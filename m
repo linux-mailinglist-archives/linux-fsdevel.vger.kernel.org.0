@@ -2,164 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E7AE42030FD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 09:58:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 543E820325E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 10:48:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728601AbgFVH6K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 03:58:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52864 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727023AbgFVH6E (ORCPT
+        id S1726422AbgFVIr7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 04:47:59 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:24570 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725912AbgFVIr6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 03:58:04 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62C46C061795
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jun 2020 00:58:02 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id e11so15039002ilr.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jun 2020 00:58:02 -0700 (PDT)
+        Mon, 22 Jun 2020 04:47:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1592815678; x=1624351678;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+  b=OSNznTDG9GhBqqzzztzwFJvVEI+9trpylvGNuDSTUl1NGVJc37BF0fqn
+   wLd28hfC/stsz6MlXrxHWfIuCE4kemVc7aOpmLUHTKddr6MWQRDnlEmyF
+   U+Jgw8BygvyHD9MurzTsZ7n4Q2KYbNgkF3nJDPjU9ruKyLAPdtTNkDwOv
+   /ILZ4HxsIEJkDkHbgjOy9g4aQqT95JVW8ED3cfR2Kcbfcf9pRxxCYdycc
+   fccCiV+InFAlXsrdiJiaGkBI8N0NlEfnl7AvWwpM1lCQWL8Huup17BxhI
+   cVUJ5vn6eQqsCslSg0gWF04HDEX6f5b6qfE+3Nb65l8QHXr1AOa6XhHtK
+   w==;
+IronPort-SDR: JIDCc/xgnM7f209KYdbA3eZQEtTbhIshFfslTXFrRC5AksvbektAiIcMNhG66DVi+cDMues1Iy
+ ULEKtNcTGEe1+Zh4SGpZS5vl6r8EcWhJ3qCdSjRfH5UyA/r9/lL721ae2o7Jcf+5wdwf664UlF
+ poB+0qy1evAF958bLKgJ1Rq4K2kdMFmpottinQOqw/MNLdrzc+0ZdrfKT+0tMlXADHWhXg2Idn
+ DJeCZ0CHP1PIcVXhkUfoRgfG0L0WCr5e2NyOcY1yIkE9dOgjyhJ72PmwO//gMnn1I37nSfdAa+
+ 6ho=
+X-IronPort-AV: E=Sophos;i="5.75,266,1589212800"; 
+   d="scan'208";a="249796329"
+Received: from mail-bn8nam11lp2172.outbound.protection.outlook.com (HELO NAM11-BN8-obe.outbound.protection.outlook.com) ([104.47.58.172])
+  by ob1.hgst.iphmx.com with ESMTP; 22 Jun 2020 16:47:57 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kfqgANpY6zoUV+0F4dlOlf+nT1Ipvfse1964GX3lKgHG6G2hpvK+spjfKepzpImru7/VdMjeelWna5+zBhVBdMegQx2z9fR5PGTcjY5KdLSWhvaJfoUo8ZXPwFdjQcYnOI7y92SjizYHvMlEqwjGucfMeDtSfLxja8AjgCnk8qKwd29+6dsKrJTizQjPch3LPEKRfnEjMKJhls6ABv5VtsuVBdfIhmd/V9A+sEglNLm9Srs5W6BDcR1c3rHre3lXq8n6RE1ijkGhShkxMJ7Aw4a4JNzu81EyOaNQ+QnDpuAEiGCqc/S2TiBGZKSMWAWAwWqLjdwjJBOoQlTe1DZ5LA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=niYo+/2PksUXY4xh7hTIPU7S1k3MOgvPbey2x+GlrmdmlHidoyiI7T72Uw1Sha9Pm2iOS8WTvxPQsPVJmM9Dl4N1coeluSLeXg2r6JPlsQb7nL1grS1fkodE+AAVkVu6pcRYYq4eM9Zlnk1ItwFafzlfjZnVaVsuy3h5kFeaj9snAii5FkWB8mNWtWLSB5KHVKb3NEyaHidGkItJk9A/qqzGafENqvNgftSfECWreAhJJ1Wo9TsZXMo3r5IZrQZ9MD+v+H1MuNRZwX81zmXsnQXCxEl5O0bLw55EgfZcjQvgyYi/GY4j0vSJbcCOVbF04IOVl46GJCdbiySKALCMJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=YJOki992P9qNOPua918TTZl0HYesJ45HJbzAqlx6Elw=;
-        b=RRBCbyCTLzOD8aqicLFIF4SOzn0LUeeYNdAbaD3uXB5TRlNWJHHhcxRGUW3hca/nXZ
-         0DYilbSSca4elYYrVQbNeIoB8y0Yrh5I4KjV9CckmtZ4VNKyox/OkW/5HVWF+XYB9Rgm
-         kiWR5gw9xXcDxPvzzAs4BT1YHyfeBNGlR5Gpg5wAy/3JCwpYmkTdvPoaeMgv1mW5yJzV
-         9wTEu2u0EpHSL519bZP1iUokiNe8qraUG6yHXE3KH9/rVtqF3b5aB6OhJ9xNxS8D/laZ
-         59eBMYI4nn4drI9UezD1eks8cmGZPh/aV9DmQA0REXcCZgYL7TQJHm2KMJ7QKIPaZzMj
-         qgEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=YJOki992P9qNOPua918TTZl0HYesJ45HJbzAqlx6Elw=;
-        b=VCg4kk8fi3PT/SC3STMOFhjRy1lyAh2oDB5IAy3mKklIDDsYsxBr/ti5r7U+m32Peb
-         pi8zjdfX+YOe5TQjsEHlcEDQIzCopxto9QLh4hcMCN/MWtZwv6ANDADgd/20A5CFiXj9
-         isk5hB2bx+rNpdYUf4p27OIKXleDnpG/qZg4SYZlS++YdPj82crv/PS3eNz/m1prP0qG
-         V1PXP/133p3yw39+TizFxYpcTCk1BMki4YA3qMlLNyQbvRo1RHxfomPxzm8ADYMBXa5I
-         BajH5pPcUeGYH1P1SOhslkIxwkN9ZNg7Kg4IJEyQuGMc0myYzZ22YcGc9fvltEIACP11
-         Qyvw==
-X-Gm-Message-State: AOAM530EL92u7qj8ibCESvlhSXkJ6mmYAH5w3apQm2L1ON7WPsi+tYml
-        hBtEE1R8nQWT3FfEtSuph3InOlZis+E1pkfmkmnY3g==
-X-Google-Smtp-Source: ABdhPJw+fjwMXvUCyqzwimJ4WWxs1noJQIVGDHJKmtUBPxyFHGYbNm8ZjI4IzPxISB9R6D6c7xgumGkOZEum/AUaPuc=
-X-Received: by 2002:a92:2a0c:: with SMTP id r12mr15616351ile.275.1592812681747;
- Mon, 22 Jun 2020 00:58:01 -0700 (PDT)
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=NYzVu4razF5DZILzUWxSy0tKnXkXAy9uzyiyN7erAKqnVd+VMTpvezsiD3O0qXv+zmnSY4l0M7BB3jLUjlvgN06Ul1bEVkra2fmTT/jro8xtZlR2Q4OPB1n55Wm9iY/vJ7QOHU0gfyPypi001aI3vcd5ZNES4YaT9hiUh5KBhaQ=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN6PR04MB5117.namprd04.prod.outlook.com
+ (2603:10b6:805:93::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3109.22; Mon, 22 Jun
+ 2020 08:47:55 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::1447:186c:326e:30b2]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::1447:186c:326e:30b2%7]) with mapi id 15.20.3109.027; Mon, 22 Jun 2020
+ 08:47:55 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 02/10] block: mark bd_finish_claiming static
+Thread-Topic: [PATCH 02/10] block: mark bd_finish_claiming static
+Thread-Index: AQHWRtLoL2GtRs5txECaKpy2txbRcg==
+Date:   Mon, 22 Jun 2020 08:47:55 +0000
+Message-ID: <SN4PR0401MB35987754B7AC39A6ECB0AFC29B970@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200620071644.463185-1-hch@lst.de>
+ <20200620071644.463185-3-hch@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: lst.de; dkim=none (message not signed)
+ header.d=none;lst.de; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [2001:a62:1597:de01:e494:6330:3987:7eb6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: a2589c8a-bf47-460f-cbae-08d81688f506
+x-ms-traffictypediagnostic: SN6PR04MB5117:
+x-microsoft-antispam-prvs: <SN6PR04MB5117B8AB4622D25E83B44E259B970@SN6PR04MB5117.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:1728;
+x-forefront-prvs: 0442E569BC
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: sFFMjJM1C6UFpp+4KVdhCvZkBQlT8wsoNNogMzuiANX1paQMP0RS2EzsC9PQkAuChrGC81kraK/+zQhfRzHVGitt+fF+wCWpOKoAZ6m6enPqeMUyle6yZRr5x/3IUFBu9/ucLU1Kekg7H7dvgj6F/a+txZX7tBsxvSxRvTOm3skL+BvVoTcuxhoGROjH0VO5B/cgYMKbrbDC/CIDLMAA2443U0keGffC6AVbg5RbF/OblBpMr9ljzoBYD7dszSTQbZhnThFXSuOiNwX1FNRfbg4ZeKiyX93SFvGOju0Jenq+JvkWanfj57TRp7oOAKXl+2r2mKNXjhKHyVe7Bh57tw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(39860400002)(366004)(396003)(136003)(346002)(376002)(478600001)(5660300002)(52536014)(76116006)(8676002)(91956017)(54906003)(66446008)(66946007)(8936002)(110136005)(19618925003)(4270600006)(316002)(66556008)(64756008)(66476007)(558084003)(9686003)(4326008)(33656002)(86362001)(186003)(6506007)(55016002)(2906002)(7696005)(71200400001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: eB91wJBVmxxTtAwB/gDMsNJ30VqtwTbeDot3Cw5KU2xcRbdB7kcKUri2vk+95i8ESHhgnMggbWOq2dhK2BMbntF8LqBTKWukmTdnmWz7E5x9KsV1AlAnYR+79kkdzONx8nZyafMXOfEU1p4HO/E3pvKETUp0GjRdSyfsx5kOEoo/H608LWmNTUxP22owGsZLUR2CnQGFkL7tYPo4Hinb+pk5omMBIUD1uwBV00EHtuP4Fe/8AHoNTac0X/tcb3fMWJqu58lJu6yZCr3vG07CoyZGcMadtXbWlGnpJnG5Tbw0crqCktPOJgUMVpgH51bV8/xdONHHcUWFHjkWug458ojQzhMxlBmrEOC+6ycKzdU3GWKihx85yDgfILojETKh//wpDnOwXc76delhLWMJqfM7wZJCbd0hhxmxeS0ljmniH/uMiMmbLm9RxxlHGh1w3o3srnlGSjH2IPwM95gN7U8/Z6NENEWyfpGo0sdizLd9BsIDPH6pu8JBhGyyoLKzD+AW9GUSr2dKwj+5xsBeUkJwuvFYCne8f2fFxnLh/SjCM5/fu77PY8hTnInHPGak
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <CAMHtQmP_TVR8QA+noWQk04Nj_8AxMXfjCj1K_k0Zf6BN-Bq9sg@mail.gmail.com>
- <87bllhh7mg.fsf@vostro.rath.org> <CAMHtQmPcADq0WSAY=uFFyRgAeuCCAo=8dOHg37304at1SRjGBg@mail.gmail.com>
- <877dw0g0wn.fsf@vostro.rath.org> <CAJfpegs3xthDEuhx_vHUtjJ7BAbVfoDu9voNPPAqJo4G3BBYZQ@mail.gmail.com>
- <87sgensmsk.fsf@vostro.rath.org> <CAOQ4uxiYG3Z9rnXB6F+fnRtoV1e3k=WP5-mgphgkKsWw+jUK=Q@mail.gmail.com>
- <87mu4vsgd4.fsf@vostro.rath.org>
-In-Reply-To: <87mu4vsgd4.fsf@vostro.rath.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 22 Jun 2020 10:57:50 +0300
-Message-ID: <CAOQ4uxgqrT=cxyjAE+FAJzfnJ1=YS91t8aidXSqxPTsEoR90Vw@mail.gmail.com>
-Subject: Re: [fuse-devel] 512 byte aligned write + O_DIRECT for xfstests
-To:     Amir Goldstein <amir73il@gmail.com>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2589c8a-bf47-460f-cbae-08d81688f506
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jun 2020 08:47:55.4018
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GRqcTJy0+jaSkOsKKKvonAhCYITQBIF3+yXsbARZN1uEUioqmmHgenM4k8LeHXguKSq5atx1lcjgpE0Pq9hVXRcGPCA1Ep1lDwzj98Ouj/Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5117
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 22, 2020 at 10:35 AM Nikolaus Rath <Nikolaus@rath.org> wrote:
->
-> On Jun 22 2020, Amir Goldstein <amir73il@gmail.com> wrote:
-> > [+CC fsdevel folks]
-> >
-> > On Mon, Jun 22, 2020 at 8:33 AM Nikolaus Rath <Nikolaus@rath.org> wrote:
-> >>
-> >> On Jun 21 2020, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >> >> I am not sure that is correct. At step 6, the write() request from
-> >> >> userspace is still being processed. I don't think that it is reasonable
-> >> >> to expect that the write() request is atomic, i.e. you can't expect to
-> >> >> see none or all of the data that is *currently being written*.
-> >> >
-> >> > Apparently the standard is quite clear on this:
-> >> >
-> >> >   "All of the following functions shall be atomic with respect to each
-> >> > other in the effects specified in POSIX.1-2017 when they operate on
-> >> > regular files or symbolic links:
-> >> >
-> >> > [...]
-> >> > pread()
-> >> > read()
-> >> > readv()
-> >> > pwrite()
-> >> > write()
-> >> > writev()
-> >> > [...]
-> >> >
-> >> > If two threads each call one of these functions, each call shall
-> >> > either see all of the specified effects of the other call, or none of
-> >> > them."[1]
-> >> >
-> >> > Thanks,
-> >> > Miklos
-> >> >
-> >> > [1]
-> >> > https://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_chap02.html#tag_15_09_07
-> >>
-> >> Thanks for digging this up, I did not know about this.
-> >>
-> >> That leaves FUSE in a rather uncomfortable place though, doesn't it?
-> >> What does the kernel do when userspace issues a write request that's
-> >> bigger than FUSE userspace pipe? It sounds like either the request must
-> >> be splitted (so it becomes non-atomic), or you'd have to return a short
-> >> write (which IIRC is not supposed to happen for local filesystems).
-> >>
-> >
-> > What makes you say that short writes are not supposed to happen?
->
-> I don't think it was an authoritative source, but I I've repeatedly read
-> that "you do not have to worry about short reads/writes when accessing
-> the local disk". I expect this to be a common expectation to be baked
-> into programs, no matter if valid or not.
->
-
-Even if that statement would have been considered true, since when can
-we speak of FUSE as a "local filesystem".
-IMO it follows all the characteristics of a "network filesystem".
-
-> > Seems like the options for FUSE are:
-> > - Take shared i_rwsem lock on read like XFS and regress performance of
-> >   mixed rw workload
-> > - Do the above only for non-direct and writeback_cache to minimize the
-> >   damage potential
-> > - Return short read/write for direct IO if request is bigger that FUSE
-> > buffer size
-> > - Add a FUSE mode that implements direct IO internally as something like
-> >   RWF_UNCACHED [2] - this is a relaxed version of "no caching" in client or
-> >   a stricter version of "cache write-through"  in the sense that
-> > during an ongoing
-> >   large write operation, read of those fresh written bytes only is served
-> >   from the client cache copy and not from the server.
->
-> I didn't understand all of that, but it seems to me that there is a
-> fundamental problem with splitting up a single write into multiple FUSE
-> requests, because the second request may fail after the first one
-> succeeds.
->
-
-I think you are confused by the use of the word "atomic" in the standard.
-It does not mean what the O_ATOMIC proposal means, that is - write everything
-or write nothing at all.
-It means if thread A successfully wrote data X over data Y, then thread B can
-either read X or Y, but not half X half Y.
-If A got an error on write, the content that B will read is probably undefined
-(excuse me for not reading what "the law" has to say about this).
-If A got a short (half) write, then surely B can read either half X or half Y
-from the first half range. Second half range I am not sure what to expect.
-
-So I do not see any fundamental problem with FUSE write requests.
-On the contrary - FUSE write requests are just like any network protocol write
-request or local disk IO request for that matter.
-
-Unless I am missing something...
-
-Thanks,
-Amir.
+Looks good,=0A=
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
