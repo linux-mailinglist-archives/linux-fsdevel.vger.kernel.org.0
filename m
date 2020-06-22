@@ -2,305 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B92203E14
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 19:34:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71AB7203E53
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 19:48:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729952AbgFVRed (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 13:34:33 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:57246 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729605AbgFVReb (ORCPT
+        id S1730112AbgFVRst (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 13:48:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59840 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729886AbgFVRss (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 13:34:31 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05MHBhdA020483;
-        Mon, 22 Jun 2020 17:34:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=VfhuG5En6CEW4ZLej2eaAM9QbT+5NiA3s7lKPm3uy14=;
- b=cqzgjIBPzIdO70u8dWgY1eCxot9ZoneoE4I9BN1SsYlKKDX0TeNLW8K9X30z+Z5p8jkB
- fIU+ecj6GNsWhXnJxTsxtwIr081D4pxFe1+fHQxGtJRpHNt/0DeCMxo4AOnzAxiGJ5Jp
- kJGBhhMmG/4pPzqjxBsEHHnCvRKxHGCKBoVhx6ZT1Db3OXnfFpqZ7Rv4GJPJHOZpeIGr
- TQXl2Fvslxe1rJ6BAPFDoiavegsMNrqiafKrQUtYJ/bNlhAVl7cn0PLz4Slfx8O/31qO
- DdNB6mwJ9hq7vsuy/DOe3pNLxTCdZgsR+ArNdgHNy+g/V6w9/1QnolWOEUw99zmC5C9C jg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 31sebbgr19-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 22 Jun 2020 17:34:19 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05MHY8Wm099296;
-        Mon, 22 Jun 2020 17:34:19 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 31svc1qhsj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Jun 2020 17:34:19 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 05MHYHFC023447;
-        Mon, 22 Jun 2020 17:34:17 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 22 Jun 2020 17:34:17 +0000
-Date:   Mon, 22 Jun 2020 10:34:15 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        hch@lst.de, david@fromorbit.com, dsterba@suse.cz,
-        jthumshirn@suse.de, fdmanana@gmail.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 1/6] iomap: Convert wait_for_completion to flags
-Message-ID: <20200622173415.GB11239@magnolia>
-References: <20200622152457.7118-1-rgoldwyn@suse.de>
- <20200622152457.7118-2-rgoldwyn@suse.de>
+        Mon, 22 Jun 2020 13:48:48 -0400
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0552C061573;
+        Mon, 22 Jun 2020 10:48:48 -0700 (PDT)
+Received: by mail-qt1-x843.google.com with SMTP id e12so2419188qtr.9;
+        Mon, 22 Jun 2020 10:48:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=zz2d7iJ3NwSu2E/XoT3Xn56CBZyHHLfswhOCBJmBdrE=;
+        b=ETnjGl3qDhRrVDClBj2NSJfweTbL2NDdD1MEU+xv69obilnDdQfWyceVLkqgCZLpWf
+         q7tn6oOks08DQhsP6CFXouUZ4AHslswN2wwzmX3IhjczxV+Aib6GdkjmHNreF5VHVy1d
+         HXBnRorul4AUJTUvTJAG0ubQBSb/O3nMDCt3kgWAKrDDgTkO0gf1FHnzFuhbrlZQzSwL
+         58oiiqqiDifJGT5+YFOCnMV1FUE+sfn1h/jr0hP9iZJ65BVmZzYAViL55EB/meCB+7V9
+         MiEmyeayF7/5P6by0vaXcwrQ274Im85PM9HscGRo44BO/VHEKky8H9KMAqi7aJJ/7AiE
+         RDFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=zz2d7iJ3NwSu2E/XoT3Xn56CBZyHHLfswhOCBJmBdrE=;
+        b=dMOwQtE04dOltYtEAGa3RN273vlr1Fi/Q6diz6VmCo84TGDVbTX6K3WDrZE1EkeQF9
+         2zBttvTTRsc1TYoarOXCL6gyJeoWNpvMOv7fil3P0/qnyt7uXGNLkyG6pyyfprK/ZXv1
+         Bo51KQl7Obg1QhRLwv9/Hc9G41AYErCqWo9gC7G9/MAhcfrz0Y6JVdXZejJ/oYcqyrxp
+         MWCipN4UNsgQ0b7jZgg3FNA6D/PrN2ADjMl+1ZQFAH+eZKX8jN0cLh7jnFYpQJ9rOXYw
+         vnWZeivxGDlS4+TCbKjpQnFF+j9xXAHCbnaOvrlbpYY2HObRcBNPQtjdv/on9EHRU+da
+         hk8w==
+X-Gm-Message-State: AOAM532+SqzQyjk7ADt0krd2sGqxIbmioTdQCvEvo116/dKWxhm3EkxW
+        M7cDe8TPmwa3bkj1GoPnvAo=
+X-Google-Smtp-Source: ABdhPJwJGd5blfrA0ijj0HL23K9O7SFQg5SC/KD4zcSDDomdxnJx0fH3LfuBQyFjWdjurKfckSSDOg==
+X-Received: by 2002:aed:2359:: with SMTP id i25mr17459184qtc.194.1592848127683;
+        Mon, 22 Jun 2020 10:48:47 -0700 (PDT)
+Received: from localhost ([199.96.181.106])
+        by smtp.gmail.com with ESMTPSA id a25sm4819864qtk.40.2020.06.22.10.48.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jun 2020 10:48:46 -0700 (PDT)
+Date:   Mon, 22 Jun 2020 13:48:45 -0400
+From:   Tejun Heo <tj@kernel.org>
+To:     Ian Kent <raven@themaw.net>
+Cc:     Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
+ improvement
+Message-ID: <20200622174845.GB13061@mtj.duckdns.org>
+References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
+ <20200619153833.GA5749@mtj.thefacebook.com>
+ <16d9d5aa-a996-d41d-cbff-9a5937863893@linux.vnet.ibm.com>
+ <20200619222356.GA13061@mtj.duckdns.org>
+ <429696e9fa0957279a7065f7d8503cb965842f58.camel@themaw.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200622152457.7118-2-rgoldwyn@suse.de>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9660 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 bulkscore=0
- spamscore=0 suspectscore=1 mlxlogscore=999 malwarescore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006220121
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9660 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 phishscore=0
- adultscore=0 impostorscore=0 cotscore=-2147483648 mlxscore=0
- suspectscore=1 mlxlogscore=999 bulkscore=0 lowpriorityscore=0
- clxscore=1015 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006220120
+In-Reply-To: <429696e9fa0957279a7065f7d8503cb965842f58.camel@themaw.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 22, 2020 at 10:24:52AM -0500, Goldwyn Rodrigues wrote:
-> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Hello, Ian.
+
+On Sun, Jun 21, 2020 at 12:55:33PM +0800, Ian Kent wrote:
+> > > They are used for hotplugging and partitioning memory. The size of
+> > > the
+> > > segments (and thus the number of them) is dictated by the
+> > > underlying
+> > > hardware.
+> > 
+> > This sounds so bad. There gotta be a better interface for that,
+> > right?
 > 
-> Convert wait_for_completion boolean to flags so we can pass more flags
-> to iomap_dio_rw()
+> I'm still struggling a bit to grasp what your getting at but ...
+
+I was more trying to say that the sysfs device interface with per-object
+directory isn't the right interface for this sort of usage at all. Are these
+even real hardware pieces which can be plugged in and out? While being a
+discrete piece of hardware isn't a requirement to be a device model device,
+the whole thing is designed with such use cases on mind. It definitely isn't
+the right design for representing six digit number of logical entities.
+
+It should be obvious that representing each consecutive memory range with a
+separate directory entry is far from an optimal way of representing
+something like this. It's outright silly.
+
+> Maybe your talking about the underlying notifications system where
+> a notification is sent for every event.
 > 
-> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> ---
->  fs/ext4/file.c        | 11 +++++++++--
->  fs/gfs2/file.c        |  7 ++++---
->  fs/iomap/direct-io.c  |  3 ++-
->  fs/xfs/xfs_file.c     | 10 ++++++----
->  fs/zonefs/super.c     |  8 ++++++--
->  include/linux/iomap.h |  9 ++++++++-
->  6 files changed, 35 insertions(+), 13 deletions(-)
+> There's nothing new about that problem and it's becoming increasingly
+> clear that existing kernel notification sub-systems don't scale well.
 > 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 2a01e31a032c..d20120c4d833 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -53,6 +53,7 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  {
->  	ssize_t ret;
->  	struct inode *inode = file_inode(iocb->ki_filp);
-> +	int flags = 0;
->  
->  	if (iocb->ki_flags & IOCB_NOWAIT) {
->  		if (!inode_trylock_shared(inode))
-> @@ -74,8 +75,11 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  		return generic_file_read_iter(iocb, to);
->  	}
->  
-> +	if (is_sync_kiocb(iocb))
-> +		flags |= IOMAP_DIOF_WAIT_FOR_COMPLETION;
-> +
->  	ret = iomap_dio_rw(iocb, to, &ext4_iomap_ops, NULL,
-> -			   is_sync_kiocb(iocb));
-> +			   flags);
->  	inode_unlock_shared(inode);
->  
->  	file_accessed(iocb->ki_filp);
-> @@ -457,6 +461,7 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  	const struct iomap_ops *iomap_ops = &ext4_iomap_ops;
->  	bool extend = false, unaligned_io = false;
->  	bool ilock_shared = true;
-> +	int flags = 0;
->  
->  	/*
->  	 * We initially start with shared inode lock unless it is
-> @@ -540,10 +545,12 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  		ext4_journal_stop(handle);
->  	}
->  
-> +	if (is_sync_kiocb(iocb) || unaligned_io || extend)
-> +		flags |= IOMAP_DIOF_WAIT_FOR_COMPLETION;
->  	if (ilock_shared)
->  		iomap_ops = &ext4_iomap_overwrite_ops;
->  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
-> -			   is_sync_kiocb(iocb) || unaligned_io || extend);
-> +			   flags);
->  
->  	if (extend)
->  		ret = ext4_handle_inode_extension(inode, offset, ret, count);
-> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-> index fe305e4bfd37..232f06338e0a 100644
-> --- a/fs/gfs2/file.c
-> +++ b/fs/gfs2/file.c
-> @@ -767,6 +767,7 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to)
->  	size_t count = iov_iter_count(to);
->  	struct gfs2_holder gh;
->  	ssize_t ret;
-> +	int flags = is_sync_kiocb(iocb) ? IOMAP_DIOF_WAIT_FOR_COMPLETION : 0;
->  
->  	if (!count)
->  		return 0; /* skip atime */
-> @@ -777,7 +778,7 @@ static ssize_t gfs2_file_direct_read(struct kiocb *iocb, struct iov_iter *to)
->  		goto out_uninit;
->  
->  	ret = iomap_dio_rw(iocb, to, &gfs2_iomap_ops, NULL,
-> -			   is_sync_kiocb(iocb));
-> +			   flags);
->  
->  	gfs2_glock_dq(&gh);
->  out_uninit:
-> @@ -794,6 +795,7 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
->  	loff_t offset = iocb->ki_pos;
->  	struct gfs2_holder gh;
->  	ssize_t ret;
-> +	int flags = is_sync_kiocb(iocb) ? IOMAP_DIOF_WAIT_FOR_COMPLETION : 0;
->  
->  	/*
->  	 * Deferred lock, even if its a write, since we do no allocation on
-> @@ -812,8 +814,7 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
->  	if (offset + len > i_size_read(&ip->i_inode))
->  		goto out;
->  
-> -	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
-> -			   is_sync_kiocb(iocb));
-> +	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL, flags);
->  
->  out:
->  	gfs2_glock_dq(&gh);
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index ec7b78e6feca..7ed857196a39 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -405,7 +405,7 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
->  ssize_t
->  iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
-> -		bool wait_for_completion)
-> +		int dio_flags)
->  {
->  	struct address_space *mapping = iocb->ki_filp->f_mapping;
->  	struct inode *inode = file_inode(iocb->ki_filp);
-> @@ -415,6 +415,7 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	unsigned int flags = IOMAP_DIRECT;
->  	struct blk_plug plug;
->  	struct iomap_dio *dio;
-> +	bool wait_for_completion = !!(dio_flags & IOMAP_DIOF_WAIT_FOR_COMPLETION);
->  
->  	if (!count)
->  		return 0;
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 00db81eac80d..38683b7c6013 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -169,6 +169,7 @@ xfs_file_dio_aio_read(
->  	struct xfs_inode	*ip = XFS_I(file_inode(iocb->ki_filp));
->  	size_t			count = iov_iter_count(to);
->  	ssize_t			ret;
-> +	int flags = is_sync_kiocb(iocb) ? IOMAP_DIOF_WAIT_FOR_COMPLETION : 0;
->  
->  	trace_xfs_file_direct_read(ip, count, iocb->ki_pos);
->  
-> @@ -183,8 +184,7 @@ xfs_file_dio_aio_read(
->  	} else {
->  		xfs_ilock(ip, XFS_IOLOCK_SHARED);
->  	}
-> -	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL,
-> -			is_sync_kiocb(iocb));
-> +	ret = iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL,	flags);
->  	xfs_iunlock(ip, XFS_IOLOCK_SHARED);
->  
->  	return ret;
-> @@ -483,6 +483,7 @@ xfs_file_dio_aio_write(
->  	int			iolock;
->  	size_t			count = iov_iter_count(from);
->  	struct xfs_buftarg      *target = xfs_inode_buftarg(ip);
-> +	int flags = 0;
+> Mount handling is a current example which is one of the areas David
+> Howells is trying to improve and that's taken years now to get as
+> far as it has.
 
-The variable names ought to be lined up.
+There sure are scalability issues everywhere that needs to be improved but
+there also are cases where the issue is the approach itself rather than
+scalability and I'm wondering whether this is the latter.
 
->  	/* DIO must be aligned to device logical sector size */
->  	if ((iocb->ki_pos | count) & target->bt_logical_sectormask)
-> @@ -546,9 +547,10 @@ xfs_file_dio_aio_write(
->  	 * If unaligned, this is the only IO in-flight. Wait on it before we
->  	 * release the iolock to prevent subsequent overlapping IO.
->  	 */
-> +	if (is_sync_kiocb(iocb) || unaligned_io)
-> +		flags |= IOMAP_DIOF_WAIT_FOR_COMPLETION;
->  	ret = iomap_dio_rw(iocb, from, &xfs_direct_write_iomap_ops,
-> -			   &xfs_dio_write_ops,
-> -			   is_sync_kiocb(iocb) || unaligned_io);
-> +			   &xfs_dio_write_ops, flags);
->  out:
->  	xfs_iunlock(ip, iolock);
->  
-> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> index 07bc42d62673..88dc5aa70d1b 100644
-> --- a/fs/zonefs/super.c
-> +++ b/fs/zonefs/super.c
-> @@ -715,7 +715,8 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
->  		ret = zonefs_file_dio_append(iocb, from);
->  	else
->  		ret = iomap_dio_rw(iocb, from, &zonefs_iomap_ops,
-> -				   &zonefs_write_dio_ops, sync);
-> +				   &zonefs_write_dio_ops,
-> +				   sync ? IOMAP_DIOF_WAIT_FOR_COMPLETION : 0);
->  	if (zi->i_ztype == ZONEFS_ZTYPE_SEQ &&
->  	    (ret > 0 || ret == -EIOCBQUEUED)) {
->  		if (ret > 0)
-> @@ -814,6 +815,7 @@ static ssize_t zonefs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  	struct super_block *sb = inode->i_sb;
->  	loff_t isize;
->  	ssize_t ret;
-> +	int flags = 0;
->  
->  	/* Offline zones cannot be read */
->  	if (unlikely(IS_IMMUTABLE(inode) && !(inode->i_mode & 0777)))
-> @@ -848,8 +850,10 @@ static ssize_t zonefs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
->  			goto inode_unlock;
->  		}
->  		file_accessed(iocb->ki_filp);
-> +		if (is_sync_kiocb(iocb))
-> +			flags |= IOMAP_DIOF_WAIT_FOR_COMPLETION;
->  		ret = iomap_dio_rw(iocb, to, &zonefs_iomap_ops,
-> -				   &zonefs_read_dio_ops, is_sync_kiocb(iocb));
-> +				   &zonefs_read_dio_ops, flags);
->  	} else {
->  		ret = generic_file_read_iter(iocb, to);
->  		if (ret == -EIO)
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 4d1d3c3469e9..f6230446b08d 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -255,9 +255,16 @@ struct iomap_dio_ops {
->  			struct bio *bio, loff_t file_offset);
->  };
->  
-> +/*
-> + * Flags to pass iomap_dio_rw()
-> + */
-> +
-> +/* Wait for completion of DIO */
-> +#define IOMAP_DIOF_WAIT_FOR_COMPLETION 		0x1
+Thanks.
 
-There's a space after "COMPLETION" but before the tabs.
-
---D
-
-> +
->  ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
-> -		bool wait_for_completion);
-> +		int flags);
->  int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
->  
->  #ifdef CONFIG_SWAP
-> -- 
-> 2.25.0
-> 
+-- 
+tejun
