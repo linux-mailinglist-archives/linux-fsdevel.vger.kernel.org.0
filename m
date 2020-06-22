@@ -2,99 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CBA020428A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 23:22:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25B6020428D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 23:23:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730474AbgFVVWx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 17:22:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39748 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730460AbgFVVWw (ORCPT
+        id S1730538AbgFVVXI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 17:23:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36910 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730460AbgFVVXI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 17:22:52 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05ML2xIt106480;
-        Mon, 22 Jun 2020 17:22:38 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31tysvg7v8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 22 Jun 2020 17:22:38 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05ML4WE3112081;
-        Mon, 22 Jun 2020 17:22:38 -0400
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31tysvg7uv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 22 Jun 2020 17:22:38 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05MLFbdJ028588;
-        Mon, 22 Jun 2020 21:22:37 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma01dal.us.ibm.com with ESMTP id 31sa38q828-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 22 Jun 2020 21:22:37 +0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05MLMZtg41353574
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 22 Jun 2020 21:22:36 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E265B6A047;
-        Mon, 22 Jun 2020 21:22:35 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3CC7D6A051;
-        Mon, 22 Jun 2020 21:22:35 +0000 (GMT)
-Received: from [9.211.67.55] (unknown [9.211.67.55])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Mon, 22 Jun 2020 21:22:35 +0000 (GMT)
-Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
- improvement
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Ian Kent <raven@themaw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
- <20200619153833.GA5749@mtj.thefacebook.com>
- <16d9d5aa-a996-d41d-cbff-9a5937863893@linux.vnet.ibm.com>
- <20200619222356.GA13061@mtj.duckdns.org>
- <fa22c563-73b7-5e45-2120-71108ca8d1a0@linux.vnet.ibm.com>
- <20200622175343.GC13061@mtj.duckdns.org>
-From:   Rick Lindsley <ricklind@linux.vnet.ibm.com>
-Message-ID: <82b2379e-36d0-22c2-41eb-71571e992b37@linux.vnet.ibm.com>
-Date:   Mon, 22 Jun 2020 14:22:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Mon, 22 Jun 2020 17:23:08 -0400
+Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 357F3C061573;
+        Mon, 22 Jun 2020 14:23:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=hPBi1Ca/ygGxeQUdNKQzKk5MNJppiF11w9HoER8rk1Q=; b=k8Y3QFkIq+BeFyvt43VXR17p8+
+        mQX77gJVujEvu7+d5QYfMAUus0U6EDtfwaYPIrKAiSAlaxIEgGXRXzcNfhPYrSGUMVMibLczDd3kR
+        HbMmpgxLVefe2/H5tg6WIPAITTeYDEgrXUc2nwCKIk2EwADK6sjKSigIsO479qbZKEHJXY1oz9LFs
+        /IhT8l/A90yd8SDSbSmjRre1ZKWY/m8SzZMB5S76nlknqBYF2+zDjrYRq69xEarKz2FFnArt5euFJ
+        Nnby+PwzqIyZvPhm1vtFX2ARMEeU/tCDuEDCVWLTM7J08PemZKQ0y/w8fUMG62SaJ8ta+ETKAn4nb
+        OjzFLyHA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jnTtu-0000Lo-1U; Mon, 22 Jun 2020 21:22:46 +0000
+Date:   Mon, 22 Jun 2020 22:22:45 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Egor Chelak <egor.chelak@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>,
+        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] isofs: fix High Sierra dirent flag accesses
+Message-ID: <20200622212245.GC21350@casper.infradead.org>
+References: <20200621040817.3388-1-egor.chelak@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200622175343.GC13061@mtj.duckdns.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-22_12:2020-06-22,2020-06-22 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 adultscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
- clxscore=1015 phishscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
- cotscore=-2147483648 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006220137
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200621040817.3388-1-egor.chelak@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/22/20 10:53 AM, Tejun Heo wrote:
+On Sun, Jun 21, 2020 at 07:08:17AM +0300, Egor Chelak wrote:
+> The flags byte of the dirent was accessed as de->flags[0] in a couple of
+> places, and not as de->flags[-sbi->s_high_sierra], which is how it's
+> accessed elsewhere. This caused a bug, where some files on an HSF disc
+> could be inaccessible.
 
-> I don't know. The above highlights the absurdity of the approach itself to
-> me. You seem to be aware of it too in writing: 250,000 "devices".
+> +++ b/fs/isofs/dir.c
+> @@ -50,6 +50,7 @@ int isofs_name_translate(struct iso_directory_record *de, char *new, struct inod
+>  int get_acorn_filename(struct iso_directory_record *de,
+>  			    char *retname, struct inode *inode)
+>  {
+> +	struct isofs_sb_info *sbi = ISOFS_SB(inode->i_sb);
+>  	int std;
+>  	unsigned char *chr;
+>  	int retnamlen = isofs_name_translate(de, retname, inode);
+> @@ -66,7 +67,7 @@ int get_acorn_filename(struct iso_directory_record *de,
+>  		return retnamlen;
+>  	if ((*retname == '_') && ((chr[19] & 1) == 1))
+>  		*retname = '!';
+> -	if (((de->flags[0] & 2) == 0) && (chr[13] == 0xff)
+> +	if (((de->flags[-sbi->s_high_sierra] & 2) == 0) && (chr[13] == 0xff)
+>  		&& ((chr[12] & 0xf0) == 0xf0)) {
+>  		retname[retnamlen] = ',';
+>  		sprintf(retname+retnamlen+1, "%3.3x",
 
-Just because it is absurd doesn't mean it wasn't built that way :)
-
-I agree, and I'm trying to influence the next hardware design.  However, what's already out there is memory units that must be accessed in 256MB blocks.  If you want to remove/add a GB, that's really 4 blocks of memory you're manipulating, to the hardware.  Those blocks have to be registered and recognized by the kernel for that to work.
-
-Rick
+It's been about 22 years since I contributed the patch which added
+support for the Acorn extensions ;-)  But I'm pretty sure that it's not
+possible to have an Acorn CD-ROM that is also an HSF CD-ROM.  That is,
+all Acorn formatted CD-ROMs are ISO-9660 compatible.  So I think this
+chunk of the patch is not required.
 
