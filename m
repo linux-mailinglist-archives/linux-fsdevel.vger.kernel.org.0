@@ -2,320 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B6E78203AC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 17:25:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D40F0203B08
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jun 2020 17:37:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729164AbgFVPZd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 11:25:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52448 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729374AbgFVPZc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 11:25:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 84AC9C209;
-        Mon, 22 Jun 2020 15:25:29 +0000 (UTC)
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-btrfs@vger.kernel.org, hch@lst.de, darrick.wong@oracle.com,
-        david@fromorbit.com, dsterba@suse.cz, jthumshirn@suse.de,
-        fdmanana@gmail.com, Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 6/6] btrfs: split btrfs_direct_IO to read and write part
-Date:   Mon, 22 Jun 2020 10:24:57 -0500
-Message-Id: <20200622152457.7118-7-rgoldwyn@suse.de>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200622152457.7118-1-rgoldwyn@suse.de>
-References: <20200622152457.7118-1-rgoldwyn@suse.de>
+        id S1729358AbgFVPhV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 11:37:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39280 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729150AbgFVPhU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 22 Jun 2020 11:37:20 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D98C061573;
+        Mon, 22 Jun 2020 08:37:20 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id q17so1375734pfu.8;
+        Mon, 22 Jun 2020 08:37:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:organization:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7I4FBHkC3xoY8dcYSORZ0nTLqrZS6hPMwq+XQvczidk=;
+        b=O4wc8PnnSmhd0MtkI7mV9+Rlp5x+aav1eXppMIpW6e6vfWSVuBtqcKJrI+Dl6tSEjP
+         bvirBl9ybJmqgaCDLsrfCPIXGkRWxij5h4/BfSq6kShUKoEhNP58McT+yPuUZxTpaVwB
+         TB298vkuKHBamQZVx+oK8NINwJONAH5UZTiLezsdHCBeeqMK1zGWv4Bg8cSARNICaheU
+         dXGCj/bN6VHS7IuItxM10WBT8+kpc1LmVhXTfBBXyQvCZTTaWEdnWbhHYiqque2UYmUJ
+         BZ52vOqxIW6WYDuyGWcMt48OTGhyoXUCXb1z769cjgEgPuDYP+JXO65x1k2uisBtOVFd
+         1tbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=7I4FBHkC3xoY8dcYSORZ0nTLqrZS6hPMwq+XQvczidk=;
+        b=kT836hbHtzhmT3dpGL71djXTKME9NaFI4RFXGO0w5vF3W2M78hUXolmufpgaMZ0R38
+         BcEP26XGr3M1dq2/18jWToICab2g3y2gQkFcdLKDGpCE1Mjmxvvrf/pDt5h93PmePCig
+         fSUQdwV8JH+iQ3OnCRJpcHrVwTqhnq6mVja7Qmcrf3fppmW2uOslugH1Nkc7g1cUIdUo
+         62fFD13fSx74vGfTFFCUgMenxJq6I160m+zYLNhavhNnBtjl5xQS/a9PhWazj/tai18d
+         W9sH/A1T62t+/2srn/L2ka35aDY5wcgCfPHMVfyyUjpJ3Bj5rH/uKuMUG2cw0og8ALcA
+         DmAw==
+X-Gm-Message-State: AOAM531TZbPOKM83Ts0B+P/BnKmTcmf2nJObUkYnNIWVzZ+c1MA/M+Eb
+        JG3LhreifoZZXZzJJTq61EOkQiY0
+X-Google-Smtp-Source: ABdhPJzqNQNJOpVYmj9g0sA4GCXf+imfhXoZXk2cFTB51ukto7iCCL0jPlM4jDE1SVmc+idfGcCl9g==
+X-Received: by 2002:a63:ca0c:: with SMTP id n12mr2298819pgi.216.1592840239667;
+        Mon, 22 Jun 2020 08:37:19 -0700 (PDT)
+Received: from ?IPv6:2601:1c0:6280:3f0::19c2? ([2601:1c0:6280:3f0::19c2])
+        by smtp.gmail.com with ESMTPSA id y10sm11749397pgi.54.2020.06.22.08.37.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jun 2020 08:37:18 -0700 (PDT)
+Subject: Re: mmotm 2020-06-20-21-36 uploaded (lkdtm/bugs.c)
+To:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+References: <20200621043737.pb6JV%akpm@linux-foundation.org>
+From:   Randy Dunlap <rd.dunlab@gmail.com>
+Organization: nil
+Message-ID: <20a39fd4-622d-693c-c8d6-1fbab12af62a@gmail.com>
+Date:   Mon, 22 Jun 2020 08:37:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
+In-Reply-To: <20200621043737.pb6JV%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+On 6/20/20 9:37 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2020-06-20-21-36 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
 
-The read and write versions don't have anything in common except for the
-call to iomap_dio_rw.  So split this function, and merge each half into
-its only caller.
+drivers/misc/lkdtm/bugs.c has build errors when building UML for i386
+(allmodconfig or allyesconfig):
 
-Originally proposed by Christoph Hellwig <hch@lst.de>
 
-Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
----
- fs/btrfs/ctree.h |  3 ++
- fs/btrfs/file.c  | 95 +++++++++++++++++++++++++++++++++++++++++++-----
- fs/btrfs/inode.c | 86 +------------------------------------------
- 3 files changed, 90 insertions(+), 94 deletions(-)
+In file included from ../drivers/misc/lkdtm/bugs.c:17:0:
+../arch/x86/um/asm/desc.h:7:0: warning: "LDT_empty" redefined
+ #define LDT_empty(info) (\
+ 
+In file included from ../arch/um/include/asm/mmu.h:10:0,
+                 from ../include/linux/mm_types.h:18,
+                 from ../include/linux/sched/signal.h:13,
+                 from ../drivers/misc/lkdtm/bugs.c:11:
+../arch/x86/um/asm/mm_context.h:65:0: note: this is the location of the previous definition
+ #define LDT_empty(info) (_LDT_empty(info))
+ 
+../drivers/misc/lkdtm/bugs.c: In function ‘lkdtm_DOUBLE_FAULT’:
+../drivers/misc/lkdtm/bugs.c:428:9: error: variable ‘d’ has initializer but incomplete type
+  struct desc_struct d = {
+         ^~~~~~~~~~~
+../drivers/misc/lkdtm/bugs.c:429:4: error: ‘struct desc_struct’ has no member named ‘type’
+   .type = 3, /* expand-up, writable, accessed data */
+    ^~~~
+../drivers/misc/lkdtm/bugs.c:429:11: warning: excess elements in struct initializer
+   .type = 3, /* expand-up, writable, accessed data */
+           ^
+../drivers/misc/lkdtm/bugs.c:429:11: note: (near initialization for ‘d’)
+../drivers/misc/lkdtm/bugs.c:430:4: error: ‘struct desc_struct’ has no member named ‘p’
+   .p = 1,  /* present */
+    ^
+../drivers/misc/lkdtm/bugs.c:430:8: warning: excess elements in struct initializer
+   .p = 1,  /* present */
+        ^
+../drivers/misc/lkdtm/bugs.c:430:8: note: (near initialization for ‘d’)
+../drivers/misc/lkdtm/bugs.c:431:4: error: ‘struct desc_struct’ has no member named ‘d’
+   .d = 1,  /* 32-bit */
+    ^
+../drivers/misc/lkdtm/bugs.c:431:8: warning: excess elements in struct initializer
+   .d = 1,  /* 32-bit */
+        ^
+../drivers/misc/lkdtm/bugs.c:431:8: note: (near initialization for ‘d’)
+../drivers/misc/lkdtm/bugs.c:432:4: error: ‘struct desc_struct’ has no member named ‘g’
+   .g = 0,  /* limit in bytes */
+    ^
+../drivers/misc/lkdtm/bugs.c:432:8: warning: excess elements in struct initializer
+   .g = 0,  /* limit in bytes */
+        ^
+../drivers/misc/lkdtm/bugs.c:432:8: note: (near initialization for ‘d’)
+../drivers/misc/lkdtm/bugs.c:433:4: error: ‘struct desc_struct’ has no member named ‘s’
+   .s = 1,  /* not system */
+    ^
+../drivers/misc/lkdtm/bugs.c:433:8: warning: excess elements in struct initializer
+   .s = 1,  /* not system */
+        ^
+../drivers/misc/lkdtm/bugs.c:433:8: note: (near initialization for ‘d’)
+../drivers/misc/lkdtm/bugs.c:428:21: error: storage size of ‘d’ isn’t known
+  struct desc_struct d = {
+                     ^
+../drivers/misc/lkdtm/bugs.c:437:2: error: implicit declaration of function ‘write_gdt_entry’; did you mean ‘init_wait_entry’? [-Werror=implicit-function-declaration]
+  write_gdt_entry(get_cpu_gdt_rw(smp_processor_id()),
+  ^~~~~~~~~~~~~~~
+  init_wait_entry
+../drivers/misc/lkdtm/bugs.c:437:18: error: implicit declaration of function ‘get_cpu_gdt_rw’; did you mean ‘get_cpu_ptr’? [-Werror=implicit-function-declaration]
+  write_gdt_entry(get_cpu_gdt_rw(smp_processor_id()),
+                  ^~~~~~~~~~~~~~
+                  get_cpu_ptr
+../drivers/misc/lkdtm/bugs.c:438:27: error: ‘DESCTYPE_S’ undeclared (first use in this function)
+    GDT_ENTRY_TLS_MIN, &d, DESCTYPE_S);
+                           ^~~~~~~~~~
+../drivers/misc/lkdtm/bugs.c:438:27: note: each undeclared identifier is reported only once for each function it appears in
+../drivers/misc/lkdtm/bugs.c:428:21: warning: unused variable ‘d’ [-Wunused-variable]
+  struct desc_struct d = {
+                     ^
+cc1: some warnings being treated as errors
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index 47b8874eddff..161533040978 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -28,6 +28,7 @@
- #include <linux/dynamic_debug.h>
- #include <linux/refcount.h>
- #include <linux/crc32c.h>
-+#include <linux/iomap.h>
- #include "extent-io-tree.h"
- #include "extent_io.h"
- #include "extent_map.h"
-@@ -2934,6 +2935,8 @@ void btrfs_writepage_endio_finish_ordered(struct page *page, u64 start,
- 					  u64 end, int uptodate);
- extern const struct dentry_operations btrfs_dentry_operations;
- ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter);
-+extern const struct iomap_ops btrfs_dio_iomap_ops;
-+extern const struct iomap_dio_ops btrfs_dops;
- 
- /* ioctl.c */
- long btrfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index dff89d04fd16..7f75adf70bcd 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1809,21 +1809,65 @@ static noinline ssize_t btrfs_buffered_write(struct kiocb *iocb,
- 	return num_written ? num_written : ret;
- }
- 
--static ssize_t __btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
-+static ssize_t check_direct_IO(struct btrfs_fs_info *fs_info,
-+                               const struct iov_iter *iter, loff_t offset)
-+{
-+        const unsigned int blocksize_mask = fs_info->sectorsize - 1;
-+
-+        if (offset & blocksize_mask)
-+                return -EINVAL;
-+
-+        if (iov_iter_alignment(iter) & blocksize_mask)
-+                return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file_inode(file);
--	loff_t pos;
--	ssize_t written;
-+	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-+	loff_t pos = iocb->ki_pos;
-+	ssize_t written = 0;
- 	ssize_t written_buffered;
- 	loff_t endbyte;
- 	int err;
-+	size_t count = 0;
-+	bool relock = false;
-+	int flags = IOMAP_DIOF_PGINVALID_FAIL;
-+
-+	if (check_direct_IO(fs_info, from, pos))
-+		goto buffered;
- 
--	written = btrfs_direct_IO(iocb, from);
-+	count = iov_iter_count(from);
-+	/*
-+	 * If the write DIO is beyond the EOF, we need update the isize, but it
-+	 * is protected by i_mutex. So we can not unlock the i_mutex at this
-+	 * case.
-+	 */
-+	if (pos + count <= inode->i_size) {
-+		inode_unlock(inode);
-+		relock = true;
-+	} else if (iocb->ki_flags & IOCB_NOWAIT) {
-+		return -EAGAIN;
-+	}
-+
-+	if (is_sync_kiocb(iocb))
-+		flags |= IOMAP_DIOF_WAIT_FOR_COMPLETION;
-+
-+	down_read(&BTRFS_I(inode)->dio_sem);
-+	written = iomap_dio_rw(iocb, from, &btrfs_dio_iomap_ops, &btrfs_dops,
-+			       flags);
-+	up_read(&BTRFS_I(inode)->dio_sem);
-+
-+	if (relock)
-+		inode_lock(inode);
- 
- 	if (written < 0 || !iov_iter_count(from))
- 		return written;
- 
-+buffered:
- 	pos = iocb->ki_pos;
- 	written_buffered = btrfs_buffered_write(iocb, from);
- 	if (written_buffered < 0) {
-@@ -1962,7 +2006,7 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
- 		atomic_inc(&BTRFS_I(inode)->sync_writers);
- 
- 	if (iocb->ki_flags & IOCB_DIRECT) {
--		num_written = __btrfs_direct_write(iocb, from);
-+		num_written = btrfs_direct_write(iocb, from);
- 	} else {
- 		num_written = btrfs_buffered_write(iocb, from);
- 		if (num_written > 0)
-@@ -3476,16 +3520,47 @@ static int btrfs_file_open(struct inode *inode, struct file *filp)
- 	return generic_file_open(inode, filp);
- }
- 
-+static int check_direct_read(struct btrfs_fs_info *fs_info,
-+                               const struct iov_iter *iter, loff_t offset)
-+{
-+	int ret;
-+	int i, seg;
-+
-+	ret = check_direct_IO(fs_info, iter, offset);
-+	if (ret < 0)
-+		return ret;
-+
-+	for (seg = 0; seg < iter->nr_segs; seg++)
-+		for (i = seg + 1; i < iter->nr_segs; i++)
-+			if (iter->iov[seg].iov_base == iter->iov[i].iov_base)
-+				return -EINVAL;
-+	return 0;
-+}
-+
-+static ssize_t btrfs_direct_read(struct kiocb *iocb, struct iov_iter *to)
-+{
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+	ssize_t ret;
-+	int flags = IOMAP_DIOF_PGINVALID_FAIL;
-+
-+	if (check_direct_read(btrfs_sb(inode->i_sb), to, iocb->ki_pos))
-+		return 0;
-+
-+	if (is_sync_kiocb(iocb))
-+		flags |= IOMAP_DIOF_WAIT_FOR_COMPLETION;
-+
-+	inode_lock_shared(inode);
-+        ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, &btrfs_dops, flags);
-+	inode_unlock_shared(inode);
-+	return ret;
-+}
-+
- static ssize_t btrfs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- {
- 	ssize_t ret = 0;
- 
- 	if (iocb->ki_flags & IOCB_DIRECT) {
--		struct inode *inode = file_inode(iocb->ki_filp);
--
--		inode_lock_shared(inode);
--		ret = btrfs_direct_IO(iocb, to);
--		inode_unlock_shared(inode);
-+		ret = btrfs_direct_read(iocb, to);
- 		if (ret < 0)
- 			return ret;
- 	}
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index edce0d77253b..31ac8c682f19 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -29,7 +29,6 @@
- #include <linux/swap.h>
- #include <linux/migrate.h>
- #include <linux/sched/mm.h>
--#include <linux/iomap.h>
- #include <asm/unaligned.h>
- #include "misc.h"
- #include "ctree.h"
-@@ -7820,96 +7819,15 @@ static blk_qc_t btrfs_submit_direct(struct inode *inode, struct iomap *iomap,
- 	return BLK_QC_T_NONE;
- }
- 
--static ssize_t check_direct_IO(struct btrfs_fs_info *fs_info,
--			       const struct iov_iter *iter, loff_t offset)
--{
--	int seg;
--	int i;
--	unsigned int blocksize_mask = fs_info->sectorsize - 1;
--	ssize_t retval = -EINVAL;
--
--	if (offset & blocksize_mask)
--		goto out;
--
--	if (iov_iter_alignment(iter) & blocksize_mask)
--		goto out;
--
--	/* If this is a write we don't need to check anymore */
--	if (iov_iter_rw(iter) != READ || !iter_is_iovec(iter))
--		return 0;
--	/*
--	 * Check to make sure we don't have duplicate iov_base's in this
--	 * iovec, if so return EINVAL, otherwise we'll get csum errors
--	 * when reading back.
--	 */
--	for (seg = 0; seg < iter->nr_segs; seg++) {
--		for (i = seg + 1; i < iter->nr_segs; i++) {
--			if (iter->iov[seg].iov_base == iter->iov[i].iov_base)
--				goto out;
--		}
--	}
--	retval = 0;
--out:
--	return retval;
--}
--
--static const struct iomap_ops btrfs_dio_iomap_ops = {
-+const struct iomap_ops btrfs_dio_iomap_ops = {
- 	.iomap_begin            = btrfs_dio_iomap_begin,
- 	.iomap_end              = btrfs_dio_iomap_end,
- };
- 
--static const struct iomap_dio_ops btrfs_dops = {
-+const struct iomap_dio_ops btrfs_dops = {
- 	.submit_io		= btrfs_submit_direct,
- };
- 
--ssize_t btrfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
--{
--	struct file *file = iocb->ki_filp;
--	struct inode *inode = file->f_mapping->host;
--	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
--	struct extent_changeset *data_reserved = NULL;
--	loff_t offset = iocb->ki_pos;
--	size_t count = 0;
--	bool relock = false;
--	ssize_t ret;
--	int flags = IOMAP_DIOF_PGINVALID_FAIL;
--
--	if (check_direct_IO(fs_info, iter, offset))
--		return 0;
--
--	count = iov_iter_count(iter);
--	if (iov_iter_rw(iter) == WRITE) {
--		/*
--		 * If the write DIO is beyond the EOF, we need update
--		 * the isize, but it is protected by i_mutex. So we can
--		 * not unlock the i_mutex at this case.
--		 */
--		if (offset + count <= inode->i_size) {
--			inode_unlock(inode);
--			relock = true;
--		} else if (iocb->ki_flags & IOCB_NOWAIT) {
--			ret = -EAGAIN;
--			goto out;
--		}
--		down_read(&BTRFS_I(inode)->dio_sem);
--	}
--
--	if (is_sync_kiocb(iocb))
--		flags |= IOMAP_DIOF_WAIT_FOR_COMPLETION;
--
--	ret = iomap_dio_rw(iocb, iter, &btrfs_dio_iomap_ops, &btrfs_dops,
--			flags);
--
--	if (iov_iter_rw(iter) == WRITE) {
--		up_read(&BTRFS_I(inode)->dio_sem);
--	}
--out:
--	if (relock)
--		inode_lock(inode);
--	extent_changeset_free(data_reserved);
--	return ret;
--}
--
- static int btrfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		__u64 start, __u64 len)
- {
+
 -- 
-2.25.0
-
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
