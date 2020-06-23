@@ -2,125 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E0197205649
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 17:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E11A205802
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 18:56:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732953AbgFWPtA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jun 2020 11:49:00 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:55208 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732942AbgFWPtA (ORCPT
+        id S1732969AbgFWQ4s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jun 2020 12:56:48 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34568 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732292AbgFWQ4r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jun 2020 11:49:00 -0400
-Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jnlAP-0004f7-D1; Tue, 23 Jun 2020 15:48:57 +0000
-Date:   Tue, 23 Jun 2020 17:48:56 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Linux Containers <containers@lists.linux-foundation.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        criu@openvz.org, lxc-devel@lists.linuxcontainers.org,
-        cgroups@vger.kernel.org
-Cc:     =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@stgraber.org>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: Virtual Linux Plumbers 2020 (24-28 August): Containers and
- Checkpoint/Restore microconference CFP Open until 20 July
-Message-ID: <20200623154856.cjuhrh3f4uel7ek2@wittgenstein>
-References: <20200604220637.d4ccmcsswi2ppniw@wittgenstein>
+        Tue, 23 Jun 2020 12:56:47 -0400
+Received: by mail-pl1-f193.google.com with SMTP id d12so3375945ply.1;
+        Tue, 23 Jun 2020 09:56:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JDvdZbZLgDkFFSdCv0TnjjXgUyD2AB2yEimWstVnawg=;
+        b=uKhk2r5TqBmH0iwKPP5O1OBLcS3/eEY194eSg9VcRszPOEy9mlcPIQ6W1sgWFHaMVa
+         5S3LEiLsszIzLBkqYxpBY5YEpBC5KOlrnGE0ZKS5oBkdqc1rHISk865P7VL6G+hjIOcJ
+         PRrp7zjuMf2VSEugGTJ94yJz0rZYzN0oi6PyZr6ztuOtcbB/iZ7C/eM4wPDzr8oaHNTH
+         WSphVDOxArvWXhfuK0IG5KcX6P9zHr/VCeR7c2Jdsbh7PqJHdxd4NK29ScsAhvottX8O
+         gMVL37MtOoiZuoyHLNNclCxF0W+twbsoE3O6f+HmTxO1MGxVv8I2p1pG1PHNG0kwjvn8
+         qREQ==
+X-Gm-Message-State: AOAM530D00WVK1pSyRN9N/XpGqcFekBIfHu0LTxuqiAAGSPGrTW1HAcv
+        a7HSc3c6r9PWFy6J83tpo1U=
+X-Google-Smtp-Source: ABdhPJzCFTSHbh94OELz47L0BiNYIconLJwPLhznXY2yEus6l/oUG0gykNuFRS7NKmtbjU+o5z156w==
+X-Received: by 2002:a17:902:7045:: with SMTP id h5mr24682778plt.151.1592931407230;
+        Tue, 23 Jun 2020 09:56:47 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id t22sm2801970pjy.32.2020.06.23.09.56.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jun 2020 09:56:45 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 9E0F240430; Tue, 23 Jun 2020 16:56:44 +0000 (UTC)
+Date:   Tue, 23 Jun 2020 16:56:44 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        martin.petersen@oracle.com, jejb@linux.ibm.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v7 5/8] loop: be paranoid on exit and prevent new
+ additions / removals
+Message-ID: <20200623165644.GB4332@42.do-not-panic.com>
+References: <20200619204730.26124-1-mcgrof@kernel.org>
+ <20200619204730.26124-6-mcgrof@kernel.org>
+ <7e76d892-b5fd-18ec-c96e-cf4537379eba@acm.org>
+ <20200622122742.GU11244@42.do-not-panic.com>
+ <14dc9294-fa99-cad0-871b-b69f138e8ac9@acm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200604220637.d4ccmcsswi2ppniw@wittgenstein>
+In-Reply-To: <14dc9294-fa99-cad0-871b-b69f138e8ac9@acm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 05, 2020 at 12:06:39AM +0200, Christian Brauner wrote:
-> Hey everyone,
+On Mon, Jun 22, 2020 at 07:16:15PM -0700, Bart Van Assche wrote:
+> On 2020-06-22 05:27, Luis Chamberlain wrote:
+> > Note: this will bring you sanity if you try to figure out *why* we still
+> > get:
+> > 
+> > [235530.144343] debugfs: Directory 'loop0' with parent 'block' already present!
+> > [235530.149477] blktrace: debugfs_dir not present for loop0 so skipping
+> > [235530.232328] debugfs: Directory 'loop0' with parent 'block' already present!
+> > [235530.238962] blktrace: debugfs_dir not present for loop0 so skipping
+> > 
+> > If you run run_0004.sh from break-blktrace [0]. Even with all my patches
+> > merged we still run into this. And so the bug lies within the block
+> > layer or on the driver. I haven't been able to find the issue yet.
+> > 
+> > [0] https://github.com/mcgrof/break-blktrace
 > 
-> We're happy to announce that the Container and Checkpoint/Restore
-> microconference (MC) has been accepted as part of Linux Plumber's again!
-> The Containers and Checkpoint/Restore MC at Linux Plumbers is the opportunity
-> for kernel developers, runtime maintainers, and generally everyone working on
-> containers and related technologies to talk about what they are up to and agree
-> on the next major changes to kernel and userspace.
+> Thanks Luis for having shared this information. If I can find the time I
+> will have a look into this myself.
 
-I'm happy to announce that the dates for virtual LPC will be Monday, 24
-August to Friday, 28 August! Once I have the final registration details
-I will resend this mail with all info included.
+Let's keep track of it:
 
-Don't forget to hand in your proposals!
+https://bugzilla.kernel.org/show_bug.cgi?id=208301
 
-Thanks!
-Christian
-
-> 
-> As we have already done the last years, the micro-conference also covers topic
-> of the Checkpoint-Restore micro-conference.
-> 
-> Please note that LPC 2020 was originally set to be held in Halifax, Nova
-> Scotia, Canada but has been moved to a virtual event in light of recent events.
-> Please see our organizing comittee's blog on the Plumber's website [1]
-> for more information.
-> 
-> We expect to time limit presentations/demos to 15 minutes including questions.
-> More open ended discussion topics will get up to 30 minutes allocated.
-> 
-> In the spirit of a Plumber's microconference we especially appreciate topics
-> pitching new ideas and features people have been thinking about. This is also
-> the time to talk about your favorite kernel- or userspace problems. If you have
-> a proposal how to solve them or if you just want to gather input and ideas from
-> other developers this is the right place.
-> 
-> Here are some ideas for topics:
-> 
-> System call filtering and interception
-> Hardware enforced container isolation
-> New seccomp features
-> New cgroup features
-> Handling cgroup v1 on cgroup v2 only hosts and vica versa
-> Performance improvement for containers (following Spectre/Meltdown mitigation)
-> Time namespacing
-> CGroupV2 developments
-> LSM, IMA, EVM, keyrings inside containers
-> UID shifting filesystem (shiftfs)
-> New mount API
-> New pidfd API
-> New clone3 syscall
-> CRIU integration with container engines and orchestration frameworks
-> (In)stability of less commonly used kernel ABIs
-> Checkpoint/Restore performance improvements
-> Improving the state of userfaultfd and its adoption in container runtimes
-> Speeding up container live migration
-> Extending and virtualizing procfs
-> Restricting path resolution
-> Android containers and containers on Android
-> Container Auditing and Monitoring
-> Cgroups and Containers with Real-Time Scheduling
-> 
-> Some of those are ideas in search of an acceptable solution, some are problems
-> likely to affect all container runtimes some are coverage of very recent
-> kernel work and how that can be used by userspace, and some are proposed kernel
-> patches that need in-person discussion. This list is not meant to be
-> exhaustive. If you have other ideas or work to discuss, please apply! Keep in
-> mind both kernel- and userspace topics are acceptable!
-> 
-> Please make your proposals on the Linux Plumber's website selecting the
-> Containers and Checkpoint/Restore MC as the Track you're submitting at:
-> 
-> https://linuxplumbersconf.org/event/7/abstracts/
-> 
-> We’ll accept proposals for this micro-conference until the 20 of July 2020.
-> 
-> This year’s edition of the micro-conference is organized and run by:
-> 
-> Christian Brauner (Canonical Ltd.)
-> Stéphane Graber (Canonical Ltd.)
-> Mike Rapoport (IBM)
-> 
-> [1]: https://www.linuxplumbersconf.org/blog/2020/linux-plumbers-conference-2020-goes-virtual/
-> 
+  Luis
