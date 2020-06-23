@@ -2,130 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35ADE204622
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 02:48:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7E4E204635
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 02:52:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732334AbgFWAsX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 20:48:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40602 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732235AbgFWAsU (ORCPT
+        id S1732291AbgFWAwX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 20:52:23 -0400
+Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:35737 "EHLO
+        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731750AbgFWAwX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 20:48:20 -0400
-Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA47EC061573;
-        Mon, 22 Jun 2020 17:48:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=xW7XautdzOxud38pqzUM3uCC+kw5dmatbyChhqw/vJc=; b=XZOsF4wq148/vLc7JZ7mHdlG/h
-        z9hXDq0z7ilaQccnLPANd6oz1/O0Fga5+UkO5lukzIIK2dB1/3sANlEtNeYOAkIY3LFg1TGlD4kfO
-        JwWGqAhPvsqKRoOx1KHsBpF8SgseJQPZWKoeUWv/YPSmx6e0wS2tBVcwYXrUf2hz9lydsPGQovjGi
-        uPH9f4d99anthkQ0G33tXrKSCafS6kyy+yA4BoojXhBsvE4y5xhJpQ857aOXJItLF0KvCV/qrej8A
-        RDkrROu6NFbkKrVWizoOh7K236jXiPQKOhJ8GxPPS1+q0EpocGhaYGt/RHH/f8E9fLygaptMF1h0Z
-        2kyT9/Fg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jnX6S-00014H-8H; Tue, 23 Jun 2020 00:47:56 +0000
-Date:   Tue, 23 Jun 2020 01:47:56 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Junxiao Bi <junxiao.bi@oracle.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <matthew.wilcox@oracle.com>,
-        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
-        "joe.jin@oracle.com" <joe.jin@oracle.com>,
-        Wengang Wang <wen.gang.wang@oracle.com>
-Subject: Re: [PATCH] proc: Avoid a thundering herd of threads freeing proc
- dentries
-Message-ID: <20200623004756.GE21350@casper.infradead.org>
-References: <20200618233958.GV8681@bombadil.infradead.org>
- <877dw3apn8.fsf@x220.int.ebiederm.org>
- <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com>
- <87bllf87ve.fsf_-_@x220.int.ebiederm.org>
- <caa9adf6-e1bb-167b-6f59-d17fd587d4fa@oracle.com>
- <87k1036k9y.fsf@x220.int.ebiederm.org>
- <68a1f51b-50bf-0770-2367-c3e1b38be535@oracle.com>
- <87blle4qze.fsf@x220.int.ebiederm.org>
- <20200620162752.GF8681@bombadil.infradead.org>
- <39e9f488-110c-588d-d977-413da3dc5dfa@oracle.com>
+        Mon, 22 Jun 2020 20:52:23 -0400
+Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
+        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 45CB65AF5E4;
+        Tue, 23 Jun 2020 10:52:18 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jnXAg-0001Y7-9C; Tue, 23 Jun 2020 10:52:18 +1000
+Date:   Tue, 23 Jun 2020 10:52:18 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Bypass filesystems for reading cached pages
+Message-ID: <20200623005218.GF2040@dread.disaster.area>
+References: <20200619155036.GZ8681@bombadil.infradead.org>
+ <20200622003215.GC2040@dread.disaster.area>
+ <CAHc6FU4b_z+vhjVPmaU46VhqoD+Y7jLN3=BRDZPrS2v=_pVpfw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <39e9f488-110c-588d-d977-413da3dc5dfa@oracle.com>
+In-Reply-To: <CAHc6FU4b_z+vhjVPmaU46VhqoD+Y7jLN3=BRDZPrS2v=_pVpfw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
+        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=7-415B0cAAAA:8
+        a=8G3SpTuCT5XHdoEvo0oA:9 a=P48SZZe_48vTZzb1:21 a=B4xsomyZ1zPHdLA9:21
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jun 21, 2020 at 10:15:39PM -0700, Junxiao Bi wrote:
-> On 6/20/20 9:27 AM, Matthew Wilcox wrote:
-> > On Fri, Jun 19, 2020 at 05:42:45PM -0500, Eric W. Biederman wrote:
-> > > Junxiao Bi <junxiao.bi@oracle.com> writes:
-> > > > Still high lock contention. Collect the following hot path.
-> > > A different location this time.
-> > > 
-> > > I know of at least exit_signal and exit_notify that take thread wide
-> > > locks, and it looks like exit_mm is another.  Those don't use the same
-> > > locks as flushing proc.
-> > > 
-> > > 
-> > > So I think you are simply seeing a result of the thundering herd of
-> > > threads shutting down at once.  Given that thread shutdown is fundamentally
-> > > a slow path there is only so much that can be done.
-> > > 
-> > > If you are up for a project to working through this thundering herd I
-> > > expect I can help some.  It will be a long process of cleaning up
-> > > the entire thread exit process with an eye to performance.
-> > Wengang had some tests which produced wall-clock values for this problem,
-> > which I agree is more informative.
-> > 
-> > I'm not entirely sure what the customer workload is that requires a
-> > highly threaded workload to also shut down quickly.  To my mind, an
-> > overall workload is normally composed of highly-threaded tasks that run
-> > for a long time and only shut down rarely (thus performance of shutdown
-> > is not important) and single-threaded tasks that run for a short time.
+On Mon, Jun 22, 2020 at 04:35:05PM +0200, Andreas Gruenbacher wrote:
+> On Mon, Jun 22, 2020 at 2:32 AM Dave Chinner <david@fromorbit.com> wrote:
+> > On Fri, Jun 19, 2020 at 08:50:36AM -0700, Matthew Wilcox wrote:
+> > >
+> > > This patch lifts the IOCB_CACHED idea expressed by Andreas to the VFS.
+> > > The advantage of this patch is that we can avoid taking any filesystem
+> > > lock, as long as the pages being accessed are in the cache (and we don't
+> > > need to readahead any pages into the cache).  We also avoid an indirect
+> > > function call in these cases.
+> >
+> > What does this micro-optimisation actually gain us except for more
+> > complexity in the IO path?
+> >
+> > i.e. if a filesystem lock has such massive overhead that it slows
+> > down the cached readahead path in production workloads, then that's
+> > something the filesystem needs to address, not unconditionally
+> > bypass the filesystem before the IO gets anywhere near it.
 > 
-> The real workload is a Java application working in server-agent mode, issue
-> happened in agent side, all it do is waiting works dispatching from server
-> and execute. To execute one work, agent will start lots of short live
-> threads, there could be a lot of threads exit same time if there were a lots
-> of work to execute, the contention on the exit path caused a high %sys time
-> which impacted other workload.
+> I'm fine with not moving that functionality into the VFS. The problem
+> I have in gfs2 is that taking glocks is really expensive. Part of that
+> overhead is accidental, but we definitely won't be able to fix it in
+> the short term. So something like the IOCB_CACHED flag that prevents
+> generic_file_read_iter from issuing readahead I/O would save the day
+> for us. Does that idea stand a chance?
 
-How about this for a micro?  Executes in about ten seconds on my laptop.
-You might need to tweak it a bit to get better timing on a server.
+I have no problem with a "NOREADAHEAD" flag being passed to
+generic_file_read_iter(). It's not a "already cached" flag though,
+it's a "don't start any IO" directive, just like the NOWAIT flag is
+a "don't block on locks or IO in progress" directive and not an
+"already cached" flag. Readahead is something we should be doing,
+unless a filesystem has a very good reason not to, such as the gfs2
+locking case here...
 
-// gcc -pthread -O2 -g -W -Wall
-#include <pthread.h>
-#include <unistd.h>
+Cheers,
 
-void *worker(void *arg)
-{
-	int i = 0;
-	int *p = arg;
-
-	for (;;) {
-		while (i < 1000 * 1000) {
-			i += *p;
-		}
-		sleep(1);
-	}
-}
-
-int main(int argc, char **argv)
-{
-	pthread_t threads[20][100];
-	int i, j, one = 1;
-
-	for (i = 0; i < 1000; i++) {
-		for (j = 0; j < 100; j++)
-			pthread_create(&threads[i % 20][j], NULL, worker, &one);
-		if (i < 5)
-			continue;
-		for (j = 0; j < 100; j++)
-			pthread_cancel(threads[(i - 5) %20][j]);
-	}
-
-	return 0;
-}
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
