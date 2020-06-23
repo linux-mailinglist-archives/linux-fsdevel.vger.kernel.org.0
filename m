@@ -2,130 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BED91204974
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 08:02:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FBD82049AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 08:15:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730149AbgFWGCn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jun 2020 02:02:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57298 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728800AbgFWGCn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jun 2020 02:02:43 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF14520738;
-        Tue, 23 Jun 2020 06:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592892162;
-        bh=x3bd9T22dLZovGnPn6q+wbS6I/RZshP+fVHKJEby0w4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pY+2PLfuJR0CNNlu0VkLooa8HwaGUnpA6E73k1IKCI66P+z3Q/qeq4j4OnsM76pfs
-         BeCTfcSh22YxTRw9e8A2ZDplEHT+CIwNqLQVR5Q0ZM5WmaqDsDByJ8BGz345mTCnL/
-         cJLJ42FiTD4Gihi4ldIYl13BkYgKkE76Aeqsn3m0=
-Date:   Tue, 23 Jun 2020 08:02:36 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Tejun Heo <tj@kernel.org>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
- improvement
-Message-ID: <20200623060236.GA3818201@kroah.com>
-References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
- <20200619153833.GA5749@mtj.thefacebook.com>
- <16d9d5aa-a996-d41d-cbff-9a5937863893@linux.vnet.ibm.com>
- <20200619222356.GA13061@mtj.duckdns.org>
- <429696e9fa0957279a7065f7d8503cb965842f58.camel@themaw.net>
- <20200622174845.GB13061@mtj.duckdns.org>
- <20200622180306.GA1917323@kroah.com>
- <2ead27912e2a852bffb1477e8720bdadb591628d.camel@themaw.net>
+        id S1730977AbgFWGPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jun 2020 02:15:30 -0400
+Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:60084 "EHLO
+        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730515AbgFWGP3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Jun 2020 02:15:29 -0400
+Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
+        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id AEB30110169;
+        Tue, 23 Jun 2020 16:15:26 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jncDN-0003TN-O3; Tue, 23 Jun 2020 16:15:25 +1000
+Date:   Tue, 23 Jun 2020 16:15:25 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        hch@lst.de, dsterba@suse.cz, jthumshirn@suse.de,
+        fdmanana@gmail.com, Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 2/6] iomap: IOMAP_DIOF_PGINVALID_FAIL return if page
+ invalidation fails
+Message-ID: <20200623061525.GI2040@dread.disaster.area>
+References: <20200622152457.7118-1-rgoldwyn@suse.de>
+ <20200622152457.7118-3-rgoldwyn@suse.de>
+ <20200622173330.GA11239@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2ead27912e2a852bffb1477e8720bdadb591628d.camel@themaw.net>
+In-Reply-To: <20200622173330.GA11239@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
+        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
+        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=iox4zFpeAAAA:8 a=yPCof4ZbAAAA:8
+        a=7-415B0cAAAA:8 a=qqUFr-TMUkpXaUc-sFEA:9 a=CjuIK1q_8ugA:10
+        a=WzC6qhA0u3u7Ye7llzcV:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 23, 2020 at 01:09:08PM +0800, Ian Kent wrote:
-> On Mon, 2020-06-22 at 20:03 +0200, Greg Kroah-Hartman wrote:
-> > On Mon, Jun 22, 2020 at 01:48:45PM -0400, Tejun Heo wrote:
-> > > Hello, Ian.
-> > > 
-> > > On Sun, Jun 21, 2020 at 12:55:33PM +0800, Ian Kent wrote:
-> > > > > > They are used for hotplugging and partitioning memory. The
-> > > > > > size of
-> > > > > > the
-> > > > > > segments (and thus the number of them) is dictated by the
-> > > > > > underlying
-> > > > > > hardware.
-> > > > > 
-> > > > > This sounds so bad. There gotta be a better interface for that,
-> > > > > right?
-> > > > 
-> > > > I'm still struggling a bit to grasp what your getting at but ...
-> > > 
-> > > I was more trying to say that the sysfs device interface with per-
-> > > object
-> > > directory isn't the right interface for this sort of usage at all.
-> > > Are these
-> > > even real hardware pieces which can be plugged in and out? While
-> > > being a
-> > > discrete piece of hardware isn't a requirement to be a device model
-> > > device,
-> > > the whole thing is designed with such use cases on mind. It
-> > > definitely isn't
-> > > the right design for representing six digit number of logical
-> > > entities.
-> > > 
-> > > It should be obvious that representing each consecutive memory
-> > > range with a
-> > > separate directory entry is far from an optimal way of representing
-> > > something like this. It's outright silly.
+On Mon, Jun 22, 2020 at 10:33:30AM -0700, Darrick J. Wong wrote:
+> On Mon, Jun 22, 2020 at 10:24:53AM -0500, Goldwyn Rodrigues wrote:
+> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 > > 
-> > I agree.  And again, Ian, you are just "kicking the problem down the
-> > road" if we accept these patches.  Please fix this up properly so
-> > that
-> > this interface is correctly fixed to not do looney things like this.
+> > The flag indicates that if the page invalidation fails, it should return
+> > back control to the filesystem so it may fallback to buffered mode.
+> > 
+> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 > 
-> Fine, mitigating this problem isn't the end of the story, and you
-> don't want to do accept a change to mitigate it because that could
-> mean no further discussion on it and no further work toward solving
-> it.
+> Looks reasonable enough, I suppose...
 > 
-> But it seems to me a "proper" solution to this will cross a number
-> of areas so this isn't just "my" problem and, as you point out, it's
-> likely to become increasingly problematic over time.
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> So what are your ideas and recommendations on how to handle hotplug
-> memory at this granularity for this much RAM (and larger amounts)?
+> --D
+> 
+> > ---
+> >  fs/iomap/direct-io.c  | 8 +++++++-
+> >  include/linux/iomap.h | 5 +++++
+> >  2 files changed, 12 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> > index 7ed857196a39..20c4370e6b1b 100644
+> > --- a/fs/iomap/direct-io.c
+> > +++ b/fs/iomap/direct-io.c
+> > @@ -484,8 +484,14 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> >  	 */
+> >  	ret = invalidate_inode_pages2_range(mapping,
+> >  			pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
+> > -	if (ret)
+> > +	if (ret) {
+> > +		if (dio_flags & IOMAP_DIOF_PGINVALID_FAIL) {
+> > +			if (ret == -EBUSY)
+> > +				ret = 0;
+> > +			goto out_free_dio;
+> > +		}
+> >  		dio_warn_stale_pagecache(iocb->ki_filp);
+> > +	}
+> >  	ret = 0;
+> >  
+> >  	if (iov_iter_rw(iter) == WRITE && !wait_for_completion &&
+> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> > index f6230446b08d..95024e28dec5 100644
+> > --- a/include/linux/iomap.h
+> > +++ b/include/linux/iomap.h
+> > @@ -261,6 +261,11 @@ struct iomap_dio_ops {
+> >  
+> >  /* Wait for completion of DIO */
+> >  #define IOMAP_DIOF_WAIT_FOR_COMPLETION 		0x1
+> > +/*
+> > + * Return zero if page invalidation fails, so caller filesystem may fallback
+> > + * to buffered I/O
+> > + */
+> > +#define IOMAP_DIOF_PGINVALID_FAIL		0x2
 
-First off, this is not my platform, and not my problem, so it's funny
-you ask me :)
+That's a mouthful of letter salad. :(
 
-Anyway, as I have said before, my first guesses would be:
-	- increase the granularity size of the "memory chunks", reducing
-	  the number of devices you create.
-	- delay creating the devices until way after booting, or do it
-	  on a totally different path/thread/workqueue/whatever to
-	  prevent delay at booting
+Basically, you want the DIO to return a short IO if there is a busy
+page cache on the inode?
 
-And then there's always:
-	- don't create them at all, only only do so if userspace asks
-	  you to.
+IOWs, you don't want the page cache to become stale as a result of
+the DIO being executed? So what the caller is actually asking for is
+that the dio avoids creating stale page cache pages? Hence:
 
-You all have the userspace tools/users for this interface and know it
-best to know what will work for them.  If you don't, then hey, let's
-just delete the whole thing and see who screams :)
+/*
+ * Direct IO will attempt to keep the page cache coherent by
+ * invalidating the inode's page cache over the range of the DIO.
+ * That can fail if something else is actively using the page cache.
+ * If this happens and the DIO continues, the data in the page
+ * cache will become stale.
+ *
+ * Set this flag if you want the DIO to abort without issuing any IO
+ * or error if it fails to invalidate the page cache successfully.
+ * This allows the IO submitter to resubmit the entire IO as a
+ * buffered IO through the page cache.
+ */
+#define IOMAP_DIO_RWF_NO_STALE_PAGECACHE	(1 << 1)
 
-thanks,
+Cheers,
 
-greg k-h
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
