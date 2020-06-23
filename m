@@ -2,54 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D9A0A2067BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 00:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B70D206821
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 01:14:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387717AbgFWWzp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jun 2020 18:55:45 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:9512 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387606AbgFWWzo (ORCPT
+        id S2387696AbgFWXNw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jun 2020 19:13:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50892 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387558AbgFWXNw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jun 2020 18:55:44 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05NMXSu6118547;
-        Tue, 23 Jun 2020 18:55:34 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31un4jhuet-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Jun 2020 18:55:34 -0400
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05NMXXqt119045;
-        Tue, 23 Jun 2020 18:55:34 -0400
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31un4jhueh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Jun 2020 18:55:33 -0400
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05NMk2CA004349;
-        Tue, 23 Jun 2020 22:55:32 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma01wdc.us.ibm.com with ESMTP id 31uttt81gp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Jun 2020 22:55:32 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05NMtWVw51511560
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Jun 2020 22:55:32 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4EF7428058;
-        Tue, 23 Jun 2020 22:55:32 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 41C882805C;
-        Tue, 23 Jun 2020 22:55:30 +0000 (GMT)
-Received: from [9.211.67.55] (unknown [9.211.67.55])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 23 Jun 2020 22:55:30 +0000 (GMT)
-Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
- improvement
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Ian Kent <raven@themaw.net>, Tejun Heo <tj@kernel.org>,
+        Tue, 23 Jun 2020 19:13:52 -0400
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA030C061573;
+        Tue, 23 Jun 2020 16:13:51 -0700 (PDT)
+Received: by mail-qk1-x743.google.com with SMTP id e13so175865qkg.5;
+        Tue, 23 Jun 2020 16:13:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7+1p2mclyR0lfU/92KynyV/hto6Q//eZlxOYZJAVpWo=;
+        b=geuFFUr3+h96lNJq2jfjxCNm4/1+y5e+iBsysgZ1OalJqcN0IFyEMJIfCzvlPRq3bw
+         6+vHXO/pbyrw37z3DsErSTr0GaUttxeVS3xpzAIwqrvzOia2l+UxdmbKiOcq5UwroWp7
+         WKP+wPYO1DvLHUICBB5IA4TN37zdoqjKnq2gMn8Fsdj7som+7PAixMSxD+Br1NuU3Ej5
+         p/BBY0TCVj8oZsRhC1xAa1sL1ONggi++YOBwviHIRApMANsneQaThAjVCn5RDMGo7+Qf
+         6b1GlKrrbkm7EWZM2rmx4PhqOKUFRUF85xRFxy+VjmlB9Oxz2RhDBT0gnDVe/palJxHo
+         OnRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=7+1p2mclyR0lfU/92KynyV/hto6Q//eZlxOYZJAVpWo=;
+        b=nObfUFFSNQyTpUZ+C9UU7Fa4kSe9sOBccEr6ckff5/t9q3TuPAGdBb6L5DfxqpBO50
+         TsjyST/ewIaOaaYvcPK7zdbcMD57EbmpUgTZ0Tf1nooY4ZVYkBnEpmjvDonAIJItxLLD
+         Ee44v5nzFvyHun+UiK6fEZxWCulXFvhl8LhCB2AZISG3P/1cR5iEC4U+5GOzNFAaLucf
+         JOW7CQtl3I81s2+PAHwROWmkODgltXIruhk5j7Beo2Y/6jLILgqN28cPkTQ6SOnBE7lS
+         G0yDnpQMQ55E+6XWBkWqn5ETXAKOUnN352HpwZkyJIVWhjQwXFN7DiCjMFERg75Fq70L
+         fkVQ==
+X-Gm-Message-State: AOAM533fLgxoFggN3H7NmHEDOl3TAXbFf1vL0mGbrseyMTE/o3KNjrKr
+        tKFr2/rhXTVBB78oUhu59As=
+X-Google-Smtp-Source: ABdhPJxJewiReujBdDg+I1QnTrOCMNrukNot2OLRnDJkFJlhcqD5N7RvZVyB/MRf1AzoKDFQqJEaoA==
+X-Received: by 2002:a37:a08:: with SMTP id 8mr23082871qkk.388.1592954030804;
+        Tue, 23 Jun 2020 16:13:50 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::1:896d])
+        by smtp.gmail.com with ESMTPSA id t36sm2036714qtj.58.2020.06.23.16.13.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jun 2020 16:13:49 -0700 (PDT)
+Date:   Tue, 23 Jun 2020 19:13:48 -0400
+From:   Tejun Heo <tj@kernel.org>
+To:     Rick Lindsley <ricklind@linux.vnet.ibm.com>
+Cc:     Ian Kent <raven@themaw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
         Andrew Morton <akpm@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -57,74 +60,51 @@ Cc:     Ian Kent <raven@themaw.net>, Tejun Heo <tj@kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
+ improvement
+Message-ID: <20200623231348.GD13061@mtj.duckdns.org>
 References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
  <20200619153833.GA5749@mtj.thefacebook.com>
  <16d9d5aa-a996-d41d-cbff-9a5937863893@linux.vnet.ibm.com>
  <20200619222356.GA13061@mtj.duckdns.org>
- <429696e9fa0957279a7065f7d8503cb965842f58.camel@themaw.net>
- <20200622174845.GB13061@mtj.duckdns.org> <20200622180306.GA1917323@kroah.com>
- <2ead27912e2a852bffb1477e8720bdadb591628d.camel@themaw.net>
- <20200623060236.GA3818201@kroah.com>
- <74fb24d0-2b61-27f8-c44e-abd159e57469@linux.vnet.ibm.com>
- <20200623114558.GA1963415@kroah.com>
-From:   Rick Lindsley <ricklind@linux.vnet.ibm.com>
-Message-ID: <4d6ec768-0481-2b2e-c54e-bd0a5618d6df@linux.vnet.ibm.com>
-Date:   Tue, 23 Jun 2020 15:55:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+ <fa22c563-73b7-5e45-2120-71108ca8d1a0@linux.vnet.ibm.com>
+ <20200622175343.GC13061@mtj.duckdns.org>
+ <82b2379e-36d0-22c2-41eb-71571e992b37@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20200623114558.GA1963415@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-23_14:2020-06-23,2020-06-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 impostorscore=0
- phishscore=0 adultscore=0 spamscore=0 clxscore=1015 mlxscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006120000 definitions=main-2006230148
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <82b2379e-36d0-22c2-41eb-71571e992b37@linux.vnet.ibm.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/23/20 4:45 AM, Greg Kroah-Hartman wrote:
+Hello, Rick.
 
-> Sure, but "help, I'm abusing your code interface, so fix your code
-> interface and not my caller code" really isn't the best mantra :)
+On Mon, Jun 22, 2020 at 02:22:34PM -0700, Rick Lindsley wrote:
+> > I don't know. The above highlights the absurdity of the approach itself to
+> > me. You seem to be aware of it too in writing: 250,000 "devices".
+> 
+> Just because it is absurd doesn't mean it wasn't built that way :)
+> 
+> I agree, and I'm trying to influence the next hardware design. However,
 
-Well, those are your words, not mine.  What we're saying is, "we've 
-identified an interface that doesn't scale in this situation, but we 
-have a way to make it scale to all known configurations."
+I'm not saying that the hardware should not segment things into however many
+pieces that it wants / needs to. That part is fine.
 
- > I am offended as a number of years ago this same user of kernfs/sysfs
- > did a lot of work to reduce the number of contentions in kernfs for
- > this same reason.  After that work was done, "all was good".  Now
- > this comes along again, blaming kernfs/sysfs, not the caller.
+> what's already out there is memory units that must be accessed in 256MB
+> blocks. If you want to remove/add a GB, that's really 4 blocks of memory
+> you're manipulating, to the hardware. Those blocks have to be registered
+> and recognized by the kernel for that to work.
 
-Ok. I don't know about the history, but I can tell you "blame" is not 
-the word I'd use.  As hardware changes, Linux also changes, and over "a 
-number of years" it's not surprising to me if basic assumptions changed 
-again and led us back to a place we've been before.  That's not an 
-indictment.  It just IS.
+The problem is fitting that into an interface which wholly doesn't fit that
+particular requirement. It's not that difficult to imagine different ways to
+represent however many memory slots, right? It'd take work to make sure that
+integrates well with whatever tooling or use cases but once done this
+particular problem will be resolved permanently and the whole thing will
+look a lot less silly. Wouldn't that be better?
 
- > Memory is only going to get bigger over time, you might want to fix it
- > this way and then run away.  But we have to maintain this for the next
- > 20+ years, and you are not solving the root-problem here.  It will
- > come back again, right?
+Thanks.
 
-If hardware vendors insist on dealing with small blocks of memory in 
-large aggregates, then yes it could.  You'll have to trust that I am 
-also in discussion with hardware architects about how that is a very bad 
-architecture and it's time to change decades and think bigger.  Separate 
-audience, equally contentious discussion.  But the bottom line is, it's 
-out there already and can't be walked back.
-
-Your response here seems to center on "kernfs was never designed for 
-that."  If so, we're in agreement.   We're suggesting a way it can be 
-extended to be more robust, with no (apparent) side effects.  I'd like 
-to discuss the merits of the patch itself.
-
-Rick
+-- 
+tejun
