@@ -2,166 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 504B020461C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 02:47:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35ADE204622
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 02:48:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732116AbgFWAqr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 20:46:47 -0400
-Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:46388 "EHLO
-        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731920AbgFWAqq (ORCPT
+        id S1732334AbgFWAsX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 20:48:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40602 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732235AbgFWAsU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 20:46:46 -0400
-Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
-        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id 55F0410E30E;
-        Tue, 23 Jun 2020 10:46:43 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jnX5A-0001Xm-Kw; Tue, 23 Jun 2020 10:46:36 +1000
-Date:   Tue, 23 Jun 2020 10:46:36 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Satya Tangirala <satyat@google.com>, linux-fsdevel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH 1/4] fs: introduce SB_INLINECRYPT
-Message-ID: <20200623004636.GE2040@dread.disaster.area>
-References: <20200617075732.213198-1-satyat@google.com>
- <20200617075732.213198-2-satyat@google.com>
- <20200618011912.GA2040@dread.disaster.area>
- <20200618031935.GE1138@sol.localdomain>
+        Mon, 22 Jun 2020 20:48:20 -0400
+Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA47EC061573;
+        Mon, 22 Jun 2020 17:48:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xW7XautdzOxud38pqzUM3uCC+kw5dmatbyChhqw/vJc=; b=XZOsF4wq148/vLc7JZ7mHdlG/h
+        z9hXDq0z7ilaQccnLPANd6oz1/O0Fga5+UkO5lukzIIK2dB1/3sANlEtNeYOAkIY3LFg1TGlD4kfO
+        JwWGqAhPvsqKRoOx1KHsBpF8SgseJQPZWKoeUWv/YPSmx6e0wS2tBVcwYXrUf2hz9lydsPGQovjGi
+        uPH9f4d99anthkQ0G33tXrKSCafS6kyy+yA4BoojXhBsvE4y5xhJpQ857aOXJItLF0KvCV/qrej8A
+        RDkrROu6NFbkKrVWizoOh7K236jXiPQKOhJ8GxPPS1+q0EpocGhaYGt/RHH/f8E9fLygaptMF1h0Z
+        2kyT9/Fg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jnX6S-00014H-8H; Tue, 23 Jun 2020 00:47:56 +0000
+Date:   Tue, 23 Jun 2020 01:47:56 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Junxiao Bi <junxiao.bi@oracle.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
+        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
+        "joe.jin@oracle.com" <joe.jin@oracle.com>,
+        Wengang Wang <wen.gang.wang@oracle.com>
+Subject: Re: [PATCH] proc: Avoid a thundering herd of threads freeing proc
+ dentries
+Message-ID: <20200623004756.GE21350@casper.infradead.org>
+References: <20200618233958.GV8681@bombadil.infradead.org>
+ <877dw3apn8.fsf@x220.int.ebiederm.org>
+ <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com>
+ <87bllf87ve.fsf_-_@x220.int.ebiederm.org>
+ <caa9adf6-e1bb-167b-6f59-d17fd587d4fa@oracle.com>
+ <87k1036k9y.fsf@x220.int.ebiederm.org>
+ <68a1f51b-50bf-0770-2367-c3e1b38be535@oracle.com>
+ <87blle4qze.fsf@x220.int.ebiederm.org>
+ <20200620162752.GF8681@bombadil.infradead.org>
+ <39e9f488-110c-588d-d977-413da3dc5dfa@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200618031935.GE1138@sol.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
-        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
-        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8
-        a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=c4diDk9UUco1MpDPBz8A:9
-        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <39e9f488-110c-588d-d977-413da3dc5dfa@oracle.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 17, 2020 at 08:19:35PM -0700, Eric Biggers wrote:
-> On Thu, Jun 18, 2020 at 11:19:12AM +1000, Dave Chinner wrote:
-> > On Wed, Jun 17, 2020 at 07:57:29AM +0000, Satya Tangirala wrote:
-> > > Introduce SB_INLINECRYPT, which is set by filesystems that wish to use
-> > > blk-crypto for file content en/decryption. This flag maps to the
-> > > '-o inlinecrypt' mount option which multiple filesystems will implement,
-> > > and code in fs/crypto/ needs to be able to check for this mount option
-> > > in a filesystem-independent way.
+On Sun, Jun 21, 2020 at 10:15:39PM -0700, Junxiao Bi wrote:
+> On 6/20/20 9:27 AM, Matthew Wilcox wrote:
+> > On Fri, Jun 19, 2020 at 05:42:45PM -0500, Eric W. Biederman wrote:
+> > > Junxiao Bi <junxiao.bi@oracle.com> writes:
+> > > > Still high lock contention. Collect the following hot path.
+> > > A different location this time.
 > > > 
-> > > Signed-off-by: Satya Tangirala <satyat@google.com>
-> > > ---
-> > >  fs/proc_namespace.c | 1 +
-> > >  include/linux/fs.h  | 1 +
-> > >  2 files changed, 2 insertions(+)
+> > > I know of at least exit_signal and exit_notify that take thread wide
+> > > locks, and it looks like exit_mm is another.  Those don't use the same
+> > > locks as flushing proc.
 > > > 
-> > > diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-> > > index 3059a9394c2d..e0ff1f6ac8f1 100644
-> > > --- a/fs/proc_namespace.c
-> > > +++ b/fs/proc_namespace.c
-> > > @@ -49,6 +49,7 @@ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
-> > >  		{ SB_DIRSYNC, ",dirsync" },
-> > >  		{ SB_MANDLOCK, ",mand" },
-> > >  		{ SB_LAZYTIME, ",lazytime" },
-> > > +		{ SB_INLINECRYPT, ",inlinecrypt" },
-> > >  		{ 0, NULL }
-> > >  	};
-> > >  	const struct proc_fs_opts *fs_infop;
+> > > 
+> > > So I think you are simply seeing a result of the thundering herd of
+> > > threads shutting down at once.  Given that thread shutdown is fundamentally
+> > > a slow path there is only so much that can be done.
+> > > 
+> > > If you are up for a project to working through this thundering herd I
+> > > expect I can help some.  It will be a long process of cleaning up
+> > > the entire thread exit process with an eye to performance.
+> > Wengang had some tests which produced wall-clock values for this problem,
+> > which I agree is more informative.
 > > 
-> > NACK.
-> > 
-> > SB_* flgs are for functionality enabled on the superblock, not for
-> > indicating mount options that have been set by the user.
+> > I'm not entirely sure what the customer workload is that requires a
+> > highly threaded workload to also shut down quickly.  To my mind, an
+> > overall workload is normally composed of highly-threaded tasks that run
+> > for a long time and only shut down rarely (thus performance of shutdown
+> > is not important) and single-threaded tasks that run for a short time.
 > 
-> That's an interesting claim, given that most SB_* flags are for mount options.
-> E.g.:
-> 
-> 	ro => SB_RDONLY
-> 	nosuid => SB_NOSUID
-> 	nodev => SB_NODEV
-> 	noexec => SB_NOEXEC
-> 	sync => SB_SYNCHRONOUS
-> 	mand => SB_MANDLOCK
-> 	noatime => SB_NOATIME
-> 	nodiratime => SB_NODIRATIME
-> 	lazytime => SB_LAZYTIME
+> The real workload is a Java application working in server-agent mode, issue
+> happened in agent side, all it do is waiting works dispatching from server
+> and execute. To execute one work, agent will start lots of short live
+> threads, there could be a lot of threads exit same time if there were a lots
+> of work to execute, the contention on the exit path caused a high %sys time
+> which impacted other workload.
 
-Yes, they *reflect* options set by mount options, but this is all so
-screwed up because the split of superblock functionality from the
-mount option API (i.e. the MS_* flag introduction to avoid having
-the superblock feature flags being directly defined by the userspace
-mount API) was never followed through to properly separate the
-implementation of *active superblock feature flags* from the *user
-specified mount API flags*.
+How about this for a micro?  Executes in about ten seconds on my laptop.
+You might need to tweak it a bit to get better timing on a server.
 
-Yes, the UAPI definitions were separated, but the rest of the
-interface wasn't and only works because of the "MS* flag exactly
-equal to the SB* flag" hack that was used. So now people have no
-idea when to use one or the other and we're repeatedly ending up
-with broken mount option parsing because SB flags are used where MS
-flags should be used and vice versa.
+// gcc -pthread -O2 -g -W -Wall
+#include <pthread.h>
+#include <unistd.h>
 
-We've made a damn mess of mount options, and the fscontext stuff
-hasn't fixed any of this ... mess. It's just stirred it around and so
-nobody really knows what they are supposed to with mount options
-right now.
+void *worker(void *arg)
+{
+	int i = 0;
+	int *p = arg;
 
-> > If the mount options are directly parsed by the filesystem option
-> > parser (as is done later in this patchset), then the mount option
-> > setting should be emitted by the filesystem's ->show_options
-> > function, not a generic function.
-> > 
-> > The option string must match what the filesystem defines, not
-> > require separate per-filesystem and VFS definitions of the same
-> > option that people could potentially get wrong (*cough* i_version vs
-> > iversion *cough*)....
-> 
-> Are you objecting to the use of a SB_* flag, or just to showing the flag in
-> show_sb_opts() instead of in the individual filesystems?  Note that the SB_*
-> flag was requested by Christoph
-> (https://lkml.kernel.org/r/20191031183217.GF23601@infradead.org/,
-> https://lkml.kernel.org/r/20191031212103.GA6244@infradead.org/).  We originally
-> used a function fscrypt_operations::inline_crypt_enabled() instead.
+	for (;;) {
+		while (i < 1000 * 1000) {
+			i += *p;
+		}
+		sleep(1);
+	}
+}
 
-I'm objecting to the layering violations of having the filesystem
-control the mount option parsing and superblock feature flags, but
-then having no control over whether features that the filesystem has
-indicated to the VFS it is using get emitted as a mount option or
-not, and then having the VFS code unconditionally override the
-functionality that the filesystem uses because it thinks it's a
-mount option the filesystem supports....
+int main(int argc, char **argv)
+{
+	pthread_t threads[20][100];
+	int i, j, one = 1;
 
-For example, the current mess that has just come to light:
-filesystems like btrfs and XFS v5 which set SB_IVERSION
-unconditionally (i.e. it's not a mount option!) end up having that
-functionality turned off on remount because the VFS conflates
-MS_IVERSION with SB_IVERSION and so unconditionally clears
-SB_IVERSION because MS_IVERSION is not set on remount by userspace.
-Which userspace will never set be because the filesystems don't put
-"iversion" in their mount option strings because -its not a mount
-option- for those filesystems.
+	for (i = 0; i < 1000; i++) {
+		for (j = 0; j < 100; j++)
+			pthread_create(&threads[i % 20][j], NULL, worker, &one);
+		if (i < 5)
+			continue;
+		for (j = 0; j < 100; j++)
+			pthread_cancel(threads[(i - 5) %20][j]);
+	}
 
-See the problem?  MS_IVERSION should be passed to the filesystem to
-deal with as a mount option, not treated as a flag to directly
-change SB_IVERSION in the superblock.
-
-We really need to stop with the "global mount options for everyone
-at the VFS" and instead pass everything down to the filesystems to
-parse appropriately. Yes, provide generic helper functions to deal
-with the common flags that everything supports, but the filesystems
-should be masking off mount options they doesn't support changing
-before changing their superblock feature support mask....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+	return 0;
+}
