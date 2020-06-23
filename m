@@ -2,132 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 80939204754
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 04:35:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 962A02047DF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 05:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731607AbgFWCf2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 22:35:28 -0400
-Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:38806 "EHLO
-        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731312AbgFWCf1 (ORCPT
+        id S1730616AbgFWDSc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 23:18:32 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41857 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728612AbgFWDSb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 22:35:27 -0400
-Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
-        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 5FCEBD5A410;
-        Tue, 23 Jun 2020 12:35:24 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jnYmL-0002E0-W3; Tue, 23 Jun 2020 12:35:18 +1000
-Date:   Tue, 23 Jun 2020 12:35:17 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        agruenba@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Bypass filesystems for reading cached pages
-Message-ID: <20200623023517.GG2040@dread.disaster.area>
-References: <20200619155036.GZ8681@bombadil.infradead.org>
- <20200622003215.GC2040@dread.disaster.area>
- <20200622191857.GB21350@casper.infradead.org>
+        Mon, 22 Jun 2020 23:18:31 -0400
+Received: by mail-pg1-f193.google.com with SMTP id b5so9208330pgm.8;
+        Mon, 22 Jun 2020 20:18:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=mpFj7/RrGtSNh2oxeWkaM9uJQKNxbdQmz4wPUcNhQuU=;
+        b=sjtOC+7gsYm2/2Q0rYSPg15/MsWG9tl5HvIm7SKbYMi8oosEqyirnuaQxD5nqhuCwQ
+         NPB6BHkSTXqiRSom6IwgDrFxihrt9sUGXPtH8PeqR0PgsIKHNZ3DCsBLRDI2UHpOkQnF
+         WqzGAAioaOioVFn2P5t+vvlTbY6GIZHqnH2zfj5bivYDfCKcTsth2EVz+tuna+sR9G0w
+         CAODGkLdjFp1v41U94hyE8GCU+FkDeKzSSnmZ8vmVNFO4i+9qHPsJg63a10MRvt+Y3bm
+         zR/Z1WnRP+K/sJGtz8G5wtjsBpqxVC8WGVt0i3U7ydnnMiCnVQsvusc/0tI+3tFya8ef
+         4Tkw==
+X-Gm-Message-State: AOAM5306kgQ1KA+u5YwzJU82DHxyTD5daOPlkzKS1lIuMolqt/S75g10
+        UFSdwznUlP2UhZu27jxmXpTkmTL17OM=
+X-Google-Smtp-Source: ABdhPJzdc2VdT5EAFZIAAEZc3fGS4qcNI/gX/vWuYt7EogWDJNOGCKd180YoLKtAWecVyPItYkRK0Q==
+X-Received: by 2002:a63:6643:: with SMTP id a64mr12702889pgc.246.1592882309689;
+        Mon, 22 Jun 2020 20:18:29 -0700 (PDT)
+Received: from [192.168.50.147] (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
+        by smtp.gmail.com with ESMTPSA id q22sm11398036pgn.91.2020.06.22.20.18.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jun 2020 20:18:28 -0700 (PDT)
+Subject: Re: [PATCH v7 8/8] block: create the request_queue debugfs_dir on
+ registration
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
+        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
+        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
+        martin.petersen@oracle.com, jejb@linux.ibm.com,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20200619204730.26124-1-mcgrof@kernel.org>
+ <20200619204730.26124-9-mcgrof@kernel.org>
+ <02112994-4cd7-c749-6bd7-66a772593c90@acm.org>
+ <20200622124208.GW11244@42.do-not-panic.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
+ mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
+ LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
+ fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
+ AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
+ 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
+ AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
+ igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
+ Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
+ jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
+ macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
+ CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
+ RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
+ PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
+ eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
+ lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
+ T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
+ ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
+ CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
+ oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
+ //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
+ mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
+ goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
+Message-ID: <4d25dbd1-a001-9869-58d5-630696440abc@acm.org>
+Date:   Mon, 22 Jun 2020 20:18:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200622191857.GB21350@casper.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
-        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=7-415B0cAAAA:8
-        a=I5Ld6uvlkQaMZklyL9UA:9 a=AnJBR7kdrS1bbMZr:21 a=j-efh17Vv1HrvYRV:21
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200622124208.GW11244@42.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 22, 2020 at 08:18:57PM +0100, Matthew Wilcox wrote:
-> On Mon, Jun 22, 2020 at 10:32:15AM +1000, Dave Chinner wrote:
-> > On Fri, Jun 19, 2020 at 08:50:36AM -0700, Matthew Wilcox wrote:
-> > > 
-> > > This patch lifts the IOCB_CACHED idea expressed by Andreas to the VFS.
-> > > The advantage of this patch is that we can avoid taking any filesystem
-> > > lock, as long as the pages being accessed are in the cache (and we don't
-> > > need to readahead any pages into the cache).  We also avoid an indirect
-> > > function call in these cases.
-> > 
-> > What does this micro-optimisation actually gain us except for more
-> > complexity in the IO path?
-> > 
-> > i.e. if a filesystem lock has such massive overhead that it slows
-> > down the cached readahead path in production workloads, then that's
-> > something the filesystem needs to address, not unconditionally
-> > bypass the filesystem before the IO gets anywhere near it.
+On 2020-06-22 05:42, Luis Chamberlain wrote:
+> On Sat, Jun 20, 2020 at 11:07:43AM -0700, Bart Van Assche wrote:
+>> On 2020-06-19 13:47, Luis Chamberlain wrote:
+>>> We were only creating the request_queue debugfs_dir only
+>>> for make_request block drivers (multiqueue), but never for
+>>> request-based block drivers. We did this as we were only
+>>> creating non-blktrace additional debugfs files on that directory
+>>> for make_request drivers. However, since blktrace *always* creates
+>>> that directory anyway, we special-case the use of that directory
+>>> on blktrace. Other than this being an eye-sore, this exposes
+>>> request-based block drivers to the same debugfs fragile
+>>> race that used to exist with make_request block drivers
+>>> where if we start adding files onto that directory we can later
+>>> run a race with a double removal of dentries on the directory
+>>> if we don't deal with this carefully on blktrace.
+>>>
+>>> Instead, just simplify things by always creating the request_queue
+>>> debugfs_dir on request_queue registration. Rename the mutex also to
+>>> reflect the fact that this is used outside of the blktrace context.
+>>
+>> There are two changes in this patch: a bug fix and a rename of a mutex.
+>> I don't like it to see two changes in a single patch.
 > 
-> You're been talking about adding a range lock to XFS for a while now.
+> I thought about doing the split first, and I did it at first, but
+> then I could hear Christoph yelling at me for it. So I merged the
+> two together. Although it makes it more difficult for review,
+> the changes do go together.
 
-I don't see what that has to do with this patch.
+During the past weeks I have been more busy than usual. I will try to
+make sure that in the future I have the time to read all comments on the
+previous versions of a patch series before replying to the latest
+version of a patch series.
 
-> I remain quite sceptical that range locks are a good idea; they have not
-> worked out well as a replacement for the mmap_sem, although the workload
-> for the mmap_sem is quite different and they may yet show promise for
-> the XFS iolock.
-
-<shrug>
-
-That was a really poor implementation of a range lock. It had no
-concurrency to speak of, because the tracking tree required a
-spinlock to be taken for every lock or unlock the range lock
-performed. Hence it had an expensive critical section that could not
-scale past the number of ops a single CPU could perform on that
-tree. IOWs, it topped out at about 150k lock cycles a second with
-2-3 concurrent AIO+DIO threads, and only went slower as the number
-of concurrent IO submitters went up.
-
-So, yeah, if you are going to talk about range locks, you need to
-forget about the what was tried on the mmap_sem because nobody
-actually scalability tested the lock implementation by itself and it
-turned out to be total crap....
-
-> There are production workloads that do not work well on top of a single
-> file on an XFS filesystem.  For example, using an XFS file in a host as
-> the backing store for a guest block device.  People tend to work around
-> that kind of performance bug rather than report it.
-
-*cough* AIO+DIO *cough*
-
-You may not like that answer, but anyone who cares about IO
-performance, especially single file IO performance, is using
-AIO+DIO. Buffered IO for VM image files in production environments
-tends to be the exception, not the norm, because caching is done in
-the guest by the guest page cache. Double caching IO data is
-generally considered a waste of resources that could otherwise be
-sold to customers.
-
-> Do you agree that the guarantees that XFS currently supplies regarding
-> locked operation will be maintained if the I/O is contained within a
-> single page and the mutex is not taken?
-
-Not at first glance because block size < file size configurations
-exist and hence filesystems might be punching out extents from a
-sub-page range....
-
-> ie add this check to the original
-> patch:
+>> Additionally, is the new mutex name really better than the old name? The
+>> proper way to use mutexes is to use mutexes to protect data instead of
+>> code. Where is the documentation that mentions which member variable(s)
+>> of which data structures are protected by the mutex formerly called
+>> blk_trace_mutex?
 > 
->         if (iocb->ki_pos / PAGE_SIZE !=
->             (iocb->ki_pos + iov_iter_count(iter) - 1) / PAGE_SIZE)
->                 goto uncached;
+> It does not exist, and that is the point. The debugfs_dir use after
+> free showed us *when* that UAF can happen, and so care must be taken
+> if we are to use the mutex to protect the debugfs_dir but also re-use
+> the same directory for other block core shenanigans.
 > 
-> I think that gets me almost everything I want.  Small I/Os are going to
-> notice the pain of the mutex more than large I/Os.
+>> Since the new name makes it even less clear which data
+>> is protected by this mutex, is the new name really better than the old name?
+> 
+> I thought the new name makes it crystal clear what is being protected. I
+> can however add a comment to explain that the q->debugfs_mutex protects
+> the q->debugfs_dir if it is created, otherwise it protects the ephemeral
+> debugfs_dir directory which would otherwise be created in lieue of
+> q->debugfs_dir, however the patch still lies under <debugfs_root>/block/.
+> 
+> Let me know if you think that will help.
 
-Exactly what are you trying to optimise, Willy? You haven't
-explained to anyone what workload needs these micro-optimisations,
-and without understanding why you want to cut the filesystems out of
-the readahead path, I can't suggest alternative solutions...
+My concern is that q->debugfs_mutex would evolve the same way as
+q->sysfs_lock: at the time of introduction the role of a mutex is very
+clear but over time the number of use cases grows to a point where it is
+no longer possible to recognize the original purpose. I think there are
+two possible approaches: either a comment is added now that explains the
+role of q->debugfs_mutex or someone who has followed this conversation
+yells when someone tries to use q->debugfs_mutex for another purpose
+than what it was intended for.
 
-Cheers,
+Thanks,
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Bart.
+
