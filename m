@@ -2,108 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20CBC20472A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 04:16:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80939204754
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 04:35:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731216AbgFWCQU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 22 Jun 2020 22:16:20 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34289 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728447AbgFWCQT (ORCPT
+        id S1731607AbgFWCf2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 22 Jun 2020 22:35:28 -0400
+Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:38806 "EHLO
+        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731312AbgFWCf1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 22 Jun 2020 22:16:19 -0400
-Received: by mail-pg1-f195.google.com with SMTP id t6so1339602pgq.1;
-        Mon, 22 Jun 2020 19:16:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=M/lKgw0WIqHsOqIn5qkk2P21mZzLktylguXH7Jx+OVk=;
-        b=tqxq8Wgo3F6HifXAj6ZoPlu5n2aUQidj+j5DJPbbRbMNYSt/ewAArz93QpfqH5H64T
-         NeCpjtJjUnJ6qvHzun2OT6fZqIMJDZ67SbcWf4Ptwm2hwUMbZ+jKN5BHy3WXM958+uFV
-         dzNWB/7qFm6LoUTm1hA1BXVP7OEifKLvA6YDJKkukoar+EBAeVeOOthJ6CC5SfVr8Yxj
-         Z+pDqch5KXutT6kL4IYYbP5mYzfiYSmgmpoE7VwCeZPF3ohAgNqJrgWGzHbJxMG1rlxu
-         3a/n4JhTWDW8wLh0zsD1vSehPXVnD2PNgf3mrdiVn86QXow9ZhUw0ZNEHLtyPMn/tOwy
-         hMgQ==
-X-Gm-Message-State: AOAM533/meih7OltlveyYgom5SgPpffYOwv9s5Q5DqBhklLMQsu43j2V
-        pZ8tI32qbLqUrvqXDQWseTQ=
-X-Google-Smtp-Source: ABdhPJzQeAPANbiAmUwJbdDHqgqKLmC7CQe4oeQcA4IUQ/MBdOu2b/RZsx/t4Z569lut9IJk2LZxsA==
-X-Received: by 2002:a62:640b:: with SMTP id y11mr22670086pfb.195.1592878578089;
-        Mon, 22 Jun 2020 19:16:18 -0700 (PDT)
-Received: from [192.168.50.147] (c-73-241-217-19.hsd1.ca.comcast.net. [73.241.217.19])
-        by smtp.gmail.com with ESMTPSA id w77sm15909899pff.126.2020.06.22.19.16.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jun 2020 19:16:17 -0700 (PDT)
-Subject: Re: [PATCH v7 5/8] loop: be paranoid on exit and prevent new
- additions / removals
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
-        gregkh@linuxfoundation.org, rostedt@goodmis.org, mingo@redhat.com,
-        jack@suse.cz, ming.lei@redhat.com, nstange@suse.de,
-        akpm@linux-foundation.org, mhocko@suse.com, yukuai3@huawei.com,
-        martin.petersen@oracle.com, jejb@linux.ibm.com,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-References: <20200619204730.26124-1-mcgrof@kernel.org>
- <20200619204730.26124-6-mcgrof@kernel.org>
- <7e76d892-b5fd-18ec-c96e-cf4537379eba@acm.org>
- <20200622122742.GU11244@42.do-not-panic.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-Autocrypt: addr=bvanassche@acm.org; prefer-encrypt=mutual; keydata=
- mQENBFSOu4oBCADcRWxVUvkkvRmmwTwIjIJvZOu6wNm+dz5AF4z0FHW2KNZL3oheO3P8UZWr
- LQOrCfRcK8e/sIs2Y2D3Lg/SL7qqbMehGEYcJptu6mKkywBfoYbtBkVoJ/jQsi2H0vBiiCOy
- fmxMHIPcYxaJdXxrOG2UO4B60Y/BzE6OrPDT44w4cZA9DH5xialliWU447Bts8TJNa3lZKS1
- AvW1ZklbvJfAJJAwzDih35LxU2fcWbmhPa7EO2DCv/LM1B10GBB/oQB5kvlq4aA2PSIWkqz4
- 3SI5kCPSsygD6wKnbRsvNn2mIACva6VHdm62A7xel5dJRfpQjXj2snd1F/YNoNc66UUTABEB
- AAG0JEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPokBOQQTAQIAIwUCVI67
- igIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFcPTXFzhAJ8QkH/1AdXblKL65M
- Y1Zk1bYKnkAb4a98LxCPm/pJBilvci6boefwlBDZ2NZuuYWYgyrehMB5H+q+Kq4P0IBbTqTa
- jTPAANn62A6jwJ0FnCn6YaM9TZQjM1F7LoDX3v+oAkaoXuq0dQ4hnxQNu792bi6QyVdZUvKc
- macVFVgfK9n04mL7RzjO3f+X4midKt/s+G+IPr4DGlrq+WH27eDbpUR3aYRk8EgbgGKvQFdD
- CEBFJi+5ZKOArmJVBSk21RHDpqyz6Vit3rjep7c1SN8s7NhVi9cjkKmMDM7KYhXkWc10lKx2
- RTkFI30rkDm4U+JpdAd2+tP3tjGf9AyGGinpzE2XY1K5AQ0EVI67igEIAKiSyd0nECrgz+H5
- PcFDGYQpGDMTl8MOPCKw/F3diXPuj2eql4xSbAdbUCJzk2ETif5s3twT2ER8cUTEVOaCEUY3
- eOiaFgQ+nGLx4BXqqGewikPJCe+UBjFnH1m2/IFn4T9jPZkV8xlkKmDUqMK5EV9n3eQLkn5g
- lco+FepTtmbkSCCjd91EfThVbNYpVQ5ZjdBCXN66CKyJDMJ85HVr5rmXG/nqriTh6cv1l1Js
- T7AFvvPjUPknS6d+BETMhTkbGzoyS+sywEsQAgA+BMCxBH4LvUmHYhpS+W6CiZ3ZMxjO8Hgc
- ++w1mLeRUvda3i4/U8wDT3SWuHcB3DWlcppECLkAEQEAAYkBHwQYAQIACQUCVI67igIbDAAK
- CRBxXD01xc4QCZ4dB/0QrnEasxjM0PGeXK5hcZMT9Eo998alUfn5XU0RQDYdwp6/kMEXMdmT
- oH0F0xB3SQ8WVSXA9rrc4EBvZruWQ+5/zjVrhhfUAx12CzL4oQ9Ro2k45daYaonKTANYG22y
- //x8dLe2Fv1By4SKGhmzwH87uXxbTJAUxiWIi1np0z3/RDnoVyfmfbbL1DY7zf2hYXLLzsJR
- mSsED/1nlJ9Oq5fALdNEPgDyPUerqHxcmIub+pF0AzJoYHK5punqpqfGmqPbjxrJLPJfHVKy
- goMj5DlBMoYqEgpbwdUYkH6QdizJJCur4icy8GUNbisFYABeoJ91pnD4IGei3MTdvINSZI5e
-Message-ID: <14dc9294-fa99-cad0-871b-b69f138e8ac9@acm.org>
-Date:   Mon, 22 Jun 2020 19:16:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Mon, 22 Jun 2020 22:35:27 -0400
+Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
+        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id 5FCEBD5A410;
+        Tue, 23 Jun 2020 12:35:24 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jnYmL-0002E0-W3; Tue, 23 Jun 2020 12:35:18 +1000
+Date:   Tue, 23 Jun 2020 12:35:17 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        agruenba@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Bypass filesystems for reading cached pages
+Message-ID: <20200623023517.GG2040@dread.disaster.area>
+References: <20200619155036.GZ8681@bombadil.infradead.org>
+ <20200622003215.GC2040@dread.disaster.area>
+ <20200622191857.GB21350@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20200622122742.GU11244@42.do-not-panic.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200622191857.GB21350@casper.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
+        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
+        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=7-415B0cAAAA:8
+        a=I5Ld6uvlkQaMZklyL9UA:9 a=AnJBR7kdrS1bbMZr:21 a=j-efh17Vv1HrvYRV:21
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-06-22 05:27, Luis Chamberlain wrote:
-> Note: this will bring you sanity if you try to figure out *why* we still
-> get:
+On Mon, Jun 22, 2020 at 08:18:57PM +0100, Matthew Wilcox wrote:
+> On Mon, Jun 22, 2020 at 10:32:15AM +1000, Dave Chinner wrote:
+> > On Fri, Jun 19, 2020 at 08:50:36AM -0700, Matthew Wilcox wrote:
+> > > 
+> > > This patch lifts the IOCB_CACHED idea expressed by Andreas to the VFS.
+> > > The advantage of this patch is that we can avoid taking any filesystem
+> > > lock, as long as the pages being accessed are in the cache (and we don't
+> > > need to readahead any pages into the cache).  We also avoid an indirect
+> > > function call in these cases.
+> > 
+> > What does this micro-optimisation actually gain us except for more
+> > complexity in the IO path?
+> > 
+> > i.e. if a filesystem lock has such massive overhead that it slows
+> > down the cached readahead path in production workloads, then that's
+> > something the filesystem needs to address, not unconditionally
+> > bypass the filesystem before the IO gets anywhere near it.
 > 
-> [235530.144343] debugfs: Directory 'loop0' with parent 'block' already present!
-> [235530.149477] blktrace: debugfs_dir not present for loop0 so skipping
-> [235530.232328] debugfs: Directory 'loop0' with parent 'block' already present!
-> [235530.238962] blktrace: debugfs_dir not present for loop0 so skipping
-> 
-> If you run run_0004.sh from break-blktrace [0]. Even with all my patches
-> merged we still run into this. And so the bug lies within the block
-> layer or on the driver. I haven't been able to find the issue yet.
-> 
-> [0] https://github.com/mcgrof/break-blktrace
+> You're been talking about adding a range lock to XFS for a while now.
 
-Thanks Luis for having shared this information. If I can find the time I
-will have a look into this myself.
+I don't see what that has to do with this patch.
 
-Bart.
+> I remain quite sceptical that range locks are a good idea; they have not
+> worked out well as a replacement for the mmap_sem, although the workload
+> for the mmap_sem is quite different and they may yet show promise for
+> the XFS iolock.
+
+<shrug>
+
+That was a really poor implementation of a range lock. It had no
+concurrency to speak of, because the tracking tree required a
+spinlock to be taken for every lock or unlock the range lock
+performed. Hence it had an expensive critical section that could not
+scale past the number of ops a single CPU could perform on that
+tree. IOWs, it topped out at about 150k lock cycles a second with
+2-3 concurrent AIO+DIO threads, and only went slower as the number
+of concurrent IO submitters went up.
+
+So, yeah, if you are going to talk about range locks, you need to
+forget about the what was tried on the mmap_sem because nobody
+actually scalability tested the lock implementation by itself and it
+turned out to be total crap....
+
+> There are production workloads that do not work well on top of a single
+> file on an XFS filesystem.  For example, using an XFS file in a host as
+> the backing store for a guest block device.  People tend to work around
+> that kind of performance bug rather than report it.
+
+*cough* AIO+DIO *cough*
+
+You may not like that answer, but anyone who cares about IO
+performance, especially single file IO performance, is using
+AIO+DIO. Buffered IO for VM image files in production environments
+tends to be the exception, not the norm, because caching is done in
+the guest by the guest page cache. Double caching IO data is
+generally considered a waste of resources that could otherwise be
+sold to customers.
+
+> Do you agree that the guarantees that XFS currently supplies regarding
+> locked operation will be maintained if the I/O is contained within a
+> single page and the mutex is not taken?
+
+Not at first glance because block size < file size configurations
+exist and hence filesystems might be punching out extents from a
+sub-page range....
+
+> ie add this check to the original
+> patch:
+> 
+>         if (iocb->ki_pos / PAGE_SIZE !=
+>             (iocb->ki_pos + iov_iter_count(iter) - 1) / PAGE_SIZE)
+>                 goto uncached;
+> 
+> I think that gets me almost everything I want.  Small I/Os are going to
+> notice the pain of the mutex more than large I/Os.
+
+Exactly what are you trying to optimise, Willy? You haven't
+explained to anyone what workload needs these micro-optimisations,
+and without understanding why you want to cut the filesystems out of
+the readahead path, I can't suggest alternative solutions...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
