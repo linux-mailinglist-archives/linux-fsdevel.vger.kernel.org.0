@@ -2,225 +2,423 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 438B0204C62
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 10:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A2AE204DCB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 11:21:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731744AbgFWI3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jun 2020 04:29:39 -0400
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:51401 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731595AbgFWI3j (ORCPT
+        id S1732041AbgFWJVe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jun 2020 05:21:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34800 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731735AbgFWJVd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jun 2020 04:29:39 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.west.internal (Postfix) with ESMTP id 9FB21D44;
-        Tue, 23 Jun 2020 04:29:37 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 23 Jun 2020 04:29:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        RJ/nZTa4W/7UFBCS92FyVC9jeNz1VWBdHNHQQracMBk=; b=wWpzM8y2uGEFc8CG
-        37yYB6+ybO9lXjrEsdoLnkWN59nNguimMJh2vcpCR+9VmJter31b3SPPSwdeJcpZ
-        YKhWmM7qurl9Sw01KZX3tgVNGcPZNhul7Gq4/fPEamGCbodyxR2U0m+sNovwzk06
-        ZpftOyfkYdp6ZrI1Kwya1mrOS/AeluW/W9eaAi33jk0sGCIEOvCLeaa7nQW6ADaq
-        HSsTQk6o5b43LElcn/KipTRN1Prgl+TC2uk6auYc8BsrNld78+s8QitEm4Kh6MgF
-        faehB9Ux2lCj8crJCKCLzPrV9ho1xV2/M4yn6+R0xsOOLA+W9T8wY/fNYYxEa0rj
-        wY/uWw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=RJ/nZTa4W/7UFBCS92FyVC9jeNz1VWBdHNHQQracM
-        Bk=; b=Ctgg7ClAj83fM65Bb20KbUPGadaapXebJxmvWLbYWiYL1X7QzZKplbUSB
-        Nh9YoeFmfs83WzzkNblpYLargrPwADZxZCVKXuRAX9+L+f5vGqT74BEoBYdIj6DP
-        uitgU72f19JhsDCyUvfyvkHItA85TIOEZA6oseaMOOBFJsgaMoeH58BztpGv0iDL
-        YBi+rymnvP8rx9QXTr8bh20RpTyNGdEU6Xss0Aua0IX9+8s8+jBSFfkO+gyfZTry
-        OLmkxTVcWtwZ7M4gQyi6LasbTHGfN6qlwPPZ08Tzu/vEjR5Yhq3oMaRBsiBTrOAQ
-        EcximOEQUB0unib1PxO/aihiujvtg==
-X-ME-Sender: <xms:cL3xXgl5nj9ND2IoyhK3ISSQPd_1eHmh-m5tGwwCUEc8Lots67TBbg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudekgedgtdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkffuhffvffgjfhgtfggggfesthejredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    effeettedvgeduvdevfeevfeettdffudduheeuiefhueevgfevheffledugefgjeenucfk
-    phepuddukedrvddtkedrheegrdehtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:cL3xXv26eSHIOoDc_VBKW01kaCH_ThBVjewyXb7c07jJ8T4U_g_vag>
-    <xmx:cL3xXupDcF0Yn_Y-713J-stZCvB4PYpnClivEfNL7o1va5d9tciIUg>
-    <xmx:cL3xXsmSbHLdSPfyDYnSzP2L4XaLW-nuGuIgFsgHAwscacu5DnvScw>
-    <xmx:cb3xXq_Zmis_YHnux4RvX1EEN1l1XU1mdGrspPAaedINACBDmUijqA>
-Received: from mickey.themaw.net (unknown [118.208.54.50])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A9CC73067489;
-        Tue, 23 Jun 2020 04:29:32 -0400 (EDT)
-Message-ID: <15f028ac3191b54ed26cf5c90cacec9c5b43ad69.camel@themaw.net>
-Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
- improvement
-From:   Ian Kent <raven@themaw.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Tejun Heo <tj@kernel.org>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 23 Jun 2020 16:29:29 +0800
-In-Reply-To: <e42b81944272dc3b70b0588948f71bc44d15762d.camel@themaw.net>
-References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
-         <20200619153833.GA5749@mtj.thefacebook.com>
-         <16d9d5aa-a996-d41d-cbff-9a5937863893@linux.vnet.ibm.com>
-         <20200619222356.GA13061@mtj.duckdns.org>
-         <429696e9fa0957279a7065f7d8503cb965842f58.camel@themaw.net>
-         <20200622174845.GB13061@mtj.duckdns.org>
-         <20200622180306.GA1917323@kroah.com>
-         <2ead27912e2a852bffb1477e8720bdadb591628d.camel@themaw.net>
-         <20200623060236.GA3818201@kroah.com>
-         <e42b81944272dc3b70b0588948f71bc44d15762d.camel@themaw.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Tue, 23 Jun 2020 05:21:33 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED810C061573
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jun 2020 02:21:33 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id i4so1295855pjd.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jun 2020 02:21:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=igel-co-jp.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=CQDLM3xTU//PvBXtVpMQxq57V6nYiegt7gME7315HGw=;
+        b=E8pcvC9J5TjGaVxdIA81X5ho0V8Fklu2L7Db04cZG6yyCTLz3eKcp95ZO/pH6pXkEb
+         CBM0CSRTUdc3jYUjchNt/b/ndsg913k1OCJwRWCXFPkqWa76ajUktGw6JmMM2BdYb1+q
+         QG7w6dBkRRQbD+0iC51kfKUk+YQOa/RzQYo1gh3NjznrIOMI0GGikqump/IfLODjwddM
+         XWt9f6pWxL03JtGZ+OaTrRGtp428fyCZGcGdaxuAHf9RgZMJOi5HiFDQ1iA16cPepZLI
+         YX8JRciKYX58lNrYWaTvxWhdWTtI6Gaa91MyhZPNzbSUMO0Zg3lRWtuxue+wX+dZfakP
+         KlDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=CQDLM3xTU//PvBXtVpMQxq57V6nYiegt7gME7315HGw=;
+        b=LpzrpyYsjoyUdAsGswHE2mQtfytBxukYj0AlWqJq+7SS5O65PlHyW6TC7LdaZfQw+Z
+         jU9hUC1mFu3ayUzTesDm/vCa2hDGEpaGk/KLfslpiTEtWyUHC7am2tI6QGqaUv15nTpu
+         l4wPET5MbAmIGOk8nsEI1kP9nuLt/GTn3YVVYY4Pp5pTsvHYOk1uVGXIHRGs+ZZ2/ZSO
+         Eu78GKJdPgwLlHo/VK61CF82EfGguCbqwF2OG7CwTS+X3gSeWmoHR45kLqPxGHx/1BIX
+         EPc6vyFok8+w2+pDqqa9EZJ2NpTpuzqx99Da/jwZ/auNDPOjLZO+I5hRv1e2R0P0bYD1
+         vv+g==
+X-Gm-Message-State: AOAM533jJ27u1fFn9Sejl10cTWj2Vlb7iZGwkdeXJK6uBG9ZSlNHuBIl
+        k67VfICZTLKg2SLEUUsXn0IPKQ==
+X-Google-Smtp-Source: ABdhPJwCCFp2vaLG2OeUnQAGPH48BJPwJMIW++nrr/wRqtNCHbheP9EY+m9d3G1gVE2pLYq5yFPZJw==
+X-Received: by 2002:a17:902:be06:: with SMTP id r6mr17494782pls.310.1592904093251;
+        Tue, 23 Jun 2020 02:21:33 -0700 (PDT)
+Received: from [192.168.0.8] (p7131-ipngn6701marunouchi.tokyo.ocn.ne.jp. [153.174.6.131])
+        by smtp.googlemail.com with ESMTPSA id z11sm1684196pfg.169.2020.06.23.02.21.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jun 2020 02:21:32 -0700 (PDT)
+Subject: Re: [PATCH v3 1/1] eventfd: implementation of EFD_MASK flag
+To:     Paul Elder <paul.elder@ideasonboard.com>
+Cc:     viro@zeniv.linux.org.uk, sustrik@250bpm.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, netdev@vger.kernel.org,
+        David.Laight@aculab.com, laurent.pinchart@ideasonboard.com
+References: <1444873328-8466-1-git-send-email-dhobsong@igel.co.jp>
+ <1444873328-8466-2-git-send-email-dhobsong@igel.co.jp>
+ <20200619101619.GD2073@jade.amanokami.net>
+From:   Damian Hobson-Garcia <dhobsong@igel.co.jp>
+Autocrypt: addr=dhobsong@igel.co.jp; prefer-encrypt=mutual; keydata=
+ mQENBFL7DcgBCADLqQvkQExYdn1UhfLLsvqtoQwS4M0llP4mCMBGntcTQ90viNgmXUp8mode
+ GXu6Qcr4uaIO75b8g6XP2g1jP969cDotlAvsjh7uEDR+eZjTDB6XvqQOroQpq80eiBjETesX
+ R5elnlLa6H+wsWCtl+xNohjBq+i/c9pC9B4k4CXOcwhxyTk6HB5w7hA502KY4zFmeRsnQyC/
+ VHx+TcRYjB5karzbJqWT3t5nEnVgOb34rUXnqbtE7Eyu6Ts1Q6Oyw9FwpzGa/fJI7asX5ahv
+ 26IJv6dgFbLPL8Gz1dOpcSKjkv2GX6NYNn0iPCgX6leGDEQjhZ1+OpyhxmHjgADz9b15ABEB
+ AAG0KkRhbWlhbiBIb2Jzb24tR2FyY2lhIDxkaG9ic29uZ0BpZ2VsLmNvLmpwPokBPwQTAQIA
+ KQUCUvsNyAIbIwUJCWYBgAcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEK3AW9cCDHCG
+ qdgH/1bDxLkQ0WchfLDGdD7pKJ3X43nouVRjbeuLtCkDMIMzCXLveR0yJ9tRtI37t3LneS/f
+ oBCSNZoEED57UjGvYTepub9cqGRDKN56n8OKGM3e0Ph5OAqI1afloiJXa/LBhNDMCzdgFB/a
+ oyuiqbD5v1oo73TCsNtHIrotg91jG7SaOHLOfQzy5drgGqM84W63z102YeHOm3jcB0PbUCOj
+ x/MPIyxcggTdedlkQFtlTZugCiCllrHcFvG30WEl4lNTF9qOeyhOyiPJRcOVEEXbt3nMcFey
+ MkMuNikkLFFq5dZ/7jbxhiQpXrZgdPXhml8lGqezhLPrk86BqtLjy4tm9Qg=
+Message-ID: <8b9b1b31-99fc-0877-cbd3-0f52de52419c@igel.co.jp>
+Date:   Tue, 23 Jun 2020 18:21:28 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
+In-Reply-To: <20200619101619.GD2073@jade.amanokami.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-06-23 at 16:01 +0800, Ian Kent wrote:
-> On Tue, 2020-06-23 at 08:02 +0200, Greg Kroah-Hartman wrote:
-> > On Tue, Jun 23, 2020 at 01:09:08PM +0800, Ian Kent wrote:
-> > > On Mon, 2020-06-22 at 20:03 +0200, Greg Kroah-Hartman wrote:
-> > > > On Mon, Jun 22, 2020 at 01:48:45PM -0400, Tejun Heo wrote:
-> > > > > Hello, Ian.
-> > > > > 
-> > > > > On Sun, Jun 21, 2020 at 12:55:33PM +0800, Ian Kent wrote:
-> > > > > > > > They are used for hotplugging and partitioning memory.
-> > > > > > > > The
-> > > > > > > > size of
-> > > > > > > > the
-> > > > > > > > segments (and thus the number of them) is dictated by
-> > > > > > > > the
-> > > > > > > > underlying
-> > > > > > > > hardware.
-> > > > > > > 
-> > > > > > > This sounds so bad. There gotta be a better interface for
-> > > > > > > that,
-> > > > > > > right?
-> > > > > > 
-> > > > > > I'm still struggling a bit to grasp what your getting at
-> > > > > > but
-> > > > > > ...
-> > > > > 
-> > > > > I was more trying to say that the sysfs device interface with
-> > > > > per-
-> > > > > object
-> > > > > directory isn't the right interface for this sort of usage at
-> > > > > all.
-> > > > > Are these
-> > > > > even real hardware pieces which can be plugged in and out?
-> > > > > While
-> > > > > being a
-> > > > > discrete piece of hardware isn't a requirement to be a device
-> > > > > model
-> > > > > device,
-> > > > > the whole thing is designed with such use cases on mind. It
-> > > > > definitely isn't
-> > > > > the right design for representing six digit number of logical
-> > > > > entities.
-> > > > > 
-> > > > > It should be obvious that representing each consecutive
-> > > > > memory
-> > > > > range with a
-> > > > > separate directory entry is far from an optimal way of
-> > > > > representing
-> > > > > something like this. It's outright silly.
-> > > > 
-> > > > I agree.  And again, Ian, you are just "kicking the problem
-> > > > down
-> > > > the
-> > > > road" if we accept these patches.  Please fix this up properly
-> > > > so
-> > > > that
-> > > > this interface is correctly fixed to not do looney things like
-> > > > this.
-> > > 
-> > > Fine, mitigating this problem isn't the end of the story, and you
-> > > don't want to do accept a change to mitigate it because that
-> > > could
-> > > mean no further discussion on it and no further work toward
-> > > solving
-> > > it.
-> > > 
-> > > But it seems to me a "proper" solution to this will cross a
-> > > number
-> > > of areas so this isn't just "my" problem and, as you point out,
-> > > it's
-> > > likely to become increasingly problematic over time.
-> > > 
-> > > So what are your ideas and recommendations on how to handle
-> > > hotplug
-> > > memory at this granularity for this much RAM (and larger
-> > > amounts)?
-> > 
-> > First off, this is not my platform, and not my problem, so it's
-> > funny
-> > you ask me :)
-> 
-> Sorry, but I don't think it's funny at all.
-> 
-> It's not "my platform" either, I'm just the poor old sole that
-> took this on because, on the face of it, it's a file system
-> problem as claimed by others that looked at it and promptly
-> washed their hands of it.
-> 
-> I don't see how asking for your advice is out of order at all.
-> 
-> > Anyway, as I have said before, my first guesses would be:
-> > 	- increase the granularity size of the "memory chunks",
-> > reducing
-> > 	  the number of devices you create.
-> 
-> Yes, I didn't get that from your initial comments but you've said
-> it a couple of times recently and I do get it now.
-> 
-> I'll try and find someone appropriate to consult about that and
-> see where it goes.
-> 
-> > 	- delay creating the devices until way after booting, or do it
-> > 	  on a totally different path/thread/workqueue/whatever to
-> > 	  prevent delay at booting
-> 
-> When you first said this it sounded like a ugly workaround to me.
-> But perhaps it isn't (I'm not really convinced it is TBH), so it's
-> probably worth trying to follow up on too.
-> 
-> > And then there's always:
-> > 	- don't create them at all, only only do so if userspace asks
-> > 	  you to.
-> 
-> At first glance the impression I get from this is that it's an even
-> uglier work around than delaying it but it might actually the most
-> sensible way to handle this, as it's been called, silliness.
-> 
-> We do have the inode flag S_AUTOMOUNT that will cause the dcache flag
-> DCACHE_NEED_AUTOMOUNT to be set on the dentry and that will cause
-> the dentry op ->d_automount() to be called on access so, from a path
-> walk perspective, the dentries could just appear when needed.
-> 
-> The question I'd need to answer is do the kernfs nodes exist so
-> ->d_automount() can discover if the node lookup is valid, and I think
-> the answer might be yes (but we would need to suppress udev
-> notifications for S_AUTOMOUNT nodes).
+Hi Paul,
 
-Or maybe taking the notion of on-demand dentry creation further
-is "nothing" more than not triggering udev notifications when
-nodes are created letting the VFS create dentries on access alone
-is all that would be needed.
+On 2020-06-19 7:16 p.m., Paul Elder wrote:
+> Hello Damian, Martin, and all,
+> 
+> I came across this (quite old by now) patch to extend eventfd's polling
+> functionality. I was wondering what happened to it (why it hasn't been
+> merged yet) and if we could, or what is needed to, move it forward.
 
-I'm really not sure about how this would work yet ...
+I think there was an open question about whether it was
+best to move the definitions of EFD_SEMAPHORE, etc out of
+/include/linux/eventfd.h and into a newly created
+/include/uapi/linux/eventfd.h as this patch does.
 
-Ian
+I don't know if the maintainers have any concerns on this matter, or the
+patch in general, that would prevent this from moving forward.
 
+Thank you,
+Damian
+
+> 
+> I was thinking to use it for V4L2 events support via polling in the V4L2
+> compatibility layer for libcamera [1]. We can signal V4L2 buffer
+> availability POLLOUT via write(), but there is no way to signal V4L2
+> events, as they are signaled via POLLPRI.
+> 
+> 
+> Thank you,
+> 
+> Paul
+> 
+> [1] https://libcamera.org/docs.html#id1
+> 
+> On Thu, Oct 15, 2015 at 10:42:08AM +0900, Damian Hobson-Garcia wrote:
+>> From: Martin Sustrik <sustrik@250bpm.com>
+>>
+>> When implementing network protocols in user space, one has to implement
+>> fake file descriptors to represent the sockets for the protocol.
+>>
+>> Polling on such fake file descriptors is a problem (poll/select/epoll
+>> accept only true file descriptors) and forces protocol implementers to use
+>> various workarounds resulting in complex, non-standard and convoluted APIs.
+>>
+>> More generally, ability to create full-blown file descriptors for
+>> userspace-to-userspace signalling is missing. While eventfd(2) goes half
+>> the way towards this goal it has follwoing shorcomings:
+>>
+>> I.  There's no way to signal POLLPRI, POLLHUP etc.
+>> II. There's no way to signal arbitrary combination of POLL* flags. Most
+>>     notably, simultaneous !POLLIN and !POLLOUT, which is a perfectly valid
+>>     combination for a network protocol (rx buffer is empty and tx buffer is
+>>     full), cannot be signaled using eventfd.
+>>
+>> This patch implements new EFD_MASK flag which solves the above problems.
+>>
+>> The semantics of EFD_MASK are as follows:
+>>
+>> eventfd(2):
+>>
+>> If eventfd is created with EFD_MASK flag set, it is initialised in such a
+>> way as to signal no events on the file descriptor when it is polled on.
+>> The 'initval' argument is ignored.
+>>
+>> write(2):
+>>
+>> User is allowed to write only buffers containing a 32-bit value
+>> representing any combination of event flags as defined by the poll(2)
+>> function (POLLIN, POLLOUT, POLLERR, POLLHUP etc.). Specified events
+>> will be signaled when polling (select, poll, epoll) on the eventfd is
+>> done later on.
+>>
+>> read(2):
+>>
+>> read is not supported and will fail with EINVAL.
+>>
+>> select(2), poll(2) and similar:
+>>
+>> When polling on the eventfd marked by EFD_MASK flag, all the events
+>> specified in last written event flags shall be signaled.
+>>
+>> Signed-off-by: Martin Sustrik <sustrik@250bpm.com>
+>>
+>> [dhobsong@igel.co.jp: Rebased, and resubmitted for Linux 4.3]
+>> Signed-off-by: Damian Hobson-Garcia <dhobsong@igel.co.jp>
+>> ---
+>>  fs/eventfd.c                 | 102 ++++++++++++++++++++++++++++++++++++++-----
+>>  include/linux/eventfd.h      |  16 +------
+>>  include/uapi/linux/eventfd.h |  33 ++++++++++++++
+>>  3 files changed, 126 insertions(+), 25 deletions(-)
+>>  create mode 100644 include/uapi/linux/eventfd.h
+>>
+>> diff --git a/fs/eventfd.c b/fs/eventfd.c
+>> index 8d0c0df..1310779 100644
+>> --- a/fs/eventfd.c
+>> +++ b/fs/eventfd.c
+>> @@ -2,6 +2,7 @@
+>>   *  fs/eventfd.c
+>>   *
+>>   *  Copyright (C) 2007  Davide Libenzi <davidel@xmailserver.org>
+>> + *  Copyright (C) 2013  Martin Sustrik <sustrik@250bpm.com>
+>>   *
+>>   */
+>>  
+>> @@ -22,18 +23,31 @@
+>>  #include <linux/proc_fs.h>
+>>  #include <linux/seq_file.h>
+>>  
+>> +#define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
+>> +#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE | EFD_MASK)
+>> +#define EFD_MASK_VALID_EVENTS (POLLIN | POLLPRI | POLLOUT | POLLERR | POLLHUP)
+>> +
+>>  struct eventfd_ctx {
+>>  	struct kref kref;
+>>  	wait_queue_head_t wqh;
+>> -	/*
+>> -	 * Every time that a write(2) is performed on an eventfd, the
+>> -	 * value of the __u64 being written is added to "count" and a
+>> -	 * wakeup is performed on "wqh". A read(2) will return the "count"
+>> -	 * value to userspace, and will reset "count" to zero. The kernel
+>> -	 * side eventfd_signal() also, adds to the "count" counter and
+>> -	 * issue a wakeup.
+>> -	 */
+>> -	__u64 count;
+>> +	union {
+>> +		/*
+>> +		 * Every time that a write(2) is performed on an eventfd, the
+>> +		 * value of the __u64 being written is added to "count" and a
+>> +		 * wakeup is performed on "wqh". A read(2) will return the
+>> +		 * "count" value to userspace, and will reset "count" to zero.
+>> +		 * The kernel side eventfd_signal() also, adds to the "count"
+>> +		 * counter and issue a wakeup.
+>> +		 */
+>> +		__u64 count;
+>> +
+>> +		/*
+>> +		 * When using eventfd in EFD_MASK mode this stracture stores the
+>> +		 * current events to be signaled on the eventfd (events member)
+>> +		 * along with opaque user-defined data (data member).
+>> +		 */
+>> +		__u32 events;
+>> +	};
+>>  	unsigned int flags;
+>>  };
+>>  
+>> @@ -134,6 +148,14 @@ static unsigned int eventfd_poll(struct file *file, poll_table *wait)
+>>  	return events;
+>>  }
+>>  
+>> +static unsigned int eventfd_mask_poll(struct file *file, poll_table *wait)
+>> +{
+>> +	struct eventfd_ctx *ctx = file->private_data;
+>> +
+>> +	poll_wait(file, &ctx->wqh, wait);
+>> +	return ctx->events;
+>> +}
+>> +
+>>  static void eventfd_ctx_do_read(struct eventfd_ctx *ctx, __u64 *cnt)
+>>  {
+>>  	*cnt = (ctx->flags & EFD_SEMAPHORE) ? 1 : ctx->count;
+>> @@ -239,6 +261,14 @@ static ssize_t eventfd_read(struct file *file, char __user *buf, size_t count,
+>>  	return put_user(cnt, (__u64 __user *) buf) ? -EFAULT : sizeof(cnt);
+>>  }
+>>  
+>> +static ssize_t eventfd_mask_read(struct file *file, char __user *buf,
+>> +			    size_t count,
+>> +			    loff_t *ppos)
+>> +{
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +
+>>  static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t count,
+>>  			     loff_t *ppos)
+>>  {
+>> @@ -286,6 +316,28 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
+>>  	return res;
+>>  }
+>>  
+>> +static ssize_t eventfd_mask_write(struct file *file, const char __user *buf,
+>> +			     size_t count,
+>> +			     loff_t *ppos)
+>> +{
+>> +	struct eventfd_ctx *ctx = file->private_data;
+>> +	__u32 events;
+>> +
+>> +	if (count < sizeof(events))
+>> +		return -EINVAL;
+>> +	if (copy_from_user(&events, buf, sizeof(events)))
+>> +		return -EFAULT;
+>> +	if (events & ~EFD_MASK_VALID_EVENTS)
+>> +		return -EINVAL;
+>> +	spin_lock_irq(&ctx->wqh.lock);
+>> +	memcpy(&ctx->events, &events, sizeof(ctx->events));
+>> +	if (waitqueue_active(&ctx->wqh))
+>> +		wake_up_locked_poll(&ctx->wqh,
+>> +			(unsigned long)ctx->events);
+>> +	spin_unlock_irq(&ctx->wqh.lock);
+>> +	return sizeof(ctx->events);
+>> +}
+>> +
+>>  #ifdef CONFIG_PROC_FS
+>>  static void eventfd_show_fdinfo(struct seq_file *m, struct file *f)
+>>  {
+>> @@ -296,6 +348,16 @@ static void eventfd_show_fdinfo(struct seq_file *m, struct file *f)
+>>  		   (unsigned long long)ctx->count);
+>>  	spin_unlock_irq(&ctx->wqh.lock);
+>>  }
+>> +
+>> +static void eventfd_mask_show_fdinfo(struct seq_file *m, struct file *f)
+>> +{
+>> +	struct eventfd_ctx *ctx = f->private_data;
+>> +
+>> +	spin_lock_irq(&ctx->wqh.lock);
+>> +	seq_printf(m, "eventfd-mask: %x\n",
+>> +		ctx->events);
+>> +	spin_unlock_irq(&ctx->wqh.lock);
+>> +}
+>>  #endif
+>>  
+>>  static const struct file_operations eventfd_fops = {
+>> @@ -309,6 +371,17 @@ static const struct file_operations eventfd_fops = {
+>>  	.llseek		= noop_llseek,
+>>  };
+>>  
+>> +static const struct file_operations eventfd_mask_fops = {
+>> +#ifdef CONFIG_PROC_FS
+>> +	.show_fdinfo	= eventfd_mask_show_fdinfo,
+>> +#endif
+>> +	.release	= eventfd_release,
+>> +	.poll		= eventfd_mask_poll,
+>> +	.read		= eventfd_mask_read,
+>> +	.write		= eventfd_mask_write,
+>> +	.llseek		= noop_llseek,
+>> +};
+>> +
+>>  /**
+>>   * eventfd_fget - Acquire a reference of an eventfd file descriptor.
+>>   * @fd: [in] Eventfd file descriptor.
+>> @@ -392,6 +465,7 @@ struct file *eventfd_file_create(unsigned int count, int flags)
+>>  {
+>>  	struct file *file;
+>>  	struct eventfd_ctx *ctx;
+>> +	const struct file_operations *fops;
+>>  
+>>  	/* Check the EFD_* constants for consistency.  */
+>>  	BUILD_BUG_ON(EFD_CLOEXEC != O_CLOEXEC);
+>> @@ -406,10 +480,16 @@ struct file *eventfd_file_create(unsigned int count, int flags)
+>>  
+>>  	kref_init(&ctx->kref);
+>>  	init_waitqueue_head(&ctx->wqh);
+>> -	ctx->count = count;
+>> +	if (flags & EFD_MASK) {
+>> +		ctx->events = 0;
+>> +		fops = &eventfd_mask_fops;
+>> +	} else {
+>> +		ctx->count = count;
+>> +		fops = &eventfd_fops;
+>> +	}
+>>  	ctx->flags = flags;
+>>  
+>> -	file = anon_inode_getfile("[eventfd]", &eventfd_fops, ctx,
+>> +	file = anon_inode_getfile("[eventfd]", fops, ctx,
+>>  				  O_RDWR | (flags & EFD_SHARED_FCNTL_FLAGS));
+>>  	if (IS_ERR(file))
+>>  		eventfd_free_ctx(ctx);
+>> diff --git a/include/linux/eventfd.h b/include/linux/eventfd.h
+>> index ff0b981..87de343 100644
+>> --- a/include/linux/eventfd.h
+>> +++ b/include/linux/eventfd.h
+>> @@ -8,23 +8,11 @@
+>>  #ifndef _LINUX_EVENTFD_H
+>>  #define _LINUX_EVENTFD_H
+>>  
+>> +#include <uapi/linux/eventfd.h>
+>> +
+>>  #include <linux/fcntl.h>
+>>  #include <linux/wait.h>
+>>  
+>> -/*
+>> - * CAREFUL: Check include/uapi/asm-generic/fcntl.h when defining
+>> - * new flags, since they might collide with O_* ones. We want
+>> - * to re-use O_* flags that couldn't possibly have a meaning
+>> - * from eventfd, in order to leave a free define-space for
+>> - * shared O_* flags.
+>> - */
+>> -#define EFD_SEMAPHORE (1 << 0)
+>> -#define EFD_CLOEXEC O_CLOEXEC
+>> -#define EFD_NONBLOCK O_NONBLOCK
+>> -
+>> -#define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
+>> -#define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
+>> -
+>>  struct file;
+>>  
+>>  #ifdef CONFIG_EVENTFD
+>> diff --git a/include/uapi/linux/eventfd.h b/include/uapi/linux/eventfd.h
+>> new file mode 100644
+>> index 0000000..097dcad
+>> --- /dev/null
+>> +++ b/include/uapi/linux/eventfd.h
+>> @@ -0,0 +1,33 @@
+>> +/*
+>> + *  Copyright (C) 2013 Martin Sustrik <sustrik@250bpm.com>
+>> + *
+>> + *  This program is free software; you can redistribute it and/or modify
+>> + *  it under the terms of the GNU General Public License as published by
+>> + *  the Free Software Foundation; either version 2 of the License, or
+>> + *  (at your option) any later version.
+>> + */
+>> +
+>> +#ifndef _UAPI_LINUX_EVENTFD_H
+>> +#define _UAPI_LINUX_EVENTFD_H
+>> +
+>> +/* For O_CLOEXEC */
+>> +#include <linux/fcntl.h>
+>> +#include <linux/types.h>
+>> +
+>> +/*
+>> + * CAREFUL: Check include/asm-generic/fcntl.h when defining
+>> + * new flags, since they might collide with O_* ones. We want
+>> + * to re-use O_* flags that couldn't possibly have a meaning
+>> + * from eventfd, in order to leave a free define-space for
+>> + * shared O_* flags.
+>> + */
+>> +
+>> +/* Provide semaphore-like semantics for reads from the eventfd. */
+>> +#define EFD_SEMAPHORE (1 << 0)
+>> +/* Provide event mask semantics for the eventfd. */
+>> +#define EFD_MASK (1 << 1)
+>> +/*  Set the close-on-exec (FD_CLOEXEC) flag on the eventfd. */
+>> +#define EFD_CLOEXEC O_CLOEXEC
+>> +/*  Create the eventfd in non-blocking mode. */
+>> +#define EFD_NONBLOCK O_NONBLOCK
+>> +#endif /* _UAPI_LINUX_EVENTFD_H */
+>> -- 
+>> 1.9.1
