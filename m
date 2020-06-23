@@ -2,131 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FBD82049AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 08:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D2FE2049CF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jun 2020 08:22:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730977AbgFWGPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jun 2020 02:15:30 -0400
-Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:60084 "EHLO
-        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730515AbgFWGP3 (ORCPT
+        id S1730911AbgFWGW2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jun 2020 02:22:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730406AbgFWGW1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jun 2020 02:15:29 -0400
-Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
-        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id AEB30110169;
-        Tue, 23 Jun 2020 16:15:26 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jncDN-0003TN-O3; Tue, 23 Jun 2020 16:15:25 +1000
-Date:   Tue, 23 Jun 2020 16:15:25 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        hch@lst.de, dsterba@suse.cz, jthumshirn@suse.de,
-        fdmanana@gmail.com, Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 2/6] iomap: IOMAP_DIOF_PGINVALID_FAIL return if page
- invalidation fails
-Message-ID: <20200623061525.GI2040@dread.disaster.area>
-References: <20200622152457.7118-1-rgoldwyn@suse.de>
- <20200622152457.7118-3-rgoldwyn@suse.de>
- <20200622173330.GA11239@magnolia>
+        Tue, 23 Jun 2020 02:22:27 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87797C061573;
+        Mon, 22 Jun 2020 23:22:27 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id h22so1096558pjf.1;
+        Mon, 22 Jun 2020 23:22:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JqdXnjOTSYDDpPPJplHpLnDfQ3QmZFq8Qe/1BA+yRRc=;
+        b=njWd611Shn9oilZBlrtfevCvAa+D5bJCriFuIYOaE2EhlPpt86TFW+K5ll3a62Ws99
+         ZJmRYHBR8o9MKWlXMmPG2gJ7jgX6on7Yziu7RT8oMqJKzN/70zkbc6bgKpvIikqwtf3y
+         A5Hxf1Dr8EdDpWYS+ITIuLUaGSwvA6FzmikSBQ6jQxdHk/+F7pnoAeRCQwqVIPgihjLY
+         J2K9+tpBEp/LrLPCtvlLYCdqRCJTND1D2kVXknpee03ac4qsMIiCAQ1yvrdWqEIyycbb
+         xNp8Nz4Ix55H02VWByVZ7dk4FEneuP3TeovyZuKHHl/vlT8ZvhcGjQWN1jKfXe1SpaIn
+         8k4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JqdXnjOTSYDDpPPJplHpLnDfQ3QmZFq8Qe/1BA+yRRc=;
+        b=t3/JZJ4oN+N98Lnp2pBAJn9dWuL8nJC/gO+Tdp9AAQEJBYzUhB4hPFH+BJ4Dm3UCll
+         iM+GOvTCulHUDuXKKiaoK4Ob7phcE3WCtHjEtQx//Ud0+hUifk84FrAgf1S8p/rtYCRP
+         8hIEpLwckXgoJTeYZcT/621fYLMpP4LIEybvj6wwj5XrRHWuyyAoW1iTtirnCermcFeQ
+         W3H1UqMOCAxaOJjVRy3qO3pVoKt8d6l8keR20jn1DPWFweP/63TJD3n9k/8FiscL3ReJ
+         DV66fZrQ4aH1DxbjQvceshuZtuNmtiIHUV2m44Whnq2rvaY4pqolFq0Y1QRmue8jIFIc
+         ns5A==
+X-Gm-Message-State: AOAM530qlVP5Ukx7ZSYam9oxMBneo6gpIW5ZDZFQgGERwX23JNge5LYd
+        0HBUYOKpIx/NhdWrDJ6Pu2s=
+X-Google-Smtp-Source: ABdhPJwlHrhVW3Iqlh67brc+IJeHLCozs/uo71Rj5VLzU1+/Ou4KwjZaevfVL7FipceVqNvC/obtcA==
+X-Received: by 2002:a17:90a:20e9:: with SMTP id f96mr581806pjg.13.1592893346950;
+        Mon, 22 Jun 2020 23:22:26 -0700 (PDT)
+Received: from dc803.localdomain (FL1-125-199-162-203.hyg.mesh.ad.jp. [125.199.162.203])
+        by smtp.gmail.com with ESMTPSA id 207sm16163690pfw.190.2020.06.22.23.22.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jun 2020 23:22:26 -0700 (PDT)
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+To:     kohada.t2@gmail.com
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2 v5] exfat: write multiple sectors at once
+Date:   Tue, 23 Jun 2020 15:22:19 +0900
+Message-Id: <20200623062219.7148-1-kohada.t2@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200622173330.GA11239@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
-        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
-        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=iox4zFpeAAAA:8 a=yPCof4ZbAAAA:8
-        a=7-415B0cAAAA:8 a=qqUFr-TMUkpXaUc-sFEA:9 a=CjuIK1q_8ugA:10
-        a=WzC6qhA0u3u7Ye7llzcV:22 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 22, 2020 at 10:33:30AM -0700, Darrick J. Wong wrote:
-> On Mon, Jun 22, 2020 at 10:24:53AM -0500, Goldwyn Rodrigues wrote:
-> > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > 
-> > The flag indicates that if the page invalidation fails, it should return
-> > back control to the filesystem so it may fallback to buffered mode.
-> > 
-> > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> 
-> Looks reasonable enough, I suppose...
-> 
-> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> 
-> --D
-> 
-> > ---
-> >  fs/iomap/direct-io.c  | 8 +++++++-
-> >  include/linux/iomap.h | 5 +++++
-> >  2 files changed, 12 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > index 7ed857196a39..20c4370e6b1b 100644
-> > --- a/fs/iomap/direct-io.c
-> > +++ b/fs/iomap/direct-io.c
-> > @@ -484,8 +484,14 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> >  	 */
-> >  	ret = invalidate_inode_pages2_range(mapping,
-> >  			pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
-> > -	if (ret)
-> > +	if (ret) {
-> > +		if (dio_flags & IOMAP_DIOF_PGINVALID_FAIL) {
-> > +			if (ret == -EBUSY)
-> > +				ret = 0;
-> > +			goto out_free_dio;
-> > +		}
-> >  		dio_warn_stale_pagecache(iocb->ki_filp);
-> > +	}
-> >  	ret = 0;
-> >  
-> >  	if (iov_iter_rw(iter) == WRITE && !wait_for_completion &&
-> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> > index f6230446b08d..95024e28dec5 100644
-> > --- a/include/linux/iomap.h
-> > +++ b/include/linux/iomap.h
-> > @@ -261,6 +261,11 @@ struct iomap_dio_ops {
-> >  
-> >  /* Wait for completion of DIO */
-> >  #define IOMAP_DIOF_WAIT_FOR_COMPLETION 		0x1
-> > +/*
-> > + * Return zero if page invalidation fails, so caller filesystem may fallback
-> > + * to buffered I/O
-> > + */
-> > +#define IOMAP_DIOF_PGINVALID_FAIL		0x2
+Write multiple sectors at once when updating dir-entries.
+Add exfat_update_bhs() for that. It wait for write completion once
+instead of sector by sector.
+It's only effective if sync enabled.
 
-That's a mouthful of letter salad. :(
+Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
+---
+Changes in v2:
+ - Split into 'write multiple sectors at once'
+   and 'add error check when updating dir-entries'
+Changes in v3
+ - Rebase to latest exfat-dev
+Changes in v4
+ - Use if/else instead of conditional operator
+Changes in v5
+ - Remove Reviewed-by tag
 
-Basically, you want the DIO to return a short IO if there is a busy
-page cache on the inode?
+ fs/exfat/dir.c      | 15 +++++++++------
+ fs/exfat/exfat_fs.h |  1 +
+ fs/exfat/misc.c     | 19 +++++++++++++++++++
+ 3 files changed, 29 insertions(+), 6 deletions(-)
 
-IOWs, you don't want the page cache to become stale as a result of
-the DIO being executed? So what the caller is actually asking for is
-that the dio avoids creating stale page cache pages? Hence:
-
-/*
- * Direct IO will attempt to keep the page cache coherent by
- * invalidating the inode's page cache over the range of the DIO.
- * That can fail if something else is actively using the page cache.
- * If this happens and the DIO continues, the data in the page
- * cache will become stale.
- *
- * Set this flag if you want the DIO to abort without issuing any IO
- * or error if it fails to invalidate the page cache successfully.
- * This allows the IO submitter to resubmit the entire IO as a
- * buffered IO through the page cache.
- */
-#define IOMAP_DIO_RWF_NO_STALE_PAGECACHE	(1 << 1)
-
-Cheers,
-
-Dave.
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index 02acbb6ddf02..7c2e29632634 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -606,13 +606,16 @@ void exfat_update_dir_chksum_with_entry_set(struct exfat_entry_set_cache *es)
+ 
+ void exfat_free_dentry_set(struct exfat_entry_set_cache *es, int sync)
+ {
+-	int i;
++	int i, err = 0;
+ 
+-	for (i = 0; i < es->num_bh; i++) {
+-		if (es->modified)
+-			exfat_update_bh(es->bh[i], sync);
+-		brelse(es->bh[i]);
+-	}
++	if (es->modified)
++		err = exfat_update_bhs(es->bh, es->num_bh, sync);
++
++	for (i = 0; i < es->num_bh; i++)
++		if (err)
++			bforget(es->bh[i]);
++		else
++			brelse(es->bh[i]);
+ 	kfree(es);
+ }
+ 
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 84664024e51e..cbb00ee97183 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -512,6 +512,7 @@ void exfat_set_entry_time(struct exfat_sb_info *sbi, struct timespec64 *ts,
+ u16 exfat_calc_chksum16(void *data, int len, u16 chksum, int type);
+ u32 exfat_calc_chksum32(void *data, int len, u32 chksum, int type);
+ void exfat_update_bh(struct buffer_head *bh, int sync);
++int exfat_update_bhs(struct buffer_head **bhs, int nr_bhs, int sync);
+ void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
+ 		unsigned int size, unsigned char flags);
+ void exfat_chain_dup(struct exfat_chain *dup, struct exfat_chain *ec);
+diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c
+index 8a3dde59052b..564718747fb2 100644
+--- a/fs/exfat/misc.c
++++ b/fs/exfat/misc.c
+@@ -172,6 +172,25 @@ void exfat_update_bh(struct buffer_head *bh, int sync)
+ 		sync_dirty_buffer(bh);
+ }
+ 
++int exfat_update_bhs(struct buffer_head **bhs, int nr_bhs, int sync)
++{
++	int i, err = 0;
++
++	for (i = 0; i < nr_bhs; i++) {
++		set_buffer_uptodate(bhs[i]);
++		mark_buffer_dirty(bhs[i]);
++		if (sync)
++			write_dirty_buffer(bhs[i], 0);
++	}
++
++	for (i = 0; i < nr_bhs && sync; i++) {
++		wait_on_buffer(bhs[i]);
++		if (!buffer_uptodate(bhs[i]))
++			err = -EIO;
++	}
++	return err;
++}
++
+ void exfat_chain_set(struct exfat_chain *ec, unsigned int dir,
+ 		unsigned int size, unsigned char flags)
+ {
 -- 
-Dave Chinner
-david@fromorbit.com
+2.25.1
+
