@@ -2,116 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA1C4207845
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 18:03:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BA83207870
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 18:10:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404817AbgFXQDm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 12:03:42 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:35695 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404749AbgFXQD2 (ORCPT
+        id S2404639AbgFXQJ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 12:09:57 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33302 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404531AbgFXQJ4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 12:03:28 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id C478C5805AB;
-        Wed, 24 Jun 2020 12:03:25 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 24 Jun 2020 12:03:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=TE2/e9FpO75wG6kqeeVhy+Ld0ru
-        0iGhAExHCNmnHBis=; b=VEYS+lzHIBd4K6Z+E7htDhS/pGNShyYjG6uGMr9DNO2
-        K/f7Vv4qZ98SBolL/kpWohOg5tOnLx5v57TbqpIpiccJTOK0bVFcWU/anuId4wqh
-        5HMH10fMfe54j2sLkDLZdxv9m1Am8Eg7N5p+jT8wSJy5Q8N7E0VMzMgxHQVqcxnE
-        MbXT6KveM8hjVnrP+zKNCBka2aHuFEWVHKy8A1gHK5p7IBPk6dsSHio7+xt9Nski
-        jCpqO30GKl5d7y9PmCc/vK2Cff3Hp6MmqzKad4sBLtitW2tIN2ljpzGUbm6c4img
-        Z1acHReOOsAnVMTArh8Gch6ni1P18sDHcenCTgMfg1g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=TE2/e9
-        FpO75wG6kqeeVhy+Ld0ru0iGhAExHCNmnHBis=; b=JrtWcRMkVFlj01KYKlXQ8b
-        b9KIqG5tA+3nAgMhwtrm9jZkJDVh9j7DQVYvzjCRvjO9p4a2O6qMZxvDrf8X/kjc
-        AW55yreGCtIswby7D/mbcbBucZChFoVNH0oGd1W2APeBPK2pC7ljhY7WfcTOHT82
-        pZNOPd/EdD4NtwVCeIgcCpDz3GYX8WczbHevSOTHzoWQS23yh/d6lTT1ClmCYaIJ
-        vG8jl/ylknCH8r/MYFqLVUg2GH/uEBdEqXJpTmAx4/AEV07c1KH2EPHVrQIyl5M+
-        fjWay30aa2tkpj5m8ohQimyL7I5eNUVN0OrC4IZKPYvOFdK+cdlSPg94EuZvsu3Q
-        ==
-X-ME-Sender: <xms:TXnzXjlECZTW4ODrs_poojQ1DYw-fologPd04jSc6w40_bkIiXpi4A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudekjedgledtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeevueehje
-    fgfffgiedvudekvdektdelleelgefhleejieeugeegveeuuddukedvteenucfkphepkeef
-    rdekiedrkeelrddutdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
-X-ME-Proxy: <xmx:TXnzXm1ev_WQ-QVkwTqHS6wdKdc5ukBwweQHwy8rOiB4u-ditdGmLA>
-    <xmx:TXnzXpp6LRvvMoCfOXdPGhBmLqTWoaRJXUky9kW1xarRJ_4RoBXMHA>
-    <xmx:TXnzXrn7XkVJoPVnZls4QB4G1QLxtIS8hVgABCsEm_vSb_QE4zbg2A>
-    <xmx:TXnzXrx8_ue5qv2roYlYk0ogjWr5CZGYd-Vdpu2bW4P8n5qP_ZycTg>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 951EB3280059;
-        Wed, 24 Jun 2020 12:03:24 -0400 (EDT)
-Date:   Wed, 24 Jun 2020 18:03:22 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>,
-        Jaedon Shin <jaedon.shin@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>,
-        Satendra Singh Thakur <satendra.t@samsung.com>,
-        "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" 
-        <linux-media@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH stable 4.9 00/21] Unbreak 32-bit DVB applications on
- 64-bit kernels
-Message-ID: <20200624160322.GA2096759@kroah.com>
-References: <20200605162518.28099-1-florian.fainelli@broadcom.com>
- <20200623191334.GA279616@kroah.com>
- <99a35736-6539-4a83-b0f0-74a8cf28d85d@gmail.com>
+        Wed, 24 Jun 2020 12:09:56 -0400
+Received: by mail-pf1-f196.google.com with SMTP id f9so1371668pfn.0;
+        Wed, 24 Jun 2020 09:09:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=DXTGnqae9YKhKIamwag0tCEqKTyhK0PYwMd2k+8bi0o=;
+        b=N0DHoN5nwmmrjTQSrMQ4BuTxEHoelQhjxKyevYv5cNXK+yEYDiHIT2T7Wr1duuXtkn
+         XvMYYC8UDsizZ9tQj16XMEy4GFS2Oidih7dXKLawEYXQpbFb8LO6JpkGqkzfIU2vR96c
+         pA3e6oLZr/JBCaEjiQOMp/Pmf/bA1PNXTBuQEiSu1iThAK7Nzwx9Cbax0jdoTcZddmtq
+         NHcmlK5yruUvCglHiBcFmiq0aKJBODgofP8uYAaEbCFpsuq5RRfP5JYfqmdNfQLj7NDx
+         RsdodkiDwc4C/Gr6q8z/RyR40/NFQ/Sddr6Bf2iqRG3oCMDvbs7vcjFkA+2eb8xUfEWU
+         GKkQ==
+X-Gm-Message-State: AOAM531s/2y96JbeaRwGvvWFd6gzBm7/PZeEh4q3O7XjO04I3Kl2GhhI
+        UWmrswJg6hDU9rzfUI4LoRU=
+X-Google-Smtp-Source: ABdhPJz7KuHyVq6mrCHaNrsdJ4rdxo9vvtDFtAlwtCcIngaCRJg5DVLieAPvLLlWDXOb7tRXxvQHXg==
+X-Received: by 2002:a62:7c49:: with SMTP id x70mr28351238pfc.66.1593014995813;
+        Wed, 24 Jun 2020 09:09:55 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id q129sm19485373pfc.60.2020.06.24.09.09.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jun 2020 09:09:54 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 64A8A40430; Wed, 24 Jun 2020 16:09:53 +0000 (UTC)
+Date:   Wed, 24 Jun 2020 16:09:53 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, ast@kernel.org,
+        axboe@kernel.dk, bfields@fieldses.org,
+        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
+        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
+        davem@davemloft.net, dhowells@redhat.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
+        keyrings@vger.kernel.org, kuba@kernel.org,
+        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
+        philipp.reisner@linbit.com, ravenexp@gmail.com,
+        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
+        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
+        netdev@vger.kernel.org, markward@linux.ibm.com,
+        linux-s390 <linux-s390@vger.kernel.org>
+Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
+ seems to break linux bridge on s390x (bisected)
+Message-ID: <20200624160953.GH4332@42.do-not-panic.com>
+References: <20200610154923.27510-5-mcgrof@kernel.org>
+ <20200623141157.5409-1-borntraeger@de.ibm.com>
+ <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
+ <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
+ <20200624144311.GA5839@infradead.org>
+ <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <99a35736-6539-4a83-b0f0-74a8cf28d85d@gmail.com>
+In-Reply-To: <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 24, 2020 at 08:41:06AM -0700, Florian Fainelli wrote:
+On Wed, Jun 24, 2020 at 05:54:46PM +0200, Christian Borntraeger wrote:
 > 
 > 
-> On 6/23/2020 12:13 PM, Greg KH wrote:
-> > On Fri, Jun 05, 2020 at 09:24:57AM -0700, Florian Fainelli wrote:
-> >> Hi all,
-> >>
-> >> This long patch series was motivated by backporting Jaedon's changes
-> >> which add a proper ioctl compatibility layer for 32-bit applications
-> >> running on 64-bit kernels. We have a number of Android TV-based products
-> >> currently running on the 4.9 kernel and this was broken for them.
-> >>
-> >> Thanks to Robert McConnell for identifying and providing the patches in
-> >> their initial format.
-> >>
-> >> In order for Jaedon's patches to apply cleanly a number of changes were
-> >> applied to support those changes. If you deem the patch series too big
-> >> please let me know.
+> On 24.06.20 16:43, Christoph Hellwig wrote:
+> > On Wed, Jun 24, 2020 at 01:11:54PM +0200, Christian Borntraeger wrote:
+> >> Does anyone have an idea why "umh: fix processed error when UMH_WAIT_PROC is used" breaks the
+> >> linux-bridge on s390?
 > > 
-> > Now queued up,t hanks.
+> > Are we even sure this is s390 specific and doesn't happen on other
+> > architectures with the same bridge setup?
 > 
-> Thanks a lot, I did not get an email about "[PATCH stable 4.9 02/21]
-> media: dvb_frontend: initialize variable s with FE_NONE instead of 0"
-> being applied, not that it is a very important change,
+> Fair point. AFAIK nobody has tested this yet on x86.
 
-That should be there, I merged it before I did the whole long series and
-realised I should just automate it, sorry about that.
+Regardless, can you enable dynamic debug prints, to see if the kernel
+reveals anything on the bridge code which may be relevant:
 
-thanks,
+echo "file net/bridge/* +p" > /sys/kernel/debug/dynamic_debug/control
 
-greg k-h
+  Luis
