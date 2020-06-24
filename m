@@ -2,170 +2,299 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8452207BAD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 20:39:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00A33207BB5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 20:44:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406142AbgFXSip (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 14:38:45 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54116 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405808AbgFXSio (ORCPT
+        id S2406131AbgFXSn5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 14:43:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33752 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405581AbgFXSn5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 14:38:44 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05OIWXBT040581;
-        Wed, 24 Jun 2020 14:38:04 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwyh3t80-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 Jun 2020 14:38:04 -0400
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05OIXIeF043584;
-        Wed, 24 Jun 2020 14:38:03 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwyh3t6r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 Jun 2020 14:38:02 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05OIa7Fm027253;
-        Wed, 24 Jun 2020 18:38:00 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma02fra.de.ibm.com with ESMTP id 31uusk0f16-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 Jun 2020 18:37:59 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05OIbvmj7012818
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Jun 2020 18:37:57 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4E4EDA4051;
-        Wed, 24 Jun 2020 18:37:57 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 105AAA4053;
-        Wed, 24 Jun 2020 18:37:56 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.145.22.164])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 24 Jun 2020 18:37:55 +0000 (GMT)
-Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
- seems to break linux bridge on s390x (bisected)
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>, ast@kernel.org,
-        axboe@kernel.dk, bfields@fieldses.org,
-        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
-        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
-        davem@davemloft.net, dhowells@redhat.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
-        keyrings@vger.kernel.org, kuba@kernel.org,
-        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
-        philipp.reisner@linbit.com, ravenexp@gmail.com,
-        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
-        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
-        netdev@vger.kernel.org, markward@linux.ibm.com,
-        linux-s390 <linux-s390@vger.kernel.org>
-References: <20200610154923.27510-5-mcgrof@kernel.org>
- <20200623141157.5409-1-borntraeger@de.ibm.com>
- <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
- <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
- <20200624144311.GA5839@infradead.org>
- <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
- <20200624160953.GH4332@42.do-not-panic.com>
- <ea41e2a9-61f7-aec1-79e5-7b08b6dd5119@de.ibm.com>
- <4e27098e-ac8d-98f0-3a9a-ea25242e24ec@de.ibm.com>
- <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
-Message-ID: <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
-Date:   Wed, 24 Jun 2020 20:37:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Wed, 24 Jun 2020 14:43:57 -0400
+Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76403C061573;
+        Wed, 24 Jun 2020 11:43:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=zg92tDS6FDjCP4scuZwVVlfnJ/vZaSsy9tayc8dvtt4=; b=dVBeegFqlQeXHW8DJ+0JOtHGky
+        3dJ+09TpI7Xxa8lEVDGwTtPWSP2N3p787HLsfspZO05G/oaAKqFrVj2qHVgBbd1YCaLvHZeMczq37
+        /RnhiEdFL7+pEhj11pXdrRS1QahDnfJC1UKVn/CE/85s6snGc4/yl0aQneqs3Go44xGX/Pk0Jqi8L
+        mo88KhKoKU3UUGih/jCNthzscWQfhgKb4Ej7dAYKShkR3/tsn6iJ0GTylvXul3fUa8JkW1NzxgHY1
+        f0q3sQqdbYv7tOIIGZUYhf+/KOD4leWGQ30avUPjK55UJ+ZrUQXSaP54NnVIYvXpoTdBvOUceVsSm
+        nerjS4ag==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1joAMz-0004wj-AA; Wed, 24 Jun 2020 18:43:37 +0000
+Date:   Wed, 24 Jun 2020 19:43:37 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 03/11] fs: add new read_uptr and write_uptr file
+ operations
+Message-ID: <20200624184337.GV21350@casper.infradead.org>
+References: <20200624162901.1814136-1-hch@lst.de>
+ <20200624162901.1814136-4-hch@lst.de>
+ <CAHk-=wit9enePELG=-HnLsr0nY5bucFNjqAqWoFTuYDGR1P4KA@mail.gmail.com>
+ <20200624175644.GR21350@casper.infradead.org>
+ <20200624175905.GA25981@lst.de>
+ <20200624183743.GA26747@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-24_14:2020-06-24,2020-06-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 cotscore=-2147483648
- spamscore=0 phishscore=0 suspectscore=0 bulkscore=0 impostorscore=0
- mlxscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0 adultscore=0
- clxscore=1015 priorityscore=1501 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006240121
+Content-Type: multipart/mixed; boundary="wRRV7LY7NUeQGEoC"
+Content-Disposition: inline
+In-Reply-To: <20200624183743.GA26747@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 24.06.20 20:32, Christian Borntraeger wrote:
-[...]> 
-> So the translations look correct. But your change is actually a sematic change
-> if(ret) will only trigger if there is an error
-> if (KWIFEXITED(ret)) will always trigger when the process ends. So we will always overwrite -ECHILD
-> and we did not do it before. 
+On Wed, Jun 24, 2020 at 08:37:43PM +0200, Christoph Hellwig wrote:
+> On Wed, Jun 24, 2020 at 07:59:05PM +0200, Christoph Hellwig wrote:
+> > On Wed, Jun 24, 2020 at 06:56:44PM +0100, Matthew Wilcox wrote:
+> > >  	/* don't even try if the size is too large */
+> > > +	error = -ENOMEM;
+> > >  	if (count > KMALLOC_MAX_SIZE)
+> > > -		return -ENOMEM;
+> > > +		goto out;
+> > > +	kbuf = kzalloc(count, GFP_KERNEL);
+> > > +	if (!kbuf)
+> > > +		goto out;
+> > >  
+> > >  	if (write) {
+> > > +		error = -EFAULT;
+> > > +		if (!copy_from_iter_full(kbuf, count, iter))
+> > >  			goto out;
+> > >  	}
+> > 
+> > The nul-termination for the write cases seems to be lost here.
 > 
+> Version with the count and termination fixed below.  Can I get your
+> signoff?  If testing passes that means I can go back to my
+> kernel_read/write version from the set_fs removal tree with it.
 
-So the right fix is
+Sure!
 
-diff --git a/kernel/umh.c b/kernel/umh.c
-index f81e8698e36e..a3a3196e84d1 100644
---- a/kernel/umh.c
-+++ b/kernel/umh.c
-@@ -154,7 +154,7 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
-                 * the real error code is already in sub_info->retval or
-                 * sub_info->retval is 0 anyway, so don't mess with it then.
-                 */
--               if (KWIFEXITED(ret))
-+               if (KWEXITSTATUS(ret))
-                        sub_info->retval = KWEXITSTATUS(ret);
-        }
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+I went with some slightly different fixes, but I'm having trouble
+sending email (the new infradead.org is not quite set up right yet).
+I've attached the two fixes to this email in case you want to
+incorporate them in some way.
+
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-sysctl-Call-sysctl_head_finish-on-error.patch"
+
+From 3c68e4efcc50192962a8cd18c67fb6fad2493713 Mon Sep 17 00:00:00 2001
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Date: Wed, 24 Jun 2020 14:12:02 -0400
+Subject: [PATCH 1/2] sysctl: Call sysctl_head_finish on error
+To: hch@lst.de
+
+This error path returned directly instead of calling sysctl_head_finish().
+
+Fixes: ef9d965bc8b6 ("sysctl: reject gigantic reads/write to sysctl files")
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/proc/proc_sysctl.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 42c5128c7d1c..6c1166ccdaea 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -566,8 +566,9 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
+ 		goto out;
  
+ 	/* don't even try if the size is too large */
+-	if (count > KMALLOC_MAX_SIZE)
+-		return -ENOMEM;
++	error = -ENOMEM;
++	if (count >= KMALLOC_MAX_SIZE)
++		goto out;
+ 
+ 	if (write) {
+ 		kbuf = memdup_user_nul(ubuf, count);
+@@ -576,7 +577,6 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
+ 			goto out;
+ 		}
+ 	} else {
+-		error = -ENOMEM;
+ 		kbuf = kzalloc(count, GFP_KERNEL);
+ 		if (!kbuf)
+ 			goto out;
+-- 
+2.27.0
 
 
-I think.
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0002-sysctl-Convert-to-iter-interfaces.patch"
+
+From 93775b67bbc3e4f761808b216bc76127f89f9ad7 Mon Sep 17 00:00:00 2001
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Date: Wed, 24 Jun 2020 14:31:08 -0400
+Subject: [PATCH 2/2] sysctl: Convert to iter interfaces
+To: hch@lst.de
+
+Using the read_iter/write_iter interfaces allows for in-kernel users
+to set sysctls without using set_fs().  Also, the buffer is a string,
+so give it the real type of 'char *', not void *.
+
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/proc/proc_sysctl.c      | 44 ++++++++++++++++++--------------------
+ include/linux/bpf-cgroup.h |  2 +-
+ kernel/bpf/cgroup.c        |  2 +-
+ 3 files changed, 23 insertions(+), 25 deletions(-)
+
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 6c1166ccdaea..9f6b9c3e3fda 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -12,6 +12,7 @@
+ #include <linux/cred.h>
+ #include <linux/namei.h>
+ #include <linux/mm.h>
++#include <linux/uio.h>
+ #include <linux/module.h>
+ #include <linux/bpf-cgroup.h>
+ #include <linux/mount.h>
+@@ -540,13 +541,14 @@ static struct dentry *proc_sys_lookup(struct inode *dir, struct dentry *dentry,
+ 	return err;
+ }
+ 
+-static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
+-		size_t count, loff_t *ppos, int write)
++static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
++		int write)
+ {
+-	struct inode *inode = file_inode(filp);
++	struct inode *inode = file_inode(iocb->ki_filp);
+ 	struct ctl_table_header *head = grab_header(inode);
+ 	struct ctl_table *table = PROC_I(inode)->sysctl_entry;
+-	void *kbuf;
++	size_t count = iov_iter_count(iter);
++	char *kbuf;
+ 	ssize_t error;
+ 
+ 	if (IS_ERR(head))
+@@ -569,32 +571,30 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
+ 	error = -ENOMEM;
+ 	if (count >= KMALLOC_MAX_SIZE)
+ 		goto out;
++	kbuf = kzalloc(count + 1, GFP_KERNEL);
++	if (!kbuf)
++		goto out;
+ 
+ 	if (write) {
+-		kbuf = memdup_user_nul(ubuf, count);
+-		if (IS_ERR(kbuf)) {
+-			error = PTR_ERR(kbuf);
+-			goto out;
+-		}
+-	} else {
+-		kbuf = kzalloc(count, GFP_KERNEL);
+-		if (!kbuf)
++		error = -EFAULT;
++		if (!copy_from_iter_full(kbuf, count, iter))
+ 			goto out;
++		kbuf[count] = '\0';
+ 	}
+ 
+ 	error = BPF_CGROUP_RUN_PROG_SYSCTL(head, table, write, &kbuf, &count,
+-					   ppos);
++					   &iocb->ki_pos);
+ 	if (error)
+ 		goto out_free_buf;
+ 
+ 	/* careful: calling conventions are nasty here */
+-	error = table->proc_handler(table, write, kbuf, &count, ppos);
++	error = table->proc_handler(table, write, kbuf, &count, &iocb->ki_pos);
+ 	if (error)
+ 		goto out_free_buf;
+ 
+ 	if (!write) {
+ 		error = -EFAULT;
+-		if (copy_to_user(ubuf, kbuf, count))
++		if (copy_to_iter(kbuf, count, iter) < count)
+ 			goto out_free_buf;
+ 	}
+ 
+@@ -607,16 +607,14 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
+ 	return error;
+ }
+ 
+-static ssize_t proc_sys_read(struct file *filp, char __user *buf,
+-				size_t count, loff_t *ppos)
++static ssize_t proc_sys_read(struct kiocb *iocb, struct iov_iter *iter)
+ {
+-	return proc_sys_call_handler(filp, (void __user *)buf, count, ppos, 0);
++	return proc_sys_call_handler(iocb, iter, 0);
+ }
+ 
+-static ssize_t proc_sys_write(struct file *filp, const char __user *buf,
+-				size_t count, loff_t *ppos)
++static ssize_t proc_sys_write(struct kiocb *iocb, struct iov_iter *iter)
+ {
+-	return proc_sys_call_handler(filp, (void __user *)buf, count, ppos, 1);
++	return proc_sys_call_handler(iocb, iter, 1);
+ }
+ 
+ static int proc_sys_open(struct inode *inode, struct file *filp)
+@@ -853,8 +851,8 @@ static int proc_sys_getattr(const struct path *path, struct kstat *stat,
+ static const struct file_operations proc_sys_file_operations = {
+ 	.open		= proc_sys_open,
+ 	.poll		= proc_sys_poll,
+-	.read		= proc_sys_read,
+-	.write		= proc_sys_write,
++	.read_iter	= proc_sys_read,
++	.write_iter	= proc_sys_write,
+ 	.llseek		= default_llseek,
+ };
+ 
+diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
+index c66c545e161a..f81d3b3752f9 100644
+--- a/include/linux/bpf-cgroup.h
++++ b/include/linux/bpf-cgroup.h
+@@ -132,7 +132,7 @@ int __cgroup_bpf_check_dev_permission(short dev_type, u32 major, u32 minor,
+ 
+ int __cgroup_bpf_run_filter_sysctl(struct ctl_table_header *head,
+ 				   struct ctl_table *table, int write,
+-				   void **buf, size_t *pcount, loff_t *ppos,
++				   char **buf, size_t *pcount, loff_t *ppos,
+ 				   enum bpf_attach_type type);
+ 
+ int __cgroup_bpf_run_filter_setsockopt(struct sock *sock, int *level,
+diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+index 4d76f16524cc..45a918fc573d 100644
+--- a/kernel/bpf/cgroup.c
++++ b/kernel/bpf/cgroup.c
+@@ -1202,7 +1202,7 @@ const struct bpf_verifier_ops cg_dev_verifier_ops = {
+  */
+ int __cgroup_bpf_run_filter_sysctl(struct ctl_table_header *head,
+ 				   struct ctl_table *table, int write,
+-				   void **buf, size_t *pcount, loff_t *ppos,
++				   char **buf, size_t *pcount, loff_t *ppos,
+ 				   enum bpf_attach_type type)
+ {
+ 	struct bpf_sysctl_kern ctx = {
+-- 
+2.27.0
+
+
+--wRRV7LY7NUeQGEoC--
