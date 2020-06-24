@@ -2,98 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C3D920787C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 18:13:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64DFF2078CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 18:17:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404744AbgFXQNY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 12:13:24 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36854 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404235AbgFXQNW (ORCPT
+        id S2404767AbgFXQOC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 12:14:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38646 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404235AbgFXQOC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 12:13:22 -0400
-Received: by mail-pg1-f196.google.com with SMTP id p3so1644502pgh.3;
-        Wed, 24 Jun 2020 09:13:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=K5HA5pFN0d7RWrFcMOeZ4eZsZOCwgkaKOKIyoGUunJA=;
-        b=bdoNe4HE152P67bqB4iz1TVFpSLKd5OLRNA8ZPD4Nx764LgDhIOQkoCOwpgshVPUlC
-         xmAg1IjdbKAPc58tpiZ8kPqndDxtcQp+nCYHryf0E8MEDiKgH67xMVcz0VOB2dfV7Sm6
-         SSZylCQCalt5a0mIATsr/DE7qglta/VKXnlUTkoqBpLAaMN00mnqQvEluSEBNwbz+CJ3
-         1fOqyTjFmJ7xWRUx0ARAvF9C/YqItCR2X3K96qaqvoIBmg7cw8LJauxlCcvMMIC+vcXl
-         GueZuSNQT2PqCZ+Vnlfd+9GaY6WO0xQeVlIrUK+jiz34ZIOzPCztqXShzjbigNDuaHva
-         EhKg==
-X-Gm-Message-State: AOAM531BWTz6jecWjjEW9ugvC/+O+rhqZas0ZaHsC7I6Ld8MngXestOd
-        7YAHw2WExEfmE7ca6pnvb0M=
-X-Google-Smtp-Source: ABdhPJxE1ygpkPiPc7c+3/yQpwGQm5PBcnPHrRJMZIslGuNTvYjGLTfGT0VAXd0ojktX0RNgdf5uBw==
-X-Received: by 2002:a63:7f5a:: with SMTP id p26mr15162576pgn.117.1593015201848;
-        Wed, 24 Jun 2020 09:13:21 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id 23sm20626008pfy.199.2020.06.24.09.13.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jun 2020 09:13:20 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id B918940430; Wed, 24 Jun 2020 16:13:19 +0000 (UTC)
-Date:   Wed, 24 Jun 2020 16:13:19 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Martin Doucha <mdoucha@suse.cz>, hch@infradead.org
-Cc:     ast@kernel.org, axboe@kernel.dk, bfields@fieldses.org,
-        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
-        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
-        davem@davemloft.net, dhowells@redhat.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
-        keyrings@vger.kernel.org, kuba@kernel.org,
-        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
-        philipp.reisner@linbit.com, ravenexp@gmail.com,
-        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
-        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
-        netdev@vger.kernel.org, markward@linux.ibm.com,
-        linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
- seems to break linux bridge on s390x (bisected)
-Message-ID: <20200624161319.GM13911@42.do-not-panic.com>
-References: <20200610154923.27510-5-mcgrof@kernel.org>
- <20200623141157.5409-1-borntraeger@de.ibm.com>
- <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
- <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
- <20200624120546.GC4332@42.do-not-panic.com>
- <20200624131725.GL13911@42.do-not-panic.com>
+        Wed, 24 Jun 2020 12:14:02 -0400
+Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55344C061573;
+        Wed, 24 Jun 2020 09:14:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=90OlxAKKJk4MpfGF1wAK+VcXxFJhMFQm3EERw9Z5SnM=; b=gY7cW0jyIntr1TMC49eyr8618s
+        pp7PTXnQGIfLOzJhZrUt7AKPtN7e5veG32FkbWOnsBdcKISt7caT3QrJqO3tXiLzLW8JrImMsZcpo
+        4Pv1tVxQ5hc0Dmk763ZRBduhuQC4nmmuM1MCjYAIisGws+cWSdZO4S4c8SpwJ2Aup5MKRG2xovdEf
+        lU+I6pL16Qw44QQ/sy10leiibrFdZRFXCwMyvqVymtLmW1WXuZC/dD8mz3KgIy+vowJ4+6qHsKEv1
+        tMLqzPy0Y8NscRvPZqg7+4Ng62bVC1ovT3Evc/wvkJoJexju596z3TJ2tEzxsFjGBrHi6MGracAqG
+        eS1my67g==;
+Received: from [2001:4bb8:180:a3:5c7c:8955:539d:955b] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jo81p-0005xR-56; Wed, 24 Jun 2020 16:13:37 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+Subject: clean up kernel_{read,write} & friends v5
+Date:   Wed, 24 Jun 2020 18:13:21 +0200
+Message-Id: <20200624161335.1810359-1-hch@lst.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200624131725.GL13911@42.do-not-panic.com>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 24, 2020 at 01:17:25PM +0000, Luis Chamberlain wrote:
-> I found however an LTP bug indicating the need to test for
-> s390 wait macros [0] in light of a recent bug in glibc for s390.
-> I am asking for references to that issue given I cannot find
-> any mention of this on glibc yet.
-> 
-> [0] https://github.com/linux-test-project/ltp/issues/605
+Hi Al,
 
-I looked into this and the bug associated was:
+this series fixes a few issues and cleans up the helpers that read from
+or write to kernel space buffers, and ensures that we don't change the
+address limit if we are using the ->read_iter and ->write_iter methods
+that don't need the changed address limit.
 
-https://sourceware.org/bugzilla/show_bug.cgi?id=19613
+I did not add your suggested comments on the instances using
+uaccess_kernel as all of them already have comments.  If you have
+anything better in mind feel free to throw in additional comments.
 
-The commit in question was upstream glibc commit
-b49ab5f4503f36dcbf43f821f817da66b2931fe6 ("Remove union wait [BZ
-#19613]"), and while I don't see anything s390 mentioned there,
-the issue there was due to the caller of the wait using a long
-instead of an int for the return value.
 
-In other words, that'd not the droid we are looking for.
+Changes since v4:
+ - warn on calling __kernel_write on files not open for write
+ - add a FMODE_READ check and warning in __kernel_read
+ - add a new patch to remove kernel_readv
+ - stop preferring the iter variants if normal read/write is
+   present
 
-So the issue is something else.
+Changes since v3:
+ - keep call_read_iter/call_write_iter for now
+ - don't modify an existing long line
+ - update a change log
 
-  Luis
+Changes since v2:
+ - picked up a few ACKs
+
+Changes since v1:
+ - __kernel_write must not take sb_writers
+ - unexport __kernel_write
+
+Diffstat:
+ fs/autofs/waitq.c            |    2 
+ fs/cachefiles/rdwr.c         |    2 
+ fs/read_write.c              |  171 ++++++++++++++++++++++++++-----------------
+ fs/splice.c                  |   53 +++----------
+ include/linux/fs.h           |    4 -
+ net/bpfilter/bpfilter_kern.c |    2 
+ security/integrity/iint.c    |   14 ---
+ 7 files changed, 125 insertions(+), 123 deletions(-)
