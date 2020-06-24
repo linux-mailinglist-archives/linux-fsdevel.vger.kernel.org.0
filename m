@@ -2,126 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E732207444
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 15:17:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C8A1207449
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 15:19:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388361AbgFXNR3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 09:17:29 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:39242 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728685AbgFXNR2 (ORCPT
+        id S2388110AbgFXNTN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 09:19:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39542 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728685AbgFXNTM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 09:17:28 -0400
-Received: by mail-pj1-f65.google.com with SMTP id b92so1146276pjc.4;
-        Wed, 24 Jun 2020 06:17:28 -0700 (PDT)
+        Wed, 24 Jun 2020 09:19:12 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 378B0C061573;
+        Wed, 24 Jun 2020 06:19:11 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id l17so1707360qki.9;
+        Wed, 24 Jun 2020 06:19:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=x9PH2bXbKT4/vlzv/t3aa9HSoEpEteRDNZADkykIJbk=;
+        b=J+rDM/27ebpHPpHj7FAYq7/0qxGqNAbak5b5IF/bxyZLq7iNX2lhgeqXdBt2b/AmBU
+         Xn96KI5GI6lLirjXlQKZ61zDEXxXRgGX7xw6utBMFxaNYcfRgN6qy+YTiAF24QBLn1Oy
+         2KonAUUiFT3Temc1ZAykdeGlx+cscnEEbiCoA/POjRoINkkP5f5ZzxVLSjv2EzuhOtH4
+         qZgK62n5YSMNnmfBTG1GkejeSpd7v88TAYiSQULdg3F3NMijoLcRiFPikv0Gj9Rx9rqr
+         W7KWcCyiJhphbawLZo3m8ZceCHYDQqgjaXKE21KAQROnIDi5g/RCHFke+yAl9CaSrU2y
+         j3Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=AmTxCuZjvcdiVEVhuLvvhfsJ8oNVmZ/lVyIOEYHWB0Y=;
-        b=Xc7/HPDfLjwO3vfOloH87tfQI4+HU7eSv2eJgbWB2VPf9JWtdmpEd2QXBmiJCy05dd
-         SUFETLgRt/OctOt5l3jgTWrwYVWkWAU8Q+QsiKAPRb9F+7ugQOxyeILRtceXsv0VmKP4
-         VtYCRJdJqRojiwFMXqFVJ/tpocUN8g7Cr8MFuOwUM10AFQE5i3sUtlTGmGPmOFBBzN+i
-         kB/jdQyJ0/WGTJuU62xF2LdZua+UNsDRQ7ku0j9EVHleHCUDO9GPVyjGTeCRbebME5Ie
-         9FeEDrpG+AADn8a8F+j4z4deipzeJi01RNzahjOH3jN2QhXTV+pnzrMRK6k8L7o6NVgw
-         D//w==
-X-Gm-Message-State: AOAM532vVbPp5eIKC7CxT0QEgrf89GpuBF1Bt8bpM9ELPFqnKUFeiaEr
-        wgVIjEamAzQeW5xiUzyrNUA=
-X-Google-Smtp-Source: ABdhPJz52oTL2B/3PLmnDoI2vugPQaT+ieV89E/RBDP6y5SvM7SHzDqNhk7CAkBkvaU94q6GXPDJhQ==
-X-Received: by 2002:a17:90a:2622:: with SMTP id l31mr29954851pje.18.1593004647767;
-        Wed, 24 Jun 2020 06:17:27 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id b71sm10617893pfb.125.2020.06.24.06.17.25
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=x9PH2bXbKT4/vlzv/t3aa9HSoEpEteRDNZADkykIJbk=;
+        b=l2qG0PicTU6kxIvvM/c528YL/vkVWFwqW7B88YU3GAZFOygwsFuiMVeJ+j1UbtCttt
+         PYt+i+5Jvx4J/VySc/Roy7LEpRXuRcIV9J2L+xGLBsGZS1KHtFvfLddb649S0OTV9f7t
+         x6fb/8E0fXcMDaQFE/2gYXqmNalhM61yPyj6CBD/d7mRqWWuoJYXMYu7wpc1TuMYkmQ1
+         LKBxKq2ImYu5kI0abFqhkGpadW0N/0yTbPu8haH4FxezkvOVDgq437OlKdbthOyQ24/s
+         yRjZ2b4OVdF9hy5rUykmBw5uKW1a2yHKFRXinA9q5/RhhkAEVPoxX5BDFVDieKR7QWdn
+         m2/A==
+X-Gm-Message-State: AOAM530O0DD5RB+2/Wo/nf7yastyFsHT0wojRJpOYlybE6O8eYKET3zB
+        69Ijt5EUgl15GRZzgVJIM1s=
+X-Google-Smtp-Source: ABdhPJwgfDfzL4KN09swypIuIKZfgsqYZMxaPOwShr4D1CtwLzc6yPm7uRLlj8lP8jvmUBf2E8jJkg==
+X-Received: by 2002:a37:649:: with SMTP id 70mr11096963qkg.306.1593004750118;
+        Wed, 24 Jun 2020 06:19:10 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::1:95ca])
+        by smtp.gmail.com with ESMTPSA id u7sm3207827qku.119.2020.06.24.06.19.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jun 2020 06:17:26 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 46E1340430; Wed, 24 Jun 2020 13:17:25 +0000 (UTC)
-Date:   Wed, 24 Jun 2020 13:17:25 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Wed, 24 Jun 2020 06:19:09 -0700 (PDT)
+Date:   Wed, 24 Jun 2020 09:19:08 -0400
+From:   Tejun Heo <tj@kernel.org>
+To:     Rick Lindsley <ricklind@linux.vnet.ibm.com>
+Cc:     Ian Kent <raven@themaw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Martin Doucha <mdoucha@suse.cz>
-Cc:     ast@kernel.org, axboe@kernel.dk, bfields@fieldses.org,
-        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
-        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
-        davem@davemloft.net, dhowells@redhat.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
-        keyrings@vger.kernel.org, kuba@kernel.org,
-        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
-        philipp.reisner@linbit.com, ravenexp@gmail.com,
-        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
-        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
-        netdev@vger.kernel.org, markward@linux.ibm.com,
-        linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
- seems to break linux bridge on s390x (bisected)
-Message-ID: <20200624131725.GL13911@42.do-not-panic.com>
-References: <20200610154923.27510-5-mcgrof@kernel.org>
- <20200623141157.5409-1-borntraeger@de.ibm.com>
- <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
- <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
- <20200624120546.GC4332@42.do-not-panic.com>
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
+ improvement
+Message-ID: <20200624131908.GE13061@mtj.duckdns.org>
+References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
+ <20200619153833.GA5749@mtj.thefacebook.com>
+ <16d9d5aa-a996-d41d-cbff-9a5937863893@linux.vnet.ibm.com>
+ <20200619222356.GA13061@mtj.duckdns.org>
+ <fa22c563-73b7-5e45-2120-71108ca8d1a0@linux.vnet.ibm.com>
+ <20200622175343.GC13061@mtj.duckdns.org>
+ <82b2379e-36d0-22c2-41eb-71571e992b37@linux.vnet.ibm.com>
+ <20200623231348.GD13061@mtj.duckdns.org>
+ <a3e9414e-4740-3013-947d-e1839a20227c@linux.vnet.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200624120546.GC4332@42.do-not-panic.com>
+In-Reply-To: <a3e9414e-4740-3013-947d-e1839a20227c@linux.vnet.ibm.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Martin, your eyeballs would be appreciated for a bit on this.
+Hello, Rick.
 
-On Wed, Jun 24, 2020 at 12:05:46PM +0000, Luis Chamberlain wrote:
-> On Wed, Jun 24, 2020 at 01:11:54PM +0200, Christian Borntraeger wrote:
-> > 
-> > 
-> > On 23.06.20 16:23, Christian Borntraeger wrote:
-> > > 
-> > > 
-> > > On 23.06.20 16:11, Christian Borntraeger wrote:
-> > >> Jens Markwardt reported a regression in the linux-next runs.  with "umh: fix
-> > >> processed error when UMH_WAIT_PROC is used" (from linux-next) a linux bridge
-> > >> with an KVM guests no longer activates :
-> > >>
-> > >> without patch
-> > >> # ip addr show dev virbr1
-> > >> 6: virbr1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
-> > >>     link/ether 52:54:00:1e:3f:c0 brd ff:ff:ff:ff:ff:ff
-> > >>     inet 192.168.254.254/24 brd 192.168.254.255 scope global virbr1
-> > >>        valid_lft forever preferred_lft forever
-> > >>
-> > >> with this patch the bridge stays DOWN with NO-CARRIER
-> > >>
-> > >> # ip addr show dev virbr1
-> > >> 6: virbr1: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
-> > >>     link/ether 52:54:00:1e:3f:c0 brd ff:ff:ff:ff:ff:ff
-> > >>     inet 192.168.254.254/24 brd 192.168.254.255 scope global virbr1
-> > >>        valid_lft forever preferred_lft forever
-> > >>
-> > >> This was bisected in linux-next. Reverting from linux-next also fixes the issue.
-> > >>
-> > >> Any idea?
-> > > 
-> > > FWIW, s390 is big endian. Maybe some of the shifts inn the __KW* macros are wrong.
-> > 
-> > Does anyone have an idea why "umh: fix processed error when UMH_WAIT_PROC is used" breaks the
-> > linux-bridge on s390?
+On Wed, Jun 24, 2020 at 02:04:15AM -0700, Rick Lindsley wrote:
+> In contrast, the provided patch fixes the observed problem with no ripple
+> effect to other subsystems or utilities.
 > 
-> glibc for instance defines __WEXITSTATUS in only one location: bits/waitstatus.h
-> and it does not special case it per architecture, so at this point I'd
-> have to say we have to look somewhere else for why this is happening.
+> Greg had suggested
+>     Treat the system as a whole please, don't go for a short-term
+>     fix that we all know is not solving the real problem here.
+> 
+> Your solution affects multiple subsystems; this one affects one.  Which is
+> the whole system approach in terms of risk?  You mentioned you support 30k
+> scsi disks but only because they are slow so the inefficiencies of kernfs
+> don't show.  That doesn't bother you?
 
-I found however an LTP bug indicating the need to test for
-s390 wait macros [0] in light of a recent bug in glibc for s390.
-I am asking for references to that issue given I cannot find
-any mention of this on glibc yet.
+I suggest putting honest thoughts into finding a long term solution instead
+of these rhetorical retorts. If you really can't see how ill-suited the
+current use of interface and proposed solution is, I'm not sure how better
+to communicate them to you.
 
-I'm in hopes Martin might be aware of that mentioned s390 glic bug.
+Thanks.
 
-[0] https://github.com/linux-test-project/ltp/issues/605
-
-  Luis
+-- 
+tejun
