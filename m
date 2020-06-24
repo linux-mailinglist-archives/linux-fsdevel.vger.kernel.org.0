@@ -2,93 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C219207937
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 18:32:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C49120795A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 18:41:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405113AbgFXQcZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 12:32:25 -0400
-Received: from mga14.intel.com ([192.55.52.115]:4058 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405107AbgFXQcY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 12:32:24 -0400
-IronPort-SDR: rZl7Xy7j8kFlLW4NGVVvAzZvnjKDzVHzumQiPKAxDvDMRJU9ktWZKNzqoIFOSXM82tL+d159A5
- Z9lO2KFf3gpw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9662"; a="143635359"
-X-IronPort-AV: E=Sophos;i="5.75,276,1589266800"; 
-   d="scan'208";a="143635359"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2020 09:32:22 -0700
-IronPort-SDR: s00+NRtZ0NPWmDjhtzqHJY8HqtYbM1o4ulSR0bl9+Q8Ul1Jt+woSwlAfZIqqLOzN0wf3E15ALa
- p2rK/8fbGvEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,276,1589266800"; 
-   d="scan'208";a="263681386"
-Received: from vsave-mobl.amr.corp.intel.com (HELO [10.251.3.18]) ([10.251.3.18])
-  by fmsmga007.fm.intel.com with ESMTP; 24 Jun 2020 09:32:22 -0700
-Subject: Re: [PATCH] fs/epoll: Enable non-blocking busypoll with epoll timeout
- of 0
-From:   "Samudrala, Sridhar" <sridhar.samudrala@intel.com>
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org,
-        "davem@davemloft.net" <davem@davemloft.net>, eric.dumazet@gmail.com
-References: <1592590409-35439-1-git-send-email-sridhar.samudrala@intel.com>
-Message-ID: <de6bf72d-d4fd-9a62-c082-c82179d1f4fe@intel.com>
-Date:   Wed, 24 Jun 2020 09:32:22 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        id S2405165AbgFXQlq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 12:41:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43026 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404160AbgFXQlq (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Jun 2020 12:41:46 -0400
+Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 448A1C061573;
+        Wed, 24 Jun 2020 09:41:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=3Etw+K+6vqw9KKAT/39I8buBhiRfi5hNZ+5u7BKhPD4=; b=cvmnF7vn1ntzO5VbxZbl+Utgf0
+        mpk9G0MYcK7vr7ci/NRGgSneoMnuk59gLm3YYAiv/JRes+kLGAgRy0wm66oc9gO+7OpzdJ+2udx8A
+        tqRrdNVtb/Fh7vD2uISBCKPFEq3BzKKnuXrd2/neFwWqiSp7S7Fs3s3Wxc/asz/lHMUTSryPdrd3v
+        /ASFRsu87FCoqnT+aAhYgzHtmnP+QBV3tOdXxO+gDr6Sl0u5JL03O1fuzP4Faa5MfEmZOKWBuRd/e
+        K6UhTxLzMFpnVf0AgK7SGfdDxL1syq+Lw1VKrJ1eql9UEcpCYqz5aXV4EFr6BZ0VsQsFEkpxt3Mre
+        slXoaTEw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jo8Sl-0007VG-Sk; Wed, 24 Jun 2020 16:41:27 +0000
+Date:   Wed, 24 Jun 2020 17:41:27 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH 05/15] mm: allow read-ahead with IOCB_NOWAIT set
+Message-ID: <20200624164127.GP21350@casper.infradead.org>
+References: <20200618144355.17324-1-axboe@kernel.dk>
+ <20200618144355.17324-6-axboe@kernel.dk>
+ <20200624010253.GB5369@dread.disaster.area>
+ <20200624014645.GJ21350@casper.infradead.org>
+ <bad52be9-ae44-171b-8dbf-0d98eedcadc0@kernel.dk>
+ <70b0427c-7303-8f45-48bd-caa0562a2951@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <1592590409-35439-1-git-send-email-sridhar.samudrala@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <70b0427c-7303-8f45-48bd-caa0562a2951@kernel.dk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Adding Dave, Eric for review and see if we can get this in via net-next
-as this is mainly useful for networking workloads doing busypoll.
+On Wed, Jun 24, 2020 at 09:35:19AM -0600, Jens Axboe wrote:
+> On 6/24/20 9:00 AM, Jens Axboe wrote:
+> > On 6/23/20 7:46 PM, Matthew Wilcox wrote:
+> >> I'd be quite happy to add a gfp_t to struct readahead_control.
+> >> The other thing I've been looking into for other reasons is adding
+> >> a memalloc_nowait_{save,restore}, which would avoid passing down
+> >> the gfp_t.
+> > 
+> > That was my first thought, having the memalloc_foo_save/restore for
+> > this. I don't think adding a gfp_t to readahead_control is going
+> > to be super useful, seems like the kind of thing that should be
+> > non-blocking by default.
+> 
+> We're already doing memalloc_nofs_save/restore in
+> page_cache_readahead_unbounded(), so I think all we need is to just do a
+> noio dance in generic_file_buffered_read() and that should be enough.
 
-Thanks
-Sridhar
+I think we can still sleep though, right?  I was thinking more
+like this:
 
-On 6/19/2020 11:13 AM, Sridhar Samudrala wrote:
-> This patch triggers non-blocking busy poll when busy_poll is enabled and
-> epoll is called with a timeout of 0 and is associated with a napi_id.
-> This enables an app thread to go through napi poll routine once by calling
-> epoll with a 0 timeout.
-> 
-> poll/select with a 0 timeout behave in a similar manner.
-> 
-> Signed-off-by: Sridhar Samudrala <sridhar.samudrala@intel.com>
-> ---
->   fs/eventpoll.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index 12eebcdea9c8..5f55078d6381 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -1847,6 +1847,19 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
->   		eavail = ep_events_available(ep);
->   		write_unlock_irq(&ep->lock);
->   
-> +		/*
-> +		 * Trigger non-blocking busy poll if timeout is 0 and there are
-> +		 * no events available. Passing timed_out(1) to ep_busy_loop
-> +		 * will make sure that busy polling is triggered only once and
-> +		 * only if sysctl.net.core.busy_poll is set to non-zero value.
-> +		 */
-> +		if (!eavail) {
-> +			ep_busy_loop(ep, timed_out);
-> +			write_lock_irq(&ep->lock);
-> +			eavail = ep_events_available(ep);
-> +			write_unlock_irq(&ep->lock);
-> +		}
-> +
->   		goto send_events;
->   	}
->   
-> 
+http://git.infradead.org/users/willy/linux.git/shortlog/refs/heads/memalloc
