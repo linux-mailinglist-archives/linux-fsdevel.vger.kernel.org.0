@@ -2,162 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 75126207792
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 17:36:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DE40207794
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 17:36:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404113AbgFXPfY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 11:35:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60836 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404382AbgFXPfW (ORCPT
+        id S2404055AbgFXPfu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 11:35:50 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40965 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390702AbgFXPfu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 11:35:22 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F1BC061573
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 08:35:22 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id k6so1185634pll.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 08:35:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vLSu1kPuflATDhPDFU0nGgb8Mr/kuY3eeM+ALkjRaYY=;
-        b=ZZswuMvynQximHdf+KSEM0t3wzEPu7urY3l2JX5ijwjRih7+H/wKSV/rUMlNY5ZUMl
-         25xI374TL2HxqYZyoimohd7tO0xiyZFGKp4rYs0lBfm7WSw3C11TJbIO61Me/n0Ar/3v
-         4cEjPauSagWqc2zs/dpCX4xogE0Ed9GOvsIyjJYvnpDaXL9IA/0mWgnyT/bfa4aO63+p
-         Oag4/gwlrSuH19xiDUa3tUzTxAQaB185nS559lWoP5U7tG8p7tsy7ItuEbJ/3vvn1QN2
-         baxOvqFZsdMRVKH8WouCAt5mMrKHIpPiJYtLU3NS4JEJYR19Cnc/kDU+dz+B9E9U+S1Y
-         +T2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vLSu1kPuflATDhPDFU0nGgb8Mr/kuY3eeM+ALkjRaYY=;
-        b=GyCUp9Lu2svcg5wAMM50siiMP59aSijnyoWPkOk8FWUO1OCzfwbuBpuhItO2BcK4Ac
-         uvZZ46T6wPB0j8mCeuBC2kTbPRCuhMhX+GabhEmdFDqA6FP0t4yQ+bFVGgx4L4bbOzJ5
-         ZD3yV2tubYyX09lv4dpClTcTCtnlrUAD011GooibIrdmVPtV8vV8XD4AVE4Tx5R83yAR
-         NAOc/JvaB9OA3lgXQlS65GqoGrD8HLZLx4Lm8Tq+xDA966NFkQ5XbyqNP529ZwxYO6ZY
-         OKW8yXMLuiJt9tVN8iCcwe4O65Pf4qJNSO4eMGOEuAdi0n9lX7sXRw0iHwyWjOoPkLTS
-         T8gA==
-X-Gm-Message-State: AOAM5324YMTxQpXOGPOjtCxwUZujPXp6eancuI+uOoS1Ih1OCHu6kLlT
-        Qe+BOscC4iD2ol2rj36mRXsI9g==
-X-Google-Smtp-Source: ABdhPJwW9B9ytkWVj20h9xxTTNI+Cy6YtKsqac7xXDLeFWj/S+Wtf5uJHdWPpxPzv5wWVSxNilo2jg==
-X-Received: by 2002:a17:902:d68d:: with SMTP id v13mr1288772ply.10.1593012921553;
-        Wed, 24 Jun 2020 08:35:21 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id j70sm1221283pfd.208.2020.06.24.08.35.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jun 2020 08:35:20 -0700 (PDT)
-Subject: Re: [PATCH 05/15] mm: allow read-ahead with IOCB_NOWAIT set
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, Johannes Weiner <hannes@cmpxchg.org>
-References: <20200618144355.17324-1-axboe@kernel.dk>
- <20200618144355.17324-6-axboe@kernel.dk>
- <20200624010253.GB5369@dread.disaster.area>
- <20200624014645.GJ21350@casper.infradead.org>
- <bad52be9-ae44-171b-8dbf-0d98eedcadc0@kernel.dk>
-Message-ID: <70b0427c-7303-8f45-48bd-caa0562a2951@kernel.dk>
-Date:   Wed, 24 Jun 2020 09:35:19 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Wed, 24 Jun 2020 11:35:50 -0400
+Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jo7RB-0002AJ-VA; Wed, 24 Jun 2020 15:35:46 +0000
+Date:   Wed, 24 Jun 2020 17:35:45 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Seth Forshee <seth.forshee@canonical.com>
+Subject: Re: overlayfs regression
+Message-ID: <20200624153545.ixamvyahayzuokl7@wittgenstein>
+References: <20200624144846.jtpolkxiqmery3uy@wittgenstein>
+ <CAOQ4uxhkiWKt2As5kMWt6PNrRwY8QbqXKiHkz_1UFb0Za+BEuw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <bad52be9-ae44-171b-8dbf-0d98eedcadc0@kernel.dk>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxhkiWKt2As5kMWt6PNrRwY8QbqXKiHkz_1UFb0Za+BEuw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/24/20 9:00 AM, Jens Axboe wrote:
-> On 6/23/20 7:46 PM, Matthew Wilcox wrote:
->> On Wed, Jun 24, 2020 at 11:02:53AM +1000, Dave Chinner wrote:
->>> On Thu, Jun 18, 2020 at 08:43:45AM -0600, Jens Axboe wrote:
->>>> The read-ahead shouldn't block, so allow it to be done even if
->>>> IOCB_NOWAIT is set in the kiocb.
->>>
->>> Doesn't think break preadv2(RWF_NOWAIT) semantics for on buffered
->>> reads? i.e. this can now block on memory allocation for the page
->>> cache, which is something RWF_NOWAIT IO should not do....
->>
->> Yes.  This eventually ends up in page_cache_readahead_unbounded()
->> which gets its gfp flags from readahead_gfp_mask(mapping).
->>
->> I'd be quite happy to add a gfp_t to struct readahead_control.
->> The other thing I've been looking into for other reasons is adding
->> a memalloc_nowait_{save,restore}, which would avoid passing down
->> the gfp_t.
+On Wed, Jun 24, 2020 at 06:25:55PM +0300, Amir Goldstein wrote:
+> On Wed, Jun 24, 2020 at 5:48 PM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> >
+> > Hey Miklosz,
+> > hey Amir,
+> >
+> > We've been observing regressions in our containers test-suite with
+> > commit:
+> >
+> > Author: Miklos Szeredi <mszeredi@redhat.com>
+> > Date:   Tue Mar 17 15:04:22 2020 +0100
+> >
+> >     ovl: separate detection of remote upper layer from stacked overlay
+> >
+> >     Following patch will allow remote as upper layer, but not overlay stacked
+> >     on upper layer.  Separate the two concepts.
+> >
+> >     This patch is doesn't change behavior.
+> >
+> >     Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> >
 > 
-> That was my first thought, having the memalloc_foo_save/restore for
-> this. I don't think adding a gfp_t to readahead_control is going
-> to be super useful, seems like the kind of thing that should be
-> non-blocking by default.
+> Are you sure this is the offending commit?
+> Look at it. It is really moving a bit of code around and should not
+> change logic.
+> There are several other commits in 5.7 that could have gone wrong...
 
-We're already doing memalloc_nofs_save/restore in
-page_cache_readahead_unbounded(), so I think all we need is to just do a
-noio dance in generic_file_buffered_read() and that should be enough.
+Yeah, most likely. I can do a bisect but it might take a little until I
+get around to it. Is that ok?
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index a5b1fa8f7ce4..c29d4b310ed6 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -41,6 +41,7 @@
- #include <linux/delayacct.h>
- #include <linux/psi.h>
- #include <linux/ramfs.h>
-+#include <linux/sched/mm.h>
- #include "internal.h"
- 
- #define CREATE_TRACE_POINTS
-@@ -2011,6 +2012,7 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 	struct address_space *mapping = filp->f_mapping;
- 	struct inode *inode = mapping->host;
- 	struct file_ra_state *ra = &filp->f_ra;
-+	const bool nowait = (iocb->ki_flags & IOCB_NOWAIT) != 0;
- 	loff_t *ppos = &iocb->ki_pos;
- 	pgoff_t index;
- 	pgoff_t last_index;
-@@ -2044,9 +2046,15 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 
- 		page = find_get_page(mapping, index);
- 		if (!page) {
-+			unsigned int flags;
-+
-+			if (nowait)
-+				flags = memalloc_noio_save();
- 			page_cache_sync_readahead(mapping,
- 					ra, filp,
- 					index, last_index - index);
-+			if (nowait)
-+				memalloc_noio_restore(flags);
- 			page = find_get_page(mapping, index);
- 			if (unlikely(page == NULL))
- 				goto no_cached_page;
-@@ -2070,7 +2078,7 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 				error = wait_on_page_locked_async(page,
- 								iocb->ki_waitq);
- 			} else {
--				if (iocb->ki_flags & IOCB_NOWAIT) {
-+				if (nowait) {
- 					put_page(page);
- 					goto would_block;
- 				}
-@@ -2185,7 +2193,7 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		}
- 
- readpage:
--		if (iocb->ki_flags & IOCB_NOWAIT) {
-+		if (nowait) {
- 			unlock_page(page);
- 			put_page(page);
- 			goto would_block;
+> 
+> > It suddenly consistently reports:
+> > [2422.695340] overlayfs: filesystem on '/home/lxcunpriv/.local/share/lxc/c2/overlay/delta' not supported as upperdir
+> > in dmesg where it used to work fine for basically 6 years when we added
+> > that test. The test creates a container c2 that uses the rootfs of
+> > another container c1 (normal directory on an ext4 filesystem). Here you
+> > can see the full mount options:
+> >
+> > Invalid argument - Failed to mount "/home/lxcunpriv/.local/share/lxc/c1/rootfs" on "/usr/lib/x86_64-linux-gnu/lxc" with options "upperdir=/home/lxcunpriv/.local/share/lxc/c2/overlay/delta,lowerdir=/home/lxcunpriv/.local/share/lxc/c1/rootfs,workdir=/home/lxcunpriv/.local/share/lxc/c2/overlay/work"
+> >
+> 
+> /home/lxcunpriv/.local/share/lxc/c2/overlay/delta' is ext4?
 
--- 
-Jens Axboe
+Yeah, so what we do is:
 
+lower -> /foo/c1/rootfs
+
+then we create the directory for the new container:
+
+mkdir_p(/foo/c2)
+mkdir_p(/foo/c2/rootfs)
+mkdir_p(/foo/c2/overlay)
+mkdir_p(/foo/c2/overlay/delta)
+mkdir_p(/foo/c2/overlay/workdir)
+
+ensuring that delta + work are on the same mount and that workdir is
+empty. The we perform the mount you see above.
+
+Christian
