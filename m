@@ -2,82 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B662520694C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 03:03:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F9A2206950
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 03:04:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388348AbgFXBDJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jun 2020 21:03:09 -0400
-Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:46138 "EHLO
-        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388240AbgFXBDI (ORCPT
+        id S2388316AbgFXBDu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jun 2020 21:03:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39648 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387677AbgFXBDs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jun 2020 21:03:08 -0400
-Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
-        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id 2763010B2D4;
-        Wed, 24 Jun 2020 11:02:54 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jntoT-0001jv-FK; Wed, 24 Jun 2020 11:02:53 +1000
-Date:   Wed, 24 Jun 2020 11:02:53 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Add@vger.kernel.org, support@vger.kernel.org, for@vger.kernel.org,
-        async@vger.kernel.org, buffered@vger.kernel.org,
-        reads@vger.kernel.org
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, Jens Axboe <axboe@kernel.dk>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH 05/15] mm: allow read-ahead with IOCB_NOWAIT set
-Message-ID: <20200624010253.GB5369@dread.disaster.area>
-References: <20200618144355.17324-1-axboe@kernel.dk>
- <20200618144355.17324-6-axboe@kernel.dk>
+        Tue, 23 Jun 2020 21:03:48 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C0CC061573
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jun 2020 18:03:48 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id t21so198798edr.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jun 2020 18:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Eo5cTIL37FpYiHosBDpvR4kZAwB7mWQXF34HqE6NXHo=;
+        b=KYVTXVXkCqMbcVuFTDEDKDF/vl50d6y6AVcDR3VWHAdVtg0rVF+rufFQ1wEqaxVJxh
+         SIb5YPrtFiiuP3U/USOvpvsCngwFcKcauttqEoZunWAugH4tljXQUnJSNiIjDNlSZE/Y
+         8vINYeh9lbMfW+YemTuHtIAKi4Sl9PXz4gZiOGRJUuGUwoyGoQmUiLV5cCSbIz4EaasJ
+         92s42xO9NEEqZm68/Q83e/Ak5uUYC6GXyyuUfu/VrtqYiplckhU03c0Vgvov8YbQnCav
+         /XiD58yFRrnMH13HCsgJrnDk0K6+OaiL+fWCrT5lEA0dPZE6YPGCpL2dE8+4ZxvV249D
+         1a5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Eo5cTIL37FpYiHosBDpvR4kZAwB7mWQXF34HqE6NXHo=;
+        b=WPRETzh+g0sJYrk/FdSJTouBK6eJv5F1pOFXrLO2wr7C2GmsKOagqFlH9w9dQvhHG5
+         mM9U1gWY1JyiAa4WrZXCE0l4+dBpIgUmEC9dAHU5m3g2rfXpdgUzpzJJZAzgEl0U4Icq
+         AyBeVxyz0i/u0elpMW1oYA5JSnd2mDkvxXL00gFyO5KpyXf9BsVkwd0ZGbmoRArDIX20
+         7SDbkIoLJhsYLpGxksKOm6B6DKETFXpopbVHCp9SbiPa46b7QDSRribnryjimkEYWkaT
+         KFnTDZOqCAy/5tGEO8zDQHk1+B/bNI5kcE6rCHqWwKi0nblnvsL4uTftiwHE1nk5II0E
+         hqNQ==
+X-Gm-Message-State: AOAM5330s2nZClAEQokfaOACstha28Ew8oZwDet4G0QWWXPWdFHQYsnS
+        bpksOYTrF3BgjICgqg8s5LZAdqp3NLndfmcwiwU6Teb7
+X-Google-Smtp-Source: ABdhPJwgEGyrPH+KoGgpyagYhDQWzp/X9Fcbf8BzrxMJ5Voz+JAHTmCCV7B6TldsquEEpVkTerwdy9arRqf3hvl6HiY=
+X-Received: by 2002:a50:d9cb:: with SMTP id x11mr9688647edj.93.1592960627165;
+ Tue, 23 Jun 2020 18:03:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200618144355.17324-6-axboe@kernel.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
-        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
-        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=ufHFDILaAAAA:8 a=7-415B0cAAAA:8
-        a=WCjB2_pVjg0caHknj34A:9 a=CjuIK1q_8ugA:10 a=ZmIg1sZ3JBWsdXgziEIF:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <1503686.1591113304@warthog.procyon.org.uk> <23219b787ed1c20a63017ab53839a0d1c794ec53.camel@intel.com>
+ <CAPcyv4g+T+GK4yVJs8bTT1q90SFDpFYUSL9Pk_u8WZROhREPkw@mail.gmail.com> <3015561.1592960116@warthog.procyon.org.uk>
+In-Reply-To: <3015561.1592960116@warthog.procyon.org.uk>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 23 Jun 2020 18:03:36 -0700
+Message-ID: <CAPcyv4gdB6iOD8N0KAHY9WybpJtRx3EfEQCSM1zuTDkURrfuug@mail.gmail.com>
+Subject: Re: [GIT PULL] General notification queue and key notifications
+To:     David Howells <dhowells@redhat.com>
+Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "raven@themaw.net" <raven@themaw.net>,
+        "kzak@redhat.com" <kzak@redhat.com>,
+        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "dray@redhat.com" <dray@redhat.com>,
+        "swhiteho@redhat.com" <swhiteho@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "mszeredi@redhat.com" <mszeredi@redhat.com>,
+        "jlayton@redhat.com" <jlayton@redhat.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "andres@anarazel.de" <andres@anarazel.de>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "christian.brauner@ubuntu.com" <christian.brauner@ubuntu.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 08:43:45AM -0600, Jens Axboe wrote:
-> The read-ahead shouldn't block, so allow it to be done even if
-> IOCB_NOWAIT is set in the kiocb.
-> 
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  mm/filemap.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index f0ae9a6308cb..3378d4fca883 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2028,8 +2028,6 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
->  
->  		page = find_get_page(mapping, index);
->  		if (!page) {
-> -			if (iocb->ki_flags & IOCB_NOWAIT)
-> -				goto would_block;
->  			page_cache_sync_readahead(mapping,
->  					ra, filp,
->  					index, last_index - index);
+On Tue, Jun 23, 2020 at 5:55 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> > > This commit:
+> > >
+> > > >       keys: Make the KEY_NEED_* perms an enum rather than a mask
+> > >
+> > > ...upstream as:
+> > >
+> > >     8c0637e950d6 keys: Make the KEY_NEED_* perms an enum rather than a mask
+> > >
+> > > ...triggers a regression in the libnvdimm unit test that exercises the
+> > > encrypted keys used to store nvdimm passphrases. It results in the
+> > > below warning.
+> >
+> > This regression is still present in tip of tree. David, have you had a
+> > chance to take a look?
+>
+> nvdimm_lookup_user_key() needs to indicate to lookup_user_key() what it wants
+> the key for so that the appropriate security checks can take place in SELinux
+> and Smack.  Note that I have a patch in the works that changes this still
+> further.
+>
+> Does setting the third argument of lookup_user_key() to KEY_NEED_SEARCH work
+> for you?
 
-Doesn't think break preadv2(RWF_NOWAIT) semantics for on buffered
-reads? i.e. this can now block on memory allocation for the page
-cache, which is something RWF_NOWAIT IO should not do....
+It does, thanks.
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Shall I wait for your further reworks to fix this for v5.8, or is that
+v5.9 material?
