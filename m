@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C8A2A207922
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 18:30:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B170120791B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 18:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405059AbgFXQ3n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 12:29:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41092 "EHLO
+        id S2405025AbgFXQ3i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 12:29:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404764AbgFXQ31 (ORCPT
+        with ESMTP id S2404833AbgFXQ31 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 24 Jun 2020 12:29:27 -0400
 Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DAAFC061573;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4A12C061798;
         Wed, 24 Jun 2020 09:29:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=VHv8vV/zSvtU7OOAqr9Qu8tuddmtuvpgD3IE+DOaLXs=; b=BYmF1uoU37E5NXUZV/N5uUhN8L
-        kLfdntSaS1J2sHkhwgkQe1bigYHTeSylJDZtb0graYXEYbmzBB/X1PKcIzLUdTGqiwdoGPIJYlHnQ
-        OnLOhoqF3MsIvho4MQa1Fl/Kw4SPil8+tSFfLpz4IhRWZfeHevlBOXTM95MFt+XE8p1RDB0mAWdZ2
-        5o+O1PQpPEIo21Ku67TdxawC5gZLVT41G+f9UwWgaOQOZjxSYimoFsNCWostJL/bXWCi7HatkdbdP
-        gswGXJi/BNohjkC15q0HPX5FGlteXfDKsg1poy8KnwRs4m1RAN2LNGqmULVAytMvxnq/yP9d3k3A1
-        6SwKDAIg==;
+        bh=2HvZhOUeF9FDVyXb54Pz1N0sRkDLIwNnoR/STkbBseI=; b=DcTcPMHn3/rJewMozHZFNKVYdM
+        Y1kb+6nBjEQdRJu32NwJA7MDexPZ1wLpJWq8BoSNtXEEvIRm3GFf1mN+oy19oDUMUITMHjO+0vZGa
+        m9ApZHQq5C/AU4VMTc89L18igA+ZrWZXIlj8TDNGG1ouHSZddAZeZMrl+mc+A/uENcUnyjq8TVYm3
+        0qiZiVg1ujK0pfVcDSEbxT2n2Ropj4fUdtilZsuzMsLvjKgn5SwQ0J9FThJBFXE96/uBfFCaCuICu
+        OlFbejHbwAB2QrMRcbhGUhvuIVwYbfaFksLl7bipA0i3X5LncABo28fKgYMq/2UuzU0OGbxpIoKe2
+        GD1UtjAA==;
 Received: from [2001:4bb8:180:a3:5c7c:8955:539d:955b] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jo8Go-0006oQ-EA; Wed, 24 Jun 2020 16:29:06 +0000
+        id 1jo8Gq-0006oi-Mj; Wed, 24 Jun 2020 16:29:08 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>
@@ -35,9 +35,9 @@ Cc:     Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Iurii Zaikin <yzaikin@google.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 03/11] fs: add new read_uptr and write_uptr file operations
-Date:   Wed, 24 Jun 2020 18:28:53 +0200
-Message-Id: <20200624162901.1814136-4-hch@lst.de>
+Subject: [PATCH 04/11] sysctl: switch to ->{read,write}_uptr
+Date:   Wed, 24 Jun 2020 18:28:54 +0200
+Message-Id: <20200624162901.1814136-5-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200624162901.1814136-1-hch@lst.de>
 References: <20200624162901.1814136-1-hch@lst.de>
@@ -49,104 +49,101 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add two new file operations that are identical to ->read and ->write
-except that they can also safely take kernel pointers using the uptr_t
-type.
+This allows the sysctl handler to safely take kernel space pointers,
+as required for the new code to set sysctl parameters at boot time.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/internal.h      |  4 ++--
- fs/read_write.c    | 18 ++++++++++++++----
- include/linux/fs.h |  3 +++
- 3 files changed, 19 insertions(+), 6 deletions(-)
+ fs/proc/proc_sysctl.c | 39 ++++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 242f2845b3428b..b6777a47b05163 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -189,9 +189,9 @@ int do_statx(int dfd, const char __user *filename, unsigned flags,
- static inline void set_fmode_can_read_write(struct file *f)
- {
- 	if ((f->f_mode & FMODE_READ) &&
--	    (f->f_op->read || f->f_op->read_iter))
-+	    (f->f_op->read || f->f_op->read_uptr || f->f_op->read_iter))
- 		f->f_mode |= FMODE_CAN_READ;
- 	if ((f->f_mode & FMODE_WRITE) &&
--	    (f->f_op->write || f->f_op->write_iter))
-+	    (f->f_op->write || f->f_op->write_uptr || f->f_op->write_iter))
- 		f->f_mode |= FMODE_CAN_WRITE;
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 42c5128c7d1c76..dd5eb693bd00df 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -540,7 +540,7 @@ static struct dentry *proc_sys_lookup(struct inode *dir, struct dentry *dentry,
+ 	return err;
  }
-diff --git a/fs/read_write.c b/fs/read_write.c
-index e7f36b15683049..24ffbf3cbda243 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -430,7 +430,9 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
  
- 	if (count > MAX_RW_COUNT)
- 		count =  MAX_RW_COUNT;
--	if (file->f_op->read) {
-+	if (file->f_op->read_uptr) {
-+		ret = file->f_op->read_uptr(file, KERNEL_UPTR(buf), count, pos);
-+	} else if (file->f_op->read) {
- 		mm_segment_t old_fs = get_fs();
+-static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
++static ssize_t proc_sys_call_handler(struct file *filp, uptr_t buf,
+ 		size_t count, loff_t *ppos, int write)
+ {
+ 	struct inode *inode = file_inode(filp);
+@@ -566,20 +566,21 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
+ 		goto out;
  
- 		set_fs(KERNEL_DS);
-@@ -485,7 +487,9 @@ ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
- 	if (count > MAX_RW_COUNT)
- 		count =  MAX_RW_COUNT;
+ 	/* don't even try if the size is too large */
+-	if (count > KMALLOC_MAX_SIZE)
++	if (count >= KMALLOC_MAX_SIZE)
+ 		return -ENOMEM;
  
--	if (file->f_op->read)
-+	if (file->f_op->read_uptr)
-+		ret = file->f_op->read_uptr(file, USER_UPTR(buf), count, pos);
-+	else if (file->f_op->read)
- 		ret = file->f_op->read(file, buf, count, pos);
- 	else if (file->f_op->read_iter)
- 		ret = new_sync_read(file, buf, count, pos);
-@@ -530,7 +534,10 @@ ssize_t __kernel_write(struct file *file, const void *buf, size_t count,
++	error = -ENOMEM;
++
++	/* allow for NULL termination on writes */
++	kbuf = kzalloc(count + (write ? 1 : 0), GFP_KERNEL);
++	if (!kbuf)
++		goto out;
++
+ 	if (write) {
+-		kbuf = memdup_user_nul(ubuf, count);
+-		if (IS_ERR(kbuf)) {
+-			error = PTR_ERR(kbuf);
+-			goto out;
+-		}
+-	} else {
+-		error = -ENOMEM;
+-		kbuf = kzalloc(count, GFP_KERNEL);
+-		if (!kbuf)
+-			goto out;
++		error = -EFAULT;
++		if (copy_from_uptr(kbuf, buf, count))
++			goto out_free_buf;
++		((char *)kbuf)[count] = '\0';
+ 	}
  
- 	if (count > MAX_RW_COUNT)
- 		count =  MAX_RW_COUNT;
--	if (file->f_op->write) {
-+	if (file->f_op->write_uptr) {
-+		ret = file->f_op->write_uptr(file, KERNEL_UPTR((void *)buf),
-+				count, pos);
-+	} else if (file->f_op->write) {
- 		mm_segment_t old_fs = get_fs();
+ 	error = BPF_CGROUP_RUN_PROG_SYSCTL(head, table, write, &kbuf, &count,
+@@ -594,7 +595,7 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
  
- 		set_fs(KERNEL_DS);
-@@ -592,7 +599,10 @@ ssize_t vfs_write(struct file *file, const char __user *buf, size_t count, loff_
- 	if (count > MAX_RW_COUNT)
- 		count =  MAX_RW_COUNT;
- 	file_start_write(file);
--	if (file->f_op->write)
-+	if (file->f_op->write_uptr)
-+		ret = file->f_op->write_uptr(file,
-+				USER_UPTR((char __user *)buf), count, pos);
-+	else if (file->f_op->write)
- 		ret = file->f_op->write(file, buf, count, pos);
- 	else if (file->f_op->write_iter)
- 		ret = new_sync_write(file, buf, count, pos);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index fac6aead402a98..d8fc3015f5a197 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -39,6 +39,7 @@
- #include <linux/fs_types.h>
- #include <linux/build_bug.h>
- #include <linux/stddef.h>
-+#include <linux/uptr.h>
+ 	if (!write) {
+ 		error = -EFAULT;
+-		if (copy_to_user(ubuf, kbuf, count))
++		if (copy_to_uptr(buf, kbuf, count))
+ 			goto out_free_buf;
+ 	}
  
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-@@ -1830,6 +1831,8 @@ struct file_operations {
- 	ssize_t (*write) (struct file *, const char __user *, size_t, loff_t *);
- 	ssize_t (*read_iter) (struct kiocb *, struct iov_iter *);
- 	ssize_t (*write_iter) (struct kiocb *, struct iov_iter *);
-+	ssize_t (*read_uptr) (struct file *, uptr_t, size_t, loff_t *);
-+	ssize_t (*write_uptr) (struct file *, uptr_t, size_t, loff_t *);
- 	int (*iopoll)(struct kiocb *kiocb, bool spin);
- 	int (*iterate) (struct file *, struct dir_context *);
- 	int (*iterate_shared) (struct file *, struct dir_context *);
+@@ -607,16 +608,16 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
+ 	return error;
+ }
+ 
+-static ssize_t proc_sys_read(struct file *filp, char __user *buf,
++static ssize_t proc_sys_read(struct file *filp, uptr_t buf,
+ 				size_t count, loff_t *ppos)
+ {
+-	return proc_sys_call_handler(filp, (void __user *)buf, count, ppos, 0);
++	return proc_sys_call_handler(filp, buf, count, ppos, 0);
+ }
+ 
+-static ssize_t proc_sys_write(struct file *filp, const char __user *buf,
++static ssize_t proc_sys_write(struct file *filp, uptr_t buf,
+ 				size_t count, loff_t *ppos)
+ {
+-	return proc_sys_call_handler(filp, (void __user *)buf, count, ppos, 1);
++	return proc_sys_call_handler(filp, buf, count, ppos, 1);
+ }
+ 
+ static int proc_sys_open(struct inode *inode, struct file *filp)
+@@ -853,8 +854,8 @@ static int proc_sys_getattr(const struct path *path, struct kstat *stat,
+ static const struct file_operations proc_sys_file_operations = {
+ 	.open		= proc_sys_open,
+ 	.poll		= proc_sys_poll,
+-	.read		= proc_sys_read,
+-	.write		= proc_sys_write,
++	.read_uptr	= proc_sys_read,
++	.write_uptr	= proc_sys_write,
+ 	.llseek		= default_llseek,
+ };
+ 
 -- 
 2.26.2
 
