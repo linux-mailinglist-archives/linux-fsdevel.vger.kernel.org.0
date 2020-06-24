@@ -2,147 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2A3B20780D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 17:56:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C804207822
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 17:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404434AbgFXP4c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 11:56:32 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:14926 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404351AbgFXP4b (ORCPT
+        id S2404756AbgFXP5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 11:57:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36036 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404750AbgFXP5P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 11:56:31 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05OFZ2o5114504;
-        Wed, 24 Jun 2020 11:54:58 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwyypwr3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 Jun 2020 11:54:57 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05OFZBeS115032;
-        Wed, 24 Jun 2020 11:54:57 -0400
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 31uwyypwpj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 Jun 2020 11:54:56 -0400
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05OFpKNX014534;
-        Wed, 24 Jun 2020 15:54:54 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma06ams.nl.ibm.com with ESMTP id 31uusjgsgv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 24 Jun 2020 15:54:54 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05OFsp9P61079756
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Jun 2020 15:54:51 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9DB7111C069;
-        Wed, 24 Jun 2020 15:54:51 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D6AB811C05C;
-        Wed, 24 Jun 2020 15:54:49 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.145.22.164])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 24 Jun 2020 15:54:49 +0000 (GMT)
-Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
- seems to break linux bridge on s390x (bisected)
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     mcgrof@kernel.org, ast@kernel.org, axboe@kernel.dk,
-        bfields@fieldses.org, bridge@lists.linux-foundation.org,
-        chainsaw@gentoo.org, christian.brauner@ubuntu.com,
-        chuck.lever@oracle.com, davem@davemloft.net, dhowells@redhat.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
-        keyrings@vger.kernel.org, kuba@kernel.org,
-        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
-        philipp.reisner@linbit.com, ravenexp@gmail.com,
-        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
-        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
-        netdev@vger.kernel.org, markward@linux.ibm.com,
-        linux-s390 <linux-s390@vger.kernel.org>
-References: <20200610154923.27510-5-mcgrof@kernel.org>
- <20200623141157.5409-1-borntraeger@de.ibm.com>
- <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
- <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
- <20200624144311.GA5839@infradead.org>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
-Message-ID: <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
-Date:   Wed, 24 Jun 2020 17:54:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Wed, 24 Jun 2020 11:57:15 -0400
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A04A3C0613ED
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 08:57:15 -0700 (PDT)
+Received: by mail-qk1-x743.google.com with SMTP id q198so2297241qka.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 08:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=jZYzs8OyHucPngtfa3rnlFCl1zhe+pFCEDNvHAi29U8=;
+        b=IbUErGQEAYWMvoLjyGAk425gR0i5lwgLpntmHS+QHu9bhEmU3AY6VBdIaTj/2TOzMc
+         OKDL3hAf1ZbscbPlWIXwKQiMMAK1vTBBOgRCOJ7Fw/lO3jUfQ1K1l0BR1ahGAa4mtfy2
+         uRYp1zOb47kIH1gWy2EyX6B0JPkWfiJDYWcWuIQGGoNfX4wEO1L0VLZDlhNSdCoG0xYd
+         lI1JpmdK+xupMWM7ExZVsDk55aRlFJ34/IcbLEyvseKw1UMPHE5imSPdTFj+T03bcE7s
+         Alc5Yu3R8Obtz+0NiMm+nbcdkhE2JflDHuFgyv+7ZIumwncJw4qibehaXIp4OE3STeoB
+         V3+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=jZYzs8OyHucPngtfa3rnlFCl1zhe+pFCEDNvHAi29U8=;
+        b=YZ/HzGwhDP4IH7rRfi1XGI8JIx9Z9MsIjL2WjmFQHP5s3kaxmyZuH7E26EMWtoXZKF
+         xhxUhidPlhgA61HoiOT7hBM5JPLXsrda1hhfgF3UkN3aoby1xBYSwVqcV3Zxa1EoV/7S
+         pgWDZ0G+SlGED9c8AorCPLCrNOVnXDjrt3yTXGsUxKUKbDABj2d0QlrNGehiO2BTlpOM
+         syIcPU5ZK5LVWbPybAGR+yKdqv6i6VU+5eVn+pVFOck+ds2QNY7S6qqvWrF/Gu6enWJM
+         1L4NNq9wT0LmWuq5DtWJPX9e3BMoKXoYlJJ5dw/YH5Rc1K7UgHCqjD6qaJtMIp0Be5CG
+         15ig==
+X-Gm-Message-State: AOAM530Wd6OIrlZ5ngWBBG3BMkCd0R/DY/dtQLi2zjTQh64nDlzO1gX2
+        JCk73M8/+Ch4CClWkFYLdHaNvSe5JuVPHA==
+X-Google-Smtp-Source: ABdhPJxiBzUIpNvmMf5asVsKH9SyMy6oN7t91xT2ZCVkBRmIuCeJU5UxviSvLsog1PSu8pEiIvn6fQ==
+X-Received: by 2002:a37:c4b:: with SMTP id 72mr4991601qkm.359.1593014234745;
+        Wed, 24 Jun 2020 08:57:14 -0700 (PDT)
+Received: from lca.pw (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id i13sm4109354qtc.83.2020.06.24.08.57.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jun 2020 08:57:14 -0700 (PDT)
+Date:   Wed, 24 Jun 2020 11:57:07 -0400
+From:   Qian Cai <cai@lca.pw>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, paulmck@kernel.org,
+        rcu@vger.kernel.org, torvalds@linux-foundation.org
+Subject: Re: Null-ptr-deref due to "vfs, fsinfo: Add an RCU safe per-ns mount
+ list"
+Message-ID: <20200624155707.GA1259@lca.pw>
+References: <31941725-BEB0-4839-945A-4952C2B5ADC7@lca.pw>
+ <2961585.1589326192@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20200624144311.GA5839@infradead.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
- definitions=2020-06-24_08:2020-06-24,2020-06-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- clxscore=1015 bulkscore=0 priorityscore=1501 cotscore=-2147483648
- mlxscore=0 lowpriorityscore=0 suspectscore=0 adultscore=0 mlxlogscore=766
- phishscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2006240108
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2961585.1589326192@warthog.procyon.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 24.06.20 16:43, Christoph Hellwig wrote:
-> On Wed, Jun 24, 2020 at 01:11:54PM +0200, Christian Borntraeger wrote:
->> Does anyone have an idea why "umh: fix processed error when UMH_WAIT_PROC is used" breaks the
->> linux-bridge on s390?
+On Wed, May 13, 2020 at 12:29:52AM +0100, David Howells wrote:
+> Qian Cai <cai@lca.pw> wrote:
 > 
-> Are we even sure this is s390 specific and doesn't happen on other
-> architectures with the same bridge setup?
+> > Reverted the linux-next commit ee8ad8190cb1 (“vfs, fsinfo: Add an RCU safe per-ns mount list”) fixed the null-ptr-deref.
+> 
+> Okay, I'm dropping this commit for now.
 
-Fair point. AFAIK nobody has tested this yet on x86.
+What's the point of re-adding this buggy patch to linux-next again since
+0621 without fixing the previous reported issue at all? Reverting the
+commit will still fix the crash below immediately, i.e.,
+
+dbc87e74d022 ("vfs, fsinfo: Add an RCU safe per-ns mount list")
+
+# runc run root
+
+[ 9067.486969][T72863] general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
+[ 9067.543973][T72863] KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+[ 9067.586640][T72863] CPU: 24 PID: 72863 Comm: runc:[2:INIT] Not tainted 5.8.0-rc2-next-20200624+ #4
+[ 9067.629285][T72863] Hardware name: HP ProLiant BL660c Gen9, BIOS I38 10/17/2018
+[ 9067.663809][T72863] RIP: 0010:umount_tree+0x4ec/0xcf0
+[ 9067.688505][T72863] Code: 0f 85 61 04 00 00 49 83 c7 08 48 8b 43 b8 4c 89 fa 48 c1 ea 03 80 3c 2a 00 0f 85 33 04 00 00 4c 8b 7b c0 4c 89 fa 48 c1 ea 03 <80> 3c 2a 00 0f 85 09 04 00 00 49 89 07 48 85 c0 74 19 48 8d 78 08
+[ 9067.782308][T72863] RSP: 0018:ffffc900259efcb0 EFLAGS: 00010246
+[ 9067.810141][T72863] RAX: 0000000000000000 RBX: ffff8884b0cb8cd8 RCX: 1ffff92004b3dfa0
+[ 9067.848310][T72863] RDX: 0000000000000000 RSI: ffff8884b0cb8cd8 RDI: ffffc900259efd08
+[ 9067.886236][T72863] RBP: dffffc0000000000 R08: fffffbfff2bac7a6 R09: fffffbfff2bac7a6
+[ 9067.922883][T72863] R10: ffffffff95d63d2f R11: fffffbfff2bac7a5 R12: ffff8884b0cb8c40
+[ 9067.960156][T72863] R13: ffffc900259efd00 R14: 0000000000000001 R15: 0000000000000000
+[ 9067.997069][T72863] FS:  00007fc286f88b80(0000) GS:ffff88881ed80000(0000) knlGS:0000000000000000
+[ 9068.040907][T72863] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 9068.074258][T72863] CR2: 00007fc284141e00 CR3: 0000000fbc33a002 CR4: 00000000001706e0
+[ 9068.111890][T72863] Call Trace:
+[ 9068.126482][T72863]  ? rcu_read_unlock+0x50/0x50
+[ 9068.148298][T72863]  ? unhash_mnt+0x450/0x450
+[ 9068.169156][T72863]  ? rwlock_bug.part.1+0x90/0x90
+[ 9068.191014][T72863]  do_mount+0x1132/0x1620
+[ 9068.211042][T72863]  ? rcu_read_lock_bh_held+0xc0/0xc0
+[ 9068.235399][T72863]  ? copy_mount_string+0x20/0x20
+[ 9068.258407][T72863]  ? memdup_user+0x4f/0x80
+[ 9068.278493][T72863]  __x64_sys_mount+0x15d/0x1b0
+[ 9068.299948][T72863]  do_syscall_64+0x5f/0x310
+[ 9068.320837][T72863]  ? trace_hardirqs_off+0x12/0x1a0
+[ 9068.343781][T72863]  ? asm_exc_page_fault+0x8/0x30
+[ 9068.367139][T72863]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 9068.394316][T72863] RIP: 0033:0x55d71f93e7ca
+[ 9068.414833][T72863] Code: Bad RIP value.
+[ 9068.433443][T72863] RSP: 002b:000000c00021af30 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+[ 9068.473044][T72863] RAX: ffffffffffffffda RBX: 000000c000028000 RCX: 000055d71f93e7ca
+[ 9068.510343][T72863] RDX: 000000c00010546a RSI: 000000c000105470 RDI: 000000c000105460
+[ 9068.547999][T72863] RBP: 000000c00021afc8 R08: 0000000000000000 R09: 0000000000000000
+[ 9068.587756][T72863] R10: 0000000000001000 R11: 0000000000000206 R12: 0000000000000148
+[ 9068.624851][T72863] R13: 0000000000000147 R14: 0000000000000200 R15: 0000000000000100
+[ 9068.662061][T72863] Modules linked in: loop vfio_pci vfio_virqfd vfio_iommu_type1 vfio kvm_intel kvm irqbypass efivars nls_ascii nls_cp437 vfat fat ip_tables x_tables sd_mod bnx2x hpsa mdio scsi_transport_sas firmware_class dm_mirror dm_region_hash dm_log dm_mod efivarfs
+[ 9068.777205][T72863] ---[ end trace 9c03562d398fb10f ]---
+[ 9068.802729][T72863] RIP: 0010:umount_tree+0x4ec/0xcf0
+[ 9068.826630][T72863] Code: 0f 85 61 04 00 00 49 83 c7 08 48 8b 43 b8 4c 89 fa 48 c1 ea 03 80 3c 2a 00 0f 85 33 04 00 00 4c 8b 7b c0 4c 89 fa 48 c1 ea 03 <80> 3c 2a 00 0f 85 09 04 00 00 49 89 07 48 85 c0 74 19 48 8d 78 08
+[ 9068.918966][T72863] RSP: 0018:ffffc900259efcb0 EFLAGS: 00010246
+[ 9068.947083][T72863] RAX: 0000000000000000 RBX: ffff8884b0cb8cd8 RCX: 1ffff92004b3dfa0
+[ 9068.985097][T72863] RDX: 0000000000000000 RSI: ffff8884b0cb8cd8 RDI: ffffc900259efd08
+[ 9069.022555][T72863] RBP: dffffc0000000000 R08: fffffbfff2bac7a6 R09: fffffbfff2bac7a6
+[ 9069.061621][T72863] R10: ffffffff95d63d2f R11: fffffbfff2bac7a5 R12: ffff8884b0cb8c40
+[ 9069.101629][T72863] R13: ffffc900259efd00 R14: 0000000000000001 R15: 0000000000000000
+[ 9069.138367][T72863] FS:  00007fc286f88b80(0000) GS:ffff88881ed80000(0000) knlGS:0000000000000000
+[ 9069.180543][T72863] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 9069.209807][T72863] CR2: 00007fc284141e00 CR3: 0000000fbc33a002 CR4: 00000000001706e0
+[ 9069.245727][T72863] Kernel panic - not syncing: Fatal exception
+[ 9069.273756][T72863] Kernel Offset: 0x11c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[ 9069.327388][T72863] ---[ end Kernel panic - not syncing: Fatal exception ]---
+> 
