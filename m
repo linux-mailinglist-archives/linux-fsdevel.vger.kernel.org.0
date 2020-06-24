@@ -2,167 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F8AD206AD6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 06:01:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86894206B34
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 06:34:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725970AbgFXEA7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 00:00:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38584 "EHLO
+        id S1728793AbgFXEeA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 00:34:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbgFXEA6 (ORCPT
+        with ESMTP id S1728808AbgFXEd6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 00:00:58 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F56C061573;
-        Tue, 23 Jun 2020 21:00:58 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id h10so719994pgq.10;
-        Tue, 23 Jun 2020 21:00:58 -0700 (PDT)
+        Wed, 24 Jun 2020 00:33:58 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B60C8C0613ED
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jun 2020 21:33:56 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id c3so1013815ybp.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jun 2020 21:33:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=WokCtReRqQ4npkuhRh+Pfv3SxLZISJ46jpj8on+jnkI=;
-        b=P+PxYDY9SRnYNMWqBYfMQ15SGzD/AUQ45NOUAgGvJRqAHkoxsSB+/cXdvOHH9uQ9Iw
-         zvT02uM19A/ye6hhphs3JdF1zSQ1tPDFjtTeIlqntJiBMrtDMC3yLzRJw+xfi/g+tqab
-         Ksx17/BV8dpD1zv1w5dqTHURkcURRVW2hqr/h9vfpHoFaGNtor3+36UQUhh3auG1ytEm
-         9UcwtfrHzfJFIfX4fxHCxKH5uc1ofG7nJklw/gml+hclRzrIlu7ITVKlUnTtjJD1P4d7
-         +aJ1A5eCLnpbAh800WQNuiB+pMKD3b5pdH23Aj8KJVpM2wgW3E1QOCkmUc36hSli/wTt
-         QgNw==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=VIhRPUc686EfpzyL1ZkpMu0h/tTzQnqLcgbnZ2tSukA=;
+        b=ATg4ot7iQfZhD7VJCToYCJEq0+HHgex7Fu5otS5NIVKN8IP1NunyBFhinY6vJQmpWp
+         4Ij36w/kSxOzIDs1lg4m4ranBcUkYgjgGqDBqZtXEgUF/A6viuow4yzNYWkxxGRvlpWC
+         mmIuA8xMCysfmJgO6z/8XuIDppG81o+uGO/b1g0+chDgAnIrr/7wD3ZVV8Vz040+E4+Z
+         OdVyjEqMLwNTcMPpg5aX3GyMmWgYDsyC79JWjtqgCg9JBAfM0b3dFkEJ4zIsj8DZBgV0
+         XSQbXGyBLB4NyxkGBW2KMLsu3Za4MN22eTnqS9Z/oFfinJGodSjpc65NAWPD+W0KoXtQ
+         L6Pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=WokCtReRqQ4npkuhRh+Pfv3SxLZISJ46jpj8on+jnkI=;
-        b=rKsXKIem0zbBwL3ZbfSdh+KCtWDvGxAyJfxHqjPOfSZxZtcbLQMSo4BpdOTsN8ezXa
-         L68Vnfg+AZnj6qrQ5yg8XaZZxAe9RHYKUn4MPm/0S+LtRSzRV7UIAhnKsFPvOLBAT+2a
-         abhfRjO6tWotLg9jqr2DDJnBuaubDsrGSbpq5v3X2Zsx4mEPJrGGolnjgvUzUecoO1tu
-         jgDK160TUdfJiMi+ovbm7ud3yJBHVE+SKLu8CA2SCE/80oF+wmGv4S6OQmbl0vNzzvlV
-         A2STGoktrsVfmDHO+m3Ns5OmdqmHTjJGvWs75ViHZkOGSnvQ5B61F0d6l6wvOCmaFBPT
-         LB/A==
-X-Gm-Message-State: AOAM5316jSxGy8yEV+wHPw72y5F5GOW90pAYfgAsg+goWWf6XEon323C
-        wJz47d68zxhWebV8jl82dYI=
-X-Google-Smtp-Source: ABdhPJxFe1q9ZKK1WhqmZXvZXrG1RJ2omGkkh8vAUN3K3NADNExTsXlc54hbTzvACxWT1DiOLDMqrA==
-X-Received: by 2002:a63:2a8a:: with SMTP id q132mr19423102pgq.279.1592971257997;
-        Tue, 23 Jun 2020 21:00:57 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:4e7a])
-        by smtp.gmail.com with ESMTPSA id y4sm1781920pfn.28.2020.06.23.21.00.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jun 2020 21:00:57 -0700 (PDT)
-Date:   Tue, 23 Jun 2020 21:00:54 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-Message-ID: <20200624040054.x5xzkuhiw67cywzl@ast-mbp.dhcp.thefacebook.com>
-References: <87bllngirv.fsf@x220.int.ebiederm.org>
- <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
- <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
- <87ftaxd7ky.fsf@x220.int.ebiederm.org>
- <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
- <87h7v1pskt.fsf@x220.int.ebiederm.org>
- <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
- <87h7v1mx4z.fsf@x220.int.ebiederm.org>
- <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
- <b4a805e7-e009-dfdf-d011-be636ce5c4f5@i-love.sakura.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b4a805e7-e009-dfdf-d011-be636ce5c4f5@i-love.sakura.ne.jp>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=VIhRPUc686EfpzyL1ZkpMu0h/tTzQnqLcgbnZ2tSukA=;
+        b=Ul+Hua0G43UZTbHStdPNC7MPkmFk4BOSNIcoVYZUhoTNBELLxr3UyPkgkbHXfdrPZp
+         yjKqIvWPd6D43eY314CSBZTKJChM/UxHSkgkiFMAlaOo6OYwlup2TXXAdgneLGl/SrC1
+         ta2/9sVkkDYlRxOOxIbL/kK5q1tdpDYIkCAvjfO27SNblQvBunvCQc5fnCeP/dTDFzh7
+         BEwonnoxw0vEErZB2reaegjeW+irlDgRkDlQmTePnwdHArZv3uG5Px/6bYSD30gwxGfd
+         DidadCQxrx2RcR0iL8tBDvx9NQOzD3peUP9ikWtzRwqz2xLlEaE/RB+mmz3nKy3KWRMf
+         O9Ow==
+X-Gm-Message-State: AOAM5326UDOhBSrhxdUFLQEdEWXAOMUI/XdThAV3PTuvG37A8lJvhHmA
+        9EDWqLjjZdZUuBar47ZLFkmqEjZdsto=
+X-Google-Smtp-Source: ABdhPJzqZudoyjfwmOnuXUVebSWSY1PkS5+3B30QL46yfijJWtmCuoeOhxK7BwlRH7FbBAlVw+Pj75yPbZ4=
+X-Received: by 2002:a25:b8b:: with SMTP id 133mr42829755ybl.373.1592973235828;
+ Tue, 23 Jun 2020 21:33:55 -0700 (PDT)
+Date:   Tue, 23 Jun 2020 21:33:37 -0700
+Message-Id: <20200624043341.33364-1-drosen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.27.0.111.gc72c7da667-goog
+Subject: [PATCH v9 0/4] Prepare for upcoming Casefolding/Encryption patches
+From:   Daniel Rosenberg <drosen@google.com>
+To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 24, 2020 at 10:51:15AM +0900, Tetsuo Handa wrote:
-> On 2020/06/24 4:40, Alexei Starovoitov wrote:
-> > There is no refcnt bug. It was a user error on tomoyo side.
-> > fork_blob() works as expected.
-> 
-> Absolutely wrong! Any check which returns an error during current->in_execve == 1
-> will cause this refcnt bug. You are simply ignoring that there is possibility
-> that execve() fails.
+This lays the ground work for enabling casefolding and encryption at the
+same time for ext4 and f2fs. A future set of patches will enable that
+functionality. These unify the highly similar dentry_operations that ext4
+and f2fs both use for casefolding.
 
-you mean security_bprm_creds_for_exec() denying exec?
-hmm. got it. refcnt model needs to change then.
+Daniel Rosenberg (4):
+  unicode: Add utf8_casefold_hash
+  fs: Add standard casefolding support
+  f2fs: Use generic casefolding support
+  ext4: Use generic casefolding support
 
-> > Not true again.
-> > usermode_blob is part of the kernel module.
-> 
-> Disagree.
+ fs/ext4/dir.c           |  64 +------------------------
+ fs/ext4/ext4.h          |  12 -----
+ fs/ext4/hash.c          |   2 +-
+ fs/ext4/namei.c         |  20 ++++----
+ fs/ext4/super.c         |  12 ++---
+ fs/f2fs/dir.c           |  84 ++++-----------------------------
+ fs/f2fs/f2fs.h          |   4 --
+ fs/f2fs/super.c         |  10 ++--
+ fs/f2fs/sysfs.c         |  10 ++--
+ fs/libfs.c              | 101 ++++++++++++++++++++++++++++++++++++++++
+ fs/unicode/utf8-core.c  |  23 ++++++++-
+ include/linux/f2fs_fs.h |   3 --
+ include/linux/fs.h      |  22 +++++++++
+ include/linux/unicode.h |   3 ++
+ 14 files changed, 186 insertions(+), 184 deletions(-)
 
-Disagree with what? that blob is part of kernel module? huh?
-what is it then?
+-- 
+2.27.0.111.gc72c7da667-goog
 
-> 
-> > Kernel module when loaded doesn't have path.
-> 
-> Disagree.
-> 
-> Kernel modules can be trusted via module signature mechanism, and the byte array
-> (which contains code / data) is protected by keeping that byte array within the
-> kernel address space. Therefore, pathname based security does not need to complain
-> that there is no pathname when kernel module is loaded.
-
-I already explained upthread that blob is part of .rodata or .init.rodata
-of kernel module and covered by the same signature mechanism.
-
-> However, regarding usermode_blob, although the byte array (which contains code / data)
-> might be initially loaded from the kernel space (which is protected), that byte array
-> is no longer protected (e.g. SIGKILL, strace()) when executed because they are placed
-> in the user address space. Thus, LSM modules (including pathname based security) want
-> to control how that byte array can behave.
-
-It's privileged memory regardless. root can poke into kernel or any process memory.
-
-> On 2020/06/24 3:53, Eric W. Biederman wrote:
-> > This isn't work anyone else can do because there are not yet any real in
-> > tree users of fork_blob.  The fact that no one else can make
-> > substantials changes to the code because it has no users is what gets in
-> > the way of maintenance.
-> 
-> It sounds to me that fork_blob() is a dangerous interface which anonymously
-> allows arbitrary behavior in an unprotected environment. Therefore,
-
-I think you missed the part that user blob is signed as part of kernel module.
-
-> > Either a path needs to be provided or the LSMs that work in terms
-> > of paths need to be fixed.
-> 
-> LSM modules want to control how that byte array can behave. But Alexei
-> still does not explain how information for LSM modules can be provided.
-
-huh?
-please see net/bpfilter/.
-
-> 
-> > My recomendation for long term maintenance is to split fork_blob into 2
-> > functions: fs_from_blob, and the ordinary call_usermodehelper_exec.
-> > That removes the need for any special support for anything in the exec
-> > path because your blob will also have a path for your file, and the
-> > file in the filesystem can be reused for restart.
-> 
-> Yes, that would be an approach for providing information for LSM modules.
-> 
-> > But with no in-tree users none of us can do anything bug guess what
-> > the actual requirements of fork_usermode_blob are.
-> 
-> Exactly. Since it is not explained why the usermode process started by
-> fork_usermode_blob() cannot interfere (or be interfered by) the rest of
-> the system (including normal usermode processes), the byte array comes from
-> the kernel address space is insufficient for convincing LSM modules to
-> ignore what that byte array can do.
-
-Sounds like tomoyo doesn't trust kernel modules. I don't think that is
-fixable with any amount of explantation.
