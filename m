@@ -2,226 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE8532076AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 17:06:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3442E2076DC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 17:10:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404079AbgFXPGX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 11:06:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56272 "EHLO
+        id S2404145AbgFXPJp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 11:09:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403991AbgFXPGW (ORCPT
+        with ESMTP id S2403814AbgFXPJp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 11:06:22 -0400
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD9B5C061573;
-        Wed, 24 Jun 2020 08:06:22 -0700 (PDT)
-Received: by mail-qk1-x742.google.com with SMTP id 80so2097068qko.7;
-        Wed, 24 Jun 2020 08:06:22 -0700 (PDT)
+        Wed, 24 Jun 2020 11:09:45 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CDD0C061573
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 08:09:45 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id b7so2379660pju.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 08:09:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=BLinj9Kg0W1/34KrqwmkEhLauk6NHTmIpjaR2XnC5qs=;
-        b=SLXKFqjZG3FQG2tZdxU/Ss/zollqCbWEQXMya7rMx4rr4DSab5IXUwelYXnsqu6TEv
-         +40cvniBKzWETgRrHpSjGDbG9cza1NcmfGwQoeJJUXU9x+lxVkVm265zy3TrUBYa/3X0
-         xL2XdG2g+DQaXAedWpWLByIod4YNC+DTxb/iKfekG0+mae3gq/3Cy5E3KCwpW4/ss7zu
-         O3VYUrRldjczm6MxHGVJ5pXGc2kQTtRThrAnE97sf7USiqGN/QSIFk3egGTGoGzIFuFw
-         dRW/DgaN8jU6rql7jTYwWkmLNBA0ND0J/FreCzoNK2NAYuS+cUVLcRoYQ1ELDAy89fEU
-         tSuw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Hm3ympvKduUNh5129dxmMgwX0W3YAimhGqajkDVt8Jw=;
+        b=hV4dK5XM2LY4lKz5JyFuMP7rwg4k+z0fv4ioWmeLSYRoWipXBV5oPcLKy7YendLDCZ
+         oDFosVNt6DL0z1pDwv0sNbBwAsilFivXTaLG67vShvTaoEGSgipBx0Sl+J0wYd1A+71C
+         BGKYEAmSNKmVYbv4bOThY6xNVDMFBRWBC8+KzWGHQ85PX7y987rUcmLQH/BeFd3Ieh+b
+         nZfarXGDG4Kb6ApvBoP/t++mTsciC8K7rhuQH5z7og8lfM7+bjVWcYdzX9pqXEdpunZI
+         qmk+WQgIPnSo4VS+yhzG1ohGUvAD8k2yEI9IgtDlWbvDslBrrpMUm6TANHAszsmBLpX2
+         taTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BLinj9Kg0W1/34KrqwmkEhLauk6NHTmIpjaR2XnC5qs=;
-        b=YHZmr9DMDq6dZrg7CFtmnIvdZdZYxWkKMD+IIH4nX/l6u+HcONwgWpWJbz6I7pWzO3
-         ZgekxhyB6UtLiachl8PIIdL2Fnu7+6IbyI6NnB4tWc73vkRhzK3GWD+CEMmzxUcQZKY1
-         +I7//XoQApxrLZXMCLxXHb2XvyCHf35qSZePzx1JHLCPIy9LwltyY7oy65qgPTuBqWag
-         QTG2VaVd/7MsZOMoz7eLiBzlLAQIg8Og01dKbO5K9upaVvus16pA5eKz9BaoBPoU3qBg
-         ZXhBignlaHX6EsfCUlP9K3owL7/oAeoHGsjBtIfRbY2f1+CjmbuWS4Cr03o7Y4VEwiZ7
-         4xHg==
-X-Gm-Message-State: AOAM530Yj6xn63BimGUmfI2xyUV+26rSkWwlVu6BcCyEWY0MnpqfMLRI
-        90YeLmzPQCQbI0+PAjLMH68=
-X-Google-Smtp-Source: ABdhPJxVU1E9AO2pt3jX2R6NoPKTzpapTWz8JPYLuKeelKxaG9eZDZ8E0U+1nG/Y3rqY9wwKZmRPJQ==
-X-Received: by 2002:a37:59c4:: with SMTP id n187mr4057972qkb.303.1593011182036;
-        Wed, 24 Jun 2020 08:06:22 -0700 (PDT)
-Received: from dev.localdomain ([183.134.211.54])
-        by smtp.gmail.com with ESMTPSA id x26sm3435188qtp.54.2020.06.24.08.06.14
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Jun 2020 08:06:21 -0700 (PDT)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     david@fromorbit.com, mhocko@kernel.org, darrick.wong@oracle.com,
-        hch@infradead.org, akpm@linux-foundation.org, bfoster@redhat.com,
-        vbabka@suse.cz, holger@applied-asynchrony.com
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v2] xfs: reintroduce PF_FSTRANS for transaction reservation recursion protection
-Date:   Wed, 24 Jun 2020 11:05:42 -0400
-Message-Id: <1593011142-10209-1-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Hm3ympvKduUNh5129dxmMgwX0W3YAimhGqajkDVt8Jw=;
+        b=iimatcgOgfAzXgW6YA2kin08/eJrTsoLGG5He8qoobx4ITO5X/uwgsBSxr/ytuBQ0i
+         PGW+F/BvlbjMVRjIrdXyE8vEUxowmSevevqTbwhwb/D99f8T+MiydHBZkWHIBN4ohkQl
+         jgSblbBskhlzeQT7wfVMUFFAVDJnCkHZAw7Fj2vaXgzgAHmrt7nE/bhH+Io6zIXQ1gS7
+         Tbis2OFETrO6vEaTzrRTjueXRGuLggD6moDEa3+uoFmbdrNlx/uJc/e2BS4hQaPTJhUb
+         AmrczB/qm63RRf32iZgpXp8WkXL5o0fiF1+enoaJFZNXnAHQpBkkldC6VG3dl99lfaS4
+         dhsQ==
+X-Gm-Message-State: AOAM533z3AsV6GCGUdlinNj93jdg8Ll9s9xNMxKZ/Ib1xMHksKL03LoT
+        S3O9MtEkN4MVY3N6tFHQsMnyDQ==
+X-Google-Smtp-Source: ABdhPJxHnvpBKJvuZJNpgdxE6VuzhPTYXWKz1m98mZL6We6g1vXw31kuyX7e9kclNRUs4CdeE/1Hbw==
+X-Received: by 2002:a17:90a:3aed:: with SMTP id b100mr26487773pjc.80.1593011384970;
+        Wed, 24 Jun 2020 08:09:44 -0700 (PDT)
+Received: from [192.168.1.188] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id v62sm9071851pfb.119.2020.06.24.08.09.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jun 2020 08:09:44 -0700 (PDT)
+Subject: Re: move block bits out of fs.h
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200620071644.463185-1-hch@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <c2fba635-b2ce-a2b5-772b-4bfcb9b43453@kernel.dk>
+Date:   Wed, 24 Jun 2020 09:09:42 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <20200620071644.463185-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PF_FSTRANS which is used to avoid transaction reservation recursion, is
-dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
-PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
-memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
-means to avoid filesystem reclaim recursion. That change is subtle.
-Let's take the exmple of the check of WARN_ON_ONCE(current->flags &
-PF_MEMALLOC_NOFS)) to explain why this abstraction from PF_FSTRANS to
-PF_MEMALLOC_NOFS is not proper.
+On 6/20/20 1:16 AM, Christoph Hellwig wrote:
+> Hi Jens,
+> 
+> this series removes various remaining block bits out of fs.h and cleans
+> up a few loose ends around that.
+> 
+> Diffstat:
+>  drivers/tty/sysrq.c         |    2 
+>  fs/adfs/super.c             |    1 
+>  fs/affs/file.c              |    1 
+>  fs/befs/linuxvfs.c          |    1 
+>  fs/block_dev.c              |    5 -
+>  fs/efs/super.c              |    1 
+>  fs/hfs/inode.c              |    1 
+>  fs/internal.h               |   17 +++-
+>  fs/jfs/jfs_mount.c          |    1 
+>  fs/jfs/resize.c             |    1 
+>  fs/ntfs/dir.c               |    1 
+>  fs/proc/devices.c           |    1 
+>  fs/quota/dquot.c            |    1 
+>  fs/reiserfs/procfs.c        |    1 
+>  include/linux/bio.h         |    3 
+>  include/linux/blk_types.h   |   39 +++++++++-
+>  include/linux/blkdev.h      |  140 ++++++++++++++++++++++--------------
+>  include/linux/buffer_head.h |    1 
+>  include/linux/dasd_mod.h    |    2 
+>  include/linux/fs.h          |  169 --------------------------------------------
+>  include/linux/genhd.h       |   39 ++++++++--
+>  include/linux/jbd2.h        |    1 
+>  security/loadpin/loadpin.c  |    1 
+>  23 files changed, 192 insertions(+), 238 deletions(-)
 
-Bellow comment is quoted from Dave,
-> It wasn't for memory allocation recursion protection in XFS - it was for
-> transaction reservation recursion protection by something trying to flush
-> data pages while holding a transaction reservation. Doing
-> this could deadlock the journal because the existing reservation
-> could prevent the nested reservation for being able to reserve space
-> in the journal and that is a self-deadlock vector.
-> IOWs, this check is not protecting against memory reclaim recursion
-> bugs at all (that's the previous check [1]). This check is
-> protecting against the filesystem calling writepages directly from a
-> context where it can self-deadlock.
-> So what we are seeing here is that the PF_FSTRANS ->
-> PF_MEMALLOC_NOFS abstraction lost all the actual useful information
-> about what type of error this check was protecting against.
+Applied for 5.9 - I kept this in a separate topic branch, fwiw. There's the
+potential for some annoying issues with this, so would rather have it in
+a branch we can modify easily, if we need to.
 
-[1]. Bellow check is to avoid memory reclaim recursion.
-if (WARN_ON_ONCE((current->flags & (PF_MEMALLOC|PF_KSWAPD)) ==
-	PF_MEMALLOC))
-	goto redirty;
-
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Michal Hocko <mhocko@kernel.org>
----
- fs/iomap/buffered-io.c    |  4 ++--
- fs/xfs/libxfs/xfs_btree.c |  2 +-
- fs/xfs/xfs_aops.c         |  4 ++--
- fs/xfs/xfs_trans.c        | 12 ++++++------
- include/linux/sched.h     |  1 +
- 5 files changed, 12 insertions(+), 11 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index bcfc288..0f1945c 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1500,9 +1500,9 @@ static void iomap_writepage_end_bio(struct bio *bio)
- 
- 	/*
- 	 * Given that we do not allow direct reclaim to call us, we should
--	 * never be called in a recursive filesystem reclaim context.
-+	 * never be called while in a filesystem transaction.
- 	 */
--	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
-+	if (WARN_ON_ONCE(current->flags & PF_FSTRANS))
- 		goto redirty;
- 
- 	/*
-diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
-index 2d25bab..4a7c8b7 100644
---- a/fs/xfs/libxfs/xfs_btree.c
-+++ b/fs/xfs/libxfs/xfs_btree.c
-@@ -2814,7 +2814,7 @@ struct xfs_btree_split_args {
- 	struct xfs_btree_split_args	*args = container_of(work,
- 						struct xfs_btree_split_args, work);
- 	unsigned long		pflags;
--	unsigned long		new_pflags = PF_MEMALLOC_NOFS;
-+	unsigned long		new_pflags = PF_MEMALLOC_NOFS | PF_FSTRANS;
- 
- 	/*
- 	 * we are in a transaction context here, but may also be doing work
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index b356118..79da028 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -62,7 +62,7 @@ static inline bool xfs_ioend_is_append(struct iomap_ioend *ioend)
- 	 * We hand off the transaction to the completion thread now, so
- 	 * clear the flag here.
- 	 */
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS | PF_FSTRANS);
- 	return 0;
- }
- 
-@@ -125,7 +125,7 @@ static inline bool xfs_ioend_is_append(struct iomap_ioend *ioend)
- 	 * thus we need to mark ourselves as being in a transaction manually.
- 	 * Similarly for freeze protection.
- 	 */
--	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS | PF_FSTRANS);
- 	__sb_writers_acquired(VFS_I(ip)->i_sb, SB_FREEZE_FS);
- 
- 	/* we abort the update if there was an IO error */
-diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
-index 3c94e5f..011f52f 100644
---- a/fs/xfs/xfs_trans.c
-+++ b/fs/xfs/xfs_trans.c
-@@ -153,7 +153,7 @@
- 	bool			rsvd = (tp->t_flags & XFS_TRANS_RESERVE) != 0;
- 
- 	/* Mark this thread as being in a transaction */
--	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS | PF_FSTRANS);
- 
- 	/*
- 	 * Attempt to reserve the needed disk blocks by decrementing
-@@ -163,7 +163,7 @@
- 	if (blocks > 0) {
- 		error = xfs_mod_fdblocks(mp, -((int64_t)blocks), rsvd);
- 		if (error != 0) {
--			current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+			current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS | PF_FSTRANS);
- 			return -ENOSPC;
- 		}
- 		tp->t_blk_res += blocks;
-@@ -240,7 +240,7 @@
- 		tp->t_blk_res = 0;
- 	}
- 
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS | PF_FSTRANS);
- 
- 	return error;
- }
-@@ -861,7 +861,7 @@
- 
- 	xfs_log_commit_cil(mp, tp, &commit_lsn, regrant);
- 
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS | PF_FSTRANS);
- 	xfs_trans_free(tp);
- 
- 	/*
-@@ -893,7 +893,7 @@
- 			xfs_log_ticket_ungrant(mp->m_log, tp->t_ticket);
- 		tp->t_ticket = NULL;
- 	}
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS | PF_FSTRANS);
- 	xfs_trans_free_items(tp, !!error);
- 	xfs_trans_free(tp);
- 
-@@ -954,7 +954,7 @@
- 	}
- 
- 	/* mark this thread as no longer being in a transaction */
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS | PF_FSTRANS);
- 
- 	xfs_trans_free_items(tp, dirty);
- 	xfs_trans_free(tp);
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index b62e6aa..02045e8 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1511,6 +1511,7 @@ static inline int is_global_init(struct task_struct *tsk)
- #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
- #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
- #define PF_SWAPWRITE		0x00800000	/* Allowed to write to swap */
-+#define PF_FSTRANS		0x01000000	/* Inside a filesystem transaction */
- #define PF_UMH			0x02000000	/* I'm an Usermodehelper process */
- #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
- #define PF_MCE_EARLY		0x08000000      /* Early kill for mce process policy */
 -- 
-1.8.3.1
+Jens Axboe
 
