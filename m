@@ -2,99 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 684AE207722
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 17:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 307AB20775C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 17:26:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404563AbgFXPQj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 11:16:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57914 "EHLO
+        id S2404167AbgFXP0I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 11:26:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404511AbgFXPQi (ORCPT
+        with ESMTP id S2403831AbgFXP0H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 11:16:38 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90A8BC061795
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 08:16:38 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id y18so1179588plr.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 08:16:38 -0700 (PDT)
+        Wed, 24 Jun 2020 11:26:07 -0400
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50C30C061573
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 08:26:07 -0700 (PDT)
+Received: by mail-il1-x12e.google.com with SMTP id j16so2418581ili.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 08:26:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TVX/MV1cRkugdklQX2owAo6W7k+5NFqvXnOlDA4kvRY=;
-        b=yGzNNUiU0zB4ia/e/BRLyub6jOMkcwxNBtVbxa2YAtqv9bXPxUetSHNyXmsHenrYHt
-         cjkFgPmkRZp/X2yNr2u9mju+xed5eYUhQk4Kpx+jH0CGmR61y8a9ouWVJug5DZ7A+Qlv
-         DJD/L8PQC/W42O0m9N96kcj4qg7p6UcD14f7MiBpKvVmmzYFuDReGBcXd8RNy518wKPV
-         wNXnls0RdYt9lZQO/MEmeg8HOax7edYnC7etow2AGG1sgeWTIFjKemddtFXoz8u+vQRr
-         Ma2eSMXnN6YljqXWa7Q+47mtbUe6tyaeYSy4XLkUoOPj471841XsJUywEBTvACE5vQ1m
-         8c/Q==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=P6vFYfQctY8kt5RgNmWbxdv59n9jFppCIc/LyroNeoQ=;
+        b=Hb1gKYi0AcR68gaSWxox6Q/ZjSItcMD95pTIPTFR5p9vPLLqFd9pnz7Y/xzMy6hrMe
+         2AsXO1yzKSxfYcnUDGIL6q6h/OS+cScbYY4eu566exQcjUYJ6MDZU9cFnoKoLtHCdJSV
+         EToSShbjx0vzRkWBubmuF3RcV1Wc2dD3/5BfJetJarDVYbk3SZqP0Wvraznw/vtjIjZl
+         hLG5IZmL3Gr7FlGlRKdg/hgLW+Dh85KsY9814GgxEyoFFwsjT6WfSy/ze4FI9cMJbW/+
+         vw3aWnL96BgNLfXLzIVzbeidVr8j32MI09Wo9fE3XlEAa+ZUUr+Bbtymgd9cu4ILrKxY
+         mq5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TVX/MV1cRkugdklQX2owAo6W7k+5NFqvXnOlDA4kvRY=;
-        b=kniptmQ3SVVoBkaU2iWQfvJ1P1ki94591VTGjUU0QySKxRs9OYMnBjfkbfhfB2ERUi
-         4+OUyUk1tK28UoFk76u2IKS86+IJxLHhRkDSVaVNtJqbzHsef3/7SVF+I3CTd+zk5G97
-         5aV2h36dAqcLJEQP7heByeBjOpk2aNmu1ZaS4GaMEZNEEj31cajpKNgKpjrgxhMdcD8k
-         /pMMv/Glggem3hdA8IPeEQqIzmSQRUiVwzqbI3bn+wtEThdrzsE851tCfhEeXdx02oMb
-         R4CCEsWbFRnFLZwchIyngOFsIqcq8/04wdH5SAipK3azi3yM7dgvtv8+JtdKq4NqkEe6
-         z1Bw==
-X-Gm-Message-State: AOAM530PnzMe40Zz7NswvaqVWjQjgaDprVGX4VDJ0dgZqOwrgjTxHJRj
-        MxJKErx53m0FaQhLwf6Zkfg+3w==
-X-Google-Smtp-Source: ABdhPJycIgQsbIB02Wur2mBRtNGc1PyURqcruMtrpODXrvsCtMYEKd4KNUN/T13UfMqBLSg/gfKfEQ==
-X-Received: by 2002:a17:902:8d98:: with SMTP id v24mr17314674plo.276.1593011798114;
-        Wed, 24 Jun 2020 08:16:38 -0700 (PDT)
-Received: from [192.168.1.188] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id n15sm3158702pgs.25.2020.06.24.08.16.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jun 2020 08:16:37 -0700 (PDT)
-Subject: Re: move block bits out of fs.h
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200620071644.463185-1-hch@lst.de>
- <c2fba635-b2ce-a2b5-772b-4bfcb9b43453@kernel.dk>
- <20200624151211.GA17344@lst.de>
- <216bcea4-a38d-8a64-bc0f-be61b2f26e79@kernel.dk>
- <20200624151454.GB17344@lst.de>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <989cafe3-ddfd-8b0c-2bad-412eb3a20ee0@kernel.dk>
-Date:   Wed, 24 Jun 2020 09:16:36 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=P6vFYfQctY8kt5RgNmWbxdv59n9jFppCIc/LyroNeoQ=;
+        b=UIWKsjn8+NXPwlDKgF605XjVgNXYBrbJzad/EYFJdGQnaTs76dDuXlLQA5YHdA4lHt
+         aLbVG12j4DV05z31BPvXfYRVgqJiNzDvSc85wt1NQmwbY/BlXx5XOGoR0+aXcZi9n/1l
+         RralM/oyBVWcRD4CJCtaw5dzBIw7rimpa5qSTcwf/3WSEspm8/IgKXY3WhgHp4vturPl
+         WyeAkMiExH7A81LxWodH+booHtQl8hKoawB4i1RCtQic/pHjf43x0c0zyZAQmlxEXlUh
+         ISTfrZU0LlC+j63EydsOBq3JCPt7erh7IX9+PZXNXEa/uBLaZEChrDTCa7ZfEg1rSngQ
+         4Hbw==
+X-Gm-Message-State: AOAM5311V+E8bNyJJ2Uu/SUH92Jk9uqI8gYVjbsShvJnv5srTQEf1kTv
+        CNd7HpcE4o/sHUVCpjjBGcuzUyJ+YW5CQ1hPSKo=
+X-Google-Smtp-Source: ABdhPJwip2rV4ltxOqRZgO9jeaDVbdM2V6oB5bCnd+9yOQNToGa9a89eNFogZc9XSDafM6jnAUYTtuoP6miQlDO+7mo=
+X-Received: by 2002:a92:b6d4:: with SMTP id m81mr5691444ill.72.1593012366564;
+ Wed, 24 Jun 2020 08:26:06 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200624151454.GB17344@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200624144846.jtpolkxiqmery3uy@wittgenstein>
+In-Reply-To: <20200624144846.jtpolkxiqmery3uy@wittgenstein>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 24 Jun 2020 18:25:55 +0300
+Message-ID: <CAOQ4uxhkiWKt2As5kMWt6PNrRwY8QbqXKiHkz_1UFb0Za+BEuw@mail.gmail.com>
+Subject: Re: overlayfs regression
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Seth Forshee <seth.forshee@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/24/20 9:14 AM, Christoph Hellwig wrote:
-> On Wed, Jun 24, 2020 at 09:14:11AM -0600, Jens Axboe wrote:
->> On 6/24/20 9:12 AM, Christoph Hellwig wrote:
->>> On Wed, Jun 24, 2020 at 09:09:42AM -0600, Jens Axboe wrote:
->>>> Applied for 5.9 - I kept this in a separate topic branch, fwiw. There's the
->>>> potential for some annoying issues with this, so would rather have it in
->>>> a branch we can modify easily, if we need to.
->>>
->>> Hmm, I have a bunch of things building on top of this pending, so that
->>> branch split will be interesting to handle.
->>
->> We can stuff it in for-5.9/block, but then I'd rather just rebase that
->> on 5.8-rc2 now since it's still early days. If we don't, we already
->> have conflicts...
-> 
-> I'll happily rebase.  rc1 also has funny ext4 warnings which are
-> pretty annoying.
+On Wed, Jun 24, 2020 at 5:48 PM Christian Brauner
+<christian.brauner@ubuntu.com> wrote:
+>
+> Hey Miklosz,
+> hey Amir,
+>
+> We've been observing regressions in our containers test-suite with
+> commit:
+>
+> Author: Miklos Szeredi <mszeredi@redhat.com>
+> Date:   Tue Mar 17 15:04:22 2020 +0100
+>
+>     ovl: separate detection of remote upper layer from stacked overlay
+>
+>     Following patch will allow remote as upper layer, but not overlay sta=
+cked
+>     on upper layer.  Separate the two concepts.
+>
+>     This patch is doesn't change behavior.
+>
+>     Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+>
 
-Done, pushed it out.
+Are you sure this is the offending commit?
+Look at it. It is really moving a bit of code around and should not
+change logic.
+There are several other commits in 5.7 that could have gone wrong...
 
--- 
-Jens Axboe
+> It suddenly consistently reports:
+> [2422.695340] overlayfs: filesystem on '/home/lxcunpriv/.local/share/lxc/=
+c2/overlay/delta' not supported as upperdir
+> in dmesg where it used to work fine for basically 6 years when we added
+> that test. The test creates a container c2 that uses the rootfs of
+> another container c1 (normal directory on an ext4 filesystem). Here you
+> can see the full mount options:
+>
+> Invalid argument - Failed to mount "/home/lxcunpriv/.local/share/lxc/c1/r=
+ootfs" on "/usr/lib/x86_64-linux-gnu/lxc" with options "upperdir=3D/home/lx=
+cunpriv/.local/share/lxc/c2/overlay/delta,lowerdir=3D/home/lxcunpriv/.local=
+/share/lxc/c1/rootfs,workdir=3D/home/lxcunpriv/.local/share/lxc/c2/overlay/=
+work"
+>
 
+/home/lxcunpriv/.local/share/lxc/c2/overlay/delta' is ext4?
+
+and it fails the test because (path->dentry->d_flags & DCACHE_OP_REAL)?
+It the only thing special about that path is that it is not in root mount n=
+s?
+
+That is strange...
+
+Thanks,
+Amir.
