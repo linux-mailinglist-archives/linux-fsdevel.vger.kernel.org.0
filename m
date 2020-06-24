@@ -2,125 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56C99207980
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 18:49:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF6C0207A23
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 19:20:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404956AbgFXQtU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 12:49:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44208 "EHLO
+        id S2405501AbgFXRTx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 13:19:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404769AbgFXQtT (ORCPT
+        with ESMTP id S2405474AbgFXRTh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 12:49:19 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0823C061573;
-        Wed, 24 Jun 2020 09:49:19 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id e9so1674260pgo.9;
-        Wed, 24 Jun 2020 09:49:19 -0700 (PDT)
+        Wed, 24 Jun 2020 13:19:37 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 153C0C061573
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 10:19:36 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id i3so3460693ljg.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 10:19:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=gHRU/IrrHY0pBXio7TxFoCNp0H7VG1Kl3CaRgA0TrYo=;
-        b=dhJAQd7WFOLBTSj9wvXYa7qMk4O42nna4v+lzqRdheF+gw8QTlPNZL/W13ALRXi40k
-         K8bj1wXi2boUKsTHKnPdEOVi7mI4MyHRt7UrPFggQA/lySzrsC8hPcBRqI6uzxMEuthJ
-         i8L8N0n9k9vpTECiPgZchpfEutLppprroXLou6EGveYVnbsNo3nFaNQZA2KvvlW20V+n
-         S5nsKVQY9wx50u3xuAKxJI+Ot9eBJ7g8G/XTmTHlpRrJe4Z09i3w1s6UqmAMDV25DM8j
-         2iVd6PbhQeAPwqpbQp6zreWRRs9wXvxbNKktJ3Cyqf70+cf/brSHhSfkScA1iccqVR0B
-         KB3g==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qnO8hKovA7hP7JvwvjuDQY7Jzg/02N7Frk2urzNRpI4=;
+        b=P4yma5zFPApj98Kr5mjr+nS/v3AyFaHaehqB4iRF6Laev6mPoAvKUOpXS81ZdH52io
+         MBVLjtssxRQN2czblUcwihfke8lVaDX2X0b0qkoR7A/UTBs4xokVujZODTlvBx7KgXeX
+         3VC6Jav+FZPi4s3KLN6PaNUXdSrLsqzenGGdM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gHRU/IrrHY0pBXio7TxFoCNp0H7VG1Kl3CaRgA0TrYo=;
-        b=gwiEtHxCqD0MbBPDIthfYN4PDlXggAPLe729ZerrrXvQ4y6khT7PUX8RxgGbEHbOCL
-         s55wZT37edleDxpUy9Q4h+1/yDVXFcLc5dZqmKacGY6M88tq9uMuiXa8JNTDmzUEwzHv
-         73aS2QNpEwGGFsEP918ahTg6RgUls/oc+AzkiAkB956ufis0xiqJwvaM4CEl+Gh6wyUy
-         JY5tl0ELnusWsnoDDwRd7iFdaDxR0qOyUMExQzGZf6X0/1U9gxTJfQ6yoIj2OROMzoJ3
-         1YelQO5Wfb1tPqcvkM5IXCnnJ5Q440BxvW1y3JVMbVVU/qzH8xTMeqtlgLFQmb+inNLq
-         /qsg==
-X-Gm-Message-State: AOAM533me2MBDAr86NwYlapaenXKzDVkSjzNXx2KupgBXpEEui6/3EuT
-        RDz0HD+EO1GwyXRDKxzXec0=
-X-Google-Smtp-Source: ABdhPJwgol1TteKFO9cz7C4Kl/Qs494BlgdsAFeVFVk4WKeiVJvHL0iU7ADzz8fdHrc/Yp4TdNaz5A==
-X-Received: by 2002:aa7:9504:: with SMTP id b4mr7863677pfp.109.1593017359200;
-        Wed, 24 Jun 2020 09:49:19 -0700 (PDT)
-Received: from [10.1.10.11] (c-73-241-150-58.hsd1.ca.comcast.net. [73.241.150.58])
-        by smtp.gmail.com with ESMTPSA id c139sm2096799pfb.189.2020.06.24.09.49.18
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qnO8hKovA7hP7JvwvjuDQY7Jzg/02N7Frk2urzNRpI4=;
+        b=EoocSEcjROEMVXiGQOhtLwjICuaJKD3ZJk/1iT39jRFIyEFKtd4kiU9UiDXhFdtAuK
+         iJKZJh6oe+oO1xQ6UYGA1vPGqo4Ewg3rWwV+aadIVkSqU6rm5Q6x0H+6NfK2BeRj5c2V
+         akznHyDI7XAOVln58aP/G4vFvQqMBpTfX3G/dphEZonKrGhaV1V4NDx9/3SZWQboiUkD
+         sdg1PbCvy1rMzwpd57OCta6nGKN3i1VwiAqwUIe0AvdCXPlZ7VYVrU715yq5nwl4B+HC
+         dcIHsbOmcge/9RTb6eDBDz5JNpXp7Q6tcM2W+/iKiGYgdovLG8GkMNprAjMHzfkPcubL
+         pifQ==
+X-Gm-Message-State: AOAM531UB4lAhpMQ6CC0lRnd+aVmtG8t0c/epSttp/6OdVIbDHoBKejz
+        7Y5W3BLmDzGKmR/zN10xAP5d1CvKMn4=
+X-Google-Smtp-Source: ABdhPJy0WsrJgK0y3k9gO0oFT7f+ZiCFKi72bAEq4ax2A62WwSxla7Z8yinfzLBCLxibxhJhQWBdZg==
+X-Received: by 2002:a2e:9dc2:: with SMTP id x2mr15259082ljj.22.1593019173925;
+        Wed, 24 Jun 2020 10:19:33 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id r9sm4282559ljj.127.2020.06.24.10.19.32
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jun 2020 09:49:18 -0700 (PDT)
-Subject: Re: [PATCH] fs/epoll: Enable non-blocking busypoll with epoll timeout
- of 0
-To:     "Samudrala, Sridhar" <sridhar.samudrala@intel.com>,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org,
-        "davem@davemloft.net" <davem@davemloft.net>, eric.dumazet@gmail.com
-References: <1592590409-35439-1-git-send-email-sridhar.samudrala@intel.com>
- <de6bf72d-d4fd-9a62-c082-c82179d1f4fe@intel.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <28225710-0e85-f937-396d-24ce839efe09@gmail.com>
-Date:   Wed, 24 Jun 2020 09:49:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        Wed, 24 Jun 2020 10:19:33 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id y13so1689561lfe.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 10:19:32 -0700 (PDT)
+X-Received: by 2002:ac2:5093:: with SMTP id f19mr16132062lfm.10.1593019172581;
+ Wed, 24 Jun 2020 10:19:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <de6bf72d-d4fd-9a62-c082-c82179d1f4fe@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200624162901.1814136-1-hch@lst.de> <20200624162901.1814136-4-hch@lst.de>
+In-Reply-To: <20200624162901.1814136-4-hch@lst.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 24 Jun 2020 10:19:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wit9enePELG=-HnLsr0nY5bucFNjqAqWoFTuYDGR1P4KA@mail.gmail.com>
+Message-ID: <CAHk-=wit9enePELG=-HnLsr0nY5bucFNjqAqWoFTuYDGR1P4KA@mail.gmail.com>
+Subject: Re: [PATCH 03/11] fs: add new read_uptr and write_uptr file operations
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Jun 24, 2020 at 9:29 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Add two new file operations that are identical to ->read and ->write
+> except that they can also safely take kernel pointers using the uptr_t
+> type.
 
+Honestly, I think this is the wrong way to go.
 
-On 6/24/20 9:32 AM, Samudrala, Sridhar wrote:
-> Adding Dave, Eric for review and see if we can get this in via net-next
-> as this is mainly useful for networking workloads doing busypoll.
-> 
-> Thanks
-> Sridhar
-> 
-> On 6/19/2020 11:13 AM, Sridhar Samudrala wrote:
->> This patch triggers non-blocking busy poll when busy_poll is enabled and
->> epoll is called with a timeout of 0 and is associated with a napi_id.
->> This enables an app thread to go through napi poll routine once by calling
->> epoll with a 0 timeout.
->>
->> poll/select with a 0 timeout behave in a similar manner.
->>
->> Signed-off-by: Sridhar Samudrala <sridhar.samudrala@intel.com>
->> ---
->>   fs/eventpoll.c | 13 +++++++++++++
->>   1 file changed, 13 insertions(+)
->>
->> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
->> index 12eebcdea9c8..5f55078d6381 100644
->> --- a/fs/eventpoll.c
->> +++ b/fs/eventpoll.c
->> @@ -1847,6 +1847,19 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
->>           eavail = ep_events_available(ep);
->>           write_unlock_irq(&ep->lock);
->>   +        /*
->> +         * Trigger non-blocking busy poll if timeout is 0 and there are
->> +         * no events available. Passing timed_out(1) to ep_busy_loop
->> +         * will make sure that busy polling is triggered only once and
->> +         * only if sysctl.net.core.busy_poll is set to non-zero value.
->> +         */
->> +        if (!eavail) {
+All of this new complexity and messiness, just to remove a few
+unimportant final cases?
 
-Maybe avoid all this stuff for the typical case of busy poll being not used ?
+If somebody can't be bothered to convert a driver to
+iter_read/iter_write, why would they be bothered to convert it to
+read_uptr/write_uptr?
 
-            if (!evail && net_busy_loop_on)) {
+And this messiness will stay around for decades.
 
->> +            ep_busy_loop(ep, timed_out);
+So let's not go down that path.
 
+If you want to do "splice() and kernel_read() requires read_iter"
+(with a warning so that we find any cases), then that's fine. But
+let's not add yet _another_ read type.
 
->> +            write_lock_irq(&ep->lock);
->> +            eavail = ep_events_available(ep);
->> +            write_unlock_irq(&ep->lock);
->> +        }
->> +
->>           goto send_events;
->>       }
->>  
+Why did you care so much about sysctl, and why couldn't they use the iter ops?
+
+                    Linus
