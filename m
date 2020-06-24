@@ -2,126 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 61AF3206F05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 10:34:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D55C3206F29
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 10:45:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389285AbgFXIeW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 04:34:22 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6826 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387811AbgFXIeV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 04:34:21 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 760C32DC9BA1D31F18B1;
-        Wed, 24 Jun 2020 16:34:18 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.487.0; Wed, 24 Jun 2020 16:34:10 +0800
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-To:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Yuqi Jin <jinyuqi@huawei.com>
-Subject: [PATCH RESEND] fs: Move @f_count to different cacheline with @f_mode
-Date:   Wed, 24 Jun 2020 16:32:28 +0800
-Message-ID: <1592987548-8653-1-git-send-email-zhangshaokun@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        id S1728910AbgFXIpQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 04:45:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53908 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727057AbgFXIpP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 24 Jun 2020 04:45:15 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34693C061573
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 01:45:15 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id q19so1692515lji.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jun 2020 01:45:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BqaLUtl/X7a4g0u53ohS9LpEPRGxCSpsENOwnH2o2ws=;
+        b=BaMR/TH7PhsFO1Q34q1x2qClsI7LOGwkyGbEQspz9ojX212XoSbqRRFRth4Meo/ssf
+         2uSK2GFHyed2vxpCFS8nAdnPkaKfIeDec0YV9QxJi/0DZp4NUqctsee+ogS3Fl1BjDdr
+         a660g7JU0oHL6NyFbXA5+GIkWejIuD89yS0M8Tc8lB+t0JgR/JNVCSHJf9uU9wrnuIDa
+         47xkwZFkFxCVyhO1vbBzMyIe1gFadRmPD50scOKKWKTaSZrjIBowcWgIjP9XbV8XY1GP
+         3JSamKeGQOntN1He/c6PG2bUnQGEpAvzaZq9ATvao350qg1CFz7ECK/Ha/Dx5Jbn102c
+         XDGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BqaLUtl/X7a4g0u53ohS9LpEPRGxCSpsENOwnH2o2ws=;
+        b=dT12qihjz9ySqkNoM7MXp0G2iYgme/ToaN561nkcdOrycFcLp3CSBZvTO/PVyqJp1G
+         hs7wp+KwhGVNeov9EzVgc/2Gz9p/jKre1UEnXvbblgmolTr5wonuiX4mr/RFjP/C0guR
+         UZzEIbPg1QkEwmd5C84C72/og2Y1THCDRB2HrXlSUZ03EqTdIeLwucZkQAfbTf0V8OTI
+         iY4MPBcrsGxLplJq2p+B7TwvSrxEEIPzNVD49vLYipWX5PwlW6V/xoH50gTmnEwYpyhY
+         XXY3Txo4r0Bh+wKtBA+TZ+xbaRFBQxRdkh/tBtJl8JUGGnZNM1sFt4qsaNfpHWD+X8Sr
+         6SJw==
+X-Gm-Message-State: AOAM532t0m+XTAKjz2sAHOUYlaNuVxNW5PlcVMhB7XeJBl+23JlInSJE
+        05wuKnrS1xquANn+Cc09LweIQwawo3dBa3JHimDvUw==
+X-Google-Smtp-Source: ABdhPJxliTcfapcUjxrmriw5iNjCcnVllOZAHYWf8QkB0iGUvYcf1ODkhqeeAxo4eRsnXoHPY0AN5BRFBvz+CFJpz5M=
+X-Received: by 2002:a2e:7f10:: with SMTP id a16mr13972228ljd.69.1592988313570;
+ Wed, 24 Jun 2020 01:45:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.56]
-X-CFilter-Loop: Reflected
+References: <edd80c0d-b7c8-4314-74da-08590170e6f5@arm.com> <87v9k84knx.derkling@matbug.net>
+ <20200603101022.GG3070@suse.de> <CAKfTPtAvMvPk5Ea2kaxXE8GzQ+Nc_PS+EKB1jAa03iJwQORSqA@mail.gmail.com>
+ <20200603165200.v2ypeagziht7kxdw@e107158-lin.cambridge.arm.com>
+ <CAKfTPtC6TvUL83VdWuGfbKm0CkXB85YQ5qkagK9aiDB8Hqrn_Q@mail.gmail.com>
+ <20200608123102.6sdhdhit7lac5cfl@e107158-lin.cambridge.arm.com>
+ <CAKfTPtCKS-2RoaMHhKGigjzc7dhXhx0z3dYNQLD3Q9aRC_tCnw@mail.gmail.com>
+ <20200611102407.vhy3zjexrhorx753@e107158-lin.cambridge.arm.com>
+ <CAKfTPtDnWuBOJxJP7ahX4Kzu+8jvPjAcE6XErMtG1SCJMdZZ-w@mail.gmail.com> <20200623154402.jfv5yhhrsbx7toes@e107158-lin.cambridge.arm.com>
+In-Reply-To: <20200623154402.jfv5yhhrsbx7toes@e107158-lin.cambridge.arm.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 24 Jun 2020 10:45:01 +0200
+Message-ID: <CAKfTPtBfFkmBRP+6vZaX9sEK+4ABpJrp2qZj18LKzu2t+Q=gGQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] sched/uclamp: Add a new sysctl to control RT default
+ boost value
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Mel Gorman <mgorman@suse.de>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fs <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-get_file_rcu_many, which is called by __fget_files, has used
-atomic_try_cmpxchg now and it can reduce the access number of the global
-variable to improve the performance of atomic instruction compared with
-atomic_cmpxchg. 
+Hi Qais,
 
-__fget_files does check the @f_mode with mask variable and will do some
-atomic operations on @f_count, but both are on the same cacheline.
-Many CPU cores do file access and it will cause much conflicts on @f_count. 
-If we could make the two members into different cachelines, it shall relax
-the siutations.
+On Tue, 23 Jun 2020 at 17:44, Qais Yousef <qais.yousef@arm.com> wrote:
+>
+> Hi Vincent
+>
+> On 06/11/20 14:01, Vincent Guittot wrote:
+> > On Thu, 11 Jun 2020 at 12:24, Qais Yousef <qais.yousef@arm.com> wrote:
+>
+> [...]
+>
+> > > > Strange because I have been able to trace them.
+> > >
+> > > On your arm platform? I can certainly see them on x86.
+> >
+> > yes on my arm platform
+>
+> Sorry for not getting back to you earlier but I have tried several things and
+> shared my results, which you were CCed into all of them.
+>
+> I have posted a patch that protects uclamp with a static key, mind trying it on
+> your platform to see if it helps you too?
 
-We have tested this on ARM64 and X86, the result is as follows:
-Syscall of unixbench has been run on Huawei Kunpeng920 with this patch:
-24 x System Call Overhead  1
+I have run some tests with your latest patchset and will reply to the
+email thread below
 
-System Call Overhead                    3160841.4 lps   (10.0 s, 1 samples)
-
-System Benchmarks Partial Index              BASELINE       RESULT    INDEX
-System Call Overhead                          15000.0    3160841.4   2107.2
-                                                                   ========
-System Benchmarks Index Score (Partial Only)                         2107.2
-
-Without this patch:
-24 x System Call Overhead  1
-
-System Call Overhead                    2222456.0 lps   (10.0 s, 1 samples)
-
-System Benchmarks Partial Index              BASELINE       RESULT    INDEX
-System Call Overhead                          15000.0    2222456.0   1481.6
-                                                                   ========
-System Benchmarks Index Score (Partial Only)                         1481.6
-
-And on Intel 6248 platform with this patch:
-40 CPUs in system; running 24 parallel copies of tests
-
-System Call Overhead                        4288509.1 lps   (10.0 s, 1 samples)
-
-System Benchmarks Partial Index              BASELINE       RESULT    INDEX
-System Call Overhead                          15000.0    4288509.1   2859.0
-                                                                   ========
-System Benchmarks Index Score (Partial Only)                         2859.0
-
-Without this patch:
-40 CPUs in system; running 24 parallel copies of tests
-
-System Call Overhead                        3666313.0 lps   (10.0 s, 1 samples)
-
-System Benchmarks Partial Index              BASELINE       RESULT    INDEX
-System Call Overhead                          15000.0    3666313.0   2444.2
-                                                                   ========
-System Benchmarks Index Score (Partial Only)                         2444.2
-
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Signed-off-by: Yuqi Jin <jinyuqi@huawei.com>
-Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
----
- include/linux/fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3f881a892ea7..0faeab5622fb 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -955,7 +955,6 @@ struct file {
- 	 */
- 	spinlock_t		f_lock;
- 	enum rw_hint		f_write_hint;
--	atomic_long_t		f_count;
- 	unsigned int 		f_flags;
- 	fmode_t			f_mode;
- 	struct mutex		f_pos_lock;
-@@ -979,6 +978,7 @@ struct file {
- 	struct address_space	*f_mapping;
- 	errseq_t		f_wb_err;
- 	errseq_t		f_sb_err; /* for syncfs */
-+	atomic_long_t		f_count;
- } __randomize_layout
-   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
- 
--- 
-2.7.4
-
+>
+> https://lore.kernel.org/lkml/20200619172011.5810-1-qais.yousef@arm.com/
+>
+> Thanks
+>
+> --
+> Qais Yousef
