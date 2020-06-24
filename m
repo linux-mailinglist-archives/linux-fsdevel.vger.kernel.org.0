@@ -2,133 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2124C2069DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 03:52:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB17A206A39
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 04:30:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388351AbgFXBwK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jun 2020 21:52:10 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:49258 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388035AbgFXBwK (ORCPT
+        id S2387985AbgFXCas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jun 2020 22:30:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387928AbgFXCas (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jun 2020 21:52:10 -0400
-Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05O1pHbH083981;
-        Wed, 24 Jun 2020 10:51:17 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav107.sakura.ne.jp);
- Wed, 24 Jun 2020 10:51:17 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav107.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05O1pGv7083968
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 24 Jun 2020 10:51:17 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
-References: <87d066vd4y.fsf@x220.int.ebiederm.org>
- <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
- <87bllngirv.fsf@x220.int.ebiederm.org>
- <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
- <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
- <87ftaxd7ky.fsf@x220.int.ebiederm.org>
- <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
- <87h7v1pskt.fsf@x220.int.ebiederm.org>
- <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
- <87h7v1mx4z.fsf@x220.int.ebiederm.org>
- <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <b4a805e7-e009-dfdf-d011-be636ce5c4f5@i-love.sakura.ne.jp>
-Date:   Wed, 24 Jun 2020 10:51:15 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Tue, 23 Jun 2020 22:30:48 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 196E6C061573;
+        Tue, 23 Jun 2020 19:30:48 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id u14so466406pjj.2;
+        Tue, 23 Jun 2020 19:30:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kz8igf69x/YCiVig6vuZapMiGHROM0tqo1mJUJV97Sc=;
+        b=pGNEcL3rrZ37V1G8NfKUZ2sLL2/BjX+eXkKe75m6uLtjgXeSq5GUyZ1HLpBHA1GTT1
+         J4MkxnlN1I8pVKtV7jnvPekSm5CPWnIuxAQHGe9y4YAFrybqaFH6YkYzgH7YHh0URQeQ
+         FB3hCGjeeAnU3/229aVelPoVK3hlYItN/UPQdUzEoe+oRbF3vaxRPjwUegrqyNU/Ll9H
+         AZm6gz03142rhQgNlrSAlEOUIGvr1bMZ6VNqQu2zcrliNvCmVaGQoi/tw+sUO2osgjy5
+         JgjNqGkFv3asOrIzooTIiFpihqQB5ja3E6v15PF9/DCqvwkFZM+nDyb0+yV9tTr4YIvT
+         2IBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kz8igf69x/YCiVig6vuZapMiGHROM0tqo1mJUJV97Sc=;
+        b=bh8DpvsMoEay7oPiSiladqepxhvsHLZOtfZZrkLyuZ9FPdsC+Groa4/Ln+hyXjA1V+
+         KCMkr/NDfs3ve3jai9z9snOvzcdr/7Cb3LupRiIPq02gkUG3T/5nefmkb7ZS6szhuPln
+         H3VlyDVwyXWxv8hVbR239zifLhbDOrJML1hU68+XWXCtPefKx1kEtX1v+U2qlWnZ0yr/
+         06R+IPnmbH0I7SkapK9cxO7JHV3qKLjDD62frYkD8OZH31wPoHQGLXPIkiMxB7CCNiBh
+         kfiXGBDG1m+cLFoHIXHJVQizAgtiBDVGyjfrLAZbOB1fpGfvFZqnrLElWbdnTWBOdX9e
+         LDkg==
+X-Gm-Message-State: AOAM531e1EZMuqlUkTSk47Ha28C5/uzOGLhgVux6La9c3dLqfZu4WkrS
+        9ZmpkrTqHGKLleyCJ9yUUMc=
+X-Google-Smtp-Source: ABdhPJxVmnEqE6f3AMcz5CJcIKSQMfeo50pGi7YL4Y7vjAr9Aebva5jQdjfLnHyvzEK2IQmWrwj+rg==
+X-Received: by 2002:a17:902:c14a:: with SMTP id 10mr27237916plj.222.1592965847375;
+        Tue, 23 Jun 2020 19:30:47 -0700 (PDT)
+Received: from dc803.localdomain (FL1-125-199-162-203.hyg.mesh.ad.jp. [125.199.162.203])
+        by smtp.gmail.com with ESMTPSA id h3sm18206070pfr.2.2020.06.23.19.30.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jun 2020 19:30:46 -0700 (PDT)
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+To:     kohada.t2@gmail.com
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] exfat: optimize exfat_zeroed_cluster()
+Date:   Wed, 24 Jun 2020 11:30:40 +0900
+Message-Id: <20200624023041.30247-1-kohada.t2@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/06/24 4:40, Alexei Starovoitov wrote:
-> There is no refcnt bug. It was a user error on tomoyo side.
-> fork_blob() works as expected.
+Replace part of exfat_zeroed_cluster() with exfat_update_bhs().
+And remove exfat_sync_bhs().
 
-Absolutely wrong! Any check which returns an error during current->in_execve == 1
-will cause this refcnt bug. You are simply ignoring that there is possibility
-that execve() fails.
+Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
+---
+Changes in v2
+ - Rebase to latest exfat-dev
 
-> Not true again.
-> usermode_blob is part of the kernel module.
+ fs/exfat/fatent.c | 53 +++++++++--------------------------------------
+ 1 file changed, 10 insertions(+), 43 deletions(-)
 
-Disagree.
-
-> Kernel module when loaded doesn't have path.
-
-Disagree.
-
-Kernel modules can be trusted via module signature mechanism, and the byte array
-(which contains code / data) is protected by keeping that byte array within the
-kernel address space. Therefore, pathname based security does not need to complain
-that there is no pathname when kernel module is loaded.
-
-However, regarding usermode_blob, although the byte array (which contains code / data)
-might be initially loaded from the kernel space (which is protected), that byte array
-is no longer protected (e.g. SIGKILL, strace()) when executed because they are placed
-in the user address space. Thus, LSM modules (including pathname based security) want
-to control how that byte array can behave.
-
-> tomoyo has to fix itself.
-
-TOMOYO needs to somehow handle /dev/fd/ case from execveat(), but fork_blob() is a
-different story.
-
-On 2020/06/24 3:53, Eric W. Biederman wrote:
-> This isn't work anyone else can do because there are not yet any real in
-> tree users of fork_blob.  The fact that no one else can make
-> substantials changes to the code because it has no users is what gets in
-> the way of maintenance.
-
-It sounds to me that fork_blob() is a dangerous interface which anonymously
-allows arbitrary behavior in an unprotected environment. Therefore,
-
-> Either a path needs to be provided or the LSMs that work in terms
-> of paths need to be fixed.
-
-LSM modules want to control how that byte array can behave. But Alexei
-still does not explain how information for LSM modules can be provided.
-
-> My recomendation for long term maintenance is to split fork_blob into 2
-> functions: fs_from_blob, and the ordinary call_usermodehelper_exec.
-> That removes the need for any special support for anything in the exec
-> path because your blob will also have a path for your file, and the
-> file in the filesystem can be reused for restart.
-
-Yes, that would be an approach for providing information for LSM modules.
-
-> But with no in-tree users none of us can do anything bug guess what
-> the actual requirements of fork_usermode_blob are.
-
-Exactly. Since it is not explained why the usermode process started by
-fork_usermode_blob() cannot interfere (or be interfered by) the rest of
-the system (including normal usermode processes), the byte array comes from
-the kernel address space is insufficient for convincing LSM modules to
-ignore what that byte array can do.
+diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
+index 82ee8246c080..c3c9afee7418 100644
+--- a/fs/exfat/fatent.c
++++ b/fs/exfat/fatent.c
+@@ -229,21 +229,6 @@ int exfat_find_last_cluster(struct super_block *sb, struct exfat_chain *p_chain,
+ 	return 0;
+ }
+ 
+-static inline int exfat_sync_bhs(struct buffer_head **bhs, int nr_bhs)
+-{
+-	int i, err = 0;
+-
+-	for (i = 0; i < nr_bhs; i++)
+-		write_dirty_buffer(bhs[i], 0);
+-
+-	for (i = 0; i < nr_bhs; i++) {
+-		wait_on_buffer(bhs[i]);
+-		if (!err && !buffer_uptodate(bhs[i]))
+-			err = -EIO;
+-	}
+-	return err;
+-}
+-
+ int exfat_zeroed_cluster(struct inode *dir, unsigned int clu)
+ {
+ 	struct super_block *sb = dir->i_sb;
+@@ -265,41 +250,23 @@ int exfat_zeroed_cluster(struct inode *dir, unsigned int clu)
+ 	}
+ 
+ 	/* Zeroing the unused blocks on this cluster */
+-	n = 0;
+ 	while (blknr < last_blknr) {
+-		bhs[n] = sb_getblk(sb, blknr);
+-		if (!bhs[n]) {
+-			err = -ENOMEM;
+-			goto release_bhs;
+-		}
+-		memset(bhs[n]->b_data, 0, sb->s_blocksize);
+-		exfat_update_bh(bhs[n], 0);
+-
+-		n++;
+-		blknr++;
+-
+-		if (n == nr_bhs) {
+-			if (IS_DIRSYNC(dir)) {
+-				err = exfat_sync_bhs(bhs, n);
+-				if (err)
+-					goto release_bhs;
++		for (n = 0; n < nr_bhs && blknr < last_blknr; n++, blknr++) {
++			bhs[n] = sb_getblk(sb, blknr);
++			if (!bhs[n]) {
++				err = -ENOMEM;
++				goto release_bhs;
+ 			}
+-
+-			for (i = 0; i < n; i++)
+-				brelse(bhs[i]);
+-			n = 0;
++			memset(bhs[n]->b_data, 0, sb->s_blocksize);
+ 		}
+-	}
+ 
+-	if (IS_DIRSYNC(dir)) {
+-		err = exfat_sync_bhs(bhs, n);
++		err = exfat_update_bhs(bhs, n, IS_DIRSYNC(dir));
+ 		if (err)
+ 			goto release_bhs;
+-	}
+-
+-	for (i = 0; i < n; i++)
+-		brelse(bhs[i]);
+ 
++		for (i = 0; i < n; i++)
++			brelse(bhs[i]);
++	}
+ 	return 0;
+ 
+ release_bhs:
+-- 
+2.25.1
 
