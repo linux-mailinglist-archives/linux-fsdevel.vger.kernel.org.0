@@ -2,84 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AA9C206B77
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 06:59:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14138206B91
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 07:13:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388036AbgFXE7V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 00:59:21 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:58415 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbgFXE7V (ORCPT
+        id S2388811AbgFXFNX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 01:13:23 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47028 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727957AbgFXFNW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 00:59:21 -0400
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05O4wXwK066260;
-        Wed, 24 Jun 2020 13:58:33 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp);
- Wed, 24 Jun 2020 13:58:33 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05O4wXR6066257
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 24 Jun 2020 13:58:33 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
-References: <87bllngirv.fsf@x220.int.ebiederm.org>
- <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
- <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
- <87ftaxd7ky.fsf@x220.int.ebiederm.org>
- <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
- <87h7v1pskt.fsf@x220.int.ebiederm.org>
- <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
- <87h7v1mx4z.fsf@x220.int.ebiederm.org>
- <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
- <b4a805e7-e009-dfdf-d011-be636ce5c4f5@i-love.sakura.ne.jp>
- <20200624040054.x5xzkuhiw67cywzl@ast-mbp.dhcp.thefacebook.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <5254444e-465e-6dee-287b-bef58526b724@i-love.sakura.ne.jp>
-Date:   Wed, 24 Jun 2020 13:58:33 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Wed, 24 Jun 2020 01:13:22 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id B1D7D2A3349
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-team@android.com
+Subject: Re: [PATCH v9 1/4] unicode: Add utf8_casefold_hash
+Organization: Collabora
+References: <20200624043341.33364-1-drosen@google.com>
+        <20200624043341.33364-2-drosen@google.com>
+Date:   Wed, 24 Jun 2020 01:13:17 -0400
+In-Reply-To: <20200624043341.33364-2-drosen@google.com> (Daniel Rosenberg's
+        message of "Tue, 23 Jun 2020 21:33:38 -0700")
+Message-ID: <87h7v1gi6q.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20200624040054.x5xzkuhiw67cywzl@ast-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/06/24 13:00, Alexei Starovoitov wrote:
->> However, regarding usermode_blob, although the byte array (which contains code / data)
->> might be initially loaded from the kernel space (which is protected), that byte array
->> is no longer protected (e.g. SIGKILL, strace()) when executed because they are placed
->> in the user address space. Thus, LSM modules (including pathname based security) want
->> to control how that byte array can behave.
-> 
-> It's privileged memory regardless. root can poke into kernel or any process memory.
+Daniel Rosenberg <drosen@google.com> writes:
 
-LSM is there to restrict processes running as "root".
-Your "root can poke into kernel or any process memory." response is out of step with the times.
+> This adds a case insensitive hash function to allow taking the hash
+> without needing to allocate a casefolded copy of the string.
+>
+> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+> ---
+>  fs/unicode/utf8-core.c  | 23 ++++++++++++++++++++++-
+>  include/linux/unicode.h |  3 +++
+>  2 files changed, 25 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+> index 2a878b739115d..90656b9980720 100644
+> --- a/fs/unicode/utf8-core.c
+> +++ b/fs/unicode/utf8-core.c
+> @@ -6,6 +6,7 @@
+>  #include <linux/parser.h>
+>  #include <linux/errno.h>
+>  #include <linux/unicode.h>
+> +#include <linux/stringhash.h>
+>  
+>  #include "utf8n.h"
+>  
+> @@ -122,9 +123,29 @@ int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
+>  	}
+>  	return -EINVAL;
+>  }
+> -
+>  EXPORT_SYMBOL(utf8_casefold);
+>  
+> +int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
+> +		       struct qstr *str)
+> +{
+> +	const struct utf8data *data = utf8nfdicf(um->version);
+> +	struct utf8cursor cur;
+> +	int c;
+> +	unsigned long hash = init_name_hash(salt);
+> +
+> +	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
+> +		return -EINVAL;
+> +
+> +	while ((c = utf8byte(&cur))) {
+> +		if (c < 0)
+> +			return c;
 
-Initial byte array used for usermode blob might be protected because of "part of .rodata or
-.init.rodata of kernel module", but that byte array after started in userspace is no longer
-protected. I don't trust such byte array as "part of kernel module", and I'm asking you how
-such byte array does not interfere (or be interfered by) the rest of the system.
+Return -EINVAL here to match other unicode functions, since utf8byte
+will return -1 on a binary blob, which doesn't make sense for this.
+
+Other than that, looks good to me.
+
+Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+
+> +		hash = partial_name_hash((unsigned char)c, hash);
+> +	}
+> +	str->hash = end_name_hash(hash);
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(utf8_casefold_hash);
+> +
+>  int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
+>  		   unsigned char *dest, size_t dlen)
+>  {
+> diff --git a/include/linux/unicode.h b/include/linux/unicode.h
+> index 990aa97d80496..74484d44c7554 100644
+> --- a/include/linux/unicode.h
+> +++ b/include/linux/unicode.h
+> @@ -27,6 +27,9 @@ int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
+>  int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
+>  		  unsigned char *dest, size_t dlen);
+>  
+> +int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
+> +		       struct qstr *str);
+> +
+>  struct unicode_map *utf8_load(const char *version);
+>  void utf8_unload(struct unicode_map *um);
+
+-- 
+Gabriel Krisman Bertazi
