@@ -2,67 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BAEA206B4E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 06:38:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AA9C206B77
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 06:59:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728732AbgFXEiW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 00:38:22 -0400
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:36036 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728681AbgFXEiU (ORCPT
+        id S2388036AbgFXE7V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 00:59:21 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:58415 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727056AbgFXE7V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 00:38:20 -0400
-Received: from dread.disaster.area (pa49-180-124-177.pa.nsw.optusnet.com.au [49.180.124.177])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id AAF3E5AAC64;
-        Wed, 24 Jun 2020 14:38:15 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jnxAs-0002xD-OJ; Wed, 24 Jun 2020 14:38:14 +1000
-Date:   Wed, 24 Jun 2020 14:38:14 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, Jens Axboe <axboe@kernel.dk>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH 05/15] mm: allow read-ahead with IOCB_NOWAIT set
-Message-ID: <20200624043814.GC5369@dread.disaster.area>
-References: <20200618144355.17324-1-axboe@kernel.dk>
- <20200618144355.17324-6-axboe@kernel.dk>
+        Wed, 24 Jun 2020 00:59:21 -0400
+Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05O4wXwK066260;
+        Wed, 24 Jun 2020 13:58:33 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp);
+ Wed, 24 Jun 2020 13:58:33 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05O4wXR6066257
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 24 Jun 2020 13:58:33 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
+References: <87bllngirv.fsf@x220.int.ebiederm.org>
+ <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
+ <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
+ <87ftaxd7ky.fsf@x220.int.ebiederm.org>
+ <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1pskt.fsf@x220.int.ebiederm.org>
+ <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1mx4z.fsf@x220.int.ebiederm.org>
+ <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
+ <b4a805e7-e009-dfdf-d011-be636ce5c4f5@i-love.sakura.ne.jp>
+ <20200624040054.x5xzkuhiw67cywzl@ast-mbp.dhcp.thefacebook.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <5254444e-465e-6dee-287b-bef58526b724@i-love.sakura.ne.jp>
+Date:   Wed, 24 Jun 2020 13:58:33 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200618144355.17324-6-axboe@kernel.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=W5xGqiek c=1 sm=1 tr=0
-        a=k3aV/LVJup6ZGWgigO6cSA==:117 a=k3aV/LVJup6ZGWgigO6cSA==:17
-        a=kj9zAlcOel0A:10 a=nTHF0DUjJn0A:10 a=ufHFDILaAAAA:8 a=VwQbUJbxAAAA:8
-        a=7-415B0cAAAA:8 a=WCjB2_pVjg0caHknj34A:9 a=CjuIK1q_8ugA:10
-        a=3K7KkRBBR4UA:10 a=ZmIg1sZ3JBWsdXgziEIF:22 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200624040054.x5xzkuhiw67cywzl@ast-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 08:43:45AM -0600, Jens Axboe wrote:
-> The read-ahead shouldn't block, so allow it to be done even if
-> IOCB_NOWAIT is set in the kiocb.
+On 2020/06/24 13:00, Alexei Starovoitov wrote:
+>> However, regarding usermode_blob, although the byte array (which contains code / data)
+>> might be initially loaded from the kernel space (which is protected), that byte array
+>> is no longer protected (e.g. SIGKILL, strace()) when executed because they are placed
+>> in the user address space. Thus, LSM modules (including pathname based security) want
+>> to control how that byte array can behave.
 > 
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> It's privileged memory regardless. root can poke into kernel or any process memory.
 
-BTW, Jens, in case nobody had mentioned it, the Reply-To field for
-the patches in this patchset is screwed up:
+LSM is there to restrict processes running as "root".
+Your "root can poke into kernel or any process memory." response is out of step with the times.
 
-| Reply-To: Add@vger.kernel.org, support@vger.kernel.org, for@vger.kernel.org,
-|         async@vger.kernel.org, buffered@vger.kernel.org,
-| 	        reads@vger.kernel.org
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Initial byte array used for usermode blob might be protected because of "part of .rodata or
+.init.rodata of kernel module", but that byte array after started in userspace is no longer
+protected. I don't trust such byte array as "part of kernel module", and I'm asking you how
+such byte array does not interfere (or be interfered by) the rest of the system.
