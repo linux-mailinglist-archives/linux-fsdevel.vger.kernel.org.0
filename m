@@ -2,95 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 404BF2075A8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 16:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C74D52075F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 16:44:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391181AbgFXO0h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 10:26:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49982 "EHLO
+        id S2391121AbgFXOoN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 10:44:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388115AbgFXO0g (ORCPT
+        with ESMTP id S2389836AbgFXOoM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 10:26:36 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F63CC061573;
-        Wed, 24 Jun 2020 07:26:35 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id y18so1369048lfh.11;
-        Wed, 24 Jun 2020 07:26:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HTlPjaEuLkT0QgL+A/2JglgCcsMWqPH0L44CLFBV1SM=;
-        b=tO/FnTvdHdzIpuxUQy1wwQ4DPmYI/tYau+9ST2jDm79OeDkzFAv21GhxjwSiJ3BsMe
-         1gwLct9itLtyJSf3KikjKqRabrCOODPviltcfBo+tNJTB8tUt3mJZW2cYZFQJB5v5maw
-         3AkplUYwWkA8zsqgU3vWkT6R3CBL5W3anLvPzNLOcGP9Wc6BaObNgtAkVLyK4QlwxrSg
-         TjyLcxgrnwybuIMlPld1RU54zhZK1vdZXEz1rbu4UG7mJkOYf6gWzApecFZvKWZAiQLc
-         KGA5zKFLlC0BdnO+j6aWo7qALB0QiN7G+5DrbGrp90Jxs4ihu0ery1fYAsKYcl1dYCpO
-         DHng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HTlPjaEuLkT0QgL+A/2JglgCcsMWqPH0L44CLFBV1SM=;
-        b=MrT9gq813bD+IqTIXZQlTs36SsZzmiHOoYSxvU9De1fywcjfbqRArmsbpSk5KlK30x
-         H2OTKouyrdkDitlYetzNtxWnq66ssL2bWTIzsru06/cwx7ILJpC//YtnerOAYjaISrb8
-         gXvMuJFEuY7q0/eetbx2m3Na2oaYVgCGMYCKyeAEpJ9lY1Ut6GUp2i4KBV6jw5WAxS1d
-         ehqx/VDPd01DG2gJI1eOd1jCuMJSl7MOLYOhx7kVYEQMGiFfEsv17awwovCdpzEkUFIT
-         9o4KlP0hxOF60b8icooBpBVjmJVmxr9AvocTz9nnUoLM5WbvopAPAfieuIyJro75PEs2
-         NW1g==
-X-Gm-Message-State: AOAM533JvVTQkqE0JbjZHUiMm5kWCUbfJj7w7gRQj1f9FTAmNzs34W+x
-        6z5GIWVa/gv+BVrAc5k3E1KXKxZ4CPReNs/947o=
-X-Google-Smtp-Source: ABdhPJxPlMeCRcoPqRVNHRUdpNTM1nFWSo4hDNGsx3i5ljQAoeJbJZoqS04grNYvQms3RKSALvSkfyRBIjLsyfYQLds=
-X-Received: by 2002:a05:6512:54d:: with SMTP id h13mr15774112lfl.8.1593008793808;
- Wed, 24 Jun 2020 07:26:33 -0700 (PDT)
+        Wed, 24 Jun 2020 10:44:12 -0400
+Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2292C061573;
+        Wed, 24 Jun 2020 07:44:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=MmxB8m2YTQX4GpqX+DS37OeRO131e4ndrA9Pl7MwAgc=; b=IOKw7hTcqP1QeelKxku2fGErUp
+        y+gPHThYulPLcw9ZipHA3WEiY0WwtrldwMIjz3I7xFlS4UrXh0IrgE+Nr+g3IVn/C5NubV4TtA66n
+        mLCdiZe84XJ5gE3144uUmasV1evosCnueCmLRk8e5igFHS/jiN+zd4BOILHYYRSu5tnwTTHYczGNM
+        1jNp5/TmBH3r+Cd233b/d63zVr4Nez7dPM6LjZYPehQuohr79GeKnvEyrBvDcVSHQMeCupwKnSb4b
+        k2SF0UgTWsWjSf1WxnC6wYcLs8KKkTGGpdaa+3jajs+y6awdDlv2/jH3uD+C53erVvC46axMeuEel
+        iaiP6SWQ==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jo6cJ-0001Xw-5j; Wed, 24 Jun 2020 14:43:11 +0000
+Date:   Wed, 24 Jun 2020 15:43:11 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     mcgrof@kernel.org, ast@kernel.org, axboe@kernel.dk,
+        bfields@fieldses.org, bridge@lists.linux-foundation.org,
+        chainsaw@gentoo.org, christian.brauner@ubuntu.com,
+        chuck.lever@oracle.com, davem@davemloft.net, dhowells@redhat.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
+        keyrings@vger.kernel.org, kuba@kernel.org,
+        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
+        philipp.reisner@linbit.com, ravenexp@gmail.com,
+        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
+        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
+        netdev@vger.kernel.org, markward@linux.ibm.com,
+        linux-s390 <linux-s390@vger.kernel.org>
+Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
+ seems to break linux bridge on s390x (bisected)
+Message-ID: <20200624144311.GA5839@infradead.org>
+References: <20200610154923.27510-5-mcgrof@kernel.org>
+ <20200623141157.5409-1-borntraeger@de.ibm.com>
+ <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
+ <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
 MIME-Version: 1.0
-References: <87d066vd4y.fsf@x220.int.ebiederm.org> <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
- <87bllngirv.fsf@x220.int.ebiederm.org> <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
- <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
- <87ftaxd7ky.fsf@x220.int.ebiederm.org> <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
- <87h7v1pskt.fsf@x220.int.ebiederm.org> <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
- <87h7v1mx4z.fsf@x220.int.ebiederm.org> <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
- <878sgck6g0.fsf@x220.int.ebiederm.org>
-In-Reply-To: <878sgck6g0.fsf@x220.int.ebiederm.org>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Wed, 24 Jun 2020 07:26:22 -0700
-Message-ID: <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently unmantained
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 24, 2020 at 5:17 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
->
-> > On Tue, Jun 23, 2020 at 01:53:48PM -0500, Eric W. Biederman wrote:
->
-> > There is no refcnt bug. It was a user error on tomoyo side.
-> > fork_blob() works as expected.
->
-> Nope.  I have independently confirmed it myself.
+On Wed, Jun 24, 2020 at 01:11:54PM +0200, Christian Borntraeger wrote:
+> Does anyone have an idea why "umh: fix processed error when UMH_WAIT_PROC is used" breaks the
+> linux-bridge on s390?
 
-I guess you've tried Tetsuo's fork_blob("#!/bin/true") kernel module ?
-yes. that fails. It never meant to be used for this.
-With elf blob it works, but breaks if there are rejections
-in things like security_bprm_creds_for_exec().
-In my mind that path was 'must succeed or kernel module is toast'.
-Like passing NULL into a function that doesn't check for it.
-Working on a fix for that since Tetsuo cares.
+Are we even sure this is s390 specific and doesn't happen on other
+architectures with the same bridge setup?
