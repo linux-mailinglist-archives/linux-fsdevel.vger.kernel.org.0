@@ -2,79 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E09C206966
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 03:18:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3AB42069AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 03:47:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388260AbgFXBSG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jun 2020 21:18:06 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:24174 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388029AbgFXBSF (ORCPT
+        id S2388334AbgFXBrD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jun 2020 21:47:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46284 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387780AbgFXBrC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jun 2020 21:18:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1592961484;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=v3+UUW6YvtIXEKqK6unLKp0s3Sioh7yCdLFU6q9JrlU=;
-        b=Di/BtklMDVjU4kQ09Dizk+9+fAp4JNMERTEgB/T12wB57yoLIYU1B5qbEbudMnpo/kUxe/
-        KXFYh3ATRRz/9U9fUmEZ80FLzNWKrc8KE+fj4DwxnR1JKsHXCQHoIaXuIcrBRbS3DQ2DsH
-        WgJIEdjocK6NJfqD6EdLflbgO6cq5l0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-56-c0pSj-gQN_qEdwt2-3CGxQ-1; Tue, 23 Jun 2020 21:18:02 -0400
-X-MC-Unique: c0pSj-gQN_qEdwt2-3CGxQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 220381005512;
-        Wed, 24 Jun 2020 01:18:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-114-66.rdu2.redhat.com [10.10.114.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3632C610FD;
-        Wed, 24 Jun 2020 01:17:58 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAPcyv4gdB6iOD8N0KAHY9WybpJtRx3EfEQCSM1zuTDkURrfuug@mail.gmail.com>
-References: <CAPcyv4gdB6iOD8N0KAHY9WybpJtRx3EfEQCSM1zuTDkURrfuug@mail.gmail.com> <1503686.1591113304@warthog.procyon.org.uk> <23219b787ed1c20a63017ab53839a0d1c794ec53.camel@intel.com> <CAPcyv4g+T+GK4yVJs8bTT1q90SFDpFYUSL9Pk_u8WZROhREPkw@mail.gmail.com> <3015561.1592960116@warthog.procyon.org.uk>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     dhowells@redhat.com,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "raven@themaw.net" <raven@themaw.net>,
-        "kzak@redhat.com" <kzak@redhat.com>,
-        "jarkko.sakkinen@linux.intel.com" <jarkko.sakkinen@linux.intel.com>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "dray@redhat.com" <dray@redhat.com>,
-        "swhiteho@redhat.com" <swhiteho@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "mszeredi@redhat.com" <mszeredi@redhat.com>,
-        "jlayton@redhat.com" <jlayton@redhat.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "andres@anarazel.de" <andres@anarazel.de>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "christian.brauner@ubuntu.com" <christian.brauner@ubuntu.com>
-Subject: Re: [GIT PULL] General notification queue and key notifications
+        Tue, 23 Jun 2020 21:47:02 -0400
+Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E036C061573;
+        Tue, 23 Jun 2020 18:47:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=SV+FHOxoc0B38PSkoJCLzzz/s0XSVgJTssyo0SVm0sM=; b=PsqGQVo7omY1pxGM+gvcBcWALS
+        XgPC65w1lx+gweE8FT9WbQa61YMqc1NWr8MbKmZAhHhqxuj6958RXXQZboI78otwpXDNLnqTAUHlP
+        55SEAEVkaFfu/7rKrH8PXcKOWkuS2e+f1R5KpEtHTmQOeNgWaf5DVfaPQDkhyT06oWz5S0oIY1bWJ
+        WN24Lt+VysG+NlToqAZOTvQgNiEA+bXkwTf+IRBJ6PLclnSPAsAWCQrJlh9gzY53o+HLBvZJga7wG
+        YcjeYTcdiIzPwqP72ly39bJmPwPvx41iBdGDxG4kfGJqCPaWyig9a+DRgJ/ZNeK1OYK1iLvlDOEcK
+        d9tH4IsA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jnuUv-0005LA-50; Wed, 24 Jun 2020 01:46:45 +0000
+Date:   Wed, 24 Jun 2020 02:46:45 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Add@vger.kernel.org, support@vger.kernel.org, for@vger.kernel.org,
+        async@vger.kernel.org, buffered@vger.kernel.org,
+        reads@vger.kernel.org, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH 05/15] mm: allow read-ahead with IOCB_NOWAIT set
+Message-ID: <20200624014645.GJ21350@casper.infradead.org>
+References: <20200618144355.17324-1-axboe@kernel.dk>
+ <20200618144355.17324-6-axboe@kernel.dk>
+ <20200624010253.GB5369@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3018028.1592961477.1@warthog.procyon.org.uk>
-Date:   Wed, 24 Jun 2020 02:17:57 +0100
-Message-ID: <3018029.1592961477@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200624010253.GB5369@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dan Williams <dan.j.williams@intel.com> wrote:
+On Wed, Jun 24, 2020 at 11:02:53AM +1000, Dave Chinner wrote:
+> On Thu, Jun 18, 2020 at 08:43:45AM -0600, Jens Axboe wrote:
+> > The read-ahead shouldn't block, so allow it to be done even if
+> > IOCB_NOWAIT is set in the kiocb.
+> 
+> Doesn't think break preadv2(RWF_NOWAIT) semantics for on buffered
+> reads? i.e. this can now block on memory allocation for the page
+> cache, which is something RWF_NOWAIT IO should not do....
 
-> Shall I wait for your further reworks to fix this for v5.8, or is that
-> v5.9 material?
+Yes.  This eventually ends up in page_cache_readahead_unbounded()
+which gets its gfp flags from readahead_gfp_mask(mapping).
 
-It could do with stewing in linux-next for a while, so 5.9 probably.
-
-David
-
+I'd be quite happy to add a gfp_t to struct readahead_control.
+The other thing I've been looking into for other reasons is adding
+a memalloc_nowait_{save,restore}, which would avoid passing down
+the gfp_t.
