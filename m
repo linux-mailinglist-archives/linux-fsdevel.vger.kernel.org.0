@@ -2,160 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB17A206A39
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 04:30:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8657206A66
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jun 2020 05:07:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387985AbgFXCas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 23 Jun 2020 22:30:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52970 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387928AbgFXCas (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 23 Jun 2020 22:30:48 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 196E6C061573;
-        Tue, 23 Jun 2020 19:30:48 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id u14so466406pjj.2;
-        Tue, 23 Jun 2020 19:30:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kz8igf69x/YCiVig6vuZapMiGHROM0tqo1mJUJV97Sc=;
-        b=pGNEcL3rrZ37V1G8NfKUZ2sLL2/BjX+eXkKe75m6uLtjgXeSq5GUyZ1HLpBHA1GTT1
-         J4MkxnlN1I8pVKtV7jnvPekSm5CPWnIuxAQHGe9y4YAFrybqaFH6YkYzgH7YHh0URQeQ
-         FB3hCGjeeAnU3/229aVelPoVK3hlYItN/UPQdUzEoe+oRbF3vaxRPjwUegrqyNU/Ll9H
-         AZm6gz03142rhQgNlrSAlEOUIGvr1bMZ6VNqQu2zcrliNvCmVaGQoi/tw+sUO2osgjy5
-         JgjNqGkFv3asOrIzooTIiFpihqQB5ja3E6v15PF9/DCqvwkFZM+nDyb0+yV9tTr4YIvT
-         2IBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kz8igf69x/YCiVig6vuZapMiGHROM0tqo1mJUJV97Sc=;
-        b=bh8DpvsMoEay7oPiSiladqepxhvsHLZOtfZZrkLyuZ9FPdsC+Groa4/Ln+hyXjA1V+
-         KCMkr/NDfs3ve3jai9z9snOvzcdr/7Cb3LupRiIPq02gkUG3T/5nefmkb7ZS6szhuPln
-         H3VlyDVwyXWxv8hVbR239zifLhbDOrJML1hU68+XWXCtPefKx1kEtX1v+U2qlWnZ0yr/
-         06R+IPnmbH0I7SkapK9cxO7JHV3qKLjDD62frYkD8OZH31wPoHQGLXPIkiMxB7CCNiBh
-         kfiXGBDG1m+cLFoHIXHJVQizAgtiBDVGyjfrLAZbOB1fpGfvFZqnrLElWbdnTWBOdX9e
-         LDkg==
-X-Gm-Message-State: AOAM531e1EZMuqlUkTSk47Ha28C5/uzOGLhgVux6La9c3dLqfZu4WkrS
-        9ZmpkrTqHGKLleyCJ9yUUMc=
-X-Google-Smtp-Source: ABdhPJxVmnEqE6f3AMcz5CJcIKSQMfeo50pGi7YL4Y7vjAr9Aebva5jQdjfLnHyvzEK2IQmWrwj+rg==
-X-Received: by 2002:a17:902:c14a:: with SMTP id 10mr27237916plj.222.1592965847375;
-        Tue, 23 Jun 2020 19:30:47 -0700 (PDT)
-Received: from dc803.localdomain (FL1-125-199-162-203.hyg.mesh.ad.jp. [125.199.162.203])
-        by smtp.gmail.com with ESMTPSA id h3sm18206070pfr.2.2020.06.23.19.30.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jun 2020 19:30:46 -0700 (PDT)
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-To:     kohada.t2@gmail.com
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] exfat: optimize exfat_zeroed_cluster()
-Date:   Wed, 24 Jun 2020 11:30:40 +0900
-Message-Id: <20200624023041.30247-1-kohada.t2@gmail.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S2388454AbgFXDHM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 23 Jun 2020 23:07:12 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:37844 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387985AbgFXDHL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 23 Jun 2020 23:07:11 -0400
+Received: from ticat.localdomain (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxT2hYw_Je_A1JAA--.474S2;
+        Wed, 24 Jun 2020 11:07:04 +0800 (CST)
+From:   Peng Fan <fanpeng@loongson.cn>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: [PATCH] fs/read_write.c: Fix memory leak in read_write.c
+Date:   Wed, 24 Jun 2020 11:07:03 +0800
+Message-Id: <1592968023-20383-1-git-send-email-fanpeng@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: AQAAf9DxT2hYw_Je_A1JAA--.474S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4UXry5XFy7urWkAryxXwb_yoW8GF1fpr
+        47Ca1UKF48tr18AFs8KFn8WFyDAw4DCFZrGr43tw10vws7uF4vy3WUKry2gr4UAFZ7ArWU
+        ZF1Iy3sIyFy5AaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+        6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
+        4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+        7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
+        1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_
+        Gr4l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+        WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI
+        7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+        1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4U
+        MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUUVHq5UUUU
+        U==
+X-CM-SenderInfo: xidq1vtqj6z05rqj20fqof0/
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Replace part of exfat_zeroed_cluster() with exfat_update_bhs().
-And remove exfat_sync_bhs().
+kmemleak report:
+unreferenced object 0x98000002bb591d00 (size 256):
+  comm "ftest03", pid 24778, jiffies 4301603810 (age 490.665s)
+  hex dump (first 32 bytes):
+    00 01 04 20 01 00 00 00 80 00 00 00 00 00 00 00  ... ............
+    f0 02 04 20 01 00 00 00 80 00 00 00 00 00 00 00  ... ............
+  backtrace:
+    [<0000000050b162cb>] __kmalloc+0x234/0x438
+    [<00000000491da9c7>] rw_copy_check_uvector+0x1ac/0x1f0
+    [<00000000b0dddb43>] import_iovec+0x50/0xe8
+    [<00000000ae843d73>] vfs_readv+0x50/0xb0
+    [<00000000c7216b06>] do_readv+0x80/0x160
+    [<00000000cad79c3f>] syscall_common+0x34/0x58
 
-Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
+This is because "iov" allocated by kmalloc() is not destroyed. Under normal
+circumstances, "ret_pointer" should be equal to "iov". But if the previous 
+statements fails to execute, and the allocation is successful, then the
+block of memory will not be released, because it is necessary to 
+determine whether they are equal. So we need to change the order.
+
+Signed-off-by: Peng Fan <fanpeng@loongson.cn>
 ---
-Changes in v2
- - Rebase to latest exfat-dev
+ fs/read_write.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- fs/exfat/fatent.c | 53 +++++++++--------------------------------------
- 1 file changed, 10 insertions(+), 43 deletions(-)
-
-diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
-index 82ee8246c080..c3c9afee7418 100644
---- a/fs/exfat/fatent.c
-+++ b/fs/exfat/fatent.c
-@@ -229,21 +229,6 @@ int exfat_find_last_cluster(struct super_block *sb, struct exfat_chain *p_chain,
- 	return 0;
+diff --git a/fs/read_write.c b/fs/read_write.c
+index bbfa9b1..aa4f7c5 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -832,8 +832,8 @@ ssize_t rw_copy_check_uvector(int type, const struct iovec __user * uvector,
+ 		}
+ 		ret += len;
+ 	}
+-out:
+ 	*ret_pointer = iov;
++out:
+ 	return ret;
  }
  
--static inline int exfat_sync_bhs(struct buffer_head **bhs, int nr_bhs)
--{
--	int i, err = 0;
--
--	for (i = 0; i < nr_bhs; i++)
--		write_dirty_buffer(bhs[i], 0);
--
--	for (i = 0; i < nr_bhs; i++) {
--		wait_on_buffer(bhs[i]);
--		if (!err && !buffer_uptodate(bhs[i]))
--			err = -EIO;
--	}
--	return err;
--}
--
- int exfat_zeroed_cluster(struct inode *dir, unsigned int clu)
- {
- 	struct super_block *sb = dir->i_sb;
-@@ -265,41 +250,23 @@ int exfat_zeroed_cluster(struct inode *dir, unsigned int clu)
- 	}
- 
- 	/* Zeroing the unused blocks on this cluster */
--	n = 0;
- 	while (blknr < last_blknr) {
--		bhs[n] = sb_getblk(sb, blknr);
--		if (!bhs[n]) {
--			err = -ENOMEM;
--			goto release_bhs;
--		}
--		memset(bhs[n]->b_data, 0, sb->s_blocksize);
--		exfat_update_bh(bhs[n], 0);
--
--		n++;
--		blknr++;
--
--		if (n == nr_bhs) {
--			if (IS_DIRSYNC(dir)) {
--				err = exfat_sync_bhs(bhs, n);
--				if (err)
--					goto release_bhs;
-+		for (n = 0; n < nr_bhs && blknr < last_blknr; n++, blknr++) {
-+			bhs[n] = sb_getblk(sb, blknr);
-+			if (!bhs[n]) {
-+				err = -ENOMEM;
-+				goto release_bhs;
- 			}
--
--			for (i = 0; i < n; i++)
--				brelse(bhs[i]);
--			n = 0;
-+			memset(bhs[n]->b_data, 0, sb->s_blocksize);
- 		}
--	}
- 
--	if (IS_DIRSYNC(dir)) {
--		err = exfat_sync_bhs(bhs, n);
-+		err = exfat_update_bhs(bhs, n, IS_DIRSYNC(dir));
- 		if (err)
- 			goto release_bhs;
--	}
--
--	for (i = 0; i < n; i++)
--		brelse(bhs[i]);
- 
-+		for (i = 0; i < n; i++)
-+			brelse(bhs[i]);
-+	}
- 	return 0;
- 
- release_bhs:
 -- 
-2.25.1
+2.1.0
 
