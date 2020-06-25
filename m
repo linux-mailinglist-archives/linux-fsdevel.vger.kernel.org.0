@@ -2,101 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 508C620983A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 03:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1280209843
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 03:35:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389225AbgFYBZY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 24 Jun 2020 21:25:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39268 "EHLO
+        id S2389016AbgFYBfY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 24 Jun 2020 21:35:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388928AbgFYBZX (ORCPT
+        with ESMTP id S2388778AbgFYBfX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 24 Jun 2020 21:25:23 -0400
-Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F299DC061573;
-        Wed, 24 Jun 2020 18:25:22 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 49sj4c29Z7z9sSt;
-        Thu, 25 Jun 2020 11:25:20 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1593048321;
-        bh=wZqYCZ4rzjYy8J0Uc//CISQWPwtAY2uNSf3i5tgRVVc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=P1LfKqFcSwtX9D0asb00y5WoSuSk2j7NvHv1XE/LT3TXlwVwM+gB8N8UpdgSojiA/
-         ZokR68IqW22ZB+xz7paQqsPkUENIOyCq4VFTy6IFUbUnKZrwKexu6J/W6lgOyLhZxh
-         8BhnXrFGNWvOJDQUrLu3DohcQa+Zv1dOMnYV7Li4rQ0Wo/NEwurKEIQdm/mEZVM24c
-         aEbRSa1PUnRtLF63tmmkeCLZCSiQTfH/hJJaSkUj6fdi84kN5esGUxBo1URiEBMAR1
-         lgol+MoKlXXu5JX5A1ajBQF6zwwTiNcOKJ7V7eQj2eDhxSTXPJBT2PwEsnKkreYYye
-         Z5p2zVngSmqgw==
-Date:   Thu, 25 Jun 2020 11:25:17 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Qian Cai <cai@lca.pw>
-Cc:     David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        paulmck@kernel.org, rcu@vger.kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: Null-ptr-deref due to "vfs, fsinfo: Add an RCU safe per-ns
- mount list"
-Message-ID: <20200625112517.4cf8f3a9@canb.auug.org.au>
-In-Reply-To: <20200624155707.GA1259@lca.pw>
-References: <31941725-BEB0-4839-945A-4952C2B5ADC7@lca.pw>
-        <2961585.1589326192@warthog.procyon.org.uk>
-        <20200624155707.GA1259@lca.pw>
+        Wed, 24 Jun 2020 21:35:23 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E2F4C061573;
+        Wed, 24 Jun 2020 18:35:23 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id g67so1612115pgc.8;
+        Wed, 24 Jun 2020 18:35:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=8AMsEtMPyIPz6aBefbbRCpn0EeTLWAujh7PMXD7e1o8=;
+        b=cq1CjO0kZr/+PAPlvrG/fQJoirloBWo1rePn7DpGhXyiH9F2MrGMM8WAYk4XYdyt3w
+         Amfxo/TrQnaWMyNZhHffznZVKFzClxR8Fegt2IkYDMzlLLBfIdmv8Dv2gmDq1JuolNez
+         kSJcawlAbMnTLngkG5rrLlKeYbkoX0De/X29DlIfA+sxjPRXzh4SpuTX7DThx2TBdtlI
+         LW7oThAK7Mt6Yexc9T9bF+j8YD9QlcvP2qP6e5iquL9az/rKWWTIRLKaNjJoqOfxkGa6
+         s7eRelgmn3wCX0BCJimdZhgMoDlDB0+f7pnjfl96FHbIzWyBt0VXPlkQhBtC+6tWwmA5
+         W4+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=8AMsEtMPyIPz6aBefbbRCpn0EeTLWAujh7PMXD7e1o8=;
+        b=A/JqOTPudqGMkDaf3d8ckjXgKhY3uDqsCYQyB+eSPyuBmVE8igLJ/102m4nmcmFxfh
+         FQ0O4C+l+GmlG6G5NzM+L4Jw23pwugzEPrHu09TXX42w3zYaarD1o4vzqwMkoWcjDZR0
+         Pm7ok9EqKjVAofY3bl+v/IYJ6mD6P6uk4w/GQIGVT7q8PO0PlsBLTh7xJx7PgjcctUXq
+         hQtG3+36CR12q/97NpZkj/AtGwBq2FOLSjFfJklPGTGk3MWfoaFYyjjsreleTjFuqxb0
+         f0gS2gRFPh3Gsf9BolIz2xt3WBVdR+QuFnLo/k83rm6nGB/Xpa3MMADQg0DljabqQc++
+         5Now==
+X-Gm-Message-State: AOAM531Rda9L2iJvs72aa0KeKt0Vnp8XXCoIdJfQWJFYXn1qOxVlA7/b
+        7L112wrh+mmpsrwr/sr6zxA=
+X-Google-Smtp-Source: ABdhPJwPzIwR/mkiShfwMRVPGJlUyMzAyo+HgWskH9F7Zm1ygoIOpHCUm3f6WP9QMUV+wdjmx7VAJA==
+X-Received: by 2002:a63:d912:: with SMTP id r18mr21144784pgg.358.1593048922749;
+        Wed, 24 Jun 2020 18:35:22 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:b86c])
+        by smtp.gmail.com with ESMTPSA id u12sm6100176pjy.37.2020.06.24.18.35.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jun 2020 18:35:21 -0700 (PDT)
+Date:   Wed, 24 Jun 2020 18:35:18 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+Message-ID: <20200625013518.chuqehybelk2k27x@ast-mbp.dhcp.thefacebook.com>
+References: <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
+ <87ftaxd7ky.fsf@x220.int.ebiederm.org>
+ <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1pskt.fsf@x220.int.ebiederm.org>
+ <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1mx4z.fsf@x220.int.ebiederm.org>
+ <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
+ <878sgck6g0.fsf@x220.int.ebiederm.org>
+ <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
+ <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/t.bTb4R9aiObfQs2q7bZVl/";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/t.bTb4R9aiObfQs2q7bZVl/
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 25, 2020 at 08:14:20AM +0900, Tetsuo Handa wrote:
+> On 2020/06/24 23:26, Alexei Starovoitov wrote:
+> > On Wed, Jun 24, 2020 at 5:17 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >>
+> >> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+> >>
+> >>> On Tue, Jun 23, 2020 at 01:53:48PM -0500, Eric W. Biederman wrote:
+> >>
+> >>> There is no refcnt bug. It was a user error on tomoyo side.
+> >>> fork_blob() works as expected.
+> >>
+> >> Nope.  I have independently confirmed it myself.
+> > 
+> > I guess you've tried Tetsuo's fork_blob("#!/bin/true") kernel module ?
+> > yes. that fails. It never meant to be used for this.
+> > With elf blob it works, but breaks if there are rejections
+> > in things like security_bprm_creds_for_exec().
+> > In my mind that path was 'must succeed or kernel module is toast'.
+> > Like passing NULL into a function that doesn't check for it.
+> > Working on a fix for that since Tetsuo cares.
+> > 
+> 
+> What is unhappy for pathname based LSMs is that fork_usermode_blob() creates
+> a file with empty filename. I can imagine that somebody would start abusing
+> fork_usermode_blob() as an interface for starting programs like modprobe, hotplug,
+> udevd and sshd. When such situation happened, how fork_usermode_blob() provides
+> information for identifying the intent of such execve() requests?
+> 
+> fork_usermode_blob() might also be an unhappy behavior for inode based LSMs (like
+> SELinux and Smack) because it seems that fork_usermode_blob() can't have a chance
+> to associate appropriate security labels based on the content of the byte array
+> because files are created on-demand. Is fork_usermode_blob() friendly to inode
+> based LSMs?
 
-Hi all,
-
-On Wed, 24 Jun 2020 11:57:07 -0400 Qian Cai <cai@lca.pw> wrote:
->
-> On Wed, May 13, 2020 at 12:29:52AM +0100, David Howells wrote:
-> > Qian Cai <cai@lca.pw> wrote:
-> >  =20
-> > > Reverted the linux-next commit ee8ad8190cb1 (=E2=80=9Cvfs, fsinfo: Ad=
-d an RCU safe per-ns mount list=E2=80=9D) fixed the null-ptr-deref. =20
-> >=20
-> > Okay, I'm dropping this commit for now. =20
->=20
-> What's the point of re-adding this buggy patch to linux-next again since
-> 0621 without fixing the previous reported issue at all? Reverting the
-> commit will still fix the crash below immediately, i.e.,
->=20
-> dbc87e74d022 ("vfs, fsinfo: Add an RCU safe per-ns mount list")
-
-I have added a revert of that commit to linux-next today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/t.bTb4R9aiObfQs2q7bZVl/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl7z/P0ACgkQAVBC80lX
-0GzqtggAhCC4k0Z3m35GbDRg7iW8yoeoyG5WHwIfVompDg7cqrbQs6XjVthYCghl
-B+/FDUDfo3wfGBy5PH1NdJRoZxwqYXWu69YvqA2jP+sNqDdsqu1uziKd2sDvthed
-FOEtxYWPYWQitRelIp2XF6T4K3wlsyP7nGZUUx987veQeL0Za8QFGln5LiGVywZr
-ZulkTHbDrMZBcDfUNjU4WHE1cVF0SfdwrknS7biVgJNtduBVVqCn3IVWJew3Z76R
-sv00DDNGe2FJiwvRPh48yXGjXLuDLFtJXnegEx2aojP8W/c09a5jsinmpnFRD70r
-O/xQWiHBqS8361DqqE09QtGStQFtpw==
-=/b6E
------END PGP SIGNATURE-----
-
---Sig_/t.bTb4R9aiObfQs2q7bZVl/--
+blob is started by a kernel module. Regardless of path existence that kernel module
+could have disabled any LSM and any kernel security mechanism.
+People who write out of tree kernel modules found ways to bypass EXPORT_SYMBOL
+with and without _GPL. Modules can do anything. It's only the number of hoops
+they need to jump through to get what they want. 
+Signed and in-tree kernel module is the only way to protect the integrity of the system.
+That's why user blob is part of kernel module elf object and it's covered by the same
+module signature verification logic.
