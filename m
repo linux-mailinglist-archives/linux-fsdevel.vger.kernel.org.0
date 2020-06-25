@@ -2,159 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C44820A662
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 22:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73A1420A66E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 22:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389843AbgFYULA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jun 2020 16:11:00 -0400
-Received: from cloud1-vm154.de-nserver.de ([178.250.10.56]:56083 "EHLO
-        cloud1-vm154.de-nserver.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389344AbgFYULA (ORCPT
+        id S2404483AbgFYUMz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jun 2020 16:12:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43664 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404386AbgFYUMy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jun 2020 16:11:00 -0400
-Received: (qmail 12076 invoked from network); 25 Jun 2020 22:10:58 +0200
-X-Fcrdns: No
-Received: from phoffice.de-nserver.de (HELO [10.242.2.6]) (185.39.223.5)
-  (smtp-auth username hostmaster@profihost.com, mechanism plain)
-  by cloud1-vm154.de-nserver.de (qpsmtpd/0.92) with (ECDHE-RSA-AES256-GCM-SHA384 encrypted) ESMTPSA; Thu, 25 Jun 2020 22:10:58 +0200
-X-GeoIP-Country: DE
-Subject: Re: Kernel 5.4 breaks fuse 2.X nonempty mount option
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     David Howells <dhowells@redhat.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        "p.kramme@profihost.ag" <p.kramme@profihost.ag>,
-        Daniel Aberger - Profihost AG <d.aberger@profihost.ag>
-References: <736d172c-84ff-3e9f-c125-03ae748218e8@profihost.ag>
- <1696715.1592552822@warthog.procyon.org.uk>
- <4a2f5aa9-1921-8884-f854-6a8b22c488f0@profihost.ag>
- <2cfa1de5-a4df-5ad3-e35b-3024cad78ed1@profihost.ag>
- <CAJfpegvLJBAzGCpR6CQ1TG8-fwMB9oN8kVFijs7vK+dvQ6Tm5w@mail.gmail.com>
-From:   Stefan Priebe - Profihost AG <s.priebe@profihost.ag>
-Message-ID: <bffa6591-6698-748d-ba26-a98142b03ae8@profihost.ag>
-Date:   Thu, 25 Jun 2020 22:10:56 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Thu, 25 Jun 2020 16:12:54 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBD78C08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jun 2020 13:12:53 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id g2so3931058lfb.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jun 2020 13:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+Y46LuyszRq3BVDcnDZ7ReMKh01CyKQeI5H/cI3VLxk=;
+        b=J5byxCRhw8+TkCbEEX9a2LCot84or8NLorXcpY6WIPYJgEH1/Ekqt/WBSlkEK7LT+G
+         bndLltQGjYgsXZkIYv7U4HSD9vfzZSX8iMP12sM3dBtFd72w9tGCUJISUrKFiIs2jlCB
+         kdg2Oz6CwCOocpL1P4O2BRetDEcG44U2iMwyc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+Y46LuyszRq3BVDcnDZ7ReMKh01CyKQeI5H/cI3VLxk=;
+        b=a6ut+MRRPlKEOatlfmxSiQBYN+q9FKkfVyguaQGn3bHe47AVtBJPgNPODjrghbhe6U
+         4IUCJatobn0DFkfgZRsEQRcSo1Aovc5QhfxpwTZqFPjVmg1MVNmltxNjKRqVOy/yIzlN
+         SdzMVlMiingQKY4kskM1mkSWYgnSjP9IG+epuOl0ZqYDnLfxJIOyBEZRNq4b876CtMGQ
+         0EiKdSB1xUUPvgDUBDq9vc2234+b5qIHTt7tCT3RpzgaMFNH5geHJcCz3U9Y4lyeyQUb
+         UhBI8ke0k4XkX0N4r/rn8sbfRSAyEpgOmMKYHayQj/g9P6i+vLRrr741OF3k/C/EP9WK
+         wx7Q==
+X-Gm-Message-State: AOAM533fPuNySFoeQfM/jVuBiVcTmPojh4hnwEpQcw5P5nwyVFlPZQ4X
+        /kXYHHvfiAjL1mCxq7FB2ZREnL2lmic=
+X-Google-Smtp-Source: ABdhPJwUV6lrUJbMu+mw/I+QXwRBZsA6DEHsIxY2JaYQtVRKPA/jEg6ZIra0zncEiPysXAj2yYvzrQ==
+X-Received: by 2002:a05:6512:10d3:: with SMTP id k19mr19803881lfg.78.1593115972064;
+        Thu, 25 Jun 2020 13:12:52 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id x11sm6192339lfq.23.2020.06.25.13.12.50
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Jun 2020 13:12:51 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id x18so7962574lji.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jun 2020 13:12:50 -0700 (PDT)
+X-Received: by 2002:a2e:97c3:: with SMTP id m3mr18125829ljj.312.1593115970627;
+ Thu, 25 Jun 2020 13:12:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegvLJBAzGCpR6CQ1TG8-fwMB9oN8kVFijs7vK+dvQ6Tm5w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
-X-User-Auth: Auth by hostmaster@profihost.com through 185.39.223.5
+References: <20200625181948.GF17788@quack2.suse.cz>
+In-Reply-To: <20200625181948.GF17788@quack2.suse.cz>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 25 Jun 2020 13:12:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj8XGkaPe1+ROAMUPK3Gfcx_tQY+RzUuSwksJepz8pQkQ@mail.gmail.com>
+Message-ID: <CAHk-=wj8XGkaPe1+ROAMUPK3Gfcx_tQY+RzUuSwksJepz8pQkQ@mail.gmail.com>
+Subject: Re: [GIT PULL] fsnotify speedup for 5.8-rc3
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Jun 25, 2020 at 11:19 AM Jan Kara <jack@suse.cz> wrote:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v5.8-rc3
+>
+> to get a performance improvement to reduce impact of fsnotify for inodes
+> where it isn't used.
 
-Am 25.06.20 um 21:54 schrieb Miklos Szeredi:
-> On Sun, Jun 21, 2020 at 9:33 PM Stefan Priebe - Profihost AG
-> <s.priebe@profihost.ag> wrote:
->>
->> Hi David,
->>
->> i did a git bisect and the breaking commit is:
->>
->> commit c30da2e981a703c6b1d49911511f7ade8dac20be
->> Author: David Howells <dhowells@redhat.com>
->> Date:   Mon Mar 25 16:38:31 2019 +0000
->>
->>     fuse: convert to use the new mount API
->>
->>     Convert the fuse filesystem to the new internal mount API as the old
->>     one will be obsoleted and removed.  This allows greater flexibility in
->>     communication of mount parameters between userspace, the VFS and the
->>     filesystem.
->>
->>     See Documentation/filesystems/mount_api.txt for more information.
->>
->>     Signed-off-by: David Howells <dhowells@redhat.com>
->>     Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
->>     Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->>
->> most probably due to the following diffences:
->>
->>
->> old default:
->>                default:
->> -                       return 0;
->>
->>
->> new default:
->> +       default:
->> +               return -EINVAL;
->>
->>
->> it seems the old API silently did ignore unknown parameters while the
->> new one fails with EINVAL.
-> 
-> v4.19 has this:
-> 
-> static int parse_fuse_opt(char *opt, struct fuse_mount_data *d, int is_bdev,
->                           struct user_namespace *user_ns)
-> {
-> [...]
->         while ((p = strsep(&opt, ",")) != NULL) {
-> [...]
->                 token = match_token(p, tokens, args);
->                 switch (token) {
-> [...]
->                 default:
->                         return 0;
-> 
-> and
-> 
-> static int fuse_fill_super(struct super_block *sb, void *data, int silent)
-> {
-> [...]
->         err = -EINVAL;
->         if (sb->s_flags & SB_MANDLOCK)
->                 goto err;
-> 
->         sb->s_flags &= ~(SB_NOSEC | SB_I_VERSION);
-> 
->         if (!parse_fuse_opt(data, &d, is_bdev, sb->s_user_ns))
->                 goto err;
-> [...]
->  err:
->         return err;
-> }
-> 
-> That looks like it returns -EINVAL for unknown options.  Can you
-> perform a "strace" on the old and the new kernel to see what the
-> difference is?
-> 
-> BTW, the hard rule is: userspace regressions caused by kernel changes
-> must be fixed.  It's just not clear where exactly this is coming from.
+Pulled.
 
-Does a userspace strace really help? I did a git bisect between kernel
-v5.3 (working) und v5.4 (not working) and it shows
+I do note that there's some commonality here with commit ef1548adada5
+("proc: Use new_inode not new_inode_pseudo") and the discussion there
+around "maybe new_inode_pseudo should disable fsnotify instead".
 
+See
 
-commit c30da2e981a703c6b1d49911511f7ade8dac20be
-Author: David Howells <dhowells@redhat.com>
-Date:   Mon Mar 25 16:38:31 2019 +0000
+    https://lore.kernel.org/lkml/CAHk-=wh7nZNf81QPcgpDh-0jzt2sOF3rdUEB0UcZvYFHDiMNkw@mail.gmail.com/
 
-    fuse: convert to use the new mount API
+and in particular the comment there:
 
-    Convert the fuse filesystem to the new internal mount API as the old
-    one will be obsoleted and removed.  This allows greater flexibility in
-    communication of mount parameters between userspace, the VFS and the
-    filesystem.
+        I do wonder if we should have kept the new_inode_pseudo(),
+    and instead just make fsnotify say "you can't notify on an inode that
+    isn't on the superblock list"
 
-    See Documentation/filesystems/mount_api.txt for more information.
+ which is kind of similar to this alloc_file_pseudo() change..
 
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-    Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+There it wasn't so much about performance, as about an actual bug
+(quoting from that commit):
 
-as the regression commit.
+    Recently syzbot reported that unmounting proc when there is an ongoing
+    inotify watch on the root directory of proc could result in a use
+    after free when the watch is removed after the unmount of proc
+    when the watcher exits.
 
-Stefan
+but the fnsotify connection and the "pseudo files/inodes can't be
+notified about" is the same.
 
-> 
-> Thanks,
-> Miklos
-> 
+Comments?
+
+               Linus
