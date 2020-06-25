@@ -2,34 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 837C920A0C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 16:22:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B045820A0CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 16:27:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405342AbgFYOWP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jun 2020 10:22:15 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:62204 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404890AbgFYOWO (ORCPT
+        id S2405388AbgFYO1F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jun 2020 10:27:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46588 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405189AbgFYO1E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jun 2020 10:22:14 -0400
-Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05PEL9iM055217;
-        Thu, 25 Jun 2020 23:21:09 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav102.sakura.ne.jp);
- Thu, 25 Jun 2020 23:21:09 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav102.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05PEL95i055207
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 25 Jun 2020 23:21:09 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-To:     Greg KH <greg@kroah.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Thu, 25 Jun 2020 10:27:04 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E589C08C5C1;
+        Thu, 25 Jun 2020 07:27:04 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id r8so5116603oij.5;
+        Thu, 25 Jun 2020 07:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dC6tzsYILRcNlhPsnZrmlaBj5Ye3SKdAeItsQWIKi+U=;
+        b=M9LygiLfmAIu+6g8BP4Bu2tbYOsK3jVQtZOrRqfNcuTBuKzBGFW7+LfZrTf0jchCsN
+         s3HMj3Z2gv5rVJUA6D9gfFprtaaMCy3p7G6sNmxarvTNNoaGLLWdyQ+hW5WAssToNGwC
+         hT1MBUi9ZCBs5hiQQfmjeVHcfMqhOALMmwTJov1aU4RG1a5ZPPlEPwKKLv7A8qTUCRNa
+         DfKZ9mUZkQkiczhlsrOgg6PrgKHCAeDSc4JI+x4pVHOyT9b2hzRgGCNqrry2NsyQjaBh
+         9mZUDMp32SXHohfxgJkzddiZfAU1yU7icmtV5CjG4CK1z6IlvbJEnYC4lF0AT7BJ0E5m
+         E2CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dC6tzsYILRcNlhPsnZrmlaBj5Ye3SKdAeItsQWIKi+U=;
+        b=rK0hDx0+S6pZMy1ES8jbnv90r0I/Vko+KjiQYOphWxLQecC7hyNISG0UdpCfAa+XR1
+         M/cEH/5xpAZn9nhaCp7fl5eso3TKquQW/nbXh7bRMJbPda8AD6adct+S/hHIAxrLaE9m
+         lQ1lZa35s7uBIQcmUMJc3RwZnwfDgaDwO/4FS8N/YJmPfY9x4UbgI+E+8FIM1QUxyXQF
+         LyU/Irt1sA0O0sNbMTsCsklpP/HVH0goYp4EfYXOoJ9OJRcNkVsmdZdVSeITohgUEZtZ
+         t6klbpMz1cu9YmM+HQq/T4RxaC13rwYPIUaIBOs9g0KDfNkP2Olk1CMegP9MUwjO3bsO
+         j07g==
+X-Gm-Message-State: AOAM533ABa0LvAB8ITpeSbQANFaO9WCUZ+MmSCR31AH0DuvoELDJXbAe
+        lymvVfYv9TwaRW84JP0DGZ+C/7Oe4AlxVZ7anyE=
+X-Google-Smtp-Source: ABdhPJzGMW1G46L2SJvq0qCi+cGzWPcwMkGo0yId5qaC1b07LSRyGeSOP2vSiAZLCUb92wYp6Kox6oQBE3XUXZcyeQ8=
+X-Received: by 2002:aca:55c1:: with SMTP id j184mr2251086oib.160.1593095223763;
+ Thu, 25 Jun 2020 07:27:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <87ftaxd7ky.fsf@x220.int.ebiederm.org> <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1pskt.fsf@x220.int.ebiederm.org> <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1mx4z.fsf@x220.int.ebiederm.org> <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
+ <878sgck6g0.fsf@x220.int.ebiederm.org> <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
+ <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
+ <CAEjxPJ4e9rWWssp0CyM7GM7NP_QKkswHK7URwLZFqo5+wGecQw@mail.gmail.com> <20200625132551.GB3526980@kroah.com>
+In-Reply-To: <20200625132551.GB3526980@kroah.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Thu, 25 Jun 2020 10:26:52 -0400
+Message-ID: <CAEjxPJ6MEb--R=zP_wCh-zgCochgcPhy7Fp7ENTYKB2NH9c6PA@mail.gmail.com>
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently unmantained
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Kees Cook <keescook@chromium.org>,
@@ -44,91 +73,38 @@ Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
         linux-security-module <linux-security-module@vger.kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>
-References: <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
- <87h7v1mx4z.fsf@x220.int.ebiederm.org>
- <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
- <878sgck6g0.fsf@x220.int.ebiederm.org>
- <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
- <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
- <20200625013518.chuqehybelk2k27x@ast-mbp.dhcp.thefacebook.com>
- <b83831ba-c330-7eb8-e6d5-5087de68a9b8@i-love.sakura.ne.jp>
- <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <46edbddb-6da8-d9b6-1ad2-9e24ac74fbcf@i-love.sakura.ne.jp>
-Date:   Thu, 25 Jun 2020 23:21:09 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200625120725.GA3493334@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/06/25 21:07, Greg KH wrote:
->>>>     call_usermodehelper() can teach LSM modules via pre-existing file's pathname and
->>>>     inode's security label at security_bprm_creds_for_exec()/security_bprm_check() etc.
->>>>     But since fork_usermode_blob() accepts only "byte array" and "length of byte array"
->>>>     arguments, I'm not sure whether LSM modules can obtain information needed for
->>>>     inspection. How does fork_usermode_blob() tell that information?
->>>
->>> It would seem that the "security context" for those would be the same as
->>> anything created before userspace launches today, right?  You handle
->>> that ok, and this should be just the same.
->>
->> I don't think so. Today when call_usermodehelper() is called, LSMs switch their security
->> context (at least TOMOYO does it) for further syscalls from the usermode process started
->> by the kernel context. But when fork_usermode_blob() is called, how LSMs can switch their
->> security context for further syscalls from the usermode process started by the kernel
->> context?
-> 
-> Ok, that makes a bit more sense.  Why not just do the same thing that
-> you do today with call_usermodehelper()?  The logic in a way is the
-> same, right?
-> 
+On Thu, Jun 25, 2020 at 9:25 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Jun 25, 2020 at 08:56:10AM -0400, Stephen Smalley wrote:
+> > No, because we cannot label the inode based on the program's purpose
+> > and therefore cannot configure an automatic transition to a suitable
+> > security context for the process, unlike call_usermodehelper().
+>
+> Why, what prevents this?  Can you not just do that based on the "blob
+> address" or signature of it or something like that?  Right now you all
+> do this based on inode of a random file on a disk, what's the difference
+> between a random blob in memory?
 
-call_usermodehelper() provides information like "the kernel is about to run
-/sbin/modprobe in order to load foo module" but fork_usermode_blob() does not
-provide information like "the kernel is about to run a blob that we think is
-a userspace USB IR filter driver". That is unfriendly to LSM modules.
+Given some kind of key to identify the blob and look up a suitable
+context in policy, I think it would work.  We just don't have that
+with the current interface.  With /bin/kmod and the like, we have a
+security xattr assigned to the file when it was created that we can
+use as the basis for determining the process security context.
 
-> 
->>> Right now I, as a kernel module, can read/write to any file in the
->>> system, and do all sorts of other fun things.  You can't mediate that
->>> today from a LSM, and this is just one other example of this.
->>
->> Some functions (e.g. kernel_sock_shutdown()) bypass permission checks by LSMs
->> comes from a sort of trustness that the byte array kept inside kernel address
->> space remains secure/intact.
-> 
-> And what is going to change that "trustness" here?  The byte array came
-> from the kernel address space to start with.  Are you thinking something
-> outside of the kernel will then tamper with those bytes to do something
-> else with them?
+> > On a different note, will the usermode blob be measured by IMA prior
+> > to execution?  What ensures that the blob was actually embedded in the
+> > kernel image and wasn't just supplied as data through exploitation of
+> > a kernel vulnerability or malicious kernel module?
+>
+> No reason it couldn't be passed to IMA for measuring, if people want to
+> do that.
 
-Right. e.g. ptrace() will allow reading/writing those bytes to do something
-else with them. I guess 'gdb -p' is the same meaning.
-
->                  If so, shouldn't you be preventing that userspace
-> program that does the tampering from doing that in the first place with
-> the LSM running?
-
-SELinux can handle process isolation very well. But the reality is that none of customers
-I'm working for can afford using SELinux because SELinux is too complicated to support.
-Instead, they use proprietary antivirus kernel modules (which tamper with syscall tables
-and/or security_hook_heads). Therefore, I wish that isolation between processes running
-fork_usermode_blob() and processes running normal usermode programs is implemented by
-built-in mechanism (like DAC), and I said
-
-  We might need to invent built-in "protected userspace" because existing
-  "unprotected userspace" is not trustworthy enough to run kernel modules.
-  That's not just inventing fork_usermode_blob().
-
-at https://lkml.kernel.org/r/62859212-df69-b913-c1e0-cd2e358d1adf@i-love.sakura.ne.jp .
-I'm happy if we can implement such isolation without counting on in-tree LSMs.
-
+Actually, I think it probably happens already via IMA's existing hooks
+but just wanted to confirm that IMA doesn't ignore S_PRIVATE inodes.
