@@ -2,118 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E59C209C1B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 11:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9077F209C2C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 11:45:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403905AbgFYJn0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jun 2020 05:43:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389532AbgFYJnW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jun 2020 05:43:22 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23E3020709;
-        Thu, 25 Jun 2020 09:43:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593078201;
-        bh=mSBu+4/jJPqb52V+9HZ8ffwpbzaCZEKDhH25+czhvss=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=W6iJmk5fJBGfc4kyvKVDTxCRFn+/FBEJu5bsIB0qaWweWEf0wjpbEaMPSTULu8GRY
-         B9eA3Q1UiTqvooaCn8L54AKkwI+8IZrIOB0OX6qP4pHLVp70BNHD29Zl1tV9leR4yW
-         lnh8pjQuKsCBEiDvKOSr200Is/Sykrs6fvxsM0JY=
-Date:   Thu, 25 Jun 2020 11:43:17 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ian Kent <raven@themaw.net>
-Cc:     Tejun Heo <tj@kernel.org>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
- improvement
-Message-ID: <20200625094317.GA3299764@kroah.com>
-References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
- <20200619153833.GA5749@mtj.thefacebook.com>
- <16d9d5aa-a996-d41d-cbff-9a5937863893@linux.vnet.ibm.com>
- <20200619222356.GA13061@mtj.duckdns.org>
- <fa22c563-73b7-5e45-2120-71108ca8d1a0@linux.vnet.ibm.com>
- <20200622175343.GC13061@mtj.duckdns.org>
- <82b2379e-36d0-22c2-41eb-71571e992b37@linux.vnet.ibm.com>
- <20200623231348.GD13061@mtj.duckdns.org>
- <ac4a2c133da21856439f907989c3f9d781857cbf.camel@themaw.net>
+        id S2390510AbgFYJpI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jun 2020 05:45:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59328 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389894AbgFYJpI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Jun 2020 05:45:08 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47E41C061573;
+        Thu, 25 Jun 2020 02:45:07 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id ga4so5259100ejb.11;
+        Thu, 25 Jun 2020 02:45:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eA4poZMceWsvM3rmLRHsnsl9hHeBKdemY+Td0g9vsCY=;
+        b=MoquPqgmXaMx4FO+yYuSA5R4x2a6ByAy0NDuobOBA4N4K0vH1Ksh6mOGG1Fg3yZ2UH
+         HeKiDEIe7YFElXGm7k6DvGKi0C+Q1TxktA/5l0K5Lac1tfo/FDG+dM6GNq061GAfBQDx
+         ywpdXloR9U0lZQlACIc8wBZLrVmQFYX11JzE7II/60DgWgQ0qu8bkX9hv/jVDt7aY+xy
+         k7LgQHsVM3DUtWa7IzTl3ZX/UfEOAxCHCI5bjAKeSrJ1g3KMcrBP/6epo4bPlYAjGBWp
+         qExZAbRZA0TNWHhgEM0AtPQKbvEWGAe94QF5mhpZUVCAjGfpKxKUEerWOUYyAEW+U2FF
+         EHgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eA4poZMceWsvM3rmLRHsnsl9hHeBKdemY+Td0g9vsCY=;
+        b=qJT+XkxqyuFcaRtl1ZbHSLcGb8M+3VLK3pUuXgSmOdb3c6ApVxilA0lpIaasCX/dqU
+         JyIX8IkPr+2FSjS5NgCSMGDap+wr2GzmCBA0zNHYBr9k2iHdWxz8wIaiinuNN8Nn9znR
+         aSpySGaVJL7ys+1urjeifvnIrQYjZOn2bT22aOSMVssqWpzMmXznd6hBs5D+ppdkthB6
+         4pQJve8maNHUkxryomFwrLGqlegvuUngYvNTRpj+ZJwPPdukj7ybX82rbeqL1hx1eWY6
+         OJ8AbJs4jg+9bLTkRJ2dU9adgQIw6Ojqd5FL1Z/hPx/U4tJ8EnUsK6mUxkTsSK6a3fme
+         QxuA==
+X-Gm-Message-State: AOAM532JW49VuGZcPBvMSFqLKErBk0bWkgqWuyy7Ilm9IyZ9t6cBo1xC
+        Z1oCbs4dcryStzq48UqOnOetPoCl
+X-Google-Smtp-Source: ABdhPJysHjz5q+amJzSiiMjvVXbq84/gQkRWKZE8gpY6jEIxxwHmNxb5AG57BN23oiRylEQFw0pWyA==
+X-Received: by 2002:a17:906:830b:: with SMTP id j11mr30510617ejx.42.1593078305827;
+        Thu, 25 Jun 2020 02:45:05 -0700 (PDT)
+Received: from ?IPv6:2001:a61:253c:8201:b2fb:3ef8:ca:1604? ([2001:a61:253c:8201:b2fb:3ef8:ca:1604])
+        by smtp.gmail.com with ESMTPSA id c26sm4508654edr.88.2020.06.25.02.45.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Jun 2020 02:45:05 -0700 (PDT)
+Cc:     mtk.manpages@gmail.com, linux-man@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][man-pages] sync.2: syncfs() now returns errors if
+ writeback fails
+To:     Jeff Layton <jlayton@kernel.org>,
+        Eric Biggers <ebiggers@kernel.org>
+References: <20200610103347.14395-1-jlayton@kernel.org>
+ <20200610155013.GA1339@sol.localdomain>
+ <fe141babe698296f96fde39a8da85005506fd0f0.camel@kernel.org>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <54c5ef29-0f12-5f55-8f54-73b20f56925e@gmail.com>
+Date:   Thu, 25 Jun 2020 11:45:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac4a2c133da21856439f907989c3f9d781857cbf.camel@themaw.net>
+In-Reply-To: <fe141babe698296f96fde39a8da85005506fd0f0.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 25, 2020 at 04:15:19PM +0800, Ian Kent wrote:
-> On Tue, 2020-06-23 at 19:13 -0400, Tejun Heo wrote:
-> > Hello, Rick.
-> > 
-> > On Mon, Jun 22, 2020 at 02:22:34PM -0700, Rick Lindsley wrote:
-> > > > I don't know. The above highlights the absurdity of the approach
-> > > > itself to
-> > > > me. You seem to be aware of it too in writing: 250,000 "devices".
-> > > 
-> > > Just because it is absurd doesn't mean it wasn't built that way :)
-> > > 
-> > > I agree, and I'm trying to influence the next hardware design.
-> > > However,
-> > 
-> > I'm not saying that the hardware should not segment things into
-> > however many
-> > pieces that it wants / needs to. That part is fine.
-> > 
-> > > what's already out there is memory units that must be accessed in
-> > > 256MB
-> > > blocks. If you want to remove/add a GB, that's really 4 blocks of
-> > > memory
-> > > you're manipulating, to the hardware. Those blocks have to be
-> > > registered
-> > > and recognized by the kernel for that to work.
-> > 
-> > The problem is fitting that into an interface which wholly doesn't
-> > fit that
-> > particular requirement. It's not that difficult to imagine different
-> > ways to
-> > represent however many memory slots, right? It'd take work to make
-> > sure that
-> > integrates well with whatever tooling or use cases but once done this
-> > particular problem will be resolved permanently and the whole thing
-> > will
-> > look a lot less silly. Wouldn't that be better?
+Hi Jeff,
+
+Any progress with v2 of this patch?
+
+Thanks,
+
+Michael
+
+
+On 6/10/20 11:19 PM, Jeff Layton wrote:
+> On Wed, 2020-06-10 at 08:50 -0700, Eric Biggers wrote:
+>> On Wed, Jun 10, 2020 at 06:33:47AM -0400, Jeff Layton wrote:
+>>> A patch has been merged for v5.8 that changes how syncfs() reports
+>>> errors. Change the sync() manpage accordingly.
+>>>
+>>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>>> ---
+>>>  man2/sync.2 | 24 +++++++++++++++++++++++-
+>>>  1 file changed, 23 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/man2/sync.2 b/man2/sync.2
+>>> index 7198f3311b05..27e04cff5845 100644
+>>> --- a/man2/sync.2
+>>> +++ b/man2/sync.2
+>>> @@ -86,11 +86,26 @@ to indicate the error.
+>>>  is always successful.
+>>>  .PP
+>>>  .BR syncfs ()
+>>> -can fail for at least the following reason:
+>>> +can fail for at least the following reasons:
+>>>  .TP
+>>>  .B EBADF
+>>>  .I fd
+>>>  is not a valid file descriptor.
+>>> +.TP
+>>> +.B EIO
+>>> +An error occurred during synchronization.
+>>> +This error may relate to data written to any file on the filesystem, or on
+>>> +metadata related to the filesytem itself.
+>>> +.TP
+>>> +.B ENOSPC
+>>> +Disk space was exhausted while synchronizing.
+>>> +.TP
+>>> +.BR ENOSPC ", " EDQUOT
+>>> +Data was written to a files on NFS or another filesystem which does not
+>>> +allocate space at the time of a
+>>> +.BR write (2)
+>>> +system call, and some previous write failed due to insufficient
+>>> +storage space.
+>>>  .SH VERSIONS
+>>>  .BR syncfs ()
+>>>  first appeared in Linux 2.6.39;
+>>> @@ -121,6 +136,13 @@ or
+>>>  .BR syncfs ()
+>>>  provide the same guarantees as fsync called on every file in
+>>>  the system or filesystem respectively.
+>>> +.PP
+>>> +In mainline kernel versions prior to 5.8,
+>>> +.\" commit 735e4ae5ba28c886d249ad04d3c8cc097dad6336
+>>> +.BR syncfs ()
+>>> +will only fail with EBADF when passed a bad file descriptor. In 5.8
+>>> +and later kernels, it will also report an error if one or more inodes failed
+>>> +to be written back since the last syncfs call.
+>>
+>> The sentence "In mainline kernel versions prior to 5.8, syncfs() will only fail
+>> with EBADF when passed a bad file descriptor" is ambiguous.  It could mean that
+>> EBADF can now mean other things too.
+>>
+>> Maybe write: "In mainline kernel versions prior to 5.8, syncfs() will only fail
+>> when passed a bad file descriptor (EBADF)."
+>>
+>> - Eric
 > 
-> Well, no, I am finding it difficult to imagine different ways to
-> represent this but perhaps that's because I'm blinker eyed on what
-> a solution might look like because of my file system focus.
+> Good point. Fixed in my tree using your verbiage. I'll send out a v2
+> patch once I give others a chance to comment.
 > 
-> Can "anyone" throw out some ideas with a little more detail than we
-> have had so far so we can maybe start to formulate an actual plan of
-> what needs to be done.
+> Thanks!
+> 
 
-I think both Tejun and I have provided a number of alternatives for you
-all to look into, and yet you all keep saying that those are impossible
-for some unknown reason.
 
-It's not up to me to tell you what to do to fix your broken interfaces
-as only you all know who is using this and how to handle those changes.
-
-It is up to me to say "don't do that!" and to refuse patches that don't
-solve the root problem here.  I'll review these later on (I have 1500+
-patches to review at the moment) as these are a nice
-micro-optimization...
-
-And as this conversation seems to just going in circles, I think this is
-going to be my last response to it...
-
-greg k-h
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
