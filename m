@@ -2,119 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FCA9209C0B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 11:40:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E59C209C1B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 11:43:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390964AbgFYJj6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jun 2020 05:39:58 -0400
-Received: from mail-eopbgr60112.outbound.protection.outlook.com ([40.107.6.112]:52231
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2390350AbgFYJj4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jun 2020 05:39:56 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kCroTc/ykNl422YUO+DIIeyHr8DF3+jyxQckAx2F/E0ZU5Kdw2AkEmHzFTYeZAiyQqeYpO/nLoiHT4QcFgo0wiTz4N+ZI0DEK10gZUlPGZgPNNkc2vVq8ZtDU1h9u4yv0HkghZcj1JXFsYIEe0QqF44SrPAZ0TRdB1y0pNa+SHAjBZVxiLgqto5ZVrpCyNLHhsl50bFSqux/AnJXTABLHpotAo4MKmXECq85AvkfwRf4+cOSxuprSy5P7ox495Bgf+Vi7a0PsmlcQ2HNsDSY5ylmRMz+f8GYDzR7oRxocpSg322Bcw4ZCUP+aSJOZn4Cultx1hueaphNQw91o0J6Fw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WS2iMm4pOlEAYANxVaoGjoerWbcd5XN6k7ye3li7wn0=;
- b=IoB8nTNxJIMbFNF8AASIrh0VWkG9FwddKZWmjA0lZnje5gOaLjo3lWcw3jy9JXpG79BJ6n7rucmyvK9ZfzfFtFVoUQdDg++BfZGIOG1yOmfGWbAcGRBStKWzB/676QufBHpf7DYVbmbzBtgkCM/lAiRPTvFCHFBbjSf+eS9sCmalE4F1kzL6h+docBPV0gBL9A1x8e7MPw+pkGuCDy2mZMaBx3L0mhsMmhvgCN8QCoLX5nSIvpQnjTHtEhgk+jBAc6E5tUavJ4KipvOeCmGpKa43XShTnfXofgrGpvMjuYtjSHq1inTMjysUYD+G7PMQYzkM1DejGInWoHgXc6xwVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
- header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WS2iMm4pOlEAYANxVaoGjoerWbcd5XN6k7ye3li7wn0=;
- b=gbf4IIoVZ8OhX/dYgHv0gBjxiSbSXYGw5iJ7VCRIZlnNbNaqglVAuTnWnCcxGDbINaPyMPo58Lyoxzkjc8/9bo0eXthxsIMbxMvaEmdwBAKjIpKpVG2yGPRqAh7e+kF+nTDi4xdt3tbci5MElpxb2m7BGZwPNhMOyic/kKfDuYE=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none
- header.from=virtuozzo.com;
-Received: from AM0PR08MB5140.eurprd08.prod.outlook.com (2603:10a6:208:162::17)
- by AM0PR08MB5425.eurprd08.prod.outlook.com (2603:10a6:208:17d::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3131.23; Thu, 25 Jun
- 2020 09:39:53 +0000
-Received: from AM0PR08MB5140.eurprd08.prod.outlook.com
- ([fe80::189d:9569:dbb8:2783]) by AM0PR08MB5140.eurprd08.prod.outlook.com
- ([fe80::189d:9569:dbb8:2783%6]) with mapi id 15.20.3131.023; Thu, 25 Jun 2020
- 09:39:53 +0000
-From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH] fuse_writepages ignores errors from fuse_writepages_fill
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, Maxim Patlasov <maximvp@gmail.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <2733b41a-b4c6-be94-0118-a1a8d6f26eec@virtuozzo.com>
-Message-ID: <be5341bf-6631-d039-7377-2c0c77fd8be3@virtuozzo.com>
-Date:   Thu, 25 Jun 2020 12:39:51 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-In-Reply-To: <2733b41a-b4c6-be94-0118-a1a8d6f26eec@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR01CA0175.eurprd01.prod.exchangelabs.com
- (2603:10a6:208:aa::44) To AM0PR08MB5140.eurprd08.prod.outlook.com
- (2603:10a6:208:162::17)
+        id S2403905AbgFYJn0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jun 2020 05:43:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34084 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389532AbgFYJnW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Jun 2020 05:43:22 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23E3020709;
+        Thu, 25 Jun 2020 09:43:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593078201;
+        bh=mSBu+4/jJPqb52V+9HZ8ffwpbzaCZEKDhH25+czhvss=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=W6iJmk5fJBGfc4kyvKVDTxCRFn+/FBEJu5bsIB0qaWweWEf0wjpbEaMPSTULu8GRY
+         B9eA3Q1UiTqvooaCn8L54AKkwI+8IZrIOB0OX6qP4pHLVp70BNHD29Zl1tV9leR4yW
+         lnh8pjQuKsCBEiDvKOSr200Is/Sykrs6fvxsM0JY=
+Date:   Thu, 25 Jun 2020 11:43:17 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Ian Kent <raven@themaw.net>
+Cc:     Tejun Heo <tj@kernel.org>,
+        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/6] kernfs: proposed locking and concurrency
+ improvement
+Message-ID: <20200625094317.GA3299764@kroah.com>
+References: <159237905950.89469.6559073274338175600.stgit@mickey.themaw.net>
+ <20200619153833.GA5749@mtj.thefacebook.com>
+ <16d9d5aa-a996-d41d-cbff-9a5937863893@linux.vnet.ibm.com>
+ <20200619222356.GA13061@mtj.duckdns.org>
+ <fa22c563-73b7-5e45-2120-71108ca8d1a0@linux.vnet.ibm.com>
+ <20200622175343.GC13061@mtj.duckdns.org>
+ <82b2379e-36d0-22c2-41eb-71571e992b37@linux.vnet.ibm.com>
+ <20200623231348.GD13061@mtj.duckdns.org>
+ <ac4a2c133da21856439f907989c3f9d781857cbf.camel@themaw.net>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [172.16.24.21] (185.231.240.5) by AM0PR01CA0175.eurprd01.prod.exchangelabs.com (2603:10a6:208:aa::44) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3131.21 via Frontend Transport; Thu, 25 Jun 2020 09:39:52 +0000
-X-Originating-IP: [185.231.240.5]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ad7cce6a-b9c7-4038-7a0c-08d818ebb67f
-X-MS-TrafficTypeDiagnostic: AM0PR08MB5425:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR08MB54258D960ECAA461A1C27A1AAA920@AM0PR08MB5425.eurprd08.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1850;
-X-Forefront-PRVS: 0445A82F82
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 67UagCNdAqAoREhmtWgE54rJVuDQtRwu2Cl2zCjUzYMFPNCT9zXyLF5oakM78LdzCrh3NarJssZHf3rfCHx56WQCf2AxCffq86VGGCSbsvSDdAKm/yzJU/nGeNQVhwy/Anc24LeM9V3KBB6JM9QUQuzSf/jDHgBnz2RAhpTzbUw/SaDeB+02VvUv7XXWzk1mBSUsyj/dogLOS9qynfsI/b/ZBRCVrpiShFoDxOTGAUdiQtRbcHmqCnd1QlTYPE+xCOdrhmLkgkDZmONlBMch/HD6KckHshxhePyNvof1jr9OYqPkaoN+rr5nkN5+Z5oRz2zQnmbuOq6vwhhKFgyLQjtdHEwx9+sAa0DshjU5ENuZH1YS8fehrZa93x69xjOn
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR08MB5140.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(396003)(39840400004)(366004)(346002)(376002)(136003)(316002)(83380400001)(66556008)(54906003)(16576012)(66946007)(66476007)(6916009)(52116002)(16526019)(31686004)(186003)(6486002)(956004)(2616005)(36756003)(4744005)(86362001)(8676002)(2906002)(4326008)(26005)(5660300002)(31696002)(478600001)(8936002)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: TM/ZDYcDwh2qJKEJOCo5D3gZJDIwnsnz52efl0cEMurV6GkYigxA6mBgdEHdemgX8tUJ4Wn4NQ45FLX/kE3ETyYxaVZAqakX9b7qbZ9nKU928Ypxqf6fb/Eld1oLs9rLAuX3HFNCoMm/KEywD5xh+a05LCyDPX7UuK543GVryPyI1iT0zZJjI6hGHr1+GAoElTUO6LcZKsQSdPGOmI25oqobeiBiPsv1WeTg9qMiZNpKpM5yhfY9twqAxdNVRYMcKRNCeLRefa4DI0Dx16CnU1uIRgyrVQsQdprMYXZj1H1h4cMNObWTyewH05wMlxkJGXqrZ0cLGKnTXSfYBC75iwqyjxK+aG7NFeSZv5ipeqYxCIEum3jlE5JPPhQ2LwvpvSmy8cd9Kop51pktD1LSHienx9Zrkw2XMMzG7gfGV7TudVfrQztwYaKvLYikWVXfiZgM8qvZIwbSySTYmF1Yn2Q9xwzvOD75XjmNgiK96bU=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ad7cce6a-b9c7-4038-7a0c-08d818ebb67f
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR08MB5140.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2020 09:39:53.2283
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: FbGQts5tno2GIibTCw1T35wjMZi0yGzoA0UvO+WS3o5SsA4HUrkDW9jfK0jMLf59KO4JPvs29WJMp89FtnAMUw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB5425
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ac4a2c133da21856439f907989c3f9d781857cbf.camel@themaw.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fuse_writepages() ignores some errors taken from fuse_writepages_fill()
-I believe it is a bug: if .writepages is called with WB_SYNC_ALL
-it should either guarantee that all data was successfully saved
-or return error.
+On Thu, Jun 25, 2020 at 04:15:19PM +0800, Ian Kent wrote:
+> On Tue, 2020-06-23 at 19:13 -0400, Tejun Heo wrote:
+> > Hello, Rick.
+> > 
+> > On Mon, Jun 22, 2020 at 02:22:34PM -0700, Rick Lindsley wrote:
+> > > > I don't know. The above highlights the absurdity of the approach
+> > > > itself to
+> > > > me. You seem to be aware of it too in writing: 250,000 "devices".
+> > > 
+> > > Just because it is absurd doesn't mean it wasn't built that way :)
+> > > 
+> > > I agree, and I'm trying to influence the next hardware design.
+> > > However,
+> > 
+> > I'm not saying that the hardware should not segment things into
+> > however many
+> > pieces that it wants / needs to. That part is fine.
+> > 
+> > > what's already out there is memory units that must be accessed in
+> > > 256MB
+> > > blocks. If you want to remove/add a GB, that's really 4 blocks of
+> > > memory
+> > > you're manipulating, to the hardware. Those blocks have to be
+> > > registered
+> > > and recognized by the kernel for that to work.
+> > 
+> > The problem is fitting that into an interface which wholly doesn't
+> > fit that
+> > particular requirement. It's not that difficult to imagine different
+> > ways to
+> > represent however many memory slots, right? It'd take work to make
+> > sure that
+> > integrates well with whatever tooling or use cases but once done this
+> > particular problem will be resolved permanently and the whole thing
+> > will
+> > look a lot less silly. Wouldn't that be better?
+> 
+> Well, no, I am finding it difficult to imagine different ways to
+> represent this but perhaps that's because I'm blinker eyed on what
+> a solution might look like because of my file system focus.
+> 
+> Can "anyone" throw out some ideas with a little more detail than we
+> have had so far so we can maybe start to formulate an actual plan of
+> what needs to be done.
 
-Fixes: 26d614df1da9 ("fuse: Implement writepages callback")
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
----
- fs/fuse/file.c | 2 --
- 1 file changed, 2 deletions(-)
+I think both Tejun and I have provided a number of alternatives for you
+all to look into, and yet you all keep saying that those are impossible
+for some unknown reason.
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index c023f7f0..5986739 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2148,10 +2148,8 @@ static int fuse_writepages(struct address_space *mapping,
- 
- 	err = write_cache_pages(mapping, wbc, fuse_writepages_fill, &data);
- 	if (data.wpa) {
--		/* Ignore errors if we can write at least one page */
- 		WARN_ON(!data.wpa->ia.ap.num_pages);
- 		fuse_writepages_send(&data);
--		err = 0;
- 	}
- 	if (data.ff)
- 		fuse_file_put(data.ff, false, false);
--- 
-1.8.3.1
+It's not up to me to tell you what to do to fix your broken interfaces
+as only you all know who is using this and how to handle those changes.
 
+It is up to me to say "don't do that!" and to refuse patches that don't
+solve the root problem here.  I'll review these later on (I have 1500+
+patches to review at the moment) as these are a nice
+micro-optimization...
+
+And as this conversation seems to just going in circles, I think this is
+going to be my last response to it...
+
+greg k-h
