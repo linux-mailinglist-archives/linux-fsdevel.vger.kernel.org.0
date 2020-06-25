@@ -2,60 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED93209E1D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 14:07:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1DC9209EF0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 14:56:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404393AbgFYMHd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jun 2020 08:07:33 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:55355 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404222AbgFYMHd (ORCPT
+        id S2404709AbgFYM4W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jun 2020 08:56:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60452 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403941AbgFYM4W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jun 2020 08:07:33 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.nyi.internal (Postfix) with ESMTP id B78A3580424;
-        Thu, 25 Jun 2020 08:07:31 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Thu, 25 Jun 2020 08:07:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=PiBMVVu5x8FU1A2d+mE/UjKt5Vm
-        t02B5VJYAAFZjK5A=; b=cw8o465cp2YW6tqJTrLs7+c96T3Zl8Cm8v1diSoqz6K
-        ojoNTAssI6J9IyWq3jbHP9Xt7fTJ3viZieEDwFIOCVpYNWc7cSyWd1mM4kHd2yrB
-        Egz/MPXIX6kIcLq0m9yXsyllMqPmA9U0vKiIJSJRmpTlzyIn2iFf5m0d2T02fWqX
-        RmOiNKTzIhertR7xFN4ol+PjjlwX0bzPjQknZIzmRP2AIZANtp7t15VcPqzv5ebV
-        857Kc2o7j4MghLF8KFlRxSmR/kUH80LTzuAG7xtZjvgxhjIdQzmb5Mccwc8Rvfrl
-        9o88Nd88Vqbid1Di3cXf5ay0EpNpF+1yiUtZQb10nJw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=PiBMVV
-        u5x8FU1A2d+mE/UjKt5Vmt02B5VJYAAFZjK5A=; b=k5vM73JGgo0AoQ33fPHuvx
-        AgH3ZCpETBWv5WeuMvKZYwbmVSx03gq1NM9gXiML2p0FFPvvp0LODlOOmkyo0CNZ
-        PAhE6XJpMFPUU98hm5qd0kNSU6drbtTptrKPHzAb1in3GyljIJ76u8oXNmByb+tm
-        kU1f1K/PBeIA/zMFfHsEcrcE5jA21VIf/ze+BmEUai6W6hti5uvupkbnmAKkyogq
-        Hhv/wEu8rHvlhU6HnPOzMu40SQTDm0l5XXwGexi2waqMOeWwCodbSyarGiKAj1V9
-        vUgMrlO9Ds49OPBcW7hd+Q1wHZOjLYfo79JaTBRhLS9Pi1ueygOo0GdwKKeoXbBQ
-        ==
-X-ME-Sender: <xms:gpP0XiOd1X8mrjfZsYChyNZpxXKcG8nds5xgcAW039LCOKgbyG-MSQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudekledggeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgvghcu
-    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeevueehje
-    fgfffgiedvudekvdektdelleelgefhleejieeugeegveeuuddukedvteenucfkphepkeef
-    rdekiedrkeelrddutdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
-X-ME-Proxy: <xmx:gpP0Xg92W9cEmQa6urOQyFXtDZVeyrZEfiFEZqw3xARC8APVk_VG6Q>
-    <xmx:gpP0XpQWN628-sjZUJ3IS07E3XWsIxjSYVJ8OnOrCrnbR5fvOGmQ2w>
-    <xmx:gpP0XisBEaztrWDCCeNG3BNdztkKEzMc3n9nyFke5j11ZFirIN2O8g>
-    <xmx:g5P0Xl35HjYXZvbNfAQDj8T3pjrj7dZw6i03T-l74k-aojcrFArJlA>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1A5553280059;
-        Thu, 25 Jun 2020 08:07:30 -0400 (EDT)
-Date:   Thu, 25 Jun 2020 14:07:25 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+        Thu, 25 Jun 2020 08:56:22 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53DC0C061573;
+        Thu, 25 Jun 2020 05:56:22 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id p82so4861860oif.1;
+        Thu, 25 Jun 2020 05:56:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BGKi64WQintPpZ0PiJ6dW4tMBiq9KIeg0n+W/5g1/1c=;
+        b=qXFNVuI1GGW2k3Ub8vf0pIfZerRDNDUPm4nHq11ub38zVd0nCBMQw5b/FyZJ1uqSsh
+         TH8gF8Es+pfp+S1FwVMF9S7sgNuNrOGAavQ41jEE/9bNtqQgdE8EUE40zexH4C7w8JI+
+         D/yF1gydpJHTeEfEOgF1at+ol9s8ZooATsbrmqsGq26ISSzTGloSCsI5xJdK8HLovNIq
+         58xBf42fE/2+v97ZZoqxPCvx0heSwtqrDoZBFGAOafrOKpA5UhzqB3hwdkhQgZpXTdyh
+         c5D5+bMcvqrclRuvLUq2PuxPsR7RHnTgCqJpFMW5MaGn/seqRDqNqDPi59jqHNAHcnHN
+         gVGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BGKi64WQintPpZ0PiJ6dW4tMBiq9KIeg0n+W/5g1/1c=;
+        b=HzHMTodCEmqsTQMgrWb96WFlCiv/D/FeUT8w1dFL64bt66qEo946ogOj++uRIZCydZ
+         owCXrHAl96PVk8bCvQiddDaLXDaIbI3EM5T2wSbB3MifvvE40bURJOvQOUKH0QXIUBSc
+         KtqN4ccII05F+Ml4mPk6tZHzFIriluvsArMC9T2rBDMlk8FPLS3595YoYOfOPJ8mLA8K
+         FgjpGQZlwYKGc73fFYhzrd5GQWBwUu8gtX2Uniuf/gHuPcLq8NtKKqHhzdIOadxQVfZQ
+         K2Jl8PtrwnlXLV1L/KNGCEZ9flAXpjy+ed/BRulWLNfkUFc2io29B6ibpl9VOVeETV+a
+         2VeA==
+X-Gm-Message-State: AOAM533bsq0xfkTvW/ZAOmnFH7r5fgtkXI3tk1dHkTthT/AUJu2rnPWx
+        Vwq4eS/eI16IpWWJNfeeo+LXoI1vzOm5HKhXnRY=
+X-Google-Smtp-Source: ABdhPJyoY1+FUwr2b7djALCSD/8Mjarm6gnmnjoZTM4ivo29bOovJFfTo6/3Hq7pq3SSrj7/mGNoKbm2E34rC02dJz0=
+X-Received: by 2002:aca:3283:: with SMTP id y125mr2042257oiy.140.1593089781523;
+ Thu, 25 Jun 2020 05:56:21 -0700 (PDT)
+MIME-Version: 1.0
+References: <87d066vd4y.fsf@x220.int.ebiederm.org> <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
+ <87bllngirv.fsf@x220.int.ebiederm.org> <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
+ <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
+ <87ftaxd7ky.fsf@x220.int.ebiederm.org> <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1pskt.fsf@x220.int.ebiederm.org> <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
+ <87h7v1mx4z.fsf@x220.int.ebiederm.org> <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
+ <878sgck6g0.fsf@x220.int.ebiederm.org> <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
+ <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
+In-Reply-To: <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Thu, 25 Jun 2020 08:56:10 -0400
+Message-ID: <CAEjxPJ4e9rWWssp0CyM7GM7NP_QKkswHK7URwLZFqo5+wGecQw@mail.gmail.com>
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently unmantained
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -71,168 +75,52 @@ Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
         linux-security-module <linux-security-module@vger.kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-Message-ID: <20200625120725.GA3493334@kroah.com>
-References: <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
- <87h7v1mx4z.fsf@x220.int.ebiederm.org>
- <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
- <878sgck6g0.fsf@x220.int.ebiederm.org>
- <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
- <2f55102e-5d11-5569-8248-13618d517e93@i-love.sakura.ne.jp>
- <20200625013518.chuqehybelk2k27x@ast-mbp.dhcp.thefacebook.com>
- <b83831ba-c330-7eb8-e6d5-5087de68a9b8@i-love.sakura.ne.jp>
- <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 25, 2020 at 08:03:26PM +0900, Tetsuo Handa wrote:
-> On 2020/06/25 18:57, Greg KH wrote:
-> > On Thu, Jun 25, 2020 at 03:38:14PM +0900, Tetsuo Handa wrote:
-> >> My questions are:
-> >>
-> >> (1) "Signed and in-tree kernel module" assertion is pointless.
-> >>     In future, some of in-tree kernel modules might start using fork_usermode_blob()
-> >>     instead of call_usermodehelper(), with instructions containing what your initial
-> >>     use case does not use. There is no guarantee that such thing can't happen.
-> > 
-> > I hope that this would happen for some tools, what's wrong with that?
-> > That means we can ship those programs from within the kernel source tree
-> > instead of trying to rely on keeping a specific user/kernel api stable
-> > for forever.
-> > 
-> > That would be a good thing, right?
-> 
-> Some in-tree users might start embedding byte array containing userspace programs
-> like /bin/sh when building kernels. How can we prove that such thing won't happen?
+On Wed, Jun 24, 2020 at 7:16 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> What is unhappy for pathname based LSMs is that fork_usermode_blob() creates
+> a file with empty filename. I can imagine that somebody would start abusing
+> fork_usermode_blob() as an interface for starting programs like modprobe, hotplug,
+> udevd and sshd. When such situation happened, how fork_usermode_blob() provides
+> information for identifying the intent of such execve() requests?
+>
+> fork_usermode_blob() might also be an unhappy behavior for inode based LSMs (like
+> SELinux and Smack) because it seems that fork_usermode_blob() can't have a chance
+> to associate appropriate security labels based on the content of the byte array
+> because files are created on-demand. Is fork_usermode_blob() friendly to inode
+> based LSMs?
 
-We have the code, we can read it, we can say, "hey, looks like you are
-including bash, do you want to do that?"  :)
+No, because we cannot label the inode based on the program's purpose
+and therefore cannot configure an automatic transition to a suitable
+security context for the process, unlike call_usermodehelper(). It is
+important to note that the goal of such transitions is not merely to
+restrict the program from doing bad things but also to protect the
+program from untrustworthy inputs, e.g. one can run kmod/modprobe in a
+domain that can only read from authorized kernel modules, prevent
+following untrusted symlinks, etc.  Further, at present, the
+implementation creates the inode via shmem_kernel_file_setup(), which
+is supposed to be for inodes private to the kernel not exposed to
+userspace (hence marked S_PRIVATE), which I believe in this case will
+end up leaving the inode unlabeled but still end up firing checks in
+the bprm hooks on the file inode, thereby potentially yielding denials
+in SELinux on the exec of unlabeled files.  Not exactly what we would
+want.  If users were to switch from using call_usermodehelper() to
+fork_usermode_blob() we would need them to label the inode in some
+manner to reflect the program purpose prior to exec.  I suppose they
+could pass in some string key and SELinux could look it up in policy
+to get a context to use or something.
 
-> I consider that the byte array can contain arbitrary instructions (regardless of
-> some tools used for building the byte array).
-
-Sure, and is this a problem?
-
-> >>     Assuming that there will be multiple blobs, we need a way to identify these blobs.
-> >>     How does fork_usermode_blob() provide information for identification?
-> > 
-> > If the kernel itself was running these blobs, why would LSM care about
-> > it?  These are coming from "within the building!" don't you trust the
-> > kernel already?
-> > 
-> > I don't understand the issue here.
-> 
-> The byte array came from the kernel, but due to possibility of "root can poke into
-> kernel or any process memory.", that byte array can become as untrusted as byte
-> array coming from userspace. There is no concept like "the kernel itself _is_ running
-> these blobs". Only a fact "the byte array _was_ copied from the kernel address space
-> (rather than from some file on the filesystem)" exists. We need a mechanism (ideally,
-> without counting on LSMs) for avoid peeking/poking etc. into/from the byte array
-> which was copied from the kernel address space to user address space.
-
-And what are you going to do with that if you can "look at the array"?
-I really don't understand the objection here, why is this any different
-than any other random kernel driver for what it can do?
-
-> >>     call_usermodehelper() can teach LSM modules via pre-existing file's pathname and
-> >>     inode's security label at security_bprm_creds_for_exec()/security_bprm_check() etc.
-> >>     But since fork_usermode_blob() accepts only "byte array" and "length of byte array"
-> >>     arguments, I'm not sure whether LSM modules can obtain information needed for
-> >>     inspection. How does fork_usermode_blob() tell that information?
-> > 
-> > It would seem that the "security context" for those would be the same as
-> > anything created before userspace launches today, right?  You handle
-> > that ok, and this should be just the same.
-> 
-> I don't think so. Today when call_usermodehelper() is called, LSMs switch their security
-> context (at least TOMOYO does it) for further syscalls from the usermode process started
-> by the kernel context. But when fork_usermode_blob() is called, how LSMs can switch their
-> security context for further syscalls from the usermode process started by the kernel
-> context?
-
-Ok, that makes a bit more sense.  Why not just do the same thing that
-you do today with call_usermodehelper()?  The logic in a way is the
-same, right?
-
-> > But again, as these programs are coming from "within the kernel", why
-> > would you want to disallow them?  If you don't want to allow them, don't
-> > build them into your kernel?  :)
-> 
-> I'm talking about not only "disallow unauthorized execve() request" but also "disallow
-> unauthorized syscalls after execve() request". Coming from the kernel is not important.
-
-Ok, then do the same thing that you do for call_usermodehelper() to
-prevent this.
-
-> >>     Thus, LSM modules (including pathname based security) want to control how that byte
-> >>     array can behave. And how does fork_usermode_blob() tell necessary information?
-> > 
-> > Think of these blobs just as any other kernel module would be today.
-> 
-> No, I can't. How can we guarantee that the byte array came from kernel remains intact
-> despite the possibility of "root can poke into kernel or any process memory" ?
-
-You guarantee it the same way you guarantee that the wifi driver really
-is running the code you think it is running.  There is no difference
-here.
-
-> > Right now I, as a kernel module, can read/write to any file in the
-> > system, and do all sorts of other fun things.  You can't mediate that
-> > today from a LSM, and this is just one other example of this.
-> 
-> Some functions (e.g. kernel_sock_shutdown()) bypass permission checks by LSMs
-> comes from a sort of trustness that the byte array kept inside kernel address
-> space remains secure/intact.
-
-And what is going to change that "trustness" here?  The byte array came
-from the kernel address space to start with.  Are you thinking something
-outside of the kernel will then tamper with those bytes to do something
-else with them?  If so, shouldn't you be preventing that userspace
-program that does the tampering from doing that in the first place with
-the LSM running?
-
-> > The "only" change is that now this code is running in userspace context,
-> > which for an overall security/system issue, should be better than
-> > running it in kernel context, right?
-> 
-> As soon as exposing that byte array outside of kernel address space, processes
-> running such byte array are considered insecure/tampered.
-
-Why?  Do you mean that you do not trust any program once it has been
-started either?  If you can, why not do the same thing here?
-
-> We can't prove that
-> the byte array exposed to outside of kernel address space does only limited
-> set of instructions, and we have to perform permission checks by LSMs.
-
-Those checks should come through the same way you check any other
-userspace program through an LSM.  Fix up the context like mentioned
-above with call_usermodehelper() and you should be fine, right?
-
-> And LSMs need to receive the intent (or "security context" argument) from fork_usermode_blob()
-> for restricting further syscalls by the usermode process started via fork_usermode_blob().
-> 
-> > 
-> > Perhaps we just add new LSM hooks for every place that we call this new
-> > function to run a blob?  That will give you the needed "the kernel is
-> > about to run a blob that we think is a userspace USB IR filter driver",
-> > or whatever the blob does.
-> 
-> Yes, that would be the intent (or "security context" argument) fork_usermode_blob()
-> is missing. Though I don't know how such stringuish argument can be represented for
-> individual LSM modules...
-
-The same way we do it today for any LSM callback?  i.e. by a new
-function call :)
-
-thanks,
-
-greg k-h
+On a different note, will the usermode blob be measured by IMA prior
+to execution?  What ensures that the blob was actually embedded in the
+kernel image and wasn't just supplied as data through exploitation of
+a kernel vulnerability or malicious kernel module?  Yes, things are
+already bad at that point but it would be good to be able to detect
+launch of the malicious userspace payload regardless (kernel exploit
+can't undo the measurement extended into the TPM even if it tampers
+with the IMA measurement list in the kernel, nor fake a quote signed
+by the TPM).
