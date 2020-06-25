@@ -2,53 +2,255 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 340F220A67F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 22:15:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E495C20A6E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jun 2020 22:40:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436501AbgFYUPD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 25 Jun 2020 16:15:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58872 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2436497AbgFYUPD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 25 Jun 2020 16:15:03 -0400
-Subject: Re: [GIT PULL] fsnotify speedup for 5.8-rc3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593116102;
-        bh=QpQpxbqKYxf/mIIwNoqd0ArngEYbI5IWcpFzDL2hfGw=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=G0TD1tcSQA9zu4zmP1KncvTWEGRvmzIIzTftKOghezzxWPO/XEzWRrgiJBkYZYFUG
-         j2ZJf9/pMOv4fimCegtFHKQqfkQ/mQQnCMZBlfLpIunINHqnnB8qijhlr6ZZtzBRmY
-         tXB63tt695dql5f8NOiUA0zT6KwqYJbymaN88MqE=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200625181948.GF17788@quack2.suse.cz>
-References: <20200625181948.GF17788@quack2.suse.cz>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200625181948.GF17788@quack2.suse.cz>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git
- fsnotify_for_v5.8-rc3
-X-PR-Tracked-Commit-Id: e9c15badbb7b20ccdbadf5da14e0a68fbad51015
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 52366a107bf0600cf366f5ff3ea1f147b285e41f
-Message-Id: <159311610290.12359.18198266268070363749.pr-tracker-bot@kernel.org>
-Date:   Thu, 25 Jun 2020 20:15:02 +0000
-To:     Jan Kara <jack@suse.cz>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org
+        id S2390270AbgFYUkA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 25 Jun 2020 16:40:00 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:54348 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389406AbgFYUj7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 25 Jun 2020 16:39:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1593117598; x=1624653598;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=neO0Khu3ookV42J7AkH6cW5PnC831pEliyuAac+ozhA=;
+  b=CXN9+h4CGKCzwVoxSxk5zaZ6qPFSlcKn2jv6Kf3HpT99/S2OGQxvik2Y
+   kVkRkzhGnqQI4u+ixKJ3JcHg9byf2ZqoaBNlXuMwKzEmepxKY5PSLgf5x
+   nuKCGcn7PepUAlE8Oua8tjZgThSvapbuaLpPKzMQiYhIXzfvDvmx+A0Ub
+   s=;
+IronPort-SDR: M1hdDHUlSHPLYMwSVx4SRigmbyqufWzyTurJm+ERQfybqKkc7HA1ySEc3scOy82R/w7K2vlmdo
+ NixkL1CnhtHQ==
+X-IronPort-AV: E=Sophos;i="5.75,280,1589241600"; 
+   d="scan'208";a="38479086"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-37fd6b3d.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 25 Jun 2020 20:39:57 +0000
+Received: from EX13MTAUEE002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
+        by email-inbound-relay-1d-37fd6b3d.us-east-1.amazon.com (Postfix) with ESMTPS id 8AAC5283BE7;
+        Thu, 25 Jun 2020 20:39:55 +0000 (UTC)
+Received: from EX13D23UEE002.ant.amazon.com (10.43.62.97) by
+ EX13MTAUEE002.ant.amazon.com (10.43.62.24) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Thu, 25 Jun 2020 20:39:54 +0000
+Received: from EX13MTAUEE002.ant.amazon.com (10.43.62.24) by
+ EX13D23UEE002.ant.amazon.com (10.43.62.97) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Thu, 25 Jun 2020 20:39:54 +0000
+Received: from dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com
+ (172.23.141.97) by mail-relay.amazon.com (10.43.62.224) with Microsoft SMTP
+ Server id 15.0.1497.2 via Frontend Transport; Thu, 25 Jun 2020 20:39:54 +0000
+Received: by dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com (Postfix, from userid 6262777)
+        id 34F33C3318; Thu, 25 Jun 2020 20:39:54 +0000 (UTC)
+Date:   Thu, 25 Jun 2020 20:39:54 +0000
+From:   Frank van der Linden <fllinden@amazon.com>
+To:     <bfields@fieldses.org>, <chuck.lever@oracle.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+CC:     <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v3 01/10] xattr: break delegations in {set,remove}xattr
+Message-ID: <20200625203954.GA10231@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+References: <20200623223927.31795-1-fllinden@amazon.com>
+ <20200623223927.31795-2-fllinden@amazon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200623223927.31795-2-fllinden@amazon.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Thu, 25 Jun 2020 20:19:48 +0200:
+Hi Al,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v5.8-rc3
+Do you have any comments / concerns about this patch? It's part of nfs
+server side user xattr support, full series here:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/52366a107bf0600cf366f5ff3ea1f147b285e41f
+https://lore.kernel.org/linux-nfs/20200623223927.31795-1-fllinden@amazon.com/
 
-Thank you!
+I copied this one to linux-fsdevel and you, just giving you an extra
+ping. Bruce/Chuck are OK with the rest of the series, so I just need
+your ACK on this one, and the next one (will send the ping separately).
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Thanks,
+
+- Frank
+
+
+On Tue, Jun 23, 2020 at 10:39:18PM +0000, Frank van der Linden wrote:
+> set/removexattr on an exported filesystem should break NFS delegations.
+> This is true in general, but also for the upcoming support for
+> RFC 8726 (NFSv4 extended attribute support). Make sure that they do.
+> 
+> Additonally, they need to grow a _locked variant, since callers might
+> call this with i_rwsem held (like the NFS server code).
+> 
+> Cc: stable@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Frank van der Linden <fllinden@amazon.com>
+> ---
+>  fs/xattr.c            | 84 +++++++++++++++++++++++++++++++++++++++----
+>  include/linux/xattr.h |  2 ++
+>  2 files changed, 79 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 91608d9bfc6a..95f38f57347f 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -204,10 +204,22 @@ int __vfs_setxattr_noperm(struct dentry *dentry, const char *name,
+>  	return error;
+>  }
+>  
+> -
+> +/**
+> + * __vfs_setxattr_locked: set an extended attribute while holding the inode
+> + * lock
+> + *
+> + *  @dentry - object to perform setxattr on
+> + *  @name - xattr name to set
+> + *  @value - value to set @name to
+> + *  @size - size of @value
+> + *  @flags - flags to pass into filesystem operations
+> + *  @delegated_inode - on return, will contain an inode pointer that
+> + *  a delegation was broken on, NULL if none.
+> + */
+>  int
+> -vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+> -		size_t size, int flags)
+> +__vfs_setxattr_locked(struct dentry *dentry, const char *name,
+> +		const void *value, size_t size, int flags,
+> +		struct inode **delegated_inode)
+>  {
+>  	struct inode *inode = dentry->d_inode;
+>  	int error;
+> @@ -216,15 +228,40 @@ vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+>  	if (error)
+>  		return error;
+>  
+> -	inode_lock(inode);
+>  	error = security_inode_setxattr(dentry, name, value, size, flags);
+>  	if (error)
+>  		goto out;
+>  
+> +	error = try_break_deleg(inode, delegated_inode);
+> +	if (error)
+> +		goto out;
+> +
+>  	error = __vfs_setxattr_noperm(dentry, name, value, size, flags);
+>  
+>  out:
+> +	return error;
+> +}
+> +EXPORT_SYMBOL_GPL(__vfs_setxattr_locked);
+> +
+> +int
+> +vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+> +		size_t size, int flags)
+> +{
+> +	struct inode *inode = dentry->d_inode;
+> +	struct inode *delegated_inode = NULL;
+> +	int error;
+> +
+> +retry_deleg:
+> +	inode_lock(inode);
+> +	error = __vfs_setxattr_locked(dentry, name, value, size, flags,
+> +	    &delegated_inode);
+>  	inode_unlock(inode);
+> +
+> +	if (delegated_inode) {
+> +		error = break_deleg_wait(&delegated_inode);
+> +		if (!error)
+> +			goto retry_deleg;
+> +	}
+>  	return error;
+>  }
+>  EXPORT_SYMBOL_GPL(vfs_setxattr);
+> @@ -378,8 +415,18 @@ __vfs_removexattr(struct dentry *dentry, const char *name)
+>  }
+>  EXPORT_SYMBOL(__vfs_removexattr);
+>  
+> +/**
+> + * __vfs_removexattr_locked: set an extended attribute while holding the inode
+> + * lock
+> + *
+> + *  @dentry - object to perform setxattr on
+> + *  @name - name of xattr to remove
+> + *  @delegated_inode - on return, will contain an inode pointer that
+> + *  a delegation was broken on, NULL if none.
+> + */
+>  int
+> -vfs_removexattr(struct dentry *dentry, const char *name)
+> +__vfs_removexattr_locked(struct dentry *dentry, const char *name,
+> +		struct inode **delegated_inode)
+>  {
+>  	struct inode *inode = dentry->d_inode;
+>  	int error;
+> @@ -388,11 +435,14 @@ vfs_removexattr(struct dentry *dentry, const char *name)
+>  	if (error)
+>  		return error;
+>  
+> -	inode_lock(inode);
+>  	error = security_inode_removexattr(dentry, name);
+>  	if (error)
+>  		goto out;
+>  
+> +	error = try_break_deleg(inode, delegated_inode);
+> +	if (error)
+> +		goto out;
+> +
+>  	error = __vfs_removexattr(dentry, name);
+>  
+>  	if (!error) {
+> @@ -401,12 +451,32 @@ vfs_removexattr(struct dentry *dentry, const char *name)
+>  	}
+>  
+>  out:
+> +	return error;
+> +}
+> +EXPORT_SYMBOL_GPL(__vfs_removexattr_locked);
+> +
+> +int
+> +vfs_removexattr(struct dentry *dentry, const char *name)
+> +{
+> +	struct inode *inode = dentry->d_inode;
+> +	struct inode *delegated_inode = NULL;
+> +	int error;
+> +
+> +retry_deleg:
+> +	inode_lock(inode);
+> +	error = __vfs_removexattr_locked(dentry, name, &delegated_inode);
+>  	inode_unlock(inode);
+> +
+> +	if (delegated_inode) {
+> +		error = break_deleg_wait(&delegated_inode);
+> +		if (!error)
+> +			goto retry_deleg;
+> +	}
+> +
+>  	return error;
+>  }
+>  EXPORT_SYMBOL_GPL(vfs_removexattr);
+>  
+> -
+>  /*
+>   * Extended attribute SET operations
+>   */
+> diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+> index 47eaa34f8761..a2f3cd02653c 100644
+> --- a/include/linux/xattr.h
+> +++ b/include/linux/xattr.h
+> @@ -51,8 +51,10 @@ ssize_t vfs_getxattr(struct dentry *, const char *, void *, size_t);
+>  ssize_t vfs_listxattr(struct dentry *d, char *list, size_t size);
+>  int __vfs_setxattr(struct dentry *, struct inode *, const char *, const void *, size_t, int);
+>  int __vfs_setxattr_noperm(struct dentry *, const char *, const void *, size_t, int);
+> +int __vfs_setxattr_locked(struct dentry *, const char *, const void *, size_t, int, struct inode **);
+>  int vfs_setxattr(struct dentry *, const char *, const void *, size_t, int);
+>  int __vfs_removexattr(struct dentry *, const char *);
+> +int __vfs_removexattr_locked(struct dentry *, const char *, struct inode **);
+>  int vfs_removexattr(struct dentry *, const char *);
+>  
+>  ssize_t generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size);
+> -- 
+> 2.17.2
+> 
