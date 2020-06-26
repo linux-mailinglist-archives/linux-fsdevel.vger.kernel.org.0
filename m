@@ -2,105 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 56B5820ADB5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 10:00:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E3DB20AE74
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 10:35:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729070AbgFZIA1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 04:00:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39820 "EHLO
+        id S1725915AbgFZIe7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 04:34:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728913AbgFZIA0 (ORCPT
+        with ESMTP id S1725355AbgFZIe6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 04:00:26 -0400
-Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2BD9C08C5C1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 01:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=Ezhqco10KeOfjAoiIeJp8ZFsUZZv4klRDxl4978wMIU=; b=W9AwD1LlVam+C8rBjLB1BojlUJ
-        Jkg6Segj5i29ucFF8BN4PG2vl7jdAb/ua+4Wqj+4K0NDu7NMBKgvWx8AyYd7xLCpqIReqOsQZbZIC
-        VsIpAqRIVxk2wgA26HdL3YnoCtZoumF+OODKyEwdE4IMNXj1hnHYYOk6nVnhF0cWDWbsZURK7ysn/
-        i1p5Znl8w9aSciHgCha3rM67f4Sg39db9fkNwe2TbVXp5MWqOSclsZClR9VWorjwgnYBceUCqhLaY
-        QUsRFIo9RN3y5MAJn1l+W7PACIaw9ThYYuqKJziOLD0XLhH8Dncikk7IQt42lTRtYAj7jiOQOc0SW
-        GfuU/bBg==;
-Received: from [2001:4bb8:184:76e3:2b32:1123:bea8:6121] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jojHO-0007LZ-9J; Fri, 26 Jun 2020 08:00:10 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: remove the block_size_bits helper
-Date:   Fri, 26 Jun 2020 10:00:09 +0200
-Message-Id: <20200626080009.1998346-1-hch@lst.de>
-X-Mailer: git-send-email 2.26.2
+        Fri, 26 Jun 2020 04:34:58 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 891ECC08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 01:34:58 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id cy7so6268965edb.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 01:34:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vpokHpdx2324WEwdOPazf8PsFwQQHRpX50Zc1gbbYss=;
+        b=LQxnYOG58GOteUZeYPt6sUc7fbHneWHvpiqhJaKr1OUx/z8Pk/ANp8vDVf8FE8Epim
+         QNafzxjINeXBb+ejGtVjTsXquNTi8TXRYujuLtjweqCHVKQm3ECSq7Rxw2Af8INLx8DT
+         ifwcXP18aWWGVpzHiL7wVjvnAtJmUuj5VBNjk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vpokHpdx2324WEwdOPazf8PsFwQQHRpX50Zc1gbbYss=;
+        b=KFUlETqm5l2QHr2Lihiyi9b+IROAXpgSzWnW1670UZrG/+kcTLwR0YeCR/MiUS8vKM
+         AE0hhsdXJRAJFgID1Xy2NjsKuaQJgHO8Ih2Q+ij/S2r9e4/Or9yDBaSXmjtCG9g2weGv
+         bBjZZ2CACeO13HpKpC3bOSnYPxAxmMDjVdQMtGJO0fbOzzwSlQ9AAqjxImfPmXhKF/2E
+         ++2Sr4uL1DnlDPPywlMyHH2xO4+874AHAPvad3V7nFZ1GJwx31NksRrgKScYkBmczoNv
+         +gOnOVg/LKu9uQVYckAHDy1N9qQruGraCZtd1wvVUTCude9MAHtKOa732xyDYAjLwLIF
+         VxIA==
+X-Gm-Message-State: AOAM533KOfoL7YrLc2S8aZqYuHEgJGuomblIk0prpLmYsbOVTUlnRxJK
+        6/5BYV30lNZUO9aj490wnjdMGAP3au1RSGH18gxjXA==
+X-Google-Smtp-Source: ABdhPJwrPiyir642FC7k+viZ0W53l93EXsjZvDmz/JU8BkbzSWa4IdiEOO5qS/igiF8Ig2qa25vfi+nBmuqr1uSqR44=
+X-Received: by 2002:a50:cd1e:: with SMTP id z30mr2164466edi.364.1593160497236;
+ Fri, 26 Jun 2020 01:34:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+References: <736d172c-84ff-3e9f-c125-03ae748218e8@profihost.ag>
+ <1696715.1592552822@warthog.procyon.org.uk> <4a2f5aa9-1921-8884-f854-6a8b22c488f0@profihost.ag>
+ <2cfa1de5-a4df-5ad3-e35b-3024cad78ed1@profihost.ag> <CAJfpegvLJBAzGCpR6CQ1TG8-fwMB9oN8kVFijs7vK+dvQ6Tm5w@mail.gmail.com>
+ <bffa6591-6698-748d-ba26-a98142b03ae8@profihost.ag>
+In-Reply-To: <bffa6591-6698-748d-ba26-a98142b03ae8@profihost.ag>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 26 Jun 2020 10:34:46 +0200
+Message-ID: <CAJfpegur2+5b0ecSx7YZcY-FB_VYrK=5BMY=g96w+uf3eLDcCw@mail.gmail.com>
+Subject: Re: Kernel 5.4 breaks fuse 2.X nonempty mount option
+To:     Stefan Priebe - Profihost AG <s.priebe@profihost.ag>
+Cc:     David Howells <dhowells@redhat.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        "p.kramme@profihost.ag" <p.kramme@profihost.ag>,
+        Daniel Aberger - Profihost AG <d.aberger@profihost.ag>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a trivial wrapper around ilog2, with a totally confusing comment.
+On Thu, Jun 25, 2020 at 10:10 PM Stefan Priebe - Profihost AG
+<s.priebe@profihost.ag> wrote:
+>
+> Does a userspace strace really help? I did a git bisect between kernel
+> v5.3 (working) und v5.4 (not working) and it shows
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/buffer.c | 19 +++----------------
- 1 file changed, 3 insertions(+), 16 deletions(-)
+I cannot reproduce this with the libfuse2 examples.  Passing
+"nonempty" as a mount(2) in either v5.3 or v5.4 results in -EINVAL.
+So without an strace I cannot tell what is causing the regression.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 64fe82ec65ff1f..c89eb509d6049c 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1658,19 +1658,6 @@ void clean_bdev_aliases(struct block_device *bdev, sector_t block, sector_t len)
- }
- EXPORT_SYMBOL(clean_bdev_aliases);
- 
--/*
-- * Size is a power-of-two in the range 512..PAGE_SIZE,
-- * and the case we care about most is PAGE_SIZE.
-- *
-- * So this *could* possibly be written with those
-- * constraints in mind (relevant mostly if some
-- * architecture has a slow bit-scan instruction)
-- */
--static inline int block_size_bits(unsigned int blocksize)
--{
--	return ilog2(blocksize);
--}
--
- static struct buffer_head *create_page_buffers(struct page *page, struct inode *inode, unsigned int b_state)
- {
- 	BUG_ON(!PageLocked(page));
-@@ -1737,7 +1724,7 @@ int __block_write_full_page(struct inode *inode, struct page *page,
- 
- 	bh = head;
- 	blocksize = bh->b_size;
--	bbits = block_size_bits(blocksize);
-+	bbits = ilog2(blocksize);
- 
- 	block = (sector_t)page->index << (PAGE_SHIFT - bbits);
- 	last_block = (i_size_read(inode) - 1) >> bbits;
-@@ -1990,7 +1977,7 @@ int __block_write_begin_int(struct page *page, loff_t pos, unsigned len,
- 
- 	head = create_page_buffers(page, inode, 0);
- 	blocksize = head->b_size;
--	bbits = block_size_bits(blocksize);
-+	bbits = ilog2(blocksize);
- 
- 	block = (sector_t)page->index << (PAGE_SHIFT - bbits);
- 
-@@ -2268,7 +2255,7 @@ int block_read_full_page(struct page *page, get_block_t *get_block)
- 
- 	head = create_page_buffers(page, inode, 0);
- 	blocksize = head->b_size;
--	bbits = block_size_bits(blocksize);
-+	bbits = ilog2(blocksize);
- 
- 	iblock = (sector_t)page->index << (PAGE_SHIFT - bbits);
- 	lblock = (i_size_read(inode)+blocksize-1) >> bbits;
--- 
-2.26.2
-
+Thanks,
+Miklos
