@@ -2,215 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93A6220ABA2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 06:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90A1720ABCD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 07:24:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbgFZE7d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 00:59:33 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:62634 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725306AbgFZE7c (ORCPT
+        id S1726997AbgFZFYY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 01:24:24 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:61164 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725306AbgFZFYX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 00:59:32 -0400
-Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05Q4waSg074045;
-        Fri, 26 Jun 2020 13:58:36 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav107.sakura.ne.jp);
- Fri, 26 Jun 2020 13:58:36 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav107.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05Q4wZ1f074034
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 26 Jun 2020 13:58:35 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
- unmantained
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
- <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <20200626015121.qpxkdaqtsywe3zqx@ast-mbp.dhcp.thefacebook.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <eb3bec08-9de4-c708-fb8e-b6a47145eb5e@i-love.sakura.ne.jp>
-Date:   Fri, 26 Jun 2020 13:58:35 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Fri, 26 Jun 2020 01:24:23 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05Q53PRN037053;
+        Fri, 26 Jun 2020 01:22:43 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31vbn7wxre-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 26 Jun 2020 01:22:42 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 05Q5MOU4093327;
+        Fri, 26 Jun 2020 01:22:42 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 31vbn7wxqf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 26 Jun 2020 01:22:42 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 05Q5BSJg006292;
+        Fri, 26 Jun 2020 05:22:39 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma06ams.nl.ibm.com with ESMTP id 31uusjjgyh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 26 Jun 2020 05:22:39 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 05Q5Ma3Z48824420
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 26 Jun 2020 05:22:36 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4385911C064;
+        Fri, 26 Jun 2020 05:22:36 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CFED011C04C;
+        Fri, 26 Jun 2020 05:22:34 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.145.13.118])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 26 Jun 2020 05:22:34 +0000 (GMT)
+Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
+ seems to break linux bridge on s390x (bisected)
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, ast@kernel.org,
+        axboe@kernel.dk, bfields@fieldses.org,
+        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
+        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
+        davem@davemloft.net, dhowells@redhat.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
+        keyrings@vger.kernel.org, kuba@kernel.org,
+        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
+        philipp.reisner@linbit.com, ravenexp@gmail.com,
+        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
+        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
+        netdev@vger.kernel.org, markward@linux.ibm.com,
+        linux-s390 <linux-s390@vger.kernel.org>
+References: <20200623141157.5409-1-borntraeger@de.ibm.com>
+ <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
+ <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
+ <20200624144311.GA5839@infradead.org>
+ <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
+ <20200624160953.GH4332@42.do-not-panic.com>
+ <ea41e2a9-61f7-aec1-79e5-7b08b6dd5119@de.ibm.com>
+ <4e27098e-ac8d-98f0-3a9a-ea25242e24ec@de.ibm.com>
+ <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
+ <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
+ <20200626025410.GJ4332@42.do-not-panic.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ nS4h0HDFPrrp1C2EMVYIQrMokWvlFZbCpsdYbBI=
+Message-ID: <feb6a8c4-2b94-3f95-6637-679e089a71ca@de.ibm.com>
+Date:   Fri, 26 Jun 2020 07:22:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-In-Reply-To: <20200626015121.qpxkdaqtsywe3zqx@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20200626025410.GJ4332@42.do-not-panic.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-26_01:2020-06-26,2020-06-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ adultscore=0 impostorscore=0 mlxscore=0 phishscore=0 priorityscore=1501
+ cotscore=-2147483648 suspectscore=0 bulkscore=0 clxscore=1015
+ lowpriorityscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2004280000 definitions=main-2006260035
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/06/26 10:51, Alexei Starovoitov wrote:
-> On Thu, Jun 25, 2020 at 06:36:34PM -0700, Linus Torvalds wrote:
->> On Thu, Jun 25, 2020 at 12:34 PM David Miller <davem@davemloft.net> wrote:
+
+
+On 26.06.20 04:54, Luis Chamberlain wrote:
+> On Wed, Jun 24, 2020 at 08:37:55PM +0200, Christian Borntraeger wrote:
+>>
+>>
+>> On 24.06.20 20:32, Christian Borntraeger wrote:
+>> [...]> 
+>>> So the translations look correct. But your change is actually a sematic change
+>>> if(ret) will only trigger if there is an error
+>>> if (KWIFEXITED(ret)) will always trigger when the process ends. So we will always overwrite -ECHILD
+>>> and we did not do it before. 
 >>>
->>> It's kernel code executing in userspace.  If you don't trust the
->>> signed code you don't trust the signed code.
->>>
->>> Nothing is magic about a piece of code executing in userspace.
 >>
->> Well, there's one real issue: the most likely thing that code is going
->> to do is execute llvm to generate more code.
-
-Wow! Are we going to allow execution of such complicated programs?
-
-I was hoping that fork_usermode_blob() accepts only simple program
-like the content of "hello64" generated by
-
-----------
-; nasm -f elf64 hello64.asm && ld -s -m elf_x86_64 -o hello64 hello64.o
-section .text
-global _start
-
-_start:
-  mov rax, 1        ; write(
-  mov rdi, 1        ;   1,
-  mov rsi, msg      ;   "Hello world\n",
-  mov rdx, 12       ;   12
-  syscall           ; );
-  mov rax, 231      ; _exit(
-  mov rdi, 0        ;   0
-  syscall           ; );
-
-section .rodata
-  msg: db "Hello world", 0x0a
-----------
-
-which can be contained by mechanisms like seccomp; there is no pathname
-resolution, no networking access etc.
-
+>> So the right fix is
 >>
->> And that's I think the real security issue here: the context in which
->> the code executes. It may be triggered in one namespace, but what
->> namespaces and what rules should the thing actually then execute in.
->>
->> So no, trying to dismiss this as "there are no security issues" is
->> bogus. There very much are security issues.
+>> diff --git a/kernel/umh.c b/kernel/umh.c
+>> index f81e8698e36e..a3a3196e84d1 100644
+>> --- a/kernel/umh.c
+>> +++ b/kernel/umh.c
+>> @@ -154,7 +154,7 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
+>>                  * the real error code is already in sub_info->retval or
+>>                  * sub_info->retval is 0 anyway, so don't mess with it then.
+>>                  */
+>> -               if (KWIFEXITED(ret))
+>> +               if (KWEXITSTATUS(ret))
+>>                         sub_info->retval = KWEXITSTATUS(ret);
+>>         }
+>>  
+>> I think.
 > 
-> I think you're referring to:
-> 
->>>   We might need to invent built-in "protected userspace" because existing
->>>   "unprotected userspace" is not trustworthy enough to run kernel modules.
->>>   That's not just inventing fork_usermode_blob().
-> 
-> Another root process can modify the memory of usermode_blob process.
+> Nope, the right form is to check for WIFEXITED() before using WEXITSTATUS().
 
-I'm not familiar with ptrace(); I'm just using /usr/bin/strace and /usr/bin/ltrace .
-What I'm worrying is that some root process tampers with memory which initially
-contained "hello64" above in order to let that memory do something different behavior.
-
-For example, a usermode process started by fork_usermode_blob() which was initially
-containing
-
-----------
-while (read(0, &uid, sizeof(uid)) == sizeof(uid)) {
-    if (uid == 0)
-        write(1, "OK\n", 3);
-    else
-        write(1, "NG\n", 3);
-}
-----------
-
-can be somehow tampered like
-
-----------
-while (read(0, &uid, sizeof(uid)) == sizeof(uid)) {
-    if (uid != 0)
-        write(1, "OK\n", 3);
-    else
-        write(1, "NG\n", 3);
-}
-----------
-
-due to interference from the rest of the system, how can we say "we trust kernel
-code executing in userspace" ?
-
-My question is: how is the byte array (which was copied from kernel space) kept secure/intact
-under "root can poke into kernel or any process memory." environment? It is obvious that
-we can't say "we trust kernel code executing in userspace" without some mechanism.
-
-Currently fork_usermode_blob() is not providing security context for the byte array to be
-executed. We could modify fork_usermode_blob() to provide security context for LSMs, but
-I'll be more happy if we can implement that mechanism without counting on in-tree LSMs, for
-SELinux is too complicated to support.
-
-> I think that's Tetsuo's point about lack of LSM hooks is kernel_sock_shutdown().
-> Obviously, kernel_sock_shutdown() can be called by kernel only.
-
-I can't catch what you mean. The kernel code executing in userspace uses syscall
-interface (e.g. SYSCALL_DEFINE2(shutdown, int, fd, int, how) path), doesn't it?
-
-> I suspect he's imaging a hypothetical situation where kernel bits of kernel module
-> interact with userblob bits of kernel module.
-> Then another root process tampers with memory of userblob.
-
-Yes, how to protect the memory of userblob is a concern. The memory of userblob can
-interfere (or can be interfered by) the rest of the system is a problem.
-
-> Then userblob interaction with kernel module can do kernel_sock_shutdown()
-> on something that initial design of kernel+userblob module didn't intend.
-
-I can't catch what you mean.
-
-> I think this is trivially enforceable without creating new features.
-> Existing security_ptrace_access_check() LSM hook can prevent tampering with
-> memory of userblob.
-
-There is security_ptrace_access_check() LSM hook, but no zero-configuration
-method is available.
-
-> 
-> As far as userblob calling llvm and other things in sequence.
-> That is no different from systemd calling things.
-
-Right.
-
-> security label can carry that execution context.
-
-If files get a chance to be associated with appropriate pathname and
-security label.
-
-> 
->> My personally strongest argument for remoiving this kernel code is
->> that it's been there for a couple of years now, and it has never
->> actually done anything useful, and there's no actual sign that it ever
->> will, or that there is a solid plan in place for it.
-> 
-> you probably missed the detailed plan:
-> https://lore.kernel.org/bpf/20200609235631.ukpm3xngbehfqthz@ast-mbp.dhcp.thefacebook.com/
-> 
-> The project #3 is the above is the one we're working on right now.
-> It should be ready to post in a week.
-
-I got a question on project #3. Given that "cat /sys/fs/bpf/my_ipv6_route"
-produces the same human output as "cat /proc/net/ipv6_route", how security
-checks which are done for "cat /proc/net/ipv6_route" can be enforced for
-"cat /sys/fs/bpf/my_ipv6_route" ? Unless same security checks (e.g. permission
-to read /proc/net/ipv6_route ) is enforced, such bpf usage sounds like a method
-for bypassing existing security mechanisms.
-
+But this IS a change over the previous code, no?
+I will test next week as I am travelling right now. 
