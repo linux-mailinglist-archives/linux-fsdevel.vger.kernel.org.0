@@ -2,112 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1960720BAC7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 22:57:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD67520BAEE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 23:05:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726082AbgFZU5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 16:57:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46736 "EHLO
+        id S1726008AbgFZVFO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 17:05:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbgFZU5R (ORCPT
+        with ESMTP id S1725781AbgFZVFO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 16:57:17 -0400
-Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DB0FC03E979;
-        Fri, 26 Jun 2020 13:57:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=/j1J3VNoc3X3k3mp9U8TxyNrfgAwisW2njcwJM52V4Q=; b=h4grfjDq/NXOFrzYJ8Q9SYUaVM
-        hpTYkJPtCel8/BPsyPaXQ1uGcjQKq8GagRfM5oJ8kF/noKfuwo9KTWtyTQcnjuaLRmH/gNmknta55
-        imKlS0xVZTeIm1JUf4F4zWPkONPx/1TwCRfQk+Q/JvexALVRJ7j5tG1RQpowHmAoNtL8mgj0n+kdE
-        IhZXaAcFVRdtkA21ALxvzNry1AuLo92nKVzsmS1tFOw57xmhGTd44FQyLxzzJaP86QFGa4hveOCdN
-        1rJR7mvidfJnrpqg0R7l4WLdbbH6Zi+vt/m1Z0R2bfa5jVpT1f6Zel9A1eB+iTlR+LPRXIU+qDsD9
-        7OWn8Ghg==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jovP2-0002Ub-TT; Fri, 26 Jun 2020 20:56:57 +0000
-Subject: Re: [PATCH] slab: Fix misplaced __free_one()
-To:     Kees Cook <keescook@chromium.org>, akpm@linux-foundation.org
-Cc:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
-        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        mm-commits@vger.kernel.org
-References: <202006261306.0D82A2B@keescook>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <1de6b098-a759-dd96-df5d-9a282b2a991b@infradead.org>
-Date:   Fri, 26 Jun 2020 13:56:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Fri, 26 Jun 2020 17:05:14 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A490C03E979
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 14:05:14 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id a14so576298pfi.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 14:05:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=wZoxiP0mTeiu9+lN0In23h0uJGDaqzSh/2yHrJcG0vY=;
+        b=W6zzf4n1FJ+jbypcb/n75nQ9f/qgNuv1aMFledULOSq+3p7GtFYtHvD+jWVHob7zij
+         Oi0GziKAhh9/2WERpXPcNsYysb41CMLrjmgII0ZRcxG0QjymJwmMX5cvNVzyBh/DJ/D+
+         XVZxAvq0ePQdTnXIAJqa7f4ekDTEqtW3W52cU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wZoxiP0mTeiu9+lN0In23h0uJGDaqzSh/2yHrJcG0vY=;
+        b=TXx3RaffP7exZQfb5E7003TOxwN3da9xU2rzIec2E+gIpQl8/B50zaN9AGnNvRqt44
+         +FJCmt1So+lngSMKJvX4D+RZS1F9eB63QNZPw0cVq09JKjfB6KIRRX/ISbgICQl2YcIv
+         IBKuN1ZcSD8din4tKfYxiJklWru2mKCzhvEe9v9CoURxSwLoRYC3dnzD7M+2E28WR6kT
+         A0q5AWSdX2DBmxRITgzgePjh9im8k4c8OpoViBwtW+faR1WF5ipd8c3SGJM0GpTj8Yr2
+         JTl+uhDV89ENFJO813ngLSF3z13wZgUcXkPRMyfAjKEkHZAxO2Z3tENpMXJwyztTYPxc
+         Bw4Q==
+X-Gm-Message-State: AOAM532nu8xU8yvpb36wacfbfz5/R2Hn80SSlcOdWzAfrRGVWat1ZS7a
+        tkNm2KgQSbTViHw2118mspsy0g==
+X-Google-Smtp-Source: ABdhPJy3s8sc/ERwXoxJsr+XLKL9bz5tQ5UtuzDRNXOvRBhYMKE4oIsAIGdPPetiSVb8MYDyRT/BAg==
+X-Received: by 2002:aa7:8681:: with SMTP id d1mr4531191pfo.230.1593205513960;
+        Fri, 26 Jun 2020 14:05:13 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y7sm11572394pgk.93.2020.06.26.14.05.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jun 2020 14:05:13 -0700 (PDT)
+Date:   Fri, 26 Jun 2020 14:05:12 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 8/9] fs: don't allow kernel reads and writes without iter
+ ops
+Message-ID: <202006261403.3E1397040F@keescook>
+References: <20200626075836.1998185-1-hch@lst.de>
+ <20200626075836.1998185-9-hch@lst.de>
+ <20200626135147.GB25039@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <202006261306.0D82A2B@keescook>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200626135147.GB25039@casper.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/26/20 1:07 PM, Kees Cook wrote:
-> The implementation of __free_one() was accidentally placed inside a
-> CONFIG_NUMA #ifdef. Move it above.
+On Fri, Jun 26, 2020 at 02:51:47PM +0100, Matthew Wilcox wrote:
+> On Fri, Jun 26, 2020 at 09:58:35AM +0200, Christoph Hellwig wrote:
+> > +static void warn_unsupported(struct file *file, const char *op)
+> > +{
+> > +	char pathname[128], *path;
+> > +
+> > +	path = file_path(file, pathname, sizeof(pathname));
+> > +	if (IS_ERR(path))
+> > +		path = "(unknown)";
+> > +	pr_warn_ratelimited(
+> > +		"kernel %s not supported for file %s (pid: %d comm: %.20s)\n",
+> > +		op, path, current->pid, current->comm);
+> > +}
+> > +
 > 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Link: https://lore.kernel.org/lkml/7ff248c7-d447-340c-a8e2-8c02972aca70@infradead.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
-
-Thanks.
-
-> ---
-> This a fix for slab-add-naive-detection-of-double-free.patch
-> ---
->  mm/slab.c | 20 ++++++++++----------
->  1 file changed, 10 insertions(+), 10 deletions(-)
+> how about just:
 > 
-> diff --git a/mm/slab.c b/mm/slab.c
-> index bbff6705ab2b..5ccb151a6e8f 100644
-> --- a/mm/slab.c
-> +++ b/mm/slab.c
-> @@ -588,6 +588,16 @@ static int transfer_objects(struct array_cache *to,
->  	return nr;
->  }
->  
-> +/* &alien->lock must be held by alien callers. */
-> +static __always_inline void __free_one(struct array_cache *ac, void *objp)
-> +{
-> +	/* Avoid trivial double-free. */
-> +	if (IS_ENABLED(CONFIG_SLAB_FREELIST_HARDENED) &&
-> +	    WARN_ON_ONCE(ac->avail > 0 && ac->entry[ac->avail - 1] == objp))
-> +		return;
-> +	ac->entry[ac->avail++] = objp;
-> +}
-> +
->  #ifndef CONFIG_NUMA
->  
->  #define drain_alien_cache(cachep, alien) do { } while (0)
-> @@ -749,16 +759,6 @@ static void drain_alien_cache(struct kmem_cache *cachep,
->  	}
->  }
->  
-> -/* &alien->lock must be held by alien callers. */
-> -static __always_inline void __free_one(struct array_cache *ac, void *objp)
-> -{
-> -	/* Avoid trivial double-free. */
-> -	if (IS_ENABLED(CONFIG_SLAB_FREELIST_HARDENED) &&
-> -	    WARN_ON_ONCE(ac->avail > 0 && ac->entry[ac->avail - 1] == objp))
-> -		return;
-> -	ac->entry[ac->avail++] = objp;
-> -}
-> -
->  static int __cache_free_alien(struct kmem_cache *cachep, void *objp,
->  				int node, int page_node)
->  {
+> 	pr_warn_ratelimited(
+> 		"kernel %s not supported for file %pD4 (pid: %d comm: %.20s)\n",
+> 			op, file, current->pid, current->comm);
 > 
+> also, is the pid really that interesting?
 
+Yes, pid matters, especially when there may be many of something running
+(e.g. rsync).
 
 -- 
-~Randy
+Kees Cook
