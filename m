@@ -2,177 +2,340 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D70F320ACB7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 09:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE50E20ADAF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 10:00:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbgFZHDt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 03:03:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59256 "EHLO
+        id S1728908AbgFZH7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 03:59:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726653AbgFZHDs (ORCPT
+        with ESMTP id S1728866AbgFZH67 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 03:03:48 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80D97C08C5DD
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 00:03:48 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id dg28so6102565edb.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 00:03:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=CI3FxrIl7lSns4541JWoWdk57zQMfx31FGFt5L4ayT8=;
-        b=hpKkLtzCISaXM7UaRpk86PMZln2paDRk35L9s4Y+KtMylLwOgBcW3JGDz5rzP1BIJl
-         joSwIHikA39AefxyGVN7nKmNbZVKT1OlK20Y6wbZXeFQuQXDggbSHVtVCAMESPjE5adW
-         q207mt7UGT7ruQ0kSvRVzpc6f8A8IRYxMVrTb1djP6ac4NycqxIyKleGPKGb8b5SkBkC
-         vVsqCGt3TurQwBlm29MfAToAQH8UFFO/miOtbV2gII5cHWxrsJUUnPjibGImxjL4SGwz
-         51hqhbzW1F9dXdiAhPP9HtiPUY3P0y1ZKwMx250fBprS8wW3zNXonhQWwbLIUfBhMoUM
-         v08w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CI3FxrIl7lSns4541JWoWdk57zQMfx31FGFt5L4ayT8=;
-        b=VyeXaNerWskEymsJAtr9lmVHfpUzuLSdjtvNonNeKhrZwB7PuNUnUpKVf7/kQt6vnp
-         QKRT70b+Zg/Yo3/JKg3NZwS+uKMKu80wpihTfnB76gpBOe31105DBAOGZrHTtjajbJrb
-         xHg3FDE9/JS/+bU7CVMYwaVREnLuy8velnVtmEPZfIzBynEgz2/zh23QXA2Ay8tJIAxH
-         WdNoY5H2KjPlKwJMC29mz4IVbgxfXPpqweFJweFGpYcUHA8FYsy4pONPZIDLlGJAYrRe
-         m37Vq9Li5ST/HmHXrvMOsOSkVr+o4h+WqtRb38SF6rgVChWJs97l4JYdSdLUwslkX8/H
-         AhSw==
-X-Gm-Message-State: AOAM533v4+LezxrMiWaKJpCZ1h6o0DS8uxasX0V1MQTSJ6nddxzyFeT2
-        nUDhUK/1xzskAoRAmUDDEuYv0w==
-X-Google-Smtp-Source: ABdhPJwNmdcT4mE0xDF8Ewsq0DmM7hEeCyMu0hfp5z0TYSOGnGMsBcd7wFfw4gvuWGBSJSo1RdtqmA==
-X-Received: by 2002:aa7:d4ca:: with SMTP id t10mr1921245edr.244.1593155027037;
-        Fri, 26 Jun 2020 00:03:47 -0700 (PDT)
-Received: from localhost (ip-5-186-127-235.cgn.fibianet.dk. [5.186.127.235])
-        by smtp.gmail.com with ESMTPSA id p4sm9756178eja.9.2020.06.26.00.03.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jun 2020 00:03:46 -0700 (PDT)
-From:   "javier.gonz@samsung.com" <javier@javigon.com>
-X-Google-Original-From: "javier.gonz@samsung.com" <javier.gonz@samsung.com>
-Date:   Fri, 26 Jun 2020 09:03:45 +0200
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        "asml.silence@gmail.com" <asml.silence@gmail.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "mb@lightnvm.io" <mb@lightnvm.io>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "selvakuma.s1@samsung.com" <selvakuma.s1@samsung.com>,
-        "nj.shetty@samsung.com" <nj.shetty@samsung.com>
-Subject: Re: [PATCH v2 0/2] zone-append support in io-uring and aio
-Message-ID: <20200626070345.vuxic46l3agy3jay@mpHalley.localdomain>
-References: <CGME20200625171829epcas5p268486a0780571edb4999fc7b3caab602@epcas5p2.samsung.com>
- <1593105349-19270-1-git-send-email-joshi.k@samsung.com>
- <CY4PR04MB37511E3B19035012A143D006E7930@CY4PR04MB3751.namprd04.prod.outlook.com>
- <20200626063717.4dhsydpcnezjhj3o@mpHalley.localdomain>
- <CY4PR04MB375154780F0B8073AB83DA9CE7930@CY4PR04MB3751.namprd04.prod.outlook.com>
+        Fri, 26 Jun 2020 03:58:59 -0400
+Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 321F4C08C5C1;
+        Fri, 26 Jun 2020 00:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=jTl80w8p/VUlsDw4KOn7DDPTq/azYxJb9y2idyQwNVs=; b=A6eykJQYGgJtt3QFcWSek9VLtQ
+        rnZHg4DvGb/cOxi2QJnzpds+Ci7Ys6Z4bhqHmXz7syRuCklte9a7cPu6nPRYfHCa0TZq18dS2haIb
+        y025ax8szzKBSkcO0wC9rvr+S3YKQyC/UMesDF9KvkIQLDYk1EbYseUdl+MTWYyKX7l1dJ2qgOPnw
+        patVNvq7dfvEjcjSBdOF0jPV0ztkhu4fpMNS6jJVpggxsnankjyKAfhhml6PrzGDyPgoVedG1mMRO
+        dgqkPUvIUaZnzRtsatFs12gJgwK5/Jl+jGPZFKgZ6ilmDog9hTliZihjMLnLXeu84+XcuLY8EjeVP
+        iSlXB+Gg==;
+Received: from [2001:4bb8:184:76e3:2b32:1123:bea8:6121] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jojFu-0006yK-KL; Fri, 26 Jun 2020 07:58:38 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [RFC] stop using ->read and ->write for kernel access v2
+Date:   Fri, 26 Jun 2020 09:58:27 +0200
+Message-Id: <20200626075836.1998185-1-hch@lst.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CY4PR04MB375154780F0B8073AB83DA9CE7930@CY4PR04MB3751.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 26.06.2020 06:56, Damien Le Moal wrote:
->On 2020/06/26 15:37, javier.gonz@samsung.com wrote:
->> On 26.06.2020 03:11, Damien Le Moal wrote:
->>> On 2020/06/26 2:18, Kanchan Joshi wrote:
->>>> [Revised as per feedback from Damien, Pavel, Jens, Christoph, Matias, Wilcox]
->>>>
->>>> This patchset enables zone-append using io-uring/linux-aio, on block IO path.
->>>> Purpose is to provide zone-append consumption ability to applications which are
->>>> using zoned-block-device directly.
->>>>
->>>> The application may specify RWF_ZONE_APPEND flag with write when it wants to
->>>> send zone-append. RWF_* flags work with a certain subset of APIs e.g. uring,
->>>> aio, and pwritev2. An error is reported if zone-append is requested using
->>>> pwritev2. It is not in the scope of this patchset to support pwritev2 or any
->>>> other sync write API for reasons described later.
->>>>
->>>> Zone-append completion result --->
->>>> With zone-append, where write took place can only be known after completion.
->>>> So apart from usual return value of write, additional mean is needed to obtain
->>>> the actual written location.
->>>>
->>>> In aio, this is returned to application using res2 field of io_event -
->>>>
->>>> struct io_event {
->>>>         __u64           data;           /* the data field from the iocb */
->>>>         __u64           obj;            /* what iocb this event came from */
->>>>         __s64           res;            /* result code for this event */
->>>>         __s64           res2;           /* secondary result */
->>>> };
->>>>
->>>> In io-uring, cqe->flags is repurposed for zone-append result.
->>>>
->>>> struct io_uring_cqe {
->>>>         __u64   user_data;      /* sqe->data submission passed back */
->>>>         __s32   res;            /* result code for this event */
->>>>         __u32   flags;
->>>> };
->>>>
->>>> Since 32 bit flags is not sufficient, we choose to return zone-relative offset
->>>> in sector/512b units. This can cover zone-size represented by chunk_sectors.
->>>> Applications will have the trouble to combine this with zone start to know
->>>> disk-relative offset. But if more bits are obtained by pulling from res field
->>>> that too would compel application to interpret res field differently, and it
->>>> seems more painstaking than the former option.
->>>> To keep uniformity, even with aio, zone-relative offset is returned.
->>>
->>> I am really not a fan of this, to say the least. The input is byte offset, the
->>> output is 512B relative sector count... Arg... We really cannot do better than
->>> that ?
->>>
->>> At the very least, byte relative offset ? The main reason is that this is
->>> _somewhat_ acceptable for raw block device accesses since the "sector"
->>> abstraction has a clear meaning, but once we add iomap/zonefs async zone append
->>> support, we really will want to have byte unit as the interface is regular
->>> files, not block device file. We could argue that 512B sector unit is still
->>> around even for files (e.g. block counts in file stat). Bu the different unit
->>> for input and output of one operation is really ugly. This is not nice for the user.
->>>
->>
->> You can refer to the discussion with Jens, Pavel and Alex on the uring
->> interface. With the bits we have and considering the maximun zone size
->> supported, there is no space for a byte relative offset. We can take
->> some bits from cqe->res, but we were afraid this is not very
->> future-proof. Do you have a better idea?
->
->If you can take 8 bits, that gives you 40 bits, enough to support byte relative
->offsets for any zone size defined as a number of 512B sectors using an unsigned
->int. Max zone size is 2^31 sectors in that case, so 2^40 bytes. Unless I am
->already too tired and my math is failing me...
+Hi Al and Linus,
 
-Yes, the match is correct. I was thinking more of the bits being needed
-for other use-case that could collide with append. We considered this
-and discard it for being messy - when Pavel brought up the 512B
-alignment we saw it as a good alternative.
+as part of removing set_fs entirely (for which I have a working
+prototype), we need to stop calling ->read and ->write with kernel
+pointers under set_fs.
 
-Note too that we would be able to translate to a byte offset in
-iouring.h too so the user would not need to think of this.
+My previous "clean up kernel_{read,write} & friends v5" series, on which
+this one builds, consolidate those calls into the __ḵernel_{read,write}
+helpers.  This series goes further and removes the option to call
+->read and ->write with kernel pointers entirely.  The replacements are
+the existing ->read_iter and ->write_iter methods which cope with kvecs
+and kernel pointers just fine and are already used by many instances
+including all the "real" file systems.
 
-I do not feel strongly on this, so the one that better fits the current
-and near-future for uring, that is the one we will send on V3. Will give
-it until next week for others to comment too.
+A git branch is available here:
 
->
->zone size is defined by chunk_sectors, which is used for raid and software raids
->too. This has been an unsigned int forever. I do not see the need for changing
->this to a 64bit anytime soon, if ever. A raid with a stripe size larger than 1TB
->does not really make any sense. Same for zone size...
+    git://git.infradead.org/users/hch/misc.git set_fs-rw
 
-Yes. I think already max zone sizes are pretty huge. But yes, this might
-change, so we will take it when it happens.
+Gitweb:
 
-[...]
+    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/set_fs-rw
 
-Javier
+Changes since v1:
+ - drop the read_uptr/write_uptr methods
+ - pick up a bunch of sysctl fixes and iter conversion from Matthew Wilcox
+
+Diffstat:
+ Documentation/filesystems/seq_file.rst                            |    2 
+ Documentation/process/clang-format.rst                            |    4 
+ Documentation/translations/it_IT/process/clang-format.rst         |    4 
+ arch/alpha/kernel/srm_env.c                                       |    2 
+ arch/arm/mm/alignment.c                                           |    2 
+ arch/arm/mm/ptdump_debugfs.c                                      |    2 
+ arch/arm64/kvm/vgic/vgic-debug.c                                  |    2 
+ arch/c6x/platforms/pll.c                                          |    2 
+ arch/mips/cavium-octeon/oct_ilm.c                                 |    2 
+ arch/mips/kernel/segment.c                                        |    2 
+ arch/mips/ralink/bootrom.c                                        |    2 
+ arch/powerpc/kernel/rtas-proc.c                                   |   10 
+ arch/powerpc/kvm/book3s_xive_native.c                             |    2 
+ arch/powerpc/kvm/timing.c                                         |    2 
+ arch/powerpc/mm/numa.c                                            |    2 
+ arch/powerpc/mm/ptdump/bats.c                                     |    2 
+ arch/powerpc/mm/ptdump/hashpagetable.c                            |    2 
+ arch/powerpc/mm/ptdump/ptdump.c                                   |    2 
+ arch/powerpc/mm/ptdump/segment_regs.c                             |    2 
+ arch/powerpc/platforms/cell/spufs/file.c                          |    8 
+ arch/powerpc/platforms/pseries/hvCall_inst.c                      |    2 
+ arch/powerpc/platforms/pseries/lpar.c                             |    4 
+ arch/powerpc/platforms/pseries/lparcfg.c                          |    2 
+ arch/s390/kernel/diag.c                                           |    2 
+ arch/s390/mm/dump_pagetables.c                                    |    2 
+ arch/s390/pci/pci_debug.c                                         |    2 
+ arch/sh/mm/alignment.c                                            |    2 
+ arch/sh/mm/asids-debugfs.c                                        |    2 
+ arch/sh/mm/cache-debugfs.c                                        |    2 
+ arch/sh/mm/pmb.c                                                  |    2 
+ arch/sh/mm/tlb-debugfs.c                                          |    2 
+ arch/sparc/kernel/led.c                                           |    2 
+ arch/um/kernel/exitcode.c                                         |    2 
+ arch/um/kernel/process.c                                          |    2 
+ arch/x86/kernel/cpu/mce/severity.c                                |    2 
+ arch/x86/kernel/cpu/mtrr/if.c                                     |    2 
+ arch/x86/mm/pat/memtype.c                                         |    2 
+ arch/x86/mm/pat/set_memory.c                                      |    2 
+ arch/x86/platform/uv/tlb_uv.c                                     |    2 
+ arch/x86/xen/p2m.c                                                |    2 
+ block/blk-mq-debugfs.c                                            |    2 
+ drivers/acpi/battery.c                                            |    2 
+ drivers/acpi/proc.c                                               |    2 
+ drivers/base/power/wakeup.c                                       |    2 
+ drivers/block/aoe/aoeblk.c                                        |    2 
+ drivers/block/drbd/drbd_debugfs.c                                 |   10 
+ drivers/block/nbd.c                                               |    4 
+ drivers/block/pktcdvd.c                                           |    2 
+ drivers/block/rsxx/core.c                                         |    4 
+ drivers/bus/mvebu-mbus.c                                          |    4 
+ drivers/char/tpm/eventlog/common.c                                |    2 
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-core.c                 |    2 
+ drivers/crypto/allwinner/sun8i-ss/sun8i-ss-core.c                 |    2 
+ drivers/crypto/amlogic/amlogic-gxl-core.c                         |    2 
+ drivers/crypto/caam/dpseci-debugfs.c                              |    2 
+ drivers/crypto/cavium/zip/zip_main.c                              |    6 
+ drivers/crypto/hisilicon/qm.c                                     |    2 
+ drivers/crypto/qat/qat_common/adf_cfg.c                           |    2 
+ drivers/crypto/qat/qat_common/adf_transport_debug.c               |    4 
+ drivers/firmware/tegra/bpmp-debugfs.c                             |    2 
+ drivers/gpio/gpiolib.c                                            |    2 
+ drivers/gpu/drm/amd/amdkfd/kfd_debugfs.c                          |    4 
+ drivers/gpu/drm/arm/display/komeda/komeda_dev.c                   |    2 
+ drivers/gpu/drm/arm/malidp_drv.c                                  |    2 
+ drivers/gpu/drm/armada/armada_debugfs.c                           |    2 
+ drivers/gpu/drm/drm_debugfs.c                                     |    6 
+ drivers/gpu/drm/drm_debugfs_crc.c                                 |    2 
+ drivers/gpu/drm/drm_mipi_dbi.c                                    |    2 
+ drivers/gpu/drm/i915/display/intel_display_debugfs.c              |   16 -
+ drivers/gpu/drm/i915/gt/debugfs_gt.h                              |    2 
+ drivers/gpu/drm/i915/i915_debugfs_params.c                        |   12 -
+ drivers/gpu/drm/msm/disp/dpu1/dpu_core_irq.c                      |    2 
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c                          |    4 
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c                       |    2 
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c                           |    4 
+ drivers/gpu/drm/msm/msm_debugfs.c                                 |    2 
+ drivers/gpu/drm/nouveau/nouveau_debugfs.c                         |    2 
+ drivers/gpu/drm/omapdrm/dss/dss.c                                 |    2 
+ drivers/gpu/host1x/debug.c                                        |    4 
+ drivers/gpu/vga/vga_switcheroo.c                                  |    2 
+ drivers/hid/hid-picolcd_debugfs.c                                 |    2 
+ drivers/hid/hid-wiimote-debug.c                                   |    2 
+ drivers/hwmon/dell-smm-hwmon.c                                    |    2 
+ drivers/ide/ide-proc.c                                            |    4 
+ drivers/infiniband/hw/cxgb4/device.c                              |    4 
+ drivers/infiniband/hw/qib/qib_debugfs.c                           |    2 
+ drivers/infiniband/ulp/ipoib/ipoib_fs.c                           |    4 
+ drivers/input/input.c                                             |    4 
+ drivers/macintosh/via-pmu.c                                       |    2 
+ drivers/md/bcache/closure.c                                       |    2 
+ drivers/md/md.c                                                   |    2 
+ drivers/media/cec/core/cec-core.c                                 |    2 
+ drivers/media/pci/saa7164/saa7164-core.c                          |    2 
+ drivers/memory/emif.c                                             |    4 
+ drivers/memory/tegra/tegra124-emc.c                               |    2 
+ drivers/memory/tegra/tegra186-emc.c                               |    2 
+ drivers/memory/tegra/tegra20-emc.c                                |    2 
+ drivers/memory/tegra/tegra30-emc.c                                |    2 
+ drivers/mfd/ab3100-core.c                                         |    2 
+ drivers/mfd/ab3100-otp.c                                          |    2 
+ drivers/mfd/ab8500-debugfs.c                                      |   14 -
+ drivers/mfd/tps65010.c                                            |    2 
+ drivers/misc/habanalabs/debugfs.c                                 |    2 
+ drivers/misc/sgi-gru/gruprocfs.c                                  |    6 
+ drivers/mmc/core/mmc_test.c                                       |    2 
+ drivers/mtd/mtdcore.c                                             |    4 
+ drivers/mtd/ubi/debug.c                                           |    2 
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c                |   38 +--
+ drivers/net/ethernet/chelsio/cxgb4/l2t.c                          |    2 
+ drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c               |    8 
+ drivers/net/ethernet/freescale/dpaa2/dpaa2-eth-debugfs.c          |    6 
+ drivers/net/ethernet/intel/fm10k/fm10k_debugfs.c                  |    2 
+ drivers/net/ethernet/marvell/octeontx2/af/rvu_debugfs.c           |    2 
+ drivers/net/wireless/ath/ath5k/debug.c                            |    2 
+ drivers/net/wireless/ath/wil6210/debugfs.c                        |   14 -
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/debug.c          |    2 
+ drivers/net/wireless/intel/ipw2x00/libipw_module.c                |    2 
+ drivers/net/wireless/intel/iwlwifi/fw/debugfs.c                   |    2 
+ drivers/net/wireless/intel/iwlwifi/pcie/trans.c                   |    2 
+ drivers/net/wireless/intersil/hostap/hostap_download.c            |    2 
+ drivers/net/wireless/mediatek/mt76/mt7603/debugfs.c               |    2 
+ drivers/net/wireless/mediatek/mt76/mt7615/debugfs.c               |    2 
+ drivers/net/wireless/mediatek/mt76/mt76x02_debugfs.c              |    4 
+ drivers/net/wireless/mediatek/mt76/mt7915/debugfs.c               |    4 
+ drivers/net/wireless/mediatek/mt7601u/debugfs.c                   |    4 
+ drivers/net/wireless/realtek/rtlwifi/debug.c                      |    2 
+ drivers/net/wireless/realtek/rtw88/debug.c                        |    4 
+ drivers/net/wireless/rsi/rsi_91x_debugfs.c                        |    4 
+ drivers/net/xen-netback/xenbus.c                                  |    2 
+ drivers/nvme/host/fabrics.c                                       |    2 
+ drivers/parisc/led.c                                              |    2 
+ drivers/pci/controller/pci-tegra.c                                |    2 
+ drivers/platform/x86/asus-wmi.c                                   |    2 
+ drivers/platform/x86/intel_pmc_core.c                             |    2 
+ drivers/platform/x86/intel_telemetry_debugfs.c                    |    4 
+ drivers/platform/x86/thinkpad_acpi.c                              |    2 
+ drivers/platform/x86/toshiba_acpi.c                               |    8 
+ drivers/pnp/pnpbios/proc.c                                        |    2 
+ drivers/power/supply/da9030_battery.c                             |    2 
+ drivers/pwm/core.c                                                |    2 
+ drivers/ras/cec.c                                                 |    2 
+ drivers/ras/debugfs.c                                             |    2 
+ drivers/s390/block/dasd.c                                         |    2 
+ drivers/s390/block/dasd_proc.c                                    |    2 
+ drivers/s390/cio/blacklist.c                                      |    2 
+ drivers/s390/cio/qdio_debug.c                                     |    2 
+ drivers/scsi/hisi_sas/hisi_sas_main.c                             |   32 +-
+ drivers/scsi/qedf/qedf_dbg.h                                      |    2 
+ drivers/scsi/qedi/qedi_dbg.h                                      |    2 
+ drivers/scsi/qla2xxx/qla_dfs.c                                    |   12 -
+ drivers/scsi/scsi_devinfo.c                                       |    2 
+ drivers/scsi/scsi_proc.c                                          |    4 
+ drivers/scsi/sg.c                                                 |    4 
+ drivers/scsi/snic/snic_debugfs.c                                  |    4 
+ drivers/sh/intc/virq-debugfs.c                                    |    2 
+ drivers/soc/qcom/cmd-db.c                                         |    2 
+ drivers/soc/qcom/socinfo.c                                        |    4 
+ drivers/soc/ti/knav_dma.c                                         |    2 
+ drivers/soc/ti/knav_qmss_queue.c                                  |    2 
+ drivers/staging/rtl8192u/ieee80211/ieee80211_module.c             |    2 
+ drivers/staging/vc04_services/interface/vchiq_arm/vchiq_debugfs.c |    4 
+ drivers/usb/chipidea/debug.c                                      |    4 
+ drivers/usb/dwc2/debugfs.c                                        |    2 
+ drivers/usb/dwc3/debugfs.c                                        |    8 
+ drivers/usb/gadget/function/rndis.c                               |    2 
+ drivers/usb/gadget/udc/lpc32xx_udc.c                              |    2 
+ drivers/usb/gadget/udc/renesas_usb3.c                             |    2 
+ drivers/usb/host/xhci-debugfs.c                                   |    6 
+ drivers/usb/mtu3/mtu3_debugfs.c                                   |    8 
+ drivers/usb/musb/musb_debugfs.c                                   |    4 
+ drivers/video/fbdev/via/viafbdev.c                                |   14 -
+ drivers/visorbus/visorbus_main.c                                  |    2 
+ drivers/xen/xenfs/xensyms.c                                       |    2 
+ fs/cifs/cifs_debug.c                                              |   14 -
+ fs/cifs/dfs_cache.c                                               |    2 
+ fs/debugfs/file.c                                                 |    4 
+ fs/dlm/debug_fs.c                                                 |    8 
+ fs/fscache/object-list.c                                          |    2 
+ fs/gfs2/glock.c                                                   |    6 
+ fs/jbd2/journal.c                                                 |    2 
+ fs/jfs/jfs_debug.c                                                |    2 
+ fs/nfsd/nfs4state.c                                               |    4 
+ fs/nfsd/nfsctl.c                                                  |   12 -
+ fs/nfsd/stats.c                                                   |    2 
+ fs/ocfs2/cluster/netdebug.c                                       |    6 
+ fs/ocfs2/dlm/dlmdebug.c                                           |    2 
+ fs/ocfs2/dlmglue.c                                                |    2 
+ fs/openpromfs/inode.c                                             |    2 
+ fs/orangefs/orangefs-debugfs.c                                    |    2 
+ fs/proc/array.c                                                   |    2 
+ fs/proc/base.c                                                    |   24 +-
+ fs/proc/cpuinfo.c                                                 |    2 
+ fs/proc/fd.c                                                      |    2 
+ fs/proc/generic.c                                                 |    4 
+ fs/proc/inode.c                                                   |   28 ++
+ fs/proc/proc_net.c                                                |    4 
+ fs/proc/proc_sysctl.c                                             |   50 ++--
+ fs/proc/stat.c                                                    |    2 
+ fs/proc/task_mmu.c                                                |    8 
+ fs/proc/task_nommu.c                                              |    2 
+ fs/proc_namespace.c                                               |    6 
+ fs/read_write.c                                                   |   41 +--
+ fs/seq_file.c                                                     |   34 +-
+ fs/splice.c                                                       |  117 ++--------
+ include/linux/bpf-cgroup.h                                        |    2 
+ include/linux/fs.h                                                |    2 
+ include/linux/proc_fs.h                                           |    1 
+ include/linux/seq_file.h                                          |    7 
+ ipc/util.c                                                        |    2 
+ kernel/bpf/cgroup.c                                               |    2 
+ kernel/bpf/inode.c                                                |    2 
+ kernel/fail_function.c                                            |    2 
+ kernel/gcov/fs.c                                                  |    2 
+ kernel/irq/debugfs.c                                              |    2 
+ kernel/irq/proc.c                                                 |    6 
+ kernel/kallsyms.c                                                 |    2 
+ kernel/kcsan/debugfs.c                                            |    2 
+ kernel/latencytop.c                                               |    2 
+ kernel/locking/lockdep_proc.c                                     |    2 
+ kernel/module.c                                                   |    2 
+ kernel/profile.c                                                  |    2 
+ kernel/sched/debug.c                                              |    2 
+ kernel/sched/psi.c                                                |    6 
+ kernel/time/test_udelay.c                                         |    2 
+ kernel/trace/ftrace.c                                             |   16 -
+ kernel/trace/trace.c                                              |   20 -
+ kernel/trace/trace_dynevent.c                                     |    2 
+ kernel/trace/trace_events.c                                       |   10 
+ kernel/trace/trace_events_hist.c                                  |    4 
+ kernel/trace/trace_events_synth.c                                 |    2 
+ kernel/trace/trace_events_trigger.c                               |    2 
+ kernel/trace/trace_kprobe.c                                       |    4 
+ kernel/trace/trace_printk.c                                       |    2 
+ kernel/trace/trace_stack.c                                        |    4 
+ kernel/trace/trace_stat.c                                         |    2 
+ kernel/trace/trace_uprobe.c                                       |    4 
+ lib/debugobjects.c                                                |    2 
+ lib/dynamic_debug.c                                               |    4 
+ lib/error-inject.c                                                |    2 
+ lib/kunit/debugfs.c                                               |    2 
+ mm/kmemleak.c                                                     |    2 
+ mm/slab_common.c                                                  |    2 
+ mm/swapfile.c                                                     |    2 
+ net/6lowpan/debugfs.c                                             |    2 
+ net/atm/mpoa_proc.c                                               |    2 
+ net/batman-adv/debugfs.c                                          |    4 
+ net/bluetooth/6lowpan.c                                           |    2 
+ net/core/pktgen.c                                                 |    6 
+ net/hsr/hsr_debugfs.c                                             |    2 
+ net/ipv4/netfilter/ipt_CLUSTERIP.c                                |    2 
+ net/ipv4/route.c                                                  |    4 
+ net/l2tp/l2tp_debugfs.c                                           |    2 
+ net/netfilter/xt_recent.c                                         |    2 
+ net/sunrpc/cache.c                                                |    4 
+ net/sunrpc/debugfs.c                                              |    4 
+ net/sunrpc/rpc_pipe.c                                             |    2 
+ net/sunrpc/stats.c                                                |    2 
+ security/apparmor/apparmorfs.c                                    |   10 
+ security/integrity/ima/ima_fs.c                                   |    6 
+ security/selinux/selinuxfs.c                                      |    2 
+ security/smack/smackfs.c                                          |   20 -
+ sound/core/info.c                                                 |    2 
+ 262 files changed, 600 insertions(+), 626 deletions(-)
