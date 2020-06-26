@@ -2,108 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4156020B0E4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 13:50:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BE5A20B11E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 14:06:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728856AbgFZLuo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 07:50:44 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39127 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725884AbgFZLuo (ORCPT
+        id S1728114AbgFZMG2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 08:06:28 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40427 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728080AbgFZMG2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 07:50:44 -0400
-Received: by mail-pl1-f194.google.com with SMTP id s14so4191378plq.6;
-        Fri, 26 Jun 2020 04:50:43 -0700 (PDT)
+        Fri, 26 Jun 2020 08:06:28 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e18so4869287pgn.7;
+        Fri, 26 Jun 2020 05:06:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=m6IlfQ2e8V9TPNspezYLF8SplDOhvC9AL7TcXaCoLTk=;
-        b=OQZxqT3mZBVUFtAHYWFqkOtO3QCJKc7upfuQZW2bxqPD+cPkiLUJxE7P/dxwjx6VbR
-         YDDJHHAQrLVNHloqBHOIGMh0OKaYBLB+BaYYKPgjKC4hbDtXMiM3oJRLGs4mXNrGKpsl
-         f0p4yVh487Mn24jw2PO51M3Ifws+/eLdrS2dgUAvdP86+KOA5rp87DNMrKyC7bDKjeRd
-         P8Y3ChhutOUXuuWWrVXiiYKDFDVEFscrIM05e82dWfGYSp6k2lebN/kzm7bkZLmCBVFu
-         6ygkwEhpaKcCOX6vpII5PAHGhisivsqUY/WbgZ62z36yQR2pnbiE+EpgJwvcDui8+Pr+
-         d8zA==
-X-Gm-Message-State: AOAM5315s1Zh7GAvbf/+hiwuXqDytkwvwwFaFjegKn2kJN5GvDP7b/l0
-        iufu1Ya9FWmZdN6hVmcaGpw=
-X-Google-Smtp-Source: ABdhPJw+vfjYwkjyjOXkCMgArijGLXv7vSz+rOJhbL995GWA76AlNmn2PvrbvK5DZHp9UnPtP91fyw==
-X-Received: by 2002:a17:902:7896:: with SMTP id q22mr2327903pll.237.1593172243027;
-        Fri, 26 Jun 2020 04:50:43 -0700 (PDT)
+        bh=Rerp7T349z5d/bW667Qe6hL4Bacoz0qeIOMjhkul/co=;
+        b=dzaaOShOAmxU7pqtsQ/HChxP1Sf0asrYtz3jHqzpDLPzVQjij8KNxtGPwI9Bo8MQOQ
+         x2FNGhxgi9SlYQUeukehswkSMM8JRwhaitZ5xrN9xXhITCbQHjwHcgYVQnLRCrIToJc9
+         A4l43ljro0aPdTwuSu9u2AACKO8pFYS5aR3Q3C7MT5A6r+VASkgNzzZh6QXndVOa9wDk
+         LcBgoccbUN+q4RJJJfRPCWZvyv01Vt/08Kse+MN3WZDh0s1gYgb78WYTDchIP38BVk0F
+         XPnGq5eaGt6WvNMzOz6WFu57Ry15gAcxTUzKd8SoaYrn1Ixrc3h3ER1T76Hln+1KHG90
+         zFFg==
+X-Gm-Message-State: AOAM533uCzdCdRbauY0v+ZJxrB8CtsZGDFw4bMrmiggnJTSxLW3qcOC6
+        DYzRol29gUPtyQjnw3yG1zk=
+X-Google-Smtp-Source: ABdhPJz4l8fsxkNBK2YDCOZe0ILtzyxwGvlDSbndekipkn5Rz8sUNYiaYM7n9+8mglpbQeyLydM1fw==
+X-Received: by 2002:a63:4d53:: with SMTP id n19mr2545086pgl.60.1593173187188;
+        Fri, 26 Jun 2020 05:06:27 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id m136sm11584572pfd.218.2020.06.26.04.50.41
+        by smtp.gmail.com with ESMTPSA id w6sm11058707pjy.15.2020.06.26.05.06.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jun 2020 04:50:41 -0700 (PDT)
+        Fri, 26 Jun 2020 05:06:25 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id BD85E40B24; Fri, 26 Jun 2020 11:50:40 +0000 (UTC)
-Date:   Fri, 26 Jun 2020 11:50:40 +0000
+        id E368940B24; Fri, 26 Jun 2020 12:06:24 +0000 (UTC)
+Date:   Fri, 26 Jun 2020 12:06:24 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>, ast@kernel.org,
-        axboe@kernel.dk, bfields@fieldses.org,
-        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
-        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
-        davem@davemloft.net, dhowells@redhat.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
-        keyrings@vger.kernel.org, kuba@kernel.org,
-        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
-        philipp.reisner@linbit.com, ravenexp@gmail.com,
-        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
-        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
-        netdev@vger.kernel.org, markward@linux.ibm.com,
-        linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
- seems to break linux bridge on s390x (bisected)
-Message-ID: <20200626115040.GN13911@42.do-not-panic.com>
-References: <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
- <20200624160953.GH4332@42.do-not-panic.com>
- <ea41e2a9-61f7-aec1-79e5-7b08b6dd5119@de.ibm.com>
- <4e27098e-ac8d-98f0-3a9a-ea25242e24ec@de.ibm.com>
- <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
- <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
- <20200626025410.GJ4332@42.do-not-panic.com>
- <feb6a8c4-2b94-3f95-6637-679e089a71ca@de.ibm.com>
- <20200626090001.GA30103@infradead.org>
- <20200626114008.GK4332@42.do-not-panic.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/9] proc: add a read_iter method to proc proc_ops
+Message-ID: <20200626120624.GL4332@42.do-not-panic.com>
+References: <20200626075836.1998185-1-hch@lst.de>
+ <20200626075836.1998185-3-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200626114008.GK4332@42.do-not-panic.com>
+In-Reply-To: <20200626075836.1998185-3-hch@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 26, 2020 at 11:40:08AM +0000, Luis Chamberlain wrote:
-> Andrew, can you please revert these two for now:
-> 
-> selftests: simplify kmod failure value
-> umh: fix processed error when UMH_WAIT_PROC is used
-> 
-> Later, we'll add Christoph's simplier kernel wait, and make the change
-> directly there to catpure the right error. That still won't fix this reported
-> issue, but it will be cleaner and will go tested by Christian Borntraeger
-> before.
+On Fri, Jun 26, 2020 at 09:58:29AM +0200, Christoph Hellwig wrote:
+> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+> index 28d6105e908e4c..fa86619cebc2be 100644
+> --- a/fs/proc/inode.c
+> +++ b/fs/proc/inode.c
+> @@ -297,6 +297,29 @@ static loff_t proc_reg_llseek(struct file *file, loff_t offset, int whence)
+>  	return rv;
+>  }
+>  
+> +static ssize_t pde_read_iter(struct proc_dir_entry *pde, struct kiocb *iocb,
+> +		struct iov_iter *iter)
+> +{
+> +	if (!pde->proc_ops->proc_read_iter)
+> +		return -EINVAL;
 
-However, note that the only consideration to make here against this
-approach of the fix later going in with the simpler kernel wait is
-if this actually is fixing a real issue, and if we'd want this going to
-stable.
+When is this true?
 
-We should for sure revert though, so Andrew please do proceed to revert
-or drop those two patches alone for now.
-
-It was unclear to me if this should go to stable given I was not sure
-how severe that NFS case mentioned on the commit log was, and no one on
-the NFS side has replied about that yet, however there may be other
-areas where code inspection of callsites was not sufficient to find the
-real critical areas.
-
-I'm now very curious what this issue that Christian with bridge on s390
-found will be.
+> +	return pde->proc_ops->proc_read_iter(iocb, iter);
+> +}
+> +
 
   Luis
