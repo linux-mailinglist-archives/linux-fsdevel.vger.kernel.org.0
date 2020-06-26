@@ -2,57 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2081420B4BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 17:37:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B18720B5D1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 18:23:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbgFZPhI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 11:37:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53762 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728742AbgFZPhH (ORCPT
+        id S1726806AbgFZQXW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 12:23:22 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:64661 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbgFZQXW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 11:37:07 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95146C03E979
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 08:37:07 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id j12so4787531pfn.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 08:37:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6C2dkYripoUvFAkhVVBU46RoeX5yKqOT+wsgB4Jgk8E=;
-        b=SrKvBemio7EuFZusYOxZ/gtaKjJLh+SpEyc1HJor/6qvsc6RX7kfLlFMNEjQUMswv5
-         4mVNtVnj7vIKGo5kYtwB4d0eFniN/JAJMsksHnt/SZ+dNJFZzT3nKFoGrIcwej8696wG
-         iUoewk8KYwIkqJ91skI9+gMp9SKe2ZC4UVfyI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6C2dkYripoUvFAkhVVBU46RoeX5yKqOT+wsgB4Jgk8E=;
-        b=FX6jm6e1JRjFVdyAYwVu/wXUn93Igztz5tBkQ1EaEyoFQPJ781HFAp4NcAyY3OEZpv
-         fHCKgUlVro0EFBt75lmRGX0PtJwvP9uHr2av2Ai7Mul++2CX7eaoYWlTHHtmD/WTQ4wt
-         iNgRcDBijXQp7jzDo89PdH80nZvm97XcvWx/P5jdjR1BnU2veXETAs3RH3iA6Xw5SuIV
-         mQ/SKiIi8AeZyKBs1ly82PjlhwXDCOQpLZD5PKoAXxT93cSb1R40p32cZ8sLTN+CiErF
-         GZVpKPzXnj+TTMCd5cT1ycF+q6LfNCMWr74DV03Tgaca0CDVku3WsiqSRW0bnwplqgKG
-         RkXA==
-X-Gm-Message-State: AOAM531iiNCOv39E2iIISWRNItNyIvxpzgqxYN46SgtqJA6uoK06L98l
-        DLWd4zfBRSksjs9io7n3R2a9iQ==
-X-Google-Smtp-Source: ABdhPJzHo+CobTVdVc+jmkCGAZ9c+NGWMDI+A+QaB2uAWrNIdixaP529YRgNwp0CVxWTojrygH9RNA==
-X-Received: by 2002:aa7:98c1:: with SMTP id e1mr3488173pfm.318.1593185827209;
-        Fri, 26 Jun 2020 08:37:07 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 9sm10803045pfh.160.2020.06.26.08.37.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jun 2020 08:37:06 -0700 (PDT)
-Date:   Fri, 26 Jun 2020 08:37:05 -0700
-From:   Kees Cook <keescook@chromium.org>
+        Fri, 26 Jun 2020 12:23:22 -0400
+Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05QGMGu2009293;
+        Sat, 27 Jun 2020 01:22:16 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp);
+ Sat, 27 Jun 2020 01:22:16 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05QGMEu8009289
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 27 Jun 2020 01:22:15 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 05/14] umh: Separate the user mode driver and the user
+ mode helper support
 To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         David Miller <davem@davemloft.net>,
         Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Alexei Starovoitov <ast@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
@@ -63,30 +44,51 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
         LSM List <linux-security-module@vger.kernel.org>,
         Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH 06/14] umd: For clarity rename umh_info umd_info
-Message-ID: <202006260836.FB867484@keescook>
 References: <20200625095725.GA3303921@kroah.com>
  <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
  <20200625120725.GA3493334@kroah.com>
  <20200625.123437.2219826613137938086.davem@davemloft.net>
  <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
  <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
- <87o8p6f0kw.fsf_-_@x220.int.ebiederm.org>
+ <87tuyyf0ln.fsf_-_@x220.int.ebiederm.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <5ce4d340-096a-f468-6719-4c34a951511e@i-love.sakura.ne.jp>
+Date:   Sat, 27 Jun 2020 01:22:12 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87o8p6f0kw.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <87tuyyf0ln.fsf_-_@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 26, 2020 at 07:55:43AM -0500, Eric W. Biederman wrote:
-> This structure is only used for user mode drivers so change
-> the prefix from umh to umd to make that clear.
+On 2020/06/26 21:55, Eric W. Biederman wrote:
+> +static void umd_cleanup(struct subprocess_info *info)
+> +{
+> +	struct umh_info *umh_info = info->data;
+> +
+> +	/* cleanup if umh_pipe_setup() was successful but exec failed */
 
-Should bpfilter_umh get renamed to bpfilter_umd at some point in this
-series too?
+s/umh_pipe_setup/umd_setup/
 
--- 
-Kees Cook
+> +	if (info->retval) {
+> +		fput(umh_info->pipe_to_umh);
+> +		fput(umh_info->pipe_from_umh);
+> +	}
+> +}
+
+After this cleanup, I expect adding some protections/isolation which kernel threads
+have (e.g. excluded from ptrace(), excluded from OOM victim selection, excluded from
+SysRq-i, won't be terminated by SIGKILL from usermode processes, won't be stopped by
+SIGSTOP from usermode processes, what else?). Doing it means giving up Alexei's
+
+  It's nice to be able to compile that blob with -g and be able to 'gdb -p' into it.
+  That works and very convenient when it comes to debugging. Compare that to debugging
+  a kernel module!
+
+but I think doing it is essential for keeping usermode blob processes as secure/robust
+as kernel threads.
