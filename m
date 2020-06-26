@@ -2,78 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E3DB20AE74
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 10:35:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B56A520AE9D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 10:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725915AbgFZIe7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 04:34:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45202 "EHLO
+        id S1726003AbgFZI7L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 04:59:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725355AbgFZIe6 (ORCPT
+        with ESMTP id S1725905AbgFZI7L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 04:34:58 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 891ECC08C5C1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 01:34:58 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id cy7so6268965edb.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 01:34:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vpokHpdx2324WEwdOPazf8PsFwQQHRpX50Zc1gbbYss=;
-        b=LQxnYOG58GOteUZeYPt6sUc7fbHneWHvpiqhJaKr1OUx/z8Pk/ANp8vDVf8FE8Epim
-         QNafzxjINeXBb+ejGtVjTsXquNTi8TXRYujuLtjweqCHVKQm3ECSq7Rxw2Af8INLx8DT
-         ifwcXP18aWWGVpzHiL7wVjvnAtJmUuj5VBNjk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vpokHpdx2324WEwdOPazf8PsFwQQHRpX50Zc1gbbYss=;
-        b=KFUlETqm5l2QHr2Lihiyi9b+IROAXpgSzWnW1670UZrG/+kcTLwR0YeCR/MiUS8vKM
-         AE0hhsdXJRAJFgID1Xy2NjsKuaQJgHO8Ih2Q+ij/S2r9e4/Or9yDBaSXmjtCG9g2weGv
-         bBjZZ2CACeO13HpKpC3bOSnYPxAxmMDjVdQMtGJO0fbOzzwSlQ9AAqjxImfPmXhKF/2E
-         ++2Sr4uL1DnlDPPywlMyHH2xO4+874AHAPvad3V7nFZ1GJwx31NksRrgKScYkBmczoNv
-         +gOnOVg/LKu9uQVYckAHDy1N9qQruGraCZtd1wvVUTCude9MAHtKOa732xyDYAjLwLIF
-         VxIA==
-X-Gm-Message-State: AOAM533KOfoL7YrLc2S8aZqYuHEgJGuomblIk0prpLmYsbOVTUlnRxJK
-        6/5BYV30lNZUO9aj490wnjdMGAP3au1RSGH18gxjXA==
-X-Google-Smtp-Source: ABdhPJwrPiyir642FC7k+viZ0W53l93EXsjZvDmz/JU8BkbzSWa4IdiEOO5qS/igiF8Ig2qa25vfi+nBmuqr1uSqR44=
-X-Received: by 2002:a50:cd1e:: with SMTP id z30mr2164466edi.364.1593160497236;
- Fri, 26 Jun 2020 01:34:57 -0700 (PDT)
+        Fri, 26 Jun 2020 04:59:11 -0400
+Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22962C08C5C1;
+        Fri, 26 Jun 2020 01:59:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gW+E1Jv1j6enHoS9ci8iskFSPJ2rZo4CjUglSeffP7o=; b=ec0yT0jWfXYNE/yB3dPz5baX8B
+        7smSzXLFiuj9f0Ed4NKLekPpMe3/SiPIJja5Dct7nl3HgWRYIQXNMnHS6dpZPVOyL5xaG5iCqF9X0
+        CL3mCgMIilh6uQny45ec0cTru4ix75kp0Y/VoGHgARCzk12v4eRECmaoJuAJIQD0/Tp7bJ32ekvrI
+        YWqtMrFLoHgzk6rGoKlqFr+ht7kheor1fGdeZ/YN27RadZ0oDsErMMl00SvVyR2aEjChHMyYZlnWR
+        luo7btYT2RvswiLQ98qswiHpUXLJnF3hTV3xX9fg/ehbnNMRGmQTlrVE/fJQfHzp9COF8QB+Vrtm2
+        FLx1RVYg==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jokC6-0007l8-Fb; Fri, 26 Jun 2020 08:58:46 +0000
+Date:   Fri, 26 Jun 2020 09:58:46 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bcrl@kvack.org,
+        asml.silence@gmail.com, Damien.LeMoal@wdc.com, hch@infradead.org,
+        linux-fsdevel@vger.kernel.org, mb@lightnvm.io,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        selvakuma.s1@samsung.com, nj.shetty@samsung.com,
+        javier.gonz@samsung.com, Arnav Dawn <a.dawn@samsung.com>
+Subject: Re: [PATCH v2 1/2] fs,block: Introduce RWF_ZONE_APPEND and handling
+ in direct IO path
+Message-ID: <20200626085846.GA24962@infradead.org>
+References: <1593105349-19270-1-git-send-email-joshi.k@samsung.com>
+ <CGME20200625171834epcas5p226a24dfcb84cfa83fe29a2bd17795d85@epcas5p2.samsung.com>
+ <1593105349-19270-2-git-send-email-joshi.k@samsung.com>
 MIME-Version: 1.0
-References: <736d172c-84ff-3e9f-c125-03ae748218e8@profihost.ag>
- <1696715.1592552822@warthog.procyon.org.uk> <4a2f5aa9-1921-8884-f854-6a8b22c488f0@profihost.ag>
- <2cfa1de5-a4df-5ad3-e35b-3024cad78ed1@profihost.ag> <CAJfpegvLJBAzGCpR6CQ1TG8-fwMB9oN8kVFijs7vK+dvQ6Tm5w@mail.gmail.com>
- <bffa6591-6698-748d-ba26-a98142b03ae8@profihost.ag>
-In-Reply-To: <bffa6591-6698-748d-ba26-a98142b03ae8@profihost.ag>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 26 Jun 2020 10:34:46 +0200
-Message-ID: <CAJfpegur2+5b0ecSx7YZcY-FB_VYrK=5BMY=g96w+uf3eLDcCw@mail.gmail.com>
-Subject: Re: Kernel 5.4 breaks fuse 2.X nonempty mount option
-To:     Stefan Priebe - Profihost AG <s.priebe@profihost.ag>
-Cc:     David Howells <dhowells@redhat.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        "p.kramme@profihost.ag" <p.kramme@profihost.ag>,
-        Daniel Aberger - Profihost AG <d.aberger@profihost.ag>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1593105349-19270-2-git-send-email-joshi.k@samsung.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 25, 2020 at 10:10 PM Stefan Priebe - Profihost AG
-<s.priebe@profihost.ag> wrote:
->
-> Does a userspace strace really help? I did a git bisect between kernel
-> v5.3 (working) und v5.4 (not working) and it shows
+To restate my previous NAK:
 
-I cannot reproduce this with the libfuse2 examples.  Passing
-"nonempty" as a mount(2) in either v5.3 or v5.4 results in -EINVAL.
-So without an strace I cannot tell what is causing the regression.
+A low-level protocol detail like RWF_ZONE_APPEND has absolutely no
+business being exposed in the Linux file system interface.
 
-Thanks,
-Miklos
+And as mentioned before I think the idea of returning the actual
+position written for O_APPEND writes totally makes sense, and actually
+is generalizable to all files.  Together with zonefs that gives you a
+perfect interface for zone append.
+
+On Thu, Jun 25, 2020 at 10:45:48PM +0530, Kanchan Joshi wrote:
+> Introduce RWF_ZONE_APPEND flag to represent zone-append.
+
+And no one but us select few even know what zone append is, nevermind
+what the detailed semantics are.  If you add a userspace API you need
+to very clearly document the semantics inluding errors and corner cases.
