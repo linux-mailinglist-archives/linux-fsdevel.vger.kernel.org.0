@@ -2,126 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A8E3C20B096
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 13:35:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12CFA20B0AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 13:40:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbgFZLfU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 07:35:20 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:56806 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbgFZLfT (ORCPT
+        id S1726718AbgFZLkM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 07:40:12 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:36155 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbgFZLkM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 07:35:19 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jomdY-0007pG-CV; Fri, 26 Jun 2020 05:35:16 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jomdX-0000K5-C2; Fri, 26 Jun 2020 05:35:16 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>
-References: <87d066vd4y.fsf@x220.int.ebiederm.org>
-        <20200611233134.5vofl53dj5wpwp5j@ast-mbp.dhcp.thefacebook.com>
-        <87bllngirv.fsf@x220.int.ebiederm.org>
-        <CAADnVQ+qNxFjTYBpYW9ZhStMh_oJBS5C_FsxSS=0Mzy=u54MSg@mail.gmail.com>
-        <CAADnVQLuGYX=LamARhrZcze1ej4ELj-y99fLzOCgz60XLPw_cQ@mail.gmail.com>
-        <87ftaxd7ky.fsf@x220.int.ebiederm.org>
-        <20200616015552.isi6j5x732okiky4@ast-mbp.dhcp.thefacebook.com>
-        <87h7v1pskt.fsf@x220.int.ebiederm.org>
-        <20200623183520.5e7fmlt3omwa2lof@ast-mbp.dhcp.thefacebook.com>
-        <87h7v1mx4z.fsf@x220.int.ebiederm.org>
-        <20200623194023.lzl34qt2wndhcehk@ast-mbp.dhcp.thefacebook.com>
-        <878sgck6g0.fsf@x220.int.ebiederm.org>
-        <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
-Date:   Fri, 26 Jun 2020 06:30:48 -0500
-In-Reply-To: <CAADnVQL8WrfV74v1ChvCKE=pQ_zo+A5EtEBB3CbD=P5ote8_MA@mail.gmail.com>
-        (Alexei Starovoitov's message of "Wed, 24 Jun 2020 07:26:22 -0700")
-Message-ID: <87sgeihxnb.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 26 Jun 2020 07:40:12 -0400
+Received: by mail-pj1-f65.google.com with SMTP id h22so4842773pjf.1;
+        Fri, 26 Jun 2020 04:40:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=wnn5CPE1OQI5MbFdoVeNzug5Y/E4qNsr7nm00pkYjsg=;
+        b=VX/NDcK3cWNkOqEznH+rHxPMCVA2ZZ/Yvsv5Pm52vlgMQQ74cnifJ+D2ecxcODvC5v
+         Fkj0Ci8vYYONLziSJeMqSFs3iyyMmvPCpJ1EgAy903rYYZcU3UdyoOY9DYzxAqPeAQsD
+         EtGEK2MZLpqSWV8tbU76mZlCdMRoypUI2oXIk3zIbS+rNZVLk5oN+cm61AB6JpBywBa0
+         H3uTZOGfHH6UChsodjhDBVoO9Kpy9AXbPrk/skrhYCeoS2gPH/ueg5Ra4ru5ykZNcETW
+         RR4+qA4tDYjy1xf+Y6ancZ2HEmH/Jn+Z+Rn6fFtNH4qNA3sBtvtqt+96vlM5zSDn7Cgq
+         P+5w==
+X-Gm-Message-State: AOAM531ObMrp6gfRCJ5JWKX5yKbh/Y/o9UELnjHWNBw9Re530u4XL29W
+        4RdpomuWlplHgMJy4xzgkQo=
+X-Google-Smtp-Source: ABdhPJwGnA6i8X9De1IIY6uo4WMjc9fcRybYmtI1FEyCJ5SkbsL4wzndlVbt12ryEpm7GBivRrC8Cw==
+X-Received: by 2002:a17:90b:1292:: with SMTP id fw18mr2901992pjb.183.1593171610835;
+        Fri, 26 Jun 2020 04:40:10 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id g21sm25348911pfh.134.2020.06.26.04.40.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jun 2020 04:40:09 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 8D0D340B24; Fri, 26 Jun 2020 11:40:08 +0000 (UTC)
+Date:   Fri, 26 Jun 2020 11:40:08 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>, ast@kernel.org,
+        axboe@kernel.dk, bfields@fieldses.org,
+        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
+        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
+        davem@davemloft.net, dhowells@redhat.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
+        keyrings@vger.kernel.org, kuba@kernel.org,
+        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
+        philipp.reisner@linbit.com, ravenexp@gmail.com,
+        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
+        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
+        netdev@vger.kernel.org, markward@linux.ibm.com,
+        linux-s390 <linux-s390@vger.kernel.org>
+Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
+ seems to break linux bridge on s390x (bisected)
+Message-ID: <20200626114008.GK4332@42.do-not-panic.com>
+References: <20200624144311.GA5839@infradead.org>
+ <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
+ <20200624160953.GH4332@42.do-not-panic.com>
+ <ea41e2a9-61f7-aec1-79e5-7b08b6dd5119@de.ibm.com>
+ <4e27098e-ac8d-98f0-3a9a-ea25242e24ec@de.ibm.com>
+ <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
+ <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
+ <20200626025410.GJ4332@42.do-not-panic.com>
+ <feb6a8c4-2b94-3f95-6637-679e089a71ca@de.ibm.com>
+ <20200626090001.GA30103@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jomdX-0000K5-C2;;;mid=<87sgeihxnb.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/z/QlJLLbv8fWfozhts4apX0qJqt5rpEs=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.7 XMSubLong Long Subject
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa08 0; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: ; sa08 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Alexei Starovoitov <alexei.starovoitov@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 570 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 14 (2.4%), b_tie_ro: 12 (2.1%), parse: 1.09
-        (0.2%), extract_message_metadata: 12 (2.1%), get_uri_detail_list: 1.29
-        (0.2%), tests_pri_-1000: 13 (2.3%), tests_pri_-950: 1.29 (0.2%),
-        tests_pri_-900: 1.12 (0.2%), tests_pri_-90: 102 (17.9%), check_bayes:
-        100 (17.5%), b_tokenize: 6 (1.0%), b_tok_get_all: 8 (1.5%),
-        b_comp_prob: 2.4 (0.4%), b_tok_touch_all: 78 (13.7%), b_finish: 1.28
-        (0.2%), tests_pri_0: 413 (72.5%), check_dkim_signature: 0.72 (0.1%),
-        check_dkim_adsp: 2.8 (0.5%), poll_dns_idle: 1.17 (0.2%), tests_pri_10:
-        2.5 (0.4%), tests_pri_500: 7 (1.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently unmantained
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200626090001.GA30103@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+On Fri, Jun 26, 2020 at 10:00:01AM +0100, Christoph Hellwig wrote:
+> On Fri, Jun 26, 2020 at 07:22:34AM +0200, Christian Borntraeger wrote:
+> > 
+> > 
+> > On 26.06.20 04:54, Luis Chamberlain wrote:
+> > > On Wed, Jun 24, 2020 at 08:37:55PM +0200, Christian Borntraeger wrote:
+> > >>
+> > >>
+> > >> On 24.06.20 20:32, Christian Borntraeger wrote:
+> > >> [...]> 
+> > >>> So the translations look correct. But your change is actually a sematic change
+> > >>> if(ret) will only trigger if there is an error
+> > >>> if (KWIFEXITED(ret)) will always trigger when the process ends. So we will always overwrite -ECHILD
+> > >>> and we did not do it before. 
+> > >>>
+> > >>
+> > >> So the right fix is
+> > >>
+> > >> diff --git a/kernel/umh.c b/kernel/umh.c
+> > >> index f81e8698e36e..a3a3196e84d1 100644
+> > >> --- a/kernel/umh.c
+> > >> +++ b/kernel/umh.c
+> > >> @@ -154,7 +154,7 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
+> > >>                  * the real error code is already in sub_info->retval or
+> > >>                  * sub_info->retval is 0 anyway, so don't mess with it then.
+> > >>                  */
+> > >> -               if (KWIFEXITED(ret))
+> > >> +               if (KWEXITSTATUS(ret))
+> > >>                         sub_info->retval = KWEXITSTATUS(ret);
+> > >>         }
+> > >>  
+> > >> I think.
+> > > 
+> > > Nope, the right form is to check for WIFEXITED() before using WEXITSTATUS().
+> > 
+> > But this IS a change over the previous code, no?
+> > I will test next week as I am travelling right now. 
+> 
+> I'm all for reverting back to the previous behavior.  If someone wants
+> a behavior change it should be a separate patch.  And out of pure self
+> interest I'd like to see that change after my addition of the
+> kernel_wait helper to replace the kernel_wait4 abuse :)
 
-> On Wed, Jun 24, 2020 at 5:17 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>
->> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
->>
->> > On Tue, Jun 23, 2020 at 01:53:48PM -0500, Eric W. Biederman wrote:
->>
->> > There is no refcnt bug. It was a user error on tomoyo side.
->> > fork_blob() works as expected.
->>
->> Nope.  I have independently confirmed it myself.
->
-> I guess you've tried Tetsuo's fork_blob("#!/bin/true") kernel module ?
-> yes. that fails. It never meant to be used for this.
-> With elf blob it works, but breaks if there are rejections
-> in things like security_bprm_creds_for_exec().
-> In my mind that path was 'must succeed or kernel module is toast'.
-> Like passing NULL into a function that doesn't check for it.
-> Working on a fix for that since Tetsuo cares.
+Yeah sure, this will be *slightly* cleaner after that. Today we
+implicitly return -ECHLD as well under the assumption the kernel_wait4()
+call failed.
 
-No.  The reference counting issue is present with the elf blob.
+Andrew, can you please revert these two for now:
 
-It is very straight forward to see when you take a minute to look.
+selftests: simplify kmod failure value
+umh: fix processed error when UMH_WAIT_PROC is used
 
-The file is created with shmem_kernel_file_setup in fork_usermode_blob.
-The file is put in fork_usermode_blob
-The file is put in free_bprm by exec.
+Later, we'll add Christoph's simplier kernel wait, and make the change
+directly there to catpure the right error. That still won't fix this reported
+issue, but it will be cleaner and will go tested by Christian Borntraeger
+before.
 
-Eric
+  Luis
