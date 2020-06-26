@@ -2,119 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 75ED720B80D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 20:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25B0920B9C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 22:02:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725824AbgFZSWn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 14:22:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51096 "EHLO
+        id S1725821AbgFZUC5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 16:02:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725275AbgFZSWn (ORCPT
+        with ESMTP id S1725823AbgFZUC4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 14:22:43 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 566ACC03E979;
-        Fri, 26 Jun 2020 11:22:43 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id d10so4559324pls.5;
-        Fri, 26 Jun 2020 11:22:43 -0700 (PDT)
+        Fri, 26 Jun 2020 16:02:56 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80649C03E97A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 13:02:56 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id y18so4646777plr.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 13:02:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=gPRKQHqm6sZx4nx7rIc/Ck2wASuw3VV19IQZEQ741Rk=;
-        b=dTvRyJfQ3Blfhxf3pDzLJQwwrEmprE8++A3HaLXLp5Q+DGxrsGf3W0PhKwPUCHr8Ry
-         pkaowC8SyUb1avgQo4c1xh1e+H2QWb5XKQxYoe9EzntrriWIgsG8lqurzmaFn3HKittV
-         o335AIa8IFUg+7UzR+3CcBXz9H9Fzj9ABI47CB+eujOCgIfNqehkk/2+QNDwZzsjdjyD
-         fwj/lp4D0hbQY5Qg/IUmp8bV6lzIyMM0qjN+UdleejA5nTpd/ezcIzBQMpTDNfbdwT1A
-         VlKf7ISr76mmdi2IKAKQ0JQQQYvJ2ClEvNQw2UNG2OUiAaGeAJRbvm8NPiay3VTbUFIz
-         Zr0g==
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=HuJILZmXLURp/yn0oSueJPx2COyMJVkAtdj3c8sCa2A=;
+        b=Oh/RiiCDnbp34CVdzAILpR378u4/AQdViDFg7C7oW5dt1jDbyEeAjP90KAvvKhIr97
+         KwI71vJclhWb7o4mSkhCh2NOFbTtfJgpS+vox3O7+FvJkCsMl4urremmWYspWh28A0+Z
+         sV5HTCY7Nn86R70arsfIYUzY6CqZUi43QquRo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gPRKQHqm6sZx4nx7rIc/Ck2wASuw3VV19IQZEQ741Rk=;
-        b=duIKc92dOOZaS2Ar+AsyhqnBqxvzfWLNm6EdfsUBkUwlPpLQ/elBkwzXdll2DitXxd
-         sgqXj01ZPkvWQlQ/OVaa+mdRo3w/f/xS+wzi/bQcDT0IIvcdCIO6z36ww3fekW5zciFv
-         mMcp+qaPQhBcXirQwB0VnGNUhCZsdyM/bOUxp4MWzipVe/xL1593qsYhZ5p/VgFum3Og
-         QFn6EEslxZnXktr9bErnRYG5cOwJu+dTGXyxrxP/sExJTelR8HL1wC8AeucRdBrBiE+u
-         lRge1A6AwpvzATKmh5dJNnAlmzyZt3iv9TK+Yq0GRQdCV2psGqUsQP3/anhbq0IiP0vq
-         eVOw==
-X-Gm-Message-State: AOAM532we8qW2FOAIIPpXVrphQzEvf1JLf4mIXoteKzJxpYKqHwoH8Hh
-        syvczP84EeBRFBqtVvM68DQ=
-X-Google-Smtp-Source: ABdhPJyuluSpkCCzQlqONsfwK+vF/2NvmP24zQveFjTNg93fMAPJ1DVKjH3L8mEHTOn7VSfkm2sxlQ==
-X-Received: by 2002:a17:90a:e983:: with SMTP id v3mr4750105pjy.71.1593195762787;
-        Fri, 26 Jun 2020 11:22:42 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:52bf])
-        by smtp.gmail.com with ESMTPSA id j36sm23889057pgj.39.2020.06.26.11.22.40
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=HuJILZmXLURp/yn0oSueJPx2COyMJVkAtdj3c8sCa2A=;
+        b=lGVEzUAQcD13QFQl6vFhsDjtkFydkjfYmZlPrQt5+Y1tOJPrX8zxL2H6NdFdP4DW+Q
+         Lnbu1nNtKtZZTsL92x8pVyiorlelDtiAf4pKTxWOcIGM0ILxUp1hDOU05gzroG1YVeZr
+         adlzatkjoatQFxGFLXcwTFKsZocxIu3ksLKNO4j/hV53+HYe9w+ysNxARLH/iThuIItG
+         5Ke2F9Dx1uMw8Rrx96oC6CVq34t59w70CULQrc67YSvR/7TPjCrPnBv5prcth0Bc9Wcj
+         okIdxtDNx4PdNWdwxbKpa0JuYzsMI9/LKHRzySoBZbvUHnsKMaZc/nsb7eTOoiL6YaD+
+         k3yg==
+X-Gm-Message-State: AOAM532Q/r9s8G99Cc72b3acEPKiBRGU63P5pRaiQ9C2tb+FlO09Eumw
+        qObS3CXt6dwJVaTn0aQfTKGkIw==
+X-Google-Smtp-Source: ABdhPJw11xKQt6MwLhidUJ9gydREFfdw80oPEr/XN3WYlxPPeC/ryrLDoithYT16cWqdMGMaKZA/Bw==
+X-Received: by 2002:a17:90a:8a8e:: with SMTP id x14mr4810785pjn.169.1593201776002;
+        Fri, 26 Jun 2020 13:02:56 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b14sm8925970pfb.186.2020.06.26.13.02.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jun 2020 11:22:42 -0700 (PDT)
-Date:   Fri, 26 Jun 2020 11:22:39 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
-Message-ID: <20200626182239.in7lsupe257zlz5x@ast-mbp.dhcp.thefacebook.com>
-References: <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
- <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
- <20200626164055.5iasnou57yrtt6wz@ast-mbp.dhcp.thefacebook.com>
- <87sgeh926j.fsf@x220.int.ebiederm.org>
+        Fri, 26 Jun 2020 13:02:55 -0700 (PDT)
+Date:   Fri, 26 Jun 2020 13:02:54 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+Subject: Re: mmotm 2020-06-25-20-36 uploaded (mm/slab.c)
+Message-ID: <202006261302.13BB6AB703@keescook>
+References: <20200626033744.URfGO%akpm@linux-foundation.org>
+ <7ff248c7-d447-340c-a8e2-8c02972aca70@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87sgeh926j.fsf@x220.int.ebiederm.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7ff248c7-d447-340c-a8e2-8c02972aca70@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 26, 2020 at 12:17:40PM -0500, Eric W. Biederman wrote:
+On Fri, Jun 26, 2020 at 09:28:36AM -0700, Randy Dunlap wrote:
+> On 6/25/20 8:37 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2020-06-25-20-36 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
 > 
-> > I'm swamped with other stuff today and will test the set Sunday/Monday
-> > with other patches that I'm working on.
-> > I'm not sure why you want to rename the interface. Seems
-> > pointless. But fine.
 > 
-> For maintainability I think the code very much benefits from a clear
-> separation between the user mode driver code from the user mode helper
-> code.
-
-you mean different name gives that separation? makes sense.
-
-> > As far as routing trees. Do you mind I'll take it via bpf-next ?
-> > As I said countless times we're working on bpf_iter using fork_blob.
-> > If you take this set via your tree we would need to wait the whole kernel release.
-> > Which is 8+ weeks before we can use the interface (due to renaming and overall changes).
-> > I'd really like to avoid this huge delay.
-> > Unless you can land it into 5.8-rc2 or rc3.
+> when CONFIG_NUMA is not set/enabled:
 > 
-> I also want to build upon this code.
-> 
-> How about when the review is done I post a frozen branch based on
-> v5.8-rc1 that you can merge into the bpf-next tree, and I can merge into
-> my branch.  That way we both can build upon this code.  That is the way
-> conflicts like this are usually handled.
+> ../mm/slab.c: In function ‘___cache_free’:
+> ../mm/slab.c:3471:2: error: implicit declaration of function ‘__free_one’; did you mean ‘__free_page’? [-Werror=implicit-function-declaration]
+>   __free_one(ac, objp);
+>   ^~~~~~~~~~
 
-sure. that works too.
+Eek! Thanks for catching that. I will send a fix patch.
 
-> Further I will leave any further enhancements to the user mode driver
-> infrastructure that people have suggested to you.
-
-ok
+-- 
+Kees Cook
