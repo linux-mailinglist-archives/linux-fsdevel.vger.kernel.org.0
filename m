@@ -2,95 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25B0920B9C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 22:02:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97EBE20B9FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 22:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725821AbgFZUC5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 16:02:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38326 "EHLO
+        id S1725976AbgFZUH4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 16:07:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbgFZUC4 (ORCPT
+        with ESMTP id S1725836AbgFZUHz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 16:02:56 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80649C03E97A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 13:02:56 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id y18so4646777plr.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 13:02:56 -0700 (PDT)
+        Fri, 26 Jun 2020 16:07:55 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E96AC03E97E
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 13:07:56 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id q17so5076611pfu.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jun 2020 13:07:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=HuJILZmXLURp/yn0oSueJPx2COyMJVkAtdj3c8sCa2A=;
-        b=Oh/RiiCDnbp34CVdzAILpR378u4/AQdViDFg7C7oW5dt1jDbyEeAjP90KAvvKhIr97
-         KwI71vJclhWb7o4mSkhCh2NOFbTtfJgpS+vox3O7+FvJkCsMl4urremmWYspWh28A0+Z
-         sV5HTCY7Nn86R70arsfIYUzY6CqZUi43QquRo=
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=rHOsQnFow9W840xshXf2xfNnPEJVNN56X5OCKvatOzc=;
+        b=O1o8GaHMP5dsVMNrT+KaSdj+Cb9ib0h6L+CH70DoWS18/VdJXbuH3MqWxoarxbltgf
+         9hqSJ7UZ0CHVc+r7XcLBCbzl4RMaKaTYV2GzT8d7aP5yg1A2C4iPLgzgAx6iszB9UWWq
+         7bLvYkt1y57I9p+8bV+wJcxmRsOeoHMBs0tZY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=HuJILZmXLURp/yn0oSueJPx2COyMJVkAtdj3c8sCa2A=;
-        b=lGVEzUAQcD13QFQl6vFhsDjtkFydkjfYmZlPrQt5+Y1tOJPrX8zxL2H6NdFdP4DW+Q
-         Lnbu1nNtKtZZTsL92x8pVyiorlelDtiAf4pKTxWOcIGM0ILxUp1hDOU05gzroG1YVeZr
-         adlzatkjoatQFxGFLXcwTFKsZocxIu3ksLKNO4j/hV53+HYe9w+ysNxARLH/iThuIItG
-         5Ke2F9Dx1uMw8Rrx96oC6CVq34t59w70CULQrc67YSvR/7TPjCrPnBv5prcth0Bc9Wcj
-         okIdxtDNx4PdNWdwxbKpa0JuYzsMI9/LKHRzySoBZbvUHnsKMaZc/nsb7eTOoiL6YaD+
-         k3yg==
-X-Gm-Message-State: AOAM532Q/r9s8G99Cc72b3acEPKiBRGU63P5pRaiQ9C2tb+FlO09Eumw
-        qObS3CXt6dwJVaTn0aQfTKGkIw==
-X-Google-Smtp-Source: ABdhPJw11xKQt6MwLhidUJ9gydREFfdw80oPEr/XN3WYlxPPeC/ryrLDoithYT16cWqdMGMaKZA/Bw==
-X-Received: by 2002:a17:90a:8a8e:: with SMTP id x14mr4810785pjn.169.1593201776002;
-        Fri, 26 Jun 2020 13:02:56 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=rHOsQnFow9W840xshXf2xfNnPEJVNN56X5OCKvatOzc=;
+        b=TzrymAtm3dh607f478+3qbs5lcl9kLFMSnPDsskkHa6GiYPqFgxSkYurZNtWYD/eZl
+         S5CS7tkh+14pWtOh0I+CcHWgjohCPhyZjcGgPyb8nHPy+NwCFsJWYZFcDFns+cwrcexo
+         heYqBRM+uq50+KKjKJugHY9pnEV0Qpd/fTUxevXmNA3yTK4LcgPZgE9+mpvOq1npIxZF
+         Qt/On4tjVt51ewl+zZYZ0DZDlT4A7lKQ2IwD+U80XpvTzulf+a6p7MW5/t1/hlyH7Vqy
+         tRsOmTqrxXXk26dOU2KFVUdxZXiYVYoQD1xIRiferGZkWqNU74TH/TOf4rjn3YzElTZw
+         ceYA==
+X-Gm-Message-State: AOAM532ZFk4Br3fNC116ssS0qONNHgt4RbvieBxuvnbzClH350OaeY5w
+        4dbWDgJvsCNbc9XZXxDrlOpHCg==
+X-Google-Smtp-Source: ABdhPJzhZjWKtrGEMaI8byUSdrVEOM1KRfW4lUX66uoeR6p2vSSKp4YijRN8kDnSI5dkSRP37/P6Cw==
+X-Received: by 2002:aa7:8c03:: with SMTP id c3mr4048300pfd.77.1593202075575;
+        Fri, 26 Jun 2020 13:07:55 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b14sm8925970pfb.186.2020.06.26.13.02.54
+        by smtp.gmail.com with ESMTPSA id n1sm12409458pjn.24.2020.06.26.13.07.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jun 2020 13:02:55 -0700 (PDT)
-Date:   Fri, 26 Jun 2020 13:02:54 -0700
+        Fri, 26 Jun 2020 13:07:54 -0700 (PDT)
+Date:   Fri, 26 Jun 2020 13:07:53 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+To:     akpm@linux-foundation.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>, broonie@kernel.org,
+        mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
-Subject: Re: mmotm 2020-06-25-20-36 uploaded (mm/slab.c)
-Message-ID: <202006261302.13BB6AB703@keescook>
-References: <20200626033744.URfGO%akpm@linux-foundation.org>
- <7ff248c7-d447-340c-a8e2-8c02972aca70@infradead.org>
+Subject: [PATCH] slab: Fix misplaced __free_one()
+Message-ID: <202006261306.0D82A2B@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7ff248c7-d447-340c-a8e2-8c02972aca70@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 26, 2020 at 09:28:36AM -0700, Randy Dunlap wrote:
-> On 6/25/20 8:37 PM, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2020-06-25-20-36 has been uploaded to
-> > 
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > mmotm-readme.txt says
-> > 
-> > README for mm-of-the-moment:
-> > 
-> > http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> 
-> 
-> when CONFIG_NUMA is not set/enabled:
-> 
-> ../mm/slab.c: In function ‘___cache_free’:
-> ../mm/slab.c:3471:2: error: implicit declaration of function ‘__free_one’; did you mean ‘__free_page’? [-Werror=implicit-function-declaration]
->   __free_one(ac, objp);
->   ^~~~~~~~~~
+The implementation of __free_one() was accidentally placed inside a
+CONFIG_NUMA #ifdef. Move it above.
 
-Eek! Thanks for catching that. I will send a fix patch.
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Link: https://lore.kernel.org/lkml/7ff248c7-d447-340c-a8e2-8c02972aca70@infradead.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+This a fix for slab-add-naive-detection-of-double-free.patch
+---
+ mm/slab.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/mm/slab.c b/mm/slab.c
+index bbff6705ab2b..5ccb151a6e8f 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -588,6 +588,16 @@ static int transfer_objects(struct array_cache *to,
+ 	return nr;
+ }
+ 
++/* &alien->lock must be held by alien callers. */
++static __always_inline void __free_one(struct array_cache *ac, void *objp)
++{
++	/* Avoid trivial double-free. */
++	if (IS_ENABLED(CONFIG_SLAB_FREELIST_HARDENED) &&
++	    WARN_ON_ONCE(ac->avail > 0 && ac->entry[ac->avail - 1] == objp))
++		return;
++	ac->entry[ac->avail++] = objp;
++}
++
+ #ifndef CONFIG_NUMA
+ 
+ #define drain_alien_cache(cachep, alien) do { } while (0)
+@@ -749,16 +759,6 @@ static void drain_alien_cache(struct kmem_cache *cachep,
+ 	}
+ }
+ 
+-/* &alien->lock must be held by alien callers. */
+-static __always_inline void __free_one(struct array_cache *ac, void *objp)
+-{
+-	/* Avoid trivial double-free. */
+-	if (IS_ENABLED(CONFIG_SLAB_FREELIST_HARDENED) &&
+-	    WARN_ON_ONCE(ac->avail > 0 && ac->entry[ac->avail - 1] == objp))
+-		return;
+-	ac->entry[ac->avail++] = objp;
+-}
+-
+ static int __cache_free_alien(struct kmem_cache *cachep, void *objp,
+ 				int node, int page_node)
+ {
+-- 
+2.25.1
+
 
 -- 
 Kees Cook
