@@ -2,191 +2,223 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E41C520ABD4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 07:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C98C20ABE8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 07:41:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728015AbgFZF1H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 01:27:07 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:46785 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725306AbgFZF1F (ORCPT
+        id S1728030AbgFZFln (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 01:41:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46600 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbgFZFlm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 01:27:05 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id B4AFD5C0126;
-        Fri, 26 Jun 2020 01:27:04 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Fri, 26 Jun 2020 01:27:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rath.org; h=from
-        :to:cc:subject:references:date:in-reply-to:message-id
-        :mime-version:content-type:content-transfer-encoding; s=fm2; bh=
-        vK+yMABEL91rfcYj+lUlRmeQixM5qaFhnXkR8mk2OFs=; b=U4FWCWRBRP4l2KCq
-        l9a4CSe6Cww9qvDu1Iow6ce4UcD82132IyQxs8JgM1dq3Gdqv988hTXzmSwv9AY/
-        rtC7hnNTxM84tQSUJdBHgNd2GkZfm3bTm+i6JpsKosUcR3dRJX1Buz48qWgBNEbx
-        oxwwNX1J2arNCPWuyxdLscQKMLvyeD11+MQmyaKYl9DItM5MxNJ6tg1YcORXJNZ2
-        jqEQ8VROeOthCIQrJc9/Diqb/umwvG2t0Mg45w0OvyhsnCfC7lCG+CWhSMqUT6tM
-        8GOCEwgsXs6BKt6r5+WxyY56gFBGvXxK9nB6vtB/ayZ87wuoPSlkePKNJ0fPRqkG
-        g576vw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=vK+yMABEL91rfcYj+lUlRmeQixM5qaFhnXkR8mk2O
-        Fs=; b=dRk8Pw09ntIUsIcZM/8MN7mSxznwu2vGph9uVzRn5UeHge80nIzLq7Gox
-        vAlCxIAC6ErCQKfESGDstdK5u128ZUk4Z8l2BOkyPYCVmLI0RBCpsMsIwSYLUuYM
-        pEtYhTho0HbvGfrglOUrPP9YdUU6m6lb4VwFWXOktZEG1+uHShbQnVhc511382sX
-        Ws9UHzHuJRKgijBD1CozpkSQMqh2zx90IryBYhATG8xjJi6RzXRz2j62BIHFk4sG
-        6uAqTpDS7bPo8B4ynzL19eoU9gdGNoQPOBaifACnMtH28/aUIGcWvsx7iTdAHP2+
-        M1zSxDmp9HUnpSL+v7uIb/KvXhXYA==
-X-ME-Sender: <xms:KIf1XhzWDzYw62uVdQhQPqAhOs4lWZrXLKkCjfTVmtdJXxofGBO-GQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeltddgleefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufhfffgjkfgfgggtgfesthhqtddttderjeenucfhrhhomheppfhikhho
-    lhgruhhsucftrghthhcuoefpihhkohhlrghushesrhgrthhhrdhorhhgqeenucggtffrrg
-    htthgvrhhnpeegfeejvdeujeeukefghfdtfeetiefhtedvgfevgfehffehgfektdfgkedv
-    gfevfeenucffohhmrghinhepohhpvghnghhrohhuphdrohhrghenucfkphepudekhedrfe
-    drleegrdduleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
-    rhhomheppfhikhholhgruhhssehrrghthhdrohhrgh
-X-ME-Proxy: <xmx:KIf1XhRu4TAucrs8HrXa5S8-o4QGRWeAingnUC6LKW0AqyuBJ_PZcw>
-    <xmx:KIf1XrUusiL_tSoLSv0vqnnLIPEQ7HCYmONF6FliRT2PTqfzILH7jQ>
-    <xmx:KIf1XjjtkyU-7_bdp66x5y4hT2Hxi39PrmDN_5cYwGkCYah3BNQXVQ>
-    <xmx:KIf1Xu5Y5X9RpJcgk3-6etOPVf_w37hBKkxBaDbzBzWJPiNOo1tsQg>
-Received: from ebox.rath.org (ebox.rath.org [185.3.94.194])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E43A83280059;
-        Fri, 26 Jun 2020 01:27:03 -0400 (EDT)
-Received: from vostro.rath.org (vostro [192.168.12.4])
-        by ebox.rath.org (Postfix) with ESMTPS id 01B7B41;
-        Fri, 26 Jun 2020 05:27:02 +0000 (UTC)
-Received: by vostro.rath.org (Postfix, from userid 1000)
-        id C09CBE0339; Fri, 26 Jun 2020 06:27:02 +0100 (BST)
-From:   Nikolaus Rath <Nikolaus@rath.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     fuse-devel <fuse-devel@lists.sourceforge.net>,
+        Fri, 26 Jun 2020 01:41:42 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6233AC08C5C1;
+        Thu, 25 Jun 2020 22:41:42 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id x11so3860374plo.7;
+        Thu, 25 Jun 2020 22:41:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=lTU5RxZlw9EIdbm5Ab2jgsTpj+Wc9/GQtGH0O0TVDuU=;
+        b=c+Fiu5kLiBtFFvq4WH0MbfxaDLLi0MjB39efcKDE7nwMBvF9QGfJ4QpEVz03Uk5iSS
+         vvHR2OCt9VLWPR9feXAkDJb9QDotRSJO7akrcRdgdq95qymWPEmI7PQQp82Q7h9GcchM
+         aRskRGSOfgwHTwmuvLFrlyiOLI5LnFZ54DGiwoKBdEpQZMa5xWVX8FxxMH6k9vc2Z/d/
+         dbnsPNQRchnOCcr4QbsmOmasABOSdazhOi+Me3Qj46Ap90kcNlR1MtZLDYVv+6yzxO4a
+         tUCbC8q5sDrroQDojHYPStRPfdQ41eboE7AvzZ+ZgpTBsTiBstePdN2kfqhhDJlZwx0m
+         D55g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lTU5RxZlw9EIdbm5Ab2jgsTpj+Wc9/GQtGH0O0TVDuU=;
+        b=RbTV46IVGAkXf17U/3gy0ujpOtxg6IczWuRnmWjf1ocOFR9Cg8LxJiwhVtcpO2p4QE
+         aRvfJqD77J88oT9Se75rcEIz0C4Es1jXrxwvmocnZ0/iB4eovSX17/ZKBeqg1hJWlE8z
+         k6OZ46rlPHuS4nOb45koKXObiSTjXOf6eRc3q5hHGw+xkkdpA8hoTopplkk87DbBmpwV
+         2GU8RLCohA4GnN10CV1+o34FHQnw+TgWdHvM+IzfwvDOUProgUfkawj7U5HIrar8yqYa
+         OpZY4mqcfbhdSRVniMwL1gL0H4U/OHmqF/U52bxTHTF68b6mIEoNJffv6AzzCOpSZpRG
+         LNFg==
+X-Gm-Message-State: AOAM531foa6Zni7jEWZRhmUZqLf4kI0ijsMXXJhgKN4Spo9eTBOTD4J5
+        S17JnAfzuBndDGWdJAyiWBU=
+X-Google-Smtp-Source: ABdhPJxRhtaYOkNCmfev9wJGmuPQcApvTJFDA4Igpsl6AQsBbNWdkwIRAPOD8X2ousk7ndZjg5uWeA==
+X-Received: by 2002:a17:902:8204:: with SMTP id x4mr1185866pln.153.1593150101589;
+        Thu, 25 Jun 2020 22:41:41 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:986f])
+        by smtp.gmail.com with ESMTPSA id lt14sm9727117pjb.52.2020.06.25.22.41.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Jun 2020 22:41:40 -0700 (PDT)
+Date:   Thu, 25 Jun 2020 22:41:37 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <dchinner@redhat.com>
-Subject: Re: [fuse-devel] 512 byte aligned write + O_DIRECT for xfstests
-References: <CAMHtQmP_TVR8QA+noWQk04Nj_8AxMXfjCj1K_k0Zf6BN-Bq9sg@mail.gmail.com>
-        <87bllhh7mg.fsf@vostro.rath.org>
-        <CAMHtQmPcADq0WSAY=uFFyRgAeuCCAo=8dOHg37304at1SRjGBg@mail.gmail.com>
-        <877dw0g0wn.fsf@vostro.rath.org>
-        <CAJfpegs3xthDEuhx_vHUtjJ7BAbVfoDu9voNPPAqJo4G3BBYZQ@mail.gmail.com>
-        <87sgensmsk.fsf@vostro.rath.org>
-        <CAOQ4uxiYG3Z9rnXB6F+fnRtoV1e3k=WP5-mgphgkKsWw+jUK=Q@mail.gmail.com>
-        <87mu4vsgd4.fsf@vostro.rath.org>
-        <CAOQ4uxgqrT=cxyjAE+FAJzfnJ1=YS91t8aidXSqxPTsEoR90Vw@mail.gmail.com>
-Mail-Copies-To: never
-Mail-Followup-To: Amir Goldstein <amir73il@gmail.com>, fuse-devel
-        <fuse-devel@lists.sourceforge.net>, linux-fsdevel
-        <linux-fsdevel@vger.kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>, Dave Chinner
-        <dchinner@redhat.com>
-Date:   Fri, 26 Jun 2020 06:27:02 +0100
-In-Reply-To: <CAOQ4uxgqrT=cxyjAE+FAJzfnJ1=YS91t8aidXSqxPTsEoR90Vw@mail.gmail.com>
-        (Amir Goldstein's message of "Mon, 22 Jun 2020 10:57:50 +0300")
-Message-ID: <874kqycs7t.fsf@vostro.rath.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [RFC][PATCH] net/bpfilter: Remove this broken and apparently
+ unmantained
+Message-ID: <20200626054137.m44jpsvlapuyslzw@ast-mbp.dhcp.thefacebook.com>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <20200626015121.qpxkdaqtsywe3zqx@ast-mbp.dhcp.thefacebook.com>
+ <eb3bec08-9de4-c708-fb8e-b6a47145eb5e@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eb3bec08-9de4-c708-fb8e-b6a47145eb5e@i-love.sakura.ne.jp>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Jun 22 2020, Amir Goldstein <amir73il@gmail.com> wrote:
->> >> > https://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_chap0=
-2.html#tag_15_09_07
->> >>
->> >> Thanks for digging this up, I did not know about this.
->> >>
->> >> That leaves FUSE in a rather uncomfortable place though, doesn't it?
->> >> What does the kernel do when userspace issues a write request that's
->> >> bigger than FUSE userspace pipe? It sounds like either the request mu=
-st
->> >> be splitted (so it becomes non-atomic), or you'd have to return a sho=
-rt
->> >> write (which IIRC is not supposed to happen for local filesystems).
->> >>
->> >
->> > What makes you say that short writes are not supposed to happen?
->>
->> I don't think it was an authoritative source, but I I've repeatedly read
->> that "you do not have to worry about short reads/writes when accessing
->> the local disk". I expect this to be a common expectation to be baked
->> into programs, no matter if valid or not.
->
-> Even if that statement would have been considered true, since when can
-> we speak of FUSE as a "local filesystem".
-> IMO it follows all the characteristics of a "network filesystem".
->
->> > Seems like the options for FUSE are:
->> > - Take shared i_rwsem lock on read like XFS and regress performance of
->> >   mixed rw workload
->> > - Do the above only for non-direct and writeback_cache to minimize the
->> >   damage potential
->> > - Return short read/write for direct IO if request is bigger that FUSE
->> > buffer size
->> > - Add a FUSE mode that implements direct IO internally as something li=
-ke
->> >   RWF_UNCACHED [2] - this is a relaxed version of "no caching" in clie=
-nt or
->> >   a stricter version of "cache write-through"  in the sense that
->> > during an ongoing
->> >   large write operation, read of those fresh written bytes only is ser=
-ved
->> >   from the client cache copy and not from the server.
->>
->> I didn't understand all of that, but it seems to me that there is a
->> fundamental problem with splitting up a single write into multiple FUSE
->> requests, because the second request may fail after the first one
->> succeeds.
->>
->
-> I think you are confused by the use of the word "atomic" in the standard.
-> It does not mean what the O_ATOMIC proposal means, that is - write everyt=
-hing
-> or write nothing at all.
-> It means if thread A successfully wrote data X over data Y, then thread B=
- can
-> either read X or Y, but not half X half Y.
-> If A got an error on write, the content that B will read is probably unde=
-fined
-> (excuse me for not reading what "the law" has to say about this).
-> If A got a short (half) write, then surely B can read either half X or ha=
-lf Y
-> from the first half range. Second half range I am not sure what to expect.
->
-> So I do not see any fundamental problem with FUSE write requests.
-> On the contrary - FUSE write requests are just like any network protocol =
-write
-> request or local disk IO request for that matter.
->
-> Unless I am missing something...
+On Fri, Jun 26, 2020 at 01:58:35PM +0900, Tetsuo Handa wrote:
+> On 2020/06/26 10:51, Alexei Starovoitov wrote:
+> > On Thu, Jun 25, 2020 at 06:36:34PM -0700, Linus Torvalds wrote:
+> >> On Thu, Jun 25, 2020 at 12:34 PM David Miller <davem@davemloft.net> wrote:
+> >>>
+> >>> It's kernel code executing in userspace.  If you don't trust the
+> >>> signed code you don't trust the signed code.
+> >>>
+> >>> Nothing is magic about a piece of code executing in userspace.
+> >>
+> >> Well, there's one real issue: the most likely thing that code is going
+> >> to do is execute llvm to generate more code.
+> 
+> Wow! Are we going to allow execution of such complicated programs?
 
-Well, you're missing the point I was trying to make, which was that FUSE
-is in an unfortunate spot if we want to avoid short writes *and* comply
-with the standard. You are asserting that is perfectly fine for FUSE to
-return short writes and I agree that in that case there is no problem
-with making writes atomic.
+No. llvm was _never_ intended to be run from the blob.
+bpfilter was envisioned as self contained binary. If it needed to do
+optimizations on generated bpf code it would have to do them internally.
 
-I do not dispute that FUSE is within its right to return short
-rights. What I am saying is that I'm sure that there are plenty of
-userspace applications that don't expect short writes or reads when
-reading *any* regular file, because people assume this is only a concern
-for fds that represents sockets or pipes. Yes, this is wrong of
-them. But it works almost all the time, so it would be unfortunate if it
-suddenly stopped working for FUSE in the situations where it previously
-worked.
+> I was hoping that fork_usermode_blob() accepts only simple program
+> like the content of "hello64" generated by
 
+pretty much. statically compiled elf that is self contained.
 
-Best,
--Nikolaus
+> For example, a usermode process started by fork_usermode_blob() which was initially
+> containing
+> 
+> ----------
+> while (read(0, &uid, sizeof(uid)) == sizeof(uid)) {
+>     if (uid == 0)
+>         write(1, "OK\n", 3);
+>     else
+>         write(1, "NG\n", 3);
+> }
+> ----------
+> 
+> can be somehow tampered like
+> 
+> ----------
+> while (read(0, &uid, sizeof(uid)) == sizeof(uid)) {
+>     if (uid != 0)
+>         write(1, "OK\n", 3);
+>     else
+>         write(1, "NG\n", 3);
+> }
+> ----------
+> 
+> due to interference from the rest of the system, how can we say "we trust kernel
+> code executing in userspace" ?
 
---=20
-GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+I answered this already in the previous email.
+Use security_ptrace_access_check() LSM hook to make sure that no other process
+can tamper with blob's memory when it's running as user process.
+In the future it would be trivial to add a new ptrace flag to
+make sure that blob's memory is not ptraceable from the start.
 
-             =C2=BBTime flies like an arrow, fruit flies like a Banana.=C2=
-=AB
+> My question is: how is the byte array (which was copied from kernel space) kept secure/intact
+> under "root can poke into kernel or any process memory." environment? It is obvious that
+> we can't say "we trust kernel code executing in userspace" without some mechanism.
+
+Already answered.
+
+> Currently fork_usermode_blob() is not providing security context for the byte array to be
+> executed. We could modify fork_usermode_blob() to provide security context for LSMs, but
+> I'll be more happy if we can implement that mechanism without counting on in-tree LSMs, for
+> SELinux is too complicated to support.
+
+I'm pretty sure it was answered in the upthread by selinux folks.
+Quick recap: we can add security labels, sha, strings, you_name_it to the blob that
+lsm hooks can track.
+We can also add another LSM hook to fork_usermode_blob(), so if tomoyo is so worried
+about blobs it would be able to reject all of them without too much work.
+
+> 
+> > I think that's Tetsuo's point about lack of LSM hooks is kernel_sock_shutdown().
+> > Obviously, kernel_sock_shutdown() can be called by kernel only.
+> 
+> I can't catch what you mean. The kernel code executing in userspace uses syscall
+> interface (e.g. SYSCALL_DEFINE2(shutdown, int, fd, int, how) path), doesn't it?
+
+yes.
+
+> > I suspect he's imaging a hypothetical situation where kernel bits of kernel module
+> > interact with userblob bits of kernel module.
+> > Then another root process tampers with memory of userblob.
+> 
+> Yes, how to protect the memory of userblob is a concern. The memory of userblob can
+> interfere (or can be interfered by) the rest of the system is a problem.
+
+answered.
+
+> > I think this is trivially enforceable without creating new features.
+> > Existing security_ptrace_access_check() LSM hook can prevent tampering with
+> > memory of userblob.
+> 
+> There is security_ptrace_access_check() LSM hook, but no zero-configuration
+> method is available.
+
+huh?
+tomoyo is not using that hook, but selinux and many other LSMs do.
+please learn from others.
+
+> > security label can carry that execution context.
+> 
+> If files get a chance to be associated with appropriate pathname and
+> security label.
+
+I can easily add a fake pathname to the blob, but it won't help tomoyo.
+That's what I was saying all along.
+pathname based security provides false sense of security.
+
+I'm pretty sure this old blog has been read by many folks who
+are following this thread, but it's worth reminding again:
+https://securityblog.org/2006/04/19/security-anti-pattern-path-based-access-control/
+I cannot agree more with Joshua.
+Here is a quote:
+"The most obvious problem with this is that not all objects are files and thus do not have paths."
+
+> >> My personally strongest argument for remoiving this kernel code is
+> >> that it's been there for a couple of years now, and it has never
+> >> actually done anything useful, and there's no actual sign that it ever
+> >> will, or that there is a solid plan in place for it.
+> > 
+> > you probably missed the detailed plan:
+> > https://lore.kernel.org/bpf/20200609235631.ukpm3xngbehfqthz@ast-mbp.dhcp.thefacebook.com/
+> > 
+> > The project #3 is the above is the one we're working on right now.
+> > It should be ready to post in a week.
+> 
+> I got a question on project #3. Given that "cat /sys/fs/bpf/my_ipv6_route"
+> produces the same human output as "cat /proc/net/ipv6_route", how security
+> checks which are done for "cat /proc/net/ipv6_route" can be enforced for
+> "cat /sys/fs/bpf/my_ipv6_route" ? Unless same security checks (e.g. permission
+> to read /proc/net/ipv6_route ) is enforced, such bpf usage sounds like a method
+> for bypassing existing security mechanisms.
+
+Standard file permissions. Nothing to do with bpf.
