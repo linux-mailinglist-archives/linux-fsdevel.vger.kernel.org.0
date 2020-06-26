@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE90620ADA7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 09:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 308C220ADAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jun 2020 09:59:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbgFZH7Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 03:59:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39620 "EHLO
+        id S1729040AbgFZH7i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 03:59:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728975AbgFZH7J (ORCPT
+        with ESMTP id S1728945AbgFZH7E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 03:59:09 -0400
+        Fri, 26 Jun 2020 03:59:04 -0400
 Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB4E6C08C5C1;
-        Fri, 26 Jun 2020 00:59:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39920C08C5DD;
+        Fri, 26 Jun 2020 00:59:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=MFh6zAftA8I60tTbMs8bqx+fHkWDGkKJuddiCkGy7lg=; b=H6+5aQ1c5Y52su43a5GMBeR06I
-        voEnTUpMhmBe6aVtpwddKW6svcL4Enilh2uAo015t8jHc3SJ+RaLg1HWEdQ1tNEcL1qtz2sZ+CaWK
-        7jTyUwHyuE42tKygQOU7lkisHGEQmuWgce+u6M6AGv/Cm51OH/jBNnS6pS9eujvNNfodY2iIH42IM
-        ceX3KS4JFuQW+eF4M0hOaIRdyGQ/mliRAsrIV1s4V9lRat1QSmQN79g45WgswhvNZN/MYsknt/9fc
-        qfQugwSGuGyNgRIZ4S7l8mRRb4FtzITAQ6RlBt5DNX1IAPCLviH/G+Ok0Im86bbva7SiojWDhG7EG
-        oBfaThxg==;
+        bh=TyROtKbkl/S72kKI7NWbc07Mk35NEfDXXPiptw56KLM=; b=Dzj8ZOUaqaAXhqkLKGWlY0NjCF
+        kQq+ASDC8tmPb+CZSAMDq0cTXACs2X88pQCHnJ9SMGKj/1ZVMv/3Kpeyb9dBKYcAZPJVOpbDgClgp
+        OtxGz6+CL/sVv9wFlrmTsqRpzeOd3cW+BNlqA1AifUpTy+qlXrqj7Y/+zPCQrJELTXAe+4Mj07aFO
+        hIABMonISYKdX6afWVB7qL0DkBf1DlEWSuYJZNcrTGqB3iy0/RCvk0+H9Tr6uyS1iOm25Chh+8seq
+        AYOm+mur/djO3gawBbPmugm57dmK4yTYsjoj26asr4AvE97GGbZeAVaGbO5qcannlKaUugUHKR9CS
+        ZkGS7BEg==;
 Received: from [2001:4bb8:184:76e3:2b32:1123:bea8:6121] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jojG4-00071c-Jg; Fri, 26 Jun 2020 07:58:48 +0000
+        id 1jojG5-00071o-Op; Fri, 26 Jun 2020 07:58:49 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>
@@ -36,9 +36,9 @@ Cc:     Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         Iurii Zaikin <yzaikin@google.com>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 8/9] fs: don't allow kernel reads and writes without iter ops
-Date:   Fri, 26 Jun 2020 09:58:35 +0200
-Message-Id: <20200626075836.1998185-9-hch@lst.de>
+Subject: [PATCH 9/9] fs: don't allow splice read/write without explicit ops
+Date:   Fri, 26 Jun 2020 09:58:36 +0200
+Message-Id: <20200626075836.1998185-10-hch@lst.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200626075836.1998185-1-hch@lst.de>
 References: <20200626075836.1998185-1-hch@lst.de>
@@ -60,16 +60,117 @@ affected driver to use the iter ops.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/read_write.c | 33 ++++++++++++++++++---------------
- 1 file changed, 18 insertions(+), 15 deletions(-)
+ fs/splice.c | 117 +++++++++++-----------------------------------------
+ 1 file changed, 24 insertions(+), 93 deletions(-)
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index e765c95ff3440d..ae463bcadb6906 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -420,6 +420,18 @@ ssize_t iter_read(struct file *filp, char __user *buf, size_t len, loff_t *ppos,
- 	return ret;
- }
+diff --git a/fs/splice.c b/fs/splice.c
+index d1efc53875bd93..f93bbfc131d5ec 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -342,66 +342,6 @@ const struct pipe_buf_operations nosteal_pipe_buf_ops = {
+ };
+ EXPORT_SYMBOL(nosteal_pipe_buf_ops);
+ 
+-static ssize_t default_file_splice_read(struct file *in, loff_t *ppos,
+-				 struct pipe_inode_info *pipe, size_t len,
+-				 unsigned int flags)
+-{
+-	struct iov_iter to;
+-	struct page **pages;
+-	unsigned int nr_pages;
+-	unsigned int mask;
+-	size_t offset, base, copied = 0;
+-	loff_t pos;
+-	ssize_t res;
+-	int i;
+-
+-	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
+-		return -EAGAIN;
+-
+-	res = rw_verify_area(READ, in, ppos, len);
+-	if (res < 0)
+-		return res;
+-
+-	/*
+-	 * Try to keep page boundaries matching to source pagecache ones -
+-	 * it probably won't be much help, but...
+-	 */
+-	offset = *ppos & ~PAGE_MASK;
+-
+-	iov_iter_pipe(&to, READ, pipe, len + offset);
+-
+-	res = iov_iter_get_pages_alloc(&to, &pages, len + offset, &base);
+-	if (res <= 0)
+-		return -ENOMEM;
+-
+-	mask = pipe->ring_size - 1;
+-	pipe->bufs[to.head & mask].offset = offset;
+-	pipe->bufs[to.head & mask].len -= offset;
+-
+-	nr_pages = DIV_ROUND_UP(res + base, PAGE_SIZE);
+-
+-	pos = *ppos;
+-	for (i = 0; i < nr_pages; i++) {
+-		size_t this_len = min_t(size_t, len, PAGE_SIZE - offset);
+-
+-		res = __kernel_read(in, page_address(pages[i]) + offset,
+-				this_len, &pos);
+-		if (res < 0)
+-			goto out;
+-		len -= this_len;
+-		offset = 0;
+-	}
+-	copied = pos - *ppos;
+-	*ppos = pos;
+-
+-out:
+-	for (i = 0; i < nr_pages; i++)
+-		put_page(pages[i]);
+-	kvfree(pages);
+-	iov_iter_advance(&to, copied);	/* truncates and discards */
+-	return res;
+-}
+-
+ /*
+  * Send 'sd->len' bytes to socket from 'sd->file' at position 'sd->pos'
+  * using sendpage(). Return the number of bytes sent.
+@@ -765,33 +705,6 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 
+ EXPORT_SYMBOL(iter_file_splice_write);
+ 
+-static int write_pipe_buf(struct pipe_inode_info *pipe, struct pipe_buffer *buf,
+-			  struct splice_desc *sd)
+-{
+-	int ret;
+-	void *data;
+-	loff_t tmp = sd->pos;
+-
+-	data = kmap(buf->page);
+-	ret = __kernel_write(sd->u.file, data + buf->offset, sd->len, &tmp);
+-	kunmap(buf->page);
+-
+-	return ret;
+-}
+-
+-static ssize_t default_file_splice_write(struct pipe_inode_info *pipe,
+-					 struct file *out, loff_t *ppos,
+-					 size_t len, unsigned int flags)
+-{
+-	ssize_t ret;
+-
+-	ret = splice_from_pipe(pipe, out, ppos, len, flags, write_pipe_buf);
+-	if (ret > 0)
+-		*ppos += ret;
+-
+-	return ret;
+-}
+-
+ /**
+  * generic_splice_sendpage - splice data from a pipe to a socket
+  * @pipe:	pipe to splice from
+@@ -813,15 +726,30 @@ ssize_t generic_splice_sendpage(struct pipe_inode_info *pipe, struct file *out,
+ 
+ EXPORT_SYMBOL(generic_splice_sendpage);
  
 +static void warn_unsupported(struct file *file, const char *op)
 +{
@@ -79,62 +180,44 @@ index e765c95ff3440d..ae463bcadb6906 100644
 +	if (IS_ERR(path))
 +		path = "(unknown)";
 +	pr_warn_ratelimited(
-+		"kernel %s not supported for file %s (pid: %d comm: %.20s)\n",
++		"splice %s not supported for file %s (pid: %d comm: %.20s)\n",
 +		op, path, current->pid, current->comm);
 +}
 +
- ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
+ /*
+  * Attempt to initiate a splice from pipe to file.
+  */
+ static long do_splice_from(struct pipe_inode_info *pipe, struct file *out,
+ 			   loff_t *ppos, size_t len, unsigned int flags)
  {
- 	ssize_t ret;
-@@ -431,13 +443,7 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
+-	if (out->f_op->splice_write)
+-		return out->f_op->splice_write(pipe, out, ppos, len, flags);
+-	return default_file_splice_write(pipe, out, ppos, len, flags);
++	if (!out->f_op->splice_write) {
++		warn_unsupported(out, "write");
++		return -EINVAL;
++	}
++
++	return out->f_op->splice_write(pipe, out, ppos, len, flags);
+ }
  
- 	if (count > MAX_RW_COUNT)
- 		count =  MAX_RW_COUNT;
--	if (file->f_op->read) {
--		mm_segment_t old_fs = get_fs();
--
--		set_fs(KERNEL_DS);
--		ret = file->f_op->read(file, (void __user *)buf, count, pos);
--		set_fs(old_fs);
--	} else if (file->f_op->read_iter) {
-+	if (file->f_op->read_iter) {
- 		struct kvec iov = { .iov_base = buf, .iov_len = count };
- 		struct kiocb kiocb;
- 		struct iov_iter iter;
-@@ -448,6 +454,8 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
- 		ret = file->f_op->read_iter(&kiocb, &iter);
- 		*pos = kiocb.ki_pos;
- 	} else {
-+		if (file->f_op->read)
-+			warn_unsupported(file, "read");
- 		ret = -EINVAL;
- 	}
- 	if (ret > 0) {
-@@ -532,14 +540,7 @@ ssize_t __kernel_write(struct file *file, const void *buf, size_t count,
+ /*
+@@ -843,9 +771,12 @@ static long do_splice_to(struct file *in, loff_t *ppos,
+ 	if (unlikely(len > MAX_RW_COUNT))
+ 		len = MAX_RW_COUNT;
  
- 	if (count > MAX_RW_COUNT)
- 		count =  MAX_RW_COUNT;
--	if (file->f_op->write) {
--		mm_segment_t old_fs = get_fs();
--
--		set_fs(KERNEL_DS);
--		ret = file->f_op->write(file, (__force const char __user *)buf,
--				count, pos);
--		set_fs(old_fs);
--	} else if (file->f_op->write_iter) {
-+	if (file->f_op->write_iter) {
- 		struct kvec iov = { .iov_base = (void *)buf, .iov_len = count };
- 		struct kiocb kiocb;
- 		struct iov_iter iter;
-@@ -551,6 +552,8 @@ ssize_t __kernel_write(struct file *file, const void *buf, size_t count,
- 		if (ret > 0)
- 			*pos = kiocb.ki_pos;
- 	} else {
-+		if (file->f_op->write)
-+			warn_unsupported(file, "write");
- 		ret = -EINVAL;
- 	}
- 	if (ret > 0) {
+-	if (in->f_op->splice_read)
+-		return in->f_op->splice_read(in, ppos, pipe, len, flags);
+-	return default_file_splice_read(in, ppos, pipe, len, flags);
++	if (!in->f_op->splice_read) {
++		warn_unsupported(in, "read");
++		return -EINVAL;
++	}
++
++	return in->f_op->splice_read(in, ppos, pipe, len, flags);
+ }
+ 
+ /**
 -- 
 2.26.2
 
