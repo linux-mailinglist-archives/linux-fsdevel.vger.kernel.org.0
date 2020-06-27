@@ -2,94 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DFF120C4AE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jun 2020 00:15:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB75720C4CB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jun 2020 01:10:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbgF0WPU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jun 2020 18:15:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52676 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbgF0WPU (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jun 2020 18:15:20 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6C48C061794
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jun 2020 15:15:19 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id 9so13949785ljv.5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jun 2020 15:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4JEHR7Il2IGp8f5V95s+cFH08ZEfipxHhJKa+vtSQXc=;
-        b=L5az16Wx0Vb9F9owDOvTovtU9UfiHOeqrhQTmmBE4a4nothf30qTjIzyM7cu7SLlCV
-         YKOvifljh4XN6M2evYVQVyyN8JAU84f2cZB3eUoAUJ7NLDuZx7HIHXCdIn+SygeHmNx+
-         97SUthWIKvp2epNCe7/LpggsYcP6nm+vsFS9A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4JEHR7Il2IGp8f5V95s+cFH08ZEfipxHhJKa+vtSQXc=;
-        b=QHHfFR7kAr0jSHZTjEaOIOZJ902p2pBn4qOaXRZ/tLuWEp2dZVRvmEloHeHlYSEpgO
-         HO7TdJv1W0cvV1X/rYTs0KgOeE/WT8YF3xgf/U9bKlbMRSMAAj4wn0G7zaY98NoukGC0
-         5Uiblqbvh1gq/SXBdV50elT9jmKn+uim3/Bn5uvYv9BH5hVtHRlYtpZ9eBSvrquAI17K
-         b2/JsD6sTXLb44z7OBr5r9CBOF+lJeUzeBQsN7gwmaaHTtlxAbL9GYAQ7zP+77I4p5wM
-         NiYFLpJQJIAapQ0Wlbq5rVedgCwumiAUhb0WiNIo0yRiAW5J/M5hFEHqD6fKv0tevP8Z
-         RMUQ==
-X-Gm-Message-State: AOAM532d2UMmwUzVpCWAGvxMqL2+Kk3//yaclE1Ay9YHHem2PaQe5wav
-        9Xqb4Imm8R0Jnfzvnvb55mlzT9u58GA=
-X-Google-Smtp-Source: ABdhPJwgnKwEULxtDgdacCj2q3t/mhJeDFmZpE0kaCc+IbB10qLtbFRvkzyMDUiodHzY9v0o+TnlvQ==
-X-Received: by 2002:a2e:7116:: with SMTP id m22mr2549813ljc.271.1593296118059;
-        Sat, 27 Jun 2020 15:15:18 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id r13sm7697624lfp.80.2020.06.27.15.15.16
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Jun 2020 15:15:17 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id s9so13904545ljm.11
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jun 2020 15:15:16 -0700 (PDT)
-X-Received: by 2002:a2e:9c92:: with SMTP id x18mr155744lji.70.1593296116489;
- Sat, 27 Jun 2020 15:15:16 -0700 (PDT)
+        id S1726678AbgF0XKQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Jun 2020 19:10:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726057AbgF0XKQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 27 Jun 2020 19:10:16 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3917820707;
+        Sat, 27 Jun 2020 23:10:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593299415;
+        bh=/ft0gEdXgdrpBXeR5hwd2mEJMfyWjzRx7hEcjdZ+TNk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WoDOyld9MuOVGH4iJuZ+iBHgjZH9PZxkzlfM86zFy/I0J99jZTg6FG73e9bRd11gT
+         aPDyr/lstgl6eteNtDc09aOcMozcGW1T0F8qhIbOVL7ACUiUKzJehNz0thD1rA4uKw
+         bVaTg0Wa/hclcMQ9rr5hV9X5IAyHZsYK9VjeO/ds=
+Date:   Sat, 27 Jun 2020 16:10:13 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+95bccd805a4aa06a4b0d@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-mm@kvack.org
+Subject: Re: linux-next boot error: WARNING in kmem_cache_free
+Message-ID: <20200627231013.GM7065@sol.localdomain>
+References: <CACT4Y+ZcbA=9L2XPC_rRG-FdwOoH6XteOoGHg7jfvd+1CH2M+w@mail.gmail.com>
+ <121C0D57-C9E6-406B-A280-A67E773EA9D0@lca.pw>
 MIME-Version: 1.0
-References: <20200626075836.1998185-1-hch@lst.de>
-In-Reply-To: <20200626075836.1998185-1-hch@lst.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 27 Jun 2020 15:15:00 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiFVdi_AGKvUH5FWfD4Pe-dFa+iYPzS174AHKx_ZsjW5w@mail.gmail.com>
-Message-ID: <CAHk-=wiFVdi_AGKvUH5FWfD4Pe-dFa+iYPzS174AHKx_ZsjW5w@mail.gmail.com>
-Subject: Re: [RFC] stop using ->read and ->write for kernel access v2
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <121C0D57-C9E6-406B-A280-A67E773EA9D0@lca.pw>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 26, 2020 at 12:58 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> as part of removing set_fs entirely (for which I have a working
-> prototype), we need to stop calling ->read and ->write with kernel
-> pointers under set_fs.
->
-> My previous "clean up kernel_{read,write} & friends v5" series, on which
-> this one builds, consolidate those calls into the __=E1=B8=B5ernel_{read,=
-write}
-> helpers.  This series goes further and removes the option to call
-> ->read and ->write with kernel pointers entirely.
+[+Cc linux-mm; +Bcc linux-fsdevel]
 
-Ack. I scanned through these and didn't find anything odd.
+On Mon, Jun 22, 2020 at 03:28:09AM -0400, Qian Cai wrote:
+> 
+> 
+> > On Jun 22, 2020, at 2:42 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> > 
+> > There is a reason, it's still important for us.
+> > But also it's not our strategy to deal with bugs by not testing
+> > configurations and closing eyes on bugs, right? If it's an official
+> > config in the kernel, it needs to be tested. If SLAB is in the state
+> > that we don't care about any bugs in it, then we need to drop it. It
+> > will automatically remove it from all testing systems out there. Or at
+> > least make it "depends on BROKEN" to slowly phase it out during
+> > several releases.
+> 
+> Do you mind sharing what’s your use cases with CONFIG_SLAB? The only thing prevents it from being purged early is that it might perform better with a certain type of networking workloads where syzbot should have nothing to gain from it.
+> 
+> I am more of thinking about the testing coverage that we could use for syzbot to test SLUB instead of SLAB. Also, I have no objection for syzbot to test SLAB, but then from my experience, you are probably on your own to debug further with those testing failures. Until you are able to figure out the buggy patch or patchset introduced the regression, I am afraid not many people would be able to spend much time on SLAB. The developers are pretty much already half-hearted on it by only fixing SLAB here and there without runtime testing it.
+> 
 
-Which either means that it's all good, or that my scanning was too
-limited. But this does feel like the right way to go about things.
+This bug also got reported 2 days later by the kernel test robot
+(https://lore.kernel.org/lkml/20200623090213.GW5535@shao2-debian/).
+Then it was fixed by commit 437edcaafbe3, so telling syzbot:
 
-Al?
+#syz fix: mm, slab/slub: improve error reporting and overhead of cache_from_obj()-fix
 
-                 Linus
+If CONFIG_SLAB is no longer useful and supported then it needs to be removed
+from the kernel.  Otherwise, it needs to be tested just like all other options.
+
+- Eric
