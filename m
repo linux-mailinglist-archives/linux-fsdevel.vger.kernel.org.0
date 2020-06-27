@@ -2,94 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB40820C0D4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 12:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDA4520C10F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 13:40:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726500AbgF0Ktq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jun 2020 06:49:46 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:25702 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725991AbgF0Ktq (ORCPT
+        id S1726439AbgF0Ljk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Jun 2020 07:39:40 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57236 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725885AbgF0Ljj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jun 2020 06:49:46 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-123-vJ8joaIvN8aZFMN3JjXhHA-1; Sat, 27 Jun 2020 11:49:42 +0100
-X-MC-Unique: vJ8joaIvN8aZFMN3JjXhHA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Sat, 27 Jun 2020 11:49:41 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Sat, 27 Jun 2020 11:49:41 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>
-CC:     Al Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
+        Sat, 27 Jun 2020 07:39:39 -0400
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05RBcbc8066660;
+        Sat, 27 Jun 2020 20:38:37 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp);
+ Sat, 27 Jun 2020 20:38:37 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05RBcZq7066652
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 27 Jun 2020 20:38:36 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH 03/11] fs: add new read_uptr and write_uptr file
- operations
-Thread-Topic: [PATCH 03/11] fs: add new read_uptr and write_uptr file
- operations
-Thread-Index: AQHWSlL8Fz5PlOyONku9ShNOCTqEYajsST7A
-Date:   Sat, 27 Jun 2020 10:49:41 +0000
-Message-ID: <f50b9afa5a2742babe0293d9910e6bf4@AcuMS.aculab.com>
-References: <20200624162901.1814136-1-hch@lst.de>
- <20200624162901.1814136-4-hch@lst.de>
- <CAHk-=wit9enePELG=-HnLsr0nY5bucFNjqAqWoFTuYDGR1P4KA@mail.gmail.com>
- <20200624175548.GA25939@lst.de>
- <CAHk-=wi_51SPWQFhURtMBGh9xgdo74j1gMpuhdkddA2rDMrt1Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wi_51SPWQFhURtMBGh9xgdo74j1gMpuhdkddA2rDMrt1Q@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
+Date:   Sat, 27 Jun 2020 20:38:33 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+In-Reply-To: <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjQgSnVuZSAyMDIwIDE5OjEyDQo+IE9uIFdl
-ZCwgSnVuIDI0LCAyMDIwIGF0IDEwOjU1IEFNIENocmlzdG9waCBIZWxsd2lnIDxoY2hAbHN0LmRl
-PiB3cm90ZToNCj4gPg0KPiA+IEkgZG9uJ3QgY2FyZSBhdCBhbGwuICBCYXNlZCBvbiBvdXIgcHJl
-dmlvdXMgY2hhdCBJIGFzc3VtZWQgeW91DQo+ID4gd2FudGVkIHNvbWV0aGluZyBsaWtlIHRoaXMu
-ICBXZSBtaWdodCBzdGlsbCBuZWVkIHRoZSB1cHRyX3QgZm9yDQo+ID4gc2V0c29ja29wdCwgdGhv
-dWdoLg0KPiANCj4gTm8uDQo+IA0KPiBXaGF0IEkgbWVhbiB3YXMgKm5vdCogc29tZXRoaW5nIGxp
-a2UgdXB0cl90Lg0KPiANCj4gSnVzdCBrZWVwIHRoZSBleGlzdGluZyAic2V0X2ZzKCkiLiBJdCdz
-IG5vdCBoYXJtZnVsIGlmIGl0J3Mgb25seSB1c2VkDQo+IG9jY2FzaW9uYWxseS4gV2Ugc2hvdWxk
-IHJlbmFtZSBpdCBvbmNlIGl0J3MgcmFyZSBlbm91Z2gsIHRob3VnaC4NCg0KQW0gSSByaWdodCBp
-biB0aGlua2luZyB0aGF0IGl0IGp1c3Qgc2V0cyBhIGZsYWcgaW4gJ2N1cnJlbnQnID8NCkFsdGhv
-dWdoIEkgZG9uJ3QgcmVtZW1iZXIgYWNjZXNzX29rKCkgZG9pbmcgYSBzdWl0YWJsZSBjaGVjaw0K
-KHdvdWxkIG5lZWQgdG8gYmUgKGFkZHJlc3MgLSBiYXNlKSA8IGxpbWl0KS4NCg0KPiBUaGVuLCBt
-YWtlIHRoZSBmb2xsb3dpbmcgY2hhbmdlczoNCj4gDQo+ICAtIGFsbCB0aGUgbm9ybWFsIHVzZXIg
-YWNjZXNzIGZ1bmN0aW9ucyBzdG9wIGNhcmluZy4gVGhleSB1c2UNCj4gVEFTS19TSVpFX01BWCBh
-bmQgYXJlIGRvbmUgd2l0aCBpdC4gVGhleSBiYXNpY2FsbHkgc3RvcCByZWFjdGluZyB0bw0KPiBz
-ZXRfZnMoKS4NCj4gDQo+ICAtIHRoZW4sIHdlIGNhbiBoYXZlIGEgZmV3ICp2ZXJ5KiBzcGVjaWZp
-YyBjYXNlcyAobGlrZSBzZXRzb2Nrb3B0LA0KPiBtYXliZSBzb21lIHJhbmRvbSByZWFkL3dyaXRl
-KSB0aGF0IHdlIHRlYWNoIHRvIHVzZSB0aGUgbmV3IHNldF9mcygpDQo+IHRoaW5nLg0KDQpDZXJ0
-YWlubHkgdGhlcmUgaXMgYSAnQlBGJyBob29rIGluIHRoZSBzZXRzb2Nrb3B0KCkgc3lzY2FsbCBo
-YW5kbGVyDQp0aGF0IGNhbiBzdWJzdGl0dXRlIGEga2VybmVsIGJ1ZmZlciBmb3IgYW55IHNldHNv
-Y2tvcHQoKSByZXF1ZXN0Lg0KDQpJZiB0aGF0IGlzIG5lZWRlZCAoSSBwcmVzdW1lIGl0IHdhcyBh
-ZGRlZCBmb3IgYSBwdXJwb3NlKSB0aGVuIGFsbA0KdGhlIHNvY2tldCBvcHRpb24gY29kZSBuZWVk
-cyB0byBiZSBhYmxlIHRvIGhhbmRsZSBrZXJuZWwgYnVmZmVycy4NCihBY3R1YWxseSBnaXZlbiB3
-aGF0IHNvbWUgZ2V0c29ja29wdCgpIGRvLCBpZiB0aGVyZSB3YXMgYQ0KcmVxdWlyZW1lbnQgdG8g
-J2FkanVzdCcgc2V0c29ja29wdCgpIHRoZW4gdGhlcmUgc2hvdWxkIGJlIGEgaG9vaw0KaW4gdGhl
-IGdldHNvY2tvcHQoKSBjb2RlIGFzIHdlbGwuKQ0KDQpJZiB5b3UgYXJlIGdvaW5nIHRvIGdvIHRo
-cm91Z2ggYWxsIHRoZSBzb2NrZXQgb3B0aW9uIGNvZGUgdG8gY2hhbmdlDQp0aGUgbmFtZSBvZiBh
-bGwgdGhlIGJ1ZmZlciBhY2Nlc3MgZnVuY3Rpb25zIHRoZW4gaXQgaXMgcHJvYmFibHkNCmFsbW9z
-dCBhcyBlYXN5IHRvIG1vdmUgdGhlIHVzZXJjb3BpZXMgb3V0IGludG8gdGhlIHdyYXBwZXJzLg0K
-DQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQs
-IE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86
-IDEzOTczODYgKFdhbGVzKQ0K
+On 2020/06/26 21:51, Eric W. Biederman wrote:
+> Please let me know if you see any bugs.  Once the code review is
+> finished I plan to take this through my tree.
 
+This series needs some sanity checks.
+
+diff --git a/kernel/umd.c b/kernel/umd.c
+index de2f542191e5..f3e0227a3012 100644
+--- a/kernel/umd.c
++++ b/kernel/umd.c
+@@ -47,15 +47,18 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
+ 
+ /**
+  * umd_load_blob - Remember a blob of bytes for fork_usermode_driver
+- * @info: information about usermode driver
+- * @data: a blob of bytes that can be executed as a file
+- * @len:  The lentgh of the blob
++ * @info: information about usermode driver (shouldn't be NULL)
++ * @data: a blob of bytes that can be executed as a file (shouldn't be NULL)
++ * @len:  The lentgh of the blob (shouldn't be 0)
+  *
+  */
+ int umd_load_blob(struct umd_info *info, const void *data, size_t len)
+ {
+ 	struct vfsmount *mnt;
+ 
++	if (!info || !info->driver_name || !data || !len)
++		return -EINVAL;
++
+ 	if (WARN_ON_ONCE(info->wd.dentry || info->wd.mnt))
+ 		return -EBUSY;
+ 
+@@ -158,6 +161,9 @@ int fork_usermode_driver(struct umd_info *info)
+ 	char **argv = NULL;
+ 	int err;
+ 
++	if (!info || !info->driver_name)
++		return -EINVAL;
++
+ 	if (WARN_ON_ONCE(info->tgid))
+ 		return -EBUSY;
+ 
+But loading
+
+----- test.c -----
+#include <linux/slab.h>
+#include <linux/module.h>
+#include <linux/umd.h>
+
+static int __init test_init(void)
+{
+	const char blob[464] = {
+		"\x7f\x45\x4c\x46\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\x02\x00\x3e\x00\x01\x00\x00\x00\x80\x00\x40\x00\x00\x00\x00\x00"
+		"\x40\x00\x00\x00\x00\x00\x00\x00\xd0\x00\x00\x00\x00\x00\x00\x00"
+		"\x00\x00\x00\x00\x40\x00\x38\x00\x01\x00\x40\x00\x04\x00\x03\x00"
+		"\x01\x00\x00\x00\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x40\x00\x00\x00\x00\x00"
+		"\xb4\x00\x00\x00\x00\x00\x00\x00\xb4\x00\x00\x00\x00\x00\x00\x00"
+		"\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\xb8\x01\x00\x00\x00\xbf\x01\x00\x00\x00\x48\xbe\xa8\x00\x40\x00"
+		"\x00\x00\x00\x00\xba\x0c\x00\x00\x00\x0f\x05\xb8\xe7\x00\x00\x00"
+		"\xbf\x00\x00\x00\x00\x0f\x05\x00\x48\x65\x6c\x6c\x6f\x20\x77\x6f"
+		"\x72\x6c\x64\x0a\x00\x2e\x73\x68\x73\x74\x72\x74\x61\x62\x00\x2e"
+		"\x74\x65\x78\x74\x00\x2e\x72\x6f\x64\x61\x74\x61\x00\x00\x00\x00"
+		"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\x0b\x00\x00\x00\x01\x00\x00\x00\x06\x00\x00\x00\x00\x00\x00\x00"
+		"\x80\x00\x40\x00\x00\x00\x00\x00\x80\x00\x00\x00\x00\x00\x00\x00"
+		"\x27\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\x11\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00"
+		"\xa8\x00\x40\x00\x00\x00\x00\x00\xa8\x00\x00\x00\x00\x00\x00\x00"
+		"\x0c\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\x01\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\x00\x00\x00\x00\x00\x00\x00\x00\xb4\x00\x00\x00\x00\x00\x00\x00"
+		"\x19\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		"\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+	};
+	struct umd_info *info = kzalloc(sizeof(*info), GFP_KERNEL);
+	
+	if (!info)
+		return -ENOMEM;
+	info->driver_name = kstrdup("my test driver", GFP_KERNEL);
+	printk("umd_load_blob()=%d\n", umd_load_blob(info, blob, 464));
+	//printk("fork_usermode_driver()=%d\n", fork_usermode_driver(info));
+	return -EINVAL;
+}
+
+module_init(test_init);
+MODULE_LICENSE("GPL");
+----- test.c -----
+
+causes
+
+   BUG_ON(!(task->flags & PF_KTHREAD));
+
+in __fput_sync(). Do we want to forbid umd_load_blob() from process context (e.g.
+upon module initialization time) ?
+
+Also, since umd_load_blob() uses info->driver_name as filename, info->driver_name has to
+satisfy strchr(info->driver_name, '/') == NULL && strlen(info->driver_name) <= NAME_MAX
+in order to avoid -ENOENT failure. On the other hand, since fork_usermode_driver() uses
+info->driver_name as argv[], info->driver_name has to use ' ' within this constraint.
+This might be inconvenient...
