@@ -2,118 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A0C2620BD92
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 03:27:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCBD920BDFB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 05:41:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbgF0B1o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 26 Jun 2020 21:27:44 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:53379 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726101AbgF0B1o (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 26 Jun 2020 21:27:44 -0400
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05R1QYhN024426;
-        Sat, 27 Jun 2020 10:26:35 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav403.sakura.ne.jp);
- Sat, 27 Jun 2020 10:26:34 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav403.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05R1QYj1024423
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 27 Jun 2020 10:26:34 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 05/14] umh: Separate the user mode driver and the user
- mode helper support
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
- <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
- <87tuyyf0ln.fsf_-_@x220.int.ebiederm.org>
- <5ce4d340-096a-f468-6719-4c34a951511e@i-love.sakura.ne.jp>
- <87d05lbwt4.fsf@x220.int.ebiederm.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <32604829-35f7-5263-aff1-27808500c1d1@i-love.sakura.ne.jp>
-Date:   Sat, 27 Jun 2020 10:26:33 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
-MIME-Version: 1.0
-In-Reply-To: <87d05lbwt4.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1725921AbgF0Dlv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 26 Jun 2020 23:41:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46520 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725828AbgF0Dlv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 26 Jun 2020 23:41:51 -0400
+Received: from X1 (nat-ab2241.sltdut.senawave.net [162.218.216.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 679D520857;
+        Sat, 27 Jun 2020 03:41:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593229310;
+        bh=Ali5IZNLTIW8llvxQDSSeqrZ636VTDReJzcRNiixCTI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aYgiC1Cmppmj+lWV8ausXHZpLkIb+IgodES53DwyIvVVnwsgutwPqyuqj1OU0f6Av
+         Ft7CT76o3C9myEmF/idXHzZk0aN9LpIc+UD86qfFy32f5YEnrjx30YBIoE8Iw3nEb0
+         /FEvX8jGyVucATfpIHWtMsBVvO9AhBEurlojSejM=
+Date:   Fri, 26 Jun 2020 20:41:48 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Subject: Re: mmotm 2020-06-25-20-36 uploaded (mm/memory-failure.c)
+Message-Id: <20200626204148.6c8c3c359e8baa310ecb744f@linux-foundation.org>
+In-Reply-To: <700cf5c7-6e8c-4c09-5ab6-5f946689b012@infradead.org>
+References: <20200626033744.URfGO%akpm@linux-foundation.org>
+        <700cf5c7-6e8c-4c09-5ab6-5f946689b012@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/06/27 1:45, Eric W. Biederman wrote:
->> After this cleanup, I expect adding some protections/isolation which kernel threads
->> have (e.g. excluded from ptrace(), excluded from OOM victim selection, excluded from
->> SysRq-i, won't be terminated by SIGKILL from usermode processes, won't be stopped by
->> SIGSTOP from usermode processes, what else?). Doing it means giving up Alexei's
->>
->>   It's nice to be able to compile that blob with -g and be able to 'gdb -p' into it.
->>   That works and very convenient when it comes to debugging. Compare that to debugging
->>   a kernel module!
->>
->> but I think doing it is essential for keeping usermode blob processes as secure/robust
->> as kernel threads.
+On Fri, 26 Jun 2020 15:09:08 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+
+> On 6/25/20 8:37 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2020-06-25-20-36 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> > 
+> > You will need quilt to apply these patches to the latest Linus release (5.x
+> > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> > http://ozlabs.org/~akpm/mmotm/series
+> > 
 > 
-> Do you have an application for a user mode driver?
-
-No, I'm not a user of this interface.
-
+> when CONFIG_MIGRATION is not set/enabled:
 > 
-> I think concerns like that are best addressed in the context of a
-> specific driver/usecase.  Just to make certain we are solving the right
-> problems.
-> 
-> My sense is that an advantage of user mode drivers can safely be buggier
-> than kernel drivers and the freedom to kill them when the drivers go
-> wrong (knowing the drivers will restart) is important.
+> ../mm/memory-failure.c: In function ‘new_page’:
+> ../mm/memory-failure.c:1692:9: error: implicit declaration of function ‘alloc_migration_target’; did you mean ‘alloc_migrate_target’? [-Werror=implicit-function-declaration]
+>   return alloc_migration_target(p, (unsigned long)&mtc);
+>          ^~~~~~~~~~~~~~~~~~~~~~
+>          alloc_migrate_target
+> ../mm/memory-failure.c:1692:9: warning: return makes pointer from integer without a cast [-Wint-conversion]
+>   return alloc_migration_target(p, (unsigned long)&mtc);
+>          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Right. Segmentation fault in user mode drivers does not cause a kernel oops
-is an advantage of user mode drivers. But the freedom to disturb/kill user mode
-drivers due to interference like ptrace()/signals from user mode processes,
-SIGKILL from OOM-killer/SysRq-i etc. is a big disadvantage of user mode drivers.
-I expect that user mode drivers should be killable only when the manager
-interface detected that user mode drivers need to be stopped (or restarted).
+Thanks.
 
-One of advantages kernel mode drivers have is that their memory is not swapped
-out/in. I don't know whether mlockall(MCL_FUTURE) should be automatically applied
-to user mode drivers.
-
-> 
-> Does this series by using the normal path through exec solve your
-> concerns with LSMs being able to identify these processes (both
-> individually and as class)?.
-
-I guess "yes" for pathname based LSMs. Though, TOMOYO wants to obtain both
-AT_SYMLINK_NOFOLLOW "struct path" and !AT_SYMLINK_NOFOLLOW "struct path"
-at do_open_execat() from do_execveat_common().
-
-I guess "no" for inode based LSMs, for they want a chance to associate
-security labels at blob_to_mnt().
+Appears to be due to Joonsoo Kim's "mm/migrate: make a standard
+migration target allocation function".
 
