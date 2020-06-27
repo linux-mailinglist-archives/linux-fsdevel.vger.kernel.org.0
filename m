@@ -2,64 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4896620BF05
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 08:51:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD63A20BF3F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 09:10:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726003AbgF0Gvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jun 2020 02:51:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52984 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbgF0Gvc (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jun 2020 02:51:32 -0400
-Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 174FAC03E979;
-        Fri, 26 Jun 2020 23:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=cA+nDLk1cEiM+pjhFHWGJZnPhFcjX6nAKwC92ViSHuk=; b=cJU7Kmy1aduUvHoiPAo1vh16S7
-        lN7xe3StQ5MB7txNrLcHuv3hHkuDTagybLIaCpnw8Cd20sXvqmhtn7mtrzf/gvfyY0eiFE6KwcAuY
-        ZHkFfjSsqPIib22YZ3I6Sku5XtZZUkuaUmeoONil6pw4UF/Rp54mfPwGOO8qpuy1ZBcxDvosIZWdp
-        oaImaF6BBRTmoiG6bcKYsNimillWYaBpua7CFYiYlPF5DHHKFfnu0UsxyHC5BWal8X61mhX7IujAP
-        4L+3aIwbGMa710Zi58WPU63g8b/fBV2pMLPb9A+YQoSM12xTjGkmL5irlo0aT/Qc+S7PFsYUdbygF
-        uLWb8Kew==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jp4g4-0005I8-2Z; Sat, 27 Jun 2020 06:51:04 +0000
-Date:   Sat, 27 Jun 2020 07:51:04 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
-        viro@zeniv.linux.org.uk, bcrl@kvack.org, asml.silence@gmail.com,
-        Damien.LeMoal@wdc.com, linux-fsdevel@vger.kernel.org,
-        mb@lightnvm.io, linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        selvakuma.s1@samsung.com, nj.shetty@samsung.com,
-        javier.gonz@samsung.com, Arnav Dawn <a.dawn@samsung.com>
-Subject: Re: [PATCH v2 1/2] fs,block: Introduce RWF_ZONE_APPEND and handling
- in direct IO path
-Message-ID: <20200627065104.GA20157@infradead.org>
-References: <1593105349-19270-1-git-send-email-joshi.k@samsung.com>
- <CGME20200625171834epcas5p226a24dfcb84cfa83fe29a2bd17795d85@epcas5p2.samsung.com>
- <1593105349-19270-2-git-send-email-joshi.k@samsung.com>
- <20200626085846.GA24962@infradead.org>
- <20200626211514.GA24762@test-zns>
+        id S1725926AbgF0HKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Jun 2020 03:10:37 -0400
+Received: from verein.lst.de ([213.95.11.211]:53843 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725885AbgF0HKh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 27 Jun 2020 03:10:37 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 2364368B02; Sat, 27 Jun 2020 09:10:33 +0200 (CEST)
+Date:   Sat, 27 Jun 2020 09:10:33 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 8/9] fs: don't allow kernel reads and writes without
+ iter ops
+Message-ID: <20200627071033.GC11854@lst.de>
+References: <20200626075836.1998185-1-hch@lst.de> <20200626075836.1998185-9-hch@lst.de> <20200626135147.GB25039@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200626211514.GA24762@test-zns>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200626135147.GB25039@casper.infradead.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 27, 2020 at 02:45:14AM +0530, Kanchan Joshi wrote:
-> For block IO path (which is the scope of this patchset) there is no
-> probelm in using RWF_APPEND for zone-append, because it does not do
-> anything for block device. We can use that, avoiding introduction of
-> RWF_ZONE_APPEND in user-space.
+On Fri, Jun 26, 2020 at 02:51:47PM +0100, Matthew Wilcox wrote:
+> On Fri, Jun 26, 2020 at 09:58:35AM +0200, Christoph Hellwig wrote:
+> > +static void warn_unsupported(struct file *file, const char *op)
+> > +{
+> > +	char pathname[128], *path;
+> > +
+> > +	path = file_path(file, pathname, sizeof(pathname));
+> > +	if (IS_ERR(path))
+> > +		path = "(unknown)";
+> > +	pr_warn_ratelimited(
+> > +		"kernel %s not supported for file %s (pid: %d comm: %.20s)\n",
+> > +		op, path, current->pid, current->comm);
+> > +}
+> > +
+> 
+> how about just:
+> 
+> 	pr_warn_ratelimited(
+> 		"kernel %s not supported for file %pD4 (pid: %d comm: %.20s)\n",
+> 			op, file, current->pid, current->comm);
 
-No, you are not just touching the block I/O path.  This is all over the
-general file code, and all RWF_* flag are about file I/O.
+Sure, we could use %pD for a few less line of code and a little less
+typesafety.  I'm not a huge fan of these custom, unchecked format
+specifiers, but given that they exist we might a well use them.
