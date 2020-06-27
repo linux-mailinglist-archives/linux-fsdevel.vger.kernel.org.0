@@ -2,298 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E13F20C1B4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 15:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C45CB20C1E7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 15:58:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbgF0NYA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jun 2020 09:24:00 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:20220 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726963AbgF0NX7 (ORCPT
+        id S1726687AbgF0N6L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Jun 2020 09:58:11 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:56481 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbgF0N6L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jun 2020 09:23:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1593264237;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:in-reply-to:
-         references:references:references;
-        bh=Vbsz74jx639O45NZJ//E5urMuCAJMJoLkV3YW2Jxk5M=;
-        b=QwkEoKOXI14Cyj4uSi8GimqBkq1i3GmtiInD1DVMVfk+Ult6ic9GeXidl5OGHOjuU/KgOh
-        W6IPWToESRCk8vNdYdMWf0WXo3iT8ZomQsj9zDk0ffTMzrFVp5eIMEXSUO0HM44P+1gHUs
-        LgYF6HEGay7ISkbmurYV05rhu+pb9vQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-300-C3L9deshP0OUCzQ5IpSj0Q-1; Sat, 27 Jun 2020 09:23:55 -0400
-X-MC-Unique: C3L9deshP0OUCzQ5IpSj0Q-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8D191A0BD7;
-        Sat, 27 Jun 2020 13:23:53 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.10.110.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5A07D8205F;
-        Sat, 27 Jun 2020 13:23:43 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
-Cc:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com,
-        omosnace@redhat.com, dhowells@redhat.com, simo@redhat.com,
-        eparis@parisplace.org, serge@hallyn.com, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, dwalsh@redhat.com, mpatel@redhat.com,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak90 V9 13/13] audit: add capcontid to set contid outside init_user_ns
-Date:   Sat, 27 Jun 2020 09:20:46 -0400
-Message-Id: <b6cb5500cfd7e8686ac2a7758103688c2da7f4ce.1593198710.git.rgb@redhat.com>
-In-Reply-To: <cover.1593198710.git.rgb@redhat.com>
-References: <cover.1593198710.git.rgb@redhat.com>
-In-Reply-To: <cover.1593198710.git.rgb@redhat.com>
-References: <cover.1593198710.git.rgb@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+        Sat, 27 Jun 2020 09:58:11 -0400
+Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05RDvCLq005289;
+        Sat, 27 Jun 2020 22:57:12 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp);
+ Sat, 27 Jun 2020 22:57:12 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav402.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05RDvBus005282
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sat, 27 Jun 2020 22:57:12 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
+ <87366g8y1e.fsf@x220.int.ebiederm.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
+Date:   Sat, 27 Jun 2020 22:57:10 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
+MIME-Version: 1.0
+In-Reply-To: <87366g8y1e.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a mechanism similar to CAP_AUDIT_CONTROL to explicitly give a
-process in a non-init user namespace the capability to set audit
-container identifiers of individual children.
+On 2020/06/27 21:59, Eric W. Biederman wrote:
+> Can you try replacing the __fput_sync with:
+> 	fput(file);
+>         flush_delayed_fput();
+>         task_work_run();
 
-Provide the /proc/$PID/audit_capcontid interface to capcontid.
-Valid values are: 1==enabled, 0==disabled
+With below change, TOMOYO can obtain pathname like "tmpfs:/my\040test\040driver".
 
-Writing a "1" to this special file for the target process $PID will
-enable the target process to set audit container identifiers of its
-descendants.
+Please avoid WARN_ON() if printk() is sufficient (for friendliness to panic_on_warn=1 environments).
+For argv[], I guess that fork_usermode_driver() should receive argv[] as argument rather than
+trying to split info->driver_name, for somebody might want to pass meaningful argv[] (and
+TOMOYO wants to use meaningful argv[] as a hint for identifying the intent).
 
-A process must already have CAP_AUDIT_CONTROL in the initial user
-namespace or have had audit_capcontid enabled by a previous use of this
-feature by its parent on this process in order to be able to enable it
-for another process.  The target process must be a descendant of the
-calling process.
-
-Report this action in new message type AUDIT_SET_CAPCONTID 1022 with
-fields opid= capcontid= old-capcontid=
-
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- fs/proc/base.c             | 57 +++++++++++++++++++++++++++++++++++++++++++++-
- include/linux/audit.h      | 14 ++++++++++++
- include/uapi/linux/audit.h |  1 +
- kernel/audit.c             | 38 ++++++++++++++++++++++++++++++-
- 4 files changed, 108 insertions(+), 2 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 794474cd8f35..1083db2ce345 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1329,7 +1329,7 @@ static ssize_t proc_contid_read(struct file *file, char __user *buf,
- 	if (!task)
- 		return -ESRCH;
- 	/* if we don't have caps, reject */
--	if (!capable(CAP_AUDIT_CONTROL))
-+	if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
- 		return -EPERM;
- 	length = scnprintf(tmpbuf, TMPBUFLEN, "%llu", audit_get_contid(task));
- 	put_task_struct(task);
-@@ -1370,6 +1370,59 @@ static ssize_t proc_contid_write(struct file *file, const char __user *buf,
- 	.write		= proc_contid_write,
- 	.llseek		= generic_file_llseek,
- };
-+
-+static ssize_t proc_capcontid_read(struct file *file, char __user *buf,
-+				  size_t count, loff_t *ppos)
-+{
-+	struct inode *inode = file_inode(file);
-+	struct task_struct *task = get_proc_task(inode);
-+	ssize_t length;
-+	char tmpbuf[TMPBUFLEN];
-+
-+	if (!task)
-+		return -ESRCH;
-+	/* if we don't have caps, reject */
-+	if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current))
-+		return -EPERM;
-+	length = scnprintf(tmpbuf, TMPBUFLEN, "%u", audit_get_capcontid(task));
-+	put_task_struct(task);
-+	return simple_read_from_buffer(buf, count, ppos, tmpbuf, length);
-+}
-+
-+static ssize_t proc_capcontid_write(struct file *file, const char __user *buf,
-+				   size_t count, loff_t *ppos)
-+{
-+	struct inode *inode = file_inode(file);
-+	u32 capcontid;
-+	int rv;
-+	struct task_struct *task = get_proc_task(inode);
-+
-+	if (!task)
-+		return -ESRCH;
-+	if (*ppos != 0) {
-+		/* No partial writes. */
-+		put_task_struct(task);
-+		return -EINVAL;
-+	}
-+
-+	rv = kstrtou32_from_user(buf, count, 10, &capcontid);
-+	if (rv < 0) {
-+		put_task_struct(task);
-+		return rv;
-+	}
-+
-+	rv = audit_set_capcontid(task, capcontid);
-+	put_task_struct(task);
-+	if (rv < 0)
-+		return rv;
-+	return count;
-+}
-+
-+static const struct file_operations proc_capcontid_operations = {
-+	.read		= proc_capcontid_read,
-+	.write		= proc_capcontid_write,
-+	.llseek		= generic_file_llseek,
-+};
- #endif
+diff --git a/kernel/umd.c b/kernel/umd.c
+index de2f542191e5..ae6e85283f13 100644
+--- a/kernel/umd.c
++++ b/kernel/umd.c
+@@ -7,6 +7,7 @@
+ #include <linux/mount.h>
+ #include <linux/fs_struct.h>
+ #include <linux/umd.h>
++#include <linux/task_work.h>
  
- #ifdef CONFIG_FAULT_INJECTION
-@@ -3273,6 +3326,7 @@ static int proc_stack_depth(struct seq_file *m, struct pid_namespace *ns,
- 	REG("loginuid",   S_IWUSR|S_IRUGO, proc_loginuid_operations),
- 	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
- 	REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
-+	REG("audit_capcontainerid", S_IWUSR|S_IRUSR, proc_capcontid_operations),
- #endif
- #ifdef CONFIG_FAULT_INJECTION
- 	REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
-@@ -3613,6 +3667,7 @@ static int proc_tid_comm_permission(struct inode *inode, int mask)
- 	REG("loginuid",  S_IWUSR|S_IRUGO, proc_loginuid_operations),
- 	REG("sessionid",  S_IRUGO, proc_sessionid_operations),
- 	REG("audit_containerid", S_IWUSR|S_IRUSR, proc_contid_operations),
-+	REG("audit_capcontainerid", S_IWUSR|S_IRUSR, proc_capcontid_operations),
- #endif
- #ifdef CONFIG_FAULT_INJECTION
- 	REG("make-it-fail", S_IRUGO|S_IWUSR, proc_fault_inject_operations),
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 025b52ae8422..2b3a2b6020ed 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -122,6 +122,7 @@ struct audit_task_info {
- 	kuid_t			loginuid;
- 	unsigned int		sessionid;
- 	struct audit_contobj	*cont;
-+	u32			capcontid;
- #ifdef CONFIG_AUDITSYSCALL
- 	struct audit_context	*ctx;
- #endif
-@@ -230,6 +231,14 @@ static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
- 	return tsk->audit->sessionid;
- }
- 
-+static inline u32 audit_get_capcontid(struct task_struct *tsk)
-+{
-+	if (!tsk->audit)
-+		return 0;
-+	return tsk->audit->capcontid;
-+}
-+
-+extern int audit_set_capcontid(struct task_struct *tsk, u32 enable);
- extern int audit_set_contid(struct task_struct *tsk, u64 contid);
- 
- static inline u64 audit_get_contid(struct task_struct *tsk)
-@@ -311,6 +320,11 @@ static inline unsigned int audit_get_sessionid(struct task_struct *tsk)
- 	return AUDIT_SID_UNSET;
- }
- 
-+static inline u32 audit_get_capcontid(struct task_struct *tsk)
-+{
-+	return 0;
-+}
-+
- static inline u64 audit_get_contid(struct task_struct *tsk)
+ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *name)
  {
- 	return AUDIT_CID_UNSET;
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 831c12bdd235..5e30f4c95dc2 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -73,6 +73,7 @@
- #define AUDIT_GET_FEATURE	1019	/* Get which features are enabled */
- #define AUDIT_CONTAINER_OP	1020	/* Define the container id and info */
- #define AUDIT_SIGNAL_INFO2	1021	/* Get info auditd signal sender */
-+#define AUDIT_SET_CAPCONTID	1022	/* Set cap_contid of a task */
+@@ -25,7 +26,7 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
+ 	if (IS_ERR(mnt))
+ 		return mnt;
  
- #define AUDIT_FIRST_USER_MSG	1100	/* Userspace messages mostly uninteresting to kernel */
- #define AUDIT_USER_AVC		1107	/* We filter this differently */
-diff --git a/kernel/audit.c b/kernel/audit.c
-index aaf74702e993..454473f2e193 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -307,6 +307,7 @@ int audit_alloc(struct task_struct *tsk)
- 	rcu_read_lock();
- 	info->cont = _audit_contobj_get(current);
- 	rcu_read_unlock();
-+	info->capcontid = 0;
- 	tsk->audit = info;
+-	file = file_open_root(mnt->mnt_root, mnt, name, O_CREAT | O_WRONLY, 0700);
++	file = file_open_root(mnt->mnt_root, mnt, name, O_CREAT | O_WRONLY | O_EXCL, 0700);
+ 	if (IS_ERR(file)) {
+ 		mntput(mnt);
+ 		return ERR_CAST(file);
+@@ -41,23 +42,33 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
+ 		return ERR_PTR(err);
+ 	}
  
- 	ret = audit_alloc_syscall(tsk);
-@@ -322,6 +323,7 @@ struct audit_task_info init_struct_audit = {
- 	.loginuid = INVALID_UID,
- 	.sessionid = AUDIT_SID_UNSET,
- 	.cont = NULL,
-+	.capcontid = 0,
- #ifdef CONFIG_AUDITSYSCALL
- 	.ctx = NULL,
- #endif
-@@ -2763,6 +2765,40 @@ static bool audit_contid_isnesting(struct task_struct *tsk)
- 	return !isowner && ownerisparent;
+-	__fput_sync(file);
++	if (current->flags & PF_KTHREAD) {
++		__fput_sync(file);
++	} else {
++		fput(file);
++		flush_delayed_fput();
++		task_work_run();
++	}
+ 	return mnt;
  }
  
-+int audit_set_capcontid(struct task_struct *task, u32 enable)
-+{
-+	u32 oldcapcontid;
-+	int rc = 0;
-+	struct audit_buffer *ab;
-+
-+	if (!task->audit)
-+		return -ENOPROTOOPT;
-+	oldcapcontid = audit_get_capcontid(task);
-+	/* if task is not descendant, block */
-+	if (task == current || !task_is_descendant(current, task))
-+		rc = -EXDEV;
-+	else if (current_user_ns() == &init_user_ns) {
-+		if (!capable(CAP_AUDIT_CONTROL) &&
-+		    !audit_get_capcontid(current))
-+			rc = -EPERM;
+ /**
+  * umd_load_blob - Remember a blob of bytes for fork_usermode_driver
+- * @info: information about usermode driver
+- * @data: a blob of bytes that can be executed as a file
+- * @len:  The lentgh of the blob
++ * @info: information about usermode driver (shouldn't be NULL)
++ * @data: a blob of bytes that can be executed as a file (shouldn't be NULL)
++ * @len:  The lentgh of the blob (shouldn't be 0)
+  *
+  */
+ int umd_load_blob(struct umd_info *info, const void *data, size_t len)
+ {
+ 	struct vfsmount *mnt;
+ 
+-	if (WARN_ON_ONCE(info->wd.dentry || info->wd.mnt))
++	if (!info || !info->driver_name || !data || !len)
++		return -EINVAL;
++	if (info->wd.dentry || info->wd.mnt) {
++		pr_info("%s already loaded.\n", info->driver_name);
+ 		return -EBUSY;
 +	}
-+	if (!rc)
-+		task->audit->capcontid = enable;
-+
-+	if (!audit_enabled)
-+		return rc;
-+
-+	ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_SET_CAPCONTID);
-+	if (!ab)
-+		return rc;
-+
-+	audit_log_format(ab,
-+			 "opid=%d capcontid=%u old-capcontid=%u",
-+			 task_tgid_nr(task), enable, oldcapcontid);
-+	audit_log_end(ab);
-+	return rc;
-+}
-+
- /*
-  * audit_set_contid - set current task's audit contid
-  * @task: target task
-@@ -2795,7 +2831,7 @@ int audit_set_contid(struct task_struct *task, u64 contid)
- 		goto unlock;
- 	}
- 	/* if we don't have caps, reject */
--	if (!capable(CAP_AUDIT_CONTROL)) {
-+	if (!capable(CAP_AUDIT_CONTROL) && !audit_get_capcontid(current)) {
- 		rc = -EPERM;
- 		goto unlock;
- 	}
--- 
-1.8.3.1
+ 
+ 	mnt = blob_to_mnt(data, len, info->driver_name);
+ 	if (IS_ERR(mnt))
+@@ -71,14 +82,14 @@ EXPORT_SYMBOL_GPL(umd_load_blob);
+ 
+ /**
+  * umd_unload_blob - Disassociate @info from a previously loaded blob
+- * @info: information about usermode driver
++ * @info: information about usermode driver (shouldn't be NULL)
+  *
+  */
+ int umd_unload_blob(struct umd_info *info)
+ {
+-	if (WARN_ON_ONCE(!info->wd.mnt ||
+-			 !info->wd.dentry ||
+-			 info->wd.mnt->mnt_root != info->wd.dentry))
++	if (!info || !info->driver_name || !info->wd.dentry || !info->wd.mnt)
++		return -EINVAL;
++	if (WARN_ON_ONCE(info->wd.mnt->mnt_root != info->wd.dentry))
+ 		return -EINVAL;
+ 
+ 	kern_unmount(info->wd.mnt);
+@@ -158,8 +169,14 @@ int fork_usermode_driver(struct umd_info *info)
+ 	char **argv = NULL;
+ 	int err;
+ 
+-	if (WARN_ON_ONCE(info->tgid))
++	if (!info || !info->driver_name || !info->wd.dentry || !info->wd.mnt)
++		return -EINVAL;
++	if (WARN_ON_ONCE(info->wd.mnt->mnt_root != info->wd.dentry))
++		return -EINVAL;
++	if (info->tgid) {
++		pr_info("%s already running.\n", info->driver_name);
+ 		return -EBUSY;
++	}
+ 
+ 	err = -ENOMEM;
+ 	argv = argv_split(GFP_KERNEL, info->driver_name, NULL);
+
+
 
