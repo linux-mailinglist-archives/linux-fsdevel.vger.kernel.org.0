@@ -2,127 +2,254 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 339BC20C079
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 11:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B3CC20C0C3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 12:31:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726212AbgF0JdT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jun 2020 05:33:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49400 "EHLO
+        id S1726556AbgF0Kbp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Jun 2020 06:31:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbgF0JdT (ORCPT
+        with ESMTP id S1725994AbgF0Kbp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jun 2020 05:33:19 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26BA1C03E979;
-        Sat, 27 Jun 2020 02:33:19 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id i25so12364987iog.0;
-        Sat, 27 Jun 2020 02:33:19 -0700 (PDT)
+        Sat, 27 Jun 2020 06:31:45 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8ACCC03E979;
+        Sat, 27 Jun 2020 03:31:44 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id w9so10549476ilk.13;
+        Sat, 27 Jun 2020 03:31:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ffLQuJygGbq4RaYKN898b4cD/qHH2O6tm/Zb6p2WV+4=;
-        b=dLwG+3iUi4OZtTX3/qfZ9iPPiOZsMB5ZU3D7Cqg4ZmmBAkoL/jgX3MlqDeKCkj7VGv
-         BOJ+Zrfw3AL2ECEaU8neH+nTTC7hIXDBOD+Mt0FE5+Gfc12cbAGQD+hpllFvb6EEYXO6
-         ayr5LNsBY9ntu78FTOgPh6uRn6K2jFonK2IDRikVy/hbj1358XggNyM2bqAkaNO57nmI
-         BwVlDNjphmD7dQuaV9bKlPLapFGE0hgyunvtO6IhtNImCPBVGrWgMl1lnyZXOWM2eQo4
-         uYmS1nRErBrH455hElDvQ1o8XS0C1DvLBtTz/Ld9MG0ugFqa/tIjXjduxBuYpfQqwzSJ
-         t1uQ==
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=hBYoEvRRpXyGXqyyyK+UUmgCSVK6/vU+GBKDP/WjSog=;
+        b=WPbYFm8LkOEQ491lr6WUlHUx16k0jFw8yAAedERvFPkMZRQYu10ksjg9pFFKLIByzC
+         hgyOgBwVWOkvUt89+lmwMJmfw5eHkEXd0bIrQWenwWXrk+sO0QbnNKQmijnRPWYsvwPC
+         wo3X8XTVZ8GdwgqdAL6m2wgJWYZlEq9OMqnES/DXosyoE/5NAneEtupy4AVlwQC7Rn9Z
+         iL/2oik8A3XFKaA5x2Yq7qXbdYMn1wuj0W0enSXkrRVXVbBvAidxxZTOMpkgyI6/hdxl
+         eov8Dpv6qqHrK+b3+vjt5iZ6YPTt2p3jdQn7W4GvbTaqDKuCUevci8iCXqxiejv+ADSB
+         OaSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ffLQuJygGbq4RaYKN898b4cD/qHH2O6tm/Zb6p2WV+4=;
-        b=pR/5kGEZhzaaETTHPmQ20VUQQtBgdXZ7c54DydVsypnq80nKXOJAS0npCusn93SOwV
-         qi/nYYQkmDpPV3b8CSC0/KwU3jhAAcs7HoavZoo8e//t6XPjOwsaFVmI9BmG8czshjO3
-         xJYsZrhnih19HyEiMajD5xGfb4C40MnDVtzIADyffyzJrBXhGl8SEQ9HtpVL5gWDkwih
-         p6v2ZISXpYHLSK2IVdojpldmMLjtiWfK2td0eYRkHqh0KjM8Pa6VDo6m2RMi7iwX7ke4
-         QyBv225VUszqSAluWcIDQyoTDQRsjN0ZYAF9MtMFQLfNNAbrZF8woMpOjthfj2B6LoFH
-         mY/A==
-X-Gm-Message-State: AOAM532z3Fi9FrflLSgLADXQeQwSPcuQjZP5gYT4tkoyx7c+aXDxQbXi
-        zO1X6fLh4DjJhjnfIgsH3KwuXShseQWa7gsTCNZFHgHg
-X-Google-Smtp-Source: ABdhPJwOotjqrBwXrGGAK19+x5rTZhFfEmNnDKCdzD15DVR1Uj4IPHoQ24FfPMq47bdkWhRaLtQgSX7481+BpJyrkQs=
-X-Received: by 2002:a6b:780d:: with SMTP id j13mr7883984iom.66.1593250398101;
- Sat, 27 Jun 2020 02:33:18 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=hBYoEvRRpXyGXqyyyK+UUmgCSVK6/vU+GBKDP/WjSog=;
+        b=ZeT8LqeiVQqhxltXRcrLxfxJNho/2cGJWDUOP+F4tCH8H76bdeTFO8/HfPu75b6xkI
+         QEjgNH++hvbnYvkUpSJCQNIUJ4oax9zVgZnD/TnJWiXoa6ZIscWt7OHYTnlEGhAFb5Ud
+         S7mcWpMH0sQ8ckDVrtgp3XurFno3E5Q+jr+FWWEaXYEo31I9hqDotzwriStHVLK4IUfz
+         B90v2LP5PcviCD2qjGTOq/7RBucAV9sBzxooEbGUANB3EnNFfHb/ketbwpCZbxSKcjXC
+         N+LGshYgx+XZ1lfpSWGCa8aR966p/bgRmDIwxfGR++DAYupWC/vAEv3LjKALyQAbH7IN
+         EgCA==
+X-Gm-Message-State: AOAM531fff3Au3EbQc1xyPwzZhz8i241zZVMlWhT27pwAGhVZ7jzIMVj
+        qvUfETjaHd8oL5zkzoZopSI2TxVvs6s/b5B9yGHuaRtrI4w=
+X-Google-Smtp-Source: ABdhPJz5AyJtabGAW8xkxuzMwsBOaBn/dnqc6WDQFkSkcopWOOO+69r5vU0f2n59M+r8ti12ivIoPmjiBO+Qs1hiMcg=
+X-Received: by 2002:a05:6e02:92:: with SMTP id l18mr7060839ilm.212.1593253904114;
+ Sat, 27 Jun 2020 03:31:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <1593011142-10209-1-git-send-email-laoar.shao@gmail.com> <20200626090250.GC30103@infradead.org>
-In-Reply-To: <20200626090250.GC30103@infradead.org>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Sat, 27 Jun 2020 17:32:42 +0800
-Message-ID: <CALOAHbD+pwzq6Gs06mMXQdNo8zPZWk2OD_q199uyH8jOAyd77A@mail.gmail.com>
-Subject: Re: [PATCH v2] xfs: reintroduce PF_FSTRANS for transaction
- reservation recursion protection
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        =?UTF-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linux MM <linux-mm@kvack.org>,
-        Matthew Wilcox <willy@infradead.org>
+References: <2733b41a-b4c6-be94-0118-a1a8d6f26eec@virtuozzo.com> <d6e8ef46-c311-b993-909c-4ae2823e2237@virtuozzo.com>
+In-Reply-To: <d6e8ef46-c311-b993-909c-4ae2823e2237@virtuozzo.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Sat, 27 Jun 2020 12:31:51 +0200
+Message-ID: <CA+icZUUad6Nk_ezhY5vcuVox41Eg120fELf5Kh_E1FCKhpv4Nw@mail.gmail.com>
+Subject: Re: [PATCH] fuse_writepages_fill() optimization to avoid WARN_ON in tree_insert
+To:     Vasily Averin <vvs@virtuozzo.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+        Maxim Patlasov <maximvp@gmail.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 26, 2020 at 5:02 PM Christoph Hellwig <hch@infradead.org> wrote:
+On Thu, Jun 25, 2020 at 11:52 AM Vasily Averin <vvs@virtuozzo.com> wrote:
 >
-> On Wed, Jun 24, 2020 at 11:05:42AM -0400, Yafang Shao wrote:
-> > PF_FSTRANS which is used to avoid transaction reservation recursion, is
-> > dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
-> > PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
-> > memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
-> > means to avoid filesystem reclaim recursion. That change is subtle.
-> > Let's take the exmple of the check of WARN_ON_ONCE(current->flags &
-> > PF_MEMALLOC_NOFS)) to explain why this abstraction from PF_FSTRANS to
-> > PF_MEMALLOC_NOFS is not proper.
-> >
-> > Bellow comment is quoted from Dave,
-> > > It wasn't for memory allocation recursion protection in XFS - it was for
-> > > transaction reservation recursion protection by something trying to flush
-> > > data pages while holding a transaction reservation. Doing
-> > > this could deadlock the journal because the existing reservation
-> > > could prevent the nested reservation for being able to reserve space
-> > > in the journal and that is a self-deadlock vector.
-> > > IOWs, this check is not protecting against memory reclaim recursion
-> > > bugs at all (that's the previous check [1]). This check is
-> > > protecting against the filesystem calling writepages directly from a
-> > > context where it can self-deadlock.
-> > > So what we are seeing here is that the PF_FSTRANS ->
-> > > PF_MEMALLOC_NOFS abstraction lost all the actual useful information
-> > > about what type of error this check was protecting against.
-> >
-> > [1]. Bellow check is to avoid memory reclaim recursion.
-> > if (WARN_ON_ONCE((current->flags & (PF_MEMALLOC|PF_KSWAPD)) ==
-> >       PF_MEMALLOC))
-> >       goto redirty;
-> >
-> > Suggested-by: Dave Chinner <david@fromorbit.com>
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-> > Cc: Michal Hocko <mhocko@kernel.org>
+> In current implementation fuse_writepages_fill() tries to share the code:
+> for new wpa it calls tree_insert() with num_pages = 0
+> then switches to common code used non-modified num_pages
+> and increments it at the very end.
 >
-> This generally looks sane, but:
+> Though it triggers WARN_ON(!wpa->ia.ap.num_pages) in tree_insert()
+>  WARNING: CPU: 1 PID: 17211 at fs/fuse/file.c:1728 tree_insert+0xab/0xc0 [fuse]
+>  RIP: 0010:tree_insert+0xab/0xc0 [fuse]
+>  Call Trace:
+>   fuse_writepages_fill+0x5da/0x6a0 [fuse]
+>   write_cache_pages+0x171/0x470
+>   fuse_writepages+0x8a/0x100 [fuse]
+>   do_writepages+0x43/0xe0
 >
->  - adds a bunch of overly long lines for no good reason
->  - doesn't really hide this behind a useful informatin, e.g. a
->    xfs_trans_context_start/end helpers for the normal case, plus
->    an extra helper with kswapd in the name for that case.
+> This patch re-works fuse_writepages_fill() to call tree_insert()
+> with num_pages = 1 and avoids its subsequent increment and
+> an extra spin_lock(&fi->lock) for newly added wpa.
 >
+> Fixes: 6b2fb79963fb ("fuse: optimize writepages search")
 
-Good point. I will try to think about it.
+Hi Vasily,
 
-> The latter should also help to isolate a bit against the mm-area
-> changes to the memalloc flags proposed.
+I have cherry-picked commit 6b2fb79963fb ("fuse: optimize writepages
+search") on top of Linux v5.7.
 
-I have read the patchset from Matthew.  Agree with you that we should
-do it the same way.
+Tested against Linux v5.7.6 with your triple patchset together (I
+guess the triple belongs together?):
 
-[adding  Matthew to cc]
+$ git log --oneline v5.7..
+0b26115de7aa (HEAD -> for-5.7/fuse-writepages-optimization-vvs)
+fuse_writepages ignores errors from fuse_writepages_fill
+687be6184c30 fuse_writepages_fill: simplified "if-else if" constuction
+8d8e2e5d90c0 fuse_writepages_fill() optimization to avoid WARN_ON in tree_insert
+cd4e568ca924 (for-5.7/fuse-writepages-optimization) fuse: optimize
+writepages search
 
--- 
-Thanks
-Yafang
+Unsure if your single patches should be labeled with:
+
+"fuse:" or "fuse: writepages:" or "fuse: writepages_fill:"
+
+It is common to use present tense not past tense in the subject line.
+I found one typo in one subject line.
+
+Example (understand this as suggestions):
+1/3: fuse: writepages: Avoid WARN_ON in tree_insert in fuse_writepages_fill
+2/3: fuse: writepages: Simplif*y* "if-else if" const*r*uction
+3/3: fuse: writepages: Ignore errors from fuse_writepages_fill
+
+Unsure how to test your patchset.
+My usecase with fuse is to mount and read from the root.disk (loop,
+ext4) of a WUBI-installation of Ubuntu/precise 12.04-LTS.
+
+root@iniza# mount -r -t auto /dev/sda2 /mnt/win7
+root@iniza# cd /path/to/root.disk
+root@iniza# mount -r -t ext4 -o loop ./root.disk /mnt/ubuntu
+
+BTW, your patchset is bullet-proof with Clang version 11.0.0-git IAS
+(Integrated Assembler).
+
+If you send a v2 please add my:
+
+Tested-by: Sedat Dilek <sedat.dilek@gmail.com> # build+boot; Linux
+v5.7.6 with clang-11 (IAS)
+
+Can you send a (git) cover-letter if this is a patchset - next time?
+
+Thanks.
+
+Regards,
+- Sedat -
+
+
+
+
+> Reported-by: kernel test robot <rong.a.chen@intel.com>
+> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+> ---
+>  fs/fuse/file.c | 56 +++++++++++++++++++++++++++++---------------------------
+>  1 file changed, 29 insertions(+), 27 deletions(-)
+>
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index e573b0c..cf267bd 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1966,10 +1966,9 @@ static bool fuse_writepage_in_flight(struct fuse_writepage_args *new_wpa,
+>         struct fuse_writepage_args *old_wpa;
+>         struct fuse_args_pages *new_ap = &new_wpa->ia.ap;
+>
+> -       WARN_ON(new_ap->num_pages != 0);
+> +       WARN_ON(new_ap->num_pages != 1);
+>
+>         spin_lock(&fi->lock);
+> -       rb_erase(&new_wpa->writepages_entry, &fi->writepages);
+>         old_wpa = fuse_find_writeback(fi, page->index, page->index);
+>         if (!old_wpa) {
+>                 tree_insert(&fi->writepages, new_wpa);
+> @@ -1977,7 +1976,6 @@ static bool fuse_writepage_in_flight(struct fuse_writepage_args *new_wpa,
+>                 return false;
+>         }
+>
+> -       new_ap->num_pages = 1;
+>         for (tmp = old_wpa->next; tmp; tmp = tmp->next) {
+>                 pgoff_t curr_index;
+>
+> @@ -2020,7 +2018,7 @@ static int fuse_writepages_fill(struct page *page,
+>         struct fuse_conn *fc = get_fuse_conn(inode);
+>         struct page *tmp_page;
+>         bool is_writeback;
+> -       int err;
+> +       int index, err;
+>
+>         if (!data->ff) {
+>                 err = -EIO;
+> @@ -2083,44 +2081,48 @@ static int fuse_writepages_fill(struct page *page,
+>                 wpa->next = NULL;
+>                 ap->args.in_pages = true;
+>                 ap->args.end = fuse_writepage_end;
+> -               ap->num_pages = 0;
+> +               ap->num_pages = 1;
+>                 wpa->inode = inode;
+> -
+> -               spin_lock(&fi->lock);
+> -               tree_insert(&fi->writepages, wpa);
+> -               spin_unlock(&fi->lock);
+> -
+> +               index = 0;
+>                 data->wpa = wpa;
+> +       } else {
+> +               index = ap->num_pages;
+>         }
+>         set_page_writeback(page);
+>
+>         copy_highpage(tmp_page, page);
+> -       ap->pages[ap->num_pages] = tmp_page;
+> -       ap->descs[ap->num_pages].offset = 0;
+> -       ap->descs[ap->num_pages].length = PAGE_SIZE;
+> +       ap->pages[index] = tmp_page;
+> +       ap->descs[index].offset = 0;
+> +       ap->descs[index].length = PAGE_SIZE;
+>
+>         inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
+>         inc_node_page_state(tmp_page, NR_WRITEBACK_TEMP);
+>
+>         err = 0;
+> -       if (is_writeback && fuse_writepage_in_flight(wpa, page)) {
+> -               end_page_writeback(page);
+> -               data->wpa = NULL;
+> -               goto out_unlock;
+> +       if (is_writeback) {
+> +               if (fuse_writepage_in_flight(wpa, page)) {
+> +                       end_page_writeback(page);
+> +                       data->wpa = NULL;
+> +                       goto out_unlock;
+> +               }
+> +       } else if (!index) {
+> +               spin_lock(&fi->lock);
+> +               tree_insert(&fi->writepages, wpa);
+> +               spin_unlock(&fi->lock);
+>         }
+> -       data->orig_pages[ap->num_pages] = page;
+> -
+> -       /*
+> -        * Protected by fi->lock against concurrent access by
+> -        * fuse_page_is_writeback().
+> -        */
+> -       spin_lock(&fi->lock);
+> -       ap->num_pages++;
+> -       spin_unlock(&fi->lock);
+> +       data->orig_pages[index] = page;
+>
+> +       if (index) {
+> +               /*
+> +                * Protected by fi->lock against concurrent access by
+> +                * fuse_page_is_writeback().
+> +                */
+> +               spin_lock(&fi->lock);
+> +               ap->num_pages++;
+> +               spin_unlock(&fi->lock);
+> +       }
+>  out_unlock:
+>         unlock_page(page);
+> -
+>         return err;
+>  }
+>
+> --
+> 1.8.3.1
+>
