@@ -2,172 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E90DA20C155
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 14:58:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9E7620C158
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 15:04:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726589AbgF0M4E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jun 2020 08:56:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51996 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726402AbgF0M4D (ORCPT
+        id S1726453AbgF0NEC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Jun 2020 09:04:02 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:57696 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbgF0NEB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jun 2020 08:56:03 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37D5CC03E979;
-        Sat, 27 Jun 2020 05:56:03 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id i4so6087878pjd.0;
-        Sat, 27 Jun 2020 05:56:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OGvZib8pdw3S5tlf2fLr9MTmZjnf+euhMJXGijUwvfw=;
-        b=aYwbbD/J1SI38fp02GDl82/GSSX9R02Ewea3Re0BXnrbRfsdZqIo/UtgbmebQMNKxs
-         guZtJS/EMfpLcYhwjQtnkDF63ioRJeB8aW2icRTjzyJdkfv9ytIj5uS7JpL1aYZG7Rwo
-         l0CtetgR3mdslTKD8MyQsrvHwhIu+NL69PUSajfJKBwOdK5PsFOFFRY7l6rp+kM6wqZ3
-         5HKs6ULkpo5XQxFXoZAIkrCPPNdUJef6uMnzTL85FZhM4J2L1J0fuPejiRl9v4mN/HHy
-         71Avk3D5c6C1y0Wh27LbkSOnzhVJe9W744JI3YG++0m3uwKRY2PSvRV2QS4gbvQzK3A8
-         RHdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=OGvZib8pdw3S5tlf2fLr9MTmZjnf+euhMJXGijUwvfw=;
-        b=pxJyxNdVpQCWD9oM42z8fHzGg9Rl24/eZbStYcFFWFZyIjlEww+zmw7ZtNxLi6Ru5z
-         CB7TnFRermaIssqG8oobL9DmRpRNaFTkd0K1reqn8AVdDCySYsvXuRaYHWXDHTP7jOwQ
-         ZlmPkSLIvouV0eepIKPOGGV7MoqN4rzMbo63CPBw1FQrlaKqVIc83GpeHOQNsB2yvvhy
-         LeLO+IJJ3eOQcjehq64kgm4a7X4aDxkSOEtufZ6zyDb95cRT69Ccc2/CTudX1ileOury
-         NtOm97NcLVAZA0eZPUTuVY7q+8QAtccZtOtgBCgsI9Z3p2dI1PYEilPwU11EUdw3BKq1
-         6eGg==
-X-Gm-Message-State: AOAM533o6WUVitefA8xz7BTAY/eq+wjBP+tj/oIv7tAIGdi2tlljN6zP
-        +9ak/WNkeIyMY+u4+9k6WTquglHJfDgjHw==
-X-Google-Smtp-Source: ABdhPJzLmyVikN5w48/X6MhRGaWzTPhpgXGppM+9aXL0CyTAu7JOQk/LEbxCUKt6DQ7oSuA38j1o0w==
-X-Received: by 2002:a17:90b:a11:: with SMTP id gg17mr8499048pjb.74.1593262562502;
-        Sat, 27 Jun 2020 05:56:02 -0700 (PDT)
-Received: from localhost.localdomain ([211.195.169.54])
-        by smtp.gmail.com with ESMTPSA id o1sm13873552pjp.37.2020.06.27.05.56.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Jun 2020 05:56:02 -0700 (PDT)
-From:   Park Ju Hyung <qkrwngud825@gmail.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Park Ju Hyung <qkrwngud825@gmail.com>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] exfat: implement "quiet" option for setattr
-Date:   Sat, 27 Jun 2020 21:55:09 +0900
-Message-Id: <20200627125509.142393-1-qkrwngud825@gmail.com>
-X-Mailer: git-send-email 2.27.0
+        Sat, 27 Jun 2020 09:04:01 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jpAUs-0005jA-Kz; Sat, 27 Jun 2020 07:03:54 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jpAUr-0008TJ-Nz; Sat, 27 Jun 2020 07:03:54 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200625095725.GA3303921@kroah.com>
+        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+        <20200625120725.GA3493334@kroah.com>
+        <20200625.123437.2219826613137938086.davem@davemloft.net>
+        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+        <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
+Date:   Sat, 27 Jun 2020 07:59:25 -0500
+In-Reply-To: <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
+        (Tetsuo Handa's message of "Sat, 27 Jun 2020 20:38:33 +0900")
+Message-ID: <87366g8y1e.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1jpAUr-0008TJ-Nz;;;mid=<87366g8y1e.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/YkAZr0C5jEfgsil9qPDA/pLV/aYtliaA=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4999]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa03 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa03 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 350 ms - load_scoreonly_sql: 0.02 (0.0%),
+        signal_user_changed: 3.4 (1.0%), b_tie_ro: 2.3 (0.7%), parse: 0.87
+        (0.2%), extract_message_metadata: 11 (3.2%), get_uri_detail_list: 0.89
+        (0.3%), tests_pri_-1000: 6 (1.8%), tests_pri_-950: 1.20 (0.3%),
+        tests_pri_-900: 1.16 (0.3%), tests_pri_-90: 121 (34.5%), check_bayes:
+        113 (32.4%), b_tokenize: 8 (2.3%), b_tok_get_all: 8 (2.4%),
+        b_comp_prob: 1.94 (0.6%), b_tok_touch_all: 92 (26.3%), b_finish: 0.72
+        (0.2%), tests_pri_0: 196 (55.9%), check_dkim_signature: 0.47 (0.1%),
+        check_dkim_adsp: 1.99 (0.6%), poll_dns_idle: 0.69 (0.2%),
+        tests_pri_10: 1.57 (0.4%), tests_pri_500: 4.9 (1.4%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Few programs, especially old ones, simply don't want to work
-if there isn't a POSIX-compliant setattr.
+Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
 
-Follow vfat and implement a new "quiet" option to workaround this.
+> On 2020/06/26 21:51, Eric W. Biederman wrote:
+>> Please let me know if you see any bugs.  Once the code review is
+>> finished I plan to take this through my tree.
+>
 
-Signed-off-by: Park Ju Hyung <qkrwngud825@gmail.com>
----
- fs/exfat/exfat_fs.h |  2 ++
- fs/exfat/file.c     | 13 +++++++++++--
- fs/exfat/super.c    |  7 +++++++
- 3 files changed, 20 insertions(+), 2 deletions(-)
+[sniped example code]
+> causes
+>
+>    BUG_ON(!(task->flags & PF_KTHREAD));
+>
+> in __fput_sync(). Do we want to forbid umd_load_blob() from process context (e.g.
+> upon module initialization time) ?
 
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index 3aed8e22087a..66837baf42d2 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -201,6 +201,8 @@ struct exfat_mount_options {
- 	unsigned short allow_utime;
- 	/* charset for filename input/display */
- 	char *iocharset;
-+	/* fake return success on setattr(e.g. chmods/chowns) */
-+	unsigned char quiet;
- 	/* on error: continue, panic, remount-ro */
- 	enum exfat_error_mode errors;
- 	unsigned utf8:1, /* Use of UTF-8 character set */
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 6707f3eb09b5..2ed6be7cab15 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -295,7 +295,7 @@ int exfat_setattr(struct dentry *dentry, struct iattr *attr)
- 	    attr->ia_size > i_size_read(inode)) {
- 		error = exfat_cont_expand(inode, attr->ia_size);
- 		if (error || attr->ia_valid == ATTR_SIZE)
--			return error;
-+			goto out;
- 		attr->ia_valid &= ~ATTR_SIZE;
- 	}
- 
-@@ -309,8 +309,11 @@ int exfat_setattr(struct dentry *dentry, struct iattr *attr)
- 
- 	error = setattr_prepare(dentry, attr);
- 	attr->ia_valid = ia_valid;
--	if (error)
-+	if (error) {
-+		if (sbi->options.quiet)
-+			error = 0;
- 		goto out;
-+	}
- 
- 	if (((attr->ia_valid & ATTR_UID) &&
- 	     !uid_eq(attr->ia_uid, sbi->options.fs_uid)) ||
-@@ -322,6 +325,12 @@ int exfat_setattr(struct dentry *dentry, struct iattr *attr)
- 		goto out;
- 	}
- 
-+	if (error) {
-+		if (sbi->options.quiet)
-+			error = 0;
-+		goto out;
-+	}
-+
- 	/*
- 	 * We don't return -EPERM here. Yes, strange, but this is too
- 	 * old behavior.
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index b5bf6dedbe11..030db33eed35 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -145,6 +145,8 @@ static int exfat_show_options(struct seq_file *m, struct dentry *root)
- 	seq_printf(m, ",fmask=%04o,dmask=%04o", opts->fs_fmask, opts->fs_dmask);
- 	if (opts->allow_utime)
- 		seq_printf(m, ",allow_utime=%04o", opts->allow_utime);
-+	if (opts->quiet)
-+		seq_puts(m, ",quiet");
- 	if (opts->utf8)
- 		seq_puts(m, ",iocharset=utf8");
- 	else if (sbi->nls_io)
-@@ -198,6 +200,7 @@ enum {
- 	Opt_fmask,
- 	Opt_allow_utime,
- 	Opt_charset,
-+	Opt_quiet,
- 	Opt_errors,
- 	Opt_discard,
- 	Opt_time_offset,
-@@ -224,6 +227,7 @@ static const struct fs_parameter_spec exfat_parameters[] = {
- 	fsparam_u32oct("fmask",			Opt_fmask),
- 	fsparam_u32oct("allow_utime",		Opt_allow_utime),
- 	fsparam_string("iocharset",		Opt_charset),
-+	fsparam_flag("quiet",			Opt_quiet),
- 	fsparam_enum("errors",			Opt_errors, exfat_param_enums),
- 	fsparam_flag("discard",			Opt_discard),
- 	fsparam_s32("time_offset",		Opt_time_offset),
-@@ -274,6 +278,9 @@ static int exfat_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		opts->iocharset = param->string;
- 		param->string = NULL;
- 		break;
-+	case Opt_quiet:
-+		opts->quiet = 1;
-+		break;
- 	case Opt_errors:
- 		opts->errors = result.uint_32;
- 		break;
--- 
-2.27.0
+Interesting.  I had not realized that fput_sync would not work from
+module context.
 
+Forcing the fput to finish is absolutely necessary.  Otherwise the file
+will still be open for write and deny_write_access in execve will fail.
+
+Can you try replacing the __fput_sync with:
+	fput(file);
+        flush_delayed_fput();
+        task_work_run();
+
+
+Given that there is a big requirement for the code to run before init
+I don't necessarily think it is a problem __fput_sync is a problem.
+But it also seems silly to forbid modules if we can easily fix
+the code.
+
+Eric
