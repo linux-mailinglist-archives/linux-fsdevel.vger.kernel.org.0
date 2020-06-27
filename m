@@ -2,203 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BCCB20C311
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 18:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9118E20C47C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jun 2020 00:01:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725930AbgF0QdY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jun 2020 12:33:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56900 "EHLO
+        id S1726057AbgF0WBv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Jun 2020 18:01:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbgF0QdX (ORCPT
+        with ESMTP id S1725912AbgF0WBu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jun 2020 12:33:23 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 733C5C061794
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jun 2020 09:33:23 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id t74so6764839lff.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jun 2020 09:33:23 -0700 (PDT)
+        Sat, 27 Jun 2020 18:01:50 -0400
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DE97C061794
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jun 2020 15:01:50 -0700 (PDT)
+Received: by mail-ot1-x344.google.com with SMTP id 5so10006269oty.11
+        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jun 2020 15:01:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Zm7F5E21VOj53dJ+cv9f96G78mr9Hbsprjoym1XE0Kg=;
-        b=dFxU7A/dIhFjWtexhRNj28JLQPwpPSTC1IGJO/QY3YkFQYuCZfN6sVlY1GZnZj6nWT
-         kQ1zk7vcokCOAN2dBrIDOU7zEwC2lfKje2337ddmXvQK9BmAk8ikcCQhrJv3qQd4ngmg
-         VFhgtqA8GhgsJmUd8Y4k5JIGnPtXeVQvq0e0I=
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=hDm0J70xfMLbVvceQHwxPddZCp69UMTk2d0jtKg2a8s=;
+        b=uvaWEz0dd8Ac3CT35qBSqfznpY4sgxsz7Od3pFBzZIuQcY/8TViLhlHXQU9leeTEpY
+         AGovLfmyzd6U3Cq2lgZLwHP1J5YFMSD+Pyz17XxyLzQnjVOPPz8Ik+J+fYFM18bC4Fqc
+         JhO+jF294xtXRRnL3TKWvGE6eKydOzo9lI+qnLW3YVbUSLfu7Gq0pi7M8z5WpDddMN8M
+         WWaoRGs8g5M97omhRASDLgcJhl5wyTXcCK3cENHMncLoSakV7dWBQ+2v4jCXqV+88itT
+         y9KXfYDXgC/gw5+BqchOAKmUvgcqp5Y71+LwruoBL/ShzO8C2ON+xs5RLFzJg/awZL11
+         9lUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Zm7F5E21VOj53dJ+cv9f96G78mr9Hbsprjoym1XE0Kg=;
-        b=qJVf9YeH3yy8JEJ5fWiuq1DKG0v8y+y9Z5hVvXxGDGDzFzAkqg3pQfPPGji0brHrYG
-         hZKoRNRJXt467R1LGUgZDJtSlhYopAt2vf8tgL91qjPKboFfiba8ZXclJt1povzkapOg
-         0VPkiZwOWtBWM2ZLOzCNAFM7GShvWQ1jQz5JpvZGAHjecOuMaipT3I7/ssunwSIVcRK7
-         V0oOY04W14J9eUaY4c8tbZYmfDcmTkdmX9svZJa/QynV74UowDpq3lZw+J7h+Ros9jfW
-         mhThMfbZ89FaZ8HdZSomOWJaiim/VQymuZfhEbkFqlxo+HBJ2zhOxYsaxW2bCrADjrbq
-         b5qw==
-X-Gm-Message-State: AOAM5332B8uBOALCttybjojjUPrZlEeqwIOM8PZCM8CDHkga9k3K9VLU
-        rvDwhwBPMjOLQ+k0hYZA485YXi+mYP0=
-X-Google-Smtp-Source: ABdhPJxiy3HrPxn1bCuEREUTPH8znhYd5KxKcMvwTi06sivaftna8afEosmGztizcdldPr4TwcI7Ag==
-X-Received: by 2002:a19:7d05:: with SMTP id y5mr4825937lfc.153.1593275601349;
-        Sat, 27 Jun 2020 09:33:21 -0700 (PDT)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id m9sm5655328lfb.5.2020.06.27.09.33.19
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Jun 2020 09:33:20 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id n23so13473355ljh.7
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jun 2020 09:33:19 -0700 (PDT)
-X-Received: by 2002:a2e:9b42:: with SMTP id o2mr3996353ljj.102.1593275599478;
- Sat, 27 Jun 2020 09:33:19 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=hDm0J70xfMLbVvceQHwxPddZCp69UMTk2d0jtKg2a8s=;
+        b=QHSdIRJlPJFtLGYAeJOx0wC0bqJLMWpeIzi0Cy46zC4FPWhC0hyCx81OARBd9SX7ZJ
+         hl5GezBrJf/elw6c2CucuXflr3xVpkdrSPJL693/7DqF6bMne689GOC+UhNHeIAnNAUy
+         AFikqi+W6sh4WHLYhH/3AyssevOfIGKzLBHhDyKdQHoVzZ4KbZAuqMRre7Fq1yPm2Fwh
+         qUNzoWbK9/Ad3KCslb2hpd3wrgEGaOKY9Lbv/Qbao1zf1qGG3KHK6DqIIF5dWJgaNhyV
+         1xSevjktZ6PtsDulaG9H+rqNvEP6e54qjClOTCZ/dRElHtErt9JZys1wERzG5afoNEFg
+         s/Kg==
+X-Gm-Message-State: AOAM530gAnXSpVtBbK42yisitCevdvxkOXDfDnlLx0B/a8p5U7sXUDzT
+        iq9lJ3H4+vg73jnYQ6QT6bugjSB68zQ9jW2tKOURa0JnT70=
+X-Google-Smtp-Source: ABdhPJynf4CV3u/z+wvqAxCFESu7ee7lLWI0u2+Rd2bRIf462RpI7Q5/OgPmYRkZuywkeS9iG1gTukKnSolbNLelkro=
+X-Received: by 2002:a05:6830:1dba:: with SMTP id z26mr8074641oti.180.1593294943879;
+ Sat, 27 Jun 2020 14:55:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200624162901.1814136-1-hch@lst.de> <20200624162901.1814136-4-hch@lst.de>
- <CAHk-=wit9enePELG=-HnLsr0nY5bucFNjqAqWoFTuYDGR1P4KA@mail.gmail.com>
- <20200624175548.GA25939@lst.de> <CAHk-=wi_51SPWQFhURtMBGh9xgdo74j1gMpuhdkddA2rDMrt1Q@mail.gmail.com>
- <f50b9afa5a2742babe0293d9910e6bf4@AcuMS.aculab.com>
-In-Reply-To: <f50b9afa5a2742babe0293d9910e6bf4@AcuMS.aculab.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 27 Jun 2020 09:33:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjxQczqZ96esvDrH5QZsLg6azXCGDgo+Bmm6r8t2ssasg@mail.gmail.com>
-Message-ID: <CAHk-=wjxQczqZ96esvDrH5QZsLg6azXCGDgo+Bmm6r8t2ssasg@mail.gmail.com>
-Subject: Re: [PATCH 03/11] fs: add new read_uptr and write_uptr file operations
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Received: by 2002:a9d:12d3:0:0:0:0:0 with HTTP; Sat, 27 Jun 2020 14:55:43
+ -0700 (PDT)
+Reply-To: un.org@i.ua
+From:   helen <taxofficebenin@gmail.com>
+Date:   Sat, 27 Jun 2020 22:55:43 +0100
+Message-ID: <CAK9MGy3D5UBf06OY16UW=c+Cybm67x+0kH_OWJkX7ywdQD9CNA@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 27, 2020 at 3:49 AM David Laight <David.Laight@aculab.com> wrote:
->
-> > Just keep the existing "set_fs()". It's not harmful if it's only used
-> > occasionally. We should rename it once it's rare enough, though.
->
-> Am I right in thinking that it just sets a flag in 'current' ?
+MONEY-GRAM TRANSFERRED PAYMENT INFO:
 
-Basically, yes. That's what it has always done.
+Below is the sender=E2=80=99s information
 
-Well "always" is not true - it used to set the %fs segment register
-originally (thus the name), but _conceptually_ it sets a flag for
-"should user accesses be kernel accesses instead".
 
-On x86 - and most other architectures where user space and kernel
-space are in the same address space and accessed with the same
-instructions, that has then been implemented as just a "what is the
-limit for an access".
 
-On other architectures - architectures that need different access
-methods (or different flags to the load/store instruction) - it's an
-actual flag that changes which access method you use.
+1. MG. REFERENCE NO#: 36360857
 
-> Although I don't remember access_ok() doing a suitable check
-> (would need to be (address - base) < limit).
+2. SENDER'S NAME: Johnson Williams
 
-So again, on the architectures with a unified address space,
-access_ok() is exactly that "address + access_size <= limit", although
-often done with some inline asm just to get the overflow case done
-efficiently.
+3. AMOUNT TO PICKUP: US$10,000
 
-On other architectures, there's no limit check, because _all_
-addresses are either user space or kernel space addresses, and what
-changes isn't the address limit, but the access itself.
 
-So what I was suggesting is literally
 
- - keep this flag around as a flag
+Go to any Money Gram office near you and pick up the payment Track the
 
- - but make all _normal_ user accesses ignore it, and always do user
-accesses (so on a unified address space architecture like x86 it
-always checks the _fixed_ limit, and on something like sparc32 which
-has separate kernel and user address spaces, it just always does a
-user access with no conditionals at all)
+Reference Number by visiting and click the link below
 
- - then make the really odd and hopefully very rare cases check that
-flag explicitly and manually, and do
+(https://secure.moneygram.com/embed/track) and enter the Reference
 
-        if (current->legacy_uptr_is_kernel)
-                memcpy(...);
-        else
-                copy_to/from_user(...);
+Number: 36360857 and the Last Name: Williams, you will find the payment
 
-and my hope is that we'd have only a handful of cases (like the
-setsockopt thing: one for each protocol or whatever) that actually
-want this.
+available for pickup instantly.
 
-Note that the legacy behavior would still remain in architectures that
-haven't been modified to remove the use of set_fs(), so I would
-further suggest that the two approaches live side-by-side for at least
-a while. But _generic_ code (and with Christoph's patches at least
-x86) would make set_fs() cause a build error.
+Yours Sincerely,
 
-So we'd have a new
-
-     set_force_kernel_pointers();
-     ....
-     clear_force_kernel_pointers();
-
-that would set/clear that 'current->legacy_uptr_is_kernel' variable,
-and we'd have a handful of places that would check it.
-
-The naming above is all random, and I'm not claiming that any of this
-is particularly _clean_. I'm also not claiming that it's really any
-better than our current "set_fs()" mess conceptually.
-
-The only thing that makes it better than our current "set_fs()" is
-
- - there would hopefully be very few cases of this
-
- - it would *not* affect random incidental user accesses that just
-happen to be in the shadow of this thing.
-
-That second point is the important one, I feel. The real problem with
-"set_fs()" has been that we've occasionally had bugs where we ended up
-running odd paths that we really didn't _intend_ to run with kernel
-pointers. The classic example is the SCSI "write as ioctl" example,
-where a write to a SCSI generic device would do various odd things and
-follow pointers and what-not. Then you get into real trouble when
-"splice()" ends up truiong to write a kernel buffer, and because of
-"set_fs()" suddenly the sg code started accessing kernel memory
-willy-nilly.
-
-So my suggestion was basically a new version of set_fs(), but one that
-is just much more targeted, and doesn't affect all random user
-accesses, only those very special ones that are then very *explicitly*
-aware of the fact that "hey, I might be called in this situation where
-I'm going to get a kernel address instead".
-
-> If that is needed (I presume it was added for a purpose) then all
-> the socket option code needs to be able to handle kernel buffers.
-
-So that's very much what I'd like to avoid.
-
-The plan would be that all the *normal* stuff would be handled by
-either (a) always having the data come from user space, or (b) the
-data has a known size (either fixed, or "optlen" or whatever) and then
-being copied to a kernel buffer and then always handled as a kernel
-field that bpf can then call with kernel data.
-
-I thought there was just one very specific case of "oh, in certain
-cases of setsockopt we don't know what size this address is and optlen
-is ignored", so we have to just pass the pointer down to the protocol,
-which is the point that knows how much of an address it wants..
-
-Was that a misunderstanding on my part?
-
-Because if there are tons and tons of places that want this "either
-kernel or user" then we could still have a helper function for it, but
-it means that the whole "limit the cases" advantage to some degree
-goes away.
-
-It would still fix the 99% of normal "copy/from/to_user()" cases,
-though. They'd be fixed and "safe" and coule never ever touch kernel
-memory even if there was some confusion about things. So it would be
-an improvement, but I was really hoping that the cases where there can
-be confusion would be pretty rare.
-
-             Linus
+Mrs. Helen Marvis
+United Nations Liaison Office
+Directorate for International Payments
