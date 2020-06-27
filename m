@@ -2,292 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A1CC20BF7E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 09:28:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 339BC20C079
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jun 2020 11:33:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbgF0H1x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jun 2020 03:27:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58582 "EHLO
+        id S1726212AbgF0JdT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 27 Jun 2020 05:33:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726412AbgF0H1t (ORCPT
+        with ESMTP id S1726160AbgF0JdT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jun 2020 03:27:49 -0400
-Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01F01C03E97A;
-        Sat, 27 Jun 2020 00:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=mURemflipje9eYopYQ4h3uusWn3YXYVAu+uuVrAN7pQ=; b=TlPnTimqsO2m30LvldYZKWVizZ
-        hpNyMesz2KmBGpNgKstCa9x+hZjeq/G/LSRMkegjvZ22YoGmrkgnX+pZNWw5KGTu0v468zw9T4sZI
-        Xu/MpJ2eSYmAE+ipVFlRyXHmj7yINmDtCVRDeT4inn/UpLST2JkhmV8QUh9BXIQDcWZI6goY8hoTK
-        4LzatZU6wTyWdTn1fSGkRe6TQ02ZarzjB0rP81o5Zm/pl6DVfHmLMMgslXwjVzsTycl+tfWpI1waO
-        hEgw54/dYKj+ZkSuM7HhgjVT0BbFo583J9Wu65cTYBtF8e6ZyiugH7Oj2JWPx8rHz3ol1injsjGRn
-        /VsHUW/A==;
-Received: from [2001:4bb8:184:76e3:595:ba65:ae56:65a6] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jp5FI-0006XS-Jx; Sat, 27 Jun 2020 07:27:30 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Brian Gerst <brgerst@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] exec: add a kernel_execveat helper
-Date:   Sat, 27 Jun 2020 09:27:04 +0200
-Message-Id: <20200627072704.2447163-6-hch@lst.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200627072704.2447163-1-hch@lst.de>
-References: <20200627072704.2447163-1-hch@lst.de>
+        Sat, 27 Jun 2020 05:33:19 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26BA1C03E979;
+        Sat, 27 Jun 2020 02:33:19 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id i25so12364987iog.0;
+        Sat, 27 Jun 2020 02:33:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ffLQuJygGbq4RaYKN898b4cD/qHH2O6tm/Zb6p2WV+4=;
+        b=dLwG+3iUi4OZtTX3/qfZ9iPPiOZsMB5ZU3D7Cqg4ZmmBAkoL/jgX3MlqDeKCkj7VGv
+         BOJ+Zrfw3AL2ECEaU8neH+nTTC7hIXDBOD+Mt0FE5+Gfc12cbAGQD+hpllFvb6EEYXO6
+         ayr5LNsBY9ntu78FTOgPh6uRn6K2jFonK2IDRikVy/hbj1358XggNyM2bqAkaNO57nmI
+         BwVlDNjphmD7dQuaV9bKlPLapFGE0hgyunvtO6IhtNImCPBVGrWgMl1lnyZXOWM2eQo4
+         uYmS1nRErBrH455hElDvQ1o8XS0C1DvLBtTz/Ld9MG0ugFqa/tIjXjduxBuYpfQqwzSJ
+         t1uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ffLQuJygGbq4RaYKN898b4cD/qHH2O6tm/Zb6p2WV+4=;
+        b=pR/5kGEZhzaaETTHPmQ20VUQQtBgdXZ7c54DydVsypnq80nKXOJAS0npCusn93SOwV
+         qi/nYYQkmDpPV3b8CSC0/KwU3jhAAcs7HoavZoo8e//t6XPjOwsaFVmI9BmG8czshjO3
+         xJYsZrhnih19HyEiMajD5xGfb4C40MnDVtzIADyffyzJrBXhGl8SEQ9HtpVL5gWDkwih
+         p6v2ZISXpYHLSK2IVdojpldmMLjtiWfK2td0eYRkHqh0KjM8Pa6VDo6m2RMi7iwX7ke4
+         QyBv225VUszqSAluWcIDQyoTDQRsjN0ZYAF9MtMFQLfNNAbrZF8woMpOjthfj2B6LoFH
+         mY/A==
+X-Gm-Message-State: AOAM532z3Fi9FrflLSgLADXQeQwSPcuQjZP5gYT4tkoyx7c+aXDxQbXi
+        zO1X6fLh4DjJhjnfIgsH3KwuXShseQWa7gsTCNZFHgHg
+X-Google-Smtp-Source: ABdhPJwOotjqrBwXrGGAK19+x5rTZhFfEmNnDKCdzD15DVR1Uj4IPHoQ24FfPMq47bdkWhRaLtQgSX7481+BpJyrkQs=
+X-Received: by 2002:a6b:780d:: with SMTP id j13mr7883984iom.66.1593250398101;
+ Sat, 27 Jun 2020 02:33:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+References: <1593011142-10209-1-git-send-email-laoar.shao@gmail.com> <20200626090250.GC30103@infradead.org>
+In-Reply-To: <20200626090250.GC30103@infradead.org>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sat, 27 Jun 2020 17:32:42 +0800
+Message-ID: <CALOAHbD+pwzq6Gs06mMXQdNo8zPZWk2OD_q199uyH8jOAyd77A@mail.gmail.com>
+Subject: Re: [PATCH v2] xfs: reintroduce PF_FSTRANS for transaction
+ reservation recursion protection
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        =?UTF-8?Q?Holger_Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linux MM <linux-mm@kvack.org>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a kernel_execveat helper to execute a binary with kernel space argv
-and envp pointers.  Switch executing init and user mode helpers to this
-new helper instead of relying on the implicit set_fs(KERNEL_DS) for early
-init code and kernel threads, and move the getname call into the
-do_execve helper.
+On Fri, Jun 26, 2020 at 5:02 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Wed, Jun 24, 2020 at 11:05:42AM -0400, Yafang Shao wrote:
+> > PF_FSTRANS which is used to avoid transaction reservation recursion, is
+> > dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
+> > PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
+> > memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
+> > means to avoid filesystem reclaim recursion. That change is subtle.
+> > Let's take the exmple of the check of WARN_ON_ONCE(current->flags &
+> > PF_MEMALLOC_NOFS)) to explain why this abstraction from PF_FSTRANS to
+> > PF_MEMALLOC_NOFS is not proper.
+> >
+> > Bellow comment is quoted from Dave,
+> > > It wasn't for memory allocation recursion protection in XFS - it was for
+> > > transaction reservation recursion protection by something trying to flush
+> > > data pages while holding a transaction reservation. Doing
+> > > this could deadlock the journal because the existing reservation
+> > > could prevent the nested reservation for being able to reserve space
+> > > in the journal and that is a self-deadlock vector.
+> > > IOWs, this check is not protecting against memory reclaim recursion
+> > > bugs at all (that's the previous check [1]). This check is
+> > > protecting against the filesystem calling writepages directly from a
+> > > context where it can self-deadlock.
+> > > So what we are seeing here is that the PF_FSTRANS ->
+> > > PF_MEMALLOC_NOFS abstraction lost all the actual useful information
+> > > about what type of error this check was protecting against.
+> >
+> > [1]. Bellow check is to avoid memory reclaim recursion.
+> > if (WARN_ON_ONCE((current->flags & (PF_MEMALLOC|PF_KSWAPD)) ==
+> >       PF_MEMALLOC))
+> >       goto redirty;
+> >
+> > Suggested-by: Dave Chinner <david@fromorbit.com>
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > Cc: Michal Hocko <mhocko@kernel.org>
+>
+> This generally looks sane, but:
+>
+>  - adds a bunch of overly long lines for no good reason
+>  - doesn't really hide this behind a useful informatin, e.g. a
+>    xfs_trans_context_start/end helpers for the normal case, plus
+>    an extra helper with kswapd in the name for that case.
+>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/exec.c               | 109 ++++++++++++++++++++++++++++++++--------
- include/linux/binfmts.h |   6 +--
- init/main.c             |   6 +--
- kernel/umh.c            |   8 ++-
- 4 files changed, 95 insertions(+), 34 deletions(-)
+Good point. I will try to think about it.
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 34781db6bf6889..7923b8334ae600 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -435,6 +435,21 @@ static int count_strings(const char __user *const __user *argv)
- 	return i;
- }
- 
-+static int count_kernel_strings(const char *const *argv)
-+{
-+	int i;
-+
-+	if (!argv)
-+		return 0;
-+
-+	for (i = 0; argv[i]; i++) {
-+		if (i >= MAX_ARG_STRINGS)
-+			return -E2BIG;
-+	}
-+
-+	return i;
-+}
-+
- static int check_arg_limit(struct linux_binprm *bprm)
- {
- 	unsigned long limit, ptr_size;
-@@ -611,6 +626,19 @@ int copy_string_kernel(const char *arg, struct linux_binprm *bprm)
- }
- EXPORT_SYMBOL(copy_string_kernel);
- 
-+static int copy_strings_kernel(int argc, const char *const *argv,
-+		struct linux_binprm *bprm)
-+{
-+	int ret;
-+
-+	while (argc-- > 0) {
-+		ret = copy_string_kernel(argv[argc], bprm);
-+		if (ret)
-+			break;
-+	}
-+	return ret;
-+}
-+
- #ifdef CONFIG_MMU
- 
- /*
-@@ -1793,9 +1821,11 @@ static int exec_binprm(struct linux_binprm *bprm)
- 	return 0;
- }
- 
--int do_execveat(int fd, struct filename *filename,
-+static int __do_execveat(int fd, struct filename *filename,
- 		const char __user *const __user *argv,
- 		const char __user *const __user *envp,
-+		const char *const *kernel_argv,
-+		const char *const *kernel_envp,
- 		int flags, struct file *file)
- {
- 	char *pathbuf = NULL;
-@@ -1876,16 +1906,30 @@ int do_execveat(int fd, struct filename *filename,
- 	if (retval)
- 		goto out_unmark;
- 
--	bprm->argc = count_strings(argv);
--	if (bprm->argc < 0) {
--		retval = bprm->argc;
--		goto out;
--	}
-+	if (unlikely(kernel_argv)) {
-+		bprm->argc = count_kernel_strings(kernel_argv);
-+		if (bprm->argc < 0) {
-+			retval = bprm->argc;
-+			goto out;
-+		}
- 
--	bprm->envc = count_strings(envp);
--	if (bprm->envc < 0) {
--		retval = bprm->envc;
--		goto out;
-+		bprm->envc = count_kernel_strings(kernel_envp);
-+		if (bprm->envc < 0) {
-+			retval = bprm->envc;
-+			goto out;
-+		}
-+	} else {
-+		bprm->argc = count_strings(argv);
-+		if (bprm->argc < 0) {
-+			retval = bprm->argc;
-+			goto out;
-+		}
-+
-+		bprm->envc = count_strings(envp);
-+		if (bprm->envc < 0) {
-+			retval = bprm->envc;
-+			goto out;
-+		}
- 	}
- 
- 	retval = check_arg_limit(bprm);
-@@ -1902,13 +1946,22 @@ int do_execveat(int fd, struct filename *filename,
- 		goto out;
- 
- 	bprm->exec = bprm->p;
--	retval = copy_strings(bprm->envc, envp, bprm);
--	if (retval < 0)
--		goto out;
- 
--	retval = copy_strings(bprm->argc, argv, bprm);
--	if (retval < 0)
--		goto out;
-+	if (unlikely(kernel_argv)) {
-+		retval = copy_strings_kernel(bprm->envc, kernel_envp, bprm);
-+		if (retval < 0)
-+			goto out;
-+		retval = copy_strings_kernel(bprm->argc, kernel_argv, bprm);
-+		if (retval < 0)
-+			goto out;
-+	} else {
-+		retval = copy_strings(bprm->envc, envp, bprm);
-+		if (retval < 0)
-+			goto out;
-+		retval = copy_strings(bprm->argc, argv, bprm);
-+		if (retval < 0)
-+			goto out;
-+	}
- 
- 	retval = exec_binprm(bprm);
- 	if (retval < 0)
-@@ -1959,6 +2012,23 @@ int do_execveat(int fd, struct filename *filename,
- 	return retval;
- }
- 
-+static int do_execveat(int fd, const char *filename,
-+		       const char __user *const __user *argv,
-+		       const char __user *const __user *envp, int flags)
-+{
-+	int lookup_flags = (flags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
-+	struct filename *name = getname_flags(filename, lookup_flags, NULL);
-+
-+	return __do_execveat(fd, name, argv, envp, NULL, NULL, flags, NULL);
-+}
-+
-+int kernel_execveat(int fd, const char *filename, const char *const *argv,
-+		const char *const *envp, int flags, struct file *file)
-+{
-+	return __do_execveat(fd, getname_kernel(filename), NULL, NULL, argv,
-+			     envp, flags, file);
-+}
-+
- void set_binfmt(struct linux_binfmt *new)
- {
- 	struct mm_struct *mm = current->mm;
-@@ -1988,7 +2058,7 @@ SYSCALL_DEFINE3(execve,
- 		const char __user *const __user *, argv,
- 		const char __user *const __user *, envp)
- {
--	return do_execveat(AT_FDCWD, getname(filename), argv, envp, 0, NULL);
-+	return do_execveat(AT_FDCWD, filename, argv, envp, 0);
- }
- 
- SYSCALL_DEFINE5(execveat,
-@@ -1997,8 +2067,5 @@ SYSCALL_DEFINE5(execveat,
- 		const char __user *const __user *, envp,
- 		int, flags)
- {
--	int lookup_flags = (flags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
--	struct filename *name = getname_flags(filename, lookup_flags, NULL);
--
--	return do_execveat(fd, name, argv, envp, flags, NULL);
-+	return do_execveat(fd, filename, argv, envp, flags);
- }
-diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-index bed702e4b1fbd9..1e61c980c16354 100644
---- a/include/linux/binfmts.h
-+++ b/include/linux/binfmts.h
-@@ -134,9 +134,7 @@ int copy_string_kernel(const char *arg, struct linux_binprm *bprm);
- extern void set_binfmt(struct linux_binfmt *new);
- extern ssize_t read_code(struct file *, unsigned long, loff_t, size_t);
- 
--int do_execveat(int fd, struct filename *filename,
--		const char __user *const __user *__argv,
--		const char __user *const __user *__envp,
--		int flags, struct file *file);
-+int kernel_execveat(int fd, const char *filename, const char *const *argv,
-+		const char *const *envp, int flags, struct file *file);
- 
- #endif /* _LINUX_BINFMTS_H */
-diff --git a/init/main.c b/init/main.c
-index 838950ea7bca22..33de235dc2aa00 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -1329,10 +1329,8 @@ static int run_init_process(const char *init_filename)
- 	pr_debug("  with environment:\n");
- 	for (p = envp_init; *p; p++)
- 		pr_debug("    %s\n", *p);
--	return do_execveat(AT_FDCWD, getname_kernel(init_filename),
--			(const char __user *const __user *)argv_init,
--			(const char __user *const __user *)envp_init,
--			0, NULL);
-+	return kernel_execveat(AT_FDCWD, init_filename, argv_init, envp_init, 0,
-+			       NULL);
- }
- 
- static int try_to_run_init_process(const char *init_filename)
-diff --git a/kernel/umh.c b/kernel/umh.c
-index 7aa9a5817582ca..1284823dbad338 100644
---- a/kernel/umh.c
-+++ b/kernel/umh.c
-@@ -103,11 +103,9 @@ static int call_usermodehelper_exec_async(void *data)
- 	commit_creds(new);
- 
- 	sub_info->pid = task_pid_nr(current);
--	retval = do_execveat(AT_FDCWD,
--			sub_info->path ? getname_kernel(sub_info->path) : NULL,
--			(const char __user *const __user *)sub_info->argv,
--			(const char __user *const __user *)sub_info->envp,
--			0, sub_info->file);
-+	retval = kernel_execveat(AT_FDCWD, sub_info->path,
-+			(const char *const *)sub_info->argv,
-+			(const char *const *)sub_info->envp, 0, sub_info->file);
- 	if (sub_info->file && !retval)
- 		current->flags |= PF_UMH;
- out:
+> The latter should also help to isolate a bit against the mm-area
+> changes to the memalloc flags proposed.
+
+I have read the patchset from Matthew.  Agree with you that we should
+do it the same way.
+
+[adding  Matthew to cc]
+
 -- 
-2.26.2
-
+Thanks
+Yafang
