@@ -2,79 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB75720C4CB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jun 2020 01:10:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ED2820C65F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jun 2020 08:11:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbgF0XKQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 27 Jun 2020 19:10:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48272 "EHLO mail.kernel.org"
+        id S1725970AbgF1GKe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Jun 2020 02:10:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726057AbgF0XKQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 27 Jun 2020 19:10:16 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725913AbgF1GKe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 28 Jun 2020 02:10:34 -0400
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3917820707;
-        Sat, 27 Jun 2020 23:10:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 205F220702;
+        Sun, 28 Jun 2020 06:10:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593299415;
-        bh=/ft0gEdXgdrpBXeR5hwd2mEJMfyWjzRx7hEcjdZ+TNk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WoDOyld9MuOVGH4iJuZ+iBHgjZH9PZxkzlfM86zFy/I0J99jZTg6FG73e9bRd11gT
-         aPDyr/lstgl6eteNtDc09aOcMozcGW1T0F8qhIbOVL7ACUiUKzJehNz0thD1rA4uKw
-         bVaTg0Wa/hclcMQ9rr5hV9X5IAyHZsYK9VjeO/ds=
-Date:   Sat, 27 Jun 2020 16:10:13 -0700
+        s=default; t=1593324634;
+        bh=Obir8NWpVyRdOF2tK7j8Pz3Unoae8GMKId/DtUm05yg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=yN31eNYNzzLXSVQ1AuUz0ZUY1jN4jmlCZRGBtVP+t9qaHgQH53VNhIsp6QcgvUIVQ
+         8eMD2+2mJ0DkJ/WPQDHbawydb81lHKUy5OyDdGCb+OZgklHmObvuIwjaat2re4tYyp
+         fgYQBBHPhbEfibW+RKScSVHvjrDkFwSgwR8YlpY8=
 From:   Eric Biggers <ebiggers@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+95bccd805a4aa06a4b0d@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-mm@kvack.org
-Subject: Re: linux-next boot error: WARNING in kmem_cache_free
-Message-ID: <20200627231013.GM7065@sol.localdomain>
-References: <CACT4Y+ZcbA=9L2XPC_rRG-FdwOoH6XteOoGHg7jfvd+1CH2M+w@mail.gmail.com>
- <121C0D57-C9E6-406B-A280-A67E773EA9D0@lca.pw>
+To:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Qiujun Huang <hqjagain@gmail.com>
+Subject: [PATCH 0/6] fs/minix: fix syzbot bugs and set s_maxbytes
+Date:   Sat, 27 Jun 2020 23:08:39 -0700
+Message-Id: <20200628060846.682158-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <121C0D57-C9E6-406B-A280-A67E773EA9D0@lca.pw>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[+Cc linux-mm; +Bcc linux-fsdevel]
+This series fixes all syzbot bugs in the minix filesystem:
 
-On Mon, Jun 22, 2020 at 03:28:09AM -0400, Qian Cai wrote:
-> 
-> 
-> > On Jun 22, 2020, at 2:42 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
-> > 
-> > There is a reason, it's still important for us.
-> > But also it's not our strategy to deal with bugs by not testing
-> > configurations and closing eyes on bugs, right? If it's an official
-> > config in the kernel, it needs to be tested. If SLAB is in the state
-> > that we don't care about any bugs in it, then we need to drop it. It
-> > will automatically remove it from all testing systems out there. Or at
-> > least make it "depends on BROKEN" to slowly phase it out during
-> > several releases.
-> 
-> Do you mind sharing what’s your use cases with CONFIG_SLAB? The only thing prevents it from being purged early is that it might perform better with a certain type of networking workloads where syzbot should have nothing to gain from it.
-> 
-> I am more of thinking about the testing coverage that we could use for syzbot to test SLUB instead of SLAB. Also, I have no objection for syzbot to test SLAB, but then from my experience, you are probably on your own to debug further with those testing failures. Until you are able to figure out the buggy patch or patchset introduced the regression, I am afraid not many people would be able to spend much time on SLAB. The developers are pretty much already half-hearted on it by only fixing SLAB here and there without runtime testing it.
-> 
+	KASAN: null-ptr-deref Write in get_block
+	KASAN: use-after-free Write in get_block
+	KASAN: use-after-free Read in get_block
+	WARNING in inc_nlink
+	KMSAN: uninit-value in get_block
+	WARNING in drop_nlink
 
-This bug also got reported 2 days later by the kernel test robot
-(https://lore.kernel.org/lkml/20200623090213.GW5535@shao2-debian/).
-Then it was fixed by commit 437edcaafbe3, so telling syzbot:
+It also fixes the minix filesystem to set s_maxbytes correctly, so that
+userspace sees the correct behavior when exceeding the max file size.
 
-#syz fix: mm, slab/slub: improve error reporting and overhead of cache_from_obj()-fix
+Al or Andrew: one of you will need to take these patches, since no one
+is maintaining this filesystem.
 
-If CONFIG_SLAB is no longer useful and supported then it needs to be removed
-from the kernel.  Otherwise, it needs to be tested just like all other options.
 
-- Eric
+Eric Biggers (6):
+  fs/minix: check return value of sb_getblk()
+  fs/minix: don't allow getting deleted inodes
+  fs/minix: reject too-large maximum file size
+  fs/minix: set s_maxbytes correctly
+  fs/minix: fix block limit check for V1 filesystems
+  fs/minix: remove expected error message in block_to_path()
+
+ fs/minix/inode.c        | 42 +++++++++++++++++++++++++++++++++++++----
+ fs/minix/itree_common.c |  8 +++++++-
+ fs/minix/itree_v1.c     | 12 ++++++------
+ fs/minix/itree_v2.c     | 13 ++++++-------
+ fs/minix/minix.h        |  1 -
+ 5 files changed, 57 insertions(+), 19 deletions(-)
+
+-- 
+2.27.0
+
