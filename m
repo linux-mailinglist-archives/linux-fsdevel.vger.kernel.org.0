@@ -2,138 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 27D7D20C8C4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jun 2020 17:49:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAC6A20C9F2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jun 2020 21:44:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726040AbgF1PtA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 28 Jun 2020 11:49:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725970AbgF1Ps7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 28 Jun 2020 11:48:59 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD39820720;
-        Sun, 28 Jun 2020 15:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593359339;
-        bh=pb+DAsbP5/KNvoIVHhH+X1bytbJugWWO3exb7riZzuw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=elhEFsFEzb5vePRErTUi7fkjISY18A19VMhto9ENb6Y4inwRT0b7n24gFqwLFBOv0
-         yyd7nlWeiZlwyjjkdhWyKraiKzV9c9z8Zu7/9TAteNfky8+inUj8fyCgpZ68I917xz
-         fSshhjbDjr6+MubpWnDDZHJ8PqRi+wTABaVZAuEw=
-Date:   Sun, 28 Jun 2020 08:48:57 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+8c4a14856e657b43487c@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: WARNING in percpu_ref_exit (2)
-Message-ID: <20200628154857.GA2310@sol.localdomain>
-References: <20191221134330.7376-1-hdanton@sina.com>
- <94c867f3-7310-573f-9fbd-088d4a75d6a3@kernel.dk>
+        id S1726735AbgF1Top (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 28 Jun 2020 15:44:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51330 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbgF1Too (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 28 Jun 2020 15:44:44 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9438DC03E979;
+        Sun, 28 Jun 2020 12:44:44 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id w2so6513834pgg.10;
+        Sun, 28 Jun 2020 12:44:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=46U5LTf9rFQftrOq8rZJnWLpeHVL1rEif2GhCvIbyXU=;
+        b=nwRrXvUhla2rgs08uSaWUjb8zZQG6bfs/KlbXDFJI/HOxYPn5w5mr7ql/l1Z+et3H8
+         B3Lwlazj3i8zZ+dXobqL+e7pe2i1b4czgwPCsE0cM2nAq1YkC5ey6bLpdhqrdeDCv/Jw
+         4UqzCTDqfymcj59XgWZlhTlzn6jwemaU2UHi2qQgx2EvS6Glvo9eN5dTsQOcXD7wdMqx
+         IIwmizNe/+d3dk0KSBF78POcsqexWyIaDZqG0t/K11cj+pJBROMSLFKEhGRFWEbkggcg
+         MMNxBk9TYqXqFoiWICxNqupHqdPGYemSJrebqzKphRJP0YUaSnpqRLkOdHBFaaNPmqIZ
+         Idnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=46U5LTf9rFQftrOq8rZJnWLpeHVL1rEif2GhCvIbyXU=;
+        b=OtiWXwmVVUCjtyEwAwIJbP/ktEdwRQnvVZivb7ouYtDMYairDFxIh8les058yQ7W2d
+         TVPrbCiPel9y9vto4yJjlTcSJRvN/0mhjqcGMMVj81ohZ6ZJ4/RHijjXRthLOxI6uO+Y
+         eDEJE91p/qSuIhJkMeGX9hsJAJOTBcag1Cv/NmrXzPVR9O0Ny9z2d9BYiip2oTRiaNXq
+         TBqfkH78Vj9x+ABe3JPrv6q8jBEFmtgg4HPgijq0zPLDzxvr/gs+CJbrIPTKva3yB3jh
+         iR4r1Mt/iKyCRnBhVhrUYzXfRh1VeH/R+Q8AAJVviQgKmdcHXLEESbIdEKw7CHONzCpe
+         aBtg==
+X-Gm-Message-State: AOAM530fcOSVzfFb4dM6DvCEPwOaDNwxQa8YtlDq9aeG4ROGsSYuDaIc
+        eeN0yzvmnY2veeUd2X4nd/c=
+X-Google-Smtp-Source: ABdhPJwoQlVtn/X4YpQlMUebDpAYoaiy5IBb/4Qr2UmBHT3aj9oiPi+Ba8b8uKZx+BVBVYLMBeVqtw==
+X-Received: by 2002:a63:d34a:: with SMTP id u10mr7145153pgi.297.1593373484059;
+        Sun, 28 Jun 2020 12:44:44 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:616])
+        by smtp.gmail.com with ESMTPSA id n1sm17373239pjn.24.2020.06.28.12.44.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Jun 2020 12:44:43 -0700 (PDT)
+Date:   Sun, 28 Jun 2020 12:44:40 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
+Message-ID: <20200628194440.puzh7nhdnk6i4rqj@ast-mbp.dhcp.thefacebook.com>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
+ <87366g8y1e.fsf@x220.int.ebiederm.org>
+ <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <94c867f3-7310-573f-9fbd-088d4a75d6a3@kernel.dk>
+In-Reply-To: <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 21, 2019 at 07:02:25AM -0700, Jens Axboe wrote:
-> On 12/21/19 6:43 AM, Hillf Danton wrote:
-> > 
-> > On Sat, 21 Dec 2019 00:05:07 -0800
-> >> Hello,
-> >>
-> >> syzbot found the following crash on:
-> >>
-> >> HEAD commit:    7ddd09fc Add linux-next specific files for 20191220
-> >> git tree:       linux-next
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=12a18cc6e00000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=f183b01c3088afc6
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=8c4a14856e657b43487c
-> >> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b8f351e00000
-> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b51925e00000
-> >>
-> >> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> >> Reported-by: syzbot+8c4a14856e657b43487c@syzkaller.appspotmail.com
-> >>
-> >> ------------[ cut here ]------------
-> >> WARNING: CPU: 1 PID: 11482 at lib/percpu-refcount.c:111  
-> >> percpu_ref_exit+0xab/0xd0 lib/percpu-refcount.c:111
-> >> Kernel panic - not syncing: panic_on_warn set ...
-> >> CPU: 1 PID: 11482 Comm: syz-executor051 Not tainted  
-> >> 5.5.0-rc2-next-20191220-syzkaller #0
-> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> >> Google 01/01/2011
-> >> Call Trace:
-> >>   __dump_stack lib/dump_stack.c:77 [inline]
-> >>   dump_stack+0x197/0x210 lib/dump_stack.c:118
-> >>   panic+0x2e3/0x75c kernel/panic.c:221
-> >>   __warn.cold+0x2f/0x3e kernel/panic.c:582
-> >>   report_bug+0x289/0x300 lib/bug.c:195
-> >>   fixup_bug arch/x86/kernel/traps.c:174 [inline]
-> >>   fixup_bug arch/x86/kernel/traps.c:169 [inline]
-> >>   do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:267
-> >>   do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:286
-> >>   invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1027
-> >> RIP: 0010:percpu_ref_exit+0xab/0xd0 lib/percpu-refcount.c:111
-> >> Code: 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 75 1d 48 c7 43 08 03 00  
-> >> 00 00 e8 01 41 e5 fd 5b 41 5c 41 5d 5d c3 e8 f5 40 e5 fd <0f> 0b eb bf 4c  
-> >> 89 ef e8 29 2c 23 fe eb d9 e8 82 2b 23 fe eb a7 4c
-> >> RSP: 0018:ffffc9000cb17968 EFLAGS: 00010293
-> >> RAX: ffff8880a3390640 RBX: ffff8880a83a8010 RCX: ffffffff83901432
-> >> RDX: 0000000000000000 RSI: ffffffff8390149b RDI: ffff8880a83a8028
-> >> RBP: ffffc9000cb17980 R08: ffff8880a3390640 R09: 0000000000000000
-> >> R10: 0000000000000000 R11: 0000000000000000 R12: 0000607f51435750
-> >> R13: ffff8880a83a8018 R14: ffff888097b95000 R15: ffff888097b95228
-> >>   io_sqe_files_unregister+0x7d/0x2f0 fs/io_uring.c:4623
-> >>   io_ring_ctx_free fs/io_uring.c:5575 [inline]
-> >>   io_ring_ctx_wait_and_kill+0x430/0x9a0 fs/io_uring.c:5644
-> >>   io_uring_release+0x42/0x50 fs/io_uring.c:5652
-> >>   __fput+0x2ff/0x890 fs/file_table.c:280
-> >>   ____fput+0x16/0x20 fs/file_table.c:313
-> >>   task_work_run+0x145/0x1c0 kernel/task_work.c:113
-> >>   exit_task_work include/linux/task_work.h:22 [inline]
-> >>   do_exit+0x909/0x2f20 kernel/exit.c:797
-> >>   do_group_exit+0x135/0x360 kernel/exit.c:895
-> >>   get_signal+0x47c/0x24f0 kernel/signal.c:2734
-> >>   do_signal+0x87/0x1700 arch/x86/kernel/signal.c:815
-> >>   exit_to_usermode_loop+0x286/0x380 arch/x86/entry/common.c:160
-> >>   prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
-> >>   syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
-> >>   do_syscall_64+0x676/0x790 arch/x86/entry/common.c:304
-> >>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > 
-> > Flush work before killing.
-> > 
-> > --- a/fs/io_uring.c
-> > +++ b/fs/io_uring.c
-> > @@ -4618,10 +4618,10 @@ static int io_sqe_files_unregister(struc
-> >  	if (!data)
-> >  		return -ENXIO;
-> >  
-> > +	flush_work(&data->ref_work);
-> >  	percpu_ref_kill_and_confirm(&data->refs, io_file_ref_kill);
-> >  	wait_for_completion(&data->done);
-> >  	percpu_ref_exit(&data->refs);
-> > -	flush_work(&data->ref_work);
-> >  
-> >  	__io_sqe_files_unregister(ctx);
-> >  	nr_tables = DIV_ROUND_UP(ctx->nr_user_files, IORING_MAX_FILES_TABLE);
+On Sat, Jun 27, 2020 at 10:57:10PM +0900, Tetsuo Handa wrote:
+> On 2020/06/27 21:59, Eric W. Biederman wrote:
+> > Can you try replacing the __fput_sync with:
+> > 	fput(file);
+> >         flush_delayed_fput();
+> >         task_work_run();
 > 
-> Oh indeed, good catch! Thanks, I'll fold this in.
+> With below change, TOMOYO can obtain pathname like "tmpfs:/my\040test\040driver".
+> 
+> Please avoid WARN_ON() if printk() is sufficient (for friendliness to panic_on_warn=1 environments).
+> For argv[], I guess that fork_usermode_driver() should receive argv[] as argument rather than
+> trying to split info->driver_name, for somebody might want to pass meaningful argv[] (and
+> TOMOYO wants to use meaningful argv[] as a hint for identifying the intent).
+> 
+> diff --git a/kernel/umd.c b/kernel/umd.c
+> index de2f542191e5..ae6e85283f13 100644
+> --- a/kernel/umd.c
+> +++ b/kernel/umd.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/mount.h>
+>  #include <linux/fs_struct.h>
+>  #include <linux/umd.h>
+> +#include <linux/task_work.h>
+>  
+>  static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *name)
+>  {
+> @@ -25,7 +26,7 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
+>  	if (IS_ERR(mnt))
+>  		return mnt;
+>  
+> -	file = file_open_root(mnt->mnt_root, mnt, name, O_CREAT | O_WRONLY, 0700);
+> +	file = file_open_root(mnt->mnt_root, mnt, name, O_CREAT | O_WRONLY | O_EXCL, 0700);
+>  	if (IS_ERR(file)) {
+>  		mntput(mnt);
+>  		return ERR_CAST(file);
+> @@ -41,23 +42,33 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
+>  		return ERR_PTR(err);
+>  	}
+>  
+> -	__fput_sync(file);
+> +	if (current->flags & PF_KTHREAD) {
+> +		__fput_sync(file);
+> +	} else {
+> +		fput(file);
+> +		flush_delayed_fput();
+> +		task_work_run();
+> +	}
 
-Hi Jens, this bug is still occurring.  See the syzbot dashboard:
-https://syzkaller.appspot.com/bug?extid=8c4a14856e657b43487c
+Thanks. This makes sense to me.
 
-Here's a crash on upstream commit 7ae77150d94d (Fri Jun 5 12:39:30 2020 -0700):
-https://syzkaller.appspot.com/text?tag=CrashReport&x=1754d169100000
+>  	return mnt;
+>  }
+>  
+>  /**
+>   * umd_load_blob - Remember a blob of bytes for fork_usermode_driver
+> - * @info: information about usermode driver
+> - * @data: a blob of bytes that can be executed as a file
+> - * @len:  The lentgh of the blob
+> + * @info: information about usermode driver (shouldn't be NULL)
+> + * @data: a blob of bytes that can be executed as a file (shouldn't be NULL)
+> + * @len:  The lentgh of the blob (shouldn't be 0)
+>   *
+>   */
+>  int umd_load_blob(struct umd_info *info, const void *data, size_t len)
+>  {
+>  	struct vfsmount *mnt;
+>  
+> -	if (WARN_ON_ONCE(info->wd.dentry || info->wd.mnt))
+> +	if (!info || !info->driver_name || !data || !len)
+> +		return -EINVAL;
+> +	if (info->wd.dentry || info->wd.mnt) {
+> +		pr_info("%s already loaded.\n", info->driver_name);
+>  		return -EBUSY;
+> +	}
 
-- Eric
+But all the defensive programming kinda goes against general kernel style.
+I wouldn't do it. Especially pr_info() ?!
+Though I don't feel strongly about it.
+
+I would like to generalize elf_header_check() a bit and call it
+before doing blob_to_mnt() to make sure that all blobs are elf files only.
+Supporting '#!/bin/bash' or other things as blobs seems wrong to me.
