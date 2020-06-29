@@ -2,114 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBEF920DE1B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 23:52:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DBFD20E194
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 23:59:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730610AbgF2UWk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jun 2020 16:22:40 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:23147 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732563AbgF2TZd (ORCPT
+        id S2389997AbgF2U50 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jun 2020 16:57:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43362 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731043AbgF2TNG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:25:33 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-10-CAqVtc7cNsK1P-8WmJmePQ-1; Mon, 29 Jun 2020 09:21:23 +0100
-X-MC-Unique: CAqVtc7cNsK1P-8WmJmePQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 29 Jun 2020 09:21:22 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 29 Jun 2020 09:21:22 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Linus Torvalds' <torvalds@linux-foundation.org>
-CC:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        "Luis Chamberlain" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Iurii Zaikin" <yzaikin@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH 03/11] fs: add new read_uptr and write_uptr file
- operations
-Thread-Topic: [PATCH 03/11] fs: add new read_uptr and write_uptr file
- operations
-Thread-Index: AQHWSlL8Fz5PlOyONku9ShNOCTqEYajsST7AgABSmoCAAqgYcA==
-Date:   Mon, 29 Jun 2020 08:21:22 +0000
-Message-ID: <fcd951e164a3407295971e3a4236b418@AcuMS.aculab.com>
-References: <20200624162901.1814136-1-hch@lst.de>
- <20200624162901.1814136-4-hch@lst.de>
- <CAHk-=wit9enePELG=-HnLsr0nY5bucFNjqAqWoFTuYDGR1P4KA@mail.gmail.com>
- <20200624175548.GA25939@lst.de>
- <CAHk-=wi_51SPWQFhURtMBGh9xgdo74j1gMpuhdkddA2rDMrt1Q@mail.gmail.com>
- <f50b9afa5a2742babe0293d9910e6bf4@AcuMS.aculab.com>
- <CAHk-=wjxQczqZ96esvDrH5QZsLg6azXCGDgo+Bmm6r8t2ssasg@mail.gmail.com>
-In-Reply-To: <CAHk-=wjxQczqZ96esvDrH5QZsLg6azXCGDgo+Bmm6r8t2ssasg@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+        Mon, 29 Jun 2020 15:13:06 -0400
+Received: from mail-pj1-x1049.google.com (mail-pj1-x1049.google.com [IPv6:2607:f8b0:4864:20::1049])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F830C0F26C5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jun 2020 05:04:13 -0700 (PDT)
+Received: by mail-pj1-x1049.google.com with SMTP id t7so2656149pjl.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jun 2020 05:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=OgrownsdciRkQfHLu2Mfy3btRxxtBKOX+y4E3Oqteos=;
+        b=gBiZCVlEO4XDHJNS23BhAsQTP1jO1/1YSpaH/WgvMSS3FuMlqd+4vKZrSzJYaWnl/Y
+         1n1gSdCt3z+pNV3CigPeOXG4eWXKbpivWBuPyrfPGp1RIgFeEDVv/cPemO6wV3JCho0e
+         jtOIYCZIL5m5allS+ROBU+GL06J1VYIuxb9Z5y9RT3Zi8IiwzIYN+bmBk1wt2JfYac8c
+         Ye2I8lshSh/FtnYECOI3yuRPOKNSi/QlD9zFMx5r0MsMNroQ3ZPLZjUGeLkHYYQ4sm3/
+         3luLSZG+zTmBtBG1Ed7XTgsbFfmZSkITPVvXtYQ1D95XhQY/gcG72x8y0aBQeNDpQhaa
+         CvEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=OgrownsdciRkQfHLu2Mfy3btRxxtBKOX+y4E3Oqteos=;
+        b=IdvGWG7ELfb0TyE95HJbTJlRuivX9FozTzcXvdjz38HSISSd6PKCKqLFYG9q6eJ4/J
+         Wzn+6m1KrmKVkPzeFA/DGM1VpM6u82J14Cu4shjTgFMSRN/QFFULop1lkxCQd/K6r3uF
+         M02lMLnc2iy//E7/iou+hrj3Mu2uFo1rtstZj3jdlu9uTRHc0FBfuhY/mRNPj3Xws38/
+         0cA6KuuwL7bi2CQAKqxogloedR1fEE3jBCuL16flt/qyRhS7H5qTBYE75Kg1p50bx+Xf
+         eLrG0vedg1H8eeQAHWVm/NEA1QNQ2BgA0+REse9TzqrWvs5AfmMMkTjt3XZPLAaDFA5j
+         3NeQ==
+X-Gm-Message-State: AOAM530/HQ5smd9JsxkKhcItXq6O4Rfyl6vpR//jFnLc90a6OqAmisex
+        7VD3WE8MJOcBh1NPPEc6RsndcHd4GF8=
+X-Google-Smtp-Source: ABdhPJwYLTVSt9n1XjUVygrqIZ2mKYtW5G+8LSUlIBRmnIEmdQxeGLDbPT+he1blzav1wz1DLUaRqIPqKYM=
+X-Received: by 2002:a17:902:c408:: with SMTP id k8mr13536731plk.279.1593432252439;
+ Mon, 29 Jun 2020 05:04:12 -0700 (PDT)
+Date:   Mon, 29 Jun 2020 12:04:01 +0000
+Message-Id: <20200629120405.701023-1-satyat@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.27.0.212.ge8ba1cc988-goog
+Subject: [PATCH v2 0/4] Inline Encryption Support for fscrypt
+From:   Satya Tangirala <satyat@google.com>
+To:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
+Cc:     Satya Tangirala <satyat@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjcgSnVuZSAyMDIwIDE3OjMzDQo+IE9uIFNh
-dCwgSnVuIDI3LCAyMDIwIGF0IDM6NDkgQU0gRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWlnaHRAYWN1
-bGFiLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiA+IEp1c3Qga2VlcCB0aGUgZXhpc3RpbmcgInNldF9m
-cygpIi4gSXQncyBub3QgaGFybWZ1bCBpZiBpdCdzIG9ubHkgdXNlZA0KPiA+ID4gb2NjYXNpb25h
-bGx5LiBXZSBzaG91bGQgcmVuYW1lIGl0IG9uY2UgaXQncyByYXJlIGVub3VnaCwgdGhvdWdoLg0K
-PiA+DQo+ID4gQW0gSSByaWdodCBpbiB0aGlua2luZyB0aGF0IGl0IGp1c3Qgc2V0cyBhIGZsYWcg
-aW4gJ2N1cnJlbnQnID8NCj4gDQo+IEJhc2ljYWxseSwgeWVzLiBUaGF0J3Mgd2hhdCBpdCBoYXMg
-YWx3YXlzIGRvbmUuDQoNCkkgY291bGQgY2hlY2ssIGJ1dCBJIHN1c3BlY3QgaXQgc2V0cyB3aGF0
-IFRBU0tfU0laRSB1c2VzIHRvIH4wdQ0Kc28gdGhhdCBhY2Nlc3Nfb2soKSBjYW4ndCBmYWlsLg0K
-DQo+IFdlbGwgImFsd2F5cyIgaXMgbm90IHRydWUgLSBpdCB1c2VkIHRvIHNldCB0aGUgJWZzIHNl
-Z21lbnQgcmVnaXN0ZXINCj4gb3JpZ2luYWxseSAodGh1cyB0aGUgbmFtZSksIGJ1dCBfY29uY2Vw
-dHVhbGx5XyBpdCBzZXRzIGEgZmxhZyBmb3INCj4gInNob3VsZCB1c2VyIGFjY2Vzc2VzIGJlIGtl
-cm5lbCBhY2Nlc3NlcyBpbnN0ZWFkIi4NCj4gDQo+IE9uIHg4NiAtIGFuZCBtb3N0IG90aGVyIGFy
-Y2hpdGVjdHVyZXMgd2hlcmUgdXNlciBzcGFjZSBhbmQga2VybmVsDQo+IHNwYWNlIGFyZSBpbiB0
-aGUgc2FtZSBhZGRyZXNzIHNwYWNlIGFuZCBhY2Nlc3NlZCB3aXRoIHRoZSBzYW1lDQo+IGluc3Ry
-dWN0aW9ucywgdGhhdCBoYXMgdGhlbiBiZWVuIGltcGxlbWVudGVkIGFzIGp1c3QgYSAid2hhdCBp
-cyB0aGUNCj4gbGltaXQgZm9yIGFuIGFjY2VzcyIuDQo+IA0KPiBPbiBvdGhlciBhcmNoaXRlY3R1
-cmVzIC0gYXJjaGl0ZWN0dXJlcyB0aGF0IG5lZWQgZGlmZmVyZW50IGFjY2Vzcw0KPiBtZXRob2Rz
-IChvciBkaWZmZXJlbnQgZmxhZ3MgdG8gdGhlIGxvYWQvc3RvcmUgaW5zdHJ1Y3Rpb24pIC0gaXQn
-cyBhbg0KPiBhY3R1YWwgZmxhZyB0aGF0IGNoYW5nZXMgd2hpY2ggYWNjZXNzIG1ldGhvZCB5b3Ug
-dXNlLg0KPiANCj4gPiBBbHRob3VnaCBJIGRvbid0IHJlbWVtYmVyIGFjY2Vzc19vaygpIGRvaW5n
-IGEgc3VpdGFibGUgY2hlY2sNCj4gPiAod291bGQgbmVlZCB0byBiZSAoYWRkcmVzcyAtIGJhc2Up
-IDwgbGltaXQpLg0KPiANCj4gU28gYWdhaW4sIG9uIHRoZSBhcmNoaXRlY3R1cmVzIHdpdGggYSB1
-bmlmaWVkIGFkZHJlc3Mgc3BhY2UsDQo+IGFjY2Vzc19vaygpIGlzIGV4YWN0bHkgdGhhdCAiYWRk
-cmVzcyArIGFjY2Vzc19zaXplIDw9IGxpbWl0IiwgYWx0aG91Z2gNCj4gb2Z0ZW4gZG9uZSB3aXRo
-IHNvbWUgaW5saW5lIGFzbSBqdXN0IHRvIGdldCB0aGUgb3ZlcmZsb3cgY2FzZSBkb25lDQo+IGVm
-ZmljaWVudGx5Lg0KDQpJIHJlYWxpc2VkIGFmdGVyd2FyZHMgdGhhdCB0aGUgJ2tlcm5lbCBhZGRy
-ZXNzIGlzIGFjdHVhbGx5IHVzZXInDQpjaGVjayBpc24ndCByZWFsbHkgZG9uZSBvbiBhcmNoaXRl
-Y3R1cmVzIGxpa2UgeDg2IHVudGlsIHN0YWMvY2xhYy4NCg0KSSBoYWQgYW5vdGhlciB0aG91Z2h0
-Lg0KV2hpbGUgc2V0dGluZyB1cCBhIGZ1bGwtYmxvd24gc2NhdHRlci1nYXRoZXIgJ2l0ZXInIHN0
-cnVjdHVyZSBmb3INCmZ1bmN0aW9ucyBsaWtlIFtnc11ldHNvY2tvcHQsIGlvY3RsIGFuZCBmY250
-bCBpcyBPVFQgYW5kIHByb2JhYmx5DQptZWFzdXJhYmx5IGV4cGVuc2l2ZSBhIGxpZ2h0d2VpZ2h0
-ICdidWZmZXInIHN0cnVjdHVyZSB0aGF0IGp1c3QNCmNvbnRhaW5lZCBhZGRyZXNzLCBsZW5ndGgg
-YW5kIHVzZXIva2VybmVsIGZsYWcgY291bGQgYmUgdXNlZC4NCg0KQWx0aG91Z2ggdGhlIHVzZXMg
-d291bGQgbmVlZCBhbiBleHRyYSBsZXZlbCBvZiBpbmRpcmVjdGlvbiB0aGlzDQp3b3VsZCBiZSBv
-ZmZzZXQgYnkgcmVkdWNpbmcgdGhlIG51bWJlciBvZiBwYXJhbWV0ZXJzIHBhc3NlZA0KdGhyb3Vn
-aCBhbGwgdGhlIGxheWVycy4NCg0KLi4uDQo+IEkgdGhvdWdodCB0aGVyZSB3YXMganVzdCBvbmUg
-dmVyeSBzcGVjaWZpYyBjYXNlIG9mICJvaCwgaW4gY2VydGFpbg0KPiBjYXNlcyBvZiBzZXRzb2Nr
-b3B0IHdlIGRvbid0IGtub3cgd2hhdCBzaXplIHRoaXMgYWRkcmVzcyBpcyBhbmQgb3B0bGVuDQo+
-IGlzIGlnbm9yZWQiLCBzbyB3ZSBoYXZlIHRvIGp1c3QgcGFzcyB0aGUgcG9pbnRlciBkb3duIHRv
-IHRoZSBwcm90b2NvbCwNCj4gd2hpY2ggaXMgdGhlIHBvaW50IHRoYXQga25vd3MgaG93IG11Y2gg
-b2YgYW4gYWRkcmVzcyBpdCB3YW50cy4uDQoNCkkgY2FuJ3QgaGVscCBmZWVsaW5nIHRoYXQgdXNl
-cnNwYWNlIHBhc3NlcyBhIHN1aXRhYmxlIGxlbmd0aCBidXQNCnRoZSBrZXJuZWwgZG9lc24ndCB2
-ZXJpZnkgaXQuDQoNCkl0IGlzIHdvcnNlIHRoYW4gdGhhdCwgb25lIG9mIHRoZSBTQ1RQIGdldHNv
-Y2tvcHQoKSBjYWxscyBoYXMgdG8gcmV0dXJuDQphIGxlbmd0aCB0aGF0IGlzIHNob3J0ZXIgdGhh
-biB0aGUgYnVmZmVyIGl0IHdyb3RlLg0KDQpTbyBhbnkgYnVmZmVyIGRlc2NyaXB0b3IgbGVuZ3Ro
-IHdvdWxkIGhhdmUgdG8gYmUgYWR2aXNvcnkuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFk
-ZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywg
-TUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+This patch series adds support for Inline Encryption to fscrypt, f2fs
+and ext4. It builds on the inline encryption support now present in
+the block layer, and has been rebased on v5.8-rc3.
+
+This patch series previously went though a number of iterations as part
+of the "Inline Encryption Support" patchset (last version was v13:
+https://lkml.kernel.org/r/20200514003727.69001-1-satyat@google.com).
+
+Patch 1 introduces the SB_INLINECRYPT sb options, which filesystems
+should set if they want to use blk-crypto for file content en/decryption.
+
+Patch 2 adds inline encryption support to fscrypt. To use inline
+encryption with fscrypt, the filesystem must set the above mentioned
+SB_INLINECRYPT sb option. When this option is set, the contents of
+encrypted files will be en/decrypted using blk-crypto.
+
+Patches 3 and 4 wire up f2fs and ext4 respectively to fscrypt support for
+inline encryption, and e.g ensure that bios are submitted with blocks
+that not only are contiguous, but also have continuous DUNs.
+
+This patchset was tested by running xfstests with the "inlinecrypt" mount
+option on ext4 and f2fs with test dummy encryption (the actual
+en/decryption of file contents was handled by the blk-crypto-fallback). It
+was also tested along with the UFS patches from the original series on some
+Qualcomm and Mediatek chipsets with hardware inline encryption support
+(refer to
+https://lkml.kernel.org/linux-scsi/20200501045111.665881-1-ebiggers@kernel.org/
+and
+https://lkml.kernel.org/linux-scsi/20200304022101.14165-1-stanley.chu@mediatek.com/
+for more details on those tests).
+
+Changes v1 => v2
+ - SB_INLINECRYPT mount option is shown by individual filesystems instead
+   of by the common VFS code since the option is parsed by filesystem
+   specific code, and is not a mount option applicable generically to
+   all filesystems.
+ - Make fscrypt_select_encryption_impl() return error code when it fails
+   to allocate memory.
+ - cleanups
+ 
+Changes v13 in original patchset => v1
+ - rename struct fscrypt_info::ci_key to ci_enc_key
+ - set dun bytes more precisely in fscrypt
+ - cleanups
+
+Eric Biggers (1):
+  ext4: add inline encryption support
+
+Satya Tangirala (3):
+  fs: introduce SB_INLINECRYPT
+  fscrypt: add inline encryption support
+  f2fs: add inline encryption support
+
+ Documentation/admin-guide/ext4.rst    |   6 +
+ Documentation/filesystems/f2fs.rst    |   7 +
+ Documentation/filesystems/fscrypt.rst |   3 +
+ fs/buffer.c                           |   7 +-
+ fs/crypto/Kconfig                     |   6 +
+ fs/crypto/Makefile                    |   1 +
+ fs/crypto/bio.c                       |  50 ++++
+ fs/crypto/crypto.c                    |   2 +-
+ fs/crypto/fname.c                     |   4 +-
+ fs/crypto/fscrypt_private.h           | 115 ++++++++-
+ fs/crypto/inline_crypt.c              | 351 ++++++++++++++++++++++++++
+ fs/crypto/keyring.c                   |   6 +-
+ fs/crypto/keysetup.c                  |  70 +++--
+ fs/crypto/keysetup_v1.c               |  16 +-
+ fs/ext4/inode.c                       |   4 +-
+ fs/ext4/page-io.c                     |   6 +-
+ fs/ext4/readpage.c                    |  11 +-
+ fs/ext4/super.c                       |  12 +
+ fs/f2fs/compress.c                    |   2 +-
+ fs/f2fs/data.c                        |  78 +++++-
+ fs/f2fs/super.c                       |  35 +++
+ include/linux/fs.h                    |   1 +
+ include/linux/fscrypt.h               |  82 ++++++
+ 23 files changed, 804 insertions(+), 71 deletions(-)
+ create mode 100644 fs/crypto/inline_crypt.c
+
+-- 
+2.27.0.212.ge8ba1cc988-goog
 
