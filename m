@@ -2,144 +2,286 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1205620DE54
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 23:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D80720E25D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 00:00:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388954AbgF2UYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jun 2020 16:24:42 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:46406 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730311AbgF2UYk (ORCPT
+        id S1731238AbgF2VEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jun 2020 17:04:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43356 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731111AbgF2TMo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jun 2020 16:24:40 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jq0KS-0008Ab-2k; Mon, 29 Jun 2020 14:24:36 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jq0KM-0006dY-76; Mon, 29 Jun 2020 14:24:35 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200625095725.GA3303921@kroah.com>
-        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
-        <20200625120725.GA3493334@kroah.com>
-        <20200625.123437.2219826613137938086.davem@davemloft.net>
-        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
-        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
-        <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
-        <87366g8y1e.fsf@x220.int.ebiederm.org>
-        <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
-        <20200628194440.puzh7nhdnk6i4rqj@ast-mbp.dhcp.thefacebook.com>
-        <c99d0cfc-8526-0daf-90b5-33e560efdede@i-love.sakura.ne.jp>
-Date:   Mon, 29 Jun 2020 15:19:59 -0500
-In-Reply-To: <c99d0cfc-8526-0daf-90b5-33e560efdede@i-love.sakura.ne.jp>
-        (Tetsuo Handa's message of "Mon, 29 Jun 2020 11:20:14 +0900")
-Message-ID: <874kqt39qo.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jq0KM-0006dY-76;;;mid=<874kqt39qo.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/d3NN0BDGHtc/aZ8NKVRKAhcNPeBHT1DI=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa01.xmission.com
-X-Spam-Level: ****
-X-Spam-Status: No, score=4.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,NO_DNS_FOR_FROM,TR_XM_PhishingBody,
-        T_TM2_M_HEADER_IN_MSG,XMNoVowels,XMSubLong,XM_B_Phish66
-        autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.7 XMSubLong Long Subject
-        *  0.0 NO_DNS_FOR_FROM DNS: Envelope sender has no MX or A DNS records
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  2.0 XM_B_Phish66 BODY: Obfuscated XMission
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 TR_XM_PhishingBody Phishing flag in body of message
-X-Spam-DCC: ; sa01 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ****;Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 5466 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 4.4 (0.1%), b_tie_ro: 3.0 (0.1%), parse: 1.13
-        (0.0%), extract_message_metadata: 11 (0.2%), get_uri_detail_list: 1.46
-        (0.0%), tests_pri_-1000: 3.4 (0.1%), tests_pri_-950: 0.95 (0.0%),
-        tests_pri_-900: 0.82 (0.0%), tests_pri_-90: 101 (1.8%), check_bayes:
-        99 (1.8%), b_tokenize: 6 (0.1%), b_tok_get_all: 8 (0.1%), b_comp_prob:
-        1.77 (0.0%), b_tok_touch_all: 81 (1.5%), b_finish: 0.75 (0.0%),
-        tests_pri_0: 5333 (97.6%), check_dkim_signature: 0.37 (0.0%),
-        check_dkim_adsp: 5089 (93.1%), poll_dns_idle: 5086 (93.1%),
-        tests_pri_10: 1.74 (0.0%), tests_pri_500: 5 (0.1%), rewrite_mail: 0.00
-        (0.0%)
-Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Mon, 29 Jun 2020 15:12:44 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8217C00E3D3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jun 2020 05:04:19 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id e20so18529048ybc.23
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jun 2020 05:04:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=V8SyAp/KIEA/2ixI2Qki30JUql8wkNLrB8gimaU9vuU=;
+        b=oPzwpj7q2tHRmr+Ety3Blqub+xJHRYm5qXrFXAQBmvJGIqE5k2sSMQW+ktb8iWLw8k
+         4KSbmYnJiQSeW1FFuxxV4SD2IIeV7DPyUSgV1HotHLu+CBQYpULGz1NEKhquapdFGiyp
+         p6kQoUYRmk0pl6upsHqGPPwq7IKqwbi+FwEvLaJXzU0z8RfRjUzvfMk8SM3y7bZxCLOT
+         UzOISMrPgtT0X6jbdnP7555xnJmSbECNv5j8dtLa7/53+c0tqsgvqnADRu+n3rTqFejI
+         J3qzZa2GUseKKnF+b4YxnrzTeUmGdGCt4muSQzbw90eXFA9GHLsNkCPWkaqKwUYoCLbe
+         lEMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=V8SyAp/KIEA/2ixI2Qki30JUql8wkNLrB8gimaU9vuU=;
+        b=KTWMhSYX+xQejm6ZDInXDMryiiDPselbKufkAX+TKNMay8v3ElqFG5/4gWTeLfj8dc
+         65evvHxj2VCJf/QuK15K5kpJkabHlqyrBiJqLu9YkexpuTmceI5QjqFL2d6eNWKrad0q
+         /Bt2SGQpZKPRQLHm6q/M0/IPcN7G/p4UZbsFYBb5REE9lYugczRD/6bx5nDIGwRhndS2
+         72xvnRvdkzex+y9HMAH4GL4N/J2WTpDQ+nsaBdCQX29cy2rSP97zJlGup+EAafo4Dbe+
+         TnOcUq12KeoT8q2tAT1ZDy9MLuEljNEkGRF+J+nHINQ9ZwjZHWqeWb8GtNNlymNraDjg
+         Sozw==
+X-Gm-Message-State: AOAM533JQekSGcf4Azu6YDldNaziIHUNx+s9Xz6+XTq6JnHzPKxYjpGi
+        hCQan2FN7cHE7wvQZBI3cNwc2f6K4FE=
+X-Google-Smtp-Source: ABdhPJw5fsuaktq+QKU1cgB6V7JT1hRV+AyXPHq1LL3HZ7nl664I/SRu0YKY68d4HtwdHMxyH5yw2JRMTWA=
+X-Received: by 2002:a25:5d2:: with SMTP id 201mr2055630ybf.280.1593432259146;
+ Mon, 29 Jun 2020 05:04:19 -0700 (PDT)
+Date:   Mon, 29 Jun 2020 12:04:05 +0000
+In-Reply-To: <20200629120405.701023-1-satyat@google.com>
+Message-Id: <20200629120405.701023-5-satyat@google.com>
+Mime-Version: 1.0
+References: <20200629120405.701023-1-satyat@google.com>
+X-Mailer: git-send-email 2.27.0.212.ge8ba1cc988-goog
+Subject: [PATCH v2 4/4] ext4: add inline encryption support
+From:   Satya Tangirala <satyat@google.com>
+To:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
+Cc:     Eric Biggers <ebiggers@google.com>,
+        Satya Tangirala <satyat@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
+From: Eric Biggers <ebiggers@google.com>
 
-> On 2020/06/29 4:44, Alexei Starovoitov wrote:
->> But all the defensive programming kinda goes against general kernel style.
->> I wouldn't do it. Especially pr_info() ?!
->> Though I don't feel strongly about it.
->
-> Honestly speaking, caller should check for errors and print appropriate
-> messages. info->wd.mnt->mnt_root != info->wd.dentry indicates that something
-> went wrong (maybe memory corruption). But other conditions are not fatal.
-> That is, I consider even pr_info() here should be unnecessary.
+Wire up ext4 to support inline encryption via the helper functions which
+fs/crypto/ now provides.  This includes:
 
-They were all should never happen cases.  Which is why my patches do:
-if (WARN_ON_ONCE(...))
+- Adding a mount option 'inlinecrypt' which enables inline encryption
+  on encrypted files where it can be used.
 
-That let's the caller know the messed up very clearly while still
-providing a change to continue.
+- Setting the bio_crypt_ctx on bios that will be submitted to an
+  inline-encrypted file.
 
-If they were clearly corruption no ones kernel should ever continue
-BUG_ON would be appropriate.
+  Note: submit_bh_wbc() in fs/buffer.c also needed to be patched for
+  this part, since ext4 sometimes uses ll_rw_block() on file data.
 
->> I would like to generalize elf_header_check() a bit and call it
->> before doing blob_to_mnt() to make sure that all blobs are elf files only.
->> Supporting '#!/bin/bash' or other things as blobs seems wrong to me.
+- Not adding logically discontiguous data to bios that will be submitted
+  to an inline-encrypted file.
 
-I vote for not worry about things that have never happened, and are
-obviously incorrect.
+- Not doing filesystem-layer crypto on inline-encrypted files.
 
-The only points of checks like that is to catch cases where other
-developers misunderstand the interface.  When you get to something like
-sysfs with lots and lots of users where it is hard to audit there
-is real value in sanity checks.  In something like this with very few
-users. Just making the code clear should be enough for people not to do
-ridiculous things.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Co-developed-by: Satya Tangirala <satyat@google.com>
+Signed-off-by: Satya Tangirala <satyat@google.com>
+---
+ Documentation/admin-guide/ext4.rst |  6 ++++++
+ fs/buffer.c                        |  7 ++++---
+ fs/ext4/inode.c                    |  4 ++--
+ fs/ext4/page-io.c                  |  6 ++++--
+ fs/ext4/readpage.c                 | 11 ++++++++---
+ fs/ext4/super.c                    | 12 ++++++++++++
+ 6 files changed, 36 insertions(+), 10 deletions(-)
 
+diff --git a/Documentation/admin-guide/ext4.rst b/Documentation/admin-guide/ext4.rst
+index 9443fcef1876..ed997e376678 100644
+--- a/Documentation/admin-guide/ext4.rst
++++ b/Documentation/admin-guide/ext4.rst
+@@ -395,6 +395,12 @@ When mounting an ext4 filesystem, the following option are accepted:
+         Documentation/filesystems/dax.txt.  Note that this option is
+         incompatible with data=journal.
+ 
++  inlinecrypt
++        Encrypt/decrypt the contents of encrypted files using the blk-crypto
++        framework rather than filesystem-layer encryption. This allows the use
++        of inline encryption hardware. The on-disk format is unaffected. For
++        more details, see Documentation/block/inline-encryption.rst.
++
+ Data Mode
+ =========
+ There are 3 different data modes:
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 64fe82ec65ff..dc5e05b47646 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -320,9 +320,8 @@ static void decrypt_bh(struct work_struct *work)
+ static void end_buffer_async_read_io(struct buffer_head *bh, int uptodate)
+ {
+ 	/* Decrypt if needed */
+-	if (uptodate && IS_ENABLED(CONFIG_FS_ENCRYPTION) &&
+-	    IS_ENCRYPTED(bh->b_page->mapping->host) &&
+-	    S_ISREG(bh->b_page->mapping->host->i_mode)) {
++	if (uptodate &&
++	    fscrypt_inode_uses_fs_layer_crypto(bh->b_page->mapping->host)) {
+ 		struct decrypt_bh_ctx *ctx = kmalloc(sizeof(*ctx), GFP_ATOMIC);
+ 
+ 		if (ctx) {
+@@ -3046,6 +3045,8 @@ static int submit_bh_wbc(int op, int op_flags, struct buffer_head *bh,
+ 	 */
+ 	bio = bio_alloc(GFP_NOIO, 1);
+ 
++	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
++
+ 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+ 	bio_set_dev(bio, bh->b_bdev);
+ 	bio->bi_write_hint = write_hint;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 10dd470876b3..44bad4bb8831 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -1096,7 +1096,7 @@ static int ext4_block_write_begin(struct page *page, loff_t pos, unsigned len,
+ 	}
+ 	if (unlikely(err)) {
+ 		page_zero_new_buffers(page, from, to);
+-	} else if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode)) {
++	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+ 		for (i = 0; i < nr_wait; i++) {
+ 			int err2;
+ 
+@@ -3737,7 +3737,7 @@ static int __ext4_block_zero_page_range(handle_t *handle,
+ 		/* Uhhuh. Read error. Complain and punt. */
+ 		if (!buffer_uptodate(bh))
+ 			goto unlock;
+-		if (S_ISREG(inode->i_mode) && IS_ENCRYPTED(inode)) {
++		if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+ 			/* We expect the key to be set. */
+ 			BUG_ON(!fscrypt_has_encryption_key(inode));
+ 			err = fscrypt_decrypt_pagecache_blocks(page, blocksize,
+diff --git a/fs/ext4/page-io.c b/fs/ext4/page-io.c
+index de6fe969f773..defd2e10dfd1 100644
+--- a/fs/ext4/page-io.c
++++ b/fs/ext4/page-io.c
+@@ -402,6 +402,7 @@ static void io_submit_init_bio(struct ext4_io_submit *io,
+ 	 * __GFP_DIRECT_RECLAIM is set, see comments for bio_alloc_bioset().
+ 	 */
+ 	bio = bio_alloc(GFP_NOIO, BIO_MAX_PAGES);
++	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
+ 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
+ 	bio_set_dev(bio, bh->b_bdev);
+ 	bio->bi_end_io = ext4_end_bio;
+@@ -418,7 +419,8 @@ static void io_submit_add_bh(struct ext4_io_submit *io,
+ {
+ 	int ret;
+ 
+-	if (io->io_bio && bh->b_blocknr != io->io_next_block) {
++	if (io->io_bio && (bh->b_blocknr != io->io_next_block ||
++			   !fscrypt_mergeable_bio_bh(io->io_bio, bh))) {
+ submit_and_retry:
+ 		ext4_io_submit(io);
+ 	}
+@@ -506,7 +508,7 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
+ 	 * (e.g. holes) to be unnecessarily encrypted, but this is rare and
+ 	 * can't happen in the common case of blocksize == PAGE_SIZE.
+ 	 */
+-	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) && nr_to_submit) {
++	if (fscrypt_inode_uses_fs_layer_crypto(inode) && nr_to_submit) {
+ 		gfp_t gfp_flags = GFP_NOFS;
+ 		unsigned int enc_bytes = round_up(len, i_blocksize(inode));
+ 
+diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+index 5761e9961682..f2df2db0786c 100644
+--- a/fs/ext4/readpage.c
++++ b/fs/ext4/readpage.c
+@@ -195,7 +195,7 @@ static void ext4_set_bio_post_read_ctx(struct bio *bio,
+ {
+ 	unsigned int post_read_steps = 0;
+ 
+-	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode))
++	if (fscrypt_inode_uses_fs_layer_crypto(inode))
+ 		post_read_steps |= 1 << STEP_DECRYPT;
+ 
+ 	if (ext4_need_verity(inode, first_idx))
+@@ -230,6 +230,7 @@ int ext4_mpage_readpages(struct inode *inode,
+ 	const unsigned blkbits = inode->i_blkbits;
+ 	const unsigned blocks_per_page = PAGE_SIZE >> blkbits;
+ 	const unsigned blocksize = 1 << blkbits;
++	sector_t next_block;
+ 	sector_t block_in_file;
+ 	sector_t last_block;
+ 	sector_t last_block_in_file;
+@@ -258,7 +259,8 @@ int ext4_mpage_readpages(struct inode *inode,
+ 		if (page_has_buffers(page))
+ 			goto confused;
+ 
+-		block_in_file = (sector_t)page->index << (PAGE_SHIFT - blkbits);
++		block_in_file = next_block =
++			(sector_t)page->index << (PAGE_SHIFT - blkbits);
+ 		last_block = block_in_file + nr_pages * blocks_per_page;
+ 		last_block_in_file = (ext4_readpage_limit(inode) +
+ 				      blocksize - 1) >> blkbits;
+@@ -358,7 +360,8 @@ int ext4_mpage_readpages(struct inode *inode,
+ 		 * This page will go to BIO.  Do we need to send this
+ 		 * BIO off first?
+ 		 */
+-		if (bio && (last_block_in_bio != blocks[0] - 1)) {
++		if (bio && (last_block_in_bio != blocks[0] - 1 ||
++			    !fscrypt_mergeable_bio(bio, inode, next_block))) {
+ 		submit_and_realloc:
+ 			submit_bio(bio);
+ 			bio = NULL;
+@@ -370,6 +373,8 @@ int ext4_mpage_readpages(struct inode *inode,
+ 			 */
+ 			bio = bio_alloc(GFP_KERNEL,
+ 				min_t(int, nr_pages, BIO_MAX_PAGES));
++			fscrypt_set_bio_crypt_ctx(bio, inode, next_block,
++						  GFP_KERNEL);
+ 			ext4_set_bio_post_read_ctx(bio, inode, page->index);
+ 			bio_set_dev(bio, bdev);
+ 			bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 330957ed1f05..0907f907c47d 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1508,6 +1508,7 @@ enum {
+ 	Opt_journal_path, Opt_journal_checksum, Opt_journal_async_commit,
+ 	Opt_abort, Opt_data_journal, Opt_data_ordered, Opt_data_writeback,
+ 	Opt_data_err_abort, Opt_data_err_ignore, Opt_test_dummy_encryption,
++	Opt_inlinecrypt,
+ 	Opt_usrjquota, Opt_grpjquota, Opt_offusrjquota, Opt_offgrpjquota,
+ 	Opt_jqfmt_vfsold, Opt_jqfmt_vfsv0, Opt_jqfmt_vfsv1, Opt_quota,
+ 	Opt_noquota, Opt_barrier, Opt_nobarrier, Opt_err,
+@@ -1610,6 +1611,7 @@ static const match_table_t tokens = {
+ 	{Opt_max_dir_size_kb, "max_dir_size_kb=%u"},
+ 	{Opt_test_dummy_encryption, "test_dummy_encryption=%s"},
+ 	{Opt_test_dummy_encryption, "test_dummy_encryption"},
++	{Opt_inlinecrypt, "inlinecrypt"},
+ 	{Opt_nombcache, "nombcache"},
+ 	{Opt_nombcache, "no_mbcache"},	/* for backward compatibility */
+ 	{Opt_removed, "check=none"},	/* mount option from ext2/3 */
+@@ -1946,6 +1948,13 @@ static int handle_mount_opt(struct super_block *sb, char *opt, int token,
+ 	case Opt_nolazytime:
+ 		sb->s_flags &= ~SB_LAZYTIME;
+ 		return 1;
++	case Opt_inlinecrypt:
++#ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
++		sb->s_flags |= SB_INLINECRYPT;
++#else
++		ext4_msg(sb, KERN_ERR, "inline encryption not supported");
++#endif
++		return 1;
+ 	}
+ 
+ 	for (m = ext4_mount_opts; m->token != Opt_err; m++)
+@@ -2404,6 +2413,9 @@ static int _ext4_show_options(struct seq_file *seq, struct super_block *sb,
+ 
+ 	fscrypt_show_test_dummy_encryption(seq, sep, sb);
+ 
++	if (sb->s_flags & SB_INLINECRYPT)
++		SEQ_OPTS_PUTS("inlinecrypt");
++
+ 	if (test_opt(sb, DAX_ALWAYS)) {
+ 		if (IS_EXT2_SB(sb))
+ 			SEQ_OPTS_PUTS("dax");
+-- 
+2.27.0.212.ge8ba1cc988-goog
 
-In any case Tetsuo I will leave futher sanity checks for you and Alexei
-to work out.  It is beyond the scope of my patchset, and they are easy
-enough to add as follow on patches.
-
-Eric
