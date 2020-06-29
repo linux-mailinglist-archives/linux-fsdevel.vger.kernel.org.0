@@ -2,90 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FEF420E103
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 23:58:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBEF920DE1B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 23:52:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389693AbgF2Uvn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jun 2020 16:51:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43394 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731388AbgF2TN1 (ORCPT
+        id S1730610AbgF2UWk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jun 2020 16:22:40 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:23147 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732563AbgF2TZd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:13:27 -0400
-Received: from ozlabs.org (ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D295AC014A45;
-        Mon, 29 Jun 2020 01:10:18 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 49wKsz3Ldfz9sQt;
-        Mon, 29 Jun 2020 18:10:15 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1593418216;
-        bh=crWSNNu528LAfdEMbW7KUH2pWweNYViIJO8WxsWa4Tg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gtPgUF8F34Ded9aBpbOEfWwctqu5d+tOBBKJlXtDhz8JMTTPXSq+uEvPSdBn7KKUT
-         bmaQ6MtpVIKTRe66ARLKx1zUgwYpHkjC3OrYo+TxOLHDHhObDYeYO0T8QkQBgODIAu
-         oh2VqKR6ex1ZL8Fb90YQuxmvhSoqQj40bqtgdTNyP4eF1JczGAEdXaZY9vPcRYAyXH
-         x2ZQfocM5NtmJRCpYY359kDoWbibNM8lroymr0q3d/xhnTa17iomgdmPR0hXZ3tovF
-         UWrw6WJlmfVs9rzf+KldX6fLpa8lWJ02r1ZKsxNsdn0Oo+OcCYeb+ogRNl7jyE1bsO
-         qFJkl3sfKPHQQ==
-Date:   Mon, 29 Jun 2020 18:10:14 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     akpm@linux-foundation.org, Randy Dunlap <rdunlap@infradead.org>,
-        broonie@kernel.org, mhocko@suse.cz, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
-Subject: Re: [PATCH] slab: Fix misplaced __free_one()
-Message-ID: <20200629181014.02f2022d@canb.auug.org.au>
-In-Reply-To: <202006261306.0D82A2B@keescook>
-References: <202006261306.0D82A2B@keescook>
+        Mon, 29 Jun 2020 15:25:33 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-10-CAqVtc7cNsK1P-8WmJmePQ-1; Mon, 29 Jun 2020 09:21:23 +0100
+X-MC-Unique: CAqVtc7cNsK1P-8WmJmePQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 29 Jun 2020 09:21:22 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 29 Jun 2020 09:21:22 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>
+CC:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        "Luis Chamberlain" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Iurii Zaikin" <yzaikin@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH 03/11] fs: add new read_uptr and write_uptr file
+ operations
+Thread-Topic: [PATCH 03/11] fs: add new read_uptr and write_uptr file
+ operations
+Thread-Index: AQHWSlL8Fz5PlOyONku9ShNOCTqEYajsST7AgABSmoCAAqgYcA==
+Date:   Mon, 29 Jun 2020 08:21:22 +0000
+Message-ID: <fcd951e164a3407295971e3a4236b418@AcuMS.aculab.com>
+References: <20200624162901.1814136-1-hch@lst.de>
+ <20200624162901.1814136-4-hch@lst.de>
+ <CAHk-=wit9enePELG=-HnLsr0nY5bucFNjqAqWoFTuYDGR1P4KA@mail.gmail.com>
+ <20200624175548.GA25939@lst.de>
+ <CAHk-=wi_51SPWQFhURtMBGh9xgdo74j1gMpuhdkddA2rDMrt1Q@mail.gmail.com>
+ <f50b9afa5a2742babe0293d9910e6bf4@AcuMS.aculab.com>
+ <CAHk-=wjxQczqZ96esvDrH5QZsLg6azXCGDgo+Bmm6r8t2ssasg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjxQczqZ96esvDrH5QZsLg6azXCGDgo+Bmm6r8t2ssasg@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Dyu5QPdDe/MilO+Q7TeeL45";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/Dyu5QPdDe/MilO+Q7TeeL45
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjcgSnVuZSAyMDIwIDE3OjMzDQo+IE9uIFNh
+dCwgSnVuIDI3LCAyMDIwIGF0IDM6NDkgQU0gRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWlnaHRAYWN1
+bGFiLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiA+IEp1c3Qga2VlcCB0aGUgZXhpc3RpbmcgInNldF9m
+cygpIi4gSXQncyBub3QgaGFybWZ1bCBpZiBpdCdzIG9ubHkgdXNlZA0KPiA+ID4gb2NjYXNpb25h
+bGx5LiBXZSBzaG91bGQgcmVuYW1lIGl0IG9uY2UgaXQncyByYXJlIGVub3VnaCwgdGhvdWdoLg0K
+PiA+DQo+ID4gQW0gSSByaWdodCBpbiB0aGlua2luZyB0aGF0IGl0IGp1c3Qgc2V0cyBhIGZsYWcg
+aW4gJ2N1cnJlbnQnID8NCj4gDQo+IEJhc2ljYWxseSwgeWVzLiBUaGF0J3Mgd2hhdCBpdCBoYXMg
+YWx3YXlzIGRvbmUuDQoNCkkgY291bGQgY2hlY2ssIGJ1dCBJIHN1c3BlY3QgaXQgc2V0cyB3aGF0
+IFRBU0tfU0laRSB1c2VzIHRvIH4wdQ0Kc28gdGhhdCBhY2Nlc3Nfb2soKSBjYW4ndCBmYWlsLg0K
+DQo+IFdlbGwgImFsd2F5cyIgaXMgbm90IHRydWUgLSBpdCB1c2VkIHRvIHNldCB0aGUgJWZzIHNl
+Z21lbnQgcmVnaXN0ZXINCj4gb3JpZ2luYWxseSAodGh1cyB0aGUgbmFtZSksIGJ1dCBfY29uY2Vw
+dHVhbGx5XyBpdCBzZXRzIGEgZmxhZyBmb3INCj4gInNob3VsZCB1c2VyIGFjY2Vzc2VzIGJlIGtl
+cm5lbCBhY2Nlc3NlcyBpbnN0ZWFkIi4NCj4gDQo+IE9uIHg4NiAtIGFuZCBtb3N0IG90aGVyIGFy
+Y2hpdGVjdHVyZXMgd2hlcmUgdXNlciBzcGFjZSBhbmQga2VybmVsDQo+IHNwYWNlIGFyZSBpbiB0
+aGUgc2FtZSBhZGRyZXNzIHNwYWNlIGFuZCBhY2Nlc3NlZCB3aXRoIHRoZSBzYW1lDQo+IGluc3Ry
+dWN0aW9ucywgdGhhdCBoYXMgdGhlbiBiZWVuIGltcGxlbWVudGVkIGFzIGp1c3QgYSAid2hhdCBp
+cyB0aGUNCj4gbGltaXQgZm9yIGFuIGFjY2VzcyIuDQo+IA0KPiBPbiBvdGhlciBhcmNoaXRlY3R1
+cmVzIC0gYXJjaGl0ZWN0dXJlcyB0aGF0IG5lZWQgZGlmZmVyZW50IGFjY2Vzcw0KPiBtZXRob2Rz
+IChvciBkaWZmZXJlbnQgZmxhZ3MgdG8gdGhlIGxvYWQvc3RvcmUgaW5zdHJ1Y3Rpb24pIC0gaXQn
+cyBhbg0KPiBhY3R1YWwgZmxhZyB0aGF0IGNoYW5nZXMgd2hpY2ggYWNjZXNzIG1ldGhvZCB5b3Ug
+dXNlLg0KPiANCj4gPiBBbHRob3VnaCBJIGRvbid0IHJlbWVtYmVyIGFjY2Vzc19vaygpIGRvaW5n
+IGEgc3VpdGFibGUgY2hlY2sNCj4gPiAod291bGQgbmVlZCB0byBiZSAoYWRkcmVzcyAtIGJhc2Up
+IDwgbGltaXQpLg0KPiANCj4gU28gYWdhaW4sIG9uIHRoZSBhcmNoaXRlY3R1cmVzIHdpdGggYSB1
+bmlmaWVkIGFkZHJlc3Mgc3BhY2UsDQo+IGFjY2Vzc19vaygpIGlzIGV4YWN0bHkgdGhhdCAiYWRk
+cmVzcyArIGFjY2Vzc19zaXplIDw9IGxpbWl0IiwgYWx0aG91Z2gNCj4gb2Z0ZW4gZG9uZSB3aXRo
+IHNvbWUgaW5saW5lIGFzbSBqdXN0IHRvIGdldCB0aGUgb3ZlcmZsb3cgY2FzZSBkb25lDQo+IGVm
+ZmljaWVudGx5Lg0KDQpJIHJlYWxpc2VkIGFmdGVyd2FyZHMgdGhhdCB0aGUgJ2tlcm5lbCBhZGRy
+ZXNzIGlzIGFjdHVhbGx5IHVzZXInDQpjaGVjayBpc24ndCByZWFsbHkgZG9uZSBvbiBhcmNoaXRl
+Y3R1cmVzIGxpa2UgeDg2IHVudGlsIHN0YWMvY2xhYy4NCg0KSSBoYWQgYW5vdGhlciB0aG91Z2h0
+Lg0KV2hpbGUgc2V0dGluZyB1cCBhIGZ1bGwtYmxvd24gc2NhdHRlci1nYXRoZXIgJ2l0ZXInIHN0
+cnVjdHVyZSBmb3INCmZ1bmN0aW9ucyBsaWtlIFtnc11ldHNvY2tvcHQsIGlvY3RsIGFuZCBmY250
+bCBpcyBPVFQgYW5kIHByb2JhYmx5DQptZWFzdXJhYmx5IGV4cGVuc2l2ZSBhIGxpZ2h0d2VpZ2h0
+ICdidWZmZXInIHN0cnVjdHVyZSB0aGF0IGp1c3QNCmNvbnRhaW5lZCBhZGRyZXNzLCBsZW5ndGgg
+YW5kIHVzZXIva2VybmVsIGZsYWcgY291bGQgYmUgdXNlZC4NCg0KQWx0aG91Z2ggdGhlIHVzZXMg
+d291bGQgbmVlZCBhbiBleHRyYSBsZXZlbCBvZiBpbmRpcmVjdGlvbiB0aGlzDQp3b3VsZCBiZSBv
+ZmZzZXQgYnkgcmVkdWNpbmcgdGhlIG51bWJlciBvZiBwYXJhbWV0ZXJzIHBhc3NlZA0KdGhyb3Vn
+aCBhbGwgdGhlIGxheWVycy4NCg0KLi4uDQo+IEkgdGhvdWdodCB0aGVyZSB3YXMganVzdCBvbmUg
+dmVyeSBzcGVjaWZpYyBjYXNlIG9mICJvaCwgaW4gY2VydGFpbg0KPiBjYXNlcyBvZiBzZXRzb2Nr
+b3B0IHdlIGRvbid0IGtub3cgd2hhdCBzaXplIHRoaXMgYWRkcmVzcyBpcyBhbmQgb3B0bGVuDQo+
+IGlzIGlnbm9yZWQiLCBzbyB3ZSBoYXZlIHRvIGp1c3QgcGFzcyB0aGUgcG9pbnRlciBkb3duIHRv
+IHRoZSBwcm90b2NvbCwNCj4gd2hpY2ggaXMgdGhlIHBvaW50IHRoYXQga25vd3MgaG93IG11Y2gg
+b2YgYW4gYWRkcmVzcyBpdCB3YW50cy4uDQoNCkkgY2FuJ3QgaGVscCBmZWVsaW5nIHRoYXQgdXNl
+cnNwYWNlIHBhc3NlcyBhIHN1aXRhYmxlIGxlbmd0aCBidXQNCnRoZSBrZXJuZWwgZG9lc24ndCB2
+ZXJpZnkgaXQuDQoNCkl0IGlzIHdvcnNlIHRoYW4gdGhhdCwgb25lIG9mIHRoZSBTQ1RQIGdldHNv
+Y2tvcHQoKSBjYWxscyBoYXMgdG8gcmV0dXJuDQphIGxlbmd0aCB0aGF0IGlzIHNob3J0ZXIgdGhh
+biB0aGUgYnVmZmVyIGl0IHdyb3RlLg0KDQpTbyBhbnkgYnVmZmVyIGRlc2NyaXB0b3IgbGVuZ3Ro
+IHdvdWxkIGhhdmUgdG8gYmUgYWR2aXNvcnkuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFk
+ZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywg
+TUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
-Hi Kees,
-
-On Fri, 26 Jun 2020 13:07:53 -0700 Kees Cook <keescook@chromium.org> wrote:
->
-> The implementation of __free_one() was accidentally placed inside a
-> CONFIG_NUMA #ifdef. Move it above.
->=20
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Link: https://lore.kernel.org/lkml/7ff248c7-d447-340c-a8e2-8c02972aca70@i=
-nfradead.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-
-I added that to linux-next for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Dyu5QPdDe/MilO+Q7TeeL45
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl75oeYACgkQAVBC80lX
-0Gw23Af9G6llJx86wM9f653I6RddIKgNYCd1+ZQBm0e3vsDC982acrw12+AxRXyy
-Yk4Gv8seQChMrSjgw9AXifoxKsoYrHncHeM1QerK8B9xtvvWxlMrCYwca9jVdhqQ
-d6CHpFvQWxLRjJRFkTgFHQJVrt8GUrsbDuIJ477V3ipJ/91jG18Z/tbF1zidhU7d
-KOXO0J/BsASSac4czoLQnSj/jC9+K+cADlIL5dvfwNn6iVRwSYRpJmGSv/ZyHoGO
-O5jpNs0c5AVaHXtq4FzwkDvY9KsTMxnWEGx+wUypYxuszAx+U9rm6wytDvbcPsFS
-A1nE5D5dEnbiZbH6jLRoyeTJep6bIw==
-=1SDg
------END PGP SIGNATURE-----
-
---Sig_/Dyu5QPdDe/MilO+Q7TeeL45--
