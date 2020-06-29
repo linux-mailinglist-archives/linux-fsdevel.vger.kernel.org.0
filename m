@@ -2,113 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FB6F20D71F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 22:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21BF820D5F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 22:04:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732379AbgF2T1K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jun 2020 15:27:10 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:10625 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732310AbgF2T1I (ORCPT
+        id S1730873AbgF2TQr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jun 2020 15:16:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44002 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731886AbgF2TQD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:27:08 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5efa2eff0000>; Mon, 29 Jun 2020 11:12:15 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 29 Jun 2020 11:13:04 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 29 Jun 2020 11:13:04 -0700
-Received: from [10.2.167.170] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 29 Jun
- 2020 18:13:03 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 0/7] THP prep patches
-Date:   Mon, 29 Jun 2020 14:13:00 -0400
-X-Mailer: MailMate (1.13.1r5690)
-Message-ID: <67FC215E-F408-4968-8700-D64C8EF7385A@nvidia.com>
-In-Reply-To: <20200629151959.15779-1-willy@infradead.org>
-References: <20200629151959.15779-1-willy@infradead.org>
+        Mon, 29 Jun 2020 15:16:03 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4668C08C5F6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jun 2020 12:16:01 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id j12so8294025pfn.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jun 2020 12:16:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=XdfoRVGuOCD2JOxmLnJxyvoO2f5zjf1xh4i//8cGLHs=;
+        b=E57soH+fAZU9oM/uuDn4bCNx2wALmvA7rwFsDeo/VdmyR4hSt+vRDMPW0qpAcJ9V/h
+         UbYJ9fIR9BUAZrS+1TfrEzBoFSxbLFUBB/IIzj7rfy4Y1SyxPmM/cs9fEremwVWV5m5u
+         b9v38myIgTBJNjasjLIOUO/K2CJS7vPJsURIlWBEC7RA0ax+vZbkexDjvFbqaAUgNm/w
+         yj4NkgHNxXLdKOO4AZsIv5vnXx8YMl4s3e1fTXh2Hp6rhwVI9k4nzVvvlc/OSvXrfpbl
+         +6DOlsrKa8IKCRxKxdcbetpm2uz+ZUKJBnziwlMhGJ11qW6bGQPIDGjYXF06+gry04Zz
+         3NGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=XdfoRVGuOCD2JOxmLnJxyvoO2f5zjf1xh4i//8cGLHs=;
+        b=Y94/XJkOuPCMTkM4due8Tn0IOSCbnqsXf2S5T7IjBq3g+a95PElnoOM56sfoNu5/7X
+         CHLPTQvbx+33LVnMUE33HAn6ozkeRgPE2mQdSxMp7I12HlwZMLbPYuWM1XiTIer1HqIf
+         sra/qj2ICu3NQkmJ3Ib+Lf5hS9XeKXvX1lY/vdKullYS7JMu2rU9P26yQD8LcMiEY+jn
+         k+ZgElRgepC6CLQWcej4z0SCTM466W/+k9OjtXRSjT2c34FK6DBtXlW+JrVdrwA2JQG/
+         9YYJfH7Lr2T424PnV7m8nG2du9S/ov//LlhirKkiiIkGOeqFcV8+PM4jmyWxkURN3MVc
+         fwFQ==
+X-Gm-Message-State: AOAM530G3HiDHjfP0k/TkP32OYNFmoHzp3XAOVuVpH0mZqucPOY6Oc4E
+        px2XiZd2kIk16NMmXL06KzlsnhCivQQWjbpOHMxwjHq0J3o=
+X-Google-Smtp-Source: ABdhPJyNR5zXZ8o09DSJzsSA3OSccnAxM/c9AxKQjYYOZlXvOMCiHs1YW/1gQi1Sa70TQ2VOPtabshfviWRkV7+ICnM=
+X-Received: by 2002:a6b:db17:: with SMTP id t23mr18236117ioc.4.1593458159284;
+ Mon, 29 Jun 2020 12:15:59 -0700 (PDT)
 MIME-Version: 1.0
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: multipart/signed;
-        boundary="=_MailMate_0C080286-7A66-4AE0-8E59-24023F4B7243_=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1593454335; bh=9ciH1aLFLrJTJwXrof0RT8opbahX/1Jrox8IFO47kHg=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:X-Mailer:Message-ID:
-         In-Reply-To:References:MIME-Version:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type;
-        b=IfRJPhWeDs0SVuqk8II/p1tlP3lZr/4PgtFXZZajoiouw++lNYAT+FNTAsGuyn/RG
-         c7JdOM4Oi4HOcKRijVhHXZ5TUlptgUgUHBl4tVvyt/8moxdjU4XESAvO3nVOXwUUmg
-         CUknPhq0ziaowJL8S32uHv0WqleJDqeTYE54bv6Q6Ub6pLPlF+/JWuNxh8iDqJMKTT
-         I3sBZLgCyEdsRXcxSSyDfXzOqoUMJAA28aTnK+YRSP3qeX0/1ih74eJqb9+VRzdXYn
-         xmCo4ZteMdkBh3B0SUcmdiVIx94LXmm4gnfA9HiTd7M+8RcGzQsgSno7jwqgKbe+hv
-         WdyaNOSTPQU6w==
+Received: by 2002:a05:6602:1588:0:0:0:0 with HTTP; Mon, 29 Jun 2020 12:15:58
+ -0700 (PDT)
+Reply-To: mrs.victoria.alexander2@gmail.com
+From:   "mrs.victoria alexander" <markalexandermilley321@gmail.com>
+Date:   Mon, 29 Jun 2020 12:15:58 -0700
+Message-ID: <CAP7XNCwEGQ+-Q==u4yk4yvJdk1X+gsfSU6pUV_hROjmF=p-DHw@mail.gmail.com>
+Subject: Hello,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=_MailMate_0C080286-7A66-4AE0-8E59-24023F4B7243_=
-Content-Type: text/plain; charset="UTF-8"; markup=markdown
-Content-Transfer-Encoding: quoted-printable
+Dear friend,
 
-On 29 Jun 2020, at 11:19, Matthew Wilcox (Oracle) wrote:
 
-> These are some generic cleanups and improvements, which I would like
-> merged into mmotm soon.  The first one should be a performance improvem=
-ent
-> for all users of compound pages, and the others are aimed at getting
-> code to compile away when CONFIG_TRANSPARENT_HUGEPAGE is disabled (ie
-> small systems).  Also better documented / less confusing than the curre=
-nt
-> prefix mixture of compound, hpage and thp.
->
-> Matthew Wilcox (Oracle) (7):
->   mm: Store compound_nr as well as compound_order
->   mm: Move page-flags include to top of file
->   mm: Add thp_order
->   mm: Add thp_size
->   mm: Replace hpage_nr_pages with thp_nr_pages
->   mm: Add thp_head
->   mm: Introduce offset_in_thp
->
+I have a business container transaction what that some of( $13million dollars)
 
-The whole series looks good to me. Thank you for the patches.
+ I would like to discuss with you. If you are interested, please
+contact my email
 
-Reviewed-by: Zi Yan <ziy@nvidia.com>
+address (mrs.victoria.alexander2@gmail.com)
 
-=E2=80=94
-Best Regards,
-Yan Zi
+My WhatsApp number but only message (+19293737780)
 
---=_MailMate_0C080286-7A66-4AE0-8E59-24023F4B7243_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAl76LywPHHppeUBudmlk
-aWEuY29tAAoJEJ2yUfNrYfqKN2AP/0Fg8v28rXGKocdIpHUNf75BP+ZxEuvTk0Vu
-W5z9p8W5qtUbpf+4A8CJfGVvNzQV4qFHYWOLg1928glKROdSrwadQVUfe84Sm+HN
-icQG0uuA1v28dKYc3oM5itIVA8eBNNCRxu62V4Ed/aKLglgwWGxiubwPF9uXdV8w
-xJB9t1r8sp9Pt2yO0zH1UNdawaDYLhETPubQ44kf40M2S6W974RvcKP83GQlS35R
-D1RHpA6iXyIe5JC1BxvWonqXych/EJigPvyIbAOGFZbGFkD35Xvu/DoRSMTqpDAG
-VZyki4PoiPxv1T1ksz76WFkRTI/ikQNhkMo9BEOEZ2ZNd2UIUgIJKrzlq+ejV+qM
-qMjdSQ4cGMwef5zwqxSWk80NMGZVtlfUfw8SGU5ONuc4wxNwDLwyIa687Rqk+PPs
-2m64nzN1k/faUAp5EVprf1KYUfrBe1tiIxSTfav/XdgEr2hR0Fo3BWbskFc20EEw
-wgcbGm13seVW+Fuq85PY5NkZRlsOXLb+SZ6s+JlP5wHOA2H2KFGBbsK7l1KLb9xL
-zRf8GQrRKoS/gg8U8AW9QH5ncAg7MGWNMaErvPVBkk/KjoG7ni7K7/FmhfY1S1RF
-qQEi65x1aMqyyiH5PzyQURzzuouq8bldsd+NhhfXjXTmY8M5jgYugVkD83KN3XmY
-8CMTJyCe
-=2V/v
------END PGP SIGNATURE-----
-
---=_MailMate_0C080286-7A66-4AE0-8E59-24023F4B7243_=--
+Please do not reply if you are not ready
+Thanks
