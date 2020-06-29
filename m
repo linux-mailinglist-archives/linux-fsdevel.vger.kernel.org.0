@@ -2,73 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21BF820D5F3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 22:04:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05CE120D6E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 22:06:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730873AbgF2TQr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jun 2020 15:16:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44002 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731886AbgF2TQD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:16:03 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4668C08C5F6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jun 2020 12:16:01 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id j12so8294025pfn.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jun 2020 12:16:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=XdfoRVGuOCD2JOxmLnJxyvoO2f5zjf1xh4i//8cGLHs=;
-        b=E57soH+fAZU9oM/uuDn4bCNx2wALmvA7rwFsDeo/VdmyR4hSt+vRDMPW0qpAcJ9V/h
-         UbYJ9fIR9BUAZrS+1TfrEzBoFSxbLFUBB/IIzj7rfy4Y1SyxPmM/cs9fEremwVWV5m5u
-         b9v38myIgTBJNjasjLIOUO/K2CJS7vPJsURIlWBEC7RA0ax+vZbkexDjvFbqaAUgNm/w
-         yj4NkgHNxXLdKOO4AZsIv5vnXx8YMl4s3e1fTXh2Hp6rhwVI9k4nzVvvlc/OSvXrfpbl
-         +6DOlsrKa8IKCRxKxdcbetpm2uz+ZUKJBnziwlMhGJ11qW6bGQPIDGjYXF06+gry04Zz
-         3NGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=XdfoRVGuOCD2JOxmLnJxyvoO2f5zjf1xh4i//8cGLHs=;
-        b=Y94/XJkOuPCMTkM4due8Tn0IOSCbnqsXf2S5T7IjBq3g+a95PElnoOM56sfoNu5/7X
-         CHLPTQvbx+33LVnMUE33HAn6ozkeRgPE2mQdSxMp7I12HlwZMLbPYuWM1XiTIer1HqIf
-         sra/qj2ICu3NQkmJ3Ib+Lf5hS9XeKXvX1lY/vdKullYS7JMu2rU9P26yQD8LcMiEY+jn
-         k+ZgElRgepC6CLQWcej4z0SCTM466W/+k9OjtXRSjT2c34FK6DBtXlW+JrVdrwA2JQG/
-         9YYJfH7Lr2T424PnV7m8nG2du9S/ov//LlhirKkiiIkGOeqFcV8+PM4jmyWxkURN3MVc
-         fwFQ==
-X-Gm-Message-State: AOAM530G3HiDHjfP0k/TkP32OYNFmoHzp3XAOVuVpH0mZqucPOY6Oc4E
-        px2XiZd2kIk16NMmXL06KzlsnhCivQQWjbpOHMxwjHq0J3o=
-X-Google-Smtp-Source: ABdhPJyNR5zXZ8o09DSJzsSA3OSccnAxM/c9AxKQjYYOZlXvOMCiHs1YW/1gQi1Sa70TQ2VOPtabshfviWRkV7+ICnM=
-X-Received: by 2002:a6b:db17:: with SMTP id t23mr18236117ioc.4.1593458159284;
- Mon, 29 Jun 2020 12:15:59 -0700 (PDT)
+        id S1732375AbgF2TYt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jun 2020 15:24:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60686 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730271AbgF2TYJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Jun 2020 15:24:09 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 4981DAAC5;
+        Mon, 29 Jun 2020 19:24:08 +0000 (UTC)
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-btrfs@vger.kernel.org, fdmanana@gmail.com, dsterba@suse.cz,
+        david@fromorbit.com, darrick.wong@oracle.com, hch@lst.de
+Subject: [PATCH 0/6 v10] btrfs direct-io using iomap
+Date:   Mon, 29 Jun 2020 14:23:47 -0500
+Message-Id: <20200629192353.20841-1-rgoldwyn@suse.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Received: by 2002:a05:6602:1588:0:0:0:0 with HTTP; Mon, 29 Jun 2020 12:15:58
- -0700 (PDT)
-Reply-To: mrs.victoria.alexander2@gmail.com
-From:   "mrs.victoria alexander" <markalexandermilley321@gmail.com>
-Date:   Mon, 29 Jun 2020 12:15:58 -0700
-Message-ID: <CAP7XNCwEGQ+-Q==u4yk4yvJdk1X+gsfSU6pUV_hROjmF=p-DHw@mail.gmail.com>
-Subject: Hello,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear friend,
+This is an effort to use iomap for direct I/O in btrfs. This would
+change the call from __blockdev_direct_io() to iomap_dio_rw().
+These are remanants of the series which was revoked due to page
+invalidation errors and adds patches in iomap for proper buffered
+fallback.
+
+The main objective is to lose the buffer head and use bio defined by
+iomap code, and hopefully to use more of generic-FS codebase.
+
+These patches are based and tested on vanilla. I have tested it against
+xfstests.
+
+The tree is available at
+https://github.com/goldwynr/linux/tree/btrfs-iomap-dio
+
+Changes since v1
+- Incorporated back the efficiency change for inode locking
+- Review comments about coding style and git comments
+- Merge related patches into one
+- Direct read to go through btrfs_direct_IO()
+- Removal of no longer used function dio_end_io()
+
+Changes since v2
+- aligning iomap offset/length to the position/length of I/O
+- Removed btrfs_dio_data
+- Removed BTRFS_INODE_READDIO_NEED_LOCK
+- Re-incorporating write efficiency changes caused lockdep_assert() in
+  iomap to be triggered, remove that code.
+
+Changes since v3
+- Fixed freeze on generic/095. Use iomap_end() to account for
+  failed/incomplete dio instead of btrfs_dio_data
+
+Changes since v4
+- moved lockdep_assert_held() to functions calling iomap_dio_rw()
+  This may be called immidiately after calling inode lock and
+  may feel not required, but it seems important.
+- Removed comments which are no longer required
+- Changed commit comments to make them more appropriate
+
+Changes since v5
+- restore inode_dio_wait() in truncate
+- Removed lockdep_assert_held() near callers
+
+Changes since v6
+- Fixed hangs due to underlying device failures
+- Removed the patch to wait while releasing pages
+
+Changes since v7
+- Moved reservation into btrfs iomap begin()/end() for correct
+  reservation cleanup in case of device error.
+- Merged patches switch to iomap, and adding btrfs_iomap_end()
+  for easier bisection. The switch to iomap would fail in case
+  of dio after buffered writes.
+
+Changes since v8
+- Added a flag to iomap_dio_rw() to return zero for buffered fallback
+
+Changes since v10
+- flag name changes for iomap_dio_rw()
+
+--
+Goldwyn
 
 
-I have a business container transaction what that some of( $13million dollars)
 
- I would like to discuss with you. If you are interested, please
-contact my email
-
-address (mrs.victoria.alexander2@gmail.com)
-
-My WhatsApp number but only message (+19293737780)
-
-Please do not reply if you are not ready
-Thanks
