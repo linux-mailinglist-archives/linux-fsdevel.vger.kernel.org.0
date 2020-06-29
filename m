@@ -2,121 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EBEF220E887
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 00:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80A1B20E8FE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 01:14:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726076AbgF2WMg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jun 2020 18:12:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44226 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbgF2WMf (ORCPT
+        id S1728780AbgF2W5f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jun 2020 18:57:35 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:43942 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728750AbgF2W5e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jun 2020 18:12:35 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C171C061755;
-        Mon, 29 Jun 2020 15:12:35 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id 35so7648612ple.0;
-        Mon, 29 Jun 2020 15:12:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=bYbnK/1xSCVq1/TiUVXXGtkJjMs/M1Q7KN0EtGsVY6o=;
-        b=QGGZu2c4OuikWTRSNeoe1sVM3jGJOC1AUrzjW5WMAQvvuH9XL+s1wpFivhaniiLEx9
-         6NZSaIGqhCzd2ykSYS1W4q5M0bwY8B9KZq82eYI88v/NWkm9FC8VcubCh2qCmdp3gmUF
-         N6zR5kwYnq7Ar8uTIsswnVYWdH8c+IWLnf6Sr69rCa+GY2Ce0LW6ixZ96NMmUAHji/wj
-         fRKp+Ea8+q1atMhnQ4bpScUYSWdMEGqJ3K6iaZvh/Mmw6zupppbQQC3YPOD7Ur4Gs3Iz
-         oCM4IGld1+je/nS1r2/OKSmScpyzGj3A254T4DmwGHMZBYPadtzyZs4UYKJ1cnF7/K0U
-         IDnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=bYbnK/1xSCVq1/TiUVXXGtkJjMs/M1Q7KN0EtGsVY6o=;
-        b=JN7wj/kJj00cpzHQuR53iIlG5fhr/Ottj9/aTaqUiYnx71JIIcjrhTyq7wyG+rBBoK
-         nRjF3r0SUTR8MGiEJVYdcJk8sBoohPZOucXKPZHJfQBaxlbaX345lqTHpfQz4i78IHGg
-         +kPyJdCn/yBCtadHKq/meetBBsXeW7cLipRIXDiuf09EKWtE3lsFFOQ3dY+qTIS5Col9
-         Vj4wqraTRHA/WTMayfL+8C3D/W310rOf8HZcDESIsFeCb/rbsgDMTszSL01M6QcTZ2Sp
-         5qjrRhS9Dq5x4H458kqzF0yTaCK46sX+D7Ex3mOV2tvg7vYF0HVjuSLKjGOE/xsvf5hR
-         bTWg==
-X-Gm-Message-State: AOAM530Ez5SdgemWMm71rVzRcsOwk/56HrNA2kKU7UTM4Pd/kw7Q1QDR
-        PiRRrYhwFP2TR+vEwXQFQ4W0Kqge
-X-Google-Smtp-Source: ABdhPJxOc+HpDNzP+2988YFqOG8eD5PnPjzwgrx3K2bOdH27XDD3MYifNIiTyYCfMU3Elj4SI7z0KA==
-X-Received: by 2002:a17:90b:1c12:: with SMTP id oc18mr18176746pjb.160.1593468754943;
-        Mon, 29 Jun 2020 15:12:34 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:592])
-        by smtp.gmail.com with ESMTPSA id cv3sm419878pjb.45.2020.06.29.15.12.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2020 15:12:34 -0700 (PDT)
-Date:   Mon, 29 Jun 2020 15:12:31 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 00/15] Make the user mode driver code a better citizen
-Message-ID: <20200629221231.jjc2czk3ul2roxkw@ast-mbp.dhcp.thefacebook.com>
-References: <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
- <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
- <87y2oac50p.fsf@x220.int.ebiederm.org>
- <87bll17ili.fsf_-_@x220.int.ebiederm.org>
+        Mon, 29 Jun 2020 18:57:34 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05THc6Ll160864;
+        Mon, 29 Jun 2020 17:40:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=gOwHGVEv+9+n2pXWogpDPvTyHw9NsjLdt8nfdAe9dbA=;
+ b=BDbG+z+MFyeHLRJxafKS3pYiJQ3MahQoJZVdM9b/IMPbiU0z7AEa6D+r8nUqSu6VEc5Q
+ 4V1HWxp4UvdmY4N1+xUqXQkV5gwPAxXh6M8YJCLVM/jWgrSnbMMggXbNm8kJ2ffnPMyO
+ tST1srxNVzFwPq6z3GZ4AlJQKvSXFgW7JWy+ihwbfj0PE0hTJ8qj4wvemWZ26GfhPJPw
+ c1SUm9DhY0+8+cn1zyV80x1uy+KUIBXHGSCFIqiKmasrTJaCW3xwwEFWf6CXC8pmSSHx
+ k+3LVa2sGFnUzQH1ssmZB77rb8NvRadC5uKBtSqsvGSgY9EVoc2B6ZWtpCTLNAM37FeL 1A== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 31wxrmytxh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 29 Jun 2020 17:40:15 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05THcVKo040680;
+        Mon, 29 Jun 2020 17:40:14 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 31xfvr3hqg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 29 Jun 2020 17:40:14 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 05THeDKI018709;
+        Mon, 29 Jun 2020 17:40:13 GMT
+Received: from [192.168.2.112] (/50.38.35.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 29 Jun 2020 17:40:13 +0000
+Subject: Re: [PATCH 5/7] mm: Replace hpage_nr_pages with thp_nr_pages
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20200629151959.15779-1-willy@infradead.org>
+ <20200629151959.15779-6-willy@infradead.org>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <8bf5ae79-eace-5345-1a77-69d9e2e083b3@oracle.com>
+Date:   Mon, 29 Jun 2020 10:40:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87bll17ili.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <20200629151959.15779-6-willy@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9667 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0 spamscore=0
+ phishscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006290112
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9667 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
+ priorityscore=1501 impostorscore=0 bulkscore=0 clxscore=1015
+ malwarescore=0 phishscore=0 adultscore=0 cotscore=-2147483648
+ lowpriorityscore=0 suspectscore=0 spamscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006290112
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 29, 2020 at 02:55:05PM -0500, Eric W. Biederman wrote:
+On 6/29/20 8:19 AM, Matthew Wilcox (Oracle) wrote:
+> The thp prefix is more frequently used than hpage and we should
+> be consistent between the various functions.
 > 
-> I have tested thes changes by booting with the code compiled in and
-> by killing "bpfilter_umh" and running iptables -vnL to restart
-> the userspace driver.
-> 
-> I have compiled tested each change with and without CONFIG_BPFILTER
-> enabled.
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+...
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 57ece74e3aae..6bb07bc655f7 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -1593,7 +1593,7 @@ static struct address_space *_get_hugetlb_page_mapping(struct page *hpage)
+>  
+>  	/* Use first found vma */
+>  	pgoff_start = page_to_pgoff(hpage);
+> -	pgoff_end = pgoff_start + hpage_nr_pages(hpage) - 1;
+> +	pgoff_end = pgoff_start + thp_nr_pages(hpage) - 1;
+>  	anon_vma_interval_tree_foreach(avc, &anon_vma->rb_root,
+>  					pgoff_start, pgoff_end) {
+>  		struct vm_area_struct *vma = avc->vma;
 
-With
-CONFIG_BPFILTER=y
-CONFIG_BPFILTER_UMH=m
-it doesn't build:
+Naming consistency is a good idea!
 
-ERROR: modpost: "kill_pid_info" [net/bpfilter/bpfilter.ko] undefined!
+I was wondering why hugetlb code would be calling a 'thp related' routine.
+The reason is that hpage_nr_pages was incorrectly added (by me) to get the
+number of pages in a hugetlb page.  If the name of the routine was thp_nr_pages
+as proposed, I would not have made this mistake.
 
-I've added:
-+EXPORT_SYMBOL(kill_pid_info);
-to continue testing...
-
-And then did:
-while true; do iptables -L;rmmod bpfilter; done
- 
-Unfortunately sometimes 'rmmod bpfilter' hangs in wait_event().
-
-I suspect patch 13 is somehow responsible:
-+	if (tgid) {
-+		kill_pid_info(SIGKILL, SEND_SIG_PRIV, tgid);
-+		wait_event(tgid->wait_pidfd, !pid_task(tgid, PIDTYPE_TGID));
-+		bpfilter_umh_cleanup(info);
-+	}
-
-I cannot figure out why it hangs. Some sort of race ?
-Since adding short delay between kill and wait makes it work.
+I will provide a patch to change the above hpage_nr_pages call to
+pages_per_huge_page(page_hstate()).
+-- 
+Mike Kravetz
