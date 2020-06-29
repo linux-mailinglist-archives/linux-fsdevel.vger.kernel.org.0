@@ -2,55 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 700E820D0DB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 20:37:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E8DF20D1DC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 20:50:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbgF2Sgm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jun 2020 14:36:42 -0400
-Received: from verein.lst.de ([213.95.11.211]:58732 "EHLO verein.lst.de"
+        id S1728969AbgF2So2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jun 2020 14:44:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726996AbgF2Sgl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jun 2020 14:36:41 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 425DD68CEE; Mon, 29 Jun 2020 20:36:37 +0200 (CEST)
-Date:   Mon, 29 Jun 2020 20:36:36 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        David Laight <David.Laight@aculab.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 03/11] fs: add new read_uptr and write_uptr file
- operations
-Message-ID: <20200629183636.GA6539@lst.de>
-References: <20200624162901.1814136-4-hch@lst.de> <CAHk-=wit9enePELG=-HnLsr0nY5bucFNjqAqWoFTuYDGR1P4KA@mail.gmail.com> <20200624175548.GA25939@lst.de> <CAHk-=wi_51SPWQFhURtMBGh9xgdo74j1gMpuhdkddA2rDMrt1Q@mail.gmail.com> <f50b9afa5a2742babe0293d9910e6bf4@AcuMS.aculab.com> <CAHk-=wjxQczqZ96esvDrH5QZsLg6azXCGDgo+Bmm6r8t2ssasg@mail.gmail.com> <20200629152912.GA26172@lst.de> <CAHk-=wj_Br5dQt0GnMjHooSvBbVXwtGRVKQNkpCLwWjYko-4Zw@mail.gmail.com> <20200629180730.GA4600@lst.de> <CAHk-=whzz81Cjfn+SNbLT8WvRxfQYbiAemKrQ5jpNAgxxDQhZA@mail.gmail.com>
+        id S1726887AbgF2So0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Jun 2020 14:44:26 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26DD520775;
+        Mon, 29 Jun 2020 18:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593456266;
+        bh=+KOLxCmwsPTRAh+iG7nBvhdN9ELAStyx3yZ+DIpMSVc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dJDIKMRCSLEvE0WirVlwv526I2ZGk7neXM71bgloPC2OjkB1QPSUU673s2YYwBV40
+         dFOqgJt44qETJs2ymoIBolyAitJBRF6/PPq0ha6wCyEDLoZNoYjKJlTun4mD7F76Pc
+         q2uBGcwiSOVQdAcampa0BMCJJlVXHO+uWyoH+9AU=
+Date:   Mon, 29 Jun 2020 11:44:24 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Satya Tangirala <satyat@google.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] ext4: add inline encryption support
+Message-ID: <20200629184424.GG20492@sol.localdomain>
+References: <20200629120405.701023-1-satyat@google.com>
+ <20200629120405.701023-5-satyat@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=whzz81Cjfn+SNbLT8WvRxfQYbiAemKrQ5jpNAgxxDQhZA@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200629120405.701023-5-satyat@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 29, 2020 at 11:29:22AM -0700, Linus Torvalds wrote:
-> I didn't look at the compat cases, but if anything I'd expect those to
-> become simpler by having kernel pointers. And there doesn't actually
-> seem to be that many of them (possibly because the "int" case si so
-> common that it all ends up being the same?)
+On Mon, Jun 29, 2020 at 12:04:05PM +0000, Satya Tangirala via Linux-f2fs-devel wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Wire up ext4 to support inline encryption via the helper functions which
+> fs/crypto/ now provides.  This includes:
+> 
+> - Adding a mount option 'inlinecrypt' which enables inline encryption
+>   on encrypted files where it can be used.
+> 
+> - Setting the bio_crypt_ctx on bios that will be submitted to an
+>   inline-encrypted file.
+> 
+>   Note: submit_bh_wbc() in fs/buffer.c also needed to be patched for
+>   this part, since ext4 sometimes uses ll_rw_block() on file data.
+> 
+> - Not adding logically discontiguous data to bios that will be submitted
+>   to an inline-encrypted file.
+> 
+> - Not doing filesystem-layer crypto on inline-encrypted files.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Co-developed-by: Satya Tangirala <satyat@google.com>
+> Signed-off-by: Satya Tangirala <satyat@google.com>
 
-Having resurrect my work there really are tons of int cases.  Which
-makes me thing that splitting out a setsockopt_int method which gets
-passed value instead of a pointer, then converting all the simple cases
-to that first and then doing the real shit later sounds like a promіsing
-idea.  Let me think a bit more about that.
+This patch looks good to me.  (I can't technically provide Reviewed-by because
+I'm listed as the author.)
 
-And yes, a lot of the common methods have tons of cases and
-sub-dispatchers and everything else you'd expect from an ioctl-like
-interface..
+Ted and Andreas, can you take a look?
+
+- Eric
