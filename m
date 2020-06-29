@@ -2,154 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EDBC120D2E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 21:11:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0A0F20D2D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 21:11:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729815AbgF2SxW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jun 2020 14:53:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40044 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729814AbgF2Sww (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1729808AbgF2Sww (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 29 Jun 2020 14:52:52 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDCC5C02E2DD;
-        Mon, 29 Jun 2020 07:05:49 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id k6so14538057ili.6;
-        Mon, 29 Jun 2020 07:05:49 -0700 (PDT)
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40040 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729429AbgF2Swt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Jun 2020 14:52:49 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA215C030786;
+        Mon, 29 Jun 2020 08:17:05 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id j12so8025849pfn.10;
+        Mon, 29 Jun 2020 08:17:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SIY049maXgLeyh5B7pSQJoj4G7EcvGdwTWmpWjXLOLg=;
-        b=Wyp0PLFugiK1RUPQcKtPHeek3fr/J/2Gy2AilxBoARXp1yFmWsTt3ik4X3TQZD8vf9
-         zuwDJQuCI33YONsdXRxww3JbOSHF0Cy3xNSQdlmAFGWrcGPLnIjfbIVR2GDMZVuA41Xk
-         +cE9N8UPLHOXuAdVJOBHqWLL48OrvZ1xTkQ91vxg1lzdIAppxXvb3JCvQDb7CmuV7YsR
-         AhbRF4xoPIyCIN9kSKkKwvk8F0oXX5++Ixcf7nXW6lJhku6iVYVfmOm/7t9kZMLn5Qw1
-         G4gr/pHHm8wlpxfqLfQbLV88FFwdtzVpIw9hgkBCp6MmRR7iA/xk0kYlCNg6mVtkYHdg
-         CjZw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TU7zddstzXSdEQt8ggnNes9FhafN4Jm/qpc0MfddreY=;
+        b=Mv6+Mv4V8pXDsuO8tCDoMsogn5FHDI2gsE5SudznI3835V3CdCL5t1oOXRUKxRaljg
+         sEti6Lr9GSm4sT48Sn5LyLLf2uyhU/qKPMRK7B2QZCGCPEHQQNlMpZv0chqVqF5PE/c/
+         iupQ0Opq5Zxbt2qssM5FTNraMN2HLXfRO+oZSu76vsXcyBckOdUaFkm7ktrzN7WV/T5D
+         neWbPrtdHZJNStUf6rQ7rV1FR22okzOgnZUKMXGi9l/m6hs8B+7nPcf2+FtWqT/7Cwo7
+         hdyatnogxk3d0AHr6me/Rux3yYkM4SGsGIq2VmzJjzyTDxZgTK6NZf67W6TdpS7q5a9q
+         uLtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SIY049maXgLeyh5B7pSQJoj4G7EcvGdwTWmpWjXLOLg=;
-        b=D9Pu9R0L7tPXRGZ9qi1aNX1Fs0BIzq7M2OgZIN0+6vvk6hWj+0sOJ7EjZVWJZWQNYT
-         ZZwGhXS/p2C60eqazoxfPdJb14FvC1wt820XKib/574pIkqG9CRtAsWKtyRW1b58/ZeW
-         OwlZx2mg7BIsR7mFWTOeXWkizBjTw1oUKP7mXaz4PG8i0wFeYFZqFtDVSK37t8fTP9th
-         RQXxqrxf0+uVBj1tYbmDnMeTP2Hb1ynlMKeWxiasSVa8sVeCo/3UlHMVdaAaqDcVv42N
-         8ofrM2xtJGW5t5Ov4DIzS5J+5O5i5UuMcBQ4X4DL2NhZOqfJwXhfLEghCLxqSQ4/jl7r
-         /oqg==
-X-Gm-Message-State: AOAM531Y0pimMkzRK/r3W+JWI6e206oPn/BBxFp5Tfic9cuUKBym3jI8
-        JNEjshUucxnoR2WqgNT+J+cQv9Vri/ObHKAIq2c=
-X-Google-Smtp-Source: ABdhPJxQkwee4h4i38IDgjWPIBbehnogM+Uwa4QjkjNIXA6MDuKP1JoQ0D6pSJNpUdpuu1DfoaOtoHeSo/c3/MUVr/0=
-X-Received: by 2002:a92:2a0c:: with SMTP id r12mr15665053ile.275.1593439549027;
- Mon, 29 Jun 2020 07:05:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <7b4aa1e985007c6d582fffe5e8435f8153e28e0f.camel@redhat.com>
- <CAOQ4uxg8E-im=B6L0PQNaTTKdtxVAO=MSJki7kxq875ME4hOLw@mail.gmail.com> <20200629130915.GF26507@quack2.suse.cz>
-In-Reply-To: <20200629130915.GF26507@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 29 Jun 2020 17:05:38 +0300
-Message-ID: <CAOQ4uxhdOMbn9vL_PAGKLtriVzkjwBkuEgbdB5+uH2ZM6uA97w@mail.gmail.com>
-Subject: Re: Commit 'fs: Do not check if there is a fsnotify watcher on pseudo
- inodes' breaks chromium here
-To:     Jan Kara <jack@suse.cz>
-Cc:     Maxim Levitsky <mlevitsk@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TU7zddstzXSdEQt8ggnNes9FhafN4Jm/qpc0MfddreY=;
+        b=nzf4Z5tXDWL8Fwl8b4BAveY+LMjtGkwTU2CBaaEYziEwSj64hcPTkmV/eQ1YXH2b25
+         Al8wJ9xHO4o1ZBd1siPKjWsPX2+9lrog9f/frHRxPyWaMhNh3LsT94KksczccnN0zOnf
+         QtMa58e+23pwzrgQGEUDbPrny7X8H801O9C1bBLP/khebZ2rtoFTYpW+eCSfs8G9wanP
+         owjgEFT1Im+qFqWPOAxWlk02TCUhcQTOTo687KVWiUdnLiiW9yJ6HQFYIpSRhrTTxy1v
+         Bb/k9HLv0QCQ5CZjFGNV7Q8OX9qh2udRR02XilKA3Zntx1D6JEy1CD1t3ijJTZfvA/up
+         lFbg==
+X-Gm-Message-State: AOAM5317o7ZESMgzaT9C0NXQs9S7CqyumYa7YcCSVH2hxZb8mWrSayQh
+        BsyrDvrD5JKQaVLBpjF7vFBbwGMa
+X-Google-Smtp-Source: ABdhPJz2SUh6ahpjpvVkNhb/b1g+16pcvO6+VvMBABgW1cnqlbi4kKBjyoohrgfDksY0CpDhjy2Btg==
+X-Received: by 2002:a62:382:: with SMTP id 124mr14980547pfd.190.1593443825038;
+        Mon, 29 Jun 2020 08:17:05 -0700 (PDT)
+Received: from [10.1.10.11] (c-73-241-150-58.hsd1.ca.comcast.net. [73.241.150.58])
+        by smtp.gmail.com with ESMTPSA id s1sm264930pjp.14.2020.06.29.08.17.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Jun 2020 08:17:04 -0700 (PDT)
+Subject: Re: [PATCH v2] fs: Do not check if there is a fsnotify watcher on
+ pseudo inodes
+To:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Cc:     Mel Gorman <mgorman@techsingularity.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20200615121358.GF3183@techsingularity.net>
+ <CAOQ4uxi0fqKFZ9=U-+DQ78233hR9TXEU44xRih4q=M556ynphA@mail.gmail.com>
+ <20200616074701.GA20086@quack2.suse.cz>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <4f6c8dab-4b54-d523-8636-2b01c03d14d3@gmail.com>
+Date:   Mon, 29 Jun 2020 08:17:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.1
+MIME-Version: 1.0
+In-Reply-To: <20200616074701.GA20086@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 29, 2020 at 4:09 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Sun 28-06-20 15:53:51, Amir Goldstein wrote:
-> > On Sun, Jun 28, 2020 at 2:14 PM Maxim Levitsky <mlevitsk@redhat.com> wrote:
-> > >
-> > > Hi,
-> > >
-> > > I just did usual kernel update and now chromium crashes on startup.
-> > > It happens both in a KVM's VM (with virtio-gpu if that matters) and natively with amdgpu driver.
-> > > Most likely not GPU related although I initially suspected that it is.
-> > >
-> > > Chromium starts as a white rectangle, shows few white rectangles
-> > > that resemble its notifications and then crashes.
-> > >
-> > > The stdout output from chromium:
-> >
-> > I guess this answers our question whether we could disable fsnoitfy
-> > watches on pseudo inodes....
->
-> Right :-|
->
-> > From comments like these in chromium code:
-> > https://chromium.googlesource.com/chromium/src/+/master/mojo/core/watcher_dispatcher.cc#77
-> > https://chromium.googlesource.com/chromium/src/+/master/base/files/file_descriptor_watcher_posix.cc#176
-> > https://chromium.googlesource.com/chromium/src/+/master/ipc/ipc_channel_mojo.cc#240
-> >
-> > I am taking a wild guess that the missing FS_CLOSE event on anonymous pipes is
-> > the cause for regression.
->
-> I was checking the Chromium code for some time. It uses inotify in
-> base/files/file_path_watcher_linux.cc and watches IN_CLOSE_WRITE event
-> (among other ones) but I was unable to track down how the class gets
-> connected to the mojo class that crashes. I'd be somewhat curious how they
-> place inotify watches on pipe inodes - probably they have to utilize proc
-> magic links but I'd like to be sure. Anyway your guess appears to be
-> correct :)
 
-Well, I lost track of the code as well...
 
->
-> > The motivation for the patch "fs: Do not check if there is a fsnotify
-> > watcher on pseudo inodes"
-> > was performance, but actually, FS_CLOSE and FS_OPEN events probably do
-> > not impact performance as FS_MODIFY and FS_ACCESS.
->
-> Correct.
->
-> > Do you agree that dropping FS_MODIFY/FS_ACCESS events for FMODE_STREAM
-> > files as a general rule should be safe?
->
-> Hum, so your patch drops FS_MODIFY/FS_ACCESS events also for named pipes
-> compared to the original patch AFAIU and for those fsnotify works fine
-> so far. So I'm not sure we won't regress someone else with this.
->
-> I've also tested inotify on a sample pipe like: cat /dev/stdin | tee
-> and watched /proc/<tee pid>/fd/0 and it actually generated IN_MODIFY |
-> IN_ACCESS when data arrived to a pipe and tee(1) read it and then
-> IN_CLOSE_WRITE | IN_CLOSE_NOWRITE when the pipe got closed (I thought you
-> mentioned modify and access events didn't get properly generated?).
+On 6/16/20 12:47 AM, Jan Kara wrote:
+> On Mon 15-06-20 19:26:38, Amir Goldstein wrote:
+>>> This patch changes alloc_file_pseudo() to always opt out of fsnotify by
+>>> setting FMODE_NONOTIFY flag so that no check is made for fsnotify watchers
+>>> on pseudo files. This should be safe as the underlying helper for the
+>>> dentry is d_alloc_pseudo which explicitly states that no lookups are ever
+>>> performed meaning that fanotify should have nothing useful to attach to.
+>>>
+>>> The test motivating this was "perf bench sched messaging --pipe". On
+>>> a single-socket machine using threads the difference of the patch was
+>>> as follows.
+>>>
+>>>                               5.7.0                  5.7.0
+>>>                             vanilla        nofsnotify-v1r1
+>>> Amean     1       1.3837 (   0.00%)      1.3547 (   2.10%)
+>>> Amean     3       3.7360 (   0.00%)      3.6543 (   2.19%)
+>>> Amean     5       5.8130 (   0.00%)      5.7233 *   1.54%*
+>>> Amean     7       8.1490 (   0.00%)      7.9730 *   2.16%*
+>>> Amean     12     14.6843 (   0.00%)     14.1820 (   3.42%)
+>>> Amean     18     21.8840 (   0.00%)     21.7460 (   0.63%)
+>>> Amean     24     28.8697 (   0.00%)     29.1680 (  -1.03%)
+>>> Amean     30     36.0787 (   0.00%)     35.2640 *   2.26%*
+>>> Amean     32     38.0527 (   0.00%)     38.1223 (  -0.18%)
+>>>
+>>> The difference is small but in some cases it's outside the noise so
+>>> while marginal, there is still some small benefit to ignoring fsnotify
+>>> for files allocated via alloc_file_pseudo in some cases.
+>>>
+>>> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+>>
+>> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> 
+> Thanks for the patch Mel and for review Amir! I've added the patch to my
+> tree with small amendments to the changelog.
+> 
+> 								Honza
+> 
 
-I don't think that I did (did I?)
+Note this patch broke some user programs (one instance being packetdrill)
 
->
-> So as much as I agree that some fsnotify events on FMODE_STREAM files are
-> dubious, they could get used (possibly accidentally) and so after this
-> Chromium experience I think we just have to revert the change and live with
-> generating notification events for pipes to avoid userspace regressions.
->
-> Thoughts?
+Typical legacy packetdrill script has :
 
-I am fine with that.
+// Create a socket and set it to non-blocking.
+    0 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
+   +0 fcntl(3, F_GETFL) = 0x2 (flags O_RDWR)
+   +0 fcntl(3, F_SETFL, O_RDWR|O_NONBLOCK) = 0
 
-Before I thought of trying out FMODE_STREAM I was considering to propose
-to set the new flag FMODE_NOIONOTIFY in alloc_file_pseudo() to narrow Mel's
-patch to dropping FS_MODIFY|FS_ACCESS.
 
-But I guess the burden of proof is back on Mel.
-And besides, quoting Mel's patch:
-"A patch is pending that reduces, but does not eliminate, the overhead of
-    fsnotify but for files that cannot be looked up via a path, even that
-    small overhead is unnecessary"
+But after this change, fcntl(3, F_GETFL) returns 0x4000002 
 
-So really, we are not even sacrificing much by reverting this patch.
-We down to "nano optimizations".
+FMODE_NONOTIFY was not meant to be visible to user space. (otherwise
+there would be a O_NONOTIFY) ?
 
-Thanks,
-Amir.
+
+
+
+
+
