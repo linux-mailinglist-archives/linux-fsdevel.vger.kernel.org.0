@@ -2,62 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DAB820D48A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 21:14:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2589D20D2D3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 21:11:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730553AbgF2TJZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jun 2020 15:09:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45474 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730340AbgF2TAU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:00:20 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3478625586;
-        Mon, 29 Jun 2020 16:11:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593447098;
-        bh=SsCIgboIh8MwG59svpDcWx6ceBeWIXunSMvUsAXqGmw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ykePTvgrdPFZQukrlOu7yodEStnFvpYDYm3C8XTl6GP7/ObdeVffikq9Uf0ZgQund
-         tnKNp0ZPHR0ZXTbRcjuTfkfcHZjXVuOHvRWCeI86Zbi4xJ5G7Gz8QxOae4WwVXwTHw
-         aVBWoHudzgee/57w8Io6JWTfCH3rqZuPueMYOUMc=
-Date:   Mon, 29 Jun 2020 18:11:29 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 05/20] kernfs: do not call fsnotify() with name without a
- parent
-Message-ID: <20200629161129.GA629636@kroah.com>
-References: <20200612093343.5669-1-amir73il@gmail.com>
- <20200612093343.5669-6-amir73il@gmail.com>
+        id S1729773AbgF2Swo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jun 2020 14:52:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40010 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729514AbgF2Swl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Jun 2020 14:52:41 -0400
+Received: from casper.infradead.org (unknown [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBCF7C030F14
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jun 2020 09:24:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PM2ctrNamI+FuCpU5ETwwiM78ezO5gsP8HYNzHGPK0g=; b=SqTiqegEftG01FRCWEr7nyvyYH
+        x89Sbz8RMBrBwBK6WIffkxlZP36qXgEAsMeZOWx7/ZKU/+Ty9dPzhrmFe5Zy6vyOyMHnlGI+2cymu
+        gwExiSBJV0sTO1HkpM/qg4TnH8XXBZ8sZhrRFH4zLtZFd6slTOWVsjMnUk7JXIydEwOPy9x7tMhEh
+        CGq9uuvGwU9ojXVhvAKizOgwL2PbRLowD4h84hyX2CZL85haOroMg7Wxg1kGnxqdvprGRf1T/XhUz
+        5gybG0fReig7OrRpC36+52r0GCUI8TDV/VM6YIlgC6E7kYPYEZ2XPyltmwtgRWkP+uk7hgW6RQVIe
+        9qKf39jg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jpwZh-0008Uy-LK; Mon, 29 Jun 2020 16:24:05 +0000
+Date:   Mon, 29 Jun 2020 17:24:05 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 1/7] mm: Store compound_nr as well as compound_order
+Message-ID: <20200629162405.GF25523@casper.infradead.org>
+References: <20200629151959.15779-1-willy@infradead.org>
+ <20200629151959.15779-2-willy@infradead.org>
+ <20200629162227.GF2454695@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200612093343.5669-6-amir73il@gmail.com>
+In-Reply-To: <20200629162227.GF2454695@iweiny-DESK2.sc.intel.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 12, 2020 at 12:33:28PM +0300, Amir Goldstein wrote:
-> When creating an FS_MODIFY event on inode itself (not on parent)
-> the file_name argument should be NULL.
+On Mon, Jun 29, 2020 at 09:22:27AM -0700, Ira Weiny wrote:
+> On Mon, Jun 29, 2020 at 04:19:53PM +0100, Matthew Wilcox wrote:
+> >  static inline void set_compound_order(struct page *page, unsigned int order)
+> >  {
+> >  	page[1].compound_order = order;
+> > +	page[1].compound_nr = 1U << order;
+>                               ^^^
+> 			      1UL?
 > 
-> The change to send a non NULL name to inode itself was done on purpuse
-> as part of another commit, as Tejun writes: "...While at it, supply the
-> target file name to fsnotify() from kernfs_node->name.".
+> Ira
 > 
-> But this is wrong practice and inconsistent with inotify behavior when
-> watching a single file.  When a child is being watched (as opposed to the
-> parent directory) the inotify event should contain the watch descriptor,
-> but not the file name.
-> 
-> Fixes: df6a58c5c5aa ("kernfs: don't depend on d_find_any_alias()...")
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > +++ b/include/linux/mm_types.h
+> > @@ -134,6 +134,7 @@ struct page {
+> >  			unsigned char compound_dtor;
+> >  			unsigned char compound_order;
+> >  			atomic_t compound_mapcount;
+> > +			unsigned int compound_nr; /* 1 << compound_order */
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+                        ^^^^^^^^^^^^
+
+No
+
