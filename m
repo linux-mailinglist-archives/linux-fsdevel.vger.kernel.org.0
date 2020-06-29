@@ -2,133 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21FF720E314
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 00:02:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBEF220E887
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 00:13:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390541AbgF2VLR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jun 2020 17:11:17 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:41633 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2390385AbgF2VLQ (ORCPT
+        id S1726076AbgF2WMg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jun 2020 18:12:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44226 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725937AbgF2WMf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jun 2020 17:11:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1593465074;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PQg9mnTPE3OOeRf345nAa+7X/PgZO8hEs5kvdWZYq50=;
-        b=LsuiZsWrvI23s77FV1YO3LelqyyxQQmPk2eL3RjskggWzrHDlf11MKJ+2x95HvR+Dn/pqP
-        Kn/NC/Fp0pCnYXn2q1ssSHdTQ+X+I2Q6Dd+qQhbE3QV0d2b83ggKylzpRck7WIln5sFsVl
-        BSkz7+Z93h4v2ZVox/BdALTQN4oogw8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-45-X-Ye_i55MHmq0La0Lu7dAg-1; Mon, 29 Jun 2020 17:11:10 -0400
-X-MC-Unique: X-Ye_i55MHmq0La0Lu7dAg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A6CAF107ACCA;
-        Mon, 29 Jun 2020 21:11:08 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-115-176.rdu2.redhat.com [10.10.115.176])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A06A45C1B2;
-        Mon, 29 Jun 2020 21:11:07 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 233D8220C58; Mon, 29 Jun 2020 17:11:07 -0400 (EDT)
-Date:   Mon, 29 Jun 2020 17:11:07 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Vasily Averin <vvs@virtuozzo.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        Maxim Patlasov <maximvp@gmail.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fuse_writepages_fill() optimization to avoid WARN_ON in
- tree_insert
-Message-ID: <20200629211107.GB269627@redhat.com>
-References: <2733b41a-b4c6-be94-0118-a1a8d6f26eec@virtuozzo.com>
- <d6e8ef46-c311-b993-909c-4ae2823e2237@virtuozzo.com>
+        Mon, 29 Jun 2020 18:12:35 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C171C061755;
+        Mon, 29 Jun 2020 15:12:35 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id 35so7648612ple.0;
+        Mon, 29 Jun 2020 15:12:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=bYbnK/1xSCVq1/TiUVXXGtkJjMs/M1Q7KN0EtGsVY6o=;
+        b=QGGZu2c4OuikWTRSNeoe1sVM3jGJOC1AUrzjW5WMAQvvuH9XL+s1wpFivhaniiLEx9
+         6NZSaIGqhCzd2ykSYS1W4q5M0bwY8B9KZq82eYI88v/NWkm9FC8VcubCh2qCmdp3gmUF
+         N6zR5kwYnq7Ar8uTIsswnVYWdH8c+IWLnf6Sr69rCa+GY2Ce0LW6ixZ96NMmUAHji/wj
+         fRKp+Ea8+q1atMhnQ4bpScUYSWdMEGqJ3K6iaZvh/Mmw6zupppbQQC3YPOD7Ur4Gs3Iz
+         oCM4IGld1+je/nS1r2/OKSmScpyzGj3A254T4DmwGHMZBYPadtzyZs4UYKJ1cnF7/K0U
+         IDnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=bYbnK/1xSCVq1/TiUVXXGtkJjMs/M1Q7KN0EtGsVY6o=;
+        b=JN7wj/kJj00cpzHQuR53iIlG5fhr/Ottj9/aTaqUiYnx71JIIcjrhTyq7wyG+rBBoK
+         nRjF3r0SUTR8MGiEJVYdcJk8sBoohPZOucXKPZHJfQBaxlbaX345lqTHpfQz4i78IHGg
+         +kPyJdCn/yBCtadHKq/meetBBsXeW7cLipRIXDiuf09EKWtE3lsFFOQ3dY+qTIS5Col9
+         Vj4wqraTRHA/WTMayfL+8C3D/W310rOf8HZcDESIsFeCb/rbsgDMTszSL01M6QcTZ2Sp
+         5qjrRhS9Dq5x4H458kqzF0yTaCK46sX+D7Ex3mOV2tvg7vYF0HVjuSLKjGOE/xsvf5hR
+         bTWg==
+X-Gm-Message-State: AOAM530Ez5SdgemWMm71rVzRcsOwk/56HrNA2kKU7UTM4Pd/kw7Q1QDR
+        PiRRrYhwFP2TR+vEwXQFQ4W0Kqge
+X-Google-Smtp-Source: ABdhPJxOc+HpDNzP+2988YFqOG8eD5PnPjzwgrx3K2bOdH27XDD3MYifNIiTyYCfMU3Elj4SI7z0KA==
+X-Received: by 2002:a17:90b:1c12:: with SMTP id oc18mr18176746pjb.160.1593468754943;
+        Mon, 29 Jun 2020 15:12:34 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:592])
+        by smtp.gmail.com with ESMTPSA id cv3sm419878pjb.45.2020.06.29.15.12.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jun 2020 15:12:34 -0700 (PDT)
+Date:   Mon, 29 Jun 2020 15:12:31 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 00/15] Make the user mode driver code a better citizen
+Message-ID: <20200629221231.jjc2czk3ul2roxkw@ast-mbp.dhcp.thefacebook.com>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <87y2oac50p.fsf@x220.int.ebiederm.org>
+ <87bll17ili.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d6e8ef46-c311-b993-909c-4ae2823e2237@virtuozzo.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+In-Reply-To: <87bll17ili.fsf_-_@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 25, 2020 at 12:02:53PM +0300, Vasily Averin wrote:
-> In current implementation fuse_writepages_fill() tries to share the code:
-> for new wpa it calls tree_insert() with num_pages = 0
-> then switches to common code used non-modified num_pages
-> and increments it at the very end.
+On Mon, Jun 29, 2020 at 02:55:05PM -0500, Eric W. Biederman wrote:
 > 
-> Though it triggers WARN_ON(!wpa->ia.ap.num_pages) in tree_insert()
->  WARNING: CPU: 1 PID: 17211 at fs/fuse/file.c:1728 tree_insert+0xab/0xc0 [fuse]
->  RIP: 0010:tree_insert+0xab/0xc0 [fuse]
->  Call Trace:
->   fuse_writepages_fill+0x5da/0x6a0 [fuse]
->   write_cache_pages+0x171/0x470
->   fuse_writepages+0x8a/0x100 [fuse]
->   do_writepages+0x43/0xe0
+> I have tested thes changes by booting with the code compiled in and
+> by killing "bpfilter_umh" and running iptables -vnL to restart
+> the userspace driver.
 > 
-> This patch re-works fuse_writepages_fill() to call tree_insert()
-> with num_pages = 1 and avoids its subsequent increment and
-> an extra spin_lock(&fi->lock) for newly added wpa.
-> 
-> Fixes: 6b2fb79963fb ("fuse: optimize writepages search")
-> Reported-by: kernel test robot <rong.a.chen@intel.com>
-> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+> I have compiled tested each change with and without CONFIG_BPFILTER
+> enabled.
 
-I think I am facing this issue with virtiofs. I am running podman which
-mounts overlayfs over virtiofs (virtiofs uses fuse). While running podman
-I am seeing tons of following warnings no console. So this needs to
-be fixed in 5.8-rc.
+With
+CONFIG_BPFILTER=y
+CONFIG_BPFILTER_UMH=m
+it doesn't build:
 
-[24908.795483] ------------[ cut here ]------------
-[24908.795484] WARNING: CPU: 6 PID: 11376 at fs/fuse/file.c:1684 tree_insert+0xaf/0xc0
-[24908.795484] Modules linked in: ip6table_nat ip6_tables xt_conntrack xt_MASQUERADE xt_comment iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 veth overlay dax_pmem_compat virtio_net device_dax dax_pmem_core net_failover joydev failover br_netfilter bridge drm stp llc virtiofs virtio_blk serio_raw nd_pmem nd_btt qemu_fw_cfg
-[24908.795495] CPU: 6 PID: 11376 Comm: dnf Tainted: G        W         5.8.0-rc2+ #18
-[24908.795496] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
-[24908.795496] RIP: 0010:tree_insert+0xaf/0xc0
-[24908.795497] Code: 80 c8 00 00 00 49 c7 80 d0 00 00 00 00 00 00 00 49 c7 80 d8 00 00 00 00 00 00 00 48 89 39 e9 a8 9a 1b 00 0f 0b eb a5 0f 0b c3 <0f> 0b e9 71 ff ff ff 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00
-[24908.795497] RSP: 0018:ffffb17840717bc0 EFLAGS: 00010246
-[24908.795498] RAX: 0000000000000000 RBX: ffffb17840717d20 RCX: 8c6318c6318c6319
-[24908.795499] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff9f6cc1a72ee0
-[24908.795499] RBP: ffffe0dedfd6e640 R08: ffff9f6d1261c800 R09: ffffffffffffffff
-[24908.795500] R10: ffff9f6cc1a72ee0 R11: 0000000000000000 R12: ffffe0dee05725c0
-[24908.795500] R13: ffff9f6cc1a72a00 R14: ffff9f6cc1a72f90 R15: ffff9f6d1261c800
-[24908.795501] FS:  00007f377b267740(0000) GS:ffff9f6d1fa00000(0000) knlGS:0000000000000000
-[24908.795501] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[24908.795502] CR2: 00007f37777588e8 CR3: 0000000828a0e000 CR4: 00000000000006e0
-[24908.795502] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[24908.795503] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[24908.795503] Call Trace:
-[24908.795504]  fuse_writepages_fill+0x5b0/0x670
-[24908.795504]  write_cache_pages+0x1c2/0x4b0
-[24908.795504]  ? fuse_writepages+0x110/0x110
-[24908.795505]  fuse_writepages+0x8d/0x110
-[24908.795505]  do_writepages+0x34/0xc0
-[24908.795506]  __filemap_fdatawrite_range+0xc5/0x100
-[24908.795506]  filemap_write_and_wait_range+0x40/0xa0
-[24908.795507]  remove_vma+0x31/0x70
-[24908.795507]  __do_munmap+0x2d9/0x4a0
-[24908.795507]  __vm_munmap+0x6a/0xc0
-[24908.795508]  __x64_sys_munmap+0x28/0x30
-[24908.795508]  do_syscall_64+0x52/0xb0
-[24908.795509]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[24908.795509] RIP: 0033:0x7f377b81067b
-[24908.795510] Code: Bad RIP value.
-[24908.795510] RSP: 002b:00007ffd88f96fd8 EFLAGS: 00000246 ORIG_RAX: 000000000000000b
-[24908.795511] RAX: ffffffffffffffda RBX: 0000559c662c79d0 RCX: 00007f377b81067b
-[24908.795511] RDX: 0000559c66349720 RSI: 0000000000104000 RDI: 00007f37778da000
-[24908.795512] RBP: 00007f37778da1e0 R08: 00007f3777894308 R09: 0000000000000001
-[24908.795512] R10: 00000000000001a4 R11: 0000000000000246 R12: 0000000000000000
-[24908.795513] R13: 0000559c65d843a0 R14: 00007f37778da000 R15: 0000000000000017
-[24908.795515] irq event stamp: 3775373
-[24908.795515] hardirqs last  enabled at (3775373): [<ffffffffa72f6a21>] page_outside_zone_boundaries+0xd1/0x100
-[24908.795516] hardirqs last disabled at (3775372): [<ffffffffa72f698e>] page_outside_zone_boundaries+0x3e/0x100
-[24908.795517] softirqs last  enabled at (3775348): [<ffffffffa7e0035d>] __do_softirq+0x35d/0x400
-[24908.795517] softirqs last disabled at (3775341): [<ffffffffa7c01052>] asm_call_on_stack+0x12/0x20
-[24908.795518] ---[ end trace f23c513c015212d2 ]---
+ERROR: modpost: "kill_pid_info" [net/bpfilter/bpfilter.ko] undefined!
 
+I've added:
++EXPORT_SYMBOL(kill_pid_info);
+to continue testing...
+
+And then did:
+while true; do iptables -L;rmmod bpfilter; done
+ 
+Unfortunately sometimes 'rmmod bpfilter' hangs in wait_event().
+
+I suspect patch 13 is somehow responsible:
++	if (tgid) {
++		kill_pid_info(SIGKILL, SEND_SIG_PRIV, tgid);
++		wait_event(tgid->wait_pidfd, !pid_task(tgid, PIDTYPE_TGID));
++		bpfilter_umh_cleanup(info);
++	}
+
+I cannot figure out why it hangs. Some sort of race ?
+Since adding short delay between kill and wait makes it work.
