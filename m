@@ -2,73 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E8DF20D1DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 20:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C12220D259
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jun 2020 20:51:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbgF2So2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 29 Jun 2020 14:44:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35134 "EHLO mail.kernel.org"
+        id S1726948AbgF2Ssj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 29 Jun 2020 14:48:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43040 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726887AbgF2So0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 29 Jun 2020 14:44:26 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26DD520775;
-        Mon, 29 Jun 2020 18:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593456266;
-        bh=+KOLxCmwsPTRAh+iG7nBvhdN9ELAStyx3yZ+DIpMSVc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dJDIKMRCSLEvE0WirVlwv526I2ZGk7neXM71bgloPC2OjkB1QPSUU673s2YYwBV40
-         dFOqgJt44qETJs2ymoIBolyAitJBRF6/PPq0ha6wCyEDLoZNoYjKJlTun4mD7F76Pc
-         q2uBGcwiSOVQdAcampa0BMCJJlVXHO+uWyoH+9AU=
-Date:   Mon, 29 Jun 2020 11:44:24 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Satya Tangirala <satyat@google.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] ext4: add inline encryption support
-Message-ID: <20200629184424.GG20492@sol.localdomain>
-References: <20200629120405.701023-1-satyat@google.com>
- <20200629120405.701023-5-satyat@google.com>
+        id S1726990AbgF2Ssi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 29 Jun 2020 14:48:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B3D3AAAC5;
+        Mon, 29 Jun 2020 18:48:35 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9726B1E12E7; Mon, 29 Jun 2020 20:48:35 +0200 (CEST)
+Date:   Mon, 29 Jun 2020 20:48:35 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Eric Dumazet <eric.dumazet@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] fs: Do not check if there is a fsnotify watcher on
+ pseudo inodes
+Message-ID: <20200629184835.GK26507@quack2.suse.cz>
+References: <20200615121358.GF3183@techsingularity.net>
+ <CAOQ4uxi0fqKFZ9=U-+DQ78233hR9TXEU44xRih4q=M556ynphA@mail.gmail.com>
+ <20200616074701.GA20086@quack2.suse.cz>
+ <4f6c8dab-4b54-d523-8636-2b01c03d14d3@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200629120405.701023-5-satyat@google.com>
+In-Reply-To: <4f6c8dab-4b54-d523-8636-2b01c03d14d3@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 29, 2020 at 12:04:05PM +0000, Satya Tangirala via Linux-f2fs-devel wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Mon 29-06-20 08:17:02, Eric Dumazet wrote:
+> On 6/16/20 12:47 AM, Jan Kara wrote:
+> > On Mon 15-06-20 19:26:38, Amir Goldstein wrote:
+> >>> This patch changes alloc_file_pseudo() to always opt out of fsnotify by
+> >>> setting FMODE_NONOTIFY flag so that no check is made for fsnotify watchers
+> >>> on pseudo files. This should be safe as the underlying helper for the
+> >>> dentry is d_alloc_pseudo which explicitly states that no lookups are ever
+> >>> performed meaning that fanotify should have nothing useful to attach to.
+> >>>
+> >>> The test motivating this was "perf bench sched messaging --pipe". On
+> >>> a single-socket machine using threads the difference of the patch was
+> >>> as follows.
+> >>>
+> >>>                               5.7.0                  5.7.0
+> >>>                             vanilla        nofsnotify-v1r1
+> >>> Amean     1       1.3837 (   0.00%)      1.3547 (   2.10%)
+> >>> Amean     3       3.7360 (   0.00%)      3.6543 (   2.19%)
+> >>> Amean     5       5.8130 (   0.00%)      5.7233 *   1.54%*
+> >>> Amean     7       8.1490 (   0.00%)      7.9730 *   2.16%*
+> >>> Amean     12     14.6843 (   0.00%)     14.1820 (   3.42%)
+> >>> Amean     18     21.8840 (   0.00%)     21.7460 (   0.63%)
+> >>> Amean     24     28.8697 (   0.00%)     29.1680 (  -1.03%)
+> >>> Amean     30     36.0787 (   0.00%)     35.2640 *   2.26%*
+> >>> Amean     32     38.0527 (   0.00%)     38.1223 (  -0.18%)
+> >>>
+> >>> The difference is small but in some cases it's outside the noise so
+> >>> while marginal, there is still some small benefit to ignoring fsnotify
+> >>> for files allocated via alloc_file_pseudo in some cases.
+> >>>
+> >>> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+> >>
+> >> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> > 
+> > Thanks for the patch Mel and for review Amir! I've added the patch to my
+> > tree with small amendments to the changelog.
+> > 
+> > 								Honza
+> > 
 > 
-> Wire up ext4 to support inline encryption via the helper functions which
-> fs/crypto/ now provides.  This includes:
+> Note this patch broke some user programs (one instance being packetdrill)
 > 
-> - Adding a mount option 'inlinecrypt' which enables inline encryption
->   on encrypted files where it can be used.
+> Typical legacy packetdrill script has :
 > 
-> - Setting the bio_crypt_ctx on bios that will be submitted to an
->   inline-encrypted file.
+> // Create a socket and set it to non-blocking.
+>     0 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
+>    +0 fcntl(3, F_GETFL) = 0x2 (flags O_RDWR)
+>    +0 fcntl(3, F_SETFL, O_RDWR|O_NONBLOCK) = 0
 > 
->   Note: submit_bh_wbc() in fs/buffer.c also needed to be patched for
->   this part, since ext4 sometimes uses ll_rw_block() on file data.
 > 
-> - Not adding logically discontiguous data to bios that will be submitted
->   to an inline-encrypted file.
+> But after this change, fcntl(3, F_GETFL) returns 0x4000002 
 > 
-> - Not doing filesystem-layer crypto on inline-encrypted files.
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> Co-developed-by: Satya Tangirala <satyat@google.com>
-> Signed-off-by: Satya Tangirala <satyat@google.com>
+> FMODE_NONOTIFY was not meant to be visible to user space. (otherwise
+> there would be a O_NONOTIFY) ?
 
-This patch looks good to me.  (I can't technically provide Reviewed-by because
-I'm listed as the author.)
+Interesting. As Mel said the patch is reverted anyway (Linus already
+applied the revert) but the question about FMODE_NONOTIFY is interesting.
+Userspace certainly cannot set the flag (the kernel enforces this on
+open(2) and fcntl(F_SETFL)). But it is visible to userspace via
+fcntl(F_GETFL) which may have been an oversight... I'm just not sure
+whether some of the fanotify(7) users which legitimately get such file
+descriptors don't depend on this flag being visible.
 
-Ted and Andreas, can you take a look?
+								Honza
 
-- Eric
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
