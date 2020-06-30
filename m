@@ -2,99 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDA1120FDE7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 22:44:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D98FA20FFA2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 23:56:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729944AbgF3Uog (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jun 2020 16:44:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55024 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728340AbgF3Uog (ORCPT
+        id S1727000AbgF3Vz5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jun 2020 17:55:57 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:60078 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726376AbgF3Vz5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jun 2020 16:44:36 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9DE2C061755
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jun 2020 13:44:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=kcuGVu3dWRulN2Ruib0VL7Gzj1OWqUiXn1HW3UNZi4c=; b=cYNHBB3ynDSnCOv1FdIYqJwIWR
-        tBIXxNso2zMMvJsTi35L1OJlnixO2sqtzENpgeU131wNq+Apt0kKFx6BdUvasGIS29digHv51BzS9
-        rACTN4hCtS2yyLyH0+Y6aU7zipOXLrhKm7bDDFnGeBtXoW6tCIR0+NAHm+GguJywAFcPCVCE2IccQ
-        33EnFl1A0qxgL9IP02N15Vn5nvKh2RpF5R4t3c7e8iGI94BCC0i8KBFsDoMY41xb1eWomtshX71E6
-        Kdu4BavDQj1LNiWdxcOVbKpadALrGiaqEqlhcseSoqgdefp5Rm0pkXmubxhoqLIRyX4dcphr6EKsz
-        ya3enmPg==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jqN7C-0006QA-8w; Tue, 30 Jun 2020 20:44:26 +0000
-Subject: Re: [PATCH] f2fs: always expose label 'next_page'
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Chao Yu <yuchao0@huawei.com>,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <020937f3-2947-ca41-c18a-026782216711@infradead.org>
- <20200630202357.GA1396584@google.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <1be18397-7fc6-703e-121b-e210e101357f@infradead.org>
-Date:   Tue, 30 Jun 2020 13:44:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+        Tue, 30 Jun 2020 17:55:57 -0400
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05ULscxI032871;
+        Wed, 1 Jul 2020 06:54:38 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp);
+ Wed, 01 Jul 2020 06:54:38 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav304.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05ULsbqs032867
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 1 Jul 2020 06:54:37 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
+ <87366g8y1e.fsf@x220.int.ebiederm.org>
+ <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
+ <20200628194440.puzh7nhdnk6i4rqj@ast-mbp.dhcp.thefacebook.com>
+ <c99d0cfc-8526-0daf-90b5-33e560efdede@i-love.sakura.ne.jp>
+ <874kqt39qo.fsf@x220.int.ebiederm.org>
+ <6a9dd8be-333a-fd21-d125-ec20fb7c81df@i-love.sakura.ne.jp>
+ <20200630164817.txa2jewfvk4stajy@ast-mbp.dhcp.thefacebook.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <c7d4df91-d78e-5134-2161-192426fc51cd@i-love.sakura.ne.jp>
+Date:   Wed, 1 Jul 2020 06:54:35 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
  Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200630202357.GA1396584@google.com>
+In-Reply-To: <20200630164817.txa2jewfvk4stajy@ast-mbp.dhcp.thefacebook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/30/20 1:23 PM, Jaegeuk Kim wrote:
-> On 06/30, Randy Dunlap wrote:
->> From: Randy Dunlap <rdunlap@infradead.org>
+On 2020/07/01 1:48, Alexei Starovoitov wrote:
+> On Tue, Jun 30, 2020 at 03:28:49PM +0900, Tetsuo Handa wrote:
+>> On 2020/06/30 5:19, Eric W. Biederman wrote:
+>>> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
+>>>
+>>>> On 2020/06/29 4:44, Alexei Starovoitov wrote:
+>>>>> But all the defensive programming kinda goes against general kernel style.
+>>>>> I wouldn't do it. Especially pr_info() ?!
+>>>>> Though I don't feel strongly about it.
+>>>>
+>>>> Honestly speaking, caller should check for errors and print appropriate
+>>>> messages. info->wd.mnt->mnt_root != info->wd.dentry indicates that something
+>>>> went wrong (maybe memory corruption). But other conditions are not fatal.
+>>>> That is, I consider even pr_info() here should be unnecessary.
+>>>
+>>> They were all should never happen cases.  Which is why my patches do:
+>>> if (WARN_ON_ONCE(...))
 >>
->> Fix build error when F2FS_FS_COMPRESSION is not set/enabled.
->> This label is needed in either case.
->>
->> ../fs/f2fs/data.c: In function ‘f2fs_mpage_readpages’:
->> ../fs/f2fs/data.c:2327:5: error: label ‘next_page’ used but not defined
->>      goto next_page;
+>> No. Fuzz testing (which uses panic_on_warn=1) will trivially hit them.
 > 
-> Thank you for the fix. This was actually introduced by the recent testing patch.
+> I don't believe that's true.
+> Please show fuzzing stack trace to prove your point.
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=ff963ad2bf54460431f517b5cae473997a29bf2a
-> 
-> If you don't mind, please let me integrate this into the original patch.
-> Let me know.
 
-Sure, no problem.
-
-> Thanks,
-> 
->>
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
->> Cc: Chao Yu <yuchao0@huawei.com>
->> Cc: linux-f2fs-devel@lists.sourceforge.net
->> ---
->>  fs/f2fs/data.c |    2 --
->>  1 file changed, 2 deletions(-)
->>
->> --- linux-next-20200630.orig/fs/f2fs/data.c
->> +++ linux-next-20200630/fs/f2fs/data.c
->> @@ -2366,9 +2366,7 @@ set_error_page:
->>  			zero_user_segment(page, 0, PAGE_SIZE);
->>  			unlock_page(page);
->>  		}
->> -#ifdef CONFIG_F2FS_FS_COMPRESSION
->>  next_page:
->> -#endif
->>  		if (rac)
->>  			put_page(page);
->>  
-
-
--- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Please find links containing "WARNING" from https://syzkaller.appspot.com/upstream . ;-)
