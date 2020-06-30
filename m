@@ -2,108 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 28E5F20EEF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 09:05:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE22820EFB8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 09:43:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730570AbgF3HFJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jun 2020 03:05:09 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:31916 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730386AbgF3HFI (ORCPT
+        id S1731170AbgF3HnJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jun 2020 03:43:09 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:16385 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731146AbgF3HnH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jun 2020 03:05:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1593500707;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8NTchzE1eUj7ZN1L/9CKJjVnTES6K0rTu7Zt52Chgwg=;
-        b=auoUCscMH77U0YrOgCHwec8s3uqE+EAcQce83uvDNTZwMnJDIj1H15Rsw9E6Q747aNFylX
-        UshIRUTGyw6JrXpVZ5wT/wV0rQOA3j9ycQVAygSC3SfpGWzTHBVDI9EI/MZBLHb2q3PGhT
-        ZE38EBoCmxsEUQs9WdIUCkQgnzeHngc=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-75-98FthR-1NB2z1c-3uEPPyQ-1; Tue, 30 Jun 2020 03:05:03 -0400
-X-MC-Unique: 98FthR-1NB2z1c-3uEPPyQ-1
-Received: by mail-qv1-f71.google.com with SMTP id g17so11574333qvw.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jun 2020 00:05:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8NTchzE1eUj7ZN1L/9CKJjVnTES6K0rTu7Zt52Chgwg=;
-        b=fU67VgHr2/SLKnjsSeBiAlJ7uPAKlZQ+ot/IBec5jda/smPZIpZEQyuOUui/WJ/ZHw
-         6a5dft/aXap69zNF4wgG+hv7n/V7TEF5tLcNlKneeDbbjGzXyLvzlvhQKIeCc2DYZBSv
-         l8zv0gkyFIEo5zQfQHwjBaMDGLXBO3c0kTWas+JKFqbPyQ8LvQZTyruWkLHhM7xfws7i
-         3aBP621e9wxITS814KejJlSoaqt9HAShw7+D/JvcmrKSvOr1zufcbE97C32Biwru46Ng
-         y3nKaudsLTeVxfcOdixu4jjN8r2vGNhC55xDb0t0BlShhvjqyycFkhW2IwEg4i5QA0Zr
-         QhpQ==
-X-Gm-Message-State: AOAM532dP1iCLBdf0TbQLS4NzJGaLy+WGJY2sZ7ujoseV5hvGDA3B3Xz
-        cIkfehx2cG2wN/mVA8nglAVuDF9yWsAnybsWpp1B7/EXRbPbMYKy/yxEDNi7e0cq/VvP0ZXZ0cD
-        J6LWeZkKKYNqdZF1eS41zNUUqNvxDr3oSgqSUn7tRRQ==
-X-Received: by 2002:a37:a6ce:: with SMTP id p197mr18185580qke.211.1593500703001;
-        Tue, 30 Jun 2020 00:05:03 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx6xxd6hymdR27bStUeOqF6w+NbR6jL/SFpPCdXe7+C9PbcguQJG+UcKKi2n7bcmmdfLYg3qZC7T7/O0zfJDFI=
-X-Received: by 2002:a37:a6ce:: with SMTP id p197mr18185559qke.211.1593500702729;
- Tue, 30 Jun 2020 00:05:02 -0700 (PDT)
+        Tue, 30 Jun 2020 03:43:07 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200630074304epoutp03193e838e5389745c8d9ac118e2417b40~dQoWKm6M71595515955epoutp03P
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jun 2020 07:43:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200630074304epoutp03193e838e5389745c8d9ac118e2417b40~dQoWKm6M71595515955epoutp03P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1593502984;
+        bh=OyE6nCakjN8L2TXqjWPoLxfFg3bpeI7JuV8HbCeOFNM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=vcbfoAZpPPBhSVutbqHBsNBvU/UpYvHOQrlTKfikhWSwTkSwHOFmMfFBPYGKVsGgV
+         BUySFFTNXrTznkWYdDnhhkqpqbdv99wF/lrH+Z7s2CD1/WXoRxD0dHdQx6zuhGspds
+         xR8nz0gXkaIKHqFTjVaCE4rPuQZTLj3CkQXfvS4U=
+Received: from epsmges5p1new.samsung.com (unknown [182.195.42.73]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20200630074303epcas5p32ef759ffbbf09c7c0f2ad71cec50deb4~dQoVlnqSh1977419774epcas5p3n;
+        Tue, 30 Jun 2020 07:43:03 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8D.85.09467.70DEAFE5; Tue, 30 Jun 2020 16:43:03 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200630074302epcas5p3d0791c46509137e448c4cc610048bec7~dQoUlKlDN1977419774epcas5p3m;
+        Tue, 30 Jun 2020 07:43:02 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200630074302epsmtrp228e13e67d0e4f4e02af8176a34428f50~dQoUkI-4X1041310413epsmtrp2b;
+        Tue, 30 Jun 2020 07:43:02 +0000 (GMT)
+X-AuditID: b6c32a49-a3fff700000024fb-d0-5efaed076f04
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E9.23.08303.60DEAFE5; Tue, 30 Jun 2020 16:43:02 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200630074300epsmtip101ce30976cb10709db63d8a7c976bcb7~dQoSY4SHy2852328523epsmtip1C;
+        Tue, 30 Jun 2020 07:43:00 +0000 (GMT)
+Date:   Tue, 30 Jun 2020 13:10:05 +0530
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "bcrl@kvack.org" <bcrl@kvack.org>,
+        "asml.silence@gmail.com" <asml.silence@gmail.com>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "mb@lightnvm.io" <mb@lightnvm.io>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "selvakuma.s1@samsung.com" <selvakuma.s1@samsung.com>,
+        "nj.shetty@samsung.com" <nj.shetty@samsung.com>,
+        "javier.gonz@samsung.com" <javier.gonz@samsung.com>,
+        Arnav Dawn <a.dawn@samsung.com>
+Subject: Re: [PATCH v2 1/2] fs,block: Introduce RWF_ZONE_APPEND and handling
+ in direct IO path
+Message-ID: <20200630074005.GA5701@test-zns>
 MIME-Version: 1.0
-References: <736d172c-84ff-3e9f-c125-03ae748218e8@profihost.ag>
- <1696715.1592552822@warthog.procyon.org.uk> <4a2f5aa9-1921-8884-f854-6a8b22c488f0@profihost.ag>
- <2cfa1de5-a4df-5ad3-e35b-3024cad78ed1@profihost.ag> <CAJfpegvLJBAzGCpR6CQ1TG8-fwMB9oN8kVFijs7vK+dvQ6Tm5w@mail.gmail.com>
- <bffa6591-6698-748d-ba26-a98142b03ae8@profihost.ag> <CAJfpegur2+5b0ecSx7YZcY-FB_VYrK=5BMY=g96w+uf3eLDcCw@mail.gmail.com>
- <1492c31e-9b0c-64b5-8dd9-d9c0b4372f29@profihost.ag> <CAOssrKdX5X7WB_tt43h_Pb7nc=3Vb+WyG_kttNd16pxtS4Z0_g@mail.gmail.com>
-In-Reply-To: <CAOssrKdX5X7WB_tt43h_Pb7nc=3Vb+WyG_kttNd16pxtS4Z0_g@mail.gmail.com>
-From:   Miklos Szeredi <mszeredi@redhat.com>
-Date:   Tue, 30 Jun 2020 09:04:51 +0200
-Message-ID: <CAOssrKcHQXbPUjec4x5zu4jWxXbx6u1Oe3APF1Wmx_2Y9XA9GQ@mail.gmail.com>
-Subject: Re: Kernel 5.4 breaks fuse 2.X nonempty mount option
-To:     Stefan Priebe - Profihost AG <s.priebe@profihost.ag>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "p.kramme@profihost.ag" <p.kramme@profihost.ag>,
-        Daniel Aberger - Profihost AG <d.aberger@profihost.ag>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CY4PR04MB3751213DD4B370F58A63368BE76F0@CY4PR04MB3751.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIKsWRmVeSWpSXmKPExsWy7bCmhi77219xBpd2GVj83vaIxWLOqm2M
+        Fqvv9rNZdP3bwmLR2v6NyeL0hEVMFu9az7FYPL7zmd1iyrQmRou9t7Qt9uw9yWJxedccNosV
+        24+wWGz7PZ/Z4vWPk2wW5/8eZ3UQ8Ng56y67x+YVWh6Xz5Z6bPo0id2j++oPRo++LasYPT5v
+        kvNoP9DN5LHpyVumAM4oLpuU1JzMstQifbsErow1P54wFRwUq1jU8YGlgfGtUBcjJ4eEgInE
+        7ZvLWbsYuTiEBHYzSpxf8ogJwvnEKNH48Qo7hPOZUeLyyZeMXYwcYC1nvydDxHcxSnz+9x+q
+        /RmjxIKdy1hA5rIIqEr8uX+NFaSBTUBT4sLkUpCwiICWxLJ978DqmQU+s0q03lnPBlIjLJAg
+        sfazJ0gNr4COxMpXPxkhbEGJkzOfsICUcArESpw45gISFhVQljiw7TjYoRICdzgkvrwHuQHk
+        HReJ789/s0DYwhKvjm9hh7ClJD6/28sGYRdL/LpzlBmiuYNR4nrDTKgGe4mLe/4ygdjMAhkS
+        3d/fsUDYfBK9v58wQTzPK9HRBg06RYl7k55C7RWXeDhjCZTtIXFsfz8bJExmM0s8mfiSaQKj
+        3Cwk/8xCsgLCtpLo/NDEOgtoBbOAtMTyfxwQpqbE+l36CxhZVzFKphYU56anFpsWGOallusV
+        J+YWl+al6yXn525iBKc6Lc8djHcffNA7xMjEwXiIUYKDWUmE97TBrzgh3pTEyqrUovz4otKc
+        1OJDjNIcLErivEo/zsQJCaQnlqRmp6YWpBbBZJk4OKUamFYLOJQ+eXvjhy9j4EPnabvexNmF
+        sRt+2v7GTdhAWTff3s881PFIvE0F07YNrq++2umkM37p97rOsPC6pO1Z1dvxep1+566c0Z09
+        o9t2Rs+nfTp37fsu9kq9OPKz0sI7e6fQlAKTbxODC7ZO+7f9uE/B4q1zNm/dsG/CteI7QSkz
+        JjwRu1LdHfiq7IRKcmnFTf/9j0SbXv/+fd0g68e/eoupn/JW5OZqhZxb3V+efbXRe2l10ZGC
+        hJydkaEaZR/rTt3kMfKpW7Rh2+xGMf+TfsXReRunrP5wd8FO/qlM67Is3fb1ei3Iz9Xffjmr
+        VoLffpnj2zdsG5Zp5X3pO/k/NqSZX3KlBtPUGYcNJ6TpLlRiKc5INNRiLipOBADpryth5AMA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsWy7bCSnC7b219xBhu+qlv83vaIxWLOqm2M
+        Fqvv9rNZdP3bwmLR2v6NyeL0hEVMFu9az7FYPL7zmd1iyrQmRou9t7Qt9uw9yWJxedccNosV
+        24+wWGz7PZ/Z4vWPk2wW5/8eZ3UQ8Ng56y67x+YVWh6Xz5Z6bPo0id2j++oPRo++LasYPT5v
+        kvNoP9DN5LHpyVumAM4oLpuU1JzMstQifbsErozJTSwFn4UrJp64wNTAuFOgi5GDQ0LAROLs
+        9+QuRi4OIYEdjBIv/t5m6mLkBIqLSzRf+8EOYQtLrPz3nB2i6AmjxJTjbYwgCRYBVYk/96+x
+        ggxiE9CUuDC5FCQsIqAlsWzfO1aQemaBn6wSl35sYASpERZIkFj72ROkhldAR2Llq5+MEDNn
+        M0vsa/zEDJEQlDg58wkLiM0sYCYxb/NDZpBeZgFpieX/OEBMToFYiRPHXEAqRAWUJQ5sO840
+        gVFwFpLmWUiaZyE0L2BkXsUomVpQnJueW2xYYJSXWq5XnJhbXJqXrpecn7uJERx5Wlo7GPes
+        +qB3iJGJg/EQowQHs5II72mDX3FCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeb/OWhgnJJCeWJKa
+        nZpakFoEk2Xi4JRqYNI/Jhz6d9Ptpsu2DS0xH0JMQ0vPzbmga2Rh6M6/JyG632AJtwfzoY6v
+        p30uvWC8wlj6h6MlQ+rgh/hZykVTFFZNjfr0UWryjZVFHyp03mVc8qhJyl7LHBNltuDU5Hld
+        ElbfxLXsNzhniGtwnrqmb6H+b2nAev5Gya6jberse8zZc+SKHRWn97jn/jo0MeCQv5TNat7p
+        73daJWyvzS7g6xU6/H3hi9XS/eXss5j7OH8ITglYyb9k7r0zO2R+/pgzIT/yaunjEiGrPfty
+        toZsnS6lvn/+Vv9tt4LsdyTbnXJ2cV09p+5YTKevlIteQ8iio9EeMy/+iO27E719t/iujDNf
+        AkUkNk96dPpxwfFMDiWW4oxEQy3mouJEADlCgVsrAwAA
+X-CMS-MailID: 20200630074302epcas5p3d0791c46509137e448c4cc610048bec7
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----_kWsYTlEiWgRcgg3slXo3.6fqMwSg3MgpFIky2YSZcHasXdW=_adde7_"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200625171834epcas5p226a24dfcb84cfa83fe29a2bd17795d85
+References: <1593105349-19270-1-git-send-email-joshi.k@samsung.com>
+        <CGME20200625171834epcas5p226a24dfcb84cfa83fe29a2bd17795d85@epcas5p2.samsung.com>
+        <1593105349-19270-2-git-send-email-joshi.k@samsung.com>
+        <CY4PR04MB37511FB1D3B3491A2CED5470E7930@CY4PR04MB3751.namprd04.prod.outlook.com>
+        <20200629183202.GA24003@test-zns>
+        <CY4PR04MB3751213DD4B370F58A63368BE76F0@CY4PR04MB3751.namprd04.prod.outlook.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Back on-list]
+------_kWsYTlEiWgRcgg3slXo3.6fqMwSg3MgpFIky2YSZcHasXdW=_adde7_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-On Mon, Jun 29, 2020 at 8:19 PM Stefan Priebe - Profihost AG
-<s.priebe@profihost.ag> wrote:
+On Tue, Jun 30, 2020 at 12:37:07AM +0000, Damien Le Moal wrote:
+>On 2020/06/30 3:35, Kanchan Joshi wrote:
+>> On Fri, Jun 26, 2020 at 02:50:20AM +0000, Damien Le Moal wrote:
+>>> On 2020/06/26 2:18, Kanchan Joshi wrote:
+>>>> Introduce RWF_ZONE_APPEND flag to represent zone-append. User-space
+>>>> sends this with write. Add IOCB_ZONE_APPEND which is set in
+>>>> kiocb->ki_flags on receiving RWF_ZONE_APPEND.
+>>>> Make direct IO submission path use IOCB_ZONE_APPEND to send bio with
+>>>> append op. Direct IO completion returns zone-relative offset, in sector
+>>>> unit, to upper layer using kiocb->ki_complete interface.
+>>>> Report error if zone-append is requested on regular file or on sync
+>>>> kiocb (i.e. one without ki_complete).
+>>>>
+>>>> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+>>>> Signed-off-by: SelvaKumar S <selvakuma.s1@samsung.com>
+>>>> Signed-off-by: Arnav Dawn <a.dawn@samsung.com>
+>>>> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+>>>> Signed-off-by: Javier Gonzalez <javier.gonz@samsung.com>
+>>>> ---
+>>>>  fs/block_dev.c          | 28 ++++++++++++++++++++++++----
+>>>>  include/linux/fs.h      |  9 +++++++++
+>>>>  include/uapi/linux/fs.h |  5 ++++-
+>>>>  3 files changed, 37 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/fs/block_dev.c b/fs/block_dev.c
+>>>> index 47860e5..5180268 100644
+>>>> --- a/fs/block_dev.c
+>>>> +++ b/fs/block_dev.c
+>>>> @@ -185,6 +185,10 @@ static unsigned int dio_bio_write_op(struct kiocb *iocb)
+>>>>  	/* avoid the need for a I/O completion work item */
+>>>>  	if (iocb->ki_flags & IOCB_DSYNC)
+>>>>  		op |= REQ_FUA;
+>>>> +
+>>>> +	if (iocb->ki_flags & IOCB_ZONE_APPEND)
+>>>> +		op |= REQ_OP_ZONE_APPEND;
+>>>
+>>> This is wrong. REQ_OP_WRITE is already set in the declaration of "op". How can
+>>> this work ?
+>> REQ_OP_ZONE_APPEND will override the REQ_WRITE op, while previously set op
+>> flags (REQ_FUA etc.) will be retained. But yes, this can be made to look
+>> cleaner.
+>> V3 will include the other changes you pointed out. Thanks for the review.
+>>
 >
-> Hi,
->
-> here we go (Off list):
->
-> 4.19 kernel:
-> # timeout 20 strace -ff -s1024 -- ceph-fuse -f /var/log/pve/tasks -o
-> noatime,nonempty
->
-> Output: see attached file
->
->
-> 5.4.47 kernel:
-> # timeout 20 strace -ff -s1024 -- ceph-fuse -f /var/log/pve/tasks -o
-> noatime,nonempty
->
-> Output: see attached file
->
+>REQ_OP_WRITE and REQ_OP_ZONE_APPEND are different bits, so there is no
+>"override". A well formed BIO bi_opf is one op+flags. Specifying multiple OP
+>codes does not make sense.
 
-Thanks.  This is the relevant line:
+one op+flags behavior is retained here. OP is not about bits (op flags are).
+Had it been, REQ_OP_WRITE (value 1) can not be differentiated from
+REQ_OP_ZONE_APPEND (value 13).
+We do not do "bio_op(bio) & REQ_OP_WRITE", rather we look at the
+absolute value "bio_op(bio) == REQ_OP_WRITE".
 
-[pid  6448] mount("ceph-fuse", "/var/log/pve/tasks", 0x557e68f75cb0,
-MS_MGC_VAL|MS_REMOUNT|MS_NOATIME, "nonempty") = 0
+------_kWsYTlEiWgRcgg3slXo3.6fqMwSg3MgpFIky2YSZcHasXdW=_adde7_
+Content-Type: text/plain; charset="utf-8"
 
-It's "mount -o remount -o unknownoption" that is broken.   Fix is a
-little complex, because we want the old behavior on the old mount(2)
-api, but the new behavior on the fsconfig(2) api.  Will post a patch
-tomorrow.
 
-Thanks,
-Miklos
-
+------_kWsYTlEiWgRcgg3slXo3.6fqMwSg3MgpFIky2YSZcHasXdW=_adde7_--
