@@ -2,134 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ECB0420F4CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 14:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7BC420F4FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 14:47:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387764AbgF3MhU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jun 2020 08:37:20 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:39166 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387756AbgF3MhT (ORCPT
+        id S2387938AbgF3Mqx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jun 2020 08:46:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37706 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387855AbgF3Mqw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jun 2020 08:37:19 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jqFVg-0000GB-8B; Tue, 30 Jun 2020 06:37:12 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jqFVf-0001Kb-E9; Tue, 30 Jun 2020 06:37:12 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200625095725.GA3303921@kroah.com>
-        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
-        <20200625120725.GA3493334@kroah.com>
-        <20200625.123437.2219826613137938086.davem@davemloft.net>
-        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
-        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
-        <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
-        <87366g8y1e.fsf@x220.int.ebiederm.org>
-        <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
-        <20200628194440.puzh7nhdnk6i4rqj@ast-mbp.dhcp.thefacebook.com>
-        <c99d0cfc-8526-0daf-90b5-33e560efdede@i-love.sakura.ne.jp>
-        <874kqt39qo.fsf@x220.int.ebiederm.org>
-        <6a9dd8be-333a-fd21-d125-ec20fb7c81df@i-love.sakura.ne.jp>
-Date:   Tue, 30 Jun 2020 07:32:39 -0500
-In-Reply-To: <6a9dd8be-333a-fd21-d125-ec20fb7c81df@i-love.sakura.ne.jp>
-        (Tetsuo Handa's message of "Tue, 30 Jun 2020 15:28:49 +0900")
-Message-ID: <871rlwzqc8.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 30 Jun 2020 08:46:52 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F0C8C061755;
+        Tue, 30 Jun 2020 05:46:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Q7p5xLxn4weNWP/HSAg2W+OjOZyX+vfU5i1SyJ0YNkk=; b=byFHeKGWpcfPv6qNe1knSNSdd6
+        eTgTvR0X9jhfJDShcpq/+Smav0j66PLJDLVbsrnabXaeL3hdlPv9cK+CbGNuN1O6xk2pN/b2vozu5
+        K8ANv0hrL4k975gPSzFONfyGBTuTBI+iv9T4Wif+0SG9XZouSDlLL2Ay6vVVrknvyYzFNmSrP+F8w
+        2TYFjzSAvJUEC0u7dBI8zbpZN7AM0FnSFStLNXRe5ELDXp8MfThkylMV9+LJWwXFJRvsW0cmPso7d
+        ZFoigGJDR8+BatGxguaXFHEzj5/dnI5AuWy993WCQ2axR2aRxQvTTFQbg8m0v53SKiF0qCA/EVuzX
+        1kh4QSKA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jqFer-0005Em-Bb; Tue, 30 Jun 2020 12:46:41 +0000
+Date:   Tue, 30 Jun 2020 13:46:41 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bcrl@kvack.org,
+        asml.silence@gmail.com, Damien.LeMoal@wdc.com, hch@infradead.org,
+        linux-fsdevel@vger.kernel.org, mb@lightnvm.io,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        selvakuma.s1@samsung.com, nj.shetty@samsung.com,
+        javier.gonz@samsung.com
+Subject: Re: [PATCH v2 0/2] zone-append support in io-uring and aio
+Message-ID: <20200630124641.GN25523@casper.infradead.org>
+References: <CGME20200625171829epcas5p268486a0780571edb4999fc7b3caab602@epcas5p2.samsung.com>
+ <1593105349-19270-1-git-send-email-joshi.k@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jqFVf-0001Kb-E9;;;mid=<871rlwzqc8.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+cf8KC/zQ0OW1Sl8Ww5gwt7JSMLP+Y3F4=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMNoVowels,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4999]
-        *  0.7 XMSubLong Long Subject
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 344 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 11 (3.2%), b_tie_ro: 10 (2.8%), parse: 0.86
-        (0.3%), extract_message_metadata: 11 (3.2%), get_uri_detail_list: 1.25
-        (0.4%), tests_pri_-1000: 6 (1.6%), tests_pri_-950: 1.25 (0.4%),
-        tests_pri_-900: 1.01 (0.3%), tests_pri_-90: 80 (23.2%), check_bayes:
-        78 (22.7%), b_tokenize: 8 (2.2%), b_tok_get_all: 8 (2.2%),
-        b_comp_prob: 2.3 (0.7%), b_tok_touch_all: 57 (16.5%), b_finish: 0.90
-        (0.3%), tests_pri_0: 221 (64.4%), check_dkim_signature: 0.51 (0.1%),
-        check_dkim_adsp: 1.82 (0.5%), poll_dns_idle: 0.27 (0.1%),
-        tests_pri_10: 2.1 (0.6%), tests_pri_500: 7 (2.0%), rewrite_mail: 0.00
-        (0.0%)
-Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1593105349-19270-1-git-send-email-joshi.k@samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
+On Thu, Jun 25, 2020 at 10:45:47PM +0530, Kanchan Joshi wrote:
+> Zone-append completion result --->
+> With zone-append, where write took place can only be known after completion.
+> So apart from usual return value of write, additional mean is needed to obtain
+> the actual written location.
+> 
+> In aio, this is returned to application using res2 field of io_event -
+> 
+> struct io_event {
+>         __u64           data;           /* the data field from the iocb */
+>         __u64           obj;            /* what iocb this event came from */
+>         __s64           res;            /* result code for this event */
+>         __s64           res2;           /* secondary result */
+> };
 
-> On 2020/06/30 5:19, Eric W. Biederman wrote:
->> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
->> 
->>> On 2020/06/29 4:44, Alexei Starovoitov wrote:
->>>> But all the defensive programming kinda goes against general kernel style.
->>>> I wouldn't do it. Especially pr_info() ?!
->>>> Though I don't feel strongly about it.
->>>
->>> Honestly speaking, caller should check for errors and print appropriate
->>> messages. info->wd.mnt->mnt_root != info->wd.dentry indicates that something
->>> went wrong (maybe memory corruption). But other conditions are not fatal.
->>> That is, I consider even pr_info() here should be unnecessary.
->> 
->> They were all should never happen cases.  Which is why my patches do:
->> if (WARN_ON_ONCE(...))
->
-> No. Fuzz testing (which uses panic_on_warn=1) will trivially hit them.
-> This bug was unfortunately not found by syzkaller because this path is
-> not easily reachable via syscall interface.
+Ah, now I understand.  I think you're being a little too specific by
+calling this zone-append.  This is really a "write-anywhere" operation,
+and the specified address is only a hint.
 
-Absolutely yes.  These are cases that should never happen.
-They should never be reachable by userspace.
+> In io-uring, cqe->flags is repurposed for zone-append result.
+> 
+> struct io_uring_cqe {
+>         __u64   user_data;      /* sqe->data submission passed back */
+>         __s32   res;            /* result code for this event */
+>         __u32   flags;
+> };
+> 
+> Since 32 bit flags is not sufficient, we choose to return zone-relative offset
+> in sector/512b units. This can cover zone-size represented by chunk_sectors.
+> Applications will have the trouble to combine this with zone start to know
+> disk-relative offset. But if more bits are obtained by pulling from res field
+> that too would compel application to interpret res field differently, and it
+> seems more painstaking than the former option.
+> To keep uniformity, even with aio, zone-relative offset is returned.
 
-It is absolutely a bug if these are hit by userspace.
+Urgh, no, that's dreadful.  I'm not familiar with the io_uring code.
+Maybe the first 8 bytes of the user_data could be required to be the
+result offset for this submission type?
 
-Now if fuzzers want horrible cases to be even more horrible and change a
-nice friendly warn into a panic that is their problem.  The issue being
-do they capture the information the rest of us need to fix.
+> Block IO vs File IO --->
+> For now, the user zone-append interface is supported only for zoned-block-device.
+> Regular files/block-devices are not supported. Regular file-system (e.g. F2FS)
+> will not need this anyway, because zone peculiarities are abstracted within FS.
+> At this point, ZoneFS also likes to use append implicitly rather than explicitly.
+> But if/when ZoneFS starts supporting explicit/on-demand zone-append, the check
+> allowing-only-block-device should be changed.
 
-Eric
+But we also have O_APPEND files.  And maybe we'll have other kinds of file
+in future for which this would make sense.
 
+> Semantics --->
+> Zone-append, by its nature, may perform write on a different location than what
+> was specified. It does not fit into POSIX, and trying to fit may just undermine
 
+... I disagree that it doesn't fit into POSIX.  As I said above, O_APPEND
+is a POSIX concept, so POSIX already understands that writes may not end
+up at the current write pointer.
+
+> its benefit. It may be better to keep semantics as close to zone-append as
+> possible i.e. specify zone-start location, and obtain the actual-write location
+> post completion. Towards that goal, existing async APIs seem to fit fine.
+> Async APIs (uring, linux aio) do not work on implicit write-pointer and demand
+> explicit write offset (which is what we need for append). Neither write-pointer
+> is taken as input, nor it is updated on completion. And there is a clear way to
+> get zone-append result. Zone-aware applications while using these async APIs
+> can be fine with, for the lack of better word, zone-append semantics itself.
+> 
+> Sync APIs work with implicit write-pointer (at least few of those), and there is
+> no way to obtain zone-append result, making it hard for user-space zone-append.
