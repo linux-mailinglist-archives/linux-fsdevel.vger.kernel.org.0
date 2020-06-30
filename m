@@ -2,112 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 51D5E20FFC0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 23:58:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4608210018
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 00:34:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbgF3V6M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jun 2020 17:58:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38426 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726123AbgF3V6L (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jun 2020 17:58:11 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40591C061755;
-        Tue, 30 Jun 2020 14:58:11 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id d17so9778881ljl.3;
-        Tue, 30 Jun 2020 14:58:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RR/UNoI7uOiKww7o9+rFTcbImZ17UI5RyQbYWAUPpvM=;
-        b=iJODyCvU2nZ44YgjY0+h7PYFr8bUm1v/dfcPFTwyhwfUTbQtYDODJNoZKcMdJvlKX0
-         L5q/qZi5MVLiWFoe7z+Sb57bxais8fPl62U6luMni2am6yZwHMab7pN/ysPQnK9q36sc
-         eOzOHSRutQ/RYWsoDaZFk/icfmYv1u9EPm6/9IXBOe413QEbAJiw+YeRHluCLU0Rzqsq
-         LOg/zjJwykLIqewbAO80JRafO5N0U7qpMf9HeklaG/D0vGjHgLOAijxNevggEgHCT7wz
-         xTHPxz5DJ1+XDASvmnurklA5+gjMejTBkVebCHY4HcPyoTQIDvM64o4W6EFHVLSqg7IF
-         GS9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RR/UNoI7uOiKww7o9+rFTcbImZ17UI5RyQbYWAUPpvM=;
-        b=d55gFnIowzNjiq+1bwK8EXUY1PAMZMnyM/2aaCh92h5Tqioq8/xnJxwSkehNo6ewKv
-         /QAcTRpeScgPEdi6EcqWRf0Mfy5wwBX1+/BNCAN5VakWfnCQnpCfCLnpRtgfqdb9naYA
-         a0xtr7NZU0fIY0OYguiqtZNzuAD44nAQhzEc4Jkvkmp5H0lEXvVPvVF2psMi+kQiVpnk
-         In9mypncT9sxQhtTCBhexUNMaerSWi8ncrQ1SqILFbJvdf/Wo+E08Skm5zT3WUTizHFr
-         sLh7H7ht87ZjGiRhKgk4eacXTroaiYHkj+swLsnv0SV0oNcBFXTOO2ETog+aNZY2z/TV
-         sMXg==
-X-Gm-Message-State: AOAM531ODlB+6iCH1ayvR98Pzc01T2AmRzbUuOu3NPsqAe2ytDgrbFtJ
-        27vSZ5mLr9xOYvXsuS/ORBFuUo4X5krmKNRLF08=
-X-Google-Smtp-Source: ABdhPJxMOq1MHbq9NqdaWC/RlC3zbcLh0U2x964uF2dtLoJiI7GgbNv49vIL8FhnvXggN3dxv2yfLtKmgwYP1ngfZZ4=
-X-Received: by 2002:a2e:9a0f:: with SMTP id o15mr12006024lji.450.1593554289688;
- Tue, 30 Jun 2020 14:58:09 -0700 (PDT)
+        id S1726139AbgF3Wej (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jun 2020 18:34:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49706 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725763AbgF3Wej (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Jun 2020 18:34:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 3A0D9ADCC;
+        Tue, 30 Jun 2020 22:34:37 +0000 (UTC)
+From:   NeilBrown <neilb@suse.de>
+To:     yangerkun <yangerkun@huawei.com>, sfrench@samba.org,
+        jlayton@kernel.org, neilb@suse.com
+Date:   Wed, 01 Jul 2020 08:34:26 +1000
+Cc:     linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] cifs: remove the retry in cifs_poxis_lock_set
+In-Reply-To: <62b291ab-291c-339f-e8e8-ba7b0c4f6670@huawei.com>
+References: <20200624071053.993784-1-yangerkun@huawei.com> <62b291ab-291c-339f-e8e8-ba7b0c4f6670@huawei.com>
+Message-ID: <878sg42nf1.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-References: <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org> <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
- <87366g8y1e.fsf@x220.int.ebiederm.org> <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
- <20200628194440.puzh7nhdnk6i4rqj@ast-mbp.dhcp.thefacebook.com>
- <c99d0cfc-8526-0daf-90b5-33e560efdede@i-love.sakura.ne.jp>
- <874kqt39qo.fsf@x220.int.ebiederm.org> <6a9dd8be-333a-fd21-d125-ec20fb7c81df@i-love.sakura.ne.jp>
- <20200630164817.txa2jewfvk4stajy@ast-mbp.dhcp.thefacebook.com> <c7d4df91-d78e-5134-2161-192426fc51cd@i-love.sakura.ne.jp>
-In-Reply-To: <c7d4df91-d78e-5134-2161-192426fc51cd@i-love.sakura.ne.jp>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Tue, 30 Jun 2020 14:57:58 -0700
-Message-ID: <CAADnVQKrRpjQpc9-xMizCPr1E12_jXrvH-kaKwxBmvQ03n_uiw@mail.gmail.com>
-Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 30, 2020 at 2:55 PM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2020/07/01 1:48, Alexei Starovoitov wrote:
-> > On Tue, Jun 30, 2020 at 03:28:49PM +0900, Tetsuo Handa wrote:
-> >> On 2020/06/30 5:19, Eric W. Biederman wrote:
-> >>> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
-> >>>
-> >>>> On 2020/06/29 4:44, Alexei Starovoitov wrote:
-> >>>>> But all the defensive programming kinda goes against general kernel style.
-> >>>>> I wouldn't do it. Especially pr_info() ?!
-> >>>>> Though I don't feel strongly about it.
-> >>>>
-> >>>> Honestly speaking, caller should check for errors and print appropriate
-> >>>> messages. info->wd.mnt->mnt_root != info->wd.dentry indicates that something
-> >>>> went wrong (maybe memory corruption). But other conditions are not fatal.
-> >>>> That is, I consider even pr_info() here should be unnecessary.
-> >>>
-> >>> They were all should never happen cases.  Which is why my patches do:
-> >>> if (WARN_ON_ONCE(...))
-> >>
-> >> No. Fuzz testing (which uses panic_on_warn=1) will trivially hit them.
-> >
-> > I don't believe that's true.
-> > Please show fuzzing stack trace to prove your point.
-> >
->
-> Please find links containing "WARNING" from https://syzkaller.appspot.com/upstream . ;-)
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Is it a joke? Do you understand how syzbot works?
-If so, please explain how it can invoke umd_* interface.
+On Tue, Jun 30 2020, yangerkun wrote:
+
+> Ping...
+>
+> =E5=9C=A8 2020/6/24 15:10, yangerkun =E5=86=99=E9=81=93:
+>> The caller of cifs_posix_lock_set will do retry(like
+>> fcntl_setlk64->do_lock_file_wait) if we will wait for any file_lock.
+>> So the retry in cifs_poxis_lock_set seems duplicated, remove it to
+>> make a cleanup.
+
+If cifs_posix_try_lock() returns FILE_LOCK_DEFERRED (which it might
+after your patch), then cifs_setlk() will check the return value:
+
+		if (!rc || rc < 0)
+			return rc;
+
+These tests will fail (as FILE_LOCK_DEFERRED is 1) and so it will
+continue on as though the lock was granted.
+
+So I think your patch is wrong.
+However I think your goal is correct.  cifs shouldn't be waiting.
+No other filesystem waits when it gets FILE_LOCK_DEFERRED.
+
+So maybe try to fix up your patch.
+
+Thanks,
+NeilBrown
+
+
+>>=20
+>> Signed-off-by: yangerkun <yangerkun@huawei.com>
+>> ---
+>>   fs/cifs/file.c | 8 --------
+>>   1 file changed, 8 deletions(-)
+>>=20
+>> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+>> index 9b0f8f33f832..2c9c24b1805d 100644
+>> --- a/fs/cifs/file.c
+>> +++ b/fs/cifs/file.c
+>> @@ -1162,7 +1162,6 @@ cifs_posix_lock_set(struct file *file, struct file=
+_lock *flock)
+>>   	if ((flock->fl_flags & FL_POSIX) =3D=3D 0)
+>>   		return rc;
+>>=20=20=20
+>> -try_again:
+>>   	cifs_down_write(&cinode->lock_sem);
+>>   	if (!cinode->can_cache_brlcks) {
+>>   		up_write(&cinode->lock_sem);
+>> @@ -1171,13 +1170,6 @@ cifs_posix_lock_set(struct file *file, struct fil=
+e_lock *flock)
+>>=20=20=20
+>>   	rc =3D posix_lock_file(file, flock, NULL);
+>>   	up_write(&cinode->lock_sem);
+>> -	if (rc =3D=3D FILE_LOCK_DEFERRED) {
+>> -		rc =3D wait_event_interruptible(flock->fl_wait,
+>> -					list_empty(&flock->fl_blocked_member));
+>> -		if (!rc)
+>> -			goto try_again;
+>> -		locks_delete_block(flock);
+>> -	}
+>>   	return rc;
+>>   }
+>>=20=20=20
+>>=20
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAl77vfQACgkQOeye3VZi
+gbmW6BAAinormSTgvP6Zq9Oi/lClg/VGdOBbdsnmyqFgfkx35BKsa0lpdohWdpNB
+e9u5TXSgohn1xEvZkYtCa5/bEx/LF4cJYoRnu1zQXS/CHAk22FsynyrbY1o3rAIm
+i/9FtbtF02HCSI5j85rqFmDR+6iju9oOZUPMAcb+w3IsxpNXd+HSa8zCXSLUi9aJ
+s1orhwmadyFulnDc/hkoD9YS9scZ00W6KKUDi2efXvbmRznH+z4mDVDjevQ9GRJG
+7eUBX/GlThAUpFlp1yI8/Pya+5gVpLox3Ttp484FT9M+V/e5LhPB62T+5L5ZbH5y
+NIpWWJAFmq9q/OWV9b6UiWyeMQ9S8/ZI5Ll4D6XtGjkYB3MdkOxXUOOg3qxheHQa
+pQEmJNOEATiF7zLOC7eSxpKl2aajZAQf1XVkNyJLCePppk655T4enJhKjyR6BoYQ
+xNnyUm7SKYx85Lkb19GqQBabJjzkzTdSUui+1VjwqlUYBYsaDOAm8IPu76J+r5qn
+FZ0Y6INOhbInI+GH6nOWMAPIK6yZG8/nnJNaFKNR95EnTnmZzWY4zg9pZ4IifQ1J
+qrn5SrRfd98TUIN8Xquua8FVCUqUSVUXyJRSA91IJbmrdOw5wnajlOJJ9q8Dl9dk
+BgfmAl/EWz40uNaMFkO7Z/BZqVxWDC0rHYEAl8zAi7Oqm0Ci7Xk=
+=wuds
+-----END PGP SIGNATURE-----
+--=-=-=--
