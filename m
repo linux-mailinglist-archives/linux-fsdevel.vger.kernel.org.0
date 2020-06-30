@@ -2,34 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CDEF20EE2F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 08:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94EC520EE7C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 08:29:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729954AbgF3GSG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jun 2020 02:18:06 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:61336 "EHLO
+        id S1730120AbgF3G3m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jun 2020 02:29:42 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:58740 "EHLO
         www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbgF3GSF (ORCPT
+        with ESMTP id S1730089AbgF3G3l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jun 2020 02:18:05 -0400
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05U6H3xt072997;
-        Tue, 30 Jun 2020 15:17:03 +0900 (JST)
+        Tue, 30 Jun 2020 02:29:41 -0400
+Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 05U6SrH8086585;
+        Tue, 30 Jun 2020 15:28:53 +0900 (JST)
         (envelope-from penguin-kernel@i-love.sakura.ne.jp)
 Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav405.sakura.ne.jp);
- Tue, 30 Jun 2020 15:17:03 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav405.sakura.ne.jp)
+ by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp);
+ Tue, 30 Jun 2020 15:28:53 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp)
 Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
         (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05U6H2bZ072931
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 05U6Sr7Q086582
         (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 30 Jun 2020 15:17:02 +0900 (JST)
+        Tue, 30 Jun 2020 15:28:53 +0900 (JST)
         (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v2 00/15] Make the user mode driver code a better citizen
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+Subject: Re: [PATCH 00/14] Make the user mode driver code a better citizen
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
         Greg Kroah-Hartman <greg@kroah.com>,
         Kees Cook <keescook@chromium.org>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -41,26 +42,26 @@ Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
         LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+        Casey Schaufler <casey@schaufler-ca.com>
 References: <20200625095725.GA3303921@kroah.com>
  <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
  <20200625120725.GA3493334@kroah.com>
  <20200625.123437.2219826613137938086.davem@davemloft.net>
  <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
  <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
- <87y2oac50p.fsf@x220.int.ebiederm.org>
- <87bll17ili.fsf_-_@x220.int.ebiederm.org>
- <20200629221231.jjc2czk3ul2roxkw@ast-mbp.dhcp.thefacebook.com>
- <87y2o51hkk.fsf@x220.int.ebiederm.org>
+ <40720db5-92f0-4b5b-3d8a-beb78464a57f@i-love.sakura.ne.jp>
+ <87366g8y1e.fsf@x220.int.ebiederm.org>
+ <aa737d87-cf38-55d6-32f1-2d989a5412ea@i-love.sakura.ne.jp>
+ <20200628194440.puzh7nhdnk6i4rqj@ast-mbp.dhcp.thefacebook.com>
+ <c99d0cfc-8526-0daf-90b5-33e560efdede@i-love.sakura.ne.jp>
+ <874kqt39qo.fsf@x220.int.ebiederm.org>
 From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <8137153b-6163-b52c-a1f8-f3949dc321bd@i-love.sakura.ne.jp>
-Date:   Tue, 30 Jun 2020 15:16:57 +0900
+Message-ID: <6a9dd8be-333a-fd21-d125-ec20fb7c81df@i-love.sakura.ne.jp>
+Date:   Tue, 30 Jun 2020 15:28:49 +0900
 User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
  Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <87y2o51hkk.fsf@x220.int.ebiederm.org>
+In-Reply-To: <874kqt39qo.fsf@x220.int.ebiederm.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,149 +70,32 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/06/30 10:13, Eric W. Biederman wrote:
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+On 2020/06/30 5:19, Eric W. Biederman wrote:
+> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
 > 
->> On Mon, Jun 29, 2020 at 02:55:05PM -0500, Eric W. Biederman wrote:
->>>
->>> I have tested thes changes by booting with the code compiled in and
->>> by killing "bpfilter_umh" and running iptables -vnL to restart
->>> the userspace driver.
->>>
->>> I have compiled tested each change with and without CONFIG_BPFILTER
->>> enabled.
+>> On 2020/06/29 4:44, Alexei Starovoitov wrote:
+>>> But all the defensive programming kinda goes against general kernel style.
+>>> I wouldn't do it. Especially pr_info() ?!
+>>> Though I don't feel strongly about it.
 >>
->> With
->> CONFIG_BPFILTER=y
->> CONFIG_BPFILTER_UMH=m
->> it doesn't build:
->>
->> ERROR: modpost: "kill_pid_info" [net/bpfilter/bpfilter.ko] undefined!
->>
->> I've added:
->> +EXPORT_SYMBOL(kill_pid_info);
->> to continue testing...
+>> Honestly speaking, caller should check for errors and print appropriate
+>> messages. info->wd.mnt->mnt_root != info->wd.dentry indicates that something
+>> went wrong (maybe memory corruption). But other conditions are not fatal.
+>> That is, I consider even pr_info() here should be unnecessary.
+> 
+> They were all should never happen cases.  Which is why my patches do:
+> if (WARN_ON_ONCE(...))
 
-kill_pid() is already exported.
+No. Fuzz testing (which uses panic_on_warn=1) will trivially hit them.
+This bug was unfortunately not found by syzkaller because this path is
+not easily reachable via syscall interface.
 
->>
->> And then did:
->> while true; do iptables -L;rmmod bpfilter; done
->>  
->> Unfortunately sometimes 'rmmod bpfilter' hangs in wait_event().
->>
->> I suspect patch 13 is somehow responsible:
->> +	if (tgid) {
->> +		kill_pid_info(SIGKILL, SEND_SIG_PRIV, tgid);
->> +		wait_event(tgid->wait_pidfd, !pid_task(tgid, PIDTYPE_TGID));
->> +		bpfilter_umh_cleanup(info);
->> +	}
->>
->> I cannot figure out why it hangs. Some sort of race ?
->> Since adding short delay between kill and wait makes it work.
+> 
+> That let's the caller know the messed up very clearly while still
+> providing a change to continue.
+> 
+> If they were clearly corruption no ones kernel should ever continue
+> BUG_ON would be appropriate.
 
-Because there is a race window that detach_pid() from __unhash_process() from
-__exit_signal() from release_task() from exit_notify() from do_exit() is called
-some time after wake_up_all(&pid->wait_pidfd) from do_notify_pidfd() from
-do_notify_parent() from exit_notify() from do_exit() was called (in other words,
-we can't use pid->wait_pidfd when pid_task() is used at wait_event()) ?
-
-Below are changes I suggest.
-
-diff --git a/kernel/umd.c b/kernel/umd.c
-index ff79fb16d738..f688813b8830 100644
---- a/kernel/umd.c
-+++ b/kernel/umd.c
-@@ -26,7 +26,7 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
- 	if (IS_ERR(mnt))
- 		return mnt;
- 
--	file = file_open_root(mnt->mnt_root, mnt, name, O_CREAT | O_WRONLY, 0700);
-+	file = file_open_root(mnt->mnt_root, mnt, name, O_CREAT | O_WRONLY | O_EXCL, 0700);
- 	if (IS_ERR(file)) {
- 		mntput(mnt);
- 		return ERR_CAST(file);
-@@ -52,16 +52,18 @@ static struct vfsmount *blob_to_mnt(const void *data, size_t len, const char *na
- 
- /**
-  * umd_load_blob - Remember a blob of bytes for fork_usermode_driver
-- * @info: information about usermode driver
-- * @data: a blob of bytes that can be executed as a file
-- * @len:  The lentgh of the blob
-+ * @info: information about usermode driver (shouldn't be NULL)
-+ * @data: a blob of bytes that can be executed as a file (shouldn't be NULL)
-+ * @len:  The lentgh of the blob (shouldn't be 0)
-  *
-  */
- int umd_load_blob(struct umd_info *info, const void *data, size_t len)
- {
- 	struct vfsmount *mnt;
- 
--	if (WARN_ON_ONCE(info->wd.dentry || info->wd.mnt))
-+	if (!info || !info->driver_name || !data || !len)
-+		return -EINVAL;
-+	if (info->wd.dentry || info->wd.mnt)
- 		return -EBUSY;
- 
- 	mnt = blob_to_mnt(data, len, info->driver_name);
-@@ -76,15 +78,14 @@ EXPORT_SYMBOL_GPL(umd_load_blob);
- 
- /**
-  * umd_unload_blob - Disassociate @info from a previously loaded blob
-- * @info: information about usermode driver
-+ * @info: information about usermode driver (shouldn't be NULL)
-  *
-  */
- int umd_unload_blob(struct umd_info *info)
- {
--	if (WARN_ON_ONCE(!info->wd.mnt ||
--			 !info->wd.dentry ||
--			 info->wd.mnt->mnt_root != info->wd.dentry))
-+	if (!info || !info->driver_name || !info->wd.dentry || !info->wd.mnt)
- 		return -EINVAL;
-+	BUG_ON(info->wd.mnt->mnt_root != info->wd.dentry);
- 
- 	kern_unmount(info->wd.mnt);
- 	info->wd.mnt = NULL;
-@@ -138,7 +139,7 @@ static void umd_cleanup(struct subprocess_info *info)
- {
- 	struct umd_info *umd_info = info->data;
- 
--	/* cleanup if umh_setup() was successful but exec failed */
-+	/* cleanup if umd_setup() was successful but exec failed */
- 	if (info->retval) {
- 		fput(umd_info->pipe_to_umh);
- 		fput(umd_info->pipe_from_umh);
-@@ -163,7 +164,10 @@ int fork_usermode_driver(struct umd_info *info)
- 	const char *argv[] = { info->driver_name, NULL };
- 	int err;
- 
--	if (WARN_ON_ONCE(info->tgid))
-+	if (!info || !info->driver_name || !info->wd.dentry || !info->wd.mnt)
-+		return -EINVAL;
-+	BUG_ON(info->wd.mnt->mnt_root != info->wd.dentry);
-+	if (info->tgid)
- 		return -EBUSY;
- 
- 	err = -ENOMEM;
-diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
-index 91474884ddb7..9dd70aacb81a 100644
---- a/net/bpfilter/bpfilter_kern.c
-+++ b/net/bpfilter/bpfilter_kern.c
-@@ -19,8 +19,13 @@ static void shutdown_umh(void)
- 	struct pid *tgid = info->tgid;
- 
- 	if (tgid) {
--		kill_pid_info(SIGKILL, SEND_SIG_PRIV, tgid);
--		wait_event(tgid->wait_pidfd, !pid_task(tgid, PIDTYPE_TGID));
-+		kill_pid(tgid, SIGKILL, 1);
-+		while (({ bool done;
-+			  rcu_read_lock();
-+			  done = !pid_task(tgid, PIDTYPE_TGID);
-+			  rcu_read_unlock();
-+			  done; }))
-+			schedule_timeout_uninterruptible(1);
- 		bpfilter_umh_cleanup(info);
- 	}
- }
+Please use BUG_ON() (to only corruption case) like I suggested in my updated diff.
 
