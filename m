@@ -2,66 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB72F20F8F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 17:56:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F27A20F98F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 18:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389815AbgF3P4u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jun 2020 11:56:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38894 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730478AbgF3P4t (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jun 2020 11:56:49 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05946C061755
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jun 2020 08:56:48 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id b15so16710722edy.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jun 2020 08:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=Tn+dFi5JC1WKFhnIolh2eZgwh3/3HTWDRoVFChKd+sQ=;
-        b=foA1no30UlwN10WWNfeXweJ5VGf6+hAaUgQ1iXpZD1W+SxbdE6H0bxiUsKBRUXm2ka
-         1zr/bgH30HuQPcMkTNqjE8VU9J8M7s64rXH5T8glMRIvjwW/VwWOVvlYvhWeEOwPrIZa
-         1jg9M8azWMaiHMGMxuv6rBe/B27VgcV4UYOhBKzOnIJ39/3kwGyyqLExoHJlivRidyU2
-         0DORFG4WA/qqJbRZL8aSOn+n8eBxohzzfdbxzJiNOth2zSpNehgDo3b03q9xIE1mGAmV
-         jpM5HL1PR7qFC5MoWCVpdQcfTMPd4vMFeo3w4bQNUKR7e+6N1SVbqYRi04M568k0EE0/
-         uhnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=Tn+dFi5JC1WKFhnIolh2eZgwh3/3HTWDRoVFChKd+sQ=;
-        b=bdzSaNygeyRhKiJwaNzdkTul8ACBAOn+B+UNggnBkkvoaYxdoaY9XEnwZ0l0wPGvAb
-         616qFShfcLOoBAtg4KPIyrRO8PG0Xt51WPgehATp4Pm9//xSQE3HZQstkNgYQeA+w4xv
-         xg80/nRSWzdTW/mt6+FTvpjjHZalZnORNv4zdrpAvLc/EiXmM+bluwW8Gb0kdTJTjwuK
-         ixB/KVQd7An0CFDNqMXldCfshNV7pUwaal2ys24LuiiHzCHdeThtPrCuoiuK4s3YEiMz
-         00Qmzwg8PKoLhTsHotkjzZcC3cJNgE6SYnxwfgx0ujIRsnn12mWFDclJNLpnJQYbBCuw
-         DTcA==
-X-Gm-Message-State: AOAM532Ctz9s4Xf8lx5OT+f2dLNFiqq46AvAb7Vm4O2IWuhjfk0aF+Ww
-        9bcPuyyihLIGTSzjgXcnzj1MmnZ851LvMFJn5UA=
-X-Google-Smtp-Source: ABdhPJwIM55gJ9s6IIbQDyG7+iFMhhxTFMsPAY+eTSvqgfl77EJI75PciyZER0QGF14a/bx6xLdODCZIzoqvNH1PgQg=
-X-Received: by 2002:a05:6402:1c07:: with SMTP id ck7mr12117878edb.297.1593532607740;
- Tue, 30 Jun 2020 08:56:47 -0700 (PDT)
+        id S1732634AbgF3Qfo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jun 2020 12:35:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34078 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726639AbgF3Qfo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Jun 2020 12:35:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 0D718ADFE;
+        Tue, 30 Jun 2020 16:35:43 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 73528DA790; Tue, 30 Jun 2020 18:35:27 +0200 (CEST)
+Date:   Tue, 30 Jun 2020 18:35:27 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        fdmanana@gmail.com, dsterba@suse.cz, david@fromorbit.com,
+        darrick.wong@oracle.com, hch@lst.de,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>
+Subject: Re: [PATCH 1/6] iomap: Convert wait_for_completion to flags
+Message-ID: <20200630163527.GZ27795@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        fdmanana@gmail.com, david@fromorbit.com, darrick.wong@oracle.com,
+        hch@lst.de, Goldwyn Rodrigues <rgoldwyn@suse.com>
+References: <20200629192353.20841-1-rgoldwyn@suse.de>
+ <20200629192353.20841-2-rgoldwyn@suse.de>
 MIME-Version: 1.0
-Received: by 2002:a50:f84:0:0:0:0:0 with HTTP; Tue, 30 Jun 2020 08:56:47 -0700 (PDT)
-Reply-To: peacemauricejen@gmail.com
-From:   Peace maurice <benann742@gmail.com>
-Date:   Tue, 30 Jun 2020 15:56:47 +0000
-Message-ID: <CAGwvNGSjVUT_9v2JMXrE-RVGvFfEXwXE9D1WnW6cKO9jUXGMOg@mail.gmail.com>
-Subject: sehr geehrter
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200629192353.20841-2-rgoldwyn@suse.de>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-K=C3=B6nnen wir bitte reden?
-Es ist gerade etwas aufgetaucht und es ist sehr dringend, bitte ich
-brauche deine Aufmerksamkeit.
+On Mon, Jun 29, 2020 at 02:23:48PM -0500, Goldwyn Rodrigues wrote:
+> From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> 
+> Convert wait_for_completion boolean to flags so we can pass more flags
+> to iomap_dio_rw()
+> 
+> Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> ---
+>  fs/ext4/file.c        | 11 +++++++++--
+>  fs/gfs2/file.c        | 14 ++++++++++----
+>  fs/iomap/direct-io.c  |  3 ++-
+>  fs/xfs/xfs_file.c     | 15 +++++++++++----
+>  fs/zonefs/super.c     | 16 ++++++++++++----
+>  include/linux/iomap.h | 11 ++++++++++-
 
-Gr=C3=BC=C3=9Fe
-Frieden Maurice.
+Though it's an API change I think you should CC all involved subsystems'
+mailinglists too.  I don't see GFS2 or zonefs.
