@@ -2,178 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D597020FB29
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 19:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E77A020FBB9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 20:30:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389240AbgF3R5I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jun 2020 13:57:08 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:51244 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbgF3R5I (ORCPT
+        id S1732459AbgF3SaK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jun 2020 14:30:10 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34386 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729718AbgF3SaK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jun 2020 13:57:08 -0400
-Received: by mail-pj1-f65.google.com with SMTP id l6so6700263pjq.1;
-        Tue, 30 Jun 2020 10:57:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=IxDMdmHFz25rQeZrQw7NFOS8gOPg1n8YJ7nCrO0iZow=;
-        b=ZEtUAicIZGWU1FmyjUHcQCzCryxfBOMljIaX4ll2uWalbkSolzS0ztAwmsQDM6Iof7
-         0zNTjUrFpcX/4UZLI0ErB0aVvsGGbP/oc5qQIye/HGMby5SpN4z2QyWG3un5Q6t3oecg
-         l4VhoGxQJiPs15WTmiltavGA8+DOpgatw8cszTfUN+LbIovR3SiZQkhLX0gik90Yvi0p
-         Ghn98X+LkaR2xUc66VcoeQeJHv/f8x6ty+MWRsV++4rVLJ8JQ//db1nLeLGynptIMZcD
-         chyikJBR5vkVOzGL8CVilxwHJ8QTjGly4iQQcaia9Vf55uiC6ryggJFb5tOf8CG6MPTy
-         ZnLw==
-X-Gm-Message-State: AOAM531QtJ3D4LIIKPUuhfPGbsODewxTQ40Fmqfw9vQ2hAe50Gp5gYf6
-        V55WnoFIeuCD+2zsMcg54U8=
-X-Google-Smtp-Source: ABdhPJyO4r2+2U3N9gJ5+4QVVzssPbq2nonngepycpeUVR0nzxS79dBaptYeC8a26mlqfwKjmxeziQ==
-X-Received: by 2002:a17:90a:668f:: with SMTP id m15mr23597845pjj.32.1593539826969;
-        Tue, 30 Jun 2020 10:57:06 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id j16sm3304413pfr.100.2020.06.30.10.57.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2020 10:57:05 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 720B9403DC; Tue, 30 Jun 2020 17:57:04 +0000 (UTC)
-Date:   Tue, 30 Jun 2020 17:57:04 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, ast@kernel.org,
-        axboe@kernel.dk, bfields@fieldses.org,
-        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
-        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
-        davem@davemloft.net, dhowells@redhat.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
-        keyrings@vger.kernel.org, kuba@kernel.org,
-        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
-        philipp.reisner@linbit.com, ravenexp@gmail.com,
-        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
-        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
-        netdev@vger.kernel.org, markward@linux.ibm.com,
-        linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
- seems to break linux bridge on s390x (bisected)
-Message-ID: <20200630175704.GO13911@42.do-not-panic.com>
-References: <b7d658b9-606a-feb1-61f9-b58e3420d711@de.ibm.com>
- <3118dc0d-a3af-9337-c897-2380062a8644@de.ibm.com>
- <20200624144311.GA5839@infradead.org>
- <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
- <20200624160953.GH4332@42.do-not-panic.com>
- <ea41e2a9-61f7-aec1-79e5-7b08b6dd5119@de.ibm.com>
- <4e27098e-ac8d-98f0-3a9a-ea25242e24ec@de.ibm.com>
- <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
- <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
- <20200626025410.GJ4332@42.do-not-panic.com>
+        Tue, 30 Jun 2020 14:30:10 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05UIIAt3081146;
+        Tue, 30 Jun 2020 18:30:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=GSuk1z+UXouJstt+zpAQYF0bKxIqA3H5G/b1ZKaCWR0=;
+ b=ZnhQy/BxAWppqyWiDqRbIsuczsDR5krjRyGGblOikR+TuZl7kGsJaIQ/AprigjoEy7jF
+ 3nb/Ao5jhqO2BWvwRHe9jVMtUROEj6hl8JShcOaWaCaGYM0M/oIn5VJtN0z+UasZOsOt
+ KHhEveWnJEg44INVLbNvzGDWmy/wy/vzZHBHsCXJC/bDHukU37kLDkP/TbHSbxMbfZbO
+ 2F9qthXffQxvjCmb/9HFDEmzxR8GxQhmjLzHX2gtnHCBjcsdwrHXyH6O3A2Z0OUonI9v
+ s3URMUOymntr859S3lho+tWln/EQD0UIMRVlnUsascNX1fy7I2PUvVV8pucjiF0CQiH1 dA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 31wxrn676n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 30 Jun 2020 18:30:07 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05UIHl3Y059759;
+        Tue, 30 Jun 2020 18:30:07 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 31xg1x6gq3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Jun 2020 18:30:07 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 05UIU67U005638;
+        Tue, 30 Jun 2020 18:30:06 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 30 Jun 2020 18:30:06 +0000
+Date:   Tue, 30 Jun 2020 11:30:04 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3] iomap: Make sure iomap_end is called after iomap_begin
+Message-ID: <20200630183004.GS7606@magnolia>
+References: <20200629095118.1366261-1-agruenba@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200626025410.GJ4332@42.do-not-panic.com>
+In-Reply-To: <20200629095118.1366261-1-agruenba@redhat.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9668 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 phishscore=0
+ malwarescore=0 mlxlogscore=999 adultscore=0 mlxscore=0 suspectscore=1
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006300126
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9668 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
+ priorityscore=1501 impostorscore=0 bulkscore=0 clxscore=1015
+ malwarescore=0 phishscore=0 adultscore=0 cotscore=-2147483648
+ lowpriorityscore=0 suspectscore=1 spamscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.12.0-2004280000
+ definitions=main-2006300126
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 26, 2020 at 02:54:10AM +0000, Luis Chamberlain wrote:
-> On Wed, Jun 24, 2020 at 08:37:55PM +0200, Christian Borntraeger wrote:
-> > 
-> > 
-> > On 24.06.20 20:32, Christian Borntraeger wrote:
-> > [...]> 
-> > > So the translations look correct. But your change is actually a sematic change
-> > > if(ret) will only trigger if there is an error
-> > > if (KWIFEXITED(ret)) will always trigger when the process ends. So we will always overwrite -ECHILD
-> > > and we did not do it before. 
-> > > 
-> > 
-> > So the right fix is
-> > 
-> > diff --git a/kernel/umh.c b/kernel/umh.c
-> > index f81e8698e36e..a3a3196e84d1 100644
-> > --- a/kernel/umh.c
-> > +++ b/kernel/umh.c
-> > @@ -154,7 +154,7 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
-> >                  * the real error code is already in sub_info->retval or
-> >                  * sub_info->retval is 0 anyway, so don't mess with it then.
-> >                  */
-> > -               if (KWIFEXITED(ret))
-> > +               if (KWEXITSTATUS(ret))
-> >                         sub_info->retval = KWEXITSTATUS(ret);
-> >         }
-> >  
-> > I think.
+On Mon, Jun 29, 2020 at 11:51:18AM +0200, Andreas Gruenbacher wrote:
+> Make sure iomap_end is always called when iomap_begin succeeds.
 > 
-> Nope, the right form is to check for WIFEXITED() before using WEXITSTATUS().
-> I'm not able to reproduce this on x86 with a bridge. What type of bridge
-> are you using on a guest, or did you mean using KVM so that the *host*
-> can spawn kvm guests?
+> Without this fix, iomap_end won't be called when a filesystem's
+> iomap_begin operation returns an invalid mapping, bypassing any
+> unlocking done in iomap_end.  With this fix, the unlocking will still
+> happen.
 > 
-> It would be good if you can try to add a bridge manually and see where
-> things fail. Can you do something like this:
+> This bug was found by Bob Peterson during code review.  It's unlikely
+> that such iomap_begin bugs will survive to affect users, so backporting
+> this fix seems unnecessary.
 > 
-> brctl addbr br0
-> brctl addif br0 ens6 
-> ip link set dev br0 up
-> 
-> Note that most callers are for modprobe. I'd be curious to see which
-> umh is failing which breaks bridge for you. Can you trut this so we can
-> see which umh call is failing?
+> Fixes: ae259a9c8593 ("fs: introduce iomap infrastructure")
+> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-Christian, any luck getting to test the code below to see what this
-reveals?
+Looks ok,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
-  Luis
+--D
 
+> ---
+>  fs/iomap/apply.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 > 
-> diff --git a/kernel/umh.c b/kernel/umh.c
-> index f81e8698e36e..5ad74bc301d8 100644
-> --- a/kernel/umh.c
-> +++ b/kernel/umh.c
-> @@ -2,6 +2,9 @@
->  /*
->   * umh - the kernel usermode helper
->   */
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
->  #include <linux/module.h>
->  #include <linux/sched.h>
->  #include <linux/sched/task.h>
-> @@ -154,8 +157,12 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
->  		 * the real error code is already in sub_info->retval or
->  		 * sub_info->retval is 0 anyway, so don't mess with it then.
->  		 */
-> -		if (KWIFEXITED(ret))
-> +		printk("== ret: %02x\n", ret);
-> +		printk("== KWIFEXITED(ret): %02x\n", KWIFEXITED(ret));
-> +		if (KWIFEXITED(ret)) {
-> +			printk("KWEXITSTATUS(ret): %d\n", KWEXITSTATUS(ret));
->  			sub_info->retval = KWEXITSTATUS(ret);
-> +		}
->  	}
+> diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
+> index 76925b40b5fd..26ab6563181f 100644
+> --- a/fs/iomap/apply.c
+> +++ b/fs/iomap/apply.c
+> @@ -46,10 +46,14 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
+>  	ret = ops->iomap_begin(inode, pos, length, flags, &iomap, &srcmap);
+>  	if (ret)
+>  		return ret;
+> -	if (WARN_ON(iomap.offset > pos))
+> -		return -EIO;
+> -	if (WARN_ON(iomap.length == 0))
+> -		return -EIO;
+> +	if (WARN_ON(iomap.offset > pos)) {
+> +		written = -EIO;
+> +		goto out;
+> +	}
+> +	if (WARN_ON(iomap.length == 0)) {
+> +		written = -EIO;
+> +		goto out;
+> +	}
 >  
->  	/* Restore default kernel sig handler */
-> @@ -383,6 +390,7 @@ struct subprocess_info *call_usermodehelper_setup(const char *path, char **argv,
->  		void *data)
->  {
->  	struct subprocess_info *sub_info;
-> +	unsigned int i = 0;
->  	sub_info = kzalloc(sizeof(struct subprocess_info), gfp_mask);
->  	if (!sub_info)
->  		goto out;
-> @@ -394,6 +402,11 @@ struct subprocess_info *call_usermodehelper_setup(const char *path, char **argv,
->  #else
->  	sub_info->path = path;
->  #endif
-> +	pr_info("sub_info->path: %s\n", sub_info->path);
-> +	while (argv[i])
-> +		printk(KERN_INFO "%s ", argv[i++]);
-> +	printk(KERN_INFO  "\n");
-> +
->  	sub_info->argv = argv;
->  	sub_info->envp = envp;
+>  	trace_iomap_apply_dstmap(inode, &iomap);
+>  	if (srcmap.type != IOMAP_HOLE)
+> @@ -80,6 +84,7 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
+>  	written = actor(inode, pos, length, data, &iomap,
+>  			srcmap.type != IOMAP_HOLE ? &srcmap : &iomap);
 >  
+> +out:
+>  	/*
+>  	 * Now the data has been copied, commit the range we've copied.  This
+>  	 * should not fail unless the filesystem has had a fatal error.
+> 
+> base-commit: 69119673bd50b176ded34032fadd41530fb5af21
+> -- 
+> 2.26.2
 > 
