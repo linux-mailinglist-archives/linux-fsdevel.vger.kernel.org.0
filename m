@@ -2,173 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD18D20F732
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 16:28:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F116120F74A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 16:33:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388967AbgF3O21 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jun 2020 10:28:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53470 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388956AbgF3O2W (ORCPT
+        id S1731372AbgF3Oc4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jun 2020 10:32:56 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:51270 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbgF3Ocz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jun 2020 10:28:22 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A26AC061755;
-        Tue, 30 Jun 2020 07:28:22 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id e18so7198252ilr.7;
-        Tue, 30 Jun 2020 07:28:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oJGxdE2zhF1OWSiyBvXLiEVFkZjHjVdukvz6hayuIpI=;
-        b=DL/YRFX3zWB+1beCdpv+E37M+LOOjRuNqHqq/SfNIZgajEnX6s2IlHb6fNRMMMWxGE
-         4AzYf440Q7iKP2/9/e7Cil+lKvg8348iuRpT9aCsj7pG3dEVrX1ApgRi5EqFvyRB4Ciw
-         o7IV6zr2zN0Z55YYU8YHDwhx5n9woT+xsiozx9LyGoRsc2mKYEG8Y+7V4+Dki+TdmpyO
-         L3tZx1AUzaqU6jTUEb3PfQQNFbDAccxcElfF2gzF+XzZEIPLziBJjb6egypi6JDEHNF6
-         tNIUsWP0LJbjygNXpG9urCWck5unK3xlC0p9ISGstcdupsvfxrXPL+XMRX+Okei8G62x
-         H3FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oJGxdE2zhF1OWSiyBvXLiEVFkZjHjVdukvz6hayuIpI=;
-        b=imM4SW4wdnDTlLs8TIjBVL7eq/i0UwAd1Jg/wsTWPYFfWxa4XHd2KmpgnB0YuuBcfo
-         yuwGxFKrDkq1xSbHwLenOwZ/Dx2uAFW/9XVVVmaY0aOwQF1djkW5W+DtnF5yA1ufkDPK
-         7lW1HKbkfDki64+TX7x52YN/iHNP4BOXlKfgpUes35wnP/rJ5K8W0G0swzVGC+jO4F0D
-         /HM0r9kWhgI/8yYQz3wj1jMQIVftvbEn/DkrFsQHp5cVBCzUH1aJrDMy76onwsuTHZr6
-         UP30iRXonacMgfAgDDSHIivDbPgNUgqXza4CHFwTt/NqdfLi0dQwOPvXd3I121IlIjkB
-         hYBA==
-X-Gm-Message-State: AOAM530Cy1MZfsA6QBv7VdycbGOb1ujQGiUV66RtypvCLp4OTzgn263r
-        C9rvVFdYaSwrQeabWKo1ilkjkEWyUsjNPlhNQ30=
-X-Google-Smtp-Source: ABdhPJwB6NQUwSjMCoZwHmFe2Q0X6v417pHxOWgPMaDrLN5c9jUAsIRXQOfkkTxdsebMp8JRb4p1McDLq35Ri9ocQ04=
-X-Received: by 2002:a92:2a0c:: with SMTP id r12mr2752884ile.275.1593527301732;
- Tue, 30 Jun 2020 07:28:21 -0700 (PDT)
+        Tue, 30 Jun 2020 10:32:55 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jqHJY-0007A8-4g; Tue, 30 Jun 2020 08:32:48 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jqHJT-00058A-3Q; Tue, 30 Jun 2020 08:32:47 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+        <20200625120725.GA3493334@kroah.com>
+        <20200625.123437.2219826613137938086.davem@davemloft.net>
+        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+        <87y2oac50p.fsf@x220.int.ebiederm.org>
+        <87bll17ili.fsf_-_@x220.int.ebiederm.org>
+        <87lfk54p0m.fsf_-_@x220.int.ebiederm.org>
+        <20200630054313.GB27221@infradead.org>
+        <87a70k21k0.fsf@x220.int.ebiederm.org>
+        <20200630133802.GA30093@infradead.org>
+Date:   Tue, 30 Jun 2020 09:28:10 -0500
+In-Reply-To: <20200630133802.GA30093@infradead.org> (Christoph Hellwig's
+        message of "Tue, 30 Jun 2020 14:38:02 +0100")
+Message-ID: <878sg4y6f9.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <CAOQ4uxgn=YNj8cJuccx2KqxEVGZy1z3DBVYXrD=Mc7Dc=Je+-w@mail.gmail.com>
- <20190416154513.GB13422@quack2.suse.cz> <CAOQ4uxh66kAozqseiEokqM3wDJws7=cnY-aFXH_0515nvsi2-A@mail.gmail.com>
- <20190417113012.GC26435@quack2.suse.cz> <CAOQ4uxgsJ7NRtFbRYyBj_RW-trysOrUTKUnkYKYR5OMyq-+HXQ@mail.gmail.com>
- <20200630092042.GL26507@quack2.suse.cz>
-In-Reply-To: <20200630092042.GL26507@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 30 Jun 2020 17:28:10 +0300
-Message-ID: <CAOQ4uxjO6Y6js-txx+_tuCx50cDobQpGMHnBe6R5fBA09-4yDA@mail.gmail.com>
-Subject: Re: fsnotify pre-modify VFS hooks (Was: fanotify and LSM path hooks)
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1jqHJT-00058A-3Q;;;mid=<878sg4y6f9.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18VudBavxc3u9jszpnmk5yoXjTN6p/HnXg=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,FVGT_m_MULTI_ODD,T_TM2_M_HEADER_IN_MSG,
+        T_TooManySym_01 autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4489]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+        *  0.4 FVGT_m_MULTI_ODD Contains multiple odd letter combinations
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Christoph Hellwig <hch@infradead.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 4405 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 12 (0.3%), b_tie_ro: 10 (0.2%), parse: 1.18
+        (0.0%), extract_message_metadata: 18 (0.4%), get_uri_detail_list: 2.7
+        (0.1%), tests_pri_-1000: 8 (0.2%), tests_pri_-950: 1.52 (0.0%),
+        tests_pri_-900: 1.29 (0.0%), tests_pri_-90: 105 (2.4%), check_bayes:
+        103 (2.3%), b_tokenize: 11 (0.3%), b_tok_get_all: 10 (0.2%),
+        b_comp_prob: 2.9 (0.1%), b_tok_touch_all: 74 (1.7%), b_finish: 1.18
+        (0.0%), tests_pri_0: 362 (8.2%), check_dkim_signature: 0.64 (0.0%),
+        check_dkim_adsp: 2.3 (0.1%), poll_dns_idle: 3863 (87.7%),
+        tests_pri_10: 2.4 (0.1%), tests_pri_500: 3889 (88.3%), rewrite_mail:
+        0.00 (0.0%)
+Subject: Re: [PATCH v2 10/15] exec: Remove do_execve_file
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 30, 2020 at 12:20 PM Jan Kara <jack@suse.cz> wrote:
+Christoph Hellwig <hch@infradead.org> writes:
+
+> On Tue, Jun 30, 2020 at 07:14:23AM -0500, Eric W. Biederman wrote:
+>> Christoph Hellwig <hch@infradead.org> writes:
+>> 
+>> > FYI, this clashes badly with my exec rework.  I'd suggest you
+>> > drop everything touching exec here for now, and I can then
+>> > add the final file based exec removal to the end of my series.
+>> 
+>> I have looked and I haven't even seen any exec work.  Where can it be
+>> found?
+>> 
+>> I have working and cleaning up exec for what 3 cycles now.  There is
+>> still quite a ways to go before it becomes possible to fix some of the
+>> deep problems in exec.  Removing all of these broken exec special cases
+>> is quite frankly the entire point of this patchset.
+>> 
+>> Sight unseen I suggest you send me your exec work and I can merge it
+>> into my branch if we are going to conflict badly.
 >
-> On Fri 26-06-20 14:06:37, Amir Goldstein wrote:
-> > On Wed, Apr 17, 2019 at 2:30 PM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Tue 16-04-19 21:24:44, Amir Goldstein wrote:
-> > > > > I'm not so sure about directory pre-modification hooks. Given the amount of
-> > > > > problems we face with applications using fanotify permission events and
-> > > > > deadlocking the system, I'm not very fond of expanding that API... AFAIU
-> > > > > you want to use such hooks for recording (and persisting) that some change
-> > > > > is going to happen and provide crash-consistency guarantees for such
-> > > > > journal?
-> > > > >
-> > > >
-> > > > That's the general idea.
-> > > > I have two use cases for pre-modification hooks:
-> > > > 1. VFS level snapshots
-> > > > 2. persistent change tracking
-> > > >
-> > > > TBH, I did not consider implementing any of the above in userspace,
-> > > > so I do not have a specific interest in extending the fanotify API.
-> > > > I am actually interested in pre-modify fsnotify hooks (not fanotify),
-> > > > that a snapshot or change tracking subsystem can register with.
-> > > > An in-kernel fsnotify event handler can set a flag in current task
-> > > > struct to circumvent system deadlocks on nested filesystem access.
-> > >
-> > > OK, I'm not opposed to fsnotify pre-modify hooks as such. As long as
-> > > handlers stay within the kernel, I'm fine with that. After all this is what
-> > > LSMs are already doing. Just exposing this to userspace for arbitration is
-> > > what I have a problem with.
-> > >
-> >
-> > Short update on that.
-> >
-> > I decided to ditch the LSM hooks approach because I realized that for
-> > the purpose of persistent change tracking, the pre-modify hooks need
-> > to be called before the caller is taking filesystem locks.
-> >
-> > So I added hooks inside mnt_want_write and file_start_write wrappers:
-> > https://github.com/amir73il/linux/commits/fsnotify_pre_modify
->
-> FWIW I've glanced through the series. I like the choice of mnt_want_write()
-> and file_start_write() as a place to generate the event. I somewhat dislike
+> https://lore.kernel.org/linux-fsdevel/20200627072704.2447163-1-hch@lst.de/T/#t
 
-Thanks. I was looking for this initial feedback to know if direction in sane.
 
-> the number of variants you have to introduce and then pass NULL in some
-> places because you don't have the info available and then it's not
-> immediately clear what semantics the event consumers can expect... That
-> would be good to define and then verify in the code.
->
+Looking at your final patch I do not like the construct.
 
-I am not sure I understand what you mean.
-Did you mean that mnt_want_write_at() mnt_want_write_path() should be
-actual functions instead of inline wrappers or something else?
+static int __do_execveat(int fd, struct filename *filename,
+ 		const char __user *const __user *argv,
+ 		const char __user *const __user *envp,
+		const char *const *kernel_argv,
+		const char *const *kernel_envp,
+ 		int flags, struct file *file);
 
-> Also given you have the requirement "no fs locks on event generation", I'm
-> not sure how reliable this can be. If you don't hold fs locks when
-> generating event, cannot it happen that actually modified object is
-> different from the reported one because we raced with some other fs
-> operations? And can we prove that? So what exactly is the usecase and
-> guarantees the event needs to provide?
->
 
-That's a good question. Answer is not trivial.
-The use case is "persistent change tracking snapshot".
-"snapshot" because it tracks ALL changes since a point in time -
-there is no concept of "consuming" events.
-It is important to note that this is complementary to real time fs events.
-A user library may combine the two mechanisms to a stream of changes
-(either recorded or live), but that is out of scope for this effort.
-Also, userspace would likely create periodic snapshots, so that e.g.
-current snapshot records changes, while previous snapshot recorded
-changes are being scanned.
+It results in a function that is full of:
+	if (kernel_argv) {
+        	// For kernel_exeveat 
+		...
+	} else {
+        	// For ordinary exeveat
+        	
+        }
 
-The concept is to record every dir fid *before* an immediate child or directory
-metadata itself may change, so that after a crash, all recorded dir fids
-may be scanned to search for possibly missed changes.
+Which while understandable.  I do not think results in good long term
+maintainble code.
 
-The dir fid is stable, so races are not an issue in that respect.
-When name is recorded, change tracking never examines the object at that
-name, it just records the fact that there has been a change at [dir fid;name].
-This is mostly needed to track creates.
+The current file paramter that I am getting rid of in my patchset is
+a stark example of that.  Because of all of the if's no one realized
+that the code had it's file reference counting wrong (amoung other
+bugs).
 
-Other than that, races should be handled by the backend itself, so proof is
-pending the completion of the backend POC, but in hand waving:
-- All name changes in the filesystem call the backend before the change
-  (because backend marks sb) and backend is responsible for locking
-against races
-- My current implementation uses overlayfs upper/index as the change
-  track storage, which has the benefit that the test "is change recorded"
-  is implemented by decode_fh and/or name lookup, so it is already very much
-  optimized by inode and dentry cache and shouldn't need any locking for
-  most  pre_modify calls
-- It is also not a coincidence that overlayfs changes to upper fs do not
-  trigger pre_modify hooks because that prevents the feedback loop.
-  I wrote in commit message that "is consistent with the fact that overlayfs
-  sets the FMODE_NONOTIFY flag on underlying open files" - that is needed
-  because the path in underlying files is "fake" (open_with_fake_path()).
+I think this is important to address as exec has already passed
+the point where people can fix all of the bugs in exec because
+the code is so hairy.
 
-If any of this hand waving sounds terribly wrong please let me know.
-Otherwise I will report back after POC is complete with a example backend.
+I think to be maintainable and clear the code exec code is going to
+need to look something like:
 
-Thanks,
-Amir.
+static int bprm_execveat(int fd, struct filename *filename,
+			struct bprm *bprm, int flags);
+
+int kernel_execve(const char *filename,
+		  const char *const *argv, const char *const *envp, int flags)
+{
+	bprm = kzalloc(sizeof(*pbrm), GFP_KERNEL);
+        bprm->argc = count_kernel_strings(argv);
+        bprm->envc = count_kernel_strings(envp);
+        prepare_arg_pages(bprm);
+        copy_strings_kernel(bprm->envc, envp, bprm);
+        copy_strings_kernel(bprm->argc, argc, bprm);
+	ret = bprm_execveat(AT_FDCWD, filename, bprm);
+        free_bprm(bprm);
+        return ret;
+}
+
+int do_exeveat(int fd, const char *filename,
+		const char __user *const __user *argv,
+                const char __user *const __user *envp, int flags)
+{
+	bprm = kzalloc(sizeof(*pbrm), GFP_KERNEL);
+        bprm->argc = count_strings(argv);
+        bprm->envc = count_strings(envp);
+        prepare_arg_pages(bprm);
+        copy_strings(bprm->envc, envp, bprm);
+        copy_strings(bprm->argc, argc, bprm);
+	ret = bprm_execveat(fd, filename, bprm);
+        free_bprm(bprm);
+        return ret;
+}
+
+More work is required obviously to make the code above really work but
+when the dust clears a structure like that doesn't have funny edge cases
+that can hide bugs and make it tricky to change the code.
+
+Eric
+
+
+
