@@ -2,130 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E77A020FBB9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 20:30:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5480920FD95
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 22:24:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732459AbgF3SaK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jun 2020 14:30:10 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:34386 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729718AbgF3SaK (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jun 2020 14:30:10 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05UIIAt3081146;
-        Tue, 30 Jun 2020 18:30:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=GSuk1z+UXouJstt+zpAQYF0bKxIqA3H5G/b1ZKaCWR0=;
- b=ZnhQy/BxAWppqyWiDqRbIsuczsDR5krjRyGGblOikR+TuZl7kGsJaIQ/AprigjoEy7jF
- 3nb/Ao5jhqO2BWvwRHe9jVMtUROEj6hl8JShcOaWaCaGYM0M/oIn5VJtN0z+UasZOsOt
- KHhEveWnJEg44INVLbNvzGDWmy/wy/vzZHBHsCXJC/bDHukU37kLDkP/TbHSbxMbfZbO
- 2F9qthXffQxvjCmb/9HFDEmzxR8GxQhmjLzHX2gtnHCBjcsdwrHXyH6O3A2Z0OUonI9v
- s3URMUOymntr859S3lho+tWln/EQD0UIMRVlnUsascNX1fy7I2PUvVV8pucjiF0CQiH1 dA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 31wxrn676n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 30 Jun 2020 18:30:07 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 05UIHl3Y059759;
-        Tue, 30 Jun 2020 18:30:07 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 31xg1x6gq3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Jun 2020 18:30:07 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 05UIU67U005638;
-        Tue, 30 Jun 2020 18:30:06 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Jun 2020 18:30:06 +0000
-Date:   Tue, 30 Jun 2020 11:30:04 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3] iomap: Make sure iomap_end is called after iomap_begin
-Message-ID: <20200630183004.GS7606@magnolia>
-References: <20200629095118.1366261-1-agruenba@redhat.com>
+        id S1728862AbgF3UX6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jun 2020 16:23:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52772 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726642AbgF3UX6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Jun 2020 16:23:58 -0400
+Received: from localhost (unknown [104.132.1.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9B38206B6;
+        Tue, 30 Jun 2020 20:23:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593548637;
+        bh=l9RYQ1V9rC0eV/2Cav74VbY6gmCMxIgckvz1UR0Gs5c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=peu3T7LcDbJmZ6m1V77CJRMfLPcFdijYiYlvAS7BjXdj96eVSaImqnQof9UnF1h8k
+         deyTLMmDjr0j1U7+Bs5iV/SpK7ZX71d6YqY2/bnENix7jEKj91AP+Akr91Zd6EUe6w
+         SG6OXmtF+/q8CZFJFx0PBnSPMVqVki8VJf61/nZw=
+Date:   Tue, 30 Jun 2020 13:23:57 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH] f2fs: always expose label 'next_page'
+Message-ID: <20200630202357.GA1396584@google.com>
+References: <020937f3-2947-ca41-c18a-026782216711@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200629095118.1366261-1-agruenba@redhat.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9668 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 phishscore=0
- malwarescore=0 mlxlogscore=999 adultscore=0 mlxscore=0 suspectscore=1
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006300126
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9668 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 impostorscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 phishscore=0 adultscore=0 cotscore=-2147483648
- lowpriorityscore=0 suspectscore=1 spamscore=0 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2006300126
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <020937f3-2947-ca41-c18a-026782216711@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 29, 2020 at 11:51:18AM +0200, Andreas Gruenbacher wrote:
-> Make sure iomap_end is always called when iomap_begin succeeds.
+On 06/30, Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> Without this fix, iomap_end won't be called when a filesystem's
-> iomap_begin operation returns an invalid mapping, bypassing any
-> unlocking done in iomap_end.  With this fix, the unlocking will still
-> happen.
+> Fix build error when F2FS_FS_COMPRESSION is not set/enabled.
+> This label is needed in either case.
 > 
-> This bug was found by Bob Peterson during code review.  It's unlikely
-> that such iomap_begin bugs will survive to affect users, so backporting
-> this fix seems unnecessary.
+> ../fs/f2fs/data.c: In function ‘f2fs_mpage_readpages’:
+> ../fs/f2fs/data.c:2327:5: error: label ‘next_page’ used but not defined
+>      goto next_page;
+
+Thank you for the fix. This was actually introduced by the recent testing patch.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev&id=ff963ad2bf54460431f517b5cae473997a29bf2a
+
+If you don't mind, please let me integrate this into the original patch.
+Let me know.
+
+Thanks,
+
 > 
-> Fixes: ae259a9c8593 ("fs: introduce iomap infrastructure")
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-
-Looks ok,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
---D
-
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+> Cc: Chao Yu <yuchao0@huawei.com>
+> Cc: linux-f2fs-devel@lists.sourceforge.net
 > ---
->  fs/iomap/apply.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+>  fs/f2fs/data.c |    2 --
+>  1 file changed, 2 deletions(-)
 > 
-> diff --git a/fs/iomap/apply.c b/fs/iomap/apply.c
-> index 76925b40b5fd..26ab6563181f 100644
-> --- a/fs/iomap/apply.c
-> +++ b/fs/iomap/apply.c
-> @@ -46,10 +46,14 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
->  	ret = ops->iomap_begin(inode, pos, length, flags, &iomap, &srcmap);
->  	if (ret)
->  		return ret;
-> -	if (WARN_ON(iomap.offset > pos))
-> -		return -EIO;
-> -	if (WARN_ON(iomap.length == 0))
-> -		return -EIO;
-> +	if (WARN_ON(iomap.offset > pos)) {
-> +		written = -EIO;
-> +		goto out;
-> +	}
-> +	if (WARN_ON(iomap.length == 0)) {
-> +		written = -EIO;
-> +		goto out;
-> +	}
+> --- linux-next-20200630.orig/fs/f2fs/data.c
+> +++ linux-next-20200630/fs/f2fs/data.c
+> @@ -2366,9 +2366,7 @@ set_error_page:
+>  			zero_user_segment(page, 0, PAGE_SIZE);
+>  			unlock_page(page);
+>  		}
+> -#ifdef CONFIG_F2FS_FS_COMPRESSION
+>  next_page:
+> -#endif
+>  		if (rac)
+>  			put_page(page);
 >  
->  	trace_iomap_apply_dstmap(inode, &iomap);
->  	if (srcmap.type != IOMAP_HOLE)
-> @@ -80,6 +84,7 @@ iomap_apply(struct inode *inode, loff_t pos, loff_t length, unsigned flags,
->  	written = actor(inode, pos, length, data, &iomap,
->  			srcmap.type != IOMAP_HOLE ? &srcmap : &iomap);
->  
-> +out:
->  	/*
->  	 * Now the data has been copied, commit the range we've copied.  This
->  	 * should not fail unless the filesystem has had a fatal error.
-> 
-> base-commit: 69119673bd50b176ded34032fadd41530fb5af21
-> -- 
-> 2.26.2
-> 
