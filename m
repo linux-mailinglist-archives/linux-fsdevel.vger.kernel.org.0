@@ -2,117 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0E4020F466
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 14:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FC0F20F444
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jun 2020 14:14:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733276AbgF3MTI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jun 2020 08:19:08 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:33564 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732509AbgF3MTH (ORCPT
+        id S2387547AbgF3MOp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jun 2020 08:14:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60988 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732036AbgF3MOn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jun 2020 08:19:07 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jqFE5-00081m-AD; Tue, 30 Jun 2020 06:19:01 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1jqFE0-00084E-2g; Tue, 30 Jun 2020 06:19:01 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20200625095725.GA3303921@kroah.com>
-        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
-        <20200625120725.GA3493334@kroah.com>
-        <20200625.123437.2219826613137938086.davem@davemloft.net>
-        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
-        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
-        <87y2oac50p.fsf@x220.int.ebiederm.org>
-        <87bll17ili.fsf_-_@x220.int.ebiederm.org>
-        <87lfk54p0m.fsf_-_@x220.int.ebiederm.org>
-        <20200630054313.GB27221@infradead.org>
-Date:   Tue, 30 Jun 2020 07:14:23 -0500
-In-Reply-To: <20200630054313.GB27221@infradead.org> (Christoph Hellwig's
-        message of "Tue, 30 Jun 2020 06:43:13 +0100")
-Message-ID: <87a70k21k0.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1jqFE0-00084E-2g;;;mid=<87a70k21k0.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18dJcHLmm8/3QJGbuxrMA4/Ld4nXUEMj/w=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4944]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Christoph Hellwig <hch@infradead.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 4796 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 9 (0.2%), b_tie_ro: 7 (0.2%), parse: 0.88 (0.0%),
-        extract_message_metadata: 11 (0.2%), get_uri_detail_list: 0.73 (0.0%),
-        tests_pri_-1000: 6 (0.1%), tests_pri_-950: 1.27 (0.0%),
-        tests_pri_-900: 1.03 (0.0%), tests_pri_-90: 167 (3.5%), check_bayes:
-        165 (3.4%), b_tokenize: 7 (0.1%), b_tok_get_all: 7 (0.1%),
-        b_comp_prob: 1.91 (0.0%), b_tok_touch_all: 146 (3.0%), b_finish: 0.86
-        (0.0%), tests_pri_0: 221 (4.6%), check_dkim_signature: 0.54 (0.0%),
-        check_dkim_adsp: 2.3 (0.0%), poll_dns_idle: 4353 (90.8%),
-        tests_pri_10: 2.2 (0.0%), tests_pri_500: 4374 (91.2%), rewrite_mail:
-        0.00 (0.0%)
-Subject: Re: [PATCH v2 10/15] exec: Remove do_execve_file
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Tue, 30 Jun 2020 08:14:43 -0400
+Received: from mail-pf1-x44a.google.com (mail-pf1-x44a.google.com [IPv6:2607:f8b0:4864:20::44a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EC49C061755
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jun 2020 05:14:43 -0700 (PDT)
+Received: by mail-pf1-x44a.google.com with SMTP id y69so14040991pfg.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jun 2020 05:14:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=lhA0BWoSWsBTuwKzKn01wZo9Oy70PMD7N1A7rW96zZc=;
+        b=Yf2T2rzyob0oJjaxt0VAVSVU7RtyTQTloLFyysxD+7tOEox6O0w6u6uNVA7lVNprXh
+         SQQYFdez1F5TGZVN4lSw4TnqPYpciAIRvTUsntD9m7woLfjh43R7PrVWe2Qtbf60l4Xs
+         SJ7gFsGfV11H8cDRSoAR2jf0eQIlCwuSeQTWZWFiSpmcBtkkIzKff6UE+YIybzU+Zsbo
+         qF3e2oYLtOqsCNLFkm9IZA745dR9XvYldgqBK69sUEtf/7haBMalAiiZJQSbFa+HYoQX
+         /f2sZu89aEa8LzaztOQMCuLcYLWd7YvscLhYTKJhE7qSLXK8gMKVvbjlSWjnw/rXjQ05
+         hPtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=lhA0BWoSWsBTuwKzKn01wZo9Oy70PMD7N1A7rW96zZc=;
+        b=bwp+PthdcfSoCsucmeCxVYOuZ46r3xJ5Zk1qBwuWVU6Li+WmucroRRyzFK+M5OF5UX
+         e+wqd9VB6DYydKJbcrF3Ahpoz6amkuILO3ntZXX1Ogxh4FnOP20DkKsotMnwfp+wLHYn
+         vXVPuGJNczk/a6TyxBbfRRuKiiOyYiU6aCSdcdYhVENdBCZ+60v6oPdyu/a3i9IwWLbF
+         68S7jRQjYMyBcEg3axI4ujR8/VMZ0qvxMOirkOoyTVcwRzH8Z4yLYU/DFPCS3MzT84yw
+         lTAdRNCtp0EEs5ZCbNQZAkGgWI51PXYRy4OSMnbuPCgETjKwZQmTL80h6oWlo4PxAfhc
+         h7XA==
+X-Gm-Message-State: AOAM533Kk+tcOy4K10swJ93qhps6/FOrkaICPQhuy4v+35CGwdP1bn9o
+        Tg+CVPYmWyqQneGXq5p8tvGMjTGYeLM=
+X-Google-Smtp-Source: ABdhPJwAHOyLt+3kT7UZQ7QETmF2sx1NwYFgJgFhaQoJiYfMqjNMWPplC+KCJoZ+BYN22obKmbu7zEAVADQ=
+X-Received: by 2002:a17:90a:d30c:: with SMTP id p12mr739331pju.4.1593519283036;
+ Tue, 30 Jun 2020 05:14:43 -0700 (PDT)
+Date:   Tue, 30 Jun 2020 12:14:34 +0000
+Message-Id: <20200630121438.891320-1-satyat@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.27.0.212.ge8ba1cc988-goog
+Subject: [PATCH v3 0/4] Inline Encryption Support for fscrypt
+From:   Satya Tangirala <satyat@google.com>
+To:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
+Cc:     Satya Tangirala <satyat@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> writes:
+This patch series adds support for Inline Encryption to fscrypt, f2fs
+and ext4. It builds on the inline encryption support now present in
+the block layer, and has been rebased on v5.8-rc3.
 
-> FYI, this clashes badly with my exec rework.  I'd suggest you
-> drop everything touching exec here for now, and I can then
-> add the final file based exec removal to the end of my series.
+This patch series previously went though a number of iterations as part
+of the "Inline Encryption Support" patchset (last version was v13:
+https://lkml.kernel.org/r/20200514003727.69001-1-satyat@google.com).
 
-I have looked and I haven't even seen any exec work.  Where can it be
-found?
+Patch 1 introduces the SB_INLINECRYPT sb options, which filesystems
+should set if they want to use blk-crypto for file content en/decryption.
 
-I have working and cleaning up exec for what 3 cycles now.  There is
-still quite a ways to go before it becomes possible to fix some of the
-deep problems in exec.  Removing all of these broken exec special cases
-is quite frankly the entire point of this patchset.
+Patch 2 adds inline encryption support to fscrypt. To use inline
+encryption with fscrypt, the filesystem must set the above mentioned
+SB_INLINECRYPT sb option. When this option is set, the contents of
+encrypted files will be en/decrypted using blk-crypto.
 
-Sight unseen I suggest you send me your exec work and I can merge it
-into my branch if we are going to conflict badly.
+Patches 3 and 4 wire up f2fs and ext4 respectively to fscrypt support for
+inline encryption, and e.g ensure that bios are submitted with blocks
+that not only are contiguous, but also have continuous DUNs.
 
-Eric
+This patchset was tested by running xfstests with the "inlinecrypt" mount
+option on ext4 and f2fs with test dummy encryption (the actual
+en/decryption of file contents was handled by the blk-crypto-fallback). It
+was also tested along with the UFS patches from the original series on some
+Qualcomm and Mediatek chipsets with hardware inline encryption support
+(refer to
+https://lkml.kernel.org/linux-scsi/20200501045111.665881-1-ebiggers@kernel.org/
+and
+https://lkml.kernel.org/linux-scsi/20200304022101.14165-1-stanley.chu@mediatek.com/
+for more details on those tests).
+
+Changes v2 => v3
+ - Fix issue with inline encryption + IV_INO_LBLK_32 policy found by Eric
+ - minor cleanup
+
+Changes v1 => v2
+ - SB_INLINECRYPT mount option is shown by individual filesystems instead
+   of by the common VFS code since the option is parsed by filesystem
+   specific code, and is not a mount option applicable generically to
+   all filesystems.
+ - Make fscrypt_select_encryption_impl() return error code when it fails
+   to allocate memory.
+ - cleanups
+ 
+Changes v13 in original patchset => v1
+ - rename struct fscrypt_info::ci_key to ci_enc_key
+ - set dun bytes more precisely in fscrypt
+ - cleanups
+
+Eric Biggers (1):
+  ext4: add inline encryption support
+
+Satya Tangirala (3):
+  fs: introduce SB_INLINECRYPT
+  fscrypt: add inline encryption support
+  f2fs: add inline encryption support
+
+ Documentation/admin-guide/ext4.rst    |   7 +
+ Documentation/filesystems/f2fs.rst    |   7 +
+ Documentation/filesystems/fscrypt.rst |   3 +
+ fs/buffer.c                           |   7 +-
+ fs/crypto/Kconfig                     |   6 +
+ fs/crypto/Makefile                    |   1 +
+ fs/crypto/bio.c                       |  51 ++++
+ fs/crypto/crypto.c                    |   2 +-
+ fs/crypto/fname.c                     |   4 +-
+ fs/crypto/fscrypt_private.h           | 115 +++++++-
+ fs/crypto/inline_crypt.c              | 364 ++++++++++++++++++++++++++
+ fs/crypto/keyring.c                   |   6 +-
+ fs/crypto/keysetup.c                  |  70 +++--
+ fs/crypto/keysetup_v1.c               |  16 +-
+ fs/ext4/inode.c                       |   4 +-
+ fs/ext4/page-io.c                     |   6 +-
+ fs/ext4/readpage.c                    |  11 +-
+ fs/ext4/super.c                       |  12 +
+ fs/f2fs/compress.c                    |   2 +-
+ fs/f2fs/data.c                        |  78 +++++-
+ fs/f2fs/super.c                       |  35 +++
+ include/linux/fs.h                    |   1 +
+ include/linux/fscrypt.h               |  82 ++++++
+ 23 files changed, 819 insertions(+), 71 deletions(-)
+ create mode 100644 fs/crypto/inline_crypt.c
+
+-- 
+2.27.0.212.ge8ba1cc988-goog
 
