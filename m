@@ -2,391 +2,310 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C078021027B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 05:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F561210324
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 06:53:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbgGADX5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jun 2020 23:23:57 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:6792 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725862AbgGADX5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jun 2020 23:23:57 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 637DB9AD957C9E7234CC;
-        Wed,  1 Jul 2020 11:23:52 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.214) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 1 Jul 2020
- 11:23:49 +0800
-Subject: Re: [PATCH v3 3/4] f2fs: add inline encryption support
-To:     Satya Tangirala <satyat@google.com>,
-        <linux-fscrypt@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-ext4@vger.kernel.org>
-CC:     Eric Biggers <ebiggers@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20200630121438.891320-1-satyat@google.com>
- <20200630121438.891320-4-satyat@google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <bb817858-118b-98e1-6633-874c9afaa77a@huawei.com>
-Date:   Wed, 1 Jul 2020 11:23:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20200630121438.891320-4-satyat@google.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1726469AbgGAExO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jul 2020 00:53:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbgGAExO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 Jul 2020 00:53:14 -0400
+Received: from X1 (071-093-078-081.res.spectrum.com [71.93.78.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA5E22070C;
+        Wed,  1 Jul 2020 04:53:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593579193;
+        bh=kusyMJtiftQUubxlEvawBBgVhPTrgMauLdYuuiMy8mE=;
+        h=Date:From:To:Subject:From;
+        b=c0o50qJwecJaYZLWPcR5U2prkkD5KYm+VnxWmn4g79Zf8J0pib5v/wasGUHnBLvfm
+         X1g65AArFaAOl2iu5DLwuC2Bz3QBVXXR4anLBT0IFSYFGY9K/BW6wylmDL+qFTjl0W
+         W4uSoLHm31YfiGOLZHhRjppNj9FqstkEseaYHCh0=
+Date:   Tue, 30 Jun 2020 21:53:12 -0700
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject:  mmotm 2020-06-30-21-52 uploaded
+Message-ID: <20200701045312.af2lR%akpm@linux-foundation.org>
+User-Agent: s-nail v14.9.10
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/6/30 20:14, Satya Tangirala wrote:
-> Wire up f2fs to support inline encryption via the helper functions which
-> fs/crypto/ now provides.  This includes:
-> 
-> - Adding a mount option 'inlinecrypt' which enables inline encryption
->   on encrypted files where it can be used.
-> 
-> - Setting the bio_crypt_ctx on bios that will be submitted to an
->   inline-encrypted file.
-> 
-> - Not adding logically discontiguous data to bios that will be submitted
->   to an inline-encrypted file.
-> 
-> - Not doing filesystem-layer crypto on inline-encrypted files.
-> 
-> This patch includes a fix for a race during IPU by
-> Sahitya Tummala <stummala@codeaurora.org>
-> 
-> Co-developed-by: Eric Biggers <ebiggers@google.com>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> Signed-off-by: Satya Tangirala <satyat@google.com>
-> Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> Reviewed-by: Eric Biggers <ebiggers@google.com>
-> ---
->  Documentation/filesystems/f2fs.rst |  7 +++
->  fs/f2fs/compress.c                 |  2 +-
->  fs/f2fs/data.c                     | 78 +++++++++++++++++++++++++-----
->  fs/f2fs/super.c                    | 35 ++++++++++++++
->  4 files changed, 108 insertions(+), 14 deletions(-)
-> 
-> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-> index 099d45ac8d8f..8b4fac44f4e1 100644
-> --- a/Documentation/filesystems/f2fs.rst
-> +++ b/Documentation/filesystems/f2fs.rst
-> @@ -258,6 +258,13 @@ compress_extension=%s  Support adding specified extension, so that f2fs can enab
->                         on compression extension list and enable compression on
->                         these file by default rather than to enable it via ioctl.
->                         For other files, we can still enable compression via ioctl.
-> +inlinecrypt
-> +                       When possible, encrypt/decrypt the contents of encrypted
-> +                       files using the blk-crypto framework rather than
-> +                       filesystem-layer encryption. This allows the use of
-> +                       inline encryption hardware. The on-disk format is
-> +                       unaffected. For more details, see
-> +                       Documentation/block/inline-encryption.rst.
->  ====================== ============================================================
->  
->  Debugfs Entries
-> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-> index 1e02a8c106b0..29e50fbe7eca 100644
-> --- a/fs/f2fs/compress.c
-> +++ b/fs/f2fs/compress.c
-> @@ -1086,7 +1086,7 @@ static int f2fs_write_compressed_pages(struct compress_ctx *cc,
->  		.submitted = false,
->  		.io_type = io_type,
->  		.io_wbc = wbc,
-> -		.encrypted = f2fs_encrypted_file(cc->inode),
-> +		.encrypted = fscrypt_inode_uses_fs_layer_crypto(cc->inode),
->  	};
->  	struct dnode_of_data dn;
->  	struct node_info ni;
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 326c63879ddc..acadfd8ea853 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -14,6 +14,7 @@
->  #include <linux/pagevec.h>
->  #include <linux/blkdev.h>
->  #include <linux/bio.h>
-> +#include <linux/blk-crypto.h>
->  #include <linux/swap.h>
->  #include <linux/prefetch.h>
->  #include <linux/uio.h>
-> @@ -459,6 +460,33 @@ static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
->  	return bio;
->  }
->  
-> +static void f2fs_set_bio_crypt_ctx(struct bio *bio, const struct inode *inode,
-> +				  pgoff_t first_idx,
-> +				  const struct f2fs_io_info *fio,
-> +				  gfp_t gfp_mask)
-> +{
-> +	/*
-> +	 * The f2fs garbage collector sets ->encrypted_page when it wants to
-> +	 * read/write raw data without encryption.
-> +	 */
-> +	if (!fio || !fio->encrypted_page)
-> +		fscrypt_set_bio_crypt_ctx(bio, inode, first_idx, gfp_mask);
-> +}
-> +
-> +static bool f2fs_crypt_mergeable_bio(struct bio *bio, const struct inode *inode,
-> +				     pgoff_t next_idx,
-> +				     const struct f2fs_io_info *fio)
-> +{
-> +	/*
-> +	 * The f2fs garbage collector sets ->encrypted_page when it wants to
-> +	 * read/write raw data without encryption.
-> +	 */
-> +	if (fio && fio->encrypted_page)
-> +		return !bio_has_crypt_ctx(bio);
-> +
-> +	return fscrypt_mergeable_bio(bio, inode, next_idx);
-> +}
-> +
->  static inline void __submit_bio(struct f2fs_sb_info *sbi,
->  				struct bio *bio, enum page_type type)
->  {
-> @@ -684,6 +712,9 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
->  	/* Allocate a new bio */
->  	bio = __bio_alloc(fio, 1);
->  
-> +	f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
-> +			       fio->page->index, fio, GFP_NOIO);
-> +
->  	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
->  		bio_put(bio);
->  		return -EFAULT;
-> @@ -763,9 +794,10 @@ static void del_bio_entry(struct bio_entry *be)
->  	kmem_cache_free(bio_entry_slab, be);
->  }
->  
-> -static int add_ipu_page(struct f2fs_sb_info *sbi, struct bio **bio,
-> +static int add_ipu_page(struct f2fs_io_info *fio, struct bio **bio,
->  							struct page *page)
->  {
-> +	struct f2fs_sb_info *sbi = fio->sbi;
->  	enum temp_type temp;
->  	bool found = false;
->  	int ret = -EAGAIN;
-> @@ -782,13 +814,18 @@ static int add_ipu_page(struct f2fs_sb_info *sbi, struct bio **bio,
->  
->  			found = true;
->  
-> -			if (bio_add_page(*bio, page, PAGE_SIZE, 0) ==
-> -							PAGE_SIZE) {
-> +			if (page_is_mergeable(sbi, *bio, *fio->last_block,
-> +					fio->new_blkaddr) &&
+The mm-of-the-moment snapshot 2020-06-30-21-52 has been uploaded to
 
-We have checked continuity of logical block addresses in its caller
-f2fs_merge_page_bio(), how about changing this to f2fs_bug_on(, !page_is_mergeable())?
+   http://www.ozlabs.org/~akpm/mmotm/
 
-Though it's minor, feel free to add:
+mmotm-readme.txt says
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+README for mm-of-the-moment:
 
-Thanks,
+http://www.ozlabs.org/~akpm/mmotm/
 
-> +			    f2fs_crypt_mergeable_bio(*bio,
-> +					fio->page->mapping->host,
-> +					fio->page->index, fio) &&
-> +			    bio_add_page(*bio, page, PAGE_SIZE, 0) ==
-> +					PAGE_SIZE) {
->  				ret = 0;
->  				break;
->  			}
->  
-> -			/* bio is full */
-> +			/* page can't be merged into bio; submit the bio */
->  			del_bio_entry(be);
->  			__submit_bio(sbi, *bio, DATA);
->  			break;
-> @@ -880,11 +917,13 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
->  	if (!bio) {
->  		bio = __bio_alloc(fio, BIO_MAX_PAGES);
->  		__attach_io_flag(fio);
-> +		f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
-> +				       fio->page->index, fio, GFP_NOIO);
->  		bio_set_op_attrs(bio, fio->op, fio->op_flags);
->  
->  		add_bio_entry(fio->sbi, bio, page, fio->temp);
->  	} else {
-> -		if (add_ipu_page(fio->sbi, &bio, page))
-> +		if (add_ipu_page(fio, &bio, page))
->  			goto alloc_new;
->  	}
->  
-> @@ -936,8 +975,11 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
->  
->  	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
->  
-> -	if (io->bio && !io_is_mergeable(sbi, io->bio, io, fio,
-> -			io->last_block_in_bio, fio->new_blkaddr))
-> +	if (io->bio &&
-> +	    (!io_is_mergeable(sbi, io->bio, io, fio, io->last_block_in_bio,
-> +			      fio->new_blkaddr) ||
-> +	     !f2fs_crypt_mergeable_bio(io->bio, fio->page->mapping->host,
-> +				       bio_page->index, fio)))
->  		__submit_merged_bio(io);
->  alloc_new:
->  	if (io->bio == NULL) {
-> @@ -949,6 +991,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
->  			goto skip;
->  		}
->  		io->bio = __bio_alloc(fio, BIO_MAX_PAGES);
-> +		f2fs_set_bio_crypt_ctx(io->bio, fio->page->mapping->host,
-> +				       bio_page->index, fio, GFP_NOIO);
->  		io->fio = *fio;
->  	}
->  
-> @@ -993,11 +1037,14 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
->  								for_write);
->  	if (!bio)
->  		return ERR_PTR(-ENOMEM);
-> +
-> +	f2fs_set_bio_crypt_ctx(bio, inode, first_idx, NULL, GFP_NOFS);
-> +
->  	f2fs_target_device(sbi, blkaddr, bio);
->  	bio->bi_end_io = f2fs_read_end_io;
->  	bio_set_op_attrs(bio, REQ_OP_READ, op_flag);
->  
-> -	if (f2fs_encrypted_file(inode))
-> +	if (fscrypt_inode_uses_fs_layer_crypto(inode))
->  		post_read_steps |= 1 << STEP_DECRYPT;
->  	if (f2fs_compressed_file(inode))
->  		post_read_steps |= 1 << STEP_DECOMPRESS_NOWQ;
-> @@ -2073,8 +2120,9 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
->  	 * This page will go to BIO.  Do we need to send this
->  	 * BIO off first?
->  	 */
-> -	if (bio && !page_is_mergeable(F2FS_I_SB(inode), bio,
-> -				*last_block_in_bio, block_nr)) {
-> +	if (bio && (!page_is_mergeable(F2FS_I_SB(inode), bio,
-> +				       *last_block_in_bio, block_nr) ||
-> +		    !f2fs_crypt_mergeable_bio(bio, inode, page->index, NULL))) {
->  submit_and_realloc:
->  		__submit_bio(F2FS_I_SB(inode), bio, DATA);
->  		bio = NULL;
-> @@ -2204,8 +2252,9 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
->  		blkaddr = data_blkaddr(dn.inode, dn.node_page,
->  						dn.ofs_in_node + i + 1);
->  
-> -		if (bio && !page_is_mergeable(sbi, bio,
-> -					*last_block_in_bio, blkaddr)) {
-> +		if (bio && (!page_is_mergeable(sbi, bio,
-> +					*last_block_in_bio, blkaddr) ||
-> +		    !f2fs_crypt_mergeable_bio(bio, inode, page->index, NULL))) {
->  submit_and_realloc:
->  			__submit_bio(sbi, bio, DATA);
->  			bio = NULL;
-> @@ -2421,6 +2470,9 @@ int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
->  	/* wait for GCed page writeback via META_MAPPING */
->  	f2fs_wait_on_block_writeback(inode, fio->old_blkaddr);
->  
-> +	if (fscrypt_inode_uses_inline_crypto(inode))
-> +		return 0;
-> +
->  retry_encrypt:
->  	fio->encrypted_page = fscrypt_encrypt_pagecache_blocks(page,
->  					PAGE_SIZE, 0, gfp_flags);
-> @@ -2594,7 +2646,7 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
->  			f2fs_unlock_op(fio->sbi);
->  		err = f2fs_inplace_write_data(fio);
->  		if (err) {
-> -			if (f2fs_encrypted_file(inode))
-> +			if (fscrypt_inode_uses_fs_layer_crypto(inode))
->  				fscrypt_finalize_bounce_page(&fio->encrypted_page);
->  			if (PageWriteback(page))
->  				end_page_writeback(page);
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 20e56b0fa46a..23c49c313fb6 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -138,6 +138,7 @@ enum {
->  	Opt_alloc,
->  	Opt_fsync,
->  	Opt_test_dummy_encryption,
-> +	Opt_inlinecrypt,
->  	Opt_checkpoint_disable,
->  	Opt_checkpoint_disable_cap,
->  	Opt_checkpoint_disable_cap_perc,
-> @@ -204,6 +205,7 @@ static match_table_t f2fs_tokens = {
->  	{Opt_fsync, "fsync_mode=%s"},
->  	{Opt_test_dummy_encryption, "test_dummy_encryption=%s"},
->  	{Opt_test_dummy_encryption, "test_dummy_encryption"},
-> +	{Opt_inlinecrypt, "inlinecrypt"},
->  	{Opt_checkpoint_disable, "checkpoint=disable"},
->  	{Opt_checkpoint_disable_cap, "checkpoint=disable:%u"},
->  	{Opt_checkpoint_disable_cap_perc, "checkpoint=disable:%u%%"},
-> @@ -833,6 +835,13 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->  			if (ret)
->  				return ret;
->  			break;
-> +		case Opt_inlinecrypt:
-> +#ifdef CONFIG_FS_ENCRYPTION_INLINE_CRYPT
-> +			sb->s_flags |= SB_INLINECRYPT;
-> +#else
-> +			f2fs_info(sbi, "inline encryption not supported");
-> +#endif
-> +			break;
->  		case Opt_checkpoint_disable_cap_perc:
->  			if (args->from && match_int(args, &arg))
->  				return -EINVAL;
-> @@ -1590,6 +1599,9 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
->  
->  	fscrypt_show_test_dummy_encryption(seq, ',', sbi->sb);
->  
-> +	if (sbi->sb->s_flags & SB_INLINECRYPT)
-> +		seq_puts(seq, ",inlinecrypt");
-> +
->  	if (F2FS_OPTION(sbi).alloc_mode == ALLOC_MODE_DEFAULT)
->  		seq_printf(seq, ",alloc_mode=%s", "default");
->  	else if (F2FS_OPTION(sbi).alloc_mode == ALLOC_MODE_REUSE)
-> @@ -1624,6 +1636,8 @@ static void default_options(struct f2fs_sb_info *sbi)
->  	F2FS_OPTION(sbi).compress_ext_cnt = 0;
->  	F2FS_OPTION(sbi).bggc_mode = BGGC_MODE_ON;
->  
-> +	sbi->sb->s_flags &= ~SB_INLINECRYPT;
-> +
->  	set_opt(sbi, INLINE_XATTR);
->  	set_opt(sbi, INLINE_DATA);
->  	set_opt(sbi, INLINE_DENTRY);
-> @@ -2470,6 +2484,25 @@ static void f2fs_get_ino_and_lblk_bits(struct super_block *sb,
->  	*lblk_bits_ret = 8 * sizeof(block_t);
->  }
->  
-> +static int f2fs_get_num_devices(struct super_block *sb)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> +
-> +	if (f2fs_is_multi_device(sbi))
-> +		return sbi->s_ndevs;
-> +	return 1;
-> +}
-> +
-> +static void f2fs_get_devices(struct super_block *sb,
-> +			     struct request_queue **devs)
-> +{
-> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> +	int i;
-> +
-> +	for (i = 0; i < sbi->s_ndevs; i++)
-> +		devs[i] = bdev_get_queue(FDEV(i).bdev);
-> +}
-> +
->  static const struct fscrypt_operations f2fs_cryptops = {
->  	.key_prefix		= "f2fs:",
->  	.get_context		= f2fs_get_context,
-> @@ -2479,6 +2512,8 @@ static const struct fscrypt_operations f2fs_cryptops = {
->  	.max_namelen		= F2FS_NAME_LEN,
->  	.has_stable_inodes	= f2fs_has_stable_inodes,
->  	.get_ino_and_lblk_bits	= f2fs_get_ino_and_lblk_bits,
-> +	.get_num_devices	= f2fs_get_num_devices,
-> +	.get_devices		= f2fs_get_devices,
->  };
->  #endif
->  
-> 
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (5.x
+or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+	https://github.com/hnaz/linux-mm
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is also available at
+
+	https://github.com/hnaz/linux-mm
+
+
+
+This mmotm tree contains the following patches against 5.8-rc3:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* hugetlb-fix-pages-per-hugetlb-calculation.patch
+* samples-vfs-avoid-warning-in-statx-override.patch
+* mm-cmac-use-exact_nid-true-to-fix-possible-per-numa-cma-leak.patch
+* vmalloc-fix-the-owner-argument-for-the-new-__vmalloc_node_range-callers.patch
+* mm-shuffle-dont-move-pages-between-zones-and-dont-read-garbage-memmaps.patch
+* mm-page_alloc-fix-documentation-error.patch
+* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
+* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
+* checkpatch-test-git_dir-changes.patch
+* scripts-tagssh-collect-compiled-source-precisely.patch
+* bloat-o-meter-support-comparing-library-archives.patch
+* scripts-decode_stacktrace-skip-missing-symbols.patch
+* scripts-decode_stacktrace-guess-basepath-if-not-specified.patch
+* scripts-decode_stacktrace-guess-path-to-modules.patch
+* scripts-decode_stacktrace-guess-path-to-vmlinux-by-release-name.patch
+* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
+* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
+* ocfs2-change-slot-number-type-s16-to-u16.patch
+* ramfs-support-o_tmpfile.patch
+* kernel-watchdog-flush-all-printk-nmi-buffers-when-hardlockup-detected.patch
+  mm.patch
+* mm-treewide-rename-kzfree-to-kfree_sensitive.patch
+* mm-ksize-should-silently-accept-a-null-pointer.patch
+* mm-expand-config_slab_freelist_hardened-to-include-slab.patch
+* slab-add-naive-detection-of-double-free.patch
+* slab-add-naive-detection-of-double-free-fix.patch
+* mm-slub-extend-slub_debug-syntax-for-multiple-blocks.patch
+* mm-slub-make-some-slub_debug-related-attributes-read-only.patch
+* mm-slub-remove-runtime-allocation-order-changes.patch
+* mm-slub-make-remaining-slub_debug-related-attributes-read-only.patch
+* mm-slub-make-reclaim_account-attribute-read-only.patch
+* mm-slub-introduce-static-key-for-slub_debug.patch
+* mm-slub-introduce-kmem_cache_debug_flags.patch
+* mm-slub-introduce-kmem_cache_debug_flags-fix.patch
+* mm-slub-extend-checks-guarded-by-slub_debug-static-key.patch
+* mm-slab-slub-move-and-improve-cache_from_obj.patch
+* mm-slab-slub-improve-error-reporting-and-overhead-of-cache_from_obj.patch
+* mm-slab-slub-improve-error-reporting-and-overhead-of-cache_from_obj-fix.patch
+* slub-drop-lockdep_assert_held-from-put_map.patch
+* mm-kcsan-instrument-slab-slub-free-with-assert_exclusive_access.patch
+* mm-filemap-clear-idle-flag-for-writes.patch
+* mm-filemap-add-missing-fgp_-flags-in-kerneldoc-comment-for-pagecache_get_page.patch
+* mm-memcg-factor-out-memcg-and-lruvec-level-changes-out-of-__mod_lruvec_state.patch
+* mm-memcg-prepare-for-byte-sized-vmstat-items.patch
+* mm-memcg-convert-vmstat-slab-counters-to-bytes.patch
+* mm-slub-implement-slub-version-of-obj_to_index.patch
+* mm-memcontrol-decouple-reference-counting-from-page-accounting.patch
+* mm-memcg-slab-obj_cgroup-api.patch
+* mm-memcg-slab-allocate-obj_cgroups-for-non-root-slab-pages.patch
+* mm-memcg-slab-save-obj_cgroup-for-non-root-slab-objects.patch
+* mm-memcg-slab-charge-individual-slab-objects-instead-of-pages.patch
+* mm-memcg-slab-deprecate-memorykmemslabinfo.patch
+* mm-memcg-slab-move-memcg_kmem_bypass-to-memcontrolh.patch
+* mm-memcg-slab-use-a-single-set-of-kmem_caches-for-all-accounted-allocations.patch
+* mm-memcg-slab-simplify-memcg-cache-creation.patch
+* mm-memcg-slab-remove-memcg_kmem_get_cache.patch
+* mm-memcg-slab-deprecate-slab_root_caches.patch
+* mm-memcg-slab-remove-redundant-check-in-memcg_accumulate_slabinfo.patch
+* mm-memcg-slab-use-a-single-set-of-kmem_caches-for-all-allocations.patch
+* kselftests-cgroup-add-kernel-memory-accounting-tests.patch
+* tools-cgroup-add-memcg_slabinfopy-tool.patch
+* percpu-return-number-of-released-bytes-from-pcpu_free_area.patch
+* mm-memcg-percpu-account-percpu-memory-to-memory-cgroups.patch
+* mm-memcg-percpu-account-percpu-memory-to-memory-cgroups-fix.patch
+* mm-memcg-percpu-account-percpu-memory-to-memory-cgroups-fix-fix.patch
+* mm-memcg-percpu-per-memcg-percpu-memory-statistics.patch
+* mm-memcg-percpu-per-memcg-percpu-memory-statistics-v3.patch
+* mm-memcg-charge-memcg-percpu-memory-to-the-parent-cgroup.patch
+* kselftests-cgroup-add-perpcu-memory-accounting-test.patch
+* mm-memcontrol-account-kernel-stack-per-node.patch
+* mm-remove-redundant-check-non_swap_entry.patch
+* mm-memoryc-make-remap_pfn_range-reject-unaligned-addr.patch
+* mm-move-pd_alloc_track-to-separate-header-file.patch
+* mm-mmap-fix-the-adjusted-length-error.patch
+* proc-meminfo-avoid-open-coded-reading-of-vm_committed_as.patch
+* mm-utilc-make-vm_memory_committed-more-accurate.patch
+* mm-adjust-vm_committed_as_batch-according-to-vm-overcommit-policy.patch
+* mm-mremap-format-the-check-in-move_normal_pmd-same-as-move_huge_pmd.patch
+* mm-mremap-it-is-sure-to-have-enough-space-when-extent-meets-requirement.patch
+* mm-mremap-calculate-extent-in-one-place.patch
+* mm-mremap-start-addresses-are-properly-aligned.patch
+* mm-sparse-never-partially-remove-memmap-for-early-section.patch
+* vmalloc-convert-to-xarray.patch
+* mm-vmalloc-simplify-merge_or_add_vmap_area-func.patch
+* mm-vmalloc-simplify-augment_tree_propagate_check-func.patch
+* mm-vmalloc-switch-to-propagate-callback.patch
+* mm-vmalloc-update-the-header-about-kva-rework.patch
+* kasan-improve-and-simplify-kconfigkasan.patch
+* kasan-update-required-compiler-versions-in-documentation.patch
+* mm-page_alloc-use-unlikely-in-task_capc.patch
+* page_alloc-consider-highatomic-reserve-in-watermark-fast.patch
+* page_alloc-consider-highatomic-reserve-in-watermark-fast-v5.patch
+* mm-page_alloc-skip-waternark_boost-for-atomic-order-0-allocations.patch
+* mm-page_alloc-skip-watermark_boost-for-atomic-order-0-allocations-fix.patch
+* mm-drop-vm_total_pages.patch
+* mm-page_alloc-drop-nr_free_pagecache_pages.patch
+* mm-memory_hotplug-document-why-shuffle_zone-is-relevant.patch
+* mm-shuffle-remove-dynamic-reconfiguration.patch
+* powerpc-numa-set-numa_node-for-all-possible-cpus.patch
+* powerpc-numa-prefer-node-id-queried-from-vphn.patch
+* mm-page_alloc-keep-memoryless-cpuless-node-0-offline.patch
+* mm-page_allocc-replace-the-definition-of-nr_migratetype_bits-with-pb_migratetype_bits.patch
+* mm-page_allocc-extract-the-common-part-in-pfn_to_bitidx.patch
+* mm-page_allocc-simplify-pageblock-bitmap-access.patch
+* mm-page_allocc-remove-unnecessary-end_bitidx-for-_pfnblock_flags_mask.patch
+* mm-page_alloc-silence-a-kasan-false-positive.patch
+* mm-page_alloc-fallbacks-at-most-has-3-elements.patch
+* mm-set-page-fault-address-for-update_mmu_cache_pmd.patch
+* mm-huge_memoryc-update-tlb-entry-if-pmd-is-changed.patch
+* mips-do-not-call-flush_tlb_all-when-setting-pmd-entry.patch
+* mm-vmscanc-fixed-typo.patch
+* mm-proactive-compaction.patch
+* mm-proactive-compaction-fix.patch
+* mm-use-unsigned-types-for-fragmentation-score.patch
+* hugetlbfs-prevent-filesystem-stacking-of-hugetlbfs.patch
+* mm-page_isolation-prefer-the-node-of-the-source-page.patch
+* mm-migrate-move-migration-helper-from-h-to-c.patch
+* mm-hugetlb-unify-migration-callbacks.patch
+* mm-hugetlb-make-hugetlb-migration-callback-cma-aware.patch
+* mm-migrate-make-a-standard-migration-target-allocation-function.patch
+* mm-gup-use-a-standard-migration-target-allocation-callback.patch
+* mm-mempolicy-use-a-standard-migration-target-allocation-callback.patch
+* mm-page_alloc-remove-a-wrapper-for-alloc_migration_target.patch
+* mm-thp-remove-debug_cow-switch.patch
+* mm-vmstat-add-events-for-pmd-based-thp-migration-without-split.patch
+* mm-vmstat-add-events-for-pmd-based-thp-migration-without-split-fix.patch
+* mm-vmstat-add-events-for-pmd-based-thp-migration-without-split-update.patch
+* mm-store-compound_nr-as-well-as-compound_order.patch
+* mm-move-page-flags-include-to-top-of-file.patch
+* mm-add-thp_order.patch
+* mm-add-thp_size.patch
+* mm-replace-hpage_nr_pages-with-thp_nr_pages.patch
+* mm-add-thp_head.patch
+* mm-introduce-offset_in_thp.patch
+* mm-cma-fix-null-pointer-dereference-when-cma-could-not-be-activated.patch
+* mm-cma-fix-the-name-of-cma-areas.patch
+* mm-cma-fix-the-name-of-cma-areas-fix.patch
+* mm-hugetlb-fix-the-name-of-hugetlb-cma.patch
+* mmhwpoison-cleanup-unused-pagehuge-check.patch
+* mm-hwpoison-remove-recalculating-hpage.patch
+* mmmadvise-call-soft_offline_page-without-mf_count_increased.patch
+* mmmadvise-refactor-madvise_inject_error.patch
+* mmhwpoison-inject-dont-pin-for-hwpoison_filter.patch
+* mmhwpoison-un-export-get_hwpoison_page-and-make-it-static.patch
+* mmhwpoison-kill-put_hwpoison_page.patch
+* mmhwpoison-remove-mf_count_increased.patch
+* mmhwpoison-remove-flag-argument-from-soft-offline-functions.patch
+* mmhwpoison-unify-thp-handling-for-hard-and-soft-offline.patch
+* mmhwpoison-rework-soft-offline-for-free-pages.patch
+* mmhwpoison-rework-soft-offline-for-free-pages-fix.patch
+* mmhwpoison-rework-soft-offline-for-in-use-pages.patch
+* mmhwpoison-refactor-soft_offline_huge_page-and-__soft_offline_page.patch
+* mmhwpoison-refactor-soft_offline_huge_page-and-__soft_offline_page-fix.patch
+* mmhwpoison-return-0-if-the-page-is-already-poisoned-in-soft-offline.patch
+* mmhwpoison-introduce-mf_msg_unsplit_thp.patch
+* sched-mm-optimize-current_gfp_context.patch
+* x86-mm-use-max-memory-block-size-on-bare-metal.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* info-task-hung-in-generic_file_write-fix.patch
+* kernel-hung_taskc-monitor-killed-tasks.patch
+* fix-annotation-of-ioreadwrite1632be.patch
+* sparse-group-the-defines-by-functionality.patch
+* bitmap-fix-bitmap_cut-for-partial-overlapping-case.patch
+* bitmap-add-test-for-bitmap_cut.patch
+* lib-generic-radix-treec-remove-unneeded-__rcu.patch
+* lib-optimize-cpumask_local_spread.patch
+* bits-add-tests-of-genmask.patch
+* bits-add-tests-of-genmask-fix.patch
+* checkpatch-add-test-for-possible-misuse-of-is_enabled-without-config_.patch
+* checkpatch-support-deprecated-terms-checking.patch
+* scripts-deprecated_terms-recommend-denylist-allowlist-instead-of-blacklist-whitelist.patch
+* checkpatch-add-fix-option-for-assign_in_if.patch
+* checkpatch-fix-const_struct-when-const_structscheckpatch-is-missing.patch
+* fatfs-switch-write_lock-to-read_lock-in-fat_ioctl_get_attributes.patch
+* fs-signalfdc-fix-inconsistent-return-codes-for-signalfd4.patch
+* selftests-kmod-use-variable-name-in-kmod_test_0001.patch
+* kmod-remove-redundant-be-an-in-the-comment.patch
+* test_kmod-avoid-potential-double-free-in-trigger_config_run_type.patch
+* exec-change-uselib2-is_sreg-failure-to-eacces.patch
+* exec-move-s_isreg-check-earlier.patch
+* exec-move-path_noexec-check-earlier.patch
+* umh-fix-refcount-underflow-in-fork_usermode_blob.patch
+* kdump-append-kernel-build-id-string-to-vmcoreinfo.patch
+* rapidio-rio_mport_cdev-use-struct_size-helper.patch
+* rapidio-use-struct_size-helper.patch
+* kernel-panicc-make-oops_may_print-return-bool.patch
+* lib-kconfigdebug-fix-typo-in-the-help-text-of-config_panic_timeout.patch
+* aio-simplify-read_events.patch
+* kcov-unconditionally-add-fno-stack-protector-to-compiler-options.patch
+  linux-next.patch
+* mm-madvise-pass-task-and-mm-to-do_madvise.patch
+* pid-move-pidfd_get_pid-to-pidc.patch
+* mm-madvise-introduce-process_madvise-syscall-an-external-memory-hinting-api.patch
+* mm-madvise-introduce-process_madvise-syscall-an-external-memory-hinting-api-fix.patch
+* mm-madvise-introduce-process_madvise-syscall-an-external-memory-hinting-api-fix-2.patch
+* mm-madvise-check-fatal-signal-pending-of-target-process.patch
+* all-arch-remove-system-call-sys_sysctl.patch
+* all-arch-remove-system-call-sys_sysctl-fix.patch
+* mm-kmemleak-silence-kcsan-splats-in-checksum.patch
+* mm-frontswap-mark-various-intentional-data-races.patch
+* mm-page_io-mark-various-intentional-data-races.patch
+* mm-page_io-mark-various-intentional-data-races-v2.patch
+* mm-swap_state-mark-various-intentional-data-races.patch
+* mm-filemap-fix-a-data-race-in-filemap_fault.patch
+* mm-swapfile-fix-and-annotate-various-data-races.patch
+* mm-swapfile-fix-and-annotate-various-data-races-v2.patch
+* mm-page_counter-fix-various-data-races-at-memsw.patch
+* mm-memcontrol-fix-a-data-race-in-scan-count.patch
+* mm-list_lru-fix-a-data-race-in-list_lru_count_one.patch
+* mm-mempool-fix-a-data-race-in-mempool_free.patch
+* mm-rmap-annotate-a-data-race-at-tlb_flush_batched.patch
+* mm-swap-annotate-data-races-for-lru_rotate_pvecs.patch
+* mm-annotate-a-data-race-in-page_zonenum.patch
+* include-asm-generic-vmlinuxldsh-align-ro_after_init.patch
+* sh-clkfwk-remove-r8-r16-r32.patch
+* sh-remove-call-to-memset-after-dma_alloc_coherent.patch
+* sh-use-generic-strncpy.patch
+* sh-add-missing-export_symbol-for-__delay.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  workaround-for-a-pci-restoring-bug.patch
