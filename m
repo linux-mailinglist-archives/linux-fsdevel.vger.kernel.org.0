@@ -2,22 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6524321061C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 10:27:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE9CF2106C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 10:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728576AbgGAI1l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jul 2020 04:27:41 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51161 "EHLO
+        id S1728961AbgGAI4F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jul 2020 04:56:05 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51835 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728450AbgGAI1k (ORCPT
+        with ESMTP id S1726009AbgGAI4F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jul 2020 04:27:40 -0400
+        Wed, 1 Jul 2020 04:56:05 -0400
 Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jqY5F-0001ea-FF; Wed, 01 Jul 2020 08:27:09 +0000
-Date:   Wed, 1 Jul 2020 10:27:08 +0200
+        id 1jqYWo-0003mV-AJ; Wed, 01 Jul 2020 08:55:38 +0000
+Date:   Wed, 1 Jul 2020 10:55:37 +0200
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Adrian Reber <areber@redhat.com>
 Cc:     Eric Biederman <ebiederm@xmission.com>,
@@ -42,209 +42,234 @@ Cc:     Eric Biederman <ebiederm@xmission.com>,
         linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
         Eric Paris <eparis@parisplace.org>,
         Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] capabilities: Introduce CAP_CHECKPOINT_RESTORE
-Message-ID: <20200701082708.pgfskg7hrsnfi36k@wittgenstein>
+Subject: Re: [PATCH v4 3/3] prctl: Allow ptrace capable processes to change
+ /proc/self/exe
+Message-ID: <20200701085537.k7whjbn3icu5rpsq@wittgenstein>
 References: <20200701064906.323185-1-areber@redhat.com>
- <20200701064906.323185-2-areber@redhat.com>
+ <20200701064906.323185-4-areber@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200701064906.323185-2-areber@redhat.com>
+In-Reply-To: <20200701064906.323185-4-areber@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 01, 2020 at 08:49:04AM +0200, Adrian Reber wrote:
-> This patch introduces CAP_CHECKPOINT_RESTORE, a new capability facilitating
-> checkpoint/restore for non-root users.
+On Wed, Jul 01, 2020 at 08:49:06AM +0200, Adrian Reber wrote:
+> From: Nicolas Viennot <Nicolas.Viennot@twosigma.com>
 > 
-> Over the last years, The CRIU (Checkpoint/Restore In Userspace) team has been
-> asked numerous times if it is possible to checkpoint/restore a process as
-> non-root. The answer usually was: 'almost'.
+> Previously, the current process could only change the /proc/self/exe
+> link with local CAP_SYS_ADMIN.
+> This commit relaxes this restriction by permitting such change with
+> CAP_CHECKPOINT_RESTORE, and the ability to use ptrace.
 > 
-> The main blocker to restore a process as non-root was to control the PID of the
-> restored process. This feature available via the clone3 system call, or via
-> /proc/sys/kernel/ns_last_pid is unfortunately guarded by CAP_SYS_ADMIN.
+> With access to ptrace facilities, a process can do the following: fork a
+> child, execve() the target executable, and have the child use ptrace()
+> to replace the memory content of the current process. This technique
+> makes it possible to masquerade an arbitrary program as any executable,
+> even setuid ones.
 > 
-> In the past two years, requests for non-root checkpoint/restore have increased
-> due to the following use cases:
-> * Checkpoint/Restore in an HPC environment in combination with a resource
->   manager distributing jobs where users are always running as non-root.
->   There is a desire to provide a way to checkpoint and restore long running
->   jobs.
-> * Container migration as non-root
-> * We have been in contact with JVM developers who are integrating
->   CRIU into a Java VM to decrease the startup time. These checkpoint/restore
->   applications are not meant to be running with CAP_SYS_ADMIN.
-> 
-> We have seen the following workarounds:
-> * Use a setuid wrapper around CRIU:
->   See https://github.com/FredHutch/slurm-examples/blob/master/checkpointer/lib/checkpointer/checkpointer-suid.c
-> * Use a setuid helper that writes to ns_last_pid.
->   Unfortunately, this helper delegation technique is impossible to use with
->   clone3, and is thus prone to races.
->   See https://github.com/twosigma/set_ns_last_pid
-> * Cycle through PIDs with fork() until the desired PID is reached:
->   This has been demonstrated to work with cycling rates of 100,000 PIDs/s
->   See https://github.com/twosigma/set_ns_last_pid
-> * Patch out the CAP_SYS_ADMIN check from the kernel
-> * Run the desired application in a new user and PID namespace to provide
->   a local CAP_SYS_ADMIN for controlling PIDs. This technique has limited use in
->   typical container environments (e.g., Kubernetes) as /proc is
->   typically protected with read-only layers (e.g., /proc/sys) for hardening
->   purposes. Read-only layers prevent additional /proc mounts (due to proc's
->   SB_I_USERNS_VISIBLE property), making the use of new PID namespaces limited as
->   certain applications need access to /proc matching their PID namespace.
-> 
-> The introduced capability allows to:
-> * Control PIDs when the current user is CAP_CHECKPOINT_RESTORE capable
->   for the corresponding PID namespace via ns_last_pid/clone3.
-> * Open files in /proc/pid/map_files when the current user is
->   CAP_CHECKPOINT_RESTORE capable in the root namespace, useful for recovering
->   files that are unreachable via the file system such as deleted files, or memfd
->   files.
-> 
-> See corresponding selftest for an example with clone3().
-> 
-> Signed-off-by: Adrian Reber <areber@redhat.com>
 > Signed-off-by: Nicolas Viennot <Nicolas.Viennot@twosigma.com>
+> Signed-off-by: Adrian Reber <areber@redhat.com>
 > ---
-
-I think that now looks reasonable. A few comments.
-
-Before we proceed, please split the addition of
-checkpoint_restore_ns_capable() out into a separate patch.
-In fact, I think the cleanest way of doing this would be:
-- 0/n capability: add CAP_CHECKPOINT_RESTORE
-- 1/n pid: use checkpoint_restore_ns_capable() for set_tid
-- 2/n pid_namespace: use checkpoint_restore_ns_capable() for ns_last_pid
-- 3/n: proc: require checkpoint_restore_ns_capable() in init userns for map_files
-
-(commit subjects up to you of course) and a nice commit message for each
-time we relax a permissions on something so we have a clear separate
-track record for each change in case we need to revert something. Then
-the rest of the patches in this series. Testing patches probably last.
-
->  fs/proc/base.c                      | 8 ++++----
->  include/linux/capability.h          | 6 ++++++
->  include/uapi/linux/capability.h     | 9 ++++++++-
->  kernel/pid.c                        | 2 +-
->  kernel/pid_namespace.c              | 2 +-
->  security/selinux/include/classmap.h | 5 +++--
->  6 files changed, 23 insertions(+), 9 deletions(-)
+>  include/linux/lsm_hook_defs.h |  1 +
+>  include/linux/security.h      |  6 ++++++
+>  kernel/sys.c                  | 12 ++++--------
+>  security/commoncap.c          | 26 ++++++++++++++++++++++++++
+>  security/security.c           |  5 +++++
+>  security/selinux/hooks.c      | 14 ++++++++++++++
+>  6 files changed, 56 insertions(+), 8 deletions(-)
 > 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index d86c0afc8a85..ad806069c778 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -2189,16 +2189,16 @@ struct map_files_info {
->  };
->  
->  /*
-> - * Only allow CAP_SYS_ADMIN to follow the links, due to concerns about how the
-> - * symlinks may be used to bypass permissions on ancestor directories in the
-> - * path to the file in question.
-> + * Only allow CAP_SYS_ADMIN and CAP_CHECKPOINT_RESTORE to follow the links, due
-> + * to concerns about how the symlinks may be used to bypass permissions on
-> + * ancestor directories in the path to the file in question.
->   */
->  static const char *
->  proc_map_files_get_link(struct dentry *dentry,
->  			struct inode *inode,
->  		        struct delayed_call *done)
->  {
-> -	if (!capable(CAP_SYS_ADMIN))
-> +	if (!capable(CAP_SYS_ADMIN) && !capable(CAP_CHECKPOINT_RESTORE))
->  		return ERR_PTR(-EPERM);
-
-I think it's clearer if you just use:
-checkpoint_restore_ns_capable(&init_user_ns)
-
-> +static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
-
->  
->  	return proc_pid_get_link(dentry, inode, done);
-> diff --git a/include/linux/capability.h b/include/linux/capability.h
-> index b4345b38a6be..1e7fe311cabe 100644
-> --- a/include/linux/capability.h
-> +++ b/include/linux/capability.h
-> @@ -261,6 +261,12 @@ static inline bool bpf_capable(void)
->  	return capable(CAP_BPF) || capable(CAP_SYS_ADMIN);
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 0098852bb56a..90e51d5e093b 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -211,6 +211,7 @@ LSM_HOOK(int, 0, task_kill, struct task_struct *p, struct kernel_siginfo *info,
+>  	 int sig, const struct cred *cred)
+>  LSM_HOOK(int, -ENOSYS, task_prctl, int option, unsigned long arg2,
+>  	 unsigned long arg3, unsigned long arg4, unsigned long arg5)
+> +LSM_HOOK(int, 0, prctl_set_mm_exe_file, struct file *exe_file)
+>  LSM_HOOK(void, LSM_RET_VOID, task_to_inode, struct task_struct *p,
+>  	 struct inode *inode)
+>  LSM_HOOK(int, 0, ipc_permission, struct kern_ipc_perm *ipcp, short flag)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 2797e7f6418e..0f594eb7e766 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -412,6 +412,7 @@ int security_task_kill(struct task_struct *p, struct kernel_siginfo *info,
+>  			int sig, const struct cred *cred);
+>  int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  			unsigned long arg4, unsigned long arg5);
+> +int security_prctl_set_mm_exe_file(struct file *exe_file);
+>  void security_task_to_inode(struct task_struct *p, struct inode *inode);
+>  int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
+>  void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid);
+> @@ -1124,6 +1125,11 @@ static inline int security_task_prctl(int option, unsigned long arg2,
+>  	return cap_task_prctl(option, arg2, arg3, arg4, arg5);
 >  }
 >  
-> +static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
+> +static inline int security_prctl_set_mm_exe_file(struct file *exe_file)
 > +{
-> +	return ns_capable(ns, CAP_CHECKPOINT_RESTORE) ||
-> +		ns_capable(ns, CAP_SYS_ADMIN);
+> +	return cap_prctl_set_mm_exe_file(exe_file);
 > +}
 > +
->  /* audit system wants to get cap info from files as well */
->  extern int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data *cpu_caps);
+>  static inline void security_task_to_inode(struct task_struct *p, struct inode *inode)
+>  { }
 >  
-> diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
-> index 48ff0757ae5e..395dd0df8d08 100644
-> --- a/include/uapi/linux/capability.h
-> +++ b/include/uapi/linux/capability.h
-> @@ -408,7 +408,14 @@ struct vfs_ns_cap_data {
->   */
->  #define CAP_BPF			39
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index 00a96746e28a..bb53e8408c63 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -1851,6 +1851,10 @@ static int prctl_set_mm_exe_file(struct mm_struct *mm, unsigned int fd)
+>  	if (err)
+>  		goto exit;
 >  
-> -#define CAP_LAST_CAP         CAP_BPF
+> +	err = security_prctl_set_mm_exe_file(exe.file);
+> +	if (err)
+> +		goto exit;
 > +
-> +/* Allow checkpoint/restore related operations */
-> +/* Allow PID selection during clone3() */
-> +/* Allow writing to ns_last_pid */
-> +
-> +#define CAP_CHECKPOINT_RESTORE	40
-> +
-> +#define CAP_LAST_CAP         CAP_CHECKPOINT_RESTORE
->  
->  #define cap_valid(x) ((x) >= 0 && (x) <= CAP_LAST_CAP)
->  
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 5799ae54b89e..2d0a97b7ed7a 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -198,7 +198,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
->  			if (tid != 1 && !tmp->child_reaper)
->  				goto out_free;
->  			retval = -EPERM;
-> -			if (!ns_capable(tmp->user_ns, CAP_SYS_ADMIN))
-> +			if (!checkpoint_restore_ns_capable(tmp->user_ns))
->  				goto out_free;
->  			set_tid_size--;
->  		}
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index 0e5ac162c3a8..ac135bd600eb 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -269,7 +269,7 @@ static int pid_ns_ctl_handler(struct ctl_table *table, int write,
->  	struct ctl_table tmp = *table;
->  	int ret, next;
->  
-> -	if (write && !ns_capable(pid_ns->user_ns, CAP_SYS_ADMIN))
-> +	if (write && !checkpoint_restore_ns_capable(pid_ns->user_ns))
->  		return -EPERM;
->  
 >  	/*
-> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-> index 98e1513b608a..40cebde62856 100644
-> --- a/security/selinux/include/classmap.h
-> +++ b/security/selinux/include/classmap.h
-> @@ -27,9 +27,10 @@
->  	    "audit_control", "setfcap"
+>  	 * Forbid mm->exe_file change if old file still mapped.
+>  	 */
+> @@ -2006,14 +2010,6 @@ static int prctl_set_mm_map(int opt, const void __user *addr, unsigned long data
+>  	}
 >  
->  #define COMMON_CAP2_PERMS  "mac_override", "mac_admin", "syslog", \
-> -		"wake_alarm", "block_suspend", "audit_read", "perfmon", "bpf"
-> +		"wake_alarm", "block_suspend", "audit_read", "perfmon", "bpf", \
-> +		"checkpoint_restore"
+>  	if (prctl_map.exe_fd != (u32)-1) {
+> -		/*
+> -		 * Make sure the caller has the rights to
+> -		 * change /proc/pid/exe link: only local sys admin should
+> -		 * be allowed to.
+> -		 */
+> -		if (!ns_capable(current_user_ns(), CAP_SYS_ADMIN))
+> -			return -EINVAL;
+> -
+>  		error = prctl_set_mm_exe_file(mm, prctl_map.exe_fd);
+>  		if (error)
+>  			return error;
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 59bf3c1674c8..663d00fe2ecc 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -1291,6 +1291,31 @@ int cap_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  	}
+>  }
 >  
-> -#if CAP_LAST_CAP > CAP_BPF
-> +#if CAP_LAST_CAP > CAP_CHECKPOINT_RESTORE
->  #error New capability defined, please update COMMON_CAP2_PERMS.
->  #endif
+> +/**
+> + * cap_prctl_set_mm_exe_file - Determine whether /proc/self/exe can be changed
+> + * by the current process.
+> + * @exe_file: The new exe file
+> + * Returns 0 if permission is granted, -ve if denied.
+> + *
+> + * The current process is permitted to change its /proc/self/exe link via two policies:
+> + * 1) The current user can do checkpoint/restore. At the time of this writing,
+> + *    this means CAP_SYS_ADMIN or CAP_CHECKPOINT_RESTORE capable.
+> + * 2) The current user can use ptrace.
+> + *
+> + * With access to ptrace facilities, a process can do the following:
+> + * fork a child, execve() the target executable, and have the child use
+> + * ptrace() to replace the memory content of the current process.
+> + * This technique makes it possible to masquerade an arbitrary program as the
+> + * target executable, even if it is setuid.
+> + */
+> +int cap_prctl_set_mm_exe_file(struct file *exe_file)
+> +{
+> +	if (checkpoint_restore_ns_capable(current_user_ns()))
+> +		return 0;
+> +
+> +	return security_ptrace_access_check(current, PTRACE_MODE_ATTACH_REALCREDS);
+> +}
+
+What is the reason for having this be a new security hook? Doesn't look
+like it needs to be unless I'm missing something. This just seems more
+complex than it needs to be.
+
+I might be wrong here but if you look at the callsites for
+security_ptrace_access_check() right now, you'll see that it's only
+called from kernel/ptrace.c in __ptrace_may_access() and that function
+checks right at the top:
+
+	/* Don't let security modules deny introspection */
+	if (same_thread_group(task, current))
+		return 0;
+
+since you're passing in same_thread_group(current, current) you're
+passing this check and never even hitting
+security_ptrace_access_check(). So the contract seems to be (as is
+obvious from the comment) that a task can't be denied ptrace
+introspection. But if you're using security_ptrace_access_check(current)
+here and _if_ there would be any lsm that would deny ptrace
+introspection to current you'd suddenly introduce a callsite where
+ptrace introspection is denied. That seems wrong. So either you meant to
+do something else here or you really just want:
+
+checkpoint_restore_ns_capable(current_user_ns())
+
+and none of the rest. But I might be missing the big picture in this
+patch.
+
+> +	if (checkpoint_restore_ns_capable(current_user_ns()))
+> +		return 0;
+> +
+>  /**
+>   * cap_vm_enough_memory - Determine whether a new virtual mapping is permitted
+>   * @mm: The VM space in which the new mapping is to be made
+> @@ -1356,6 +1381,7 @@ static struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
+>  	LSM_HOOK_INIT(mmap_file, cap_mmap_file),
+>  	LSM_HOOK_INIT(task_fix_setuid, cap_task_fix_setuid),
+>  	LSM_HOOK_INIT(task_prctl, cap_task_prctl),
+> +	LSM_HOOK_INIT(prctl_set_mm_exe_file, cap_prctl_set_mm_exe_file),
+>  	LSM_HOOK_INIT(task_setscheduler, cap_task_setscheduler),
+>  	LSM_HOOK_INIT(task_setioprio, cap_task_setioprio),
+>  	LSM_HOOK_INIT(task_setnice, cap_task_setnice),
+> diff --git a/security/security.c b/security/security.c
+> index 2bb912496232..13a1ed32f9e3 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1790,6 +1790,11 @@ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  	return rc;
+>  }
 >  
+> +int security_prctl_set_mm_exe_file(struct file *exe_file)
+> +{
+> +	return call_int_hook(prctl_set_mm_exe_file, 0, exe_file);
+> +}
+> +
+>  void security_task_to_inode(struct task_struct *p, struct inode *inode)
+>  {
+>  	call_void_hook(task_to_inode, p, inode);
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index ca901025802a..fca5581392b8 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -4156,6 +4156,19 @@ static int selinux_task_kill(struct task_struct *p, struct kernel_siginfo *info,
+>  			    secid, task_sid(p), SECCLASS_PROCESS, perm, NULL);
+>  }
+>  
+> +static int selinux_prctl_set_mm_exe_file(struct file *exe_file)
+> +{
+> +	u32 sid = current_sid();
+> +
+> +	struct common_audit_data ad = {
+> +		.type = LSM_AUDIT_DATA_FILE,
+> +		.u.file = exe_file,
+> +	};
+> +
+> +	return avc_has_perm(&selinux_state, sid, sid,
+> +			    SECCLASS_FILE, FILE__EXECUTE_NO_TRANS, &ad);
+> +}
+> +
+>  static void selinux_task_to_inode(struct task_struct *p,
+>  				  struct inode *inode)
+>  {
+> @@ -7057,6 +7070,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+>  	LSM_HOOK_INIT(task_getscheduler, selinux_task_getscheduler),
+>  	LSM_HOOK_INIT(task_movememory, selinux_task_movememory),
+>  	LSM_HOOK_INIT(task_kill, selinux_task_kill),
+> +	LSM_HOOK_INIT(prctl_set_mm_exe_file, selinux_prctl_set_mm_exe_file),
+>  	LSM_HOOK_INIT(task_to_inode, selinux_task_to_inode),
+>  
+>  	LSM_HOOK_INIT(ipc_permission, selinux_ipc_permission),
 > -- 
 > 2.26.2
 > 
