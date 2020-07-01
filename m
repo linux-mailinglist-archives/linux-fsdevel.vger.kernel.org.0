@@ -2,81 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F2852107D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 11:16:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CF282108C1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 11:58:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbgGAJQh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jul 2020 05:16:37 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:43221 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728776AbgGAJQh (ORCPT
+        id S1729779AbgGAJ6a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jul 2020 05:58:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36730 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729332AbgGAJ62 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jul 2020 05:16:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1593594995;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Bir7bqjcJgYEot4xBxckFswPYyAETyRptlOPMzbduK4=;
-        b=QnadbUsZbLTN5/jlkP6POk5KgfIcrNMeTzo2Tz/I1qkv1d5MK4Al7uqH7AmJu2t2qvBZX1
-        euZwal7ot7dJ/rlvdEhB+Fx9P7vA4PEUDEMgFTmcQUEv2zkNHLiLq9QK9MzUc6s8GygnyY
-        IOkUjwzvhn6Nbd/33/melJpUKM81KTw=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-409-9H6mYgpwO6mWvetYh-pyMA-1; Wed, 01 Jul 2020 05:16:34 -0400
-X-MC-Unique: 9H6mYgpwO6mWvetYh-pyMA-1
-Received: by mail-pf1-f199.google.com with SMTP id g85so4949707pfb.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jul 2020 02:16:34 -0700 (PDT)
+        Wed, 1 Jul 2020 05:58:28 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C877C061755
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jul 2020 02:58:28 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id t27so15556003ill.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jul 2020 02:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=0dHlgcv4sbxhgmkhvddO/jEH8IZWk/uLZU2aq4ocRCg=;
+        b=Ni/KGkPRntWb0OaXZ02d3Lx7xYR57iM94ZASq4mMQN4BYm/yDNPwJPtiRB9JZTVkT3
+         Y7KYCTlD4P53A2nmzsqcUngiQC019VPG0TTJ1399bYfGLORG81kvl3OGJEvhveUgebfG
+         Nv1TSGEIxKo/yKiVwLfpiqa66rkc1jeu+wjO91SLwK8cFTsDKBIclSrF2DV/kiIhpBBi
+         IIjxST3q/mpeL7Zer0Nvl5mZfL0OwGSdCyZg+9pLcm7oIbV1GRa3O9JDHGV5iTHUpM4c
+         LMotFH6U0PgXF9pDXLwPBpPTY52tPVvkYwMAQowLA4QRPORWF57XyufsIzLGsvIAODM7
+         le+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Bir7bqjcJgYEot4xBxckFswPYyAETyRptlOPMzbduK4=;
-        b=ENtV1WY18JzhIsAt4iBA/yMol8NWsXAxLTLEGTWiC3Xs2kKlugCWcPX1dNO+VDsjWg
-         oKzsWL89MyJptrEJLmSCw/elyRoGlYIvfXpcbcTvx+GXKZo5wA/9jlE0oxwenlbZ3FgI
-         CG+ycgNEvba5ZCBiAnbYvuK3zXdUm3wQjfeR0so9TuUMxTpt8WyDSR+YzzFbPj+2T3ed
-         U1Ra6/b1wDkD+0WVMRUbltGp5LSieQjPLuOUsJO4V8nBKBHih8uHHGFFm3PKtuDaYe19
-         esPySzMpajbK2zNM0hUqVXBiOuL8fukIqOxki0KYaGra5zWux/vEdhROYah25jTM19/A
-         bdQw==
-X-Gm-Message-State: AOAM531dv42v0w5c7adV5tmww5zoeVBQLg4rlIt+9Yd1KsNVt87sTB40
-        pJiQWiPMKtz7QcIkkxVG9k3E12Je4W2S/n0573XKcdVW5Ai5CPl83oyj1k3xWtnGyWKnXPvZWal
-        uOhiz69nP5J+yVQt4aP/ZTpnTXA==
-X-Received: by 2002:a05:6a00:1342:: with SMTP id k2mr22670770pfu.32.1593594993512;
-        Wed, 01 Jul 2020 02:16:33 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzQMFIc/PWlagM5muWuijz1ziAMv88d0MVJCM3+aCsE+fzjpDjphfTL7QLKhA0nRjttqGaYng==
-X-Received: by 2002:a05:6a00:1342:: with SMTP id k2mr22670744pfu.32.1593594993229;
-        Wed, 01 Jul 2020 02:16:33 -0700 (PDT)
-Received: from xiangao.remote.csb ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id nv9sm4869318pjb.6.2020.07.01.02.16.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jul 2020 02:16:32 -0700 (PDT)
-Date:   Wed, 1 Jul 2020 17:16:22 +0800
-From:   Gao Xiang <hsiangkao@redhat.com>
-To:     lampahome <pahome.chen@mirlab.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, jaegeuk@kernel.org,
-        chao@kernel.org
-Subject: Fwd: Any tools of f2fs to inspect infos?
-Message-ID: <20200701091622.GA5411@xiangao.remote.csb>
-References: <CAB3eZfsO0ZN_79oaFpooJ32WNZwwyaS4GBb+W6jR=buU-VczAA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=0dHlgcv4sbxhgmkhvddO/jEH8IZWk/uLZU2aq4ocRCg=;
+        b=J4K2SfYzp5iFHnGXp8Wr6Fh/3UautX96FNIugesOFVqA9/O5UBK4z0kXFDYZUq2f9I
+         DCl4VnUyno7SpQT1REOoqzJx+/Rwjnl3iXdcZ9764/5ysbMGi3BKwc50yvqd88CunGcg
+         GIGay9lKgvdX6/Lmh49OOk81UUuzCLuNo9adNN3tsiUuPwBwet0XMGF60elZ8TS6s94E
+         mwBQWVCbaYsaloSu1iE7JgMcNSL+1qzYeED+XrBEFp2sm3BUaE/zc6MbUtPL3xeC68X0
+         leTV5DT0IviCA3+HP+1ZngIm74LlEc08UKc+hRqCpyzlr6bBcaZpmPmRmHnQTZGqNINJ
+         gbHw==
+X-Gm-Message-State: AOAM533ZV3hV3jUHJIQ3bfssDuqOoFPJfW1BkghR3tQDwuU1XonveBBb
+        soFzzsPilcjdDzN9p88WeKadCXfNfKZAOOPMxYA=
+X-Google-Smtp-Source: ABdhPJyJ5xkXTYs3zllZ2Aj+/fBxNPvRJ2DXwqXtJUP1lgeIKLNgRY89hgoGqqRfsqxgbIKoZbGbSmcyTWk0gNW6poI=
+X-Received: by 2002:a92:a1cf:: with SMTP id b76mr6693791ill.128.1593597507405;
+ Wed, 01 Jul 2020 02:58:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAB3eZfsO0ZN_79oaFpooJ32WNZwwyaS4GBb+W6jR=buU-VczAA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAMHtQmP_TVR8QA+noWQk04Nj_8AxMXfjCj1K_k0Zf6BN-Bq9sg@mail.gmail.com>
+ <87bllhh7mg.fsf@vostro.rath.org> <CAMHtQmPcADq0WSAY=uFFyRgAeuCCAo=8dOHg37304at1SRjGBg@mail.gmail.com>
+ <877dw0g0wn.fsf@vostro.rath.org> <CAJfpegs3xthDEuhx_vHUtjJ7BAbVfoDu9voNPPAqJo4G3BBYZQ@mail.gmail.com>
+ <87sgensmsk.fsf@vostro.rath.org> <CAOQ4uxiYG3Z9rnXB6F+fnRtoV1e3k=WP5-mgphgkKsWw+jUK=Q@mail.gmail.com>
+ <87mu4vsgd4.fsf@vostro.rath.org> <CAOQ4uxgqrT=cxyjAE+FAJzfnJ1=YS91t8aidXSqxPTsEoR90Vw@mail.gmail.com>
+ <874kqycs7t.fsf@vostro.rath.org>
+In-Reply-To: <874kqycs7t.fsf@vostro.rath.org>
+From:   Hselin Chen <hselin.chen@gmail.com>
+Date:   Wed, 1 Jul 2020 02:58:16 -0700
+Message-ID: <CAMHtQmMz8rzZhwD0J72YL_57_UM7ESpGu-5bdv7eaMUWyxa+3w@mail.gmail.com>
+Subject: Re: [fuse-devel] 512 byte aligned write + O_DIRECT for xfstests
+To:     Amir Goldstein <amir73il@gmail.com>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <dchinner@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-(cc linux-f2fs-devel, Jaegeuk, Chao.
- It'd be better to ask related people and cc the corresponding list.)
+Hi Nikolaus,
 
-On Wed, Jul 01, 2020 at 03:29:41PM +0800, lampahome wrote:
-> As title
-> 
-> Any tools of f2fs to inspect like allocated segments, hot/warm/cold
-> ratio, or gc is running?
-> 
-> thx
+Sorry for being dense, apologies if I misunderstood something.
+I think the issue is also more than just short writes?
+The "reverse" write order (i.e. writing higher offsets before lower
+offsets) can create temporary "holes" in the written file that short
+writes wouldn't have caused.
 
+Thanks!
+Albert
+
+On Thu, Jun 25, 2020 at 10:27 PM Nikolaus Rath <Nikolaus@rath.org> wrote:
+>
+> On Jun 22 2020, Amir Goldstein <amir73il@gmail.com> wrote:
+> >> >> > https://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_cha=
+p02.html#tag_15_09_07
+> >> >>
+> >> >> Thanks for digging this up, I did not know about this.
+> >> >>
+> >> >> That leaves FUSE in a rather uncomfortable place though, doesn't it=
+?
+> >> >> What does the kernel do when userspace issues a write request that'=
+s
+> >> >> bigger than FUSE userspace pipe? It sounds like either the request =
+must
+> >> >> be splitted (so it becomes non-atomic), or you'd have to return a s=
+hort
+> >> >> write (which IIRC is not supposed to happen for local filesystems).
+> >> >>
+> >> >
+> >> > What makes you say that short writes are not supposed to happen?
+> >>
+> >> I don't think it was an authoritative source, but I I've repeatedly re=
+ad
+> >> that "you do not have to worry about short reads/writes when accessing
+> >> the local disk". I expect this to be a common expectation to be baked
+> >> into programs, no matter if valid or not.
+> >
+> > Even if that statement would have been considered true, since when can
+> > we speak of FUSE as a "local filesystem".
+> > IMO it follows all the characteristics of a "network filesystem".
+> >
+> >> > Seems like the options for FUSE are:
+> >> > - Take shared i_rwsem lock on read like XFS and regress performance =
+of
+> >> >   mixed rw workload
+> >> > - Do the above only for non-direct and writeback_cache to minimize t=
+he
+> >> >   damage potential
+> >> > - Return short read/write for direct IO if request is bigger that FU=
+SE
+> >> > buffer size
+> >> > - Add a FUSE mode that implements direct IO internally as something =
+like
+> >> >   RWF_UNCACHED [2] - this is a relaxed version of "no caching" in cl=
+ient or
+> >> >   a stricter version of "cache write-through"  in the sense that
+> >> > during an ongoing
+> >> >   large write operation, read of those fresh written bytes only is s=
+erved
+> >> >   from the client cache copy and not from the server.
+> >>
+> >> I didn't understand all of that, but it seems to me that there is a
+> >> fundamental problem with splitting up a single write into multiple FUS=
+E
+> >> requests, because the second request may fail after the first one
+> >> succeeds.
+> >>
+> >
+> > I think you are confused by the use of the word "atomic" in the standar=
+d.
+> > It does not mean what the O_ATOMIC proposal means, that is - write ever=
+ything
+> > or write nothing at all.
+> > It means if thread A successfully wrote data X over data Y, then thread=
+ B can
+> > either read X or Y, but not half X half Y.
+> > If A got an error on write, the content that B will read is probably un=
+defined
+> > (excuse me for not reading what "the law" has to say about this).
+> > If A got a short (half) write, then surely B can read either half X or =
+half Y
+> > from the first half range. Second half range I am not sure what to expe=
+ct.
+> >
+> > So I do not see any fundamental problem with FUSE write requests.
+> > On the contrary - FUSE write requests are just like any network protoco=
+l write
+> > request or local disk IO request for that matter.
+> >
+> > Unless I am missing something...
+>
+> Well, you're missing the point I was trying to make, which was that FUSE
+> is in an unfortunate spot if we want to avoid short writes *and* comply
+> with the standard. You are asserting that is perfectly fine for FUSE to
+> return short writes and I agree that in that case there is no problem
+> with making writes atomic.
+>
+> I do not dispute that FUSE is within its right to return short
+> rights. What I am saying is that I'm sure that there are plenty of
+> userspace applications that don't expect short writes or reads when
+> reading *any* regular file, because people assume this is only a concern
+> for fds that represents sockets or pipes. Yes, this is wrong of
+> them. But it works almost all the time, so it would be unfortunate if it
+> suddenly stopped working for FUSE in the situations where it previously
+> worked.
+>
+>
+> Best,
+> -Nikolaus
+>
+> --
+> GPG Fingerprint: ED31 791B 2C5C 1613 AF38 8B8A D113 FCAC 3C4E 599F
+>
+>              =C2=BBTime flies like an arrow, fruit flies like a Banana.=
+=C2=AB
+>
+>
+> --
+> fuse-devel mailing list
+> To unsubscribe or subscribe, visit https://lists.sourceforge.net/lists/li=
+stinfo/fuse-devel
