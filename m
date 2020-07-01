@@ -2,248 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1D18211450
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 22:23:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB9D1211476
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 22:32:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbgGAUXh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jul 2020 16:23:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49368 "EHLO
+        id S1727057AbgGAUc2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jul 2020 16:32:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727939AbgGAUXe (ORCPT
+        with ESMTP id S1726441AbgGAUcX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jul 2020 16:23:34 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26B15C08C5DB;
-        Wed,  1 Jul 2020 13:23:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=BZwlxkFB7g0cf7GR5s6FwPGhKaavO3wCLSdCQZi6EkQ=; b=ei5Qvrpa4n/UOyB5EmqFsCeIoD
-        qRkVpwbF3eURJJpbECtc/c/lyCkHEU8nugWWNAx/EYfCtV+lmiNpiWwB3+T7GxDXAnWqxe9N3l44x
-        zAj6tT27AFe+o3Gx4VZp3XymPrUE5pC51YStA2EUaq9Fxi435+/9DIRGD2oHaw+RaxINrM8yNsXMh
-        DSOxvl4woVxvZzBoMJutn1yjrjF6h2B38/0uBfcswl8OToieECej4QAN/oP2ixV0rXLG83JO+pZwT
-        NI5lRvTGX1Xp70W6lTFC1CChG4l0cCthbrGSljKwHV69VUnhfkoF4gUKW9npFz/jPbtClOFmA42oC
-        LiwEqRvA==;
-Received: from [2001:4bb8:18c:3b3b:379a:a079:66b5:89c3] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jqjGR-0002UB-Jb; Wed, 01 Jul 2020 20:23:27 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 23/23] fs: don't allow splice read/write without explicit ops
-Date:   Wed,  1 Jul 2020 22:09:51 +0200
-Message-Id: <20200701200951.3603160-24-hch@lst.de>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200701200951.3603160-1-hch@lst.de>
-References: <20200701200951.3603160-1-hch@lst.de>
+        Wed, 1 Jul 2020 16:32:23 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A79C08C5DD
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jul 2020 13:32:23 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id s9so28773848ljm.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jul 2020 13:32:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yQTuuRnTRD5guY+N3kjgnPLHXT6P3qZiYHrrKJ47r1w=;
+        b=M5E2TfLcC3cfW8OMyrKhXxxtIvY0Y104cXmmv3Q4raTCa6ajB/XOROYaclyuBwWh+A
+         QwyVYKRQgeqALuvdcW7sv0dw33dOl/5F5gCyZFcJBfQqk4HuU7lj0CC2aelEfwTDdC0Y
+         4kjCbqfpjXn7jho9KN1KvD2s7uo+DH0VG6r6M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yQTuuRnTRD5guY+N3kjgnPLHXT6P3qZiYHrrKJ47r1w=;
+        b=MT8kczKGZqXHsHJwNhiaS36UAiN2upaK2FN9xns+DnkYeR8jkFggTCyXtpssUg3/EI
+         T5HccuB2pm8X9jySWQvG1eal+IzyNZjhl0MYNUbD5BYMai/ladwCGBkdA3Ktusn528F3
+         cpusBUXhCtinLAZ0Zy82K07x2DdqMB6Xu/x1IG9kFPOCO0TXXEbdCY53Ga7QcIR1use7
+         snK9FAcN1cLTCshauhYjbXVA9YlWOQJXD1705FfzgVCJs9AdQyBMJ8ynru4D4g0oP1d2
+         vRSgVHdX3R2w/N2wDCDEbPKpiQq3Fu/sv//SZKi0CYXpRaFnKlGpPeFV9c9cFWiJe0RX
+         xhZw==
+X-Gm-Message-State: AOAM531fidLEmIIgdfbl6UrJ9iVu3P61ENkvsnOZir1avnFraucbPXeV
+        hYiwXTKbysPoZdYdu4OrGI5UkBRJZCw=
+X-Google-Smtp-Source: ABdhPJwK1KzikbW1iqU2LLblTeFGdJQz7/I/nCjw0m5dnFiVxw7D4MSOMcOsiDKxpxSr3fwLNEpQuw==
+X-Received: by 2002:a2e:780e:: with SMTP id t14mr10165042ljc.444.1593635541083;
+        Wed, 01 Jul 2020 13:32:21 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id e13sm2066725lfs.33.2020.07.01.13.32.19
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Jul 2020 13:32:19 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id o4so14513647lfi.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jul 2020 13:32:19 -0700 (PDT)
+X-Received: by 2002:a19:8a07:: with SMTP id m7mr16119813lfd.31.1593635539128;
+ Wed, 01 Jul 2020 13:32:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+References: <20200624161335.1810359-14-hch@lst.de> <20200701091943.GC3874@shao2-debian>
+ <20200701121344.GA14149@lst.de>
+In-Reply-To: <20200701121344.GA14149@lst.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 1 Jul 2020 13:32:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whYihRm0brAXPc0dFcsU2M+FA4VoOiwGGdVLC_sHT=M1g@mail.gmail.com>
+Message-ID: <CAHk-=whYihRm0brAXPc0dFcsU2M+FA4VoOiwGGdVLC_sHT=M1g@mail.gmail.com>
+Subject: Re: [fs] 140402bab8: stress-ng.splice.ops_per_sec -100.0% regression
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>, lkp@lists.01.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Don't allow calling ->read or ->write with set_fs as a preparation for
-killing off set_fs.  While I've not triggered any of these cases in my
-setups as all the usual suspect (file systems, pipes, sockets, block
-devices, system character devices) use the iter ops this is almost
-going to be guaranteed to eventuall break something, so print a detailed
-error message helping to debug such cases.  The fix will be to switch the
-affected driver to use the iter ops.
+On Wed, Jul 1, 2020 at 5:13 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> FYI, this is because stress-nh tests splice using /dev/null.  Which
+> happens to actually have the iter ops, but doesn't have explicit
+> splice_read operation.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/read_write.c    |   2 +-
- fs/splice.c        | 121 ++++-----------------------------------------
- include/linux/fs.h |   2 -
- 3 files changed, 10 insertions(+), 115 deletions(-)
+Heh. I guess a splice op for /dev/null should be fairly trivial to implement..
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 21b017a5377d3f..edb13a3092c6bd 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1079,7 +1079,7 @@ ssize_t vfs_iter_write(struct file *file, struct iov_iter *iter, loff_t *ppos,
- }
- EXPORT_SYMBOL(vfs_iter_write);
- 
--ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
-+static ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
- 		  unsigned long vlen, loff_t *pos, rwf_t flags)
- {
- 	struct iovec iovstack[UIO_FASTIOV];
-diff --git a/fs/splice.c b/fs/splice.c
-index 52485158023778..3ceaaf3b8c122c 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -342,89 +342,6 @@ const struct pipe_buf_operations nosteal_pipe_buf_ops = {
- };
- EXPORT_SYMBOL(nosteal_pipe_buf_ops);
- 
--static ssize_t kernel_readv(struct file *file, const struct kvec *vec,
--			    unsigned long vlen, loff_t offset)
--{
--	mm_segment_t old_fs;
--	loff_t pos = offset;
--	ssize_t res;
--
--	old_fs = get_fs();
--	set_fs(KERNEL_DS);
--	/* The cast to a user pointer is valid due to the set_fs() */
--	res = vfs_readv(file, (const struct iovec __user *)vec, vlen, &pos, 0);
--	set_fs(old_fs);
--
--	return res;
--}
--
--static ssize_t default_file_splice_read(struct file *in, loff_t *ppos,
--				 struct pipe_inode_info *pipe, size_t len,
--				 unsigned int flags)
--{
--	struct kvec *vec, __vec[PIPE_DEF_BUFFERS];
--	struct iov_iter to;
--	struct page **pages;
--	unsigned int nr_pages;
--	unsigned int mask;
--	size_t offset, base, copied = 0;
--	ssize_t res;
--	int i;
--
--	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
--		return -EAGAIN;
--
--	/*
--	 * Try to keep page boundaries matching to source pagecache ones -
--	 * it probably won't be much help, but...
--	 */
--	offset = *ppos & ~PAGE_MASK;
--
--	iov_iter_pipe(&to, READ, pipe, len + offset);
--
--	res = iov_iter_get_pages_alloc(&to, &pages, len + offset, &base);
--	if (res <= 0)
--		return -ENOMEM;
--
--	nr_pages = DIV_ROUND_UP(res + base, PAGE_SIZE);
--
--	vec = __vec;
--	if (nr_pages > PIPE_DEF_BUFFERS) {
--		vec = kmalloc_array(nr_pages, sizeof(struct kvec), GFP_KERNEL);
--		if (unlikely(!vec)) {
--			res = -ENOMEM;
--			goto out;
--		}
--	}
--
--	mask = pipe->ring_size - 1;
--	pipe->bufs[to.head & mask].offset = offset;
--	pipe->bufs[to.head & mask].len -= offset;
--
--	for (i = 0; i < nr_pages; i++) {
--		size_t this_len = min_t(size_t, len, PAGE_SIZE - offset);
--		vec[i].iov_base = page_address(pages[i]) + offset;
--		vec[i].iov_len = this_len;
--		len -= this_len;
--		offset = 0;
--	}
--
--	res = kernel_readv(in, vec, nr_pages, *ppos);
--	if (res > 0) {
--		copied = res;
--		*ppos += res;
--	}
--
--	if (vec != __vec)
--		kfree(vec);
--out:
--	for (i = 0; i < nr_pages; i++)
--		put_page(pages[i]);
--	kvfree(pages);
--	iov_iter_advance(&to, copied);	/* truncates and discards */
--	return res;
--}
--
- /*
-  * Send 'sd->len' bytes to socket from 'sd->file' at position 'sd->pos'
-  * using sendpage(). Return the number of bytes sent.
-@@ -788,33 +705,6 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 
- EXPORT_SYMBOL(iter_file_splice_write);
- 
--static int write_pipe_buf(struct pipe_inode_info *pipe, struct pipe_buffer *buf,
--			  struct splice_desc *sd)
--{
--	int ret;
--	void *data;
--	loff_t tmp = sd->pos;
--
--	data = kmap(buf->page);
--	ret = __kernel_write(sd->u.file, data + buf->offset, sd->len, &tmp);
--	kunmap(buf->page);
--
--	return ret;
--}
--
--static ssize_t default_file_splice_write(struct pipe_inode_info *pipe,
--					 struct file *out, loff_t *ppos,
--					 size_t len, unsigned int flags)
--{
--	ssize_t ret;
--
--	ret = splice_from_pipe(pipe, out, ppos, len, flags, write_pipe_buf);
--	if (ret > 0)
--		*ppos += ret;
--
--	return ret;
--}
--
- /**
-  * generic_splice_sendpage - splice data from a pipe to a socket
-  * @pipe:	pipe to splice from
-@@ -844,7 +734,10 @@ static long do_splice_from(struct pipe_inode_info *pipe, struct file *out,
- {
- 	if (out->f_op->splice_write)
- 		return out->f_op->splice_write(pipe, out, ppos, len, flags);
--	return default_file_splice_write(pipe, out, ppos, len, flags);
-+	pr_warn_ratelimited(
-+		"splice write not supported for file %pD4 (pid: %d comm: %.20s)\n",
-+		out, current->pid, current->comm);
-+	return -EINVAL;
- }
- 
- /*
-@@ -870,7 +763,11 @@ static long do_splice_to(struct file *in, loff_t *ppos,
- 		return in->f_op->splice_read(in, ppos, pipe, len, flags);
- 	if (in->f_op->read_iter)
- 		return generic_file_splice_read(in, ppos, pipe, len, flags);
--	return default_file_splice_read(in, ppos, pipe, len, flags);
-+
-+	pr_warn_ratelimited(
-+		"splice read not supported for file %pD4 (pid: %d comm: %.20s)\n",
-+		in, current->pid, current->comm);
-+	return -EINVAL;
- }
- 
- /**
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 2e921d7dfd4878..b9b2ee31ef9bf1 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1921,8 +1921,6 @@ ssize_t iter_read(struct file *filp, char __user *buf, size_t len, loff_t *ppos,
- 
- extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
- extern ssize_t vfs_write(struct file *, const char __user *, size_t, loff_t *);
--extern ssize_t vfs_readv(struct file *, const struct iovec __user *,
--		unsigned long, loff_t *, rwf_t);
- extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
- 				   loff_t, size_t, unsigned int);
- extern ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
--- 
-2.26.2
-
+               Linus
