@@ -2,40 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC5BA210187
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 03:34:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7805210204
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 04:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbgGABd5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 30 Jun 2020 21:33:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42854 "EHLO mail.kernel.org"
+        id S1726208AbgGAC0d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 30 Jun 2020 22:26:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726347AbgGABd4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 30 Jun 2020 21:33:56 -0400
+        id S1725988AbgGAC0d (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 30 Jun 2020 22:26:33 -0400
 Received: from X1 (071-093-078-081.res.spectrum.com [71.93.78.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C79DB2074D;
-        Wed,  1 Jul 2020 01:33:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46D7B2073E;
+        Wed,  1 Jul 2020 02:26:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593567236;
-        bh=f1yB5Zra8JE7ZxnZ7PpU1nJ8yXL5iYPCKmc0wIacENI=;
+        s=default; t=1593570392;
+        bh=3MljW59SXvwa7bhT/OQO01+UNW6pNEpuKLpJw1nBH2Y=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=tygY2kWV4JVtZg0Dh2rn7ZKNDFI5JVQoLDJUSlF2nkMO9YWjPFeiXf/CvJGCjKg8A
-         PHTRS6pQ0OIMgj3oRBG614IePcy+t9edRW6tcaCj12Dk0svHahtq1GCl/lB9SS8B/b
-         bjWFmRkczS/XJe2yNQTH39U7+ev2bzY0whZmQO2I=
-Date:   Tue, 30 Jun 2020 18:33:54 -0700
+        b=v8SA4Jwdp74xVT0YW9LoMdzqV6Tov5mZJ3dlee41GLx1gB11rUkrZJTZUUC58vuKj
+         +JpNfJ3wjrxkNZ7iWNZsXn2ORS7MX39YR9pLoCD4L+uXR5gi07qhuBEEG2ERmMzSaL
+         QTF91J/fO53a85b7cgP6I3BNu/V1wdV8+0slXpKw=
+Date:   Tue, 30 Jun 2020 19:26:31 -0700
 From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 5/7] mm: Replace hpage_nr_pages with thp_nr_pages
-Message-Id: <20200630183354.45a8574844ae7e2cf2c9429c@linux-foundation.org>
-In-Reply-To: <20200629183228.GH25523@casper.infradead.org>
-References: <20200629151959.15779-1-willy@infradead.org>
-        <20200629151959.15779-6-willy@infradead.org>
-        <8bf5ae79-eace-5345-1a77-69d9e2e083b3@oracle.com>
-        <20200629181440.GG25523@casper.infradead.org>
-        <20200629183228.GH25523@casper.infradead.org>
+To:     Lepton Wu <ytht.net@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] coredump: Add %f for executable file name.
+Message-Id: <20200630192631.612f79b6226b36630c1429de@linux-foundation.org>
+In-Reply-To: <20200627042303.1216506-1-ytht.net@gmail.com>
+References: <20200627040100.1211301-1-ytht.net@gmail.com>
+        <20200627042303.1216506-1-ytht.net@gmail.com>
 X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -45,11 +41,12 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 29 Jun 2020 19:32:28 +0100 Matthew Wilcox <willy@infradead.org> wrote:
+On Fri, 26 Jun 2020 21:23:03 -0700 Lepton Wu <ytht.net@gmail.com> wrote:
 
-> So I think you found the only bug of this type, although I'm a little
-> unsure about the rmap_walk_file().
+> The document reads "%e" should be executable file name while actually
+> it could be changed by things like pr_ctl PR_SET_NAME. We can't really
+> change the behavior of "%e" for now, so introduce a new "%f" for the
+> real executable file name.
 
-So...  I'll assume that this part of this patch ("mm: Replace
-hpage_nr_pages with thp_nr_pages") is to be dropped.
-
+Please explain (in as much detail as possible) why you believe the
+kernel should be changed in this way.
