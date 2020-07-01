@@ -2,89 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94424210D3B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 16:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 658DD210DD3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jul 2020 16:35:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731297AbgGAOLu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jul 2020 10:11:50 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:60283 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731153AbgGAOLu (ORCPT
+        id S1726760AbgGAOfO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jul 2020 10:35:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52114 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbgGAOfN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jul 2020 10:11:50 -0400
-Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 061E90OX093153;
-        Wed, 1 Jul 2020 23:09:00 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav305.sakura.ne.jp);
- Wed, 01 Jul 2020 23:09:00 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav305.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 061E8xWB093138
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 1 Jul 2020 23:08:59 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
- seems to break linux bridge on s390x (bisected)
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>, ast@kernel.org,
-        axboe@kernel.dk, bfields@fieldses.org,
-        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
-        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
-        davem@davemloft.net, dhowells@redhat.com,
-        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
-        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
-        keyrings@vger.kernel.org, kuba@kernel.org,
-        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
-        philipp.reisner@linbit.com, ravenexp@gmail.com,
-        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
-        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
-        netdev@vger.kernel.org, markward@linux.ibm.com,
-        linux-s390 <linux-s390@vger.kernel.org>
-References: <9e767819-9bbe-2181-521e-4d8ca28ca4f7@de.ibm.com>
- <20200624160953.GH4332@42.do-not-panic.com>
- <ea41e2a9-61f7-aec1-79e5-7b08b6dd5119@de.ibm.com>
- <4e27098e-ac8d-98f0-3a9a-ea25242e24ec@de.ibm.com>
- <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
- <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
- <20200626025410.GJ4332@42.do-not-panic.com>
- <20200630175704.GO13911@42.do-not-panic.com>
- <b24d8dae-1872-ba2c-acd4-ed46c0781317@de.ibm.com>
- <a6792135-3285-0861-014e-3db85ea251dc@i-love.sakura.ne.jp>
- <20200701135324.GS4332@42.do-not-panic.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <8d714a23-bac4-7631-e5fc-f97c20a46083@i-love.sakura.ne.jp>
-Date:   Wed, 1 Jul 2020 23:08:57 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200701135324.GS4332@42.do-not-panic.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 1 Jul 2020 10:35:13 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83F69C08C5DB
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jul 2020 07:35:13 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id d194so8439443pga.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jul 2020 07:35:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=BSf/vpHUifGkdyZX+Kgxt7sMwJIxVEANESZA5wY4Roc=;
+        b=dHfNp/ZDKJqnnXwk2wz+HbWL+u7s3y8/MgUzn1RncvLd0wzgHMs6LILSC4x6IGDSJa
+         Sakg/8yzQ2JjserYlOUjmKYJROY39L407Z0Db377ZnaqizFMNJRoazEitxExRXcrtMCl
+         D+3KqybU3TRPVwz2S8xVl+zsQbK/f1O2I1s5fyRWGXJVYSR+Bjtd9XAvuPmRqB7cUfIo
+         ZiiyvNdndbxWY7jJAwbBSNJgsOnc0OVUA9jxU8w90wGqUavhxfDIOETooWQr0Ifg7P3Q
+         /NPB7jRQsv7SXyHNWpV7OkySavcVZe55RlEStX5iaOwAmplv2RFCnwp/K2ovfulRv/7a
+         L1lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BSf/vpHUifGkdyZX+Kgxt7sMwJIxVEANESZA5wY4Roc=;
+        b=G5C5oOIxd70Rlo0LYX5kf0YjXOr39th5ZYldM/rWqQUoI11EhLZruQz8vgoCBoeJYM
+         KuCDygJGJAbYgpxUD5peFUKats299TiC60F98FOuMn9JZzF0thkBvCUOgoA/dlsgKDpQ
+         55JvRNfadz4l/HUkJlAz4Se9gZGnVsC86paWVQ2tOFJhy+1TcbCjnSngsdiFops/d/y6
+         VcnaWh7iDIIYaWKqqkWyZcPnWeiB2u66YrgENDK88rKfY4Z68tVyjdjjSk0f3F8EDu/a
+         CKBLJ98k5n0/jmOCpMPRvzpEnSU2HK9J+pi8J7Dxyr0HhAeQAPTikEY2J1ruEEuB5tAG
+         IWWA==
+X-Gm-Message-State: AOAM533/KQ+76U75dYOyKaKQTb+j9HlqlBpN682meWPoG/KZ9dV2xsbV
+        RzrX+xWwbjZuMOfTL/Z8ogILEg==
+X-Google-Smtp-Source: ABdhPJyJ2loHLGNrvZQDC+XojLat1lPdaszxAZlLnrV0qu79IoGVFF0hk598mQVzRnCr4o5B5fZcYQ==
+X-Received: by 2002:a63:545e:: with SMTP id e30mr20530905pgm.62.1593614112802;
+        Wed, 01 Jul 2020 07:35:12 -0700 (PDT)
+Received: from always-ThinkPad-T480.bytedance.net ([61.120.150.75])
+        by smtp.gmail.com with ESMTPSA id 140sm6167882pfz.154.2020.07.01.07.35.08
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Jul 2020 07:35:10 -0700 (PDT)
+From:   zhenwei pi <pizhenwei@bytedance.com>
+To:     adobriyan@gmail.com
+Cc:     tglx@linutronix.de, kzak@redhat.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, zhenwei pi <pizhenwei@bytedance.com>
+Subject: [PATCH] fs/proc: add short desc for /proc/softirqs
+Date:   Wed,  1 Jul 2020 22:35:03 +0800
+Message-Id: <1593614103-23574-1-git-send-email-pizhenwei@bytedance.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/07/01 22:53, Luis Chamberlain wrote:
->> Well, it is not br_stp_call_user() but br_stp_start() which is expecting
->> to set sub_info->retval for both KWIFEXITED() case and KWIFSIGNALED() case.
->> That is, sub_info->retval needs to carry raw value (i.e. without "umh: fix
->> processed error when UMH_WAIT_PROC is used" will be the correct behavior).
-> 
-> br_stp_start() doesn't check for the raw value, it just checks for err
-> or !err. So the patch, "umh: fix processed error when UMH_WAIT_PROC is
-> used" propagates the correct error now.
+Only softirq name is not friendly to end-users, typically 'HI' is
+difficult to understand. During developing irqtop/lsirq utilities
+for util-linux, Karel Zak considered that we should give more
+information to end-users. Discuss about this:
+    https://github.com/karelzak/util-linux/pull/1079
 
-No. If "/sbin/bridge-stp virbr0 start" terminated due to e.g. SIGSEGV
-(for example, by inserting "kill -SEGV $$" into right after "#!/bin/sh" line),
-br_stp_start() needs to select BR_KERNEL_STP path. We can't assume that
-/sbin/bridge-stp is always terminated by exit() syscall (and hence we can't
-ignore KWIFSIGNALED() case in call_usermodehelper_exec_sync()).
+Add short desc for /proc/softirqs in this patch, then /proc/softirqs
+gets more human-readable.
+
+Signed-off-by: zhenwei pi <pizhenwei@bytedance.com>
+---
+ fs/proc/softirqs.c        |  2 +-
+ include/linux/interrupt.h |  5 +++--
+ kernel/softirq.c          | 12 ++++++++++++
+ 3 files changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/fs/proc/softirqs.c b/fs/proc/softirqs.c
+index 12901dc..fcd21f3 100644
+--- a/fs/proc/softirqs.c
++++ b/fs/proc/softirqs.c
+@@ -20,7 +20,7 @@ static int show_softirqs(struct seq_file *p, void *v)
+ 		seq_printf(p, "%12s:", softirq_to_name[i]);
+ 		for_each_possible_cpu(j)
+ 			seq_printf(p, " %10u", kstat_softirqs_cpu(i, j));
+-		seq_putc(p, '\n');
++		seq_printf(p, "  %s\n", softirq_to_desc[i]);
+ 	}
+ 	return 0;
+ }
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 5db970b..1d51397 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -543,10 +543,11 @@ enum
+ 
+ #define SOFTIRQ_STOP_IDLE_MASK (~(1 << RCU_SOFTIRQ))
+ 
+-/* map softirq index to softirq name. update 'softirq_to_name' in
+- * kernel/softirq.c when adding a new softirq.
++/* map softirq index to softirq name. update 'softirq_to_name' &
++ * 'softirq_to_desc' in kernel/softirq.c when adding a new softirq.
+  */
+ extern const char * const softirq_to_name[NR_SOFTIRQS];
++extern const char * const softirq_to_desc[NR_SOFTIRQS];
+ 
+ /* softirq mask and active fields moved to irq_cpustat_t in
+  * asm/hardirq.h to get better cache usage.  KAO
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index c4201b7f..74eca3b 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -61,6 +61,18 @@ const char * const softirq_to_name[NR_SOFTIRQS] = {
+ 	"TASKLET", "SCHED", "HRTIMER", "RCU"
+ };
+ 
++const char * const softirq_to_desc[NR_SOFTIRQS] = {
++	"high priority tasklet softirq",
++	"timer softirq",
++	"network transmit softirq",
++	"network receive softirq",
++	"block device softirq",
++	"IO poll softirq",
++	"normal priority tasklet softirq",
++	"schedule softirq",
++	"high resolution timer softirq",
++	"RCU softirq"
++};
+ /*
+  * we cannot loop indefinitely here to avoid userspace starvation,
+  * but we also don't want to introduce a worst case 1/HZ latency
+-- 
+2.7.4
 
