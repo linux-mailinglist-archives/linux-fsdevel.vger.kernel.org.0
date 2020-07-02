@@ -2,60 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A3A7B21173A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 02:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5DF4211825
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 03:28:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbgGBAcq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jul 2020 20:32:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59624 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726093AbgGBAcq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jul 2020 20:32:46 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41E77C08C5C1;
-        Wed,  1 Jul 2020 17:32:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=q/MGBmpqvDE2/0MSXOyoSKHtoMwcFwFDPcNkwI5LzZs=; b=Y9f/je5WEN5lJPIHo9GuDgamE0
-        A0jUPA3N0+WzK9Rj7iB0xk7YdQFuEXxXJ/SK5DMNEDezHupyBZA7dZKAkDT3Q4IOKr8wEaqa0g1jM
-        9TntLDg0M4oDYzrzSDcaLR/8h/1L43RK3ovqHExGEGqj+smzB4c5dHH93LAadBoFxDL5Z774Br814
-        JSiPgj7FR61qSdTkUkgE3y0Zu8Z9xRwyde1posaM7sKxqf96xu8IwYO86BTsogENql9qIxYM0p3Ao
-        /D/K5GBsXGDpKqKFkUH6ZNFiJJD2z1ctEgYwIik9kXno5G4eGcKwQwYOyjDOI23JpaYRLZo7Cv5C3
-        8yEHdX9Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jqn9c-0004Qk-FH; Thu, 02 Jul 2020 00:32:40 +0000
-Date:   Thu, 2 Jul 2020 01:32:40 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 19/23] sysctl: Call sysctl_head_finish on error
-Message-ID: <20200702003240.GW25523@casper.infradead.org>
-References: <20200701200951.3603160-1-hch@lst.de>
- <20200701200951.3603160-20-hch@lst.de>
+        id S1728788AbgGBBZ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jul 2020 21:25:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54434 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728366AbgGBBXo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 Jul 2020 21:23:44 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC2F620885;
+        Thu,  2 Jul 2020 01:23:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593653023;
+        bh=hVnObDxVcx1RGwFLMx3QUPjXV49Wc2ghcsfqJzOTPC0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1HbT+18n77Dp4VD448UuLPBCw5oukfo1SXQXVtRnflduA9ShOVyDi9ic8vBLwto6U
+         Ey98YBOQJkzamtsrCjUg6cH2NPQF/VNAy0s7cqDQeAfFFOuuNUx3sD45yK/nS3iSDZ
+         O2kOja7fEC7muaij5pw6U3LQ3IvC/HNnie8ViO6M=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.7 39/53] io_uring: fix io_sq_thread no schedule when busy
+Date:   Wed,  1 Jul 2020 21:21:48 -0400
+Message-Id: <20200702012202.2700645-39-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200702012202.2700645-1-sashal@kernel.org>
+References: <20200702012202.2700645-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200701200951.3603160-20-hch@lst.de>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 01, 2020 at 10:09:47PM +0200, Christoph Hellwig wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-> 
-> This error path returned directly instead of calling sysctl_head_finish().
-> 
-> Fixes: ef9d965bc8b6 ("sysctl: reject gigantic reads/write to sysctl files")
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
 
-I think this one needs to go to Linus before 5.8, not get stuck in the
-middle of a large patch series.
+[ Upstream commit b772f07add1c0b22e02c0f1e96f647560679d3a9 ]
+
+When the user consumes and generates sqe at a fast rate,
+io_sqring_entries can always get sqe, and ret will not be equal to -EBUSY,
+so that io_sq_thread will never call cond_resched or schedule, and then
+we will get the following system error prompt:
+
+rcu: INFO: rcu_sched self-detected stall on CPU
+or
+watchdog: BUG: soft lockup-CPU#23 stuck for 112s! [io_uring-sq:1863]
+
+This patch checks whether need to call cond_resched() by checking
+the need_resched() function every cycle.
+
+Suggested-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/io_uring.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 1829be7f63a35..6cf9d509371e2 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -6071,7 +6071,7 @@ static int io_sq_thread(void *data)
+ 		 * If submit got -EBUSY, flag us as needing the application
+ 		 * to enter the kernel to reap and flush events.
+ 		 */
+-		if (!to_submit || ret == -EBUSY) {
++		if (!to_submit || ret == -EBUSY || need_resched()) {
+ 			/*
+ 			 * Drop cur_mm before scheduling, we can't hold it for
+ 			 * long periods (or over schedule()). Do this before
+@@ -6087,7 +6087,7 @@ static int io_sq_thread(void *data)
+ 			 * more IO, we should wait for the application to
+ 			 * reap events and wake us up.
+ 			 */
+-			if (!list_empty(&ctx->poll_list) ||
++			if (!list_empty(&ctx->poll_list) || need_resched() ||
+ 			    (!time_after(jiffies, timeout) && ret != -EBUSY &&
+ 			    !percpu_ref_is_dying(&ctx->refs))) {
+ 				if (current->task_works)
+-- 
+2.25.1
+
