@@ -2,63 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 046D2212BEF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 20:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10913212C3C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 20:24:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbgGBSLC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jul 2020 14:11:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53674 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727905AbgGBSLC (ORCPT
+        id S1728220AbgGBSXU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jul 2020 14:23:20 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:38618 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726997AbgGBSXS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jul 2020 14:11:02 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD3ECC08C5DD
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jul 2020 11:11:01 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id h22so26235391lji.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jul 2020 11:11:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4ZF2RO7D0EVWwMJZ+4s9BUuPvy5hetDDT+LtkKbx5jA=;
-        b=aBC7CVuq4bDi327CCmAk00uAKzXwDXFwka2t1budpO1vnfIVa2mhtpM0hyc23Ybcsc
-         4Q9QSrTL8XeuvC6s7HWsM8siP9hY3nACHvOUGoA9Ud6+Hmi67VrIhRHxBHHtC9gyA+ed
-         oAFRom3cS+moVq1MRyTJGXkqatICUT293Pa3E=
+        Thu, 2 Jul 2020 14:23:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1593714197;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=N4n2qeDClQPShAlOepg3+xUXJF0gLP+gI9YS4+e3wWo=;
+        b=VG0uLCzP6klptJMASdTb5lg8eSxXbyaUJba0E6CJGKywZAKndPM8RGA9IP0cmkuHyKd6pB
+        C4zeUClWlblpweh51WsXmV6ft3DFl+shr7kG7h1rWgY/PKrngvKAujP+YDajN0m/iT7QR1
+        JTED7YB450EezijkMkP0HTw05yq0jqw=
+Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
+ [209.85.161.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-108-ZLvEFRAQPT20aEWJxNR8jw-1; Thu, 02 Jul 2020 14:23:15 -0400
+X-MC-Unique: ZLvEFRAQPT20aEWJxNR8jw-1
+Received: by mail-oo1-f72.google.com with SMTP id x19so5081936ooq.16
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jul 2020 11:23:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4ZF2RO7D0EVWwMJZ+4s9BUuPvy5hetDDT+LtkKbx5jA=;
-        b=qD/jCwqY1Zb0Qmw3XPMRTrXKLoNJh9fIPFtDzzJoABwh3+lhgxiUzng94ovqat8G5k
-         w65P7dv0Je106acmOiEeN4XqmPJvHgbXr37APSWmR/aCDcVneGnWkrY0c8O6ow7cjMC/
-         FXUplBWUUij/8/GwQQJ+KTJfLMsDCvi8MKl8b4q0vHBVe35usDJtUNnv0sgi8kOS67wx
-         YQ8Ia31eTCtWy01cFbILS+OiCOcvEnk5iWqwESuvjLAMdMixBygHWWjCCzzgiX7HvFrv
-         VK5KnfyqNep/dyEXUA7S1KKxQlIW7/l8/GWE6JOYO5K5WpUeuERhlM2XoXMVUFIi76wX
-         izYQ==
-X-Gm-Message-State: AOAM5327c6Dw+Y6v9qumraPAwrNNyten9mWoGCMfTzT5Pkwxyo9IHxUp
-        4mTV06dBDo7oSxq42mH/eiKayZ7HaGU=
-X-Google-Smtp-Source: ABdhPJxly2gg9ctJWNSozthSgG+E+wXac6DfHsJ7on+KMvEU3/vOxRSc1n670FhHFf7769qMs5qvwg==
-X-Received: by 2002:a2e:905a:: with SMTP id n26mr1335193ljg.254.1593713459806;
-        Thu, 02 Jul 2020 11:10:59 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id l23sm3205449lji.31.2020.07.02.11.10.58
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jul 2020 11:10:59 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id n23so33440506ljh.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jul 2020 11:10:58 -0700 (PDT)
-X-Received: by 2002:a2e:760b:: with SMTP id r11mr2189529ljc.285.1593713458587;
- Thu, 02 Jul 2020 11:10:58 -0700 (PDT)
+        bh=N4n2qeDClQPShAlOepg3+xUXJF0gLP+gI9YS4+e3wWo=;
+        b=t46tOHgV3zsC5jeqv7EIRybR6g4c6XJU7GXyv3OhF+3sc2KgshOq7XKftglBIiHb2Q
+         YmwCk0XeAWEYW+/y91jLCj+JBNN+LOJcGeuPXxFnvY+j6ldFTllBBP4SQ/i+mHg33nMK
+         htIi6F3vZ7S/jwThaZCg/NZL9cSVwz3kitcLO1WZsocB35qnXLIDFtRqwRwUrlYHZ7sx
+         DIkQBPHnAbs2ru/u5yUS7biR+fi+S9rnYikvT1x3AI1hwVF+zcgGVGl0iaKRlscXPegi
+         OYOqoq+O14JHWdJNvPXssELZ7ay4FeGUruNhV0cqNwTR4hVwTDy3wVFh37EedHl9mVzz
+         N/8w==
+X-Gm-Message-State: AOAM531fnHAyrHagf7pdNIN2dlyd7kd1IxG0RaWXBbqAk4uQRMsflyYF
+        m5D8Iz0cLJJVYn8B7phDgl45XBgxjCY70jrQvPv4RBsLXhT12HNZ233LATBjX9U6/zXJENOZaeL
+        Ig/378uLUMbkhHNg1/Ck+YHiGKTq8a1yw+8yyXIRV7A==
+X-Received: by 2002:a9d:5f92:: with SMTP id g18mr12102140oti.95.1593714194843;
+        Thu, 02 Jul 2020 11:23:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxvm7EcRvsfCto8/PgbdopuIxxPcMOqqa27XvyoeidGOQ9Dab1I7ij1VwHb4T6hC4Paewj6S+oUpsnH5rz8W5I=
+X-Received: by 2002:a9d:5f92:: with SMTP id g18mr12102114oti.95.1593714194564;
+ Thu, 02 Jul 2020 11:23:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200702165120.1469875-1-agruenba@redhat.com>
-In-Reply-To: <20200702165120.1469875-1-agruenba@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 2 Jul 2020 11:10:42 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whb4H3ywKcwGxgjFSTEap_WuFj5SW7CYw0J2j=WGUs4nQ@mail.gmail.com>
-Message-ID: <CAHk-=whb4H3ywKcwGxgjFSTEap_WuFj5SW7CYw0J2j=WGUs4nQ@mail.gmail.com>
+References: <20200702165120.1469875-1-agruenba@redhat.com> <CAHk-=whb4H3ywKcwGxgjFSTEap_WuFj5SW7CYw0J2j=WGUs4nQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whb4H3ywKcwGxgjFSTEap_WuFj5SW7CYw0J2j=WGUs4nQ@mail.gmail.com>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Thu, 2 Jul 2020 20:23:03 +0200
+Message-ID: <CAHc6FU7ZWJb308yfMaskFeSwNxgxqn89pxT4F7Ud4HthhrC5CA@mail.gmail.com>
 Subject: Re: [RFC 0/4] Fix gfs2 readahead deadlocks
-To:     Andreas Gruenbacher <agruenba@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Matthew Wilcox <willy@infradead.org>,
         Dave Chinner <david@fromorbit.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -70,24 +65,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 2, 2020 at 9:51 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+On Thu, Jul 2, 2020 at 8:11 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Thu, Jul 2, 2020 at 9:51 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+> >
+> > Of this patch queue, either only the first patch or all four patches can
+> > be applied to fix gfs2's current issues in 5.8.  Please let me know what
+> > you think.
 >
-> Of this patch queue, either only the first patch or all four patches can
-> be applied to fix gfs2's current issues in 5.8.  Please let me know what
-> you think.
+> I think the IOCB_NOIO flag looks fine (apart from the nit I pointed
+> out), and we could do that.
 
-I think the IOCB_NOIO flag looks fine (apart from the nit I pointed
-out), abnd we could do that.
+Ok, that's a step forward.
 
-However, is the "revert and reinstate" looks odd. Is the reinstate so
-different front he original that it makes sense to do that way?
+> However, is the "revert and reinstate" looks odd. Is the reinstate so
+> different from the original that it makes sense to do that way?
+>
+> Or was it done that way only to give the choice of just doing the revert?
+>
+> Because if so, I think I'd rather just see a "fix" rather than
+> "revert+reinstate".
 
-Or was it done that way only to give the choice of just doing the revert?
+I only did the "revert and reinstate" so that the revert alone will
+give us a working gfs2 in 5.8. If there's agreement to add the
+IOCB_NOIO flag, then we can just fix gfs2 (basically
+https://lore.kernel.org/linux-fsdevel/20200619093916.1081129-3-agruenba@redhat.com/
+with IOCB_CACHED renamed to IOCB_NOIO).
 
-Because if so, I think I'd rather just see a "fix" rather than
-"revert+reinstate".
+Thanks,
+Andreas
 
-But I didn't look that closely at the gfs2 code itself, maybe there's
-some reason you did it that way.
-
-              Linus
