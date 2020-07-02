@@ -2,96 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 10913212C3C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 20:24:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BC89212D54
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 21:47:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbgGBSXU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jul 2020 14:23:20 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:38618 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726997AbgGBSXS (ORCPT
+        id S1726108AbgGBTrA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jul 2020 15:47:00 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40886 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbgGBTrA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jul 2020 14:23:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1593714197;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=N4n2qeDClQPShAlOepg3+xUXJF0gLP+gI9YS4+e3wWo=;
-        b=VG0uLCzP6klptJMASdTb5lg8eSxXbyaUJba0E6CJGKywZAKndPM8RGA9IP0cmkuHyKd6pB
-        C4zeUClWlblpweh51WsXmV6ft3DFl+shr7kG7h1rWgY/PKrngvKAujP+YDajN0m/iT7QR1
-        JTED7YB450EezijkMkP0HTw05yq0jqw=
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
- [209.85.161.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-108-ZLvEFRAQPT20aEWJxNR8jw-1; Thu, 02 Jul 2020 14:23:15 -0400
-X-MC-Unique: ZLvEFRAQPT20aEWJxNR8jw-1
-Received: by mail-oo1-f72.google.com with SMTP id x19so5081936ooq.16
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jul 2020 11:23:15 -0700 (PDT)
+        Thu, 2 Jul 2020 15:47:00 -0400
+Received: by mail-pl1-f195.google.com with SMTP id x11so11697603plo.7;
+        Thu, 02 Jul 2020 12:46:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N4n2qeDClQPShAlOepg3+xUXJF0gLP+gI9YS4+e3wWo=;
-        b=t46tOHgV3zsC5jeqv7EIRybR6g4c6XJU7GXyv3OhF+3sc2KgshOq7XKftglBIiHb2Q
-         YmwCk0XeAWEYW+/y91jLCj+JBNN+LOJcGeuPXxFnvY+j6ldFTllBBP4SQ/i+mHg33nMK
-         htIi6F3vZ7S/jwThaZCg/NZL9cSVwz3kitcLO1WZsocB35qnXLIDFtRqwRwUrlYHZ7sx
-         DIkQBPHnAbs2ru/u5yUS7biR+fi+S9rnYikvT1x3AI1hwVF+zcgGVGl0iaKRlscXPegi
-         OYOqoq+O14JHWdJNvPXssELZ7ay4FeGUruNhV0cqNwTR4hVwTDy3wVFh37EedHl9mVzz
-         N/8w==
-X-Gm-Message-State: AOAM531fnHAyrHagf7pdNIN2dlyd7kd1IxG0RaWXBbqAk4uQRMsflyYF
-        m5D8Iz0cLJJVYn8B7phDgl45XBgxjCY70jrQvPv4RBsLXhT12HNZ233LATBjX9U6/zXJENOZaeL
-        Ig/378uLUMbkhHNg1/Ck+YHiGKTq8a1yw+8yyXIRV7A==
-X-Received: by 2002:a9d:5f92:: with SMTP id g18mr12102140oti.95.1593714194843;
-        Thu, 02 Jul 2020 11:23:14 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxvm7EcRvsfCto8/PgbdopuIxxPcMOqqa27XvyoeidGOQ9Dab1I7ij1VwHb4T6hC4Paewj6S+oUpsnH5rz8W5I=
-X-Received: by 2002:a9d:5f92:: with SMTP id g18mr12102114oti.95.1593714194564;
- Thu, 02 Jul 2020 11:23:14 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=OHFXCZoREfl1GMwKik+5lcCUbnGDc+wlkQ8rGpzOHJY=;
+        b=FkPhG6A9U0NVwzmsAT98qHKnNfxcOIO4csmQAuQS+Huj3cN7OUZojfDthIOyqkg+cn
+         tQ8sBz63yiKWxLdjBGol4JEk4K0ZRkCdmiZ2MI79q7UGAb0tP2EmpFKIjA4oTmsTXw7H
+         AAsfYv8dMIkOtjkF/JwzP1d+q3YxNtULohv7BJNvIpYSVSNkNA+XR/Qew2olbDMA44kT
+         eym0Y6ysfnXPbqQO+Qel1NeD3LFrBA4WKNMzuOX+TJnDJmpZJCOkRzqGJVVbKZ9P8I8W
+         L1kl3JsKcrs6mosc7N4ImANeT+hfsloxy+o3CNFDohZIzM3rIUq+UbqReWBL0AjTuNoz
+         yBHA==
+X-Gm-Message-State: AOAM532MQcCPbJ5AwLGsnvWxX7yPB5OzlnQj9L41VQSkrKF73G5VJReq
+        xLS6tEb7x0b9kdpx3fy1F0I=
+X-Google-Smtp-Source: ABdhPJzZRZZnyTT/LL8zshMzqSe4q6iWh/bqF3eI60b4K/yHnYqIox4lLP9gZCWSkU96CYlxNiNA6Q==
+X-Received: by 2002:a17:90a:b38b:: with SMTP id e11mr15548657pjr.120.1593719219005;
+        Thu, 02 Jul 2020 12:46:59 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id n18sm10014912pfd.99.2020.07.02.12.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jul 2020 12:46:57 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 695BF403DC; Thu,  2 Jul 2020 19:46:56 +0000 (UTC)
+Date:   Thu, 2 Jul 2020 19:46:56 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        David Howells <dhowells@redhat.com>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, ast@kernel.org,
+        axboe@kernel.dk, bfields@fieldses.org,
+        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
+        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
+        davem@davemloft.net, gregkh@linuxfoundation.org,
+        jarkko.sakkinen@linux.intel.com, jmorris@namei.org,
+        josh@joshtriplett.org, keescook@chromium.org,
+        keyrings@vger.kernel.org, kuba@kernel.org,
+        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
+        philipp.reisner@linbit.com, ravenexp@gmail.com,
+        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
+        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
+        netdev@vger.kernel.org, markward@linux.ibm.com,
+        linux-s390 <linux-s390@vger.kernel.org>
+Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
+ seems to break linux bridge on s390x (bisected)
+Message-ID: <20200702194656.GV4332@42.do-not-panic.com>
+References: <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
+ <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
+ <20200626025410.GJ4332@42.do-not-panic.com>
+ <20200630175704.GO13911@42.do-not-panic.com>
+ <b24d8dae-1872-ba2c-acd4-ed46c0781317@de.ibm.com>
+ <a6792135-3285-0861-014e-3db85ea251dc@i-love.sakura.ne.jp>
+ <20200701135324.GS4332@42.do-not-panic.com>
+ <8d714a23-bac4-7631-e5fc-f97c20a46083@i-love.sakura.ne.jp>
+ <20200701153859.GT4332@42.do-not-panic.com>
+ <e3f3e501-2cb7-b683-4b85-2002b7603244@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-References: <20200702165120.1469875-1-agruenba@redhat.com> <CAHk-=whb4H3ywKcwGxgjFSTEap_WuFj5SW7CYw0J2j=WGUs4nQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whb4H3ywKcwGxgjFSTEap_WuFj5SW7CYw0J2j=WGUs4nQ@mail.gmail.com>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Thu, 2 Jul 2020 20:23:03 +0200
-Message-ID: <CAHc6FU7ZWJb308yfMaskFeSwNxgxqn89pxT4F7Ud4HthhrC5CA@mail.gmail.com>
-Subject: Re: [RFC 0/4] Fix gfs2 readahead deadlocks
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e3f3e501-2cb7-b683-4b85-2002b7603244@i-love.sakura.ne.jp>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 2, 2020 at 8:11 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, Jul 2, 2020 at 9:51 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
-> >
-> > Of this patch queue, either only the first patch or all four patches can
-> > be applied to fix gfs2's current issues in 5.8.  Please let me know what
-> > you think.
->
-> I think the IOCB_NOIO flag looks fine (apart from the nit I pointed
-> out), and we could do that.
+On Thu, Jul 02, 2020 at 01:26:53PM +0900, Tetsuo Handa wrote:
+> On 2020/07/02 0:38, Luis Chamberlain wrote:
+> > @@ -156,6 +156,18 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
+> >  		 */
+> >  		if (KWIFEXITED(ret))
+> >  			sub_info->retval = KWEXITSTATUS(ret);
+> > +		/*
+> > +		 * Do we really want to be passing the signal, or do we pass
+> > +		 * a single error code for all cases?
+> > +		 */
+> > +		else if (KWIFSIGNALED(ret))
+> > +			sub_info->retval = KWTERMSIG(ret);
+> 
+> No, this is bad. Caller of usermode helper is unable to distinguish exit(9)
+> and e.g. SIGKILL'ed by the OOM-killer.
 
-Ok, that's a step forward.
+Right, the question is: do we care?
 
-> However, is the "revert and reinstate" looks odd. Is the reinstate so
-> different from the original that it makes sense to do that way?
->
-> Or was it done that way only to give the choice of just doing the revert?
->
-> Because if so, I think I'd rather just see a "fix" rather than
-> "revert+reinstate".
+> Please pass raw exit status value.
+> 
+> I feel that caller of usermode helper should not use exit status value.
+> For example, call_sbin_request_key() is checking
+> 
+>   test_bit(KEY_FLAG_USER_CONSTRUCT, &key->flags) || key_validate(key) < 0
+> 
+> condition (if usermode helper was invoked) in order to "ignore any errors from
+> userspace if the key was instantiated".
 
-I only did the "revert and reinstate" so that the revert alone will
-give us a working gfs2 in 5.8. If there's agreement to add the
-IOCB_NOIO flag, then we can just fix gfs2 (basically
-https://lore.kernel.org/linux-fsdevel/20200619093916.1081129-3-agruenba@redhat.com/
-with IOCB_CACHED renamed to IOCB_NOIO).
+For those not familiar with this code path, or if you cannot decipher
+the above, the code path in question was:
 
-Thanks,
-Andreas
+static int call_sbin_request_key(struct key *authkey, void *aux)                
+{
+	...
+	/* do it */                                                             
+	ret = call_usermodehelper_keys(request_key, argv, envp, keyring,        
+				       UMH_WAIT_PROC);
+	kdebug("usermode -> 0x%x", ret);
+	if (ret >= 0) {
+		/* ret is the exit/wait code */
+		if (test_bit(KEY_FLAG_USER_CONSTRUCT, &key->flags) ||
+		    key_validate(key) < 0)
+		    ret = -ENOKEY;
+		/* ignore any errors from userspace if the key was      
+		 * instantiated */  
+		 ret = 0;
+	}
+	...
+}
 
+And the umh patch "umh: fix processed error when UMH_WAIT_PROC is used"
+changed this to:
+
+-       if (ret >= 0) {
++       if (ret != 0) {
+
+Prior to the patch negative return values from userspace were still
+being captured, and likewise signals, but the error value was not
+raw, not the actual value. After the patch, since we check for ret != 0
+we still upkeep the sanity check for any error, correct the error value,
+but as you noted signals were ignored as I made the wrong assumption
+we would ignore them. The umh sub_info->retval is set after my original
+patch only if KWIFSIGNALED(ret)), and ignored signals, and so that
+would be now capitured with the additional KWIFSIGNALED(ret)) check.
+
+The question still stands:
+
+Do we want to open code all these checks or simply wrap them up in
+the umh. If we do the later, as you note exit(9) and a SIGKILL will
+be the same to the inspector in the kernel. But do we care?
+
+Do we really want umh callers differntiatin between signals and exit values?
+
+The alternative to making a compromise is using generic wrappers for
+things which make sense and letting the callers use those.
+
+  Luis
+
+> > +		/* Same here */
+> > +		else if (KWIFSTOPPED((ret)))
+> > +			sub_info->retval = KWSTOPSIG(ret);
+> > +		/* And are we really sure we want this? */
+> > +		else if (KWIFCONTINUED((ret)))
+> > +			sub_info->retval = 0;
+> >  	}
+> >  
+> >  	/* Restore default kernel sig handler */
+> > 
+> 
