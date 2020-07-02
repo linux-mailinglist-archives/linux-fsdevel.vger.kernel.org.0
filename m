@@ -2,77 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA3C2211A63
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 05:00:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 219E3211B17
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 06:28:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbgGBDAy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jul 2020 23:00:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54050 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbgGBDAy (ORCPT
+        id S1726152AbgGBE2Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jul 2020 00:28:24 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:58243 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725857AbgGBE2Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jul 2020 23:00:54 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15525C08C5C1
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jul 2020 20:00:54 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id dr13so27344916ejc.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jul 2020 20:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mirlab-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7Wq3JslNYELazNdYN3d5ZECSZKjYJO3aCNgBZjhaXHs=;
-        b=a+NSgxP/5gbvzac+43dVkFV5N+udyBau5Vkq6Lcge/c5HgfzTS9QLkOqp8f8Ez9Ptg
-         yRrsq+VueZHeBR272Iii/zwYUNXw9tnSmXG3vYqbglGSHBG7wZnbaKq4EyUjanLwchdy
-         hGH9r2jlHTDVCe6bUigP16w8kx/A2qtlOpKSbCKe+BStuwD/Iri9kvtE6BAVuvpvx7BG
-         BAmDkHEkyV3WLkdTrDDis2cQ4G4Zxdd7RkemgTt4Kwd09dAd5KMcLGNZIaxkoSmYrq7s
-         9H8y7v21oAbb8nTL2Kv6WBacixIh7vCw/yspZCiVTfo6f1LnvRAY60a/8QMmtqQXBs2D
-         2zog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7Wq3JslNYELazNdYN3d5ZECSZKjYJO3aCNgBZjhaXHs=;
-        b=Iu/5l5WMGgDJWenDt2rG3I5vA22RZzx9tzgxEv+PDwhNvc8oQGedOGeo5RKqhDl4po
-         kRZ83W2y3wXtIuaG0exXkoLC0cpzzXx8fiMLiH+oz5t608JOU0qe556vwrtefo6QOBQq
-         +0y3AQ0F5Db65Bjwbeo4mFPxfrsv+T4vMxBYdJ3OLZPWkkknArAfP+9BwG1rzyo16TXk
-         cytKsfU5NTrS72HTpPm8cXL9X4tjYwKDcfxipDJ5jv3EPts1srHjFwRzLKKbBB9aa4S2
-         f54lYzFx1hk7bSZVSvcfEGzNl0h4wbHxhf/isG1ydNGMZs1UMKCQIZzF9HWJukbK7HT0
-         1QMw==
-X-Gm-Message-State: AOAM530lJ9d3Bo6+2H1BxnIq52zbrNLJR2CQXLYMgfxby8AVDvIeVQl2
-        M6uhNr+c0dkolwewyAvyejxuA5QLrbaePYsQODNYXgdud6A=
-X-Google-Smtp-Source: ABdhPJy2Laxw28vFX8lT2vyBhVquCB1WCXcvESu05xt5Bw9Cxwd2GJcKH+uqynNYXl1pbCaAhCnjajzc6yYMAIbqW6s=
-X-Received: by 2002:a17:906:5006:: with SMTP id s6mr24861034ejj.294.1593658852847;
- Wed, 01 Jul 2020 20:00:52 -0700 (PDT)
+        Thu, 2 Jul 2020 00:28:24 -0400
+Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 0624QsOL032532;
+        Thu, 2 Jul 2020 13:26:54 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav105.sakura.ne.jp);
+ Thu, 02 Jul 2020 13:26:54 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav105.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 0624Qsh8032529
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 2 Jul 2020 13:26:54 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
+ seems to break linux bridge on s390x (bisected)
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, ast@kernel.org,
+        axboe@kernel.dk, bfields@fieldses.org,
+        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
+        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
+        davem@davemloft.net, dhowells@redhat.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jmorris@namei.org, josh@joshtriplett.org, keescook@chromium.org,
+        keyrings@vger.kernel.org, kuba@kernel.org,
+        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
+        philipp.reisner@linbit.com, ravenexp@gmail.com,
+        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
+        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
+        netdev@vger.kernel.org, markward@linux.ibm.com,
+        linux-s390 <linux-s390@vger.kernel.org>
+References: <ea41e2a9-61f7-aec1-79e5-7b08b6dd5119@de.ibm.com>
+ <4e27098e-ac8d-98f0-3a9a-ea25242e24ec@de.ibm.com>
+ <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
+ <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
+ <20200626025410.GJ4332@42.do-not-panic.com>
+ <20200630175704.GO13911@42.do-not-panic.com>
+ <b24d8dae-1872-ba2c-acd4-ed46c0781317@de.ibm.com>
+ <a6792135-3285-0861-014e-3db85ea251dc@i-love.sakura.ne.jp>
+ <20200701135324.GS4332@42.do-not-panic.com>
+ <8d714a23-bac4-7631-e5fc-f97c20a46083@i-love.sakura.ne.jp>
+ <20200701153859.GT4332@42.do-not-panic.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <e3f3e501-2cb7-b683-4b85-2002b7603244@i-love.sakura.ne.jp>
+Date:   Thu, 2 Jul 2020 13:26:53 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <CAB3eZfsO0ZN_79oaFpooJ32WNZwwyaS4GBb+W6jR=buU-VczAA@mail.gmail.com>
- <20200701091622.GA5411@xiangao.remote.csb> <20200701160808.GA1704717@google.com>
-In-Reply-To: <20200701160808.GA1704717@google.com>
-From:   lampahome <pahome.chen@mirlab.org>
-Date:   Thu, 2 Jul 2020 11:00:40 +0800
-Message-ID: <CAB3eZftaTi9QCgbPfQ7dQdPCPJg+mN+4+pSO+Rt3VUVD4KPqVw@mail.gmail.com>
-Subject: Re: Fwd: Any tools of f2fs to inspect infos?
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Gao Xiang <hsiangkao@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, chao@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200701153859.GT4332@42.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> # cat /sys/kernel/debug/f2fs/status ?
-That's good, I saw info I need
+On 2020/07/02 0:38, Luis Chamberlain wrote:
+> @@ -156,6 +156,18 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
+>  		 */
+>  		if (KWIFEXITED(ret))
+>  			sub_info->retval = KWEXITSTATUS(ret);
+> +		/*
+> +		 * Do we really want to be passing the signal, or do we pass
+> +		 * a single error code for all cases?
+> +		 */
+> +		else if (KWIFSIGNALED(ret))
+> +			sub_info->retval = KWTERMSIG(ret);
 
-And I also found a f2fs-tools which contains dump.f2fs
-dump.f2fs -a will dump SSA info.
+No, this is bad. Caller of usermode helper is unable to distinguish exit(9)
+and e.g. SIGKILL'ed by the OOM-killer. Please pass raw exit status value.
 
-How to read the SSA entry info from the dumped file named dump_ssa?
-It looks like:
-segno: 0, Current Node
+I feel that caller of usermode helper should not use exit status value.
+For example, call_sbin_request_key() is checking
 
-[0: d93][1: d95]...etc
-[10: da2]...etc
-...etc
+  test_bit(KEY_FLAG_USER_CONSTRUCT, &key->flags) || key_validate(key) < 0
 
-Take [0: d93] for example, 0 means the first segment and d93 means what?
+condition (if usermode helper was invoked) in order to "ignore any errors from
+userspace if the key was instantiated".
+
+> +		/* Same here */
+> +		else if (KWIFSTOPPED((ret)))
+> +			sub_info->retval = KWSTOPSIG(ret);
+> +		/* And are we really sure we want this? */
+> +		else if (KWIFCONTINUED((ret)))
+> +			sub_info->retval = 0;
+>  	}
+>  
+>  	/* Restore default kernel sig handler */
+> 
+
