@@ -2,131 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F13EF2123DF
+	by mail.lfdr.de (Postfix) with ESMTP id 1802C2123DD
 	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 14:58:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729253AbgGBM6A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jul 2020 08:58:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33236 "EHLO
+        id S1729246AbgGBM57 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jul 2020 08:57:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729234AbgGBM5z (ORCPT
+        with ESMTP id S1729241AbgGBM55 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jul 2020 08:57:55 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C334C08C5C1;
-        Thu,  2 Jul 2020 05:57:55 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id f7so25189047wrw.1;
-        Thu, 02 Jul 2020 05:57:55 -0700 (PDT)
+        Thu, 2 Jul 2020 08:57:57 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FD35C08C5DC
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jul 2020 05:57:57 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id f7so25189207wrw.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jul 2020 05:57:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=vZWa1OkafsMVoikBYT73kEpsHbnGbrk/usRmQjvvTGw=;
-        b=UvZuwxVhaN5i0Kc+zOwV5WxiC7YMUR4BvNIff6umw5e1ji1rQSatvVivYgeHhHXwMt
-         BJwr1YnSe/E3MqM2hA4sACOvZHPr0/rc6kZMUiaUv6s4+L/2bZwvLwuKJ2JUO+Eef4fW
-         WyfQ8H/ZKWFD1vDOtlYYhFlLzS+b4uB4EzkNfHQfKi/3v7oGbxLaVvBzvFV2s0GxctL+
-         2TCVgfgcTRHhY7NgpTlx4/9jCOIBz2KVEmpI3OSSbiOpyxkE1fNetaqwYDNLC2l/B7tu
-         DZ7gQ/ttgcDb5hc2PjKWyI0j30A7ZJ+JxuItH2UYNcyqfALt0Cn47iAOkylcLaHiqtba
-         bYFQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Jyvj9uA1kmJLPgeGKmI2F71fNhX2ewPIbDn9JQ61e5Y=;
+        b=vdBMbSHWjzPd8eITfBqO7BJO2dM7PQ+B5UBrrXpdbWc/VJANehOsUIVE76IKqjp8RH
+         05f2AloK7qv34b9ohq0VdA+LOsaHdLT4hnNOX8jMBRuUOlT94B51+9I93FRNSVc29rwO
+         5ejteRDKMFSxdCb8eCjeto8hylRmiIxg+dv9PyKLjOGugTulcT/PqPLDTE0GzTuvpNJB
+         jZ8h2QWiqMbb/ycFZh3LXxGEh8FueuMDi1aNiccHgbonIWIQzFtXeVElPy16Lz3aWQVH
+         uvn8uE6QN7dTwDhYHYpnXPMcgZZ4b89gQG+b2S1bLfFRG79vMa9ktk6v0LyodcGksUtw
+         Kjag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=vZWa1OkafsMVoikBYT73kEpsHbnGbrk/usRmQjvvTGw=;
-        b=lxinjEA8OYJCINreKV2t2SwNWiuZSM85eOAlng8KjxQ9ILbL5TZUfmfbyOtmuftRz1
-         POiSm+C6E3t67g3quTfZPNN7xtDrD3qNej97rOJvKj4CJ2dGXmJRwp40gdyhNajlN2tt
-         9I4dEDy8/vQbTO7QJAww8oz/i4kXXsaszkTDOt2cKH7NDOOeL0IXVl5+owkIu48s8Cs+
-         /Bi0w3YkkoTUWAJuMhflRS07H4UdU3wyK3ZS/SehawFKqBXPOq5CCYjslEIgx5lq23vj
-         QDVbFkYK+7wzTPpQ2EQopC/IlM/rG2JLR/xnM/Wi4rQHMpNfIB7vU+LcjXBvA9vFeDsz
-         o7+g==
-X-Gm-Message-State: AOAM531cT4g2JnHycV9U1HC1bGuMJYR+OiaSJNXGJFt9y9o9oqzzZqZC
-        nK2XlFnH6sZ4TrLka2vr8xfVQXby
-X-Google-Smtp-Source: ABdhPJzMD26D1wYq6fwZj5CZ/02ae4CYtc/X4mljpJLQjEdoijaRu9jJ1kwiTogXvUOV1ya1KZq0Xw==
-X-Received: by 2002:a5d:6987:: with SMTP id g7mr31191931wru.79.1593694674331;
-        Thu, 02 Jul 2020 05:57:54 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Jyvj9uA1kmJLPgeGKmI2F71fNhX2ewPIbDn9JQ61e5Y=;
+        b=uSr4L9aAZ3ZBBsFS/gJl8xcWQDpZvmXRaA5yn6Zn1fPzlN1ignoJv+W83UUAoCd/bl
+         ZvyPksZGBcLT+rbszQJISvfX3lm8BurHvfVtQ0myT0f/Al/LPqUszPyBggeUPrmCnrUP
+         7QJiKhv0mGoGdo6bXGgz6TD6ulgXmiuxG6ZeAT5uSavgsvPqhbYjvlFDowZUF1pXHJXW
+         dHoINT7eX6Zd47Mt2qMK4D5SaHkLHGYexdRRg/jSi1zSOY6redU3odCwHs5yo+81/c6I
+         tgk+LjBfdnYrEmtx41FpPrXdej/+wkynuqa7ZBDXSxkUWE6JZiVhL4JyU0IdEnHcFTjM
+         nQlQ==
+X-Gm-Message-State: AOAM530ax4+wW56bWoTrazgDnZdedJL4ZnQsRWdgPWVdJP3yEW+yBf4e
+        X9HMpP507Ri9OWWNKWDq4Hc=
+X-Google-Smtp-Source: ABdhPJwZheQpddnKAR4SEXrW05HuvhjXH4uMHMJGaYerLB+Q1hgsNF9JMmzKTjBeEqYe8Hb/pXkkDA==
+X-Received: by 2002:adf:f209:: with SMTP id p9mr30024617wro.86.1593694676177;
+        Thu, 02 Jul 2020 05:57:56 -0700 (PDT)
 Received: from localhost.localdomain ([141.226.183.23])
-        by smtp.gmail.com with ESMTPSA id g16sm11847335wrh.91.2020.07.02.05.57.53
+        by smtp.gmail.com with ESMTPSA id g16sm11847335wrh.91.2020.07.02.05.57.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jul 2020 05:57:53 -0700 (PDT)
+        Thu, 02 Jul 2020 05:57:55 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH v4 00/10] fanotify events with name info
-Date:   Thu,  2 Jul 2020 15:57:34 +0300
-Message-Id: <20200702125744.10535-1-amir73il@gmail.com>
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 01/10] inotify: report both events on parent and child with single callback
+Date:   Thu,  2 Jul 2020 15:57:35 +0300
+Message-Id: <20200702125744.10535-2-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200702125744.10535-1-amir73il@gmail.com>
+References: <20200702125744.10535-1-amir73il@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jan,
+fsnotify usually calls inotify_handle_event() once for watching parent
+to report event with child's name and once for watching child to report
+event without child's name.
 
-This patch set implements the FAN_REPORT_NAME and FAN_REPORT_DIR_FID
-group flags.  It depends on the prep patch series I posted earlier [1].
+Do the same thing with a single callback instead of two callbacks when
+marks iterator contains both inode and child entries.
 
-Previously on this patch series...
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ fs/notify/inotify/inotify_fsnotify.c | 37 +++++++++++++++++++++-------
+ 1 file changed, 28 insertions(+), 9 deletions(-)
 
-In v2 [2] I implemented both the event FAN_DIR_MODIFY and the group flag
-FAN_REPORT_NAME.  We decided to merge only the FAN_DIR_MODIFY part for
-v5.7-rc1 and leave the rest for later after we complete the discussion
-or user API for FAN_REPORT_NAME.
-
-As the discussions continued on v3 [3], we came to a conclusion that the
-FAN_DIR_MODIFY event is redundant and we disabled it before the release
-of v5.7.
-
-This time around, the patches are presented after the man page for the
-user API has been written [4] and after we covered all the open API
-questions in long discussions among us without leaving any open ends.
-
-The patches are available on github branch fanotify_name_fid [5] based
-on v5.7-rc3 + Mel's revert patch.  LTP tests [6] and a demo [7] are also
-available.
-
-Thanks,
-Amir.
-
-Changes since v3:
-- All user API aspects clearly defined in man page
-- Support flag FAN_REPORT_DIR_FID in addition to FAN_REPORT_NAME
-- Support most combinations of new flags with FAN_REPORT_FID
-- Supersede the functionality of removed FAN_DIR_MODIFY event
-- Report name for more event types including FAN_MOVE_SELF
-- Stronger integration with fsnotify_parent() to eliminate duplicate
-  events with and without name
-
-[1] https://lore.kernel.org/linux-fsdevel/20200612093343.5669-1-amir73il@gmail.com/
-[2] https://lore.kernel.org/linux-fsdevel/20200217131455.31107-1-amir73il@gmail.com/
-[3] https://lore.kernel.org/linux-fsdevel/20200505162014.10352-1-amir73il@gmail.com/
-[4] https://github.com/amir73il/man-pages/commits/fanotify_name_fid
-[5] https://github.com/amir73il/linux/commits/fanotify_name_fid
-[6] https://github.com/amir73il/ltp/commits/fanotify_name_fid
-[7] https://github.com/amir73il/inotify-tools/commits/fanotify_name
-
-Amir Goldstein (10):
-  inotify: report both events on parent and child with single callback
-  fanotify: report both events on parent and child with single callback
-  fsnotify: send event to parent and child with single callback
-  fsnotify: send event with parent/name info to sb/mount/non-dir marks
-  fsnotify: send MOVE_SELF event with parent/name info
-  fanotify: add basic support for FAN_REPORT_DIR_FID
-  fanotify: report events with parent dir fid to sb/mount/non-dir marks
-  fanotify: add support for FAN_REPORT_NAME
-  fanotify: report parent fid + name + child fid
-  fanotify: report parent fid + child fid
-
- fs/kernfs/file.c                     |  10 ++-
- fs/notify/fanotify/fanotify.c        |  96 +++++++++++++++++++++--
- fs/notify/fanotify/fanotify.h        |   2 +
- fs/notify/fanotify/fanotify_user.c   | 111 +++++++++++++++++++++++----
- fs/notify/fsnotify.c                 | 103 ++++++++++++++++++-------
- fs/notify/inotify/inotify_fsnotify.c |  37 ++++++---
- include/linux/fanotify.h             |   2 +-
- include/linux/fsnotify.h             |  15 ++--
- include/linux/fsnotify_backend.h     |  32 +++++++-
- include/uapi/linux/fanotify.h        |  15 +++-
- 10 files changed, 345 insertions(+), 78 deletions(-)
-
+diff --git a/fs/notify/inotify/inotify_fsnotify.c b/fs/notify/inotify/inotify_fsnotify.c
+index dfd455798a1b..6fb8ae34edd1 100644
+--- a/fs/notify/inotify/inotify_fsnotify.c
++++ b/fs/notify/inotify/inotify_fsnotify.c
+@@ -55,13 +55,11 @@ static int inotify_merge(struct list_head *list,
+ 	return event_compare(last_event, event);
+ }
+ 
+-int inotify_handle_event(struct fsnotify_group *group, u32 mask,
+-			 const void *data, int data_type, struct inode *dir,
+-			 const struct qstr *file_name, u32 cookie,
+-			 struct fsnotify_iter_info *iter_info)
++static int inotify_one_event(struct fsnotify_group *group, u32 mask,
++			     struct fsnotify_mark *inode_mark,
++			     const struct path *path,
++			     const struct qstr *file_name, u32 cookie)
+ {
+-	const struct path *path = fsnotify_data_path(data, data_type);
+-	struct fsnotify_mark *inode_mark = fsnotify_iter_inode_mark(iter_info);
+ 	struct inotify_inode_mark *i_mark;
+ 	struct inotify_event_info *event;
+ 	struct fsnotify_event *fsn_event;
+@@ -69,9 +67,6 @@ int inotify_handle_event(struct fsnotify_group *group, u32 mask,
+ 	int len = 0;
+ 	int alloc_len = sizeof(struct inotify_event_info);
+ 
+-	if (WARN_ON(fsnotify_iter_vfsmount_mark(iter_info)))
+-		return 0;
+-
+ 	if ((inode_mark->mask & FS_EXCL_UNLINK) &&
+ 	    path && d_unlinked(path->dentry))
+ 		return 0;
+@@ -135,6 +130,30 @@ int inotify_handle_event(struct fsnotify_group *group, u32 mask,
+ 	return 0;
+ }
+ 
++int inotify_handle_event(struct fsnotify_group *group, u32 mask,
++			 const void *data, int data_type, struct inode *dir,
++			 const struct qstr *file_name, u32 cookie,
++			 struct fsnotify_iter_info *iter_info)
++{
++	const struct path *path = fsnotify_data_path(data, data_type);
++	struct fsnotify_mark *inode_mark = fsnotify_iter_inode_mark(iter_info);
++	struct fsnotify_mark *child_mark = fsnotify_iter_child_mark(iter_info);
++	int ret = 0;
++
++	if (WARN_ON(fsnotify_iter_vfsmount_mark(iter_info)))
++		return 0;
++
++	/* If parent is watching, report the event with child's name */
++	if (inode_mark)
++		ret = inotify_one_event(group, mask, inode_mark, path,
++					file_name, cookie);
++	if (ret || !child_mark)
++		return ret;
++
++	/* If child is watching, report another event without child's name */
++	return inotify_one_event(group, mask, child_mark, path, NULL, 0);
++}
++
+ static void inotify_freeing_mark(struct fsnotify_mark *fsn_mark, struct fsnotify_group *group)
+ {
+ 	inotify_ignored_and_remove_idr(fsn_mark, group);
 -- 
 2.17.1
 
