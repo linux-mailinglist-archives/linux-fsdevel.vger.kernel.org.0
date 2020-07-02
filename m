@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99FA32123E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 14:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D20DC2123EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 14:58:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbgGBM6K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jul 2020 08:58:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33282 "EHLO
+        id S1729281AbgGBM6V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jul 2020 08:58:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729262AbgGBM6H (ORCPT
+        with ESMTP id S1729279AbgGBM6I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jul 2020 08:58:07 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B33F0C08C5DC
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jul 2020 05:58:06 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id f18so27848066wml.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jul 2020 05:58:06 -0700 (PDT)
+        Thu, 2 Jul 2020 08:58:08 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC4ACC08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jul 2020 05:58:07 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id s10so28156952wrw.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jul 2020 05:58:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=DJu4uF/qCVu5luBu+CcGMSMZyh9Ry08Rhva2XdheEaI=;
-        b=Lih5Tyib99Xu5Tp+Cm9IpPy9MwJrAtWfQ77uxlIrjrPINsasYNj9wfTSGd6g/j2Nuq
-         FOAd0mkXzHBjzH/llxnSMd6bs0Hn+f/FG6RGUfW1dyxaQfHiRb90t26jDMFCax3WiDJ5
-         SM1pH22itDjFtNdP1KLwrsvZlkYtVNsfRzbC+tzpKMoOjTkh37ARqtvSDE2GSZFNmNvN
-         petw/tW2C3uJQ66aTqvtPhzFZFL3p8oAgiLxU+e3f7G8EtEDzDHY1uC4ZR3tlnbgbVbk
-         z7I9ZJQQgo+txwKbp/OqY0pHuwMHLOEcCsynGrrZD7Vj73hy+y6c1tw8uKj9ZvAzJzRZ
-         Rt0Q==
+        bh=khL8hyqyx3E4QPcYcyO3mp4iNI8nasQzH6Opvr5yWZw=;
+        b=WW4tsNOuDtRbTrwDCYhJAgQBX9X0lEzVCtBaava4zu12L9z+9YYceWbCjiajol2300
+         jjp9vXaUc951dd/TQWfr/ZYdIsVYr1JzIhZe4yxRQwlCsG2LQdPi6kEpabb6baHo7hok
+         5vFnHsIUMc6peNnaVVelon7Ko1RNKHxyzih8ojazbBJq6HSlx3bfGXPqALGsj1jmo0Rj
+         Mh6dLIyJoTWyApS+gS50twjfyUW6iIGiJKMT3kSt6SmyQAUFk8XxNA4G/m6cOzvjORqs
+         kYMEyIahGbYnl0qMQ2rZ05WtyQsXoTIFrnHkwpsUaNc5Rq1g4iUSxuULuAUe5YN4NrQj
+         KpLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=DJu4uF/qCVu5luBu+CcGMSMZyh9Ry08Rhva2XdheEaI=;
-        b=b974orKsv6DlytZXgphmSIPMsuK/89hufSyJlzhDSOtYXLwBFQ5ZFns1+nkDtsxPib
-         LYS5LzXOLDZo10aCEVLazJPxh9rDaLiZ2Kp+tZ3guApD4J+j81R9K/pzZCu5ZTumHaWA
-         yyVcFSv1ew40t7MVfht+SWkelOetwXQuX+5dytrH4gqBuBi/ysbcepWq0Ugjlvq/i61h
-         HppCXclOmbuAH/fOCJ3SU0emATd2SY6RTI8LSz/kq5bhACIzIUu+OdbvoHgNMNIRy1Od
-         8Qda6TMTHW0H7GqvYWqgy7nM3f+fJpvx2zCRItlv/Zv1huN9PPpBhwpnrrJTEUnh2m1t
-         ERnw==
-X-Gm-Message-State: AOAM533PzDu6dXZWkwKfumnywRZX93B6gE7grt2XU2Cv40UEia1E8+bU
-        wY2XGh4Ms46uzzZtyKyxcRiCKd/U
-X-Google-Smtp-Source: ABdhPJz606gmcf6JVkcUUIpsGezowCemK75XInhTjILE+sie89jfDbDpmmIH4L8FH0ilNGQl+v4zIA==
-X-Received: by 2002:a1c:7f82:: with SMTP id a124mr29647461wmd.132.1593694685344;
-        Thu, 02 Jul 2020 05:58:05 -0700 (PDT)
+        bh=khL8hyqyx3E4QPcYcyO3mp4iNI8nasQzH6Opvr5yWZw=;
+        b=TANbUlmpylw/vKG1UtPIHxO5DEtby2DRAo66fhEn9I2w4qh93si3lu019K3ayEX49M
+         wQ6PIcvtFSLrhVgWh0dHEn0O2J9bf9KYG+tQyTXBoJM5ea83/K8x2hamQwL7HiMMDxP7
+         WJvDmTEBB9/CfvqxW3L0dGDGsBALNnt3FELUuBWHnlxDXJc/ZeO1ccB0Q4ExOY0s+2XE
+         awSRZB2KUtAiOmibEGngv1zUrrghZhwvoee+7xUhnp1DTavaDPTcM+9tROeQn5/AjsiZ
+         Rm1JZ2RXT/BZF2p5hscYsLuhFKpIWa5YEPzMbGUk6Ybe5pjHiTa2FooZwdE1AVeV9yZZ
+         9R9g==
+X-Gm-Message-State: AOAM532mly/z+9tKJfMjmoPHObEr3yjEzuTvWJKqIyo2keZE01t+5QpK
+        C1WVwOGB+khefmc4zkjFG0Y=
+X-Google-Smtp-Source: ABdhPJxBdV/7CVMo1Zn5NbsCQiLWZCsGivSfPlaBI778A1CcMsm+ebEeVO5/f4aba/ZCh/dKtcm97A==
+X-Received: by 2002:adf:a507:: with SMTP id i7mr34373566wrb.0.1593694686715;
+        Thu, 02 Jul 2020 05:58:06 -0700 (PDT)
 Received: from localhost.localdomain ([141.226.183.23])
-        by smtp.gmail.com with ESMTPSA id g16sm11847335wrh.91.2020.07.02.05.58.04
+        by smtp.gmail.com with ESMTPSA id g16sm11847335wrh.91.2020.07.02.05.58.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jul 2020 05:58:04 -0700 (PDT)
+        Thu, 02 Jul 2020 05:58:06 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 08/10] fanotify: add support for FAN_REPORT_NAME
-Date:   Thu,  2 Jul 2020 15:57:42 +0300
-Message-Id: <20200702125744.10535-9-amir73il@gmail.com>
+Subject: [PATCH v4 09/10] fanotify: report parent fid + name + child fid
+Date:   Thu,  2 Jul 2020 15:57:43 +0300
+Message-Id: <20200702125744.10535-10-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200702125744.10535-1-amir73il@gmail.com>
 References: <20200702125744.10535-1-amir73il@gmail.com>
@@ -62,213 +62,141 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce a new fanotify_init() flag FAN_REPORT_NAME.  It requires the
-flag FAN_REPORT_DIR_FID and there is a constant for setting both flags
-named FAN_REPORT_DFID_NAME.
+For a group with fanotify_init() flag FAN_REPORT_DFID_NAME, the parent
+fid and name are reported for events on non-directory objects with an
+info record of type FAN_EVENT_INFO_TYPE_DFID_NAME.
 
-For a group with flag FAN_REPORT_NAME, the parent fid and name are
-reported for directory entry modification events (create/detete/move)
-and for events on non-directory objects.
+If the group also has the init flag FAN_REPORT_FID, the child fid
+is also reported with another info record that follows the first info
+record. The second info record is the same info record that would have
+been reported to a group with only FAN_REPORT_FID flag.
 
-Events on directories themselves are reported with their own fid and
-"." as the name.
-
-The parent fid and name are reported with an info record of type
-FAN_EVENT_INFO_TYPE_DFID_NAME, similar to the way that parent fid is
-reported with into type FAN_EVENT_INFO_TYPE_DFID, but with an appended
-null terminated name string.
+When the child fid needs to be recorded, the variable size struct
+fanotify_name_event is preallocated with enough space to store the
+child fh between the dir fh and the name.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify.c      | 18 +++++++++++-
- fs/notify/fanotify/fanotify_user.c | 47 +++++++++++++++++++++++-------
- include/linux/fanotify.h           |  2 +-
- include/uapi/linux/fanotify.h      |  4 +++
- 4 files changed, 59 insertions(+), 12 deletions(-)
+ fs/notify/fanotify/fanotify.c      | 33 ++++++++++++++++++++++++++++--
+ fs/notify/fanotify/fanotify.h      |  2 ++
+ fs/notify/fanotify/fanotify_user.c |  3 ++-
+ 3 files changed, 35 insertions(+), 3 deletions(-)
 
 diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index c45d65fa8d1d..b22ab6630eba 100644
+index b22ab6630eba..3e8e20c19d97 100644
 --- a/fs/notify/fanotify/fanotify.c
 +++ b/fs/notify/fanotify/fanotify.c
-@@ -495,9 +495,25 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+@@ -64,6 +64,16 @@ static bool fanotify_name_event_equal(struct fanotify_name_event *fne1,
+ 	    !fanotify_fh_equal(dfh1, dfh2))
+ 		return false;
+ 
++	/*
++	 * There could be a child fid before the name.
++	 * If only one dfh had a blob, we would have failed the name_offset
++	 * comparison above.
++	 */
++	if (fanotify_fh_blob_len(dfh1) &&
++	    memcmp(fanotify_fh_blob(dfh1), fanotify_fh_blob(dfh2),
++		   fanotify_fh_blob_len(dfh1)))
++		return false;
++
+ 	return !memcmp(fanotify_fh_name(dfh1), fanotify_fh_name(dfh2),
+ 		       dfh1->name_len);
+ }
+@@ -454,13 +464,19 @@ struct fanotify_event *fanotify_alloc_fid_event(struct inode *id,
+ struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
+ 						 __kernel_fsid_t *fsid,
+ 						 const struct qstr *file_name,
+-						 gfp_t gfp)
++						 struct inode *child, gfp_t gfp)
+ {
+ 	struct fanotify_name_event *fne;
+ 	struct fanotify_fh *dfh;
+ 	unsigned int prealloc_fh_len = fanotify_encode_fh_len(id);
++	unsigned int child_fh_len = fanotify_encode_fh_len(child);
+ 	unsigned int size;
+ 
++	if (WARN_ON_ONCE(prealloc_fh_len % FANOTIFY_FH_HDR_LEN))
++		child_fh_len = 0;
++	else if (child_fh_len)
++		prealloc_fh_len += FANOTIFY_FH_HDR_LEN + child_fh_len;
++
+ 	size = sizeof(*fne) - FANOTIFY_INLINE_FH_LEN + prealloc_fh_len;
+ 	if (file_name)
+ 		size += file_name->len + 1;
+@@ -472,6 +488,8 @@ struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
+ 	fne->fsid = *fsid;
+ 	dfh = &fne->dir_fh;
+ 	fanotify_encode_fh(dfh, id, prealloc_fh_len, 0);
++	if (child_fh_len)
++		fanotify_encode_fh(fanotify_fh_blob(dfh), child, child_fh_len, 0);
+ 	if (file_name)
+ 		fanotify_fh_copy_name(dfh, file_name);
+ 
+@@ -493,9 +511,19 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+ 	struct inode *id = fanotify_fid_inode(mask, data, data_type, dir);
+ 	const struct path *path = fsnotify_data_path(data, data_type);
  	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
++	struct inode *child = NULL;
  	bool name_event = false;
  
--	if ((fid_mode & FAN_REPORT_DIR_FID) && dir)
-+	if ((fid_mode & FAN_REPORT_DIR_FID) && dir) {
+ 	if ((fid_mode & FAN_REPORT_DIR_FID) && dir) {
++		/*
++		 * With both flags FAN_REPORT_DIR_FID and FAN_REPORT_FID, we
++		 * report the child fid for events reported on a non-dir child
++		 * in addition to reporting the parent fid and child name.
++		 */
++		if ((fid_mode & FAN_REPORT_FID) &&
++		    (mask & FAN_EVENT_ON_CHILD) && !(mask & FAN_ONDIR))
++			child = id;
++
  		id = fanotify_dfid_inode(mask, data, data_type, dir);
  
-+		/*
-+		 * We record file name only in a group with FAN_REPORT_NAME
-+		 * and when we have a directory inode to report.
-+		 *
-+		 * For directory entry modification event, we record the fid of
-+		 * the directory and the name of the modified entry.
-+		 *
-+		 * For event on non-directory that is reported to parent, we
-+		 * record the fid of the parent and the name of the child.
-+		 */
-+		if ((fid_mode & FAN_REPORT_NAME) &&
-+		    ((mask & ALL_FSNOTIFY_DIRENT_EVENTS) ||
-+		     !(mask & FAN_ONDIR)))
-+			name_event = true;
-+	}
-+
- 	/*
- 	 * For queues with unlimited length lost events are not expected and
- 	 * can possibly have security implications. Avoid losing events when
+ 		/*
+@@ -531,7 +559,8 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+ 	if (fanotify_is_perm_event(mask)) {
+ 		event = fanotify_alloc_perm_event(path, gfp);
+ 	} else if (name_event && file_name) {
+-		event = fanotify_alloc_name_event(id, fsid, file_name, gfp);
++		event = fanotify_alloc_name_event(id, fsid, file_name, child,
++						  gfp);
+ 	} else if (fid_mode) {
+ 		event = fanotify_alloc_fid_event(id, fsid, gfp);
+ 	} else {
+diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+index 7cbdac4be42f..f1aaa9fa5ca8 100644
+--- a/fs/notify/fanotify/fanotify.h
++++ b/fs/notify/fanotify/fanotify.h
+@@ -171,6 +171,8 @@ static inline struct fanotify_fh *fanotify_event_object_fh(
+ {
+ 	if (event->type == FANOTIFY_EVENT_TYPE_FID)
+ 		return &FANOTIFY_FE(event)->object_fh;
++	else if (event->type == FANOTIFY_EVENT_TYPE_FID_NAME)
++		return fanotify_fh_blob(&FANOTIFY_NE(event)->dir_fh);
+ 	else
+ 		return NULL;
+ }
 diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 20bb1c52b1cd..27116cfead66 100644
+index 27116cfead66..577ad74f71ec 100644
 --- a/fs/notify/fanotify/fanotify_user.c
 +++ b/fs/notify/fanotify/fanotify_user.c
-@@ -64,17 +64,26 @@ static int fanotify_fid_info_len(int fh_len, int name_len)
- 	return roundup(FANOTIFY_INFO_HDR_LEN + info_len, FANOTIFY_EVENT_ALIGN);
- }
- 
--static int fanotify_event_info_len(struct fanotify_event *event)
-+static int fanotify_event_info_len(unsigned int fid_mode,
-+				   struct fanotify_event *event)
- {
--	int info_len = 0;
- 	int fh_len = fanotify_event_object_fh_len(event);
- 	struct fanotify_fh *dfh = fanotify_event_dir_fh(event);
-+	int info_len = 0;
-+	int dot_len = 0;
- 
--	if (dfh)
-+	if (dfh) {
- 		info_len += fanotify_fid_info_len(dfh->len, dfh->name_len);
-+	} else if ((fid_mode & FAN_REPORT_NAME) && (event->mask & FAN_ONDIR)) {
-+		/*
-+		 * With group flag FAN_REPORT_NAME, if name was not recorded in
-+		 * event on a directory, we will report the name ".".
-+		 */
-+		dot_len = 1;
-+	}
- 
- 	if (fh_len)
--		info_len += fanotify_fid_info_len(fh_len, 0);
-+		info_len += fanotify_fid_info_len(fh_len, dot_len);
- 
- 	return info_len;
- }
-@@ -90,6 +99,7 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
- {
- 	size_t event_size = FAN_EVENT_METADATA_LEN;
- 	struct fanotify_event *event = NULL;
-+	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
- 
- 	pr_debug("%s: group=%p count=%zd\n", __func__, group, count);
- 
-@@ -97,8 +107,8 @@ static struct fanotify_event *get_one_event(struct fsnotify_group *group,
- 	if (fsnotify_notify_queue_is_empty(group))
- 		goto out;
- 
--	if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS)) {
--		event_size += fanotify_event_info_len(
-+	if (fid_mode) {
-+		event_size += fanotify_event_info_len(fid_mode,
- 			FANOTIFY_E(fsnotify_peek_first_event(group)));
- 	}
- 
-@@ -324,7 +334,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	pr_debug("%s: group=%p event=%p\n", __func__, group, event);
- 
- 	metadata.event_len = FAN_EVENT_METADATA_LEN +
--					fanotify_event_info_len(event);
-+				fanotify_event_info_len(fid_mode, event);
- 	metadata.metadata_len = FAN_EVENT_METADATA_LEN;
- 	metadata.vers = FANOTIFY_METADATA_VERSION;
- 	metadata.reserved = 0;
-@@ -372,12 +382,25 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 	}
- 
- 	if (fanotify_event_object_fh_len(event)) {
-+		const char *dot = NULL;
-+		int dot_len = 0;
-+
- 		if (fid_mode == FAN_REPORT_FID || info_type) {
- 			/*
- 			 * With only group flag FAN_REPORT_FID only type FID is
- 			 * reported. Second info record type is always FID.
- 			 */
- 			info_type = FAN_EVENT_INFO_TYPE_FID;
-+		} else if ((fid_mode & FAN_REPORT_NAME) &&
-+			   (event->mask & FAN_ONDIR)) {
-+			/*
-+			 * With group flag FAN_REPORT_NAME, if name was not
-+			 * recorded in an event on a directory, report the
-+			 * name "." with info type DFID_NAME.
-+			 */
-+			info_type = FAN_EVENT_INFO_TYPE_DFID_NAME;
-+			dot = ".";
-+			dot_len = 1;
- 		} else if ((event->mask & ALL_FSNOTIFY_DIRENT_EVENTS) ||
- 			   (event->mask & FAN_ONDIR)) {
- 			/*
-@@ -398,7 +421,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
- 
- 		ret = copy_info_to_user(fanotify_event_fsid(event),
- 					fanotify_event_object_fh(event),
--					info_type, NULL, 0, buf, count);
-+					info_type, dot, dot_len, buf, count);
- 		if (ret < 0)
- 			return ret;
- 
-@@ -925,11 +948,15 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 	if (fid_mode && class != FAN_CLASS_NOTIF)
+@@ -949,14 +949,15 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
  		return -EINVAL;
  
--	/* Reporting either object fid or dir fid */
-+	/*
-+	 * Reporting either object fid or dir fid.
-+	 * Child name is reported with parent fid so requires dir fid.
-+	 */
+ 	/*
+-	 * Reporting either object fid or dir fid.
+ 	 * Child name is reported with parent fid so requires dir fid.
++	 * If reporting child name, we can report both child fid and dir fid.
+ 	 */
  	switch (fid_mode) {
  	case 0:
  	case FAN_REPORT_FID:
  	case FAN_REPORT_DIR_FID:
-+	case FAN_REPORT_DFID_NAME:
+ 	case FAN_REPORT_DFID_NAME:
++	case FAN_REPORT_DFID_NAME | FAN_REPORT_FID:
  		break;
  	default:
  		return -EINVAL;
-@@ -1287,7 +1314,7 @@ COMPAT_SYSCALL_DEFINE6(fanotify_mark,
-  */
- static int __init fanotify_user_setup(void)
- {
--	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 9);
-+	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 10);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
- 
- 	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 4ddac97b2bf7..3e9c56ee651f 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -18,7 +18,7 @@
- #define FANOTIFY_CLASS_BITS	(FAN_CLASS_NOTIF | FAN_CLASS_CONTENT | \
- 				 FAN_CLASS_PRE_CONTENT)
- 
--#define FANOTIFY_FID_BITS	(FAN_REPORT_FID | FAN_REPORT_DIR_FID)
-+#define FANOTIFY_FID_BITS	(FAN_REPORT_FID | FAN_REPORT_DFID_NAME)
- 
- #define FANOTIFY_INIT_FLAGS	(FANOTIFY_CLASS_BITS | FANOTIFY_FID_BITS | \
- 				 FAN_REPORT_TID | \
-diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-index 21afebf77fd7..fbf9c5c7dd59 100644
---- a/include/uapi/linux/fanotify.h
-+++ b/include/uapi/linux/fanotify.h
-@@ -54,6 +54,10 @@
- #define FAN_REPORT_TID		0x00000100	/* event->pid is thread id */
- #define FAN_REPORT_FID		0x00000200	/* Report unique file id */
- #define FAN_REPORT_DIR_FID	0x00000400	/* Report unique directory id */
-+#define FAN_REPORT_NAME		0x00000800	/* Report events with name */
-+
-+/* Convenience macro - FAN_REPORT_NAME requires FAN_REPORT_DIR_FID */
-+#define FAN_REPORT_DFID_NAME	(FAN_REPORT_DIR_FID | FAN_REPORT_NAME)
- 
- /* Deprecated - do not use this in programs and do not add new flags here! */
- #define FAN_ALL_INIT_FLAGS	(FAN_CLOEXEC | FAN_NONBLOCK | \
 -- 
 2.17.1
 
