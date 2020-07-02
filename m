@@ -2,119 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6886F2117FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 03:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9CFA2119D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jul 2020 03:56:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbgGBBX6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jul 2020 21:23:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54746 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728536AbgGBBX4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jul 2020 21:23:56 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BBF12145D;
-        Thu,  2 Jul 2020 01:23:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593653036;
-        bh=FeJYSWpPkEj16ll5EuwSvsmJPTgeQNhCZZ/l+eCp2w8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LEpsozyf6RMXApLZrXyeYiLc92fWqrtut31jAJvEuJWAkkmqigAyOkVoLeeC3tlyZ
-         dbsKuOiparlf1nZNc5FGSCY0M0nfXijdvlJf7HpZRUbm/5GLkMcq6+d/Ko1ZHSPMid
-         8XvdYLkzpXXGEMWTTLVpE71faGWImnyXBx5jgZ1A=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 49/53] io_uring: fix current->mm NULL dereference on exit
-Date:   Wed,  1 Jul 2020 21:21:58 -0400
-Message-Id: <20200702012202.2700645-49-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200702012202.2700645-1-sashal@kernel.org>
-References: <20200702012202.2700645-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1728022AbgGBB4M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jul 2020 21:56:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44174 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726792AbgGBB4L (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 1 Jul 2020 21:56:11 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 437AAC08C5DB
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jul 2020 18:56:11 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id f16so28308409ybp.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jul 2020 18:56:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=xAITaULtdMDEOzvw+l2Rasjf1QfU0QQ930xQ9EFFDhw=;
+        b=mJr6dns1TdHPLaPk1l1nUCN4IUtvYtOpMd2odmYKWwr0/WbLXDSazaIVv1ciEv9fJ6
+         SutKMg5RIy1dEiGwT8tnYEFpjFd9W3ngQvNkiALl+UdZ0ZpNdu4FjIE80wjAdsRl8PXr
+         qpPoSKhwncdhK0vfriwJb2pRIZrTdVXv1cetv5y7HizWBttesdKay1ggMdGpx0GXDBNT
+         5dmnOm8hmCDyzG+8x4qUxQgWyr8aQpbgx3O9tMQF8yy3S+D+8d8nHIzsCTwDEX5dtTE9
+         viXRGOQoHfzNzEwu76bLCC0Nna/lluLtAlSJGwqypdkfxZWTZKMdIexOw/mnSePGmjfr
+         uazg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=xAITaULtdMDEOzvw+l2Rasjf1QfU0QQ930xQ9EFFDhw=;
+        b=arUxwVJwwgGAEPz26BzRbOCt5pWryH85Vhnms//Rb9e+4WKKkH847BM/pRscVGvIo9
+         QURO5aNXsZwjK/eJM59LgWowB9WzmYQAaKIVQ0K+2khSU1A4HWMN7Jw41x9aVjXhJ3wD
+         1VWAjyrjqTcIF/Kk/+CWF5bKyNiKYJ6C+m8CWTY4C4/EZEmxvZAT3Q4eTufQvO5x7TO4
+         B7Rx9L8O/mZfnRDNfJ/Z7J6eCFb9/qqerw6igXLsesJnXtvjSwl4/aPrbDJQcCSsThJ8
+         2i7b5Ik4q52Hjw0/V9isrg5C8L1fJ9ktSoxJs9hFo+e4hsXM+/9/rcjVylp1oliw6Ja2
+         2faA==
+X-Gm-Message-State: AOAM530GVbTp8OkPrdnXJxP+tCXPLbQr5W0dfVdBj5EaNR+y02cJ/cz0
+        3kcOKjRgCKSd1ruTWzccVVtSrgBYYkU=
+X-Google-Smtp-Source: ABdhPJwJQVRpteo2WlW4RD45U90u9w3Bir/5IPPjxXl6Q7riTU/fQWHTNswcF38H+KG41biaAsLKtQ7YqWM=
+X-Received: by 2002:a25:3bca:: with SMTP id i193mr46883130yba.182.1593654970400;
+ Wed, 01 Jul 2020 18:56:10 -0700 (PDT)
+Date:   Thu,  2 Jul 2020 01:56:03 +0000
+Message-Id: <20200702015607.1215430-1-satyat@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.27.0.212.ge8ba1cc988-goog
+Subject: [PATCH v4 0/4] Inline Encryption Support for fscrypt
+From:   Satya Tangirala <satyat@google.com>
+To:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
+Cc:     Satya Tangirala <satyat@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+This patch series adds support for Inline Encryption to fscrypt, f2fs
+and ext4. It builds on the inline encryption support now present in
+the block layer, and has been rebased on v5.8-rc3. Note that Patches 1 and
+2 can be applied independently of Patches 3 and 4 (and Patches 3 and 4 can
+be applied independently of each other).
 
-[ Upstream commit d60b5fbc1ce8210759b568da49d149b868e7c6d3 ]
+This patch series previously went though a number of iterations as part
+of the "Inline Encryption Support" patchset (last version was v13:
+https://lkml.kernel.org/r/20200514003727.69001-1-satyat@google.com).
 
-Don't reissue requests from io_iopoll_reap_events(), the task may not
-have mm, which ends up with NULL. It's better to kill everything off on
-exit anyway.
+Patch 1 introduces the SB_INLINECRYPT sb options, which filesystems
+should set if they want to use blk-crypto for file content en/decryption.
 
-[  677.734670] RIP: 0010:io_iopoll_complete+0x27e/0x630
-...
-[  677.734679] Call Trace:
-[  677.734695]  ? __send_signal+0x1f2/0x420
-[  677.734698]  ? _raw_spin_unlock_irqrestore+0x24/0x40
-[  677.734699]  ? send_signal+0xf5/0x140
-[  677.734700]  io_iopoll_getevents+0x12f/0x1a0
-[  677.734702]  io_iopoll_reap_events.part.0+0x5e/0xa0
-[  677.734703]  io_ring_ctx_wait_and_kill+0x132/0x1c0
-[  677.734704]  io_uring_release+0x20/0x30
-[  677.734706]  __fput+0xcd/0x230
-[  677.734707]  ____fput+0xe/0x10
-[  677.734709]  task_work_run+0x67/0xa0
-[  677.734710]  do_exit+0x35d/0xb70
-[  677.734712]  do_group_exit+0x43/0xa0
-[  677.734713]  get_signal+0x140/0x900
-[  677.734715]  do_signal+0x37/0x780
-[  677.734717]  ? enqueue_hrtimer+0x41/0xb0
-[  677.734718]  ? recalibrate_cpu_khz+0x10/0x10
-[  677.734720]  ? ktime_get+0x3e/0xa0
-[  677.734721]  ? lapic_next_deadline+0x26/0x30
-[  677.734723]  ? tick_program_event+0x4d/0x90
-[  677.734724]  ? __hrtimer_get_next_event+0x4d/0x80
-[  677.734726]  __prepare_exit_to_usermode+0x126/0x1c0
-[  677.734741]  prepare_exit_to_usermode+0x9/0x40
-[  677.734742]  idtentry_exit_cond_rcu+0x4c/0x60
-[  677.734743]  sysvec_reschedule_ipi+0x92/0x160
-[  677.734744]  ? asm_sysvec_reschedule_ipi+0xa/0x20
-[  677.734745]  asm_sysvec_reschedule_ipi+0x12/0x20
+Patch 2 adds inline encryption support to fscrypt. To use inline
+encryption with fscrypt, the filesystem must set the above mentioned
+SB_INLINECRYPT sb option. When this option is set, the contents of
+encrypted files will be en/decrypted using blk-crypto.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Patches 3 and 4 wire up f2fs and ext4 respectively to fscrypt support for
+inline encryption, and e.g ensure that bios are submitted with blocks
+that not only are contiguous, but also have continuous DUNs.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 6cf9d509371e2..43dc745727408 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -858,6 +858,7 @@ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
- 				 struct io_uring_files_update *ip,
- 				 unsigned nr_args);
- static int io_grab_files(struct io_kiocb *req);
-+static void io_complete_rw_common(struct kiocb *kiocb, long res);
- static void io_cleanup_req(struct io_kiocb *req);
- static int io_file_get(struct io_submit_state *state, struct io_kiocb *req,
- 		       int fd, struct file **out_file, bool fixed);
-@@ -1697,6 +1698,14 @@ static void io_iopoll_queue(struct list_head *again)
- 	do {
- 		req = list_first_entry(again, struct io_kiocb, list);
- 		list_del(&req->list);
-+
-+		/* shouldn't happen unless io_uring is dying, cancel reqs */
-+		if (unlikely(!current->mm)) {
-+			io_complete_rw_common(&req->rw.kiocb, -EAGAIN);
-+			io_put_req(req);
-+			continue;
-+		}
-+
- 		refcount_inc(&req->refs);
- 		io_queue_async_work(req);
- 	} while (!list_empty(again));
+This patchset was tested by running xfstests with the "inlinecrypt" mount
+option on ext4 and f2fs with test dummy encryption (the actual
+en/decryption of file contents was handled by the blk-crypto-fallback). It
+was also tested along with the UFS patches from the original series on some
+Qualcomm and Mediatek chipsets with hardware inline encryption support
+(refer to
+https://lkml.kernel.org/linux-scsi/20200501045111.665881-1-ebiggers@kernel.org/
+and
+https://lkml.kernel.org/linux-scsi/20200304022101.14165-1-stanley.chu@mediatek.com/
+for more details on those tests).
+
+Changes v3 => v4
+ - change the page_is_mergeable() check in add_ipu_page() to an f2fs_bug_on
+   since the only caller of add_ipu_page() already checks page_is_mergeable
+ - add reviewed by
+
+Changes v2 => v3
+ - Fix issue with inline encryption + IV_INO_LBLK_32 policy found by Eric
+ - minor cleanup
+
+Changes v1 => v2
+ - SB_INLINECRYPT mount option is shown by individual filesystems instead
+   of by the common VFS code since the option is parsed by filesystem
+   specific code, and is not a mount option applicable generically to
+   all filesystems.
+ - Make fscrypt_select_encryption_impl() return error code when it fails
+   to allocate memory.
+ - cleanups
+ 
+Changes v13 in original patchset => v1
+ - rename struct fscrypt_info::ci_key to ci_enc_key
+ - set dun bytes more precisely in fscrypt
+ - cleanups
+
+Eric Biggers (1):
+  ext4: add inline encryption support
+
+Satya Tangirala (3):
+  fs: introduce SB_INLINECRYPT
+  fscrypt: add inline encryption support
+  f2fs: add inline encryption support
+
+ Documentation/admin-guide/ext4.rst    |   7 +
+ Documentation/filesystems/f2fs.rst    |   7 +
+ Documentation/filesystems/fscrypt.rst |   3 +
+ fs/buffer.c                           |   7 +-
+ fs/crypto/Kconfig                     |   6 +
+ fs/crypto/Makefile                    |   1 +
+ fs/crypto/bio.c                       |  51 ++++
+ fs/crypto/crypto.c                    |   2 +-
+ fs/crypto/fname.c                     |   4 +-
+ fs/crypto/fscrypt_private.h           | 115 +++++++-
+ fs/crypto/inline_crypt.c              | 364 ++++++++++++++++++++++++++
+ fs/crypto/keyring.c                   |   6 +-
+ fs/crypto/keysetup.c                  |  70 +++--
+ fs/crypto/keysetup_v1.c               |  16 +-
+ fs/ext4/inode.c                       |   4 +-
+ fs/ext4/page-io.c                     |   6 +-
+ fs/ext4/readpage.c                    |  11 +-
+ fs/ext4/super.c                       |  12 +
+ fs/f2fs/compress.c                    |   2 +-
+ fs/f2fs/data.c                        |  79 +++++-
+ fs/f2fs/super.c                       |  35 +++
+ include/linux/fs.h                    |   1 +
+ include/linux/fscrypt.h               |  82 ++++++
+ 23 files changed, 820 insertions(+), 71 deletions(-)
+ create mode 100644 fs/crypto/inline_crypt.c
+
 -- 
-2.25.1
+2.27.0.212.ge8ba1cc988-goog
 
