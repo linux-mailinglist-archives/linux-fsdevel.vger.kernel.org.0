@@ -2,317 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F805213F32
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 20:12:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26B95213FD9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 21:21:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726265AbgGCSML (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jul 2020 14:12:11 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:45006 "EHLO mail.hallyn.com"
+        id S1726721AbgGCTU6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jul 2020 15:20:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726147AbgGCSML (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jul 2020 14:12:11 -0400
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 0C5296FC; Fri,  3 Jul 2020 13:12:09 -0500 (CDT)
-Date:   Fri, 3 Jul 2020 13:12:09 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Adrian Reber <areber@redhat.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] selftests: add clone3() CAP_CHECKPOINT_RESTORE
- test
-Message-ID: <20200703181208.GA16241@mail.hallyn.com>
-References: <20200701064906.323185-1-areber@redhat.com>
- <20200701064906.323185-3-areber@redhat.com>
- <20200702205305.GA3283@mail.hallyn.com>
- <20200703111807.GC243637@dcbz.redhat.com>
+        id S1726147AbgGCTU5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Jul 2020 15:20:57 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB37F207FF;
+        Fri,  3 Jul 2020 19:20:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593804057;
+        bh=PEmsm7KiYhEynj7JM9OkcWwJJEMC5FTZ1MgB7GC3/kw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cZz3+cYtChLGxVGtGhI0iqF8NG4vRe7SyHyKP6rwlrniscYuLOgqOM9tC5bBvh6V9
+         rCNuVMRKKdD1/I05cjOph+0nERO2OeeH/Y1QSjn/3szq+YCjsBxWz49TxA/V8HiT6F
+         N6pBBTbIdf7MhFFMTY1BRtmYQCvTyvOSvJ4M/pzg=
+Date:   Fri, 3 Jul 2020 12:20:55 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com
+Subject: Re: [PATCH v9 2/4] fs: Add standard casefolding support
+Message-ID: <20200703192055.GA2825@sol.localdomain>
+References: <20200624043341.33364-1-drosen@google.com>
+ <20200624043341.33364-3-drosen@google.com>
+ <20200624055707.GG844@sol.localdomain>
+ <CA+PiJmTDXTKnccJdADX=ir+PtqsDD72xHGbzObpntkjkVmKHxQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200703111807.GC243637@dcbz.redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CA+PiJmTDXTKnccJdADX=ir+PtqsDD72xHGbzObpntkjkVmKHxQ@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 03, 2020 at 01:18:07PM +0200, Adrian Reber wrote:
-> On Thu, Jul 02, 2020 at 03:53:05PM -0500, Serge E. Hallyn wrote:
-> > On Wed, Jul 01, 2020 at 08:49:05AM +0200, Adrian Reber wrote:
-> > > This adds a test that changes its UID, uses capabilities to
-> > > get CAP_CHECKPOINT_RESTORE and uses clone3() with set_tid to
-> > > create a process with a given PID as non-root.
-> > 
-> > Seems worth also verifying that it fails if you have no capabilities.
-> > I don't see that in the existing clone3/ test dir.
+On Thu, Jul 02, 2020 at 06:01:37PM -0700, Daniel Rosenberg wrote:
+> On Tue, Jun 23, 2020 at 10:57 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > Note that the '!IS_ENCRYPTED(dir) || fscrypt_has_encryption_key(dir)' check can
+> > be racy, because a process can be looking up a no-key token in a directory while
+> > concurrently another process initializes the directory's ->i_crypt_info, causing
+> > fscrypt_has_encryption_key(dir) to suddenly start returning true.
+> >
+> > In my rework of filename handling in f2fs, I actually ended up removing all
+> > calls to needs_casefold(), thus avoiding this race.  f2fs now decides whether
+> > the name is going to need casefolding early on, in __f2fs_setup_filename(),
+> > where it knows in a race-free way whether the filename is a no-key token or not.
+> >
+> > Perhaps ext4 should work the same way?  It did look like there would be some
+> > extra complexity due to how the ext4 directory hashing works in comparison to
+> > f2fs's, but I haven't had a chance to properly investigate it.
+> >
+> > - Eric
 > 
-> Bit confused about what you mean. This test does:
-> 
->  * switch UID to 1000
->  * run clone3() with set_tid set and expect EPERM
->  * set CAP_CHECKPOINT_RESTORE capability
->  * run clone3() with set_tid set and expect success
-> 
-> So it already does what I think you are asking for. Did I misunderstand
-> your comment?
+> Hm. I think I should be able to just check for DCACHE_ENCRYPTED_NAME
+> in the dentry here, right? I'm just trying to avoid casefolding the
+> no-key token, and that flag should indicate that.
 
-Ah, no, I missed that line doing the call with -EPERM.  Thanks!
+Ideally yes, but currently the 'struct dentry' isn't always available.  See how
+fscrypt_setup_filename(), f2fs_setup_filename(), f2fs_find_entry(),
+ext4_find_entry(), etc. take a 'struct qstr', not a 'struct dentry'.
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+At some point we should fix that by passing down the dentry whenever it's
+available, so that we reliably know whether the name is a no-key name or not.
 
+So even my new f2fs code is still racy.  But it at least handles each filename
+in a consistent way within each directory operation.  In comparison, your
+proposed ext4 code can treat a filename as a no-key name while matching one
+dir_entry and then as a regular filename while matching the next.  I think the
+f2fs way is more on the right track, both correctness-wise and efficiency-wise.
 
-> 		Adrian
-> 
-> > > Signed-off-by: Adrian Reber <areber@redhat.com>
-> > > ---
-> > >  tools/testing/selftests/clone3/Makefile       |   4 +-
-> > >  .../clone3/clone3_cap_checkpoint_restore.c    | 203 ++++++++++++++++++
-> > >  2 files changed, 206 insertions(+), 1 deletion(-)
-> > >  create mode 100644 tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> > > 
-> > > diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
-> > > index cf976c732906..ef7564cb7abe 100644
-> > > --- a/tools/testing/selftests/clone3/Makefile
-> > > +++ b/tools/testing/selftests/clone3/Makefile
-> > > @@ -1,6 +1,8 @@
-> > >  # SPDX-License-Identifier: GPL-2.0
-> > >  CFLAGS += -g -I../../../../usr/include/
-> > > +LDLIBS += -lcap
-> > >  
-> > > -TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid
-> > > +TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
-> > > +	clone3_cap_checkpoint_restore
-> > >  
-> > >  include ../lib.mk
-> > > diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> > > new file mode 100644
-> > > index 000000000000..2cc3d57b91f2
-> > > --- /dev/null
-> > > +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> > > @@ -0,0 +1,203 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +/*
-> > > + * Based on Christian Brauner's clone3() example.
-> > > + * These tests are assuming to be running in the host's
-> > > + * PID namespace.
-> > > + */
-> > > +
-> > > +/* capabilities related code based on selftests/bpf/test_verifier.c */
-> > > +
-> > > +#define _GNU_SOURCE
-> > > +#include <errno.h>
-> > > +#include <linux/types.h>
-> > > +#include <linux/sched.h>
-> > > +#include <stdio.h>
-> > > +#include <stdlib.h>
-> > > +#include <stdbool.h>
-> > > +#include <sys/capability.h>
-> > > +#include <sys/prctl.h>
-> > > +#include <sys/syscall.h>
-> > > +#include <sys/types.h>
-> > > +#include <sys/un.h>
-> > > +#include <sys/wait.h>
-> > > +#include <unistd.h>
-> > > +#include <sched.h>
-> > > +
-> > > +#include "../kselftest.h"
-> > > +#include "clone3_selftests.h"
-> > > +
-> > > +#ifndef MAX_PID_NS_LEVEL
-> > > +#define MAX_PID_NS_LEVEL 32
-> > > +#endif
-> > > +
-> > > +static void child_exit(int ret)
-> > > +{
-> > > +	fflush(stdout);
-> > > +	fflush(stderr);
-> > > +	_exit(ret);
-> > > +}
-> > > +
-> > > +static int call_clone3_set_tid(pid_t * set_tid, size_t set_tid_size)
-> > > +{
-> > > +	int status;
-> > > +	pid_t pid = -1;
-> > > +
-> > > +	struct clone_args args = {
-> > > +		.exit_signal = SIGCHLD,
-> > > +		.set_tid = ptr_to_u64(set_tid),
-> > > +		.set_tid_size = set_tid_size,
-> > > +	};
-> > > +
-> > > +	pid = sys_clone3(&args, sizeof(struct clone_args));
-> > > +	if (pid < 0) {
-> > > +		ksft_print_msg("%s - Failed to create new process\n",
-> > > +			       strerror(errno));
-> > > +		return -errno;
-> > > +	}
-> > > +
-> > > +	if (pid == 0) {
-> > > +		int ret;
-> > > +		char tmp = 0;
-> > > +
-> > > +		ksft_print_msg
-> > > +		    ("I am the child, my PID is %d (expected %d)\n",
-> > > +		     getpid(), set_tid[0]);
-> > > +
-> > > +		if (set_tid[0] != getpid())
-> > > +			child_exit(EXIT_FAILURE);
-> > > +		child_exit(EXIT_SUCCESS);
-> > > +	}
-> > > +
-> > > +	ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
-> > > +		       getpid(), pid);
-> > > +
-> > > +	if (waitpid(pid, &status, 0) < 0) {
-> > > +		ksft_print_msg("Child returned %s\n", strerror(errno));
-> > > +		return -errno;
-> > > +	}
-> > > +
-> > > +	if (!WIFEXITED(status))
-> > > +		return -1;
-> > > +
-> > > +	return WEXITSTATUS(status);
-> > > +}
-> > > +
-> > > +static int test_clone3_set_tid(pid_t * set_tid,
-> > > +			       size_t set_tid_size, int expected)
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	ksft_print_msg("[%d] Trying clone3() with CLONE_SET_TID to %d\n",
-> > > +		       getpid(), set_tid[0]);
-> > > +	ret = call_clone3_set_tid(set_tid, set_tid_size);
-> > > +
-> > > +	ksft_print_msg
-> > > +	    ("[%d] clone3() with CLONE_SET_TID %d says :%d - expected %d\n",
-> > > +	     getpid(), set_tid[0], ret, expected);
-> > > +	if (ret != expected) {
-> > > +		ksft_test_result_fail
-> > > +		    ("[%d] Result (%d) is different than expected (%d)\n",
-> > > +		     getpid(), ret, expected);
-> > > +		return -1;
-> > > +	}
-> > > +	ksft_test_result_pass
-> > > +	    ("[%d] Result (%d) matches expectation (%d)\n", getpid(), ret,
-> > > +	     expected);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +struct libcap {
-> > > +	struct __user_cap_header_struct hdr;
-> > > +	struct __user_cap_data_struct data[2];
-> > > +};
-> > > +
-> > > +static int set_capability()
-> > > +{
-> > > +	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
-> > > +	struct libcap *cap;
-> > > +	int ret = -1;
-> > > +	cap_t caps;
-> > > +
-> > > +	caps = cap_get_proc();
-> > > +	if (!caps) {
-> > > +		perror("cap_get_proc");
-> > > +		return -1;
-> > > +	}
-> > > +
-> > > +	/* Drop all capabilities */
-> > > +	if (cap_clear(caps)) {
-> > > +		perror("cap_clear");
-> > > +		goto out;
-> > > +	}
-> > > +
-> > > +	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
-> > > +	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
-> > > +
-> > > +	cap = (struct libcap *) caps;
-> > > +
-> > > +	/* 40 -> CAP_CHECKPOINT_RESTORE */
-> > > +	cap->data[1].effective |= 1 << (40 - 32);
-> > > +	cap->data[1].permitted |= 1 << (40 - 32);
-> > > +
-> > > +	if (cap_set_proc(caps)) {
-> > > +		perror("cap_set_proc");
-> > > +		goto out;
-> > > +	}
-> > > +	ret = 0;
-> > > +out:
-> > > +	if (cap_free(caps))
-> > > +		perror("cap_free");
-> > > +	return ret;
-> > > +}
-> > > +
-> > > +int main(int argc, char *argv[])
-> > > +{
-> > > +	pid_t pid;
-> > > +	int status;
-> > > +	int ret = 0;
-> > > +	pid_t set_tid[1];
-> > > +	uid_t uid = getuid();
-> > > +
-> > > +	ksft_print_header();
-> > > +	test_clone3_supported();
-> > > +	ksft_set_plan(2);
-> > > +
-> > > +	if (uid != 0) {
-> > > +		ksft_cnt.ksft_xskip = ksft_plan;
-> > > +		ksft_print_msg("Skipping all tests as non-root\n");
-> > > +		return ksft_exit_pass();
-> > > +	}
-> > > +
-> > > +	memset(&set_tid, 0, sizeof(set_tid));
-> > > +
-> > > +	/* Find the current active PID */
-> > > +	pid = fork();
-> > > +	if (pid == 0) {
-> > > +		ksft_print_msg("Child has PID %d\n", getpid());
-> > > +		child_exit(EXIT_SUCCESS);
-> > > +	}
-> > > +	if (waitpid(pid, &status, 0) < 0)
-> > > +		ksft_exit_fail_msg("Waiting for child %d failed", pid);
-> > > +
-> > > +	/* After the child has finished, its PID should be free. */
-> > > +	set_tid[0] = pid;
-> > > +
-> > > +	if (set_capability())
-> > > +		ksft_test_result_fail
-> > > +		    ("Could not set CAP_CHECKPOINT_RESTORE\n");
-> > > +	prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0);
-> > > +	/* This would fail without CAP_CHECKPOINT_RESTORE */
-> > > +	setgid(1000);
-> > > +	setuid(1000);
-> > > +	set_tid[0] = pid;
-> > > +	ret |= test_clone3_set_tid(set_tid, 1, -EPERM);
-> > > +	if (set_capability())
-> > > +		ksft_test_result_fail
-> > > +		    ("Could not set CAP_CHECKPOINT_RESTORE\n");
-> > > +	/* This should work as we have CAP_CHECKPOINT_RESTORE as non-root */
-> > > +	ret |= test_clone3_set_tid(set_tid, 1, 0);
-> > > +
-> > > +	return !ret ? ksft_exit_pass() : ksft_exit_fail();
-> > > +}
-> > > -- 
-> > > 2.26.2
-> > 
+- Eric
