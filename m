@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC63621412D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 23:44:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30BB7214130
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 23:44:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727838AbgGCVoN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jul 2020 17:44:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53404 "EHLO
+        id S1727854AbgGCVoS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jul 2020 17:44:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726913AbgGCVoM (ORCPT
+        with ESMTP id S1726913AbgGCVoR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jul 2020 17:44:12 -0400
+        Fri, 3 Jul 2020 17:44:17 -0400
 Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 306D6C061794;
-        Fri,  3 Jul 2020 14:44:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C936C061794;
+        Fri,  3 Jul 2020 14:44:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=incZpa5IzYuxKoiVY1wfaG2NDrHQ8Af3HlDfc4ZtKDk=; b=KEMj7EoGqSbPuk7g2qxJF1qUP/
-        CY6kqOAsh2Juj8iQvnuFEy2bV69j9JSGthAPu2m68ycrMUgtQM72hXhI6P/dQTowSl0qhQYAi19fG
-        KPgIaXtFNhbtYxo2657TsAWYkg4bHcxNFwDVQ2ZPeoMCoI8SehbPfp/UPte4cgP8uaa4Bi+8yQVnA
-        EdGeZBlNiZ3yPuC4TFSgkBJPUMfS2/0nHSRbTBk/Eh7WgpMt5zPHsB2LMC0CMrlkLwDFIbTj5szCn
-        t0gH80gG70GITOIlbUZY4Oudy0vu59YfhplxD9y3riRQuMaUf+oBfyWccwA5NI+1XdA+fvi9XceNV
-        e1WJ04ow==;
+        bh=iC52qoRmLcwFciCkqPwzA3sza3CsSIpvy4KRurXO10U=; b=EvFYgB3HkAOfgpEW7n7DPinnpX
+        GB+9PIK2jY6Yw9kFEB0QxKEI/gUDO+bLzbVPabFSUUrZQ/gx5dkP0MjBLxM9U8s1qc9xsXcor7/GK
+        f2MsQZ8QMUI7+A1REYGNfbtH/cRbnZB9TSh80Y8kFSjIMPQQam2sbBt0p9kB4h6MuOeWDg8wkccxH
+        hoGLlNQNlOiJ94RizOjbZZEXglwOTyUMEYAl5Q1uHGMReVFoDS0azqtvwwDfLZQOR2F7QkBsJC6g1
+        bLNFIdD8TkDKf2unNALJzzVJyRYJLLOlObcy/XKj8yYJVULZrBQUFRRkBHlrv2vaBOIn6Uganrj0M
+        dSlXFhgA==;
 Received: from [2601:1c0:6280:3f0::19c2] (helo=smtpauth.infradead.org)
         by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jrTTc-0006uZ-W1; Fri, 03 Jul 2020 21:44:10 +0000
+        id 1jrTTi-0006uZ-Sl; Fri, 03 Jul 2020 21:44:15 +0000
 From:   Randy Dunlap <rdunlap@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Randy Dunlap <rdunlap@infradead.org>,
@@ -41,9 +41,9 @@ Cc:     Randy Dunlap <rdunlap@infradead.org>,
         "Theodore Y . Ts'o" <tytso@mit.edu>, linux-fscrypt@vger.kernel.org,
         Miklos Szeredi <miklos@szeredi.hu>,
         linux-unionfs@vger.kernel.org
-Subject: [PATCH 07/10] Documentation: filesystems: overlayfs: drop doubled word
-Date:   Fri,  3 Jul 2020 14:43:22 -0700
-Message-Id: <20200703214325.31036-8-rdunlap@infradead.org>
+Subject: [PATCH 08/10] Documentation: filesystems: path-lookup: drop doubled word
+Date:   Fri,  3 Jul 2020 14:43:23 -0700
+Message-Id: <20200703214325.31036-9-rdunlap@infradead.org>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200703214325.31036-1-rdunlap@infradead.org>
 References: <20200703214325.31036-1-rdunlap@infradead.org>
@@ -54,25 +54,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Drop the doubled word "the".
+Drop the doubled word "to".
 
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-unionfs@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
 ---
- Documentation/filesystems/overlayfs.rst |    2 +-
+ Documentation/filesystems/path-lookup.rst |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20200701.orig/Documentation/filesystems/overlayfs.rst
-+++ linux-next-20200701/Documentation/filesystems/overlayfs.rst
-@@ -328,7 +328,7 @@ the time of copy (on-demand vs. up-front
- Multiple lower layers
- ---------------------
+--- linux-next-20200701.orig/Documentation/filesystems/path-lookup.rst
++++ linux-next-20200701/Documentation/filesystems/path-lookup.rst
+@@ -1365,7 +1365,7 @@ as well as blocking ".." if it would jum
+ resolution of "..". Magic-links are also blocked.
  
--Multiple lower layers can now be given using the the colon (":") as a
-+Multiple lower layers can now be given using the colon (":") as a
- separator character between the directory names.  For example:
- 
-   mount -t overlay overlay -olowerdir=/lower1:/lower2:/lower3 /merged
+ ``LOOKUP_IN_ROOT`` resolves all path components as though the starting point
+-were the filesystem root. ``nd_jump_root()`` brings the resolution back to to
++were the filesystem root. ``nd_jump_root()`` brings the resolution back to
+ the starting point, and ".." at the starting point will act as a no-op. As with
+ ``LOOKUP_BENEATH``, ``rename_lock`` and ``mount_lock`` are used to detect
+ attacks against ".." resolution. Magic-links are also blocked.
