@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6780221411A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 23:44:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B2E5214121
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 23:44:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbgGCVn4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jul 2020 17:43:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53358 "EHLO
+        id S1727792AbgGCVoD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jul 2020 17:44:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727028AbgGCVn4 (ORCPT
+        with ESMTP id S1726913AbgGCVoB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jul 2020 17:43:56 -0400
+        Fri, 3 Jul 2020 17:44:01 -0400
 Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7493C061794;
-        Fri,  3 Jul 2020 14:43:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43DD3C061794;
+        Fri,  3 Jul 2020 14:44:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=4dSawoUbToBjQYPQeKu/vzB/+jr94zPa4ftwUT26O9o=; b=FQY8eH7NIX5N2+6YzPa/p7i8cz
-        MF2x/KxqTmwJuCuOd4UfLyGT5QFtwIU9fc5HnT2wmrLfh6JYKbBWA1s1aPI3FXnxw+qF7idP8vPAU
-        4uKGmx1Ewgs3akvMX3yIH0DE1Xqiayl+wYo/oIVQwtosnwnVX7zCNwsANO/IkAzVroVTZhfstH5rD
-        FngNaGGHCn2X7P6rW+3uFQww3Rf6W45T3IXxMBnhV0K4PkIWL9+P7yeR2DGW9S2PWclqIX+M6Z51g
-        4L9aR7Ssy0XGRCqVszKCww80n5XEtshMOxIQh54yhrTswTiKZ/cfTTQm4I5uvdoucelySkuzV1LI0
-        3Xwoa/hQ==;
+        bh=QYt3pLrvEkgdE5J9HL0HcJrm5k49qsMnkbwk8AJ+Pa4=; b=DYk4ml3k/OpYg3wEdP54cuw5kr
+        9boTO/p72S7yr71IB6JW1UzHP60tl2Rjpizt8RMtwF/N+xBTrN/W43HOaKN7e/KUAlKoWB18QOBGd
+        4HJZTZ7ziQNpfeu2fN/PcKVghE+Y45mLZGCntE7MFVoTk+9DXhBS+VqbOUNF2dLgx5EvJOKa9EAvR
+        BFLuKH6X7/OrHc2z2e3CwCxWdlHV5roAefwDtQMbQbcN+J/KMVXX/j6y8ljQqa3QBTtaOeSrdQHx7
+        9/JSu6jVUxiH8uZayeLZMvfnbKE5ET4/3GgZrnomJyH2UWYzO6pCIOvmp+Tj9pc8cVvEX3arI9ZRg
+        btS/XlIg==;
 Received: from [2601:1c0:6280:3f0::19c2] (helo=smtpauth.infradead.org)
         by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jrTTN-0006uZ-95; Fri, 03 Jul 2020 21:43:53 +0000
+        id 1jrTTS-0006uZ-Ch; Fri, 03 Jul 2020 21:43:58 +0000
 From:   Randy Dunlap <rdunlap@infradead.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Randy Dunlap <rdunlap@infradead.org>,
@@ -41,9 +41,9 @@ Cc:     Randy Dunlap <rdunlap@infradead.org>,
         "Theodore Y . Ts'o" <tytso@mit.edu>, linux-fscrypt@vger.kernel.org,
         Miklos Szeredi <miklos@szeredi.hu>,
         linux-unionfs@vger.kernel.org
-Subject: [PATCH 04/10] Documentation: filesystems: directory-locking: drop doubled word
-Date:   Fri,  3 Jul 2020 14:43:19 -0700
-Message-Id: <20200703214325.31036-5-rdunlap@infradead.org>
+Subject: [PATCH 05/10] Documentation: filesystems: fsverity: drop doubled word
+Date:   Fri,  3 Jul 2020 14:43:20 -0700
+Message-Id: <20200703214325.31036-6-rdunlap@infradead.org>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200703214325.31036-1-rdunlap@infradead.org>
 References: <20200703214325.31036-1-rdunlap@infradead.org>
@@ -59,29 +59,21 @@ Drop the doubled word "the".
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: Theodore Y. Ts'o <tytso@mit.edu>
+Cc: linux-fscrypt@vger.kernel.org
 ---
- Documentation/filesystems/directory-locking.rst |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/filesystems/fsverity.rst |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- linux-next-20200701.orig/Documentation/filesystems/directory-locking.rst
-+++ linux-next-20200701/Documentation/filesystems/directory-locking.rst
-@@ -28,7 +28,7 @@ RENAME_EXCHANGE in flags argument) lock
- if the target already exists, lock it.  If the source is a non-directory,
- lock it.  If we need to lock both, lock them in inode pointer order.
- Then call the method.  All locks are exclusive.
--NB: we might get away with locking the the source (and target in exchange
-+NB: we might get away with locking the source (and target in exchange
- case) shared.
+--- linux-next-20200701.orig/Documentation/filesystems/fsverity.rst
++++ linux-next-20200701/Documentation/filesystems/fsverity.rst
+@@ -659,7 +659,7 @@ weren't already directly answered in oth
+       retrofit existing filesystems with new consistency mechanisms.
+       Data journalling is available on ext4, but is very slow.
  
- 5) link creation.  Locking rules:
-@@ -56,7 +56,7 @@ rules:
- 	* call the method.
- 
- All ->i_rwsem are taken exclusive.  Again, we might get away with locking
--the the source (and target in exchange case) shared.
-+the source (and target in exchange case) shared.
- 
- The rules above obviously guarantee that all directories that are going to be
- read, modified or removed by method will be locked by caller.
+-    - Rebuilding the the Merkle tree after every write, which would be
++    - Rebuilding the Merkle tree after every write, which would be
+       extremely inefficient.  Alternatively, a different authenticated
+       dictionary structure such as an "authenticated skiplist" could
+       be used.  However, this would be far more complex.
