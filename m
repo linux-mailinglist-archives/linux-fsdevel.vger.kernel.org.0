@@ -2,82 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EE4C2137DB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 11:44:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1126D2137F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 11:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbgGCJn4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jul 2020 05:43:56 -0400
-Received: from smtprelay0019.hostedemail.com ([216.40.44.19]:41798 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725786AbgGCJnz (ORCPT
+        id S1726410AbgGCJpo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jul 2020 05:45:44 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:33184 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726408AbgGCJpo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jul 2020 05:43:55 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 736CC182CF665;
-        Fri,  3 Jul 2020 09:43:54 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3871:3874:4321:4823:5007:7875:7903:10004:10400:10848:11026:11232:11658:11914:12296:12297:12663:12740:12760:12895:13018:13019:13069:13255:13311:13357:13439:14181:14659:14721:21080:21212:21324:21433:21627:21987:30006:30054:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: limit47_4e12c1126e90
-X-Filterd-Recvd-Size: 2311
-Received: from XPS-9350.home (unknown [47.151.133.149])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Fri,  3 Jul 2020 09:43:52 +0000 (UTC)
-Message-ID: <2f1128bd916cebe01730528b5de47680d8721179.camel@perches.com>
-Subject: Re: [PATCH 16/23] seq_file: switch over direct seq_read method
- calls to seq_read_iter
-From:   Joe Perches <joe@perches.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Fri, 03 Jul 2020 02:43:51 -0700
-In-Reply-To: <CANiq72=LekNWFbK8_+88T2oGSqA5A0fjnvn28cY-tEOfKbSqdw@mail.gmail.com>
-References: <20200701200951.3603160-1-hch@lst.de>
-         <20200701200951.3603160-17-hch@lst.de>
-         <CANiq72=CaKKzXSayH9bRpzMkU2zyHGLA4a-XqTH--_mpTvO7ZQ@mail.gmail.com>
-         <20200702135054.GA29240@lst.de>
-         <CANiq72=8facdt7HBtoUZiJW5zfki-gYYESJzxjXf7wK7dYLm1Q@mail.gmail.com>
-         <d7c902f9eecffc51f3a5761fa343bedad89dff7e.camel@perches.com>
-         <CANiq72=LekNWFbK8_+88T2oGSqA5A0fjnvn28cY-tEOfKbSqdw@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.36.3-0ubuntu1 
+        Fri, 3 Jul 2020 05:45:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1593769542;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=AA5KODddQ3HbG0ydkjTXDrfB0iva22PrfbR0RkgNHDk=;
+        b=Ae7VpSksvYLK1fC0q3zkmXPQ6G099gxRyRqPpz0rc7w9j0WMDABcFpytUYgtOY/VlGRoQI
+        RbbWYYtIAlWN1sHufFU8TbdbT6j+6k0tpFbWIjBsAnHBjGInRg7juZBALq+oWvMuYFxRCV
+        4bRS/UsfpHq3O1QMQNNrHrI4bQ6ELOk=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-350-GJmGwAyYP1aMk0b788Sw4g-1; Fri, 03 Jul 2020 05:45:41 -0400
+X-MC-Unique: GJmGwAyYP1aMk0b788Sw4g-1
+Received: by mail-ot1-f70.google.com with SMTP id l13so2129985otf.16
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Jul 2020 02:45:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AA5KODddQ3HbG0ydkjTXDrfB0iva22PrfbR0RkgNHDk=;
+        b=uJLGlpq0rdUsSWwz3hiNJYm53deZv1ZjDppSQb54kyQ3DLNPpWvAw2BTpW/lHMKWYH
+         C+wIYEUJbz6KfTwdKuwIWBPqqhyqlLyRqWpJEbpZB6os3+CgvqTaOZpSpwW4JgjlKcbw
+         3ywOPufSxAQJvDhElz+kcCKPV0OejkQWoZO9d045qMRP+UY08Hd6rbA+RTO+20lk3JqW
+         COv9aJR97uitPEgybd01ySzvdBdwntZUnZXDVns92pvYxrF7z5vrQ/az38k1yvATbVsB
+         8awPFbNz0pHCuv5bhVzTiLFD194hwRcKr4ZOynwWcd2vB2KmbSisurUg2stapyO679vP
+         VQcQ==
+X-Gm-Message-State: AOAM5339CuhrJ3Cx1u5MmYBovJL7Xyn4dBdurNQRFWD8OFFUETk5Vcjq
+        SNOiXzVRtnZYDiqVbWYdG+yzM0th54Qh3auhLNiZWedDSphaEfQiakYITrBs91pWnrH32yWhixG
+        SxNY/yZRfu9t3apsmxxMvG+RVB2V/PwSwsvDxsO8gyA==
+X-Received: by 2002:a05:6830:1c6e:: with SMTP id s14mr25164708otg.58.1593769540965;
+        Fri, 03 Jul 2020 02:45:40 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx+Ce/YV4Ri2FhaSPK6PoutDZUmwdOzBUZOLe5RemGei+boqUpH8/2S5wzAt2YXKDn+6fKVwICp10PF4itwpMQ=
+X-Received: by 2002:a05:6830:1c6e:: with SMTP id s14mr25164681otg.58.1593769540566;
+ Fri, 03 Jul 2020 02:45:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20200702165120.1469875-1-agruenba@redhat.com> <20200702165120.1469875-3-agruenba@redhat.com>
+ <CAHk-=wgpsuC6ejzr3pn5ej5Yn5z4xthNUUOvmA7KXHHGynL15Q@mail.gmail.com>
+ <CAHc6FU5_JnK=LHtLL9or6E2+XMwNgmftdM_V71hDqk8apawC4A@mail.gmail.com> <CAHk-=wiDA9wm09e1aOSwqq9=e5iTEP5ncheux=C=p62h7dWvbA@mail.gmail.com>
+In-Reply-To: <CAHk-=wiDA9wm09e1aOSwqq9=e5iTEP5ncheux=C=p62h7dWvbA@mail.gmail.com>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Fri, 3 Jul 2020 11:45:29 +0200
+Message-ID: <CAHc6FU5rz+2NZwvXqAxSAme9uvY8cGEHjnBmwi0S6NFnHRbUCA@mail.gmail.com>
+Subject: Re: [RFC 2/4] fs: Add IOCB_NOIO flag for generic_file_read_iter
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2020-07-03 at 11:35 +0200, Miguel Ojeda wrote:
-> On Fri, Jul 3, 2020 at 9:44 AM Joe Perches <joe@perches.com> wrote:
-> > And I'd generally not bother with 80 column rewrapping
-> 
-> Thanks for the quick answer Joe -- here I was referring to the cases
-> where one needs to move all the `=`s to the right like:
-> 
->  static const struct file_operations memtype_fops = {
->   .open    = memtype_seq_open,
-> - .read    = seq_read,
-> + .read_iter    = seq_read_iter,
->   .llseek  = seq_lseek,
->   .release = seq_release,
->  };
-> 
-> (I don't think there is any/many cases of 80-column rewrapping here).
+On Thu, Jul 2, 2020 at 10:18 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Thu, Jul 2, 2020 at 12:58 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+> > > Of course, if you want to avoid both new reads to be submitted _and_
+> > > avoid waiting for existing pending reads, you should just set both
+> > > flags, and you get the semantics you want. So for your case, this may
+> > > not make any difference.
+> >
+> > Indeed, in the gfs2 case, waiting for existing pending reads should be
+> > fine. I'll send an update after some testing.
+>
+> Do note that "wait for pending reads" very much does imply "wait for
+> those reads to _complete_".
+>
+> And maybe the IO completion handler itself ends up having to finalize
+> something and take the lock to do that?
+>
+> So in that case, even just "waiting" will cause a deadlock. Not
+> because the waiter itself needs the lock, but because the thing it
+> waits for might possibly need it.
+>
+> But in many simple cases, IO completion shouldn't need any filesystem
+> locks. I just don't know the gfs2 code at all, so I'm not even going
+> to guess. I just wanted to mention it.
 
-OK.
+Yes, that makes sense. Luckily gfs2 doesn't do any such locking on IO
+completion.
 
-I'm not much bothered much by alignments like that and
-I don't see a good way to automate such conversions as
-some might, as here, use spaces to align to = and most
-would use tabs.
-
-
-
+Thanks,
+Andreas
 
