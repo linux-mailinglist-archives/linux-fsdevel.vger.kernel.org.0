@@ -2,335 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8742621415E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jul 2020 00:04:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A361F21418C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jul 2020 00:31:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbgGCWEZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jul 2020 18:04:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726258AbgGCWEZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jul 2020 18:04:25 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C3DD20739;
-        Fri,  3 Jul 2020 22:04:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593813864;
-        bh=4srlIXNOcN6ni0HVpkGOIUvvlfwmheTopq1Pd8E6wR8=;
-        h=Date:From:To:Subject:From;
-        b=NrkIcUr1c3pLHNcjLI289bg/gbVFjBGYew1vkM1WoBBt88k0nCwpvHBBdQBo+5Ixl
-         AwdXLQCPsBHrqZJY53ICvWGd5TaeZS6GbejHayP4auGrq6TVUpgr9tqSkfFkBPj1zj
-         45hXkfhKmlYHcYwLP/W18SHlm7zW6V4M5kslK0vc=
-Date:   Fri, 03 Jul 2020 15:04:23 -0700
-From:   akpm@linux-foundation.org
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2020-07-03-15-03 uploaded
-Message-ID: <20200703220423.GEbKTUJ0A%akpm@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        id S1726317AbgGCWag (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jul 2020 18:30:36 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:45110 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbgGCWaf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Jul 2020 18:30:35 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jrUCR-000708-Gl; Fri, 03 Jul 2020 16:30:27 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jrUCQ-0005eV-HO; Fri, 03 Jul 2020 16:30:27 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20200625095725.GA3303921@kroah.com>
+        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+        <20200625120725.GA3493334@kroah.com>
+        <20200625.123437.2219826613137938086.davem@davemloft.net>
+        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+        <87y2oac50p.fsf@x220.int.ebiederm.org>
+        <87bll17ili.fsf_-_@x220.int.ebiederm.org>
+        <20200629221231.jjc2czk3ul2roxkw@ast-mbp.dhcp.thefacebook.com>
+        <87eepwzqhd.fsf@x220.int.ebiederm.org>
+        <1f4d8b7e-bcff-f950-7dac-76e3c4a65661@i-love.sakura.ne.jp>
+        <87pn9euks9.fsf@x220.int.ebiederm.org>
+        <757f37f8-5641-91d2-be80-a96ebc74cacb@i-love.sakura.ne.jp>
+        <87h7upucqi.fsf@x220.int.ebiederm.org>
+        <d0266a24-dfab-83d0-e178-aa67c9f5ebc0@i-love.sakura.ne.jp>
+Date:   Fri, 03 Jul 2020 17:25:49 -0500
+In-Reply-To: <d0266a24-dfab-83d0-e178-aa67c9f5ebc0@i-love.sakura.ne.jp>
+        (Tetsuo Handa's message of "Fri, 3 Jul 2020 22:19:17 +0900")
+Message-ID: <87lfk0nslu.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1jrUCQ-0005eV-HO;;;mid=<87lfk0nslu.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19gJkekNuulipNZ4g9GUrgrQKnIVKDpx4I=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 539 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 11 (2.1%), b_tie_ro: 10 (1.8%), parse: 1.10
+        (0.2%), extract_message_metadata: 13 (2.5%), get_uri_detail_list: 3.0
+        (0.5%), tests_pri_-1000: 6 (1.1%), tests_pri_-950: 1.36 (0.3%),
+        tests_pri_-900: 1.06 (0.2%), tests_pri_-90: 82 (15.2%), check_bayes:
+        80 (14.9%), b_tokenize: 12 (2.3%), b_tok_get_all: 13 (2.3%),
+        b_comp_prob: 4.0 (0.7%), b_tok_touch_all: 47 (8.8%), b_finish: 1.00
+        (0.2%), tests_pri_0: 411 (76.1%), check_dkim_signature: 0.57 (0.1%),
+        check_dkim_adsp: 1.97 (0.4%), poll_dns_idle: 0.48 (0.1%),
+        tests_pri_10: 2.2 (0.4%), tests_pri_500: 7 (1.3%), rewrite_mail: 0.00
+        (0.0%)
+Subject: Re: [PATCH v2 00/15] Make the user mode driver code a better citizen
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2020-07-03-15-03 has been uploaded to
+Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
 
-   http://www.ozlabs.org/~akpm/mmotm/
+> On 2020/07/02 22:08, Eric W. Biederman wrote:
+>>> By the way, commit 4a9d4b024a3102fc ("switch fput to task_work_add") says
+>>> that use of flush_delayed_fput() has to be careful. Al, is it safe to call
+>>> flush_delayed_fput() from blob_to_mnt() from umd_load_blob() (which might be
+>>> called from both kernel thread and from process context (e.g. init_module()
+>>> syscall by /sbin/insmod )) ?
+>> 
+>> And __fput_sync needs to be even more careful.
+>> umd_load_blob is called in these changes without any locks held.
+>
+> But where is the guarantee that a thread which called flush_delayed_fput() waits for
+> the completion of processing _all_ "struct file" linked into delayed_fput_list ?
+> If some other thread or delayed_fput_work (scheduled by fput_many()) called
+> flush_delayed_fput() between blob_to_mnt()'s fput(file) and flush_delayed_fput()
+> sequence? blob_to_mnt()'s flush_delayed_fput() can miss the "struct file" which
+> needs to be processed before execve(), can't it?
 
-mmotm-readme.txt says
+As a module the guarantee is we call task_work_run.
+Built into the kernel the guarantee as best I can trace it is that
+kthreadd hasn't started, and as such nothing that is scheduled has run
+yet.
 
-README for mm-of-the-moment:
+> Also, I don't know how convoluted the dependency of all "struct file" linked into
+> delayed_fput_list might be, for there can be "struct file" which will not be a
+> simple close of tmpfs file created by blob_to_mnt()'s file_open_root() request.
+>
+> On the other hand, although __fput_sync() cannot be called from !PF_KTHREAD threads,
+> there is a guarantee that __fput_sync() waits for the completion of "struct file"
+> which needs to be flushed before execve(), isn't there?
 
-http://www.ozlabs.org/~akpm/mmotm/
+There is really not a good helper or helpers, and this code suggests we
+have something better.  Right now I have used the existing helpers to
+the best of my ability.  If you or someone else wants to write a better
+version of flushing so that exec can happen be my guest.
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+As far as I can tell what I have is good enough.
 
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+>> We fundamentally AKA in any correct version of this code need to flush
+>> the file descriptor before we call exec or exec can not open it a
+>> read-only denying all writes from any other opens.
+>> 
+>> The use case of flush_delayed_fput is exactly the same as that used
+>> when loading the initramfs.
+>
+> When loading the initramfs, the number of threads is quite few (which
+> means that the possibility of hitting the race window and convoluted
+> dependency is small).
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+But the reality is the code run very early, before the initramfs is
+initialized in practice.
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+> But like EXPORT_SYMBOL_GPL(umd_load_blob) indicates, blob_to_mnt()'s
+> flush_delayed_fput() might be called after many number of threads already
+> started running.
 
+At which point the code probably won't be runnig from a kernel thread
+but instead will be running in a thread where task_work_run is relevant.
 
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
+At worst it is a very small race, where someone else in another thread
+starts flushing the file.  Which means the file could still be
+completely close before exec.   Even that is not necessarily fatal,
+as the usermode driver code has a respawn capability.
 
-	https://github.com/hnaz/linux-mm
+Code that is used enough that it hits that race sounds like a very
+good problem to have from the perspective of the usermode driver code.
 
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
+> Do we really need to mount upon umd_load_blob() and unmount upon umd_unload_blob() ?
+> LSM modules might prefer only one instance of filesystem for umd
+> blobs.
 
-A git copy of this tree is also available at
+It is simple. People are free to change it, but a single filesystem
+seems like a very good place to start with this functionality.
 
-	https://github.com/hnaz/linux-mm
+> For pathname based LSMs, since that filesystem is not visible from mount tree, only
+> info->driver_name can be used for distinction. Therefore, one instance of filesystem
+> with files created with file_open_root(O_CREAT | O_WRONLY | O_EXCL)
+> might be preferable.
 
+I took a quick look and the creation and removal of files with the
+in-kernel helpers is not particularly easy.  Certainly it is more work
+and thus a higher likelyhood of bugs than what I have done.
 
+A directory per driver does sound tempting.  Just more work that I am
+willing to do.
 
-This mmotm tree contains the following patches against 5.8-rc3:
-(patches marked "*" will be included in linux-next)
+> For inode based LSMs, reusing one instance of filesystem created upon early boot might
+> be convenient for labeling.
+>
+> Also, we might want a dedicated filesystem (say, "umdfs") instead of regular tmpfs in
+> order to implement protections without labeling files. Then, we might also be able to
+> implement minimal protections without LSMs.
 
-  origin.patch
-* hugetlb-fix-pages-per-hugetlb-calculation.patch
-* samples-vfs-avoid-warning-in-statx-override.patch
-* mm-cmac-use-exact_nid-true-to-fix-possible-per-numa-cma-leak.patch
-* vmalloc-fix-the-owner-argument-for-the-new-__vmalloc_node_range-callers.patch
-* mm-page_alloc-fix-documentation-error.patch
-* mm-shuffle-dont-move-pages-between-zones-and-dont-read-garbage-memmaps.patch
-* mm-initialize-return-of-vm_insert_pages.patch
-* mm-shmem-fix-freeing-new_attr-in-shmem_initxattrs.patch
-* mm-memcontrol-fix-oops-inside-mem_cgroup_get_nr_swap_pages.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* checkpatch-test-git_dir-changes.patch
-* kthread-work-could-not-be-queued-when-worker-being-destroyed.patch
-* scripts-tagssh-collect-compiled-source-precisely.patch
-* scripts-tagssh-collect-compiled-source-precisely-v2.patch
-* bloat-o-meter-support-comparing-library-archives.patch
-* scripts-decode_stacktrace-skip-missing-symbols.patch
-* scripts-decode_stacktrace-guess-basepath-if-not-specified.patch
-* scripts-decode_stacktrace-guess-path-to-modules.patch
-* scripts-decode_stacktrace-guess-path-to-vmlinux-by-release-name.patch
-* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
-* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
-* ocfs2-change-slot-number-type-s16-to-u16.patch
-* ramfs-support-o_tmpfile.patch
-* kernel-watchdog-flush-all-printk-nmi-buffers-when-hardlockup-detected.patch
-  mm.patch
-* mm-treewide-rename-kzfree-to-kfree_sensitive.patch
-* mm-ksize-should-silently-accept-a-null-pointer.patch
-* mm-expand-config_slab_freelist_hardened-to-include-slab.patch
-* slab-add-naive-detection-of-double-free.patch
-* slab-add-naive-detection-of-double-free-fix.patch
-* mm-slab-check-gfp_slab_bug_mask-before-alloc_pages-in-kmalloc_order.patch
-* mm-slub-extend-slub_debug-syntax-for-multiple-blocks.patch
-* mm-slub-extend-slub_debug-syntax-for-multiple-blocks-fix.patch
-* mm-slub-make-some-slub_debug-related-attributes-read-only.patch
-* mm-slub-remove-runtime-allocation-order-changes.patch
-* mm-slub-make-remaining-slub_debug-related-attributes-read-only.patch
-* mm-slub-make-reclaim_account-attribute-read-only.patch
-* mm-slub-introduce-static-key-for-slub_debug.patch
-* mm-slub-introduce-kmem_cache_debug_flags.patch
-* mm-slub-introduce-kmem_cache_debug_flags-fix.patch
-* mm-slub-extend-checks-guarded-by-slub_debug-static-key.patch
-* mm-slab-slub-move-and-improve-cache_from_obj.patch
-* mm-slab-slub-improve-error-reporting-and-overhead-of-cache_from_obj.patch
-* mm-slab-slub-improve-error-reporting-and-overhead-of-cache_from_obj-fix.patch
-* slub-drop-lockdep_assert_held-from-put_map.patch
-* mm-kcsan-instrument-slab-slub-free-with-assert_exclusive_access.patch
-* mm-filemap-clear-idle-flag-for-writes.patch
-* mm-filemap-add-missing-fgp_-flags-in-kerneldoc-comment-for-pagecache_get_page.patch
-* mm-kmem-make-memcg_kmem_enabled-irreversible.patch
-* mm-memcg-factor-out-memcg-and-lruvec-level-changes-out-of-__mod_lruvec_state.patch
-* mm-memcg-prepare-for-byte-sized-vmstat-items.patch
-* mm-memcg-convert-vmstat-slab-counters-to-bytes.patch
-* mm-slub-implement-slub-version-of-obj_to_index.patch
-* mm-memcontrol-decouple-reference-counting-from-page-accounting.patch
-* mm-memcg-slab-obj_cgroup-api.patch
-* mm-memcg-slab-allocate-obj_cgroups-for-non-root-slab-pages.patch
-* mm-memcg-slab-save-obj_cgroup-for-non-root-slab-objects.patch
-* mm-memcg-slab-charge-individual-slab-objects-instead-of-pages.patch
-* mm-memcg-slab-deprecate-memorykmemslabinfo.patch
-* mm-memcg-slab-move-memcg_kmem_bypass-to-memcontrolh.patch
-* mm-memcg-slab-use-a-single-set-of-kmem_caches-for-all-accounted-allocations.patch
-* mm-memcg-slab-simplify-memcg-cache-creation.patch
-* mm-memcg-slab-remove-memcg_kmem_get_cache.patch
-* mm-memcg-slab-deprecate-slab_root_caches.patch
-* mm-memcg-slab-remove-redundant-check-in-memcg_accumulate_slabinfo.patch
-* mm-memcg-slab-use-a-single-set-of-kmem_caches-for-all-allocations.patch
-* kselftests-cgroup-add-kernel-memory-accounting-tests.patch
-* tools-cgroup-add-memcg_slabinfopy-tool.patch
-* percpu-return-number-of-released-bytes-from-pcpu_free_area.patch
-* mm-memcg-percpu-account-percpu-memory-to-memory-cgroups.patch
-* mm-memcg-percpu-account-percpu-memory-to-memory-cgroups-fix.patch
-* mm-memcg-percpu-account-percpu-memory-to-memory-cgroups-fix-fix.patch
-* mm-memcg-percpu-per-memcg-percpu-memory-statistics.patch
-* mm-memcg-percpu-per-memcg-percpu-memory-statistics-v3.patch
-* mm-memcg-charge-memcg-percpu-memory-to-the-parent-cgroup.patch
-* kselftests-cgroup-add-perpcu-memory-accounting-test.patch
-* mm-memcontrol-account-kernel-stack-per-node.patch
-* mm-remove-redundant-check-non_swap_entry.patch
-* mm-memoryc-make-remap_pfn_range-reject-unaligned-addr.patch
-* mm-remove-unneeded-includes-of-asm-pgalloch.patch
-* opeinrisc-switch-to-generic-version-of-pte-allocation.patch
-* xtensa-switch-to-generic-version-of-pte-allocation.patch
-* asm-generic-pgalloc-provide-generic-pmd_alloc_one-and-pmd_free_one.patch
-* asm-generic-pgalloc-provide-generic-pud_alloc_one-and-pud_free_one.patch
-* asm-generic-pgalloc-provide-generic-pgd_free.patch
-* mm-move-lib-ioremapc-to-mm.patch
-* mm-move-pd_alloc_track-to-separate-header-file.patch
-* mm-mmap-fix-the-adjusted-length-error.patch
-* proc-meminfo-avoid-open-coded-reading-of-vm_committed_as.patch
-* mm-utilc-make-vm_memory_committed-more-accurate.patch
-* mm-adjust-vm_committed_as_batch-according-to-vm-overcommit-policy.patch
-* mm-mremap-format-the-check-in-move_normal_pmd-same-as-move_huge_pmd.patch
-* mm-mremap-it-is-sure-to-have-enough-space-when-extent-meets-requirement.patch
-* mm-mremap-calculate-extent-in-one-place.patch
-* mm-mremap-start-addresses-are-properly-aligned.patch
-* mm-sparse-never-partially-remove-memmap-for-early-section.patch
-* mm-sparse-only-sub-section-aligned-range-would-be-populated.patch
-* vmalloc-convert-to-xarray.patch
-* mm-vmalloc-simplify-merge_or_add_vmap_area-func.patch
-* mm-vmalloc-simplify-augment_tree_propagate_check-func.patch
-* mm-vmalloc-switch-to-propagate-callback.patch
-* mm-vmalloc-update-the-header-about-kva-rework.patch
-* kasan-improve-and-simplify-kconfigkasan.patch
-* kasan-update-required-compiler-versions-in-documentation.patch
-* rcu-kasan-record-and-print-call_rcu-call-stack.patch
-* kasan-record-and-print-the-free-track.patch
-* kasan-add-tests-for-call_rcu-stack-recording.patch
-* kasan-update-documentation-for-generic-kasan.patch
-* mm-page_alloc-use-unlikely-in-task_capc.patch
-* page_alloc-consider-highatomic-reserve-in-watermark-fast.patch
-* page_alloc-consider-highatomic-reserve-in-watermark-fast-v5.patch
-* mm-page_alloc-skip-waternark_boost-for-atomic-order-0-allocations.patch
-* mm-page_alloc-skip-watermark_boost-for-atomic-order-0-allocations-fix.patch
-* mm-drop-vm_total_pages.patch
-* mm-page_alloc-drop-nr_free_pagecache_pages.patch
-* mm-memory_hotplug-document-why-shuffle_zone-is-relevant.patch
-* mm-shuffle-remove-dynamic-reconfiguration.patch
-* powerpc-numa-set-numa_node-for-all-possible-cpus.patch
-* powerpc-numa-prefer-node-id-queried-from-vphn.patch
-* mm-page_alloc-keep-memoryless-cpuless-node-0-offline.patch
-* mm-page_allocc-replace-the-definition-of-nr_migratetype_bits-with-pb_migratetype_bits.patch
-* mm-page_allocc-extract-the-common-part-in-pfn_to_bitidx.patch
-* mm-page_allocc-simplify-pageblock-bitmap-access.patch
-* mm-page_allocc-remove-unnecessary-end_bitidx-for-_pfnblock_flags_mask.patch
-* mm-page_alloc-silence-a-kasan-false-positive.patch
-* mm-page_alloc-fallbacks-at-most-has-3-elements.patch
-* mm-huge_memoryc-update-tlb-entry-if-pmd-is-changed.patch
-* mips-do-not-call-flush_tlb_all-when-setting-pmd-entry.patch
-* mm-vmscanc-fixed-typo.patch
-* mm-proactive-compaction.patch
-* mm-proactive-compaction-fix.patch
-* mm-use-unsigned-types-for-fragmentation-score.patch
-* hugetlbfs-prevent-filesystem-stacking-of-hugetlbfs.patch
-* mm-page_isolation-prefer-the-node-of-the-source-page.patch
-* mm-migrate-move-migration-helper-from-h-to-c.patch
-* mm-hugetlb-unify-migration-callbacks.patch
-* mm-hugetlb-make-hugetlb-migration-callback-cma-aware.patch
-* mm-migrate-make-a-standard-migration-target-allocation-function.patch
-* mm-gup-use-a-standard-migration-target-allocation-callback.patch
-* mm-mempolicy-use-a-standard-migration-target-allocation-callback.patch
-* mm-page_alloc-remove-a-wrapper-for-alloc_migration_target.patch
-* mm-thp-remove-debug_cow-switch.patch
-* mm-vmstat-add-events-for-pmd-based-thp-migration-without-split.patch
-* mm-vmstat-add-events-for-pmd-based-thp-migration-without-split-fix.patch
-* mm-vmstat-add-events-for-pmd-based-thp-migration-without-split-update.patch
-* mm-store-compound_nr-as-well-as-compound_order.patch
-* mm-move-page-flags-include-to-top-of-file.patch
-* mm-add-thp_order.patch
-* mm-add-thp_size.patch
-* mm-replace-hpage_nr_pages-with-thp_nr_pages.patch
-* mm-add-thp_head.patch
-* mm-introduce-offset_in_thp.patch
-* mm-cma-fix-null-pointer-dereference-when-cma-could-not-be-activated.patch
-* mm-cma-fix-the-name-of-cma-areas.patch
-* mm-cma-fix-the-name-of-cma-areas-fix.patch
-* mm-hugetlb-fix-the-name-of-hugetlb-cma.patch
-* mmhwpoison-cleanup-unused-pagehuge-check.patch
-* mm-hwpoison-remove-recalculating-hpage.patch
-* mmmadvise-call-soft_offline_page-without-mf_count_increased.patch
-* mmmadvise-refactor-madvise_inject_error.patch
-* mmhwpoison-inject-dont-pin-for-hwpoison_filter.patch
-* mmhwpoison-un-export-get_hwpoison_page-and-make-it-static.patch
-* mmhwpoison-kill-put_hwpoison_page.patch
-* mmhwpoison-remove-mf_count_increased.patch
-* mmhwpoison-remove-flag-argument-from-soft-offline-functions.patch
-* mmhwpoison-unify-thp-handling-for-hard-and-soft-offline.patch
-* mmhwpoison-rework-soft-offline-for-free-pages.patch
-* mmhwpoison-rework-soft-offline-for-free-pages-fix.patch
-* mmhwpoison-rework-soft-offline-for-in-use-pages.patch
-* mmhwpoison-refactor-soft_offline_huge_page-and-__soft_offline_page.patch
-* mmhwpoison-refactor-soft_offline_huge_page-and-__soft_offline_page-fix.patch
-* mmhwpoison-refactor-soft_offline_huge_page-and-__soft_offline_page-fix-fix.patch
-* mmhwpoison-return-0-if-the-page-is-already-poisoned-in-soft-offline.patch
-* mmhwpoison-introduce-mf_msg_unsplit_thp.patch
-* sched-mm-optimize-current_gfp_context.patch
-* x86-mm-use-max-memory-block-size-on-bare-metal.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* fix-annotation-of-ioreadwrite1632be.patch
-* mailmap-add-entry-for-obsolete-email-address.patch
-* sparse-group-the-defines-by-functionality.patch
-* bitmap-fix-bitmap_cut-for-partial-overlapping-case.patch
-* bitmap-add-test-for-bitmap_cut.patch
-* lib-generic-radix-treec-remove-unneeded-__rcu.patch
-* lib-optimize-cpumask_local_spread.patch
-* bits-add-tests-of-genmask.patch
-* bits-add-tests-of-genmask-fix.patch
-* bits-add-tests-of-genmask-fix-2.patch
-* checkpatch-add-test-for-possible-misuse-of-is_enabled-without-config_.patch
-* checkpatch-support-deprecated-terms-checking.patch
-* scripts-deprecated_terms-recommend-denylist-allowlist-instead-of-blacklist-whitelist.patch
-* checkpatch-add-fix-option-for-assign_in_if.patch
-* checkpatch-fix-const_struct-when-const_structscheckpatch-is-missing.patch
-* fatfs-switch-write_lock-to-read_lock-in-fat_ioctl_get_attributes.patch
-* fs-signalfdc-fix-inconsistent-return-codes-for-signalfd4.patch
-* selftests-kmod-use-variable-name-in-kmod_test_0001.patch
-* kmod-remove-redundant-be-an-in-the-comment.patch
-* test_kmod-avoid-potential-double-free-in-trigger_config_run_type.patch
-* coredump-add-%f-for-executable-filename.patch
-* exec-change-uselib2-is_sreg-failure-to-eacces.patch
-* exec-move-s_isreg-check-earlier.patch
-* exec-move-path_noexec-check-earlier.patch
-* umh-fix-refcount-underflow-in-fork_usermode_blob.patch
-* kdump-append-kernel-build-id-string-to-vmcoreinfo.patch
-* rapidio-rio_mport_cdev-use-struct_size-helper.patch
-* rapidio-use-struct_size-helper.patch
-* kernel-panicc-make-oops_may_print-return-bool.patch
-* lib-kconfigdebug-fix-typo-in-the-help-text-of-config_panic_timeout.patch
-* aio-simplify-read_events.patch
-* kcov-unconditionally-add-fno-stack-protector-to-compiler-options.patch
-* kcov-make-some-symbols-static.patch
-  linux-next.patch
-  linux-next-rejects.patch
-* mm-madvise-pass-task-and-mm-to-do_madvise.patch
-* pid-move-pidfd_get_pid-to-pidc.patch
-* mm-madvise-introduce-process_madvise-syscall-an-external-memory-hinting-api.patch
-* mm-madvise-introduce-process_madvise-syscall-an-external-memory-hinting-api-fix.patch
-* mm-madvise-introduce-process_madvise-syscall-an-external-memory-hinting-api-fix-2.patch
-* mm-madvise-check-fatal-signal-pending-of-target-process.patch
-* all-arch-remove-system-call-sys_sysctl.patch
-* all-arch-remove-system-call-sys_sysctl-fix.patch
-* mm-kmemleak-silence-kcsan-splats-in-checksum.patch
-* mm-frontswap-mark-various-intentional-data-races.patch
-* mm-page_io-mark-various-intentional-data-races.patch
-* mm-page_io-mark-various-intentional-data-races-v2.patch
-* mm-swap_state-mark-various-intentional-data-races.patch
-* mm-filemap-fix-a-data-race-in-filemap_fault.patch
-* mm-swapfile-fix-and-annotate-various-data-races.patch
-* mm-swapfile-fix-and-annotate-various-data-races-v2.patch
-* mm-page_counter-fix-various-data-races-at-memsw.patch
-* mm-memcontrol-fix-a-data-race-in-scan-count.patch
-* mm-list_lru-fix-a-data-race-in-list_lru_count_one.patch
-* mm-mempool-fix-a-data-race-in-mempool_free.patch
-* mm-rmap-annotate-a-data-race-at-tlb_flush_batched.patch
-* mm-swap-annotate-data-races-for-lru_rotate_pvecs.patch
-* mm-annotate-a-data-race-in-page_zonenum.patch
-* include-asm-generic-vmlinuxldsh-align-ro_after_init.patch
-* sh-clkfwk-remove-r8-r16-r32.patch
-* sh-remove-call-to-memset-after-dma_alloc_coherent.patch
-* sh-use-generic-strncpy.patch
-* sh-add-missing-export_symbol-for-__delay.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
+All valid points.  Nothing sets this design in stone.
+Nothing says this is the endpoint of the evolution of this code.
+
+The entire point of this patchset for me is that I remove the
+unnecessary special cases from exec and do_exit, so I don't have to deal
+with the usermode driver code anymore.
+
+Eric
