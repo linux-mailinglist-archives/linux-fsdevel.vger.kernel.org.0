@@ -2,328 +2,317 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E541D213D25
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 18:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F805213F32
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 20:12:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726111AbgGCQCc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jul 2020 12:02:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59420 "EHLO mx2.suse.de"
+        id S1726265AbgGCSML (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jul 2020 14:12:11 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:45006 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726035AbgGCQCc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jul 2020 12:02:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id D3C9CAD79;
-        Fri,  3 Jul 2020 16:02:29 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 6F88B1E12EB; Fri,  3 Jul 2020 18:02:29 +0200 (CEST)
-Date:   Fri, 3 Jul 2020 18:02:29 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 19/20] fanotify: move event name into fanotify_fh
-Message-ID: <20200703160229.GF21364@quack2.suse.cz>
-References: <20200612093343.5669-1-amir73il@gmail.com>
- <20200612093343.5669-20-amir73il@gmail.com>
+        id S1726147AbgGCSML (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Jul 2020 14:12:11 -0400
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 0C5296FC; Fri,  3 Jul 2020 13:12:09 -0500 (CDT)
+Date:   Fri, 3 Jul 2020 13:12:09 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Adrian Reber <areber@redhat.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] selftests: add clone3() CAP_CHECKPOINT_RESTORE
+ test
+Message-ID: <20200703181208.GA16241@mail.hallyn.com>
+References: <20200701064906.323185-1-areber@redhat.com>
+ <20200701064906.323185-3-areber@redhat.com>
+ <20200702205305.GA3283@mail.hallyn.com>
+ <20200703111807.GC243637@dcbz.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200612093343.5669-20-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200703111807.GC243637@dcbz.redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 12-06-20 12:33:42, Amir Goldstein wrote:
-> An fanotify event name is always recorded relative to a dir fh.
-> Move the name_len members of fanotify_name_event into unused space
-> in struct fanotify_fh.
+On Fri, Jul 03, 2020 at 01:18:07PM +0200, Adrian Reber wrote:
+> On Thu, Jul 02, 2020 at 03:53:05PM -0500, Serge E. Hallyn wrote:
+> > On Wed, Jul 01, 2020 at 08:49:05AM +0200, Adrian Reber wrote:
+> > > This adds a test that changes its UID, uses capabilities to
+> > > get CAP_CHECKPOINT_RESTORE and uses clone3() with set_tid to
+> > > create a process with a given PID as non-root.
+> > 
+> > Seems worth also verifying that it fails if you have no capabilities.
+> > I don't see that in the existing clone3/ test dir.
 > 
-> We add a name_offset member to allow packing a binary blob before
-> the name string in the variable size buffer. We are going to use
-> that space to store the child fid.
-
-So how much is this packing going to save us? Currently it is 1 byte for
-name events (modulo that fanotify_alloc_name_event_bug() you mention
-below). With the additional fanotify_fh in the event, we'll save two more
-bytes by the packing. So that doesn't really seem to be worth it to me.
-Am I missing some other benefit?
-
-Maybe your main motivation (which is not mentioned in the changelog at all
-BTW) is that the whole game of inline vs out of line file handles is
-pointless when we kmalloc() the event anyway because of the name? And it's
-actively wasteful in case handles don't fit in the inline space. I agree
-with that and it's good observation. But I'd rather leave fanotify_fh
-struct alone for the cases where we want to bother with inline vs out of line
-file handles and define new way of partitioning space at the end of the
-event among one or two file handles and name. Something like:
-
-struct fanotify_dynamic_info {
-	u8 dirfh_len;
-	u8 filefh_len;
-	u8 name_len;
-	unsigned char buf[];
-};
-
-And at appropriate offsets (0, dirfh_len, dirfh_len + filefh_len) there
-would be additional info (e.g. type + fh for file handles). Maybe this
-format will require some tweaking so that processing of both storage types
-of file handles can be reasonably uniform but at this point it seems
-cleaner than what you try to do fanotify_fh with combining lenghts and
-offsets and some blobs in the middle...
-
-> It also fixes a bug in fanotify_alloc_name_event() which used an
-> allocation size 7 bytes bigger than required size, because it used
-> sizeof(struct fanotify_name_event) without deducting that 7 bytes
-> alignment padding.
-
-								Honza
+> Bit confused about what you mean. This test does:
 > 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  fs/notify/fanotify/fanotify.c      | 27 ++++++++-----
->  fs/notify/fanotify/fanotify.h      | 62 +++++++++++++++++++++++-------
->  fs/notify/fanotify/fanotify_user.c | 23 +++++------
->  3 files changed, 75 insertions(+), 37 deletions(-)
+>  * switch UID to 1000
+>  * run clone3() with set_tid set and expect EPERM
+>  * set CAP_CHECKPOINT_RESTORE capability
+>  * run clone3() with set_tid set and expect success
 > 
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 3885bf63976b..3a2d48edaddd 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -52,15 +52,20 @@ static bool fanotify_fid_event_equal(struct fanotify_fid_event *ffe1,
->  static bool fanotify_name_event_equal(struct fanotify_name_event *fne1,
->  				      struct fanotify_name_event *fne2)
->  {
-> +	struct fanotify_fh *dfh1 = &fne1->dir_fh;
-> +	struct fanotify_fh *dfh2 = &fne2->dir_fh;
-> +
->  	/* Do not merge name events without dir fh */
-> -	if (!fne1->dir_fh.len)
-> +	if (!dfh1->len)
->  		return false;
->  
-> -	if (fne1->name_len != fne2->name_len ||
-> -	    !fanotify_fh_equal(&fne1->dir_fh, &fne2->dir_fh))
-> +	if (dfh1->name_len != dfh2->name_len ||
-> +	    dfh1->name_offset != dfh2->name_offset ||
-> +	    !fanotify_fh_equal(dfh1, dfh2))
->  		return false;
->  
-> -	return !memcmp(fne1->name, fne2->name, fne1->name_len);
-> +	return !memcmp(fanotify_fh_name(dfh1), fanotify_fh_name(dfh2),
-> +		       dfh1->name_len);
->  }
->  
->  static bool fanotify_should_merge(struct fsnotify_event *old_fsn,
-> @@ -284,8 +289,7 @@ static void fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
->  	void *buf = fh->buf;
->  	int err;
->  
-> -	fh->type = FILEID_ROOT;
-> -	fh->len = 0;
-> +	fanotify_fh_init(fh);
->  	if (!inode)
->  		return;
->  
-> @@ -314,6 +318,10 @@ static void fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
->  
->  	fh->type = type;
->  	fh->len = bytes;
-> +	if (fh->len > FANOTIFY_INLINE_FH_LEN)
-> +		fh->name_offset = FANOTIFY_INLINE_FH_LEN;
-> +	else
-> +		fh->name_offset = fh->len;
->  
->  	return;
->  
-> @@ -401,6 +409,7 @@ struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
->  						 gfp_t gfp)
->  {
->  	struct fanotify_name_event *fne;
-> +	struct fanotify_fh *dfh;
->  
->  	fne = kmalloc(sizeof(*fne) + file_name->len + 1, gfp);
->  	if (!fne)
-> @@ -408,9 +417,9 @@ struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
->  
->  	fne->fae.type = FANOTIFY_EVENT_TYPE_FID_NAME;
->  	fne->fsid = *fsid;
-> -	fanotify_encode_fh(&fne->dir_fh, id, gfp);
-> -	fne->name_len = file_name->len;
-> -	strcpy(fne->name, file_name->name);
-> +	dfh = &fne->dir_fh;
-> +	fanotify_encode_fh(dfh, id, gfp);
-> +	fanotify_fh_copy_name(dfh, file_name);
->  
->  	return &fne->fae;
->  }
-> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-> index 1b2a3bbe6008..8cb062eefd3e 100644
-> --- a/fs/notify/fanotify/fanotify.h
-> +++ b/fs/notify/fanotify/fanotify.h
-> @@ -23,13 +23,24 @@ enum {
->   * stored in either the first or last 2 dwords.
->   */
->  #define FANOTIFY_INLINE_FH_LEN	(3 << 2)
-> +#define FANOTIFY_FH_HDR_LEN	offsetof(struct fanotify_fh, buf)
->  
->  struct fanotify_fh {
-> -	unsigned char buf[FANOTIFY_INLINE_FH_LEN];
->  	u8 type;
->  	u8 len;
-> +	u8 name_offset;
-> +	u8 name_len;
-> +	unsigned char buf[FANOTIFY_INLINE_FH_LEN];
->  } __aligned(4);
->  
-> +static inline void fanotify_fh_init(struct fanotify_fh *fh)
-> +{
-> +	fh->type = FILEID_ROOT;
-> +	fh->len = 0;
-> +	fh->name_offset = 0;
-> +	fh->name_len = 0;
-> +}
-> +
->  static inline bool fanotify_fh_has_ext_buf(struct fanotify_fh *fh)
->  {
->  	return fh->len > FANOTIFY_INLINE_FH_LEN;
-> @@ -37,6 +48,7 @@ static inline bool fanotify_fh_has_ext_buf(struct fanotify_fh *fh)
->  
->  static inline char **fanotify_fh_ext_buf_ptr(struct fanotify_fh *fh)
->  {
-> +	BUILD_BUG_ON(FANOTIFY_FH_HDR_LEN % 4);
->  	BUILD_BUG_ON(__alignof__(char *) - 4 + sizeof(char *) >
->  		     FANOTIFY_INLINE_FH_LEN);
->  	return (char **)ALIGN((unsigned long)(fh->buf), __alignof__(char *));
-> @@ -52,6 +64,35 @@ static inline void *fanotify_fh_buf(struct fanotify_fh *fh)
->  	return fanotify_fh_has_ext_buf(fh) ? fanotify_fh_ext_buf(fh) : fh->buf;
->  }
->  
-> +static inline int fanotify_fh_blob_len(struct fanotify_fh *fh)
-> +{
-> +	if (fh->name_offset <= fh->len)
-> +		return 0;
-> +
-> +	/* Is there a space between end of fh_buf and start of name? */
-> +	return fh->name_offset - fh->len;
-> +}
-> +
-> +static inline void *fanotify_fh_blob(struct fanotify_fh *fh)
-> +{
-> +	if (fh->name_offset <= fh->len)
-> +		return NULL;
-> +
-> +	return fh->buf + fh->len;
-> +}
-> +
-> +static inline const char *fanotify_fh_name(struct fanotify_fh *fh)
-> +{
-> +	return fh->name_len ? fh->buf + fh->name_offset : NULL;
-> +}
-> +
-> +static inline void fanotify_fh_copy_name(struct fanotify_fh *fh,
-> +					 const struct qstr *name)
-> +{
-> +	fh->name_len = name->len;
-> +	strcpy(fh->buf + fh->name_offset, name->name);
-> +}
-> +
->  /*
->   * Common structure for fanotify events. Concrete structs are allocated in
->   * fanotify_handle_event() and freed when the information is retrieved by
-> @@ -93,12 +134,16 @@ FANOTIFY_FE(struct fanotify_event *event)
->  	return container_of(event, struct fanotify_fid_event, fae);
->  }
->  
-> +/*
-> + * This is identical to struct fanotify_fid_event, but allocated with variable
-> + * size kmalloc and should have positive value of dir_fh.name_len.
-> + * Keeping the separate struct definition for semantics and type safety -
-> + * an event should be cast to this type IFF it was allocated using kmalloc.
-> + */
->  struct fanotify_name_event {
->  	struct fanotify_event fae;
->  	__kernel_fsid_t fsid;
->  	struct fanotify_fh dir_fh;
-> -	u8 name_len;
-> -	char name[];
->  };
->  
->  static inline struct fanotify_name_event *
-> @@ -142,17 +187,6 @@ static inline int fanotify_event_object_fh_len(struct fanotify_event *event)
->  	return fh ? fh->len : 0;
->  }
->  
-> -static inline bool fanotify_event_has_name(struct fanotify_event *event)
-> -{
-> -	return event->type == FANOTIFY_EVENT_TYPE_FID_NAME;
-> -}
-> -
-> -static inline int fanotify_event_name_len(struct fanotify_event *event)
-> -{
-> -	return fanotify_event_has_name(event) ?
-> -		FANOTIFY_NE(event)->name_len : 0;
-> -}
-> -
->  struct fanotify_path_event {
->  	struct fanotify_event fae;
->  	struct path path;
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 42b8cc51cb3f..af8268b44c68 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -68,17 +68,14 @@ static int fanotify_event_info_len(struct fanotify_event *event)
->  {
->  	int info_len = 0;
->  	int fh_len = fanotify_event_object_fh_len(event);
-> +	struct fanotify_fh *dfh = fanotify_event_dir_fh(event);
-> +
-> +	if (dfh)
-> +		info_len += fanotify_fid_info_len(dfh->len, dfh->name_len);
->  
->  	if (fh_len)
->  		info_len += fanotify_fid_info_len(fh_len, 0);
->  
-> -	if (fanotify_event_name_len(event)) {
-> -		struct fanotify_name_event *fne = FANOTIFY_NE(event);
-> -
-> -		info_len += fanotify_fid_info_len(fne->dir_fh.len,
-> -						  fne->name_len);
-> -	}
-> -
->  	return info_len;
->  }
->  
-> @@ -305,6 +302,7 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
->  {
->  	struct fanotify_event_metadata metadata;
->  	struct path *path = fanotify_event_path(event);
-> +	struct fanotify_fh *dfh = fanotify_event_dir_fh(event);
->  	struct file *f = NULL;
->  	int ret, fd = FAN_NOFD;
->  
-> @@ -346,13 +344,10 @@ static ssize_t copy_event_to_user(struct fsnotify_group *group,
->  		fd_install(fd, f);
->  
->  	/* Event info records order is: dir fid + name, child fid */
-> -	if (fanotify_event_name_len(event)) {
-> -		struct fanotify_name_event *fne = FANOTIFY_NE(event);
-> -
-> -		ret = copy_info_to_user(fanotify_event_fsid(event),
-> -					fanotify_event_dir_fh(event),
-> -					fne->name, fne->name_len,
-> -					buf, count);
-> +	if (dfh) {
-> +		ret = copy_info_to_user(fanotify_event_fsid(event), dfh,
-> +					fanotify_fh_name(dfh),
-> +					dfh->name_len, buf, count);
->  		if (ret < 0)
->  			return ret;
->  
-> -- 
-> 2.17.1
+> So it already does what I think you are asking for. Did I misunderstand
+> your comment?
+
+Ah, no, I missed that line doing the call with -EPERM.  Thanks!
+
+Acked-by: Serge Hallyn <serge@hallyn.com>
+
+
+> 		Adrian
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> > > Signed-off-by: Adrian Reber <areber@redhat.com>
+> > > ---
+> > >  tools/testing/selftests/clone3/Makefile       |   4 +-
+> > >  .../clone3/clone3_cap_checkpoint_restore.c    | 203 ++++++++++++++++++
+> > >  2 files changed, 206 insertions(+), 1 deletion(-)
+> > >  create mode 100644 tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+> > > 
+> > > diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
+> > > index cf976c732906..ef7564cb7abe 100644
+> > > --- a/tools/testing/selftests/clone3/Makefile
+> > > +++ b/tools/testing/selftests/clone3/Makefile
+> > > @@ -1,6 +1,8 @@
+> > >  # SPDX-License-Identifier: GPL-2.0
+> > >  CFLAGS += -g -I../../../../usr/include/
+> > > +LDLIBS += -lcap
+> > >  
+> > > -TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid
+> > > +TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
+> > > +	clone3_cap_checkpoint_restore
+> > >  
+> > >  include ../lib.mk
+> > > diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+> > > new file mode 100644
+> > > index 000000000000..2cc3d57b91f2
+> > > --- /dev/null
+> > > +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+> > > @@ -0,0 +1,203 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +/*
+> > > + * Based on Christian Brauner's clone3() example.
+> > > + * These tests are assuming to be running in the host's
+> > > + * PID namespace.
+> > > + */
+> > > +
+> > > +/* capabilities related code based on selftests/bpf/test_verifier.c */
+> > > +
+> > > +#define _GNU_SOURCE
+> > > +#include <errno.h>
+> > > +#include <linux/types.h>
+> > > +#include <linux/sched.h>
+> > > +#include <stdio.h>
+> > > +#include <stdlib.h>
+> > > +#include <stdbool.h>
+> > > +#include <sys/capability.h>
+> > > +#include <sys/prctl.h>
+> > > +#include <sys/syscall.h>
+> > > +#include <sys/types.h>
+> > > +#include <sys/un.h>
+> > > +#include <sys/wait.h>
+> > > +#include <unistd.h>
+> > > +#include <sched.h>
+> > > +
+> > > +#include "../kselftest.h"
+> > > +#include "clone3_selftests.h"
+> > > +
+> > > +#ifndef MAX_PID_NS_LEVEL
+> > > +#define MAX_PID_NS_LEVEL 32
+> > > +#endif
+> > > +
+> > > +static void child_exit(int ret)
+> > > +{
+> > > +	fflush(stdout);
+> > > +	fflush(stderr);
+> > > +	_exit(ret);
+> > > +}
+> > > +
+> > > +static int call_clone3_set_tid(pid_t * set_tid, size_t set_tid_size)
+> > > +{
+> > > +	int status;
+> > > +	pid_t pid = -1;
+> > > +
+> > > +	struct clone_args args = {
+> > > +		.exit_signal = SIGCHLD,
+> > > +		.set_tid = ptr_to_u64(set_tid),
+> > > +		.set_tid_size = set_tid_size,
+> > > +	};
+> > > +
+> > > +	pid = sys_clone3(&args, sizeof(struct clone_args));
+> > > +	if (pid < 0) {
+> > > +		ksft_print_msg("%s - Failed to create new process\n",
+> > > +			       strerror(errno));
+> > > +		return -errno;
+> > > +	}
+> > > +
+> > > +	if (pid == 0) {
+> > > +		int ret;
+> > > +		char tmp = 0;
+> > > +
+> > > +		ksft_print_msg
+> > > +		    ("I am the child, my PID is %d (expected %d)\n",
+> > > +		     getpid(), set_tid[0]);
+> > > +
+> > > +		if (set_tid[0] != getpid())
+> > > +			child_exit(EXIT_FAILURE);
+> > > +		child_exit(EXIT_SUCCESS);
+> > > +	}
+> > > +
+> > > +	ksft_print_msg("I am the parent (%d). My child's pid is %d\n",
+> > > +		       getpid(), pid);
+> > > +
+> > > +	if (waitpid(pid, &status, 0) < 0) {
+> > > +		ksft_print_msg("Child returned %s\n", strerror(errno));
+> > > +		return -errno;
+> > > +	}
+> > > +
+> > > +	if (!WIFEXITED(status))
+> > > +		return -1;
+> > > +
+> > > +	return WEXITSTATUS(status);
+> > > +}
+> > > +
+> > > +static int test_clone3_set_tid(pid_t * set_tid,
+> > > +			       size_t set_tid_size, int expected)
+> > > +{
+> > > +	int ret;
+> > > +
+> > > +	ksft_print_msg("[%d] Trying clone3() with CLONE_SET_TID to %d\n",
+> > > +		       getpid(), set_tid[0]);
+> > > +	ret = call_clone3_set_tid(set_tid, set_tid_size);
+> > > +
+> > > +	ksft_print_msg
+> > > +	    ("[%d] clone3() with CLONE_SET_TID %d says :%d - expected %d\n",
+> > > +	     getpid(), set_tid[0], ret, expected);
+> > > +	if (ret != expected) {
+> > > +		ksft_test_result_fail
+> > > +		    ("[%d] Result (%d) is different than expected (%d)\n",
+> > > +		     getpid(), ret, expected);
+> > > +		return -1;
+> > > +	}
+> > > +	ksft_test_result_pass
+> > > +	    ("[%d] Result (%d) matches expectation (%d)\n", getpid(), ret,
+> > > +	     expected);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +struct libcap {
+> > > +	struct __user_cap_header_struct hdr;
+> > > +	struct __user_cap_data_struct data[2];
+> > > +};
+> > > +
+> > > +static int set_capability()
+> > > +{
+> > > +	cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
+> > > +	struct libcap *cap;
+> > > +	int ret = -1;
+> > > +	cap_t caps;
+> > > +
+> > > +	caps = cap_get_proc();
+> > > +	if (!caps) {
+> > > +		perror("cap_get_proc");
+> > > +		return -1;
+> > > +	}
+> > > +
+> > > +	/* Drop all capabilities */
+> > > +	if (cap_clear(caps)) {
+> > > +		perror("cap_clear");
+> > > +		goto out;
+> > > +	}
+> > > +
+> > > +	cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
+> > > +	cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
+> > > +
+> > > +	cap = (struct libcap *) caps;
+> > > +
+> > > +	/* 40 -> CAP_CHECKPOINT_RESTORE */
+> > > +	cap->data[1].effective |= 1 << (40 - 32);
+> > > +	cap->data[1].permitted |= 1 << (40 - 32);
+> > > +
+> > > +	if (cap_set_proc(caps)) {
+> > > +		perror("cap_set_proc");
+> > > +		goto out;
+> > > +	}
+> > > +	ret = 0;
+> > > +out:
+> > > +	if (cap_free(caps))
+> > > +		perror("cap_free");
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +int main(int argc, char *argv[])
+> > > +{
+> > > +	pid_t pid;
+> > > +	int status;
+> > > +	int ret = 0;
+> > > +	pid_t set_tid[1];
+> > > +	uid_t uid = getuid();
+> > > +
+> > > +	ksft_print_header();
+> > > +	test_clone3_supported();
+> > > +	ksft_set_plan(2);
+> > > +
+> > > +	if (uid != 0) {
+> > > +		ksft_cnt.ksft_xskip = ksft_plan;
+> > > +		ksft_print_msg("Skipping all tests as non-root\n");
+> > > +		return ksft_exit_pass();
+> > > +	}
+> > > +
+> > > +	memset(&set_tid, 0, sizeof(set_tid));
+> > > +
+> > > +	/* Find the current active PID */
+> > > +	pid = fork();
+> > > +	if (pid == 0) {
+> > > +		ksft_print_msg("Child has PID %d\n", getpid());
+> > > +		child_exit(EXIT_SUCCESS);
+> > > +	}
+> > > +	if (waitpid(pid, &status, 0) < 0)
+> > > +		ksft_exit_fail_msg("Waiting for child %d failed", pid);
+> > > +
+> > > +	/* After the child has finished, its PID should be free. */
+> > > +	set_tid[0] = pid;
+> > > +
+> > > +	if (set_capability())
+> > > +		ksft_test_result_fail
+> > > +		    ("Could not set CAP_CHECKPOINT_RESTORE\n");
+> > > +	prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0);
+> > > +	/* This would fail without CAP_CHECKPOINT_RESTORE */
+> > > +	setgid(1000);
+> > > +	setuid(1000);
+> > > +	set_tid[0] = pid;
+> > > +	ret |= test_clone3_set_tid(set_tid, 1, -EPERM);
+> > > +	if (set_capability())
+> > > +		ksft_test_result_fail
+> > > +		    ("Could not set CAP_CHECKPOINT_RESTORE\n");
+> > > +	/* This should work as we have CAP_CHECKPOINT_RESTORE as non-root */
+> > > +	ret |= test_clone3_set_tid(set_tid, 1, 0);
+> > > +
+> > > +	return !ret ? ksft_exit_pass() : ksft_exit_fail();
+> > > +}
+> > > -- 
+> > > 2.26.2
+> > 
