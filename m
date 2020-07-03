@@ -2,91 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26B95213FD9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 21:21:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20761213FFA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 21:25:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbgGCTU6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jul 2020 15:20:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49142 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726147AbgGCTU5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jul 2020 15:20:57 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB37F207FF;
-        Fri,  3 Jul 2020 19:20:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593804057;
-        bh=PEmsm7KiYhEynj7JM9OkcWwJJEMC5FTZ1MgB7GC3/kw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cZz3+cYtChLGxVGtGhI0iqF8NG4vRe7SyHyKP6rwlrniscYuLOgqOM9tC5bBvh6V9
-         rCNuVMRKKdD1/I05cjOph+0nERO2OeeH/Y1QSjn/3szq+YCjsBxWz49TxA/V8HiT6F
-         N6pBBTbIdf7MhFFMTY1BRtmYQCvTyvOSvJ4M/pzg=
-Date:   Fri, 3 Jul 2020 12:20:55 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com
-Subject: Re: [PATCH v9 2/4] fs: Add standard casefolding support
-Message-ID: <20200703192055.GA2825@sol.localdomain>
-References: <20200624043341.33364-1-drosen@google.com>
- <20200624043341.33364-3-drosen@google.com>
- <20200624055707.GG844@sol.localdomain>
- <CA+PiJmTDXTKnccJdADX=ir+PtqsDD72xHGbzObpntkjkVmKHxQ@mail.gmail.com>
+        id S1726721AbgGCTZC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jul 2020 15:25:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60338 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726379AbgGCTZC (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 3 Jul 2020 15:25:02 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 904E5C08C5DD
+        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Jul 2020 12:25:01 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id t9so19075485lfl.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Jul 2020 12:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nEMPMKHktF+3GiPNxFWdeLrXOxNE07nmroDOEVThA4A=;
+        b=EhC1qDxGOcHnqhdTefcfYAg7Ihgd+dyuCofQ5oRzGgTrAnhAQqF7OzcfuyTH4ovLGg
+         lVeESWYyUkkno7e5pvU5gocokHSLu0r0EG8L+u7jkct0aI3QhIpJFf9k8NwIciFyX7/7
+         9XeVBI0g2czxapfWKmluX0h7W/Jh645iHYlCI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nEMPMKHktF+3GiPNxFWdeLrXOxNE07nmroDOEVThA4A=;
+        b=C4Iw7lcvNM9+KIfKNAsjV3hdt523hs2CfvdwpSDmVFDwn71mbujTlLjIGk6oCbpghV
+         ZIxMoSdTjkqh0cSoJtezgkDrVDNcZSX39TVpVyNsRzRZdBEfyBj5XGgwRgoDfivjMTv+
+         n4Sliq4ZN6BaUTRY2s8Iq6Xc4KkwFt4rjUFYOzkWHT41Sqajhexy8c2EUyFZzOf0Y5L9
+         19fmwB2k9P/jT7AUJJ+TzEfUqTzppWe8iUkThoGYweKX87bQmXWmvO1X45nJ6orSvZHm
+         gr/cjhyAs3jJTQyAXJ7ag48MQxWJk82YwddKfh4zwg1GSlDjwdFv9ix5Gxnxq9PffK5K
+         YAZg==
+X-Gm-Message-State: AOAM531MfklqlJycHCD/7SI1oGlnU0KlbzpaHDjNyk4Y4J/gsw34+U5p
+        l0yj7Hfo1PS0+AEpA8TzHg+FY8jzCfw=
+X-Google-Smtp-Source: ABdhPJwopu4EqX/UZW75tTMf4+x6Hen3f2HA2SDNBqoXZm0OGh4A6NpkePIdiM3uYA/oH0CCVp9+wg==
+X-Received: by 2002:a05:6512:214f:: with SMTP id s15mr6388996lfr.101.1593804299458;
+        Fri, 03 Jul 2020 12:24:59 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id f24sm4388796ljk.125.2020.07.03.12.24.58
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Jul 2020 12:24:58 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id t25so33591842lji.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Jul 2020 12:24:58 -0700 (PDT)
+X-Received: by 2002:a2e:991:: with SMTP id 139mr20104619ljj.314.1593804298028;
+ Fri, 03 Jul 2020 12:24:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+PiJmTDXTKnccJdADX=ir+PtqsDD72xHGbzObpntkjkVmKHxQ@mail.gmail.com>
+References: <20200703095325.1491832-1-agruenba@redhat.com>
+In-Reply-To: <20200703095325.1491832-1-agruenba@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 3 Jul 2020 12:24:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj9ObgMYF8QhPCJrHBBgVXG1J75-r8CgyQm88BbfSVYcg@mail.gmail.com>
+Message-ID: <CAHk-=wj9ObgMYF8QhPCJrHBBgVXG1J75-r8CgyQm88BbfSVYcg@mail.gmail.com>
+Subject: Re: [RFC v2 0/2] Fix gfs2 readahead deadlocks
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 02, 2020 at 06:01:37PM -0700, Daniel Rosenberg wrote:
-> On Tue, Jun 23, 2020 at 10:57 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > Note that the '!IS_ENCRYPTED(dir) || fscrypt_has_encryption_key(dir)' check can
-> > be racy, because a process can be looking up a no-key token in a directory while
-> > concurrently another process initializes the directory's ->i_crypt_info, causing
-> > fscrypt_has_encryption_key(dir) to suddenly start returning true.
-> >
-> > In my rework of filename handling in f2fs, I actually ended up removing all
-> > calls to needs_casefold(), thus avoiding this race.  f2fs now decides whether
-> > the name is going to need casefolding early on, in __f2fs_setup_filename(),
-> > where it knows in a race-free way whether the filename is a no-key token or not.
-> >
-> > Perhaps ext4 should work the same way?  It did look like there would be some
-> > extra complexity due to how the ext4 directory hashing works in comparison to
-> > f2fs's, but I haven't had a chance to properly investigate it.
-> >
-> > - Eric
-> 
-> Hm. I think I should be able to just check for DCACHE_ENCRYPTED_NAME
-> in the dentry here, right? I'm just trying to avoid casefolding the
-> no-key token, and that flag should indicate that.
+On Fri, Jul 3, 2020 at 2:53 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+>
+> Here's an improved version.  If the IOCB_NOIO flag can be added right
+> away, we can just fix the locking in gfs2.
 
-Ideally yes, but currently the 'struct dentry' isn't always available.  See how
-fscrypt_setup_filename(), f2fs_setup_filename(), f2fs_find_entry(),
-ext4_find_entry(), etc. take a 'struct qstr', not a 'struct dentry'.
+I see nothing wrong with this, and would be ok with getting the
+patches as pulls from the gfs2 tree despite touching generic code.
 
-At some point we should fix that by passing down the dentry whenever it's
-available, so that we reliably know whether the name is a no-key name or not.
+Maybe wait a bit for others to comment (I see Willy already did), but
+it seems like a fairly straightforward improvement, and the IOCB_NOIO
+flag conceptually seems to match well with the IOCB_NOWAIT one, so
+this all makes sense to me.
 
-So even my new f2fs code is still racy.  But it at least handles each filename
-in a consistent way within each directory operation.  In comparison, your
-proposed ext4 code can treat a filename as a no-key name while matching one
-dir_entry and then as a regular filename while matching the next.  I think the
-f2fs way is more on the right track, both correctness-wise and efficiency-wise.
-
-- Eric
+              Linus
