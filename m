@@ -2,149 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9E42130B3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 02:54:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 282D92130CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jul 2020 03:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726336AbgGCAyG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jul 2020 20:54:06 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:58398 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbgGCAyG (ORCPT
+        id S1726396AbgGCBBv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jul 2020 21:01:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60456 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbgGCBBu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jul 2020 20:54:06 -0400
-Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 0630q3Dc066718;
-        Fri, 3 Jul 2020 09:52:03 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp);
- Fri, 03 Jul 2020 09:52:03 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav303.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 0630q2Yw066713
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 3 Jul 2020 09:52:02 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: linux-next: umh: fix processed error when UMH_WAIT_PROC is used
- seems to break linux bridge on s390x (bisected)
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, ast@kernel.org,
-        axboe@kernel.dk, bfields@fieldses.org,
-        bridge@lists.linux-foundation.org, chainsaw@gentoo.org,
-        christian.brauner@ubuntu.com, chuck.lever@oracle.com,
-        davem@davemloft.net, gregkh@linuxfoundation.org,
-        jarkko.sakkinen@linux.intel.com, jmorris@namei.org,
-        josh@joshtriplett.org, keescook@chromium.org,
-        keyrings@vger.kernel.org, kuba@kernel.org,
-        lars.ellenberg@linbit.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, nikolay@cumulusnetworks.com,
-        philipp.reisner@linbit.com, ravenexp@gmail.com,
-        roopa@cumulusnetworks.com, serge@hallyn.com, slyfox@gentoo.org,
-        viro@zeniv.linux.org.uk, yangtiezhu@loongson.cn,
-        netdev@vger.kernel.org, markward@linux.ibm.com,
-        linux-s390 <linux-s390@vger.kernel.org>
-References: <4d8fbcea-a892-3453-091f-d57c03f9aa90@de.ibm.com>
- <1263e370-7cee-24d8-b98c-117bf7c90a83@de.ibm.com>
- <20200626025410.GJ4332@42.do-not-panic.com>
- <20200630175704.GO13911@42.do-not-panic.com>
- <b24d8dae-1872-ba2c-acd4-ed46c0781317@de.ibm.com>
- <a6792135-3285-0861-014e-3db85ea251dc@i-love.sakura.ne.jp>
- <20200701135324.GS4332@42.do-not-panic.com>
- <8d714a23-bac4-7631-e5fc-f97c20a46083@i-love.sakura.ne.jp>
- <20200701153859.GT4332@42.do-not-panic.com>
- <e3f3e501-2cb7-b683-4b85-2002b7603244@i-love.sakura.ne.jp>
- <20200702194656.GV4332@42.do-not-panic.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <d8a74a06-de97-54ae-de03-0d955e82f62b@i-love.sakura.ne.jp>
-Date:   Fri, 3 Jul 2020 09:52:01 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 2 Jul 2020 21:01:50 -0400
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D3F6C08C5DE
+        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jul 2020 18:01:50 -0700 (PDT)
+Received: by mail-ot1-x344.google.com with SMTP id 72so25563367otc.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jul 2020 18:01:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+0u5TnXqElmJHIUbIwfyg0UnTaWODXR+GC+hM1QsUz4=;
+        b=oOqDzf9UhdHQiWfizW6yxKYuiXycU3fWLPwduq8AH7hV/7gSiEHYYCaf1R8F2ctgqG
+         Ctt5zAILp2PI93b4Q9sIqk+bct1cHbzT8Yw9+IcOxwWKgWbCaachSWq9et+Yf8XtLZAo
+         4PfjLQ2EBIkG8ZapbfVu6Be6/Vu8TcYpCdwMqVXiYNjxd4suP9wdDfoO3oqnw035dU8n
+         /R6DDvFq0BMQXLdQ3Ov60bKRizaMZFmcKMO6VN+JDo/z+/DFAUQ/rBIJ0OdRJmHbICOW
+         lVBzFxBYsXOkdcGMH5/fGPjcJF+UWV/JV1fhleZLJ4KwG6qXoSH5MyKRsJ+/bO2HGygC
+         mIWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+0u5TnXqElmJHIUbIwfyg0UnTaWODXR+GC+hM1QsUz4=;
+        b=IpNEcUC/CjmBdmYGUbpsT55JnhYCHGuhaRpKI88VugSKSnqygkdvmXpoFEzvLHWf7A
+         m0werlOJHvbRRTj5no1uza5r18/fsuqVvEOkiq1Vejqf593tCdCw9TP9XLqRiHX0gxdY
+         SZ9iHxrbsNvBM+7XEerbvu8HrOuzt4Hj77OPU3u5HVGypy7YrPBY63Gd/Gl+f+6n/nna
+         CnIGUKVY/itD7sFHSZH9g0DbDuGgmlqS24CEYX5cWLzuP+POX06TQxJVOpq3oImiNlBz
+         Ob+dzEQ1OiRv8mo1lS7WfXqFXX7hnkte10hSdOHMLWOK5ZDi8ZiX1W1Yod4+JlSw62gS
+         29lg==
+X-Gm-Message-State: AOAM531HRiusSc2KLmoBWh2DlhQxmM3cBvjYUjKcEVuX/N6mYvZkGakp
+        /DYLujrQyCHOf0iVLsPzBE1Vw6w84dEjdC7HkPQ5Xg==
+X-Google-Smtp-Source: ABdhPJxyzjPijsRL1V11XOG//slLi4ypOVvA8gCAeJn23Y/3chvpbEFZmi5lFQBGL/hRDveD1WrFac5iKC6RBaNTr+k=
+X-Received: by 2002:a9d:6d98:: with SMTP id x24mr18707612otp.93.1593738109138;
+ Thu, 02 Jul 2020 18:01:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200702194656.GV4332@42.do-not-panic.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200624043341.33364-1-drosen@google.com> <20200624043341.33364-3-drosen@google.com>
+ <20200624055707.GG844@sol.localdomain>
+In-Reply-To: <20200624055707.GG844@sol.localdomain>
+From:   Daniel Rosenberg <drosen@google.com>
+Date:   Thu, 2 Jul 2020 18:01:37 -0700
+Message-ID: <CA+PiJmTDXTKnccJdADX=ir+PtqsDD72xHGbzObpntkjkVmKHxQ@mail.gmail.com>
+Subject: Re: [PATCH v9 2/4] fs: Add standard casefolding support
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/07/03 4:46, Luis Chamberlain wrote:
-> On Thu, Jul 02, 2020 at 01:26:53PM +0900, Tetsuo Handa wrote:
->> On 2020/07/02 0:38, Luis Chamberlain wrote:
->>> @@ -156,6 +156,18 @@ static void call_usermodehelper_exec_sync(struct subprocess_info *sub_info)
->>>  		 */
->>>  		if (KWIFEXITED(ret))
->>>  			sub_info->retval = KWEXITSTATUS(ret);
->>> +		/*
->>> +		 * Do we really want to be passing the signal, or do we pass
->>> +		 * a single error code for all cases?
->>> +		 */
->>> +		else if (KWIFSIGNALED(ret))
->>> +			sub_info->retval = KWTERMSIG(ret);
->>
->> No, this is bad. Caller of usermode helper is unable to distinguish exit(9)
->> and e.g. SIGKILL'ed by the OOM-killer.
-> 
-> Right, the question is: do we care?
+On Tue, Jun 23, 2020 at 10:57 PM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> Note that the '!IS_ENCRYPTED(dir) || fscrypt_has_encryption_key(dir)' check can
+> be racy, because a process can be looking up a no-key token in a directory while
+> concurrently another process initializes the directory's ->i_crypt_info, causing
+> fscrypt_has_encryption_key(dir) to suddenly start returning true.
+>
+> In my rework of filename handling in f2fs, I actually ended up removing all
+> calls to needs_casefold(), thus avoiding this race.  f2fs now decides whether
+> the name is going to need casefolding early on, in __f2fs_setup_filename(),
+> where it knows in a race-free way whether the filename is a no-key token or not.
+>
+> Perhaps ext4 should work the same way?  It did look like there would be some
+> extra complexity due to how the ext4 directory hashing works in comparison to
+> f2fs's, but I haven't had a chance to properly investigate it.
+>
+> - Eric
 
-Yes, we have to care.
-
-> And the umh patch "umh: fix processed error when UMH_WAIT_PROC is used"
-> changed this to:
-> 
-> -       if (ret >= 0) {
-> +       if (ret != 0) {
-> 
-> Prior to the patch negative return values from userspace were still
-> being captured, and likewise signals, but the error value was not
-> raw, not the actual value. After the patch, since we check for ret != 0
-> we still upkeep the sanity check for any error, correct the error value,
-> but as you noted signals were ignored as I made the wrong assumption
-> we would ignore them. The umh sub_info->retval is set after my original
-> patch only if KWIFSIGNALED(ret)), and ignored signals, and so that
-> would be now capitured with the additional KWIFSIGNALED(ret)) check.
-
-"call_usermodehelper_keys() == 0" (i.e. usermode helper was successfully
-started and successfully terminated via exit(0)) is different from "there is
-nothing to do". call_sbin_request_key() == 0 case still has to check for
-possibility of -ENOKEY case.
-
-> 
-> The question still stands:
-> 
-> Do we want to open code all these checks or simply wrap them up in
-> the umh. If we do the later, as you note exit(9) and a SIGKILL will
-> be the same to the inspector in the kernel. But do we care?
-
-Yes, we do care.
-
-> 
-> Do we really want umh callers differntiatin between signals and exit values?
-
-Yes, we do.
-
-> 
-> The alternative to making a compromise is using generic wrappers for
-> things which make sense and letting the callers use those.
-
-I suggest just introducing KWIFEXITED()/KWEXITSTATUS()/KWIFSIGNALED()/KWTERMSIG()
-macros and fixing the callers, for some callers are not aware of possibility of
-KWIFSIGNALED() case.
-
-For example, conn_try_outdate_peer() in drivers/block/drbd/drbd_nl.c misbehaves if
-drbd_usermode_helper process was terminated by a signal, for the switch() statement
-after returning from conn_helper() is assuming that the return value of conn_helper()
-is a KWEXITSTATUS() value if drbd_usermode_helper process was successfully started.
-If drbd_usermode_helper process was terminated by SIGQUIT (which is 3),
-conn_try_outdate_peer() will by error hit "case P_INCONSISTENT:" (which is 3);
-conn_try_outdate_peer() should hit "default: /* The script is broken ... */"
-unless KWIFEXITED() == true.
-
-Your patch is trying to obnubilate the return code.
-
+Hm. I think I should be able to just check for DCACHE_ENCRYPTED_NAME
+in the dentry here, right? I'm just trying to avoid casefolding the
+no-key token, and that flag should indicate that.
+I'll see if I can rework the ext4 patches to not need needs_casefold
+as well, since then there'd be no need to export it.
+-Daniel
