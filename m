@@ -2,257 +2,209 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E887221446B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jul 2020 08:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1A622144AE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jul 2020 11:30:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbgGDG6y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Jul 2020 02:58:54 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:55118 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbgGDG6y (ORCPT
+        id S1726621AbgGDJaX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Jul 2020 05:30:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48782 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726259AbgGDJaW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Jul 2020 02:58:54 -0400
-Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 0646vmDZ037624;
-        Sat, 4 Jul 2020 15:57:48 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp);
- Sat, 04 Jul 2020 15:57:48 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 0646vcQt037357
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 4 Jul 2020 15:57:47 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v2 00/15] Make the user mode driver code a better citizen
-To:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
- <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
- <87y2oac50p.fsf@x220.int.ebiederm.org>
- <87bll17ili.fsf_-_@x220.int.ebiederm.org>
- <20200629221231.jjc2czk3ul2roxkw@ast-mbp.dhcp.thefacebook.com>
- <87eepwzqhd.fsf@x220.int.ebiederm.org>
- <1f4d8b7e-bcff-f950-7dac-76e3c4a65661@i-love.sakura.ne.jp>
- <87pn9euks9.fsf@x220.int.ebiederm.org>
- <757f37f8-5641-91d2-be80-a96ebc74cacb@i-love.sakura.ne.jp>
- <87h7upucqi.fsf@x220.int.ebiederm.org>
- <d0266a24-dfab-83d0-e178-aa67c9f5ebc0@i-love.sakura.ne.jp>
- <87lfk0nslu.fsf@x220.int.ebiederm.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <ec6a6e18-d7aa-3072-c8dc-b925398b8409@i-love.sakura.ne.jp>
-Date:   Sat, 4 Jul 2020 15:57:38 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sat, 4 Jul 2020 05:30:22 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A280C061794
+        for <linux-fsdevel@vger.kernel.org>; Sat,  4 Jul 2020 02:30:22 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id a6so12346063ilq.13
+        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Jul 2020 02:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=b0Lm6SsL+oARp35qSv+EVBSn+BqwdZLV8/EszsiU2BU=;
+        b=rszYWtsWSM6Vf9L80pe1Ha78oqeBNFQOJ8ldD8rhIaSzmTA+DnQ/1Ev85fdUnBqQu8
+         Zh4Y5VV34uzUYlJ19TCywKPLm85T8wN2QHEwaw8vd3Fecw54kQjXp+C9T95YE+ruR8s8
+         9uHZaeAfu4NrXNeKowg81StBU0upQlyXBCNDh+z5VfcO7yfY3UjdsIHrvpgOR3AEX8n8
+         IkaCM3dmqz1PhJrDXmFIsEnbZxzsL+bwP/Q+JduAjzSbhmdhoO4SBupeqpSGNLNQBQD4
+         gaCjlkKK2wznSCIP/YdzOPddWttBgKZitWA4loyY68rJnmyKkfAwI213Fk+unQYMesvB
+         /LYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b0Lm6SsL+oARp35qSv+EVBSn+BqwdZLV8/EszsiU2BU=;
+        b=biGsHwo2U3nxCbXsBIF6t0vW+DF1op0Jz6JFMTpHOgxWrCwB1irfa6xLldygkWqfv+
+         SGqCetc0q4QlR08uA54CkPmrLnBmYWocttAStOyXregHTEm/HDCxcA3M2rPbqPlfPk6m
+         knKbvBf6GhvL4otI1Ut217lWaCpiRgm6HhX4rCMWFN9lOaNvGomGZI35pBRvtRtIZnEw
+         gqcseruhFsE8Wamt9A1lf3t0I0ae1pUVUNVVIScpchdUnhiD6ZkR0k36HVhdsmQdT54B
+         W0MLKa6th8Lqb70julohYHhCly3Oi/KxUasUrPG2/qBbruXiuntjnCA0JdkuZJW8fMOu
+         UqEA==
+X-Gm-Message-State: AOAM533YUmAfBytJARfb5U+ht9bLeRbEvNu+Jpe127FM22PlgyZMZNVp
+        72KcnoElgzS6s/jg2PnvuFCtNLIlM6vrIe4njQN3+seB
+X-Google-Smtp-Source: ABdhPJx+izQw92U2aLg+jztXvMQPn9bxAm94Hi4GpgRbEmfcwk0IQQgbc2wdEQ3xDOPsYvVgaen4qA9L4uuW9nSbNJI=
+X-Received: by 2002:a92:b6d4:: with SMTP id m81mr21488074ill.72.1593855021173;
+ Sat, 04 Jul 2020 02:30:21 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87lfk0nslu.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200612093343.5669-1-amir73il@gmail.com> <20200612093343.5669-2-amir73il@gmail.com>
+ <20200703140342.GD21364@quack2.suse.cz>
+In-Reply-To: <20200703140342.GD21364@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 4 Jul 2020 12:30:10 +0300
+Message-ID: <CAOQ4uxgJkmSgt6nSO3C4y2Mc=T92ky5K5eis0f1Ofr-wDq7Wrw@mail.gmail.com>
+Subject: Re: [PATCH 01/20] fsnotify: Rearrange fast path to minimise overhead
+ when there is no watcher
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/07/04 7:25, Eric W. Biederman wrote:
-> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
-> 
->> On 2020/07/02 22:08, Eric W. Biederman wrote:
->>>> By the way, commit 4a9d4b024a3102fc ("switch fput to task_work_add") says
->>>> that use of flush_delayed_fput() has to be careful. Al, is it safe to call
->>>> flush_delayed_fput() from blob_to_mnt() from umd_load_blob() (which might be
->>>> called from both kernel thread and from process context (e.g. init_module()
->>>> syscall by /sbin/insmod )) ?
->>>
->>> And __fput_sync needs to be even more careful.
->>> umd_load_blob is called in these changes without any locks held.
->>
->> But where is the guarantee that a thread which called flush_delayed_fput() waits for
->> the completion of processing _all_ "struct file" linked into delayed_fput_list ?
->> If some other thread or delayed_fput_work (scheduled by fput_many()) called
->> flush_delayed_fput() between blob_to_mnt()'s fput(file) and flush_delayed_fput()
->> sequence? blob_to_mnt()'s flush_delayed_fput() can miss the "struct file" which
->> needs to be processed before execve(), can't it?
-> 
-> As a module the guarantee is we call task_work_run.
+On Fri, Jul 3, 2020 at 5:03 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Fri 12-06-20 12:33:24, Amir Goldstein wrote:
+> > From: Mel Gorman <mgorman@techsingularity.net>
+> >
+> > The fsnotify paths are trivial to hit even when there are no watchers and
+> > they are surprisingly expensive. For example, every successful vfs_write()
+> > hits fsnotify_modify which calls both fsnotify_parent and fsnotify unless
+> > FMODE_NONOTIFY is set which is an internal flag invisible to userspace.
+> > As it stands, fsnotify_parent is a guaranteed functional call even if there
+> > are no watchers and fsnotify() does a substantial amount of unnecessary
+> > work before it checks if there are any watchers. A perf profile showed
+> > that applying mnt->mnt_fsnotify_mask in fnotify() was almost half of the
+> > total samples taken in that function during a test. This patch rearranges
+> > the fast paths to reduce the amount of work done when there are no
+> > watchers.
+> >
+> > The test motivating this was "perf bench sched messaging --pipe". Despite
+> > the fact the pipes are anonymous, fsnotify is still called a lot and
+> > the overhead is noticeable even though it's completely pointless. It's
+> > likely the overhead is negligible for real IO so this is an extreme
+> > example. This is a comparison of hackbench using processes and pipes on
+> > a 1-socket machine with 8 CPU threads without fanotify watchers.
+> >
+> >                               5.7.0                  5.7.0
+> >                             vanilla      fastfsnotify-v1r1
+> > Amean     1       0.4837 (   0.00%)      0.4630 *   4.27%*
+> > Amean     3       1.5447 (   0.00%)      1.4557 (   5.76%)
+> > Amean     5       2.6037 (   0.00%)      2.4363 (   6.43%)
+> > Amean     7       3.5987 (   0.00%)      3.4757 (   3.42%)
+> > Amean     12      5.8267 (   0.00%)      5.6983 (   2.20%)
+> > Amean     18      8.4400 (   0.00%)      8.1327 (   3.64%)
+> > Amean     24     11.0187 (   0.00%)     10.0290 *   8.98%*
+> > Amean     30     13.1013 (   0.00%)     12.8510 (   1.91%)
+> > Amean     32     13.9190 (   0.00%)     13.2410 (   4.87%)
+> >
+> >                        5.7.0       5.7.0
+> >                      vanilla fastfsnotify-v1r1
+> > Duration User         157.05      152.79
+> > Duration System      1279.98     1219.32
+> > Duration Elapsed      182.81      174.52
+> >
+> > This is showing that the latencies are improved by roughly 2-9%. The
+> > variability is not shown but some of these results are within the noise
+> > as this workload heavily overloads the machine. That said, the system CPU
+> > usage is reduced by quite a bit so it makes sense to avoid the overhead
+> > even if it is a bit tricky to detect at times. A perf profile of just 1
+> > group of tasks showed that 5.14% of samples taken were in either fsnotify()
+> > or fsnotify_parent(). With the patch, 2.8% of samples were in fsnotify,
+> > mostly function entry and the initial check for watchers.  The check for
+> > watchers is complicated enough that inlining it may be controversial.
+> >
+> > [Amir] Slightly simplify with mnt_or_sb_mask => marks_mask
+> >
+> > Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >  fs/notify/fsnotify.c             | 27 +++++++++++++++------------
+> >  include/linux/fsnotify.h         | 10 ++++++++++
+> >  include/linux/fsnotify_backend.h |  4 ++--
+> >  3 files changed, 27 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> > index 72d332ce8e12..d59a58d10b84 100644
+> > --- a/fs/notify/fsnotify.c
+> > +++ b/fs/notify/fsnotify.c
+> > @@ -143,7 +143,7 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
+> >  }
+> >
+> >  /* Notify this dentry's parent about a child's events. */
+> > -int fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+> > +int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+> >                   int data_type)
+> >  {
+> >       struct dentry *parent;
+>
+> Hum, should we actually remove the DCACHE_FSNOTIFY_PARENT_WATCHED check
+> from here when it's moved to fsnotify_parent() inline helper?
 
-No. It is possible that blob_to_mnt() is called by a kernel thread which was
-started by init_module() syscall by /sbin/insmod .
+No point.
+It is making a comeback on:
+ fsnotify: send event with parent/name info to sb/mount/non-dir marks
 
-> Built into the kernel the guarantee as best I can trace it is that
-> kthreadd hasn't started, and as such nothing that is scheduled has run
-> yet.
+>
+> > @@ -315,17 +315,11 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
+> >       struct fsnotify_iter_info iter_info = {};
+> >       struct super_block *sb = to_tell->i_sb;
+> >       struct mount *mnt = NULL;
+> > -     __u32 mnt_or_sb_mask = sb->s_fsnotify_mask;
+> >       int ret = 0;
+> > -     __u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
+> > +     __u32 test_mask, marks_mask;
+> >
+> > -     if (path) {
+> > +     if (path)
+> >               mnt = real_mount(path->mnt);
+> > -             mnt_or_sb_mask |= mnt->mnt_fsnotify_mask;
+> > -     }
+> > -     /* An event "on child" is not intended for a mount/sb mark */
+> > -     if (mask & FS_EVENT_ON_CHILD)
+> > -             mnt_or_sb_mask = 0;
+> >
+> >       /*
+> >        * Optimization: srcu_read_lock() has a memory barrier which can
+> > @@ -337,13 +331,22 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
+> >       if (!to_tell->i_fsnotify_marks && !sb->s_fsnotify_marks &&
+> >           (!mnt || !mnt->mnt_fsnotify_marks))
+> >               return 0;
+> > +
+> > +     /* An event "on child" is not intended for a mount/sb mark */
+> > +     marks_mask = to_tell->i_fsnotify_mask;
+> > +     if (!(mask & FS_EVENT_ON_CHILD)) {
+> > +             marks_mask |= sb->s_fsnotify_mask;
+> > +             if (mnt)
+> > +                     marks_mask |= mnt->mnt_fsnotify_mask;
+> > +     }
+> > +
+> >       /*
+> >        * if this is a modify event we may need to clear the ignored masks
+> >        * otherwise return if neither the inode nor the vfsmount/sb care about
+> >        * this type of event.
+> >        */
+> > -     if (!(mask & FS_MODIFY) &&
+> > -         !(test_mask & (to_tell->i_fsnotify_mask | mnt_or_sb_mask)))
+> > +     test_mask = (mask & ALL_FSNOTIFY_EVENTS);
+> > +     if (!(mask & FS_MODIFY) && !(test_mask & marks_mask))
+> >               return 0;
+>
+> Otherwise the patch looks good. One observation though: The (mask &
+> FS_MODIFY) check means that all vfs_write() calls end up going through the
+> "slower" path iterating all mark types and checking whether there are marks
+> anyway. That could be relatively simply optimized using a hidden mask flag
+> like FS_ALWAYS_RECEIVE_MODIFY which would be set when there's some mark
+> needing special handling of FS_MODIFY... Not sure if we care enough at this
+> point...
 
-Have you ever checked how early the kthreadd (PID=2) gets started?
+Yeh that sounds low hanging.
+Actually, I Don't think we need to define a flag for that.
+__fsnotify_recalc_mask() can add FS_MODIFY to the object's mask if needed.
 
-----------
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2306,6 +2306,7 @@ static __latent_entropy struct task_struct *copy_process(
-        trace_task_newtask(p, clone_flags);
-        uprobe_copy_process(p, clone_flags);
+I will take a look at that as part of FS_PRE_MODIFY work.
+But in general, we should fight the urge to optimize theoretic
+performance issues...
 
-+       printk(KERN_INFO "Created PID: %u Comm: %s\n", p->pid, p->comm);
-        return p;
-
- bad_fork_cancel_cgroup:
-----------
-
-----------
-[    0.090757][    T0] pid_max: default: 65536 minimum: 512
-[    0.090890][    T0] LSM: Security Framework initializing
-[    0.090890][    T0] Mount-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
-[    0.090890][    T0] Mountpoint-cache hash table entries: 8192 (order: 4, 65536 bytes, linear)
-[    0.090890][    T0] Disabled fast string operations
-[    0.090890][    T0] Last level iTLB entries: 4KB 1024, 2MB 1024, 4MB 1024
-[    0.090890][    T0] Last level dTLB entries: 4KB 1024, 2MB 1024, 4MB 1024, 1GB 4
-[    0.090890][    T0] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
-[    0.090890][    T0] Spectre V2 : Spectre mitigation: kernel not compiled with retpoline; no mitigation available!
-[    0.090890][    T0] Speculative Store Bypass: Mitigation: Speculative Store Bypass disabled via prctl and seccomp
-[    0.090890][    T0] SRBDS: Unknown: Dependent on hypervisor status
-[    0.090890][    T0] MDS: Mitigation: Clear CPU buffers
-[    0.090890][    T0] Freeing SMP alternatives memory: 24K
-[    0.090890][    T0] Created PID: 1 Comm: swapper/0
-[    0.090890][    T0] Created PID: 2 Comm: swapper/0
-[    0.090890][    T1] smpboot: CPU0: Intel(R) Core(TM) i5-4440S CPU @ 2.80GHz (family: 0x6, model: 0x3c, stepping: 0x3)
-[    0.091000][    T2] Created PID: 3 Comm: kthreadd
-[    0.091995][    T2] Created PID: 4 Comm: kthreadd
-[    0.093028][    T2] Created PID: 5 Comm: kthreadd
-[    0.093997][    T2] Created PID: 6 Comm: kthreadd
-[    0.094995][    T2] Created PID: 7 Comm: kthreadd
-[    0.096037][    T2] Created PID: 8 Comm: kthreadd
-(...snipped...)
-[    0.135716][    T2] Created PID: 13 Comm: kthreadd
-[    0.135716][    T1] smp: Bringing up secondary CPUs ...
-[    0.135716][    T2] Created PID: 14 Comm: kthreadd
-[    0.135716][    T2] Created PID: 15 Comm: kthreadd
-[    0.135716][    T2] Created PID: 16 Comm: kthreadd
-[    0.135716][    T2] Created PID: 17 Comm: kthreadd
-[    0.135716][    T2] Created PID: 18 Comm: kthreadd
-[    0.135716][    T1] x86: Booting SMP configuration:
-(...snipped...)
-[    0.901990][    T1] pci 0000:00:00.0: Limiting direct PCI/PCI transfers
-[    0.902145][    T1] pci 0000:00:0f.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
-[    0.902213][    T1] pci 0000:02:00.0: CLS mismatch (32 != 64), using 64 bytes
-[    0.902224][    T1] Trying to unpack rootfs image as initramfs...
-[    1.107993][    T1] Freeing initrd memory: 18876K
-[    1.109049][    T1] PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
-[    1.111003][    T1] software IO TLB: mapped [mem 0xab000000-0xaf000000] (64MB)
-[    1.112136][    T1] check: Scanning for low memory corruption every 60 seconds
-[    1.115040][    T2] Created PID: 52 Comm: kthreadd
-[    1.116110][    T1] workingset: timestamp_bits=46 max_order=20 bucket_order=0
-[    1.120936][    T1] SGI XFS with ACLs, security attributes, verbose warnings, quota, no debug enabled
-[    1.129626][    T2] Created PID: 53 Comm: kthreadd
-[    1.131403][    T2] Created PID: 54 Comm: kthreadd
-----------
-
-kthreadd (PID=2) is created by swapper/0 (PID=0) immediately after init (PID=1) was created by
-swapper/0 (PID=0). It is even before secondary CPUs are brought up, and far earlier than unpacking
-initramfs.
-
-And how can we prove that blob_to_mnt() is only called by a kernel thread before some kernel
-thread that interferes fput() starts running? blob_to_mnt() needs to be prepared for being
-called after many processes already started running.
-
-> 
->> Also, I don't know how convoluted the dependency of all "struct file" linked into
->> delayed_fput_list might be, for there can be "struct file" which will not be a
->> simple close of tmpfs file created by blob_to_mnt()'s file_open_root() request.
->>
->> On the other hand, although __fput_sync() cannot be called from !PF_KTHREAD threads,
->> there is a guarantee that __fput_sync() waits for the completion of "struct file"
->> which needs to be flushed before execve(), isn't there?
-> 
-> There is really not a good helper or helpers, and this code suggests we
-> have something better.  Right now I have used the existing helpers to
-> the best of my ability.  If you or someone else wants to write a better
-> version of flushing so that exec can happen be my guest.
-> 
-> As far as I can tell what I have is good enough.
-
-Just saying what you think is not a "review". I'm waiting for answer from Al Viro
-because I consider that Al will be the most familiar with fput()'s behavior.
-At least I consider that
-
-	if (current->flags & PF_KTHREAD) {
-		__fput_sync(file);
-	} else {
-		fput(file);
-		task_work_run();
-	}
-
-is a candidate for closing the race window. And depending on Al's answer,
-removing
-
-	BUG_ON(!(task->flags & PF_KTHREAD));
-
- from __fput_sync() and unconditionally using
-
-	__fput_sync(file);
-
- from blob_to_mnt() might be the better choice. Anyway, I consider that
-Al's response is important for this "review".
-
-> 
->>> We fundamentally AKA in any correct version of this code need to flush
->>> the file descriptor before we call exec or exec can not open it a
->>> read-only denying all writes from any other opens.
->>>
->>> The use case of flush_delayed_fput is exactly the same as that used
->>> when loading the initramfs.
->>
->> When loading the initramfs, the number of threads is quite few (which
->> means that the possibility of hitting the race window and convoluted
->> dependency is small).
-> 
-> But the reality is the code run very early, before the initramfs is
-> initialized in practice.
-
-Such expectation is not a reality.
-
-> 
->> But like EXPORT_SYMBOL_GPL(umd_load_blob) indicates, blob_to_mnt()'s
->> flush_delayed_fput() might be called after many number of threads already
->> started running.
-> 
-> At which point the code probably won't be runnig from a kernel thread
-> but instead will be running in a thread where task_work_run is relevant.
-
-No. It is possible that blob_to_mnt() is called by a kernel thread which was
-started by init_module() syscall by /sbin/insmod .
-
-> 
-> At worst it is a very small race, where someone else in another thread
-> starts flushing the file.  Which means the file could still be
-> completely close before exec.   Even that is not necessarily fatal,
-> as the usermode driver code has a respawn capability.
-> 
-> Code that is used enough that it hits that race sounds like a very
-> good problem to have from the perspective of the usermode driver code.
-
-In general, unconditionally retrying call_usermodehelper() when it returned
-a negative value (e.g. -ENOENT, -ENOMEM, -EBUSY) is bad. I don't know which
-code is an implementation of "a respawn capability"; I'd like to check where
-that code is and whether that code is checking -ETXTBSY.
-
+Thanks,
+Amir.
