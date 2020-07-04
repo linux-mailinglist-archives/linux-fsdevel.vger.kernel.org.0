@@ -2,77 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E6A18214620
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jul 2020 15:30:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0D09214644
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jul 2020 16:03:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728066AbgGDNap (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 4 Jul 2020 09:30:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57374 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727970AbgGDNaj (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 4 Jul 2020 09:30:39 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFDF6C08C5E1
-        for <linux-fsdevel@vger.kernel.org>; Sat,  4 Jul 2020 06:30:38 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id a8so29093223edy.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 04 Jul 2020 06:30:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lYXNB8sAYPR03z+7yXMvQjkDEkew3CoGHxaB14N9l3o=;
-        b=c7UsYj0Lh39A+4qQDoIM8UAT0oPZ089C4wY54z+FI+hjKJoHqfZ+OSKJ7pK/eKAzO+
-         T7h9fPkTqD0YYgXGbcszXQVBpQZzfECPoTaiJSGKgFPEOiS0bmZOKBCgcrfKjvEdRMi8
-         ky7eDfhq2RRrihjXm8dQdD6Hedc2JnwUqwscoh1W5k3VqOOPGf5jhlp6vbXB7HwDuuuA
-         l6lArMUWn4qcA6162GFXILJmBuS2liiSETUEkV2qAh7X0km7lbiqZ9omHzHGqNRHaFyc
-         TmsOjTYv2/H0FKRf0bMOTc1qIUhtzUtzAS0OOkKa0/6QnCfPSRLp3MPHy4Nwd0KH+RTE
-         ygpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lYXNB8sAYPR03z+7yXMvQjkDEkew3CoGHxaB14N9l3o=;
-        b=jhps6d9aY78sHFWwHbMPOYCa5paHef5PcqML5WBiEPHaF5pTE6uOJ5fWshLsGUhkrq
-         GBzqXsLE03gVNE9mbEqvpyDUgnyBtbozTlDVjo0RGxWIohT9vWcsQRfjE7eRHF+MF1Rm
-         CTRb3yndEvecgVuHT2Nt3Uv9EwgkXCI+8z9ec+jiYEXf2PCLSweH8r7/Qr9eNpaXJ/Rf
-         MO3EeL0GqojhiPqcBm26dIWpL+UMdCcmt9ONFdMyluCnw+iYZJ0HdJ8KVUrPTrOCDnxv
-         PQ4Y+dIKx2YTaaTgWU1KpHRayxYccaSaqXD2Xw4Nha5whWjMh32cuX7+vrio1ruZKVxB
-         Lm2g==
-X-Gm-Message-State: AOAM530K8NLlWgtAFJ3RVGAVp//vtcDQyuPC5v7N/QfeokeGupQquzPA
-        bx5IuIwv1MvxvSx7QBmz2qZ++mm0/6HAbej8vMGE
-X-Google-Smtp-Source: ABdhPJxXnEAomjGOTfVoMxiJBSuMBpETmOS+i8zhHtjzsBKGVLhQISOvjpbb5e1kLK73pS32uCKmaU1565rkftQCo+o=
-X-Received: by 2002:aa7:d6cf:: with SMTP id x15mr44774064edr.164.1593869437418;
- Sat, 04 Jul 2020 06:30:37 -0700 (PDT)
+        id S1728116AbgGDODE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Jul 2020 10:03:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728086AbgGDODD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 4 Jul 2020 10:03:03 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8842A21707;
+        Sat,  4 Jul 2020 14:03:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593871383;
+        bh=URxPKIHQL7SkJXwUkdzXDCnSnjDxxoHjfZVsU7XPN0c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lNw6k9kfAw5gsYe5uk+i6vpwYxW8sPZrQ3zJh/DdSYq5sBWnedFlAfvfydfdhzSd/
+         5pD7iKApSSjp/0/TIeK4LE8RucNAdRx2g8DQbmGxgcmX0CicZUyaelPskm+wN3Udro
+         ecZ+W68QdR9MKn44hzZwB/Q+1X+dQevcyOI6Dnlw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     viro@zeniv.linux.org.uk, mtk.manpages@gmail.com, shuah@kernel.org,
+        linux-api@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-man@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 0/3] readfile(2): a new syscall to make open/read/close faster
+Date:   Sat,  4 Jul 2020 16:02:46 +0200
+Message-Id: <20200704140250.423345-1-gregkh@linuxfoundation.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <cover.1593198710.git.rgb@redhat.com> <e5a1ab6955c565743372b392a93f7d1ac98478a2.1593198710.git.rgb@redhat.com>
- <CAHC9VhTcFrPDSmvBBXevo-atCnxy4WK2YQ0WOeg4M1Sfz0qPgA@mail.gmail.com>
-In-Reply-To: <CAHC9VhTcFrPDSmvBBXevo-atCnxy4WK2YQ0WOeg4M1Sfz0qPgA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 4 Jul 2020 09:30:26 -0400
-Message-ID: <CAHC9VhTW+pTES3g7gOoCWT3tXG3NsP0KjDLLyBHs_i3HSQMspQ@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V9 02/13] audit: add container id
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, Ondrej Mosnacek <omosnace@redhat.com>,
-        dhowells@redhat.com, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 4, 2020 at 9:29 AM Paul Moore <paul@paul-moore.com> wrote:
-> On Sat, Jun 27, 2020 at 9:22 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >
-> > Implement the proc fs write to set the audit container identifier of a
-> > process, emitting an AUDIT_CONTAINER_OP record to document the event.
+Here is a tiny new syscall, readfile, that makes it simpler to read
+small/medium sized files all in one shot, no need to do open/read/close.
+This is especially helpful for tools that poke around in procfs or
+sysfs, making a little bit of a less system load than before, especially
+as syscall overheads go up over time due to various CPU bugs being
+addressed.
 
-Sorry about the email misfire, you can safely ignore that last empty message.
+There are 4 patches in this series, the first 3 are against the kernel
+tree, adding the syscall logic, wiring up the syscall, and adding some
+tests for it.
+
+The last patch is agains the man-pages project, adding a tiny man page
+to try to describe the new syscall.
+
+Greg Kroah-Hartman (3):
+  readfile: implement readfile syscall
+  arch: wire up the readfile syscall
+  selftests: add readfile(2) selftests
+
+ arch/alpha/kernel/syscalls/syscall.tbl        |   1 +
+ arch/arm/tools/syscall.tbl                    |   1 +
+ arch/arm64/include/asm/unistd.h               |   2 +-
+ arch/arm64/include/asm/unistd32.h             |   2 +
+ arch/ia64/kernel/syscalls/syscall.tbl         |   1 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |   1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |   1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |   1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl     |   1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |   1 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |   1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |   1 +
+ arch/s390/kernel/syscalls/syscall.tbl         |   1 +
+ arch/sh/kernel/syscalls/syscall.tbl           |   1 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |   1 +
+ fs/open.c                                     |  50 +++
+ include/linux/syscalls.h                      |   2 +
+ include/uapi/asm-generic/unistd.h             |   4 +-
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/readfile/.gitignore   |   3 +
+ tools/testing/selftests/readfile/Makefile     |   7 +
+ tools/testing/selftests/readfile/readfile.c   | 285 +++++++++++++++++
+ .../selftests/readfile/readfile_speed.c       | 301 ++++++++++++++++++
+ 26 files changed, 671 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/readfile/.gitignore
+ create mode 100644 tools/testing/selftests/readfile/Makefile
+ create mode 100644 tools/testing/selftests/readfile/readfile.c
+ create mode 100644 tools/testing/selftests/readfile/readfile_speed.c
+
+-- 
+2.27.0
+
