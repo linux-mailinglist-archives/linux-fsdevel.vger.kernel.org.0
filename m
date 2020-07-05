@@ -2,78 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B427214C34
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jul 2020 13:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3CFC214C3E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jul 2020 13:58:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726898AbgGELuU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jul 2020 07:50:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55658 "EHLO mail.kernel.org"
+        id S1726797AbgGEL6u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jul 2020 07:58:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726454AbgGELuT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jul 2020 07:50:19 -0400
+        id S1726454AbgGEL6u (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 5 Jul 2020 07:58:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DD4A2073E;
-        Sun,  5 Jul 2020 11:50:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6F5820708;
+        Sun,  5 Jul 2020 11:58:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593949819;
-        bh=6H4BG9XUn4FArWwJ1aHdJuAbaZICFxfaIIk6oHWyqSc=;
+        s=default; t=1593950329;
+        bh=pEThZSurgEAGI6bD+iWUpXIlCqpTIfabn5t/AHWOQ6M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qEndCB28R0sfFMfC1Jsnwtvx3NntdXF6wKOBm9AoAbFI0D0SuHggK8qbd54n7Oklq
-         CpGgbmTxLKfcc1gltZEeyNAmEIxnhGySwZaUq9W3RfDH5g33e/hzIcUhlyNssJh3aO
-         4qvNF3EXSBP/nhQO5JVioPo23rX4w9mFMFkqsvlA=
-Date:   Sun, 5 Jul 2020 13:50:21 +0200
+        b=QdZlzL5SQXxiIeV3CUEn3VhPIvbTnfU6UpG6IjAHEklPweIXNnomInzKT+zTi2sHy
+         AMdqOR/QdJN3kK4RgJ5Q5WL+pyNevx/K6ERDjL6AD0zpE5VTy2Lp9kCdMf6Mwpb42t
+         X/oL4jT+z/nmZEHkoVxsWSUSG6NcJoiCGry+TBw0=
+Date:   Sun, 5 Jul 2020 13:58:51 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Jan Ziak <0xe2.0x9a.0x9b@gmail.com>
-Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-man@vger.kernel.org, mtk.manpages@gmail.com,
-        shuah@kernel.org, viro@zeniv.linux.org.uk
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-man@vger.kernel.org,
+        mtk.manpages@gmail.com, shuah@kernel.org, viro@zeniv.linux.org.uk
 Subject: Re: [PATCH 0/3] readfile(2): a new syscall to make open/read/close
  faster
-Message-ID: <20200705115021.GA1227929@kroah.com>
+Message-ID: <20200705115851.GB1227929@kroah.com>
 References: <CAODFU0q6CrUB_LkSdrbp5TQ4Jm6Sw=ZepZwD-B7-aFudsOvsig@mail.gmail.com>
+ <20200705021631.GR25523@casper.infradead.org>
+ <CAODFU0qwtPTaBRbA3_ufA6N7fajhi61Sp5iE75Shdk25NSOTLA@mail.gmail.com>
+ <20200705031208.GS25523@casper.infradead.org>
+ <CAODFU0q=nDdx7D1NUxTQshBjqgTCYPpKzog78XZLjoPqnZqXvw@mail.gmail.com>
+ <20200705032732.GT25523@casper.infradead.org>
+ <CAODFU0rSqQsO9rSiA8Ke=+mk_NgEdFDHPMfmXGSmzmkqQh1KYw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAODFU0q6CrUB_LkSdrbp5TQ4Jm6Sw=ZepZwD-B7-aFudsOvsig@mail.gmail.com>
+In-Reply-To: <CAODFU0rSqQsO9rSiA8Ke=+mk_NgEdFDHPMfmXGSmzmkqQh1KYw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 05, 2020 at 04:06:22AM +0200, Jan Ziak wrote:
-> Hello
+On Sun, Jul 05, 2020 at 06:09:03AM +0200, Jan Ziak wrote:
+> On Sun, Jul 5, 2020 at 5:27 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Sun, Jul 05, 2020 at 05:18:58AM +0200, Jan Ziak wrote:
+> > > On Sun, Jul 5, 2020 at 5:12 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > > >
+> > > > You should probably take a look at io_uring.  That has the level of
+> > > > complexity of this proposal and supports open/read/close along with many
+> > > > other opcodes.
+> > >
+> > > Then glibc can implement readfile using io_uring and there is no need
+> > > for a new single-file readfile syscall.
+> >
+> > It could, sure.  But there's also a value in having a simple interface
+> > to accomplish a simple task.  Your proposed API added a very complex
+> > interface to satisfy needs that clearly aren't part of the problem space
+> > that Greg is looking to address.
 > 
-> At first, I thought that the proposed system call is capable of
-> reading *multiple* small files using a single system call - which
-> would help increase HDD/SSD queue utilization and increase IOPS (I/O
-> operations per second) - but that isn't the case and the proposed
-> system call can read just a single file.
+> I believe that we should look at the single-file readfile syscall from
+> a performance viewpoint. If an application is expecting to read a
+> couple of small/medium-size files per second, then neither readfile
+> nor readfiles makes sense in terms of improving performance. The
+> benefits start to show up only in case an application is expecting to
+> read at least a hundred of files per second. The "per second" part is
+> important, it cannot be left out. Because readfile only improves
+> performance for many-file reads, the syscall that applications
+> performing many-file reads actually want is the multi-file version,
+> not the single-file version.
 
-If you want to do this for multple files, use io_ring, that's what it
-was designed for.  I think Jens was going to be adding support for the
-open/read/close pattern to it as well, after some other more pressing
-features/fixes were finished.
+It also is a measurable increase over reading just a single file.
+Here's my really really fast AMD system doing just one call to readfile
+vs. one call sequence to open/read/close:
 
-> Without the ability to read multiple small files using a single system
-> call, it is impossible to increase IOPS (unless an application is
-> using multiple reader threads or somehow instructs the kernel to
-> prefetch multiple files into memory).
+	$ ./readfile_speed -l 1
+	Running readfile test on file /sys/devices/system/cpu/vulnerabilities/meltdown for 1 loops...
+	Took 3410 ns
+	Running open/read/close test on file /sys/devices/system/cpu/vulnerabilities/meltdown for 1 loops...
+	Took 3780 ns
 
-There's not much (but it is mesurable) need to prefetch virtual files
-into memory first, which is primarily what this syscall is for (procfs,
-sysfs, securityfs, etc.)  If you are dealing with real-disks, then yes,
-the overhead of the syscall might be in the noise compared to the i/o
-path of the data.
+370ns isn't all that much, yes, but it is 370ns that could have been
+used for something else :)
 
-> While you are at it, why not also add a readfiles system call to read
-> multiple, presumably small, files? The initial unoptimized
-> implementation of readfiles syscall can simply call readfile
-> sequentially.
+Look at the overhead these days of a syscall using something like perf
+to see just how bad things have gotten on Intel-based systems (above was
+AMD which doesn't suffer all the syscall slowdowns, only some).
 
-Again, that's what io_uring is for.
+I'm going to have to now dig up my old rpi to get the stats on that
+thing, as well as some Intel boxes to show the problem I'm trying to
+help out with here.  I'll post that for the next round of this patch
+series.
+
+> I am not sure I understand why you think that a pointer to an array of
+> readfile_t structures is very complex. If it was very complex then it
+> would be a deep tree or a large graph.
+
+Of course you can make it more complex if you want, but look at the
+existing tools that currently do many open/read/close sequences.  The
+apis there don't lend themselves very well to knowing the larger list of
+files ahead of time.  But I could be looking at the wrong thing, what
+userspace programs are you thinking of that could be easily converted
+into using something like this?
 
 thanks,
 
