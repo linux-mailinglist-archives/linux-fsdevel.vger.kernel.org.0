@@ -2,211 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B582D214EB3
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jul 2020 20:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2152214ED5
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jul 2020 21:12:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbgGESwe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jul 2020 14:52:34 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:31546 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728169AbgGESwb (ORCPT
+        id S1728053AbgGETMU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jul 2020 15:12:20 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:39513 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727781AbgGETMU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jul 2020 14:52:31 -0400
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200705185228epoutp04ae94c6d40f8373818d9528491dded802~e7-PcLp8q0980909809epoutp04b
-        for <linux-fsdevel@vger.kernel.org>; Sun,  5 Jul 2020 18:52:28 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200705185228epoutp04ae94c6d40f8373818d9528491dded802~e7-PcLp8q0980909809epoutp04b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1593975148;
-        bh=EDeoKzff2L3XGHadZi/OIFUby3HIdjDpDQcs/wY5K7A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h0vCiK0vfynf7uS3gvJlWms2MQeu8M+FS+SHtQUQvyafvenqgHCZAmcoXOB9EryHX
-         g0o5FTw/BJ7ecm3vKmE8M4/PLFDnUakZZZlR21BhHKAegbJkXAPA2JAB+aQEXA90bi
-         /Uwb6T6y989qhkukq4YITiC1rW6ouyz7ApWmsyOk=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20200705185228epcas5p4d63536fb4ff71ca1a9d91322c2aec8b2~e7-O7A85D1418914189epcas5p4D;
-        Sun,  5 Jul 2020 18:52:28 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D5.C7.09703.C61220F5; Mon,  6 Jul 2020 03:52:28 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7~e7-OS5KwJ2311023110epcas5p1E;
-        Sun,  5 Jul 2020 18:52:27 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200705185227epsmtrp1958b2733946f97338ab9ed5a3835c095~e7-OSHD770303903039epsmtrp1_;
-        Sun,  5 Jul 2020 18:52:27 +0000 (GMT)
-X-AuditID: b6c32a4a-4b5ff700000025e7-54-5f02216c3ddb
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4D.37.08303.B61220F5; Mon,  6 Jul 2020 03:52:27 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.110.206.5]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200705185224epsmtip27b31b5b2d629a5e08596d2873cb48d57~e7-Ln6_Kc3204432044epsmtip2i;
-        Sun,  5 Jul 2020 18:52:24 +0000 (GMT)
-From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bcrl@kvack.org
-Cc:     hch@infradead.org, Damien.LeMoal@wdc.com, asml.silence@gmail.com,
-        linux-fsdevel@vger.kernel.org, mb@lightnvm.io,
-        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Selvakumar S <selvakuma.s1@samsung.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-Subject: [PATCH v3 4/4] io_uring: add support for zone-append
-Date:   Mon,  6 Jul 2020 00:17:50 +0530
-Message-Id: <1593974870-18919-5-git-send-email-joshi.k@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1593974870-18919-1-git-send-email-joshi.k@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsWy7bCmlm6OIlO8wY0OTovf06ewWsxZtY3R
-        YvXdfjaLrn9bWCxa278xWZyesIjJ4l3rORaLx3c+s1sc/f+WzWLKtCZGi723tC327D3JYnF5
-        1xw2ixXbj7BYbPs9n9niypRFzBavf5xkszj/9zirg5DHzll32T02r9DyuHy21GPTp0nsHt1X
-        fzB69G1ZxejxeZOcR/uBbiaPTU/eMgVwRnHZpKTmZJalFunbJXBlzJm1gb1grnRFzzexBsaF
-        Yl2MHBwSAiYSL9uluhi5OIQEdjNKTNmxhgXC+cQosat7IhOE85lR4uepl8xdjJxgHX1Pb7NB
-        JHYBJVYdQqg6/qeTEWQum4CmxIXJpSCmiICNxM4lKiAlzALtzBIndt5hAhkkLGArce7PKnYQ
-        m0VAVeLOmUlgNq+As8TGi+dZIZbJSdw81wm2mFPARaJt92lmkEESAls4JI6encYGUeQi8f7g
-        OyhbWOLV8S3sELaUxMv+Nii7WOLXnaNQzR2MEtcbZrJAJOwlLu75ywRyKTPQ0et36YOEmQX4
-        JHp/P2GChBGvREebEES1osS9SU+hbhOXeDhjCZTtIXGs+QLYX0IC0xkl5pwvmcAoOwth6AJG
-        xlWMkqkFxbnpqcWmBUZ5qeV6xYm5xaV56XrJ+bmbGMFJSMtrB+PDBx/0DjEycTAeYpTgYFYS
-        4e3VZowX4k1JrKxKLcqPLyrNSS0+xCjNwaIkzqv040yckEB6YklqdmpqQWoRTJaJg1OqgWlu
-        2ZKGfwmfWq7aX3hwNUq6PntZa+npY6cPXUqJM3N12pfLZLPF8tS5ud8e7PBK+7+5eGWTyZfu
-        9IU3M/Yf0NlctD027FDS44LI2MA09ik9Dx5mXvToMA6ocnZZsOHcrNscf5z2/y1blSFRW3rf
-        TyExlS8v5q51+9vuq5H6GhnfD4XWuCzc5xld/kHilcpm7Ve/RL9N7zLnPX1z8/rMXfcf3u2J
-        Kd48mS2qIm7RDq09XhuenHmouo7fecVl/lDLqRudDufL3zK4FPR6YZ5pdMqPy6+C/Dnion22
-        dwpUK/hZHYrVtJ7x3UqZPZF14s5YayHXe9IN7SX5sx9oP1cw9xf8+WX32Qkc/+Ifdf+qtlBi
-        Kc5INNRiLipOBAAT/P/DsQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsWy7bCSvG62IlO8Qe97KYvf06ewWsxZtY3R
-        YvXdfjaLrn9bWCxa278xWZyesIjJ4l3rORaLx3c+s1sc/f+WzWLKtCZGi723tC327D3JYnF5
-        1xw2ixXbj7BYbPs9n9niypRFzBavf5xkszj/9zirg5DHzll32T02r9DyuHy21GPTp0nsHt1X
-        fzB69G1ZxejxeZOcR/uBbiaPTU/eMgVwRnHZpKTmZJalFunbJXBlzJm1gb1grnRFzzexBsaF
-        Yl2MnBwSAiYSfU9vs3UxcnEICexglDiyfDcTREJcovnaD3YIW1hi5b/n7BBFHxklLky6A9TB
-        wcEmoClxYXIpSI2IgINE1/HHTCA1zAJTmSV2vlvCBpIQFrCVOPdnFdggFgFViTtnJoHZvALO
-        EhsvnmeFWCAncfNcJzOIzSngItG2+zQzyHwhoJqplxQnMPItYGRYxSiZWlCcm55bbFhglJda
-        rlecmFtcmpeul5yfu4kRHANaWjsY96z6oHeIkYmD8RCjBAezkghvrzZjvBBvSmJlVWpRfnxR
-        aU5q8SFGaQ4WJXHer7MWxgkJpCeWpGanphakFsFkmTg4pRqYavVfztGIPcy9oVLt6qZ9Mrnf
-        bX27pzp3/rs8L9b/Su7V1VXMtVxqLx33Tn532udU1wNWYRXdk4nLzVrfvrly4tAq6zO+cYY+
-        ebu8zmYZfWx6Wjrj+LU/3YontPXqE2vk/N60zxd5/3pPZ4u6gNfMNx9uu36p2xDucLw7psj3
-        /IQ/1QYnWkrzfWz/t9jUuT5IMJY3OexyqtYi4fHW5J+WP/588a2Mfchyso9tX5rUpXS1X7Vf
-        JVvW//WfO+nsfvmSxtXcLfxnvlza/6Uj2/HLZct+R57HhetaWXz+H8mtFNof9EhKd3pX2T/m
-        NZ0xD39/v1LiE8WyzemW/r78yTdceOU/exy78ftaUepS611flFiKMxINtZiLihMBLkoc7vAC
-        AAA=
-X-CMS-MailID: 20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7
-References: <1593974870-18919-1-git-send-email-joshi.k@samsung.com>
-        <CGME20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7@epcas5p1.samsung.com>
+        Sun, 5 Jul 2020 15:12:20 -0400
+Received: by mail-il1-f200.google.com with SMTP id f66so20757121ilh.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Jul 2020 12:12:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Sl5/QP84bh2XxnAfKFwY88vpKb0Kww2/Do1jEci7GLs=;
+        b=J1d0TykngtGrvZxNKmupecigRBtPpdjrxUySkUYWm0iU3XRNMfalMcx0lWizUR7WTI
+         u439iKHteR3JmRRnsHggoQxRja8bLzC/7CEb/mErbExOIM+yZ7GNj1il2cW43J+npNLX
+         VVqMXVELqIWrqyvDUj+cZ4EQsd52FQ9hQOonU5yTM/P+QnmgnPjHP2oggEWumu6vj6Dh
+         n2blW++EaR1OMrIyHg0wXyWD8RcsDVLgL+ESjC5W6VDlo6STboKmYvL+0cFHDe5njZQ8
+         sAQ9fAEKOFiWnZPaLIPfvcVTcBvbXjeJvFoCmzRqzJu/foz4OmKYKZnqcOVnTJTsYmD3
+         ijkg==
+X-Gm-Message-State: AOAM530FXeYGe7PD5Dnr3DKT4NkIxDefoex8Wzjuq8FkUGuLU16pgkez
+        jzZIz+63VrtxXMRu2t8tTAYABiNG6agr4+kOuVt/LV8D3aTd
+X-Google-Smtp-Source: ABdhPJzWjNzar+P72KKdkIVF+DZ40jOXCSUNpjoq3IH8gtvzQBLAlN4ZtpkRp7YaQTqzLA0ezWTZA4EJ+Ull5RrmQRfAQfZXUJLC
+MIME-Version: 1.0
+X-Received: by 2002:a02:30c4:: with SMTP id q187mr48480579jaq.102.1593976339427;
+ Sun, 05 Jul 2020 12:12:19 -0700 (PDT)
+Date:   Sun, 05 Jul 2020 12:12:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007df63d05a9b68960@google.com>
+Subject: general protection fault in bdev_read_page (2)
+From:   syzbot <syzbot+662448179365dddc1880@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Selvakumar S <selvakuma.s1@samsung.com>
+Hello,
 
-For zone-append, block-layer will return zone-relative offset via ret2
-of ki_complete interface. Make changes to collect it, and send to
-user-space using cqe->flags.
+syzbot found the following crash on:
 
-Signed-off-by: Selvakumar S <selvakuma.s1@samsung.com>
-Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
-Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-Signed-off-by: Javier Gonzalez <javier.gonz@samsung.com>
+HEAD commit:    7c30b859 Merge tag 'spi-fix-v5.8-rc3' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1279b86b100000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7be693511b29b338
+dashboard link: https://syzkaller.appspot.com/bug?extid=662448179365dddc1880
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13bd80a3100000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16af525b100000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+662448179365dddc1880@syzkaller.appspotmail.com
+
+general protection fault, probably for non-canonical address 0xdffffc000000001e: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x00000000000000f0-0x00000000000000f7]
+CPU: 0 PID: 7121 Comm: systemd-udevd Not tainted 5.8.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:bdev_read_page+0x35/0x290 fs/block_dev.c:700
+Code: f5 53 48 89 fb 48 83 ec 08 48 89 14 24 e8 03 12 a5 ff 48 8d bb f0 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 e7 01 00 00 4c 8b bb f0 00 00 00 48 b8 00 00 00
+RSP: 0018:ffffc90001b57530 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81cf749a
+RDX: 000000000000001e RSI: ffffffff81cea51d RDI: 00000000000000f0
+RBP: fff89719b6b00000 R08: 0000000000000001 R09: ffffea0002871787
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: ffffc90001b57748
+FS:  00007fde67d458c0(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055f65ed31138 CR3: 00000000a78d8000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ do_mpage_readpage+0x10ca/0x1ef0 fs/mpage.c:302
+ mpage_readahead+0x3a2/0x870 fs/mpage.c:391
+ read_pages+0x1df/0x8d0 mm/readahead.c:130
+ page_cache_readahead_unbounded+0x572/0x850 mm/readahead.c:244
+ __do_page_cache_readahead mm/readahead.c:273 [inline]
+ force_page_cache_readahead+0x2e9/0x460 mm/readahead.c:303
+ page_cache_sync_readahead mm/readahead.c:580 [inline]
+ page_cache_sync_readahead+0x113/0x130 mm/readahead.c:567
+ generic_file_buffered_read+0x108c/0x27e0 mm/filemap.c:2033
+ generic_file_read_iter+0x396/0x4e0 mm/filemap.c:2307
+ blkdev_read_iter+0x11b/0x180 fs/block_dev.c:2044
+ call_read_iter include/linux/fs.h:1901 [inline]
+ new_sync_read+0x41a/0x6e0 fs/read_write.c:415
+ __vfs_read+0xc9/0x100 fs/read_write.c:428
+ vfs_read+0x1f6/0x420 fs/read_write.c:462
+ ksys_read+0x12d/0x250 fs/read_write.c:588
+ do_syscall_64+0x60/0xe0 arch/x86/entry/common.c:359
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7fde66e8c210
+Code: Bad RIP value.
+RSP: 002b:00007fff13285fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 000055f65ed30d00 RCX: 00007fde66e8c210
+RDX: 0000000000000400 RSI: 000055f65ed30d28 RDI: 000000000000000f
+RBP: 000055f65ed34e80 R08: 00007fde66e76f88 R09: 0000000000000430
+R10: 000000000000006d R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000400 R14: 000055f65ed34ed0 R15: 0000000000000400
+Modules linked in:
+---[ end trace 5b6f53a9af7ced6f ]---
+RIP: 0010:bdev_read_page+0x35/0x290 fs/block_dev.c:700
+Code: f5 53 48 89 fb 48 83 ec 08 48 89 14 24 e8 03 12 a5 ff 48 8d bb f0 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 e7 01 00 00 4c 8b bb f0 00 00 00 48 b8 00 00 00
+RSP: 0018:ffffc90001b57530 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81cf749a
+RDX: 000000000000001e RSI: ffffffff81cea51d RDI: 00000000000000f0
+RBP: fff89719b6b00000 R08: 0000000000000001 R09: ffffea0002871787
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: ffffc90001b57748
+FS:  00007fde67d458c0(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5807cc2ab4 CR3: 00000000a78d8000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- fs/io_uring.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 155f3d8..cbde4df 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -402,6 +402,8 @@ struct io_rw {
- 	struct kiocb			kiocb;
- 	u64				addr;
- 	u64				len;
-+	/* zone-relative offset for append, in sectors */
-+	u32			append_offset;
- };
- 
- struct io_connect {
-@@ -541,6 +543,7 @@ enum {
- 	REQ_F_NO_FILE_TABLE_BIT,
- 	REQ_F_QUEUE_TIMEOUT_BIT,
- 	REQ_F_WORK_INITIALIZED_BIT,
-+	REQ_F_ZONE_APPEND_BIT,
- 
- 	/* not a real bit, just to check we're not overflowing the space */
- 	__REQ_F_LAST_BIT,
-@@ -598,6 +601,8 @@ enum {
- 	REQ_F_QUEUE_TIMEOUT	= BIT(REQ_F_QUEUE_TIMEOUT_BIT),
- 	/* io_wq_work is initialized */
- 	REQ_F_WORK_INITIALIZED	= BIT(REQ_F_WORK_INITIALIZED_BIT),
-+	/* to return zone relative offset for zone append*/
-+	REQ_F_ZONE_APPEND	= BIT(REQ_F_ZONE_APPEND_BIT),
- };
- 
- struct async_poll {
-@@ -1745,6 +1750,8 @@ static void io_iopoll_complete(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 
- 		if (req->flags & REQ_F_BUFFER_SELECTED)
- 			cflags = io_put_kbuf(req);
-+		if (req->flags & REQ_F_ZONE_APPEND)
-+			cflags = req->rw.append_offset;
- 
- 		__io_cqring_fill_event(req, req->result, cflags);
- 		(*nr_events)++;
-@@ -1943,7 +1950,7 @@ static inline void req_set_fail_links(struct io_kiocb *req)
- 		req->flags |= REQ_F_FAIL_LINK;
- }
- 
--static void io_complete_rw_common(struct kiocb *kiocb, long res)
-+static void io_complete_rw_common(struct kiocb *kiocb, long res, long res2)
- {
- 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
- 	int cflags = 0;
-@@ -1955,6 +1962,10 @@ static void io_complete_rw_common(struct kiocb *kiocb, long res)
- 		req_set_fail_links(req);
- 	if (req->flags & REQ_F_BUFFER_SELECTED)
- 		cflags = io_put_kbuf(req);
-+	/* use cflags to return zone append completion result */
-+	if (req->flags & REQ_F_ZONE_APPEND)
-+		cflags = res2;
-+
- 	__io_cqring_add_event(req, res, cflags);
- }
- 
-@@ -1962,7 +1973,7 @@ static void io_complete_rw(struct kiocb *kiocb, long res, long res2)
- {
- 	struct io_kiocb *req = container_of(kiocb, struct io_kiocb, rw.kiocb);
- 
--	io_complete_rw_common(kiocb, res);
-+	io_complete_rw_common(kiocb, res, res2);
- 	io_put_req(req);
- }
- 
-@@ -1975,6 +1986,9 @@ static void io_complete_rw_iopoll(struct kiocb *kiocb, long res, long res2)
- 
- 	if (res != req->result)
- 		req_set_fail_links(req);
-+	if (req->flags & REQ_F_ZONE_APPEND)
-+		req->rw.append_offset = res2;
-+
- 	req->result = res;
- 	if (res != -EAGAIN)
- 		WRITE_ONCE(req->iopoll_completed, 1);
-@@ -2739,6 +2753,9 @@ static int io_write(struct io_kiocb *req, bool force_nonblock)
- 						SB_FREEZE_WRITE);
- 		}
- 		kiocb->ki_flags |= IOCB_WRITE;
-+		/* zone-append requires few extra steps during completion */
-+		if (kiocb->ki_flags & IOCB_ZONE_APPEND)
-+			req->flags |= REQ_F_ZONE_APPEND;
- 
- 		if (!force_nonblock)
- 			current->signal->rlim[RLIMIT_FSIZE].rlim_cur = req->fsize;
--- 
-2.7.4
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
