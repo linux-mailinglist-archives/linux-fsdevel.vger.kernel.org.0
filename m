@@ -2,121 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 335FA214C49
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jul 2020 14:00:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08FCF214C77
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jul 2020 14:50:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbgGEMAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jul 2020 08:00:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58022 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726454AbgGEMAB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jul 2020 08:00:01 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5834C20708;
-        Sun,  5 Jul 2020 12:00:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593950400;
-        bh=EYV4BEyFaXQt1VRsg7oCnvXDXA2qdM5fANKa6Er1s9w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NLiuvOSW5tG3I+Wl+TUTcoFnA88jTQg7/nqpmOXC/AOuyKSf8z0A8iFO0gkgmV5NT
-         iwFKSFGaeJ+WICwzHmBK6zmyuJpKw6mKFTopQjG3V0/abiELcEa5OyomHym4mEF2hh
-         q+A8071zcTBOofSS9H3c3eg2HLN3c6XvNhTcwGnI=
-Date:   Sun, 5 Jul 2020 14:00:03 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jan Ziak <0xe2.0x9a.0x9b@gmail.com>
-Cc:     Andreas Dilger <adilger@dilger.ca>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-man@vger.kernel.org, mtk.manpages@gmail.com,
-        shuah@kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH 0/3] readfile(2): a new syscall to make open/read/close
- faster
-Message-ID: <20200705120003.GC1227929@kroah.com>
-References: <CAODFU0q6CrUB_LkSdrbp5TQ4Jm6Sw=ZepZwD-B7-aFudsOvsig@mail.gmail.com>
- <20200705021631.GR25523@casper.infradead.org>
- <CAODFU0qwtPTaBRbA3_ufA6N7fajhi61Sp5iE75Shdk25NSOTLA@mail.gmail.com>
- <37170CC1-C132-40BE-8ABA-B14E3419975C@dilger.ca>
- <CAODFU0qT07ERWVH7F3rO1CK6CckmoF4p8ArHk09S9DCojD8M4w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAODFU0qT07ERWVH7F3rO1CK6CckmoF4p8ArHk09S9DCojD8M4w@mail.gmail.com>
+        id S1726903AbgGEMt6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jul 2020 08:49:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45768 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbgGEMt6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 5 Jul 2020 08:49:58 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD3DC061794;
+        Sun,  5 Jul 2020 05:49:58 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id k5so6276056pjg.3;
+        Sun, 05 Jul 2020 05:49:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Aj40E3vlw0EzHeK0WU01GA5Zuc/XtjNbFyYn4gYvCAo=;
+        b=RYM2H25OcxnyT1kzSYmB8h461hXG2zCMIq1XhMv0IG0y/ITnvsyj6WJJ5Pv4joZkBh
+         rbQFmOwRGoLPsNDiCeUzYZgzuDrDOz6+PYXbkcfXGqR1bs/vgwOseqH7nfd/Az7M5CHy
+         gyC4aZe6PYhA4REP64q1bTPidLwhUMNq1/qmra4dTgguXORHdjqe0Ka4VGLYQ3EeJZUl
+         7LPiYqX9LJBqfxShPR5NO4u4MmPE/4qT9yktFPPOtqwImagnNL/3ZVoNvUY11WUo/MpX
+         j5qEQBYmLJ7lAkVo7GXEhGLa4HdwIgR3Fi6nNdAefolJULmtpTy4WFNqjdMjJIVKeCKZ
+         Oh+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Aj40E3vlw0EzHeK0WU01GA5Zuc/XtjNbFyYn4gYvCAo=;
+        b=aMjHbWd/1vRioeTcn2f5RDty0ilxeDt2U4fxsO8IZhtsagOeWY5f8EPy9xuJRMpgrL
+         iee6gxBBCsuTOayXpy5a2OiKLrpXTAfuFlQsIp3kG9hc09kKtQy5L6LB2gqBmicszVYY
+         LJHeeUqo37cz0Rnh6AbCFy6cti+PNO/IUzg/mp4Pqqr7VO5gHMoz3EocCXh6tDFGsjrq
+         UFBW2Fm5KUbqjnBgi/GO2WzqnMiIqbp/w07+ZaNofhBzKzwdgDPz6MNQPshaAsjrEi9J
+         WCv7xXccpZ6+Wd+km/8VgVYYmyrMTvpcX5F9BipwkVWNKgsNxjDMBnvvpTfH10cF4C7j
+         Nq1w==
+X-Gm-Message-State: AOAM533Npzmqsfg85PN6eZvO7TH/lLvRYQs3QVGZMGDMZD8ShFFIBkj0
+        1zIIQ0qUiuOeNHaYjoK+bG8=
+X-Google-Smtp-Source: ABdhPJyZY3GzukKAOFoczFcdoYjLdT0sF/ULpERELza3uD5+xtOfsJy0SCICVsMTPGPer1DTz5W5uA==
+X-Received: by 2002:a17:902:c401:: with SMTP id k1mr16445742plk.202.1593953397440;
+        Sun, 05 Jul 2020 05:49:57 -0700 (PDT)
+Received: from mi-OptiPlex-7050.mioffice.cn ([43.224.245.180])
+        by smtp.gmail.com with ESMTPSA id f207sm16954553pfa.107.2020.07.05.05.49.55
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 05 Jul 2020 05:49:56 -0700 (PDT)
+From:   yang che <chey84736@gmail.com>
+To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        yang che <chey84736@gmail.com>
+Subject: [PATCH v2] hung_task:add detecting task in D state milliseconds timeout
+Date:   Sun,  5 Jul 2020 20:48:52 +0800
+Message-Id: <1593953332-29404-1-git-send-email-chey84736@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 05, 2020 at 09:25:39AM +0200, Jan Ziak wrote:
-> On Sun, Jul 5, 2020 at 8:32 AM Andreas Dilger <adilger@dilger.ca> wrote:
-> >
-> > On Jul 4, 2020, at 8:46 PM, Jan Ziak <0xe2.0x9a.0x9b@gmail.com> wrote:
-> > >
-> > > On Sun, Jul 5, 2020 at 4:16 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > >>
-> > >> On Sun, Jul 05, 2020 at 04:06:22AM +0200, Jan Ziak wrote:
-> > >>> Hello
-> > >>>
-> > >>> At first, I thought that the proposed system call is capable of
-> > >>> reading *multiple* small files using a single system call - which
-> > >>> would help increase HDD/SSD queue utilization and increase IOPS (I/O
-> > >>> operations per second) - but that isn't the case and the proposed
-> > >>> system call can read just a single file.
-> > >>>
-> > >>> Without the ability to read multiple small files using a single system
-> > >>> call, it is impossible to increase IOPS (unless an application is
-> > >>> using multiple reader threads or somehow instructs the kernel to
-> > >>> prefetch multiple files into memory).
-> > >>
-> > >> What API would you use for this?
-> > >>
-> > >> ssize_t readfiles(int dfd, char **files, void **bufs, size_t *lens);
-> > >>
-> > >> I pretty much hate this interface, so I hope you have something better
-> > >> in mind.
-> > >
-> > > I am proposing the following:
-> > >
-> > > struct readfile_t {
-> > >  int dirfd;
-> > >  const char *pathname;
-> > >  void *buf;
-> > >  size_t count;
-> > >  int flags;
-> > >  ssize_t retval; // set by kernel
-> > >  int reserved; // not used by kernel
-> > > };
-> >
-> > If you are going to pass a struct from userspace to the kernel, it
-> > should not mix int and pointer types (which may be 64-bit values,
-> > so that there are not structure packing issues, like:
-> >
-> > struct readfile {
-> >         int     dirfd;
-> >         int     flags;
-> >         const char *pathname;
-> >         void    *buf;
-> >         size_t  count;
-> >         ssize_t retval;
-> > };
-> >
-> > It would be better if "retval" was returned in "count", so that
-> > the structure fits nicely into 32 bytes on a 64-bit system, instead
-> > of being 40 bytes per entry, which adds up over many entries, like.
-> 
-> I know what you mean and it is a valid point, but in my opinion it
-> shouldn't (in most cases) be left to the programmer to decide what the
-> binary layout of a data structure is - instead it should be left to an
-> optimizing compiler to decide it.
+current hung_task_check_interval_secs and hung_task_timeout_secs
+only supports seconds. In some cases,the TASK_UNINTERRUPTIBLE state
+takes less than 1 second,may need to hung task trigger panic
+get ramdump or print all cpu task.
 
-We don't get that luxury when creating user/kernel apis in C, sorry.
+modify hung_task_check_interval_secs to hung_task_check_interval_millisecs,
+check interval use milliseconds. Add hung_task_timeout_millisecs file to
+set milliseconds.
+task timeout = hung_task_timeout_secs * 1000 + hung_task_timeout_millisecs.
+(timeout * HZ / 1000) calculate how many are generated jiffies
+in timeout milliseconds.
 
-I suggest using the pahole tool if you are interested in seeing the
-"best" way a structure can be layed out, it can perform that
-optimization for you so that you know how to fix your code.
+Signed-off-by: yang che <chey84736@gmail.com>
+---
 
-thanks,
+v1->v2:
+ add hung_task_check_interval_millisecs,hung_task_timeout_millisecs.
+ fix writing to the millisecond file silently overrides the setting in
+ the seconds file.
 
-greg k-h
+ [1]https://lore.kernel.org/lkml/CAN_w4MWMfoDGfpON-bYHrU=KuJG2vpFj01ZbN4r-iwM4AyyuGw@mail.gmail.com
+
+ include/linux/sched/sysctl.h |  3 ++-
+ kernel/hung_task.c           | 25 ++++++++++++++++++-------
+ kernel/sysctl.c              | 12 ++++++++++--
+ 3 files changed, 30 insertions(+), 10 deletions(-)
+
+diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+index 660ac49..179c331 100644
+--- a/include/linux/sched/sysctl.h
++++ b/include/linux/sched/sysctl.h
+@@ -16,8 +16,9 @@ extern unsigned int sysctl_hung_task_all_cpu_backtrace;
+ 
+ extern int	     sysctl_hung_task_check_count;
+ extern unsigned int  sysctl_hung_task_panic;
++extern unsigned long  sysctl_hung_task_timeout_millisecs;
+ extern unsigned long sysctl_hung_task_timeout_secs;
+-extern unsigned long sysctl_hung_task_check_interval_secs;
++extern unsigned long sysctl_hung_task_check_interval_millisecs;
+ extern int sysctl_hung_task_warnings;
+ int proc_dohung_task_timeout_secs(struct ctl_table *table, int write,
+ 		void *buffer, size_t *lenp, loff_t *ppos);
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index ce76f49..809c999 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -37,6 +37,7 @@ int __read_mostly sysctl_hung_task_check_count = PID_MAX_LIMIT;
+  * the RCU grace period. So it needs to be upper-bound.
+  */
+ #define HUNG_TASK_LOCK_BREAK (HZ / 10)
++#define SECONDS 1000
+ 
+ /*
+  * Zero means infinite timeout - no checking done:
+@@ -44,9 +45,14 @@ int __read_mostly sysctl_hung_task_check_count = PID_MAX_LIMIT;
+ unsigned long __read_mostly sysctl_hung_task_timeout_secs = CONFIG_DEFAULT_HUNG_TASK_TIMEOUT;
+ 
+ /*
++ * Zero means only use sysctl_hung_task_timeout_secs
++ */
++unsigned long  __read_mostly sysctl_hung_task_timeout_millisecs;
++
++/*
+  * Zero (default value) means use sysctl_hung_task_timeout_secs:
+  */
+-unsigned long __read_mostly sysctl_hung_task_check_interval_secs;
++unsigned long __read_mostly sysctl_hung_task_check_interval_millisecs;
+ 
+ int __read_mostly sysctl_hung_task_warnings = 10;
+ 
+@@ -108,7 +114,8 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 		t->last_switch_time = jiffies;
+ 		return;
+ 	}
+-	if (time_is_after_jiffies(t->last_switch_time + timeout * HZ))
++
++	if (time_is_after_jiffies(t->last_switch_time + (timeout * HZ) / SECONDS))
+ 		return;
+ 
+ 	trace_sched_process_hang(t);
+@@ -126,13 +133,16 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 	if (sysctl_hung_task_warnings) {
+ 		if (sysctl_hung_task_warnings > 0)
+ 			sysctl_hung_task_warnings--;
+-		pr_err("INFO: task %s:%d blocked for more than %ld seconds.\n",
+-		       t->comm, t->pid, (jiffies - t->last_switch_time) / HZ);
++
++		pr_err("INFO: task %s:%d blocked for more than %ld seconds %ld milliseconds.\n",
++			t->comm, t->pid, (jiffies - t->last_switch_time) / HZ,
++			(jiffies - t->last_switch_time) % HZ * (SECONDS / HZ));
+ 		pr_err("      %s %s %.*s\n",
+ 			print_tainted(), init_utsname()->release,
+ 			(int)strcspn(init_utsname()->version, " "),
+ 			init_utsname()->version);
+ 		pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_secs\""
++			"\"echo 0 > /proc/sys/kernel/hung_task_timeout_millisecs\""
+ 			" disables this message.\n");
+ 		sched_show_task(t);
+ 		hung_task_show_lock = true;
+@@ -217,7 +227,7 @@ static long hung_timeout_jiffies(unsigned long last_checked,
+ 				 unsigned long timeout)
+ {
+ 	/* timeout of 0 will disable the watchdog */
+-	return timeout ? last_checked - jiffies + timeout * HZ :
++	return timeout ? last_checked - jiffies + (timeout * HZ) / SECONDS :
+ 		MAX_SCHEDULE_TIMEOUT;
+ }
+ 
+@@ -281,8 +291,9 @@ static int watchdog(void *dummy)
+ 	set_user_nice(current, 0);
+ 
+ 	for ( ; ; ) {
+-		unsigned long timeout = sysctl_hung_task_timeout_secs;
+-		unsigned long interval = sysctl_hung_task_check_interval_secs;
++		unsigned long timeout = sysctl_hung_task_timeout_secs * SECONDS +
++					sysctl_hung_task_timeout_millisecs;
++		unsigned long interval = sysctl_hung_task_check_interval_millisecs;
+ 		long t;
+ 
+ 		if (interval == 0)
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index db1ce7a..8f7ac33 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2476,6 +2476,14 @@ static struct ctl_table kern_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 	},
+ 	{
++		.procname       = "hung_task_timeout_millisecs",
++		.data           = &sysctl_hung_task_timeout_millisecs,
++		.maxlen         = sizeof(unsigned long),
++		.mode           = 0644,
++		.proc_handler   = proc_dohung_task_timeout_secs,
++		.extra2         = &hung_task_timeout_max,
++	},
++	{
+ 		.procname	= "hung_task_timeout_secs",
+ 		.data		= &sysctl_hung_task_timeout_secs,
+ 		.maxlen		= sizeof(unsigned long),
+@@ -2484,8 +2492,8 @@ static struct ctl_table kern_table[] = {
+ 		.extra2		= &hung_task_timeout_max,
+ 	},
+ 	{
+-		.procname	= "hung_task_check_interval_secs",
+-		.data		= &sysctl_hung_task_check_interval_secs,
++		.procname	= "hung_task_check_interval_millisecs",
++		.data		= &sysctl_hung_task_check_interval_millisecs,
+ 		.maxlen		= sizeof(unsigned long),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dohung_task_timeout_secs,
+-- 
+2.7.4
+
