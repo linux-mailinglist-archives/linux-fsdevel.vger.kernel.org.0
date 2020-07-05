@@ -2,66 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DD90214AF4
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jul 2020 09:34:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBEE3214B16
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jul 2020 10:14:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726052AbgGEHea (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jul 2020 03:34:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48772 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725873AbgGEHea (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jul 2020 03:34:30 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C32720702;
-        Sun,  5 Jul 2020 07:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593934470;
-        bh=M0Nl0piVJywOWOh5GkXic1ooxXaj3OJL4yQvkIzhHc0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jeRjaa14xmg7VN1dNQTqNABuDjz5ik3ypPX5CDQdd7lbMcZ42I3Ycp9dJuLQ356ST
-         SPZAkO62/Dsek+qBJK8A0e8Q9d6LJKUyfiOf7dlPWFfUTKqe7J6ahukX/P0Qtqo/hC
-         SzJg6nSCHZ5Rp5Ld0cao8dQSiNJ8ZXaKlQjmSuDY=
-Date:   Sun, 5 Jul 2020 09:34:26 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
-Cc:     viro@zeniv.linux.org.uk, mtk.manpages@gmail.com, shuah@kernel.org,
+        id S1726467AbgGEIOm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jul 2020 04:14:42 -0400
+Received: from shells.gnugeneration.com ([66.240.222.126]:48028 "EHLO
+        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbgGEIOm (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 5 Jul 2020 04:14:42 -0400
+X-Greylist: delayed 447 seconds by postgrey-1.27 at vger.kernel.org; Sun, 05 Jul 2020 04:14:42 EDT
+Received: by shells.gnugeneration.com (Postfix, from userid 1000)
+        id 1E45E1A401F9; Sun,  5 Jul 2020 01:07:15 -0700 (PDT)
+Date:   Sun, 5 Jul 2020 01:07:14 -0700
+From:   Vito Caputo <vcaputo@pengaru.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Ziak <0xe2.0x9a.0x9b@gmail.com>, gregkh@linuxfoundation.org,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-man@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 3/3] selftests: add readfile(2) selftests
-Message-ID: <20200705073426.GA37944@kroah.com>
-References: <20200704140250.423345-1-gregkh@linuxfoundation.org>
- <20200704140250.423345-4-gregkh@linuxfoundation.org>
- <fdaa31b7-b045-e38b-680a-01f0389e6acc@gmx.de>
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-man@vger.kernel.org, mtk.manpages@gmail.com,
+        shuah@kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 0/3] readfile(2): a new syscall to make open/read/close
+ faster
+Message-ID: <20200705080714.76m64pwwpvlzji2v@shells.gnugeneration.com>
+References: <CAODFU0q6CrUB_LkSdrbp5TQ4Jm6Sw=ZepZwD-B7-aFudsOvsig@mail.gmail.com>
+ <20200705021631.GR25523@casper.infradead.org>
+ <CAODFU0qwtPTaBRbA3_ufA6N7fajhi61Sp5iE75Shdk25NSOTLA@mail.gmail.com>
+ <20200705031208.GS25523@casper.infradead.org>
+ <CAODFU0q=nDdx7D1NUxTQshBjqgTCYPpKzog78XZLjoPqnZqXvw@mail.gmail.com>
+ <20200705032732.GT25523@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fdaa31b7-b045-e38b-680a-01f0389e6acc@gmx.de>
+In-Reply-To: <20200705032732.GT25523@casper.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 05, 2020 at 03:41:48AM +0200, Heinrich Schuchardt wrote:
-> On 7/4/20 4:02 PM, Greg Kroah-Hartman wrote:
-> > Test the functionality of readfile(2) in various ways.
+On Sun, Jul 05, 2020 at 04:27:32AM +0100, Matthew Wilcox wrote:
+> On Sun, Jul 05, 2020 at 05:18:58AM +0200, Jan Ziak wrote:
+> > On Sun, Jul 5, 2020 at 5:12 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > >
+> > > You should probably take a look at io_uring.  That has the level of
+> > > complexity of this proposal and supports open/read/close along with many
+> > > other opcodes.
+> > 
+> > Then glibc can implement readfile using io_uring and there is no need
+> > for a new single-file readfile syscall.
 > 
-> Hello Greg,
-> 
-> I expect readfile() to generate fanotify events FAN_OPEN_PERM, FAN_OPEN,
-> FAN_ACCESS_PERM, FAN_ACCESS, FAN_CLOSE_NOWRITE in this sequence.
+> It could, sure.  But there's also a value in having a simple interface
+> to accomplish a simple task.  Your proposed API added a very complex
+> interface to satisfy needs that clearly aren't part of the problem space
+> that Greg is looking to address.
 
-Yes, it should, I don't think I do anything unique here when it comes to
-vfs accesses that would go around those events.
+I disagree re: "aren't part of the problem space".
 
-> Looking at patch 1/3 you took care of notifications. Would this deserve
-> testing here?
+Reading small files from procfs was specifically called out in the
+rationale for the syscall.
 
-Possibly, do we have other in-tree tests of syscalls that validate those
-events properly being created?
+In my experience you're rarely monitoring a single proc file in any
+situation where you care about the syscall overhead.  You're
+monitoring many of them, and any serious effort to do this efficiently
+in a repeatedly sampled situation has cached the open fds and already
+uses pread() to simply restart from 0 on every sample and not
+repeatedly pay for the name lookup.
 
-thanks,
+Basically anything optimally using the existing interfaces for
+sampling proc files needs a way to read multiple open file descriptors
+in a single syscall to move the needle.
 
-greg k-h
+This syscall doesn't provide that.  It doesn't really give any
+advantage over what we can achieve already.  It seems basically
+pointless to me, from a monitoring proc files perspective.
+
+Regards,
+Vito Caputo
