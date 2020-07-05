@@ -2,131 +2,441 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E2152214ED5
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jul 2020 21:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43E97214F5B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jul 2020 22:35:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbgGETMU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jul 2020 15:12:20 -0400
-Received: from mail-il1-f200.google.com ([209.85.166.200]:39513 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727781AbgGETMU (ORCPT
+        id S1728324AbgGEUfA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jul 2020 16:35:00 -0400
+Received: from shells.gnugeneration.com ([66.240.222.126]:39218 "EHLO
+        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728056AbgGEUfA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jul 2020 15:12:20 -0400
-Received: by mail-il1-f200.google.com with SMTP id f66so20757121ilh.6
-        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Jul 2020 12:12:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Sl5/QP84bh2XxnAfKFwY88vpKb0Kww2/Do1jEci7GLs=;
-        b=J1d0TykngtGrvZxNKmupecigRBtPpdjrxUySkUYWm0iU3XRNMfalMcx0lWizUR7WTI
-         u439iKHteR3JmRRnsHggoQxRja8bLzC/7CEb/mErbExOIM+yZ7GNj1il2cW43J+npNLX
-         VVqMXVELqIWrqyvDUj+cZ4EQsd52FQ9hQOonU5yTM/P+QnmgnPjHP2oggEWumu6vj6Dh
-         n2blW++EaR1OMrIyHg0wXyWD8RcsDVLgL+ESjC5W6VDlo6STboKmYvL+0cFHDe5njZQ8
-         sAQ9fAEKOFiWnZPaLIPfvcVTcBvbXjeJvFoCmzRqzJu/foz4OmKYKZnqcOVnTJTsYmD3
-         ijkg==
-X-Gm-Message-State: AOAM530FXeYGe7PD5Dnr3DKT4NkIxDefoex8Wzjuq8FkUGuLU16pgkez
-        jzZIz+63VrtxXMRu2t8tTAYABiNG6agr4+kOuVt/LV8D3aTd
-X-Google-Smtp-Source: ABdhPJzWjNzar+P72KKdkIVF+DZ40jOXCSUNpjoq3IH8gtvzQBLAlN4ZtpkRp7YaQTqzLA0ezWTZA4EJ+Ull5RrmQRfAQfZXUJLC
+        Sun, 5 Jul 2020 16:35:00 -0400
+Received: by shells.gnugeneration.com (Postfix, from userid 1000)
+        id DF0791A402E6; Sun,  5 Jul 2020 13:34:59 -0700 (PDT)
+Date:   Sun, 5 Jul 2020 13:34:59 -0700
+From:   Vito Caputo <vcaputo@pengaru.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Jan Ziak <0xe2.0x9a.0x9b@gmail.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-man@vger.kernel.org,
+        mtk.manpages@gmail.com, shuah@kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 0/3] readfile(2): a new syscall to make open/read/close
+ faster
+Message-ID: <20200705203459.ojli5uruxqt2cq2s@shells.gnugeneration.com>
+References: <CAODFU0q6CrUB_LkSdrbp5TQ4Jm6Sw=ZepZwD-B7-aFudsOvsig@mail.gmail.com>
+ <20200705021631.GR25523@casper.infradead.org>
+ <CAODFU0qwtPTaBRbA3_ufA6N7fajhi61Sp5iE75Shdk25NSOTLA@mail.gmail.com>
+ <20200705031208.GS25523@casper.infradead.org>
+ <CAODFU0q=nDdx7D1NUxTQshBjqgTCYPpKzog78XZLjoPqnZqXvw@mail.gmail.com>
+ <20200705032732.GT25523@casper.infradead.org>
+ <20200705080714.76m64pwwpvlzji2v@shells.gnugeneration.com>
+ <20200705114454.GB1224775@kroah.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:30c4:: with SMTP id q187mr48480579jaq.102.1593976339427;
- Sun, 05 Jul 2020 12:12:19 -0700 (PDT)
-Date:   Sun, 05 Jul 2020 12:12:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007df63d05a9b68960@google.com>
-Subject: general protection fault in bdev_read_page (2)
-From:   syzbot <syzbot+662448179365dddc1880@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="eioqlffteccd2lzb"
+Content-Disposition: inline
+In-Reply-To: <20200705114454.GB1224775@kroah.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+--eioqlffteccd2lzb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-HEAD commit:    7c30b859 Merge tag 'spi-fix-v5.8-rc3' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1279b86b100000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7be693511b29b338
-dashboard link: https://syzkaller.appspot.com/bug?extid=662448179365dddc1880
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13bd80a3100000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16af525b100000
+On Sun, Jul 05, 2020 at 01:44:54PM +0200, Greg KH wrote:
+> On Sun, Jul 05, 2020 at 01:07:14AM -0700, Vito Caputo wrote:
+> > On Sun, Jul 05, 2020 at 04:27:32AM +0100, Matthew Wilcox wrote:
+> > > On Sun, Jul 05, 2020 at 05:18:58AM +0200, Jan Ziak wrote:
+> > > > On Sun, Jul 5, 2020 at 5:12 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > > > >
+> > > > > You should probably take a look at io_uring.  That has the level of
+> > > > > complexity of this proposal and supports open/read/close along with many
+> > > > > other opcodes.
+> > > > 
+> > > > Then glibc can implement readfile using io_uring and there is no need
+> > > > for a new single-file readfile syscall.
+> > > 
+> > > It could, sure.  But there's also a value in having a simple interface
+> > > to accomplish a simple task.  Your proposed API added a very complex
+> > > interface to satisfy needs that clearly aren't part of the problem space
+> > > that Greg is looking to address.
+> > 
+> > I disagree re: "aren't part of the problem space".
+> > 
+> > Reading small files from procfs was specifically called out in the
+> > rationale for the syscall.
+> > 
+> > In my experience you're rarely monitoring a single proc file in any
+> > situation where you care about the syscall overhead.  You're
+> > monitoring many of them, and any serious effort to do this efficiently
+> > in a repeatedly sampled situation has cached the open fds and already
+> > uses pread() to simply restart from 0 on every sample and not
+> > repeatedly pay for the name lookup.
+> 
+> That's your use case, but many other use cases are just "read a bunch of
+> sysfs files in one shot".  Examples of that are tools that monitor
+> uevents and lots of hardware-information gathering tools.
+> 
+> Also not all tools sem to be as smart as you think they are, look at
+> util-linux for loads of the "open/read/close" lots of files pattern.  I
+> had a half-baked patch to convert it to use readfile which I need to
+> polish off and post with the next series to show how this can be used to
+> both make userspace simpler as well as use less cpu time.
+> 
+> > Basically anything optimally using the existing interfaces for
+> > sampling proc files needs a way to read multiple open file descriptors
+> > in a single syscall to move the needle.
+> 
+> Is psutils using this type of interface, or do they constantly open
+> different files?
+> 
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+662448179365dddc1880@syzkaller.appspotmail.com
+When I last checked, psutils was not an optimal example, nor did I
+suggest it was.
 
-general protection fault, probably for non-canonical address 0xdffffc000000001e: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x00000000000000f0-0x00000000000000f7]
-CPU: 0 PID: 7121 Comm: systemd-udevd Not tainted 5.8.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:bdev_read_page+0x35/0x290 fs/block_dev.c:700
-Code: f5 53 48 89 fb 48 83 ec 08 48 89 14 24 e8 03 12 a5 ff 48 8d bb f0 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 e7 01 00 00 4c 8b bb f0 00 00 00 48 b8 00 00 00
-RSP: 0018:ffffc90001b57530 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81cf749a
-RDX: 000000000000001e RSI: ffffffff81cea51d RDI: 00000000000000f0
-RBP: fff89719b6b00000 R08: 0000000000000001 R09: ffffea0002871787
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: ffffc90001b57748
-FS:  00007fde67d458c0(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f65ed31138 CR3: 00000000a78d8000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- do_mpage_readpage+0x10ca/0x1ef0 fs/mpage.c:302
- mpage_readahead+0x3a2/0x870 fs/mpage.c:391
- read_pages+0x1df/0x8d0 mm/readahead.c:130
- page_cache_readahead_unbounded+0x572/0x850 mm/readahead.c:244
- __do_page_cache_readahead mm/readahead.c:273 [inline]
- force_page_cache_readahead+0x2e9/0x460 mm/readahead.c:303
- page_cache_sync_readahead mm/readahead.c:580 [inline]
- page_cache_sync_readahead+0x113/0x130 mm/readahead.c:567
- generic_file_buffered_read+0x108c/0x27e0 mm/filemap.c:2033
- generic_file_read_iter+0x396/0x4e0 mm/filemap.c:2307
- blkdev_read_iter+0x11b/0x180 fs/block_dev.c:2044
- call_read_iter include/linux/fs.h:1901 [inline]
- new_sync_read+0x41a/0x6e0 fs/read_write.c:415
- __vfs_read+0xc9/0x100 fs/read_write.c:428
- vfs_read+0x1f6/0x420 fs/read_write.c:462
- ksys_read+0x12d/0x250 fs/read_write.c:588
- do_syscall_64+0x60/0xe0 arch/x86/entry/common.c:359
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x7fde66e8c210
-Code: Bad RIP value.
-RSP: 002b:00007fff13285fd8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 000055f65ed30d00 RCX: 00007fde66e8c210
-RDX: 0000000000000400 RSI: 000055f65ed30d28 RDI: 000000000000000f
-RBP: 000055f65ed34e80 R08: 00007fde66e76f88 R09: 0000000000000430
-R10: 000000000000006d R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000400 R14: 000055f65ed34ed0 R15: 0000000000000400
-Modules linked in:
----[ end trace 5b6f53a9af7ced6f ]---
-RIP: 0010:bdev_read_page+0x35/0x290 fs/block_dev.c:700
-Code: f5 53 48 89 fb 48 83 ec 08 48 89 14 24 e8 03 12 a5 ff 48 8d bb f0 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 e7 01 00 00 4c 8b bb f0 00 00 00 48 b8 00 00 00
-RSP: 0018:ffffc90001b57530 EFLAGS: 00010206
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81cf749a
-RDX: 000000000000001e RSI: ffffffff81cea51d RDI: 00000000000000f0
-RBP: fff89719b6b00000 R08: 0000000000000001 R09: ffffea0002871787
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: ffffc90001b57748
-FS:  00007fde67d458c0(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f5807cc2ab4 CR3: 00000000a78d8000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> What about fun tools like bashtop:
+> 	https://github.com/aristocratos/bashtop.git
+> which thankfully now relies on python's psutil package to parse proc in
+> semi-sane ways, but that package does loads of constant open/read/close
+> of proc files all the time from what I can tell.
+> 
+> And lots of people rely on python's psutil, right?
 
+If python's psutil is constantly reopening the same files in /proc,
+this is an argument to go improve python's psutil, especially if it's
+popular.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Your proposed syscall doesn't magically make everything suboptimally
+sampling proc more efficient.  It still requires going out and
+modifying everything to use the new syscall.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+In order to actually realize a gain comparable to what can be done
+using existing interfaces, but with your new syscall, if the code
+wasn't already reusing the open fd it still requires a refactor to do
+so with your syscall, to eliminate the directory lookup on every
+sample.
+
+At the end of the day, if you did all this work, you'd have code that
+only works on kernels with the new syscall, didn't enjoy a significant
+performance gain over what could have been achieved using the existing
+interfaces, and still required basically the same amount of work as
+optimizing for the existing interfaces would have.  For what gain?
+
+> 
+> > This syscall doesn't provide that.  It doesn't really give any
+> > advantage over what we can achieve already.  It seems basically
+> > pointless to me, from a monitoring proc files perspective.
+> 
+> What "good" monitoring programs do you suggest follow the pattern you
+> recommend?
+> 
+
+"Good" is not generally a word I'd use to describe software, surely
+that's not me you're quoting... but I assume you mean "optimal".
+
+I'm sure sysprof is at least reusing open files when sampling proc,
+because we discussed the issue when Christian took over maintenance.
+
+It appears he's currently using the lseek()->read() sequence:
+
+https://gitlab.gnome.org/GNOME/sysprof/-/blob/master/src/libsysprof/sysprof-netdev-source.c#L223
+https://gitlab.gnome.org/GNOME/sysprof/-/blob/master/src/libsysprof/sysprof-memory-source.c#L210
+https://gitlab.gnome.org/GNOME/sysprof/-/blob/master/src/libsysprof/sysprof-diskstat-source.c#L185
+
+It'd be more efficient to just use pread() and lose the lseek(), at
+which point it'd be just a single pread() call per sample per proc
+file.  Nothing your proposed syscall would improve upon, not that it'd
+be eligible for software that wants to work on existing kernels from
+distros like Debian and Centos/RHEL anyways.
+
+If this were a conversation about providing something like a better
+scatter-gather interface akin to p{read,write}v but with the fd in the
+iovec, then we'd be talking about something very lucrative for proc
+sampling. But like you've said elsewhere in this thread, io_uring()
+may suffice as an alternative solution in that vein.
+
+My personal interest in this topic stems from an experimental window
+manager I made, and still use, which monitors every descendant process
+for the X session at frequencies up to 60HZ.  The code opens a bunch
+of proc files for every process, and keeps them open until the process
+goes away or falls out of scope.  See the attachment for some idea of
+what /proc/$(pidof wm)/fd looks like.  All those proc files are read
+at up to 60HZ continuously.
+
+All top-like tools are really no different, and already shouldn't be
+reopening things on every sample.  They should be fixed if not - with
+or without your syscall, it's equal effort, but the existing
+interfaces... exist.
+
+Regards,
+Vito Caputo
+
+--eioqlffteccd2lzb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="vwm-fds.txt"
+
+total 0
+lrwx------ 1 vcaputo vcaputo 64 Jul  5 13:16 0 -> /dev/tty1
+l-wx------ 1 vcaputo vcaputo 64 Jul  5 13:16 1 -> /home/vcaputo/.xsession-errors
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 10 -> /proc/829/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 100 -> /proc/8427/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 101 -> /proc/8428/task/8428/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 102 -> /proc/8428/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 103 -> /proc/8428/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 104 -> /proc/8428/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 105 -> /proc/8428/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 106 -> /proc/8430/task/8430/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 107 -> /proc/8430/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 108 -> /proc/8430/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 109 -> /proc/8430/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 11 -> /proc/830/task/830/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 110 -> /proc/8430/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 111 -> /proc/8433/task/8433/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 112 -> /proc/8433/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 113 -> /proc/8433/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 114 -> /proc/8433/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 115 -> /proc/8433/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 116 -> /proc/8434/task/8434/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 117 -> /proc/8434/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 118 -> /proc/8434/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 119 -> /proc/8434/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 12 -> /proc/830/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 120 -> /proc/8434/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 121 -> /proc/12400/task/12400/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 122 -> /proc/12400/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 123 -> /proc/12400/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 124 -> /proc/12400/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 125 -> /proc/12400/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 126 -> /proc/11921/task/11921/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 127 -> /proc/11921/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 128 -> /proc/11921/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 129 -> /proc/11921/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 13 -> /proc/830/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 130 -> /proc/11921/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 131 -> /proc/30440/task/30440/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 132 -> /proc/30440/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 133 -> /proc/30440/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 134 -> /proc/30440/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 135 -> /proc/30440/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 136 -> /proc/5841/task/5841/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 137 -> /proc/5841/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 138 -> /proc/5841/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 139 -> /proc/5841/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 14 -> /proc/830/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 140 -> /proc/5841/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 141 -> /proc/25853/task/25853/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 142 -> /proc/25853/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 143 -> /proc/25853/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 144 -> /proc/25853/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 145 -> /proc/25853/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 146 -> /proc/25854/task/25854/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 147 -> /proc/25854/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 148 -> /proc/25854/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 149 -> /proc/25854/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 15 -> /proc/830/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 150 -> /proc/25854/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 151 -> /proc/25856/task/25856/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 152 -> /proc/25856/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 153 -> /proc/25856/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 154 -> /proc/25856/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 155 -> /proc/25856/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 156 -> /proc/25859/task/25859/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 157 -> /proc/25859/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 158 -> /proc/25859/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 159 -> /proc/25859/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 16 -> /proc/831/task/831/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 160 -> /proc/25859/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 161 -> /proc/5843/task/5843/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 162 -> /proc/5843/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 163 -> /proc/5843/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 164 -> /proc/5843/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 165 -> /proc/5843/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 166 -> /proc/5848/task/5848/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 167 -> /proc/5848/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 168 -> /proc/5848/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 169 -> /proc/5848/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 17 -> /proc/831/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 170 -> /proc/5848/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 171 -> /proc/5848/task
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 172 -> /proc/5848/task/5848/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 173 -> /proc/5848/task/5848/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 174 -> /proc/5848/task/5848/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 175 -> /proc/5848/task/5848/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 176 -> /proc/5849/task/5849/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 177 -> /proc/5849/task/5849/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 178 -> /proc/5849/task/5849/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 179 -> /proc/5849/task/5849/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 18 -> /proc/831/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 180 -> /proc/5850/task/5850/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 181 -> /proc/30441/task/30441/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 182 -> /proc/30441/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 183 -> /proc/30441/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 184 -> /proc/30441/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 185 -> /proc/30441/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 186 -> /proc/30443/task/30443/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 187 -> /proc/30443/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 188 -> /proc/30443/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 189 -> /proc/30443/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 19 -> /proc/831/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 190 -> /proc/30443/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 191 -> /proc/30446/task/30446/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 192 -> /proc/30446/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 193 -> /proc/30446/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 194 -> /proc/30446/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 195 -> /proc/30446/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 196 -> /proc/30447/task/30447/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 197 -> /proc/30447/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 198 -> /proc/30447/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 199 -> /proc/30447/wchan
+l-wx------ 1 vcaputo vcaputo 64 Jul  5 13:16 2 -> /home/vcaputo/.xsession-errors
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 20 -> /proc/831/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 200 -> /proc/30447/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 201 -> /proc/30448/task/30448/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 202 -> /proc/30448/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 203 -> /proc/30448/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 204 -> /proc/30448/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 205 -> /proc/30448/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 206 -> /proc/30451/task/30451/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 207 -> /proc/30451/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 208 -> /proc/30451/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 209 -> /proc/30451/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 21 -> /proc/832/task/832/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 210 -> /proc/30451/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 211 -> /proc/30451/task
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 212 -> /proc/30451/task/30451/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 213 -> /proc/30451/task/30451/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 214 -> /proc/30451/task/30451/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 215 -> /proc/30451/task/30451/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 216 -> /proc/30452/task/30452/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 217 -> /proc/30452/task/30452/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 218 -> /proc/30452/task/30452/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 219 -> /proc/30452/task/30452/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 22 -> /proc/832/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 220 -> /proc/30453/task/30453/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 221 -> /proc/30453/task/30453/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 222 -> /proc/30453/task/30453/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 223 -> /proc/30453/task/30453/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 224 -> /proc/30454/task/30454/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 225 -> /proc/30454/task/30454/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 226 -> /proc/30454/task/30454/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 227 -> /proc/30454/task/30454/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 228 -> /proc/30455/task/30455/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 229 -> /proc/30455/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 23 -> /proc/832/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 230 -> /proc/30455/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 231 -> /proc/30455/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 232 -> /proc/30455/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 233 -> /proc/30458/task/30458/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 234 -> /proc/30458/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 235 -> /proc/30458/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 236 -> /proc/30458/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 237 -> /proc/30458/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 238 -> /proc/5850/task/5850/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 239 -> /proc/5850/task/5850/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 24 -> /proc/832/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 240 -> /proc/5850/task/5850/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 241 -> /proc/5851/task/5851/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 242 -> /proc/5851/task/5851/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 243 -> /proc/5851/task/5851/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 244 -> /proc/5851/task/5851/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 245 -> /proc/5853/task/5853/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 246 -> /proc/5853/task/5853/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 247 -> /proc/5853/task/5853/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 248 -> /proc/5853/task/5853/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 249 -> /proc/5856/task/5856/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 25 -> /proc/832/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 250 -> /proc/5856/task/5856/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 251 -> /proc/5856/task/5856/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 252 -> /proc/5856/task/5856/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 253 -> /proc/6844/task/6844/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 254 -> /proc/6844/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 255 -> /proc/6844/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 256 -> /proc/6844/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 257 -> /proc/6844/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 26 -> /proc/833/task/833/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 27 -> /proc/833/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 28 -> /proc/833/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 29 -> /proc/833/wchan
+lrwx------ 1 vcaputo vcaputo 64 Jul  5 13:16 3 -> socket:[19590]
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 30 -> /proc/833/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 31 -> /proc/839/task/839/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 32 -> /proc/839/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 33 -> /proc/839/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 34 -> /proc/839/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 35 -> /proc/839/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 36 -> /proc/840/task/840/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 37 -> /proc/840/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 38 -> /proc/840/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 39 -> /proc/840/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 4 -> /proc
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 40 -> /proc/840/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 41 -> /proc/842/task/842/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 42 -> /proc/842/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 43 -> /proc/842/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 44 -> /proc/842/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 45 -> /proc/842/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 46 -> /proc/5858/task/5858/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 47 -> /proc/5858/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 48 -> /proc/5858/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 49 -> /proc/5858/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 5 -> /proc/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 50 -> /proc/5858/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 51 -> /proc/6841/task/6841/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 52 -> /proc/6841/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 53 -> /proc/6841/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 54 -> /proc/6841/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 55 -> /proc/6841/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 56 -> /proc/6842/task/6842/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 57 -> /proc/6842/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 58 -> /proc/6842/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 59 -> /proc/6842/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 6 -> /proc/829/task/829/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 60 -> /proc/6842/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 61 -> /proc/5840/task/5840/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 62 -> /proc/5840/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 63 -> /proc/5840/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 64 -> /proc/5840/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 65 -> /proc/5840/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 66 -> /proc/896/task/896/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 67 -> /proc/896/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 68 -> /proc/896/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 69 -> /proc/896/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 7 -> /proc/829/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 70 -> /proc/896/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 71 -> /proc/897/task/897/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 72 -> /proc/897/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 73 -> /proc/897/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 74 -> /proc/897/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 75 -> /proc/897/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 76 -> /proc/899/task/899/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 77 -> /proc/899/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 78 -> /proc/899/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 79 -> /proc/899/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 8 -> /proc/829/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 80 -> /proc/899/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 81 -> /proc/2293/task/2293/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 82 -> /proc/2293/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 83 -> /proc/2293/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 84 -> /proc/2293/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 85 -> /proc/2293/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 86 -> /proc/2294/task/2294/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 87 -> /proc/2294/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 88 -> /proc/2294/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 89 -> /proc/2294/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 9 -> /proc/829/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 90 -> /proc/2294/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 91 -> /proc/2296/task/2296/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 92 -> /proc/2296/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 93 -> /proc/2296/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 94 -> /proc/2296/wchan
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 95 -> /proc/2296/stat
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 96 -> /proc/8427/task/8427/children
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 97 -> /proc/8427/comm
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 98 -> /proc/8427/cmdline
+lr-x------ 1 vcaputo vcaputo 64 Jul  5 13:16 99 -> /proc/8427/wchan
+
+--eioqlffteccd2lzb--
