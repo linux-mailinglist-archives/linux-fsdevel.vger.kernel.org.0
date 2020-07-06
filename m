@@ -2,122 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EFD5215D67
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 19:45:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B63B8215E07
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 20:10:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729733AbgGFRpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jul 2020 13:45:09 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:36578 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729550AbgGFRpI (ORCPT
+        id S1729693AbgGFSK0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jul 2020 14:10:26 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38194 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729648AbgGFSK0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jul 2020 13:45:08 -0400
-Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jsVAU-0007so-Be; Mon, 06 Jul 2020 17:44:38 +0000
-Date:   Mon, 6 Jul 2020 19:44:37 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Nicolas Viennot <Nicolas.Viennot@twosigma.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Adrian Reber <areber@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v4 3/3] prctl: Allow ptrace capable processes to change
- /proc/self/exe
-Message-ID: <20200706174437.zpshxlul7rl3vmmq@wittgenstein>
-References: <20200701064906.323185-1-areber@redhat.com>
- <20200701064906.323185-4-areber@redhat.com>
- <20200702211647.GB3283@mail.hallyn.com>
- <CAHC9VhQZ=cwiOay6OMMdM1UHm69wDaga9HBkyTbx8-1OU=aBvA@mail.gmail.com>
- <a2b4deacfc7541e3adea2f36a6f44262@EXMBDFT11.ad.twosigma.com>
+        Mon, 6 Jul 2020 14:10:26 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 066I6nbF088795;
+        Mon, 6 Jul 2020 18:10:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=5T7dTXioAzbYOiIl5A/DrEFn8a4oDLa1jF9+FRzNVQE=;
+ b=XEt3gI8xMtNYX4IHNnW8WTyzariYXA4A14VuBro4X8ETzUdF8Tvcv6S6b8xETpRmmlcu
+ U2FLNueI9pfRYdP2yK7ytcJoV5bzdrhPQbmpFWQAsuE3HEncVN0mTQLgzG1ybMNF7LFE
+ PpOvCGnv5r3tm1LtGYxYpIyC2UDcTiFe3pVrtjJNohV9/mmgVkIpMJgVXcPOzW41lShr
+ 7n9ppuw79Q9PEZsCe4ItzWzT4nIdAkDPrOGwYdD0l9G7o4QTVMHbfgvXIN3JrrPe6DOV
+ UEfWd80yOfkkp84C5aocPzE+S5Cuxwp11gDIMl+okVlvM/wBHrQNcklUzLXcqHfb06Jf Ow== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 323sxxma77-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 06 Jul 2020 18:10:14 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 066I95VZ065440;
+        Mon, 6 Jul 2020 18:10:14 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 3233p0grse-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 06 Jul 2020 18:10:14 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 066IABqb004822;
+        Mon, 6 Jul 2020 18:10:11 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 06 Jul 2020 11:10:11 -0700
+Date:   Mon, 6 Jul 2020 11:10:10 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [ANNOUNCE] xfs-linux: iomap-5.9-merge updated to d1b4f507d71d
+Message-ID: <20200706181010.GA7597@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a2b4deacfc7541e3adea2f36a6f44262@EXMBDFT11.ad.twosigma.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9673 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 mlxlogscore=999
+ mlxscore=0 spamscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2007060125
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9673 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 mlxlogscore=999
+ bulkscore=0 impostorscore=0 adultscore=0 cotscore=-2147483648 phishscore=0
+ priorityscore=1501 clxscore=1015 malwarescore=0 suspectscore=2 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2004280000 definitions=main-2007060125
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 06, 2020 at 05:13:35PM +0000, Nicolas Viennot wrote:
-> > > This is scary.  But I believe it is safe.
-> > >
-> > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > >
-> > > I am a bit curious about the implications of the selinux patch.
-> > > IIUC you are using the permission of the tracing process to execute
-> > > the file without transition, so this is a way to work around the
-> > > policy which might prevent the tracee from doing so.
-> > > Given that SELinux wants to be MAC, I'm not *quite* sure that's
-> > > considered kosher.  You also are skipping the PROCESS__PTRACE to
-> > > SECCLASS_PROCESS check which selinux_bprm_set_creds does later on.
-> > > Again I'm just not quite sure what's considered normal there these
-> > > days.
-> > >
-> > > Paul, do you have input there?
-> >
-> > I agree, the SELinux hook looks wrong.  Building on what Christian said, this looks more like a ptrace operation than an exec operation.
-> 
-> Serge, Paul, Christian,
-> 
-> I made a PoC to demonstrate the change of /proc/self/exe without CAP_SYS_ADMIN using only ptrace and execve.
-> You may find it here: https://github.com/nviennot/run_as_exe
-> 
-> What do you recommend to relax the security checks in the kernel when it comes to changing the exe link?
+Hi folks,
 
-Looks fun! Yeah, so that this is possible is known afaict. But you're
-not really circumventing the kernel check but are mucking with the EFL
-by changing the auxv, right?
+The iomap-5.9-merge branch of the xfs-linux repository at:
 
-Originally, you needed to be userns root, i.e. only uid 0 could
-change the /proc/self/exe link (cf. [1]). This was changed to
-ns_capable(CAP_SYS_ADMIN) in [2].
+	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-The original reasoning in [1] is interesting as it basically already
-points to your poc:
+has just been updated.
 
-"Still note that updating exe-file link now doesn't require sys-resource
- capability anymore, after all there is no much profit in preventing
- setup own file link (there are a number of ways to execute own code --
- ptrace, ld-preload, so that the only reliable way to find which exactly
- code is executed is to inspect running program memory).  Still we
- require the caller to be at least user-namespace root user."
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.
 
-There were arguments being made that /proc/<pid>/exe needs to be sm that
-userspace can have a decent amount of trust in but I believe that that's
-not a great argument.
+The new head of the iomap-5.9-merge branch is commit:
 
-But let me dig a little into the original discussion and see what the
-thread-model was.
-At this point I'm starting to believe that it was people being cautios
-but better be sure.
+d1b4f507d71d iomap: Make sure iomap_end is called after iomap_begin
 
-[1]: f606b77f1a9e ("prctl: PR_SET_MM -- introduce PR_SET_MM_MAP operation")
-[2]: 4d28df6152aa ("prctl: Allow local CAP_SYS_ADMIN changing exe_file")
-[3]: https://lore.kernel.org/patchwork/patch/697304/
+New Commits:
 
-Christian
+Andreas Gruenbacher (1):
+      [d1b4f507d71d] iomap: Make sure iomap_end is called after iomap_begin
+
+
+Code Diffstat:
+
+ fs/iomap/apply.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
