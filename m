@@ -2,133 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C0F4215F03
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 20:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21FDF215F5C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 21:30:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729816AbgGFSuD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jul 2020 14:50:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39878 "EHLO
+        id S1726694AbgGFTah (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jul 2020 15:30:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729569AbgGFSuC (ORCPT
+        with ESMTP id S1726467AbgGFTag (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jul 2020 14:50:02 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6331EC061755
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jul 2020 11:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=FZ1GTUJbHt2UVdMS+1l/ulphkyYygdgKZTWjwmCf1Tg=; b=RV+9KJfgQNn+JF6wEifqtNnQpi
-        BdG9mN2HzNSHK7Fr/vd3M/HihP8patHmRtslmdY884hhzbmoWEpEdtD6yjBVuX+YnRlI51jHY3eqa
-        2xMPhygAV9ur4l36FGeYHa5UaFUfR0HvIAJb1YDl7YINSlogcxMhSS+lq34YQkin4Mr1IdNrGqjPf
-        2CNgwmCe/2xFwtQ3kp26tSB/3hbB+pN4m+nm5tipMrhMCOrGcA0EY46itiEVsHbyqy/YQv90AJnpN
-        wh9S0VuNfmQrB/cDIPfBDd2AWYDoHgP6Xpwd2mD+fF5lo/DJggiNZ9Tvrb7zIWesVcZlpLRy8yfI4
-        whMyGGpw==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jsWBk-0008Rm-8y; Mon, 06 Jul 2020 18:50:00 +0000
-Date:   Mon, 6 Jul 2020 19:50:00 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 0/2] Use multi-index entries in the page cache
-Message-ID: <20200706185000.GC25523@casper.infradead.org>
-References: <20200629152033.16175-1-willy@infradead.org>
- <alpine.LSU.2.11.2007041206270.1056@eggly.anvils>
- <20200706144320.GB25523@casper.infradead.org>
+        Mon, 6 Jul 2020 15:30:36 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736EAC08C5DF
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jul 2020 12:30:36 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id e8so18852923pgc.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jul 2020 12:30:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=jA71++q3kdwcFkfUU/1at8AL+IZxf2Nnq6lJ3LbUnXg=;
+        b=Q+7dfF3lcRisIsTqM7EGD0tYjWye1O/Gfz50qcw4naOrpboCi2ZmrR6d1RzMnOs7mR
+         Fh1/KCwCGizIS3GVQrZmc4YKPc7/8e4SSalTwfSqP37iQkamNsBrIJtKubGbQxGTlF4L
+         Gxge8avBKJljPA0a7NtRL4/iHOuA13h42MPe0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jA71++q3kdwcFkfUU/1at8AL+IZxf2Nnq6lJ3LbUnXg=;
+        b=EnYFLaq3vDBA9V1nsH5mb9hATw2nuMwxLUgkh1xITJunMCIoVJYIdvqaKXF8qsK2bW
+         +ei8yCjmLDqKDERCPWaUZYT084gPOguSrZ86nZfvszniHBxDoDJlDxsOTSYX1EuVB9DB
+         Lj9S+RzvQcc2VV4pKFGfjsSF10fQYexNv8EZg/pFlp3anJVH435gfC0ul3+uew9o9N/Z
+         On32DTrgl5t0F9F7aTw8XbiW65C4msvKxPRWBfW1OXVH/iGEybSz4ZcnWy1S5RyyQcOw
+         Oc/UDZXuO9iE5RD0EzJVUwx+zPqludnOwv+p4rYxT0L125DHno9uCJGYMojS7S9YsA1a
+         eB3g==
+X-Gm-Message-State: AOAM533PfrIpWG3TiiH+9WqU9HSGWkHLS2kZ46h0INYjorSujWtRlii+
+        fYHSlmtYvgzavmkkdq4pGMJVsg==
+X-Google-Smtp-Source: ABdhPJz7tXd/nnBDS0YQJcB7rwYbSOG0wy8tzeWXjOdUxA5eSWOjt+6q3dGWi3mLABNZOwnfZ4Olmg==
+X-Received: by 2002:a62:fc15:: with SMTP id e21mr46353476pfh.167.1594063835932;
+        Mon, 06 Jul 2020 12:30:35 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id y8sm225835pju.49.2020.07.06.12.30.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jul 2020 12:30:35 -0700 (PDT)
+Date:   Mon, 6 Jul 2020 12:30:33 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     linux-kernel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Matt Denton <mpdenton@google.com>,
+        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
+        Robert Sesek <rsesek@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        netdev@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v5 4/7] pidfd: Replace open-coded partial
+ fd_install_received()
+Message-ID: <202007061225.5CBC3CF@keescook>
+References: <20200617220327.3731559-1-keescook@chromium.org>
+ <20200617220327.3731559-5-keescook@chromium.org>
+ <20200706130713.n6r3vhn4hn2lodex@wittgenstein>
+ <202007060830.0FE753B@keescook>
+ <20200706161245.hjat2rsikt3linbm@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200706144320.GB25523@casper.infradead.org>
+In-Reply-To: <20200706161245.hjat2rsikt3linbm@wittgenstein>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 06, 2020 at 03:43:20PM +0100, Matthew Wilcox wrote:
-> On Sat, Jul 04, 2020 at 01:20:19PM -0700, Hugh Dickins wrote:
-> > These problems were either mm/filemap.c:1565 find_lock_entry()
-> > VM_BUG_ON_PAGE(page_to_pgoff(page) != offset, page); or hangs, which
-> > (at least the ones that I went on to investigate) turned out also to be
-> > find_lock_entry(), circling around with page_mapping(page) != mapping.
-> > It seems that find_get_entry() is sometimes supplying the wrong page,
-> > and you will work out why much quicker than I shall.  (One tantalizing
-> > detail of the bad offset crashes: very often page pgoff is exactly one
-> > less than the requested offset.)
+On Mon, Jul 06, 2020 at 06:12:45PM +0200, Christian Brauner wrote:
+> On Mon, Jul 06, 2020 at 08:34:06AM -0700, Kees Cook wrote:
+> > Yup, this was a mistake in my refactoring of the pidfs changes.
 > 
-> I added this:
+> I already did.
+
+Er, what? (I had a typo in my quote: s/pidfs/pidfd/.) I was trying to
+say that this was just a mistake in my refactoring of the pidfd usage of
+the new helper.
+
+> > I still don't agree: it radically complicates the SCM_RIGHTS and seccomp
 > 
-> @@ -1535,6 +1535,11 @@ struct page *find_get_entry(struct address_space *mapping, pgoff_t offset)
->                 goto repeat;
+> I'm sorry, I don't buy it yet, though I might've missed something in the
+> discussions: :)
+> After applying the patches in your series this literally is just (which
+> is hardly radical ;):
+
+Agreed, "radical" was too strong.
+
+> diff --git a/fs/file.c b/fs/file.c
+> index 9568bcfd1f44..26930b2ea39d 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -974,7 +974,7 @@ int __fd_install_received(int fd, struct file *file, int __user *ufd,
 >         }
->         page = find_subpage(page, offset);
-> +       if (page_to_index(page) != offset) {
-> +               printk("offset %ld xas index %ld offset %d\n", offset, xas.xa_index, xas.xa_offset);
-> +               dump_page(page, "index mismatch");
-> +               printk("xa_load %p\n", xa_load(&mapping->i_pages, offset));
-> +       }
->  out:
->         rcu_read_unlock();
->  
-> and I have a good clue now:
 > 
-> 1322 offset 631 xas index 631 offset 48
-> 1322 page:000000008c9a9bc3 refcount:4 mapcount:0 mapping:00000000d8615d47 index:0x276
-> 1322 flags: 0x4000000000002026(referenced|uptodate|active|private)
-> 1322 mapping->aops:0xffffffff88a2ebc0 ino 1800b82 dentry name:"f1141"
-> 1322 raw: 4000000000002026 dead000000000100 dead000000000122 ffff98ff2a8b8a20
-> 1322 raw: 0000000000000276 ffff98ff1ac271a0 00000004ffffffff 0000000000000000
-> 1322 page dumped because: index mismatch
-> 1322 xa_load 000000008c9a9bc3
+>         if (fd < 0)
+> -               fd_install(new_fd, get_file(file));
+> +               fd_install(new_fd, file);
+>         else {
+>                 new_fd = fd;
+>                 error = replace_fd(new_fd, file, o_flags);
+> diff --git a/net/compat.c b/net/compat.c
+> index 71494337cca7..605a5a67200c 100644
+> --- a/net/compat.c
+> +++ b/net/compat.c
+> @@ -298,9 +298,11 @@ void scm_detach_fds_compat(struct msghdr *msg, struct scm_cookie *scm)
+>         int err = 0, i;
 > 
-> 0x276 is decimal 630.  So we're looking up a tail page and getting its
-> erstwhile head page.  I'll dig in and figure out exactly how that's
-> happening.
+>         for (i = 0; i < fdmax; i++) {
+> -               err = fd_install_received_user(scm->fp->fp[i], cmsg_data + i, o_flags);
+> -               if (err < 0)
+> +               err = fd_install_received_user(get_file(scm->fp->fp[i]), cmsg_data + i, o_flags);
+> +               if (err < 0) {
+> +                       fput(scm->fp->fp[i]);
+>                         break;
+> +               }
+>         }
+> 
+>         if (i > 0) {
+> diff --git a/net/core/scm.c b/net/core/scm.c
+> index b9a0442ebd26..0d06446ae598 100644
+> --- a/net/core/scm.c
+> +++ b/net/core/scm.c
+> @@ -306,9 +306,11 @@ void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm)
+>         }
+> 
+>         for (i = 0; i < fdmax; i++) {
+> -               err = fd_install_received_user(scm->fp->fp[i], cmsg_data + i, o_flags);
+> -               if (err < 0)
+> +               err = fd_install_received_user(get_file(scm->fp->fp[i]), cmsg_data + i, o_flags);
+> +               if (err < 0) {
+> +                       fput(scm->fp->fp[i]);
+>                         break;
+> +               }
+>         }
+> 
+>         if (i > 0) {
 
-@@ -841,6 +842,7 @@ static int __add_to_page_cache_locked(struct page *page,
-                nr = thp_nr_pages(page);
-        }
- 
-+       VM_BUG_ON_PAGE(xa_load(&mapping->i_pages, offset + nr) == page, page);
-        page_ref_add(page, nr);
-        page->mapping = mapping;
-        page->index = offset;
-@@ -880,6 +882,7 @@ static int __add_to_page_cache_locked(struct page *page,
-                goto error;
-        }
- 
-+       VM_BUG_ON_PAGE(xa_load(&mapping->i_pages, offset + nr) == page, page);
-        trace_mm_filemap_add_to_page_cache(page);
-        return 0;
- error:
+But my point stands: I really dislike this; suddenly the caller needs to
+manage this when it should be an entirely internal detail to the
+function. It was only pidfd doing it wrong, and that was entirely my
+fault in the conversion.
 
-The second one triggers with generic/051 (running against xfs with the
-rest of my patches).  So I deduce that we have a shadow entry which
-takes up multiple indices, then when we store the page, we now have
-a multi-index entry which refers to a single page.  And this explains
-basically all the accounting problems.
+> The problem here is that the current patch invites bugs and has already
+> produced one because fd_install() and fd_install_*() have the same
+> naming scheme but different behavior when dealing with references.
+> That's just not a good idea.
 
-Now I'm musing how best to fix this.
+I will rename the helper and add explicit documentation, but I really
+don't think callers should have to deal with managing the helper's split
+ref lifetime.
 
-1. When removing a compound page from the cache, we could store only
-a single entry.  That seems bad because we cuold hit somewhere else in
-the compound page and we'd have the wrong information about workingset
-history (or worse believe that a shmem page isn't in swap!)
-
-2. When removing a compound page from the cache, we could split the
-entry and store the same entry N times.  Again, this seems bad for shmem
-because then all the swap entries would be the same, and we'd fetch the
-wrong data from swap.
-
-3 & 4. When adding a page to the cache, we delete any shadow entry which was
-previously there, or replicate the shadow entry.  Same drawbacks as the
-above two, I feel.
-
-5. Use the size of the shadow entry to allocate a page of the right size.
-We don't currently have an API to find the right size, so that would
-need to be written.  And what do we do if we can't allocate a page of
-sufficient size?
-
-So that's five ideas with their drawbacks as I see them.  Maybe you have
-a better idea?
+-- 
+Kees Cook
