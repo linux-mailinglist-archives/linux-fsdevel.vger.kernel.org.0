@@ -2,92 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DEDBE215A1E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 16:59:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 530C7215AA8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 17:24:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbgGFO7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jul 2020 10:59:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60568 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729197AbgGFO7B (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jul 2020 10:59:01 -0400
-Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76E67C061755;
-        Mon,  6 Jul 2020 07:59:01 -0700 (PDT)
-Received: by mail-qt1-x842.google.com with SMTP id x62so29149575qtd.3;
-        Mon, 06 Jul 2020 07:59:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Ry1RpVAEDjDLCs5jpWgNEsfeNNgUahwX2prGBgFkAOU=;
-        b=LUmTPMf5mmAgukBOW1BCsZ9FagomTLGbESXBWtoa2RJ2ZwucTPRq7Ri2KvyQA/HpHa
-         8pizs6iLDVo4+l+zATwQAGnjVXzSREMVSfWd837YEhQYD/KxIDaoNhKsH6ag/zcswwiR
-         +v6Ic4Apb8Kaa7aYzWJEhhB+QhWa2ZAu2TXd6wdbojP4fiBQq+AUNtU4H5SfFNRRVwnm
-         on/C1L8EToHj1d75h8Utb+WKCzRpavTBd4+cVa3cSF8zqxef/X8c6Gs4Mbr/J1TiBu4t
-         pWEpbTQ/fsQzZ/hzBlyEkAc26KWRTQSRTFd46GJIIlLj+f3CDf4NDOH+KJ9bSnFIoUz6
-         PFUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=Ry1RpVAEDjDLCs5jpWgNEsfeNNgUahwX2prGBgFkAOU=;
-        b=VnlYGz/xaKFrdlKMlYBiEOFaggJTtSP122JqtBbMDxJeqloDcv+t20sWJHv/jIuSKZ
-         gB1WnOrQJcyA9gBr4o5Dh8sG9kf+Gnwmmaov7dlfCs7Jq2wHyUUsWHvOSNAimF576sGt
-         UreoVVVQ7O6+pjQZhXJyASBSA18oe2rBhFFMKU+THEQq9CI2262a4e5cRBF5MxS7jAxQ
-         gIXLeEoW6hexcSgM59so5b3p0biZ1kzjsbRyoCpD9dbQcrmD6fCwbZ2uNaVVpVAzKVG3
-         LBVb7v4MK/63UDXCSTKn/8NTXliky/2YI4DJonl4G/zWBDK5bz9SJpY+m1PJ22uLUkzG
-         24VQ==
-X-Gm-Message-State: AOAM533x0MLd+rlO8px4k/hA+xokNOq1X60sV3m7whNVDUMhGvruuVHa
-        mwJghIgLQ57v+wi9e5fxA6E=
-X-Google-Smtp-Source: ABdhPJykggZDIAVAXmRbeYWXuLMu3UvItgKVCCxVjen0/4GBZzuzIGAZmQgjrGUyGZjMwcuf9HP87w==
-X-Received: by 2002:aed:239b:: with SMTP id j27mr50809330qtc.183.1594047540521;
-        Mon, 06 Jul 2020 07:59:00 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::1:74c4])
-        by smtp.gmail.com with ESMTPSA id c27sm18469834qkl.125.2020.07.06.07.58.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2020 07:58:59 -0700 (PDT)
-Date:   Mon, 6 Jul 2020 10:58:58 -0400
-From:   Tejun Heo <tj@kernel.org>
-To:     Chengguang Xu <cgxu519@mykernel.net>
-Cc:     akpm@linux-foundation.org, stable@vger.kernel.org, dxu@dxuuu.xyz,
-        chris@chrisdown.name, adilger@dilger.ca,
-        gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
-        hughd@google.com, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] vfs/xattr: mm/shmem: kernfs: release simple xattr
- entry in a right way
-Message-ID: <20200706145858.GA5603@mtj.thefacebook.com>
-References: <20200704051608.15043-1-cgxu519@mykernel.net>
+        id S1729267AbgGFPYX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jul 2020 11:24:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38622 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729301AbgGFPYX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Jul 2020 11:24:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id C20F9AAC3;
+        Mon,  6 Jul 2020 15:24:21 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 480A01E1311; Mon,  6 Jul 2020 17:24:21 +0200 (CEST)
+Date:   Mon, 6 Jul 2020 17:24:21 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 19/20] fanotify: move event name into fanotify_fh
+Message-ID: <20200706152421.GE3913@quack2.suse.cz>
+References: <20200612093343.5669-1-amir73il@gmail.com>
+ <20200612093343.5669-20-amir73il@gmail.com>
+ <20200703160229.GF21364@quack2.suse.cz>
+ <CAOQ4uxjG6pd2_Rd1ssh__0f7=HVc0iOjAkQwaLsD+BOFPz2F=A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200704051608.15043-1-cgxu519@mykernel.net>
+In-Reply-To: <CAOQ4uxjG6pd2_Rd1ssh__0f7=HVc0iOjAkQwaLsD+BOFPz2F=A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 04, 2020 at 01:16:08PM +0800, Chengguang Xu wrote:
-> After commit fdc85222d58e ("kernfs: kvmalloc xattr value
-> instead of kmalloc"), simple xattr entry is allocated with
-> kvmalloc() instead of kmalloc(), so we should release it
-> with kvfree() instead of kfree().
+On Mon 06-07-20 11:21:24, Amir Goldstein wrote:
+> On Fri, Jul 3, 2020 at 7:02 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Fri 12-06-20 12:33:42, Amir Goldstein wrote:
+> > > An fanotify event name is always recorded relative to a dir fh.
+> > > Move the name_len members of fanotify_name_event into unused space
+> > > in struct fanotify_fh.
+> > >
+> > > We add a name_offset member to allow packing a binary blob before
+> > > the name string in the variable size buffer. We are going to use
+> > > that space to store the child fid.
+> >
+> > So how much is this packing going to save us? Currently it is 1 byte for
+> > name events (modulo that fanotify_alloc_name_event_bug() you mention
+> > below). With the additional fanotify_fh in the event, we'll save two more
+> > bytes by the packing. So that doesn't really seem to be worth it to me.
+> > Am I missing some other benefit?
+> >
+> > Maybe your main motivation (which is not mentioned in the changelog at all
+> > BTW) is that the whole game of inline vs out of line file handles is
+> > pointless when we kmalloc() the event anyway because of the name?
 > 
-> Cc: stable@vger.kernel.org # v5.7
-> Cc: Daniel Xu <dxu@dxuuu.xyz>
-> Cc: Chris Down <chris@chrisdown.name>
-> Cc: Andreas Dilger <adilger@dilger.ca>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Hugh Dickins <hughd@google.com>
-> Fixes: fdc85222d58e ("kernfs: kvmalloc xattr value instead of kmalloc")
-> Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+> The only motivation, which is written in the commit message is to make
+> space to store the child file handle. Saving space is just a by product.
+> In fact, the new parceling code looses this space back to alignment
+> and I am perfectly fine with that.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Yeah, I think the loss is acceptable.
 
-Thanks.
+> I tried your suggestion (with the minor modifications above) and I
+> like the result.
+> Pushed prep series with 2 last patches changed to branch fanotify_prep.
+> Old prep series is at fanotify_prep-v2.
 
+Yeah, I like the result as well. I've left some minor comments on github.
+Please repost the preparatory series once you address the comments so that
+we have something for final review and picking up into my tree.
+
+> Pushed tested full series adapted to this change to fanotify_name_fid.
+> Old full series is at fanotify_name_fid-v4.
+> 
+> There was almost no changes to the fanotify_name_fid patches besides
+> adapting the accessors, e.g.:
+> -               fanotify_fh_blob(&FANOTIFY_NE(event)->dir_fh);
+> +              fanotify_info_file_fh(&FANOTIFY_NE(event)->info);
+> 
+> Please let me know if you want me to post fanotify_name_fid-v5 with these
+> changes.
+
+No need to repost at this point I guess. I can do a high-level check with
+what I have...
+
+								Honza
 -- 
-tejun
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
