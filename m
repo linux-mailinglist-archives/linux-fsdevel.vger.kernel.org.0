@@ -2,94 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C04B7215439
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 10:55:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 597242154DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 11:43:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbgGFIy7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jul 2020 04:54:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60480 "EHLO
+        id S1728640AbgGFJnX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jul 2020 05:43:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728183AbgGFIy6 (ORCPT
+        with ESMTP id S1728517AbgGFJnX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jul 2020 04:54:58 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0792BC061794
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jul 2020 01:54:58 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id q7so31087878ljm.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jul 2020 01:54:57 -0700 (PDT)
+        Mon, 6 Jul 2020 05:43:23 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE07C061794;
+        Mon,  6 Jul 2020 02:43:23 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id a6so15585515ilq.13;
+        Mon, 06 Jul 2020 02:43:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cNNvIPbyRDyhu5ZgEEiWbAIxYQhb/2gTkX3OL9Va+WQ=;
-        b=GwK48GhmFmirpg3fdswa9lBUePOmYDIUGRR8hdVDdkSej4xaxCeCZAFSNgxfHMX6Yy
-         w9Kla9Zz94g96jzu2SdkDHlz3/g7x+cSsfL0CLrYgCZP6J19zRAdLsZs87JfMO7sIJE6
-         hD8DhDJnDAm0DcZzdnRoijixEc6U2wSUxDKr/PyrnIZ6sDA3NJltPdTHsLduPer5Awad
-         NUwH5K/XHmbz5gpeAqR5kYWsh2PSuS+J5l9UTHxPSnjzSl1GyAg/pMTCqSfzmJ/+quNd
-         zVd7EeWl6Jy5ia0GEmuuMG516H4zo1kh4cHrXJacH0rZz+cmV3uWqvNIF5fVl3UCZoOV
-         qcKg==
+         :cc:content-transfer-encoding;
+        bh=LNYWgR7Suf7EUjxaqSLpnVGU//+Xb6oQLjw8lAmdkjY=;
+        b=g34jrCIyQ/KBb7B0F7MtQiKZS/DMZM5vQ4aDZ7Rbx99uAPPD77YGuf8/pVtZq7xugT
+         D5ddwCGsEMQWLwCqmRMyHIVBU5pbIC7CPILael5jhjkc5eLPzTuS/QhIsss7VGnAUKf2
+         miudzI208yMtInG6YDRN1LwEaXr3RKS85Db0aTgl0urSoLWuykjgt+wfiYB0+dBdHmDH
+         DF20Bo+m8tZCPuBXmwRgHbUAfpoDFuEd9+pW3JQHJWTBgVSVWgEkbDvgMploGeg3Wc0W
+         cixDrgZDZnYUYYC/WQi8cYu7uv5SUk309u9RhaQZoyuvcSqgKJzJ5X/kmHoX6wKtKlsv
+         TEsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cNNvIPbyRDyhu5ZgEEiWbAIxYQhb/2gTkX3OL9Va+WQ=;
-        b=ggc2sSlfdoPddHYNOLsT2MMs9URSIU8rz+PbiGO1TX8UuLsDr1b1UmnvylFmuxkh4n
-         yqQL7D3apdshptCJ24kj94WSBCVWzcslAHdF5ySHaTRg573+VkcSZZDqX6FM3D68j1mr
-         2SfpNFXnjtLWqYh5v4mNFsBsLt2IWIQqwEvBrz8h07QUCH8/D+rBDmfu9yw+FhoO656b
-         jTJYbst84So+QyHDrH2kwmTUA2yf6hq2ANiPaJ/abIphLg4MPQeI2o7rDx6JsPZMWLON
-         2SAYyq9nczVK2iRA8lj8JKqny6SmQUKSwkfnOxqWNHJ7RK9wVbziKxzxXNjBar5Mvtad
-         nxGw==
-X-Gm-Message-State: AOAM533yBmt8vJmSPh+dQt5j/SGG/HdWm1oX06R/9q8li/PPSL158lZD
-        HNvOL7o3IHxMsOARpMZMnnsanXDW5F7ugfwSyD7wyw==
-X-Google-Smtp-Source: ABdhPJylBq/GlipYoQiOaeWdyv7Nd1mhikRAHRzoHcrBYF2Tgt2xn3B345Rezd2yDNMo2CkzdbSQ8juxx+Oe1fm99VA=
-X-Received: by 2002:a2e:7a1a:: with SMTP id v26mr10720535ljc.104.1594025696518;
- Mon, 06 Jul 2020 01:54:56 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LNYWgR7Suf7EUjxaqSLpnVGU//+Xb6oQLjw8lAmdkjY=;
+        b=FFWDlkCRJjsnXfeCI+Y1bD/Lk6+ZrV722sYOqVT7+/MmiDCBVNwwXfZv7JMt0IQj51
+         jNNkW1dyPwbeNOzb5mvTf2bp29tGwBfCXF8oWKFnktF4zSjqQaNPzzpU1xljEfrYWSKr
+         EsV8SWNZ3yTSMNTjDp8rqjxNZKEKKFol5l2ovWPpBOwLAexdYPnO/6x/RHNBTqnLDuoE
+         JoNh/o+t0PQDnZpdu3yRv0elGIUHpqviBerCHsBao8lorNDYunOlJtFdCAG/h64WKigy
+         cU7XJjhL2eDOAS5BZCxMwEdRpUkHSOSwaB2oqGCAQy0i4bubRIhtUvh6UWD8awgjC73R
+         EPng==
+X-Gm-Message-State: AOAM530dE929dweTtYT/P0RBu4P1xIUg5ZPpTsFxgUK42ZFh3kcdOYQn
+        QoFjLOcGPzH7USYNHgozlsIT3yjTuYA2liHrd4/M68smzELK3g==
+X-Google-Smtp-Source: ABdhPJzZyc2+uqg6q27N5tXiIMInGgcDo4bHlnmwYNtD5+OHbSWCErAfMg/ybpZlOZs4zZjYNLEKikjWhFjwBUebFaA=
+X-Received: by 2002:a92:bb57:: with SMTP id w84mr29774094ili.104.1594028602542;
+ Mon, 06 Jul 2020 02:43:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200529072017.2906-1-linus.walleij@linaro.org> <CAFEAcA-x0y6ufRXebckRdGSLOBzbdBsk=uw+foK4p+HDeVrA9A@mail.gmail.com>
-In-Reply-To: <CAFEAcA-x0y6ufRXebckRdGSLOBzbdBsk=uw+foK4p+HDeVrA9A@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 6 Jul 2020 10:54:45 +0200
-Message-ID: <CACRpkdZk-Pv49PyhtrW7ZQo+iebOapVb7L2T_cxh0SpYtcv5Xw@mail.gmail.com>
-Subject: Re: [PATCH v2] fcntl: Add 32bit filesystem mode
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Florian Weimer <fw@deneb.enyo.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Maydell <peter.maydell@linaro.org>
+References: <1593698893-6371-1-git-send-email-chey84736@gmail.com>
+ <20200702174346.GB25523@casper.infradead.org> <CAN_w4MWMfoDGfpON-bYHrU=KuJG2vpFj01ZbN4r-iwM4AyyuGw@mail.gmail.com>
+ <20200705171810.GV25523@casper.infradead.org>
+In-Reply-To: <20200705171810.GV25523@casper.infradead.org>
+From:   yang che <chey84736@gmail.com>
+Date:   Mon, 6 Jul 2020 17:43:06 +0800
+Message-ID: <CAN_w4MVzObz8C3cmK_Ckwsdr1z6m5Q=MGnSsj+vqK_jHXCMr7g@mail.gmail.com>
+Subject: Re: [RFC] hung_task:add detecting task in D state milliseconds timeout
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     mcgrof@kernel.org, Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 23, 2020 at 12:08 PM Peter Maydell <peter.maydell@linaro.org> wrote:
-> On Fri, 29 May 2020 at 08:22, Linus Walleij <linus.walleij@linaro.org> wrote:
-> >
-> > It was brought to my attention that this bug from 2018 was
-> > still unresolved: 32 bit emulators like QEMU were given
-> > 64 bit hashes when running 32 bit emulation on 64 bit systems.
-> >
-> > This adds a flag to the fcntl() F_GETFD and F_SETFD operations
-> > to set the underlying filesystem into 32bit mode even if the
-> > file handle was opened using 64bit mode without the compat
-> > syscalls.
+I will learn how to use KernelShark. Try to solve my problem,thanks
+for your suggestion.
+Talk about I solved a problem with  hung task milliseconds=EF=BC=9A
+   the process get anon_vma read lock when it directly reclaims
+memory, but other process down anon_vma write lock,
+long time waiting for write lock up. Since anonymous pages can be
+inherited from the parent process,
+need to analyze whether the anonymous page inherits the parent
+process, find is inherits parent process,
+use anon_vma's red black tree and  anon_vma_chain find all child
+processes have inherited this anonymous page
+of the parent process,and analyze the corresponding mapping file of
+the current anonymous page in vma.
+find what file caused by this problem.
+  I used crash+ramdump to analyze this problem before, I will try to
+use KernelShark analyze this problem.
+
+I want to ask whether the hung task can be added to support the
+detection of millisecond settings=EF=BC=9F
+In theory, there is no harm, and the detection time can be more accurate.
+
+Matthew Wilcox <willy@infradead.org> =E4=BA=8E2020=E5=B9=B47=E6=9C=886=E6=
+=97=A5=E5=91=A8=E4=B8=80 =E4=B8=8A=E5=8D=881:18=E5=86=99=E9=81=93=EF=BC=9A
 >
-> I somewhat belatedly got round to updating my QEMU patch
-> that uses this new fcntl() flag to fix the bug. Sorry for
-> the delay getting round to this. You can find the QEMU patch here:
-> https://patchew.org/QEMU/20200623100101.6041-1-peter.maydell@linaro.org/
-> (it's an RFC because obviously we won't put it into QEMU until
-> the kernel side has gone upstream and the API is final.)
+> On Fri, Jul 03, 2020 at 11:18:28AM +0800, yang che wrote:
+> >   my understanding, KernelShark can't trigger panic, hung_task can
+> > trigger. According to my use,
+> > sometimes need to trigger panic to grab ramdump to analyze lock and
+> > memory problems.
 >
-> What's the next step for moving this forward?
-
-Ted, can you merge this patch?
-
-It seems QEMU is happy and AFICT it uses the approach you want :)
-
-Yours,
-Linus Walleij
+> You shouldn't need to trigger a panic to analyse locking or memory
+> problems.  KernelShark is supposed to be able to help you do that without
+> bringing down the system.  Give it a try, and if it doesn't work, Steven
+> Rostedt is very interested in making it work for your case.
