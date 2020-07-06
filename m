@@ -2,170 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 21FDF215F5C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 21:30:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B16B1215FA7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 21:50:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbgGFTah (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jul 2020 15:30:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46082 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726467AbgGFTag (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jul 2020 15:30:36 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 736EAC08C5DF
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jul 2020 12:30:36 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id e8so18852923pgc.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jul 2020 12:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=jA71++q3kdwcFkfUU/1at8AL+IZxf2Nnq6lJ3LbUnXg=;
-        b=Q+7dfF3lcRisIsTqM7EGD0tYjWye1O/Gfz50qcw4naOrpboCi2ZmrR6d1RzMnOs7mR
-         Fh1/KCwCGizIS3GVQrZmc4YKPc7/8e4SSalTwfSqP37iQkamNsBrIJtKubGbQxGTlF4L
-         Gxge8avBKJljPA0a7NtRL4/iHOuA13h42MPe0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=jA71++q3kdwcFkfUU/1at8AL+IZxf2Nnq6lJ3LbUnXg=;
-        b=EnYFLaq3vDBA9V1nsH5mb9hATw2nuMwxLUgkh1xITJunMCIoVJYIdvqaKXF8qsK2bW
-         +ei8yCjmLDqKDERCPWaUZYT084gPOguSrZ86nZfvszniHBxDoDJlDxsOTSYX1EuVB9DB
-         Lj9S+RzvQcc2VV4pKFGfjsSF10fQYexNv8EZg/pFlp3anJVH435gfC0ul3+uew9o9N/Z
-         On32DTrgl5t0F9F7aTw8XbiW65C4msvKxPRWBfW1OXVH/iGEybSz4ZcnWy1S5RyyQcOw
-         Oc/UDZXuO9iE5RD0EzJVUwx+zPqludnOwv+p4rYxT0L125DHno9uCJGYMojS7S9YsA1a
-         eB3g==
-X-Gm-Message-State: AOAM533PfrIpWG3TiiH+9WqU9HSGWkHLS2kZ46h0INYjorSujWtRlii+
-        fYHSlmtYvgzavmkkdq4pGMJVsg==
-X-Google-Smtp-Source: ABdhPJz7tXd/nnBDS0YQJcB7rwYbSOG0wy8tzeWXjOdUxA5eSWOjt+6q3dGWi3mLABNZOwnfZ4Olmg==
-X-Received: by 2002:a62:fc15:: with SMTP id e21mr46353476pfh.167.1594063835932;
-        Mon, 06 Jul 2020 12:30:35 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y8sm225835pju.49.2020.07.06.12.30.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2020 12:30:35 -0700 (PDT)
-Date:   Mon, 6 Jul 2020 12:30:33 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-kernel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
-        Christian Brauner <christian@brauner.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Christoph Hellwig <hch@lst.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Matt Denton <mpdenton@google.com>,
-        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
-        Robert Sesek <rsesek@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
-        netdev@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 4/7] pidfd: Replace open-coded partial
- fd_install_received()
-Message-ID: <202007061225.5CBC3CF@keescook>
-References: <20200617220327.3731559-1-keescook@chromium.org>
- <20200617220327.3731559-5-keescook@chromium.org>
- <20200706130713.n6r3vhn4hn2lodex@wittgenstein>
- <202007060830.0FE753B@keescook>
- <20200706161245.hjat2rsikt3linbm@wittgenstein>
+        id S1726591AbgGFTuT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jul 2020 15:50:19 -0400
+Received: from mga03.intel.com ([134.134.136.65]:10736 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725860AbgGFTuS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Jul 2020 15:50:18 -0400
+IronPort-SDR: UlDEFaIY3GXC6+sUE5l63N2iljwM81ot3OZEswJOREdzdeOlkwIsZnsy5dHBhWzKNhqGjzWlF+
+ nBIloTSL31bw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9674"; a="147505977"
+X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
+   d="scan'208";a="147505977"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jul 2020 12:50:17 -0700
+IronPort-SDR: +N5rseYLr1lDYqNiavH5byDprej7NlY1eO23n7foN6n5v6JsR7zGvoqK5DXeqg6nR286oKwEq2
+ 3Os5u94KVYlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,321,1589266800"; 
+   d="scan'208";a="483246170"
+Received: from samudral-mobl.amr.corp.intel.com (HELO [10.255.228.177]) ([10.255.228.177])
+  by fmsmga005.fm.intel.com with ESMTP; 06 Jul 2020 12:50:16 -0700
+Subject: Re: [PATCH v2] fs/epoll: Enable non-blocking busypoll when epoll
+ timeout is 0
+From:   "Samudrala, Sridhar" <sridhar.samudrala@intel.com>
+To:     linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+        eric.dumazet@gmail.com, davem@davemloft.net,
+        viro@zeniv.linux.org.uk
+References: <1593027056-43779-1-git-send-email-sridhar.samudrala@intel.com>
+Message-ID: <f7126487-71fc-ff8d-939a-d29316cda8e1@intel.com>
+Date:   Mon, 6 Jul 2020 12:50:16 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200706161245.hjat2rsikt3linbm@wittgenstein>
+In-Reply-To: <1593027056-43779-1-git-send-email-sridhar.samudrala@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 06, 2020 at 06:12:45PM +0200, Christian Brauner wrote:
-> On Mon, Jul 06, 2020 at 08:34:06AM -0700, Kees Cook wrote:
-> > Yup, this was a mistake in my refactoring of the pidfs changes.
+Resending.
+
+Dave, Eric,
+
+Can we get this in via net-next as this is targeted for networking use 
+case using epoll/busypoll.
+
+Thanks
+Sridhar
+
+On 6/24/2020 12:30 PM, Sridhar Samudrala wrote:
+> This patch triggers non-blocking busy poll when busy_poll is enabled,
+> epoll is called with a timeout of 0 and is associated with a napi_id.
+> This enables an app thread to go through napi poll routine once by
+> calling epoll with a 0 timeout.
 > 
-> I already did.
-
-Er, what? (I had a typo in my quote: s/pidfs/pidfd/.) I was trying to
-say that this was just a mistake in my refactoring of the pidfd usage of
-the new helper.
-
-> > I still don't agree: it radically complicates the SCM_RIGHTS and seccomp
+> poll/select with a 0 timeout behave in a similar manner.
 > 
-> I'm sorry, I don't buy it yet, though I might've missed something in the
-> discussions: :)
-> After applying the patches in your series this literally is just (which
-> is hardly radical ;):
-
-Agreed, "radical" was too strong.
-
-> diff --git a/fs/file.c b/fs/file.c
-> index 9568bcfd1f44..26930b2ea39d 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -974,7 +974,7 @@ int __fd_install_received(int fd, struct file *file, int __user *ufd,
->         }
+> Signed-off-by: Sridhar Samudrala <sridhar.samudrala@intel.com>
 > 
->         if (fd < 0)
-> -               fd_install(new_fd, get_file(file));
-> +               fd_install(new_fd, file);
->         else {
->                 new_fd = fd;
->                 error = replace_fd(new_fd, file, o_flags);
-> diff --git a/net/compat.c b/net/compat.c
-> index 71494337cca7..605a5a67200c 100644
-> --- a/net/compat.c
-> +++ b/net/compat.c
-> @@ -298,9 +298,11 @@ void scm_detach_fds_compat(struct msghdr *msg, struct scm_cookie *scm)
->         int err = 0, i;
+> v2:
+> Added net_busy_loop_on() check (Eric)
 > 
->         for (i = 0; i < fdmax; i++) {
-> -               err = fd_install_received_user(scm->fp->fp[i], cmsg_data + i, o_flags);
-> -               if (err < 0)
-> +               err = fd_install_received_user(get_file(scm->fp->fp[i]), cmsg_data + i, o_flags);
-> +               if (err < 0) {
-> +                       fput(scm->fp->fp[i]);
->                         break;
-> +               }
->         }
+> ---
+>   fs/eventpoll.c | 13 +++++++++++++
+>   1 file changed, 13 insertions(+)
 > 
->         if (i > 0) {
-> diff --git a/net/core/scm.c b/net/core/scm.c
-> index b9a0442ebd26..0d06446ae598 100644
-> --- a/net/core/scm.c
-> +++ b/net/core/scm.c
-> @@ -306,9 +306,11 @@ void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm)
->         }
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 12eebcdea9c8..c33cc98d3848 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -1847,6 +1847,19 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+>   		eavail = ep_events_available(ep);
+>   		write_unlock_irq(&ep->lock);
+>   
+> +		/*
+> +		 * Trigger non-blocking busy poll if timeout is 0 and there are
+> +		 * no events available. Passing timed_out(1) to ep_busy_loop
+> +		 * will make sure that busy polling is triggered only once.
+> +		 */
+> +		if (!eavail && net_busy_loop_on()) {
+> +			ep_busy_loop(ep, timed_out);
+> +			write_lock_irq(&ep->lock);
+> +			eavail = ep_events_available(ep);
+> +			write_unlock_irq(&ep->lock);
+> +		}
+> +
+>   		goto send_events;
+>   	}
+>   
 > 
->         for (i = 0; i < fdmax; i++) {
-> -               err = fd_install_received_user(scm->fp->fp[i], cmsg_data + i, o_flags);
-> -               if (err < 0)
-> +               err = fd_install_received_user(get_file(scm->fp->fp[i]), cmsg_data + i, o_flags);
-> +               if (err < 0) {
-> +                       fput(scm->fp->fp[i]);
->                         break;
-> +               }
->         }
-> 
->         if (i > 0) {
-
-But my point stands: I really dislike this; suddenly the caller needs to
-manage this when it should be an entirely internal detail to the
-function. It was only pidfd doing it wrong, and that was entirely my
-fault in the conversion.
-
-> The problem here is that the current patch invites bugs and has already
-> produced one because fd_install() and fd_install_*() have the same
-> naming scheme but different behavior when dealing with references.
-> That's just not a good idea.
-
-I will rename the helper and add explicit documentation, but I really
-don't think callers should have to deal with managing the helper's split
-ref lifetime.
-
--- 
-Kees Cook
