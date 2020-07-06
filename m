@@ -2,155 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB7AF215262
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 08:08:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2737D2152C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 08:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728910AbgGFGIY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jul 2020 02:08:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35006 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728804AbgGFGIX (ORCPT
+        id S1728466AbgGFGqG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jul 2020 02:46:06 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42145 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727089AbgGFGqG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jul 2020 02:08:23 -0400
-Received: from mail-oo1-xc43.google.com (mail-oo1-xc43.google.com [IPv6:2607:f8b0:4864:20::c43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BD7EC061794;
-        Sun,  5 Jul 2020 23:08:23 -0700 (PDT)
-Received: by mail-oo1-xc43.google.com with SMTP id a9so91494oof.12;
-        Sun, 05 Jul 2020 23:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X1BjitBb0woJ/AqYDROx+THUx8rqaPKmjtehNi6j/8Q=;
-        b=ga5k5Fm94tsxJPmvN5Qz7vnzhTrXfjjHXZPRCJk4df64cFFiydOPVyTPH0ugyCSmBv
-         xWRchB3G2ib8qiIIc/u+kxh12gDUiatbOIKDJc3FPtvSMJadpa7v/WSUZyEauK6u2tOu
-         FpaK1eFRuAC1ZlM5KhuqPgkHurDYWgY/Avrf5zUvwjHzIb7vgOc7AK6SNdpXhly8Kh3x
-         ATbUHXPs2V1SeaUyTp1NUrhUNmtK/3BIP/MZU5OdftvpglEYIEw6JH5T+5GFM1A4E5/b
-         jS5JfUrnuYKcLihWEv4AZR4g/l7sSbrZ3PAIO6P4giOKs+iSNEId1+CevqpFav0wkviq
-         OJuQ==
+        Mon, 6 Jul 2020 02:46:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594017963;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ARowG2upYL1FRBFOB0ffQO34fUJQ8qsd+4GQ3s8Aw0w=;
+        b=QMKzNuFqi45lWp9Ohs2Px3kpddwS0d+LtraufIZVpX49hkeqIkqlRvCkH1j4KvO5dbKIUO
+        fKfnvLyInx/NWI6iXpy9z2eu5XdMe/VYRqGsiCorfCcuYssPyAP2/vkXOfx4AR9/i+1ny9
+        kzrdN7Yr5m54V/WWgQpvwfM2J8NoFSk=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-23-Nbj0IJzSPPqcJzCTqB4FgQ-1; Mon, 06 Jul 2020 02:46:01 -0400
+X-MC-Unique: Nbj0IJzSPPqcJzCTqB4FgQ-1
+Received: by mail-wr1-f70.google.com with SMTP id w4so39261165wrm.5
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Jul 2020 23:46:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X1BjitBb0woJ/AqYDROx+THUx8rqaPKmjtehNi6j/8Q=;
-        b=t11LlXrz0ini0Z3HNeMh/YaNder+20JR2vYZy1DCHZDE4tbWrIyp359i6tijlTVwtr
-         lGALpRQ5+QMtJgLmMFwxnnxsSYOj3hpzXAmhFx/oYpGpSgC+O25/+shOWcAaDd7XS5nV
-         S5Y9qqvGlLosKCrI8tj2eAasEBTK+27Vi2qsaw0scC/rP7gKj3+Lqf6km6a2snvrisVf
-         Rcrb88R45cGzHkj14ojuN8ma9w359R2ZJnQKV2YnssDAyWziFlUpA1UZqCGmWZS5IFy5
-         g/xzTC+D7GJP+SF+uf6bc2ospZHs6ivdDh1c/oh/wv/GxiaSBE+yPn07dL844v3YUtSh
-         qK0Q==
-X-Gm-Message-State: AOAM530zpA7hxvH14/TF0qxRSesPzxj//pvdzVugN/by1N0KTpsL8hU0
-        bn0Q1nrGWEVTerJWQLuyPQiXjPhcdeDm3+HmAmxOitn6
-X-Google-Smtp-Source: ABdhPJz/HAbhyuLArVmNsg/6kUXsngMITW3h2wuAxja2UJS9ppi60bItfwaYPKCzrBJBa4IuDePWvHpWPMn7amISmiE=
-X-Received: by 2002:a4a:dfb5:: with SMTP id k21mr32478997ook.27.1594015702379;
- Sun, 05 Jul 2020 23:08:22 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ARowG2upYL1FRBFOB0ffQO34fUJQ8qsd+4GQ3s8Aw0w=;
+        b=lQVbjkB9FhS3MoE5cNUcZXrcqDx2Weq5pa0OAnnF53YZYLJNtl3mhsiyippwcXgmlq
+         Mpy+k79yRSvK+gS60SIYWtDzPfjrwOVTPvwuuRoGBLn6XPyAy1gV5bjsUuj22pAlEI2Y
+         20m11wEFDlj382M6ey5BMjUFtcdwx9szugF3bZTFzcmdvAZnbrQtUGASHOr5aGx0kKuZ
+         7F+tzT/WZWC/jcP8qRIh+Ijvjlg0CWSuY3aiaUKa9Pism6WqrEa0kPHgZC+G7BE1w5Tq
+         wfjgwqmebWOkcW05vvno+fsCynL4+506ZN1nr8XIKBCGpEjtzs7UDFIGDEe52kL4XMPO
+         WPpA==
+X-Gm-Message-State: AOAM5314cf2PhgZkfNlkD61l6RsJ8BLyvkEpHXCz84/r1Zj/ffwjuhLQ
+        gLxNWproerOAVRwQGrj+QUv89zybc+FOhnsxeHKw3UixUMJi2B7d8IkI0KDctlaQg7bNZ9H5lT6
+        NBFgoTP2HNQzzYwmlCyuCpn/uGw==
+X-Received: by 2002:adf:c551:: with SMTP id s17mr45472947wrf.330.1594017960089;
+        Sun, 05 Jul 2020 23:46:00 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxXKRgv2Yi4GtFNaRL7lNBSGMigmOVf2YwXXf+1ouKxxO0A6r9m6n7Qd3x6f9RjD+e21Ty2cw==
+X-Received: by 2002:adf:c551:: with SMTP id s17mr45472928wrf.330.1594017959736;
+        Sun, 05 Jul 2020 23:45:59 -0700 (PDT)
+Received: from localhost.localdomain ([151.29.90.54])
+        by smtp.gmail.com with ESMTPSA id 92sm24328066wrr.96.2020.07.05.23.45.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Jul 2020 23:45:59 -0700 (PDT)
+Date:   Mon, 6 Jul 2020 08:45:57 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     He Zhe <zhe.he@windriver.com>
+Cc:     viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] eventfd: Enlarge recursion limit to allow vhost to work
+Message-ID: <20200706064557.GA26135@localhost.localdomain>
+References: <20200410114720.24838-1-zhe.he@windriver.com>
+ <20200703081209.GN9670@localhost.localdomain>
+ <cbecaad6-48fc-3c52-d764-747ea91dc3fa@windriver.com>
 MIME-Version: 1.0
-References: <CAODFU0q6CrUB_LkSdrbp5TQ4Jm6Sw=ZepZwD-B7-aFudsOvsig@mail.gmail.com>
- <20200705021631.GR25523@casper.infradead.org> <CAODFU0qwtPTaBRbA3_ufA6N7fajhi61Sp5iE75Shdk25NSOTLA@mail.gmail.com>
- <20200705031208.GS25523@casper.infradead.org> <CAODFU0q=nDdx7D1NUxTQshBjqgTCYPpKzog78XZLjoPqnZqXvw@mail.gmail.com>
- <20200705032732.GT25523@casper.infradead.org> <CAODFU0rSqQsO9rSiA8Ke=+mk_NgEdFDHPMfmXGSmzmkqQh1KYw@mail.gmail.com>
- <20200705115851.GB1227929@kroah.com>
-In-Reply-To: <20200705115851.GB1227929@kroah.com>
-From:   Jan Ziak <0xe2.0x9a.0x9b@gmail.com>
-Date:   Mon, 6 Jul 2020 08:07:46 +0200
-Message-ID: <CAODFU0ovM-i=4fNKSzp9SgO_FjPcAOZ0R8S4iRXyGm+QL53C1A@mail.gmail.com>
-Subject: Re: [PATCH 0/3] readfile(2): a new syscall to make open/read/close faster
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-man@vger.kernel.org,
-        mtk.manpages@gmail.com, shuah@kernel.org, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cbecaad6-48fc-3c52-d764-747ea91dc3fa@windriver.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 5, 2020 at 1:58 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Sun, Jul 05, 2020 at 06:09:03AM +0200, Jan Ziak wrote:
-> > On Sun, Jul 5, 2020 at 5:27 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > On Sun, Jul 05, 2020 at 05:18:58AM +0200, Jan Ziak wrote:
-> > > > On Sun, Jul 5, 2020 at 5:12 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > > > >
-> > > > > You should probably take a look at io_uring.  That has the level of
-> > > > > complexity of this proposal and supports open/read/close along with many
-> > > > > other opcodes.
-> > > >
-> > > > Then glibc can implement readfile using io_uring and there is no need
-> > > > for a new single-file readfile syscall.
-> > >
-> > > It could, sure.  But there's also a value in having a simple interface
-> > > to accomplish a simple task.  Your proposed API added a very complex
-> > > interface to satisfy needs that clearly aren't part of the problem space
-> > > that Greg is looking to address.
+On 03/07/20 19:11, He Zhe wrote:
+> 
+> 
+> On 7/3/20 4:12 PM, Juri Lelli wrote:
+> > Hi,
 > >
-> > I believe that we should look at the single-file readfile syscall from
-> > a performance viewpoint. If an application is expecting to read a
-> > couple of small/medium-size files per second, then neither readfile
-> > nor readfiles makes sense in terms of improving performance. The
-> > benefits start to show up only in case an application is expecting to
-> > read at least a hundred of files per second. The "per second" part is
-> > important, it cannot be left out. Because readfile only improves
-> > performance for many-file reads, the syscall that applications
-> > performing many-file reads actually want is the multi-file version,
-> > not the single-file version.
->
-> It also is a measurable increase over reading just a single file.
-> Here's my really really fast AMD system doing just one call to readfile
-> vs. one call sequence to open/read/close:
->
->         $ ./readfile_speed -l 1
->         Running readfile test on file /sys/devices/system/cpu/vulnerabilities/meltdown for 1 loops...
->         Took 3410 ns
->         Running open/read/close test on file /sys/devices/system/cpu/vulnerabilities/meltdown for 1 loops...
->         Took 3780 ns
->
-> 370ns isn't all that much, yes, but it is 370ns that could have been
-> used for something else :)
+> > On 10/04/20 19:47, zhe.he@windriver.com wrote:
+> >> From: He Zhe <zhe.he@windriver.com>
+> >>
+> >> commit b5e683d5cab8 ("eventfd: track eventfd_signal() recursion depth")
+> >> introduces a percpu counter that tracks the percpu recursion depth and
+> >> warn if it greater than zero, to avoid potential deadlock and stack
+> >> overflow.
+> >>
+> >> However sometimes different eventfds may be used in parallel. Specifically,
+> >> when heavy network load goes through kvm and vhost, working as below, it
+> >> would trigger the following call trace.
+> >>
+> >> -  100.00%
+> >>    - 66.51%
+> >>         ret_from_fork
+> >>         kthread
+> >>       - vhost_worker
+> >>          - 33.47% handle_tx_kick
+> >>               handle_tx
+> >>               handle_tx_copy
+> >>               vhost_tx_batch.isra.0
+> >>               vhost_add_used_and_signal_n
+> >>               eventfd_signal
+> >>          - 33.05% handle_rx_net
+> >>               handle_rx
+> >>               vhost_add_used_and_signal_n
+> >>               eventfd_signal
+> >>    - 33.49%
+> >>         ioctl
+> >>         entry_SYSCALL_64_after_hwframe
+> >>         do_syscall_64
+> >>         __x64_sys_ioctl
+> >>         ksys_ioctl
+> >>         do_vfs_ioctl
+> >>         kvm_vcpu_ioctl
+> >>         kvm_arch_vcpu_ioctl_run
+> >>         vmx_handle_exit
+> >>         handle_ept_misconfig
+> >>         kvm_io_bus_write
+> >>         __kvm_io_bus_write
+> >>         eventfd_signal
+> >>
+> >> 001: WARNING: CPU: 1 PID: 1503 at fs/eventfd.c:73 eventfd_signal+0x85/0xa0
+> >> ---- snip ----
+> >> 001: Call Trace:
+> >> 001:  vhost_signal+0x15e/0x1b0 [vhost]
+> >> 001:  vhost_add_used_and_signal_n+0x2b/0x40 [vhost]
+> >> 001:  handle_rx+0xb9/0x900 [vhost_net]
+> >> 001:  handle_rx_net+0x15/0x20 [vhost_net]
+> >> 001:  vhost_worker+0xbe/0x120 [vhost]
+> >> 001:  kthread+0x106/0x140
+> >> 001:  ? log_used.part.0+0x20/0x20 [vhost]
+> >> 001:  ? kthread_park+0x90/0x90
+> >> 001:  ret_from_fork+0x35/0x40
+> >> 001: ---[ end trace 0000000000000003 ]---
+> >>
+> >> This patch enlarges the limit to 1 which is the maximum recursion depth we
+> >> have found so far.
+> >>
+> >> Signed-off-by: He Zhe <zhe.he@windriver.com>
+> >> ---
+> > Not sure if this approch can fly, but I also encountered the same
+> > warning (which further caused hangs during VM install) and this change
+> > addresses that.
+> >
+> > I'd be interested in understanding what is the status of this problem/fix.
+> 
+> This is actually v2 of the patch and has not got any reply yet. Here is the v1. FYI.
+> https://lore.kernel.org/lkml/1586257192-58369-1-git-send-email-zhe.he@windriver.com/
 
-I am curious as to how you amortized or accounted for the fact that
-readfile() first needs to open the dirfd and then close it later.
+I see, thanks. Hope this gets reviewed soon! :-)
 
-From performance viewpoint, only codes where readfile() is called
-multiple times from within a loop make sense:
+> > On a side note, by looking at the code, I noticed that (apart from
+> > samples) all callers don't actually check eventfd_signal() return value
+> > and I'm wondering why is that the case and if is it safe to do so.
+> 
+> Checking the return value right after sending the signal can tell us if the
+> event counter has just overflowed, that is, exceeding ULLONG_MAX. I guess the
+> authors of the callers listed in the commit log just don't worry about that,
+> since they add only one to a dedicated eventfd.
 
-dirfd = open();
-for(...) {
-  readfile(dirfd, ...);
-}
-close(dirfd);
+OK. I was mostly wondering if returning early in case the WARN_ON_ONCE
+fires would cause a missing wakeup for the eventfd_ctx wait queue.
 
-> Look at the overhead these days of a syscall using something like perf
-> to see just how bad things have gotten on Intel-based systems (above was
-> AMD which doesn't suffer all the syscall slowdowns, only some).
->
-> I'm going to have to now dig up my old rpi to get the stats on that
-> thing, as well as some Intel boxes to show the problem I'm trying to
-> help out with here.  I'll post that for the next round of this patch
-> series.
->
-> > I am not sure I understand why you think that a pointer to an array of
-> > readfile_t structures is very complex. If it was very complex then it
-> > would be a deep tree or a large graph.
->
-> Of course you can make it more complex if you want, but look at the
-> existing tools that currently do many open/read/close sequences.  The
-> apis there don't lend themselves very well to knowing the larger list of
-> files ahead of time.  But I could be looking at the wrong thing, what
-> userspace programs are you thinking of that could be easily converted
-> into using something like this?
+Best,
 
-Perhaps, passing multiple filenames to tools via the command-line is a
-valid and quite general use case where it is known ahead of time that
-multiple files are going to be read, such as "gcc *.o" which is
-commonly used to link shared libraries and executables. Although, in
-case of "gcc *.o" some of the object files are likely to be cached in
-memory and thus unlikely to be required to be fetched from HDD/SSD, so
-the valid use case where we could see a speedup (if gcc was to use the
-multi-file readfiles() syscall) is when the programmer/Makefile
-invokes "gcc *.o" after rebuilding a small subset of the object files
-and the objects files which did not have to be rebuilt are stored on
-HDD/SSD, so basically this means 1st-time use of a project's Makefile
-in a particular day.
+Juri
+
