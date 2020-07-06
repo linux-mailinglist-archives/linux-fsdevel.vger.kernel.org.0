@@ -2,154 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D161F215983
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 16:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 017742159CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 16:43:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729193AbgGFOdm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jul 2020 10:33:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56514 "EHLO
+        id S1729285AbgGFOnW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jul 2020 10:43:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729255AbgGFOdm (ORCPT
+        with ESMTP id S1729193AbgGFOnV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jul 2020 10:33:42 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E0A6C08C5E0
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jul 2020 07:33:42 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id e18so22356267ilr.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jul 2020 07:33:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fmUO+MRhKaF9iDr809BkP0BZ1FEwKum+d6TqO74BCHY=;
-        b=IgeFwe3MEabbYSbiAs+p2J1s7Hx8+qkGi0XKQXS+TMUtSUDcHZAsfvxQjSInnGs/hG
-         n6Fz7r5BjsVqrvUpgJdUSa9Ot7cb3E6+iRdD+agLt9B0IjYMp38UYZJEIF9y1vE2HjAp
-         Kbh529x6F3DrjiKAglmQCbHz0hx2QoAmqXWuzy5jvlhkcptALLA19v/KuTWX5paTji/t
-         nnKCxKV6cikD2Rff9ULQNZcyBUKvKrKkgmgVI2AKCBdtELl8UVLddf8bUulVaSn76hIL
-         edeo419KBLPKXNwu7YGkq7y+OUUCily9z0J0WPonnjRVbqCDElrL1f6uf/ihcltKINg7
-         tOpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fmUO+MRhKaF9iDr809BkP0BZ1FEwKum+d6TqO74BCHY=;
-        b=rwTAgwKC+AqDU7wiza5fXvv7KgMKm9X/O2oPOV28n/gK4BZrx3mxfV0JK22NT/ZhCl
-         In8sBmMGg4KZAzv/GQpV/zMxx7WJ2YFataweZ4qokN3zGzHJaiua9fJYeeodHF6EtvwM
-         JH3JtpAPr+7vunCJ+mKIw851GH5MtDVpEr3GjBV+g7YiJV8vDQxhoK937Csbew+HqBCS
-         lhHSQCls3/wTIVWIOB04TPN+WbSLt20QSdzTJ0PuRV1BuG7mWf3jRPlLt63lBXblwe26
-         VyFuI1mwkR8CYWE/g8r+MSCJ1b29bp4o4hKL5DUbR4M1cYOyTprd4w4ts12zydaCf5rk
-         FqDw==
-X-Gm-Message-State: AOAM530tebClvNjSG6JTHUcAg/Fjpln2l/qj6v7pJuy91I79rMHmEZkv
-        dXThOTlJsjx/4kJYFyrltRcRoA==
-X-Google-Smtp-Source: ABdhPJwOtHmNnHmEW2Bjrz3fklq2Hr32zEZPkqI1YmYfRyWomLR+5Awwy7juGYxR0E2eZ/0IStYegA==
-X-Received: by 2002:a05:6e02:10d4:: with SMTP id s20mr31143956ilj.203.1594046021328;
-        Mon, 06 Jul 2020 07:33:41 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id y6sm10971417ila.74.2020.07.06.07.33.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jul 2020 07:33:40 -0700 (PDT)
-Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, hch@infradead.org, Damien.LeMoal@wdc.com,
-        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-        mb@lightnvm.io, linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Selvakumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-References: <1593974870-18919-1-git-send-email-joshi.k@samsung.com>
- <CGME20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7@epcas5p1.samsung.com>
- <1593974870-18919-5-git-send-email-joshi.k@samsung.com>
- <fe0066b7-5380-43ee-20b2-c9b17ba18e4f@kernel.dk>
- <20200705210947.GW25523@casper.infradead.org>
- <239ee322-9c38-c838-a5b2-216787ad2197@kernel.dk>
- <20200706141002.GZ25523@casper.infradead.org>
- <4a9bf73e-f3ee-4f06-7fad-b8f8861b0bc1@kernel.dk>
- <20200706143208.GA25523@casper.infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ee671380-86f0-d50d-7fb4-2e1901c4173c@kernel.dk>
-Date:   Mon, 6 Jul 2020 08:33:39 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Mon, 6 Jul 2020 10:43:21 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3F06C061755
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jul 2020 07:43:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=VD2eTpv/dPofadULvyAlvcBsQkpHPtWNIJfEVK/jT00=; b=g6oJzEent+MAMiCgnq6Ez/tYdq
+        mgf7/+52rKkl+3QHGV8g0kwNX60NaYs2sHE1YzttAU/+iVqkxzd3NJJukmuOAtjlT05rFWn7ADhIL
+        K3IwjgMQh/VzmUob8osXiEa+gWtc2XPqJ/cEnK0XcsBPVIzL5G1xk7cK1UG7ztXNzZB8A9+BEML32
+        q2Wn/5YHatEYz12bNAj+XrQ0nHR5hDW+qMIp44Sz8ktxRGtAl31hKZlqMFlBSyviBpTaHUy4sgo1s
+        vErtOX/B0oxZ6vW/WZsLEKUD+KURpccPKYwA0Nlk1MRfKLBJgoUozgQZYoQ1/U/S32hPgeCYJYgUf
+        caP4+0mA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jsSL2-0005O7-2f; Mon, 06 Jul 2020 14:43:20 +0000
+Date:   Mon, 6 Jul 2020 15:43:20 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 0/2] Use multi-index entries in the page cache
+Message-ID: <20200706144320.GB25523@casper.infradead.org>
+References: <20200629152033.16175-1-willy@infradead.org>
+ <alpine.LSU.2.11.2007041206270.1056@eggly.anvils>
 MIME-Version: 1.0
-In-Reply-To: <20200706143208.GA25523@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.11.2007041206270.1056@eggly.anvils>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/6/20 8:32 AM, Matthew Wilcox wrote:
-> On Mon, Jul 06, 2020 at 08:27:17AM -0600, Jens Axboe wrote:
->> On 7/6/20 8:10 AM, Matthew Wilcox wrote:
->>> On Sun, Jul 05, 2020 at 03:12:50PM -0600, Jens Axboe wrote:
->>>> On 7/5/20 3:09 PM, Matthew Wilcox wrote:
->>>>> On Sun, Jul 05, 2020 at 03:00:47PM -0600, Jens Axboe wrote:
->>>>>> On 7/5/20 12:47 PM, Kanchan Joshi wrote:
->>>>>>> From: Selvakumar S <selvakuma.s1@samsung.com>
->>>>>>>
->>>>>>> For zone-append, block-layer will return zone-relative offset via ret2
->>>>>>> of ki_complete interface. Make changes to collect it, and send to
->>>>>>> user-space using cqe->flags.
->>>
->>>>> I'm surprised you aren't more upset by the abuse of cqe->flags for the
->>>>> address.
->>>>
->>>> Yeah, it's not great either, but we have less leeway there in terms of
->>>> how much space is available to pass back extra data.
->>>>
->>>>> What do you think to my idea of interpreting the user_data as being a
->>>>> pointer to somewhere to store the address?  Obviously other things
->>>>> can be stored after the address in the user_data.
->>>>
->>>> I don't like that at all, as all other commands just pass user_data
->>>> through. This means the application would have to treat this very
->>>> differently, and potentially not have a way to store any data for
->>>> locating the original command on the user side.
->>>
->>> I think you misunderstood me.  You seem to have thought I meant
->>> "use the user_data field to return the address" when I actually meant
->>> "interpret the user_data field as a pointer to where userspace
->>> wants the address stored".
->>
->> It's still somewhat weird to have user_data have special meaning, you're
->> now having the kernel interpret it while every other command it's just
->> an opaque that is passed through.
->>
->> But it could of course work, and the app could embed the necessary
->> u32/u64 in some other structure that's persistent across IO. If it
->> doesn't have that, then it'd need to now have one allocated and freed
->> across the lifetime of the IO.
->>
->> If we're going that route, it'd be better to define the write such that
->> you're passing in the necessary information upfront. In syscall terms,
->> then that'd be something ala:
->>
->> ssize_t my_append_write(int fd, const struct iovec *iov, int iovcnt,
->> 			off_t *offset, int flags);
->>
->> where *offset is copied out when the write completes. That removes the
->> need to abuse user_data, with just providing the storage pointer for the
->> offset upfront.
+On Sat, Jul 04, 2020 at 01:20:19PM -0700, Hugh Dickins wrote:
+> On Mon, 29 Jun 2020, Matthew Wilcox (Oracle) wrote:
+> > Hugh, I would love it if you could test this.  It didn't introduce any new
+> > regressions to the xfstests, but shmem does exercise different paths and
+> > of course I don't have a clean xfstests run yet, so there could easily
+> > still be bugs.
 > 
-> That works for me!  In io_uring terms, would you like to see that done
-> as adding:
-> 
->         union {
->                 __u64   off;    /* offset into file */
-> +		__u64   *offp;	/* appending writes */
->                 __u64   addr2;
->         };
-> 
+> I have been trying it, and it's not good yet. I had hoped to work
+> out what's wrong and send a patch, but I'm not making progress,
+> so better hand back to you with what I've found.
 
-Either that, or just use addr2 for it directly. I consider the appending
-writes a marginal enough use case that it doesn't really warrant adding
-a specially named field for that.
+Thank you so much!  I've made some progress.
 
--- 
-Jens Axboe
+> First problem was that it did not quite build on top of 5.8-rc3
+> plus your 1-7 THP prep patches: was there some other series we
+> were supposed to add in too? If so, that might make a big difference,
+> but I fixed up __add_to_page_cache_locked() as in the diff below
+> (and I'm not bothering about hugetlbfs, so haven't looked to see if
+> its page indexing is or isn't still exceptional with your series).
+
+Oops.  I shifted some patches around and clearly didn't get it quite
+right.  I'll fix it up.
+
+> Second problem was fs/inode.c:530 BUG_ON(inode->i_data.nrpages),
+> after warning from shmem_evict_inode(). Surprisingly, that first
+> happened on a machine with CONFIG_TRANSPARENT_HUGEPAGE not set,
+> while doing an "rm -rf".
+
+I've seen that occasionally too.
+
+> The original non-THP machine ran the same load for
+> ten hours yesterday, but hit no problem. The only significant
+> difference in what ran successfully, is that I've been surprised
+> by all the non-zero entries I saw in xarray nodes, exceeding
+> total entry "count" (I've also been bothered by non-zero "offset"
+> at root, but imagine that's just noise that never gets used).
+> So I've changed the kmem_cache_alloc()s in lib/radix-tree.c to
+> kmem_cache_zalloc()s, as in the diff below: not suggesting that
+> as necessary, just a temporary precaution in case something is
+> not being initialized as intended.
+
+Umm.  ->count should always be accurate and match the number of non-NULL
+entries in a node.  the zalloc shouldn't be necessary, and will probably
+break the workingset code.  Actually, it should BUG because we have both
+a constructor and an instruction to zero the allocation, and they can't
+both be right.
+
+You're right that ->offset is never used at root.  I had plans to
+repurpose that to support smaller files more efficiently, but never
+got round to implementing those plans.
+
+> These problems were either mm/filemap.c:1565 find_lock_entry()
+> VM_BUG_ON_PAGE(page_to_pgoff(page) != offset, page); or hangs, which
+> (at least the ones that I went on to investigate) turned out also to be
+> find_lock_entry(), circling around with page_mapping(page) != mapping.
+> It seems that find_get_entry() is sometimes supplying the wrong page,
+> and you will work out why much quicker than I shall.  (One tantalizing
+> detail of the bad offset crashes: very often page pgoff is exactly one
+> less than the requested offset.)
+
+I added this:
+
+@@ -1535,6 +1535,11 @@ struct page *find_get_entry(struct address_space *mapping, pgoff_t offset)
+                goto repeat;
+        }
+        page = find_subpage(page, offset);
++       if (page_to_index(page) != offset) {
++               printk("offset %ld xas index %ld offset %d\n", offset, xas.xa_index, xas.xa_offset);
++               dump_page(page, "index mismatch");
++               printk("xa_load %p\n", xa_load(&mapping->i_pages, offset));
++       }
+ out:
+        rcu_read_unlock();
+ 
+and I have a good clue now:
+
+1322 offset 631 xas index 631 offset 48
+1322 page:000000008c9a9bc3 refcount:4 mapcount:0 mapping:00000000d8615d47 index:0x276
+1322 flags: 0x4000000000002026(referenced|uptodate|active|private)
+1322 mapping->aops:0xffffffff88a2ebc0 ino 1800b82 dentry name:"f1141"
+1322 raw: 4000000000002026 dead000000000100 dead000000000122 ffff98ff2a8b8a20
+1322 raw: 0000000000000276 ffff98ff1ac271a0 00000004ffffffff 0000000000000000
+1322 page dumped because: index mismatch
+1322 xa_load 000000008c9a9bc3
+
+0x276 is decimal 630.  So we're looking up a tail page and getting its
+erstwhile head page.  I'll dig in and figure out exactly how that's
+happening.
 
