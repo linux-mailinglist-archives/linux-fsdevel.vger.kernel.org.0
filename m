@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4565F21622A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 01:24:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DFED21622F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 01:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbgGFXYG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jul 2020 19:24:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53924 "EHLO
+        id S1728067AbgGFXYN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jul 2020 19:24:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53956 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbgGFXYF (ORCPT
+        with ESMTP id S1727088AbgGFXYM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jul 2020 19:24:05 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A8FC061794
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jul 2020 16:24:04 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id d18so31143300edv.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jul 2020 16:24:04 -0700 (PDT)
+        Mon, 6 Jul 2020 19:24:12 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA760C061794
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jul 2020 16:24:11 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id g20so36587136edm.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jul 2020 16:24:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sCHL24pJFJSFoASanMhktjUvoQlUfrXyegYhzckyoiE=;
-        b=VbsulSNVum8Xox31K2vkZ75sExmmLfThOy1tO3cZELgoRxBgnbf1QAJdvoFa6B4EmJ
-         YjUWtsJoaHbjnLVYLFH7dHdFPTFi2bO9FnGHJRjyN4SGFdn/mohwpOIBo+PiiD194e5/
-         LdpyQo8zpZkZXCtIg0zYoMDaqqSV2HaDr9vwk=
+        bh=qz7MuNPVCvdbh+ZgEThp7mjF9Pplt5mjBACsV2Ifvtc=;
+        b=HWfTKJdKS5N8S+MI4QIk4FQF9QAI9dY+1bKC8KC79ycoOQm4aHEOIzyn/FCH6AzPp4
+         QuxxAQU1BwpRO8GDRE9si6MhjQoGGUpZrf/Svr+kpD0Y8203Lg1/XjewZrWjs2vtyRK0
+         Fswr3vLR7QP1+n/JSAOXhRf8Oa15HThhJFxAY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=sCHL24pJFJSFoASanMhktjUvoQlUfrXyegYhzckyoiE=;
-        b=EX3bFQ/AzNX0kUSnSYwqzg+X2pqPwL7L7+3jxT2iViOWkYokmYCmni9fOFfJeD6cCX
-         UCj5u1yBqXV2UNTAnbMSEcf+222ShfiNvkDAeVWehJZmG49wk5/c8447MpkTIgqjaLZu
-         FzyVS15gxyLWLuYgQjNNbUcEhGx43eVQmbIYQpqNE9FksErktsbUn5l5grgaxuhqRnbv
-         8tzBBQrdQpDRobLOfAJngE+5jQig4f3siTYNmCEVAVMQb+vrGGzQWyWpBXU36+dm7xnd
-         lWGGOMHTdNWFkcKsjlvJiNIKwpBNDXlv3L9lJygqdhu8v7OdNKe2aXwtj/OdXW3sLvpm
-         r49g==
-X-Gm-Message-State: AOAM531H7yIO/jhdhfQppzjnRzdUtGedz61sPhC9XJLHTtiGLX7j1wLv
-        fT5wD26S+onNra4obO4aok30Tg==
-X-Google-Smtp-Source: ABdhPJxAbXjF+Gs6sYum2Xf3mUIFZlbOyFQCxU889QiaLBq9vuFgNeTH9ifaFNpkLKQ6ecEYdv9w5Q==
-X-Received: by 2002:a50:dacf:: with SMTP id s15mr60970729edj.136.1594077843678;
-        Mon, 06 Jul 2020 16:24:03 -0700 (PDT)
+        bh=qz7MuNPVCvdbh+ZgEThp7mjF9Pplt5mjBACsV2Ifvtc=;
+        b=cDwnj4WePrSebYrngtOw+rq2KG4ptUhaXczON4uJXk8UAS6F+88PH/oOdl0ZMqTSRc
+         FeBwDVRVkTWORsBUwGkHmQ/hdR8CaWvBe0eO+Aqysr/otRR8UN+txLvP7PRAKvST7Ujt
+         OYw1JsP6fKl3/y60/VFhe5vDNr75nX3WOY1qiHZrujhT8538CSjZwc+fzSukATaUHMay
+         getNQnGU3MFn2FJL6rfAa9cfQIVWjVrFRSGISicHm3gkzejNSOHXw4xvUxT9ZRp08fvo
+         Xfsvv/qaK9TsDhaOvE9bw7+Q70+xTVJGHnMpjbYHDIWqGf742mTJvJGpLGaDLJBJ1Q57
+         zY7A==
+X-Gm-Message-State: AOAM533teA8Ne6XwbjQymsJlRYNz3h0Qq0cz2Gg7K3we+wP1pzBIkQoY
+        dwtk7k5bk5mWMZ3EtUofLidUkQ==
+X-Google-Smtp-Source: ABdhPJzIjODpNtttijixyI5G0ahrTebaAeneDXU8MZ9fv4D93eos9tLC+KXrz8u6x+rUHSYdutqMAw==
+X-Received: by 2002:a50:9f8c:: with SMTP id c12mr55274402edf.149.1594077850623;
+        Mon, 06 Jul 2020 16:24:10 -0700 (PDT)
 Received: from lbrmn-lnxub113.broadcom.net ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id i2sm4002567ejp.114.2020.07.06.16.23.57
+        by smtp.gmail.com with ESMTPSA id i2sm4002567ejp.114.2020.07.06.16.24.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2020 16:24:03 -0700 (PDT)
+        Mon, 06 Jul 2020 16:24:10 -0700 (PDT)
 From:   Scott Branden <scott.branden@broadcom.com>
 To:     Luis Chamberlain <mcgrof@kernel.org>,
         Wolfram Sang <wsa@kernel.org>,
@@ -68,9 +68,9 @@ Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         Scott Branden <scott.branden@broadcom.com>
-Subject: [PATCH v10 5/9] firmware: test partial file reads of request_partial_firmware_into_buf
-Date:   Mon,  6 Jul 2020 16:23:05 -0700
-Message-Id: <20200706232309.12010-6-scott.branden@broadcom.com>
+Subject: [PATCH v10 6/9] bcm-vk: add bcm_vk UAPI
+Date:   Mon,  6 Jul 2020 16:23:06 -0700
+Message-Id: <20200706232309.12010-7-scott.branden@broadcom.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200706232309.12010-1-scott.branden@broadcom.com>
 References: <20200706232309.12010-1-scott.branden@broadcom.com>
@@ -79,126 +79,119 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add firmware tests for partial file reads of
-request_partial_firmware_into_buf.
+Add user space api for bcm-vk driver.
 
 Signed-off-by: Scott Branden <scott.branden@broadcom.com>
 ---
- .../selftests/firmware/fw_filesystem.sh       | 80 +++++++++++++++++++
- 1 file changed, 80 insertions(+)
+ include/uapi/linux/misc/bcm_vk.h | 99 ++++++++++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
+ create mode 100644 include/uapi/linux/misc/bcm_vk.h
 
-diff --git a/tools/testing/selftests/firmware/fw_filesystem.sh b/tools/testing/selftests/firmware/fw_filesystem.sh
-index fcc281373b4d..afc2e469ac06 100755
---- a/tools/testing/selftests/firmware/fw_filesystem.sh
-+++ b/tools/testing/selftests/firmware/fw_filesystem.sh
-@@ -149,6 +149,26 @@ config_unset_into_buf()
- 	echo 0 >  $DIR/config_into_buf
- }
- 
-+config_set_buf_size()
-+{
-+	echo $1 >  $DIR/config_buf_size
-+}
+diff --git a/include/uapi/linux/misc/bcm_vk.h b/include/uapi/linux/misc/bcm_vk.h
+new file mode 100644
+index 000000000000..783087b7c31f
+--- /dev/null
++++ b/include/uapi/linux/misc/bcm_vk.h
+@@ -0,0 +1,99 @@
++/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-2-Clause) */
++/*
++ * Copyright 2018-2020 Broadcom.
++ */
 +
-+config_set_file_offset()
-+{
-+	echo $1 >  $DIR/config_file_offset
-+}
++#ifndef __UAPI_LINUX_MISC_BCM_VK_H
++#define __UAPI_LINUX_MISC_BCM_VK_H
 +
-+config_set_partial()
-+{
-+	echo 1 >  $DIR/config_partial
-+}
++#include <linux/ioctl.h>
++#include <linux/types.h>
 +
-+config_unset_partial()
-+{
-+	echo 0 >  $DIR/config_partial
-+}
++#define BCM_VK_MAX_FILENAME 64
 +
- config_set_sync_direct()
- {
- 	echo 1 >  $DIR/config_sync_direct
-@@ -207,6 +227,35 @@ read_firmwares()
- 	done
- }
- 
-+read_partial_firmwares()
-+{
-+	if [ "$(cat $DIR/config_into_buf)" == "1" ]; then
-+		fwfile="${FW_INTO_BUF}"
-+	else
-+		fwfile="${FW}"
-+	fi
++struct vk_image {
++	__u32 type; /* Type of image */
++#define VK_IMAGE_TYPE_BOOT1 1 /* 1st stage (load to SRAM) */
++#define VK_IMAGE_TYPE_BOOT2 2 /* 2nd stage (load to DDR) */
++	char filename[BCM_VK_MAX_FILENAME]; /* Filename of image */
++};
 +
-+	if [ "$1" = "xzonly" ]; then
-+		fwfile="${fwfile}-orig"
-+	fi
++struct vk_reset {
++	__u32 arg1;
++	__u32 arg2;
++};
 +
-+	# Strip fwfile down to match partial offset and length
-+	partial_data="$(cat $fwfile)"
-+	partial_data="${partial_data:$2:$3}"
++#define VK_MAGIC		0x5e
 +
-+	for i in $(seq 0 3); do
-+		config_set_read_fw_idx $i
++/* Load image to Valkyrie */
++#define VK_IOCTL_LOAD_IMAGE	_IOW(VK_MAGIC, 0x2, struct vk_image)
 +
-+		read_firmware="$(cat $DIR/read_firmware)"
++/* Send Reset to Valkyrie */
++#define VK_IOCTL_RESET		_IOW(VK_MAGIC, 0x4, struct vk_reset)
 +
-+		# Verify the contents are what we expect.
-+		if [ $read_firmware != $partial_data ]; then
-+			echo "request #$i: partial firmware was not loaded" >&2
-+			exit 1
-+		fi
-+	done
-+}
++/*
++ * message block - basic unit in the message where a message's size is always
++ *		   N x sizeof(basic_block)
++ */
++struct vk_msg_blk {
++	__u8 function_id;
++#define VK_FID_TRANS_BUF	5
++#define VK_FID_SHUTDOWN		8
++	__u8 size;
++	__u16 trans_id; /* transport id, queue & msg_id */
++	__u32 context_id;
++	__u32 args[2];
++#define VK_CMD_PLANES_MASK	0x000f /* number of planes to up/download */
++#define VK_CMD_UPLOAD		0x0400 /* memory transfer to vk */
++#define VK_CMD_DOWNLOAD		0x0500 /* memory transfer from vk */
++#define VK_CMD_MASK		0x0f00 /* command mask */
++};
 +
- read_firmwares_expect_nofile()
- {
- 	for i in $(seq 0 3); do
-@@ -319,6 +368,21 @@ test_batched_request_firmware_into_buf()
- 	echo "OK"
- }
- 
-+test_batched_request_partial_firmware_into_buf()
-+{
-+	echo -n "Batched request_partial_firmware_into_buf() $2 off=$3 size=$4 try #$1: "
-+	config_reset
-+	config_set_name $TEST_FIRMWARE_INTO_BUF_FILENAME
-+	config_set_into_buf
-+	config_set_partial
-+	config_set_buf_size $4
-+	config_set_file_offset $3
-+	config_trigger_sync
-+	read_partial_firmwares $2 $3 $4
-+	release_all_firmware
-+	echo "OK"
-+}
++#define VK_BAR_FWSTS			0x41c
++#define VK_BAR_COP_FWSTS		0x428
++/* VK_FWSTS definitions */
++#define VK_FWSTS_RELOCATION_ENTRY	BIT(0)
++#define VK_FWSTS_RELOCATION_EXIT	BIT(1)
++#define VK_FWSTS_INIT_START		BIT(2)
++#define VK_FWSTS_ARCH_INIT_DONE		BIT(3)
++#define VK_FWSTS_PRE_KNL1_INIT_DONE	BIT(4)
++#define VK_FWSTS_PRE_KNL2_INIT_DONE	BIT(5)
++#define VK_FWSTS_POST_KNL_INIT_DONE	BIT(6)
++#define VK_FWSTS_INIT_DONE		BIT(7)
++#define VK_FWSTS_APP_INIT_START		BIT(8)
++#define VK_FWSTS_APP_INIT_DONE		BIT(9)
++#define VK_FWSTS_MASK			0xffffffff
++#define VK_FWSTS_READY			(VK_FWSTS_INIT_START | \
++					 VK_FWSTS_ARCH_INIT_DONE | \
++					 VK_FWSTS_PRE_KNL1_INIT_DONE | \
++					 VK_FWSTS_PRE_KNL2_INIT_DONE | \
++					 VK_FWSTS_POST_KNL_INIT_DONE | \
++					 VK_FWSTS_INIT_DONE | \
++					 VK_FWSTS_APP_INIT_START | \
++					 VK_FWSTS_APP_INIT_DONE)
++/* Deinit */
++#define VK_FWSTS_APP_DEINIT_START	BIT(23)
++#define VK_FWSTS_APP_DEINIT_DONE	BIT(24)
++#define VK_FWSTS_DRV_DEINIT_START	BIT(25)
++#define VK_FWSTS_DRV_DEINIT_DONE	BIT(26)
++#define VK_FWSTS_RESET_DONE		BIT(27)
++#define VK_FWSTS_DEINIT_TRIGGERED	(VK_FWSTS_APP_DEINIT_START | \
++					 VK_FWSTS_APP_DEINIT_DONE  | \
++					 VK_FWSTS_DRV_DEINIT_START | \
++					 VK_FWSTS_DRV_DEINIT_DONE)
++/* Last nibble for reboot reason */
++#define VK_FWSTS_RESET_REASON_SHIFT	28
++#define VK_FWSTS_RESET_REASON_MASK	(0xf << VK_FWSTS_RESET_REASON_SHIFT)
++#define VK_FWSTS_RESET_SYS_PWRUP	(0x0 << VK_FWSTS_RESET_REASON_SHIFT)
++#define VK_FWSTS_RESET_MBOX_DB		(0x1 << VK_FWSTS_RESET_REASON_SHIFT)
++#define VK_FWSTS_RESET_M7_WDOG		(0x2 << VK_FWSTS_RESET_REASON_SHIFT)
++#define VK_FWSTS_RESET_TEMP		(0x3 << VK_FWSTS_RESET_REASON_SHIFT)
++#define VK_FWSTS_RESET_PCI_FLR		(0x4 << VK_FWSTS_RESET_REASON_SHIFT)
++#define VK_FWSTS_RESET_PCI_HOT		(0x5 << VK_FWSTS_RESET_REASON_SHIFT)
++#define VK_FWSTS_RESET_PCI_WARM		(0x6 << VK_FWSTS_RESET_REASON_SHIFT)
++#define VK_FWSTS_RESET_PCI_COLD		(0x7 << VK_FWSTS_RESET_REASON_SHIFT)
++#define VK_FWSTS_RESET_L1		(0x8 << VK_FWSTS_RESET_REASON_SHIFT)
++#define VK_FWSTS_RESET_L0		(0x9 << VK_FWSTS_RESET_REASON_SHIFT)
++#define VK_FWSTS_RESET_UNKNOWN		(0xf << VK_FWSTS_RESET_REASON_SHIFT)
 +
- test_batched_request_firmware_direct()
- {
- 	echo -n "Batched request_firmware_direct() $2 try #$1: "
-@@ -371,6 +435,22 @@ for i in $(seq 1 5); do
- 	test_batched_request_firmware_into_buf $i normal
- done
- 
-+for i in $(seq 1 5); do
-+	test_batched_request_partial_firmware_into_buf $i normal 0 10
-+done
-+
-+for i in $(seq 1 5); do
-+	test_batched_request_partial_firmware_into_buf $i normal 0 5
-+done
-+
-+for i in $(seq 1 5); do
-+	test_batched_request_partial_firmware_into_buf $i normal 1 6
-+done
-+
-+for i in $(seq 1 5); do
-+	test_batched_request_partial_firmware_into_buf $i normal 2 10
-+done
-+
- for i in $(seq 1 5); do
- 	test_batched_request_firmware_direct $i normal
- done
++#endif /* __UAPI_LINUX_MISC_BCM_VK_H */
 -- 
 2.17.1
 
