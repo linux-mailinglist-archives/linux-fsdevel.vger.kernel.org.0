@@ -2,87 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 981392153E8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 10:22:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C04B7215439
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 10:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728237AbgGFIWw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jul 2020 04:22:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55566 "EHLO
+        id S1728259AbgGFIy7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jul 2020 04:54:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbgGFIWw (ORCPT
+        with ESMTP id S1728183AbgGFIy6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jul 2020 04:22:52 -0400
-Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AB44C061794;
-        Mon,  6 Jul 2020 01:22:52 -0700 (PDT)
-Received: by mail-vs1-xe43.google.com with SMTP id v1so20130831vsb.10;
-        Mon, 06 Jul 2020 01:22:52 -0700 (PDT)
+        Mon, 6 Jul 2020 04:54:58 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0792BC061794
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jul 2020 01:54:58 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id q7so31087878ljm.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jul 2020 01:54:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=TcfPy5BeGetjZcZtg49AHnHlYlMY923EHh58Yx8xPwY=;
-        b=amobd3UufJOQ2LwSgoh8z8cDtk2XkOXjE3WqYKXlXU36cNs4cSbMFborVOQpGRVwAx
-         UstxxLR0+FD6IcJZ8l6ARjrlVJKXc5AHqiYulfJW1p6MSM5cx0J6NoiWcKst22Ta5ANR
-         MZY9wDpT10XbkRmiAJ+QcOPhuc/E7AtjN2+4znh8+84CkJMxlscFmTR5AUBIP/2YGCRG
-         c9FfHfgVEwlI6mvrctkbwD///f2K0JDmzXdg5HAhjwy18Z47ROl3D3U5EIij5TQwBI62
-         l1B+NzZd3fdW9JsJB3L0QG6jkjeMZV7Ea55FCnBgMzHpZviXx93P3VvAqSooUI3b10jG
-         BPPQ==
+        bh=cNNvIPbyRDyhu5ZgEEiWbAIxYQhb/2gTkX3OL9Va+WQ=;
+        b=GwK48GhmFmirpg3fdswa9lBUePOmYDIUGRR8hdVDdkSej4xaxCeCZAFSNgxfHMX6Yy
+         w9Kla9Zz94g96jzu2SdkDHlz3/g7x+cSsfL0CLrYgCZP6J19zRAdLsZs87JfMO7sIJE6
+         hD8DhDJnDAm0DcZzdnRoijixEc6U2wSUxDKr/PyrnIZ6sDA3NJltPdTHsLduPer5Awad
+         NUwH5K/XHmbz5gpeAqR5kYWsh2PSuS+J5l9UTHxPSnjzSl1GyAg/pMTCqSfzmJ/+quNd
+         zVd7EeWl6Jy5ia0GEmuuMG516H4zo1kh4cHrXJacH0rZz+cmV3uWqvNIF5fVl3UCZoOV
+         qcKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TcfPy5BeGetjZcZtg49AHnHlYlMY923EHh58Yx8xPwY=;
-        b=nMBgMP0vV71ajyszCOnj9p/G2CdulgYIIpDebqF7lyfJ0qwmilmn5RVVWpRBQxlNka
-         +jEZLymdOgPidQiELy1tkuSgW3HxS26B7cCZ2AiAF92GIUlrGqiSxRe78xNY+vpHQRNy
-         SOdimXhncGkKACtDsxgcixLWJ71/U9S4+ya4dXyzz5VBYS9wHgHjwuktrQkdV0cNs3sZ
-         m2qtXuGBt27lj1rC0K38q+5ev3Bqq6o/7aNO1s0Kv/MUTh02HvX35fhQapJTs8GTe+OG
-         wFn9SE9MzfB588V3HxGJKWos81E8TAUyfhDoJrgR3S9+UfZU+fmeU1chbqqSq7T3EiKc
-         soaw==
-X-Gm-Message-State: AOAM533IoVZ3c1gL86A7DGPCj5WmoZcTGDhTzpwYr6ov4StzlGKdYnEl
-        VSYyuIDGPbGY7hZ53xQPCJabZxX/IClKL2V/p6Q=
-X-Google-Smtp-Source: ABdhPJwgvZ4oHoUCtn9VtIbwa5Hbr8RpwTI0uj+TB7B0R+ZfDc8KZgjpgNFeatpMagMcoQIWxeV5YUSEo9iZoI6aqhU=
-X-Received: by 2002:a67:cb03:: with SMTP id b3mr35827339vsl.214.1594023771334;
- Mon, 06 Jul 2020 01:22:51 -0700 (PDT)
+        bh=cNNvIPbyRDyhu5ZgEEiWbAIxYQhb/2gTkX3OL9Va+WQ=;
+        b=ggc2sSlfdoPddHYNOLsT2MMs9URSIU8rz+PbiGO1TX8UuLsDr1b1UmnvylFmuxkh4n
+         yqQL7D3apdshptCJ24kj94WSBCVWzcslAHdF5ySHaTRg573+VkcSZZDqX6FM3D68j1mr
+         2SfpNFXnjtLWqYh5v4mNFsBsLt2IWIQqwEvBrz8h07QUCH8/D+rBDmfu9yw+FhoO656b
+         jTJYbst84So+QyHDrH2kwmTUA2yf6hq2ANiPaJ/abIphLg4MPQeI2o7rDx6JsPZMWLON
+         2SAYyq9nczVK2iRA8lj8JKqny6SmQUKSwkfnOxqWNHJ7RK9wVbziKxzxXNjBar5Mvtad
+         nxGw==
+X-Gm-Message-State: AOAM533yBmt8vJmSPh+dQt5j/SGG/HdWm1oX06R/9q8li/PPSL158lZD
+        HNvOL7o3IHxMsOARpMZMnnsanXDW5F7ugfwSyD7wyw==
+X-Google-Smtp-Source: ABdhPJylBq/GlipYoQiOaeWdyv7Nd1mhikRAHRzoHcrBYF2Tgt2xn3B345Rezd2yDNMo2CkzdbSQ8juxx+Oe1fm99VA=
+X-Received: by 2002:a2e:7a1a:: with SMTP id v26mr10720535ljc.104.1594025696518;
+ Mon, 06 Jul 2020 01:54:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <CGME20200627125605epcas1p175ba4ecfbdea3426cc7b0a8fc1750cd0@epcas1p1.samsung.com>
- <20200627125509.142393-1-qkrwngud825@gmail.com> <003801d6502f$f40101c0$dc030540$@samsung.com>
-In-Reply-To: <003801d6502f$f40101c0$dc030540$@samsung.com>
-From:   Ju Hyung Park <qkrwngud825@gmail.com>
-Date:   Mon, 6 Jul 2020 17:22:40 +0900
-Message-ID: <CAD14+f0QUgXbDY8vK4HHKcWAh90Jp8DCMb-SRoFmmGrZ3cBhdw@mail.gmail.com>
-Subject: Re: [PATCH] exfat: implement "quiet" option for setattr
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     Sungjong Seo <sj1557.seo@samsung.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
+References: <20200529072017.2906-1-linus.walleij@linaro.org> <CAFEAcA-x0y6ufRXebckRdGSLOBzbdBsk=uw+foK4p+HDeVrA9A@mail.gmail.com>
+In-Reply-To: <CAFEAcA-x0y6ufRXebckRdGSLOBzbdBsk=uw+foK4p+HDeVrA9A@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 6 Jul 2020 10:54:45 +0200
+Message-ID: <CACRpkdZk-Pv49PyhtrW7ZQo+iebOapVb7L2T_cxh0SpYtcv5Xw@mail.gmail.com>
+Subject: Re: [PATCH v2] fcntl: Add 32bit filesystem mode
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>,
+        Florian Weimer <fw@deneb.enyo.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Maydell <peter.maydell@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Namjae.
-
-Looks like I ported this incorrectly from the previous sdFAT base.
-
-I'll fix, test again and send v2.
-
-Thanks.
-
-On Thu, Jul 2, 2020 at 2:16 PM Namjae Jeon <namjae.jeon@samsung.com> wrote:
->
+On Tue, Jun 23, 2020 at 12:08 PM Peter Maydell <peter.maydell@linaro.org> wrote:
+> On Fri, 29 May 2020 at 08:22, Linus Walleij <linus.walleij@linaro.org> wrote:
 > >
-> >       if (((attr->ia_valid & ATTR_UID) &&
-> >            !uid_eq(attr->ia_uid, sbi->options.fs_uid)) || @@ -322,6 +325,12 @@ int
-> > exfat_setattr(struct dentry *dentry, struct iattr *attr)
-> >               goto out;
-> You should remove goto statement and curly braces here to reach if error condition.
-> >       }
+> > It was brought to my attention that this bug from 2018 was
+> > still unresolved: 32 bit emulators like QEMU were given
+> > 64 bit hashes when running 32 bit emulation on 64 bit systems.
 > >
-> > +     if (error) {
-> > +             if (sbi->options.quiet)
-> > +                     error = 0;
-> > +             goto out;
-> > +     }
+> > This adds a flag to the fcntl() F_GETFD and F_SETFD operations
+> > to set the underlying filesystem into 32bit mode even if the
+> > file handle was opened using 64bit mode without the compat
+> > syscalls.
 >
+> I somewhat belatedly got round to updating my QEMU patch
+> that uses this new fcntl() flag to fix the bug. Sorry for
+> the delay getting round to this. You can find the QEMU patch here:
+> https://patchew.org/QEMU/20200623100101.6041-1-peter.maydell@linaro.org/
+> (it's an RFC because obviously we won't put it into QEMU until
+> the kernel side has gone upstream and the API is final.)
+>
+> What's the next step for moving this forward?
+
+Ted, can you merge this patch?
+
+It seems QEMU is happy and AFICT it uses the approach you want :)
+
+Yours,
+Linus Walleij
