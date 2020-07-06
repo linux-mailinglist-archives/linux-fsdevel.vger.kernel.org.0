@@ -2,111 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C679521560D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 13:05:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A082621561D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jul 2020 13:11:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728806AbgGFLF2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jul 2020 07:05:28 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51468 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728697AbgGFLF2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jul 2020 07:05:28 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B0755AE92;
-        Mon,  6 Jul 2020 11:05:26 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 2AF4E1E1311; Mon,  6 Jul 2020 13:05:26 +0200 (CEST)
-Date:   Mon, 6 Jul 2020 13:05:26 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: Re: [PATCH 01/20] fsnotify: Rearrange fast path to minimise overhead
- when there is no watcher
-Message-ID: <20200706110526.GA3913@quack2.suse.cz>
-References: <20200612093343.5669-1-amir73il@gmail.com>
- <20200612093343.5669-2-amir73il@gmail.com>
- <20200703140342.GD21364@quack2.suse.cz>
- <CAOQ4uxgJkmSgt6nSO3C4y2Mc=T92ky5K5eis0f1Ofr-wDq7Wrw@mail.gmail.com>
+        id S1728806AbgGFLLP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jul 2020 07:11:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53238 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728683AbgGFLLP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Jul 2020 07:11:15 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD154C061794;
+        Mon,  6 Jul 2020 04:11:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=KlHYEimVGLsKScv6oNv5oiMWJ+UIcIiByEGKOUr0M2k=; b=OildahYhTHa05m+AVwTccdqLCA
+        WoBIL9QsRm2jCvbBJL5sZ/9kZAx3UrTSUBv0uVMIkKahxMVntD+kU5hrDWXvMTN1S6RUPO5h3UErd
+        40rZYGBqzGxj4fQeAGXv8UBrMTOpLJZaoi7lCv5owU90PbB3wBJmLe7yZNmhro7F7hOFTJozWaOJh
+        xK7NXesSvWLY6xXuFr+oI59pd//OImMaxV6paFKLa1pmTnqo2rdUs1L/g6wGs/l7ujNHP63sOteEF
+        IHIKvKUr9l0PvR7AESkLaDb19hoJjIyh4LExHZEAGmTcKlMxiJARr7pI/NuOt56rTA5tbjlugHoWS
+        fk8x+FOA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jsP1j-00049i-UK; Mon, 06 Jul 2020 11:11:12 +0000
+Date:   Mon, 6 Jul 2020 12:11:11 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jan Ziak <0xe2.0x9a.0x9b@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-man@vger.kernel.org,
+        mtk.manpages@gmail.com, shuah@kernel.org, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH 0/3] readfile(2): a new syscall to make open/read/close
+ faster
+Message-ID: <20200706111111.GX25523@casper.infradead.org>
+References: <CAODFU0q6CrUB_LkSdrbp5TQ4Jm6Sw=ZepZwD-B7-aFudsOvsig@mail.gmail.com>
+ <20200705021631.GR25523@casper.infradead.org>
+ <CAODFU0qwtPTaBRbA3_ufA6N7fajhi61Sp5iE75Shdk25NSOTLA@mail.gmail.com>
+ <20200705031208.GS25523@casper.infradead.org>
+ <CAODFU0q=nDdx7D1NUxTQshBjqgTCYPpKzog78XZLjoPqnZqXvw@mail.gmail.com>
+ <20200705032732.GT25523@casper.infradead.org>
+ <CAODFU0rSqQsO9rSiA8Ke=+mk_NgEdFDHPMfmXGSmzmkqQh1KYw@mail.gmail.com>
+ <20200705115851.GB1227929@kroah.com>
+ <CAODFU0ovM-i=4fNKSzp9SgO_FjPcAOZ0R8S4iRXyGm+QL53C1A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgJkmSgt6nSO3C4y2Mc=T92ky5K5eis0f1Ofr-wDq7Wrw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAODFU0ovM-i=4fNKSzp9SgO_FjPcAOZ0R8S4iRXyGm+QL53C1A@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat 04-07-20 12:30:10, Amir Goldstein wrote:
-> On Fri, Jul 3, 2020 at 5:03 PM Jan Kara <jack@suse.cz> wrote:
-> > >  /* Notify this dentry's parent about a child's events. */
-> > > -int fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
-> > > +int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
-> > >                   int data_type)
-> > >  {
-> > >       struct dentry *parent;
+On Mon, Jul 06, 2020 at 08:07:46AM +0200, Jan Ziak wrote:
+> On Sun, Jul 5, 2020 at 1:58 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > It also is a measurable increase over reading just a single file.
+> > Here's my really really fast AMD system doing just one call to readfile
+> > vs. one call sequence to open/read/close:
 > >
-> > Hum, should we actually remove the DCACHE_FSNOTIFY_PARENT_WATCHED check
-> > from here when it's moved to fsnotify_parent() inline helper?
-> 
-> No point.
-> It is making a comeback on:
->  fsnotify: send event with parent/name info to sb/mount/non-dir marks
-
-Right, I've noticed that later as well.
-
-> > > @@ -337,13 +331,22 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
-> > >       if (!to_tell->i_fsnotify_marks && !sb->s_fsnotify_marks &&
-> > >           (!mnt || !mnt->mnt_fsnotify_marks))
-> > >               return 0;
-> > > +
-> > > +     /* An event "on child" is not intended for a mount/sb mark */
-> > > +     marks_mask = to_tell->i_fsnotify_mask;
-> > > +     if (!(mask & FS_EVENT_ON_CHILD)) {
-> > > +             marks_mask |= sb->s_fsnotify_mask;
-> > > +             if (mnt)
-> > > +                     marks_mask |= mnt->mnt_fsnotify_mask;
-> > > +     }
-> > > +
-> > >       /*
-> > >        * if this is a modify event we may need to clear the ignored masks
-> > >        * otherwise return if neither the inode nor the vfsmount/sb care about
-> > >        * this type of event.
-> > >        */
-> > > -     if (!(mask & FS_MODIFY) &&
-> > > -         !(test_mask & (to_tell->i_fsnotify_mask | mnt_or_sb_mask)))
-> > > +     test_mask = (mask & ALL_FSNOTIFY_EVENTS);
-> > > +     if (!(mask & FS_MODIFY) && !(test_mask & marks_mask))
-> > >               return 0;
+> >         $ ./readfile_speed -l 1
+> >         Running readfile test on file /sys/devices/system/cpu/vulnerabilities/meltdown for 1 loops...
+> >         Took 3410 ns
+> >         Running open/read/close test on file /sys/devices/system/cpu/vulnerabilities/meltdown for 1 loops...
+> >         Took 3780 ns
 > >
-> > Otherwise the patch looks good. One observation though: The (mask &
-> > FS_MODIFY) check means that all vfs_write() calls end up going through the
-> > "slower" path iterating all mark types and checking whether there are marks
-> > anyway. That could be relatively simply optimized using a hidden mask flag
-> > like FS_ALWAYS_RECEIVE_MODIFY which would be set when there's some mark
-> > needing special handling of FS_MODIFY... Not sure if we care enough at this
-> > point...
+> > 370ns isn't all that much, yes, but it is 370ns that could have been
+> > used for something else :)
 > 
-> Yeh that sounds low hanging.
-> Actually, I Don't think we need to define a flag for that.
-> __fsnotify_recalc_mask() can add FS_MODIFY to the object's mask if needed.
+> I am curious as to how you amortized or accounted for the fact that
+> readfile() first needs to open the dirfd and then close it later.
+> 
+> >From performance viewpoint, only codes where readfile() is called
+> multiple times from within a loop make sense:
+> 
+> dirfd = open();
+> for(...) {
+>   readfile(dirfd, ...);
+> }
+> close(dirfd);
 
-Yes, that would be even more elegant.
+dirfd can be AT_FDCWD or if the path is absolute, dirfd will be ignored,
+so one does not have to open anything.  It would be an optimisation
+if one wanted to read several files relating to the same process:
 
-> I will take a look at that as part of FS_PRE_MODIFY work.
-> But in general, we should fight the urge to optimize theoretic
-> performance issues...
+char dir[50];
+sprintf(dir, "/proc/%d", pid);
+dirfd = open(dir);
+readfile(dirfd, "maps", ...);
+readfile(dirfd, "stack", ...);
+readfile(dirfd, "comm", ...);
+readfile(dirfd, "environ", ...);
+close(dirfd);
 
-Agreed. I just suspect this may bring measurable benefit for hackbench pipe
-or tiny tmpfs writes after seeing Mel's results. But as I wrote this is a
-separate idea and without some numbers confirming my suspicion I don't
-think the complication is worth it so I don't want you to burn time on this
-unless you're really interested :).
+but one would not have to do that.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
