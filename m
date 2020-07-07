@@ -2,245 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00E6D216F1D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 16:45:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CA1C216FFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 17:15:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbgGGOpN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 10:45:13 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:43649 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728267AbgGGOpM (ORCPT
+        id S1728372AbgGGPOJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 11:14:09 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:33700 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728335AbgGGPOI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 10:45:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594133111;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mT7+S/JZ0X5UTjCHTtZu+xMVOeg7qKFbo24bRgqj2g8=;
-        b=SzoMb7BRcF4Z6qWkhPallba4BhTvirb2gjkR7fcSc09AuxEBYXqNy6pfHm9Fyy/gSc02sQ
-        0qzZG49sIMa/UKsz9B41Mc1Zm/SLRkB00TdHDU2oJpMqxPtdiRC9UbmHpmBJOrPzYLs6mg
-        bzU4BJJxBKxYciunFhZoWEDZb0y31Vs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-171-sRVWfiggMZaE7nFUWgYLQw-1; Tue, 07 Jul 2020 10:45:08 -0400
-X-MC-Unique: sRVWfiggMZaE7nFUWgYLQw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 825F08005B0;
-        Tue,  7 Jul 2020 14:45:06 +0000 (UTC)
-Received: from max.home.com (unknown [10.40.192.179])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 874DA797E8;
-        Tue,  7 Jul 2020 14:45:04 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [RFC v3 2/2] gfs2: Rework read and page fault locking
-Date:   Tue,  7 Jul 2020 16:44:57 +0200
-Message-Id: <20200707144457.1603400-3-agruenba@redhat.com>
-In-Reply-To: <20200707144457.1603400-1-agruenba@redhat.com>
-References: <20200707144457.1603400-1-agruenba@redhat.com>
+        Tue, 7 Jul 2020 11:14:08 -0400
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200707151405epoutp02f7520a0d78f2c08fcb16597dcd409d6e~fgTI6XCFI0536905369epoutp02F
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jul 2020 15:14:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200707151405epoutp02f7520a0d78f2c08fcb16597dcd409d6e~fgTI6XCFI0536905369epoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1594134845;
+        bh=CozfpjjODVO0B3Tmqb6GxjDGwaIqxT2A79vtpOE55/4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jtWK5HdkkyW9uGNJ3MBDrFI5hlpbUDZBwtVyjGzOI2H+zJDvTVW/WF3dJMOaHx2pL
+         4zWstYRXxXZiTIVfJxgLvjndKPZJ/p9+1w60MXcs3AjH7To3S1Hg/cDyxp78iZ3Tjb
+         p47uafSQx/+uHxhpol70WsnkL+e6+j/A/erb2IAE=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20200707151404epcas5p35d9d0727ce1c34139f01b8e11465a6a2~fgTHj3vfQ0715007150epcas5p3o;
+        Tue,  7 Jul 2020 15:14:04 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0E.5D.09475.C31940F5; Wed,  8 Jul 2020 00:14:04 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20200707151403epcas5p40471fc85d71d08bc1faeb148b5c629ee~fgTGvfoIU1143811438epcas5p4P;
+        Tue,  7 Jul 2020 15:14:03 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200707151403epsmtrp121320ea4b0f7c6303b75d6efd0535ba9~fgTGujOCo1286512865epsmtrp1r;
+        Tue,  7 Jul 2020 15:14:03 +0000 (GMT)
+X-AuditID: b6c32a4b-389ff70000002503-d4-5f04913c13fb
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E4.3E.08303.B31940F5; Wed,  8 Jul 2020 00:14:03 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200707151401epsmtip229d304e31cbfa2693021b85ecacabd6f~fgTEi7yBT3255432554epsmtip2c;
+        Tue,  7 Jul 2020 15:14:01 +0000 (GMT)
+Date:   Tue, 7 Jul 2020 20:41:05 +0530
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, hch@infradead.org, Damien.LeMoal@wdc.com,
+        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+        mb@lightnvm.io, linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        Selvakumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
+Message-ID: <20200707151105.GA23395@test-zns>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <20200706143208.GA25523@casper.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAKsWRmVeSWpSXmKPExsWy7bCmhq7NRJZ4g+nX+C3mrNrGaLH6bj+b
+        Rde/LSwWre3fmCxOT1jEZPGu9RyLxeM7n9ktpkxrYrTYe0vbYs/ekywWl3fNYbNYsf0Ii8W2
+        3/OZLV7/OMlmcf7vcVaL3z/msDkIeOycdZfdY/MKLY/LZ0s9Nn2axO7RffUHo0ffllWMHp83
+        yXm0H+hm8tj05C1TAGcUl01Kak5mWWqRvl0CV8avD0oFJxQrvjxqZmtgfCHVxcjJISFgIvF1
+        6gamLkYuDiGB3YwSj5f9YoZwPjFKHJv8jAXC+cwocW/pfFaYlllL57JDJHYxSnxt/sII4Txj
+        lDj76jwzSBWLgIrEhDfv2LoYOTjYBDQlLkwuBTFFBDQk3mwxAilnFljJLDGj5Q0LSLmwgKPE
+        550nGUFqeAV0Jd7drAQJ8woISpyc+QSshFPASuLg405GEFtUQFniwLbjYGdLCNzhkHhyeg0z
+        xHEuEhfe9TBB2MISr45vYYewpSRe9rdB2cUSv+4cZYZo7mCUuN4wkwUiYS9xcc9fsGZmgQyJ
+        FSv/sELYfBK9v58wgRwnIcAr0dEmBFGuKHFv0lNooIhLPJyxBMr2kDjWfAFsjJDAL2aJh3e8
+        JjDKzULyzywkGyBsK4nOD01ANgeQLS2x/B8HhKkpsX6X/gJG1lWMkqkFxbnpqcWmBcZ5qeV6
+        xYm5xaV56XrJ+bmbGMGJTst7B+OjBx/0DjEycTAeYpTgYFYS4e3VZowX4k1JrKxKLcqPLyrN
+        SS0+xCjNwaIkzqv040yckEB6YklqdmpqQWoRTJaJg1OqgSm+yfiK754f5wt39vzZmRz2c5nZ
+        9Y0nHvGZGP5dYeKyRbas1OaO5MbikHRR4y0Xj/+67sbSea+muvGBbtOx/BnhCXXm3Yycvx1f
+        XvAoPt+5Mvre2cnpXk6nH95nyngbe0vUomfT9toFO+5aROtnKJ4y8op+vOFoopJWy4uEyaU8
+        nzmXK3OX9hxJ2Mdr/Cq25NI+kdKNu9eufx41Q997kY7y2YxPUZcitCI1nN3m3m+w6N5vM/HY
+        uqPTJifIBWZF/kixuLntletHk4oLnre63/4xT19cdGKGyarbfz7PzvlZYBS6cC8Pz7a3zwv3
+        asizi9QIRrnUVm5qYvn+jXmJyde1N7eqfWhjsbjFOONLNJcSS3FGoqEWc1FxIgDBCUVh4wMA
+        AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsWy7bCSvK71RJZ4gy3NkhZzVm1jtFh9t5/N
+        ouvfFhaL1vZvTBanJyxisnjXeo7F4vGdz+wWU6Y1MVrsvaVtsWfvSRaLy7vmsFms2H6ExWLb
+        7/nMFq9/nGSzOP/3OKvF7x9z2BwEPHbOusvusXmFlsfls6Uemz5NYvfovvqD0aNvyypGj8+b
+        5DzaD3QzeWx68pYpgDOKyyYlNSezLLVI3y6BK2PplcOsBb/kKn4du8HSwLhFoouRk0NCwERi
+        1tK57CC2kMAORomTF1kh4uISzdd+sEPYwhIr/z0HsrmAap4wSuzb1sEIkmARUJGY8OYdWxcj
+        BwebgKbEhcmlIKaIgIbEmy1GIOXMAmuZJc7+n8YMUi4s4CjxeedJRpAaXgFdiXc3KyFG/mKW
+        WHfvB9hIXgFBiZMzn7CA2MwCZhLzNj9kBqlnFpCWWP6PAyTMKWAlcfBxJ1i5qICyxIFtx5km
+        MArOQtI9C0n3LITuBYzMqxglUwuKc9Nziw0LjPJSy/WKE3OLS/PS9ZLzczcxgmNPS2sH455V
+        H/QOMTJxMB5ilOBgVhLh7dVmjBfiTUmsrEotyo8vKs1JLT7EKM3BoiTO+3XWwjghgfTEktTs
+        1NSC1CKYLBMHp1QD0yKdR8wfrNdKZ37daCfd/86+QTa5tzZs8+e250FRvjm1SdPcj22QuSNy
+        fMtzFoUurvVn++Z37vfbeerCS8HQc79f36gI7HaMeMOmU7z19yGF7zUhwam/knf/vhN7JEEk
+        KvkiQ8JE5W1sZ+dOnngz2mV6wooE3pMluWYFqr3s8rtlFswJbQpqOCsnMjE06MP9ifkxXRfn
+        +ddUTOfc6ZLxVvbAEpNl8wXXFC3Pi+c05nPcU2Xll2bley+3Wm3B0W+7fj5acn3dFbWHPs+W
+        70moOX6iMq139onn61+y/yv5l3wvyypxa8jqg7MLXvN9mXbZ8fSpP/yTPOKVVHxe7CiO5tpo
+        1pMg3+TDsmyxwM3jz5VYijMSDbWYi4oTAf1AtowsAwAA
+X-CMS-MailID: 20200707151403epcas5p40471fc85d71d08bc1faeb148b5c629ee
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----mE6RfbMtbYdcyZmGWslR4GSM.zWZsq_P24FjfoMtl_HTY3xR=_e3042_"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7
+References: <1593974870-18919-1-git-send-email-joshi.k@samsung.com>
+        <CGME20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7@epcas5p1.samsung.com>
+        <1593974870-18919-5-git-send-email-joshi.k@samsung.com>
+        <fe0066b7-5380-43ee-20b2-c9b17ba18e4f@kernel.dk>
+        <20200705210947.GW25523@casper.infradead.org>
+        <239ee322-9c38-c838-a5b2-216787ad2197@kernel.dk>
+        <20200706141002.GZ25523@casper.infradead.org>
+        <4a9bf73e-f3ee-4f06-7fad-b8f8861b0bc1@kernel.dk>
+        <20200706143208.GA25523@casper.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-So far, gfs2 has taken the inode glocks inside the ->readpage and
-->readahead address space operations.  Since commit d4388340ae0b ("fs:
-convert mpage_readpages to mpage_readahead"), gfs2_readahead is passed
-the pages to read ahead locked.  With that, the current holder of the
-inode glock may be trying to lock one of those pages while
-gfs2_readahead is trying to take the inode glock, resulting in a
-deadlock.
+------mE6RfbMtbYdcyZmGWslR4GSM.zWZsq_P24FjfoMtl_HTY3xR=_e3042_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 
-Fix that by moving the lock taking to the higher-level ->read_iter file
-and ->fault vm operations.  This also gets rid of an ugly lock inversion
-workaround in gfs2_readpage.
+On Mon, Jul 06, 2020 at 03:32:08PM +0100, Matthew Wilcox wrote:
+>On Mon, Jul 06, 2020 at 08:27:17AM -0600, Jens Axboe wrote:
+>> On 7/6/20 8:10 AM, Matthew Wilcox wrote:
+>> > On Sun, Jul 05, 2020 at 03:12:50PM -0600, Jens Axboe wrote:
+>> >> On 7/5/20 3:09 PM, Matthew Wilcox wrote:
+>> >>> On Sun, Jul 05, 2020 at 03:00:47PM -0600, Jens Axboe wrote:
+>> >>>> On 7/5/20 12:47 PM, Kanchan Joshi wrote:
+>> >>>>> From: Selvakumar S <selvakuma.s1@samsung.com>
+>> >>>>>
+>> >>>>> For zone-append, block-layer will return zone-relative offset via ret2
+>> >>>>> of ki_complete interface. Make changes to collect it, and send to
+>> >>>>> user-space using cqe->flags.
+>> >
+>> >>> I'm surprised you aren't more upset by the abuse of cqe->flags for the
+>> >>> address.
 
-The cache consistency model of filesystems like gfs2 is such that if
-data is found in the page cache, the data is up to date and can be used
-without taking any filesystem locks.  If a page is not cached,
-filesystem locks must be taken before populating the page cache.
+Documentation (https://kernel.dk/io_uring.pdf) mentioned cqe->flags can carry
+the metadata for the operation. I wonder if this should be called abuse.
 
-To avoid taking the inode glock when the data is already cached,
-gfs2_file_read_iter first tries to read the data with the IOCB_NOIO flag
-set.  If that fails, the inode glock is taken and the operation is
-retried with the IOCB_NOIO flag cleared.
+>> >> Yeah, it's not great either, but we have less leeway there in terms of
+>> >> how much space is available to pass back extra data.
+>> >>
+>> >>> What do you think to my idea of interpreting the user_data as being a
+>> >>> pointer to somewhere to store the address?  Obviously other things
+>> >>> can be stored after the address in the user_data.
+>> >>
+>> >> I don't like that at all, as all other commands just pass user_data
+>> >> through. This means the application would have to treat this very
+>> >> differently, and potentially not have a way to store any data for
+>> >> locating the original command on the user side.
+>> >
+>> > I think you misunderstood me.  You seem to have thought I meant
+>> > "use the user_data field to return the address" when I actually meant
+>> > "interpret the user_data field as a pointer to where userspace
+>> > wants the address stored".
+>>
+>> It's still somewhat weird to have user_data have special meaning, you're
+>> now having the kernel interpret it while every other command it's just
+>> an opaque that is passed through.
+>>
+>> But it could of course work, and the app could embed the necessary
+>> u32/u64 in some other structure that's persistent across IO. If it
+>> doesn't have that, then it'd need to now have one allocated and freed
+>> across the lifetime of the IO.
+>>
+>> If we're going that route, it'd be better to define the write such that
+>> you're passing in the necessary information upfront. In syscall terms,
+>> then that'd be something ala:
+>>
+>> ssize_t my_append_write(int fd, const struct iovec *iov, int iovcnt,
+>> 			off_t *offset, int flags);
+>>
+>> where *offset is copied out when the write completes. That removes the
+>> need to abuse user_data, with just providing the storage pointer for the
+>> offset upfront.
+>
+>That works for me!  In io_uring terms, would you like to see that done
+>as adding:
+>
+>        union {
+>                __u64   off;    /* offset into file */
+>+		__u64   *offp;	/* appending writes */
+>                __u64   addr2;
+>        };
+But there are peformance implications of this approach?
+If I got it right, the workflow is: 
+- Application allocates 64bit of space, writes "off" into it and pass it
+  in the sqe->addr2
+- Kernel first reads sqe->addr2, reads the value to know the intended
+  write-location, and stores the address somewhere (?) to be used during
+  completion. Storing this address seems tricky as this may add one more
+  cacheline (in io_kiocb->rw)?
+- During completion cqe res/flags are written as before, but extra step
+  to copy the append-completion-result into that user-space address.
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/gfs2/aops.c | 45 +------------------------------------------
- fs/gfs2/file.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 51 insertions(+), 46 deletions(-)
+Extra steps are due to the pointer indirection.
+And it seems application needs to be careful about managing this 64bit of
+space for a cluster of writes, especially if it wants to reuse the sqe
+before the completion.
+New one can handle 64bit result cleanly, but seems slower than current
+one.
+It will be good to have the tradeoff cleared before we take things to V4.
 
-diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-index 72c9560f4467..68cd700a2719 100644
---- a/fs/gfs2/aops.c
-+++ b/fs/gfs2/aops.c
-@@ -468,21 +468,10 @@ static int stuffed_readpage(struct gfs2_inode *ip, struct page *page)
- }
- 
- 
--/**
-- * __gfs2_readpage - readpage
-- * @file: The file to read a page for
-- * @page: The page to read
-- *
-- * This is the core of gfs2's readpage. It's used by the internal file
-- * reading code as in that case we already hold the glock. Also it's
-- * called by gfs2_readpage() once the required lock has been granted.
-- */
--
- static int __gfs2_readpage(void *file, struct page *page)
- {
- 	struct gfs2_inode *ip = GFS2_I(page->mapping->host);
- 	struct gfs2_sbd *sdp = GFS2_SB(page->mapping->host);
--
- 	int error;
- 
- 	if (i_blocksize(page->mapping->host) == PAGE_SIZE &&
-@@ -505,36 +494,11 @@ static int __gfs2_readpage(void *file, struct page *page)
-  * gfs2_readpage - read a page of a file
-  * @file: The file to read
-  * @page: The page of the file
-- *
-- * This deals with the locking required. We have to unlock and
-- * relock the page in order to get the locking in the right
-- * order.
-  */
- 
- static int gfs2_readpage(struct file *file, struct page *page)
- {
--	struct address_space *mapping = page->mapping;
--	struct gfs2_inode *ip = GFS2_I(mapping->host);
--	struct gfs2_holder gh;
--	int error;
--
--	unlock_page(page);
--	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
--	error = gfs2_glock_nq(&gh);
--	if (unlikely(error))
--		goto out;
--	error = AOP_TRUNCATED_PAGE;
--	lock_page(page);
--	if (page->mapping == mapping && !PageUptodate(page))
--		error = __gfs2_readpage(file, page);
--	else
--		unlock_page(page);
--	gfs2_glock_dq(&gh);
--out:
--	gfs2_holder_uninit(&gh);
--	if (error && error != AOP_TRUNCATED_PAGE)
--		lock_page(page);
--	return error;
-+	return __gfs2_readpage(file, page);
- }
- 
- /**
-@@ -598,16 +562,9 @@ static void gfs2_readahead(struct readahead_control *rac)
- {
- 	struct inode *inode = rac->mapping->host;
- 	struct gfs2_inode *ip = GFS2_I(inode);
--	struct gfs2_holder gh;
- 
--	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
--	if (gfs2_glock_nq(&gh))
--		goto out_uninit;
- 	if (!gfs2_is_stuffed(ip))
- 		mpage_readahead(rac, gfs2_block_map);
--	gfs2_glock_dq(&gh);
--out_uninit:
--	gfs2_holder_uninit(&gh);
- }
- 
- /**
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index fe305e4bfd37..bebde537ac8c 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -558,8 +558,29 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
- 	return block_page_mkwrite_return(ret);
- }
- 
-+static vm_fault_t gfs2_fault(struct vm_fault *vmf)
-+{
-+	struct inode *inode = file_inode(vmf->vma->vm_file);
-+	struct gfs2_inode *ip = GFS2_I(inode);
-+	struct gfs2_holder gh;
-+	vm_fault_t ret;
-+	int err;
-+
-+	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
-+	err = gfs2_glock_nq(&gh);
-+	if (err) {
-+		ret = block_page_mkwrite_return(err);
-+		goto out_uninit;
-+	}
-+	ret = filemap_fault(vmf);
-+	gfs2_glock_dq(&gh);
-+out_uninit:
-+	gfs2_holder_uninit(&gh);
-+	return ret;
-+}
-+
- static const struct vm_operations_struct gfs2_vm_ops = {
--	.fault = filemap_fault,
-+	.fault = gfs2_fault,
- 	.map_pages = filemap_map_pages,
- 	.page_mkwrite = gfs2_page_mkwrite,
- };
-@@ -824,6 +845,9 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
- 
- static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- {
-+	struct gfs2_inode *ip;
-+	struct gfs2_holder gh;
-+	size_t written = 0;
- 	ssize_t ret;
- 
- 	if (iocb->ki_flags & IOCB_DIRECT) {
-@@ -832,7 +856,31 @@ static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 			return ret;
- 		iocb->ki_flags &= ~IOCB_DIRECT;
- 	}
--	return generic_file_read_iter(iocb, to);
-+	iocb->ki_flags |= IOCB_NOIO;
-+	ret = generic_file_read_iter(iocb, to);
-+	iocb->ki_flags &= ~IOCB_NOIO;
-+	if (ret >= 0) {
-+		if (!iov_iter_count(to))
-+			return ret;
-+		written = ret;
-+	} else {
-+		if (ret != -EAGAIN)
-+			return ret;
-+		if (iocb->ki_flags & IOCB_NOWAIT)
-+			return ret;
-+	}
-+	ip = GFS2_I(iocb->ki_filp->f_mapping->host);
-+	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
-+	ret = gfs2_glock_nq(&gh);
-+	if (ret)
-+		goto out_uninit;
-+	ret = generic_file_read_iter(iocb, to);
-+	if (ret > 0)
-+		written += ret;
-+	gfs2_glock_dq(&gh);
-+out_uninit:
-+	gfs2_holder_uninit(&gh);
-+	return written ? written : ret;
- }
- 
- /**
--- 
-2.26.2
 
+
+------mE6RfbMtbYdcyZmGWslR4GSM.zWZsq_P24FjfoMtl_HTY3xR=_e3042_
+Content-Type: text/plain; charset="utf-8"
+
+
+------mE6RfbMtbYdcyZmGWslR4GSM.zWZsq_P24FjfoMtl_HTY3xR=_e3042_--
