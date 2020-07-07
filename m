@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 15170216F1B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 16:45:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00E6D216F1D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 16:45:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbgGGOpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 10:45:09 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29308 "EHLO
+        id S1728295AbgGGOpN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 10:45:13 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:43649 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726946AbgGGOpJ (ORCPT
+        with ESMTP id S1728267AbgGGOpM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 10:45:09 -0400
+        Tue, 7 Jul 2020 10:45:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594133108;
+        s=mimecast20190719; t=1594133111;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=+Rc8UffssJDHnOarGy+MDwuizYchxVZvOHLs0Aalc1w=;
-        b=RVqtSMX6hiznRGu9toC2JipZNziiTCl00h4jym/CyvpcXDTCt3UdFNQ4NTHB8eAnnifDU1
-        WoVydbhDSDCDdJuml4LpAINlNtVlhw76HoHfdTDbwisO1CBGcLeaXg/X+biZO0K0xWQbRe
-        adN2SioZKcqrEcU+fWtyu9qIGt8Jx74=
+        bh=mT7+S/JZ0X5UTjCHTtZu+xMVOeg7qKFbo24bRgqj2g8=;
+        b=SzoMb7BRcF4Z6qWkhPallba4BhTvirb2gjkR7fcSc09AuxEBYXqNy6pfHm9Fyy/gSc02sQ
+        0qzZG49sIMa/UKsz9B41Mc1Zm/SLRkB00TdHDU2oJpMqxPtdiRC9UbmHpmBJOrPzYLs6mg
+        bzU4BJJxBKxYciunFhZoWEDZb0y31Vs=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-460-IGP8yhUsNAq5HY_0rN31jA-1; Tue, 07 Jul 2020 10:45:05 -0400
-X-MC-Unique: IGP8yhUsNAq5HY_0rN31jA-1
+ us-mta-171-sRVWfiggMZaE7nFUWgYLQw-1; Tue, 07 Jul 2020 10:45:08 -0400
+X-MC-Unique: sRVWfiggMZaE7nFUWgYLQw-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2C54B19057A0;
-        Tue,  7 Jul 2020 14:45:04 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 825F08005B0;
+        Tue,  7 Jul 2020 14:45:06 +0000 (UTC)
 Received: from max.home.com (unknown [10.40.192.179])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 33C915F7D8;
-        Tue,  7 Jul 2020 14:45:01 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 874DA797E8;
+        Tue,  7 Jul 2020 14:45:04 +0000 (UTC)
 From:   Andreas Gruenbacher <agruenba@redhat.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Matthew Wilcox <willy@infradead.org>,
@@ -41,9 +41,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>,
         Jens Axboe <axboe@kernel.dk>, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [RFC v3 1/2] fs: Add IOCB_NOIO flag for generic_file_read_iter
-Date:   Tue,  7 Jul 2020 16:44:56 +0200
-Message-Id: <20200707144457.1603400-2-agruenba@redhat.com>
+Subject: [RFC v3 2/2] gfs2: Rework read and page fault locking
+Date:   Tue,  7 Jul 2020 16:44:57 +0200
+Message-Id: <20200707144457.1603400-3-agruenba@redhat.com>
 In-Reply-To: <20200707144457.1603400-1-agruenba@redhat.com>
 References: <20200707144457.1603400-1-agruenba@redhat.com>
 MIME-Version: 1.0
@@ -54,87 +54,193 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add an IOCB_NOIO flag that indicates to generic_file_read_iter that it
-shouldn't trigger any filesystem I/O for the actual request or for
-readahead.  This allows to do tentative reads out of the page cache as
-some filesystems allow, and to take the appropriate locks and retry the
-reads only if the requested pages are not cached.
+So far, gfs2 has taken the inode glocks inside the ->readpage and
+->readahead address space operations.  Since commit d4388340ae0b ("fs:
+convert mpage_readpages to mpage_readahead"), gfs2_readahead is passed
+the pages to read ahead locked.  With that, the current holder of the
+inode glock may be trying to lock one of those pages while
+gfs2_readahead is trying to take the inode glock, resulting in a
+deadlock.
+
+Fix that by moving the lock taking to the higher-level ->read_iter file
+and ->fault vm operations.  This also gets rid of an ugly lock inversion
+workaround in gfs2_readpage.
+
+The cache consistency model of filesystems like gfs2 is such that if
+data is found in the page cache, the data is up to date and can be used
+without taking any filesystem locks.  If a page is not cached,
+filesystem locks must be taken before populating the page cache.
+
+To avoid taking the inode glock when the data is already cached,
+gfs2_file_read_iter first tries to read the data with the IOCB_NOIO flag
+set.  If that fails, the inode glock is taken and the operation is
+retried with the IOCB_NOIO flag cleared.
 
 Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 ---
- include/linux/fs.h |  1 +
- mm/filemap.c       | 23 +++++++++++++++++++++--
- 2 files changed, 22 insertions(+), 2 deletions(-)
+ fs/gfs2/aops.c | 45 +------------------------------------------
+ fs/gfs2/file.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 51 insertions(+), 46 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3f881a892ea7..1ab2ea19e883 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -315,6 +315,7 @@ enum rw_hint {
- #define IOCB_SYNC		(1 << 5)
- #define IOCB_WRITE		(1 << 6)
- #define IOCB_NOWAIT		(1 << 7)
-+#define IOCB_NOIO		(1 << 8)
+diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+index 72c9560f4467..68cd700a2719 100644
+--- a/fs/gfs2/aops.c
++++ b/fs/gfs2/aops.c
+@@ -468,21 +468,10 @@ static int stuffed_readpage(struct gfs2_inode *ip, struct page *page)
+ }
  
- struct kiocb {
- 	struct file		*ki_filp;
-diff --git a/mm/filemap.c b/mm/filemap.c
-index f0ae9a6308cb..385759c4ce4b 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2028,7 +2028,7 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
  
- 		page = find_get_page(mapping, index);
- 		if (!page) {
--			if (iocb->ki_flags & IOCB_NOWAIT)
-+			if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_NOIO))
- 				goto would_block;
- 			page_cache_sync_readahead(mapping,
- 					ra, filp,
-@@ -2038,6 +2038,10 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 				goto no_cached_page;
- 		}
- 		if (PageReadahead(page)) {
-+			if (iocb->ki_flags & IOCB_NOIO) {
-+				put_page(page);
-+				goto out;
-+			}
- 			page_cache_async_readahead(mapping,
- 					ra, filp, page,
- 					index, last_index - index);
-@@ -2160,6 +2164,11 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		}
+-/**
+- * __gfs2_readpage - readpage
+- * @file: The file to read a page for
+- * @page: The page to read
+- *
+- * This is the core of gfs2's readpage. It's used by the internal file
+- * reading code as in that case we already hold the glock. Also it's
+- * called by gfs2_readpage() once the required lock has been granted.
+- */
+-
+ static int __gfs2_readpage(void *file, struct page *page)
+ {
+ 	struct gfs2_inode *ip = GFS2_I(page->mapping->host);
+ 	struct gfs2_sbd *sdp = GFS2_SB(page->mapping->host);
+-
+ 	int error;
  
- readpage:
-+		if (iocb->ki_flags & IOCB_NOIO) {
-+			unlock_page(page);
-+			put_page(page);
-+			goto would_block;
-+		}
- 		/*
- 		 * A previous I/O error may have been due to temporary
- 		 * failures, eg. multipath errors.
-@@ -2249,9 +2258,19 @@ EXPORT_SYMBOL_GPL(generic_file_buffered_read);
-  *
-  * This is the "read_iter()" routine for all filesystems
-  * that can use the page cache directly.
-+ *
-+ * The IOCB_NOWAIT flag in iocb->ki_flags indicates that -EAGAIN shall
-+ * be returned when no data can be read without waiting for I/O requests
-+ * to complete; it doesn't prevent readahead.
-+ *
-+ * The IOCB_NOIO flag in iocb->ki_flags indicates that no new I/O
-+ * requests shall be made for the read or for readahead.  When no data
-+ * can be read, -EAGAIN shall be returned.  When readahead would be
-+ * triggered, a partial, possibly empty read shall be returned.
-+ *
-  * Return:
-  * * number of bytes copied, even for partial reads
-- * * negative error code if nothing was read
-+ * * negative error code (or 0 if IOCB_NOIO) if nothing was read
+ 	if (i_blocksize(page->mapping->host) == PAGE_SIZE &&
+@@ -505,36 +494,11 @@ static int __gfs2_readpage(void *file, struct page *page)
+  * gfs2_readpage - read a page of a file
+  * @file: The file to read
+  * @page: The page of the file
+- *
+- * This deals with the locking required. We have to unlock and
+- * relock the page in order to get the locking in the right
+- * order.
   */
- ssize_t
- generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 
+ static int gfs2_readpage(struct file *file, struct page *page)
+ {
+-	struct address_space *mapping = page->mapping;
+-	struct gfs2_inode *ip = GFS2_I(mapping->host);
+-	struct gfs2_holder gh;
+-	int error;
+-
+-	unlock_page(page);
+-	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
+-	error = gfs2_glock_nq(&gh);
+-	if (unlikely(error))
+-		goto out;
+-	error = AOP_TRUNCATED_PAGE;
+-	lock_page(page);
+-	if (page->mapping == mapping && !PageUptodate(page))
+-		error = __gfs2_readpage(file, page);
+-	else
+-		unlock_page(page);
+-	gfs2_glock_dq(&gh);
+-out:
+-	gfs2_holder_uninit(&gh);
+-	if (error && error != AOP_TRUNCATED_PAGE)
+-		lock_page(page);
+-	return error;
++	return __gfs2_readpage(file, page);
+ }
+ 
+ /**
+@@ -598,16 +562,9 @@ static void gfs2_readahead(struct readahead_control *rac)
+ {
+ 	struct inode *inode = rac->mapping->host;
+ 	struct gfs2_inode *ip = GFS2_I(inode);
+-	struct gfs2_holder gh;
+ 
+-	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
+-	if (gfs2_glock_nq(&gh))
+-		goto out_uninit;
+ 	if (!gfs2_is_stuffed(ip))
+ 		mpage_readahead(rac, gfs2_block_map);
+-	gfs2_glock_dq(&gh);
+-out_uninit:
+-	gfs2_holder_uninit(&gh);
+ }
+ 
+ /**
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index fe305e4bfd37..bebde537ac8c 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -558,8 +558,29 @@ static vm_fault_t gfs2_page_mkwrite(struct vm_fault *vmf)
+ 	return block_page_mkwrite_return(ret);
+ }
+ 
++static vm_fault_t gfs2_fault(struct vm_fault *vmf)
++{
++	struct inode *inode = file_inode(vmf->vma->vm_file);
++	struct gfs2_inode *ip = GFS2_I(inode);
++	struct gfs2_holder gh;
++	vm_fault_t ret;
++	int err;
++
++	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
++	err = gfs2_glock_nq(&gh);
++	if (err) {
++		ret = block_page_mkwrite_return(err);
++		goto out_uninit;
++	}
++	ret = filemap_fault(vmf);
++	gfs2_glock_dq(&gh);
++out_uninit:
++	gfs2_holder_uninit(&gh);
++	return ret;
++}
++
+ static const struct vm_operations_struct gfs2_vm_ops = {
+-	.fault = filemap_fault,
++	.fault = gfs2_fault,
+ 	.map_pages = filemap_map_pages,
+ 	.page_mkwrite = gfs2_page_mkwrite,
+ };
+@@ -824,6 +845,9 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
+ 
+ static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
++	struct gfs2_inode *ip;
++	struct gfs2_holder gh;
++	size_t written = 0;
+ 	ssize_t ret;
+ 
+ 	if (iocb->ki_flags & IOCB_DIRECT) {
+@@ -832,7 +856,31 @@ static ssize_t gfs2_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			return ret;
+ 		iocb->ki_flags &= ~IOCB_DIRECT;
+ 	}
+-	return generic_file_read_iter(iocb, to);
++	iocb->ki_flags |= IOCB_NOIO;
++	ret = generic_file_read_iter(iocb, to);
++	iocb->ki_flags &= ~IOCB_NOIO;
++	if (ret >= 0) {
++		if (!iov_iter_count(to))
++			return ret;
++		written = ret;
++	} else {
++		if (ret != -EAGAIN)
++			return ret;
++		if (iocb->ki_flags & IOCB_NOWAIT)
++			return ret;
++	}
++	ip = GFS2_I(iocb->ki_filp->f_mapping->host);
++	gfs2_holder_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
++	ret = gfs2_glock_nq(&gh);
++	if (ret)
++		goto out_uninit;
++	ret = generic_file_read_iter(iocb, to);
++	if (ret > 0)
++		written += ret;
++	gfs2_glock_dq(&gh);
++out_uninit:
++	gfs2_holder_uninit(&gh);
++	return written ? written : ret;
+ }
+ 
+ /**
 -- 
 2.26.2
 
