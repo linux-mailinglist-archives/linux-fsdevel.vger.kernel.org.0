@@ -2,66 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF4A2177EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 21:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A3A921789C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 22:12:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbgGGT0N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 15:26:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45392 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728100AbgGGT0N (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 15:26:13 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66EB4206BE;
-        Tue,  7 Jul 2020 19:26:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594149972;
-        bh=uxcMM/Sf9inJLIkj1U8e0LfZX/0p8ULXiZ2yN0bNMnc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OZ9oxJPKMjuAxAmKeMAMKFymbhEyjmXIECfqDtlfmvgSF4TgxNY9YLFoNZb2hIrPd
-         gSeBgN0IW5+L1EdPdkdCwjTulvRa1gyxwU0fX8CJRmFSwYpz0k85UyPielx4nyddEa
-         CWRf3xdhMMl7uifSsvzoml6r7C6cp901pUmd8EQY=
-Date:   Tue, 7 Jul 2020 12:26:12 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org, Qiujun Huang <hqjagain@gmail.com>,
-        stable@vger.kernel.org,
-        syzbot+4a88b2b9dc280f47baf4@syzkaller.appspotmail.com
-Subject: Re: [PATCH 1/6] fs/minix: check return value of sb_getblk()
-Message-Id: <20200707122612.249699c3f136968dd6782452@linux-foundation.org>
-In-Reply-To: <20200628060846.682158-2-ebiggers@kernel.org>
-References: <20200628060846.682158-1-ebiggers@kernel.org>
-        <20200628060846.682158-2-ebiggers@kernel.org>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1728316AbgGGUMQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 16:12:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49410 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726763AbgGGUMQ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 16:12:16 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A38D3C061755;
+        Tue,  7 Jul 2020 13:12:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=B/o5Uj7bv1uKmlSBwdGS6cD2I4R/nsJYtW8ks3eYCiY=; b=yoQ6HpvMh/27T/sXK71yFTTfje
+        wz1bO443OdeoeMKq6jb+govoxFts4nlmoEYVMaUMslznkdIIVdHi4593t91yqrOxUYEiJU0QgYJop
+        HqXF3TwlrPyLRSzUITc+u6bPEDTSJLmRyIcHci7+5iPz+lH5G/rAxSfh/KEwsyO/LIpP67tsYzMsR
+        5/eNbab17s5Yi3XneR2K88y+YYj3l9JAmgUSGZatk/lEmJpwujMJoecbtyfSmt9GeLIBW0MPq89QB
+        4Hvx5tEcJ7jvnTmtr7DjjuryhIZS/8xGA9wV0M2WORXS8s4w7B9cifC/ERNsr8MJuujfNiYuTlJSL
+        KBfyLNdw==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jstwl-0008MJ-Kd; Tue, 07 Jul 2020 20:12:07 +0000
+Subject: Re: [PATCH v19 07/12] landlock: Support filesystem access-control
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
+        Richard Weinberger <richard@nod.at>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+References: <20200707180955.53024-1-mic@digikod.net>
+ <20200707180955.53024-8-mic@digikod.net>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6a80b712-a7b9-7b47-083a-08b7769016f8@infradead.org>
+Date:   Tue, 7 Jul 2020 13:11:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
+MIME-Version: 1.0
+In-Reply-To: <20200707180955.53024-8-mic@digikod.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 27 Jun 2020 23:08:40 -0700 Eric Biggers <ebiggers@kernel.org> wrote:
+Hi--
 
-> From: Eric Biggers <ebiggers@google.com>
+On 7/7/20 11:09 AM, Mickaël Salaün wrote:
+> ---
+>  arch/Kconfig                  |   7 +
+>  arch/um/Kconfig               |   1 +
+>  include/uapi/linux/landlock.h |  78 +++++
+>  security/landlock/Kconfig     |   2 +-
+>  security/landlock/Makefile    |   2 +-
+>  security/landlock/fs.c        | 609 ++++++++++++++++++++++++++++++++++
+>  security/landlock/fs.h        |  60 ++++
+>  security/landlock/setup.c     |   7 +
+>  security/landlock/setup.h     |   2 +
+>  9 files changed, 766 insertions(+), 2 deletions(-)
+>  create mode 100644 include/uapi/linux/landlock.h
+>  create mode 100644 security/landlock/fs.c
+>  create mode 100644 security/landlock/fs.h
 > 
-> sb_getblk() can fail, so check its return value.
-> 
-> This fixes a NULL pointer dereference.
-> 
-> Reported-by: syzbot+4a88b2b9dc280f47baf4@syzkaller.appspotmail.com
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: stable@vger.kernel.org
-> Originally-from: Qiujun Huang <anenbupt@gmail.com>
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index 8cc35dc556c7..483b7476ac69 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -845,6 +845,13 @@ config COMPAT_32BIT_TIME
+>  config ARCH_NO_PREEMPT
+>  	bool
+>  
+> +config ARCH_EPHEMERAL_STATES
+> +	def_bool n
+> +	help
+> +	  An arch should select this symbol if it do not keep an internal kernel
 
-Originally-from: isn't really a thing.  Did the original come with a
-signed-off-by:?
+	                                       it does not
 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
->
-> ...
->
+> +	  state for kernel objects such as inodes, but instead rely on something
+
+	                                               instead relies on
+
+> +	  else (e.g. the host kernel for an UML kernel).
+> +
+>  config ARCH_SUPPORTS_RT
+>  	bool
+>  
+
+thanks.
+-- 
+~Randy
+
