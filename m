@@ -2,61 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F43321759A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 19:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE4CD2175F0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 20:08:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbgGGRug (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 13:50:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728211AbgGGRuf (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 13:50:35 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72C94C061755;
-        Tue,  7 Jul 2020 10:50:35 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 651CF2A39FD
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Daniel Rosenberg <drosen@google.com>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH v10 1/4] unicode: Add utf8_casefold_hash
-Organization: Collabora
-References: <20200707113123.3429337-1-drosen@google.com>
-        <20200707113123.3429337-2-drosen@google.com>
-Date:   Tue, 07 Jul 2020 13:50:27 -0400
-In-Reply-To: <20200707113123.3429337-2-drosen@google.com> (Daniel Rosenberg's
-        message of "Tue, 7 Jul 2020 04:31:20 -0700")
-Message-ID: <877dvftdss.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        id S1728183AbgGGSI4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 14:08:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727834AbgGGSI4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 14:08:56 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8917E20708;
+        Tue,  7 Jul 2020 18:08:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594145335;
+        bh=296k3vE2kk+jFGLHJR3rGPowqbR7vIAKHN05TDFqEjU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tcnxsJRqHw+W02Km31hpUvdQQVBZ3J18CWf6ryCBIr/V+IM1gdxhjl3eLzTZYSMgT
+         MvODHFpSVX+Wwb0vQtNnfA2DuOghtogMd7IjxrhhrEH+I5FZjHbwJAAoDzTOcPraB2
+         h8r2enGEWKOpHzfobdAqJ29kADsewKrXCBoz5j9w=
+Date:   Tue, 7 Jul 2020 11:08:54 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Satya Tangirala <satyat@google.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] Inline Encryption Support for fscrypt
+Message-ID: <20200707180854.GB839@sol.localdomain>
+References: <20200702015607.1215430-1-satyat@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200702015607.1215430-1-satyat@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Daniel Rosenberg <drosen@google.com> writes:
+On Thu, Jul 02, 2020 at 01:56:03AM +0000, Satya Tangirala wrote:
+> This patch series adds support for Inline Encryption to fscrypt, f2fs
+> and ext4. It builds on the inline encryption support now present in
+> the block layer, and has been rebased on v5.8-rc3. Note that Patches 1 and
+> 2 can be applied independently of Patches 3 and 4 (and Patches 3 and 4 can
+> be applied independently of each other).
+> 
+> This patch series previously went though a number of iterations as part
+> of the "Inline Encryption Support" patchset (last version was v13:
+> https://lkml.kernel.org/r/20200514003727.69001-1-satyat@google.com).
+> 
+> Patch 1 introduces the SB_INLINECRYPT sb options, which filesystems
+> should set if they want to use blk-crypto for file content en/decryption.
+> 
+> Patch 2 adds inline encryption support to fscrypt. To use inline
+> encryption with fscrypt, the filesystem must set the above mentioned
+> SB_INLINECRYPT sb option. When this option is set, the contents of
+> encrypted files will be en/decrypted using blk-crypto.
+> 
+> Patches 3 and 4 wire up f2fs and ext4 respectively to fscrypt support for
+> inline encryption, and e.g ensure that bios are submitted with blocks
+> that not only are contiguous, but also have continuous DUNs.
 
-> This adds a case insensitive hash function to allow taking the hash
-> without needing to allocate a casefolded copy of the string.
->
-> The existing d_hash implementations for casefolding allocates memory
-> within rcu-walk, by avoiding it we can be more efficient and avoid
-> worrying about a failed allocation.
->
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+I've applied patches 1-3 to fscrypt.git#master for 5.9.
+Any additional reviews are still appreciated though.
 
-Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Ted and Andreas, can I get your Acked-by on patch 4?
 
--- 
-Gabriel Krisman Bertazi
+- Eric
