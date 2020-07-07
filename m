@@ -2,99 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5402A21690F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 11:31:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA6CD216920
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 11:35:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbgGGJbe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 05:31:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57622 "EHLO mail.kernel.org"
+        id S1727916AbgGGJex (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 05:34:53 -0400
+Received: from foss.arm.com ([217.140.110.172]:34362 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725825AbgGGJbd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 05:31:33 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47DBE2065F;
-        Tue,  7 Jul 2020 09:31:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594114293;
-        bh=7EJPV5cge5x3+J13JIKyNgux4EwJmANov4vu3RAeYAU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G5b57d5VluIkuQJOC73on6FYdeC3Z9X1U3EH8Y6N35tSs1ybjw+w2UaJMRNvNiI0C
-         Ztuon0HGC5mXaRIHbnMgXBEjgnZ8st6X1f0tTkpVWTVYNchlfy/EsoIrbhNasxpjrD
-         b4O5dyY2lR6K9uqQZ+lUSMciMwebhkosO8EJSxJE=
-Date:   Tue, 7 Jul 2020 11:31:31 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jessica Yu <jeyu@kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+        id S1727058AbgGGJex (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 05:34:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60550C0A;
+        Tue,  7 Jul 2020 02:34:52 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB5923F68F;
+        Tue,  7 Jul 2020 02:34:49 -0700 (PDT)
+Date:   Tue, 7 Jul 2020 10:34:47 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Boyd <stephen.boyd@linaro.org>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 0/4] Fix misused kernel_read_file() enums
-Message-ID: <20200707093131.GA2592640@kroah.com>
-References: <20200707081926.3688096-1-keescook@chromium.org>
+        Doug Anderson <dianders@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] sched/uclamp: Add a new sysctl to control RT
+ default boost value
+Message-ID: <20200707093447.4t6eqjy4fkt747fo@e107158-lin.cambridge.arm.com>
+References: <20200706142839.26629-1-qais.yousef@arm.com>
+ <20200706142839.26629-2-qais.yousef@arm.com>
+ <jhj8sfw8wzk.mognet@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200707081926.3688096-1-keescook@chromium.org>
+In-Reply-To: <jhj8sfw8wzk.mognet@arm.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 07, 2020 at 01:19:22AM -0700, Kees Cook wrote:
-> Hi,
+On 07/06/20 16:49, Valentin Schneider wrote:
 > 
-> In looking for closely at the additions that got made to the
-> kernel_read_file() enums, I noticed that FIRMWARE_PREALLOC_BUFFER
-> and FIRMWARE_EFI_EMBEDDED were added, but they are not appropriate
-> *kinds* of files for the LSM to reason about. They are a "how" and
-> "where", respectively. Remove these improper aliases and refactor the
-> code to adapt to the changes.
+> On 06/07/20 15:28, Qais Yousef wrote:
+> > CC: linux-fsdevel@vger.kernel.org
+> > ---
+> >
+> > Peter
+> >
+> > I didn't do the
+> >
+> >       read_lock(&taslist_lock);
+> >       smp_mb__after_spinlock();
+> >       read_unlock(&tasklist_lock);
+> >
+> > dance you suggested on IRC as it didn't seem necessary. But maybe I missed
+> > something.
+> >
 > 
-> Additionally adds in missing calls to security_kernel_post_read_file()
-> in the platform firmware fallback path (to match the sysfs firmware
-> fallback path) and in module loading. I considered entirely removing
-> security_kernel_post_read_file() hook since it is technically unused,
-> but IMA probably wants to be able to measure EFI-stored firmware images,
-> so I wired it up and matched it for modules, in case anyone wants to
-> move the module signature checks out of the module core and into an LSM
-> to avoid the current layering violations.
+> So the annoying bit with just uclamp_fork() is that it happens *before* the
+> task is appended to the tasklist. This means without too much care we
+> would have (if we'd do a sync at uclamp_fork()):
 > 
-> This touches several trees, and I suspect it would be best to go through
-> James's LSM tree.
+>   CPU0 (sysctl write)                                CPU1 (concurrent forker)
 > 
-> Thanks!
+>                                                        copy_process()
+>                                                          uclamp_fork()
+>                                                            p.uclamp_min = state
+>     state = foo
 > 
-> -Kees
+>     for_each_process_thread(p, t)
+>       update_state(t);
+>                                                          list_add(p)
 > 
-> Kees Cook (4):
->   firmware_loader: EFI firmware loader must handle pre-allocated buffer
->   fs: Remove FIRMWARE_PREALLOC_BUFFER from kernel_read_file() enums
->   fs: Remove FIRMWARE_EFI_EMBEDDED from kernel_read_file() enums
->   module: Add hook for security_kernel_post_read_file()
+> i.e. that newly forked process would entirely sidestep the update. Now,
+> with Peter's suggested approach we can be in a much better situation. If we
+> have this in the sysctl update:
+> 
+>   state = foo;
+> 
+>   read_lock(&taslist_lock);
+>   smp_mb__after_spinlock();
+>   read_unlock(&tasklist_lock);
+> 
+>   for_each_process_thread(p, t)
+>     update_state(t);
+> 
+> While having this in the fork:
+> 
+>   write_lock(&tasklist_lock);
+>   list_add(p);
+>   write_unlock(&tasklist_lock);
+> 
+>   sched_post_fork(p); // state re-read here; probably wants an mb first
+> 
+> Then we can no longer miss an update. If the forked p doesn't see the new
+> value, it *must* have been added to the tasklist before the updater loops
+> over it, so the loop will catch it. If it sees the new value, we're done.
 
-Looks good to me, thanks for fixing this up:
+uclamp_fork() has nothing to do with the race. If copy_process() duplicates the
+task_struct of an RT task, it'll copy the old value.
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I'd expect the newly introduced sched_post_fork() (also in copy_process() after
+the list update) to prevent this race altogether.
+
+Now we could end up with a problem if for_each_process_thread() doesn't see the
+newly forked task _after_ sched_post_fork(). Hence my question to Peter.
+
+> 
+> AIUI, the above strategy doesn't require any use of RCU. The update_state()
+> and sched_post_fork() can race, but as per the above they should both be
+> writing the same value.
+
+for_each_process_thread() must be protected by either tasklist_lock or
+rcu_read_lock().
+
+The other RCU logic I added is not to protect against the race above. I
+describe the other race condition in a comment. Basically another updater on a
+different cpu via fork() and sched_setattr() might read an old value and get
+preempted. The rcu synchronization will ensure concurrent updaters have
+finished before iterating the list.
+
+Thanks
+
+--
+Qais Yousef
