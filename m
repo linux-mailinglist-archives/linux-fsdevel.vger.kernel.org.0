@@ -2,105 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D9439216BC0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 13:39:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91764216BCE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 13:40:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgGGLiO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 07:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53950 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbgGGLiN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 07:38:13 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9254BC061755;
-        Tue,  7 Jul 2020 04:38:13 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id s21so20520121ilk.5;
-        Tue, 07 Jul 2020 04:38:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1+9PXsEHC8Tau1MQTySeSJIu15QBhP57I+JN1uapBu0=;
-        b=JirTA1RlvJAlDXxssPiBjYAQw8/IAQxOLQXqoDRmUr5Q7eXEI05rN0ZCnBmWsZzbFe
-         Fse1fi06L+PCjopdbPPnGNT1QeQojO3coqU1ja8XSjRjF03hlXmzC0GLIWJUCIhcm3yk
-         nexkBSFm9tW9pjzicOY0yEmXy+WBwvcexBGHnjSkhPXZDAx3P2pkRwd5xKSEENjE1Alf
-         /1Yf7FdVFHCXNGYnUEcg0LUccx2gPlnuBsZkwpRz7lZ661siGnnxrpYu/I5r8bEADam2
-         6S/vUj52Ak5EkHTaIEoaCCDdPgdGT6/tL9DFm402FNQaW5itQi11KgZOCG3mUTv8/4uC
-         Sehw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1+9PXsEHC8Tau1MQTySeSJIu15QBhP57I+JN1uapBu0=;
-        b=roTmvF9pSzP0C2GBAH1L1L5m5N5ApQJd7NdN2TO0kvX60qIzpg4GmXmBEmgHNMjuVP
-         ZIi2ln2QsJSKGzgS+OwpQDFccaB+LJJkK7jmImZ3+AZSArminYMtjgHC+5bolCfsi+5n
-         PiK2BwCqDvqz+yxo9M/lBcleKCaXjqkDpcQoQj+gakjzq0TXv9kIuyx+syZFbfS8MGmC
-         3EG9CL/B0wKRxTXaHg5ZzXk+qlOw+a36awZyrVAgnCbaiYaxv+ABxFJD/WLW37egz7M5
-         kYcKhuxALSJ5RDO2+eftVMJm2ZCy3hJoh/uDCecVAP5DbvexxyxX2us3VKcokZVWM+dB
-         Z5vg==
-X-Gm-Message-State: AOAM531UH367wOKFaPJXdpKTUFsnErJqOVtlJgISOxupgX455U/er8H5
-        HF++VJ4NCCZFNPBUQiB1WJ29bhIml8mMKkhVbh8=
-X-Google-Smtp-Source: ABdhPJyLy71kFINoMC1IHKN/W9Wzb6/SH2hqLTyUZVHsX7LIVZCqyVklNgrjn7GmuSwIHTTceD6R3Lnu4FTNFB1XILg=
-X-Received: by 2002:a92:c7ab:: with SMTP id f11mr36287094ilk.50.1594121892966;
- Tue, 07 Jul 2020 04:38:12 -0700 (PDT)
+        id S1728088AbgGGLjy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 07:39:54 -0400
+Received: from foss.arm.com ([217.140.110.172]:42780 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726805AbgGGLjx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 07:39:53 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFA3E1FB;
+        Tue,  7 Jul 2020 04:39:52 -0700 (PDT)
+Received: from e113632-lin (e113632-lin.cambridge.arm.com [10.1.194.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 878203F71E;
+        Tue,  7 Jul 2020 04:39:50 -0700 (PDT)
+References: <20200706142839.26629-1-qais.yousef@arm.com> <20200706142839.26629-2-qais.yousef@arm.com>
+User-agent: mu4e 0.9.17; emacs 26.3
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] sched/uclamp: Add a new sysctl to control RT default boost value
+In-reply-to: <20200706142839.26629-2-qais.yousef@arm.com>
+Date:   Tue, 07 Jul 2020 12:39:48 +0100
+Message-ID: <jhj1rln8sfv.mognet@arm.com>
 MIME-Version: 1.0
-References: <20200618144355.17324-1-axboe@kernel.dk> <20200618144355.17324-6-axboe@kernel.dk>
- <20200624010253.GB5369@dread.disaster.area> <20200624014645.GJ21350@casper.infradead.org>
- <bad52be9-ae44-171b-8dbf-0d98eedcadc0@kernel.dk> <70b0427c-7303-8f45-48bd-caa0562a2951@kernel.dk>
- <20200624164127.GP21350@casper.infradead.org> <8835b6f2-b3c5-c9a0-2119-1fb161cf87dd@kernel.dk>
-In-Reply-To: <8835b6f2-b3c5-c9a0-2119-1fb161cf87dd@kernel.dk>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Tue, 7 Jul 2020 13:38:01 +0200
-Message-ID: <CAHpGcMJsrQXX4OQe6MqjyTt8BOLZw-y1ixdk76p_DsZONyEJcQ@mail.gmail.com>
-Subject: Re: [PATCH 05/15] mm: allow read-ahead with IOCB_NOWAIT set
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>, io-uring@vger.kernel.org,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am Mi., 24. Juni 2020 um 18:48 Uhr schrieb Jens Axboe <axboe@kernel.dk>:
+
+On 06/07/20 15:28, Qais Yousef wrote:
+> RT tasks by default run at the highest capacity/performance level. When
+> uclamp is selected this default behavior is retained by enforcing the
+> requested uclamp.min (p->uclamp_req[UCLAMP_MIN]) of the RT tasks to be
+> uclamp_none(UCLAMP_MAX), which is SCHED_CAPACITY_SCALE; the maximum
+> value.
 >
-> On 6/24/20 10:41 AM, Matthew Wilcox wrote:
-> > On Wed, Jun 24, 2020 at 09:35:19AM -0600, Jens Axboe wrote:
-> >> On 6/24/20 9:00 AM, Jens Axboe wrote:
-> >>> On 6/23/20 7:46 PM, Matthew Wilcox wrote:
-> >>>> I'd be quite happy to add a gfp_t to struct readahead_control.
-> >>>> The other thing I've been looking into for other reasons is adding
-> >>>> a memalloc_nowait_{save,restore}, which would avoid passing down
-> >>>> the gfp_t.
-> >>>
-> >>> That was my first thought, having the memalloc_foo_save/restore for
-> >>> this. I don't think adding a gfp_t to readahead_control is going
-> >>> to be super useful, seems like the kind of thing that should be
-> >>> non-blocking by default.
-> >>
-> >> We're already doing memalloc_nofs_save/restore in
-> >> page_cache_readahead_unbounded(), so I think all we need is to just do a
-> >> noio dance in generic_file_buffered_read() and that should be enough.
-> >
-> > I think we can still sleep though, right?  I was thinking more
-> > like this:
-> >
-> > http://git.infradead.org/users/willy/linux.git/shortlog/refs/heads/memalloc
+> This is also referred to as 'the default boost value of RT tasks'.
 >
-> Yeah, that's probably better. How do we want to handle this? I've already
-> got the other bits queued up. I can either add them to the series, or
-> pull a branch that'll go into Linus as well.
+> See commit 1a00d999971c ("sched/uclamp: Set default clamps for RT tasks").
+>
+> On battery powered devices, it is desired to control this default
+> (currently hardcoded) behavior at runtime to reduce energy consumed by
+> RT tasks.
+>
+> For example, a mobile device manufacturer where big.LITTLE architecture
+> is dominant, the performance of the little cores varies across SoCs, and
+> on high end ones the big cores could be too power hungry.
+>
+> Given the diversity of SoCs, the new knob allows manufactures to tune
+> the best performance/power for RT tasks for the particular hardware they
+> run on.
+>
+> They could opt to further tune the value when the user selects
+> a different power saving mode or when the device is actively charging.
+>
+> The runtime aspect of it further helps in creating a single kernel image
+> that can be run on multiple devices that require different tuning.
+>
+> Keep in mind that a lot of RT tasks in the system are created by the
+> kernel. On Android for instance I can see over 50 RT tasks, only
+> a handful of which created by the Android framework.
+>
+> To control the default behavior globally by system admins and device
+> integrator, introduce the new sysctl_sched_uclamp_util_min_rt_default
+> to change the default boost value of the RT tasks.
+>
+> I anticipate this to be mostly in the form of modifying the init script
+> of a particular device.
+>
 
-Also note my conflicting patch that introduces a IOCB_NOIO flag for
-fixing a gfs2 regression:
+Sorry for going at this again, but I feel like I can squeeze more juice out
+of this.
 
-https://lore.kernel.org/linux-fsdevel/20200703095325.1491832-2-agruenba@redhat.com/
+This being mainly tweaked in init scripts makes me question why we should
+harden this for runtime tweaking. Yes, there's the whole single image
+thing, but there's other ways to have different init-time values on a
+single image (e.g. cmdline, although that one is usually a bit
+controversial).
 
-Thanks,
-Andreas
+For instance, Android could set the min to 0 and then go about its life
+tweaking the clamp of individual / all RT tasks at runtime, using the
+existing uclamp API.
