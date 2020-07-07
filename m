@@ -2,139 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A05217295
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 17:44:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC0212172DF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 17:56:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbgGGPh7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 11:37:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63502 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728194AbgGGPh7 (ORCPT
+        id S1728588AbgGGPpa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 11:45:30 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45991 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726911AbgGGPp3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 11:37:59 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 067FVOBd141554;
-        Tue, 7 Jul 2020 11:37:28 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 324ffe5v90-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jul 2020 11:37:28 -0400
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 067FVRd3141899;
-        Tue, 7 Jul 2020 11:37:27 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 324ffe5v7e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jul 2020 11:37:27 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 067F6pLA031946;
-        Tue, 7 Jul 2020 15:37:25 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma02fra.de.ibm.com with ESMTP id 322hd83nbt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 07 Jul 2020 15:37:25 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 067Fa8Q062390518
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 7 Jul 2020 15:36:08 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9816EA4054;
-        Tue,  7 Jul 2020 15:36:08 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1D379A405F;
-        Tue,  7 Jul 2020 15:36:05 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.200.130])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  7 Jul 2020 15:36:04 +0000 (GMT)
-Message-ID: <1594136164.23056.76.camel@linux.ibm.com>
-Subject: Re: [PATCH 0/4] Fix misused kernel_read_file() enums
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jessica Yu <jeyu@kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Tue, 7 Jul 2020 11:45:29 -0400
+Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jspmM-0001C3-Mv; Tue, 07 Jul 2020 15:45:06 +0000
+Date:   Tue, 7 Jul 2020 17:45:04 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Jann Horn <jannh@google.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
+        Adrian Reber <areber@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Boyd <stephen.boyd@linaro.org>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Tue, 07 Jul 2020 11:36:04 -0400
-In-Reply-To: <20200707081926.3688096-1-keescook@chromium.org>
-References: <20200707081926.3688096-1-keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-07_08:2020-07-07,2020-07-07 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- impostorscore=0 cotscore=-2147483648 malwarescore=0 mlxscore=0
- adultscore=0 mlxlogscore=999 spamscore=0 priorityscore=1501 bulkscore=0
- phishscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2004280000 definitions=main-2007070113
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v4 3/3] prctl: Allow ptrace capable processes to change
+ /proc/self/exe
+Message-ID: <20200707154504.aknxmw6qavpjkr24@wittgenstein>
+References: <20200701064906.323185-1-areber@redhat.com>
+ <20200701064906.323185-4-areber@redhat.com>
+ <20200702211647.GB3283@mail.hallyn.com>
+ <CAHC9VhQZ=cwiOay6OMMdM1UHm69wDaga9HBkyTbx8-1OU=aBvA@mail.gmail.com>
+ <a2b4deacfc7541e3adea2f36a6f44262@EXMBDFT11.ad.twosigma.com>
+ <20200706174437.zpshxlul7rl3vmmq@wittgenstein>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200706174437.zpshxlul7rl3vmmq@wittgenstein>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Kees,
-
-On Tue, 2020-07-07 at 01:19 -0700, Kees Cook wrote:
-> Hi,
+On Mon, Jul 06, 2020 at 07:44:38PM +0200, Christian Brauner wrote:
+> On Mon, Jul 06, 2020 at 05:13:35PM +0000, Nicolas Viennot wrote:
+> > > > This is scary.  But I believe it is safe.
+> > > >
+> > > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> > > >
+> > > > I am a bit curious about the implications of the selinux patch.
+> > > > IIUC you are using the permission of the tracing process to execute
+> > > > the file without transition, so this is a way to work around the
+> > > > policy which might prevent the tracee from doing so.
+> > > > Given that SELinux wants to be MAC, I'm not *quite* sure that's
+> > > > considered kosher.  You also are skipping the PROCESS__PTRACE to
+> > > > SECCLASS_PROCESS check which selinux_bprm_set_creds does later on.
+> > > > Again I'm just not quite sure what's considered normal there these
+> > > > days.
+> > > >
+> > > > Paul, do you have input there?
+> > >
+> > > I agree, the SELinux hook looks wrong.  Building on what Christian said, this looks more like a ptrace operation than an exec operation.
+> > 
+> > Serge, Paul, Christian,
+> > 
+> > I made a PoC to demonstrate the change of /proc/self/exe without CAP_SYS_ADMIN using only ptrace and execve.
+> > You may find it here: https://github.com/nviennot/run_as_exe
+> > 
+> > What do you recommend to relax the security checks in the kernel when it comes to changing the exe link?
 > 
-> In looking for closely at the additions that got made to the
-> kernel_read_file() enums, I noticed that FIRMWARE_PREALLOC_BUFFER
-> and FIRMWARE_EFI_EMBEDDED were added, but they are not appropriate
-> *kinds* of files for the LSM to reason about. They are a "how" and
-> "where", respectively. Remove these improper aliases and refactor the
-> code to adapt to the changes.
+> Looks fun! Yeah, so that this is possible is known afaict. But you're
+> not really circumventing the kernel check but are mucking with the EFL
+> by changing the auxv, right?
+> 
+> Originally, you needed to be userns root, i.e. only uid 0 could
+> change the /proc/self/exe link (cf. [1]). This was changed to
+> ns_capable(CAP_SYS_ADMIN) in [2].
+> 
+> The original reasoning in [1] is interesting as it basically already
+> points to your poc:
+> 
+> "Still note that updating exe-file link now doesn't require sys-resource
+>  capability anymore, after all there is no much profit in preventing
+>  setup own file link (there are a number of ways to execute own code --
+>  ptrace, ld-preload, so that the only reliable way to find which exactly
+>  code is executed is to inspect running program memory).  Still we
+>  require the caller to be at least user-namespace root user."
+> 
+> There were arguments being made that /proc/<pid>/exe needs to be sm that
+> userspace can have a decent amount of trust in but I believe that that's
+> not a great argument.
+> 
+> But let me dig a little into the original discussion and see what the
+> thread-model was.
+> At this point I'm starting to believe that it was people being cautios
+> but better be sure.
 
-Thank you for adding the missing calls and the firmware pre allocated
-buffer comment update.
+Ok, so the original patch proposal was presented in [4] in 2014. The
+final version of that patch added the PR_SET_MM_MAP we know today. The
+initial version presented in [4] did not require _any_ privilege.
+
+So the reasoning for only placing the /proc/<pid>/exe link under
+ns_capable(CAP_SYS_ADMIN) is very thin. to quote from [5]:
+
+"Controlling exe_fd without privileges may turn out to be dangerous. At
+ least things like tomoyo examine it for making policy decisions (see
+ tomoyo_manager())."
+
+So yes, tomoyo_get_exe() is what this was retained for apparently:
+
+const char *tomoyo_get_exe(void)
+{
+	struct file *exe_file;
+	const char *cp;
+	struct mm_struct *mm = current->mm;
+
+	if (!mm)
+		return NULL;
+	exe_file = get_mm_exe_file(mm);
+	if (!exe_file)
+		return NULL;
+
+	cp = tomoyo_realpath_from_path(&exe_file->f_path);
+	fput(exe_file);
+	return cp;
+}
+
+The exe path is literally used in tomoyo_manager() to verify that you
+are allowed to change policy. That seems like a bad idea to me but then
+again, I don't know enough about Tomoyo. In any case, I think that means
+we can't remove CAP_SYS_ADMIN because that would make things worse than
+they are right now for Tomoyo but I also don't see why placing this
+under ns_capable(CAP_SYS_ADMIN) || ns_capable(CAP_CHECKPOINT_RESTORE)
+would make this any worse.
+
+And Cyrill (and later in that thread Andrei) already mentioned it in [6]:
+"@exe_fd is just a hint and as I mentioned if we have ptrace/preload
+ rights there damn a lot of ways to inject own code into any program so
+ that a user won't even notice ;)"
+
+Another place where the exe file is relevant is for the coredump with
+the -E option. But it only uses the path when generating the coredump
+pattern and if that's a security issue than your poc shows that this can
+already be achieved today.
+
+Christian
 
 > 
-> Additionally adds in missing calls to security_kernel_post_read_file()
-> in the platform firmware fallback path (to match the sysfs firmware
-> fallback path) and in module loading. I considered entirely removing
-> security_kernel_post_read_file() hook since it is technically unused,
-> but IMA probably wants to be able to measure EFI-stored firmware images,
-> so I wired it up and matched it for modules, in case anyone wants to
-> move the module signature checks out of the module core and into an LSM
-> to avoid the current layering violations.
+> [1]: f606b77f1a9e ("prctl: PR_SET_MM -- introduce PR_SET_MM_MAP operation")
+> [2]: 4d28df6152aa ("prctl: Allow local CAP_SYS_ADMIN changing exe_file")
+> [3]: https://lore.kernel.org/patchwork/patch/697304/
 
-IMa has always verified kernel module signatures.  Recently appended
-kernel module signature support was added to IMA.  The same appended
-signature format is also being used to sign and verify the kexec
-kernel image.
-
-With IMA's new kernel module appended signature support and patch 4/4
-in this series, IMA won't be limit to the finit_module syscall, but
-could support the init_module syscall as well.
-
-> 
-> This touches several trees, and I suspect it would be best to go through
-> James's LSM tree.
-
-Sure.
-
-thanks!
-
-Mimi
-
+[4]: https://lore.kernel.org/lkml/20140703151102.842945837@openvz.org/ 
+[5]: https://lore.kernel.org/lkml/CAGXu5jL3exT4j+8rjMv1O54uJWQ5UHL69Z-24b61rhXROqZamQ@mail.gmail.com/
+[6]: https://lore.kernel.org/lkml/20140722203614.GF838@moon/
