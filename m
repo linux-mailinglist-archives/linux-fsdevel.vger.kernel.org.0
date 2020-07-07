@@ -2,87 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72831217948
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 22:24:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 154C2217946
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 22:24:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbgGGUYV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 16:24:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51358 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727895AbgGGUYV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 16:24:21 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9FEDC061755
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jul 2020 13:24:20 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id q7so38276355ljm.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jul 2020 13:24:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6XqDOhPELSzMgZFeHVQzNLAfVHgv7dPOLnk5RnzM4P4=;
-        b=LY4FvMZzILikh15a8T4+gZcC0iBGtJIHSCWGKPXPFccoqV7BkYRThzmBYw+Gn++IR0
-         KDHlg9I55kRP3bn6OA1SY3gKt8aJQqmugf/5wZuoWhDeEEHYDWHOD/dvGo2Wt9x4Qui/
-         iilyA/ngA43BVbE72OqjP1/UYdQ3shqLk3Ktc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6XqDOhPELSzMgZFeHVQzNLAfVHgv7dPOLnk5RnzM4P4=;
-        b=cVC3VZ3BCG0yg0vWxO6F4WueRkwuoZFANkdpBfAVlU6bwRkxuFni+HqV8TNm8Fgsbi
-         JJjKkHhFRTglIlYwbUNzy9z1INozxTUAIiqzhsth2nDQy3hgofmrU0upSFnPC4sY0meZ
-         f7OSNrrOnp2p4bQCc9XiiC3aFeo6d4t+fU5RdcfdjvJ2U/4nIwO6/SOxAHloR9ag2aQ9
-         a++vM6yR+C7o5Lkv0zNDlnonbUZ8ox30dMNFLsF4doAQQ/zeSrQtF3a1EUZvp7HgSzmp
-         560lMKrXRTFRkMpDfu6/HpxGASC2FvJh5TR6LAAmd54Yj+XP5ZYiNnj0A5qZPHbzsdoI
-         eAWQ==
-X-Gm-Message-State: AOAM532PeU81ZCP/oWaZ2ETgkDFV+FTlF64THa0vcSpqfv+4/KU5G/HJ
-        x+aTcm2NYRUfywOcabi45ZqkW8iWyqc=
-X-Google-Smtp-Source: ABdhPJz4E6h8PizUBAYp7dQgYN6ER5+T3IwEjWu+CEuG5RGvcI3P7SS1pNs+0mlHTQtCDoteeWpAig==
-X-Received: by 2002:a2e:80cc:: with SMTP id r12mr25760813ljg.344.1594153458945;
-        Tue, 07 Jul 2020 13:24:18 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id m10sm431107lji.72.2020.07.07.13.24.17
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jul 2020 13:24:18 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id s9so51480572ljm.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jul 2020 13:24:17 -0700 (PDT)
-X-Received: by 2002:a2e:9b42:: with SMTP id o2mr30598178ljj.102.1594153457543;
- Tue, 07 Jul 2020 13:24:17 -0700 (PDT)
+        id S1728447AbgGGUYH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 16:24:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47690 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728292AbgGGUYG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 16:24:06 -0400
+Received: from gmail.com (unknown [104.132.1.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79B99206BE;
+        Tue,  7 Jul 2020 20:24:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594153445;
+        bh=40urT3yultzL1QLUZ36YCR16H0oUPShoY0I57dvbUr8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nT/o5KAXF2gFIf05jT6b2gEiT9nuQSKnyAqyTp57qFBRm/vDI9YT0MrRyzYNOdjTG
+         W+tMQIpTmbs4CxmsWHyeZdBOMG3x2QuunzX8XSwDLhY9W8x3dRhdnAJKSxJjaQ90e8
+         zsyYhLPzxBRvCKxIK3EnzApxnnv0i9R+pTEq2A9s=
+Date:   Tue, 7 Jul 2020 13:24:04 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     syzbot <syzbot+7748c5375dc20dfdb92f@syzkaller.appspotmail.com>
+Cc:     bp@alien8.de, hpa@zytor.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, luto@kernel.org, mingo@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        viro@zeniv.linux.org.uk, x86@kernel.org
+Subject: Re: BUG: sleeping function called from invalid context in
+ do_user_addr_fault
+Message-ID: <20200707202404.GA3426938@gmail.com>
+References: <0000000000002c6fbf05a8954afe@google.com>
+ <0000000000006dbe1005a9dfaa7c@google.com>
 MIME-Version: 1.0
-References: <20200707174801.4162712-1-hch@lst.de>
-In-Reply-To: <20200707174801.4162712-1-hch@lst.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 7 Jul 2020 13:24:01 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wib3BP9AoFzhR_Z0oPRwx7vkcS=zsDuUmx0FbCrtia7CA@mail.gmail.com>
-Message-ID: <CAHk-=wib3BP9AoFzhR_Z0oPRwx7vkcS=zsDuUmx0FbCrtia7CA@mail.gmail.com>
-Subject: Re: stop using ->read and ->write for kernel access v3
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000006dbe1005a9dfaa7c@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 7, 2020 at 10:48 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> Hi Al and Linus (and Stephen, see below),
->
-> as part of removing set_fs entirely (for which I have a working
-> prototype), we need to stop calling ->read and ->write with kernel
-> pointers under set_fs.
+On Tue, Jul 07, 2020 at 01:16:25PM -0700, syzbot wrote:
+> syzbot has found a reproducer for the following crash on:
+> 
+> HEAD commit:    7cc2a8ea Merge tag 'block-5.8-2020-07-01' of git://git.ker..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14ed01a3100000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=183dd243398ba7ec
+> dashboard link: https://syzkaller.appspot.com/bug?extid=7748c5375dc20dfdb92f
+> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1469d28f100000
+> 
 
-I'd be willing to pick up patches 1-6 as trivial and obvious cleanups
-right now, if you sent those to me as a pull request. That would at
-least focus the remaining series a bit on the actual changes..
-
-           Linus
+The reproducer uses ioctl$FBIOPUT_VSCREENINFO on /dev/fb0, which is generating
+lots of other syzbot reports.  This is probably another duplicate.
+See https://lkml.kernel.org/lkml/000000000000ff323f05a053100c@google.com/T/#u
+for some previous discussion.
