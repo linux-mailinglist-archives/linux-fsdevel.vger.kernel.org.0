@@ -2,147 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C40B217B10
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 00:38:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07D97217B76
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 01:05:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729349AbgGGWiA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 18:38:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43832 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729345AbgGGWiA (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 18:38:00 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2346C08C5E1
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jul 2020 15:37:59 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id x8so16434249plm.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jul 2020 15:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ujEygxc3d5j3mD7Fz8DXKzp+VHqFRmCSAyV6TACKRqY=;
-        b=k5O7SoEuB4v6eAKTQCGR+WdOKA3x9uxJYb+gAPfh3XvulB0NUO8KAQitfuJa9ojiSH
-         hxKVrpKXGznJXSNUg9l/jd5QyFaTM+4Eb3lSE69M4/KL2f9OFW1/Ms8Fw7c5Z7VudOMo
-         tCLp+SrSLpUSbbAMy+WG/OHB+odh5rndXsxAiBUnwSaS34Ahhg0rVR+db6V3tTCIu1NN
-         eDfPa05dmlFdw9/Mb/JNujhTLFEzBBdOagseogP3GiACZ4+xPX0M877Cm544V+awZNDO
-         BpbhGyU+kbXhZowakppxW8sAXBwZssx2nSOq1RHiXZjqDiktcfi8tcZpEBVn+DPU4bVv
-         mENw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ujEygxc3d5j3mD7Fz8DXKzp+VHqFRmCSAyV6TACKRqY=;
-        b=q7pnqJVQxjCJajCRJ923ZNim7kMkZxnkZxZPOBIMvcNfLT0ITvoHOH1KH+kLTst1EC
-         cJAQr3VTFftD/xGSuLItGGjXsiRzwiErN3gXI5QYDc0EEt8S9AMjwHCNp/HUeBgHOIXc
-         lA+9q0XF9YNgopb1L9BGhAYye80t7ar/fSlmQVlY0+2kaPBFI5xDojd77CiaaehvG+jh
-         S2WKevSzu19ppbR+6f7crMaQFga5F43GF3uIBfcW+PkrURs9dm2jtGEhw3y25QkgHDB1
-         QRKjs4g4VG75EGe6bgLiPIH3GVenFEUIImd6DH74WS/jtExSnOeUfhIW+XGs18hEpMZE
-         qcZQ==
-X-Gm-Message-State: AOAM533qKDfkglvsYDjVAhdL8rZtrCSUUYlekctu4vXsx84KQDi5DUqv
-        4OFTZj4YJ3c9FHFj0xicWnKc8A==
-X-Google-Smtp-Source: ABdhPJynwm1vS5HIwknN1B1A+r1QOKKGTnZqhLY/x2Zvdjf5NrFMJCsGKME8x1h9+LkeExWE4OO7ig==
-X-Received: by 2002:a17:90a:9f4a:: with SMTP id q10mr6612744pjv.139.1594161479264;
-        Tue, 07 Jul 2020 15:37:59 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id e6sm15496691pfh.176.2020.07.07.15.37.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jul 2020 15:37:58 -0700 (PDT)
-Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, hch@infradead.org, Damien.LeMoal@wdc.com,
-        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-        mb@lightnvm.io, linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Selvakumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-References: <fe0066b7-5380-43ee-20b2-c9b17ba18e4f@kernel.dk>
- <20200705210947.GW25523@casper.infradead.org>
- <239ee322-9c38-c838-a5b2-216787ad2197@kernel.dk>
- <20200706141002.GZ25523@casper.infradead.org>
- <4a9bf73e-f3ee-4f06-7fad-b8f8861b0bc1@kernel.dk>
- <20200706143208.GA25523@casper.infradead.org>
- <20200707151105.GA23395@test-zns>
- <20200707155237.GM25523@casper.infradead.org>
- <20200707202342.GA28364@test-zns>
- <7a44d9c6-bf7d-0666-fc29-32c3cba9d1d8@kernel.dk>
- <20200707221812.GN25523@casper.infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <145cc0ad-af86-2d6a-78b3-9ade007aae52@kernel.dk>
-Date:   Tue, 7 Jul 2020 16:37:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1728618AbgGGXDL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 19:03:11 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:48895 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728001AbgGGXDK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 19:03:10 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4B1dJW0qcDz9s1x;
+        Wed,  8 Jul 2020 09:03:07 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1594162988;
+        bh=ZyI/3429U87XB0Dgnc42vomRNERSgupm2+gTzZsuAM0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=lZzBB8vQfCvQhg6iR19YFVBr5s4z9Jx0lwNYpjDAyp2LFivTrFJ7NBNT8Xk6eNR1S
+         i6GhNs8QfympzmpRcxhiZfHnDlXsPbaWUfA+V7wdOqUe5sChRdCNlgNTzYL9CdpKw6
+         jOPFUYHEMon1dCdLgp9iSX6vZqO9LAMc+/Eff1EYi2cr3dtU6oh2lxkcsYdlLpEWEL
+         LcLc3Dd4pmjkNyQoRsfPef8093qrYHwbgeLDI3LnAR6My+VmEFJqc2iQdalur3Y3Al
+         VcKXv2yHtwSTq/Ag9BhAl7x67pFO4gqX8UdFHUYV2ILzna5XlUF+LT3EctnoP15GNa
+         1vCtxO30SvOkg==
+Date:   Wed, 8 Jul 2020 09:03:06 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: stop using ->read and ->write for kernel access v3
+Message-ID: <20200708090306.2209802a@canb.auug.org.au>
+In-Reply-To: <20200707174801.4162712-1-hch@lst.de>
+References: <20200707174801.4162712-1-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20200707221812.GN25523@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/zQt_i5i/0wX+K.IyNJL8Y3s";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/7/20 4:18 PM, Matthew Wilcox wrote:
-> On Tue, Jul 07, 2020 at 02:40:06PM -0600, Jens Axboe wrote:
->>>> so we have another 24 bytes before io_kiocb takes up another cacheline.
->>>> If that's a serious problem, I have an idea about how to shrink struct
->>>> kiocb by 8 bytes so struct io_rw would have space to store another
->>>> pointer.
->>> Yes, io_kiocb has room. Cache-locality wise whether that is fine or
->>> it must be placed within io_rw - I'll come to know once I get to
->>> implement this. Please share the idea you have, it can come handy.
->>
->> Except it doesn't, I'm not interested in adding per-request type fields
->> to the generic part of it. Before we know it, we'll blow past the next
->> cacheline.
->>
->> If we can find space in the kiocb, that'd be much better. Note that once
->> the async buffered bits go in for 5.9, then there's no longer a 4-byte
->> hole in struct kiocb.
-> 
-> Well, poot, I was planning on using that.  OK, how about this:
+--Sig_/zQt_i5i/0wX+K.IyNJL8Y3s
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Figured you might have had your sights set on that one, which is why I
-wanted to bring it up upfront :-)
+Hi Christoph,
 
-> +#define IOCB_NO_CMPL		(15 << 28)
-> 
->  struct kiocb {
-> [...]
-> -	void (*ki_complete)(struct kiocb *iocb, long ret, long ret2);
-> +	loff_t __user *ki_uposp;
-> -	int			ki_flags;
-> +	unsigned int		ki_flags;
-> 
-> +typedef void ki_cmpl(struct kiocb *, long ret, long ret2);
-> +static ki_cmpl * const ki_cmpls[15];
-> 
-> +void ki_complete(struct kiocb *iocb, long ret, long ret2)
-> +{
-> +	unsigned int id = iocb->ki_flags >> 28;
-> +
-> +	if (id < 15)
-> +		ki_cmpls[id](iocb, ret, ret2);
-> +}
-> 
-> +int kiocb_cmpl_register(void (*cb)(struct kiocb *, long, long))
-> +{
-> +	for (i = 0; i < 15; i++) {
-> +		if (ki_cmpls[id])
-> +			continue;
-> +		ki_cmpls[id] = cb;
-> +		return id;
-> +	}
-> +	WARN();
-> +	return -1;
-> +}
+On Tue,  7 Jul 2020 19:47:38 +0200 Christoph Hellwig <hch@lst.de> wrote:
+>
+> A git branch is available here:
+>=20
+>     git://git.infradead.org/users/hch/misc.git set_fs-rw
+>=20
+> Gitweb:
+>=20
+>     http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/set_f=
+s-rw
+>=20
+> Given that this has been out and cooking for a while, is there a chance to
+> add the above as a temp branch to linux-next to get a little more exposure
+> until Al reviews it and (hopefully) picks it up?
 
-That could work, we don't really have a lot of different completion
-types in the kernel.
+No worries, I will add it in later today and drop it after Al grabs it.
 
--- 
-Jens Axboe
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_/zQt_i5i/0wX+K.IyNJL8Y3s
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8E/yoACgkQAVBC80lX
+0GwGjwf+Mat7xlpqLTM/Bvrnt5C85aBmgIUU1wqEjpLFAEI6mEMGIsy+jcN3CirD
+5aGD65LRyq51fE75O+4BNUzKh4arvhTLst+ydJuN3yzIVU5dUv63GwFsyHGnOTB9
+U/h+B/7rXOGtTgxmLBoDswY8cay68JLP+YKoPgrJaLduR49ZICvx1kx6LNIWPfRc
+sphTE0ktVkM4849BkoYYmeDjypr+ig+jugHgna4N2RVZYjgbKY7SDubk6gROXi4s
+7T8BIeO6KFCYltv4joyECkFI20pKdDymemPlnTPRtlXvyRVqh1/pHX/iVSx1eG5Y
+M4n1BWkJ7XWUI6x8yppyykJRHSsfZA==
+=I7ho
+-----END PGP SIGNATURE-----
+
+--Sig_/zQt_i5i/0wX+K.IyNJL8Y3s--
