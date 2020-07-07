@@ -2,91 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45CC32176EC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 20:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CF4A2177EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 21:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbgGGSjc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 14:39:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35138 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728191AbgGGSjb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 14:39:31 -0400
-Received: from mail-il1-x132.google.com (mail-il1-x132.google.com [IPv6:2607:f8b0:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42CE5C061755
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jul 2020 11:39:31 -0700 (PDT)
-Received: by mail-il1-x132.google.com with SMTP id e18so26174852ilr.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jul 2020 11:39:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5xeeSJNl89hdKNZc1p2IwCwGKPk4JGxYiYMtbRQmKxI=;
-        b=HR0L6o45VkMPdZEhOiGtgwb0XyoPs1smLQhWsbJoJFM3270Dny+fsvO465OMms0KLl
-         cQkrkK2q6o6bnFjMkNwLcvhlO0Hm0ylhjSyQG8eGo44G83CAvKjF5PxmQS2HnI75yPPq
-         weVjhbIk7cUu7LM7sH5fIMJPy1/GVyMt+EuIKx3EMB7/VNGeOddk4itL0OYuHjzAWBfn
-         zHgXKV6M0ChVIhJB6K8gAqOjuxPxFa1TJfs4kpUDiYgPnhWdWLZyXIYGe6TjiWpJz2XB
-         OhcIYCsc2GYpQD/2zTI8sOCbvSuzPMgBmqPKyQ9MwYBdB2EPrMzpPitk++G4wT9utrVB
-         cnyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5xeeSJNl89hdKNZc1p2IwCwGKPk4JGxYiYMtbRQmKxI=;
-        b=Fbltm3NU/mCqkAv+myBXLAOVHbGwPMJmhxV24O1zcZ/ik7UqEdVmSTVxazUXspc1uf
-         tZLt7U+rAUc7eBd5yAsDs77JqbHHExa74HcPHV7tUbgv+w8JhMi9iNXH4/qiqc3OLRzg
-         FFDopy0NAXMml6xVUxX91Fth9LzI7CCFYC/ki5A4+0N/fQjxKmIH9gb/yH5/xC0RJS7H
-         147yKfIny3C9aFHMuscWwRmAhvenmB5sARKET00mD0cKqb19wv2R+Q5bu4dDyHc3IFar
-         q3g0qeZIVA19SB9u10pdz6fdVumBvMQMN/EqH02tSTUmdfoaFjvHe+zerYhuGCzIC6By
-         zy8w==
-X-Gm-Message-State: AOAM531LDEiBBRUtt4E1q9jC8XokZykYNXidM73yVaZIfh+WHS2CbfgZ
-        j8F0ZaWLVz3gXfSMqRBVNKrTM0ODHO0Vpg==
-X-Google-Smtp-Source: ABdhPJzXMYDY68ecmhBSVS35kxyxucMZrFavc7ZlIavGwuXlLW9FHoAZuz7G2RqaKLRDUCHGnuud7w==
-X-Received: by 2002:a92:cd01:: with SMTP id z1mr37863825iln.103.1594147170503;
-        Tue, 07 Jul 2020 11:39:30 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id w5sm13211479ilm.46.2020.07.07.11.39.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jul 2020 11:39:29 -0700 (PDT)
-Subject: Re: [RFC v3 1/2] fs: Add IOCB_NOIO flag for generic_file_read_iter
-To:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20200707144457.1603400-1-agruenba@redhat.com>
- <20200707144457.1603400-2-agruenba@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e49c5a2b-866f-14ae-9665-284726815bbd@kernel.dk>
-Date:   Tue, 7 Jul 2020 12:39:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <20200707144457.1603400-2-agruenba@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1728562AbgGGT0N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 15:26:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728100AbgGGT0N (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 15:26:13 -0400
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66EB4206BE;
+        Tue,  7 Jul 2020 19:26:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594149972;
+        bh=uxcMM/Sf9inJLIkj1U8e0LfZX/0p8ULXiZ2yN0bNMnc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OZ9oxJPKMjuAxAmKeMAMKFymbhEyjmXIECfqDtlfmvgSF4TgxNY9YLFoNZb2hIrPd
+         gSeBgN0IW5+L1EdPdkdCwjTulvRa1gyxwU0fX8CJRmFSwYpz0k85UyPielx4nyddEa
+         CWRf3xdhMMl7uifSsvzoml6r7C6cp901pUmd8EQY=
+Date:   Tue, 7 Jul 2020 12:26:12 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, Qiujun Huang <hqjagain@gmail.com>,
+        stable@vger.kernel.org,
+        syzbot+4a88b2b9dc280f47baf4@syzkaller.appspotmail.com
+Subject: Re: [PATCH 1/6] fs/minix: check return value of sb_getblk()
+Message-Id: <20200707122612.249699c3f136968dd6782452@linux-foundation.org>
+In-Reply-To: <20200628060846.682158-2-ebiggers@kernel.org>
+References: <20200628060846.682158-1-ebiggers@kernel.org>
+        <20200628060846.682158-2-ebiggers@kernel.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/7/20 8:44 AM, Andreas Gruenbacher wrote:
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 3f881a892ea7..1ab2ea19e883 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -315,6 +315,7 @@ enum rw_hint {
->  #define IOCB_SYNC		(1 << 5)
->  #define IOCB_WRITE		(1 << 6)
->  #define IOCB_NOWAIT		(1 << 7)
-> +#define IOCB_NOIO		(1 << 8)
+On Sat, 27 Jun 2020 23:08:40 -0700 Eric Biggers <ebiggers@kernel.org> wrote:
 
-Just to make this even more trivial in terms of merge conflicts, could
-you do 1 << 9 instead?
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> sb_getblk() can fail, so check its return value.
+> 
+> This fixes a NULL pointer dereference.
+> 
+> Reported-by: syzbot+4a88b2b9dc280f47baf4@syzkaller.appspotmail.com
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: stable@vger.kernel.org
+> Originally-from: Qiujun Huang <anenbupt@gmail.com>
 
--- 
-Jens Axboe
+Originally-from: isn't really a thing.  Did the original come with a
+signed-off-by:?
 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+>
+> ...
+>
