@@ -2,210 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CA1C216FFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 17:15:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E60F62171B3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 17:43:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbgGGPOJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 11:14:09 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:33700 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbgGGPOI (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 11:14:08 -0400
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200707151405epoutp02f7520a0d78f2c08fcb16597dcd409d6e~fgTI6XCFI0536905369epoutp02F
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jul 2020 15:14:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200707151405epoutp02f7520a0d78f2c08fcb16597dcd409d6e~fgTI6XCFI0536905369epoutp02F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1594134845;
-        bh=CozfpjjODVO0B3Tmqb6GxjDGwaIqxT2A79vtpOE55/4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=jtWK5HdkkyW9uGNJ3MBDrFI5hlpbUDZBwtVyjGzOI2H+zJDvTVW/WF3dJMOaHx2pL
-         4zWstYRXxXZiTIVfJxgLvjndKPZJ/p9+1w60MXcs3AjH7To3S1Hg/cDyxp78iZ3Tjb
-         p47uafSQx/+uHxhpol70WsnkL+e6+j/A/erb2IAE=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20200707151404epcas5p35d9d0727ce1c34139f01b8e11465a6a2~fgTHj3vfQ0715007150epcas5p3o;
-        Tue,  7 Jul 2020 15:14:04 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0E.5D.09475.C31940F5; Wed,  8 Jul 2020 00:14:04 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200707151403epcas5p40471fc85d71d08bc1faeb148b5c629ee~fgTGvfoIU1143811438epcas5p4P;
-        Tue,  7 Jul 2020 15:14:03 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200707151403epsmtrp121320ea4b0f7c6303b75d6efd0535ba9~fgTGujOCo1286512865epsmtrp1r;
-        Tue,  7 Jul 2020 15:14:03 +0000 (GMT)
-X-AuditID: b6c32a4b-389ff70000002503-d4-5f04913c13fb
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E4.3E.08303.B31940F5; Wed,  8 Jul 2020 00:14:03 +0900 (KST)
-Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200707151401epsmtip229d304e31cbfa2693021b85ecacabd6f~fgTEi7yBT3255432554epsmtip2c;
-        Tue,  7 Jul 2020 15:14:01 +0000 (GMT)
-Date:   Tue, 7 Jul 2020 20:41:05 +0530
-From:   Kanchan Joshi <joshi.k@samsung.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, hch@infradead.org, Damien.LeMoal@wdc.com,
-        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-        mb@lightnvm.io, linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Selvakumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
-Message-ID: <20200707151105.GA23395@test-zns>
+        id S1729625AbgGGPYP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 11:24:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37374 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730047AbgGGPYO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 11:24:14 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 245C3AC24;
+        Tue,  7 Jul 2020 15:24:12 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 730F01E12BC; Tue,  7 Jul 2020 17:24:11 +0200 (CEST)
+Date:   Tue, 7 Jul 2020 17:24:11 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     syzbot <syzbot+dec34b033b3479b9ef13@syzkaller.appspotmail.com>
+Cc:     amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: memory leak in inotify_update_watch
+Message-ID: <20200707152411.GD25069@quack2.suse.cz>
+References: <000000000000a47ace05a9c7b825@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20200706143208.GA25523@casper.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAKsWRmVeSWpSXmKPExsWy7bCmhq7NRJZ4g+nX+C3mrNrGaLH6bj+b
-        Rde/LSwWre3fmCxOT1jEZPGu9RyLxeM7n9ktpkxrYrTYe0vbYs/ekywWl3fNYbNYsf0Ii8W2
-        3/OZLV7/OMlmcf7vcVaL3z/msDkIeOycdZfdY/MKLY/LZ0s9Nn2axO7RffUHo0ffllWMHp83
-        yXm0H+hm8tj05C1TAGcUl01Kak5mWWqRvl0CV8avD0oFJxQrvjxqZmtgfCHVxcjJISFgIvF1
-        6gamLkYuDiGB3YwSj5f9YoZwPjFKHJv8jAXC+cwocW/pfFaYlllL57JDJHYxSnxt/sII4Txj
-        lDj76jwzSBWLgIrEhDfv2LoYOTjYBDQlLkwuBTFFBDQk3mwxAilnFljJLDGj5Q0LSLmwgKPE
-        550nGUFqeAV0Jd7drAQJ8woISpyc+QSshFPASuLg405GEFtUQFniwLbjYGdLCNzhkHhyeg0z
-        xHEuEhfe9TBB2MISr45vYYewpSRe9rdB2cUSv+4cZYZo7mCUuN4wkwUiYS9xcc9fsGZmgQyJ
-        FSv/sELYfBK9v58wgRwnIcAr0dEmBFGuKHFv0lNooIhLPJyxBMr2kDjWfAFsjJDAL2aJh3e8
-        JjDKzULyzywkGyBsK4nOD01ANgeQLS2x/B8HhKkpsX6X/gJG1lWMkqkFxbnpqcWmBcZ5qeV6
-        xYm5xaV56XrJ+bmbGMGJTst7B+OjBx/0DjEycTAeYpTgYFYS4e3VZowX4k1JrKxKLcqPLyrN
-        SS0+xCjNwaIkzqv040yckEB6YklqdmpqQWoRTJaJg1OqgSm+yfiK754f5wt39vzZmRz2c5nZ
-        9Y0nHvGZGP5dYeKyRbas1OaO5MbikHRR4y0Xj/+67sbSea+muvGBbtOx/BnhCXXm3Yycvx1f
-        XvAoPt+5Mvre2cnpXk6nH95nyngbe0vUomfT9toFO+5aROtnKJ4y8op+vOFoopJWy4uEyaU8
-        nzmXK3OX9hxJ2Mdr/Cq25NI+kdKNu9eufx41Q997kY7y2YxPUZcitCI1nN3m3m+w6N5vM/HY
-        uqPTJifIBWZF/kixuLntletHk4oLnre63/4xT19cdGKGyarbfz7PzvlZYBS6cC8Pz7a3zwv3
-        asizi9QIRrnUVm5qYvn+jXmJyde1N7eqfWhjsbjFOONLNJcSS3FGoqEWc1FxIgDBCUVh4wMA
-        AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsWy7bCSvK71RJZ4gy3NkhZzVm1jtFh9t5/N
-        ouvfFhaL1vZvTBanJyxisnjXeo7F4vGdz+wWU6Y1MVrsvaVtsWfvSRaLy7vmsFms2H6ExWLb
-        7/nMFq9/nGSzOP/3OKvF7x9z2BwEPHbOusvusXmFlsfls6Uemz5NYvfovvqD0aNvyypGj8+b
-        5DzaD3QzeWx68pYpgDOKyyYlNSezLLVI3y6BK2PplcOsBb/kKn4du8HSwLhFoouRk0NCwERi
-        1tK57CC2kMAORomTF1kh4uISzdd+sEPYwhIr/z0HsrmAap4wSuzb1sEIkmARUJGY8OYdWxcj
-        BwebgKbEhcmlIKaIgIbEmy1GIOXMAmuZJc7+n8YMUi4s4CjxeedJRpAaXgFdiXc3KyFG/mKW
-        WHfvB9hIXgFBiZMzn7CA2MwCZhLzNj9kBqlnFpCWWP6PAyTMKWAlcfBxJ1i5qICyxIFtx5km
-        MArOQtI9C0n3LITuBYzMqxglUwuKc9Nziw0LjPJSy/WKE3OLS/PS9ZLzczcxgmNPS2sH455V
-        H/QOMTJxMB5ilOBgVhLh7dVmjBfiTUmsrEotyo8vKs1JLT7EKM3BoiTO+3XWwjghgfTEktTs
-        1NSC1CKYLBMHp1QD0yKdR8wfrNdKZ37daCfd/86+QTa5tzZs8+e250FRvjm1SdPcj22QuSNy
-        fMtzFoUurvVn++Z37vfbeerCS8HQc79f36gI7HaMeMOmU7z19yGF7zUhwam/knf/vhN7JEEk
-        KvkiQ8JE5W1sZ+dOnngz2mV6wooE3pMluWYFqr3s8rtlFswJbQpqOCsnMjE06MP9ifkxXRfn
-        +ddUTOfc6ZLxVvbAEpNl8wXXFC3Pi+c05nPcU2Xll2bley+3Wm3B0W+7fj5acn3dFbWHPs+W
-        70moOX6iMq139onn61+y/yv5l3wvyypxa8jqg7MLXvN9mXbZ8fSpP/yTPOKVVHxe7CiO5tpo
-        1pMg3+TDsmyxwM3jz5VYijMSDbWYi4oTAf1AtowsAwAA
-X-CMS-MailID: 20200707151403epcas5p40471fc85d71d08bc1faeb148b5c629ee
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----mE6RfbMtbYdcyZmGWslR4GSM.zWZsq_P24FjfoMtl_HTY3xR=_e3042_"
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7
-References: <1593974870-18919-1-git-send-email-joshi.k@samsung.com>
-        <CGME20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7@epcas5p1.samsung.com>
-        <1593974870-18919-5-git-send-email-joshi.k@samsung.com>
-        <fe0066b7-5380-43ee-20b2-c9b17ba18e4f@kernel.dk>
-        <20200705210947.GW25523@casper.infradead.org>
-        <239ee322-9c38-c838-a5b2-216787ad2197@kernel.dk>
-        <20200706141002.GZ25523@casper.infradead.org>
-        <4a9bf73e-f3ee-4f06-7fad-b8f8861b0bc1@kernel.dk>
-        <20200706143208.GA25523@casper.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000a47ace05a9c7b825@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------mE6RfbMtbYdcyZmGWslR4GSM.zWZsq_P24FjfoMtl_HTY3xR=_e3042_
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
+Hello!
 
-On Mon, Jul 06, 2020 at 03:32:08PM +0100, Matthew Wilcox wrote:
->On Mon, Jul 06, 2020 at 08:27:17AM -0600, Jens Axboe wrote:
->> On 7/6/20 8:10 AM, Matthew Wilcox wrote:
->> > On Sun, Jul 05, 2020 at 03:12:50PM -0600, Jens Axboe wrote:
->> >> On 7/5/20 3:09 PM, Matthew Wilcox wrote:
->> >>> On Sun, Jul 05, 2020 at 03:00:47PM -0600, Jens Axboe wrote:
->> >>>> On 7/5/20 12:47 PM, Kanchan Joshi wrote:
->> >>>>> From: Selvakumar S <selvakuma.s1@samsung.com>
->> >>>>>
->> >>>>> For zone-append, block-layer will return zone-relative offset via ret2
->> >>>>> of ki_complete interface. Make changes to collect it, and send to
->> >>>>> user-space using cqe->flags.
->> >
->> >>> I'm surprised you aren't more upset by the abuse of cqe->flags for the
->> >>> address.
+On Mon 06-07-20 08:42:24, syzbot wrote:
+> syzbot found the following crash on:
+> 
+> HEAD commit:    7cc2a8ea Merge tag 'block-5.8-2020-07-01' of git://git.ker..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17644c05100000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5ee23b9caef4e07a
+> dashboard link: https://syzkaller.appspot.com/bug?extid=dec34b033b3479b9ef13
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1478a67b100000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+dec34b033b3479b9ef13@syzkaller.appspotmail.com
+> 
+> BUG: memory leak
+> unreferenced object 0xffff888115db8480 (size 576):
+>   comm "systemd-udevd", pid 11037, jiffies 4295104591 (age 56.960s)
+>   hex dump (first 32 bytes):
+>     00 04 00 00 00 00 00 00 80 fd e8 15 81 88 ff ff  ................
+>     a0 02 dd 20 81 88 ff ff b0 81 d0 09 81 88 ff ff  ... ............
+>   backtrace:
+>     [<00000000288c0066>] radix_tree_node_alloc.constprop.0+0xc1/0x140 lib/radix-tree.c:252
+>     [<00000000f80ba6a7>] idr_get_free+0x231/0x3b0 lib/radix-tree.c:1505
+>     [<00000000ec9ab938>] idr_alloc_u32+0x91/0x120 lib/idr.c:46
+>     [<00000000aea98d29>] idr_alloc_cyclic+0x84/0x110 lib/idr.c:125
+>     [<00000000dbad44a4>] inotify_add_to_idr fs/notify/inotify/inotify_user.c:365 [inline]
+>     [<00000000dbad44a4>] inotify_new_watch fs/notify/inotify/inotify_user.c:578 [inline]
+>     [<00000000dbad44a4>] inotify_update_watch+0x1af/0x2d0 fs/notify/inotify/inotify_user.c:617
+>     [<00000000e141890d>] __do_sys_inotify_add_watch fs/notify/inotify/inotify_user.c:755 [inline]
+>     [<00000000e141890d>] __se_sys_inotify_add_watch fs/notify/inotify/inotify_user.c:698 [inline]
+>     [<00000000e141890d>] __x64_sys_inotify_add_watch+0x12f/0x180 fs/notify/inotify/inotify_user.c:698
+>     [<00000000d872d7cc>] do_syscall_64+0x4c/0xe0 arch/x86/entry/common.c:359
+>     [<000000005c62d8da>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Documentation (https://kernel.dk/io_uring.pdf) mentioned cqe->flags can carry
-the metadata for the operation. I wonder if this should be called abuse.
+I've been looking into this for a while and I don't think this is related
+to inotify at all. Firstly the reproducer looks totally benign:
 
->> >> Yeah, it's not great either, but we have less leeway there in terms of
->> >> how much space is available to pass back extra data.
->> >>
->> >>> What do you think to my idea of interpreting the user_data as being a
->> >>> pointer to somewhere to store the address?  Obviously other things
->> >>> can be stored after the address in the user_data.
->> >>
->> >> I don't like that at all, as all other commands just pass user_data
->> >> through. This means the application would have to treat this very
->> >> differently, and potentially not have a way to store any data for
->> >> locating the original command on the user side.
->> >
->> > I think you misunderstood me.  You seem to have thought I meant
->> > "use the user_data field to return the address" when I actually meant
->> > "interpret the user_data field as a pointer to where userspace
->> > wants the address stored".
->>
->> It's still somewhat weird to have user_data have special meaning, you're
->> now having the kernel interpret it while every other command it's just
->> an opaque that is passed through.
->>
->> But it could of course work, and the app could embed the necessary
->> u32/u64 in some other structure that's persistent across IO. If it
->> doesn't have that, then it'd need to now have one allocated and freed
->> across the lifetime of the IO.
->>
->> If we're going that route, it'd be better to define the write such that
->> you're passing in the necessary information upfront. In syscall terms,
->> then that'd be something ala:
->>
->> ssize_t my_append_write(int fd, const struct iovec *iov, int iovcnt,
->> 			off_t *offset, int flags);
->>
->> where *offset is copied out when the write completes. That removes the
->> need to abuse user_data, with just providing the storage pointer for the
->> offset upfront.
->
->That works for me!  In io_uring terms, would you like to see that done
->as adding:
->
->        union {
->                __u64   off;    /* offset into file */
->+		__u64   *offp;	/* appending writes */
->                __u64   addr2;
->        };
-But there are peformance implications of this approach?
-If I got it right, the workflow is: 
-- Application allocates 64bit of space, writes "off" into it and pass it
-  in the sqe->addr2
-- Kernel first reads sqe->addr2, reads the value to know the intended
-  write-location, and stores the address somewhere (?) to be used during
-  completion. Storing this address seems tricky as this may add one more
-  cacheline (in io_kiocb->rw)?
-- During completion cqe res/flags are written as before, but extra step
-  to copy the append-completion-result into that user-space address.
+prlimit64(0x0, 0xe, &(0x7f0000000280)={0x9, 0x8d}, 0x0)
+sched_setattr(0x0, &(0x7f00000000c0)={0x38, 0x2, 0x0, 0x0, 0x9}, 0x0)
+vmsplice(0xffffffffffffffff, 0x0, 0x0, 0x0)
+perf_event_open(0x0, 0x0, 0xffffffffffffffff, 0xffffffffffffffff, 0x0)
+clone(0x20000103, 0x0, 0xfffffffffffffffe, 0x0, 0xffffffffffffffff)
+syz_mount_image$vfat(0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0)
 
-Extra steps are due to the pointer indirection.
-And it seems application needs to be careful about managing this 64bit of
-space for a cluster of writes, especially if it wants to reuse the sqe
-before the completion.
-New one can handle 64bit result cleanly, but seems slower than current
-one.
-It will be good to have the tradeoff cleared before we take things to V4.
+So we seem to set SCHED_RR class and prio 9 to itself, the rest of syscalls
+seem to be invalid and should fail. Secondly, the kernel log shows that we
+hit OOM killer frequently and after one of these kills, many leaked objects
+(among them this radix tree node from inotify idr) are reported. I'm not
+sure if it could be the leak detector getting confused (e.g. because it got
+ENOMEM at some point) or something else... Catalin, any idea?
 
+								Honza
 
-
-------mE6RfbMtbYdcyZmGWslR4GSM.zWZsq_P24FjfoMtl_HTY3xR=_e3042_
-Content-Type: text/plain; charset="utf-8"
-
-
-------mE6RfbMtbYdcyZmGWslR4GSM.zWZsq_P24FjfoMtl_HTY3xR=_e3042_--
+> BUG: memory leak
+> unreferenced object 0xffff88811fb8c180 (size 192):
+>   comm "systemd-udevd", pid 11486, jiffies 4295108810 (age 14.770s)
+>   hex dump (first 32 bytes):
+>     08 80 00 00 06 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 89 13 1a 81 88 ff ff  ................
+>   backtrace:
+>     [<000000009fe0803b>] __d_alloc+0x2a/0x260 fs/dcache.c:1709
+>     [<000000005a828803>] d_alloc+0x21/0xb0 fs/dcache.c:1788
+>     [<00000000e0349988>] __lookup_hash+0x67/0xc0 fs/namei.c:1441
+>     [<00000000907d6c36>] filename_create+0xa5/0x1c0 fs/namei.c:3459
+>     [<0000000025ebf47f>] user_path_create fs/namei.c:3516 [inline]
+>     [<0000000025ebf47f>] do_symlinkat+0x70/0x180 fs/namei.c:3973
+>     [<00000000d872d7cc>] do_syscall_64+0x4c/0xe0 arch/x86/entry/common.c:359
+>     [<000000005c62d8da>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> BUG: memory leak
+> unreferenced object 0xffff888107962b00 (size 704):
+>   comm "systemd-udevd", pid 11486, jiffies 4295108810 (age 14.770s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 01 00 00 00 00 00 20 00 00 00 00 00  .......... .....
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<000000001bbffdf0>] shmem_alloc_inode+0x18/0x40 mm/shmem.c:3701
+>     [<000000008bdb5db7>] alloc_inode+0x27/0xf0 fs/inode.c:232
+>     [<00000000b322bd08>] new_inode_pseudo fs/inode.c:928 [inline]
+>     [<00000000b322bd08>] new_inode+0x21/0xf0 fs/inode.c:957
+>     [<0000000090aa6bc7>] shmem_get_inode+0x47/0x2b0 mm/shmem.c:2229
+>     [<00000000d46b8299>] shmem_symlink+0x6b/0x290 mm/shmem.c:3080
+>     [<00000000edfa50df>] vfs_symlink fs/namei.c:3953 [inline]
+>     [<00000000edfa50df>] vfs_symlink+0x15a/0x230 fs/namei.c:3939
+>     [<00000000a8f2bfa3>] do_symlinkat+0x14f/0x180 fs/namei.c:3980
+>     [<00000000d872d7cc>] do_syscall_64+0x4c/0xe0 arch/x86/entry/common.c:359
+>     [<000000005c62d8da>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> BUG: memory leak
+> unreferenced object 0xffff88811952fa80 (size 56):
+>   comm "systemd-udevd", pid 11486, jiffies 4295108810 (age 14.770s)
+>   hex dump (first 32 bytes):
+>     a8 2c 96 07 81 88 ff ff e0 18 b9 81 ff ff ff ff  .,..............
+>     70 2b 96 07 81 88 ff ff 98 fa 52 19 81 88 ff ff  p+........R.....
+>   backtrace:
+>     [<00000000369fbe38>] kmem_cache_zalloc include/linux/slab.h:659 [inline]
+>     [<00000000369fbe38>] lsm_inode_alloc security/security.c:588 [inline]
+>     [<00000000369fbe38>] security_inode_alloc+0x2e/0xb0 security/security.c:971
+>     [<000000005b4a8c5f>] inode_init_always+0x10c/0x200 fs/inode.c:171
+>     [<0000000022ebc8f1>] alloc_inode+0x44/0xf0 fs/inode.c:239
+>     [<00000000b322bd08>] new_inode_pseudo fs/inode.c:928 [inline]
+>     [<00000000b322bd08>] new_inode+0x21/0xf0 fs/inode.c:957
+>     [<0000000090aa6bc7>] shmem_get_inode+0x47/0x2b0 mm/shmem.c:2229
+>     [<00000000d46b8299>] shmem_symlink+0x6b/0x290 mm/shmem.c:3080
+>     [<00000000edfa50df>] vfs_symlink fs/namei.c:3953 [inline]
+>     [<00000000edfa50df>] vfs_symlink+0x15a/0x230 fs/namei.c:3939
+>     [<00000000a8f2bfa3>] do_symlinkat+0x14f/0x180 fs/namei.c:3980
+>     [<00000000d872d7cc>] do_syscall_64+0x4c/0xe0 arch/x86/entry/common.c:359
+>     [<000000005c62d8da>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> BUG: memory leak
+> unreferenced object 0xffff88811f95dcc0 (size 192):
+>   comm "systemd-udevd", pid 11488, jiffies 4295108822 (age 14.650s)
+>   hex dump (first 32 bytes):
+>     08 80 00 00 06 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 89 13 1a 81 88 ff ff  ................
+>   backtrace:
+>     [<000000009fe0803b>] __d_alloc+0x2a/0x260 fs/dcache.c:1709
+>     [<000000005a828803>] d_alloc+0x21/0xb0 fs/dcache.c:1788
+>     [<00000000e0349988>] __lookup_hash+0x67/0xc0 fs/namei.c:1441
+>     [<00000000907d6c36>] filename_create+0xa5/0x1c0 fs/namei.c:3459
+>     [<0000000025ebf47f>] user_path_create fs/namei.c:3516 [inline]
+>     [<0000000025ebf47f>] do_symlinkat+0x70/0x180 fs/namei.c:3973
+>     [<00000000d872d7cc>] do_syscall_64+0x4c/0xe0 arch/x86/entry/common.c:359
+>     [<000000005c62d8da>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
