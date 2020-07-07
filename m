@@ -2,330 +2,235 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B94B4216BF3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 13:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41FD8216B9A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 13:33:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728507AbgGGLpZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 07:45:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55104 "EHLO
+        id S1728053AbgGGLc6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 07:32:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728489AbgGGLpU (ORCPT
+        with ESMTP id S1726757AbgGGLc5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 07:45:20 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28323C08C5E0
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jul 2020 04:45:20 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id u64so32173686ybf.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jul 2020 04:45:20 -0700 (PDT)
+        Tue, 7 Jul 2020 07:32:57 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75F35C061755;
+        Tue,  7 Jul 2020 04:32:57 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id c16so42755283ioi.9;
+        Tue, 07 Jul 2020 04:32:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3s5nIcgeCVK/8qOOuqTu13U9YGTPVq58/PSMtQuprZI=;
-        b=WRXoJKTWwr4Gb+hZzYoMdLk2Q7/ioGM3tI+FlNcA+R+J8AQ1FLnBgp3rwlXYoEMjoJ
-         bOVeKakePD8LGgSDH8vIt5+A2kNgawedL13u++yVsnZtYOS4JZbsU9DwuxSiLNaO5qPO
-         CANVbUigy4SA0/gWM6G0DFkYFS/L1OZGL0fRjHr52TFJBhBQ9s32CsDJmKPqGuIW9kSD
-         oju1ksqMtQal/f7qAt6gT9C2iUj809tWLNIzqHbjE2CIYr62oK3kDI8QNped/QEY0m/5
-         KoRDW+9JsDwQRcRuSHstTkT0ideRgDhlTDIcPGFRIoryQs0HHIvE2Kup75/G1dvyeng6
-         Bnkw==
+        bh=W8ex225kaSlTw3bKIjQVMp0nQkgTYotTwezAeDJJGSM=;
+        b=V0VDkhWyiWeGyV+CN+dV54Jnb8Nt8eFvJmNyrzeALh2XaauRfX0i4VhIEJ5v9cZR54
+         TUd3dawNxnyDGld6umFTsrpEZeosRDpxdsqDQRflh7n8Ge+w5T99GP//WdJyZM5QGAL9
+         CVyROJ4mUi7d3irvAk0zNURosRTdi2f3i8EBXAIM7AsE0vBlq44rXf3B/uT+pZHvmrNz
+         UEzCmZJmEHuKSTrHZVYReka0NBH155TdG8oYl9VtY3bjvROi67EIKTraBw2f0uPd75zh
+         jGXnDXWcU9h2O9kCNJ+IuQvn+i4F9cMo1z9mkHPO3kSrt8cSkqRkA/sYJB5nxYBj470b
+         pN6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=3s5nIcgeCVK/8qOOuqTu13U9YGTPVq58/PSMtQuprZI=;
-        b=LM8pjqhgbWJeMW7ltfKxjxuOcBqiLegD0VG3xR8NOrEzIEYsWlbhiBF6yT+YvntS/9
-         wlxfVPaecvC6l1Gcajf9LhrH8yJ6Lfr2B1ny60KOLONPEgH/alvRtkSJJVEIY43DUVgR
-         hmAKTvHdNohnvEYXekkq/XU/zZYXMJjgfr/EvdeON3TUQZ2pwak4T7jhKVVvTGXvuyW7
-         VQWTSSpoAfZWCroM/fjnfF8d+pHkKRjVgh6tIt54XJ79WGlhntRRd9t5NCzjAZZWPsFJ
-         DrmNfx1b1aKjNTARNtAx3DGrojzLYraflIeb60tWM9Hxtp9D//pO4TC024/J0y89eJW1
-         u1EA==
-X-Gm-Message-State: AOAM533lFwKz3GKaTby/FTj0bILVT+jcqotpa0XE9C1nxK/pVfyStpEb
-        LlYxlbid9slPdBu5/RMa74pxY8R4rj8=
-X-Google-Smtp-Source: ABdhPJwId0/keByMgLsxhh0MM7LAMkq0XI6EPu/O6sZuWm039e27GvYG+0E78UHhWcbAYK57WjBZPvp8I/o=
-X-Received: by 2002:a25:6f02:: with SMTP id k2mr78641348ybc.481.1594122319302;
- Tue, 07 Jul 2020 04:45:19 -0700 (PDT)
-Date:   Tue,  7 Jul 2020 04:31:23 -0700
-In-Reply-To: <20200707113123.3429337-1-drosen@google.com>
-Message-Id: <20200707113123.3429337-5-drosen@google.com>
-Mime-Version: 1.0
-References: <20200707113123.3429337-1-drosen@google.com>
-X-Mailer: git-send-email 2.27.0.212.ge8ba1cc988-goog
-Subject: [PATCH v10 4/4] ext4: Use generic casefolding support
-From:   Daniel Rosenberg <drosen@google.com>
-To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Eric Biggers <ebiggers@kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W8ex225kaSlTw3bKIjQVMp0nQkgTYotTwezAeDJJGSM=;
+        b=ku1CWfn32PkPeyY50bvxbiAOFzStl56JdlffiGDZ5CEpbMo6IVxtYC+pK+tlYeLMRD
+         yLvjQGVKyd8nvvy+PrFuYiUv+c2uyrVwgjl3v87rI+E5M+Z+zh+kcC+Vx+5o0wT2Zj7G
+         3dHgHHIjiDskmKlQMsBLRsBfABrEM3MBewZlbRze5VaR2Yj8xwLmW2IxftOiLeTb9BLY
+         ibngSjBuShQtwONlhFXylA2cTL7/RfDMgA5UdqUc6W9AdR7yGRN+dUaR5NzjkfyM0+ij
+         BH1FJyMwSY8meY6+RnHxtmXFBbomCt67thSb3fi9jB6VXXttnjh2+KIgU4ab/qD7hi9w
+         24MQ==
+X-Gm-Message-State: AOAM533TJE7rx4yOj3UW2dszy2eirth7lgH+XuPWSLSdjuCirUhCpDGn
+        VeuYEg+6dy4hGPvn+7k3Vlc/3D0g9geK0yJSvSo=
+X-Google-Smtp-Source: ABdhPJzuuI6n7OsTdd7jnUI/qPbTnVF/a+HsCSK/l7Rso+5GNXncpB05vSj3V+aHPq7XbW31Ea8gnQV2CmT1CRNtnpI=
+X-Received: by 2002:a02:1784:: with SMTP id 126mr60838088jah.53.1594121576660;
+ Tue, 07 Jul 2020 04:32:56 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200618144355.17324-1-axboe@kernel.dk> <20200618144355.17324-8-axboe@kernel.dk>
+In-Reply-To: <20200618144355.17324-8-axboe@kernel.dk>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Tue, 7 Jul 2020 13:32:44 +0200
+Message-ID: <CAHpGcM+iUnrLg+2jLzUPS45+E0ne8EiNEHt81Bjqko51u--+CA@mail.gmail.com>
+Subject: Re: [PATCH 07/15] mm: add support for async page locking
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This switches ext4 over to the generic support provided in
-the previous patch.
+Jens,
 
-Since casefolded dentries behave the same in ext4 and f2fs, we decrease
-the maintenance burden by unifying them, and any optimizations will
-immediately apply to both.
+Am Do., 18. Juni 2020 um 16:47 Uhr schrieb Jens Axboe <axboe@kernel.dk>:
+> Normally waiting for a page to become unlocked, or locking the page,
+> requires waiting for IO to complete. Add support for lock_page_async()
+> and wait_on_page_locked_async(), which are callback based instead. This
+> allows a caller to get notified when a page becomes unlocked, rather
+> than wait for it.
+>
+> We add a new iocb field, ki_waitq, to pass in the necessary data for this
+> to happen. We can unionize this with ki_cookie, since that is only used
+> for polled IO. Polled IO can never co-exist with async callbacks, as it is
+> (by definition) polled completions. struct wait_page_key is made public,
+> and we define struct wait_page_async as the interface between the caller
+> and the core.
+>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  include/linux/fs.h      |  7 ++++++-
+>  include/linux/pagemap.h | 17 ++++++++++++++++
+>  mm/filemap.c            | 45 ++++++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 67 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 6c4ab4dc1cd7..6ac919b40596 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -315,6 +315,8 @@ enum rw_hint {
+>  #define IOCB_SYNC              (1 << 5)
+>  #define IOCB_WRITE             (1 << 6)
+>  #define IOCB_NOWAIT            (1 << 7)
+> +/* iocb->ki_waitq is valid */
+> +#define IOCB_WAITQ             (1 << 8)
+>
+>  struct kiocb {
+>         struct file             *ki_filp;
+> @@ -328,7 +330,10 @@ struct kiocb {
+>         int                     ki_flags;
+>         u16                     ki_hint;
+>         u16                     ki_ioprio; /* See linux/ioprio.h */
+> -       unsigned int            ki_cookie; /* for ->iopoll */
+> +       union {
+> +               unsigned int            ki_cookie; /* for ->iopoll */
+> +               struct wait_page_queue  *ki_waitq; /* for async buffered IO */
+> +       };
+>
+>         randomized_struct_fields_end
+>  };
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 2f18221bb5c8..e053e1d9a4d7 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -535,6 +535,7 @@ static inline int wake_page_match(struct wait_page_queue *wait_page,
+>
+>  extern void __lock_page(struct page *page);
+>  extern int __lock_page_killable(struct page *page);
+> +extern int __lock_page_async(struct page *page, struct wait_page_queue *wait);
+>  extern int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
+>                                 unsigned int flags);
+>  extern void unlock_page(struct page *page);
+> @@ -571,6 +572,22 @@ static inline int lock_page_killable(struct page *page)
+>         return 0;
+>  }
+>
+> +/*
+> + * lock_page_async - Lock the page, unless this would block. If the page
+> + * is already locked, then queue a callback when the page becomes unlocked.
+> + * This callback can then retry the operation.
+> + *
+> + * Returns 0 if the page is locked successfully, or -EIOCBQUEUED if the page
+> + * was already locked and the callback defined in 'wait' was queued.
+> + */
+> +static inline int lock_page_async(struct page *page,
+> +                                 struct wait_page_queue *wait)
+> +{
+> +       if (!trylock_page(page))
+> +               return __lock_page_async(page, wait);
+> +       return 0;
+> +}
+> +
+>  /*
+>   * lock_page_or_retry - Lock the page, unless this would block and the
+>   * caller indicated that it can handle a retry.
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index c3175dbd8fba..e8aaf43bee9f 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -1180,6 +1180,36 @@ int wait_on_page_bit_killable(struct page *page, int bit_nr)
+>  }
+>  EXPORT_SYMBOL(wait_on_page_bit_killable);
+>
+> +static int __wait_on_page_locked_async(struct page *page,
+> +                                      struct wait_page_queue *wait, bool set)
+> +{
+> +       struct wait_queue_head *q = page_waitqueue(page);
+> +       int ret = 0;
+> +
+> +       wait->page = page;
+> +       wait->bit_nr = PG_locked;
+> +
+> +       spin_lock_irq(&q->lock);
+> +       __add_wait_queue_entry_tail(q, &wait->wait);
+> +       SetPageWaiters(page);
+> +       if (set)
+> +               ret = !trylock_page(page);
+> +       else
+> +               ret = PageLocked(page);
+> +       /*
+> +        * If we were succesful now, we know we're still on the
+> +        * waitqueue as we're still under the lock. This means it's
+> +        * safe to remove and return success, we know the callback
+> +        * isn't going to trigger.
+> +        */
+> +       if (!ret)
+> +               __remove_wait_queue(q, &wait->wait);
+> +       else
+> +               ret = -EIOCBQUEUED;
+> +       spin_unlock_irq(&q->lock);
+> +       return ret;
+> +}
+> +
+>  /**
+>   * put_and_wait_on_page_locked - Drop a reference and wait for it to be unlocked
+>   * @page: The page to wait for.
+> @@ -1342,6 +1372,11 @@ int __lock_page_killable(struct page *__page)
+>  }
+>  EXPORT_SYMBOL_GPL(__lock_page_killable);
+>
+> +int __lock_page_async(struct page *page, struct wait_page_queue *wait)
+> +{
+> +       return __wait_on_page_locked_async(page, wait, true);
+> +}
+> +
+>  /*
+>   * Return values:
+>   * 1 - page is locked; mmap_lock is still held.
+> @@ -2131,6 +2166,11 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+>                 }
+>
+>  readpage:
+> +               if (iocb->ki_flags & IOCB_NOWAIT) {
+> +                       unlock_page(page);
+> +                       put_page(page);
+> +                       goto would_block;
+> +               }
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
----
- fs/ext4/dir.c   | 64 ++-----------------------------------------------
- fs/ext4/ext4.h  | 12 ----------
- fs/ext4/hash.c  |  2 +-
- fs/ext4/namei.c | 20 +++++++---------
- fs/ext4/super.c | 12 +++++-----
- 5 files changed, 17 insertions(+), 93 deletions(-)
+This hunk should have been part of "mm: allow read-ahead with
+IOCB_NOWAIT set" ...
 
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index 1d82336b1cd4..b437120f0b3f 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -669,68 +669,8 @@ const struct file_operations ext4_dir_operations = {
- };
- 
- #ifdef CONFIG_UNICODE
--static int ext4_d_compare(const struct dentry *dentry, unsigned int len,
--			  const char *str, const struct qstr *name)
--{
--	struct qstr qstr = {.name = str, .len = len };
--	const struct dentry *parent = READ_ONCE(dentry->d_parent);
--	const struct inode *inode = READ_ONCE(parent->d_inode);
--	char strbuf[DNAME_INLINE_LEN];
--
--	if (!inode || !IS_CASEFOLDED(inode) ||
--	    !EXT4_SB(inode->i_sb)->s_encoding) {
--		if (len != name->len)
--			return -1;
--		return memcmp(str, name->name, len);
--	}
--
--	/*
--	 * If the dentry name is stored in-line, then it may be concurrently
--	 * modified by a rename.  If this happens, the VFS will eventually retry
--	 * the lookup, so it doesn't matter what ->d_compare() returns.
--	 * However, it's unsafe to call utf8_strncasecmp() with an unstable
--	 * string.  Therefore, we have to copy the name into a temporary buffer.
--	 */
--	if (len <= DNAME_INLINE_LEN - 1) {
--		memcpy(strbuf, str, len);
--		strbuf[len] = 0;
--		qstr.name = strbuf;
--		/* prevent compiler from optimizing out the temporary buffer */
--		barrier();
--	}
--
--	return ext4_ci_compare(inode, name, &qstr, false);
--}
--
--static int ext4_d_hash(const struct dentry *dentry, struct qstr *str)
--{
--	const struct ext4_sb_info *sbi = EXT4_SB(dentry->d_sb);
--	const struct unicode_map *um = sbi->s_encoding;
--	const struct inode *inode = READ_ONCE(dentry->d_inode);
--	unsigned char *norm;
--	int len, ret = 0;
--
--	if (!inode || !IS_CASEFOLDED(inode) || !um)
--		return 0;
--
--	norm = kmalloc(PATH_MAX, GFP_ATOMIC);
--	if (!norm)
--		return -ENOMEM;
--
--	len = utf8_casefold(um, str, norm, PATH_MAX);
--	if (len < 0) {
--		if (ext4_has_strict_mode(sbi))
--			ret = -EINVAL;
--		goto out;
--	}
--	str->hash = full_name_hash(dentry, norm, len);
--out:
--	kfree(norm);
--	return ret;
--}
--
- const struct dentry_operations ext4_dentry_ops = {
--	.d_hash = ext4_d_hash,
--	.d_compare = ext4_d_compare,
-+	.d_hash = generic_ci_d_hash,
-+	.d_compare = generic_ci_d_compare,
- };
- #endif
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 42f5060f3cdf..5cd8be24a4fd 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1393,14 +1393,6 @@ struct ext4_super_block {
- 
- #define EXT4_ENC_UTF8_12_1	1
- 
--/*
-- * Flags for ext4_sb_info.s_encoding_flags.
-- */
--#define EXT4_ENC_STRICT_MODE_FL	(1 << 0)
--
--#define ext4_has_strict_mode(sbi) \
--	(sbi->s_encoding_flags & EXT4_ENC_STRICT_MODE_FL)
--
- /*
-  * fourth extended-fs super-block data in memory
-  */
-@@ -1450,10 +1442,6 @@ struct ext4_sb_info {
- 	struct kobject s_kobj;
- 	struct completion s_kobj_unregister;
- 	struct super_block *s_sb;
--#ifdef CONFIG_UNICODE
--	struct unicode_map *s_encoding;
--	__u16 s_encoding_flags;
--#endif
- 
- 	/* Journaling */
- 	struct journal_s *s_journal;
-diff --git a/fs/ext4/hash.c b/fs/ext4/hash.c
-index 3e133793a5a3..143b0073b3f4 100644
---- a/fs/ext4/hash.c
-+++ b/fs/ext4/hash.c
-@@ -275,7 +275,7 @@ int ext4fs_dirhash(const struct inode *dir, const char *name, int len,
- 		   struct dx_hash_info *hinfo)
- {
- #ifdef CONFIG_UNICODE
--	const struct unicode_map *um = EXT4_SB(dir->i_sb)->s_encoding;
-+	const struct unicode_map *um = dir->i_sb->s_encoding;
- 	int r, dlen;
- 	unsigned char *buff;
- 	struct qstr qstr = {.name = name, .len = len };
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 56738b538ddf..6ffd53e6455e 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1286,8 +1286,8 @@ static void dx_insert_block(struct dx_frame *frame, u32 hash, ext4_lblk_t block)
- int ext4_ci_compare(const struct inode *parent, const struct qstr *name,
- 		    const struct qstr *entry, bool quick)
- {
--	const struct ext4_sb_info *sbi = EXT4_SB(parent->i_sb);
--	const struct unicode_map *um = sbi->s_encoding;
-+	const struct super_block *sb = parent->i_sb;
-+	const struct unicode_map *um = sb->s_encoding;
- 	int ret;
- 
- 	if (quick)
-@@ -1299,7 +1299,7 @@ int ext4_ci_compare(const struct inode *parent, const struct qstr *name,
- 		/* Handle invalid character sequence as either an error
- 		 * or as an opaque byte sequence.
- 		 */
--		if (ext4_has_strict_mode(sbi))
-+		if (sb_has_strict_encoding(sb))
- 			return -EINVAL;
- 
- 		if (name->len != entry->len)
-@@ -1316,7 +1316,7 @@ void ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
- {
- 	int len;
- 
--	if (!IS_CASEFOLDED(dir) || !EXT4_SB(dir->i_sb)->s_encoding) {
-+	if (!IS_CASEFOLDED(dir) || !dir->i_sb->s_encoding) {
- 		cf_name->name = NULL;
- 		return;
- 	}
-@@ -1325,7 +1325,7 @@ void ext4_fname_setup_ci_filename(struct inode *dir, const struct qstr *iname,
- 	if (!cf_name->name)
- 		return;
- 
--	len = utf8_casefold(EXT4_SB(dir->i_sb)->s_encoding,
-+	len = utf8_casefold(dir->i_sb->s_encoding,
- 			    iname, cf_name->name,
- 			    EXT4_NAME_LEN);
- 	if (len <= 0) {
-@@ -1362,7 +1362,7 @@ static inline bool ext4_match(const struct inode *parent,
- #endif
- 
- #ifdef CONFIG_UNICODE
--	if (EXT4_SB(parent->i_sb)->s_encoding && IS_CASEFOLDED(parent)) {
-+	if (parent->i_sb->s_encoding && IS_CASEFOLDED(parent)) {
- 		if (fname->cf_name.name) {
- 			struct qstr cf = {.name = fname->cf_name.name,
- 					  .len = fname->cf_name.len};
-@@ -2171,9 +2171,6 @@ static int ext4_add_entry(handle_t *handle, struct dentry *dentry,
- 	struct buffer_head *bh = NULL;
- 	struct ext4_dir_entry_2 *de;
- 	struct super_block *sb;
--#ifdef CONFIG_UNICODE
--	struct ext4_sb_info *sbi;
--#endif
- 	struct ext4_filename fname;
- 	int	retval;
- 	int	dx_fallback=0;
-@@ -2190,9 +2187,8 @@ static int ext4_add_entry(handle_t *handle, struct dentry *dentry,
- 		return -EINVAL;
- 
- #ifdef CONFIG_UNICODE
--	sbi = EXT4_SB(sb);
--	if (ext4_has_strict_mode(sbi) && IS_CASEFOLDED(dir) &&
--	    sbi->s_encoding && utf8_validate(sbi->s_encoding, &dentry->d_name))
-+	if (sb_has_strict_encoding(sb) && IS_CASEFOLDED(dir) &&
-+	    sb->s_encoding && utf8_validate(sb->s_encoding, &dentry->d_name))
- 		return -EINVAL;
- #endif
- 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 330957ed1f05..d097771a374f 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1102,7 +1102,7 @@ static void ext4_put_super(struct super_block *sb)
- 	fs_put_dax(sbi->s_daxdev);
- 	fscrypt_free_dummy_context(&sbi->s_dummy_enc_ctx);
- #ifdef CONFIG_UNICODE
--	utf8_unload(sbi->s_encoding);
-+	utf8_unload(sb->s_encoding);
- #endif
- 	kfree(sbi);
- }
-@@ -4035,7 +4035,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 		goto failed_mount;
- 
- #ifdef CONFIG_UNICODE
--	if (ext4_has_feature_casefold(sb) && !sbi->s_encoding) {
-+	if (ext4_has_feature_casefold(sb) && !sb->s_encoding) {
- 		const struct ext4_sb_encodings *encoding_info;
- 		struct unicode_map *encoding;
- 		__u16 encoding_flags;
-@@ -4066,8 +4066,8 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 			 "%s-%s with flags 0x%hx", encoding_info->name,
- 			 encoding_info->version?:"\b", encoding_flags);
- 
--		sbi->s_encoding = encoding;
--		sbi->s_encoding_flags = encoding_flags;
-+		sb->s_encoding = encoding;
-+		sb->s_encoding_flags = encoding_flags;
- 	}
- #endif
- 
-@@ -4678,7 +4678,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 	}
- 
- #ifdef CONFIG_UNICODE
--	if (sbi->s_encoding)
-+	if (sb->s_encoding)
- 		sb->s_d_op = &ext4_dentry_ops;
- #endif
- 
-@@ -4873,7 +4873,7 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
- 		crypto_free_shash(sbi->s_chksum_driver);
- 
- #ifdef CONFIG_UNICODE
--	utf8_unload(sbi->s_encoding);
-+	utf8_unload(sb->s_encoding);
- #endif
- 
- #ifdef CONFIG_QUOTA
--- 
-2.27.0.212.ge8ba1cc988-goog
+>                 /*
+>                  * A previous I/O error may have been due to temporary
+>                  * failures, eg. multipath errors.
+> @@ -2150,7 +2190,10 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
+>                 }
+>
+>                 if (!PageUptodate(page)) {
+> -                       error = lock_page_killable(page);
+> +                       if (iocb->ki_flags & IOCB_WAITQ)
+> +                               error = lock_page_async(page, iocb->ki_waitq);
+> +                       else
+> +                               error = lock_page_killable(page);
+>                         if (unlikely(error))
+>                                 goto readpage_error;
+>                         if (!PageUptodate(page)) {
+> --
+> 2.27.0
+>
 
+Andreas
