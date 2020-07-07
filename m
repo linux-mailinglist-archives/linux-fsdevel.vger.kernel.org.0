@@ -2,50 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 854F92168C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 11:04:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5402A21690F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 11:31:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727064AbgGGJDy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 05:03:54 -0400
-Received: from verein.lst.de ([213.95.11.211]:57868 "EHLO verein.lst.de"
+        id S1726805AbgGGJbe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 05:31:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726478AbgGGJDy (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 05:03:54 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 3A0A168AFE; Tue,  7 Jul 2020 11:03:51 +0200 (CEST)
-Date:   Tue, 7 Jul 2020 11:03:50 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        Song Liu <song@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 09/16] initrd: remove the BLKFLSBUF call in
- handle_initrd
-Message-ID: <20200707090350.GA28510@lst.de>
-References: <20200615125323.930983-1-hch@lst.de> <20200615125323.930983-10-hch@lst.de> <514b0176-d235-f640-b278-9a7d49af356f@zytor.com>
+        id S1725825AbgGGJbd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 05:31:33 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47DBE2065F;
+        Tue,  7 Jul 2020 09:31:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594114293;
+        bh=7EJPV5cge5x3+J13JIKyNgux4EwJmANov4vu3RAeYAU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G5b57d5VluIkuQJOC73on6FYdeC3Z9X1U3EH8Y6N35tSs1ybjw+w2UaJMRNvNiI0C
+         Ztuon0HGC5mXaRIHbnMgXBEjgnZ8st6X1f0tTkpVWTVYNchlfy/EsoIrbhNasxpjrD
+         b4O5dyY2lR6K9uqQZ+lUSMciMwebhkosO8EJSxJE=
+Date:   Tue, 7 Jul 2020 11:31:31 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jessica Yu <jeyu@kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 0/4] Fix misused kernel_read_file() enums
+Message-ID: <20200707093131.GA2592640@kroah.com>
+References: <20200707081926.3688096-1-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <514b0176-d235-f640-b278-9a7d49af356f@zytor.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200707081926.3688096-1-keescook@chromium.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 02, 2020 at 08:40:31PM -0700, H. Peter Anvin wrote:
-> On 2020-06-15 05:53, Christoph Hellwig wrote:
-> > BLKFLSBUF used to be overloaded for the ramdisk driver to free the whole
-> > ramdisk, which was completely different behavior compared to all other
-> > drivers.  But this magic overload got removed in commit ff26956875c2
-> > ("brd: remove support for BLKFLSBUF"), so this call is entirely
-> > pointless now.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Tue, Jul 07, 2020 at 01:19:22AM -0700, Kees Cook wrote:
+> Hi,
 > 
-> Does *anyone* use initrd as opposed to initramfs anymore? It would seem
-> like a good candidate for deprecation/removal.
+> In looking for closely at the additions that got made to the
+> kernel_read_file() enums, I noticed that FIRMWARE_PREALLOC_BUFFER
+> and FIRMWARE_EFI_EMBEDDED were added, but they are not appropriate
+> *kinds* of files for the LSM to reason about. They are a "how" and
+> "where", respectively. Remove these improper aliases and refactor the
+> code to adapt to the changes.
+> 
+> Additionally adds in missing calls to security_kernel_post_read_file()
+> in the platform firmware fallback path (to match the sysfs firmware
+> fallback path) and in module loading. I considered entirely removing
+> security_kernel_post_read_file() hook since it is technically unused,
+> but IMA probably wants to be able to measure EFI-stored firmware images,
+> so I wired it up and matched it for modules, in case anyone wants to
+> move the module signature checks out of the module core and into an LSM
+> to avoid the current layering violations.
+> 
+> This touches several trees, and I suspect it would be best to go through
+> James's LSM tree.
+> 
+> Thanks!
+> 
+> -Kees
+> 
+> Kees Cook (4):
+>   firmware_loader: EFI firmware loader must handle pre-allocated buffer
+>   fs: Remove FIRMWARE_PREALLOC_BUFFER from kernel_read_file() enums
+>   fs: Remove FIRMWARE_EFI_EMBEDDED from kernel_read_file() enums
+>   module: Add hook for security_kernel_post_read_file()
 
-I thought about that as well.  I think deprecating it at least is a good
-idea and can add a patch doing that to the next version.
+Looks good to me, thanks for fixing this up:
+
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
