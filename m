@@ -2,335 +2,338 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D643221638E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 03:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96CFE216424
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 04:50:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbgGGBxr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jul 2020 21:53:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbgGGBxq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jul 2020 21:53:46 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727102AbgGGCuj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jul 2020 22:50:39 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:46161 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727064AbgGGCuj (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 6 Jul 2020 22:50:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594090236;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=yxXlYWxcxG8pWngZ/9z2Sr6gsZr9wcEP+Rkwxu1y7t0=;
+        b=JboM26mzhnu8VDRcLJBO2gf6hdaZ4fpoadmlmULj3pafuuPnWPpqPLVlC1fUEqidSWcDdh
+        3Pz5MqW0yWmY0v9eusdsP8R0+o1u43qMWH9KOrGNRDHSbTfZVLnVeq1xI5sNe1WPYO6SOi
+        maczH3UfOFrQ50iwif7PaaTpJufBKDU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-347-acDzPFKRNsexecKoQ3XNBQ-1; Mon, 06 Jul 2020 22:50:32 -0400
+X-MC-Unique: acDzPFKRNsexecKoQ3XNBQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 601B5206F6;
-        Tue,  7 Jul 2020 01:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594086825;
-        bh=xQDGILTrk2pGVb6dD+mGVNxeZIiWqSgTDmXZq+hawlw=;
-        h=Date:From:To:Subject:In-Reply-To:From;
-        b=cQK1FTvMmOINIKyHX7cCZgB7fvwxe0nt2RKcnlt1d/6FYaCmvMxQ8jot6D2ACkkcQ
-         KMawh4dYsko1lREuUFW2V/8U9E0ch9bSxQO+dYDPZzPPbH2SVOgWTVxr5/T2PhKbpL
-         ylwoHfmsRkv7swIiS2jZo2p60uPJjfQOz2VjsslY=
-Date:   Mon, 06 Jul 2020 18:53:44 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2020-07-06-18-53 uploaded
-Message-ID: <20200707015344.U9ep-OO5Z%akpm@linux-foundation.org>
-In-Reply-To: <20200703151445.b6a0cfee402c7c5c4651f1b1@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 13587EC1A0;
+        Tue,  7 Jul 2020 02:50:30 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.10.110.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F40B32B6D6;
+        Tue,  7 Jul 2020 02:50:16 +0000 (UTC)
+Date:   Mon, 6 Jul 2020 22:50:14 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 V9 01/13] audit: collect audit task parameters
+Message-ID: <20200707025014.x33eyxbankw2fbww@madcap2.tricolour.ca>
+References: <cover.1593198710.git.rgb@redhat.com>
+ <6abeb26e64489fc29b00c86b60b501c8b7316424.1593198710.git.rgb@redhat.com>
+ <CAHC9VhTx=4879F1MSXg4=Xd1i5rhEtyam6CakQhy=_ZjGtTaMA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTx=4879F1MSXg4=Xd1i5rhEtyam6CakQhy=_ZjGtTaMA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2020-07-06-18-53 has been uploaded to
+On 2020-07-05 11:09, Paul Moore wrote:
+> On Sat, Jun 27, 2020 at 9:21 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> >
+> > The audit-related parameters in struct task_struct should ideally be
+> > collected together and accessed through a standard audit API.
+> >
+> > Collect the existing loginuid, sessionid and audit_context together in a
+> > new struct audit_task_info called "audit" in struct task_struct.
+> >
+> > Use kmem_cache to manage this pool of memory.
+> > Un-inline audit_free() to be able to always recover that memory.
+> >
+> > Please see the upstream github issue
+> > https://github.com/linux-audit/audit-kernel/issues/81
+> >
+> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > Acked-by: Neil Horman <nhorman@tuxdriver.com>
+> > Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > ---
+> >  include/linux/audit.h | 49 +++++++++++++++++++++++------------
+> >  include/linux/sched.h |  7 +----
+> >  init/init_task.c      |  3 +--
+> >  init/main.c           |  2 ++
+> >  kernel/audit.c        | 71 +++++++++++++++++++++++++++++++++++++++++++++++++--
+> >  kernel/audit.h        |  5 ++++
+> >  kernel/auditsc.c      | 26 ++++++++++---------
+> >  kernel/fork.c         |  1 -
+> >  8 files changed, 124 insertions(+), 40 deletions(-)
+> >
+> > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > index 3fcd9ee49734..c2150415f9df 100644
+> > --- a/include/linux/audit.h
+> > +++ b/include/linux/audit.h
+> > @@ -100,6 +100,16 @@ enum audit_nfcfgop {
+> >         AUDIT_XT_OP_UNREGISTER,
+> >  };
+> >
+> > +struct audit_task_info {
+> > +       kuid_t                  loginuid;
+> > +       unsigned int            sessionid;
+> > +#ifdef CONFIG_AUDITSYSCALL
+> > +       struct audit_context    *ctx;
+> > +#endif
+> > +};
+> > +
+> > +extern struct audit_task_info init_struct_audit;
+> > +
+> >  extern int is_audit_feature_set(int which);
+> >
+> >  extern int __init audit_register_class(int class, unsigned *list);
+> 
+> ...
+> 
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index b62e6aaf28f0..2213ac670386 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -34,7 +34,6 @@
+> >  #include <linux/kcsan.h>
+> >
+> >  /* task_struct member predeclarations (sorted alphabetically): */
+> > -struct audit_context;
+> >  struct backing_dev_info;
+> >  struct bio_list;
+> >  struct blk_plug;
+> > @@ -946,11 +945,7 @@ struct task_struct {
+> >         struct callback_head            *task_works;
+> >
+> >  #ifdef CONFIG_AUDIT
+> > -#ifdef CONFIG_AUDITSYSCALL
+> > -       struct audit_context            *audit_context;
+> > -#endif
+> > -       kuid_t                          loginuid;
+> > -       unsigned int                    sessionid;
+> > +       struct audit_task_info          *audit;
+> >  #endif
+> >         struct seccomp                  seccomp;
+> 
+> In the early days of this patchset we talked a lot about how to handle
+> the task_struct and the changes that would be necessary, ultimately
+> deciding that encapsulating all of the audit fields into an
+> audit_task_info struct.  However, what is puzzling me a bit at this
+> moment is why we are only including audit_task_info in task_info by
+> reference *and* making it a build time conditional (via CONFIG_AUDIT).
+> 
+> If audit is enabled at build time it would seem that we are always
+> going to allocate an audit_task_info struct, so I have to wonder why
+> we don't simply embed it inside the task_info struct (similar to the
+> seccomp struct in the snippet above?  Of course the audit_context
+> struct needs to remain as is, I'm talking only about the
+> task_info/audit_task_info struct.
 
-   http://www.ozlabs.org/~akpm/mmotm/
+I agree that including the audit_task_info struct in the struct
+task_struct would have been preferred to simplify allocation and free,
+but the reason it was included by reference instead was to make the
+task_struct size independent of audit so that future changes would not
+cause as many kABI challenges.  This first change will cause kABI
+challenges regardless, but it was future ones that we were trying to
+ease.
 
-mmotm-readme.txt says
+Does that match with your recollection?
 
-README for mm-of-the-moment:
+> Richard, I'm sure you can answer this off the top of your head, but
+> I'd have to go digging through the archives to pull out the relevant
+> discussions so I figured I would just ask you for a reminder ... ?  I
+> imagine it's also possible things have changed a bit since those early
+> discussions and the solution we arrived at then no longer makes as
+> much sense as it did before.
 
-http://www.ozlabs.org/~akpm/mmotm/
+Agreed, it doesn't make as much sense now as it did when proposed, but
+will make more sense in the future depending on when this change gets
+accepted upstream.  This is why I wanted this patch to go through as
+part of ghak81 at the time the rest of it did so that future kABI issues
+would be easier to handle, but that ship has long sailed.  I didn't make
+that argument then and I regret it now that I realize and recall some of
+the thinking behind the change.  Your reasons at the time were that
+contid was the only user of that change but there have been some
+CONFIG_AUDIT and CONFIG_AUDITSYSCALL changes since that were related.
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+> > diff --git a/init/init_task.c b/init/init_task.c
+> > index 15089d15010a..92d34c4b7702 100644
+> > --- a/init/init_task.c
+> > +++ b/init/init_task.c
+> > @@ -130,8 +130,7 @@ struct task_struct init_task
+> >         .thread_group   = LIST_HEAD_INIT(init_task.thread_group),
+> >         .thread_node    = LIST_HEAD_INIT(init_signals.thread_head),
+> >  #ifdef CONFIG_AUDIT
+> > -       .loginuid       = INVALID_UID,
+> > -       .sessionid      = AUDIT_SID_UNSET,
+> > +       .audit          = &init_struct_audit,
+> >  #endif
+> >  #ifdef CONFIG_PERF_EVENTS
+> >         .perf_event_mutex = __MUTEX_INITIALIZER(init_task.perf_event_mutex),
+> > diff --git a/init/main.c b/init/main.c
+> > index 0ead83e86b5a..349470ad7458 100644
+> > --- a/init/main.c
+> > +++ b/init/main.c
+> > @@ -96,6 +96,7 @@
+> >  #include <linux/jump_label.h>
+> >  #include <linux/mem_encrypt.h>
+> >  #include <linux/kcsan.h>
+> > +#include <linux/audit.h>
+> >
+> >  #include <asm/io.h>
+> >  #include <asm/bugs.h>
+> > @@ -1028,6 +1029,7 @@ asmlinkage __visible void __init start_kernel(void)
+> >         nsfs_init();
+> >         cpuset_init();
+> >         cgroup_init();
+> > +       audit_task_init();
+> >         taskstats_init_early();
+> >         delayacct_init();
+> >
+> > diff --git a/kernel/audit.c b/kernel/audit.c
+> > index 8c201f414226..5d8147a29291 100644
+> > --- a/kernel/audit.c
+> > +++ b/kernel/audit.c
+> > @@ -203,6 +203,73 @@ struct audit_reply {
+> >         struct sk_buff *skb;
+> >  };
+> >
+> > +static struct kmem_cache *audit_task_cache;
+> > +
+> > +void __init audit_task_init(void)
+> > +{
+> > +       audit_task_cache = kmem_cache_create("audit_task",
+> > +                                            sizeof(struct audit_task_info),
+> > +                                            0, SLAB_PANIC, NULL);
+> > +}
+> > +
+> > +/**
+> > + * audit_alloc - allocate an audit info block for a task
+> > + * @tsk: task
+> > + *
+> > + * Call audit_alloc_syscall to filter on the task information and
+> > + * allocate a per-task audit context if necessary.  This is called from
+> > + * copy_process, so no lock is needed.
+> > + */
+> > +int audit_alloc(struct task_struct *tsk)
+> > +{
+> > +       int ret = 0;
+> > +       struct audit_task_info *info;
+> > +
+> > +       info = kmem_cache_alloc(audit_task_cache, GFP_KERNEL);
+> > +       if (!info) {
+> > +               ret = -ENOMEM;
+> > +               goto out;
+> > +       }
+> > +       info->loginuid = audit_get_loginuid(current);
+> > +       info->sessionid = audit_get_sessionid(current);
+> > +       tsk->audit = info;
+> > +
+> > +       ret = audit_alloc_syscall(tsk);
+> > +       if (ret) {
+> > +               tsk->audit = NULL;
+> > +               kmem_cache_free(audit_task_cache, info);
+> > +       }
+> > +out:
+> > +       return ret;
+> > +}
+> 
+> This is a big nitpick, and I'm only mentioning this in the case you
+> need to respin this patchset: the "out" label is unnecessary in the
+> function above.  Simply return the error code, there is no need to
+> jump to "out" only to immediately return the error code there and
+> nothing more.
 
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+Agreed.  This must have been due to some restructuring that no longer
+needed an exit cleanup action.
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+> > +struct audit_task_info init_struct_audit = {
+> > +       .loginuid = INVALID_UID,
+> > +       .sessionid = AUDIT_SID_UNSET,
+> > +#ifdef CONFIG_AUDITSYSCALL
+> > +       .ctx = NULL,
+> > +#endif
+> > +};
+> > +
+> > +/**
+> > + * audit_free - free per-task audit info
+> > + * @tsk: task whose audit info block to free
+> > + *
+> > + * Called from copy_process and do_exit
+> > + */
+> > +void audit_free(struct task_struct *tsk)
+> > +{
+> > +       struct audit_task_info *info = tsk->audit;
+> > +
+> > +       audit_free_syscall(tsk);
+> > +       /* Freeing the audit_task_info struct must be performed after
+> > +        * audit_log_exit() due to need for loginuid and sessionid.
+> > +        */
+> > +       info = tsk->audit;
+> > +       tsk->audit = NULL;
+> > +       kmem_cache_free(audit_task_cache, info);
+> 
+> Another nitpick, and this one may even become a moot point given the
+> question posed above.  However, is there any reason we couldn't get
+> rid of "info" and simplify this a bit?
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+That info allocation and assignment does now seem pointless, I agree...
 
+>   audit_free_syscall(tsk);
+>   kmem_cache_free(audit_task_cache, tsk->audit);
+>   tsk->audit = NULL;
+> 
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index 468a23390457..f00c1da587ea 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -1612,7 +1615,6 @@ void __audit_free(struct task_struct *tsk)
+> >                 if (context->current_state == AUDIT_RECORD_CONTEXT)
+> >                         audit_log_exit();
+> >         }
+> > -
+> >         audit_set_context(tsk, NULL);
+> >         audit_free_context(context);
+> >  }
+> 
+> This nitpick is barely worth the time it is taking me to write this,
+> but the whitespace change above isn't strictly necessary.
 
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
+Sure, it is a harmless but noisy cleanup when the function was being
+cleaned up and renamed.  It wasn't an accident, but a style preference.
+Do you prefer a vertical space before cleanup actions at the end of
+functions and more versus less vertical whitespace in general?
 
-	https://github.com/hnaz/linux-mm
+> paul moore
 
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
+- RGB
 
-A git copy of this tree is also available at
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
-	https://github.com/hnaz/linux-mm
-
-
-
-This mmotm tree contains the following patches against 5.8-rc4:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* mm-shuffle-dont-move-pages-between-zones-and-dont-read-garbage-memmaps.patch
-* vfs-xattr-mm-shmem-kernfs-release-simple-xattr-entry-in-a-right-way.patch
-* mm-initialize-return-of-vm_insert_pages.patch
-* mm-memcontrol-fix-oops-inside-mem_cgroup_get_nr_swap_pages.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* kasan-fix-kasan-unit-tests-for-tag-based-kasan.patch
-* checkpatch-test-git_dir-changes.patch
-* kthread-work-could-not-be-queued-when-worker-being-destroyed.patch
-* scripts-tagssh-collect-compiled-source-precisely.patch
-* scripts-tagssh-collect-compiled-source-precisely-v2.patch
-* bloat-o-meter-support-comparing-library-archives.patch
-* scripts-decode_stacktrace-skip-missing-symbols.patch
-* scripts-decode_stacktrace-guess-basepath-if-not-specified.patch
-* scripts-decode_stacktrace-guess-path-to-modules.patch
-* scripts-decode_stacktrace-guess-path-to-vmlinux-by-release-name.patch
-* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
-* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
-* ocfs2-change-slot-number-type-s16-to-u16.patch
-* ramfs-support-o_tmpfile.patch
-* kernel-watchdog-flush-all-printk-nmi-buffers-when-hardlockup-detected.patch
-  mm.patch
-* mm-treewide-rename-kzfree-to-kfree_sensitive.patch
-* mm-ksize-should-silently-accept-a-null-pointer.patch
-* mm-expand-config_slab_freelist_hardened-to-include-slab.patch
-* slab-add-naive-detection-of-double-free.patch
-* slab-add-naive-detection-of-double-free-fix.patch
-* mm-slab-check-gfp_slab_bug_mask-before-alloc_pages-in-kmalloc_order.patch
-* mm-slub-extend-slub_debug-syntax-for-multiple-blocks.patch
-* mm-slub-extend-slub_debug-syntax-for-multiple-blocks-fix.patch
-* mm-slub-make-some-slub_debug-related-attributes-read-only.patch
-* mm-slub-remove-runtime-allocation-order-changes.patch
-* mm-slub-make-remaining-slub_debug-related-attributes-read-only.patch
-* mm-slub-make-reclaim_account-attribute-read-only.patch
-* mm-slub-introduce-static-key-for-slub_debug.patch
-* mm-slub-introduce-kmem_cache_debug_flags.patch
-* mm-slub-introduce-kmem_cache_debug_flags-fix.patch
-* mm-slub-extend-checks-guarded-by-slub_debug-static-key.patch
-* mm-slab-slub-move-and-improve-cache_from_obj.patch
-* mm-slab-slub-improve-error-reporting-and-overhead-of-cache_from_obj.patch
-* mm-slab-slub-improve-error-reporting-and-overhead-of-cache_from_obj-fix.patch
-* slub-drop-lockdep_assert_held-from-put_map.patch
-* mm-kcsan-instrument-slab-slub-free-with-assert_exclusive_access.patch
-* mm-debug_vm_pgtable-add-tests-validating-arch-helpers-for-core-mm-features.patch
-* mm-debug_vm_pgtable-add-tests-validating-advanced-arch-page-table-helpers.patch
-* mm-debug_vm_pgtable-add-debug-prints-for-individual-tests.patch
-* documentation-mm-add-descriptions-for-arch-page-table-helpers.patch
-* mm-filemap-clear-idle-flag-for-writes.patch
-* mm-filemap-add-missing-fgp_-flags-in-kerneldoc-comment-for-pagecache_get_page.patch
-* mm-kmem-make-memcg_kmem_enabled-irreversible.patch
-* mm-memcg-factor-out-memcg-and-lruvec-level-changes-out-of-__mod_lruvec_state.patch
-* mm-memcg-prepare-for-byte-sized-vmstat-items.patch
-* mm-memcg-convert-vmstat-slab-counters-to-bytes.patch
-* mm-slub-implement-slub-version-of-obj_to_index.patch
-* mm-memcontrol-decouple-reference-counting-from-page-accounting.patch
-* mm-memcg-slab-obj_cgroup-api.patch
-* mm-memcg-slab-allocate-obj_cgroups-for-non-root-slab-pages.patch
-* mm-memcg-slab-save-obj_cgroup-for-non-root-slab-objects.patch
-* mm-memcg-slab-charge-individual-slab-objects-instead-of-pages.patch
-* mm-memcg-slab-deprecate-memorykmemslabinfo.patch
-* mm-memcg-slab-move-memcg_kmem_bypass-to-memcontrolh.patch
-* mm-memcg-slab-use-a-single-set-of-kmem_caches-for-all-accounted-allocations.patch
-* mm-memcg-slab-simplify-memcg-cache-creation.patch
-* mm-memcg-slab-remove-memcg_kmem_get_cache.patch
-* mm-memcg-slab-deprecate-slab_root_caches.patch
-* mm-memcg-slab-remove-redundant-check-in-memcg_accumulate_slabinfo.patch
-* mm-memcg-slab-use-a-single-set-of-kmem_caches-for-all-allocations.patch
-* kselftests-cgroup-add-kernel-memory-accounting-tests.patch
-* tools-cgroup-add-memcg_slabinfopy-tool.patch
-* percpu-return-number-of-released-bytes-from-pcpu_free_area.patch
-* mm-memcg-percpu-account-percpu-memory-to-memory-cgroups.patch
-* mm-memcg-percpu-account-percpu-memory-to-memory-cgroups-fix.patch
-* mm-memcg-percpu-account-percpu-memory-to-memory-cgroups-fix-fix.patch
-* mm-memcg-percpu-per-memcg-percpu-memory-statistics.patch
-* mm-memcg-percpu-per-memcg-percpu-memory-statistics-v3.patch
-* mm-memcg-charge-memcg-percpu-memory-to-the-parent-cgroup.patch
-* kselftests-cgroup-add-perpcu-memory-accounting-test.patch
-* mm-memcontrol-account-kernel-stack-per-node.patch
-* mm-remove-redundant-check-non_swap_entry.patch
-* mm-memoryc-make-remap_pfn_range-reject-unaligned-addr.patch
-* mm-remove-unneeded-includes-of-asm-pgalloch.patch
-* opeinrisc-switch-to-generic-version-of-pte-allocation.patch
-* xtensa-switch-to-generic-version-of-pte-allocation.patch
-* asm-generic-pgalloc-provide-generic-pmd_alloc_one-and-pmd_free_one.patch
-* asm-generic-pgalloc-provide-generic-pud_alloc_one-and-pud_free_one.patch
-* asm-generic-pgalloc-provide-generic-pgd_free.patch
-* mm-move-lib-ioremapc-to-mm.patch
-* mm-move-pd_alloc_track-to-separate-header-file.patch
-* mm-mmap-fix-the-adjusted-length-error.patch
-* proc-meminfo-avoid-open-coded-reading-of-vm_committed_as.patch
-* mm-utilc-make-vm_memory_committed-more-accurate.patch
-* mm-adjust-vm_committed_as_batch-according-to-vm-overcommit-policy.patch
-* mm-mmap-optimize-a-branch-judgment-in-ksys_mmap_pgoff.patch
-* mm-sparse-never-partially-remove-memmap-for-early-section.patch
-* mm-sparse-only-sub-section-aligned-range-would-be-populated.patch
-* vmalloc-convert-to-xarray.patch
-* mm-vmalloc-simplify-merge_or_add_vmap_area-func.patch
-* mm-vmalloc-simplify-augment_tree_propagate_check-func.patch
-* mm-vmalloc-switch-to-propagate-callback.patch
-* mm-vmalloc-update-the-header-about-kva-rework.patch
-* kasan-improve-and-simplify-kconfigkasan.patch
-* kasan-update-required-compiler-versions-in-documentation.patch
-* rcu-kasan-record-and-print-call_rcu-call-stack.patch
-* kasan-record-and-print-the-free-track.patch
-* kasan-add-tests-for-call_rcu-stack-recording.patch
-* kasan-update-documentation-for-generic-kasan.patch
-* kasan-remove-kasan_unpoison_stack_above_sp_to.patch
-* mm-page_alloc-use-unlikely-in-task_capc.patch
-* page_alloc-consider-highatomic-reserve-in-watermark-fast.patch
-* page_alloc-consider-highatomic-reserve-in-watermark-fast-v5.patch
-* mm-page_alloc-skip-waternark_boost-for-atomic-order-0-allocations.patch
-* mm-page_alloc-skip-watermark_boost-for-atomic-order-0-allocations-fix.patch
-* mm-drop-vm_total_pages.patch
-* mm-page_alloc-drop-nr_free_pagecache_pages.patch
-* mm-memory_hotplug-document-why-shuffle_zone-is-relevant.patch
-* mm-shuffle-remove-dynamic-reconfiguration.patch
-* powerpc-numa-set-numa_node-for-all-possible-cpus.patch
-* powerpc-numa-prefer-node-id-queried-from-vphn.patch
-* mm-page_alloc-keep-memoryless-cpuless-node-0-offline.patch
-* mm-page_allocc-replace-the-definition-of-nr_migratetype_bits-with-pb_migratetype_bits.patch
-* mm-page_allocc-extract-the-common-part-in-pfn_to_bitidx.patch
-* mm-page_allocc-simplify-pageblock-bitmap-access.patch
-* mm-page_allocc-remove-unnecessary-end_bitidx-for-_pfnblock_flags_mask.patch
-* mm-page_alloc-silence-a-kasan-false-positive.patch
-* mm-page_alloc-fallbacks-at-most-has-3-elements.patch
-* mm-page_alloc-skip-setting-nodemask-when-we-are-in-interrupt.patch
-* mm-huge_memoryc-update-tlb-entry-if-pmd-is-changed.patch
-* mips-do-not-call-flush_tlb_all-when-setting-pmd-entry.patch
-* mm-vmscanc-fixed-typo.patch
-* mm-proactive-compaction.patch
-* mm-proactive-compaction-fix.patch
-* mm-use-unsigned-types-for-fragmentation-score.patch
-* hugetlbfs-prevent-filesystem-stacking-of-hugetlbfs.patch
-* mm-page_isolation-prefer-the-node-of-the-source-page.patch
-* mm-migrate-move-migration-helper-from-h-to-c.patch
-* mm-hugetlb-unify-migration-callbacks.patch
-* mm-hugetlb-make-hugetlb-migration-callback-cma-aware.patch
-* mm-migrate-make-a-standard-migration-target-allocation-function.patch
-* mm-gup-use-a-standard-migration-target-allocation-callback.patch
-* mm-mempolicy-use-a-standard-migration-target-allocation-callback.patch
-* mm-page_alloc-remove-a-wrapper-for-alloc_migration_target.patch
-* mm-thp-remove-debug_cow-switch.patch
-* mm-vmstat-add-events-for-pmd-based-thp-migration-without-split.patch
-* mm-vmstat-add-events-for-pmd-based-thp-migration-without-split-fix.patch
-* mm-vmstat-add-events-for-pmd-based-thp-migration-without-split-update.patch
-* mm-store-compound_nr-as-well-as-compound_order.patch
-* mm-move-page-flags-include-to-top-of-file.patch
-* mm-add-thp_order.patch
-* mm-add-thp_size.patch
-* mm-replace-hpage_nr_pages-with-thp_nr_pages.patch
-* mm-add-thp_head.patch
-* mm-introduce-offset_in_thp.patch
-* mm-cma-fix-null-pointer-dereference-when-cma-could-not-be-activated.patch
-* mm-cma-fix-the-name-of-cma-areas.patch
-* mm-cma-fix-the-name-of-cma-areas-fix.patch
-* mm-hugetlb-fix-the-name-of-hugetlb-cma.patch
-* mmhwpoison-cleanup-unused-pagehuge-check.patch
-* mm-hwpoison-remove-recalculating-hpage.patch
-* mmmadvise-call-soft_offline_page-without-mf_count_increased.patch
-* mmmadvise-refactor-madvise_inject_error.patch
-* mmhwpoison-inject-dont-pin-for-hwpoison_filter.patch
-* mmhwpoison-un-export-get_hwpoison_page-and-make-it-static.patch
-* mmhwpoison-kill-put_hwpoison_page.patch
-* mmhwpoison-remove-mf_count_increased.patch
-* mmhwpoison-remove-flag-argument-from-soft-offline-functions.patch
-* mmhwpoison-unify-thp-handling-for-hard-and-soft-offline.patch
-* mmhwpoison-rework-soft-offline-for-free-pages.patch
-* mmhwpoison-rework-soft-offline-for-free-pages-fix.patch
-* mmhwpoison-rework-soft-offline-for-in-use-pages.patch
-* mmhwpoison-refactor-soft_offline_huge_page-and-__soft_offline_page.patch
-* mmhwpoison-refactor-soft_offline_huge_page-and-__soft_offline_page-fix.patch
-* mmhwpoison-refactor-soft_offline_huge_page-and-__soft_offline_page-fix-fix.patch
-* mmhwpoison-return-0-if-the-page-is-already-poisoned-in-soft-offline.patch
-* mmhwpoison-introduce-mf_msg_unsplit_thp.patch
-* sched-mm-optimize-current_gfp_context.patch
-* x86-mm-use-max-memory-block-size-on-bare-metal.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* fix-annotation-of-ioreadwrite1632be.patch
-* sparse-group-the-defines-by-functionality.patch
-* bitmap-fix-bitmap_cut-for-partial-overlapping-case.patch
-* bitmap-add-test-for-bitmap_cut.patch
-* lib-generic-radix-treec-remove-unneeded-__rcu.patch
-* lib-test_bitops-do-the-full-test-during-module-init.patch
-* lib-optimize-cpumask_local_spread.patch
-* bits-add-tests-of-genmask.patch
-* bits-add-tests-of-genmask-fix.patch
-* bits-add-tests-of-genmask-fix-2.patch
-* checkpatch-add-test-for-possible-misuse-of-is_enabled-without-config_.patch
-* checkpatch-support-deprecated-terms-checking.patch
-* scripts-deprecated_terms-recommend-denylist-allowlist-instead-of-blacklist-whitelist.patch
-* checkpatch-add-fix-option-for-assign_in_if.patch
-* checkpatch-fix-const_struct-when-const_structscheckpatch-is-missing.patch
-* fatfs-switch-write_lock-to-read_lock-in-fat_ioctl_get_attributes.patch
-* fs-signalfdc-fix-inconsistent-return-codes-for-signalfd4.patch
-* selftests-kmod-use-variable-name-in-kmod_test_0001.patch
-* kmod-remove-redundant-be-an-in-the-comment.patch
-* test_kmod-avoid-potential-double-free-in-trigger_config_run_type.patch
-* coredump-add-%f-for-executable-filename.patch
-* exec-change-uselib2-is_sreg-failure-to-eacces.patch
-* exec-move-s_isreg-check-earlier.patch
-* exec-move-path_noexec-check-earlier.patch
-* umh-fix-refcount-underflow-in-fork_usermode_blob.patch
-* kdump-append-kernel-build-id-string-to-vmcoreinfo.patch
-* rapidio-rio_mport_cdev-use-struct_size-helper.patch
-* rapidio-use-struct_size-helper.patch
-* kernel-panicc-make-oops_may_print-return-bool.patch
-* lib-kconfigdebug-fix-typo-in-the-help-text-of-config_panic_timeout.patch
-* aio-simplify-read_events.patch
-* kcov-unconditionally-add-fno-stack-protector-to-compiler-options.patch
-* kcov-make-some-symbols-static.patch
-  linux-next.patch
-  linux-next-rejects.patch
-* mm-madvise-pass-task-and-mm-to-do_madvise.patch
-* pid-move-pidfd_get_pid-to-pidc.patch
-* mm-madvise-introduce-process_madvise-syscall-an-external-memory-hinting-api.patch
-* mm-madvise-introduce-process_madvise-syscall-an-external-memory-hinting-api-fix.patch
-* mm-madvise-introduce-process_madvise-syscall-an-external-memory-hinting-api-fix-2.patch
-* mm-madvise-check-fatal-signal-pending-of-target-process.patch
-* all-arch-remove-system-call-sys_sysctl.patch
-* all-arch-remove-system-call-sys_sysctl-fix.patch
-* mm-kmemleak-silence-kcsan-splats-in-checksum.patch
-* mm-frontswap-mark-various-intentional-data-races.patch
-* mm-page_io-mark-various-intentional-data-races.patch
-* mm-page_io-mark-various-intentional-data-races-v2.patch
-* mm-swap_state-mark-various-intentional-data-races.patch
-* mm-filemap-fix-a-data-race-in-filemap_fault.patch
-* mm-swapfile-fix-and-annotate-various-data-races.patch
-* mm-swapfile-fix-and-annotate-various-data-races-v2.patch
-* mm-page_counter-fix-various-data-races-at-memsw.patch
-* mm-memcontrol-fix-a-data-race-in-scan-count.patch
-* mm-list_lru-fix-a-data-race-in-list_lru_count_one.patch
-* mm-mempool-fix-a-data-race-in-mempool_free.patch
-* mm-rmap-annotate-a-data-race-at-tlb_flush_batched.patch
-* mm-swap-annotate-data-races-for-lru_rotate_pvecs.patch
-* mm-annotate-a-data-race-in-page_zonenum.patch
-* include-asm-generic-vmlinuxldsh-align-ro_after_init.patch
-* sh-clkfwk-remove-r8-r16-r32.patch
-* sh-remove-call-to-memset-after-dma_alloc_coherent.patch
-* sh-use-generic-strncpy.patch
-* sh-add-missing-export_symbol-for-__delay.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
