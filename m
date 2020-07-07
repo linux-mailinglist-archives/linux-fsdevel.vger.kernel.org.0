@@ -2,85 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C60B3216D3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 14:57:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D43A3216D4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 14:58:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbgGGM5J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 08:57:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38018 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbgGGM5J (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 08:57:09 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D206C061755;
-        Tue,  7 Jul 2020 05:57:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=NcqHrUmx33Xz3ikGjbmqyDITaJtyyUAxn+yVEQB5egg=; b=ofG/O9FXtmDtbWnntDxYn6vCii
-        lBosd0F3EBZqz4nzmI+lv73zKOaBrCqAEbjSOSz6+dBhoy8VomVwvx8q/uvHSGVx0PXhyT7vfB0OR
-        M6MiciRdpwivfdM8/gFIBl6ruQNxsAx8AfRS0ljHMcyqBJRoFZ7ipc1D2GEu4CNyYuYDypIIK71PW
-        +7DBTJ3Zb6j5S+BeKyh5S1kKto5iZ1PYVHB1YBWRHIM8OyLHzxlVoRSDLpo1vx3U3hbQ+eclD/xAV
-        abt24/JV4jwYmfFVukE2LgtHSmTv1+b+6KaDxsGni5ljaU+FBMf9he4KIh3fI18PX1CEuJXq7SK7y
-        LujY/7ww==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jsn9l-0004qG-Lq; Tue, 07 Jul 2020 12:57:05 +0000
-Date:   Tue, 7 Jul 2020 13:57:05 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, fdmanana@gmail.com, dsterba@suse.cz,
-        david@fromorbit.com, darrick.wong@oracle.com,
-        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: always fall back to buffered I/O after invalidation failures,
- was: Re: [PATCH 2/6] iomap: IOMAP_DIO_RWF_NO_STALE_PAGECACHE return if page
- invalidation fails
-Message-ID: <20200707125705.GK25523@casper.infradead.org>
-References: <20200629192353.20841-1-rgoldwyn@suse.de>
- <20200629192353.20841-3-rgoldwyn@suse.de>
- <20200701075310.GB29884@lst.de>
- <20200707124346.xnr5gtcysuzehejq@fiona>
+        id S1728047AbgGGM6d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 08:58:33 -0400
+Received: from foss.arm.com ([217.140.110.172]:47750 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727886AbgGGM6c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 08:58:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20D0EC0A;
+        Tue,  7 Jul 2020 05:58:32 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 89BFF3F71E;
+        Tue,  7 Jul 2020 05:58:29 -0700 (PDT)
+Date:   Tue, 7 Jul 2020 13:58:27 +0100
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] sched/uclamp: Add a new sysctl to control RT
+ default boost value
+Message-ID: <20200707125826.e6lrllulf6x5bqek@e107158-lin.cambridge.arm.com>
+References: <20200706142839.26629-1-qais.yousef@arm.com>
+ <20200706142839.26629-2-qais.yousef@arm.com>
+ <jhj1rln8sfv.mognet@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200707124346.xnr5gtcysuzehejq@fiona>
+In-Reply-To: <jhj1rln8sfv.mognet@arm.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 07, 2020 at 07:43:46AM -0500, Goldwyn Rodrigues wrote:
-> On  9:53 01/07, Christoph Hellwig wrote:
-> > On Mon, Jun 29, 2020 at 02:23:49PM -0500, Goldwyn Rodrigues wrote:
-> > > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > > 
-> > > For direct I/O, add the flag IOMAP_DIO_RWF_NO_STALE_PAGECACHE to indicate
-> > > that if the page invalidation fails, return back control to the
-> > > filesystem so it may fallback to buffered mode.
-> > > 
-> > > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> > 
-> > I'd like to start a discussion of this shouldn't really be the
-> > default behavior.  If we have page cache that can't be invalidated it
-> > actually makes a whole lot of sense to not do direct I/O, avoid the
-> > warnings, etc.
-> > 
-> > Adding all the relevant lists.
+On 07/07/20 12:39, Valentin Schneider wrote:
 > 
-> Since no one responded so far, let me see if I can stir the cauldron :)
+> On 06/07/20 15:28, Qais Yousef wrote:
+> > RT tasks by default run at the highest capacity/performance level. When
+> > uclamp is selected this default behavior is retained by enforcing the
+> > requested uclamp.min (p->uclamp_req[UCLAMP_MIN]) of the RT tasks to be
+> > uclamp_none(UCLAMP_MAX), which is SCHED_CAPACITY_SCALE; the maximum
+> > value.
+> >
+> > This is also referred to as 'the default boost value of RT tasks'.
+> >
+> > See commit 1a00d999971c ("sched/uclamp: Set default clamps for RT tasks").
+> >
+> > On battery powered devices, it is desired to control this default
+> > (currently hardcoded) behavior at runtime to reduce energy consumed by
+> > RT tasks.
+> >
+> > For example, a mobile device manufacturer where big.LITTLE architecture
+> > is dominant, the performance of the little cores varies across SoCs, and
+> > on high end ones the big cores could be too power hungry.
+> >
+> > Given the diversity of SoCs, the new knob allows manufactures to tune
+> > the best performance/power for RT tasks for the particular hardware they
+> > run on.
+> >
+> > They could opt to further tune the value when the user selects
+> > a different power saving mode or when the device is actively charging.
+> >
+> > The runtime aspect of it further helps in creating a single kernel image
+> > that can be run on multiple devices that require different tuning.
+> >
+> > Keep in mind that a lot of RT tasks in the system are created by the
+> > kernel. On Android for instance I can see over 50 RT tasks, only
+> > a handful of which created by the Android framework.
+> >
+> > To control the default behavior globally by system admins and device
+> > integrator, introduce the new sysctl_sched_uclamp_util_min_rt_default
+> > to change the default boost value of the RT tasks.
+> >
+> > I anticipate this to be mostly in the form of modifying the init script
+> > of a particular device.
+> >
 > 
-> What error should be returned in case of such an error? I think the
+> Sorry for going at this again, but I feel like I can squeeze more juice out
+> of this.
+> 
+> This being mainly tweaked in init scripts makes me question why we should
+> harden this for runtime tweaking. Yes, there's the whole single image
+> thing, but there's other ways to have different init-time values on a
+> single image (e.g. cmdline, although that one is usually a bit
+> controversial).
 
-Christoph's message is ambiguous.  I don't know if he means "fail the
-I/O with an error" or "satisfy the I/O through the page cache".  I'm
-strongly in favour of the latter.  Indeed, I'm in favour of not invalidating
-the page cache at all for direct I/O.  For reads, I think the page cache
-should be used to satisfy any portion of the read which is currently
-cached.  For writes, I think we should write into the page cache pages
-which currently exist, and then force those pages to be written back,
-but left in cache.
+cmdline is not userfriendly. A person who installs a new distro on their laptop
+can easily modify a sysctl knob to squeeze maximum battery life, but not play
+with grub and bootloader to add a cmdline option.
 
+> 
+> For instance, Android could set the min to 0 and then go about its life
+> tweaking the clamp of individual / all RT tasks at runtime, using the
+> existing uclamp API.
+
+This was addressed before. This is not flexible and having a daemon that
+monitors RT tasks as they come and go is terrible IMO.
+
+If you're suggesting to hardcode it to 0, then this is not what we're trying to
+achieve here.
+
+I don't think we've hit a wall where things look really ugly to not continue
+pursue this flexible and more robust solution.
+
+Thanks
+
+--
+Qais Yousef
