@@ -2,176 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 016FD216CEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 14:36:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A555216CF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 14:39:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbgGGMgq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 08:36:46 -0400
-Received: from foss.arm.com ([217.140.110.172]:46300 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725944AbgGGMgq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 08:36:46 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7763D1FB;
-        Tue,  7 Jul 2020 05:36:45 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 11C433F71E;
-        Tue,  7 Jul 2020 05:36:42 -0700 (PDT)
-Date:   Tue, 7 Jul 2020 13:36:40 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] sched/uclamp: Add a new sysctl to control RT
- default boost value
-Message-ID: <20200707123640.lahojmq2s4byhkhl@e107158-lin.cambridge.arm.com>
-References: <20200706142839.26629-1-qais.yousef@arm.com>
- <20200706142839.26629-2-qais.yousef@arm.com>
- <jhj8sfw8wzk.mognet@arm.com>
- <20200707093447.4t6eqjy4fkt747fo@e107158-lin.cambridge.arm.com>
- <jhj36638suv.mognet@arm.com>
+        id S1727003AbgGGMi6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 08:38:58 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39390 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbgGGMi6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 08:38:58 -0400
+Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jsmsB-0008IT-CA; Tue, 07 Jul 2020 12:38:55 +0000
+Date:   Tue, 7 Jul 2020 14:38:54 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Matt Denton <mpdenton@google.com>,
+        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
+        Robert Sesek <rsesek@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        netdev@vger.kernel.org, containers@lists.linux-foundation.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v6 5/7] fs: Expand __receive_fd() to accept existing fd
+Message-ID: <20200707123854.wi4s2kzwkhkgieyv@wittgenstein>
+References: <20200706201720.3482959-1-keescook@chromium.org>
+ <20200706201720.3482959-6-keescook@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <jhj36638suv.mognet@arm.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20200706201720.3482959-6-keescook@chromium.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/07/20 12:30, Valentin Schneider wrote:
+On Mon, Jul 06, 2020 at 01:17:18PM -0700, Kees Cook wrote:
+> Expand __receive_fd() with support for replace_fd() for the coming seccomp
+> "addfd" ioctl(). Add new wrapper receive_fd_replace() for the new behavior
+> and update existing wrappers to retain old behavior.
 > 
-> On 07/07/20 10:34, Qais Yousef wrote:
-> > On 07/06/20 16:49, Valentin Schneider wrote:
-> >>
-> >> On 06/07/20 15:28, Qais Yousef wrote:
-> >> > CC: linux-fsdevel@vger.kernel.org
-> >> > ---
-> >> >
-> >> > Peter
-> >> >
-> >> > I didn't do the
-> >> >
-> >> >       read_lock(&taslist_lock);
-> >> >       smp_mb__after_spinlock();
-> >> >       read_unlock(&tasklist_lock);
-> >> >
-> >> > dance you suggested on IRC as it didn't seem necessary. But maybe I missed
-> >> > something.
-> >> >
-> >>
-> >> So the annoying bit with just uclamp_fork() is that it happens *before* the
-> >> task is appended to the tasklist. This means without too much care we
-> >> would have (if we'd do a sync at uclamp_fork()):
-> >>
-> >>   CPU0 (sysctl write)                                CPU1 (concurrent forker)
-> >>
-> >>                                                        copy_process()
-> >>                                                          uclamp_fork()
-> >>                                                            p.uclamp_min = state
-> >>     state = foo
-> >>
-> >>     for_each_process_thread(p, t)
-> >>       update_state(t);
-> >>                                                          list_add(p)
-> >>
-> >> i.e. that newly forked process would entirely sidestep the update. Now,
-> >> with Peter's suggested approach we can be in a much better situation. If we
-> >> have this in the sysctl update:
-> >>
-> >>   state = foo;
-> >>
-> >>   read_lock(&taslist_lock);
-> >>   smp_mb__after_spinlock();
-> >>   read_unlock(&tasklist_lock);
-> >>
-> >>   for_each_process_thread(p, t)
-> >>     update_state(t);
-> >>
-> >> While having this in the fork:
-> >>
-> >>   write_lock(&tasklist_lock);
-> >>   list_add(p);
-> >>   write_unlock(&tasklist_lock);
-> >>
-> >>   sched_post_fork(p); // state re-read here; probably wants an mb first
-> >>
-> >> Then we can no longer miss an update. If the forked p doesn't see the new
-> >> value, it *must* have been added to the tasklist before the updater loops
-> >> over it, so the loop will catch it. If it sees the new value, we're done.
-> >
-> > uclamp_fork() has nothing to do with the race. If copy_process() duplicates the
-> > task_struct of an RT task, it'll copy the old value.
-> >
+> Thanks to Colin Ian King <colin.king@canonical.com> for pointing out an
+> uninitialized variable exposure in an earlier version of this patch.
 > 
-> Quite so; my point was if we were to use uclamp_fork() as to re-read the value.
-> 
-> > I'd expect the newly introduced sched_post_fork() (also in copy_process() after
-> > the list update) to prevent this race altogether.
-> >
-> > Now we could end up with a problem if for_each_process_thread() doesn't see the
-> > newly forked task _after_ sched_post_fork(). Hence my question to Peter.
-> >
-> 
-> 
-> >>
-> >> AIUI, the above strategy doesn't require any use of RCU. The update_state()
-> >> and sched_post_fork() can race, but as per the above they should both be
-> >> writing the same value.
-> >
-> > for_each_process_thread() must be protected by either tasklist_lock or
-> > rcu_read_lock().
-> >
-> 
-> Right
-> 
-> > The other RCU logic I added is not to protect against the race above. I
-> > describe the other race condition in a comment.
-> 
-> I take it that's the one in uclamp_sync_util_min_rt_default()?
+> Reviewed-by: Sargun Dhillon <sargun@sargun.me>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
 
-Correct.
+Thanks!
+(One tiny-nit below.)
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
+>  fs/file.c            | 24 ++++++++++++++++++------
+>  include/linux/file.h | 10 +++++++---
+>  2 files changed, 25 insertions(+), 9 deletions(-)
 > 
-> __setscheduler_uclamp() can't be preempted as we hold task_rq_lock(). It
-> can indeed race with the sync though, but again with the above suggested
-> setup it would either:
-> - see the old value, but be guaranteed to be iterated over later by the
->   updater
-> - see the new value
+> diff --git a/fs/file.c b/fs/file.c
+> index 0efdcf413210..11313ff36802 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -937,6 +937,7 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
+>  /**
+>   * __receive_fd() - Install received file into file descriptor table
+>   *
+> + * @fd: fd to install into (if negative, a new fd will be allocated)
+>   * @file: struct file that was received from another process
+>   * @ufd: __user pointer to write new fd number to
+>   * @o_flags: the O_* flags to apply to the new fd entry
+> @@ -950,7 +951,7 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
+>   *
+>   * Returns newly install fd or -ve on error.
+>   */
+> -int __receive_fd(struct file *file, int __user *ufd, unsigned int o_flags)
+> +int __receive_fd(int fd, struct file *file, int __user *ufd, unsigned int o_flags)
+>  {
+>  	struct socket *sock;
+>  	int new_fd;
+> @@ -960,18 +961,30 @@ int __receive_fd(struct file *file, int __user *ufd, unsigned int o_flags)
+>  	if (error)
+>  		return error;
+>  
+> -	new_fd = get_unused_fd_flags(o_flags);
+> -	if (new_fd < 0)
+> -		return new_fd;
+> +	if (fd < 0) {
+> +		new_fd = get_unused_fd_flags(o_flags);
+> +		if (new_fd < 0)
+> +			return new_fd;
+> +	} else
+> +		new_fd = fd;
 
-AFAIU rcu_read_lock() is light weight. So having the protection applied is more
-robust against future changes.
+This is nitpicky but coding style technically wants us to use braces
+around both branches if one of them requires them. ;)
 
+>  
+>  	if (ufd) {
+>  		error = put_user(new_fd, ufd);
+>  		if (error) {
+> -			put_unused_fd(new_fd);
+> +			if (fd < 0)
+> +				put_unused_fd(new_fd);
+>  			return error;
+>  		}
+>  	}
+>  
+> +	if (fd < 0)
+> +		fd_install(new_fd, get_file(file));
+> +	else {
+> +		error = replace_fd(new_fd, file, o_flags);
+> +		if (error)
+> +			return error;
+> +	}
+> +
+>  	/*
+>  	 * Bump the usage count and install the file. The resulting value of
+>  	 * "error" is ignored here since we only need to take action when
+> @@ -982,7 +995,6 @@ int __receive_fd(struct file *file, int __user *ufd, unsigned int o_flags)
+>  		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
+>  		sock_update_classid(&sock->sk->sk_cgrp_data);
+>  	}
+> -	fd_install(new_fd, get_file(file));
+>  	return new_fd;
+>  }
+>  
+> diff --git a/include/linux/file.h b/include/linux/file.h
+> index d9fee9f5c8da..225982792fa2 100644
+> --- a/include/linux/file.h
+> +++ b/include/linux/file.h
+> @@ -92,18 +92,22 @@ extern void put_unused_fd(unsigned int fd);
+>  
+>  extern void fd_install(unsigned int fd, struct file *file);
+>  
+> -extern int __receive_fd(struct file *file, int __user *ufd,
+> +extern int __receive_fd(int fd, struct file *file, int __user *ufd,
+>  			unsigned int o_flags);
+>  static inline int receive_fd_user(struct file *file, int __user *ufd,
+>  				  unsigned int o_flags)
+>  {
+>  	if (ufd == NULL)
+>  		return -EFAULT;
+> -	return __receive_fd(file, ufd, o_flags);
+> +	return __receive_fd(-1, file, ufd, o_flags);
+>  }
+>  static inline int receive_fd(struct file *file, unsigned int o_flags)
+>  {
+> -	return __receive_fd(file, NULL, o_flags);
+> +	return __receive_fd(-1, file, NULL, o_flags);
+> +}
+> +static inline int receive_fd_replace(int fd, struct file *file, unsigned int o_flags)
+> +{
+> +	return __receive_fd(fd, file, NULL, o_flags);
+>  }
+>  
+>  extern void flush_delayed_fput(void);
+> -- 
+> 2.25.1
 > 
-> sched_post_fork() being preempted out is a bit more annoying, but what
-> prevents us from making that bit preempt-disabled?
-
-preempt_disable() is not friendly to RT and heavy handed approach IMO.
-
-> 
-> I have to point out I'm assuming here updaters are serialized, which does
-> seem to be see the case (cf. uclamp_mutex).
-
-Correct.
-
-Thanks
-
---
-Qais Yousef
