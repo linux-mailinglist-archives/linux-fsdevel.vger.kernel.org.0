@@ -2,139 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA6CD216920
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 11:35:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 764C4216A66
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 12:34:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbgGGJex (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 05:34:53 -0400
-Received: from foss.arm.com ([217.140.110.172]:34362 "EHLO foss.arm.com"
+        id S1728182AbgGGKen (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 06:34:43 -0400
+Received: from verein.lst.de ([213.95.11.211]:58212 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727058AbgGGJex (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 05:34:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60550C0A;
-        Tue,  7 Jul 2020 02:34:52 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB5923F68F;
-        Tue,  7 Jul 2020 02:34:49 -0700 (PDT)
-Date:   Tue, 7 Jul 2020 10:34:47 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] sched/uclamp: Add a new sysctl to control RT
- default boost value
-Message-ID: <20200707093447.4t6eqjy4fkt747fo@e107158-lin.cambridge.arm.com>
-References: <20200706142839.26629-1-qais.yousef@arm.com>
- <20200706142839.26629-2-qais.yousef@arm.com>
- <jhj8sfw8wzk.mognet@arm.com>
+        id S1725944AbgGGKen (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 06:34:43 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id C93F068B05; Tue,  7 Jul 2020 12:34:39 +0200 (CEST)
+Date:   Tue, 7 Jul 2020 12:34:39 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Song Liu <song@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        open list <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-raid <linux-raid@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 01/16] init: remove the bstat helper
+Message-ID: <20200707103439.GA2812@lst.de>
+References: <20200615125323.930983-1-hch@lst.de> <20200615125323.930983-2-hch@lst.de> <CAPhsuW6chy6uMpow3L1WvBW8xCsUYw4SbLHQQXcANqBVcqoULg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <jhj8sfw8wzk.mognet@arm.com>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPhsuW6chy6uMpow3L1WvBW8xCsUYw4SbLHQQXcANqBVcqoULg@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/06/20 16:49, Valentin Schneider wrote:
+On Thu, Jul 02, 2020 at 04:25:41PM -0700, Song Liu wrote:
+> Hi Christoph,
 > 
-> On 06/07/20 15:28, Qais Yousef wrote:
-> > CC: linux-fsdevel@vger.kernel.org
-> > ---
+> On Mon, Jun 15, 2020 at 5:53 AM Christoph Hellwig <hch@lst.de> wrote:
 > >
-> > Peter
+> > The only caller of the bstat function becomes cleaner and simpler when
+> > open coding the function.
 > >
-> > I didn't do the
-> >
-> >       read_lock(&taslist_lock);
-> >       smp_mb__after_spinlock();
-> >       read_unlock(&tasklist_lock);
-> >
-> > dance you suggested on IRC as it didn't seem necessary. But maybe I missed
-> > something.
-> >
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > 
-> So the annoying bit with just uclamp_fork() is that it happens *before* the
-> task is appended to the tasklist. This means without too much care we
-> would have (if we'd do a sync at uclamp_fork()):
+> Thanks for the set. md parts of the set look good to me.
 > 
->   CPU0 (sysctl write)                                CPU1 (concurrent forker)
-> 
->                                                        copy_process()
->                                                          uclamp_fork()
->                                                            p.uclamp_min = state
->     state = foo
-> 
->     for_each_process_thread(p, t)
->       update_state(t);
->                                                          list_add(p)
-> 
-> i.e. that newly forked process would entirely sidestep the update. Now,
-> with Peter's suggested approach we can be in a much better situation. If we
-> have this in the sysctl update:
-> 
->   state = foo;
-> 
->   read_lock(&taslist_lock);
->   smp_mb__after_spinlock();
->   read_unlock(&tasklist_lock);
-> 
->   for_each_process_thread(p, t)
->     update_state(t);
-> 
-> While having this in the fork:
-> 
->   write_lock(&tasklist_lock);
->   list_add(p);
->   write_unlock(&tasklist_lock);
-> 
->   sched_post_fork(p); // state re-read here; probably wants an mb first
-> 
-> Then we can no longer miss an update. If the forked p doesn't see the new
-> value, it *must* have been added to the tasklist before the updater loops
-> over it, so the loop will catch it. If it sees the new value, we're done.
+> How should we route this set, as it touches multiple subsystems?
 
-uclamp_fork() has nothing to do with the race. If copy_process() duplicates the
-task_struct of an RT task, it'll copy the old value.
-
-I'd expect the newly introduced sched_post_fork() (also in copy_process() after
-the list update) to prevent this race altogether.
-
-Now we could end up with a problem if for_each_process_thread() doesn't see the
-newly forked task _after_ sched_post_fork(). Hence my question to Peter.
-
-> 
-> AIUI, the above strategy doesn't require any use of RCU. The update_state()
-> and sched_post_fork() can race, but as per the above they should both be
-> writing the same value.
-
-for_each_process_thread() must be protected by either tasklist_lock or
-rcu_read_lock().
-
-The other RCU logic I added is not to protect against the race above. I
-describe the other race condition in a comment. Basically another updater on a
-different cpu via fork() and sched_setattr() might read an old value and get
-preempted. The rcu synchronization will ensure concurrent updaters have
-finished before iterating the list.
-
-Thanks
-
---
-Qais Yousef
+Good question as there is no really applicable tree.  One option
+would the vfs tree as it toucheѕ some VFS stuff, and the follow on
+series that depends on it is all about VFS bits.  Alternatively I
+could set up a tree just for these bits.  The important bit is that
+it doesn't go into the -mm tree as the usual catchall, as I have
+more stuff that depends on it and requires a git tree.
