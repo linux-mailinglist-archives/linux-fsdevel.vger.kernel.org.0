@@ -2,95 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 30269216EBE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 16:30:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07DF5216EC2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jul 2020 16:31:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728211AbgGGOai (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 10:30:38 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:53030 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725944AbgGGOag (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 10:30:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594132235;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=jdHAIpfWqWHafM+znmNZIJaMTPI5wENHSEaIJXcuW90=;
-        b=QtjyHM5Vhk3tsIQUdAhndT/azb5HdOsoaNmBHqOyjEI52JDzIFrM748+hqW5J8OOQAMjkI
-        nQC0uF1t73GIRU8tqucFxfVI+iI5wVsOZLi3w7kZDZ4Z4BaIbdTxbG2ET/hnGkQWHV8XY6
-        TikitstwpO6C5XElSHKg9hDDEI5CeC8=
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com
- [209.85.161.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-301-6KkJ2UZnP3qJ653a63IN4A-1; Tue, 07 Jul 2020 10:30:32 -0400
-X-MC-Unique: 6KkJ2UZnP3qJ653a63IN4A-1
-Received: by mail-oo1-f71.google.com with SMTP id p68so9266506oop.19
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jul 2020 07:30:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jdHAIpfWqWHafM+znmNZIJaMTPI5wENHSEaIJXcuW90=;
-        b=YKUYZFvF3nyTklPofDq+gDUqvCkq++JZJMv9RhDdeFg3nKeQqY4HYXvSlhIYPfeXD5
-         Uz4TEJTA3QEndhFo2fKjRPJELNBDbcQMuW0s4+DvfD9Cl/efshtRWrYxU6/ZAv+EGYdu
-         N+dSvXYFXkktbHPBnfXD3U/kjOxIz28wEsjqpqS79AXoY67WKDa0YTU9GJ3af7B0kAQK
-         n6nTsXPk6txQT07yN+fR5rLMNscNIQIdufBdc1JYA08SVZhLWtpdVOehxM6GIB8y8RKI
-         c93lwVQNwJ0Bdm2h3O1/h2qeaUd455eVC/Qth2roFfOCcv6N4wT5ys5Bf8VdFB6/Du0b
-         92kQ==
-X-Gm-Message-State: AOAM531HyGi73XUnJs+c07Jy6FKcbdnDo1KAB8y1ucm4fPcgj1eJYPZ2
-        /cHA1z58wAtQgIGMFv47iI1n7CC2PgoVHFO9x4gpnUrJ2hwT1K9tgLhKwmTbwqemqJYMoLckQS/
-        R1GbBD3GfGy+A6YrJHSYGHPeHK0aCIcxm9uJrOv7shQ==
-X-Received: by 2002:a4a:868a:: with SMTP id x10mr47045444ooh.31.1594132231279;
-        Tue, 07 Jul 2020 07:30:31 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxkyrmC9YyVoZKCHhEbKVmEbE0QU21dPZEuBspnOoCY6PvjRo2XRprybq1+LMm+sMOQeYKXQRvYJk4hHGy4wPw=
-X-Received: by 2002:a4a:868a:: with SMTP id x10mr47045402ooh.31.1594132230968;
- Tue, 07 Jul 2020 07:30:30 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200702165120.1469875-1-agruenba@redhat.com> <20200702165120.1469875-3-agruenba@redhat.com>
- <CAHk-=wgpsuC6ejzr3pn5ej5Yn5z4xthNUUOvmA7KXHHGynL15Q@mail.gmail.com>
-In-Reply-To: <CAHk-=wgpsuC6ejzr3pn5ej5Yn5z4xthNUUOvmA7KXHHGynL15Q@mail.gmail.com>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Tue, 7 Jul 2020 16:30:19 +0200
-Message-ID: <CAHc6FU6LmR7m_8UHmB_77jUpYNo-kgCZ-1YTLqya-PPqvvBy7Q@mail.gmail.com>
-Subject: Re: [RFC 2/4] fs: Add IOCB_NOIO flag for generic_file_read_iter
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        id S1728250AbgGGObB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 10:31:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59190 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727995AbgGGObB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 7 Jul 2020 10:31:01 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id D97A6AC6E;
+        Tue,  7 Jul 2020 14:30:59 +0000 (UTC)
+Date:   Tue, 7 Jul 2020 09:30:56 -0500
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, fdmanana@gmail.com, dsterba@suse.cz,
+        david@fromorbit.com, cluster-devel@redhat.com,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: always fall back to buffered I/O after invalidation failures,
+ was: Re: [PATCH 2/6] iomap: IOMAP_DIO_RWF_NO_STALE_PAGECACHE return if page
+ invalidation fails
+Message-ID: <20200707143056.t7zf3xqvocty64td@fiona>
+References: <20200629192353.20841-1-rgoldwyn@suse.de>
+ <20200629192353.20841-3-rgoldwyn@suse.de>
+ <20200701075310.GB29884@lst.de>
+ <20200707124346.xnr5gtcysuzehejq@fiona>
+ <20200707125705.GK25523@casper.infradead.org>
+ <20200707134952.3niqhxngwh3gus54@fiona>
+ <20200707140120.GJ7606@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200707140120.GJ7606@magnolia>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 2, 2020 at 8:06 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, Jul 2, 2020 at 9:51 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
-> > Add an IOCB_NOIO flag that indicates to generic_file_read_iter that it
-> > shouldn't trigger any filesystem I/O for the actual request or for
-> > readahead.  This allows to do tentative reads out of the page cache as
-> > some filesystems allow, and to take the appropriate locks and retry the
-> > reads only if the requested pages are not cached.
->
-> This looks sane to me, except for this part:
-> >                 if (!PageUptodate(page)) {
-> > -                       if (iocb->ki_flags & IOCB_NOWAIT) {
-> > +                       if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_NOIO)) {
-> >                                 put_page(page);
-> >                                 goto would_block;
-> >                         }
->
-> This path doesn't actually initiate reads at all - it waits for
-> existing reads to finish.
->
-> So I think it should only check for IOCB_NOWAIT.
+On  7:01 07/07, Darrick J. Wong wrote:
+> On Tue, Jul 07, 2020 at 08:49:52AM -0500, Goldwyn Rodrigues wrote:
+> > On 13:57 07/07, Matthew Wilcox wrote:
+> > > On Tue, Jul 07, 2020 at 07:43:46AM -0500, Goldwyn Rodrigues wrote:
+> > > > On  9:53 01/07, Christoph Hellwig wrote:
+> > > > > On Mon, Jun 29, 2020 at 02:23:49PM -0500, Goldwyn Rodrigues wrote:
+> > > > > > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > > > > > 
+> > > > > > For direct I/O, add the flag IOMAP_DIO_RWF_NO_STALE_PAGECACHE to indicate
+> > > > > > that if the page invalidation fails, return back control to the
+> > > > > > filesystem so it may fallback to buffered mode.
+> > > > > > 
+> > > > > > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> > > > > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > > > > 
+> > > > > I'd like to start a discussion of this shouldn't really be the
+> > > > > default behavior.  If we have page cache that can't be invalidated it
+> > > > > actually makes a whole lot of sense to not do direct I/O, avoid the
+> > > > > warnings, etc.
+> > > > > 
+> > > > > Adding all the relevant lists.
+> > > > 
+> > > > Since no one responded so far, let me see if I can stir the cauldron :)
+> > > > 
+> > > > What error should be returned in case of such an error? I think the
+> > > 
+> > > Christoph's message is ambiguous.  I don't know if he means "fail the
+> > > I/O with an error" or "satisfy the I/O through the page cache".  I'm
+> > > strongly in favour of the latter.  Indeed, I'm in favour of not invalidating
+> > > the page cache at all for direct I/O.  For reads, I think the page cache
+> > > should be used to satisfy any portion of the read which is currently
+> > 
+> > That indeed would make reads faster. How about if the pages are dirty
+> > during DIO reads?
+> > Should a direct I/O read be responsible for making sure that the dirty
+> > pages are written back. Technically direct I/O reads is that we are
+> > reading from the device.
+> 
+> The filemap_write_and_wait_range should persist that data, right?
 
-It turns out that label readpage is reachable from here via goto
-page_not_up_to_date / goto page_not_up_to_date_locked. So IOCB_NOIO
-needs to be checked somewhere. I'll send an update.
+Right. filemap_write_and_wait_range() would not make sense for writes
+though.
 
-Andreas
+> 
+> > > cached.  For writes, I think we should write into the page cache pages
+> > > which currently exist, and then force those pages to be written back,
+> > > but left in cache.
+> > 
+> > Yes, that makes sense.
+> > If this is implemented, what would be the difference between O_DIRECT
+> > and O_DSYNC, if any?
+> 
+> Presumably a direct write would proceed as it does today if there's no
+> pagecache at all?
+> 
 
+Yes, correct. Just that it would leave pages in the cache instead of
+invalidating it after DIO write is complete.
+
+-- 
+Goldwyn
