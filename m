@@ -2,51 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D44A217D48
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 05:05:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CDFC217D51
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 05:07:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbgGHDF6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 23:05:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56722 "EHLO
+        id S1729363AbgGHDGB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 23:06:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728555AbgGHDF5 (ORCPT
+        with ESMTP id S1729326AbgGHDF7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 23:05:57 -0400
-Received: from mail-pj1-x104a.google.com (mail-pj1-x104a.google.com [IPv6:2607:f8b0:4864:20::104a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BA6EC08C5E1
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jul 2020 20:05:57 -0700 (PDT)
-Received: by mail-pj1-x104a.google.com with SMTP id 8so886126pjk.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jul 2020 20:05:57 -0700 (PDT)
+        Tue, 7 Jul 2020 23:05:59 -0400
+Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 721FCC08C5E2
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jul 2020 20:05:59 -0700 (PDT)
+Received: by mail-pg1-x549.google.com with SMTP id i1so34013291pgn.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jul 2020 20:05:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=sxoy6q+HxdTygJctVhkj+Ncax7HD8YrVRDBUHbmI/GA=;
-        b=jvxGSCDzgqCSzD3A5CZ6zoxEY3HwELi8FObL00AmNlxQWLpvrUeBFZBc3B9zB5etbX
-         mYEpJX0jRgUUJ4S9ot+BQk61eRDjpYkKZjXS5FkMSOUavjWBlMPiA5+LW/699y0iXpQC
-         s8ynNf8lIHMTPkHzVRmSAVfDowYI++DiMfl/exKk9l+l/8eEG3w0s91A1Ycqqyju5MfB
-         hrssrkk130gtKV4YYHCQ2dycaO4RT4XQHdC+kpGmlUYHSXN8zNcGMq9fWspZLGH9mYPU
-         dePpa1pDLmtFFKbvxkZX6SahRyc7gjEHircUdtQBKPXrVPw+ESEA+mxA7Fqh1xXzohzl
-         +nKg==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=wV4Dlp1PtfRWNCEDy3OUVmwFuHR/znQviVm4udIzuj8=;
+        b=cfqa4ZI0uBxj1JWd8dAGqnZFXA438OEfTLCcfqHSddxLMr8U1C1o3sty7pkLZivxV9
+         k2SLkAZmTm86qL76MMu0rWCsjw2KGoVfUpcu2Skz+1RJ2HRxepy9PS+oJHBH6EAIiKT0
+         SriweU9dx43A69vye8MbQ/7x6celwyfbxtDCje7B/pL2YOYpnBZAXmG4R6XlmFBlpzHU
+         zIIB+JCbamdhEvMVnfZqSc8WEq8Ob08h3jKHTybWQtf0DWwoHE/q1x+7PQ4gsYCnSPgg
+         nGLeVC26zVJq9dt0SaFj68BsveNgcD72gE+9VWRDJhJ5LkwFf2660LZxMJDrcdwQGjSi
+         7aVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=sxoy6q+HxdTygJctVhkj+Ncax7HD8YrVRDBUHbmI/GA=;
-        b=I+DbhucibIrfMRF5hPJRb4rbwgX4TQg3AnNTkZLi/oVz6tPsxzzLl8LYrlU0GQxBHc
-         CZ1Do8U7gXhkxUKRTIPePsrniDli9ivJrvQNPx9+CJ2ZuCyrRqeBDdNSjG+3Zyayte8U
-         7J5eegfzPKSfI2HWKj203tqfy54p9E+a1XCkvwFCRR/PBk/5Ky55wpH6+zpjaS9MDHme
-         IzySAQ5p8+qdDGgrGo1DGBQNcZSmF/v9bUqiBu7v7tzvKDR+C/7EJeV6AalbXMKPthU5
-         yeBTI8vr0t5dotRCR5yV/Fsi4crB4oc0qUKdy9mrnQieNj8UZuJDz0i3ozP1hfhJOzc8
-         zoNg==
-X-Gm-Message-State: AOAM530xDhepw6LFFiTYVljUP5OlOvxGYLqPAK2umChqezEwF+pIaY0v
-        YfX+PqbKPf4/NXT8WHcoZ1Lrrm4lGLA=
-X-Google-Smtp-Source: ABdhPJxHc+FKhRyKZRaUpdsFwS/kCIg/eIMdmz1LxIxSnZIjP9Kv5YSfmEOlULOG9PgVuLCQSbtYJSctP7g=
-X-Received: by 2002:a17:90a:1fcb:: with SMTP id z11mr1032734pjz.1.1594177556279;
- Tue, 07 Jul 2020 20:05:56 -0700 (PDT)
-Date:   Tue,  7 Jul 2020 20:05:48 -0700
-Message-Id: <20200708030552.3829094-1-drosen@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=wV4Dlp1PtfRWNCEDy3OUVmwFuHR/znQviVm4udIzuj8=;
+        b=AqKKzljbo6iu2p27h/xHF4qF7/OBv3L4G9kBRqT4Hwzqea1t0JRz4OMsfdJ1+Tqd0U
+         U3gm3Y338Cn6kVvb8xa/UfzbuEoZcXCPsYzK/IoGXRQw4j/U5AK07Qw+4lLea4UTvhbu
+         mPEBN08RYKCemN0k5XIPDZcYZoAkiID6DfK6SQp13rI1X6rJbmwkbbDzoTNtUMhpyFgJ
+         gbDefXYgQOkmTBdk2s41aszpcAijJfOMU1fTUDm2Eb0hAxCsPmd2qN5dTWYD7Mey9AhX
+         vdlCutd9bKHLQ+4RP6Jv7Pd/er3votoT7xTFCgpEFm93cQ6MuHfoAcOZAVO/VI73FkY1
+         cbeA==
+X-Gm-Message-State: AOAM5303eJYkkTv2AnxPhzRKv756/1lzdB7Ubf9Rjhr+KOpTOL3Ib/EG
+        YqHi1RjZVKh1O8DNKzAWjOVvOSAg0Y0=
+X-Google-Smtp-Source: ABdhPJzqov5JL3MTCYCUXsgN1WMwA/rTbUQMcSdZ1sJWb3HhqSUyDy2izboLJgJ3fC9ih0rA4dvnY2hb6wM=
+X-Received: by 2002:a17:902:744c:: with SMTP id e12mr39192696plt.337.1594177558861;
+ Tue, 07 Jul 2020 20:05:58 -0700 (PDT)
+Date:   Tue,  7 Jul 2020 20:05:49 -0700
+In-Reply-To: <20200708030552.3829094-1-drosen@google.com>
+Message-Id: <20200708030552.3829094-2-drosen@google.com>
 Mime-Version: 1.0
+References: <20200708030552.3829094-1-drosen@google.com>
 X-Mailer: git-send-email 2.27.0.383.g050319c2ae-goog
-Subject: [PATCH v11 0/4] Prepare for upcoming Casefolding/Encryption patches
+Subject: [PATCH v11 1/4] unicode: Add utf8_casefold_hash
 From:   Daniel Rosenberg <drosen@google.com>
 To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
         Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
@@ -57,43 +61,86 @@ To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
 Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
+        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>,
+        Eric Biggers <ebiggers@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This lays the ground work for enabling casefolding and encryption at the
-same time for ext4 and f2fs. A future set of patches will enable that
-functionality.
+This adds a case insensitive hash function to allow taking the hash
+without needing to allocate a casefolded copy of the string.
 
-These unify the highly similar dentry_operations that ext4 and f2fs both
-use for casefolding. In addition, they improve d_hash by not requiring a
-new string allocation.
+The existing d_hash implementations for casefolding allocate memory
+within rcu-walk, by avoiding it we can be more efficient and avoid
+worrying about a failed allocation.
 
-Daniel Rosenberg (4):
-  unicode: Add utf8_casefold_hash
-  fs: Add standard casefolding support
-  f2fs: Use generic casefolding support
-  ext4: Use generic casefolding support
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+Reviewed-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/unicode/utf8-core.c  | 23 ++++++++++++++++++++++-
+ include/linux/unicode.h |  3 +++
+ 2 files changed, 25 insertions(+), 1 deletion(-)
 
- fs/ext4/dir.c           | 64 +---------------------------
- fs/ext4/ext4.h          | 12 ------
- fs/ext4/hash.c          |  2 +-
- fs/ext4/namei.c         | 20 ++++-----
- fs/ext4/super.c         | 12 +++---
- fs/f2fs/dir.c           | 84 ++++--------------------------------
- fs/f2fs/f2fs.h          |  4 --
- fs/f2fs/super.c         | 10 ++---
- fs/f2fs/sysfs.c         | 10 +++--
- fs/libfs.c              | 94 +++++++++++++++++++++++++++++++++++++++++
- fs/unicode/utf8-core.c  | 23 +++++++++-
- include/linux/f2fs_fs.h |  3 --
- include/linux/fs.h      | 16 +++++++
- include/linux/unicode.h |  3 ++
- 14 files changed, 172 insertions(+), 185 deletions(-)
-
+diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+index 2a878b739115..dc25823bfed9 100644
+--- a/fs/unicode/utf8-core.c
++++ b/fs/unicode/utf8-core.c
+@@ -6,6 +6,7 @@
+ #include <linux/parser.h>
+ #include <linux/errno.h>
+ #include <linux/unicode.h>
++#include <linux/stringhash.h>
+ 
+ #include "utf8n.h"
+ 
+@@ -122,9 +123,29 @@ int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
+ 	}
+ 	return -EINVAL;
+ }
+-
+ EXPORT_SYMBOL(utf8_casefold);
+ 
++int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
++		       struct qstr *str)
++{
++	const struct utf8data *data = utf8nfdicf(um->version);
++	struct utf8cursor cur;
++	int c;
++	unsigned long hash = init_name_hash(salt);
++
++	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
++		return -EINVAL;
++
++	while ((c = utf8byte(&cur))) {
++		if (c < 0)
++			return -EINVAL;
++		hash = partial_name_hash((unsigned char)c, hash);
++	}
++	str->hash = end_name_hash(hash);
++	return 0;
++}
++EXPORT_SYMBOL(utf8_casefold_hash);
++
+ int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
+ 		   unsigned char *dest, size_t dlen)
+ {
+diff --git a/include/linux/unicode.h b/include/linux/unicode.h
+index 990aa97d8049..74484d44c755 100644
+--- a/include/linux/unicode.h
++++ b/include/linux/unicode.h
+@@ -27,6 +27,9 @@ int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
+ int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
+ 		  unsigned char *dest, size_t dlen);
+ 
++int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
++		       struct qstr *str);
++
+ struct unicode_map *utf8_load(const char *version);
+ void utf8_unload(struct unicode_map *um);
+ 
 -- 
 2.27.0.383.g050319c2ae-goog
 
