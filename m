@@ -2,170 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D92021897E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 15:48:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05C9A218986
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 15:50:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbgGHNsX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 09:48:23 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:23948 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729288AbgGHNsW (ORCPT
+        id S1729636AbgGHNuS convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 8 Jul 2020 09:50:18 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:46273 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729392AbgGHNuR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 09:48:22 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 068DXE6K143958;
-        Wed, 8 Jul 2020 09:47:57 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 325brdf91s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Jul 2020 09:47:56 -0400
-Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 068DcUxh156791;
-        Wed, 8 Jul 2020 09:47:55 -0400
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 325brdf90a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Jul 2020 09:47:55 -0400
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 068DaDE2022178;
-        Wed, 8 Jul 2020 13:47:52 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma04fra.de.ibm.com with ESMTP id 3251dw0cts-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Jul 2020 13:47:52 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 068DkSUQ60096810
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 8 Jul 2020 13:46:28 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C87D42042;
-        Wed,  8 Jul 2020 13:47:50 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B175842041;
-        Wed,  8 Jul 2020 13:47:46 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.202.84])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  8 Jul 2020 13:47:46 +0000 (GMT)
-Message-ID: <1594216064.23056.208.camel@linux.ibm.com>
-Subject: Re: [PATCH 4/4] module: Add hook for
- security_kernel_post_read_file()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>, Jessica Yu <jeyu@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+        Wed, 8 Jul 2020 09:50:17 -0400
+Received: from mail-qt1-f181.google.com ([209.85.160.181]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MJm8H-1kCc5m2mEr-00K5vV; Wed, 08 Jul 2020 15:50:15 +0200
+Received: by mail-qt1-f181.google.com with SMTP id g13so34469581qtv.8;
+        Wed, 08 Jul 2020 06:50:14 -0700 (PDT)
+X-Gm-Message-State: AOAM532DtPDX0V0xlxgv5JdhWqePX0BHlyAKzf1pBVKlqTk15Xe/UREa
+        MWN2w1eQs9BJ7mLGKm77odAN5QFSEddKqu5Bm9k=
+X-Google-Smtp-Source: ABdhPJzGbqSLDVa+22V+OxqUS2NDeQMLg4lKFCfmasSmlQFshduHvuFJ4EYxw9p5RNP/z2hlcFkstPMlyhdckAfJkBA=
+X-Received: by 2002:ac8:7587:: with SMTP id s7mr60215048qtq.304.1594216213827;
+ Wed, 08 Jul 2020 06:50:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200707180955.53024-1-mic@digikod.net> <20200707180955.53024-9-mic@digikod.net>
+ <CAK8P3a0FkoxFtcQJ2jSqyLbDCOp3R8-1JoY8CWAgbSZ9hH9wdQ@mail.gmail.com> <7f407b67-d470-25fd-1287-f4f55f18e74a@digikod.net>
+In-Reply-To: <7f407b67-d470-25fd-1287-f4f55f18e74a@digikod.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 8 Jul 2020 15:49:57 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1ehWZErD2a0iBqn37s-LTAtW0AbV_gt32iX3cQkXbpOQ@mail.gmail.com>
+Message-ID: <CAK8P3a1ehWZErD2a0iBqn37s-LTAtW0AbV_gt32iX3cQkXbpOQ@mail.gmail.com>
+Subject: Re: [PATCH v19 08/12] landlock: Add syscall implementation
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Boyd <stephen.boyd@linaro.org>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Wed, 08 Jul 2020 09:47:44 -0400
-In-Reply-To: <202007071951.605F38D43@keescook>
-References: <20200707081926.3688096-1-keescook@chromium.org>
-         <20200707081926.3688096-5-keescook@chromium.org>
-         <1594169240.23056.143.camel@linux.ibm.com>
-         <202007071951.605F38D43@keescook>
+        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
+        Richard Weinberger <richard@nod.at>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-08_11:2020-07-08,2020-07-08 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- phishscore=0 clxscore=1015 adultscore=0 cotscore=-2147483648
- suspectscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
- impostorscore=0 mlxscore=0 priorityscore=1501 classifier=spam adjust=0
- reason=mlx scancount=1 engine=8.12.0-2004280000
- definitions=main-2007080095
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:1EbzIoFyJM0srBmwqFU/S9OU4GrMN1MwPgI0Rt8D93c7MKFw8Vh
+ XAL2Mqzq8tROm189yfmIAAkwGBnqfvIAFmIXjoKW2kH0dmD3+NzqCb/ckj+Eb8wYodD69GC
+ UX3OO53NSdcm3ZmOC3ng/iiAQ+yoZ/tyGlG+Z6/45CQLkPDw6XjkwbRG4riXwmEhLWXzbtt
+ 2tt6J/Rja18C7l932QkIQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:311prxkKa2c=:8xNBGuQmWDWcOOo2Np72ie
+ iYO+qSJE0vLVPmqxDNEMH9dFwohmv/IWW8w1MF/hFbXPm1ZTuuL29xTPOLVO6ST1lamB63dgq
+ /oyNrqfINWsYPsPTUGV/cvjcL12wbjSThqPq9j+6ybZ88xJ1hlCpG7zC70MMohYsMtvC0/SIT
+ oN/1H71C4qmAu+L/SPY0peHovz8LZW5l1kOqlj1pRiT3cfNsIJqq3BWkcO2QxdQ7OTH4Rh3Md
+ VYuOpujXqrqZROak/a+LvR6pfMrcfuLsChK42uYeO1GiIurqVJvwgub4REhXeM8VAXXlGriz2
+ /IKPoq0hCetvMBo9tfZhs1pPp8E8zeToSTprSeimjAIrwySD5w0IQV74rrNzUMjNwL8N0OLBB
+ pxTE7H0D6humbFN/t1om7dhvl54XNOdczbQ2OI7AV17J+xr73yD+VhIOrh46P86qN1V6LrR8b
+ cgHzkU34XHWBn4XR7rMsvVoMLms6zcwrBlotosrs96bDtXU5hlS9XAGa1MiCKRpcMYtiuj2Wh
+ z4IKSiXqa9dHsG4iQZ/Yhp5NyhKUJn5a87Bo3f3dYdbbe5/V5cYF1e3ARDNC0AiyIhLlGnhbE
+ yh1kwxRPO4yWgeUu521IES/q3W0ZpDZvKmN3UAh1oWRZ1pjFo70KH8D5eNZ/4VNKJgMwGp9ac
+ CintiunzKm45WMH+75nhq6ioxqoJXHnpppg4Y/eb0l9fpI0FfR+Z5Uy8MzM/cWttkZQysowIZ
+ cYc5NdXuFeYXIy0/WwdZUz9PnrwF7QKFju3jnwHtxIZgMxQVqJ4FofJWQL3xAeq+4mbVdWgkB
+ dYS6VeYAszYLC7uILbm9BGBMDWCvpBOEeN1WHWtUYBgKxmLQxeR5qze8YqtqKJ6L3gqefSQ0e
+ 4Wm4oU3nd4D4LBcrPOHL3KMefI1JkXMLK9viTZKq1DQ0HLRF3zW/Y9YfikYvC7A/ZxIQ7pgj3
+ dYx+DEA3oBMSb8iF+hUk1EDGJh/6S2o8/Wl+HRYz7j778DOnf9pqm
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-07-07 at 20:10 -0700, Kees Cook wrote:
-> On Tue, Jul 07, 2020 at 08:47:20PM -0400, Mimi Zohar wrote:
-> > On Tue, 2020-07-07 at 01:19 -0700, Kees Cook wrote:
-> > > Calls to security_kernel_load_data() should be paired with a call to
-> > > security_kernel_post_read_file() with a NULL file argument. Add the
-> > > missing call so the module contents are visible to the LSMs interested
-> > > in measuring the module content. (This also paves the way for moving
-> > > module signature checking out of the module core and into an LSM.)
-> > > 
-> > > Cc: Jessica Yu <jeyu@kernel.org>
-> > > Fixes: c77b8cdf745d ("module: replace the existing LSM hook in init_module")
-> > > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > > ---
-> > >  kernel/module.c | 7 ++++++-
-> > >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/kernel/module.c b/kernel/module.c
-> > > index 0c6573b98c36..af9679f8e5c6 100644
-> > > --- a/kernel/module.c
-> > > +++ b/kernel/module.c
-> > > @@ -2980,7 +2980,12 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
-> > >  		return -EFAULT;
-> > >  	}
-> > >  
-> > > -	return 0;
-> > > +	err = security_kernel_post_read_file(NULL, (char *)info->hdr,
-> > > +					     info->len, READING_MODULE);
-> > 
-> > There was a lot of push back on calling security_kernel_read_file()
-> > with a NULL file descriptor here.[1]  The result was defining a new
-> > security hook - security_kernel_load_data - and enumeration -
-> > LOADING_MODULE.  I would prefer calling the same pre and post security
-> > hook.
-> > 
-> > Mimi
-> > 
-> > [1] http://kernsec.org/pipermail/linux-security-module-archive/2018-May/007110.html
-> 
-> Ah yes, thanks for the pointer to the discussion.
-> 
-> I think we have four cases then, for differing LSM hooks:
-> 
-> - no "file", no contents
-> 	e.g. init_module() before copying user buffer
-> 	security_kernel_load_data()
-> - only a "file" available, no contents
-> 	e.g. kernel_read_file() before actually reading anything
-> 	security_kernel_read_file()
-> - "file" and contents
-> 	e.g. kernel_read_file() after reading
-> 	security_kernel_post_read_file()
-> - no "file" available, just the contents
-> 	e.g. firmware platform fallback from EFI space (no "file")
-> 	unimplemented!
-> 
-> If an LSM wants to be able to examine the contents of firmware, modules,
-> kexec, etc, it needs either a "file" or the full contents.
-> 
-> The "file" methods all pass through the kernel_read_file()-family. The
-> others happen via blobs coming from userspace or (more recently) the EFI
-> universe.
-> 
-> So, if a NULL file is unreasonable, we need, perhaps,
-> security_kernel_post_load_data()
-> 
-> ?
+On Wed, Jul 8, 2020 at 3:04 PM Mickaël Salaün <mic@digikod.net> wrote:
+> On 08/07/2020 10:57, Arnd Bergmann wrote:
+> > On Tue, Jul 7, 2020 at 8:10 PM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > It looks like all you need here today is a single argument bit, plus
+> > possibly some room for extensibility. I would suggest removing all
+> > the extra bits and using a syscall like
+> >
+> > SYSCALL_DEFINE1(landlock_create_ruleset, u32, flags);
+> >
+> > I don't really see how this needs any variable-length arguments,
+> > it really doesn't do much.
+>
+> We need the attr_ptr/attr_size pattern because the number of ruleset
+> properties will increase (e.g. network access mask).
 
-Agreed.
+But how many bits do you think you will *actually* need in total that
+this needs to be a two-dimensional set of flags? At the moment you
+only have a single bit that you interpret.
 
-Mimi
+> > To be on the safe side, you might split up the flags into either the
+> > upper/lower 16 bits or two u32 arguments, to allow both compatible
+> > (ignored by older kernels if flag is set) and incompatible (return error
+> > when an unknown flag is set) bits.
+>
+> This may be a good idea in general, but in the case of Landlock, because
+> this kind of (discretionary) sandboxing should be a best-effort security
+> feature, we should avoid incompatible behavior. In practice, every
+> unknown bit returns an error because userland can probe for available
+> bits thanks to the get_features command. This kind of (in)compatibility
+> can then be handled by userland.
+
+If there are not going to be incompatible extensions, then just ignore
+all unknown bits and never return an error but get rid of the user
+space probing that just complicates the interface.
+
+In general, it's hard to rely on user space to first ask the kernel
+what it can do, the way this normally works is that user space
+asks the kernel for something and it either does it or not, but gives
+an indication of whether it worked.
+
+> I suggest this syscall signature:
+> SYSCALL_DEFINE3(landlock_create_ruleset, __u32, options, const struct
+> landlock_attr_ruleset __user *, ruleset_ptr, size_t, ruleset_size);
+
+The other problem here is that indirect variable-size structured arguments
+are a pain to instrument with things like strace or seccomp, so you
+should first try to use a fixed argument list, and fall back to a fixed
+structure if that fails.
+
+> >> +static int syscall_add_rule_path_beneath(const void __user *const attr_ptr,
+> >> +               const size_t attr_size)
+> >> +{
+> >> +       struct landlock_attr_path_beneath attr_path_beneath;
+> >> +       struct path path;
+> >> +       struct landlock_ruleset *ruleset;
+> >> +       int err;
+> >
+> > Similarly, it looks like this wants to be
+> >
+> > SYSCALL_DEFINE3(landlock_add_rule_path_beneath, int, ruleset, int,
+> > path, __u32, flags)
+> >
+> > I don't see any need to extend this in a way that wouldn't already
+> > be served better by adding another system call. You might argue
+> > that 'flags' and 'allowed_access' could be separate, with the latter
+> > being an indirect in/out argument here, like
+> >
+> > SYSCALL_DEFINE4(landlock_add_rule_path_beneath, int, ruleset, int, path,
+> >                            __u64 *, allowed_acces, __u32, flags)
+>
+> To avoid adding a new syscall for each new rule type (e.g. path_beneath,
+> path_range, net_ipv4_range, etc.), I think it would be better to keep
+> the attr_ptr/attr_size pattern and to explicitely set a dedicated option
+> flag to specify the attr type.
+>
+> This would look like this:
+> SYSCALL_DEFINE4(landlock_add_rule, __u32, options, int, ruleset, const
+> void __user *, rule_ptr, size_t, rule_size);
+>
+> The rule_ptr could then point to multiple types like struct
+> landlock_attr_path_beneath (without the current ruleset_fd field).
+
+This again introduces variable-sized structured data. How many different
+kinds of rule types do you think there will be (most likely, and maybe an
+upper bound)?
+
+Could (some of) these be generalized to use the same data structure?
+
+> >> +static int syscall_enforce_ruleset(const void __user *const attr_ptr,
+> >> +               const size_t attr_size)
+> >
+> > Here it seems like you just need to pass the file descriptor, or maybe
+> >
+> > SYSCALL_DEFINE2(landlock_enforce, int, ruleset, __u32 flags);
+> >
+> > if you need flags for extensibility.
+>
+> Right, but for consistency I prefer to change the arguments like this:
+> SYSCALL_DEFINE2(landlock_enforce, __u32 options, int, ruleset);
+
+Most system calls pass the object they work on as the first argument,
+in this case this would be the ruleset file descriptor.
+
+     Arnd
