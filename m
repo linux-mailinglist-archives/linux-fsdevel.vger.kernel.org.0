@@ -2,86 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 38DE421821F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 10:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33B0921822F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 10:27:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbgGHIXg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 04:23:36 -0400
-Received: from smtp-190f.mail.infomaniak.ch ([185.125.25.15]:54711 "EHLO
-        smtp-190f.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726806AbgGHIXg (ORCPT
+        id S1726913AbgGHI1Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 04:27:16 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:46572 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726006AbgGHI1P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 04:23:36 -0400
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4B1sl84TSxzlhWDS;
-        Wed,  8 Jul 2020 10:23:32 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4B1sl50LZfzlh8TT;
-        Wed,  8 Jul 2020 10:23:28 +0200 (CEST)
-Subject: Re: [PATCH v19 09/12] arch: Wire up landlock() syscall
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>,
-        Richard Weinberger <richard@nod.at>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <20200707180955.53024-1-mic@digikod.net>
- <20200707180955.53024-10-mic@digikod.net>
- <CAK8P3a0docCqHkEn9C7=e0GC_ieN1dsYgKQ9PbUmSZYxh9MRnw@mail.gmail.com>
- <8d2dab03-289e-2872-db66-ce80ce5c189f@digikod.net>
- <CAK8P3a3Mf_+-MY5kdeY7sqwUgCUi=PksWz1pGDy+o0ZfgF93Zw@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <956a05c8-529b-bf97-99ac-8958cceb35f3@digikod.net>
-Date:   Wed, 8 Jul 2020 10:23:28 +0200
-User-Agent: 
+        Wed, 8 Jul 2020 04:27:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594196834;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=nkl9/v1z2n5oTxi5AR2lnE/ZboSNKokLUsnZ/l22yc8=;
+        b=ii8HmGkT6vuc3EN/7LtKI29+YS2xEBIU7Gl5qnWJAZ2N2wueLYXpzkVsZWQmrMldcMBfNp
+        i6Ii1DW8+vMA9uNRUABsPbeE+SyOQPNYMbpH3b788CVmDcL49b+lVoreFvFsK+HRcMEL/z
+        m/+0zdox1M9hHaPTQVYt/kRHgxIS0Wg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-427-EekmgsW0PuybJaMHpAOPKA-1; Wed, 08 Jul 2020 04:27:10 -0400
+X-MC-Unique: EekmgsW0PuybJaMHpAOPKA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 663F919057A1;
+        Wed,  8 Jul 2020 08:27:09 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-113.rdu2.redhat.com [10.10.112.113])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 74F4860E3E;
+        Wed,  8 Jul 2020 08:27:08 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix interruption of operations
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 08 Jul 2020 09:27:07 +0100
+Message-ID: <159419682767.3479071.15857808307874696111.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.22
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3Mf_+-MY5kdeY7sqwUgCUi=PksWz1pGDy+o0ZfgF93Zw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The afs filesystem driver allows unstarted operations to be cancelled by
+signal, but most of these can easily be restarted (mkdir for example).  The
+primary culprits for reproducing this are those applications that use
+SIGALRM to display a progress counter.
 
-On 08/07/2020 09:47, Arnd Bergmann wrote:
-> On Wed, Jul 8, 2020 at 9:31 AM Mickaël Salaün <mic@digikod.net> wrote:
->> On 08/07/2020 09:22, Arnd Bergmann wrote:
->>> On Tue, Jul 7, 2020 at 8:10 PM Mickaël Salaün <mic@digikod.net> wrote:
->>>
->>>> index f4a01305d9a6..a63a411a74d5 100644
->>>> --- a/include/uapi/asm-generic/unistd.h
->>>> +++ b/include/uapi/asm-generic/unistd.h
->>
->> OK, I'll rebase the next series on linux-next.
-> 
-> Just change the number to the next free one, without actually rebasing.
-> It's always a bit messy to have multiple syscalls added, but I think that
-> causes the least confusion.
+File lock-extension operation is marked uninterruptible as we have a
+limited time in which to do it, and the release op is marked
+uninterruptible also as if we fail to unlock a file, we'll have to wait 20
+mins before anyone can lock it again.
 
-OK, but this will lead to two merge conflicts: patch 8 (asmlinkage) and
-patch 9 (tbl files).
+The store operation logs a warning if it gets interruption, e.g.:
 
-Do you want me to update the tools/perf/arch/*.tbl too?
+	kAFS: Unexpected error from FS.StoreData -4
+
+because it's run from the background - but it can also be run from
+fdatasync()-type things.  However, store options aren't marked
+interruptible at the moment.
+
+Fix this in the following ways:
+
+ (1) Mark store operations as uninterruptible.  It might make sense to
+     relax this for certain situations, but I'm not sure how to make sure
+     that background store ops aren't affected by signals to foreground
+     processes that happen to trigger them.
+
+ (2) In afs_get_io_locks(), where we're getting the serialisation lock for
+     talking to the fileserver, return ERESTARTSYS rather than EINTR
+     because a lot of the operations (e.g. mkdir) are restartable if we
+     haven't yet started sending the op to the server.
+
+Fixes: e49c7b2f6de7 ("afs: Build an abstraction around an "operation" concept")
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ fs/afs/fs_operation.c |    4 ++--
+ fs/afs/write.c        |    1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/afs/fs_operation.c b/fs/afs/fs_operation.c
+index c264839b2fd0..24fd163c6323 100644
+--- a/fs/afs/fs_operation.c
++++ b/fs/afs/fs_operation.c
+@@ -71,7 +71,7 @@ static bool afs_get_io_locks(struct afs_operation *op)
+ 		swap(vnode, vnode2);
+ 
+ 	if (mutex_lock_interruptible(&vnode->io_lock) < 0) {
+-		op->error = -EINTR;
++		op->error = -ERESTARTSYS;
+ 		op->flags |= AFS_OPERATION_STOP;
+ 		_leave(" = f [I 0]");
+ 		return false;
+@@ -80,7 +80,7 @@ static bool afs_get_io_locks(struct afs_operation *op)
+ 
+ 	if (vnode2) {
+ 		if (mutex_lock_interruptible_nested(&vnode2->io_lock, 1) < 0) {
+-			op->error = -EINTR;
++			op->error = -ERESTARTSYS;
+ 			op->flags |= AFS_OPERATION_STOP;
+ 			mutex_unlock(&vnode->io_lock);
+ 			op->flags &= ~AFS_OPERATION_LOCK_0;
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index abfc8d3dc20c..60918b80b729 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -449,6 +449,7 @@ static int afs_store_data(struct address_space *mapping,
+ 	op->store.first_offset = offset;
+ 	op->store.last_to = to;
+ 	op->mtime = vnode->vfs_inode.i_mtime;
++	op->flags |= AFS_OPERATION_UNINTR;
+ 	op->ops = &afs_store_data_operation;
+ 
+ try_next_key:
+
+
