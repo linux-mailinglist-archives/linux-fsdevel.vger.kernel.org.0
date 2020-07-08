@@ -2,154 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55299218569
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 13:02:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2B81218580
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 13:05:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728658AbgGHLB7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 07:01:59 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:24413 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728579AbgGHLB5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 07:01:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594206115;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=R5NESMLlssU1+fU+MzHpdMP4ATVfk6Mh7mmKV6aiRHE=;
-        b=YS/Nf+ldhQ6NhSsRWzRqzoakNyW4t/dL1YJlj8oBOLXE2ICG8Ob3suSLBmV0foq/wm36Ap
-        72IKAf1nV0FVsf//3Xl374HcKekFSUOGmcy43OJ91ucFvRykWgnx03NVuTaDd45ShYPEZz
-        I27lDeKIZo4q7+PvRui+o7oCGcR/97w=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-448-hKktApQNOnyH42sefk-tdg-1; Wed, 08 Jul 2020 07:01:54 -0400
-X-MC-Unique: hKktApQNOnyH42sefk-tdg-1
-Received: by mail-ed1-f72.google.com with SMTP id c25so58499266edr.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jul 2020 04:01:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=R5NESMLlssU1+fU+MzHpdMP4ATVfk6Mh7mmKV6aiRHE=;
-        b=AaEV77uHWfQEmUpOx+SBdsX0nvblI/+/PT1fFE8Qydx1cdw8PngsmIKJWNzt/g65/4
-         HHx2OqA+1RSaACoB0nkd7Hg/CBVGYCgSbah4U2DBORZhxEEaoxpSxnP88wx6kHHNJkaO
-         xbCHYFh/VbtXVgADOr11UyOqZzp6e1IB7yo8LezlmVy/91GSQNNlVVyXbm5v2lPxMV/U
-         TAVd40vx/Rc000fqyxoDwiyu65pTjSwW6s+x+qev8cnABJUf8Mb6Lrwttm3Di2++T3Mc
-         S9z7C4+4Y0hTgdg3UWk7m6fD8RgoKTM9nFeZg1X6o7vABTuiy2PuvlN8VXYfMP8mOOUY
-         E9+A==
-X-Gm-Message-State: AOAM530cV19sCJx8u3nf4iH0Uk+mKZdBZK1jWsTXTxV3WlhfcoxAFT7+
-        oMe+JfMisl1D7Tpcfn0xyia/yl+f1h8v+C+kHln3mNjZ+vLhKGb7rw5n7vHLmW9HPDsWtnsUjZg
-        6MqFGDBojv23aBUfTyllSD/3yzg==
-X-Received: by 2002:aa7:d297:: with SMTP id w23mr63681843edq.49.1594206112970;
-        Wed, 08 Jul 2020 04:01:52 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyu3h7uw896uTUPxnA3LkPYXdQN/SwlS39PF0fY2ZywJDOPl8R3ZF8j4DbvajdrArtX/ozobQ==
-X-Received: by 2002:aa7:d297:: with SMTP id w23mr63681803edq.49.1594206112726;
-        Wed, 08 Jul 2020 04:01:52 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
-        by smtp.gmail.com with ESMTPSA id p4sm1776088eja.9.2020.07.08.04.01.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jul 2020 04:01:52 -0700 (PDT)
-Subject: Re: [PATCH 0/4] Fix misused kernel_read_file() enums
-To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jessica Yu <jeyu@kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+        id S1728679AbgGHLFh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 07:05:37 -0400
+Received: from foss.arm.com ([217.140.110.172]:60812 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728410AbgGHLFh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jul 2020 07:05:37 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0208931B;
+        Wed,  8 Jul 2020 04:05:36 -0700 (PDT)
+Received: from e113632-lin (e113632-lin.cambridge.arm.com [10.1.194.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CF373F68F;
+        Wed,  8 Jul 2020 04:05:33 -0700 (PDT)
+References: <20200706142839.26629-1-qais.yousef@arm.com> <20200706142839.26629-2-qais.yousef@arm.com> <jhj8sfw8wzk.mognet@arm.com> <20200707093447.4t6eqjy4fkt747fo@e107158-lin.cambridge.arm.com> <jhj36638suv.mognet@arm.com> <20200707123640.lahojmq2s4byhkhl@e107158-lin.cambridge.arm.com>
+User-agent: mu4e 0.9.17; emacs 26.3
+From:   Valentin Schneider <valentin.schneider@arm.com>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
-        Peter Jones <pjones@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Boyd <stephen.boyd@linaro.org>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20200707081926.3688096-1-keescook@chromium.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <3c01073b-c422-dd97-0677-c16fe1158907@redhat.com>
-Date:   Wed, 8 Jul 2020 13:01:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Doug Anderson <dianders@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] sched/uclamp: Add a new sysctl to control RT default boost value
+In-reply-to: <20200707123640.lahojmq2s4byhkhl@e107158-lin.cambridge.arm.com>
+Date:   Wed, 08 Jul 2020 12:05:30 +0100
+Message-ID: <jhjwo3e6zd1.mognet@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20200707081926.3688096-1-keescook@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
 
-On 7/7/20 10:19 AM, Kees Cook wrote:
-> Hi,
-> 
-> In looking for closely at the additions that got made to the
-> kernel_read_file() enums, I noticed that FIRMWARE_PREALLOC_BUFFER
-> and FIRMWARE_EFI_EMBEDDED were added, but they are not appropriate
-> *kinds* of files for the LSM to reason about. They are a "how" and
-> "where", respectively. Remove these improper aliases and refactor the
-> code to adapt to the changes.
-> 
-> Additionally adds in missing calls to security_kernel_post_read_file()
-> in the platform firmware fallback path (to match the sysfs firmware
-> fallback path) and in module loading. I considered entirely removing
-> security_kernel_post_read_file() hook since it is technically unused,
-> but IMA probably wants to be able to measure EFI-stored firmware images,
-> so I wired it up and matched it for modules, in case anyone wants to
-> move the module signature checks out of the module core and into an LSM
-> to avoid the current layering violations.
-> 
-> This touches several trees, and I suspect it would be best to go through
-> James's LSM tree.
-> 
-> Thanks!
+On 07/07/20 13:36, Qais Yousef wrote:
+> On 07/07/20 12:30, Valentin Schneider wrote:
+>>
+>> On 07/07/20 10:34, Qais Yousef wrote:
+>> > On 07/06/20 16:49, Valentin Schneider wrote:
+>> >>
+>> >> On 06/07/20 15:28, Qais Yousef wrote:
+>> >> > CC: linux-fsdevel@vger.kernel.org
+>> >> > ---
+>> >> >
+>> >> > Peter
+>> >> >
+>> >> > I didn't do the
+>> >> >
+>> >> >       read_lock(&taslist_lock);
+>> >> >       smp_mb__after_spinlock();
+>> >> >       read_unlock(&tasklist_lock);
+>> >> >
+>> >> > dance you suggested on IRC as it didn't seem necessary. But maybe I missed
+>> >> > something.
+>> >> >
+>> >>
+>> >> So the annoying bit with just uclamp_fork() is that it happens *before* the
+>> >> task is appended to the tasklist. This means without too much care we
+>> >> would have (if we'd do a sync at uclamp_fork()):
+>> >>
+>> >>   CPU0 (sysctl write)                                CPU1 (concurrent forker)
+>> >>
+>> >>                                                        copy_process()
+>> >>                                                          uclamp_fork()
+>> >>                                                            p.uclamp_min = state
+>> >>     state = foo
+>> >>
+>> >>     for_each_process_thread(p, t)
+>> >>       update_state(t);
+>> >>                                                          list_add(p)
+>> >>
+>> >> i.e. that newly forked process would entirely sidestep the update. Now,
+>> >> with Peter's suggested approach we can be in a much better situation. If we
+>> >> have this in the sysctl update:
+>> >>
+>> >>   state = foo;
+>> >>
+>> >>   read_lock(&taslist_lock);
+>> >>   smp_mb__after_spinlock();
+>> >>   read_unlock(&tasklist_lock);
+>> >>
+>> >>   for_each_process_thread(p, t)
+>> >>     update_state(t);
+>> >>
+>> >> While having this in the fork:
+>> >>
+>> >>   write_lock(&tasklist_lock);
+>> >>   list_add(p);
+>> >>   write_unlock(&tasklist_lock);
+>> >>
+>> >>   sched_post_fork(p); // state re-read here; probably wants an mb first
+>> >>
+>> >> Then we can no longer miss an update. If the forked p doesn't see the new
+>> >> value, it *must* have been added to the tasklist before the updater loops
+>> >> over it, so the loop will catch it. If it sees the new value, we're done.
+>> >
+>> > uclamp_fork() has nothing to do with the race. If copy_process() duplicates the
+>> > task_struct of an RT task, it'll copy the old value.
+>> >
+>>
+>> Quite so; my point was if we were to use uclamp_fork() as to re-read the value.
+>>
+>> > I'd expect the newly introduced sched_post_fork() (also in copy_process() after
+>> > the list update) to prevent this race altogether.
+>> >
+>> > Now we could end up with a problem if for_each_process_thread() doesn't see the
+>> > newly forked task _after_ sched_post_fork(). Hence my question to Peter.
+>> >
+>>
+>>
+>> >>
+>> >> AIUI, the above strategy doesn't require any use of RCU. The update_state()
+>> >> and sched_post_fork() can race, but as per the above they should both be
+>> >> writing the same value.
+>> >
+>> > for_each_process_thread() must be protected by either tasklist_lock or
+>> > rcu_read_lock().
+>> >
+>>
+>> Right
+>>
+>> > The other RCU logic I added is not to protect against the race above. I
+>> > describe the other race condition in a comment.
+>>
+>> I take it that's the one in uclamp_sync_util_min_rt_default()?
+>
+> Correct.
+>
+>>
+>> __setscheduler_uclamp() can't be preempted as we hold task_rq_lock(). It
+>> can indeed race with the sync though, but again with the above suggested
+>> setup it would either:
+>> - see the old value, but be guaranteed to be iterated over later by the
+>>   updater
+>> - see the new value
+>
+> AFAIU rcu_read_lock() is light weight. So having the protection applied is more
+> robust against future changes.
 
+So I think the one thing you win by having this dance with mb's and the
+suggested handling of the task list is that you do not need any
+rcu_synchronize() anymore. Both approaches have merit, it's just that the
+way I understood the suggestion to add sched_post_fork() was to simplify
+the ordering of the update with the aforementioned scheme.
 
-I've done some quick tests on this series to make sure that
-the efi embedded-firmware support did not regress.
-That still works fine, so this series is;
+>
+>>
+>> sched_post_fork() being preempted out is a bit more annoying, but what
+>> prevents us from making that bit preempt-disabled?
+>
+> preempt_disable() is not friendly to RT and heavy handed approach IMO.
+>
 
-Tested-by: Hans de Goede <hdegoede@redhat.com>
+True, but this is both an infrequent and slow sysctl path, so I don't think
+RT would care much.
 
-Regards,
-
-Hans
-
-
-
-
-> 
-> -Kees
-> 
-> Kees Cook (4):
->    firmware_loader: EFI firmware loader must handle pre-allocated buffer
->    fs: Remove FIRMWARE_PREALLOC_BUFFER from kernel_read_file() enums
->    fs: Remove FIRMWARE_EFI_EMBEDDED from kernel_read_file() enums
->    module: Add hook for security_kernel_post_read_file()
-> 
->   drivers/base/firmware_loader/fallback_platform.c | 12 ++++++++++--
->   drivers/base/firmware_loader/main.c              |  5 ++---
->   fs/exec.c                                        |  7 ++++---
->   include/linux/fs.h                               |  3 +--
->   include/linux/lsm_hooks.h                        |  6 +++++-
->   kernel/module.c                                  |  7 ++++++-
->   security/integrity/ima/ima_main.c                |  6 ++----
->   7 files changed, 30 insertions(+), 16 deletions(-)
-> 
-
+>>
+>> I have to point out I'm assuming here updaters are serialized, which does
+>> seem to be see the case (cf. uclamp_mutex).
+>
+> Correct.
+>
+> Thanks
