@@ -2,101 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 588BE218C59
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 17:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AE81218C87
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 18:08:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730284AbgGHP6m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 11:58:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35842 "EHLO
+        id S1730276AbgGHQIR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 12:08:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730400AbgGHP6l (ORCPT
+        with ESMTP id S1730116AbgGHQIQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 11:58:41 -0400
-Received: from smtp.al2klimov.de (smtp.al2klimov.de [IPv6:2a01:4f8:c0c:1465::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D85DC061A0B
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jul 2020 08:58:41 -0700 (PDT)
-Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
-        by smtp.al2klimov.de (Postfix) with ESMTPA id 7D40BBC06F;
-        Wed,  8 Jul 2020 15:58:37 +0000 (UTC)
-From:   "Alexander A. Klimov" <grandmaster@al2klimov.de>
-To:     krisman@collabora.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Subject: [PATCH] Replace HTTP links with HTTPS ones: UNICODE SUBSYSTEM
-Date:   Wed,  8 Jul 2020 17:58:31 +0200
-Message-Id: <20200708155831.15102-1-grandmaster@al2klimov.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: +++++
-X-Spam-Level: *****
-Authentication-Results: smtp.al2klimov.de;
-        auth=pass smtp.auth=aklimov@al2klimov.de smtp.mailfrom=grandmaster@al2klimov.de
+        Wed, 8 Jul 2020 12:08:16 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DA32C08C5CE
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jul 2020 09:08:16 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id p20so51093610ejd.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jul 2020 09:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=HqpBY7r7cMmdxSomsxil1bu4vGv+J4OJWZNNfUv/dZM=;
+        b=TsT/rSU0rnR5xGbl/M/14iPag3TvmnldihTNk7Rpc2tIBuwM43sdJZ88gwylItA8dw
+         /LLoBTgoMlE+BsqiKmvh+AI0PumbsszW+VZ9ulB7aPx6Psu5d6WMhG5N6pxxZ6ovCTnH
+         gjoyIJ437nkHN8N2u6yxBGsHzFdWPsMRNJek0HPE07ZtzHWYEDKQmYO3OGVavyM/QT7d
+         C72+HVsc59mvH5AOpq1JAH0Gi5IQ64VxOEze5O8GWkXkrohOcVXhZ0WJb7X7OFcOzK+b
+         XyuDNiMz+T1LPbEw2AltMBvRMQBrMRfg5deI9GOpksLfLBTdwXZ5ZF6Wtneai1XkZVuA
+         CPtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=HqpBY7r7cMmdxSomsxil1bu4vGv+J4OJWZNNfUv/dZM=;
+        b=pv3Cfjfk2crq60RC135XSmpBcOvI5vvBpNmz8BsKh+hkPOUFzf+ZjkR2zlPRjCTsXv
+         ghOEiWMIsUyhwi29EWh2yW1+IDM9ehlXhudHF98Hzs+ncxXKxGTUgB/NSNUSfQFX+sQ/
+         3hn/ONDDGS0Mp56c9eQQYOPvbFkjV6RbjQF7ZyAIv53BalUS5/wvx8wXCAvQM894q2dm
+         iAgJwRVpJGBHUyxb5ZCL73VsvyX/Jxm8eHRzfLhiD2ZWZPvnuMV0RELD4U2LnJCZl/14
+         rNqY55M4nEajoZutrIxfjfYisnQcdUC6a64LRECppSr9VgARoGpiSOjCNcFuwjk+T4vd
+         r+QQ==
+X-Gm-Message-State: AOAM533YWpnx0HBmmL1siZlUJ03oyAry1+a+U2B76/+PRJenMqbu/6hA
+        2hUE2xK4t3REuiwnrwkmVYTTOg==
+X-Google-Smtp-Source: ABdhPJzFmbEoWRJtTJrtEq1GYcXtnsEsi025KjmbmGjkw8A5ckMUVYg/t+96wXuRw5d3teUIwmknUg==
+X-Received: by 2002:a17:906:7855:: with SMTP id p21mr41176812ejm.492.1594224494867;
+        Wed, 08 Jul 2020 09:08:14 -0700 (PDT)
+Received: from [192.168.2.16] (5.186.127.235.cgn.fibianet.dk. [5.186.127.235])
+        by smtp.gmail.com with ESMTPSA id b98sm8352edf.24.2020.07.08.09.08.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jul 2020 09:08:13 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
+Date:   Wed, 8 Jul 2020 18:08:12 +0200
+Message-Id: <36C0AD99-0D75-40D4-B704-507A222AEB81@javigon.com>
+References: <33b9887b-eaba-c7be-5dfd-fc7e7d416f48@kernel.dk>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, hch@infradead.org, damien.lemoal@wdc.com,
+        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+        mb@lightnvm.io, linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        Selvakumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+In-Reply-To: <33b9887b-eaba-c7be-5dfd-fc7e7d416f48@kernel.dk>
+To:     Jens Axboe <axboe@kernel.dk>
+X-Mailer: iPhone Mail (17F80)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Rationale:
-Reduces attack surface on kernel devs opening the links for MITM
-as HTTPS traffic is much harder to manipulate.
 
-Deterministic algorithm:
-For each file:
-  If not .svg:
-    For each line:
-      If doesn't contain `\bxmlns\b`:
-        For each link, `\bhttp://[^# \t\r\n]*(?:\w|/)`:
-	  If neither `\bgnu\.org/license`, nor `\bmozilla\.org/MPL\b`:
-            If both the HTTP and HTTPS versions
-            return 200 OK and serve the same content:
-              Replace HTTP with HTTPS.
+> On 8 Jul 2020, at 17.06, Jens Axboe <axboe@kernel.dk> wrote:
+>=20
+> =EF=BB=BFOn 7/8/20 9:02 AM, Matthew Wilcox wrote:
+>>> On Wed, Jul 08, 2020 at 08:59:50AM -0600, Jens Axboe wrote:
+>>> On 7/8/20 8:58 AM, Matthew Wilcox wrote:
+>>>> On Wed, Jul 08, 2020 at 08:54:07AM -0600, Jens Axboe wrote:
+>>>>> On 7/8/20 6:58 AM, Kanchan Joshi wrote:
+>>>>>>>> +#define IOCB_NO_CMPL        (15 << 28)
+>>>>>>>>=20
+>>>>>>>> struct kiocb {
+>>>>>>>> [...]
+>>>>>>>> -    void (*ki_complete)(struct kiocb *iocb, long ret, long ret2);
+>>>>>>>> +    loff_t __user *ki_uposp;
+>>>>>>>> -    int            ki_flags;
+>>>>>>>> +    unsigned int        ki_flags;
+>>>>>>>>=20
+>>>>>>>> +typedef void ki_cmpl(struct kiocb *, long ret, long ret2);
+>>>>>>>> +static ki_cmpl * const ki_cmpls[15];
+>>>>>>>>=20
+>>>>>>>> +void ki_complete(struct kiocb *iocb, long ret, long ret2)
+>>>>>>>> +{
+>>>>>>>> +    unsigned int id =3D iocb->ki_flags >> 28;
+>>>>>>>> +
+>>>>>>>> +    if (id < 15)
+>>>>>>>> +        ki_cmpls[id](iocb, ret, ret2);
+>>>>>>>> +}
+>>>>>>>>=20
+>>>>>>>> +int kiocb_cmpl_register(void (*cb)(struct kiocb *, long, long))
+>>>>>>>> +{
+>>>>>>>> +    for (i =3D 0; i < 15; i++) {
+>>>>>>>> +        if (ki_cmpls[id])
+>>>>>>>> +            continue;
+>>>>>>>> +        ki_cmpls[id] =3D cb;
+>>>>>>>> +        return id;
+>>>>>>>> +    }
+>>>>>>>> +    WARN();
+>>>>>>>> +    return -1;
+>>>>>>>> +}
+>>>>>>>=20
+>>>>>>> That could work, we don't really have a lot of different completion
+>>>>>>> types in the kernel.
+>>>>>>=20
+>>>>>> Thanks, this looks sorted.
+>>>>>=20
+>>>>> Not really, someone still needs to do that work. I took a quick look, a=
+nd
+>>>>> most of it looks straight forward. The only potential complication is
+>>>>> ocfs2, which does a swap of the completion for the kiocb. That would j=
+ust
+>>>>> turn into an upper flag swap. And potential sync kiocb with NULL
+>>>>> ki_complete. The latter should be fine, I think we just need to reserv=
+e
+>>>>> completion nr 0 for being that.
+>>>>=20
+>>>> I was reserving completion 15 for that ;-)
+>>>>=20
+>>>> +#define IOCB_NO_CMPL        (15 << 28)
+>>>> ...
+>>>> +    if (id < 15)
+>>>> +        ki_cmpls[id](iocb, ret, ret2);
+>>>>=20
+>>>> Saves us one pointer in the array ...
+>>>=20
+>>> That works. Are you going to turn this into an actual series of patches,=
 
-Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
----
- Continuing my work started at 93431e0607e5.
- See also: git log --oneline '--author=Alexander A. Klimov <grandmaster@al2klimov.de>' v5.7..master
- (Actually letting a shell for loop submit all this stuff for me.)
+>>> adding the functionality and converting users?
+>>=20
+>> I was under the impression Kanchan was going to do that, but I can run it=
 
- If there are any URLs to be removed completely or at least not HTTPSified:
- Just clearly say so and I'll *undo my change*.
- See also: https://lkml.org/lkml/2020/6/27/64
+>> off quickly ...
+>=20
+> I just wanted to get clarification there, because to me it sounded like
+> you expected Kanchan to do it, and Kanchan assuming it "was sorted". I'd
+> consider that a prerequisite for the append series as far as io_uring is
+> concerned, hence _someone_ needs to actually do it ;-)
+>=20
 
- If there are any valid, but yet not changed URLs:
- See: https://lkml.org/lkml/2020/6/26/837
+I believe Kanchan meant that now the trade-off we were asking to clear out i=
+s sorted.=20
 
- If you apply the patch, please let me know.
+We will send a new version shortly for the current functionality - we can se=
+e what we are missing on when the uring interface is clear.=20
 
+We really want this to be stable as a lot of other things are depending on t=
+his (e.g., fio patches)
 
- fs/unicode/mkutf8data.c | 2 +-
- fs/unicode/utf8-norm.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/unicode/mkutf8data.c b/fs/unicode/mkutf8data.c
-index ff2025ac5a32..33b76cbb3db3 100644
---- a/fs/unicode/mkutf8data.c
-+++ b/fs/unicode/mkutf8data.c
-@@ -244,7 +244,7 @@ utf8trie_t *nfdicf;
-  * The shortest sequence requirement was introduced by:
-  *    Corrigendum #1: UTF-8 Shortest Form
-  * It can be found here:
-- *    http://www.unicode.org/versions/corrigendum1.html
-+ *    https://www.unicode.org/versions/corrigendum1.html
-  *
-  */
- 
-diff --git a/fs/unicode/utf8-norm.c b/fs/unicode/utf8-norm.c
-index 1d2d2e5b906a..7978d2b3634c 100644
---- a/fs/unicode/utf8-norm.c
-+++ b/fs/unicode/utf8-norm.c
-@@ -79,7 +79,7 @@ EXPORT_SYMBOL(utf8version_latest);
-  * The shortest sequence requirement was introduced by:
-  *    Corrigendum #1: UTF-8 Shortest Form
-  * It can be found here:
-- *    http://www.unicode.org/versions/corrigendum1.html
-+ *    https://www.unicode.org/versions/corrigendum1.html
-  *
-  */
- 
--- 
-2.27.0
-
+Javier=
