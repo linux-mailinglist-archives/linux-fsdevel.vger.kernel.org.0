@@ -2,128 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 80F232185C4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 13:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92E642185CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 13:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbgGHLMi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 07:12:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47454 "EHLO
+        id S1728743AbgGHLPO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 07:15:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728865AbgGHLMh (ORCPT
+        with ESMTP id S1725972AbgGHLPN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 07:12:37 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17443C08C5DC
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jul 2020 04:12:37 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id q5so48446450wru.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jul 2020 04:12:37 -0700 (PDT)
+        Wed, 8 Jul 2020 07:15:13 -0400
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EA7AC08E6DC
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jul 2020 04:15:13 -0700 (PDT)
+Received: by mail-qt1-x844.google.com with SMTP id j10so34085781qtq.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jul 2020 04:15:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=HqU2Uiw1+L19r7fgkV1X/uqPYD/gZMcb2AA/s1T80Ks=;
-        b=CBcExC4njMa+jk5v6B1H9fbmoNGeDQHDinRetk3mgPDTUwaEvyi7ujjlpspdBA8aG2
-         JyyA/rq/mwBKVTSowb3CyUy2IlPBtdPX6Hsg0iJKafU420CrEZdo2CEMkF+DNsvw5yA9
-         RHaeCahVd64554oOukU9BwnAtWk2yMSf+vUHNNHA2WFsDpSAxbJhN0aQpm7V4wc6bUnd
-         bH/0cKKPhkj46x3DFn6gxzA3UDGlaByyaV57lKDmJb2d1S1AMY/DoVt9fqPEf+eRg6BT
-         yPl7hDpVzYeI7tnWj0RM3Q8SzxxQBhnCtCtoLB3wN8Vs9BsSr1wj8CGFI4NpA2x+itVD
-         Z94w==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mi6TL9T9iKfT5X0caZoWFf4L6ARlFDMGl6M6HUbAyGQ=;
+        b=oR6mc7oXySioKIzpAZZS+JHd5d+4ZTUEYZi/yss9U0fkOuZo40/tparovX9Ueoos6v
+         kOL2BlB3OVJnT9TYSGkFIkw1wRcR2b4G+Qs/l/o/QjiKD37PwGsiOQFBO6ee0cMMX6EN
+         e0/BF/D9gdAKMXV08vSlx6b01PpCxrKoANdz6XjdNITkozPTjWilO8xoDBxeFiwyOzZS
+         ioVwvbF16lpoIb4GVmeBEcB6B9q+SZRM9XUq1+Rgf5dvl7XdRD9RYz2eHw0wu/O9/zsB
+         OtmSn++vBAbqSlmhKfRp1UGX5z9i3HU0Q2ac/5TVOq0bYpiQs8RUhhyLdlTY9mZNMJtC
+         /dvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=HqU2Uiw1+L19r7fgkV1X/uqPYD/gZMcb2AA/s1T80Ks=;
-        b=TF/D4Zb81Wd0zj9Oc0v84VvwazMBUstSBuBzREJ2uW2AN9tX4jQboDmUJQ/bIatBEc
-         wlcJgF3uTOJkFBBCOCY+lO/E83TQu4IzJ7lhlff1Ll/LK0eyeO0MVIbZX7DA9pXr1EeO
-         emeXdGhd2iJjVbpAtm3MpVInIog3nPDYKIiEjKLuAyWC99MZgYQ1kfsume1Elo8GvZ+j
-         6uKKfb9uBucuX6KJmNVGcclFFqkcrHQhy7js+2ixTci9app52rUNXXfTE8/DEcrRdQOZ
-         ZaP0fzEiQWvNFfPjP+4pyPl5mxQz4gyI7hqC+gH6dwjvVRIK/3vFTXZb4pWWp1AT8zuZ
-         j+1w==
-X-Gm-Message-State: AOAM530o02R0B/qWImn2vMEUr3HXCseV0QPkujgMcZt7wJcIZTkpZhzl
-        wKGpX7Jtt6nEu+ykaAgI0I0=
-X-Google-Smtp-Source: ABdhPJwpbB5k9H/WTBx8lr/DpPHU4XKM09qCXtrvoA9FQlT4OLUFohAmQD1Ldi3jrxSjky2UZbupPw==
-X-Received: by 2002:adf:9561:: with SMTP id 88mr27377717wrs.240.1594206755851;
-        Wed, 08 Jul 2020 04:12:35 -0700 (PDT)
-Received: from localhost.localdomain ([141.226.183.23])
-        by smtp.gmail.com with ESMTPSA id k126sm5980834wme.17.2020.07.08.04.12.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2020 04:12:35 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 00/20] Prep work for fanotify events with name info
-Date:   Wed,  8 Jul 2020 14:11:56 +0300
-Message-Id: <20200708111156.24659-21-amir73il@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200708111156.24659-1-amir73il@gmail.com>
-References: <20200708111156.24659-1-amir73il@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mi6TL9T9iKfT5X0caZoWFf4L6ARlFDMGl6M6HUbAyGQ=;
+        b=G0tz5Ctkje7B0kQtJBqWvyg2Q9o+M5gi/ZUeQK5L1ov2oK40YEe4qeE+4795HLjSmB
+         IiGNP3Bpi5TrL9PyVpNrAnZQaXjqZfLC0xlElqbHUaQF/xEq/qom0QZYw8e3tHqA97e8
+         IsefKPDl2ZXU15AP9ST7Nqu9OBNpDPxGagtcN9mtZdsR4/Y4dUtgoOT99/aXnLZ4T7bX
+         CrmdxawDoDth2cI4v7WgRePEhD+W9gbFe8RNPRvM8hydrvC21ktCj1ihBHXhW35AXzCI
+         zMtdppoPEqxrwEfdssfd6PaVSs7sjYQgQfUNfMxLjK5DqxQy2YH+WAm9G+uDqUQQ54oU
+         gjUw==
+X-Gm-Message-State: AOAM530v+fYSM/LopltdFNSOP1ao0iM/cyVuh8GfHHBReHFmnfXbl+AI
+        W9V2mj0pLdkiYXlFN07TmHkQFYSG/qYOSR4xYQBPz88borupVQ==
+X-Google-Smtp-Source: ABdhPJz0cuf2U1RcCfJfUPmZLeauOtF48OOTeofNCW7eLZV45C29Pz+WifPZjuIr9BN+3xKxRdS7nyJmcjvANfOCiIA=
+X-Received: by 2002:ac8:4c88:: with SMTP id j8mr57010251qtv.57.1594206912372;
+ Wed, 08 Jul 2020 04:15:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <000000000000a47ace05a9c7b825@google.com> <20200707152411.GD25069@quack2.suse.cz>
+ <20200707181710.GD32331@gaia> <CACT4Y+ZLx3wT3uvsMr9EOQ35wF+tw3SN_kzgwn2B+K5dTtHrOg@mail.gmail.com>
+ <20200708110814.GA6308@gaia>
+In-Reply-To: <20200708110814.GA6308@gaia>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 8 Jul 2020 13:15:00 +0200
+Message-ID: <CACT4Y+YSP8+Oy0Hm4ss8sH-eoas3ZHgUe18rVwDif8uba+qTxA@mail.gmail.com>
+Subject: Re: memory leak in inotify_update_watch
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        syzbot <syzbot+dec34b033b3479b9ef13@syzkaller.appspotmail.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jan,
+On Wed, Jul 8, 2020 at 1:08 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+>
+> On Wed, Jul 08, 2020 at 09:17:37AM +0200, Dmitry Vyukov wrote:
+> > On Tue, Jul 7, 2020 at 8:17 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > > Kmemleak never performs well under heavy load. Normally you'd need to
+> > > let the system settle for a bit before checking whether the leaks are
+> > > still reported. The issue is caused by the memory scanning not stopping
+> > > the whole machine, so pointers may be hidden in registers on different
+> > > CPUs (list insertion/deletion for example causes transient kmemleak
+> > > confusion).
+> > >
+> > > I think the syzkaller guys tried a year or so ago to run it in parallel
+> > > with kmemleak and gave up shortly. The proposal was to add a "stopscan"
+> > > command to kmemleak which would do this under stop_machine(). However,
+> > > no-one got to implementing it.
+> > >
+> > > So, in this case, does the leak still appear with the reproducer, once
+> > > the system went idle?
+> >
+> > This report came from syzbot, so obviously we did not give up :)
+>
+> That's good to know ;).
+>
+> > We don't run scanning in parallel with fuzzing and do a very intricate
+> > multi-step dance to overcome false positives:
+> > https://github.com/google/syzkaller/blob/5962a2dc88f6511b77100acdf687c1088f253f6b/executor/common_linux.h#L3407-L3478
+> > and only report leaks that are reproducible.
+> > So far I have not seen any noticable amount of false positives, and
+> > you can see 70 already fixed leaks here:
+> > https://syzkaller.appspot.com/upstream/fixed?manager=ci-upstream-gce-leak
+> > https://syzkaller.appspot.com/upstream?manager=ci-upstream-gce-leak
+>
+> Thanks for the information and the good work here. If you have time, you
+> could implement the stop_machine() kmemleak scan as well ;).
 
-Following patches address your review comments on v2 [1].
-Branch is avalable at [2] and test branch of complete work of the moment
-is available at [3].
-
-Thanks,
-Amir.
-
-Changes sinve v2:
-- Re-parcel variable size buffer using struct fanotify_info
-- Move space reservation of _inline_fh_buf to struct fanotify_fid_event
-- Add Acks on kernfs patch
-
-[1] https://lore.kernel.org/linux-fsdevel/20200612093343.5669-1-amir73il@gmail.com/
-[2] https://github.com/amir73il/linux/commits/fanotify_prep-v3
-[3] https://github.com/amir73il/linux/commits/fanotify_name_fid
-
-Amir Goldstein (19):
-  fsnotify: fold fsnotify() call into fsnotify_parent()
-  fsnotify: return non const from fsnotify_data_inode()
-  nfsd: use fsnotify_data_inode() to get the unlinked inode
-  kernfs: do not call fsnotify() with name without a parent
-  inotify: do not use objectid when comparing events
-  fanotify: create overflow event type
-  fanotify: break up fanotify_alloc_event()
-  fsnotify: pass dir argument to handle_event() callback
-  fanotify: generalize the handling of extra event flags
-  fanotify: generalize merge logic of events on dir
-  fanotify: distinguish between fid encode error and null fid
-  fanotify: generalize test for FAN_REPORT_FID
-  fanotify: mask out special event flags from ignored mask
-  fanotify: prepare for implicit event flags in mark mask
-  fanotify: use FAN_EVENT_ON_CHILD as implicit flag on sb/mount/non-dir
-    marks
-  fanotify: remove event FAN_DIR_MODIFY
-  fsnotify: add object type "child" to object type iterator
-  fanotify: use struct fanotify_info to parcel the variable size buffer
-  fanotify: no external fh buffer in fanotify_name_event
-
-Mel Gorman (1):
-  fsnotify: Rearrange fast path to minimise overhead when there is no
-    watcher
-
- fs/kernfs/file.c                     |   2 +-
- fs/nfsd/filecache.c                  |   8 +-
- fs/notify/dnotify/dnotify.c          |   8 +-
- fs/notify/fanotify/fanotify.c        | 354 ++++++++++++++++-----------
- fs/notify/fanotify/fanotify.h        | 110 +++++++--
- fs/notify/fanotify/fanotify_user.c   | 110 +++++----
- fs/notify/fsnotify.c                 |  82 ++++---
- fs/notify/inotify/inotify.h          |   6 +-
- fs/notify/inotify/inotify_fsnotify.c |  11 +-
- fs/notify/inotify/inotify_user.c     |   4 +-
- include/linux/fanotify.h             |   6 +-
- include/linux/fsnotify.h             |  43 ++--
- include/linux/fsnotify_backend.h     |  34 ++-
- include/uapi/linux/fanotify.h        |   1 -
- kernel/audit_fsnotify.c              |  10 +-
- kernel/audit_tree.c                  |   6 +-
- kernel/audit_watch.c                 |   6 +-
- 17 files changed, 500 insertions(+), 301 deletions(-)
-
--- 
-2.17.1
-
+stop_machine will only help with pointers stored in registers/jumping
+in memory. But there may be other sources of false positives like
+hidden pointers via some hashing, offsets, reused low/high bits. Doing
+several scans and crc checksum of object contents helps with these as
+well and is orthogonal to stop_machine.
+So now I wonder if using stop_machine will actually solve all
+problems... because if not, then doing this work but then having to do
+several scans and checksums anyway is kinda pointless...
