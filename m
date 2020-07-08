@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 47B12218346
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 11:13:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F1A3218333
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 11:12:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbgGHJMo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 05:12:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57080 "EHLO
+        id S1727995AbgGHJMs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 05:12:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727796AbgGHJMn (ORCPT
+        with ESMTP id S1727908AbgGHJMp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 05:12:43 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6B72C08E81A
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jul 2020 02:12:43 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id r17so50603480ybj.22
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jul 2020 02:12:43 -0700 (PDT)
+        Wed, 8 Jul 2020 05:12:45 -0400
+Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E599C08C5DC
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jul 2020 02:12:45 -0700 (PDT)
+Received: by mail-pg1-x549.google.com with SMTP id e127so24519972pgc.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jul 2020 02:12:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=wV4Dlp1PtfRWNCEDy3OUVmwFuHR/znQviVm4udIzuj8=;
-        b=TmfFQqldI6NR71g11ccYeLYb4YMRJ9TbhNQpLgbner44eVMPHA3+K4/r3OVoQRVqiU
-         oNB0e489EVTL8XxXR17WKGxWV7xu+at9ec0oMAxeMgcQ5T9k9n+ssKWhtmWGqmjnLnUM
-         6BeB3sGPZLxW+Crt0D7Jg9uTB3Ou/lbVcbRxBFVNT1U7DJ5xXK91RBF+UxS6r65lKZvH
-         mb0YANeHYaPI2HDI/q5KpLu4zwrnZ/Hd496MiPfyQOJR1nAqzsvRk07T0x7CzCU/v40I
-         9VR02aGQQCuV7etZAmEfaL4xiNC9HANSW/5B2aq3+iMK4Qs+wEkrnXqi/ckFCoDMjrjA
-         I0tQ==
+        bh=8+TC1+grcd9+1L+bfv/X5qx9D+VjZ57HqDGHlmrwyxg=;
+        b=q96aTbimluUtEdhrrGai6ITGwzBJEtjxuyK5R4Ohgo8jMj9xT3CE2pEQIPnI7YgKU0
+         iZ+R+ujBZAkfm3i2yakoOqzAq77sDJ/DKwpxAwoYSJS5CsOoGES9CaumlTPPXerTo9rC
+         svZP+qq435cqH5JMxhzd9HO0liyx1FRkgh+/JRijSnPZOCQoUUtu6NWMnDdYja6WCMQl
+         WiOQFv8qa0NeOoqy7UgLEytqpfiFUb9Urs87YvVE9ZEk4azikkjjTTgMNa/LP41wArMS
+         hovD05z9U+Vg3zkwPRG7uM3rnKL7GPzr6qaRxTaPbnB06HagWo8ViUYYrUf2i+6dDvHW
+         p/RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=wV4Dlp1PtfRWNCEDy3OUVmwFuHR/znQviVm4udIzuj8=;
-        b=ezFXKi2uGHepIJ+6oAhPtn9lcORzOVAKcFUfVtTg8luZ1EViDTGH7N1atmj3BntmCQ
-         VksTn9RwJpiIam3aEjSUfLQCRcbUzMkMEZblteLMlW/np4gTkG4Q9QSf9uThhaaayXFf
-         LzXUXU/8qZV2q30nmDtogo6PvrHnLJwn02IuLA15W/HUAfTYtwZPEJSfCOCHC/enFQPl
-         /8xMKnoApJ6jE0T+3hiD1Ub/Oi2O2BCc+UvsaH3TXx349wySoRFBwaMWVZWiCAqrdGX7
-         85vJsH/3SuIj8Ayv+kjfZv9SxDZF7aUaW9d0VEGGD5GBpxO3xahkLOL4wJFoId7Obdii
-         9V+w==
-X-Gm-Message-State: AOAM53229qCiDW3hEyX4n+dZ0T9dN8xKMjR2/eYlyJNnbV5F/PwRCZsO
-        as4aAqvoU+g7Icjd8Cak7DUCSa6d86w=
-X-Google-Smtp-Source: ABdhPJxT53xSTJPoJDE7zNOjGdUzwbWSLO3iz5TcZnavMsDjJ7aSH9oD27jm9uQKje34VSZMZujf2U3uXyg=
-X-Received: by 2002:a25:9a41:: with SMTP id r1mr1597091ybo.516.1594199562803;
- Wed, 08 Jul 2020 02:12:42 -0700 (PDT)
-Date:   Wed,  8 Jul 2020 02:12:34 -0700
+        bh=8+TC1+grcd9+1L+bfv/X5qx9D+VjZ57HqDGHlmrwyxg=;
+        b=qQxmCcXgqTT0G4ZJw1z/MrLq4iXTFJAgYnz3veedBNNGM1uPHNZwxhAmP95n8z5E/T
+         Sva7t8/KTEKrqwpVNincE0tb5qZZe89+VUx/hm0dRzJS94h07lUJVEy3bhq8abMMLljO
+         /dhmd+jehKb49cZWTC/jNtfII6hK3JNiVNjkyNoaMiJQ8GTYs3ICdlQiOQs5uz8qKGNS
+         zUqPwQTqKW0eSfxUQzBIcIvs/rmDaiBpfbntH7OTPAiIqJBe72BuP1YTYpm3XY3uycJH
+         zsTjVGgE1NPfw3UQ8DwGI812Wz2j4DzFm/uS1ODrNVAouzLR2DOnpZ3IrKpvQ79HDVQz
+         CLCQ==
+X-Gm-Message-State: AOAM533DQECETATv9yhxOCJXcN+210h7TI1QV2Qo+HEZnxSUpdkRENSL
+        xvB93mZZw1MugpFWRfQmcwh464Hb6Zw=
+X-Google-Smtp-Source: ABdhPJymFIDabeVHG9reQJ9gahP1lHCXjNoctA7rMpb+c+pa+O+mAAY16K2hflrIoUySyNa//P1EBBAuC2Y=
+X-Received: by 2002:a17:90b:1993:: with SMTP id mv19mr8603393pjb.39.1594199564949;
+ Wed, 08 Jul 2020 02:12:44 -0700 (PDT)
+Date:   Wed,  8 Jul 2020 02:12:35 -0700
 In-Reply-To: <20200708091237.3922153-1-drosen@google.com>
-Message-Id: <20200708091237.3922153-2-drosen@google.com>
+Message-Id: <20200708091237.3922153-3-drosen@google.com>
 Mime-Version: 1.0
 References: <20200708091237.3922153-1-drosen@google.com>
 X-Mailer: git-send-email 2.27.0.383.g050319c2ae-goog
-Subject: [PATCH v12 1/4] unicode: Add utf8_casefold_hash
+Subject: [PATCH v12 2/4] fs: Add standard casefolding support
 From:   Daniel Rosenberg <drosen@google.com>
 To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
         Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
@@ -61,86 +61,173 @@ To:     "Theodore Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
 Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>,
-        Eric Biggers <ebiggers@google.com>
+        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds a case insensitive hash function to allow taking the hash
-without needing to allocate a casefolded copy of the string.
+This adds general supporting functions for filesystems that use
+utf8 casefolding. It provides standard dentry_operations and adds the
+necessary structures in struct super_block to allow this standardization.
 
-The existing d_hash implementations for casefolding allocate memory
-within rcu-walk, by avoiding it we can be more efficient and avoid
-worrying about a failed allocation.
+The new dentry operations are functionally equivalent to the existing
+operations in ext4 and f2fs, apart from the use of utf8_casefold_hash to
+avoid an allocation.
+
+By providing a common implementation, all users can benefit from any
+optimizations without needing to port over improvements.
 
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
-Reviewed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-Reviewed-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/unicode/utf8-core.c  | 23 ++++++++++++++++++++++-
- include/linux/unicode.h |  3 +++
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ fs/libfs.c         | 87 ++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/fs.h | 16 +++++++++
+ 2 files changed, 103 insertions(+)
 
-diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
-index 2a878b739115..dc25823bfed9 100644
---- a/fs/unicode/utf8-core.c
-+++ b/fs/unicode/utf8-core.c
-@@ -6,6 +6,7 @@
- #include <linux/parser.h>
- #include <linux/errno.h>
- #include <linux/unicode.h>
-+#include <linux/stringhash.h>
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 4d08edf19c78..72407cf151d4 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -20,6 +20,8 @@
+ #include <linux/fs_context.h>
+ #include <linux/pseudo_fs.h>
+ #include <linux/fsnotify.h>
++#include <linux/unicode.h>
++#include <linux/fscrypt.h>
  
- #include "utf8n.h"
+ #include <linux/uaccess.h>
  
-@@ -122,9 +123,29 @@ int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
- 	}
- 	return -EINVAL;
+@@ -1363,3 +1365,88 @@ bool is_empty_dir_inode(struct inode *inode)
+ 	return (inode->i_fop == &empty_dir_operations) &&
+ 		(inode->i_op == &empty_dir_inode_operations);
  }
--
- EXPORT_SYMBOL(utf8_casefold);
- 
-+int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
-+		       struct qstr *str)
++
++#ifdef CONFIG_UNICODE
++/*
++ * Determine if the name of a dentry should be casefolded.
++ *
++ * Return: if names will need casefolding
++ */
++static bool needs_casefold(const struct inode *dir)
 +{
-+	const struct utf8data *data = utf8nfdicf(um->version);
-+	struct utf8cursor cur;
-+	int c;
-+	unsigned long hash = init_name_hash(salt);
++	return IS_CASEFOLDED(dir) && dir->i_sb->s_encoding;
++}
 +
-+	if (utf8ncursor(&cur, data, str->name, str->len) < 0)
-+		return -EINVAL;
++/**
++ * generic_ci_d_compare - generic d_compare implementation for casefolding filesystems
++ * @dentry:	dentry whose name we are checking against
++ * @len:	len of name of dentry
++ * @str:	str pointer to name of dentry
++ * @name:	Name to compare against
++ *
++ * Return: 0 if names match, 1 if mismatch, or -ERRNO
++ */
++int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
++			  const char *str, const struct qstr *name)
++{
++	const struct dentry *parent = READ_ONCE(dentry->d_parent);
++	const struct inode *dir = READ_ONCE(parent->d_inode);
++	const struct super_block *sb = dentry->d_sb;
++	const struct unicode_map *um = sb->s_encoding;
++	struct qstr qstr = QSTR_INIT(str, len);
++	char strbuf[DNAME_INLINE_LEN];
++	int ret;
 +
-+	while ((c = utf8byte(&cur))) {
-+		if (c < 0)
-+			return -EINVAL;
-+		hash = partial_name_hash((unsigned char)c, hash);
++	if (!dir || !needs_casefold(dir))
++		goto fallback;
++	/*
++	 * If the dentry name is stored in-line, then it may be concurrently
++	 * modified by a rename.  If this happens, the VFS will eventually retry
++	 * the lookup, so it doesn't matter what ->d_compare() returns.
++	 * However, it's unsafe to call utf8_strncasecmp() with an unstable
++	 * string.  Therefore, we have to copy the name into a temporary buffer.
++	 */
++	if (len <= DNAME_INLINE_LEN - 1) {
++		memcpy(strbuf, str, len);
++		strbuf[len] = 0;
++		qstr.name = strbuf;
++		/* prevent compiler from optimizing out the temporary buffer */
++		barrier();
 +	}
-+	str->hash = end_name_hash(hash);
++	ret = utf8_strncasecmp(um, name, &qstr);
++	if (ret >= 0)
++		return ret;
++
++	if (sb_has_strict_encoding(sb))
++		return -EINVAL;
++fallback:
++	if (len != name->len)
++		return 1;
++	return !!memcmp(str, name->name, len);
++}
++EXPORT_SYMBOL(generic_ci_d_compare);
++
++/**
++ * generic_ci_d_hash - generic d_hash implementation for casefolding filesystems
++ * @dentry:	dentry of the parent directory
++ * @str:	qstr of name whose hash we should fill in
++ *
++ * Return: 0 if hash was successful or unchanged, and -EINVAL on error
++ */
++int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
++{
++	const struct inode *dir = READ_ONCE(dentry->d_inode);
++	struct super_block *sb = dentry->d_sb;
++	const struct unicode_map *um = sb->s_encoding;
++	int ret = 0;
++
++	if (!dir || !needs_casefold(dir))
++		return 0;
++
++	ret = utf8_casefold_hash(um, dentry, str);
++	if (ret < 0 && sb_has_strict_encoding(sb))
++		return -EINVAL;
 +	return 0;
 +}
-+EXPORT_SYMBOL(utf8_casefold_hash);
-+
- int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
- 		   unsigned char *dest, size_t dlen)
- {
-diff --git a/include/linux/unicode.h b/include/linux/unicode.h
-index 990aa97d8049..74484d44c755 100644
---- a/include/linux/unicode.h
-+++ b/include/linux/unicode.h
-@@ -27,6 +27,9 @@ int utf8_normalize(const struct unicode_map *um, const struct qstr *str,
- int utf8_casefold(const struct unicode_map *um, const struct qstr *str,
- 		  unsigned char *dest, size_t dlen);
++EXPORT_SYMBOL(generic_ci_d_hash);
++#endif
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3f881a892ea7..af8f2ecec8ff 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1392,6 +1392,12 @@ extern int send_sigurg(struct fown_struct *fown);
+ #define SB_ACTIVE	(1<<30)
+ #define SB_NOUSER	(1<<31)
  
-+int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
-+		       struct qstr *str);
++/* These flags relate to encoding and casefolding */
++#define SB_ENC_STRICT_MODE_FL	(1 << 0)
 +
- struct unicode_map *utf8_load(const char *version);
- void utf8_unload(struct unicode_map *um);
++#define sb_has_strict_encoding(sb) \
++	(sb->s_encoding_flags & SB_ENC_STRICT_MODE_FL)
++
+ /*
+  *	Umount options
+  */
+@@ -1461,6 +1467,10 @@ struct super_block {
+ #endif
+ #ifdef CONFIG_FS_VERITY
+ 	const struct fsverity_operations *s_vop;
++#endif
++#ifdef CONFIG_UNICODE
++	struct unicode_map *s_encoding;
++	__u16 s_encoding_flags;
+ #endif
+ 	struct hlist_bl_head	s_roots;	/* alternate root dentries for NFS */
+ 	struct list_head	s_mounts;	/* list of mounts; _not_ for fs use */
+@@ -3385,6 +3395,12 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
  
+ extern int generic_check_addressable(unsigned, u64);
+ 
++#ifdef CONFIG_UNICODE
++extern int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
++extern int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
++				const char *str, const struct qstr *name);
++#endif
++
+ #ifdef CONFIG_MIGRATION
+ extern int buffer_migrate_page(struct address_space *,
+ 				struct page *, struct page *,
 -- 
 2.27.0.383.g050319c2ae-goog
 
