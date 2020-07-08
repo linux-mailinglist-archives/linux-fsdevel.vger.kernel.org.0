@@ -2,45 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7998C217FB5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 08:39:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5043217FEC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 08:51:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729786AbgGHGis (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 02:38:48 -0400
-Received: from verein.lst.de ([213.95.11.211]:33796 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbgGHGis (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 02:38:48 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 8B7BE68AFE; Wed,  8 Jul 2020 08:38:45 +0200 (CEST)
-Date:   Wed, 8 Jul 2020 08:38:45 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Song Liu <song@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        open list <linux-kernel@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-raid <linux-raid@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 01/16] init: remove the bstat helper
-Message-ID: <20200708063845.GA5468@lst.de>
-References: <20200615125323.930983-1-hch@lst.de> <20200615125323.930983-2-hch@lst.de> <CAPhsuW6chy6uMpow3L1WvBW8xCsUYw4SbLHQQXcANqBVcqoULg@mail.gmail.com> <20200707103439.GA2812@lst.de> <CAPhsuW6CvKMPEuUEFfZhxyyU2ke9oiYOuCwkM+NM2=bo_o_MFw@mail.gmail.com>
+        id S1729991AbgGHGvg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 02:51:36 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:55758 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729971AbgGHGvf (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jul 2020 02:51:35 -0400
+Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 408423A4417;
+        Wed,  8 Jul 2020 16:51:29 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jt3vT-0003aV-Rn; Wed, 08 Jul 2020 16:51:27 +1000
+Date:   Wed, 8 Jul 2020 16:51:27 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        fdmanana@gmail.com, dsterba@suse.cz, darrick.wong@oracle.com,
+        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: always fall back to buffered I/O after invalidation failures,
+ was: Re: [PATCH 2/6] iomap: IOMAP_DIO_RWF_NO_STALE_PAGECACHE return if page
+ invalidation fails
+Message-ID: <20200708065127.GM2005@dread.disaster.area>
+References: <20200629192353.20841-1-rgoldwyn@suse.de>
+ <20200629192353.20841-3-rgoldwyn@suse.de>
+ <20200701075310.GB29884@lst.de>
+ <20200707124346.xnr5gtcysuzehejq@fiona>
+ <20200707125705.GK25523@casper.infradead.org>
+ <20200707130030.GA13870@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPhsuW6CvKMPEuUEFfZhxyyU2ke9oiYOuCwkM+NM2=bo_o_MFw@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200707130030.GA13870@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
+        a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
+        a=kj9zAlcOel0A:10 a=_RQrkK6FrEwA:10 a=iox4zFpeAAAA:8 a=yPCof4ZbAAAA:8
+        a=7-415B0cAAAA:8 a=3vpnGOzTaiQfhgfqfmAA:9 a=CjuIK1q_8ugA:10
+        a=WzC6qhA0u3u7Ye7llzcV:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 07, 2020 at 09:54:30AM -0700, Song Liu wrote:
-> Would this official mm tree work?
+On Tue, Jul 07, 2020 at 03:00:30PM +0200, Christoph Hellwig wrote:
+> On Tue, Jul 07, 2020 at 01:57:05PM +0100, Matthew Wilcox wrote:
+> > On Tue, Jul 07, 2020 at 07:43:46AM -0500, Goldwyn Rodrigues wrote:
+> > > On  9:53 01/07, Christoph Hellwig wrote:
+> > > > On Mon, Jun 29, 2020 at 02:23:49PM -0500, Goldwyn Rodrigues wrote:
+> > > > > From: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > > > > 
+> > > > > For direct I/O, add the flag IOMAP_DIO_RWF_NO_STALE_PAGECACHE to indicate
+> > > > > that if the page invalidation fails, return back control to the
+> > > > > filesystem so it may fallback to buffered mode.
+> > > > > 
+> > > > > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> > > > > Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> > > > 
+> > > > I'd like to start a discussion of this shouldn't really be the
+> > > > default behavior.  If we have page cache that can't be invalidated it
+> > > > actually makes a whole lot of sense to not do direct I/O, avoid the
+> > > > warnings, etc.
+> > > > 
+> > > > Adding all the relevant lists.
+> > > 
+> > > Since no one responded so far, let me see if I can stir the cauldron :)
+> > > 
+> > > What error should be returned in case of such an error? I think the
+> > 
+> > Christoph's message is ambiguous.  I don't know if he means "fail the
+> > I/O with an error" or "satisfy the I/O through the page cache".  I'm
+> > strongly in favour of the latter.
 > 
-> T:      git git://github.com/hnaz/linux-mm.git
+> Same here.  Sorry if my previous mail was unclear.
 > 
-> If not, I am OK with either vfs tree or a dedicated tree.
+> > Indeed, I'm in favour of not invalidating
+> > the page cache at all for direct I/O.  For reads, I think the page cache
+> > should be used to satisfy any portion of the read which is currently
+> > cached.  For writes, I think we should write into the page cache pages
+> > which currently exist, and then force those pages to be written back,
+> > but left in cache.
+> 
+> Something like that, yes.
 
-That is a constantly rebased tree, so I don't think it helps.
+So are we really willing to take the performance regression that
+occurs from copying out of the page cache consuming lots more CPU
+than an actual direct IO read? Or that direct IO writes suddenly
+serialise because there are page cache pages and now we have to do
+buffered IO?
+
+Direct IO should be a deterministic, zero-copy IO path to/from
+storage. Using the CPU to copy data during direct IO is the complete
+opposite of the intended functionality, not to mention the behaviour
+that many applications have been careful designed and tuned for.
+
+Hence I think that forcing iomap to use cached pages for DIO is a
+non-starter. I have no problems with providing infrastructure that
+allows filesystems to -opt in- to using buffered IO for the direct
+IO path. However, the change in IO behaviour caused by unpredicably
+switching between direct IO and buffered IO (e.g. suddening DIO
+writes serialise -all IO-) will cause unacceptible performance
+regressions for many applications and be -very difficult to
+diagnose- in production systems.
+
+IOWs, we need to let the individual filesystems decide how they want
+to use the page cache for direct IO. Just because we have new direct
+IO infrastructure (i.e. iomap) it does not mean we can just make
+wholesale changes to the direct IO path behaviour...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
