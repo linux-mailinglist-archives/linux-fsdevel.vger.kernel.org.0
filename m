@@ -2,84 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A879A218A15
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 16:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61343218A1D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 16:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729717AbgGHOYK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 10:24:10 -0400
-Received: from casper.infradead.org ([90.155.50.34]:36036 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729467AbgGHOYK (ORCPT
+        id S1729505AbgGHOZ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 10:25:29 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:60912 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729468AbgGHOZ3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 10:24:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MrAnEvtYxJ3CG9gxR3loAOZTO73HHraqyOfrOks4hhg=; b=JMJwqmeTQ9cGJpeD9W93Dw1IjO
-        XWotEiYbye0J2WZMFOcGjZcu3WbLV55gbbJHp4tN6THMa9cj8svxx7BtFefMqc5eD0hLPhSeiRHfc
-        dht8oKIrdba3H++FPHoTHrH8o9AQOKTc5hTH/OdDHsBq21QVOWsKJkMnSgzwbdKEGeCAdNafeHIRP
-        HEnmGYkfg5gUtC+4LV/Yixsovv71OLHrATMzHBfgyjOvNVwWFVhR/b96qceLBtbGfR6b7iZywHu96
-        xYgs+G2w1wHc8O/belST07+MM+apfnisUfdTHRfp0HtCEz7f1uB/VtCHjo6wP6mC5f+lUYi8bEbKU
-        1Q3ih66A==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jtAyJ-0007LT-Jr; Wed, 08 Jul 2020 14:22:51 +0000
-Date:   Wed, 8 Jul 2020 15:22:51 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kanchan Joshi <joshi.k@samsung.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, hch@infradead.org, Damien.LeMoal@wdc.com,
-        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-        mb@lightnvm.io, linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Selvakumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
-Message-ID: <20200708142251.GQ25523@casper.infradead.org>
-References: <4a9bf73e-f3ee-4f06-7fad-b8f8861b0bc1@kernel.dk>
- <20200706143208.GA25523@casper.infradead.org>
- <20200707151105.GA23395@test-zns>
- <20200707155237.GM25523@casper.infradead.org>
- <20200707202342.GA28364@test-zns>
- <7a44d9c6-bf7d-0666-fc29-32c3cba9d1d8@kernel.dk>
- <20200707221812.GN25523@casper.infradead.org>
- <CGME20200707223803epcas5p41814360c764d6b5f67fdbf173a8ba64e@epcas5p4.samsung.com>
- <145cc0ad-af86-2d6a-78b3-9ade007aae52@kernel.dk>
- <20200708125805.GA16495@test-zns>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200708125805.GA16495@test-zns>
+        Wed, 8 Jul 2020 10:25:29 -0400
+Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 068EPCde004077;
+        Wed, 8 Jul 2020 23:25:12 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp);
+ Wed, 08 Jul 2020 23:25:12 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp)
+Received: from localhost.localdomain (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 068EOOel003215
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 8 Jul 2020 23:25:11 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] fput: Allow calling __fput_sync() from !PF_KTHREAD thread.
+Date:   Wed,  8 Jul 2020 23:24:09 +0900
+Message-Id: <20200708142409.8965-1-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 2.18.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 08, 2020 at 06:28:05PM +0530, Kanchan Joshi wrote:
-> The last thing is about the flag used to trigger this processing. Will it be
-> fine to intoduce new flag (RWF_APPEND2 or RWF_APPEND_OFFSET)
-> instead of using RWF_APPEND?
-> 
-> New flag will do what RWF_APPEND does and will also return the
-> written-location (and therefore expects pointer setup in application).
+__fput_sync() was introduced by commit 4a9d4b024a3102fc ("switch fput to
+task_work_add") with BUG_ON(!(current->flags & PF_KTHREAD)) check, and
+the only user of __fput_sync() was introduced by commit 17c0a5aaffa63da6
+("make acct_kill() wait for file closing."). However, the latter commit is
+effectively calling __fput_sync() from !PF_KTHREAD thread because of
+schedule_work() call followed by immediate wait_for_completion() call.
+That is, there is no need to defer close_work() to a WQ context. I guess
+that the reason to defer was nothing but to bypass this BUG_ON() check.
+While we need to remain careful about calling __fput_sync(), we can remove
+bypassable BUG_ON() check from __fput_sync().
 
-I think it's simpler to understand if it's called RWF_INDIRECT_OFFSET
-Then it'd look like:
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+Al, is this change acceptable?
 
-+	rwf_t rwf = READ_ONCE(sqe->rw_flags);
-...
--	iocb->ki_pos = READ_ONCE(sqe->off);
-+	if (rwf & RWF_INDIRECT_OFFSET) {
-+		loff_t __user *loffp = u64_to_user_ptr(sqe->addr2);
-+
-+		if (get_user(iocb->ki_pos, loffp)
-+			return -EFAULT;
-+		iocb->ki_loffp = loffp;
-+	} else {
-+		iocb->ki_pos = READ_ONCE(sqe->off);
-+	}
-...
--	ret = kiocb_set_rw_flags(kiocb, READ_ONCE(sqe->rw_flags));
-+	ret = kiocb_set_rw_flags(kiocb, rwf);
+Eric is trying to use fput()/flush_delayed_fput()/task_work_run() from
+blob_to_mnt() which is going to be introduced by
+https://lkml.kernel.org/r/20200702164140.4468-8-ebiederm@xmission.com
+in order to make sure that a file (which was opened for writing and is
+intended to be execve()d shortly) is closed by current thread before
+leaving blob_to_mnt().
+
+But since current thread might fail to find the interested file (which was
+opened for writing and is intended to be execve()d shortly) and/or might find
+uninterested files (which current thread does not need to process) when
+multiple threads concurrently called flush_delayed_fput(), I think that we
+should use __fput_sync() in order to make sure that only the interested file
+is closed by current thread.
+
+Therefore, I propose this change.
+
+ fs/file_table.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
+
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 656647f9575a..7c4125179469 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -359,20 +359,15 @@ void fput(struct file *file)
+ }
+ 
+ /*
+- * synchronous analog of fput(); for kernel threads that might be needed
+- * in some umount() (and thus can't use flush_delayed_fput() without
+- * risking deadlocks), need to wait for completion of __fput() and know
+- * for this specific struct file it won't involve anything that would
+- * need them.  Use only if you really need it - at the very least,
+- * don't blindly convert fput() by kernel thread to that.
++ * synchronous analog of fput(); for threads that need to wait for completion
++ * of __fput() and know for this specific struct file it won't involve anything
++ * that would need them.  Use only if you really need it - at the very least,
++ * don't blindly convert fput() to __fput_sync().
+  */
+ void __fput_sync(struct file *file)
+ {
+-	if (atomic_long_dec_and_test(&file->f_count)) {
+-		struct task_struct *task = current;
+-		BUG_ON(!(task->flags & PF_KTHREAD));
++	if (atomic_long_dec_and_test(&file->f_count))
+ 		__fput(file);
+-	}
+ }
+ 
+ EXPORT_SYMBOL(fput);
+-- 
+2.18.4
 
