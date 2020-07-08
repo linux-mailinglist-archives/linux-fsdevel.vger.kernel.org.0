@@ -2,131 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 838A5217C0F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 02:04:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F383217C13
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 02:05:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729519AbgGHADz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jul 2020 20:03:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57104 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728911AbgGHADy (ORCPT
+        id S1729556AbgGHAFK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jul 2020 20:05:10 -0400
+Received: from www62.your-server.de ([213.133.104.62]:45386 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728280AbgGHAFK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jul 2020 20:03:54 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0120FC08C5E2
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jul 2020 17:03:54 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id j19so13905657pgm.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jul 2020 17:03:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=XdUaPDr56t2dB8W61mELkwj0Skn6S5S4z+Vsl/tJuD4=;
-        b=VTUdIfdQiK5zHvzFtK8tbyfXjd+nD6axR+vPnmGSSkNh1E+1ZiM7M9DC1CsxyMf2wt
-         b2v8jrBY52b2jGsd26dV33M2EUP/T2e2Dgnx6h0zwboF2A1izvEz03TmfgImJCv+hVe9
-         ZK3sk7xEQSZ9B1SsC6/oLqAPlJT5zW/upU9BA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=XdUaPDr56t2dB8W61mELkwj0Skn6S5S4z+Vsl/tJuD4=;
-        b=gii0XVqoNFtMU6kR4lB8BAZMi9w/eH/76ZbJr5Xd2jchru6k/u8vFxfZBOUZd8QE4h
-         /NLUKRYapHFF7lK69/954DcJ6cMRFmQUligUEqarh6uOR4DnOSNZXhZR1U2w9OrqCeS1
-         hIBdP3LnGyko7k98PdthigkicWLmQLIr1y8OHQsMdri6YXtputqDCXjJQUiwjMPM5VtS
-         n68gL1dpGCoASTTygRXZFnmfXA3Xjk/O+ijoCxJw8GfNwXn03hBmhmc7I4zXkWn7MOJO
-         In1bcmzGMlu3qX4oWuXkO9OuAIXzYWud99wWCkVsVVOXuQJ1wULdMKHHVgWNynG/bl6Z
-         2MNg==
-X-Gm-Message-State: AOAM530T8wLc+JWe0wdCEDZc6KHhKDEYPPmaDmHs1dmejVUZfBqL8mnS
-        cDj8LdTw8ZC1iIUfAyuGT8/3Sg==
-X-Google-Smtp-Source: ABdhPJzlB+wnA820KsXyKDpkiqDz27omyRVHEG+75x1JqbwOpWvyP8oemaSGQaQclki+9QkvXKv2uA==
-X-Received: by 2002:a62:f202:: with SMTP id m2mr39784579pfh.157.1594166631916;
-        Tue, 07 Jul 2020 17:03:51 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 27sm3417389pjg.19.2020.07.07.17.03.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2020 17:03:51 -0700 (PDT)
-Date:   Tue, 7 Jul 2020 17:03:50 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
+        Tue, 7 Jul 2020 20:05:10 -0400
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1jsxaC-0000bi-IL; Wed, 08 Jul 2020 02:05:04 +0200
+Received: from [178.196.57.75] (helo=pc-9.home)
+        by sslproxy01.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1jsxaC-0009N2-5Q; Wed, 08 Jul 2020 02:05:04 +0200
+Subject: Re: [PATCH v3 13/16] exit: Factor thread_group_exited out of
+ pidfd_poll
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kees Cook <keescook@chromium.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Desmond Yan <desmond.yan@broadcom.com>,
-        James Hu <james.hu@broadcom.com>
-Subject: Re: [PATCH v10 7/9] misc: bcm-vk: add Broadcom VK driver
-Message-ID: <202007071700.C567BA7B@keescook>
-References: <20200706232309.12010-1-scott.branden@broadcom.com>
- <20200706232309.12010-8-scott.branden@broadcom.com>
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <87y2o1swee.fsf_-_@x220.int.ebiederm.org>
+ <20200702164140.4468-13-ebiederm@xmission.com>
+ <20200703203021.paebx25miovmaxqt@ast-mbp.dhcp.thefacebook.com>
+ <873668s2j8.fsf@x220.int.ebiederm.org>
+ <20200704155052.kmrest5useyxcfnu@wittgenstein>
+ <87mu4bjlqm.fsf@x220.int.ebiederm.org>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <a84ec1df-dc9b-dd5b-cc34-385fd3ca1da4@iogearbox.net>
+Date:   Wed, 8 Jul 2020 02:05:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200706232309.12010-8-scott.branden@broadcom.com>
+In-Reply-To: <87mu4bjlqm.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.102.3/25866/Tue Jul  7 15:47:52 2020)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 06, 2020 at 04:23:07PM -0700, Scott Branden wrote:
-> Add Broadcom VK driver offload engine.
-> This driver interfaces to the VK PCIe offload engine to perform
-> should offload functions as video transcoding on multiple streams
-> in parallel.  VK device is booted from files loaded using
-> request_firmware_into_buf mechanism.  After booted card status is updated
-> and messages can then be sent to the card.
-> Such messages contain scatter gather list of addresses
-> to pull data from the host to perform operations on.
+On 7/7/20 7:09 PM, Eric W. Biederman wrote:
+> Christian Brauner <christian.brauner@ubuntu.com> writes:
+>> On Fri, Jul 03, 2020 at 04:37:47PM -0500, Eric W. Biederman wrote:
+>>> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+>>>
+>>>> On Thu, Jul 02, 2020 at 11:41:37AM -0500, Eric W. Biederman wrote:
+>>>>> Create an independent helper thread_group_exited report return true
+>>>>> when all threads have passed exit_notify in do_exit.  AKA all of the
+>>>>> threads are at least zombies and might be dead or completely gone.
+>>>>>
+>>>>> Create this helper by taking the logic out of pidfd_poll where
+>>>>> it is already tested, and adding a missing READ_ONCE on
+>>>>> the read of task->exit_state.
+>>>>>
+>>>>> I will be changing the user mode driver code to use this same logic
+>>>>> to know when a user mode driver needs to be restarted.
+>>>>>
+>>>>> Place the new helper thread_group_exited in kernel/exit.c and
+>>>>> EXPORT it so it can be used by modules.
+>>>>>
+>>>>> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>>>>> ---
+>>>>>   include/linux/sched/signal.h |  2 ++
+>>>>>   kernel/exit.c                | 24 ++++++++++++++++++++++++
+>>>>>   kernel/fork.c                |  6 +-----
+>>>>>   3 files changed, 27 insertions(+), 5 deletions(-)
+>>>>>
+>>>>> diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+>>>>> index 0ee5e696c5d8..1bad18a1d8ba 100644
+>>>>> --- a/include/linux/sched/signal.h
+>>>>> +++ b/include/linux/sched/signal.h
+>>>>> @@ -674,6 +674,8 @@ static inline int thread_group_empty(struct task_struct *p)
+>>>>>   #define delay_group_leader(p) \
+>>>>>   		(thread_group_leader(p) && !thread_group_empty(p))
+>>>>>   
+>>>>> +extern bool thread_group_exited(struct pid *pid);
+>>>>> +
+>>>>>   extern struct sighand_struct *__lock_task_sighand(struct task_struct *task,
+>>>>>   							unsigned long *flags);
+>>>>>   
+>>>>> diff --git a/kernel/exit.c b/kernel/exit.c
+>>>>> index d3294b611df1..a7f112feb0f6 100644
+>>>>> --- a/kernel/exit.c
+>>>>> +++ b/kernel/exit.c
+>>>>> @@ -1713,6 +1713,30 @@ COMPAT_SYSCALL_DEFINE5(waitid,
+>>>>>   }
+>>>>>   #endif
+>>>>>   
+>>>>> +/**
+>>>>> + * thread_group_exited - check that a thread group has exited
+>>>>> + * @pid: tgid of thread group to be checked.
+>>>>> + *
+>>>>> + * Test if thread group is has exited (all threads are zombies, dead
+>>>>> + * or completely gone).
+>>>>> + *
+>>>>> + * Return: true if the thread group has exited. false otherwise.
+>>>>> + */
+>>>>> +bool thread_group_exited(struct pid *pid)
+>>>>> +{
+>>>>> +	struct task_struct *task;
+>>>>> +	bool exited;
+>>>>> +
+>>>>> +	rcu_read_lock();
+>>>>> +	task = pid_task(pid, PIDTYPE_PID);
+>>>>> +	exited = !task ||
+>>>>> +		(READ_ONCE(task->exit_state) && thread_group_empty(task));
+>>>>> +	rcu_read_unlock();
+>>>>> +
+>>>>> +	return exited;
+>>>>> +}
+>>>>
+>>>> I'm not sure why you think READ_ONCE was missing.
+>>>> It's different in wait_consider_task() where READ_ONCE is needed because
+>>>> of multiple checks. Here it's done once.
+>>>
+>>> In practice it probably has no effect on the generated code.  But
+>>> READ_ONCE is about telling the compiler not to be clever.  Don't use
+>>> tearing loads or stores etc.  When all of the other readers are using
+>>> READ_ONCE I just get nervous if we have a case that doesn't.
+>>
+>> That's not true. The only place where READ_ONCE(->exit_state) is used is
+>> in wait_consider_task() and nowhere else. We had that discussion a while
+>> ago where I or someone proposed to simply place a READ_ONCE() around all
+>> accesses to exit_state for the sake of kcsan and we agreed that it's
+>> unnecessary and not to do this.
+>> But it obviously doesn't hurt to have it.
 > 
-> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
-> Signed-off-by: Desmond Yan <desmond.yan@broadcom.com>
+> There is a larger discussion to be had around the proper handling of
+> exit_state.
+> 
+> In this particular case because we are accessing exit_state with
+> only rcu_read_lock protection, because the outcome of the read
+> is about correctness, and because the compiler has nothing else
+> telling it not to re-read exit_state, I believe we actually need
+> the READ_ONCE.
+> 
+> At the same time it would take a pretty special compiler to want to
+> reaccess that field in thread_group_exited.
+> 
+> I have looked through and I don't find any of the other access of
+> exit_state where the result is about correctness (so that we care)
+> and we don't hold tasklist_lock.
+> 
+> But I have removed the necessary wording from the commit comment.
 
-nit: your S-o-b chain doesn't make sense (I would expect you at the end
-since you're sending it and showing as the Author). Is it Co-developed-by?
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
+Hey Eric, are you planning to push the final version into a topic branch
+so it can be pulled into bpf-next as discussed earlier?
 
-> [...]
-> +
-> +		max_buf = SZ_4M;
-> +		bufp = dma_alloc_coherent(dev,
-> +					  max_buf,
-> +					  &boot_dma_addr, GFP_KERNEL);
-> +		if (!bufp) {
-> +			dev_err(dev, "Error allocating 0x%zx\n", max_buf);
-> +			ret = -ENOMEM;
-> +			goto err_buf_out;
-> +		}
-> +
-> +		bcm_vk_buf_notify(vk, bufp, boot_dma_addr, max_buf);
-> +	} else {
-> +		dev_err(dev, "Error invalid image type 0x%x\n", load_type);
-> +		ret = -EINVAL;
-> +		goto err_buf_out;
-> +	}
-> +
-> +	ret = request_partial_firmware_into_buf(&fw, filename, dev,
-> +						bufp, max_buf, 0);
-
-Unless I don't understand what's happening here, this needs to be
-reordered if you're going to keep Mimi happy and disallow the device
-being able to see the firmware before it has been verified. (i.e. please
-load the firmware before mapping DMA across the buffer.)
-
--- 
-Kees Cook
+Thanks,
+Daniel
