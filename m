@@ -2,416 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 55574217E82
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 06:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4BA4217E8C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 06:49:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725903AbgGHEl6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 00:41:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43314 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbgGHEl5 (ORCPT
+        id S1728535AbgGHEtI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 00:49:08 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:54028 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725446AbgGHEtI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 00:41:57 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A22FFC08C5E1
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jul 2020 21:41:56 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id f18so1511960wml.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jul 2020 21:41:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=MbPNGyvQVDB2y46X45NmGM3hH15KoPAubf6hZSmuu9E=;
-        b=IKTJBnPyyZlROnmMdPRFW8vBvM3zxudgMwHlbli65X27x0yTDAeft1AGUeSVNdvYWn
-         2fGJveAwj1kgcnIts1zXpnrxHKrVcMHe0kPN6HMaevVyL6ZgDYqSOZpGzMdI3BqxYY2g
-         iBa4ibx6V3GP2zOXg3/Y/5CJAFlK9wLyFQqrI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=MbPNGyvQVDB2y46X45NmGM3hH15KoPAubf6hZSmuu9E=;
-        b=QyJdLutjupKoshI/k6sNdsYvg5VBf9frzJloTiX4mDzFxTk8iAhne/l0ZjmwfvqpeF
-         oru8y4wbebYhxpbOhIFylQalfnl/yunMke/Bs1GgM3ufkC/Wg+czB1z8yL5gNFuToIOG
-         sabhS3jP8hHQyROVUI13IXsobZfNfuDPqzBAjVyg/SXBGd2llvzf7QP3Ikx+cesNisCe
-         vGl41rxpP99AycK4xgUUJEFafN5Uv0G9ovwrgAEDefVrnrOov+N9LFvgbp2kHaXlVzqp
-         Pbrlua0Irjx0PoLKrmiOMEmM9rcBn1RIiVs3gWoVlQJ8fXuZDiP8yEuZWJo3aIVKmqIQ
-         kNHg==
-X-Gm-Message-State: AOAM531RfTkwEf/SHGO4AmCXx2z45mnG1DonBWwGVG92FXI4zrjsdihH
-        0NIkKLuZ06gx6QvmwIwj57X29A==
-X-Google-Smtp-Source: ABdhPJzkoF+o+jVb4KFIq1S4tFO7RpEyAgmP5Lpbm+uBNFSEAo8Vs4N79cIZfsSeMkJm/P73rjJGjA==
-X-Received: by 2002:a7b:c0da:: with SMTP id s26mr6771723wmh.96.1594183314920;
-        Tue, 07 Jul 2020 21:41:54 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id z10sm3759957wrm.21.2020.07.07.21.41.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jul 2020 21:41:54 -0700 (PDT)
-Subject: Re: [PATCH v10 2/9] fs: introduce kernel_pread_file* support
-From:   Scott Branden <scott.branden@broadcom.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Wolfram Sang <wsa@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
+        Wed, 8 Jul 2020 00:49:08 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jt211-0001kS-7J; Tue, 07 Jul 2020 22:49:03 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1jt210-0006xn-Av; Tue, 07 Jul 2020 22:49:03 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Kees Cook <keescook@chromium.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20200706232309.12010-1-scott.branden@broadcom.com>
- <20200706232309.12010-3-scott.branden@broadcom.com>
- <202007071642.AA705B2A@keescook>
- <42169718-d1b8-27f8-eeee-6cdef75a30d9@broadcom.com>
-Message-ID: <e463e8e1-3559-72e8-3da1-33da36c78b86@broadcom.com>
-Date:   Tue, 7 Jul 2020 21:41:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20200625095725.GA3303921@kroah.com>
+        <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+        <20200625120725.GA3493334@kroah.com>
+        <20200625.123437.2219826613137938086.davem@davemloft.net>
+        <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+        <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+        <87y2oac50p.fsf@x220.int.ebiederm.org>
+        <87bll17ili.fsf_-_@x220.int.ebiederm.org>
+        <20200629221231.jjc2czk3ul2roxkw@ast-mbp.dhcp.thefacebook.com>
+        <87eepwzqhd.fsf@x220.int.ebiederm.org>
+        <1f4d8b7e-bcff-f950-7dac-76e3c4a65661@i-love.sakura.ne.jp>
+        <87pn9euks9.fsf@x220.int.ebiederm.org>
+        <757f37f8-5641-91d2-be80-a96ebc74cacb@i-love.sakura.ne.jp>
+        <87h7upucqi.fsf@x220.int.ebiederm.org>
+        <d0266a24-dfab-83d0-e178-aa67c9f5ebc0@i-love.sakura.ne.jp>
+        <87lfk0nslu.fsf@x220.int.ebiederm.org>
+        <ec6a6e18-d7aa-3072-c8dc-b925398b8409@i-love.sakura.ne.jp>
+Date:   Tue, 07 Jul 2020 23:46:18 -0500
+In-Reply-To: <ec6a6e18-d7aa-3072-c8dc-b925398b8409@i-love.sakura.ne.jp>
+        (Tetsuo Handa's message of "Sat, 4 Jul 2020 15:57:38 +0900")
+Message-ID: <87o8oqipgl.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <42169718-d1b8-27f8-eeee-6cdef75a30d9@broadcom.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain
+X-XM-SPF: eid=1jt210-0006xn-Av;;;mid=<87o8oqipgl.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+sfYvpeMP1lDLTQFoc9fa68JTKvPiHbwU=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4976]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 365 ms - load_scoreonly_sql: 0.08 (0.0%),
+        signal_user_changed: 12 (3.4%), b_tie_ro: 11 (2.9%), parse: 1.52
+        (0.4%), extract_message_metadata: 4.0 (1.1%), get_uri_detail_list:
+        1.18 (0.3%), tests_pri_-1000: 5 (1.4%), tests_pri_-950: 1.40 (0.4%),
+        tests_pri_-900: 1.30 (0.4%), tests_pri_-90: 61 (16.7%), check_bayes:
+        59 (16.2%), b_tokenize: 8 (2.3%), b_tok_get_all: 8 (2.3%),
+        b_comp_prob: 2.5 (0.7%), b_tok_touch_all: 36 (9.8%), b_finish: 1.01
+        (0.3%), tests_pri_0: 259 (71.1%), check_dkim_signature: 0.58 (0.2%),
+        check_dkim_adsp: 2.7 (0.7%), poll_dns_idle: 0.97 (0.3%), tests_pri_10:
+        2.5 (0.7%), tests_pri_500: 8 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v2 00/15] Make the user mode driver code a better citizen
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Kees,
 
-one more comment below.
+Just to make certain I understand what is going on I instrumented a
+kernel with some print statements.
 
-On 2020-07-07 9:01 p.m., Scott Branden wrote:
->
->
-> On 2020-07-07 4:56 p.m., Kees Cook wrote:
->> On Mon, Jul 06, 2020 at 04:23:02PM -0700, Scott Branden wrote:
->>> Add kernel_pread_file* support to kernel to allow for partial read
->>> of files with an offset into the file.
->>>
->>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->>> ---
->>>   fs/exec.c                        | 93 
->>> ++++++++++++++++++++++++--------
->>>   include/linux/kernel_read_file.h | 17 ++++++
->>>   2 files changed, 87 insertions(+), 23 deletions(-)
->>>
->>> diff --git a/fs/exec.c b/fs/exec.c
->>> index 4ea87db5e4d5..e6a8a65f7478 100644
->>> --- a/fs/exec.c
->>> +++ b/fs/exec.c
->>> @@ -928,10 +928,14 @@ struct file *open_exec(const char *name)
->>>   }
->>>   EXPORT_SYMBOL(open_exec);
->>>   -int kernel_read_file(struct file *file, void **buf, loff_t *size,
->>> -             loff_t max_size, enum kernel_read_file_id id)
->>> -{
->>> -    loff_t i_size, pos;
->>> +int kernel_pread_file(struct file *file, void **buf, loff_t *size,
->>> +              loff_t max_size, loff_t pos,
->>> +              enum kernel_read_file_id id)
->>> +{
->>> +    loff_t alloc_size;
->>> +    loff_t buf_pos;
->>> +    loff_t read_end;
->>> +    loff_t i_size;
->>>       ssize_t bytes = 0;
->>>       int ret;
->>>   @@ -951,21 +955,32 @@ int kernel_read_file(struct file *file, void 
->>> **buf, loff_t *size,
->>>           ret = -EINVAL;
->>>           goto out;
->>>       }
->>> -    if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
->>> +
->>> +    /* Default read to end of file */
->>> +    read_end = i_size;
->>> +
->>> +    /* Allow reading partial portion of file */
->>> +    if ((id == READING_FIRMWARE_PARTIAL_READ) &&
->>> +        (i_size > (pos + max_size)))
->>> +        read_end = pos + max_size;
->> There's no need to involve "id" here. There are other signals about
->> what's happening (i.e. pos != 0, max_size != i_size, etc).
-> There are other signals other than the fact that kernel_read_file 
-> requires
-> the entire file to be read while kernel_pread_file allows partial 
-> files to be read.
-> So if you do a pread at pos = 0 you need another key to indicate it is 
-> "ok" if max_size < i_size.
-> If id == READING_FIRMWARE_PARTIAL_READ is removed (and we want to 
-> share 99% of the code
-> between kernel_read_file and kernel_pread_file then I need to add 
-> another parameter to a common function
-> called between these functions.  And adding another parameter was 
-> rejected previously in the review as a "swiss army knife approach" by 
-> another reviewer.  I am happy to add it back in because it is 
-> necessary to share code and differentiate whether we are performing a 
-> partial read or not.
->>
->>> +
->>> +    alloc_size = read_end - pos;
->>> +    if (i_size > SIZE_MAX || (max_size > 0 && alloc_size > 
->>> max_size)) {
->>>           ret = -EFBIG;
->>>           goto out;
->>>       }
->>>   -    if (id != READING_FIRMWARE_PREALLOC_BUFFER)
->>> -        *buf = vmalloc(i_size);
->>> +    if ((id != READING_FIRMWARE_PARTIAL_READ) &&
->>> +        (id != READING_FIRMWARE_PREALLOC_BUFFER))
->>> +        *buf = vmalloc(alloc_size);
->>>       if (!*buf) {
->>>           ret = -ENOMEM;
->>>           goto out;
->>>       }
->> The id usage here was a mistake in upstream, and the series I sent is
->> trying to clean that up.
-> I see that cleanup and it works fine with the pread.  Other than I 
-> need some sort of key to share code and indicate whether it is "ok" to 
-> do a partial read of the file or not.
->>
->> Greg, it seems this series is going to end up in your tree due to it
->> being drivers/misc? I guess I need to direct my series to Greg then, but
->> get LSM folks Acks.
->>
->>>   -    pos = 0;
->>> -    while (pos < i_size) {
->>> -        bytes = kernel_read(file, *buf + pos, i_size - pos, &pos);
->>> +    buf_pos = 0;
->>> +    while (pos < read_end) {
->>> +        bytes = kernel_read(file, *buf + buf_pos, read_end - pos, 
->>> &pos);
->>>           if (bytes < 0) {
->>>               ret = bytes;
->>>               goto out_free;
->>> @@ -973,20 +988,23 @@ int kernel_read_file(struct file *file, void 
->>> **buf, loff_t *size,
->>>             if (bytes == 0)
->>>               break;
->>> +
->>> +        buf_pos += bytes;
->>>       }
->>>   -    if (pos != i_size) {
->>> +    if (pos != read_end) {
->>>           ret = -EIO;
->>>           goto out_free;
->>>       }
->>>   -    ret = security_kernel_post_read_file(file, *buf, i_size, id);
->>> +    ret = security_kernel_post_read_file(file, *buf, alloc_size, id);
->>>       if (!ret)
->>>           *size = pos;
->> This call cannot be inside kernel_pread_file(): any future LSMs will see
->> a moving window of contents, etc. It'll need to be in kernel_read_file()
->> proper.
-> If IMA still passes (after testing my next patch series with your 
-> changes and my modifications)
-> I will need some more help here.
->>
->>>     out_free:
->>>       if (ret < 0) {
->>> -        if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
->>> +        if ((id != READING_FIRMWARE_PARTIAL_READ) &&
->>> +            (id != READING_FIRMWARE_PREALLOC_BUFFER)) {
->>>               vfree(*buf);
->>>               *buf = NULL;
->>>           }
->>> @@ -996,10 +1014,18 @@ int kernel_read_file(struct file *file, void 
->>> **buf, loff_t *size,
->>>       allow_write_access(file);
->>>       return ret;
->>>   }
->>> +
->>> +int kernel_read_file(struct file *file, void **buf, loff_t *size,
->>> +             loff_t max_size, enum kernel_read_file_id id)
->>> +{
->>> +    return kernel_pread_file(file, buf, size, max_size, 0, id);
->>> +}
->>>   EXPORT_SYMBOL_GPL(kernel_read_file);
->>>   -int kernel_read_file_from_path(const char *path, void **buf, 
->>> loff_t *size,
->>> -                   loff_t max_size, enum kernel_read_file_id id)
->>> +int kernel_pread_file_from_path(const char *path, void **buf,
->>> +                loff_t *size,
->>> +                loff_t max_size, loff_t pos,
->>> +                enum kernel_read_file_id id)
->>>   {
->>>       struct file *file;
->>>       int ret;
->>> @@ -1011,15 +1037,22 @@ int kernel_read_file_from_path(const char 
->>> *path, void **buf, loff_t *size,
->>>       if (IS_ERR(file))
->>>           return PTR_ERR(file);
->>>   -    ret = kernel_read_file(file, buf, size, max_size, id);
->>> +    ret = kernel_pread_file(file, buf, size, max_size, pos, id);
->>>       fput(file);
->>>       return ret;
->>>   }
->>> +
->>> +int kernel_read_file_from_path(const char *path, void **buf, loff_t 
->>> *size,
->>> +                   loff_t max_size, enum kernel_read_file_id id)
->>> +{
->>> +    return kernel_pread_file_from_path(path, buf, size, max_size, 
->>> 0, id);
->>> +}
->>>   EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
->>>   -int kernel_read_file_from_path_initns(const char *path, void **buf,
->>> -                      loff_t *size, loff_t max_size,
->>> -                      enum kernel_read_file_id id)
->>> +int kernel_pread_file_from_path_initns(const char *path, void **buf,
->>> +                       loff_t *size,
->>> +                       loff_t max_size, loff_t pos,
->>> +                       enum kernel_read_file_id id)
->>>   {
->>>       struct file *file;
->>>       struct path root;
->>> @@ -1037,14 +1070,22 @@ int kernel_read_file_from_path_initns(const 
->>> char *path, void **buf,
->>>       if (IS_ERR(file))
->>>           return PTR_ERR(file);
->>>   -    ret = kernel_read_file(file, buf, size, max_size, id);
->>> +    ret = kernel_pread_file(file, buf, size, max_size, pos, id);
->>>       fput(file);
->>>       return ret;
->>>   }
->>> +
->>> +int kernel_read_file_from_path_initns(const char *path, void **buf,
->>> +                      loff_t *size, loff_t max_size,
->>> +                      enum kernel_read_file_id id)
->>> +{
->>> +    return kernel_pread_file_from_path_initns(path, buf, size, 
->>> max_size, 0, id);
->>> +}
->>>   EXPORT_SYMBOL_GPL(kernel_read_file_from_path_initns);
->>>   -int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, 
->>> loff_t max_size,
->>> -                 enum kernel_read_file_id id)
->>> +int kernel_pread_file_from_fd(int fd, void **buf, loff_t *size,
->>> +                  loff_t max_size, loff_t pos,
->>> +                  enum kernel_read_file_id id)
->>>   {
->>>       struct fd f = fdget(fd);
->>>       int ret = -EBADF;
->>> @@ -1052,11 +1093,17 @@ int kernel_read_file_from_fd(int fd, void 
->>> **buf, loff_t *size, loff_t max_size,
->>>       if (!f.file)
->>>           goto out;
->>>   -    ret = kernel_read_file(f.file, buf, size, max_size, id);
->>> +    ret = kernel_pread_file(f.file, buf, size, max_size, pos, id);
->>>   out:
->>>       fdput(f);
->>>       return ret;
->>>   }
->>> +
->>> +int kernel_read_file_from_fd(int fd, void **buf, loff_t *size, 
->>> loff_t max_size,
->>> +                 enum kernel_read_file_id id)
->>> +{
->>> +    return kernel_pread_file_from_fd(fd, buf, size, max_size, 0, id);
->>> +}
->>>   EXPORT_SYMBOL_GPL(kernel_read_file_from_fd);
->> For each of these execution path, the mapping to LSM hooks is:
->>
->> - all path must call security_kernel_read_file(file, id) before reading
->>    (this appears to be fine as-is in your series).
->>
->> - anything doing a "full" read needs to call
->>    security_kernel_post_read_file() with the file and full buffer, size,
->>    etc (so all the kernel_read_file*() paths). I imagine instead of
->>    adding 3 copy/pasted versions of this, it may be possible to refactor
->>    the helpers into a single core "full" caller that takes struct file,
->>    or doing some logic in kernel_pread_file() that notices it has the
->>    entire file in the buffer and doing the call then.
->>    As an example of what I mean about doing the call, here's how I might
->>    imagine it for one of the paths if it took struct file:
->>
->> int kernel_read_file_from_file(struct file *file, void **buf, loff_t 
->> *size,
->>                    loff_t max_size, enum kernel_read_file_id id)
->> {
->>     int ret;
->>
->>     ret = kernel_pread_file_from_file(file, buf, size, max_size, 0, id);
->>     if (ret)
->>         return ret;
->>     return security_kernel_post_read_file(file, buf, *size, id);
->> }
->>
->>>     #if defined(CONFIG_HAVE_AOUT) || defined(CONFIG_BINFMT_FLAT) || \
->>> diff --git a/include/linux/kernel_read_file.h 
->>> b/include/linux/kernel_read_file.h
->>> index 53f5ca41519a..f061ccb8d0b4 100644
->>> --- a/include/linux/kernel_read_file.h
->>> +++ b/include/linux/kernel_read_file.h
->>> @@ -8,6 +8,7 @@
->>>   #define __kernel_read_file_id(id) \
->>>       id(UNKNOWN, unknown)        \
->>>       id(FIRMWARE, firmware)        \
->>> +    id(FIRMWARE_PARTIAL_READ, firmware)    \
->>>       id(FIRMWARE_PREALLOC_BUFFER, firmware)    \
->>>       id(FIRMWARE_EFI_EMBEDDED, firmware)    \
->> And again, sorry that this was in here as a misleading example.
->>
->>>       id(MODULE, kernel-module)        \
->>> @@ -36,15 +37,31 @@ static inline const char 
->>> *kernel_read_file_id_str(enum kernel_read_file_id id)
->>>       return kernel_read_file_str[id];
->>>   }
->>>   +int kernel_pread_file(struct file *file,
->>> +              void **buf, loff_t *size, loff_t pos,
->>> +              loff_t max_size,
->>> +              enum kernel_read_file_id id);
->>>   int kernel_read_file(struct file *file,
->>>                void **buf, loff_t *size, loff_t max_size,
->>>                enum kernel_read_file_id id);
->>> +int kernel_pread_file_from_path(const char *path,
->>> +                void **buf, loff_t *size, loff_t pos,
->>> +                loff_t max_size,
->>> +                enum kernel_read_file_id id);
->>>   int kernel_read_file_from_path(const char *path,
->>>                      void **buf, loff_t *size, loff_t max_size,
->>>                      enum kernel_read_file_id id);
->>> +int kernel_pread_file_from_path_initns(const char *path,
->>> +                       void **buf, loff_t *size, loff_t pos,
->>> +                       loff_t max_size,
->>> +                       enum kernel_read_file_id id);
->>>   int kernel_read_file_from_path_initns(const char *path,
->>>                         void **buf, loff_t *size, loff_t max_size,
->>>                         enum kernel_read_file_id id);
->>> +int kernel_pread_file_from_fd(int fd,
->>> +                  void **buf, loff_t *size, loff_t pos,
->>> +                  loff_t max_size,
->>> +                  enum kernel_read_file_id id);
->>>   int kernel_read_file_from_fd(int fd,
->>>                    void **buf, loff_t *size, loff_t max_size,
->>>                    enum kernel_read_file_id id);
->> I remain concerned that adding these helpers will lead a poor
->> interaction with LSMs, but I guess I get to hold my tongue. :)
-I only need kernel_pread_file and kernel_pread_file_from_path_initns.  
-kernel_pread_file_from_fd and kernel_pread_file_from_path were only 
-added for completeness.
-And are really only helper functions called by their kernel_read_file* 
-counterparts at this time.  So they can be removed from this patch if 
-that helps?
-> We could add pread functions that are "unsafe" in nature instead then?
-> As I certainly do not need any integrity checks on the file for my 
-> driver.  The real check is done by the card the data is loaded to 
-> whether is passes the linux security checks or not.
-> And then, if someone does want to do something "safe" with preads 
-> another kernel_read_file_securelock/unlock could be added for those 
-> that need security for their partial reads?
->>
->
+a) The workqueues and timers start before populate_rootfs.
+
+b) populate_rootfs does indeed happen long before the bpfilter
+   module is intialized.
+
+c) What prevents populate_rootfs and the umd_load_blob from
+   having problems when they call flush_delayed_put is the
+   fact that fput_many does:
+   "schedule_delayed_work(&delayed_fput_work,1)".
+
+   That 1 requests a delay of at least 1 jiffy.  A jiffy is between
+   1ms and 10ms depending on how Linux is configured.
+
+   In my test configuration running a kernel in kvm printing to a serial
+   console I measured 0.8ms between the fput in blob_to_mnt and
+   flush_delayed_fput which immediately follows it.
+
+   So unless the fput becomes incredibly slow there is nothing to worry
+   about in blob_to_mnt.
+
+d) As the same mechanism is used by populate_rootfs.  A but in the
+   mechanism applies to both.
+
+e) No one appears to have reported a problem executing files out of
+   initramfs these last several years since the flush_delayed_fput was
+   introduced.
+ 
+f) The code works for me.  There is real reason to believe the code will
+   work for everyone else, as the exact same logic is used by initramfs.
+   So it should be perfectly fine for the patchset and the
+   usermode_driver code to go ahead as written.
+
+h) If there is something to be fixed it is flush_delayed_fput as that is
+   much more important than anything in the usermode driver code.
+
+Eric
+
+p.s.) When I talked of restarts of the usermode driver code ealier I was
+   referring to the code that restarts the usermode driver if it is
+   killed, the next time the kernel tries to talk to it.
+
+   That could mask an -ETXTBUSY except if it happens on the first exec
+   the net/bfilter/bpfilter_kern.c:load_umh() will return an error.
 
