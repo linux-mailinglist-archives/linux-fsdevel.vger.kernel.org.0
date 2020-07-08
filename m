@@ -2,86 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 232CC217EFB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 07:15:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7D5A217F0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 07:20:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726420AbgGHFO7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 01:14:59 -0400
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:34773 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbgGHFO6 (ORCPT
+        id S1728949AbgGHFUb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 01:20:31 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38870 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728479AbgGHFUb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 01:14:58 -0400
-Received: by mail-pj1-f68.google.com with SMTP id cv18so1685275pjb.1;
-        Tue, 07 Jul 2020 22:14:58 -0700 (PDT)
+        Wed, 8 Jul 2020 01:20:31 -0400
+Received: by mail-pl1-f195.google.com with SMTP id d10so17692342pls.5;
+        Tue, 07 Jul 2020 22:20:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=OqVVW0oBTFGuooK5mpqIGnPNuH2j0inEUm18D/YWITE=;
-        b=C+5XmQ4DjwLm6uKyKMliNV9QR10t19L42Y4ymLbtfroZ91vOCM3zSAy/1VSRAdXBsd
-         4MGX8Rtz1BSXDDJ4Tjtq3QugK/DNNkwkgXinlwx1OjyXhS8Gf6THuuIhASNrYTXnc8o3
-         4akC8DQdnwm8Ba0bha5jHB7EUgEHwmvKobw0PWVSyeLHlJOTJENZvGauM9NeSNkZW/pp
-         SmNbQgYRC9LlyO7bLVmVefZivO/El9/oiEk2X8bBOUhiyO10veTsjlig2hVG19GKURUa
-         lULsj7bCkoLs3LbqPFv3WkdupWoQGcbMBSPQ7HztHU35gXjpJvSWjaiCg8aerchCChQe
-         S93Q==
-X-Gm-Message-State: AOAM530lBa+PGKnezy6ELfbJ318WNeuMJirruvc09rfiuOsjr7RqJYqS
-        xJOWLxkeQRSjw1tF30EYXYc=
-X-Google-Smtp-Source: ABdhPJyQx8ZMpcO8bKNNbg4mSfCGoBKklHKtFUJJ+PqPd/73lutAhh1K9WLnEPfuPOJBEPM1jMtFNA==
-X-Received: by 2002:a17:902:778d:: with SMTP id o13mr46710940pll.247.1594185297748;
-        Tue, 07 Jul 2020 22:14:57 -0700 (PDT)
+        bh=mHvv1akSeMcW+d6BM9EuxicMsI99taf4NpplA/oKL1o=;
+        b=KMFoKbnyoePxQFA3rnyFJ3zeD5rtutHt6+jC0y9bRWwTdN/ktAVFBUIec+0s5kU18J
+         i5KpdCz27haaPe9myp+JXs7PbJxijKFzFhPtZkHLq7/9YWrsJxtxwMY27mr7vI9SKcHs
+         /mwoN76UBRwwICd9e1MC39Hof8i19+Y/UZoCqXCr67N+u+rAtsvH34ZbCZPOpHcR0Bt8
+         BuYnf2Cdr7TyTTeeIT6NH5VI4A62X1GRrzrx0MrHTTtc4ClTrgtoI6UV0wsPdUswS+zv
+         eyV9KD0EsK2+eHPAleumCBO+jfCqFw7je/yf0Lt5Lp4inE3Phx+pqrOjdLROQuwOysKP
+         r/rg==
+X-Gm-Message-State: AOAM5338rSQ4MybTDF8XQEgzP//lCmtzDh2GLK20KIp4OXOHBrrrny9k
+        a1eZVAWyZTdjhMeyHzq0RVw=
+X-Google-Smtp-Source: ABdhPJyUtlGzmjKuYw2anwU6VZKAJzkXHMyJZbFUQtGLl++AohBG0jXwWNT+2io4N3hckgnkQtYmRA==
+X-Received: by 2002:a17:902:bb93:: with SMTP id m19mr47969475pls.137.1594185630550;
+        Tue, 07 Jul 2020 22:20:30 -0700 (PDT)
 Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id b18sm4120429pju.10.2020.07.07.22.14.56
+        by smtp.gmail.com with ESMTPSA id u26sm2607618pgo.71.2020.07.07.22.20.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jul 2020 22:14:56 -0700 (PDT)
+        Tue, 07 Jul 2020 22:20:29 -0700 (PDT)
 Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id BEAB7400DB; Wed,  8 Jul 2020 05:14:55 +0000 (UTC)
-Date:   Wed, 8 Jul 2020 05:14:55 +0000
+        id D0978400DB; Wed,  8 Jul 2020 05:20:28 +0000 (UTC)
+Date:   Wed, 8 Jul 2020 05:20:28 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
+        Greg Kroah-Hartman <greg@kroah.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
         Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 03/11] fs: add new read_uptr and write_uptr file
- operations
-Message-ID: <20200708051455.GA4332@42.do-not-panic.com>
-References: <20200624162901.1814136-1-hch@lst.de>
- <20200624162901.1814136-4-hch@lst.de>
- <CAHk-=wit9enePELG=-HnLsr0nY5bucFNjqAqWoFTuYDGR1P4KA@mail.gmail.com>
- <20200624175548.GA25939@lst.de>
- <CAHk-=wi_51SPWQFhURtMBGh9xgdo74j1gMpuhdkddA2rDMrt1Q@mail.gmail.com>
- <f50b9afa5a2742babe0293d9910e6bf4@AcuMS.aculab.com>
- <CAHk-=wjxQczqZ96esvDrH5QZsLg6azXCGDgo+Bmm6r8t2ssasg@mail.gmail.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 00/15] Make the user mode driver code a better citizen
+Message-ID: <20200708052028.GB4332@42.do-not-panic.com>
+References: <20200625095725.GA3303921@kroah.com>
+ <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
+ <20200625120725.GA3493334@kroah.com>
+ <20200625.123437.2219826613137938086.davem@davemloft.net>
+ <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
+ <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
+ <87y2oac50p.fsf@x220.int.ebiederm.org>
+ <87bll17ili.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjxQczqZ96esvDrH5QZsLg6azXCGDgo+Bmm6r8t2ssasg@mail.gmail.com>
+In-Reply-To: <87bll17ili.fsf_-_@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jun 27, 2020 at 09:33:03AM -0700, Linus Torvalds wrote:
-> The real problem with
-> "set_fs()" has been that we've occasionally had bugs where we ended up
-> running odd paths that we really didn't _intend_ to run with kernel
-> pointers. The classic example is the SCSI "write as ioctl" example,
-> where a write to a SCSI generic device would do various odd things and
-> follow pointers and what-not. Then you get into real trouble when
-> "splice()" ends up truiong to write a kernel buffer, and because of
-> "set_fs()" suddenly the sg code started accessing kernel memory
-> willy-nilly.
+On Mon, Jun 29, 2020 at 02:55:05PM -0500, Eric W. Biederman wrote:
+> 
+> I have tested thes changes by booting with the code compiled in and
+> by killing "bpfilter_umh" and running iptables -vnL to restart
+> the userspace driver.
+> 
+> I have compiled tested each change with and without CONFIG_BPFILTER
+> enabled.
 
-So the semantics of this interface can create chaos fast if not used
-carefully and conservatively.
-
-Christoph, it would be great if you're future series can include some
-version of a verbiage for the motivation for the culling of set_fs().
-Maybe it was just me, but the original motivation wasn't clear at first
-and took some thread digging to get it.
+Sounds like grounds for a selftests driver and respective selftest?
+And if so, has the other issues Tetsuo reported be hacked into one?
 
   Luis
