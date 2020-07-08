@@ -2,61 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C0930217E5D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 06:31:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D2E3217E74
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 06:39:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726206AbgGHEaj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 00:30:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41592 "EHLO
+        id S1729282AbgGHEiX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 00:38:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726267AbgGHEaj (ORCPT
+        with ESMTP id S1726185AbgGHEiW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 00:30:39 -0400
+        Wed, 8 Jul 2020 00:38:22 -0400
 Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7CCBC08C5E3
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jul 2020 21:30:38 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id f139so1486139wmf.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jul 2020 21:30:38 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66217C061755;
+        Tue,  7 Jul 2020 21:38:22 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id j18so1485179wmi.3;
+        Tue, 07 Jul 2020 21:38:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
+        d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=9z8AqNAtfLqJboxfTSuy4+9Gg/kN9QYsVqfQLWbeo4w=;
-        b=gwkq4+Hlakm3izkfm3Vx8ZZCM5LOzO3cymjOSh4+vM8T7cBwdjsaTUVd9kq/x6E+Nh
-         LNC4usHx3RpnjI9YfPVuOYlIHMxSq1nB5UkuqJzdB3PaMh+PFXIlNStED6a1DCPIfivL
-         ZGphzvNanNKVijraSFJb+UugoBCX9/HxIAv7Y=
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=06Hzq2VRyI6UIt88Dp3b82i5/9v//2xu8xecyFLZ6F8=;
+        b=p8q3DCgqjwzsoCr7bSNkRvfBW4kSwZKR6Yn4LN/XneUEg3TfLt+TnMkBnDooJB2adw
+         7Ctv+ExHMl9a14uHnLMjD24lI83nztqURJDfQKLrSRtgb1Nv3VOE09B2TdPLhedkAqZj
+         y+VQniCP9WvlhgsCAoIYtBS9ttVFG1wltvpAj8K6i2fnSX8FfXmI/TcXoqxZflp8JB23
+         UW80W0VvIj/SolCiVVuyCuGejIPfIylgx7BMbc3csLCEtA9EPtsnnFAiZ4eHr332s2pJ
+         Ek7XnYg9VwDsEnL02WnwQEF169FYBLswe843gYZw+G3CGvLT/80L+0A9OouSFQoKgGOu
+         AC3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=9z8AqNAtfLqJboxfTSuy4+9Gg/kN9QYsVqfQLWbeo4w=;
-        b=eqHh/8Aq0fKydRDgqfhyqOCCRHwrjAtfzCYG4CGveVH435zVsQ6RPISoLu/iyEjGJF
-         m/iuPdY86DzIc1u093hKHj0wKM318yH+AycqLAcLuysgBwp/uZJzNdeX/RZzvQPiKUKx
-         o+Pzzur9aFP6Lfq+cm5kSgDe3cv/u3GP3ZlrL46xSJ5qAIUvPllyz9p7A+YZLDHRyFVb
-         NS3B91oELM6VmkCgi3OB7ZPyynm6hWYNVlfVTxk/MmnC/hN0VXI9Bmw2E4GtYA0g+Mtu
-         cODffMR7MwuyhllZirlX/Fvt3thyRl7dCzzturHU8gsnehv7skwKuK7wPayR3pe9unmJ
-         3mYQ==
-X-Gm-Message-State: AOAM531MsNHvQdhdOhC+Gr3AlGzPniRkvLoEMP2W9np4J4qAeG1RhdRq
-        3soMFQNNLs6NOzzPpAEtjr0UaQ==
-X-Google-Smtp-Source: ABdhPJxz1HCKFHKGJAHeBxv2ayO0myaozG6pLXUA04b6prEWm0Cz5Rezi42VTrPu7hajJjMaPp0QIA==
-X-Received: by 2002:a7b:cd09:: with SMTP id f9mr7627559wmj.160.1594182637061;
-        Tue, 07 Jul 2020 21:30:37 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id q1sm3577207wro.82.2020.07.07.21.30.30
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=06Hzq2VRyI6UIt88Dp3b82i5/9v//2xu8xecyFLZ6F8=;
+        b=kWRJuOkSpVjEz1PumhnuyEwesvqVsD2ABmIbmFep59H6jgn2Tq0uoXrYYGR5HF42l6
+         0fpT6qSpEzY/hXFi+K4Ck/ype8MAjRN/wjtIvth6q4I7yUo32kx+hKWjnwFVDFNou2E4
+         KoDkN/ap2vmoO3ue4qJXvKPIz9BNVLcl8/xZf7yrhzEkqvmdzbQsV5/HB3OFytL5JMZY
+         zbha9WyGjddZdJx2J4wvBFavcxPo4m16xyZ9BtRyqdgHo0vL45mRMkdDlLoSzoQXsQFm
+         Jj7yTFc9GzP+C3F0TJM7pFFETgrvUzGXZ3+9OK3A80XL2bwNwdIjW1akTcbTByXRPRoK
+         TgCQ==
+X-Gm-Message-State: AOAM531MHQ0Wjny6R6F3Oi6aeWzBOIr5RY17RZddNOzbuzaIKc+aImny
+        3bhHkvONG656p8fVEdEmuZkpdNom
+X-Google-Smtp-Source: ABdhPJzFNbynHxzghcviq7OHt7Ns5zaJAl0bcRMp1hwy3+kBx3Go3m/5LroH6bVLAX0SonyxRMi8pg==
+X-Received: by 2002:a1c:c904:: with SMTP id f4mr7224279wmb.69.1594183100840;
+        Tue, 07 Jul 2020 21:38:20 -0700 (PDT)
+Received: from [10.230.30.107] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id w128sm4489452wmb.19.2020.07.07.21.38.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jul 2020 21:30:36 -0700 (PDT)
-Subject: Re: [PATCH v10 7/9] misc: bcm-vk: add Broadcom VK driver
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Tue, 07 Jul 2020 21:38:20 -0700 (PDT)
+Subject: Re: [PATCH v10 0/9] firmware: add request_partial_firmware_into_buf
+To:     Scott Branden <scott.branden@broadcom.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
         Wolfram Sang <wsa@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         David Brown <david.brown@linaro.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
         Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
@@ -65,25 +68,22 @@ Cc:     Luis Chamberlain <mcgrof@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
         Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
         Andy Gross <agross@kernel.org>,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Desmond Yan <desmond.yan@broadcom.com>,
-        James Hu <james.hu@broadcom.com>
+        linux-security-module@vger.kernel.org
 References: <20200706232309.12010-1-scott.branden@broadcom.com>
- <20200706232309.12010-8-scott.branden@broadcom.com>
- <202007071700.C567BA7B@keescook>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <400ebe0d-6b04-a211-7d80-cc8b0bf4d7df@broadcom.com>
-Date:   Tue, 7 Jul 2020 21:30:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <c8bbabe6-0b25-a816-f95d-8af63010eaf2@gmail.com>
+Date:   Tue, 7 Jul 2020 21:38:13 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Firefox/68.0 Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <202007071700.C567BA7B@keescook>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200706232309.12010-1-scott.branden@broadcom.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -91,60 +91,27 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 2020-07-07 5:03 p.m., Kees Cook wrote:
-> On Mon, Jul 06, 2020 at 04:23:07PM -0700, Scott Branden wrote:
->> Add Broadcom VK driver offload engine.
->> This driver interfaces to the VK PCIe offload engine to perform
->> should offload functions as video transcoding on multiple streams
->> in parallel.  VK device is booted from files loaded using
->> request_firmware_into_buf mechanism.  After booted card status is updated
->> and messages can then be sent to the card.
->> Such messages contain scatter gather list of addresses
->> to pull data from the host to perform operations on.
->>
->> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->> Signed-off-by: Desmond Yan <desmond.yan@broadcom.com>
-> nit: your S-o-b chain doesn't make sense (I would expect you at the end
-> since you're sending it and showing as the Author). Is it Co-developed-by?
-> https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
-Yes, Co-developed-by.  Will adjust.
->
->> [...]
->> +
->> +		max_buf = SZ_4M;
->> +		bufp = dma_alloc_coherent(dev,
->> +					  max_buf,
->> +					  &boot_dma_addr, GFP_KERNEL);
->> +		if (!bufp) {
->> +			dev_err(dev, "Error allocating 0x%zx\n", max_buf);
->> +			ret = -ENOMEM;
->> +			goto err_buf_out;
->> +		}
->> +
->> +		bcm_vk_buf_notify(vk, bufp, boot_dma_addr, max_buf);
->> +	} else {
->> +		dev_err(dev, "Error invalid image type 0x%x\n", load_type);
->> +		ret = -EINVAL;
->> +		goto err_buf_out;
->> +	}
->> +
->> +	ret = request_partial_firmware_into_buf(&fw, filename, dev,
->> +						bufp, max_buf, 0);
-> Unless I don't understand what's happening here, this needs to be
-> reordered if you're going to keep Mimi happy and disallow the device
-> being able to see the firmware before it has been verified. (i.e. please
-> load the firmware before mapping DMA across the buffer.)
-I don't understand your concern here.  We request partial firmware into 
-a buffer that we allocated.
-After loading it we signal the card the firmware has been loaded into 
-that memory region.
-The card then pulls the data into its internal memory.  And, 
-authenticates it.
+On 7/6/2020 4:23 PM, Scott Branden wrote:
+> This patch series adds partial read support via a new call
+> request_partial_firmware_into_buf.
+> Such support is needed when the whole file is not needed and/or
+> only a smaller portion of the file will fit into allocated memory
+> at any one time.
+> In order to accept the enhanced API it has been requested that kernel
+> selftests and upstreamed driver utilize the API enhancement and so
+> are included in this patch series.
+> 
+> Also in this patch series is the addition of a new Broadcom VK driver
+> utilizing the new request_firmware_into_buf enhanced API.
+> 
+> Further comment followed to add IMA support of the partial reads
+> originating from request_firmware_into_buf calls.  And another request
+> to move existing kernel_read_file* functions to its own include file.
 
-Even if the card randomly read and writes to that buffer it shouldn't 
-matter to the linux kernel security subsystem.
-It passed the security check already when placed in the buffer.
-If there is a concern could we add an "nosecurity" 
-request_partial_firmware_into_buf instead as there is no need for any 
-security on this particular request?
-
+Do you have any way to separate the VK drivers submission from the
+request_partial_firmware_into_buf() work that you are doing? It looks
+like it is going to require quite a few iterations of this patch set for
+the firmware/fs/IMA part to be ironed out, so if you could get your
+driver separated out, it might help you achieve partial success here.
+-- 
+Florian
