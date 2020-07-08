@@ -2,195 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AAC121847E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 11:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55299218569
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 13:02:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728148AbgGHJ6L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 05:58:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35918 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726237AbgGHJ6L (ORCPT
+        id S1728658AbgGHLB7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 07:01:59 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:24413 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728579AbgGHLB5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 05:58:11 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47771C08C5DC;
-        Wed,  8 Jul 2020 02:58:11 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id e18so21425072pgn.7;
-        Wed, 08 Jul 2020 02:58:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=vfd3otyp56vRqiURxmDOZ6Fo0opPnI/s7gjtxv0KznQ=;
-        b=gL2NcQtPyLmGdzNGGNQjTRVRuD8YTehJuNaOsRyQZtacdqttXhiIP5wBwJ7N11ezVs
-         QtIYgsbhXHAliR9T7rDYN8pV+9J5phU56BO6bnC+6h9K6uqG85qvV2Qk6ozQGKVhLG23
-         6unVCTkqfJsITJPcTxxhHiVre1zM49yuVGHKAiH0Zgw49DJBoEz9nw1QMB5kcBn8xiLj
-         pYrV+IAbFiJWWN9Mc9rrcg35W0wp+Umuko1hQpFrUyV91ktzvkQlCJBxlXOAvZbSlPzF
-         LjQXsBjSBvWehbljAS3zv/hzfALFJrCYh+90yl+ZghepmlaqODL+8TkuFYGQfRV3BHWG
-         Rjdg==
+        Wed, 8 Jul 2020 07:01:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594206115;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=R5NESMLlssU1+fU+MzHpdMP4ATVfk6Mh7mmKV6aiRHE=;
+        b=YS/Nf+ldhQ6NhSsRWzRqzoakNyW4t/dL1YJlj8oBOLXE2ICG8Ob3suSLBmV0foq/wm36Ap
+        72IKAf1nV0FVsf//3Xl374HcKekFSUOGmcy43OJ91ucFvRykWgnx03NVuTaDd45ShYPEZz
+        I27lDeKIZo4q7+PvRui+o7oCGcR/97w=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-448-hKktApQNOnyH42sefk-tdg-1; Wed, 08 Jul 2020 07:01:54 -0400
+X-MC-Unique: hKktApQNOnyH42sefk-tdg-1
+Received: by mail-ed1-f72.google.com with SMTP id c25so58499266edr.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jul 2020 04:01:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=vfd3otyp56vRqiURxmDOZ6Fo0opPnI/s7gjtxv0KznQ=;
-        b=j0xY/z138i3DNkjCehHeSZSq5Q1hYm+wo2cGstrHKEZbwTDKpTgCjyydM4y1MObobs
-         dfagJGiBYkc65xTeV/bezPG1ZZ+k7T0Z6Nads9+rL6YG7q5Lj8qTTKfnZUlUnJyfUrvS
-         HvTzg+Qw4GYB1e2Db1Oxy8O8PHuZjiik7n1iE///GK9GAE/UxRoN5LBp5c/FgtORZa7g
-         cJqFt/pzmCgDnt7on1Fql/sO+Rn0X9IK2GzjdSxrmn4Bcnk26fJ5c6rJyor6sD1dLvtX
-         nAuDPOmn1n8wMqD20ZvCE3qoHukRsPJazpAiCzn2WdLqzegY8zvOU69PIaTtMduyK1R3
-         T2xg==
-X-Gm-Message-State: AOAM531MgEgKt70sOh5Tww3GEh+sBw94or9Rj1zX70O6rklLIkyuHUfC
-        HG8qnBRIxTVN84hpgpiBKiE=
-X-Google-Smtp-Source: ABdhPJxOYlfGjzaVLuvnhyaKrtfL7UXTvUZMzz+Dec8UeVdd/TGCzwBrNgUt8dKQgLU3tCdUNAy8VA==
-X-Received: by 2002:a62:1b4a:: with SMTP id b71mr44869526pfb.9.1594202290717;
-        Wed, 08 Jul 2020 02:58:10 -0700 (PDT)
-Received: from dc803.localdomain (flh2-125-196-131-224.osk.mesh.ad.jp. [125.196.131.224])
-        by smtp.gmail.com with ESMTPSA id q24sm3567971pgg.3.2020.07.08.02.58.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2020 02:58:10 -0700 (PDT)
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-To:     kohada.t2@gmail.com
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] exfat: retain 'VolumeFlags' properly
-Date:   Wed,  8 Jul 2020 18:57:45 +0900
-Message-Id: <20200708095746.4179-1-kohada.t2@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        bh=R5NESMLlssU1+fU+MzHpdMP4ATVfk6Mh7mmKV6aiRHE=;
+        b=AaEV77uHWfQEmUpOx+SBdsX0nvblI/+/PT1fFE8Qydx1cdw8PngsmIKJWNzt/g65/4
+         HHx2OqA+1RSaACoB0nkd7Hg/CBVGYCgSbah4U2DBORZhxEEaoxpSxnP88wx6kHHNJkaO
+         xbCHYFh/VbtXVgADOr11UyOqZzp6e1IB7yo8LezlmVy/91GSQNNlVVyXbm5v2lPxMV/U
+         TAVd40vx/Rc000fqyxoDwiyu65pTjSwW6s+x+qev8cnABJUf8Mb6Lrwttm3Di2++T3Mc
+         S9z7C4+4Y0hTgdg3UWk7m6fD8RgoKTM9nFeZg1X6o7vABTuiy2PuvlN8VXYfMP8mOOUY
+         E9+A==
+X-Gm-Message-State: AOAM530cV19sCJx8u3nf4iH0Uk+mKZdBZK1jWsTXTxV3WlhfcoxAFT7+
+        oMe+JfMisl1D7Tpcfn0xyia/yl+f1h8v+C+kHln3mNjZ+vLhKGb7rw5n7vHLmW9HPDsWtnsUjZg
+        6MqFGDBojv23aBUfTyllSD/3yzg==
+X-Received: by 2002:aa7:d297:: with SMTP id w23mr63681843edq.49.1594206112970;
+        Wed, 08 Jul 2020 04:01:52 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyu3h7uw896uTUPxnA3LkPYXdQN/SwlS39PF0fY2ZywJDOPl8R3ZF8j4DbvajdrArtX/ozobQ==
+X-Received: by 2002:aa7:d297:: with SMTP id w23mr63681803edq.49.1594206112726;
+        Wed, 08 Jul 2020 04:01:52 -0700 (PDT)
+Received: from x1.localdomain (2001-1c00-0c0c-fe00-d2ea-f29d-118b-24dc.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:d2ea:f29d:118b:24dc])
+        by smtp.gmail.com with ESMTPSA id p4sm1776088eja.9.2020.07.08.04.01.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jul 2020 04:01:52 -0700 (PDT)
+Subject: Re: [PATCH 0/4] Fix misused kernel_read_file() enums
+To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jessica Yu <jeyu@kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
+        Peter Jones <pjones@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20200707081926.3688096-1-keescook@chromium.org>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <3c01073b-c422-dd97-0677-c16fe1158907@redhat.com>
+Date:   Wed, 8 Jul 2020 13:01:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200707081926.3688096-1-keescook@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Retain ActiveFat, MediaFailure and ClearToZero fields.
-And, never clear VolumeDirty, if it is dirty at mount.
+Hi,
 
-In '3.1.13.3 Media Failure Field' of exfat specification says ...
- If, upon mounting a volume, the value of this field is 1, implementations
- which scan the entire volume for media failures and record all failures as
- "bad" clusters in the FAT (or otherwise resolve media failures) may clear
- the value of this field to 0.
-Therefore, should not clear MediaFailure without scanning volume.
+On 7/7/20 10:19 AM, Kees Cook wrote:
+> Hi,
+> 
+> In looking for closely at the additions that got made to the
+> kernel_read_file() enums, I noticed that FIRMWARE_PREALLOC_BUFFER
+> and FIRMWARE_EFI_EMBEDDED were added, but they are not appropriate
+> *kinds* of files for the LSM to reason about. They are a "how" and
+> "where", respectively. Remove these improper aliases and refactor the
+> code to adapt to the changes.
+> 
+> Additionally adds in missing calls to security_kernel_post_read_file()
+> in the platform firmware fallback path (to match the sysfs firmware
+> fallback path) and in module loading. I considered entirely removing
+> security_kernel_post_read_file() hook since it is technically unused,
+> but IMA probably wants to be able to measure EFI-stored firmware images,
+> so I wired it up and matched it for modules, in case anyone wants to
+> move the module signature checks out of the module core and into an LSM
+> to avoid the current layering violations.
+> 
+> This touches several trees, and I suspect it would be best to go through
+> James's LSM tree.
+> 
+> Thanks!
 
-In '8.1 Recommended Write Ordering' of exfat specification says ...
- Clear the value of the VolumeDirty field to 0, if its value prior to the
- first step was 0
-Therefore, should not clear VolumeDirty when mounted.
 
-Also, rename ERR_MEDIUM to MED_FAILURE.
+I've done some quick tests on this series to make sure that
+the efi embedded-firmware support did not regress.
+That still works fine, so this series is;
 
-Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
----
- fs/exfat/exfat_fs.h  |  5 +++--
- fs/exfat/exfat_raw.h |  2 +-
- fs/exfat/super.c     | 22 ++++++++++++++--------
- 3 files changed, 18 insertions(+), 11 deletions(-)
+Tested-by: Hans de Goede <hdegoede@redhat.com>
 
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index cb51d6e83199..3f8dc4ca8109 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -224,7 +224,8 @@ struct exfat_sb_info {
- 	unsigned int num_FAT_sectors; /* num of FAT sectors */
- 	unsigned int root_dir; /* root dir cluster */
- 	unsigned int dentries_per_clu; /* num of dentries per cluster */
--	unsigned int vol_flag; /* volume dirty flag */
-+	unsigned int vol_flags; /* volume flags */
-+	unsigned int vol_flags_noclear; /* volume flags to retain */
- 	struct buffer_head *boot_bh; /* buffer_head of BOOT sector */
- 
- 	unsigned int map_clu; /* allocation bitmap start cluster */
-@@ -380,7 +381,7 @@ static inline int exfat_sector_to_cluster(struct exfat_sb_info *sbi,
- }
- 
- /* super.c */
--int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag);
-+int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flags);
- 
- /* fatent.c */
- #define exfat_get_next_cluster(sb, pclu) exfat_ent_get(sb, *(pclu), pclu)
-diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
-index 350ce59cc324..d86a8a6b0601 100644
---- a/fs/exfat/exfat_raw.h
-+++ b/fs/exfat/exfat_raw.h
-@@ -16,7 +16,7 @@
- 
- #define VOL_CLEAN		0x0000
- #define VOL_DIRTY		0x0002
--#define ERR_MEDIUM		0x0004
-+#define MED_FAILURE		0x0004
- 
- #define EXFAT_EOF_CLUSTER	0xFFFFFFFFu
- #define EXFAT_BAD_CLUSTER	0xFFFFFFF7u
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index b5bf6dedbe11..c26b0f5a0875 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -96,17 +96,22 @@ static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	return 0;
- }
- 
--int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag)
-+int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flags)
- {
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	struct boot_sector *p_boot = (struct boot_sector *)sbi->boot_bh->b_data;
- 	bool sync;
- 
-+	if (new_flags == VOL_CLEAN)
-+		new_flags = (sbi->vol_flags & ~VOL_DIRTY) | sbi->vol_flags_noclear;
-+	else
-+		new_flags |= sbi->vol_flags;
-+
- 	/* flags are not changed */
--	if (sbi->vol_flag == new_flag)
-+	if (sbi->vol_flags == new_flags)
- 		return 0;
- 
--	sbi->vol_flag = new_flag;
-+	sbi->vol_flags = new_flags;
- 
- 	/* skip updating volume dirty flag,
- 	 * if this volume has been mounted with read-only
-@@ -114,9 +119,9 @@ int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag)
- 	if (sb_rdonly(sb))
- 		return 0;
- 
--	p_boot->vol_flags = cpu_to_le16(new_flag);
-+	p_boot->vol_flags = cpu_to_le16(new_flags);
- 
--	if (new_flag == VOL_DIRTY && !buffer_dirty(sbi->boot_bh))
-+	if ((new_flags & VOL_DIRTY) && !buffer_dirty(sbi->boot_bh))
- 		sync = true;
- 	else
- 		sync = false;
-@@ -457,7 +462,8 @@ static int exfat_read_boot_sector(struct super_block *sb)
- 	sbi->dentries_per_clu = 1 <<
- 		(sbi->cluster_size_bits - DENTRY_SIZE_BITS);
- 
--	sbi->vol_flag = le16_to_cpu(p_boot->vol_flags);
-+	sbi->vol_flags = le16_to_cpu(p_boot->vol_flags);
-+	sbi->vol_flags_noclear = sbi->vol_flags & (VOL_DIRTY | MED_FAILURE);
- 	sbi->clu_srch_ptr = EXFAT_FIRST_CLUSTER;
- 	sbi->used_clusters = EXFAT_CLUSTERS_UNTRACKED;
- 
-@@ -472,9 +478,9 @@ static int exfat_read_boot_sector(struct super_block *sb)
- 		exfat_err(sb, "bogus data start sector");
- 		return -EINVAL;
- 	}
--	if (sbi->vol_flag & VOL_DIRTY)
-+	if (sbi->vol_flags & VOL_DIRTY)
- 		exfat_warn(sb, "Volume was not properly unmounted. Some data may be corrupt. Please run fsck.");
--	if (sbi->vol_flag & ERR_MEDIUM)
-+	if (sbi->vol_flags & MED_FAILURE)
- 		exfat_warn(sb, "Medium has reported failures. Some data may be lost.");
- 
- 	/* exFAT file size is limited by a disk volume size */
--- 
-2.25.1
+Regards,
+
+Hans
+
+
+
+
+> 
+> -Kees
+> 
+> Kees Cook (4):
+>    firmware_loader: EFI firmware loader must handle pre-allocated buffer
+>    fs: Remove FIRMWARE_PREALLOC_BUFFER from kernel_read_file() enums
+>    fs: Remove FIRMWARE_EFI_EMBEDDED from kernel_read_file() enums
+>    module: Add hook for security_kernel_post_read_file()
+> 
+>   drivers/base/firmware_loader/fallback_platform.c | 12 ++++++++++--
+>   drivers/base/firmware_loader/main.c              |  5 ++---
+>   fs/exec.c                                        |  7 ++++---
+>   include/linux/fs.h                               |  3 +--
+>   include/linux/lsm_hooks.h                        |  6 +++++-
+>   kernel/module.c                                  |  7 ++++++-
+>   security/integrity/ima/ima_main.c                |  6 ++----
+>   7 files changed, 30 insertions(+), 16 deletions(-)
+> 
 
