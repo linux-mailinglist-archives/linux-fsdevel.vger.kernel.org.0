@@ -2,62 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A21F1218F7E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 20:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6225218FF0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 20:49:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbgGHSIM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 14:08:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55928 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbgGHSIM (ORCPT
+        id S1726876AbgGHStY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 14:49:24 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:37344 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725953AbgGHStX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 14:08:12 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52524C061A0B;
-        Wed,  8 Jul 2020 11:08:12 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id C9D962A2050
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     "Alexander A. Klimov" <grandmaster@al2klimov.de>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Replace HTTP links with HTTPS ones: UNICODE SUBSYSTEM
-Organization: Collabora
-References: <20200708155831.15102-1-grandmaster@al2klimov.de>
-Date:   Wed, 08 Jul 2020 14:08:05 -0400
-In-Reply-To: <20200708155831.15102-1-grandmaster@al2klimov.de> (Alexander
-        A. Klimov's message of "Wed, 8 Jul 2020 17:58:31 +0200")
-Message-ID: <873661nam2.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Wed, 8 Jul 2020 14:49:23 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 068IaqlI102786;
+        Wed, 8 Jul 2020 18:49:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=f16GOGKsc9NRiItIq+nSVW6pbFW72HperJdkFPlL8B0=;
+ b=XK9VsAzwSD913ZwtbsqMykwkXGvGB4z7psu8Zqc3yyUZfSIuhIeaJDm6DPleE9kmyjO6
+ J7Qye+rn0acoJTFdqFnAv14qnGNYt2faRQCgM+U2jL/XyLBabfdbI+RwI9F5+qy/7iWm
+ nFwTbTrJsh4BRkw86NdOCzmpV5MEdEul9Qt7eV07ByOuqkrrzPz3ELFQJCda/k3czgch
+ OAcDQY1Iqkn1YqPTwpX3HxW2/+WysxhgDwawEVZhF5he4dg2pRbToUnFvEAcJyBpR/j5
+ q5/HOrqMdt0G4xNVOKwau4zC7ZdE4UEDygah1VYYNDpS/c6DrbbHkq4dJhvp4FDSoaqe 7Q== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 325k3687qn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 08 Jul 2020 18:49:20 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 068IdD4Y125333;
+        Wed, 8 Jul 2020 18:47:19 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 325k3fsp27-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 08 Jul 2020 18:47:19 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 068IlIjk025607;
+        Wed, 8 Jul 2020 18:47:18 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 08 Jul 2020 11:47:18 -0700
+Date:   Wed, 8 Jul 2020 21:47:11 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] io_uring: fix a use after free in io_async_task_func()
+Message-ID: <20200708184711.GA31157@mwanda>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9676 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 mlxscore=0
+ spamscore=0 malwarescore=0 phishscore=0 mlxlogscore=999 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007080114
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9676 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 impostorscore=0 mlxscore=0
+ adultscore=0 spamscore=0 mlxlogscore=999 malwarescore=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 clxscore=1011 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007080114
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"Alexander A. Klimov" <grandmaster@al2klimov.de> writes:
+The "apoll" variable is freed and then used on the next line.  We need
+to move the free down a few lines.
 
-> Rationale:
-> Reduces attack surface on kernel devs opening the links for MITM
-> as HTTPS traffic is much harder to manipulate.
->
-> Deterministic algorithm:
-> For each file:
->   If not .svg:
->     For each line:
->       If doesn't contain `\bxmlns\b`:
->         For each link, `\bhttp://[^# \t\r\n]*(?:\w|/)`:
-> 	  If neither `\bgnu\.org/license`, nor `\bmozilla\.org/MPL\b`:
->             If both the HTTP and HTTPS versions
->             return 200 OK and serve the same content:
->               Replace HTTP with HTTPS.
->
-> Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
+Fixes: 0be0b0e33b0b ("io_uring: simplify io_async_task_func()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ fs/io_uring.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Applied, with a fix to the summary line, to match unicode contributions.
-
-Thanks,
-
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 70828e2470e2..f2993070a9e8 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4652,12 +4652,13 @@ static void io_async_task_func(struct callback_head *cb)
+ 	/* restore ->work in case we need to retry again */
+ 	if (req->flags & REQ_F_WORK_INITIALIZED)
+ 		memcpy(&req->work, &apoll->work, sizeof(req->work));
+-	kfree(apoll);
+ 
+ 	if (!READ_ONCE(apoll->poll.canceled))
+ 		__io_req_task_submit(req);
+ 	else
+ 		__io_req_task_cancel(req, -ECANCELED);
++
++	kfree(apoll);
+ }
+ 
+ static int io_async_wake(struct wait_queue_entry *wait, unsigned mode, int sync,
 -- 
-Gabriel Krisman Bertazi
+2.27.0
+
