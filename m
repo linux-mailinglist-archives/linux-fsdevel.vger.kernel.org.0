@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7468F219264
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 23:20:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58260219267
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 23:20:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726315AbgGHVUA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 17:20:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35518 "EHLO mx2.suse.de"
+        id S1726324AbgGHVUB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 17:20:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35580 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbgGHVT4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 17:19:56 -0400
+        id S1726305AbgGHVUA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jul 2020 17:20:00 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 806EDAC91;
-        Wed,  8 Jul 2020 21:19:55 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id 6092FAD33;
+        Wed,  8 Jul 2020 21:19:58 +0000 (UTC)
 From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
 To:     linux-btrfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com, hch@lst.de,
         cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
         linux-xfs@vger.kernel.org, Goldwyn Rodrigues <rgoldwyn@suse.com>,
         Nikolay Borisov <nborisov@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH 4/6] fs: remove dio_end_io()
-Date:   Wed,  8 Jul 2020 16:19:24 -0500
-Message-Id: <20200708211926.7706-5-rgoldwyn@suse.de>
+        Johannes Thumshirn <jth@kernel.org>
+Subject: [PATCH 5/6] btrfs: remove BTRFS_INODE_READDIO_NEED_LOCK
+Date:   Wed,  8 Jul 2020 16:19:25 -0500
+Message-Id: <20200708211926.7706-6-rgoldwyn@suse.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200708211926.7706-1-rgoldwyn@suse.de>
 References: <20200708211926.7706-1-rgoldwyn@suse.de>
@@ -37,61 +37,71 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-Since we removed the last user of dio_end_io(), remove the helper
-function dio_end_io().
+Since we now perform direct reads using i_rwsem, we can remove this
+inode flag used to co-ordinate unlocked reads.
+
+The truncate call takes i_rwsem. This means it is correctly synchronized
+with concurrent direct reads.
 
 Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Johannes Thumshirn <jth@kernel.org>
 Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 ---
- fs/direct-io.c     | 19 -------------------
- include/linux/fs.h |  2 --
+ fs/btrfs/btrfs_inode.h | 18 ------------------
+ fs/btrfs/inode.c       |  3 ---
  2 files changed, 21 deletions(-)
 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 6d5370eac2a8..1543b5af400e 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -386,25 +386,6 @@ static void dio_bio_end_io(struct bio *bio)
- 	spin_unlock_irqrestore(&dio->bio_lock, flags);
- }
- 
--/**
-- * dio_end_io - handle the end io action for the given bio
-- * @bio: The direct io bio thats being completed
-- *
-- * This is meant to be called by any filesystem that uses their own dio_submit_t
-- * so that the DIO specific endio actions are dealt with after the filesystem
-- * has done it's completion work.
-- */
--void dio_end_io(struct bio *bio)
--{
--	struct dio *dio = bio->bi_private;
--
--	if (dio->is_async)
--		dio_bio_end_aio(bio);
--	else
--		dio_bio_end_io(bio);
--}
--EXPORT_SYMBOL_GPL(dio_end_io);
--
- static inline void
- dio_bio_alloc(struct dio *dio, struct dio_submit *sdio,
- 	      struct block_device *bdev,
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3f881a892ea7..9b3f250d634c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3202,8 +3202,6 @@ enum {
- 	DIO_SKIP_HOLES	= 0x02,
+diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+index e7d709505cb1..aeff56a0e105 100644
+--- a/fs/btrfs/btrfs_inode.h
++++ b/fs/btrfs/btrfs_inode.h
+@@ -28,7 +28,6 @@ enum {
+ 	BTRFS_INODE_NEEDS_FULL_SYNC,
+ 	BTRFS_INODE_COPY_EVERYTHING,
+ 	BTRFS_INODE_IN_DELALLOC_LIST,
+-	BTRFS_INODE_READDIO_NEED_LOCK,
+ 	BTRFS_INODE_HAS_PROPS,
+ 	BTRFS_INODE_SNAPSHOT_FLUSH,
+ };
+@@ -313,23 +312,6 @@ struct btrfs_dio_private {
+ 	u8 csums[];
  };
  
--void dio_end_io(struct bio *bio);
+-/*
+- * Disable DIO read nolock optimization, so new dio readers will be forced
+- * to grab i_mutex. It is used to avoid the endless truncate due to
+- * nonlocked dio read.
+- */
+-static inline void btrfs_inode_block_unlocked_dio(struct btrfs_inode *inode)
+-{
+-	set_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
+-	smp_mb();
+-}
 -
- ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 			     struct block_device *bdev, struct iov_iter *iter,
- 			     get_block_t get_block,
+-static inline void btrfs_inode_resume_unlocked_dio(struct btrfs_inode *inode)
+-{
+-	smp_mb__before_atomic();
+-	clear_bit(BTRFS_INODE_READDIO_NEED_LOCK, &inode->runtime_flags);
+-}
+-
+ /* Array of bytes with variable length, hexadecimal format 0x1234 */
+ #define CSUM_FMT				"0x%*phN"
+ #define CSUM_FMT_VALUE(size, bytes)		size, bytes
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 0fa75af35a1f..264b676ebf29 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -4835,10 +4835,7 @@ static int btrfs_setsize(struct inode *inode, struct iattr *attr)
+ 
+ 		truncate_setsize(inode, newsize);
+ 
+-		/* Disable nonlocked read DIO to avoid the endless truncate */
+-		btrfs_inode_block_unlocked_dio(BTRFS_I(inode));
+ 		inode_dio_wait(inode);
+-		btrfs_inode_resume_unlocked_dio(BTRFS_I(inode));
+ 
+ 		ret = btrfs_truncate(inode, newsize == oldsize);
+ 		if (ret && inode->i_nlink) {
 -- 
 2.26.2
 
