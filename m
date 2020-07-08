@@ -2,189 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05C9A218986
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 15:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CCE121898F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 15:55:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729636AbgGHNuS convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 8 Jul 2020 09:50:18 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:46273 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729392AbgGHNuR (ORCPT
+        id S1729538AbgGHNz2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 09:55:28 -0400
+Received: from casper.infradead.org ([90.155.50.34]:35578 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729357AbgGHNz2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 09:50:17 -0400
-Received: from mail-qt1-f181.google.com ([209.85.160.181]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MJm8H-1kCc5m2mEr-00K5vV; Wed, 08 Jul 2020 15:50:15 +0200
-Received: by mail-qt1-f181.google.com with SMTP id g13so34469581qtv.8;
-        Wed, 08 Jul 2020 06:50:14 -0700 (PDT)
-X-Gm-Message-State: AOAM532DtPDX0V0xlxgv5JdhWqePX0BHlyAKzf1pBVKlqTk15Xe/UREa
-        MWN2w1eQs9BJ7mLGKm77odAN5QFSEddKqu5Bm9k=
-X-Google-Smtp-Source: ABdhPJzGbqSLDVa+22V+OxqUS2NDeQMLg4lKFCfmasSmlQFshduHvuFJ4EYxw9p5RNP/z2hlcFkstPMlyhdckAfJkBA=
-X-Received: by 2002:ac8:7587:: with SMTP id s7mr60215048qtq.304.1594216213827;
- Wed, 08 Jul 2020 06:50:13 -0700 (PDT)
+        Wed, 8 Jul 2020 09:55:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=UB2tdF87tFQumNjUF6URWsZKnhuGKxYkdOBfeGqgmNc=; b=UeWTs1ynUHzLfr+5s7N2jufuZq
+        hVJMkoOaL51orUJ2U6d/jXiD65aMw5gc4OGO/iGGnU4H5d+7sRGEgTEwnJmjw0Wvojw1vz0K1jIhX
+        ROyUmisDAxlU1Qaw8C8IOh9jCz/mFEYKYXFV0g01q144YSfPf1SFBQs5YNmhGkhRtkHfecJm//rjj
+        z0mzg63OZ9bdyw2OW79uVfvsYz2zBTM1edW2wTP9uRo6ZkQKXz/zcFQyxn440w3YjX89PhiFI6E5G
+        fva+HWNLqN3VKzlfYtsID3IerAPVQF5Thq/MfdWQu4E8tRwiYt/HoJ/GNzJIU335YmyDNl7Fzxs0v
+        a01ZHrsA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jtAX1-0005vm-5p; Wed, 08 Jul 2020 13:54:43 +0000
+Date:   Wed, 8 Jul 2020 14:54:37 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        fdmanana@gmail.com, dsterba@suse.cz, darrick.wong@oracle.com,
+        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: always fall back to buffered I/O after invalidation failures,
+ was: Re: [PATCH 2/6] iomap: IOMAP_DIO_RWF_NO_STALE_PAGECACHE return if page
+ invalidation fails
+Message-ID: <20200708135437.GP25523@casper.infradead.org>
+References: <20200629192353.20841-1-rgoldwyn@suse.de>
+ <20200629192353.20841-3-rgoldwyn@suse.de>
+ <20200701075310.GB29884@lst.de>
+ <20200707124346.xnr5gtcysuzehejq@fiona>
+ <20200707125705.GK25523@casper.infradead.org>
+ <20200707130030.GA13870@lst.de>
+ <20200708065127.GM2005@dread.disaster.area>
 MIME-Version: 1.0
-References: <20200707180955.53024-1-mic@digikod.net> <20200707180955.53024-9-mic@digikod.net>
- <CAK8P3a0FkoxFtcQJ2jSqyLbDCOp3R8-1JoY8CWAgbSZ9hH9wdQ@mail.gmail.com> <7f407b67-d470-25fd-1287-f4f55f18e74a@digikod.net>
-In-Reply-To: <7f407b67-d470-25fd-1287-f4f55f18e74a@digikod.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 8 Jul 2020 15:49:57 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1ehWZErD2a0iBqn37s-LTAtW0AbV_gt32iX3cQkXbpOQ@mail.gmail.com>
-Message-ID: <CAK8P3a1ehWZErD2a0iBqn37s-LTAtW0AbV_gt32iX3cQkXbpOQ@mail.gmail.com>
-Subject: Re: [PATCH v19 08/12] landlock: Add syscall implementation
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mickael.salaun@ssi.gouv.fr>,
-        Richard Weinberger <richard@nod.at>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:1EbzIoFyJM0srBmwqFU/S9OU4GrMN1MwPgI0Rt8D93c7MKFw8Vh
- XAL2Mqzq8tROm189yfmIAAkwGBnqfvIAFmIXjoKW2kH0dmD3+NzqCb/ckj+Eb8wYodD69GC
- UX3OO53NSdcm3ZmOC3ng/iiAQ+yoZ/tyGlG+Z6/45CQLkPDw6XjkwbRG4riXwmEhLWXzbtt
- 2tt6J/Rja18C7l932QkIQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:311prxkKa2c=:8xNBGuQmWDWcOOo2Np72ie
- iYO+qSJE0vLVPmqxDNEMH9dFwohmv/IWW8w1MF/hFbXPm1ZTuuL29xTPOLVO6ST1lamB63dgq
- /oyNrqfINWsYPsPTUGV/cvjcL12wbjSThqPq9j+6ybZ88xJ1hlCpG7zC70MMohYsMtvC0/SIT
- oN/1H71C4qmAu+L/SPY0peHovz8LZW5l1kOqlj1pRiT3cfNsIJqq3BWkcO2QxdQ7OTH4Rh3Md
- VYuOpujXqrqZROak/a+LvR6pfMrcfuLsChK42uYeO1GiIurqVJvwgub4REhXeM8VAXXlGriz2
- /IKPoq0hCetvMBo9tfZhs1pPp8E8zeToSTprSeimjAIrwySD5w0IQV74rrNzUMjNwL8N0OLBB
- pxTE7H0D6humbFN/t1om7dhvl54XNOdczbQ2OI7AV17J+xr73yD+VhIOrh46P86qN1V6LrR8b
- cgHzkU34XHWBn4XR7rMsvVoMLms6zcwrBlotosrs96bDtXU5hlS9XAGa1MiCKRpcMYtiuj2Wh
- z4IKSiXqa9dHsG4iQZ/Yhp5NyhKUJn5a87Bo3f3dYdbbe5/V5cYF1e3ARDNC0AiyIhLlGnhbE
- yh1kwxRPO4yWgeUu521IES/q3W0ZpDZvKmN3UAh1oWRZ1pjFo70KH8D5eNZ/4VNKJgMwGp9ac
- CintiunzKm45WMH+75nhq6ioxqoJXHnpppg4Y/eb0l9fpI0FfR+Z5Uy8MzM/cWttkZQysowIZ
- cYc5NdXuFeYXIy0/WwdZUz9PnrwF7QKFju3jnwHtxIZgMxQVqJ4FofJWQL3xAeq+4mbVdWgkB
- dYS6VeYAszYLC7uILbm9BGBMDWCvpBOEeN1WHWtUYBgKxmLQxeR5qze8YqtqKJ6L3gqefSQ0e
- 4Wm4oU3nd4D4LBcrPOHL3KMefI1JkXMLK9viTZKq1DQ0HLRF3zW/Y9YfikYvC7A/ZxIQ7pgj3
- dYx+DEA3oBMSb8iF+hUk1EDGJh/6S2o8/Wl+HRYz7j778DOnf9pqm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200708065127.GM2005@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 8, 2020 at 3:04 PM Mickaël Salaün <mic@digikod.net> wrote:
-> On 08/07/2020 10:57, Arnd Bergmann wrote:
-> > On Tue, Jul 7, 2020 at 8:10 PM Mickaël Salaün <mic@digikod.net> wrote:
-> >
-> > It looks like all you need here today is a single argument bit, plus
-> > possibly some room for extensibility. I would suggest removing all
-> > the extra bits and using a syscall like
-> >
-> > SYSCALL_DEFINE1(landlock_create_ruleset, u32, flags);
-> >
-> > I don't really see how this needs any variable-length arguments,
-> > it really doesn't do much.
->
-> We need the attr_ptr/attr_size pattern because the number of ruleset
-> properties will increase (e.g. network access mask).
+On Wed, Jul 08, 2020 at 04:51:27PM +1000, Dave Chinner wrote:
+> On Tue, Jul 07, 2020 at 03:00:30PM +0200, Christoph Hellwig wrote:
+> > On Tue, Jul 07, 2020 at 01:57:05PM +0100, Matthew Wilcox wrote:
+> > > Indeed, I'm in favour of not invalidating
+> > > the page cache at all for direct I/O.  For reads, I think the page cache
+> > > should be used to satisfy any portion of the read which is currently
+> > > cached.  For writes, I think we should write into the page cache pages
+> > > which currently exist, and then force those pages to be written back,
+> > > but left in cache.
+> > 
+> > Something like that, yes.
+> 
+> So are we really willing to take the performance regression that
+> occurs from copying out of the page cache consuming lots more CPU
+> than an actual direct IO read? Or that direct IO writes suddenly
+> serialise because there are page cache pages and now we have to do
+> buffered IO?
+> 
+> Direct IO should be a deterministic, zero-copy IO path to/from
+> storage. Using the CPU to copy data during direct IO is the complete
+> opposite of the intended functionality, not to mention the behaviour
+> that many applications have been careful designed and tuned for.
 
-But how many bits do you think you will *actually* need in total that
-this needs to be a two-dimensional set of flags? At the moment you
-only have a single bit that you interpret.
+Direct I/O isn't deterministic though.  If the file isn't shared, then
+it works great, but as soon as you get mixed buffered and direct I/O,
+everything is already terrible.  Direct I/Os perform pagecache lookups
+already, but instead of using the data that we found in the cache, we
+(if it's dirty) write it back, wait for the write to complete, remove
+the page from the pagecache and then perform another I/O to get the data
+that we just wrote out!  And then the app that's using buffered I/O has
+to read it back in again.
 
-> > To be on the safe side, you might split up the flags into either the
-> > upper/lower 16 bits or two u32 arguments, to allow both compatible
-> > (ignored by older kernels if flag is set) and incompatible (return error
-> > when an unknown flag is set) bits.
->
-> This may be a good idea in general, but in the case of Landlock, because
-> this kind of (discretionary) sandboxing should be a best-effort security
-> feature, we should avoid incompatible behavior. In practice, every
-> unknown bit returns an error because userland can probe for available
-> bits thanks to the get_features command. This kind of (in)compatibility
-> can then be handled by userland.
+Nobody's proposing changing Direct I/O to exclusively work through the
+pagecache.  The proposal is to behave less weirdly when there's already
+data in the pagecache.
 
-If there are not going to be incompatible extensions, then just ignore
-all unknown bits and never return an error but get rid of the user
-space probing that just complicates the interface.
+I have had an objection raised off-list.  In a scenario with a block
+device shared between two systems and an application which does direct
+I/O, everything is normally fine.  If one of the systems uses tar to
+back up the contents of the block device then the application on that
+system will no longer see the writes from the other system because
+there's nothing to invalidate the pagecache on the first system.
 
-In general, it's hard to rely on user space to first ask the kernel
-what it can do, the way this normally works is that user space
-asks the kernel for something and it either does it or not, but gives
-an indication of whether it worked.
+Unfortunately, this is in direct conflict with the performance
+problem caused by some little arsewipe deciding to do:
 
-> I suggest this syscall signature:
-> SYSCALL_DEFINE3(landlock_create_ruleset, __u32, options, const struct
-> landlock_attr_ruleset __user *, ruleset_ptr, size_t, ruleset_size);
+$ while true; do dd if=/lib/x86_64-linux-gnu/libc-2.30.so iflag=direct of=/dev/null; done
 
-The other problem here is that indirect variable-size structured arguments
-are a pain to instrument with things like strace or seccomp, so you
-should first try to use a fixed argument list, and fall back to a fixed
-structure if that fails.
-
-> >> +static int syscall_add_rule_path_beneath(const void __user *const attr_ptr,
-> >> +               const size_t attr_size)
-> >> +{
-> >> +       struct landlock_attr_path_beneath attr_path_beneath;
-> >> +       struct path path;
-> >> +       struct landlock_ruleset *ruleset;
-> >> +       int err;
-> >
-> > Similarly, it looks like this wants to be
-> >
-> > SYSCALL_DEFINE3(landlock_add_rule_path_beneath, int, ruleset, int,
-> > path, __u32, flags)
-> >
-> > I don't see any need to extend this in a way that wouldn't already
-> > be served better by adding another system call. You might argue
-> > that 'flags' and 'allowed_access' could be separate, with the latter
-> > being an indirect in/out argument here, like
-> >
-> > SYSCALL_DEFINE4(landlock_add_rule_path_beneath, int, ruleset, int, path,
-> >                            __u64 *, allowed_acces, __u32, flags)
->
-> To avoid adding a new syscall for each new rule type (e.g. path_beneath,
-> path_range, net_ipv4_range, etc.), I think it would be better to keep
-> the attr_ptr/attr_size pattern and to explicitely set a dedicated option
-> flag to specify the attr type.
->
-> This would look like this:
-> SYSCALL_DEFINE4(landlock_add_rule, __u32, options, int, ruleset, const
-> void __user *, rule_ptr, size_t, rule_size);
->
-> The rule_ptr could then point to multiple types like struct
-> landlock_attr_path_beneath (without the current ruleset_fd field).
-
-This again introduces variable-sized structured data. How many different
-kinds of rule types do you think there will be (most likely, and maybe an
-upper bound)?
-
-Could (some of) these be generalized to use the same data structure?
-
-> >> +static int syscall_enforce_ruleset(const void __user *const attr_ptr,
-> >> +               const size_t attr_size)
-> >
-> > Here it seems like you just need to pass the file descriptor, or maybe
-> >
-> > SYSCALL_DEFINE2(landlock_enforce, int, ruleset, __u32 flags);
-> >
-> > if you need flags for extensibility.
->
-> Right, but for consistency I prefer to change the arguments like this:
-> SYSCALL_DEFINE2(landlock_enforce, __u32 options, int, ruleset);
-
-Most system calls pass the object they work on as the first argument,
-in this case this would be the ruleset file descriptor.
-
-     Arnd
+... doesn't hurt me because my root filesystem is on ext4 which doesn't
+purge the cache.  But anything using iomap gets all the pages for libc
+kicked out of the cache, and that's a lot of fun.
