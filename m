@@ -2,232 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13C402185AD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 13:12:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D097C2185AE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jul 2020 13:12:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728640AbgGHLMI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 07:12:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47340 "EHLO
+        id S1728658AbgGHLML (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 07:12:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728466AbgGHLMI (ORCPT
+        with ESMTP id S1725972AbgGHLMK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 07:12:08 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CF7AC08C5DC
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jul 2020 04:12:08 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id z15so37192343wrl.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jul 2020 04:12:08 -0700 (PDT)
+        Wed, 8 Jul 2020 07:12:10 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6712BC08C5DC
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jul 2020 04:12:10 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id g10so3744050wmc.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jul 2020 04:12:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=oubne8wXWrj/bFxoGmKp7Zl07250gESHqIsh+1rMSPc=;
-        b=WaxYHoS1h814+a8heXRRdVHAmgD7KB2BPU2JGpFcV3e3Owp15qkwFXP/kHaYbbP9zZ
-         qAgHiCXn9adFArh5cmTt1rSAN0j3jSqwC6bNv9zGxKXnHXFGeBCaMSFLLqVG4Si91GSV
-         rP5pM96oij3zMeJjxigCiPR63RDMbFDTkAswBTJm/e9clLcpS1OLwd3PJb+b4znvnbd+
-         bxEisXJ1N91w8vRfP8qAKOv/U327nrLji9uOBXrrbzlFxE7qi1S0p0jFnA9H+ClxZgJg
-         d7L6FnUu2fxv4xf55f/usjPFun2S9SMRfIQMlTztRkKxTkVCFzp2lNBZHCiQSEl14fYH
-         XtzA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=33Xisl4lMhvn/WaDKdXc9pHfauIoD/BUq0VCz7uTm/s=;
+        b=m2NcTcbBYi7vrBWHSDzG0bzZ7d9onedv+8kzDZEPbrKXyADmju8bSiQZ4xY4YD5os+
+         9JTZUpLvY1jtvHXnrNJxgVPJw6Q9E9xujWjMnGi2KbY2KFdpe74tE5VEq96AF7PVJkA9
+         yzY6NIWxgyz8ch/pbiXNIr0/Vc7w5wPXzUQSZuTakVprPcCNUeJjwhEqc5ISEXR9huxc
+         zDpuYJ5Z9wsfmjpPmQYjVxRE4tHZKuWE9jHhLzDRrPv6pWUOZyIewzZgNCqsr21EPQrp
+         kon31Te02aJhmFNH47pN9Z/GiLmC2fOX1nq6fYR+T8q+jhfbRar4pwy0QDWvcA/CVUbc
+         HPgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oubne8wXWrj/bFxoGmKp7Zl07250gESHqIsh+1rMSPc=;
-        b=aiQghzNvTfJkNbVbPMBmoEzG/dTjwVK8cSPer40xOtMH32kkG20Tv0FlLvjuWYA1ne
-         2ApaADv88K0GOX3HpHwlz4/DvlUE484emLY8dCv/OQrKHtXV+0808mPIGmz2U7HYW4WP
-         Pklt72qHI0MBKFeJGarpM0DnqZ/iZjRdSGb3eg/gz3/7iSKaY0VgExqgVjQYxBP4zie5
-         bNNBlevp5wBEe+FpmAD0Djj7IJ8mOcaSan6HwpxE3QZeJoPNHG9DNcoU82ECI1mNDk50
-         6zlLtoLISlXswkqhmijnMk9gp/kfiHOuz/kbYuTNq9YVwb/pzQBxtbIGOMWhUh5GVZls
-         AJWA==
-X-Gm-Message-State: AOAM531f/za84bcLrzJBHg9D2sGGPS+UP4FsPIQYdKAUuEiYJ4bv8X8o
-        EWfAS3QyoRK8UnZ1VDLEhEeEvLcA
-X-Google-Smtp-Source: ABdhPJydbZAuJh/Yjsf0V4xDSyj1oGg6xBUFZ9RNBXfijQUEN600RINqh/OSP3W32ZvKojRpQIDN+A==
-X-Received: by 2002:a5d:4d8b:: with SMTP id b11mr58431508wru.341.1594206726890;
-        Wed, 08 Jul 2020 04:12:06 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=33Xisl4lMhvn/WaDKdXc9pHfauIoD/BUq0VCz7uTm/s=;
+        b=IEbIx+RQvpV7+pFEl6ITLO+85I3xkXB+UiZLY8u1v4H2R6hpdCLFkKPOO1XZ1GCjej
+         RKLbCcxXujzRoInIAlwTQQnUwGP5MQ3pqZDc+icwdgHfnXdUVq/BISfU21vYsLBxBWwC
+         td3Kfp/rXPZji/E+WiOeRre7IgjwETm970THnFFIWLUAPLr28N8H8d482ZrnS/bKzeRI
+         p9jxeVvek2bfRncWBRYIXNr+1BMaVTYc9KQlY/mRQ5rG1J8THvXkJsjvqTx9bVf7X9/x
+         qHcQi9iWbo6bNsHJSxEdIJXycVYztCfIc2QGy/sj+/f+JP9iWkRGPQlqu0EJu/7zZy9t
+         DVXg==
+X-Gm-Message-State: AOAM530TOrKQTFg1YiD1g5QC0uS5ql9ie/Qf6B7oGyaTh5UuEiDsFd4n
+        SdGrancvRo4swFwzrVygCaA=
+X-Google-Smtp-Source: ABdhPJzIJdUgxmE+R1EVcAtQ0BCwuBWmK8h9g6ltfa352KfKEUhkI1l8dGbPx3z0wfcOq+oWLlyNxg==
+X-Received: by 2002:a7b:cb92:: with SMTP id m18mr6953059wmi.94.1594206728380;
+        Wed, 08 Jul 2020 04:12:08 -0700 (PDT)
 Received: from localhost.localdomain ([141.226.183.23])
-        by smtp.gmail.com with ESMTPSA id k126sm5980834wme.17.2020.07.08.04.12.05
+        by smtp.gmail.com with ESMTPSA id k126sm5980834wme.17.2020.07.08.04.12.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2020 04:12:06 -0700 (PDT)
+        Wed, 08 Jul 2020 04:12:07 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH v3 01/20] fsnotify: Rearrange fast path to minimise overhead when there is no watcher
-Date:   Wed,  8 Jul 2020 14:11:36 +0300
-Message-Id: <20200708111156.24659-1-amir73il@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH v3 02/20] fsnotify: fold fsnotify() call into fsnotify_parent()
+Date:   Wed,  8 Jul 2020 14:11:37 +0300
+Message-Id: <20200708111156.24659-2-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200708111156.24659-1-amir73il@gmail.com>
+References: <20200708111156.24659-1-amir73il@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mel Gorman <mgorman@techsingularity.net>
+All (two) callers of fsnotify_parent() also call fsnotify() to notify
+the child inode. Move the second fsnotify() call into fsnotify_parent().
 
-The fsnotify paths are trivial to hit even when there are no watchers and
-they are surprisingly expensive. For example, every successful vfs_write()
-hits fsnotify_modify which calls both fsnotify_parent and fsnotify unless
-FMODE_NONOTIFY is set which is an internal flag invisible to userspace.
-As it stands, fsnotify_parent is a guaranteed functional call even if there
-are no watchers and fsnotify() does a substantial amount of unnecessary
-work before it checks if there are any watchers. A perf profile showed
-that applying mnt->mnt_fsnotify_mask in fnotify() was almost half of the
-total samples taken in that function during a test. This patch rearranges
-the fast paths to reduce the amount of work done when there are no
-watchers.
+This will allow more flexibility in making decisions about which of the
+two event falvors should be sent.
 
-The test motivating this was "perf bench sched messaging --pipe". Despite
-the fact the pipes are anonymous, fsnotify is still called a lot and
-the overhead is noticeable even though it's completely pointless. It's
-likely the overhead is negligible for real IO so this is an extreme
-example. This is a comparison of hackbench using processes and pipes on
-a 1-socket machine with 8 CPU threads without fanotify watchers.
+Using 'goto notify_child' in the inline helper seems a bit strange, but
+it mimics the code in __fsnotify_parent() for clarity and the goto
+pattern will become less strage after following patches are applied.
 
-                              5.7.0                  5.7.0
-                            vanilla      fastfsnotify-v1r1
-Amean     1       0.4837 (   0.00%)      0.4630 *   4.27%*
-Amean     3       1.5447 (   0.00%)      1.4557 (   5.76%)
-Amean     5       2.6037 (   0.00%)      2.4363 (   6.43%)
-Amean     7       3.5987 (   0.00%)      3.4757 (   3.42%)
-Amean     12      5.8267 (   0.00%)      5.6983 (   2.20%)
-Amean     18      8.4400 (   0.00%)      8.1327 (   3.64%)
-Amean     24     11.0187 (   0.00%)     10.0290 *   8.98%*
-Amean     30     13.1013 (   0.00%)     12.8510 (   1.91%)
-Amean     32     13.9190 (   0.00%)     13.2410 (   4.87%)
-
-                       5.7.0       5.7.0
-                     vanilla fastfsnotify-v1r1
-Duration User         157.05      152.79
-Duration System      1279.98     1219.32
-Duration Elapsed      182.81      174.52
-
-This is showing that the latencies are improved by roughly 2-9%. The
-variability is not shown but some of these results are within the noise
-as this workload heavily overloads the machine. That said, the system CPU
-usage is reduced by quite a bit so it makes sense to avoid the overhead
-even if it is a bit tricky to detect at times. A perf profile of just 1
-group of tasks showed that 5.14% of samples taken were in either fsnotify()
-or fsnotify_parent(). With the patch, 2.8% of samples were in fsnotify,
-mostly function entry and the initial check for watchers.  The check for
-watchers is complicated enough that inlining it may be controversial.
-
-[Amir] Slightly simplify with mnt_or_sb_mask => marks_mask
-
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fsnotify.c             | 27 +++++++++++++++------------
- include/linux/fsnotify.h         | 10 ++++++++++
- include/linux/fsnotify_backend.h |  4 ++--
- 3 files changed, 27 insertions(+), 14 deletions(-)
+ fs/notify/fsnotify.c     | 27 ++++++++++++++++++---------
+ include/linux/fsnotify.h | 33 +++++++++++++--------------------
+ 2 files changed, 31 insertions(+), 29 deletions(-)
 
 diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 72d332ce8e12..d59a58d10b84 100644
+index d59a58d10b84..30628a72ca01 100644
 --- a/fs/notify/fsnotify.c
 +++ b/fs/notify/fsnotify.c
-@@ -143,7 +143,7 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
+@@ -142,16 +142,20 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
+ 	spin_unlock(&inode->i_lock);
  }
  
- /* Notify this dentry's parent about a child's events. */
--int fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
-+int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
- 		    int data_type)
+-/* Notify this dentry's parent about a child's events. */
++/*
++ * Notify this dentry's parent about a child's events with child name info
++ * if parent is watching.
++ * Notify also the child without name info if child inode is watching.
++ */
+ int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+-		    int data_type)
++		      int data_type)
  {
  	struct dentry *parent;
-@@ -174,7 +174,7 @@ int fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(fsnotify_parent);
-+EXPORT_SYMBOL_GPL(__fsnotify_parent);
- 
- static int send_to_group(struct inode *to_tell,
- 			 __u32 mask, const void *data,
-@@ -315,17 +315,11 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
- 	struct fsnotify_iter_info iter_info = {};
- 	struct super_block *sb = to_tell->i_sb;
- 	struct mount *mnt = NULL;
--	__u32 mnt_or_sb_mask = sb->s_fsnotify_mask;
+ 	struct inode *p_inode;
  	int ret = 0;
--	__u32 test_mask = (mask & ALL_FSNOTIFY_EVENTS);
-+	__u32 test_mask, marks_mask;
  
--	if (path) {
-+	if (path)
- 		mnt = real_mount(path->mnt);
--		mnt_or_sb_mask |= mnt->mnt_fsnotify_mask;
--	}
--	/* An event "on child" is not intended for a mount/sb mark */
--	if (mask & FS_EVENT_ON_CHILD)
--		mnt_or_sb_mask = 0;
+ 	if (!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
+-		return 0;
++		goto notify_child;
  
- 	/*
- 	 * Optimization: srcu_read_lock() has a memory barrier which can
-@@ -337,13 +331,22 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_is,
- 	if (!to_tell->i_fsnotify_marks && !sb->s_fsnotify_marks &&
- 	    (!mnt || !mnt->mnt_fsnotify_marks))
- 		return 0;
+ 	parent = dget_parent(dentry);
+ 	p_inode = parent->d_inode;
+@@ -161,18 +165,23 @@ int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+ 	} else if (p_inode->i_fsnotify_mask & mask & ALL_FSNOTIFY_EVENTS) {
+ 		struct name_snapshot name;
+ 
+-		/* we are notifying a parent so come up with the new mask which
+-		 * specifies these are events which came from a child. */
+-		mask |= FS_EVENT_ON_CHILD;
+-
++		/*
++		 * We are notifying a parent, so set a flag in mask to inform
++		 * backend that event has information about a child entry.
++		 */
+ 		take_dentry_name_snapshot(&name, dentry);
+-		ret = fsnotify(p_inode, mask, data, data_type, &name.name, 0);
++		ret = fsnotify(p_inode, mask | FS_EVENT_ON_CHILD, data,
++			       data_type, &name.name, 0);
+ 		release_dentry_name_snapshot(&name);
+ 	}
+ 
+ 	dput(parent);
+ 
+-	return ret;
++	if (ret)
++		return ret;
 +
-+	/* An event "on child" is not intended for a mount/sb mark */
-+	marks_mask = to_tell->i_fsnotify_mask;
-+	if (!(mask & FS_EVENT_ON_CHILD)) {
-+		marks_mask |= sb->s_fsnotify_mask;
-+		if (mnt)
-+			marks_mask |= mnt->mnt_fsnotify_mask;
-+	}
-+
- 	/*
- 	 * if this is a modify event we may need to clear the ignored masks
- 	 * otherwise return if neither the inode nor the vfsmount/sb care about
- 	 * this type of event.
- 	 */
--	if (!(mask & FS_MODIFY) &&
--	    !(test_mask & (to_tell->i_fsnotify_mask | mnt_or_sb_mask)))
-+	test_mask = (mask & ALL_FSNOTIFY_EVENTS);
-+	if (!(mask & FS_MODIFY) && !(test_mask & marks_mask))
- 		return 0;
++notify_child:
++	return fsnotify(d_inode(dentry), mask, data, data_type, NULL, 0);
+ }
+ EXPORT_SYMBOL_GPL(__fsnotify_parent);
  
- 	iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
 diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index 5ab28f6c7d26..508f6bb0b06b 100644
+index 508f6bb0b06b..316c9b820517 100644
 --- a/include/linux/fsnotify.h
 +++ b/include/linux/fsnotify.h
-@@ -44,6 +44,16 @@ static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
- 	fsnotify_name(dir, mask, d_inode(dentry), &dentry->d_name, 0);
- }
- 
-+/* Notify this dentry's parent about a child's events. */
-+static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
-+				  const void *data, int data_type)
-+{
-+	if (!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
-+		return 0;
-+
-+	return __fsnotify_parent(dentry, mask, data, data_type);
-+}
-+
- /*
-  * Simple wrappers to consolidate calls fsnotify_parent()/fsnotify() when
-  * an event is on a file/dentry.
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index f0c506405b54..1626fa7d10ff 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -379,7 +379,7 @@ struct fsnotify_mark {
- /* main fsnotify call to send events */
- extern int fsnotify(struct inode *to_tell, __u32 mask, const void *data,
- 		    int data_type, const struct qstr *name, u32 cookie);
--extern int fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
-+extern int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
- 			   int data_type);
- extern void __fsnotify_inode_delete(struct inode *inode);
- extern void __fsnotify_vfsmount_delete(struct vfsmount *mnt);
-@@ -541,7 +541,7 @@ static inline int fsnotify(struct inode *to_tell, __u32 mask, const void *data,
- 	return 0;
- }
- 
--static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
-+static inline int __fsnotify_parent(struct dentry *dentry, __u32 mask,
+@@ -48,44 +48,37 @@ static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
+ static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
  				  const void *data, int data_type)
  {
- 	return 0;
++	struct inode *inode = d_inode(dentry);
++
++	if (S_ISDIR(inode->i_mode))
++		mask |= FS_ISDIR;
++
+ 	if (!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
+-		return 0;
++		goto notify_child;
+ 
+ 	return __fsnotify_parent(dentry, mask, data, data_type);
++
++notify_child:
++	return fsnotify(inode, mask, data, data_type, NULL, 0);
+ }
+ 
+ /*
+- * Simple wrappers to consolidate calls fsnotify_parent()/fsnotify() when
+- * an event is on a file/dentry.
++ * Simple wrappers to consolidate calls to fsnotify_parent() when an event
++ * is on a file/dentry.
+  */
+ static inline void fsnotify_dentry(struct dentry *dentry, __u32 mask)
+ {
+-	struct inode *inode = d_inode(dentry);
+-
+-	if (S_ISDIR(inode->i_mode))
+-		mask |= FS_ISDIR;
+-
+-	fsnotify_parent(dentry, mask, inode, FSNOTIFY_EVENT_INODE);
+-	fsnotify(inode, mask, inode, FSNOTIFY_EVENT_INODE, NULL, 0);
++	fsnotify_parent(dentry, mask, d_inode(dentry), FSNOTIFY_EVENT_INODE);
+ }
+ 
+ static inline int fsnotify_file(struct file *file, __u32 mask)
+ {
+ 	const struct path *path = &file->f_path;
+-	struct inode *inode = file_inode(file);
+-	int ret;
+ 
+ 	if (file->f_mode & FMODE_NONOTIFY)
+ 		return 0;
+ 
+-	if (S_ISDIR(inode->i_mode))
+-		mask |= FS_ISDIR;
+-
+-	ret = fsnotify_parent(path->dentry, mask, path, FSNOTIFY_EVENT_PATH);
+-	if (ret)
+-		return ret;
+-
+-	return fsnotify(inode, mask, path, FSNOTIFY_EVENT_PATH, NULL, 0);
++	return fsnotify_parent(path->dentry, mask, path, FSNOTIFY_EVENT_PATH);
+ }
+ 
+ /* Simple call site for access decisions */
 -- 
 2.17.1
 
