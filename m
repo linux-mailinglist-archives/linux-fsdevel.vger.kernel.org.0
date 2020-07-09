@@ -2,63 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C41FD21A69A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jul 2020 20:07:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A0DB21A69D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jul 2020 20:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726759AbgGISH2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jul 2020 14:07:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52250 "EHLO
+        id S1726817AbgGISJD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jul 2020 14:09:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbgGISH2 (ORCPT
+        with ESMTP id S1726734AbgGISJC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jul 2020 14:07:28 -0400
+        Thu, 9 Jul 2020 14:09:02 -0400
 Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B1E4C08C5DC
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jul 2020 11:07:28 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id d17so3457422ljl.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jul 2020 11:07:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66015C08C5DD
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jul 2020 11:09:02 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id j11so3447814ljo.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jul 2020 11:09:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=tGB1Ppz9iVx4FA/xnoM13tjpRPi/F5lN29F79qSyClI=;
-        b=XlUxRvTGYZccRYMrKRoB6EWa71eHhhv7TO7Vq+BYwEosgfG77FRVMUrnAizkb/+sIJ
-         rFcH3zyCOVKPaTjKMFymNQmA2ANoiIU33O3g7HgDp0mdHKMUF/14/BxYkEd+THUBakSJ
-         LuCHx3jBsBS0QnYep3fFl0iBrz4LUkE9/SE2I=
+        bh=PLUY2+cROQWDH9LIMjuUg8XLSdiwCev/lP1hc9DwpHE=;
+        b=Xw17pp3QVH4SLTeelEhTcbB9WI56tYv4leZAltXzvEIWNs50TewZI2tfSpQ7QZMxH6
+         5F3rhBO6EWtqhrcf2t3KoUtkNyWFvvLaN2SzNstCrzohcqjTqUHBNcOnAIhq1Jin6fEG
+         t49EF28LHN/k7FfZi6olVrtLnJMu540l0OAEo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=tGB1Ppz9iVx4FA/xnoM13tjpRPi/F5lN29F79qSyClI=;
-        b=gkh8caWZDvJW4y5g+ctwUOaT/JYqB/AAuuzv+1+ClzTjICuBsN/MaoJ2KF9aptY3NV
-         Y7pi/F259Fxy3AEv1OPNlPKPwkylVAgO9pnFUSWOt74UBuyvQTVjxY3FdjemRa4ZUIlQ
-         UrhHNTiFNMyjqPNYOnX6+qheliW0uZ4haKxqRVnxnXfEgX4ieZSWgti5o/LAzotYe9LW
-         u4NoRivIIquKCO08bkLro4YpILbuKarm+kPrNSwcQ/96STj/OfbksD3jTorZoxGkwY05
-         Uk1Vkd5eStplgKi9oix4FRT95/mLSzGJPxpXZ6wFtZa2C6ml562MmnqvhlSFikigB0sf
-         ILyA==
-X-Gm-Message-State: AOAM531qrA7p8aksYdp1RYJnGs7sx/i8z2LXcTtQS0gqU8oCDTa40sJ0
-        AmZB+ROQn5uqZtibF4qCzZdq1pNum6Y=
-X-Google-Smtp-Source: ABdhPJwgxyzz06ww+NvDNux3IvkPmp2WJIs4nxIKpd4zgnE8ai9goe+mGrlirHfUceFkbJPZ2vzdww==
-X-Received: by 2002:a2e:89ca:: with SMTP id c10mr27224812ljk.407.1594318046004;
-        Thu, 09 Jul 2020 11:07:26 -0700 (PDT)
+        bh=PLUY2+cROQWDH9LIMjuUg8XLSdiwCev/lP1hc9DwpHE=;
+        b=pu6T/BWCIq7QJ90WBeaHY8A3p7g9WksS1mD2dpTN8gs5iWxCCKeYCzH27XplAQ6QGH
+         pGbVXe3z66kbuC3I2Y9Z5PYTydtTWeTI9vtzi0XrOyL1l2HOmZu1Vnt/3tbvFFyDsiHA
+         CnXGBSa0MvARQmk4RQkZuNN9bBza178bg9ak3cSEPF2ZKljeVk0bNfv14Dr8uCsjlu92
+         10nxkk/iogyzpbh1xKgkt7Fll+/Dofz2BUKRRN4GEwMfdxzvsOdkaVMXcVjSOhjGjE0G
+         e40lmqlfIWhxuyKnRR61DfBTHGF5qL7SYYHwwxo2bXyjVpVOqYx7kCVJP9RnNkTk8vNG
+         qTVw==
+X-Gm-Message-State: AOAM533NvIxDXhJC4pZXY1V6/ob3dNYMANGiTHCjtApQ++2n5Nt+Gsw8
+        2Dx0oxpXHDyvc8tMPHkdKsYPlhXqtys=
+X-Google-Smtp-Source: ABdhPJzHQsSzthLTLlU12KFn3IB7RyOXc35mgLea033cRuEgwATWV96TrOIHTyPsa78Ml+WRVEyRlw==
+X-Received: by 2002:a2e:6e0b:: with SMTP id j11mr6592639ljc.159.1594318140502;
+        Thu, 09 Jul 2020 11:09:00 -0700 (PDT)
 Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id k11sm1039529ljg.37.2020.07.09.11.07.24
+        by smtp.gmail.com with ESMTPSA id y24sm1188133lfy.49.2020.07.09.11.08.59
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jul 2020 11:07:24 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id h22so3431312lji.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jul 2020 11:07:24 -0700 (PDT)
-X-Received: by 2002:a2e:9b42:: with SMTP id o2mr36559372ljj.102.1594318044230;
- Thu, 09 Jul 2020 11:07:24 -0700 (PDT)
+        Thu, 09 Jul 2020 11:08:59 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id r19so3425634ljn.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jul 2020 11:08:59 -0700 (PDT)
+X-Received: by 2002:a2e:9b42:: with SMTP id o2mr36562158ljj.102.1594318138800;
+ Thu, 09 Jul 2020 11:08:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200709151814.110422-1-hch@lst.de> <20200709151814.110422-16-hch@lst.de>
-In-Reply-To: <20200709151814.110422-16-hch@lst.de>
+References: <20200709151814.110422-1-hch@lst.de>
+In-Reply-To: <20200709151814.110422-1-hch@lst.de>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 9 Jul 2020 11:07:08 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whXq_149rcDv9ENkKeKpcEQ93MAvcmAOAbU8=bWG55X2A@mail.gmail.com>
-Message-ID: <CAHk-=whXq_149rcDv9ENkKeKpcEQ93MAvcmAOAbU8=bWG55X2A@mail.gmail.com>
-Subject: Re: [PATCH 15/17] initramfs: switch initramfs unpacking to struct
- file based APIs
+Date:   Thu, 9 Jul 2020 11:08:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wibathZJc6oSfgBdw7qhW75eF1ukg9y3bMXFfmp5t_uig@mail.gmail.com>
+Message-ID: <CAHk-=wibathZJc6oSfgBdw7qhW75eF1ukg9y3bMXFfmp5t_uig@mail.gmail.com>
+Subject: Re: decruft the early init / initrd / initramfs code v2
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "H. Peter Anvin" <hpa@zytor.com>, Song Liu <song@kernel.org>,
@@ -72,24 +71,16 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Thu, Jul 9, 2020 at 8:18 AM Christoph Hellwig <hch@lst.de> wrote:
 >
-> There is no good reason to mess with file descriptors from in-kernel
-> code, switch the initramfs unpacking to struct file based write
-> instead.  As we don't have nice helper for chmod or chown on a struct
-> file or struct path use the pathname based ones instead there.  This
-> causes additional (cached) lookups, but keeps the code much simpler.
+> There is no really good tree for this, so if there are no objections
+> I'd like to set up a new one for linux-next.
 
-This is the only one I'm not a huge fan of.
+All looks good to me. I had a wish-list change for one of the patches
+that I sent a reply out for, but even without that it's clearly an
+improvement.
 
-I agree about moving to 'struct file'. But then you could just do the
-chown/chmod using chown/chmod_common() on file->f_path.
+Of course, I just looked at the patches for sanity, rather than
+testing anything. Maybe there's something stupid in there. But it all
+looked straightforward. So Ack from me, with the hope that you'd do
+that "vfs_chown/chmod()" thing.
 
-That would keep the same semantics, and it feels like a more
-straightforward patch.
-
-It would still remove the nasty ksys_fchmod/fchmod, it would just
-require our - already existing - *_common() functions to be non-static
-(and maybe renamed to "vfs_chown/chmod()" instead, that "*_common()"
-naming looks a bit odd compared to all our other "vfs_operation()"
-helpers).
-
-               Linus
+                Linus
