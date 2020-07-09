@@ -2,96 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFCCA219693
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jul 2020 05:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 642712196D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jul 2020 05:48:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbgGIDZH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 23:25:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57168 "EHLO
+        id S1726211AbgGIDsG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 23:48:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726184AbgGIDZG (ORCPT
+        with ESMTP id S1726119AbgGIDsG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 23:25:06 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47C3FC08C5DC
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jul 2020 20:25:06 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id mn17so464220pjb.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jul 2020 20:25:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=deFlbzkfMfRMfRuQ/QU9968LuaI6fXYErNVqNwLy8as=;
-        b=XfXxLQhprQL4NnAPivi9oxxga+lkbU6keLLx0IU9ns311y+Px8w7PHpAvp64BESVN1
-         kApTUyFPpte5GFuHFeS/tqgxuf+JfeKB/NfsCfL4/Q7xLCmt77fIxD8L1nsveweR5Z3U
-         stZYA/J8PALWqAOyibX4wC/1mOzF7QgXrVOfRcKrsGPN+zRi5kVsmiu/7GSmraV76z1u
-         9ZTiQ1RhmoRrRMw6K/K2zqK3S1fpXNCaMYko6BfG9diP84SEITRpvXXOBEAMHkSzA6Bn
-         Z8NbKFFJdzezBHtv/nlht3avdMXFd1UzEOBG0W8I0Mpfku36kQjtIxFh7Q/lo58UxnOj
-         k9Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=deFlbzkfMfRMfRuQ/QU9968LuaI6fXYErNVqNwLy8as=;
-        b=RnVGhOznxNFMv7j9yXrL2Nc7UIDT5lOn4aCm9xRYDzGiG0yxWHkOMGBvNvS85sSShG
-         D5pm8HidEa4KYTpxgQoKeGyeqBbTNbpTlAB5XAAMML3iSVe9W5nWUBH9XByIlpyLR0PG
-         TB8u9g9tANwx8Iy0v8xrA3jMan1flsACW52js8PJe1dNMRC0BNL9JodCEg/5D/9kLMaf
-         teDTLu+0FwQpm60HqDhpcAf8/4S6fyedc04jsh84wNR0SaRujk8N40zljHoC5AbrvtIt
-         fMfD5BBThLAGknWuEWhtxnL7hWcNzdK+lRFdaNA1VR5bXyfck4I3hDK1ZqjTvS4LNYb1
-         gVtw==
-X-Gm-Message-State: AOAM532/TW9btp0SfeE2VFLIOPe6U/vztiNo0k2keC1SRw2BauCRpx7d
-        4eLNN3A5LqxO0jroJvW16hKG6Q==
-X-Google-Smtp-Source: ABdhPJz560zuzQ7gzwQLW5ElxrPuuMfP9mKyVDEbkWsInO/9g2BC0r+xIW94+9fByxAUgBsOGZ5Jmw==
-X-Received: by 2002:a17:90b:4005:: with SMTP id ie5mr12867035pjb.147.1594265105583;
-        Wed, 08 Jul 2020 20:25:05 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id y198sm1043506pfg.116.2020.07.08.20.25.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jul 2020 20:25:04 -0700 (PDT)
-Subject: Re: [PATCH 2/2] fs: Remove kiocb->ki_complete
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kanchan Joshi <joshi.k@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-References: <20200708222637.23046-1-willy@infradead.org>
- <20200708222637.23046-3-willy@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a0d5c015-1985-280e-2253-8e2663b234e9@kernel.dk>
-Date:   Wed, 8 Jul 2020 21:25:03 -0600
+        Wed, 8 Jul 2020 23:48:06 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE246C061A0B;
+        Wed,  8 Jul 2020 20:48:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description;
+        bh=flvZ17SdeYCgDzmst9WBe5pC+viP+SaP3isapAJ36bo=; b=U6G9E2dwPL6X9AOKHmbN8D1Ana
+        Xg4JPwui72nhP0L/iVdT9FV8yrai+np3QJiR1EefKNKeylnJ36zU8f8YMzFP0dysE/2CFgv+sPx+e
+        YFYA9vVhGsJ4AafRLTno/BB0Rt/TvDIIyYCxZ12e6lrNtYceBcDqvH9J1jDPNYPYJCgEIcsrlGmpm
+        uZkfN87QsShxX+JkdLS81p44LK5k5+dHI5qQTvr169inaiUHcNNL4EQmowt3my5j044gs0lMnkbmO
+        YTV/bEg8BdAFiS/t+QsC5k/PrAiYKfGejCFTccRcKWtn+Ve6uNKK6Ag3tgrBJ+OEI/y4pyr5Bf47+
+        jh9z+j5g==;
+Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jtNXU-000463-7T; Thu, 09 Jul 2020 03:48:00 +0000
+Subject: Re: mmotm 2020-07-08-19-28 uploaded (mm/migrate.c)
+To:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        Anshuman Khandual <anshuman.khandual@arm.com>
+References: <20200709022901.FTEvQ122j%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <11c5e928-1227-286d-ef7d-6d6e554747db@infradead.org>
+Date:   Wed, 8 Jul 2020 20:47:54 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200708222637.23046-3-willy@infradead.org>
+In-Reply-To: <20200709022901.FTEvQ122j%akpm@linux-foundation.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/8/20 4:26 PM, Matthew Wilcox (Oracle) wrote:
-> +void unregister_kiocb_completion(int id)
-> +{
-> +	ki_cmpls[id - 1] = NULL;
-> +}
-> +EXPORT_SYMBOL(unregister_kiocb_completion);
+On 7/8/20 7:29 PM, Andrew Morton wrote:
+> The mm-of-the-moment snapshot 2020-07-08-19-28 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
 
-This should have a limit check (<= 0 || > max).
+on i386:
 
->  void complete_kiocb(struct kiocb *iocb, long ret, long ret2)
->  {
-> -	iocb->ki_complete(iocb, ret, ret2);
-> +	unsigned int id = kiocb_completion_id(iocb);
-> +
-> +	if (id > 0)
-> +		ki_cmpls[id - 1](iocb, ret, ret2);
->  }
+CONFIG_MIGRATION=y
+# CONFIG_TRANSPARENT_HUGEPAGE is not set
 
-I'd make id == 0 be a dummy funciton to avoid this branch.
+../mm/migrate.c: In function ‘migrate_pages’:
+../mm/migrate.c:1528:19: error: ‘THP_MIGRATION_SUCCESS’ undeclared (first use in this function); did you mean ‘PGMIGRATE_SUCCESS’?
+   count_vm_events(THP_MIGRATION_SUCCESS, nr_thp_succeeded);
+                   ^~~~~~~~~~~~~~~~~~~~~
+                   PGMIGRATE_SUCCESS
+../mm/migrate.c:1528:19: note: each undeclared identifier is reported only once for each function it appears in
+../mm/migrate.c:1530:19: error: ‘THP_MIGRATION_FAILURE’ undeclared (first use in this function); did you mean ‘THP_MIGRATION_SUCCESS’?
+   count_vm_events(THP_MIGRATION_FAILURE, nr_thp_failed);
+                   ^~~~~~~~~~~~~~~~~~~~~
+                   THP_MIGRATION_SUCCESS
+../mm/migrate.c:1532:19: error: ‘THP_MIGRATION_SPLIT’ undeclared (first use in this function); did you mean ‘THP_MIGRATION_FAILURE’?
+   count_vm_events(THP_MIGRATION_SPLIT, nr_thp_split);
+                   ^~~~~~~~~~~~~~~~~~~
+                   THP_MIGRATION_FAILURE
+
+
+from: mm-vmstat-add-events-for-thp-migration-without-split.patch
+
 
 -- 
-Jens Axboe
-
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
