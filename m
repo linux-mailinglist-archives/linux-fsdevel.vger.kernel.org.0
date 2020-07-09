@@ -2,377 +2,588 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FE33219642
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jul 2020 04:29:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D509721965E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jul 2020 04:56:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726220AbgGIC3D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jul 2020 22:29:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39068 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726082AbgGIC3D (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jul 2020 22:29:03 -0400
-Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDC49206F6;
-        Thu,  9 Jul 2020 02:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594261742;
-        bh=iSg9FrSe3XGsbZMDkjpx8ly7pQhRwUtFAzr6Vlw+kf0=;
-        h=Date:From:To:Subject:In-Reply-To:From;
-        b=YB8sY9XuaMo4vXwFirJCI8Fcm+AjQP5RcY3mJ1OtaKnl93rWpERMZHRREOs7suhSA
-         fOcCCxpXgqjowaJjjsbGQQnZA2VRrYCTh/3CSQErx7JD/ohmc++wNwURqYNTeVLTGe
-         RHooaQJ5rC7dBnY2XNvo/w32+Zzpo4uuItZq2duQ=
-Date:   Wed, 08 Jul 2020 19:29:01 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-Subject:  mmotm 2020-07-08-19-28 uploaded
-Message-ID: <20200709022901.FTEvQ122j%akpm@linux-foundation.org>
-In-Reply-To: <20200703151445.b6a0cfee402c7c5c4651f1b1@linux-foundation.org>
-User-Agent: s-nail v14.8.16
+        id S1726129AbgGIC4F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jul 2020 22:56:05 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7274 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726119AbgGIC4F (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 8 Jul 2020 22:56:05 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id AC759ED24059B028237C;
+        Thu,  9 Jul 2020 10:56:02 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 9 Jul 2020
+ 10:55:59 +0800
+Subject: Re: [PATCH 1/2] f2fs: support zone capacity less than zone size
+To:     Aravind Ramesh <Aravind.Ramesh@wdc.com>,
+        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>, "hch@lst.de" <hch@lst.de>
+CC:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Niklas Cassel <Niklas.Cassel@wdc.com>,
+        Matias Bjorling <Matias.Bjorling@wdc.com>
+References: <20200702155401.13322-1-aravind.ramesh@wdc.com>
+ <20200702155401.13322-2-aravind.ramesh@wdc.com>
+ <d262eba9-31d5-6205-3244-b5176a17637c@huawei.com>
+ <BY5PR04MB6995AD34A289A013932E1A698C660@BY5PR04MB6995.namprd04.prod.outlook.com>
+ <038b0276-d6b4-73b7-7844-8da6219976b3@huawei.com>
+ <BY5PR04MB69956185F538985101390AB78C670@BY5PR04MB6995.namprd04.prod.outlook.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <9b7dedd4-e9e9-e084-5ce0-372ac6bbac01@huawei.com>
+Date:   Thu, 9 Jul 2020 10:55:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <BY5PR04MB69956185F538985101390AB78C670@BY5PR04MB6995.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mm-of-the-moment snapshot 2020-07-08-19-28 has been uploaded to
+On 2020/7/8 21:04, Aravind Ramesh wrote:
+> Please find my response inline.
+> 
+> Thanks,
+> Aravind
+> 
+>> -----Original Message-----
+>> From: Chao Yu <yuchao0@huawei.com>
+>> Sent: Wednesday, July 8, 2020 8:04 AM
+>> To: Aravind Ramesh <Aravind.Ramesh@wdc.com>; jaegeuk@kernel.org; linux-
+>> fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net; hch@lst.de
+>> Cc: Damien Le Moal <Damien.LeMoal@wdc.com>; Niklas Cassel
+>> <Niklas.Cassel@wdc.com>; Matias Bjorling <Matias.Bjorling@wdc.com>
+>> Subject: Re: [PATCH 1/2] f2fs: support zone capacity less than zone size
+>>
+>> On 2020/7/8 2:23, Aravind Ramesh wrote:
+>>> Thanks for review Chao Yu.
+>>> Please find my response inline.
+>>> I will re-send a V2 after incorporating your comments.
+>>>
+>>> Regards,
+>>> Aravind
+>>>
+>>>> -----Original Message-----
+>>>> From: Chao Yu <yuchao0@huawei.com>
+>>>> Sent: Tuesday, July 7, 2020 5:49 PM
+>>>> To: Aravind Ramesh <Aravind.Ramesh@wdc.com>; jaegeuk@kernel.org;
+>>>> linux- fsdevel@vger.kernel.org;
+>>>> linux-f2fs-devel@lists.sourceforge.net; hch@lst.de
+>>>> Cc: Damien Le Moal <Damien.LeMoal@wdc.com>; Niklas Cassel
+>>>> <Niklas.Cassel@wdc.com>; Matias Bjorling <Matias.Bjorling@wdc.com>
+>>>> Subject: Re: [PATCH 1/2] f2fs: support zone capacity less than zone
+>>>> size
+>>>>
+>>>> On 2020/7/2 23:54, Aravind Ramesh wrote:
+>>>>> NVMe Zoned Namespace devices can have zone-capacity less than zone-size.
+>>>>> Zone-capacity indicates the maximum number of sectors that are
+>>>>> usable in a zone beginning from the first sector of the zone. This
+>>>>> makes the sectors sectors after the zone-capacity till zone-size to be unusable.
+>>>>> This patch set tracks zone-size and zone-capacity in zoned devices
+>>>>> and calculate the usable blocks per segment and usable segments per section.
+>>>>>
+>>>>> If zone-capacity is less than zone-size mark only those segments
+>>>>> which start before zone-capacity as free segments. All segments at
+>>>>> and beyond zone-capacity are treated as permanently used segments.
+>>>>> In cases where zone-capacity does not align with segment size the
+>>>>> last segment will start before zone-capacity and end beyond the
+>>>>> zone-capacity of the zone. For such spanning segments only sectors
+>>>>> within the
+>>>> zone-capacity are used.
+>>>>>
+>>>>> Signed-off-by: Aravind Ramesh <aravind.ramesh@wdc.com>
+>>>>> Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+>>>>> Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
+>>>>> ---
+>>>>>  fs/f2fs/f2fs.h    |   5 ++
+>>>>>  fs/f2fs/segment.c | 136
+>>>> ++++++++++++++++++++++++++++++++++++++++++++--
+>>>>>  fs/f2fs/segment.h |   6 +-
+>>>>>  fs/f2fs/super.c   |  41 ++++++++++++--
+>>>>>  4 files changed, 176 insertions(+), 12 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h index
+>>>>> e6e47618a357..73219e4e1ba4 100644
+>>>>> --- a/fs/f2fs/f2fs.h
+>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>> @@ -1232,6 +1232,7 @@ struct f2fs_dev_info {  #ifdef
+>>>>> CONFIG_BLK_DEV_ZONED
+>>>>>  	unsigned int nr_blkz;		/* Total number of zones */
+>>>>>  	unsigned long *blkz_seq;	/* Bitmap indicating sequential zones */
+>>>>> +	block_t *zone_capacity_blocks;  /* Array of zone capacity in blks
+>>>>> +*/
+>>>>>  #endif
+>>>>>  };
+>>>>>
+>>>>> @@ -3395,6 +3396,10 @@ void
+>>>>> f2fs_destroy_segment_manager_caches(void);
+>>>>>  int f2fs_rw_hint_to_seg_type(enum rw_hint hint);  enum rw_hint
+>>>>> f2fs_io_type_to_rw_hint(struct f2fs_sb_info *sbi,
+>>>>>  			enum page_type type, enum temp_type temp);
+>>>>> +unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi,
+>>>>> +			unsigned int segno);
+>>>>> +unsigned int f2fs_usable_blks_in_seg(struct f2fs_sb_info *sbi,
+>>>>> +			unsigned int segno);
+>>>>>
+>>>>>  /*
+>>>>>   * checkpoint.c
+>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c index
+>>>>> c35614d255e1..d2156f3f56a5 100644
+>>>>> --- a/fs/f2fs/segment.c
+>>>>> +++ b/fs/f2fs/segment.c
+>>>>> @@ -4294,9 +4294,12 @@ static void init_free_segmap(struct
+>>>>> f2fs_sb_info *sbi)  {
+>>>>>  	unsigned int start;
+>>>>>  	int type;
+>>>>> +	struct seg_entry *sentry;
+>>>>>
+>>>>>  	for (start = 0; start < MAIN_SEGS(sbi); start++) {
+>>>>> -		struct seg_entry *sentry = get_seg_entry(sbi, start);
+>>>>> +		if (f2fs_usable_blks_in_seg(sbi, start) == 0)
+>>>>
+>>>> If usable blocks count is zero, shouldn't we update
+>>>> SIT_I(sbi)->written_valid_blocks as we did when there is partial usable block in
+>> current segment?
+>>> If usable_block_count is zero, then it is like a dead segment, all
+>>> blocks in the segment lie after the zone-capacity in the zone. So there can never be
+>> a valid written content on these segments, hence it is not updated.
+>>> In the other case, when a segment start before the zone-capacity and
+>>> it ends beyond zone-capacity, then there are some blocks before zone-capacity
+>> which can be used, so they are accounted for.
+>>
+>> I'm thinking that for limit_free_user_blocks() function, it assumes all unwritten
+>> blocks as potential reclaimable blocks, however segment after zone-capacity should
+>> never be used or reclaimable, it looks calculation could be not correct here.
+>>
+> The sbi->user_block_count is updated with the total usable_blocks in the full 
+> file system during the formatting of the file system using mkfs.f2fs. Please see the f2fs-tools
+> patch series that I have submitted along with this patch set. 
+> 
+> So sbi->user_block_count reflects the actual number of usable blocks (i.e. total blocks - unusable blocks).
 
-   http://www.ozlabs.org/~akpm/mmotm/
+Alright, will check both kernel and f2fs-tools change again later. :)
 
-mmotm-readme.txt says
+> 
+>> static inline block_t limit_free_user_blocks(struct f2fs_sb_info *sbi) {
+>> 	block_t reclaimable_user_blocks = sbi->user_block_count -
+>> 		written_block_count(sbi);
+>> 	return (long)(reclaimable_user_blocks * LIMIT_FREE_BLOCK) / 100; }
+>>
+>> static inline bool has_enough_invalid_blocks(struct f2fs_sb_info *sbi) {
+>> 	block_t invalid_user_blocks = sbi->user_block_count -
+>> 					written_block_count(sbi);
+>> 	/*
+>> 	 * Background GC is triggered with the following conditions.
+>> 	 * 1. There are a number of invalid blocks.
+>> 	 * 2. There is not enough free space.
+>> 	 */
+>> 	if (invalid_user_blocks > limit_invalid_user_blocks(sbi) &&
+>> 			free_user_blocks(sbi) < limit_free_user_blocks(sbi))
+>>
+>> -- In this condition, free_user_blocks() doesn't include segments after zone-capacity,
+>> however limit_free_user_blocks() includes them.
+> In the second patch of this patch set, free_user_blocks is updated to account for the segments after zone-capacity.
+> It basically gets the free segment(segments before zone capacity and free) block count and deducts the 
+> overprovision segment block count. It also considers the spanning segments block count into account.
 
-README for mm-of-the-moment:
+Okay.
 
-http://www.ozlabs.org/~akpm/mmotm/
+> 
+> 
+>>
+>> 		return true;
+>> 	return false;
+>> }
+>>
+>>
+>>>>
+>>>>> +			continue;
+>>>>> +		sentry = get_seg_entry(sbi, start);
+>>>>>  		if (!sentry->valid_blocks)
+>>>>>  			__set_free(sbi, start);
+>>>>>  		else
+>>>>> @@ -4316,7 +4319,7 @@ static void init_dirty_segmap(struct f2fs_sb_info
+>> *sbi)
+>>>>>  	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
+>>>>>  	struct free_segmap_info *free_i = FREE_I(sbi);
+>>>>>  	unsigned int segno = 0, offset = 0, secno;
+>>>>> -	unsigned short valid_blocks;
+>>>>> +	unsigned short valid_blocks, usable_blks_in_seg;
+>>>>>  	unsigned short blks_per_sec = BLKS_PER_SEC(sbi);
+>>>>>
+>>>>>  	while (1) {
+>>>>> @@ -4326,9 +4329,10 @@ static void init_dirty_segmap(struct f2fs_sb_info
+>> *sbi)
+>>>>>  			break;
+>>>>>  		offset = segno + 1;
+>>>>>  		valid_blocks = get_valid_blocks(sbi, segno, false);
+>>>>> -		if (valid_blocks == sbi->blocks_per_seg || !valid_blocks)
+>>>>> +		usable_blks_in_seg = f2fs_usable_blks_in_seg(sbi, segno);
+>>>>> +		if (valid_blocks == usable_blks_in_seg || !valid_blocks)
+>>>>
+>>>> It needs to traverse .cur_valid_map bitmap to check whether blocks in
+>>>> range of [0, usable_blks_in_seg] are all valid or not, if there is at
+>>>> least one usable block in the range, segment should be dirty.
+>>> For the segments which start and end before zone-capacity are just like any
+>> normal segments.
+>>> Segments which start after the zone-capacity are fully unusable and are marked as
+>> used in the free_seg_bitmap, so these segments are never used.
+>>> Segments which span across the zone-capacity have some unusable blocks. Even
+>> when blocks from these segments are allocated/deallocated the valid_blocks
+>> counter is incremented/decremented, reflecting the current valid_blocks count.
+>>> Comparing valid_blocks count with usable_blocks count in the segment can
+>> indicate if the segment is dirty or fully used.
+>>
+>> I thought that if there is one valid block locates in range of [usable_blks_in_seg,
+>> blks_per_seg] (after zone-capacity), the condition will be incorrect. That should
+>> never happen, right?
+> Yes, this will never happen. All blocks after zone-capacity are never usable.
+>>
+>> If so, how about adjusting check_block_count() to do sanity check on bitmap locates
+>> after zone-capacity to make sure there is no free slots there.
+> 
+> Ok, I will add this check in check_block_count. It makes sense.
+> 
+>>
+>>> Sorry, but could you please share why cur_valid_map needs to be traversed ?
+>>>
+>>>>
+>>>> One question, if we select dirty segment which across zone-capacity
+>>>> as opened segment (in curseg), how can we avoid allocating usable
+>>>> block beyong zone-capacity in such segment via .cur_valid_map?
+>>> For zoned devices, we have to allocate blocks sequentially, so it's always in LFS
+>> manner it is allocated.
+>>> The __has_curseg_space() checks for the usable blocks and stops allocating blocks
+>> after zone-capacity.
+>>
+>> Oh, that was implemented in patch 2, I haven't checked that patch...sorry, however,
+>> IMO, patch should be made to apply independently, what if do allocation only after
+>> applying patch 1..., do we need to merge them into one?
+> The patches were split keeping in mind that all data structure related and initialization
+> Changes would go into patch 1 and IO path and GC related changes in patch 2.
+> But if you think, merging them to a single patch will be easier to review, 
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+Yes, please, it's not only about easier review, but also for better maintenance
+of patches in upstream, otherwise, it's not possible to apply, backport, revert
+one of two patches independently.
 
-You will need quilt to apply these patches to the latest Linus release (5.x
-or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+I still didn't get the full picture of using such zns device which has
+configured zone-capacity, is it like?
+1. configure zone-capacity in zns device
+2. mkfs.f2fs zns device
+3. mount zns device
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+Can we change zone-capacity dynamically after step 2? Or we should run
+mkfs.f2fs again whenever update zone-capacity?
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+Thanks,
 
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-	https://github.com/hnaz/linux-mm
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is also available at
-
-	https://github.com/hnaz/linux-mm
-
-
-
-This mmotm tree contains the following patches against 5.8-rc4:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* mm-shuffle-dont-move-pages-between-zones-and-dont-read-garbage-memmaps.patch
-* mm-avoid-access-flag-update-tlb-flush-for-retried-page-fault.patch
-* vfs-xattr-mm-shmem-kernfs-release-simple-xattr-entry-in-a-right-way.patch
-* mm-initialize-return-of-vm_insert_pages.patch
-* mm-memcontrol-fix-oops-inside-mem_cgroup_get_nr_swap_pages.patch
-* proc-kpageflags-prevent-an-integer-overflow-in-stable_page_flags.patch
-* proc-kpageflags-do-not-use-uninitialized-struct-pages.patch
-* mm-memcg-fix-refcount-error-while-moving-and-swapping.patch
-* mm-hugetlb-avoid-hardcoding-while-checking-if-cma-is-enable.patch
-* mailmap-add-entry-for-mike-rapoport.patch
-* checkpatch-test-git_dir-changes.patch
-* kthread-remove-incorrect-comment-in-kthread_create_on_cpu.patch
-* kbuild-move-wtype-limits-to-w=2.patch
-* scripts-tagssh-collect-compiled-source-precisely.patch
-* scripts-tagssh-collect-compiled-source-precisely-v2.patch
-* bloat-o-meter-support-comparing-library-archives.patch
-* scripts-decode_stacktrace-skip-missing-symbols.patch
-* scripts-decode_stacktrace-guess-basepath-if-not-specified.patch
-* scripts-decode_stacktrace-guess-path-to-modules.patch
-* scripts-decode_stacktrace-guess-path-to-vmlinux-by-release-name.patch
-* ocfs2-clear-links-count-in-ocfs2_mknod-if-an-error-occurs.patch
-* ocfs2-fix-ocfs2-corrupt-when-iputting-an-inode.patch
-* ocfs2-change-slot-number-type-s16-to-u16.patch
-* ramfs-support-o_tmpfile.patch
-* kernel-watchdog-flush-all-printk-nmi-buffers-when-hardlockup-detected.patch
-  mm.patch
-* mm-treewide-rename-kzfree-to-kfree_sensitive.patch
-* mm-ksize-should-silently-accept-a-null-pointer.patch
-* mm-expand-config_slab_freelist_hardened-to-include-slab.patch
-* slab-add-naive-detection-of-double-free.patch
-* slab-add-naive-detection-of-double-free-fix.patch
-* mm-slab-check-gfp_slab_bug_mask-before-alloc_pages-in-kmalloc_order.patch
-* mm-slub-extend-slub_debug-syntax-for-multiple-blocks.patch
-* mm-slub-extend-slub_debug-syntax-for-multiple-blocks-fix.patch
-* mm-slub-make-some-slub_debug-related-attributes-read-only.patch
-* mm-slub-remove-runtime-allocation-order-changes.patch
-* mm-slub-make-remaining-slub_debug-related-attributes-read-only.patch
-* mm-slub-make-reclaim_account-attribute-read-only.patch
-* mm-slub-introduce-static-key-for-slub_debug.patch
-* mm-slub-introduce-kmem_cache_debug_flags.patch
-* mm-slub-introduce-kmem_cache_debug_flags-fix.patch
-* mm-slub-extend-checks-guarded-by-slub_debug-static-key.patch
-* mm-slab-slub-move-and-improve-cache_from_obj.patch
-* mm-slab-slub-improve-error-reporting-and-overhead-of-cache_from_obj.patch
-* mm-slab-slub-improve-error-reporting-and-overhead-of-cache_from_obj-fix.patch
-* slub-drop-lockdep_assert_held-from-put_map.patch
-* mm-kcsan-instrument-slab-slub-free-with-assert_exclusive_access.patch
-* mm-debug_vm_pgtable-add-tests-validating-arch-helpers-for-core-mm-features.patch
-* mm-debug_vm_pgtable-add-tests-validating-advanced-arch-page-table-helpers.patch
-* mm-debug_vm_pgtable-add-debug-prints-for-individual-tests.patch
-* documentation-mm-add-descriptions-for-arch-page-table-helpers.patch
-* mm-filemap-clear-idle-flag-for-writes.patch
-* mm-filemap-add-missing-fgp_-flags-in-kerneldoc-comment-for-pagecache_get_page.patch
-* mm-swap-simplify-alloc_swap_slot_cache.patch
-* mm-swap-simplify-enable_swap_slots_cache.patch
-* mm-swap-remove-redundant-check-for-swap_slot_cache_initialized.patch
-* mm-kmem-make-memcg_kmem_enabled-irreversible.patch
-* mm-memcg-factor-out-memcg-and-lruvec-level-changes-out-of-__mod_lruvec_state.patch
-* mm-memcg-prepare-for-byte-sized-vmstat-items.patch
-* mm-memcg-convert-vmstat-slab-counters-to-bytes.patch
-* mm-slub-implement-slub-version-of-obj_to_index.patch
-* mm-memcontrol-decouple-reference-counting-from-page-accounting.patch
-* mm-memcg-slab-obj_cgroup-api.patch
-* mm-memcg-slab-allocate-obj_cgroups-for-non-root-slab-pages.patch
-* mm-memcg-slab-save-obj_cgroup-for-non-root-slab-objects.patch
-* mm-memcg-slab-charge-individual-slab-objects-instead-of-pages.patch
-* mm-memcg-slab-deprecate-memorykmemslabinfo.patch
-* mm-memcg-slab-move-memcg_kmem_bypass-to-memcontrolh.patch
-* mm-memcg-slab-use-a-single-set-of-kmem_caches-for-all-accounted-allocations.patch
-* mm-memcg-slab-simplify-memcg-cache-creation.patch
-* mm-memcg-slab-remove-memcg_kmem_get_cache.patch
-* mm-memcg-slab-deprecate-slab_root_caches.patch
-* mm-memcg-slab-remove-redundant-check-in-memcg_accumulate_slabinfo.patch
-* mm-memcg-slab-use-a-single-set-of-kmem_caches-for-all-allocations.patch
-* kselftests-cgroup-add-kernel-memory-accounting-tests.patch
-* tools-cgroup-add-memcg_slabinfopy-tool.patch
-* percpu-return-number-of-released-bytes-from-pcpu_free_area.patch
-* mm-memcg-percpu-account-percpu-memory-to-memory-cgroups.patch
-* mm-memcg-percpu-account-percpu-memory-to-memory-cgroups-fix.patch
-* mm-memcg-percpu-account-percpu-memory-to-memory-cgroups-fix-fix.patch
-* mm-memcg-percpu-per-memcg-percpu-memory-statistics.patch
-* mm-memcg-percpu-per-memcg-percpu-memory-statistics-v3.patch
-* mm-memcg-charge-memcg-percpu-memory-to-the-parent-cgroup.patch
-* kselftests-cgroup-add-perpcu-memory-accounting-test.patch
-* mm-memcontrol-account-kernel-stack-per-node.patch
-* mm-memcg-slab-remove-unused-argument-by-charge_slab_page.patch
-* mm-slab-rename-uncharge_slab_page-to-unaccount_slab_page.patch
-* mm-kmem-switch-to-static_branch_likely-in-memcg_kmem_enabled.patch
-* mm-remove-redundant-check-non_swap_entry.patch
-* mm-memoryc-make-remap_pfn_range-reject-unaligned-addr.patch
-* mm-remove-unneeded-includes-of-asm-pgalloch.patch
-* mm-remove-unneeded-includes-of-asm-pgalloch-fix.patch
-* opeinrisc-switch-to-generic-version-of-pte-allocation.patch
-* xtensa-switch-to-generic-version-of-pte-allocation.patch
-* asm-generic-pgalloc-provide-generic-pmd_alloc_one-and-pmd_free_one.patch
-* asm-generic-pgalloc-provide-generic-pud_alloc_one-and-pud_free_one.patch
-* asm-generic-pgalloc-provide-generic-pgd_free.patch
-* mm-move-lib-ioremapc-to-mm.patch
-* mm-move-pd_alloc_track-to-separate-header-file.patch
-* mm-mmap-fix-the-adjusted-length-error.patch
-* proc-meminfo-avoid-open-coded-reading-of-vm_committed_as.patch
-* mm-utilc-make-vm_memory_committed-more-accurate.patch
-* mm-adjust-vm_committed_as_batch-according-to-vm-overcommit-policy.patch
-* mm-mmap-optimize-a-branch-judgment-in-ksys_mmap_pgoff.patch
-* mm-do-page-fault-accounting-in-handle_mm_fault.patch
-* mm-alpha-use-general-page-fault-accounting.patch
-* mm-arc-use-general-page-fault-accounting.patch
-* mm-arm-use-general-page-fault-accounting.patch
-* mm-arm64-use-general-page-fault-accounting.patch
-* mm-csky-use-general-page-fault-accounting.patch
-* mm-hexagon-use-general-page-fault-accounting.patch
-* mm-ia64-use-general-page-fault-accounting.patch
-* mm-m68k-use-general-page-fault-accounting.patch
-* mm-microblaze-use-general-page-fault-accounting.patch
-* mm-mips-use-general-page-fault-accounting.patch
-* mm-nds32-use-general-page-fault-accounting.patch
-* mm-nios2-use-general-page-fault-accounting.patch
-* mm-openrisc-use-general-page-fault-accounting.patch
-* mm-parisc-use-general-page-fault-accounting.patch
-* mm-powerpc-use-general-page-fault-accounting.patch
-* mm-riscv-use-general-page-fault-accounting.patch
-* mm-s390-use-general-page-fault-accounting.patch
-* mm-sh-use-general-page-fault-accounting.patch
-* mm-sparc32-use-general-page-fault-accounting.patch
-* mm-sparc64-use-general-page-fault-accounting.patch
-* mm-x86-use-general-page-fault-accounting.patch
-* mm-xtensa-use-general-page-fault-accounting.patch
-* mm-clean-up-the-last-pieces-of-page-fault-accountings.patch
-* mm-gup-remove-task_struct-pointer-for-all-gup-code.patch
-* mm-mremap-it-is-sure-to-have-enough-space-when-extent-meets-requirement.patch
-* mm-mremap-calculate-extent-in-one-place.patch
-* mm-mremap-start-addresses-are-properly-aligned.patch
-* mm-mremap-use-pmd_addr_end-to-simplify-the-calculate-of-extent.patch
-* mm-sparse-never-partially-remove-memmap-for-early-section.patch
-* mm-sparse-only-sub-section-aligned-range-would-be-populated.patch
-* vmalloc-convert-to-xarray.patch
-* mm-vmalloc-simplify-merge_or_add_vmap_area-func.patch
-* mm-vmalloc-simplify-augment_tree_propagate_check-func.patch
-* mm-vmalloc-switch-to-propagate-callback.patch
-* mm-vmalloc-update-the-header-about-kva-rework.patch
-* mm-vmalloc-remove-redundant-asignmnet-in-unmap_kernel_range_noflush.patch
-* kasan-improve-and-simplify-kconfigkasan.patch
-* kasan-update-required-compiler-versions-in-documentation.patch
-* rcu-kasan-record-and-print-call_rcu-call-stack.patch
-* kasan-record-and-print-the-free-track.patch
-* kasan-add-tests-for-call_rcu-stack-recording.patch
-* kasan-update-documentation-for-generic-kasan.patch
-* kasan-remove-kasan_unpoison_stack_above_sp_to.patch
-* kasan-fix-kasan-unit-tests-for-tag-based-kasan.patch
-* kasan-fix-kasan-unit-tests-for-tag-based-kasan-v4.patch
-* mm-page_alloc-use-unlikely-in-task_capc.patch
-* page_alloc-consider-highatomic-reserve-in-watermark-fast.patch
-* page_alloc-consider-highatomic-reserve-in-watermark-fast-v5.patch
-* mm-page_alloc-skip-waternark_boost-for-atomic-order-0-allocations.patch
-* mm-page_alloc-skip-watermark_boost-for-atomic-order-0-allocations-fix.patch
-* mm-drop-vm_total_pages.patch
-* mm-page_alloc-drop-nr_free_pagecache_pages.patch
-* mm-memory_hotplug-document-why-shuffle_zone-is-relevant.patch
-* mm-shuffle-remove-dynamic-reconfiguration.patch
-* powerpc-numa-set-numa_node-for-all-possible-cpus.patch
-* powerpc-numa-prefer-node-id-queried-from-vphn.patch
-* mm-page_alloc-keep-memoryless-cpuless-node-0-offline.patch
-* mm-page_allocc-replace-the-definition-of-nr_migratetype_bits-with-pb_migratetype_bits.patch
-* mm-page_allocc-extract-the-common-part-in-pfn_to_bitidx.patch
-* mm-page_allocc-simplify-pageblock-bitmap-access.patch
-* mm-page_allocc-remove-unnecessary-end_bitidx-for-_pfnblock_flags_mask.patch
-* mm-page_alloc-silence-a-kasan-false-positive.patch
-* mm-page_alloc-fallbacks-at-most-has-3-elements.patch
-* mm-page_alloc-skip-setting-nodemask-when-we-are-in-interrupt.patch
-* mm-huge_memoryc-update-tlb-entry-if-pmd-is-changed.patch
-* mips-do-not-call-flush_tlb_all-when-setting-pmd-entry.patch
-* mm-vmscanc-fixed-typo.patch
-* mm-proactive-compaction.patch
-* mm-proactive-compaction-fix.patch
-* mm-use-unsigned-types-for-fragmentation-score.patch
-* hugetlbfs-prevent-filesystem-stacking-of-hugetlbfs.patch
-* mm-thp-remove-debug_cow-switch.patch
-* mm-store-compound_nr-as-well-as-compound_order.patch
-* mm-move-page-flags-include-to-top-of-file.patch
-* mm-add-thp_order.patch
-* mm-add-thp_size.patch
-* mm-replace-hpage_nr_pages-with-thp_nr_pages.patch
-* mm-add-thp_head.patch
-* mm-introduce-offset_in_thp.patch
-* mm-vmstat-add-events-for-thp-migration-without-split.patch
-* mm-vmstat-add-events-for-thp-migration-without-split-fix.patch
-* mm-cma-fix-null-pointer-dereference-when-cma-could-not-be-activated.patch
-* mm-cma-fix-the-name-of-cma-areas.patch
-* mm-cma-fix-the-name-of-cma-areas-fix.patch
-* mm-hugetlb-fix-the-name-of-hugetlb-cma.patch
-* mmhwpoison-cleanup-unused-pagehuge-check.patch
-* mm-hwpoison-remove-recalculating-hpage.patch
-* mmmadvise-call-soft_offline_page-without-mf_count_increased.patch
-* mmmadvise-refactor-madvise_inject_error.patch
-* mmhwpoison-inject-dont-pin-for-hwpoison_filter.patch
-* mmhwpoison-un-export-get_hwpoison_page-and-make-it-static.patch
-* mmhwpoison-kill-put_hwpoison_page.patch
-* mmhwpoison-remove-mf_count_increased.patch
-* mmhwpoison-remove-flag-argument-from-soft-offline-functions.patch
-* mmhwpoison-unify-thp-handling-for-hard-and-soft-offline.patch
-* mmhwpoison-rework-soft-offline-for-free-pages.patch
-* mmhwpoison-rework-soft-offline-for-free-pages-fix.patch
-* mmhwpoison-rework-soft-offline-for-in-use-pages.patch
-* mmhwpoison-refactor-soft_offline_huge_page-and-__soft_offline_page.patch
-* mmhwpoison-refactor-soft_offline_huge_page-and-__soft_offline_page-fix.patch
-* mmhwpoison-refactor-soft_offline_huge_page-and-__soft_offline_page-fix-fix.patch
-* mmhwpoison-return-0-if-the-page-is-already-poisoned-in-soft-offline.patch
-* mmhwpoison-introduce-mf_msg_unsplit_thp.patch
-* sched-mm-optimize-current_gfp_context.patch
-* x86-mm-use-max-memory-block-size-on-bare-metal.patch
-* info-task-hung-in-generic_file_write_iter.patch
-* info-task-hung-in-generic_file_write-fix.patch
-* kernel-hung_taskc-monitor-killed-tasks.patch
-* fix-annotation-of-ioreadwrite1632be.patch
-* sparse-group-the-defines-by-functionality.patch
-* bitmap-fix-bitmap_cut-for-partial-overlapping-case.patch
-* bitmap-add-test-for-bitmap_cut.patch
-* lib-generic-radix-treec-remove-unneeded-__rcu.patch
-* lib-test_bitops-do-the-full-test-during-module-init.patch
-* lib-optimize-cpumask_local_spread.patch
-* lib-test_lockupc-make-symbol-test_works-static.patch
-* bits-add-tests-of-genmask.patch
-* bits-add-tests-of-genmask-fix.patch
-* bits-add-tests-of-genmask-fix-2.patch
-* checkpatch-add-test-for-possible-misuse-of-is_enabled-without-config_.patch
-* checkpatch-support-deprecated-terms-checking.patch
-* scripts-deprecated_terms-recommend-denylist-allowlist-instead-of-blacklist-whitelist.patch
-* checkpatch-add-fix-option-for-assign_in_if.patch
-* checkpatch-fix-const_struct-when-const_structscheckpatch-is-missing.patch
-* fs-minix-check-return-value-of-sb_getblk.patch
-* fs-minix-dont-allow-getting-deleted-inodes.patch
-* fs-minix-reject-too-large-maximum-file-size.patch
-* fs-minix-set-s_maxbytes-correctly.patch
-* fs-minix-fix-block-limit-check-for-v1-filesystems.patch
-* fs-minix-remove-expected-error-message-in-block_to_path.patch
-* fatfs-switch-write_lock-to-read_lock-in-fat_ioctl_get_attributes.patch
-* vfat-fat-msdos-filesystem-replace-http-links-with-https-ones.patch
-* fs-signalfdc-fix-inconsistent-return-codes-for-signalfd4.patch
-* selftests-kmod-use-variable-name-in-kmod_test_0001.patch
-* kmod-remove-redundant-be-an-in-the-comment.patch
-* test_kmod-avoid-potential-double-free-in-trigger_config_run_type.patch
-* coredump-add-%f-for-executable-filename.patch
-* exec-change-uselib2-is_sreg-failure-to-eacces.patch
-* exec-move-s_isreg-check-earlier.patch
-* exec-move-path_noexec-check-earlier.patch
-* umh-fix-refcount-underflow-in-fork_usermode_blob.patch
-* kdump-append-kernel-build-id-string-to-vmcoreinfo.patch
-* rapidio-rio_mport_cdev-use-struct_size-helper.patch
-* rapidio-use-struct_size-helper.patch
-* kernel-panicc-make-oops_may_print-return-bool.patch
-* lib-kconfigdebug-fix-typo-in-the-help-text-of-config_panic_timeout.patch
-* aio-simplify-read_events.patch
-* kcov-unconditionally-add-fno-stack-protector-to-compiler-options.patch
-* kcov-make-some-symbols-static.patch
-  linux-next.patch
-  linux-next-rejects.patch
-* mm-madvise-pass-task-and-mm-to-do_madvise.patch
-* pid-move-pidfd_get_pid-to-pidc.patch
-* mm-madvise-introduce-process_madvise-syscall-an-external-memory-hinting-api.patch
-* mm-madvise-introduce-process_madvise-syscall-an-external-memory-hinting-api-fix.patch
-* mm-madvise-introduce-process_madvise-syscall-an-external-memory-hinting-api-fix-2.patch
-* mm-madvise-check-fatal-signal-pending-of-target-process.patch
-* all-arch-remove-system-call-sys_sysctl.patch
-* all-arch-remove-system-call-sys_sysctl-fix.patch
-* mm-kmemleak-silence-kcsan-splats-in-checksum.patch
-* mm-frontswap-mark-various-intentional-data-races.patch
-* mm-page_io-mark-various-intentional-data-races.patch
-* mm-page_io-mark-various-intentional-data-races-v2.patch
-* mm-swap_state-mark-various-intentional-data-races.patch
-* mm-filemap-fix-a-data-race-in-filemap_fault.patch
-* mm-swapfile-fix-and-annotate-various-data-races.patch
-* mm-swapfile-fix-and-annotate-various-data-races-v2.patch
-* mm-page_counter-fix-various-data-races-at-memsw.patch
-* mm-memcontrol-fix-a-data-race-in-scan-count.patch
-* mm-list_lru-fix-a-data-race-in-list_lru_count_one.patch
-* mm-mempool-fix-a-data-race-in-mempool_free.patch
-* mm-rmap-annotate-a-data-race-at-tlb_flush_batched.patch
-* mm-swap-annotate-data-races-for-lru_rotate_pvecs.patch
-* mm-annotate-a-data-race-in-page_zonenum.patch
-* include-asm-generic-vmlinuxldsh-align-ro_after_init.patch
-* sh-clkfwk-remove-r8-r16-r32.patch
-* sh-remove-call-to-memset-after-dma_alloc_coherent.patch
-* sh-use-generic-strncpy.patch
-* sh-add-missing-export_symbol-for-__delay.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  workaround-for-a-pci-restoring-bug.patch
+> then I shall merge it and send it as one patch in V2, along with other suggestions incorporated.
+> 
+> Please let me know.
+>>
+>>>>
+>>>>>  			continue;
+>>>>> -		if (valid_blocks > sbi->blocks_per_seg) {
+>>>>> +		if (valid_blocks > usable_blks_in_seg) {
+>>>>>  			f2fs_bug_on(sbi, 1);
+>>>>>  			continue;
+>>>>>  		}
+>>>>> @@ -4678,6 +4682,101 @@ int f2fs_check_write_pointer(struct
+>>>>> f2fs_sb_info *sbi)
+>>>>>
+>>>>>  	return 0;
+>>>>>  }
+>>>>> +
+>>>>> +static bool is_conv_zone(struct f2fs_sb_info *sbi, unsigned int zone_idx,
+>>>>> +						unsigned int dev_idx)
+>>>>> +{
+>>>>> +	if (!bdev_is_zoned(FDEV(dev_idx).bdev))
+>>>>> +		return true;
+>>>>> +	return !test_bit(zone_idx, FDEV(dev_idx).blkz_seq); }
+>>>>> +
+>>>>> +/* Return the zone index in the given device */ static unsigned int
+>>>>> +get_zone_idx(struct f2fs_sb_info *sbi, unsigned int secno,
+>>>>> +					int dev_idx)
+>>>>> +{
+>>>>> +	block_t sec_start_blkaddr = START_BLOCK(sbi, GET_SEG_FROM_SEC(sbi,
+>>>>> +secno));
+>>>>> +
+>>>>> +	return (sec_start_blkaddr - FDEV(dev_idx).start_blk) >>
+>>>>> +						sbi->log_blocks_per_blkz;
+>>>>> +}
+>>>>> +
+>>>>> +/*
+>>>>> + * Return the usable segments in a section based on the zone's
+>>>>> + * corresponding zone capacity. Zone is equal to a section.
+>>>>> + */
+>>>>> +static inline unsigned int f2fs_usable_zone_segs_in_sec(
+>>>>> +		struct f2fs_sb_info *sbi, unsigned int segno) {
+>>>>> +	unsigned int dev_idx, zone_idx, unusable_segs_in_sec;
+>>>>> +
+>>>>> +	dev_idx = f2fs_target_device_index(sbi, START_BLOCK(sbi, segno));
+>>>>> +	zone_idx = get_zone_idx(sbi, GET_SEC_FROM_SEG(sbi, segno),
+>>>>> +dev_idx);
+>>>>> +
+>>>>> +	/* Conventional zone's capacity is always equal to zone size */
+>>>>> +	if (is_conv_zone(sbi, zone_idx, dev_idx))
+>>>>> +		return sbi->segs_per_sec;
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * If the zone_capacity_blocks array is NULL, then zone capacity
+>>>>> +	 * is equal to the zone size for all zones
+>>>>> +	 */
+>>>>> +	if (!FDEV(dev_idx).zone_capacity_blocks)
+>>>>> +		return sbi->segs_per_sec;
+>>>>> +
+>>>>> +	/* Get the segment count beyond zone capacity block */
+>>>>> +	unusable_segs_in_sec = (sbi->blocks_per_blkz -
+>>>>> +				FDEV(dev_idx).zone_capacity_blocks[zone_idx])
+>>>>>>
+>>>>> +				sbi->log_blocks_per_seg;
+>>>>> +	return sbi->segs_per_sec - unusable_segs_in_sec; }
+>>>>> +
+>>>>> +/*
+>>>>> + * Return the number of usable blocks in a segment. The number of
+>>>>> +blocks
+>>>>> + * returned is always equal to the number of blocks in a segment
+>>>>> +for
+>>>>> + * segments fully contained within a sequential zone capacity or a
+>>>>> + * conventional zone. For segments partially contained in a
+>>>>> +sequential
+>>>>> + * zone capacity, the number of usable blocks up to the zone
+>>>>> +capacity
+>>>>> + * is returned. 0 is returned in all other cases.
+>>>>> + */
+>>>>> +static inline unsigned int f2fs_usable_zone_blks_in_seg(
+>>>>> +			struct f2fs_sb_info *sbi, unsigned int segno) {
+>>>>> +	block_t seg_start, sec_start_blkaddr, sec_cap_blkaddr;
+>>>>> +	unsigned int zone_idx, dev_idx, secno;
+>>>>> +
+>>>>> +	secno = GET_SEC_FROM_SEG(sbi, segno);
+>>>>> +	seg_start = START_BLOCK(sbi, segno);
+>>>>> +	dev_idx = f2fs_target_device_index(sbi, seg_start);
+>>>>> +	zone_idx = get_zone_idx(sbi, secno, dev_idx);
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * Conventional zone's capacity is always equal to zone size,
+>>>>> +	 * so, blocks per segment is unchanged.
+>>>>> +	 */
+>>>>> +	if (is_conv_zone(sbi, zone_idx, dev_idx))
+>>>>> +		return sbi->blocks_per_seg;
+>>>>> +
+>>>>> +	if (!FDEV(dev_idx).zone_capacity_blocks)
+>>>>> +		return sbi->blocks_per_seg;
+>>>>> +
+>>>>> +	sec_start_blkaddr = START_BLOCK(sbi, GET_SEG_FROM_SEC(sbi, secno));
+>>>>> +	sec_cap_blkaddr = sec_start_blkaddr +
+>>>>> +				FDEV(dev_idx).zone_capacity_blocks[zone_idx];
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * If segment starts before zone capacity and spans beyond
+>>>>> +	 * zone capacity, then usable blocks are from seg start to
+>>>>> +	 * zone capacity. If the segment starts after the zone capacity,
+>>>>> +	 * then there are no usable blocks.
+>>>>> +	 */
+>>>>> +	if (seg_start >= sec_cap_blkaddr)
+>>>>> +		return 0;
+>>>>> +	if (seg_start + sbi->blocks_per_seg > sec_cap_blkaddr)
+>>>>> +		return sec_cap_blkaddr - seg_start;
+>>>>> +
+>>>>> +	return sbi->blocks_per_seg;
+>>>>> +}
+>>>>>  #else
+>>>>>  int f2fs_fix_curseg_write_pointer(struct f2fs_sb_info *sbi)  { @@
+>>>>> -4688,7 +4787,36 @@ int f2fs_check_write_pointer(struct f2fs_sb_info
+>>>>> *sbi)  {
+>>>>>  	return 0;
+>>>>>  }
+>>>>> +
+>>>>> +static inline unsigned int f2fs_usable_zone_blks_in_seg(struct f2fs_sb_info
+>> *sbi,
+>>>>> +							unsigned int segno)
+>>>>> +{
+>>>>> +	return 0;
+>>>>> +}
+>>>>> +
+>>>>> +static inline unsigned int f2fs_usable_zone_segs_in_sec(struct f2fs_sb_info
+>> *sbi,
+>>>>> +							unsigned int segno)
+>>>>> +{
+>>>>> +	return 0;
+>>>>> +}
+>>>>>  #endif
+>>>>> +unsigned int f2fs_usable_blks_in_seg(struct f2fs_sb_info *sbi,
+>>>>> +					unsigned int segno)
+>>>>> +{
+>>>>> +	if (f2fs_sb_has_blkzoned(sbi))
+>>>>> +		return f2fs_usable_zone_blks_in_seg(sbi, segno);
+>>>>> +
+>>>>> +	return sbi->blocks_per_seg;
+>>>>> +}
+>>>>> +
+>>>>> +unsigned int f2fs_usable_segs_in_sec(struct f2fs_sb_info *sbi,
+>>>>> +					unsigned int segno)
+>>>>> +{
+>>>>> +	if (f2fs_sb_has_blkzoned(sbi))
+>>>>> +		return f2fs_usable_zone_segs_in_sec(sbi, segno);
+>>>>> +
+>>>>> +	return sbi->segs_per_sec;
+>>>>> +}
+>>>>>
+>>>>>  /*
+>>>>>   * Update min, max modified time for cost-benefit GC algorithm diff
+>>>>> --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h index
+>>>>> f261e3e6a69b..79b0dc33feaf 100644
+>>>>> --- a/fs/f2fs/segment.h
+>>>>> +++ b/fs/f2fs/segment.h
+>>>>> @@ -411,6 +411,7 @@ static inline void __set_free(struct
+>>>>> f2fs_sb_info *sbi,
+>>>> unsigned int segno)
+>>>>>  	unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
+>>>>>  	unsigned int start_segno = GET_SEG_FROM_SEC(sbi, secno);
+>>>>>  	unsigned int next;
+>>>>> +	unsigned int usable_segs = f2fs_usable_segs_in_sec(sbi, segno);
+>>>>>
+>>>>>  	spin_lock(&free_i->segmap_lock);
+>>>>>  	clear_bit(segno, free_i->free_segmap); @@ -418,7 +419,7 @@ static
+>>>>> inline void __set_free(struct f2fs_sb_info *sbi, unsigned int segno)
+>>>>>
+>>>>>  	next = find_next_bit(free_i->free_segmap,
+>>>>>  			start_segno + sbi->segs_per_sec, start_segno);
+>>>>> -	if (next >= start_segno + sbi->segs_per_sec) {
+>>>>> +	if (next >= start_segno + usable_segs) {
+>>>>>  		clear_bit(secno, free_i->free_secmap);
+>>>>>  		free_i->free_sections++;
+>>>>>  	}
+>>>>> @@ -444,6 +445,7 @@ static inline void __set_test_and_free(struct
+>>>>> f2fs_sb_info
+>>>> *sbi,
+>>>>>  	unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
+>>>>>  	unsigned int start_segno = GET_SEG_FROM_SEC(sbi, secno);
+>>>>>  	unsigned int next;
+>>>>> +	unsigned int usable_segs = f2fs_usable_segs_in_sec(sbi, segno);
+>>>>>
+>>>>>  	spin_lock(&free_i->segmap_lock);
+>>>>>  	if (test_and_clear_bit(segno, free_i->free_segmap)) { @@ -453,7
+>>>>> +455,7 @@ static inline void __set_test_and_free(struct f2fs_sb_info
+>>>>> +*sbi,
+>>>>>  			goto skip_free;
+>>>>>  		next = find_next_bit(free_i->free_segmap,
+>>>>>  				start_segno + sbi->segs_per_sec, start_segno);
+>>>>> -		if (next >= start_segno + sbi->segs_per_sec) {
+>>>>> +		if (next >= start_segno + usable_segs) {
+>>>>>  			if (test_and_clear_bit(secno, free_i->free_secmap))
+>>>>>  				free_i->free_sections++;
+>>>>>  		}
+>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c index
+>>>>> 80cb7cd358f8..2686b07ae7eb 100644
+>>>>> --- a/fs/f2fs/super.c
+>>>>> +++ b/fs/f2fs/super.c
+>>>>> @@ -1164,6 +1164,7 @@ static void destroy_device_list(struct f2fs_sb_info
+>> *sbi)
+>>>>>  		blkdev_put(FDEV(i).bdev, FMODE_EXCL);  #ifdef
+>>>> CONFIG_BLK_DEV_ZONED
+>>>>>  		kvfree(FDEV(i).blkz_seq);
+>>>>> +		kvfree(FDEV(i).zone_capacity_blocks);
+>>>>
+>>>> Now, f2fs_kzalloc won't allocate vmalloc's memory, so it's safe to use kfree().
+>>> Ok
+>>>>
+>>>>>  #endif
+>>>>>  	}
+>>>>>  	kvfree(sbi->devs);
+>>>>> @@ -3039,13 +3040,26 @@ static int init_percpu_info(struct
+>>>>> f2fs_sb_info *sbi)  }
+>>>>>
+>>>>>  #ifdef CONFIG_BLK_DEV_ZONED
+>>>>> +
+>>>>> +struct f2fs_report_zones_args {
+>>>>> +	struct f2fs_dev_info *dev;
+>>>>> +	bool zone_cap_mismatch;
+>>>>> +};
+>>>>> +
+>>>>>  static int f2fs_report_zone_cb(struct blk_zone *zone, unsigned int idx,
+>>>>> -			       void *data)
+>>>>> +			      void *data)
+>>>>>  {
+>>>>> -	struct f2fs_dev_info *dev = data;
+>>>>> +	struct f2fs_report_zones_args *rz_args = data;
+>>>>> +
+>>>>> +	if (zone->type == BLK_ZONE_TYPE_CONVENTIONAL)
+>>>>> +		return 0;
+>>>>> +
+>>>>> +	set_bit(idx, rz_args->dev->blkz_seq);
+>>>>> +	rz_args->dev->zone_capacity_blocks[idx] = zone->capacity >>
+>>>>> +						F2FS_LOG_SECTORS_PER_BLOCK;
+>>>>> +	if (zone->len != zone->capacity && !rz_args->zone_cap_mismatch)
+>>>>> +		rz_args->zone_cap_mismatch = true;
+>>>>>
+>>>>> -	if (zone->type != BLK_ZONE_TYPE_CONVENTIONAL)
+>>>>> -		set_bit(idx, dev->blkz_seq);
+>>>>>  	return 0;
+>>>>>  }
+>>>>>
+>>>>> @@ -3053,6 +3067,7 @@ static int init_blkz_info(struct f2fs_sb_info
+>>>>> *sbi, int devi)  {
+>>>>>  	struct block_device *bdev = FDEV(devi).bdev;
+>>>>>  	sector_t nr_sectors = bdev->bd_part->nr_sects;
+>>>>> +	struct f2fs_report_zones_args rep_zone_arg;
+>>>>>  	int ret;
+>>>>>
+>>>>>  	if (!f2fs_sb_has_blkzoned(sbi))
+>>>>> @@ -3078,12 +3093,26 @@ static int init_blkz_info(struct
+>>>>> f2fs_sb_info *sbi, int
+>>>> devi)
+>>>>>  	if (!FDEV(devi).blkz_seq)
+>>>>>  		return -ENOMEM;
+>>>>>
+>>>>> -	/* Get block zones type */
+>>>>> +	/* Get block zones type and zone-capacity */
+>>>>> +	FDEV(devi).zone_capacity_blocks = f2fs_kzalloc(sbi,
+>>>>> +					FDEV(devi).nr_blkz * sizeof(block_t),
+>>>>> +					GFP_KERNEL);
+>>>>> +	if (!FDEV(devi).zone_capacity_blocks)
+>>>>> +		return -ENOMEM;
+>>>>> +
+>>>>> +	rep_zone_arg.dev = &FDEV(devi);
+>>>>> +	rep_zone_arg.zone_cap_mismatch = false;
+>>>>> +
+>>>>>  	ret = blkdev_report_zones(bdev, 0, BLK_ALL_ZONES, f2fs_report_zone_cb,
+>>>>> -				  &FDEV(devi));
+>>>>> +				  &rep_zone_arg);
+>>>>>  	if (ret < 0)
+>>>>>  		return ret;
+>>>>
+>>>> Missed to call kfree(FDEV(devi).zone_capacity_blocks)?
+>>> Thanks for catching it. Will free it here also.
+>>>>
+>>>>>
+>>>>> +	if (!rep_zone_arg.zone_cap_mismatch) {
+>>>>> +		kvfree(FDEV(devi).zone_capacity_blocks);
+>>>>
+>>>> Ditto, kfree().
+>>> Ok.
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> +		FDEV(devi).zone_capacity_blocks = NULL;
+>>>>> +	}
+>>>>> +
+>>>>>  	return 0;
+>>>>>  }
+>>>>>  #endif
+>>>>>
+>>> .
+>>>
+> .
+> 
