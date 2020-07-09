@@ -2,119 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 122F521ABD7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jul 2020 01:59:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AF6721ABD2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jul 2020 01:54:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726272AbgGIX64 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jul 2020 19:58:56 -0400
-Received: from rcdn-iport-5.cisco.com ([173.37.86.76]:21784 "EHLO
-        rcdn-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbgGIX64 (ORCPT
+        id S1726761AbgGIXyZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jul 2020 19:54:25 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:40447 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbgGIXyW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jul 2020 19:58:56 -0400
-X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Thu, 09 Jul 2020 19:58:55 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=2283; q=dns/txt; s=iport;
-  t=1594339135; x=1595548735;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=tF4pr/5XLKqBBsQkjwuwO6riASGyIFysFx/ut+c98HA=;
-  b=cCuwIOGJNxx3XPF18pAdLlhRAzpx2+5LmhIdJTb5rYP2zUYB7rs5DZF9
-   uaJ8DSYWi4H9LE8P+wXN4qC/2BEM8rlKRCrjW4SWNpYNypLNKhNvVvAkK
-   RiBgB0hUw0OzZZ4qaDBgQekrU8GHdEqrI1/uAqWd7mdeRv5w8fLEOHEkX
-   0=;
-X-IronPort-AV: E=Sophos;i="5.75,332,1589241600"; 
-   d="scan'208";a="532948238"
-Received: from rcdn-core-1.cisco.com ([173.37.93.152])
-  by rcdn-iport-5.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 09 Jul 2020 23:51:50 +0000
-Received: from sjc-ads-2033.cisco.com (sjc-ads-2033.cisco.com [171.70.61.221])
-        by rcdn-core-1.cisco.com (8.15.2/8.15.2) with ESMTP id 069NpoJ5024104;
-        Thu, 9 Jul 2020 23:51:50 GMT
-Received: by sjc-ads-2033.cisco.com (Postfix, from userid 396877)
-        id E14BAC5C; Thu,  9 Jul 2020 16:51:49 -0700 (PDT)
-From:   Julius Hemanth Pitti <jpitti@cisco.com>
-To:     keescook@chromium.org, yzaikin@google.com, mcgrof@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        akpm@linux-foundation.org, mingo@elte.hu, viro@zeniv.linux.org.uk,
-        xe-linux-external@cisco.com,
-        Julius Hemanth Pitti <jpitti@cisco.com>
-Subject: [PATCH] proc/sysctl: make protected_* world readable
-Date:   Thu,  9 Jul 2020 16:51:15 -0700
-Message-Id: <20200709235115.56954-1-jpitti@cisco.com>
-X-Mailer: git-send-email 2.19.1
+        Thu, 9 Jul 2020 19:54:22 -0400
+Received: by mail-io1-f70.google.com with SMTP id f25so2416963ioh.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jul 2020 16:54:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=pA1D2YOMFQkwPaYBnQ/rdy34gVd9ksQzg2H5D68cGj4=;
+        b=S86iKR4A1ZIc8AVXiczALth6boIetL5HCZoYmHJG8hdaWDphDFlcKtrQcGGRq7uc7B
+         Ewjtu/K5Fc51B/9H9t/dRn+oOlhFHihSAG4uHAv7ktJOOIvl4M+NGDFmXJ5V1Mj0vRRL
+         qcKlW05jIcC9BFdG6nPjUoPeRvIeGKMNb2hyGOT5/J1Kz17zf6BySgNOj0jNTWxslHGp
+         m6QkfyBiLHzUygZtpuFUbx3AMp/NbE8V3NxWKYgMM4J7z0zoYHLfaqwiX+e0Cqo7s1EK
+         81Jx3XyXvkqRf6+ndbRVodTMd8FAxbyxrF6IPWkU8zCvkTe6O7tApI6tY//x7uyaD2fT
+         kTDg==
+X-Gm-Message-State: AOAM532SVmyz1r5HTeyj56HyzMw6MbtCuFtkVsIuKRc9oqTbcTD169o8
+        SUELk/0c79ypke9qj1O9h+xn9ZoNQNDWMSOVnes7q4f8mMLX
+X-Google-Smtp-Source: ABdhPJyDBO+jkuWfL+7LMleucW9jdEcd8VeOHm+EKp/lw736s7ukAPPxvJQFi0BD+kjXzh2UDSYTIBBdv5u5leLGKGilZyM1BvKn
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 171.70.61.221, sjc-ads-2033.cisco.com
-X-Outbound-Node: rcdn-core-1.cisco.com
+X-Received: by 2002:a92:dc0f:: with SMTP id t15mr44091781iln.218.1594338859494;
+ Thu, 09 Jul 2020 16:54:19 -0700 (PDT)
+Date:   Thu, 09 Jul 2020 16:54:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005f350105aa0af108@google.com>
+Subject: WARNING in __kernel_write
+From:   syzbot <syzbot+e6f77e16ff68b2434a2c@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-protected_* files have 600 permissions which prevents
-non-superuser from reading them.
+Hello,
 
-Container like "AWS greengrass" refuse to launch unless
-protected_hardlinks and protected_symlinks are set. When
-containers like these run with "userns-remap" or "--user"
-mapping container's root to non-superuser on host, they
-fail to run due to denied read access to these files.
+syzbot found the following crash on:
 
-As these protections are hardly a secret, and do not
-possess any security risk, making them world readable.
+HEAD commit:    89032636 Add linux-next specific files for 20200708
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15c4af2f100000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=64a250ebabc6c320
+dashboard link: https://syzkaller.appspot.com/bug?extid=e6f77e16ff68b2434a2c
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15898b97100000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14463a47100000
 
-Though above greengrass usecase needs read access to
-only protected_hardlinks and protected_symlinks files,
-setting all other protected_* files to 644 to keep
-consistency.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e6f77e16ff68b2434a2c@syzkaller.appspotmail.com
 
-Fixes: 800179c9b8a1 ("fs: add link restrictions")
-Signed-off-by: Julius Hemanth Pitti <jpitti@cisco.com>
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 12 at fs/read_write.c:528 __kernel_write+0x828/0x9b0 fs/read_write.c:528
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.8.0-rc4-next-20200708-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Workqueue: events p9_write_work
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x18f/0x20d lib/dump_stack.c:118
+ panic+0x2e3/0x75c kernel/panic.c:231
+ __warn.cold+0x20/0x45 kernel/panic.c:600
+ report_bug+0x1bd/0x210 lib/bug.c:198
+ handle_bug+0x38/0x90 arch/x86/kernel/traps.c:234
+ exc_invalid_op+0x13/0x40 arch/x86/kernel/traps.c:254
+ asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:542
+RIP: 0010:__kernel_write+0x828/0x9b0 fs/read_write.c:528
+Code: 01 89 c6 89 04 24 e8 d7 90 b5 ff 8b 04 24 85 c0 0f 84 c7 fa ff ff e9 b9 fa ff ff e8 42 94 b5 ff e9 e9 fe ff ff e8 38 94 b5 ff <0f> 0b 49 c7 c5 f7 ff ff ff e9 0e ff ff ff 4c 89 f7 e8 d2 48 f5 ff
+RSP: 0018:ffffc90000d2fb18 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 1ffff920001a5f67 RCX: ffffffff81be629e
+RDX: ffff8880a95f4300 RSI: ffffffff81be69f8 RDI: 0000000000000005
+RBP: ffff888094301158 R08: 0000000000000001 R09: ffff8880a95f4bd0
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888094301040
+R13: 0000000000000000 R14: ffff8880943010c4 R15: 0000000000080001
+ kernel_write fs/read_write.c:569 [inline]
+ kernel_write+0xe2/0x200 fs/read_write.c:559
+ p9_fd_write net/9p/trans_fd.c:424 [inline]
+ p9_write_work+0x25e/0xca0 net/9p/trans_fd.c:475
+ process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
+ kthread+0x3b5/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
 ---
- kernel/sysctl.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index db1ce7a..aeca2fd 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -3223,7 +3223,7 @@ int proc_do_static_key(struct ctl_table *table, int write,
- 		.procname	= "protected_symlinks",
- 		.data		= &sysctl_protected_symlinks,
- 		.maxlen		= sizeof(int),
--		.mode		= 0600,
-+		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
-@@ -3232,7 +3232,7 @@ int proc_do_static_key(struct ctl_table *table, int write,
- 		.procname	= "protected_hardlinks",
- 		.data		= &sysctl_protected_hardlinks,
- 		.maxlen		= sizeof(int),
--		.mode		= 0600,
-+		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
-@@ -3241,7 +3241,7 @@ int proc_do_static_key(struct ctl_table *table, int write,
- 		.procname	= "protected_fifos",
- 		.data		= &sysctl_protected_fifos,
- 		.maxlen		= sizeof(int),
--		.mode		= 0600,
-+		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= &two,
-@@ -3250,7 +3250,7 @@ int proc_do_static_key(struct ctl_table *table, int write,
- 		.procname	= "protected_regular",
- 		.data		= &sysctl_protected_regular,
- 		.maxlen		= sizeof(int),
--		.mode		= 0600,
-+		.mode		= 0644,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= &two,
--- 
-1.7.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
