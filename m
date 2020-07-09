@@ -2,114 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2E6421A65D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jul 2020 19:56:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C41FD21A69A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jul 2020 20:07:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbgGIR4r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jul 2020 13:56:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50598 "EHLO
+        id S1726759AbgGISH2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jul 2020 14:07:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbgGIR4r (ORCPT
+        with ESMTP id S1726523AbgGISH2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jul 2020 13:56:47 -0400
-Received: from mail-il1-x129.google.com (mail-il1-x129.google.com [IPv6:2607:f8b0:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D0C2C08C5CE
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jul 2020 10:56:47 -0700 (PDT)
-Received: by mail-il1-x129.google.com with SMTP id h16so2763212ilj.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jul 2020 10:56:47 -0700 (PDT)
+        Thu, 9 Jul 2020 14:07:28 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B1E4C08C5DC
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jul 2020 11:07:28 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id d17so3457422ljl.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jul 2020 11:07:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XVe8ER7vvA9HGUL5K0lp+ZJGlsH2wRxOQYaCqDBOzMc=;
-        b=l/H+P2MtHjTlOFriT/641cHuS7TP6LIDiDhxHUtjXctqTcVqKq1E5Yhz5AmRQo7PhJ
-         zJfRF2D2rGUYbxdr5soO2sdlSGwqdQdtkiHjGPQiVivNv79hmZvkIhT/HVLx9n+aQhI0
-         z75uceTdQpIkbQrhvcvDMzatO4Hvfv22YkPqZzUpQC7t4vgSHHrPInPNWgKfzI68NZUB
-         jAsHT3pE0JFdIFgs+GA51dSNxI30ptQADYrKgzzMebIP+h2TybAEgjxasKBqP14cQ0dB
-         YbKssBXJ3F8dlWn8d5VuXgEc/nM1fQ2wDmXEE7EyJ1b2X1aaAO3m09GBvVSu9Xpr7iXe
-         GXjQ==
+        bh=tGB1Ppz9iVx4FA/xnoM13tjpRPi/F5lN29F79qSyClI=;
+        b=XlUxRvTGYZccRYMrKRoB6EWa71eHhhv7TO7Vq+BYwEosgfG77FRVMUrnAizkb/+sIJ
+         rFcH3zyCOVKPaTjKMFymNQmA2ANoiIU33O3g7HgDp0mdHKMUF/14/BxYkEd+THUBakSJ
+         LuCHx3jBsBS0QnYep3fFl0iBrz4LUkE9/SE2I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XVe8ER7vvA9HGUL5K0lp+ZJGlsH2wRxOQYaCqDBOzMc=;
-        b=FTk4/DbK7WYH4tV3NS025K9hcy3iwW88GqxwHpKjA63+B3HbERZ8gKEN33/4gPaPd8
-         3tDJ7/+GOziqTgrdlKbLxalBocQvEviltxQqMasDaYwt+BqQsdmawVXR83Q1pHTiezgh
-         LbvYL/QZfxeKVk1EHxB+tQS/xiqdN79KmP5njMe+bu7g0t7ARSxLkQnya53J85OlCT+u
-         i0N5xsDLNGugBXMQxUMD7m+jtvz3PI+gBdEkU8IQi+LpnWHcn+itwxelDAujkLnB6GC6
-         ClKFSPYkyBjjlNiLHsBXPSCuJ1bXAhC72h7Lcbbn2IK34Fe2IRU8AERi/qORF6o2xIv5
-         LKjg==
-X-Gm-Message-State: AOAM530+BJXZca42rprY4exj+TBJq8QXiD6alDFsdyZXZX0pMLEf8CKD
-        0FbZ7DX/EUHVJx7r7rbrcSwVbT1X/G7GlU097zJKqRYo
-X-Google-Smtp-Source: ABdhPJzXY1CO4pM7pXtk3tUd9CkbR4Ea/XHa8zE4N61/GJEd7gDJH8Gykn+GQhUP1n10f6b+FbHMGQC3P+VinwC1Ktw=
-X-Received: by 2002:a92:490d:: with SMTP id w13mr28446368ila.250.1594317406562;
- Thu, 09 Jul 2020 10:56:46 -0700 (PDT)
+        bh=tGB1Ppz9iVx4FA/xnoM13tjpRPi/F5lN29F79qSyClI=;
+        b=gkh8caWZDvJW4y5g+ctwUOaT/JYqB/AAuuzv+1+ClzTjICuBsN/MaoJ2KF9aptY3NV
+         Y7pi/F259Fxy3AEv1OPNlPKPwkylVAgO9pnFUSWOt74UBuyvQTVjxY3FdjemRa4ZUIlQ
+         UrhHNTiFNMyjqPNYOnX6+qheliW0uZ4haKxqRVnxnXfEgX4ieZSWgti5o/LAzotYe9LW
+         u4NoRivIIquKCO08bkLro4YpILbuKarm+kPrNSwcQ/96STj/OfbksD3jTorZoxGkwY05
+         Uk1Vkd5eStplgKi9oix4FRT95/mLSzGJPxpXZ6wFtZa2C6ml562MmnqvhlSFikigB0sf
+         ILyA==
+X-Gm-Message-State: AOAM531qrA7p8aksYdp1RYJnGs7sx/i8z2LXcTtQS0gqU8oCDTa40sJ0
+        AmZB+ROQn5uqZtibF4qCzZdq1pNum6Y=
+X-Google-Smtp-Source: ABdhPJwgxyzz06ww+NvDNux3IvkPmp2WJIs4nxIKpd4zgnE8ai9goe+mGrlirHfUceFkbJPZ2vzdww==
+X-Received: by 2002:a2e:89ca:: with SMTP id c10mr27224812ljk.407.1594318046004;
+        Thu, 09 Jul 2020 11:07:26 -0700 (PDT)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id k11sm1039529ljg.37.2020.07.09.11.07.24
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jul 2020 11:07:24 -0700 (PDT)
+Received: by mail-lj1-f173.google.com with SMTP id h22so3431312lji.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jul 2020 11:07:24 -0700 (PDT)
+X-Received: by 2002:a2e:9b42:: with SMTP id o2mr36559372ljj.102.1594318044230;
+ Thu, 09 Jul 2020 11:07:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200612093343.5669-1-amir73il@gmail.com> <20200612093343.5669-2-amir73il@gmail.com>
- <20200703140342.GD21364@quack2.suse.cz> <CAOQ4uxgJkmSgt6nSO3C4y2Mc=T92ky5K5eis0f1Ofr-wDq7Wrw@mail.gmail.com>
- <20200706110526.GA3913@quack2.suse.cz>
-In-Reply-To: <20200706110526.GA3913@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 9 Jul 2020 20:56:35 +0300
-Message-ID: <CAOQ4uxi5Zpp7rCKdOkdw9Nkd=uGC-K2AuLqOFc0WQc_CgJQP2Q@mail.gmail.com>
-Subject: Re: fsnotify: minimise overhead when there are no marks with ignore mask
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>
+References: <20200709151814.110422-1-hch@lst.de> <20200709151814.110422-16-hch@lst.de>
+In-Reply-To: <20200709151814.110422-16-hch@lst.de>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 9 Jul 2020 11:07:08 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whXq_149rcDv9ENkKeKpcEQ93MAvcmAOAbU8=bWG55X2A@mail.gmail.com>
+Message-ID: <CAHk-=whXq_149rcDv9ENkKeKpcEQ93MAvcmAOAbU8=bWG55X2A@mail.gmail.com>
+Subject: Re: [PATCH 15/17] initramfs: switch initramfs unpacking to struct
+ file based APIs
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Song Liu <song@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-raid@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > > Otherwise the patch looks good. One observation though: The (mask &
-> > > FS_MODIFY) check means that all vfs_write() calls end up going through the
-> > > "slower" path iterating all mark types and checking whether there are marks
-> > > anyway. That could be relatively simply optimized using a hidden mask flag
-> > > like FS_ALWAYS_RECEIVE_MODIFY which would be set when there's some mark
-> > > needing special handling of FS_MODIFY... Not sure if we care enough at this
-> > > point...
-> >
-> > Yeh that sounds low hanging.
-> > Actually, I Don't think we need to define a flag for that.
-> > __fsnotify_recalc_mask() can add FS_MODIFY to the object's mask if needed.
+On Thu, Jul 9, 2020 at 8:18 AM Christoph Hellwig <hch@lst.de> wrote:
 >
-> Yes, that would be even more elegant.
->
-> > I will take a look at that as part of FS_PRE_MODIFY work.
-> > But in general, we should fight the urge to optimize theoretic
-> > performance issues...
->
-> Agreed. I just suspect this may bring measurable benefit for hackbench pipe
-> or tiny tmpfs writes after seeing Mel's results. But as I wrote this is a
-> separate idea and without some numbers confirming my suspicion I don't
-> think the complication is worth it so I don't want you to burn time on this
-> unless you're really interested :).
->
+> There is no good reason to mess with file descriptors from in-kernel
+> code, switch the initramfs unpacking to struct file based write
+> instead.  As we don't have nice helper for chmod or chown on a struct
+> file or struct path use the pathname based ones instead there.  This
+> causes additional (cached) lookups, but keeps the code much simpler.
 
-You know me ;-)
-FS_MODIFY optimization pushed to fsnotify_pre_modify branch.
-Only tested that LTP tests pass.
+This is the only one I'm not a huge fan of.
 
-Note that this is only expected to improve performance in case there *are*
-marks, but not marks with ignore mask, because there is an earlier
-optimization in fsnotify() for the no marks case.
+I agree about moving to 'struct file'. But then you could just do the
+chown/chmod using chown/chmod_common() on file->f_path.
 
-Sorry for bombarding you with more patches (I should let you finish with
-fanotify_prep and fanotify_name_fid), but if you get a chance and can
-take a quick look at these 2 patches on fsnotify_pre_modify branch:
-1. fsnotify: replace igrab() with ihold() on attach connector
-2. fsnotify: allow adding an inode mark without pinning inode
+That would keep the same semantics, and it feels like a more
+straightforward patch.
 
-They are very small and simple, but I am afraid I may be missing something.
+It would still remove the nasty ksys_fchmod/fchmod, it would just
+require our - already existing - *_common() functions to be non-static
+(and maybe renamed to "vfs_chown/chmod()" instead, that "*_common()"
+naming looks a bit odd compared to all our other "vfs_operation()"
+helpers).
 
-Why did we use igrab() there in the first place? Is there a reason or is it
-relic from old code?
-
-As for the second patch, I won't get into why I need the evictable inode
-marks right now, but I was wondering if there was some inherent reason
-that I am missing why that cannot be done and inodes *have* to be pinned
-if you attach a mark to them (besides functionality of course)?
-
-Thanks,
-Amir.
+               Linus
