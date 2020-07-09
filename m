@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2299D21A6FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jul 2020 20:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E93B21A6D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jul 2020 20:26:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbgGIS1v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jul 2020 14:27:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55290 "EHLO
+        id S1726361AbgGIS0t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jul 2020 14:26:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbgGIS0v (ORCPT
+        with ESMTP id S1726222AbgGIS0t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jul 2020 14:26:51 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F873C08E8A0
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jul 2020 11:26:51 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id b9so1165628plx.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jul 2020 11:26:51 -0700 (PDT)
+        Thu, 9 Jul 2020 14:26:49 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26498C08E6DC
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jul 2020 11:26:49 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id s26so1373855pfm.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jul 2020 11:26:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JDLlch6jQ6b/Ci4KTwYO3yaCS+hjAOCVDzfUIy5QEwQ=;
-        b=DNDleAo0uMHf7/DTXLL/i2S24PvXDPvlQ14Ivr2titwFCsKNgi+Kv/vKbnaXprb6f1
-         chcoIAKkLN9//ppx4zyPvXEqToxeppaTc44FyNcsYcs2zXewo1+29WB3m2ouuFmQ3vud
-         vI+jn29PW0Sf+mrlVCIaa3TsiU1811viEuh3g=
+        bh=bbOsfemkppItMRL9baKJDrdeIT9dav/5vOG4sh+GTJw=;
+        b=YU79DjoIN/w7y5TyqFO3ZzDnsrj2BCinthNc2lfzih0B5hSlbM9EPloRGc7GUGLZ0o
+         6JCSijpWAwERecVO9M0iG7unm7ZYrZrnPJPNyO9Oco+db4Slc8o+2SvXhQzFecZDzV3x
+         uE470OnBMx34GKCyElA8NXtqGTnzpolwAW8kQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JDLlch6jQ6b/Ci4KTwYO3yaCS+hjAOCVDzfUIy5QEwQ=;
-        b=pKlyLKcoNx11WRlXWSilCXa+H6l7HUDTJ1Sux9TLt7tquRNOlRcnb90MRuvty1MFue
-         p9HaLGaomsHYpnq3Qdj2HU19IRZ2caAT7T5Krr5RGqGZG9KxZ/V+7MZjT63iJY+IJqyY
-         W+TMTFgo41ZkaTA+nnY11CxIqQ7O+A6bjO5DJVzTUi35vv93c/YUblfdrRSWncIQUf/V
-         gBawPr14lggvVAp8qEunnEsWI5ZPFel8DZ1DDSN6ozRthDVXXIjso7XnP1+i5CleLZn4
-         iWvIbo28Sx8RxGyYZd+16niuBqwvZT1/1TZ+M67gO5jFoi+eSPSUAnV9HcoEjuVh9ve7
-         xrJg==
-X-Gm-Message-State: AOAM532u9PtWj+psJJ3v1s2EdANApMlJoIpjVAPXH2Pf6fvjIPj8mUGM
-        9AheVm6LJAtegcAa16nuUB6tOw==
-X-Google-Smtp-Source: ABdhPJyA+Ic2E+z6uMO1UTG3SkSJOCj/9RBjg+eRJHv5onUU1yxGvD5dA+aRgVJ0h36ibNdtF7idTw==
-X-Received: by 2002:a17:90a:f206:: with SMTP id bs6mr1490003pjb.48.1594319210806;
-        Thu, 09 Jul 2020 11:26:50 -0700 (PDT)
+        bh=bbOsfemkppItMRL9baKJDrdeIT9dav/5vOG4sh+GTJw=;
+        b=LfiZqcLhr1URhvU6Ouu8Mpr+HwX7W2Io6JfoNWZ/9DhJkaM3q441RvNR8Rc1Xoo5a3
+         jC9dpQ0w3KQHGsOaw78P7pfDMdlCM0NBf1Z7upR8i3QpKn4L0rSFz4OGYWQ04CQuJCNO
+         9LlCARIlPBrnV7n/0L1mwXaxlQCgGlMJdYv4N7hKXzw+Ed+tG2CVWhHD+q9WNetuEgo/
+         2+SfWJ0cAnNKnsG/tWl5KIcDcX+JcYML9fkH2Q1qzBGaco02iLHX67vkq4Esd/j0+eG3
+         G8qkkj2lN0uJvoXJA/ep4738FoR31xPF7evm6qXxRiilH3LfmYtDdJlh44Hzz02ym40F
+         UlXg==
+X-Gm-Message-State: AOAM531hG70KGpswwZgpG8NpDjuDtcEWloERET5G0Nrf8O0DsC6rw/J5
+        rYLnQSV4TLlgPPdrZnXfFR8MXA==
+X-Google-Smtp-Source: ABdhPJzltdn89rhN6XYfPiPOe4yMRQPDF/YkLsmF+9nfEb0qXub5V6RSRyXpBK142NIdo+LNFAx+Tw==
+X-Received: by 2002:a63:9212:: with SMTP id o18mr37331988pgd.347.1594319208450;
+        Thu, 09 Jul 2020 11:26:48 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id z1sm3429471pgk.89.2020.07.09.11.26.47
+        by smtp.gmail.com with ESMTPSA id h1sm3436654pgn.41.2020.07.09.11.26.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 09 Jul 2020 11:26:47 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -67,9 +67,9 @@ Cc:     Kees Cook <keescook@chromium.org>, stable@vger.kernel.org,
         netdev@vger.kernel.org, containers@lists.linux-foundation.org,
         linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kselftest@vger.kernel.org
-Subject: [PATCH v7 1/9] net/compat: Add missing sock updates for SCM_RIGHTS
-Date:   Thu,  9 Jul 2020 11:26:34 -0700
-Message-Id: <20200709182642.1773477-2-keescook@chromium.org>
+Subject: [PATCH v7 2/9] pidfd: Add missing sock updates for pidfd_getfd()
+Date:   Thu,  9 Jul 2020 11:26:35 -0700
+Message-Id: <20200709182642.1773477-3-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200709182642.1773477-1-keescook@chromium.org>
 References: <20200709182642.1773477-1-keescook@chromium.org>
@@ -80,86 +80,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add missed sock updates to compat path via a new helper, which will be
-used more in coming patches. (The net/core/scm.c code is left as-is here
-to assist with -stable backports for the compat path.)
+The sock counting (sock_update_netprioidx() and sock_update_classid())
+was missing from pidfd's implementation of received fd installation. Add
+a call to the new __receive_sock() helper.
 
 Cc: stable@vger.kernel.org
-Fixes: 48a87cc26c13 ("net: netprio: fd passed in SCM_RIGHTS datagram not set correctly")
-Fixes: d84295067fc7 ("net: net_cls: fd passed in SCM_RIGHTS datagram not set correctly")
+Fixes: 8649c322f75c ("pid: Implement pidfd_getfd syscall")
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/net/sock.h |  4 ++++
- net/compat.c       |  1 +
- net/core/sock.c    | 21 +++++++++++++++++++++
- 3 files changed, 26 insertions(+)
+ kernel/pid.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/include/net/sock.h b/include/net/sock.h
-index c53cc42b5ab9..2be67f1ee8b1 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -890,6 +890,8 @@ static inline int sk_memalloc_socks(void)
- {
- 	return static_branch_unlikely(&memalloc_socks_key);
- }
-+
-+void __receive_sock(struct file *file);
- #else
+diff --git a/kernel/pid.c b/kernel/pid.c
+index f1496b757162..85ed00abdc7c 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -42,6 +42,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/sched/task.h>
+ #include <linux/idr.h>
++#include <net/sock.h>
  
- static inline int sk_memalloc_socks(void)
-@@ -897,6 +899,8 @@ static inline int sk_memalloc_socks(void)
- 	return 0;
- }
- 
-+static inline void __receive_sock(struct file *file)
-+{ }
- #endif
- 
- static inline gfp_t sk_gfp_mask(const struct sock *sk, gfp_t gfp_mask)
-diff --git a/net/compat.c b/net/compat.c
-index 5e3041a2c37d..2937b816107d 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -309,6 +309,7 @@ void scm_detach_fds_compat(struct msghdr *kmsg, struct scm_cookie *scm)
- 			break;
- 		}
- 		/* Bump the usage count and install the file. */
-+		__receive_sock(fp[i]);
- 		fd_install(new_fd, get_file(fp[i]));
+ struct pid init_struct_pid = {
+ 	.count		= REFCOUNT_INIT(1),
+@@ -642,10 +643,12 @@ static int pidfd_getfd(struct pid *pid, int fd)
  	}
  
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 6c4acf1f0220..bde394979041 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -2840,6 +2840,27 @@ int sock_no_mmap(struct file *file, struct socket *sock, struct vm_area_struct *
- }
- EXPORT_SYMBOL(sock_no_mmap);
- 
-+/*
-+ * When a file is received (via SCM_RIGHTS, etc), we must bump the
-+ * various sock-based usage counts.
-+ */
-+void __receive_sock(struct file *file)
-+{
-+	struct socket *sock;
-+	int error;
-+
-+	/*
-+	 * The resulting value of "error" is ignored here since we only
-+	 * need to take action when the file is a socket and testing
-+	 * "sock" for NULL is sufficient.
-+	 */
-+	sock = sock_from_file(file, &error);
-+	if (sock) {
-+		sock_update_netprioidx(&sock->sk->sk_cgrp_data);
-+		sock_update_classid(&sock->sk->sk_cgrp_data);
+ 	ret = get_unused_fd_flags(O_CLOEXEC);
+-	if (ret < 0)
++	if (ret < 0) {
+ 		fput(file);
+-	else
++	} else {
+ 		fd_install(ret, file);
++		__receive_sock(file);
 +	}
-+}
-+
- ssize_t sock_no_sendpage(struct socket *sock, struct page *page, int offset, size_t size, int flags)
- {
- 	ssize_t res;
+ 
+ 	return ret;
+ }
 -- 
 2.25.1
 
