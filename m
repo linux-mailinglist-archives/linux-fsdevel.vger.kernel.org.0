@@ -2,109 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A4D321B7EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jul 2020 16:11:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6776B21B83B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jul 2020 16:20:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbgGJOLr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jul 2020 10:11:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41188 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbgGJOLr (ORCPT
+        id S1727820AbgGJOUC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jul 2020 10:20:02 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:44760 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727033AbgGJOUC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jul 2020 10:11:47 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 048F7C08C5CE;
-        Fri, 10 Jul 2020 07:11:47 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id o8so6312650wmh.4;
-        Fri, 10 Jul 2020 07:11:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VGeeR8+VbNtB7URPLqfeyF8R/0u0wMAauszGUX1N1UI=;
-        b=fk0BU7iaq6X8TwybCHTvJwUCTakRRnB6bs6MI80jO2k/15kDhIIIoHZt5ZVGA7a6nv
-         hV6Yh9e81iPov/qajATCsYe/c6NeRIcS20LNg52siwqUX6u3VxeNYDkHCaYpXDz3sesR
-         3Ulry/Xu+YcNYFGogM36GHBVr/nLyKWwB8yN+B4JOfNdNDvsgl6Xyx9sHtC8js15nxNc
-         nklaZ6IT1IayDupdAOiUuueQIAip22AQGlYBr81JJttcMam+vf9cCdSbd7Dr0GbPPo8S
-         WuCA8IGNqtAVATytmAJ1Fk+OlPI//tMI5/RRQlUAb47OVCI6/1nGJ7E0n7Scdyv45XhO
-         GJUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VGeeR8+VbNtB7URPLqfeyF8R/0u0wMAauszGUX1N1UI=;
-        b=abY8ydoh2znbR3wVQPv5/cy10JYdkWgKdo+75Z2CEXQ12HV6M6tB22Zc5gNoGoG6cc
-         i2KArNk9Y2xlAb8HNcpFZe6ZyKCWeDfw8WacJpVx5C+P5chbY1TXRx6DAGXdvJDl7mpp
-         8ZYnUdhv8ZNpM6f7e5sizuMZeuCaMYLS/aZa4obbEl5oqWoErlRRupzFs24+3uUJbooO
-         3G8YwshUZ6GfdFvzCJr9egWuzBxX57S8dQUUN+ZgAhegksfUHoPo7DpWvGldqFoiAVUn
-         dOxqsscScMDmG9apCoPtAVP13Dda8giMUiONEYgl7ovpma4lcqbqhlmPpeH160EFXMIr
-         qkiQ==
-X-Gm-Message-State: AOAM533kd7eKPkaZRLA2DrS+Eqq/y+pkNlMAgPqDZ0YcWsKQK3CRgS/T
-        F0SSyQVIxsMI9zoANrcL+MGLBC7lox5CBwCZoeM=
-X-Google-Smtp-Source: ABdhPJysoJRlQ8UFaxjIgEOwBzA5N40n6EBPhXu9a+0n6/TXYajVrD/1a1tH7ji3ATsg3D0/tZUikVlkV5IOILYSjyk=
-X-Received: by 2002:a1c:9e45:: with SMTP id h66mr5276012wme.15.1594390305664;
- Fri, 10 Jul 2020 07:11:45 -0700 (PDT)
+        Fri, 10 Jul 2020 10:20:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594390800;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=S/hfdY2jn078JPQClgP6PouoRBDjiWkYV+fASuPUqJA=;
+        b=JV7CRZdoFSTQKjRWWBS/LJ6SFRzG2CwYkrEGMqUpANXtjFDeHBhvksyKAMduEOrcOdgrNx
+        YGWWQzkf4Cfts9guIB6wCIJZNDZco5lub+g8g+yc+Cc+Rr//NAeuNAJRl6f71ZQ72MJNmn
+        hHv5b8rXbqwibvaOoxTednyv7fJY9jA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-12-Ur_35eYIO8ykayRn1yNGQw-1; Fri, 10 Jul 2020 10:19:57 -0400
+X-MC-Unique: Ur_35eYIO8ykayRn1yNGQw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 128B11B18BC0;
+        Fri, 10 Jul 2020 14:19:55 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-112-4.ams2.redhat.com [10.36.112.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DF67B5C1D6;
+        Fri, 10 Jul 2020 14:19:46 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Sargun Dhillon <sargun@sargun.me>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Jann Horn <jannh@google.com>, Aleksa Sarai <asarai@suse.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Moyer <jmoyer@redhat.com>
+Subject: [PATCH RFC 0/3] io_uring: add restrictions to support untrusted
+ applications and guests
+Date:   Fri, 10 Jul 2020 16:19:42 +0200
+Message-Id: <20200710141945.129329-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20200709085501.GA64935@infradead.org> <adc14700-8e95-10b2-d914-afa5029ae80c@kernel.dk>
- <20200709140053.GA7528@infradead.org> <2270907f-670c-5182-f4ec-9756dc645376@kernel.dk>
- <CA+1E3r+H7WEyfTufNz3xBQQynOVV-uD3myYynkfp7iU+D=Svuw@mail.gmail.com>
- <f5e3e931-ef1b-2eb6-9a03-44dd5589c8d3@kernel.dk> <CA+1E3rLna6VVuwMSHVVEFmrgsTyJN=U4CcZtxSGWYr_UYV7AmQ@mail.gmail.com>
- <20200710131054.GB7491@infradead.org> <20200710134824.GK12769@casper.infradead.org>
- <20200710134932.GA16257@infradead.org> <20200710135119.GL12769@casper.infradead.org>
-In-Reply-To: <20200710135119.GL12769@casper.infradead.org>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Fri, 10 Jul 2020 19:41:19 +0530
-Message-ID: <CA+1E3rKOZUz7oZ_DGW6xZPQaDu+T5iEKXctd+gsJw05VwpGQSQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, Damien.LeMoal@wdc.com, asml.silence@gmail.com,
-        linux-fsdevel@vger.kernel.org, "Matias Bj??rling" <mb@lightnvm.io>,
-        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Selvakumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 10, 2020 at 7:21 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Fri, Jul 10, 2020 at 02:49:32PM +0100, Christoph Hellwig wrote:
-> > On Fri, Jul 10, 2020 at 02:48:24PM +0100, Matthew Wilcox wrote:
-> > > If we're going to go the route of changing the CQE, how about:
-> > >
-> > >  struct io_uring_cqe {
-> > >          __u64   user_data;      /* sqe->data submission passed back */
-> > > -        __s32   res;            /* result code for this event */
-> > > -        __u32   flags;
-> > > +   union {
-> > > +           struct {
-> > > +                   __s32   res;            /* result code for this event */
-> > > +                   __u32   flags;
-> > > +           };
-> > > +           __s64   res64;
-> > > +   };
-> > >  };
-> > >
-> > > then we don't need to change the CQE size and it just depends on the SQE
-> > > whether the CQE for it uses res+flags or res64.
-> >
-> > How do you return a status code or short write when you just have
-> > a u64 that is needed for the offset?
->
-> it's an s64 not a u64 so you can return a negative errno.  i didn't
-> think we allowed short writes for objects-which-have-a-pos.
+Following the proposal that I send about restrictions [1], I wrote a PoC with
+the main changes. It is still WiP so I left some TODO in the code.
 
-If we are doing this for zone-append (and not general cases), "__s64
-res64" should work -.
-64 bits = 1 (sign) + 23 (bytes-copied: cqe->res) + 40
-(written-location: chunk_sector bytes limit)
+I also wrote helpers in liburing and a test case (test/register-restrictions.c)
+available in this repository:
+https://github.com/stefano-garzarella/liburing (branch: io_uring_restrictions)
+
+Just to recap the proposal, the idea is to add some restrictions to the
+operations (sqe, register, fixed file) to safely allow untrusted applications
+or guests to use io_uring queues.
+
+The first patch changes io_uring_register(2) opcodes into an enumeration to
+keep track of the last opcode available.
+
+The second patch adds IOURING_REGISTER_RESTRICTIONS opcode and the code to
+handle restrictions.
+
+The third patch adds IORING_SETUP_R_DISABLED flag to start the rings disabled,
+allowing the user to register restrictions, buffers, files, before to start
+processing SQEs.
+I'm not sure if this could help seccomp. An alternative pointed out by Jann
+Horn could be to register restrictions during io_uring_setup(2), but this
+requires some intrusive changes (there is no space in the struct
+io_uring_params to pass a pointer to restriction arrays, maybe we can add a
+flag and add the pointer at the end of the struct io_uring_params).
+
+Another limitation now is that I need to enable every time
+IORING_REGISTER_ENABLE_RINGS in the restrictions to be able to start the rings,
+I'm not sure if we should treat it as an exception.
+
+Maybe registering restrictions during io_uring_setup(2) could solve both issues
+(seccomp integration and IORING_REGISTER_ENABLE_RINGS registration), but I need
+some suggestions to properly extend the io_uring_setup(2).
+
+Comments and suggestions are very welcome.
+
+Thank you in advance,
+Stefano
+
+[1] https://lore.kernel.org/io-uring/20200609142406.upuwpfmgqjeji4lc@steredhat/
+
+Stefano Garzarella (3):
+  io_uring: use an enumeration for io_uring_register(2) opcodes
+  io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
+  io_uring: allow disabling rings during the creation
+
+ fs/io_uring.c                 | 155 ++++++++++++++++++++++++++++++++--
+ include/uapi/linux/io_uring.h |  59 ++++++++++---
+ 2 files changed, 194 insertions(+), 20 deletions(-)
 
 -- 
-Joshi
+2.26.2
+
