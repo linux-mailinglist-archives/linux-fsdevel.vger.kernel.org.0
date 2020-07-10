@@ -2,122 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96C7821B7D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jul 2020 16:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1122D21B7DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jul 2020 16:09:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727819AbgGJOIg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jul 2020 10:08:36 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:50436 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727031AbgGJOIf (ORCPT
+        id S1728054AbgGJOJi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jul 2020 10:09:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40860 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728043AbgGJOJg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jul 2020 10:08:35 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06AE2g12026023;
-        Fri, 10 Jul 2020 14:08:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=HRjmvI4vZJxBEruWHqbfRo7K5lADy6bhYc6mrJ1sR1E=;
- b=PA2yqrPPZyMv8eyEvUUJIuFp3ndF1NELf/wUmT8pOBuj5B1E/Q+aXjWrWV6xhru4j+y0
- 6qh8cA1tCnv+Ua/o31RkdRqduODzscZu8vb58EnCLTr44p2vQ8FSaAxhM9OKmZO58Eta
- U0QGwgSDrX5YXG0ifkOamdBmK5yWHZPN9/hYqe+Tu7Fz29sv+K4dLifcS3P8+spKol3a
- de/s6vopTqB4bHuvrXyW0Tm//SVQuDdG7hhuMnC7Z+0EMdYGf8kRVqPh+LJ1r7aTogUv
- hmQOzuuzXrnUxRADRanzyOdtKuqaXrk0zeeLPi+noHrG2+cQNBmo3QNQA1AS2AD1S5+p Hw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 325y0aqn31-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 10 Jul 2020 14:08:27 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06AE8OaG022349;
-        Fri, 10 Jul 2020 14:08:26 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 325k42gnqv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 Jul 2020 14:08:25 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 06AE8EFc001292;
-        Fri, 10 Jul 2020 14:08:14 GMT
-Received: from anon-dhcp-153.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 10 Jul 2020 07:08:14 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.14\))
-Subject: Re: [PATCH v3 01/10] xattr: break delegations in {set,remove}xattr
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <20200710140308.9C810207BB@mail.kernel.org>
-Date:   Fri, 10 Jul 2020 10:08:12 -0400
-Cc:     Frank van der Linden <fllinden@amazon.com>,
-        Bruce Fields <bfields@fieldses.org>, stable@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <75E4D727-E962-466A-AC40-AB047E1EF5AE@oracle.com>
-References: <20200623223927.31795-2-fllinden@amazon.com>
- <20200710140308.9C810207BB@mail.kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-X-Mailer: Apple Mail (2.3445.104.14)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9677 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=2
- mlxlogscore=999 mlxscore=0 spamscore=0 phishscore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007100099
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9677 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0
- priorityscore=1501 spamscore=0 phishscore=0 clxscore=1011 mlxlogscore=999
- lowpriorityscore=0 malwarescore=0 bulkscore=0 suspectscore=2
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007100098
+        Fri, 10 Jul 2020 10:09:36 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D2D9C08E763
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jul 2020 07:09:36 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id o5so6098756iow.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jul 2020 07:09:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GkJUhDwEWg19k+flxmmMGIck6ztbcEd5EG3ERyiHHYM=;
+        b=fuJTfU5frNftoB2nOBvhj+jH0w0v7UZBt3PnRDu7UtC8P7Sjj1DqVomTFixtOge9ng
+         pEAvE7Ed2zvkR8YDMoTElqae1xCMERl72kzobWs8n3Q08z3K1TqZfDI/df8oUG5w6ou1
+         FvwJ4Qt9KvhC8Suq6E9kP7Ffdr64WsPcUDDBnUVRgvxBs6HYsmpINdpOA652MjrafdJ0
+         //BgRQgnQ6kcjVnz5c0X2FZYU01+No7t4lPdlw6X5GFu5PHuecm10X3Xi7IjZlie1f8L
+         hYUamcPROy8+F7Grc28Rq5/qJsOhRSzAmkvgu9beFuD+suZDnIDHiuSXBFu0Dj78eLeo
+         t+WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GkJUhDwEWg19k+flxmmMGIck6ztbcEd5EG3ERyiHHYM=;
+        b=kYpYUPQhwI5+yxTUVrJbBsmO4KsoV9ufVCq5u1hodWQLhU7SO8dzPbXpzV8iVE3Qtn
+         lO0JnXA5VPxfU1iyVuleqs6cXCMwe4pc0lrQpFfvnN1uwnzyFX2a0F9ZGYRnuAA8Uv7f
+         zfd2+a5ufImKzqvN5Njb5ERWgzTNXERzoAWM/A/31GJ7P4iJiHaLO5W72pKkG/NUx7IQ
+         TVXf77CW4ORidy7C6ViLLgyR2/YBKaburQnAosYLlaczT/+GCt6D13OyznpoGCPljYia
+         MGvOsbXh1dHCfhcMSjNQNRdAYnQTHb2jTZj6mSzygxrRkLhg40RAFOGwRQJFMk/eqIA5
+         R8UA==
+X-Gm-Message-State: AOAM531fZdU5LHYDyOmUS2lUwITtw/F6HXvOvGlwC+TJLRCIQsOLQLBG
+        MEfMgnkbfl8eEUnbMa2gyC1dWQ==
+X-Google-Smtp-Source: ABdhPJzaZyEeMrMWgbopFxfHGDE7K7HRqxBSjebhSFB7gm/+G+oST+FYJgvn85vQMrSkFWFE9eWgyA==
+X-Received: by 2002:a02:70d4:: with SMTP id f203mr80267571jac.74.1594390175673;
+        Fri, 10 Jul 2020 07:09:35 -0700 (PDT)
+Received: from [192.168.1.58] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id z9sm3564606ilz.45.2020.07.10.07.09.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jul 2020 07:09:35 -0700 (PDT)
+Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
+To:     Christoph Hellwig <hch@infradead.org>,
+        Kanchan Joshi <joshiiitr@gmail.com>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, Damien.LeMoal@wdc.com, asml.silence@gmail.com,
+        linux-fsdevel@vger.kernel.org, Matias Bj??rling <mb@lightnvm.io>,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        Selvakumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+References: <CGME20200705185227epcas5p16fba3cb92561794b960184c89fdf2bb7@epcas5p1.samsung.com>
+ <1593974870-18919-5-git-send-email-joshi.k@samsung.com>
+ <fe0066b7-5380-43ee-20b2-c9b17ba18e4f@kernel.dk>
+ <20200709085501.GA64935@infradead.org>
+ <adc14700-8e95-10b2-d914-afa5029ae80c@kernel.dk>
+ <20200709140053.GA7528@infradead.org>
+ <2270907f-670c-5182-f4ec-9756dc645376@kernel.dk>
+ <CA+1E3r+H7WEyfTufNz3xBQQynOVV-uD3myYynkfp7iU+D=Svuw@mail.gmail.com>
+ <f5e3e931-ef1b-2eb6-9a03-44dd5589c8d3@kernel.dk>
+ <CA+1E3rLna6VVuwMSHVVEFmrgsTyJN=U4CcZtxSGWYr_UYV7AmQ@mail.gmail.com>
+ <20200710131054.GB7491@infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9e870249-01db-c68d-ea65-28edc3c1f071@kernel.dk>
+Date:   Fri, 10 Jul 2020 08:09:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200710131054.GB7491@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Sasha-
+On 7/10/20 7:10 AM, Christoph Hellwig wrote:
+> On Fri, Jul 10, 2020 at 12:35:43AM +0530, Kanchan Joshi wrote:
+>> Append required special treatment (conversion for sector to bytes) for io_uring.
+>> And we were planning a user-space wrapper to abstract that.
+>>
+>> But good part (as it seems now) was: append result went along with cflags at
+>> virtually no additional cost. And uring code changes became super clean/minimal
+>> with further revisions.
+>> While indirect-offset requires doing allocation/mgmt in application,
+>> io-uring submission
+>> and in completion path (which seems trickier), and those CQE flags
+>> still get written
+>> user-space and serve no purpose for append-write.
+> 
+> I have to say that storing the results in the CQE generally make
+> so much more sense.  I wonder if we need a per-fd "large CGE" flag
+> that adds two extra u64s to the CQE, and some ops just require this
+> version.
 
-> On Jul 10, 2020, at 10:03 AM, Sasha Levin <sashal@kernel.org> wrote:
->=20
-> Hi
->=20
-> [This is an automated email]
->=20
-> This commit has been processed because it contains a -stable tag.
-> The stable tag indicates that it's relevant for the following trees: =
-all
->=20
-> The bot has tested the following trees: v5.7.6, v5.4.49, v4.19.130, =
-v4.14.186, v4.9.228, v4.4.228.
->=20
-> v5.7.6: Build OK!
-> v5.4.49: Build OK!
-> v4.19.130: Build OK!
-> v4.14.186: Build OK!
-> v4.9.228: Build OK!
-> v4.4.228: Failed to apply! Possible dependencies:
->    5d6c31910bc07 ("xattr: Add __vfs_{get,set,remove}xattr helpers")
->    6b2553918d8b4 ("replace ->follow_link() with new method that could =
-stay in RCU mode")
->    aa80deab33a8f ("namei: page_getlink() and page_follow_link_light() =
-are the same thing")
->    cd3417c8fc950 ("kill free_page_put_link()")
->    ce23e64013348 ("->getxattr(): pass dentry and inode as separate =
-arguments")
->    fceef393a5381 ("switch ->get_link() to delayed_call, kill =
-->put_link()")
->=20
->=20
-> NOTE: The patch will not be queued to stable trees until it is =
-upstream.
->=20
-> How should we proceed with this patch?
+I have been pondering the same thing, we could make certain ops consume
+two CQEs if it makes sense. It's a bit ugly on the app side with two
+different CQEs for a request, though. We can't just treat it as a large
+CQE, as they might not be sequential if we happen to wrap. But maybe
+it's not too bad.
 
-I've updated the "cc: stable" tag in my testing branch to include "# =
-v4.9+".
-
-
---
-Chuck Lever
-
-
+-- 
+Jens Axboe
 
