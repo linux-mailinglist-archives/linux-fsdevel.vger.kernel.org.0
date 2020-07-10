@@ -2,88 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BE3A21BC71
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jul 2020 19:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4D7121BC81
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jul 2020 19:44:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbgGJRki (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jul 2020 13:40:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45290 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbgGJRki (ORCPT
+        id S1727065AbgGJRoC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jul 2020 13:44:02 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:42721 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726977AbgGJRoB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jul 2020 13:40:38 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D60B3C08C5DC;
-        Fri, 10 Jul 2020 10:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description;
-        bh=nzj9xEzg94TiDWiQ2mj7wOcGxexy5FgiHulDtZkhqco=; b=E0sLL2v+dosTWZ483q887n3x/L
-        ongb9Eg5BLuc74OARhk+JyNg+hKdT/4dEJvtxdmYeCiG25LIaUcL06KNdIsf8e7v1123jmPex6Wtc
-        vMoShmm64O2B3f8BixYU08T8GF0h8eXZjHJPhcuXCObxj+AH3tjisMjSDxHM7rkcVwVD87E6rJ3GE
-        nqsaMOp2BrUs0H9u0gLeTYaEhVhTpqhet2OpS4ExVBZvspLqGGClUd1s+QMwgjkEfmF6No41r8Hed
-        TVeEDTDaZpaZ2iiHafIzUEtX0BU+Gx1gKetifX6dcTOXLbiwQDcHb6D39ediV8HpQq4tbCaHAwb3O
-        2tUyTfnA==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jtx0k-00079r-Uz; Fri, 10 Jul 2020 17:40:35 +0000
-Subject: Re: mmotm 2020-07-09-21-00 uploaded
- (drivers/net/ethernet/mellanox/mlx5/core/en_main.c)
-To:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-References: <20200710040047.md-jEb0TK%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <8a6f8902-c36c-b46c-8e6f-05ae612d25ea@infradead.org>
-Date:   Fri, 10 Jul 2020 10:40:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Fri, 10 Jul 2020 13:44:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1594403064; x=1625939064;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=cbc3oM6oIgo9G4kTaaD0VNdPm5ejczfoBNVZTRiYqc0=;
+  b=Ak6I+Yd2ZQBOmVDZYsc7QPwFfgOC2VFCmq54E+74LGP4eYn956ZPcqeN
+   l7GJ+HMq1TJJnvEvCPcZ2zX0Pnu4G3W9sFyN3HZRCq2Fla03cSLRwyeVK
+   AXMNLcj4+qoLm8AeyaP2XSp5bdRN1y4rHPSvq5Mt5im6OHSwmZGRNa85P
+   kTDqFtKVPS1s7kixtMm42dTTrFPP8nDV/g6DUt1q+UxBV48S0HH4lgRGc
+   deIShTjhKatsKiqUZXEk5jeWRgLd2dvD8v421tcZbbW9NXAFE8zBDtJW8
+   /PhQsAuiaRQRXNN6mzkgIPy+wxqmknwSdDIYkeluJSHjqYnOlefnkhioM
+   w==;
+IronPort-SDR: 4ZAeyr2EJOtogwpiCXj9TKBJS2dwy5dTv8ZfxA5Y5z6wu9aycVcucwwwxekWsgkxLyXj38Ouy0
+ ckd100fgAJCZWI6AjxgxZlh3khoEB9D7LLBldZKUBPaHizvGWcLFcdl4wH6MpTcpymh2yTs5qE
+ 8/p5unWxnpCHYgAsAJel1euAcroXY9y45OK03kMfZeZPfAKwPv8PgCdBcapgehWhUMEvlmpn0Y
+ lkijziJol23qMmPTeltoyq1bkiA1oNbfL6L4j5M1DRqSDGQl7W7CqGjoO7vhOyxyDx/outyp6q
+ HVc=
+X-IronPort-AV: E=Sophos;i="5.75,336,1589212800"; 
+   d="scan'208";a="245178501"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 11 Jul 2020 01:44:23 +0800
+IronPort-SDR: 95sf03RibGJjppJ6zTgVf050Q5gYWvIlKUv+y+p4n+kEY8cnPzVwf39419cVTOObyuKNdVW/pU
+ NwHYNFXx9sJscdvFxuSPjnhkSHZAshHgU=
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2020 10:32:02 -0700
+IronPort-SDR: blztnjK4Hr8mDDnOtUyUAVCX9Zd4cdtNa2WcuJVOvCmTXnXU9rOLJV21Gxa2bdRBhvM2Go+ebd
+ hSRVNrEM6l3w==
+WDCIronportException: Internal
+Received: from aravind-workstation.hgst.com (HELO localhost.localdomain) ([10.64.18.44])
+  by uls-op-cesaip02.wdc.com with ESMTP; 10 Jul 2020 10:43:58 -0700
+From:   Aravind Ramesh <aravind.ramesh@wdc.com>
+To:     jaegeuk@kernel.org, yuchao0@huawei.com,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, hch@lst.de
+Cc:     Damien.LeMoal@wdc.com, niklas.cassel@wdc.com,
+        matias.bjorling@wdc.com, Aravind Ramesh <aravind.ramesh@wdc.com>
+Subject: [PATCH v2 0/1]  f2fs: zns zone-capacity support
+Date:   Fri, 10 Jul 2020 23:13:52 +0530
+Message-Id: <20200710174353.21988-1-aravind.ramesh@wdc.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20200710040047.md-jEb0TK%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/9/20 9:00 PM, Andrew Morton wrote:
-> The mm-of-the-moment snapshot 2020-07-09-21-00 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
-> 
-> You will need quilt to apply these patches to the latest Linus release (5.x
-> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
-> 
+NVM Express Zoned Namespace command set specification allows host software
+to communicate with a NVM subsystem using zones. ZNS defines a host-managed
+zoned block device model for NVMe devices. It divides the logical address
+space of a namespace into zones. Each zone provides a LBA range that
+shall be written sequentially. An explicit reset of zone is needed to write to
+the zone again.
 
-on i386:
+ZNS defines a per-zone capacity which can be equal or less than the
+zone-size. Zone-capacity is the number of usable blocks in the zone.
+This patchset implements support for ZNS devices with a zone-capacity
+that is less that the device zone-size.
 
-In file included from ../drivers/net/ethernet/mellanox/mlx5/core/en_main.c:49:0:
-../drivers/net/ethernet/mellanox/mlx5/core/en_accel/en_accel.h: In function ‘mlx5e_accel_sk_get_rxq’:
-../drivers/net/ethernet/mellanox/mlx5/core/en_accel/en_accel.h:153:12: error: implicit declaration of function ‘sk_rx_queue_get’; did you mean ‘sk_rx_queue_set’? [-Werror=implicit-function-declaration]
-  int rxq = sk_rx_queue_get(sk);
-            ^~~~~~~~~~~~~~~
-            sk_rx_queue_set
+This patch checks if zone-capacity is less than zone-size, if it is,
+then any segment which starts after the zone-capacity is marked as
+not-free in the free segment bitmap at initial mount time. These segments
+are marked as permanently used so they are not allocated for writes and
+consequently not needed to be garbage collected. In case the zone-capacity
+is not aligned to default segment size(2MB), then a segment can start
+before the zone-capacity and span across zone-capacity boundary.
+Such spanning segments are also considered as usable segments. It tracks
+the usable blocks in a spanning segment, so that during writes and GC,
+usable blocks in spanning segment is calculated to ensure writes/reads
+do not cross the zone-capacity boundary.
 
+This patch is based on the git tree
+git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git branch dev
+and requires the below patch in order to build.
+https://lore.kernel.org/linux-nvme/20200701063720.GA28954@lst.de/T/#m19e0197ae1837b7fe959b13fbc2a859b1f2abc1e
 
+The above patch has been merged to the nvme-5.9 branch in the git tree:
+git://git.infradead.org/nvme.git
+
+Aravind Ramesh (1):
+  f2fs: support zone capacity less than zone size
+
+ Documentation/filesystems/f2fs.rst |  15 +++
+ fs/f2fs/f2fs.h                     |   5 +
+ fs/f2fs/gc.c                       |  27 +++--
+ fs/f2fs/gc.h                       |  42 +++++++-
+ fs/f2fs/segment.c                  | 154 ++++++++++++++++++++++++++---
+ fs/f2fs/segment.h                  |  21 ++--
+ fs/f2fs/super.c                    |  41 ++++++--
+ 7 files changed, 267 insertions(+), 38 deletions(-)
 
 -- 
-~Randy
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+2.19.1
+
