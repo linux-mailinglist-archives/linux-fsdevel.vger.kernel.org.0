@@ -2,90 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 931FE21C277
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jul 2020 08:09:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45C3321C29B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jul 2020 08:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbgGKGJm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Jul 2020 02:09:42 -0400
-Received: from mga02.intel.com ([134.134.136.20]:11246 "EHLO mga02.intel.com"
+        id S1728056AbgGKGtB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Jul 2020 02:49:01 -0400
+Received: from verein.lst.de ([213.95.11.211]:45371 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726958AbgGKGJm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Jul 2020 02:09:42 -0400
-IronPort-SDR: hEgT6D3u93TYiUIoxoKWZhuW8DQ0ANBLTD8Key8tw3TlevEB2U+KE6mD8ilkEJaqNxMc8liegT
- fhqgyr23QKmg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9678"; a="136534498"
-X-IronPort-AV: E=Sophos;i="5.75,338,1589266800"; 
-   d="scan'208";a="136534498"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jul 2020 23:09:41 -0700
-IronPort-SDR: PmSfM7g2eMJJvdWSFUuNZPctpgQZTLq8QgPLabE9sddBDoHGIDzt8AnTJC/sSYusrgjA1DsK9t
- rF5Rme91Sffw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,338,1589266800"; 
-   d="scan'208";a="323746397"
-Received: from arch-p28.jf.intel.com ([10.166.187.31])
-  by FMSMGA003.fm.intel.com with ESMTP; 10 Jul 2020 23:09:41 -0700
-From:   Sridhar Samudrala <sridhar.samudrala@intel.com>
-To:     linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        eric.dumazet@gmail.com, davem@davemloft.net,
-        alexander.h.duyck@linux.intel.com, andy.lavr@gmail.com
-Subject: [PATCH v4] fs/epoll: Enable non-blocking busypoll when epoll timeout is 0
-Date:   Fri, 10 Jul 2020 23:09:41 -0700
-Message-Id: <1594447781-27115-1-git-send-email-sridhar.samudrala@intel.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1727867AbgGKGtA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 11 Jul 2020 02:49:00 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 9B60168AEF; Sat, 11 Jul 2020 08:48:57 +0200 (CEST)
+Date:   Sat, 11 Jul 2020 08:48:57 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 15/23] seq_file: switch over direct seq_read method
+ calls to seq_read_iter
+Message-ID: <20200711064857.GA29078@lst.de>
+References: <20200707174801.4162712-1-hch@lst.de> <20200707174801.4162712-16-hch@lst.de> <5a2a97f1-58b5-8068-3c69-bb06130ffb35@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5a2a97f1-58b5-8068-3c69-bb06130ffb35@nvidia.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch triggers non-blocking busy poll when busy_poll is enabled,
-epoll is called with a timeout of 0 and is associated with a napi_id.
-This enables an app thread to go through napi poll routine once by
-calling epoll with a 0 timeout.
+Please try this one:
 
-poll/select with a 0 timeout behave in a similar manner.
-
-Signed-off-by: Sridhar Samudrala <sridhar.samudrala@intel.com>
-
-v4:
-- Fix a typo (Andy)
-v3:
-- reset napi_id if no event available after busy poll (Alex)
-v2: 
-- Added net_busy_loop_on() check (Eric)
 ---
- fs/eventpoll.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+From 5e86146296fbcd7593da1d9d39b9685a5e6b83be Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Sat, 11 Jul 2020 08:46:10 +0200
+Subject: debugfs: add a proxy stub for ->read_iter
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 12eebcdea9c8..10da7a8e1c2b 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1847,6 +1847,22 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 		eavail = ep_events_available(ep);
- 		write_unlock_irq(&ep->lock);
+debugfs registrations typically go through a set of proxy ops to deal
+with refcounting, which need to support every method that can be
+supported.  Add ->read_iter to the proxy ops to prepare for seq_file to
+be switch to ->read_iter.
+
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/debugfs/file.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+index 8ba32c2feb1b73..dcd7bdaf67417f 100644
+--- a/fs/debugfs/file.c
++++ b/fs/debugfs/file.c
+@@ -231,6 +231,10 @@ FULL_PROXY_FUNC(read, ssize_t, filp,
+ 			loff_t *ppos),
+ 		ARGS(filp, buf, size, ppos));
  
-+		/*
-+		 * Trigger non-blocking busy poll if timeout is 0 and there are
-+		 * no events available. Passing timed_out(1) to ep_busy_loop
-+		 * will make sure that busy polling is triggered only once.
-+		 */
-+		if (!eavail && net_busy_loop_on()) {
-+			ep_busy_loop(ep, timed_out);
++FULL_PROXY_FUNC(read_iter, ssize_t, iocb->ki_filp,
++		PROTO(struct kiocb *iocb, struct iov_iter *iter),
++		ARGS(iocb, iter));
 +
-+			write_lock_irq(&ep->lock);
-+			eavail = ep_events_available(ep);
-+			write_unlock_irq(&ep->lock);
-+
-+			if (!eavail)
-+				ep_reset_busy_poll_napi_id(ep);
-+		}
-+
- 		goto send_events;
- 	}
- 
+ FULL_PROXY_FUNC(write, ssize_t, filp,
+ 		PROTO(struct file *filp, const char __user *buf, size_t size,
+ 			loff_t *ppos),
+@@ -286,6 +290,8 @@ static void __full_proxy_fops_init(struct file_operations *proxy_fops,
+ 		proxy_fops->llseek = full_proxy_llseek;
+ 	if (real_fops->read)
+ 		proxy_fops->read = full_proxy_read;
++	if (real_fops->read_iter)
++		proxy_fops->read_iter = full_proxy_read_iter;
+ 	if (real_fops->write)
+ 		proxy_fops->write = full_proxy_write;
+ 	if (real_fops->poll)
 -- 
-2.25.4
+2.26.2
 
