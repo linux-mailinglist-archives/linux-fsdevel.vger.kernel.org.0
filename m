@@ -2,110 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5264321C823
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jul 2020 10:44:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8407321C929
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jul 2020 13:36:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbgGLIoT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Jul 2020 04:44:19 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:48734 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbgGLIoS (ORCPT
+        id S1728799AbgGLLgg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Jul 2020 07:36:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34944 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728807AbgGLLgf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Jul 2020 04:44:18 -0400
-Received: by mail-il1-f199.google.com with SMTP id q9so7230853ilt.15
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jul 2020 01:44:18 -0700 (PDT)
+        Sun, 12 Jul 2020 07:36:35 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF563C08E6DC
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jul 2020 04:36:34 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id q5so10117027wru.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jul 2020 04:36:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=scylladb-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=5A9cDnFjTG3NBzPmqHsPL3YmbPK4apFGGEKOIxq7+1E=;
+        b=ZiuD87Dsu+6b7jF8K06Oi76ztxdd7tcCfM24FD0meQMd0en5C46y3i/vjGou1ps+mp
+         IINa+5udjSzWkifAEdUzA21DvZcisQqApTQfvyUaleXNt2uCllIdltFhYN4TsL5IU3Wz
+         f+67WzizA9s7b3wjdRsNSf6wAguRT8/W0xLrxIM+zD0y19fcSXwwmG//8Ba/KKYoH/ck
+         XZSqpzoX6xVbBJ0gnk3TJFGiHv4bUtwLjQfHq1aCeVkUR8byjONl687PUWDkIYlUScSe
+         ptjblxeDeZ6iP9JetGcVIDSG8L9WbbwkPQFwcQ+DIzroN6zwuC1FzvfZxRMeeZ9Ml1LC
+         0N1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=hNr1tIRlvbH20zaT/8dcl97UmNnkqXdA8xn65ajghas=;
-        b=iFazHnGomuM1vx1UsKG9ZuOxg3p+qlHrdLgnf10FXyehrfcXqqel2QJnG9LLI9dP42
-         K7GbnYa+0BxQ+BudluwAOBNQAORFCOw8w/psQjPuApw1jE1Fm5zOqnz/gDL3WWsYG3Aq
-         danzzB2+3He1jpehZ1gAb/VeXVzHjKmkeBQKrUBLt334W61lBpDjd3/EoLNm3hJOmbXL
-         Q7AAjoA8bGxFyOrprQelRx4KckTDUOTT7kzOgc1S4rHALQRbjALL7Y1v0OTGZ8J3QG8n
-         XsuRbD/jU8uiURnZOw9AOZhq2FF9RKQ4pidJfCJXpVr7rvnYAZNGmwbkyQNBu5XGr5vt
-         cNgw==
-X-Gm-Message-State: AOAM531s8QwFkwLPZHTasOHQd9BORItgbKd3e3tfDFSmk5d6ZnoYizeo
-        1iFdsyDE678Y0YkDaJcOhK1eEwqm8tx8Eq65otE8ll6wLBg/
-X-Google-Smtp-Source: ABdhPJwkGhN2zTd+VnNCjMQ/aUmDoI4F0/coh3xZ0ddSMc0fv2nrT/LNkwAlbZj2Zk5PvNbTbuplIIDPg1K6yUtPrrbaV2gquIrw
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=5A9cDnFjTG3NBzPmqHsPL3YmbPK4apFGGEKOIxq7+1E=;
+        b=DeDL8RJnVArVji6hFf1uZGAQPkb0iKAlquY3AyAFGKkLxXdeTG5KZdZJzuGvgbw1e9
+         Ay8ovmEhKvlLOve4ceoGa10Ibm3U+OM68McoYyjbwI1YEkrp+uLTvVyWCw6G/M2zydqb
+         lU7gt0YJJGED7uIJaxcSkuBKjjmn+7znyld2tkCqcLZ41T9GO7LjPGHftABBc0hB7xOT
+         SpKwPGeWs0KThkONRMthy9p6XUwI1ERI54ork+pE0ySuqP/KijR7k4hmBG818Mk28cJS
+         z0iBL9ZGwhP175StIbgkNGxaAFK+fHvZ2S60Fz9c671OzRDfER+K1BauZHun5SX1+2dn
+         8CIw==
+X-Gm-Message-State: AOAM530+VO8uSdbRHS1ldJXHFm0zt6VSEI5H8/8VVZcdx76BoiZswYfN
+        EA+KH8Ryvs8LyVKnbNgq/3HYIQ==
+X-Google-Smtp-Source: ABdhPJz33AclGjgkKPm9J3Ofni7d342G+PScmj88XhlgW6hBgx7woi/nEA1w/wuw9KvF7wt1x0wiRg==
+X-Received: by 2002:adf:f889:: with SMTP id u9mr82733150wrp.149.1594553793471;
+        Sun, 12 Jul 2020 04:36:33 -0700 (PDT)
+Received: from [10.0.0.1] (system.cloudius-systems.com. [199.203.229.89])
+        by smtp.gmail.com with ESMTPSA id m2sm7020970wmg.0.2020.07.12.04.36.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 12 Jul 2020 04:36:32 -0700 (PDT)
+Subject: Re: always fall back to buffered I/O after invalidation failures,
+ was: Re: [PATCH 2/6] iomap: IOMAP_DIO_RWF_NO_STALE_PAGECACHE return if page
+ invalidation fails
+To:     Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        fdmanana@gmail.com, dsterba@suse.cz, darrick.wong@oracle.com,
+        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+References: <20200629192353.20841-1-rgoldwyn@suse.de>
+ <20200629192353.20841-3-rgoldwyn@suse.de> <20200701075310.GB29884@lst.de>
+ <20200707124346.xnr5gtcysuzehejq@fiona>
+ <20200707125705.GK25523@casper.infradead.org> <20200707130030.GA13870@lst.de>
+ <20200708065127.GM2005@dread.disaster.area>
+ <20200708135437.GP25523@casper.infradead.org>
+ <20200709022527.GQ2005@dread.disaster.area>
+From:   Avi Kivity <avi@scylladb.com>
+Organization: ScyllaDB
+Message-ID: <f86a687a-29bf-ef9c-844c-4354de9a65bb@scylladb.com>
+Date:   Sun, 12 Jul 2020 14:36:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-X-Received: by 2002:a6b:c80a:: with SMTP id y10mr55355839iof.67.1594543457754;
- Sun, 12 Jul 2020 01:44:17 -0700 (PDT)
-Date:   Sun, 12 Jul 2020 01:44:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000060e43005aa3a9476@google.com>
-Subject: KMSAN: uninit-value in path_openat
-From:   syzbot <syzbot+4191a44ad556eacc1a7a@syzkaller.appspotmail.com>
-To:     glider@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200709022527.GQ2005@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+On 09/07/2020 05.25, Dave Chinner wrote:
+>
+>> Nobody's proposing changing Direct I/O to exclusively work through the
+>> pagecache.  The proposal is to behave less weirdly when there's already
+>> data in the pagecache.
+> No, the proposal it to make direct IO behave *less
+> deterministically* if there is data in the page cache.
+>
+> e.g. Instead of having a predicatable submission CPU overhead and
+> read latency of 100us for your data, this proposal makes the claim
+> that it is always better to burn 10x the IO submission CPU for a
+> single IO to copy the data and give that specific IO 10x lower
+> latency than it is to submit 10 async IOs to keep the IO pipeline
+> full.
+>
+> What it fails to take into account is that in spending that CPU time
+> to copy the data, we haven't submitted 10 other IOs and so the
+> actual in-flight IO for the application has decreased. If
+> performance comes from keeping the IO pipeline as close to 100% full
+> as possible, then copying the data out of the page cache will cause
+> performance regressions.
+>
+> i.e. Hit 5 page cache pages in 5 IOs in a row, and the IO queue
+> depth craters because we've only fulfilled 5 complete IOs instead of
+> submitting 50 entire IOs. This is the hidden cost of synchronous IO
+> via CPU data copying vs async IO via hardware offload, and if we
+> take that into account we must look at future hardware performance
+> trends to determine if this cost is going to increase or decrease in
+> future.
+>
+> That is: CPUs are not getting faster anytime soon. IO subsystems are
+> still deep in the "performance doubles every 2 years" part of the
+> technology curve (pcie 3.0->4.0 just happened, 4->5 is a year away,
+> 5->6 is 3-4 years away, etc). Hence our reality is that we are deep
+> within a performance trend curve that tells us synchronous CPU
+> operations are not getting faster, but IO bandwidth and IOPS are
+> going to increase massively over the next 5-10 years. Hence putting
+> (already expensive) synchronous CPU operations in the asynchronous
+> zero-data-touch IO fast path is -exactly the wrong direction to be
+> moving-.
+>
+> This is simple math. The gap between IO latency and bandwidth and
+> CPU addressable memory latency and bandwidth is closing all the
+> time, and the closer that gap gets the less sense it makes to use
+> CPU addressable memory for buffering syscall based read and write
+> IO. We are not quite yet at the cross-over point, but we really
+> aren't that far from it.
+>
+>
 
-HEAD commit:    f0d5ec90 kmsan: apply __no_sanitize_memory to dotraplinkag..
-git tree:       https://github.com/google/kmsan.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=159636b7100000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=86e4f8af239686c6
-dashboard link: https://syzkaller.appspot.com/bug?extid=4191a44ad556eacc1a7a
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-userspace arch: i386
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1073c0bd100000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13974b2f100000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4191a44ad556eacc1a7a@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in may_create_in_sticky fs/namei.c:1060 [inline]
-BUG: KMSAN: uninit-value in do_open fs/namei.c:3207 [inline]
-BUG: KMSAN: uninit-value in path_openat+0x48be/0x5d50 fs/namei.c:3346
-CPU: 1 PID: 8815 Comm: syz-executor333 Not tainted 5.7.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1c9/0x220 lib/dump_stack.c:118
- kmsan_report+0xf7/0x1e0 mm/kmsan/kmsan_report.c:121
- __msan_warning+0x58/0xa0 mm/kmsan/kmsan_instr.c:215
- may_create_in_sticky fs/namei.c:1060 [inline]
- do_open fs/namei.c:3207 [inline]
- path_openat+0x48be/0x5d50 fs/namei.c:3346
- do_file_open_root+0x469/0xb40 fs/namei.c:3401
- file_open_root+0x6f1/0x760 fs/open.c:1128
- do_handle_open+0xa11/0xe30 fs/fhandle.c:232
- __do_compat_sys_open_by_handle_at fs/fhandle.c:277 [inline]
- __se_compat_sys_open_by_handle_at+0x8e/0xa0 fs/fhandle.c:274
- __ia32_compat_sys_open_by_handle_at+0x4a/0x70 fs/fhandle.c:274
- do_syscall_32_irqs_on arch/x86/entry/common.c:339 [inline]
- do_fast_syscall_32+0x3bf/0x6d0 arch/x86/entry/common.c:398
- entry_SYSENTER_compat+0x68/0x77 arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7f3bdd9
-Code: 90 e8 0b 00 00 00 f3 90 0f ae e8 eb f9 8d 74 26 00 89 3c 24 c3 90 90 90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000ff8507fc EFLAGS: 00000207 ORIG_RAX: 0000000000000156
-RAX: ffffffffffffffda RBX: 00000000ffffff9c RCX: 0000000020000200
-RDX: 0000000000002f40 RSI: 0000000000000001 RDI: 00000000080bb4c8
-RBP: 0000000000000012 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-
-Local variable ----nd@do_file_open_root created at:
- do_file_open_root+0xa4/0xb40 fs/namei.c:3385
- do_file_open_root+0xa4/0xb40 fs/namei.c:3385
-=====================================================
+My use-case supports this. The application uses AIO+DIO, but backup may 
+bring pages into page cache. For me, it is best to ignore page cache (as 
+long as it's clean, which it is for backup) and serve from disk as usual.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
