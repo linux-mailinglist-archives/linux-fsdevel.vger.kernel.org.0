@@ -2,105 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E50F21DDFA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 18:55:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D0F121DEB6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 19:28:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730180AbgGMQzM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jul 2020 12:55:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52254 "EHLO
+        id S1730211AbgGMR2L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jul 2020 13:28:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729659AbgGMQzM (ORCPT
+        with ESMTP id S1729644AbgGMR2K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jul 2020 12:55:12 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB39C061794;
-        Mon, 13 Jul 2020 09:55:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=HuDdCAe7E/MURwBsmW1Ls9iUs+3VUz9I3ziwdok6E+A=; b=LWb7VIGpl0H9u+jUhBSNqsfnkh
-        bI7HOZD2MHbpne8P2z3FF2pANyq/O8ttXKz04u7N2xaiedmLEqGd7qOcFY968v9TUKHQcTqqL20Pj
-        xg7dow/Qn1uV2dvTd1URZW80j6On7agD3JZkY64Vl13C7EVuq5rvK8R3oosHdsHeal3ejwztgJoAq
-        QlFoNCgY1gQ5BnT1IW9JY3YBcnbg78ejezNjzOSS3rtMjNoBARVCMx5ckbwcX3Ig7VBuWikmnkQEI
-        GBZE8bahcF2hRsRXOQeIN67F1ZxxHaiCnIX0mnSlZoZdfbE0vIseds6GoqtLPbjxMMHoM7S1LZr7s
-        ro7N6bwA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jv1jA-00043K-2o; Mon, 13 Jul 2020 16:54:52 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E60EE303A02;
-        Mon, 13 Jul 2020 18:54:49 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CCBF020D28BB0; Mon, 13 Jul 2020 18:54:49 +0200 (CEST)
-Date:   Mon, 13 Jul 2020 18:54:49 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Qais Yousef <qais.yousef@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] sched/uclamp: Add a new sysctl to control RT
- default boost value
-Message-ID: <20200713165449.GM10769@hirez.programming.kicks-ass.net>
-References: <20200706142839.26629-1-qais.yousef@arm.com>
- <20200706142839.26629-2-qais.yousef@arm.com>
- <20200713112125.GG10769@hirez.programming.kicks-ass.net>
- <20200713121246.xjif3g4zpja25o5r@e107158-lin.cambridge.arm.com>
- <20200713133558.GK10769@hirez.programming.kicks-ass.net>
- <20200713142754.tri5jljnrzjst2oe@e107158-lin.cambridge.arm.com>
+        Mon, 13 Jul 2020 13:28:10 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EF34C061755
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 10:28:10 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id ga4so18149706ejb.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 10:28:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=pH1K2vUzPfJhwEBVdOMPKdK/A94n7hLqQfvszT16hv4=;
+        b=NRegjh3LBWDlrzUeOyPaQJxImhcWMjvignzs5E6UY4PzLSDkmPbyXeWAHNwJECOTmS
+         cwenOTW+EsLhulDrayiQ/2zwo5NgqG4xyARuMoN+FCHCM4FS8fduE6c0yLQ92Dik+fN9
+         qPQsCSXMlAdYzgiDDf30IbAHXQyAltxf+sHHA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=pH1K2vUzPfJhwEBVdOMPKdK/A94n7hLqQfvszT16hv4=;
+        b=saKL4Z7oTkKKYvHLlF3jf1UVkuvIcpDSM7dkK79UEVbtGgUGHnNzflN5OJm2hleKKw
+         2r8TM1SpsQm6O5nCKMyyruaAV1mvR1CrFjNmelbANfdOlSdEwyqqdizy1tBGxMwpJHrK
+         C641bnt1y73Q8NgZ0iNfJ9m7BEXeJ1Xhh/qwK3gGTX4moiLqSPfFnf9/52s2+9JYGMYq
+         Fjj7hrTJHsH8yk/v9hm8Zy7mvtpWo3ywUPcQ7yTNMvLYX5L2bsWjpW0JRCvN68VMQwQ1
+         rxHtUZpW6yOh6B7ff6h4vWU6hAZh81IMxfppjbMRj1kJM5Mo/HRhV3bnzIaT3JgS/lKw
+         J18A==
+X-Gm-Message-State: AOAM531zNUH5nHXCTn51nlHTn98T1DBQ4e3Df/8ye6pL6TjqhwTzZFvT
+        2IsRrjCnyqNAguh5VFsF5wl+yg==
+X-Google-Smtp-Source: ABdhPJxBuP+bUAv3rzAwsjjREEpJYKQWi2Eub0eeBpMQBkIX2vw77IaPWiNeyjfA4TaX3+SHhnNC/g==
+X-Received: by 2002:a17:906:9244:: with SMTP id c4mr796991ejx.60.1594661288807;
+        Mon, 13 Jul 2020 10:28:08 -0700 (PDT)
+Received: from localhost ([2620:10d:c093:400::5:ef88])
+        by smtp.gmail.com with ESMTPSA id b14sm10150344ejg.18.2020.07.13.10.28.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jul 2020 10:28:08 -0700 (PDT)
+Date:   Mon, 13 Jul 2020 18:28:08 +0100
+From:   Chris Down <chris@chrisdown.name>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Hugh Dickins <hughd@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: [PATCH v7 0/2] tmpfs: inode: Reduce risk of inum overflow
+Message-ID: <cover.1594661218.git.chris@chrisdown.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200713142754.tri5jljnrzjst2oe@e107158-lin.cambridge.arm.com>
+User-Agent: Mutt/1.14.5 (2020-06-23)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 13, 2020 at 03:27:55PM +0100, Qais Yousef wrote:
-> On 07/13/20 15:35, Peter Zijlstra wrote:
-> > > I protect this with rcu_read_lock() which as far as I know synchronize_rcu()
-> > > will ensure if we do the update during this section; we'll wait for it to
-> > > finish. New forkees entering the rcu_read_lock() section will be okay because
-> > > they should see the new value.
-> > > 
-> > > spinlocks() and mutexes seemed inferior to this approach.
-> > 
-> > Well, didn't we just write in another patch that p->uclamp_* was
-> > protected by both rq->lock and p->pi_lock?
-> 
-> __setscheduler_uclamp() path is holding these locks, not sure by design or it
-> just happened this path holds the lock. I can't see the lock in the
-> uclamp_fork() path. But it's hard sometimes to unfold the layers of callers,
-> especially not all call sites are annotated for which lock is assumed to be
-> held.
-> 
-> Is it safe to hold the locks in uclamp_fork() while the task is still being
-> created? My new code doesn't hold it of course.
-> 
-> We can enforce this rule if you like. Though rcu critical section seems lighter
-> weight to me.
-> 
-> If all of this does indeed start looking messy we can put the update in
-> a delayed worker and schedule that instead of doing synchronous setup.
+In Facebook production we are seeing heavy i_ino wraparounds on tmpfs.
+On affected tiers, in excess of 10% of hosts show multiple files with
+different content and the same inode number, with some servers even
+having as many as 150 duplicated inode numbers with differing file
+content.
 
-sched_fork() doesn't need the locks, because at that point the task
-isn't visible yet. HOWEVER, sched_post_fork() is after pid-hash (per
-design) and thus the task is visible, so we can race against
-sched_setattr(), so we'd better hold those locks anyway.
+This causes actual, tangible problems in production. For example, we
+have complaints from those working on remote caches that their
+application is reporting cache corruptions because it uses (device,
+inodenum) to establish the identity of a particular cache object, but
+because it's not unique any more, the application refuses to continue
+and reports cache corruption. Even worse, sometimes applications may not
+even detect the corruption but may continue anyway, causing phantom and
+hard to debug behaviour.
+
+In general, userspace applications expect that (device, inodenum) should
+be enough to be uniquely point to one inode, which seems fair enough.
+One might also need to check the generation, but in this case:
+
+1. That's not currently exposed to userspace
+   (ioctl(...FS_IOC_GETVERSION...) returns ENOTTY on tmpfs);
+2. Even with generation, there shouldn't be two live inodes with the
+   same inode number on one device.
+
+In order to mitigate this, we take a two-pronged approach:
+
+1. Moving inum generation from being global to per-sb for tmpfs. This
+   itself allows some reduction in i_ino churn. This works on both 64-
+   and 32- bit machines.
+2. Adding inode{64,32} for tmpfs. This fix is supported on machines with
+   64-bit ino_t only: we allow users to mount tmpfs with a new inode64
+   option that uses the full width of ino_t, or CONFIG_TMPFS_INODE64.
+
+You can see how this compares to previous related patches which didn't
+implement this per-superblock:
+
+- https://patchwork.kernel.org/patch/11254001/
+- https://patchwork.kernel.org/patch/11023915/
+
+Changes since v6:
+
+- Fix misalignment in percpu batching, thanks Matthew.
+
+Chris Down (2):
+  tmpfs: Per-superblock i_ino support
+  tmpfs: Support 64-bit inums per-sb
+
+ Documentation/filesystems/tmpfs.rst |  11 +++
+ fs/Kconfig                          |  15 ++++
+ include/linux/fs.h                  |  15 ++++
+ include/linux/shmem_fs.h            |   3 +
+ mm/shmem.c                          | 127 ++++++++++++++++++++++++++--
+ 5 files changed, 166 insertions(+), 5 deletions(-)
+
+-- 
+2.27.0
+
