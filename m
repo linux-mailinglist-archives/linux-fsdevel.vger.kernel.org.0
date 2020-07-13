@@ -2,123 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F3BD21CDCC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 05:35:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6BC621CDEF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 06:03:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbgGMDfE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Jul 2020 23:35:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47574 "EHLO mail.kernel.org"
+        id S1725859AbgGMECm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jul 2020 00:02:42 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:37043 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726491AbgGMDfE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Jul 2020 23:35:04 -0400
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725554AbgGMECm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Jul 2020 00:02:42 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D2E320722;
-        Mon, 13 Jul 2020 03:35:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594611303;
-        bh=41IYY+/hX2sb2b1GBvHrVsrCwrGfmHuoNNwcohgG4Us=;
-        h=From:To:Cc:Subject:Date:From;
-        b=zKLykD+ebs0yY0QSgcLifTmGtf0olv8jsDAubALRq2trmmLiErvOdj5Lt9Q5pktgz
-         UerZhze4E3Z8Vnq8R++twoa81O8L6/XVIA6/7fKEO0o0KQBh9sBm7yvNt/Xd4/ZOtB
-         J3u9YYUlHTWNLZLawnI+60HlK4L2C0qCxnhIAL2w=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: [PATCH] fs/direct-io: avoid data race on ->s_dio_done_wq
-Date:   Sun, 12 Jul 2020 20:33:30 -0700
-Message-Id: <20200713033330.205104-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.27.0
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4B4qjp6mDkz9sR4;
+        Mon, 13 Jul 2020 14:02:38 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1594612959;
+        bh=vWeQzD85atpg+LjMgT4McIZoQRyk/+HkVAXmS4w/2c0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Rr2m+A6YFY7yH7vjsBrmHnpkNQ2Pw/szNrPHXda2KEkIAbCML+ZoPE4Cs/l85Yyh4
+         F4tIdB4UcV5S3rNa9sbeTXB29a+n1uGqn510Za7aMK/h/eIafM32XNggwG/1V5nz/J
+         BoGwmHFbAEjhs1Exrv4g//EY5PJ4FNyD3UM8gvWz5wJhmnrTep54XfdDojC3/HYH5O
+         wtvCg7CXvrxW18YbtC+/0NS0ABznm/LEJsBZCwc195wEcjKL6q+6OmG9fS4HU0HVYF
+         EFxtvV/8HkDdAYgS14yup5Iv0ir3n5/GW1yV3IgBWNjt08KFu3cK7OTll1N0OTLWft
+         TJD4wRChymSxw==
+Date:   Mon, 13 Jul 2020 14:02:38 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        Tariq Toukan <tariqt@mellanox.com>
+Subject: Re: mmotm 2020-07-09-21-00 uploaded
+ (drivers/net/ethernet/mellanox/mlx5/core/en_main.c)
+Message-ID: <20200713140238.72649525@canb.auug.org.au>
+In-Reply-To: <8a6f8902-c36c-b46c-8e6f-05ae612d25ea@infradead.org>
+References: <20200710040047.md-jEb0TK%akpm@linux-foundation.org>
+        <8a6f8902-c36c-b46c-8e6f-05ae612d25ea@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/a.F=98_FQpFriK6K_UyZ8YF";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+--Sig_/a.F=98_FQpFriK6K_UyZ8YF
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Fix the preliminary checks for ->s_dio_done_wq to use READ_ONCE(), since
-it's a data race, and technically the behavior is undefined without
-READ_ONCE().  Also, on one CPU architecture (Alpha), the data read
-dependency barrier included in READ_ONCE() is needed to guarantee that
-the pointed-to struct is seen as fully initialized.
+Hi Randy,
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/direct-io.c       | 8 +++-----
- fs/internal.h        | 9 ++++++++-
- fs/iomap/direct-io.c | 3 +--
- 3 files changed, 12 insertions(+), 8 deletions(-)
+On Fri, 10 Jul 2020 10:40:29 -0700 Randy Dunlap <rdunlap@infradead.org> wro=
+te:
+>
+> on i386:
+>=20
+> In file included from ../drivers/net/ethernet/mellanox/mlx5/core/en_main.=
+c:49:0:
+> ../drivers/net/ethernet/mellanox/mlx5/core/en_accel/en_accel.h: In functi=
+on =E2=80=98mlx5e_accel_sk_get_rxq=E2=80=99:
+> ../drivers/net/ethernet/mellanox/mlx5/core/en_accel/en_accel.h:153:12: er=
+ror: implicit declaration of function =E2=80=98sk_rx_queue_get=E2=80=99; di=
+d you mean =E2=80=98sk_rx_queue_set=E2=80=99? [-Werror=3Dimplicit-function-=
+declaration]
+>   int rxq =3D sk_rx_queue_get(sk);
+>             ^~~~~~~~~~~~~~~
+>             sk_rx_queue_set
 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 6d5370eac2a8..26221ae24156 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -590,7 +590,7 @@ static inline int dio_bio_reap(struct dio *dio, struct dio_submit *sdio)
-  * filesystems that don't need it and also allows us to create the workqueue
-  * late enough so the we can include s_id in the name of the workqueue.
-  */
--int sb_init_dio_done_wq(struct super_block *sb)
-+int __sb_init_dio_done_wq(struct super_block *sb)
- {
- 	struct workqueue_struct *old;
- 	struct workqueue_struct *wq = alloc_workqueue("dio/%s",
-@@ -615,9 +615,7 @@ static int dio_set_defer_completion(struct dio *dio)
- 	if (dio->defer_completion)
- 		return 0;
- 	dio->defer_completion = true;
--	if (!sb->s_dio_done_wq)
--		return sb_init_dio_done_wq(sb);
--	return 0;
-+	return sb_init_dio_done_wq(sb);
- }
- 
- /*
-@@ -1250,7 +1248,7 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 		retval = 0;
- 		if (iocb->ki_flags & IOCB_DSYNC)
- 			retval = dio_set_defer_completion(dio);
--		else if (!dio->inode->i_sb->s_dio_done_wq) {
-+		else {
- 			/*
- 			 * In case of AIO write racing with buffered read we
- 			 * need to defer completion. We can't decide this now,
-diff --git a/fs/internal.h b/fs/internal.h
-index 9b863a7bd708..6736c9eee978 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -178,7 +178,14 @@ extern void mnt_pin_kill(struct mount *m);
- extern const struct dentry_operations ns_dentry_operations;
- 
- /* direct-io.c: */
--int sb_init_dio_done_wq(struct super_block *sb);
-+int __sb_init_dio_done_wq(struct super_block *sb);
-+static inline int sb_init_dio_done_wq(struct super_block *sb)
-+{
-+	/* pairs with cmpxchg() in __sb_init_dio_done_wq() */
-+	if (likely(READ_ONCE(sb->s_dio_done_wq)))
-+		return 0;
-+	return __sb_init_dio_done_wq(sb);
-+}
- 
- /*
-  * fs/stat.c:
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index ec7b78e6feca..dc7fe898dab8 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -487,8 +487,7 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		dio_warn_stale_pagecache(iocb->ki_filp);
- 	ret = 0;
- 
--	if (iov_iter_rw(iter) == WRITE && !wait_for_completion &&
--	    !inode->i_sb->s_dio_done_wq) {
-+	if (iov_iter_rw(iter) == WRITE && !wait_for_completion) {
- 		ret = sb_init_dio_done_wq(inode->i_sb);
- 		if (ret < 0)
- 			goto out_free_dio;
--- 
-2.27.0
+Caused by commit
 
+  1182f3659357 ("net/mlx5e: kTLS, Add kTLS RX HW offload support")
+
+from the net-next tree.  Presumably CONFIG_XPS is not set.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/a.F=98_FQpFriK6K_UyZ8YF
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8L3N4ACgkQAVBC80lX
+0GxeJQf/f6Wyg7WRuxi4cpGEg9Z6M6hlgGSMFlkj3ZiCJ+L9O0HC3d21ZBJm8oOS
+PQBMbSZI8KnWqWIlIW922w82Wz3plpENMPiQZFo7rqAev47OHt/6ICuHLBcVyvVk
+REoOq5rp4cAIVrynBaOpldxRfiA+ympEdq8Mefz3/LYB60FRAoXIHe2G1xbXiv/x
+v9TPVFNef5TOurprjSmv4UkBz2myohPfn5m57Ps9veUrZldgB49eoTUTIOwrLUGz
+alWdiIW5hCAXttqNqnpMhtQJUNLxuR52gIxOBhPgm7f+8J0BT2lqvFtLGLghFVkg
+9VjdxhP5ut4zxxHzMzurJuSAR/XvHA==
+=M9pq
+-----END PGP SIGNATURE-----
+
+--Sig_/a.F=98_FQpFriK6K_UyZ8YF--
