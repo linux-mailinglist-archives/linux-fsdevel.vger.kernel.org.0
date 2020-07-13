@@ -2,107 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E98821DB5D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 18:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAEB321DB63
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 18:15:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729747AbgGMQOc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jul 2020 12:14:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45898 "EHLO
+        id S1729782AbgGMQPe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jul 2020 12:15:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729649AbgGMQOb (ORCPT
+        with ESMTP id S1729747AbgGMQPe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jul 2020 12:14:31 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11FD4C061794
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 09:14:31 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id d18so14150488edv.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 09:14:30 -0700 (PDT)
+        Mon, 13 Jul 2020 12:15:34 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB8CC061755
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 09:15:34 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id bm28so12176920edb.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 09:15:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A7J/dIrjZFio1lV9NcYy8QCYPiQ6BKOzuPMbzTW6hKs=;
-        b=jZ8C1lVMF7Tzy4ozH3eARzBxNxa9AIKbhB4vTgGwEfjvMCcNh0hz1RIR3OcaIj7wTk
-         6EtwLWhVjnRBWdizDDwNsRm9wBP+TfCyFgZ+dA+7hP13C8kt0HVbfG5jOOt7NrVOSZPz
-         wsAwP1yxi6uvhgjRVGawUaT1ZuygIX8yggZUQ=
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=qYE0MGzN5oZiWXIC6Rq6ejY3VVjgiXoPpvYjyKeBdiI=;
+        b=dqAuVp/Md6dltU2+wWd9YmXmJl0gjR4sK5zDAvjpTsJSVJFEJFpBOpTEFPSYpZrDap
+         FvgwvNzH7PYXXjZj0kRjjJYnHYbr40UVkpwOFFuDRfDDDHTwKOApy25cUst736JqiSEN
+         1pXb/1YwmZ1btxsaqDTInRVQlHzc3Smv65CFY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A7J/dIrjZFio1lV9NcYy8QCYPiQ6BKOzuPMbzTW6hKs=;
-        b=nYSDA4S/bLWexnZ9wuMWcus4OsT6elsMwquYsPFz6lWp0vsVB03od3/fCWKhzpK4wQ
-         SzXE9HXlwBFp08ws62TAOWDaqRcUyYLLQdOBwX4oe7IC2wkf32MB1XHdoh7yE9Hb4YIk
-         0S0N9yi9P/1hZ4t9BTAvHBdFbxzkP5O9sYTnbbDwxFevmHR/OJGQhlezIMc3RohDhh3j
-         phgiQW8LZ1NFwuq2YPGksV8W1jdyWRjiPOv4lKs2jPlmOoSJ9QA1yMz6vyhcU4kqWoz7
-         wW3uIwsYezrP9VmTL+wy+phKRltco9Lj11gzRtlrTiXZEOaragftwLNyzrXx2GDLYBe2
-         PLdg==
-X-Gm-Message-State: AOAM533k3tMHMlqDn17pgHKv+hBnMgVCrQutwVjP6fqJzdaD/V1Kb/L+
-        Mwd68ephTta7Se+62OuPN4GIzxs/6Ek5qjT1r530zQ==
-X-Google-Smtp-Source: ABdhPJzXRGJE3TcK5wECCdKKfoKHfG85l1u/aM1eJ1RxfsXlJyiUiSBf3ojXMDQKJF70SFgMqKDXfR09Gt/l9JKhYqY=
-X-Received: by 2002:a50:f413:: with SMTP id r19mr165397edm.17.1594656869606;
- Mon, 13 Jul 2020 09:14:29 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=qYE0MGzN5oZiWXIC6Rq6ejY3VVjgiXoPpvYjyKeBdiI=;
+        b=JeBLISV8n1qfUeh6aU7icvfL7EtDGP8NE0krryUbB8ZMaYdPa03N4wBCSHQwI0OjY7
+         E/ePhwZqcaJPtYdwd6Y9EdwWWSpeTBU+OgU/bdLunpqN2h1l9Ej0PYy1p4TFictvPlO7
+         nxTLrgIpaqjbnvoiLtTjxaQ0gcGSe+mEFaIjIp5BxzIyEuKNk1lJYtiMfiTgI7tM8iLr
+         byUjR/vYEzeyBe52ehZiZq8ntzaNLEJWweb35nzqpUAZ0setE5cPSljBnt9EBHWQEYH1
+         dfVENViwHa8FEl1iVmYFs8hQKCOvpzDcLiin8/aVPQKamBGvSa5JU0OICI0HuQm5YkYk
+         YePg==
+X-Gm-Message-State: AOAM531R1o7fonY2NUnoyekR/8T/tb+EJxjlsbcIxhjubbFWeJy8txeU
+        E4MP4qD1WDLSrxBe6ZYXkGU43g==
+X-Google-Smtp-Source: ABdhPJzsRdZY8noRNZwAyszwwF9P9Y/ARLnpJW6z3ijXs5crRBCn6Voi+/JfVOJDz2petEtU+vf66w==
+X-Received: by 2002:a50:bf09:: with SMTP id f9mr133964edk.249.1594656932825;
+        Mon, 13 Jul 2020 09:15:32 -0700 (PDT)
+Received: from localhost ([2620:10d:c093:400::5:ef88])
+        by smtp.gmail.com with ESMTPSA id n9sm12163985edr.46.2020.07.13.09.15.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jul 2020 09:15:32 -0700 (PDT)
+Date:   Mon, 13 Jul 2020 17:15:32 +0100
+From:   Chris Down <chris@chrisdown.name>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Hugh Dickins <hughd@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: [PATCH v6 0/2] tmpfs: inode: Reduce risk of inum overflow
+Message-ID: <cover.1594656618.git.chris@chrisdown.name>
 MIME-Version: 1.0
-References: <2733b41a-b4c6-be94-0118-a1a8d6f26eec@virtuozzo.com>
- <d6e8ef46-c311-b993-909c-4ae2823e2237@virtuozzo.com> <CAJfpegupeWA_dFi5Q4RBSdHFAkutEeRk3Z1KZ5mtfkFn-ROo=A@mail.gmail.com>
- <8da94b27-484c-98e4-2152-69d282bcfc50@virtuozzo.com>
-In-Reply-To: <8da94b27-484c-98e4-2152-69d282bcfc50@virtuozzo.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 13 Jul 2020 18:14:16 +0200
-Message-ID: <CAJfpegvU2JQcNM+0mcMPk-_e==RcT0xjqYUHCTzx3g0oCw6RiA@mail.gmail.com>
-Subject: Re: [PATCH] fuse_writepages_fill() optimization to avoid WARN_ON in tree_insert
-To:     Vasily Averin <vvs@virtuozzo.com>
-Cc:     linux-fsdevel@vger.kernel.org, Maxim Patlasov <maximvp@gmail.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.14.5 (2020-06-23)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 13, 2020 at 10:02 AM Vasily Averin <vvs@virtuozzo.com> wrote:
->
-> On 7/11/20 7:01 AM, Miklos Szeredi wrote:
-> > On Thu, Jun 25, 2020 at 11:02 AM Vasily Averin <vvs@virtuozzo.com> wrote:
-> >>
-> >> In current implementation fuse_writepages_fill() tries to share the code:
-> >> for new wpa it calls tree_insert() with num_pages = 0
-> >> then switches to common code used non-modified num_pages
-> >> and increments it at the very end.
-> >>
-> >> Though it triggers WARN_ON(!wpa->ia.ap.num_pages) in tree_insert()
-> >>  WARNING: CPU: 1 PID: 17211 at fs/fuse/file.c:1728 tree_insert+0xab/0xc0 [fuse]
-> >>  RIP: 0010:tree_insert+0xab/0xc0 [fuse]
-> >>  Call Trace:
-> >>   fuse_writepages_fill+0x5da/0x6a0 [fuse]
-> >>   write_cache_pages+0x171/0x470
-> >>   fuse_writepages+0x8a/0x100 [fuse]
-> >>   do_writepages+0x43/0xe0
-> >>
-> >> This patch re-works fuse_writepages_fill() to call tree_insert()
-> >> with num_pages = 1 and avoids its subsequent increment and
-> >> an extra spin_lock(&fi->lock) for newly added wpa.
-> >
-> > Looks good.  However, I don't like the way fuse_writepage_in_flight()
-> > is silently changed to insert page into the rb_tree.  Also the
-> > insertion can be merged with the search for in-flight and be done
-> > unconditionally to simplify the logic.  See attached patch.
->
-> Your patch looks correct for me except 2 things:
+In Facebook production we are seeing heavy i_ino wraparounds on tmpfs.
+On affected tiers, in excess of 10% of hosts show multiple files with
+different content and the same inode number, with some servers even
+having as many as 150 duplicated inode numbers with differing file
+content.
 
-Thanks for reviewing.
+This causes actual, tangible problems in production. For example, we
+have complaints from those working on remote caches that their
+application is reporting cache corruptions because it uses (device,
+inodenum) to establish the identity of a particular cache object, but
+because it's not unique any more, the application refuses to continue
+and reports cache corruption. Even worse, sometimes applications may not
+even detect the corruption but may continue anyway, causing phantom and
+hard to debug behaviour.
 
-> 1) you have lost "data->wpa = NULL;" when fuse_writepage_add() returns false.
+In general, userspace applications expect that (device, inodenum) should
+be enough to be uniquely point to one inode, which seems fair enough.
+One might also need to check the generation, but in this case:
 
-This is intentional, because this is in the !data->wpa branch.
+1. That's not currently exposed to userspace
+   (ioctl(...FS_IOC_GETVERSION...) returns ENOTTY on tmpfs);
+2. Even with generation, there shouldn't be two live inodes with the
+   same inode number on one device.
 
-> 2) in the same case old code did not set data->orig_pages[ap->num_pages] = page;
+In order to mitigate this, we take a two-pronged approach:
 
-That is also intentional, in this case the origi_pages[0] is either
-overwritten with the next page or discarded due to data->wpa being
-NULL.
+1. Moving inum generation from being global to per-sb for tmpfs. This
+   itself allows some reduction in i_ino churn. This works on both 64-
+   and 32- bit machines.
+2. Adding inode{64,32} for tmpfs. This fix is supported on machines with
+   64-bit ino_t only: we allow users to mount tmpfs with a new inode64
+   option that uses the full width of ino_t, or CONFIG_TMPFS_INODE64.
 
-I'll write these up in the patch header.
+You can see how this compares to previous related patches which didn't
+implement this per-superblock:
 
-Thanks,
-Miklos
+- https://patchwork.kernel.org/patch/11254001/
+- https://patchwork.kernel.org/patch/11023915/
+
+Changes since v5 (it's been a while, eh?):
+
+- Implement percpu batching for SB_KERNMOUNT at Hugh's suggestion.
+- Hugh also pointed out that user-exposed tmpfs can also now have
+  max_inodes == 0, so we have to account for that. I just use
+  SB_KERNMOUNT to do that in all the places we used to look at
+  max_inodes.
+
+Chris Down (2):
+  tmpfs: Per-superblock i_ino support
+  tmpfs: Support 64-bit inums per-sb
+
+ Documentation/filesystems/tmpfs.rst |  11 +++
+ fs/Kconfig                          |  15 ++++
+ include/linux/fs.h                  |  15 ++++
+ include/linux/shmem_fs.h            |   3 +
+ mm/shmem.c                          | 127 ++++++++++++++++++++++++++--
+ 5 files changed, 166 insertions(+), 5 deletions(-)
+
+-- 
+2.27.0
+
