@@ -2,44 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E9F4F21DCEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 18:35:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A89A821DCF4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 18:35:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbgGMQfg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jul 2020 12:35:36 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:48716 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730713AbgGMQff (ORCPT
+        id S1730152AbgGMQfu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jul 2020 12:35:50 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:41354 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729751AbgGMQfq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jul 2020 12:35:35 -0400
+        Mon, 13 Jul 2020 12:35:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594658133;
+        s=mimecast20190719; t=1594658144;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=wQkmMwKqdoqPES4EgtSnMTmwzuuUgpaX2PYBWluvNRQ=;
-        b=PvATHN9DVuK0+31uvBsPEDkGeMPFDC8g6ZvrGw5sOidv/1+K+n8XRwPNM2E8OnihoPkFFE
-        +TCxehYkWNQrEG7ev3W+tW6PZQ7W4jPSmD08sLermsTrWOpfL0fH6RM73CVzGJzji9v1gT
-        saCpbO436N8tNWvSBHwmLdDLqbYm+TU=
+        bh=82R50oM3fLGYFRzRYFN6AIMM8NnlH3BJGDV9nGHGEXg=;
+        b=Z+OksT5GEdD1RishtKrnzTACgjS72G8eUuXa6HEE0qFvhVBrnsGC9tW+LbP+yrdzg9vdtM
+        fp3+SzCDhlNQZlQpu5/8TLcQDJLtz+Tib2xITigTSgr/sBRWvnagTtipH1enIKf6XMlJop
+        xKOn/CqFhmmGCoZEKvl1E704e/zWDlE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-191-FznXJ4y8M4qbT_ZvwuEGwg-1; Mon, 13 Jul 2020 12:35:28 -0400
-X-MC-Unique: FznXJ4y8M4qbT_ZvwuEGwg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-305-Q3WUxPnjPveEQof5IUo9kA-1; Mon, 13 Jul 2020 12:35:41 -0400
+X-MC-Unique: Q3WUxPnjPveEQof5IUo9kA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 07B1E107ACCA;
-        Mon, 13 Jul 2020 16:35:27 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D1C871080;
+        Mon, 13 Jul 2020 16:35:38 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-113.rdu2.redhat.com [10.10.112.113])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E22B60CD0;
-        Mon, 13 Jul 2020 16:35:21 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 18FBF19C66;
+        Mon, 13 Jul 2020 16:35:32 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 25/32] fscache: Display cache-specific data in
- /proc/fs/fscache/objects
+Subject: [PATCH 26/32] fscache: Remove more obsolete stats
 From:   David Howells <dhowells@redhat.com>
 To:     Trond Myklebust <trondmy@hammerspace.com>,
         Anna Schumaker <anna.schumaker@netapp.com>,
@@ -52,193 +51,200 @@ Cc:     Jeff Layton <jlayton@redhat.com>,
         linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
         ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 13 Jul 2020 17:35:20 +0100
-Message-ID: <159465812047.1376674.773368234437370021.stgit@warthog.procyon.org.uk>
+Date:   Mon, 13 Jul 2020 17:35:32 +0100
+Message-ID: <159465813226.1376674.13527511953573909880.stgit@warthog.procyon.org.uk>
 In-Reply-To: <159465784033.1376674.18106463693989811037.stgit@warthog.procyon.org.uk>
 References: <159465784033.1376674.18106463693989811037.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.22
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Allow the cache to add information in /proc/fs/fscache/objects instead of
-displaying cookie key and aux data - which can be seen in the cookies file.
+Remove some more stats that have become obsolete.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- fs/cachefiles/content-map.c   |   41 +++++++++++++++++++++++++++++++++++++++++
- fs/cachefiles/interface.c     |    1 +
- fs/cachefiles/internal.h      |    1 +
- fs/fscache/object-list.c      |   33 +++------------------------------
- include/linux/fscache-cache.h |    4 ++++
- 5 files changed, 50 insertions(+), 30 deletions(-)
+ fs/fscache/internal.h |   18 ++----------------
+ fs/fscache/obj.c      |    6 +++---
+ fs/fscache/stats.c    |   50 +++++++++----------------------------------------
+ 3 files changed, 14 insertions(+), 60 deletions(-)
 
-diff --git a/fs/cachefiles/content-map.c b/fs/cachefiles/content-map.c
-index 91c44bb39a93..f2a10e8d8d6d 100644
---- a/fs/cachefiles/content-map.c
-+++ b/fs/cachefiles/content-map.c
-@@ -396,3 +396,44 @@ void cachefiles_save_content_map(struct cachefiles_object *object)
+diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
+index 2674438ccafd..d2b856aa5f0e 100644
+--- a/fs/fscache/internal.h
++++ b/fs/fscache/internal.h
+@@ -165,25 +165,13 @@ extern void fscache_proc_cleanup(void);
+  * stats.c
+  */
+ #ifdef CONFIG_FSCACHE_STATS
+-extern atomic_t fscache_n_op_pend;
+-extern atomic_t fscache_n_op_run;
+-extern atomic_t fscache_n_op_enqueue;
+-extern atomic_t fscache_n_op_deferred_release;
+-extern atomic_t fscache_n_op_initialised;
+-extern atomic_t fscache_n_op_release;
+-extern atomic_t fscache_n_op_gc;
+-extern atomic_t fscache_n_op_cancelled;
+-extern atomic_t fscache_n_op_rejected;
+-
+ extern atomic_t fscache_n_acquires;
+ extern atomic_t fscache_n_acquires_null;
+ extern atomic_t fscache_n_acquires_no_cache;
+ extern atomic_t fscache_n_acquires_ok;
+-extern atomic_t fscache_n_acquires_nobufs;
+ extern atomic_t fscache_n_acquires_oom;
  
- 	_leave(" = %zd", ret);
+ extern atomic_t fscache_n_invalidates;
+-extern atomic_t fscache_n_invalidates_run;
+ 
+ extern atomic_t fscache_n_updates;
+ extern atomic_t fscache_n_updates_null;
+@@ -202,15 +190,13 @@ extern atomic_t fscache_n_object_no_alloc;
+ extern atomic_t fscache_n_object_lookups;
+ extern atomic_t fscache_n_object_lookups_negative;
+ extern atomic_t fscache_n_object_lookups_positive;
+-extern atomic_t fscache_n_object_lookups_timed_out;
+-extern atomic_t fscache_n_object_created;
++extern atomic_t fscache_n_object_creates;
+ extern atomic_t fscache_n_object_avail;
+ extern atomic_t fscache_n_object_dead;
+ 
+ extern atomic_t fscache_n_cop_alloc_object;
+ extern atomic_t fscache_n_cop_lookup_object;
+-extern atomic_t fscache_n_cop_lookup_complete;
+-extern atomic_t fscache_n_cop_grab_object;
++extern atomic_t fscache_n_cop_create_object;
+ extern atomic_t fscache_n_cop_invalidate_object;
+ extern atomic_t fscache_n_cop_update_object;
+ extern atomic_t fscache_n_cop_drop_object;
+diff --git a/fs/fscache/obj.c b/fs/fscache/obj.c
+index 63373b99ac34..baab7c465142 100644
+--- a/fs/fscache/obj.c
++++ b/fs/fscache/obj.c
+@@ -47,10 +47,10 @@ static int fscache_do_lookup_object(struct fscache_object *object, void *data)
+ static int fscache_do_create_object(struct fscache_object *object, void *data)
+ {
+ 	int ret;
+-	fscache_stat(&fscache_n_object_lookups);
+-	fscache_stat(&fscache_n_cop_lookup_object);
++	fscache_stat(&fscache_n_object_creates);
++	fscache_stat(&fscache_n_cop_create_object);
+ 	ret = object->cache->ops->create_object(object, data);
+-	fscache_stat_d(&fscache_n_cop_lookup_object);
++	fscache_stat_d(&fscache_n_cop_create_object);
+ 	return ret;
  }
-+
-+/*
-+ * Display object information in proc.
-+ */
-+int cachefiles_display_object(struct seq_file *m, struct fscache_object *_object)
-+{
-+	struct cachefiles_object *object =
-+		container_of(_object, struct cachefiles_object, fscache);
-+
-+	if (object->fscache.cookie->type == FSCACHE_COOKIE_TYPE_INDEX) {
-+		if (object->content_info != CACHEFILES_CONTENT_NO_DATA)
-+			seq_printf(m, " ???%u???", object->content_info);
-+	} else {
-+		switch (object->content_info) {
-+		case CACHEFILES_CONTENT_NO_DATA:
-+			seq_puts(m, " <n>");
-+			break;
-+		case CACHEFILES_CONTENT_SINGLE:
-+			seq_puts(m, " <s>");
-+			break;
-+		case CACHEFILES_CONTENT_ALL:
-+			seq_puts(m, " <a>");
-+			break;
-+		case CACHEFILES_CONTENT_MAP:
-+			read_lock_bh(&object->content_map_lock);
-+			if (object->content_map) {
-+				seq_printf(m, " %*phN",
-+					   object->content_map_size,
-+					   object->content_map);
-+			}
-+			read_unlock_bh(&object->content_map_lock);
-+			break;
-+		default:
-+			seq_printf(m, " <%u>", object->content_info);
-+			break;
-+		}
-+	}
-+
-+	seq_putc(m, '\n');
-+	return 0;
-+}
-diff --git a/fs/cachefiles/interface.c b/fs/cachefiles/interface.c
-index e73de62d0e73..78180d269c5f 100644
---- a/fs/cachefiles/interface.c
-+++ b/fs/cachefiles/interface.c
-@@ -491,4 +491,5 @@ const struct fscache_cache_ops cachefiles_cache_ops = {
- 	.shape_request		= cachefiles_shape_request,
- 	.read			= cachefiles_read,
- 	.write			= cachefiles_write,
-+	.display_object		= cachefiles_display_object,
- };
-diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-index 2ea469b77712..c91a9b3c5bd5 100644
---- a/fs/cachefiles/internal.h
-+++ b/fs/cachefiles/internal.h
-@@ -132,6 +132,7 @@ extern void cachefiles_expand_content_map(struct cachefiles_object *object, loff
- extern void cachefiles_shorten_content_map(struct cachefiles_object *object, loff_t new_size);
- extern bool cachefiles_load_content_map(struct cachefiles_object *object);
- extern void cachefiles_save_content_map(struct cachefiles_object *object);
-+extern int cachefiles_display_object(struct seq_file *m, struct fscache_object *object);
  
+diff --git a/fs/fscache/stats.c b/fs/fscache/stats.c
+index 583817f4f113..ccca0016fd26 100644
+--- a/fs/fscache/stats.c
++++ b/fs/fscache/stats.c
+@@ -14,25 +14,13 @@
  /*
-  * daemon.c
-diff --git a/fs/fscache/object-list.c b/fs/fscache/object-list.c
-index 5777f909d31a..361610e124bd 100644
---- a/fs/fscache/object-list.c
-+++ b/fs/fscache/object-list.c
-@@ -155,7 +155,6 @@ static int fscache_objlist_show(struct seq_file *m, void *v)
- 	struct fscache_cookie *cookie;
- 	unsigned long config = data->config;
- 	char _type[3], *type;
--	u8 *p;
- 
- 	if ((unsigned long) v == 1) {
- 		seq_puts(m, "OBJECT   PARENT   USE CHLDN OPS FL  S"
-@@ -201,8 +200,6 @@ static int fscache_objlist_show(struct seq_file *m, void *v)
- 		   obj->stage);
- 
- 	if (obj->cookie) {
--		uint16_t keylen = 0, auxlen = 0;
+  * operation counters
+  */
+-atomic_t fscache_n_op_pend;
+-atomic_t fscache_n_op_run;
+-atomic_t fscache_n_op_enqueue;
+-atomic_t fscache_n_op_deferred_release;
+-atomic_t fscache_n_op_initialised;
+-atomic_t fscache_n_op_release;
+-atomic_t fscache_n_op_gc;
+-atomic_t fscache_n_op_cancelled;
+-atomic_t fscache_n_op_rejected;
 -
- 		switch (cookie->type) {
- 		case 0:
- 			type = "IX";
-@@ -211,8 +208,7 @@ static int fscache_objlist_show(struct seq_file *m, void *v)
- 			type = "DT";
- 			break;
- 		default:
--			snprintf(_type, sizeof(_type), "%02u",
--				 cookie->type);
-+			snprintf(_type, sizeof(_type), "%02x", cookie->type);
- 			type = _type;
- 			break;
- 		}
-@@ -223,34 +219,11 @@ static int fscache_objlist_show(struct seq_file *m, void *v)
- 			   type,
- 			   cookie->stage,
- 			   cookie->flags);
--
--		if (config & FSCACHE_OBJLIST_CONFIG_KEY)
--			keylen = cookie->key_len;
--
--		if (config & FSCACHE_OBJLIST_CONFIG_AUX)
--			auxlen = cookie->aux_len;
--
--		if (keylen > 0 || auxlen > 0) {
--			seq_puts(m, " ");
--			p = keylen <= sizeof(cookie->inline_key) ?
--				cookie->inline_key : cookie->key;
--			for (; keylen > 0; keylen--)
--				seq_printf(m, "%02x", *p++);
--			if (auxlen > 0) {
--				if (config & FSCACHE_OBJLIST_CONFIG_KEY)
--					seq_puts(m, ", ");
--				p = auxlen <= sizeof(cookie->inline_aux) ?
--					cookie->inline_aux : cookie->aux;
--				for (; auxlen > 0; auxlen--)
--					seq_printf(m, "%02x", *p++);
--			}
--		}
--
--		seq_puts(m, "\n");
- 	} else {
- 		seq_puts(m, "<no_netfs>\n");
- 	}
--	return 0;
-+
-+	return obj->cache->ops->display_object(m, obj);
- }
+ atomic_t fscache_n_acquires;
+ atomic_t fscache_n_acquires_null;
+ atomic_t fscache_n_acquires_no_cache;
+ atomic_t fscache_n_acquires_ok;
+-atomic_t fscache_n_acquires_nobufs;
+ atomic_t fscache_n_acquires_oom;
  
- static const struct seq_operations fscache_objlist_ops = {
-diff --git a/include/linux/fscache-cache.h b/include/linux/fscache-cache.h
-index 81a41e37f07b..1357c44d371b 100644
---- a/include/linux/fscache-cache.h
-+++ b/include/linux/fscache-cache.h
-@@ -19,6 +19,7 @@
+ atomic_t fscache_n_invalidates;
+-atomic_t fscache_n_invalidates_run;
  
- #define NR_MAXCACHES BITS_PER_LONG
+ atomic_t fscache_n_updates;
+ atomic_t fscache_n_updates_null;
+@@ -51,15 +39,13 @@ atomic_t fscache_n_object_no_alloc;
+ atomic_t fscache_n_object_lookups;
+ atomic_t fscache_n_object_lookups_negative;
+ atomic_t fscache_n_object_lookups_positive;
+-atomic_t fscache_n_object_lookups_timed_out;
+-atomic_t fscache_n_object_created;
++atomic_t fscache_n_object_creates;
+ atomic_t fscache_n_object_avail;
+ atomic_t fscache_n_object_dead;
  
-+struct seq_file;
- struct fscache_cache;
- struct fscache_cache_ops;
- struct fscache_object;
-@@ -151,6 +152,9 @@ struct fscache_cache_ops {
- 	int (*write)(struct fscache_object *object,
- 		     struct fscache_io_request *req,
- 		     struct iov_iter *iter);
-+
-+	/* Display object info in /proc/fs/fscache/objects */
-+	int (*display_object)(struct seq_file *m, struct fscache_object *object);
- };
+ atomic_t fscache_n_cop_alloc_object;
+ atomic_t fscache_n_cop_lookup_object;
+-atomic_t fscache_n_cop_lookup_complete;
+-atomic_t fscache_n_cop_grab_object;
++atomic_t fscache_n_cop_create_object;
+ atomic_t fscache_n_cop_invalidate_object;
+ atomic_t fscache_n_cop_update_object;
+ atomic_t fscache_n_cop_drop_object;
+@@ -90,25 +76,21 @@ int fscache_stats_show(struct seq_file *m, void *v)
+ 		   atomic_read(&fscache_n_object_avail),
+ 		   atomic_read(&fscache_n_object_dead));
  
- extern struct fscache_cookie fscache_fsdef_index;
+-	seq_printf(m, "Acquire: n=%u nul=%u noc=%u ok=%u nbf=%u"
+-		   " oom=%u\n",
++	seq_printf(m, "Acquire: n=%u nul=%u noc=%u ok=%u oom=%u\n",
+ 		   atomic_read(&fscache_n_acquires),
+ 		   atomic_read(&fscache_n_acquires_null),
+ 		   atomic_read(&fscache_n_acquires_no_cache),
+ 		   atomic_read(&fscache_n_acquires_ok),
+-		   atomic_read(&fscache_n_acquires_nobufs),
+ 		   atomic_read(&fscache_n_acquires_oom));
+ 
+-	seq_printf(m, "Lookups: n=%u neg=%u pos=%u crt=%u tmo=%u\n",
++	seq_printf(m, "Lookups: n=%u neg=%u pos=%u crt=%u\n",
+ 		   atomic_read(&fscache_n_object_lookups),
+ 		   atomic_read(&fscache_n_object_lookups_negative),
+ 		   atomic_read(&fscache_n_object_lookups_positive),
+-		   atomic_read(&fscache_n_object_created),
+-		   atomic_read(&fscache_n_object_lookups_timed_out));
++		   atomic_read(&fscache_n_object_creates));
+ 
+-	seq_printf(m, "Invals : n=%u run=%u\n",
+-		   atomic_read(&fscache_n_invalidates),
+-		   atomic_read(&fscache_n_invalidates_run));
++	seq_printf(m, "Invals : n=%u\n",
++		   atomic_read(&fscache_n_invalidates));
+ 
+ 	seq_printf(m, "Updates: n=%u nul=%u run=%u\n",
+ 		   atomic_read(&fscache_n_updates),
+@@ -120,23 +102,9 @@ int fscache_stats_show(struct seq_file *m, void *v)
+ 		   atomic_read(&fscache_n_relinquishes_null),
+ 		   atomic_read(&fscache_n_relinquishes_retire));
+ 
+-	seq_printf(m, "Ops    : pend=%u run=%u enq=%u can=%u rej=%u\n",
+-		   atomic_read(&fscache_n_op_pend),
+-		   atomic_read(&fscache_n_op_run),
+-		   atomic_read(&fscache_n_op_enqueue),
+-		   atomic_read(&fscache_n_op_cancelled),
+-		   atomic_read(&fscache_n_op_rejected));
+-	seq_printf(m, "Ops    : ini=%u dfr=%u rel=%u gc=%u\n",
+-		   atomic_read(&fscache_n_op_initialised),
+-		   atomic_read(&fscache_n_op_deferred_release),
+-		   atomic_read(&fscache_n_op_release),
+-		   atomic_read(&fscache_n_op_gc));
+-
+-	seq_printf(m, "CacheOp: alo=%d luo=%d luc=%d gro=%d\n",
++	seq_printf(m, "CacheOp: alo=%d luo=%d\n",
+ 		   atomic_read(&fscache_n_cop_alloc_object),
+-		   atomic_read(&fscache_n_cop_lookup_object),
+-		   atomic_read(&fscache_n_cop_lookup_complete),
+-		   atomic_read(&fscache_n_cop_grab_object));
++		   atomic_read(&fscache_n_cop_lookup_object));
+ 	seq_printf(m, "CacheOp: inv=%d upo=%d dro=%d pto=%d atc=%d syn=%d\n",
+ 		   atomic_read(&fscache_n_cop_invalidate_object),
+ 		   atomic_read(&fscache_n_cop_update_object),
 
 
