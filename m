@@ -2,116 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB95621D26C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 11:03:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF84921D283
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 11:09:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729279AbgGMJDu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jul 2020 05:03:50 -0400
-Received: from mail-eopbgr20119.outbound.protection.outlook.com ([40.107.2.119]:20292
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726360AbgGMJDu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jul 2020 05:03:50 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HrxjN2ft9U71wkSwlzLHkFGEI7ypBJzl1KgvaJaBPOC+M7TFLSChfXzhDPTb09UAZ/STIhl4VthI9Dw/w0FiX0mssSDdMtavIf9bSyS22WX2PL0S/tiwuEqH0M+2+i1qB34EzU1slL8rivO17MrYFHMXChwCnUWB458s7uUcd4m2HWH4kiCpgtmgPRkY7SR/GihcBtHvNEpNLMZKrdyqsAPn7aYJNHXwJzRheWZugBZbtNJf2XmJZyAmWnuaLFdAWHyXbe9QyMa1k1thIvCbzGITI0bAEG9oQZozr0JBm6JhWRSB+qJUUxrtH/S6z0oJb1zgP08sglOrTXseSvVjBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=intwFnpnQOajolbVn3hE29bRAEuMrZyiuQE9wYcVe6Q=;
- b=DpReJcNniJ/O/ufaxrPTcdeb/AaXOnkd7oUsEFGnDLLphjVTz6bYSlBqIViVdfptRP7L+pZ06x+qI3WszlwCdQsBQW+5ASBsLm5vE6agOTH8AGfaBwW89U7KZiKKEL6SiJDtKXAnrbd/Nrv9LA/YLgjGKE8uKzdzn32nL4cs6czL8AbVluf2/pWWZknzuEXXDuKaAJOzlp4dkhA1Jxrz+5h6TFqdXVonHndbx8cKpDHRverL1gdXZEd1bXCpxTesDE4vQiIIMkzPefMPYAQJ6G4rblI6T2Vxs8VpQYOlRRFRuliVDP2P2k4iugDpdFf0IO5R1l60hNygWVhtmrRWag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
- header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=intwFnpnQOajolbVn3hE29bRAEuMrZyiuQE9wYcVe6Q=;
- b=ATDAO3aswavXvXkEdaXpKNqGcyZ7SEPciyLEdq3JByRtHT95z5H10SXWH3KtR6Fpfpb9UgTUbZYoDExhJ1g3iklA9G1C5qO1JY/Wq+rLbya6odZIgJ8bsNUhGtCZNt6Mnm0o8gq5GyIVELmXeQ7xFDiMY/482vOIKIJ5vk7EyBc=
-Authentication-Results: redhat.com; dkim=none (message not signed)
- header.d=none;redhat.com; dmarc=none action=none header.from=virtuozzo.com;
-Received: from AM0PR08MB5140.eurprd08.prod.outlook.com (2603:10a6:208:162::17)
- by AM0PR08MB5026.eurprd08.prod.outlook.com (2603:10a6:208:158::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3174.21; Mon, 13 Jul
- 2020 09:03:46 +0000
-Received: from AM0PR08MB5140.eurprd08.prod.outlook.com
- ([fe80::189d:9569:dbb8:2783]) by AM0PR08MB5140.eurprd08.prod.outlook.com
- ([fe80::189d:9569:dbb8:2783%6]) with mapi id 15.20.3174.025; Mon, 13 Jul 2020
- 09:03:46 +0000
-Subject: Re: [5.8RC4][bugreport]WARNING: CPU: 28 PID: 211236 at
- fs/fuse/file.c:1684 tree_insert+0xaf/0xc0 [fuse]
-To:     Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        mszeredi@redhat.com
-References: <CABXGCsPPoeja2WxWQ7yhX+3EF1gtCHfjdFjx1CwuAyJcSVzz1g@mail.gmail.com>
- <CABXGCsP3ytiGTt4bepZp2A=rzZzOKbMv62dXpe26f57OCYPnvQ@mail.gmail.com>
- <CABXGCsO+YH62cjT_pF1RMqKD86Zug4CiWzv6QATe_zhEp3eaeQ@mail.gmail.com>
-From:   Vasily Averin <vvs@virtuozzo.com>
-Message-ID: <30a611e6-f445-494e-dab9-d7a5c17c9889@virtuozzo.com>
-Date:   Mon, 13 Jul 2020 12:03:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-In-Reply-To: <CABXGCsO+YH62cjT_pF1RMqKD86Zug4CiWzv6QATe_zhEp3eaeQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR05CA0086.eurprd05.prod.outlook.com
- (2603:10a6:208:136::26) To AM0PR08MB5140.eurprd08.prod.outlook.com
- (2603:10a6:208:162::17)
+        id S1727829AbgGMJJc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jul 2020 05:09:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34890 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbgGMJJb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Jul 2020 05:09:31 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E17DFC061755
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 02:09:31 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id l63so5744970pge.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 02:09:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Fhc+RGhQKPjaGb3t2j/Ouyv4Kl3zy1Pm1n0Ml4d0G1I=;
+        b=EQdLtqIQ++mKv92vV8ab16Fz3TjOrfmxwCgb76ZMPlnmDD2qzBTicxvkq7bSf2j1Yx
+         EktyrbyrJ39aeqFkAUYDCMyiMRrOnHN8Tk7p0GW2VddUmp6bI2w6/VeYhxXpbAisPgui
+         HaTzAXtKx1OBZeJjIeyNS6P3u5jzexAyfm94k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Fhc+RGhQKPjaGb3t2j/Ouyv4Kl3zy1Pm1n0Ml4d0G1I=;
+        b=AFwLRvhi9LRF0QZSLfKVQlVvGOURnYJTHpwYFN5HUGhpenMXfYyu0Rl7mAuop9tvsr
+         EeXitqRWyGp2E0VjL+ngf7y1+AXvKpQoJG+t767+Y4JAwC+S8FX6IiRpBx/euSYLsPy6
+         mXCBf86FRjex1cVVc9TKf7rr0U9TfSqyrhcr/qWKxKmiTQkHDiXy8Cd8N8OqK+GXKZPe
+         oGKRPTiREm9o1C3az3VLjaEqpcA7rsWwMh1iE/HgagdkpQsAMyNNOnx83lA5reAlrSiD
+         ZSlM3Ir3Xn+PW2a3OIcQbKicbg48U0QVqKqay49p4xjeQ2xtLw9nAHeSuCTVNemrjYQ7
+         2kIg==
+X-Gm-Message-State: AOAM533E2suvGsihGqzT7/WuBwUG72DXYaO+Ov+eFR43EZNMb3UO17MC
+        w1hkKOPmqx1ws+EnxdK/R5mJjILhKPw=
+X-Google-Smtp-Source: ABdhPJyGTUbPHC1UzwT9SIb0ZkqJDDy7bsGeDKakrS/wDrsuSzLmtuqfer/q62JsNabNVNxH/mc03w==
+X-Received: by 2002:a63:6ec2:: with SMTP id j185mr36621697pgc.176.1594631371363;
+        Mon, 13 Jul 2020 02:09:31 -0700 (PDT)
+Received: from localhost ([2401:fa00:8f:2:f693:9fff:fef4:2537])
+        by smtp.gmail.com with ESMTPSA id q5sm13846490pfc.130.2020.07.13.02.09.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jul 2020 02:09:30 -0700 (PDT)
+From:   Chirantan Ekbote <chirantan@chromium.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>,
+        fuse-devel@lists.sourceforge.net,
+        Chirantan Ekbote <chirantan@chromium.org>
+Subject: [PATCHv3 1/2] uapi: fuse: Add FUSE_SECURITY_CTX
+Date:   Mon, 13 Jul 2020 18:09:20 +0900
+Message-Id: <20200713090921.312962-1-chirantan@chromium.org>
+X-Mailer: git-send-email 2.27.0.383.g050319c2ae-goog
+In-Reply-To: <20200610092744.140038-1-chirantan@chromium.org>
+References: <20200610092744.140038-1-chirantan@chromium.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [172.16.24.21] (185.231.240.5) by AM0PR05CA0086.eurprd05.prod.outlook.com (2603:10a6:208:136::26) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3174.21 via Frontend Transport; Mon, 13 Jul 2020 09:03:46 +0000
-X-Originating-IP: [185.231.240.5]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: cdf73866-ec1f-42c2-d88f-08d8270ba6a1
-X-MS-TrafficTypeDiagnostic: AM0PR08MB5026:
-X-Microsoft-Antispam-PRVS: <AM0PR08MB5026876AAE310FA625C61832AA600@AM0PR08MB5026.eurprd08.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:862;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: x3IxsGtYipng3MNUXhvHwuUCnzG3RhupyXsuI9qVpb7+afmi87A5rGttdptk0HaEZb9/Bg/niUEIMYQubosHg6N8VksegmSqUv6BP4NKDOWEa16MxD5PSB5HG4rJZDhNuKh6m+eiREyEmVurBbLRMWvqr9TTB7wsquQzLiRafbFy0t75aBgxpzKh1PBBrd8I6tO1Ek1IhxSsDpx6UVgUc+//1i/sE2hwMUH6fBhzlSFPczV5jQroZNiaNaqZ1Y1lgvterW3zWFPEEKioxHJs7gS8k5CaMWrBQAVCEjFwuT8LKoOR+QwxQH+jGCJl3408e/H1H4lgZKq5HP0qxDGOVrZdDKQyzLZpTR5ZJgJASjwqpVsVLuBnPwN5MPZVS6KAMhFYfyoPfcZvBtifjpj6MMpHycWsKdnIT0lu5Hhk6A1VnyXaaPCaU+nVrTxNsN+Va2rhkmy/XLryGPp3IF1ahw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR08MB5140.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(136003)(396003)(39840400004)(346002)(366004)(376002)(8676002)(66556008)(66476007)(66946007)(8936002)(2906002)(966005)(26005)(52116002)(16526019)(4744005)(31686004)(956004)(53546011)(478600001)(186003)(86362001)(2616005)(83380400001)(316002)(110136005)(31696002)(5660300002)(6486002)(16576012)(36756003)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: UqpuW61leJ9WmBNDxemiSYDm7tcEbmnEX7gcHFVNGtI0xLmTgjIDnaGBIHu/n9Wx501FTbJbUE6g2un3T/WBXJDIeL+GzKsXGiBB5B1yStt5HWpIF3KluuqENZ37KpwwIEn4P3huJKoa5f8wcKtWfdR/D9S328XebMG4uuMgpfEdNabPsI21sgt681PrEfnZl8/6N8N/bIdlLE0l5j85JZo0PzeWFUX+BB3cSOduQQqyRyyJH4z+VnEnp/obmKhtnG2bui+HfSt/LacK8KmPP+Y379dp100Wj1OAHCnjtaHPxWQG2sluGnDhLyHjcYgs3+hOa52e23GdJXS6DCe4zK/zAh64HN4KbJ/EbSvjiQeVQMSXph4xa2fl97w9iEMIh+er56wNzIE0iSeBSrpI0O9P0huA7lYHtnsZXQQ1o9yNSqhXffhW+JTLEfGHR+srZIqhi2FQ+ZY4AY0GJj3SJ5N165TfnyT3v3GktTlpdRs=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdf73866-ec1f-42c2-d88f-08d8270ba6a1
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR08MB5140.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jul 2020 09:03:46.8352
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7Is1CIzUx5WJ7zHurkCYcAbnH63zTvvGC2CLKLyY6Q3e+ibZGxRosixihIKNdN+hMIh3Pd+1LHx9MDn1fRWaig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB5026
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/13/20 11:02 AM, Mikhail Gavrilov wrote:
-> On Mon, 13 Jul 2020 at 12:11, Mikhail Gavrilov
-> <mikhail.v.gavrilov@gmail.com> wrote:
->>
->> On Mon, 13 Jul 2020 at 03:28, Mikhail Gavrilov
->> <mikhail.v.gavrilov@gmail.com> wrote:
->>>
->>> Hi folks.
->>> While testing 5.8 RCs I founded that kernel log flooded by the message
->>> "WARNING: CPU: 28 PID: 211236 at fs/fuse/file.c:1684 tree
->>> insert+0xaf/0xc0 [fuse]" when I start podman container.
->>> In kernel 5.7 not has such a problem.
->>
->> Maxim, I suppose you leave `WARN_ON(!wpa->ia.ap.num_pages);` for debug purpose?
->> Now this line is often called when I start the container.
->>
-> 
-> That odd, but I can't send an email to the author of the commit.
-> mpatlasov wasn't found at virtuozzo.com.
+Add the FUSE_SECURITY_CTX flag for the `flags` field of the
+fuse_init_out struct.  When this flag is set the kernel will append the
+security context for a newly created inode to the request (create,
+mkdir, mknod, and symlink).  The server is responsible for ensuring that
+the inode appears atomically with the requested security context.
 
-Reported problem is not fixed yet in 5.8-rc kernels
-Please take look at
-https://lkml.org/lkml/2020/7/13/265
+For example, if the server is backed by a "real" linux file system then
+it can write the security context value to
+/proc/thread-self/attr/fscreate before making the syscall to create the
+inode.
 
-Thank you,
-	Vasily Averin
+---
+ include/uapi/linux/fuse.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 373cada898159..e2099b45fd44b 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -172,6 +172,10 @@
+  *  - add FUSE_WRITE_KILL_PRIV flag
+  *  - add FUSE_SETUPMAPPING and FUSE_REMOVEMAPPING
+  *  - add map_alignment to fuse_init_out, add FUSE_MAP_ALIGNMENT flag
++ *
++ *  7.32
++ *  - add FUSE_SECURITY_CTX flag for fuse_init_out
++ *  - add security context to create, mkdir, symlink, and mknod requests
+  */
+ 
+ #ifndef _LINUX_FUSE_H
+@@ -207,7 +211,7 @@
+ #define FUSE_KERNEL_VERSION 7
+ 
+ /** Minor version number of this interface */
+-#define FUSE_KERNEL_MINOR_VERSION 31
++#define FUSE_KERNEL_MINOR_VERSION 32
+ 
+ /** The node ID of the root inode */
+ #define FUSE_ROOT_ID 1
+@@ -314,6 +318,7 @@ struct fuse_file_lock {
+  * FUSE_NO_OPENDIR_SUPPORT: kernel supports zero-message opendir
+  * FUSE_EXPLICIT_INVAL_DATA: only invalidate cached pages on explicit request
+  * FUSE_MAP_ALIGNMENT: map_alignment field is valid
++ * FUSE_SECURITY_CTX: add security context to create, mkdir, symlink, and mknod
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -342,6 +347,7 @@ struct fuse_file_lock {
+ #define FUSE_NO_OPENDIR_SUPPORT (1 << 24)
+ #define FUSE_EXPLICIT_INVAL_DATA (1 << 25)
+ #define FUSE_MAP_ALIGNMENT	(1 << 26)
++#define FUSE_SECURITY_CTX	(1 << 27)
+ 
+ /**
+  * CUSE INIT request/reply flags
+-- 
+2.27.0.383.g050319c2ae-goog
+
