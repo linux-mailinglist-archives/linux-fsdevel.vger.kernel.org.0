@@ -2,157 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B934421D871
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 16:28:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8729221DA23
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 17:34:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730049AbgGMO2B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jul 2020 10:28:01 -0400
-Received: from foss.arm.com ([217.140.110.172]:38166 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729881AbgGMO2A (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jul 2020 10:28:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2E2E30E;
-        Mon, 13 Jul 2020 07:27:59 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CA813F7BB;
-        Mon, 13 Jul 2020 07:27:57 -0700 (PDT)
-Date:   Mon, 13 Jul 2020 15:27:55 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] sched/uclamp: Add a new sysctl to control RT
- default boost value
-Message-ID: <20200713142754.tri5jljnrzjst2oe@e107158-lin.cambridge.arm.com>
-References: <20200706142839.26629-1-qais.yousef@arm.com>
- <20200706142839.26629-2-qais.yousef@arm.com>
- <20200713112125.GG10769@hirez.programming.kicks-ass.net>
- <20200713121246.xjif3g4zpja25o5r@e107158-lin.cambridge.arm.com>
- <20200713133558.GK10769@hirez.programming.kicks-ass.net>
+        id S1729687AbgGMPeH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jul 2020 11:34:07 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:36318 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729649AbgGMPeH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Jul 2020 11:34:07 -0400
+Received: by mail-il1-f198.google.com with SMTP id t19so9738839ili.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 08:34:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=PuwK5sOU81rM/XoQcuJqMMPHQ+Gr8re6yhX7o7C4muQ=;
+        b=GncOLDhZbdWgNkqboOKTfN1K3vHyOQ9oaaAUepxW+IDWthVrqLyk9lYLQcPbMFMoNk
+         8Isn3RGpcpllATlt+2PbLehhvvGmyOyRQNAvq8BapiRyfAUDfY5oJYw8U+80SmbLwvDD
+         KJ93lMnbHCURe3M2dbAirT1fkjSGXCWdj6p6QqeaOMg7D0e97+4ZO6MRw5kTWi3eozvr
+         oyvhPaLZf46lRtYttYQOvSZ5wyk1uA2yk2/lgv40SLlBY9WZ46rAd2hdWDyGO5W0ciVe
+         IYrkkLfr7VBKcAEVrD5EPtIL1iVOd3P/hYtpeRpsytHJzq/+13PIvRdqzYpWgiseKbWT
+         jWgA==
+X-Gm-Message-State: AOAM5311lc8n5xTykRmxCMR5WWsz7Id6TGtynFHsvDt1nEwdMeUkzue9
+        aZtng1MbuL2KuHEpv2NCYwQq7rtXQkylBPxdlAEwNkPALS8C
+X-Google-Smtp-Source: ABdhPJydbjbFEZskX61aECXgpw3Hf5lQrLPxhVEfS8LhGnBo3W5qg9pPTvobj6Hs8ic5kEJcDP2fXDOcy5fkMgW8HBxuPOvZeySr
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200713133558.GK10769@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+X-Received: by 2002:a92:1bd5:: with SMTP id f82mr225494ill.121.1594654446305;
+ Mon, 13 Jul 2020 08:34:06 -0700 (PDT)
+Date:   Mon, 13 Jul 2020 08:34:06 -0700
+In-Reply-To: <0000000000001bbb6705aa49635a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cfc8ff05aa546b84@google.com>
+Subject: Re: KASAN: use-after-free Read in userfaultfd_release (2)
+From:   syzbot <syzbot+75867c44841cb6373570@syzkaller.appspotmail.com>
+To:     Markus.Elfring@web.de, casey@schaufler-ca.com, dancol@google.com,
+        hdanton@sina.com, jmorris@namei.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stephen.smalley.work@gmail.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/13/20 15:35, Peter Zijlstra wrote:
-> On Mon, Jul 13, 2020 at 01:12:46PM +0100, Qais Yousef wrote:
-> > On 07/13/20 13:21, Peter Zijlstra wrote:
-> 
-> > > It's monday, and I cannot get my brain working.. I cannot decipher the
-> > > comments you have with the smp_[rw]mb(), what actual ordering do they
-> > > enforce?
-> > 
-> > It was a  bit of a paranoia to ensure that readers on other cpus see the new
-> > value after this point.
-> 
-> IIUC that's not something any barrier can provide.
-> 
-> Barriers can only order between (at least) two memory operations:
-> 
-> 	X = 1;		y = Y;
-> 	smp_wmb();	smp_rmb();
-> 	Y = 1;		x = X;
-> 
-> guarantees that if y == 1, then x must also be 1. Because the left hand
-> side orders the store of Y after the store of X, while the right hand
-> side order the load of X after the load of Y. Therefore, if the first
-> load observes the last store, the second load must observe the first
-> store.
-> 
-> Without a second variable, barriers can't guarantee _anything_. Which is
-> why any barrier comment should refer to at least two variables.
+syzbot has bisected this bug to:
 
-Hmmm okay. I thought this will order the write with the read. In my head if,
-for example, the write was stuck in the write buffer of CPU0, then a read on
-CPU1 would wait for this to be committed before carrying on and issue a read.
+commit d08ac70b1e0dc71ac2315007bcc3efb283b2eae4
+Author: Daniel Colascione <dancol@google.com>
+Date:   Wed Apr 1 21:39:03 2020 +0000
 
-So I was reading this as don't issue new reads before current writes are done.
+    Wire UFFD up to SELinux
 
-I need to go back and read memory-barriers.rst. It's been 10 years since I last
-read it..
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14a79d13100000
+start commit:   89032636 Add linux-next specific files for 20200708
+git tree:       linux-next
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=16a79d13100000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a79d13100000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=64a250ebabc6c320
+dashboard link: https://syzkaller.appspot.com/bug?extid=75867c44841cb6373570
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c4c8db100000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cbb68f100000
 
-> 
-> > > Also, your synchronize_rcu() relies on write_lock() beeing
-> > > non-preemptible, which isn't true on PREEMPT_RT.
-> > > 
-> > > The below seems simpler...
-> 
-> > Hmm maybe I am missing something obvious, but beside the race with fork; I was
-> > worried about another race and that's what the synchronize_rcu() is trying to
-> > handle.
-> > 
-> > It's the classic preemption in the middle of RMW operation race.
-> > 
-> > 		copy_process()			sysctl_uclamp
-> > 
-> > 		  sched_post_fork()
-> > 		    __uclamp_sync_rt()
-> > 		      // read sysctl
-> > 		      // PREEMPT
-> > 						  for_each_process_thread()
-> > 		      // RESUME
-> > 		      // write syctl to p
-> > 
-> 
-> > 	2. sysctl_uclamp happens *during* sched_post_fork()
-> > 
-> > There's the risk of the classic preemption in the middle of RMW where another
-> > CPU could have changed the shared variable after the current CPU has already
-> > read it, but before writing it back.
-> 
-> Aah.. I see.
-> 
-> > I protect this with rcu_read_lock() which as far as I know synchronize_rcu()
-> > will ensure if we do the update during this section; we'll wait for it to
-> > finish. New forkees entering the rcu_read_lock() section will be okay because
-> > they should see the new value.
-> > 
-> > spinlocks() and mutexes seemed inferior to this approach.
-> 
-> Well, didn't we just write in another patch that p->uclamp_* was
-> protected by both rq->lock and p->pi_lock?
+Reported-by: syzbot+75867c44841cb6373570@syzkaller.appspotmail.com
+Fixes: d08ac70b1e0d ("Wire UFFD up to SELinux")
 
-__setscheduler_uclamp() path is holding these locks, not sure by design or it
-just happened this path holds the lock. I can't see the lock in the
-uclamp_fork() path. But it's hard sometimes to unfold the layers of callers,
-especially not all call sites are annotated for which lock is assumed to be
-held.
-
-Is it safe to hold the locks in uclamp_fork() while the task is still being
-created? My new code doesn't hold it of course.
-
-We can enforce this rule if you like. Though rcu critical section seems lighter
-weight to me.
-
-If all of this does indeed start looking messy we can put the update in
-a delayed worker and schedule that instead of doing synchronous setup.
-
-Or go back to task_woken_rt() with a cached per-rq variable of
-sysctl_util_min_rt that is more likely to be cache hot compared to the global
-sysctl_util_min_rt variable.
-
-Thanks
-
---
-Qais Yousef
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
