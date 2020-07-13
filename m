@@ -2,174 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 375AC21D5B7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 14:21:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 907D421D6A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 15:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729665AbgGMMU4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jul 2020 08:20:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55710 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729578AbgGMMU4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jul 2020 08:20:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 45B73B1E2;
-        Mon, 13 Jul 2020 12:20:56 +0000 (UTC)
-Date:   Mon, 13 Jul 2020 07:20:50 -0500
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 2/2] iomap: fall back to buffered writes for invalidation
- failures
-Message-ID: <20200713122050.okus7qlampk5ysyb@fiona>
-References: <20200713074633.875946-1-hch@lst.de>
- <20200713074633.875946-3-hch@lst.de>
+        id S1729739AbgGMNWT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jul 2020 09:22:19 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:20774 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729564AbgGMNWS (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Jul 2020 09:22:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594646537;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IHiDVAN+/NpycJ9K1bAeFKAt7d8Zl7wvOhlXnD93E/I=;
+        b=OnDnzNIieFeZbNqwX5BZy9jWP1S74A8I8urSBmHx1a+Fsq5g5G9qErMFj14RkjYoPOXtrU
+        9FG2wV+tzJ5y1Z2pmIHz3Ljjjf7CXFJ23v+sqDliK5YbwTK/nSk1ZL2hn3fSSuX6zbjGZ9
+        MRRZAhGpTH46229r01CRLOD6UUjBpSA=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-308-rFn7liWKN2ix8q_ZIXpf9w-1; Mon, 13 Jul 2020 09:22:15 -0400
+X-MC-Unique: rFn7liWKN2ix8q_ZIXpf9w-1
+Received: by mail-wr1-f72.google.com with SMTP id b8so17706976wro.19
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 06:22:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=IHiDVAN+/NpycJ9K1bAeFKAt7d8Zl7wvOhlXnD93E/I=;
+        b=g13RgrzQPOcCVpmEnnZMzbzwG1Gis/BO+8eJLjaO7yDkrHNyxabzzjHQvgM55MKlbR
+         B9CtQ7fZqxsAWbWfWplf7ONZ3CB5WXsTDPvyiBE6fsp1CZSPfTnAb1ttPnTAQaWgyg+G
+         0wyeSx6KiU0lwelwNBAxLv8r+6aSGYAh6OAtqDpH55r7juMKn/k5Z2SO6vA5I9WyCjDY
+         BCxUH6aWKIrK6S2vlxic5RC7imNm0UKhvlxh0wEmFs9IfwhSrUJaGHoP3xHUGB9JEH7Y
+         q87+JAu1aPGDoSO8CT0BOR+cBw/VXYlkmNfwQCvvb+1Jh9C31+Wp4ORcNZ3PCfUtjl8Y
+         SEvA==
+X-Gm-Message-State: AOAM53225u4QkKl0zK9TMH16EY2s+WaHio+w1p9bJnPPzxXthsEblXy1
+        WoydMK+HNzoV/uQoVHZz3nYxMYMpOMyZlQbs4uIU/FQXht7iUn7tqdzi5TzlbG3qOjdl+eblgC8
+        EbQKhT6jT5PXQb4uqi3vJq3O0vw==
+X-Received: by 2002:adf:f10a:: with SMTP id r10mr48337311wro.406.1594646533911;
+        Mon, 13 Jul 2020 06:22:13 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzm0qOT27kCpMTY1OC3xFic2ZegzyQksmisJV4C1SdGMg3ljlJkc6raT64MWjktjjJwMxmcUg==
+X-Received: by 2002:adf:f10a:: with SMTP id r10mr48337287wro.406.1594646533607;
+        Mon, 13 Jul 2020 06:22:13 -0700 (PDT)
+Received: from localhost.localdomain ([151.29.94.4])
+        by smtp.gmail.com with ESMTPSA id m4sm21994076wmi.48.2020.07.13.06.22.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jul 2020 06:22:13 -0700 (PDT)
+Date:   Mon, 13 Jul 2020 15:22:11 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     He Zhe <zhe.he@windriver.com>
+Cc:     viro@zeniv.linux.org.uk, axboe@kernel.dk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] eventfd: Enlarge recursion limit to allow vhost to work
+Message-ID: <20200713132211.GB5564@localhost.localdomain>
+References: <20200410114720.24838-1-zhe.he@windriver.com>
+ <20200703081209.GN9670@localhost.localdomain>
+ <cbecaad6-48fc-3c52-d764-747ea91dc3fa@windriver.com>
+ <20200706064557.GA26135@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200713074633.875946-3-hch@lst.de>
+In-Reply-To: <20200706064557.GA26135@localhost.localdomain>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On  9:46 13/07, Christoph Hellwig wrote:
-> Failing to invalid the page cache means data in incoherent, which is
-> a very bad state for the system.  Always fall back to buffered I/O
-> through the page cache if we can't invalidate mappings.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Hi,
 
-Thanks. This will help btrfs. The current next tree contains the iomap
-changes I recomended and would need to be reverted in order to
-incorporate this. Once this is in the next tree I will (re)format the
-btrfs iomap dio patches.
-
-Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-> ---
->  fs/ext4/file.c       |  2 ++
->  fs/gfs2/file.c       |  3 ++-
->  fs/iomap/direct-io.c | 13 ++++++++-----
->  fs/iomap/trace.h     |  1 +
->  fs/xfs/xfs_file.c    |  4 ++--
->  fs/zonefs/super.c    |  7 +++++--
->  6 files changed, 20 insertions(+), 10 deletions(-)
+On 06/07/20 08:45, Juri Lelli wrote:
+> On 03/07/20 19:11, He Zhe wrote:
+> > 
+> > 
+> > On 7/3/20 4:12 PM, Juri Lelli wrote:
+> > > Hi,
+> > >
+> > > On 10/04/20 19:47, zhe.he@windriver.com wrote:
+> > >> From: He Zhe <zhe.he@windriver.com>
+> > >>
+> > >> commit b5e683d5cab8 ("eventfd: track eventfd_signal() recursion depth")
+> > >> introduces a percpu counter that tracks the percpu recursion depth and
+> > >> warn if it greater than zero, to avoid potential deadlock and stack
+> > >> overflow.
+> > >>
+> > >> However sometimes different eventfds may be used in parallel. Specifically,
+> > >> when heavy network load goes through kvm and vhost, working as below, it
+> > >> would trigger the following call trace.
+> > >>
+> > >> -  100.00%
+> > >>    - 66.51%
+> > >>         ret_from_fork
+> > >>         kthread
+> > >>       - vhost_worker
+> > >>          - 33.47% handle_tx_kick
+> > >>               handle_tx
+> > >>               handle_tx_copy
+> > >>               vhost_tx_batch.isra.0
+> > >>               vhost_add_used_and_signal_n
+> > >>               eventfd_signal
+> > >>          - 33.05% handle_rx_net
+> > >>               handle_rx
+> > >>               vhost_add_used_and_signal_n
+> > >>               eventfd_signal
+> > >>    - 33.49%
+> > >>         ioctl
+> > >>         entry_SYSCALL_64_after_hwframe
+> > >>         do_syscall_64
+> > >>         __x64_sys_ioctl
+> > >>         ksys_ioctl
+> > >>         do_vfs_ioctl
+> > >>         kvm_vcpu_ioctl
+> > >>         kvm_arch_vcpu_ioctl_run
+> > >>         vmx_handle_exit
+> > >>         handle_ept_misconfig
+> > >>         kvm_io_bus_write
+> > >>         __kvm_io_bus_write
+> > >>         eventfd_signal
+> > >>
+> > >> 001: WARNING: CPU: 1 PID: 1503 at fs/eventfd.c:73 eventfd_signal+0x85/0xa0
+> > >> ---- snip ----
+> > >> 001: Call Trace:
+> > >> 001:  vhost_signal+0x15e/0x1b0 [vhost]
+> > >> 001:  vhost_add_used_and_signal_n+0x2b/0x40 [vhost]
+> > >> 001:  handle_rx+0xb9/0x900 [vhost_net]
+> > >> 001:  handle_rx_net+0x15/0x20 [vhost_net]
+> > >> 001:  vhost_worker+0xbe/0x120 [vhost]
+> > >> 001:  kthread+0x106/0x140
+> > >> 001:  ? log_used.part.0+0x20/0x20 [vhost]
+> > >> 001:  ? kthread_park+0x90/0x90
+> > >> 001:  ret_from_fork+0x35/0x40
+> > >> 001: ---[ end trace 0000000000000003 ]---
+> > >>
+> > >> This patch enlarges the limit to 1 which is the maximum recursion depth we
+> > >> have found so far.
+> > >>
+> > >> Signed-off-by: He Zhe <zhe.he@windriver.com>
+> > >> ---
+> > > Not sure if this approch can fly, but I also encountered the same
+> > > warning (which further caused hangs during VM install) and this change
+> > > addresses that.
+> > >
+> > > I'd be interested in understanding what is the status of this problem/fix.
+> > 
+> > This is actually v2 of the patch and has not got any reply yet. Here is the v1. FYI.
+> > https://lore.kernel.org/lkml/1586257192-58369-1-git-send-email-zhe.he@windriver.com/
 > 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 2a01e31a032c4c..0da6c2a2c32c1e 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -544,6 +544,8 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  		iomap_ops = &ext4_iomap_overwrite_ops;
->  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
->  			   is_sync_kiocb(iocb) || unaligned_io || extend);
-> +	if (ret == -EREMCHG)
-> +		ret = 0;
->  
->  	if (extend)
->  		ret = ext4_handle_inode_extension(inode, offset, ret, count);
-> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-> index fe305e4bfd3734..c7907d40c61d17 100644
-> --- a/fs/gfs2/file.c
-> +++ b/fs/gfs2/file.c
-> @@ -814,7 +814,8 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
->  
->  	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
->  			   is_sync_kiocb(iocb));
-> -
-> +	if (ret == -EREMCHG)
-> +		ret = 0;
->  out:
->  	gfs2_glock_dq(&gh);
->  out_uninit:
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 190967e87b69e4..62626235cdbe8d 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -10,6 +10,7 @@
->  #include <linux/backing-dev.h>
->  #include <linux/uio.h>
->  #include <linux/task_io_accounting_ops.h>
-> +#include "trace.h"
->  
->  #include "../internal.h"
->  
-> @@ -478,13 +479,15 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	if (iov_iter_rw(iter) == WRITE) {
->  		/*
->  		 * Try to invalidate cache pages for the range we are writing.
-> -		 * If this invalidation fails, tough, the write will still work,
-> -		 * but racing two incompatible write paths is a pretty crazy
-> -		 * thing to do, so we don't support it 100%.
-> +		 * If this invalidation fails, let the caller fall back to
-> +		 * buffered I/O.
->  		 */
->  		if (invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT,
-> -				end >> PAGE_SHIFT))
-> -			dio_warn_stale_pagecache(iocb->ki_filp);
-> +				end >> PAGE_SHIFT)) {
-> +			trace_iomap_dio_invalidate_fail(inode, pos, count);
-> +			ret = -EREMCHG;
-> +			goto out_free_dio;
-> +		}
->  
->  		if (!wait_for_completion && !inode->i_sb->s_dio_done_wq) {
->  			ret = sb_init_dio_done_wq(inode->i_sb);
-> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-> index 5693a39d52fb63..fdc7ae388476f5 100644
-> --- a/fs/iomap/trace.h
-> +++ b/fs/iomap/trace.h
-> @@ -74,6 +74,7 @@ DEFINE_EVENT(iomap_range_class, name,	\
->  DEFINE_RANGE_EVENT(iomap_writepage);
->  DEFINE_RANGE_EVENT(iomap_releasepage);
->  DEFINE_RANGE_EVENT(iomap_invalidatepage);
-> +DEFINE_RANGE_EVENT(iomap_dio_invalidate_fail);
->  
->  #define IOMAP_TYPE_STRINGS \
->  	{ IOMAP_HOLE,		"HOLE" }, \
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 00db81eac80d6c..551cca39fa3ba6 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -553,8 +553,8 @@ xfs_file_dio_aio_write(
->  	xfs_iunlock(ip, iolock);
->  
->  	/*
-> -	 * No fallback to buffered IO on errors for XFS, direct IO will either
-> -	 * complete fully or fail.
-> +	 * No partial fallback to buffered IO on errors for XFS, direct IO will
-> +	 * either complete fully or fail.
->  	 */
->  	ASSERT(ret < 0 || ret == count);
->  	return ret;
-> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> index 07bc42d62673ce..793850454b752f 100644
-> --- a/fs/zonefs/super.c
-> +++ b/fs/zonefs/super.c
-> @@ -786,8 +786,11 @@ static ssize_t zonefs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  	if (iocb->ki_pos >= ZONEFS_I(inode)->i_max_size)
->  		return -EFBIG;
->  
-> -	if (iocb->ki_flags & IOCB_DIRECT)
-> -		return zonefs_file_dio_write(iocb, from);
-> +	if (iocb->ki_flags & IOCB_DIRECT) {
-> +		ret = zonefs_file_dio_write(iocb, from);
-> +		if (ret != -EREMCHG)
-> +			return ret;
-> +	}
->  
->  	return zonefs_file_buffered_write(iocb, from);
->  }
-> -- 
-> 2.26.2
+> I see, thanks. Hope this gets reviewed soon! :-)
 > 
+> > > On a side note, by looking at the code, I noticed that (apart from
+> > > samples) all callers don't actually check eventfd_signal() return value
+> > > and I'm wondering why is that the case and if is it safe to do so.
+> > 
+> > Checking the return value right after sending the signal can tell us if the
+> > event counter has just overflowed, that is, exceeding ULLONG_MAX. I guess the
+> > authors of the callers listed in the commit log just don't worry about that,
+> > since they add only one to a dedicated eventfd.
+> 
+> OK. I was mostly wondering if returning early in case the WARN_ON_ONCE
+> fires would cause a missing wakeup for the eventfd_ctx wait queue.
 
--- 
-Goldwyn
+Gentle ping about this issue (mainly addressing relevant maintainers and
+potential reviewers). It's easily reproducible with PREEMPT_RT.
+
+Thanks,
+
+Juri
+
