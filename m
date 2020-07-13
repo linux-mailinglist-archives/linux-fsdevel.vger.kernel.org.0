@@ -2,223 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E9BF21CD17
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 04:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BED6E21CD27
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 04:24:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbgGMCTh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Jul 2020 22:19:37 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:20545 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbgGMCTh (ORCPT
+        id S1728223AbgGMCYR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Jul 2020 22:24:17 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:52075 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbgGMCYQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Jul 2020 22:19:37 -0400
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200713021933epoutp02161c4146029c22426d2f1eae8690cda9~hLmlsm5vw2668726687epoutp02W
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 02:19:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200713021933epoutp02161c4146029c22426d2f1eae8690cda9~hLmlsm5vw2668726687epoutp02W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1594606773;
-        bh=E6/4umsv8LVl+yrK0/Rkj8oHO0Hn6kk7Qn99QrzsZ4k=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=g7aoMsY+SIErb5BieHyGzXV38g26HDXvm1T6YA+CuXhfTTiCN+XcW2FYhFF0fq6mH
-         T9rq8wmdXIZK24E6ubcaSk3ID5MVzIgHhIevUBPI+bxuO6rpU73nCxVOOU1Z2vh6vc
-         qSuGvkj9k9TYG+fcNonu1EVsxACjIu0IJJ1ruHYw=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200713021932epcas1p2c511839ea0023ce2dd2108cb1ad04f8c~hLmlQqc2n2649326493epcas1p2H;
-        Mon, 13 Jul 2020 02:19:32 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.161]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4B4nQr0GDczMqYlh; Mon, 13 Jul
-        2020 02:19:32 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        0A.5E.19033.2B4CB0F5; Mon, 13 Jul 2020 11:19:30 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200713021929epcas1p4b187bfc24619bd8044197610ac143e5e~hLmih_wmJ3230532305epcas1p4I;
-        Mon, 13 Jul 2020 02:19:29 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200713021929epsmtrp20f454c3528e481e45231bc832e18e53d~hLmihKM9Q2745727457epsmtrp2u;
-        Mon, 13 Jul 2020 02:19:29 +0000 (GMT)
-X-AuditID: b6c32a36-16fff70000004a59-89-5f0bc4b2070d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        95.8E.08303.1B4CB0F5; Mon, 13 Jul 2020 11:19:29 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200713021929epsmtip21db11a67a6424c1ee107679f22377ecb~hLmiMHZ8A2489824898epsmtip2A;
-        Mon, 13 Jul 2020 02:19:29 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
-Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
-        <mori.takahiro@ab.mitsubishielectric.co.jp>,
-        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
-        "'Namjae Jeon'" <namjae.jeon@samsung.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200626060947.24709-1-kohada.t2@gmail.com>
-Subject: RE: [RFC]PATCH] exfat: integrates dir-entry getting and validation
-Date:   Mon, 13 Jul 2020 11:19:29 +0900
-Message-ID: <4a6201d658bc$09e3fa80$1dabef80$@samsung.com>
+        Sun, 12 Jul 2020 22:24:16 -0400
+Received: by mail-io1-f70.google.com with SMTP id l1so7160599ioh.18
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jul 2020 19:24:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=oeDO3uGOlGXCY3ZqE1/B/SxjjNdp+6TXbFewQjpCefw=;
+        b=unp9DCJdUPL42K8vrAl4IQasP0/wnokvMN9CEDLOuLgQmTFRyfRwUtFTTM/GSNeK89
+         sKj827vjPtR2u0EtNYogPNqNkxU80WpHDKyNnlK6Y+gBbwhRMaTlcEHEaB2X0CmjB51Z
+         oI8zQG5gkqUu1o5MMzZEV1pd4Ph0ok2gJwvlgdHtvXF+qO+Nq/rF8NfzFvzARvegEFyr
+         MhLJWr+XOmdpEc9LSH6j/yKdfB8KJY2urGrM+63lGhml2xTL065HnJUhvLcAgpBH9jfF
+         WPANMoWl+6oFXH2qJW8eUnES4DqXiEaY+nWrxxGkzgJBnfre9Zo1Hoh8efvzgNKXcaPY
+         QywA==
+X-Gm-Message-State: AOAM5320mhuB/ZP+c2OIZrSHkSTQW5Kt8JTqe4wQmw4HCjPnfhl8pFwE
+        zLF6jB70HoISjrBd4DtbVY9MaSRbEq6aKT0SUCenPt8cX69m
+X-Google-Smtp-Source: ABdhPJxRfVkxi74W5tf9BM+cl+c0WkhO3ZD1Gj8UUT++sqELpJ0xxRFyOqGRMEVMAJfZrykDKadxtB6k6oIeE2W8sjCkgYoqqHmJ
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQFeQsEZsKvoo//MXIOVy2EvFQ2xIQIdLCHaqeP/l8A=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJJsWRmVeSWpSXmKPExsWy7bCmnu6mI9zxBot/KVr8mHubxeLNyaks
-        Fnv2nmSxuLxrDpvF5f+fWCyWfZnMYvFjer0Du8eXOcfZPdom/2P3aD62ks1j56y77B59W1Yx
-        enzeJBfAFpVjk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuW
-        mQN0ipJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwNCgQK84Mbe4NC9dLzk/18rQ
-        wMDIFKgyISej5atXwUXZiqM3v7A2MN4Q72Lk5JAQMJG4vHwGC4gtJLCDUWLqc8cuRi4g+xOj
-        RN/rHewQic+MEpvO+8A0bFo2jQWiaBejxKLz79khnJeMEpcn7WUEqWIT0JV4cuMnM4gtIqAn
-        cfLkdTYQm1mgkUnixMtsEJtTwFJi399VYKuFBbwldv+cBdbLIqAqcXnabLA4L1DN3OM3mSFs
-        QYmTM5+wQMyRl9j+dg4zxEUKErs/HWXtYuQA2mUlcXIxH0SJiMTszjZmkNskBOZySJy/eJYF
-        ot5FYkrLV1YIW1ji1fEt7BC2lMTnd3vZIOx6if/z17JDNLcwSjz8tI0JZIGEgL3E+0sWICaz
-        gKbE+l36EOWKEjt/z2WE2Msn8e5rDytENa9ER5sQRImKxPcPO1lgNl35cZVpAqPSLCSPzULy
-        2CwkH8xCWLaAkWUVo1hqQXFuemqxYYERckxvYgSnUS2zHYyT3n7QO8TIxMF4iFGCg1lJhDda
-        lDNeiDclsbIqtSg/vqg0J7X4EKMpMKgnMkuJJucDE3leSbyhqZGxsbGFiZm5mamxkjjvv7Ps
-        8UIC6YklqdmpqQWpRTB9TBycUg1MmSZG7D+nLL2g/UrE7tr3D3/PTN3LfIYrPc5g7Q1jgYUz
-        tXNT59xMWx6ZmlbJ5LVXZu4ne9/KVcd3S3zoi17/2e2nqLKjbsO7VeZJ+ZmVl+TddEpOPLwq
-        kbbiSlnfyb45MonH4paJNDz9YM82W0/E2qZKtmTilYNaTH7Cm49ctvQ8I//bpJyL7cJEhfte
-        +w/eWDz/suKxDv6c3QHXz2k7/b5ROWFr/znf2Ju9Sgdmei+O1Nzh1VwdJ8il5H5r1f+sqx7z
-        N75JliifcCX56VIxz5+7rmf+0blmXfTj4TqxlcdqdZk8PtSXHo15VSgWmXLU33S5sotv3uwT
-        l1r9XjleSJh32PLVs1tqbyaJ29XUKLEUZyQaajEXFScCAJWFQ/4sBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42LZdlhJXnfjEe54g+NdlhY/5t5msXhzciqL
-        xZ69J1ksLu+aw2Zx+f8nFotlXyazWPyYXu/A7vFlznF2j7bJ/9g9mo+tZPPYOesuu0ffllWM
-        Hp83yQWwRXHZpKTmZJalFunbJXBltHz1KrgoW3H05hfWBsYb4l2MnBwSAiYSm5ZNY+li5OIQ
-        EtjBKPHxy0vGLkYOoISUxMF9mhCmsMThw8UQJc8ZJXY8v8YC0ssmoCvx5MZPZhBbREBP4uTJ
-        62wgRcwCzUwSrV+amSA6uhglvn5/AFbFKWApse/vKrBuYQFvid0/ZzGC2CwCqhKXp80Gi/MC
-        1cw9fpMZwhaUODnzCQvIFcxAG9o2gpUzC8hLbH87hxniAQWJ3Z+OsoKUiAhYSZxczAdRIiIx
-        u7ONeQKj8Cwkg2YhDJqFZNAsJB0LGFlWMUqmFhTnpucWGxYY5aWW6xUn5haX5qXrJefnbmIE
-        x5OW1g7GPas+6B1iZOJgPMQowcGsJMIbLcoZL8SbklhZlVqUH19UmpNafIhRmoNFSZz366yF
-        cUIC6YklqdmpqQWpRTBZJg5OqQYmz50662tMPu7qi5pmMymvQn/RxE2v+nMP/KmQ2cKwhqMs
-        ZKHOjvTZh7yEWH52+Ees2/jMkGuHkX1h4owQo4dOW2zksrRULyT9n2Da87xv2eUy1+0eVd9P
-        Spu959I9v/doeMWR1Fm5sTd1H3+N+6gjFTmjTUvFZ1KxvPQXZqHZb6Mj/wvlhuzscsubuotV
-        52DflAbtqK+TZp385fS6q7TAONjwj2p2A/fxJd83Pdsk0sl0xdpV5Esus0qy3vz09KTWpO8/
-        Dc0Lv2ktnvZ7a1B3QMyTU+4v3//M8vOenZnIm6zAb6kXElzinfnUc8GRivb853tZFDf3N2zP
-        mf1UaJJPQI9Cx7tFKUyaPrt/nVFiKc5INNRiLipOBAD64VnTFgMAAA==
-X-CMS-MailID: 20200713021929epcas1p4b187bfc24619bd8044197610ac143e5e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200626061009epcas1p24585a6472e7103dc878bf9fc1d0f7d12
-References: <CGME20200626061009epcas1p24585a6472e7103dc878bf9fc1d0f7d12@epcas1p2.samsung.com>
-        <20200626060947.24709-1-kohada.t2@gmail.com>
+X-Received: by 2002:a02:b897:: with SMTP id p23mr7141821jam.32.1594607055648;
+ Sun, 12 Jul 2020 19:24:15 -0700 (PDT)
+Date:   Sun, 12 Jul 2020 19:24:15 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001bbb6705aa49635a@google.com>
+Subject: KASAN: use-after-free Read in userfaultfd_release (2)
+From:   syzbot <syzbot+75867c44841cb6373570@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Add validation for num, bh and type on getting dir-entry.
-> ('file' and 'stream-ext' dir-entries are pre-validated to ensure success)
-> Renamed exfat_get_dentry_cached() to exfat_get_validated_dentry() due to a
-> change in functionality.
-> 
-> Integrate type-validation with simplified.
-> This will also recognize a dir-entry set that contains 'benign secondary'
-> dir-entries.
-> 
-> And, rename TYPE_EXTEND to TYPE_NAME.
-> 
-> Suggested-by: Sungjong Seo <sj1557.seo@samsung.com>
-> Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
-> ---
->  fs/exfat/dir.c      | 144 ++++++++++++++++++--------------------------
->  fs/exfat/exfat_fs.h |  15 +++--
->  fs/exfat/file.c     |   4 +-
->  fs/exfat/inode.c    |   6 +-
->  fs/exfat/namei.c    |   4 +-
->  5 files changed, 73 insertions(+), 100 deletions(-)
-> 
-> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c index
-> f4cea9a7fd02..e029e0986edc 100644
-> --- a/fs/exfat/dir.c
-> +++ b/fs/exfat/dir.c
-[snip]
->   */
->  struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block
-*sb,
-> -		struct exfat_chain *p_dir, int entry, unsigned int type)
-> +		struct exfat_chain *p_dir, int entry, int max_entries)
->  {
->  	int ret, i, num_bh;
-> -	unsigned int off, byte_offset, clu = 0;
-> +	unsigned int byte_offset, clu = 0;
->  	sector_t sec;
->  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
->  	struct exfat_entry_set_cache *es;
->  	struct exfat_dentry *ep;
-> -	int num_entries;
-> -	enum exfat_validate_dentry_mode mode = ES_MODE_STARTED;
->  	struct buffer_head *bh;
-> 
->  	if (p_dir->dir == DIR_DELETED) {
-> @@ -844,13 +815,13 @@ struct exfat_entry_set_cache
-> *exfat_get_dentry_set(struct super_block *sb,
->  		return NULL;
->  	es->sb = sb;
->  	es->modified = false;
-> +	es->num_entries = 1;
-> 
->  	/* byte offset in cluster */
->  	byte_offset = EXFAT_CLU_OFFSET(byte_offset, sbi);
-> 
->  	/* byte offset in sector */
-> -	off = EXFAT_BLK_OFFSET(byte_offset, sb);
-> -	es->start_off = off;
-> +	es->start_off = EXFAT_BLK_OFFSET(byte_offset, sb);
-> 
->  	/* sector offset in cluster */
->  	sec = EXFAT_B_TO_BLK(byte_offset, sb); @@ -861,15 +832,12 @@ struct
-> exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
->  		goto free_es;
->  	es->bh[es->num_bh++] = bh;
-> 
-> -	ep = exfat_get_dentry_cached(es, 0);
-> -	if (!exfat_validate_entry(exfat_get_entry_type(ep), &mode))
-> +	ep = exfat_get_validated_dentry(es, 0, TYPE_FILE);
-> +	if (!ep)
->  		goto free_es;
-> +	es->num_entries = min(ep->dentry.file.num_ext + 1, max_entries);
-> 
-> -	num_entries = type == ES_ALL_ENTRIES ?
-> -		ep->dentry.file.num_ext + 1 : type;
-> -	es->num_entries = num_entries;
-> -
-> -	num_bh = EXFAT_B_TO_BLK_ROUND_UP(off + num_entries * DENTRY_SIZE,
-> sb);
-> +	num_bh = EXFAT_B_TO_BLK_ROUND_UP(es->start_off  + es->num_entries *
-> +DENTRY_SIZE, sb);
->  	for (i = 1; i < num_bh; i++) {
->  		/* get the next sector */
->  		if (exfat_is_last_sector_in_cluster(sbi, sec)) { @@ -889,11
-> +857,13 @@ struct exfat_entry_set_cache *exfat_get_dentry_set(struct
-> super_block *sb,
->  	}
-> 
->  	/* validiate cached dentries */
-> -	for (i = 1; i < num_entries; i++) {
-> -		ep = exfat_get_dentry_cached(es, i);
-> -		if (!exfat_validate_entry(exfat_get_entry_type(ep), &mode))
+Hello,
 
-> +	for (i = 1; i < es->num_entries; i++) {
-> +		if (!exfat_get_validated_dentry(es, i, TYPE_SECONDARY))
->  			goto free_es;
->  	}
-> +	if (!exfat_get_validated_dentry(es, 1, TYPE_STREAM))
-> +		goto free_es;
+syzbot found the following crash on:
 
-It looks better to move checking TYPE_STREAM above the for-loop.
-And then for-loop should start from index 2.
+HEAD commit:    89032636 Add linux-next specific files for 20200708
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1028732f100000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=64a250ebabc6c320
+dashboard link: https://syzkaller.appspot.com/bug?extid=75867c44841cb6373570
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c4c8db100000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12cbb68f100000
 
-BTW, do you think it is enough to check only TYPE_SECONDARY not TYPE NAME?
-As you might know, FILE, STREAM and NAME entries must be consecutive in
-order.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+75867c44841cb6373570@syzkaller.appspotmail.com
 
-> +
->  	return es;
-> 
+==================================================================
+BUG: KASAN: use-after-free in userfaultfd_release+0x57f/0x5f0 fs/userfaultfd.c:879
+Read of size 8 at addr ffff88809b09af88 by task syz-executor902/6813
 
+CPU: 0 PID: 6813 Comm: syz-executor902 Not tainted 5.8.0-rc4-next-20200708-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x18f/0x20d lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:383
+ __kasan_report mm/kasan/report.c:513 [inline]
+ kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
+ userfaultfd_release+0x57f/0x5f0 fs/userfaultfd.c:879
+ __fput+0x33c/0x880 fs/file_table.c:281
+ task_work_run+0xdd/0x190 kernel/task_work.c:135
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_usermode_loop arch/x86/entry/common.c:239 [inline]
+ __prepare_exit_to_usermode+0x1e9/0x1f0 arch/x86/entry/common.c:269
+ do_syscall_64+0x6c/0xe0 arch/x86/entry/common.c:393
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x4401f9
+Code: Bad RIP value.
+RSP: 002b:00007ffdd722dfe8 EFLAGS: 00000246 ORIG_RAX: 0000000000000143
+RAX: ffffffffffffffe8 RBX: 00000000004002c8 RCX: 00000000004401f9
+RDX: 00000000004401f9 RSI: 0000000000400aa0 RDI: 0000000000000000
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401a00
+R13: 0000000000401a90 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 6813:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:461
+ slab_post_alloc_hook mm/slab.h:536 [inline]
+ slab_alloc mm/slab.c:3312 [inline]
+ kmem_cache_alloc+0x148/0x550 mm/slab.c:3482
+ __do_sys_userfaultfd+0x96/0x4b0 fs/userfaultfd.c:2026
+ do_syscall_64+0x60/0xe0 arch/x86/entry/common.c:384
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Freed by task 6813:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
+ kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0xd8/0x120 mm/kasan/common.c:422
+ __cache_free mm/slab.c:3418 [inline]
+ kmem_cache_free.part.0+0x67/0x1f0 mm/slab.c:3693
+ __do_sys_userfaultfd+0x3cf/0x4b0 fs/userfaultfd.c:2061
+ do_syscall_64+0x60/0xe0 arch/x86/entry/common.c:384
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The buggy address belongs to the object at ffff88809b09ae00
+ which belongs to the cache userfaultfd_ctx_cache of size 408
+The buggy address is located 392 bytes inside of
+ 408-byte region [ffff88809b09ae00, ffff88809b09af98)
+The buggy address belongs to the page:
+page:ffffea00026c2680 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880a03d5dc0
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffff8880a3de5d50 ffff8880a3de5d50 ffff888219701b00
+raw: ffff8880a03d5dc0 ffff88809b09a000 0000000100000008 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88809b09ae80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88809b09af00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88809b09af80: fb fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc
+                      ^
+ ffff88809b09b000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88809b09b080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
