@@ -2,126 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60E9321D2B7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 11:24:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB03321D345
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 11:57:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728520AbgGMJYp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jul 2020 05:24:45 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:43480 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726360AbgGMJYp (ORCPT
+        id S1729130AbgGMJ5I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jul 2020 05:57:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42238 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728950AbgGMJ5H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jul 2020 05:24:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594632283;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=8taBpeNWfYvGCIuu+3RcwP8mgr+DtPBfUd45yt6a9tM=;
-        b=Rq8Rk1KvIVnuE9eYYjiOeQ8iU3fgbPSFk90s3TDWA9aFuTBE8OBVmFP+MhQcogqy2KPiIp
-        n4B1bUjXZ/e6csGYxU3jBi/I6JnRvkXBEIq/Ue/FjoC8HwdZhAuO/Mow+MXbqhBQsv6+p+
-        OchEItMGSsA09QWziXFLwaqw098zjqA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-352-p6tDz3eYNamNtlQUM20UWg-1; Mon, 13 Jul 2020 05:24:39 -0400
-X-MC-Unique: p6tDz3eYNamNtlQUM20UWg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D3A3F19200C3;
-        Mon, 13 Jul 2020 09:24:37 +0000 (UTC)
-Received: from localhost (ovpn-114-66.ams2.redhat.com [10.36.114.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C68C719D61;
-        Mon, 13 Jul 2020 09:24:36 +0000 (UTC)
-Date:   Mon, 13 Jul 2020 10:24:35 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Sargun Dhillon <sargun@sargun.me>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Jann Horn <jannh@google.com>, Aleksa Sarai <asarai@suse.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>
-Subject: Re: [PATCH RFC 0/3] io_uring: add restrictions to support untrusted
- applications and guests
-Message-ID: <20200713092435.GC28639@stefanha-x1.localdomain>
-References: <20200710141945.129329-1-sgarzare@redhat.com>
- <20200710153309.GA4699@char.us.oracle.com>
- <20200710162017.qdu34ermtxh3rfgl@steredhat>
+        Mon, 13 Jul 2020 05:57:07 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08111C061755
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 02:57:07 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id e8so5806473pgc.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 02:57:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=1BVl/A4ZuZHtoqyknQZtUC9ho61FPvwu+Y4wN12Kj8U=;
+        b=VP+bk5HMZIAPlQjZP2e7eQNzu1lE6CFhQ6VMPNrgIOjST02IUF2y0kRzXV7UrIGGj8
+         HedvsxcGBaZVebJSB7mztbkxFe6a//+FrxDIftoeDtAQQCaB5Dhp1n4vrpzhpf/DORNK
+         YZ1ceF8lEmfx2bD37dx+tGQ7TTE1ESyNeQQu8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=1BVl/A4ZuZHtoqyknQZtUC9ho61FPvwu+Y4wN12Kj8U=;
+        b=Ett6+jqGQO3/XK+X/UBFwshXN1k9mGnZUYsdgczCAlxb+iMz1RHqrIhMdetOqnHRZB
+         Wpv6YdRwS56sHg5lLj5vsr8PW63GgbWqQ8wygzluBFKOlNNouEE6zstFGvbZkCt/Yy+W
+         sIlhmoMBQytMZpMQtPecGeuxP8S+6K9OxpM7emzw0Z6NChutZSbfCS1ptqMR+wBPdhF7
+         OkRw1bQFAxygZ9sb+h+6kZQh2JXAn13G3Tue3JjGZ7pPT3wBmkLIVjOgxVF5CDibmCEl
+         Wdpo/8DN2sF+GL0wDqtDbYGDqQCjwYDggnDXRsQI7Gz4WCEw3dBHPOcvH7jXdwLpJKqe
+         6ZcQ==
+X-Gm-Message-State: AOAM533gyndpU0avyvTtTUc6GFNuC7LHOjTj8+hCGffH9B9BvdnKGZDB
+        09k0+KhS/qggcQ4TFaPLnjd+6Q==
+X-Google-Smtp-Source: ABdhPJzTiKU6MkYpR31tfDqsy+4lcc0pUEWAIbEZYhRb8/sYZIcm/sACohdD9hft6UVXozSVM0ZSKg==
+X-Received: by 2002:aa7:84d3:: with SMTP id x19mr63384343pfn.155.1594634226613;
+        Mon, 13 Jul 2020 02:57:06 -0700 (PDT)
+Received: from localhost ([2401:fa00:8f:2:f693:9fff:fef4:2537])
+        by smtp.gmail.com with ESMTPSA id w9sm13741053pja.39.2020.07.13.02.57.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jul 2020 02:57:05 -0700 (PDT)
+From:   Chirantan Ekbote <chirantan@chromium.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>,
+        fuse-devel@lists.sourceforge.net,
+        Chirantan Ekbote <chirantan@chromium.org>
+Subject: [PATCHv4 1/2] uapi: fuse: Add FUSE_SECURITY_CTX
+Date:   Mon, 13 Jul 2020 18:56:59 +0900
+Message-Id: <20200713095700.350234-1-chirantan@chromium.org>
+X-Mailer: git-send-email 2.27.0.383.g050319c2ae-goog
+In-Reply-To: <20200713090921.312962-1-chirantan@chromium.org>
+References: <20200713090921.312962-1-chirantan@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20200710162017.qdu34ermtxh3rfgl@steredhat>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZwgA9U+XZDXt4+m+"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---ZwgA9U+XZDXt4+m+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add the FUSE_SECURITY_CTX flag for the `flags` field of the
+fuse_init_out struct.  When this flag is set the kernel will append the
+security context for a newly created inode to the request (create,
+mkdir, mknod, and symlink).  The server is responsible for ensuring that
+the inode appears atomically with the requested security context.
 
-On Fri, Jul 10, 2020 at 06:20:17PM +0200, Stefano Garzarella wrote:
-> On Fri, Jul 10, 2020 at 11:33:09AM -0400, Konrad Rzeszutek Wilk wrote:
-> > .snip..
-> > > Just to recap the proposal, the idea is to add some restrictions to t=
-he
-> > > operations (sqe, register, fixed file) to safely allow untrusted appl=
-ications
-> > > or guests to use io_uring queues.
-> >=20
-> > Hi!
-> >=20
-> > This is neat and quite cool - but one thing that keeps nagging me is
-> > what how much overhead does this cut from the existing setup when you u=
-se
-> > virtio (with guests obviously)?
->=20
-> I need to do more tests, but the preliminary results that I reported on
-> the original proposal [1] show an overhead of ~ 4.17 uS (with iodepth=3D1=
-)
-> when I'm using virtio ring processed in a dedicated iothread:
->=20
->   - 73 kIOPS using virtio-blk + QEMU iothread + io_uring backend
->   - 104 kIOPS using io_uring passthrough
->=20
-> >                                 That is from a high level view the
-> > beaty of io_uring being passed in the guest is you don't have the
-> > virtio ring -> io_uring processing, right?
->=20
-> Right, and potentially we can share the io_uring queues directly to the
-> guest userspace applications, cutting down the cost of Linux block
-> layer in the guest.
+For example, if the server is backed by a "real" linux file system then
+it can write the security context value to
+/proc/thread-self/attr/fscreate before making the syscall to create the
+inode.
 
-Another factor is that the guest submits requests directly to the host
-kernel sqpoll thread. When a virtqueue is used the sqpoll thread cannot
-poll it directly so another host thread (QEMU) needs to poll the
-virtqueue. The same applies for the completion code path.
+Signed-off-by: Chirantan Ekbote <chirantan@chromium.org>
+---
+Changes in v4:
+  * Added signoff to commit message.
 
-Stefan
+ include/uapi/linux/fuse.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---ZwgA9U+XZDXt4+m+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl8MKFMACgkQnKSrs4Gr
-c8iWaQgAkvf4Ga+PHPaSTucaASbYCgeYbSgiUPCLRsOB0g2+3HM6buSTHpdfYoUk
-Fy1Y3Yl7cDqGmCCHdTx9rYTQCd6SYSElqylNNnn6yEMiMgvcYcK4xn+wgY8BxVGy
-yIv0Rl52ucmtkQ4Iry5mA/vSNZiiVnDyP5Mq9EahEKDO9RtC0duf4xJeR1Lhyk9G
-QDbDx9I2/TZgsxar1+Tettaf6vbC1d8S5WCSSktvMl7Jn2zP/uyJg9DyuMCRWMVl
-YPX8SPGK/Kr0uKRWkWtBdbK0TuDJtM5i8hdD59ppdQaSwt7JrmowOFDKg9iznl4r
-Z9f95iJ6QD2dHTtGo4Yc5WKyhZ9BmA==
-=KoLY
------END PGP SIGNATURE-----
-
---ZwgA9U+XZDXt4+m+--
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 373cada898159..e2099b45fd44b 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -172,6 +172,10 @@
+  *  - add FUSE_WRITE_KILL_PRIV flag
+  *  - add FUSE_SETUPMAPPING and FUSE_REMOVEMAPPING
+  *  - add map_alignment to fuse_init_out, add FUSE_MAP_ALIGNMENT flag
++ *
++ *  7.32
++ *  - add FUSE_SECURITY_CTX flag for fuse_init_out
++ *  - add security context to create, mkdir, symlink, and mknod requests
+  */
+ 
+ #ifndef _LINUX_FUSE_H
+@@ -207,7 +211,7 @@
+ #define FUSE_KERNEL_VERSION 7
+ 
+ /** Minor version number of this interface */
+-#define FUSE_KERNEL_MINOR_VERSION 31
++#define FUSE_KERNEL_MINOR_VERSION 32
+ 
+ /** The node ID of the root inode */
+ #define FUSE_ROOT_ID 1
+@@ -314,6 +318,7 @@ struct fuse_file_lock {
+  * FUSE_NO_OPENDIR_SUPPORT: kernel supports zero-message opendir
+  * FUSE_EXPLICIT_INVAL_DATA: only invalidate cached pages on explicit request
+  * FUSE_MAP_ALIGNMENT: map_alignment field is valid
++ * FUSE_SECURITY_CTX: add security context to create, mkdir, symlink, and mknod
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -342,6 +347,7 @@ struct fuse_file_lock {
+ #define FUSE_NO_OPENDIR_SUPPORT (1 << 24)
+ #define FUSE_EXPLICIT_INVAL_DATA (1 << 25)
+ #define FUSE_MAP_ALIGNMENT	(1 << 26)
++#define FUSE_SECURITY_CTX	(1 << 27)
+ 
+ /**
+  * CUSE INIT request/reply flags
+-- 
+2.27.0.383.g050319c2ae-goog
 
