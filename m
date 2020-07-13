@@ -2,80 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA75C21DDC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 18:45:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E50F21DDFA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 18:55:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729776AbgGMQpd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jul 2020 12:45:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50692 "EHLO
+        id S1730180AbgGMQzM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jul 2020 12:55:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729703AbgGMQpd (ORCPT
+        with ESMTP id S1729659AbgGMQzM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jul 2020 12:45:33 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18116C061794
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 09:45:33 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id bm28so12271044edb.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 09:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YWJmchy5NBOUhyK5SwRwLbF2VzgzDqorZLs7Z4tlH84=;
-        b=YauW5eu+U1WcnMWUhCH6USIo4RRa/4DjiT3BOcbbsGW0KeXV1YoHALoYmdaAuDYylQ
-         xW3zY6dlDd+ktaWQENSLYYleqAJBN1mwxzFTHYSZhqqCbzDPkHsybQCD9Ue2e1XZtlDx
-         VqnuSpVjTEL1T5Bs9LKIoi7gvVEmFp1gABikk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YWJmchy5NBOUhyK5SwRwLbF2VzgzDqorZLs7Z4tlH84=;
-        b=kfqHscCAvMj4PrU8TBm6MtpZEcGM5OLIbgr74vwbP8nXt/SDTTtdWpUG/iX1PYnN4x
-         cOuAtdvCLCgMfisSWzw8a3FbPvrJClRP1z/VGTRLYmSA8gYtNmr/VjjlJPFlGcraD1OO
-         /GR8XNfU1RNUkOEXHu7bKhwiB/Nb/2nR8KCOXcNbpuo2/8OBJOIrWO4K6wc3H3CwNZOo
-         k9A3NIl4voTg4pvrgEAjjh1ah0pzxCbW1bqhjNluRJpPtcPsO0+/e9u6SqDhs0+T9b3V
-         ZCxTQnKRZdjyHD6x9gjvoBn3ENYbDoU2xJo5XT5WyZODO6XpCZh1n9OLG9OAg5GZGFPJ
-         4mWw==
-X-Gm-Message-State: AOAM532FdMknZjzBYPyMdQNGZKJbkZRlXrthPgw7cZ17bMRumzMOaA4Y
-        1HJz9p7tnasNFuu84JZtuP6gGA==
-X-Google-Smtp-Source: ABdhPJzcKhMEWkxja+nXz5D6veGVU3r4UEuSD2r7Zl/utZcyhS3svSDQ5ap7tYvz3qxodpWBKIGFLQ==
-X-Received: by 2002:a50:fd12:: with SMTP id i18mr256850eds.371.1594658731595;
-        Mon, 13 Jul 2020 09:45:31 -0700 (PDT)
-Received: from localhost ([2620:10d:c093:400::5:ef88])
-        by smtp.gmail.com with ESMTPSA id s7sm12186223edr.57.2020.07.13.09.45.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2020 09:45:31 -0700 (PDT)
-Date:   Mon, 13 Jul 2020 17:45:30 +0100
-From:   Chris Down <chris@chrisdown.name>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH v6 1/2] tmpfs: Per-superblock i_ino support
-Message-ID: <20200713164530.GB1065134@chrisdown.name>
-References: <cover.1594656618.git.chris@chrisdown.name>
- <2cddd4498ba1db1c7a3831d47b9db0d063746a3b.1594656618.git.chris@chrisdown.name>
- <20200713164145.GY12769@casper.infradead.org>
+        Mon, 13 Jul 2020 12:55:12 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB39C061794;
+        Mon, 13 Jul 2020 09:55:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=HuDdCAe7E/MURwBsmW1Ls9iUs+3VUz9I3ziwdok6E+A=; b=LWb7VIGpl0H9u+jUhBSNqsfnkh
+        bI7HOZD2MHbpne8P2z3FF2pANyq/O8ttXKz04u7N2xaiedmLEqGd7qOcFY968v9TUKHQcTqqL20Pj
+        xg7dow/Qn1uV2dvTd1URZW80j6On7agD3JZkY64Vl13C7EVuq5rvK8R3oosHdsHeal3ejwztgJoAq
+        QlFoNCgY1gQ5BnT1IW9JY3YBcnbg78ejezNjzOSS3rtMjNoBARVCMx5ckbwcX3Ig7VBuWikmnkQEI
+        GBZE8bahcF2hRsRXOQeIN67F1ZxxHaiCnIX0mnSlZoZdfbE0vIseds6GoqtLPbjxMMHoM7S1LZr7s
+        ro7N6bwA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jv1jA-00043K-2o; Mon, 13 Jul 2020 16:54:52 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E60EE303A02;
+        Mon, 13 Jul 2020 18:54:49 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CCBF020D28BB0; Mon, 13 Jul 2020 18:54:49 +0200 (CEST)
+Date:   Mon, 13 Jul 2020 18:54:49 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Doug Anderson <dianders@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 1/2] sched/uclamp: Add a new sysctl to control RT
+ default boost value
+Message-ID: <20200713165449.GM10769@hirez.programming.kicks-ass.net>
+References: <20200706142839.26629-1-qais.yousef@arm.com>
+ <20200706142839.26629-2-qais.yousef@arm.com>
+ <20200713112125.GG10769@hirez.programming.kicks-ass.net>
+ <20200713121246.xjif3g4zpja25o5r@e107158-lin.cambridge.arm.com>
+ <20200713133558.GK10769@hirez.programming.kicks-ass.net>
+ <20200713142754.tri5jljnrzjst2oe@e107158-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200713164145.GY12769@casper.infradead.org>
-User-Agent: Mutt/1.14.5 (2020-06-23)
+In-Reply-To: <20200713142754.tri5jljnrzjst2oe@e107158-lin.cambridge.arm.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox writes:
->I don't think that works.  I think you meant to write ~(SHMEM_INO_BATCH - 1).
->Or just ino % SHMEM_INO_BATCH which works even for non-power-of-two.
+On Mon, Jul 13, 2020 at 03:27:55PM +0100, Qais Yousef wrote:
+> On 07/13/20 15:35, Peter Zijlstra wrote:
+> > > I protect this with rcu_read_lock() which as far as I know synchronize_rcu()
+> > > will ensure if we do the update during this section; we'll wait for it to
+> > > finish. New forkees entering the rcu_read_lock() section will be okay because
+> > > they should see the new value.
+> > > 
+> > > spinlocks() and mutexes seemed inferior to this approach.
+> > 
+> > Well, didn't we just write in another patch that p->uclamp_* was
+> > protected by both rq->lock and p->pi_lock?
+> 
+> __setscheduler_uclamp() path is holding these locks, not sure by design or it
+> just happened this path holds the lock. I can't see the lock in the
+> uclamp_fork() path. But it's hard sometimes to unfold the layers of callers,
+> especially not all call sites are annotated for which lock is assumed to be
+> held.
+> 
+> Is it safe to hold the locks in uclamp_fork() while the task is still being
+> created? My new code doesn't hold it of course.
+> 
+> We can enforce this rule if you like. Though rcu critical section seems lighter
+> weight to me.
+> 
+> If all of this does indeed start looking messy we can put the update in
+> a delayed worker and schedule that instead of doing synchronous setup.
 
-Er, right. I now wonder why I didn't just write `ino % SHMEM_INO_BATCH` :-)
-
-I'll send again with that fix.
+sched_fork() doesn't need the locks, because at that point the task
+isn't visible yet. HOWEVER, sched_post_fork() is after pid-hash (per
+design) and thus the task is visible, so we can race against
+sched_setattr(), so we'd better hold those locks anyway.
