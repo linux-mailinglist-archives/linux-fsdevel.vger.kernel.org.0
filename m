@@ -2,284 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 597DF21D58D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 14:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 375AC21D5B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jul 2020 14:21:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729646AbgGMMMx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jul 2020 08:12:53 -0400
-Received: from foss.arm.com ([217.140.110.172]:58790 "EHLO foss.arm.com"
+        id S1729665AbgGMMU4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jul 2020 08:20:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55710 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726586AbgGMMMw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jul 2020 08:12:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5428630E;
-        Mon, 13 Jul 2020 05:12:51 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DFC2C3F887;
-        Mon, 13 Jul 2020 05:12:48 -0700 (PDT)
-Date:   Mon, 13 Jul 2020 13:12:46 +0100
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] sched/uclamp: Add a new sysctl to control RT
- default boost value
-Message-ID: <20200713121246.xjif3g4zpja25o5r@e107158-lin.cambridge.arm.com>
-References: <20200706142839.26629-1-qais.yousef@arm.com>
- <20200706142839.26629-2-qais.yousef@arm.com>
- <20200713112125.GG10769@hirez.programming.kicks-ass.net>
+        id S1729578AbgGMMU4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Jul 2020 08:20:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 45B73B1E2;
+        Mon, 13 Jul 2020 12:20:56 +0000 (UTC)
+Date:   Mon, 13 Jul 2020 07:20:50 -0500
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 2/2] iomap: fall back to buffered writes for invalidation
+ failures
+Message-ID: <20200713122050.okus7qlampk5ysyb@fiona>
+References: <20200713074633.875946-1-hch@lst.de>
+ <20200713074633.875946-3-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200713112125.GG10769@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20200713074633.875946-3-hch@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/13/20 13:21, Peter Zijlstra wrote:
-> > +	 * 2. fork()->sched_post_fork()
-> > +	 *    __setscheduler_uclamp()
-> > +	 *
-> > +	 *	Both of these functions could read the old value but then get
-> > +	 *	preempted, during which a user might write new value to
-> > +	 *	sysctl_sched_uclamp_util_min_rt_default.
-> > +	 *
-> > +	 *	// read sysctl_sched_uclamp_util_min_rt_default;
-> > +	 *	// PREEMPT-OUT
-> > +	 *	.
-> > +	 *	.                  <-- sync happens here
-> > +	 *	.
-> > +	 *	// PREEMPT-IN
-> > +	 *	// write p->uclamp_req[UCLAMP_MIN]
-> > +	 *
-> > +	 *	That section is protected with rcu_read_lock(), so
-> > +	 *	synchronize_rcu() will guarantee it has finished before we
-> > +	 *	perform the update. Hence ensure that this sync happens after
-> > +	 *	any concurrent sync which should guarantee correctness.
-> > +	 */
-> > +	synchronize_rcu();
-> > +
-> > +	rcu_read_lock();
-> > +	for_each_process_thread(g, p)
-> > +		__uclamp_sync_util_min_rt_default(p);
-> > +	rcu_read_unlock();
-> > +}
+On  9:46 13/07, Christoph Hellwig wrote:
+> Failing to invalid the page cache means data in incoherent, which is
+> a very bad state for the system.  Always fall back to buffered I/O
+> through the page cache if we can't invalidate mappings.
 > 
-> It's monday, and I cannot get my brain working.. I cannot decipher the
-> comments you have with the smp_[rw]mb(), what actual ordering do they
-> enforce?
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-It was a  bit of a paranoia to ensure that readers on other cpus see the new
-value after this point.
+Thanks. This will help btrfs. The current next tree contains the iomap
+changes I recomended and would need to be reverted in order to
+incorporate this. Once this is in the next tree I will (re)format the
+btrfs iomap dio patches.
 
+Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+> ---
+>  fs/ext4/file.c       |  2 ++
+>  fs/gfs2/file.c       |  3 ++-
+>  fs/iomap/direct-io.c | 13 ++++++++-----
+>  fs/iomap/trace.h     |  1 +
+>  fs/xfs/xfs_file.c    |  4 ++--
+>  fs/zonefs/super.c    |  7 +++++--
+>  6 files changed, 20 insertions(+), 10 deletions(-)
 > 
-> Also, your synchronize_rcu() relies on write_lock() beeing
-> non-preemptible, which isn't true on PREEMPT_RT.
-> 
-> The below seems simpler...
-
-Hmm maybe I am missing something obvious, but beside the race with fork; I was
-worried about another race and that's what the synchronize_rcu() is trying to
-handle.
-
-It's the classic preemption in the middle of RMW operation race.
-
-		copy_process()			sysctl_uclamp
-
-		  sched_post_fork()
-		    __uclamp_sync_rt()
-		      // read sysctl
-		      // PREEMPT
-						  for_each_process_thread()
-		      // RESUME
-		      // write syctl to p
-
-So to summarize we have 3 scenarios:
-
-
-	1. sysctl_uclamp happens *before* sched_post_fork()
-
-for_each_process_thread() could miss the forked task, but that's okay because
-sched_post_fork() will apply the correct value.
-
-
-	2. sysctl_uclamp happens *during* sched_post_fork()
-
-There's the risk of the classic preemption in the middle of RMW where another
-CPU could have changed the shared variable after the current CPU has already
-read it, but before writing it back.
-
-I protect this with rcu_read_lock() which as far as I know synchronize_rcu()
-will ensure if we do the update during this section; we'll wait for it to
-finish. New forkees entering the rcu_read_lock() section will be okay because
-they should see the new value.
-
-spinlocks() and mutexes seemed inferior to this approach.
-
-Any other potential future user that needs to do __uclamp_sync_rt() could
-suffer from this race.
-
-
-	3. sysctl_uclamp happens *after* sched_post_fork()
-
-Here if for_each_process_thread() still can't see the forked task; then we have
-a problem. For this case I wasn't sure if we needed the
-smp_mp__after_spinlock() dance. It seemed a stretch to me not to see the forked
-task after this point.
-
-Would a simple smp_mp() in for_each_process_thread() be sufficient instead?
-
-Though maybe better to provide a generic macro to do this dance for the benefit
-of potential other future users and just call it here and not think too much.
-
-diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 0ee5e696c5d8..a124e3a1cb6d 100644
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -586,7 +586,7 @@ extern void flush_itimer_signals(void);
-        list_entry_rcu((p)->tasks.next, struct task_struct, tasks)
-
- #define for_each_process(p) \
--       for (p = &init_task ; (p = next_task(p)) != &init_task ; )
-+       for (smp_mp(); p = &init_task ; (p = next_task(p)) != &init_task ; )
-
- extern bool current_is_single_threaded(void);
-
-Thanks
-
---
-Qais Yousef
-
-> 
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -1013,8 +1013,6 @@ static void __uclamp_sync_util_min_rt_de
->  	unsigned int default_util_min;
->  	struct uclamp_se *uc_se;
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 2a01e31a032c4c..0da6c2a2c32c1e 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -544,6 +544,8 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		iomap_ops = &ext4_iomap_overwrite_ops;
+>  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+>  			   is_sync_kiocb(iocb) || unaligned_io || extend);
+> +	if (ret == -EREMCHG)
+> +		ret = 0;
 >  
-> -	WARN_ON_ONCE(!rcu_read_lock_held());
+>  	if (extend)
+>  		ret = ext4_handle_inode_extension(inode, offset, ret, count);
+> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+> index fe305e4bfd3734..c7907d40c61d17 100644
+> --- a/fs/gfs2/file.c
+> +++ b/fs/gfs2/file.c
+> @@ -814,7 +814,8 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
+>  
+>  	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
+>  			   is_sync_kiocb(iocb));
 > -
->  	if (!rt_task(p))
->  		return;
+> +	if (ret == -EREMCHG)
+> +		ret = 0;
+>  out:
+>  	gfs2_glock_dq(&gh);
+>  out_uninit:
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index 190967e87b69e4..62626235cdbe8d 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/backing-dev.h>
+>  #include <linux/uio.h>
+>  #include <linux/task_io_accounting_ops.h>
+> +#include "trace.h"
 >  
-> @@ -1024,8 +1022,6 @@ static void __uclamp_sync_util_min_rt_de
->  	if (uc_se->user_defined)
->  		return;
+>  #include "../internal.h"
 >  
-> -	/* Sync with smp_wmb() in uclamp_sync_util_min_rt_default() */
-> -	smp_rmb();
->  	default_util_min = sysctl_sched_uclamp_util_min_rt_default;
->  	uclamp_se_set(uc_se, default_util_min, false);
->  }
-> @@ -1035,47 +1031,21 @@ static void uclamp_sync_util_min_rt_defa
->  	struct task_struct *g, *p;
->  
->  	/*
-> -	 * Make sure the updated sysctl_sched_uclamp_util_min_rt_default which
-> -	 * was just written is synchronized against any future read on another
-> -	 * cpu.
-> -	 */
-> -	smp_wmb();
-> -
-> -	/*
-> -	 * Wait for all updaters to observe the new change.
-> -	 *
-> -	 * There are 2 races to deal with here:
-> -	 *
-> -	 * 1. fork()->copy_process()
-> -	 *
-> -	 *	If a task was concurrently forking, for_each_process_thread()
-> -	 *	will not see it, hence it could have copied the old value and
-> -	 *	we missed the opportunity to update it.
-> -	 *
-> -	 *	This should be handled by sched_post_fork() where it'll ensure
-> -	 *	it performs the sync after the fork.
-> -	 *
-> -	 * 2. fork()->sched_post_fork()
-> -	 *    __setscheduler_uclamp()
-> -	 *
-> -	 *	Both of these functions could read the old value but then get
-> -	 *	preempted, during which a user might write new value to
-> -	 *	sysctl_sched_uclamp_util_min_rt_default.
-> -	 *
-> -	 *	// read sysctl_sched_uclamp_util_min_rt_default;
-> -	 *	// PREEMPT-OUT
-> -	 *	.
-> -	 *	.                  <-- sync happens here
-> -	 *	.
-> -	 *	// PREEMPT-IN
-> -	 *	// write p->uclamp_req[UCLAMP_MIN]
-> -	 *
-> -	 *	That section is protected with rcu_read_lock(), so
-> -	 *	synchronize_rcu() will guarantee it has finished before we
-> -	 *	perform the update. Hence ensure that this sync happens after
-> -	 *	any concurrent sync which should guarantee correctness.
-> -	 */
-> -	synchronize_rcu();
-> +	 * copy_process()			sysctl_uclamp
-> +	 *					  uclamp_min_rt = X;
-> +	 *   write_lock(&tasklist_lock)		  read_lock(&tasklist_lock)
-> +	 *   // link thread			  smp_mb__after_spinlock()
-> +	 *   write_unlock(&tasklist_lock)	  read_unlock(&tasklist_lock);
-> +	 *   sched_post_fork()			  for_each_process_thread()
-> +	 *     __uclamp_sync_rt()		    __uclamp_sync_rt()
-> +	 *
-> +	 * Ensures that either sched_post_fork() will observe the new
-> +	 * uclamp_min_rt or for_each_process_thread() will observe the new
-> +	 * task.
-> +	 */
-> +	read_lock(&tasklist_lock);
-> +	smp_mb__after_spinlock();
-> +	read_unlock(&tasklist_lock);
->  
->  	rcu_read_lock();
->  	for_each_process_thread(g, p)
-> @@ -1408,6 +1378,9 @@ int sysctl_sched_uclamp_handler(struct c
->  		uclamp_update_root_tg();
->  	}
->  
-> +	if (old_min_rt != sysctl_sched_uclamp_util_min_rt_default)
-> +		uclamp_sync_util_min_rt_default();
-> +
->  	/*
->  	 * We update all RUNNABLE tasks only when task groups are in use.
->  	 * Otherwise, keep it simple and do just a lazy update at each next
-> @@ -1466,9 +1439,7 @@ static void __setscheduler_uclamp(struct
->  		 * at runtime.
+> @@ -478,13 +479,15 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (iov_iter_rw(iter) == WRITE) {
+>  		/*
+>  		 * Try to invalidate cache pages for the range we are writing.
+> -		 * If this invalidation fails, tough, the write will still work,
+> -		 * but racing two incompatible write paths is a pretty crazy
+> -		 * thing to do, so we don't support it 100%.
+> +		 * If this invalidation fails, let the caller fall back to
+> +		 * buffered I/O.
 >  		 */
->  		if (unlikely(rt_task(p) && clamp_id == UCLAMP_MIN)) {
-> -			rcu_read_lock();
->  			__uclamp_sync_util_min_rt_default(p);
-> -			rcu_read_unlock();
->  		} else {
->  			uclamp_se_set(uc_se, uclamp_none(clamp_id), false);
->  		}
-> @@ -1521,6 +1492,11 @@ static void __init init_uclamp_rq(struct
->  	rq->uclamp_flags = 0;
->  }
+>  		if (invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT,
+> -				end >> PAGE_SHIFT))
+> -			dio_warn_stale_pagecache(iocb->ki_filp);
+> +				end >> PAGE_SHIFT)) {
+> +			trace_iomap_dio_invalidate_fail(inode, pos, count);
+> +			ret = -EREMCHG;
+> +			goto out_free_dio;
+> +		}
 >  
-> +static void uclamp_post_fork(struct task_struct *p)
-> +{
-> +	__uclamp_sync_util_min_rt_default(p);
-> +}
-> +
->  static void __init init_uclamp(void)
->  {
->  	struct uclamp_se uc_max = {};
+>  		if (!wait_for_completion && !inode->i_sb->s_dio_done_wq) {
+>  			ret = sb_init_dio_done_wq(inode->i_sb);
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> index 5693a39d52fb63..fdc7ae388476f5 100644
+> --- a/fs/iomap/trace.h
+> +++ b/fs/iomap/trace.h
+> @@ -74,6 +74,7 @@ DEFINE_EVENT(iomap_range_class, name,	\
+>  DEFINE_RANGE_EVENT(iomap_writepage);
+>  DEFINE_RANGE_EVENT(iomap_releasepage);
+>  DEFINE_RANGE_EVENT(iomap_invalidatepage);
+> +DEFINE_RANGE_EVENT(iomap_dio_invalidate_fail);
+>  
+>  #define IOMAP_TYPE_STRINGS \
+>  	{ IOMAP_HOLE,		"HOLE" }, \
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 00db81eac80d6c..551cca39fa3ba6 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -553,8 +553,8 @@ xfs_file_dio_aio_write(
+>  	xfs_iunlock(ip, iolock);
+>  
+>  	/*
+> -	 * No fallback to buffered IO on errors for XFS, direct IO will either
+> -	 * complete fully or fail.
+> +	 * No partial fallback to buffered IO on errors for XFS, direct IO will
+> +	 * either complete fully or fail.
+>  	 */
+>  	ASSERT(ret < 0 || ret == count);
+>  	return ret;
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> index 07bc42d62673ce..793850454b752f 100644
+> --- a/fs/zonefs/super.c
+> +++ b/fs/zonefs/super.c
+> @@ -786,8 +786,11 @@ static ssize_t zonefs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  	if (iocb->ki_pos >= ZONEFS_I(inode)->i_max_size)
+>  		return -EFBIG;
+>  
+> -	if (iocb->ki_flags & IOCB_DIRECT)
+> -		return zonefs_file_dio_write(iocb, from);
+> +	if (iocb->ki_flags & IOCB_DIRECT) {
+> +		ret = zonefs_file_dio_write(iocb, from);
+> +		if (ret != -EREMCHG)
+> +			return ret;
+> +	}
+>  
+>  	return zonefs_file_buffered_write(iocb, from);
+>  }
+> -- 
+> 2.26.2
+> 
+
+-- 
+Goldwyn
