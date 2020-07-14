@@ -2,106 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7071221FDA8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 21:43:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 804DE21FDC1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 21:50:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730318AbgGNTmV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 15:42:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47124 "EHLO
+        id S1729442AbgGNTtm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 15:49:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729427AbgGNTmU (ORCPT
+        with ESMTP id S1726418AbgGNTtm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 15:42:20 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4585C061755;
-        Tue, 14 Jul 2020 12:42:20 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id o13so8056344pgf.0;
-        Tue, 14 Jul 2020 12:42:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+ZhRanqEZ6xrzrFJNj1TcXKoTTLAuy/jV3gWLNq6hZ4=;
-        b=giu+sL5nBFSemahOaz6MWi28NSoEh5gBWf7W/REahIs3P6gyU45zkCg2aKS23Dn0S0
-         M/gnZ9RUATYkOYeuop9a3noUH4U0ds3U4otsNJ3HVeUWMSUBQ7IDgRWFohRw/8wrjVne
-         /FdX1Ekj/KQ4rJjpw1GwMn2lSMiwaZL63W0lUaeaAzpL/U7drbicEP46mKpmZZEN4yfi
-         vq3nQnGox9EZjQ3R2vpbG+OjVSMFpNwSvFu6oSjZCZ54dJcJMeMQ8ucWLY+KPQ7UHG25
-         QyNK4NgQT6oUSL/7yWEFfasxf5/E5Dii8tH73DLtBasnMYN0HnD90rSMFe4A8zWEpl1z
-         +v/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+ZhRanqEZ6xrzrFJNj1TcXKoTTLAuy/jV3gWLNq6hZ4=;
-        b=EhRU0Ax1MA68QUWzp0TtspNjurMN2WYEcgfTY73L5U60QBAyKTVY7KLL4/Tl/ReEhB
-         wUtKY/OxtzOljKMhypikF4l3zpNfA4NoIEyHBqLxvrji1H9p9QOjpLiH2s/knx6Emnd2
-         lObxVTA/jNZZnNf1sRUtY7r4z6ARnouJqnl/eEGg3EUrS7hMFPzHM5wwKOqnbPUKUsWV
-         ssp9bAvj6UXdsKJ2B0KbgsSsiZRLPw0JRuFEQfy1jKCWqnRD1+jPyK60DPeMerJ6pGRZ
-         OfptGinbrciwJx9+GW/wctkgSIf7E4WeSlxsCHbz3156d32aXi5JRHcNvMflai6I7Cb0
-         WOgw==
-X-Gm-Message-State: AOAM533XtrJ0iK+azwqC8EQP9P8D8VSeUGEsmgM9b+yftBlooD2heZv5
-        40vR0iuVZs4h43oRKEmNjfb3+kAQi7I=
-X-Google-Smtp-Source: ABdhPJwCZW0EI5rCFgMKvm2MFTrsjjZtvXTrUu9XHGbNrwtGiJZJ/jM8nhz7CjNBJzySZOjUfWeRrw==
-X-Received: by 2002:a62:4e06:: with SMTP id c6mr5741389pfb.296.1594755740258;
-        Tue, 14 Jul 2020 12:42:20 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:96f0])
-        by smtp.gmail.com with ESMTPSA id f2sm5394pfb.184.2020.07.14.12.42.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2020 12:42:19 -0700 (PDT)
-Date:   Tue, 14 Jul 2020 12:42:16 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <greg@kroah.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Kees Cook <keescook@chromium.org>,
+        Tue, 14 Jul 2020 15:49:42 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E2ACC061755;
+        Tue, 14 Jul 2020 12:49:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=q7NrJBulspMdgxi2cducPGZ39YVyw0D0jNEe7CHNFek=; b=pR+q0ltz9wN4EMOYLJfOx0i96Z
+        fflfRrIqJ/FjDcRjkjnXWWtoHOwwXb5VsxdrGuZS+CvUr+oUVlTyCv7gRGycAnTBa73nx/ZZzxraY
+        82iJarBVL45tJXSN9iBukFBmkrK9TjFwkyynR9lgHVj3P/pTN95GAdES3IngOKWCc/IT/AJeExrws
+        B1iS+MFHhiV2wqkcQPS+4cu4PIVmyzJ5wPbo1+MD1rYtVpUtTpPR4NAyL3Qe+F1StOpbl5ZlMwm/d
+        zltUaTYbLueeel/jU/1kBjn+57c1OiyIkuqs9kUC5wGlwJjyFjRHU5uwW598uj7Fo2AqOiGYpCTQs
+        STKoB0Qw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jvQva-0008SY-R4; Tue, 14 Jul 2020 19:49:23 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CA5909817E0; Tue, 14 Jul 2020 21:49:21 +0200 (CEST)
+Date:   Tue, 14 Jul 2020 21:49:21 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Gary Lin <GLin@suse.com>, Bruno Meneguele <bmeneg@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [merged][PATCH v3 00/16] Make the user mode driver code a better
- citizen
-Message-ID: <20200714194216.sq2e3z44htts57qf@ast-mbp.dhcp.thefacebook.com>
-References: <20200625095725.GA3303921@kroah.com>
- <778297d2-512a-8361-cf05-42d9379e6977@i-love.sakura.ne.jp>
- <20200625120725.GA3493334@kroah.com>
- <20200625.123437.2219826613137938086.davem@davemloft.net>
- <CAHk-=whuTwGHEPjvtbBvneHHXeqJC=q5S09mbPnqb=Q+MSPMag@mail.gmail.com>
- <87pn9mgfc2.fsf_-_@x220.int.ebiederm.org>
- <87y2oac50p.fsf@x220.int.ebiederm.org>
- <87bll17ili.fsf_-_@x220.int.ebiederm.org>
- <87y2o1swee.fsf_-_@x220.int.ebiederm.org>
- <87r1tke44q.fsf_-_@x220.int.ebiederm.org>
+        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [RFC PATCH 12/15] kmap: Add stray write protection for device
+ pages
+Message-ID: <20200714194921.GJ5523@worktop.programming.kicks-ass.net>
+References: <20200714070220.3500839-1-ira.weiny@intel.com>
+ <20200714070220.3500839-13-ira.weiny@intel.com>
+ <20200714084451.GQ10769@hirez.programming.kicks-ass.net>
+ <20200714190615.GC3008823@iweiny-DESK2.sc.intel.com>
+ <20200714192930.GH5523@worktop.programming.kicks-ass.net>
+ <50d472d8-e4d9-dd35-f31f-268aa69c76e2@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87r1tke44q.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <50d472d8-e4d9-dd35-f31f-268aa69c76e2@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 09, 2020 at 05:05:09PM -0500, Eric W. Biederman wrote:
+On Tue, Jul 14, 2020 at 12:42:11PM -0700, Dave Hansen wrote:
+> On 7/14/20 12:29 PM, Peter Zijlstra wrote:
+> > On Tue, Jul 14, 2020 at 12:06:16PM -0700, Ira Weiny wrote:
+> >> On Tue, Jul 14, 2020 at 10:44:51AM +0200, Peter Zijlstra wrote:
+> >>> So, if I followed along correctly, you're proposing to do a WRMSR per
+> >>> k{,un}map{_atomic}(), sounds like excellent performance all-round :-(
+> >> Only to pages which have this additional protection, ie not DRAM.
+> >>
+> >> User mappings of this memory is not affected (would be covered by User PKeys if
+> >> desired).  User mappings to persistent memory are the primary use case and the
+> >> performant path.
+> > Because performance to non-volatile memory doesn't matter? I think Dave
+> > has a better answer here ...
 > 
-> I have merged all of this into my exec-next tree.
-> 
-> The code is also available on the frozen branch:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git usermode-driver-cleanup
-> 
-> Declaring this set of changes done now, allows the work that depends
-> upon this change to proceed.
+> So, these WRMSRs are less evil than normal.  They're architecturally
+> non-serializing instructions,
 
-Now I've pulled it into bpf-next as well.
-In the mean time there were changes to kernel_write that broke bpfilter.ko
-I fixed it up as well.
-Thanks.
+Excellent, that should make these a fair bit faster than regular MSRs.
+
+> But, either way, this *will* make accessing PMEM more expensive from the
+> kernel.  No escaping that. 
+
+There's no free lunch, it's just that regular MSRs are fairly horrible.
