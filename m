@@ -2,114 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E56FA21EEA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 13:02:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2C7721EF35
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 13:25:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbgGNLCm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 07:02:42 -0400
-Received: from verein.lst.de ([213.95.11.211]:53847 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726610AbgGNLCl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 07:02:41 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 8228B68CFC; Tue, 14 Jul 2020 13:02:39 +0200 (CEST)
-Date:   Tue, 14 Jul 2020 13:02:39 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     syzbot <syzbot+d012ca3f813739c37c25@syzkaller.appspotmail.com>
-Cc:     hch@lst.de, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, v9fs-developer@lists.sourceforge.net
-Subject: Re: WARNING in __kernel_read
-Message-ID: <20200714110239.GE16178@lst.de>
-References: <00000000000003d32b05aa4d493c@google.com>
+        id S1727119AbgGNLYX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 07:24:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53454 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbgGNLYW (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Jul 2020 07:24:22 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74CC8C061755
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 04:24:22 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id l2so5068964wmf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 04:24:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=plexistor-com.20150623.gappssmtp.com; s=20150623;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=kShGsztpJubyW8F4tx0kVgpgl8mx3Q9oApw9u8aOREo=;
+        b=XXBMO50H/KuyDOJp/szX94CMpIhLBccHyLWxgqh8hqikXcMM7WNbIDFLrBqq5kKUvS
+         L00mHmQMYg0a9aEWJ2awU9hbwPGUegny6u/jPQ98sWy3c5KvCj6c7g68Ll295/3XPXeK
+         tGpxKVt3fzcLT5xWMyV385sZSd4oiZv4oIpHmMFIc9YeT2bpbxUflQS/jfWcEvk3k/4s
+         49haJZTYPy5L/8Y+DMPnag/Cc7kJHX/fI9tscGFrICnf3HgQjvV7tXsKWS1em5isK+MZ
+         vyoKxVWmsmETxq2X/jB4zSxfJ/huIAdQ9vO0+MWsXljaYjhbbZXZa6Y8iti35b3vP127
+         lWYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=kShGsztpJubyW8F4tx0kVgpgl8mx3Q9oApw9u8aOREo=;
+        b=t9NGjey8QaU1GQ6Oj97rP8l8g5jH//T/IVAvuab2iCsqkAVaFNW/CtKWVzM00i1JMV
+         hsFcZjbGMaFboUZ5JSbP4JTFF0YhHR8c8fVZEdrvrvpwWnmIh3JOqbUXhiGzINQs+XKK
+         rofwpF3Vm7dgXTOv1xJEW9l1Wml+4tktXnleoy74U8fB9sjTv6NF6XhG4fZD4mZobt7o
+         xJE2ccUfxVgWgQd+shTb8USGwQB+A+Y6FMl5R7475aYsTUu3KJXJK5FwhdUdg+iBg9ar
+         pOSFtePjF6CwbBbDMjuPfRdGFtdjhr8wau6qP0muOm505WYnabT7rYGseHyO7Uvuse18
+         Tekg==
+X-Gm-Message-State: AOAM530bMWZVadOiG+yQndBOwMLSFDC0harBQGhJZUo5k0qyIQLyOgCp
+        OSXxUSSOuVvgexDFkCBjK6TEiB6hO+0=
+X-Google-Smtp-Source: ABdhPJzeVwW9Qq9uk2XYBPi/TnMfdcOH/3+oWRvh8WZR3d501cGnsZCUApTkTnSTKIvsZxp0O5vgtQ==
+X-Received: by 2002:a1c:4183:: with SMTP id o125mr3820396wma.101.1594725860530;
+        Tue, 14 Jul 2020 04:24:20 -0700 (PDT)
+Received: from ?IPv6:2a00:a040:196:431d:6203:64fa:e313:fb47? ([2a00:a040:196:431d:6203:64fa:e313:fb47])
+        by smtp.googlemail.com with ESMTPSA id s8sm28152750wru.38.2020.07.14.04.24.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Jul 2020 04:24:19 -0700 (PDT)
+To:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+From:   Boaz Harrosh <boaz@plexistor.com>
+Subject: Unexpected behavior from xarray - Is it expected?
+Message-ID: <9c7b1024-d81e-6038-7e01-6747c897d79e@plexistor.com>
+Date:   Tue, 14 Jul 2020 14:24:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000003d32b05aa4d493c@google.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 13, 2020 at 12:03:17AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
+Matthew Hi
 
-This is not a crash, but a WARN_ON_ONCE, someone really needs to fix
-syzbot to report this correctly.
+First I want to thank you for the great xarray tool. I use it heavily with great joy & ease
 
-The fix should be queued up by the 9p maintainers.
+However I have encountered a bug in my code which I did not expect, as follows:
 
-> 
-> HEAD commit:    a581387e Merge tag 'io_uring-5.8-2020-07-10' of git://git...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13e730eb100000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=66ad203c2bb6d8b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d012ca3f813739c37c25
-> compiler:       gcc (GCC) 10.1.0-syz 20200507
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12e0222b100000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=162a004f100000
-> 
-> The bug was bisected to:
-> 
-> commit 6209dd9132e8ea5545cffc84483841e88ea8cc5b
-> Author: Christoph Hellwig <hch@lst.de>
-> Date:   Fri May 8 07:00:28 2020 +0000
-> 
->     fs: implement kernel_read using __kernel_read
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=152d91fb100000
-> final crash:    https://syzkaller.appspot.com/x/report.txt?x=172d91fb100000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=132d91fb100000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+d012ca3f813739c37c25@syzkaller.appspotmail.com
-> Fixes: 6209dd9132e8 ("fs: implement kernel_read using __kernel_read")
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 5 at fs/read_write.c:427 __kernel_read+0x41d/0x4d0 fs/read_write.c:427
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 5.8.0-rc4-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Workqueue: events p9_read_work
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x18f/0x20d lib/dump_stack.c:118
->  panic+0x2e3/0x75c kernel/panic.c:231
->  __warn.cold+0x20/0x45 kernel/panic.c:600
->  report_bug+0x1bd/0x210 lib/bug.c:198
->  handle_bug+0x38/0x90 arch/x86/kernel/traps.c:235
->  exc_invalid_op+0x13/0x40 arch/x86/kernel/traps.c:255
->  asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:542
-> RIP: 0010:__kernel_read+0x41d/0x4d0 fs/read_write.c:427
-> Code: fd ff ff e8 75 19 b6 ff 45 31 c9 45 31 c0 b9 01 00 00 00 4c 89 f2 89 ee 4c 89 ef e8 5d 22 12 00 e9 46 ff ff ff e8 53 19 b6 ff <0f> 0b 49 c7 c4 ea ff ff ff e9 11 fe ff ff 4c 89 f7 e8 2d 76 f5 ff
-> RSP: 0018:ffffc90000cbfbc8 EFLAGS: 00010293
-> RAX: 0000000000000000 RBX: ffff8880a9786ac0 RCX: ffffffff81bd9ac4
-> RDX: ffff8880a95a2140 RSI: ffffffff81bd9e3d RDI: 0000000000000005
-> RBP: ffff888096bc8060 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 1ffffffff1829bdd R12: 00000000081d801e
-> R13: ffffc90000cbfc98 R14: ffff8880a9786b44 R15: 0000000000000007
->  kernel_read+0x52/0x70 fs/read_write.c:457
->  p9_fd_read net/9p/trans_fd.c:263 [inline]
->  p9_read_work+0x2ac/0xff0 net/9p/trans_fd.c:298
->  process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
->  worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
->  kthread+0x3b5/0x4a0 kernel/kthread.c:291
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:293
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
-> 
-> 
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
----end quoted text---
+I need code in the very hot-path that is looping on the xarray in an unusual way.
+What I need is to scan a range from x-x+l but I need to break on first "hole" ie.
+first entry that was not __xa_store() to. So I am using this loop:
+	rcu_read_lock();
+
+	for (xae = xas_load(&xas); xae; xae = xas_next(&xas)) {
+		...
+	}
+
+Every thing works fine and I usually get a NULL from xas_next() (or xas_load())
+on first hole, And the loop exits.
+
+But in the case that I have entered a *single* xa_store() *at index 0*, but then try
+to GET a range 0-Y I get these unexpected results:
+	xas_next() will return the same entry repeatedly
+I have put some prints (see full code below):
+
+zuf: pi_pr [zuf_pi_get_range:248] [5] [@x0] GET bn=0x11e8 xae=0x23d1 xa_index=0x0 xa_offset=0x0
+zuf: pi_pr [zuf_pi_get_range:248] [5] [@x1] GET bn=0x11e8 xae=0x23d1 xa_index=0x1 xa_offset=0x0
+zuf: pi_pr [zuf_pi_get_range:248] [5] [@x2] GET bn=0x11e8 xae=0x23d1 xa_index=0x2 xa_offset=0x0
+zuf: pi_pr [zuf_pi_get_range:248] [5] [@x3] GET bn=0x11e8 xae=0x23d1 xa_index=0x3 xa_offset=0x0
+zuf: pi_pr [zuf_pi_get_range:248] [5] [@x4] GET bn=0x11e8 xae=0x23d1 xa_index=0x4 xa_offset=0x0
+zuf: pi_pr [zuf_pi_get_range:248] [5] [@x5] GET bn=0x11e8 xae=0x23d1 xa_index=0x5 xa_offset=0x0
+zuf: pi_pr [zuf_pi_get_range:248] [5] [@x6] GET bn=0x11e8 xae=0x23d1 xa_index=0x6 xa_offset=0x0
+
+The loop only stopped because of some other condition.
+
+[Q] Is this expected from a single xa_store() at 0?
+
+[I am not even sure how to safely check this because consecutive entries may have
+ the same exact value.
+
+ Should I check for xa_offset not changing or should I use something else other than
+ xas_next()?
+
+ Do I must use xa_load() and take/release the rcu_lock every iteration?
+]
+
+Here is the full code.
+
+<pi.c>
+#include <linux/xarray.h>
+
+#define xa_2_bn(xae)	xa_to_value(xae)
+
+struct _pi_info {
+	/* IN */
+	ulong start;	/* start index to get	*/
+	uint requested;	/* Num bns requested	*/
+	/* OUT */
+	ulong *bns;	/* array of block-numbers */
+	uint cached;	/* Number of bns filled from page-index */
+};
+
+void zuf_pi_get_range(struct inode *inode, struct _pi_info *pi)
+{
+	XA_STATE(xas, &inode->i_mapping->i_pages, pi->start);
+	void *xae;
+
+	rcu_read_lock();
+
+	for (xae = xas_load(&xas); xae; xae = xas_next(&xas)) {
+		ulong  bn;
+
+		if (xas_retry(&xas, xae)) {
+			zuf_warn("See this yet e=0x%lx" _FMT_XAS "\n",
+				 (ulong)xae, _PR_XAS(xas));
+			continue;
+		}
+
+		bn = xa_2_bn(xae);
+
+		zuf_dbg_pi("[%ld] [@x%lx] GET bn=0x%lx xae=0x%lx xa_index=0x%lx xa_offset=0x%x\n",
+			   inode->i_ino, pi->start + pi->cached, bn, (ulong)xae, xas.xa_index, xas.xa_offset);
+
+		pi->bns[pi->cached++] = bn;
+		if (pi->cached == pi->requested)
+			break; /* ALL DONE */
+	}
+
+	rcu_read_unlock();
+}
+<pi.c>
+
+Thank you for looking, good day
+Boaz
+
