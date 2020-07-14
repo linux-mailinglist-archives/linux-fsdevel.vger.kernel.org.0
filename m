@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6556721FCAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 21:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 382A321FC9D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 21:10:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730790AbgGNTKn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 15:10:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41880 "EHLO
+        id S1730595AbgGNTKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 15:10:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731263AbgGNTJD (ORCPT
+        with ESMTP id S1731298AbgGNTJF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 15:09:03 -0400
+        Tue, 14 Jul 2020 15:09:05 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87DAEC061794;
-        Tue, 14 Jul 2020 12:09:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B157AC061755;
+        Tue, 14 Jul 2020 12:09:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=zjYXahrc67z+U+udFYifbdyIkhxiC1vzcHw8hyKL+rM=; b=EgIF51q0I5yPvrmW52i2hvFe5h
-        vJ0ix+606e2nfAuezF/MpDlAhyWw5DToTdrQkb+NN5ojZgAu8tg4RbypXm5AoAzKrk+I0E6iufXJf
-        ZcPcODQ6e5xofh1+85zT6erI6SJlyQHYVkC+1qeoNAQ95w8ZTTEDopU9oxeMZpangzEWdmWTxULbO
-        1YS0gqle8Bwdsnh7J5jpgajMCYeRTaInBNoulk2I8ybOZnDECf7UgObCue8K4OXCKgjlb/6WCNk3p
-        j462X251thVk40TjjFMcwbxd96fIegcL+cjTrvWmYkRaKk5CY6BCBFq2vKhoJLYuMxb968eyDqPuX
-        r8hR4+Ig==;
+        bh=OmCgUOdSsvmHGztW/pN0QYL1W0Hm8w4sIRIjoHrqxng=; b=LKLu+0XYPDhxTj2Kr2CM/h6nGN
+        oFsS2HfC1DzPfvaExlEfzQC18M3ItsCWp94GHgM7usiqsBZzetBCb9FGvRhPQ7G9BIHUscUYFfmla
+        Q0EW4L0P7lKlZ93XUXveEcJA/Ut2N6ZZcviFhicCAKccUnn6Q2F2TUll3+Ao8R5q6et2+cLdb9erV
+        jees1YZuFUGL30NnXYVwHj4WpIPaEJJeSN+DdZWrCNJmUKIgcvu9z7bEeu0PeNhIcuUF7TM87u73M
+        rjgEL8+J5wMFr+VQrv3Nt0zYBsTpXIPGKzgu9T3W5sEjBZkE7EQIphISioV0OJzOY6ueCdJclYUiv
+        9mXL8CAA==;
 Received: from [2001:4bb8:188:5f50:f037:8cfe:627e:7028] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jvQIX-0005r5-FB; Tue, 14 Jul 2020 19:09:01 +0000
+        id 1jvQIY-0005rN-Tz; Tue, 14 Jul 2020 19:09:03 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     "H. Peter Anvin" <hpa@zytor.com>, Song Liu <song@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 09/23] md: rewrite md_setup_drive to avoid ioctls
-Date:   Tue, 14 Jul 2020 21:04:13 +0200
-Message-Id: <20200714190427.4332-10-hch@lst.de>
+Subject: [PATCH 10/23] initrd: remove support for multiple floppies
+Date:   Tue, 14 Jul 2020 21:04:14 +0200
+Message-Id: <20200714190427.4332-11-hch@lst.de>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200714190427.4332-1-hch@lst.de>
 References: <20200714190427.4332-1-hch@lst.de>
@@ -48,324 +48,293 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-md_setup_drive knows it works with md devices, so it is rather pointless
-to open a file descriptor and issue ioctls.  Just call directly into the
-relevant low-level md routines after getting a handle to the device using
-blkdev_get_by_dev instead.
+Remove the special handling for multiple floppies in the initrd code.
+No one should be using floppies for booting these days. (famous last
+words..)
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Song Liu <song@kernel.org>
 ---
- drivers/md/md-autodetect.c | 127 ++++++++++++++++---------------------
- drivers/md/md.c            |  20 +++---
- drivers/md/md.h            |   6 ++
- 3 files changed, 71 insertions(+), 82 deletions(-)
+ arch/arm/kernel/atags_parse.c |  2 -
+ arch/sh/kernel/setup.c        |  2 -
+ arch/sparc/kernel/setup_32.c  |  2 -
+ arch/sparc/kernel/setup_64.c  |  2 -
+ arch/x86/kernel/setup.c       |  2 -
+ include/linux/initrd.h        |  6 ---
+ init/do_mounts.c              | 69 ++++-------------------------------
+ init/do_mounts.h              |  1 -
+ init/do_mounts_rd.c           | 20 +++-------
+ 9 files changed, 12 insertions(+), 94 deletions(-)
 
-diff --git a/drivers/md/md-autodetect.c b/drivers/md/md-autodetect.c
-index a43a8f1580584c..5b24b5616d3acc 100644
---- a/drivers/md/md-autodetect.c
-+++ b/drivers/md/md-autodetect.c
-@@ -2,7 +2,6 @@
- #include <linux/kernel.h>
- #include <linux/blkdev.h>
- #include <linux/init.h>
--#include <linux/syscalls.h>
- #include <linux/mount.h>
- #include <linux/major.h>
- #include <linux/delay.h>
-@@ -120,37 +119,29 @@ static int __init md_setup(char *str)
+diff --git a/arch/arm/kernel/atags_parse.c b/arch/arm/kernel/atags_parse.c
+index ce02f92f4ab262..6c12d9fe694e3e 100644
+--- a/arch/arm/kernel/atags_parse.c
++++ b/arch/arm/kernel/atags_parse.c
+@@ -91,8 +91,6 @@ __tagtable(ATAG_VIDEOTEXT, parse_tag_videotext);
+ static int __init parse_tag_ramdisk(const struct tag *tag)
+ {
+ 	rd_image_start = tag->u.ramdisk.start;
+-	rd_doload = (tag->u.ramdisk.flags & 1) == 0;
+-	rd_prompt = (tag->u.ramdisk.flags & 2) == 0;
+ 
+ 	if (tag->u.ramdisk.size)
+ 		rd_size = tag->u.ramdisk.size;
+diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
+index 67f5a3b44c2eff..4144be650d4106 100644
+--- a/arch/sh/kernel/setup.c
++++ b/arch/sh/kernel/setup.c
+@@ -290,8 +290,6 @@ void __init setup_arch(char **cmdline_p)
+ 
+ #ifdef CONFIG_BLK_DEV_RAM
+ 	rd_image_start = RAMDISK_FLAGS & RAMDISK_IMAGE_START_MASK;
+-	rd_prompt = ((RAMDISK_FLAGS & RAMDISK_PROMPT_FLAG) != 0);
+-	rd_doload = ((RAMDISK_FLAGS & RAMDISK_LOAD_FLAG) != 0);
+ #endif
+ 
+ 	if (!MOUNT_ROOT_RDONLY)
+diff --git a/arch/sparc/kernel/setup_32.c b/arch/sparc/kernel/setup_32.c
+index 6d07b85b9e2470..eea43a1aef1b9a 100644
+--- a/arch/sparc/kernel/setup_32.c
++++ b/arch/sparc/kernel/setup_32.c
+@@ -353,8 +353,6 @@ void __init setup_arch(char **cmdline_p)
+ 	ROOT_DEV = old_decode_dev(root_dev);
+ #ifdef CONFIG_BLK_DEV_RAM
+ 	rd_image_start = ram_flags & RAMDISK_IMAGE_START_MASK;
+-	rd_prompt = ((ram_flags & RAMDISK_PROMPT_FLAG) != 0);
+-	rd_doload = ((ram_flags & RAMDISK_LOAD_FLAG) != 0);	
+ #endif
+ 
+ 	prom_setsync(prom_sync_me);
+diff --git a/arch/sparc/kernel/setup_64.c b/arch/sparc/kernel/setup_64.c
+index f765fda871eb61..d87244197d5cbb 100644
+--- a/arch/sparc/kernel/setup_64.c
++++ b/arch/sparc/kernel/setup_64.c
+@@ -659,8 +659,6 @@ void __init setup_arch(char **cmdline_p)
+ 	ROOT_DEV = old_decode_dev(root_dev);
+ #ifdef CONFIG_BLK_DEV_RAM
+ 	rd_image_start = ram_flags & RAMDISK_IMAGE_START_MASK;
+-	rd_prompt = ((ram_flags & RAMDISK_PROMPT_FLAG) != 0);
+-	rd_doload = ((ram_flags & RAMDISK_LOAD_FLAG) != 0);
+ #endif
+ 
+ 	task_thread_info(&init_task)->kregs = &fake_swapper_regs;
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index a3767e74c758c0..b9a68d8e06d8d1 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -870,8 +870,6 @@ void __init setup_arch(char **cmdline_p)
+ 
+ #ifdef CONFIG_BLK_DEV_RAM
+ 	rd_image_start = boot_params.hdr.ram_size & RAMDISK_IMAGE_START_MASK;
+-	rd_prompt = ((boot_params.hdr.ram_size & RAMDISK_PROMPT_FLAG) != 0);
+-	rd_doload = ((boot_params.hdr.ram_size & RAMDISK_LOAD_FLAG) != 0);
+ #endif
+ #ifdef CONFIG_EFI
+ 	if (!strncmp((char *)&boot_params.efi_info.efi_loader_signature,
+diff --git a/include/linux/initrd.h b/include/linux/initrd.h
+index aa591435572868..8db6f8c8030b68 100644
+--- a/include/linux/initrd.h
++++ b/include/linux/initrd.h
+@@ -2,12 +2,6 @@
+ 
+ #define INITRD_MINOR 250 /* shouldn't collide with /dev/ram* too soon ... */
+ 
+-/* 1 = load ramdisk, 0 = don't load */
+-extern int rd_doload;
+-
+-/* 1 = prompt for ramdisk, 0 = don't prompt */
+-extern int rd_prompt;
+-
+ /* starting block # of image */
+ extern int rd_image_start;
+ 
+diff --git a/init/do_mounts.c b/init/do_mounts.c
+index 1a4dfa17fb2899..4f4ceb35805503 100644
+--- a/init/do_mounts.c
++++ b/init/do_mounts.c
+@@ -28,8 +28,6 @@
+ 
+ #include "do_mounts.h"
+ 
+-int __initdata rd_doload;	/* 1 = load RAM disk, 0 = don't load */
+-
+ int root_mountflags = MS_RDONLY | MS_SILENT;
+ static char * __initdata root_device_name;
+ static char __initdata saved_root_name[64];
+@@ -39,7 +37,7 @@ dev_t ROOT_DEV;
+ 
+ static int __init load_ramdisk(char *str)
+ {
+-	rd_doload = simple_strtol(str,NULL,0) & 3;
++	pr_warn("ignoring the depreated load_ramdisk= option\n");
  	return 1;
  }
+ __setup("load_ramdisk=", load_ramdisk);
+@@ -553,66 +551,20 @@ static int __init mount_cifs_root(void)
+ }
+ #endif
  
--static inline int create_dev(char *name, dev_t dev)
+-#if defined(CONFIG_BLK_DEV_RAM) || defined(CONFIG_BLK_DEV_FD)
+-void __init change_floppy(char *fmt, ...)
 -{
--	ksys_unlink(name);
--	return ksys_mknod(name, S_IFBLK|0600, new_encode_dev(dev));
--}
--
- static void __init md_setup_drive(struct md_setup_args *args)
- {
--	int minor, i, partitioned;
--	dev_t dev;
--	dev_t devices[MD_SB_DISKS+1];
+-	struct termios termios;
+-	char buf[80];
+-	char c;
 -	int fd;
--	int err = 0;
--	char *devname;
--	mdu_disk_info_t dinfo;
-+	char *devname = args->device_names;
-+	dev_t devices[MD_SB_DISKS + 1], mdev;
-+	struct mdu_array_info_s ainfo = { };
-+	struct block_device *bdev;
-+	struct mddev *mddev;
-+	int err = 0, i;
- 	char name[16];
- 
--	minor = args->minor;
--	partitioned = args->partitioned;
--	devname = args->device_names;
-+	if (args->partitioned) {
-+		mdev = MKDEV(mdp_major, args->minor << MdpMinorShift);
-+		sprintf(name, "md_d%d", args->minor);
-+	} else {
-+		mdev = MKDEV(MD_MAJOR, args->minor);
-+		sprintf(name, "md%d", args->minor);
-+	}
- 
--	sprintf(name, "/dev/md%s%d", partitioned?"_d":"", minor);
--	if (partitioned)
--		dev = MKDEV(mdp_major, minor << MdpMinorShift);
--	else
--		dev = MKDEV(MD_MAJOR, minor);
--	create_dev(name, dev);
- 	for (i = 0; i < MD_SB_DISKS && devname != NULL; i++) {
- 		struct kstat stat;
- 		char *p;
- 		char comp_name[64];
-+		dev_t dev;
- 
- 		p = strchr(devname, ',');
- 		if (p)
-@@ -163,7 +154,7 @@ static void __init md_setup_drive(struct md_setup_args *args)
- 		if (vfs_stat(comp_name, &stat) == 0 && S_ISBLK(stat.mode))
- 			dev = new_decode_dev(stat.rdev);
- 		if (!dev) {
--			printk(KERN_WARNING "md: Unknown device name: %s\n", devname);
-+			pr_warn("md: Unknown device name: %s\n", devname);
- 			break;
- 		}
- 
-@@ -175,68 +166,64 @@ static void __init md_setup_drive(struct md_setup_args *args)
- 	if (!i)
- 		return;
- 
--	printk(KERN_INFO "md: Loading md%s%d: %s\n",
--		partitioned ? "_d" : "", minor,
--		args->device_names);
-+	pr_info("md: Loading %s: %s\n", name, args->device_names);
- 
--	fd = ksys_open(name, 0, 0);
--	if (fd < 0) {
--		printk(KERN_ERR "md: open failed - cannot start "
--				"array %s\n", name);
-+	bdev = blkdev_get_by_dev(mdev, FMODE_READ, NULL);
-+	if (IS_ERR(bdev)) {
-+		pr_err("md: open failed - cannot start array %s\n", name);
- 		return;
- 	}
--	if (ksys_ioctl(fd, SET_ARRAY_INFO, 0) == -EBUSY) {
--		printk(KERN_WARNING
--		       "md: Ignoring md=%d, already autodetected. (Use raid=noautodetect)\n",
--		       minor);
+-	va_list args;
+-	va_start(args, fmt);
+-	vsprintf(buf, fmt, args);
+-	va_end(args);
+-	fd = ksys_open("/dev/root", O_RDWR | O_NDELAY, 0);
+-	if (fd >= 0) {
+-		ksys_ioctl(fd, FDEJECT, 0);
 -		ksys_close(fd);
--		return;
-+	mddev = bdev->bd_disk->private_data;
-+
-+	err = mddev_lock(mddev);
-+	if (err) {
-+		pr_err("md: failed to lock array %s\n", name);
-+		goto out_blkdev_put;
-+	}
-+
-+	if (!list_empty(&mddev->disks) || mddev->raid_disks) {
-+		pr_warn("md: Ignoring %s, already autodetected. (Use raid=noautodetect)\n",
-+		       name);
-+		goto out_unlock;
- 	}
- 
- 	if (args->level != LEVEL_NONE) {
- 		/* non-persistent */
--		mdu_array_info_t ainfo;
- 		ainfo.level = args->level;
--		ainfo.size = 0;
--		ainfo.nr_disks =0;
--		ainfo.raid_disks =0;
--		while (devices[ainfo.raid_disks])
--			ainfo.raid_disks++;
--		ainfo.md_minor =minor;
-+		ainfo.md_minor = args->minor;
- 		ainfo.not_persistent = 1;
+-	}
+-	printk(KERN_NOTICE "VFS: Insert %s and press ENTER\n", buf);
+-	fd = ksys_open("/dev/console", O_RDWR, 0);
+-	if (fd >= 0) {
+-		ksys_ioctl(fd, TCGETS, (long)&termios);
+-		termios.c_lflag &= ~ICANON;
+-		ksys_ioctl(fd, TCSETSF, (long)&termios);
+-		ksys_read(fd, &c, 1);
+-		termios.c_lflag |= ICANON;
+-		ksys_ioctl(fd, TCSETSF, (long)&termios);
+-		ksys_close(fd);
+-	}
+-}
+-#endif
 -
- 		ainfo.state = (1 << MD_SB_CLEAN);
--		ainfo.layout = 0;
- 		ainfo.chunk_size = args->chunk;
--		err = ksys_ioctl(fd, SET_ARRAY_INFO, (long)&ainfo);
--		for (i = 0; !err && i <= MD_SB_DISKS; i++) {
--			dev = devices[i];
--			if (!dev)
--				break;
-+		while (devices[ainfo.raid_disks])
-+			ainfo.raid_disks++;
-+	}
-+
-+	err = md_set_array_info(mddev, &ainfo);
-+
-+	for (i = 0; i <= MD_SB_DISKS && devices[i]; i++) {
-+		struct mdu_disk_info_s dinfo = {
-+			.major	= MAJOR(devices[i]),
-+			.minor	= MINOR(devices[i]),
-+		};
-+
-+		if (args->level != LEVEL_NONE) {
- 			dinfo.number = i;
- 			dinfo.raid_disk = i;
--			dinfo.state = (1<<MD_DISK_ACTIVE)|(1<<MD_DISK_SYNC);
--			dinfo.major = MAJOR(dev);
--			dinfo.minor = MINOR(dev);
--			err = ksys_ioctl(fd, ADD_NEW_DISK,
--					 (long)&dinfo);
--		}
--	} else {
--		/* persistent */
--		for (i = 0; i <= MD_SB_DISKS; i++) {
--			dev = devices[i];
--			if (!dev)
--				break;
--			dinfo.major = MAJOR(dev);
--			dinfo.minor = MINOR(dev);
--			ksys_ioctl(fd, ADD_NEW_DISK, (long)&dinfo);
-+			dinfo.state =
-+				(1 << MD_DISK_ACTIVE) | (1 << MD_DISK_SYNC);
- 		}
-+
-+		md_add_new_disk(mddev, &dinfo);
- 	}
-+
- 	if (!err)
--		err = ksys_ioctl(fd, RUN_ARRAY, 0);
-+		err = do_md_run(mddev);
- 	if (err)
--		printk(KERN_WARNING "md: starting md%d failed\n", minor);
--	ksys_close(fd);
-+		pr_warn("md: starting %s failed\n", name);
-+out_unlock:
-+	mddev_unlock(mddev);
-+out_blkdev_put:
-+	blkdev_put(bdev, FMODE_READ);
- }
- 
- static int __init raid_setup(char *str)
-@@ -286,8 +273,6 @@ void __init md_run_setup(void)
+ void __init mount_root(void)
  {
- 	int ent;
- 
--	create_dev("/dev/md0", MKDEV(MD_MAJOR, 0));
+ #ifdef CONFIG_ROOT_NFS
+ 	if (ROOT_DEV == Root_NFS) {
+-		if (mount_nfs_root())
+-			return;
 -
- 	if (raid_noautodetect)
- 		printk(KERN_INFO "md: Skipping autodetection of RAID arrays. (raid=autodetect will force)\n");
- 	else
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 6e9a48da474848..9960cfeb59a50c 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -4368,7 +4368,6 @@ array_state_show(struct mddev *mddev, char *page)
- 
- static int do_md_stop(struct mddev *mddev, int ro, struct block_device *bdev);
- static int md_set_readonly(struct mddev *mddev, struct block_device *bdev);
--static int do_md_run(struct mddev *mddev);
- static int restart_array(struct mddev *mddev);
- 
- static ssize_t
-@@ -6015,7 +6014,7 @@ int md_run(struct mddev *mddev)
- }
- EXPORT_SYMBOL_GPL(md_run);
- 
--static int do_md_run(struct mddev *mddev)
-+int do_md_run(struct mddev *mddev)
- {
- 	int err;
- 
-@@ -6651,7 +6650,7 @@ static int get_disk_info(struct mddev *mddev, void __user * arg)
- 	return 0;
- }
- 
--static int add_new_disk(struct mddev *mddev, mdu_disk_info_t *info)
-+int md_add_new_disk(struct mddev *mddev, struct mdu_disk_info_s *info)
- {
- 	char b[BDEVNAME_SIZE], b2[BDEVNAME_SIZE];
- 	struct md_rdev *rdev;
-@@ -6697,7 +6696,7 @@ static int add_new_disk(struct mddev *mddev, mdu_disk_info_t *info)
+-		printk(KERN_ERR "VFS: Unable to mount root fs via NFS, trying floppy.\n");
+-		ROOT_DEV = Root_FD0;
++		if (!mount_nfs_root())
++			printk(KERN_ERR "VFS: Unable to mount root fs via NFS.\n");
++		return;
  	}
- 
- 	/*
--	 * add_new_disk can be used once the array is assembled
-+	 * md_add_new_disk can be used once the array is assembled
- 	 * to add "hot spares".  They must already have a superblock
- 	 * written
- 	 */
-@@ -6810,7 +6809,7 @@ static int add_new_disk(struct mddev *mddev, mdu_disk_info_t *info)
- 		return err;
+ #endif
+ #ifdef CONFIG_CIFS_ROOT
+ 	if (ROOT_DEV == Root_CIFS) {
+-		if (mount_cifs_root())
+-			return;
+-
+-		printk(KERN_ERR "VFS: Unable to mount root fs via SMB, trying floppy.\n");
+-		ROOT_DEV = Root_FD0;
+-	}
+-#endif
+-#ifdef CONFIG_BLK_DEV_FD
+-	if (MAJOR(ROOT_DEV) == FLOPPY_MAJOR) {
+-		/* rd_doload is 2 for a dual initrd/ramload setup */
+-		if (rd_doload==2) {
+-			if (rd_load_disk(1)) {
+-				ROOT_DEV = Root_RAM1;
+-				root_device_name = NULL;
+-			}
+-		} else
+-			change_floppy("root floppy");
++		if (!mount_cifs_root())
++			printk(KERN_ERR "VFS: Unable to mount root fs via SMB.\n");
++		return;
  	}
- 
--	/* otherwise, add_new_disk is only allowed
-+	/* otherwise, md_add_new_disk is only allowed
- 	 * for major_version==0 superblocks
- 	 */
- 	if (mddev->major_version != 0) {
-@@ -7055,7 +7054,7 @@ static int set_bitmap_file(struct mddev *mddev, int fd)
- }
- 
- /*
-- * set_array_info is used two different ways
-+ * md_set_array_info is used two different ways
-  * The original usage is when creating a new array.
-  * In this usage, raid_disks is > 0 and it together with
-  *  level, size, not_persistent,layout,chunksize determine the
-@@ -7067,9 +7066,8 @@ static int set_bitmap_file(struct mddev *mddev, int fd)
-  *  The minor and patch _version numbers are also kept incase the
-  *  super_block handler wishes to interpret them.
+ #endif
+ #ifdef CONFIG_BLOCK
+@@ -631,8 +583,6 @@ void __init mount_root(void)
   */
--static int set_array_info(struct mddev *mddev, mdu_array_info_t *info)
-+int md_set_array_info(struct mddev *mddev, struct mdu_array_info_s *info)
+ void __init prepare_namespace(void)
  {
+-	int is_floppy;
 -
- 	if (info->raid_disks == 0) {
- 		/* just setting version number for superblock loading */
- 		if (info->major_version < 0 ||
-@@ -7560,7 +7558,7 @@ static int md_ioctl(struct block_device *bdev, fmode_t mode,
- 			err = -EBUSY;
- 			goto unlock;
- 		}
--		err = set_array_info(mddev, &info);
-+		err = md_set_array_info(mddev, &info);
- 		if (err) {
- 			pr_warn("md: couldn't set array info. %d\n", err);
- 			goto unlock;
-@@ -7614,7 +7612,7 @@ static int md_ioctl(struct block_device *bdev, fmode_t mode,
- 				/* Need to clear read-only for this */
- 				break;
- 			else
--				err = add_new_disk(mddev, &info);
-+				err = md_add_new_disk(mddev, &info);
- 			goto unlock;
- 		}
- 		break;
-@@ -7682,7 +7680,7 @@ static int md_ioctl(struct block_device *bdev, fmode_t mode,
- 		if (copy_from_user(&info, argp, sizeof(info)))
- 			err = -EFAULT;
- 		else
--			err = add_new_disk(mddev, &info);
-+			err = md_add_new_disk(mddev, &info);
- 		goto unlock;
+ 	if (root_delay) {
+ 		printk(KERN_INFO "Waiting %d sec before mounting root device...\n",
+ 		       root_delay);
+@@ -675,11 +625,6 @@ void __init prepare_namespace(void)
+ 		async_synchronize_full();
  	}
  
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index 6f8fff77ce10a5..7ee81aa2eac862 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -801,7 +801,13 @@ static inline void mddev_check_write_zeroes(struct mddev *mddev, struct bio *bio
- 		mddev->queue->limits.max_write_zeroes_sectors = 0;
+-	is_floppy = MAJOR(ROOT_DEV) == FLOPPY_MAJOR;
+-
+-	if (is_floppy && rd_doload && rd_load_disk(0))
+-		ROOT_DEV = Root_RAM0;
+-
+ 	mount_root();
+ out:
+ 	devtmpfs_mount();
+diff --git a/init/do_mounts.h b/init/do_mounts.h
+index 50d6c8941e15a1..c855b3f0e06d19 100644
+--- a/init/do_mounts.h
++++ b/init/do_mounts.h
+@@ -9,7 +9,6 @@
+ #include <linux/major.h>
+ #include <linux/root_dev.h>
+ 
+-void  change_floppy(char *fmt, ...);
+ void  mount_block_root(char *name, int flags);
+ void  mount_root(void);
+ extern int root_mountflags;
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index 32fb049d18f9b4..27b1bccf6f12a8 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -15,11 +15,9 @@
+ #include <linux/decompress/generic.h>
+ 
+ 
+-int __initdata rd_prompt = 1;/* 1 = prompt for RAM disk, 0 = don't prompt */
+-
+ static int __init prompt_ramdisk(char *str)
+ {
+-	rd_prompt = simple_strtol(str,NULL,0) & 1;
++	pr_warn("ignoring the depreated prompt_ramdisk= option\n");
+ 	return 1;
  }
+ __setup("prompt_ramdisk=", prompt_ramdisk);
+@@ -178,7 +176,7 @@ int __init rd_load_image(char *from)
+ 	int res = 0;
+ 	int in_fd, out_fd;
+ 	unsigned long rd_blocks, devblocks;
+-	int nblocks, i, disk;
++	int nblocks, i;
+ 	char *buf = NULL;
+ 	unsigned short rotate = 0;
+ 	decompress_fn decompressor = NULL;
+@@ -243,21 +241,15 @@ int __init rd_load_image(char *from)
  
-+struct mdu_array_info_s;
-+struct mdu_disk_info_s;
-+
- extern int mdp_major;
- void md_autostart_arrays(int part);
-+int md_set_array_info(struct mddev *mddev, struct mdu_array_info_s *info);
-+int md_add_new_disk(struct mddev *mddev, struct mdu_disk_info_s *info);
-+int do_md_run(struct mddev *mddev);
+ 	printk(KERN_NOTICE "RAMDISK: Loading %dKiB [%ld disk%s] into ram disk... ",
+ 		nblocks, ((nblocks-1)/devblocks)+1, nblocks>devblocks ? "s" : "");
+-	for (i = 0, disk = 1; i < nblocks; i++) {
++	for (i = 0; i < nblocks; i++) {
+ 		if (i && (i % devblocks == 0)) {
+-			pr_cont("done disk #%d.\n", disk++);
++			pr_cont("done disk #1.\n");
+ 			rotate = 0;
+ 			if (ksys_close(in_fd)) {
+ 				printk("Error closing the disk.\n");
+ 				goto noclose_input;
+ 			}
+-			change_floppy("disk #%d", disk);
+-			in_fd = ksys_open(from, O_RDONLY, 0);
+-			if (in_fd < 0)  {
+-				printk("Error opening disk.\n");
+-				goto noclose_input;
+-			}
+-			printk("Loading disk #%d... ", disk);
++			break;
+ 		}
+ 		ksys_read(in_fd, buf, BLOCK_SIZE);
+ 		ksys_write(out_fd, buf, BLOCK_SIZE);
+@@ -284,8 +276,6 @@ int __init rd_load_image(char *from)
  
- #endif /* _MD_MD_H */
+ int __init rd_load_disk(int n)
+ {
+-	if (rd_prompt)
+-		change_floppy("root floppy disk to be loaded into RAM disk");
+ 	create_dev("/dev/root", ROOT_DEV);
+ 	create_dev("/dev/ram", MKDEV(RAMDISK_MAJOR, n));
+ 	return rd_load_image("/dev/root");
 -- 
 2.27.0
 
