@@ -2,158 +2,319 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8082821EF5C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 13:36:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29C7F21EFD1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 13:55:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726748AbgGNLgV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 07:36:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55280 "EHLO
+        id S1728069AbgGNLy5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 07:54:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbgGNLgU (ORCPT
+        with ESMTP id S1727888AbgGNLy5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 07:36:20 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C71B2C061755;
-        Tue, 14 Jul 2020 04:36:19 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id lx13so21245562ejb.4;
-        Tue, 14 Jul 2020 04:36:19 -0700 (PDT)
+        Tue, 14 Jul 2020 07:54:57 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1433BC061755
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 04:54:57 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id l1so16942619ioh.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 04:54:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=S6Lz4POdNjUTGOOy3xbPAv+KDka9cWa78bGftdkZIv0=;
-        b=kLVRyyQq4Xj0pyWZMTMzOmGI1SM4xq9V+NtExHkuXvchep5PO56H1wchdSciPTiZdc
-         u6NLwNd6Jk3yI5CChXlcABdRoKOjfCWF258l9Gi8SwKOAQjXb0ykpo0wD+L302grztac
-         xh4b+V+he3/uPbDCPa1SCeM3IAb5lOn5UgFEd18n+i95vxbU2BdoidaX13uN9qnHD0SB
-         TeSv36clOiiqOgaiJwiHvusdjp7fhOqwc1sSkH7VH1OE+m820Cw3Osg2VaxubCCL2Ox2
-         PN1XC0bRvg++Ql0QTHoJfXorSO5y6ynkae2DyRoORSaPQCv+0C42So6kkcSpb3coHdyl
-         TsJw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ogABOJ9kq9ShjeaQx7oQS3GJ1bIja1Y/L2sF+4bHzj0=;
+        b=rZy+94BlWgb8e8j1s2tqJvjHJVFd1Y1QD0Sr0tHNtiknyUMZRjjDD2yCU/nAviP3jH
+         GPVgMntOCIN1FWjSEBIG2HqUW2BdMwBo29XbecOOFlEdcFzUMlXoxnf9gJDw2jlViJum
+         5g9AJsPS3/KHR9aChGFkvrvplrr1FaNTm7p/s0ITRCWzK4ujSMPBaOKeahWFuAiotmbb
+         iqIQ2kxay510cY9NoNEe7cN9jdaAIvTXsBx2mBnFuJwMZQuVs39a/C6y/Bh5tw8buW+J
+         mYbTxH4RbaVEQSumqIoU5M9LAC7PtTP1ut2ZtXIDNAaiq/zGCbwWw5Gmso3lHGkZ8uA6
+         iw8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=S6Lz4POdNjUTGOOy3xbPAv+KDka9cWa78bGftdkZIv0=;
-        b=qKx0jTjRtYikHWeUaxYZdXKwUGy+ps/68B63wWNb55HwKy5KCwxHFc6muswIPrwx//
-         UCWf2JGsA9DZFc13DvepAFvGWkTzNmZ1Is/G3iJ1tq86xXHCN1IRfduYYr/4B3wOpkhp
-         DXCtwq5iTcT9/S+UuiSSX/XnjTsa1XiQLd1Qi0m34s9Mpd3YhSeXD99QwO/TiVbt+Xhd
-         8z8W+Gq0S3K4xrHg8jb7a57pZUH3RlhP3z79XEq213AizsLM4p/UWAeDWMmIrUOName4
-         Mzm0tQ+oCrFHEx7xSzxLEVow9yO8TQEGkTJodSf1cd/aDb6sjzt/mmRt9JfWxGwTavWJ
-         xBxA==
-X-Gm-Message-State: AOAM533z17y60N6AYXEA3AOuM875vqKXVEydCQyyYSMXj2AL1CpVI3D7
-        5Pkn0TJdsM7LNvyHMkeFmR/0Z2qYCNE=
-X-Google-Smtp-Source: ABdhPJx6ay6y4BBL5hEiLN7daCspr7g1lTc/+WYzjTELEwmXRpW5QgJJQMimYeDnLmvSgG9RSF8NSQ==
-X-Received: by 2002:a17:907:2489:: with SMTP id zg9mr4018730ejb.48.1594726577800;
-        Tue, 14 Jul 2020 04:36:17 -0700 (PDT)
-Received: from [192.168.43.236] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id t20sm12281668ejd.124.2020.07.14.04.36.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jul 2020 04:36:17 -0700 (PDT)
-To:     Miklos Szeredi <miklos@szeredi.hu>, Pavel Machek <pavel@denx.de>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Jan Ziak <0xe2.0x9a.0x9b@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-man <linux-man@vger.kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>, shuah@kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org
-References: <CAODFU0q6CrUB_LkSdrbp5TQ4Jm6Sw=ZepZwD-B7-aFudsOvsig@mail.gmail.com>
- <20200705115021.GA1227929@kroah.com> <20200714065110.GA8047@amd>
- <CAJfpegu8AXZWQh3W39PriqxVna+t3D2pz23t_4xEVxGcNf1AUA@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH 0/3] readfile(2): a new syscall to make open/read/close
- faster
-Message-ID: <4e92b851-ce9a-e2f6-3f9a-a4d47219d320@gmail.com>
-Date:   Tue, 14 Jul 2020 14:34:30 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ogABOJ9kq9ShjeaQx7oQS3GJ1bIja1Y/L2sF+4bHzj0=;
+        b=lCXB5ue10QeHn5W3jT3Pn3cyuj1l/+iaSaQqh2OxwWWrT/W4NmNa8irzJIcHHFaa3S
+         MyVOpekeEStNXXXIhNhkFcRz253H6t7GYNc+eToT24QBl7Vcs4VZ62vJe9baoPvfbwCe
+         s9HwuVinnumASlaGd+q3XmCEuc4CMjz9jwsSNJVCDLyRyqDVMkD9zDjANCMZ55ww4Y2e
+         hy7jqv7j5zA4tPQAiz4gJw+djM1FPRCDjlQxJaS5e7czubs5WecgWFz26I9lv7NKCMun
+         nhNvEWsfWL5KpLnU4tJ+YwEFRMLJWLFlwB4DTZKwmOvzf+CQ0eBaeorQl5Ey8O6751Ch
+         qnLw==
+X-Gm-Message-State: AOAM532hKSSyAkmO+PfB0LTOySkmytDPjBz6g9oTDj8rYTMG1acOwOBH
+        inlsDu15wBdKS3e+nv9+644IEzXB9lbk73cFSYwzC6J6
+X-Google-Smtp-Source: ABdhPJxxzVvz15KUIsc13SJ+iplI+1KEHP7XJka1/xZqnzcupefOT/XNQAdhBIuYtu+1g+TXAvPBAS2d8vGXMGtw83s=
+X-Received: by 2002:a6b:b483:: with SMTP id d125mr4584716iof.186.1594727696224;
+ Tue, 14 Jul 2020 04:54:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegu8AXZWQh3W39PriqxVna+t3D2pz23t_4xEVxGcNf1AUA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200702125744.10535-1-amir73il@gmail.com> <20200702125744.10535-4-amir73il@gmail.com>
+ <20200714103455.GD23073@quack2.suse.cz>
+In-Reply-To: <20200714103455.GD23073@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 14 Jul 2020 14:54:44 +0300
+Message-ID: <CAOQ4uxi7oGHC5HJGWgF+PO3359CpbpzSC=pPhp=RPCczHHdv3g@mail.gmail.com>
+Subject: Re: [PATCH v4 03/10] fsnotify: send event to parent and child with
+ single callback
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14/07/2020 11:07, Miklos Szeredi wrote:
-> On Tue, Jul 14, 2020 at 8:51 AM Pavel Machek <pavel@denx.de> wrote:
->>
->> Hi!
->>
->>>> At first, I thought that the proposed system call is capable of
->>>> reading *multiple* small files using a single system call - which
->>>> would help increase HDD/SSD queue utilization and increase IOPS (I/O
->>>> operations per second) - but that isn't the case and the proposed
->>>> system call can read just a single file.
->>>
->>> If you want to do this for multple files, use io_ring, that's what it
->>> was designed for.  I think Jens was going to be adding support for the
->>> open/read/close pattern to it as well, after some other more pressing
->>> features/fixes were finished.
->>
->> What about... just using io_uring for single file, too? I'm pretty
->> sure it can be wrapped in a library that is simple to use, avoiding
->> need for new syscall.
-> 
-> Just wondering:  is there a plan to add strace support to io_uring?
-> And I don't just mean the syscalls associated with io_uring, but
-> tracing the ring itself.
+On Tue, Jul 14, 2020 at 1:34 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Thu 02-07-20 15:57:37, Amir Goldstein wrote:
+> > Instead of calling fsnotify() twice, once with parent inode and once
+> > with child inode, if event should be sent to parent inode, send it
+> > with both parent and child inodes marks in object type iterator and call
+> > the backend handle_event() callback only once.
+> >
+> > The parent inode is assigned to the standard "inode" iterator type and
+> > the child inode is assigned to the special "child" iterator type.
+> >
+> > In that case, the bit FS_EVENT_ON_CHILD will be set in the event mask,
+> > the dir argment to handle_event will be the parent inode, the file_name
+> > argument to handle_event is non NULL and refers to the name of the child
+> > and the child inode can be accessed with fsnotify_data_inode().
+> >
+> > This will allow fanotify to make decisions based on child or parent's
+> > ignored mask.  For example, when a parent is interested in a specific
+> > event on its children, but a specific child wishes to ignore this event,
+> > the event will not be reported.  This is not what happens with current
+> > code, but according to man page, it is the expected behavior.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>
+> I like the direction where this is going. But can't we push it even a bit
+> further? I like the fact that we now have "one fs event" -> "one fsnotify()
+> call". Ideally I'd like to get rid of FS_EVENT_ON_CHILD in the event mask
+> because it's purpose seems very weak now and it complicates code (and now
 
-What kind of support do you mean? io_uring is asynchronous in nature
-with all intrinsic tracing/debugging/etc. problems of such APIs.
-And there are a lot of handy trace points, are those not enough?
+Can you give an example where it complicates the code?
+Don't confuse this with the code in fanotify_user.c that subscribes for events
+on child/with name.
 
-Though, this can be an interesting project to rethink how async
-APIs are worked with.
+In one before the last patch of the series I am testing FS_EVENT_ON_CHILD
+in mask to know how to report the event inside fanotify_alloc_event().
+I may be able to carry this information not in mask, but the flag space is
+already taken anyway by FAN_EVENT_ON_CHILD input arg, so not sure
+what is there to gain from not setting FS_EVENT_ON_CHILD.
 
-> 
-> I think that's quite important as io_uring becomes mainstream.
+> it became even a bit of a misnomer) - intuitively, ->handle_event is now
 
--- 
-Pavel Begunkov
+I thought of changing the name to FS_EVENT_WITH_NAME, but that was
+confusing because create/delete are also events with a name.
+Maybe FS_EVENT_WITH_CHILD_NAME :-/
+
+> passed sb, mnt, parent, child so it should have all the info to decide
+> where the event should be reported and I don't see a need for
+> FS_EVENT_ON_CHILD flag.
+
+Do you mean something like this?
+
+        const struct path *inode = fsnotify_data_inode(data, data_type);
+        bool event_on_child = !!file_name && dir != inode;
+
+It may be true that all information is there, but I think the above is
+a bit ugly and quite not trivial to explain, whereas the flag is quite
+intuitive (to me) and adds no extra complexity (IMO).
+
+> With fsnotify() call itself we still use
+> FS_EVENT_ON_CHILD to determine what the arguments mean but can't we just
+> mandate that 'data' always points to the child, 'to_tell' is always the
+> parent dir if watching or NULL (and I'd rename that argument to 'dir' and
+> maybe move it after 'data_type' argument). What do you think?
+>
+
+I think what you are missing is the calls from fsnotify_name().
+For those calls, data is the dir and so is to_tell and name is the entry name.
+
+> Some further comments about the current implementation are below...
+>
+> > ---
+> >  fs/kernfs/file.c     | 10 ++++++----
+> >  fs/notify/fsnotify.c | 40 ++++++++++++++++++++++++++--------------
+> >  2 files changed, 32 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+> > index e23b3f62483c..5b1468bc509e 100644
+> > --- a/fs/kernfs/file.c
+> > +++ b/fs/kernfs/file.c
+> > @@ -883,6 +883,7 @@ static void kernfs_notify_workfn(struct work_struct *work)
+> >
+> >       list_for_each_entry(info, &kernfs_root(kn)->supers, node) {
+> >               struct kernfs_node *parent;
+> > +             struct inode *p_inode = NULL;
+> >               struct inode *inode;
+> >               struct qstr name;
+> >
+> > @@ -899,8 +900,6 @@ static void kernfs_notify_workfn(struct work_struct *work)
+> >               name = (struct qstr)QSTR_INIT(kn->name, strlen(kn->name));
+> >               parent = kernfs_get_parent(kn);
+> >               if (parent) {
+> > -                     struct inode *p_inode;
+> > -
+> >                       p_inode = ilookup(info->sb, kernfs_ino(parent));
+> >                       if (p_inode) {
+> >                               fsnotify(p_inode, FS_MODIFY | FS_EVENT_ON_CHILD,
+> > @@ -911,8 +910,11 @@ static void kernfs_notify_workfn(struct work_struct *work)
+> >                       kernfs_put(parent);
+> >               }
+> >
+> > -             fsnotify(inode, FS_MODIFY, inode, FSNOTIFY_EVENT_INODE,
+> > -                      NULL, 0);
+> > +             if (!p_inode) {
+> > +                     fsnotify(inode, FS_MODIFY, inode, FSNOTIFY_EVENT_INODE,
+> > +                              NULL, 0);
+> > +             }
+> > +
+> >               iput(inode);
+> >       }
+> >
+> > diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> > index 51ada3cfd2ff..7c6e624b24c9 100644
+> > --- a/fs/notify/fsnotify.c
+> > +++ b/fs/notify/fsnotify.c
+> > @@ -145,15 +145,17 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
+> >  /*
+> >   * Notify this dentry's parent about a child's events with child name info
+> >   * if parent is watching.
+> > - * Notify also the child without name info if child inode is watching.
+> > + * Notify only the child without name info if parent is not watching.
+> >   */
+> >  int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+> >                     int data_type)
+> >  {
+> > +     struct inode *inode = d_inode(dentry);
+> >       struct dentry *parent;
+> >       struct inode *p_inode;
+> >       int ret = 0;
+> >
+> > +     parent = NULL;
+> >       if (!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
+> >               goto notify_child;
+> >
+> > @@ -165,23 +167,23 @@ int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
+> >       } else if (p_inode->i_fsnotify_mask & mask & ALL_FSNOTIFY_EVENTS) {
+> >               struct name_snapshot name;
+> >
+> > -             /*
+> > -              * We are notifying a parent, so set a flag in mask to inform
+> > -              * backend that event has information about a child entry.
+> > -              */
+> > +             /* When notifying parent, child should be passed as data */
+> > +             WARN_ON_ONCE(inode != fsnotify_data_inode(data, data_type));
+> > +
+> > +             /* Notify both parent and child with child name info */
+> >               take_dentry_name_snapshot(&name, dentry);
+> >               ret = fsnotify(p_inode, mask | FS_EVENT_ON_CHILD, data,
+> >                              data_type, &name.name, 0);
+> >               release_dentry_name_snapshot(&name);
+> > +     } else {
+> > +notify_child:
+> > +             /* Notify child without child name info */
+> > +             ret = fsnotify(inode, mask, data, data_type, NULL, 0);
+> >       }
+>
+> AFAICT this will miss notifying the child if the condition
+>         !fsnotify_inode_watches_children(p_inode)
+> above is true... And I've noticed this because jumping into a branch in an
+> if block is usually a bad idea and so I gave it a closer look. Exactly
+> because of problems like this. Usually it's better to restructure
+> conditions instead.
+>
+> In this case I think we could structure the code like:
+>         struct name_snapshot name
+>         struct qstr *namestr = NULL;
+>
+>         if (!(dentry->d_flags & DCACHE_FSNOTIFY_PARENT_WATCHED))
+>                 goto notify;
+>         parent = dget_parent(dentry);
+>         p_inode = parent->d_inode;
+>
+>         if (unlikely(!fsnotify_inode_watches_children(p_inode))) {
+>                 __fsnotify_update_child_dentry_flags(p_inode);
+>         } else if (p_inode->i_fsnotify_mask & mask & ALL_FSNOTIFY_EVENTS) {
+>                 take_dentry_name_snapshot(&name, dentry);
+>                 namestr = &name.name;
+>                 mask |= FS_EVENT_ON_CHILD;
+>         }
+> notify:
+>         ret = fsnotify(p_inode, mask, data, data_type, namestr, 0);
+>         if (namestr)
+>                 release_dentry_name_snapshot(&name);
+>         dput(parent);
+>         return ret;
+
+I will look into this proposal, but please be aware that this function
+completely changes
+in the next patch "send event with parent/name info to sb/mount/non-dir marks",
+so some of the things that look weird here or possibly even bugs might go away.
+That is not to say that I won't fix them, but please review with the
+next patch in mind
+when considering reconstruct.
+
+> >
+> >       dput(parent);
+> >
+> > -     if (ret)
+> > -             return ret;
+> > -
+> > -notify_child:
+> > -     return fsnotify(d_inode(dentry), mask, data, data_type, NULL, 0);
+> > +     return ret;
+> >  }
+> >  EXPORT_SYMBOL_GPL(__fsnotify_parent);
+> >
+> > @@ -322,12 +324,16 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
+> >       struct super_block *sb = to_tell->i_sb;
+> >       struct inode *dir = S_ISDIR(to_tell->i_mode) ? to_tell : NULL;
+> >       struct mount *mnt = NULL;
+> > +     struct inode *child = NULL;
+> >       int ret = 0;
+> >       __u32 test_mask, marks_mask;
+> >
+> >       if (path)
+> >               mnt = real_mount(path->mnt);
+> >
+> > +     if (mask & FS_EVENT_ON_CHILD)
+> > +             child = fsnotify_data_inode(data, data_type);
+> > +
+> >       /*
+> >        * Optimization: srcu_read_lock() has a memory barrier which can
+> >        * be expensive.  It protects walking the *_fsnotify_marks lists.
+> > @@ -336,21 +342,23 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
+> >        * need SRCU to keep them "alive".
+> >        */
+> >       if (!to_tell->i_fsnotify_marks && !sb->s_fsnotify_marks &&
+> > -         (!mnt || !mnt->mnt_fsnotify_marks))
+> > +         (!mnt || !mnt->mnt_fsnotify_marks) &&
+> > +         (!child || !child->i_fsnotify_marks))
+> >               return 0;
+> >
+> >       /* An event "on child" is not intended for a mount/sb mark */
+> >       marks_mask = to_tell->i_fsnotify_mask;
+> > -     if (!(mask & FS_EVENT_ON_CHILD)) {
+> > +     if (!child) {
+> >               marks_mask |= sb->s_fsnotify_mask;
+> >               if (mnt)
+> >                       marks_mask |= mnt->mnt_fsnotify_mask;
+> > +     } else {
+> > +             marks_mask |= child->i_fsnotify_mask;
+> >       }
+>
+> I don't think this is correct. The FS_EVENT_ON_CHILD events should
+> also be reported to sb & mnt marks because we now generate only
+> FS_EVENT_ON_CHILD if parent is watching but that doesn't mean e.g. sb
+> shouldn't receive the event. Am I missing something? If I'm indeed right,
+> maybe we should extend our LTP coverage a bit to catch breakage like
+> this...
+>
+
+You are right.
+I will see if the bug is interim or stays with the next patch and will check
+if LTP coverage covers this mid series breakage.
+
+Thanks,
+Amir.
