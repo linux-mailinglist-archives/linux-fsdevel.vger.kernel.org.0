@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0694E21FC86
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 21:10:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BAEB21FC85
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 21:10:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730961AbgGNTJ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 15:09:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41932 "EHLO
+        id S1730791AbgGNTJ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 15:09:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730645AbgGNTJR (ORCPT
+        with ESMTP id S1730799AbgGNTJS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 15:09:17 -0400
+        Tue, 14 Jul 2020 15:09:18 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63755C061755;
-        Tue, 14 Jul 2020 12:09:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12F3CC08C5C1;
+        Tue, 14 Jul 2020 12:09:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=nw4ihKopIpWaNCr5Y6kT67N/CHkCbR4jVRqwGCHV1nE=; b=qqNHbLIRKZphbu96z3Z01iyAkK
-        xtTx8ZQii1DUdG8kyK0YYXOcSXjEnHVyoj7Eg/NsGa90/rTkYyIqaKxMy9hCL+PXtwf2AFP/483ZQ
-        LXEKQjAVEYA2SaW+de6+iJgle93ITzhc7DEkp2thdlvRDrICNez2U37jqNDEir0sZsMc/7tPeII+X
-        BptAF25wpWXl0usrmNOOIp8tAxLssJ7MjcTSe9n4D4o6lWIyuWqGXJDgzu6b+QpM18bdc2Np+rren
-        DZ7IkznmGYnLePINciciU0aV5f9qZeXCE85GMjO6I3eoNXGl2P0cI3tzt93UxQA5sP6bUvlUN9ong
-        9MiJpZ6g==;
+        bh=8TOhkMP63y+WabUPsTk9ObOGsvlUh0ZRK3HKBndfJis=; b=jJBrjBTfdvVPgj6+yqGcHSSakf
+        5+TrHG/bucDNpVb2YrcUsuXEZF1Dfb7zz+C47qPMImrm/0GmZzDVOv4cWSmLo7oU2CZLru4YVns4P
+        V/cwAerJP9AG7akpxjDKcZJ44bc2+5JeEsxovVtdhGm/XiG/l55jClKUzQIoTFAMlGD1PVz/r0ZOY
+        JFFTrFWdy/vWH2ekghqXzOu05o9owHT2wyDxqcrMJxKfUdkPKZVJftAnhOde2SEcj6XPrZNl11tb+
+        2n+nGAZKIr7zKiviG3sY+M3AS8dmC3yVkmucMKRlewQ3GKpZk6ecr4OexuH2Tq7P20WK9Z9eMGNSi
+        Q5xHocEQ==;
 Received: from [2001:4bb8:188:5f50:f037:8cfe:627e:7028] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jvQIk-0005td-N3; Tue, 14 Jul 2020 19:09:15 +0000
+        id 1jvQIl-0005to-Ps; Tue, 14 Jul 2020 19:09:16 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     "H. Peter Anvin" <hpa@zytor.com>, Song Liu <song@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 18/23] init: open code setting up stdin/stdout/stderr
-Date:   Tue, 14 Jul 2020 21:04:22 +0200
-Message-Id: <20200714190427.4332-19-hch@lst.de>
+Subject: [PATCH 19/23] fs: remove ksys_getdents64
+Date:   Tue, 14 Jul 2020 21:04:23 +0200
+Message-Id: <20200714190427.4332-20-hch@lst.de>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200714190427.4332-1-hch@lst.de>
 References: <20200714190427.4332-1-hch@lst.de>
@@ -48,45 +48,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Don't rely on the implicit set_fs(KERNEL_DS) for ksys_open to work, but
-instead open a struct file for /dev/console and then install it as FD
-0/1/2 manually.
+Just open code it in the only caller.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- init/main.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ fs/readdir.c             | 11 ++---------
+ include/linux/syscalls.h |  2 --
+ 2 files changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/init/main.c b/init/main.c
-index 0ead83e86b5aa2..db0621dfbb0468 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -1457,15 +1457,19 @@ static int __ref kernel_init(void *unused)
- 	      "See Linux Documentation/admin-guide/init.rst for guidance.");
+diff --git a/fs/readdir.c b/fs/readdir.c
+index a49f07c11cfbd0..19434b3c982cd3 100644
+--- a/fs/readdir.c
++++ b/fs/readdir.c
+@@ -348,8 +348,8 @@ static int filldir64(struct dir_context *ctx, const char *name, int namlen,
+ 	return -EFAULT;
  }
  
-+/* Open /dev/console, for stdin/stdout/stderr, this should never fail */
- void console_on_rootfs(void)
+-int ksys_getdents64(unsigned int fd, struct linux_dirent64 __user *dirent,
+-		    unsigned int count)
++SYSCALL_DEFINE3(getdents64, unsigned int, fd,
++		struct linux_dirent64 __user *, dirent, unsigned int, count)
  {
--	/* Open the /dev/console as stdin, this should never fail */
--	if (ksys_open((const char __user *) "/dev/console", O_RDWR, 0) < 0)
--		pr_err("Warning: unable to open an initial console.\n");
-+	struct file *file = filp_open("/dev/console", O_RDWR, 0);
- 
--	/* create stdout/stderr */
--	(void) ksys_dup(0);
--	(void) ksys_dup(0);
-+	if (IS_ERR(file)) {
-+		pr_err("Warning: unable to open an initial console.\n");
-+		return;
-+	}
-+	get_file_rcu_many(file, 2);
-+	fd_install(get_unused_fd_flags(0), file);
-+	fd_install(get_unused_fd_flags(0), file);
-+	fd_install(get_unused_fd_flags(0), file);
+ 	struct fd f;
+ 	struct getdents_callback64 buf = {
+@@ -380,13 +380,6 @@ int ksys_getdents64(unsigned int fd, struct linux_dirent64 __user *dirent,
+ 	return error;
  }
  
- static noinline void __init kernel_init_freeable(void)
+-
+-SYSCALL_DEFINE3(getdents64, unsigned int, fd,
+-		struct linux_dirent64 __user *, dirent, unsigned int, count)
+-{
+-	return ksys_getdents64(fd, dirent, count);
+-}
+-
+ #ifdef CONFIG_COMPAT
+ struct compat_old_linux_dirent {
+ 	compat_ulong_t	d_ino;
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 10843a6adb770d..a998651629c71b 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1243,8 +1243,6 @@ ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count);
+ int ksys_chdir(const char __user *filename);
+ int ksys_fchmod(unsigned int fd, umode_t mode);
+ int ksys_fchown(unsigned int fd, uid_t user, gid_t group);
+-int ksys_getdents64(unsigned int fd, struct linux_dirent64 __user *dirent,
+-		    unsigned int count);
+ int ksys_ioctl(unsigned int fd, unsigned int cmd, unsigned long arg);
+ ssize_t ksys_read(unsigned int fd, char __user *buf, size_t count);
+ void ksys_sync(void);
 -- 
 2.27.0
 
