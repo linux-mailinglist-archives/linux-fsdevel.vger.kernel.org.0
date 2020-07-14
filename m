@@ -2,103 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E51AE21E602
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 04:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F91421E667
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 05:38:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbgGNC7m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jul 2020 22:59:42 -0400
-Received: from mx.aristanetworks.com ([162.210.129.12]:30247 "EHLO
-        smtp.aristanetworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbgGNC7l (ORCPT
+        id S1726582AbgGNDid (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jul 2020 23:38:33 -0400
+Received: from mx06.melco.co.jp ([192.218.140.146]:52982 "EHLO
+        mx06.melco.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726456AbgGNDid (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jul 2020 22:59:41 -0400
-X-Greylist: delayed 323 seconds by postgrey-1.27 at vger.kernel.org; Mon, 13 Jul 2020 22:59:41 EDT
-Received: from us180.sjc.aristanetworks.com (us180.sjc.aristanetworks.com [172.25.230.4])
-        by smtp.aristanetworks.com (Postfix) with ESMTP id BA0E54000A4;
-        Mon, 13 Jul 2020 19:54:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
-        s=Arista-A; t=1594695257;
-        bh=5S99b4Wsz1sSm6XJJBWve3nBCOGAX6DPDI8yaAHT25E=;
-        h=Date:To:Subject:From:From;
-        b=Qm8Gr88enAqDOUJHMvxrDLfLVMXPVBB1b6re0SVAco1YL0XDO16nhBoBrSKpaHEjp
-         a3iNLx/d3Zfj5y/FLzEoBqZBTIZ89w1Y0Ppw7X9Y5lvNuww7Xe/c/Z3iaRvZBFWEcF
-         aqbjmUUr5FOcUkF+IMas7Dy6OEV4dYbRRzOO66xOxD6K6mxQ7UGFcXeIrs7gHBQpyS
-         2cIjSuG+92Cg+sFi6/lUJpfZ4nrAuFh+XM+VepNxzMGor7QykGQCmo3hMwPBL2G61C
-         Dk7kAGBietPF96FPuEObRfehATihKjuQHXIm2lgCDlWlnbNRcygb4N43c+hNdoVre3
-         Fstayl15mHK7Q==
-Received: by us180.sjc.aristanetworks.com (Postfix, from userid 10189)
-        id A25EB95C0339; Mon, 13 Jul 2020 19:54:17 -0700 (PDT)
-Date:   Mon, 13 Jul 2020 19:54:17 -0700
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        amir73il@gmail.com, jack@suse.cz, fruggeri@arista.com
-Subject: soft lockup in fanotify_read
-User-Agent: Heirloom mailx 12.5 7/5/10
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Message-Id: <20200714025417.A25EB95C0339@us180.sjc.aristanetworks.com>
-From:   fruggeri@arista.com (Francesco Ruggeri)
+        Mon, 13 Jul 2020 23:38:33 -0400
+Received: from mr06.melco.co.jp (mr06 [133.141.98.164])
+        by mx06.melco.co.jp (Postfix) with ESMTP id 68FCE3A4497;
+        Tue, 14 Jul 2020 12:38:31 +0900 (JST)
+Received: from mr06.melco.co.jp (unknown [127.0.0.1])
+        by mr06.imss (Postfix) with ESMTP id 4B5R7W2chpzRjpb;
+        Tue, 14 Jul 2020 12:38:31 +0900 (JST)
+Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
+        by mr06.melco.co.jp (Postfix) with ESMTP id 4B5R7W2JXMzRk9B;
+        Tue, 14 Jul 2020 12:38:31 +0900 (JST)
+Received: from mf03.melco.co.jp (unknown [133.141.98.183])
+        by mf03_second.melco.co.jp (Postfix) with ESMTP id 4B5R7W2D8pzRjwN;
+        Tue, 14 Jul 2020 12:38:31 +0900 (JST)
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (unknown [104.47.125.58])
+        by mf03.melco.co.jp (Postfix) with ESMTP id 4B5R7V6l9QzRjw6;
+        Tue, 14 Jul 2020 12:38:30 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OiM19rwF4jQQbQr/2u+uEmPHaU+LFGrCngaTZZC9PC7YgVFrQ1oDuHekoVLKolo8LbgWM6dYR15/9HfpDsmhZcAJx7FcxLQWDRX9vHb5muL4Q3kkVZuRnwQp+c1bwlp6CCIHgCIyn5BzJclLgenwqxepPQd4bMQSLSrhAu57tFkuvIwlquED2VqkGRT9h4IPYfW4Kp64Y+Qn82fS4OjZLSJ8l+aPlQSE04U96e2Rkwgdq/FkKU97dpBYkM9QWtWkk0PcG34gUTLr7Hgm/qR3F09La9lnmKpJz5WkFVNyuaovgM5EmllcojEC4yoM236B7rxIjKyCQIQBXKlPH5HLrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vhB7ud2Xu9rJsJecsm3x5bP9VkLaZ1GXmA/UUYNG6B4=;
+ b=YexOxTBTJ2jBBDhGqJfUvRqI856Lj3iq06CpGxZcmF11keMZ+M1VliJQvfRqk8h11CtL4PfQiyilo+sIDDHcMFsXLrhiOIxKA+X2WWA3QP78SS43K/YRGPp7eFVtZxrvdb0J7TeUKsooeWxzQWLeU8c4Yxap1IOcFzCjKlS0d0ieaJy9LnTzDV0lTZvuZDnnmgJ1LzxBfJQ2FEpCbeWr444OTDIFLUXUd5iyV3gTofMLPdGFdoD00Sjv62Ki4CPhjInNt0ITJcOxSZ4zYNfqLgiH4vOyMpsHCkSTG/tm0lq4KU/EPcwTyEhe8IdezJemun5DIujoRXyNRM1EVQ1BZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
+ header.from=dc.mitsubishielectric.co.jp; dkim=pass
+ header.d=dc.mitsubishielectric.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mitsubishielectricgroup.onmicrosoft.com;
+ s=selector2-mitsubishielectricgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vhB7ud2Xu9rJsJecsm3x5bP9VkLaZ1GXmA/UUYNG6B4=;
+ b=Ym4MJsGvYziYF4yh/YOGRIwjiWIEcX+tSh4Vs37y6gEReIBVkLS0+7UwQ+aVgYPKKYdv9oUnUrWCMIX0oZp+lEYY3/e0eatuRLN+GlKZBGvHoTnxKzZmpiiDBe/l89CHZlH/Hxw6BuDzLg1tHeSAAKSb9kDlaM7AH+Fo2ianPKQ=
+Received: from TY2PR01MB2875.jpnprd01.prod.outlook.com (2603:1096:404:6b::11)
+ by TY2PR01MB4425.jpnprd01.prod.outlook.com (2603:1096:404:11c::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3174.22; Tue, 14 Jul
+ 2020 03:38:29 +0000
+Received: from TY2PR01MB2875.jpnprd01.prod.outlook.com
+ ([fe80::51f8:6ee3:3a68:20e6]) by TY2PR01MB2875.jpnprd01.prod.outlook.com
+ ([fe80::51f8:6ee3:3a68:20e6%3]) with mapi id 15.20.3174.025; Tue, 14 Jul 2020
+ 03:38:29 +0000
+From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+To:     'Sungjong Seo' <sj1557.seo@samsung.com>
+CC:     "Mori.Takahiro@ab.MitsubishiElectric.co.jp" 
+        <Mori.Takahiro@ab.MitsubishiElectric.co.jp>,
+        "Motai.Hirotaka@aj.MitsubishiElectric.co.jp" 
+        <Motai.Hirotaka@aj.MitsubishiElectric.co.jp>,
+        'Namjae Jeon' <namjae.jeon@samsung.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC]PATCH] exfat: integrates dir-entry getting and validation
+Thread-Topic: [RFC]PATCH] exfat: integrates dir-entry getting and validation
+Thread-Index: AQHWWLwPRt+8581iI0We4lRfkrRHoKkGVDbQ
+Date:   Tue, 14 Jul 2020 03:35:57 +0000
+Deferred-Delivery: Tue, 14 Jul 2020 03:38:00 +0000
+Message-ID: <TY2PR01MB2875E617CBA988EEF65A7DD390610@TY2PR01MB2875.jpnprd01.prod.outlook.com>
+References: <CGME20200626061009epcas1p24585a6472e7103dc878bf9fc1d0f7d12@epcas1p2.samsung.com>
+        <20200626060947.24709-1-kohada.t2@gmail.com>
+ <4a6201d658bc$09e3fa80$1dabef80$@samsung.com>
+In-Reply-To: <4a6201d658bc$09e3fa80$1dabef80$@samsung.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-melpop: 1
+authentication-results: samsung.com; dkim=none (message not signed)
+ header.d=none;samsung.com; dmarc=none action=none
+ header.from=dc.MitsubishiElectric.co.jp;
+x-originating-ip: [121.80.0.163]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7827d877-6a80-4ed3-8a20-08d827a7600f
+x-ms-traffictypediagnostic: TY2PR01MB4425:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <TY2PR01MB44251C748C04CA5A4F5BF13590610@TY2PR01MB4425.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: M8AwGQhcbGEF5bsJN+ZcuNN05UzjhNcIUJAPSyiBbmH+VvTDkkDdIlX9vy2s5QdmSMxjosdd0HfuUtH/Jb5vmFLuNWrDCj6SKrdR0tZiZ+b7bM5aJHn9fVEScG+Dm4BFaFfl7yavM8HnJUqjpPQaGrVtR/A6YqXpecSno6lvmJUJZK1EjOeDcteetpZjowxVic8KionoO2dk6hJsjNhxW6jA44t/r9FfV0xbnr7SuR6xkjb07kMtLTIQn9Fx9o+e6E+ot6PO7mx9ZGn8QpdLKdCRcRkfkEwzRPxmJDTliIoC65BWSdthVqMlWQH7wjytvKZFyq6jmHydjn2UEEQnww==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB2875.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(39860400002)(396003)(376002)(366004)(346002)(136003)(9686003)(83380400001)(186003)(86362001)(66556008)(66476007)(64756008)(76116006)(66946007)(26005)(66446008)(8676002)(54906003)(71200400001)(316002)(6666004)(478600001)(55016002)(6506007)(33656002)(7696005)(2906002)(6916009)(5660300002)(52536014)(8936002)(4326008);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: 3mgQEe71m9MZ2qC7aEBNbdjl663nw/FLjYWB9ELR1NeSizcQ2aHMPthSagWxYa5NCKH2vGvB709HFp/RZADlpcqQmWQR/6anM1+lXXmQUgvxsVrXaEm4QlQAQ0Zh9YfoQEPKNaCa3z6Eb2PCvofecsPdzv1KPP11l+MuvbOFje7jd03IW49ywKue5l+6Eek+gTGgvB/xRMXs4n/Ko5xIIoblRDiCR0ofJgu9qjrazzdB80EOUYU6LaAm1TFtCxwVD+zzICLoBermGUjbzMtL6RBpSzdTcdR2L0t+9ZbxCA664iUYeBid18NBlX6PRowvfsDBIyuEXTTI8tnQWy/xWJyf/oNTWmuRxMHnKYhhFMKIUuo/AYd/mpqCeKTKWWsej26TeHiRhwn56MgyXx84H8lZsMOd8W27RyiPL5CU6shT/fGeRvuU2/CGT2YBDpIHd+8W4rpN+IVJ17c14LIdlWRy7U5La3nVqY8eaFHGrHg=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: dc.MitsubishiElectric.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB2875.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7827d877-6a80-4ed3-8a20-08d827a7600f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jul 2020 03:38:29.6438
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: sAiAT1+0dZHru98OHd/XcHYjTQ7ARkK3pjUNH/TBy2kUqBo0wcRK34mpzR/rN4O1TDDRM12+cOxmoT/rxOAwUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB4425
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We are getting this soft lockup in fanotify_read.
-The reason is that this code does not seem to scale to cases where there
-are big bursts of events generated by fanotify_handle_event.
-fanotify_read acquires group->notification_lock for each event.
-fanotify_handle_event uses the lock to add one event, which also involves
-fanotify_merge, which scans the whole list trying to find an event to
-merge the new one with.
-In our case fanotify_read is invoked with a buffer big enough for 200
-events, and what happens is that every time fanotify_read dequeues an
-event and releases the lock, fanotify_handle_event adds several more,
-scanning a longer and longer list. This causes fanotify_read to wait
-longer and longer for the lock, and the soft lockup happens before
-fanotify_read can reach 200 events.
-Is it intentional for fanotify_read to acquire the lock for each event,
-rather than batching together a user buffer worth of events?
-
-Thanks,
-Francesco Ruggeri
-
-[5752801.578813] watchdog: BUG: soft lockup - CPU#15 stuck for 22s! [fstrace:23105]
-[5752801.586804] Modules linked in: ...
-[5752801.586871] CPU: 15 PID: 23105 Comm: fstrace Tainted: G        W  O L    4.19.112-16802951.AroraKernel419.el7.x86_64 #1
-[5752801.586872] Hardware name: Supermicro SYS-6029TP-HTR/X11DPT-PS, BIOS 3.1 04/30/2019
-[5752801.586879] RIP: 0010:queued_spin_lock_slowpath+0x141/0x17c
-[5752801.586881] Code: 5e c1 e9 12 83 e0 03 ff c9 48 c1 e0 04 48 63 c9 48 05 c0 14 02 00 48 03 04 cd 20 e7 e9 81 48 89 10 8b 42 08 85 c0 75 04 f3 90 <eb> f5 48 8b 0a 48 85 c9 74 03 0f 0d 09 8b 07 66 85 c0 74 93 f3 90
-[5752801.586882] RSP: 0018:ffffc90027c5fd18 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-[5752801.586883] RAX: 0000000000000000 RBX: ffff8883a9078ce8 RCX: 000000000000001e
-[5752801.586884] RDX: ffff88df7f6e14c0 RSI: 0000000000400000 RDI: ffff88b06306e30c
-[5752801.586885] RBP: ffffc90027c5fd18 R08: 0000000000000001 R09: ffffffff811e8b7e
-[5752801.586886] R10: ffffc90027c5fce0 R11: 0000000000000000 R12: ffff88b06306e300
-[5752801.586887] R13: 00000000ff935638 R14: ffff88b4af422600 R15: 0000000000000018
-[5752801.586888] FS:  0000000000000000(0000) GS:ffff88df7f6c0000(0063) knlGS:0000000009c6a880
-[5752801.586889] CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-[5752801.586890] CR2: 0000000009430914 CR3: 000000035bbef006 CR4: 00000000007606e0
-[5752801.586891] DR0: 000000000001864c DR1: 0000000000000000 DR2: 0000000000000000
-[5752801.586891] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-[5752801.586892] PKRU: 55555554
-[5752801.586892] Call Trace:
-[5752801.586898]  do_raw_spin_lock+0x1a/0x1c
-[5752801.586901]  _raw_spin_lock+0xe/0x10
-[5752801.586905]  fanotify_read+0xa3/0x32d
-[5752801.586912]  ? __wake_up_sync+0x12/0x12
-[5752801.586916]  copy_oldmem_page+0xa9/0xa9
-[5752801.586920]  ? fsnotify_perm+0x60/0x6c
-[5752801.586921]  ? fsnotify_perm+0x60/0x6c
-[5752801.586923]  ? security_file_permission+0x37/0x3e
-[5752801.586926]  vfs_read+0xa4/0xdc
-[5752801.586928]  ksys_read+0x64/0xab
-[5752801.586930]  __ia32_sys_read+0x18/0x1a
-[5752801.586933]  do_fast_syscall_32+0xaf/0xf6
-[5752801.586935]  entry_SYSENTER_compat+0x6b/0x7a
-[5752801.586936] RIP: 0023:0xf7f64c29
-[5752801.586938] Code: 5b 5d c3 8b 04 24 c3 8b 14 24 c3 8b 1c 24 c3 8b 34 24 c3 90 90 90 90 90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-[5752801.586939] RSP: 002b:00000000ff933828 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-[5752801.586940] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00000000ff9348d0
-[5752801.586941] RDX: 00000000000012c0 RSI: 0000000009c72da8 RDI: 00000000ff9348d0
-[5752801.586941] RBP: 00000000ff935ba8 R08: 0000000000000000 R09: 0000000000000000
-[5752801.586942] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-[5752801.586942] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-
+VGhhbmtzIGZvciB5b3VyIHJlcGx5Lg0KDQo+ID4NCj4gPiAgCS8qIHZhbGlkaWF0ZSBjYWNoZWQg
+ZGVudHJpZXMgKi8NCj4gPiAtCWZvciAoaSA9IDE7IGkgPCBudW1fZW50cmllczsgaSsrKSB7DQo+
+ID4gLQkJZXAgPSBleGZhdF9nZXRfZGVudHJ5X2NhY2hlZChlcywgaSk7DQo+ID4gLQkJaWYgKCFl
+eGZhdF92YWxpZGF0ZV9lbnRyeShleGZhdF9nZXRfZW50cnlfdHlwZShlcCksICZtb2RlKSkNCj4g
+DQo+ID4gKwlmb3IgKGkgPSAxOyBpIDwgZXMtPm51bV9lbnRyaWVzOyBpKyspIHsNCj4gPiArCQlp
+ZiAoIWV4ZmF0X2dldF92YWxpZGF0ZWRfZGVudHJ5KGVzLCBpLCBUWVBFX1NFQ09OREFSWSkpDQo+
+ID4gIAkJCWdvdG8gZnJlZV9lczsNCj4gPiAgCX0NCj4gPiArCWlmICghZXhmYXRfZ2V0X3ZhbGlk
+YXRlZF9kZW50cnkoZXMsIDEsIFRZUEVfU1RSRUFNKSkNCj4gPiArCQlnb3RvIGZyZWVfZXM7DQo+
+IA0KPiBJdCBsb29rcyBiZXR0ZXIgdG8gbW92ZSBjaGVja2luZyBUWVBFX1NUUkVBTSBhYm92ZSB0
+aGUgZm9yLWxvb3AuDQo+IEFuZCB0aGVuIGZvci1sb29wIHNob3VsZCBzdGFydCBmcm9tIGluZGV4
+IDIuDQoNCk9LLiBJJ2xsIGNoYW5nZSB0aGF0LiANCkhvd2V2ZXIsIHRoaXMgZm9yLWxvb3AgaXMg
+Y29uc2lkZXJpbmcgY2hhbmdpbmcgdG8gY2hlY2tzdW0gdmVyaWZpY2F0aW9uLg0KDQoNCj4gQlRX
+LCBkbyB5b3UgdGhpbmsgaXQgaXMgZW5vdWdoIHRvIGNoZWNrIG9ubHkgVFlQRV9TRUNPTkRBUlkg
+bm90IFRZUEUgTkFNRT8NCj4gQXMgeW91IG1pZ2h0IGtub3csIEZJTEUsIFNUUkVBTSBhbmQgTkFN
+RSBlbnRyaWVzIG11c3QgYmUgY29uc2VjdXRpdmUgaW4gb3JkZXIuDQoNCkkgdGhpbmsgaXQgaXMg
+YXBwcm9wcmlhdGUgYXMgYSBjaGVjayBoZXJlLg0KVFlQRV9OQU1FIHN0YXJ0aW5nIHdpdGhvdXQg
+aW5kZXg9MiBkb2Vzbid0IGFjY2VwdCBpbiBleGZhdF9nZXRfdW5pbmFtZV9mcm9tX2V4dF9lbnRy
+eSgpLg0KSG93ZXZlciwgSSB0aGluayB0aGlzIGlzIG5vdCBlbm91Z2guDQpUaGlzIGlzIGJlY2F1
+c2UgdGhlcmUgaXMgbm8gY2hlY2sgZm9yIG5hbWUtbGVuZ3RoLiAoc2FtZSB3aXRoIG9yIHdpdGhv
+dXQgcGF0Y2gpDQoNCkkgd2lsbCBjaGVjayB0aGUgbmFtZS1sZW5ndGggaW4gdGhlIG5leHQob3Ig
+YWZ0ZXIgbmV4dCkgcGF0Y2guDQoNCg0KQlINCi0tLQ0KS29oYWRhIFRldHN1aGlybyA8S29oYWRh
+LlRldHN1aGlyb0BkYy5NaXRzdWJpc2hpRWxlY3RyaWMuY28uanA+DQo=
