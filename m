@@ -2,42 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B499C21FC1B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 21:06:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C71B21FCA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 21:11:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731227AbgGNTGn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 15:06:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41502 "EHLO
+        id S1731115AbgGNTI6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 15:08:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729917AbgGNTGl (ORCPT
+        with ESMTP id S1729587AbgGNTIv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 15:06:41 -0400
+        Tue, 14 Jul 2020 15:08:51 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 558B2C061755;
-        Tue, 14 Jul 2020 12:06:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B915AC061755;
+        Tue, 14 Jul 2020 12:08:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=3mOaoD/B/fJiX289qQjOUZtXOEZ2+n+0JbvjRMjxJao=; b=IDR/vZd4vo7XbrQ3tTdWn6EOsA
-        fGgy5xPMuRkYm1IvorwX2tRu+QVFD9THWEEz/F7SKv0ODpJrJMTqvujD8fMBgR+96UDHuQwN1+ukr
-        3qVqC2NlQi310NumxiqTfX1xt6lAECmhhBdKCE3mcgN/+qR+ms56Vesqe3YU2AGA/LA3p2p0nnLrd
-        sYTfvUSptdqcle1kCtdQ/Lf/QWY9HbbtZN3C0tcqN9qKYaffJlbVIRy3pkXa2OiVMbc0MfMitchUT
-        fQdG5vK6q4WfYqnrTWI7pCNgpRqBwnjERK3xS8X1sDu1AC3nRIsCBnvsPI5n3q4cJPCekNSVi6O7z
-        h7IBwuxA==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=SfNmnpeIaLgqLHElMoiTdMHjuz+bhccYioCzBmt8Vg0=; b=DqW4FLzTD57cZNh10SjFknXCtC
+        Mow05kCJ7Q/oZx3rGuN9I6SEx6li24QLIAE1xENr/zk9CRUI6iz4sASvq7zTG0ogSZNxgT/Espl9a
+        g9/6+KSWPSOZ+w543FqtOfDsK+dJvdFJXQKFNsQq5SQqWou1MA0MLXlAq0Lxie7T82TGd3C/nsPhk
+        zknezzp02cXSyZO0Sw1eSvA2GAvs7ULLHpfxBhTvgEYlh8AIMl4iYPiLbXouw7KkVO/KPU/JzE1hZ
+        bTzzNK8weW1KPOFzo9M5OQuGG/9I5Z90bvSUTYx3E4i4Y/73nZzw9MbrjcvRBtjDKVRTRE77NDRDw
+        4ck54ujg==;
 Received: from 089144201169.atnat0010.highway.a1.net ([89.144.201.169] helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jvQGE-0005cy-Vv; Tue, 14 Jul 2020 19:06:39 +0000
+        id 1jvQIM-0005pB-0o; Tue, 14 Jul 2020 19:08:50 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     "H. Peter Anvin" <hpa@zytor.com>, Song Liu <song@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: decruft the early init / initrd / initramfs code v2
-Date:   Tue, 14 Jul 2020 21:04:04 +0200
-Message-Id: <20200714190427.4332-1-hch@lst.de>
+Subject: [PATCH 01/23] fs: add a vfs_fchown helper
+Date:   Tue, 14 Jul 2020 21:04:05 +0200
+Message-Id: <20200714190427.4332-2-hch@lst.de>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200714190427.4332-1-hch@lst.de>
+References: <20200714190427.4332-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
@@ -46,58 +48,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+Add a helper for struct file based chown operations.  To be used by
+the initramfs code soon.
 
-this series starts to move the early init code away from requiring
-KERNEL_DS to be implicitly set during early startup.  It does so by
-first removing legacy unused cruft, and the switches away the code
-from struct file based APIs to our more usual in-kernel APIs.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/open.c          | 29 +++++++++++++++++------------
+ include/linux/fs.h |  2 ++
+ 2 files changed, 19 insertions(+), 12 deletions(-)
 
-There is no really good tree for this, so if there are no objections
-I'd like to set up a new one for linux-next.
+diff --git a/fs/open.c b/fs/open.c
+index 6cd48a61cda3b9..103c66309bee67 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -740,23 +740,28 @@ SYSCALL_DEFINE3(lchown, const char __user *, filename, uid_t, user, gid_t, group
+ 			   AT_SYMLINK_NOFOLLOW);
+ }
+ 
++int vfs_fchown(struct file *file, uid_t user, gid_t group)
++{
++	int error;
++
++	error = mnt_want_write_file(file);
++	if (error)
++		return error;
++	audit_file(file);
++	error = chown_common(&file->f_path, user, group);
++	mnt_drop_write_file(file);
++	return error;
++}
++
+ int ksys_fchown(unsigned int fd, uid_t user, gid_t group)
+ {
+ 	struct fd f = fdget(fd);
+ 	int error = -EBADF;
+ 
+-	if (!f.file)
+-		goto out;
+-
+-	error = mnt_want_write_file(f.file);
+-	if (error)
+-		goto out_fput;
+-	audit_file(f.file);
+-	error = chown_common(&f.file->f_path, user, group);
+-	mnt_drop_write_file(f.file);
+-out_fput:
+-	fdput(f);
+-out:
++	if (f.file) {
++		error = vfs_fchown(f.file, user, group);
++		fdput(f);
++	}
+ 	return error;
+ }
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f5abba86107d86..0ddd64ca0b45c0 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1744,6 +1744,8 @@ int vfs_mkobj(struct dentry *, umode_t,
+ 		int (*f)(struct dentry *, umode_t, void *),
+ 		void *);
+ 
++int vfs_fchown(struct file *file, uid_t user, gid_t group);
++
+ extern long vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+ 
+ #ifdef CONFIG_COMPAT
+-- 
+2.27.0
 
-
-Git tree:
-
-    git://git.infradead.org/users/hch/misc.git init-user-pointers
-
-Gitweb:
-
-    http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/init-user-pointers
-
-Changes since v2:
- - add vfs_fchown and vfs_fchmod helpers and use them for initramfs
-   unpacking
- - split patches up a little more
- - fix a commit log typo
-Changes since v1:
- - add a patch to deprecated "classic" initrd support
-
-Diffstat:
- b/arch/arm/kernel/atags_parse.c |    2 
- b/arch/sh/kernel/setup.c        |    2 
- b/arch/sparc/kernel/setup_32.c  |    2 
- b/arch/sparc/kernel/setup_64.c  |    2 
- b/arch/x86/kernel/setup.c       |    2 
- b/drivers/md/Makefile           |    3 
- b/drivers/md/md-autodetect.c    |  239 ++++++++++++++++++----------------------
- b/drivers/md/md.c               |   34 +----
- b/drivers/md/md.h               |   10 +
- b/fs/file.c                     |    7 -
- b/fs/ioctl.c                    |    7 -
- b/fs/open.c                     |   56 +++++----
- b/fs/read_write.c               |    2 
- b/fs/readdir.c                  |   11 -
- b/include/linux/fs.h            |    3 
- b/include/linux/initrd.h        |    6 -
- b/include/linux/raid/detect.h   |    8 +
- b/include/linux/syscalls.h      |   17 --
- b/init/Makefile                 |    1 
- b/init/do_mounts.c              |   70 +----------
- b/init/do_mounts.h              |   21 ---
- b/init/do_mounts_initrd.c       |   13 --
- b/init/do_mounts_rd.c           |  102 +++++++----------
- b/init/initramfs.c              |  103 +++++------------
- b/init/main.c                   |   16 +-
- include/linux/raid/md_u.h       |   13 --
- 26 files changed, 279 insertions(+), 473 deletions(-)
