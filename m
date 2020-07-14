@@ -2,92 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 67FD521EAF3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 10:07:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FE2321EB4A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 10:27:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbgGNIHQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 04:07:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51306 "EHLO
+        id S1726769AbgGNI1R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 04:27:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbgGNIHP (ORCPT
+        with ESMTP id S1725793AbgGNI1Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 04:07:15 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E58F5C08C5C1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 01:07:14 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id h28so16214052edz.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 01:07:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VxG136uE7k/7DQKw2dWH82lAeA2t/fDkcPS0g4RMW9A=;
-        b=El1qSrVlx5j8OzqWY+jAkGIyxjaAfYH+cAXX/jS9K9Nm7LDsD7Ow20X6ZI/9L4i34m
-         i6WsR0CtSO9QTmeXYDIWsjH1tlcEOcfyjR+Yn6OuRbJMAlEjvHkjEtfJJvDtJKZFb57q
-         UXgWM5FxsZRScs6IL4dz92fo4cR62DnQk6wXY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VxG136uE7k/7DQKw2dWH82lAeA2t/fDkcPS0g4RMW9A=;
-        b=YCNEE+Ln8fj0B7MUe5gB1WZZzw4ZxZf9jOKUEkmKXD5MoyGAq8tSYqlzMsbNlDImPP
-         xGfsJs6FogFlsa416eg9dzhgWaisrrnULGUuAwVLbG3d9Aw3V2YkqoS0nlNpWpJzUpkZ
-         KXP3jHoyN3jLVctQvqPt6EqnfsFJjAV/hS3nGBd1je6/MvjglSEjBkEQRX4kqyo6dUgO
-         E+k2lLRB7Gr1PM1q4ZM4jAOFVign81TXgIhlCdeST847vRwb5w2rF4Exr8U5/u1e2c4I
-         gveB5WCuGnXvaMP8p7lSdPAgyZihy+DD162blz9Pq0pcCcXGSbdSpIQ3qvShK60KZwg9
-         XSAA==
-X-Gm-Message-State: AOAM531k/qbT+BUSXPQJBTug7RTQKl3UwQrHenUR1mdrbfgqIumwiXxB
-        hIPJjalkRRKux6sW0nAO0RCTyNxo/ZSvdmtdqXjSgA==
-X-Google-Smtp-Source: ABdhPJzWasYoseKAcvHkcWBtEYPiZDeYidABizN8Y9lJDS4GoTapol5Yea6vIlDc4ozwIskC2c/AS3sLTWFc+1jaNwk=
-X-Received: by 2002:a05:6402:1687:: with SMTP id a7mr3263957edv.358.1594714033497;
- Tue, 14 Jul 2020 01:07:13 -0700 (PDT)
+        Tue, 14 Jul 2020 04:27:16 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F56C061755;
+        Tue, 14 Jul 2020 01:27:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=A51ag8nDs9zuaekV72PLvRRRTy65GcHBqX/h7vCoPM8=; b=Qliqg88yubr5gTr0CebRm5zHyM
+        VmoSi0W8BiWxbo8q0BQItVbTESnzPp2YQGxipV4dST4DFJUBsJEgrytU7IzP9Ptmtt31ahpakJj6W
+        pvVJgC5LHcsQYfqFGy5fNdrhBWJcuZf7H3SfDGiu09ZMSL4+z0b4A+hAncBX1lLJRahHM4aEJlNXj
+        lWa0NgagAQJSPYr3J9uR3wRQOov3bvouDKlbm6svybYdiMyh2k7P7B7hdk3PoyRtrnU8/ltNHbyf4
+        4872KPEM7cf358Zm+G7TVXFu4J9ua11eoXXrDYwTVxnobsO9G7E1mpGrwznsBUZ6VolO/a5+BQvvh
+        bjtbmldw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jvGHI-0003qe-0A; Tue, 14 Jul 2020 08:27:04 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E72DC305C22;
+        Tue, 14 Jul 2020 10:27:01 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C5FA120D27C6B; Tue, 14 Jul 2020 10:27:01 +0200 (CEST)
+Date:   Tue, 14 Jul 2020 10:27:01 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     ira.weiny@intel.com
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Subject: Re: [RFC PATCH 04/15] x86/pks: Preserve the PKRS MSR on context
+ switch
+Message-ID: <20200714082701.GO10769@hirez.programming.kicks-ass.net>
+References: <20200714070220.3500839-1-ira.weiny@intel.com>
+ <20200714070220.3500839-5-ira.weiny@intel.com>
 MIME-Version: 1.0
-References: <CAODFU0q6CrUB_LkSdrbp5TQ4Jm6Sw=ZepZwD-B7-aFudsOvsig@mail.gmail.com>
- <20200705115021.GA1227929@kroah.com> <20200714065110.GA8047@amd>
-In-Reply-To: <20200714065110.GA8047@amd>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 14 Jul 2020 10:07:02 +0200
-Message-ID: <CAJfpegu8AXZWQh3W39PriqxVna+t3D2pz23t_4xEVxGcNf1AUA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] readfile(2): a new syscall to make open/read/close faster
-To:     Pavel Machek <pavel@denx.de>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Jan Ziak <0xe2.0x9a.0x9b@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-man <linux-man@vger.kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>, shuah@kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200714070220.3500839-5-ira.weiny@intel.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 8:51 AM Pavel Machek <pavel@denx.de> wrote:
->
-> Hi!
->
-> > > At first, I thought that the proposed system call is capable of
-> > > reading *multiple* small files using a single system call - which
-> > > would help increase HDD/SSD queue utilization and increase IOPS (I/O
-> > > operations per second) - but that isn't the case and the proposed
-> > > system call can read just a single file.
-> >
-> > If you want to do this for multple files, use io_ring, that's what it
-> > was designed for.  I think Jens was going to be adding support for the
-> > open/read/close pattern to it as well, after some other more pressing
-> > features/fixes were finished.
->
-> What about... just using io_uring for single file, too? I'm pretty
-> sure it can be wrapped in a library that is simple to use, avoiding
-> need for new syscall.
+On Tue, Jul 14, 2020 at 12:02:09AM -0700, ira.weiny@intel.com wrote:
+> From: Ira Weiny <ira.weiny@intel.com>
+> 
+> The PKRS MSR is defined as a per-core register.  This isolates memory
+> access by CPU.  Unfortunately, the MSR is not preserved by XSAVE.
+> Therefore, We must preserve the protections for individual tasks even if
+> they are context switched out and placed on another cpu later.
 
-Just wondering:  is there a plan to add strace support to io_uring?
-And I don't just mean the syscalls associated with io_uring, but
-tracing the ring itself.
-
-I think that's quite important as io_uring becomes mainstream.
-
-Thanks,
-Miklos
+This is a contradiction and utter trainwreck. We're not going to do more
+per-core MSRs and pretend they make sense per-task.
