@@ -2,88 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C2F2421FD72
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 21:35:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C79F021FD8E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 21:41:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729596AbgGNTfH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 15:35:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45920 "EHLO
+        id S1730022AbgGNTkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 15:40:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728768AbgGNTfG (ORCPT
+        with ESMTP id S1729702AbgGNTks (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 15:35:06 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 564A1C061794
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 12:35:05 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id d17so24998469ljl.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 12:35:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TmvrJI/J3yG66g6pPz5Il+RcCg67c3v/jT1iQASKlcc=;
-        b=KIYXfollvDwZIWSi8MBvzI16dhsw+y4zL9hnXlh1UD0SE8cjPtPzh3zCIWaf7usmKY
-         sJIPvwRi57eB+/xJI+6JaFihnvlQfFnptYDDF1G9FGiSyn3r0SxvQFRYD3v6hzm4/QTE
-         v64cADt8D/wtG1AQ2083itD+hTnNb9/mL5p7o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TmvrJI/J3yG66g6pPz5Il+RcCg67c3v/jT1iQASKlcc=;
-        b=Ib2kMFWakSEKaGXMb8GV9YMiVSgS1tFlrar9UDWZ9DU7RGMmAcS02ekcA0pOLqdAzN
-         j3plipgixYGijPTGFBayDb7y9bcJnmBjWeESZDj3aCucHAOFHbaWifVvd3ISEyu0MTBi
-         G4flugpSZ/YdV4EDXBRC0t9Tcd58UF+PS09BTNqzEsPDdI3G6x5zJ68bYYBopF0vY7Hz
-         jHndV17kDBQ1Rf+mtlAOuhXX9vqUeyJIVWenjvdaA19D1Q7A17gnjlTtyelWoWcVG2Nm
-         9HrjDdUl6cXvv6dw4s9FTpOL403/JoQB5G/0WrUOytDD8SvoKOBk1awHGmEVCXVdmMvo
-         k+wQ==
-X-Gm-Message-State: AOAM531nKiRhfA4GvlqcNMgNAsE+QFb4iir+Es7/NPbbB8qJ0Z3iglXq
-        xSGIBmgnTG5Oef2RH3y12ZjanNN4H+U=
-X-Google-Smtp-Source: ABdhPJxwWNlj0ksdyScDUVZTel8koRjk4JTDhlxPCiDKFnHnrduNZFaAIC0HTSbzBYXTLtp+hGLB1Q==
-X-Received: by 2002:a2e:b054:: with SMTP id d20mr2853501ljl.55.1594755303217;
-        Tue, 14 Jul 2020 12:35:03 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id x17sm5498456lfe.44.2020.07.14.12.35.02
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jul 2020 12:35:02 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id t9so13088330lfl.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 12:35:02 -0700 (PDT)
-X-Received: by 2002:a19:8a07:: with SMTP id m7mr2908470lfd.31.1594755301618;
- Tue, 14 Jul 2020 12:35:01 -0700 (PDT)
+        Tue, 14 Jul 2020 15:40:48 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F50BC061755;
+        Tue, 14 Jul 2020 12:40:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=A7QakhpbDS7UpMv5+nU5KcUWNAdeAaqYrQ/G09rIDaM=; b=hfQoOcG+Pzg8dmu3eJSSuTU6l1
+        IOJF9Ygv/Ir6H4jax9Vk0necvIXLuIFoc8RghaSIpMO2o90p3Kq+v8gmgX+JBiM2dUtjNrfgeLaIE
+        NygcPnxNWGIDt8TfeoiZjI3culu/1+/kakxLwczxNW6ZtWxyqh0zsIiYqlLORazVknTBLLZhmFarB
+        oxjQNqBBHr+/xhoC//cla5A+xlCy3cwKDZPEBcjywqGKy+NS8coxnvKAin3/6zvC+y5ORIiiFWrL7
+        8niS3yPRXFTMnawEHXnE3kmKOZa2Rjy2EMpWfjQklgfuiYZLSLOyu0KH3mh9FihtfRDQMzFs7CKzb
+        bKC+acMQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jvQn3-0003Xv-HT; Tue, 14 Jul 2020 19:40:33 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9D32E9817E0; Tue, 14 Jul 2020 21:40:31 +0200 (CEST)
+Date:   Tue, 14 Jul 2020 21:40:31 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org
+Subject: Re: [RFC PATCH 11/15] memremap: Add zone device access protection
+Message-ID: <20200714194031.GI5523@worktop.programming.kicks-ass.net>
+References: <20200714070220.3500839-1-ira.weiny@intel.com>
+ <20200714070220.3500839-12-ira.weiny@intel.com>
+ <20200714084057.GP10769@hirez.programming.kicks-ass.net>
+ <20200714191047.GE3008823@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
-References: <20200714190427.4332-1-hch@lst.de>
-In-Reply-To: <20200714190427.4332-1-hch@lst.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 14 Jul 2020 12:34:45 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgxV9We+nVcJtQu2DHco+HSeja-WqVdA-KUcB=nyUYuoQ@mail.gmail.com>
-Message-ID: <CAHk-=wgxV9We+nVcJtQu2DHco+HSeja-WqVdA-KUcB=nyUYuoQ@mail.gmail.com>
-Subject: Re: decruft the early init / initrd / initramfs code v2
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Song Liu <song@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-raid@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200714191047.GE3008823@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 12:06 PM Christoph Hellwig <hch@lst.de> wrote:
->
-> this series starts to move the early init code away from requiring
-> KERNEL_DS to be implicitly set during early startup.  It does so by
-> first removing legacy unused cruft, and the switches away the code
-> from struct file based APIs to our more usual in-kernel APIs.
+On Tue, Jul 14, 2020 at 12:10:47PM -0700, Ira Weiny wrote:
+> On Tue, Jul 14, 2020 at 10:40:57AM +0200, Peter Zijlstra wrote:
 
-Looks good to me, with the added note on the utimes cruft too as a
-further cleanup (separate patch).
+> > That's an anti-pattern vs static_keys, I'm thinking you actually want
+> > static_key_slow_{inc,dec}() instead of {enable,disable}().
+> 
+> Thanks.  I'll go read the doc for those as I'm not familiar with them.
 
-So you can add my acked-by.
-
-I _would_ like the md parts to get a few more acks. I see the one from
-Song Liu, anybody else in md land willing to go through those patches?
-They were the bulk of it, and the least obvious to me because I don't
-know that code at all?
-
-              Linus
+Look for static_branch_{inc,dec} in include/linux/jump_label.h, it
+basically does the refcount thing you need and does the actual
+transition on the 0->1 and 1->0 transitions.
