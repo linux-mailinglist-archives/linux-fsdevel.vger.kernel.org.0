@@ -2,86 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8509321F07E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 14:13:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D53821F084
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 14:13:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbgGNMNL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 08:13:11 -0400
-Received: from nautica.notk.org ([91.121.71.147]:55181 "EHLO nautica.notk.org"
+        id S1728888AbgGNMNd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 08:13:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35560 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726354AbgGNMNK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 08:13:10 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id C9AB1C01B; Tue, 14 Jul 2020 14:13:04 +0200 (CEST)
-Date:   Tue, 14 Jul 2020 14:12:49 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Victor Hsieh <victorhsieh@google.com>
-Cc:     v9fs-developer@lists.sourceforge.net,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] fs/9p: Fix TCREATE's fid in protocol
-Message-ID: <20200714121249.GA21928@nautica>
-References: <20200713215759.3701482-1-victorhsieh@google.com>
+        id S1728872AbgGNMNc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Jul 2020 08:13:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B6CBFB1CD;
+        Tue, 14 Jul 2020 12:13:32 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E9CEB1E12C9; Tue, 14 Jul 2020 14:13:29 +0200 (CEST)
+Date:   Tue, 14 Jul 2020 14:13:29 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 05/10] fsnotify: send MOVE_SELF event with parent/name
+ info
+Message-ID: <20200714121329.GF23073@quack2.suse.cz>
+References: <20200702125744.10535-1-amir73il@gmail.com>
+ <20200702125744.10535-6-amir73il@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200713215759.3701482-1-victorhsieh@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20200702125744.10535-6-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Victor Hsieh wrote on Mon, Jul 13, 2020:
-> The fid parameter of TCREATE represents the directory that the file
-
-This is not TCREATE, this is TLCREATE.
-The fid represents the directory before the call, but on success
-represents the file that has been created.
-
-> should be created at. The current implementation mistakenly passes a
-> locally created fid for the file. The correct file fid is usually
-> retrieved by another WALK call, which does happen right after.
+On Thu 02-07-20 15:57:39, Amir Goldstein wrote:
+> MOVE_SELF event does not get reported to a parent watching children
+> when a child is moved, but it can be reported to sb/mount mark with
+> parent/name info if group is interested in parent/name info.
 > 
-> The problem happens when a new created fd is read from (i.e. where
-> private_data->fid is used), but not write to.
-
-I'm not sure why the code currently does a 2nd walk from the directory
-with the name which is prone to a race instead of cloning ofid without a
-path, but I fail to see the problem you ran into - file->private_data is
-a fid pointing to the file as it should be.
-
-Could you describe what kind of errors you get and if possible how to
-reproduce?
-
-> Fixes: 5643135a2846 ("fs/9p: This patch implements TLCREATE for 9p2000.L protocol.")
-> Signed-off-by: Victor Hsieh <victorhsieh@google.com>
-> Cc: stable@vger.kernel.org
-
-(afaiu it is normally frowned upon for developers to add this cc (I can
-understand stable@ not wanting spam discussing issues left and right
-before maintainers agreed on them!) ; I can add it to the commit itself
-if requested but they normally pick most such fixes pretty nicely for
-backport anyway; I see most 9p patches backported as long as the patch
-applies cleanly which is pretty much all the time.
-Please let me know if I understood that incorrectly)
-
+> Use the fsnotify_parent() helper to send a MOVE_SELF event and adjust
+> fsnotify() to handle the case of an event "on child" that should not
+> be sent to the watching parent's inode mark.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > ---
->  fs/9p/vfs_inode_dotl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/notify/fsnotify.c             | 21 +++++++++++++++++----
+>  include/linux/fsnotify.h         |  5 +----
+>  include/linux/fsnotify_backend.h |  2 +-
+>  3 files changed, 19 insertions(+), 9 deletions(-)
 > 
-> diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-> index 60328b21c5fb..90a7aaea918d 100644
-> --- a/fs/9p/vfs_inode_dotl.c
-> +++ b/fs/9p/vfs_inode_dotl.c
-> @@ -285,7 +285,7 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
->  			 err);
->  		goto error;
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 6683c77a5b13..0faf5b09a73e 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -352,6 +352,7 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
+>  	struct super_block *sb = to_tell->i_sb;
+>  	struct inode *dir = S_ISDIR(to_tell->i_mode) ? to_tell : NULL;
+>  	struct mount *mnt = NULL;
+> +	struct inode *inode = NULL;
+>  	struct inode *child = NULL;
+>  	int ret = 0;
+>  	__u32 test_mask, marks_mask;
+> @@ -362,6 +363,14 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
+>  	if (mask & FS_EVENT_ON_CHILD)
+>  		child = fsnotify_data_inode(data, data_type);
+>  
+> +	/*
+> +	 * If event is "on child" then to_tell is a watching parent.
+> +	 * An event "on child" may be sent to mount/sb mark with parent/name
+> +	 * info, but not appropriate for watching parent (e.g. FS_MOVE_SELF).
+> +	 */
+> +	if (!child || (mask & FS_EVENTS_POSS_ON_CHILD))
+> +		inode = to_tell;
+
+I'm now confused. Don't you want to fill in FSNOTIFY_OBJ_TYPE_INODE below
+for FS_MOVE_SELF event? But this condition is false for it so you won't do
+it?
+
+> +
+>  	/*
+>  	 * Optimization: srcu_read_lock() has a memory barrier which can
+>  	 * be expensive.  It protects walking the *_fsnotify_marks lists.
+> @@ -369,14 +378,17 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
+>  	 * SRCU because we have no references to any objects and do not
+>  	 * need SRCU to keep them "alive".
+>  	 */
+> -	if (!to_tell->i_fsnotify_marks && !sb->s_fsnotify_marks &&
+> +	if (!sb->s_fsnotify_marks &&
+>  	    (!mnt || !mnt->mnt_fsnotify_marks) &&
+> +	    (!inode || !inode->i_fsnotify_marks) &&
+>  	    (!child || !child->i_fsnotify_marks))
+>  		return 0;
+>  
+> -	marks_mask = to_tell->i_fsnotify_mask | sb->s_fsnotify_mask;
+> +	marks_mask = sb->s_fsnotify_mask;
+>  	if (mnt)
+>  		marks_mask |= mnt->mnt_fsnotify_mask;
+> +	if (inode)
+> +		marks_mask |= inode->i_fsnotify_mask;
+>  	if (child)
+>  		marks_mask |= child->i_fsnotify_mask;
+>  
+> @@ -390,14 +402,15 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
+>  
+>  	iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
+>  
+> -	iter_info.marks[FSNOTIFY_OBJ_TYPE_INODE] =
+> -		fsnotify_first_mark(&to_tell->i_fsnotify_marks);
+>  	iter_info.marks[FSNOTIFY_OBJ_TYPE_SB] =
+>  		fsnotify_first_mark(&sb->s_fsnotify_marks);
+>  	if (mnt) {
+>  		iter_info.marks[FSNOTIFY_OBJ_TYPE_VFSMOUNT] =
+>  			fsnotify_first_mark(&mnt->mnt_fsnotify_marks);
 >  	}
-> -	err = p9_client_create_dotl(ofid, name, v9fs_open_to_dotl_flags(flags),
-> +	err = p9_client_create_dotl(dfid, name, v9fs_open_to_dotl_flags(flags),
->  				    mode, gid, &qid);
->  	if (err < 0) {
->  		p9_debug(P9_DEBUG_VFS, "p9_client_open_dotl failed in creat %d\n",
+> +	if (inode)
+> +		iter_info.marks[FSNOTIFY_OBJ_TYPE_INODE] =
+> +			fsnotify_first_mark(&inode->i_fsnotify_marks);
+>  	if (child) {
+>  		iter_info.marks[FSNOTIFY_OBJ_TYPE_CHILD] =
+>  			fsnotify_first_mark(&child->i_fsnotify_marks);
+> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> index 044cae3a0628..61dccaf21e7b 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -131,7 +131,6 @@ static inline void fsnotify_move(struct inode *old_dir, struct inode *new_dir,
+>  	u32 fs_cookie = fsnotify_get_cookie();
+>  	__u32 old_dir_mask = FS_MOVED_FROM;
+>  	__u32 new_dir_mask = FS_MOVED_TO;
+> -	__u32 mask = FS_MOVE_SELF;
+>  	const struct qstr *new_name = &moved->d_name;
+>  
+>  	if (old_dir == new_dir)
+> @@ -140,7 +139,6 @@ static inline void fsnotify_move(struct inode *old_dir, struct inode *new_dir,
+>  	if (isdir) {
+>  		old_dir_mask |= FS_ISDIR;
+>  		new_dir_mask |= FS_ISDIR;
+> -		mask |= FS_ISDIR;
+>  	}
+>  
+>  	fsnotify_name(old_dir, old_dir_mask, source, old_name, fs_cookie);
+> @@ -149,8 +147,7 @@ static inline void fsnotify_move(struct inode *old_dir, struct inode *new_dir,
+>  	if (target)
+>  		fsnotify_link_count(target);
+>  
+> -	if (source)
+> -		fsnotify(source, mask, source, FSNOTIFY_EVENT_INODE, NULL, 0);
+> +	fsnotify_dentry(moved, FS_MOVE_SELF);
+
+I'm somewhat unsure about this. Does this mean that 'moved' is guaranteed
+to be positive or that you've made sure that all the code below
+fsnotify_dentry() is actually fine with a negative dentry? I don't find
+either trivial to verify so some note in a changelog or maybe even a
+separate patch for this would be useful.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
