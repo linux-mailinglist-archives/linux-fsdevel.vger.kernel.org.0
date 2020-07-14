@@ -2,67 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EE6921F223
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 15:11:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA55F21F231
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 15:14:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbgGNNKq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 09:10:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41850 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726354AbgGNNKp (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 09:10:45 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B89C061755;
-        Tue, 14 Jul 2020 06:10:45 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id d18so17203604ion.0;
-        Tue, 14 Jul 2020 06:10:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lv9gVEtOCHmdCNCXNh+kZOMT5/e2RCfYMVdBCxYu8hY=;
-        b=GGvCVe9fQU1dq95jD2QsY9q8iP9qkPLUMm8oPCRjJ7Anpl4RZFDQbyaFWBWnDnpLZ4
-         akCnj2zM5URBnRzaIYx3QViomArLjo2TYpYkKUdo/rc9Ev91ZRKMH/8XeuHIazcC6c9X
-         X5e55Z39z5v/S/1QJJmyS5e4BULhf2dcpWbN4Rz5aiw1fkHUaQuYK//DOOIuRhg/YMoN
-         n2xr6Y/ChWx51FMUP57QmncbKCORyhewPR3gy1lBR0mf/Hn9kfig/IhmlXPSlGpiPi80
-         ugnw+VVG06u4vmLe0YcKVW76Sjjn51ULmDMzk5J0lyt30N7aqkZelE3x0JW4tdCaw606
-         ps1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lv9gVEtOCHmdCNCXNh+kZOMT5/e2RCfYMVdBCxYu8hY=;
-        b=MwxVaudSE/X1IYIAZJFlTYzsvAapWoaQW9dkpQ0+T4jgQI5kBd2tEAD2cFp8FeHU03
-         DiqoHp9BIAqsxjvb88VIwGsTKtjLXfEAjXORSUPMdJzuOvBUAroIRDohIXx6XEpZ9MOw
-         zKnSg/axMc+O9tLxi08LRuyEYk8mBcxo7z0OCHOhdNV0C+lqFLoX5/ZDs5R6kRqLSidj
-         f/YcpblgVDNkrc3iaNtfsmq3PNIuu/ITrvgGyapuU3YCzAtOjeM8JQd0AAh0AP4freYb
-         N1Yu7TKQFI2a2hdgd1UNXfdTZuSF3fgJOxNzav44cz1pXUs6pZZW33QBw4QpdE0qFTcJ
-         QhTw==
-X-Gm-Message-State: AOAM5303SgIuUS2BDRhPz9hGEYCiZuEB7MuMFNaCohRnrk6VNlC8rBQn
-        7SgcrTelWNWNsXFaRrkT5073ZksYPrdeeCi77E0V4lPF
-X-Google-Smtp-Source: ABdhPJzXMwozFQAgRFaE2pFvKBmp5FCG/BtI9uXL/90zZu+JnA5e5/U/t3TL0CPy1LXwB+bUTV5aM8NrEjKdJO05MgI=
-X-Received: by 2002:a6b:b483:: with SMTP id d125mr4887880iof.186.1594732244839;
- Tue, 14 Jul 2020 06:10:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200714025417.A25EB95C0339@us180.sjc.aristanetworks.com>
-In-Reply-To: <20200714025417.A25EB95C0339@us180.sjc.aristanetworks.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 14 Jul 2020 16:10:33 +0300
-Message-ID: <CAOQ4uxjLaGyOUd5GOV8oHwBY=nGGtgk4=5bRxmHTr5VsocrhiA@mail.gmail.com>
-Subject: Re: soft lockup in fanotify_read
+        id S1728314AbgGNNOT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 09:14:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51132 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726914AbgGNNOS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Jul 2020 09:14:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id AAFCEAFB7;
+        Tue, 14 Jul 2020 13:14:18 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id C99941E12C9; Tue, 14 Jul 2020 15:14:13 +0200 (CEST)
+Date:   Tue, 14 Jul 2020 15:14:13 +0200
+From:   Jan Kara <jack@suse.cz>
 To:     Francesco Ruggeri <fruggeri@arista.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        amir73il@gmail.com, jack@suse.cz
+Subject: Re: soft lockup in fanotify_read
+Message-ID: <20200714131413.GJ23073@quack2.suse.cz>
+References: <20200714025417.A25EB95C0339@us180.sjc.aristanetworks.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200714025417.A25EB95C0339@us180.sjc.aristanetworks.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 5:54 AM Francesco Ruggeri <fruggeri@arista.com> wrote:
->
+Hello!
+
+On Mon 13-07-20 19:54:17, Francesco Ruggeri wrote:
 > We are getting this soft lockup in fanotify_read.
 > The reason is that this code does not seem to scale to cases where there
 > are big bursts of events generated by fanotify_handle_event.
@@ -70,33 +45,6 @@ On Tue, Jul 14, 2020 at 5:54 AM Francesco Ruggeri <fruggeri@arista.com> wrote:
 > fanotify_handle_event uses the lock to add one event, which also involves
 > fanotify_merge, which scans the whole list trying to find an event to
 > merge the new one with.
-
-Yes, that is a terribly inefficient merge algorithm.
-If it helps I am carrying a quick brown paper bag fix for this issue in my tree:
-
-@@ -65,6 +74,8 @@ static int fanotify_merge(struct list_head *list,
-struct fsnotify_event *event)
- {
-        struct fsnotify_event *test_event;
-        struct fanotify_event *new;
-+       int limit = 128;
-+       int i = 0;
-
-        pr_debug("%s: list=%p event=%p\n", __func__, list, event);
-        new = FANOTIFY_E(event);
-
-@@ -78,6 +89,9 @@ static int fanotify_merge(struct list_head *list,
-struct fsnotify_event *event)
-                return 0;
-
-        list_for_each_entry_reverse(test_event, list, list) {
-+               /* Event merges are expensive so should be limited */
-+               if (++i > limit)
-+                       break;
-                if (should_merge(test_event, event)) {
-
-It's somewhere down my TODO list to fix this properly with a hash table.
-
 > In our case fanotify_read is invoked with a buffer big enough for 200
 > events, and what happens is that every time fanotify_read dequeues an
 > event and releases the lock, fanotify_handle_event adds several more,
@@ -106,14 +54,28 @@ It's somewhere down my TODO list to fix this properly with a hash table.
 > Is it intentional for fanotify_read to acquire the lock for each event,
 > rather than batching together a user buffer worth of events?
 
-I think it is meant to allow for multiple reader threads to read events
-with fairness, but not sure.
+Thanks for report and the analysis. I agree what you describe is possible.
+The locking is actually fine I think but you're correct that the merging
+logic isn't ideal and for large amounts of queued events may be too slow.
+We were already discussing with Amir how to speed it up but didn't end up
+doing anything yet since the issue wasn't really pressing.
 
-Even if it was fine to read a batch of events on every spinlock acquire
-making the code in the fanotify_read() loop behave well in case of
-an error in an event after reading a bunch of good events looks challenging,
-but I didn't try. Anyway, the root cause of the issue seems to be the
-inefficient merge and not the spinlock taken per one event read.
+WRT fanotify_read() removing events from the list in batches: That's
+certainly one possible optimization but (especially with recent extensions
+to fanotify interface) it is difficult to tell how many events will
+actually fit in the provided buffer so we'd have to provide a way to push
+events back to the event queue which may get a bit tricky. And as I wrote
+above I think the real problem is actually with fanotify merge logic which
+ends up holding the notification_lock for too long...
 
-Thanks,
-Amir.
+But we may want to add cond_resched() into the loop in fanotify_read() as
+that can currently take time proportinal to user-provided buffer which can
+be a lot. That will probably silence the softlockup for you as well
+(although it's not really fixing the underlying issue).
+
+We'll have a look what we can do about this :)
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
