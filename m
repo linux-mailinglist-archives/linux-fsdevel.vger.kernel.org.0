@@ -2,86 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B312921FA89
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 20:53:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B455221FBC7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 21:04:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730636AbgGNSx1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 14:53:27 -0400
-Received: from mga14.intel.com ([192.55.52.115]:43539 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730626AbgGNSxY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 14:53:24 -0400
-IronPort-SDR: 1fV2sjGxhfIIrmYdRIGsuPzZPRGWZ8Q7/l9/XE9GhF22y4AbDkhq/zODkTmJnsLY8r8J+dCiYr
- 7M4lYHM7d5Mg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9682"; a="148142821"
-X-IronPort-AV: E=Sophos;i="5.75,352,1589266800"; 
-   d="scan'208";a="148142821"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2020 11:53:23 -0700
-IronPort-SDR: K8KPclbMvzgCpNFSFhz9Nn0YwCcdCbQhJi73NeRnxAdxCClsbyjKHY02fk6MDlf/UteP15gYg8
- 6LDggwpzlYUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,352,1589266800"; 
-   d="scan'208";a="307978346"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by fmsmga004.fm.intel.com with ESMTP; 14 Jul 2020 11:53:23 -0700
-Date:   Tue, 14 Jul 2020 11:53:22 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [RFC PATCH 04/15] x86/pks: Preserve the PKRS MSR on context
- switch
-Message-ID: <20200714185322.GB3008823@iweiny-DESK2.sc.intel.com>
-References: <20200714070220.3500839-1-ira.weiny@intel.com>
- <20200714070220.3500839-5-ira.weiny@intel.com>
- <20200714082701.GO10769@hirez.programming.kicks-ass.net>
+        id S1731063AbgGNTEZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 15:04:25 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:53036 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730936AbgGNS4C (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 14 Jul 2020 14:56:02 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06EIg5nH123000;
+        Tue, 14 Jul 2020 18:55:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=zBSFWFJmK6H6QUNUzT1isFDg2o5kHAYgey+PVkvmy3A=;
+ b=0gYbMbZrTAKzqSs2uR5NW6kMPhqX/DyK3rUF6liKEMQa3koTon0ow0cqknhFyywpq/wA
+ Rbf/qWKjaJ6oUkh3kA1XsauNCBe+9dwPXZE3JFMZBXQxAkYtBmrQGc1m0FP+gxMUyLn0
+ mgTDeZfuIu9cyZ72cuAFJVAbMqgNJhwuLKrHAtiO7qOofQIb6rbeujmg2k/vcVEwYZNw
+ bLg1guO8SSaA9zbBn9BMaq+I6V8CHulxgINt7q0/q13i8CLZyasB/SxLvYfz7bCgp8ia
+ WagyEEEtcsMNbdU3R+4qLGlmEC4+4sPX8nuFkIaIA8kgmcIZ7u2DG3JyG65JAC1Eb3s1 1w== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 3274ur7afj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 14 Jul 2020 18:55:46 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06EIhbb1092521;
+        Tue, 14 Jul 2020 18:55:45 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 327q0ps5x5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 14 Jul 2020 18:55:45 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 06EIthgF006460;
+        Tue, 14 Jul 2020 18:55:43 GMT
+Received: from OracleT490.vogsphere (/73.203.30.179)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 14 Jul 2020 11:55:42 -0700
+Subject: Re: [PATCH 0/2] iowait and idle fixes in /proc/stat
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tglx@linutronix.de
+Cc:     fweisbec@gmail.com, mingo@kernel.org, adobriyan@gmail.com
+References: <20200610210549.61193-1-tom.hromatka@oracle.com>
+From:   Tom Hromatka <tom.hromatka@oracle.com>
+Message-ID: <85937052-fcdf-8bd7-83ec-831a51e320cb@oracle.com>
+Date:   Tue, 14 Jul 2020 12:55:41 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200714082701.GO10769@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20200610210549.61193-1-tom.hromatka@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9682 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 spamscore=0
+ mlxlogscore=999 bulkscore=0 adultscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007140133
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9682 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 malwarescore=0
+ mlxscore=0 priorityscore=1501 adultscore=0 bulkscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007140133
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 10:27:01AM +0200, Peter Zijlstra wrote:
-> On Tue, Jul 14, 2020 at 12:02:09AM -0700, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > The PKRS MSR is defined as a per-core register.  This isolates memory
-> > access by CPU.  Unfortunately, the MSR is not preserved by XSAVE.
-> > Therefore, We must preserve the protections for individual tasks even if
-> > they are context switched out and placed on another cpu later.
-> 
-> This is a contradiction and utter trainwreck.
+Ping.
 
-I don't understand where there is a contradiction?  Perhaps I should have said
-the MSR is not XSAVE managed vs 'preserved'?
+Thanks.
 
-> We're not going to do more
-> per-core MSRs and pretend they make sense per-task.
+Tom
 
-I don't understand how this does not make sense.  The PKRS register is
-controlling the task's access to kernel memory and is designed to be restricted
-to that task.  Put another way, this is similar to CR3 which ultimately
-controls tasks memory access.  Per-process mm is inherent to memory access
-control and is per-task.  So how is this any different?  Many MSRs are like
-this.
 
-I suppose an alternative might be to disallow a context switch while the PKRS
-value is not the default but I don't see this being very desirable at all.
+On 6/10/20 3:05 PM, Tom Hromatka wrote:
+> A customer is using /proc/stat to track cpu usage in a VM and noted
+> that the iowait and idle times behave strangely when a cpu goes
+> offline and comes back online.
+>
+> This patchset addresses two issues that can cause iowait and idle
+> to fluctuate up and down.  With these changes, cpu iowait and idle
+> now only monotonically increase.
+>
+> Tom Hromatka (2):
+>    tick-sched: Do not clear the iowait and idle times
+>    /proc/stat: Simplify iowait and idle calculations when cpu is offline
+>
+>   fs/proc/stat.c           | 24 ++++++------------------
+>   kernel/time/tick-sched.c |  9 +++++++++
+>   2 files changed, 15 insertions(+), 18 deletions(-)
+>
 
-Ira
