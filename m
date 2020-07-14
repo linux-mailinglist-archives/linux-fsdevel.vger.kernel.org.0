@@ -2,70 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E51C121E758
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 07:11:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E82A21E7DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 08:06:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725890AbgGNFLd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 01:11:33 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:35508 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725306AbgGNFLd (ORCPT
+        id S1726670AbgGNGG0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 02:06:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60906 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725306AbgGNGG0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 01:11:33 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 2F3138066C;
-        Tue, 14 Jul 2020 17:11:28 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1594703488;
-        bh=O8M/VJRhRxeOoGoN7HkoA71jSzqeM9f2QwrI5HndS4E=;
-        h=From:To:CC:Subject:Date;
-        b=MiUpwprXODEVpSt2aL/+bNETJFa3lfHSjS24FtIEy4bQZnrLvGVhRZakl05UX43kC
-         eN71cpzicQM4kcuUTQttYKk2cIgns2ZYlPeF6nK+kA8YsnRn4dis23cX4ge2+hoBV+
-         BOS86zsODOG4nJyWG+8jVOFZMef7O3ubJJyPBTqPhgMn2cznnXqND+NWSE0+7rb5Q1
-         P2ByZ4Nb89WkGP0ArLVolVRfX7XxeP2Fxr8lVbQgi5jIqfbFivkRyta3f/bknImt0n
-         WnvQPzCxnGqLJ9QK/A/ThQTct+y9K1Cz9Ke72OiycDpRLNinTCUJnRlRLsMirfBz5E
-         K0e24Kg7cHRGw==
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5f0d3e7f0000>; Tue, 14 Jul 2020 17:11:27 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
- by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
- Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 14 Jul 2020 17:11:24 +1200
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1497.006; Tue, 14 Jul 2020 17:11:24 +1200
-From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To:     Jonathan Corbet <corbet@lwn.net>,
+        Tue, 14 Jul 2020 02:06:26 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFBC2C061755;
+        Mon, 13 Jul 2020 23:06:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=UIXDCXwJB/3NeMqMWfWT3V3jqZ15kLhlWyDghMyaIz0=; b=JMzCTAEtA44frARh4Fspuz2L0T
+        LccTR8Ea95W2ZujXKz28LnB2wK0cgNkGXSUFT+Az8bsG2vQ9Zjqg7OYeQLqmOwvmWWBjz6rO2Nwfy
+        7mNzELT3rwdoF6BY1R/7GzwAbyetPecUoa9kHiE35jnSfpPERVE8o08NA4wsj8ZSPFWf6D1kZUl19
+        r/DYvFiIqkHF4SaCtikLURLQEdcarDG51WagosW6HLAaFh9c4S+cdvdrGkyUT9w0D2oNPE04B0e4a
+        6u2Ccqd8TuhQJ9gBXv4ofE+r6nQn7/Ut0AmgNirCcA0Hd4YWNa1Q5e9JM4J1cBcsvYORWE18JLITP
+        MD5J27Uw==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jvE56-0003wr-27; Tue, 14 Jul 2020 06:06:20 +0000
+Subject: Re: procfs VmFlags table missing from online docs
+To:     Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
+        Jonathan Corbet <corbet@lwn.net>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+Cc:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: procfs VmFlags table missing from online docs
-Thread-Topic: procfs VmFlags table missing from online docs
-Thread-Index: AQHWWZ04Axuc9KTu2km08OQff6fL1w==
-Date:   Tue, 14 Jul 2020 05:11:24 +0000
-Message-ID: <8abafee9-e34b-45f6-19a7-3f043ceb5537@alliedtelesis.co.nz>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.32.1.11]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C41B5694AB920741B5F1DA9FAC79A379@atlnz.lc>
-Content-Transfer-Encoding: base64
+References: <8abafee9-e34b-45f6-19a7-3f043ceb5537@alliedtelesis.co.nz>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <6ee41c18-934e-26c2-a875-3d9e4c700c6c@infradead.org>
+Date:   Mon, 13 Jul 2020 23:06:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
+In-Reply-To: <8abafee9-e34b-45f6-19a7-3f043ceb5537@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-SGksDQoNCkkgd2FzIGp1c3QgYnJvd3NpbmcgDQpodHRwczovL3d3dy5rZXJuZWwub3JnL2RvYy9o
-dG1sL2xhdGVzdC9maWxlc3lzdGVtcy9wcm9jLmh0bWwNCg0KVGhlICJWbUZsYWdzIiBkZXNjcmlw
-dGlvbiBzZWVtcyB0byBiZSBtaXNzaW5nIGEgdGFibGUuIEl0J3MgdGhlcmUgaW4gDQpEb2N1bWVu
-dGF0aW9uL2ZpbGVzeXN0ZW1zL3Byb2MucnN0IHNvIEkgYXNzdW1lIGl0J3Mgc29tZSBzcGhpbngv
-cnN0IA0KcHJvYmxlbS4gUG9zc2libHkgdGhlIHRhYmxlIGlzIG92ZXIgaW5kZW50ZWQ/DQoNCkFu
-eXdheSBJIHRob3VnaHQgSSdkIGxldCBzb21lb25lIGtub3cuDQoNClJlZ2FyZHMsDQpDaHJpcw0K
+On 7/13/20 10:11 PM, Chris Packham wrote:
+> Hi,
+> 
+> I was just browsing 
+> https://www.kernel.org/doc/html/latest/filesystems/proc.html
+> 
+> The "VmFlags" description seems to be missing a table. It's there in 
+> Documentation/filesystems/proc.rst so I assume it's some sphinx/rst 
+> problem. Possibly the table is over indented?
+
+Wow. It skips the table completely.
+
+I tried a couple of things that did not help.
+
+> Anyway I thought I'd let someone know.
+
+Thanks.
+
+> Regards,
+> Chris
+
+
+-- 
+~Randy
+
