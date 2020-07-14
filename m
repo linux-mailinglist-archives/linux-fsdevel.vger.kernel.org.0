@@ -2,146 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E75D21F124
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 14:24:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DDE221F1AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 14:41:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728066AbgGNMYr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 08:24:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34796 "EHLO
+        id S1728267AbgGNMlB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 08:41:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726041AbgGNMYq (ORCPT
+        with ESMTP id S1726354AbgGNMlA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 08:24:46 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC5CC061755
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 05:24:46 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id d18so16854341edv.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 05:24:46 -0700 (PDT)
+        Tue, 14 Jul 2020 08:41:00 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A085C061755;
+        Tue, 14 Jul 2020 05:41:00 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id h16so14006954ilj.11;
+        Tue, 14 Jul 2020 05:41:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1LYBEaBRyuis0Be1SFDt4HqJhBIwOXUUG3MSMkOQOUw=;
-        b=WKLDC2c2K9TBZmX1yD7Ch61moUX9XE7uQLZbiA0XH83CyWX2rU1lhfEbJNw2sRMkH4
-         vuAHn/GIfe2Xxuht0ijB7Xzn97EbdR3Uru40Vb2ME+UaSXw/KyxQ1fRn+F6F65LZSc//
-         3qqlEhWJArc2JNZNkjIsHValY5kzEUhLFKlw0=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=CQxvrB4Ck+AM0oxmbx8eCSq9nhQ1PCpNHzf0lmr96vg=;
+        b=ga0CTMGTwJDVmPUhlnhcQSfJKHbC4PWnapFc/JS7c4VfXoyeP/5lJJT9abB3RmqUL3
+         /FfcIdUWEhD3fb3i2d1KAey+Ld2JEo4I1wRZPUJVj64JoADUY5fht3ELiu37EN0aD8Ga
+         WPjiWIcF63MHGUa7/48r9JXnCOXhI5JbonZB20KhyHdVW4m8ue3jJs3js3/eTiUzEqQJ
+         HwSUfIkDrZI8dVcvxEHnSbnhUpn4FckMpY2CmK6SXLR0b20lnQ2MsY/6krYaN6iVFLbu
+         A4PE07ZL04tWrUKIkTOAZckq6eYUY7GYV5FFL5JPhQvq0VKxWZ+2JFoYQwv6pdZFoDRu
+         JtLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1LYBEaBRyuis0Be1SFDt4HqJhBIwOXUUG3MSMkOQOUw=;
-        b=YCAcUfxhwx81QEsPXEj798xspLBUudQw9SjldLJla/75uROj+eyi+tm4u4QY/rOwX8
-         auV2Hc+w+V5PLMF6dIZ9tMJ5si9yz3zpcxn5++foeEsdthVtbAJUkWBXWjAHQbyd1or/
-         2IAs31q0t3eiXBy1joiUgcStmDzVH9o6vVIfUfg7BZyddt481sQvmcy/HNch8hBMYaEt
-         OUxxKVmm7uGcP+PXJO+66MdNXExRSjSEDiRMt6+ybCMDPvtoNJON9suxJAyKuQ9xAvv2
-         63wQM6I1tA1e6cCGYZby8pA9aBmFbVP91FmOLYOdi6D7d7fgXb/EpNfH2vVJXcfUaYbI
-         1mkA==
-X-Gm-Message-State: AOAM532+HldfxXzEknO7QQWfLhITChOMkUagH63xq3GvqQtEqydYfjdS
-        QrIMgQInol9OdGUzIrKGO2021yrNltMSvfMjkLnL4g==
-X-Google-Smtp-Source: ABdhPJyKH+QSIc5w/1NGLSwn4aMd/CRFVqmigbjqowt8jjhQfJmOU38cH62fqr5t/gMCVtTKnlsu4sHosTiwWzvAcIA=
-X-Received: by 2002:a50:cd1e:: with SMTP id z30mr4076057edi.364.1594729485027;
- Tue, 14 Jul 2020 05:24:45 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=CQxvrB4Ck+AM0oxmbx8eCSq9nhQ1PCpNHzf0lmr96vg=;
+        b=Ps0sbfvXET8lsHyDdiMpYpQ0HXmHws3vmQtOcfMdd7uUa49a8CIVQb9K3UHDOnrsdV
+         I3XI8xVg+vS43kCUy0/7JOSeAGkeSAHpdBfYoN/M/v4lNFLcU1DKxgeGNJlBJpmMfZzy
+         kPfcQxl5BWoaEm6nRN/MKit80sz6wWbZ5ebn1bqVmntiV0mB+m4gifPTGgGyX5s8I+D1
+         d5LGIvfJcZQ002kUzTQ+VKMOEHgDQynHysf1Adn8nShpyn/Grgk2fujI55lnIszegvdW
+         iQCWARpA1x9/dpEotocSZjBomUDwTGmeXIQynrLJOTAcyTz1gH0R+byJNG28OpWy0Iy5
+         ypbA==
+X-Gm-Message-State: AOAM530+rTUfPGOwK4y4VBHTH7UjVsqsCuTks9x5TTAmnB7bBHhfz3NO
+        RiNtHrWhA0re7o2xFnSmlw1sVHrFZ1HXsgxWSuQ/iZB+
+X-Google-Smtp-Source: ABdhPJyg9ZaTVjh6vZ4UADzqTQ+qZ6bmDOHwvz/El17YlTw1wCLH3Ue9zzVnJXc9mX5mvm3mLBC02UAz3C/t3TrMOnQ=
+X-Received: by 2002:a92:290a:: with SMTP id l10mr4829633ilg.204.1594730459517;
+ Tue, 14 Jul 2020 05:40:59 -0700 (PDT)
 MIME-Version: 1.0
-References: <2733b41a-b4c6-be94-0118-a1a8d6f26eec@virtuozzo.com> <446f0df5-798d-ab3a-e773-39d9f202c092@virtuozzo.com>
-In-Reply-To: <446f0df5-798d-ab3a-e773-39d9f202c092@virtuozzo.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 14 Jul 2020 14:24:33 +0200
-Message-ID: <CAJfpegv_7nvWoigY-eCX0ny+phWYOz3kEZvYsuGb=u65yMLGHg@mail.gmail.com>
-Subject: Re: [PATCH] fuse_writepages_fill: simplified "if-else if" constuction
-To:     Vasily Averin <vvs@virtuozzo.com>
-Cc:     linux-fsdevel@vger.kernel.org, Maxim Patlasov <maximvp@gmail.com>,
+References: <2733b41a-b4c6-be94-0118-a1a8d6f26eec@virtuozzo.com>
+ <d6e8ef46-c311-b993-909c-4ae2823e2237@virtuozzo.com> <CAJfpegupeWA_dFi5Q4RBSdHFAkutEeRk3Z1KZ5mtfkFn-ROo=A@mail.gmail.com>
+ <8da94b27-484c-98e4-2152-69d282bcfc50@virtuozzo.com> <CAJfpegvU2JQcNM+0mcMPk-_e==RcT0xjqYUHCTzx3g0oCw6RiA@mail.gmail.com>
+In-Reply-To: <CAJfpegvU2JQcNM+0mcMPk-_e==RcT0xjqYUHCTzx3g0oCw6RiA@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Tue, 14 Jul 2020 14:40:47 +0200
+Message-ID: <CA+icZUXtYt6LtaB4Fc3UWS0iCOZPV1ExaZgc-1-cD6TBw29Q8A@mail.gmail.com>
+Subject: Re: [PATCH] fuse_writepages_fill() optimization to avoid WARN_ON in tree_insert
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vasily Averin <vvs@virtuozzo.com>, linux-fsdevel@vger.kernel.org,
+        Maxim Patlasov <maximvp@gmail.com>,
         Kirill Tkhai <ktkhai@virtuozzo.com>,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="00000000000077f70505aa65e488"
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---00000000000077f70505aa65e488
-Content-Type: text/plain; charset="UTF-8"
-
-On Thu, Jun 25, 2020 at 11:30 AM Vasily Averin <vvs@virtuozzo.com> wrote:
+On Mon, Jul 13, 2020 at 6:16 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
-> fuse_writepages_fill uses following construction:
-> if (wpa && ap->num_pages &&
->     (A || B || C)) {
->         action;
-> } else if (wpa && D) {
->         if (E) {
->                 the same action;
->         }
-> }
+> On Mon, Jul 13, 2020 at 10:02 AM Vasily Averin <vvs@virtuozzo.com> wrote:
+> >
+> > On 7/11/20 7:01 AM, Miklos Szeredi wrote:
+> > > On Thu, Jun 25, 2020 at 11:02 AM Vasily Averin <vvs@virtuozzo.com> wrote:
+> > >>
+> > >> In current implementation fuse_writepages_fill() tries to share the code:
+> > >> for new wpa it calls tree_insert() with num_pages = 0
+> > >> then switches to common code used non-modified num_pages
+> > >> and increments it at the very end.
+> > >>
+> > >> Though it triggers WARN_ON(!wpa->ia.ap.num_pages) in tree_insert()
+> > >>  WARNING: CPU: 1 PID: 17211 at fs/fuse/file.c:1728 tree_insert+0xab/0xc0 [fuse]
+> > >>  RIP: 0010:tree_insert+0xab/0xc0 [fuse]
+> > >>  Call Trace:
+> > >>   fuse_writepages_fill+0x5da/0x6a0 [fuse]
+> > >>   write_cache_pages+0x171/0x470
+> > >>   fuse_writepages+0x8a/0x100 [fuse]
+> > >>   do_writepages+0x43/0xe0
+> > >>
+> > >> This patch re-works fuse_writepages_fill() to call tree_insert()
+> > >> with num_pages = 1 and avoids its subsequent increment and
+> > >> an extra spin_lock(&fi->lock) for newly added wpa.
+> > >
+> > > Looks good.  However, I don't like the way fuse_writepage_in_flight()
+> > > is silently changed to insert page into the rb_tree.  Also the
+> > > insertion can be merged with the search for in-flight and be done
+> > > unconditionally to simplify the logic.  See attached patch.
+> >
+> > Your patch looks correct for me except 2 things:
 >
-> - ap->num_pages check is always true and can be removed
-> - "if" and "else if" calls the same action and can be merged.
+> Thanks for reviewing.
+>
+> > 1) you have lost "data->wpa = NULL;" when fuse_writepage_add() returns false.
+>
+> This is intentional, because this is in the !data->wpa branch.
+>
+> > 2) in the same case old code did not set data->orig_pages[ap->num_pages] = page;
+>
+> That is also intentional, in this case the origi_pages[0] is either
+> overwritten with the next page or discarded due to data->wpa being
+> NULL.
+>
+> I'll write these up in the patch header.
+>
 
-Makes sense.  Attached patch goes further and moves checking the
-conditions to a separate helper for clarity.
+Did you sent out a new version of your patch?
+If yes, where can I get it from?
 
-Thanks,
-Miklos
-
---00000000000077f70505aa65e488
-Content-Type: text/x-patch; charset="US-ASCII"; name="fuse-clean-up-writepage-sending.patch"
-Content-Disposition: attachment; 
-	filename="fuse-clean-up-writepage-sending.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_kclwpq8b0>
-X-Attachment-Id: f_kclwpq8b0
-
-RnJvbTogTWlrbG9zIFN6ZXJlZGkgPG1zemVyZWRpQHJlZGhhdC5jb20+ClN1YmplY3Q6IGZ1c2U6
-IGNsZWFuIHVwIGNvbmRpdGlvbiBmb3Igd3JpdGVwYWdlIHNlbmRpbmcKCmZ1c2Vfd3JpdGVwYWdl
-c19maWxsIHVzZXMgZm9sbG93aW5nIGNvbnN0cnVjdGlvbjoKCmlmICh3cGEgJiYgYXAtPm51bV9w
-YWdlcyAmJgogICAgKEEgfHwgQiB8fCBDKSkgewogICAgICAgIGFjdGlvbjsKfSBlbHNlIGlmICh3
-cGEgJiYgRCkgewogICAgICAgIGlmIChFKSB7CiAgICAgICAgICAgICAgICB0aGUgc2FtZSBhY3Rp
-b247CiAgICAgICAgfQp9CgogLSBhcC0+bnVtX3BhZ2VzIGNoZWNrIGlzIGFsd2F5cyB0cnVlIGFu
-ZCBjYW4gYmUgcmVtb3ZlZAoKIC0gImlmIiBhbmQgImVsc2UgaWYiIGNhbGxzIHRoZSBzYW1lIGFj
-dGlvbiBhbmQgY2FuIGJlIG1lcmdlZC4KCk1vdmUgY2hlY2tpbmcgQSwgQiwgQywgRCwgRSBjb25k
-aXRpb25zIHRvIGEgaGVscGVyLCBhZGQgY29tbWVudHMuCgpPcmlnaW5hbC1wYXRjaC1ieTogVmFz
-aWx5IEF2ZXJpbiA8dnZzQHZpcnR1b3p6by5jb20+ClNpZ25lZC1vZmYtYnk6IE1pa2xvcyBTemVy
-ZWRpIDxtc3plcmVkaUByZWRoYXQuY29tPgotLS0KIGZzL2Z1c2UvZmlsZS5jIHwgICA1MSArKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBj
-aGFuZ2VkLCAzMyBpbnNlcnRpb25zKCspLCAxOCBkZWxldGlvbnMoLSkKCi0tLSBhL2ZzL2Z1c2Uv
-ZmlsZS5jCisrKyBiL2ZzL2Z1c2UvZmlsZS5jCkBAIC0yMDE1LDYgKzIwMTUsMzggQEAgc3RhdGlj
-IGJvb2wgZnVzZV93cml0ZXBhZ2VfYWRkKHN0cnVjdCBmdQogCXJldHVybiBmYWxzZTsKIH0KIAor
-c3RhdGljIGJvb2wgZnVzZV93cml0ZXBhZ2VfbmVlZF9zZW5kKHN0cnVjdCBmdXNlX2Nvbm4gKmZj
-LCBzdHJ1Y3QgcGFnZSAqcGFnZSwKKwkJCQkgICAgIHN0cnVjdCBmdXNlX2FyZ3NfcGFnZXMgKmFw
-LAorCQkJCSAgICAgc3RydWN0IGZ1c2VfZmlsbF93Yl9kYXRhICpkYXRhKQoreworCS8qCisJICog
-QmVpbmcgdW5kZXIgd3JpdGViYWNrIGlzIHVubGlrZWx5IGJ1dCBwb3NzaWJsZS4gIEZvciBleGFt
-cGxlIGRpcmVjdAorCSAqIHJlYWQgdG8gYW4gbW1hcGVkIGZ1c2UgZmlsZSB3aWxsIHNldCB0aGUg
-cGFnZSBkaXJ0eSB0d2ljZTsgb25jZSB3aGVuCisJICogdGhlIHBhZ2VzIGFyZSBmYXVsdGVkIHdp
-dGggZ2V0X3VzZXJfcGFnZXMoKSwgYW5kIHRoZW4gYWZ0ZXIgdGhlIHJlYWQKKwkgKiBjb21wbGV0
-ZWQuCisJICovCisJaWYgKGZ1c2VfcGFnZV9pc193cml0ZWJhY2soZGF0YS0+aW5vZGUsIHBhZ2Ut
-PmluZGV4KSkKKwkJcmV0dXJuIHRydWU7CisKKwkvKiBSZWFjaGVkIG1heCBwYWdlcyAqLworCWlm
-IChhcC0+bnVtX3BhZ2VzID09IGZjLT5tYXhfcGFnZXMpCisJCXJldHVybiB0cnVlOworCisJLyog
-UmVhY2hlZCBtYXggd3JpdGUgYnl0ZXMgKi8KKwlpZiAoKGFwLT5udW1fcGFnZXMgKyAxKSAqIFBB
-R0VfU0laRSA+IGZjLT5tYXhfd3JpdGUpCisJCXJldHVybiB0cnVlOworCisJLyogRGlzY29udGlu
-dWl0eSAqLworCWlmIChkYXRhLT5vcmlnX3BhZ2VzW2FwLT5udW1fcGFnZXMgLSAxXS0+aW5kZXgg
-KyAxICE9IHBhZ2UtPmluZGV4KQorCQlyZXR1cm4gdHJ1ZTsKKworCS8qIE5lZWQgdG8gZ3JvdyB0
-aGUgcGFnZXMgYXJyYXk/ICBJZiBzbywgZGlkIHRoZSBleHBhbnNpb24gZmFpbD8gKi8KKwlpZiAo
-YXAtPm51bV9wYWdlcyA9PSBkYXRhLT5tYXhfcGFnZXMgJiYgIWZ1c2VfcGFnZXNfcmVhbGxvYyhk
-YXRhKSkKKwkJcmV0dXJuIHRydWU7CisKKwlyZXR1cm4gZmFsc2U7Cit9CisKIHN0YXRpYyBpbnQg
-ZnVzZV93cml0ZXBhZ2VzX2ZpbGwoc3RydWN0IHBhZ2UgKnBhZ2UsCiAJCXN0cnVjdCB3cml0ZWJh
-Y2tfY29udHJvbCAqd2JjLCB2b2lkICpfZGF0YSkKIHsKQEAgLTIwMjUsNyArMjA1Nyw2IEBAIHN0
-YXRpYyBpbnQgZnVzZV93cml0ZXBhZ2VzX2ZpbGwoc3RydWN0IHAKIAlzdHJ1Y3QgZnVzZV9pbm9k
-ZSAqZmkgPSBnZXRfZnVzZV9pbm9kZShpbm9kZSk7CiAJc3RydWN0IGZ1c2VfY29ubiAqZmMgPSBn
-ZXRfZnVzZV9jb25uKGlub2RlKTsKIAlzdHJ1Y3QgcGFnZSAqdG1wX3BhZ2U7Ci0JYm9vbCBpc193
-cml0ZWJhY2s7CiAJaW50IGVycjsKIAogCWlmICghZGF0YS0+ZmYpIHsKQEAgLTIwMzUsMjUgKzIw
-NjYsOSBAQCBzdGF0aWMgaW50IGZ1c2Vfd3JpdGVwYWdlc19maWxsKHN0cnVjdCBwCiAJCQlnb3Rv
-IG91dF91bmxvY2s7CiAJfQogCi0JLyoKLQkgKiBCZWluZyB1bmRlciB3cml0ZWJhY2sgaXMgdW5s
-aWtlbHkgYnV0IHBvc3NpYmxlLiAgRm9yIGV4YW1wbGUgZGlyZWN0Ci0JICogcmVhZCB0byBhbiBt
-bWFwZWQgZnVzZSBmaWxlIHdpbGwgc2V0IHRoZSBwYWdlIGRpcnR5IHR3aWNlOyBvbmNlIHdoZW4K
-LQkgKiB0aGUgcGFnZXMgYXJlIGZhdWx0ZWQgd2l0aCBnZXRfdXNlcl9wYWdlcygpLCBhbmQgdGhl
-biBhZnRlciB0aGUgcmVhZAotCSAqIGNvbXBsZXRlZC4KLQkgKi8KLQlpc193cml0ZWJhY2sgPSBm
-dXNlX3BhZ2VfaXNfd3JpdGViYWNrKGlub2RlLCBwYWdlLT5pbmRleCk7Ci0KLQlpZiAod3BhICYm
-IGFwLT5udW1fcGFnZXMgJiYKLQkgICAgKGlzX3dyaXRlYmFjayB8fCBhcC0+bnVtX3BhZ2VzID09
-IGZjLT5tYXhfcGFnZXMgfHwKLQkgICAgIChhcC0+bnVtX3BhZ2VzICsgMSkgKiBQQUdFX1NJWkUg
-PiBmYy0+bWF4X3dyaXRlIHx8Ci0JICAgICBkYXRhLT5vcmlnX3BhZ2VzW2FwLT5udW1fcGFnZXMg
-LSAxXS0+aW5kZXggKyAxICE9IHBhZ2UtPmluZGV4KSkgeworCWlmICh3cGEgJiYgZnVzZV93cml0
-ZXBhZ2VfbmVlZF9zZW5kKGZjLCBwYWdlLCBhcCwgZGF0YSkpIHsKIAkJZnVzZV93cml0ZXBhZ2Vz
-X3NlbmQoZGF0YSk7CiAJCWRhdGEtPndwYSA9IE5VTEw7Ci0JfSBlbHNlIGlmICh3cGEgJiYgYXAt
-Pm51bV9wYWdlcyA9PSBkYXRhLT5tYXhfcGFnZXMpIHsKLQkJaWYgKCFmdXNlX3BhZ2VzX3JlYWxs
-b2MoZGF0YSkpIHsKLQkJCWZ1c2Vfd3JpdGVwYWdlc19zZW5kKGRhdGEpOwotCQkJZGF0YS0+d3Bh
-ID0gTlVMTDsKLQkJfQogCX0KIAogCWVyciA9IC1FTk9NRU07Cg==
---00000000000077f70505aa65e488--
+- Sedat -
