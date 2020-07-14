@@ -2,117 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DDE221F1AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 14:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 824C021F1BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 14:44:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbgGNMlB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 08:41:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
+        id S1727942AbgGNMo3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 08:44:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726354AbgGNMlA (ORCPT
+        with ESMTP id S1726041AbgGNMo2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 08:41:00 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A085C061755;
-        Tue, 14 Jul 2020 05:41:00 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id h16so14006954ilj.11;
-        Tue, 14 Jul 2020 05:41:00 -0700 (PDT)
+        Tue, 14 Jul 2020 08:44:28 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE90DC061755
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 05:44:28 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id p15so6432469ilh.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 05:44:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=CQxvrB4Ck+AM0oxmbx8eCSq9nhQ1PCpNHzf0lmr96vg=;
-        b=ga0CTMGTwJDVmPUhlnhcQSfJKHbC4PWnapFc/JS7c4VfXoyeP/5lJJT9abB3RmqUL3
-         /FfcIdUWEhD3fb3i2d1KAey+Ld2JEo4I1wRZPUJVj64JoADUY5fht3ELiu37EN0aD8Ga
-         WPjiWIcF63MHGUa7/48r9JXnCOXhI5JbonZB20KhyHdVW4m8ue3jJs3js3/eTiUzEqQJ
-         HwSUfIkDrZI8dVcvxEHnSbnhUpn4FckMpY2CmK6SXLR0b20lnQ2MsY/6krYaN6iVFLbu
-         A4PE07ZL04tWrUKIkTOAZckq6eYUY7GYV5FFL5JPhQvq0VKxWZ+2JFoYQwv6pdZFoDRu
-         JtLw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w/iGjEd8abu1Xgk8l64vunJu7PM1PKUTyJT+8VOxIds=;
+        b=TDEM1B2KoP3hz4JTto9Pw8cg8zi5rs1bewkwG0ZU8Bu2Ylak6E3gckFU7LZFnbCSTc
+         2FQbIW89lRoOwhsZRiWYdQkXDCHsLz8XrOqwiPWI4oW3sutAob/ZtmM+K1gzNF7j49F/
+         GbQOEyalSaZk+18HVeMjTClY+MeVJjqAxCIKvWeM4frZhxHRPXzVcPawu2icnMWd5POQ
+         ZVu6MnmEBc0V6F0YGjtQylSPbWGs+YbqLOJ2PTKfS5I7Lk9V6JvQGgBOSTkCx+VuJorf
+         edB4bSUKmtzJ6iApztXdcGrl1k9cbWPcit7veQDG/aGQIgooBfLVENhB/rXbS+gffdoc
+         t8Og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=CQxvrB4Ck+AM0oxmbx8eCSq9nhQ1PCpNHzf0lmr96vg=;
-        b=Ps0sbfvXET8lsHyDdiMpYpQ0HXmHws3vmQtOcfMdd7uUa49a8CIVQb9K3UHDOnrsdV
-         I3XI8xVg+vS43kCUy0/7JOSeAGkeSAHpdBfYoN/M/v4lNFLcU1DKxgeGNJlBJpmMfZzy
-         kPfcQxl5BWoaEm6nRN/MKit80sz6wWbZ5ebn1bqVmntiV0mB+m4gifPTGgGyX5s8I+D1
-         d5LGIvfJcZQ002kUzTQ+VKMOEHgDQynHysf1Adn8nShpyn/Grgk2fujI55lnIszegvdW
-         iQCWARpA1x9/dpEotocSZjBomUDwTGmeXIQynrLJOTAcyTz1gH0R+byJNG28OpWy0Iy5
-         ypbA==
-X-Gm-Message-State: AOAM530+rTUfPGOwK4y4VBHTH7UjVsqsCuTks9x5TTAmnB7bBHhfz3NO
-        RiNtHrWhA0re7o2xFnSmlw1sVHrFZ1HXsgxWSuQ/iZB+
-X-Google-Smtp-Source: ABdhPJyg9ZaTVjh6vZ4UADzqTQ+qZ6bmDOHwvz/El17YlTw1wCLH3Ue9zzVnJXc9mX5mvm3mLBC02UAz3C/t3TrMOnQ=
-X-Received: by 2002:a92:290a:: with SMTP id l10mr4829633ilg.204.1594730459517;
- Tue, 14 Jul 2020 05:40:59 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w/iGjEd8abu1Xgk8l64vunJu7PM1PKUTyJT+8VOxIds=;
+        b=Ff3mv5wyapiScEZt1VjXDmAva1eADng4Diz6XSF+da55eG/hjk7laltouQMDOjrjTG
+         cGOGy6KZQKcsYU07K6okySFzKItv0+tIlD9P4NxembJcgNvPDfDaZ68novJFMCKtu+9C
+         xKpeqfq4HjdRYBDCdu0su1OroMmQ6ov8J+4VZoUxAs1w4SCAQRWOlzPfeZU8zvzdDnZt
+         tzKtGWh6TXXj9fEimRGHcmRKKsMZ3EEHI9ftmiKZNj4dcfa0nrJcAs/rAYDYtj9QAN3B
+         sR++YFEKDgqK5ksD11S1EDzGbS0sywhZIKRHBp41BX2DbF2NLR2zlUnvEZy47CB+spgH
+         k5rQ==
+X-Gm-Message-State: AOAM530/SMAjtBVN7k0je+eSViXcsaEZULqEBJk1dnTuPKixWwmx4TsS
+        +ShKWdAeBO42ZHb0wlF6D6sLAejGXJWxYoaKFgCCYm5V
+X-Google-Smtp-Source: ABdhPJy/0F3WApf4o0bbt+R3FINgMZfgyIQp5GssRrPB0EH7gqldCtd7UOwt/2l+H3ILKhL82v6BJKw1F0qzPt2xUYw=
+X-Received: by 2002:a92:490d:: with SMTP id w13mr4562006ila.250.1594730667559;
+ Tue, 14 Jul 2020 05:44:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <2733b41a-b4c6-be94-0118-a1a8d6f26eec@virtuozzo.com>
- <d6e8ef46-c311-b993-909c-4ae2823e2237@virtuozzo.com> <CAJfpegupeWA_dFi5Q4RBSdHFAkutEeRk3Z1KZ5mtfkFn-ROo=A@mail.gmail.com>
- <8da94b27-484c-98e4-2152-69d282bcfc50@virtuozzo.com> <CAJfpegvU2JQcNM+0mcMPk-_e==RcT0xjqYUHCTzx3g0oCw6RiA@mail.gmail.com>
-In-Reply-To: <CAJfpegvU2JQcNM+0mcMPk-_e==RcT0xjqYUHCTzx3g0oCw6RiA@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Tue, 14 Jul 2020 14:40:47 +0200
-Message-ID: <CA+icZUXtYt6LtaB4Fc3UWS0iCOZPV1ExaZgc-1-cD6TBw29Q8A@mail.gmail.com>
-Subject: Re: [PATCH] fuse_writepages_fill() optimization to avoid WARN_ON in tree_insert
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Vasily Averin <vvs@virtuozzo.com>, linux-fsdevel@vger.kernel.org,
-        Maxim Patlasov <maximvp@gmail.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20200702125744.10535-1-amir73il@gmail.com> <20200702125744.10535-6-amir73il@gmail.com>
+ <20200714121329.GF23073@quack2.suse.cz>
+In-Reply-To: <20200714121329.GF23073@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 14 Jul 2020 15:44:16 +0300
+Message-ID: <CAOQ4uxhs2Hc-qr9or2tYLgPkoB-tQ4w-pr0qPSYa8qrvcD3rVQ@mail.gmail.com>
+Subject: Re: [PATCH v4 05/10] fsnotify: send MOVE_SELF event with parent/name info
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 13, 2020 at 6:16 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Tue, Jul 14, 2020 at 3:13 PM Jan Kara <jack@suse.cz> wrote:
 >
-> On Mon, Jul 13, 2020 at 10:02 AM Vasily Averin <vvs@virtuozzo.com> wrote:
+> On Thu 02-07-20 15:57:39, Amir Goldstein wrote:
+> > MOVE_SELF event does not get reported to a parent watching children
+> > when a child is moved, but it can be reported to sb/mount mark with
+> > parent/name info if group is interested in parent/name info.
 > >
-> > On 7/11/20 7:01 AM, Miklos Szeredi wrote:
-> > > On Thu, Jun 25, 2020 at 11:02 AM Vasily Averin <vvs@virtuozzo.com> wrote:
-> > >>
-> > >> In current implementation fuse_writepages_fill() tries to share the code:
-> > >> for new wpa it calls tree_insert() with num_pages = 0
-> > >> then switches to common code used non-modified num_pages
-> > >> and increments it at the very end.
-> > >>
-> > >> Though it triggers WARN_ON(!wpa->ia.ap.num_pages) in tree_insert()
-> > >>  WARNING: CPU: 1 PID: 17211 at fs/fuse/file.c:1728 tree_insert+0xab/0xc0 [fuse]
-> > >>  RIP: 0010:tree_insert+0xab/0xc0 [fuse]
-> > >>  Call Trace:
-> > >>   fuse_writepages_fill+0x5da/0x6a0 [fuse]
-> > >>   write_cache_pages+0x171/0x470
-> > >>   fuse_writepages+0x8a/0x100 [fuse]
-> > >>   do_writepages+0x43/0xe0
-> > >>
-> > >> This patch re-works fuse_writepages_fill() to call tree_insert()
-> > >> with num_pages = 1 and avoids its subsequent increment and
-> > >> an extra spin_lock(&fi->lock) for newly added wpa.
-> > >
-> > > Looks good.  However, I don't like the way fuse_writepage_in_flight()
-> > > is silently changed to insert page into the rb_tree.  Also the
-> > > insertion can be merged with the search for in-flight and be done
-> > > unconditionally to simplify the logic.  See attached patch.
+> > Use the fsnotify_parent() helper to send a MOVE_SELF event and adjust
+> > fsnotify() to handle the case of an event "on child" that should not
+> > be sent to the watching parent's inode mark.
 > >
-> > Your patch looks correct for me except 2 things:
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >  fs/notify/fsnotify.c             | 21 +++++++++++++++++----
+> >  include/linux/fsnotify.h         |  5 +----
+> >  include/linux/fsnotify_backend.h |  2 +-
+> >  3 files changed, 19 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> > index 6683c77a5b13..0faf5b09a73e 100644
+> > --- a/fs/notify/fsnotify.c
+> > +++ b/fs/notify/fsnotify.c
+> > @@ -352,6 +352,7 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
+> >       struct super_block *sb = to_tell->i_sb;
+> >       struct inode *dir = S_ISDIR(to_tell->i_mode) ? to_tell : NULL;
+> >       struct mount *mnt = NULL;
+> > +     struct inode *inode = NULL;
+> >       struct inode *child = NULL;
+> >       int ret = 0;
+> >       __u32 test_mask, marks_mask;
+> > @@ -362,6 +363,14 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
+> >       if (mask & FS_EVENT_ON_CHILD)
+> >               child = fsnotify_data_inode(data, data_type);
+> >
+> > +     /*
+> > +      * If event is "on child" then to_tell is a watching parent.
+> > +      * An event "on child" may be sent to mount/sb mark with parent/name
+> > +      * info, but not appropriate for watching parent (e.g. FS_MOVE_SELF).
+> > +      */
+> > +     if (!child || (mask & FS_EVENTS_POSS_ON_CHILD))
+> > +             inode = to_tell;
 >
-> Thanks for reviewing.
->
-> > 1) you have lost "data->wpa = NULL;" when fuse_writepage_add() returns false.
->
-> This is intentional, because this is in the !data->wpa branch.
->
-> > 2) in the same case old code did not set data->orig_pages[ap->num_pages] = page;
->
-> That is also intentional, in this case the origi_pages[0] is either
-> overwritten with the next page or discarded due to data->wpa being
-> NULL.
->
-> I'll write these up in the patch header.
+> I'm now confused. Don't you want to fill in FSNOTIFY_OBJ_TYPE_INODE below
+> for FS_MOVE_SELF event? But this condition is false for it so you won't do
+> it?
 >
 
-Did you sent out a new version of your patch?
-If yes, where can I get it from?
+I do not.
+For events with the flag FS_EVENT_ON_CHILD, the inode in
+FSNOTIFY_OBJ_TYPE_INODE is always the parent and the inode in
+FSNOTIFY_OBJ_TYPE_CHILD is always the child.
+So FS_MOVE_SELF will be reported if sb/mount are watching
+or if child inode is watching, but NOT if only parent inode is watching.
 
-- Sedat -
+I realize I may have been able to make other choices, but seemed like
+the most consistent choice to me.
+If you see a better option, let me know.
+
+> > +
+> >       /*
+> >        * Optimization: srcu_read_lock() has a memory barrier which can
+> >        * be expensive.  It protects walking the *_fsnotify_marks lists.
+> > @@ -369,14 +378,17 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
+> >        * SRCU because we have no references to any objects and do not
+> >        * need SRCU to keep them "alive".
+> >        */
+> > -     if (!to_tell->i_fsnotify_marks && !sb->s_fsnotify_marks &&
+> > +     if (!sb->s_fsnotify_marks &&
+> >           (!mnt || !mnt->mnt_fsnotify_marks) &&
+> > +         (!inode || !inode->i_fsnotify_marks) &&
+> >           (!child || !child->i_fsnotify_marks))
+> >               return 0;
+> >
+> > -     marks_mask = to_tell->i_fsnotify_mask | sb->s_fsnotify_mask;
+> > +     marks_mask = sb->s_fsnotify_mask;
+> >       if (mnt)
+> >               marks_mask |= mnt->mnt_fsnotify_mask;
+> > +     if (inode)
+> > +             marks_mask |= inode->i_fsnotify_mask;
+> >       if (child)
+> >               marks_mask |= child->i_fsnotify_mask;
+> >
+> > @@ -390,14 +402,15 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
+> >
+> >       iter_info.srcu_idx = srcu_read_lock(&fsnotify_mark_srcu);
+> >
+> > -     iter_info.marks[FSNOTIFY_OBJ_TYPE_INODE] =
+> > -             fsnotify_first_mark(&to_tell->i_fsnotify_marks);
+> >       iter_info.marks[FSNOTIFY_OBJ_TYPE_SB] =
+> >               fsnotify_first_mark(&sb->s_fsnotify_marks);
+> >       if (mnt) {
+> >               iter_info.marks[FSNOTIFY_OBJ_TYPE_VFSMOUNT] =
+> >                       fsnotify_first_mark(&mnt->mnt_fsnotify_marks);
+> >       }
+> > +     if (inode)
+> > +             iter_info.marks[FSNOTIFY_OBJ_TYPE_INODE] =
+> > +                     fsnotify_first_mark(&inode->i_fsnotify_marks);
+> >       if (child) {
+> >               iter_info.marks[FSNOTIFY_OBJ_TYPE_CHILD] =
+> >                       fsnotify_first_mark(&child->i_fsnotify_marks);
+> > diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> > index 044cae3a0628..61dccaf21e7b 100644
+> > --- a/include/linux/fsnotify.h
+> > +++ b/include/linux/fsnotify.h
+> > @@ -131,7 +131,6 @@ static inline void fsnotify_move(struct inode *old_dir, struct inode *new_dir,
+> >       u32 fs_cookie = fsnotify_get_cookie();
+> >       __u32 old_dir_mask = FS_MOVED_FROM;
+> >       __u32 new_dir_mask = FS_MOVED_TO;
+> > -     __u32 mask = FS_MOVE_SELF;
+> >       const struct qstr *new_name = &moved->d_name;
+> >
+> >       if (old_dir == new_dir)
+> > @@ -140,7 +139,6 @@ static inline void fsnotify_move(struct inode *old_dir, struct inode *new_dir,
+> >       if (isdir) {
+> >               old_dir_mask |= FS_ISDIR;
+> >               new_dir_mask |= FS_ISDIR;
+> > -             mask |= FS_ISDIR;
+> >       }
+> >
+> >       fsnotify_name(old_dir, old_dir_mask, source, old_name, fs_cookie);
+> > @@ -149,8 +147,7 @@ static inline void fsnotify_move(struct inode *old_dir, struct inode *new_dir,
+> >       if (target)
+> >               fsnotify_link_count(target);
+> >
+> > -     if (source)
+> > -             fsnotify(source, mask, source, FSNOTIFY_EVENT_INODE, NULL, 0);
+> > +     fsnotify_dentry(moved, FS_MOVE_SELF);
+>
+> I'm somewhat unsure about this. Does this mean that 'moved' is guaranteed
+> to be positive or that you've made sure that all the code below
+> fsnotify_dentry() is actually fine with a negative dentry? I don't find
+> either trivial to verify so some note in a changelog or maybe even a
+> separate patch for this would be useful.
+>
+
+Oh, it's true. I should've mentioned it or separate this change.
+I guess my reaction was the opposite of yours - it seemed obvious to
+me that moved
+dentry is positive - vfs_rename() is called under lock_rename() and it seemed
+obvious to me that callers verified positive source, but in any case,
+vfs_rename()
+starts with may_delete() that verifies positive rename victim and
+debugfs_rename(), the other caller of fsnotify_move() also verifies
+positive victim.
+
+I will add this information to the commit message.
+
+Thanks,
+Amir.
