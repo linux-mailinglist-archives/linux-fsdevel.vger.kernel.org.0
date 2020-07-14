@@ -2,54 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2425921F1BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 14:45:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F67421F1EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 14:53:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbgGNMpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jul 2020 08:45:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37930 "EHLO
+        id S1728075AbgGNMxH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jul 2020 08:53:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727886AbgGNMpH (ORCPT
+        with ESMTP id S1726352AbgGNMxG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jul 2020 08:45:07 -0400
+        Tue, 14 Jul 2020 08:53:06 -0400
 Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05439C061794
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 05:45:06 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id w6so21590274ejq.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 05:45:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10A67C061794
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 05:53:06 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id br7so7825919ejb.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jul 2020 05:53:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Y1I0HAegT4r/446CzgZG+DkAzDcM+MzQfjx73vwQdRM=;
-        b=CQJLmeA+xaZZtJF5b0Wo0lD5+aCoZG1R80srNwsCUjS76gLGuxfUW4TWyhqjgQ7ver
-         SPR896yyEgiAOZBSYYcMMtrRuMKty152p9lVN1GuCkKIwX1fLqDjELomw5gPGQcHjxJL
-         /QQLP2+0F4wJo1q8ejn97Hzff4QxDGsVczbuw=
+        bh=02YT1Lj8tQBcXYWYQpvUg3R7oFq3J1/SDbHKgSEViOM=;
+        b=pG17K27r/eh9uS5LUykan0qzoLSeXs0OsFRdIMBC599dtjKqobI6aXecAu+D4I3vrs
+         VlOgdWyjwcBqGzGSXtVR+I7+Lgkd+G4Ihk5N1cBYftfzWFJBq4o6wWt9nU5E8+XkpYYi
+         BSvk0drNpPK2i0jyJHwa6r4ZUQroktho/OPvg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Y1I0HAegT4r/446CzgZG+DkAzDcM+MzQfjx73vwQdRM=;
-        b=EkqXwyr8HTbelUOzVZEP0WW1n4nyocdowh2bHfJCpxf5S9xT1ynKzChGP66Y8iGHkF
-         DunhFEHsvNX8J88zlfRDTtJviJHOc6Wqq6LmctEbRmUaT+1PAf9aEee65oQCrJ780Zej
-         ByAgnwQ56zburS09uhEJcFvXkk5uUKLqKM6DSUdQ6lDZaOALW0YVKGPLZ3XvPvfEO5Kc
-         9CW1Z7U6jAuaXD3CvXDKHbUQlpRksESS7nt1xyvcbxnM8/74maAjEg2lZawEs67ENcBF
-         RtkKsmeabNy6fcvA7itmBYbgshVX+m4HGP7lU9eToidLiTr1z8/iX2vZ1qbmOeIDuEI0
-         c8Lg==
-X-Gm-Message-State: AOAM532PNQYOb/n4r1VOELLo6rroMgg+XpvzyfPDEamZgtnZcZrtxLms
-        bWdEW1rgMSQVkgviJSaRKEzFTETwvVU0/a6s25XEwg==
-X-Google-Smtp-Source: ABdhPJzgPCDFfwq8iNZU/sqh44HMtCTq9RHyO/4YCVra0P+Tw+3f+dR5jwQ//Ejs/ZWSUL9JourMwf9sQGQL8is3i7U=
-X-Received: by 2002:a17:906:1c05:: with SMTP id k5mr4174938ejg.320.1594730705729;
- Tue, 14 Jul 2020 05:45:05 -0700 (PDT)
+        bh=02YT1Lj8tQBcXYWYQpvUg3R7oFq3J1/SDbHKgSEViOM=;
+        b=Q7larTaQ6Jb3UeWxiSiIaJhb/Tzm/x65Zq1+SzYJ2DwyItaauDmsJSkxgo+QV6AznC
+         XUytBEImQWMmTARLBBNaEq2spiz9zHM4KK/dsiJ/eidHiGWNb5nuctVfGGt6NovPAT7p
+         4dz2Z93tjDT7we6RZ7hjhIn3Hv2riBSjqSSN3ms6ryLJeBKStjN7obEY8NV5D5qPgwsw
+         cxIlFgaI8lSrwmUScDRwmMrINpFmXxbF5SJZMMG1JFR3zYUjxD1HwqLJDochrh0JGfZj
+         /Sqbll5fPQ7aS31cLFnHMYICZ08PPXD1Gcz8yPqC8pnqREx7MMW14CYQCig/LsHxj2ON
+         WYsA==
+X-Gm-Message-State: AOAM531pydseqbHhF9O26xTT5uetTCTt/xrKOliyLWglnu61DZ8WjxyZ
+        dx5AOt0iNk08vcY17tscEnHK170Ezpm2Gc3sOXVxiw==
+X-Google-Smtp-Source: ABdhPJw6m1Bx4tTAVd5qna1UJXIjSt0ecpLxk7rReLLIYcM3qVVI8xAtQJZfQj1z1jmrWaiu4SPAVmgH8PSnUdWmFRE=
+X-Received: by 2002:a17:906:1c05:: with SMTP id k5mr4199021ejg.320.1594731184628;
+ Tue, 14 Jul 2020 05:53:04 -0700 (PDT)
 MIME-Version: 1.0
-References: <2733b41a-b4c6-be94-0118-a1a8d6f26eec@virtuozzo.com> <be5341bf-6631-d039-7377-2c0c77fd8be3@virtuozzo.com>
-In-Reply-To: <be5341bf-6631-d039-7377-2c0c77fd8be3@virtuozzo.com>
+References: <2733b41a-b4c6-be94-0118-a1a8d6f26eec@virtuozzo.com>
+ <d6e8ef46-c311-b993-909c-4ae2823e2237@virtuozzo.com> <CAJfpegupeWA_dFi5Q4RBSdHFAkutEeRk3Z1KZ5mtfkFn-ROo=A@mail.gmail.com>
+ <8da94b27-484c-98e4-2152-69d282bcfc50@virtuozzo.com> <CAJfpegvU2JQcNM+0mcMPk-_e==RcT0xjqYUHCTzx3g0oCw6RiA@mail.gmail.com>
+ <CA+icZUXtYt6LtaB4Fc3UWS0iCOZPV1ExaZgc-1-cD6TBw29Q8A@mail.gmail.com>
+In-Reply-To: <CA+icZUXtYt6LtaB4Fc3UWS0iCOZPV1ExaZgc-1-cD6TBw29Q8A@mail.gmail.com>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 14 Jul 2020 14:44:54 +0200
-Message-ID: <CAJfpegtHkZPky_rvBhtgpWrSZdzhWNw0YLiH4C_GHm9TdChs=w@mail.gmail.com>
-Subject: Re: [PATCH] fuse_writepages ignores errors from fuse_writepages_fill
-To:     Vasily Averin <vvs@virtuozzo.com>
-Cc:     linux-fsdevel@vger.kernel.org, Maxim Patlasov <maximvp@gmail.com>,
+Date:   Tue, 14 Jul 2020 14:52:53 +0200
+Message-ID: <CAJfpegs+hN2G02qigUyQMp=0Ev+t_vYHmK5kh3z+U1GkSuLH-w@mail.gmail.com>
+Subject: Re: [PATCH] fuse_writepages_fill() optimization to avoid WARN_ON in tree_insert
+To:     Sedat Dilek <sedat.dilek@gmail.com>
+Cc:     Vasily Averin <vvs@virtuozzo.com>, linux-fsdevel@vger.kernel.org,
+        Maxim Patlasov <maximvp@gmail.com>,
         Kirill Tkhai <ktkhai@virtuozzo.com>,
         LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
@@ -58,16 +62,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 25, 2020 at 11:39 AM Vasily Averin <vvs@virtuozzo.com> wrote:
->
-> fuse_writepages() ignores some errors taken from fuse_writepages_fill()
-> I believe it is a bug: if .writepages is called with WB_SYNC_ALL
-> it should either guarantee that all data was successfully saved
-> or return error.
->
-> Fixes: 26d614df1da9 ("fuse: Implement writepages callback")
-> Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+On Tue, Jul 14, 2020 at 2:40 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
 
-Applied.  Thanks.
+> Did you sent out a new version of your patch?
+> If yes, where can I get it from?
 
+Just pushed a bunch of fixes including this one to
+
+git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#for-next
+
+Thanks,
 Miklos
