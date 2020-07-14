@@ -2,142 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D682421E3D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 01:45:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C008B21E4B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jul 2020 02:45:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbgGMXpp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jul 2020 19:45:45 -0400
-Received: from sandeen.net ([63.231.237.45]:55786 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726339AbgGMXpo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jul 2020 19:45:44 -0400
-Received: from Liberator.localdomain (unknown [50.34.198.88])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id 5119A4EA2B7;
-        Mon, 13 Jul 2020 18:45:06 -0500 (CDT)
-Subject: Re: [PATCH] fs: i_version mntopt gets visible through /proc/mounts
-To:     Dave Chinner <david@fromorbit.com>,
-        Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs <linux-xfs@vger.kernel.org>
-References: <20200617155836.GD13815@fieldses.org>
- <24692989-2ee0-3dcc-16d8-aa436114f5fb@sandeen.net>
- <20200617172456.GP11245@magnolia>
- <8f0df756-4f71-9d96-7a52-45bf51482556@sandeen.net>
- <20200617181816.GA18315@fieldses.org>
- <4cbb5cbe-feb4-2166-0634-29041a41a8dc@sandeen.net>
- <20200617184507.GB18315@fieldses.org>
- <20200618013026.ewnhvf64nb62k2yx@gabell>
- <20200618030539.GH2005@dread.disaster.area>
- <20200618034535.h5ho7pd4eilpbj3f@gabell>
- <20200618223948.GI2005@dread.disaster.area>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Autocrypt: addr=sandeen@sandeen.net; prefer-encrypt=mutual; keydata=
- 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 pA==
-Message-ID: <0404aff7-a1d9-c054-f709-521458d7901d@sandeen.net>
-Date:   Mon, 13 Jul 2020 16:45:19 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.10.0
+        id S1726974AbgGNApL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jul 2020 20:45:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40050 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726600AbgGNApL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 13 Jul 2020 20:45:11 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBAB2C061794
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 17:45:10 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id a1so9952979edt.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jul 2020 17:45:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bmkyDT2Ok5AKFPTzejs90EKhv0LPiFP9AWMW7s63JrQ=;
+        b=Jg0UAal5+4ko6u58hgMcHJj+uPsQ3LKmIcb61aCtyM4jaS3QWcAOCy0OObnsCpkXUU
+         ISOHXxoeLc2wCXHvajiQfNFdrMJ7CZz0MIzF+f971d/Gfu7vDxvayh7mhP2svb+qf2K1
+         YjCKpJmEeHMPjbQgTcGGPjMJ2K/Bh+qYoKC+z1uXDQYgcZeKcEhWagYje7djbIKDgWYJ
+         AYe/bLL7xIkCn1F4CcRszKPFnDbSkFF4fiY64ouwJMLevX6CoCQo+zUsKxKywrzWL6JY
+         EIXB9J4+THNCUiMEJXbr8YqqIliuE2LBwznBkdqqenwgZ5vW4MfNPwXn4hh3McNhiyp1
+         6Lpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bmkyDT2Ok5AKFPTzejs90EKhv0LPiFP9AWMW7s63JrQ=;
+        b=mSL1D30Zdgz3GPjrS3Qpnfgh+lLbQtQp4A1LMARYhPFSEi6tRp5jS0mv6jd861XfHH
+         oZxzGD0botmMERa6qmjJTndpxcEc40PKBLO60xQWKyVlrGveql2ZHNVxoukp9ps5q9fi
+         4WNwux71FgEmaAKbbogXhpL7XOYWfv6b0Ks6+JogcoZvAHjOLO+HxmgzrschAXXwnGbl
+         y6rSe3IATFaRZJYIzA8yD8rhY9LYOcs7ogwkUC9YY6YCGog59j7yBZZvI1joFkhL4DRA
+         odbcH/zY6BMpYr8h76cHtFb0rJPU+KvHJ5lqia/r2eUBH8pOd9hkkGkjmBBez9Mt2uAp
+         FPKQ==
+X-Gm-Message-State: AOAM533evzliWRFlgJW/ReM11Y75v1DeFUXqIkUd2ec5PE4kAUUXC366
+        H44i7Of1BNgdnfK1tGmxGllm7cPy2uvLm20wdJ7k
+X-Google-Smtp-Source: ABdhPJxFM46eZkco0XOaaCsFFTHlrOfIfbbkJNmhbdNiqdLTCYkgzE1EAejSD/O9P/+a7qjfCVbCzfrxVpEC0f0mWgE=
+X-Received: by 2002:a05:6402:1d89:: with SMTP id dk9mr1958150edb.31.1594687509148;
+ Mon, 13 Jul 2020 17:45:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200618223948.GI2005@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <cover.1593198710.git.rgb@redhat.com> <6abeb26e64489fc29b00c86b60b501c8b7316424.1593198710.git.rgb@redhat.com>
+ <CAHC9VhTx=4879F1MSXg4=Xd1i5rhEtyam6CakQhy=_ZjGtTaMA@mail.gmail.com>
+ <20200707025014.x33eyxbankw2fbww@madcap2.tricolour.ca> <CAHC9VhTTGLf9MPS_FgL1ibUVoH+YzMtPK6+2dp_j8a5o9fzftA@mail.gmail.com>
+ <20200713202906.iiz435vjeedljcwf@madcap2.tricolour.ca>
+In-Reply-To: <20200713202906.iiz435vjeedljcwf@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 13 Jul 2020 20:44:57 -0400
+Message-ID: <CAHC9VhScQAMeEXssDhDeAo+za9f-doqcM-yutDmFBuwqZVpa3A@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V9 01/13] audit: collect audit task parameters
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/18/20 3:39 PM, Dave Chinner wrote:
-> On Wed, Jun 17, 2020 at 11:45:35PM -0400, Masayoshi Mizuma wrote:
+On Mon, Jul 13, 2020 at 4:30 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-07-07 21:42, Paul Moore wrote:
+> > On Mon, Jul 6, 2020 at 10:50 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2020-07-05 11:09, Paul Moore wrote:
+> > > > On Sat, Jun 27, 2020 at 9:21 AM Richard Guy Briggs <rgb@redhat.com> wrote:
 
 ...
 
->> Thank you for pointed it out.
->> How about following change? I believe it works both xfs and btrfs...
->>
->> diff --git a/fs/super.c b/fs/super.c
->> index b0a511bef4a0..42fc6334d384 100644
->> --- a/fs/super.c
->> +++ b/fs/super.c
->> @@ -973,6 +973,9 @@ int reconfigure_super(struct fs_context *fc)
->>                 }
->>         }
->>
->> +       if (sb->s_flags & SB_I_VERSION)
->> +               fc->sb_flags |= MS_I_VERSION;
->> +
->>         WRITE_ONCE(sb->s_flags, ((sb->s_flags & ~fc->sb_flags_mask) |
->>                                  (fc->sb_flags & fc->sb_flags_mask)));
->>         /* Needs to be ordered wrt mnt_is_readonly() */
-> 
-> This will prevent SB_I_VERSION from being turned off at all. That
-> will break existing filesystems that allow SB_I_VERSION to be turned
-> off on remount, such as ext4.
-> 
-> The manipulations here need to be in the filesystem specific code;
-> we screwed this one up so badly there is no "one size fits all"
-> behaviour that we can implement in the generic code...
+> > > > In the early days of this patchset we talked a lot about how to handle
+> > > > the task_struct and the changes that would be necessary, ultimately
+> > > > deciding that encapsulating all of the audit fields into an
+> > > > audit_task_info struct.  However, what is puzzling me a bit at this
+> > > > moment is why we are only including audit_task_info in task_info by
+> > > > reference *and* making it a build time conditional (via CONFIG_AUDIT).
+> > > >
+> > > > If audit is enabled at build time it would seem that we are always
+> > > > going to allocate an audit_task_info struct, so I have to wonder why
+> > > > we don't simply embed it inside the task_info struct (similar to the
+> > > > seccomp struct in the snippet above?  Of course the audit_context
+> > > > struct needs to remain as is, I'm talking only about the
+> > > > task_info/audit_task_info struct.
+> > >
+> > > I agree that including the audit_task_info struct in the struct
+> > > task_struct would have been preferred to simplify allocation and free,
+> > > but the reason it was included by reference instead was to make the
+> > > task_struct size independent of audit so that future changes would not
+> > > cause as many kABI challenges.  This first change will cause kABI
+> > > challenges regardless, but it was future ones that we were trying to
+> > > ease.
+> > >
+> > > Does that match with your recollection?
+> >
+> > I guess, sure.  I suppose what I was really asking was if we had a
+> > "good" reason for not embedding the audit_task_info struct.
+> > Regardless, thanks for the explanation, that was helpful.
+>
+> Making it dynamic was actually your idea back in the spring of 2018:
+>         https://lkml.org/lkml/2018/4/18/759
 
-I wandered back into this thread for some reason ... ;)
+If you read my comments from 2018 carefully, or even not so carefully
+I think, you'll notice that my primary motivation for using a pointer
+was to "hide" the audit_task_info struct contents so that they
+couldn't be abused by other kernel subsystems looking for a general
+container identifier inside the kernel.  As we've discussed many times
+before, this patchset is not a general purpose container identifier,
+this is an ***audit*** container ID; limiting the scope and usage of
+this identifier is what has allowed us to gain the begrudging
+acceptance we've had thus far and I believe it is the key to success.
 
-Since iversion/noiversion is /already/ advertised as a vfs-level mount option,
-wouldn't exposing it in /proc/mounts solve the original problem here?
+For whatever it is worth, this patchset doesn't hide the
+audit_task_struct definition in a kernel/audit*.c file, it lives in a
+header file which is easily accessed by other subsystems.
 
-("i_version" is wrong, because it's ext4-specific, but "iversion" is handled
-by the vfs, so it's meaningful for any filesystems, and it will also trivially
-allow mount(2) to preserve it across remounts for all filesystems that set it by
-default.)
+In my opinion we should pick one of two options: leave it as a pointer
+reference and "hide" the struct definition, or just embed the struct
+and simplify the code.  I see little value in openly defining the
+audit_task_info struct and using a pointer reference; if you believe
+you have a valid argument for why this makes sense I'm open to hearing
+it, but your comments thus far have been unconvincing.
 
-Seems like that's the fastest path to fixing the current problems, even if a
-long-term goal may be to deprecate it altogether.
+> > > > Richard, I'm sure you can answer this off the top of your head, but
+> > > > I'd have to go digging through the archives to pull out the relevant
+> > > > discussions so I figured I would just ask you for a reminder ... ?  I
+> > > > imagine it's also possible things have changed a bit since those early
+> > > > discussions and the solution we arrived at then no longer makes as
+> > > > much sense as it did before.
+> > >
+> > > Agreed, it doesn't make as much sense now as it did when proposed, but
+> > > will make more sense in the future depending on when this change gets
+> > > accepted upstream.  This is why I wanted this patch to go through as
+> > > part of ghak81 at the time the rest of it did so that future kABI issues
+> > > would be easier to handle, but that ship has long sailed.
+> >
+> > To be clear, kABI issues with task_struct really aren't an issue with
+> > the upstream kernel.  I know that you know all of this already
+> > Richard, I'm mostly talking to everyone else on the To/CC line in case
+> > they are casually watching this discussion.
+>
+> kABI issues may not as much of an upstream issue, but part of the goal
+> here was upstream kernel issues, isolating the kernel audit changes
+> to its own subsystem and affect struct task_struct as little as possible
+> in the future and to protect it from "abuse" (as you had expressed
+> serious concerns) from the rest of the kernel.  include/linux/sched.h
+> will need to know more about struct audit_task_info if it is embedded,
+> making it more suceptible to abuse.
 
--Eric
+I define "abuse" in this context as other kernel subsystems inspecting
+the contents of the audit_task_struct, most likely to try and
+approximate a general container identifier.
+
+Better separation between the audit subsystem and the task_struct,
+while conceptually nice, isn't critical and is easily changed upstream
+with each kernel release as it isn't part of the kernel/userspace API.
+Regardless, a basic conceptual separation is achieved by the
+audit_task_struct regardless of if it is embedded into the task_struct
+or included by a pointer reference.
+
+> > While I'm sympathetic to long-lifetime enterprise distros such as
+> > RHEL, my responsibility is to ensure the upstream kernel is as good as
+> > we can make it, and in this case I believe that means embedding
+> > audit_task_info into the task_struct.
+>
+> Keeping audit_task_info dynamic will also make embedding struct
+> audit_context as a zero-length array at the end of it possible in the
+> future as an internal audit subsystem optimization whereas largely
+> preclude that if it were embedded.
+
+Predicting the future is hard, but I would be comfortable giving up on
+a variable length audit_task_info struct.  Besides, if we *really* had
+to do that in the future we could, it's not part of the
+kernel/userspace API.
+
+> This method has been well exercised over the last two years of
+> development, testing and rebases, so I'm not particularly concerned
+> about its dynamic nature any more.  It works well.  At this point this
+> change seems to be more gratuitously disruptive than helpful.
+
+It may not seem like it, but at this point in this patchset's life I
+do try to limit my comments to only those things which I feel are
+substantive.  In the cases where I think something is borderline I'll
+mention that in my comments.  The trivial cases I'll generally call
+out as "nitpicks".  I assure you my comments are not gratuitous.
+
+I look forward to reviewing another round of this patchset about as
+much as I expect you look forward to writing, testing, and submitting
+it.
+
+> > > > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > > > index 468a23390457..f00c1da587ea 100644
+> > > > > --- a/kernel/auditsc.c
+> > > > > +++ b/kernel/auditsc.c
+> > > > > @@ -1612,7 +1615,6 @@ void __audit_free(struct task_struct *tsk)
+> > > > >                 if (context->current_state == AUDIT_RECORD_CONTEXT)
+> > > > >                         audit_log_exit();
+> > > > >         }
+> > > > > -
+> > > > >         audit_set_context(tsk, NULL);
+> > > > >         audit_free_context(context);
+> > > > >  }
+> > > >
+> > > > This nitpick is barely worth the time it is taking me to write this,
+> > > > but the whitespace change above isn't strictly necessary.
+> > >
+> > > Sure, it is a harmless but noisy cleanup when the function was being
+> > > cleaned up and renamed.  It wasn't an accident, but a style preference.
+> > > Do you prefer a vertical space before cleanup actions at the end of
+> > > functions and more versus less vertical whitespace in general?
+> >
+> > As I mentioned above, this really was barely worth mentioning, but I
+> > made the comment simply because I feel this patchset is going to draw
+> > a lot of attention once it is merged and I feel keeping the patchset
+> > as small, and as focused, as possible is a good thing.
+>
+> Is this concern also affecting the perspective on the change from
+> pointer to embedded above?
+
+Keeping this particular patchset small and focused has always been a
+goal; I know we talked about this at least once, likely more than
+that, while I was still at RH and we were talking offline.
+
+If something is going to be contentious, it is better to be small and
+focused on the contention.
+
+-- 
+paul moore
+www.paul-moore.com
