@@ -2,175 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 332C8220683
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 09:54:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E975A2206A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 10:01:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729490AbgGOHy2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 03:54:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46814 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729430AbgGOHy2 (ORCPT
+        id S1729549AbgGOIBu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 04:01:50 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39378 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729001AbgGOIBu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 03:54:28 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9C47C061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 00:54:27 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id q4so1558491lji.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 00:54:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndmsystems-com.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language;
-        bh=AaMeE2VFR8ZuEw5LsQxEItloLz0gWhQi19KYRomVT+s=;
-        b=p0kVU3eciEfVOpPecAgjJe9HwQYo4jlHTFXZAA5p+nn7VuY/9uN/12xeA0dtCTOfR3
-         If101DlUz+C//0ge2nuUh2hTVj3lp7nk2Iap31qDgVAV2E+mn1fkeNKIy3P4Gld9/WOq
-         6zQLXMV9Q7ew0Wvz2aLZ10tL/GFlMeXgGRX/Qf5GS0CItFfc80653xOSMv3LUdLDagJK
-         SE2JXory5dh2bUUD2fVBLmaT4lBQshLK9FDgiIsthOZ33sYnDRwjHwCgC02WqMBdbZfZ
-         +wpi48lU2OebKq28t2gthQv4/PgoUNAAPw91tnVj3xdJhpnb0umY7U4sFvHohJUgY2y2
-         s4sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language;
-        bh=AaMeE2VFR8ZuEw5LsQxEItloLz0gWhQi19KYRomVT+s=;
-        b=RhPiVsTh/bJIFO4ZUT4mIwJgiZ/QmWIT3HM/kSzHq+t0L16ic41BB6prmoVdWdr5cO
-         G1fDolR9mZKZuHznnofbLpCszgteIr1lDRgU9Fp7RG/aE8B5M+PzwHTdawJ3REfZStDI
-         VR0Awlifcfy1WGAme0GHNd0vS6iYhvIXCXeeEbiGpPtC5qPFNh70yJ8cEHOij3hwL+T/
-         Lk5CC9JNkt21V9ErbShfu0i1v2q46BcTHLcLukJPWWG6x8p9e9LytdYmWHBVZNsNI3Na
-         QYBrj92Udnpay0RMOz/7Yms95TQETCG6HJW5qQGwQ8ZI27/xdWIfMDtxPHQbHh80zssX
-         4NIg==
-X-Gm-Message-State: AOAM532MGCMsdbWDJ4maXX1FPtFv7ui2gvC6DUnyvY3eZf5EQUpPoruG
-        Vo3++H/+ghddBLguESQwRV2kyRahPhi06g==
-X-Google-Smtp-Source: ABdhPJx8AxldNrX5cG9Ka74ruIuI96lcfgtSIbGkhi1U9UVJU2eU12DapaM5eUh5pGnoNRpcLxUMVQ==
-X-Received: by 2002:a2e:8707:: with SMTP id m7mr3999154lji.350.1594799665908;
-        Wed, 15 Jul 2020 00:54:25 -0700 (PDT)
-Received: from [172.16.120.9] ([176.118.209.45])
-        by smtp.googlemail.com with ESMTPSA id y26sm302725ljk.26.2020.07.15.00.54.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jul 2020 00:54:25 -0700 (PDT)
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>
-Cc:     linux-fsdevel@vger.kernel.org
-From:   Ilya Ponetaev <i.ponetaev@ndmsystems.com>
-Subject: [PATCH v2] exfat: fix name_hash computation on big endian systems
-Message-ID: <77ff2710-ebf7-6958-87a7-a5aa9a709e3b@ndmsystems.com>
-Date:   Wed, 15 Jul 2020 10:54:23 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Wed, 15 Jul 2020 04:01:50 -0400
+Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id DF491821FB8;
+        Wed, 15 Jul 2020 18:01:46 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jvcMK-00045x-Rx; Wed, 15 Jul 2020 18:01:44 +1000
+Date:   Wed, 15 Jul 2020 18:01:44 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH] fs/direct-io: avoid data race on ->s_dio_done_wq
+Message-ID: <20200715080144.GF2005@dread.disaster.area>
+References: <20200713033330.205104-1-ebiggers@kernel.org>
+ <20200715013008.GD2005@dread.disaster.area>
+ <20200715023714.GA38091@sol.localdomain>
 MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------8737218D46B35B24E58289DC"
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200715023714.GA38091@sol.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=X6os11be c=1 sm=1 tr=0
+        a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
+        a=kj9zAlcOel0A:10 a=_RQrkK6FrEwA:10 a=1XWaLZrsAAAA:8 a=7-415B0cAAAA:8
+        a=qULOb7ZNe8sg2onIpx4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------8737218D46B35B24E58289DC
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On Tue, Jul 14, 2020 at 07:37:14PM -0700, Eric Biggers wrote:
+> On Wed, Jul 15, 2020 at 11:30:08AM +1000, Dave Chinner wrote:
+> > On Sun, Jul 12, 2020 at 08:33:30PM -0700, Eric Biggers wrote:
+> > > From: Eric Biggers <ebiggers@google.com>
+> > > 
+> > > Fix the preliminary checks for ->s_dio_done_wq to use READ_ONCE(), since
+> > > it's a data race, and technically the behavior is undefined without
+> > > READ_ONCE().  Also, on one CPU architecture (Alpha), the data read
+> > > dependency barrier included in READ_ONCE() is needed to guarantee that
+> > > the pointed-to struct is seen as fully initialized.
+> > > 
+> > > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > > ---
+> > >  fs/direct-io.c       | 8 +++-----
+> > >  fs/internal.h        | 9 ++++++++-
+> > >  fs/iomap/direct-io.c | 3 +--
+> > >  3 files changed, 12 insertions(+), 8 deletions(-)
+> > > 
+> > > diff --git a/fs/direct-io.c b/fs/direct-io.c
+> > > index 6d5370eac2a8..26221ae24156 100644
+> > > --- a/fs/direct-io.c
+> > > +++ b/fs/direct-io.c
+> > > @@ -590,7 +590,7 @@ static inline int dio_bio_reap(struct dio *dio, struct dio_submit *sdio)
+> > >   * filesystems that don't need it and also allows us to create the workqueue
+> > >   * late enough so the we can include s_id in the name of the workqueue.
+> > >   */
+> > > -int sb_init_dio_done_wq(struct super_block *sb)
+> > > +int __sb_init_dio_done_wq(struct super_block *sb)
+> > >  {
+> > >  	struct workqueue_struct *old;
+> > >  	struct workqueue_struct *wq = alloc_workqueue("dio/%s",
+> > > @@ -615,9 +615,7 @@ static int dio_set_defer_completion(struct dio *dio)
+> > >  	if (dio->defer_completion)
+> > >  		return 0;
+> > >  	dio->defer_completion = true;
+> > > -	if (!sb->s_dio_done_wq)
+> > > -		return sb_init_dio_done_wq(sb);
+> > > -	return 0;
+> > > +	return sb_init_dio_done_wq(sb);
+> > >  }
+> > >  
+> > >  /*
+> > > @@ -1250,7 +1248,7 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+> > >  		retval = 0;
+> > >  		if (iocb->ki_flags & IOCB_DSYNC)
+> > >  			retval = dio_set_defer_completion(dio);
+> > > -		else if (!dio->inode->i_sb->s_dio_done_wq) {
+> > > +		else {
+> > >  			/*
+> > >  			 * In case of AIO write racing with buffered read we
+> > >  			 * need to defer completion. We can't decide this now,
+> > > diff --git a/fs/internal.h b/fs/internal.h
+> > > index 9b863a7bd708..6736c9eee978 100644
+> > > --- a/fs/internal.h
+> > > +++ b/fs/internal.h
+> > > @@ -178,7 +178,14 @@ extern void mnt_pin_kill(struct mount *m);
+> > >  extern const struct dentry_operations ns_dentry_operations;
+> > >  
+> > >  /* direct-io.c: */
+> > > -int sb_init_dio_done_wq(struct super_block *sb);
+> > > +int __sb_init_dio_done_wq(struct super_block *sb);
+> > > +static inline int sb_init_dio_done_wq(struct super_block *sb)
+> > > +{
+> > > +	/* pairs with cmpxchg() in __sb_init_dio_done_wq() */
+> > > +	if (likely(READ_ONCE(sb->s_dio_done_wq)))
+> > > +		return 0;
+> > > +	return __sb_init_dio_done_wq(sb);
+> > > +}
+> > 
+> > Ummm, why don't you just add this check in sb_init_dio_done_wq(). I
+> > don't see any need for adding another level of function call
+> > abstraction in the source code?
+> 
+> This keeps the fast path doing no function calls and one fewer branch, as it was
+> before.  People care a lot about minimizing direct I/O overhead, so it seems
+> desirable to keep this simple optimization.  Would you rather it be removed?
 
-Hello!
+No.
 
-I tested current kernel 5.8 on MIPS BE CPU, and found that name_hash 
-field of directory entry is computed incorrectly due to lack of 
-endianess conversion.
+What I'm trying to say is that I'd prefer fast path checks don't get
+hidden away in a static inline function wrappers that require the
+reader to go look up code in a different file to understand that
+code in yet another different file is conditionally executed.
 
-It leads to errors in directories listing and opening files:
+Going from obvious, easy to read fast path code to spreading the
+fast path logic over functions in 3 different files is not an
+improvement in the code - it is how we turn good code into an
+unmaintainable mess...
 
-~# ls /mnt/sda1/
-ls: /mnt/sda1/System Volume Information: No such file or directory
-ls: /mnt/sda1/node.exe: No such file or directory
-ls: /mnt/sda1/node_etw_provider.man: No such file or directory
-ls: /mnt/sda1/nodevars.bat: No such file or directory
-ls: /mnt/sda1/npm: No such file or directory
-ls: /mnt/sda1/npm.cmd: No such file or directory
-ls: /mnt/sda1/npx: No such file or directory
-ls: /mnt/sda1/npx.cmd: No such file or directory
+> > Also, you need to explain the reason for the READ_ONCE() existing
+> > rather than just saying "it pairs with <some other operation>".
+> > Knowing what operation it pairs with doesn't explain why the pairing
+> > is necessary in the first place, and that leads to nobody reading
+> > the code being able to understand what this is protecting against.
+> > 
+> 
+> How about this?
+> 
+> 	/*
+> 	 * Nothing to do if ->s_dio_done_wq is already set.  But since another
+> 	 * process may set it concurrently, we need to use READ_ONCE() rather
+> 	 * than a plain read to avoid a data race (undefined behavior) and to
+> 	 * ensure we observe the pointed-to struct to be fully initialized.
+> 	 */
+> 	if (likely(READ_ONCE(sb->s_dio_done_wq)))
+> 		return 0;
 
+You still need to document what it pairs with, as "data race" doesn't
+describe the actual dependency we are synchronising against is.
 
-v2:
-  - fixed sparse errors
+AFAICT from your description, the data race is not on
+sb->s_dio_done_wq itself, but on seeing the contents of the
+structure being pointed to incorrectly. i.e. we need to ensure that
+writes done before the cmpxchg are ordered correctly against
+reads done after the pointer can be seen here.
 
-sparse warnings: (new ones prefixed by >>)
+If so, can't we just treat this as a normal
+store-release/load-acquire ordering pattern and hence use more
+relaxed memory barriers instead of have to patch up what we have now
+to specifically make ancient platforms that nobody actually uses
+with weird and unusual memory models work correctly?
 
- >> fs/exfat/nls.c:522:27: sparse: sparse: incorrect type in assignment 
-(different base types) @@     expected unsigned short @@     got 
-restricted __le16 [usertype] @@
- >> fs/exfat/nls.c:522:27: sparse:     expected unsigned short
- >> fs/exfat/nls.c:522:27: sparse:     got restricted __le16 [usertype]
-    fs/exfat/nls.c:614:32: sparse: sparse: incorrect type in assignment 
-(different base types) @@     expected unsigned short @@     got 
-restricted __le16 [usertype] @@
-    fs/exfat/nls.c:614:32: sparse:     expected unsigned short
-    fs/exfat/nls.c:614:32: sparse:     got restricted __le16 [usertype]
+Cheers,
 
-
-
-Sincerely yours,
-Ilya Ponetayev
-
---------------8737218D46B35B24E58289DC
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-exfat-fix-name_hash-wrong-on-big_endian-system.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-exfat-fix-name_hash-wrong-on-big_endian-system.patch"
-
-From f6d2c94c57189c162ccb531d10909d6d7f77c058 Mon Sep 17 00:00:00 2001
-From: Ilya Ponetayev <i.ponetaev@ndmsystems.com>
-Date: Tue, 7 Jul 2020 23:02:30 +0300
-Subject: [PATCH] exfat: fix name_hash computation on big endian systems
-
-On-disk format for name_hash field is LE, so it must be explicitly transformed
-on BE system for proper result.
-
-Signed-off-by: Chen Minqiang <ptpt52@gmail.com>
-Signed-off-by: Ilya Ponetayev <i.ponetaev@ndmsystems.com>
----
- nls.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/nls.c b/nls.c
-index d48060a..1a70138 100644
---- a/nls.c
-+++ b/nls.c
-@@ -494,7 +494,7 @@ static int exfat_utf8_to_utf16(struct super_block *sb,
- 		struct exfat_uni_name *p_uniname, int *p_lossy)
- {
- 	int i, unilen, lossy = NLS_NAME_NO_LOSSY;
--	unsigned short upname[MAX_NAME_LENGTH + 1];
-+	__le16 upname[MAX_NAME_LENGTH + 1];
- 	unsigned short *uniname = p_uniname->name;
- 
- 	WARN_ON(!len);
-@@ -518,7 +518,7 @@ static int exfat_utf8_to_utf16(struct super_block *sb,
- 		    exfat_wstrchr(bad_uni_chars, *uniname))
- 			lossy |= NLS_NAME_LOSSY;
- 
--		upname[i] = exfat_toupper(sb, *uniname);
-+		upname[i] = cpu_to_le16(exfat_toupper(sb, *uniname));
- 		uniname++;
- 	}
- 
-@@ -596,7 +596,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
- 		struct exfat_uni_name *p_uniname, int *p_lossy)
- {
- 	int i = 0, unilen = 0, lossy = NLS_NAME_NO_LOSSY;
--	unsigned short upname[MAX_NAME_LENGTH + 1];
-+	__le16 upname[MAX_NAME_LENGTH + 1];
- 	unsigned short *uniname = p_uniname->name;
- 	struct nls_table *nls = EXFAT_SB(sb)->nls_io;
- 
-@@ -610,7 +610,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb,
- 		    exfat_wstrchr(bad_uni_chars, *uniname))
- 			lossy |= NLS_NAME_LOSSY;
- 
--		upname[unilen] = exfat_toupper(sb, *uniname);
-+		upname[unilen] = cpu_to_le16(exfat_toupper(sb, *uniname));
- 		uniname++;
- 		unilen++;
- 	}
-
---------------8737218D46B35B24E58289DC--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
