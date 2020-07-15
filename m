@@ -2,61 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDBB7220573
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 08:51:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33C86220580
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 08:55:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728892AbgGOGvn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 02:51:43 -0400
-Received: from verein.lst.de ([213.95.11.211]:57781 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727913AbgGOGvn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 02:51:43 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 79AA767357; Wed, 15 Jul 2020 08:51:40 +0200 (CEST)
-Date:   Wed, 15 Jul 2020 08:51:40 +0200
+        id S1728929AbgGOGyi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 02:54:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37566 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728917AbgGOGyi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jul 2020 02:54:38 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59281C061755;
+        Tue, 14 Jul 2020 23:54:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=m5ZuSlWoPk8IHJ8rMAHWiVJpEk2rW/bZkOwkNvU9eg8=; b=gFvXBEXY2Jb2aUCtFOUB8jezQc
+        lOOXaFWy7KMIyKz95DfU9gnD45yKzN8/TDWKSfo0ejmnl+fd1CvJmOhBfv+NMuTTcHzr+s28zA9nX
+        OZQve/e5p5T8JuS13QtmS+5eIk/nOtSWndDdLOoZ9euwj3aFQSI9DRYvsTYqjqGQgfWzn4zVQonX6
+        MKdbzPZHhJgksVm9diElD36/Zg6c5LXn4DENBL3x8csJk0+kWcEXgJvNFF1qiFd2WWju10qBW6g95
+        M0721ycH6CAmNclB43ski06+D2gJLJ9QSyxp5vQAI6HMN3dP74vv9/VEt82bRRiYKQZ98Fi9VjV1P
+        7VaHe7EQ==;
+Received: from [2001:4bb8:105:4a81:1c8f:d581:a5f2:bdb7] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jvbJL-0001jv-U8; Wed, 15 Jul 2020 06:54:36 +0000
 From:   Christoph Hellwig <hch@lst.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Song Liu <song@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-raid@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        NeilBrown <neilb@suse.com>,
-        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
-Subject: Re: decruft the early init / initrd / initramfs code v2
-Message-ID: <20200715065140.GA22060@lst.de>
-References: <20200714190427.4332-1-hch@lst.de> <CAHk-=wgxV9We+nVcJtQu2DHco+HSeja-WqVdA-KUcB=nyUYuoQ@mail.gmail.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: clean up utimes and use path based utimes in initrams
+Date:   Wed, 15 Jul 2020 08:54:30 +0200
+Message-Id: <20200715065434.2550-1-hch@lst.de>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wgxV9We+nVcJtQu2DHco+HSeja-WqVdA-KUcB=nyUYuoQ@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 12:34:45PM -0700, Linus Torvalds wrote:
-> On Tue, Jul 14, 2020 at 12:06 PM Christoph Hellwig <hch@lst.de> wrote:
-> >
-> > this series starts to move the early init code away from requiring
-> > KERNEL_DS to be implicitly set during early startup.  It does so by
-> > first removing legacy unused cruft, and the switches away the code
-> > from struct file based APIs to our more usual in-kernel APIs.
-> 
-> Looks good to me, with the added note on the utimes cruft too as a
-> further cleanup (separate patch).
-> 
-> So you can add my acked-by.
-> 
-> I _would_ like the md parts to get a few more acks. I see the one from
-> Song Liu, anybody else in md land willing to go through those patches?
-> They were the bulk of it, and the least obvious to me because I don't
-> know that code at all?
+Hi Al and Linus,
 
-Song is the maintainer.   Neil is the only person I could think of
-that also knows the old md code pretty well.  Guoqing has contributed
-a lot lately, but the code touched here is rather historic (and not
-used very much at all these days as people use modular md and initramfѕ
-based detection).
+here is the requested series to add a vfs_utimes and use that in
+initramfs, plus assorted cleanups that makes this easier.
+
+ fs/utimes.c        |  107 ++++++++++++++++++++++++++++-------------------------
+ include/linux/fs.h |    1 
+ init/initramfs.c   |   11 +++--
+ 3 files changed, 65 insertions(+), 54 deletions(-)
