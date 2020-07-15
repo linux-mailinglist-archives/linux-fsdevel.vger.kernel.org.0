@@ -2,156 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 43491221267
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 18:33:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 492EB2212B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 18:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727062AbgGOQc7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 12:32:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725861AbgGOQc7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 12:32:59 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5E7B2065E;
-        Wed, 15 Jul 2020 16:32:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594830778;
-        bh=+uLAH+itPHjULQo5bhc9wBdg14YcpBPRvVPHuJLv89A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ukkkW0oKG0GURJFDKRMzbyKsogkYQmCeI1TEvWWl1+j//ZTxqMkMsGYLq398xpv/s
-         rVKY8OOlB5Ma2lU5ghN/RkGQOzs7r6fBZb7aMkZhDJtQj9aHN9ySP4pS/2OcJJMC3x
-         5OQiTXEtmNsbAqYuXjeGkvKbKMeCCYBAVnZxr7Z0=
-Date:   Wed, 15 Jul 2020 09:32:56 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Marco Elver <elver@google.com>
-Cc:     syzbot <syzbot+0f1e470df6a4316e0a11@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Will Deacon <will@kernel.org>
-Subject: Re: KCSAN: data-race in generic_file_buffered_read /
- generic_file_buffered_read
-Message-ID: <20200715163256.GB1167@sol.localdomain>
-References: <0000000000004a4d6505aa7c688a@google.com>
- <20200715152912.GA2209203@elver.google.com>
+        id S1728051AbgGOQl0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 12:41:26 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:60472 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727037AbgGOQlZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jul 2020 12:41:25 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06FGRBCA114614;
+        Wed, 15 Jul 2020 16:41:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=F2LkoM+UWtBMNs81QAgimajX13qffszW2vrur3LEJAs=;
+ b=mzpb91InlBToye1VyhhDpXuE6dalx8a1Ki6BYrf/xOZ+9ec0NAC7EqH5gmlSsV8ht5al
+ 0IBwe0SmOAqg47AKlUxBmcmOMZWdVJ30IiaoHLrEL8Xc03alFTWX2VF/XDI2Jhg6j2Vz
+ qvOv1SlRPe3PX796G0V1f8BnFX0VLGTH6VRZF3kPTLZO8UIuiBtJnlgvkS5FP64VWB8Y
+ goJZNI0HHCq59zAA+w1BzL5sC4abA1PNFRTP0d+kPMXpzWLXqFxH9cV6NQ+lKoqo7nsY
+ s+LYbQrZMBIsK/Ju/3k5pHMxOna2ZamfKeXGQ9ObIvwA9BzBtDRz9Dp8Qfo6qlgnmpnu qg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 3275cmcgpb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 15 Jul 2020 16:41:22 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06FGMggF044797;
+        Wed, 15 Jul 2020 16:41:21 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 327qc1a91y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 15 Jul 2020 16:41:21 +0000
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 06FGfK10006935;
+        Wed, 15 Jul 2020 16:41:20 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 15 Jul 2020 09:41:20 -0700
+Date:   Wed, 15 Jul 2020 09:41:18 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH] fs/direct-io: avoid data race on ->s_dio_done_wq
+Message-ID: <20200715164118.GB848607@magnolia>
+References: <20200713033330.205104-1-ebiggers@kernel.org>
+ <20200715013008.GD2005@dread.disaster.area>
+ <20200715023714.GA38091@sol.localdomain>
+ <20200715080144.GF2005@dread.disaster.area>
+ <20200715161342.GA1167@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200715152912.GA2209203@elver.google.com>
+In-Reply-To: <20200715161342.GA1167@sol.localdomain>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9683 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 bulkscore=0 malwarescore=0 mlxscore=0 phishscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007150129
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9683 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 priorityscore=1501
+ bulkscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 spamscore=0
+ impostorscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007150129
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[+Cc linux-fsdevel]
-
-On Wed, Jul 15, 2020 at 05:29:12PM +0200, 'Marco Elver' via syzkaller-bugs wrote:
-> On Wed, Jul 15, 2020 at 08:16AM -0700, syzbot wrote:
-> > Hello,
+On Wed, Jul 15, 2020 at 09:13:42AM -0700, Eric Biggers wrote:
+> On Wed, Jul 15, 2020 at 06:01:44PM +1000, Dave Chinner wrote:
+> > > > >  /* direct-io.c: */
+> > > > > -int sb_init_dio_done_wq(struct super_block *sb);
+> > > > > +int __sb_init_dio_done_wq(struct super_block *sb);
+> > > > > +static inline int sb_init_dio_done_wq(struct super_block *sb)
+> > > > > +{
+> > > > > +	/* pairs with cmpxchg() in __sb_init_dio_done_wq() */
+> > > > > +	if (likely(READ_ONCE(sb->s_dio_done_wq)))
+> > > > > +		return 0;
+> > > > > +	return __sb_init_dio_done_wq(sb);
+> > > > > +}
+> > > > 
+> > > > Ummm, why don't you just add this check in sb_init_dio_done_wq(). I
+> > > > don't see any need for adding another level of function call
+> > > > abstraction in the source code?
+> > > 
+> > > This keeps the fast path doing no function calls and one fewer branch, as it was
+> > > before.  People care a lot about minimizing direct I/O overhead, so it seems
+> > > desirable to keep this simple optimization.  Would you rather it be removed?
 > > 
-> > syzbot found the following issue on:
+> > No.
 > > 
-> > HEAD commit:    e9919e11 Merge branch 'for-linus' of git://git.kernel.org/..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=1217a83b100000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=570eb530a65cd98e
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=0f1e470df6a4316e0a11
-> > compiler:       clang version 11.0.0 (https://github.com/llvm/llvm-project.git ca2dcbd030eadbf0aa9b660efe864ff08af6e18b)
+> > What I'm trying to say is that I'd prefer fast path checks don't get
+> > hidden away in a static inline function wrappers that require the
+> > reader to go look up code in a different file to understand that
+> > code in yet another different file is conditionally executed.
 > > 
-> > Unfortunately, I don't have any reproducer for this issue yet.
+> > Going from obvious, easy to read fast path code to spreading the
+> > fast path logic over functions in 3 different files is not an
+> > improvement in the code - it is how we turn good code into an
+> > unmaintainable mess...
+> 
+> The alternative would be to duplicate the READ_ONCE() at all 3 call sites --
+> including the explanatory comment.  That seems strictly worse.
+> 
+> And the code before was broken, so I disagree it was "obvious" or "good".
+> 
 > > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+0f1e470df6a4316e0a11@syzkaller.appspotmail.com
+> > > > Also, you need to explain the reason for the READ_ONCE() existing
+> > > > rather than just saying "it pairs with <some other operation>".
+> > > > Knowing what operation it pairs with doesn't explain why the pairing
+> > > > is necessary in the first place, and that leads to nobody reading
+> > > > the code being able to understand what this is protecting against.
+> > > > 
+> > > 
+> > > How about this?
+> > > 
+> > > 	/*
+> > > 	 * Nothing to do if ->s_dio_done_wq is already set.  But since another
+> > > 	 * process may set it concurrently, we need to use READ_ONCE() rather
+> > > 	 * than a plain read to avoid a data race (undefined behavior) and to
+> > > 	 * ensure we observe the pointed-to struct to be fully initialized.
+> > > 	 */
+> > > 	if (likely(READ_ONCE(sb->s_dio_done_wq)))
+> > > 		return 0;
 > > 
-> > ==================================================================
-> > BUG: KCSAN: data-race in generic_file_buffered_read / generic_file_buffered_read
-> 
-> Our guess is that this is either misuse of an API from userspace, or a
-> bug. Can someone clarify?
-> 
-> Below are the snippets of code around these accesses.
-
-Concurrent reads on the same file descriptor are allowed.  Not with sys_read(),
-as that implicitly uses the file position.  But it's allowed with sys_pread(),
-and also with sys_sendfile() which is the case syzbot is reporting here.
-
-> 
-> > write to 0xffff8880968747b0 of 8 bytes by task 6336 on cpu 0:
-> >  generic_file_buffered_read+0x18be/0x19e0 mm/filemap.c:2246
-> 
-> 	...
-> 	would_block:
-> 		error = -EAGAIN;
-> 	out:
-> 		ra->prev_pos = prev_index;
-> 		ra->prev_pos <<= PAGE_SHIFT;
-> 2246)		ra->prev_pos |= prev_offset;
-> 
-> 		*ppos = ((loff_t)index << PAGE_SHIFT) + offset;
-> 		file_accessed(filp);
-> 		return written ? written : error;
-> 	}
-> 	EXPORT_SYMBOL_GPL(generic_file_buffered_read);
-> 	...
-
-Well, it's a data race.  Each open file descriptor has just one readahead state
-(struct file_ra_state), and concurrent reads of the same file descriptor
-use/change that readahead state without any locking.
-
-Presumably this has traditionally been considered okay, since readahead is
-"only" for performance and doesn't affect correctness.  And for performance
-reasons, we want to avoid locking during file reads.
-
-So we may just need to annotate all access to file_ra_state with
-READ_ONCE() and WRITE_ONCE()...
-
-> 
-> >  generic_file_read_iter+0x7d/0x3e0 mm/filemap.c:2326
-> >  ext4_file_read_iter+0x2d6/0x420 fs/ext4/file.c:74
-> >  call_read_iter include/linux/fs.h:1902 [inline]
-> >  generic_file_splice_read+0x22a/0x310 fs/splice.c:312
-> >  do_splice_to fs/splice.c:870 [inline]
-> >  splice_direct_to_actor+0x2a8/0x660 fs/splice.c:950
-> >  do_splice_direct+0xf2/0x170 fs/splice.c:1059
-> >  do_sendfile+0x562/0xb10 fs/read_write.c:1540
-> >  __do_sys_sendfile64 fs/read_write.c:1601 [inline]
-> >  __se_sys_sendfile64 fs/read_write.c:1587 [inline]
-> >  __x64_sys_sendfile64+0xf2/0x130 fs/read_write.c:1587
-> >  do_syscall_64+0x51/0xb0 arch/x86/entry/common.c:384
-> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > You still need to document what it pairs with, as "data race" doesn't
+> > describe the actual dependency we are synchronising against is.
 > > 
-> > read to 0xffff8880968747b0 of 8 bytes by task 6334 on cpu 1:
-> >  generic_file_buffered_read+0x11e/0x19e0 mm/filemap.c:2011
-> 
-> 	...
-> 	index = *ppos >> PAGE_SHIFT;
-> 	prev_index = ra->prev_pos >> PAGE_SHIFT;
-> 2011)	prev_offset = ra->prev_pos & (PAGE_SIZE-1);
-> 	last_index = (*ppos + iter->count + PAGE_SIZE-1) >> PAGE_SHIFT;
-> 	offset = *ppos & ~PAGE_MASK;
-> 	...
-> 
-> >  generic_file_read_iter+0x7d/0x3e0 mm/filemap.c:2326
-> >  ext4_file_read_iter+0x2d6/0x420 fs/ext4/file.c:74
-> >  call_read_iter include/linux/fs.h:1902 [inline]
-> >  generic_file_splice_read+0x22a/0x310 fs/splice.c:312
-> >  do_splice_to fs/splice.c:870 [inline]
-> >  splice_direct_to_actor+0x2a8/0x660 fs/splice.c:950
-> >  do_splice_direct+0xf2/0x170 fs/splice.c:1059
-> >  do_sendfile+0x562/0xb10 fs/read_write.c:1540
-> >  __do_sys_sendfile64 fs/read_write.c:1601 [inline]
-> >  __se_sys_sendfile64 fs/read_write.c:1587 [inline]
-> >  __x64_sys_sendfile64+0xf2/0x130 fs/read_write.c:1587
-> >  do_syscall_64+0x51/0xb0 arch/x86/entry/common.c:384
-> >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > AFAICT from your description, the data race is not on
+> > sb->s_dio_done_wq itself, but on seeing the contents of the
+> > structure being pointed to incorrectly. i.e. we need to ensure that
+> > writes done before the cmpxchg are ordered correctly against
+> > reads done after the pointer can be seen here.
 > > 
-> > Reported by Kernel Concurrency Sanitizer on:
-> > CPU: 1 PID: 6334 Comm: syz-executor.0 Not tainted 5.8.0-rc5-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > ==================================================================
 > 
-> Thanks,
-> -- Marco
+> No, the data race is on ->s_dio_done_wq itself.  How about this:
+> 
+>         /*
+>          * Nothing to do if ->s_dio_done_wq is already set.  The READ_ONCE()
+>          * here pairs with the cmpxchg() in __sb_init_dio_done_wq().  Since the
+>          * cmpxchg() may set ->s_dio_done_wq concurrently, a plain load would be
+>          * a data race (undefined behavior), so READ_ONCE() is needed.
+>          * READ_ONCE() also includes any needed read data dependency barrier to
+>          * ensure that the pointed-to struct is seen to be fully initialized.
+>          */
+> 
+> FWIW, long-term we really need to get developers to understand these sorts of
+> issues, so that the code is written correctly in the first place and we don't
+> need to annotate common patterns like one-time-init with a long essay and have a
+> long discussion.  Recently KCSAN was merged upstream
+> (https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/dev-tools/kcsan.rst)
+> and the memory model documentation was improved
+> (https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/explanation.txt?h=v5.8-rc5#n1922),
+> so hopefully that will raise awareness...
+
+I tried to understand that, but TBH this whole topic area seems very
+complex and difficult to understand.  I more or less understand what
+READ_ONCE and WRITE_ONCE do wrt restricting compiler optimizations, but
+I wouldn't say that I understand all that machinery.
+
+Granted, my winning strategy so far is to write a simple version with
+big dumb locks and let the rest of you argue over slick optimizations.
+:P
+
+<shrug> If using READ_ONCE and cmpxchg for pointer initialization (or I
+guess smp_store_release and smp_load_acquire?) are a commonly used
+paradigm, then maybe that should get its own section in
+tools/memory-model/Documentation/recipes.txt and then any code that uses
+it can point readers at that?
+
+--D
+
+> > If so, can't we just treat this as a normal
+> > store-release/load-acquire ordering pattern and hence use more
+> > relaxed memory barriers instead of have to patch up what we have now
+> > to specifically make ancient platforms that nobody actually uses
+> > with weird and unusual memory models work correctly?
+> 
+> READ_ONCE() is already as relaxed as it can get, as it includes a read data
+> dependency barrier only (which is no-op on everything other than Alpha).
+> 
+> If anything it should be upgraded to smp_load_acquire(), which handles control
+> dependencies too.  I didn't see anything obvious in the workqueue code that
+> would need that (i.e. accesses to some global structure that isn't transitively
+> reachable via the workqueue_struct itself).  But we could use it to be safe if
+> we're okay with any performance implications of the additional memory barrier it
+> would add.
+> 
+> - Eric
