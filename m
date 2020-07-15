@@ -2,80 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 66FDD220CD2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 14:20:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7E26220CE6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 14:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729312AbgGOMU2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 08:20:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59656 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725924AbgGOMU1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 08:20:27 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95050C061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 05:20:27 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id dr13so1948403ejc.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 05:20:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HeTHDFfLVETkERx6UHMSuqnimLPDuMv2Twprnpi/zB8=;
-        b=PQD3bmXdYBZjEJ2Z0urtOmxELCrWCtlqmK8ddgomSKQOP1vip1EyjSl7tYKq+A14hx
-         Nj9QCnoYgpR0psa4hSp1Gn3xMtQFAeoX8Wc9DaP/AoxRg5copSm0AVwCnlkLS8/RmzGj
-         k89dufCnR6qdWFBhKewVRomBeA1hfPTDk5Xvc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HeTHDFfLVETkERx6UHMSuqnimLPDuMv2Twprnpi/zB8=;
-        b=PpBuX7TWN3D+XcmQl6VUCTfRFka+oBpqePPy/p1AbRkqu1EHHvZEikfM/R0I8YTDnl
-         ZsbXIgFoR90LZ0yjvZsQ1loVzIykuDliiN0pZ5354Gtr4NnvNxDcb/HdQvqU5/Wy+ra9
-         Q4X57SwGAhjgxyhiw/z64yzjU86Rwa1BTIUZLA+LE+OByfPS8WJVMiKIjlEHCm38/Q2x
-         B14NLiUv4RrR4Q284GKLYUjs8Nl7ziBbbM8yOZizoE27Z9Jk9va7ykLxDWwIvsWtcC2C
-         dZ9H9mbOu3eJyO4owXTkyLOL8VeA3lutZGZznxuUtPNgTxHWiHDKeR758nwJJaaoBkpi
-         YBmg==
-X-Gm-Message-State: AOAM531PvEp1lPid6NvBDEsUChjBbtidTFGWvsd09OttBbNSiu6dB+yY
-        Yw4NcsR9e/JQJWTP1HTkKcTBUQ5YaQFJ2UN+qoS0bw==
-X-Google-Smtp-Source: ABdhPJw4u9Qg0JDt4YVvuFrVa6gdZ72EvuyZe6cBBiKHy9ozBIKZ0GpVVrWv1PR4VgoZ7YPW1UkHN10Hp+Bck1mbPls=
-X-Received: by 2002:a17:906:b74e:: with SMTP id fx14mr8621021ejb.202.1594815626117;
- Wed, 15 Jul 2020 05:20:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200714102639.662048-1-chirantan@chromium.org>
-In-Reply-To: <20200714102639.662048-1-chirantan@chromium.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 15 Jul 2020 14:20:15 +0200
-Message-ID: <CAJfpegvd3nHWLtxjeC8BfW8JTHKRmX5iNgdWYYFj+MEK-ogiFw@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Fix parameter for FS_IOC_{GET,SET}FLAGS
-To:     Chirantan Ekbote <chirantan@chromium.org>
-Cc:     linux-fsdevel@vger.kernel.org, Dylan Reid <dgreid@chromium.org>,
-        Suleiman Souhlal <suleiman@chromium.org>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="UTF-8"
+        id S1730278AbgGOM3Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 08:29:24 -0400
+Received: from [195.135.220.15] ([195.135.220.15]:42272 "EHLO mx2.suse.de"
+        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+        id S1729198AbgGOM3Y (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jul 2020 08:29:24 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 9C2BCAC83;
+        Wed, 15 Jul 2020 12:29:26 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 329081E12C9; Wed, 15 Jul 2020 14:29:23 +0200 (CEST)
+From:   Jan Kara <jack@suse.cz>
+To:     <linux-fsdevel@vger.kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Francesco Ruggeri <fruggeri@arista.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH] fanotify: Avoid softlockups when reading many events
+Date:   Wed, 15 Jul 2020 14:29:21 +0200
+Message-Id: <20200715122921.5995-1-jack@suse.cz>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 12:26 PM Chirantan Ekbote
-<chirantan@chromium.org> wrote:
->
-> The ioctl encoding for this parameter is a long but the documentation
-> says it should be an int and the kernel drivers expect it to be an int.
-> If the fuse driver treats this as a long it might end up scribbling over
-> the stack of a userspace process that only allocated enough space for an
-> int.
->
-> This was previously discussed in [1] and a patch for fuse was proposed
-> in [2].  From what I can tell the patch in [2] was nacked in favor of
-> adding new, "fixed" ioctls and using those from userspace.  However
-> there is still no "fixed" version of these ioctls and the fact is that
-> it's sometimes infeasible to change all userspace to use the new one.
+When user provides large buffer for events and there are lots of events
+available, we can try to copy them all to userspace without scheduling
+which can softlockup the kernel (furthermore exacerbated by the
+contention on notification_lock). Add a scheduling point after copying
+each event.
 
-Okay, applied.
+Note that usually the real underlying problem is the cost of fanotify
+event merging and the resulting contention on notification_lock but this
+is a cheap way to somewhat reduce the problem until we can properly
+address that.
 
-Funny that no one came back with this issue for 7 years.
+Reported-by: Francesco Ruggeri <fruggeri@arista.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/notify/fanotify/fanotify_user.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Thanks,
-Miklos
+This is a quick mending we can do immediately and is probably a good idea
+nevertheless... I'll queue it up if Amir agrees.
+
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 63b5dffdca9e..d7f63aeca992 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -412,6 +412,11 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
+ 
+ 	add_wait_queue(&group->notification_waitq, &wait);
+ 	while (1) {
++		/*
++		 * User can supply arbitrarily large buffer. Avoid softlockups
++		 * in case there are lots of available events.
++		 */
++		cond_resched();
+ 		event = get_one_event(group, count);
+ 		if (IS_ERR(event)) {
+ 			ret = PTR_ERR(event);
+-- 
+2.16.4
+
