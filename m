@@ -2,189 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23B402212E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 18:46:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D65502212E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 18:46:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726811AbgGOQpw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 12:45:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44426 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728139AbgGOQpr (ORCPT
+        id S1726894AbgGOQqv convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 12:46:51 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:44532 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726766AbgGOQqt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 12:45:47 -0400
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED1B8C08C5DB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 09:45:46 -0700 (PDT)
-Received: by mail-oi1-x243.google.com with SMTP id k22so2738855oib.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 09:45:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9TcWWArm6s2MYIjyVq/UCCy6oJdlx6ARoFnt89Ui6x0=;
-        b=sV6IQzmmJdgqjSlPefWQO1LQG41ajK49ClTNxi6vcAcJc/xoMmC9RgSCHTvxuCLRvB
-         6r0LmXLs0zGlQP4Bfu5p1odS+zZkvmVlrXy5fRe1JH78zAZSUu26SJ3MKgENdjkjskAq
-         Lq5wuzeEDZGN5gIFi0BN/c7vv18aLxvT45YmKGMTsreDy9SmXD6Zv+PAA1RykgpGxonv
-         vVEoHX+nbl2KYuqhwf72Owy17ueFZHrtvvRM15bpnFG0eOjVnZbr4Ac/WjwxjUligG13
-         8hBWAK8AP557FROdKvpdTX8eLwfig/RXBN4RkmH9OBWjpstDMRsCT/SASNWzHMFt+K1W
-         QG2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9TcWWArm6s2MYIjyVq/UCCy6oJdlx6ARoFnt89Ui6x0=;
-        b=NjfT6nOaQ2PM0EN7fF8GY5w9oJowgarObld0gyc0ml5oJBffEavxsfe0FJzkgiAp8d
-         8xPIfQfrIb32ju4JHbzKjFj4r277JF02cGPyY2SyAjw+XJKGQm9wmzZowR+ViQgqla93
-         iCCvl2NfOaZWhSCZwlgwOnLsgX9V8XJPUwl8VjCaH9bSKoYktH5GBgDRU2GZj2YfyY1G
-         iIQ9PJteLMy/5LTm7I8rWPLYnGuOGnzrjGPLhMd8JXLq/SDuhcSpexxehU0g4N+tIOy5
-         V3f7ncfNjuwr2tJIRJtMelq0OzPqegwHLYnHuPpXMDZyPr5bltIx8Waw6VuIpDOZfKDp
-         KKkg==
-X-Gm-Message-State: AOAM531al91E1YyCSov+u4bHXvGvC0TwD5C4D5mUM1t9pIYCWkR6pYvl
-        UeZWg9fHRkgZqx77/gFOBU8RbLzI6EhozGGEdj/9Iw==
-X-Google-Smtp-Source: ABdhPJwssU2sgLtioAtubTRiKoa9fXpfCJPHELz4q7gRW7oXa88GnM/2/oRwHYoMQmQ5ln/cthnWT+Q2TDvVLRpl+Ag=
-X-Received: by 2002:aca:cf4f:: with SMTP id f76mr510384oig.172.1594831546012;
- Wed, 15 Jul 2020 09:45:46 -0700 (PDT)
+        Wed, 15 Jul 2020 12:46:49 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-52-I5MfYmGMN8WVVlleqrOfeQ-1; Wed, 15 Jul 2020 17:46:45 +0100
+X-MC-Unique: I5MfYmGMN8WVVlleqrOfeQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 15 Jul 2020 17:46:44 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 15 Jul 2020 17:46:44 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Kees Cook' <keescook@chromium.org>
+CC:     'Christoph Hellwig' <hch@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "John Johansen" <john.johansen@canonical.com>
+Subject: RE: [PATCH 7/7] exec: Implement kernel_execve
+Thread-Topic: [PATCH 7/7] exec: Implement kernel_execve
+Thread-Index: AQHWWnMrd4ih7YlzG0aqMJfp5omyT6kIuIaQ///1mACAACJpAA==
+Date:   Wed, 15 Jul 2020 16:46:44 +0000
+Message-ID: <dc8371b7e05d4aa49eefcfd402b3fa1e@AcuMS.aculab.com>
+References: <871rle8bw2.fsf@x220.int.ebiederm.org>
+ <87wo365ikj.fsf@x220.int.ebiederm.org> <202007141446.A72A4437C@keescook>
+ <20200715064248.GH32470@infradead.org>
+ <d6d204c4427b49f6b24ac24bf1082fa4@AcuMS.aculab.com>
+ <202007150801.27B6690@keescook>
+In-Reply-To: <202007150801.27B6690@keescook>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <0000000000004a4d6505aa7c688a@google.com> <20200715152912.GA2209203@elver.google.com>
- <20200715163256.GB1167@sol.localdomain>
-In-Reply-To: <20200715163256.GB1167@sol.localdomain>
-From:   Marco Elver <elver@google.com>
-Date:   Wed, 15 Jul 2020 18:45:33 +0200
-Message-ID: <CANpmjNN7GhF0e5gKPpn8mQS1Nry_8out4j_meDM0PqbZ9K5Ang@mail.gmail.com>
-Subject: Re: KCSAN: data-race in generic_file_buffered_read / generic_file_buffered_read
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     syzbot <syzbot+0f1e470df6a4316e0a11@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 15 Jul 2020 at 18:33, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> [+Cc linux-fsdevel]
->
-> On Wed, Jul 15, 2020 at 05:29:12PM +0200, 'Marco Elver' via syzkaller-bugs wrote:
-> > On Wed, Jul 15, 2020 at 08:16AM -0700, syzbot wrote:
-> > > Hello,
+From: Kees Cook <keescook@chromium.org>
+> Sent: 15 July 2020 16:09
+> 
+> On Wed, Jul 15, 2020 at 02:55:50PM +0000, David Laight wrote:
+> > From: Christoph Hellwig
+> > > Sent: 15 July 2020 07:43
+> > > Subject: Re: [PATCH 7/7] exec: Implement kernel_execve
 > > >
-> > > syzbot found the following issue on:
-> > >
-> > > HEAD commit:    e9919e11 Merge branch 'for-linus' of git://git.kernel.org/..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1217a83b100000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=570eb530a65cd98e
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=0f1e470df6a4316e0a11
-> > > compiler:       clang version 11.0.0 (https://github.com/llvm/llvm-project.git ca2dcbd030eadbf0aa9b660efe864ff08af6e18b)
-> > >
-> > > Unfortunately, I don't have any reproducer for this issue yet.
-> > >
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+0f1e470df6a4316e0a11@syzkaller.appspotmail.com
-> > >
-> > > ==================================================================
-> > > BUG: KCSAN: data-race in generic_file_buffered_read / generic_file_buffered_read
+> > > On Tue, Jul 14, 2020 at 02:49:23PM -0700, Kees Cook wrote:
+> > > > On Tue, Jul 14, 2020 at 08:31:40AM -0500, Eric W. Biederman wrote:
+> > > > > +static int count_strings_kernel(const char *const *argv)
+> > > > > +{
+> > > > > +	int i;
+> > > > > +
+> > > > > +	if (!argv)
+> > > > > +		return 0;
+> > > > > +
+> > > > > +	for (i = 0; argv[i]; ++i) {
+> > > > > +		if (i >= MAX_ARG_STRINGS)
+> > > > > +			return -E2BIG;
+> > > > > +		if (fatal_signal_pending(current))
+> > > > > +			return -ERESTARTNOHAND;
+> > > > > +		cond_resched();
+> > > > > +	}
+> > > > > +	return i;
+> > > > > +}
+> > > >
+> > > > I notice count() is only ever called with MAX_ARG_STRINGS. Perhaps
+> > > > refactor that too? (And maybe rename it to count_strings_user()?)
 > >
-> > Our guess is that this is either misuse of an API from userspace, or a
-> > bug. Can someone clarify?
-> >
-> > Below are the snippets of code around these accesses.
->
-> Concurrent reads on the same file descriptor are allowed.  Not with sys_read(),
-> as that implicitly uses the file position.  But it's allowed with sys_pread(),
-> and also with sys_sendfile() which is the case syzbot is reporting here.
->
-> >
-> > > write to 0xffff8880968747b0 of 8 bytes by task 6336 on cpu 0:
-> > >  generic_file_buffered_read+0x18be/0x19e0 mm/filemap.c:2246
-> >
-> >       ...
-> >       would_block:
-> >               error = -EAGAIN;
-> >       out:
-> >               ra->prev_pos = prev_index;
-> >               ra->prev_pos <<= PAGE_SHIFT;
-> > 2246)         ra->prev_pos |= prev_offset;
-> >
-> >               *ppos = ((loff_t)index << PAGE_SHIFT) + offset;
-> >               file_accessed(filp);
-> >               return written ? written : error;
-> >       }
-> >       EXPORT_SYMBOL_GPL(generic_file_buffered_read);
-> >       ...
->
-> Well, it's a data race.  Each open file descriptor has just one readahead state
-> (struct file_ra_state), and concurrent reads of the same file descriptor
-> use/change that readahead state without any locking.
->
-> Presumably this has traditionally been considered okay, since readahead is
-> "only" for performance and doesn't affect correctness.  And for performance
-> reasons, we want to avoid locking during file reads.
->
-> So we may just need to annotate all access to file_ra_state with
-> READ_ONCE() and WRITE_ONCE()...
+> > Thinks....
+> > If you setup env[] and argv[] on the new user stack early in exec processing
+> > then you may not need any limits at all - except the size of the user stack.
+> > Even the get_user() loop will hit an invalid address before the counter
+> > wraps (provided it is unsigned long).
+> 
+> *grumpy noises* Yes, but not in practice (if I'm understanding what you
+> mean). The expectations of a number of execution environments can be
+> really odd-ball. I've tried to collect the notes from over the years in
+> prepare_arg_pages()'s comments, and it mostly boils down to "there has
+> to be enough room for the exec to start" otherwise the exec ends up in a
+> hard-to-debug failure state (i.e. past the "point of no return", where you
+> get no useful information about the cause of the SEGV). So the point has
+> been to move as many of the setup checks as early as possible and report
+> about them if they fail. The argv processing is already very early, but
+> it needs to do the limit checks otherwise it'll just break after the exec
+> is underway and the process will just SEGV. (And ... some environments
+> will attempt to dynamically check the size of the argv space by growing
+> until it sees E2BIG, so we can't just remove it and let those hit SEGV.)
 
-The thing that stood out here are the multiple accesses both on the
-reader and writer side. If it was only 1 access, where the race is
-expected, a simple READ/WRITE_ONCE might have been OK.
+Yes - I bet the code is horrid.
+I guess the real problem is that you'd need access to the old process's
+user addresses and the new process's stack area at the same time.
+Unless there is a suitable hole in the old process's address map
+any attempted trick will fall foul of cache aliasing on some
+architectures - like anything else that does page-loaning.
 
-But here, we actually have several writes to the same variable
-'prev_pos'. The reader is also doing several reads to the same
-variable. Maybe we got lucky because the compiler just turns it into 1
-load, keeps it in a register and does the various modifications, and
-then 1 store to write back. Similar on the reader side, we may have
-gotten lucky in that the compiler just does 1 actual load. If that
-behaviour is safe, it needs to be made explicit to make it impossible
-for the compiler to generate anything else.
+I'm sure there are hair-brained schemes that might work.
 
-> > >  generic_file_read_iter+0x7d/0x3e0 mm/filemap.c:2326
-> > >  ext4_file_read_iter+0x2d6/0x420 fs/ext4/file.c:74
-> > >  call_read_iter include/linux/fs.h:1902 [inline]
-> > >  generic_file_splice_read+0x22a/0x310 fs/splice.c:312
-> > >  do_splice_to fs/splice.c:870 [inline]
-> > >  splice_direct_to_actor+0x2a8/0x660 fs/splice.c:950
-> > >  do_splice_direct+0xf2/0x170 fs/splice.c:1059
-> > >  do_sendfile+0x562/0xb10 fs/read_write.c:1540
-> > >  __do_sys_sendfile64 fs/read_write.c:1601 [inline]
-> > >  __se_sys_sendfile64 fs/read_write.c:1587 [inline]
-> > >  __x64_sys_sendfile64+0xf2/0x130 fs/read_write.c:1587
-> > >  do_syscall_64+0x51/0xb0 arch/x86/entry/common.c:384
-> > >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > >
-> > > read to 0xffff8880968747b0 of 8 bytes by task 6334 on cpu 1:
-> > >  generic_file_buffered_read+0x11e/0x19e0 mm/filemap.c:2011
-> >
-> >       ...
-> >       index = *ppos >> PAGE_SHIFT;
-> >       prev_index = ra->prev_pos >> PAGE_SHIFT;
-> > 2011) prev_offset = ra->prev_pos & (PAGE_SIZE-1);
-> >       last_index = (*ppos + iter->count + PAGE_SIZE-1) >> PAGE_SHIFT;
-> >       offset = *ppos & ~PAGE_MASK;
-> >       ...
-> >
-> > >  generic_file_read_iter+0x7d/0x3e0 mm/filemap.c:2326
-> > >  ext4_file_read_iter+0x2d6/0x420 fs/ext4/file.c:74
-> > >  call_read_iter include/linux/fs.h:1902 [inline]
-> > >  generic_file_splice_read+0x22a/0x310 fs/splice.c:312
-> > >  do_splice_to fs/splice.c:870 [inline]
-> > >  splice_direct_to_actor+0x2a8/0x660 fs/splice.c:950
-> > >  do_splice_direct+0xf2/0x170 fs/splice.c:1059
-> > >  do_sendfile+0x562/0xb10 fs/read_write.c:1540
-> > >  __do_sys_sendfile64 fs/read_write.c:1601 [inline]
-> > >  __se_sys_sendfile64 fs/read_write.c:1587 [inline]
-> > >  __x64_sys_sendfile64+0xf2/0x130 fs/read_write.c:1587
-> > >  do_syscall_64+0x51/0xb0 arch/x86/entry/common.c:384
-> > >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > >
-> > > Reported by Kernel Concurrency Sanitizer on:
-> > > CPU: 1 PID: 6334 Comm: syz-executor.0 Not tainted 5.8.0-rc5-syzkaller #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > > ==================================================================
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
