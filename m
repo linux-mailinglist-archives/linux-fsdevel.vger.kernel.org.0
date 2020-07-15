@@ -2,147 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41160220E6D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 15:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA32C220F85
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 16:36:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729414AbgGONuM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 09:50:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45282 "EHLO
+        id S1729088AbgGOOf5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 10:35:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729086AbgGONuL (ORCPT
+        with ESMTP id S1728849AbgGOOfz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 09:50:11 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D18DDC061755;
-        Wed, 15 Jul 2020 06:50:11 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id cm21so3103668pjb.3;
-        Wed, 15 Jul 2020 06:50:11 -0700 (PDT)
+        Wed, 15 Jul 2020 10:35:55 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A5F9C08C5DB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 07:35:55 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id b92so3060952pjc.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 07:35:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=hRkHds1NU1aAj2mUyg9AefWENY97EFcwEhOvlQBvAKI=;
-        b=pWaJrQSldw39pjxlOdwaKTkIxxaKzDd4ZxG0tqbp1GB3mRAkMTmBA0jtlp6bAGgTSU
-         GgVzohKuKo/TfEfX2Ei6K2SXDRpbmwRYuzFCxY7rcIjA1+li0MF8JPTKUoZ7IxMBljDL
-         JvaqQ1fpJHcR5gmIujuUgVUxcwwc4sCalhmzTUs5j+tUUQBP7qFE6PpCcHhiwA8VCu04
-         wcDW6kz6yQAGqqJqZZBULuWAvge1DKFp+Cv9IohNu+/idyG32HxhLK1tRc2HROEnwjSP
-         L/VwxQMXznSL0PvfGv3fe3uqWg40CmOXEgSp5FKpdqVDia+mxNwxhqtski5ooBLP4mBM
-         x6lQ==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=yhR2xx3ll78zXx4v/LleHZDLIGASUAw7oXjwdcYoQnM=;
+        b=MBTmhayGzIbypNDEFm2+paSuwfcC+PzqE85tReoauMa8/vlEuTbLPAXgN9+8qVkcNT
+         yGNU7gl/zluURp9BUENw3LJ4rFqKK/8Ff3aRUbs7uTkYSeZwW3aDJgw4Kt3y+YyUVgap
+         0Zoy3gWJ2MC50r6ZcK2DVZ/eywPJseJ4IQfjEcO37x2ua0wTNQCE2y3Qf9A5N9IFiZH3
+         TV20PfmuxIw8NVCsuD+kmZ/Sgqsg/HqB0qdOSMeiMCizUz5tGze/hYcp6asxJeM5mtMB
+         DgMTMy20N6K6A7ufGOkrKyndioWzeqygDTq2Q7VudYC1FYDBSTz+eJgpCU7AeeAih/Ao
+         uuaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=hRkHds1NU1aAj2mUyg9AefWENY97EFcwEhOvlQBvAKI=;
-        b=NSBsZFugBAf6KzxDtswnO65KF1+P6kmz0GznfQivy+rkHsKqdwOUpjzpUcNjXH0QCJ
-         3XaAvHEe3fvNEVmKJ0H1SQQujNsTI7Y84jRRpjTBg4CxPu79KMIV7bslTr3IvnAOzIht
-         baUlbvtSXPIu3SRF9GccZCge42vBSS8CG6QPUlvDkvqQifoLWaAY/nIcW2nEjkH6y4I7
-         8r8A9FjXfI3vZ3H311wUAsBXouWVs0XrBdqNeUxOKE0vIjKktBJc5ubFSv1ML4m0qyl2
-         AOZeIGKZDOtkKpQP39VqVxmKULPzUwcOlSjh9qdTL2fSE3is8MU9pperH3qF4tljWqEV
-         MQ9Q==
-X-Gm-Message-State: AOAM5325ZlQpyp+Uq4L+ZmJMpdTTw0CKawztwvNpU8VklC6ItNJaEGeF
-        xc5PTRlgYeXX6Co9Jj9hpqyevwp8
-X-Google-Smtp-Source: ABdhPJxwp+fXlmVhFcSGVSrfWttv0T9qrX7cyZMRH9nprZKuy53DxC55Zw0pQl3hlh4gr1o4To4C1w==
-X-Received: by 2002:a17:902:8bc7:: with SMTP id r7mr8654284plo.57.1594821011393;
-        Wed, 15 Jul 2020 06:50:11 -0700 (PDT)
-Received: from ubuntu.localdomain ([220.116.27.194])
-        by smtp.gmail.com with ESMTPSA id y9sm2205998pju.37.2020.07.15.06.50.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 06:50:10 -0700 (PDT)
-From:   youngjun <her0gyugyu@gmail.com>
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        youngjun <her0gyugyu@gmail.com>
-Subject: [PATCH] exfat: change exfat_set_vol_flags() return type void.
-Date:   Wed, 15 Jul 2020 06:50:00 -0700
-Message-Id: <20200715135000.86155-1-her0gyugyu@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=yhR2xx3ll78zXx4v/LleHZDLIGASUAw7oXjwdcYoQnM=;
+        b=qkxNcW5tggxFUHf72HhdWUXMcF2M4CxsSHD0YZ63s7+DsnWYNPISjV8uTyC8eREFTU
+         Iy2mdHdVlvCmSyOH6JxCue7sY1i8Glea9ZyRulm6cv3BSQW7iUWDIla3UAPDMgjfr9JT
+         AzZDNKteuG3a1i9EdAtKPsuCQaAKodKVhZpn4V5HE0iII2nzn8D0QN43kDeg6jvA7LOS
+         onMuBuDlLg31mOznEaUfBaNDjppCOQw1yQfrXZ1fNo2qCPMWXB9nJ3TERKB+stIT9eKj
+         1TurFwrrnrZBUNkpzdHxqPaHhOrM0BCCWIBXoBJMWalO1er9dca0fytgbtYN03dJfOe3
+         W7Uw==
+X-Gm-Message-State: AOAM530idsKNHzfl9wTS2FIVE6g3uBHWdMmmCvo65rt6gii7GeWeBbwZ
+        5l8UxOCv1GlbO8H/EmFzDLNCsA==
+X-Google-Smtp-Source: ABdhPJx+DB3uxvOEpxqYRcjJv7aAG86vLrcHnfdyXOzjYxTb/HN/VlnnEvVbdEuur4NmvWF0oRc3Vw==
+X-Received: by 2002:a17:90a:7406:: with SMTP id a6mr9616376pjg.152.1594823753194;
+        Wed, 15 Jul 2020 07:35:53 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:1ef2:14c:4e33:547f:e274? ([2601:646:c200:1ef2:14c:4e33:547f:e274])
+        by smtp.gmail.com with ESMTPSA id y7sm2101353pfq.69.2020.07.15.07.35.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jul 2020 07:35:51 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: strace of io_uring events?
+Date:   Wed, 15 Jul 2020 07:35:50 -0700
+Message-Id: <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
+References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
+Cc:     strace-devel@lists.strace.io, io-uring@vger.kernel.org,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+X-Mailer: iPhone Mail (17F80)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-exfat_set_vol_flags() always return 0.
-So, change function return type as void.
 
-Signed-off-by: youngjun <her0gyugyu@gmail.com>
----
- fs/exfat/exfat_fs.h |  2 +-
- fs/exfat/super.c    | 15 +++++++--------
- 2 files changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index 7579cd3bbadb..2130f62bf518 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -383,7 +383,7 @@ static inline int exfat_sector_to_cluster(struct exfat_sb_info *sbi,
- }
- 
- /* super.c */
--int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag);
-+void exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag);
- 
- /* fatent.c */
- #define exfat_get_next_cluster(sb, pclu) exfat_ent_get(sb, *(pclu), pclu)
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index 253a92460d52..dc05935cb88f 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -58,17 +58,16 @@ static void exfat_put_super(struct super_block *sb)
- static int exfat_sync_fs(struct super_block *sb, int wait)
- {
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
--	int err = 0;
- 
- 	/* If there are some dirty buffers in the bdev inode */
- 	mutex_lock(&sbi->s_lock);
- 	if (test_and_clear_bit(EXFAT_SB_DIRTY, &sbi->s_state)) {
- 		sync_blockdev(sb->s_bdev);
--		if (exfat_set_vol_flags(sb, VOL_CLEAN))
--			err = -EIO;
-+		exfat_set_vol_flags(sb, VOL_CLEAN);
-+
- 	}
- 	mutex_unlock(&sbi->s_lock);
--	return err;
-+	return 0;
- }
- 
- static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
-@@ -98,7 +97,7 @@ static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	return 0;
- }
- 
--int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag)
-+void exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag)
- {
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	struct boot_sector *p_boot = (struct boot_sector *)sbi->boot_bh->b_data;
-@@ -106,7 +105,7 @@ int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag)
- 
- 	/* flags are not changed */
- 	if (sbi->vol_flag == new_flag)
--		return 0;
-+		return;
- 
- 	sbi->vol_flag = new_flag;
- 
-@@ -114,7 +113,7 @@ int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag)
- 	 * if this volume has been mounted with read-only
- 	 */
- 	if (sb_rdonly(sb))
--		return 0;
-+		return;
- 
- 	p_boot->vol_flags = cpu_to_le16(new_flag);
- 
-@@ -128,7 +127,7 @@ int exfat_set_vol_flags(struct super_block *sb, unsigned short new_flag)
- 
- 	if (sync)
- 		sync_dirty_buffer(sbi->boot_bh);
--	return 0;
-+	return;
- }
- 
- static int exfat_show_options(struct seq_file *m, struct dentry *root)
--- 
-2.17.1
+> On Jul 15, 2020, at 4:12 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
+>=20
+> =EF=BB=BFHi,
+>=20
+> This thread is to discuss the possibility of stracing requests
+> submitted through io_uring.   I'm not directly involved in io_uring
+> development, so I'm posting this out of  interest in using strace on
+> processes utilizing io_uring.
+>=20
+> io_uring gives the developer a way to bypass the syscall interface,
+> which results in loss of information when tracing.  This is a strace
+> fragment on  "io_uring-cp" from liburing:
+>=20
+> io_uring_enter(5, 40, 0, 0, NULL, 8)    =3D 40
+> io_uring_enter(5, 1, 0, 0, NULL, 8)     =3D 1
+> io_uring_enter(5, 1, 0, 0, NULL, 8)     =3D 1
+> ...
+>=20
+> What really happens are read + write requests.  Without that
+> information the strace output is mostly useless.
+>=20
+> This loss of information is not new, e.g. calls through the vdso or
+> futext fast paths are also invisible to strace.  But losing filesystem
+> I/O calls are a major blow, imo.
+>=20
+> What do people think?
+>=20
+> =46rom what I can tell, listing the submitted requests on
+> io_uring_enter() would not be hard.  Request completion is
+> asynchronous, however, and may not require  io_uring_enter() syscall.
+> Am I correct?
+>=20
+> Is there some existing tracing infrastructure that strace could use to
+> get async completion events?  Should we be introducing one?
+>=20
+>=20
 
+Let=E2=80=99s add some seccomp folks. We probably also want to be able to ru=
+n seccomp-like filters on io_uring requests. So maybe io_uring should call i=
+nto seccomp-and-tracing code for each action.=
