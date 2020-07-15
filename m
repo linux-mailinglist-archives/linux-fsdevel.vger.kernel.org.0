@@ -2,123 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3B63221665
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 22:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1BC22167F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 22:45:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbgGOUkR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 16:40:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52302 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725917AbgGOUkQ (ORCPT
+        id S1727826AbgGOUpG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 16:45:06 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:37268 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727112AbgGOUpC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 16:40:16 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A00BC08C5DB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 13:40:16 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id k5so3555332pjg.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 13:40:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=3RdpnHt4YFQNegHM71xCSPo+5hGEKA55j9DzkLX+zEI=;
-        b=W6JWWMnCCKRoZOrZTqxAVNCpWdse7JHrhl955F5ofkWIbY8yj0WiYEYIrzGnCpQmPr
-         nebzAR1cLp77bQPydJtMWmGvGL1DOx/5b1SD2FJ+owpHkt8+SixM1Gqmi5haJ+ZpVK/l
-         ohTNaS/ycfxJ7NhhCYIL+fq/TdpwR9jTHXNUw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=3RdpnHt4YFQNegHM71xCSPo+5hGEKA55j9DzkLX+zEI=;
-        b=pD420LVdWGdnbK13CfON/igN5ubDEFW6dZGUaRjVwrt+BQF6BXD2/qQW1DiPaLjryu
-         R+fv9UeWc6z7c52a4MBzGdb4JuEylk5okqh8JFlLFpvSXI6er9y75aIhnyw0AVmkAJRN
-         w4KzitQ5M37jwHc382d2AZakDauYsLS6Gvyp6fx1AOSAK2Iy02W8nzddpGC9Lt3ab1lm
-         Inm9YJTvy7wigN6/EvNl8evh7rgCrFLXZEB55RhupcOv+GjhRRGdpuAW1CYlEdY3aLT6
-         P1y2jCdhL7Olm/YI42Tv4P2H+fpbE5Sc8mLzB+HUnURZoHiJZkfdx5T+737JjRVFAAiC
-         ehvw==
-X-Gm-Message-State: AOAM532Mvh58ZLOh1CyQ6Vet6LL+B00Iobk368wz91ku6+/Huqg1ij3k
-        cS+7vekEaNOKQwUiRF8Pqmc4tg==
-X-Google-Smtp-Source: ABdhPJy0QMC5q+2qYD6o7SHOebREIiw8ISqB8EjezF/XGzbblfIdGbOr3hMolHLPO5Yp/fgvt7Nt3A==
-X-Received: by 2002:a17:90b:8d7:: with SMTP id ds23mr1507273pjb.148.1594845616072;
-        Wed, 15 Jul 2020 13:40:16 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id 66sm2720207pfd.93.2020.07.15.13.40.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 13:40:15 -0700 (PDT)
-Date:   Wed, 15 Jul 2020 13:40:14 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 7/7] ima: add policy support for the new file open
- MAY_OPENEXEC flag
-Message-ID: <202007151339.283D7CD@keescook>
-References: <20200714181638.45751-1-mic@digikod.net>
- <20200714181638.45751-8-mic@digikod.net>
+        Wed, 15 Jul 2020 16:45:02 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 7FE948066C;
+        Thu, 16 Jul 2020 08:44:54 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1594845894;
+        bh=Yyrrii0aC13/URhPuBNQwge6HS2GmJlH4tIWcCtwuik=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To;
+        b=xnJm4t/14f2aR0lTcnqmPhj4qT6tA4A+BQZbK++5niPKjXZobZpur9z0GGQW7+yKW
+         8PNhx1k2mq8ku/NnrS3NmZbloNkbAUoSzikBPXo4iHKVUNddes5oCIfWBecW/iyodG
+         InVjzTzcgGzFddsdggHWDwcBZSuwm/QYXpW0Zn+66gUVQirdXFGLallItVZQ5cFDOa
+         Zfak+VFIF6UH5UXTtPsw1EH/RpPXU8ApoESprVMX3FF4FJyuS5ho2Gzlb8G5JB+I94
+         Ccb1Ny2CUtnbjIjR+KSYQOHYck2Lg4I4McQ5SVqDCWiE6uJb9clFCGm1ZwPqQPyOR1
+         EteGRa08RaMqQ==
+Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5f0f6ac50001>; Thu, 16 Jul 2020 08:44:53 +1200
+Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8)
+ by svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8:409d:36f5:8899:92e8) with
+ Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 16 Jul 2020 08:44:54 +1200
+Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
+ svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
+ 15.00.1497.006; Thu, 16 Jul 2020 08:44:54 +1200
+From:   Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To:     Jonathan Corbet <corbet@lwn.net>
+CC:     "adobriyan@gmail.com" <adobriyan@gmail.com>,
+        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] doc: filesystems: proc: Remove stray '-' preventing
+ table output
+Thread-Topic: [PATCH 1/2] doc: filesystems: proc: Remove stray '-' preventing
+ table output
+Thread-Index: AQHWWb4d+mzGhLnBJ0Sy58P6Uv8OEqkGTvYAgAIF+QA=
+Date:   Wed, 15 Jul 2020 20:44:54 +0000
+Message-ID: <e8df76a1-349f-7499-77a9-bac42e2c6e32@alliedtelesis.co.nz>
+References: <20200714090644.13011-1-chris.packham@alliedtelesis.co.nz>
+ <20200714075100.41db8cea@lwn.net>
+In-Reply-To: <20200714075100.41db8cea@lwn.net>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.32.1.11]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <43E8D424AD5D9A4193247B9BF585BA9D@atlnz.lc>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200714181638.45751-8-mic@digikod.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 14, 2020 at 08:16:38PM +0200, Mickaël Salaün wrote:
-> From: Mimi Zohar <zohar@linux.ibm.com>
-> 
-> The kernel has no way of differentiating between a file containing data
-> or code being opened by an interpreter.  The proposed O_MAYEXEC
-> openat2(2) flag bridges this gap by defining and enabling the
-> MAY_OPENEXEC flag.
-> 
-> This patch adds IMA policy support for the new MAY_OPENEXEC flag.
-> 
-> Example:
-> measure func=FILE_CHECK mask=^MAY_OPENEXEC
-> appraise func=FILE_CHECK appraise_type=imasig mask=^MAY_OPENEXEC
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Acked-by: Mickaël Salaün <mic@digikod.net>
-
-(Process nit: if you're sending this on behalf of another author, then
-this should be Signed-off-by rather than Acked-by.)
-
--- 
-Kees Cook
+DQpPbiAxNS8wNy8yMCAxOjUxIGFtLCBKb25hdGhhbiBDb3JiZXQgd3JvdGU6DQo+IE9uIFR1ZSwg
+MTQgSnVsIDIwMjAgMjE6MDY6NDMgKzEyMDANCj4gQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hh
+bUBhbGxpZWR0ZWxlc2lzLmNvLm56PiB3cm90ZToNCj4NCj4+IFdoZW4gcHJvY2Vzc2luZyBwcm9j
+LnJzdCBzcGhpbnggY29tcGxhaW5lZA0KPj4NCj4+ICAgIERvY3VtZW50YXRpb24vZmlsZXN5c3Rl
+bXMvcHJvYy5yc3Q6NTQ4OiBXQVJOSU5HOiBNYWxmb3JtZWQgdGFibGUuDQo+PiAgICBUZXh0IGlu
+IGNvbHVtbiBtYXJnaW4gaW4gdGFibGUgbGluZSAyOS4NCj4+DQo+PiBUaGlzIGNhdXNlZCB0aGUg
+ZW50aXJlIHRhYmxlIHRvIGJlIGRyb3BwZWQuIFJlbW92aW5nIHRoZSBzdHJheSAnLScNCj4+IHJl
+c29sdmVzIHRoZSBlcnJvciBhbmQgcHJvZHVjZXMgdGhlIGRlc2lyZWQgdGFibGUuDQo+Pg0KPj4g
+U2lnbmVkLW9mZi1ieTogQ2hyaXMgUGFja2hhbSA8Y2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lz
+LmNvLm56Pg0KPj4gLS0tDQo+PiAgIERvY3VtZW50YXRpb24vZmlsZXN5c3RlbXMvcHJvYy5yc3Qg
+fCAyICstDQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigt
+KQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2ZpbGVzeXN0ZW1zL3Byb2MucnN0
+IGIvRG9jdW1lbnRhdGlvbi9maWxlc3lzdGVtcy9wcm9jLnJzdA0KPj4gaW5kZXggOTk2ZjNjZmU3
+MDMwLi41M2EwMjMwYTA4ZTIgMTAwNjQ0DQo+PiAtLS0gYS9Eb2N1bWVudGF0aW9uL2ZpbGVzeXN0
+ZW1zL3Byb2MucnN0DQo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2ZpbGVzeXN0ZW1zL3Byb2MucnN0
+DQo+PiBAQCAtNTQ1LDcgKzU0NSw3IEBAIGVuY29kZWQgbWFubmVyLiBUaGUgY29kZXMgYXJlIHRo
+ZSBmb2xsb3dpbmc6DQo+PiAgICAgICBoZyAgICBodWdlIHBhZ2UgYWR2aXNlIGZsYWcNCj4+ICAg
+ICAgIG5oICAgIG5vIGh1Z2UgcGFnZSBhZHZpc2UgZmxhZw0KPj4gICAgICAgbWcgICAgbWVyZ2Fi
+bGUgYWR2aXNlIGZsYWcNCj4+IC0gICAgYnQgIC0gYXJtNjQgQlRJIGd1YXJkZWQgcGFnZQ0KPj4g
+KyAgICBidCAgICBhcm02NCBCVEkgZ3VhcmRlZCBwYWdlDQo+PiAgICAgICA9PSAgICA9PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCj4gV2hpY2ggdHJlZSBhcmUgeW91IGxv
+b2tpbmcgYXQ/ICBNYXVybyBmaXhlZCB0aGlzIGJhY2sgaW4gSnVuZS4uLg0KPg0KPiBUaGFua3Ms
+DQoNClRpcCBvZiBMaW51cydzIHRyZWUuIEN1cnJlbnRseSBwb2ludHMgdG8gY29tbWl0IGU5OTE5
+ZTExZTIxOSAoIk1lcmdlIA0KYnJhbmNoICdmb3ItbGludXMnIG9mIA0KZ2l0Oi8vZ2l0Lmtlcm5l
+bC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2R0b3IvaW5wdXQiKS4gSSBjYW4gc2VlIA0K
+TWF1cm8ncyBmaXggd2FpdGluZyBpbiBkb2NzLW5leHQgKHByb2JhYmx5IHNob3VsZCBoYXZlIGNo
+ZWNrZWQgdGhlcmUgDQpmaXJzdCkuIEZlZWwgZnJlZSB0byBkcm9wIHRoaXMgcGF0Y2guDQoNCj4N
+Cj4gam9u
