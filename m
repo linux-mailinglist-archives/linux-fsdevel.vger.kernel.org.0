@@ -2,143 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 642612211FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 18:09:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52A7222120E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 18:13:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727036AbgGOQIy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 12:08:54 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:34470 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726893AbgGOQIr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 12:08:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1594829296;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BvLLniNma7qFXHVXKr+V0FVyWHhRwlayjCU6NK0NUYE=;
-        b=WAPg7mYtQmrd07Fo/qn8Q9DKD8L83wUZt3Tg+p9T84L2/GrwClLeseDoY7LkGrIFbQFGyA
-        2qhtE/zGwFOyQ/PInu2fccStUTGJBx9Mkm6YDXV+Hz8r79OE6lKW30QCMVtfm+O23lobhV
-        1qcMX9P7FALmCfCgzqbNNHk1Vj492pM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-259-orQPS7gsM5uj0AkVb_lqTg-1; Wed, 15 Jul 2020 12:08:14 -0400
-X-MC-Unique: orQPS7gsM5uj0AkVb_lqTg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725885AbgGOQNq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 12:13:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32850 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725831AbgGOQNp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jul 2020 12:13:45 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3F11118FF66A;
-        Wed, 15 Jul 2020 16:08:12 +0000 (UTC)
-Received: from bogon.redhat.com (ovpn-13-249.pek2.redhat.com [10.72.13.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6EFA16FDD1;
-        Wed, 15 Jul 2020 16:08:10 +0000 (UTC)
-From:   Zorro Lang <zlang@redhat.com>
-To:     fstests@vger.kernel.org
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/3] fsstress: fix memory leak in do_aio_rw
-Date:   Thu, 16 Jul 2020 00:07:55 +0800
-Message-Id: <20200715160755.14392-4-zlang@redhat.com>
-In-Reply-To: <20200715160755.14392-1-zlang@redhat.com>
-References: <20200715160755.14392-1-zlang@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F93120663;
+        Wed, 15 Jul 2020 16:13:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594829624;
+        bh=IJsMkoevTsx6L9HNxlWZDWP3nwinEoBjxQZqDR3QAYM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=N0z0tBQotG8LArmmiAePX5kmgXENP4UAKHIg9UhO1qGZPrV8Ilw+LOIpBvIm+VROW
+         AoElmez3OskjYxnq2+b63SuxSI83F+O+C3V4lqsRfNbW0Dqvog97lsMD/99y4sRwB+
+         FhOZI9bPxybyBjGn3THjrB6bMu7VYjNnUaTHySQw=
+Date:   Wed, 15 Jul 2020 09:13:42 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH] fs/direct-io: avoid data race on ->s_dio_done_wq
+Message-ID: <20200715161342.GA1167@sol.localdomain>
+References: <20200713033330.205104-1-ebiggers@kernel.org>
+ <20200715013008.GD2005@dread.disaster.area>
+ <20200715023714.GA38091@sol.localdomain>
+ <20200715080144.GF2005@dread.disaster.area>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200715080144.GF2005@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If io_submit or io_getevents fails, the do_aio_rw() won't free the
-"buf" and cause memory leak.
+On Wed, Jul 15, 2020 at 06:01:44PM +1000, Dave Chinner wrote:
+> > > >  /* direct-io.c: */
+> > > > -int sb_init_dio_done_wq(struct super_block *sb);
+> > > > +int __sb_init_dio_done_wq(struct super_block *sb);
+> > > > +static inline int sb_init_dio_done_wq(struct super_block *sb)
+> > > > +{
+> > > > +	/* pairs with cmpxchg() in __sb_init_dio_done_wq() */
+> > > > +	if (likely(READ_ONCE(sb->s_dio_done_wq)))
+> > > > +		return 0;
+> > > > +	return __sb_init_dio_done_wq(sb);
+> > > > +}
+> > > 
+> > > Ummm, why don't you just add this check in sb_init_dio_done_wq(). I
+> > > don't see any need for adding another level of function call
+> > > abstraction in the source code?
+> > 
+> > This keeps the fast path doing no function calls and one fewer branch, as it was
+> > before.  People care a lot about minimizing direct I/O overhead, so it seems
+> > desirable to keep this simple optimization.  Would you rather it be removed?
+> 
+> No.
+> 
+> What I'm trying to say is that I'd prefer fast path checks don't get
+> hidden away in a static inline function wrappers that require the
+> reader to go look up code in a different file to understand that
+> code in yet another different file is conditionally executed.
+> 
+> Going from obvious, easy to read fast path code to spreading the
+> fast path logic over functions in 3 different files is not an
+> improvement in the code - it is how we turn good code into an
+> unmaintainable mess...
 
-Signed-off-by: Zorro Lang <zlang@redhat.com>
----
- ltp/fsstress.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+The alternative would be to duplicate the READ_ONCE() at all 3 call sites --
+including the explanatory comment.  That seems strictly worse.
 
-diff --git a/ltp/fsstress.c b/ltp/fsstress.c
-index a11206d4..410a2437 100644
---- a/ltp/fsstress.c
-+++ b/ltp/fsstress.c
-@@ -2099,8 +2099,7 @@ do_aio_rw(int opno, long r, int flags)
- 	if (!get_fname(FT_REGFILE, r, &f, NULL, NULL, &v)) {
- 		if (v)
- 			printf("%d/%d: do_aio_rw - no filename\n", procid, opno);
--		free_pathname(&f);
--		return;
-+		goto aio_out3;
- 	}
- 	fd = open_path(&f, flags|O_DIRECT);
- 	e = fd < 0 ? errno : 0;
-@@ -2109,16 +2108,13 @@ do_aio_rw(int opno, long r, int flags)
- 		if (v)
- 			printf("%d/%d: do_aio_rw - open %s failed %d\n",
- 			       procid, opno, f.path, e);
--		free_pathname(&f);
--		return;
-+		goto aio_out3;
- 	}
- 	if (fstat64(fd, &stb) < 0) {
- 		if (v)
- 			printf("%d/%d: do_aio_rw - fstat64 %s failed %d\n",
- 			       procid, opno, f.path, errno);
--		free_pathname(&f);
--		close(fd);
--		return;
-+		goto aio_out2;
- 	}
- 	inode_info(st, sizeof(st), &stb, v);
- 	if (!iswrite && stb.st_size == 0) {
-@@ -2150,6 +2146,12 @@ do_aio_rw(int opno, long r, int flags)
- 	else if (len > diob.d_maxiosz)
- 		len = diob.d_maxiosz;
- 	buf = memalign(diob.d_mem, len);
-+	if (!buf) {
-+		if (v)
-+			printf("%d/%d: do_aio_rw - memalign failed\n",
-+			       procid, opno);
-+		goto aio_out2;
-+	}
- 
- 	if (iswrite) {
- 		off = (off64_t)(lr % MIN(stb.st_size + (1024 * 1024), MAXFSIZE));
-@@ -2166,27 +2168,26 @@ do_aio_rw(int opno, long r, int flags)
- 		if (v)
- 			printf("%d/%d: %s - io_submit failed %d\n",
- 			       procid, opno, iswrite ? "awrite" : "aread", e);
--		free_pathname(&f);
--		close(fd);
--		return;
-+		goto aio_out1;
- 	}
- 	if ((e = io_getevents(io_ctx, 1, 1, &event, NULL)) != 1) {
- 		if (v)
- 			printf("%d/%d: %s - io_getevents failed %d\n",
- 			       procid, opno, iswrite ? "awrite" : "aread", e);
--		free_pathname(&f);
--		close(fd);
--		return;
-+		goto aio_out1;
- 	}
- 
- 	e = event.res != len ? event.res2 : 0;
--	free(buf);
- 	if (v)
- 		printf("%d/%d: %s %s%s [%lld,%d] %d\n",
- 		       procid, opno, iswrite ? "awrite" : "aread",
- 		       f.path, st, (long long)off, (int)len, e);
--	free_pathname(&f);
-+ aio_out1:
-+	free(buf);
-+ aio_out2:
- 	close(fd);
-+ aio_out3:
-+	free_pathname(&f);
- }
- #endif
- 
--- 
-2.20.1
+And the code before was broken, so I disagree it was "obvious" or "good".
 
+> 
+> > > Also, you need to explain the reason for the READ_ONCE() existing
+> > > rather than just saying "it pairs with <some other operation>".
+> > > Knowing what operation it pairs with doesn't explain why the pairing
+> > > is necessary in the first place, and that leads to nobody reading
+> > > the code being able to understand what this is protecting against.
+> > > 
+> > 
+> > How about this?
+> > 
+> > 	/*
+> > 	 * Nothing to do if ->s_dio_done_wq is already set.  But since another
+> > 	 * process may set it concurrently, we need to use READ_ONCE() rather
+> > 	 * than a plain read to avoid a data race (undefined behavior) and to
+> > 	 * ensure we observe the pointed-to struct to be fully initialized.
+> > 	 */
+> > 	if (likely(READ_ONCE(sb->s_dio_done_wq)))
+> > 		return 0;
+> 
+> You still need to document what it pairs with, as "data race" doesn't
+> describe the actual dependency we are synchronising against is.
+> 
+> AFAICT from your description, the data race is not on
+> sb->s_dio_done_wq itself, but on seeing the contents of the
+> structure being pointed to incorrectly. i.e. we need to ensure that
+> writes done before the cmpxchg are ordered correctly against
+> reads done after the pointer can be seen here.
+> 
+
+No, the data race is on ->s_dio_done_wq itself.  How about this:
+
+        /*
+         * Nothing to do if ->s_dio_done_wq is already set.  The READ_ONCE()
+         * here pairs with the cmpxchg() in __sb_init_dio_done_wq().  Since the
+         * cmpxchg() may set ->s_dio_done_wq concurrently, a plain load would be
+         * a data race (undefined behavior), so READ_ONCE() is needed.
+         * READ_ONCE() also includes any needed read data dependency barrier to
+         * ensure that the pointed-to struct is seen to be fully initialized.
+         */
+
+FWIW, long-term we really need to get developers to understand these sorts of
+issues, so that the code is written correctly in the first place and we don't
+need to annotate common patterns like one-time-init with a long essay and have a
+long discussion.  Recently KCSAN was merged upstream
+(https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/dev-tools/kcsan.rst)
+and the memory model documentation was improved
+(https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/explanation.txt?h=v5.8-rc5#n1922),
+so hopefully that will raise awareness...
+
+> If so, can't we just treat this as a normal
+> store-release/load-acquire ordering pattern and hence use more
+> relaxed memory barriers instead of have to patch up what we have now
+> to specifically make ancient platforms that nobody actually uses
+> with weird and unusual memory models work correctly?
+
+READ_ONCE() is already as relaxed as it can get, as it includes a read data
+dependency barrier only (which is no-op on everything other than Alpha).
+
+If anything it should be upgraded to smp_load_acquire(), which handles control
+dependencies too.  I didn't see anything obvious in the workqueue code that
+would need that (i.e. accesses to some global structure that isn't transitively
+reachable via the workqueue_struct itself).  But we could use it to be safe if
+we're okay with any performance implications of the additional memory barrier it
+would add.
+
+- Eric
