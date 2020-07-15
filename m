@@ -2,192 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B2B4F22154A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 21:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D2842215BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 22:06:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbgGOTnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 15:43:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43578 "EHLO
+        id S1727021AbgGOUGb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 16:06:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbgGOTny (ORCPT
+        with ESMTP id S1726894AbgGOUG2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 15:43:54 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6356C061755;
-        Wed, 15 Jul 2020 12:43:53 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id ga4so3417798ejb.11;
-        Wed, 15 Jul 2020 12:43:53 -0700 (PDT)
+        Wed, 15 Jul 2020 16:06:28 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FE3CC08C5DD
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 13:06:28 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id t6so2836826plo.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 13:06:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iaLGexaSw4FQvPhMT9GEqm7GZkiMzvFUAf6J/Ie1zOA=;
-        b=ExaZGhoDR2ndnOqNntbrwWNIBpldsMx/kGfINn/oieckd2ZAnOdyl8/0/8NgHgHHeC
-         onOQwXpudiyWKJ+I0SkS0OveCxqZMjrrZgN7gD6tleGHGZBaaR1axLFbbrO6QCnCO4xP
-         1FKB4tJpPwaXljdhatldDhQH3ASqG9HqU7vyD5QClCxfZNfLKFSbPq0oDDR8wsWv5Dij
-         BPasKLZwzd44d/jwCpQhs37K0FROo0KEPrMVLTa7TYZdTt+7Y5pHoWFnYVNqwQaMR+Eh
-         9ozGo+/geqdnLHZAulFsZ/02Mrasqt7Sk0Rc9NJlYzdahvbizQbjPF9adHNZJqq9PzgD
-         puRw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=YL19XoL2DCkvrhiZbpXv6h7Rc/+Lwr1rsydviLs8pFc=;
+        b=PCMIvsfXHhRDJz8Khz3VUsUkSsqo3SsGXmW6qozBpfFw4kwRb7k2005MBV/m480XJo
+         UJjjM2/i31FD6kd3JPB8hOvDWYGhWQ2O79+33d3StMVVlrSmwT3Jn2OjikQ0pG18Ox6N
+         0dOa8dwyh4myV41v2K0+FJWi/pMjoCl6QAT6I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=iaLGexaSw4FQvPhMT9GEqm7GZkiMzvFUAf6J/Ie1zOA=;
-        b=OAFWkX+9bG6MMfYehZdwCDGN38sL9jvVtGnrba4CqrFWOX05TAdupHVKX3x/3d+LAS
-         ZSK764MtqdW1Jeju79j2CVakYlIjuZTTnBGDZweDnUZ518l2aYTZxldO+E8S33b0IIQ+
-         IadP6sw3vByMNrqdOCVH9o6zh5AjrAiqRmdFdzCaQMbDEUmbF40YrN+jgx0Tt9NkFKJF
-         iKCQkxWSgJJH/UwdKfunt5EF26KprV2FV76aNgzlrDY+YaYcZx2EMjEpu3mvwUbectbn
-         qryclx1OBO7IQjz3o0E/m0g9EhtqK9GwIEUNr183vfTaq/xIshzANnek+zwp0tGUjzgV
-         VkCA==
-X-Gm-Message-State: AOAM531fi2+tLtWahqrbDj3oq+8H28SANoxaKanI66CdIaDDpi2fTyOZ
-        73vRZN0MMDwth9bM1S4UEINNdrPgXog=
-X-Google-Smtp-Source: ABdhPJyzNKFw1M0wjMMFZxBhJp2hgNFM/MGMacBI9InXmClalXZd3CNIgy0jyccKprE3eYn0Z7dOWA==
-X-Received: by 2002:a17:906:1402:: with SMTP id p2mr528029ejc.126.1594842232060;
-        Wed, 15 Jul 2020 12:43:52 -0700 (PDT)
-Received: from [192.168.43.238] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id o6sm3112602edr.94.2020.07.15.12.43.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jul 2020 12:43:51 -0700 (PDT)
-To:     Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Cc:     Stefano Garzarella <sgarzare@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Kees Cook <keescook@chromium.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=YL19XoL2DCkvrhiZbpXv6h7Rc/+Lwr1rsydviLs8pFc=;
+        b=AupUesWG3euEeDMX/yPQZO1HkOBI3VaPTWphxSfQXNEJ1NepA0eaS0wJB5jqu4NcLi
+         lWVTlR0AolUDCfBVC3KcN2qM1Uvz2Le0yJhFnfhUWXMbFA67V8CLbax6s2nGG1ZOvkr6
+         DKcVOikjQlbCPEPoCm6LSGsNjMDAObfSr+JP3m6nA+3OyI2yC1GZxJ3Y/SU9I8wiCZbo
+         mVLMttDkApm6qN3uJv/h911kdwjlhjAgHzY2m8JhmYQM3z5tz3kfo3rCaN9hpsb9+IsL
+         nVRquG3fFBQfeLB66w9c2xhpf2nfpLuNNfddz8RW/qo4ML6ksYYd/pbuD+Nltw+MPoJq
+         mPqg==
+X-Gm-Message-State: AOAM532k6dzipDV88r3B7UBjdpcc34Rvu7dEz76ETKFhVbTq46H44Eyj
+        WbFI8n0Xsz9MtEgYShQbRHTb+w==
+X-Google-Smtp-Source: ABdhPJxqPw/byppqYk72FBQJ1XrQVSH3bnxbDXc7/lfw9v75K7lcTOddZ1PpPFhX50QhSgkPHCK9SQ==
+X-Received: by 2002:a17:90a:bc98:: with SMTP id x24mr1196990pjr.63.1594843587647;
+        Wed, 15 Jul 2020 13:06:27 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id e20sm2721660pfl.212.2020.07.15.13.06.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jul 2020 13:06:26 -0700 (PDT)
+Date:   Wed, 15 Jul 2020 13:06:25 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
         Christian Brauner <christian.brauner@ubuntu.com>,
-        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
- <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
- <20200715171130.GG12769@casper.infradead.org>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: strace of io_uring events?
-Message-ID: <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com>
-Date:   Wed, 15 Jul 2020 22:42:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 4/7] fs: Introduce O_MAYEXEC flag for openat2(2)
+Message-ID: <202007151304.9F48071@keescook>
+References: <20200714181638.45751-1-mic@digikod.net>
+ <20200714181638.45751-5-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <20200715171130.GG12769@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200714181638.45751-5-mic@digikod.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 15/07/2020 20:11, Matthew Wilcox wrote:
-> On Wed, Jul 15, 2020 at 07:35:50AM -0700, Andy Lutomirski wrote:
->>> On Jul 15, 2020, at 4:12 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
->>>
->>> <feff>Hi,
+On Tue, Jul 14, 2020 at 08:16:35PM +0200, Mickaël Salaün wrote:
+> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
+> additional restrictions depending on a security policy managed by the
+> kernel through a sysctl or implemented by an LSM thanks to the
+> inode_permission hook.  This new flag is ignored by open(2) and
+> openat(2) because of their unspecified flags handling.
 > 
-> feff?  Are we doing WTF-16 in email now?  ;-)
+> The underlying idea is to be able to restrict scripts interpretation
+> according to a policy defined by the system administrator.  For this to
+> be possible, script interpreters must use the O_MAYEXEC flag
+> appropriately.  To be fully effective, these interpreters also need to
+> handle the other ways to execute code: command line parameters (e.g.,
+> option -e for Perl), module loading (e.g., option -m for Python), stdin,
+> file sourcing, environment variables, configuration files, etc.
+> According to the threat model, it may be acceptable to allow some script
+> interpreters (e.g. Bash) to interpret commands from stdin, may it be a
+> TTY or a pipe, because it may not be enough to (directly) perform
+> syscalls.  Further documentation can be found in a following patch.
 > 
->>>
->>> This thread is to discuss the possibility of stracing requests
->>> submitted through io_uring.   I'm not directly involved in io_uring
->>> development, so I'm posting this out of  interest in using strace on
->>> processes utilizing io_uring.
->>>
->>> io_uring gives the developer a way to bypass the syscall interface,
->>> which results in loss of information when tracing.  This is a strace
->>> fragment on  "io_uring-cp" from liburing:
->>>
->>> io_uring_enter(5, 40, 0, 0, NULL, 8)    = 40
->>> io_uring_enter(5, 1, 0, 0, NULL, 8)     = 1
->>> io_uring_enter(5, 1, 0, 0, NULL, 8)     = 1
->>> ...
->>>
->>> What really happens are read + write requests.  Without that
->>> information the strace output is mostly useless.
->>>
->>> This loss of information is not new, e.g. calls through the vdso or
->>> futext fast paths are also invisible to strace.  But losing filesystem
->>> I/O calls are a major blow, imo.
-
-To clear details for those who are not familiar with io_uring:
-
-io_uring has a pair of queues, submission (SQ) and completion queues (CQ),
-both shared between kernel and user spaces. The userspace submits requests
-by filling a chunk of memory in SQ. The kernel picks up SQ entries in
-(syscall io_uring_enter) or asynchronously by polling SQ.
-
-CQ entries are filled by the kernel completely asynchronously and
-in parallel. Some users just poll CQ to get them, but also have a way
-to wait for them.
-
->>>
->>> What do people think?
->>>
->>> From what I can tell, listing the submitted requests on
->>> io_uring_enter() would not be hard.  Request completion is
->>> asynchronous, however, and may not require  io_uring_enter() syscall.
->>> Am I correct?
-
-Both, submission and completion sides may not require a syscall.
-
->>>
->>> Is there some existing tracing infrastructure that strace could use to
->>> get async completion events?  Should we be introducing one?
-
-There are static trace points covering all needs.
-
-And if not used the whole thing have to be zero-overhead. Otherwise
-there is perf, which is zero-overhead, and this IMHO won't fly. 
-
->>
->> Letâ€™s add some seccomp folks. We probably also want to be able to run
->> seccomp-like filters on io_uring requests. So maybe io_uring should
->> call into seccomp-and-tracing code for each action.
+> Even without enforced security policy, userland interpreters can set it
+> to enforce the system policy at their level, knowing that it will not
+> break anything on running systems which do not care about this feature.
+> However, on systems which want this feature enforced, there will be
+> knowledgeable people (i.e. sysadmins who enforced O_MAYEXEC
+> deliberately) to manage it.  A simple security policy implementation,
+> configured through a dedicated sysctl, is available in a following
+> patch.
 > 
-> Adding Stefano since he had a complementary proposal for iouring
-> restrictions that weren't exactly seccomp.
+> O_MAYEXEC should not be confused with the O_EXEC flag which is intended
+> for execute-only, which obviously doesn't work for scripts.  However, a
+> similar behavior could be implemented in userland with O_PATH:
+> https://lore.kernel.org/lkml/1e2f6913-42f2-3578-28ed-567f6a4bdda1@digikod.net/
 > 
+> The implementation of O_MAYEXEC almost duplicates what execve(2) and
+> uselib(2) are already doing: setting MAY_OPENEXEC in acc_mode (which can
+> then be checked as MAY_EXEC, if enforced), and propagating FMODE_EXEC to
+> _fmode via __FMODE_EXEC flag (which can then trigger a
+> fanotify/FAN_OPEN_EXEC event).
+> 
+> This is an updated subset of the patch initially written by Vincent
+> Strubel for CLIP OS 4:
+> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
+> This patch has been used for more than 12 years with customized script
+> interpreters.  Some examples (with the original name O_MAYEXEC) can be
+> found here:
+> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+> 
+> Co-developed-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
+> Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
+> Co-developed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+> Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Reviewed-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Cc: Aleksa Sarai <cyphar@cyphar.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+> 
+> Changes since v5:
+> * Update commit message.
+> 
+> Changes since v3:
+> * Switch back to O_MAYEXEC, but only handle it with openat2(2) which
+>   checks unknown flags (suggested by Aleksa Sarai). Cf.
+>   https://lore.kernel.org/lkml/20200430015429.wuob7m5ofdewubui@yavin.dot.cyphar.com/
+> 
+> Changes since v2:
+> * Replace O_MAYEXEC with RESOLVE_MAYEXEC from openat2(2).  This change
+>   enables to not break existing application using bogus O_* flags that
+>   may be ignored by current kernels by using a new dedicated flag, only
+>   usable through openat2(2) (suggested by Jeff Layton).  Using this flag
+>   will results in an error if the running kernel does not support it.
+>   User space needs to manage this case, as with other RESOLVE_* flags.
+>   The best effort approach to security (for most common distros) will
+>   simply consists of ignoring such an error and retry without
+>   RESOLVE_MAYEXEC.  However, a fully controlled system may which to
+>   error out if such an inconsistency is detected.
+> 
+> Changes since v1:
+> * Set __FMODE_EXEC when using O_MAYEXEC to make this information
+>   available through the new fanotify/FAN_OPEN_EXEC event (suggested by
+>   Jan Kara and Matthew Bobrowski):
+>   https://lore.kernel.org/lkml/20181213094658.GA996@lithium.mbobrowski.org/
+> ---
+>  fs/fcntl.c                       | 2 +-
+>  fs/open.c                        | 8 ++++++++
+>  include/linux/fcntl.h            | 2 +-
+>  include/linux/fs.h               | 2 ++
+>  include/uapi/asm-generic/fcntl.h | 7 +++++++
+>  5 files changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fcntl.c b/fs/fcntl.c
+> index 2e4c0fa2074b..0357ad667563 100644
+> --- a/fs/fcntl.c
+> +++ b/fs/fcntl.c
+> @@ -1033,7 +1033,7 @@ static int __init fcntl_init(void)
+>  	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
+>  	 * is defined as O_NONBLOCK on some platforms and not on others.
+>  	 */
+> -	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
+> +	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
+>  		HWEIGHT32(
+>  			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
+>  			__FMODE_EXEC | __FMODE_NONOTIFY));
+> diff --git a/fs/open.c b/fs/open.c
+> index 623b7506a6db..38e434bdbbb6 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -987,6 +987,8 @@ inline struct open_how build_open_how(int flags, umode_t mode)
+>  		.mode = mode & S_IALLUGO,
+>  	};
+>  
+> +	/* O_MAYEXEC is ignored by syscalls relying on build_open_how(). */
+> +	how.flags &= ~O_MAYEXEC;
+>  	/* O_PATH beats everything else. */
+>  	if (how.flags & O_PATH)
+>  		how.flags &= O_PATH_FLAGS;
+> @@ -1054,6 +1056,12 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+>  	if (flags & __O_SYNC)
+>  		flags |= O_DSYNC;
+>  
+> +	/* Checks execution permissions on open. */
+> +	if (flags & O_MAYEXEC) {
+> +		acc_mode |= MAY_OPENEXEC;
+> +		flags |= __FMODE_EXEC;
+> +	}
+
+Adding __FMODE_EXEC here will immediately change the behaviors of NFS
+and fsnotify. If that's going to happen, I think it needs to be under
+the control of the later patches doing the behavioral controls.
+(specifically, NFS looks like it completely changes its access control
+test when this is set and ignores the read/write checks entirely, which
+is not what's wanted).
+
 
 -- 
-Pavel Begunkov
+Kees Cook
