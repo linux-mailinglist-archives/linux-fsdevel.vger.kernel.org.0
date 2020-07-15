@@ -2,97 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E627B220586
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 08:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F330220677
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 09:48:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbgGOGyp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 02:54:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37588 "EHLO
+        id S1729450AbgGOHsN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 03:48:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728948AbgGOGyn (ORCPT
+        with ESMTP id S1728888AbgGOHsN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 02:54:43 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9764BC061755;
-        Tue, 14 Jul 2020 23:54:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=y+69naeMbJzLmps1ix1zIh5S0S7ZMs54M4SKXhvxIQw=; b=m5M0g8I044GkmEWX1jwLHudNgg
-        Y+R7SYA1jyAZiY2QPIlKeZnT/BMBXmOsKpm66Wg/2BFzyBNPno9O6z6DEvT49dtjIx21GcnTrCXQR
-        M/MrLXSh8EjTApsGbTG3LZaaIAcqn06MVY+gfWePppXQm72I/Knz3pBbii8lerEJfot94ZLRdUJFq
-        tbE5Ekq60OkT/InvLe5vM1FZpUKnspDXaMk+F2zVesBJysWviC8GKPDR5Kkyb/RnQXY9d8I8CnuUG
-        dROrl1xSVgpjtTdlb6JMDsXnb53vLlNuoBwD0soTpbOOqMfhHxoJXRlDHOVA0ILXdGczFilL6cky5
-        Mfv0KDYw==;
-Received: from [2001:4bb8:105:4a81:1c8f:d581:a5f2:bdb7] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jvbJR-0001kO-9X; Wed, 15 Jul 2020 06:54:41 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] initramfs: use vfs_utimes in do_copy
-Date:   Wed, 15 Jul 2020 08:54:34 +0200
-Message-Id: <20200715065434.2550-5-hch@lst.de>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200715065434.2550-1-hch@lst.de>
-References: <20200715065434.2550-1-hch@lst.de>
+        Wed, 15 Jul 2020 03:48:13 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17850C061755;
+        Wed, 15 Jul 2020 00:48:13 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id v8so1288264iox.2;
+        Wed, 15 Jul 2020 00:48:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=Jccfp2oNJt1HrsGzFk4h4PJ44TgtIZuDADLeh+4YZok=;
+        b=H1U4R4r2h/fLl4slZLL1wyxioF29o00xgKLg5uTsiYPuFw1cWu8p42i3K9FPYcVz42
+         aAD6GY+xSmzxd/y2kWVO5Inv1n71to6wLo5CeARmRjwvjhrHgWEd90AAlkWOxzqvs8cb
+         3Vf9UYsSwgb29uW7EQ+7Y2Mn/fZZ/Zlu8HV824MMuEl/7FLSWbF/dlisuNikQ1gXOJ8l
+         QAkTnO5YHHAuLyfiSfu/Hubalev5H8o1x9OazVL27m66a2Hoj/Xvtl7nwrsy1MpqNjQJ
+         AjNHvDWnXKvK9v45NofwwYZpHJOzkECHM5ppydCFl60D1ZzgSL8wzORrsL5ZyI5iM6Si
+         nNFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=Jccfp2oNJt1HrsGzFk4h4PJ44TgtIZuDADLeh+4YZok=;
+        b=h/qskm4oxqdlhhVrbY2Ytzc7Qu0ShbptJ94EvFBDzFcjJjmjW4YrXbZRx2fBgXJr3+
+         cGV9zM4u/UweJq3t8mlVUwgpO+gJc4wazFEzDGSkfeEKJvM1n4jA9n8aIjZTysQ4wYXn
+         P9khGRybwCEjr3cIV8JAeirCJzJHP/2E+rKHEa44QFRCRwaE89SzsTSdrvNgqb+DSPSF
+         WmQVNy5wPuXz1bHXlWHdWU8F3rkguANqzABAjW8ejB5DgxVzgUlE9+uelo6K/YqTE7L+
+         B5hb91gifVBp0SbeBz5/uoezZEepnfd8GvaCE/4E0XeAo0cPIbF98mhVUZW0S5dVYxnc
+         fbnw==
+X-Gm-Message-State: AOAM532qYSoh0VrhtB2MT9hNgVfDdwlnqtLA92psm2ziL6mMM+AYxPgd
+        ECa0xNumFigBFB6LA8FQV9RPFAQIqARzMkG4Rb8=
+X-Google-Smtp-Source: ABdhPJwrtnQrYazl29CU7+zmtfNBiLquKPbrXzX5QLJgrUgSoItWQhTZNPgWQERFAAgv0BIXlILa5DrOI+5+6g1IIW0=
+X-Received: by 2002:a5e:c91a:: with SMTP id z26mr671341iol.70.1594799292282;
+ Wed, 15 Jul 2020 00:48:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+References: <2733b41a-b4c6-be94-0118-a1a8d6f26eec@virtuozzo.com>
+ <d6e8ef46-c311-b993-909c-4ae2823e2237@virtuozzo.com> <CAJfpegupeWA_dFi5Q4RBSdHFAkutEeRk3Z1KZ5mtfkFn-ROo=A@mail.gmail.com>
+ <8da94b27-484c-98e4-2152-69d282bcfc50@virtuozzo.com> <CAJfpegvU2JQcNM+0mcMPk-_e==RcT0xjqYUHCTzx3g0oCw6RiA@mail.gmail.com>
+ <CA+icZUXtYt6LtaB4Fc3UWS0iCOZPV1ExaZgc-1-cD6TBw29Q8A@mail.gmail.com>
+ <CAJfpegs+hN2G02qigUyQMp=0Ev+t_vYHmK5kh3z+U1GkSuLH-w@mail.gmail.com> <CA+icZUWSeUJwtymRL2MXXCRy3SyhQ9LraQAzUwCB2my09BWRcA@mail.gmail.com>
+In-Reply-To: <CA+icZUWSeUJwtymRL2MXXCRy3SyhQ9LraQAzUwCB2my09BWRcA@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Wed, 15 Jul 2020 09:48:00 +0200
+Message-ID: <CA+icZUX7xRy+duwQpR_8R_tJi7ru-si5_HZ_9rrdJFTJs73KXA@mail.gmail.com>
+Subject: Re: [PATCH] fuse_writepages_fill() optimization to avoid WARN_ON in tree_insert
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Vasily Averin <vvs@virtuozzo.com>, linux-fsdevel@vger.kernel.org,
+        Maxim Patlasov <maximvp@gmail.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Don't bother saving away the pathname and just use the new struct path
-based utimes helper instead.
+On Tue, Jul 14, 2020 at 2:57 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>
+> On Tue, Jul 14, 2020 at 2:53 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Tue, Jul 14, 2020 at 2:40 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+> >
+> > > Did you sent out a new version of your patch?
+> > > If yes, where can I get it from?
+> >
+> > Just pushed a bunch of fixes including this one to
+> >
+> > git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git#for-next
+> >
+>
+> Just-In-Time... I stopped my kernel-build and applied from <fuse.git#for-next>.
+>
+> Thanks.
+>
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- init/initramfs.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+Tested with my usual testcase "mount Ubuntu/precise 12.04 LTS
+(WUBI-installation):
 
-diff --git a/init/initramfs.c b/init/initramfs.c
-index c335920e5ecc2d..3823d15e5d2619 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -201,7 +201,6 @@ static inline void __init eat(unsigned n)
- 	byte_count -= n;
- }
- 
--static __initdata char *vcollected;
- static __initdata char *collected;
- static long remains __initdata;
- static __initdata char *collect;
-@@ -342,7 +341,6 @@ static int __init do_name(void)
- 			vfs_fchmod(wfile, mode);
- 			if (body_len)
- 				vfs_truncate(&wfile->f_path, body_len);
--			vcollected = kstrdup(collected, GFP_KERNEL);
- 			state = CopyFile;
- 		}
- 	} else if (S_ISDIR(mode)) {
-@@ -365,11 +363,16 @@ static int __init do_name(void)
- static int __init do_copy(void)
- {
- 	if (byte_count >= body_len) {
-+		struct timespec64 t[2] = { };
-+
- 		if (xwrite(wfile, victim, body_len) != body_len)
- 			error("write error");
-+
-+		t[0].tv_sec = mtime;
-+		t[1].tv_sec = mtime;
-+		vfs_utimes(&wfile->f_path, t);
-+
- 		fput(wfile);
--		do_utime(vcollected, mtime);
--		kfree(vcollected);
- 		eat(body_len);
- 		state = SkipIt;
- 		return 0;
--- 
-2.27.0
+fdisk -l /dev/sdb
 
+mount -r -t auto /dev/sdb2 /mnt/win7
+
+cd /path/to/disks/
+mount -r -t ext4 -o loop ./root.disk /mnt/ubuntu
+
+df -hT
+
+cd /mnt/ubuntu/
+ls -alhR
+
+dmesg -T | tail
+
+Looks good.
+
+- Sedat -
