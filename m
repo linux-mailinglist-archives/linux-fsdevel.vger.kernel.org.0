@@ -2,81 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A5372213A4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 19:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34A1C22142C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 20:21:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbgGORod (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 13:44:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53482 "EHLO
+        id S1726660AbgGOSVE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 14:21:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbgGORoc (ORCPT
+        with ESMTP id S1726402AbgGOSVD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 13:44:32 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F6AAC061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 10:44:32 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id v6so3156753iob.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 10:44:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=whE827+S7wnMHW3w0ZWpyEDslmIj4jcLVIJfYN1gVz0=;
-        b=k1JFEuLvFsURas7BidjBFrhAg+tI7jLOlVmmgpzpuGigvheXaOHCt1hiD1TC8xT7nN
-         5Nwsu9s3MDt41ZyqFArvZcZ5Bkd1fWly4ZlgclPKRrT6LYjWt+mjEt2IUrya3zmKWJ5W
-         5CX2EsVE3VsmaSj7vDZXjL3FZgs3fabgLnllTL70ow6HC/R6qpV/SjYOh220wkhFqnmn
-         la33lwnzSPRT0cNKp50RzQprUlKeJX1cpEJRkpe7LoCSWjxkUMi+BPeo3CC9bz9OExDs
-         /zxm4gxzlRrRWibDedOSaP4JHCaz+rjvPa5KS/mF15fZ0RVFDLx5AMFtjcIeVQvx7+yX
-         R33Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=whE827+S7wnMHW3w0ZWpyEDslmIj4jcLVIJfYN1gVz0=;
-        b=WU8Q1aqNGdM6R16FVbsJGARjUd5oxE+EQ+Z682yZHMA66DoXHdBiTRgHBUFeC8zrtW
-         GiXWJPLsh99OFUbhQ6nfUmGypJuZx1ppI75Qb4/LL3yXWO96L49SvpZHQeTIdRycRQLz
-         suLlIXm9c0+PWxki43TrCofDsXL2bOK3igLEfw+kYZ6zRM5cpRrkxPMRm/d1aIekQTs7
-         MycL6+/v8UE7YJhTu0UASQPPN+MpXiy95kU57jl4uTk3/N78rKAvVnb29sOovgNbsH4H
-         4B4yHDWrdCz4rykDDyrtzZ6pJcOF0KsZu/m7JwOiHKDgz8zvR03uJV4OwrAalpNGO8Vf
-         12aQ==
-X-Gm-Message-State: AOAM5333c4MXsJeD73mDb49b+FbrUWAXTdLEwgcG6r3njOBXc1+1cJwR
-        BXrhDKAQHCAR0jGAg3NMy+JmYXqXNCUFrDSQe0hPdcc6
-X-Google-Smtp-Source: ABdhPJxZovo+cotgET/bzIEeiAREqjCPlYEkDGxOxgjdziR82nzwYb2bJPTzniNK0oz8FpaWkqibiA4u0mVyRcN0e80=
-X-Received: by 2002:a05:6638:d96:: with SMTP id l22mr572197jaj.120.1594835072075;
- Wed, 15 Jul 2020 10:44:32 -0700 (PDT)
+        Wed, 15 Jul 2020 14:21:03 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67CBDC061755;
+        Wed, 15 Jul 2020 11:21:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=/PGzMxiRs3LntzWdZ9BnnwhzRWaZLNAopFC1UTRKht4=; b=n386cJ2xX5uIHAjX8MFywK56Cj
+        pEKViQSpn12oXPq+h8K3cwBZdII+6juPIXizsdN0DLdJ4Rc1NyN592FdP5uqCk+B/xYa2yhYae9cT
+        +0JnimG086wSG0LSReTbBoW4ePpClWtyrlGO5FDh3oY5xRiddhoKYaF3ifM6HcOCIyKcTeCxf1oWU
+        OHFEvG1qnhnWp3FwkmcJ8/lakxMfoKo9R/XX34BEDiEy9UhTONH3wJ9yW6YdgOxeuUHJzU48+HKNw
+        bi2lOezBfZ2/Srt2KpxfXCeQk8TME8Vhf22lkWNDDSi2xh5BPfBHe100mnJPi5X+nOp+x0e/rjolf
+        NFdarelA==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jvm1W-0005BZ-1A; Wed, 15 Jul 2020 18:20:54 +0000
+Date:   Wed, 15 Jul 2020 19:20:53 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-security-module@vger.kernel.org,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>
+Subject: Re: [PATCH 7/7] exec: Implement kernel_execve
+Message-ID: <20200715182053.GA18278@infradead.org>
+References: <871rle8bw2.fsf@x220.int.ebiederm.org>
+ <87wo365ikj.fsf@x220.int.ebiederm.org>
+ <202007141446.A72A4437C@keescook>
+ <20200715064248.GH32470@infradead.org>
+ <202007150758.3D1597C6D@keescook>
 MIME-Version: 1.0
-References: <20200708111156.24659-1-amir73il@gmail.com> <20200708111156.24659-20-amir73il@gmail.com>
- <20200715153454.GO23073@quack2.suse.cz> <CAOQ4uxg+75abXiNtPXqh6tybUAGfJ7=we9nmxSnaCsfNGBjZcQ@mail.gmail.com>
- <20200715162440.GP23073@quack2.suse.cz>
-In-Reply-To: <20200715162440.GP23073@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 15 Jul 2020 20:44:21 +0300
-Message-ID: <CAOQ4uxjXEtAqjjKw8Toi_bAZfde5nq-6tbgWsp_Q6vcHHz9JYQ@mail.gmail.com>
-Subject: Re: [PATCH v3 20/20] fanotify: no external fh buffer in fanotify_name_event
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202007150758.3D1597C6D@keescook>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > Yap. sounds good.
-> > I will test and push the branches.
-> > Let me know if you want me to re-post anything.
->
-> So I've just picked up patches 1-9 (I took patches 8 and 9 from your git)
-> and 17 to my fsnotify branch because they are completely stand-alone
-> cleanups and I didn't see a reason to delay them further. All the other
-> patches in this series look fine to me but I didn't pick them up yet
-> because they are more tightly related to the name event series and could
-> possibly change. So I'll pick them up once I feel name event series is more
-> stable...
->
+On Wed, Jul 15, 2020 at 08:00:16AM -0700, Kees Cook wrote:
+> Heh, yes please. :) (Which branch is this from?
 
-Fair enough.
-I rebased on top of your branch tested and pushed
-fanotify_prep/fanotify_name_fid.
+http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/exec-cleanup
 
-Thanks,
-Amir.
+> Are yours and Eric's
+> tree going to collide?)
+
+Yes, badly.
