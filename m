@@ -2,108 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AB28220CFE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 14:35:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F4093220D65
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jul 2020 14:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726479AbgGOMfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 08:35:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33640 "EHLO
+        id S1730822AbgGOMu1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 08:50:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725852AbgGOMfA (ORCPT
+        with ESMTP id S1729312AbgGOMu1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 08:35:00 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90602C061755
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 05:35:00 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id r12so1801352ilh.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 05:35:00 -0700 (PDT)
+        Wed, 15 Jul 2020 08:50:27 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F0DDC08C5C1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 05:50:27 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id z3so2044284pfn.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 05:50:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DMM1LJMKcluZERyzxTbnBheEyP+mTQpYVSwQDsHOxV0=;
-        b=ANwxTDc0cBeZ+884LiLnWSUDcfxQovXTG0sPng3n/vLlGbHDRlzSKeU8OVmeBk/Qao
-         kbqjuvgdwl9YAxM81rrGzXuJcv7WjEKQ7jtWDhLM5jdSCG/dvSsT2sTxEHEhlVlf0njV
-         FIIlXHc6IJCZOw14LkYc/DVIsyHGs80k6010oLWSwTronp/HAWb9MeOg3YrbIeXmufnh
-         Wo7tvJFmcrURNpjHgN11wY0OXaHS9DE2vTz4eFHeMnnf2P5eYJHkhzSbuT2vHv/CvfGH
-         swP4l/01nqcqyqeqpoVXiKkFVxMihashVw81yvXbwuS/erX0vxuZEoPRvfyj8nnNW8mi
-         JM2w==
+        d=pesu-pes-edu.20150623.gappssmtp.com; s=20150623;
+        h=from:date:to:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ShVGtDM5xerpslVq+QO4NAQXlRlUc1FZogmGfNpoutY=;
+        b=zfEz8H5E0uTrtiedmvrlTGbHtdxGX3RrMjMgJxif+xhNGImqKZRwVnxOB7SiJiHGZb
+         EgfDXwV6eV0eYsRRBkuQtDnVaC/gA32Wm8PgvRC0S/grBe3RSNr07Qwb/U5MFJQCd+xu
+         ZzRH0TwSYyHM7F+ByWaX4y+/lwLlfZropXcAtw4OEd6s5YhRov92z0a99VRfYJAAhfNf
+         bZtJoVQi9SqMDg0zgDRRi4WZCRBAeTXicGV743fdg5EHoHEDZibVOgCS65ZUQ9HcWhdA
+         loHkMsrB0ViJIeLN9ArV7hzmoxVeMMuJFVT9NdQFZG26b8lb2eJfYno6GYBY0w3mG5Fw
+         aObg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DMM1LJMKcluZERyzxTbnBheEyP+mTQpYVSwQDsHOxV0=;
-        b=PGDURjjPWLb04bMFu4PqHyVF3yAAiB7JH4LGkGs7WLOI+yYxFxTIlcSIBhJs/OvaJt
-         dNo/8p8eLoLERSxx/lnLw6DqBJmOlSAmIslWeVHWIEzIZe/gha33wiCE3VkNWQMzqT4/
-         A/yQtVe7DgKDGIGds1nhz1D5CnVvenOUpjUf3fJb6riSRiUK8ySrohUeWls1897ZoBr2
-         hnOxPiuQK42hg5drpfaIcpcRiNC30LxZeGEH/fD6qQj80K8wlQp6GV4WvAO5yGoq21l8
-         pvwg9zEVNQoICOD0Oxd9Kkg8oPvDz2OV5IsYqQ6zTUBxFQ65MYsGEGEoc/HdUjx9q1Dp
-         GS2w==
-X-Gm-Message-State: AOAM531x0STpVnhdf/9HxAnqR7TsJlrRVZM09fs1N/O5vCSaeFqMkpWt
-        WdlrxVPlf+f1jIdH6LMkQY8yL5v8V535NjkfNf4mE7Y+
-X-Google-Smtp-Source: ABdhPJwPFy+aG2u1qyogUAjqKMeNx1gtaQc/hm4tBnHXGlPJCeQh+IqXvl6QSsN6UYPFJWR0a/04MtgS2Q27hu9OnXM=
-X-Received: by 2002:a92:c205:: with SMTP id j5mr9877799ilo.137.1594816499974;
- Wed, 15 Jul 2020 05:34:59 -0700 (PDT)
+        h=x-gm-message-state:from:date:to:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ShVGtDM5xerpslVq+QO4NAQXlRlUc1FZogmGfNpoutY=;
+        b=s9U6Q+u+1AE0D52udZecrfuezRxSjKYlw39D8qDqyhKT7ocUG6xiVGzmu7fljBZrzl
+         mdWwbm+MQy/MIjMUqPJy+OuCf5IBvnUTxqVZNkuKTbj4G2a5Pwhx3IHj4iSPYwx7YrZh
+         yw7idIMv24qe0IKPKlQ/U5vFzpIVS0hZsPO5XiSmSXmXm8U9ETXEGwtDQcEMNLSRYltN
+         UvgQeNTIgzU76aTGZ8yXD/Mmj6/MfZvp81rJU5cEX2UR3OBHbUz0jLMy0hyNedrldnKw
+         BYm5Im/jrQk69S+E/AdLtxoGcFJVjq7uCsTjTbueJn1mS0X6IB2/oQ4SGV6+VGF28uRo
+         ZZ5w==
+X-Gm-Message-State: AOAM530O3HwWgX4zNOvmkVsL5PLsi1dS6GvNliUgWHNAId1L3Ffw886g
+        xiPniz0rA83WjMSHfz31phvDfQ==
+X-Google-Smtp-Source: ABdhPJy/Ln9peH7xxHmsqXkwnv/o960pFulImShZC6watVz+6vqqfalkLQT9ngLHhAPVGcqCMTcTqA==
+X-Received: by 2002:a63:1f11:: with SMTP id f17mr7755201pgf.217.1594817426552;
+        Wed, 15 Jul 2020 05:50:26 -0700 (PDT)
+Received: from localhost ([2406:7400:73:f0a7:1936:cfd2:c2df:5e48])
+        by smtp.gmail.com with ESMTPSA id ml8sm2037189pjb.47.2020.07.15.05.50.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jul 2020 05:50:25 -0700 (PDT)
+From:   B K Karthik <bkkarthik@pesu.pes.edu>
+X-Google-Original-From: B K Karthik <karthik.bk2000@live.com>
+Date:   Wed, 15 Jul 2020 08:50:18 -0400
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: block_dev.c: fix WARNING in submit_bio_check
+Message-ID: <20200715125018.mjj6sj5uibd5s67b@pesu-pes-edu>
 MIME-Version: 1.0
-References: <20200715122921.5995-1-jack@suse.cz>
-In-Reply-To: <20200715122921.5995-1-jack@suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 15 Jul 2020 15:34:48 +0300
-Message-ID: <CAOQ4uxjJCKVQU0FaN-gU4RLcE97YnNAZMdg6RRbKeLjOLW7dCw@mail.gmail.com>
-Subject: Re: [PATCH] fanotify: Avoid softlockups when reading many events
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Francesco Ruggeri <fruggeri@arista.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lpn6rsynz3x3gxmk"
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 15, 2020 at 3:29 PM Jan Kara <jack@suse.cz> wrote:
->
-> When user provides large buffer for events and there are lots of events
-> available, we can try to copy them all to userspace without scheduling
-> which can softlockup the kernel (furthermore exacerbated by the
-> contention on notification_lock). Add a scheduling point after copying
-> each event.
->
-> Note that usually the real underlying problem is the cost of fanotify
-> event merging and the resulting contention on notification_lock but this
-> is a cheap way to somewhat reduce the problem until we can properly
-> address that.
->
-> Reported-by: Francesco Ruggeri <fruggeri@arista.com>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> ---
->  fs/notify/fanotify/fanotify_user.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> This is a quick mending we can do immediately and is probably a good idea
-> nevertheless... I'll queue it up if Amir agrees.
->
 
-Sure. fine by me.
-Maybe add a lore link to the issue report.
+--lpn6rsynz3x3gxmk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+duplicating the logic in blkdev_get_by_path to
+blkdev_get_by_dev to avoid a user-triggerable WARN
+trying to write to a read-only block device.
 
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 63b5dffdca9e..d7f63aeca992 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -412,6 +412,11 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
->
->         add_wait_queue(&group->notification_waitq, &wait);
->         while (1) {
-> +               /*
-> +                * User can supply arbitrarily large buffer. Avoid softlockups
-> +                * in case there are lots of available events.
-> +                */
-> +               cond_resched();
->                 event = get_one_event(group, count);
->                 if (IS_ERR(event)) {
->                         ret = PTR_ERR(event);
-> --
-> 2.16.4
->
+blkdev_get_by_path() looks at
+((mode & FMODE_WRITE) && bdev_read_only(bdev)) to check for write permissio=
+ns.
+
+A user-triggerable WARN can be avoided by doing the same with bdev_get_by_d=
+ev.
+
+Reported-by: syzbot+4c50ac32e5b10e4133e1@syzkaller.appspotmail.com
+Signed-off-by: B K Karthik <karthik.bk2000@live.com>
+---
+ fs/block_dev.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 64c4fe8181f2..472e3b046406 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1796,6 +1796,11 @@ struct block_device *blkdev_get_by_dev(dev_t dev, fm=
+ode_t mode, void *holder)
+ 	if (err)
+ 		return ERR_PTR(err);
+=20
++	if ((mode & FMODE_WRITE) && bdev_read_only(bdev)) {
++		blkdev_put(bdev, mode);
++		return ERR_PTR(-EACCES);
++	}
++
+ 	return bdev;
+ }
+ EXPORT_SYMBOL(blkdev_get_by_dev);
+--=20
+2.20.1
+
+
+--lpn6rsynz3x3gxmk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAEBCgAdFiEEpIrzAt4LvWLJmKjp471Q5AHeZ2oFAl8O+4kACgkQ471Q5AHe
+Z2rFSwv/eUXmS0JEAwk4ovaLtuu9ly240wFQQBHwIyOidIuxiw0fnOKPfRpBFCHc
+NDdVlZ3/IDfRbcT/5Td3wO+X4OmWPoE/mr2EClOxeYWFCcJV7oWzO+FBkkYb7P93
+JmzuDtIYMsSVnIrAyjlwwCdlii0nW2eism0rIP2Ja30FsAvZR5l1pqw8ypjFpKrQ
+tGot98tkBA5iAm5A2F/8iBpwX+kp/y5kEzXpfH8qgrslt3booQ4FLFcg+TCOeIaj
+G1vPkY0fuVCsQZPXSta6RU89NI71AQKN5FhyujqpNa1hIiA5IYT4+c9ryRwzuJIr
+fzLFygwWbFXLXtvgZ87BlhkSIayJMQNFUBrjA36BB0iN83fRyKr69K0i8BbG5QKU
+FP/zryOsnO2AdbtBpB8OCPXq5era+hbeZnXncBzl9h9ApatmRWajO4D0mOXQRd7a
+njx23nf5npJtjXeHmznhi+luoAeeLkK+te0hvGl2fmFhT/v7Zt8xa7D4bMnC18eh
+ZkaRfIHq
+=Pl6p
+-----END PGP SIGNATURE-----
+
+--lpn6rsynz3x3gxmk--
