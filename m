@@ -2,317 +2,461 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C4A122230B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 14:57:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1264A222317
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 14:57:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbgGPM4Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 08:56:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33148 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728774AbgGPM4W (ORCPT
+        id S1728857AbgGPM46 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 08:56:58 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:28331 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728119AbgGPM44 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 08:56:22 -0400
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5449CC08C5C0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 05:56:22 -0700 (PDT)
-Received: by mail-ot1-x343.google.com with SMTP id 5so4052744oty.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 05:56:22 -0700 (PDT)
+        Thu, 16 Jul 2020 08:56:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1594904216; x=1626440216;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=nnrSUmlaPvumNbuo5gEa0jXKnDFdtNKg3w64txYtHu8=;
+  b=a40WonA1zDjtfKNoKiAosCm2PmGxf/CoqG+w5RTAtto2b3M96ia7IAaI
+   mKIQlVoyBVpKjFjE8f5NHmjHEp4JC6CVsZ1uBPG8IGFRPTNHXVf+sfkES
+   A8K3uFHgfs864w5faumgApzSprICKHzlXuU+MpDRSJ55MD9z9uRtx9c0H
+   0VzDM/2LinRGcpHaJpcd6KLdQf2rM2UmqOVrhgDb/a9Mpp+dUYUIqRMw/
+   r3bUNV7g7uuO5VUEHL/rPpV2Lmiopwxe/HG6nFhviEtrc7zCq5thwPo1Z
+   jxvaKUO4wN4J2J3zQmV7/VbwJ113Jc2dRMIp7Qn3z/JJnc5sRE5mXRlKE
+   g==;
+IronPort-SDR: 6BAFf6BjQH6FGfDYQZQPIop9gprPxc37F5m+c7hHX2xJVRpIuQsiDvG+j8zPUVIG0Oe5DIFjF8
+ QPBjOKh3O/R/ac1L303fzFn3rqMS23UOUYs+3JOURlW1nDLpyKi6+Z9rWHgj+cKFdV3mxk5pcz
+ +p7vWsxs5l92UU9L9AnAyo4l9DIKugqzw7bcYOdCCvcT63yfWi3IdNdyTzjk5/Crle1hCjtmJ+
+ g3I2AWNOUAXYmVMWuguIyhU8I86sCiankVZWfnLXXgsxON7XWq0qXvyPbzuJEMhF8p/AGOvFSv
+ fCs=
+X-IronPort-AV: E=Sophos;i="5.75,359,1589212800"; 
+   d="scan'208";a="251874249"
+Received: from mail-dm6nam10lp2106.outbound.protection.outlook.com (HELO NAM10-DM6-obe.outbound.protection.outlook.com) ([104.47.58.106])
+  by ob1.hgst.iphmx.com with ESMTP; 16 Jul 2020 20:56:55 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IAXWvZEHGMf6DplKxqe3vdoaAkdjElq9nONf3k+qQOROGCTKh5sosucMgaXEOS89ZiDSazTy5XRjKKBWOziUNOAJSweQOFAqMsnXExFoIk7EKZjPRHl7jI+qD6okxXNYqNcKJaTYNdyRTMHFsP8E1HpqHingB2CqGC5gBUN2NoCXsbrn0EJY54su8+mwakOIYlXJ3NpIk53UL9Jg3VIuUIL6GDKibx+0U6a4GtlCIuxy/uy6By9Szt+fjDghnVHFwhTvVyFJA/G2GDulbgOHfLopbUKe/IbQm6Wekt/XOppGE9W57JFdwkb/UY1+uEL577W393/I6xCeQYOpzo6WxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mLO046rDAArkcyGam2W7sNSJFgDvlTgAkUcr/viw+Zo=;
+ b=l1mD677xBRQWnvbvfiQX8WfpR62TE/JoFNVHK4QwOlNvSRBNwbrl2goL1AAlHxG7Bhk6i6YXJg1nUpfDPi6XMOEODpYmWQxL2TV/3i0zWa2jHFn2D13sHO5fidG1isiBmKPtAPZgJPN/jJ3hawa3Dmq3TxozyWRKNum9ARvKByVfDtfMotuSxaeMz3b+H6BBCXPMqXpsTF30cSO5NKw+2qI2EsF32Wj/zLlyZffoUCnjNwwlX9f9a0ClQ8QiLSw/EUpQJD73ziuY3zlGO7DxmbXCwN8UbtpXuq6VljifrGp4cBgKRWv1m0/q6pXiVaoyEyfZcWaF3n9HSC8UnqlOsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KhEuTQ/sONMxFPvCk9XIn2quNPqfByU8Bi6tyB3MW0I=;
-        b=Aj5U3tTA8XB998P5G/hlb/7gXSO4+soc+jXfZ8krPUepoQAScE3soEMvFJtBjfhPQA
-         KndY2wOR32Ty64a/PjsBKh49KQV2sanfyzBBpX3pn00V2eh0buglz0kRVDdOekNJSOll
-         3KygUJSpnfDj6b82AQJrSfagfDmqszTmVYhiimjE0CvLpZ92RNjax7k3sxg7Wmesq1Ke
-         7N59cimJaNhIPOpltH0fatFhLIbfrJmJPavPUmpcuDK7p2ndgFa6rqOr9AnnEy6/FIPx
-         9e/3RFfbi9fATqFp3JhPzDiI6GBfQYEI2ck9nRNcZMtCPLlmExjSJ76uYaJLIhb915un
-         eCrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KhEuTQ/sONMxFPvCk9XIn2quNPqfByU8Bi6tyB3MW0I=;
-        b=RN/OtvGGEdhYbEoDSxGSpcSw9Y/a0oOr1/vD+qjAZcGaLlItQHWm/g2ADS3FcHl9Nc
-         kHyZVp8aMkFfOxXp2pDdVWI1p4B8IrtkPPfHqe0k2f5hWh+u4J3Mdh2vLIaQytS+E0lg
-         qrFFJW99fXT7YZ13OTHXSQJLW2BXIj0AVJs8RaIjKqdxrAuMBxOeA3fx4hHGlLnlrjGQ
-         RtFm3fIenPhaVaYzTa+WiTsPINMrOJHO4FRB47iHNJpJHsjkw9N1wV6zDvSbfaEnPGmv
-         QR0a3zcwOaNmE4aMlsaGgwc7MFO28Lt9326j6AbxmcOP8NL6Yf8R9r7N9U3xkyzt29Hh
-         FrXA==
-X-Gm-Message-State: AOAM533rLVggqldlMGjF9bq6oabd4RiM58n64im+AS0/PN2X7PjOXdLg
-        h9uSr+i+LL9+glvmZV3FFLFhuX8Qj2Agnre6ZUxW3A==
-X-Google-Smtp-Source: ABdhPJw+/+tCsMYB5w5xFwiO0JTOVGqH6ErP0pK+M8iDt3vfii/EqqtEHXHCwTEYaqvOeUhoFWdmmsD2NmnDERM6oeQ=
-X-Received: by 2002:a9d:2788:: with SMTP id c8mr3954004otb.251.1594904181121;
- Thu, 16 Jul 2020 05:56:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <0000000000004a4d6505aa7c688a@google.com> <20200715152912.GA2209203@elver.google.com>
- <20200715163256.GB1167@sol.localdomain> <20200715234203.GK5369@dread.disaster.area>
- <20200716030357.GE1167@sol.localdomain> <1594880070.49b50i0a1p.astroid@bobo.none>
- <20200716065454.GI1167@sol.localdomain> <1594884557.u5rf1h2p6r.astroid@bobo.none>
-In-Reply-To: <1594884557.u5rf1h2p6r.astroid@bobo.none>
-From:   Marco Elver <elver@google.com>
-Date:   Thu, 16 Jul 2020 14:56:09 +0200
-Message-ID: <CANpmjNP+ZAGoj9Bfbh2a2t+GatrxpOF67bNCgjGNbctvo4mDtw@mail.gmail.com>
-Subject: Re: KCSAN: data-race in generic_file_buffered_read / generic_file_buffered_read
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        syzbot <syzbot+0f1e470df6a4316e0a11@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mLO046rDAArkcyGam2W7sNSJFgDvlTgAkUcr/viw+Zo=;
+ b=qAogMcxkehezCPshk3qujZoRoYGlAtEgAzlBHT27naAu6a+tytswYRfH61gCdyw1ikoRvs+3KMpan3nhiDW98g3w2GYyIwGIWzjqA5aETny037FEyDi6nLldNA/2jEyp96CVytWiChrabgtKWequU4QH/qEdcRNaTM15TDujtvc=
+Received: from BY5PR04MB6995.namprd04.prod.outlook.com (2603:10b6:a03:22c::12)
+ by BYAPR04MB5719.namprd04.prod.outlook.com (2603:10b6:a03:111::25) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3174.23; Thu, 16 Jul
+ 2020 12:56:54 +0000
+Received: from BY5PR04MB6995.namprd04.prod.outlook.com
+ ([fe80::f813:2bba:2c5c:a63b]) by BY5PR04MB6995.namprd04.prod.outlook.com
+ ([fe80::f813:2bba:2c5c:a63b%7]) with mapi id 15.20.3174.026; Thu, 16 Jul 2020
+ 12:56:54 +0000
+From:   Aravind Ramesh <Aravind.Ramesh@wdc.com>
+To:     Chao Yu <yuchao0@huawei.com>,
+        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>, "hch@lst.de" <hch@lst.de>
+CC:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Niklas Cassel <Niklas.Cassel@wdc.com>,
+        Matias Bjorling <Matias.Bjorling@wdc.com>
+Subject: RE: [PATCH v2 1/1] f2fs: support zone capacity less than zone size
+Thread-Topic: [PATCH v2 1/1] f2fs: support zone capacity less than zone size
+Thread-Index: AQHWVuG8df1cHLlYCEqjMFhbHkjwLakG/kWAgABix9CAAIkQgIACQjYw
+Date:   Thu, 16 Jul 2020 12:56:53 +0000
+Message-ID: <BY5PR04MB6995C8D8BCB5BEE887F8A1A88C7F0@BY5PR04MB6995.namprd04.prod.outlook.com>
+References: <20200710174353.21988-1-aravind.ramesh@wdc.com>
+ <20200710174353.21988-2-aravind.ramesh@wdc.com>
+ <c9d121e3-294d-189f-9314-01dc0b0b7ab5@huawei.com>
+ <BY5PR04MB69955AA241F77C37D6020CCE8C610@BY5PR04MB6995.namprd04.prod.outlook.com>
+ <af3f4ce5-5653-38f8-9fce-06efbaae09d5@huawei.com>
+In-Reply-To: <af3f4ce5-5653-38f8-9fce-06efbaae09d5@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: huawei.com; dkim=none (message not signed)
+ header.d=none;huawei.com; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [49.207.56.64]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: bd6ab940-68d8-4d02-f80e-08d82987b6fa
+x-ms-traffictypediagnostic: BYAPR04MB5719:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR04MB57196AE8573FC95B17F9D9B58C7F0@BYAPR04MB5719.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: vZaZ7OJud9jwJnXW81dC4qKZqgg5YabFAyBK1siQ+kkyMTixYwdUcplg19ObZ+LZtQArzozo5g52AfbzGwxMYZ+J8a+5GmnCzmif+ZJXE2nK5uFmU7QNSXdxIc6QM6hsOyTJtJLsal2BC6MU3u+IBfwpEJ4kI0g2jwoR0GeviaxbpMKmtpnU/oJ9tQj91xaGTRjeUGFSUyQbmS7JHceZxzwpLzjXVJ5jqWEz1CiC7G2MHMpNlBWs8qRqTLUQBAhqxXSJ1zgujEGOtJxYj7kc/z0nYVIjwyEWCRZtaPCV6lfU6Ao67zXh5/1qvWsJw73OAj6rMDKGfrXuX79vibF3XQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR04MB6995.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(396003)(376002)(39860400002)(136003)(346002)(366004)(52536014)(4326008)(71200400001)(55016002)(66946007)(66446008)(30864003)(66476007)(54906003)(66556008)(76116006)(110136005)(64756008)(7696005)(83380400001)(8676002)(5660300002)(478600001)(9686003)(33656002)(186003)(2906002)(55236004)(53546011)(316002)(8936002)(6506007)(26005)(86362001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: 40AqKBFcCYP3297uZ+SDeOn3jzr0nqhprG5O6rogKjbmI01tKzh3+2+IWunP75V47slinPTrH28CofX6MxCUVHauaEuYFqGbjprTABpBNy+Ft4yjgM+n/zYZgoZaTlxUrWypKaiJA7Je/mIj+PtkHcuSJSRYzYuwzo9eVKkh91+f6Cao/wfMzeWltHp2w/9PesytSUzy6X5ieTqoaV/LgyKmo7xUTnM66t58GrVVN9E5aLN89slcmNYsM3Pi/E0NkOtJV1UcMXpgnXt1W+kNDVwDQuI/+QmAEx5KMfJhYeyropyLGCRqPhTRsicU/EJSpUWMYGjKpuboBeftOxLIsxoLEJvLrqkMjocdGPlAuwEmkZE8jEbTmW5F/u23ktJocvbJHWNh/joVNpD3kpm3emiF8AiSz10MzFvXY6nKSW/U+b/hGIXhmqEU2XLZ+z2GnVUwgXkJSfjUZUQoxFCQutL95nBaJ+havBEr2L7jUso=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR04MB6995.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd6ab940-68d8-4d02-f80e-08d82987b6fa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2020 12:56:53.7720
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: twyo3mKXeYD1EaHTNfWBb2iDvAvZoUy2xdQ5h6BwRdlL4Al45WV0P5N7ty5LYfqfxonjARoItzQMRdEy+pyDKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5719
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 16 Jul 2020 at 09:52, Nicholas Piggin <npiggin@gmail.com> wrote:
->
-> Excerpts from Eric Biggers's message of July 16, 2020 4:54 pm:
-> > On Thu, Jul 16, 2020 at 04:24:01PM +1000, Nicholas Piggin wrote:
-> >> Excerpts from Eric Biggers's message of July 16, 2020 1:03 pm:
-> >> > On Thu, Jul 16, 2020 at 09:42:03AM +1000, Dave Chinner wrote:
-> >> >> On Wed, Jul 15, 2020 at 09:32:56AM -0700, Eric Biggers wrote:
-[...]
-> >> >> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> >> > > > BUG: KCSAN: data-race in generic_file_buffered_read / generic=
-_file_buffered_read
-[...]
-> >> >> > Concurrent reads on the same file descriptor are allowed.  Not wi=
-th sys_read(),
-> >> >> > as that implicitly uses the file position.  But it's allowed with=
- sys_pread(),
-> >> >> > and also with sys_sendfile() which is the case syzbot is reportin=
-g here.
-> >> >>
-> >> >> Concurrent read()s are fine, they'll just read from the same offset=
-.
-> >> >
-> >> > Actually the VFS serializes concurrent read()'s on the same fd, at l=
-east for
-> >> > regular files.
-> >>
-> >> Hmm, where?
+
+> -----Original Message-----
+> From: Chao Yu <yuchao0@huawei.com>
+> Sent: Wednesday, July 15, 2020 7:32 AM
+> To: Aravind Ramesh <Aravind.Ramesh@wdc.com>; jaegeuk@kernel.org; linux-
+> fsdevel@vger.kernel.org; linux-f2fs-devel@lists.sourceforge.net; hch@lst.=
+de
+> Cc: Damien Le Moal <Damien.LeMoal@wdc.com>; Niklas Cassel
+> <Niklas.Cassel@wdc.com>; Matias Bjorling <Matias.Bjorling@wdc.com>
+> Subject: Re: [PATCH v2 1/1] f2fs: support zone capacity less than zone si=
+ze
+>=20
+> On 2020/7/15 2:40, Aravind Ramesh wrote:
+> > Thanks for the valuable feedback.
+> > My comments are inline.
+> > Will send the V3 with the feedback incorporated.
 > >
-> > It's serialized by file->f_pos_lock.  See fdget_pos().
->
-> Ah thanks! Missed that.
->
-> >> >> > > > write to 0xffff8880968747b0 of 8 bytes by task 6336 on cpu 0:
-> >> >> > > >  generic_file_buffered_read+0x18be/0x19e0 mm/filemap.c:2246
-> >> >> > >
-> >> >> > >       ...
-> >> >> > >       would_block:
-> >> >> > >               error =3D -EAGAIN;
-> >> >> > >       out:
-> >> >> > >               ra->prev_pos =3D prev_index;
-> >> >> > >               ra->prev_pos <<=3D PAGE_SHIFT;
-> >> >> > > 2246)         ra->prev_pos |=3D prev_offset;
-> >> >> > >
-> >> >> > >               *ppos =3D ((loff_t)index << PAGE_SHIFT) + offset;
-> >> >> > >               file_accessed(filp);
-> >> >> > >               return written ? written : error;
-> >> >> > >       }
-> >> >> > >       EXPORT_SYMBOL_GPL(generic_file_buffered_read);
-> >> >> > >       ...
-> >> >> >
-> >> >> > Well, it's a data race.  Each open file descriptor has just one r=
-eadahead state
-> >> >> > (struct file_ra_state), and concurrent reads of the same file des=
-criptor
-> >> >> > use/change that readahead state without any locking.
-> >> >> >
-> >> >> > Presumably this has traditionally been considered okay, since rea=
-dahead is
-> >> >> > "only" for performance and doesn't affect correctness.  And for p=
-erformance
-> >> >> > reasons, we want to avoid locking during file reads.
-> >> >> >
-> >> >> > So we may just need to annotate all access to file_ra_state with
-> >> >> > READ_ONCE() and WRITE_ONCE()...
-> >> >>
-> >> >> Please, no. Can we stop making the code hard to read, more difficul=
-t
-> >> >> to maintain and preventing the compiler from optimising it by doing
-> >> >> stupid "turn off naive static checker warnings" stuff like this?
-> >> >>
-> >> >> If the code is fine with races, then -leave it alone-. If it's not
-> >> >> fine with a data race, then please go and work out the correct
-> >> >> ordering and place well documented barriers and/or release/acquire
-> >> >> ordering semantics in the code so that we do not need to hide data
-> >> >> races behind a compiler optimisation defeating macro....
-> >> >>
-> >> >> Yes, I know data_race() exists to tell the tooling that it should
-> >> >> ignore data races in the expression, but that makes just as much
-> >> >> mess of the code as READ_ONCE/WRITE_ONCE being spewed everywhere
-> >> >> indiscriminately because <some tool said we need to do that>.
-> >> >>
-> >> >
-> >> > Data races are undefined behavior, so it's never guaranteed "fine".
-> >>
-> >> Is this a new requirement for the kernel? Even code which is purely an
-> >> optimisation (e.g. a readahead heuristic) can never be guaranteed to
-> >> be fine for a data race? As in, the compiler might be free to start
-> >> scribbling on memory because of undefined behaviour?
-> >>
-> >> What we used to be able to do is assume that the variable might take o=
-n
-> >> one or other value at any time its used (or even see split between the
-> >> two if the thing wasn't naturally aligned for example), but that was
-> >> quite well "defined". So we could in fact guarantee that it would be
-> >> fine.
+> > Regards,
+> > Aravind
 > >
-> > Not really, it's always been undefined behavior.
+> >> -----Original Message-----
+> >> From: Chao Yu <yuchao0@huawei.com>
+> >> Sent: Tuesday, July 14, 2020 5:28 PM
+> >> To: Aravind Ramesh <Aravind.Ramesh@wdc.com>; jaegeuk@kernel.org;
+> >> linux- fsdevel@vger.kernel.org;
+> >> linux-f2fs-devel@lists.sourceforge.net; hch@lst.de
+> >> Cc: Damien Le Moal <Damien.LeMoal@wdc.com>; Niklas Cassel
+> >> <Niklas.Cassel@wdc.com>; Matias Bjorling <Matias.Bjorling@wdc.com>
+> >> Subject: Re: [PATCH v2 1/1] f2fs: support zone capacity less than
+> >> zone size
+> >>
+[snip..]
+       /*
+> >>> +	* zone-capacity can be less than zone-size in zoned devices,
+> >>> +	* resulting in less than expected usable segments in the zone,
+> >>> +	* calculate the end segno in the zone which can be garbage collecte=
+d
+> >>> +	*/
+> >>> +	if (f2fs_sb_has_blkzoned(sbi))
+> >>> +		end_segno -=3D sbi->segs_per_sec -
+> >>> +					f2fs_usable_segs_in_sec(sbi, segno);
+> >>> +
+> >>> +	else if (__is_large_section(sbi))
+> >>>  		end_segno =3D rounddown(end_segno, sbi->segs_per_sec);
+> >>
+> >> end_segno could be beyond end of section, so below calculation could
+> >> adjust it to the end of section first, then adjust to zone-capacity bo=
+undary.
+> >>
+> >> 	if (__is_large_section(sbi))
+> >> 		end_segno =3D rounddown(end_segno, sbi->segs_per_sec);
+> >>
+> >> 	if (f2fs_sb_has_blkzoned(sbi))
+> >> 		end_segno -=3D sbi->segs_per_sec -
+> >> 				f2fs_usable_segs_in_sec(sbi, segno);
+> > Ok, will change it.
+> >>
+> >>>
+> >>>  	/* readahead multi ssa blocks those have contiguous address */ @@
+> >>> -1356,7 +1368,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >>>  		goto stop;
+> >>>
+> >>>  	seg_freed =3D do_garbage_collect(sbi, segno, &gc_list, gc_type);
+> >>> -	if (gc_type =3D=3D FG_GC && seg_freed =3D=3D sbi->segs_per_sec)
+> >>> +	if (gc_type =3D=3D FG_GC &&
+> >>> +		seg_freed =3D=3D f2fs_usable_segs_in_sec(sbi, segno))
+> >>>  		sec_freed++;
+> >>>  	total_freed +=3D seg_freed;
+> >>>
+> >>> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h index
+> >>> db3c61046aa4..463b4e38b864 100644
+> >>> --- a/fs/f2fs/gc.h
+> >>> +++ b/fs/f2fs/gc.h
+> >>> @@ -44,13 +44,47 @@ struct gc_inode_list {
+> >>>  /*
+> >>>   * inline functions
+> >>>   */
+> >>> +
+> >>> +/*
+> >>> + * On a Zoned device zone-capacity can be less than zone-size and
+> >>> +if
+> >>> + * zone-capacity is not aligned to f2fs segment size(2MB), then the
+> >>> +segment
+> >>> + * starting just before zone-capacity has some blocks spanning
+> >>> +across the
+> >>> + * zone-capacity, these blocks are not usable.
+> >>> + * Such spanning segments can be in free list so calculate the sum
+> >>> +of usable
+> >>> + * blocks in currently free segments including normal and spanning s=
+egments.
+> >>> + */
+> >>> +static inline block_t free_segs_blk_count_zoned(struct f2fs_sb_info
+> >>> +*sbi) {
+> >>> +	block_t free_seg_blks =3D 0;
+> >>> +	struct free_segmap_info *free_i =3D FREE_I(sbi);
+> >>> +	int j;
+> >>> +
+> >>
+> >> spin_lock(&free_i->segmap_lock);
+> > Ok
+> >>
+> >>> +	for (j =3D 0; j < MAIN_SEGS(sbi); j++)
+> >>> +		if (!test_bit(j, free_i->free_segmap))
+> >>> +			free_seg_blks +=3D f2fs_usable_blks_in_seg(sbi, j);
+> >>
+> >> spin_unlock(&free_i->segmap_lock);
+> > Ok
+> >>
+> >>> +
+> >>> +	return free_seg_blks;
+> >>> +}
+> >>> +
+> >>> +static inline block_t free_segs_blk_count(struct f2fs_sb_info *sbi) =
+{
+> >>> +	if (f2fs_sb_has_blkzoned(sbi))
+> >>> +		return free_segs_blk_count_zoned(sbi);
+> >>> +
+> >>> +	return free_segments(sbi) << sbi->log_blocks_per_seg; }
+> >>> +
+> >>>  static inline block_t free_user_blocks(struct f2fs_sb_info *sbi)  {
+> >>> -	if (free_segments(sbi) < overprovision_segments(sbi))
+> >>> +	block_t free_blks, ovp_blks;
+> >>> +
+> >>> +	free_blks =3D free_segs_blk_count(sbi);
+> >>> +	ovp_blks =3D overprovision_segments(sbi) << sbi->log_blocks_per_seg=
+;
+> >>> +
+> >>> +	if (free_blks < ovp_blks)
+> >>>  		return 0;
+> >>> -	else
+> >>> -		return (free_segments(sbi) - overprovision_segments(sbi))
+> >>> -			<< sbi->log_blocks_per_seg;
+> >>> +
+> >>> +	return free_blks - ovp_blks;
+> >>>  }
+> >>>
+> >>>  static inline block_t limit_invalid_user_blocks(struct f2fs_sb_info
+> >>> *sbi) diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c index
+> >>> c35614d255e1..d75c1849dc83 100644
+> >>> --- a/fs/f2fs/segment.c
+> >>> +++ b/fs/f2fs/segment.c
+> >>> @@ -869,10 +869,10 @@ static void locate_dirty_segment(struct
+> >>> f2fs_sb_info
+> >> *sbi, unsigned int segno)
+> >>>  	ckpt_valid_blocks =3D get_ckpt_valid_blocks(sbi, segno);
+> >>
+> >> unsigned int usable_blocks =3D f2fs_usable_blks_in_seg(sbi, segno);
+> >>
+> >>>
+> >>>  	if (valid_blocks =3D=3D 0 && (!is_sbi_flag_set(sbi, SBI_CP_DISABLED=
+) ||
+> >>> -				ckpt_valid_blocks =3D=3D sbi->blocks_per_seg)) {
+> >>
+> >> ckpt_valid_blocks =3D=3D usable_blocks
+> >>
+> >>> +		ckpt_valid_blocks =3D=3D f2fs_usable_blks_in_seg(sbi, segno))) {
+> >>>  		__locate_dirty_segment(sbi, segno, PRE);
+> >>>  		__remove_dirty_segment(sbi, segno, DIRTY);
+> >>> -	} else if (valid_blocks < sbi->blocks_per_seg) {
+> >>> +	} else if (valid_blocks < f2fs_usable_blks_in_seg(sbi, segno)) {
+> >>
+> >> } else if (valid_blocks < usable_blocks) {
+> >>
+> > Ok.
+> >>
+> >> BTW, would you consider to add a field as below to avoid calculation
+> >> whenever we want to get usable_blocks in segment:
 > >
-> > AFAICT, there's tribal knowledge among some kernel developers about wha=
-t types
-> > of undefined behavior are "okay" because they're thought to be unlikely=
- to cause
-> > problems in practice.  However except in certain cases (e.g., the kerne=
-l uses
-> > -fwrapv to make signed integer overflow well-defined, and -fno-strict-a=
-liasing
-> > to make type aliasing well-defined) these cases have never been formall=
-y
-> > defined, and people disagree about them.  If they have actually been fo=
-rmally
-> > defined, please point me to the documentation or compiler options.
->
-> Well we did traditionally say stores to natural aligned word types and
-> smaller were atomic (although being loff_t may not be true for 32-bit).
-> Kernel behaviour, rather than C (which as you say is not kernel
-> semantics).
+> > The reason to do it like this is that f2fs supports using multiple devi=
+ces to create a
+> volume.
+> > So, if 2 ZNS devices are used where both have same zone-size but
+> > different zone capacity, then having this single field to indicate
+> > usable blocks will not work, as usable blocks of zones
+>=20
+> The field @usable_blocks in 'struct seg_entry' is per-segment, that's not=
+ single, it can
+> be initialized to 0 or blocks_per_seg or 'sec_cap_blkaddr - seg_start' ba=
+sed on its
+> locatation in which zone of device during build_sit_entries().
 
-This is one assumption that KCSAN is definitely aware of and is
-included in its default config. I'd still prefer a WRITE_ONCE(), as
-I'm a little more paranoid of things breaking on some arch with some
-compiler, and as it documents the fact there is concurrency. In the
-end nobody is forcing anything yet.
+I see that it is per segment entry, sorry about that.
 
-> > Data races in particular are tricky because there are a lot of ways for=
- things
-> > to go wrong that people fail to think of; for some examples see:
-> > https://www.usenix.org/legacy/event/hotpar11/tech/final_files/Boehm.pdf
-> > https://software.intel.com/content/www/us/en/develop/blogs/benign-data-=
-races-what-could-possibly-go-wrong.html
-
-I'll add to this, our recent kernel-specific summary,
-  https://lwn.net/Articles/816850/#Why%20should%20we%20care%20about%20data%=
-20races?
-and
-  https://lwn.net/Articles/793253/
-
-In short, the kernel makes its own rules and are meant to be captured
-in the LKMM.
-
-Data races in the kernel are tolerable in certain codes, but due to
-the subtleness in which things can break, we ought to try and document
-intentional data races with 'data_race(..)'. Because otherwise, there
-is no telling if it was intentional or not.
-
-> If we abandon that and go with always explicit accessors okay. But none
-> of those are things that surprise the kernel model except this one
->
-> "So if a program stores to a variable X, the compiler can legally reuse
-> X=E2=80=99s storage for any temporal data inside of some region of code b=
-efore
-> the store (e.g. to reduce stack frame size)."
->
-> Which is wrong and we'd never tolerate it in the kernel. We don't just
-> race with other threads but also our interrupts. preempt_enable()
-> called somewhere can't allow the compiler to enable preemption by
-> spilling zero to preempt_count in code before the call, for example.
->
-> So that would be disabled exactly the same as other insanity.
-
-Indeed, the LKMM tries to capture some of the kernel's rules, in
-effect we do roll our own standard. However, because of the disconnect
-between what the compiler is aware of and what we merely assume, we
-need to be extra careful. Some things can be enforced with more
-compiler flags (but not everything).
-
-> The only argument really is for race checkers.
-
-The race checker, in this case KCSAN, does follow as closely as
-possible to the kernel's written rules (i.e. LKMM), but also some
-unwritten rules ("assume aligned writes up to word size are atomic")
-by default. What other unwritten rules are we missing?
-
-> >> > We can only
-> >> > attempt to conclude that it's fine "in practice" and is too difficul=
-t to fix,
-> >> > and therefore doesn't meet the bar to be fixed (for now).
-> >> >
-> >> > Of course, in most cases the preferred solution for data races is to=
- introduce
-> >> > proper synchronization.  As I said, I'm not sure that's feasible her=
-e.  Memory
-> >> > barriers aren't the issue here; we'd need *locking*, which would mea=
-n concurrent
-> >> > readers would start contending for the lock.  Other suggestions appr=
-eciated...
-> >>
-> >>
-> >>              ra->prev_pos =3D prev_index;
-> >>              ra->prev_pos <<=3D PAGE_SHIFT;
-> >>  2246)               ra->prev_pos |=3D prev_offset;
-> >>
-> >>
-> >> In this case we can do better I guess, in case some compiler decides t=
-o
-> >> store a half-done calculation there because it ran out of registers.
-> >>
-> >> WRITE_ONCE(ra->prev_pos, ((loff_t)prev_index << PAGE_SHIFT) | prev_off=
-set);
-> >>
-> >> As Dave said, adding WRITE_ONCE to the individual accesses would be
-> >> stupid because it does nothing to solve the actual race and makes it
-> >> harder to read in more than one way.
+>=20
+> > from different devices are not same. In such a scenario, we would need
+> > to maintain an array, which stores the usable blocks of each zone based=
+ on its
+> zone-capacity.
+> > This approach can eliminate the calculation.
 > >
-> > Yes, obviously if we were to add READ/WRITE_ONCE we'd want to avoid sto=
-ring
-> > intermediate results like that, in order to avoid some obvious race con=
-ditions.
->
-> Well the suggestion was to just simply add READ/WRITE once to all
-> accesses, not to fix them up. That would actually add more race
-> conditions.
->
-> > However, the overall use of file_ra_state is still racy.  And it's pass=
-ed to the
-> > functions in mm/readahead.c like page_cache_async_readahead() too, so a=
-ll the
-> > accesses to it in those functions are data races too.
+> > So we actually implemented this approach with a buffer and at mount
+> > time this buffer would be allocated and populated with all the zone's
+> > usable_blocks information and would be read from this buffer
+> > subsequently. But we did not see any performance difference when
+> > compared to current approach and concluded that the overhead of
+> > calculation was negligible and also current approach does not need to m=
+odify core
+> data structure, as this field will be used only when using a ZNS drive an=
+d if that drive
+> has zone capacity less than zone size.
+> > And for all other cases, the function f2fs_usable_blks_in_seg() just
+> > returns sbi->blocks_per_seg without any calculation.
 > >
-> > I'm not really suggesting any specific solution; locking isn't really f=
-easible
-> > here, and there would be an annoyingly large number of places that woul=
-d need
-> > READ/WRITE_ONCE.
->
-> If you put behind some accessor functions it might become easier,
-> but...
->
-> > I just wish we had a better plan than "let's write some code with
-> > undefined behavior and hope it's okay".
->
-> It really isn't so undefined as you think. Again, we enforce against
-> insane compilers de facto if not written anywhere with our interrupt
-> races. So we really can guarantee it'll be okay.
+> > If you think, like the calculation overhead is more, then we need to
+> > add a pointer and allocate memory to it to accommodate all zone's
+> > zone-capacity info. In my opinion, the gain is very less because of the=
+ reasons
+> stated above. However, I am open to change it based on your feedback.
+>=20
+> I just thought those fixed size could be recorded in advance to avoid red=
+undant
+> calculation, but the change I suggested is not critical, and I do agree t=
+hat it will not
+> help performance a bit.
+>=20
+> Anyway, I'm not against with keeping it as it is, let's go ahead. :)
 
-Agreed that we make our own rules, for better or worse. But I think
-even within these rules and assumptions, the case around the
-'prev_pos' accesses just isn't safe. In particular, these plain
-compound ops / read-modify-writes just aren't guaranteed to be atomic,
-even with tons of compiler flags.
+Ok, thanks :)
+
+>=20
+> >
+> >>
+> >> struct seg_entry {
+> >> 	unsigned long long type:6;		/* segment type like
+
+[snip...]
+
+> >>> @@ -546,8 +548,8 @@ static inline bool
+> >>> has_curseg_enough_space(struct
+> >> f2fs_sb_info *sbi)
+> >>>  	/* check current node segment */
+> >>>  	for (i =3D CURSEG_HOT_NODE; i <=3D CURSEG_COLD_NODE; i++) {
+> >>>  		segno =3D CURSEG_I(sbi, i)->segno;
+> >>> -		left_blocks =3D sbi->blocks_per_seg -
+> >>> -			get_seg_entry(sbi, segno)->ckpt_valid_blocks;
+> >>> +		left_blocks =3D f2fs_usable_blks_in_seg(sbi, segno) -
+> >>> +				get_seg_entry(sbi, segno)->ckpt_valid_blocks;
+> >>>
+> >>>  		if (node_blocks > left_blocks)
+> >>>  			return false;
+> >>> @@ -555,7 +557,7 @@ static inline bool
+> >>> has_curseg_enough_space(struct f2fs_sb_info *sbi)
+> >>>
+> >>>  	/* check current data segment */
+> >>>  	segno =3D CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
+> >>> -	left_blocks =3D sbi->blocks_per_seg -
+> >>> +	left_blocks =3D f2fs_usable_blks_in_seg(sbi, segno) -
+> >>>  			get_seg_entry(sbi, segno)->ckpt_valid_blocks;
+> >>>  	if (dent_blocks > left_blocks)
+> >>>  		return false;
+> >>> @@ -677,21 +679,22 @@ static inline int check_block_count(struct
+> >>> f2fs_sb_info
+> >> *sbi,
+> >>>  	bool is_valid  =3D test_bit_le(0, raw_sit->valid_map) ? true : fals=
+e;
+> >>>  	int valid_blocks =3D 0;
+> >>>  	int cur_pos =3D 0, next_pos;
+> >>> +	unsigned int usable_blks_per_seg =3D f2fs_usable_blks_in_seg(sbi,
+> >>> +segno);
+> >>>
+> >>>  	/* check bitmap with valid block count */
+> >>>  	do {
+> >>>  		if (is_valid) {
+> >>>  			next_pos =3D find_next_zero_bit_le(&raw_sit->valid_map,
+> >>> -					sbi->blocks_per_seg,
+> >>> +					usable_blks_per_seg,
+> >>>  					cur_pos);
+> >>>  			valid_blocks +=3D next_pos - cur_pos;
+> >>>  		} else
+> >>>  			next_pos =3D find_next_bit_le(&raw_sit->valid_map,
+> >>> -					sbi->blocks_per_seg,
+> >>> +					usable_blks_per_seg,
+> >>>  					cur_pos);
+> >>>  		cur_pos =3D next_pos;
+> >>>  		is_valid =3D !is_valid;
+> >>> -	} while (cur_pos < sbi->blocks_per_seg);
+> >>> +	} while (cur_pos < usable_blks_per_seg);
+> >>
+> >> I meant we need to check that there should be no valid slot locates
+> >> beyond zone- capacity in bitmap:
+> > Ahh, ok. Got it. Will change.
+
+I have retained the other checks also and added the condition to
+check for set bits after the zone capacity, as you suggested.
+Let me know if you feel the other checks are not necessary.
+
+ [snip...]
+
+> >>> @@ -3078,12 +3093,26 @@ static int init_blkz_info(struct
+> >>> f2fs_sb_info *sbi, int
+> >> devi)
+> >>>  	if (!FDEV(devi).blkz_seq)
+> >>>  		return -ENOMEM;
+> >>>
+> >>> -	/* Get block zones type */
+> >>> +	/* Get block zones type and zone-capacity */
+> >>> +	FDEV(devi).zone_capacity_blocks =3D f2fs_kzalloc(sbi,
+> >>> +					FDEV(devi).nr_blkz * sizeof(block_t),
+> >>> +					GFP_KERNEL);
+> >>> +	if (!FDEV(devi).zone_capacity_blocks)
+> >>> +		return -ENOMEM;
+> >>> +
+> >>> +	rep_zone_arg.dev =3D &FDEV(devi);
+> >>> +	rep_zone_arg.zone_cap_mismatch =3D false;
+> >>> +
+> >>>  	ret =3D blkdev_report_zones(bdev, 0, BLK_ALL_ZONES, f2fs_report_zon=
+e_cb,
+> >>> -				  &FDEV(devi));
+> >>> +				  &rep_zone_arg);
+> >>>  	if (ret < 0)
+> >>
+> >> kfree(FDEV(devi).zone_capacity_blocks);
+> > Actually, we do not need to free this here, because if error (ret < 0)
+> > is returned, then the control goes back to
+> > destroy_device_list() and deallocates the buffer.
+>=20
+> Confirmed.
+>=20
+> Thanks,
+>=20
+Thanks again for the review feedback.
+Have sent v3 with all the recommended changes.
 
 Thanks,
--- Marco
+Aravind
+
+> >
+> >>
+> >> Thanks,
+> >>
+> >>>  		return ret;
+> >>>
+> >>> +	if (!rep_zone_arg.zone_cap_mismatch) {
+> >>> +		kfree(FDEV(devi).zone_capacity_blocks);
+> >>> +		FDEV(devi).zone_capacity_blocks =3D NULL;
+> >>> +	}
+> >>> +
+> >>>  	return 0;
+> >>>  }
+> >>>  #endif
+> >>>
+> > .
+> >
