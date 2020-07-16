@@ -2,141 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3114122269D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 17:12:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E5642226B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 17:18:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbgGPPMi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 11:12:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54410 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728150AbgGPPMi (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 11:12:38 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A00C061755
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 08:12:38 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id 72so4009726ple.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 08:12:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=N9cLlw64hWKscX8FZb2xpNSIxOyx8OVcITnqRM7FpVI=;
-        b=mv9JS06gZ97E3G32ZQWL6GS0ElnkOcD6uZoaEwIKSYlYwnw+I789fgsnu9RIyKRAU+
-         UtjwIxEz8y/Rd1KzJvRZW5NPhGYYsAgc+9JcovTIRuRW4JSCU7Yy4LtIaNRwRtKYVMAa
-         O0HqOafeihrdM6BtpKQ9bf/CSzxCZGvW/VyGU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=N9cLlw64hWKscX8FZb2xpNSIxOyx8OVcITnqRM7FpVI=;
-        b=RWg9eNqxFKjxlgFS/actk/2ujpeD3sFRKG2Ttvl85PmuRTd5zHQs7x7my54PqGnrdc
-         /RKrNfObWxpPgJyBdg4veMHelNUAGH6qN+DdnT9AuhHm1kckiUS+7atpDHScD84mCbWg
-         gFnhQc46NhsPLndqhifLtVj2I9x0SQuWrIkmjFoj/lwOeWLs8siNP03dF1Y/Qno67lUp
-         mHujjFWy9xMW6emBzkv5747f34sqzb1AZHhuOtyqITU5keVQ68QEn4G25y+yOQpR4vf+
-         MzrLsSYUn90KK+guWZ+Lcd4oKnQekBswW4gO2BdgbpaiZLsqzVFbIQA50j5MrevwplHC
-         z79Q==
-X-Gm-Message-State: AOAM530nc85b9vj7aB/gnfsx3P8FLCjVxvDjTyxtZcf7znhTZJPwLKGD
-        1rV+WZJut0rb09v3HIFKqpU4/Q==
-X-Google-Smtp-Source: ABdhPJxZQy+rxF9/jXytbGfyHMD/u/Eum1INRvVxrE25iFO25PsexI0VEAJV5sGRq2U2nAyAa4wWdA==
-X-Received: by 2002:a17:90a:cc:: with SMTP id v12mr4994854pjd.96.1594912357822;
-        Thu, 16 Jul 2020 08:12:37 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id z6sm5060155pfn.173.2020.07.16.08.12.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 08:12:36 -0700 (PDT)
-Date:   Thu, 16 Jul 2020 08:12:35 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jann Horn <jannh@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: Re: strace of io_uring events?
-Message-ID: <202007160751.ED56C55@keescook>
-References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
- <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
- <20200715171130.GG12769@casper.infradead.org>
- <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com>
- <CAJfpegt9=p4uo5U2GXqc-rwqOESzZCWAkGMRTY1r8H6fuXx96g@mail.gmail.com>
- <48cc7eea-5b28-a584-a66c-4eed3fac5e76@gmail.com>
- <202007151511.2AA7718@keescook>
- <20200716131404.bnzsaarooumrp3kx@steredhat>
+        id S1728515AbgGPPRh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 11:17:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37414 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728385AbgGPPRh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jul 2020 11:17:37 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 7B952AD5C;
+        Thu, 16 Jul 2020 15:17:40 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 675881E0E81; Thu, 16 Jul 2020 17:17:36 +0200 (CEST)
+Date:   Thu, 16 Jul 2020 17:17:36 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v5 12/22] inotify: report both events on parent and child
+ with single callback
+Message-ID: <20200716151736.GG5022@quack2.suse.cz>
+References: <20200716084230.30611-1-amir73il@gmail.com>
+ <20200716084230.30611-13-amir73il@gmail.com>
+ <20200716125211.GB5022@quack2.suse.cz>
+ <CAOQ4uxjFcGGw8Dr+57cwBgpdThpoZrMP-AQvPO9Gn8Lv-V8vvA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200716131404.bnzsaarooumrp3kx@steredhat>
+In-Reply-To: <CAOQ4uxjFcGGw8Dr+57cwBgpdThpoZrMP-AQvPO9Gn8Lv-V8vvA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 03:14:04PM +0200, Stefano Garzarella wrote:
-> On Wed, Jul 15, 2020 at 04:07:00PM -0700, Kees Cook wrote:
-> [...]
+On Thu 16-07-20 17:25:27, Amir Goldstein wrote:
+> On Thu, Jul 16, 2020 at 3:52 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Thu 16-07-20 11:42:20, Amir Goldstein wrote:
+> > > fsnotify usually calls inotify_handle_event() once for watching parent
+> > > to report event with child's name and once for watching child to report
+> > > event without child's name.
+> > >
+> > > Do the same thing with a single callback instead of two callbacks when
+> > > marks iterator contains both inode and child entries.
+> > >
+> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> >
+> > Another idea for possible future cleanup here: Everybody except for
+> > fanotify cares only about inode marks and reporting both parent and child
+> > only complicates things for them (and I can imagine bugs being created by
+> > in-kernel fsnotify users because they misunderstand inode-vs-child mark
+> > types etc.). So maybe we can create another fsnotify_group operation
+> > similar to ->handle_event but with simpler signature for these simple
+> > notification handlers and send_to_group() will take care of translating
+> > the complex fsnotify() call into a sequence of these simple callbacks.
+> >
 > 
-> > Speaking to Stefano's proposal[1]:
-> > 
-> > - There appear to be three classes of desired restrictions:
-> >   - opcodes for io_uring_register() (which can be enforced entirely with
-> >     seccomp right now).
-> >   - opcodes from SQEs (this _could_ be intercepted by seccomp, but is
-> >     not currently written)
-> >   - opcodes of the types of restrictions to restrict... for making sure
-> >     things can't be changed after being set? seccomp already enforces
-> >     that kind of "can only be made stricter"
-> 
-> In addition we want to limit the SQEs to use only the registered fd and buffers.
+> Yeh we could do that.
+> But then it's not every day that a new in-kernel fsnotify_group is added...
 
-Hmm, good point. Yeah, since it's an "extra" mapping (ioring file number
-vs fd number) this doesn't really map well to seccomp. (And frankly,
-there's some difficulty here mapping many of the ioring-syscalls to
-seccomp because it's happening "deeper" than the syscall layer (i.e.
-some of the arguments have already been resolved into kernel object
-pointers, etc).
+Definitely. But then we often do not notice when it is added (to review the
+usage) or when e.g. audit decides to tweak its event mask and things
+suddently subtly break for it...
 
-> Do you think it's better to have everything in seccomp instead of adding
-> the restrictions in io_uring (the patch isn't very big)?
-
-I'm still trying to understand how io_uring will be used, and it seems
-odd to me that it's effectively a seccomp bypass. (Though from what I
-can tell it is not an LSM bypass, which is good -- though I'm worried
-there might be some embedded assumptions in LSMs about creds vs current
-and LSMs may try to reason (or report) on actions with the kthread in
-mind, but afaict everything important is checked against creds.
-
-> With seccomp, would it be possible to have different restrictions for two
-> instances of io_uring in the same process?
-
-For me, this is the most compelling reason to have the restrictions NOT
-implemented via seccomp. Trying to make "which instance" choice in
-seccomp would be extremely clumsy.
-
-So at this point, I think it makes sense for the restriction series to
-carry on -- it is io_uring-specific and solves some problems that
-seccomp is not in good position to reason about.
-
-All this said, I'd still like a way to apply seccomp to io_uring
-because it's a rather giant syscall filter bypass mechanism, and gaining
-access (IIUC) is possible without actually calling any of the io_uring
-syscalls. Is that correct? A process would receive an fd (via SCM_RIGHTS,
-pidfd_getfd, or soon seccomp addfd), and then call mmap() on it to gain
-access to the SQ and CQ, and off it goes? (The only glitch I see is
-waking up the worker thread?)
-
-What appears to be the worst bit about adding seccomp to io_uring is the
-almost complete disassociation of process hierarchy from syscall action.
-Only a cred is used for io_uring, and seccomp filters are associated with
-task structs. I'm not sure if there is a way to solve this disconnect
-without a major internal refactoring of seccomp to attach to creds and
-then make every filter attachment create a new cred... *head explody*
-
+								Honza
 -- 
-Kees Cook
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
