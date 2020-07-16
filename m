@@ -2,147 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59C6322211E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 13:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C5242222B8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 14:44:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbgGPLHc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 07:07:32 -0400
-Received: from foss.arm.com ([217.140.110.172]:58250 "EHLO foss.arm.com"
+        id S1728110AbgGPMoO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 08:44:14 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39214 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726383AbgGPLHc (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 07:07:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6390A1063;
-        Thu, 16 Jul 2020 04:07:31 -0700 (PDT)
-Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D620B3F68F;
-        Thu, 16 Jul 2020 04:07:28 -0700 (PDT)
-From:   Qais Yousef <qais.yousef@arm.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        Qais Yousef <qais.yousef@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Quentin Perret <qperret@google.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@matbug.net>,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v7 2/3] Documentation/sysctl: Document uclamp sysctl knobs
-Date:   Thu, 16 Jul 2020 12:03:46 +0100
-Message-Id: <20200716110347.19553-3-qais.yousef@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200716110347.19553-1-qais.yousef@arm.com>
-References: <20200716110347.19553-1-qais.yousef@arm.com>
+        id S1726537AbgGPMoN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jul 2020 08:44:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 8AD96ADC4;
+        Thu, 16 Jul 2020 12:44:16 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 6B2D71E12C9; Thu, 16 Jul 2020 14:44:12 +0200 (CEST)
+Date:   Thu, 16 Jul 2020 14:44:12 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 10/22] fanotify: no external fh buffer in
+ fanotify_name_event
+Message-ID: <20200716124412.GA5022@quack2.suse.cz>
+References: <20200716084230.30611-1-amir73il@gmail.com>
+ <20200716084230.30611-11-amir73il@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200716084230.30611-11-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Uclamp exposes 3 sysctl knobs:
+On Thu 16-07-20 11:42:18, Amir Goldstein wrote:
+> The fanotify_fh struct has an inline buffer of size 12 which is enough
+> to store the most common local filesystem file handles (e.g. ext4, xfs).
+> For file handles that do not fit in the inline buffer (e.g. btrfs), an
+> external buffer is allocated to store the file handle.
+> 
+> When allocating a variable size fanotify_name_event, there is no point
+> in allocating also an external fh buffer when file handle does not fit
+> in the inline buffer.
+> 
+> Check required size for encoding fh, preallocate an event buffer
+> sufficient to contain both file handle and name and store the name after
+> the file handle.
+> 
+> At this time, when not reporting name in event, we still allocate
+> the fixed size fanotify_fid_event and an external buffer for large
+> file handles, but fanotify_alloc_name_event() has already been prepared
+> to accept a NULL file_name.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-	* sched_util_clamp_min
-	* sched_util_clamp_max
-	* sched_util_clamp_min_rt_default
+When reading this, I've got one cleanup idea for later: For FID events, we
+could now easily check fh len in fanotify_alloc_fid_event(). If it fits in
+inline size, allocate the event from kmem cache, if it does not, allocate
+appropriately sized event from kmalloc(). Similarly when freeing event we
+could check fh len to determine how to free the event. This way we can
+completely get rid of the external buffer code, somewhat simplify all
+the fh handling, remove the alignment restrictions on fanotify_fh and
+fanotify_info...
 
-Document them in sysctl/kernel.rst.
-
-Signed-off-by: Qais Yousef <qais.yousef@arm.com>
-CC: Jonathan Corbet <corbet@lwn.net>
-CC: Juri Lelli <juri.lelli@redhat.com>
-CC: Vincent Guittot <vincent.guittot@linaro.org>
-CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: Ben Segall <bsegall@google.com>
-CC: Mel Gorman <mgorman@suse.de>
-CC: Luis Chamberlain <mcgrof@kernel.org>
-CC: Kees Cook <keescook@chromium.org>
-CC: Iurii Zaikin <yzaikin@google.com>
-CC: Quentin Perret <qperret@google.com>
-CC: Valentin Schneider <valentin.schneider@arm.com>
-CC: Patrick Bellasi <patrick.bellasi@matbug.net>
-CC: Pavan Kondeti <pkondeti@codeaurora.org>
-CC: linux-doc@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-CC: linux-fsdevel@vger.kernel.org
----
- Documentation/admin-guide/sysctl/kernel.rst | 54 +++++++++++++++++++++
- 1 file changed, 54 insertions(+)
-
-diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-index 83acf5025488..55bf6b4de4ec 100644
---- a/Documentation/admin-guide/sysctl/kernel.rst
-+++ b/Documentation/admin-guide/sysctl/kernel.rst
-@@ -1062,6 +1062,60 @@ Enables/disables scheduler statistics. Enabling this feature
- incurs a small amount of overhead in the scheduler but is
- useful for debugging and performance tuning.
- 
-+sched_util_clamp_min:
-+=====================
-+
-+Max allowed *minimum* utilization.
-+
-+Default value is 1024, which is the maximum possible value.
-+
-+It means that any requested uclamp.min value cannot be greater than
-+sched_util_clamp_min, i.e., it is restricted to the range
-+[0:sched_util_clamp_min].
-+
-+sched_util_clamp_max:
-+=====================
-+
-+Max allowed *maximum* utilization.
-+
-+Default value is 1024, which is the maximum possible value.
-+
-+It means that any requested uclamp.max value cannot be greater than
-+sched_util_clamp_max, i.e., it is restricted to the range
-+[0:sched_util_clamp_max].
-+
-+sched_util_clamp_min_rt_default:
-+================================
-+
-+By default Linux is tuned for performance. Which means that RT tasks always run
-+at the highest frequency and most capable (highest capacity) CPU (in
-+heterogeneous systems).
-+
-+Uclamp achieves this by setting the requested uclamp.min of all RT tasks to
-+1024 by default, which effectively boosts the tasks to run at the highest
-+frequency and biases them to run on the biggest CPU.
-+
-+This knob allows admins to change the default behavior when uclamp is being
-+used. In battery powered devices particularly, running at the maximum
-+capacity and frequency will increase energy consumption and shorten the battery
-+life.
-+
-+This knob is only effective for RT tasks which the user hasn't modified their
-+requested uclamp.min value via sched_setattr() syscall.
-+
-+This knob will not escape the range constraint imposed by sched_util_clamp_min
-+defined above.
-+
-+For example if
-+
-+	sched_util_clamp_min_rt_default = 800
-+	sched_util_clamp_min = 600
-+
-+Then the boost will be clamped to 600 because 800 is outside of the permissible
-+range of [0:600]. This could happen for instance if a powersave mode will
-+restrict all boosts temporarily by modifying sched_util_clamp_min. As soon as
-+this restriction is lifted, the requested sched_util_clamp_min_rt_default
-+will take effect.
- 
- seccomp
- =======
+								Honza
 -- 
-2.17.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
