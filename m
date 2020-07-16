@@ -2,143 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C843E222D89
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 23:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 744B9222DAA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 23:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbgGPVQN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 17:16:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54154 "EHLO
+        id S1726205AbgGPVU5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 17:20:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbgGPVQM (ORCPT
+        with ESMTP id S1726104AbgGPVU4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 17:16:12 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCBA7C08C5DB
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 14:16:11 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id a23so2676578pfk.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 14:16:11 -0700 (PDT)
+        Thu, 16 Jul 2020 17:20:56 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF92C061755
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 14:20:56 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id l17so7632363iok.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 14:20:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=lmZBQbjqMeBLnSI9FVD3UqngzNA1tgpRunHRVfsAN4E=;
-        b=jrlSSu3doUVtC/cF6fPEixkmZ7d3kTAXWl4iNsSM4I6YoEFL+12kpcB6R9QQdqWsrL
-         tXF4IFkuk15RdtqH+h3KXuu4gjR6RZUWVUL2RXcBy7kHTyR41Iagp8SO/Nhhy6hRv9LC
-         SJF0MSnv27iK1CLHjM8qOEZHVhyaIK8raTTYM=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LEv+cQHA0XVbPMchrlnqMxvR2K1AYW3g6zK4UFsmFr4=;
+        b=n8TtjlSgQK6zU0sdra5ATCoBC6aOE8/1mnUXbCo8BmXqg8Y12GIOpFWzYBy40wj23U
+         JmoMk0rduLiaC+UVOW7D/nGGfwTrey+2CrevmYppsxQULo8eDxbunzsZNk0LLJ6HtOGq
+         ZsscAzjF0679jB4Qb+S39HskAxrgsRKj9NoYzU+iFB/OVxvFtbwgib1KEwtVPGcaB6SG
+         qp3z1ZJ7zcxrN121ZMsjZNknSEJCYp95O85MD4wG3pGulD20kBSlPl0xXhVLAQJgbXC6
+         goO5rKY/VaWec0XlG3xAf+9pbAmCycTC5aJ9vYExN1xKg352hKcLAEpkifJF+Fryj3mZ
+         coZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=lmZBQbjqMeBLnSI9FVD3UqngzNA1tgpRunHRVfsAN4E=;
-        b=iFB44AODD40BeS1Si5VWIvF1SpSNv4CzQqliyEb+al4I0c5xJ4+FXxGjcIdqLmS5WB
-         Ppptlvivtlro22jaVN0FrkEX2TUcwmwBYS0LSq6o0TeVjGRwnGNiM2xF7pq9g0lFfAAC
-         HfhCb7AXl+q/QWN8QGyNMTVB/tUdxgPopZfsjIY9Kq89wvS612POGb+kCuy9C5Lgr+HF
-         ieWH8Ika32TiqzijD+1kdvSu+Lc20+FPCpCW6LTUP+7gAetnFRLLuL29floNh9IBqraP
-         tAZQPKEckx9Xx5uCQigI8Bsc2LQQCBLmdczjCS5RIX5rSzrE0MJ+svnbLZ3DCDungHbl
-         ujdw==
-X-Gm-Message-State: AOAM533JhlT3iRBWLQjB6kPaMch3kWUg+YOVp6WGtmY85SlKh15u/yme
-        TBdhRQhodFldHJL7I99aaMFMWg==
-X-Google-Smtp-Source: ABdhPJxx6Jf69e3T4HfcHOftkZ9Viu9RPr7fEyeFqrBzPYqKcb2Yk/GKdggH4BwCHYsK3kDOz6WVQw==
-X-Received: by 2002:a63:c947:: with SMTP id y7mr5734755pgg.357.1594934171026;
-        Thu, 16 Jul 2020 14:16:11 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a30sm5752036pfr.87.2020.07.16.14.16.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 14:16:09 -0700 (PDT)
-Date:   Thu, 16 Jul 2020 14:16:09 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        James Morris <jmorris@namei.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jessica Yu <jeyu@kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Boyd <stephen.boyd@linaro.org>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 2/4] fs: Remove FIRMWARE_PREALLOC_BUFFER from
- kernel_read_file() enums
-Message-ID: <202007161415.10D015477@keescook>
-References: <20200707081926.3688096-1-keescook@chromium.org>
- <20200707081926.3688096-3-keescook@chromium.org>
- <3fdb3c53-7471-14d8-ce6a-251d8b660b8a@broadcom.com>
- <20200710220411.GR12769@casper.infradead.org>
- <128120ca-7465-e041-7481-4c5d53f639dd@broadcom.com>
- <202007101543.912633AA73@keescook>
- <9ba08503-e515-6761-63de-a3b611720b1b@broadcom.com>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LEv+cQHA0XVbPMchrlnqMxvR2K1AYW3g6zK4UFsmFr4=;
+        b=f/4RJHzj7kG0TOFwzYvCHNbd7Xxlo3guIuiPekGTl8m9w7WQAOGQkLEOqOGlgj9SJ8
+         3m/AZwNOpJvvYQvzTlXXsNE5tB+kayXmruKCHO8gldz6VifguoeDGTt3M2pGU34+DxIO
+         ZZ8A4w339mLx3iCjI1Glnn1vZrvpDvc7X8HJddq6PUDAC5iPbhGNpvgYLElPkPPuVauq
+         yuIDYW3BAh3e3rXVfDocVFT9Lym/7lvKLiGhaDJD7o+JdNbBL4DH2+JoQVqzWGQr0Xxw
+         VA0xnnFHTq9Re1ZyU8pque9p0qd3dipubJCrLWgJLl030dqpvh5/cOMS4aGkhQmw9Uc8
+         UENA==
+X-Gm-Message-State: AOAM5311hTF21REXxHl2lctKcEBcuuHwme85Zer+e+QdflMX+OC06dK/
+        nFtwemmS18YlCkxEA7cx7R/KSg==
+X-Google-Smtp-Source: ABdhPJxkpXHzsahyntnkdfZ9wBuSP7clR/vwRWqejN6tIPNw6BoYR132PIZwKZWkDVV6KrHlU2MY5A==
+X-Received: by 2002:a92:4913:: with SMTP id w19mr6104024ila.185.1594934455696;
+        Thu, 16 Jul 2020 14:20:55 -0700 (PDT)
+Received: from [192.168.1.58] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id v15sm2238190ili.28.2020.07.16.14.20.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jul 2020 14:20:54 -0700 (PDT)
+Subject: Re: [PATCH RFC v2 1/3] io_uring: use an enumeration for
+ io_uring_register(2) opcodes
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Stefano Garzarella <sgarzare@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Kees Cook <keescook@chromium.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Jann Horn <jannh@google.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
+        linux-kernel@vger.kernel.org
+References: <20200716124833.93667-1-sgarzare@redhat.com>
+ <20200716124833.93667-2-sgarzare@redhat.com>
+ <ca242a15-576d-4099-a5f8-85c08985e3ff@gmail.com>
+ <a2f109b2-adbf-147d-9423-7a1a4bf99967@kernel.dk>
+ <20326d79-fb5a-2480-e52a-e154e056171f@gmail.com>
+ <76879432-745d-a5ca-b171-b1391b926ea2@kernel.dk>
+Message-ID: <0357e544-d534-06d2-dc61-1169fc172d20@kernel.dk>
+Date:   Thu, 16 Jul 2020 15:20:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9ba08503-e515-6761-63de-a3b611720b1b@broadcom.com>
+In-Reply-To: <76879432-745d-a5ca-b171-b1391b926ea2@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 01:35:17PM -0700, Scott Branden wrote:
-> On 2020-07-10 3:44 p.m., Kees Cook wrote:
-> > On Fri, Jul 10, 2020 at 03:10:25PM -0700, Scott Branden wrote:
-> > > 
-> > > On 2020-07-10 3:04 p.m., Matthew Wilcox wrote:
-> > > > On Fri, Jul 10, 2020 at 02:00:32PM -0700, Scott Branden wrote:
-> > > > > > @@ -950,8 +951,8 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
-> > > > > >     		goto out;
-> > > > > >     	}
-> > > > > > -	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
-> > > > > > -		*buf = vmalloc(i_size);
-> > > > > > +	if (!*buf)
-> > > > > The assumption that *buf is always NULL when id !=
-> > > > > READING_FIRMWARE_PREALLOC_BUFFER doesn't appear to be correct.
-> > > > > I get unhandled page faults due to this change on boot.
-> > > > Did it give you a stack backtrace?
-> > > Yes, but there's no requirement that *buf need to be NULL when calling this
-> > > function.
-> > > To fix my particular crash I added the following locally:
-> > > 
-> > > --- a/kernel/module.c
-> > > +++ b/kernel/module.c
-> > > @@ -3989,7 +3989,7 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char
-> > > __user *, uargs, int, flags)
-> > >   {
-> > >       struct load_info info = { };
-> > >       loff_t size;
-> > > -    void *hdr;
-> > > +    void *hdr = NULL;
-> > >       int err;
-> > > 
-> > >       err = may_init_module();
-> > Thanks for the diagnosis and fix! I haven't had time to cycle back
-> > around to this series yet. Hopefully soon. :)
-> > 
-> In order to assist in your patchset I have combined it with my patch series
-> here:
-> https://github.com/sbranden/linux/tree/kernel_read_file_for_kees
-> 
-> Please let me know if this matches your expectations for my patches or if
-> there is something else I need to change.
+On 7/16/20 2:51 PM, Jens Axboe wrote:
+> On 7/16/20 2:47 PM, Pavel Begunkov wrote:
+>> On 16/07/2020 23:42, Jens Axboe wrote:
+>>> On 7/16/20 2:16 PM, Pavel Begunkov wrote:
+>>>> On 16/07/2020 15:48, Stefano Garzarella wrote:
+>>>>> The enumeration allows us to keep track of the last
+>>>>> io_uring_register(2) opcode available.
+>>>>>
+>>>>> Behaviour and opcodes names don't change.
+>>>>>
+>>>>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+>>>>> ---
+>>>>>  include/uapi/linux/io_uring.h | 27 ++++++++++++++++-----------
+>>>>>  1 file changed, 16 insertions(+), 11 deletions(-)
+>>>>>
+>>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>>>>> index 7843742b8b74..efc50bd0af34 100644
+>>>>> --- a/include/uapi/linux/io_uring.h
+>>>>> +++ b/include/uapi/linux/io_uring.h
+>>>>> @@ -253,17 +253,22 @@ struct io_uring_params {
+>>>>>  /*
+>>>>>   * io_uring_register(2) opcodes and arguments
+>>>>>   */
+>>>>> -#define IORING_REGISTER_BUFFERS		0
+>>>>> -#define IORING_UNREGISTER_BUFFERS	1
+>>>>> -#define IORING_REGISTER_FILES		2
+>>>>> -#define IORING_UNREGISTER_FILES		3
+>>>>> -#define IORING_REGISTER_EVENTFD		4
+>>>>> -#define IORING_UNREGISTER_EVENTFD	5
+>>>>> -#define IORING_REGISTER_FILES_UPDATE	6
+>>>>> -#define IORING_REGISTER_EVENTFD_ASYNC	7
+>>>>> -#define IORING_REGISTER_PROBE		8
+>>>>> -#define IORING_REGISTER_PERSONALITY	9
+>>>>> -#define IORING_UNREGISTER_PERSONALITY	10
+>>>>> +enum {
+>>>>> +	IORING_REGISTER_BUFFERS,
+>>>>> +	IORING_UNREGISTER_BUFFERS,
+>>>>> +	IORING_REGISTER_FILES,
+>>>>> +	IORING_UNREGISTER_FILES,
+>>>>> +	IORING_REGISTER_EVENTFD,
+>>>>> +	IORING_UNREGISTER_EVENTFD,
+>>>>> +	IORING_REGISTER_FILES_UPDATE,
+>>>>> +	IORING_REGISTER_EVENTFD_ASYNC,
+>>>>> +	IORING_REGISTER_PROBE,
+>>>>> +	IORING_REGISTER_PERSONALITY,
+>>>>> +	IORING_UNREGISTER_PERSONALITY,
+>>>>> +
+>>>>> +	/* this goes last */
+>>>>> +	IORING_REGISTER_LAST
+>>>>> +};
+>>>>
+>>>> It breaks userspace API. E.g.
+>>>>
+>>>> #ifdef IORING_REGISTER_BUFFERS
+>>>
+>>> It can, yes, but we have done that in the past. In this one, for
+>>
+>> Ok, if nobody on the userspace side cares, then better to do that
+>> sooner than later.
 
-Thanks! I was working on the next revision of this last night, and I'm
-trying to get through today's email to finish it. I'll take a look!
+I actually don't think it's a huge issue. Normally if applications
+do this, it's because they are using it and need it. Ala:
+
+#ifndef IORING_REGISTER_SOMETHING
+#define IORING_REGISTER_SOMETHING	fooval
+#endif
+
+and that'll still work just fine, even if an identical enum is there.
 
 -- 
-Kees Cook
+Jens Axboe
+
