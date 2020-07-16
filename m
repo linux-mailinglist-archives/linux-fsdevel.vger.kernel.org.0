@@ -2,108 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4313A2227E8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 17:59:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 089F42227EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 17:59:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbgGPP5a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 11:57:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33122 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729274AbgGPP5a (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 11:57:30 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B403C061755
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 08:57:30 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id r12so5485766ilh.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 08:57:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0rhXE8to2+Mye2riYz2x1JxlLqxOWYOjgM0fM7NJ42c=;
-        b=t95d+34YlD1y8PW18chxzaqiviKIIHkkumf4UQzXn2i9tYrGpxSFE5+mxJVWyUHJ5n
-         tztvyOYN2XwKcC9Xuk1lSYsOo6SyZah3+Q0Qw3llH7nH+yd4c8LZHNlfZbACuqgLgPnC
-         EB+b8/bF8YE+O+7dmpPeGpV11+XPMVpWj8QpDy3AVZ2HWxXu9U8BWGGceojhhuGUcngx
-         vor2pbaHGAkxusXQlgOPVreUe4Me3w9aSVCyoWw8H9h7Y89VoykZfzZlaft0OerdTxt6
-         7rIv4PNnwvrIAP6kd9leT7rICzKfEwXv37bH3FOsrgjTFNWpvbogl/D/t6bEm6BJ/xAq
-         Kg4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0rhXE8to2+Mye2riYz2x1JxlLqxOWYOjgM0fM7NJ42c=;
-        b=YNq4ftpR3JN2WBuSbgybHxCemHo2K94pfHd5BW1SEBDTZSB16k5JWIRgK2nej6TXb2
-         qSNPHgv3hBVoisJq25DpvrkfZcQ3k+2rCIyTHkYZYQlJcgBNWO4DuIXkf84kO6uT0iIm
-         8hQWFAOykFPwznHdMPRNpL/lkoOhB64pK/88G51+MExyipM/1L1ai8uGAM1t6JJs1Etg
-         PCiMGhkLcySrqfKYl2+KAizOQFQyMeNsqlmO25643QGQaneG4k+CHCnx8TN754fdks2g
-         OFardm93NF4mgcToCAW8jI6gW/BauiuG0TPG/Qh5T/DCRI3UCflLftiT2DmtkYivwmgg
-         02ew==
-X-Gm-Message-State: AOAM530Y4o3d2iz55GclB3kneMkL5sl8y6xmlYnlF8ZkPQ6BMEcdTC6V
-        1QyKiQWFqSCfY6nsLpyeUw97m0WB5c2cM6+pjGal7A0Q
-X-Google-Smtp-Source: ABdhPJzgNwoFRlCEdTpfwFOP9TDPyEWToxEwuIEciZ4dRZt8F7lAjBmxvUF2uNnULywDRxE1I04f4nWEa3+DlQGvo9Q=
-X-Received: by 2002:a92:490d:: with SMTP id w13mr5246385ila.250.1594915049765;
- Thu, 16 Jul 2020 08:57:29 -0700 (PDT)
+        id S1729174AbgGPP7e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 11:59:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58130 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728845AbgGPP7e (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jul 2020 11:59:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 7F24AB7E1;
+        Thu, 16 Jul 2020 15:59:36 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 3EA131E0E81; Thu, 16 Jul 2020 17:59:32 +0200 (CEST)
+Date:   Thu, 16 Jul 2020 17:59:32 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 21/22] fanotify: report parent fid + name + child fid
+Message-ID: <20200716155932.GH5022@quack2.suse.cz>
+References: <20200716084230.30611-1-amir73il@gmail.com>
+ <20200716084230.30611-22-amir73il@gmail.com>
 MIME-Version: 1.0
-References: <20200716084230.30611-1-amir73il@gmail.com> <20200716084230.30611-18-amir73il@gmail.com>
- <20200716134556.GE5022@quack2.suse.cz> <CAOQ4uxiYAviCUAzp0oz8dEmDzJvCW1z_Cyh0FiCONH7kY72rFQ@mail.gmail.com>
- <CAOQ4uxjViX_UhSY7KZBf04yqJK8qORP8EisXBvUpnvfoRWmRLg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjViX_UhSY7KZBf04yqJK8qORP8EisXBvUpnvfoRWmRLg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 16 Jul 2020 18:57:18 +0300
-Message-ID: <CAOQ4uxjxHQc9BoWbb8waLKnYGnqPq4pdiYHamTZtJNCJmyZubg@mail.gmail.com>
-Subject: Re: [PATCH v5 17/22] fsnotify: send MOVE_SELF event with parent/name info
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200716084230.30611-22-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 5:10 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Thu, Jul 16, 2020 at 4:59 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Thu, Jul 16, 2020 at 4:45 PM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Thu 16-07-20 11:42:25, Amir Goldstein wrote:
-> > > > MOVE_SELF event does not get reported to a parent watching children
-> > > > when a child is moved, but it can be reported to sb/mount mark or to
-> > > > the moved inode itself with parent/name info if group is interested
-> > > > in parent/name info.
-> > > >
-> > > > Use the fsnotify_parent() helper to send a MOVE_SELF event and adjust
-> > > > fsnotify() to handle the case of an event "on child" that should not
-> > > > be sent to the watching parent's inode mark.
-> > > >
-> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > >
-> > > What I find strange about this is that the MOVE_SELF event will be reported
-> > > to the new parent under the new name (just due to the way how dentry
-> > > handling in vfs_rename() works). That seems rather arbitrary and I'm not
-> > > sure it would be useful? I guess anybody needing dir info with renames
-> > > will rather use FS_MOVED_FROM / FS_MOVED_TO where it is well defined?
-> > >
-> > > So can we leave FS_MOVE_SELF as one of those cases that doesn't report
-> > > parent + name info?
-> > >
-> >
-> > I can live with that.
-> > I didn't have a use case for it.
-> > This patch may be dropped from the series without affecting the rest.
-> >
->
-> BTW, I checked my man page and it doesn't say anything about whether
-> parent fid and child fid can be reported together with MOVE_SELF.
-> The language is generic enough on that part.
->
+On Thu 16-07-20 11:42:29, Amir Goldstein wrote:
+> For a group with fanotify_init() flag FAN_REPORT_DFID_NAME, the parent
+> fid and name are reported for events on non-directory objects with an
+> info record of type FAN_EVENT_INFO_TYPE_DFID_NAME.
+> 
+> If the group also has the init flag FAN_REPORT_FID, the child fid
+> is also reported with another info record that follows the first info
+> record. The second info record is the same info record that would have
+> been reported to a group with only FAN_REPORT_FID flag.
+> 
+> When the child fid needs to be recorded, the variable size struct
+> fanotify_name_event is preallocated with enough space to store the
+> child fh between the dir fh and the name.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/notify/fanotify/fanotify.c      | 30 ++++++++++++++++++++++++++----
+>  fs/notify/fanotify/fanotify.h      |  8 +++++++-
+>  fs/notify/fanotify/fanotify_user.c |  3 ++-
+>  3 files changed, 35 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index c77b37eb33a9..1d8eb886fe08 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -479,15 +479,22 @@ static struct fanotify_event *fanotify_alloc_fid_event(struct inode *id,
+>  static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
+>  							__kernel_fsid_t *fsid,
+>  							const struct qstr *file_name,
+> +							struct inode *child,
+>  							gfp_t gfp)
+>  {
+>  	struct fanotify_name_event *fne;
+>  	struct fanotify_info *info;
+> -	struct fanotify_fh *dfh;
+> +	struct fanotify_fh *dfh, *ffh;
+>  	unsigned int dir_fh_len = fanotify_encode_fh_len(id);
+> +	unsigned int child_fh_len = fanotify_encode_fh_len(child);
+>  	unsigned int size;
+>  
+> +	if (WARN_ON_ONCE(dir_fh_len % FANOTIFY_FH_HDR_LEN))
+> +		child_fh_len = 0;
+> +
 
-FYI, I pushed a commit to the LTP branch that adapts the test to MOVE_SELF
-that does not report name and tested with this patch reverted.
+Why this check? Do you want to check everything is 4-byte aligned? But then
+FANOTIFY_FH_HDR_LEN works mostly by accident...
 
-The test now has less special cases when setting expected values,
-which is generally a good sign ;-)
-
-Thanks,
-Amir.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
