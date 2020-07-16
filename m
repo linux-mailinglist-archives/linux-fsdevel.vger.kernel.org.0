@@ -2,120 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85CA4222803
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 18:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D26D222838
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 18:25:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728837AbgGPQIg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 12:08:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34842 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728374AbgGPQIg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 12:08:36 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BA45C061755
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 09:08:36 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id t27so5498279ill.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 09:08:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O47mfUBVOt+vsdDCqqvsg/aMVyy9NzMv8RpPVc2C3G8=;
-        b=SjtIxj+BDgCmQKCOnua4Snfp7t0mp0CCZ/Gcuu6gi5XO25RafG7zshsbc5+EfzeZjW
-         29gFmS2vAJSuW4K+QPPGHcuDQ5icYTU0jGVbwYwGhs1anT4FLcTUVxbHn1KnYbkMBZGe
-         q+jzHkGWzOIDlUwcwimzYY9LB3eQDIQxJNmJkcIqzuPHJsxdbdoLh5WDakpoXLsB2Kbu
-         Bl1D/o63KuB+cYSAUXdD8T46TTmU6l/gMNe1LKwUmb9ow99KNuOUHn/4O7hvC5K4Nma5
-         +EFPsPyxWhOyTU4OocG1MT0Bd+cMuIvlYUkBcsi242T+JeHkMuTLvJMbKiwxqsh9cOGg
-         ddtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O47mfUBVOt+vsdDCqqvsg/aMVyy9NzMv8RpPVc2C3G8=;
-        b=Ln5Ag1fLHLAkYA/O9JEv1uGnZNbahZCx04USwTMuuU4XXQdhEsHOqoA3cCJ1ZnGi/x
-         Hcm+NuB+Q97uFzGvLIdGlr3VaFRleGY2mKlSJDFQDS94jQ6VhK73l+VEnxplzOC2Ra0j
-         1qqka9UQ4UkMBQcqg5uscHCrCa7sy/VT97NyeQqQZwUPD4aLfkjqOXw8FERR3YwI0Ggb
-         Jh6FOkYRNL7wmf7kx5FU69byRbE0Rfp8SGiAyJrbQAq6HSNd2S5NU+yaGMAqnBV3TFlV
-         4RhZYrh9qrnocdnEnKTFcsClxkffQfgtcirDScToJgAFzXs04XpfJXtC7E8cDHuZq/3t
-         ourw==
-X-Gm-Message-State: AOAM531j3oIKJQumISFWtLEpsbkxVy4mQpmRhmwew8x7PpeFhG1Ioy2M
-        QwjleJmFK/M1ZYUOIOS1mGGxupDj9vLUgHAF3eMr5mzi
-X-Google-Smtp-Source: ABdhPJzUXn4FqiQkFn9FBHbo1ReWG1cltsGAR5wVQz8ITqsUCOh+iRGfhfkUEInr3qL3tga59anGme3XlkfHP/E7gnY=
-X-Received: by 2002:a05:6e02:13e2:: with SMTP id w2mr5447409ilj.9.1594915715792;
- Thu, 16 Jul 2020 09:08:35 -0700 (PDT)
+        id S1729198AbgGPQZE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 12:25:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35714 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729031AbgGPQZE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jul 2020 12:25:04 -0400
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11BFE20842
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 16:25:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594916703;
+        bh=p0w3EEAD5X53cCqDFmoE6un1clNbYGiJ/DMa0RV+rfI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yAj2KihHyUS0XU5c+XLdrccZniFtQURmn47hIVuaqVi7YwvUC5wy5/LPReb0zG2y8
+         yTIznCUpNbfm02LXaUfrNi1/9wl1N4UBhZMLYNgTGx8avENMAwoHR9RFT0K8QqQ49h
+         gVfqvEJ33BZMt5jmgooHcFZaPFk36MTqZP86z1JQ=
+Received: by mail-wm1-f45.google.com with SMTP id j18so10841471wmi.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 09:25:02 -0700 (PDT)
+X-Gm-Message-State: AOAM532TTrJeAdZIs3ytXrmrbU0+ucnBQFkos3dsotI8C/n4evZ9nMAU
+        7h1iQ7uNq4nyhl7Kj9+X2I8uOrAVvR/SivSE9Bi2uw==
+X-Google-Smtp-Source: ABdhPJx4aHgQedBYAiS/i+maR6+HLKjkrpnmZif6PsbomewsecKvhVh0PDhmC4WGpinWqQzmno1SRYT3WT0rxEG8RsY=
+X-Received: by 2002:a7b:c09a:: with SMTP id r26mr4960600wmh.176.1594916701395;
+ Thu, 16 Jul 2020 09:25:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200716084230.30611-1-amir73il@gmail.com> <20200716084230.30611-22-amir73il@gmail.com>
- <20200716155932.GH5022@quack2.suse.cz>
-In-Reply-To: <20200716155932.GH5022@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 16 Jul 2020 19:08:23 +0300
-Message-ID: <CAOQ4uxi-GB0OAwGgBVnDAMCM5nEECN3pQA2Zrp3z-EGJjwt6Hw@mail.gmail.com>
-Subject: Re: [PATCH v5 21/22] fanotify: report parent fid + name + child fid
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
+ <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net> <20200715171130.GG12769@casper.infradead.org>
+ <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com> <CAJfpegt9=p4uo5U2GXqc-rwqOESzZCWAkGMRTY1r8H6fuXx96g@mail.gmail.com>
+ <48cc7eea-5b28-a584-a66c-4eed3fac5e76@gmail.com> <202007151511.2AA7718@keescook>
+In-Reply-To: <202007151511.2AA7718@keescook>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 16 Jul 2020 09:24:48 -0700
+X-Gmail-Original-Message-ID: <CALCETrVD1hTc5QDL5=DNkLSS5Qu_AuEC-QZQAuZY0tCP1giMwQ@mail.gmail.com>
+Message-ID: <CALCETrVD1hTc5QDL5=DNkLSS5Qu_AuEC-QZQAuZY0tCP1giMwQ@mail.gmail.com>
+Subject: Re: strace of io_uring events?
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 6:59 PM Jan Kara <jack@suse.cz> wrote:
+> On Jul 15, 2020, at 4:07 PM, Kees Cook <keescook@chromium.org> wrote:
 >
-> On Thu 16-07-20 11:42:29, Amir Goldstein wrote:
-> > For a group with fanotify_init() flag FAN_REPORT_DFID_NAME, the parent
-> > fid and name are reported for events on non-directory objects with an
-> > info record of type FAN_EVENT_INFO_TYPE_DFID_NAME.
-> >
-> > If the group also has the init flag FAN_REPORT_FID, the child fid
-> > is also reported with another info record that follows the first info
-> > record. The second info record is the same info record that would have
-> > been reported to a group with only FAN_REPORT_FID flag.
-> >
-> > When the child fid needs to be recorded, the variable size struct
-> > fanotify_name_event is preallocated with enough space to store the
-> > child fh between the dir fh and the name.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/notify/fanotify/fanotify.c      | 30 ++++++++++++++++++++++++++----
-> >  fs/notify/fanotify/fanotify.h      |  8 +++++++-
-> >  fs/notify/fanotify/fanotify_user.c |  3 ++-
-> >  3 files changed, 35 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> > index c77b37eb33a9..1d8eb886fe08 100644
-> > --- a/fs/notify/fanotify/fanotify.c
-> > +++ b/fs/notify/fanotify/fanotify.c
-> > @@ -479,15 +479,22 @@ static struct fanotify_event *fanotify_alloc_fid_event(struct inode *id,
-> >  static struct fanotify_event *fanotify_alloc_name_event(struct inode *id,
-> >                                                       __kernel_fsid_t *fsid,
-> >                                                       const struct qstr *file_name,
-> > +                                                     struct inode *child,
-> >                                                       gfp_t gfp)
-> >  {
-> >       struct fanotify_name_event *fne;
-> >       struct fanotify_info *info;
-> > -     struct fanotify_fh *dfh;
-> > +     struct fanotify_fh *dfh, *ffh;
-> >       unsigned int dir_fh_len = fanotify_encode_fh_len(id);
-> > +     unsigned int child_fh_len = fanotify_encode_fh_len(child);
-> >       unsigned int size;
-> >
-> > +     if (WARN_ON_ONCE(dir_fh_len % FANOTIFY_FH_HDR_LEN))
-> > +             child_fh_len = 0;
-> > +
+> =EF=BB=BFEarlier Andy Lutomirski wrote:
+>> Let=E2=80=99s add some seccomp folks. We probably also want to be able t=
+o run
+>> seccomp-like filters on io_uring requests. So maybe io_uring should call=
+ into
+>> seccomp-and-tracing code for each action.
 >
-> Why this check? Do you want to check everything is 4-byte aligned? But then
-> FANOTIFY_FH_HDR_LEN works mostly by accident...
+> Okay, I'm finally able to spend time looking at this. And thank you to
+> the many people that CCed me into this and earlier discussions (at least
+> Jann, Christian, and Andy).
+>
+> It *seems* like there is a really clean mapping of SQE OPs to syscalls.
+> To that end, yes, it should be trivial to add ptrace and seccomp support
+> (sort of). The trouble comes for doing _interception_, which is how both
+> ptrace and seccomp are designed.
+>
+> In the basic case of seccomp, various syscalls are just being checked
+> for accept/reject. It seems like that would be easy to wire up. For the
+> more ptrace-y things (SECCOMP_RET_TRAP, SECCOMP_RET_USER_NOTIF, etc),
+> I think any such results would need to be "upgraded" to "reject". Things
+> are a bit complex in that seccomp's form of "reject" can be "return
+> errno" (easy) or it can be "kill thread (or thread_group)" which ...
+> becomes less clear. (More on this later.)
 
-Good catch.
-That's indeed a mistake.
-Should be % 4 which is expected because
-...
-        return dwords << 2;
+My intuition is not to do this kind of creative reinterpretation of
+return values. Instead let=E2=80=99s have a new type of seccomp filter
+specifically for io_uring. So we can have SECCOMP_IO_URING_ACCEPT,
+ERRNO, and eventually other things. We probably will want a user
+notifier feature for io_uring, but I'd be a bit surprised if it ends
+up ABI-compatible with current users of user notifiers.
 
-If you think that is over defensive, you can drop it.
+> - There appear to be three classes of desired restrictions:
+>  - opcodes for io_uring_register() (which can be enforced entirely with
+>    seccomp right now).
 
-Thanks,
-Amir.
+Agreed.
+
+>  - opcodes from SQEs (this _could_ be intercepted by seccomp, but is
+>    not currently written)
+
+As above, I think this should be intercepted by seccomp, but in a new
+mode.  I think that existing seccomp filters should not intercept it.
+
+>  - opcodes of the types of restrictions to restrict... for making sure
+>    things can't be changed after being set? seccomp already enforces
+>    that kind of "can only be made stricter"
+
+Agreed.
+
+>
+> - How does no_new_privs play a role in the existing io_uring credential
+>  management? Using _any_ kind of syscall-effective filtering, whether
+>  it's seccomp or Stefano's existing proposal, needs to address the
+>  potential inheritable restrictions across privilege boundaries (which is
+>  what no_new_privs tries to eliminate). In regular syscall land, this is
+>  an issue when a filter follows a process through setuid via execve()
+>  and it gains privileges that now the filter-creator can trick into
+>  doing weird stuff -- io_uring has a concept of alternative credentials
+>  so I have to ask about it. (I don't *think* there would be a path to
+>  install a filter before gaining privilege, but I likely just
+>  need to do my homework on the io_uring internals. Regardless,
+>  use of seccomp by io_uring would need to have this issue "solved"
+>  in the sense that it must be "safe" to filter io_uring OPs, from a
+>  privilege-boundary-crossing perspective.
+>
+> - From which task perspective should filters be applied? It seems like it
+>  needs to follow the io_uring personalities, as that contains the
+>  credentials. (This email is a brain-dump so far -- I haven't gone to
+>  look to see if that means io_uring is literally getting a reference to
+>  struct cred; I assume so.) Seccomp filters are attached to task_struct.
+>  However, for v5.9, seccomp will gain a more generalized get/put system
+>  for having filters attached to the SECCOMP_RET_USER_NOTIF fd. Adding
+>  more get/put-ers for some part of the io_uring context shouldn't
+>  be hard.
+
+Let's ignore personalities for a moment (and see below).  Thinking
+through the possibilities:
+
+A: io_uring seccomp filters are attached to tasks.  When an io_uring
+is created, it inherits an immutable copy of its creating task's
+filter, and that's the filter set that applies to that io_uring
+instance.  This could have somewhat bizarre consequences if the fd
+gets passed around, but io_uring already has odd security effects if
+fds are passed around.  It has the annoying property that, if a
+library creates an io_uring and then a seccomp filter is loaded, the
+io_uring bypasses the library.
+
+B: The same, but the io_uring references the creating task so new
+filters on the task apply to the io_uring, too.  This allows loading
+and then sandboxing.  Is this too bizarre overall?
+
+C: io_uring filters are attached directly to io_urings.  This has the
+problem where an io_uring created before a task sandboxes itself isn't
+sandboxed.  It also would require that a filter be able to hook
+io_uring creation to sandbox it.
+
+Does anyone actually pass io_urings around with SCM_RIGHTS?  It would
+be really nice if we could make the default be that io_urings are
+bound to their creating mm and can't be used outside it.  Then
+creating an mm-crossing io_uring could, itself, be restricted.
+
+In any case, my inclination is to go for choice B.  Choice C could
+also be supported if there's a use case.
