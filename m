@@ -2,130 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F7CD221CD1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 08:49:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0ADB221CDD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 08:55:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbgGPGtW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 02:49:22 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:42449 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728197AbgGPGtV (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 02:49:21 -0400
-Received: by mail-io1-f72.google.com with SMTP id l18so2993696ion.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 23:49:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Jb66gF5TU/5G0RQu96O7sxpWsrW4mYp2swVpVG+8PLQ=;
-        b=trzUDfA/vnMVNHM2aOivYXFJMEWRQDuKft6H1s3HxuBDjiV0zcJK14JhQoyYI5k22o
-         J9j9EebD89PdWUQ5CFX0+jh7qalT9JlMujiEDM/yEdoLG3audgch0zKXv3X4r0j6hHwB
-         Lyv5Qkelt1eHpk9tO//d8hErHcCrhUWxtgDU1PkAXn0Mw1wIEykR4le2HqQIqlsdYdp5
-         h/6MGCv6hKQAwygyB8LvAXftsvs/0kxwOUFhOEDc2I+m8Mud5wHqeIc38IKqXg2Rzh+i
-         58gTIAsPAZ/ggEzUqXnU6PmP/izbLAo0CIwR0xLj1Ti1mwdzDB0ZEJZWFNMIM8UZlYVD
-         2x6A==
-X-Gm-Message-State: AOAM531ZPO46pjVFw1CnCGtGwtIrgNBxic+/aNvZhK7+ub3L3GPAHSWs
-        PDlsvdAkcSrRZcyaCSzJ5aQwxxgOj3lQAi8pVQE0T/xZoq3S
-X-Google-Smtp-Source: ABdhPJx25uyIgSwV9oiD3qZEmSnsqUaWzZ4i3gAqzxYixj++WyS0bT5dhEynXbtVsWXRz6JzdgIZqwA4GA4mxkvDycbXlHETAQxe
+        id S1728115AbgGPGy5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 02:54:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59594 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725921AbgGPGy5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jul 2020 02:54:57 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1200F206F4;
+        Thu, 16 Jul 2020 06:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594882496;
+        bh=0wEDLws9/ZTCpyy4Gy8ssQKEcMWpiT/BR9A7+RU6y1c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RITLOo6ydR0ZrwrhA3nb2jT94HHfu88oTfHLI/0AxjdLHBnZnMRZUNJLrsaWOMJov
+         8Inma7m2xfSoshaTvMvXLVFNqMVDDq5fauKFyaKlYhacVvSlsenf3szhl+Tzcqz9Ld
+         5/AOUk/t+CvM3e264V0RA4yRSPr0YC20C+m+jmfs=
+Date:   Wed, 15 Jul 2020 23:54:54 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Dave Chinner <david@fromorbit.com>, akpm@linux-foundation.org,
+        Marco Elver <elver@google.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        syzbot <syzbot+0f1e470df6a4316e0a11@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com, Will Deacon <will@kernel.org>
+Subject: Re: KCSAN: data-race in generic_file_buffered_read /
+ generic_file_buffered_read
+Message-ID: <20200716065454.GI1167@sol.localdomain>
+References: <0000000000004a4d6505aa7c688a@google.com>
+ <20200715152912.GA2209203@elver.google.com>
+ <20200715163256.GB1167@sol.localdomain>
+ <20200715234203.GK5369@dread.disaster.area>
+ <20200716030357.GE1167@sol.localdomain>
+ <1594880070.49b50i0a1p.astroid@bobo.none>
 MIME-Version: 1.0
-X-Received: by 2002:a02:854a:: with SMTP id g68mr3561329jai.24.1594882160593;
- Wed, 15 Jul 2020 23:49:20 -0700 (PDT)
-Date:   Wed, 15 Jul 2020 23:49:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a4189005aa8970c7@google.com>
-Subject: BUG: corrupted list in evict
-From:   syzbot <syzbot+2677e2f48b47153e3838@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1594880070.49b50i0a1p.astroid@bobo.none>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, Jul 16, 2020 at 04:24:01PM +1000, Nicholas Piggin wrote:
+> Excerpts from Eric Biggers's message of July 16, 2020 1:03 pm:
+> > On Thu, Jul 16, 2020 at 09:42:03AM +1000, Dave Chinner wrote:
+> >> On Wed, Jul 15, 2020 at 09:32:56AM -0700, Eric Biggers wrote:
+> >> > [+Cc linux-fsdevel]
+> >> > 
+> >> > On Wed, Jul 15, 2020 at 05:29:12PM +0200, 'Marco Elver' via syzkaller-bugs wrote:
+> >> > > On Wed, Jul 15, 2020 at 08:16AM -0700, syzbot wrote:
+> >> > > > Hello,
+> >> > > > 
+> >> > > > syzbot found the following issue on:
+> >> > > > 
+> >> > > > HEAD commit:    e9919e11 Merge branch 'for-linus' of git://git.kernel.org/..
+> >> > > > git tree:       upstream
+> >> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=1217a83b100000
+> >> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=570eb530a65cd98e
+> >> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=0f1e470df6a4316e0a11
+> >> > > > compiler:       clang version 11.0.0 (https://github.com/llvm/llvm-project.git ca2dcbd030eadbf0aa9b660efe864ff08af6e18b)
+> >> > > > 
+> >> > > > Unfortunately, I don't have any reproducer for this issue yet.
+> >> > > > 
+> >> > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> >> > > > Reported-by: syzbot+0f1e470df6a4316e0a11@syzkaller.appspotmail.com
+> >> > > > 
+> >> > > > ==================================================================
+> >> > > > BUG: KCSAN: data-race in generic_file_buffered_read / generic_file_buffered_read
+> >> > > 
+> >> > > Our guess is that this is either misuse of an API from userspace, or a
+> >> > > bug. Can someone clarify?
+> >> > > 
+> >> > > Below are the snippets of code around these accesses.
+> >> > 
+> >> > Concurrent reads on the same file descriptor are allowed.  Not with sys_read(),
+> >> > as that implicitly uses the file position.  But it's allowed with sys_pread(),
+> >> > and also with sys_sendfile() which is the case syzbot is reporting here.
+> >> 
+> >> Concurrent read()s are fine, they'll just read from the same offset.
+> >> 
+> > 
+> > Actually the VFS serializes concurrent read()'s on the same fd, at least for
+> > regular files.
+> 
+> Hmm, where?
 
-syzbot found the following issue on:
+It's serialized by file->f_pos_lock.  See fdget_pos().
 
-HEAD commit:    d31958b3 Add linux-next specific files for 20200710
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1050b2af100000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3fe4fccb94cbc1a6
-dashboard link: https://syzkaller.appspot.com/bug?extid=2677e2f48b47153e3838
-compiler:       gcc (GCC) 10.1.0-syz 20200507
+> >> > > > write to 0xffff8880968747b0 of 8 bytes by task 6336 on cpu 0:
+> >> > > >  generic_file_buffered_read+0x18be/0x19e0 mm/filemap.c:2246
+> >> > > 
+> >> > > 	...
+> >> > > 	would_block:
+> >> > > 		error = -EAGAIN;
+> >> > > 	out:
+> >> > > 		ra->prev_pos = prev_index;
+> >> > > 		ra->prev_pos <<= PAGE_SHIFT;
+> >> > > 2246)		ra->prev_pos |= prev_offset;
+> >> > > 
+> >> > > 		*ppos = ((loff_t)index << PAGE_SHIFT) + offset;
+> >> > > 		file_accessed(filp);
+> >> > > 		return written ? written : error;
+> >> > > 	}
+> >> > > 	EXPORT_SYMBOL_GPL(generic_file_buffered_read);
+> >> > > 	...
+> >> > 
+> >> > Well, it's a data race.  Each open file descriptor has just one readahead state
+> >> > (struct file_ra_state), and concurrent reads of the same file descriptor
+> >> > use/change that readahead state without any locking.
+> >> > 
+> >> > Presumably this has traditionally been considered okay, since readahead is
+> >> > "only" for performance and doesn't affect correctness.  And for performance
+> >> > reasons, we want to avoid locking during file reads.
+> >> > 
+> >> > So we may just need to annotate all access to file_ra_state with
+> >> > READ_ONCE() and WRITE_ONCE()...
+> >> 
+> >> Please, no. Can we stop making the code hard to read, more difficult
+> >> to maintain and preventing the compiler from optimising it by doing
+> >> stupid "turn off naive static checker warnings" stuff like this?
+> >> 
+> >> If the code is fine with races, then -leave it alone-. If it's not
+> >> fine with a data race, then please go and work out the correct
+> >> ordering and place well documented barriers and/or release/acquire
+> >> ordering semantics in the code so that we do not need to hide data
+> >> races behind a compiler optimisation defeating macro....
+> >> 
+> >> Yes, I know data_race() exists to tell the tooling that it should
+> >> ignore data races in the expression, but that makes just as much
+> >> mess of the code as READ_ONCE/WRITE_ONCE being spewed everywhere
+> >> indiscriminately because <some tool said we need to do that>.
+> >> 
+> > 
+> > Data races are undefined behavior, so it's never guaranteed "fine".
+> 
+> Is this a new requirement for the kernel? Even code which is purely an 
+> optimisation (e.g. a readahead heuristic) can never be guaranteed to
+> be fine for a data race? As in, the compiler might be free to start
+> scribbling on memory because of undefined behaviour?
+> 
+> What we used to be able to do is assume that the variable might take on 
+> one or other value at any time its used (or even see split between the
+> two if the thing wasn't naturally aligned for example), but that was 
+> quite well "defined". So we could in fact guarantee that it would be 
+> fine.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Not really, it's always been undefined behavior.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2677e2f48b47153e3838@syzkaller.appspotmail.com
+AFAICT, there's tribal knowledge among some kernel developers about what types
+of undefined behavior are "okay" because they're thought to be unlikely to cause
+problems in practice.  However except in certain cases (e.g., the kernel uses
+-fwrapv to make signed integer overflow well-defined, and -fno-strict-aliasing
+to make type aliasing well-defined) these cases have never been formally
+defined, and people disagree about them.  If they have actually been formally
+defined, please point me to the documentation or compiler options.
 
-list_del corruption. next->prev should be ffff88808970f818, but was 0000000000000000
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:54!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 7059 Comm: syz-executor.3 Not tainted 5.8.0-rc4-next-20200710-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__list_del_entry_valid.cold+0x48/0x55 lib/list_debug.c:54
-Code: e8 a1 71 c0 fd 0f 0b 4c 89 e2 48 89 ee 48 c7 c7 e0 db 93 88 e8 8d 71 c0 fd 0f 0b 48 89 ee 48 c7 c7 a0 dc 93 88 e8 7c 71 c0 fd <0f> 0b cc cc cc cc cc cc cc cc cc cc cc 41 57 41 56 41 55 41 54 55
-RSP: 0018:ffffc90003ed7958 EFLAGS: 00010282
-RAX: 0000000000000054 RBX: ffff88808970f818 RCX: 0000000000000000
-RDX: ffff88805e3401c0 RSI: ffffffff815d7e07 RDI: fffff520007daf1d
-RBP: ffff88808970f818 R08: 0000000000000054 R09: ffff8880ae6318e7
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880494b5c60
-R13: ffff88800082e290 R14: ffffffff88598f60 R15: ffff88808970f728
-FS:  0000000001ce5940(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000ca3b72 CR3: 00000000a1033000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __list_del_entry include/linux/list.h:132 [inline]
- list_del_init include/linux/list.h:204 [inline]
- inode_sb_list_del fs/inode.c:471 [inline]
- evict+0x181/0x750 fs/inode.c:565
- iput_final fs/inode.c:1652 [inline]
- iput.part.0+0x424/0x850 fs/inode.c:1678
- iput+0x58/0x70 fs/inode.c:1668
- proc_invalidate_siblings_dcache+0x28d/0x600 fs/proc/inode.c:160
- release_task+0xc63/0x14d0 kernel/exit.c:221
- wait_task_zombie kernel/exit.c:1088 [inline]
- wait_consider_task+0x2fb3/0x3b20 kernel/exit.c:1315
- do_wait_thread kernel/exit.c:1378 [inline]
- do_wait+0x36a/0x9e0 kernel/exit.c:1449
- kernel_wait4+0x14c/0x260 kernel/exit.c:1604
- __do_sys_wait4+0x13f/0x150 kernel/exit.c:1616
- do_syscall_64+0x60/0xe0 arch/x86/entry/common.c:384
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x4169ca
-Code: Bad RIP value.
-RSP: 002b:00007ffc79eed098 EFLAGS: 00000246 ORIG_RAX: 000000000000003d
-RAX: ffffffffffffffda RBX: 00000000000f83dc RCX: 00000000004169ca
-RDX: 0000000040000001 RSI: 00007ffc79eed0d0 RDI: ffffffffffffffff
-RBP: 00000000000018e5 R08: 0000000000000001 R09: 0000000001ce5940
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
-R13: 00007ffc79eed0d0 R14: 00000000000f838e R15: 00007ffc79eed0e0
-Modules linked in:
----[ end trace 532812e394e0dae0 ]---
-RIP: 0010:__list_del_entry_valid.cold+0x48/0x55 lib/list_debug.c:54
-Code: e8 a1 71 c0 fd 0f 0b 4c 89 e2 48 89 ee 48 c7 c7 e0 db 93 88 e8 8d 71 c0 fd 0f 0b 48 89 ee 48 c7 c7 a0 dc 93 88 e8 7c 71 c0 fd <0f> 0b cc cc cc cc cc cc cc cc cc cc cc 41 57 41 56 41 55 41 54 55
-RSP: 0018:ffffc90003ed7958 EFLAGS: 00010282
-RAX: 0000000000000054 RBX: ffff88808970f818 RCX: 0000000000000000
-RDX: ffff88805e3401c0 RSI: ffffffff815d7e07 RDI: fffff520007daf1d
-RBP: ffff88808970f818 R08: 0000000000000054 R09: ffff8880ae6318e7
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880494b5c60
-R13: ffff88800082e290 R14: ffffffff88598f60 R15: ffff88808970f728
-FS:  0000000001ce5940(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000ca3b72 CR3: 00000000a1033000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Data races in particular are tricky because there are a lot of ways for things
+to go wrong that people fail to think of; for some examples see:
+https://www.usenix.org/legacy/event/hotpar11/tech/final_files/Boehm.pdf
+https://software.intel.com/content/www/us/en/develop/blogs/benign-data-races-what-could-possibly-go-wrong.html
 
+> > We can only
+> > attempt to conclude that it's fine "in practice" and is too difficult to fix,
+> > and therefore doesn't meet the bar to be fixed (for now).
+> > 
+> > Of course, in most cases the preferred solution for data races is to introduce
+> > proper synchronization.  As I said, I'm not sure that's feasible here.  Memory
+> > barriers aren't the issue here; we'd need *locking*, which would mean concurrent
+> > readers would start contending for the lock.  Other suggestions appreciated...
+> 
+> 
+>  		ra->prev_pos = prev_index;
+>  		ra->prev_pos <<= PAGE_SHIFT;
+>  2246)		ra->prev_pos |= prev_offset;
+> 
+> 
+> In this case we can do better I guess, in case some compiler decides to 
+> store a half-done calculation there because it ran out of registers.
+> 
+> WRITE_ONCE(ra->prev_pos, ((loff_t)prev_index << PAGE_SHIFT) | prev_offset);
+> 
+> As Dave said, adding WRITE_ONCE to the individual accesses would be 
+> stupid because it does nothing to solve the actual race and makes it 
+> harder to read in more than one way.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Yes, obviously if we were to add READ/WRITE_ONCE we'd want to avoid storing
+intermediate results like that, in order to avoid some obvious race conditions.
+However, the overall use of file_ra_state is still racy.  And it's passed to the
+functions in mm/readahead.c like page_cache_async_readahead() too, so all the
+accesses to it in those functions are data races too.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I'm not really suggesting any specific solution; locking isn't really feasible
+here, and there would be an annoyingly large number of places that would need
+READ/WRITE_ONCE.
+
+I just wish we had a better plan than "let's write some code with
+undefined behavior and hope it's okay".
+
+- Eric
