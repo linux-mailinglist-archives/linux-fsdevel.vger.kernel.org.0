@@ -2,126 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 149BB222B29
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 20:42:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56336222B9C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 21:12:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728400AbgGPSme (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 14:42:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58612 "EHLO
+        id S1729344AbgGPTMw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 15:12:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728163AbgGPSmd (ORCPT
+        with ESMTP id S1728257AbgGPTMv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 14:42:33 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A0C2C061755
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 11:42:33 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id l1so7101770ioh.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 11:42:33 -0700 (PDT)
+        Thu, 16 Jul 2020 15:12:51 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB9E0C061755
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 12:12:50 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id d1so4280785plr.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 12:12:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F8V2h1SBvwKcqOUQP5/OlxR189iREiR2x1+r/r8UapQ=;
-        b=TR0Exk7qmAwU1e4jBZ3pNzxYFhg9iD1FigBAYUcQIcHjZ1nYZHBhY4WPH/Q+iDZPs2
-         tMPK8iihivGD2RqJuOqXRfRR4mJSzHnNgmX/k5aj5KnlMdBdxFhTe1gttgAhgB0BRtvk
-         zvALiIO3quN7jVUbBXqWNR1bEvSbiTcVFjZtUCS3D+Var1JS8IRLWI5lbs2jy+QwmwF1
-         tdbHA47DUQPm1VA08Ab7B0x06jEsxkG0f/TkQXkhk/PgYvCvk/SzihkezvjKv1YA61jU
-         VPnnJXV70ZVBhcV8IoOvKnDnyr41aGtu18BmWMEV7q6Yg2uxNyP/Rea68tQ1t7hw+XGg
-         0NvA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=reZvnOQ8bijPp6S5yQzmCOTTsMLuDmnyX5N/3GfwHXo=;
+        b=lhX4KRZzVkUSda9R6NyorS54yyDn6hPMA24J3zBk96aHpX1ic/PoqYAe/VIB7Xy9B/
+         HlVJ28tVKHEHHcNCuv/KrJOZBUcoLwz6roC1HJNW31P8tAYmIPcACI0nrMG4j1+ivpMt
+         1Xfyw0pkzrtmnsj0jd8RERq8Fj7NvEgD8QxLc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F8V2h1SBvwKcqOUQP5/OlxR189iREiR2x1+r/r8UapQ=;
-        b=D5MWuGXmpe0M3FkiyKoZFffMcb6i8uwQcTdcwsZB/g/YyqBPox2h6m8ji/qzvtNtIO
-         2mfg6g2v2zk+lMSfFlfFTcrR00LOafgHZ5rxshjr8m+23FONcTpcDuA5isGNO26aD7mF
-         vacNxiSn1NE1KWuSIsTXDiLYM5LdVzcHsGGoRlp1j79kVCjp63JV+68bRQdoDfHYHmWJ
-         X1P9dHRh7ddAuA5v6vd1ts7eLtJNZXJcFKJsX73UsNYl3QifY7PHwrqUa1Z1D/SkqcRO
-         DkZToERNZYPtNiOfNaoNZHYuCEj6WA+FDwSvM5d/IB3ub9sUP8J1A8duP4vjwE8j6xvl
-         SuKA==
-X-Gm-Message-State: AOAM530TSejZ1S5riIJQAgcV1xEATXXXrY+TxpWTdpBFw9woaRyUSGz1
-        KZcX1NmkuwDlpfrCH0E/BVOCcdPbx+D76NvgUmtOh1Kv
-X-Google-Smtp-Source: ABdhPJyufvxq4NiISzf6X5dRCW+RXAqAkrJAMrM6xcqsZrm652PfHUwsO2Fcd8NOnyXM/U8xTrb/zuw7sds+xTMfAaA=
-X-Received: by 2002:a02:a986:: with SMTP id q6mr6309462jam.93.1594924952511;
- Thu, 16 Jul 2020 11:42:32 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=reZvnOQ8bijPp6S5yQzmCOTTsMLuDmnyX5N/3GfwHXo=;
+        b=set3cZdxfl/aRIiFCljHz+m+5nXcql617tRPcBydPa0SrxKwqcl9KEhn7VOc4pfMho
+         XLQ7aFLhx1n/AecZ/GfzdbS26SmK+c+g1rqvhfi2Z/oWIG8Qg3IXXD0WQCP3ehZ6yP1j
+         RPiilDcMSMnQ6yj9CNqinONXKYNzuAqUannIngknwGNOA8P/jWYi1L3uW7XyCJcemqlH
+         Z/Yib/1DKvQcS34HmHTKijKH9zJMaJ7kVt66bq9UxL7fFCXZxsy1sRYBE/TyG7+ZSone
+         VtKXggNWCyIK7QuySc2hUMDxYISYj+G0fBLXHvGW1S9tZIC9jN7cXQpJ0xoj6++/BXFg
+         RgtQ==
+X-Gm-Message-State: AOAM530PewAwH9e7o9M//1RSrliuD+x7lYSFZzJKhvm91L5a12b6XgwZ
+        O2zXIejqJW242Y08WKjxGZlazA==
+X-Google-Smtp-Source: ABdhPJzSOAMegB1OmeJ/PboDzHabSRQP9lhAlD8QVD09gpvRf9fpyvnr8fMJH6cpEeTI0kWvhxJF2g==
+X-Received: by 2002:a17:902:7441:: with SMTP id e1mr4615121plt.23.1594926769952;
+        Thu, 16 Jul 2020 12:12:49 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id g22sm5602957pgb.82.2020.07.16.12.12.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jul 2020 12:12:48 -0700 (PDT)
+Date:   Thu, 16 Jul 2020 12:12:47 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 7/7] ima: add policy support for the new file open
+ MAY_OPENEXEC flag
+Message-ID: <202007160957.CABE4CC@keescook>
+References: <20200714181638.45751-1-mic@digikod.net>
+ <20200714181638.45751-8-mic@digikod.net>
+ <202007151339.283D7CD@keescook>
+ <8df69733-0088-3e3c-9c3d-2610414cea2b@digikod.net>
 MIME-Version: 1.0
-References: <20200716084230.30611-1-amir73il@gmail.com> <20200716084230.30611-16-amir73il@gmail.com>
- <20200716170133.GJ5022@quack2.suse.cz> <CAOQ4uxhuMyOjcs=qct6Hz3OOonYAJ9qhnhCkf-yy4zvZxTgFfw@mail.gmail.com>
- <20200716175709.GM5022@quack2.suse.cz>
-In-Reply-To: <20200716175709.GM5022@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 16 Jul 2020 21:42:20 +0300
-Message-ID: <CAOQ4uxiS2zNkVQZjcErmqq2OSXdfk2_H+gDyRWEAdjzbM+qipg@mail.gmail.com>
-Subject: Re: [PATCH v5 15/22] fsnotify: send event with parent/name info to
- sb/mount/non-dir marks
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8df69733-0088-3e3c-9c3d-2610414cea2b@digikod.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 8:57 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 16-07-20 20:20:04, Amir Goldstein wrote:
-> > On Thu, Jul 16, 2020 at 8:01 PM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Thu 16-07-20 11:42:23, Amir Goldstein wrote:
-> > > > Similar to events "on child" to watching directory, send event "on child"
-> > > > with parent/name info if sb/mount/non-dir marks are interested in
-> > > > parent/name info.
-> > > >
-> > > > The FS_EVENT_ON_CHILD flag can be set on sb/mount/non-dir marks to specify
-> > > > interest in parent/name info for events on non-directory inodes.
-> > > >
-> > > > Events on "orphan" children (disconnected dentries) are sent without
-> > > > parent/name info.
-> > > >
-> > > > Events on direcories are send with parent/name info only if the parent
-> > > > directory is watching.
-> > > >
-> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > >
-> > > Hum, doesn't this break ignore mask handling in
-> > > fanotify_group_event_mask()? Because parent's ignore mask will be included
-> > > even though parent is added into the iter only to carry the parent info...
-> > >
-> >
-> > Hmm, break ignore mask handling? or fix it?
-> >
-> > Man page said:
-> > "Having these two types of masks permits a mount point or directory to be
-> >  marked for receiving events, while at the  same time ignoring events for
-> >  specific objects under that mount point or directory."
->
-> Right, but presumably that speaks of the case of a mark where the parent
-> has FS_EVENT_ON_CHILD set. For case of parent watching events of a child, I
-> agree it makes sense to apply ignore masks of both the parent and the child.
->
-> > The author did not say what to expect from marking a mount and ignoring
-> > a directory.
->
-> Yes and I'd expect to apply ignore mask on events for that directory but
-> not for events on files in that directory... Even more so because this will
-> be currently inconsistent wrt whether the child is dir (parent's ignore mask
-> does not apply) or file (parent's ignore mask does apply).
->
+On Thu, Jul 16, 2020 at 04:40:15PM +0200, Mickaël Salaün wrote:
+> 
+> On 15/07/2020 22:40, Kees Cook wrote:
+> > On Tue, Jul 14, 2020 at 08:16:38PM +0200, Mickaël Salaün wrote:
+> >> From: Mimi Zohar <zohar@linux.ibm.com>
+> >>
+> >> The kernel has no way of differentiating between a file containing data
+> >> or code being opened by an interpreter.  The proposed O_MAYEXEC
+> >> openat2(2) flag bridges this gap by defining and enabling the
+> >> MAY_OPENEXEC flag.
+> >>
+> >> This patch adds IMA policy support for the new MAY_OPENEXEC flag.
+> >>
+> >> Example:
+> >> measure func=FILE_CHECK mask=^MAY_OPENEXEC
+> >> appraise func=FILE_CHECK appraise_type=imasig mask=^MAY_OPENEXEC
+> >>
+> >> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> >> Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> >> Acked-by: Mickaël Salaün <mic@digikod.net>
+> > 
+> > (Process nit: if you're sending this on behalf of another author, then
+> > this should be Signed-off-by rather than Acked-by.)
+> 
+> I'm not a co-author of this patch.
 
-Indeed. For that I used this trick in my POC:
+Correct, but you are part of the delivery path to its entry to the
+tree. If you were co-author, you would include "Co-developed-by" with
+a Signed-off-by. (So my nit stands)
 
-        /* Set the mark mask, so fsnotify_parent() will find this mark */
-        ovm->fsn_mark.mask = mask | FS_EVENT_ON_CHILD;
-        ovm->fsn_mark.ignored_mask = mask;
+For excruciating details:
 
-It's not how users are expected to configure an ignored mask on children
-but we can work the ignored mask information into the object mask, like
-I already did w.r.t FS_MODIFY and get the same result without the hack.
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
 
-Thanks,
-Amir.
+"The Signed-off-by: tag indicates that the signer was ... in the patch’s
+delivery path."
 
-P.S. for whoever is interested, my POC is on ovl-fsnotify branch.
-It seems to be working well. I am just trying to get those "ephemeral
-exclude marks" to not pin the dir inodes to cache, so that those inodes
-could be evicted.
+"Co-developed-by: ... is a used to give attribution to co-authors ..."
+
+-- 
+Kees Cook
