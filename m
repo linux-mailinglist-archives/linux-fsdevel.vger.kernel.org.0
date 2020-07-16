@@ -2,231 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91469221C91
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 08:24:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD154221CAD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 08:38:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbgGPGYI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 02:24:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57280 "EHLO
+        id S1728164AbgGPGiP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 02:38:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbgGPGYH (ORCPT
+        with ESMTP id S1726069AbgGPGiN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 02:24:07 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1AFBC061755;
-        Wed, 15 Jul 2020 23:24:07 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id 207so3209699pfu.3;
-        Wed, 15 Jul 2020 23:24:07 -0700 (PDT)
+        Thu, 16 Jul 2020 02:38:13 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8FC8C061755
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 23:38:13 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id c16so4856908ioi.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 23:38:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :message-id:content-transfer-encoding;
-        bh=RVf+nZWX+91+dteQBQwe8rFE2LN3RLK87/mLuBjVmYA=;
-        b=h+DIx6SlQ0p4epVcvakt+XdBEBG3eS28pIKn606BO8yd7Zf3gaG7TIZIP6D6CITxNW
-         3ixOcXQyCSmk5dgjJaFUoANu+qwViGTvLKshSHcjlw9C4DnQ/NCC+ixJTuJcpRMd76WY
-         jPmHRpPFqYkQyEQtGsuut74SBBrwrtQ0MyrLGwyFxhjajMVbEbbqVHlAMWk0xIeYGyco
-         i68M4maXzFL+UgAGOodxywfrETXmGFXhFQtyFnx18+BFXWb0eRB0VowWj/mzESgpAHqn
-         eGqbDY6ytIPzCsJeLmLfNy/vfc5JbgY4gaqMraLit2KMa2RTlYi6HS+3n3X5ngF+cZgQ
-         3pog==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=405MEk0thD5homIHnbMeKKdn1LZhGC95KcOAqfwv9aI=;
+        b=GeXKvO11rFDMh5rciNBIDS7ufg5DaMA6Q/5U+KUasaVCS2XAfcnBpyPRFXVwaarHIV
+         ItiqbgUAa3gsVIMsivLc+H1nCwtXEsNR8cvMfzcGlBymzlcQhAor0triJqiBuC33gER0
+         X97fqauCE1xN2QRkZAbUz9mS/5Ub31ffOq4i3IUuwDnSIsWIvnLc1+Ok2gqkQTex7Tgt
+         c11qF4Pik7UnM1EFkiO46btxbpCPhh0r+a6h3wXvErEX1CKxUNTBbfqKKx1R0k0wuS+V
+         wYFBhLZa0SpN4FQ4lrRtAxLFV0vpATlbOm9416xngKpXCl6mG8CEBGhzRZ9/i5AX782v
+         Myrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:message-id:content-transfer-encoding;
-        bh=RVf+nZWX+91+dteQBQwe8rFE2LN3RLK87/mLuBjVmYA=;
-        b=VOFzlH/kCR5bhg+ilncUvPfhEHXReKmp7u85zMqG6mvsT3gAcD/e9c3JVaiRZrysFg
-         od+PjkVUXAiDLwUfl30ridOKI2vTeb+ufTpnnO9LJtMsFTN9uFNjk1t3S7ZR8Ypub4rX
-         Uzyiy+B+6D1kZTY2hgLuPZyuj/U64p2YZuRqyYUWVQ4tPajNhJ1C1HGiw/S6Hcj0lbOk
-         AQXkfzLCD5WTvFH94J3gCsxQfqoeMlzo296dhGWTo60Ltt9xugKSjN0fTew/Q1MXdw2Q
-         ERPom/m9OcjZ+tJIaBY2rDGktv3ErccFZeATnf3ePdLTXKoQkZpAzq+tLvpwMj/DM3FT
-         fIIA==
-X-Gm-Message-State: AOAM533swyzsKPWCMVCZ4jsSWsr6NRu0fPeQVukfzEtaWQz+OFsSAwPx
-        M+w5iKpKSliam3R/BroySMc=
-X-Google-Smtp-Source: ABdhPJy8SHnN4hG7z//QwWsCRWGE/2K8Qc7x+LUk6kXbTBodNFFWLKqzBou2ptxC0O2bMDD7+PITgg==
-X-Received: by 2002:a63:1a08:: with SMTP id a8mr2973419pga.39.1594880647192;
-        Wed, 15 Jul 2020 23:24:07 -0700 (PDT)
-Received: from localhost (110-174-173-27.tpgi.com.au. [110.174.173.27])
-        by smtp.gmail.com with ESMTPSA id q24sm3859410pgg.3.2020.07.15.23.24.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 23:24:06 -0700 (PDT)
-Date:   Thu, 16 Jul 2020 16:24:01 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: KCSAN: data-race in generic_file_buffered_read /
- generic_file_buffered_read
-To:     Dave Chinner <david@fromorbit.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     akpm@linux-foundation.org, Marco Elver <elver@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, "Paul E. McKenney" <paulmck@kernel.org>,
-        syzbot <syzbot+0f1e470df6a4316e0a11@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com, Will Deacon <will@kernel.org>
-References: <0000000000004a4d6505aa7c688a@google.com>
-        <20200715152912.GA2209203@elver.google.com>
-        <20200715163256.GB1167@sol.localdomain>
-        <20200715234203.GK5369@dread.disaster.area>
-        <20200716030357.GE1167@sol.localdomain>
-In-Reply-To: <20200716030357.GE1167@sol.localdomain>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=405MEk0thD5homIHnbMeKKdn1LZhGC95KcOAqfwv9aI=;
+        b=IIbJIuJSfzTOXp8SGF4M6lbysIXvO3ycAAtCGxHi4kzKr3gYjqvzSq2DQVyTnLShrp
+         r3sntCYVYSOj2xAy7a8rtyD8CqsEPW65cgZLYRFvwqD0GIunEMF69UhGALOS5cAFY9ow
+         KiRELTrJNsMAP9EQoBoBuekBgM6db4/z01O4IuNJBqx9PJy0//D5IqeSAuEVM38RPewP
+         bKvmnqJbEv1+iHt8K+UURrUg61If1pajIxnPupn81osEs/SXzbtJPwSeEXnUrJnLPvUA
+         7fQvW8RRupqodQX2qfPInPHA0xdnUdtxqlB3+c+ZDAuJXGUiD0w/nF5neXrhuEskCKHr
+         v+Bw==
+X-Gm-Message-State: AOAM5309D7qw2U1dwrnNGFe0hiJOrDT40q0bbbtt0r838vHwU37ZA7kH
+        5Yz9/nConLtB44zKqxJ7ELoRWk8Mm+U56Ii8rEKf3wF6
+X-Google-Smtp-Source: ABdhPJwEKAck9EfVCtkWsE/O6WAuxgGgm+Ikh3SkEma8+NMALuLM/eLJ6QbDA4MhkWI8MRwK7uZZd+qb1de0zlH5gzE=
+X-Received: by 2002:a6b:f012:: with SMTP id w18mr3062339ioc.5.1594881492984;
+ Wed, 15 Jul 2020 23:38:12 -0700 (PDT)
 MIME-Version: 1.0
-Message-Id: <1594880070.49b50i0a1p.astroid@bobo.none>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20200702125744.10535-1-amir73il@gmail.com> <20200702125744.10535-4-amir73il@gmail.com>
+ <20200714103455.GD23073@quack2.suse.cz> <CAOQ4uxi7oGHC5HJGWgF+PO3359CpbpzSC=pPhp=RPCczHHdv3g@mail.gmail.com>
+ <20200715170937.GQ23073@quack2.suse.cz> <CAOQ4uxj_SoOvG1ozC8tSc7VYeYwOyS30TL=9-+T6J_++-q8qXg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxj_SoOvG1ozC8tSc7VYeYwOyS30TL=9-+T6J_++-q8qXg@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 16 Jul 2020 09:38:01 +0300
+Message-ID: <CAOQ4uxi0c7ii7bzAomqpFMxRcLwaAUbsxPtUxzFpR=bAnQU80w@mail.gmail.com>
+Subject: Re: [PATCH v4 03/10] fsnotify: send event to parent and child with
+ single callback
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Excerpts from Eric Biggers's message of July 16, 2020 1:03 pm:
-> On Thu, Jul 16, 2020 at 09:42:03AM +1000, Dave Chinner wrote:
->> On Wed, Jul 15, 2020 at 09:32:56AM -0700, Eric Biggers wrote:
->> > [+Cc linux-fsdevel]
->> >=20
->> > On Wed, Jul 15, 2020 at 05:29:12PM +0200, 'Marco Elver' via syzkaller-=
-bugs wrote:
->> > > On Wed, Jul 15, 2020 at 08:16AM -0700, syzbot wrote:
->> > > > Hello,
->> > > >=20
->> > > > syzbot found the following issue on:
->> > > >=20
->> > > > HEAD commit:    e9919e11 Merge branch 'for-linus' of git://git.ker=
-nel.org/..
->> > > > git tree:       upstream
->> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1217a8=
-3b100000
->> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D570eb5=
-30a65cd98e
->> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D0f1e470d=
-f6a4316e0a11
->> > > > compiler:       clang version 11.0.0 (https://github.com/llvm/llvm=
--project.git ca2dcbd030eadbf0aa9b660efe864ff08af6e18b)
->> > > >=20
->> > > > Unfortunately, I don't have any reproducer for this issue yet.
->> > > >=20
->> > > > IMPORTANT: if you fix the issue, please add the following tag to t=
-he commit:
->> > > > Reported-by: syzbot+0f1e470df6a4316e0a11@syzkaller.appspotmail.com
->> > > >=20
->> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->> > > > BUG: KCSAN: data-race in generic_file_buffered_read / generic_file=
-_buffered_read
->> > >=20
->> > > Our guess is that this is either misuse of an API from userspace, or=
- a
->> > > bug. Can someone clarify?
->> > >=20
->> > > Below are the snippets of code around these accesses.
->> >=20
->> > Concurrent reads on the same file descriptor are allowed.  Not with sy=
-s_read(),
->> > as that implicitly uses the file position.  But it's allowed with sys_=
-pread(),
->> > and also with sys_sendfile() which is the case syzbot is reporting her=
-e.
->>=20
->> Concurrent read()s are fine, they'll just read from the same offset.
->>=20
->=20
-> Actually the VFS serializes concurrent read()'s on the same fd, at least =
-for
-> regular files.
+On Wed, Jul 15, 2020 at 8:42 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Wed, Jul 15, 2020 at 8:09 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Tue 14-07-20 14:54:44, Amir Goldstein wrote:
+> > > On Tue, Jul 14, 2020 at 1:34 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Thu 02-07-20 15:57:37, Amir Goldstein wrote:
+> > > > > Instead of calling fsnotify() twice, once with parent inode and once
+> > > > > with child inode, if event should be sent to parent inode, send it
+> > > > > with both parent and child inodes marks in object type iterator and call
+> > > > > the backend handle_event() callback only once.
+> > > > >
+> > > > > The parent inode is assigned to the standard "inode" iterator type and
+> > > > > the child inode is assigned to the special "child" iterator type.
+> > > > >
+> > > > > In that case, the bit FS_EVENT_ON_CHILD will be set in the event mask,
+> > > > > the dir argment to handle_event will be the parent inode, the file_name
+> > > > > argument to handle_event is non NULL and refers to the name of the child
+> > > > > and the child inode can be accessed with fsnotify_data_inode().
+> > > > >
+> > > > > This will allow fanotify to make decisions based on child or parent's
+> > > > > ignored mask.  For example, when a parent is interested in a specific
+> > > > > event on its children, but a specific child wishes to ignore this event,
+> > > > > the event will not be reported.  This is not what happens with current
+> > > > > code, but according to man page, it is the expected behavior.
+> > > > >
+> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > >
+> > > > I like the direction where this is going. But can't we push it even a bit
+> > > > further? I like the fact that we now have "one fs event" -> "one fsnotify()
+> > > > call". Ideally I'd like to get rid of FS_EVENT_ON_CHILD in the event mask
+> > > > because it's purpose seems very weak now and it complicates code (and now
+> > >
+> > > Can you give an example where it complicates the code?
+> > > Don't confuse this with the code in fanotify_user.c that subscribes for
+> > > events on child/with name.
+> >
+> > I refer mostly to the stuff like:
+> >
+> >         /* An event "on child" is not intended for a mount/sb mark */
+> >         if (mask & FS_EVENT_ON_CHILD)
+> >                 ...
+> >
 
-Hmm, where?
+I need to explain something that was not an obvious decision for me.
 
-> Anyway, doesn't matter since we can consider pread() instead.
->=20
->>=20
->> >=20
->> > >=20
->> > > > write to 0xffff8880968747b0 of 8 bytes by task 6336 on cpu 0:
->> > > >  generic_file_buffered_read+0x18be/0x19e0 mm/filemap.c:2246
->> > >=20
->> > > 	...
->> > > 	would_block:
->> > > 		error =3D -EAGAIN;
->> > > 	out:
->> > > 		ra->prev_pos =3D prev_index;
->> > > 		ra->prev_pos <<=3D PAGE_SHIFT;
->> > > 2246)		ra->prev_pos |=3D prev_offset;
->> > >=20
->> > > 		*ppos =3D ((loff_t)index << PAGE_SHIFT) + offset;
->> > > 		file_accessed(filp);
->> > > 		return written ? written : error;
->> > > 	}
->> > > 	EXPORT_SYMBOL_GPL(generic_file_buffered_read);
->> > > 	...
->> >=20
->> > Well, it's a data race.  Each open file descriptor has just one readah=
-ead state
->> > (struct file_ra_state), and concurrent reads of the same file descript=
-or
->> > use/change that readahead state without any locking.
->> >=20
->> > Presumably this has traditionally been considered okay, since readahea=
-d is
->> > "only" for performance and doesn't affect correctness.  And for perfor=
-mance
->> > reasons, we want to avoid locking during file reads.
->> >=20
->> > So we may just need to annotate all access to file_ra_state with
->> > READ_ONCE() and WRITE_ONCE()...
->>=20
->> Please, no. Can we stop making the code hard to read, more difficult
->> to maintain and preventing the compiler from optimising it by doing
->> stupid "turn off naive static checker warnings" stuff like this?
->>=20
->> If the code is fine with races, then -leave it alone-. If it's not
->> fine with a data race, then please go and work out the correct
->> ordering and place well documented barriers and/or release/acquire
->> ordering semantics in the code so that we do not need to hide data
->> races behind a compiler optimisation defeating macro....
->>=20
->> Yes, I know data_race() exists to tell the tooling that it should
->> ignore data races in the expression, but that makes just as much
->> mess of the code as READ_ONCE/WRITE_ONCE being spewed everywhere
->> indiscriminately because <some tool said we need to do that>.
->>=20
->=20
-> Data races are undefined behavior, so it's never guaranteed "fine".
+When sending the same event on two inodes marks I considered a few options:
 
-Is this a new requirement for the kernel? Even code which is purely an=20
-optimisation (e.g. a readahead heuristic) can never be guaranteed to
-be fine for a data race? As in, the compiler might be free to start
-scribbling on memory because of undefined behaviour?
+1. TYPE_INODE is the mark on the object referred to in data
+    TYPE_PARENT is the mark on the parent if event is sent to a watching
+                               parent or to sb/mnt/child with parent/name info
+2. TYPE_CHILD is the mark on the object referred to in data
+    TYPE_INODE is the mark on the fsnotify to_tell inode if not same as data
+3. TYPE_INODE is the mark on the fsnotify to_tell inode
+    TYPE_CHILD is the mark on the object referred to in data if it is
+not to_tell
 
-What we used to be able to do is assume that the variable might take on=20
-one or other value at any time its used (or even see split between the
-two if the thing wasn't naturally aligned for example), but that was=20
-quite well "defined". So we could in fact guarantee that it would be=20
-fine.
+The first option with TYPE_PARENT  would require changing audit
+and dnotify to look at TYPE_PARENT mark in addition to TYPE_INODE
+mark, so it adds more friction and I ruled it out.
 
-> We can only
-> attempt to conclude that it's fine "in practice" and is too difficult to =
-fix,
-> and therefore doesn't meet the bar to be fixed (for now).
->=20
-> Of course, in most cases the preferred solution for data races is to intr=
-oduce
-> proper synchronization.  As I said, I'm not sure that's feasible here.  M=
-emory
-> barriers aren't the issue here; we'd need *locking*, which would mean con=
-current
-> readers would start contending for the lock.  Other suggestions appreciat=
-ed...
+I think you had option #2 in mind when reading the code, but I went
+for option #3.
+There is a minor difference between them related to how we deal with the case
+that the parent is watching and the case that only the child is watching.
 
+If the parent is not watching (and child/sb/mnt not interested in name) we do
+not snapshot the name and do not set the ON_CHILD flag in the mask.
+In that case, should we add the child mark as TYPE_INODE or TYPE_CHILD?
 
- 		ra->prev_pos =3D prev_index;
- 		ra->prev_pos <<=3D PAGE_SHIFT;
- 2246)		ra->prev_pos |=3D prev_offset;
+I chose TYPE_INODE because this meant I did not have to change audit/dnotify
+for that case. I didn't even care to look if they needed to be changed or not,
+just wanted to keep things as they were.
 
+Looking now, I see that dnotify would have needed to check TYPE_CHILD to
+get FS_ATTRIB event on self.
 
-In this case we can do better I guess, in case some compiler decides to=20
-store a half-done calculation there because it ran out of registers.
+It looks like audit would not have needed to change because although they set
+FS_EVENT_ON_CHILD in mask, none of the events they care about are
+"possible on child":
+ #define AUDIT_FS_WATCH (FS_MOVE | FS_CREATE | FS_DELETE | FS_DELETE_SELF |\
+                        FS_MOVE_SELF | FS_EVENT_ON_CHILD | FS_UNMOUNT)
+#define AUDIT_FS_EVENTS (FS_MOVE | FS_CREATE | FS_DELETE | FS_DELETE_SELF |\
+                         FS_MOVE_SELF | FS_EVENT_ON_CHILD)
 
-WRITE_ONCE(ra->prev_pos, ((loff_t)prev_index << PAGE_SHIFT) | prev_offset);
+Having written that decision process down made me realize there is a bug in
+my unified inotify event handler implementation - it does not clear
+FS_EVENT_ON_CHILD when reporting without name.
 
-As Dave said, adding WRITE_ONCE to the individual accesses would be=20
-stupid because it does nothing to solve the actual race and makes it=20
-harder to read in more than one way.
+It is interesting to note that the result of sending FS_OPEN only to a watching
+child to inotify_handle_event() is the same for design choices #2 and #3 above.
+But the bug fix of clearing FS_EVENT_ON_CHILD when reporting without name
+would look different depending on said choice.
+
+Since I had to change inotify handler anyway, I prefer to stick with my choice
+and fix inotify handler using goto notify_child which is a bit uglier,
+instead of
+having to adapt dnotify to choice #2.
+
+> > They are not big complications. But it would be nice to get rid of special
+> > cases like this. Basically my thinking was like: Now that we generate each
+> > event exactly once (i.e., no event duplication once with FS_EVENT_ON_CHILD
+> > and once without it), we should just be able to deliver all events to sb,
+> > mnt, parent, child and they'll just ignore it if they don't care. No
+> > special cases needed. But I understand I'm omitting a lot of detail in this
+> > highlevel "feeling" and these details may make this impractical.
+> >
+>
+[...]
+> > > > passed sb, mnt, parent, child so it should have all the info to decide
+> > > > where the event should be reported and I don't see a need for
+> > > > FS_EVENT_ON_CHILD flag.
+> > >
+> > > Do you mean something like this?
+> > >
+> > >         const struct path *inode = fsnotify_data_inode(data, data_type);
+> > >         bool event_on_child = !!file_name && dir != inode;
+> >
+> > Not quite. E.g. in fanotify_group_event_mask() we could replace the
+> > FS_EVENT_ON_CHILD usage with something like:
+> >
+> >         /* If parent isn't interested in events on child, skip adding its mask */
+> >         if (type == FSNOTIFY_OBJ_TYPE_INODE &&
+> >             !(mark->mask & FS_EVENT_ON_CHILD))
+> >                 continue;
+> >
+
+That looks wrong. FAN_CREATE does not have the ON_CHILD flag and
+should very well be reported to inode mark.
+Trying to special case as little as possible the different types of events
+(on child/dirent/self) is what drove my choices here, but if we can find
+ways to further simplify the code all the better.
 
 Thanks,
-Nick
+Amir.
