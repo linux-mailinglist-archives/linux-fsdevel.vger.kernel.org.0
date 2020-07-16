@@ -2,71 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C5242222B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 14:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEBFF2222C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 14:49:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbgGPMoO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 08:44:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39214 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbgGPMoN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 08:44:13 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 8AD96ADC4;
-        Thu, 16 Jul 2020 12:44:16 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 6B2D71E12C9; Thu, 16 Jul 2020 14:44:12 +0200 (CEST)
-Date:   Thu, 16 Jul 2020 14:44:12 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 10/22] fanotify: no external fh buffer in
- fanotify_name_event
-Message-ID: <20200716124412.GA5022@quack2.suse.cz>
-References: <20200716084230.30611-1-amir73il@gmail.com>
- <20200716084230.30611-11-amir73il@gmail.com>
+        id S1728547AbgGPMtP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 08:49:15 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29679 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726963AbgGPMtB (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jul 2020 08:49:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594903739;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=uaIPW54kqULYezLBNEp1wzYUF/CfEEz3Uiiha/ZVVF4=;
+        b=KO70tFTsn7fzH/B3yJBwawWzF06zI00l9xnweuOmJOIOb+Sy/DR0i0TR0aXIohcrROkt7t
+        WtHP5LNJ4uZSPWpeO79Rrz0zyzTTq+YPvEUXUJ+BaAc9qpdGYBHmxC0RVtFuDVSwnc1Woi
+        h1oihLsMIEfiHpvcnj1H0jJooFba7Xo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-379-TG6ruVBSN5WSYIjOFApk0w-1; Thu, 16 Jul 2020 08:48:50 -0400
+X-MC-Unique: TG6ruVBSN5WSYIjOFApk0w-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5D41B100CCC4;
+        Thu, 16 Jul 2020 12:48:48 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-114-107.ams2.redhat.com [10.36.114.107])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9146B78A58;
+        Thu, 16 Jul 2020 12:48:36 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Kees Cook <keescook@chromium.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Jann Horn <jannh@google.com>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RFC v2 0/3] io_uring: add restrictions to support untrusted
+ applications and guests
+Date:   Thu, 16 Jul 2020 14:48:30 +0200
+Message-Id: <20200716124833.93667-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200716084230.30611-11-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 16-07-20 11:42:18, Amir Goldstein wrote:
-> The fanotify_fh struct has an inline buffer of size 12 which is enough
-> to store the most common local filesystem file handles (e.g. ext4, xfs).
-> For file handles that do not fit in the inline buffer (e.g. btrfs), an
-> external buffer is allocated to store the file handle.
-> 
-> When allocating a variable size fanotify_name_event, there is no point
-> in allocating also an external fh buffer when file handle does not fit
-> in the inline buffer.
-> 
-> Check required size for encoding fh, preallocate an event buffer
-> sufficient to contain both file handle and name and store the name after
-> the file handle.
-> 
-> At this time, when not reporting name in event, we still allocate
-> the fixed size fanotify_fid_event and an external buffer for large
-> file handles, but fanotify_alloc_name_event() has already been prepared
-> to accept a NULL file_name.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+I fixed some issues that Jens pointed out, and also the TODOs that I left
+in the previous version.
 
-When reading this, I've got one cleanup idea for later: For FID events, we
-could now easily check fh len in fanotify_alloc_fid_event(). If it fits in
-inline size, allocate the event from kmem cache, if it does not, allocate
-appropriately sized event from kmalloc(). Similarly when freeing event we
-could check fh len to determine how to free the event. This way we can
-completely get rid of the external buffer code, somewhat simplify all
-the fh handling, remove the alignment restrictions on fanotify_fh and
-fanotify_info...
+I still have any doubts about patch 3, any advice?
 
-								Honza
+RFC v1 -> RFC v2:
+    - added 'restricted' flag in the ctx [Jens]
+    - added IORING_MAX_RESTRICTIONS define
+    - returned EBUSY instead of EINVAL when restrictions are already
+      registered
+    - reset restrictions if an error happened during the registration
+    - removed return value of io_sq_offload_start()
+
+RFC v1: https://lore.kernel.org/io-uring/20200710141945.129329-1-sgarzare@redhat.com
+
+Following the proposal that I send about restrictions [1], I wrote this series
+to add restrictions in io_uring.
+
+I also wrote helpers in liburing and a test case (test/register-restrictions.c)
+available in this repository:
+https://github.com/stefano-garzarella/liburing (branch: io_uring_restrictions)
+
+Just to recap the proposal, the idea is to add some restrictions to the
+operations (sqe, register, fixed file) to safely allow untrusted applications
+or guests to use io_uring queues.
+
+The first patch changes io_uring_register(2) opcodes into an enumeration to
+keep track of the last opcode available.
+
+The second patch adds IOURING_REGISTER_RESTRICTIONS opcode and the code to
+handle restrictions.
+
+The third patch adds IORING_SETUP_R_DISABLED flag to start the rings disabled,
+allowing the user to register restrictions, buffers, files, before to start
+processing SQEs.
+I'm not sure if this could help seccomp. An alternative pointed out by Jann
+Horn could be to register restrictions during io_uring_setup(2), but this
+requires some intrusive changes (there is no space in the struct
+io_uring_params to pass a pointer to restriction arrays, maybe we can add a
+flag and add the pointer at the end of the struct io_uring_params).
+
+Another limitation now is that I need to enable every time
+IORING_REGISTER_ENABLE_RINGS in the restrictions to be able to start the rings,
+I'm not sure if we should treat it as an exception.
+
+Maybe registering restrictions during io_uring_setup(2) could solve both issues
+(seccomp integration and IORING_REGISTER_ENABLE_RINGS registration), but I need
+some suggestions to properly extend the io_uring_setup(2).
+
+Comments and suggestions are very welcome.
+
+Thank you in advance,
+Stefano
+
+[1] https://lore.kernel.org/io-uring/20200609142406.upuwpfmgqjeji4lc@steredhat/
+
+Stefano Garzarella (3):
+  io_uring: use an enumeration for io_uring_register(2) opcodes
+  io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
+  io_uring: allow disabling rings during the creation
+
+ fs/io_uring.c                 | 152 ++++++++++++++++++++++++++++++++--
+ include/uapi/linux/io_uring.h |  56 ++++++++++---
+ 2 files changed, 188 insertions(+), 20 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.26.2
+
