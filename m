@@ -2,76 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B610D221BB7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 07:00:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83E64221BE2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 07:17:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726230AbgGPFAN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 01:00:13 -0400
-Received: from mail-il1-f197.google.com ([209.85.166.197]:37005 "EHLO
-        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbgGPFAG (ORCPT
+        id S1725913AbgGPFRs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 01:17:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47118 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbgGPFRs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 01:00:06 -0400
-Received: by mail-il1-f197.google.com with SMTP id x23so2901136ilk.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 22:00:06 -0700 (PDT)
+        Thu, 16 Jul 2020 01:17:48 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFC96C061755
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 22:17:47 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id ga4so5203167ejb.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 22:17:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nhKdkyhzBCrHDBJwUUcPf+KwT6tO1Wi+tMUkn7td2RQ=;
+        b=b1LEFcnRYx1nTMkOSj0eTB/2U15B9GIWDLABwl6F+4oXlXbNreUFFzUVlzRmtbZH/W
+         zEWxLPDgqjA61HLvxaZ9e4ueIt3ocMzY1cHVlZXTlS5SDYZuedDggNjvXdr/fBmtRWPy
+         IDSyjQDt6/FnzYzq7AU4G/iOD6Z2hM4bUWXUE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=cE1hhRVuLf2gZer2Ucpnx9HKI06D31CoZ/RNlVo8Pe0=;
-        b=Qc+CXZhldrBbmPciQDqGTsV0u0Ky3eickEkhndbU1KQniRyBHslWI0PR/lwHnOy2o9
-         n4Gl2ACdyEA/kumuU6mKAOsigtzKiths75fVYbDOxtKW+wbHrpz1HatHYhYk14+Zo7pm
-         z2VW8FFP2+epLTCkpK4IplW2c4PyH+4qEk/AYEy07AewiqjC8FHoCWrJbk4N542wYT3P
-         ksRB6JlnTFtAW9NAP+rW4kyL+mAlJR5Aw5IQbS2DN1d/vN4SFR0FnD3aNMtWJwjUiGft
-         rP9qxg0RI98rbuzAP8hKrocU+ttlj0qBT4E9VB/osbMVHPCbCKMHy2OYByi0kGBe9VOc
-         +s5A==
-X-Gm-Message-State: AOAM530zYD8fUO+Q1pkvCCR8OKRouou7sK75tmamiYbxlqTGFhJem1h/
-        ZP8fHRNzQCVc7ZOIL3NYF4kh1FKO8zZp070i93TFffbynV0l
-X-Google-Smtp-Source: ABdhPJwrtEU1PwKJDwMkynoxse8GDaDxlNH/e4aaSkK3f5Z72MwWHALTn6uAryXSscOV5ZuIi1/gjdhbEGKyVnlXGRdUASMWb0gi
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nhKdkyhzBCrHDBJwUUcPf+KwT6tO1Wi+tMUkn7td2RQ=;
+        b=k4dYw61ikE83z7x9UE+OVE43xE9AFN92Dxt6h23Shb4Mdgv7dLW01KMqfhBgVpAjmF
+         aJKFiQqcuKinVmpRx60dxxYL4JQ5C85F4ssNdkH05YA4gnMO3wqgzQ3mvTUU58fkPmx5
+         cQeDzDi0m4f+sUphp3Itm6Jbe4vjjkRivZPAJtwORnQx9P7JWXwFA+zP+bFqmu9VRO1Z
+         NZVvQxlPjRGjo2eEV69LmaDa6aUKXsNCjhEB38nglIPCAbUPVFRDCDtbdGyFFE22DQO6
+         /ovATHsGTwedkVCP3Ixp2SatgTSjI10Os+4+yJWBcAvqcpD5scdl4LcvpBktWh8iH0A1
+         OkRw==
+X-Gm-Message-State: AOAM532gVY95tptik1RjKCGGdQw3DnwdJytbOuAMKXAHkv61KPZ807f3
+        IjH3iqPljekA4Cad9UK5uuRPU42mHAMxJg2g/amKzg==
+X-Google-Smtp-Source: ABdhPJwR08O0tTC70WK+dzUYKsRlUldZiUJ9by9ozP6Qb0JMiLS/i4upeHK3NPcl15T56c1fTQWRZ8W5qEvKKyNMrcI=
+X-Received: by 2002:a17:906:3c42:: with SMTP id i2mr2339121ejg.14.1594876666485;
+ Wed, 15 Jul 2020 22:17:46 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:7c02:: with SMTP id m2mr2790747iok.49.1594875605629;
- Wed, 15 Jul 2020 22:00:05 -0700 (PDT)
-Date:   Wed, 15 Jul 2020 22:00:05 -0700
-In-Reply-To: <00000000000029663005aa23cff4@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ef406d05aa87e9ba@google.com>
-Subject: Re: WARNING in submit_bio_checks
-From:   syzbot <syzbot+4c50ac32e5b10e4133e1@syzkaller.appspotmail.com>
-To:     andriin@fb.com, ast@kernel.org, axboe@kernel.dk,
-        bkkarthik@pesu.pes.edu, bpf@vger.kernel.org, daniel@iogearbox.net,
-        davem@davemloft.net, ebiggers@kernel.org, hch@infradead.org,
-        john.fastabend@gmail.com, kafai@fb.com, kpsingh@chromium.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mcgrof@kernel.org,
-        netdev@vger.kernel.org, songliubraving@fb.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        yhs@fb.com
+References: <20200714102639.662048-1-chirantan@chromium.org>
+ <CAJfpegvd3nHWLtxjeC8BfW8JTHKRmX5iNgdWYYFj+MEK-ogiFw@mail.gmail.com> <CA+icZUWDtOHpgTCEhPatYfR+zJAbOBK2ihtf7G=zzCKAxiVmsQ@mail.gmail.com>
+In-Reply-To: <CA+icZUWDtOHpgTCEhPatYfR+zJAbOBK2ihtf7G=zzCKAxiVmsQ@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 16 Jul 2020 07:17:35 +0200
+Message-ID: <CAJfpegvG+xMNaL4r1UATGu6tjZqjapp50=Z4rsq6sumaBzwFMQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Fix parameter for FS_IOC_{GET,SET}FLAGS
+To:     Sedat Dilek <sedat.dilek@gmail.com>
+Cc:     Chirantan Ekbote <chirantan@chromium.org>,
+        linux-fsdevel@vger.kernel.org, Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+On Thu, Jul 16, 2020 at 1:06 AM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>
+> On Wed, Jul 15, 2020 at 5:05 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Tue, Jul 14, 2020 at 12:26 PM Chirantan Ekbote
+> > <chirantan@chromium.org> wrote:
+> > >
+> > > The ioctl encoding for this parameter is a long but the documentation
+> > > says it should be an int and the kernel drivers expect it to be an int.
+> > > If the fuse driver treats this as a long it might end up scribbling over
+> > > the stack of a userspace process that only allocated enough space for an
+> > > int.
+> > >
+> > > This was previously discussed in [1] and a patch for fuse was proposed
+> > > in [2].  From what I can tell the patch in [2] was nacked in favor of
+> > > adding new, "fixed" ioctls and using those from userspace.  However
+> > > there is still no "fixed" version of these ioctls and the fact is that
+> > > it's sometimes infeasible to change all userspace to use the new one.
+> >
+> > Okay, applied.
+> >
+>
+> ...and pushed? I do not see in in fuse.git.
 
-commit 449325b52b7a6208f65ed67d3484fd7b7184477b
-Author: Alexei Starovoitov <ast@kernel.org>
-Date:   Tue May 22 02:22:29 2018 +0000
+Pushed now.
 
-    umh: introduce fork_usermode_blob() helper
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10fc4b00900000
-start commit:   9e50b94b Add linux-next specific files for 20200703
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12fc4b00900000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14fc4b00900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f99cc0faa1476ed6
-dashboard link: https://syzkaller.appspot.com/bug?extid=4c50ac32e5b10e4133e1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1111fb6d100000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1218fa1f100000
-
-Reported-by: syzbot+4c50ac32e5b10e4133e1@syzkaller.appspotmail.com
-Fixes: 449325b52b7a ("umh: introduce fork_usermode_blob() helper")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Thanks,
+Miklos
