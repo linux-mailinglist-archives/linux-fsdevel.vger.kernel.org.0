@@ -2,134 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B718D222DDB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 23:26:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC293222ED4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 01:14:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbgGPV0z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 17:26:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55830 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725970AbgGPV0y (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 17:26:54 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30ED9C08C5C0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 14:26:54 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id a12so7652111ion.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 14:26:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oQxCrdBDFS2fRH6xFMh6bKNwdL/lOdhX2TcgbTw/bOw=;
-        b=X1bKofa1qS2JEqLt0jom2OGXcSEoy9mscvmqkSKw8hFEy0fixVyEp97RLhJBv0e25M
-         5JKdMVDMSTsC5WlnjOSPEo/tHM7cdH3CZ9iJLQBDMXVrv18QtAElSGku/OwZib6w+YDZ
-         DPMZ8zhKkmKok/aW7E+USmDemh/OhbI+MFhZDrPjUCoVLLS8sCH6uu61kaFE8LqZrslC
-         +nno3iWJZm1lbiDJXPvnuDBIJyTCQRgTVEJMwwqfZZqcxhsf4+9PRJ+/vK22/BTtxuEB
-         LK5CvgOZLaUAjsWE48ccQb8xKsqoO2DrM/MEbnYL7Fyo5JpyMmYLeZBXl7GCDwrWKoSG
-         2sWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oQxCrdBDFS2fRH6xFMh6bKNwdL/lOdhX2TcgbTw/bOw=;
-        b=JUL61lZB/ZnGDBZX3k+elFMCXp5vgQrETd59tO0WPXUi1gIFT1zA9Ej3lVOPHL19d+
-         QKkvDruH5L3xv6DJzTnoa27bcdZqp6FG+Fx2TjsmtzpE8W75U3kmeHrvdiyAKbFw1pWo
-         zFBynAJIT1xbYAmMqumPQ05OVmUulZiTWjRbNAXvHZjkGlHuUDQitQcYRdCzzELbvaww
-         aAg9y6R9Qn60NnhIAFGVSKs73MWgEaq93bBEfWPxzaH/YrQ2vkBxOx+uzEmAFEAknuZ4
-         3yQ4ZeIryln6LdDV5UWRIDC0mQun34ul0ErDvWqe5sdlsCJjUZxgl1K2eijKQYeKiFWb
-         at/Q==
-X-Gm-Message-State: AOAM531TLq48b7Vtpw3Aw6BULG/ErDJ4dNDKF/ZNICXf5er6SuWHxOC3
-        lSWe4YFNlgnunFaQa99G2hjJxw==
-X-Google-Smtp-Source: ABdhPJziyVuAkAxLvealhwn98eWxfMZWbG1ZmYnENKBM0t128sCt9/8AqZ3b6rF3HvTsRxWrjCRABQ==
-X-Received: by 2002:a05:6602:2103:: with SMTP id x3mr6450447iox.130.1594934813535;
-        Thu, 16 Jul 2020 14:26:53 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id u65sm3232286iod.45.2020.07.16.14.26.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jul 2020 14:26:52 -0700 (PDT)
-Subject: Re: [PATCH RFC v2 2/3] io_uring: add IOURING_REGISTER_RESTRICTIONS
- opcode
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Kees Cook <keescook@chromium.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Jann Horn <jannh@google.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
-        linux-kernel@vger.kernel.org
-References: <20200716124833.93667-1-sgarzare@redhat.com>
- <20200716124833.93667-3-sgarzare@redhat.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <0fbb0393-c14f-3576-26b1-8bb22d2e0615@kernel.dk>
-Date:   Thu, 16 Jul 2020 15:26:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727120AbgGPXNp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 19:13:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42556 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726007AbgGPXNo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jul 2020 19:13:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id AB76DAB89;
+        Thu, 16 Jul 2020 22:34:45 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 63C751E0E83; Fri, 17 Jul 2020 00:34:41 +0200 (CEST)
+Date:   Fri, 17 Jul 2020 00:34:41 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v5 15/22] fsnotify: send event with parent/name info to
+ sb/mount/non-dir marks
+Message-ID: <20200716223441.GA5085@quack2.suse.cz>
+References: <20200716084230.30611-1-amir73il@gmail.com>
+ <20200716084230.30611-16-amir73il@gmail.com>
+ <20200716170133.GJ5022@quack2.suse.cz>
+ <CAOQ4uxhuMyOjcs=qct6Hz3OOonYAJ9qhnhCkf-yy4zvZxTgFfw@mail.gmail.com>
+ <20200716175709.GM5022@quack2.suse.cz>
+ <CAOQ4uxiS2zNkVQZjcErmqq2OSXdfk2_H+gDyRWEAdjzbM+qipg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200716124833.93667-3-sgarzare@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxiS2zNkVQZjcErmqq2OSXdfk2_H+gDyRWEAdjzbM+qipg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/16/20 6:48 AM, Stefano Garzarella wrote:
-> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> index efc50bd0af34..0774d5382c65 100644
-> --- a/include/uapi/linux/io_uring.h
-> +++ b/include/uapi/linux/io_uring.h
-> @@ -265,6 +265,7 @@ enum {
->  	IORING_REGISTER_PROBE,
->  	IORING_REGISTER_PERSONALITY,
->  	IORING_UNREGISTER_PERSONALITY,
-> +	IORING_REGISTER_RESTRICTIONS,
->  
->  	/* this goes last */
->  	IORING_REGISTER_LAST
-> @@ -293,4 +294,30 @@ struct io_uring_probe {
->  	struct io_uring_probe_op ops[0];
->  };
->  
-> +struct io_uring_restriction {
-> +	__u16 opcode;
-> +	union {
-> +		__u8 register_op; /* IORING_RESTRICTION_REGISTER_OP */
-> +		__u8 sqe_op;      /* IORING_RESTRICTION_SQE_OP */
-> +	};
-> +	__u8 resv;
-> +	__u32 resv2[3];
-> +};
-> +
-> +/*
-> + * io_uring_restriction->opcode values
-> + */
-> +enum {
-> +	/* Allow an io_uring_register(2) opcode */
-> +	IORING_RESTRICTION_REGISTER_OP,
-> +
-> +	/* Allow an sqe opcode */
-> +	IORING_RESTRICTION_SQE_OP,
-> +
-> +	/* Only allow fixed files */
-> +	IORING_RESTRICTION_FIXED_FILES_ONLY,
-> +
-> +	IORING_RESTRICTION_LAST
-> +};
-> +
+On Thu 16-07-20 21:42:20, Amir Goldstein wrote:
+> On Thu, Jul 16, 2020 at 8:57 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Thu 16-07-20 20:20:04, Amir Goldstein wrote:
+> > > On Thu, Jul 16, 2020 at 8:01 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Thu 16-07-20 11:42:23, Amir Goldstein wrote:
+> > > > > Similar to events "on child" to watching directory, send event "on child"
+> > > > > with parent/name info if sb/mount/non-dir marks are interested in
+> > > > > parent/name info.
+> > > > >
+> > > > > The FS_EVENT_ON_CHILD flag can be set on sb/mount/non-dir marks to specify
+> > > > > interest in parent/name info for events on non-directory inodes.
+> > > > >
+> > > > > Events on "orphan" children (disconnected dentries) are sent without
+> > > > > parent/name info.
+> > > > >
+> > > > > Events on direcories are send with parent/name info only if the parent
+> > > > > directory is watching.
+> > > > >
+> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > >
+> > > > Hum, doesn't this break ignore mask handling in
+> > > > fanotify_group_event_mask()? Because parent's ignore mask will be included
+> > > > even though parent is added into the iter only to carry the parent info...
+> > > >
+> > >
+> > > Hmm, break ignore mask handling? or fix it?
+> > >
+> > > Man page said:
+> > > "Having these two types of masks permits a mount point or directory to be
+> > >  marked for receiving events, while at the  same time ignoring events for
+> > >  specific objects under that mount point or directory."
+> >
+> > Right, but presumably that speaks of the case of a mark where the parent
+> > has FS_EVENT_ON_CHILD set. For case of parent watching events of a child, I
+> > agree it makes sense to apply ignore masks of both the parent and the child.
+> >
+> > > The author did not say what to expect from marking a mount and ignoring
+> > > a directory.
+> >
+> > Yes and I'd expect to apply ignore mask on events for that directory but
+> > not for events on files in that directory... Even more so because this will
+> > be currently inconsistent wrt whether the child is dir (parent's ignore mask
+> > does not apply) or file (parent's ignore mask does apply).
+> >
+> 
+> Indeed. For that I used this trick in my POC:
+> 
+>         /* Set the mark mask, so fsnotify_parent() will find this mark */
+>         ovm->fsn_mark.mask = mask | FS_EVENT_ON_CHILD;
+>         ovm->fsn_mark.ignored_mask = mask;
+> 
+> It's not how users are expected to configure an ignored mask on children
+> but we can work the ignored mask information into the object mask, like
+> I already did w.r.t FS_MODIFY and get the same result without the hack.
 
-Not sure I totally love this API. Maybe it'd be cleaner to have separate
-ops for this, instead of muxing it like this. One for registering op
-code restrictions, and one for disallowing other parts (like fixed
-files, etc).
+OK, nice trick but for this series, I'd like to keep the original ignore
+mask behavior (bug to bug compatibility) or possibly let parent's ignore
+mask be applied only for events being sent to the parent due to its
+FS_EVENT_ON_CHILD. Can you please fix that up? I won't get to it before I
+leave for vacation but once I return, I'd like to just pick the fixed up
+commit and push everything to linux-next... Thanks!
 
-I think that would look a lot cleaner than the above.
-
+								Honza
 -- 
-Jens Axboe
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
