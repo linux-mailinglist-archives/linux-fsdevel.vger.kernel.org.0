@@ -2,87 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB9C5221AC7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 05:21:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B610D221BB7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 07:00:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbgGPDTl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 23:19:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45684 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726905AbgGPDTl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 23:19:41 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BE5B2076C;
-        Thu, 16 Jul 2020 03:19:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594869580;
-        bh=vgPMdz/7sCKkyj9OaQrErsOsGTtsVIrq+sr8sn87GuU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EtE9oJJqUTVTtM4nTcziXAOegeBwz5zdOszxhZLgXYpmLgOq2RPCOIbDz2/1B0yJ3
-         rQguRgZjmQmCGqFgM6CNv9bqyDe4SnhFo/PSqFv3bOc0lqMPWvrV/GCp1Yk8me8Lk4
-         yHnooUxaiKYqSapJvsfpqkwplyY2oPQ6f8LV2bHc=
-Date:   Wed, 15 Jul 2020 20:19:39 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH] fs/direct-io: avoid data race on ->s_dio_done_wq
-Message-ID: <20200716031939.GF1167@sol.localdomain>
-References: <20200713033330.205104-1-ebiggers@kernel.org>
- <20200715013008.GD2005@dread.disaster.area>
- <20200715023714.GA38091@sol.localdomain>
- <20200715080144.GF2005@dread.disaster.area>
- <20200715161342.GA1167@sol.localdomain>
- <20200716014656.GJ2005@dread.disaster.area>
- <20200716024717.GJ12769@casper.infradead.org>
+        id S1726230AbgGPFAN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 01:00:13 -0400
+Received: from mail-il1-f197.google.com ([209.85.166.197]:37005 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725935AbgGPFAG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jul 2020 01:00:06 -0400
+Received: by mail-il1-f197.google.com with SMTP id x23so2901136ilk.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jul 2020 22:00:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=cE1hhRVuLf2gZer2Ucpnx9HKI06D31CoZ/RNlVo8Pe0=;
+        b=Qc+CXZhldrBbmPciQDqGTsV0u0Ky3eickEkhndbU1KQniRyBHslWI0PR/lwHnOy2o9
+         n4Gl2ACdyEA/kumuU6mKAOsigtzKiths75fVYbDOxtKW+wbHrpz1HatHYhYk14+Zo7pm
+         z2VW8FFP2+epLTCkpK4IplW2c4PyH+4qEk/AYEy07AewiqjC8FHoCWrJbk4N542wYT3P
+         ksRB6JlnTFtAW9NAP+rW4kyL+mAlJR5Aw5IQbS2DN1d/vN4SFR0FnD3aNMtWJwjUiGft
+         rP9qxg0RI98rbuzAP8hKrocU+ttlj0qBT4E9VB/osbMVHPCbCKMHy2OYByi0kGBe9VOc
+         +s5A==
+X-Gm-Message-State: AOAM530zYD8fUO+Q1pkvCCR8OKRouou7sK75tmamiYbxlqTGFhJem1h/
+        ZP8fHRNzQCVc7ZOIL3NYF4kh1FKO8zZp070i93TFffbynV0l
+X-Google-Smtp-Source: ABdhPJwrtEU1PwKJDwMkynoxse8GDaDxlNH/e4aaSkK3f5Z72MwWHALTn6uAryXSscOV5ZuIi1/gjdhbEGKyVnlXGRdUASMWb0gi
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200716024717.GJ12769@casper.infradead.org>
+X-Received: by 2002:a6b:7c02:: with SMTP id m2mr2790747iok.49.1594875605629;
+ Wed, 15 Jul 2020 22:00:05 -0700 (PDT)
+Date:   Wed, 15 Jul 2020 22:00:05 -0700
+In-Reply-To: <00000000000029663005aa23cff4@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ef406d05aa87e9ba@google.com>
+Subject: Re: WARNING in submit_bio_checks
+From:   syzbot <syzbot+4c50ac32e5b10e4133e1@syzkaller.appspotmail.com>
+To:     andriin@fb.com, ast@kernel.org, axboe@kernel.dk,
+        bkkarthik@pesu.pes.edu, bpf@vger.kernel.org, daniel@iogearbox.net,
+        davem@davemloft.net, ebiggers@kernel.org, hch@infradead.org,
+        john.fastabend@gmail.com, kafai@fb.com, kpsingh@chromium.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mcgrof@kernel.org,
+        netdev@vger.kernel.org, songliubraving@fb.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 03:47:17AM +0100, Matthew Wilcox wrote:
-> On Thu, Jul 16, 2020 at 11:46:56AM +1000, Dave Chinner wrote:
-> > And why should we compromise performance on hundreds of millions of
-> > modern systems to fix an extremely rare race on an extremely rare
-> > platform that maybe only a hundred people world-wide might still
-> > use?
-> 
-> I thought that wasn't the argument here.  It was that some future
-> compiler might choose to do something absolutely awful that no current
-> compiler does, and that rather than disable the stupid "optimisation",
-> we'd be glad that we'd already stuffed the source code up so that it
-> lay within some tortuous reading of the C spec.
+syzbot has bisected this issue to:
 
-There are actually many reasons to avoid data races; see
-https://github.com/google/ktsan/wiki/READ_ONCE-and-WRITE_ONCE
+commit 449325b52b7a6208f65ed67d3484fd7b7184477b
+Author: Alexei Starovoitov <ast@kernel.org>
+Date:   Tue May 22 02:22:29 2018 +0000
 
-> 
-> The memory model is just too complicated.  Look at the recent exchange
-> between myself & Dan Williams.  I spent literally _hours_ trying to
-> figure out what rules to follow.
-> 
-> https://lore.kernel.org/linux-mm/CAPcyv4jgjoLqsV+aHGJwGXbCSwbTnWLmog5-rxD2i31vZ2rDNQ@mail.gmail.com/
-> https://lore.kernel.org/linux-mm/CAPcyv4j2+7XiJ9BXQ4mj_XN0N+rCyxch5QkuZ6UsOBsOO1+2Vg@mail.gmail.com/
-> 
-> Neither Dan nor I are exactly "new" to Linux kernel development.  As Dave
-> is saying here, having to understand the memory model is too high a bar.
-> 
-> Hell, I don't know if what we ended up with for v4 is actually correct.
-> It lokos good to me, but *shrug*
-> 
-> https://lore.kernel.org/linux-mm/159009507306.847224.8502634072429766747.stgit@dwillia2-desk3.amr.corp.intel.com/
+    umh: introduce fork_usermode_blob() helper
 
-Yes, it's too complicated.  I'm not sure there's much of a solution, though.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10fc4b00900000
+start commit:   9e50b94b Add linux-next specific files for 20200703
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=12fc4b00900000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14fc4b00900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f99cc0faa1476ed6
+dashboard link: https://syzkaller.appspot.com/bug?extid=4c50ac32e5b10e4133e1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1111fb6d100000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1218fa1f100000
 
-Of course, we also have easy-to-use synchronization primitives like mutex,
-spinlock, rw_semaphore, etc.  The problems arise when people think they know
-better and try to write something more "optimized".  We need to have a higher
-bar for accepting changes where the memory model is a concern at all.
+Reported-by: syzbot+4c50ac32e5b10e4133e1@syzkaller.appspotmail.com
+Fixes: 449325b52b7a ("umh: introduce fork_usermode_blob() helper")
 
-- Eric
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
