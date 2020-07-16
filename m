@@ -2,64 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 96D502218B8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 02:12:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E9EE2218D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 02:27:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbgGPAMe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jul 2020 20:12:34 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:35417 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726479AbgGPAMe (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jul 2020 20:12:34 -0400
-Received: from callcc.thunk.org (pool-96-230-252-158.bstnma.fios.verizon.net [96.230.252.158])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 06G0CCDh007246
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 15 Jul 2020 20:12:13 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 8BA07420304; Wed, 15 Jul 2020 20:12:12 -0400 (EDT)
-Date:   Wed, 15 Jul 2020 20:12:12 -0400
-From:   tytso@mit.edu
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Kees Cook <keescook@chromium.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: strace of io_uring events?
-Message-ID: <20200716001212.GA388817@mit.edu>
-References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
- <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
- <20200715171130.GG12769@casper.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200715171130.GG12769@casper.infradead.org>
+        id S1727829AbgGPA1f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jul 2020 20:27:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54466 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726998AbgGPA1d (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 15 Jul 2020 20:27:33 -0400
+Received: from localhost (unknown [137.135.114.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3ECE62075B;
+        Thu, 16 Jul 2020 00:27:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594859253;
+        bh=sH7HZ/hiQ6QZF9W5U008uEn7gxw0DgoaqhS93fgxyfw=;
+        h=Date:From:To:To:To:Cc:Cc:Subject:In-Reply-To:References:From;
+        b=ptUOxybMH8P6psxTIde0HVNyMy8dq4g0my4AdtXPwRf7dlm9DodZM+h1axGA9YX+7
+         tcpruouj/2BJc9rLAiYBfaqclR092Zm/+eVBy/bAnvtar6i2oZj3+m2iRN5hRFwfTh
+         n3Ui9cjevr4pwrXbeJDuiZFzZmJYGgKPTciB7gEk=
+Date:   Thu, 16 Jul 2020 00:27:32 +0000
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Stefan Priebe <s.priebe@profihost.ag>
+Cc:     stable@vger.kernel.org
+Subject: Re: [PATCH 2/3] fuse: ignore 'data' argument of mount(..., MS_REMOUNT)
+In-Reply-To: <20200710115805.4478-2-mszeredi@redhat.com>
+References: <20200710115805.4478-2-mszeredi@redhat.com>
+Message-Id: <20200716002733.3ECE62075B@mail.kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 15, 2020 at 06:11:30PM +0100, Matthew Wilcox wrote:
-> On Wed, Jul 15, 2020 at 07:35:50AM -0700, Andy Lutomirski wrote:
-> > > On Jul 15, 2020, at 4:12 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > This thread is to discuss the possibility of stracing requests
-> > > submitted through io_uring.   I'm not directly involved in io_uring
-> > > development, so I'm posting this out of  interest in using strace on
-> > > processes utilizing io_uring.
+Hi
 
-> > > 
-> > > Is there some existing tracing infrastructure that strace could use to
-> > > get async completion events?  Should we be introducing one?
+[This is an automated email]
 
-I suspect the best approach to use here is use eBPF, since since
-sending asyncronously to a ring buffer is going to be *way* more
-efficient than using the blocking ptrace(2) system call...
+This commit has been processed because it contains a "Fixes:" tag
+fixing commit: c30da2e981a7 ("fuse: convert to use the new mount API").
 
-	       	     	 	  	    - Ted
+The bot has tested the following trees: v5.7.8, v5.4.51.
+
+v5.7.8: Build OK!
+v5.4.51: Failed to apply! Possible dependencies:
+    7f5d38141e309 ("new primitive: __fs_parse()")
+    82995cc6c5ae4 ("libceph, rbd, ceph: convert to use the new mount API")
+    d7167b149943e ("fs_parse: fold fs_parameter_desc/fs_parameter_spec")
+
+
+NOTE: The patch will not be queued to stable trees until it is upstream.
+
+How should we proceed with this patch?
+
+-- 
+Thanks
+Sasha
