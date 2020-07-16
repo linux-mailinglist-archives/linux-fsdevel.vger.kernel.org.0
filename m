@@ -2,74 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DAAF62228C3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 19:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A31F222936
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 19:20:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbgGPRNe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 13:13:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60016 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728257AbgGPRNe (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 13:13:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 92DCDB88D;
-        Thu, 16 Jul 2020 17:13:36 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 6CCE81E0E81; Thu, 16 Jul 2020 19:13:32 +0200 (CEST)
-Date:   Thu, 16 Jul 2020 19:13:32 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Subject: Re: [PATCH v5 00/22] fanotify events with name info
-Message-ID: <20200716171332.GK5022@quack2.suse.cz>
-References: <20200716084230.30611-1-amir73il@gmail.com>
+        id S1729771AbgGPRUV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 13:20:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45946 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729757AbgGPRUR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jul 2020 13:20:17 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 813C2C061755
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 10:20:17 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id o3so5702007ilo.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 10:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=C/fNskhZQSlEWPzq8YKnwQxe94+wY9nLK+aOyJAPuyg=;
+        b=XLQ1Md9K9z4XyeSEhckH3uQXNGvZvV+RGH3+seFkpbSs3O3lwdUrDbv3cNS4LKMlRW
+         O01gNRJ3mZw16KwLxcYCEiRK+WUzI80xy1/RRxegrn2u2aqEOKDVCUG/g5LJ/3TFolLQ
+         UAyd6GV0gYERVcUU7iAp+rs9Aw7jMw9USi7QiKdEVQPks5o0oX5yNxdAN/2+cx5ttYcv
+         ntzhlTyoyXl3gAd13wN66qF3qWsmejmwyLzxeq+5vHNWiw3XfYNBug6P/Ht9ex+GnKsY
+         5jea4MAmBr5F9WIoAwA/TOmFPCyJjsf3B2m6o33YrP1To7Jam7G5S/e/GZEJazySJ89f
+         uvMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=C/fNskhZQSlEWPzq8YKnwQxe94+wY9nLK+aOyJAPuyg=;
+        b=VOnonhvNCDAi+8df1JZQOdDEGbBGi3ZZUq9kR9acUVC7AL4GGLav5t5vDqAUyqjv7O
+         uvJaV++qLlS5N036eClmOjLQEsgM9DLzjrHpAqrkhp0mCCvyAeCfEeuXuDvXBgREV8yl
+         CcNATiwmoFbFGpZT/SzEM2RJfb/ZUgxU16dTYKlRbEFh/EhM0WIXYGDq52dDFCfsvo6a
+         6UQWGVW/Ve1zM8goorZg5fAY2DLODGUvCH1BS0hDF1OHQl5bHloitmtyr9dS2hcHtJBU
+         Q56Ejj4GJd3yPsS4LR+gnxbCriY97mfIPUswfNCGaL26cGTPnxr7DHrbvMGugGjqCEcd
+         sh8Q==
+X-Gm-Message-State: AOAM533PxlCbzwW4e5ylYhKundzOU0r0gFcSd0K1O7YztKx7St0Weyqk
+        Zdj5OGxyH7bUzvJzK9VqUnXxCVlkFNIxdsTkNX8=
+X-Google-Smtp-Source: ABdhPJyDc0KBRiYjx4t1XfjGcF9DeONP+QI98ucLqUEtiu3zYGl4q+hedsOPt0qxjl/nQnWe3N67A5DkssedsZtpE1M=
+X-Received: by 2002:a92:c205:: with SMTP id j5mr5808830ilo.137.1594920016917;
+ Thu, 16 Jul 2020 10:20:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200716084230.30611-1-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20200716084230.30611-1-amir73il@gmail.com> <20200716084230.30611-16-amir73il@gmail.com>
+ <20200716170133.GJ5022@quack2.suse.cz>
+In-Reply-To: <20200716170133.GJ5022@quack2.suse.cz>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 16 Jul 2020 20:20:04 +0300
+Message-ID: <CAOQ4uxhuMyOjcs=qct6Hz3OOonYAJ9qhnhCkf-yy4zvZxTgFfw@mail.gmail.com>
+Subject: Re: [PATCH v5 15/22] fsnotify: send event with parent/name info to
+ sb/mount/non-dir marks
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Amir!
+On Thu, Jul 16, 2020 at 8:01 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Thu 16-07-20 11:42:23, Amir Goldstein wrote:
+> > Similar to events "on child" to watching directory, send event "on child"
+> > with parent/name info if sb/mount/non-dir marks are interested in
+> > parent/name info.
+> >
+> > The FS_EVENT_ON_CHILD flag can be set on sb/mount/non-dir marks to specify
+> > interest in parent/name info for events on non-directory inodes.
+> >
+> > Events on "orphan" children (disconnected dentries) are sent without
+> > parent/name info.
+> >
+> > Events on direcories are send with parent/name info only if the parent
+> > directory is watching.
+> >
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+>
+> Hum, doesn't this break ignore mask handling in
+> fanotify_group_event_mask()? Because parent's ignore mask will be included
+> even though parent is added into the iter only to carry the parent info...
+>
 
-On Thu 16-07-20 11:42:08, Amir Goldstein wrote:
-> This patch set implements the FAN_REPORT_NAME and FAN_REPORT_DIR_FID
-> group flags.
-> 
-> I previously posted v3 of prep patch series [1] and v4 of follow up
-> series [2].  Since then you pick up several prep patches, so this
-> posting includes the rest of the prep patches along with the followup
-> patches with most of your comments addressed.
-> 
-> Regarding the use of flag FS_EVENT_ON_CHILD and the TYPE_CHILD mark
-> iterator, I did not change that because I was not sure about it and it
-> is an internal implementation detail that we can change later.
-> But the discussion about it made me realize that dnotify event handler
-> wasn't properly adapted, so I added a patch to fix it.
-> 
-> The patches are available on github [3] based on your fsnotify branch.
-> man-pages [4] LTP tests [5] and a demo [6] are also available.
+Hmm, break ignore mask handling? or fix it?
 
-Phew! So I went through the patches. I didn't find any bug besides couple
-of typos I've fixed and then couple of things I've flagged at individual
-patches (which I've fixed up locally as well). There's just that
-ignore_mask handling issue outstanding. Overall I have to say I'm unhappy
-about the complexity of juggling with dir/inode/child, dirfh vs objfh, etc.
-I acknowledge that the stuff is at least well commented so I was able to
-grok it but still... That being said I don't have a great idea how to
-simplify all this so at this point I'm ok with merging things as they are
-but once all the functionality is in I want to have a look at how to
-simplify all the special cases.
+Man page said:
+"Having these two types of masks permits a mount point or directory to be
+ marked for receiving events, while at the  same time ignoring events for
+ specific objects under that mount point or directory."
 
-Anyway, for now, thanks for your persistence and work when developing this
-series!
+The author did not say what to expect from marking a mount and ignoring
+a directory.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+As it turns out, I need this exact functionality for my snapshot.
+- sb is watching all (pre) modify events
+- after dir has been marked with a change in snapshot an exclude
+  mark is set on that dir inode
+- further modification events on files inside that dir are ignored
+  without calling event handler
+
+I am sure you are aware that we have been fixing a lot of problems
+in handling combinations of mark masks.
+I see the unified event as another step in the direction to fix those
+issues and to get consistent and expected behavior.
+
+Thanks,
+Amir.
