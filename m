@@ -2,145 +2,398 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2479F222CFF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 22:35:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09E0C222D0D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 22:36:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbgGPUfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 16:35:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47872 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbgGPUf3 (ORCPT
+        id S1726817AbgGPUf6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 16:35:58 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:56717 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726836AbgGPUfh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 16:35:29 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B46DFC061755
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 13:35:28 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id q15so11567374wmj.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 13:35:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=9KKssZ/dTd5jFWuQk++quPFGpJEaxp++vXeRWFCVTYg=;
-        b=TcYH/jHU1RmQBPJCKXiG0zbJbk6t8T+p4WR/fKwsA07BAUPP4VqbUfrlpPWqF+0UiM
-         aslyup07dAKKGj1vxS9qXutKQzsMcEXQbXq4CTy9RwVdw9DdCJS0Ahbtc/p7cV6ngjeI
-         rh6Q8XL8U+5dtOZTRfteBdf+eio7fNkRoMQr8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=9KKssZ/dTd5jFWuQk++quPFGpJEaxp++vXeRWFCVTYg=;
-        b=PZuqWjdJfWM5CAwKIhcGLGCOBRZMW1clIOEC1jTyeeiqPaGYIDdyv9FDTAK0OuaJ35
-         Zre3SnFzHFL8O68MP0UcKU9Gy42acsH2sYyGLxJnkaBfpm3iwKO4si0VpinDUgBIRGMU
-         LjA5tXy5aM1mKg7Lo1pBI2Y1RcnaMeh8VMSabD9VaenOE0VuFJTxgVOPUnsSU0gXqJCj
-         eYphMX9SqSp8QEEfkF5FXzRu+tGY+gsE8E65fZavCdhiHKD29mphafCX7YRv24kEzjpC
-         36gH4DgdCwMpsH9GRtJaINAj2PXzJRNbD5jYndnsjcvB02r98LXZE/9NHHbHnof+HXxa
-         9ysw==
-X-Gm-Message-State: AOAM533HbMgDlSXjbeOe4s5tqAHFzoIxLgIqqlSsf7Zxfe8O4tb3n/yt
-        xPWxpSn/AcA88d4rdCHiG8Kn+A==
-X-Google-Smtp-Source: ABdhPJwP6NWxHHZE4jgbCtjpWDSnq8sR96EVizFQf4hhI6jzl9kIJSa2hoPAe1ShiSsc4DVR7x6Big==
-X-Received: by 2002:a05:600c:2182:: with SMTP id e2mr5761554wme.186.1594931727116;
-        Thu, 16 Jul 2020 13:35:27 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id 14sm10031229wmk.19.2020.07.16.13.35.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jul 2020 13:35:26 -0700 (PDT)
-Subject: Re: [PATCH 2/4] fs: Remove FIRMWARE_PREALLOC_BUFFER from
- kernel_read_file() enums
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        James Morris <jmorris@namei.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jessica Yu <jeyu@kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Boyd <stephen.boyd@linaro.org>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20200707081926.3688096-1-keescook@chromium.org>
- <20200707081926.3688096-3-keescook@chromium.org>
- <3fdb3c53-7471-14d8-ce6a-251d8b660b8a@broadcom.com>
- <20200710220411.GR12769@casper.infradead.org>
- <128120ca-7465-e041-7481-4c5d53f639dd@broadcom.com>
- <202007101543.912633AA73@keescook>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <9ba08503-e515-6761-63de-a3b611720b1b@broadcom.com>
-Date:   Thu, 16 Jul 2020 13:35:17 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 16 Jul 2020 16:35:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594931735;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sGlqsraquDgu8I0zmAVqtzYIeEOB5GrV+LoXf470Egs=;
+        b=OqVb7lvGUno+aBdyUjLXfV8GjdWQFuKBRgds9y2mhQCWTNrHu57iKC3xe2l5i3OD6eGraj
+        UDspwaRNhKdDfxN+otV4TkvbEYHHW7/TuAEo0ifQnrCo3VOvza+HPVEVkD7N1cCfNrjbx4
+        UP6KoVuSPfwcTCgcsqdzH3ocevsZxQs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-358-8K5DXL6lPOuYLyuH5dvvsw-1; Thu, 16 Jul 2020 16:35:31 -0400
+X-MC-Unique: 8K5DXL6lPOuYLyuH5dvvsw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D246D108D;
+        Thu, 16 Jul 2020 20:35:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-113.rdu2.redhat.com [10.10.112.113])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B90C060C84;
+        Thu, 16 Jul 2020 20:35:25 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [RFC PATCH 4/5] keys: Split the search perms between KEY_NEED_USE and
+ KEY_NEED_SEARCH
+From:   David Howells <dhowells@redhat.com>
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Eric Biederman <ebiederm@xmission.com>, jlayton@redhat.com,
+        christian@brauner.io, selinux@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org
+Date:   Thu, 16 Jul 2020 21:35:24 +0100
+Message-ID: <159493172491.3249370.12796192457457028352.stgit@warthog.procyon.org.uk>
+In-Reply-To: <159493167778.3249370.8145886688150701997.stgit@warthog.procyon.org.uk>
+References: <159493167778.3249370.8145886688150701997.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.22
 MIME-Version: 1.0
-In-Reply-To: <202007101543.912633AA73@keescook>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Kees
+Allow the permission needed for a keyring search to be specified and split
+the permissions between KEY_NEED_USE (the kernel wants to do something with
+the key) and KEY_NEED_SEARCH (userspace wants to do something with the
+key).
 
-On 2020-07-10 3:44 p.m., Kees Cook wrote:
-> On Fri, Jul 10, 2020 at 03:10:25PM -0700, Scott Branden wrote:
->>
->> On 2020-07-10 3:04 p.m., Matthew Wilcox wrote:
->>> On Fri, Jul 10, 2020 at 02:00:32PM -0700, Scott Branden wrote:
->>>>> @@ -950,8 +951,8 @@ int kernel_read_file(struct file *file, void **buf, loff_t *size,
->>>>>     		goto out;
->>>>>     	}
->>>>> -	if (id != READING_FIRMWARE_PREALLOC_BUFFER)
->>>>> -		*buf = vmalloc(i_size);
->>>>> +	if (!*buf)
->>>> The assumption that *buf is always NULL when id !=
->>>> READING_FIRMWARE_PREALLOC_BUFFER doesn't appear to be correct.
->>>> I get unhandled page faults due to this change on boot.
->>> Did it give you a stack backtrace?
->> Yes, but there's no requirement that *buf need to be NULL when calling this
->> function.
->> To fix my particular crash I added the following locally:
->>
->> --- a/kernel/module.c
->> +++ b/kernel/module.c
->> @@ -3989,7 +3989,7 @@ SYSCALL_DEFINE3(finit_module, int, fd, const char
->> __user *, uargs, int, flags)
->>   {
->>       struct load_info info = { };
->>       loff_t size;
->> -    void *hdr;
->> +    void *hdr = NULL;
->>       int err;
->>
->>       err = may_init_module();
-> Thanks for the diagnosis and fix! I haven't had time to cycle back
-> around to this series yet. Hopefully soon. :)
->
-In order to assist in your patchset I have combined it with my patch 
-series here:
-https://github.com/sbranden/linux/tree/kernel_read_file_for_kees
+This primarily affects how request_key() works, differentiating implicit
+calls (e.g. from filesystems) from userspace calling the request_key()
+system call.
 
-Please let me know if this matches your expectations for my patches or 
-if there is something else I need to change.
+This will allow the kernel to find keys in a hidden container keyring, but
+not the denizens of the container.
 
-Thanks,
-Scott
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
+ certs/blacklist.c                        |    2 +-
+ crypto/asymmetric_keys/asymmetric_type.c |    2 +-
+ include/linux/key.h                      |    2 ++
+ net/rxrpc/security.c                     |    2 +-
+ security/keys/internal.h                 |    4 ++++
+ security/keys/keyctl.c                   |    6 ++++--
+ security/keys/keyring.c                  |   13 ++++++++-----
+ security/keys/permission.c               |   31 ++++++++++++++++++++++++++++++
+ security/keys/proc.c                     |    1 +
+ security/keys/process_keys.c             |    8 ++++++--
+ security/keys/request_key.c              |    5 +++++
+ security/keys/request_key_auth.c         |    1 +
+ 12 files changed, 65 insertions(+), 12 deletions(-)
+
+diff --git a/certs/blacklist.c b/certs/blacklist.c
+index aff83e3a9f49..29c3cb6254d9 100644
+--- a/certs/blacklist.c
++++ b/certs/blacklist.c
+@@ -123,7 +123,7 @@ int is_hash_blacklisted(const u8 *hash, size_t hash_len, const char *type)
+ 	*p = 0;
+ 
+ 	kref = keyring_search(make_key_ref(blacklist_keyring, true),
+-			      &key_type_blacklist, buffer, false);
++			      &key_type_blacklist, buffer, KEY_NEED_USE, false);
+ 	if (!IS_ERR(kref)) {
+ 		key_ref_put(kref);
+ 		ret = -EKEYREJECTED;
+diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
+index 6e5fc8e31f01..4559ac2f0bb7 100644
+--- a/crypto/asymmetric_keys/asymmetric_type.c
++++ b/crypto/asymmetric_keys/asymmetric_type.c
+@@ -83,7 +83,7 @@ struct key *find_asymmetric_key(struct key *keyring,
+ 	pr_debug("Look up: \"%s\"\n", req);
+ 
+ 	ref = keyring_search(make_key_ref(keyring, 1),
+-			     &key_type_asymmetric, req, true);
++			     &key_type_asymmetric, req, KEY_NEED_USE, true);
+ 	if (IS_ERR(ref))
+ 		pr_debug("Request for key '%s' err %ld\n", req, PTR_ERR(ref));
+ 	kfree(req);
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 94a6d51464b5..0db5539366e7 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -296,6 +296,7 @@ extern struct key *key_alloc(struct key_type *type,
+ #define KEY_ALLOC_BUILT_IN		0x0004	/* Key is built into kernel */
+ #define KEY_ALLOC_BYPASS_RESTRICTION	0x0008	/* Override the check on restricted keyrings */
+ #define KEY_ALLOC_UID_KEYRING		0x0010	/* allocating a user or user session keyring */
++#define KEY_ALLOC_USERSPACE_REQUEST	0x0020	/* Userspace requested the key */
+ 
+ extern void key_revoke(struct key *key);
+ extern void key_invalidate(struct key *key);
+@@ -432,6 +433,7 @@ extern int keyring_clear(struct key *keyring);
+ extern key_ref_t keyring_search(key_ref_t keyring,
+ 				struct key_type *type,
+ 				const char *description,
++				enum key_need_perm need_perm,
+ 				bool recurse);
+ 
+ extern int keyring_add_key(struct key *keyring,
+diff --git a/net/rxrpc/security.c b/net/rxrpc/security.c
+index 9b1fb9ed0717..23077cfe3d44 100644
+--- a/net/rxrpc/security.c
++++ b/net/rxrpc/security.c
+@@ -141,7 +141,7 @@ bool rxrpc_look_up_server_security(struct rxrpc_local *local, struct rxrpc_sock
+ 
+ 	/* look through the service's keyring */
+ 	kref = keyring_search(make_key_ref(rx->securities, 1UL),
+-			      &key_type_rxrpc_s, kdesc, true);
++			      &key_type_rxrpc_s, kdesc, KEY_NEED_USE, true);
+ 	if (IS_ERR(kref)) {
+ 		trace_rxrpc_abort(0, "SVK",
+ 				  sp->hdr.cid, sp->hdr.callNumber, sp->hdr.seq,
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index af2c9531c435..d0d1bce95674 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -131,6 +131,7 @@ struct keyring_search_context {
+ 	struct keyring_index_key index_key;
+ 	const struct cred	*cred;
+ 	struct key_match_data	match_data;
++	enum key_need_perm	need_perm;	/* Permission required for search */
+ 	unsigned		flags;
+ #define KEYRING_SEARCH_NO_STATE_CHECK	0x0001	/* Skip state checks */
+ #define KEYRING_SEARCH_DO_STATE_CHECK	0x0002	/* Override NO_STATE_CHECK */
+@@ -196,6 +197,9 @@ extern void key_gc_keytype(struct key_type *ktype);
+ extern int key_task_permission(const key_ref_t key_ref,
+ 			       const struct cred *cred,
+ 			       enum key_need_perm need_perm);
++extern int key_search_permission(const key_ref_t key_ref,
++				 struct keyring_search_context *ctx,
++				 enum key_need_perm need_perm);
+ extern unsigned int key_acl_to_perm(const struct key_acl *acl);
+ extern long key_set_acl(struct key *key, struct key_acl *acl);
+ extern void key_put_acl(struct key_acl *acl);
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index fae2df676e30..54a2bfff9af2 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -225,7 +225,8 @@ SYSCALL_DEFINE4(request_key, const char __user *, _type,
+ 	key = request_key_and_link(ktype, description, NULL, callout_info,
+ 				   callout_len, NULL, NULL,
+ 				   key_ref_to_ptr(dest_ref),
+-				   KEY_ALLOC_IN_QUOTA);
++				   KEY_ALLOC_IN_QUOTA |
++				   KEY_ALLOC_USERSPACE_REQUEST);
+ 	if (IS_ERR(key)) {
+ 		ret = PTR_ERR(key);
+ 		goto error5;
+@@ -685,7 +686,8 @@ long keyctl_keyring_search(key_serial_t ringid,
+ 	}
+ 
+ 	/* do the search */
+-	key_ref = keyring_search(keyring_ref, ktype, description, true);
++	key_ref = keyring_search(keyring_ref, ktype, description,
++				 KEY_NEED_SEARCH, true);
+ 	if (IS_ERR(key_ref)) {
+ 		ret = PTR_ERR(key_ref);
+ 
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index f14aabf27a51..1779c95b428c 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -621,8 +621,8 @@ static int keyring_search_iterator(const void *object, void *iterator_data)
+ 
+ 	/* key must have search permissions */
+ 	if (!(ctx->flags & KEYRING_SEARCH_NO_CHECK_PERM) &&
+-	    key_task_permission(make_key_ref(key, ctx->possessed),
+-				ctx->cred, KEY_NEED_SEARCH) < 0) {
++	    key_search_permission(make_key_ref(key, ctx->possessed),
++				  ctx, ctx->need_perm) < 0) {
+ 		ctx->result = ERR_PTR(-EACCES);
+ 		kleave(" = %d [!perm]", ctx->skipped_ret);
+ 		goto skipped;
+@@ -798,8 +798,8 @@ static bool search_nested_keyrings(struct key *keyring,
+ 
+ 		/* Search a nested keyring */
+ 		if (!(ctx->flags & KEYRING_SEARCH_NO_CHECK_PERM) &&
+-		    key_task_permission(make_key_ref(key, ctx->possessed),
+-					ctx->cred, KEY_NEED_SEARCH) < 0)
++		    key_search_permission(make_key_ref(key, ctx->possessed),
++					  ctx, KEY_NEED_SEARCH) < 0)
+ 			continue;
+ 
+ 		/* stack the current position */
+@@ -921,7 +921,7 @@ key_ref_t keyring_search_rcu(key_ref_t keyring_ref,
+ 		return ERR_PTR(-ENOTDIR);
+ 
+ 	if (!(ctx->flags & KEYRING_SEARCH_NO_CHECK_PERM)) {
+-		err = key_task_permission(keyring_ref, ctx->cred, KEY_NEED_SEARCH);
++		err = key_search_permission(keyring_ref, ctx, ctx->need_perm);
+ 		if (err < 0)
+ 			return ERR_PTR(err);
+ 	}
+@@ -937,6 +937,7 @@ key_ref_t keyring_search_rcu(key_ref_t keyring_ref,
+  * @keyring: The root of the keyring tree to be searched.
+  * @type: The type of keyring we want to find.
+  * @description: The name of the keyring we want to find.
++ * @need_perm: The permission required of the target key.
+  * @recurse: True to search the children of @keyring also
+  *
+  * As keyring_search_rcu() above, but using the current task's credentials and
+@@ -945,6 +946,7 @@ key_ref_t keyring_search_rcu(key_ref_t keyring_ref,
+ key_ref_t keyring_search(key_ref_t keyring,
+ 			 struct key_type *type,
+ 			 const char *description,
++			 enum key_need_perm need_perm,
+ 			 bool recurse)
+ {
+ 	struct keyring_search_context ctx = {
+@@ -955,6 +957,7 @@ key_ref_t keyring_search(key_ref_t keyring,
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+ 		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
++		.need_perm		= need_perm,
+ 		.flags			= KEYRING_SEARCH_DO_STATE_CHECK,
+ 	};
+ 	key_ref_t key;
+diff --git a/security/keys/permission.c b/security/keys/permission.c
+index 0bb7f6b695f4..3ae4d9aedc3a 100644
+--- a/security/keys/permission.c
++++ b/security/keys/permission.c
+@@ -253,6 +253,37 @@ int key_task_permission(const key_ref_t key_ref, const struct cred *cred,
+ 	return security_key_permission(key_ref, cred, need_perm, notes);
+ }
+ 
++/**
++ * key_search_permission - Check a key can be searched for
++ * @key_ref: The key to check.
++ * @cred: The credentials to use.
++ * @need_perm: The permission required.
++ *
++ * Check to see whether permission is granted to use a key in the desired way,
++ * but permit the security modules to override.
++ *
++ * The caller must hold the RCU readlock.
++ *
++ * Returns 0 if successful, -EACCES if access is denied based on the
++ * permissions bits or the LSM check.
++ */
++int key_search_permission(const key_ref_t key_ref,
++			  struct keyring_search_context *ctx,
++			  enum key_need_perm need_perm)
++{
++	unsigned int allow, notes = 0;
++	int ret;
++
++	allow = key_resolve_acl(key_ref, ctx->cred);
++
++	ret = check_key_permission(key_ref, ctx->cred, allow, need_perm, &notes);
++	if (ret < 0)
++		return ret;
++
++	/* Let the LSMs be the final arbiter */
++	return security_key_permission(key_ref, ctx->cred, need_perm, notes);
++}
++
+ /**
+  * key_validate - Validate a key.
+  * @key: The key to be validated.
+diff --git a/security/keys/proc.c b/security/keys/proc.c
+index c68ec5f98659..a6b349ee1759 100644
+--- a/security/keys/proc.c
++++ b/security/keys/proc.c
+@@ -174,6 +174,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
+ 		.match_data.cmp		= lookup_user_key_possessed,
+ 		.match_data.raw_data	= key,
+ 		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
++		.need_perm		= KEY_NEED_SEARCH,
+ 		.flags			= (KEYRING_SEARCH_NO_STATE_CHECK |
+ 					   KEYRING_SEARCH_RECURSE),
+ 	};
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index 11227101bea0..3721f96dd6fb 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -135,7 +135,8 @@ int look_up_user_keyrings(struct key **_user_keyring,
+ 	 */
+ 	snprintf(buf, sizeof(buf), "_uid.%u", uid);
+ 	uid_keyring_r = keyring_search(make_key_ref(reg_keyring, true),
+-				       &key_type_keyring, buf, false);
++				       &key_type_keyring, buf, KEY_NEED_SEARCH,
++				       false);
+ 	kdebug("_uid %p", uid_keyring_r);
+ 	if (uid_keyring_r == ERR_PTR(-EAGAIN)) {
+ 		uid_keyring = keyring_alloc(buf, cred->user->uid, INVALID_GID,
+@@ -157,7 +158,8 @@ int look_up_user_keyrings(struct key **_user_keyring,
+ 	/* Get a default session keyring (which might also exist already) */
+ 	snprintf(buf, sizeof(buf), "_uid_ses.%u", uid);
+ 	session_keyring_r = keyring_search(make_key_ref(reg_keyring, true),
+-					   &key_type_keyring, buf, false);
++					   &key_type_keyring, buf, KEY_NEED_SEARCH,
++					   false);
+ 	kdebug("_uid_ses %p", session_keyring_r);
+ 	if (session_keyring_r == ERR_PTR(-EAGAIN)) {
+ 		session_keyring = keyring_alloc(buf, cred->user->uid, INVALID_GID,
+@@ -230,6 +232,7 @@ struct key *get_user_session_keyring_rcu(const struct cred *cred)
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= buf,
+ 		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
++		.need_perm		= KEY_NEED_SEARCH,
+ 		.flags			= KEYRING_SEARCH_DO_STATE_CHECK,
+ 	};
+ 
+@@ -648,6 +651,7 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
+ 	struct keyring_search_context ctx = {
+ 		.match_data.cmp		= lookup_user_key_possessed,
+ 		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
++		.need_perm		= KEY_NEED_SEARCH,
+ 		.flags			= (KEYRING_SEARCH_NO_STATE_CHECK |
+ 					   KEYRING_SEARCH_RECURSE),
+ 	};
+diff --git a/security/keys/request_key.c b/security/keys/request_key.c
+index 2b84efb420cb..479ae0573d1e 100644
+--- a/security/keys/request_key.c
++++ b/security/keys/request_key.c
+@@ -567,6 +567,7 @@ struct key *request_key_and_link(struct key_type *type,
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+ 		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
++		.need_perm		= KEY_NEED_USE,
+ 		.flags			= (KEYRING_SEARCH_DO_STATE_CHECK |
+ 					   KEYRING_SEARCH_SKIP_EXPIRED |
+ 					   KEYRING_SEARCH_RECURSE),
+@@ -579,6 +580,9 @@ struct key *request_key_and_link(struct key_type *type,
+ 	       ctx.index_key.type->name, ctx.index_key.description,
+ 	       callout_info, callout_len, aux, dest_keyring, flags);
+ 
++	if (flags & KEY_ALLOC_USERSPACE_REQUEST)
++		ctx.need_perm = KEY_NEED_SEARCH;
++
+ 	if (type->match_preparse) {
+ 		ret = type->match_preparse(&ctx.match_data);
+ 		if (ret < 0) {
+@@ -774,6 +778,7 @@ struct key *request_key_rcu(struct key_type *type,
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+ 		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
++		.need_perm		= KEY_NEED_USE,
+ 		.flags			= (KEYRING_SEARCH_DO_STATE_CHECK |
+ 					   KEYRING_SEARCH_SKIP_EXPIRED),
+ 	};
+diff --git a/security/keys/request_key_auth.c b/security/keys/request_key_auth.c
+index ee8c5fe6ed61..f8f77af152de 100644
+--- a/security/keys/request_key_auth.c
++++ b/security/keys/request_key_auth.c
+@@ -264,6 +264,7 @@ struct key *key_get_instantiation_authkey(key_serial_t target_id)
+ 		.match_data.cmp		= key_default_cmp,
+ 		.match_data.raw_data	= description,
+ 		.match_data.lookup_type	= KEYRING_SEARCH_LOOKUP_DIRECT,
++		.need_perm		= KEY_NEED_USE,
+ 		.flags			= (KEYRING_SEARCH_DO_STATE_CHECK |
+ 					   KEYRING_SEARCH_RECURSE),
+ 	};
 
 
