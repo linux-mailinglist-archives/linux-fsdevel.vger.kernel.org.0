@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A130D221EAD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 10:42:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AD47221EAF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 10:42:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727969AbgGPIms (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 04:42:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50370 "EHLO
+        id S1728082AbgGPImx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 04:42:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727913AbgGPImr (ORCPT
+        with ESMTP id S1728024AbgGPImt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 04:42:47 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DC9AC061755
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 01:42:47 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id z15so6125889wrl.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 01:42:47 -0700 (PDT)
+        Thu, 16 Jul 2020 04:42:49 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C083CC061755
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 01:42:48 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id o11so6128676wrv.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 01:42:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VtSI19lVKcekdGv3+3h/X+blWNwMmlEfOOGXPLwnEho=;
-        b=ZjXQolMJS/eua0B8JSN7k0Iwpv6evhn7V3taeX7qyO45siRkR5F6hkR1ywXwQIxrqv
-         UPY6JXOMHTYfVubWgHDvsI9dY+YfaxGMAmidjiUpbhgPg1RHobNazzOFNWrTmWVKULbN
-         9pfIwXgu0srPYddXS+uhZaKSbn3XuKKw0HNW74/tsm2iEMFmZxOSDp99zp7PRoPdpV1i
-         NtzevDNrcWbsa6CqBCQmB894ytx9ROe6Grs4M2Xp/o0tKPSvTR/tctnO992kQ85Ss56l
-         l1b3XBP/lHekB2qbwrVxlR2qqajimoefUX4hcWFXqXr+TwWcSbIHoXns3udUT4acKdaK
-         zRAA==
+        bh=nyv2KtM2WO7usNbqtN+HqdiLWba1gwwl7ImOSY7fMcw=;
+        b=tetOeu6P9HowxRpnSOCw/FAoB9VGZHFjyqzbpvS14Nf/WB3sxAg2PAHJ5iouHl1e4E
+         PHZkYrzgDTEplr/GJ81UwMzoY05veVs06M35BQEskWwLwhwS7FD93gRLTQZy+ZW2bxmE
+         HgJcwTCm0OgkwAjfiIAhB12PdSSWP+GBstBKAfuAYQBwWV0STRWjbxn2ov+9Mo5GN5DF
+         7o8HgeZ0aDOz79E9gQ5VOg85HHract6b4eUE4yDn9atsO8evqJCeIFxg/Pc7QPgyvBcw
+         F1VikbeIOIlu2AGHCVqjkVkq1+NiPzngsuER1vKnXNGNtRusl3g5d1gPC7Un63YMe+B2
+         31gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=VtSI19lVKcekdGv3+3h/X+blWNwMmlEfOOGXPLwnEho=;
-        b=FZKfhMYO0QVVwDq7yF1yRW5YXXnIFoZ6FvT6B6ofu4RZJUAkEXW6vceD2xeSG/d2z/
-         q3w09LpLtluMI5rQMgkF84JAh0/tT/I/sSffmFOmxwueLMVw+idXlATf8+QOXnjFRR7v
-         FUNsuRahVTv3qRvEMZ4EIDuekd331cVOv4J8JJXDjIkMcZFA7Oa0cQOBNiO+uBl5kRl7
-         yOEpKyOwsWZgxT3+5NJ9QlsbcgK4vfKJWY8YuExr350iWWeLv5zijscKVYjunziHmbZL
-         Pd4Iaz1FFce5IgAQWrTu7+JBN1iRals0KdAq6g6N3l4g4JQjvZ3vtb06buTlfxVMXZo/
-         OV4A==
-X-Gm-Message-State: AOAM531lZ6rkvt0zxB/4r6hN7pLcdOc1TAvfgIoucD4YHHh8hN1fYJE0
-        qzCbC4WS5f3Ejw+FYDhW21M=
-X-Google-Smtp-Source: ABdhPJx0JFM44ihHtkr77mBsDLKZZ9m6ovbb89Ey/ZLhZXBZybAMqQVN52iShcfPBa6eQjlQ6R/ZKw==
-X-Received: by 2002:adf:d842:: with SMTP id k2mr4057218wrl.239.1594888966109;
-        Thu, 16 Jul 2020 01:42:46 -0700 (PDT)
+        bh=nyv2KtM2WO7usNbqtN+HqdiLWba1gwwl7ImOSY7fMcw=;
+        b=Mqw0SSW8rQTxPkRXBwsjX5zGVbKPmL/3SQqYcyksFTQlKrB0NacjG9cVOSjKCIgq9/
+         xvQcEajy3kuj5qtLHbRtqr0pSosAkhXFsN1VHHBaYg26xZqCAaItIsTN3h+fu9/bb7zz
+         A9dgFEaQP0gUziZLX2HxrR4nOPcmgTcXdiGlYMaJs1frf2z8obZ+qTJcq5TN3YNhWAST
+         nUhefdaexOcDdyZcSaXxTMmtCSy3ITxNjKf7kmDmOXc1osi2LkITJuFPDWro+/GoytXI
+         QVYZlzoGVlEDGwj5FEQwx32WrFdFnlNDE76y4yRvAeagopBdQHR5CQ1a5cX6bC/JNOGl
+         JjfQ==
+X-Gm-Message-State: AOAM533h7tXvMg1kvH4mjsuQ7UcTgSldQP1JIRm5ltKAZ08joNscBN2V
+        ERy5huELFCSISfd4L0V8B/aKS8tT
+X-Google-Smtp-Source: ABdhPJwi6vbtTUVUjq7VLtvvXVN3JEq6TruXUyGmYRVzWpNGthqkyCEEIn5euq8bxKqtGJwdgXm7pw==
+X-Received: by 2002:adf:ec8c:: with SMTP id z12mr3755434wrn.281.1594888967520;
+        Thu, 16 Jul 2020 01:42:47 -0700 (PDT)
 Received: from localhost.localdomain ([141.226.183.23])
-        by smtp.gmail.com with ESMTPSA id j75sm8509977wrj.22.2020.07.16.01.42.44
+        by smtp.gmail.com with ESMTPSA id j75sm8509977wrj.22.2020.07.16.01.42.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 01:42:45 -0700 (PDT)
+        Thu, 16 Jul 2020 01:42:46 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH v5 07/22] fanotify: use FAN_EVENT_ON_CHILD as implicit flag on sb/mount/non-dir marks
-Date:   Thu, 16 Jul 2020 11:42:15 +0300
-Message-Id: <20200716084230.30611-8-amir73il@gmail.com>
+Subject: [PATCH v5 08/22] fsnotify: add object type "child" to object type iterator
+Date:   Thu, 16 Jul 2020 11:42:16 +0300
+Message-Id: <20200716084230.30611-9-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200716084230.30611-1-amir73il@gmail.com>
 References: <20200716084230.30611-1-amir73il@gmail.com>
@@ -61,62 +61,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Up to now, fanotify allowed to set the FAN_EVENT_ON_CHILD flag on
-sb/mount marks and non-directory inode mask, but the flag was ignored.
+The object type iterator is used to collect all the marks of
+a specific group that have interest in an event.
 
-Mask out the flag if it is provided by user on sb/mount/non-dir marks
-and define it as an implicit flag that cannot be removed by user.
+It is used by fanotify to get a single handle_event callback
+when an event has a match to either of inode/sb/mount marks
+of the group.
 
-This flag is going to be used internally to request for events with
-parent and name info.
+The nature of fsnotify events is that they are associated with
+at most one sb at most one mount and at most one inode.
+
+When a parent and child are both watching, two events are sent
+to backend, one associated to parent inode and one associated
+to the child inode.
+
+This results in duplicate events in fanotify, which usually
+get merged before user reads them, but this is sub-optimal.
+
+It would be better if the same event is sent to backend with
+an object type iterator that has both the child inode and its
+parent, and let the backend decide if the event should be reported
+once (fanotify) or twice (inotify).
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify_user.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ include/linux/fsnotify_backend.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index ab974cd234f7..16d70a8e90f9 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1050,6 +1050,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
- 	bool ignored = flags & FAN_MARK_IGNORED_MASK;
- 	unsigned int obj_type, fid_mode;
-+	u32 umask = 0;
- 	int ret;
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index 860c847c5bfa..2c62628566c5 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -255,6 +255,7 @@ static inline const struct path *fsnotify_data_path(const void *data,
  
- 	pr_debug("%s: fanotify_fd=%d flags=%x dfd=%d pathname=%p mask=%llx\n",
-@@ -1167,6 +1168,12 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	else
- 		mnt = path.mnt;
+ enum fsnotify_obj_type {
+ 	FSNOTIFY_OBJ_TYPE_INODE,
++	FSNOTIFY_OBJ_TYPE_CHILD,
+ 	FSNOTIFY_OBJ_TYPE_VFSMOUNT,
+ 	FSNOTIFY_OBJ_TYPE_SB,
+ 	FSNOTIFY_OBJ_TYPE_COUNT,
+@@ -262,6 +263,7 @@ enum fsnotify_obj_type {
+ };
  
-+	/* Mask out FAN_EVENT_ON_CHILD flag for sb/mount/non-dir marks */
-+	if (mnt || !S_ISDIR(inode->i_mode)) {
-+		mask &= ~FAN_EVENT_ON_CHILD;
-+		umask = FAN_EVENT_ON_CHILD;
-+	}
-+
- 	/* create/update an inode mark */
- 	switch (flags & (FAN_MARK_ADD | FAN_MARK_REMOVE)) {
- 	case FAN_MARK_ADD:
-@@ -1183,13 +1190,13 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	case FAN_MARK_REMOVE:
- 		if (mark_type == FAN_MARK_MOUNT)
- 			ret = fanotify_remove_vfsmount_mark(group, mnt, mask,
--							    flags, 0);
-+							    flags, umask);
- 		else if (mark_type == FAN_MARK_FILESYSTEM)
- 			ret = fanotify_remove_sb_mark(group, mnt->mnt_sb, mask,
--						      flags, 0);
-+						      flags, umask);
- 		else
- 			ret = fanotify_remove_inode_mark(group, inode, mask,
--							 flags, 0);
-+							 flags, umask);
- 		break;
- 	default:
- 		ret = -EINVAL;
+ #define FSNOTIFY_OBJ_TYPE_INODE_FL	(1U << FSNOTIFY_OBJ_TYPE_INODE)
++#define FSNOTIFY_OBJ_TYPE_CHILD_FL	(1U << FSNOTIFY_OBJ_TYPE_CHILD)
+ #define FSNOTIFY_OBJ_TYPE_VFSMOUNT_FL	(1U << FSNOTIFY_OBJ_TYPE_VFSMOUNT)
+ #define FSNOTIFY_OBJ_TYPE_SB_FL		(1U << FSNOTIFY_OBJ_TYPE_SB)
+ #define FSNOTIFY_OBJ_ALL_TYPES_MASK	((1U << FSNOTIFY_OBJ_TYPE_COUNT) - 1)
+@@ -306,6 +308,7 @@ static inline struct fsnotify_mark *fsnotify_iter_##name##_mark( \
+ }
+ 
+ FSNOTIFY_ITER_FUNCS(inode, INODE)
++FSNOTIFY_ITER_FUNCS(child, CHILD)
+ FSNOTIFY_ITER_FUNCS(vfsmount, VFSMOUNT)
+ FSNOTIFY_ITER_FUNCS(sb, SB)
+ 
 -- 
 2.17.1
 
