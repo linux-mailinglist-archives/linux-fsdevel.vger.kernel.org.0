@@ -2,92 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48CAC2220B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 12:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 412F1222119
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 13:07:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727815AbgGPKh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 06:37:27 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:15802 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbgGPKh0 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 06:37:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1594895846; x=1626431846;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=BGvYOWcLH2ldVjSghDjHj4cFv58uWURpxWhh4gALlj4=;
-  b=FEE6u8tRzHR9xrDdbaVpKhN+JSbVRtUIpVwXw1fNXam8p+USLNShtMKP
-   wnxg5RMIqyQgDXPfRtBh8Roz43q7KA3k/V8ZQ+7gRykN7WcGNk2t5tLrd
-   K6DsKIdGv0CiiA4SKV3JKvzpncByJVbuHb/+V1edz0u+9W4KryVB3Ciy4
-   sfh1XAephfq+Zj8mIXv6VqvG/U8jfNwlIzecR0phzhkdVTA+biSuo4zcG
-   ll0UfOsLf0djaq280qEyLHEH2P1xHX5lvmTm723lk/7JIU1oblsdXT7Ia
-   QV5AY8a6fjXQRG5WhJlIcIBT9530fE6aM9W6wST+nRwqDQ8LMl0wtLChm
-   g==;
-IronPort-SDR: eeP5ecPAXdwgckKliyYl4zdVhAuBknkrQk9+XuLfMKt+2FAy0YMxB/TG0q5UZkuKpKQbQqtEeU
- f0vE5Q7vM0US3slQwxF0u8B64V5jeubMPLnDkhAS+WJzI/WQhRLRtY7D5IvaR2blZbtzHPEO4s
- kHjXPPYtmhnP48nbdZheZX6PO+S9tHcpbo9TEIP6NV12zCS+vTO6sXk0aACzTsIWPUnYpiM/qZ
- SGe0SH19WQ8xo2enrIeAxevE3apUM2kBtgYXAhvEpIQ0otN7Z9TffxYgnpBkaaWu3Js/UQVBJN
- I1o=
-X-IronPort-AV: E=Sophos;i="5.75,359,1589212800"; 
-   d="scan'208";a="251864876"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 16 Jul 2020 18:37:26 +0800
-IronPort-SDR: i2mXiRIABXHhuaXWYXB+NVojwqPtS9ccbPdgqfwstIDDKhDgCFPn98mx0SgMvna9Qt9MZ/ahHU
- oNh57Bi6jE/0cKFhl+iRFpxmM5yX7+f4w=
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2020 03:25:17 -0700
-IronPort-SDR: 00/M6i+3aiIG7l12kHpqSOpoyudBPVpkIWCe2NL6B9ivFBAMRdMC5Ng96Rxb7CFboeuNlR5aHs
- uyoYK5yC11oA==
-WDCIronportException: Internal
-Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip01.wdc.com with ESMTP; 16 Jul 2020 03:37:27 -0700
-From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH] zonefs: count pages after truncating the iterator
-Date:   Thu, 16 Jul 2020 19:37:23 +0900
-Message-Id: <20200716103723.31983-1-johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.26.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727062AbgGPLHV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 07:07:21 -0400
+Received: from foss.arm.com ([217.140.110.172]:58178 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726383AbgGPLHV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 16 Jul 2020 07:07:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 639B91FB;
+        Thu, 16 Jul 2020 04:07:20 -0700 (PDT)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5D6C3F68F;
+        Thu, 16 Jul 2020 04:07:17 -0700 (PDT)
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Doug Anderson <dianders@chromium.org>,
+        Qais Yousef <qais.yousef@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Patrick Bellasi <patrick.bellasi@matbug.net>,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v7 0/3] sched/uclamp: new sysctl for default RT boost value
+Date:   Thu, 16 Jul 2020 12:03:44 +0100
+Message-Id: <20200716110347.19553-1-qais.yousef@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Count pages after possible truncating the iterator to the maximum zone
-append size, not before.
+Changes in v7:
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- fs/zonefs/super.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+	* Rebase on top of tip/sched/core
+	* Hold task_rq_lock() instead of using RCU.
+	* Better document that changes to p->uclamp_ require task_rq_lock()
+	* Remove smp_{wr}mp()
+	* Hold the the tasklist_lock with smp_mp__after_spinlock()
+	* Add patch 3 which addresses a splat I've seen while testing.
+	  static_branch_enable() in __setscheduler_uclamp() was causing it.
+	  Remove the call outside of the critical section to fix it.
 
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 5b7ced5c643b..116bad28cd68 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -607,13 +607,14 @@ static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
- 	int nr_pages;
- 	ssize_t ret;
- 
-+	max = queue_max_zone_append_sectors(bdev_get_queue(bdev));
-+	max = ALIGN_DOWN(max << SECTOR_SHIFT, inode->i_sb->s_blocksize);
-+	iov_iter_truncate(from, max);
-+
- 	nr_pages = iov_iter_npages(from, BIO_MAX_PAGES);
- 	if (!nr_pages)
- 		return 0;
- 
--	max = queue_max_zone_append_sectors(bdev_get_queue(bdev));
--	max = ALIGN_DOWN(max << SECTOR_SHIFT, inode->i_sb->s_blocksize);
--	iov_iter_truncate(from, max);
- 
- 	bio = bio_alloc_bioset(GFP_NOFS, nr_pages, &fs_bio_set);
- 	if (!bio)
+
+*** v6 cover-letter ***
+
+This series introduces a new sysctl_sched_uclamp_util_min_rt_default to control
+at runtime the default boost value of RT tasks.
+
+Full rationale is in patch 1 commit message.
+
+v6 has changed the approach taken in v5 [1] and earlier by moving away from the
+lazy update approach that touched the fast path to a synchronous one that is
+performed when the write to the procfs entry is done.
+
+for_each_process_thread() is used to update all existing RT tasks now. And to
+handle the race with a concurrent fork() we introduce sched_post_fork() in
+_do_fork() to ensure a concurrently forked RT tasks gets the right update.
+
+To ensure the race condition is handled correctly, I wrote this small (simple!)
+test program:
+
+	https://github.com/qais-yousef/uclamp_test.git
+
+And ran it on 4core x86 system and 8core big.LITTLE juno-r2 system.
+
+From juno-r2 run, 10 iterations each run:
+
+Without sched_post_fork()
+
+	# ./run.sh
+	pid 3105 has 336 but default should be 337
+	pid 13162 has 336 but default should be 337
+	pid 23256 has 338 but default should be 339
+	All forked RT tasks had the correct uclamp.min
+	pid 10638 has 334 but default should be 335
+	All forked RT tasks had the correct uclamp.min
+	pid 30683 has 335 but default should be 336
+	pid 8247 has 336 but default should be 337
+	pid 18170 has 1024 but default should be 334
+	pid 28274 has 336 but default should be 337
+
+With sched_post_fork()
+
+	# ./run.sh
+	All forked RT tasks had the correct uclamp.min
+	All forked RT tasks had the correct uclamp.min
+	All forked RT tasks had the correct uclamp.min
+	All forked RT tasks had the correct uclamp.min
+	All forked RT tasks had the correct uclamp.min
+	All forked RT tasks had the correct uclamp.min
+	All forked RT tasks had the correct uclamp.min
+	All forked RT tasks had the correct uclamp.min
+	All forked RT tasks had the correct uclamp.min
+	All forked RT tasks had the correct uclamp.min
+
+Thanks
+
+--
+Qais Yousef
+
+[1] https://lore.kernel.org/lkml/20200511154053.7822-1-qais.yousef@arm.com/
+
+CC: Jonathan Corbet <corbet@lwn.net>
+CC: Juri Lelli <juri.lelli@redhat.com>
+CC: Vincent Guittot <vincent.guittot@linaro.org>
+CC: Dietmar Eggemann <dietmar.eggemann@arm.com>
+CC: Steven Rostedt <rostedt@goodmis.org>
+CC: Ben Segall <bsegall@google.com>
+CC: Mel Gorman <mgorman@suse.de>
+CC: Luis Chamberlain <mcgrof@kernel.org>
+CC: Kees Cook <keescook@chromium.org>
+CC: Iurii Zaikin <yzaikin@google.com>
+CC: Quentin Perret <qperret@google.com>
+CC: Valentin Schneider <valentin.schneider@arm.com>
+CC: Patrick Bellasi <patrick.bellasi@matbug.net>
+CC: Pavan Kondeti <pkondeti@codeaurora.org>
+CC: linux-doc@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-fsdevel@vger.kernel.org
+
+
+Qais Yousef (3):
+  sched/uclamp: Add a new sysctl to control RT default boost value
+  Documentation/sysctl: Document uclamp sysctl knobs
+  sched/uclamp: Fix a deadlock when enabling uclamp static key
+
+ Documentation/admin-guide/sysctl/kernel.rst |  54 +++++++
+ include/linux/sched.h                       |  10 +-
+ include/linux/sched/sysctl.h                |   1 +
+ include/linux/sched/task.h                  |   1 +
+ kernel/fork.c                               |   1 +
+ kernel/sched/core.c                         | 149 ++++++++++++++++++--
+ kernel/sysctl.c                             |   7 +
+ 7 files changed, 208 insertions(+), 15 deletions(-)
+
 -- 
-2.26.2
+2.17.1
 
