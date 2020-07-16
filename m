@@ -2,139 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D34422270F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 17:32:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEDBC2227E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 16 Jul 2020 17:59:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728939AbgGPPbn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 16 Jul 2020 11:31:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57342 "EHLO
+        id S1729249AbgGPP5Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 16 Jul 2020 11:57:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728791AbgGPPbh (ORCPT
+        with ESMTP id S1728126AbgGPP5P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 11:31:37 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC87AC08C5DD
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 08:31:34 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id q17so4012553pls.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 08:31:34 -0700 (PDT)
+        Thu, 16 Jul 2020 11:57:15 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88341C061755
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 08:57:15 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id dg28so5115953edb.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 08:57:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=jGC0Cma9sD+M6C66CXjEVdr4Gdb8mMF8OboSIxxwdH4=;
-        b=ZCAVB8nsh1reVbsCtXsNpc9/GpvQQzf253bRke2fSht/9fsA2S0zNy7s7Q7zaYprZf
-         XIp3CYeZYUJRxqJWxlw4GYR6Rxfcw9Cy7l7xTQwKslcSPJZlLm/qGcYymwn8C7VPsU+k
-         dDBF3EEYw3UhdPnQHkORD5qj1r8KpyjprM3rc=
+        d=cloud.ionos.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=7ZTrgnbVy1vjZemfA6CrwyOwuqJRgX22NBFVKy7mJ70=;
+        b=OniGW0QPefqaE1Pu3X3AeSrA+Ez8+e1Tfjibofp2o2ptBMKEnOAepDKhoBjkb6Ellc
+         sQHdkWgUVRA6Vpm7dO4+tifS4hFZX2/ovZUjKiqhHPXQ8PjTzZyvMiePLeyow6xwkUE7
+         i8LaevdviDkzIFMorYpI6QMSk310Q5kjn2rdSXCU4zsdgwp5GloyyK4IeZ+w/tuhWFZh
+         O8cz0hurMpd7jrqdVCrzf6VHtyTTShFYzFJeGGCOr+HN2l3vO9ZTnXu8ddrdnfpgCMnt
+         GsvMJrv3FVT4ADrewaV8nvQiQMsg3EnwlWKlKZzHcZCAXXj/5A1JCTXROnll+0Oz21i2
+         FsSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=jGC0Cma9sD+M6C66CXjEVdr4Gdb8mMF8OboSIxxwdH4=;
-        b=W1LbOtUvG8oZM78Rs6tNyfVwpRWZUIJHU+DE0x65MbDSpwBUpjhIHs/arXiVnKUSUf
-         DLLSWuvST+KPUP+Y6AijL2DUmYNvoXWQC3xU/Tj/f3tD/vnFdOdi7WwJBMYGuWa7hois
-         RfnUKGZukCaDjzsHVqhfjYDpFXTdWcGh9QNzUoRF1ip2aLTrAKObYB6NAeApeLWWGiCR
-         O8ueZcKNua0E+RXW4B5aAFOTy0cy1+dGsDGm36rXo9cfEeeuYjhOQfrgBJkA41ruQcx1
-         Wu7dzjTaBcUrcldCB3wiojtFGUOYSGAsUZr6CbRHtXk4lNHnGYanINusfWUM5hcg8VqD
-         uo+g==
-X-Gm-Message-State: AOAM533ak3amOphLBiycE7s5TE3/9vVCvf0KtEMZOoYw5CT1M96K3VfA
-        //UQAYJSvT2pa7lPT5hHwY6aUw==
-X-Google-Smtp-Source: ABdhPJweDZrRnoUX7jCQB/uM+EQPmvMQFRn5PcnR6HDszEBspoWj0c+Kso5Fx/ceySNNzLeNRQX5LA==
-X-Received: by 2002:a17:90b:390e:: with SMTP id ob14mr4976168pjb.221.1594913494019;
-        Thu, 16 Jul 2020 08:31:34 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id e195sm5218464pfh.218.2020.07.16.08.31.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 08:31:33 -0700 (PDT)
-Date:   Thu, 16 Jul 2020 08:31:32 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 4/7] fs: Introduce O_MAYEXEC flag for openat2(2)
-Message-ID: <202007160822.CCDB5478@keescook>
-References: <20200714181638.45751-1-mic@digikod.net>
- <20200714181638.45751-5-mic@digikod.net>
- <202007151304.9F48071@keescook>
- <b209ea10-5b7f-c40e-5b6a-3da9028403d5@digikod.net>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=7ZTrgnbVy1vjZemfA6CrwyOwuqJRgX22NBFVKy7mJ70=;
+        b=kK+YvTosRO7KNG18Vof8PejxFkVAdXGl6jON9z/9YDxzoewp0da0wJJ4ipAeZJuvsK
+         8wnWr4sGyOahfFNkMqLuKRirE49a1PtlJPZbtLsjzcYbxJIeld7MZ/YohiDq8I1xbCr2
+         AHYmf1lqasrwMJvlE7M4nWUmHQa3dAVgUVBKHjmMRp/AExXCwchBFpI+ySaXYq/sSMKo
+         K/YSSARYZuHe6x8x1KS4MCjroAku6geKwxkR5n9MKtCfnjLSiElv+PNz/57qD76kAX94
+         96wM7qvzrOKBiG+kPcfWtvEMSVDmj4yuY1xsi/mN4LHi46+ILVpo5kAYwYEJtDhf/ExN
+         2v9w==
+X-Gm-Message-State: AOAM533fMyPGsIPff1vHXprN1KGNIGpBZNbHGMwB6YkctFmUB0RmqOq6
+        P+/ajck25sY5e2PPtGRI9c+Kdg==
+X-Google-Smtp-Source: ABdhPJyJFY5MDKgfi9kzpiIwMsqvq1uusoXLJ7QuDb4vsWlYMhGqrdvrpq478UJYhZ766tojh5a+iw==
+X-Received: by 2002:a05:6402:1803:: with SMTP id g3mr4807400edy.377.1594915033870;
+        Thu, 16 Jul 2020 08:57:13 -0700 (PDT)
+Received: from ?IPv6:2001:16b8:4843:4a00:587:bfc1:3ea4:c2f6? ([2001:16b8:4843:4a00:587:bfc1:3ea4:c2f6])
+        by smtp.gmail.com with ESMTPSA id y22sm5591028edl.84.2020.07.16.08.57.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jul 2020 08:57:13 -0700 (PDT)
+Subject: Re: decruft the early init / initrd / initramfs code v2
+To:     Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Song Liu <song@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-raid@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        NeilBrown <neilb@suse.com>
+References: <20200714190427.4332-1-hch@lst.de>
+ <CAHk-=wgxV9We+nVcJtQu2DHco+HSeja-WqVdA-KUcB=nyUYuoQ@mail.gmail.com>
+ <20200715065140.GA22060@lst.de>
+From:   Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Message-ID: <4b38a63b-af09-608c-c4fa-b9e484ebe6bc@cloud.ionos.com>
+Date:   Thu, 16 Jul 2020 17:57:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20200715065140.GA22060@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b209ea10-5b7f-c40e-5b6a-3da9028403d5@digikod.net>
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 04:18:27PM +0200, Micka�l Sala�n wrote:
-> On 15/07/2020 22:06, Kees Cook wrote:
-> > On Tue, Jul 14, 2020 at 08:16:35PM +0200, Micka�l Sala�n wrote:
-> >> The implementation of O_MAYEXEC almost duplicates what execve(2) and
-> >> uselib(2) are already doing: setting MAY_OPENEXEC in acc_mode (which can
-> >> then be checked as MAY_EXEC, if enforced), and propagating FMODE_EXEC to
-> >> _fmode via __FMODE_EXEC flag (which can then trigger a
-> >> fanotify/FAN_OPEN_EXEC event).
-> >> [...]
-> > 
-> > Adding __FMODE_EXEC here will immediately change the behaviors of NFS
-> > and fsnotify. If that's going to happen, I think it needs to be under
-> > the control of the later patches doing the behavioral controls.
-> > (specifically, NFS looks like it completely changes its access control
-> > test when this is set and ignores the read/write checks entirely, which
-> > is not what's wanted).
-> 
-> __FMODE_EXEC was suggested by Jan Kara and Matthew Bobrowski because of
-> fsnotify. However, the NFS handling of SUID binaries [1] indeed leads to
-> an unintended behavior. This also means that uselib(2) shouldn't work
-> properly with NFS. I can remove the __FMODE_EXEC flag for now.
+On 7/15/20 8:51 AM, Christoph Hellwig wrote:
+> On Tue, Jul 14, 2020 at 12:34:45PM -0700, Linus Torvalds wrote:
+>> On Tue, Jul 14, 2020 at 12:06 PM Christoph Hellwig <hch@lst.de> wrote:
+>>> this series starts to move the early init code away from requiring
+>>> KERNEL_DS to be implicitly set during early startup.  It does so by
+>>> first removing legacy unused cruft, and the switches away the code
+>>> from struct file based APIs to our more usual in-kernel APIs.
+>> Looks good to me, with the added note on the utimes cruft too as a
+>> further cleanup (separate patch).
+>>
+>> So you can add my acked-by.
+>>
+>> I _would_ like the md parts to get a few more acks. I see the one from
+>> Song Liu, anybody else in md land willing to go through those patches?
+>> They were the bulk of it, and the least obvious to me because I don't
+>> know that code at all?
+> Song is the maintainer.   Neil is the only person I could think of
+> that also knows the old md code pretty well.  Guoqing has contributed
+> a lot lately, but the code touched here is rather historic (and not
+> used very much at all these days as people use modular md and initramfѕ
+> based detection).
 
-I kind of wonder if we need to more completely fix __FMODE_EXEC?
+Hi Christoph,
 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=f8d9a897d4384b77f13781ea813156568f68b83e
+I just cloned the tree, seems there is compile issue that you need to 
+resolve.
 
-Hmpf, this implies that "fmode" should contain MAY_EXEC? It really looks
-like __FMODE_EXEC is a hack for places where only "flags" were passed
-around, and this only seems to be an issue for NFS at this point? And it
-should be fixable for fsnotify too?
+hch-misc$ make -j8
+   DESCEND  objtool
+   CALL    scripts/atomic/check-atomics.sh
+   CALL    scripts/checksyscalls.sh
+   CHK     include/generated/compile.h
+   CC      drivers/md/md.o
+   CC      drivers/md/md-bitmap.o
+   CC      drivers/md/md-autodetect.o
+   AR      drivers/perf/built-in.a
+   CC      drivers/md/dm.o
+   AR      drivers/hwtracing/intel_th/built-in.a
+   CC      drivers/nvmem/core.o
+drivers/md/md.c:7809:45: error: static declaration of ‘md_fops’ follows 
+non-static declaration
+  static const struct block_device_operations md_fops =
+                                              ^~~~~~~
+drivers/md/md.c:329:38: note: previous declaration of ‘md_fops’ was here
+  const struct block_device_operations md_fops;
+                                       ^~~~~~~
+scripts/Makefile.build:280: recipe for target 'drivers/md/md.o' failed
+make[2]: *** [drivers/md/md.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
 
-Hmm. (And nothing should use uselib anyway...)
+And for the changes of md, feel free to add my Acked-by if it could help.
 
--- 
-Kees Cook
+Thanks,
+Guoqing
