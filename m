@@ -2,101 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88D712230B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 03:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 046EB2230B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 03:46:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbgGQBqC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1726852AbgGQBqC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 16 Jul 2020 21:46:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39454 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbgGQBpx (ORCPT
+        with ESMTP id S1726593AbgGQBpz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 16 Jul 2020 21:45:53 -0400
-Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D269C08C5DE
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 18:45:53 -0700 (PDT)
-Received: by mail-pg1-x549.google.com with SMTP id o15so6836612pgn.15
-        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 18:45:53 -0700 (PDT)
+        Thu, 16 Jul 2020 21:45:55 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 229A7C08C5E1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 18:45:55 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id p22so9530622ybg.21
+        for <linux-fsdevel@vger.kernel.org>; Thu, 16 Jul 2020 18:45:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=ORAQciKgJGVxLPMl88O8FRaS7Y2vfgBBYDIN8L834Cw=;
-        b=ng8R1/65DV2iU+IQ306zEBb/0gZuzKY2wd9E8N5W+UqslArMsttZ5glLKrikl28eKb
-         mHq69ANYkDbSrWX4gfqMUWI2ZBqFfFly0rtpiO9z2tckqlbPuAu+WgKmohY8YtajbC7y
-         TAkC3td2D69tT+i8RxwKdpD86ImI888MHpVaS3zpZqe2TBh09T3GOUsEhGrYpq7qszO9
-         0eL1IJrZbZyK33JvINmsQYzOQns4GWk/EypSIDCE0Bw5rjnxJookR+K0w4fiVIfjkP4l
-         48dzxFnzHST1VX+U4ko1hntKzQ14Ezmb2zBJCYDs2eKpTWvdT0fsRQhtyl4OAmHbNGpd
-         7XZA==
+        bh=M2BARCIgcttWxNELPw4zNOFpxD9+a8coXLhy2/p7EJA=;
+        b=IuienX4mga40GmSRRKzTF+joRBlWaewlilX9kK4DbxKVxKtc0HgNzNmwzCZ1zOSkZS
+         /sl4RwiktZzyDIGk22y0rBU4/6to0p2Mb+0sHuOgVc59Of+mmEYUSL/X8GIx7S9N2g7k
+         AAsNYq+yOp1P9y/M3dpmzdp+iTmYeg60KNpHeU9Q4DinrRedG6NGSsYmC3G3+ZszcxWF
+         iiLyYi1e8fZMhBIQmpfrA1eMen9sCtNU9W9nDP6q6QwGvJa13W8tY3dxZyWvEvjE0cyb
+         7vhn6iWIVWyfKhLFtLO/KNWOxq8m9tNiM/Xk00LgFuq+iUFipff48yn3YZCVEhX9KuBH
+         cXvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=ORAQciKgJGVxLPMl88O8FRaS7Y2vfgBBYDIN8L834Cw=;
-        b=qfZ6qGDW9JMz2AKBLOZm/34Yv9yl8fYeYKJN3c3eydB9pdq1/Z1xlfQ123DE21LON5
-         BdfWuTdD6ijtX8ER9KvumaiQDia3VhYaRMVyEqQ3ZhdwB2ZZ50dKLvbYpqCkTL08SJeS
-         XFZD9Kp1RBBcp1K/1y+PDU530W+tBvDSvMY0LNCmy5jCYtnu914RlL3qtP/9nmd/hrgg
-         J/VfauqzdNFz1ZpoCcWtnS+KIoN/wxgXVNenc0wt/P9U+rs2JuEDW8YO57zrM8Eqy9Lc
-         b7G3IFUK4BiC8HcZ9+XyfZ+WxXGZLfO07+4Xb5vinuWF698wEBUPV+35JJ+Z9b0uonVD
-         8LYw==
-X-Gm-Message-State: AOAM533DqnIhblydeCBdJ50RQYo4yVWshi7/Wjoz8CYwKwYaETpYfP4X
-        NSSqEHaf+nmxUWo9/ky17hdFYen8fkk=
-X-Google-Smtp-Source: ABdhPJypMvXx5XgQi+oxPJJGIhfKX32tGeIjNcFpR4zHf1BJbMQwMi373dkhjOi4KnE/mp1ikT0bXUTweTE=
-X-Received: by 2002:a17:90a:2b8f:: with SMTP id u15mr7349194pjd.98.1594950352671;
- Thu, 16 Jul 2020 18:45:52 -0700 (PDT)
-Date:   Fri, 17 Jul 2020 01:45:38 +0000
+        bh=M2BARCIgcttWxNELPw4zNOFpxD9+a8coXLhy2/p7EJA=;
+        b=tsjCLZgyjLmBiL5H8uwWlVMw7rv07xaP8D2hjdyhur37nnzxUx8bfkkwJquuMly3zj
+         /DlWfsp6OtYOKn+TeM4HAFkZ3BEnPYZbcsOg3RqSxs+rXvsmQfRX3gLURY+zgjaDZ/vg
+         ucitUaIRqeNR/c5d+SgBnZwBhX9cM+5l6wlU7wRFjP5A9pdWzCp9Xlo8toD2vJM7YOYa
+         PGDS9p+QmKgRSqe2TtxOosA5MFbYUMTXJVz3i8dxdjBclu7/Yex6h/5XH0CbcJ+6XGxL
+         /kVwSFWIx40kbcnTSUdKWzTDvoMHIkTB0JI+o5eZuhGdT7lTPmSMnpayy8LmqKE6Q5XG
+         cSMg==
+X-Gm-Message-State: AOAM5323UPFEbG1RezvFsS5lS92cX/8ShmUhziboKMe7vqTXDqs9RSyJ
+        hS1NYi2qPT6jdITDztTDkj+OcDCq9OQ=
+X-Google-Smtp-Source: ABdhPJxSclWXD3pWyzJ/EO11UCYSucRKXFbMR9YelueZjjlG1f9W2/r7ez0qwF6s0pIusA0evwMmb2iIxEk=
+X-Received: by 2002:a25:3789:: with SMTP id e131mr10722971yba.417.1594950354393;
+ Thu, 16 Jul 2020 18:45:54 -0700 (PDT)
+Date:   Fri, 17 Jul 2020 01:45:39 +0000
 In-Reply-To: <20200717014540.71515-1-satyat@google.com>
-Message-Id: <20200717014540.71515-6-satyat@google.com>
+Message-Id: <20200717014540.71515-7-satyat@google.com>
 Mime-Version: 1.0
 References: <20200717014540.71515-1-satyat@google.com>
 X-Mailer: git-send-email 2.28.0.rc0.105.gf9edc3c819-goog
-Subject: [PATCH v3 5/7] f2fs: support direct I/O with fscrypt using blk-crypto
+Subject: [PATCH v3 6/7] fscrypt: document inline encryption support
 From:   Satya Tangirala <satyat@google.com>
 To:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-Cc:     linux-xfs@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Satya Tangirala <satyat@google.com>
+Cc:     linux-xfs@vger.kernel.org, Satya Tangirala <satyat@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Update the fscrypt documentation file for inline encryption support.
 
-Wire up f2fs with fscrypt direct I/O support. direct I/O with fscrypt is
-only supported through blk-crypto (i.e. CONFIG_BLK_INLINE_ENCRYPTION must
-have been enabled, the 'inlinecrypt' mount option must have been specified,
-and either hardware inline encryption support must be present or
-CONFIG_BLK_INLINE_ENCYRPTION_FALLBACK must have been enabled). Further,
-direct I/O on encrypted files is only supported when I/O is aligned
-to the filesystem block size (which is *not* necessarily the same as the
-block device's block size).
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Co-developed-by: Satya Tangirala <satyat@google.com>
 Signed-off-by: Satya Tangirala <satyat@google.com>
 ---
- fs/f2fs/f2fs.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ Documentation/filesystems/fscrypt.rst | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index b35a50f4953c..978130b5a195 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4082,7 +4082,11 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	int rw = iov_iter_rw(iter);
+diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
+index f5d8b0303ddf..f3d87a1a0a7f 100644
+--- a/Documentation/filesystems/fscrypt.rst
++++ b/Documentation/filesystems/fscrypt.rst
+@@ -1204,6 +1204,18 @@ buffer.  Some filesystems, such as UBIFS, already use temporary
+ buffers regardless of encryption.  Other filesystems, such as ext4 and
+ F2FS, have to allocate bounce pages specially for encryption.
  
--	if (f2fs_post_read_required(inode))
-+	if (!fscrypt_dio_supported(iocb, iter))
-+		return true;
-+	if (fsverity_active(inode))
-+		return true;
-+	if (f2fs_compressed_file(inode))
- 		return true;
- 	if (f2fs_is_multi_device(sbi))
- 		return true;
++Fscrypt is also able to use inline encryption hardware instead of the
++kernel crypto API for en/decryption of file contents.  When possible, and
++if directed to do so (by specifying the 'inlinecrypt' mount option for
++an ext4/F2FS filesystem), it adds encryption contexts to bios and
++uses blk-crypto to perform the en/decryption instead of making use
++of the above read/write path changes.  Of course, even if directed to make
++use of inline encryption, fscrypt will only be able to do so if either
++hardware inline encryption support is available for the selected encryption
++algorithm or CONFIG_BLK_INLINE_ENCRYPTION_FALLBACK is selected.  If neither
++is the case, fscrypt will fall back to using the above mentioned read/write
++path changes for en/decryption.
++
+ Filename hashing and encoding
+ -----------------------------
+ 
+@@ -1250,7 +1262,9 @@ Tests
+ 
+ To test fscrypt, use xfstests, which is Linux's de facto standard
+ filesystem test suite.  First, run all the tests in the "encrypt"
+-group on the relevant filesystem(s).  For example, to test ext4 and
++group on the relevant filesystem(s).  One can also run the tests
++with the 'inlinecrypt' mount option to test the implementation for
++inline encryption support.  For example, to test ext4 and
+ f2fs encryption using `kvm-xfstests
+ <https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md>`_::
+ 
 -- 
 2.28.0.rc0.105.gf9edc3c819-goog
 
