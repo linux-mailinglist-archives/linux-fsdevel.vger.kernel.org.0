@@ -2,135 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAB992245EA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 23:39:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91936224628
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jul 2020 00:07:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbgGQVjd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jul 2020 17:39:33 -0400
-Received: from mga05.intel.com ([192.55.52.43]:24888 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726204AbgGQVjb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jul 2020 17:39:31 -0400
-IronPort-SDR: aBZHDjghD0crMd+R/XDYtcqWhPJ5nLUfrgPhoHmUF6bdbc8D8ucG/UNxn1ggygKf0OWYn6BtiC
- YUpWjjmzkOdQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9685"; a="234532583"
-X-IronPort-AV: E=Sophos;i="5.75,364,1589266800"; 
-   d="scan'208";a="234532583"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2020 14:39:30 -0700
-IronPort-SDR: AU7pg9gP52qGosMkjj44f+xwiuRZBXuNXBPORBl/nIscyOnQkujZOX7iJDcTIOdgYz9TXvt9wD
- p6bhZiX9j/bw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,364,1589266800"; 
-   d="scan'208";a="460984872"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.147])
-  by orsmga005.jf.intel.com with ESMTP; 17 Jul 2020 14:39:30 -0700
-Date:   Fri, 17 Jul 2020 14:39:30 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
+        id S1728028AbgGQWGR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jul 2020 18:06:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58278 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727105AbgGQWGP (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Jul 2020 18:06:15 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51C3CC0619D2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jul 2020 15:06:15 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id f16so6998094pjt.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jul 2020 15:06:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=q5TCCZgzdfgT0G/6PATrZpLazvHyt7WUQKrX1xrUKLk=;
+        b=EuxBM1YB0vCqSrSBab3wG4+3G4l3LZB0r/Sy24DYkcIknVoRK1vd5FybG7DBoZMGK3
+         /CTYNU5fQj7jzV2LhEHV/rMxebd8TPxLdS/JqIf4QW3G3zlJPlZkenuoPSr3MjLle+Qt
+         xVgyLZ3UJBffb9GcM/W4p9s1nh6pIolmqkWH8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=q5TCCZgzdfgT0G/6PATrZpLazvHyt7WUQKrX1xrUKLk=;
+        b=mA2kzgEJxF9I5W+Qc0IKJO5S+JgCSNPehL0FT1Cd5pupRZUG8hZ2VAm/KMA+8CQ8aM
+         +E6sMPWlwOxpzB+6k6OQrCd/ccT49VKLjlBjymioMtI+1FcQm3Im7iExjPYUxPQlmN+t
+         DnVQzjikOkFAhpqfjb05cFMMjgfqDSYN7EcRVGW36oG9rCi7wjRIhHdzA7H4kkx4mOsf
+         qNKCqKCHnXVmmopzezke7iv354W7QN5umleEux79q/XVJGvycx+sOXJZo11g6fFBB1/A
+         4xTfrju+0k5Z9CMTvEajuAJPQVdWHi8PfHk8avrOPo496Yn7Y+JHmNfbftjnVllanvc5
+         F3mg==
+X-Gm-Message-State: AOAM532Km3i1Cyqv6BV3J1oGa1EgNRYPXq07xcFrBxH9VkwXtKDPB6NR
+        L7jts/of8eTXuKVyAGyttLuUjw==
+X-Google-Smtp-Source: ABdhPJy9/8XCi8iOFM3R8LvinzGsW1RKW4M4ZDH4GQ47QjK1iaaE3UlIgfUhMF6EPqI5aJJtdKAWBw==
+X-Received: by 2002:a17:90a:9381:: with SMTP id q1mr4017193pjo.38.1595023574832;
+        Fri, 17 Jul 2020 15:06:14 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id n18sm8896320pfd.99.2020.07.17.15.06.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jul 2020 15:06:13 -0700 (PDT)
+Date:   Fri, 17 Jul 2020 15:06:12 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jessica Yu <jeyu@kernel.org>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Peter Jones <pjones@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC V2 04/17] x86/pks: Preserve the PKRS MSR on context
- switch
-Message-ID: <20200717213929.GR3008823@iweiny-DESK2.sc.intel.com>
-References: <20200717072056.73134-1-ira.weiny@intel.com>
- <20200717072056.73134-5-ira.weiny@intel.com>
- <20200717083140.GW10769@hirez.programming.kicks-ass.net>
+        Stephen Boyd <stephen.boyd@linaro.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/13] fs/kernel_read_file: Remove redundant size argument
+Message-ID: <202007171502.22E12A4E9@keescook>
+References: <20200717174309.1164575-1-keescook@chromium.org>
+ <20200717174309.1164575-7-keescook@chromium.org>
+ <39b2d8af-812f-8c5e-3957-34543add0173@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200717083140.GW10769@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <39b2d8af-812f-8c5e-3957-34543add0173@broadcom.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 17, 2020 at 10:31:40AM +0200, Peter Zijlstra wrote:
-> On Fri, Jul 17, 2020 at 12:20:43AM -0700, ira.weiny@intel.com wrote:
-> 
-> > diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-> > index f362ce0d5ac0..d69250a7c1bf 100644
-> > --- a/arch/x86/kernel/process.c
-> > +++ b/arch/x86/kernel/process.c
-> > @@ -42,6 +42,7 @@
-> >  #include <asm/spec-ctrl.h>
-> >  #include <asm/io_bitmap.h>
-> >  #include <asm/proto.h>
-> > +#include <asm/pkeys_internal.h>
-> >  
-> >  #include "process.h"
-> >  
-> > @@ -184,6 +185,36 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
-> >  	return ret;
-> >  }
-> >  
-> > +/*
-> > + * NOTE: We wrap pks_init_task() and pks_sched_in() with
-> > + * CONFIG_ARCH_HAS_SUPERVISOR_PKEYS because using IS_ENABLED() fails
-> > + * due to the lack of task_struct->saved_pkrs in this configuration.
-> > + * Furthermore, we place them here because of the complexity introduced by
-> > + * header conflicts introduced to get the task_struct definition in the pkeys
-> > + * headers.
-> > + */
-> 
-> I don't see anything much useful in that comment.
+On Fri, Jul 17, 2020 at 12:04:18PM -0700, Scott Branden wrote:
+> On 2020-07-17 10:43 a.m., Kees Cook wrote:
+> > In preparation for refactoring kernel_read_file*(), remove the redundant
+> > "size" argument which is not needed: it can be included in the return
+>
+> I don't think the size argument is redundant though.
+> The existing kernel_read_file functions always read the whole file.
+> Now, what happens if the file is bigger than the buffer.
+> How does kernel_read_file know it read the whole file by looking at the
+> return value?
 
-I'm happy to delete.  Internal reviews questioned the motive here so I added
-the comment to inform why this style was chosen rather than the preferred
-IS_ENABLED().
+Yes; an entirely reasonable concern. This is why I add the file_size
+output argument later in the series.
 
-I've deleted it now.
+> > code, with callers adjusted. (VFS reads already cannot be larger than
+> > INT_MAX.)
+> > [...]
+> > -	if (i_size > SIZE_MAX || (max_size > 0 && i_size > max_size)) {
+> > +	if (i_size > INT_MAX || (max_size > 0 && i_size > max_size)) {
+>
+> Should this be SSIZE_MAX?
 
-> 
-> > +#ifdef CONFIG_ARCH_HAS_SUPERVISOR_PKEYS
-> > +DECLARE_PER_CPU(u32, pkrs_cache);
-> > +static inline void pks_init_task(struct task_struct *tsk)
-> > +{
-> > +	/* New tasks get the most restrictive PKRS value */
-> > +	tsk->thread.saved_pkrs = INIT_PKRS_VALUE;
-> > +}
-> > +static inline void pks_sched_in(void)
-> > +{
-> > +	u64 current_pkrs = current->thread.saved_pkrs;
-> > +
-> > +	/* Only update the MSR when current's pkrs is different from the MSR. */
-> > +	if (this_cpu_read(pkrs_cache) == current_pkrs)
-> > +		return;
-> > +
-> > +	write_pkrs(current_pkrs);
-> 
-> Should we write that like:
-> 
-> 	/*
-> 	 * PKRS is only temporarily changed during specific code paths.
-> 	 * Only a preemption during these windows away from the default
-> 	 * value would require updating the MSR.
-> 	 */
-> 	if (unlikely(this_cpu_read(pkrs_cache) != current_pkrs))
-> 		write_pkrs(current_pkrs);
-> 
-> ?
+No, for two reasons: then we need to change the return value and likely
+the callers need more careful checks, and more importantly, because the
+VFS already limits single read actions to INT_MAX, so limits above this
+make no sense. Win win! :)
 
-Yes I think the unlikely is better.
-
-Thanks,
-Ira
-
-> 
-> > +}
-> > +#else
-> > +static inline void pks_init_task(struct task_struct *tsk) { }
-> > +static inline void pks_sched_in(void) { }
-> > +#endif
+-- 
+Kees Cook
