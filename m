@@ -2,113 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4FB7223B71
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 14:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D572223B7F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 14:39:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbgGQMfw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jul 2020 08:35:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54682 "EHLO
+        id S1726198AbgGQMjQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jul 2020 08:39:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbgGQMfw (ORCPT
+        with ESMTP id S1726090AbgGQMjP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jul 2020 08:35:52 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E08BC061755;
-        Fri, 17 Jul 2020 05:35:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=JEnG7mSqI+pOdpDjfM+f6CJVo0VXXVteFm0g348cSBY=; b=G9cwaGuvyxgnPq4ixlH6xAMtBA
-        RrNLQI3/AuAxk9eoWKVfwYqarRZnBF8epiv5EF7SwjwDQYtTJLLTZjnv1+/O/yfyoT76J5xIZn8mT
-        xzY84BZ3cc8Teu2n9n5mNp8Jhz/HX7WxysLhd21d69kywy5LpoWnwaOF+kog6g0bJdCsl/R5Xo6YL
-        UG9ccKR6LT13o+iu4AveJjdxUEIno8rODv6IOEQN2N6BJVBwiy2nzk9xm8xQ07Ldug4HA9TazTt+c
-        BP2cZJ/8ObIweJoQTrDwByLuPtyF7YxFk84YBpRed85MrEDhKTDW9uvsOO/Gb6hguXGnyHWv1supa
-        swG19jVQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jwPaa-0001He-1Z; Fri, 17 Jul 2020 12:35:44 +0000
-Date:   Fri, 17 Jul 2020 13:35:43 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Paul E . McKenney" <paulmck@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] tools/memory-model: document the "one-time init" pattern
-Message-ID: <20200717123543.GO12769@casper.infradead.org>
-References: <20200717044427.68747-1-ebiggers@kernel.org>
+        Fri, 17 Jul 2020 08:39:15 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71700C061755
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jul 2020 05:39:15 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id dg28so7525769edb.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jul 2020 05:39:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8m43ZvjLHj8K9sJfHsZK0vsdYRBAMe/CF7D4HifFsUg=;
+        b=T4T2jkpD9Q4Z3GNzd1eQGMSBOGyrvsKblIWzKAeKP4ctsXHo5689KZjTLHNP90wBYl
+         +/HqbpISL7aWn+1U35+J7DvycTk1SRqvZFlihkso6CHpDKn+Q7q9wGPa1kj1zIwUsz85
+         j5NJj3KsT3HTr6n//7Z5tuHDQcUWW2vWB/ZHs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8m43ZvjLHj8K9sJfHsZK0vsdYRBAMe/CF7D4HifFsUg=;
+        b=LcUKCFoCtoKmK7BCqacvRexB68yUG3ob4PRqfKNiK65NYOD/bR7K8FuU9POFoVG+SB
+         5jWyOqE/xwcrWXMKqo/pioiNYIVrsaxlcKC0qHJ8cpbKzFVKjq58NRFjtzQGRfit9/Rs
+         2zpQc2buOfe22Fi7vsiSwTbK8Bg1ScIkFPgiC9WQFThpmNa/MnUdtXLMqnTBp1xMI6Hv
+         P05lkjC6hhoyfZ+TxiLjAlNq1BzXPgKQZ/tmsXOVCZecHOiRH+ZxeU7MdDa7MXLXmh9m
+         GHpy08PNrf72NxXXi+WmhZqs/2CTuRsnDInmXhhBEjhYIJ01Ky6dT2gXLmY9dc/wLGsK
+         UrCQ==
+X-Gm-Message-State: AOAM5326jUVDMQHp8ho7bnGobi4c9XHOJATiDjgJzEM6X4VewyQEmH3I
+        VVFAey3yDDZdA441DN4yfb5T4fDhMw8i8V5nH5vox0B0IffIeg==
+X-Google-Smtp-Source: ABdhPJxUyNY98W5EqDQ4nYcRHBmGnC610+9x1Jt74FeScY/Kv81sxWV4dAx67bh2xjpO6/v1eGCvKDsacDLVB3YwTV8=
+X-Received: by 2002:a50:f413:: with SMTP id r19mr9415035edm.17.1594989554177;
+ Fri, 17 Jul 2020 05:39:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200717044427.68747-1-ebiggers@kernel.org>
+References: <874de72a-e196-66a7-39f7-e7fe8aa678ee@molgen.mpg.de>
+In-Reply-To: <874de72a-e196-66a7-39f7-e7fe8aa678ee@molgen.mpg.de>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 17 Jul 2020 14:39:03 +0200
+Message-ID: <CAJfpegs7qxiA+bKvS3_e_QNJEn+5YQxR=kEQ95W0wRFCeunWKw@mail.gmail.com>
+Subject: Re: `ls` blocked with SSHFS mount
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+Cc:     linux-fsdevel@vger.kernel.org, it+linux-fsdevel@molgen.mpg.de
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 09:44:27PM -0700, Eric Biggers wrote:
-> +The simplest implementation just uses a mutex and an 'inited' flag.
+On Fri, Jul 17, 2020 at 10:07 AM Paul Menzel <pmenzel@molgen.mpg.de> wrote:
+>
+> Dear Linux folks,
+>
+>
+> On Debian Sid/unstable with Linux 5.7.6, `ls` hangs sometimes when
+> accessing a directory with an SSHFS mount. Linux logs the messages below.
 
-There's a perfectly good real word "initialised" / initialized.
-https://chambers.co.uk/search/?query=inited&title=21st
+Several solutions:
 
-> +For the single-pointer case, a further optimized implementation
-> +eliminates the mutex and instead uses compare-and-exchange:
-> +
-> +	static struct foo *foo;
-> +
-> +	int init_foo_if_needed(void)
-> +	{
-> +		struct foo *p;
-> +
-> +		/* pairs with successful cmpxchg_release() below */
-> +		if (smp_load_acquire(&foo))
-> +			return 0;
-> +
-> +		p = alloc_foo();
-> +		if (!p)
-> +			return -ENOMEM;
-> +
-> +		/* on success, pairs with smp_load_acquire() above and below */
-> +		if (cmpxchg_release(&foo, NULL, p) != NULL) {
-> +			free_foo(p);
-> +			/* pairs with successful cmpxchg_release() above */
-> +			smp_load_acquire(&foo);
-> +		}
-> +		return 0;
-> +	}
-> +
-> +Note that when the cmpxchg_release() fails due to another task already
-> +having done it, a second smp_load_acquire() is required, since we still
-> +need to acquire the data that the other task released.  You may be
-> +tempted to upgrade cmpxchg_release() to cmpxchg() with the goal of it
-> +acting as both ACQUIRE and RELEASE, but that doesn't work here because
-> +cmpxchg() only guarantees memory ordering if it succeeds.
-> +
-> +Because of the above subtlety, the version with the mutex instead of
-> +cmpxchg_release() should be preferred, except potentially in cases where
-> +it is difficult to provide anything other than a global mutex and where
-> +the one-time data is part of a frequently allocated structure.  In that
-> +case, a global mutex might present scalability concerns.
+- kill `pidof sshfs`
+- umount -f $MOUNTPOINT
+- echo 1 > /sys/fs/fuse/connections/$DEVNUM/abort
 
-There are concerns other than scalability where we might want to eliminate
-the mutex.  For example, if (likely) alloc_foo() needs to allocate memory
-and we would need foo to perform page writeback, then either we must
-allocate foo using GFP_NOFS or do without the mutex, lest we deadlock
-on this new mutex.
 
-You might think this would argue for just using GFP_NOFS always, but
-GFP_NOFS is a big hammer which forbids reclaiming from any filesystem,
-whereas we might only need this foo to reclaim from a particular
-filesystem.
+>
+> ```
+> [105591.121285] INFO: task ls:21242 blocked for more than 120 seconds.
+> [105591.121293]       Not tainted 5.7.0-1-amd64 #1 Debian 5.7.6-1
+> [105591.121295] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+> disables this message.
+> [105591.121298] ls              D    0 21242    778 0x00004004
+> [105591.121304] Call Trace:
+> [105591.121319]  __schedule+0x2da/0x770
+> [105591.121326]  schedule+0x4a/0xb0
+> [105591.121339]  request_wait_answer+0x122/0x210 [fuse]
+> [105591.121349]  ? finish_wait+0x80/0x80
+> [105591.121357]  fuse_simple_request+0x198/0x290 [fuse]
+> [105591.121366]  fuse_do_getattr+0xcf/0x2c0 [fuse]
+> [105591.121376]  vfs_statx+0x96/0xe0
+> [105591.121382]  __do_sys_statx+0x3b/0x80
+> [105591.121391]  do_syscall_64+0x52/0x180
+> [105591.121396]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [105591.121400] RIP: 0033:0x7f948c1c972a
+> [105591.121410] Code: Bad RIP value.
+> [105591.121412] RSP: 002b:00007ffd94582dd8 EFLAGS: 00000246 ORIG_RAX:
+> 000000000000014c
+> [105591.121416] RAX: ffffffffffffffda RBX: 0000556c6a957cc8 RCX:
+> 00007f948c1c972a
+> [105591.121417] RDX: 0000000000000100 RSI: 00007ffd94582f10 RDI:
+> 00000000ffffff9c
+> [105591.121419] RBP: 000000000000025e R08: 00007ffd94582de0 R09:
+> 000000006a95c700
+> [105591.121421] R10: 000000000000025e R11: 0000000000000246 R12:
+> 0000556c6a95c763
+> [105591.121423] R13: 0000000000000003 R14: 00007ffd94582f10 R15:
+> 0000556c6a957cc8
+> ```
+>
+> The `ls` process cannot be killed. The SSHFS issue *Fuse sshfs blocks
+> standby (Visual Studio Code?)* from 2018 already reported this for Linux
+> 4.17, and the SSHFS developers asked to report this to the Linux kernel.
+
+
+This is a very old and fundamental issue.   Theoretical solution for
+killing the stuck process exists, but it's not trivial and since the
+above mentioned workarounds work well in all cases it's not high
+priority right now.
+
+Thanks,
+Miklos
