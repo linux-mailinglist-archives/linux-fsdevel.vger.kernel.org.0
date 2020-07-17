@@ -2,138 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CC17223764
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 10:53:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AF7822376F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 10:57:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbgGQIxU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jul 2020 04:53:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48580 "EHLO
+        id S1726530AbgGQIzA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jul 2020 04:55:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbgGQIxU (ORCPT
+        with ESMTP id S1725912AbgGQIy7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jul 2020 04:53:20 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6135C061755
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jul 2020 01:53:19 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id a21so9938167ejj.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jul 2020 01:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sepW1MS/244yRuMm//K9S5ChlKO04q+uSw0y80a65rg=;
-        b=KSBnq8ckwuIMY+eOle/raGsanI1xcfX9Dr9CLYQjGVzmnmkRKA2AcTO3SsX7ymuFxZ
-         n9Tu0GRWZESNQZMvqoqrFfYHkOtw9fBReJAD6p5pTIUDf8DFzM8sJZ+13xqAnR8UWL86
-         7w5tPz3/LRnPHJZlGL2jvW6ioBgzbmHZIAInc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sepW1MS/244yRuMm//K9S5ChlKO04q+uSw0y80a65rg=;
-        b=Yl42Askw9Am3m5YZgP2qViF1XkfnMbKB/XCIqeS4c8xpWdsjfrf3ZKqHouTukpJqH3
-         QHV4nbT82KvBI1i6gCqz5swgyWtqrzDU5aBwnyQryPtohkVEWc/vKdbEzl8nqv0Ip02j
-         E+o9htXypnY1WE8OLsA1Hm0/vRUzAYa2kzBrnE7Mkhi9UvbV26bPJ4/yun5oHfR//x3I
-         2zGVTamjtkxLKburDunvSvRKRPX1ESoS8kX4AuWRPW3qFILKHLtcAcElfhYRZs0JfxS/
-         /0ljCLwqLcq8tvO8hGQFyFxlCa/8BygW/4ixfvoJ4ESBmunacyxBdwoR0ElFKgIdOJco
-         eL9g==
-X-Gm-Message-State: AOAM533mIwV8+MWQOaL8w3vIYEpPIJWgqRqG7d1TjFQ2S+KjU+cKR78a
-        kzyf0Ol3Uo73KPWYj0VX1x2NvXeY2r8s5sgHfbraWQ==
-X-Google-Smtp-Source: ABdhPJyAq3TxehmCpgWQARyhP2J75ZT3gpSD3vCIJ6IIcBC4g7DXdnVISeWLTc2Ays8lVrVYYPX2hlYzP7Wt+hYWwz8=
-X-Received: by 2002:a17:906:824c:: with SMTP id f12mr5105825ejx.443.1594975998485;
- Fri, 17 Jul 2020 01:53:18 -0700 (PDT)
+        Fri, 17 Jul 2020 04:54:59 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB95DC061755;
+        Fri, 17 Jul 2020 01:54:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=aEr7cpiEkCxbEVwXSRfLp3Ytk5hTAgwAHhMYmtgWkp8=; b=XTp6bn8FEKwlnyQgkHyasqtfQs
+        fFYXMAUIiMSk8ZvOhG343GjKyPZe9SzrBqo4dgVstwgjT/qqnBnojwBCg02q+0+oaf4CtVI9jrQ03
+        ONB24bL/N5z3WjOc/fHRXLiv5pluGJgrS96d7OVkA8awqCpQdsFU7l6f1TDqUW+wjR9oMMFFmdtJn
+        VzUhKVeV4zqZEVhYbJxkhKgUC4lOzWSbPL46WpppaNrJaSpNv9qbChKd0nKPB+YDqPSa0c4DPcASR
+        deR1T0ijZzeJx31cEvj91bKq7KSnx5u0W411DK6OS3PyVW3svSma5utxYBHXipY7w2w6E5oKjTaT5
+        O7+5x+pg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jwM8j-0002lD-9h; Fri, 17 Jul 2020 08:54:45 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 79D35304D58;
+        Fri, 17 Jul 2020 10:54:42 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5001929CF6F79; Fri, 17 Jul 2020 10:54:42 +0200 (CEST)
+Date:   Fri, 17 Jul 2020 10:54:42 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     ira.weiny@intel.com
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC V2 02/17] x86/fpu: Refactor
+ arch_set_user_pkey_access() for PKS support
+Message-ID: <20200717085442.GX10769@hirez.programming.kicks-ass.net>
+References: <20200717072056.73134-1-ira.weiny@intel.com>
+ <20200717072056.73134-3-ira.weiny@intel.com>
 MIME-Version: 1.0
-References: <20200716144032.GC422759@redhat.com> <20200716181828.GE422759@redhat.com>
-In-Reply-To: <20200716181828.GE422759@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 17 Jul 2020 10:53:07 +0200
-Message-ID: <CAJfpegt-v6sjm2WyjXMWkObqLdL6TSAi=rjra4KK5sNy6hhhmA@mail.gmail.com>
-Subject: Re: [PATCH] virtiofs: Enable SB_NOSEC flag to improve small write performance
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        ganesh.mahalingam@intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200717072056.73134-3-ira.weiny@intel.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 8:18 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Thu, Jul 16, 2020 at 10:40:33AM -0400, Vivek Goyal wrote:
-> > Ganesh Mahalingam reported that virtiofs is slow with small direct random
-> > writes when virtiofsd is run with cache=always.
-> >
-> > https://github.com/kata-containers/runtime/issues/2815
-> >
-> > Little debugging showed that that file_remove_privs() is called in cached
-> > write path on every write. And everytime it calls
-> > security_inode_need_killpriv() which results in call to
-> > __vfs_getxattr(XATTR_NAME_CAPS). And this goes to file server to fetch
-> > xattr. This extra round trip for every write slows down writes a lot.
-> >
-> > Normally to avoid paying this penalty on every write, vfs has the
-> > notion of caching this information in inode (S_NOSEC). So vfs
-> > sets S_NOSEC, if filesystem opted for it using super block flag
-> > SB_NOSEC. And S_NOSEC is cleared when setuid/setgid bit is set or
-> > when security xattr is set on inode so that next time a write
-> > happens, we check inode again for clearing setuid/setgid bits as well
-> > clear any security.capability xattr.
-> >
-> > This seems to work well for local file systems but for remote file
-> > systems it is possible that VFS does not have full picture and a
-> > different client sets setuid/setgid bit or security.capability xattr
-> > on file and that means VFS information about S_NOSEC on another client
-> > will be stale. So for remote filesystems SB_NOSEC was disabled by
-> > default.
-> >
-> > commit 9e1f1de02c2275d7172e18dc4e7c2065777611bf
-> > Author: Al Viro <viro@zeniv.linux.org.uk>
-> > Date:   Fri Jun 3 18:24:58 2011 -0400
-> >
-> >     more conservative S_NOSEC handling
-> >
-> > That commit mentioned that these filesystems can still make use of
-> > SB_NOSEC as long as they clear S_NOSEC when they are refreshing inode
-> > attriutes from server.
-> >
-> > So this patch tries to enable SB_NOSEC on fuse (regular fuse as well
-> > as virtiofs). And clear SB_NOSEC when we are refreshing inode attributes.
-> >
-> > We need to clear SB_NOSEC either when inode has setuid/setgid bit set
-> > or security.capability xattr has been set. We have the first piece of
-> > information available in FUSE_GETATTR response. But we don't know if
-> > security.capability has been set on file or not. Question is, do we
-> > really need to know about security.capability. file_remove_privs()
-> > always removes security.capability if a file is being written to. That
-> > means when server writes to file, security.capability should be removed
-> > without guest having to tell anything to it.
->
->
-> I am assuming that file server will clear security.capability on host
-> upon WRITE. Is it a fair assumption for all filesystems passthrough
-> virtiofsd might be running?
+On Fri, Jul 17, 2020 at 12:20:41AM -0700, ira.weiny@intel.com wrote:
+> +/*
+> + * Get a new pkey register value from the user values specified.
+> + *
+> + * Kernel users use the same flags as user space:
+> + *     PKEY_DISABLE_ACCESS
+> + *     PKEY_DISABLE_WRITE
+> + */
+> +u32 get_new_pkr(u32 old_pkr, int pkey, unsigned long init_val)
+> +{
+> +	int pkey_shift = (pkey * PKR_BITS_PER_PKEY);
+> +	u32 new_pkr_bits = 0;
+> +
+> +	/* Set the bits we need in the register:  */
+> +	if (init_val & PKEY_DISABLE_ACCESS)
+> +		new_pkr_bits |= PKR_AD_BIT;
+> +	if (init_val & PKEY_DISABLE_WRITE)
+> +		new_pkr_bits |= PKR_WD_BIT;
+> +
+> +	/* Shift the bits in to the correct place: */
+> +	new_pkr_bits <<= pkey_shift;
+> +
+> +	/* Mask off any old bits in place: */
+> +	old_pkr &= ~((PKR_AD_BIT | PKR_WD_BIT) << pkey_shift);
+> +
+> +	/* Return the old part along with the new part: */
+> +	return old_pkr | new_pkr_bits;
+> +}
 
-AFAICS this needs to be gated through handle_killpriv, and with that
-it can become a generic fuse feature, not just virtiofs:
+This is unbelievable junk...
 
- * FUSE_HANDLE_KILLPRIV: fs handles killing suid/sgid/cap on write/chown/trunc
+How about something like:
 
-Even writeback_cache could be handled by this addition, since we call
-fuse_update_attributes() before generic_file_write_iter() :
+u32 update_pkey_reg(u32 pk_reg, int pkey, unsigned int flags)
+{
+	int pkey_shift = pkey * PKR_BITS_PER_PKEY;
 
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -985,6 +985,7 @@ static int fuse_update_get_attr(struct inode
-*inode, struct file *file,
+	pk_reg &= ~(((1 << PKR_BITS_PER_PKEY) - 1) << pkey_shift);
 
-        if (sync) {
-                forget_all_cached_acls(inode);
-+               inode->i_flags &= ~S_NOSEC;
-                err = fuse_do_getattr(inode, stat, file);
-        } else if (stat) {
-                generic_fillattr(inode, stat);
+	if (flags & PKEY_DISABLE_ACCESS)
+		pk_reg |= PKR_AD_BIT << pkey_shift;
+	if (flags & PKEY_DISABLE_WRITE)
+		pk_reg |= PKR_WD_BIT << pkey_shift;
 
+	return pk_reg;
+}
 
-Thanks,
-Miklos
+Then we at least have a little clue wtf the thing does.. Yes I started
+with a rename and then got annoyed at the implementation too.
