@@ -2,64 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E012D223AC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 13:45:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0031223AE5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 13:56:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbgGQLph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jul 2020 07:45:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46970 "EHLO
+        id S1726971AbgGQLzk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jul 2020 07:55:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbgGQLph (ORCPT
+        with ESMTP id S1726960AbgGQLzj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jul 2020 07:45:37 -0400
-Received: from mail-qv1-xf41.google.com (mail-qv1-xf41.google.com [IPv6:2607:f8b0:4864:20::f41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44939C061755;
-        Fri, 17 Jul 2020 04:45:37 -0700 (PDT)
-Received: by mail-qv1-xf41.google.com with SMTP id ed14so4095569qvb.2;
-        Fri, 17 Jul 2020 04:45:37 -0700 (PDT)
+        Fri, 17 Jul 2020 07:55:39 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05D86C08C5CE
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jul 2020 04:55:38 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id n26so10468905ejx.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jul 2020 04:55:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:mime-version
-         :content-disposition;
-        bh=RGmCnCujTCPHPAqseUf5nHct0c3cR5+Pl0sn8j65GRA=;
-        b=La4PoFUSodowSJLHupAbyoCryYe4IscT0uVjcLdnBdcKu34q4TNYPqzS0Nr/jQc+EM
-         F2XyfYyxL8FQhKctiFagZGB9yxdA12JMq8JEvISZeKuMS1vZ5/Oau3CFZLgR8K43xiUU
-         E86yO3eN5U8q9hW+83UrqolEyLOq60sn5RWpuN0fRb6KFwI9m265IqtAwKVQfl4cygy3
-         0jKEYBIANHgXGZAdahfISR5yQA6FuB5q/EXPJLjCM6LtRPdNK0IPKb1/gbZHs22PgaEY
-         wX7lul5113brAi0ptNWB69Sc4TE4p22uWbGzG5GisCJcFbMfc7QZcO5iTG1ztdjRVt0Y
-         Uktg==
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=SY5s40KDlTkVmobOCCx6aYJt7MG1YIiLKIV6kOLpFQA=;
+        b=OxCuPXgyZIAHVUj+Boo9+0c//JRD/o6zIuuL8L7wQB+y76sO/C6pzBznTpXie+69KA
+         xW2lIQK4LckwD0iqD5ynYxiPol4VEtZtNSvM1oZ3Mem+1do2Pk/jQQTarIgfPnsRVAxG
+         dv9QyxhuBJtjyTid9qTpeUe5bkxSv3mQ0iNuo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mime-version:content-disposition;
-        bh=RGmCnCujTCPHPAqseUf5nHct0c3cR5+Pl0sn8j65GRA=;
-        b=qGMcyCf5HiazK1TIB0hEeejdA3gHvOawaLPnyms2I80MHbS8qx+o82rYiqdlXZqGh9
-         uQ5m45QAM8osavfd8fGRENDtx5tn/ZC+BQnWASw5CozGSRLCv3P1BKgxernNSPlQG9t9
-         yNmzTbUayGQqaOXmynwmmr5iiTyctbQMfboKgsKnnHRvV+lHE+s82oxgRpWQRVtzPLac
-         3HFO243rZmJKbIS/t+Xwtf4YQuHe4MvutB4I+Z51/IOetbxdqF2n8fs5zAzNBL7cKrf8
-         yOZ7ZRyScGsqvrb3/NPEtql26mXxDLaTdTfuF+3rHq1g5AJ/xFfK8dMVcQNiN6SA6235
-         QlEg==
-X-Gm-Message-State: AOAM531570kqhHP5igGwvvl+K2wnd1utHryrtT/hwfmxrojj0j/iwn7n
-        kCwVuEussoQoreJ4MQ/jPMSPFLuE0k3W
-X-Google-Smtp-Source: ABdhPJzKXuvJZlL9/a9hkaENPQ8WnD+XhRB2h7wtRwtCk65prLKd7UbjOiRuatykH0KlTfyqjIJ2+Q==
-X-Received: by 2002:a0c:a992:: with SMTP id a18mr8145355qvb.211.1594986336193;
-        Fri, 17 Jul 2020 04:45:36 -0700 (PDT)
-Received: from PWN (c-76-119-149-155.hsd1.ma.comcast.net. [76.119.149.155])
-        by smtp.gmail.com with ESMTPSA id s8sm10967968qtc.17.2020.07.17.04.45.34
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=SY5s40KDlTkVmobOCCx6aYJt7MG1YIiLKIV6kOLpFQA=;
+        b=aTB2pgAnqFL4V3TPxzFXMatafdx8eUru5To/+mOUwghZNYM7RznpbD/9Du61mAcL2A
+         ZAXAQKI2sW1Kp9LR73mK2dLBXZkv1Cc7k76jL1OCdRLcA1RkaAf5tITPDQq8Wa4KMTAv
+         NEyhaQ7N3nMfO6ADwuXDHBMWtFC4juyF1kTvXPbauZXZb323qH7Sf/mEvuxafxGIRpSv
+         YY12ryXNzt8PWJtpAHtGVIR0jTnUrBuQ1c0VnhuzPaJ16aPUUgmP2yhHLr5Mvw+EWX9t
+         ZgXCn7NlX3MKYI24tmRbNajNGi2TXlF2PyDRqBILxUmOESKavS+gG1+RhX3ikyIRjxXZ
+         2NYA==
+X-Gm-Message-State: AOAM531N+An4LuBqjIdi/ziund/Y0HnzYXimIjKSkdpjRQK9XMr4jYJv
+        /HFnrkNbFmrYxh1G3rGiv5OX7v62yRT9ZQ==
+X-Google-Smtp-Source: ABdhPJySh71wp6796TmdDtBpVZ+KxutnWoBAeRuPzy7j1N2cRKyvxXeJH/RrvQMbTssXQFrRYM9LHA==
+X-Received: by 2002:a17:906:af6d:: with SMTP id os13mr7925043ejb.57.1594986937686;
+        Fri, 17 Jul 2020 04:55:37 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id u13sm8008061eds.10.2020.07.17.04.55.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jul 2020 04:45:35 -0700 (PDT)
-Date:   Fri, 17 Jul 2020 07:45:32 -0400
-From:   Peilin Ye <yepeilin.cs@gmail.com>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     timmurray@google.com, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, viro@zeniv.linux.org.uk, paul@paul-moore.com,
-        nnk@google.com, sds@tycho.nsa.gov, lokeshgidra@google.com,
-        jmorris@namei.org
-Subject: Reporting a use-after-free read bug in userfaultfd_release()
-Message-ID: <20200717114532.GA688728@PWN>
-Reply-To: 20200401213903.182112-4-dancol@google.com
+        Fri, 17 Jul 2020 04:55:37 -0700 (PDT)
+Date:   Fri, 17 Jul 2020 13:55:30 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs fixes for 5.8-rc6
+Message-ID: <20200717115237.GD6171@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -68,30 +59,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+Hi Linus,
 
-Syzbot reported the following use-after-free bug in
-userfaultfd_release():
+Please pull from:
 
-	https://syzkaller.appspot.com/bug?id=4b9e5aea757b678d9939c364e50212354a3480a6
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-fixes-5.8-rc6
 
-It seems to be caused by this patch. I took a look at the stack trace.
-In the patch:
+Fix the following:
 
-	fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
-	if (fd < 0) {
-		fput(file);
-		goto out;
-	}
+ - a regression introduced in v4.20 in handling a regenerated squashfs
+   lower layer
 
-If get_unused_fd_flags() fails, `ctx` is freed. Later however, before
-returning back to userland, userfaultfd_release() is called and tries to
-use `ctx` again, causing a use-after-free bug.
+ - two regressions in this cycle, one of which is Oops inducing
 
-The syzbot reproducer does a setrlimit() then a userfaultfd(). The
-former sets a hard limit on number of open files to zero, which causes
-get_unused_fd_flags() to fail.
+ - miscellaneous issues.
 
-Thank you,
+Thanks,
+Miklos
 
-Peilin Ye
+----------------------------------------------------------------
+Amir Goldstein (7):
+      ovl: relax WARN_ON() when decoding lower directory file handle
+      ovl: fix oops in ovl_indexdir_cleanup() with nfs_export=on
+      ovl: fix regression with re-formatted lower squashfs
+      ovl: force read-only sb on failure to create index dir
+      ovl: fix mount option checks for nfs_export with no upperdir
+      ovl: fix unneeded call to ovl_change_flags()
+      ovl: fix lookup of indexed hardlinks with metacopy
+
+youngjun (3):
+      ovl: inode reference leak in ovl_is_inuse true case.
+      ovl: change ovl_copy_up_flags static
+      ovl: remove not used argument in ovl_check_origin
+
+---
+ Documentation/filesystems/overlayfs.rst |  4 +-
+ fs/overlayfs/copy_up.c                  |  2 +-
+ fs/overlayfs/export.c                   |  2 +-
+ fs/overlayfs/file.c                     | 10 +++--
+ fs/overlayfs/namei.c                    | 15 +++----
+ fs/overlayfs/overlayfs.h                |  1 -
+ fs/overlayfs/super.c                    | 73 ++++++++++++++++++++++-----------
+ 7 files changed, 65 insertions(+), 42 deletions(-)
