@@ -2,162 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A74B22232BC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 07:05:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 386DB223314
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 07:49:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725909AbgGQFFl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jul 2020 01:05:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50104 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725300AbgGQFFk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jul 2020 01:05:40 -0400
-Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43CA420578;
-        Fri, 17 Jul 2020 05:05:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594962339;
-        bh=5l82E/2QHFoLujhbouEO+rAl9xdMKFx6N0zLGFHTMhs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hPy3AehdaeIYUIxIi6vazUd8VjMAZGkYAA9YuPUVsM/+o1rNDuTZd7rj6tgsqBaCg
-         KQUG7GS8hB/15zv/jq/B9imnCHICTViJsaToC9nZuZ8VP3tacmbLxTCo/jxosGmOtv
-         mvSEgW/3wMT4bv+EqBY8oCQgS96QiT3FN9l+fZv4=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: [PATCH v2] fs/direct-io: fix one-time init of ->s_dio_done_wq
-Date:   Thu, 16 Jul 2020 22:05:10 -0700
-Message-Id: <20200717050510.95832-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.27.0
+        id S1726113AbgGQFtP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jul 2020 01:49:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48560 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbgGQFtO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Jul 2020 01:49:14 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F5FC061755;
+        Thu, 16 Jul 2020 22:49:14 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id f23so9275872iof.6;
+        Thu, 16 Jul 2020 22:49:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=jRkz34kzHFPJP/YTtWgR3dxC6hqrBlvuag30CVq0UoQ=;
+        b=iI/+5rrkFI4dnPFFL/L9iw7HH0VcWjZdoGZaaLuBlmQLDJBqtgojCpPaS3yo+FxkxR
+         QnsmJXspT3A6FdmPPRQi1kCxZI3LL4vXUOxU9+4MTQFH8ebFhEC6t9sSPUzTHryU2S9P
+         wA4jU47UYjRo8kflfSBSCbrZn1YjpOsYYvNfxjL+8oSiE/dp8lXc4Ieoe3wd/ezx+p6X
+         Y23br8KsxQoPQ8wl8rvcmJ3qSQ4E8lZjIC7NzYhOtXZR6nkY8+XsUhqu94AC0nRBLKkf
+         wbjb8wv4lIfPYwBANTy2DmUI/ncQ0uDt5kIhcoBMNekF+PvbzBgB7lsW37mcntgP1ZDg
+         fV/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=jRkz34kzHFPJP/YTtWgR3dxC6hqrBlvuag30CVq0UoQ=;
+        b=OoGVshz3SCffiY5Hctbq15Zb/iYxrkW8s7K29oHjaNdOZbrkJEoa201dg80eSdnt/K
+         ydqAJJ3P5NHZQT5rI2D0qjaXEZ85Xy7qaAYTBWxa4iNpypvZN96hmvWEu15HWPr4BI6j
+         EovtwB5Xy3F65cTEIZYEMhjnTrGlHDllJDeeI4WMHsVeiVwKG6YySzqiXL39hIzAsRpx
+         lyz5fWgiWOr0KapdfDT6SBRAR9z/UEQ+b2fA5W1R5K91O6Z9zvBgwhV/0bxXAw1/sZw4
+         U41cyAoZL9kXiiaebu/Qj1i8lOJ2nOmX6Dfd4Xe54PL0sa4UO2MDSdQYjnO1m+YzQqYp
+         Cg9w==
+X-Gm-Message-State: AOAM5337XQ2up79OdCBHIIYSwg1PIw9n7uLxZo69YZwMOPzpXohV+aXR
+        z+lqU1B3V40s6qiDm2PhOOpVJIvb1FuNvvvxmXk=
+X-Google-Smtp-Source: ABdhPJwJ///MEyrS1OLVdgShQV62SL/Jv9Vfiv4k/9Hxb86brLgF/WS6Lsx3au+bsCH1wKjhDxJ9MhMotr+Lz82o9EU=
+X-Received: by 2002:a5e:c91a:: with SMTP id z26mr8188202iol.70.1594964954143;
+ Thu, 16 Jul 2020 22:49:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200717044427.68747-1-ebiggers@kernel.org>
+In-Reply-To: <20200717044427.68747-1-ebiggers@kernel.org>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Fri, 17 Jul 2020 07:49:02 +0200
+Message-ID: <CA+icZUVztkBRBhs_NQpTOg7rc34VkBQ1GCr5iXgw+P9XORwd9A@mail.gmail.com>
+Subject: Re: [PATCH] tools/memory-model: document the "one-time init" pattern
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Fri, Jul 17, 2020 at 6:48 AM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+...
+> This is motivated by the discussion at
+> https://lkml.kernel.org/linux-fsdevel/20200713033330.205104-1-ebiggers@kernel.org/T/#u
+...
+> +In where cases where taking the mutex in the "already initialized" case
 
-Correctly implement the "one-time" init pattern for ->s_dio_done_wq.
-This fixes the following issues:
+"In cases where..." (drop first "where")
 
-- The LKMM doesn't guarantee that the workqueue will be seen initialized
-  before being used, if another CPU allocated it.  With regards to
-  specific CPU architectures, this is true on at least Alpha, but it may
-  be true on other architectures too if the internal implementation of
-  workqueues causes use of the workqueue to involve a control
-  dependency.  (There doesn't appear to be a control dependency
-  currently, but it's hard to tell and it could change in the future.)
+> +presents scalability concerns, the implementation can be optimized to
+> +check the 'inited' flag outside the mutex.  Unfortunately, this
+> +optimization is often implemented incorrectly by using a plain load.
+> +That violates the memory model and may result in unpredictable behavior.
 
-- The preliminary checks for sb->s_dio_done_wq are a data race, since
-  they do a plain load of a concurrently modified variable.  According
-  to the C standard, this undefined behavior.  In practice, the kernel
-  does sometimes makes assumptions about data races might be okay in
-  practice, but these rules are undocumented and not uniformly agreed
-  upon, so it's best to avoid cases where they might come into play.
-
-Following the guidance for one-time init I've proposed at
-https://lkml.kernel.org/r/20200717044427.68747-1-ebiggers@kernel.org,
-replace it with the simplest implementation that is guaranteed to be
-correct while still achieving the following properties:
-
-    - Doesn't make direct I/O users contend on a mutex in the fast path.
-
-    - Doesn't allocate the workqueue when it will never be used.
-
-Fixes: 7b7a8665edd8 ("direct-io: Implement generic deferred AIO completions")
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
-
-v2: new implementation using smp_load_acquire() + smp_store_release()
-    and a mutex.
-
- fs/direct-io.c       | 42 ++++++++++++++++++++++++------------------
- fs/iomap/direct-io.c |  3 +--
- 2 files changed, 25 insertions(+), 20 deletions(-)
-
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 6d5370eac2a8..c03c2204aadf 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -592,20 +592,28 @@ static inline int dio_bio_reap(struct dio *dio, struct dio_submit *sdio)
-  */
- int sb_init_dio_done_wq(struct super_block *sb)
- {
--	struct workqueue_struct *old;
--	struct workqueue_struct *wq = alloc_workqueue("dio/%s",
--						      WQ_MEM_RECLAIM, 0,
--						      sb->s_id);
--	if (!wq)
--		return -ENOMEM;
--	/*
--	 * This has to be atomic as more DIOs can race to create the workqueue
--	 */
--	old = cmpxchg(&sb->s_dio_done_wq, NULL, wq);
--	/* Someone created workqueue before us? Free ours... */
--	if (old)
--		destroy_workqueue(wq);
--	return 0;
-+	static DEFINE_MUTEX(sb_init_dio_done_mutex);
-+	struct workqueue_struct *wq;
-+	int err = 0;
-+
-+	/* Pairs with the smp_store_release() below */
-+	if (smp_load_acquire(&sb->s_dio_done_wq))
-+		return 0;
-+
-+	mutex_lock(&sb_init_dio_done_mutex);
-+	if (sb->s_dio_done_wq)
-+		goto out;
-+
-+	wq = alloc_workqueue("dio/%s", WQ_MEM_RECLAIM, 0, sb->s_id);
-+	if (!wq) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+	/* Pairs with the smp_load_acquire() above */
-+	smp_store_release(&sb->s_dio_done_wq, wq);
-+out:
-+	mutex_unlock(&sb_init_dio_done_mutex);
-+	return err;
- }
- 
- static int dio_set_defer_completion(struct dio *dio)
-@@ -615,9 +623,7 @@ static int dio_set_defer_completion(struct dio *dio)
- 	if (dio->defer_completion)
- 		return 0;
- 	dio->defer_completion = true;
--	if (!sb->s_dio_done_wq)
--		return sb_init_dio_done_wq(sb);
--	return 0;
-+	return sb_init_dio_done_wq(sb);
- }
- 
- /*
-@@ -1250,7 +1256,7 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 		retval = 0;
- 		if (iocb->ki_flags & IOCB_DSYNC)
- 			retval = dio_set_defer_completion(dio);
--		else if (!dio->inode->i_sb->s_dio_done_wq) {
-+		else {
- 			/*
- 			 * In case of AIO write racing with buffered read we
- 			 * need to defer completion. We can't decide this now,
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index ec7b78e6feca..dc7fe898dab8 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -487,8 +487,7 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		dio_warn_stale_pagecache(iocb->ki_filp);
- 	ret = 0;
- 
--	if (iov_iter_rw(iter) == WRITE && !wait_for_completion &&
--	    !inode->i_sb->s_dio_done_wq) {
-+	if (iov_iter_rw(iter) == WRITE && !wait_for_completion) {
- 		ret = sb_init_dio_done_wq(inode->i_sb);
- 		if (ret < 0)
- 			goto out_free_dio;
--- 
-2.27.0
-
+- Sedat -
