@@ -2,77 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 640312241D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 19:31:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A84FE22420A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 19:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726221AbgGQRbq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jul 2020 13:31:46 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:58088 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726090AbgGQRbq (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jul 2020 13:31:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595007104;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oc+tQb+orRG6mlum1B7MxPOO3O8qhEIhLyg7hJEBoCA=;
-        b=got76lTM5RQs/wEnLL1+TiUi3Bu26PjpHTw6U8cPWEc3A7aPqW3uQ9WAvN+rw2s35KZxKa
-        yWNAbC1eTbCd0Srhc/w0pWecoFY82SA5BzEgjL6xWAqqRwAR4KQeBA/sU8mJkGTSxoOKvj
-        8xYWggJqFwbiN3ttuw030SkkyDC2pSA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-25-tbWeKkqUOnmvZ5uzugHaEQ-1; Fri, 17 Jul 2020 13:31:42 -0400
-X-MC-Unique: tbWeKkqUOnmvZ5uzugHaEQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AAB641005268;
-        Fri, 17 Jul 2020 17:31:41 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-113.rdu2.redhat.com [10.10.112.113])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E35A74F64;
-        Fri, 17 Jul 2020 17:31:40 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200713101222.GA246269@mwanda>
-References: <20200713101222.GA246269@mwanda>
-To:     dan.carpenter@oracle.com
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [bug report] fsinfo: Allow fsinfo() to look up a mount object by ID
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3762612.1595007100.1@warthog.procyon.org.uk>
-Date:   Fri, 17 Jul 2020 18:31:40 +0100
-Message-ID: <3762613.1595007100@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+        id S1727955AbgGQRkC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jul 2020 13:40:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56152 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726381AbgGQRkC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Jul 2020 13:40:02 -0400
+Subject: Re: [GIT PULL] overlayfs fixes for 5.8-rc6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595007601;
+        bh=TH2Fb3gNyU4J9bGpnlHrZm7ZQjonUvKvpKhYXb7z+iw=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=qyxOFWYRbq1LFP6TYMPXucC2rEnDgF1GujjYgyejTK9Peas4UMK+aam+0waVEtT9Z
+         3b6C0Q3GWgyQslsTJyB4qQNQ56FbV9b+dN9joOrLe2M4hvGn/I2vGJo/zGzqxgs4D+
+         8QKL+WfhvLWVLG4atyPQkIDJIWdOwqPnwJZKf1WU=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200717115237.GD6171@miu.piliscsaba.redhat.com>
+References: <20200717115237.GD6171@miu.piliscsaba.redhat.com>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200717115237.GD6171@miu.piliscsaba.redhat.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git
+ tags/ovl-fixes-5.8-rc6
+X-PR-Tracked-Commit-Id: 4518dfcf761e3c44632855abcf433236cf7ab6c6
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 44fea37378bf735de63263d558763ce50fca05ef
+Message-Id: <159500760166.14528.4179344717566879349.pr-tracker-bot@kernel.org>
+Date:   Fri, 17 Jul 2020 17:40:01 +0000
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-<dan.carpenter@oracle.com> wrote:
+The pull request you sent on Fri, 17 Jul 2020 13:55:30 +0200:
 
->    604          ret = kstrtoul(name, 0, &mnt_id);
+> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-fixes-5.8-rc6
 
-Hmmm...  I'm a bit surprised there isn't a warning generated: kstrtoul() takes
-a pointer to an unsigned long, not a long.  mnt_id should be an unsigned
-long.  I'll fix that.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/44fea37378bf735de63263d558763ce50fca05ef
 
->    607          if (mnt_id > INT_MAX)
->                     ^^^^^^^^^^^^^^^^
-> This can be negative.  Why do we need to check this at all?  Can we just
-> delete this check?
+Thank you!
 
-As we get a long, it can go out of range for the mount parameter we're
-checking - which is an int.  I feel it's better to restrict it so that we
-don't get a false match due to implicit masking.
-
-I wonder if struct mount::mnt_id should actually be unsigned int rather than
-int - there doesn't seem any reason it should go negative.
-
-David
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
