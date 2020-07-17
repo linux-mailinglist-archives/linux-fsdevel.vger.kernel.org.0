@@ -2,300 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E6D6F22356F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 09:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B343822366E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 17 Jul 2020 10:02:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbgGQHVX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jul 2020 03:21:23 -0400
-Received: from mga04.intel.com ([192.55.52.120]:4232 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728107AbgGQHVT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jul 2020 03:21:19 -0400
-IronPort-SDR: dzTBoc8jWTtNIccqMAXx7LIYUQWkJfrVLf+QqDHXyUjYMS4xDgy+oR+gEC6hWL3qtI4MdeEq2x
- XHNR1SLOmm3A==
-X-IronPort-AV: E=McAfee;i="6000,8403,9684"; a="147057757"
-X-IronPort-AV: E=Sophos;i="5.75,362,1589266800"; 
-   d="scan'208";a="147057757"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2020 00:21:10 -0700
-IronPort-SDR: NpuLFicxYo6CMu6J08/KxXwA/c9FftKiMbWjFW+agAcMqKsLM+Wl39F5cNH0ROoUg+xVVBXjhw
- ko/0FI16DIyw==
-X-IronPort-AV: E=Sophos;i="5.75,362,1589266800"; 
-   d="scan'208";a="326769004"
-Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
-  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jul 2020 00:21:10 -0700
-From:   ira.weiny@intel.com
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Ira Weiny <ira.weiny@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH RFC V2 17/17] x86/entry: Preserve PKRS MSR across exceptions
-Date:   Fri, 17 Jul 2020 00:20:56 -0700
-Message-Id: <20200717072056.73134-18-ira.weiny@intel.com>
-X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
-In-Reply-To: <20200717072056.73134-1-ira.weiny@intel.com>
-References: <20200717072056.73134-1-ira.weiny@intel.com>
+        id S1728210AbgGQICM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jul 2020 04:02:12 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:33036 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726793AbgGQICH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Jul 2020 04:02:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1594972925;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=6rcr/B0+uYonvATiDQC4F/S5E0Ijrw2tibP+/iOy0GA=;
+        b=XZ2XpCaN7n1hJb59UM/TPg6z8Ji6CeIEDNG0g542TSAnwsw6gmc9G1EWOhRNC+e1iPGrmV
+        Mysv9/SgK0Ln4fEe9rpKGZ7p8jWtW0eigthAeQbelUrutqlpxfMGyc+pNcOJLVNqaQgAbE
+        xSgYinJyGfaE3t8ChtTyyLULzsK4e9Q=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-146-vWMnDARBN6iJOlJ7hrHkhQ-1; Fri, 17 Jul 2020 04:02:03 -0400
+X-MC-Unique: vWMnDARBN6iJOlJ7hrHkhQ-1
+Received: by mail-wr1-f69.google.com with SMTP id o25so8244000wro.16
+        for <linux-fsdevel@vger.kernel.org>; Fri, 17 Jul 2020 01:02:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6rcr/B0+uYonvATiDQC4F/S5E0Ijrw2tibP+/iOy0GA=;
+        b=VogiVbTvoU3qRNdSk/7FWYzAYLCPIydLEQmDJOrO5NQjT9tjwlK0lC6QEPFppfuRhX
+         LIsYYblL89Y9W3Ccht+XNrhMxhzuO0LHT8WlAGEv0iclgIqf+UB9uE2lS9jXK6gwc6w/
+         6NvY+YuPWjoTYIJDzN+XWcFouaYA6BTQzvV5x6TAh06jIlSpigvvKja6Ssc6Fm2iRac1
+         te+Arjri7CoTSgd34pNmvcMo2qhV0Vx6+RZq0uccny9cRNjBu+vzuPoX+F7oNTIzsZ0I
+         kXe1PIkiZnUrlJ0lKCVCUSFFiwLKMtaHFvGzYreZUyxFWc9t40JnSISL3kCQL7gjizw3
+         ZPoA==
+X-Gm-Message-State: AOAM5308PbrZdczuGJPejqz4VJ5gzPzP9VGKV/mHJacFMaPZxgW2wSbx
+        ILkZSpN1MG7ryX8JpZAgQ1hXtbTS8cpOaRldmECZYeWoSwmDACssN93ce5Yrnc+Ou3NMEY/Jcif
+        JLI2ZlyuIcwOnhuBFCrDOZh8jqg==
+X-Received: by 2002:a05:600c:2483:: with SMTP id 3mr7936041wms.120.1594972922232;
+        Fri, 17 Jul 2020 01:02:02 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw5lUscsVqkDpbm7EZ6xTIOuN95u1Ppt2CEYvOEPZ/iTjER1w+8Y5Lg8za60AnhINO8FcW2lg==
+X-Received: by 2002:a05:600c:2483:: with SMTP id 3mr7936008wms.120.1594972921869;
+        Fri, 17 Jul 2020 01:02:01 -0700 (PDT)
+Received: from steredhat.lan ([5.180.207.22])
+        by smtp.gmail.com with ESMTPSA id a123sm12380160wmd.28.2020.07.17.01.01.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jul 2020 01:02:01 -0700 (PDT)
+Date:   Fri, 17 Jul 2020 10:01:57 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Subject: Re: strace of io_uring events?
+Message-ID: <20200717080157.ezxapv7pscbqykhl@steredhat.lan>
+References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
+ <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
+ <20200715171130.GG12769@casper.infradead.org>
+ <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com>
+ <CAJfpegt9=p4uo5U2GXqc-rwqOESzZCWAkGMRTY1r8H6fuXx96g@mail.gmail.com>
+ <48cc7eea-5b28-a584-a66c-4eed3fac5e76@gmail.com>
+ <202007151511.2AA7718@keescook>
+ <20200716131404.bnzsaarooumrp3kx@steredhat>
+ <202007160751.ED56C55@keescook>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202007160751.ED56C55@keescook>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ira Weiny <ira.weiny@intel.com>
+On Thu, Jul 16, 2020 at 08:12:35AM -0700, Kees Cook wrote:
+> On Thu, Jul 16, 2020 at 03:14:04PM +0200, Stefano Garzarella wrote:
+> > On Wed, Jul 15, 2020 at 04:07:00PM -0700, Kees Cook wrote:
+> > [...]
+> > 
+> > > Speaking to Stefano's proposal[1]:
+> > > 
+> > > - There appear to be three classes of desired restrictions:
+> > >   - opcodes for io_uring_register() (which can be enforced entirely with
+> > >     seccomp right now).
+> > >   - opcodes from SQEs (this _could_ be intercepted by seccomp, but is
+> > >     not currently written)
+> > >   - opcodes of the types of restrictions to restrict... for making sure
+> > >     things can't be changed after being set? seccomp already enforces
+> > >     that kind of "can only be made stricter"
+> > 
+> > In addition we want to limit the SQEs to use only the registered fd and buffers.
+> 
+> Hmm, good point. Yeah, since it's an "extra" mapping (ioring file number
+> vs fd number) this doesn't really map well to seccomp. (And frankly,
+> there's some difficulty here mapping many of the ioring-syscalls to
+> seccomp because it's happening "deeper" than the syscall layer (i.e.
+> some of the arguments have already been resolved into kernel object
+> pointers, etc).
+> 
+> > Do you think it's better to have everything in seccomp instead of adding
+> > the restrictions in io_uring (the patch isn't very big)?
+> 
+> I'm still trying to understand how io_uring will be used, and it seems
+> odd to me that it's effectively a seccomp bypass. (Though from what I
+> can tell it is not an LSM bypass, which is good -- though I'm worried
+> there might be some embedded assumptions in LSMs about creds vs current
+> and LSMs may try to reason (or report) on actions with the kthread in
+> mind, but afaict everything important is checked against creds.
+> 
+> > With seccomp, would it be possible to have different restrictions for two
+> > instances of io_uring in the same process?
+> 
+> For me, this is the most compelling reason to have the restrictions NOT
+> implemented via seccomp. Trying to make "which instance" choice in
+> seccomp would be extremely clumsy.
+> 
+> So at this point, I think it makes sense for the restriction series to
+> carry on -- it is io_uring-specific and solves some problems that
+> seccomp is not in good position to reason about.
 
-The PKRS MSR is not managed by XSAVE.  It is already preserved through a
-context switch but this support leaves exception handling code open to
-memory accesses which the interrupted process has allowed.
+Thanks for the feedback, then I'll continue in this direction!
 
-Close this hole by preserve the current task's PKRS MSR, reset the PKRS
-MSR value on exception entry, and then restore the state on exception
-exit.
+> 
+> All this said, I'd still like a way to apply seccomp to io_uring
+> because it's a rather giant syscall filter bypass mechanism, and gaining
 
-Notice that, in addition to the MSR value itself, the saved task state
-must also include the device memory protection reference count which is
-maintained to keep kmap re-entrant.  The following shows how this works:
+Agree.
 
-...
-	// ref == 0
-	dev_access_enable()  // ref += 1 ==> disable protection
-		irq()
-			// enable protection
-			// ref = 0
-			_handler()
-				dev_access_enable()   // ref += 1 ==> disable protection
-				dev_access_disable()  // ref -= 1 ==> enable protection
-			// WARN_ON(ref != 0)
-			// disable protection
-	do_pmem_thing()  // all good here
-	dev_access_disable() // ref -= 1 ==> 0 ==> enable protection
-...
+> access (IIUC) is possible without actually calling any of the io_uring
+> syscalls. Is that correct? A process would receive an fd (via SCM_RIGHTS,
+> pidfd_getfd, or soon seccomp addfd), and then call mmap() on it to gain
+> access to the SQ and CQ, and off it goes? (The only glitch I see is
+> waking up the worker thread?)
 
-Nested exceptions should also operate the same way with each exception
-storing the previous reference count all the way down.
+It is true only if the io_uring istance is created with SQPOLL flag (not the
+default behaviour and it requires CAP_SYS_ADMIN). In this case the
+kthread is created and you can also set an higher idle time for it, so
+also the waking up syscall can be avoided.
 
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> 
+> What appears to be the worst bit about adding seccomp to io_uring is the
+> almost complete disassociation of process hierarchy from syscall action.
+> Only a cred is used for io_uring, and seccomp filters are associated with
+> task structs. I'm not sure if there is a way to solve this disconnect
+> without a major internal refactoring of seccomp to attach to creds and
+> then make every filter attachment create a new cred... *head explody*
+> 
 
----
-RFC NOTES:
+Sorry but I don't know seccomp that well :-(
+I'm learning a lot about it these days. I'll keep your concern in mind.
 
-First I'm not sure if adding this state to idtentry_state and having
-that state copied is the right way to go.  It seems like we should start
-passing this by reference instead of value.  But for now this works as
-an RFC.  Comments?
-
-Second, I'm not 100% happy with having to save the reference count in
-the exception handler.  It seems like a very ugly layering violation but
-I don't see a way around it at the moment.
-
-Third, this patch has gone through a couple of revisions as I've had
-crashes which just don't make sense to me.  One particular issue I've
-had is taking a MCE during memcpy_mcsafe causing my WARN_ON() to fire.
-The code path was a pmem copy and the ref count should have been
-elevated due to dev_access_enable() but why was
-idtentry_enter()->idt_save_pkrs() not called I don't know.
-
-Finally, it looks like the entry/exit code is being refactored into
-common code.  So likely this is best handled somewhat there.  Because
-this can be predicated on CONFIG_ARCH_HAS_SUPERVISOR_PKEYS and handled
-in a generic fashion.  But that is a ways off I think.
-
-This patch depends on:
-	https://lore.kernel.org/lkml/159411021855.4006.13113751062324360868.tip-bot2@tip-bot2/
-	Which has yet to land upstream.  I just pulled it into my test
-	branch which is based on 5.8-rc5 to get the exception state
-	tracking.  Hopefully it is self contained enough I'm not causing
-	other issues with my tests.
----
- arch/x86/entry/common.c               | 78 ++++++++++++++++++++++++++-
- arch/x86/include/asm/idtentry.h       |  2 +
- arch/x86/include/asm/pkeys_internal.h |  3 +-
- arch/x86/kernel/process.c             |  1 -
- arch/x86/mm/pkeys.c                   |  2 +-
- 5 files changed, 82 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/entry/common.c b/arch/x86/entry/common.c
-index 0521546022cb..012bf7ecca0d 100644
---- a/arch/x86/entry/common.c
-+++ b/arch/x86/entry/common.c
-@@ -41,6 +41,7 @@
- #include <asm/io_bitmap.h>
- #include <asm/syscall.h>
- #include <asm/irq_stack.h>
-+#include <asm/pkeys_internal.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/syscalls.h>
-@@ -558,6 +559,72 @@ SYSCALL_DEFINE0(ni_syscall)
- 	return -ENOSYS;
- }
- 
-+#ifdef CONFIG_ARCH_HAS_SUPERVISOR_PKEYS
-+/*
-+ * PKRS is a per-logical-processor MSR which overlays additional protection for
-+ * pages which have been mapped with a protection key.
-+ *
-+ * The register is not maintained with XSAVE so we have to maintain the MSR
-+ * value in software during context switch and exception handling.
-+ *
-+ * Context switches save the MSR in the task struct thus taking that value to
-+ * other processors if necessary.
-+ *
-+ * To protect against exceptions having access to this memory we save the
-+ * current running value and set the default PKRS value for the duration of the
-+ * exception.  Thus preventing exception handlers from having the access of the
-+ * interrupted task.
-+ *
-+ * Furthermore, Zone Device Access Protection maintains access in a re-entrant
-+ * manner through a reference count which also needs to be maintained should
-+ * exception handlers use those interfaces for memory access.  Here we start
-+ * off the exception handler ref count to 0 and ensure it is 0 when the
-+ * exception is done.  Then restore it for the interrupted task.
-+ */
-+
-+static void noinstr idt_save_pkrs(idtentry_state_t state)
-+{
-+	if (!cpu_feature_enabled(X86_FEATURE_PKS))
-+		return;
-+
-+#ifdef CONFIG_ZONE_DEVICE_ACCESS_PROTECTION
-+	/*
-+	 * Save the ref count of the current running process and set it to 0
-+	 * for any irq users to properly track re-entrance
-+	 */
-+	state.pkrs_ref = current->dev_page_access_ref;
-+	current->dev_page_access_ref = 0;
-+#endif
-+
-+	state.pkrs = this_cpu_read(pkrs_cache);
-+	if (state.pkrs != INIT_PKRS_VALUE)
-+		write_pkrs(INIT_PKRS_VALUE);
-+}
-+
-+static void noinstr idt_restore_pkrs(idtentry_state_t state)
-+{
-+	u32 pkrs;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_PKS))
-+		return;
-+
-+	pkrs = this_cpu_read(pkrs_cache);
-+	if (state.pkrs != pkrs)
-+		write_pkrs(state.pkrs);
-+
-+#ifdef CONFIG_ZONE_DEVICE_ACCESS_PROTECTION
-+	WARN_ON_ONCE(current->dev_page_access_ref != 0);
-+	/* Restore the interrupted process reference */
-+	current->dev_page_access_ref = state.pkrs_ref;
-+#endif
-+}
-+#else
-+/* Define as macros to prevent conflict of inline and noinstr */
-+#define idt_save_pkrs(state)
-+#define idt_restore_pkrs(state)
-+#endif
-+
-+
- /**
-  * idtentry_enter - Handle state tracking on ordinary idtentries
-  * @regs:	Pointer to pt_regs of interrupted context
-@@ -604,6 +671,8 @@ idtentry_state_t noinstr idtentry_enter(struct pt_regs *regs)
- 		return ret;
- 	}
- 
-+	idt_save_pkrs(ret);
-+
- 	/*
- 	 * If this entry hit the idle task invoke rcu_irq_enter() whether
- 	 * RCU is watching or not.
-@@ -694,7 +763,12 @@ void noinstr idtentry_exit(struct pt_regs *regs, idtentry_state_t state)
- 	/* Check whether this returns to user mode */
- 	if (user_mode(regs)) {
- 		prepare_exit_to_usermode(regs);
--	} else if (regs->flags & X86_EFLAGS_IF) {
-+		return;
-+	}
-+
-+	idt_restore_pkrs(state);
-+
-+	if (regs->flags & X86_EFLAGS_IF) {
- 		/*
- 		 * If RCU was not watching on entry this needs to be done
- 		 * carefully and needs the same ordering of lockdep/tracing
-@@ -819,6 +893,8 @@ __visible noinstr void xen_pv_evtchn_do_upcall(struct pt_regs *regs)
- 
- 	inhcall = get_and_clear_inhcall();
- 	if (inhcall && !WARN_ON_ONCE(state.exit_rcu)) {
-+		/* Normally called by idtentry_exit, we must restore pkrs here */
-+		idt_restore_pkrs(state);
- 		instrumentation_begin();
- 		idtentry_exit_cond_resched(regs, true);
- 		instrumentation_end();
-diff --git a/arch/x86/include/asm/idtentry.h b/arch/x86/include/asm/idtentry.h
-index 7227225cf45d..92d5e43cda7f 100644
---- a/arch/x86/include/asm/idtentry.h
-+++ b/arch/x86/include/asm/idtentry.h
-@@ -14,6 +14,8 @@ void idtentry_enter_user(struct pt_regs *regs);
- void idtentry_exit_user(struct pt_regs *regs);
- 
- typedef struct idtentry_state {
-+	unsigned int pkrs_ref;
-+	u32 pkrs;
- 	bool exit_rcu;
- } idtentry_state_t;
- 
-diff --git a/arch/x86/include/asm/pkeys_internal.h b/arch/x86/include/asm/pkeys_internal.h
-index e34f380c66d1..60e7b55dd141 100644
---- a/arch/x86/include/asm/pkeys_internal.h
-+++ b/arch/x86/include/asm/pkeys_internal.h
-@@ -27,7 +27,8 @@
- #define        PKS_NUM_KEYS            16
- 
- #ifdef CONFIG_ARCH_HAS_SUPERVISOR_PKEYS
--void write_pkrs(u32 pkrs_val);
-+DECLARE_PER_CPU(u32, pkrs_cache);
-+void noinstr write_pkrs(u32 pkrs_val);
- #else
- static inline void write_pkrs(u32 pkrs_val) { }
- #endif
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index d69250a7c1bf..85f0cbd5faa5 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -194,7 +194,6 @@ int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
-  * headers.
-  */
- #ifdef CONFIG_ARCH_HAS_SUPERVISOR_PKEYS
--DECLARE_PER_CPU(u32, pkrs_cache);
- static inline void pks_init_task(struct task_struct *tsk)
- {
- 	/* New tasks get the most restrictive PKRS value */
-diff --git a/arch/x86/mm/pkeys.c b/arch/x86/mm/pkeys.c
-index e565fadd74d7..cf9915fed6c9 100644
---- a/arch/x86/mm/pkeys.c
-+++ b/arch/x86/mm/pkeys.c
-@@ -247,7 +247,7 @@ DEFINE_PER_CPU(u32, pkrs_cache);
-  * disabled as it does not guarantee the atomicity of updating the pkrs_cache
-  * and MSR on its own.
-  */
--void write_pkrs(u32 pkrs_val)
-+void noinstr write_pkrs(u32 pkrs_val)
- {
- 	this_cpu_write(pkrs_cache, pkrs_val);
- 	wrmsrl(MSR_IA32_PKRS, pkrs_val);
--- 
-2.28.0.rc0.12.gb6a658bd00c9
+Thanks,
+Stefano
 
