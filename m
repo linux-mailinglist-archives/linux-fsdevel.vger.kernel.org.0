@@ -2,33 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 169D72246B0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jul 2020 01:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBCB52246E0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jul 2020 01:17:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbgGQXK0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jul 2020 19:10:26 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:51258 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728054AbgGQXJv (ORCPT
+        id S1726851AbgGQXRB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jul 2020 19:17:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40938 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbgGQXRB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jul 2020 19:09:51 -0400
-Received: from dede-linux-virt.corp.microsoft.com (unknown [131.107.160.54])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 7A58020B491A;
-        Fri, 17 Jul 2020 16:09:49 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7A58020B491A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595027389;
-        bh=BO1cenWUnGNayuyBmKqbXIIbsqyXRIWwZdTmlpXz42M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UEK6bCRlZ3yHGyKGaRWyP5jHQzRrrAYEO5KKP17Y4BmMJ1Nr6o6SZGIpaRj3Ao3h2
-         uCPsuDU3GtXpHo/C2CxZZQIVASOkGBO+Q76b7GCVySzRUjnxDxtHqpNPJmzKfroBIM
-         eISHHUFu4MQN74uMfaDmt1dE+UWdpS0bpelogemc=
-From:   Deven Bowers <deven.desai@linux.microsoft.com>
-To:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        viro@zeniv.linux.org.uk, paul@paul-moore.com, eparis@redhat.com,
-        jannh@google.com, dm-devel@redhat.com,
-        linux-integrity@vger.kernel.org,
+        Fri, 17 Jul 2020 19:17:01 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A412C0619D2;
+        Fri, 17 Jul 2020 16:17:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=ef+sx4FCFDKD8f3Ki+AsdS8ty08ol0udXIqRaW/LotY=; b=fdLx60WrqkoLK0sx3eeSx3fc9N
+        3qOh4xfeXZP10F++06CYZ4Rmm7x1bsqctucy8nQ8WuHzDgRtwf1QrjkX5nXQFxK8s/jSL19ljUcla
+        p/6ai/LQ2UUMUymEemZ6ZyBXX28cUNa5S1z+bWZsztTRxj23xM4qBz8yoZ19jNphDiDYkZI/1HC4w
+        b6TaNVcF5FTAUVCQzjVSZAvJnD35iemwUUiQtlAMTcqNO9wHVp5GrDwkofK6+3qE0bTO4UK+Xy6zQ
+        zIROU9XnA9sAsui+cfATf/D/j0ihYFz8ygvjFft8+Yfh4FeHrCJOx74BzXcnF9RaEf2kZrejtgwou
+        TkWKdrsQ==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jwZb2-0005Vh-Az; Fri, 17 Jul 2020 23:16:52 +0000
+Subject: Re: [RFC PATCH v4 02/12] security: add ipe lsm evaluation loop and
+ audit system
+To:     Deven Bowers <deven.desai@linux.microsoft.com>, agk@redhat.com,
+        axboe@kernel.dk, snitzer@redhat.com, jmorris@namei.org,
+        serge@hallyn.com, zohar@linux.ibm.com, viro@zeniv.linux.org.uk,
+        paul@paul-moore.com, eparis@redhat.com, jannh@google.com,
+        dm-devel@redhat.com, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-audit@redhat.com
@@ -36,84 +42,40 @@ Cc:     tyhicks@linux.microsoft.com, linux-kernel@vger.kernel.org,
         corbet@lwn.net, sashal@kernel.org,
         jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
         nramas@linux.microsoft.com, pasha.tatshin@soleen.com
-Subject: [RFC PATCH v4 12/12] cleanup: uapi/linux/audit.h
-Date:   Fri, 17 Jul 2020 16:09:41 -0700
-Message-Id: <20200717230941.1190744-13-deven.desai@linux.microsoft.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200717230941.1190744-1-deven.desai@linux.microsoft.com>
 References: <20200717230941.1190744-1-deven.desai@linux.microsoft.com>
+ <20200717230941.1190744-3-deven.desai@linux.microsoft.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <4b0c9925-d163-46a2-bbcb-74deb7446540@infradead.org>
+Date:   Fri, 17 Jul 2020 16:16:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200717230941.1190744-3-deven.desai@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove trailing whitespaces and align the integrity #defines in
-linux/uapi/audit.h
+On 7/17/20 4:09 PM, Deven Bowers wrote:
+> +config SECURITY_IPE_PERMISSIVE_SWITCH
+> +	bool "Enable the ability to switch IPE to permissive mode"
+> +	default y
+> +	help
+> +	  This option enables two ways of switching IPE to permissive mode,
+> +	  a sysctl (if enabled), `ipe.enforce`, or a kernel command line
+> +	  parameter, `ipe.enforce`. If either of these are set to 0, files
 
-Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
----
- include/uapi/linux/audit.h | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+	                                               is set
 
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 5a634cca1d42..609b4a5e8a80 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -48,7 +48,7 @@
-  * 2500 - 2999 future user space (maybe integrity labels and related events)
-  *
-  * Messages from 1000-1199 are bi-directional. 1200-1299 & 2100 - 2999 are
-- * exclusively user space. 1300-2099 is kernel --> user space 
-+ * exclusively user space. 1300-2099 is kernel --> user space
-  * communication.
-  */
- #define AUDIT_GET		1000	/* Get status */
-@@ -78,7 +78,7 @@
- #define AUDIT_LAST_USER_MSG	1199
- #define AUDIT_FIRST_USER_MSG2	2100	/* More user space messages */
- #define AUDIT_LAST_USER_MSG2	2999
-- 
-+
- #define AUDIT_DAEMON_START      1200    /* Daemon startup record */
- #define AUDIT_DAEMON_END        1201    /* Daemon normal stop record */
- #define AUDIT_DAEMON_ABORT      1202    /* Daemon error stop record */
-@@ -140,20 +140,20 @@
- #define AUDIT_MAC_CALIPSO_ADD	1418	/* NetLabel: add CALIPSO DOI entry */
- #define AUDIT_MAC_CALIPSO_DEL	1419	/* NetLabel: del CALIPSO DOI entry */
- 
--#define AUDIT_FIRST_KERN_ANOM_MSG   1700
--#define AUDIT_LAST_KERN_ANOM_MSG    1799
--#define AUDIT_ANOM_PROMISCUOUS      1700 /* Device changed promiscuous mode */
--#define AUDIT_ANOM_ABEND            1701 /* Process ended abnormally */
--#define AUDIT_ANOM_LINK		    1702 /* Suspicious use of file links */
--#define AUDIT_ANOM_CREAT	    1703 /* Suspicious file creation */
--#define AUDIT_INTEGRITY_DATA	    1800 /* Data integrity verification */
--#define AUDIT_INTEGRITY_METADATA    1801 /* Metadata integrity verification */
--#define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
--#define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
--#define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
--#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
--#define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
--#define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
-+#define AUDIT_FIRST_KERN_ANOM_MSG	1700
-+#define AUDIT_LAST_KERN_ANOM_MSG	1799
-+#define AUDIT_ANOM_PROMISCUOUS		1700 /* Device changed promiscuous mode */
-+#define AUDIT_ANOM_ABEND		1701 /* Process ended abnormally */
-+#define AUDIT_ANOM_LINK			1702 /* Suspicious use of file links */
-+#define AUDIT_ANOM_CREAT		1703 /* Suspicious file creation */
-+#define AUDIT_INTEGRITY_DATA		1800 /* Data integrity verification */
-+#define AUDIT_INTEGRITY_METADATA	1801 /* Metadata integrity verification */
-+#define AUDIT_INTEGRITY_STATUS		1802 /* Integrity enable status */
-+#define AUDIT_INTEGRITY_HASH		1803 /* Integrity HASH type */
-+#define AUDIT_INTEGRITY_PCR		1804 /* PCR invalidation msgs */
-+#define AUDIT_INTEGRITY_RULE		1805 /* policy rule */
-+#define AUDIT_INTEGRITY_EVM_XATTR	1806 /* New EVM-covered xattr */
-+#define AUDIT_INTEGRITY_POLICY_RULE	1807 /* IMA policy rules */
- #define AUDIT_INTEGRITY_POLICY_LOAD	1808 /* IPE Policy Load */
- #define AUDIT_INTEGRITY_POLICY_ACTIVATE	1809 /* IPE Policy Activation */
- #define AUDIT_INTEGRITY_EVENT		1810 /* IPE Evaluation Event */
+> +	  will be subject to IPE's policy, audit messages will be logged, but
+> +	  the policy will not be enforced.
+> +
+> +	  If unsure, answer Y.
+
+
 -- 
-2.27.0
+~Randy
 
