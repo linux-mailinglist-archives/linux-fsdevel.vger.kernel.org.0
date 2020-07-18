@@ -2,37 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58C222247F1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jul 2020 04:00:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD0802247FF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jul 2020 04:13:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728170AbgGRCAM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jul 2020 22:00:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53624 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbgGRCAM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jul 2020 22:00:12 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E9632070E;
-        Sat, 18 Jul 2020 02:00:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595037611;
-        bh=I2Mq1wDqXWIAJrmNEz3XRIN/ncXHwMctELd7o7JBcUM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Nw/u3nWYES+vEAJm5OT9r+QAcWU7zPoxYs0q9VeXAdOAQ2klSRmYa7ociYSbAB78P
-         cU1Qx1y891hOdSbQNksLUzjOyxtbR9S4GEeSluWauAbeDCPLboMaATjDdE2D+mcTBU
-         UHM0jFrG/Xmj2F7uzPQKdTRgt87o2C3U57GaeMVg=
-Date:   Fri, 17 Jul 2020 19:00:09 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        id S1727043AbgGRCNI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jul 2020 22:13:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39610 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726665AbgGRCNI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Jul 2020 22:13:08 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 080E0C0619D2;
+        Fri, 17 Jul 2020 19:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=b6Lq/lewhmuN9xzWi3dHd0xI6Cg0i4KUL37C2Kg1dS8=; b=HophwgPLXdiolehFqCeYvePvXL
+        mriM58eqE9tYcmpXbUWG10+WG8uvKd6NEuRdIlMGpFhQug0EDt90vDBzTAK9ytr9agSs9T6JwgQJA
+        enP39pgqZ1bPQn7D7t+Z8nSKdTfPKa18YImWxT3eb0xI91O9SF+5zZZBXnvstFoLvEqZ8zMu/q09t
+        yOMU0piavcn8/bXAmmrPHlQWBzKysq/eq3urOQKYfUxu7NbgW4Kr4unl4jmTiYDQzsWUojYpjD9A6
+        3x+xXINHbilI0enTEFRP5+/o4QC9Ee2KAI/TU7zj6Zk7a4fMvWVgOyJJ9H33/odet6gNXxM7nLxWw
+        9YOEbGMw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jwcLY-0002fS-VR; Sat, 18 Jul 2020 02:13:05 +0000
+Date:   Sat, 18 Jul 2020 03:13:04 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         "Paul E . McKenney" <paulmck@kernel.org>,
         linux-fsdevel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
         Andrea Parri <parri.andrea@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>,
         Daniel Lustig <dlustig@nvidia.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
         Dave Chinner <david@fromorbit.com>,
         David Howells <dhowells@redhat.com>,
         Jade Alglave <j.alglave@ucl.ac.uk>,
@@ -41,78 +46,147 @@ Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Will Deacon <will@kernel.org>
 Subject: Re: [PATCH] tools/memory-model: document the "one-time init" pattern
-Message-ID: <20200718020009.GE2183@sol.localdomain>
+Message-ID: <20200718021304.GS12769@casper.infradead.org>
 References: <20200717044427.68747-1-ebiggers@kernel.org>
- <20200717205340.GR7625@magnolia>
- <20200718005857.GB2183@sol.localdomain>
- <20200718012555.GA1168834@rowland.harvard.edu>
+ <20200717174750.GQ12769@casper.infradead.org>
+ <20200718013839.GD2183@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200718012555.GA1168834@rowland.harvard.edu>
+In-Reply-To: <20200718013839.GD2183@sol.localdomain>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 17, 2020 at 09:25:55PM -0400, Alan Stern wrote:
-> On Fri, Jul 17, 2020 at 05:58:57PM -0700, Eric Biggers wrote:
-> > On Fri, Jul 17, 2020 at 01:53:40PM -0700, Darrick J. Wong wrote:
-> > > > +There are also cases in which the smp_load_acquire() can be replaced by
-> > > > +the more lightweight READ_ONCE().  (smp_store_release() is still
-> > > > +required.)  Specifically, if all initialized memory is transitively
-> > > > +reachable from the pointer itself, then there is no control dependency
-> > > 
-> > > I don't quite understand what "transitively reachable from the pointer
-> > > itself" means?  Does that describe the situation where all the objects
-> > > reachable through the object that the global struct foo pointer points
-> > > at are /only/ reachable via that global pointer?
-> > > 
+On Fri, Jul 17, 2020 at 06:38:39PM -0700, Eric Biggers wrote:
+> On Fri, Jul 17, 2020 at 06:47:50PM +0100, Matthew Wilcox wrote:
+> > On Thu, Jul 16, 2020 at 09:44:27PM -0700, Eric Biggers wrote:
+> > > +If that doesn't apply, you'll have to implement one-time init yourself.
+> > > +
+> > > +The simplest implementation just uses a mutex and an 'inited' flag.
+> > > +This implementation should be used where feasible:
 > > 
-> > The intent is that "transitively reachable" means that all initialized memory
-> > can be reached by dereferencing the pointer in some way, e.g. p->a->b[5]->c.
+> > I think some syntactic sugar should make it feasible for normal people
+> > to implement the most efficient version of this just like they use locks.
+> 
+> Note that the cmpxchg version is not necessarily the "most efficient".
+> 
+> If the one-time initialization is expensive, e.g. if it allocates a lot of
+> memory or if takes a long time, it could be better to use the mutex version so
+> that at most one task does it.
+
+Sure, but I think those are far less common than just allocating a single
+thing.
+
+> > How about something like this ...
 > > 
-> > It could also be the case that allocating the object initializes some global or
-> > static data, which isn't reachable in that way.  Access to that data would then
-> > be a control dependency, which a data dependency barrier wouldn't work for.
+> > once.h:
 > > 
-> > It's possible I misunderstood something.  (Note the next paragraph does say that
-> > using READ_ONCE() is discouraged, exactly for this reason -- it can be hard to
-> > tell whether it's correct.)  Suggestions of what to write here are appreciated.
+> > static struct init_once_pointer {
+> > 	void *p;
+> > };
+> > 
+> > static inline void *once_get(struct init_once_pointer *oncep)
+> > { ... }
+> > 
+> > static inline bool once_store(struct init_once_pointer *oncep, void *p)
+> > { ... }
+> > 
+> > --- foo.c ---
+> > 
+> > struct foo *get_foo(gfp_t gfp)
+> > {
+> > 	static struct init_once_pointer my_foo;
+> > 	struct foo *foop;
+> > 
+> > 	foop = once_get(&my_foo);
+> > 	if (foop)
+> > 		return foop;
+> > 
+> > 	foop = alloc_foo(gfp);
+> > 	if (!once_store(&my_foo, foop)) {
+> > 		free_foo(foop);
+> > 		foop = once_get(&my_foo);
+> > 	}
+> > 
+> > 	return foop;
+> > }
+> > 
+> > Any kernel programmer should be able to handle that pattern.  And no mutex!
 > 
-> Perhaps something like this:
-> 
-> 	Specifically, if the only way to reach the initialized memory 
-> 	involves dereferencing the pointer itself then READ_ONCE() is 
-> 	sufficient.  This is because there will be an address dependency 
-> 	between reading the pointer and accessing the memory, which will 
-> 	ensure proper ordering.  But if some of the initialized memory 
-> 	is reachable some other way (for example, if it is global or 
-> 	static data) then there need not be an address dependency, 
-> 	merely a control dependency (checking whether the pointer is 
-> 	non-NULL).  Control dependencies do not always ensure ordering 
-> 	-- certainly not for reads, and depending on the compiler, 
-> 	possibly not for some writes -- and therefore a load-acquire is 
-> 	necessary.
-> 
-> Perhaps this is more wordy than you want, but it does get the important 
-> ideas across.
-> 
+> I don't think this version would be worthwhile.  It eliminates type safety due
+> to the use of 'void *', and doesn't actually save any lines of code.  Nor does
+> it eliminate the need to correctly implement the cmpxchg failure case, which is
+> tricky (it must free the object and get the new one) and will be rarely tested.
 
-How about:
+You're missing the point.  It prevents people from trying to optimise
+"can I use READ_ONCE() here, or do I need to use smp_rmb()?"  The type
+safety is provided by the get_foo() function.  I suppose somebody could
+play some games with _Generic or something, but there's really no need to.
+It's like using a list_head and casting to the container_of.
 
-	There are also cases in which the smp_load_acquire() can be replaced by
-	the more lightweight READ_ONCE().  (smp_store_release() is still
-	required.)  Specifically, if the only way to reach the initialized
-	memory involves dereferencing the pointer itself, then the data
-	dependency barrier provided by READ_ONCE() is sufficient.  However, if
-	some of the initialized memory is reachable some other way (for example,
-	if it is global or static data) then there need not be an address
-	dependency, merely a control dependency (checking whether the pointer is
-	non-NULL).  READ_ONCE() is *not* sufficient in that case.
+> It also forces all users of the struct to use this helper function to access it.
+> That could be considered a good thing, but it's also bad because even with
+> one-time init there's still usually some sort of ordering of "initialization"
+> vs. "use".  Just taking a random example I'm familiar with, we do one-time init
+> of inode::i_crypt_info when we open an encrypted file, so we guarantee it's set
+> for all I/O to the file, where we then simply access ->i_crypt_info directly.
+> We don't want the code to read like it's initializing ->i_crypt_info in the
+> middle of ->writepages(), since that would be wrong.
 
-	The optimization of replacing smp_load_acquire() with READ_ONCE() is
-	discouraged for nontrivial data structures, since it can be difficult to
-	determine if it is correct.  In particular, for complex data structures
-	the correctness of the READ_ONCE() optimization may depend on internal
-	implementation details of other kernel subsystems.
+Right, and I wouldn't use this pattern for that.  You can't get to
+writepages without having opened the file, so just initialising the
+pointer in open is fine.
+
+> An improvement might be to make once_store() take the free function as a
+> parameter so that it would handle the failure case for you:
+> 
+> struct foo *get_foo(gfp_t gfp)
+> {
+> 	static struct init_once_pointer my_foo;
+> 	struct foo *foop;
+>  
+>  	foop = once_get(&my_foo);
+>  	if (!foop) {
+> 		foop = alloc_foo(gfp);
+> 		if (foop)
+> 			once_store(&my_foo, foop, free_foo);
+
+Need to mark once_store as __must_check to avoid the bug you have here:
+
+			foop = once_store(&my_foo, foop, free_foo);
+
+Maybe we could use a macro for once_store so we could write:
+
+void *once_get(struct init_pointer_once *);
+int once_store(struct init_pointer_once *, void *);
+
+#define once_alloc(s, o_alloc, o_free) ({                               \
+        void *__p = o_alloc;                                            \
+        if (__p) {                                                      \
+                if (!once_store(s, __p)) {                              \
+                        o_free(__p);                                    \
+                        __p = once_get(s);                              \
+                }                                                       \
+        }                                                               \
+        __p;                                                            \
+})
+
+---
+
+struct foo *alloc_foo(gfp_t);
+void free_foo(struct foo *);
+
+struct foo *get_foo(gfp_t gfp)
+{
+        static struct init_pointer_once my_foo;
+        struct foo *foop;
+
+        foop = once_get(&my_foo);
+        if (!foop)
+                foop = once_alloc(&my_foo, alloc_foo(gfp), free_foo);
+        return foop;
+}
+
+That's pretty hard to misuse (I compile-tested it, and it works).
