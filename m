@@ -2,183 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93FB9224A7F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jul 2020 12:00:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 138CB224BAE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jul 2020 16:07:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbgGRKAj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jul 2020 06:00:39 -0400
-Received: from verein.lst.de ([213.95.11.211]:41577 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbgGRKAj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jul 2020 06:00:39 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 2B7CC68AFE; Sat, 18 Jul 2020 12:00:36 +0200 (CEST)
-Date:   Sat, 18 Jul 2020 12:00:35 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Song Liu <song@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 16/23] initramfs: simplify clean_rootfs
-Message-ID: <20200718100035.GA8856@lst.de>
-References: <20200714190427.4332-1-hch@lst.de> <20200714190427.4332-17-hch@lst.de> <CGME20200717205549eucas1p13fca9a8496836faa71df515524743648@eucas1p1.samsung.com> <7f37802c-d8d9-18cd-7394-df51fa785988@samsung.com>
+        id S1727120AbgGROHM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jul 2020 10:07:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35540 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726611AbgGROHL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 18 Jul 2020 10:07:11 -0400
+Received: from mail-vk1-xa43.google.com (mail-vk1-xa43.google.com [IPv6:2607:f8b0:4864:20::a43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E8C7C0619D2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jul 2020 07:07:11 -0700 (PDT)
+Received: by mail-vk1-xa43.google.com with SMTP id s192so2736986vkh.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 18 Jul 2020 07:07:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=t0TLC5mt6zw20J38nO6UV1Kz+5E95WBtIXeRkoxQ4a0=;
+        b=Am9ljAu1z8n/VTgYAl8DNuZVX+OPh5GNt9bBDdhsRGP1okcxPTRdHI3vgADTK7a/Mn
+         TZBVGZs2eSDx6R61tHuLF6qI/duSqXB2kAx5zcqaswpt636yWn8jFi+AQOGZz04y6YhW
+         +6rtXxDhtJ/c/QwJaGocsAm8PgrXrIhxavdU0rlNBhuOF07xejXI7Bs0olEQUTc5Nr6C
+         sQP8eVFpJF9GMWkV8bU14TGdFB1lroMxtltanXNneSHDm4VHmqxaFlKMRJ2FY+zH6Hkx
+         uUnSTM1+EhpLA5E65bUzpBncbeYjdfJe4y8S+noBVjDDz+0AAKKgabqrjQ1jXhPTP3ij
+         fvMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=t0TLC5mt6zw20J38nO6UV1Kz+5E95WBtIXeRkoxQ4a0=;
+        b=AAFLPl4Zy1c/BEHQe2JQswptPyLDbQvG6f8O41mYcPL/of+/Jh8nogI3mWkTtjz4J7
+         r5pXwP4OV8nYvWZAPKL+3aR00uaRW+Fu9PtO3bR/NRsY80QyVSqzzhHLHW+JzaS4MJFi
+         +Lb859BXR0ouPD2kpKtud7wohtZYbH5eu9fJeb3rxZvA9yWkEMShLlPOoEeseWgJDC9w
+         eVGaprho0V4TIXDvUrbgHnmnHUxbNYqKV0yxfkjTcJhxBTKGsnOvSKBGEH8LRBbDV3Yn
+         9Bv4Y8OP9YHBd3dvBpECLs5lNvw43z1tIFW+D8YE3kb/eorpnwipeX66UJ1LPfWcQHBm
+         Y8bQ==
+X-Gm-Message-State: AOAM532diOoTkxbmFM53e9ryFEMbW103ybXvK6paiU6FfSVLWeqlieGi
+        IqD0RghBOEW3hvgNJOM4XUBSHE9OKcT7/1hfiDI=
+X-Google-Smtp-Source: ABdhPJzC0BlCpQMBPttVEYFoI1GvaI4DKmsjb5qN4oZi0QcUrkpguDYueoObncLuIJrdHcKx/X0ue6qBn+d8T0cWVd0=
+X-Received: by 2002:a1f:eec8:: with SMTP id m191mr10622921vkh.47.1595081228789;
+ Sat, 18 Jul 2020 07:07:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7f37802c-d8d9-18cd-7394-df51fa785988@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Reply-To: mrsanna.h.bruun119@gmail.com
+Received: by 2002:ab0:194:0:0:0:0:0 with HTTP; Sat, 18 Jul 2020 07:07:08 -0700 (PDT)
+From:   "Mrs. Anna H. Bruun" <mrsanna.h.bruun119@gmail.com>
+Date:   Sat, 18 Jul 2020 07:07:08 -0700
+X-Google-Sender-Auth: i7u3HLFxfKC2bCjfGs0pcbRtzMI
+Message-ID: <CAKipdRmMezYCUBC-HKZoUPJrNUiF++_ESBrtE+gYib=jVho5uA@mail.gmail.com>
+Subject: My Greetings
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 17, 2020 at 10:55:48PM +0200, Marek Szyprowski wrote:
-> Hi Christoph,
-> 
-> On 14.07.2020 21:04, Christoph Hellwig wrote:
-> > Just use d_genocide instead of iterating through the root directory with
-> > cumbersome userspace-like APIs.  This also ensures we actually remove files
-> > that are not direct children of the root entry, which the old code failed
-> > to do.
-> >
-> > Fixes: df52092f3c97 ("fastboot: remove duplicate unpack_to_rootfs()")
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> 
-> This patch breaks initrd support ;-(
-> 
-> I use initrd to deploy kernel modules on my test machines. It was 
-> automatically mounted on /initrd. /lib/modules is just a symlink to 
-> /initrd. I know that initrd support is marked as deprecated, but it 
-> would be really nice to give people some time to update their machines 
-> before breaking the stuff.
+My Dear
 
-Looks like your setup did rely on the /dev/ notes from the built-in
-initramfs to be preserved.
+My Name is Mrs. Anna H. Bruun, from Norway. I know that this message
+will be a surprise to you. Firstly, I am married to Mr. Patrick Bruun,
+A gold merchant who owns a small gold Mine in Burkina Faso; He died of
+Cardiovascular Disease in mid-March 2011. During his life time he
+deposited the sum of =E2=82=AC 8.5 Million Euro) Eight million, Five hundre=
+d
+thousand Euros in a bank in Ouagadougou the capital city of Burkina
+Faso. The deposited money was from the sale of the shares, death
+benefits payment and entitlements of my deceased husband by his
+company.
 
-Can you comment out the call to d_genocide?  It seems like for your
-the fact that clean_rootfs didn't actually clean up was a feature and
-not a bug.
+I am sending this message to you praying that it will reach you in
+good health, since I am not in good health condition in which I sleep
+every night without knowing if I may be alive to see the next day. I
+am suffering from long time cancer and presently i am partially
+suffering from a stroke illness which has become almost impossible for
+me to move around. I am married to my late husband for over 4 years
+before he died and is unfortunately that we don't have a child, my
+doctor confided in me that i have less chance to live. Having known my
+health condition, I decided to contact you to claim the fund since I
+don't have any relation I grew up from the orphanage home,
 
-I guess the old, pre-2008 code also wouldn't have worked for you in
-that case.
+I have decided to donate what I have to you for the support of helping
+Motherless babies/Less privileged/Widows' because I am dying and
+diagnosed of cancer for about 2 years ago. I have been touched by God
+Almighty to donate from what I have inherited from my late husband to
+you for good work of God Almighty. I have asked Almighty God to
+forgive me and believe he has, because He is a Merciful God I will be
+going in for an operation surgery soon
 
-> 
-> Here is the log:
-> 
-> Kernel image @ 0x40007fc0 [ 0x000000 - 0x6dd9c8 ]
-> ## Flattened Device Tree blob at 41000000
->     Booting using the fdt blob at 0x41000000
->     Loading Ramdisk to 4de3c000, end 50000000 ... OK
->     Loading Device Tree to 4de2d000, end 4de3b206 ... OK
-> 
-> Starting kernel ...
-> 
-> [    0.000000] Booting Linux on physical CPU 0x900
-> ...
-> 
-> [    0.000000] Kernel command line: root=PARTLABEL=rootfs rootwait 
-> console=tty1 console=ttySAC2,115200n8 earlycon rootdelay=2
-> ...
-> 
-> [    1.853631] Trying to unpack rootfs image as initramfs...
-> [    1.858661] rootfs image is not initramfs (invalid magic at start of 
-> compressed archive); looks like an initrd
-> ...
-> [    2.204776] Freeing initrd memory: 34576K
-> 
-> ...
-> 
-> [    4.635360] Warning: unable to open an initial console.
-> [    4.640706] Waiting 2 sec before mounting root device...
-> ...
-> [    6.776007] Failed to create /dev/root: -2
-> [    6.778989] VFS: Cannot open root device "PARTLABEL=rootfs" or 
-> unknown-block(179,6): error -2
-> [    6.787200] Please append a correct "root=" boot option; here are the 
-> available partitions:
-> [    6.795693] 0100           65536 ram0
-> [    6.795697]  (driver?)
-> [    6.801459] 0101           65536 ram1
-> [    6.801462]  (driver?)
-> [    6.807532] 0102           65536 ram2
-> [    6.807535]  (driver?)
-> [    6.813674] 0103           65536 ram3
-> [    6.813677]  (driver?)
-> [    6.819760] 0104           65536 ram4
-> [    6.819763]  (driver?)
-> [    6.832610] 0105           65536 ram5
-> [    6.832613]  (driver?)
-> [    6.848685] 0106           65536 ram6
-> [    6.848688]  (driver?)
-> [    6.864590] 0107           65536 ram7
-> [    6.864593]  (driver?)
-> [    6.880504] 0108           65536 ram8
-> [    6.880507]  (driver?)
-> [    6.896248] 0109           65536 ram9
-> [    6.896251]  (driver?)
-> [    6.911828] 010a           65536 ram10
-> [    6.911831]  (driver?)
-> [    6.927447] 010b           65536 ram11
-> [    6.927450]  (driver?)
-> [    6.942976] 010c           65536 ram12
-> [    6.942979]  (driver?)
-> [    6.958190] 010d           65536 ram13
-> [    6.958193]  (driver?)
-> [    6.973205] 010e           65536 ram14
-> [    6.973208]  (driver?)
-> [    6.988105] 010f           65536 ram15
-> [    6.988108]  (driver?)
-> [    7.002897] b300        15388672 mmcblk0
-> [    7.002901]  driver: mmcblk
-> [    7.018061]   b301            8192 mmcblk0p1 
-> 654b73ea-7c04-c24d-9642-2a186649605c
-> [    7.018064]
-> [    7.035359]   b302           61440 mmcblk0p2 
-> 7ef6fb83-0d6c-8c44-826b-ad11df290e0c
-> [    7.035362]
-> [    7.052589]   b303          102400 mmcblk0p3 
-> 34883856-7d52-d548-a196-718efbd06876
-> [    7.052592]
-> [    7.069744]   b304          153600 mmcblk0p4 
-> 8d4410d0-a4ff-c447-abb9-73350dcdd2d6
-> [    7.069747]
-> [    7.086888]   b305         1572864 mmcblk0p5 
-> 485c2c17-a9e8-9c45-bb68-e0748a2bb1f1
-> [    7.086890]
-> [    7.103991]   b306         3072000 mmcblk0p6 
-> 7fb2bbf3-e064-2343-b169-e69c18dbb43e
-> [    7.103993]
-> [    7.121290]   b307        10413039 mmcblk0p7 
-> b0ee9150-6b6a-274b-9ec3-703d29072555
-> [    7.121292]
-> [    7.138722] Kernel panic - not syncing: VFS: Unable to mount root fs 
-> on unknown-block(179,6)
-> [    7.151482] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 
-> 5.8.0-rc5-00064-g38d014f6d446 #8823
-> [    7.164026] Hardware name: Samsung Exynos (Flattened Device Tree)
-> [    7.174556] [<c011188c>] (unwind_backtrace) from [<c010d27c>] 
-> (show_stack+0x10/0x14)
-> [    7.186799] [<c010d27c>] (show_stack) from [<c05182e4>] 
-> (dump_stack+0xbc/0xe8)
-> [    7.198533] [<c05182e4>] (dump_stack) from [<c01272e0>] 
-> (panic+0x128/0x354)
-> [    7.210002] [<c01272e0>] (panic) from [<c1001580>] 
-> (mount_block_root+0x1a8/0x240)
-> [    7.221961] [<c1001580>] (mount_block_root) from [<c1001738>] 
-> (mount_root+0x120/0x13c)
-> [    7.234325] [<c1001738>] (mount_root) from [<c10018ac>] 
-> (prepare_namespace+0x158/0x194)
-> [    7.246751] [<c10018ac>] (prepare_namespace) from [<c0ab7684>] 
-> (kernel_init+0x8/0x118)
-> [    7.259086] [<c0ab7684>] (kernel_init) from [<c0100114>] 
-> (ret_from_fork+0x14/0x20)tatic void __init populate_initrd_image(char *err)
-> 
-> Best regards
-> -- 
-> Marek Szyprowski, PhD
-> Samsung R&D Institute Poland
----end quoted text---
+This is the reason i need your services to stand as my next of kin or
+an executor to claim the funds for charity purposes. If this money
+remains unclaimed after my death, the bank executives or the
+government will take the money as unclaimed fund and maybe use it for
+selfish and worthless ventures, I need a very honest person who can
+claim this money and use it for Charity works, for orphanages, widows
+and also build schools for less privilege that will be named after my
+late husband and my name; I need your urgent answer to know if you
+will be able to execute this project, and I will give you more
+Information on how the fund will be transferred to your bank account.
+
+Thanks
+Mrs. Anna H.
