@@ -2,109 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90EA22247BD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jul 2020 03:32:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E413E2247CC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jul 2020 03:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbgGRBcT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jul 2020 21:32:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33304 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbgGRBcS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jul 2020 21:32:18 -0400
-Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63AB2C0619D2;
-        Fri, 17 Jul 2020 18:32:18 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726974AbgGRBim (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jul 2020 21:38:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726710AbgGRBim (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Jul 2020 21:38:42 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4B7r801fNHz9sSd;
-        Sat, 18 Jul 2020 11:32:16 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1595035936;
-        bh=zbqPgE8v7ON2kH31+pvIfuRRd/Syn3vdJv6lvJRWYSY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qpW/K+16DKipBBvhuDO1XEIr7Q2RitPvywDHHcuSSFB3K3o0lf1Ha511qrwUZUpzU
-         mQhdYNiTZM++fABgsYxblhT0e++7SG7OnSOidZRn3roE/RHYflo5J8zUrndxs8y4b7
-         kZn1bP2Fc4y54zoHUR2t9xuRSvlY1bg1VOMcwuwj/12B8qm5Rg31jofCSCSsvAQf3w
-         6ZqT0evS2bQJsMPp5gztr9CX77bgmO9qv4YDqD8fWRV10nUvjnOpoTkkHF8yZVuJms
-         hex/GWpkJIMf8Ut9djV0GHbTJtObpVLyMxfoCBWc+b0+s8bKeWVMpbjS+GuToewrXu
-         Cer626C0CobFg==
-Date:   Sat, 18 Jul 2020 11:32:15 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org
-Subject: Re: mmotm 2020-07-16-22-52 uploaded (mm/hugetlb.c)
-Message-ID: <20200718113215.2099dab3@canb.auug.org.au>
-In-Reply-To: <267a50e8-b7b2-b095-d62e-6e95313bc4c2@infradead.org>
-References: <20200717055300.ObseZH9Vs%akpm@linux-foundation.org>
-        <267a50e8-b7b2-b095-d62e-6e95313bc4c2@infradead.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id F2E3F2073E;
+        Sat, 18 Jul 2020 01:38:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595036321;
+        bh=s/JzOkxSkfNtv0xY8lsJGN9mFrYMl/KFrYLNGUU2bU8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0q7XdCxMQYLX0NebmbgdVQvCEgD4SLGqw/gmgT3IMo1D9Lre+Dt/3vWV0HLuLH5D3
+         YfUWGxoleps2vT9xLkxsnxAH7BRLP6YaEnUFPWK/rerRuzemezhsUL5hSngYCjbAKB
+         YckhkW+QVYv7Tgcp0WBtGi+6Z3e6pkmqfhcfcTnU=
+Date:   Fri, 17 Jul 2020 18:38:39 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] tools/memory-model: document the "one-time init" pattern
+Message-ID: <20200718013839.GD2183@sol.localdomain>
+References: <20200717044427.68747-1-ebiggers@kernel.org>
+ <20200717174750.GQ12769@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/MIM/s.l/+DRjtjirRvNy8b0";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200717174750.GQ12769@casper.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/MIM/s.l/+DRjtjirRvNy8b0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jul 17, 2020 at 06:47:50PM +0100, Matthew Wilcox wrote:
+> On Thu, Jul 16, 2020 at 09:44:27PM -0700, Eric Biggers wrote:
+> > +If that doesn't apply, you'll have to implement one-time init yourself.
+> > +
+> > +The simplest implementation just uses a mutex and an 'inited' flag.
+> > +This implementation should be used where feasible:
+> 
+> I think some syntactic sugar should make it feasible for normal people
+> to implement the most efficient version of this just like they use locks.
 
-Hi Randy,
+Note that the cmpxchg version is not necessarily the "most efficient".
 
-On Fri, 17 Jul 2020 08:35:45 -0700 Randy Dunlap <rdunlap@infradead.org> wro=
-te:
->
-> on i386:
-> 6 of 10 builds failed with:
->=20
-> ../mm/hugetlb.c:1302:20: error: redefinition of =E2=80=98destroy_compound=
-_gigantic_page=E2=80=99
->  static inline void destroy_compound_gigantic_page(struct hstate *h,
->                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ../mm/hugetlb.c:1223:13: note: previous definition of =E2=80=98destroy_co=
-mpound_gigantic_page=E2=80=99 was here
->  static void destroy_compound_gigantic_page(struct hstate *h, struct page=
- *page,
->              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If the one-time initialization is expensive, e.g. if it allocates a lot of
+memory or if takes a long time, it could be better to use the mutex version so
+that at most one task does it.
 
-Reported here: https://lore.kernel.org/lkml/20200717213127.3bd426e1@canb.au=
-ug.org.au/
+> How about something like this ...
+> 
+> once.h:
+> 
+> static struct init_once_pointer {
+> 	void *p;
+> };
+> 
+> static inline void *once_get(struct init_once_pointer *oncep)
+> { ... }
+> 
+> static inline bool once_store(struct init_once_pointer *oncep, void *p)
+> { ... }
+> 
+> --- foo.c ---
+> 
+> struct foo *get_foo(gfp_t gfp)
+> {
+> 	static struct init_once_pointer my_foo;
+> 	struct foo *foop;
+> 
+> 	foop = once_get(&my_foo);
+> 	if (foop)
+> 		return foop;
+> 
+> 	foop = alloc_foo(gfp);
+> 	if (!once_store(&my_foo, foop)) {
+> 		free_foo(foop);
+> 		foop = once_get(&my_foo);
+> 	}
+> 
+> 	return foop;
+> }
+> 
+> Any kernel programmer should be able to handle that pattern.  And no mutex!
 
-> ../mm/hugetlb.c:1223:13: warning: =E2=80=98destroy_compound_gigantic_page=
-=E2=80=99 defined but not used [-Wunused-function]
-> ../mm/hugetlb.c:50:https://lore.kernel.org/lkml/20200709191111.0b63f84d@c=
-anb.auug.org.au/20: warning: =E2=80=98hugetlb_cma=E2=80=99 defined but not =
-used [-Wunused-variable]
->  static struct cma *hugetlb_cma[MAX_NUMNODES];
->                     ^~~~~~~~~~~
+I don't think this version would be worthwhile.  It eliminates type safety due
+to the use of 'void *', and doesn't actually save any lines of code.  Nor does
+it eliminate the need to correctly implement the cmpxchg failure case, which is
+tricky (it must free the object and get the new one) and will be rarely tested.
 
-Reported here: https://lore.kernel.org/lkml/20200709191111.0b63f84d@canb.au=
-ug.org.au/
+It also forces all users of the struct to use this helper function to access it.
+That could be considered a good thing, but it's also bad because even with
+one-time init there's still usually some sort of ordering of "initialization"
+vs. "use".  Just taking a random example I'm familiar with, we do one-time init
+of inode::i_crypt_info when we open an encrypted file, so we guarantee it's set
+for all I/O to the file, where we then simply access ->i_crypt_info directly.
+We don't want the code to read like it's initializing ->i_crypt_info in the
+middle of ->writepages(), since that would be wrong.
 
---=20
-Cheers,
-Stephen Rothwell
+An improvement might be to make once_store() take the free function as a
+parameter so that it would handle the failure case for you:
 
---Sig_/MIM/s.l/+DRjtjirRvNy8b0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+struct foo *get_foo(gfp_t gfp)
+{
+	static struct init_once_pointer my_foo;
+	struct foo *foop;
+ 
+ 	foop = once_get(&my_foo);
+ 	if (!foop) {
+		foop = alloc_foo(gfp);
+		if (foop)
+			once_store(&my_foo, foop, free_foo);
+	}
+ 	return foop;
+}
 
------BEGIN PGP SIGNATURE-----
+I'm not sure even that version would be worthwhile, though.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8SUR8ACgkQAVBC80lX
-0Gw2BQgAlJRnzqsEMwMGbGxshd1VTQJzQfPAxyeaASZ7c0wyXS1gaxlaXqHhO93Q
-qsVKoYpqn8ZH2vZTyK5DcWS98nncrlu35W8yseL1DLep/2mSuCa7BEE049/madFh
-YY2YfT00oXifVMGBYx312bgou7D8fFc5j4RdXd/nUQYNJ8TUDeZZLA5K2IF3kyw7
-nrwE94xTxLBJNiSTS6hdQeVFLT5Wd0ZFlT3CLkwL2RMMwjIZkLGJ9ytkzlr/QgII
-MdYhZ/J10kcMbb0Y0VeFEJN9VBvK/IxZ8wIqB9+5UnmQARQE0sEmSadyJZQS0z34
-QWVUbzUGRcHDslowYETvaqiHW742mA==
-=FhKn
------END PGP SIGNATURE-----
+What I do like is DO_ONCE() in <linux/once.h>, which is used as just:
 
---Sig_/MIM/s.l/+DRjtjirRvNy8b0--
+    DO_ONCE(func)
+
+But it has limitations:
+
+   - Only atomic context
+   - Initialization can't fail
+   - Only global/static data
+
+We could address the first two limitations by splitting it into DO_ONCE_ATOMIC()
+and DO_ONCE_BLOCKING(), and by allowing the initialization function to return an
+error code.  That would make it work for all global/static data cases, I think.
+
+Ideally we'd have something almost as simple for non-global/non-static data too.
+I'm not sure the best way to do it, though.  It would have to be something more
+complex like:
+
+    ONETIME_INIT_DATA(&my_foo, alloc_foo, free_foo)
+
+- Eric
