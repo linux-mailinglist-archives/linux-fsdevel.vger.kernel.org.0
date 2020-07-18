@@ -2,33 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF7032247F0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jul 2020 04:00:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 58C222247F1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jul 2020 04:00:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbgGRCAJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 17 Jul 2020 22:00:09 -0400
-Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:55270 "EHLO
-        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726665AbgGRCAJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 17 Jul 2020 22:00:09 -0400
-Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
-        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id 5990F105E9E;
-        Sat, 18 Jul 2020 12:00:02 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jwc8v-0002KH-1J; Sat, 18 Jul 2020 12:00:01 +1000
-Date:   Sat, 18 Jul 2020 12:00:01 +1000
-From:   Dave Chinner <david@fromorbit.com>
+        id S1728170AbgGRCAM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 17 Jul 2020 22:00:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53624 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726665AbgGRCAM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 17 Jul 2020 22:00:12 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E9632070E;
+        Sat, 18 Jul 2020 02:00:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595037611;
+        bh=I2Mq1wDqXWIAJrmNEz3XRIN/ncXHwMctELd7o7JBcUM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Nw/u3nWYES+vEAJm5OT9r+QAcWU7zPoxYs0q9VeXAdOAQ2klSRmYa7ociYSbAB78P
+         cU1Qx1y891hOdSbQNksLUzjOyxtbR9S4GEeSluWauAbeDCPLboMaATjDdE2D+mcTBU
+         UHM0jFrG/Xmj2F7uzPQKdTRgt87o2C3U57GaeMVg=
+Date:   Fri, 17 Jul 2020 19:00:09 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
 To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
         linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         "Paul E . McKenney" <paulmck@kernel.org>,
         linux-fsdevel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
         Andrea Parri <parri.andrea@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>,
         Daniel Lustig <dlustig@nvidia.com>,
+        Dave Chinner <david@fromorbit.com>,
         David Howells <dhowells@redhat.com>,
         Jade Alglave <j.alglave@ucl.ac.uk>,
         Luc Maranget <luc.maranget@inria.fr>,
@@ -36,7 +41,7 @@ Cc:     Eric Biggers <ebiggers@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Will Deacon <will@kernel.org>
 Subject: Re: [PATCH] tools/memory-model: document the "one-time init" pattern
-Message-ID: <20200718020001.GO5369@dread.disaster.area>
+Message-ID: <20200718020009.GE2183@sol.localdomain>
 References: <20200717044427.68747-1-ebiggers@kernel.org>
  <20200717205340.GR7625@magnolia>
  <20200718005857.GB2183@sol.localdomain>
@@ -45,13 +50,6 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20200718012555.GA1168834@rowland.harvard.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LPwYv6e9 c=1 sm=1 tr=0
-        a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
-        a=kj9zAlcOel0A:10 a=_RQrkK6FrEwA:10 a=7-415B0cAAAA:8
-        a=m2fqJy7gfEZGdrr6IoAA:9 a=uIZ0nfzhNTXwYeV5:21 a=TVXeNXAKodzJbbhi:21
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -96,27 +94,25 @@ On Fri, Jul 17, 2020 at 09:25:55PM -0400, Alan Stern wrote:
 > 	-- certainly not for reads, and depending on the compiler, 
 > 	possibly not for some writes -- and therefore a load-acquire is 
 > 	necessary.
-
-Recipes are aimed at people who simply don't understand any of that
-goobledegook. This won't help them -write correct code-.
-
+> 
 > Perhaps this is more wordy than you want, but it does get the important 
 > ideas across.
+> 
 
-You think they are important because you understand what those words
-mean.  Large numbers of developers do not understand what they mean,
-nor how to put them into practise correctly.
+How about:
 
-Seriously: if you want people to use this stuff correctly, you need
-to -dumb it down-, not make it even more challenging by explaining
-words people don't understand with yet more words they don't
-understand...
+	There are also cases in which the smp_load_acquire() can be replaced by
+	the more lightweight READ_ONCE().  (smp_store_release() is still
+	required.)  Specifically, if the only way to reach the initialized
+	memory involves dereferencing the pointer itself, then the data
+	dependency barrier provided by READ_ONCE() is sufficient.  However, if
+	some of the initialized memory is reachable some other way (for example,
+	if it is global or static data) then there need not be an address
+	dependency, merely a control dependency (checking whether the pointer is
+	non-NULL).  READ_ONCE() is *not* sufficient in that case.
 
-This is the "curse of knowledge" cognative bias in a nutshell.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+	The optimization of replacing smp_load_acquire() with READ_ONCE() is
+	discouraged for nontrivial data structures, since it can be difficult to
+	determine if it is correct.  In particular, for complex data structures
+	the correctness of the READ_ONCE() optimization may depend on internal
+	implementation details of other kernel subsystems.
