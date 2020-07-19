@@ -2,90 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4D20224D64
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 18 Jul 2020 19:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20C98224E8B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jul 2020 03:45:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbgGRRsN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 18 Jul 2020 13:48:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41694 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbgGRRsM (ORCPT
+        id S1726390AbgGSBpE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 18 Jul 2020 21:45:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57544 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726256AbgGSBpE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 18 Jul 2020 13:48:12 -0400
-Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jwqw0-0003uS-Rf; Sat, 18 Jul 2020 17:47:40 +0000
-Date:   Sat, 18 Jul 2020 19:47:39 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Adrian Reber <areber@redhat.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>
-Cc:     Adrian Reber <areber@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 0/6] capabilities: Introduce CAP_CHECKPOINT_RESTORE
-Message-ID: <20200718174739.bg73idrihaj4p2qf@wittgenstein>
-References: <20200715144954.1387760-1-areber@redhat.com>
- <20200718032416.GC11982@mail.hallyn.com>
+        Sat, 18 Jul 2020 21:45:04 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44B80C0619D2;
+        Sat, 18 Jul 2020 18:45:04 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jwyNY-00FOFG-MQ; Sun, 19 Jul 2020 01:44:36 +0000
+Date:   Sun, 19 Jul 2020 02:44:36 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/32] iov_iter: Add ITER_MAPPING
+Message-ID: <20200719014436.GG2786714@ZenIV.linux.org.uk>
+References: <159465784033.1376674.18106463693989811037.stgit@warthog.procyon.org.uk>
+ <159465785214.1376674.6062549291411362531.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200718032416.GC11982@mail.hallyn.com>
+In-Reply-To: <159465785214.1376674.6062549291411362531.stgit@warthog.procyon.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 17, 2020 at 10:24:16PM -0500, Serge Hallyn wrote:
-> On Wed, Jul 15, 2020 at 04:49:48PM +0200, Adrian Reber wrote:
-> > This is v5 of the 'Introduce CAP_CHECKPOINT_RESTORE' patchset. The
-> > changes to v4 are:
-> > 
-> >  * split into more patches to have the introduction of
-> >    CAP_CHECKPOINT_RESTORE and the actual usage in different
-> >    patches
-> >  * reduce the /proc/self/exe patch to only be about
-> >    CAP_CHECKPOINT_RESTORE
-> > 
-> > Adrian Reber (5):
-> >   capabilities: Introduce CAP_CHECKPOINT_RESTORE
-> >   pid: use checkpoint_restore_ns_capable() for set_tid
-> >   pid_namespace: use checkpoint_restore_ns_capable() for ns_last_pid
-> >   proc: allow access in init userns for map_files with CAP_CHECKPOINT_RESTORE
-> >   selftests: add clone3() CAP_CHECKPOINT_RESTORE test
-> > 
-> > Nicolas Viennot (1):
-> >   prctl: Allow checkpoint/restore capable processes to change exe link
+On Mon, Jul 13, 2020 at 05:30:52PM +0100, David Howells wrote:
+> Add an iterator, ITER_MAPPING, that walks through a set of pages attached
+> to an address_space, starting at a given page and offset and walking for
+> the specified amount of bytes.
 > 
-> (This is probably bad form, but)  All
+> The caller must guarantee that the pages are all present and they must be
+> locked using PG_locked, PG_writeback or PG_fscache to prevent them from
+> going away or being migrated whilst they're being accessed.
 > 
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+> This is useful for copying data from socket buffers to inodes in network
+> filesystems and for transferring data between those inodes and the cache
+> using direct I/O.
 > 
-> Assuming you changes patches 4 and 6 per Christian's suggestions,
-> I'd like to re-review those then.
+> Whilst it is true that ITER_BVEC could be used instead, that would require
+> a bio_vec array to be allocated to refer to all the pages - which should be
+> redundant if inode->i_pages also points to all these pages.
+> 
+> This could also be turned into an ITER_XARRAY, taking and xarray pointer
+> instead of a mapping pointer.  It would be mostly trivial, except for the
+> use of find_get_pages_contig() by iov_iter_get_pages*().
+> 
 
-Thanks, once Adrian has reposted the changes and you agree with them as
-well, I'll pick them up though I might end up pushing this into the next
-merge window...
+My main problem here is that your iterate_mapping() assumes that STEP is
+safe under rcu_read_lock(), with no visible mentioning of that fact.
+Note, BTW, that iov_iter_for_each_range() quietly calls user-supplied
+callback in such context.
 
-Christian
+Incidentally, do you ever have different steps for bvec and mapping?
+
+> +	if (unlikely(iov_iter_is_mapping(i))) {
+> +		/* We really don't want to fetch pages if we can avoid it */
+> +		i->iov_offset += size;
+> +		i->count -= size;
+> +		return;
+
+That's... not nice.  At the very least you want to cap size by i->count here
+(and for discard case as well, while we are at it).
