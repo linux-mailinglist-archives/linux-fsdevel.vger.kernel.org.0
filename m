@@ -2,102 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B810225376
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 19 Jul 2020 20:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13C08225494
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 00:48:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbgGSSR4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jul 2020 14:17:56 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39120 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbgGSSR4 (ORCPT
+        id S1726413AbgGSWr4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jul 2020 18:47:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52202 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726156AbgGSWr4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Jul 2020 14:17:56 -0400
-Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1jxDsQ-0003b6-HU; Sun, 19 Jul 2020 18:17:30 +0000
-Date:   Sun, 19 Jul 2020 20:17:29 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Adrian Reber <areber@redhat.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>
-Cc:     Eric Biederman <ebiederm@xmission.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-        Kamil Yurtsever <kyurtsever@google.com>,
-        Dirk Petersen <dipeit@gmail.com>,
-        Christine Flood <chf@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Radostin Stoyanov <rstoyanov1@gmail.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v6 0/7] capabilities: Introduce CAP_CHECKPOINT_RESTORE
-Message-ID: <20200719181729.6f37lilhvov5a74f@wittgenstein>
-References: <20200719100418.2112740-1-areber@redhat.com>
+        Sun, 19 Jul 2020 18:47:56 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8727C0619D2;
+        Sun, 19 Jul 2020 15:47:55 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id q3so11708194ilt.8;
+        Sun, 19 Jul 2020 15:47:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=752GIqWb7TeflmfvTlvXG4lE85m80lDi3OdyHGBoGE4=;
+        b=SYKhSqvg0eRjLfsoeBoocA3N8uY4CC49g8HYKV4q1YUiDsWzl5zJ7I011lkNHPOvb2
+         WJXrXr7Nu+vSqqNGStE1BrRAlT6/pRpdtRbk3/8pM5CalsGjmJdtwRQj/1IASfmxaFWK
+         L7C65KMmIMFp8dUFFeW06R6FnhD3sQemF08kVNr2rxq/xsT5fTOsLOD4XTPkbLtZ4Obp
+         pNAiTQ5HJHzL/+Qw5E1EpyMaXKt1cZ3IMCK8DdkGo8uenP0pXXIL9u0OZZVe85POo0Xf
+         wuS3LWoBkDXLcE2w56JAOlu6jxOWK2rdeaLChOUEWPi+nk0GnVC5Lt1MZapCNcjkrIA8
+         6flQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=752GIqWb7TeflmfvTlvXG4lE85m80lDi3OdyHGBoGE4=;
+        b=juswCXNC+se51HY+TwUKGu24hoWnJ4Du/vL/dp1ZTGGWqhyWXxpCPOIb7xXef1XvT6
+         8cy5cySsAm88Pl25y7UAO8WglPwXw62pZS7XL35RMqqFg2/QyY9FcD7QKccKgsIjkQlI
+         DHnoP18TWhwJWOiYiLv1Uh0uo3pb6IMLrwRwGGhVPbR4W0mqvxBstKZI7LINLHiT19ph
+         LM9T9hV1NK/iq+uaHKs0G7KgqXPw5iiLYMN9rJPbdfdbWa8/Obud7NmjwGVstzTi6SQ9
+         S5gBeDKOtJS+CQB7HXYAvJuSxsslCfFi1pszSjO3Qc6y7EMh9GP/GB3g4p5XlaxSRE3F
+         edBA==
+X-Gm-Message-State: AOAM5314Z/3fLI8fy8wKXR+pFN8t0BYZ4zlLOgg638rXP/8CPLSJ5JRz
+        Cd0RcXMJ+XQuMHqoOr1MsoFHNs+xFTEOkjmjx7A=
+X-Google-Smtp-Source: ABdhPJxQq5vcDCcmYHgb5SHeEoGyf/RBEQJNp1ljNaDlfoLHRjDkfUgM8yK5bYY1GVTkQEoYTf5yNC21RRfTGe3fHpw=
+X-Received: by 2002:a92:8b11:: with SMTP id i17mr20118496ild.212.1595198874273;
+ Sun, 19 Jul 2020 15:47:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200719100418.2112740-1-areber@redhat.com>
+References: <CGME20200512081526epcas1p364393ddc6bae354db5aaaae9b09ffbff@epcas1p3.samsung.com>
+ <000201d62835$7ddafe50$7990faf0$@samsung.com> <CA+icZUUjcyrVsDNQ4gHVMYWkLLX9oscme3PmXUnfnc5DojkqVA@mail.gmail.com>
+ <CANFS6bbandOzMxFk-VHbHR1FXqbVJSE_Dr3=miQSwwDcJO-v0A@mail.gmail.com> <CA+icZUUiOqP5=1i6QtorSbjsyaQRe1thwcp36qfTdDUnKKqmJA@mail.gmail.com>
+In-Reply-To: <CA+icZUUiOqP5=1i6QtorSbjsyaQRe1thwcp36qfTdDUnKKqmJA@mail.gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Mon, 20 Jul 2020 00:47:43 +0200
+Message-ID: <CA+icZUV1AtKYt-K21mc4daQr4avA_PLs21LOxctWEP6r_cRhcw@mail.gmail.com>
+Subject: Re: exfatprogs-1.0.3 version released
+To:     Hyunchul Lee <hyc.lee@gmail.com>
+Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Eric Sandeen <sandeen@sandeen.net>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicolas Boos <nicolas.boos@wanadoo.fr>,
+        Sven Hoexter <hoexter@debian.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 19, 2020 at 12:04:10PM +0200, Adrian Reber wrote:
-> This is v6 of the 'Introduce CAP_CHECKPOINT_RESTORE' patchset. The
-> changes to v5 are:
-> 
->  * split patch dealing with /proc/self/exe into two patches:
->    * first patch to enable changing it with CAP_CHECKPOINT_RESTORE
->      and detailed history in the commit message
->    * second patch changes -EINVAL to -EPERM
->  * use kselftest_harness.h infrastructure for test
->  * replace if (!capable(CAP_SYS_ADMIN) || !capable(CAP_CHECKPOINT_RESTORE))
->    with if (!checkpoint_restore_ns_capable(&init_user_ns))
-> 
-> Adrian Reber (5):
->   capabilities: Introduce CAP_CHECKPOINT_RESTORE
->   pid: use checkpoint_restore_ns_capable() for set_tid
->   pid_namespace: use checkpoint_restore_ns_capable() for ns_last_pid
->   proc: allow access in init userns for map_files with
->     CAP_CHECKPOINT_RESTORE
->   selftests: add clone3() CAP_CHECKPOINT_RESTORE test
-> 
-> Nicolas Viennot (2):
->   prctl: Allow local CAP_CHECKPOINT_RESTORE to change /proc/self/exe
->   prctl: exe link permission error changed from -EINVAL to -EPERM
-> 
->  fs/proc/base.c                                |   8 +-
->  include/linux/capability.h                    |   6 +
->  include/uapi/linux/capability.h               |   9 +-
->  kernel/pid.c                                  |   2 +-
->  kernel/pid_namespace.c                        |   2 +-
->  kernel/sys.c                                  |  13 +-
->  security/selinux/include/classmap.h           |   5 +-
->  tools/testing/selftests/clone3/.gitignore     |   1 +
->  tools/testing/selftests/clone3/Makefile       |   4 +-
->  .../clone3/clone3_cap_checkpoint_restore.c    | 177 ++++++++++++++++++
->  10 files changed, 212 insertions(+), 15 deletions(-)
->  create mode 100644 tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
-> 
-> base-commit: d31958b30ea3b7b6e522d6bf449427748ad45822
+[ CC Sven Hoexter (Debian maintainer of exfatprogs ]
 
-Adrian, Nicolas thank you!
-I grabbed the series to run the various core test-suites we've added
-over the last year and pushed it to
-https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=cap_checkpoint_restore
-for now to let kbuild/ltp chew on it for a bit.
+Just wanted to let you know Debian has an exfatprogs package in their
+official repositories.
 
-Thanks!
-Christian
+- Sedat -
+
+[1] https://packages.debian.org/sid/exfatprogs
+[2] http://sven.stormbind.net/blog/posts/deb_debian_and_exfat/
