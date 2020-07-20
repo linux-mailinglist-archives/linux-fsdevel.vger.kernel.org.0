@@ -2,164 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 866232269B5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 18:30:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D87B5226B88
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 18:43:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387494AbgGTQ2o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jul 2020 12:28:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42032 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732218AbgGTP7Z (ORCPT
+        id S1730371AbgGTQmI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jul 2020 12:42:08 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:58374 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729276AbgGTQmG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jul 2020 11:59:25 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A81AEC061794;
-        Mon, 20 Jul 2020 08:59:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=y1dPItBmZKcvSo985WsMlTxvtNzxD63bJREW0GA5b/M=; b=e433WSzzwsp/Kfz0ckwD1yJy3J
-        +jQNrQ8OKYZXYltBtzntPs+h+aDDTsYbuMbGDCnWE43JVIgVMANJxmcVnPVp86u1u2LHU9QpBUK04
-        7otT0hLWG+qjO80neJwzJbioRxOswOlX7hLsaRK7jM4QD6d8EviAlRPrJKElP+N2jWlotZWft9MBk
-        VQA4wqQ5UJNlR3p1Tmn1TuGe6XlFBpUDfOdj5THGv4DEjapg19WyA+Y2CeWWvVm0x00vwkds4yavp
-        nE4ps1PRc9WdgDKp96bSEZCgxUAgGCBgW2CwmYI65RRF/y6PH5rVYRd75f2OJ8GYnLmiO207rdsB3
-        EdUrZZHg==;
-Received: from [2001:4bb8:105:4a81:db56:edb1:dbf2:5cc3] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jxYCG-0007ok-4t; Mon, 20 Jul 2020 15:59:21 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH 10/24] fs: move the uid16 (f)chown syscalls to fs/open.c
-Date:   Mon, 20 Jul 2020 17:58:48 +0200
-Message-Id: <20200720155902.181712-11-hch@lst.de>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200720155902.181712-1-hch@lst.de>
-References: <20200720155902.181712-1-hch@lst.de>
+        Mon, 20 Jul 2020 12:42:06 -0400
+Received: from [10.137.106.139] (unknown [131.107.174.11])
+        by linux.microsoft.com (Postfix) with ESMTPSA id D40D020B4909;
+        Mon, 20 Jul 2020 09:42:05 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D40D020B4909
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1595263326;
+        bh=3WXhX2ALsHf2q0CNQWhMDb6+Us/DWEgno/p0XetGReU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UX8lUvTr2G8xrIi4guewPBf2sMpGgCSWG+ypVjSkYree00iVyz+K6+TNPYj5kqBpt
+         OJ1PUugFka19lCF1U2bCAf3ni5ddtj5CGjxeZgGafnEwJSMh8WQa7ExyR5hCc+fazj
+         HdAQOXuV9j5EmSiKfIRiaJdWdiInyuMxRVW+6Yqg=
+Subject: Re: [RFC PATCH v4 05/12] fs: add security blob and hooks for
+ block_device
+To:     Casey Schaufler <casey@schaufler-ca.com>, agk@redhat.com,
+        axboe@kernel.dk, snitzer@redhat.com, jmorris@namei.org,
+        serge@hallyn.com, zohar@linux.ibm.com, viro@zeniv.linux.org.uk,
+        paul@paul-moore.com, eparis@redhat.com, jannh@google.com,
+        dm-devel@redhat.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-audit@redhat.com
+Cc:     tyhicks@linux.microsoft.com, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, sashal@kernel.org,
+        jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
+        nramas@linux.microsoft.com
+References: <20200717230941.1190744-1-deven.desai@linux.microsoft.com>
+ <20200717230941.1190744-6-deven.desai@linux.microsoft.com>
+ <1843d707-c62e-fa13-c663-c123ea1205a0@schaufler-ca.com>
+From:   Deven Bowers <deven.desai@linux.microsoft.com>
+Message-ID: <e82dbf6b-e90d-205b-62d1-b7cd8b5df844@linux.microsoft.com>
+Date:   Mon, 20 Jul 2020 09:42:05 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <1843d707-c62e-fa13-c663-c123ea1205a0@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This allows to keep the internal (f)chown helper private in open.c.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/open.c                | 25 ++++++++++++++++++++++---
- include/linux/syscalls.h |  4 ----
- kernel/uid16.c           | 17 -----------------
- 3 files changed, 22 insertions(+), 24 deletions(-)
 
-diff --git a/fs/open.c b/fs/open.c
-index 7d7456070503f2..8157db254c8f8a 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -714,7 +714,7 @@ static int chown_common(const struct path *path, uid_t user, gid_t group)
- 	return error;
- }
- 
--int do_fchownat(int dfd, struct filename *name, uid_t user, gid_t group,
-+static int do_fchownat(int dfd, struct filename *name, uid_t user, gid_t group,
- 		int flag)
- {
- 	struct path path;
-@@ -787,7 +787,7 @@ int vfs_fchown(struct file *file, uid_t user, gid_t group)
- 	return error;
- }
- 
--int ksys_fchown(unsigned int fd, uid_t user, gid_t group)
-+static int do_fchown(unsigned int fd, uid_t user, gid_t group)
- {
- 	struct fd f = fdget(fd);
- 	int error = -EBADF;
-@@ -801,9 +801,28 @@ int ksys_fchown(unsigned int fd, uid_t user, gid_t group)
- 
- SYSCALL_DEFINE3(fchown, unsigned int, fd, uid_t, user, gid_t, group)
- {
--	return ksys_fchown(fd, user, group);
-+	return do_fchown(fd, user, group);
- }
- 
-+#ifdef CONFIG_UID16
-+SYSCALL_DEFINE3(chown16, const char __user *, filename, old_uid_t, user, old_gid_t, group)
-+{
-+	return do_fchownat(AT_FDCWD, getname(filename), low2highuid(user),
-+			low2highgid(group), 0);
-+}
-+
-+SYSCALL_DEFINE3(lchown16, const char __user *, filename, old_uid_t, user, old_gid_t, group)
-+{
-+	return do_fchownat(AT_FDCWD, getname(filename), low2highuid(user),
-+			low2highgid(group), AT_SYMLINK_NOFOLLOW);
-+}
-+
-+SYSCALL_DEFINE3(fchown16, unsigned int, fd, old_uid_t, user, old_gid_t, group)
-+{
-+	return do_fchown(fd, low2highuid(user), low2highgid(group));
-+}
-+#endif /* CONFIG_UID16 */
-+
- static int do_dentry_open(struct file *f,
- 			  struct inode *inode,
- 			  int (*open)(struct inode *, struct file *))
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 42dd2715e07688..82346a68a73877 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1237,7 +1237,6 @@ asmlinkage long sys_ni_syscall(void);
-  */
- 
- ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count);
--int ksys_fchown(unsigned int fd, uid_t user, gid_t group);
- ssize_t ksys_read(unsigned int fd, char __user *buf, size_t count);
- void ksys_sync(void);
- int ksys_unshare(unsigned long unshare_flags);
-@@ -1326,9 +1325,6 @@ static inline int ksys_chmod(const char __user *filename, umode_t mode)
- 	return do_fchmodat(AT_FDCWD, filename, mode);
- }
- 
--extern int do_fchownat(int dfd, struct filename *name, uid_t user,
--		       gid_t group, int flag);
--
- extern long do_sys_ftruncate(unsigned int fd, loff_t length, int small);
- 
- static inline long ksys_ftruncate(unsigned int fd, loff_t length)
-diff --git a/kernel/uid16.c b/kernel/uid16.c
-index a332947e92d12e..ec2a5634e99af6 100644
---- a/kernel/uid16.c
-+++ b/kernel/uid16.c
-@@ -20,23 +20,6 @@
- 
- #include "uid16.h"
- 
--SYSCALL_DEFINE3(chown16, const char __user *, filename, old_uid_t, user, old_gid_t, group)
--{
--	return do_fchownat(AT_FDCWD, getname(filename), low2highuid(user),
--			low2highgid(group), 0);
--}
--
--SYSCALL_DEFINE3(lchown16, const char __user *, filename, old_uid_t, user, old_gid_t, group)
--{
--	return do_fchownat(AT_FDCWD, getname(filename), low2highuid(user),
--			low2highgid(group), AT_SYMLINK_NOFOLLOW);
--}
--
--SYSCALL_DEFINE3(fchown16, unsigned int, fd, old_uid_t, user, old_gid_t, group)
--{
--	return ksys_fchown(fd, low2highuid(user), low2highgid(group));
--}
--
- SYSCALL_DEFINE2(setregid16, old_gid_t, rgid, old_gid_t, egid)
- {
- 	return __sys_setregid(low2highgid(rgid), low2highgid(egid));
--- 
-2.27.0
+On 7/17/2020 5:14 PM, Casey Schaufler wrote:
 
+[...snip]
+
+>> +EXPORT_SYMBOL(security_bdev_free);
+>> +
+>> +int security_bdev_setsecurity(struct block_device *bdev,
+>> +			      const char *name, const void *value,
+>> +			      size_t size)
+>> +{
+>> +	return call_int_hook(bdev_setsecurity, 0, bdev, name, value, size);
+>> +}
+> 
+> What is your expectation regarding multiple security modules using the
+> same @name? What do you expect a security module to do if it does not
+> support a particular @name? You may have a case where SELinux supports
+> a @name that AppArmor (or KSRI) doesn't. -ENOSYS may be you friend here.
+> 
+
+I expect that some security modules may want to use the same @name / use
+the data contained with @name. I cannot speak to the future cases of
+other LSMs, but I expect if they want the raw @value, they'll copy it
+into their security blob, or interpret @value to a field defined by
+their security blob.
+
+Originally, I expected a security module that does not implement a
+particular @name no-op with return 0, not -ENOSYS, but I recognize that
+error codes are valuable, and it's a trivial change - I'll switch the 
+security hook to call the hooks while allowing -ENOSYS or 0 in the next 
+iteration.
+
+>> +EXPORT_SYMBOL(security_bdev_setsecurity);
+>> +
+>>   #ifdef CONFIG_PERF_EVENTS
+>>   int security_perf_event_open(struct perf_event_attr *attr, int type)
+>>   {
