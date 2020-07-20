@@ -2,138 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BDB94225A27
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 10:34:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5365E225A66
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 10:52:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbgGTIeh convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jul 2020 04:34:37 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:54698 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728024AbgGTIeh (ORCPT
+        id S1727809AbgGTIwM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jul 2020 04:52:12 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:15083 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726938AbgGTIwM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jul 2020 04:34:37 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-110-UvCh1H6SNg2kNCAjyiamHg-1; Mon, 20 Jul 2020 09:34:33 +0100
-X-MC-Unique: UvCh1H6SNg2kNCAjyiamHg-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 20 Jul 2020 09:34:32 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 20 Jul 2020 09:34:32 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Kees Cook' <keescook@chromium.org>,
-        Scott Branden <scott.branden@broadcom.com>
-CC:     Mimi Zohar <zohar@linux.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        James Morris <jmorris@namei.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jessica Yu <jeyu@kernel.org>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        KP Singh <kpsingh@google.com>, Dave Olsthoorn <dave@bewaar.me>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Peter Jones <pjones@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Boyd <stephen.boyd@linaro.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 07/13] fs/kernel_read_file: Switch buffer size arg to
- size_t
-Thread-Topic: [PATCH 07/13] fs/kernel_read_file: Switch buffer size arg to
- size_t
-Thread-Index: AQHWXGHtmci88hmJCUOWA6z9jUdXWKkQJ6ZQ
-Date:   Mon, 20 Jul 2020 08:34:32 +0000
-Message-ID: <5db582d3ec08401eb4731ce3acd51561@AcuMS.aculab.com>
-References: <20200717174309.1164575-1-keescook@chromium.org>
- <20200717174309.1164575-8-keescook@chromium.org>
-In-Reply-To: <20200717174309.1164575-8-keescook@chromium.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 20 Jul 2020 04:52:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1595235131; x=1626771131;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=05owFcyNM8IjVRwbauic5lfY7gnHLkEzZXqacpF5REQ=;
+  b=cP6g+pqxWy9/DztdhYwKqm9CgGQSjQAtfMbgHKQimAlkwi2nAr6GY6j7
+   g3b6pV58LIyyLGwDlbQSj2imdCdZAN+SACOjzB2e6rxa0dhdeaUDflpZ3
+   nYwYW5CWBWiuQ/cYetYUOyuuN+dF9x26Cn5jvLXWR5Yt+vGyA5LWjhCop
+   TdR4yZJXIcUQC0TOhB+9qixoiJJjIh00/+R7wpmQZXG/5HvkcDf0A1Byt
+   UDb7B2G03rqdMhAKBW26Y/c6f4URphAB60VTy79hsEwM9H/ugyhRBNXJt
+   Tzk5k0X5M8+fT30DIhjf1Ya9Yqm9qwuiMWpVdXhRoqG+N5l9cViIT1YTJ
+   Q==;
+IronPort-SDR: 7hpPth+O8t2vapSHEbrynS81lzx+yvZQj95TMH7D7avcyQe0gMq0NGQBLHoKjCtRAWLOnlnMB3
+ RROM5dxXo3hxnuRsWHjyxHQTV34IxEadrq07jpQZlo4FwbB8dhlwyOCqLHKCni2LXWQVaoW8Wt
+ bBZW+APYPLSg4nE14nbLk98kp+PpfbViTNVzzCjXivO6VL5I848WltkvU9HisQXyTYpBw4Ewy2
+ nUITl/0wFZ276Hxt8skK4hy9PMXaecRWPtlLNhUe3E76k1y/e/F5siipbKTcvPNljnjDx/ou+h
+ wCo=
+X-IronPort-AV: E=Sophos;i="5.75,374,1589212800"; 
+   d="scan'208";a="252171861"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 20 Jul 2020 16:52:11 +0800
+IronPort-SDR: 9bHGek/j862nkODWXxQvZETbTKQ82eJ6UlKt5VhwQfRTfpfZnuhZrjCsfdIDiOhESqOO7qYJdc
+ BeYDuHanRQxT9adnBcEQ1kJb9U+/JnABM=
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2020 01:40:30 -0700
+IronPort-SDR: L1QIchpz1u/HA/5RhkDQa7h5TwYP/yTHm8nPufpLXhSWwcd3HxE1arMdybl8MpL/Yg/EG9QOfm
+ q8zD61PHguLg==
+WDCIronportException: Internal
+Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
+  by uls-op-cesaip02.wdc.com with ESMTP; 20 Jul 2020 01:52:11 -0700
+From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v2 0/2] zonefs: add support zone capacity support
+Date:   Mon, 20 Jul 2020 17:52:06 +0900
+Message-Id: <20200720085208.27347-1-johannes.thumshirn@wdc.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Kees Cook
-> Sent: 17 July 2020 18:43
-> In preparation for further refactoring of kernel_read_file*(), rename
-> the "max_size" argument to the more accurate "buf_size", and correct
-> its type to size_t. Add kerndoc to explain the specifics of how the
-> arguments will be used. Note that with buf_size now size_t, it can no
-> longer be negative (and was never called with a negative value). Adjust
-> callers to use it as a "maximum size" when *buf is NULL.
-> 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  fs/kernel_read_file.c            | 34 +++++++++++++++++++++++---------
->  include/linux/kernel_read_file.h |  8 ++++----
->  security/integrity/digsig.c      |  2 +-
->  security/integrity/ima/ima_fs.c  |  2 +-
->  4 files changed, 31 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
-> index dc28a8def597..e21a76001fff 100644
-> --- a/fs/kernel_read_file.c
-> +++ b/fs/kernel_read_file.c
-> @@ -5,15 +5,31 @@
->  #include <linux/security.h>
->  #include <linux/vmalloc.h>
-> 
-> +/**
-> + * kernel_read_file() - read file contents into a kernel buffer
-> + *
-> + * @file	file to read from
-> + * @buf		pointer to a "void *" buffer for reading into (if
-> + *		*@buf is NULL, a buffer will be allocated, and
-> + *		@buf_size will be ignored)
-> + * @buf_size	size of buf, if already allocated. If @buf not
-> + *		allocated, this is the largest size to allocate.
-> + * @id		the kernel_read_file_id identifying the type of
-> + *		file contents being read (for LSMs to examine)
-> + *
-> + * Returns number of bytes read (no single read will be bigger
-> + * than INT_MAX), or negative on error.
-> + *
-> + */
+Add support for zone capacity to zonefs. For devices which expose a zone capacity
+that is different to the zone's size, the maximum zonefs file size will be set
+to the zone's (usable) capacity, not the zone size.
 
-That seems to be self-inconsistent.
-If '*buf' is NULL is both says that buf_size is ignored and
-is treated as a limit.
-To make life easier, zero should probably be treated as no-limit.
+Changes to v1:
+- Fix zone size calculation for aggregated conventional zones 
 
-	David
+Johannes Thumshirn (2):
+  zonefs: add zone-capacity support
+  zonefs: update documentation to reflect zone size vs capacity
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+ Documentation/filesystems/zonefs.rst | 22 ++++++++++++----------
+ fs/zonefs/super.c                    | 11 +++++++----
+ fs/zonefs/zonefs.h                   |  3 +++
+ 3 files changed, 22 insertions(+), 14 deletions(-)
+
+-- 
+2.26.2
 
