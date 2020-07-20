@@ -2,85 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23004226310
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 17:14:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 973DE22636D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 17:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbgGTPOd convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jul 2020 11:14:33 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56880 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725815AbgGTPOd (ORCPT
+        id S1728735AbgGTPfE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jul 2020 11:35:04 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:58576 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbgGTPfE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jul 2020 11:14:33 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 50A1928B855
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     tytso@mit.edu
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Unicode patches for v5.9
-Date:   Mon, 20 Jul 2020 11:14:28 -0400
-Message-ID: <87blkap6az.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
+        Mon, 20 Jul 2020 11:35:04 -0400
+From:   John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1595259302;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ufuggYevdsxiEsM6XXjzZH3T4aQwv57H04VOD0n80js=;
+        b=ykIsIdVy6iTVunurqGW6mvQzrsfYH8VAN+cS3RxVHx0+qNMCiIX9gYOdEHRD41S69Ajgwa
+        NkIE8mbpV+65xIY6v3Wb5Jjvq/L+iwvgqUdRCdmbBkrd6wfAwizRWBs1FHwQB02KydPXDF
+        XWAqKwvgX0oZq50FFF5uJDmN1vLtzNE145DVPHi1cCeNPtJWHoBef3nbEt+KPJQJYPbo12
+        lxDUEvD/q6D/rCs1mAPMpNsPvJzyIhj+L40wpsE+yiNpSV5Uuten2f9YRQhairr30pV3+2
+        WDmx6Oq8iE/uXUZov/8tUAtk6rq1L0CRcyG17iUSMiYxfYboMB3HHaU3Kzvv/A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1595259302;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ufuggYevdsxiEsM6XXjzZH3T4aQwv57H04VOD0n80js=;
+        b=HRkBAS/x+gIamYfN5EbFxuu5i87i8FA/tuz+aMwEfMys6qT91oIp9W9ec/sW1xVDfFU6ar
+        ojWiuAh4KStjgAAw==
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH v2] fs/namespace: use percpu_rw_semaphore for writer holding
+In-Reply-To: <20200719014954.GH2786714@ZenIV.linux.org.uk>
+References: <20200702154646.qkrzchuttrywvuud@linutronix.de> <20200719014954.GH2786714@ZenIV.linux.org.uk>
+Date:   Mon, 20 Jul 2020 17:41:01 +0206
+Message-ID: <877duyryhm.fsf@jogness.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit 9c94b39560c3a013de5886ea21ef1eaf21840cb9:
+On 2020-07-19, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>> The MNT_WRITE_HOLD flag is used to manually implement a rwsem.
+>
+> Could you show me where does it currently sleep?  Your version does,
+> unless I'm misreading it...
 
-  Merge tag 'ext4_for_linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4 (2020-04-05 10:54:03 -0700)
+You are reading it correctly. This patch introduces new possible
+sleeping for__mnt_want_write() when writers for a superblock are being
+held.
 
-are available in the Git repository at:
+The RFCv1 [0] is a variant that does not introduce sleeping, but instead
+reverts back to per-cpu spinlocks.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/krisman/unicode.git tags/unicode-next-v5.9
+Sebastian and I are requesting comments on these two possible
+solutions. Or perhaps you have an idea how to solve the potential live
+lock situation.
 
-for you to fetch changes up to c055c978bebf14dda7e72d89d7ed9c867b2e6382:
+John Ogness
 
-  unicode: Replace HTTP links with HTTPS ones (2020-07-08 14:06:53 -0400)
-
-----------------------------------------------------------------
-fs/unicode patches for v5.9
-
-This includes 3 patches for the unicode system for inclusion into
-Linux v5.9:
-
-  - A patch by Ricardo Cañuelo converting the unicode tests to kunit.
-
-  - A patch from Gabriel exporting in sysfs the most recent utf-8
-    version available.
-
-  - A patch from Gabriel fixing the build of the kunit part as a module.
-
-  - A patch from Alexander updating documentation web links.
-
-----------------------------------------------------------------
-Alexander A. Klimov (1):
-      unicode: Replace HTTP links with HTTPS ones
-
-Gabriel Krisman Bertazi (2):
-      unicode: Expose available encodings in sysfs
-      unicode: Allow building kunit test suite as a module
-
-Ricardo Cañuelo (1):
-      unicode: implement utf8 unit tests as a KUnit test suite.
-
- Documentation/ABI/testing/sysfs-fs-unicode  |   6 +
- fs/unicode/Kconfig                          |  19 ++-
- fs/unicode/Makefile                         |   2 +-
- fs/unicode/mkutf8data.c                     |   2 +-
- fs/unicode/utf8-core.c                      |  55 ++++++++
- fs/unicode/utf8-norm.c                      |   2 +-
- fs/unicode/{utf8-selftest.c => utf8-test.c} | 199 +++++++++++++---------------
- fs/unicode/utf8n.h                          |   4 +
- 8 files changed, 175 insertions(+), 114 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-fs-unicode
- rename fs/unicode/{utf8-selftest.c => utf8-test.c} (60%)
-
--- 
-Gabriel Krisman Bertazi
+[0] https://lkml.kernel.org/r/20200617104058.14902-2-john.ogness@linutronix.de
