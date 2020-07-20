@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCD41226939
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 18:29:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 558B72269AE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 18:30:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732242AbgGTP7b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jul 2020 11:59:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42046 "EHLO
+        id S1732737AbgGTQ2V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jul 2020 12:28:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732237AbgGTP73 (ORCPT
+        with ESMTP id S1729674AbgGTP7c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jul 2020 11:59:29 -0400
+        Mon, 20 Jul 2020 11:59:32 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65B72C0619D2;
-        Mon, 20 Jul 2020 08:59:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DC4BC061794;
+        Mon, 20 Jul 2020 08:59:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=jtHBIwmXUO+IpCLDUYA/xY56Y7TdHPfWXhl32/DtCRU=; b=gm1KlltQMD7HECwEh+VO80E1I+
-        mOnCoM/Nj7OgwtcQT/16JZ7Dz96rQQ2ZQOHolMQv7HrZaTUekTj9Gjrd29pn/UjrfKL8nYBiTPIvY
-        fJdQ2tgXcPZDQpwtFgyQGRjrVbH4Nsc5BSQCtlysT5aLpxjrsZVohxWpJeklyibp92S1Hm96gXFHK
-        wqOSpmWSttT2UPAdwI9AubBHlUJvLm1diIxdlF/4BYa/rfuTFzIc81LAz4Yf6R6VYjgi8KD6vUA1B
-        w18a0Cnt0Ac1CNC76yZo2GpPnzIevN7vs+vE4l1vjZsiWMBwKHVjcpXTFwQYGTDdJ6frRdHNREzBg
-        WPu7TWRg==;
+        bh=PSMvb6mxSyCL6jUka1+HOoxgXMNhtnt5S7iEUobUQOM=; b=la/7h6lkTvHgv8IwlaO6D+zJ/e
+        sdfifrxvwYrZK/EyWWa2WqIuzapDZtPTHj5uLftcFkenukqovgULWTnSsb88aUB4rLf19jMjXzDOz
+        o0TW74kzUpisJUP4jq02gIaxPIOPu2XaSUoM6SRdA9oubtwUhEscZWBlDcm8i0J76FwyyvYRNL8EO
+        ktXhayxyDJr96vigdpdB1t2A50ns6pg0W0TBMJ1YG8bHpx3ixvmzQIZs5FWB5GJQ2Mn13YCfySno5
+        oM9RzMTTsB3xT1Fw/QblYAZiatkfoAaWyBIOhcDjPeiEEIrYrcyoj4HKCoGuvWj3XnblzmY+MJuH/
+        z2x4h6Jg==;
 Received: from [2001:4bb8:105:4a81:db56:edb1:dbf2:5cc3] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jxYCK-0007ph-R0; Mon, 20 Jul 2020 15:59:25 +0000
+        id 1jxYCM-0007pp-Gk; Mon, 20 Jul 2020 15:59:27 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>
@@ -35,9 +35,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH 12/24] fs: add a kern_utimes helper
-Date:   Mon, 20 Jul 2020 17:58:50 +0200
-Message-Id: <20200720155902.181712-13-hch@lst.de>
+Subject: [PATCH 13/24] fs: add a kern_mkdir helper
+Date:   Mon, 20 Jul 2020 17:58:51 +0200
+Message-Id: <20200720155902.181712-14-hch@lst.de>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200720155902.181712-1-hch@lst.de>
 References: <20200720155902.181712-1-hch@lst.de>
@@ -49,108 +49,159 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a simple helper to set timestamps with a kernel space name and use it
-in the early init code instead of relying on the implicit
-set_fs(KERNEL_DS) there.
+Add a simple helper perform a mkdir with a kernel space file name and use
+it in the early init code instead of relying on the implicit
+set_fs(KERNEL_DS) there.  To do so push the getname from do_mkdirat into the
+callers.  Remove the now unused ksys_mkdir.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/utimes.c        | 19 ++++++++++++++-----
- include/linux/fs.h |  1 +
- init/initramfs.c   |  2 +-
- 3 files changed, 16 insertions(+), 6 deletions(-)
+ fs/internal.h            |  1 -
+ fs/namei.c               | 14 ++++++++++----
+ include/linux/fs.h       |  1 +
+ include/linux/syscalls.h |  7 -------
+ init/do_mounts_initrd.c  |  2 +-
+ init/initramfs.c         |  2 +-
+ init/noinitramfs.c       |  4 ++--
+ 7 files changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/fs/utimes.c b/fs/utimes.c
-index fd3cc42262241f..f4d7f9a73e115a 100644
---- a/fs/utimes.c
-+++ b/fs/utimes.c
-@@ -7,6 +7,7 @@
- #include <linux/uaccess.h>
- #include <linux/compat.h>
- #include <asm/unistd.h>
-+#include "internal.h"
- 
- static bool nsec_valid(long nsec)
- {
-@@ -75,14 +76,15 @@ int vfs_utimes(const struct path *path, struct timespec64 *times)
- 	return error;
+diff --git a/fs/internal.h b/fs/internal.h
+index 1e2b425f56ee9e..722d33a66d9645 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -64,7 +64,6 @@ extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
+ 			   const char *, unsigned int, struct path *);
+ long do_mknodat(int dfd, const char __user *filename, umode_t mode,
+ 		unsigned int dev);
+-long do_mkdirat(int dfd, const char __user *pathname, umode_t mode);
+ long do_rmdir(int dfd, const char __user *pathname);
+ long do_unlinkat(int dfd, struct filename *name);
+ long do_symlinkat(const char __user *oldname, int newdfd,
+diff --git a/fs/namei.c b/fs/namei.c
+index 6daffd59e97270..3545623495d1f4 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3665,7 +3665,7 @@ int vfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
  }
+ EXPORT_SYMBOL(vfs_mkdir);
  
--static int do_utimes_path(int dfd, const char __user *filename,
-+static int do_utimes_path(int dfd, struct filename *name,
- 		struct timespec64 *times, int flags)
+-long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
++static int do_mkdirat(int dfd, struct filename *name, umode_t mode)
  {
+ 	struct dentry *dentry;
  	struct path path;
- 	int lookup_flags = 0, error;
- 
-+	error = -EINVAL;
- 	if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH))
--		return -EINVAL;
-+		goto out_putname;
- 
- 	if (!(flags & AT_SYMLINK_NOFOLLOW))
- 		lookup_flags |= LOOKUP_FOLLOW;
-@@ -90,7 +92,7 @@ static int do_utimes_path(int dfd, const char __user *filename,
- 		lookup_flags |= LOOKUP_EMPTY;
+@@ -3673,7 +3673,7 @@ long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
+ 	unsigned int lookup_flags = LOOKUP_DIRECTORY;
  
  retry:
--	error = user_path_at(dfd, filename, lookup_flags, &path);
-+	error = filename_lookup(dfd, name, lookup_flags, &path, NULL);
- 	if (error)
- 		return error;
+-	dentry = user_path_create(dfd, pathname, &path, lookup_flags);
++	dentry = filename_create(dfd, name, &path, lookup_flags);
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
  
-@@ -100,10 +102,17 @@ static int do_utimes_path(int dfd, const char __user *filename,
+@@ -3687,17 +3687,23 @@ long do_mkdirat(int dfd, const char __user *pathname, umode_t mode)
  		lookup_flags |= LOOKUP_REVAL;
  		goto retry;
  	}
--
-+out_putname:
-+	if (!IS_ERR(name))
-+		putname(name);
++	putname(name);
  	return error;
  }
  
-+int __init kern_utimes(const char *filename, struct timespec64 *tv, int flags)
++int kern_mkdir(const char *pathname, umode_t mode)
 +{
-+	return do_utimes_path(AT_FDCWD, getname_kernel(filename), tv, flags);
++	return do_mkdirat(AT_FDCWD, getname_kernel(pathname), mode);
 +}
 +
- static int do_utimes_fd(int fd, struct timespec64 *times, int flags)
+ SYSCALL_DEFINE3(mkdirat, int, dfd, const char __user *, pathname, umode_t, mode)
  {
- 	struct fd f;
-@@ -140,7 +149,7 @@ long do_utimes(int dfd, const char __user *filename, struct timespec64 *times,
- {
- 	if (filename == NULL && dfd != AT_FDCWD)
- 		return do_utimes_fd(dfd, times, flags);
--	return do_utimes_path(dfd, filename, times, flags);
-+	return do_utimes_path(dfd, getname(filename), times, flags);
+-	return do_mkdirat(dfd, pathname, mode);
++	return do_mkdirat(dfd, getname(pathname), mode);
  }
  
- SYSCALL_DEFINE4(utimensat, int, dfd, const char __user *, filename,
+ SYSCALL_DEFINE2(mkdir, const char __user *, pathname, umode_t, mode)
+ {
+-	return do_mkdirat(AT_FDCWD, pathname, mode);
++	return do_mkdirat(AT_FDCWD, getname(pathname), mode);
+ }
+ 
+ int vfs_rmdir(struct inode *dir, struct dentry *dentry)
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ca034126cb0e4d..7472ff0b7062d9 100644
+index 7472ff0b7062d9..3bbeeadf2ddd98 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -3676,5 +3676,6 @@ int kern_chroot(const char *filename);
- int __init kern_access(const char *filename, int mode);
+@@ -3677,5 +3677,6 @@ int __init kern_access(const char *filename, int mode);
  int __init kern_chown(const char *filename, uid_t user, gid_t group, int flag);
  int __init kern_chmod(const char *filename, umode_t mode);
-+int __init kern_utimes(const char *filename, struct timespec64 *tv, int flags);
+ int __init kern_utimes(const char *filename, struct timespec64 *tv, int flags);
++int kern_mkdir(const char *pathname, umode_t mode);
  
  #endif /* _LINUX_FS_H */
-diff --git a/init/initramfs.c b/init/initramfs.c
-index 2c2d4480d495e8..de850d4c6da200 100644
---- a/init/initramfs.c
-+++ b/init/initramfs.c
-@@ -110,7 +110,7 @@ static long __init do_utime(char *filename, time64_t mtime)
- 	t[1].tv_sec = mtime;
- 	t[1].tv_nsec = 0;
- 
--	return do_utimes(AT_FDCWD, filename, t, AT_SYMLINK_NOFOLLOW);
-+	return kern_utimes(filename, t, 0);
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index a2ece4cc8692f5..6aa1cd200425a4 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1284,13 +1284,6 @@ static inline long ksys_rmdir(const char __user *pathname)
+ 	return do_rmdir(AT_FDCWD, pathname);
  }
  
- static __initdata LIST_HEAD(dir_list);
+-extern long do_mkdirat(int dfd, const char __user *pathname, umode_t mode);
+-
+-static inline long ksys_mkdir(const char __user *pathname, umode_t mode)
+-{
+-	return do_mkdirat(AT_FDCWD, pathname, mode);
+-}
+-
+ extern long do_symlinkat(const char __user *oldname, int newdfd,
+ 			 const char __user *newname);
+ 
+diff --git a/init/do_mounts_initrd.c b/init/do_mounts_initrd.c
+index 1cbc9988d2e0ad..b9a749ebe85c2d 100644
+--- a/init/do_mounts_initrd.c
++++ b/init/do_mounts_initrd.c
+@@ -81,7 +81,7 @@ static void __init handle_initrd(void)
+ 	create_dev("/dev/root.old", Root_RAM0);
+ 	/* mount initrd on rootfs' /root */
+ 	mount_block_root("/dev/root.old", root_mountflags & ~MS_RDONLY);
+-	ksys_mkdir("/old", 0700);
++	kern_mkdir("/old", 0700);
+ 	kern_chdir("/old");
+ 
+ 	/*
+diff --git a/init/initramfs.c b/init/initramfs.c
+index de850d4c6da200..40b97ca5fe8cde 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -344,7 +344,7 @@ static int __init do_name(void)
+ 			state = CopyFile;
+ 		}
+ 	} else if (S_ISDIR(mode)) {
+-		ksys_mkdir(collected, mode);
++		kern_mkdir(collected, mode);
+ 		kern_chown(collected, uid, gid, 0);
+ 		kern_chmod(collected, mode);
+ 		dir_add(collected, mtime);
+diff --git a/init/noinitramfs.c b/init/noinitramfs.c
+index fa9cdfa7101d3c..89109c1d633adb 100644
+--- a/init/noinitramfs.c
++++ b/init/noinitramfs.c
+@@ -17,7 +17,7 @@ static int __init default_rootfs(void)
+ {
+ 	int err;
+ 
+-	err = ksys_mkdir((const char __user __force *) "/dev", 0755);
++	err = kern_mkdir("/dev", 0755);
+ 	if (err < 0)
+ 		goto out;
+ 
+@@ -27,7 +27,7 @@ static int __init default_rootfs(void)
+ 	if (err < 0)
+ 		goto out;
+ 
+-	err = ksys_mkdir((const char __user __force *) "/root", 0700);
++	err = kern_mkdir("/root", 0700);
+ 	if (err < 0)
+ 		goto out;
+ 
 -- 
 2.27.0
 
