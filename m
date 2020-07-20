@@ -2,111 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EECFD22731C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 01:37:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 218AD227377
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 02:05:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbgGTXh4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jul 2020 19:37:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56070 "EHLO
+        id S1728179AbgGUAF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jul 2020 20:05:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728139AbgGTXhz (ORCPT
+        with ESMTP id S1726535AbgGUAF1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jul 2020 19:37:55 -0400
-Received: from mail-pg1-x549.google.com (mail-pg1-x549.google.com [IPv6:2607:f8b0:4864:20::549])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 220A3C0619D4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jul 2020 16:37:55 -0700 (PDT)
-Received: by mail-pg1-x549.google.com with SMTP id s8so14903684pgs.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jul 2020 16:37:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=H043ZGT0tUkHasuQEIGWrSIMw4QdS1VbmKoEccjtzM0=;
-        b=dpz3hRRXJhzFYY0/pCX+Y/eePZpWFCADC/kjj4qZk3jOrPT6G6tdSjuyh9Qw+Wrue9
-         9f6dhzx0VvfFcrv4a6Firxihch6LbPRbw8QtUFYbwd4f1tEtLpf5bbkhowqe2WfQ2faw
-         kB23eVk86fVuNkCwvfPS/vFUeGyQ4ajGNPlCM2T5YJCzs0iVMV+giOYth8pP1IoNiIus
-         FwA5zN/b6t+kqlz18awv5ni7cMS7s5ikKECiJK6Jzuibq8sR3hYMa51fZAjxbYwbSer4
-         WjNWu50cQeiODtlqpxegUVzn2ulDcCCSBkWeQKnwEj276YUVPDg3kVr0Rfiy1ajwok15
-         JZ6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=H043ZGT0tUkHasuQEIGWrSIMw4QdS1VbmKoEccjtzM0=;
-        b=SdC8eNyBe2FrGTaOlYcdp66/sxJ4YlsOTlfo5aJ5THeWqcsRdiCPPeoP1hG2dLGcUB
-         +0sYJemLQg1YocuTAMsWVW22kto6Im/pGwrZXZikkocUn3farklcqmM8rLARcsH+ntrC
-         1husOGMofhfBSssexXhWK3Ipq550lkELNDufmkczpxnd5YdfIScoVu9F1fFsu0sEcc8/
-         mG6t0a/jeI6gzF4cnSigajPHVps0p+UCNNSio2ISLpP0+tZbcXkd0xxTzzMQtBqvz9Ee
-         p9yZ2Q/3tE7h8LMTPcALZIOU9ItFEIUJSrelVt43+EiOuGlZ7tspaixbgeaCI40yf0UF
-         ZJ+w==
-X-Gm-Message-State: AOAM5317Hff0E+0qi7LsWnQvq11W2/jzNm5Ht+EebRfDriqoFLGMVU0S
-        rt4IiLrk73HNBzTwwaLwB+nR8Vk3V5E=
-X-Google-Smtp-Source: ABdhPJzD4zyxL6NAWP8CBEO3nWgs3IY5xzymZloYi6QDkienrJ3ha/vZk0REiujEDejgnVubHrJvYSOYoFY=
-X-Received: by 2002:a17:90a:bd8b:: with SMTP id z11mr82498pjr.0.1595288274362;
- Mon, 20 Jul 2020 16:37:54 -0700 (PDT)
-Date:   Mon, 20 Jul 2020 23:37:39 +0000
-In-Reply-To: <20200720233739.824943-1-satyat@google.com>
-Message-Id: <20200720233739.824943-8-satyat@google.com>
-Mime-Version: 1.0
-References: <20200720233739.824943-1-satyat@google.com>
-X-Mailer: git-send-email 2.28.0.rc0.105.gf9edc3c819-goog
-Subject: [PATCH v4 7/7] fscrypt: update documentation for direct I/O support
-From:   Satya Tangirala <satyat@google.com>
-To:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-Cc:     linux-xfs@vger.kernel.org, Satya Tangirala <satyat@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 20 Jul 2020 20:05:27 -0400
+X-Greylist: delayed 1140 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 20 Jul 2020 17:05:27 PDT
+Received: from dancol.org (dancol.org [IPv6:2600:3c01::f03c:91ff:fedf:adf3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99E18C061794;
+        Mon, 20 Jul 2020 17:05:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=dancol.org;
+         s=x; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:
+        Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=M7ne2wNKGUVfQ0Rq3JJyzcSeIutkzaWRH6uidYm39t4=; b=Cf9bd9kD7v15wkq5sgFaaARD9w
+        l+ogJcTLirmPy+sz6hVZY9VSrPOk3KqeB8fKR6CFfBqwanb1SAgwQcLszVewUHssb2ckJp5hC5GPL
+        7rAUYbNVVRhEsIclBaQmtdjQ4cy9xpzA7CLRX5PeSEtgmROcx1rO+Zncr4xhJNy0AtXyqoLvAwT0D
+        vZ3QgzCD1utTm1+ctnDxX9cItabFAlzM8UKbyOMtd2BSztER8X+QMWUZTgoLRdaF8YgOOrorEK/Lh
+        OPn6vp7jVmuczxtaA4mSE09zHR3BqXa02Bwwoc66unZ8KlhkzAAJZpt6sIZw4/Wt46F7tqFl7HVFj
+        LKXEuaag==;
+Received: from [2604:4080:1321:9a00:cd6:9ee0:a66c:7274]
+        by dancol.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <dancol@dancol.org>)
+        id 1jxfUC-0000tF-Re; Mon, 20 Jul 2020 16:46:20 -0700
+Subject: Re: KASAN: use-after-free Read in userfaultfd_release (2)
+To:     Al Viro <viro@zeniv.linux.org.uk>, Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+75867c44841cb6373570@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        Markus Elfring <Markus.Elfring@web.de>
+References: <0000000000001bbb6705aa49635a@google.com>
+ <20200713084512.10416-1-hdanton@sina.com>
+ <20200720160059.GO2786714@ZenIV.linux.org.uk>
+From:   Daniel Colascione <dancol@dancol.org>
+Message-ID: <1f69c0ab-5791-974f-8bc0-3997ab1d61ea@dancol.org>
+Date:   Mon, 20 Jul 2020 16:46:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200720160059.GO2786714@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Update fscrypt documentation to reflect the addition of direct I/O support
-and document the necessary conditions for direct I/O on encrypted files.
+On 7/20/20 9:00 AM, Al Viro wrote:
+> On Mon, Jul 13, 2020 at 04:45:12PM +0800, Hillf Danton wrote:
+> 
+>> Bridge the gap between slab free and the fput in task work wrt
+>> file's private data.
+> 
+> No.  This
+> 
+>> @@ -2048,6 +2055,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
+>>   
+>>   	fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
+>>   	if (fd < 0) {
+>> +		file->private_data = NULL;
+>>   		fput(file);
+>>   		goto out;
+>>   	}
+>>
+> 
+> is fundamentally wrong; you really shouldn't take over the cleanups
+> if you ever do fput().
 
-Signed-off-by: Satya Tangirala <satyat@google.com>
----
- Documentation/filesystems/fscrypt.rst | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
-index ec81598477fc..5367c03b17bb 100644
---- a/Documentation/filesystems/fscrypt.rst
-+++ b/Documentation/filesystems/fscrypt.rst
-@@ -1049,8 +1049,10 @@ astute users may notice some differences in behavior:
-   may be used to overwrite the source files but isn't guaranteed to be
-   effective on all filesystems and storage devices.
- 
--- Direct I/O is not supported on encrypted files.  Attempts to use
--  direct I/O on such files will fall back to buffered I/O.
-+- Direct I/O is supported on encrypted files only under some
-+  circumstances (see `Direct I/O support`_ for details). When these
-+  circumstances are not met, attempts to use direct I/O on encrypted
-+  files will fall back to buffered I/O.
- 
- - The fallocate operations FALLOC_FL_COLLAPSE_RANGE and
-   FALLOC_FL_INSERT_RANGE are not supported on encrypted files and will
-@@ -1123,6 +1125,20 @@ It is not currently possible to backup and restore encrypted files
- without the encryption key.  This would require special APIs which
- have not yet been implemented.
- 
-+Direct I/O support
-+==================
-+
-+Direct I/O on encrypted files is supported through blk-crypto. In
-+particular, this means the kernel must have CONFIG_BLK_INLINE_ENCRYPTION
-+enabled, the filesystem must have had the 'inlinecrypt' mount option
-+specified, and either hardware inline encryption must be present, or
-+CONFIG_BLK_INLINE_ENCRYPTION_FALLBACK must have been enabled. Further,
-+any I/O must be aligned to the filesystem block size (*not* necessarily
-+the same as the block device's block size) - in particular, any userspace
-+buffer into which data is read/written from must also be aligned to the
-+filesystem block size. If any of these conditions isn't met, attempts to do
-+direct I/O on an encrypted file will fall back to buffered I/O.
-+
- Encryption policy enforcement
- =============================
- 
--- 
-2.28.0.rc0.105.gf9edc3c819-goog
-
+Yep. I don't recall how the O_CLOEXEC got in there: that's indeed wrong, 
+and probably the result of patch-editing butchery. As for the exit 
+cleanup: yes, that's a bug. I was trying to keep the exit paths 
+together. We could fix it forward (which seems simple enough) or re-submit.
