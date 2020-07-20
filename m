@@ -2,77 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 13C08225494
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 00:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B6E7225579
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 03:34:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbgGSWr4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 19 Jul 2020 18:47:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52202 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726156AbgGSWr4 (ORCPT
+        id S1726617AbgGTBd3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 19 Jul 2020 21:33:29 -0400
+Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:34269 "EHLO
+        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726225AbgGTBd2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 19 Jul 2020 18:47:56 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8727C0619D2;
-        Sun, 19 Jul 2020 15:47:55 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id q3so11708194ilt.8;
-        Sun, 19 Jul 2020 15:47:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=752GIqWb7TeflmfvTlvXG4lE85m80lDi3OdyHGBoGE4=;
-        b=SYKhSqvg0eRjLfsoeBoocA3N8uY4CC49g8HYKV4q1YUiDsWzl5zJ7I011lkNHPOvb2
-         WJXrXr7Nu+vSqqNGStE1BrRAlT6/pRpdtRbk3/8pM5CalsGjmJdtwRQj/1IASfmxaFWK
-         L7C65KMmIMFp8dUFFeW06R6FnhD3sQemF08kVNr2rxq/xsT5fTOsLOD4XTPkbLtZ4Obp
-         pNAiTQ5HJHzL/+Qw5E1EpyMaXKt1cZ3IMCK8DdkGo8uenP0pXXIL9u0OZZVe85POo0Xf
-         wuS3LWoBkDXLcE2w56JAOlu6jxOWK2rdeaLChOUEWPi+nk0GnVC5Lt1MZapCNcjkrIA8
-         6flQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=752GIqWb7TeflmfvTlvXG4lE85m80lDi3OdyHGBoGE4=;
-        b=juswCXNC+se51HY+TwUKGu24hoWnJ4Du/vL/dp1ZTGGWqhyWXxpCPOIb7xXef1XvT6
-         8cy5cySsAm88Pl25y7UAO8WglPwXw62pZS7XL35RMqqFg2/QyY9FcD7QKccKgsIjkQlI
-         DHnoP18TWhwJWOiYiLv1Uh0uo3pb6IMLrwRwGGhVPbR4W0mqvxBstKZI7LINLHiT19ph
-         LM9T9hV1NK/iq+uaHKs0G7KgqXPw5iiLYMN9rJPbdfdbWa8/Obud7NmjwGVstzTi6SQ9
-         S5gBeDKOtJS+CQB7HXYAvJuSxsslCfFi1pszSjO3Qc6y7EMh9GP/GB3g4p5XlaxSRE3F
-         edBA==
-X-Gm-Message-State: AOAM5314Z/3fLI8fy8wKXR+pFN8t0BYZ4zlLOgg638rXP/8CPLSJ5JRz
-        Cd0RcXMJ+XQuMHqoOr1MsoFHNs+xFTEOkjmjx7A=
-X-Google-Smtp-Source: ABdhPJxQq5vcDCcmYHgb5SHeEoGyf/RBEQJNp1ljNaDlfoLHRjDkfUgM8yK5bYY1GVTkQEoYTf5yNC21RRfTGe3fHpw=
-X-Received: by 2002:a92:8b11:: with SMTP id i17mr20118496ild.212.1595198874273;
- Sun, 19 Jul 2020 15:47:54 -0700 (PDT)
+        Sun, 19 Jul 2020 21:33:28 -0400
+Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
+        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id 311EE1070E9;
+        Mon, 20 Jul 2020 11:33:22 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1jxKgC-0001wQ-Lq; Mon, 20 Jul 2020 11:33:20 +1000
+Date:   Mon, 20 Jul 2020 11:33:20 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] tools/memory-model: document the "one-time init" pattern
+Message-ID: <20200720013320.GP5369@dread.disaster.area>
+References: <20200717044427.68747-1-ebiggers@kernel.org>
+ <20200718014204.GN5369@dread.disaster.area>
+ <20200718140811.GA1179836@rowland.harvard.edu>
 MIME-Version: 1.0
-References: <CGME20200512081526epcas1p364393ddc6bae354db5aaaae9b09ffbff@epcas1p3.samsung.com>
- <000201d62835$7ddafe50$7990faf0$@samsung.com> <CA+icZUUjcyrVsDNQ4gHVMYWkLLX9oscme3PmXUnfnc5DojkqVA@mail.gmail.com>
- <CANFS6bbandOzMxFk-VHbHR1FXqbVJSE_Dr3=miQSwwDcJO-v0A@mail.gmail.com> <CA+icZUUiOqP5=1i6QtorSbjsyaQRe1thwcp36qfTdDUnKKqmJA@mail.gmail.com>
-In-Reply-To: <CA+icZUUiOqP5=1i6QtorSbjsyaQRe1thwcp36qfTdDUnKKqmJA@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Mon, 20 Jul 2020 00:47:43 +0200
-Message-ID: <CA+icZUV1AtKYt-K21mc4daQr4avA_PLs21LOxctWEP6r_cRhcw@mail.gmail.com>
-Subject: Re: exfatprogs-1.0.3 version released
-To:     Hyunchul Lee <hyc.lee@gmail.com>
-Cc:     Namjae Jeon <namjae.jeon@samsung.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Eric Sandeen <sandeen@sandeen.net>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Nicolas Boos <nicolas.boos@wanadoo.fr>,
-        Sven Hoexter <hoexter@debian.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200718140811.GA1179836@rowland.harvard.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
+        a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
+        a=kj9zAlcOel0A:10 a=_RQrkK6FrEwA:10 a=7-415B0cAAAA:8
+        a=feIL57iW5i9pFtJXli8A:9 a=nK-mLslAj2odQg0r:21 a=efrNrOHdcqjrA1Sw:21
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ CC Sven Hoexter (Debian maintainer of exfatprogs ]
+On Sat, Jul 18, 2020 at 10:08:11AM -0400, Alan Stern wrote:
+> > This is one of the reasons that the LKMM documetnation is so damn
+> > difficult to read and understand: just understanding the vocabulary
+> > it uses requires a huge learning curve, and it's not defined
+> > anywhere. Understanding the syntax of examples requires a huge
+> > learning curve, because it's not defined anywhere. 
+> 
+> Have you seen tools/memory-model/Documentation/explanation.txt?
 
-Just wanted to let you know Debian has an exfatprogs package in their
-official repositories.
+<raises eyebrow>
 
-- Sedat -
+Well, yes. Several times. I look at it almost daily, but that
+doesn't mean it's approachable, easy to read or even -that I
+understand what large parts of it say-. IOWs, that's one of the 
+problematic documents that I've been saying have a huge learning
+curve.
 
-[1] https://packages.debian.org/sid/exfatprogs
-[2] http://sven.stormbind.net/blog/posts/deb_debian_and_exfat/
+So, if I say "the LKMM documentation", I mean -all- of the
+documentation, not just some tiny subset of it. I've read it all,
+I've even installed herd7 so I can run the litmus tests to see if
+that helps me understand the documentation better.
+
+That only increased the WTF factor because the documentation of that
+stuff is far, far more impenetrable than the LKMM documentation.  If
+the LKMM learnign curve is near vertical, then the stuff in the
+herd7 tools is an -overhang-. And I most certainly can't climb
+that....
+
+/me idly wonders if you recognise that your comment is, yet again, a
+classic demonstration of the behaviour the "curse of knowledge"
+cognitive bias describes.
+
+> That
+> file was specifically written for non-experts to help them overcome the
+> learning curve.  It tries to define the vocabulary as terms are
+> introduced and to avoid using obscure syntax.
+
+It tries to teach people about what a memory model is at the same
+time it tries to define the LKMM. What it doesn't do at all is
+teach people how to write safe code. People want to write safe code,
+not become "memory model experts".
+
+Memory models are -your expertise- but they aren't mine. My
+expertise is filesystems: I don't care about the nitty gritty
+details of memory models, I just want to be able to write lockless
+algorithms correctly. Which, I might point out, I've been doing for
+well over a decade...
+
+> If you think it needs improvement and can give some specific
+> details about where it falls short, I would like to hear them.
+
+Haven't you understood anything I've been saying? That developers
+don't care about how the theory behind the memory model  or how it
+works - we just want to be able to write safe code. And to do that
+quickly and efficiently. The "make the documentation more complex"
+response is the wrong direction. Please *dumb it down* to the most
+basic, simplest, common concurrency patterns that programmers use
+and then write APIs to do those things that *hide the memory model
+for the programmer*.
+
+Adding documentation about all the possible things you could do,
+all the optimisations you could make, all the intricate, subtle
+variations you can use, etc is not helpful. It might be interesting
+to you, but I just want -somethign that works- and not have to
+understand the LKMM to get stuff done.
+
+Example: I know how smp_load_acquire() works. I know that I can
+expect the same behavioural semantics from smp_cond_load_acquire().
+But I don't care how the implementation of smp_cond_load_acquire()
+is optimised to minimise ordering barriers as it spins. That sort of
+optimisation is your job, not mine - I just want a function that
+will spin safely until a specific value is seen and then return with
+acquire semantics on the successful load.....
+
+Can you see the difference between "understanding the LKMM
+documenation" vs "using a well defined API that provides commonly
+used functionality" to write correct, optimal code that needs to
+spin waiting for some other context to update a variable?
+
+That's the problem the LKMM documentation fails to address. It is
+written to explain the theory behind the LKMM rather than provide
+developers with pointers to the templates and APIs that implement
+the lockless co-ordination functionality they want to use....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
