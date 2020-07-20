@@ -2,103 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AEAB1226F92
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 22:18:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C47A227058
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 23:28:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729897AbgGTURu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jul 2020 16:17:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53576 "EHLO
+        id S1726808AbgGTV2K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jul 2020 17:28:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727123AbgGTURt (ORCPT
+        with ESMTP id S1726428AbgGTV2J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jul 2020 16:17:49 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CF75C061794;
-        Mon, 20 Jul 2020 13:17:49 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id 88so8791109wrh.3;
-        Mon, 20 Jul 2020 13:17:49 -0700 (PDT)
+        Mon, 20 Jul 2020 17:28:09 -0400
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9917AC061794;
+        Mon, 20 Jul 2020 14:28:09 -0700 (PDT)
+Received: by mail-qk1-x743.google.com with SMTP id b79so3438304qkg.9;
+        Mon, 20 Jul 2020 14:28:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Jzw/8onKma0qauB0WGLcDc9iDqAqJvDHoJWk74V2lfo=;
-        b=CHHIdvTfP8EqK9uyRez8Lcjdq5Oe+D6Y7pnyDlXGm1LUZuhlkz0Krw3rk/qbSEC6Am
-         ruzsz3YaCd2sHkMTRIF1I5OnVcwnh9XSgvSvFoboW8IKdyCwAgSsp42T/oBex6yLYEZj
-         eTO5kvRRfcadyvvtUxlO/Hl6A4zzwWxn8uiQHZbTWtrigambUNXvgKseo+As8PQbpe/o
-         Rrpm4tddDCNl5F6gUrvPhXxnyDYgsVr80aEwaPdjZLC0SMnGHf9DsvNaZpKVcGgHH62n
-         6LoY6IW7yZa9nh+rePv4N5G2GSWS06nEbicm9GhwgPHFMnu5fSM/9P6mXqFprykqGyH0
-         hmsw==
+        bh=Sh/KLSzQqnJr0/PMf2DmO5rUtVYfFwMH4ti+obo2a7s=;
+        b=EulKUbZ0padoY58Gz7BUn19Q8Hk6KEJaTssCqM4lILM7IAI6zewfZh8oqNUoUyQoQB
+         7NTznTeKJycRqCHBebiJHdUDc3dJuXT4oWkSqv7Nd8vAXT58D5mHAgRZrE/rlefmctXk
+         iF0R314VBwwyPtZ5vQ9GjPl1jHRYIZxMQkWwbkCU5KpbxSiLWlT5Nqva2QiK7czML7c5
+         URTZec+Vmlsd24zt83lXA6dlTzT6u6pS8nCtPCyLiAvWG+LFRFdZ5hizdC/H3ow8Mkn8
+         0jt58w1ztanJnkcf9f7qnHKksF3N35HduNlT0BJ1Z5fBq2yUpp1KgYjnlkc1j3tOh7m6
+         BfSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Jzw/8onKma0qauB0WGLcDc9iDqAqJvDHoJWk74V2lfo=;
-        b=AtdBxNgVzp8ootlckDr1a5GtV8nhd40u7CVergJAGPnU/wWctHPn1eGqgGOGyN65d4
-         AapS/TLNrzYG12OyxCGeUzAPmPNl/bfrrfNbZU+Tvj/tE6013XomMyyCSlFwZmK9XaU7
-         Vjm72hBH+hK8CkBXdW502hdDH4IS7Jdp0dv7flfo+g9k2iLYEf7Ry9oN9s9WpdYYcFf0
-         ebCDcm89+c+MKwPP/NFcDwrepHtY1+7rqulG7w1yxqvOfzvDD2TZ7qZXbjiII7XhIjMz
-         PVllbyit9pFSQTQCcEAc7ZUSFQS8iUcsl93IA7AIauXpAW6cYoQLfO3FCRgteiGbTrRQ
-         GSRw==
-X-Gm-Message-State: AOAM530xSfsrBlvry0+G4ESJIxz15rjwYWvKk+I1uSNwqNH9Rda8IU6e
-        xWBoipf5LQ0A2MaXTVJWxNOLVYRHCfmZA7DgMj4=
-X-Google-Smtp-Source: ABdhPJwPxH7QBtP6wc4HBaQCIWU0o/YJOzNcPKhclaoxZuQg8Gf7VoRYP5hEuqNnOXAm3b1u0V1tXFsd75nMfdMeAAY=
-X-Received: by 2002:adf:f0ce:: with SMTP id x14mr22656173wro.137.1595276267720;
- Mon, 20 Jul 2020 13:17:47 -0700 (PDT)
+        bh=Sh/KLSzQqnJr0/PMf2DmO5rUtVYfFwMH4ti+obo2a7s=;
+        b=gudpn3MvtSCEHHB0yIwr2tNZ7iTRR6paf8TE9QGtm8N21TzL8EAOmTXkXVeeY1XHWv
+         cjbIIWrttcbKsaAt/2KDbtk09ZAEbD8wP0e26XPVrFCS2KLu5n8OeCJqYyRzZKWKuMUD
+         NGOx7UKpcYTNxM+CHuQHUWS2nHmWiZ5nXAj8uEec5XnPo07UVlJDguRECN/8O3jZFv2x
+         6/VJawQshzzMvW1vRKwW2Ta2HJxdtkalfzx0Ip5eikVW2CMU2rJrDRJrQndGShI6Lw1z
+         LS9Wn2Sn52WL+f3fSgUN1qiCG2GizDjzhv40MVCOVmfIeRnpFb87joet8qsq3/wiY1UB
+         7T/A==
+X-Gm-Message-State: AOAM532TvstF8Ibwg0zJQyXGeHwLuThUHDBwJsu5BZ3nyWwxs4nj1T3y
+        qK2RnpOSFAyqvGT6920E676dFD/gpJBFwtUgGF0=
+X-Google-Smtp-Source: ABdhPJzsaontx5ozyXPRUXIspav4OYKL8Yae9yGB7WLujLekyBKPAJ+mXHiIErPXcPeOXd4tel2AAhIoC764A4fM5+Q=
+X-Received: by 2002:a37:9147:: with SMTP id t68mr23191512qkd.34.1595280488864;
+ Mon, 20 Jul 2020 14:28:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <2270907f-670c-5182-f4ec-9756dc645376@kernel.dk>
- <CA+1E3r+H7WEyfTufNz3xBQQynOVV-uD3myYynkfp7iU+D=Svuw@mail.gmail.com>
- <f5e3e931-ef1b-2eb6-9a03-44dd5589c8d3@kernel.dk> <CA+1E3rLna6VVuwMSHVVEFmrgsTyJN=U4CcZtxSGWYr_UYV7AmQ@mail.gmail.com>
- <20200710131054.GB7491@infradead.org> <20200710134824.GK12769@casper.infradead.org>
- <20200710134932.GA16257@infradead.org> <20200710135119.GL12769@casper.infradead.org>
- <CA+1E3rKOZUz7oZ_DGW6xZPQaDu+T5iEKXctd+gsJw05VwpGQSQ@mail.gmail.com>
- <CA+1E3r+j=amkEg-_KUKSiu6gt2TRU6AU-_jwnB1C6wHHKnptfQ@mail.gmail.com> <20200720171416.GY12769@casper.infradead.org>
-In-Reply-To: <20200720171416.GY12769@casper.infradead.org>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Tue, 21 Jul 2020 01:47:20 +0530
-Message-ID: <CA+1E3rLNo5sFH3RPFAM4_SYXSmyWTCdbC3k3-6jeaj3FRPYLkQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, Damien.LeMoal@wdc.com, asml.silence@gmail.com,
-        linux-fsdevel@vger.kernel.org, "Matias Bj??rling" <mb@lightnvm.io>,
-        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        Selvakumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
+References: <20200720075148.172156-1-hch@lst.de> <20200720075148.172156-5-hch@lst.de>
+ <CAFLxGvxNHGEOrj6nKTtDeiU+Rx4xv_6asjSQYcFWXhk5m=1cBA@mail.gmail.com>
+ <20200720120734.GA29061@lst.de> <2827a5dbd94bc5c2c1706a6074d9a9a32a590feb.camel@gmail.com>
+In-Reply-To: <2827a5dbd94bc5c2c1706a6074d9a9a32a590feb.camel@gmail.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Mon, 20 Jul 2020 23:27:57 +0200
+Message-ID: <CAFLxGvyxtYnJ5UdD18uNA97zQaDB8-Wv8MHQn2g9GYD74v7cTg@mail.gmail.com>
+Subject: Re: [PATCH 04/14] bdi: initialize ->ra_pages in bdi_init
+To:     Artem Bityutskiy <dedekind1@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-raid@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Richard Weinberger <richard@nod.at>,
+        LKML <linux-kernel@vger.kernel.org>, linux-block@vger.kernel.org,
+        Song Liu <song@kernel.org>,
+        device-mapper development <dm-devel@redhat.com>,
+        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        cgroups mailinglist <cgroups@vger.kernel.org>,
+        drbd-dev@lists.linbit.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 20, 2020 at 10:44 PM Matthew Wilcox <willy@infradead.org> wrote:
+On Mon, Jul 20, 2020 at 2:37 PM Artem Bityutskiy <dedekind1@gmail.com> wrote:
 >
-> On Mon, Jul 20, 2020 at 10:19:57PM +0530, Kanchan Joshi wrote:
-> > On Fri, Jul 10, 2020 at 7:41 PM Kanchan Joshi <joshiiitr@gmail.com> wrote:
-> > > If we are doing this for zone-append (and not general cases), "__s64
-> > > res64" should work -.
-> > > 64 bits = 1 (sign) + 23 (bytes-copied: cqe->res) + 40
-> > > (written-location: chunk_sector bytes limit)
->
-> No, don't do this.
->
->  struct io_uring_cqe {
->         __u64   user_data;      /* sqe->data submission passed back */
-> -       __s32   res;            /* result code for this event */
-> -       __u32   flags;
-> +       union {
-> +               struct {
-> +                       __s32   res;    /* result code for this event */
-> +                       __u32   flags;
-> +               };
-> +               __s64           res64;
-> +       };
->  };
->
-> Return the value in bytes in res64, or a negative errno.  Done.
+> On Mon, 2020-07-20 at 14:07 +0200, Christoph Hellwig wrote:
+> > What about jffs2 and blk2mtd raw block devices?
 
-I concur. Can do away with bytes-copied. It's either in its entirety
-or not at all.
+I don't worry much about blk2mtd.
+
+> If my memory serves me correctly JFFS2 did not mind readahead.
+
+This covers my knowledge too.
+I fear enabling readahead on JFFS2 will cause performance issues, this
+filesystem
+is mostly used on small and slow NOR devices.
+
+-- 
+Thanks,
+//richard
