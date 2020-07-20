@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 104FE225A67
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 10:52:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B5F3225A68
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 10:52:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727978AbgGTIwN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jul 2020 04:52:13 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:15083 "EHLO
+        id S1728063AbgGTIwO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jul 2020 04:52:14 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:15088 "EHLO
         esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727044AbgGTIwN (ORCPT
+        with ESMTP id S1726938AbgGTIwO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jul 2020 04:52:13 -0400
+        Mon, 20 Jul 2020 04:52:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1595235132; x=1626771132;
+  t=1595235133; x=1626771133;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=yOoJjsAFN66v8mfd33lh+d+eraORihFxqJaL6thhbIw=;
-  b=gSO5YRZwcJdRNax3gia+uzEC5oTz/gwjuWtnMARq3/6yHNKPrycV7YIh
-   J+g8szRaLTs2KKKcUaLummUZcbtL2JtvdbBlYKrd8hLdI6qrq2lriOU5J
-   4f/OxiGLpYAk5J/VojJukmT4LlRuDKp49pK8xG4XQGjkp/XvtFlkmGv3g
-   n2n8Xh6zw+q2FrH3kyadbIV8bfmJ3KC+CVHoxWp7eQ6KubAGjmAYt8gqW
-   z+zzWOhkWEgsw0HnCj52hW6ZnHHvYoWsQBEFf1hEGAo5e/Iazdyotlnal
-   30gKGWFWJZuHAZpOvNvQNIGbsfrewrRiCY93TP+omhVbSCvtzu5X6gH1s
-   w==;
-IronPort-SDR: O/seQZWZ6dGsPbdLKT8gICQKMkOXQ1opt0Y214bkj+WmjmA2fEGvlAEJrLdcEpz7dBLzuwAo3d
- KISg30sVFlwGLLHEPyo3hxxueDF1EVag5vUXjiHlzeWzpIhYZON+8DAmBZ+SDSe0vlqtS9PhRK
- rw1fMuFjKwr+OW1HEgOdKnHnN3WIlY/JQRY+x6r74PsGV/5HDlTafJk1zFlMQH/o6ay8ktmGtP
- TdlJ22ONX1pI/oLy1AVK5cNtdq1Oarpz/V5w/aBxbWYfUaXDnkg1hkyczlY807xfgNNnNdPuST
- n7o=
+  bh=KALZF4NqHXC9qoy6I4teMnQITGGpyunub/V7H6Pi3g4=;
+  b=oPANTfs22BQxK2y4m0Bj5aRrx80d1lizvP65Ffh+QsU75pkXuPD6+MFa
+   oTmggdOyNwsaUnvDdHMYyztbdngxe/kITnv9XtU6de+tqPVyRvL3Ghk8d
+   4jov/gV33zr7wCuKt87HATRnSrL3yfird+/Obpw8ub7EEwY6jLQe7tKLU
+   rZuVttz1vV8weqdZgn7L1Efwl3kbtoKaK2aQGp4kC8RGsK/FtS6fUV1cJ
+   ba3ZXBFfcgyU9MqwQc6EjdwKOzjMbct9wslsl/YkFUhcdZbXh6LYvvONa
+   kEwJoK3OrJZgkMieySmSdxwuLP0udzj6pqPys662I2OspJWu2QnMGo8t0
+   Q==;
+IronPort-SDR: q3Vmvu6m+G8+4SusyKN3FMc5rqj6pV/XrebSq0iq9xg8XGaT93Vgfm7OJFv4DrZInzKsyh2xPe
+ ohdBtTDNY01jJRxnX+bDXgEJ7tQDAS6dZQimDj2/6SQuGUAL9EKl70DpTpnMvl8rusHl+MUC4v
+ fnPn7tW5te2mDTX1cV1Vy/IerbXtMkPEDbV0Sxhq0IqCPN1t8XC73paMbzGTCJ6/tJlRZPnLJG
+ Tk6KOhCZt3re+bi539ngB2isO5MOwBHbmw08j+lAQfiRvHyTuromXDK8UT0WoGLfLd53tVl45w
+ wrQ=
 X-IronPort-AV: E=Sophos;i="5.75,374,1589212800"; 
-   d="scan'208";a="252171862"
+   d="scan'208";a="252171863"
 Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Jul 2020 16:52:12 +0800
-IronPort-SDR: S23q9Mcp036CC0mhJOQfR4k0rVBpGNtIGtJuXYzLI2/BHEr86nW/cvjszmC/v957g2caZylB0i
- bEmezbp/UxyX9a45p0KrwuK6FvhjB9ADA=
+  by ob1.hgst.iphmx.com with ESMTP; 20 Jul 2020 16:52:13 +0800
+IronPort-SDR: goV+rds3anDk53ybGwIvHtsgyVYGo3pT3kUIvtolHUq5UHxlLyPzOc5YwGDkc/kTwioggSsGjC
+ uKb2MXZc9gi+U/LsfpPmAl4PW3AVaGsok=
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2020 01:40:31 -0700
-IronPort-SDR: zLi5XZ1neqO8oxZ7b3Sey3H4hoZsjAMcz9yVBaFl/PLJtB4uQEF2mUMWsHNDgYOxGoIMHQHJpz
- cBFIJgZCHqyA==
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Jul 2020 01:40:32 -0700
+IronPort-SDR: eLy2mmeZYrbtTd31IZ98bnUygnyRRcUBp2j6uCsYXu+E8/rvjc6HVyeuCirvKo8LLJT1iwlvaF
+ mFo9PdompHyQ==
 WDCIronportException: Internal
 Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip02.wdc.com with ESMTP; 20 Jul 2020 01:52:12 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 20 Jul 2020 01:52:13 -0700
 From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
 To:     Damien Le Moal <Damien.LeMoal@wdc.com>
 Cc:     linux-fsdevel@vger.kernel.org,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v2 1/2] zonefs: add zone-capacity support
-Date:   Mon, 20 Jul 2020 17:52:07 +0900
-Message-Id: <20200720085208.27347-2-johannes.thumshirn@wdc.com>
+Subject: [PATCH v2 2/2] zonefs: update documentation to reflect zone size vs capacity
+Date:   Mon, 20 Jul 2020 17:52:08 +0900
+Message-Id: <20200720085208.27347-3-johannes.thumshirn@wdc.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200720085208.27347-1-johannes.thumshirn@wdc.com>
 References: <20200720085208.27347-1-johannes.thumshirn@wdc.com>
@@ -60,87 +60,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In the zoned storage model, the sectors within a zone are typically all
-writeable. With the introduction of the Zoned Namespace (ZNS) Command
-Set in the NVM Express organization, the model was extended to have a
-specific writeable capacity.
+Update the zonefs documentation to reflect the difference between a zone's
+size and it's capacity.
 
-This zone capacity can be less than the overall zone size for a NVMe ZNS
-device. For other zoned block devices like ZBC or null_blk in zoned-mode
-the zone capacity is always equal to the zone size.
-
-Use the zone capacity field instead from blk_zone for determining the
-maximum inode size and inode blocks in zonefs.
+The maximum file size in zonefs is the zones capacity, for ZBC and ZAC
+based devices, which do not have a separate zone capacity, the zone
+capacity is equal to the zone size.
 
 Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- fs/zonefs/super.c  | 11 +++++++----
- fs/zonefs/zonefs.h |  3 +++
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ Documentation/filesystems/zonefs.rst | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index b13c332a3513..337249f98cae 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -335,7 +335,7 @@ static void zonefs_io_error(struct inode *inode, bool write)
- 	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
- 	unsigned int noio_flag;
- 	unsigned int nr_zones =
--		zi->i_max_size >> (sbi->s_zone_sectors_shift + SECTOR_SHIFT);
-+		zi->i_zone_size >> (sbi->s_zone_sectors_shift + SECTOR_SHIFT);
- 	struct zonefs_ioerr_data err = {
- 		.inode = inode,
- 		.write = write,
-@@ -398,7 +398,7 @@ static int zonefs_file_truncate(struct inode *inode, loff_t isize)
- 		goto unlock;
+diff --git a/Documentation/filesystems/zonefs.rst b/Documentation/filesystems/zonefs.rst
+index 71d845c6a700..6c18bc8ce332 100644
+--- a/Documentation/filesystems/zonefs.rst
++++ b/Documentation/filesystems/zonefs.rst
+@@ -110,14 +110,14 @@ contain files named "0", "1", "2", ... The file numbers also represent
+ increasing zone start sector on the device.
  
- 	ret = blkdev_zone_mgmt(inode->i_sb->s_bdev, op, zi->i_zsector,
--			       zi->i_max_size >> SECTOR_SHIFT, GFP_NOFS);
-+			       zi->i_zone_size >> SECTOR_SHIFT, GFP_NOFS);
- 	if (ret) {
- 		zonefs_err(inode->i_sb,
- 			   "Zone management operation at %llu failed %d",
-@@ -1051,14 +1051,16 @@ static void zonefs_init_file_inode(struct inode *inode, struct blk_zone *zone,
+ All read and write operations to zone files are not allowed beyond the file
+-maximum size, that is, beyond the zone size. Any access exceeding the zone
+-size is failed with the -EFBIG error.
++maximum size, that is, beyond the zone capacity. Any access exceeding the zone
++capacity is failed with the -EFBIG error.
  
- 	zi->i_ztype = type;
- 	zi->i_zsector = zone->start;
-+	zi->i_zone_size = zone->len << SECTOR_SHIFT;
-+
- 	zi->i_max_size = min_t(loff_t, MAX_LFS_FILESIZE,
--			       zone->len << SECTOR_SHIFT);
-+			       zone->capacity << SECTOR_SHIFT);
- 	zi->i_wpoffset = zonefs_check_zone_condition(inode, zone, true, true);
+ Creating, deleting, renaming or modifying any attribute of files and
+ sub-directories is not allowed.
  
- 	inode->i_uid = sbi->s_uid;
- 	inode->i_gid = sbi->s_gid;
- 	inode->i_size = zi->i_wpoffset;
--	inode->i_blocks = zone->len;
-+	inode->i_blocks = zi->i_max_size >> SECTOR_SHIFT;
+ The number of blocks of a file as reported by stat() and fstat() indicates the
+-size of the file zone, or in other words, the maximum file size.
++capacity of the zone file, or in other words, the maximum file size.
  
- 	inode->i_op = &zonefs_file_inode_operations;
- 	inode->i_fop = &zonefs_file_operations;
-@@ -1169,6 +1171,7 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
- 				else if (next->cond == BLK_ZONE_COND_OFFLINE)
- 					zone->cond = BLK_ZONE_COND_OFFLINE;
- 			}
-+			zone->capacity = zone->len;
- 		}
+ Conventional zone files
+ -----------------------
+@@ -156,8 +156,8 @@ all accepted.
  
- 		/*
-diff --git a/fs/zonefs/zonefs.h b/fs/zonefs/zonefs.h
-index ad17fef7ce91..55b39970acb2 100644
---- a/fs/zonefs/zonefs.h
-+++ b/fs/zonefs/zonefs.h
-@@ -56,6 +56,9 @@ struct zonefs_inode_info {
- 	/* File maximum size */
- 	loff_t			i_max_size;
+ Truncating sequential zone files is allowed only down to 0, in which case, the
+ zone is reset to rewind the file zone write pointer position to the start of
+-the zone, or up to the zone size, in which case the file's zone is transitioned
+-to the FULL state (finish zone operation).
++the zone, or up to the zone capacity, in which case the file's zone is
++transitioned to the FULL state (finish zone operation).
  
-+	/* File zone size */
-+	loff_t			i_zone_size;
-+
- 	/*
- 	 * To serialise fully against both syscall and mmap based IO and
- 	 * sequential file truncation, two locks are used. For serializing
+ Format options
+ --------------
+@@ -324,7 +324,7 @@ file size set to 0. This is necessary as the write pointer of read-only zones
+ is defined as invalib by the ZBC and ZAC standards, making it impossible to
+ discover the amount of data that has been written to the zone. In the case of a
+ read-only zone discovered at run-time, as indicated in the previous section.
+-the size of the zone file is left unchanged from its last updated value.
++The size of the zone file is left unchanged from its last updated value.
+ 
+ Zonefs User Space Tools
+ =======================
+@@ -401,8 +401,9 @@ append-writes to the file::
+     # ls -l /mnt/seq/0
+     -rw-r----- 1 root root 0 Nov 25 13:49 /mnt/seq/0
+ 
+-Since files are statically mapped to zones on the disk, the number of blocks of
+-a file as reported by stat() and fstat() indicates the size of the file zone::
++Since files are statically mapped to zones on the disk, the number of blocks
++of a file as reported by stat() and fstat() indicates the capacity of the file
++zone::
+ 
+     # stat /mnt/seq/0
+     File: /mnt/seq/0
+@@ -416,5 +417,6 @@ a file as reported by stat() and fstat() indicates the size of the file zone::
+ 
+ The number of blocks of the file ("Blocks") in units of 512B blocks gives the
+ maximum file size of 524288 * 512 B = 256 MB, corresponding to the device zone
+-size in this example. Of note is that the "IO block" field always indicates the
+-minimum I/O size for writes and corresponds to the device physical sector size.
++capacity in this example. Of note is that the "IO block" field always
++indicates the minimum I/O size for writes and corresponds to the device
++physical sector size.
 -- 
 2.26.2
 
