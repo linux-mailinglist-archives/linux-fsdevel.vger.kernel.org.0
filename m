@@ -2,68 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 937C2226CE6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 19:10:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEC7C226CFB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 19:15:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731626AbgGTRJz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jul 2020 13:09:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46728 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729084AbgGTRJx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jul 2020 13:09:53 -0400
-Received: from gmail.com (unknown [104.132.1.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5796207DF;
-        Mon, 20 Jul 2020 17:09:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595264993;
-        bh=OthK/AQBHEtdjBBAz0n/15WPSHBWT0arVmiBxqHTdbo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Rwg++Qqd28JZ8teR6Wn7NDm2yRrPKRUXPCfuzh8ZpZPAWd0YfMmSXjxHQP4nWQF0o
-         FrYFN3RpBW5U2NGYXWhrdk4coaezy1WR6SdlptXgG5oxgriJtgAPEw45ju74Rm4iSZ
-         eBhgXcl8BUAPAe6EtMV4CKHIMUm9uD+CIwQNfKks=
-Date:   Mon, 20 Jul 2020 10:09:51 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Daniel Rosenberg <drosen@google.com>, linux-ext4@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel-team@android.com
-Subject: Re: [PATCH v12 0/4] Prepare for upcoming Casefolding/Encryption
- patches
-Message-ID: <20200720170951.GE1292162@gmail.com>
-References: <20200708091237.3922153-1-drosen@google.com>
+        id S1729812AbgGTRO1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jul 2020 13:14:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53598 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728889AbgGTRO0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Jul 2020 13:14:26 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DA64C061794;
+        Mon, 20 Jul 2020 10:14:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=d45SJ+BOtrVprN5peIref8u4gVYNL9L8EWPr0CD0nOs=; b=Qn43UcExzwvyrabYv+bSaietLB
+        7P14B46c5KQm8NZYBan4GaRIDj45LsNwNwArUaU7OZLcrqyZKS5Tx2dr5uXoM1glReH6jW+FCBglM
+        XF+a8BwEWiZDXEDjXK9/kMkqlBKagUZH8nJ9xSCyIP/7MgjMAtfZ/gFCWM0Ywp01yCVpNBt0oSi4B
+        k70PZdwvZ+vYVilV9Nz8vXzLSrpSG8VrAPGlioDQ04QqEWiSM/D337Su2iMlGk/DuUJSc7xtlxu/E
+        T9mqc5nb+1xZYcUoVVltrip1njtJjF4677m/yH6bIeCltwnH6o7AQ4eEqxD+WAYKME/lPsa0VsOlB
+        hVNDoRcg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jxZMm-0005hb-71; Mon, 20 Jul 2020 17:14:16 +0000
+Date:   Mon, 20 Jul 2020 18:14:16 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kanchan Joshi <joshiiitr@gmail.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, Damien.LeMoal@wdc.com, asml.silence@gmail.com,
+        linux-fsdevel@vger.kernel.org, Matias Bj??rling <mb@lightnvm.io>,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        Selvakumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
+Message-ID: <20200720171416.GY12769@casper.infradead.org>
+References: <2270907f-670c-5182-f4ec-9756dc645376@kernel.dk>
+ <CA+1E3r+H7WEyfTufNz3xBQQynOVV-uD3myYynkfp7iU+D=Svuw@mail.gmail.com>
+ <f5e3e931-ef1b-2eb6-9a03-44dd5589c8d3@kernel.dk>
+ <CA+1E3rLna6VVuwMSHVVEFmrgsTyJN=U4CcZtxSGWYr_UYV7AmQ@mail.gmail.com>
+ <20200710131054.GB7491@infradead.org>
+ <20200710134824.GK12769@casper.infradead.org>
+ <20200710134932.GA16257@infradead.org>
+ <20200710135119.GL12769@casper.infradead.org>
+ <CA+1E3rKOZUz7oZ_DGW6xZPQaDu+T5iEKXctd+gsJw05VwpGQSQ@mail.gmail.com>
+ <CA+1E3r+j=amkEg-_KUKSiu6gt2TRU6AU-_jwnB1C6wHHKnptfQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200708091237.3922153-1-drosen@google.com>
+In-Reply-To: <CA+1E3r+j=amkEg-_KUKSiu6gt2TRU6AU-_jwnB1C6wHHKnptfQ@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 08, 2020 at 02:12:33AM -0700, Daniel Rosenberg wrote:
-> This lays the ground work for enabling casefolding and encryption at the
-> same time for ext4 and f2fs. A future set of patches will enable that
-> functionality.
-> 
-> These unify the highly similar dentry_operations that ext4 and f2fs both
-> use for casefolding. In addition, they improve d_hash by not requiring a
-> new string allocation.
-> 
-> Daniel Rosenberg (4):
->   unicode: Add utf8_casefold_hash
->   fs: Add standard casefolding support
->   f2fs: Use generic casefolding support
->   ext4: Use generic casefolding support
-> 
+On Mon, Jul 20, 2020 at 10:19:57PM +0530, Kanchan Joshi wrote:
+> On Fri, Jul 10, 2020 at 7:41 PM Kanchan Joshi <joshiiitr@gmail.com> wrote:
+> > If we are doing this for zone-append (and not general cases), "__s64
+> > res64" should work -.
+> > 64 bits = 1 (sign) + 23 (bytes-copied: cqe->res) + 40
+> > (written-location: chunk_sector bytes limit)
 
-Ted, are you interested in taking this through the ext4 tree for 5.9?
+No, don't do this.
 
-- Eric
+ struct io_uring_cqe {
+	__u64   user_data;      /* sqe->data submission passed back */
+-	__s32   res;            /* result code for this event */
+-	__u32   flags;
++	union {
++		struct {
++			__s32   res;    /* result code for this event */
++			__u32   flags;
++		};
++		__s64		res64;
++	};
+ };
+
+Return the value in bytes in res64, or a negative errno.  Done.
+			
+>   * IO completion data structure (Completion Queue Entry)
+>   */
+>  struct io_uring_cqe {
+> -       __u64   user_data;      /* sqe->data submission passed back */
+> -       __s32   res;            /* result code for this event */
+> -       __u32   flags;
+> +       __u64   user_data;      /* sqe->data submission passed back */
+> +        union {
+> +                struct {
+> +                        __s32   res;            /* result code for
+> this event */
+> +                        __u32   flags;
+> +                };
+> +               /* Alternate for zone-append */
+> +               struct {
+> +                       union {
+> +                               /*
+> +                                * kernel uses this to store append result
+> +                                * Most significant 23 bits to return number of
+> +                                * bytes or error, and least significant 41 bits
+> +                                * to return zone-relative offset in bytes
+> +                                * */
+> +                               __s64 res64;
+> +                               /*for user-space ease, kernel does not use*/
+> +                               struct {
+> +#if defined(__LITTLE_ENDIAN_BITFIELD)
+> +                                       __u64 append_offset :
+> APPEND_OFFSET_BITS;
+> +                                       __s32 append_res : APPEND_RES_BITS;
+> +#elif defined(__BIG_ENDIAN_BITFIELD)
+> +                                       __s32 append_res : APPEND_RES_BITS;
+> +                                       __u64 append_offset :
+> APPEND_OFFSET_BITS;
+> +#endif
+> +                               }__attribute__ ((__packed__));
+> +                       };
+> +                };
+> +        };
+>  };
+> 
+> -- 
+> Joshi
