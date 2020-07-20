@@ -2,107 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4DCC226F85
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 22:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEAB1226F92
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 22:18:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730014AbgGTUOG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jul 2020 16:14:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727123AbgGTUOG (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jul 2020 16:14:06 -0400
-Received: from gmail.com (unknown [104.132.1.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 680AD2080D;
-        Mon, 20 Jul 2020 20:14:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595276045;
-        bh=wDxijBprww99JyKZ7zq1b0Bm+gBJfpxa+gZiTN2MMac=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PPMtmi5EfngGRLVXC4qUYRQ1gdrrDIyuG8biGtRFAryZ0R9CC8s/0ZXIdD+Ovfbla
-         JnQVA+559vhRMT7XehRKOYcnDREV63fo/E7ZW17Y80AOMn3OmELWauhiaC/+dIA1E8
-         5l8h0NDI2Cq1StzoLJGfBfBTNTRRaqlHa6Pc2oyE=
-Date:   Mon, 20 Jul 2020 13:14:04 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] fscrypt: Add functions for direct I/O support
-Message-ID: <20200720201404.GJ1292162@gmail.com>
-References: <20200717014540.71515-1-satyat@google.com>
- <20200717014540.71515-2-satyat@google.com>
+        id S1729897AbgGTURu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jul 2020 16:17:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53576 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727123AbgGTURt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 20 Jul 2020 16:17:49 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CF75C061794;
+        Mon, 20 Jul 2020 13:17:49 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id 88so8791109wrh.3;
+        Mon, 20 Jul 2020 13:17:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Jzw/8onKma0qauB0WGLcDc9iDqAqJvDHoJWk74V2lfo=;
+        b=CHHIdvTfP8EqK9uyRez8Lcjdq5Oe+D6Y7pnyDlXGm1LUZuhlkz0Krw3rk/qbSEC6Am
+         ruzsz3YaCd2sHkMTRIF1I5OnVcwnh9XSgvSvFoboW8IKdyCwAgSsp42T/oBex6yLYEZj
+         eTO5kvRRfcadyvvtUxlO/Hl6A4zzwWxn8uiQHZbTWtrigambUNXvgKseo+As8PQbpe/o
+         Rrpm4tddDCNl5F6gUrvPhXxnyDYgsVr80aEwaPdjZLC0SMnGHf9DsvNaZpKVcGgHH62n
+         6LoY6IW7yZa9nh+rePv4N5G2GSWS06nEbicm9GhwgPHFMnu5fSM/9P6mXqFprykqGyH0
+         hmsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Jzw/8onKma0qauB0WGLcDc9iDqAqJvDHoJWk74V2lfo=;
+        b=AtdBxNgVzp8ootlckDr1a5GtV8nhd40u7CVergJAGPnU/wWctHPn1eGqgGOGyN65d4
+         AapS/TLNrzYG12OyxCGeUzAPmPNl/bfrrfNbZU+Tvj/tE6013XomMyyCSlFwZmK9XaU7
+         Vjm72hBH+hK8CkBXdW502hdDH4IS7Jdp0dv7flfo+g9k2iLYEf7Ry9oN9s9WpdYYcFf0
+         ebCDcm89+c+MKwPP/NFcDwrepHtY1+7rqulG7w1yxqvOfzvDD2TZ7qZXbjiII7XhIjMz
+         PVllbyit9pFSQTQCcEAc7ZUSFQS8iUcsl93IA7AIauXpAW6cYoQLfO3FCRgteiGbTrRQ
+         GSRw==
+X-Gm-Message-State: AOAM530xSfsrBlvry0+G4ESJIxz15rjwYWvKk+I1uSNwqNH9Rda8IU6e
+        xWBoipf5LQ0A2MaXTVJWxNOLVYRHCfmZA7DgMj4=
+X-Google-Smtp-Source: ABdhPJwPxH7QBtP6wc4HBaQCIWU0o/YJOzNcPKhclaoxZuQg8Gf7VoRYP5hEuqNnOXAm3b1u0V1tXFsd75nMfdMeAAY=
+X-Received: by 2002:adf:f0ce:: with SMTP id x14mr22656173wro.137.1595276267720;
+ Mon, 20 Jul 2020 13:17:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200717014540.71515-2-satyat@google.com>
+References: <2270907f-670c-5182-f4ec-9756dc645376@kernel.dk>
+ <CA+1E3r+H7WEyfTufNz3xBQQynOVV-uD3myYynkfp7iU+D=Svuw@mail.gmail.com>
+ <f5e3e931-ef1b-2eb6-9a03-44dd5589c8d3@kernel.dk> <CA+1E3rLna6VVuwMSHVVEFmrgsTyJN=U4CcZtxSGWYr_UYV7AmQ@mail.gmail.com>
+ <20200710131054.GB7491@infradead.org> <20200710134824.GK12769@casper.infradead.org>
+ <20200710134932.GA16257@infradead.org> <20200710135119.GL12769@casper.infradead.org>
+ <CA+1E3rKOZUz7oZ_DGW6xZPQaDu+T5iEKXctd+gsJw05VwpGQSQ@mail.gmail.com>
+ <CA+1E3r+j=amkEg-_KUKSiu6gt2TRU6AU-_jwnB1C6wHHKnptfQ@mail.gmail.com> <20200720171416.GY12769@casper.infradead.org>
+In-Reply-To: <20200720171416.GY12769@casper.infradead.org>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Tue, 21 Jul 2020 01:47:20 +0530
+Message-ID: <CA+1E3rLNo5sFH3RPFAM4_SYXSmyWTCdbC3k3-6jeaj3FRPYLkQ@mail.gmail.com>
+Subject: Re: [PATCH v3 4/4] io_uring: add support for zone-append
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, Damien.LeMoal@wdc.com, asml.silence@gmail.com,
+        linux-fsdevel@vger.kernel.org, "Matias Bj??rling" <mb@lightnvm.io>,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        Selvakumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 17, 2020 at 01:45:34AM +0000, Satya Tangirala wrote:
-> From: Eric Biggers <ebiggers@google.com>
-> 
-> Introduce fscrypt_dio_supported() to check whether a direct I/O request
-> is unsupported due to encryption constraints, and
-> fscrypt_limit_io_pages() to check how many pages may be added to a bio
-> being prepared for direct I/O.
-> 
-> The IV_INO_LBLK_32 fscrypt policy introduced the possibility that DUNs
-> in logically continuous file blocks might wrap from 0xffffffff to 0.
-> Since this was particularly difficult to handle when block_size !=
-> PAGE_SIZE, fscrypt only supports blk-crypto en/decryption with
-> the IV_INO_LBLK_32 policy when block_size == PAGE_SIZE, and ensures that
-> the DUN never wraps around within any submitted bio.
-> fscrypt_limit_io_pages() can be used to determine the number of logically
-> contiguous blocks/pages that may be added to the bio without causing the
-> DUN to wrap around within the bio. This is an alternative to calling
-> fscrypt_mergeable_bio() on each page in a range of logically contiguous
-> pages.
+On Mon, Jul 20, 2020 at 10:44 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Mon, Jul 20, 2020 at 10:19:57PM +0530, Kanchan Joshi wrote:
+> > On Fri, Jul 10, 2020 at 7:41 PM Kanchan Joshi <joshiiitr@gmail.com> wrote:
+> > > If we are doing this for zone-append (and not general cases), "__s64
+> > > res64" should work -.
+> > > 64 bits = 1 (sign) + 23 (bytes-copied: cqe->res) + 40
+> > > (written-location: chunk_sector bytes limit)
+>
+> No, don't do this.
+>
+>  struct io_uring_cqe {
+>         __u64   user_data;      /* sqe->data submission passed back */
+> -       __s32   res;            /* result code for this event */
+> -       __u32   flags;
+> +       union {
+> +               struct {
+> +                       __s32   res;    /* result code for this event */
+> +                       __u32   flags;
+> +               };
+> +               __s64           res64;
+> +       };
+>  };
+>
+> Return the value in bytes in res64, or a negative errno.  Done.
 
-This is a bit hard to read, especially the second paragraph.  How about:
-
-
-"Introduce fscrypt_dio_supported() to check whether a direct I/O request
-is unsupported due to encryption constraints.
-
-Also introduce fscrypt_limit_io_pages() to limit how many pages can be
-added to a bio being prepared for direct I/O.  This is needed for the
-iomap direct I/O implementation to avoid DUN wraparound in the middle of
-a bio (which is possible with the IV_INO_LBLK_32 IV generation method).
-Elsewhere fscrypt_mergeable_bio() is used for this, but iomap operates
-on logical ranges directly and thus needs doesn't have a chance to call
-fscrypt_mergeable_bio() on every block or page.  So we need a function
-which limits a logical range in one go."
-
-
-In particular, the detail about PAGE_SIZE better belongs in the code, I think.
-
-> +/**
-> + * fscrypt_limit_io_pages() - limit I/O pages to avoid discontiguous DUNs
-> + * @inode: the file on which I/O is being done
-> + * @pos: the file position (in bytes) at which the I/O is being done
-> + * @nr_pages: the number of pages we want to submit starting at @pos
-> + *
-> + * Determine the limit to the number of pages that can be submitted in the bio
-> + * targeting @pos without causing a data unit number (DUN) discontinuity.
-> + *
-> + * For IV generation methods that can't cause DUN wraparounds
-> + * within logically continuous data blocks, the maximum number of pages is
-> + * simply @nr_pages. For those IV generation methods that *might* cause DUN
-> + * wraparounds, the returned number of pages is the largest possible number of
-> + * pages (less than @nr_pages) that can be added to the bio without causing a
-> + * DUN wraparound within the bio.
-
-How about replacing the second paragraph here with:
- 
- * This is normally just @nr_pages, as normally the DUNs just increment along
- * with the logical blocks.  (Or the file is not encrypted.)
- *
- * In rare cases, fscrypt can be using an IV generation method that allows the
- * DUN to wrap around within logically continuous blocks, and that wraparound
- * will occur.  If this happens, a value less than @nr_pages will be returned so
- * that the wraparound doesn't occur in the middle of the bio.  Note that we
- * only support block_size == PAGE_SIZE (and page-aligned DIO) in such cases.
+I concur. Can do away with bytes-copied. It's either in its entirety
+or not at all.
