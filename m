@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E364225900
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 09:52:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88A75225934
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 09:53:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbgGTHwD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jul 2020 03:52:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50624 "EHLO
+        id S1727891AbgGTHwK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jul 2020 03:52:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727774AbgGTHwC (ORCPT
+        with ESMTP id S1727819AbgGTHwE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jul 2020 03:52:02 -0400
+        Mon, 20 Jul 2020 03:52:04 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CCF5C061794;
-        Mon, 20 Jul 2020 00:52:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A163C0619D2;
+        Mon, 20 Jul 2020 00:52:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=CuUaZG9Qhitrr+iOhUhgyWHM76MKMZjl3OX8RO552bE=; b=flVROLQubR6uF1pCvEN9P45yX8
-        5OLapfMKCH0fY2r35ViO2jMD0d4StlwWmgHdCrsXL7HSL44gfNJRb2hVc1XqgP4UwA7wccIEHL3o7
-        LxyAjWM5UEjl3VtB5ooa5L5xa8pASt6teZcxkL6m5Y0NO5F75MnjygFOIleuz9LwqjYbVsd+Ic722
-        BMaSQMfg9fPWIjfJs3NP+wah/dr3BLa8zbN8rg33h9tju4hfj61KvRciKJOnAIMoAW7W7oQ9zLeu+
-        dzMDoZv+isOyqu3IqtuWZrIeVd/D56WGbsd9+Tj+a8wrPCO4FD2P9xsKH32tkikbg9cegkxdWwvXq
-        e/kaZwKQ==;
+        bh=DP8fGyU8x8aj+q3+p8UbqlahCkFpP7eR5QGK+Cdd8Uc=; b=XAXygMpK+JQ52rLAvNJKGgcswf
+        pyvv2uabK80nhnlZYqh/947WwKF8CKwMEqSZr3eIR6omGV1LyoChcCeOZqOS5bFSI80bQva3toPPD
+        ZnwA4mxzKEMGUFl1XLSVFfBjKjT8oswm80ZW9rNAYn/O6AgNltNOeckp9GsYioz5rn13xyNHbRELp
+        /My/sEmvFG4u/IuMHK/90sAF1/LRYYkUqja2xnuBTd1VEjngeaqIJUqapKiYhyNXqU4TBPTMpUKw2
+        KGejWTaqN6yw89SlDZgBLLUWJftuHOr4Wc6XfcFA2IagkC1SmDPv+hB0JDnWy9GIWJZDmMKEszWqm
+        gDFbb/8A==;
 Received: from [2001:4bb8:105:4a81:5185:88fc:94bb:f8bf] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jxQaU-0003zM-Ln; Mon, 20 Jul 2020 07:51:51 +0000
+        id 1jxQaW-0003zp-Vt; Mon, 20 Jul 2020 07:51:54 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
@@ -37,9 +37,9 @@ Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
         drbd-dev@lists.linbit.com, linux-raid@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         cgroups@vger.kernel.org
-Subject: [PATCH 01/14] fs: remove the unused SB_I_MULTIROOT flag
-Date:   Mon, 20 Jul 2020 09:51:35 +0200
-Message-Id: <20200720075148.172156-2-hch@lst.de>
+Subject: [PATCH 02/14] drbd: remove dead code in device_to_statistics
+Date:   Mon, 20 Jul 2020 09:51:36 +0200
+Message-Id: <20200720075148.172156-3-hch@lst.de>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200720075148.172156-1-hch@lst.de>
 References: <20200720075148.172156-1-hch@lst.de>
@@ -51,39 +51,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Ever since the switch to blk-mq, a lower device not use by VM
+writeback will not be marked congested, so the check will never
+trigger.
+
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/namei.c         | 4 ++--
- include/linux/fs.h | 1 -
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ drivers/block/drbd/drbd_nl.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 72d4219c93acb7..e9ff0d54a110a7 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -568,8 +568,8 @@ static bool path_connected(struct vfsmount *mnt, struct dentry *dentry)
- {
- 	struct super_block *sb = mnt->mnt_sb;
+diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+index d0d9a549b58388..650372ee2c7822 100644
+--- a/drivers/block/drbd/drbd_nl.c
++++ b/drivers/block/drbd/drbd_nl.c
+@@ -3370,7 +3370,6 @@ static void device_to_statistics(struct device_statistics *s,
+ 	if (get_ldev(device)) {
+ 		struct drbd_md *md = &device->ldev->md;
+ 		u64 *history_uuids = (u64 *)s->history_uuids;
+-		struct request_queue *q;
+ 		int n;
  
--	/* Bind mounts and multi-root filesystems can have disconnected paths */
--	if (!(sb->s_iflags & SB_I_MULTIROOT) && (mnt->mnt_root == sb->s_root))
-+	/* Bind mounts can have disconnected paths */
-+	if (mnt->mnt_root == sb->s_root)
- 		return true;
+ 		spin_lock_irq(&md->uuid_lock);
+@@ -3384,11 +3383,6 @@ static void device_to_statistics(struct device_statistics *s,
+ 		spin_unlock_irq(&md->uuid_lock);
  
- 	return is_subdir(dentry, mnt->mnt_root);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 1d7c4f7465d24c..613323008519ca 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1365,7 +1365,6 @@ extern int send_sigurg(struct fown_struct *fown);
- #define SB_I_CGROUPWB	0x00000001	/* cgroup-aware writeback enabled */
- #define SB_I_NOEXEC	0x00000002	/* Ignore executables on this fs */
- #define SB_I_NODEV	0x00000004	/* Ignore devices on this fs */
--#define SB_I_MULTIROOT	0x00000008	/* Multiple roots to the dentry tree */
- 
- /* sb->s_iflags to limit user namespace mounts */
- #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
+ 		s->dev_disk_flags = md->flags;
+-		q = bdev_get_queue(device->ldev->backing_bdev);
+-		s->dev_lower_blocked =
+-			bdi_congested(q->backing_dev_info,
+-				      (1 << WB_async_congested) |
+-				      (1 << WB_sync_congested));
+ 		put_ldev(device);
+ 	}
+ 	s->dev_size = drbd_get_capacity(device->this_bdev);
 -- 
 2.27.0
 
