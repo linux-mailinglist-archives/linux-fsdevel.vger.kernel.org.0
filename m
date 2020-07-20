@@ -2,124 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D453225D7A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 13:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59A6F225DF0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 13:55:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728582AbgGTLae (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jul 2020 07:30:34 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:35313 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728058AbgGTLad (ORCPT
+        id S1728624AbgGTLzX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jul 2020 07:55:23 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35936 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728058AbgGTLzX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jul 2020 07:30:33 -0400
-Received: from mail-qk1-f170.google.com ([209.85.222.170]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MRSdf-1k9Ok72cqr-00NTol; Mon, 20 Jul 2020 13:30:30 +0200
-Received: by mail-qk1-f170.google.com with SMTP id 80so14817204qko.7;
-        Mon, 20 Jul 2020 04:30:30 -0700 (PDT)
-X-Gm-Message-State: AOAM533b9YzZWWSK2VaipD1h2AnkEirKKrzZLtfVzSdHYYCMguVcfIZV
-        XQGqfFuBGbZHRM6c7FcqDgXWQoYgJwKsrLkTPDg=
-X-Google-Smtp-Source: ABdhPJybaWn8qrmG7q01lgvZCZBti2IcqiiH7/UJUKpkh5l1pzukFrbCvJJFdRaOz1n0M6O3nf2Yvp55077wbmpCEEY=
-X-Received: by 2002:a05:620a:1654:: with SMTP id c20mr20996310qko.138.1595244629225;
- Mon, 20 Jul 2020 04:30:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200720092435.17469-1-rppt@kernel.org> <20200720092435.17469-4-rppt@kernel.org>
-In-Reply-To: <20200720092435.17469-4-rppt@kernel.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 20 Jul 2020 13:30:13 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0NyvRMqH7X0YNO5E6DGtvZXD5ZcD6Y6n7AkocufkMnHA@mail.gmail.com>
-Message-ID: <CAK8P3a0NyvRMqH7X0YNO5E6DGtvZXD5ZcD6Y6n7AkocufkMnHA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] mm: introduce secretmemfd system call to create
- "secret" memory areas
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
+        Mon, 20 Jul 2020 07:55:23 -0400
+Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1jxUNi-0004wH-99; Mon, 20 Jul 2020 11:54:54 +0000
+Date:   Mon, 20 Jul 2020 13:54:52 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Adrian Reber <areber@redhat.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>
+Cc:     Eric Biederman <ebiederm@xmission.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+        Kamil Yurtsever <kyurtsever@google.com>,
+        Dirk Petersen <dipeit@gmail.com>,
+        Christine Flood <chf@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         Mike Rapoport <rppt@linux.ibm.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, linux-nvdimm@lists.01.org,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linaro-mm-sig@lists.linaro.org,
-        Sumit Semwal <sumit.semwal@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:TfMVKI8Xwwil9I21P8OmonrH2jkQ8LQLt3AUMzzKE3uFso+l/Ie
- dWFOAW34L1oerzNOfgd6/x4mRQaYHRpbfB5vnLm9Jc5BD+P3vDLbFxj9ZPunj8IhEkHh8yT
- NpZP+/Dh2Vtk2D8LkfOIR3jZGQmfRIAwPyWb4mamJnPb00tX7n5moKVad9lP6bc2Sxsn/Zv
- uJkF+a1KD/24lXRqsz0BQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:by+CjfWV5wU=:5W1HSFIYkjF1Xls7nDjsrF
- zPOIOYqc6MG1WsW/TJkgz8B543REI1efhIjAZTCl8hl54UAoxo0qtrlUXi27OkDb06rCki8SE
- PrH9QehiykmvXgC0CWGnP5UhgZJq88hRye+jhN+/c4q6JdMdLDdsfAKBZkbVJqHv4euRSHcCB
- pMRldOesaZG68Ri01KstRYq+uO0qvC3cGFOgL7jE62JZwc1MZMVCNAAruGz6LyGDGZ5ffjlZu
- cI+6BSG4/1Tuo0qd90tDZdQdLzdqbGbGvm9dRT4V42fJfmB1QaHt1jjrtDzWYc82XBKzC90WN
- strBEtRNEN6rijs14n8XSpcfCoZBjCQdcXBvomqj2rbiTUJNpf7nD8WbtR0ijUN63PwOdr+qw
- NLdAhi5bJWI16DWIfaabkdoK1O47W3P9Z0fQuFNw8TG0D9XKAPvrJGrP7Sypuly1/UPgiWrf3
- 34/vTl1bkVSzZWfMi+J3YVwdec5oJ8AR58c+F69IBoBz8htFMSXfAjMQVBigZMgnVGkXqoYRy
- 5xQe5sbB1GaaXEVgxVpZsTXlf2p/JuU3PZG2+ZpjCUWVrT1yVUGU6E+inuYNt5UarVcidxnS/
- Kv/7GjAApsC1rmKxa0RGN1uWHd/b2I5CsaMyfilr3Up/Hib6etrERmTZUH/t6+UHQtYjpBL6G
- HY7LqdFXjkXb2qPUm6BpCbyuWeqlJ2Y3ULn6o0TF/gOHv3nkqIL4IV2yvc5vmyrYGn9ISS2yy
- 0ibKXIMN7KdKRllILtPYah2wamWjdw25ghSi3b6Yd1/uJZYzfL0ZQq1Zyjqog/Xyb0YnhthyD
- ptQoabXcOne1rys3kOv80NTwZZzp2R+MtSQTJNil9zt1ZmbW0wRejytP8kBuM1SOJcnew6y/G
- x/k/iNo+p9hCG/1dUA/DgqUBr9JWlPUNRqhi+Pijmj1sGzbXgl/L53e72cY7EfOjjzKDoVTBH
- ISVSBtTHqZruPQS8vu9AvidlRNnn7ts46+P9XBMolGWhQBYjbhJQC
+        Radostin Stoyanov <rstoyanov1@gmail.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>,
+        Jann Horn <jannh@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v6 0/7] capabilities: Introduce CAP_CHECKPOINT_RESTORE
+Message-ID: <20200720115452.ne2vqtdneuungb3j@wittgenstein>
+References: <20200719100418.2112740-1-areber@redhat.com>
+ <20200719181729.6f37lilhvov5a74f@wittgenstein>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200719181729.6f37lilhvov5a74f@wittgenstein>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 20, 2020 at 11:25 AM Mike Rapoport <rppt@kernel.org> wrote:
->
-> From: Mike Rapoport <rppt@linux.ibm.com>
->
-> Introduce "secretmemfd" system call with the ability to create memory areas
-> visible only in the context of the owning process and not mapped not only
-> to other processes but in the kernel page tables as well.
->
-> The user will create a file descriptor using the secretmemfd system call
-> where flags supplied as a parameter to this system call will define the
-> desired protection mode for the memory associated with that file
-> descriptor. Currently there are two protection modes:
->
-> * exclusive - the memory area is unmapped from the kernel direct map and it
->               is present only in the page tables of the owning mm.
-> * uncached  - the memory area is present only in the page tables of the
->               owning mm and it is mapped there as uncached.
->
-> For instance, the following example will create an uncached mapping (error
-> handling is omitted):
->
->         fd = secretmemfd(SECRETMEM_UNCACHED);
->         ftruncate(fd, MAP_SIZE);
->         ptr = mmap(NULL, MAP_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED,
->                    fd, 0);
->
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+On Sun, Jul 19, 2020 at 08:17:30PM +0200, Christian Brauner wrote:
+> On Sun, Jul 19, 2020 at 12:04:10PM +0200, Adrian Reber wrote:
+> > This is v6 of the 'Introduce CAP_CHECKPOINT_RESTORE' patchset. The
+> > changes to v5 are:
+> > 
+> >  * split patch dealing with /proc/self/exe into two patches:
+> >    * first patch to enable changing it with CAP_CHECKPOINT_RESTORE
+> >      and detailed history in the commit message
+> >    * second patch changes -EINVAL to -EPERM
+> >  * use kselftest_harness.h infrastructure for test
+> >  * replace if (!capable(CAP_SYS_ADMIN) || !capable(CAP_CHECKPOINT_RESTORE))
+> >    with if (!checkpoint_restore_ns_capable(&init_user_ns))
+> > 
+> > Adrian Reber (5):
+> >   capabilities: Introduce CAP_CHECKPOINT_RESTORE
+> >   pid: use checkpoint_restore_ns_capable() for set_tid
+> >   pid_namespace: use checkpoint_restore_ns_capable() for ns_last_pid
+> >   proc: allow access in init userns for map_files with
+> >     CAP_CHECKPOINT_RESTORE
+> >   selftests: add clone3() CAP_CHECKPOINT_RESTORE test
+> > 
+> > Nicolas Viennot (2):
+> >   prctl: Allow local CAP_CHECKPOINT_RESTORE to change /proc/self/exe
+> >   prctl: exe link permission error changed from -EINVAL to -EPERM
+> > 
+> >  fs/proc/base.c                                |   8 +-
+> >  include/linux/capability.h                    |   6 +
+> >  include/uapi/linux/capability.h               |   9 +-
+> >  kernel/pid.c                                  |   2 +-
+> >  kernel/pid_namespace.c                        |   2 +-
+> >  kernel/sys.c                                  |  13 +-
+> >  security/selinux/include/classmap.h           |   5 +-
+> >  tools/testing/selftests/clone3/.gitignore     |   1 +
+> >  tools/testing/selftests/clone3/Makefile       |   4 +-
+> >  .../clone3/clone3_cap_checkpoint_restore.c    | 177 ++++++++++++++++++
+> >  10 files changed, 212 insertions(+), 15 deletions(-)
+> >  create mode 100644 tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+> > 
+> > base-commit: d31958b30ea3b7b6e522d6bf449427748ad45822
+> 
+> Adrian, Nicolas thank you!
+> I grabbed the series to run the various core test-suites we've added
+> over the last year and pushed it to
+> https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=cap_checkpoint_restore
+> for now to let kbuild/ltp chew on it for a bit.
 
-I wonder if this should be more closely related to dmabuf file
-descriptors, which
-are already used for a similar purpose: sharing access to secret memory areas
-that are not visible to the OS but can be shared with hardware through device
-drivers that can import a dmabuf file descriptor.
+Ok, I ran the test-suite this morning and there's nothing to worry about
+it all passes _but_ the selftests had a bug using SKIP() instead of
+XFAIL() and they mixed ksft_print_msg() and TH_LOG(). I know that I
+think I mentioned to you that you can't use TH_LOG() outside of TEST*().
+Turns out I was wrong. You can do it if you pass in a specific global
+variable. Here's the diff I applied on top of the selftests you sent.
+After these changes the output looks like this:
 
-      Arnd
+[==========] Running 1 tests from 1 test cases.
+[ RUN      ] global.clone3_cap_checkpoint_restore
+# clone3() syscall supported
+clone3_cap_checkpoint_restore.c:155:clone3_cap_checkpoint_restore:Child has PID 12303
+clone3_cap_checkpoint_restore.c:88:clone3_cap_checkpoint_restore:[12302] Trying clone3() with CLONE_SET_TID to 12303
+clone3_cap_checkpoint_restore.c:55:clone3_cap_checkpoint_restore:Operation not permitted - Failed to create new process
+clone3_cap_checkpoint_restore.c:90:clone3_cap_checkpoint_restore:[12302] clone3() with CLONE_SET_TID 12303 says:-1
+clone3_cap_checkpoint_restore.c:88:clone3_cap_checkpoint_restore:[12302] Trying clone3() with CLONE_SET_TID to 12303
+clone3_cap_checkpoint_restore.c:70:clone3_cap_checkpoint_restore:I am the parent (12302). My child's pid is 12303
+clone3_cap_checkpoint_restore.c:63:clone3_cap_checkpoint_restore:I am the child, my PID is 12303 (expected 12303)
+clone3_cap_checkpoint_restore.c:90:clone3_cap_checkpoint_restore:[12302] clone3() with CLONE_SET_TID 12303 says:0
+[       OK ] global.clone3_cap_checkpoint_restore
+[==========] 1 / 1 tests passed.
+[  PASSED  ]
+
+Ok with this below being applied on top of it?
+
+diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+index c0d83511cd28..9562425aa0a9 100644
+--- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
++++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+@@ -38,7 +38,8 @@ static void child_exit(int ret)
+ 	_exit(ret);
+ }
+ 
+-static int call_clone3_set_tid(pid_t *set_tid, size_t set_tid_size)
++static int call_clone3_set_tid(struct __test_metadata *_metadata,
++			       pid_t *set_tid, size_t set_tid_size)
+ {
+ 	int status;
+ 	pid_t pid = -1;
+@@ -51,7 +52,7 @@ static int call_clone3_set_tid(pid_t *set_tid, size_t set_tid_size)
+ 
+ 	pid = sys_clone3(&args, sizeof(struct clone_args));
+ 	if (pid < 0) {
+-		ksft_print_msg("%s - Failed to create new process\n", strerror(errno));
++		TH_LOG("%s - Failed to create new process", strerror(errno));
+ 		return -errno;
+ 	}
+ 
+@@ -59,18 +60,17 @@ static int call_clone3_set_tid(pid_t *set_tid, size_t set_tid_size)
+ 		int ret;
+ 		char tmp = 0;
+ 
+-		ksft_print_msg
+-		    ("I am the child, my PID is %d (expected %d)\n", getpid(), set_tid[0]);
++		TH_LOG("I am the child, my PID is %d (expected %d)", getpid(), set_tid[0]);
+ 
+ 		if (set_tid[0] != getpid())
+ 			child_exit(EXIT_FAILURE);
+ 		child_exit(EXIT_SUCCESS);
+ 	}
+ 
+-	ksft_print_msg("I am the parent (%d). My child's pid is %d\n", getpid(), pid);
++	TH_LOG("I am the parent (%d). My child's pid is %d", getpid(), pid);
+ 
+ 	if (waitpid(pid, &status, 0) < 0) {
+-		ksft_print_msg("Child returned %s\n", strerror(errno));
++		TH_LOG("Child returned %s", strerror(errno));
+ 		return -errno;
+ 	}
+ 
+@@ -80,13 +80,14 @@ static int call_clone3_set_tid(pid_t *set_tid, size_t set_tid_size)
+ 	return WEXITSTATUS(status);
+ }
+ 
+-static int test_clone3_set_tid(pid_t *set_tid, size_t set_tid_size)
++static int test_clone3_set_tid(struct __test_metadata *_metadata,
++			       pid_t *set_tid, size_t set_tid_size)
+ {
+ 	int ret;
+ 
+-	ksft_print_msg("[%d] Trying clone3() with CLONE_SET_TID to %d\n", getpid(), set_tid[0]);
+-	ret = call_clone3_set_tid(set_tid, set_tid_size);
+-	ksft_print_msg("[%d] clone3() with CLONE_SET_TID %d says:%d\n", getpid(), set_tid[0], ret);
++	TH_LOG("[%d] Trying clone3() with CLONE_SET_TID to %d", getpid(), set_tid[0]);
++	ret = call_clone3_set_tid(_metadata, set_tid, set_tid_size);
++	TH_LOG("[%d] clone3() with CLONE_SET_TID %d says:%d", getpid(), set_tid[0], ret);
+ 	return ret;
+ }
+ 
+@@ -144,7 +145,7 @@ TEST(clone3_cap_checkpoint_restore)
+ 	test_clone3_supported();
+ 
+ 	EXPECT_EQ(getuid(), 0)
+-		SKIP(return, "Skipping all tests as non-root\n");
++		XFAIL(return, "Skipping all tests as non-root\n");
+ 
+ 	memset(&set_tid, 0, sizeof(set_tid));
+ 
+@@ -162,16 +163,20 @@ TEST(clone3_cap_checkpoint_restore)
+ 
+ 	ASSERT_EQ(set_capability(), 0)
+ 		TH_LOG("Could not set CAP_CHECKPOINT_RESTORE");
+-	prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0);
+-	setgid(1000);
+-	setuid(1000);
++
++	ASSERT_EQ(prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0), 0);
++
++	EXPECT_EQ(setgid(65534), 0)
++		TH_LOG("Failed to setgid(65534)");
++	ASSERT_EQ(setuid(65534), 0);
++
+ 	set_tid[0] = pid;
+ 	/* This would fail without CAP_CHECKPOINT_RESTORE */
+-	ASSERT_EQ(test_clone3_set_tid(set_tid, 1), -EPERM);
++	ASSERT_EQ(test_clone3_set_tid(_metadata, set_tid, 1), -EPERM);
+ 	ASSERT_EQ(set_capability(), 0)
+ 		TH_LOG("Could not set CAP_CHECKPOINT_RESTORE");
+ 	/* This should work as we have CAP_CHECKPOINT_RESTORE as non-root */
+-	ASSERT_EQ(test_clone3_set_tid(set_tid, 1), 0);
++	ASSERT_EQ(test_clone3_set_tid(_metadata, set_tid, 1), 0);
+ }
+ 
+ TEST_HARNESS_MAIN
