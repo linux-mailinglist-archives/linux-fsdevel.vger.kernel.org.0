@@ -2,118 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC38E226DBD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 20:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9B6F226DCC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 20 Jul 2020 20:09:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728987AbgGTSGL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 20 Jul 2020 14:06:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33322 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728639AbgGTSGL (ORCPT
+        id S1731531AbgGTSJG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 20 Jul 2020 14:09:06 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:58215 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729029AbgGTSJF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 20 Jul 2020 14:06:11 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D05EBC061794
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jul 2020 11:06:10 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id h19so21203997ljg.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jul 2020 11:06:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uI8ot/2J0X8mcn9Zfp2J49mB1lp08I2jN3wbAeSC/Pw=;
-        b=Cz61HqTwOZ6IEwVnpU+vIjJ2UVZP/Mu4fKA2ydp8JL2VDpMC+nUU4axsRhH+TxIuMT
-         7h9Jetot2Q2oMe1da303RP61HjMA+kS64YBC7m4CKaPJ6ZkKqgFan1xJh394/xLoayCV
-         YJQKJ0gYeeODtQeM9+onNI6euuT5xsMXV1y1M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uI8ot/2J0X8mcn9Zfp2J49mB1lp08I2jN3wbAeSC/Pw=;
-        b=dv5/OEL3vcgHV+q2fAZidhkzt05GIk6qZ4RbUe9ffmcdAXLY1FwTlH5bObxM0Kupsb
-         zTqs7+LPPOic7GPVH/6Ucf4TqU8uuz5LHR1DC9KKBRf9U3Z21ZhKjoyG4W1lSKCdlkpn
-         609ZRUM5bAHwuhr7xmWsonMl03FLdaHFfdnieaI2uajWdzuFMG4czEgFaEfCbBnoagJF
-         BC5ULfyupprGtigSaYPlC6Lmx8Yc8P9uU0o/YT+R6q5Ny4cSXk8lVOg2QvYcqmbWydEL
-         vDdW871hwCEFVUa0XIsq+KekzDAi5bAeDXJlncq6yz+E07kVLLKnv42a2AksXnMOraXi
-         7spw==
-X-Gm-Message-State: AOAM531pVC+T8ousaUinkjVL7HuYRIENMKAk8EPpNPvsntNSANtxZjp6
-        kOrEBKkEZdqbCc6FkMYJlChyHnPl+/g=
-X-Google-Smtp-Source: ABdhPJzCZ0hyPiZC2w5iULPOZolnm1P7Gz+AUajSycgBjtOAeLBiHNB2dUSRvpyu/ucOXn+V1uTVMg==
-X-Received: by 2002:a05:651c:2006:: with SMTP id s6mr10095608ljo.74.1595268368880;
-        Mon, 20 Jul 2020 11:06:08 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id 16sm3315619ljw.127.2020.07.20.11.06.07
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 20 Jul 2020 11:06:07 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id o4so10233355lfi.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 20 Jul 2020 11:06:07 -0700 (PDT)
-X-Received: by 2002:a05:6512:2082:: with SMTP id t2mr2412004lfr.142.1595268366796;
- Mon, 20 Jul 2020 11:06:06 -0700 (PDT)
+        Mon, 20 Jul 2020 14:09:05 -0400
+Received: from mail-qk1-f177.google.com ([209.85.222.177]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MqbI0-1kb3l72gnw-00mbhT; Mon, 20 Jul 2020 20:09:01 +0200
+Received: by mail-qk1-f177.google.com with SMTP id h7so488677qkk.7;
+        Mon, 20 Jul 2020 11:09:01 -0700 (PDT)
+X-Gm-Message-State: AOAM532LQ8HuYgMqhLlbzb6YY2X2/QtBTW0FSzbZAAlDn3gv8mcRSjt6
+        XWA2t0IqODVxLfyOqHpTpKnJW5G8B3CxF5IkwjQ=
+X-Google-Smtp-Source: ABdhPJxk8AXvQoaaSyG6TPpWGlRFg6r3NFnqCF1QtWJiuwzUOgkiVS3DL9DQU7SzABQpPR/Um1zIkILDDVb8zZFAISI=
+X-Received: by 2002:a37:b484:: with SMTP id d126mr22851253qkf.394.1595268540113;
+ Mon, 20 Jul 2020 11:09:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200720155902.181712-1-hch@lst.de> <20200720155902.181712-5-hch@lst.de>
-In-Reply-To: <20200720155902.181712-5-hch@lst.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 20 Jul 2020 11:05:50 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wimKMPiGP6n_HQUJ1rQ_6cT6hZH5rjQa_nfAgjB1mug+A@mail.gmail.com>
-Message-ID: <CAHk-=wimKMPiGP6n_HQUJ1rQ_6cT6hZH5rjQa_nfAgjB1mug+A@mail.gmail.com>
-Subject: Re: [PATCH 04/24] fs: move the putname from filename_create to the callers
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-raid@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
+References: <20200720092435.17469-1-rppt@kernel.org> <20200720092435.17469-4-rppt@kernel.org>
+ <CAK8P3a0NyvRMqH7X0YNO5E6DGtvZXD5ZcD6Y6n7AkocufkMnHA@mail.gmail.com> <1595260305.4554.9.camel@linux.ibm.com>
+In-Reply-To: <1595260305.4554.9.camel@linux.ibm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 20 Jul 2020 20:08:43 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a34kx4aAFY=-SBHX3suCLwxeZY7+YSRzct93YM_OFbSWA@mail.gmail.com>
+Message-ID: <CAK8P3a34kx4aAFY=-SBHX3suCLwxeZY7+YSRzct93YM_OFbSWA@mail.gmail.com>
+Subject: Re: [PATCH 3/6] mm: introduce secretmemfd system call to create
+ "secret" memory areas
+To:     "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc:     Mike Rapoport <rppt@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, linux-nvdimm@lists.01.org,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        linaro-mm-sig@lists.linaro.org,
+        Sumit Semwal <sumit.semwal@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:mMIslIN9LPglY3J5UjtYLyGRTynVj4G4C03NTxE+HIOHtsP3EDW
+ 6vmwXQ/rDd95A8R1jRHFPgcyZMoWnj/4hN3OEW3EpFjaNSHtXpDYrL9Uh6LIjaX+/ZQfhyJ
+ B12aXsIQkzUBTOJPJ/HhZPOj1VlOAmNTTwbYN0w8ueDy6Zyx5dxUKhnNVtTvXoqrqjYtebO
+ RTzwoOPaMa8GXoCUdWs9Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:dt3ajiaLIoE=:8lPDfmMJiVDwnBROjMIocG
+ tGAzx7/zLHCoN1MZgnxqBlxX6FThpKjK7O6ofp2Yw8dIr8mDFbnxbgvstpnukhQhBuosGvt/P
+ KaGO5OISWQ4gxbcxsUU8M/L8yxHpuFZGRq6S2LTuauxo3V/v/a2YJVq3B/uQCjjvnK/VbsEy7
+ pR6fa8bJI9aVHZ3DgLuBSTKcWxdTbNubrUU3FNViOSG1VgktOgwfjBJwFKzMontW1Z3QsREng
+ mMBUJ7OBpw/Fj5ue/t9VFEjrPmE30w71rF4OWFmL8XVDIzU8pGmFiWAtFmjKg5pkDL/XSFEMi
+ 5nTB5zX+I4MqreHz/MI+jSEE28ftMdi5rPB7Ex0LoMeSz8bUejNnYn9hKBbrSzaullCoJKGu4
+ QfTo5R9rVeiNYWwpT4ygereWpfHJEf4nfVq/4FHlDl0b1GdVmfpE8S2VWozJYoZKMdpAe0Yv6
+ ucTWi37ZY+8JV2dxhdY3pto1wNDKVhm3ts+rS9bIde/a1rvaiVAYHZ8G64kgTmBWKlX+iCN3f
+ UheXvSyqWHaqR5IMwEJdW2A78l2GDhM8zTFBhH/LaPeGMTHFoK58CuwEzEd68SqT0GSJfxrOb
+ lVZ1Twq78ZvFdFxnBqDdw6vwJSpF4rM+nSZo+Fs426CfaT7vLYZXBO5raAwXDxZUAKk9GBfHG
+ jhunTBDmPA1x2q3g5daoNpAFzXp3JXK+9iXHLd32D4DCLdh3VP0mi53ib+HCIsrUkdSbiVwW7
+ 5SkKDILDy5UVTZugXj0QFnnp+/iA0caVqf/SoHYR7Em/znOlACY8xTCJLAs5c5I5MDO0N223i
+ CR+jPo9UqaBJcTsNFCXLmZdo4EaHJn4wshEZ7Ud+bX+QHKG1F32j5Yc0zUG63xIVdlr9ENaBd
+ a3WrKZiEeCqmPMVFkbEtFg4gO1QNrZlsNKDiIq5mh6KWAzxG8DOBt527XkG0Ff5syd9/OYBk+
+ HnblSI7zF4+xHOoKeORALKWXkERQX6zg1lpkHtwnbqoHDFivCd4q7
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 20, 2020 at 8:59 AM Christoph Hellwig <hch@lst.de> wrote:
+On Mon, Jul 20, 2020 at 5:52 PM James Bottomley <jejb@linux.ibm.com> wrote:
+> On Mon, 2020-07-20 at 13:30 +0200, Arnd Bergmann wrote:
 >
-> This allows reusing the struct filename for retries, and will also allow
-> pushing the getname up the stack for a few places to allower for better
-> handling of kernel space filenames.
+> I'll assume you mean the dmabuf userspace API?  Because the kernel API
+> is completely device exchange specific and wholly inappropriate for
+> this use case.
+>
+> The user space API of dmabuf uses a pseudo-filesystem.  So you mount
+> the dmabuf file type (and by "you" I mean root because an ordinary user
+> doesn't have sufficient privilege).  This is basically because every
+> dmabuf is usable by any user who has permissions.  This really isn't
+> the initial interface we want for secret memory because secret regions
+> are supposed to be per process and not shared (at least we don't want
+> other tenants to see who's using what).
+>
+> Once you have the fd, you can seek to find the size, mmap, poll and
+> ioctl it.  The ioctls are all to do with memory synchronization (as
+> you'd expect from a device backed region) and the mmap is handled by
+> the dma_buf_ops, which is device specific.  Sizing is missing because
+> that's reported by the device not settable by the user.
 
-I find this _very_ confusing.
+I was mainly talking about the in-kernel interface that is used for
+sharing a buffer with hardware. Aside from the limited ioctls, anything
+in the kernel can decide on how it wants to export a dma_buf by
+calling dma_buf_export()/dma_buf_fd(), which is roughly what the
+new syscall does as well. Using dma_buf vs the proposed
+implementation for this is not a big difference in complexity.
 
-Now the rule is that filename_create() does the putname() if it fails,
-but not if it succeeds.
+The one thing that a dma_buf does is that it allows devices to
+do DMA on it. This is either something that can turn out to be
+useful later, or it is not. From the description, it sounded like
+the sharing might be useful, since we already have known use
+cases in which "secret" data is exchanged with a trusted execution
+environment using the dma-buf interface.
 
-That's just all kinds of messed up.
+If there is no way the data stored in this new secret memory area
+would relate to secret data in a TEE or some other hardware
+device, then I agree that dma-buf has no value.
 
-It was already slightly confusing how "getname()" was paired with
-"putname()", and how you didn't need to check for errors, but at least
-it was easy to explain: "filename_create() will  check errors and use
-the name we got".
+> What we want is the ability to get an fd, set the properties and the
+> size and mmap it.  This is pretty much a 100% overlap with the memfd
+> API and not much overlap with the dmabuf one, which is why I don't
+> think the interface is very well suited.
 
-That slightly confusing calling convention made the code much more
-compact, and nobody involved needed to do error checks on the name
-etc.
+Does that mean you are suggesting to use additional flags on
+memfd_create() instead of a new system call?
 
-Now that "slightly confusing" convention has gone from "slightly" to
-"outright", and the whole advantage of the interface has completely
-gone away, because now you not only need to do the putname() in the
-caller, you need to do it _conditionally_.
-
-So please don't do this.
-
-The other patches also all make it *really* hard to follow when
-putname() is done - because depending on the context, you have to do
-it when returning an error, or when an error was not returned.
-
-I really think this is a huge mistake. Don't do it this way. NAK NAK NAK.
-
-Please instead of making this all completely messy and completely
-impossible to follow the rule about exactly who does "putname()" and
-under what conditions, just leave the slight duplication in place.
-
-Duplicating simple helper routines is *good*. Complex and
-hard-to-understand and non-intuitive rules are *bad*.
-
-You're adding badness.
-
-                 Linus
+      Arnd
