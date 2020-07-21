@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EC6C2285A7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 18:30:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 666732285A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 18:30:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730312AbgGUQ2a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jul 2020 12:28:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44646 "EHLO
+        id S1730330AbgGUQ2b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jul 2020 12:28:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730258AbgGUQ21 (ORCPT
+        with ESMTP id S1728432AbgGUQ23 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jul 2020 12:28:27 -0400
+        Tue, 21 Jul 2020 12:28:29 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81A0CC061794;
-        Tue, 21 Jul 2020 09:28:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDE07C0619DA;
+        Tue, 21 Jul 2020 09:28:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=m67RdQ+cLDv76HGUGUecOWlHz7zkGO1looBZ2dbrIkU=; b=qZhDZgi911HBC1S9S+Rs3mGrv3
-        SmH/OVU2DKghnNIXDajD3gyPercus7xYUnlJxxK1VLS7rVKWKc6jWrLmvGpTXKaHbHTCp1nlSCMli
-        ncekk2hn8ktPrky2aaUnDdaxCG+SLetGaLh+lqKyvysYMhBaIe0WtIhdX61RI+Cadknib+oKiJwiE
-        xYCuYV+uWfUhKrbW4JD+cSTPpKdxKbHI+R5Knm4lofJq8ZIAap/eYjxdZUZ/S6Z6lWdrs2XU6zIN7
-        ISLPp60Bl8bqT/nEAoNr6BD/ANqn1JDEnY1f9hOSkWu17owUNcexZ642T+Cod5ahjr38dKYZB/Vn5
-        3iwClXmQ==;
+        bh=XAvmv1Dl0w8Zpf/KQARmzzrtRh2ODKzOSAZO8WVKkSg=; b=tXrgBqGAHo4E0VBkb2nw9VyfvD
+        9IRTxUlxuz0ouJ6VjOfWwo5xwX2jtGUDhnB/PPyj7ye4XdZrTgxnlTESz22JKRwwhAXils98CWURu
+        SVkOjms0QSposrqfehUAagszD2Wq0rNdV2j6QFCF5nvY/esvkPMKRxnz+G3f1g5F9w9zi2lX+9yev
+        tdyWnCvLfKNrh4yNIp/FAMCvdLF29u62EWzp+xkxnT0bV062m7zdtpO6inhVrCahfFwsu0jqko3Eb
+        5LpKmCWQ6XjxyLCboyCWs5ZTMhA6cCQIVUY27cvgnXaLjpIiVDMDvIKLalAhh5+ncsG5jLa8z+FGh
+        aiHc6a/A==;
 Received: from [2001:4bb8:18c:2acc:5b1c:6483:bd6d:e406] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jxv7v-0007Rm-8b; Tue, 21 Jul 2020 16:28:23 +0000
+        id 1jxv7w-0007Ru-OJ; Tue, 21 Jul 2020 16:28:25 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>
@@ -35,9 +35,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH 03/24] fs: push the getname from do_rmdir into the callers
-Date:   Tue, 21 Jul 2020 18:27:57 +0200
-Message-Id: <20200721162818.197315-4-hch@lst.de>
+Subject: [PATCH 04/24] devtmpfs: open code do_mount
+Date:   Tue, 21 Jul 2020 18:27:58 +0200
+Message-Id: <20200721162818.197315-5-hch@lst.de>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200721162818.197315-1-hch@lst.de>
 References: <20200721162818.197315-1-hch@lst.de>
@@ -49,90 +49,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This mirrors do_unlinkat and will make life a little easier for
-the init code to reuse the whole function with a kernel filename.
+Replace do_umount with an open coded version that takes the proper
+kernel pointer instead of relying on the implicit set_fs(KERNEL_DS)
+during early init.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/internal.h            |  2 +-
- fs/namei.c               | 10 ++++------
- include/linux/syscalls.h |  4 ++--
- 3 files changed, 7 insertions(+), 9 deletions(-)
+ drivers/base/devtmpfs.c | 17 +++++++++++++++--
+ fs/namespace.c          |  2 +-
+ include/linux/mount.h   |  3 +++
+ 3 files changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/fs/internal.h b/fs/internal.h
-index 9b863a7bd70892..e903d5aae139a2 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -65,7 +65,7 @@ extern int vfs_path_lookup(struct dentry *, struct vfsmount *,
- long do_mknodat(int dfd, const char __user *filename, umode_t mode,
- 		unsigned int dev);
- long do_mkdirat(int dfd, const char __user *pathname, umode_t mode);
--long do_rmdir(int dfd, const char __user *pathname);
-+long do_rmdir(int dfd, struct filename *name);
- long do_unlinkat(int dfd, struct filename *name);
- long do_symlinkat(const char __user *oldname, int newdfd,
- 		  const char __user *newname);
-diff --git a/fs/namei.c b/fs/namei.c
-index 72d4219c93acb7..d75a6039ae3966 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3720,17 +3720,16 @@ int vfs_rmdir(struct inode *dir, struct dentry *dentry)
+diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+index c9017e0584c003..5e8d677ee783bc 100644
+--- a/drivers/base/devtmpfs.c
++++ b/drivers/base/devtmpfs.c
+@@ -345,6 +345,19 @@ static int handle_remove(const char *nodename, struct device *dev)
+ 	return err;
  }
- EXPORT_SYMBOL(vfs_rmdir);
  
--long do_rmdir(int dfd, const char __user *pathname)
-+long do_rmdir(int dfd, struct filename *name)
++static int devtmpfs_do_mount(const char __user *dir_name)
++{
++	struct path p;
++	int ret;
++
++	ret = kern_path(dir_name, LOOKUP_FOLLOW, &p);
++	if (ret)
++		return ret;
++	ret = path_mount("devtmpfs", &p, "devtmpfs", MS_SILENT, NULL);
++	path_put(&p);
++	return ret;
++}
++
+ /*
+  * If configured, or requested by the commandline, devtmpfs will be
+  * auto-mounted after the kernel mounted the root filesystem.
+@@ -359,7 +372,7 @@ int __init devtmpfs_mount(void)
+ 	if (!thread)
+ 		return 0;
+ 
+-	err = do_mount("devtmpfs", "dev", "devtmpfs", MS_SILENT, NULL);
++	err = devtmpfs_do_mount("dev");
+ 	if (err)
+ 		printk(KERN_INFO "devtmpfs: error mounting %i\n", err);
+ 	else
+@@ -385,7 +398,7 @@ static int devtmpfs_setup(void *p)
+ 	err = ksys_unshare(CLONE_NEWNS);
+ 	if (err)
+ 		goto out;
+-	err = do_mount("devtmpfs", "/", "devtmpfs", MS_SILENT, NULL);
++	err = devtmpfs_do_mount("/");
+ 	if (err)
+ 		goto out;
+ 	ksys_chdir("/.."); /* will traverse into overmounted root */
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 43834b59eff6c3..2c4d7592097485 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3111,7 +3111,7 @@ char *copy_mount_string(const void __user *data)
+  * Therefore, if this magic number is present, it carries no information
+  * and must be discarded.
+  */
+-static int path_mount(const char *dev_name, struct path *path,
++int path_mount(const char *dev_name, struct path *path,
+ 		const char *type_page, unsigned long flags, void *data_page)
  {
- 	int error = 0;
--	struct filename *name;
- 	struct dentry *dentry;
- 	struct path path;
- 	struct qstr last;
- 	int type;
- 	unsigned int lookup_flags = 0;
- retry:
--	name = filename_parentat(dfd, getname(pathname), lookup_flags,
-+	name = filename_parentat(dfd, name, lookup_flags,
- 				&path, &last, &type);
- 	if (IS_ERR(name))
- 		return PTR_ERR(name);
-@@ -3781,7 +3780,7 @@ long do_rmdir(int dfd, const char __user *pathname)
+ 	unsigned int mnt_flags = 0, sb_flags;
+diff --git a/include/linux/mount.h b/include/linux/mount.h
+index de657bd211fa64..bf9896f86a48f4 100644
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -113,4 +113,7 @@ extern bool path_is_mountpoint(const struct path *path);
  
- SYSCALL_DEFINE1(rmdir, const char __user *, pathname)
- {
--	return do_rmdir(AT_FDCWD, pathname);
-+	return do_rmdir(AT_FDCWD, getname(pathname));
- }
+ extern void kern_unmount_array(struct vfsmount *mnt[], unsigned int num);
  
- /**
-@@ -3926,8 +3925,7 @@ SYSCALL_DEFINE3(unlinkat, int, dfd, const char __user *, pathname, int, flag)
- 		return -EINVAL;
- 
- 	if (flag & AT_REMOVEDIR)
--		return do_rmdir(dfd, pathname);
--
-+		return do_rmdir(dfd, getname(pathname));
- 	return do_unlinkat(dfd, getname(pathname));
- }
- 
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 5b0f1fca4cfb9d..e43816198e6001 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -1281,11 +1281,11 @@ static inline long ksys_unlink(const char __user *pathname)
- 	return do_unlinkat(AT_FDCWD, getname(pathname));
- }
- 
--extern long do_rmdir(int dfd, const char __user *pathname);
-+long do_rmdir(int dfd, struct filename *name);
- 
- static inline long ksys_rmdir(const char __user *pathname)
- {
--	return do_rmdir(AT_FDCWD, pathname);
-+	return do_rmdir(AT_FDCWD, getname(pathname));
- }
- 
- extern long do_mkdirat(int dfd, const char __user *pathname, umode_t mode);
++int path_mount(const char *dev_name, struct path *path, const char *type_page,
++		unsigned long flags, void *data_page);
++
+ #endif /* _LINUX_MOUNT_H */
 -- 
 2.27.0
 
