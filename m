@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A9158228C55
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jul 2020 01:01:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8DC8228C5B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jul 2020 01:01:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731376AbgGUXBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1731353AbgGUXBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 21 Jul 2020 19:01:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48972 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:48984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728014AbgGUXBA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S1731305AbgGUXBA (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 21 Jul 2020 19:01:00 -0400
 Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED9DF2073A;
-        Tue, 21 Jul 2020 23:00:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47D762077D;
+        Tue, 21 Jul 2020 23:00:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1595372459;
-        bh=i10MleHpPiD+UlqvEBbCBk40R3U1eodRZ9LmKRTef48=;
+        bh=+JzszfrnukA7rp34K4rJ987oveUxD8x6PQPTeTcR6H0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2UrKh8jVKP4YqMR+ott79ppUtxS+O7gHH9ShvxNTAuNFBZmTmqlCG5CWy9w79n+Cg
-         XiIpP7yNESIvQqfvRZiaQZxEVS7x37eKyEqXzXOksAXo5PoR6DPlVSMqDfBnF9DnxQ
-         6p9F6n2gtDZpXH1niAqfrcTbH+cjpR+CZkOdM19g=
+        b=UD7wGV6o8j/007/nURLRwUgh3FtROGYfwXlRmz2E+hWc/ErhCaZg7QhEk0J6rE/0G
+         BJHPNkKnY4vns9lZKCHYAn0AyRVj/MdMod0spy99kT4HspV3dOEXWcfNm82loSvY4+
+         Kl/7BHiom0gFkPFuluRnlrqwmYTBIXRPyd2QkAtk=
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fscrypt@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
-        Daniel Rosenberg <drosen@google.com>
-Subject: [PATCH 1/5] fscrypt: switch fscrypt_do_sha256() to use the SHA-256 library
-Date:   Tue, 21 Jul 2020 15:59:16 -0700
-Message-Id: <20200721225920.114347-2-ebiggers@kernel.org>
+        Satya Tangirala <satyat@google.com>
+Subject: [PATCH 2/5] fscrypt: use smp_load_acquire() for fscrypt_prepared_key
+Date:   Tue, 21 Jul 2020 15:59:17 -0700
+Message-Id: <20200721225920.114347-3-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200721225920.114347-1-ebiggers@kernel.org>
 References: <20200721225920.114347-1-ebiggers@kernel.org>
@@ -43,125 +43,101 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-fscrypt_do_sha256() is only used for hashing encrypted filenames to
-create no-key tokens, which isn't performance-critical.  Therefore a C
-implementation of SHA-256 is sufficient.
+Normally smp_store_release() or cmpxchg_release() is paired with
+smp_load_acquire().  Sometimes smp_load_acquire() can be replaced with
+the more lightweight READ_ONCE().  However, for this to be safe, all the
+published memory must only be accessed in a way that involves the
+pointer itself.  This may not be the case if allocating the object also
+involves initializing a static or global variable, for example.
 
-Also, the logic to create no-key tokens is always potentially needed.
-This differs from fscrypt's other dependencies on crypto API algorithms,
-which are conditionally needed depending on what encryption policies
-userspace is using.  Therefore, for fscrypt there isn't much benefit to
-allowing SHA-256 to be a loadable module.
+fscrypt_prepared_key includes a pointer to a crypto_skcipher object,
+which is internal to and is allocated by the crypto subsystem.  By using
+READ_ONCE() for it, we're relying on internal implementation details of
+the crypto subsystem.
 
-So, make fscrypt_do_sha256() use the SHA-256 library instead of the
-crypto_shash API.  This is much simpler, since it avoids having to
-implement one-time-init (which is hard to do correctly, and in fact was
-implemented incorrectly) and handle failures to allocate the
-crypto_shash object.
+Remove this fragile assumption by using smp_load_acquire() instead.
 
-Fixes: edc440e3d27f ("fscrypt: improve format of no-key names")
-Cc: Daniel Rosenberg <drosen@google.com>
+(Note: I haven't seen any real-world problems here.  This change is just
+fixing the code to be guaranteed correct and less fragile.)
+
+Fixes: 5fee36095cda ("fscrypt: add inline encryption support")
+Cc: Satya Tangirala <satyat@google.com>
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/crypto/Kconfig |  2 +-
- fs/crypto/fname.c | 41 ++++++++++-------------------------------
- 2 files changed, 11 insertions(+), 32 deletions(-)
+ fs/crypto/fscrypt_private.h | 15 +++++++++------
+ fs/crypto/inline_crypt.c    |  6 ++++--
+ fs/crypto/keysetup.c        |  6 ++++--
+ 3 files changed, 17 insertions(+), 10 deletions(-)
 
-diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
-index f1f11a6228eb..a5f5c30368a2 100644
---- a/fs/crypto/Kconfig
-+++ b/fs/crypto/Kconfig
-@@ -4,6 +4,7 @@ config FS_ENCRYPTION
- 	select CRYPTO
- 	select CRYPTO_HASH
- 	select CRYPTO_SKCIPHER
-+	select CRYPTO_LIB_SHA256
- 	select KEYS
- 	help
- 	  Enable encryption of files and directories.  This
-@@ -21,7 +22,6 @@ config FS_ENCRYPTION_ALGS
- 	select CRYPTO_CTS
- 	select CRYPTO_ECB
- 	select CRYPTO_HMAC
--	select CRYPTO_SHA256
- 	select CRYPTO_SHA512
- 	select CRYPTO_XTS
- 
-diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
-index d828e3df898b..011830f84d8d 100644
---- a/fs/crypto/fname.c
-+++ b/fs/crypto/fname.c
-@@ -61,30 +61,13 @@ struct fscrypt_nokey_name {
-  */
- #define FSCRYPT_NOKEY_NAME_MAX	offsetofend(struct fscrypt_nokey_name, sha256)
- 
--static struct crypto_shash *sha256_hash_tfm;
--
--static int fscrypt_do_sha256(const u8 *data, unsigned int data_len, u8 *result)
-+static void fscrypt_do_sha256(const u8 *data, unsigned int data_len, u8 *result)
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index bc1a3fcd45ed..8117a61b6f55 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -351,13 +351,16 @@ fscrypt_is_key_prepared(struct fscrypt_prepared_key *prep_key,
+ 			const struct fscrypt_info *ci)
  {
--	struct crypto_shash *tfm = READ_ONCE(sha256_hash_tfm);
--
--	if (unlikely(!tfm)) {
--		struct crypto_shash *prev_tfm;
--
--		tfm = crypto_alloc_shash("sha256", 0, 0);
--		if (IS_ERR(tfm)) {
--			fscrypt_err(NULL,
--				    "Error allocating SHA-256 transform: %ld",
--				    PTR_ERR(tfm));
--			return PTR_ERR(tfm);
--		}
--		prev_tfm = cmpxchg(&sha256_hash_tfm, NULL, tfm);
--		if (prev_tfm) {
--			crypto_free_shash(tfm);
--			tfm = prev_tfm;
--		}
--	}
-+	struct sha256_state sctx;
- 
--	return crypto_shash_tfm_digest(tfm, data, data_len, result);
-+	sha256_init(&sctx);
-+	sha256_update(&sctx, data, data_len);
-+	sha256_final(&sctx, result);
+ 	/*
+-	 * The READ_ONCE() here pairs with the smp_store_release() in
+-	 * fscrypt_prepare_key().  (This only matters for the per-mode keys,
+-	 * which are shared by multiple inodes.)
++	 * The two smp_load_acquire()'s here pair with the smp_store_release()'s
++	 * in fscrypt_prepare_inline_crypt_key() and fscrypt_prepare_key().
++	 * I.e., in some cases (namely, if this prep_key is a per-mode
++	 * encryption key) another task can publish blk_key or tfm concurrently,
++	 * executing a RELEASE barrier.  We need to use smp_load_acquire() here
++	 * to safely ACQUIRE the memory the other task published.
+ 	 */
+ 	if (fscrypt_using_inline_encryption(ci))
+-		return READ_ONCE(prep_key->blk_key) != NULL;
+-	return READ_ONCE(prep_key->tfm) != NULL;
++		return smp_load_acquire(&prep_key->blk_key) != NULL;
++	return smp_load_acquire(&prep_key->tfm) != NULL;
  }
  
- static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
-@@ -349,7 +332,6 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
- 	const struct qstr qname = FSTR_TO_QSTR(iname);
- 	struct fscrypt_nokey_name nokey_name;
- 	u32 size; /* size of the unencoded no-key name */
--	int err;
+ #else /* CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
+@@ -391,7 +394,7 @@ static inline bool
+ fscrypt_is_key_prepared(struct fscrypt_prepared_key *prep_key,
+ 			const struct fscrypt_info *ci)
+ {
+-	return READ_ONCE(prep_key->tfm) != NULL;
++	return smp_load_acquire(&prep_key->tfm) != NULL;
+ }
+ #endif /* !CONFIG_FS_ENCRYPTION_INLINE_CRYPT */
  
- 	if (fscrypt_is_dot_dotdot(&qname)) {
- 		oname->name[0] = '.';
-@@ -387,11 +369,9 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
- 	} else {
- 		memcpy(nokey_name.bytes, iname->name, sizeof(nokey_name.bytes));
- 		/* Compute strong hash of remaining part of name. */
--		err = fscrypt_do_sha256(&iname->name[sizeof(nokey_name.bytes)],
--					iname->len - sizeof(nokey_name.bytes),
--					nokey_name.sha256);
--		if (err)
--			return err;
-+		fscrypt_do_sha256(&iname->name[sizeof(nokey_name.bytes)],
-+				  iname->len - sizeof(nokey_name.bytes),
-+				  nokey_name.sha256);
- 		size = FSCRYPT_NOKEY_NAME_MAX;
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index d7aecadf33c1..dfb06375099a 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -176,8 +176,10 @@ int fscrypt_prepare_inline_crypt_key(struct fscrypt_prepared_key *prep_key,
+ 		}
  	}
- 	oname->len = base64_encode((const u8 *)&nokey_name, size, oname->name);
-@@ -530,9 +510,8 @@ bool fscrypt_match_name(const struct fscrypt_name *fname,
- 		return false;
- 	if (memcmp(de_name, nokey_name->bytes, sizeof(nokey_name->bytes)))
- 		return false;
--	if (fscrypt_do_sha256(&de_name[sizeof(nokey_name->bytes)],
--			      de_name_len - sizeof(nokey_name->bytes), sha256))
--		return false;
-+	fscrypt_do_sha256(&de_name[sizeof(nokey_name->bytes)],
-+			  de_name_len - sizeof(nokey_name->bytes), sha256);
- 	return !memcmp(sha256, nokey_name->sha256, sizeof(sha256));
- }
- EXPORT_SYMBOL_GPL(fscrypt_match_name);
+ 	/*
+-	 * Pairs with READ_ONCE() in fscrypt_is_key_prepared().  (Only matters
+-	 * for the per-mode keys, which are shared by multiple inodes.)
++	 * Pairs with the smp_load_acquire() in fscrypt_is_key_prepared().
++	 * I.e., here we publish ->blk_key with a RELEASE barrier so that
++	 * concurrent tasks can ACQUIRE it.  Note that this concurrency is only
++	 * possible for per-mode keys, not for per-file keys.
+ 	 */
+ 	smp_store_release(&prep_key->blk_key, blk_key);
+ 	return 0;
+diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
+index 22a94b18fe70..7f85fc645602 100644
+--- a/fs/crypto/keysetup.c
++++ b/fs/crypto/keysetup.c
+@@ -129,8 +129,10 @@ int fscrypt_prepare_key(struct fscrypt_prepared_key *prep_key,
+ 	if (IS_ERR(tfm))
+ 		return PTR_ERR(tfm);
+ 	/*
+-	 * Pairs with READ_ONCE() in fscrypt_is_key_prepared().  (Only matters
+-	 * for the per-mode keys, which are shared by multiple inodes.)
++	 * Pairs with the smp_load_acquire() in fscrypt_is_key_prepared().
++	 * I.e., here we publish ->tfm with a RELEASE barrier so that
++	 * concurrent tasks can ACQUIRE it.  Note that this concurrency is only
++	 * possible for per-mode keys, not for per-file keys.
+ 	 */
+ 	smp_store_release(&prep_key->tfm, tfm);
+ 	return 0;
 -- 
 2.27.0
 
