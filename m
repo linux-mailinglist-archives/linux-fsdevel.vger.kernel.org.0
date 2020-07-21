@@ -2,188 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16663228849
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 20:32:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3963228866
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 20:39:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730219AbgGUScP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jul 2020 14:32:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35784 "EHLO
+        id S1729266AbgGUSj0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jul 2020 14:39:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728577AbgGUScJ (ORCPT
+        with ESMTP id S1727860AbgGUSjY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jul 2020 14:32:09 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D6E2C0619DC;
-        Tue, 21 Jul 2020 11:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=g1iU+g80X5NheLUj70Usw4wskv5FEEX9gbzjsPxiIG4=; b=YCrFq48BOZ+ZpLcUDlo3t/YS22
-        VhEtv/+6o60MkrpDfnDvCDmuIgcTTmA3psW4K9+lrJx8V7zgFmwewa5YW7a5s5uHA1ClLqUQiAi7D
-        4de1hqXxmVp6bDFwPv41ymH535PNS/2X7qMjalJyNwk8tZsHgdRY/btyGm/82XKa/7fj73Rr/SKwd
-        4mdb7PBCiAPtzyLbtQiwXwcHixdWI+/XaWgshBP/Yw3OaNe/3W6dx2etX7gQWy9OABLtTvqnwpOx9
-        fyjZUFBtLmEx6f9NNMRipziu+ngzNFBtpeAY+ULvC1stSgszyjhvqo+jsP9jCkktH04Wordcp6JvY
-        E3hctjfw==;
-Received: from [2001:4bb8:18c:2acc:5b1c:6483:bd6d:e406] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jxx3c-00062e-DZ; Tue, 21 Jul 2020 18:32:05 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dave Chinner <david@fromorbit.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
+        Tue, 21 Jul 2020 14:39:24 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44BC6C0619DC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jul 2020 11:39:24 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id m9so11145452pfh.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jul 2020 11:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=j123tjao84sCawAECklrlDQrmh9RZ45cJHgg6B+xpl0=;
+        b=ATkzng+r1uo35unLIfNtsPpb5eVV4wK+rzAbIw4RBkY1/0DgAAEui5Jqs4BStBgH7+
+         lLdXZheX+n0+7S3Wx5a4UurMmGWkaipPXonBn7uKIBM72y/0A+xK2fnwQMmaX+YMiL2k
+         B70pTM6kPUyYOx20xLI6eDr26aFfZ828JhTxLQeoLymNRlT2nedn3FFvgSFD9CzgFFJu
+         iAWiBImbxYoSu7O0tiBBYEZq8nPJHl1+oWySWoVzhwALjloG6vmu3DIrpPdXmChbmt8o
+         lxPzlKKdl0QN48RDg9WoqxhQZI/LSMVZKTNzZVwWrDyGBDDzghuKYDBJTbyTUdjtlZ++
+         Nw8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=j123tjao84sCawAECklrlDQrmh9RZ45cJHgg6B+xpl0=;
+        b=mgWttWAIdQlpUKM61T3r7B/flu5I/fYo3KUeq50iDl7EM+K25OIoSCjmZcMV7O3+jr
+         jiMs9nSjm+i8LUi0kD0rhasSFDjS8ba1Rm5xNjJhRqDPgvEiIywap99JN4IdF3eSpIfX
+         /w0uz5OsCNAZeQQLNFX47N87tWqFZ9yQ1jMYExti5XckxAOyVhX49KRi70H4jvFV+ki1
+         CWjTjAOJelQcchaXya0tGnJN2T1AKYorDesxlhyzIKutx2MSRbfiOAFozcTRk/Vjoh/b
+         8zzZpQ5q0z8SHdfTTQSCWqKItb09cuZt+C3zHOp5bYb2wjv2wJ+OcbfYdugTwTaCO/UQ
+         rgxA==
+X-Gm-Message-State: AOAM532zLjzVzLOhFlJeH1SoFTA5XSVP11dD21qfl/Et0QLF+bOtCDz4
+        hH9IRiRv72vlEYhya2W34ZZOBA==
+X-Google-Smtp-Source: ABdhPJyBnwfPCvzBusrVoqeAxNvrnuMvSEMtSfjfg2ovoTL09gpc8FDkjGYAUUauWvRkQD37SlD9ZQ==
+X-Received: by 2002:a63:f04d:: with SMTP id s13mr23251957pgj.100.1595356763477;
+        Tue, 21 Jul 2020 11:39:23 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id m19sm18875012pgd.13.2020.07.21.11.39.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jul 2020 11:39:22 -0700 (PDT)
+Subject: Re: strace of io_uring events?
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Andres Freund <andres@anarazel.de>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Kees Cook <keescook@chromium.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
         Matthew Wilcox <willy@infradead.org>,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: [PATCH 3/3] iomap: fall back to buffered writes for invalidation failures
-Date:   Tue, 21 Jul 2020 20:31:57 +0200
-Message-Id: <20200721183157.202276-4-hch@lst.de>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200721183157.202276-1-hch@lst.de>
-References: <20200721183157.202276-1-hch@lst.de>
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
+ <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net>
+ <20200715171130.GG12769@casper.infradead.org>
+ <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com>
+ <CAJfpegt9=p4uo5U2GXqc-rwqOESzZCWAkGMRTY1r8H6fuXx96g@mail.gmail.com>
+ <48cc7eea-5b28-a584-a66c-4eed3fac5e76@gmail.com>
+ <202007151511.2AA7718@keescook> <20200716131404.bnzsaarooumrp3kx@steredhat>
+ <202007160751.ED56C55@keescook>
+ <20200717080157.ezxapv7pscbqykhl@steredhat.lan>
+ <CALCETrXSPdiVCgh3h=q7w9RyiKnp-=8jOHoFHX=an0cWqK7bzQ@mail.gmail.com>
+ <39a3378a-f8f3-6706-98c8-be7017e64ddb@kernel.dk>
+ <CALCETrXAxFzuRB5EJZR7bbgfrEcNc=9_E7wwhPaZ3YGJ1=DZ0w@mail.gmail.com>
+ <ba989463-c627-8af7-9234-4dc8ac4eea0e@kernel.dk>
+ <CALCETrUvOuKZWiQeZhf9DXyjS4OQdyW+s1YMh+vwe605jBS3LQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <65ad6c17-37d0-da30-4121-43554ad8f51f@kernel.dk>
+Date:   Tue, 21 Jul 2020 12:39:20 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CALCETrUvOuKZWiQeZhf9DXyjS4OQdyW+s1YMh+vwe605jBS3LQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Failing to invalid the page cache means data in incoherent, which is
-a very bad state for the system.  Always fall back to buffered I/O
-through the page cache if we can't invalidate mappings.
+On 7/21/20 11:44 AM, Andy Lutomirski wrote:
+> On Tue, Jul 21, 2020 at 10:30 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 7/21/20 11:23 AM, Andy Lutomirski wrote:
+>>> On Tue, Jul 21, 2020 at 8:31 AM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>
+>>>> On 7/21/20 9:27 AM, Andy Lutomirski wrote:
+>>>>> On Fri, Jul 17, 2020 at 1:02 AM Stefano Garzarella <sgarzare@redhat.com> wrote:
+>>>>>>
+>>>>>> On Thu, Jul 16, 2020 at 08:12:35AM -0700, Kees Cook wrote:
+>>>>>>> On Thu, Jul 16, 2020 at 03:14:04PM +0200, Stefano Garzarella wrote:
+>>>>>
+>>>>>>> access (IIUC) is possible without actually calling any of the io_uring
+>>>>>>> syscalls. Is that correct? A process would receive an fd (via SCM_RIGHTS,
+>>>>>>> pidfd_getfd, or soon seccomp addfd), and then call mmap() on it to gain
+>>>>>>> access to the SQ and CQ, and off it goes? (The only glitch I see is
+>>>>>>> waking up the worker thread?)
+>>>>>>
+>>>>>> It is true only if the io_uring istance is created with SQPOLL flag (not the
+>>>>>> default behaviour and it requires CAP_SYS_ADMIN). In this case the
+>>>>>> kthread is created and you can also set an higher idle time for it, so
+>>>>>> also the waking up syscall can be avoided.
+>>>>>
+>>>>> I stared at the io_uring code for a while, and I'm wondering if we're
+>>>>> approaching this the wrong way. It seems to me that most of the
+>>>>> complications here come from the fact that io_uring SQEs don't clearly
+>>>>> belong to any particular security principle.  (We have struct creds,
+>>>>> but we don't really have a task or mm.)  But I'm also not convinced
+>>>>> that io_uring actually supports cross-mm submission except by accident
+>>>>> -- as it stands, unless a user is very careful to only submit SQEs
+>>>>> that don't use user pointers, the results will be unpredictable.
+>>>>
+>>>> How so?
+>>>
+>>> Unless I've missed something, either current->mm or sqo_mm will be
+>>> used depending on which thread ends up doing the IO.  (And there might
+>>> be similar issues with threads.)  Having the user memory references
+>>> end up somewhere that is an implementation detail seems suboptimal.
+>>
+>> current->mm is always used from the entering task - obviously if done
+>> synchronously, but also if it needs to go async. The only exception is a
+>> setup with SQPOLL, in which case ctx->sqo_mm is the task that set up the
+>> ring. SQPOLL requires root privileges to setup, and there's no task
+>> entering the io_uring at all necessarily. It'll just submit sqes with
+>> the credentials that are registered with the ring.
+> 
+> Really?  I admit I haven't fully followed how the code works, but it
+> looks like anything that goes through the io_queue_async_work() path
+> will use sqo_mm, and can't most requests that end up blocking end up
+> there?  It looks like, even if SQPOLL is not set, the mm used will
+> depend on whether the request ends up blocking and thus getting queued
+> for later completion.
+> 
+> Or does some magic I missed make this a nonissue.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Dave Chinner <dchinner@redhat.com>
-Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
----
- fs/ext4/file.c       |  2 ++
- fs/gfs2/file.c       |  3 ++-
- fs/iomap/direct-io.c | 16 +++++++++++-----
- fs/iomap/trace.h     |  1 +
- fs/xfs/xfs_file.c    |  4 ++--
- fs/zonefs/super.c    |  7 +++++--
- 6 files changed, 23 insertions(+), 10 deletions(-)
+No, you are wrong. The logic works as I described it.
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 2a01e31a032c4c..129cc1dd6b7952 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -544,6 +544,8 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		iomap_ops = &ext4_iomap_overwrite_ops;
- 	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
- 			   is_sync_kiocb(iocb) || unaligned_io || extend);
-+	if (ret == -ENOTBLK)
-+		ret = 0;
- 
- 	if (extend)
- 		ret = ext4_handle_inode_extension(inode, offset, ret, count);
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index bebde537ac8cf2..b085a3bea4f0fd 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -835,7 +835,8 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
- 
- 	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
- 			   is_sync_kiocb(iocb));
--
-+	if (ret == -ENOTBLK)
-+		ret = 0;
- out:
- 	gfs2_glock_dq(&gh);
- out_uninit:
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 190967e87b69e4..c1aafb2ab99072 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -10,6 +10,7 @@
- #include <linux/backing-dev.h>
- #include <linux/uio.h>
- #include <linux/task_io_accounting_ops.h>
-+#include "trace.h"
- 
- #include "../internal.h"
- 
-@@ -401,6 +402,9 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
-  * can be mapped into multiple disjoint IOs and only a subset of the IOs issued
-  * may be pure data writes. In that case, we still need to do a full data sync
-  * completion.
-+ *
-+ * Returns -ENOTBLK In case of a page invalidation invalidation failure for
-+ * writes.  The callers needs to fall back to buffered I/O in this case.
-  */
- ssize_t
- iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-@@ -478,13 +482,15 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	if (iov_iter_rw(iter) == WRITE) {
- 		/*
- 		 * Try to invalidate cache pages for the range we are writing.
--		 * If this invalidation fails, tough, the write will still work,
--		 * but racing two incompatible write paths is a pretty crazy
--		 * thing to do, so we don't support it 100%.
-+		 * If this invalidation fails, let the caller fall back to
-+		 * buffered I/O.
- 		 */
- 		if (invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT,
--				end >> PAGE_SHIFT))
--			dio_warn_stale_pagecache(iocb->ki_filp);
-+				end >> PAGE_SHIFT)) {
-+			trace_iomap_dio_invalidate_fail(inode, pos, count);
-+			ret = -ENOTBLK;
-+			goto out_free_dio;
-+		}
- 
- 		if (!wait_for_completion && !inode->i_sb->s_dio_done_wq) {
- 			ret = sb_init_dio_done_wq(inode->i_sb);
-diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-index 5693a39d52fb63..fdc7ae388476f5 100644
---- a/fs/iomap/trace.h
-+++ b/fs/iomap/trace.h
-@@ -74,6 +74,7 @@ DEFINE_EVENT(iomap_range_class, name,	\
- DEFINE_RANGE_EVENT(iomap_writepage);
- DEFINE_RANGE_EVENT(iomap_releasepage);
- DEFINE_RANGE_EVENT(iomap_invalidatepage);
-+DEFINE_RANGE_EVENT(iomap_dio_invalidate_fail);
- 
- #define IOMAP_TYPE_STRINGS \
- 	{ IOMAP_HOLE,		"HOLE" }, \
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index a6ef90457abf97..1b4517fc55f1b9 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -553,8 +553,8 @@ xfs_file_dio_aio_write(
- 	xfs_iunlock(ip, iolock);
- 
- 	/*
--	 * No fallback to buffered IO on errors for XFS, direct IO will either
--	 * complete fully or fail.
-+	 * No fallback to buffered IO after short writes for XFS, direct I/O
-+	 * will either complete fully or return an error.
- 	 */
- 	ASSERT(ret < 0 || ret == count);
- 	return ret;
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 07bc42d62673ce..d0a04528a7e18e 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -786,8 +786,11 @@ static ssize_t zonefs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	if (iocb->ki_pos >= ZONEFS_I(inode)->i_max_size)
- 		return -EFBIG;
- 
--	if (iocb->ki_flags & IOCB_DIRECT)
--		return zonefs_file_dio_write(iocb, from);
-+	if (iocb->ki_flags & IOCB_DIRECT) {
-+		ssize_t ret = zonefs_file_dio_write(iocb, from);
-+		if (ret != -ENOTBLK)
-+			return ret;
-+	}
- 
- 	return zonefs_file_buffered_write(iocb, from);
- }
+>> This is just one known use case, there may very well be others. Outside
+>> of SQPOLL, which is special, I don't see a reason to restrict this.
+>> Given that you may have a fuller understanding of it after the above
+>> explanation, please clearly state what problem you're seeing that
+>> warrants a change.
+> 
+> I see two fundamental issues:
+> 
+> 1. The above.  This may be less of an issue than it seems to me, but,
+> if you submit io from outside sqo_mm, the mm that ends up being used
+> depends on whether the IO is completed from io_uring_enter() or from
+> the workqueue.  For something like Postgres, I guess this is okay
+> because the memory is MAP_ANONYMOUS | MAP_SHARED and the pointers all
+> point the same place regardless.
+
+No that is incorrect. If you disregard SQPOLL, then the 'mm' is always
+who submitted it.
+
+> 2. If you create an io_uring and io_uring_enter() it from a different
+> mm, it's unclear what seccomp is supposed to do.  (Or audit, for that
+> matter.)  Which task did the IO?  Which mm did the IO?  Whose sandbox
+> is supposed to be applied?
+
+Also doesn't seem like a problem, if you understand the 'mm' logic
+above. Unless SQPOLL is used, the entering tasks mm will be used.
+There's no mixing of tasks and mm outside of that.
+
 -- 
-2.27.0
+Jens Axboe
 
