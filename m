@@ -2,144 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F41522836B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 17:17:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CAE52283C3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 17:27:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728922AbgGUPRE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jul 2020 11:17:04 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:26148 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728644AbgGUPRE (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jul 2020 11:17:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595344622;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XvULJ0cVUTfwaF7djxHKlkhJQlw5AkHWIX3WfNuevwk=;
-        b=EZ27kzBxkKoRAWTeoVskL8zMj5bQw9Hnbd4i4SoE4NqM9MDlMXAefzkvxdgBBX+fsAOeQz
-        VHqeG3Dt0+LjSWKTqj9HFZwJxHMQsLu2Shy4Sfma2DyhQPaKVyLhIG6l93wFcWNdW+TUqj
-        268ifclfrF8huQ4DBGfWZ1SFlvbjBSg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-465-T75nFIx7NAaILWiFPTr9OA-1; Tue, 21 Jul 2020 11:17:00 -0400
-X-MC-Unique: T75nFIx7NAaILWiFPTr9OA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729693AbgGUP1u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jul 2020 11:27:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728755AbgGUP1t (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Jul 2020 11:27:49 -0400
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 168418014D4;
-        Tue, 21 Jul 2020 15:16:59 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-116-14.rdu2.redhat.com [10.10.116.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 14D6F10002B5;
-        Tue, 21 Jul 2020 15:16:56 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 87A8C223C1E; Tue, 21 Jul 2020 11:16:55 -0400 (EDT)
-Date:   Tue, 21 Jul 2020 11:16:55 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        ganesh.mahalingam@intel.com
-Subject: Re: [PATCH] virtiofs: Enable SB_NOSEC flag to improve small write
- performance
-Message-ID: <20200721151655.GB551452@redhat.com>
-References: <20200716144032.GC422759@redhat.com>
- <20200716181828.GE422759@redhat.com>
- <CAJfpegt-v6sjm2WyjXMWkObqLdL6TSAi=rjra4KK5sNy6hhhmA@mail.gmail.com>
- <20200720154112.GC502563@redhat.com>
- <CAJfpegtked-aUq0zbTQjmspG04LG3ar-j_BRsb88kR+cnHNO_w@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id BEBCD206E3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jul 2020 15:27:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595345269;
+        bh=dL7Jw9KmKIYfCmIThtzQuCIzVWDKDKywulNrdIg2buI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=j0qRLvgmYQ9iXUqJ4f4hiZXX+OC7ujiyWP5EZtQyEfF4iDeAt6CeXmdA0V1+otFGZ
+         ePL1Enpmwdgg1XrlRvW3NTB4VJCiZ1CoYTXOS46oM3P/dYP/h46vNrhyvd6fFuYtck
+         gxufNMXrr7yOktk0HDH9GFzFZXNYolk0wn50WmuA=
+Received: by mail-wr1-f42.google.com with SMTP id f18so21672290wrs.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jul 2020 08:27:48 -0700 (PDT)
+X-Gm-Message-State: AOAM533liDzZhZgXq7jhBRzxi9uo64sUgn69FNgLiJgdBSJQ7JCgzlFh
+        900+aqm3dnX4760YP07EABw4Hlay5PNGB0z986Sczg==
+X-Google-Smtp-Source: ABdhPJzs/y1/L+ekPbxoouGPVxU+hlgPxvyWi1Ma7ez4YIIKHie9EHhNDAWjrb2H6ZhhYQES2PRhXXKktTgN8DqKT1Y=
+X-Received: by 2002:a5d:5273:: with SMTP id l19mr17785233wrc.257.1595345267417;
+ Tue, 21 Jul 2020 08:27:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtked-aUq0zbTQjmspG04LG3ar-j_BRsb88kR+cnHNO_w@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
+ <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net> <20200715171130.GG12769@casper.infradead.org>
+ <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com> <CAJfpegt9=p4uo5U2GXqc-rwqOESzZCWAkGMRTY1r8H6fuXx96g@mail.gmail.com>
+ <48cc7eea-5b28-a584-a66c-4eed3fac5e76@gmail.com> <202007151511.2AA7718@keescook>
+ <20200716131404.bnzsaarooumrp3kx@steredhat> <202007160751.ED56C55@keescook> <20200717080157.ezxapv7pscbqykhl@steredhat.lan>
+In-Reply-To: <20200717080157.ezxapv7pscbqykhl@steredhat.lan>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 21 Jul 2020 08:27:34 -0700
+X-Gmail-Original-Message-ID: <CALCETrXSPdiVCgh3h=q7w9RyiKnp-=8jOHoFHX=an0cWqK7bzQ@mail.gmail.com>
+Message-ID: <CALCETrXSPdiVCgh3h=q7w9RyiKnp-=8jOHoFHX=an0cWqK7bzQ@mail.gmail.com>
+Subject: Re: strace of io_uring events?
+To:     Stefano Garzarella <sgarzare@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 21, 2020 at 02:33:41PM +0200, Miklos Szeredi wrote:
-> On Mon, Jul 20, 2020 at 5:41 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Fri, Jul 17, 2020 at 10:53:07AM +0200, Miklos Szeredi wrote:
-> 
-> > I see in VFS that chown() always kills suid/sgid. While truncate() and
-> > write(), will suid/sgid only if caller does not have CAP_FSETID.
-> >
-> > How does this work with FUSE_HANDLE_KILLPRIV. IIUC, file server does not
-> > know if caller has CAP_FSETID or not. That means file server will be
-> > forced to kill suid/sgid on every write and truncate. And that will fail
-> > some of the tests.
-> >
-> > For WRITE requests now we do have the notion of setting
-> > FUSE_WRITE_KILL_PRIV flag to tell server explicitly to kill suid/sgid.
-> > Probably we could use that in cached write path as well to figure out
-> > whether to kill suid/sgid or not. But truncate() will still continue
-> > to be an issue.
-> 
-> Yes, not doing the same for truncate seems to be an oversight.
-> Unfortunate, since we'll need another INIT flag to enable selective
-> clearing of suid/sgid on truncate.
-> 
-> >
-> > >
-> > > Even writeback_cache could be handled by this addition, since we call
-> > > fuse_update_attributes() before generic_file_write_iter() :
-> > >
-> > > --- a/fs/fuse/dir.c
-> > > +++ b/fs/fuse/dir.c
-> > > @@ -985,6 +985,7 @@ static int fuse_update_get_attr(struct inode
-> > > *inode, struct file *file,
-> > >
-> > >         if (sync) {
-> > >                 forget_all_cached_acls(inode);
-> > > +               inode->i_flags &= ~S_NOSEC;
-> >
-> > Ok, So I was clearing S_NOSEC only if server reports that file has
-> > suid/sgid bit set. This change will clear S_NOSEC whenever we fetch
-> > attrs from host and will force getxattr() when we call file_remove_privs()
-> > and will increase overhead for non cache writeback mode. We probably
-> > could keep both. For cache writeback mode, clear it undonditionally
-> > otherwise not.
-> 
-> We clear S_NOSEC because the attribute timeout has expired.  This
-> means we need to refresh all metadata, including cached xattr (which
-> is what S_NOSEC effectively is).
-> 
-> > What I don't understand is though that how this change will clear
-> > suid/sgid on host in cache=writeback mode. I see fuse_setattr()
-> > will not set ATTR_MODE and clear S_ISUID and S_ISGID if
-> > fc->handle_killpriv is set. So when server receives setattr request
-> > (if it does), then how will it know it is supposed to kill suid/sgid
-> > bit. (its not chown, truncate and its not write).
-> 
-> Depends.  If the attribute timeout is infinity, then that means the
-> cache is always up to date.  In that case we only need to clear
-> suid/sgid if set in i_mode.  Similarly, the security.capability will
-> only be cleared if it was set in the first place (which would clear
-> S_NOSEC).
-> 
-> If the timeout is finite, then that means we need to check if the
-> metadata changed after a timeout.  That's the purpose of the
-> fuse_update_attributes() call before generic_file_write_iter().
-> 
-> Does that make it clear?
+On Fri, Jul 17, 2020 at 1:02 AM Stefano Garzarella <sgarzare@redhat.com> wrote:
+>
+> On Thu, Jul 16, 2020 at 08:12:35AM -0700, Kees Cook wrote:
+> > On Thu, Jul 16, 2020 at 03:14:04PM +0200, Stefano Garzarella wrote:
 
-I understood it partly but one thing is still bothering me. What
-happens when cache writeback is set as well as fc->handle_killpriv=1.
+> > access (IIUC) is possible without actually calling any of the io_uring
+> > syscalls. Is that correct? A process would receive an fd (via SCM_RIGHTS,
+> > pidfd_getfd, or soon seccomp addfd), and then call mmap() on it to gain
+> > access to the SQ and CQ, and off it goes? (The only glitch I see is
+> > waking up the worker thread?)
+>
+> It is true only if the io_uring istance is created with SQPOLL flag (not the
+> default behaviour and it requires CAP_SYS_ADMIN). In this case the
+> kthread is created and you can also set an higher idle time for it, so
+> also the waking up syscall can be avoided.
 
-When handle_killpriv is set, how suid/sgid will be cleared by
-server. Given cache=writeback, write probably got cached in
-guest and server probably will not not see a WRITE immideately.
-(I am assuming we are relying on a WRITE to clear setuid/setgid when
- handle_killpriv is set). And that means server will not clear
- setuid/setgid till inode is written back at some point of time
- later.
+I stared at the io_uring code for a while, and I'm wondering if we're
+approaching this the wrong way. It seems to me that most of the
+complications here come from the fact that io_uring SQEs don't clearly
+belong to any particular security principle.  (We have struct creds,
+but we don't really have a task or mm.)  But I'm also not convinced
+that io_uring actually supports cross-mm submission except by accident
+-- as it stands, unless a user is very careful to only submit SQEs
+that don't use user pointers, the results will be unpredictable.
+Perhaps we can get away with this:
 
-IOW, cache=writeback and fc->handle_killpriv don't seem to go
-together (atleast given the current code).
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 74bc4a04befa..92266f869174 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7660,6 +7660,20 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int,
+fd, u32, to_submit,
+     if (!percpu_ref_tryget(&ctx->refs))
+         goto out_fput;
 
-Thanks
-Vivek
++    if (unlikely(current->mm != ctx->sqo_mm)) {
++        /*
++         * The mm used to process SQEs will be current->mm or
++         * ctx->sqo_mm depending on which submission path is used.
++         * It's also unclear who is responsible for an SQE submitted
++         * out-of-process from a security and auditing perspective.
++         *
++         * Until a real usecase emerges and there are clear semantics
++         * for out-of-process submission, disallow it.
++         */
++        ret = -EACCES;
++        goto out;
++    }
++
+     /*
+      * For SQ polling, the thread will do all submissions and completions.
+      * Just return the requested submit count, and wake the thread if
 
+If we can do that, then we could bind seccomp-like io_uring filters to
+an mm, and we get obvious semantics that ought to cover most of the
+bases.
+
+Jens, Christoph?
+
+Stefano, what's your intended usecase for your restriction patchset?
