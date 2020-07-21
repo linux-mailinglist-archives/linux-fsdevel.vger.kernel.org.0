@@ -2,123 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CAE52283C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 17:27:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A3702283CF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 17:30:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729693AbgGUP1u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jul 2020 11:27:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56538 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728755AbgGUP1t (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jul 2020 11:27:49 -0400
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEBCD206E3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jul 2020 15:27:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595345269;
-        bh=dL7Jw9KmKIYfCmIThtzQuCIzVWDKDKywulNrdIg2buI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=j0qRLvgmYQ9iXUqJ4f4hiZXX+OC7ujiyWP5EZtQyEfF4iDeAt6CeXmdA0V1+otFGZ
-         ePL1Enpmwdgg1XrlRvW3NTB4VJCiZ1CoYTXOS46oM3P/dYP/h46vNrhyvd6fFuYtck
-         gxufNMXrr7yOktk0HDH9GFzFZXNYolk0wn50WmuA=
-Received: by mail-wr1-f42.google.com with SMTP id f18so21672290wrs.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jul 2020 08:27:48 -0700 (PDT)
-X-Gm-Message-State: AOAM533liDzZhZgXq7jhBRzxi9uo64sUgn69FNgLiJgdBSJQ7JCgzlFh
-        900+aqm3dnX4760YP07EABw4Hlay5PNGB0z986Sczg==
-X-Google-Smtp-Source: ABdhPJzs/y1/L+ekPbxoouGPVxU+hlgPxvyWi1Ma7ez4YIIKHie9EHhNDAWjrb2H6ZhhYQES2PRhXXKktTgN8DqKT1Y=
-X-Received: by 2002:a5d:5273:: with SMTP id l19mr17785233wrc.257.1595345267417;
- Tue, 21 Jul 2020 08:27:47 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAJfpegu3EwbBFTSJiPhm7eMyTK2MzijLUp1gcboOo3meMF_+Qg@mail.gmail.com>
- <D9FAB37B-D059-4137-A115-616237D78640@amacapital.net> <20200715171130.GG12769@casper.infradead.org>
- <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com> <CAJfpegt9=p4uo5U2GXqc-rwqOESzZCWAkGMRTY1r8H6fuXx96g@mail.gmail.com>
- <48cc7eea-5b28-a584-a66c-4eed3fac5e76@gmail.com> <202007151511.2AA7718@keescook>
- <20200716131404.bnzsaarooumrp3kx@steredhat> <202007160751.ED56C55@keescook> <20200717080157.ezxapv7pscbqykhl@steredhat.lan>
-In-Reply-To: <20200717080157.ezxapv7pscbqykhl@steredhat.lan>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 21 Jul 2020 08:27:34 -0700
-X-Gmail-Original-Message-ID: <CALCETrXSPdiVCgh3h=q7w9RyiKnp-=8jOHoFHX=an0cWqK7bzQ@mail.gmail.com>
-Message-ID: <CALCETrXSPdiVCgh3h=q7w9RyiKnp-=8jOHoFHX=an0cWqK7bzQ@mail.gmail.com>
-Subject: Re: strace of io_uring events?
-To:     Stefano Garzarella <sgarzare@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        id S1728391AbgGUPaM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jul 2020 11:30:12 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40168 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726830AbgGUPaM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Jul 2020 11:30:12 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06LFHUKa161225;
+        Tue, 21 Jul 2020 15:29:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=0Di/+LBNYrIXXMbvu11QntF17nf+IJYoGWc+LBb2pmg=;
+ b=iPSG9+Umz/nYx5BTW0gSzz+8mMxfsHpGKGhyVNlQbirZ2Gg91F/+/yN9dorrb5yh4A2g
+ FmIklwjq2cklliAWhg30YUoun8Nn9PSp+Ph/jMojQML7T17XWB74ao14KiXyExCDpFGU
+ M+u+uc8e+c+26KhG2kaG1bwtxr7PfbZMSD3P3RTZoKpisxyoTEpaqFZg8VybrK0fuJHK
+ VXExccYpeAA6f06W8iSHmKN9YlmqV5cWtDq4LR5U9VseAsoC5zhplcJyFIujM3Sd7hdy
+ ZogK5xGO6PYcqsB86jqEIDXS8GQ018CRsRJ8Y3UjcATfZI6UKHSojn9GFiWRj17EH2hp 4Q== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 32bs1mdxg9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 21 Jul 2020 15:29:59 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06LFN2oV044772;
+        Tue, 21 Jul 2020 15:27:59 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 32dyj646hs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Jul 2020 15:27:58 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 06LFRuxF032038;
+        Tue, 21 Jul 2020 15:27:56 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 21 Jul 2020 08:27:56 -0700
+Date:   Tue, 21 Jul 2020 08:27:54 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        Dave Chinner <david@fromorbit.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-man@vger.kernel.org
+Subject: Re: RFC: iomap write invalidation
+Message-ID: <20200721152754.GD7597@magnolia>
+References: <20200713074633.875946-1-hch@lst.de>
+ <20200720215125.bfz7geaftocy4r5l@fiona>
+ <20200721145313.GA9217@lst.de>
+ <20200721150432.GH15516@casper.infradead.org>
+ <20200721150615.GA10330@lst.de>
+ <20200721151437.GI15516@casper.infradead.org>
+ <20200721151616.GA11074@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200721151616.GA11074@lst.de>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9689 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 suspectscore=1
+ mlxscore=0 mlxlogscore=999 phishscore=0 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007210111
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9689 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 bulkscore=0 adultscore=0
+ lowpriorityscore=0 mlxlogscore=999 malwarescore=0 clxscore=1011
+ spamscore=0 mlxscore=0 impostorscore=0 phishscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007210111
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 17, 2020 at 1:02 AM Stefano Garzarella <sgarzare@redhat.com> wrote:
->
-> On Thu, Jul 16, 2020 at 08:12:35AM -0700, Kees Cook wrote:
-> > On Thu, Jul 16, 2020 at 03:14:04PM +0200, Stefano Garzarella wrote:
+On Tue, Jul 21, 2020 at 05:16:16PM +0200, Christoph Hellwig wrote:
+> On Tue, Jul 21, 2020 at 04:14:37PM +0100, Matthew Wilcox wrote:
+> > On Tue, Jul 21, 2020 at 05:06:15PM +0200, Christoph Hellwig wrote:
+> > > On Tue, Jul 21, 2020 at 04:04:32PM +0100, Matthew Wilcox wrote:
+> > > > I thought you were going to respin this with EREMCHG changed to ENOTBLK?
+> > > 
+> > > Oh, true.  I'll do that ASAP.
+> > 
+> > Michael, could we add this to manpages?
+> 
+> Umm, no.  -ENOTBLK is internal - the file systems will retry using
+> buffered I/O and the error shall never escape to userspace (or even the
+> VFS for that matter).
 
-> > access (IIUC) is possible without actually calling any of the io_uring
-> > syscalls. Is that correct? A process would receive an fd (via SCM_RIGHTS,
-> > pidfd_getfd, or soon seccomp addfd), and then call mmap() on it to gain
-> > access to the SQ and CQ, and off it goes? (The only glitch I see is
-> > waking up the worker thread?)
->
-> It is true only if the io_uring istance is created with SQPOLL flag (not the
-> default behaviour and it requires CAP_SYS_ADMIN). In this case the
-> kthread is created and you can also set an higher idle time for it, so
-> also the waking up syscall can be avoided.
+It's worth dropping a comment somewhere that ENOTBLK is the desired
+"fall back to buffered" errcode, seeing as Dave and I missed that in
+XFS...
 
-I stared at the io_uring code for a while, and I'm wondering if we're
-approaching this the wrong way. It seems to me that most of the
-complications here come from the fact that io_uring SQEs don't clearly
-belong to any particular security principle.  (We have struct creds,
-but we don't really have a task or mm.)  But I'm also not convinced
-that io_uring actually supports cross-mm submission except by accident
--- as it stands, unless a user is very careful to only submit SQEs
-that don't use user pointers, the results will be unpredictable.
-Perhaps we can get away with this:
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 74bc4a04befa..92266f869174 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -7660,6 +7660,20 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int,
-fd, u32, to_submit,
-     if (!percpu_ref_tryget(&ctx->refs))
-         goto out_fput;
-
-+    if (unlikely(current->mm != ctx->sqo_mm)) {
-+        /*
-+         * The mm used to process SQEs will be current->mm or
-+         * ctx->sqo_mm depending on which submission path is used.
-+         * It's also unclear who is responsible for an SQE submitted
-+         * out-of-process from a security and auditing perspective.
-+         *
-+         * Until a real usecase emerges and there are clear semantics
-+         * for out-of-process submission, disallow it.
-+         */
-+        ret = -EACCES;
-+        goto out;
-+    }
-+
-     /*
-      * For SQ polling, the thread will do all submissions and completions.
-      * Just return the requested submit count, and wake the thread if
-
-If we can do that, then we could bind seccomp-like io_uring filters to
-an mm, and we get obvious semantics that ought to cover most of the
-bases.
-
-Jens, Christoph?
-
-Stefano, what's your intended usecase for your restriction patchset?
+--D
