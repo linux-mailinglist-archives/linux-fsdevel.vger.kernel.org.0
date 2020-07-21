@@ -2,128 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 601D5227FF7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 14:33:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A1CA228080
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 15:02:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbgGUMdz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jul 2020 08:33:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36288 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726919AbgGUMdy (ORCPT
+        id S1726687AbgGUNCp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jul 2020 09:02:45 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:47769 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbgGUNCo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jul 2020 08:33:54 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB5EC061794
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jul 2020 05:33:54 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id a21so21450008ejj.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jul 2020 05:33:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XRx+GMkPyl0Ni2dtSicn9mHxtuGv25ioZ7oSYzWdlcQ=;
-        b=VVxelUJaM932HGLeNAIVlZgYjbIQExZz/pke7j3ErdzGi70cdf+9AltDQwMJp4RW2c
-         Dnd1MOfhIFkebEflMP7Aedy29CB4pmZWaUVs7Gs1D2RLpyNptdBk8QdHwy2Xc+eBEZua
-         XPkh9KvCxw/VfeyL+Wpu+VLR937eXIFhmSbn4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XRx+GMkPyl0Ni2dtSicn9mHxtuGv25ioZ7oSYzWdlcQ=;
-        b=M/agADTwDKvJcO2yuD+rNf+wnvmBYzMnI5kO7yvYcZdXwBhAjWK/lzb+74j2SBE/9V
-         g4J1Z9E0ZDzgQUMghh8krhjw895FcZpUrCaHWf3PXGIXz3+DJ9EWAQFicyk/ItDdmZKd
-         dcV+LNTp6mu2XVZI1TwbnA9nbABhE9BqoaarzLcTG6voSWEHEjLs8+Ehoy2KIJgr+HSS
-         QlNnwqRQoxXMGrsD6iThn4YaxcmUjFvFsyOKMJvGlDZfF2myjt/9e0N9f1umBacyWWnx
-         YgthFeTDt/d8/e5dn5iRY/wsQGvAIoh8L+yKIFQho6p+JDyzyngwoAQuTfjGuEJjxyjf
-         cm7g==
-X-Gm-Message-State: AOAM530fg9l629/JfcvZI60Wre3lyMDRXw+F1F72Dx00/jhm7Lk2fTH7
-        Z9bRTiusaiELAON88OJXKX2qPkHFwJnZN4mVz5R3inX1mxu84A==
-X-Google-Smtp-Source: ABdhPJzEVPeBOF/5G87M0mUj0FyLSRO1bdeJ/sMciM5FNneoz+SM0e+vlbCJh78tN/qOwaUA750sB0VzzediMYNGts4=
-X-Received: by 2002:a17:906:3c42:: with SMTP id i2mr26893516ejg.14.1595334832605;
- Tue, 21 Jul 2020 05:33:52 -0700 (PDT)
+        Tue, 21 Jul 2020 09:02:44 -0400
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200721130240epoutp045ea99a410cd1284b14dfca99f3e08082~jxiZP5s570260102601epoutp048
+        for <linux-fsdevel@vger.kernel.org>; Tue, 21 Jul 2020 13:02:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200721130240epoutp045ea99a410cd1284b14dfca99f3e08082~jxiZP5s570260102601epoutp048
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1595336560;
+        bh=NH9wpyCevd6tdTMAvvlpkRQBPadD95ZpMq4wOph5JTY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=btNPpeMwXhJnouB83tJcCQ7pEwB4sr4E/YhXI7M9MAKqpTSnvp9kTjYrDtucCuzmV
+         HZ/5DSOMQAvA9CopGpOp6eHcIORS1S63UcL/DKHEDA69yVfuWa5C22BXc0/r5XCWUh
+         fI8X0tyRYRCr1UeyCpt67ffbqhWGLZfqIkq3QD0w=
+Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20200721130240epcas5p2d3e9666920e1e30be15033b708fe394e~jxiYl5LzM2146321463epcas5p2W;
+        Tue, 21 Jul 2020 13:02:40 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D3.D8.09475.F67E61F5; Tue, 21 Jul 2020 22:02:40 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200721124642epcas5p1bce3e2aa2fa603240b41d75d28e23e0e~jxUcdcVIg0031300313epcas5p13;
+        Tue, 21 Jul 2020 12:46:42 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200721124642epsmtrp212cff39b474e25fe7a53b21432fd79be~jxUccxVIH1310613106epsmtrp2M;
+        Tue, 21 Jul 2020 12:46:42 +0000 (GMT)
+X-AuditID: b6c32a4b-389ff70000002503-c9-5f16e76f8c3f
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        69.96.08303.2B3E61F5; Tue, 21 Jul 2020 21:46:42 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200721124641epsmtip29f9adff10d406ff1af92893b97e50306~jxUbbl0Ys1392513925epsmtip2W;
+        Tue, 21 Jul 2020 12:46:41 +0000 (GMT)
+Date:   Tue, 21 Jul 2020 18:13:43 +0530
+From:   Kanchan Joshi <joshi.k@samsung.com>
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 2/2] zonefs: use zone-append for AIO as well
+Message-ID: <20200721122724.GA17629@test-zns>
 MIME-Version: 1.0
-References: <20200716144032.GC422759@redhat.com> <20200716181828.GE422759@redhat.com>
- <CAJfpegt-v6sjm2WyjXMWkObqLdL6TSAi=rjra4KK5sNy6hhhmA@mail.gmail.com> <20200720154112.GC502563@redhat.com>
-In-Reply-To: <20200720154112.GC502563@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 21 Jul 2020 14:33:41 +0200
-Message-ID: <CAJfpegtked-aUq0zbTQjmspG04LG3ar-j_BRsb88kR+cnHNO_w@mail.gmail.com>
-Subject: Re: [PATCH] virtiofs: Enable SB_NOSEC flag to improve small write performance
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        ganesh.mahalingam@intel.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200720132118.10934-3-johannes.thumshirn@wdc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOKsWRmVeSWpSXmKPExsWy7bCmlm7Bc7F4g2nbmCxW3+1ns2ht/8Zk
+        sXL1USaLv133mCz23tK22LP3JIsDm8fls6Ueu282sHl83iTn0X6gmymAJYrLJiU1J7MstUjf
+        LoEr483e24wFkyQqZt59xNTAeFKoi5GTQ0LARGJ2z0LmLkYuDiGB3YwSryY/h3I+MUp8XzaT
+        DcL5zChxc8ZPJpiW1cvmskIkdjFKHFlzmAXCeQbkdHWAVbEIqEp0dewDSnBwsAloSlyYXAoS
+        FhEwlrjyfSFYPbPACkaJMxMvs4MkhAUcJHYtWMMGYvMK6Eq8XXSJBcIWlDg58wmYzQlUs/lU
+        FyOILSqgLHFg23EmkEESAh/ZJba/PcwCcZ6LROeTZjYIW1ji1fEt7BC2lMTnd3uh4sUSv+4c
+        ZYZo7mCUuN4wE6rZXuLinr9gHzALZEo0dL6BapCVmHpqHVScT6L39xNoWPBK7JgHYytK3Jv0
+        lBXCFpd4OGMJlO0hsfZLNzRUTzJK/F5zhHECo/wsJN/NQrIPwraS6PzQxDoLGHrMAtISy/9x
+        QJiaEut36S9gZF3FKJlaUJybnlpsWmCcl1quV5yYW1yal66XnJ+7iRGcdrS8dzA+evBB7xAj
+        EwfjIUYJDmYlEd6JPMLxQrwpiZVVqUX58UWlOanFhxilOViUxHmVfpyJExJITyxJzU5NLUgt
+        gskycXBKNTCdDejVE7Gr4jl69o/F4brN/Jl8UoGqSyxcZ8eWW3LMn58yK0DB+iLvAr5f57iK
+        r/ocsrvDtknU20YtPTnXcHa319sQ8zbWggtZwYnfZtz8tNjK7zTLE5mE/HU6J7+8YRVPZNlh
+        /JI7/a6KcARX7fcMAxu9bR33y+U0RYJl4qSU532oejGpceKPc478Fl0BhffLzcs+B78XDF8T
+        IutQn9xqzMZqxtwSFC+tpKWn+is0M7My78gW06q5m7Wn/LL+8CTz/eVdyhWxTl+kl1yUEw+U
+        PHghSnPlySw7Cf4plo/N+Ffs+LEkZ5HyBZ8r9+Z4G/h9ZOn5VxIS6/PsyJlbk1T2+x07mHBI
+        lWnprmW8SizFGYmGWsxFxYkAlxmwcKoDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrILMWRmVeSWpSXmKPExsWy7bCSvO6mx2LxBve3sVusvtvPZtHa/o3J
+        YuXqo0wWf7vuMVnsvaVtsWfvSRYHNo/LZ0s9dt9sYPP4vEnOo/1AN1MASxSXTUpqTmZZapG+
+        XQJXxpKNFQUHRSvOPJ7H3sA4SaCLkZNDQsBEYvWyuaxdjFwcQgI7GCXuvv/EDpEQl2i+9gPK
+        FpZY+e85O0TRE0aJ6zuuM4EkWARUJbo69rF0MXJwsAloSlyYXAoSFhEwlrjyfSELSD2zwApG
+        iUN3r7OCJIQFHCR2LVjDBmLzCuhKvF10iQVi6ElGidarJ9ghEoISJ2c+YQGxmQXMJOZtfsgM
+        soBZQFpi+T8OkDAn0JzNp7oYQWxRAWWJA9uOM01gFJyFpHsWku5ZCN0LGJlXMUqmFhTnpucW
+        GxYY5aWW6xUn5haX5qXrJefnbmIEh7qW1g7GPas+6B1iZOJgPMQowcGsJMI7kUc4Xog3JbGy
+        KrUoP76oNCe1+BCjNAeLkjjv11kL44QE0hNLUrNTUwtSi2CyTBycUg1Ml30Zvh+fvyu428OQ
+        y/jON2v/r1cMWA7uFX9rO7Ffpaj22A5JIeUtcSIvp/8okZ7d4/8/oF9PaPm5WJPUOaFhlion
+        Wqa1Jjgdv71snVFX01EpE+dl+5OSJ1a4m8wVmMm4/4a+8V3vnJjbGyNeFOa48T+6+u7IWzO7
+        tC8Fe4Rkk2L0b05Rn7256GJ85I5ZtR8zc78dC+3+W/nbuu/pB0X9ntn989marulFLzSafV/F
+        quhWZWaKruaJy3f+HgoyShWfpVdzX+XR1u0b5x+7N/9y8ITybb8mvn0hM/HiPYcHM52O7U68
+        2ep6+MV2y4VNK2PW5Tf0hPTlaGtnX5mXvczk0oV67mNb1rR+e361waz7khJLcUaioRZzUXEi
+        AAR9DvrkAgAA
+X-CMS-MailID: 20200721124642epcas5p1bce3e2aa2fa603240b41d75d28e23e0e
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----HLsVUhwo1NnMf0MkEybe_TfPnfOwGw2mguf7MLxPvWAMWj5A=_129dcd_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20200720132131epcas5p390f6f8a13696a3f54ef906d8ce8cc0ea
+References: <20200720132118.10934-1-johannes.thumshirn@wdc.com>
+        <CGME20200720132131epcas5p390f6f8a13696a3f54ef906d8ce8cc0ea@epcas5p3.samsung.com>
+        <20200720132118.10934-3-johannes.thumshirn@wdc.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 20, 2020 at 5:41 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+------HLsVUhwo1NnMf0MkEybe_TfPnfOwGw2mguf7MLxPvWAMWj5A=_129dcd_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
+
+On Mon, Jul 20, 2020 at 10:21:18PM +0900, Johannes Thumshirn wrote:
+>If we get an async I/O iocb with an O_APPEND or RWF_APPEND flag set,
+>submit it using REQ_OP_ZONE_APPEND to the block layer.
 >
-> On Fri, Jul 17, 2020 at 10:53:07AM +0200, Miklos Szeredi wrote:
+>As an REQ_OP_ZONE_APPEND bio must not be split, this does come with an
+>additional constraint, namely the buffer submitted to zonefs must not be
+>bigger than the max zone append size of the underlying device. For
+>synchronous I/O we don't care about this constraint as we can return short
+>writes, for AIO we need to return an error on too big buffers.
 
-> I see in VFS that chown() always kills suid/sgid. While truncate() and
-> write(), will suid/sgid only if caller does not have CAP_FSETID.
+I wonder what part of the patch implements that constraint on large
+buffer and avoids short-write.
+Existing code seems to trim iov_iter in the outset. 
+
+        max = queue_max_zone_append_sectors(bdev_get_queue(bdev));
+        max = ALIGN_DOWN(max << SECTOR_SHIFT, inode->i_sb->s_blocksize);
+        iov_iter_truncate(from, max);
+
+This will prevent large-buffer seeing that error, and will lead to partial write.
+
+>On a successful completion, the position the data is written to is
+>returned via AIO's res2 field to the calling application.
 >
-> How does this work with FUSE_HANDLE_KILLPRIV. IIUC, file server does not
-> know if caller has CAP_FSETID or not. That means file server will be
-> forced to kill suid/sgid on every write and truncate. And that will fail
-> some of the tests.
+>Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>---
+> fs/zonefs/super.c  | 143 +++++++++++++++++++++++++++++++++++++++------
+> fs/zonefs/zonefs.h |   3 +
+> 2 files changed, 128 insertions(+), 18 deletions(-)
 >
-> For WRITE requests now we do have the notion of setting
-> FUSE_WRITE_KILL_PRIV flag to tell server explicitly to kill suid/sgid.
-> Probably we could use that in cached write path as well to figure out
-> whether to kill suid/sgid or not. But truncate() will still continue
-> to be an issue.
-
-Yes, not doing the same for truncate seems to be an oversight.
-Unfortunate, since we'll need another INIT flag to enable selective
-clearing of suid/sgid on truncate.
-
+>diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+>index 5832e9f69268..f155a658675b 100644
+>--- a/fs/zonefs/super.c
+>+++ b/fs/zonefs/super.c
+>@@ -24,6 +24,8 @@
 >
-> >
-> > Even writeback_cache could be handled by this addition, since we call
-> > fuse_update_attributes() before generic_file_write_iter() :
-> >
-> > --- a/fs/fuse/dir.c
-> > +++ b/fs/fuse/dir.c
-> > @@ -985,6 +985,7 @@ static int fuse_update_get_attr(struct inode
-> > *inode, struct file *file,
-> >
-> >         if (sync) {
-> >                 forget_all_cached_acls(inode);
-> > +               inode->i_flags &= ~S_NOSEC;
+> #include "zonefs.h"
 >
-> Ok, So I was clearing S_NOSEC only if server reports that file has
-> suid/sgid bit set. This change will clear S_NOSEC whenever we fetch
-> attrs from host and will force getxattr() when we call file_remove_privs()
-> and will increase overhead for non cache writeback mode. We probably
-> could keep both. For cache writeback mode, clear it undonditionally
-> otherwise not.
+>+static struct bio_set zonefs_dio_bio_set;
+>+
+> static inline int zonefs_zone_mgmt(struct zonefs_inode_info *zi,
+> 				   enum req_opf op)
+> {
+>@@ -700,16 +702,71 @@ static const struct iomap_dio_ops zonefs_write_dio_ops = {
+> 	.end_io			= zonefs_file_write_dio_end_io,
+> };
+>
+>+struct zonefs_dio {
+>+	struct kiocb		*iocb;
+>+	struct task_struct	*waiter;
+>+	int			error;
+>+	struct work_struct	work;
+>+	size_t			size;
+>+	u64			sector;
+>+	struct completion	completion;
+>+	struct bio		bio;
+>+};
 
-We clear S_NOSEC because the attribute timeout has expired.  This
-means we need to refresh all metadata, including cached xattr (which
-is what S_NOSEC effectively is).
+How about this (will save 32 bytes) - 
++struct zonefs_dio {
++       struct kiocb            *iocb;
++       struct task_struct      *waiter;
++       int                     error;
++	union {
++       	struct work_struct      work;   //only for async IO
++       	struct completion       completion; //only for sync IO
++	};
++       size_t                  size;
++       u64                     sector;
++       struct bio              bio;
++};
+And dio->error field is not required.
+I see it being used at one place -
++       ret = zonefs_file_write_dio_end_io(iocb, dio->size,
++                                          dio->error, 0);
+Here error-code can be picked from dio->bio.
 
-> What I don't understand is though that how this change will clear
-> suid/sgid on host in cache=writeback mode. I see fuse_setattr()
-> will not set ATTR_MODE and clear S_ISUID and S_ISGID if
-> fc->handle_killpriv is set. So when server receives setattr request
-> (if it does), then how will it know it is supposed to kill suid/sgid
-> bit. (its not chown, truncate and its not write).
+------HLsVUhwo1NnMf0MkEybe_TfPnfOwGw2mguf7MLxPvWAMWj5A=_129dcd_
+Content-Type: text/plain; charset="utf-8"
 
-Depends.  If the attribute timeout is infinity, then that means the
-cache is always up to date.  In that case we only need to clear
-suid/sgid if set in i_mode.  Similarly, the security.capability will
-only be cleared if it was set in the first place (which would clear
-S_NOSEC).
 
-If the timeout is finite, then that means we need to check if the
-metadata changed after a timeout.  That's the purpose of the
-fuse_update_attributes() call before generic_file_write_iter().
-
-Does that make it clear?
-
-Thanks,
-Miklos
+------HLsVUhwo1NnMf0MkEybe_TfPnfOwGw2mguf7MLxPvWAMWj5A=_129dcd_--
