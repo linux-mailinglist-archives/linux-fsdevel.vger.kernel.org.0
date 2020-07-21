@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 666732285A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 18:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E7EF2285AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 18:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730330AbgGUQ2b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jul 2020 12:28:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44654 "EHLO
+        id S1730643AbgGUQaT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jul 2020 12:30:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728432AbgGUQ23 (ORCPT
+        with ESMTP id S1730336AbgGUQ2b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jul 2020 12:28:29 -0400
+        Tue, 21 Jul 2020 12:28:31 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDE07C0619DA;
-        Tue, 21 Jul 2020 09:28:28 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2E0EC061794;
+        Tue, 21 Jul 2020 09:28:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=XAvmv1Dl0w8Zpf/KQARmzzrtRh2ODKzOSAZO8WVKkSg=; b=tXrgBqGAHo4E0VBkb2nw9VyfvD
-        9IRTxUlxuz0ouJ6VjOfWwo5xwX2jtGUDhnB/PPyj7ye4XdZrTgxnlTESz22JKRwwhAXils98CWURu
-        SVkOjms0QSposrqfehUAagszD2Wq0rNdV2j6QFCF5nvY/esvkPMKRxnz+G3f1g5F9w9zi2lX+9yev
-        tdyWnCvLfKNrh4yNIp/FAMCvdLF29u62EWzp+xkxnT0bV062m7zdtpO6inhVrCahfFwsu0jqko3Eb
-        5LpKmCWQ6XjxyLCboyCWs5ZTMhA6cCQIVUY27cvgnXaLjpIiVDMDvIKLalAhh5+ncsG5jLa8z+FGh
-        aiHc6a/A==;
+        bh=H1k4IbX7Cdi4TcmpDofJ7UHs3moalFNWToOeNyCFxRc=; b=Hqg/HT2fLvykoBAK6Jckh9zCh0
+        kAvY2WP4BU2YvrNihBf5BR4v6TogXgs9MamN09n1TRW6z/u+8QnRlrdbKVupDFTpjMyN0e73g7OqG
+        y5CtkLmCvTSF37J3uoLyZcFv3GbkeFoJMkq8aT2TJluI8tjn9y0SU/KkRiOuoyq0dauk4uvXW4x6z
+        T/Tzv7ElW+nG4rQ2t/8dlUb+iFu0jWRdcwr/p3g+7utavEkMxRHOhTnNUP+6IDAMbvOoBGAP5obmM
+        tbFbFeNpNziJ8ZwzoaeYzLhsAGv4YqKMGqnSblpMYIKgHWVnqfDPft7p3AVpGOBpvZASBRXG2IzRJ
+        Rc3nrspw==;
 Received: from [2001:4bb8:18c:2acc:5b1c:6483:bd6d:e406] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jxv7w-0007Ru-OJ; Tue, 21 Jul 2020 16:28:25 +0000
+        id 1jxv7z-0007S7-8C; Tue, 21 Jul 2020 16:28:27 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>
@@ -35,9 +35,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH 04/24] devtmpfs: open code do_mount
-Date:   Tue, 21 Jul 2020 18:27:58 +0200
-Message-Id: <20200721162818.197315-5-hch@lst.de>
+Subject: [PATCH 06/24] md: open code vfs_stat in md_setup_drive
+Date:   Tue, 21 Jul 2020 18:28:00 +0200
+Message-Id: <20200721162818.197315-7-hch@lst.de>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200721162818.197315-1-hch@lst.de>
 References: <20200721162818.197315-1-hch@lst.de>
@@ -49,84 +49,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Replace do_umount with an open coded version that takes the proper
-kernel pointer instead of relying on the implicit set_fs(KERNEL_DS)
-during early init.
+Instead of passing a kernel pointer to vfs_stat by relying on the
+implicit set_fs(KERNEL_DS) in md_setup_drive, just open code the
+trivial getattr, and use the opportunity to move a little bit more
+code from the caller into the new helper.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/base/devtmpfs.c | 17 +++++++++++++++--
- fs/namespace.c          |  2 +-
- include/linux/mount.h   |  3 +++
- 3 files changed, 19 insertions(+), 3 deletions(-)
+ drivers/md/md-autodetect.c | 29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-index c9017e0584c003..5e8d677ee783bc 100644
---- a/drivers/base/devtmpfs.c
-+++ b/drivers/base/devtmpfs.c
-@@ -345,6 +345,19 @@ static int handle_remove(const char *nodename, struct device *dev)
- 	return err;
+diff --git a/drivers/md/md-autodetect.c b/drivers/md/md-autodetect.c
+index 14b6e86814c061..1e8f1df257a112 100644
+--- a/drivers/md/md-autodetect.c
++++ b/drivers/md/md-autodetect.c
+@@ -8,6 +8,7 @@
+ #include <linux/raid/detect.h>
+ #include <linux/raid/md_u.h>
+ #include <linux/raid/md_p.h>
++#include <linux/namei.h>
+ #include "md.h"
+ 
+ /*
+@@ -119,6 +120,23 @@ static int __init md_setup(char *str)
+ 	return 1;
  }
  
-+static int devtmpfs_do_mount(const char __user *dir_name)
++static void __init md_lookup_dev(const char *devname, dev_t *dev)
 +{
-+	struct path p;
-+	int ret;
++	struct kstat stat;
++	struct path path;
++	char filename[64];
 +
-+	ret = kern_path(dir_name, LOOKUP_FOLLOW, &p);
-+	if (ret)
-+		return ret;
-+	ret = path_mount("devtmpfs", &p, "devtmpfs", MS_SILENT, NULL);
-+	path_put(&p);
-+	return ret;
++	if (strncmp(devname, "/dev/", 5) == 0)
++		devname += 5;
++	snprintf(filename, 63, "/dev/%s", devname);
++
++	if (!kern_path(filename, LOOKUP_FOLLOW, &path) &&
++	    !vfs_getattr(&path, &stat, STATX_BASIC_STATS, AT_NO_AUTOMOUNT) &&
++	    S_ISBLK(stat.mode))
++		*dev = new_decode_dev(stat.rdev);
++	path_put(&path);
 +}
 +
- /*
-  * If configured, or requested by the commandline, devtmpfs will be
-  * auto-mounted after the kernel mounted the root filesystem.
-@@ -359,7 +372,7 @@ int __init devtmpfs_mount(void)
- 	if (!thread)
- 		return 0;
- 
--	err = do_mount("devtmpfs", "dev", "devtmpfs", MS_SILENT, NULL);
-+	err = devtmpfs_do_mount("dev");
- 	if (err)
- 		printk(KERN_INFO "devtmpfs: error mounting %i\n", err);
- 	else
-@@ -385,7 +398,7 @@ static int devtmpfs_setup(void *p)
- 	err = ksys_unshare(CLONE_NEWNS);
- 	if (err)
- 		goto out;
--	err = do_mount("devtmpfs", "/", "devtmpfs", MS_SILENT, NULL);
-+	err = devtmpfs_do_mount("/");
- 	if (err)
- 		goto out;
- 	ksys_chdir("/.."); /* will traverse into overmounted root */
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 43834b59eff6c3..2c4d7592097485 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3111,7 +3111,7 @@ char *copy_mount_string(const void __user *data)
-  * Therefore, if this magic number is present, it carries no information
-  * and must be discarded.
-  */
--static int path_mount(const char *dev_name, struct path *path,
-+int path_mount(const char *dev_name, struct path *path,
- 		const char *type_page, unsigned long flags, void *data_page)
+ static void __init md_setup_drive(struct md_setup_args *args)
  {
- 	unsigned int mnt_flags = 0, sb_flags;
-diff --git a/include/linux/mount.h b/include/linux/mount.h
-index de657bd211fa64..bf9896f86a48f4 100644
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -113,4 +113,7 @@ extern bool path_is_mountpoint(const struct path *path);
+ 	char *devname = args->device_names;
+@@ -138,21 +156,14 @@ static void __init md_setup_drive(struct md_setup_args *args)
+ 	}
  
- extern void kern_unmount_array(struct vfsmount *mnt[], unsigned int num);
+ 	for (i = 0; i < MD_SB_DISKS && devname != NULL; i++) {
+-		struct kstat stat;
+-		char *p;
+-		char comp_name[64];
+ 		dev_t dev;
++		char *p;
  
-+int path_mount(const char *dev_name, struct path *path, const char *type_page,
-+		unsigned long flags, void *data_page);
-+
- #endif /* _LINUX_MOUNT_H */
+ 		p = strchr(devname, ',');
+ 		if (p)
+ 			*p++ = 0;
+-
+ 		dev = name_to_dev_t(devname);
+-		if (strncmp(devname, "/dev/", 5) == 0)
+-			devname += 5;
+-		snprintf(comp_name, 63, "/dev/%s", devname);
+-		if (vfs_stat(comp_name, &stat) == 0 && S_ISBLK(stat.mode))
+-			dev = new_decode_dev(stat.rdev);
++		md_lookup_dev(devname, &dev);
+ 		if (!dev) {
+ 			pr_warn("md: Unknown device name: %s\n", devname);
+ 			break;
 -- 
 2.27.0
 
