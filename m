@@ -2,85 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 46E052289A4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 22:12:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE3EA2289FE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 22:35:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbgGUULp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jul 2020 16:11:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44556 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbgGUULo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jul 2020 16:11:44 -0400
-Received: from localhost (unknown [104.132.1.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 066C320684;
-        Tue, 21 Jul 2020 20:11:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595362304;
-        bh=qoQKgWZhAvGtgKCUrR3MgpQoIvX416jAmXkYrTf5C4o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bMWyWlB/11MTlbsMxh/UBrlE+PK1UfU+8098QuYaeXP4gnmt57SZVQ4oHkG5Bmx7c
-         y37NhSgDyEyTuRp2QUZ0i/ZCMWvbKfqv2HTlM7bvw7DIE9G9y9s15zy03EMcbENl7E
-         Yyq19zoKHdpAYxs4E/ewwfdjJbbRCSXhjDWvFOtw=
-Date:   Tue, 21 Jul 2020 13:11:43 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Satya Tangirala <satyat@google.com>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH v4 5/7] f2fs: support direct I/O with fscrypt using
- blk-crypto
-Message-ID: <20200721201143.GB43066@google.com>
-References: <20200720233739.824943-1-satyat@google.com>
- <20200720233739.824943-6-satyat@google.com>
+        id S1730180AbgGUUfZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jul 2020 16:35:25 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:40810 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729049AbgGUUfY (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 21 Jul 2020 16:35:24 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06LKRJV3175529;
+        Tue, 21 Jul 2020 20:35:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=4v/XK3jArSM5GdNy79pVNgZbgmLE/7IavWQqjWY0cWQ=;
+ b=XNtGkFfHbRAg0aQNbSnK32Fn0KuB/0dv6ruqO7V7a6+YkBbIPeFkDk9XY5KuizSpop6y
+ bugK20WiDqhKJVxJLrKe1flEQWeXwa8Rv3r+tDaOspHwnn92RbvJf/khR51qbIctG6QW
+ 8txL8D3+TQD322WBEQ5zgOTPQ5bhRtYPhhTwkzXZZYUDDcw8GS5QfgFOFX9q2XujvRrt
+ qc9LXsZKur24Dz1Dou8067hxdmbJV4/fP773tT5Y+omjcfKWW+5pDXdEInLwl4w3+78v
+ SnlC2ba8GxuKa6pbVye5swu8zz14ccr+ln7EEYTSXm/Fbba7gRYXIT0vzCYF5T0cWfxv LQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 32d6ksktu4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 21 Jul 2020 20:35:11 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06LKXIgM147407;
+        Tue, 21 Jul 2020 20:35:10 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 32e3vet5sa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 21 Jul 2020 20:35:10 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 06LKZ8fM018008;
+        Tue, 21 Jul 2020 20:35:08 GMT
+Received: from localhost (/10.159.147.229)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 21 Jul 2020 20:35:08 +0000
+Date:   Tue, 21 Jul 2020 13:35:05 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 1/3] xfs: use ENOTBLK for direct I/O to buffered I/O
+ fallback
+Message-ID: <20200721203505.GE3151642@magnolia>
+References: <20200721183157.202276-1-hch@lst.de>
+ <20200721183157.202276-2-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200720233739.824943-6-satyat@google.com>
+In-Reply-To: <20200721183157.202276-2-hch@lst.de>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9689 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=1
+ adultscore=0 bulkscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007210135
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9689 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=1
+ bulkscore=0 mlxscore=0 mlxlogscore=999 impostorscore=0 priorityscore=1501
+ lowpriorityscore=0 phishscore=0 spamscore=0 adultscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007210135
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/20, Satya Tangirala wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Tue, Jul 21, 2020 at 08:31:55PM +0200, Christoph Hellwig wrote:
+> This is what the classic fs/direct-io.c implementation and thuse other
+> file systems use.
 > 
-> Wire up f2fs with fscrypt direct I/O support. direct I/O with fscrypt is
-> only supported through blk-crypto (i.e. CONFIG_BLK_INLINE_ENCRYPTION must
-> have been enabled, the 'inlinecrypt' mount option must have been specified,
-> and either hardware inline encryption support must be present or
-> CONFIG_BLK_INLINE_ENCYRPTION_FALLBACK must have been enabled). Further,
-> direct I/O on encrypted files is only supported when I/O is aligned
-> to the filesystem block size (which is *not* necessarily the same as the
-> block device's block size).
-> 
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> Co-developed-by: Satya Tangirala <satyat@google.com>
-> Signed-off-by: Satya Tangirala <satyat@google.com>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Looks ok to me,
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
 
 > ---
->  fs/f2fs/f2fs.h | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+>  fs/xfs/xfs_file.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index b35a50f4953c..978130b5a195 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -4082,7 +4082,11 @@ static inline bool f2fs_force_buffered_io(struct inode *inode,
->  	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->  	int rw = iov_iter_rw(iter);
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 00db81eac80d6c..a6ef90457abf97 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -505,7 +505,7 @@ xfs_file_dio_aio_write(
+>  		 */
+>  		if (xfs_is_cow_inode(ip)) {
+>  			trace_xfs_reflink_bounce_dio_write(ip, iocb->ki_pos, count);
+> -			return -EREMCHG;
+> +			return -ENOTBLK;
+>  		}
+>  		iolock = XFS_IOLOCK_EXCL;
+>  	} else {
+> @@ -714,7 +714,7 @@ xfs_file_write_iter(
+>  		 * allow an operation to fall back to buffered mode.
+>  		 */
+>  		ret = xfs_file_dio_aio_write(iocb, from);
+> -		if (ret != -EREMCHG)
+> +		if (ret != -ENOTBLK)
+>  			return ret;
+>  	}
 >  
-> -	if (f2fs_post_read_required(inode))
-> +	if (!fscrypt_dio_supported(iocb, iter))
-> +		return true;
-> +	if (fsverity_active(inode))
-> +		return true;
-> +	if (f2fs_compressed_file(inode))
->  		return true;
->  	if (f2fs_is_multi_device(sbi))
->  		return true;
 > -- 
-> 2.28.0.rc0.105.gf9edc3c819-goog
+> 2.27.0
+> 
