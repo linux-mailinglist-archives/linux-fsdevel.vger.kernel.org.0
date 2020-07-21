@@ -2,227 +2,258 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A668A228A10
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 22:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27951228B4A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 21 Jul 2020 23:30:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730963AbgGUUiL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 21 Jul 2020 16:38:11 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:42060 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728837AbgGUUiK (ORCPT
+        id S1731194AbgGUVax (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 21 Jul 2020 17:30:53 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:49501 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730654AbgGUVav (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 21 Jul 2020 16:38:10 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06LKRh4Z178822;
-        Tue, 21 Jul 2020 20:37:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=3x813AIWufPcAcXMzJIzFrj8TwErT72vrpTdX/dgkQA=;
- b=v+YoGT/IhTP6ML8OX7vng+hNTOCm5q1u3Hs4dEE+ssCk94tH6vbIy0IbFa2ri05c7ejw
- FyeVkX66gXS73TH/MXTnw4y/wbVCFar/91ku8z4lhzLDBTkec0lDj0PKbkMWVJGr88p2
- 5i/k77iyEa3BcfY4j6DVOFODdUu9xOO/PD7DcsS4TIu+WmvEqQpQrTgSDmh3lmBst6dT
- 9nsckwS1r8fVz/xsHZ9HB2TBk+hgzaTS77FPYcCJ6V2/KyPBWLDOqAFmoj1xXN6DShIg
- jlGncUKSBf8kIbxX8VJD2Js7rK9xVKznCthpLRWY516VxftPSfkckggIXSpOGnpx1Xqs +w== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 32d6ksku6u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 21 Jul 2020 20:37:53 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06LKS1pC181699;
-        Tue, 21 Jul 2020 20:37:53 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 32e5fxdcjx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 21 Jul 2020 20:37:52 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 06LKbpxM027485;
-        Tue, 21 Jul 2020 20:37:51 GMT
-Received: from localhost (/10.159.147.229)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 21 Jul 2020 13:37:51 -0700
-Date:   Tue, 21 Jul 2020 13:37:49 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-Subject: Re: [PATCH 3/3] iomap: fall back to buffered writes for invalidation
- failures
-Message-ID: <20200721203749.GF3151642@magnolia>
-References: <20200721183157.202276-1-hch@lst.de>
- <20200721183157.202276-4-hch@lst.de>
+        Tue, 21 Jul 2020 17:30:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1595367049;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CXOIW2tKcjVLnKfRcrpqQIxVJkDQFrSqbbXs9Ch/ijw=;
+        b=L/64WBGQs7M3f2Tvc6RdZUmPY4eLSXJUiJhiZy35CjZ+Crde5OFT3kxjBSWyX2mIF5B7Gm
+        yiVZAFYnCrwnDcKSI8id/WZJqGscSLCNQIqINGwfR6BS530v+4KGRxXNisKLodPPLemugs
+        QL0zHsdrnoSGx8c+czPgtE3gDrQAU9s=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-250-TI-Juf5eMny5Lh2j3_oDGg-1; Tue, 21 Jul 2020 17:30:47 -0400
+X-MC-Unique: TI-Juf5eMny5Lh2j3_oDGg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 33F1B800473;
+        Tue, 21 Jul 2020 21:30:46 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-14.rdu2.redhat.com [10.10.116.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 420A68731A;
+        Tue, 21 Jul 2020 21:30:43 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id D0A13223C1E; Tue, 21 Jul 2020 17:30:42 -0400 (EDT)
+Date:   Tue, 21 Jul 2020 17:30:42 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        ganesh.mahalingam@intel.com
+Subject: Re: [PATCH] virtiofs: Enable SB_NOSEC flag to improve small write
+ performance
+Message-ID: <20200721213042.GE551452@redhat.com>
+References: <20200716144032.GC422759@redhat.com>
+ <20200716181828.GE422759@redhat.com>
+ <CAJfpegt-v6sjm2WyjXMWkObqLdL6TSAi=rjra4KK5sNy6hhhmA@mail.gmail.com>
+ <20200720154112.GC502563@redhat.com>
+ <CAJfpegtked-aUq0zbTQjmspG04LG3ar-j_BRsb88kR+cnHNO_w@mail.gmail.com>
+ <20200721151655.GB551452@redhat.com>
+ <CAJfpegtiSNVhnH_FF8qyd2+NO8EJyXoJhPzRVsus8qm4d6UABQ@mail.gmail.com>
+ <20200721155503.GC551452@redhat.com>
+ <CAJfpegsUsZ1DLW6rzR4PQ=M2MxCY1r87eu2rP0Nac4Li_VEm7Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200721183157.202276-4-hch@lst.de>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9689 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=5 malwarescore=0
- mlxscore=0 adultscore=0 phishscore=0 spamscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007210135
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9689 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=5
- bulkscore=0 mlxscore=0 mlxlogscore=999 impostorscore=0 priorityscore=1501
- lowpriorityscore=0 phishscore=0 spamscore=0 adultscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2007210135
+In-Reply-To: <CAJfpegsUsZ1DLW6rzR4PQ=M2MxCY1r87eu2rP0Nac4Li_VEm7Q@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 21, 2020 at 08:31:57PM +0200, Christoph Hellwig wrote:
-> Failing to invalid the page cache means data in incoherent, which is
-> a very bad state for the system.  Always fall back to buffered I/O
-> through the page cache if we can't invalidate mappings.
+On Tue, Jul 21, 2020 at 09:53:21PM +0200, Miklos Szeredi wrote:
+> On Tue, Jul 21, 2020 at 5:55 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > On Tue, Jul 21, 2020 at 05:44:14PM +0200, Miklos Szeredi wrote:
+> > > On Tue, Jul 21, 2020 at 5:17 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > >
+> > > > On Tue, Jul 21, 2020 at 02:33:41PM +0200, Miklos Szeredi wrote:
+> > > > > On Mon, Jul 20, 2020 at 5:41 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > > > >
+> > > > > > On Fri, Jul 17, 2020 at 10:53:07AM +0200, Miklos Szeredi wrote:
+> > > > >
+> > > > > > I see in VFS that chown() always kills suid/sgid. While truncate() and
+> > > > > > write(), will suid/sgid only if caller does not have CAP_FSETID.
+> > > > > >
+> > > > > > How does this work with FUSE_HANDLE_KILLPRIV. IIUC, file server does not
+> > > > > > know if caller has CAP_FSETID or not. That means file server will be
+> > > > > > forced to kill suid/sgid on every write and truncate. And that will fail
+> > > > > > some of the tests.
+> > > > > >
+> > > > > > For WRITE requests now we do have the notion of setting
+> > > > > > FUSE_WRITE_KILL_PRIV flag to tell server explicitly to kill suid/sgid.
+> > > > > > Probably we could use that in cached write path as well to figure out
+> > > > > > whether to kill suid/sgid or not. But truncate() will still continue
+> > > > > > to be an issue.
+> > > > >
+> > > > > Yes, not doing the same for truncate seems to be an oversight.
+> > > > > Unfortunate, since we'll need another INIT flag to enable selective
+> > > > > clearing of suid/sgid on truncate.
+> > > > >
+> > > > > >
+> > > > > > >
+> > > > > > > Even writeback_cache could be handled by this addition, since we call
+> > > > > > > fuse_update_attributes() before generic_file_write_iter() :
+> > > > > > >
+> > > > > > > --- a/fs/fuse/dir.c
+> > > > > > > +++ b/fs/fuse/dir.c
+> > > > > > > @@ -985,6 +985,7 @@ static int fuse_update_get_attr(struct inode
+> > > > > > > *inode, struct file *file,
+> > > > > > >
+> > > > > > >         if (sync) {
+> > > > > > >                 forget_all_cached_acls(inode);
+> > > > > > > +               inode->i_flags &= ~S_NOSEC;
+> > > > > >
+> > > > > > Ok, So I was clearing S_NOSEC only if server reports that file has
+> > > > > > suid/sgid bit set. This change will clear S_NOSEC whenever we fetch
+> > > > > > attrs from host and will force getxattr() when we call file_remove_privs()
+> > > > > > and will increase overhead for non cache writeback mode. We probably
+> > > > > > could keep both. For cache writeback mode, clear it undonditionally
+> > > > > > otherwise not.
+> > > > >
+> > > > > We clear S_NOSEC because the attribute timeout has expired.  This
+> > > > > means we need to refresh all metadata, including cached xattr (which
+> > > > > is what S_NOSEC effectively is).
+> > > > >
+> > > > > > What I don't understand is though that how this change will clear
+> > > > > > suid/sgid on host in cache=writeback mode. I see fuse_setattr()
+> > > > > > will not set ATTR_MODE and clear S_ISUID and S_ISGID if
+> > > > > > fc->handle_killpriv is set. So when server receives setattr request
+> > > > > > (if it does), then how will it know it is supposed to kill suid/sgid
+> > > > > > bit. (its not chown, truncate and its not write).
+> > > > >
+> > > > > Depends.  If the attribute timeout is infinity, then that means the
+> > > > > cache is always up to date.  In that case we only need to clear
+> > > > > suid/sgid if set in i_mode.  Similarly, the security.capability will
+> > > > > only be cleared if it was set in the first place (which would clear
+> > > > > S_NOSEC).
+> > > > >
+> > > > > If the timeout is finite, then that means we need to check if the
+> > > > > metadata changed after a timeout.  That's the purpose of the
+> > > > > fuse_update_attributes() call before generic_file_write_iter().
+> > > > >
+> > > > > Does that make it clear?
+> > > >
+> > > > I understood it partly but one thing is still bothering me. What
+> > > > happens when cache writeback is set as well as fc->handle_killpriv=1.
+> > > >
+> > > > When handle_killpriv is set, how suid/sgid will be cleared by
+> > > > server. Given cache=writeback, write probably got cached in
+> > > > guest and server probably will not not see a WRITE immideately.
+> > > > (I am assuming we are relying on a WRITE to clear setuid/setgid when
+> > > >  handle_killpriv is set). And that means server will not clear
+> > > >  setuid/setgid till inode is written back at some point of time
+> > > >  later.
+> > > >
+> > > > IOW, cache=writeback and fc->handle_killpriv don't seem to go
+> > > > together (atleast given the current code).
+> > >
+> > > fuse_cache_write_iter()
+> > >   -> fuse_update_attributes()   * this will refresh i_mode
+> > >   -> generic_file_write_iter()
+> > >       ->__generic_file_write_iter()
+> > >           ->file_remove_privs()    * this will check i_mode
+> > >               ->__remove_privs()
+> > >                   -> notify_change()
+> > >                      -> fuse_setattr()   * this will clear suid/sgit bits
+> >
+> > And fuse_setattr() has following.
+> >
+> >                 if (!fc->handle_killpriv) {
+> >                         /*
+> >                          * ia_mode calculation may have used stale i_mode.
+> >                          * Refresh and recalculate.
+> >                          */
+> >                         ret = fuse_do_getattr(inode, NULL, file);
+> >                         if (ret)
+> >                                 return ret;
+> >
+> >                         attr->ia_mode = inode->i_mode;
+> >                         if (inode->i_mode & S_ISUID) {
+> >                                 attr->ia_valid |= ATTR_MODE;
+> >                                 attr->ia_mode &= ~S_ISUID;
+> >                         }
+> >                         if ((inode->i_mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP)) {
+> >                                 attr->ia_valid |= ATTR_MODE;
+> >                                 attr->ia_mode &= ~S_ISGID;
+> >                         }
+> >                 }
+> >         }
+> >         if (!attr->ia_valid)
+> >                 return 0;
+> >
+> > So if fc->handle_killpriv is set, we might not even send setattr
+> > request if attr->ia_valid turns out to be zero.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Dave Chinner <dchinner@redhat.com>
-> Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
-
-For the iomap and xfs parts,
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-
-But I'd still like acks from Ted, Andreas, and Damien for ext4, gfs2,
-and zonefs, respectively.
-
-(Particularly if anyone was harboring ideas about trying to get this in
-before 5.10, though I've not yet heard anyone say that explicitly...)
-
---D
-
-> ---
->  fs/ext4/file.c       |  2 ++
->  fs/gfs2/file.c       |  3 ++-
->  fs/iomap/direct-io.c | 16 +++++++++++-----
->  fs/iomap/trace.h     |  1 +
->  fs/xfs/xfs_file.c    |  4 ++--
->  fs/zonefs/super.c    |  7 +++++--
->  6 files changed, 23 insertions(+), 10 deletions(-)
+> Ah, right you are.  The writeback_cache case is indeed special.
 > 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 2a01e31a032c4c..129cc1dd6b7952 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -544,6 +544,8 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  		iomap_ops = &ext4_iomap_overwrite_ops;
->  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
->  			   is_sync_kiocb(iocb) || unaligned_io || extend);
-> +	if (ret == -ENOTBLK)
-> +		ret = 0;
->  
->  	if (extend)
->  		ret = ext4_handle_inode_extension(inode, offset, ret, count);
-> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-> index bebde537ac8cf2..b085a3bea4f0fd 100644
-> --- a/fs/gfs2/file.c
-> +++ b/fs/gfs2/file.c
-> @@ -835,7 +835,8 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
->  
->  	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
->  			   is_sync_kiocb(iocb));
-> -
-> +	if (ret == -ENOTBLK)
-> +		ret = 0;
->  out:
->  	gfs2_glock_dq(&gh);
->  out_uninit:
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 190967e87b69e4..c1aafb2ab99072 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -10,6 +10,7 @@
->  #include <linux/backing-dev.h>
->  #include <linux/uio.h>
->  #include <linux/task_io_accounting_ops.h>
-> +#include "trace.h"
->  
->  #include "../internal.h"
->  
-> @@ -401,6 +402,9 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
->   * can be mapped into multiple disjoint IOs and only a subset of the IOs issued
->   * may be pure data writes. In that case, we still need to do a full data sync
->   * completion.
-> + *
-> + * Returns -ENOTBLK In case of a page invalidation invalidation failure for
-> + * writes.  The callers needs to fall back to buffered I/O in this case.
->   */
->  ssize_t
->  iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> @@ -478,13 +482,15 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  	if (iov_iter_rw(iter) == WRITE) {
->  		/*
->  		 * Try to invalidate cache pages for the range we are writing.
-> -		 * If this invalidation fails, tough, the write will still work,
-> -		 * but racing two incompatible write paths is a pretty crazy
-> -		 * thing to do, so we don't support it 100%.
-> +		 * If this invalidation fails, let the caller fall back to
-> +		 * buffered I/O.
->  		 */
->  		if (invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT,
-> -				end >> PAGE_SHIFT))
-> -			dio_warn_stale_pagecache(iocb->ki_filp);
-> +				end >> PAGE_SHIFT)) {
-> +			trace_iomap_dio_invalidate_fail(inode, pos, count);
-> +			ret = -ENOTBLK;
-> +			goto out_free_dio;
-> +		}
->  
->  		if (!wait_for_completion && !inode->i_sb->s_dio_done_wq) {
->  			ret = sb_init_dio_done_wq(inode->i_sb);
-> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-> index 5693a39d52fb63..fdc7ae388476f5 100644
-> --- a/fs/iomap/trace.h
-> +++ b/fs/iomap/trace.h
-> @@ -74,6 +74,7 @@ DEFINE_EVENT(iomap_range_class, name,	\
->  DEFINE_RANGE_EVENT(iomap_writepage);
->  DEFINE_RANGE_EVENT(iomap_releasepage);
->  DEFINE_RANGE_EVENT(iomap_invalidatepage);
-> +DEFINE_RANGE_EVENT(iomap_dio_invalidate_fail);
->  
->  #define IOMAP_TYPE_STRINGS \
->  	{ IOMAP_HOLE,		"HOLE" }, \
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index a6ef90457abf97..1b4517fc55f1b9 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -553,8 +553,8 @@ xfs_file_dio_aio_write(
->  	xfs_iunlock(ip, iolock);
->  
->  	/*
-> -	 * No fallback to buffered IO on errors for XFS, direct IO will either
-> -	 * complete fully or fail.
-> +	 * No fallback to buffered IO after short writes for XFS, direct I/O
-> +	 * will either complete fully or return an error.
->  	 */
->  	ASSERT(ret < 0 || ret == count);
->  	return ret;
-> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> index 07bc42d62673ce..d0a04528a7e18e 100644
-> --- a/fs/zonefs/super.c
-> +++ b/fs/zonefs/super.c
-> @@ -786,8 +786,11 @@ static ssize_t zonefs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  	if (iocb->ki_pos >= ZONEFS_I(inode)->i_max_size)
->  		return -EFBIG;
->  
-> -	if (iocb->ki_flags & IOCB_DIRECT)
-> -		return zonefs_file_dio_write(iocb, from);
-> +	if (iocb->ki_flags & IOCB_DIRECT) {
-> +		ssize_t ret = zonefs_file_dio_write(iocb, from);
-> +		if (ret != -ENOTBLK)
-> +			return ret;
-> +	}
->  
->  	return zonefs_file_buffered_write(iocb, from);
->  }
-> -- 
-> 2.27.0
+> The way that can be properly solved, I think, is to check if any
+> security bits need to be removed before calling into
+> generic_file_write_iter() and if yes, fall back to unbuffered write.
 > 
+> Something like the attached?
+> 
+> Thanks,
+> Miklos
+
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 83d917f7e542..f67c6f46dae9 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1245,16 +1245,21 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  	ssize_t written = 0;
+>  	ssize_t written_buffered = 0;
+>  	struct inode *inode = mapping->host;
+> +	struct fuse_conn *fc = get_fuse_conn(inode);
+>  	ssize_t err;
+>  	loff_t endbyte = 0;
+>  
+> -	if (get_fuse_conn(inode)->writeback_cache) {
+> +	if (fc->writeback_cache) {
+>  		/* Update size (EOF optimization) and mode (SUID clearing) */
+>  		err = fuse_update_attributes(mapping->host, file);
+>  		if (err)
+>  			return err;
+>  
+> -		return generic_file_write_iter(iocb, from);
+> +		if (!fc->handle_killpriv ||
+> +		    !should_remove_suid(file->f_path.dentry))
+> +			return generic_file_write_iter(iocb, from);
+> +
+> +		/* Fall back to unbuffered write to remove SUID/SGID bits */
+
+This should solve the issue with fc->writeback_cache.
+
+What about following race. Assume a client has set suid/sgid/caps
+and this client is doing write but cache metadata has not expired
+yet. That means fuse_update_attributes() will not clear S_NOSEC
+and that means file_remove_privs() will not clear suid/sgid/caps
+as well as WRITE will be buffered so that also will not clear
+suid/sgid/caps as well.
+
+IOW, even after WRITE has completed, suid/sgid/security.capability will
+still be there on file inode if inode metadata had not expired at the time
+of WRITE. Is that acceptable from coherency requirements point of view.
+
+I have a question. Does general fuse allow this use case where multiple
+clients are distributed and not going through same VFS? virtiofs wants
+to support that at some point of time but what about existing fuse
+filesystems.
+
+I also have concerns with being dependent on FUSE_HANDLE_KILLPRIV because
+it clear suid/sgid on WRITE and truncate evn if caller has
+CAP_SETID, breaking Linux behavior (Don't know what does POSIX say).
+
+Shall we design FUSE_HANDLE_KILLPRIV2 instead which kills
+security.capability always but kills suid/sgid on on WRITE/truncate
+only if caller does not have CAP_FSETID. This also means that
+we probably will have to send this information in fuse_setattr()
+somehow.
+
+Am I overthinking now? :-)
+
+Thanks
+Vivek
+
