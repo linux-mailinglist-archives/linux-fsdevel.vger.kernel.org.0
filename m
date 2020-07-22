@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B1D4A229DD9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jul 2020 19:06:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9C38229DDF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jul 2020 19:07:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731378AbgGVRG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jul 2020 13:06:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59934 "EHLO mail.kernel.org"
+        id S1730292AbgGVRHk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jul 2020 13:07:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726784AbgGVRG5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jul 2020 13:06:57 -0400
+        id S1726666AbgGVRHk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Jul 2020 13:07:40 -0400
 Received: from localhost (unknown [104.132.1.66])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 716B32065F;
-        Wed, 22 Jul 2020 17:06:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76DED2065F;
+        Wed, 22 Jul 2020 17:07:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595437616;
-        bh=J9bE9IOReg39TnqW7rQqgVX/bLpQnJgtze/XCWHrEi8=;
+        s=default; t=1595437659;
+        bh=lrvRB6IMtIhg3LyXmKGp5DKL4F5360nyGUKKpkB6a6Y=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SLvlcAXPykYlMlmVanzKn3R31qhYknX1uon6FWXrRV0UQOMps3FOBazrA/ELlo+uv
-         MNqN9Ht4B0YtczHGivnbHHdEPndGHM5XTTPdEXCeiRe3J1AosGDJNHFuh9g5rvKbHU
-         0q60IWW69l0+aw4fVpq7A8zP3s6fMj8Ao8qr1f9s=
-Date:   Wed, 22 Jul 2020 10:06:56 -0700
+        b=aI9Wi6pSaEG/S9c9su+uORfKY473DfMmnndryhb7OhnbvOIVUD6fkKmpBSCRE7UDh
+         Fq+REBJwGcG+FFGpCsa9h1LBIEdi95Eq9jp274ieWYidzJHQ1isIWpZej9n0sosl/9
+         WLUxZiNa6zn3W1aeuYxFOmFX5AxdqOZWPdUA+NKU=
+Date:   Wed, 22 Jul 2020 10:07:39 -0700
 From:   Jaegeuk Kim <jaegeuk@kernel.org>
 To:     Satya Tangirala <satyat@google.com>
 Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
         linux-xfs@vger.kernel.org, Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH v4 3/7] iomap: support direct I/O with fscrypt using
+Subject: Re: [PATCH v4 4/7] ext4: support direct I/O with fscrypt using
  blk-crypto
-Message-ID: <20200722170656.GF3912099@google.com>
+Message-ID: <20200722170739.GG3912099@google.com>
 References: <20200720233739.824943-1-satyat@google.com>
- <20200720233739.824943-4-satyat@google.com>
+ <20200720233739.824943-5-satyat@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200720233739.824943-4-satyat@google.com>
+In-Reply-To: <20200720233739.824943-5-satyat@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -46,23 +46,14 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On 07/20, Satya Tangirala wrote:
 > From: Eric Biggers <ebiggers@google.com>
 > 
-> Wire up iomap direct I/O with the fscrypt additions for direct I/O.
-> This allows ext4 to support direct I/O on encrypted files when inline
-> encryption is enabled.
-> 
-> This change consists of two parts:
-> 
-> - Set a bio_crypt_ctx on bios for encrypted files, so that the file
->   contents get encrypted (or decrypted).
-> 
-> - Ensure that encryption data unit numbers (DUNs) are contiguous within
->   each bio.  Use the new function fscrypt_limit_io_pages() for this,
->   since the iomap code works directly with logical ranges and thus
->   doesn't have a chance to call fscrypt_mergeable_bio() on each page.
-> 
-> Note that fscrypt_limit_io_pages() is normally a no-op, as normally the
-> DUNs simply increment along with the logical blocks.  But it's needed to
-> handle an edge case in one of the fscrypt IV generation methods.
+> Wire up ext4 with fscrypt direct I/O support. direct I/O with fscrypt is
+> only supported through blk-crypto (i.e. CONFIG_BLK_INLINE_ENCRYPTION must
+> have been enabled, the 'inlinecrypt' mount option must have been specified,
+> and either hardware inline encryption support must be present or
+> CONFIG_BLK_INLINE_ENCYRPTION_FALLBACK must have been enabled). Further,
+> direct I/O on encrypted files is only supported when I/O is aligned
+> to the filesystem block size (which is *not* necessarily the same as the
+> block device's block size).
 > 
 > Signed-off-by: Eric Biggers <ebiggers@google.com>
 > Co-developed-by: Satya Tangirala <satyat@google.com>
@@ -71,66 +62,44 @@ On 07/20, Satya Tangirala wrote:
 Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
 > ---
->  fs/iomap/direct-io.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
+>  fs/ext4/file.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index ec7b78e6feca..12064daa3e3d 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -6,6 +6,7 @@
->  #include <linux/module.h>
->  #include <linux/compiler.h>
->  #include <linux/fs.h>
-> +#include <linux/fscrypt.h>
->  #include <linux/iomap.h>
->  #include <linux/backing-dev.h>
->  #include <linux/uio.h>
-> @@ -183,11 +184,16 @@ static void
->  iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
->  		unsigned len)
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 2a01e31a032c..d534f72675d9 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -36,9 +36,11 @@
+>  #include "acl.h"
+>  #include "truncate.h"
+>  
+> -static bool ext4_dio_supported(struct inode *inode)
+> +static bool ext4_dio_supported(struct kiocb *iocb, struct iov_iter *iter)
 >  {
-> +	struct inode *inode = file_inode(dio->iocb->ki_filp);
->  	struct page *page = ZERO_PAGE(0);
->  	int flags = REQ_SYNC | REQ_IDLE;
->  	struct bio *bio;
->  
->  	bio = bio_alloc(GFP_KERNEL, 1);
+> -	if (IS_ENABLED(CONFIG_FS_ENCRYPTION) && IS_ENCRYPTED(inode))
+> +	struct inode *inode = file_inode(iocb->ki_filp);
 > +
-> +	/* encrypted direct I/O is guaranteed to be fs-block aligned */
-> +	WARN_ON_ONCE(fscrypt_needs_contents_encryption(inode));
-> +
->  	bio_set_dev(bio, iomap->bdev);
->  	bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
->  	bio->bi_private = dio;
-> @@ -253,6 +259,7 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  		ret = nr_pages;
->  		goto out;
+> +	if (!fscrypt_dio_supported(iocb, iter))
+>  		return false;
+>  	if (fsverity_active(inode))
+>  		return false;
+> @@ -61,7 +63,7 @@ static ssize_t ext4_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  		inode_lock_shared(inode);
 >  	}
-> +	nr_pages = fscrypt_limit_io_pages(inode, pos, nr_pages);
 >  
->  	if (need_zeroout) {
->  		/* zero out from the start of the block to the write offset */
-> @@ -270,6 +277,8 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  		}
+> -	if (!ext4_dio_supported(inode)) {
+> +	if (!ext4_dio_supported(iocb, to)) {
+>  		inode_unlock_shared(inode);
+>  		/*
+>  		 * Fallback to buffered I/O if the operation being performed on
+> @@ -490,7 +492,7 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  	}
 >  
->  		bio = bio_alloc(GFP_KERNEL, nr_pages);
-> +		fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
-> +					  GFP_KERNEL);
->  		bio_set_dev(bio, iomap->bdev);
->  		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
->  		bio->bi_write_hint = dio->iocb->ki_hint;
-> @@ -306,9 +315,10 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
->  		dio->size += n;
->  		copied += n;
->  
-> -		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
->  		iomap_dio_submit_bio(dio, iomap, bio, pos);
->  		pos += n;
-> +		nr_pages = iov_iter_npages(dio->submit.iter, BIO_MAX_PAGES);
-> +		nr_pages = fscrypt_limit_io_pages(inode, pos, nr_pages);
->  	} while (nr_pages);
->  
->  	/*
+>  	/* Fallback to buffered I/O if the inode does not support direct I/O. */
+> -	if (!ext4_dio_supported(inode)) {
+> +	if (!ext4_dio_supported(iocb, from)) {
+>  		if (ilock_shared)
+>  			inode_unlock_shared(inode);
+>  		else
 > -- 
 > 2.28.0.rc0.105.gf9edc3c819-goog
