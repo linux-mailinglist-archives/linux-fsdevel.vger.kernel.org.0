@@ -2,191 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D5F25229A1C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jul 2020 16:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B7EE229A2A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jul 2020 16:33:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbgGVO3q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jul 2020 10:29:46 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:52464 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728837AbgGVO3q (ORCPT
+        id S1732579AbgGVOcb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jul 2020 10:32:31 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:22601 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729642AbgGVOca (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jul 2020 10:29:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595428183;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=HpvRfWeKDVYWowGCZPg9akb4cGt+hw0uA1Pjk8EfaPA=;
-        b=d+Gnyckc8soOibbPN62EoZ5rKom/gvaE993kwOPqBFOO/kT/FJD18nfYzAPiRzTv3ogMtT
-        +GU+BifFPL1MMJDbyUHkRkd1N0QP1u2PHy9BegY3nk5iI25du3RBBSIM9RkgCe5do8c1LO
-        ru6mahI8Kg4zJcvvzSSa7oEXEAQYAVY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-57-Kyk_mQmsNhSJ31xkLzc6Ww-1; Wed, 22 Jul 2020 10:29:40 -0400
-X-MC-Unique: Kyk_mQmsNhSJ31xkLzc6Ww-1
-Received: by mail-wr1-f70.google.com with SMTP id b8so687454wro.19
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jul 2020 07:29:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HpvRfWeKDVYWowGCZPg9akb4cGt+hw0uA1Pjk8EfaPA=;
-        b=Mc/GKVPkNoFt417ISO4L3XJG+vzPtOwRcciopaIeRdj89DkZg5mC7tIdamKcv1hB8R
-         tyE1XOBzj7v22CpprSK+T5KownHcP2dKJXjnwr2o40C4m3vt0TtzR0IKMlr5cD3JyDw3
-         LgbSinaezFSCXUk6567n36z+LMxudTAgM5/HZAz14A5q6PBCBmRdUO0VLLaLUuM7JHu2
-         4vWSq/PpbOurc8C6veXJmPK2HwK/Lp6hnTTnY7jubFY8Dn/bslECyXJd11jAbfJlAaTj
-         90qpH64NSGOk1uyzKVR0+rHsSBKB1745DURRA1WAtpC99Lj8bHhyLwYPmc6P+6RTs0aa
-         4WQw==
-X-Gm-Message-State: AOAM530q619mb0OLcuWSySARAZjOgQV1EmF9GwBrCTTV3SiXHsUGDmZv
-        S4ntwvP+N+Yrf3ind9h4l1IT4tZuqu8g9/uGWbTX02pCBr3+2dK2uHbEJjPK0exWRCR61t8FVfK
-        3NeQocm7t8FGFLbrEhcGmX8a/Rw==
-X-Received: by 2002:adf:8024:: with SMTP id 33mr33689231wrk.117.1595428178920;
-        Wed, 22 Jul 2020 07:29:38 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyG8Z8DO7euidMpeOf2ZLbbpnrBtYwH+3mx/ul+4ozsKYbSDmGaA4HHY0n0WQCn79ezmV8nig==
-X-Received: by 2002:adf:8024:: with SMTP id 33mr33689200wrk.117.1595428178650;
-        Wed, 22 Jul 2020 07:29:38 -0700 (PDT)
-Received: from steredhat ([5.180.207.22])
-        by smtp.gmail.com with ESMTPSA id e5sm146181wrc.37.2020.07.22.07.29.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2020 07:29:38 -0700 (PDT)
-Date:   Wed, 22 Jul 2020 16:29:33 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Kees Cook <keescook@chromium.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Jann Horn <jannh@google.com>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jeff Moyer <jmoyer@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v2 2/3] io_uring: add IOURING_REGISTER_RESTRICTIONS
- opcode
-Message-ID: <20200722142933.rmskkqjputefjace@steredhat>
-References: <20200716124833.93667-1-sgarzare@redhat.com>
- <20200716124833.93667-3-sgarzare@redhat.com>
- <0fbb0393-c14f-3576-26b1-8bb22d2e0615@kernel.dk>
- <20200721104009.lg626hmls5y6ihdr@steredhat>
- <15f7fcf5-c5bb-7752-fa9a-376c4c7fc147@kernel.dk>
+        Wed, 22 Jul 2020 10:32:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1595428350; x=1626964350;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=PuoDC017WeeuiJvZB02eCzGu3ROWuDo8Ht1IM1oE98k=;
+  b=qpA11iX1qfaN341XQPRUdPv6SwYtQODDMBvRj0aiemFtEOvX6JU7gymb
+   CgU919fhJi4ek+T6kD9dMdCD4pm9HjlrlQFy5sM+Y2h66eGyQhr6w6/QC
+   F03bMz1bdsBNS1wnsCk2X8//szeoRc5iP+2Q0IG/y8TEcOeZQc0lzloWX
+   Zny9I6eor11KEXhJFvqMgFakiTxpfu2wTEVeecYKb2f+IbYkAxY4wTRbR
+   DBMGvDSZdharPxI0YuCpbDaGoUz1bJN8ZUrngFUvvG6wwEigC1+7cyRhD
+   RyxnZFYfdaSI01XkIODAz1zYo9d1/Rn+EgGRCJ6f7ApMfbtMyAPIukEQr
+   A==;
+IronPort-SDR: YchkogHDAhlkvvwfvfFRvCGdosErwV+qc6HV1ath0uu7WyeHsn//tgqel7Z2I9ZnCMjMi7ZiPT
+ lkM3bPJcgDsfKoMq270cIIQoNOrffIVglGbG9IUjB4IKv6UwJRnkkpCXrsLAhdx0UNTeA3/O/F
+ TI5EadLTK5Z653bmdhhw7u3+NkOyME72vWAD4g8mZAzNnsJDVCOPN6NBnCNXCyJrkxKTIvv6z8
+ 6bk8eM7a491xzb0OxqwppRDN6Nc0mk3A959W+a+fkvZ2xKZhuU/OLlE72a0xQDd/++ZICol8fJ
+ fek=
+X-IronPort-AV: E=Sophos;i="5.75,383,1589212800"; 
+   d="scan'208";a="143211681"
+Received: from mail-sn1nam02lp2054.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([104.47.36.54])
+  by ob1.hgst.iphmx.com with ESMTP; 22 Jul 2020 22:32:30 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IEXVoMcEPWfu2Ob8ZBBos/pWr5Ee+pskHvUn/tBHMxS61x8bLZ9n9YuVmAbL8m+XYeSzn3PCR8ZckICZMoSgYNqQHIRA+q1bgXq8MaVGeBropeAHaqrZfR+C9BN9Tsf0yE4kQI4n/qErlJFndfWYY2DX+HRZgEmX4biFYNOsdV32AZ00vRbKBqya2dg5rTgkQ+m5cRCMJRLZ7dZhR3rgYnYFWRRKudAl4p2hjwWNENgjmA6jRg6zMz0rtn46PhMJco2SzgYQy9gMJ3Cf3fhJDM1B6xdoeigVrJQZjCchhL4q8h4ARYHcpm6k14bY572y7nxzO9USAg7ZaLfttL3akQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Cxk+DhQ+SuMEvg14K0d1ydh9/tjs9QeWow4ivS+olHo=;
+ b=myusQPypYcEo88pxie+PfGqdNleYBv0e1p/AhNKQm6IM8kxxp10btvDo/jUl4a0zK7wIp3E0HuEgnPkqj5vlhJHwuLY2lXLL6MR2zBcH6ys7vap/sdcbJKJp0jNiG5J8yKHjj3l/fQpuG/iQk98A8np9rwErTppWJ1iIWurvDSwKakBiJX8pUEORsGZXPEPX2CwSLxnxphEH54FTSAIFdtfYHM+c0RJvEhBAb/I10REhOwLgucHAZyBCTalCzhGgFV7cwzZnyv9E7KDKh0dtj167V6SBoX07aPebE4ln8k+/F/mGtKTW8ZR6ZdKOUGBDhY5Ixcg20lepEfBj+6PtyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Cxk+DhQ+SuMEvg14K0d1ydh9/tjs9QeWow4ivS+olHo=;
+ b=aERQETBnLPqAvrUXLQXm8Kyvbl7nB2/y0onBM64mkHsJ7h34coEfGWjuhRFhHHNSeyr6Sz0RcAqRfHURf4XbTgSxSxrvrLX2r67eymmcFCFFouly4F+f2gb9Bz1pDJO0nUyP9SLBmTe6Z6GdGJ8rfdjZKW0iLunjLkolNS+pGEI=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN4PR0401MB3597.namprd04.prod.outlook.com
+ (2603:10b6:803:45::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3216.21; Wed, 22 Jul
+ 2020 14:32:27 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::1447:186c:326e:30b2]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::1447:186c:326e:30b2%7]) with mapi id 15.20.3195.026; Wed, 22 Jul 2020
+ 14:32:27 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Kanchan Joshi <joshi.k@samsung.com>
+CC:     Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 2/2] zonefs: use zone-append for AIO as well
+Thread-Topic: [PATCH 2/2] zonefs: use zone-append for AIO as well
+Thread-Index: AQHWXpitifll0c+NqUqXemZ9Ae0oAA==
+Date:   Wed, 22 Jul 2020 14:32:26 +0000
+Message-ID: <SN4PR0401MB3598D4B6188B031D7C8191329B790@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200720132118.10934-1-johannes.thumshirn@wdc.com>
+ <CGME20200720132131epcas5p390f6f8a13696a3f54ef906d8ce8cc0ea@epcas5p3.samsung.com>
+ <20200720132118.10934-3-johannes.thumshirn@wdc.com>
+ <20200721122724.GA17629@test-zns>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: samsung.com; dkim=none (message not signed)
+ header.d=none;samsung.com; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: b49b304e-75d1-415f-59d3-08d82e4c0e9b
+x-ms-traffictypediagnostic: SN4PR0401MB3597:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SN4PR0401MB3597D100DBC1127A7B4496E79B790@SN4PR0401MB3597.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: bet3t+gaVVPYY+R96o6qIJ1u0joPLcr8X4QQnFRC5DYC2SSNt8B5ae3KBkS1zi6NC9Lx6M1ac47mKBEGTGlCVQqZfjd1Wi5aBz7cQKbRhgISD2mcy0aq/T6QLLAi/v7vcv1DP5GUw14AqbPmMwU8gyQUqCrftgs/bZihhzC80pzUqKz3lKuKJ8EXnWwV0JsJONfIN3VqQ+rCiLIQ28sEyRELIgN6agQD7q9zJUXMjDuGPBT6J/EQMXnTfpnompja9Gh2L8SFM5K9vxP6NJd5xzlHP4GMlOlSjdTVW5bA9mgbhyZvimLktSh9x+mbnBlcq14+UHt6j3HjWR371Pojsw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(396003)(346002)(39860400002)(136003)(376002)(366004)(7696005)(52536014)(478600001)(86362001)(316002)(71200400001)(83380400001)(4326008)(54906003)(5660300002)(26005)(6916009)(53546011)(6506007)(66476007)(66946007)(64756008)(76116006)(91956017)(66446008)(66556008)(9686003)(186003)(33656002)(55016002)(2906002)(8936002)(8676002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: sx81vTrkmwI6ka+HX3r7wA+2gS9xHjmjlduK961DKSB4dzmMV6ChJKPrXUEgSkqQvds/AN6eAlIZAgaNqVHvF71EN1tQeBLsxWieRtC/UNVS3vmGaUo/d+J3JAo9dLVb9P4c7F15Sk/cfCVYC0T/ft7wrYfWdru0RCmoAQH2Pb+LOHazSfET/fQ3T769WyoNgWYvfbJmcJfPqAy/WViV60f8fzyJFzYIUUxh5I/CdIOnc7s64iaY2BAdJx0Rrhq3NEfaTp5bg6w1hP4dJt+nW36PKAq0NjUnIkM6UGRiInDGv3ih4x+XqqJ98Hw/wEXwr77AKeZjvl8lpZSodk2Qy2v5lwsLDCexlCecS2XJ4pjdlO43hpnx8CEJwv3NuZDz+kwma2z1+9RIKxCDrFxnZmtnJMU/4gKNiuc8UT/ncfePW8k5auyjPp0ip2GFcoX/O4tFEE+zINVUngd/aROrSOrenxtcj4mz8meKuM7lwwULi9JdffYdudrDLWGlhUqF
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15f7fcf5-c5bb-7752-fa9a-376c4c7fc147@kernel.dk>
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b49b304e-75d1-415f-59d3-08d82e4c0e9b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2020 14:32:26.8950
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: z9XHT9dvaXeSp49yf7EM/KGSVT1hh72ptzfZZTSF+/S2k9B+DUFsOe8+gpUWCQqarc9IhqQ5WXPvGo123h1m0l+g1XPT/ixATZ6L7Bfjm9Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3597
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 21, 2020 at 11:11:17AM -0600, Jens Axboe wrote:
-> On 7/21/20 4:40 AM, Stefano Garzarella wrote:
-> > On Thu, Jul 16, 2020 at 03:26:51PM -0600, Jens Axboe wrote:
-> >> On 7/16/20 6:48 AM, Stefano Garzarella wrote:
-> >>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> >>> index efc50bd0af34..0774d5382c65 100644
-> >>> --- a/include/uapi/linux/io_uring.h
-> >>> +++ b/include/uapi/linux/io_uring.h
-> >>> @@ -265,6 +265,7 @@ enum {
-> >>>  	IORING_REGISTER_PROBE,
-> >>>  	IORING_REGISTER_PERSONALITY,
-> >>>  	IORING_UNREGISTER_PERSONALITY,
-> >>> +	IORING_REGISTER_RESTRICTIONS,
-> >>>  
-> >>>  	/* this goes last */
-> >>>  	IORING_REGISTER_LAST
-> >>> @@ -293,4 +294,30 @@ struct io_uring_probe {
-> >>>  	struct io_uring_probe_op ops[0];
-> >>>  };
-> >>>  
-> >>> +struct io_uring_restriction {
-> >>> +	__u16 opcode;
-> >>> +	union {
-> >>> +		__u8 register_op; /* IORING_RESTRICTION_REGISTER_OP */
-> >>> +		__u8 sqe_op;      /* IORING_RESTRICTION_SQE_OP */
-> >>> +	};
-> >>> +	__u8 resv;
-> >>> +	__u32 resv2[3];
-> >>> +};
-> >>> +
-> >>> +/*
-> >>> + * io_uring_restriction->opcode values
-> >>> + */
-> >>> +enum {
-> >>> +	/* Allow an io_uring_register(2) opcode */
-> >>> +	IORING_RESTRICTION_REGISTER_OP,
-> >>> +
-> >>> +	/* Allow an sqe opcode */
-> >>> +	IORING_RESTRICTION_SQE_OP,
-> >>> +
-> >>> +	/* Only allow fixed files */
-> >>> +	IORING_RESTRICTION_FIXED_FILES_ONLY,
-> >>> +
-> >>> +	IORING_RESTRICTION_LAST
-> >>> +};
-> >>> +
-> >>
-> >> Not sure I totally love this API. Maybe it'd be cleaner to have separate
-> >> ops for this, instead of muxing it like this. One for registering op
-> >> code restrictions, and one for disallowing other parts (like fixed
-> >> files, etc).
-> >>
-> >> I think that would look a lot cleaner than the above.
-> >>
-> > 
-> > Talking with Stefan, an alternative, maybe more near to your suggestion,
-> > would be to remove the 'struct io_uring_restriction' and add the
-> > following register ops:
-> > 
-> >     /* Allow an sqe opcode */
-> >     IORING_REGISTER_RESTRICTION_SQE_OP
-> > 
-> >     /* Allow an io_uring_register(2) opcode */
-> >     IORING_REGISTER_RESTRICTION_REG_OP
-> > 
-> >     /* Register IORING_RESTRICTION_*  */
-> >     IORING_REGISTER_RESTRICTION_OP
-> > 
-> > 
-> >     enum {
-> >         /* Only allow fixed files */
-> >         IORING_RESTRICTION_FIXED_FILES_ONLY,
-> > 
-> >         IORING_RESTRICTION_LAST
-> >     })
-> > 
-> > 
-> > We can also enable restriction only when the rings started, to avoid to
-> > register IORING_REGISTER_ENABLE_RINGS opcode. Once rings are started,
-> > the restrictions cannot be changed or disabled.
-> 
-> My concerns are largely:
-> 
-> 1) An API that's straight forward to use
-> 2) Something that'll work with future changes
-> 
-> The "allow these opcodes" is straightforward, and ditto for the register
-> opcodes. The fixed file I guess is the odd one out. So if we need to
-> disallow things in the future, we'll need to add a new restriction
-> sub-op. Should this perhaps be "these flags must be set", and that could
-> easily be augmented with "these flags must not be set"?
-
-Okay, now I get it, and I think that's a good point. I'm going to change that
-to restrict SQE flags.
-
-About the registration of restrictions, what do you think is the best solution
-among them?
-1. a single register op (e.g. IORING_REGISTER_RESTRICTIONS) which has an array
-   of restrictions as a parameter.
-2. a register op for each restriction (sqe ops, register ops, sqe flags, etc.),
-   that requires multiple io_uring_register() calls to register all the
-   restrictions.
-
-I'd go for the first one (basically as it's implemented in this RFC) because
-it seems more extensible and manageable to me, but I'd like to have your
-opinion.
-
-Thanks for your suggestions,
-Stefano
-
+On 21/07/2020 15:02, Kanchan Joshi wrote:=0A=
+> On Mon, Jul 20, 2020 at 10:21:18PM +0900, Johannes Thumshirn wrote:=0A=
+>> If we get an async I/O iocb with an O_APPEND or RWF_APPEND flag set,=0A=
+>> submit it using REQ_OP_ZONE_APPEND to the block layer.=0A=
+>>=0A=
+>> As an REQ_OP_ZONE_APPEND bio must not be split, this does come with an=
+=0A=
+>> additional constraint, namely the buffer submitted to zonefs must not be=
+=0A=
+>> bigger than the max zone append size of the underlying device. For=0A=
+>> synchronous I/O we don't care about this constraint as we can return sho=
+rt=0A=
+>> writes, for AIO we need to return an error on too big buffers.=0A=
+> =0A=
+> I wonder what part of the patch implements that constraint on large=0A=
+> buffer and avoids short-write.=0A=
+> Existing code seems to trim iov_iter in the outset. =0A=
+> =0A=
+>         max =3D queue_max_zone_append_sectors(bdev_get_queue(bdev));=0A=
+>         max =3D ALIGN_DOWN(max << SECTOR_SHIFT, inode->i_sb->s_blocksize)=
+;=0A=
+>         iov_iter_truncate(from, max);=0A=
+=0A=
+This actually needs a 'if (sync)' before the iov_iter_truncate() you're rig=
+ht.=0A=
+=0A=
+> =0A=
+> This will prevent large-buffer seeing that error, and will lead to partia=
+l write.=0A=
+> =0A=
+>> On a successful completion, the position the data is written to is=0A=
+>> returned via AIO's res2 field to the calling application.=0A=
+>>=0A=
+>> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
+>> ---=0A=
+>> fs/zonefs/super.c  | 143 +++++++++++++++++++++++++++++++++++++++------=
+=0A=
+>> fs/zonefs/zonefs.h |   3 +=0A=
+>> 2 files changed, 128 insertions(+), 18 deletions(-)=0A=
+>>=0A=
+>> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c=0A=
+>> index 5832e9f69268..f155a658675b 100644=0A=
+>> --- a/fs/zonefs/super.c=0A=
+>> +++ b/fs/zonefs/super.c=0A=
+>> @@ -24,6 +24,8 @@=0A=
+>>=0A=
+>> #include "zonefs.h"=0A=
+>>=0A=
+>> +static struct bio_set zonefs_dio_bio_set;=0A=
+>> +=0A=
+>> static inline int zonefs_zone_mgmt(struct zonefs_inode_info *zi,=0A=
+>> 				   enum req_opf op)=0A=
+>> {=0A=
+>> @@ -700,16 +702,71 @@ static const struct iomap_dio_ops zonefs_write_dio=
+_ops =3D {=0A=
+>> 	.end_io			=3D zonefs_file_write_dio_end_io,=0A=
+>> };=0A=
+>>=0A=
+>> +struct zonefs_dio {=0A=
+>> +	struct kiocb		*iocb;=0A=
+>> +	struct task_struct	*waiter;=0A=
+>> +	int			error;=0A=
+>> +	struct work_struct	work;=0A=
+>> +	size_t			size;=0A=
+>> +	u64			sector;=0A=
+>> +	struct completion	completion;=0A=
+>> +	struct bio		bio;=0A=
+>> +};=0A=
+> =0A=
+> How about this (will save 32 bytes) - =0A=
+> +struct zonefs_dio {=0A=
+> +       struct kiocb            *iocb;=0A=
+> +       struct task_struct      *waiter;=0A=
+> +       int                     error;=0A=
+> +	union {=0A=
+> +       	struct work_struct      work;   //only for async IO=0A=
+> +       	struct completion       completion; //only for sync IO=0A=
+> +	};=0A=
+> +       size_t                  size;=0A=
+> +       u64                     sector;=0A=
+> +       struct bio              bio;=0A=
+> +};=0A=
+> And dio->error field is not required.=0A=
+> I see it being used at one place -=0A=
+> +       ret =3D zonefs_file_write_dio_end_io(iocb, dio->size,=0A=
+> +                                          dio->error, 0);=0A=
+> Here error-code can be picked from dio->bio.=0A=
+> =0A=
+=0A=
+Indeed, did that and also removed the unused completion from =0A=
+zonefs_dio and made a union of work and waiter.=0A=
+=0A=
