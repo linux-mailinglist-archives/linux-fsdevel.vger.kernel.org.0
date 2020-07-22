@@ -2,34 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C140022A28C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jul 2020 00:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52F2022A2DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jul 2020 01:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbgGVWoO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jul 2020 18:44:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44268 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbgGVWoN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jul 2020 18:44:13 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DCFDC0619DC;
-        Wed, 22 Jul 2020 15:44:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=M1S5XB5jiOs5OBOB/2wH4SZBx30nFn9Ws/CcKpaLIvw=; b=Vk6TjZt44S+/o/6Za+Yv8f+njY
-        HByLP468kZDGhNcS1rfX0KpYuV5q+9yAZdxTk2zCbasyjrcuzHK1ql0TqJnEOCKG1qmX38vWiIf3y
-        anIhRutn1IkLiYU2CX13chtoOhugQ9623I/k3Bgc54XywPpW05WhcM8cu/kvK8VHohtCLFF/fyeLv
-        DnB4vDru6uXeWEYNCJWxMlXp15X41KriDq9C6mt3VV7kq5oYEclCox3a3nFCgh/LhDRjvErgVkMob
-        gKUJx5RUghjFtfTVXD6EadMlsi29AnTVT1WT0L4UOwu27vikJZkKvWaN/izhcaXw++r3sG5Gbs/aK
-        GtGsxJxg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jyNT5-0005no-5i; Wed, 22 Jul 2020 22:44:07 +0000
-Date:   Wed, 22 Jul 2020 23:44:07 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Eric Biggers <ebiggers@kernel.org>
+        id S1733057AbgGVXNB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jul 2020 19:13:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43226 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726447AbgGVXNB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 22 Jul 2020 19:13:01 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CEF92071A;
+        Wed, 22 Jul 2020 23:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595459580;
+        bh=HEvt8lyCEN3ZmLCF1F3YI7aqWFAeXTGaHSadk319KrI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DOcLVkNzY1Ih1PYGRteI/48NgDjzPpJqhAiy3Bm1rKFbQ0/Ap0D+Keuc67pI0xPfH
+         WtJquG4oOQM+/LW67fiuUTw1FSgP5jMtxtE4E30+47Xas9p2xkDjq/33ONaWvi6f+a
+         qjZUV7jHG81quN/uhS1slSRH/l6c+hJF2U2ijJTg=
+Date:   Wed, 22 Jul 2020 16:12:58 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Dave Chinner <david@fromorbit.com>,
         Satya Tangirala <satyat@google.com>,
         linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -37,43 +33,56 @@ Cc:     Dave Chinner <david@fromorbit.com>,
         linux-xfs@vger.kernel.org
 Subject: Re: [PATCH v4 3/7] iomap: support direct I/O with fscrypt using
  blk-crypto
-Message-ID: <20200722224407.GR15516@casper.infradead.org>
+Message-ID: <20200722231258.GA83434@sol.localdomain>
 References: <20200720233739.824943-1-satyat@google.com>
  <20200720233739.824943-4-satyat@google.com>
  <20200722211629.GE2005@dread.disaster.area>
  <20200722223404.GA76479@sol.localdomain>
+ <20200722224407.GR15516@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200722223404.GA76479@sol.localdomain>
+In-Reply-To: <20200722224407.GR15516@casper.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 22, 2020 at 03:34:04PM -0700, Eric Biggers wrote:
-> > Which means you are now placing a new constraint on this code in
-> > that we cannot ever, in future, zero entire blocks here.
+On Wed, Jul 22, 2020 at 11:44:07PM +0100, Matthew Wilcox wrote:
+> On Wed, Jul 22, 2020 at 03:34:04PM -0700, Eric Biggers wrote:
+> > > Which means you are now placing a new constraint on this code in
+> > > that we cannot ever, in future, zero entire blocks here.
+> > > 
+> > > This code can issue arbitrary sized zeroing bios - multiple entire fs blocks
+> > > blocks if necessary - so I think constraining it to only support
+> > > partial block zeroing by adding a warning like this is no correct.
 > > 
-> > This code can issue arbitrary sized zeroing bios - multiple entire fs blocks
-> > blocks if necessary - so I think constraining it to only support
-> > partial block zeroing by adding a warning like this is no correct.
+> > In v3 and earlier this instead had the code to set an encryption context:
+> > 
+> > 	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
+> > 				  GFP_KERNEL);
+> > 
+> > Would you prefer that, even though the call to fscrypt_set_bio_crypt_ctx() would
+> > always be a no-op currently (since for now, iomap_dio_zero() will never be
+> > called with an encrypted file) and thus wouldn't be properly tested?
+> > 
+> > BTW, iomap_dio_zero() is actually limited to one page, so it's not quite
+> > "arbitrary sizes".
 > 
-> In v3 and earlier this instead had the code to set an encryption context:
+> I have a patch for that
 > 
-> 	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
-> 				  GFP_KERNEL);
-> 
-> Would you prefer that, even though the call to fscrypt_set_bio_crypt_ctx() would
-> always be a no-op currently (since for now, iomap_dio_zero() will never be
-> called with an encrypted file) and thus wouldn't be properly tested?
-> 
-> BTW, iomap_dio_zero() is actually limited to one page, so it's not quite
-> "arbitrary sizes".
+> http://git.infradead.org/users/willy/pagecache.git/commitdiff/1a4d72a890ca9c2ea3d244a6153511ae674ce1d8
 
-I have a patch for that
+No you don't :-)  Your patch is for iomap_zero_range() in
+fs/iomap/buffered-io.c.  It doesn't touch fs/iomap/direct-io.c which is what
+we're talking about here.
 
-http://git.infradead.org/users/willy/pagecache.git/commitdiff/1a4d72a890ca9c2ea3d244a6153511ae674ce1d8
+> It's not going to cause a problem for crossing a 2^32 boundary because
+> pages are naturally aligned and don't get that big.
 
-It's not going to cause a problem for crossing a 2^32 boundary because
-pages are naturally aligned and don't get that big.
+Well, the boundary can actually occur at any block.  But it's not relevant here
+because (a) fs/iomap/buffered-io.c doesn't yet support encryption anyway, since
+neither ext4 nor f2fs use it; and (b) iomap_zero_range() just writes to the
+pagecache, and the bios aren't actually issued until ->writepages().
+
+- Eric
