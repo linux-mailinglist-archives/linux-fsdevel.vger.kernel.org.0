@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65D822298CD
+	by mail.lfdr.de (Postfix) with ESMTP id D33132298CE
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 22 Jul 2020 14:59:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732382AbgGVM7J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 22 Jul 2020 08:59:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37554 "EHLO
+        id S1732394AbgGVM7N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 22 Jul 2020 08:59:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732295AbgGVM7J (ORCPT
+        with ESMTP id S1732295AbgGVM7K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 22 Jul 2020 08:59:09 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D887AC0619DC
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jul 2020 05:59:08 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id 17so1922460wmo.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jul 2020 05:59:08 -0700 (PDT)
+        Wed, 22 Jul 2020 08:59:10 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CF76C0619DC
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jul 2020 05:59:10 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id s10so1794038wrw.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 22 Jul 2020 05:59:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mq4lMGMMRabdtLMbjK6o4L3vb3t6wnKYpHTiwhaTctk=;
-        b=LVx/0Bhu7coOa1v5ZMIyZkn3IjHhWCD9xitZW14b5Jke3AzjcN5a6VNMRmshv+EH8J
-         tMvAXshJQChlBMT1Neq4gKGwas+YV3KluuhxRg0sFgvF4hMlM88hpaGKOol8h4vu4BJk
-         fFM3DEseQ+un/Y/lzUtf6ZJOdZevUHy8j2NEd4z0wukvsF4tVBo9j3AUN7OrrpJzdzw+
-         7oSSBNTuphYh0fqp1+FDkYd6R+707vVpI9+2QOiV7JQcbssE96ZiRhNK5JXmu38SOaV3
-         Hz7uMTlLjlDxd+TwPPoYc/uBoaQ2PYV5bvvcqX20XVvEgPfq2lc8KOlYjPBt5XLZ2oQV
-         fNHA==
+        bh=2wYA7mBMODKNUAV9pBdhQQeD4kLfNGRYjkDwVOQ8Szk=;
+        b=rt/gYXBIk9/WuQevRfq2WyEg62A1Zr991uzj1t5kaUXVuF5sRomFPEm7fkxjo0HIn3
+         jP2Kgy0BLWtdoZvM3ZA4MbXu8wJuIIyU/8C+Og2dwQhyaITW5HPWkNJI5A3h5TxnvMa8
+         FcwNrVHEAn5oOBPX9iLkEmz9MOfZsYDSDe46RUk//7+fBAJgP8Yi/jW6Kh7u0VHndrxL
+         g4e9zO49ZDCHcELzRKKObltF9Y1eKFaNVee2DSIETpv+Vu08sxE4Shfca3lpAbBbS6K9
+         Ju3ewSiFhcXt2r/fbLik4nSHT+ZzXxqn6e70uYKAYcvYDKOH39FboGBU1c4H8WjsQFio
+         F5xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=mq4lMGMMRabdtLMbjK6o4L3vb3t6wnKYpHTiwhaTctk=;
-        b=PqIvoNPU1yC3kkGRL6l618kJM8+qtMu7ypkKKOsKPoNtYXFtqEeFxJghWF56R2BAMN
-         /w0lF6jDagJFq0vqAOcFwt+SRSolu8/K825djTDxKagkXPeQ/UJpyupGMH8bVOtT9cCj
-         S7dtfTXNJyU/Pb0RkGZcWpbfQufN1MOZ2jACJVIL0Arpr7iEzm6qnPc5VSLUbjjQ9KI8
-         6qqNFeXT7z6P3yRD/NRWN8pzI3nwb5P29VPNz9nEonqq0WX7PSU5j4Eu+a9FmLCH36sn
-         maNqGRo9xM8ATjo6Z4Mti+s1jT6Adw/0ZzRxmhZNoLLzM4p+F5Coaxs6i3A1X5EiQGtl
-         6chw==
-X-Gm-Message-State: AOAM530ddzwx9cOXNQqatydtSWwwHTxbT4XwYCSK78d6VdLTdsrOy/oA
-        AGk4UyFa1OYfK78QB3fYGfc=
-X-Google-Smtp-Source: ABdhPJxmUsElyoKjdxjszpYO9J0AsB8J5TPz4gPENxsenHHOHmDqZtFFepMc6nHqLxCdzOC9JscqWg==
-X-Received: by 2002:a7b:c936:: with SMTP id h22mr8094290wml.114.1595422747601;
-        Wed, 22 Jul 2020 05:59:07 -0700 (PDT)
+        bh=2wYA7mBMODKNUAV9pBdhQQeD4kLfNGRYjkDwVOQ8Szk=;
+        b=JNiklPGM+Yr407QYdvQWMJV5JUBzDOyE6IkPJpTILPdH6/BnDS5NAJsErsZwwVuqbE
+         AA0TbrXRgd1O99GjmFgZbtUGPxGR3dCxOZCBZMuuyp8yIRBlhoh1oEQ7LiKNmDtJY7WA
+         jbeYiC2fxfuVEz8ml/ryU69cljkTjZCf/jAQKBOp+7RMVysYnQqOaOQwOMtEZA/A/lfv
+         PBHF+Tcz9FJASCj+LCtyYDI8tqepBU3Qgn4ZETH/kFaKhAyMjGPl0VGY0blyrVu81cJr
+         +P3+hD6FM+oD2+foWirgW3fAJEqTPyozh3fPmotjQlB7CSsy7FsnUlu2X9V5jh0lsnLC
+         K5EQ==
+X-Gm-Message-State: AOAM531thzX16/aMBPlRit6yKipLUeu7liWpjcLL5I9d/3nKgKHZkPY4
+        SYl92tVO+fDa1DF0Npk0xms=
+X-Google-Smtp-Source: ABdhPJxlxVymyMVaRm8XZw23Bx6d8HKu2NrmYngw4IEdVLi9F1CdE7p3MJbyCE1TYACHXtR7lGGTKw==
+X-Received: by 2002:adf:ec90:: with SMTP id z16mr31011034wrn.52.1595422748954;
+        Wed, 22 Jul 2020 05:59:08 -0700 (PDT)
 Received: from localhost.localdomain ([31.210.180.214])
-        by smtp.gmail.com with ESMTPSA id s4sm35487744wre.53.2020.07.22.05.59.06
+        by smtp.gmail.com with ESMTPSA id s4sm35487744wre.53.2020.07.22.05.59.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jul 2020 05:59:07 -0700 (PDT)
+        Wed, 22 Jul 2020 05:59:08 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 4/9] fsnotify: create helper fsnotify_inode()
-Date:   Wed, 22 Jul 2020 15:58:44 +0300
-Message-Id: <20200722125849.17418-5-amir73il@gmail.com>
+Subject: [PATCH 5/9] fsnotify: simplify dir argument to handle_event()
+Date:   Wed, 22 Jul 2020 15:58:45 +0300
+Message-Id: <20200722125849.17418-6-amir73il@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200722125849.17418-1-amir73il@gmail.com>
 References: <20200722125849.17418-1-amir73il@gmail.com>
@@ -61,132 +61,100 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Simple helper to consolidate biolerplate code.
+The meaning of dir argument could be simplified a lot to just the base
+of file_name it we let the only backends that care about it (fanotify and
+dnotify) cope with the case of NULL file_name themselves, which is easy.
 
+This will make dir argument meaning generic enough so we can use the
+same argument for fsnotify() without causing confusion.
+
+Fixes: e2c9d9039c3f ("fsnotify: pass dir argument to handle_event() callback")
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/kernfs/file.c         |  6 ++----
- fs/notify/fsnotify.c     |  2 +-
- include/linux/fsnotify.h | 26 +++++++++++---------------
- kernel/trace/trace.c     |  3 +--
- 4 files changed, 15 insertions(+), 22 deletions(-)
+ fs/notify/dnotify/dnotify.c      | 2 +-
+ fs/notify/fanotify/fanotify.c    | 7 ++++---
+ fs/notify/fsnotify.c             | 2 +-
+ include/linux/fsnotify_backend.h | 4 +---
+ 4 files changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
-index 5b1468bc509e..1d185bffc52f 100644
---- a/fs/kernfs/file.c
-+++ b/fs/kernfs/file.c
-@@ -910,10 +910,8 @@ static void kernfs_notify_workfn(struct work_struct *work)
- 			kernfs_put(parent);
- 		}
+diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+index 305e5559560a..ca78d3f78da8 100644
+--- a/fs/notify/dnotify/dnotify.c
++++ b/fs/notify/dnotify/dnotify.c
+@@ -112,7 +112,7 @@ static int dnotify_handle_event(struct fsnotify_group *group, u32 mask,
+ 	struct fsnotify_mark *child_mark = fsnotify_iter_child_mark(iter_info);
  
--		if (!p_inode) {
--			fsnotify(inode, FS_MODIFY, inode, FSNOTIFY_EVENT_INODE,
--				 NULL, 0);
--		}
-+		if (!p_inode)
-+			fsnotify_inode(inode, FS_MODIFY);
+ 	/* not a dir, dnotify doesn't care */
+-	if (!dir)
++	if (!dir && !(mask & FS_ISDIR))
+ 		return 0;
  
- 		iput(inode);
+ 	if (WARN_ON(fsnotify_iter_vfsmount_mark(iter_info)))
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index 36ea0cd6387e..03e3dce2a97c 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -245,7 +245,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+ 			return 0;
+ 	} else if (!(fid_mode & FAN_REPORT_FID)) {
+ 		/* Do we have a directory inode to report? */
+-		if (!dir)
++		if (!dir && !(event_mask & FS_ISDIR))
+ 			return 0;
  	}
+ 
+@@ -525,12 +525,13 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+ 	struct fanotify_event *event = NULL;
+ 	gfp_t gfp = GFP_KERNEL_ACCOUNT;
+ 	struct inode *id = fanotify_fid_inode(mask, data, data_type, dir);
++	struct inode *dirid = fanotify_dfid_inode(mask, data, data_type, dir);
+ 	const struct path *path = fsnotify_data_path(data, data_type);
+ 	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+ 	struct inode *child = NULL;
+ 	bool name_event = false;
+ 
+-	if ((fid_mode & FAN_REPORT_DIR_FID) && dir) {
++	if ((fid_mode & FAN_REPORT_DIR_FID) && dirid) {
+ 		/*
+ 		 * With both flags FAN_REPORT_DIR_FID and FAN_REPORT_FID, we
+ 		 * report the child fid for events reported on a non-dir child
+@@ -540,7 +541,7 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+ 		    (mask & FAN_EVENT_ON_CHILD) && !(mask & FAN_ONDIR))
+ 			child = id;
+ 
+-		id = fanotify_dfid_inode(mask, data, data_type, dir);
++		id = dirid;
+ 
+ 		/*
+ 		 * We record file name only in a group with FAN_REPORT_NAME
 diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index efa5c1c4908a..277af3d5efce 100644
+index 277af3d5efce..834775f61f6b 100644
 --- a/fs/notify/fsnotify.c
 +++ b/fs/notify/fsnotify.c
-@@ -74,7 +74,7 @@ static void fsnotify_unmount_inodes(struct super_block *sb)
- 			iput(iput_inode);
- 
- 		/* for each watch, send FS_UNMOUNT and then remove it */
--		fsnotify(inode, FS_UNMOUNT, inode, FSNOTIFY_EVENT_INODE, NULL, 0);
-+		fsnotify_inode(inode, FS_UNMOUNT);
- 
- 		fsnotify_inode_delete(inode);
- 
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index fe4f2bc5b4c2..01b71ad91339 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -38,6 +38,14 @@ static inline void fsnotify_dirent(struct inode *dir, struct dentry *dentry,
- 	fsnotify_name(dir, mask, d_inode(dentry), &dentry->d_name, 0);
- }
- 
-+static inline void fsnotify_inode(struct inode *inode, __u32 mask)
-+{
-+	if (S_ISDIR(inode->i_mode))
-+		mask |= FS_ISDIR;
-+
-+	fsnotify(inode, mask, inode, FSNOTIFY_EVENT_INODE, NULL, 0);
-+}
-+
- /* Notify this dentry's parent about a child's events. */
- static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
- 				  const void *data, int data_type)
-@@ -111,12 +119,7 @@ static inline int fsnotify_perm(struct file *file, int mask)
-  */
- static inline void fsnotify_link_count(struct inode *inode)
- {
--	__u32 mask = FS_ATTRIB;
--
--	if (S_ISDIR(inode->i_mode))
--		mask |= FS_ISDIR;
--
--	fsnotify(inode, mask, inode, FSNOTIFY_EVENT_INODE, NULL, 0);
-+	fsnotify_inode(inode, FS_ATTRIB);
- }
- 
- /*
-@@ -131,7 +134,6 @@ static inline void fsnotify_move(struct inode *old_dir, struct inode *new_dir,
- 	u32 fs_cookie = fsnotify_get_cookie();
- 	__u32 old_dir_mask = FS_MOVED_FROM;
- 	__u32 new_dir_mask = FS_MOVED_TO;
--	__u32 mask = FS_MOVE_SELF;
- 	const struct qstr *new_name = &moved->d_name;
- 
- 	if (old_dir == new_dir)
-@@ -140,7 +142,6 @@ static inline void fsnotify_move(struct inode *old_dir, struct inode *new_dir,
- 	if (isdir) {
- 		old_dir_mask |= FS_ISDIR;
- 		new_dir_mask |= FS_ISDIR;
--		mask |= FS_ISDIR;
- 	}
- 
- 	fsnotify_name(old_dir, old_dir_mask, source, old_name, fs_cookie);
-@@ -149,7 +150,7 @@ static inline void fsnotify_move(struct inode *old_dir, struct inode *new_dir,
- 	if (target)
- 		fsnotify_link_count(target);
- 
--	fsnotify(source, mask, source, FSNOTIFY_EVENT_INODE, NULL, 0);
-+	fsnotify_inode(source, FS_MOVE_SELF);
- 	audit_inode_child(new_dir, moved, AUDIT_TYPE_CHILD_CREATE);
- }
- 
-@@ -174,12 +175,7 @@ static inline void fsnotify_vfsmount_delete(struct vfsmount *mnt)
-  */
- static inline void fsnotify_inoderemove(struct inode *inode)
- {
--	__u32 mask = FS_DELETE_SELF;
--
--	if (S_ISDIR(inode->i_mode))
--		mask |= FS_ISDIR;
--
--	fsnotify(inode, mask, inode, FSNOTIFY_EVENT_INODE, NULL, 0);
-+	fsnotify_inode(inode, FS_DELETE_SELF);
- 	__fsnotify_inode_delete(inode);
- }
- 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index bb62269724d5..0c655c039506 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -1543,8 +1543,7 @@ static void latency_fsnotify_workfn(struct work_struct *work)
- {
- 	struct trace_array *tr = container_of(work, struct trace_array,
- 					      fsnotify_work);
--	fsnotify(tr->d_max_latency->d_inode, FS_MODIFY,
--		 tr->d_max_latency->d_inode, FSNOTIFY_EVENT_INODE, NULL, 0);
-+	fsnotify_inode(tr->d_max_latency->d_inode, FS_MODIFY);
- }
- 
- static void latency_fsnotify_workfn_irq(struct irq_work *iwork)
+@@ -365,7 +365,7 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
+ 	const struct path *path = fsnotify_data_path(data, data_type);
+ 	struct fsnotify_iter_info iter_info = {};
+ 	struct super_block *sb = to_tell->i_sb;
+-	struct inode *dir = S_ISDIR(to_tell->i_mode) ? to_tell : NULL;
++	struct inode *dir = file_name ? to_tell : NULL;
+ 	struct mount *mnt = NULL;
+ 	struct inode *child = NULL;
+ 	int ret = 0;
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index 9bd75d0582b4..d94a50e0445a 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -123,9 +123,7 @@ struct mem_cgroup;
+  * @data_type:	type of object for fanotify_data_XXX() accessors
+  * @dir:	optional directory associated with event -
+  *		if @file_name is not NULL, this is the directory that
+- *		@file_name is relative to. Otherwise, @dir is the object
+- *		inode if event happened on directory and NULL if event
+- *		happenned on a non-directory.
++ *		@file_name is relative to
+  * @file_name:	optional file name associated with event
+  * @cookie:	inotify rename cookie
+  * @iter_info:	array of marks from this group that are interested in the event
 -- 
 2.17.1
 
