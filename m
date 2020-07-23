@@ -2,54 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DD8D122B14C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jul 2020 16:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE37222B2F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jul 2020 17:51:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbgGWO1j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jul 2020 10:27:39 -0400
-Received: from verein.lst.de ([213.95.11.211]:60460 "EHLO verein.lst.de"
+        id S1729668AbgGWPvo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jul 2020 11:51:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726089AbgGWO1i (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jul 2020 10:27:38 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 146E468AFE; Thu, 23 Jul 2020 16:27:35 +0200 (CEST)
-Date:   Thu, 23 Jul 2020 16:27:34 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Lukasz Stelmach <l.stelmach@samsung.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Song Liu <song@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 16/23] initramfs: simplify clean_rootfs
-Message-ID: <20200723142734.GA11080@lst.de>
-References: <20200714190427.4332-1-hch@lst.de> <20200714190427.4332-17-hch@lst.de> <CGME20200717205549eucas1p13fca9a8496836faa71df515524743648@eucas1p1.samsung.com> <7f37802c-d8d9-18cd-7394-df51fa785988@samsung.com> <20200718100035.GA8856@lst.de> <20200723092200.GA19922@lst.de> <dleftjblk6b95t.fsf%l.stelmach@samsung.com>
+        id S1727108AbgGWPvo (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Jul 2020 11:51:44 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B4902071A;
+        Thu, 23 Jul 2020 15:51:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595519503;
+        bh=s7fnhlfkAZ4BDqciAV1UteqeFEi6PoF3meXFtsJ2XFc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pbdjRk7AcTzuJnPWMqvcsWQgsIHa3kfOVWA+356lKqVZTJjaILnpro156gOY6GZbc
+         5cDbaDxYKYjar5G12tA63PKyQeaPpJcZ0A5jAEhJLrIDbYXonDtHAi7YUI6ASXKOxP
+         BZtEIIII3j49elO102+UnQihS0xM3XF34dQkue7E=
+Date:   Thu, 23 Jul 2020 08:51:42 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Cengiz Can <cengiz@kernel.wtf>
+Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk, v9fs-developer@lists.sourceforge.net,
+        syzbot <syzbot+d012ca3f813739c37c25@syzkaller.appspotmail.com>
+Subject: Re: WARNING in __kernel_read
+Message-ID: <20200723155142.GA870@sol.localdomain>
+References: <00000000000003d32b05aa4d493c@google.com>
+ <20200714110239.GE16178@lst.de>
+ <455c6bf929ea197a7c18ba3f9e8464148b333297.camel@kernel.wtf>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dleftjblk6b95t.fsf%l.stelmach@samsung.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <455c6bf929ea197a7c18ba3f9e8464148b333297.camel@kernel.wtf>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 23, 2020 at 04:25:34PM +0200, Lukasz Stelmach wrote:
-> >> Can you comment out the call to d_genocide?  It seems like for your
-> >> the fact that clean_rootfs didn't actually clean up was a feature and
-> >> not a bug.
-> >> 
-> >> I guess the old, pre-2008 code also wouldn't have worked for you in
-> >> that case.
-> >
-> > Did you get a chance to try this?
+Hi Cengiz,
+
+On Thu, Jul 23, 2020 at 05:17:25PM +0300, Cengiz Can wrote:
+> Hello,
 > 
-> Indeed, commenting out d_genocide() helps.
+> I'm trying to help clean up syzkaller submissions and this caught my
+> attention and I wanted to get your advice.
+> 
+> With commit: 6209dd9132e8ea5545cffc84483841e88ea8cc5b `kernel_read` was
+> modified to use `__kernel_read` by Christoph Hellwig.
+> 
+> One of the syzkaller tests executes following system calls:
+> 
+> open("./file0", O_WRONLY|O_CREAT|O_EXCL|O_DIRECT|0x4, 000) = 5
+> open("/dev/char/4:1", O_RDWR)           = 6
+> mount(NULL, "./file0", "9p", 0,
+> "trans=fd,rfdno=0x0000000000000005,wfdno=0x0000000000000006,"
+> 
+> This initiates a `__kernel_read` call from `p9_read_work` (and
+> `p9_fd_read`) and since the `file->f_mode` does not contain FMODE_READ
+> , a WARN_ON_ONCE is thrown.
+> 
+> ```
+> if (WARN_ON_ONCE(!(file->f_mode & FMODE_READ)))
+>          return -EINVAL;
+> ```
+> 
+> Can you help me understand what's wrong and fix this issue? 
+> Is it already being worked on?
+> 
 
-So given that people have relied on at least the basic device nodes
-like /dev/console to not go away since 2008, I wonder if we should just
-remove clean_rootfs entirely
+Looks like this was already fixed in linux-next by:
 
-Linus, Al?
+	commit a39c46067c845a8a2d7144836e9468b7f072343e
+	Author: Christoph Hellwig <hch@lst.de>
+	Date:   Fri Jul 10 10:57:22 2020 +0200
+
+	    net/9p: validate fds in p9_fd_open
+
+Let's tell syzbot so that it closes this bug report:
+
+#syz fix: net/9p: validate fds in p9_fd_open
