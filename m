@@ -2,57 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EB2E22B644
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jul 2020 20:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 880F022B641
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jul 2020 20:59:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727850AbgGWS7d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jul 2020 14:59:33 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:54334 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726617AbgGWS7b (ORCPT
+        id S1727043AbgGWS73 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jul 2020 14:59:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34730 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbgGWS73 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jul 2020 14:59:31 -0400
-Received: from callcc.thunk.org (pool-96-230-252-158.bstnma.fios.verizon.net [96.230.252.158])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 06NIxSlY016217
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 23 Jul 2020 14:59:28 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 07817420304; Thu, 23 Jul 2020 14:59:28 -0400 (EDT)
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     viro@zeniv.linux.org.uk
-Cc:     Linux Filesystem Development List <linux-fsdevel@vger.kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>
-Subject: [PATCH] fs: prevent out-of-bounds array speculation when closing a file descriptor
-Date:   Thu, 23 Jul 2020 14:59:21 -0400
-Message-Id: <20200723185921.1847880-1-tytso@mit.edu>
-X-Mailer: git-send-email 2.24.1
+        Thu, 23 Jul 2020 14:59:29 -0400
+Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3E69C0619E2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jul 2020 11:59:28 -0700 (PDT)
+Received: by mail-vs1-xe41.google.com with SMTP id d198so3649034vsc.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 23 Jul 2020 11:59:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=HBLwNKzqqxHN+Tkikn4Qn01JM5oU/tXNqnRPrbn+c/Y=;
+        b=iPurI/knJtYTII1fiojs42KZ6BUIf1DWLTodSN2an9dlonqzPHTJ49FLfZNK+zNXgo
+         5aDO33RNmI57xcYAIj1Fqe7/LpZ68DXEs7pyNqqU/AK3XwKqE3xLejVqv0dHmib5cq/R
+         ZwzwGni7TFquXHukZSDFIBVJSDOsCDLxo6p79cUIMK7k4EVEgedeU3qSDUk6zhy4WkOw
+         4u4Jh+H46OBHqs0tdie5TZJ2YM5RlBvXqNddwJv/pgJcAnoOhqZNPXAwV/Gj8yxHxLZ2
+         IJvGCphtg5llDxbLhhRS8HJ++r+wXJ8xleRX9OS09T1pkGPF2IYYaqe/2x8vO4CbzdtP
+         9DIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=HBLwNKzqqxHN+Tkikn4Qn01JM5oU/tXNqnRPrbn+c/Y=;
+        b=rlcJ3+kV4TgwVD8Qitsl9VD83FtaleHFPbmHlpAcLnSJJzfLZejsCvBVoqGcXNTDV2
+         o8TtcLUplU8rIMjmbWFvpBxSQkFL75zTgMEDwNRPI3Gn7HZvnmZNz0BbZX9GdyOtUFze
+         cBmHFJTpvQ/NTujG0y3u09Ko+eg5lLh8hzh5GxHSdlkDEcxwKq0KY8jedoZh0S+bABW9
+         zUTvo09TI8q55zfANGi2OzToN1bFRG1qYeSomMrEod+ybhmx0IFiMUSaYeXOJgvSs3kq
+         V8lDg3X7QzJRsUhNRom19379WVA3GZAsED3ykM3xM30SIAv78hGQ361kFxqlG4JIJcX7
+         rImw==
+X-Gm-Message-State: AOAM531sOzISVue0pQYPuImQ+B8cY/SfnUdQJ07oNVyqKfzkGjoDv5gg
+        imRRgvIY8k3IbvHMr/4t/uOInGzkNFKUo8gzeRs=
+X-Google-Smtp-Source: ABdhPJzDPSsZDVubVkN/2qxlYJc1ePmyUeDC4H9wbaj8Bzo7xI9D5SzUegniysui7DWMdN7EjU2JtBFoCKT8JCDsRBU=
+X-Received: by 2002:a05:6102:94:: with SMTP id t20mr5196320vsp.106.1595530767617;
+ Thu, 23 Jul 2020 11:59:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a05:6102:31af:0:0:0:0 with HTTP; Thu, 23 Jul 2020 11:59:27
+ -0700 (PDT)
+Reply-To: laurarichardson314@gmail.com
+From:   "Laura J. Richardson" <petichaleur9960@gmail.com>
+Date:   Thu, 23 Jul 2020 18:59:27 +0000
+Message-ID: <CAHeG7j8hY6qJQOr947eCCtkgxphGc8D2d2XAYKSo5Vr+miiFTg@mail.gmail.com>
+Subject: Saludos
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Google-Bug-Id: 114199369
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
----
- fs/file.c | 1 +
- 1 file changed, 1 insertion(+)
+Hola querido amigo,
 
-diff --git a/fs/file.c b/fs/file.c
-index abb8b7081d7a..73189eaad1df 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -632,6 +632,7 @@ int __close_fd(struct files_struct *files, unsigned fd)
- 	fdt = files_fdtable(files);
- 	if (fd >= fdt->max_fds)
- 		goto out_unlock;
-+	fd = array_index_nospec(fd, fdt->max_fds);
- 	file = fdt->fd[fd];
- 	if (!file)
- 		goto out_unlock;
--- 
-2.24.1
+Soy Laura J. Richardson de los Estados Unidos. Por favor, me gustar=C3=ADa
+comunicarme con usted. estar=C3=A9 esperando tu respuesta.
 
+Laura
