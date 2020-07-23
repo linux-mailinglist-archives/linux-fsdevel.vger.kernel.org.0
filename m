@@ -2,706 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C1D822AC28
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jul 2020 12:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25FFE22ACB8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jul 2020 12:40:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728312AbgGWKIo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jul 2020 06:08:44 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:54548 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728300AbgGWKIn (ORCPT
+        id S1728364AbgGWKkA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jul 2020 06:40:00 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:52228 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728355AbgGWKj7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jul 2020 06:08:43 -0400
+        Thu, 23 Jul 2020 06:39:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595498919;
+        s=mimecast20190719; t=1595500797;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ON177NFnkmZ8ehSMlbNng36Of33sS7iBp1Yg/NlK08o=;
-        b=NFJyDgsyXZ0+01Puji458F9DKfYmDQCdohH648XDRHRwgwWn2L1Y9lEXqiY8CFnLajjGV3
-        1iTrmHPpK3uoE4g77ikL2Yd/I+CF5CbHlfMeasXLd2uLVq8IHWW3zxsHgVEaDTNs/WD4nV
-        DYZ1RCtvsn5+2zdwIx1UXQIczTCd8yg=
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=OroazbspJMAWk8IItdGjVpPCZoCWX8pkuMgG1WcYA/I=;
+        b=GBsh7ZQzAKrLQ4sCKj+veiL6VM6YI7yU9KTD16Sn95V/7zYbbhZuc6FB+nut1aBW0S6dmS
+        7qb0dUHc87Wve4LhskE5AaNDm65gwbht/YxM+YpSy4740GLZTkMKHOnxurtE6ZPXAX47Qk
+        7mIF5FuZKG6Qn8mE3+AAxwq9994+EU0=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-32-BVcQZLwEMnGaEgy029VtUw-1; Thu, 23 Jul 2020 06:08:33 -0400
-X-MC-Unique: BVcQZLwEMnGaEgy029VtUw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-10-QIUSu_4VN7e_6n4PXA-BIg-1; Thu, 23 Jul 2020 06:39:54 -0400
+X-MC-Unique: QIUSu_4VN7e_6n4PXA-BIg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D53E2100AA21;
-        Thu, 23 Jul 2020 10:08:32 +0000 (UTC)
-Received: from ws.net.home (unknown [10.40.194.188])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7CB9D8BEE6;
-        Thu, 23 Jul 2020 10:08:31 +0000 (UTC)
-Date:   Thu, 23 Jul 2020 12:08:28 +0200
-From:   Karel Zak <kzak@redhat.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        util-linux@vger.kernel.org
-Subject: [ANNOUNCE] util-linux v2.36
-Message-ID: <20200723100828.262ftx3qhie2sc32@ws.net.home>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D2D92193F560;
+        Thu, 23 Jul 2020 10:39:51 +0000 (UTC)
+Received: from localhost (ovpn-114-204.ams2.redhat.com [10.36.114.204])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9065478538;
+        Thu, 23 Jul 2020 10:39:50 +0000 (UTC)
+Date:   Thu, 23 Jul 2020 11:39:49 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>,
+        Kees Cook <keescook@chromium.org>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        strace-devel@lists.strace.io, io-uring@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: Re: strace of io_uring events?
+Message-ID: <20200723103949.GE186372@stefanha-x1.localdomain>
+References: <20200715171130.GG12769@casper.infradead.org>
+ <7c09f6af-653f-db3f-2378-02dca2bc07f7@gmail.com>
+ <CAJfpegt9=p4uo5U2GXqc-rwqOESzZCWAkGMRTY1r8H6fuXx96g@mail.gmail.com>
+ <48cc7eea-5b28-a584-a66c-4eed3fac5e76@gmail.com>
+ <202007151511.2AA7718@keescook>
+ <20200716131404.bnzsaarooumrp3kx@steredhat>
+ <202007160751.ED56C55@keescook>
+ <20200717080157.ezxapv7pscbqykhl@steredhat.lan>
+ <CALCETrXSPdiVCgh3h=q7w9RyiKnp-=8jOHoFHX=an0cWqK7bzQ@mail.gmail.com>
+ <20200721155848.32xtze5ntvcmjv63@steredhat>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200721155848.32xtze5ntvcmjv63@steredhat>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=stefanha@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cYtjc4pxslFTELvY"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+--cYtjc4pxslFTELvY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The util-linux release v2.36 is available at
-  
-  http://www.kernel.org/pub/linux/utils/util-linux/v2.36
- 
-Feedback and bug reports, as always, are welcomed.
- 
-  Karel
+On Tue, Jul 21, 2020 at 05:58:48PM +0200, Stefano Garzarella wrote:
+> On Tue, Jul 21, 2020 at 08:27:34AM -0700, Andy Lutomirski wrote:
+> > On Fri, Jul 17, 2020 at 1:02 AM Stefano Garzarella <sgarzare@redhat.com=
+> wrote:
+> > >
+> > > On Thu, Jul 16, 2020 at 08:12:35AM -0700, Kees Cook wrote:
+> > > > On Thu, Jul 16, 2020 at 03:14:04PM +0200, Stefano Garzarella wrote:
+> >=20
+> > > > access (IIUC) is possible without actually calling any of the io_ur=
+ing
+> > > > syscalls. Is that correct? A process would receive an fd (via SCM_R=
+IGHTS,
+> > > > pidfd_getfd, or soon seccomp addfd), and then call mmap() on it to =
+gain
+> > > > access to the SQ and CQ, and off it goes? (The only glitch I see is
+> > > > waking up the worker thread?)
+> > >
+> > > It is true only if the io_uring istance is created with SQPOLL flag (=
+not the
+> > > default behaviour and it requires CAP_SYS_ADMIN). In this case the
+> > > kthread is created and you can also set an higher idle time for it, s=
+o
+> > > also the waking up syscall can be avoided.
+> >=20
+> > I stared at the io_uring code for a while, and I'm wondering if we're
+> > approaching this the wrong way. It seems to me that most of the
+> > complications here come from the fact that io_uring SQEs don't clearly
+> > belong to any particular security principle.  (We have struct creds,
+> > but we don't really have a task or mm.)  But I'm also not convinced
+> > that io_uring actually supports cross-mm submission except by accident
+> > -- as it stands, unless a user is very careful to only submit SQEs
+> > that don't use user pointers, the results will be unpredictable.
+> > Perhaps we can get away with this:
+> >=20
+> > diff --git a/fs/io_uring.c b/fs/io_uring.c
+> > index 74bc4a04befa..92266f869174 100644
+> > --- a/fs/io_uring.c
+> > +++ b/fs/io_uring.c
+> > @@ -7660,6 +7660,20 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int,
+> > fd, u32, to_submit,
+> >      if (!percpu_ref_tryget(&ctx->refs))
+> >          goto out_fput;
+> >=20
+> > +    if (unlikely(current->mm !=3D ctx->sqo_mm)) {
+> > +        /*
+> > +         * The mm used to process SQEs will be current->mm or
+> > +         * ctx->sqo_mm depending on which submission path is used.
+> > +         * It's also unclear who is responsible for an SQE submitted
+> > +         * out-of-process from a security and auditing perspective.
+> > +         *
+> > +         * Until a real usecase emerges and there are clear semantics
+> > +         * for out-of-process submission, disallow it.
+> > +         */
+> > +        ret =3D -EACCES;
+> > +        goto out;
+> > +    }
+> > +
+> >      /*
+> >       * For SQ polling, the thread will do all submissions and completi=
+ons.
+> >       * Just return the requested submit count, and wake the thread if
+> >=20
+> > If we can do that, then we could bind seccomp-like io_uring filters to
+> > an mm, and we get obvious semantics that ought to cover most of the
+> > bases.
+> >=20
+> > Jens, Christoph?
+> >=20
+> > Stefano, what's your intended usecase for your restriction patchset?
+> >=20
+>=20
+> Hi Andy,
+> my use case concerns virtualization. The idea, that I described in the
+> proposal of io-uring restrictions [1], is to share io_uring CQ and SQ que=
+ues
+> with a guest VM for block operations.
+>=20
+> In the PoC that I realized, there is a block device driver in the guest t=
+hat
+> uses io_uring queues coming from the host to submit block requests.
+>=20
+> Since the guest is not trusted, we need restrictions to allow only
+> a subset of syscalls on a subset of file descriptors and memory.
 
+BTW there's only a single mm in the kvm.ko use case.
 
-Util-linux 2.36 Release Notes
-=============================
- 
-Release highlights
-------------------
+Stefan
 
-blkdiscard(8) refuses to proceed if filesystem or RAID signatures are found in
-interactive mode (executed on a terminal). The option --force is required to
-the discard data.
+--cYtjc4pxslFTELvY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-irqtop(1) and lsirq(1) are NEW COMMANDS to monitor kernel interrupts.
+-----BEGIN PGP SIGNATURE-----
 
-cal(1) provides a new --vertical command line option to output calendar
-in vertical mode.
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl8ZaPUACgkQnKSrs4Gr
+c8g3gQgAyCD8y5GHtXlxs23BbgNqd/8tiO02REWzw2jBut5VyHXhfX7MqZ3L/jFc
+vxPAlkPQwzKgyoIdhUXukXhFWhR5Zu2DuKtceGkdk6Y6MNfqaSBL2MX0oxPqondI
+nH3tizipLCJWb31XRrntm7EONxiSA7A4CC/ZDGKUu1rVAfIRJd1AK/5+Ymg/5lqz
+9RhG60zrTMG/CrSM1ZLaX2ko6QHHqJJji0uMLJyDsUxY2SRVljAS54kt0pX11Uxl
+YkONk+ZDISAWYEofcawpoT3yLkfpTCQ4CS1gyVzxb8lFljBSxBJfk6pfzReYECy3
+IFGMwOrd2ux1ti3osGizht2otYVbbw==
+=juCa
+-----END PGP SIGNATURE-----
 
-blkzone(8) implements open/close/finish commands now.
-
-unshare(1) and nsenter(1) commands support the time namespace now.
-
-agetty(8) now supports multiple paths in the option --issue-file.
-
-The commands fdisk(8), sfdisk(8), cfdisk(8), mkswap(8) and wipefs(8) now
-support block devices locking by flock(2) to better behave with udevd or other
-tools. Ffor more details see https://systemd.io/BLOCK_DEVICE_LOCKING/.  This
-feature is controlled by a new command line option --lock and
-$LOCK_BLOCK_DEVICE environmental variable.
-
-dmesg(1) supports a new command line option --follow-new to wait and print only
-new kernel messages.
-
-fdisk(8) provides a new command line option --list-details to print more
-information about partition table. Another new command line option is
---noauto-pt. It's usable to don't automatically create default partition table
-on empty devices.
-
-The command fdisk(8) and sfdisk(8) support user-friendly aliases for partition
-types. For example "echo 'size=10M type=uefi' | sfdisk /dev/sda" creates EFI 
-system partition on sda.
-
-fstrim(8) supports new command line option --listed-in to specify alternatives 
-where to read list of the filesystems. This option makes fstrim systemd service
-file more portable between distributions.
-
-libfdisk provides API to relocate GPT backup header. This feature is usable to 
-generate small, but still valid images for containers and resize the image later.
-This new feature is exported to command line by "sfdisk --relocate".
-
-mount(8) now supports mount by ID= tag. The tag is a block device identifier as
-used by udevd in /dev/disk/by-id. It's usually WWN or another HW related
-identifier.  This feature is designed for users who need to avoid filesystem or
-partition table dependence in fstab. The udevd is required for this tag.
-
-login(1) supports list of "message of the day" files and directories in the
-option MOTD_FILE= in /etc/login.defs now. The default value is
-/usr/share/misc/motd:/run/motd:/etc/motd.
-
-All tools which read /etc/login.defs is possible to compile with libeconf now.
-
-The build system provides a new option --disable-hwclock-gplv3 to avoid optional 
-GPLv3 code in the command hwclock(8).
-
-The build system supports a new option --with-cryptsetup=dlopen to use dlopen
-for libcryptsetup in libmount dm-verity support. This is a temporary workaround
-to avoid collisions between JSON libraries and to reduce dependencies overhead in
-libmount.  Note that dm-verity support is still EXPERIMENTAL and disabled by
-default.
-
-more(1) has been refactored to meet 21st century codding standards. Thanks to
-Sami Kerola.
-
-Thanks to Michael Kerrisk for massive man pages cleanup, and thanks to Evgeny 
-Vereshchagin for work on better integration with CIFuzz and Travis.
-
-
-Changes between v2.35 and v2.36
--------------------------------
-
-Manual pages:
-   - ipcmk.1, ipcs.1, lsipc.1  explicitly mention "System V"  [Michael Kerrisk (man-pages)]
-   - fdisk.8  fix typo  [Shigeki Morishima]
-   - Standardize on AUTHORS as section title  [Michael Kerrisk (man-pages)]
-   - Standardize on CONFORMING TO as section title  [Michael Kerrisk (man-pages)]
-   - Standardize on ENVIRONMENT as section title  [Michael Kerrisk (man-pages)]
-   - Standardize on EXAMPLE as section title  [Michael Kerrisk (man-pages)]
-   - Standardize on EXIT STATUS as section title  [Michael Kerrisk (man-pages)]
-   - Standardize on OPTIONS as section title  [Michael Kerrisk (man-pages)]
-   - ipcmk.1, ipcrm.1, ipcs.1, lsipc.1  SEE ALSO  add sysvipc(7)  [Michael Kerrisk (man-pages)]
-   - kill.1  improve the description of the --timout option  [Michael Kerrisk (man-pages)]
-   - kill.1  various language, spelling, and formatting fixes  [Michael Kerrisk (man-pages)]
-   - login.1  SEE ALSO  add utmp(5), lastlog(8)  [Michael Kerrisk (man-pages)]
-   - login.1  formatting fixes  [Michael Kerrisk (man-pages)]
-   - login.1  various minor wording fixes  [Michael Kerrisk (man-pages)]
-   - losetup.8  Fix "--direct-io" defaults  [Rupesh Girase]
-   - mount.8  Miscellaneous wording, grammar, and formatting fixes  [Michael Kerrisk (man-pages)]
-   - mount.8  Rewrite FILESYSTEM-SPECIFIC MOUNT OPTIONS intro  [Michael Kerrisk (man-pages)]
-   - mount.8  SEE ALSO  add some obvious references  [Michael Kerrisk (man-pages)]
-   - mount.8  Typo fix (remove an accidental paragraph break)  [Michael Kerrisk (man-pages)]
-   - mount.8, umount.8  Clarify that "namespace" means "mount namespace"  [Michael Kerrisk (man-pages)]
-   - mount.8, umount.8  Consistently format pathnames with italic  [Michael Kerrisk (man-pages)]
-   - nsenter.1  clarify the intro discussion  [Michael Kerrisk]
-   - nsenter.1  note that 'file' can be a bind mount  [Michael Kerrisk]
-   - nsenter.1, unshare.1  add a reference to time_namespaces(7)  [Michael Kerrisk]
-   - nsenter.1, unshare.1  remove repeated references to clone(2)  [Michael Kerrisk]
-   - nsenter.1, unshare.1  update references to *_namespaces(7) pages  [Michael Kerrisk]
-   - order AUTHORS / COPYRIGHT / SEE ALSO / AVAILABILITY consistently  [Michael Kerrisk (man-pages)]
-   - order ENVIRONMENT / FILES / CONFORMING TO consistently  [Michael Kerrisk (man-pages)]
-   - order NOTES / HISTORY / BUGS / EXAMPLE consistently  [Michael Kerrisk (man-pages)]
-   - rename EXAMPLE section to EXAMPLES  [Michael Kerrisk (man-pages)]
-   - rename RETURN VALUES to RETURN VALUE  [Michael Kerrisk (man-pages)]
-   - reword su.1 description  [Karel Zak]
-   - runuser.1  Various wording and formatting fixes  [Michael Kerrisk (man-pages)]
-   - runuser.1, su.1  miscellaneous wording and formatting fixes  [Michael Kerrisk (man-pages)]
-   - script.1  Miscellaneous wording, grammar, and formatting fixes  [Michael Kerrisk (man-pages)]
-   - scriptlive.1  Miscellaneous wording, grammar, and formatting fixes  [Michael Kerrisk (man-pages)]
-   - scriptreplay.1  Miscellaneous wording, grammar, and formatting fixes  [Michael Kerrisk (man-pages)]
-   - setpriv.1  Minor formatting and typo fixes  [Michael Kerrisk (man-pages)]
-   - setpriv.1  Various minor wording and formatting fixes  [Michael Kerrisk (man-pages)]
-   - setpriv.1  warn users of restrictions on capability changes  [Michael Kerrisk (man-pages)]
-   - umount.8  use "filesystem" consistently  [Michael Kerrisk (man-pages)]
-   - unshare.1  EXAMPLES  improve persistent mount namespace example  [Michael Kerrisk (man-pages)]
-   - unshare.1  clarify description and example for --mount=<path>  [Michael Kerrisk (man-pages)]
-   - unshare.1  clarify that --pid=<file> requires --fork  [Michael Kerrisk (man-pages)]
-   - unshare.1  fix examples, part 1  [Michael Kerrisk]
-   - unshare.1  fix examples, part 2  [Michael Kerrisk]
-   - unshare.1  fix examples, part 3  [Michael Kerrisk]
-   - unshare.1  improve intro paragraphs  [Michael Kerrisk]
-   - unshare.1  typo fix  [Michael Kerrisk (man-pages)]
-   - use the term "exit status"  [Michael Kerrisk (man-pages)]
-   - various  reword "allow(s) to"  [Michael Kerrisk (man-pages)]
-   - wording fix  "another" ==> "other"  [Michael Kerrisk (man-pages)]
-Subject:
-   - docs  change from nofill to fill mode  [Bjarni Ingi Gislason]
-   - docs  disk-utils  change "allows to <verb>" to "allows <verb>ing"  [Bjarni Ingi Gislason]
-   - docs  remove unnecessary paragraph macros  [Bjarni Ingi Gislason]
-agetty:
-   - (man) add "white" color name  [Karel Zak]
-   - (man) fix typo  [Karel Zak]
-   - extend --issue-file to support multiple paths  [Karel Zak]
-   - ignore ^C  [Karel Zak]
-   - save the original speed on --keep-baud  [Karel Zak]
-bash-completion:
-   - chmod -x  [Karel Zak]
-   - release preparations  [Sami Kerola]
-   - umount explicitly needs gawk  [Wolfram Sang]
-   - update irqtop and lsirq completions  [Sami Kerola]
-bash-completion/umount:
-   - shell charaters escape  [Etienne Mollier]
-blkdiscard:
-   - (man) offset and length must be sector aligned  [Lukas Czerner]
-   - Refuse to proceed if signatures are found  [Lukas Czerner]
-   - use O_EXCL, add --force  [Karel Zak]
-blkzone:
-   - Add --force option  [Shin'ichiro Kawasaki]
-   - add open/close/finish commands  [Aravind Ramesh]
-   - deny destructive ioctls on busy blockdev  [Johannes Thumshirn]
-   - ioctl related code refactoring  [Damien Le Moal]
-   - remove unnecessary initializations  [Karel Zak]
-blockdev:
-   - Don't fail on missing start sector  [Stanislav Brabec]
-build-sys:
-   - Fix autogenerated URL in ChangeLog  [Chris Hofstaedtler]
-   - add $LDADD and libcommon to test_logindefs_LDADD  [Karel Zak]
-   - add --disable-hwclock-gplv3  [Karel Zak]
-   - add --enable-ubsan to make it possible to build util-linux with UBSan  [Evgeny Vereshchagin]
-   - add --enable-werror  [Karel Zak]
-   - add --enable-werror to devel build scenarios  [Karel Zak]
-   - add -Waddress-of-packed-member  [Karel Zak]
-   - add missing LDADD to blkid test  [Karel Zak]
-   - cleanup $vendordir use  [Karel Zak]
-   - fix blkdiscard blkid.h use  [Karel Zak]
-   - fix chfn-chsh configure help text  [Karel Zak]
-   - fix irqtop compilation with -lslang  [Karel Zak]
-   - make lsirq and irqtop optional  [Karel Zak]
-   - release++ (v2.36-rc1)  [Karel Zak]
-   - release++ (v2.36-rc2)  [Karel Zak]
-   - remove redundard includes  [Karel Zak]
-   - remove unneeded include of generated file  [Zbigniew Jędrzejewski-Szmek]
-   - rename automake variable to match define name  [Zbigniew Jędrzejewski-Szmek]
-cal:
-   - Add column mode  [Aurelien LAJOIE]
-   - Add helper functions for left align  [Aurelien LAJOIE]
-   - Add test, all are checked against ncal  [Aurelien LAJOIE]
-   - Add weekdays into cal_control  [Aurelien LAJOIE]
-   - Correctly center the year  [Aurelien LAJOIE]
-   - Remove todo  [Aurelien LAJOIE]
-   - Update man page  [Aurelien LAJOIE]
-   - correctly set the week width  [Aurelien LAJOIE]
-   - use a const char*  [Aurelien LAJOIE]
-   - use size_t to calculate width [lgtm scan]  [Karel Zak]
-cfdisk:
-   - add --lock and LOCK_BLOCK_DEVICE  [Karel Zak]
-chfn:
-   - Make readline prompt for each field on a separate line  [Damien Goutte-Gattat]
-chrt:
-   - Use sched_setscheduler system call directly  [jonnyh64]
-chsh:
-   - (man) fix default behavior description  [Karel Zak]
-col:
-   - fix output when first line does not have newline character  [Sami Kerola]
-cryptsetup:
-   - add option to use via dlopen in libmount  [Luca Boccassi]
-ctrlaltdel:
-   - display error message indicated by errno  [Sami Kerola]
-disk-utils:
-   - Add reference to ufiformat(8)  [Wojtek Kaniewski]
-dmesg:
-   - add --follow-new  [Konstantin Khlebnikov]
-   - adjust timestamps according to suspended time  [Konstantin Khlebnikov]
-doc:
-   - Fix some warnings from "test-groff" for manuals  [Bjarni Ingi Gislason]
-   - disk-utils/*  Fix some warnings from "mandoc -T lint"  [Bjarni Ingi Gislason]
-   - libuuid/man/*  Fix some warnings from "mandoc -T lint"  [Bjarni Ingi Gislason]
-   - login-utils/*  Fix some warnings from "mandoc -T lint"  [Bjarni Ingi Gislason]
-   - misc-utils/*  Fix some warnings from "mandoc -T lint"  [Bjarni Ingi Gislason]
-   - schedutils/*  Fix some warnings from "mandoc -T lint"  [Bjarni Ingi Gislason]
-   - sys-utils/*  fix some warnings from "mandoc -T lint"  [Bjarni Ingi Gislason]
-   - term-utils/*  fix some warnings from "mandoc -T lint"  [Bjarni Ingi Gislason]
-   - text-utils/*  fix some warnings from "mandoc -T lint"  [Bjarni Ingi Gislason]
-docs:
-   - (man) remove double quotes (") in .SH lines  [Michael Kerrisk (man-pages)]
-   - Correct ChangeLog URL to history log.  [Anatoly Pugachev]
-   - Fix dead references to kernel documentation  [Yannick Le Pennec]
-   - Improve grammar  [Ben Frankel]
-   - Some minor fixes in some manuals  [Bjarni Ingi Gislason]
-   - add blkdiscard to ReleaseNotes  [Karel Zak]
-   - add note about AsciiDocs  [Karel Zak]
-   - add rev(1) to TODO  [Karel Zak]
-   - add swap to 1st fstab field  [Karel Zak]
-   - add terminal hyperlinks to TODO  [Karel Zak]
-   - add v2.36-ReleaseNotes  [Karel Zak]
-   - fix release notes file name  [Karel Zak]
-   - fix spacing in irqtop and lsirq manual pages  [Sami Kerola]
-   - improve size arguments description in --help output  [Karel Zak, ed]
-   - kill.1 add note about shell-internal kill implementations  [Sami Kerola]
-   - mark some branches as github-only  [Karel Zak]
-   - mention Coverity Scan and the Fossies codespell report  [Evgeny Vereshchagin]
-   - misc-utils  change "allows to <verb>" to "allows <verb>ing"  [Bjarni Ingi Gislason]
-   - nsenter(1)  fix further details in PID namespace section  [Stephen Kitt]
-   - remove drone.io, add lgtm.com  [Karel Zak]
-   - remove irqtop TODO item  [Sami Kerola]
-   - remove trailing space in strings  [Bjarni Ingi Gislason]
-   - renice(1)  Add chrt(1) to SEE ALSO  [Jann Horn]
-   - reword others "allow to"  [Karel Zak]
-   - update AUTHORS file  [Karel Zak]
-   - update ReleaseNotes  [Karel Zak]
-   - update v2.36-ReleaseNotes  [Karel Zak]
-eject:
-   - fix compiler warning [-Wformat-overflow]  [Karel Zak]
-exfat:
-   - Fix parsing exfat label  [Pali Rohár]
-fdisk:
-   - add --list-details  [Karel Zak]
-   - add --lock and LOCK_BLOCK_DEVICE  [Karel Zak]
-   - add --noauto-pt  [Karel Zak]
-   - add support for parttype aliases  [Karel Zak]
-   - better wording for '-B' in the man page  [Wolfram Sang]
-   - improve list-types readability  [Karel Zak]
-   - make sure label defined for some menu entries  [Karel Zak]
-   - specify in '--help' that we can have multiple devices with '-l'  [Wolfram Sang]
-   - update expected test outputs with command outputs  [Sami Kerola]
-findmnt:
-   - make xalloc use mroe robust  [Karel Zak]
-fix typo:
-   - yourbranch -> yourgit  [Soumendra Ganguly]
-flock:
-   - Add new example using shell IO redirection  [Jookia]
-   - make examples in man page more readable  [Karel Zak]
-fsck.cramfs:
-   - fix macro usage  [Zbigniew Jędrzejewski-Szmek]
-fstrim:
-   - add --listed-in <file[ file ..]>  [Karel Zak]
-   - do not use Protect setting in systemd service  [Karel Zak]
-   - randomize timer start time across 100 minutes  [Sami Kerola]
-   - rename --quite to --quite-unsupported  [Karel Zak]
-   - run service and timer only if /etc/fstab is present  [Luca BRUNO]
-getopt:
-   - use examples installation directory in man page  [Sami Kerola]
-hexdump:
-   - fix typo, dcl instead of dc1  [Karel Zak]
-hwclock:
-   - fix audit exit status  [Karel Zak]
-   - improve use of settimeofday() portability  [Karel Zak]
-   - make glibc 2.31 compatible  [J William Piggott, Karel Zak]
-   - update yacc file  [Sami Kerola]
-ilib/strutils:
-   - fix rounding in size_to_human_string()  [Karel Zak]
-include:
-   - add remove_entry() to env.h  [Sami Kerola]
-   - cleanup pidfd inckudes  [Karel Zak]
-include/c:
-   - add USAGE_ARGUMENT  [Karel Zak]
-include/nls:
-   - remove unnecessary declaration  [Karel Zak]
-ipcs:
-   - ipcs.1 ipcs no longer needs read permission on IPC resources  [Michael Kerrisk]
-iqrtop:
-   - cleanup header  [Karel Zak]
-irctop:
-   - move source code to sys-utils/ directory  [Sami Kerola]
-irqtop:
-   - add bash-completion  [Sami Kerola]
-   - add manual page  [Sami Kerola]
-   - add struct irq_output  [Karel Zak]
-   - add total and delta as own columns  [Sami Kerola]
-   - avoid function like pre-processor definitions  [Sami Kerola]
-   - change the update delay to use struct timeval  [Sami Kerola]
-   - cleanup command line options  [Karel Zak]
-   - cleanup man page  [Karel Zak]
-   - cleanup sort stuff  [Karel Zak]
-   - cleanup struct irq_stat use  [Karel Zak]
-   - display number of new interupts in-between updates  [Sami Kerola]
-   - do not use fixed size /proc/interrupts line buffer  [Sami Kerola]
-   - don't print header for --once  [Karel Zak]
-   - fix all warnings  [zhenwei pi]
-   - fix open file descriptor leak  [Sami Kerola]
-   - hide cursor when in interactive mode  [Sami Kerola]
-   - implement a new utility to display kernel interrupt  [zhenwei pi]
-   - improve header  [Sami Kerola]
-   - include hostname and timestamp to output header  [Sami Kerola]
-   - init README  [zhenwei pi]
-   - keep WINDOW pointer in functions only  [Karel Zak]
-   - keep table in functions only  [Karel Zak]
-   - make util-linux build-system to build the command  [Sami Kerola]
-   - minor cleanup  [Karel Zak]
-   - move WINDOW back to control struct  [Karel Zak]
-   - move independent code to irq-common.c  [Karel Zak]
-   - move screen update to a separate function  [Sami Kerola]
-   - remove dead code  [Karel Zak]
-   - remove unnecessary code  [Karel Zak]
-   - reorder function  [Karel Zak]
-   - separate normal and ncurses way  [Karel Zak]
-   - separate screen and scols code  [Karel Zak]
-   - simplify terminal resizing  [Karel Zak]
-   - small cleanup in main()  [Karel Zak]
-   - tidy coding style and update usage() text  [Sami Kerola]
-   - trim white spaces from end of name field  [Sami Kerola]
-   - use -J for JSON  [Karel Zak]
-   - use epoll event loop  [Sami Kerola]
-   - use lib/monotonic.c to determine uptime  [Sami Kerola]
-   - use libsmartcols  [Sami Kerola]
-   - use memory allocation that check errors  [Sami Kerola]
-   - use name instead of desc as irq name field referal  [Sami Kerola]
-   - use runtime control structure  [Sami Kerola]
-   - use util-linux libcommon facilities  [Sami Kerola]
-kill:
-   - include sys/types.h before checking SYS_pidfd_send_signal  [Sami Kerola]
-last:
-   - fix use of non-terminated utmp->ut_line  [Karel Zak]
-lib/blkdev:
-   - add support for --lock and LOCK_BLOCK_DEVICE  [Karel Zak]
-lib/color-names:
-   - add "white" between human-readable  [Karel Zak]
-lib/mangle:
-   - check for the NULL string argument  [Gaël PORTAY]
-lib/mbsalign:
-   - add function to calculate width  [Karel Zak]
-lib/path:
-   - add ul_path_is_accessible()  [Karel Zak]
-lib/pwdutils:
-   - add xgetgrnam  [Matthew Harm Bekkema]
-lib/randutils:
-   - use explicit data types for bit ops  [Karel Zak]
-lib/strutils:
-   - add test for strdup_to_struct_member()  [Karel Zak]
-   - fix floating point exception  [Karel Zak]
-   - fix parse_size() for large numbers  [Karel Zak]
-   - fix uint64_t overflow  [Karel Zak]
-   - remove unnecessary include  [Karel Zak]
-   - use directly err()  [Karel Zak]
-lib/sysfs:
-   - fix prefix use in sysfs_devname_is_hidden()  [Karel Zak]
-libblkid:
-   - (docs) add missing references  [Karel Zak]
-   - (docs) document new function  [Karel Zak]
-   - Add support for zonefs  [Damien Le Moal]
-   - Fix UTF-16 support in function blkid_encode_to_utf8()  [Pali Rohár]
-   - add dax capability detection in topology probing  [Anthony Iliopoulos]
-   - fix compiler warning [-Wsign-compare]  [Karel Zak]
-   - fix fstatat() use in blkid__scan_dir()  [Karel Zak]
-   - move UTF encoding function to lib/  [Karel Zak]
-   - remove blkid_llseek()  [Karel Zak]
-   - remove unnecessary uuid.h  [Karel Zak]
-libfdisk:
-   - (docs) add missing comment  [Karel Zak]
-   - (docs) add missing references  [Karel Zak]
-   - (docs) document new functions  [Karel Zak]
-   - (docs) fix typos  [Karel Zak]
-   - (dos) be more explicit in fdisk_verify_disklabel() output  [Karel Zak]
-   - (dos) be more robust about max number of partitions  [Karel Zak]
-   - (dos) fix default partition start  [Karel Zak]
-   - (gpt) add GPT debug mask  [Karel Zak]
-   - (gpt) add functionality to move backup header  [Karel Zak]
-   - (gpt) cleanup and consolidate write code  [Karel Zak]
-   - (gpt) cleanup entries array size calculations  [Karel Zak]
-   - (gpt) fix compiler warning [-Wmaybe-uninitialized]  [Karel Zak]
-   - (gpt) partition name default to empty string  [Karel Zak]
-   - (script) accept sector-size, ignore unknown headers  [Karel Zak]
-   - (script) fix memory leak  [Karel Zak]
-   - (script) fix partno_from_devname()  [Karel Zak]
-   - (script) fix segmentation fault  [Gaël PORTAY]
-   - add Linux /var, /var/tmp and root verity GPT partition types  [nl6720]
-   - add fdisk_set_disklabel_id_from_string()  [Karel Zak]
-   - add missing comments  [Karel Zak]
-   - add partition type aliases and shortcuts  [Karel Zak]
-   - fix __copy_partition()  [Karel Zak]
-   - fix alignment logic for tiny partitions  [Karel Zak]
-   - fix const char mess  [Karel Zak]
-   - fix partition calculation for BLKPG_* ioctls  [Karel Zak]
-   - fix pointer wraparound warning  [Sami Kerola]
-   - make sure we check for maximal number of partitions  [Karel Zak]
-   - make sure we use NULL after free  [Karel Zak]
-   - remove unwanted assert()  [Karel Zak]
-   - use ul_encode_to_utf8()  [Karel Zak]
-libfdisk, unshare:
-   - fix gcc-4.9.4 warnings  [Toni Uhlig]
-libmount:
-   - (docs) add missing references  [Karel Zak]
-   - (docs) fix typo, remove unused reference  [Karel Zak]
-   - (parser) fix memory leak on error before end-of-file  [Karel Zak]
-   - (umount) FS lookup refactoring  [Karel Zak]
-   - (umount) fix FD leak  [Karel Zak]
-   - (verity) remove unnecessary empty lines  [Karel Zak]
-   - Avoid triggering autofs in lookup_umount_fs_by_statfs  [Fabian Vogt]
-   - add support for ID=  [Karel Zak]
-   - add support for signed verity devices  [Luca Boccassi]
-   - do not unnecessarily chmod utab.lock  [Tycho Andersen]
-   - fix condition for mountinfo filter  [Karel Zak]
-   - fix mount -a EBUSY for cifs  [Roberto Bergantinos Corpas]
-   - fix x- options use for non-root users  [Karel Zak]
-   - improve smb{2,3} support  [Karel Zak]
-   - make mnt_context_find_umount_fs() more extendable  [Karel Zak]
-   - move "already mounted" code to separate function  [Karel Zak]
-   - smb2 is unsupported alias  [Karel Zak]
-   - try read-only mount on write-protected superblock too  [Karel Zak]
-   - use mnt_stat_mountpoint() on more places  [Karel Zak]
-libsmartcols:
-   - (docs) add missing references  [Karel Zak]
-   - (docs) fix reference  [Karel Zak]
-   - (sample) check scols_line_refer_data() return code [coverity scan]  [Karel Zak]
-   - (sample) check scols_line_set_data() return code [coverity scan]  [Karel Zak]
-   - (sample) remove unnecessary check [coverity scan]  [Karel Zak]
-   - (sample) remove unused variable  [Karel Zak]
-   - (smaple) check scols_line_set_data() return code [coverity scan]  [Karel Zak]
-   - don't calculate with encoding on scols_table_enable_noencoding()  [Karel Zak]
-libuuid:
-   - (test) cleanup unused memory [coverity scan]  [Karel Zak]
-   - (test) close fd [coverity scan]  [Karel Zak]
-   - (test) make sure UUID is terminated [coverity scan]  [Karel Zak]
-   - add uuid_parse_range()  [Zane van Iperen]
-   - add uuid_parse_range() to man page and symbol-table  [Karel Zak]
-   - ensure variable is initialized [cppcheck]  [Sami Kerola]
-   - improve uuid_unparse() performance  [Aurelien LAJOIE]
-   - remove function alias  [Karel Zak]
-login:
-   - add MOTD_FIRSTONLY=  [Karel Zak]
-   - add support for directories in MOTD_FILE=  [Karel Zak]
-   - avoid lseek() with pread() and pwrite()  [Sami Kerola]
-   - cleanup -f in usage() and comments  [Karel Zak]
-   - cleanup get_hushlogin_status() use  [Karel Zak]
-   - fix -f description in the man-page  [Karel Zak]
-   - fixed invalid sizeof usage  [Toni Uhlig]
-   - keep default MOTD_FILE= backwardly compatible  [Karel Zak]
-   - use PAM_SILENT to propagate hushlogin to PAM  [Karel Zak]
-logindefs:
-   - use xalloc.h, code cleanup  [Karel Zak]
-lsblk:
-   - Add SERIAL column to the SCSI output mode.  [Milan Broz]
-   - Fall back to ID_SERIAL  [Sven Wiltink]
-   - Ignore hidden devices  [Ritika Srivastava]
-   - add dax (direct access) capability column  [Anthony Iliopoulos]
-   - fix -P regression from v2.34  [Karel Zak]
-lscpu:
-   - Adapt MIPS cpuinfo  [Jiaxun Yang]
-   - Add shared cached info for s390 lscpu -C  [Sumanth Korikkar]
-   - cleanup caches code  [Karel Zak]
-   - fix SIGSEGV on archs without drawers & books  [Karel Zak]
-   - use official name for HiSilicon tsv110  [Karel Zak]
-lsirq:
-   - add -P option  [Karel Zak]
-   - add -n option  [Karel Zak]
-   - add new command  [Karel Zak]
-   - mark --json and --pairs options mutually exclusive  [Sami Kerola]
-lslogins:
-   - remove unnecessary brackets  [Karel Zak]
-   - use lastlog as wtmp fallback  [Sami Kerola]
-lsmem:
-   - make it without leaks for non-error output  [Karel Zak]
-   - report inaccessible /sys/devices/system/memory  [Karel Zak]
-lsns:
-   - add time namespace support  [Adrian Reber]
-manual pages:
-   - adjtime_config.5  format pathname with .I  [Michael Kerrisk (man-pages)]
-mkswap:
-   - add --lock and LOCK_BLOCK_DEVICE  [Karel Zak]
-more:
-   - add display_file() to show files and stdin  [Sami Kerola]
-   - avoid defining special characters locally  [Sami Kerola]
-   - avoid libmagic telling an empty file is binary  [Sami Kerola]
-   - do not allocate shell command buffer from stack  [Sami Kerola]
-   - do not reset parent process terminal in execute()  [Sami Kerola]
-   - drop setuid permissions before executing anything  [Sami Kerola]
-   - fix SIGSTOP and SIGCONT handling  [Sami Kerola]
-   - fix moving backwards so that it can reach begining of the file  [Sami Kerola]
-   - make execute() more robust and timely  [Sami Kerola]
-   - make page and arrow up/down to update view  [Sami Kerola]
-   - move code blocks from more_key_command() to functions  [Sami Kerola]
-   - move currently open file to control structure  [Sami Kerola]
-   - move runtime usage output to a function  [Sami Kerola]
-   - refactor and clarify code  [Sami Kerola]
-   - remove kill_line() in favor of erase_prompt()  [Sami Kerola]
-   - remove underlining related code  [Sami Kerola]
-   - replace siglongjmp() and signal() calls with signalfd()  [Sami Kerola]
-   - restructure print_buf() if-else with continue  [Sami Kerola]
-   - simplify initterm()  [Sami Kerola]
-   - target all standard streams when calling fflush()  [Sami Kerola]
-   - tell in run time help what the 'v' will execute as editor  [Sami Kerola]
-   - use getopt_long() to parse options  [Sami Kerola]
-   - use libmagic to identify binary files  [Sami Kerola]
-   - use off_t and cc_t to clarify what variables attempt to represent  [Sami Kerola]
-   - use single exit path to ensure resource freeing is unified  [Sami Kerola]
-mount:
-   - (man) cleanup devices identifiers section  [Karel Zak]
-   - Update man page Synopsis  [Marcel Waldvogel]
-   - support "-o move" on command line  [Karel Zak]
-nsenter:
-   - add support for the time namespace  [Adrian Reber]
-po:
-   - merge changes  [Karel Zak]
-   - update cs.po (from translationproject.org)  [Petr Písař]
-   - update de.po (from translationproject.org)  [Mario Blättermann]
-   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
-   - update fr.po (from translationproject.org)  [Frédéric Marchal]
-   - update hr.po (from translationproject.org)  [Božidar Putanec]
-   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
-   - update pl.po (from translationproject.org)  [Jakub Bogusz]
-   - update pt.po (from translationproject.org)  [Pedro Albuquerque]
-   - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
-   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
-   - update zh_CN.po (from translationproject.org)  [Boyuan Yang]
-pylibmount:
-   - cleanup and sync UL_RaiseExc  [Karel Zak]
-rename:
-   - fix regression for symlink with non-existing target  [Mauricio Faria de Oliveira]
-   - tests  add more symlink checks  [Mauricio Faria de Oliveira]
-rev:
-   - (man) add note about limitations  [Karel Zak]
-   - report line on error  [Karel Zak]
-script:
-   - fix minor warning  [Sami Kerola]
-scriptlive:
-   - fix man page formatting  [Jakub Wilk]
-   - fix typo  [Jakub Wilk]
-scriptlive, scriptreplay:
-   - cleanup --maxdelay man page description  [Karel Zak]
-setarch:
-   - add arm and aarch64 architectures to transition rules  [Alexey Gladkov]
-   - fix stderr handling in uname26 tests  [Helge Deller]
-   - make verify_arch_domain extendable  [Alexey Gladkov]
-sfdisk:
-   - (man) add note about type and shortcuts collision  [Karel Zak]
-   - (man) fix typo  [Gaël PORTAY]
-   - add --disk-id to change disk UUID/ID  [Karel Zak]
-   - add --lock and LOCK_BLOCK_DEVICE  [Karel Zak]
-   - add --relocate command  [Karel Zak]
-   - avoid unneeded empty lines with '--list-free'  [Wolfram Sang]
-   - extend --part-type, support aliases  [Karel Zak]
-   - fix --append to PT with gaps  [Karel Zak]
-   - fix previous --append patch, improve man page  [Karel Zak]
-   - fix ref-counting for the script  [Karel Zak]
-   - make sure we do not overlap on --move  [Karel Zak]
-   - only report I/O errors on --move-data  [Karel Zak]
-   - remove broken step alignment for --move  [Karel Zak]
-su, runuser:
-   - (man) add more info about PATH and PAM  [Karel Zak]
-swapoff:
-   - cleanup EXIT STATUS  [Karel Zak]
-   - do not use 1 exist status at all  [Karel Zak]
-sys-utils:
-   - mount.8  split a long line into two  [Bjarni Ingi Gislason]
-test_tiocsti:
-   - check ioctl() return code [coverity scan]  [Karel Zak]
-tests:
-   - Add UDF hdd image with emoji label created by mkudffs 2.2  [Pali Rohár]
-   - Fix for misc/fallocate test build failure.  [Mark Hindley]
-   - Fix mountpoint test failure in build chroots.  [Mark Hindley]
-   - add STATIC binaries to build-sys tests  [Karel Zak]
-   - add checksum for cramfs/mkfs for BE 8192 (sparc64)  [Anatoly Pugachev]
-   - add sanitize_env() check  [Sami Kerola]
-   - add sfdisk --dump test  [Karel Zak]
-   - add zonefs blkid test  [Karel Zak]
-   - cleanup cramfs checksums  [Karel Zak]
-   - cleanup fdisk based stuff  [Karel Zak]
-   - don't use ASAN in build tests  [Karel Zak]
-   - explain why MD tests with metadata v0.90 are KNOWN-FAIL  [Karel Zak]
-   - fixes eject/umount on SPARC  [Anatoly Pugachev]
-   - fixes fdisk/align-512-* tests  [Anatoly Pugachev]
-   - fixes libmount/ on SPARC  [Anatoly Pugachev]
-   - fixes mount tests on SPARC  [Anatoly Pugachev]
-   - ignore the python libmount tests when they're run under UBSan  [Evgeny Vereshchagin]
-   - sfdisk fill correctly gaps if default start requested  [Karel Zak]
-   - skip "blkid/dm-err" when `mknod` doesn't work  [Evgeny Vereshchagin]
-   - turn off detect_leaks on s390x, use more asan options  [Evgeny Vereshchagin]
-   - update build-sys tests  [Karel Zak]
-   - update fdisk outputs due to sizes rounding change  [Karel Zak]
-travis:
-   - build util-linux on arm64, ppc64le and s390x  [Evgeny Vereshchagin]
-   - don't ask for Ubuntu release on XOS  [Karel Zak]
-   - ignore memory leaks in checkusage  [Evgeny Vereshchagin]
-   - install all the "official" build dependencies  [Evgeny Vereshchagin]
-   - install llvm-* to get llvm-symbolizer  [Evgeny Vereshchagin]
-   - integrate util-linux with Coverity Scan  [Evgeny Vereshchagin]
-   - make it easier to switch to the next clang/gcc  [Evgeny Vereshchagin]
-   - switch to Bionic  [Evgeny Vereshchagin]
-   - switch to a newer version of macOS  [Evgeny Vereshchagin]
-   - switch to clang-10  [Evgeny Vereshchagin]
-   - switch to gcc-10  [Evgeny Vereshchagin]
-   - turn off -Werror on precise and osx  [Evgeny Vereshchagin]
-   - turn on -Werror  [Evgeny Vereshchagin]
-   - turn on CIFuzz  [Evgeny Vereshchagin]
-   - turn on UBsan on Travis CI to see how it goes  [Evgeny Vereshchagin]
-umount:
-   - don't try it as non-suid if not found mountinfo entry  [Karel Zak]
-unshare:
-   - (man) add note about signals on --fork  [Karel Zak]
-   - Fix PID and TIME namespace persistence  [michael-dev]
-   - Support names for map-user/group options  [Matthew Harm Bekkema]
-   - allow custom uid/gid mappings in userns  [Matthew Harm Bekkema]
-   - fix help message indentation  [Adrian Reber]
-   - fix man page formatting  [Jakub Wilk]
-   - support the time namespace  [Adrian Reber]
-   - use '-T' for time namespace instead of '-t'  [Adrian Reber]
-unshare --fork:
-   - Ignore SIGINT and SIGTERM in parent  [Daan De Meyer]
-various:
-   - fix more lgtm scan warnings  [Sami Kerola]
-   - use threadsafe versions of time functions [lgtm scan]  [Sami Kerola]
-wipefs:
-   - add --lock and LOCK_BLOCK_DEVICE  [Karel Zak]
-   - fix man page --no-headings short option  [Karel Zak]
-write:
-   - fix potential string overflow  [Sami Kerola]
-
--- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
+--cYtjc4pxslFTELvY--
 
