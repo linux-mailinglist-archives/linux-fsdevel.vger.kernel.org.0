@@ -2,186 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC7E722B474
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jul 2020 19:14:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE3F422B4DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 23 Jul 2020 19:31:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730269AbgGWRM5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 23 Jul 2020 13:12:57 -0400
-Received: from smtp-190d.mail.infomaniak.ch ([185.125.25.13]:48037 "EHLO
-        smtp-190d.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730235AbgGWRMs (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 23 Jul 2020 13:12:48 -0400
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BCJms3QbTzlhN1y;
-        Thu, 23 Jul 2020 19:12:45 +0200 (CEST)
-Received: from localhost (unknown [94.23.54.103])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4BCJmr6v6jzlh8T5;
-        Thu, 23 Jul 2020 19:12:44 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        id S1730131AbgGWRaj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 23 Jul 2020 13:30:39 -0400
+Received: from mga03.intel.com ([134.134.136.65]:46431 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730122AbgGWRaj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 23 Jul 2020 13:30:39 -0400
+IronPort-SDR: CuX44Z+71GlcCEaKrx5EthOHSuSWLWHgDEVJkCEZmpdr0/2OfKb5Cfc7Y+Fdglou0mEAEsJY3d
+ 0yUe0/iC3i7A==
+X-IronPort-AV: E=McAfee;i="6000,8403,9691"; a="150569087"
+X-IronPort-AV: E=Sophos;i="5.75,387,1589266800"; 
+   d="scan'208";a="150569087"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2020 10:30:32 -0700
+IronPort-SDR: gqKvpMmiWky5X0ghBbiaK3jF97xdeU9ME6ECe9K6z/VLCqvJx4wgrvxflJlCkTD031UPAnoTlZ
+ UB5sF/mFQu8Q==
+X-IronPort-AV: E=Sophos;i="5.75,387,1589266800"; 
+   d="scan'208";a="393073616"
+Received: from bhkleins-mobl.amr.corp.intel.com (HELO [10.252.140.192]) ([10.252.140.192])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2020 10:30:31 -0700
+Subject: Re: [PATCH RFC V2 17/17] x86/entry: Preserve PKRS MSR across
+ exceptions
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Weiny Ira <ira.weiny@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        X86 ML <x86@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v7 7/7] ima: add policy support for the new file open MAY_OPENEXEC flag
-Date:   Thu, 23 Jul 2020 19:12:27 +0200
-Message-Id: <20200723171227.446711-8-mic@digikod.net>
-X-Mailer: git-send-email 2.28.0.rc1
-In-Reply-To: <20200723171227.446711-1-mic@digikod.net>
-References: <20200723171227.446711-1-mic@digikod.net>
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+References: <20200723165204.GB77434@romley-ivt3.sc.intel.com>
+ <C03DA782-BD1A-42E3-B118-ABB34BC5F2AF@amacapital.net>
+From:   Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <71f0e3d8-6dfa-742d-eaa7-330b59611e2f@intel.com>
+Date:   Thu, 23 Jul 2020 10:30:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <C03DA782-BD1A-42E3-B118-ABB34BC5F2AF@amacapital.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mimi Zohar <zohar@linux.ibm.com>
+On 7/23/20 10:08 AM, Andy Lutomirski wrote:
+> Suppose some kernel code (a syscall or kernel thread) changes PKRS
+> then takes a page fault. The page fault handler needs a fresh PKRS.
+> Then the page fault handler (say a VMA’s .fault handler) changes
+> PKRS.  The we get an interrupt. The interrupt *also* needs a fresh
+> PKRS and the page fault value needs to be saved somewhere.
+> 
+> So we have more than one saved value per thread, and thread_struct
+> isn’t going to solve this problem.
 
-The kernel has no way of differentiating between a file containing data
-or code being opened by an interpreter.  The proposed O_MAYEXEC
-openat2(2) flag bridges this gap by defining and enabling the
-MAY_OPENEXEC flag.
+Taking a step back...  This is all true only if we decide that we want
+protection keys to provide protection during exceptions and interrupts.
+ Right now, the code supports nesting:
 
-This patch adds IMA policy support for the new MAY_OPENEXEC flag.
+	kmap(foo);
+		kmap(bar);
+		kunmap(bar);
+	kunmap(foo);
 
-Example:
-measure func=FILE_CHECK mask=^MAY_OPENEXEC
-appraise func=FILE_CHECK appraise_type=imasig mask=^MAY_OPENEXEC
+with a reference count.  So, the nested kmap() will see the count
+elevated and do nothing.
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Link: https://lore.kernel.org/r/1588167523-7866-3-git-send-email-zohar@linux.ibm.com
----
- Documentation/ABI/testing/ima_policy |  2 +-
- security/integrity/ima/ima_main.c    |  3 ++-
- security/integrity/ima/ima_policy.c  | 15 +++++++++++----
- 3 files changed, 14 insertions(+), 6 deletions(-)
+I'm generally OK with this getting merged without extending PKS
+protection to interrupts and exceptions.  Ira and Fenghua should
+certainly give it a go, but I'd like to see it as an add-on feature and
+we can judge the benefits versus complexity separately.
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index cd572912c593..caca46125fe0 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -31,7 +31,7 @@ Description:
- 				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
- 				[KEXEC_CMDLINE] [KEY_CHECK]
- 			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
--			       [[^]MAY_EXEC]
-+			       [[^]MAY_EXEC] [[^]MAY_OPENEXEC]
- 			fsmagic:= hex value
- 			fsuuid:= file system UUID (e.g 8bcbe394-4f13-4144-be8e-5aa9ea2ce2f6)
- 			uid:= decimal value
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index c1583d98c5e5..59fd1658a203 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -490,7 +490,8 @@ int ima_file_check(struct file *file, int mask)
- 
- 	security_task_getsecid(current, &secid);
- 	return process_measurement(file, current_cred(), secid, NULL, 0,
--				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
-+				   mask & (MAY_READ | MAY_WRITE |
-+					   MAY_EXEC | MAY_OPENEXEC |
- 					   MAY_APPEND), FILE_CHECK);
- }
- EXPORT_SYMBOL_GPL(ima_file_check);
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index e493063a3c34..6487f0b2afdd 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -406,7 +406,8 @@ static bool ima_match_keyring(struct ima_rule_entry *rule,
-  * @cred: a pointer to a credentials structure for user validation
-  * @secid: the secid of the task to be validated
-  * @func: LIM hook identifier
-- * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
-+ * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC |
-+ *			    MAY_OPENEXEC)
-  * @keyring: keyring name to check in policy for KEY_CHECK func
-  *
-  * Returns true on rule match, false on failure.
-@@ -527,7 +528,8 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
-  *        being made
-  * @secid: LSM secid of the task to be validated
-  * @func: IMA hook identifier
-- * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
-+ * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC |
-+ *			    MAY_OPENEXEC)
-  * @pcr: set the pcr to extend
-  * @template_desc: the template that should be used for this rule
-  * @keyring: the keyring name, if given, to be used to check in the policy.
-@@ -1091,6 +1093,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				entry->mask = MAY_READ;
- 			else if (strcmp(from, "MAY_APPEND") == 0)
- 				entry->mask = MAY_APPEND;
-+			else if (strcmp(from, "MAY_OPENEXEC") == 0)
-+				entry->mask = MAY_OPENEXEC;
- 			else
- 				result = -EINVAL;
- 			if (!result)
-@@ -1422,14 +1426,15 @@ const char *const func_tokens[] = {
- 
- #ifdef	CONFIG_IMA_READ_POLICY
- enum {
--	mask_exec = 0, mask_write, mask_read, mask_append
-+	mask_exec = 0, mask_write, mask_read, mask_append, mask_openexec
- };
- 
- static const char *const mask_tokens[] = {
- 	"^MAY_EXEC",
- 	"^MAY_WRITE",
- 	"^MAY_READ",
--	"^MAY_APPEND"
-+	"^MAY_APPEND",
-+	"^MAY_OPENEXEC"
- };
- 
- void *ima_policy_start(struct seq_file *m, loff_t *pos)
-@@ -1518,6 +1523,8 @@ int ima_policy_show(struct seq_file *m, void *v)
- 			seq_printf(m, pt(Opt_mask), mt(mask_read) + offset);
- 		if (entry->mask & MAY_APPEND)
- 			seq_printf(m, pt(Opt_mask), mt(mask_append) + offset);
-+		if (entry->mask & MAY_OPENEXEC)
-+			seq_printf(m, pt(Opt_mask), mt(mask_openexec) + offset);
- 		seq_puts(m, " ");
- 	}
- 
--- 
-2.27.0
+Ira was looking at adding it because it _looked_ simple.  Andy has me
+really scared about it now. :)
 
