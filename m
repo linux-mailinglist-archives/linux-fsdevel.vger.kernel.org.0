@@ -2,110 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ADD222CAD0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 18:20:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EB8F22CB12
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 18:29:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbgGXQUF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jul 2020 12:20:05 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37490 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbgGXQUE (ORCPT
+        id S1726861AbgGXQ3X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jul 2020 12:29:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37784 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbgGXQ3W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jul 2020 12:20:04 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06OGDR6r066731;
-        Fri, 24 Jul 2020 16:19:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=gsr+vWVs/KQ7EOATjgJv17+sA8w6+4lLcvRvINDuemk=;
- b=nrDrSg8xpV/TPsl+qV0r083eSeEGEhkzhHu9zaDyi0PIstRrYMIYBTc5H+6IJ5mftfIZ
- n77gnJ2B/CXIHb37dOBZHez12LU7ByzA1knuMo7qgPNLqO2Q4EMcku54hMg3TUqxOtKb
- 9Km11XHhoM5sRPDFxTci/Ui/P+O3agEKnJ/3nc18Gnv9BbVlfwqO7oM2qBJPH5d2S3Qv
- t9kNT2U8gYtF1SNOd7HGcH2u29wZn8HeTFMeIrVhfWyUtx7qG3376KSt9+hGom8efj8b
- G9FhKTGpH4lIH93ILXxgALJ+MbG1GyV1jZditG0CMKfF3W/cJiCTkviVZeeUWAdWBgIN Hg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 32bs1n004g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 24 Jul 2020 16:19:57 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06OG4OhW058171;
-        Fri, 24 Jul 2020 16:19:57 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 32fswssurg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 24 Jul 2020 16:19:56 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 06OGJuKC004419;
-        Fri, 24 Jul 2020 16:19:56 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 24 Jul 2020 09:19:55 -0700
-Date:   Fri, 24 Jul 2020 09:19:55 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [ANNOUNCE] xfs-linux: iomap-for-next updated to 979045f83ced
-Message-ID: <20200724161955.GV3151642@magnolia>
+        Fri, 24 Jul 2020 12:29:22 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1722C0619E6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jul 2020 09:29:22 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id m22so5512465pgv.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jul 2020 09:29:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=H5vpCWHYjYJzXRlUWgDCLhZpTQz6UHH/5YbUsvqWdNg=;
+        b=AiM7BvGhGZq+8CYp8kZrjTGkqBuGSOVx6gcS2ZoV6niiBFHjxOg990QxEbHLjMtigv
+         rkvJauw/Nl3yhgdh3yh3/cQAnPJiwRmEprDaz+FVWchlY0XqPjysldBf7LV7iodBdHsg
+         899CD4i/WKRLcxWHL2qBJPQckfv3u7k8PdGNBc5u9vYaxF2nX4a0GJZ0t2UsIEZTpo6J
+         LSaij/Yuh1Dejhu73ovuUR07/jtKpWqsPIuesjS1PnD7zc9xpDNs1ajo4VYGKaFSYPEp
+         4k9hgoXmZx02QlUnefhSTGyaDFr/jP9Yjztbzg3eY6wwKKTEEk/uuvzIim3EIQCSWKme
+         optQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=H5vpCWHYjYJzXRlUWgDCLhZpTQz6UHH/5YbUsvqWdNg=;
+        b=FpoKcm5K05kpnJdVZdyVmrlaGastRyMQPqr4FAZYtToOawP8i52PfDLaEJ7bOAREYe
+         1GYe1nODOEnA1UYSp0wbm+6kPJvC8kUKRBgnCSwK1Iodwyr/E/gbtVeIhs4ZF0X24NVt
+         JIqFO1hgNy/+KIpkyEHWHeDrZR3tU3eEeDDs8/iRg28YSiCDF8n27jWXZTsoH2sQAhFt
+         ESNtQsotDuTkECqGFp3Cb4ffn5HZX+P6uYT1e1mqKugduFW2VxpDBOS86bW6qS6jKIXa
+         bxGT2tvvWHZvLuUaVeVJTKw0wFRIRiRfXlF3HjkhqHKaTfNN0rGeQ/+7YJIoTPhxMAtt
+         9Zmw==
+X-Gm-Message-State: AOAM5328YopZT1G6oav5h83IMi4+SoJiEmiJRQhUsNz7KMntWtinBJTu
+        SGkw3AR73lE5vWzcoHC4066c5A==
+X-Google-Smtp-Source: ABdhPJwiUQeYSR905NX4BkAH3K9ZeZTdo2ytHvuhOnPUvAeq9vMBPv48vFJy3B/CVUpeaPlmxlgHwA==
+X-Received: by 2002:a63:338c:: with SMTP id z134mr9031841pgz.245.1595608162016;
+        Fri, 24 Jul 2020 09:29:22 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id e15sm6659144pgt.17.2020.07.24.09.29.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Jul 2020 09:29:21 -0700 (PDT)
+Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
+To:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org
+Cc:     willy@infradead.org, hch@infradead.org, Damien.LeMoal@wdc.com,
+        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-api@vger.kernel.org, SelvaKumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+References: <1595605762-17010-1-git-send-email-joshi.k@samsung.com>
+ <CGME20200724155350epcas5p3b8f1d59eda7f8fbb38c828f692d42fd6@epcas5p3.samsung.com>
+ <1595605762-17010-7-git-send-email-joshi.k@samsung.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <f5416bd4-93b3-4d14-3266-bdbc4ae1990b@kernel.dk>
+Date:   Fri, 24 Jul 2020 10:29:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9692 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=2
- malwarescore=0 bulkscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007240127
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9692 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 bulkscore=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 malwarescore=0 clxscore=1015
- spamscore=0 mlxscore=0 impostorscore=0 phishscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2007240127
+In-Reply-To: <1595605762-17010-7-git-send-email-joshi.k@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On 7/24/20 9:49 AM, Kanchan Joshi wrote:
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 7809ab2..6510cf5 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -1284,8 +1301,15 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
+>  	cqe = io_get_cqring(ctx);
+>  	if (likely(cqe)) {
+>  		WRITE_ONCE(cqe->user_data, req->user_data);
+> -		WRITE_ONCE(cqe->res, res);
+> -		WRITE_ONCE(cqe->flags, cflags);
+> +		if (unlikely(req->flags & REQ_F_ZONE_APPEND)) {
+> +			if (likely(res > 0))
+> +				WRITE_ONCE(cqe->res64, req->rw.append_offset);
+> +			else
+> +				WRITE_ONCE(cqe->res64, res);
+> +		} else {
+> +			WRITE_ONCE(cqe->res, res);
+> +			WRITE_ONCE(cqe->flags, cflags);
+> +		}
 
-The iomap-for-next branch of the xfs-linux repository at:
+This would be nice to keep out of the fast path, if possible.
 
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+> index 92c2269..2580d93 100644
+> --- a/include/uapi/linux/io_uring.h
+> +++ b/include/uapi/linux/io_uring.h
+> @@ -156,8 +156,13 @@ enum {
+>   */
+>  struct io_uring_cqe {
+>  	__u64	user_data;	/* sqe->data submission passed back */
+> -	__s32	res;		/* result code for this event */
+> -	__u32	flags;
+> +	union {
+> +		struct {
+> +			__s32	res;	/* result code for this event */
+> +			__u32	flags;
+> +		};
+> +		__s64	res64;	/* appending offset for zone append */
+> +	};
+>  };
 
-has just been updated.
+Is this a compatible change, both for now but also going forward? You
+could randomly have IORING_CQE_F_BUFFER set, or any other future flags.
+Layout would also be different between big and little endian, so not
+even that easy to set aside a flag for this. But even if that was done,
+we'd still have this weird API where liburing or the app would need to
+distinguish this cqe from all others based on... the user_data? Hence
+liburing can't do it, only the app would be able to.
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update (bug fixes for 5.9, new features for 5.10).
+Just seems like a hack to me.
 
-This is later in the week than I was hoping, but I'm also recovering
-from wrenching my back a few day ago. :(
+-- 
+Jens Axboe
 
-The new head of the iomap-for-next branch is commit:
-
-979045f83ced iomap: fall back to buffered writes for invalidation failures
-
-New Commits:
-
-Andreas Gruenbacher (1):
-      [d1b4f507d71d] iomap: Make sure iomap_end is called after iomap_begin
-
-Christoph Hellwig (2):
-      [00dccd7bf406] xfs: use ENOTBLK for direct I/O to buffered I/O fallback
-      [979045f83ced] iomap: fall back to buffered writes for invalidation failures
-
-Dave Chinner (1):
-      [6fa1c383e783] iomap: Only invalidate page cache pages on direct IO writes
-
-
-Code Diffstat:
-
- fs/ext4/file.c       |  2 ++
- fs/gfs2/file.c       |  3 ++-
- fs/iomap/apply.c     | 13 +++++++++----
- fs/iomap/direct-io.c | 37 +++++++++++++++++++++----------------
- fs/iomap/trace.h     |  1 +
- fs/xfs/xfs_file.c    |  8 ++++----
- fs/zonefs/super.c    |  7 +++++--
- 7 files changed, 44 insertions(+), 27 deletions(-)
