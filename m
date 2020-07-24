@@ -2,115 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0337B22C4D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 14:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0624722C5DA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 15:11:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbgGXMMN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jul 2020 08:12:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53752 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727113AbgGXMME (ORCPT
+        id S1726768AbgGXNLc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jul 2020 09:11:32 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:31238 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726726AbgGXNLc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jul 2020 08:12:04 -0400
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F36AC08C5C0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jul 2020 05:12:02 -0700 (PDT)
-Received: by mail-yb1-xb49.google.com with SMTP id j187so10174644ybj.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jul 2020 05:12:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=j09FJFOs7ox27oQ/jw0Hg/h+WWOfzzYjATzxUrwtjag=;
-        b=uinx4umNBzjZNhDldRFu/4q/KRDj/aDyTI/UPTsQCLp9QNIT/Pkx3JVsXg/gNYy18X
-         8fzYbL2l+0BjejTs82TRocYlvCmHfn64VAHgBtAoxl223aUkRG3nBLgaaC3G9xOT+Ee1
-         rnavYw4RFQWWpr4kEAgcyApl0DBMmQqQ425gWWhdRZjgy/8fQlCPdngERjFBN7JGM4dr
-         U8tyJmjfakSMtKlyzL3/ej5FMsNjZGA0nrRghc67idy4m8GhAjIfh7Nj6B8JlxuCnCUI
-         kVLkYfz/3ijWwgCZz1ul3FHiFmKsgTc48xkeKY1rm28DffqkcvD9qA1RRrydNx89Ft+E
-         K0ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=j09FJFOs7ox27oQ/jw0Hg/h+WWOfzzYjATzxUrwtjag=;
-        b=bF9gQqZN5kz037rDToVGjDFaCmBbFFaaPTN6YMZlEOH2j0uMyhJ/Adn3c73IjZEUgc
-         NNV0PLSrZpgnzb9+sSuCDSVqKDHGuMheqOWMiKwuo9AgA+q+arY8cwWcgK5fU2hUcaa5
-         Xv8cTOlYyxEa5GONKmcDtUeOP9ddz+eBkNPX9RZkr0eJjQ06XrY87gLpmqN9I8dadABd
-         mlxqllg1KpuCBzV6CstbcoKPrxpxwQ5mxdmyaTW2qGJk0wmXVmGCWJKz+m/7BEIVd6TX
-         teYaog0YMVACk3gBauz9T4lluct5A/ZFGFO/Vn3ODmoyMkaFxelfgRNk/URB1shwTyre
-         u3Cg==
-X-Gm-Message-State: AOAM532DbKhEoJ47u6hNetlf9UvgwHhVjrJbqOh6Zfm4JaY+x9bQI8SD
-        atZ2hui4rhpeFFamVvJ92ujwlRTqFOk=
-X-Google-Smtp-Source: ABdhPJx/kR9OGGrb08Cms1pOt8vKHYWUtxe5tDqnionkhbA71lMBxyPqAWtadG1S0CUcqUHbUujo0btmzCE=
-X-Received: by 2002:a25:385:: with SMTP id 127mr14857247ybd.141.1595592721412;
- Fri, 24 Jul 2020 05:12:01 -0700 (PDT)
-Date:   Fri, 24 Jul 2020 12:11:43 +0000
-In-Reply-To: <20200724121143.1589121-1-satyat@google.com>
-Message-Id: <20200724121143.1589121-8-satyat@google.com>
-Mime-Version: 1.0
-References: <20200724121143.1589121-1-satyat@google.com>
-X-Mailer: git-send-email 2.28.0.rc0.142.g3c755180ce-goog
-Subject: [PATCH v5 7/7] fscrypt: update documentation for direct I/O support
-From:   Satya Tangirala <satyat@google.com>
-To:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org
-Cc:     linux-xfs@vger.kernel.org, Satya Tangirala <satyat@google.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 24 Jul 2020 09:11:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1595596290;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=k9drAeZ4hZck3whF/zeswoHycRwKNcQGYouHgh2Avoc=;
+        b=YDqeQfkJoA+Uul4rs/pkD4LVyYa/WW4oajQY6I0TGOSh9f4O74xUKewjEMvMEk1g5PCjEY
+        L3ztfie8Se7xAt2jXZf9muY5AupAbZBSSfqaIVoC3Gcebc1J3hYm8OvQMyoQWqZBL0t7CP
+        vCgOxW6tKBuMd8jGecAvLbK+upriiIs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-209-gG4lK0YCMwmnzZVTuuyqkA-1; Fri, 24 Jul 2020 09:11:28 -0400
+X-MC-Unique: gG4lK0YCMwmnzZVTuuyqkA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8292658;
+        Fri, 24 Jul 2020 13:11:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 58970183AB;
+        Fri, 24 Jul 2020 13:11:23 +0000 (UTC)
+Subject: [PATCH 0/4] Mount notifications
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-security-module@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Miklos Szeredi <mszeredi@redhat.com>, dhowells@redhat.com,
+        torvalds@linux-foundation.org, casey@schaufler-ca.com,
+        sds@tycho.nsa.gov, nicolas.dichtel@6wind.com, raven@themaw.net,
+        christian@brauner.io, jlayton@redhat.com, kzak@redhat.com,
+        mszeredi@redhat.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 24 Jul 2020 14:11:22 +0100
+Message-ID: <159559628247.2141315.2107013106060144287.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Update fscrypt documentation to reflect the addition of direct I/O support
-and document the necessary conditions for direct I/O on encrypted files.
 
-Signed-off-by: Satya Tangirala <satyat@google.com>
-Reviewed-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Here's a set of patches to add notifications for mount topology events,
+such as mounting, unmounting, mount expiry, mount reconfiguration.
+
+An LSM hook is included to an LSM to rule on whether or not a mount watch
+may be set on a particular path.
+
+Why do we want mount notifications?  Whilst /proc/mounts can be polled, it
+only tells you that something changed in your namespace.  To find out, you
+have to trawl /proc/mounts or similar to work out what changed in the mount
+object attributes and mount topology.  I'm told that the proc file holding
+the namespace_sem is a point of contention, especially as the process of
+generating the text descriptions of the mounts/superblocks can be quite
+involved.
+
+The notification generated here directly indicates the mounts involved in
+any particular event and gives an idea of what the change was.
+
+This is combined with a new fsinfo() system call that allows, amongst other
+things, the ability to retrieve in one go an { id, change_counter } tuple
+from all the children of a specified mount, allowing buffer overruns to be
+dealt with quickly.
+
+This is of use to systemd to improve efficiency:
+
+	https://lore.kernel.org/linux-fsdevel/20200227151421.3u74ijhqt6ekbiss@ws.net.home/
+
+And it's not just Red Hat that's potentially interested in this:
+
+	https://lore.kernel.org/linux-fsdevel/293c9bd3-f530-d75e-c353-ddeabac27cf6@6wind.com/
+
+The kernel patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=notifications-pipe-core
+
+David
 ---
- Documentation/filesystems/fscrypt.rst | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+David Howells (4):
+      watch_queue: Make watch_sizeof() check record size
+      watch_queue: Add security hooks to rule on setting mount watches
+      watch_queue: Implement mount topology and attribute change notifications
+      watch_queue: sample: Display mount tree change notifications
 
-diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
-index ec81598477fc..5367c03b17bb 100644
---- a/Documentation/filesystems/fscrypt.rst
-+++ b/Documentation/filesystems/fscrypt.rst
-@@ -1049,8 +1049,10 @@ astute users may notice some differences in behavior:
-   may be used to overwrite the source files but isn't guaranteed to be
-   effective on all filesystems and storage devices.
- 
--- Direct I/O is not supported on encrypted files.  Attempts to use
--  direct I/O on such files will fall back to buffered I/O.
-+- Direct I/O is supported on encrypted files only under some
-+  circumstances (see `Direct I/O support`_ for details). When these
-+  circumstances are not met, attempts to use direct I/O on encrypted
-+  files will fall back to buffered I/O.
- 
- - The fallocate operations FALLOC_FL_COLLAPSE_RANGE and
-   FALLOC_FL_INSERT_RANGE are not supported on encrypted files and will
-@@ -1123,6 +1125,20 @@ It is not currently possible to backup and restore encrypted files
- without the encryption key.  This would require special APIs which
- have not yet been implemented.
- 
-+Direct I/O support
-+==================
-+
-+Direct I/O on encrypted files is supported through blk-crypto. In
-+particular, this means the kernel must have CONFIG_BLK_INLINE_ENCRYPTION
-+enabled, the filesystem must have had the 'inlinecrypt' mount option
-+specified, and either hardware inline encryption must be present, or
-+CONFIG_BLK_INLINE_ENCRYPTION_FALLBACK must have been enabled. Further,
-+any I/O must be aligned to the filesystem block size (*not* necessarily
-+the same as the block device's block size) - in particular, any userspace
-+buffer into which data is read/written from must also be aligned to the
-+filesystem block size. If any of these conditions isn't met, attempts to do
-+direct I/O on an encrypted file will fall back to buffered I/O.
-+
- Encryption policy enforcement
- =============================
- 
--- 
-2.28.0.rc0.142.g3c755180ce-goog
+
+ Documentation/watch_queue.rst               |  12 +-
+ arch/alpha/kernel/syscalls/syscall.tbl      |   1 +
+ arch/arm/tools/syscall.tbl                  |   1 +
+ arch/arm64/include/asm/unistd32.h           |   2 +
+ arch/ia64/kernel/syscalls/syscall.tbl       |   1 +
+ arch/m68k/kernel/syscalls/syscall.tbl       |   1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl |   1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |   1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |   1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |   1 +
+ arch/parisc/kernel/syscalls/syscall.tbl     |   1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |   1 +
+ arch/s390/kernel/syscalls/syscall.tbl       |   1 +
+ arch/sh/kernel/syscalls/syscall.tbl         |   1 +
+ arch/sparc/kernel/syscalls/syscall.tbl      |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl      |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl      |   1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     |   1 +
+ fs/Kconfig                                  |   9 +
+ fs/Makefile                                 |   1 +
+ fs/mount.h                                  |  21 ++
+ fs/mount_notify.c                           | 228 ++++++++++++++++++++
+ fs/namespace.c                              |  22 ++
+ include/linux/dcache.h                      |   1 +
+ include/linux/lsm_hook_defs.h               |   3 +
+ include/linux/lsm_hooks.h                   |   6 +
+ include/linux/security.h                    |   8 +
+ include/linux/syscalls.h                    |   2 +
+ include/uapi/asm-generic/unistd.h           |   4 +-
+ include/uapi/linux/watch_queue.h            |  36 +++-
+ kernel/sys_ni.c                             |   3 +
+ samples/watch_queue/watch_test.c            |  44 +++-
+ security/security.c                         |   7 +
+ 33 files changed, 421 insertions(+), 4 deletions(-)
+ create mode 100644 fs/mount_notify.c
+
 
