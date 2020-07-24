@@ -2,114 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB12722C1FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 11:21:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EEFC22C2F7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 12:20:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbgGXJUr convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jul 2020 05:20:47 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:52941 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727972AbgGXJUq (ORCPT
+        id S1726520AbgGXKUK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jul 2020 06:20:10 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:54640 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726114AbgGXKUJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jul 2020 05:20:46 -0400
-Received: from mail-qk1-f176.google.com ([209.85.222.176]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1N3sNa-1kyONw1BNg-00zofz; Fri, 24 Jul 2020 11:20:44 +0200
-Received: by mail-qk1-f176.google.com with SMTP id e13so8027966qkg.5;
-        Fri, 24 Jul 2020 02:20:43 -0700 (PDT)
-X-Gm-Message-State: AOAM533Xbv7VPZv6K9FbSXZLNfp32yJDDIOK2u+6hbGcPWpfxugglv6B
-        bK8L0K5uL3IjUl/muzddjKdAZiwuadn3aodyC6w=
-X-Google-Smtp-Source: ABdhPJwABW1YhCHM+rzhS9ETGodCvKpQaJKjnVRjhdVgBMUZcgbq2AhEaUluWQdEhha+o+dVmLq0Az5h4pnXqSPsV/o=
-X-Received: by 2002:a05:620a:1654:: with SMTP id c20mr9525639qko.138.1595582443026;
- Fri, 24 Jul 2020 02:20:43 -0700 (PDT)
+        Fri, 24 Jul 2020 06:20:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1595586008;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iNwJ2cEmHYj+S0Ahc6f50GridTdh2KfTtR3COy4a8r0=;
+        b=FeW10BPJhm8IiKcp/ifw7qwIb14HJBv8QnxtKn6XNRE9YI6lkN2HmgYaHfqZ91PgYHMlDW
+        w/sFtENwfyQeS2TL9tsI2yP3hhg1xnv1A69w+5WlZP9DrjSIDYuybT0EIupABdgNlEKShN
+        c7APFcGvJJMn+4xLc/Hs45CPpmVYq74=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-109-tpfvniXtPBmBGWTxVCEyVQ-1; Fri, 24 Jul 2020 06:20:07 -0400
+X-MC-Unique: tpfvniXtPBmBGWTxVCEyVQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 26212800597;
+        Fri, 24 Jul 2020 10:20:04 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3EF84872E5;
+        Fri, 24 Jul 2020 10:20:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <1293241.1595501326@warthog.procyon.org.uk>
+References: <1293241.1595501326@warthog.procyon.org.uk> <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com> <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk> <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
+        Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
+        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and attribute change notifications [ver #5]
 MIME-Version: 1.0
-References: <20200724001248.GC25522@altlinux.org>
-In-Reply-To: <20200724001248.GC25522@altlinux.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 24 Jul 2020 11:20:26 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0JM8dytW6C8P9HoPcGksg0d5JCut1yT7JzBcUCAm-WcQ@mail.gmail.com>
-Message-ID: <CAK8P3a0JM8dytW6C8P9HoPcGksg0d5JCut1yT7JzBcUCAm-WcQ@mail.gmail.com>
-Subject: Re: [PATCH] fs/nsfs.c: fix ioctl support of compat processes
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Serge Hallyn <serge@hallyn.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        =?UTF-8?B?w4Frb3MgVXpvbnlp?= <uzonyi.akos@gmail.com>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:T2/vIztnhZynRsOcAXoIISvlgJgffTQCDi4EdAH6mVPwIrPBg5v
- ndVMcJ0U3z6aHd7rDquf37P43BoS9nUhNT3EbVNf8NIaAuUDOL71H8gPS5EVo0OrXiEnJVA
- bz6jY0Fnl/xzV2XYwLo28gx3w3OF/e4mP+crUmOk887ak21eK63POZ86EfCYN2aGDe4fWCU
- jp7tYZDSm/6qL4QAicQlQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:u15t9tA4sZE=:3QJhBrC99WeXoTxX7bhp6P
- qmZ66Qp7GzD2AcfugQCGSs+HkTPetVFGgLmTzS3D6Jv+lYgDVGb3bAZRDUtUM3aecyk6nD55l
- ZLJTD3M34O7yx2IQZt1A7IIm4LXJMEDJvWFMc4U1fI4se66X6yXdoHWiFuYCv6q7zZHzHNfEq
- jmXgSFrRf4Gf99ou+/OfWOewVzcOMD2ym6nQ76nwgODpBnjKLaQHTzlIFlZhsmItalJyjF/ZZ
- gVyLKTTrENHP38p8spf9fYj9BR4PrDE14Kyc9geeiXp3Rqvt43HJJhSmu5RAxYCU7sUpSibpo
- 3VmyZ0WCLuN3ljugSU3NFPeTjsN/3+LP6y2+5yGf/lM2C8FxSY74s1b1S1fSLgH6e4kuLVDbr
- rLV5YScRa42YiOjZbII0R014RFkaJ3deVb+U3WYggCuneM8HwXOLk2UYCHpCVkIBGc/Y4Zhl2
- iML0k1O3uXIDwrHL83IWKevneyr7icDDhmYVfIXvTcYXy3aAYM9TKPDlrFRTx6unTn1mrb2E/
- 0tNSyvfpHl1eDSeB8aTBb/XYmcBv14bthqT+NSHwyU4rJCO/Qrf3hilCTw4sWS8MbYyibDN//
- dbwucpHbO3ZeiWJ8cyLjXXZmgrKvxn8J19hcJ0RSSKUHYsfx93slBnZeMsxT2pALaOOkm1x7P
- Yw1ryhY2saAHNstYigRt3tbOlIgNQg52JyuP9SFjJbRaYHLD1gpLB5eJLxy83iER1nrJxBDqv
- jtzcy7R9Cox0030bPs7cFGOK7tYHWRNnZNMw95Tt0wpuOXrg0zp1DQFTCJZg9AJ6xouHRzaVI
- YvScS21dezXfV8ZJcO+bfWV0jyKJVYYG3l0YNDpJGcFqTN1WYQ8+RAFkDMeeSYbAImJlbif
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2003786.1595585999.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Fri, 24 Jul 2020 11:19:59 +0100
+Message-ID: <2003787.1595585999@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 2:12 AM Dmitry V. Levin <ldv@altlinux.org> wrote:
->
-> According to Documentation/driver-api/ioctl.rst, in order to support
-> 32-bit user space running on a 64-bit kernel, each subsystem or driver
-> that implements an ioctl callback handler must also implement the
-> corresponding compat_ioctl handler.  The compat_ptr_ioctl() helper can
-> be used in place of a custom compat_ioctl file operation for drivers
-> that only take arguments that are pointers to compatible data
-> structures.
->
-> In case of NS_* ioctls only NS_GET_OWNER_UID accepts an argument, and
-> this argument is a pointer to uid_t type, which is universally defined
-> to __kernel_uid32_t.
+David Howells <dhowells@redhat.com> wrote:
 
-This is potentially dangerous to rely on, as there are two parts that
-are mismatched:
+> > What guarantees that mount_id is going to remain a 32bit entity?
+> =
 
-- user space does not see the kernel's uid_t definition, but has its own,
-  which may be either the 16-bit or the 32-bit type. 32-bit uid_t was
-  introduced with linux-2.3.39 in back in 2000. glibc was already
-  using 32-bit uid_t at the time in user space, but uclibc only changed
-  in 2003, and others may have been even later.
+> You think it likely we'd have >4 billion concurrent mounts on a system? =
+ That
+> would require >1.2TiB of RAM just for the struct mount allocations.
+> =
 
-- the ioctl command number is defined (incorrectly) as if there was no
-  argument, so if there is any user space that happens to be built with
-  a 16-bit uid_t, this does not get caught.
+> But I can expand it to __u64.
 
-       Arnd
+That said, sys_name_to_handle_at() assumes it's a 32-bit signed integer, s=
+o
+we're currently limited to ~2 billion concurrent mounts:-/
 
-> Reported-by: Ákos Uzonyi <uzonyi.akos@gmail.com>
-> Fixes: 6786741dbf99 ("nsfs: add ioctl to get an owning user namespace for ns file descriptor")
-> Cc: stable@vger.kernel.org # v4.9+
-> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-> ---
->  fs/nsfs.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/fs/nsfs.c b/fs/nsfs.c
-> index 800c1d0eb0d0..a00236bffa2c 100644
-> --- a/fs/nsfs.c
-> +++ b/fs/nsfs.c
-> @@ -21,6 +21,7 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
->  static const struct file_operations ns_file_operations = {
->         .llseek         = no_llseek,
->         .unlocked_ioctl = ns_ioctl,
-> +       .compat_ioctl   = compat_ptr_ioctl,
->  };
->
->  static char *ns_dname(struct dentry *dentry, char *buffer, int buflen)
+David
+
