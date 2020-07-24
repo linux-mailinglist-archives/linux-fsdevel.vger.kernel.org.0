@@ -2,79 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 893C222D08B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 23:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 300EE22D13F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 23:41:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726759AbgGXVbg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jul 2020 17:31:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56940 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbgGXVbg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jul 2020 17:31:36 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59144C0619D3;
-        Fri, 24 Jul 2020 14:31:36 -0700 (PDT)
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1595626293;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4aIj5BJFXygT8U4O1CTI3DzA3eMR9QI7whCGEMz/ttI=;
-        b=W6Fe6hfg8SE4RiJMMLflHKp+NIWV0wPCb2wlrzrl1CWSYcA1ZeoGi7rq+Rv/c+87J015Ii
-        ymqZRbBlkoC7snn6il30NJ9jrjaCZ2P5M9uWUecoBkwg2isk3ACjECD/reQ1fV64r8c6zK
-        xXifmMt2Q2pN3iCuMj2WGD03NU0TkqnIl/4taUWW9AGKc9Kh6VVD0kyGKEw4odlDuHki5Q
-        +KRrBOygiG05siOdbNw9K7vJEd7aC9LPaw6OfErJFt7c0v8VEO7A7HSr0cWdh4gT0jFy+q
-        qIoaWcdYlCOxUrjclZMWRFUgn6vPWyAhHcJ/nA+kp0o5rWTg6Ypjjd3Hok5B8g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1595626293;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4aIj5BJFXygT8U4O1CTI3DzA3eMR9QI7whCGEMz/ttI=;
-        b=gvXpoJL9j0ueMxbRK7LxQkpKPtXsWnCEONeSpDv+LpS7hSA8x+8FAQ2hRnaenRubtW+dhH
-        8fovrLUcNueXU0BA==
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH RFC V2 17/17] x86/entry: Preserve PKRS MSR across exceptions
-In-Reply-To: <874kpwtxlh.fsf@nanos.tec.linutronix.de>
-References: <20200717072056.73134-1-ira.weiny@intel.com> <20200717072056.73134-18-ira.weiny@intel.com> <87r1t2vwi7.fsf@nanos.tec.linutronix.de> <20200723220435.GI844235@iweiny-DESK2.sc.intel.com> <87mu3pvly7.fsf@nanos.tec.linutronix.de> <874kpwtxlh.fsf@nanos.tec.linutronix.de>
-Date:   Fri, 24 Jul 2020 23:31:33 +0200
-Message-ID: <871rl0txai.fsf@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1726639AbgGXVkC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jul 2020 17:40:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48778 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726576AbgGXVkB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Jul 2020 17:40:01 -0400
+Subject: Re: [GIT PULL] zonefs fixes for X.Y-rcZ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595626801;
+        bh=0t9F/Wnb4mEskXWmu6AAaZcbpgu4Q4Ye8kWTKGWsVmQ=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=uVR7hvSS0mhjzdXxcbQ4RX88bVG25h9TdkwbdmL3PkwCCtvJiAIdHBkbGTnawEMdr
+         G9stSQqXSSCN2r+wy1xAlTFas3lelD2XKl+fn350vpIkuNR4fQFzgC8dWZzlU6o2lQ
+         2xBbo0O6K2XJ1JnOggpMAC6XQZTZmS11inlgr01s=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200724073626.333882-1-damien.lemoal@wdc.com>
+References: <20200724073626.333882-1-damien.lemoal@wdc.com>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200724073626.333882-1-damien.lemoal@wdc.com>
+X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git/
+ tags/zonefs-5.8-rc7
+X-PR-Tracked-Commit-Id: 89ee72376be23a1029a0c65eff8838c262b01d65
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6a343656d30229a424458f8111e55df336375382
+Message-Id: <159562680155.3064.4010983355398850296.pr-tracker-bot@kernel.org>
+Date:   Fri, 24 Jul 2020 21:40:01 +0000
+To:     Damien Le Moal <damien.lemoal@wdc.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thomas Gleixner <tglx@linutronix.de> writes:
-> static __always_inline idtentry_state_t idtentry_nmi_enter(void)
-> {
->      	idtentry_state_t state = {};
->
->         nmi_enter();
->         instrumentation_begin();
->         state.key = save_and_clear_key();
->         instrumentation_end();
+The pull request you sent on Fri, 24 Jul 2020 16:36:26 +0900:
 
-Clearly lacks a
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git/ tags/zonefs-5.8-rc7
 
-        return state;
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6a343656d30229a424458f8111e55df336375382
 
-But I assume you already spotted it. Otherwise the compiler would have :)
+Thank you!
 
-Thanks,
-
-        tglx
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
