@@ -2,150 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7133F22CC30
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 19:29:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FDC622CC62
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 19:41:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbgGXR33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jul 2020 13:29:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47096 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726397AbgGXR32 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jul 2020 13:29:28 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54B9CC0619E6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jul 2020 10:29:28 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id gc9so5664964pjb.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jul 2020 10:29:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=xVJb6QB7yJwnn1Z6Ovzuc7SiH2/mFZI/eEetibZkjak=;
-        b=oCF2bACf0J3wi10Mkevj6a1lx9ZJ2XYqftXol/Y5C3BUVETOi1ThoRhsL2OxKFCyb4
-         LGJ3ZE9QuRoT+dYLR9CdhNjE9P+KA1F0J34lD0z4Rjmsdl1uULCFsHQh/kjIrw/3yYIN
-         MIxEx6ObahD1W2wfYbyu5J04MgrODyT6hzuLM3mpaqgWNY1btI1HYMmRRqfrG327H9oM
-         z5+CURUIEaZafgf40maNhBKcXiwP+sIOTIqvFURURI9WNSOzDt9L7YckftzfASDKb67X
-         c6S0yxsINqy7Fs9MCqKwbe5ZznH0YewS4KMFQ8V9Fo2+D3qH4LKoiOb9hjdKp/ooZMns
-         71UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=xVJb6QB7yJwnn1Z6Ovzuc7SiH2/mFZI/eEetibZkjak=;
-        b=Wkvuruv0rDX+Ken5VkjwKaQfVNDsL2unBehYkTzMkoCze0X6lHx/0ei4A6ETyoNtfV
-         S2WZGvGMy2JxJ34GH/6UpzZsPZJASYH8p0Q+3GKiJ1uR7SX4i/zp/FtT3P0Dz5U5hi+b
-         imdHO9Yj9syKZQMRhMs9qoFPADwkFWEVO05Sh4jCTxRtx2uTyH79FO0i/DoBsqZRGnm/
-         6wWrgffbdSXgNMWIPLGA4ffsZy6LS6HfCZ6mYeFXOtbyJ/8wKI4d+tPO5HNLF6bQLBQc
-         887WjARAzSh+3RcbY7x20EWl2vTdl1KkR/oxkJUwqB1T3nu8XUHYBjwPdYqa5EfC8zHU
-         bvEg==
-X-Gm-Message-State: AOAM5324tIZG+XDIv/oWBRIqCH9awT5wRZ38M0pP3Vmp4fRrJ7ceAXFm
-        v1STNzshB6qRn/2EFHdyaAxSJw==
-X-Google-Smtp-Source: ABdhPJxgGZkOO3kQzBrpxCwHwlk1F6DYD0lzx0NwksvJwkCVThBWugwQYsACXzFP/Kw/IrlXRyq2VQ==
-X-Received: by 2002:a17:90a:1b2c:: with SMTP id q41mr6495292pjq.195.1595611767681;
-        Fri, 24 Jul 2020 10:29:27 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:cc1b:c95e:6185:cfc7? ([2601:646:c200:1ef2:cc1b:c95e:6185:cfc7])
-        by smtp.gmail.com with ESMTPSA id x66sm6882326pgb.12.2020.07.24.10.29.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Jul 2020 10:29:27 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH RFC V2 17/17] x86/entry: Preserve PKRS MSR across exceptions
-Date:   Fri, 24 Jul 2020 10:29:23 -0700
-Message-Id: <D866BD75-42A2-43B2-B07A-55BCC3781FEC@amacapital.net>
-References: <20200724172344.GO844235@iweiny-DESK2.sc.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org
-In-Reply-To: <20200724172344.GO844235@iweiny-DESK2.sc.intel.com>
-To:     Ira Weiny <ira.weiny@intel.com>
-X-Mailer: iPhone Mail (17F80)
+        id S1727779AbgGXRlf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jul 2020 13:41:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50234 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726455AbgGXRlf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Jul 2020 13:41:35 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 016BE2067D;
+        Fri, 24 Jul 2020 17:41:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595612494;
+        bh=aRMgYqgvo4BFbSMRZ6izOXZzYw7jYpwFPgZM1in6fMU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jBZM5Y0g+E10PwoCqRC6t5F6HCknVy62WPLNvcAzxDV15X1J6NGfRf+WZ3Tdv4vEC
+         PZev737/sUJJ5pcIQHzYt4uiOTtESBBEHz5SbsJhuZlXHLnK9gUZqLgGp/kHfWMDCs
+         FfrARJduO1G+dnwJjrvvMzKNmhVqqtK6ncu1eGWg=
+Date:   Fri, 24 Jul 2020 10:41:32 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Satya Tangirala <satyat@google.com>, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v4 3/7] iomap: support direct I/O with fscrypt using
+ blk-crypto
+Message-ID: <20200724174132.GB819@sol.localdomain>
+References: <20200720233739.824943-1-satyat@google.com>
+ <20200720233739.824943-4-satyat@google.com>
+ <20200722211629.GE2005@dread.disaster.area>
+ <20200722223404.GA76479@sol.localdomain>
+ <20200723220752.GF2005@dread.disaster.area>
+ <20200723230345.GB870@sol.localdomain>
+ <20200724013910.GH2005@dread.disaster.area>
+ <20200724034628.GC870@sol.localdomain>
+ <20200724053130.GO2005@dread.disaster.area>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200724053130.GO2005@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Jul 24, 2020 at 03:31:30PM +1000, Dave Chinner wrote:
+> On Thu, Jul 23, 2020 at 08:46:28PM -0700, Eric Biggers wrote:
+> > On Fri, Jul 24, 2020 at 11:39:10AM +1000, Dave Chinner wrote:
+> > > fscrypt_inode_uses_inline_crypto() ends up being:
+> > > 
+> > > 	if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode) &&
+> > > 	    inode->i_crypt_info->ci_inlinecrypt)
+> > > 
+> > > I note there are no checks for inode->i_crypt_info being non-null,
+> > > and I note that S_ENCRYPTED is set on the inode when the on-disk
+> > > encrypted flag is encountered, not when inode->i_crypt_info is set.
+> > > 
+> > 
+> > ->i_crypt_info is set when the file is opened, so it's guaranteed to be set for
+> > any I/O.  So the case you're concerned about just doesn't happen.
+> 
+> Ok. The connection is not obvious to someone who doesn't know the
+> fscrypt code inside out.
+> 
+> > > > Note that currently, I don't think iomap_dio_bio_actor() would handle an
+> > > > encrypted file with blocksize > PAGE_SIZE correctly, as the I/O could be split
+> > > > in the middle of a filesystem block (even after the filesystem ensures that
+> > > > direct I/O on encrypted files is fully filesystem-block-aligned, which we do ---
+> > > > see the rest of this patchset), which isn't allowed on encrypted files.
+> > > 
+> > > That can already happen unless you've specifically restricted DIO
+> > > alignments in the filesystem code. i.e. Direct IO already supports
+> > > sub-block ranges and alignment, and we can already do user DIO on
+> > > sub-block, sector aligned ranges just fine. And the filesystem can
+> > > already split the iomap on sub-block alignments and ranges if it
+> > > needs to because the iomap uses byte range addressing, not sector or
+> > > block based addressing.
+> > > 
+> > > So either you already have a situation where the 2^32 offset can
+> > > land *inside* a filesystem block, or the offset is guaranteed to be
+> > > filesystem block aligned and so you'll never get this "break an IO
+> > > on sub-block alignment" problem regardless of the filesystem block
+> > > size...
+> > > 
+> > > Either way, it's not an iomap problem - it's a filesystem mapping
+> > > problem...
+> > > 
+> > 
+> > I think you're missing the point here.  Currently, the granularity of encryption
+> > (a.k.a. "data unit size") is always filesystem blocks, so that's the minimum we
+> > can directly read or write to an encrypted file.  This has nothing to do with
+> > the IV wraparound case also being discussed.
+> 
+> So when you change the subject, please make it *really obvious* so
+> that people don't think you are still talking about the same issue.
+> 
+> > For example, changing a single bit in the plaintext of a filesystem block may
+> > result in the entire block's ciphertext changing.  (The exact behavior depends
+> > on the cryptographic algorithm that is used.)
+> > 
+> > That's why this patchset makes ext4 only allow direct I/O on encrypted files if
+> > the I/O is fully filesystem-block-aligned.  Note that this might be a more
+> > strict alignment requirement than the bdev_logical_block_size().
+> > 
+> > As long as the iomap code only issues filesystem-block-aligned bios, *given
+> > fully filesystem-block-aligned inputs*, we're fine.  That appears to be the case
+> > currently.
+> 
+> The actual size and shape of the bios issued by direct IO (both old
+> code and newer iomap code) is determined by the user supplied iov,
+> the size of the biovec array allocated in the bio, and the IO
+> constraints of the underlying hardware.  Hence direct IO does not
+> guarantee alignment to anything larger than the underlying block
+> device logical sector size because there's no guarantee when or
+> where a bio will fill up.
+> 
+> To guarantee alignment of what ends up at the hardware, you have to
+> set the block device parameters (e.g. logical sector size)
+> appropriately all the way down the stack. You also need to ensure
+> that the filesystem is correctly aligned on the block device so that
+> filesystem blocks don't overlap things like RAID stripe boundaires,
+> linear concat boundaries, etc.
+> 
+> IOWs, to constrain alignment in the IO path, you need to configure
+> you system correct so that the information provided to iomap for IO
+> alignment matches your requirements. This is not somethign iomap can
+> do itself; everything from above needs to be constrained by the
+> filesystem using iomap, everything sent below by iomap is
+> constrained by the block device config.
 
-> On Jul 24, 2020, at 10:23 AM, Ira Weiny <ira.weiny@intel.com> wrote:
->=20
-> =EF=BB=BFOn Thu, Jul 23, 2020 at 10:15:17PM +0200, Thomas Gleixner wrote:
->> Thomas Gleixner <tglx@linutronix.de> writes:
->>=20
->>> Ira Weiny <ira.weiny@intel.com> writes:
->>>> On Fri, Jul 17, 2020 at 12:06:10PM +0200, Peter Zijlstra wrote:
->>>>>> On Fri, Jul 17, 2020 at 12:20:56AM -0700, ira.weiny@intel.com wrote:
->>>>> I've been really digging into this today and I'm very concerned that I=
-'m
->>>>> completely missing something WRT idtentry_enter() and idtentry_exit().=
+That way of thinking about things doesn't entirely work for inline encryption.
 
->>>>>=20
->>>>> I've instrumented idt_{save,restore}_pkrs(), and __dev_access_{en,dis}=
-able()
->>>>> with trace_printk()'s.
->>>>>=20
->>>>> With this debug code, I have found an instance where it seems like
->>>>> idtentry_enter() is called without a corresponding idtentry_exit().  T=
-his has
->>>>> left the thread ref counter at 0 which results in very bad things happ=
-ening
->>>>> when __dev_access_disable() is called and the ref count goes negative.=
+Hardware can support multiple encryption "data unit sizes", some of which may be
+larger than the logical block size.  (The data unit size is the granularity of
+encryption.  E.g. if software selects data_unit_size=4096, then each invocation
+of the encryption/decryption algorithm is passed 4096 bytes.  You can't then
+later encrypt/decrypt just part of that; that's not how the algorithms work.)
 
->>>>>=20
->>>>> Effectively this seems to be happening:
->>>>>=20
->>>>> ...
->>>>>    // ref =3D=3D 0
->>>>>    dev_access_enable()  // ref +=3D 1 =3D=3D> disable protection
->>>>>        // exception  (which one I don't know)
->>>>>            idtentry_enter()
->>>>>                // ref =3D 0
->>>>>                _handler() // or whatever code...
->>>>>            // *_exit() not called [at least there is no trace_printk()=
- output]...
->>>>>            // Regardless of trace output, the ref is left at 0
->>>>>    dev_access_disable() // ref -=3D 1 =3D=3D> -1 =3D=3D> does not enab=
-le protection
->>>>>    (Bad stuff is bound to happen now...)
->>>=20
->>> Well, if any exception which calls idtentry_enter() would return without=
+For example hardware might *in general* support addressing 512-byte sectors and
+thus have logical_block_size=512.  But it could also support encryption data
+unit sizes [512, 1024, 2048, 4096].  Encrypted I/O has to be aligned to the data
+unit size, not just to the logical block size.  The data unit size to use, and
+whether to use encryption or not, is decided on a per-I/O basis.
 
->>> going through idtentry_exit() then lots of bad stuff would happen even
->>> without your patches.
->>>=20
->>>> Also is there any chance that the process could be getting scheduled an=
-d that
->>>> is causing an issue?
->>>=20
->>> Only from #PF, but after the fault has been resolved and the tasks is
->>> scheduled in again then the task returns through idtentry_exit() to the
->>> place where it took the fault. That's not guaranteed to be on the same
->>> CPU. If schedule is not aware of the fact that the exception turned off
->>> stuff then you surely get into trouble. So you really want to store it
->>> in the task itself then the context switch code can actually see the
->>> state and act accordingly.
->>=20
->> Actually thats nasty as well as you need a stack of PKRS values to
->> handle nested exceptions. But it might be still the most reasonable
->> thing to do. 7 PKRS values plus an index should be really sufficient,
->> that's 32bytes total, not that bad.
->=20
-> I've thought about this a bit more and unless I'm wrong I think the
-> idtentry_state provides for that because each nested exception has it's ow=
-n
-> idtentry_state doesn't it?
+So in this case technically it's the filesystem (and later the
+bio::bi_crypt_context which the filesystem sets) that knows about the alignment
+needed -- *not* the request_queue.
 
-Only the ones that use idtentry_enter() instead of, say, nmi_enter().
+Is it your opinion that inline encryption should only be supported when
+data_unit_size <= logical_block_size?  The problems with that are
 
->=20
-> Ira
+    (a) Using an unnecessarily small data_unit_size degrades performance a
+	lot -- for *all* I/O, not just direct I/O.  This is because there are a
+	lot more separate encryptions/decryptions to do, and there's a fixed
+	overhead to each one (much of which is intrinsic in the crypto
+	algorithms themselves, i.e. this isn't simply an implementation quirk).
+
+    (b) fscrypt currently only supports data_unit_size == filesystem_block_size.
+	(OFC, filesystem_block_size may be greater than logical_block_size.)
+
+    (c) Filesystem images would be less portable, unless the minimum
+	data_unit_size were used everywhere which would degrade performance.
+
+(We could address (b) by allowing users to specify data_unit_size when
+encrypting a directory.  That would add complexity, but it's possible.)
+
+But again, as far as I can tell, fs/iomap/direct-io.c currently *does* guarantee
+that *if* the input is fully filesystem-block-aligned and if blocksize <=
+PAGE_SIZE, then the issued I/O is also filesystem-block-aligned.
+
+So as far as I can tell, there isn't really any problem there, at least not now.
+I just want to make sure we're on the same page...
+
+> 
+> > (It's possible that in the future we'll support other encryption data unit
+> > sizes, perhaps powers of 2 from 512 to filesystem block size.  But for now the
+> > filesystem block size has been good enough for everyone,
+> 
+> Not the case. fscrypt use in enterprise environments needs support
+> for block size < page size so that it can be deployed on 64kB page
+> size machines without requiring 64kB filesystem block sizes.
+> 
+
+It's already supported (on ext4 since Linux v5.5).
+
+What's not supported (yet) is data_unit_size < filesystem_block_size.
+
+- Eric
