@@ -2,83 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 44BE622C43E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 13:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A566722C46F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 13:36:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbgGXLU1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jul 2020 07:20:27 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:35217 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726483AbgGXLU0 (ORCPT
+        id S1727036AbgGXLgQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jul 2020 07:36:16 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:22527 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726952AbgGXLgP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jul 2020 07:20:26 -0400
-X-Originating-IP: 90.63.246.187
-Received: from gandi.net (laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr [90.63.246.187])
-        (Authenticated sender: thibaut.sautereau@clip-os.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id D40D7FF80A;
-        Fri, 24 Jul 2020 11:20:14 +0000 (UTC)
-Date:   Fri, 24 Jul 2020 13:20:14 +0200
-From:   Thibaut Sautereau <thibaut.sautereau@clip-os.org>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        Fri, 24 Jul 2020 07:36:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1595590573;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=I68fbRd6bZ95LK9+jolwOQBVPAxfW2jV01rcWnCSNp0=;
+        b=QiUxsE5hiBwr1+j9+9A4zI7TPuUTuM2MYnn90e7OYV5jLh3QfxzurpmL60vc6A3ms52vre
+        j+UHnijDh5I2fbv/M7PFXw/GhI8YQIWkR+W8GbBqnuGIgXCB66AMoYdThyeNxV1KhN2wYD
+        DYGnf68Iwt82eYr9qVbQZBthoTuur4M=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-512-PexwN0WVOwWbFOVy0tM0dg-1; Fri, 24 Jul 2020 07:36:10 -0400
+X-MC-Unique: PexwN0WVOwWbFOVy0tM0dg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 507C6107ACCA;
+        Fri, 24 Jul 2020 11:36:07 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EDB2919723;
+        Fri, 24 Jul 2020 11:36:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <865566fb800a014868a9a7e36a00a14430efb11e.camel@themaw.net>
+References: <865566fb800a014868a9a7e36a00a14430efb11e.camel@themaw.net> <1293241.1595501326@warthog.procyon.org.uk> <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com> <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk> <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk> <2003787.1595585999@warthog.procyon.org.uk>
+To:     Ian Kent <raven@themaw.net>
+Cc:     dhowells@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 0/7] Add support for O_MAYEXEC
-Message-ID: <20200724112014.GB38720@gandi.net>
-References: <20200723171227.446711-1-mic@digikod.net>
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>, nicolas.dichtel@6wind.com,
+        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
+        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and attribute change notifications [ver #5]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200723171227.446711-1-mic@digikod.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2023285.1595590563.1@warthog.procyon.org.uk>
+Date:   Fri, 24 Jul 2020 12:36:03 +0100
+Message-ID: <2023286.1595590563@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 23, 2020 at 07:12:20PM +0200, Mickaël Salaün wrote:
+Ian Kent <raven@themaw.net> wrote:
 
-> This patch series can be applied on top of v5.8-rc5 .
+> I was wondering about id re-use.
+> 
+> Assuming that ids that are returned to the idr db are re-used
+> what would the chance that a recently used id would end up
+> being used?
+> 
+> Would that chance increase as ids are consumed and freed over
+> time?
 
-v5.8-rc6, actually.
+I've added something to deal with that in the fsinfo branch.  I've given each
+mount object and superblock a supplementary 64-bit unique ID that's not likely
+to repeat before we're no longer around to have to worry about it.
 
-> Previous version:
-> https://lore.kernel.org/lkml/20200505153156.925111-1-mic@digikod.net/
+fsinfo() then allows you to retrieve them by path or by mount ID.
 
-This is v5.
-v6 is at https://lore.kernel.org/lkml/20200714181638.45751-1-mic@digikod.net/
+So, yes, mnt_id and s_dev are not unique and may be reused very quickly, but
+I'm also providing uniquifiers that you can check.
 
--- 
-Thibaut Sautereau
-CLIP OS developer
+David
+
