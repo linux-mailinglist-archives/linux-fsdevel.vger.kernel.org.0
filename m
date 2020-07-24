@@ -2,78 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A4F322C388
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 12:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70BD322C3A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 24 Jul 2020 12:49:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbgGXKpl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jul 2020 06:45:41 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:24936 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726258AbgGXKpk (ORCPT
+        id S1727907AbgGXKtE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jul 2020 06:49:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40786 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbgGXKtE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jul 2020 06:45:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595587539;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=dP5qwmAy0dGXBb00hD2b2i9QHk2HM2volq4yxKaXFGc=;
-        b=LaYKZqXQ0rauFMy1hH05iTC+u242Noj90Qj95Wa9MIDscahEreew9tESrauZ7vmdAYeFm8
-        69ZbmSGxBPlTPk3QspeaWrHVp6cS2/moJSM7nKWX/D/IVc1OISPh4e95dO63SoTKjKsZ6b
-        DhBp5yTYqRrUpj+NBasKzBxrb6G4jBI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-107-0QXk46cJP8CQv4Knyv0-Ww-1; Fri, 24 Jul 2020 06:45:37 -0400
-X-MC-Unique: 0QXk46cJP8CQv4Knyv0-Ww-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8ED028014D7;
-        Fri, 24 Jul 2020 10:45:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 083FF5D9E2;
-        Fri, 24 Jul 2020 10:45:34 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAKgNAkjyXcXZkEczRz2yvJRFBy2zAwTaNfyiSmskAFWN_3uY1g@mail.gmail.com>
+        Fri, 24 Jul 2020 06:49:04 -0400
+Received: from mail-oi1-x242.google.com (mail-oi1-x242.google.com [IPv6:2607:f8b0:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81847C0619D3;
+        Fri, 24 Jul 2020 03:49:03 -0700 (PDT)
+Received: by mail-oi1-x242.google.com with SMTP id r8so7665658oij.5;
+        Fri, 24 Jul 2020 03:49:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=umNG0bCwzsY56yb8Lvp7QR76/+OQaJlUV4OImgDt+Z8=;
+        b=pU9BJm7J+II6zNxN4UvCGVQoQIJJwXLUp6PLXWSN2Y0ddExpq0fOAWQpMOu68Q0YNY
+         8NVPUCPfPuJgdJIWLc5CgUd/RhP97I8HnU0+hgCi3nxPjsXTNIBWH0PD4mq6spCdoV99
+         Tok/wB6/xw+BC7bEo3tnZtR5HSmA4bjc8B+LIsC99bIbeio5l6+EeYmk5U2gL6m8Lj6n
+         DaBvDdhS2J46gUV66G1WaYxwNiONLZcg4WrtsOr/61TbUmkTahApBRgxLc+BrWWxXk9u
+         T+xUxmm46qKZ1XmeQGR3y0oMRtF2jB25XPHhTR4upyJPsvikQ5kNLpCWsy8KFpvq2KWW
+         qhiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=umNG0bCwzsY56yb8Lvp7QR76/+OQaJlUV4OImgDt+Z8=;
+        b=MU8VpeokmvcqlCqsPnZBv/Boa/JtgmW+4pu3B5npU/XWdJg79xSn1YR25IjQDCOMf0
+         5YPLrgVhXeQ+BvG6rHssj8KXmVnhoTKtc0uKCbtydTlJdb++eC7hHV9hthtZMNqY9v0n
+         0Qlt0XvmpbOnzMIoxpHAxC2eSgq/jjIC2I0oU1Vg4b44LVADBsbS7kmT/vK0w62OlEgM
+         P78l0+XQE1rYpCij9J2a0dhRv7116kGy5kaiGI0L7t36kUU/dWY8mzyVhkH5i7w1yEGa
+         jW77gCPtgsA/1mqdgXlp/ap+AfWc+cn12XeoGwEapgAhn2HYmMSpkl9Ja5gYYeGFYuyr
+         0Ubg==
+X-Gm-Message-State: AOAM531MIDpfg1cbI5/w5Ut0x636TOV5yMNSajWb28VEGg1JtYO56BSu
+        RFV9pFDiaB8SdTBVz6t/Ca/mTNcGP91QKOgjFvs=
+X-Google-Smtp-Source: ABdhPJza2qNxYJ/DLBVTEYPYOAuuHzbhjzvO5vCZv/Ja89JofeWChcyZUVny91MeCnYRr8rsTEYs+fkAUeKUyaLPd2g=
+X-Received: by 2002:aca:5683:: with SMTP id k125mr7561380oib.159.1595587742937;
+ Fri, 24 Jul 2020 03:49:02 -0700 (PDT)
+MIME-Version: 1.0
 References: <CAKgNAkjyXcXZkEczRz2yvJRFBy2zAwTaNfyiSmskAFWN_3uY1g@mail.gmail.com>
-To:     mtk.manpages@gmail.com
-Cc:     dhowells@redhat.com, Petr Vorel <pvorel@suse.cz>,
+ <2007335.1595587534@warthog.procyon.org.uk>
+In-Reply-To: <2007335.1595587534@warthog.procyon.org.uk>
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Fri, 24 Jul 2020 12:48:51 +0200
+Message-ID: <CAKgNAkgJqGEZsD0UJKcuB_11gFW+zRp-jDbVCB2F1iVMKgHwMg@mail.gmail.com>
+Subject: Re: Mount API manual pages
+To:     David Howells <dhowells@redhat.com>
+Cc:     Petr Vorel <pvorel@suse.cz>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         linux-man <linux-man@vger.kernel.org>,
         Christian Brauner <christian.brauner@ubuntu.com>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: Mount API manual pages
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2007334.1595587534.1@warthog.procyon.org.uk>
-Date:   Fri, 24 Jul 2020 11:45:34 +0100
-Message-ID: <2007335.1595587534@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+        lkml <linux-kernel@vger.kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
+On Fri, 24 Jul 2020 at 12:45, David Howells <dhowells@redhat.com> wrote:
+>
+> Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
+>
+> > Would you be willing to do the following please:
+> >
+> > 1. Review the pages that you already wrote to see what needs to be
+> > updated. (I did take a look at some of those pages a while back, and
+> > some pieces--I don't recall the details--were out of sync with the
+> > implementation.)
+> >
+> > 2. Resend the pages, one patch per page.
+> >
+> > 3. Please CC linux-man@, linux-api@, linux-kernel@, and the folk in CC
+> > on this message.
+>
+> For this week and next, I have an online language course taking up 8-10 hours
+> a day.  I'll pick it up in August, if that's okay with you.
 
-> Would you be willing to do the following please:
-> 
-> 1. Review the pages that you already wrote to see what needs to be
-> updated. (I did take a look at some of those pages a while back, and
-> some pieces--I don't recall the details--were out of sync with the
-> implementation.)
-> 
-> 2. Resend the pages, one patch per page.
-> 
-> 3. Please CC linux-man@, linux-api@, linux-kernel@, and the folk in CC
-> on this message.
+Okay -- enjoy the course!  I'll ping again in a couple of weeks.
 
-For this week and next, I have an online language course taking up 8-10 hours
-a day.  I'll pick it up in August, if that's okay with you.
+Cheers,
 
-David
+Michael
 
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
