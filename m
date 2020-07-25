@@ -2,155 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2518622D1B9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jul 2020 00:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C17B22D316
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 25 Jul 2020 02:09:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbgGXWTi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 24 Jul 2020 18:19:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36290 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbgGXWTh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 24 Jul 2020 18:19:37 -0400
-Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBD70C0619D3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jul 2020 15:19:37 -0700 (PDT)
-Received: by mail-pf1-x441.google.com with SMTP id u185so6050549pfu.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jul 2020 15:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=tKu6dCt613fdxShSr3MNQvN+Z3t8LPfma2vJHgkDUqY=;
-        b=Ze0QOU71S5Saw5DycUmCZWwu7UDssrDQF0AErcq/xzaOBE1TTHJtT5cYe1fTHWoyWl
-         Pi8XZrkpRL2pCy+E4BXKTi3GSskC48PI169avdr5aESBcn9w+NE+73qCkFsFwQqi+68m
-         CjtpCokJcV0q7o35ec+JVuZSEC2yUmbNQpcXY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=tKu6dCt613fdxShSr3MNQvN+Z3t8LPfma2vJHgkDUqY=;
-        b=bKj+ZopZSUjfzzRoJFZC3ZaWNTicxJ9yM6ivtJTxPVjtliMeG5tm2QR8pl1oarANjI
-         adqkvCD8Rf9AkqhOBTv+N2RxDhcA4z4nFK3sa3euEG6IcHkJJ/p3wJ8vpPH95zETH3OG
-         5LC9JlpTwFjR2B2VvIp4TsGiFuuyIkbXzb/E0TlQpgfLzT16JzTqikd+DhjEKY1qBJLT
-         xkdLcJCbw09b+nsnN2qlL12QSkwvXTNnF7NhtEhHn37ZRmUpoZ1OfmoSPvgdnptM9Qwo
-         snTUSR0Kbzsit5Mmw1b87TpQeb0ZMhUjejdy+6v+Y/uKcujCkUPmCX9surISuJwqvIs5
-         R9aQ==
-X-Gm-Message-State: AOAM530ViL2ECD45W2lsKMKhkVUH1+iHvP6KX5uAuF0Ca3aQbucnJbO9
-        zwcpBQgPYS9ygsSBOdELcvxR4A==
-X-Google-Smtp-Source: ABdhPJzXnphiLbThu5BAiaaTLpUONpLw/5HE6EjQi5PD4fOSq9f/Swuwb/PB3pgiv1W1TRcMVLRNEA==
-X-Received: by 2002:a63:5906:: with SMTP id n6mr9883418pgb.278.1595629177336;
-        Fri, 24 Jul 2020 15:19:37 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r25sm6938775pgv.88.2020.07.24.15.19.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jul 2020 15:19:36 -0700 (PDT)
-Date:   Fri, 24 Jul 2020 15:19:35 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     ira.weiny@intel.com
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        id S1727036AbgGYAJP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 24 Jul 2020 20:09:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58366 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726625AbgGYAJP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 24 Jul 2020 20:09:15 -0400
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3CC42078D
+        for <linux-fsdevel@vger.kernel.org>; Sat, 25 Jul 2020 00:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595635754;
+        bh=btOIZU1MW+6PlkkqDJUz7DcCUStR/8qT0xAu53GlQ6s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=sxS88DZLD1Ub3RW0YPgyikY7BDShzwcfepCzbZBjkaqBJP77hyvnz9aXpp551L9Pb
+         zU2WTGc5yM4bV7AnuKssI6OXXS3oITRb+uD4VVa0gWA1nxKyleZhPlLV48Zgna5QtC
+         kYQUX5BdvbpUC+Yv/uFXlOSxeVLIjzbZ7mfuQHwg=
+Received: by mail-wm1-f41.google.com with SMTP id 184so9625892wmb.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 24 Jul 2020 17:09:13 -0700 (PDT)
+X-Gm-Message-State: AOAM533nS17yOT9otJ3FmLJnVF9bXr6pMlQ7s9TTe5Xdx7oY3XE4fZol
+        2Oe8IrY0D2JFCA30YE4s2t/y/36QdefrQYE45a4Lhg==
+X-Google-Smtp-Source: ABdhPJzODXWRSR4bEqjZdQmjvnAm94COixhWx/ZHwpxi601Bsr0u6vIlMnxzH7evHcvtBmUNUEDn46VTXFtuOAxUs7I=
+X-Received: by 2002:a1c:56c3:: with SMTP id k186mr10711218wmb.21.1595635752371;
+ Fri, 24 Jul 2020 17:09:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200717072056.73134-1-ira.weiny@intel.com> <20200717072056.73134-18-ira.weiny@intel.com>
+ <87r1t2vwi7.fsf@nanos.tec.linutronix.de> <20200723220435.GI844235@iweiny-DESK2.sc.intel.com>
+ <87mu3pvly7.fsf@nanos.tec.linutronix.de> <874kpwtxlh.fsf@nanos.tec.linutronix.de>
+In-Reply-To: <874kpwtxlh.fsf@nanos.tec.linutronix.de>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 24 Jul 2020 17:09:00 -0700
+X-Gmail-Original-Message-ID: <CALCETrXM1q664Udfq-LnU8SaUxSn-S+FkFRP1M9n3Aav9bjChA@mail.gmail.com>
+Message-ID: <CALCETrXM1q664Udfq-LnU8SaUxSn-S+FkFRP1M9n3Aav9bjChA@mail.gmail.com>
+Subject: Re: [PATCH RFC V2 17/17] x86/entry: Preserve PKRS MSR across exceptions
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Ira Weiny <ira.weiny@intel.com>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        X86 ML <x86@kernel.org>,
         Dan Williams <dan.j.williams@intel.com>,
         Vishal Verma <vishal.l.verma@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Nadav Amit <nadav.amit@gmail.com>
-Subject: Re: [PATCH RFC V2 00/17] PKS: Add Protection Keys Supervisor (PKS)
- support
-Message-ID: <202007241455.010B049A@keescook>
-References: <20200717072056.73134-1-ira.weiny@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200717072056.73134-1-ira.weiny@intel.com>
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 17, 2020 at 12:20:39AM -0700, ira.weiny@intel.com wrote:
-> From: Ira Weiny <ira.weiny@intel.com>
-> 
-> This RFC series has been reviewed by Dave Hansen.
-> 
-> Changes from RFC:
-> 	Clean up commit messages based on Peter Zijlstra's and Dave Hansen's
-> 		feedback
-> 	Fix static branch anti-pattern
-> 	New patch:
-> 	(memremap: Convert devmap static branch to {inc,dec})
-> 		This was the code I used as a model for my static branch which
-> 		I believe is wrong now.
-> 	New Patch:
-> 	(x86/entry: Preserve PKRS MSR through exceptions)
-> 		This attempts to preserve the per-logical-processor MSR, and
-> 		reference counting during exceptions.  I'd really like feed
-> 		back on this because I _think_ it should work but I'm afraid
-> 		I'm missing something as my testing has shown a lot of spotty
-> 		crashes which don't make sense to me.
-> 
-> This patch set introduces a new page protection mechanism for supervisor pages,
-> Protection Key Supervisor (PKS) and an initial user of them, persistent memory,
-> PMEM.
-> 
-> PKS enables protections on 'domains' of supervisor pages to limit supervisor
-> mode access to those pages beyond the normal paging protections.  They work in
-> a similar fashion to user space pkeys.  Like User page pkeys (PKU), supervisor
-> pkeys are checked in addition to normal paging protections and Access or Writes
-> can be disabled via a MSR update without TLB flushes when permissions change.
-> A page mapping is assigned to a domain by setting a pkey in the page table
-> entry.
-> 
-> Unlike User pkeys no new instructions are added; rather WRMSR/RDMSR are used to
-> update the PKRS register.
-> 
-> XSAVE is not supported for the PKRS MSR.  To reduce software complexity the
-> implementation saves/restores the MSR across context switches but not during
-> irqs.  This is a compromise which results is a hardening of unwanted access
-> without absolute restriction.
-> 
-> For consistent behavior with current paging protections, pkey 0 is reserved and
-> configured to allow full access via the pkey mechanism, thus preserving the
-> default paging protections on mappings with the default pkey value of 0.
-> 
-> Other keys, (1-15) are allocated by an allocator which prepares us for key
-> contention from day one.  Kernel users should be prepared for the allocator to
-> fail either because of key exhaustion or due to PKS not being supported on the
-> arch and/or CPU instance.
-> 
-> Protecting against stray writes is particularly important for PMEM because,
-> unlike writes to anonymous memory, writes to PMEM persists across a reboot.
-> Thus data corruption could result in permanent loss of data.
-> 
-> The following attributes of PKS makes it perfect as a mechanism to protect PMEM
-> from stray access within the kernel:
-> 
->    1) Fast switching of permissions
->    2) Prevents access without page table manipulations
->    3) Works on a per thread basis
->    4) No TLB flushes required
+On Fri, Jul 24, 2020 at 2:25 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Ira,
+>
+> Thomas Gleixner <tglx@linutronix.de> writes:
+> > Ira Weiny <ira.weiny@intel.com> writes:
+> >> On Thu, Jul 23, 2020 at 09:53:20PM +0200, Thomas Gleixner wrote:
+> >> I think, after fixing my code (see below), using idtentry_state could still
+> >> work.  If the per-cpu cache and the MSR is updated in idtentry_exit() that
+> >> should carry the state to the new cpu, correct?
+> >
+> > I'm way too tired to think about that now. Will have a look tomorrow
+> > with brain awake.
+>
+> Not that I'm way more awake now, but at least I have the feeling that my
+> brain is not completely useless.
+>
+> Let me summarize what I understood:
+>
+>   1) A per CPU cache which shadows the current state of the MSR, i.e. the
+>      current valid key. You use that to avoid costly MSR writes if the
+>      key does not change.
+>
+>   2) On idtentry you store the key on entry in idtentry_state, clear it
+>      in the MSR and shadow state if necessary and restore it on exit.
+>
+>   3) On context switch out you save the per CPU cache value in the task
+>      and on context switch in you restore it from there.
+>
+> Yes, that works (see below for #2) and sorry for my confusion yesterday
+> about storing this in task state.
+>
+> #2 requires to handle the exceptions which do not go through
+> idtentry_enter/exit() seperately, but that's a manageable amount. It's
+> the ones which use IDTENTRY_RAW or a variant of it.
+>
+> #BP, #MC, #NMI, #DB, #DF need extra local storage as all the kernel
+> entries for those use nmi_enter()/exit(). So you just can create
+> wrappers around those. Somehting like this
+>
+> static __always_inline idtentry_state_t idtentry_nmi_enter(void)
+> {
+>         idtentry_state_t state = {};
+>
+>         nmi_enter();
+>         instrumentation_begin();
+>         state.key = save_and_clear_key();
+>         instrumentation_end();
+> }
+>
+> static __always_inline void idtentry_nmi_exit(idtentry_state_t state)
+> {
+>         instrumentation_begin();
+>         restore_key(state.key);
+>         instrumentation_end();
+>         nmi_exit();
+> }
+>
+> #UD and #PF are using the raw entry variant as well but still invoke
+> idtentry_enter()/exit(). #PF does not need any work. #UD handles
+> WARN/BUG without going through idtentry_enter() first, but I don't think
+> that's an issue unless a not 0 key would prevent writing to the console
+> device. You surely can figure that out.
 
-Cool! This seems like it'd be very handy to make other types of kernel
-data "read-only at rest" (as was long ago proposed via X86_CR0_WP[1],
-which only provided to protection levels, not 15). For example, I think
-at least a few other kinds of areas stand out to me that are in need
-of PKS markings (i.e. only things that actually manipulate these areas
-should gain temporary PK access):
-- Page Tables themselves
-- Identity mapping
-- The "read-only at rest" stuff, though it'll need special plumbing to
-  make it work with the slab allocator, etc (more like the later "static
-  allocation" work[2]).
+Putting on my mm maintainer hat for a moment, I really think that we
+want oopses to print PKRS along with all the other registers when we
+inevitably oops due to a page fault.  And we probably also want it in
+the nasty nested case where we get infinite page faults and eventually
+double fault.
 
-[1] https://lore.kernel.org/lkml/1490811363-93944-1-git-send-email-keescook@chromium.org/
-[2] https://lore.kernel.org/lkml/cover.1550097697.git.igor.stoppa@huawei.com/
+I'm sure it's *possible* to wire this up if we stick it in
+idtentry_state, but it's trivial if we stick it in pt_regs.  I'm okay
+with doing the save/restore in C (in fact, I prefer that), but I think
+that either the value should be stuck in pt_regs or we should find a
+way to teach the unwinder to locate idtentry_state.
 
--- 
-Kees Cook
+And, if we go with idtentry_state, we should make a signature change
+to nmi_enter() to also provide idtentry_state or some equivalent
+object.
+
+--Andy
