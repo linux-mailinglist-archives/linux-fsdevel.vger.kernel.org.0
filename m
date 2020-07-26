@@ -2,286 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB59E22DFC6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jul 2020 16:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A23F822E03B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jul 2020 17:05:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbgGZO6l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Jul 2020 10:58:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46522 "EHLO
+        id S1726763AbgGZPDt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Jul 2020 11:03:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbgGZO6k (ORCPT
+        with ESMTP id S1726121AbgGZPDt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Jul 2020 10:58:40 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F17CC0619D2;
-        Sun, 26 Jul 2020 07:58:40 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id l6so13024050qkc.6;
-        Sun, 26 Jul 2020 07:58:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=KAfwsQAYRTAnXNOuNdMTgyk/UNE7iK0HNM+7zF7RzbI=;
-        b=H+wgeYHvVBXeQ59wBmmIoeWwfKiLmBfcZo3/KtPMpCCnsHYHcTGluSMDWjMhLV0UK2
-         HoDGD1C3ZNzOB3YCZ43fHdW8/KqvHbt4ZpqykTmCj41YULtMi4OBc9/jTw+C/Qi4K/Mu
-         gYZfQJraoAknWwKMXka5xaG/8eZFBj8P3XUuRI9fUpT8jr2mP7PE6hvstcQ1yTEgzPda
-         OGKul3TPPtXs6uuKzy0g6Gc1iDHr+Tx3Mp0MtOwSak6pTVXcSA/SJoDg5SWiowgTeoj0
-         NI5b2V7yHI4VIwcffwndDxlBXt3cEC08ZPu2d2GTXGwoUOFCgNVamIJPd8cV5/tNO06U
-         FkTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KAfwsQAYRTAnXNOuNdMTgyk/UNE7iK0HNM+7zF7RzbI=;
-        b=ZD0qnXUiVZZ1mDSudwlECa7HXtS4Qp2OD7GH9xOZ2NbYtV4nFomn1FFfYYBjD4YjfX
-         FFn9HXn0cDu8MRw2uw+XNWI8m0DJlt2UEM/tZyjXfZWd9ZNuNYZqQKtvhIvMM+nU6PMD
-         Z75bj5OIEyKjwnx+Z7wj9nBIeE4alD9sl87aDq1ne+CRF4HqKMf05N18oe3lK2CSM8I1
-         TVXFqwrS58+9TriMzgxHX45KNQZ9/bZKJqMq1ra0/eflkygmZFM8eSO/TP6hCCrYESje
-         hZ6FGYpDN3S+nGAFtbQuTivBjgh4if31DvBfPMFikGX+9hRdtU8JabRyr91kKnd7vfOR
-         ENLg==
-X-Gm-Message-State: AOAM531CyELNfpnaD0Q40W258h/C+mE2v55IzO35SyfkRfKcPuWlAmTV
-        NVoJ1V1BK+YCoXHH1PkAlrmIi9+GL5Y=
-X-Google-Smtp-Source: ABdhPJwM/B+9Oh6lt9bJpucORvrEO+0Oid6n3VVdRJVaMJxcnf7D2M3HaOTjy14UUFdxFfgVa+tOhg==
-X-Received: by 2002:a37:4d97:: with SMTP id a145mr18483770qkb.380.1595775519540;
-        Sun, 26 Jul 2020 07:58:39 -0700 (PDT)
-Received: from localhost.localdomain ([183.134.211.54])
-        by smtp.gmail.com with ESMTPSA id y143sm15385178qka.22.2020.07.26.07.58.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Jul 2020 07:58:38 -0700 (PDT)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com,
-        mhocko@kernel.org, willy@infradead.org
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v3] xfs: introduce task->in_fstrans for transaction reservation recursion protection
-Date:   Sun, 26 Jul 2020 10:57:26 -0400
-Message-Id: <20200726145726.1484-1-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.18.1
+        Sun, 26 Jul 2020 11:03:49 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03342C0619D4;
+        Sun, 26 Jul 2020 08:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=04VE7HPmOaEIcQmpVyHs48tjQkwZrMnq91D8chn1PWs=; b=gcCyhFoksQsWO0hBn75l9y3eqO
+        rt7vUoyyQ9uPDBBFPq3XTHLMjW3AjTgCzBO7uTLnkzsJ1uYPw8ycXoDFcMhrQisMj+zvN/aTVihsw
+        1hgMXQRfoxvh+sEv+0wfcelGuxKwdudBPeZjx4VCI4fL6bZ24Sbo13xsIp0pR/acwSKk8xlQnswXm
+        JdJUIHrcVzKgjZDPTlvdTExghgDiF+byhGFaaQSQrUkAUpH9N0viDO1N29oOCGjpZ/3uWPjZEvbeG
+        sjHA/7Ii8CvICPtcoIBb9xkg9PYMmFVoSvqoE/fwHTcuKmUdlhJDbe8KAeCL+k+aVJFCbu+TASYWg
+        RLrHiiIg==;
+Received: from [2001:4bb8:18c:2acc:2375:88ff:9f84:118d] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jziBb-0005eu-MR; Sun, 26 Jul 2020 15:03:36 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+        Richard Weinberger <richard@nod.at>,
+        Minchan Kim <minchan@kernel.org>,
+        linux-mtd@lists.infradead.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-raid@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        cgroups@vger.kernel.org
+Subject: bdi cleanups v3
+Date:   Sun, 26 Jul 2020 17:03:19 +0200
+Message-Id: <20200726150333.305527-1-hch@lst.de>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PF_FSTRANS which is used to avoid transaction reservation recursion, is
-dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
-PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
-memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
-means to avoid filesystem reclaim recursion. That change is subtle.
-Let's take the exmple of the check of WARN_ON_ONCE(current->flags &
-PF_MEMALLOC_NOFS)) to explain why this abstraction from PF_FSTRANS to
-PF_MEMALLOC_NOFS is not proper.
-Bellow comment is quoted from Dave,
-> It wasn't for memory allocation recursion protection in XFS - it was for
-> transaction reservation recursion protection by something trying to flush
-> data pages while holding a transaction reservation. Doing
-> this could deadlock the journal because the existing reservation
-> could prevent the nested reservation for being able to reserve space
-> in the journal and that is a self-deadlock vector.
-> IOWs, this check is not protecting against memory reclaim recursion
-> bugs at all (that's the previous check [1]). This check is
-> protecting against the filesystem calling writepages directly from a
-> context where it can self-deadlock.
-> So what we are seeing here is that the PF_FSTRANS ->
-> PF_MEMALLOC_NOFS abstraction lost all the actual useful information
-> about what type of error this check was protecting against.
+Hi Jens,
 
-As a result, we should reintroduce PF_FSTRANS. Because PF_FSTRANS is only
-set by current, we can move it out of task->flags to avoid being out of PF_
-flags. So a new flag in_fstrans is introduced.
+this series contains a bunch of different BDI cleanups.  The biggest item
+is to isolate block drivers from the BDI in preparation of changing the
+lifetime of the block device BDI in a follow up series.
 
-[1]. Bellow check is to avoid memory reclaim recursion.
-if (WARN_ON_ONCE((current->flags & (PF_MEMALLOC|PF_KSWAPD)) ==
-	PF_MEMALLOC))
-	goto redirty;
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Darrick J. Wong <darrick.wong@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>
+Changes since v2:
+ - fix a rw_page return value check
+ - fix up various changelogs
 
----
-v2 -> v3:
-- retitle from "xfs: reintroduce PF_FSTRANS for transaction reservation recursion protection"
-- replace PF_FSTRANS with in_fstrans, per Christoph.
----
- fs/iomap/buffered-io.c    |  4 ++--
- fs/xfs/libxfs/xfs_btree.c |  3 +++
- fs/xfs/xfs_aops.c         |  3 +++
- fs/xfs/xfs_linux.h        | 14 ++++++++++++++
- fs/xfs/xfs_trans.c        |  7 +++++++
- fs/xfs/xfs_trans.h        |  1 +
- include/linux/sched.h     |  2 ++
- 7 files changed, 32 insertions(+), 2 deletions(-)
+Changes since v1:
+ - rebased to the for-5.9/block-merge branch
+ - explicitly set the readahead to 0 for ubifs, vboxsf and mtd
+ - split the zram block_device operations
+ - let rw_page users fall back to bios in swap_readpage
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index bcfc288dba3f..a90d865fb435 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1500,9 +1500,9 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 
- 	/*
- 	 * Given that we do not allow direct reclaim to call us, we should
--	 * never be called in a recursive filesystem reclaim context.
-+	 * never be called while in a filesystem transaction.
- 	 */
--	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
-+	if (WARN_ON_ONCE(current->in_fstrans))
- 		goto redirty;
- 
- 	/*
-diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
-index 2d25bab68764..7f55ab17d5dd 100644
---- a/fs/xfs/libxfs/xfs_btree.c
-+++ b/fs/xfs/libxfs/xfs_btree.c
-@@ -2815,6 +2815,7 @@ xfs_btree_split_worker(
- 						struct xfs_btree_split_args, work);
- 	unsigned long		pflags;
- 	unsigned long		new_pflags = PF_MEMALLOC_NOFS;
-+	unsigned int		in_fstrans;
- 
- 	/*
- 	 * we are in a transaction context here, but may also be doing work
-@@ -2825,6 +2826,7 @@ xfs_btree_split_worker(
- 	if (args->kswapd)
- 		new_pflags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
- 
-+	in_fstrans = xfs_trans_context_start();
- 	current_set_flags_nested(&pflags, new_pflags);
- 
- 	args->result = __xfs_btree_split(args->cur, args->level, args->ptrp,
-@@ -2832,6 +2834,7 @@ xfs_btree_split_worker(
- 	complete(args->done);
- 
- 	current_restore_flags_nested(&pflags, new_pflags);
-+	xfs_trans_context_end(in_fstrans);
- }
- 
- /*
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index b35611882ff9..65fc997159fa 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -63,6 +63,8 @@ xfs_setfilesize_trans_alloc(
- 	 * clear the flag here.
- 	 */
- 	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	xfs_trans_context_end(tp->t_fstrans);
-+
- 	return 0;
- }
- 
-@@ -125,6 +127,7 @@ xfs_setfilesize_ioend(
- 	 * thus we need to mark ourselves as being in a transaction manually.
- 	 * Similarly for freeze protection.
- 	 */
-+	tp->t_fstrans = xfs_trans_context_start();
- 	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
- 	__sb_writers_acquired(VFS_I(ip)->i_sb, SB_FREEZE_FS);
- 
-diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-index 9f70d2f68e05..5cee22b1674f 100644
---- a/fs/xfs/xfs_linux.h
-+++ b/fs/xfs/xfs_linux.h
-@@ -111,6 +111,20 @@ typedef __u32			xfs_nlink_t;
- #define current_restore_flags_nested(sp, f)	\
- 		(current->flags = ((current->flags & ~(f)) | (*(sp) & (f))))
- 
-+static inline unsigned int xfs_trans_context_start(void)
-+{
-+	unsigned int flags = current->in_fstrans;
-+
-+	current->in_fstrans = 1;
-+
-+	return flags;
-+}
-+
-+static inline void xfs_trans_context_end(unsigned int flags)
-+{
-+	current->in_fstrans = flags ? 1 : 0;
-+}
-+
- #define NBBY		8		/* number of bits per byte */
- 
- /*
-diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
-index 3c94e5ff4316..8936c650abc9 100644
---- a/fs/xfs/xfs_trans.c
-+++ b/fs/xfs/xfs_trans.c
-@@ -153,6 +153,7 @@ xfs_trans_reserve(
- 	bool			rsvd = (tp->t_flags & XFS_TRANS_RESERVE) != 0;
- 
- 	/* Mark this thread as being in a transaction */
-+	tp->t_fstrans = xfs_trans_context_start();
- 	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
- 
- 	/*
-@@ -164,6 +165,7 @@ xfs_trans_reserve(
- 		error = xfs_mod_fdblocks(mp, -((int64_t)blocks), rsvd);
- 		if (error != 0) {
- 			current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+			xfs_trans_context_end(tp->t_fstrans);
- 			return -ENOSPC;
- 		}
- 		tp->t_blk_res += blocks;
-@@ -241,6 +243,7 @@ xfs_trans_reserve(
- 	}
- 
- 	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	xfs_trans_context_end(tp->t_fstrans);
- 
- 	return error;
- }
-@@ -862,6 +865,7 @@ __xfs_trans_commit(
- 	xfs_log_commit_cil(mp, tp, &commit_lsn, regrant);
- 
- 	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	xfs_trans_context_end(tp->t_fstrans);
- 	xfs_trans_free(tp);
- 
- 	/*
-@@ -893,7 +897,9 @@ __xfs_trans_commit(
- 			xfs_log_ticket_ungrant(mp->m_log, tp->t_ticket);
- 		tp->t_ticket = NULL;
- 	}
-+
- 	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	xfs_trans_context_end(tp->t_fstrans);
- 	xfs_trans_free_items(tp, !!error);
- 	xfs_trans_free(tp);
- 
-@@ -955,6 +961,7 @@ xfs_trans_cancel(
- 
- 	/* mark this thread as no longer being in a transaction */
- 	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	xfs_trans_context_end(tp->t_fstrans);
- 
- 	xfs_trans_free_items(tp, dirty);
- 	xfs_trans_free(tp);
-diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
-index 8308bf6d7e40..eeb307536efe 100644
---- a/fs/xfs/xfs_trans.h
-+++ b/fs/xfs/xfs_trans.h
-@@ -118,6 +118,7 @@ typedef struct xfs_trans {
- 	unsigned int		t_rtx_res;	/* # of rt extents resvd */
- 	unsigned int		t_rtx_res_used;	/* # of resvd rt extents used */
- 	unsigned int		t_flags;	/* misc flags */
-+	unsigned int		t_fstrans;	/* saved fstrans state */
- 	xfs_fsblock_t		t_firstblock;	/* first block allocated */
- 	struct xlog_ticket	*t_ticket;	/* log mgr ticket */
- 	struct xfs_mount	*t_mountp;	/* ptr to fs mount struct */
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 692e327d7455..82a0a3999cbb 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -800,6 +800,8 @@ struct task_struct {
- 	/* Stalled due to lack of memory */
- 	unsigned			in_memstall:1;
- #endif
-+	/* Inside a filesystem transaction */
-+	unsigned			in_fstrans:1;
- 
- 	unsigned long			atomic_flags; /* Flags requiring atomic access. */
- 
--- 
-2.18.1
 
+Diffstat:
+ block/blk-core.c              |    2 
+ block/blk-integrity.c         |    4 
+ block/blk-mq-debugfs.c        |    1 
+ block/blk-settings.c          |    5 
+ block/blk-sysfs.c             |  282 ++++++++++--------------------------------
+ block/genhd.c                 |   13 +
+ drivers/block/aoe/aoeblk.c    |    2 
+ drivers/block/brd.c           |    1 
+ drivers/block/drbd/drbd_nl.c  |   18 --
+ drivers/block/drbd/drbd_req.c |    4 
+ drivers/block/rbd.c           |    2 
+ drivers/block/zram/zram_drv.c |   19 +-
+ drivers/md/bcache/super.c     |    4 
+ drivers/md/dm-table.c         |    9 -
+ drivers/md/raid0.c            |   16 --
+ drivers/md/raid10.c           |   46 ++----
+ drivers/md/raid5.c            |   31 +---
+ drivers/mmc/core/queue.c      |    3 
+ drivers/mtd/mtdcore.c         |    1 
+ drivers/nvdimm/btt.c          |    2 
+ drivers/nvdimm/pmem.c         |    1 
+ drivers/nvme/host/core.c      |    3 
+ drivers/nvme/host/multipath.c |   10 -
+ drivers/scsi/iscsi_tcp.c      |    4 
+ fs/9p/vfs_file.c              |    2 
+ fs/9p/vfs_super.c             |    4 
+ fs/afs/super.c                |    1 
+ fs/btrfs/disk-io.c            |    2 
+ fs/fs-writeback.c             |    7 -
+ fs/fuse/inode.c               |    4 
+ fs/namei.c                    |    4 
+ fs/nfs/super.c                |    9 -
+ fs/super.c                    |    2 
+ fs/ubifs/super.c              |    1 
+ fs/vboxsf/super.c             |    1 
+ include/linux/backing-dev.h   |   78 +----------
+ include/linux/blkdev.h        |    3 
+ include/linux/drbd.h          |    1 
+ include/linux/fs.h            |    2 
+ mm/backing-dev.c              |   12 -
+ mm/filemap.c                  |    4 
+ mm/memcontrol.c               |    2 
+ mm/memory-failure.c           |    2 
+ mm/migrate.c                  |    2 
+ mm/mmap.c                     |    2 
+ mm/page-writeback.c           |   18 +-
+ mm/page_io.c                  |   18 +-
+ mm/swapfile.c                 |    4 
+ 48 files changed, 204 insertions(+), 464 deletions(-)
