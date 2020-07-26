@@ -2,82 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C58422E101
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jul 2020 18:04:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A837122E108
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jul 2020 18:04:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbgGZQEH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Jul 2020 12:04:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56640 "EHLO
+        id S1727871AbgGZQEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Jul 2020 12:04:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbgGZQEH (ORCPT
+        with ESMTP id S1727852AbgGZQEO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Jul 2020 12:04:07 -0400
+        Sun, 26 Jul 2020 12:04:14 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC24BC0619D2;
-        Sun, 26 Jul 2020 09:04:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51AC9C0619D2;
+        Sun, 26 Jul 2020 09:04:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=pVJtNGHKrqJibaPA3Azyc6Icu8sYoP/gQC/o3PwnvVU=; b=IMzGjam+jYWweR4dE5pR1jb47q
-        qJXQ+Q7F6bVEJHCiZDBrXvepJnhu3S/KypM4zhSAz7STtXk734nGPy60m4rprHbKqbMugtEKLVk2G
-        5jvpAMrlGIwP4oyLv7TWQuMlG2KHgzh7ngSLFCDc8s7CyjRI6oB0cNuO6pjpbt8cB7pMcdPe3bh4n
-        TdqHuxvv/UqBhoApHqUwRZGuSbGw5mHj1PvrzJOpNghWIUeT8nADLuCxRQdzDxghU9cNYqyNAorHD
-        DVayd8gJHff0MxgLEloRwh1tX2pIMEwcgbpdWBk4jqh13fOuFyo9hjv3bBzcQrgMildKtzWsoWar4
-        vcR76Kpg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jzj84-0000YE-O7; Sun, 26 Jul 2020 16:04:01 +0000
-Date:   Sun, 26 Jul 2020 17:04:00 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com,
-        mhocko@kernel.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v3] xfs: introduce task->in_fstrans for transaction
- reservation recursion protection
-Message-ID: <20200726160400.GF23808@casper.infradead.org>
-References: <20200726145726.1484-1-laoar.shao@gmail.com>
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=Qgxj/loCE+O6wxKk/eqjrsxG348MHNKY89kEnscKvrM=; b=kohjCkwvuA7bxnRm6vGl5H2oKA
+        GzAu5e2DedmqSrCUCxMa2wVzikiqeFhOAl7DopN5IIIPZlxSBnMNN1s+aIJdy4r4w128g5qlQktZ5
+        YtdAxg07ilyloUoEIvwAATlsMwEJ2nW7RmE7UbmspjS0dD6kmdr2r9RVAXNyFcrA+yeLf7HHn7MeA
+        oabw8e8mNooy7RXCnSFXymIHpGIym1zjyeQwgy9bn5uUfiWozo8sO8UGDSnNOxX8JYvlai4HlPcaf
+        0UXci6cy2qYk0tiaI2aLMi1nEhYIefNc0mTYxWPPIcsAX+lmWN71eVWE26/hBWamIXrO4SA/W1fnc
+        8i9ErYBw==;
+Received: from [2001:4bb8:18c:2acc:2375:88ff:9f84:118d] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jzj8E-0000Zf-1n; Sun, 26 Jul 2020 16:04:10 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     x86@kernel.org, Jan Kara <jack@suse.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: [PATCH 3/4] compat: add a compat_need_64bit_alignment_fixup() helper
+Date:   Sun, 26 Jul 2020 18:04:00 +0200
+Message-Id: <20200726160401.311569-4-hch@lst.de>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200726160401.311569-1-hch@lst.de>
+References: <20200726160401.311569-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200726145726.1484-1-laoar.shao@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 26, 2020 at 10:57:26AM -0400, Yafang Shao wrote:
-> Bellow comment is quoted from Dave,
+Add a helper to check if the calling syscall needs a fixup for
+non-natural 64-bit type alignment in the compat ABI.  This will only
+return true for i386 syscalls on x86_64.
 
-FYI, you mean "Below", not "Bellow".  Dave doesn't often bellow.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/x86/include/asm/compat.h | 1 +
+ include/linux/compat.h        | 9 +++++++++
+ 2 files changed, 10 insertions(+)
 
-> As a result, we should reintroduce PF_FSTRANS. Because PF_FSTRANS is only
-> set by current, we can move it out of task->flags to avoid being out of PF_
-> flags. So a new flag in_fstrans is introduced.
-
-I don't think we need a new flag for this.  I think you can just set
-current->journal_info to a non-NULL value.
-
-> +++ b/fs/xfs/xfs_linux.h
-> @@ -111,6 +111,20 @@ typedef __u32			xfs_nlink_t;
->  #define current_restore_flags_nested(sp, f)	\
->  		(current->flags = ((current->flags & ~(f)) | (*(sp) & (f))))
->  
-> +static inline unsigned int xfs_trans_context_start(void)
-> +{
-> +	unsigned int flags = current->in_fstrans;
-> +
-> +	current->in_fstrans = 1;
-> +
-> +	return flags;
-> +}
-> +
-> +static inline void xfs_trans_context_end(unsigned int flags)
-> +{
-> +	current->in_fstrans = flags ? 1 : 0;
-> +}
-
-Does XFS support nested transactions?  If we're just using
-current->journal_info, we can pretend its an unsigned long and use it
-as a counter rather than handle the nesting the same way as the GFP flags.
+diff --git a/arch/x86/include/asm/compat.h b/arch/x86/include/asm/compat.h
+index bf547701f41f87..0e327a01f50fbb 100644
+--- a/arch/x86/include/asm/compat.h
++++ b/arch/x86/include/asm/compat.h
+@@ -209,6 +209,7 @@ static inline bool in_compat_syscall(void)
+ 	return in_32bit_syscall();
+ }
+ #define in_compat_syscall in_compat_syscall	/* override the generic impl */
++#define compat_need_64bit_alignment_fixup in_ia32_syscall
+ #endif
+ 
+ struct compat_siginfo;
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index c22a7f1d253b87..afdd44ba3a8869 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -945,6 +945,15 @@ static inline bool in_compat_syscall(void) { return false; }
+ 
+ #endif /* CONFIG_COMPAT */
+ 
++/*
++ * Some legacy ABIs like the i386 one use less than natural alignment for 64-bit
++ * types, and will need special compat treatment for that.  Most architectures
++ * don't need that special handling even for compat syscalls.
++ */
++#ifndef compat_need_64bit_alignment_fixup
++#define compat_need_64bit_alignment_fixup()		false
++#endif
++
+ /*
+  * A pointer passed in from user mode. This should not
+  * be used for syscall parameters, just declare them
+-- 
+2.27.0
 
