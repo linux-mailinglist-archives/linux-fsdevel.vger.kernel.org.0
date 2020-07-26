@@ -2,60 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F43A22DD72
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jul 2020 11:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B91422DD87
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jul 2020 11:11:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbgGZJBn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Jul 2020 05:01:43 -0400
-Received: from smtp.hosts.co.uk ([85.233.160.19]:11925 "EHLO smtp.hosts.co.uk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725794AbgGZJBn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Jul 2020 05:01:43 -0400
-Received: from host86-157-100-178.range86-157.btcentralplus.com ([86.157.100.178] helo=[192.168.1.64])
-        by smtp.hosts.co.uk with esmtpa (Exim)
-        (envelope-from <antlists@youngman.org.uk>)
-        id 1jzcXM-000AVu-50; Sun, 26 Jul 2020 10:01:40 +0100
-Subject: Re: [PATCH 09/14] bdi: remove BDI_CAP_CGROUP_WRITEBACK
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-References: <20200722062552.212200-1-hch@lst.de>
- <20200722062552.212200-10-hch@lst.de>
- <SN4PR0401MB35988BC2003CCDFC7CE8258F9B790@SN4PR0401MB3598.namprd04.prod.outlook.com>
-Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
-        Richard Weinberger <richard@nod.at>,
-        Minchan Kim <minchan@kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>
-From:   Wols Lists <antlists@youngman.org.uk>
-Message-ID: <5F1D4671.5060708@youngman.org.uk>
-Date:   Sun, 26 Jul 2020 10:01:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.7.0
+        id S1726982AbgGZJLF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Jul 2020 05:11:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49550 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbgGZJLF (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 26 Jul 2020 05:11:05 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFAD1C0619D2;
+        Sun, 26 Jul 2020 02:11:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=sEtihcpcEBRDfrflBBXQKHWbhX05b4az17G9xIFJB1o=; b=cZ5x/4zlRzZa6KKK0NHhQWP4Kb
+        Ud26d7W4jWmin2U+u9Igf6eEO624I6b31eV5DBTUrieE30uvbSDBLulBapx+0vKB8liBlkO/y+/D6
+        +zQWIrvnjuBAbx3/kZ6Nks+XOqxslayz7Zh8KqNxHFIJlgQ6ded0WbBMar4sneR/d2LFW8dMJC3WZ
+        H5/0pMV4w75EBknMO8raJZmFnxri9LRlch/2LysVE5u56LPS8JKSvhzoUffo1KofrqwJKswFk5hgB
+        ASXD+z4eu1wfSZXLxsNMrNWAu3e4o+IS63c6S3mig/gm5Y7t33URbYr2foXLSfN165dmIKBQl+q3u
+        /c6ZduyA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jzcgQ-0007y1-BV; Sun, 26 Jul 2020 09:11:02 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] iomap: Ensure iop->uptodate matches PageUptodate
+Date:   Sun, 26 Jul 2020 10:10:52 +0100
+Message-Id: <20200726091052.30576-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.3
 MIME-Version: 1.0
-In-Reply-To: <SN4PR0401MB35988BC2003CCDFC7CE8258F9B790@SN4PR0401MB3598.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22/07/20 08:45, Johannes Thumshirn wrote:
-> On 22/07/2020 08:27, Christoph Hellwig wrote:
->> it is know to support cgroup writeback, or the bdi comes from the block
-> knwon  ~^
-> 
-Whoops - "known"
+If the filesystem has block size < page size and we end up calling
+iomap_page_create() in iomap_page_mkwrite_actor(), the uptodate bits
+would be zero, which causes us to skip writeback of blocks which are
+!uptodate in iomap_writepage_map().  This can lead to user data loss.
 
-> Apart from that,
-> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> 
-Cheers,
-Wol
+Found using generic/127 with the THP patches.  I don't think this can be
+reproduced on mainline using that test (the THP code causes iomap_pages
+to be discarded more frequently), but inspection shows it can happen
+with an appropriate series of operations.
+
+Fixes: 9dc55f1389f9 ("iomap: add support for sub-pagesize buffered I/O without buffer heads")
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/iomap/buffered-io.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index a2b3b5455219..f0c5027bf33f 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -53,7 +53,10 @@ iomap_page_create(struct inode *inode, struct page *page)
+ 	atomic_set(&iop->read_count, 0);
+ 	atomic_set(&iop->write_count, 0);
+ 	spin_lock_init(&iop->uptodate_lock);
+-	bitmap_zero(iop->uptodate, PAGE_SIZE / SECTOR_SIZE);
++	if (PageUptodate(page))
++		bitmap_fill(iop->uptodate, PAGE_SIZE / SECTOR_SIZE);
++	else
++		bitmap_zero(iop->uptodate, PAGE_SIZE / SECTOR_SIZE);
+ 
+ 	/*
+ 	 * migrate_page_move_mapping() assumes that pages with private data have
+@@ -72,6 +75,8 @@ iomap_page_release(struct page *page)
+ 		return;
+ 	WARN_ON_ONCE(atomic_read(&iop->read_count));
+ 	WARN_ON_ONCE(atomic_read(&iop->write_count));
++	WARN_ON_ONCE(bitmap_full(iop->uptodate, PAGE_SIZE / SECTOR_SIZE) !=
++			PageUptodate(page));
+ 	kfree(iop);
+ }
+ 
+-- 
+2.27.0
+
