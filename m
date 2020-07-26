@@ -2,62 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 20A1A22E07B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jul 2020 17:15:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BED122E083
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jul 2020 17:18:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbgGZPPH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Jul 2020 11:15:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49092 "EHLO
+        id S1726669AbgGZPSV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Jul 2020 11:18:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbgGZPPG (ORCPT
+        with ESMTP id S1725982AbgGZPSU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Jul 2020 11:15:06 -0400
+        Sun, 26 Jul 2020 11:18:20 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97317C0619D2;
-        Sun, 26 Jul 2020 08:15:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8598BC0619D2;
+        Sun, 26 Jul 2020 08:18:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Ev1VURu58iCEGwGbY/Qyy/++BloxrBTIN1o2rMikomM=; b=UahsiBU7A6+9mo/fhhXeXL2qD3
-        TpiwmeEApj/aVfbo+YJfzwvcDEor563+JOoSvBV9gV+wz7MQP7YM54XfrAloA/1xc9FL6MHkOQ9tX
-        BwS+3LThvFdg/eKn1ycY9kZoNFFrHWKO6zm46gqDm7aJpkVEeNGKCjofB34Sr86Sv0noi0Id5gtMW
-        GeRtR4Wxu7qYP+aOx8Rtqcagi37vAizrZWTrOwTlw+4/PRtZUTTLFjegagAFJm/Aa4Xoj1WIKGNXl
-        ZVLocjCeMJejFwju0nnL8F+kVBLvJALZ1rjnN5oSmgqI5wp97EN5kNUEzfprzjl9Z26jCR81dl8AU
-        JFCXqLDw==;
+        bh=cYcLOt9xMtmqE1IKx7EJ1yVFnTZAqfZV+W0fuS8FqWc=; b=um7wejtOBrnxldoh/n2UwYzdJD
+        D9kN+dcL/MsT/0uG9sGqD8xfLD9J1OZl36V8NSMrE09UsBqvu5cey9jY62V9FZ+l0rfWlK2XivUQ5
+        IvH8MMhKTIuHmlxZTP2YzPDzfb5cybiixpKPU2L9yzQiyshm67sAIyAYZaS1u71ZYizWOSQI2tkmZ
+        xodRaLGMMyE5//vKS2Hmbd9saln6jEn3qGiPpEk7V7s8dupqyhTmcTeO0EMJ46MGFeeOVY9yWVlOK
+        5sIRSUu6VFjVOx2zaDKoQcIzXsKhsm/LzpkqVbNsWq0dmTLKOFGVKdOx0MexfeDq26NjNefxjkUDA
+        2+7zsW2w==;
 Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jziMi-0006XA-1t; Sun, 26 Jul 2020 15:15:04 +0000
-Date:   Sun, 26 Jul 2020 16:15:04 +0100
+        id 1jziPi-0006ej-M1; Sun, 26 Jul 2020 15:18:10 +0000
+Date:   Sun, 26 Jul 2020 16:18:10 +0100
 From:   Christoph Hellwig <hch@infradead.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iomap: Ensure iop->uptodate matches PageUptodate
-Message-ID: <20200726151504.GA24553@infradead.org>
-References: <20200726091052.30576-1-willy@infradead.org>
+To:     Kanchan Joshi <joshi.k@samsung.com>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk, bcrl@kvack.org,
+        willy@infradead.org, hch@infradead.org, Damien.LeMoal@wdc.com,
+        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-api@vger.kernel.org, Selvakumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+Subject: Re: [PATCH v4 1/6] fs: introduce FMODE_ZONE_APPEND and
+ IOCB_ZONE_APPEND
+Message-ID: <20200726151810.GA25328@infradead.org>
+References: <1595605762-17010-1-git-send-email-joshi.k@samsung.com>
+ <CGME20200724155258epcas5p1a75b926950a18cd1e6c8e7a047e6c589@epcas5p1.samsung.com>
+ <1595605762-17010-2-git-send-email-joshi.k@samsung.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200726091052.30576-1-willy@infradead.org>
+In-Reply-To: <1595605762-17010-2-git-send-email-joshi.k@samsung.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 26, 2020 at 10:10:52AM +0100, Matthew Wilcox (Oracle) wrote:
-> If the filesystem has block size < page size and we end up calling
-> iomap_page_create() in iomap_page_mkwrite_actor(), the uptodate bits
-> would be zero, which causes us to skip writeback of blocks which are
-> !uptodate in iomap_writepage_map().  This can lead to user data loss.
-> 
-> Found using generic/127 with the THP patches.  I don't think this can be
-> reproduced on mainline using that test (the THP code causes iomap_pages
-> to be discarded more frequently), but inspection shows it can happen
-> with an appropriate series of operations.
-
-Looks good,
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Zone append is a protocol context that ha not business showing up
+in a file system interface.  The right interface is a generic way
+to report the written offset for an append write for any kind of file.
+So we should pick a better name like FMODE_REPORT_APPEND_OFFSET
+(not that I particularly like that name, but it is the best I could
+quickly come up with).
