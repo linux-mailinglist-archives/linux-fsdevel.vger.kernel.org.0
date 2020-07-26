@@ -2,49 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88B6622DD31
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jul 2020 10:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F43A22DD72
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 26 Jul 2020 11:01:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbgGZIVW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Jul 2020 04:21:22 -0400
-Received: from verein.lst.de ([213.95.11.211]:39929 "EHLO verein.lst.de"
+        id S1726909AbgGZJBn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Jul 2020 05:01:43 -0400
+Received: from smtp.hosts.co.uk ([85.233.160.19]:11925 "EHLO smtp.hosts.co.uk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725810AbgGZIVW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Jul 2020 04:21:22 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id DD91168B05; Sun, 26 Jul 2020 10:21:18 +0200 (CEST)
-Date:   Sun, 26 Jul 2020 10:21:18 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH 04/21] devtmpfs: refactor devtmpfsd()
-Message-ID: <20200726082118.GA17726@lst.de>
-References: <20200726071356.287160-1-hch@lst.de> <20200726071356.287160-5-hch@lst.de> <20200726074306.GA444745@kroah.com>
+        id S1725794AbgGZJBn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 26 Jul 2020 05:01:43 -0400
+Received: from host86-157-100-178.range86-157.btcentralplus.com ([86.157.100.178] helo=[192.168.1.64])
+        by smtp.hosts.co.uk with esmtpa (Exim)
+        (envelope-from <antlists@youngman.org.uk>)
+        id 1jzcXM-000AVu-50; Sun, 26 Jul 2020 10:01:40 +0100
+Subject: Re: [PATCH 09/14] bdi: remove BDI_CAP_CGROUP_WRITEBACK
+To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+References: <20200722062552.212200-1-hch@lst.de>
+ <20200722062552.212200-10-hch@lst.de>
+ <SN4PR0401MB35988BC2003CCDFC7CE8258F9B790@SN4PR0401MB3598.namprd04.prod.outlook.com>
+Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+        Richard Weinberger <richard@nod.at>,
+        Minchan Kim <minchan@kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>
+From:   Wols Lists <antlists@youngman.org.uk>
+Message-ID: <5F1D4671.5060708@youngman.org.uk>
+Date:   Sun, 26 Jul 2020 10:01:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200726074306.GA444745@kroah.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <SN4PR0401MB35988BC2003CCDFC7CE8258F9B790@SN4PR0401MB3598.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jul 26, 2020 at 09:43:06AM +0200, Greg Kroah-Hartman wrote:
-> On Sun, Jul 26, 2020 at 09:13:39AM +0200, Christoph Hellwig wrote:
-> > Split the main worker loop into a separate function.  This allows
-> > devtmpfsd itself and devtmpfsd_setup to be marked __init, which will
-> > allows us to call __init routines for the setup work.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >  drivers/base/devtmpfs.c | 47 +++++++++++++++++++++++------------------
-> >  1 file changed, 26 insertions(+), 21 deletions(-)
+On 22/07/20 08:45, Johannes Thumshirn wrote:
+> On 22/07/2020 08:27, Christoph Hellwig wrote:
+>> it is know to support cgroup writeback, or the bdi comes from the block
+> knwon  ~^
 > 
-> Nice cleanup, thanks for doing this:
+Whoops - "known"
 
-This was actualy Als idea, I should have probably mentioned that.
+> Apart from that,
+> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> 
+Cheers,
+Wol
