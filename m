@@ -2,143 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D02F22F916
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 21:32:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6397322F931
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 21:38:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbgG0TcV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 15:32:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42506 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726222AbgG0TcU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 15:32:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3FED1AD43;
-        Mon, 27 Jul 2020 19:32:29 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 8C2DE1E12C7; Mon, 27 Jul 2020 21:32:18 +0200 (CEST)
-Date:   Mon, 27 Jul 2020 21:32:18 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/9] fsnotify: simplify dir argument to handle_event()
-Message-ID: <20200727193218.GH5284@quack2.suse.cz>
-References: <20200722125849.17418-1-amir73il@gmail.com>
- <20200722125849.17418-6-amir73il@gmail.com>
+        id S1727823AbgG0TiR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 15:38:17 -0400
+Received: from shells.gnugeneration.com ([66.240.222.126]:43836 "EHLO
+        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726139AbgG0TiR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Jul 2020 15:38:17 -0400
+Received: by shells.gnugeneration.com (Postfix, from userid 1000)
+        id D7F071A40175; Mon, 27 Jul 2020 12:38:16 -0700 (PDT)
+Date:   Mon, 27 Jul 2020 12:38:16 -0700
+From:   Vito Caputo <vcaputo@pengaru.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
+Subject: Re: [QUESTION] Sharing a `struct page` across multiple `struct
+ address_space` instances
+Message-ID: <20200727193816.cialb45mbf6okkba@shells.gnugeneration.com>
+References: <20200725002221.dszdahfhqrbz43cz@shells.gnugeneration.com>
+ <20200725031158.GD23808@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200722125849.17418-6-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200725031158.GD23808@casper.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 22-07-20 15:58:45, Amir Goldstein wrote:
-> The meaning of dir argument could be simplified a lot to just the base
-> of file_name it we let the only backends that care about it (fanotify and
-> dnotify) cope with the case of NULL file_name themselves, which is easy.
+On Sat, Jul 25, 2020 at 04:11:58AM +0100, Matthew Wilcox wrote:
+> On Fri, Jul 24, 2020 at 05:22:21PM -0700, Vito Caputo wrote:
+> > Prior to looking at the code, conceptually I was envisioning the pages
+> > in the reflink source inode's address_space would simply get their
+> > refcounts bumped as they were added to the dest inode's address_space,
+> > with some CoW flag set to prevent writes.
+> > 
+> > But there seems to be a fundamental assumption that a `struct page`
+> > would only belong to a single `struct address_space` at a time, as it
+> > has single `mapping` and `index` members for reverse mapping the page
+> > to its address_space.
+> > 
+> > Am I completely lost here or does it really look like a rather
+> > invasive modification to support this feature?
+> > 
+> > I have vague memories of Dave Chinner mentioning work towards sharing
+> > pages across address spaces in the interests of getting reflink copies
+> > more competitive with overlayfs in terms of page cache utilization.
 > 
-> This will make dir argument meaning generic enough so we can use the
-> same argument for fsnotify() without causing confusion.
+> It's invasive.  Dave and I have chatted about this in the past.  I've done
+> no work towards it (... a little busy right now with THPs in the page
+> cache ...) but I have a design in mind.
 > 
-> Fixes: e2c9d9039c3f ("fsnotify: pass dir argument to handle_event() callback")
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> The fundamental idea is to use the DAX support to refer to pages which
+> actually belong to a separate address space.  DAX entries are effectively
+> PFN entries.  So there would be a clear distinction between "I looked
+> up a page which actually belongs to this address space" and "I looked
+> up a page which is shared with a different address space".  My thinking
+> has been that if files A and B are reflinked, both A and B would see
+> DAX entries in their respective page caches.  The page would belong to
+> a third address space which might be the block device's address space,
+> or maybe there would be an address space per shared fragment (since
+> files can share fragments that are at different offsets from each other).
+> 
+> There are a lot of details to get right around this approach.
+> Importantly, there _shouldn't_ be a refcount from each of file A and
+> B on the page.  Instead the refcount from files A and B should be on
+> the fragment.  When the fragment's refcount goes to zero, we know there
+> are no more references to the fragment and all its pages can be freed.
+> 
+> That means that if we reflink B to C, we don't have to walk every page
+> in the file and increase its refcount again.
+> 
+> So, are you prepared to do a lot of work, or were you thinking this
+> would be a quick hack?  Because I'm willing to advise on a big project,
+> but if you're thinking this will be quick, and don't have time for a
+> big project, it's probably time to stop here.
+> 
 
-I've folded this patch into "fsnotify: pass dir argument to handle_event()
-callback" and int "fanotify: add basic support for FAN_REPORT_DIR_FID".
-
-								Honza
+Thanks for the thoughtful response.  For the time being I'll just poke
+at the code and familiarize myself with how DAX works.  If it gets to
+where I'm effectively spending full-time on it anyways and feeling
+determined to run it to ground, I'll reach out.
 
 > ---
->  fs/notify/dnotify/dnotify.c      | 2 +-
->  fs/notify/fanotify/fanotify.c    | 7 ++++---
->  fs/notify/fsnotify.c             | 2 +-
->  include/linux/fsnotify_backend.h | 4 +---
->  4 files changed, 7 insertions(+), 8 deletions(-)
 > 
-> diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
-> index 305e5559560a..ca78d3f78da8 100644
-> --- a/fs/notify/dnotify/dnotify.c
-> +++ b/fs/notify/dnotify/dnotify.c
-> @@ -112,7 +112,7 @@ static int dnotify_handle_event(struct fsnotify_group *group, u32 mask,
->  	struct fsnotify_mark *child_mark = fsnotify_iter_child_mark(iter_info);
->  
->  	/* not a dir, dnotify doesn't care */
-> -	if (!dir)
-> +	if (!dir && !(mask & FS_ISDIR))
->  		return 0;
->  
->  	if (WARN_ON(fsnotify_iter_vfsmount_mark(iter_info)))
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 36ea0cd6387e..03e3dce2a97c 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -245,7 +245,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
->  			return 0;
->  	} else if (!(fid_mode & FAN_REPORT_FID)) {
->  		/* Do we have a directory inode to report? */
-> -		if (!dir)
-> +		if (!dir && !(event_mask & FS_ISDIR))
->  			return 0;
->  	}
->  
-> @@ -525,12 +525,13 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
->  	struct fanotify_event *event = NULL;
->  	gfp_t gfp = GFP_KERNEL_ACCOUNT;
->  	struct inode *id = fanotify_fid_inode(mask, data, data_type, dir);
-> +	struct inode *dirid = fanotify_dfid_inode(mask, data, data_type, dir);
->  	const struct path *path = fsnotify_data_path(data, data_type);
->  	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
->  	struct inode *child = NULL;
->  	bool name_event = false;
->  
-> -	if ((fid_mode & FAN_REPORT_DIR_FID) && dir) {
-> +	if ((fid_mode & FAN_REPORT_DIR_FID) && dirid) {
->  		/*
->  		 * With both flags FAN_REPORT_DIR_FID and FAN_REPORT_FID, we
->  		 * report the child fid for events reported on a non-dir child
-> @@ -540,7 +541,7 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
->  		    (mask & FAN_EVENT_ON_CHILD) && !(mask & FAN_ONDIR))
->  			child = id;
->  
-> -		id = fanotify_dfid_inode(mask, data, data_type, dir);
-> +		id = dirid;
->  
->  		/*
->  		 * We record file name only in a group with FAN_REPORT_NAME
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index 277af3d5efce..834775f61f6b 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -365,7 +365,7 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
->  	const struct path *path = fsnotify_data_path(data, data_type);
->  	struct fsnotify_iter_info iter_info = {};
->  	struct super_block *sb = to_tell->i_sb;
-> -	struct inode *dir = S_ISDIR(to_tell->i_mode) ? to_tell : NULL;
-> +	struct inode *dir = file_name ? to_tell : NULL;
->  	struct mount *mnt = NULL;
->  	struct inode *child = NULL;
->  	int ret = 0;
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index 9bd75d0582b4..d94a50e0445a 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -123,9 +123,7 @@ struct mem_cgroup;
->   * @data_type:	type of object for fanotify_data_XXX() accessors
->   * @dir:	optional directory associated with event -
->   *		if @file_name is not NULL, this is the directory that
-> - *		@file_name is relative to. Otherwise, @dir is the object
-> - *		inode if event happened on directory and NULL if event
-> - *		happenned on a non-directory.
-> + *		@file_name is relative to
->   * @file_name:	optional file name associated with event
->   * @cookie:	inotify rename cookie
->   * @iter_info:	array of marks from this group that are interested in the event
-> -- 
-> 2.17.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Something that did occur to me while writing this is that if you just want
+> read-only duplicates of files to work, you could make inode->i_mapping
+> point to a different address_space instead of &inode->i_data.  There's
+> probabyl a quick hack solution there.
+
+I wonder if it's worth implementing something like this to at least
+get reflink enabled with file-granular CoW on tmpfs, then iterate from
+there to make things more granular.
+
+Regards,
+Vito Caputo
