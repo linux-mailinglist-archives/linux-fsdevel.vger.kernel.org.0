@@ -2,123 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1E2522E391
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 02:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 801C622E3B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 03:50:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbgG0A7L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 26 Jul 2020 20:59:11 -0400
-Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:34676 "EHLO
-        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726636AbgG0A7K (ORCPT
+        id S1726942AbgG0Buo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 26 Jul 2020 21:50:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33722 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726797AbgG0Buo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 26 Jul 2020 20:59:10 -0400
-Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
-        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id 9E4AA1AB97C;
-        Mon, 27 Jul 2020 10:58:50 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1jzrTc-0001qC-3B; Mon, 27 Jul 2020 10:58:48 +1000
-Date:   Mon, 27 Jul 2020 10:58:48 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Satya Tangirala <satyat@google.com>,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH v6 1/7] fscrypt: Add functions for direct I/O
- support
-Message-ID: <20200727005848.GV2005@dread.disaster.area>
-References: <20200724184501.1651378-1-satyat@google.com>
- <20200724184501.1651378-2-satyat@google.com>
- <20200725001441.GQ2005@dread.disaster.area>
- <20200726024920.GB14321@sol.localdomain>
+        Sun, 26 Jul 2020 21:50:44 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30E9DC0619D2;
+        Sun, 26 Jul 2020 18:50:44 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jzsHm-003LpT-3z; Mon, 27 Jul 2020 01:50:38 +0000
+Date:   Mon, 27 Jul 2020 02:50:38 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Song Liu <song@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 12/23] initrd: switch initrd loading to struct file based
+ APIs
+Message-ID: <20200727015038.GA795125@ZenIV.linux.org.uk>
+References: <20200714190427.4332-1-hch@lst.de>
+ <20200714190427.4332-13-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200726024920.GB14321@sol.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
-        a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
-        a=kj9zAlcOel0A:10 a=_RQrkK6FrEwA:10 a=7-415B0cAAAA:8
-        a=HhHiFS5hF6oLP9lHTOgA:9 a=NJy3QXZAm110Gvun:21 a=N6VXu3NYk34LK-xd:21
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200714190427.4332-13-hch@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 25, 2020 at 07:49:20PM -0700, Eric Biggers wrote:
-> On Sat, Jul 25, 2020 at 10:14:41AM +1000, Dave Chinner wrote:
-> > > +bool fscrypt_dio_supported(struct kiocb *iocb, struct iov_iter *iter)
-> > > +{
-> > > +	const struct inode *inode = file_inode(iocb->ki_filp);
-> > > +	const unsigned int blocksize = i_blocksize(inode);
-> > > +
-> > > +	/* If the file is unencrypted, no veto from us. */
-> > > +	if (!fscrypt_needs_contents_encryption(inode))
-> > > +		return true;
-> > > +
-> > > +	/* We only support direct I/O with inline crypto, not fs-layer crypto */
-> > > +	if (!fscrypt_inode_uses_inline_crypto(inode))
-> > > +		return false;
-> > > +
-> > > +	/*
-> > > +	 * Since the granularity of encryption is filesystem blocks, the I/O
-> > > +	 * must be block aligned -- not just disk sector aligned.
-> > > +	 */
-> > > +	if (!IS_ALIGNED(iocb->ki_pos | iov_iter_alignment(iter), blocksize))
-> > > +		return false;
-> > 
-> > Doesn't this force user buffers to be filesystem block size aligned,
-> > instead of 512 byte aligned as is typical for direct IO?
-> > 
-> > That's going to cause applications that work fine on normal
-> > filesystems becaues the memalign() buffers to 512 bytes or logical
-> > block device sector sizes (as per the open(2) man page) to fail on
-> > encrypted volumes, and it's not going to be obvious to users as to
-> > why this happens.
-> 
-> The status quo is that direct I/O on encrypted files falls back to buffered I/O.
+On Tue, Jul 14, 2020 at 09:04:16PM +0200, Christoph Hellwig wrote:
 
-Largely irrelevant.
+>  static int __init
+> -identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
+> +identify_ramdisk_image(struct file *file, int start_block,
+> +		decompress_fn *decompressor)
+>  {
+....
+> -	ksys_lseek(fd, start_block * BLOCK_SIZE, 0);
+>  	kfree(buf);
+>  	return nblocks;
+>  }
 
-You claimed in another thread that performance is a key feature that
-inline encryption + DIO provides. Now you're implying that failing
-to provide that performance doesn't really matter at all.
+You do realize that you've changed behaviour of that thing if start_block != 0?
+Old one used to leave the things for subsequent reads to start at start_block * 512;
+new one will ignore that.  So after
 
-> So this patch is strictly an improvement; it's making direct I/O work in a case
-> where previously it didn't work.
+> -	nblocks = identify_ramdisk_image(in_fd, rd_image_start, &decompressor);
+> +	nblocks = identify_ramdisk_image(in_file, rd_image_start, &decompressor);
 
-Improvements still need to follow longstanding conventions. And,
-IMO, it's not an improvement if the feature results in 
-unpredictable performance for userspace applications.
+you'll have in_file->f_pos left at 0 instead of rd_image_start * 512.
 
-i.e. there is no point in enabling direct IO if it is unpredictably
-going to fall back to the buffered IO path when applications are
-coded to the guidelines the man page said they should use. Such
-problems are an utter PITA to diagnose in the field, and on those
-grounds alone the current implementation gets a NACK.
+... affecting this
 
-> Note that there are lots of other cases where ext4 and f2fs fall back to
-> buffered I/O; see ext4_dio_supported() and f2fs_force_buffered_io().  So this
-> isn't a new problem.
+> -		if (crd_load(in_fd, out_fd, decompressor) == 0)
+> +		if (crd_load(in_file, out_file, decompressor) == 0)
 
-No shit, sherlock. But that's also irrelevant to the discussion at
-hand - claiming "we can fall back to buffered IO" doesn't address
-the problem I've raised. It's just an excuse for not fixing it.
 
-Indeed, the problem is easy to fix - fscrypt only cares that the
-user IO offset and length is DUN aligned.  fscrypt does not care
-that the user memory buffer is filesystem block aligned - user
-memory buffer alignment is an underlying hardware DMA constraint -
-and so fscrypt_dio_supported() needs to relax or remove the user
-memroy buffer alignment constraint so that it follows existing
-conventions....
+... and this
 
-Cheers,
+> -		ksys_read(in_fd, buf, BLOCK_SIZE);
+> -		ksys_write(out_fd, buf, BLOCK_SIZE);
+> +		kernel_read(in_file, buf, BLOCK_SIZE, &in_file->f_pos);
+> +		kernel_write(out_file, buf, BLOCK_SIZE, &out_file->f_pos);
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+FWIW, I would suggest *not* bothering with ->f_pos and using two global
+(well, file-static, obviously) variables instead.  And kill 'pos' in
+identify_ramdisk_image() as well - use the in_pos instead.
