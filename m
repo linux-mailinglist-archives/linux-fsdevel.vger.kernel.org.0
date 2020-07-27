@@ -2,101 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6397322F931
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 21:38:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F40322F967
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 21:47:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbgG0TiR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 15:38:17 -0400
-Received: from shells.gnugeneration.com ([66.240.222.126]:43836 "EHLO
-        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbgG0TiR (ORCPT
+        id S1728650AbgG0TrD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 15:47:03 -0400
+Received: from smtp-8fa9.mail.infomaniak.ch ([83.166.143.169]:46041 "EHLO
+        smtp-8fa9.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728990AbgG0TrD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 15:38:17 -0400
-Received: by shells.gnugeneration.com (Postfix, from userid 1000)
-        id D7F071A40175; Mon, 27 Jul 2020 12:38:16 -0700 (PDT)
-Date:   Mon, 27 Jul 2020 12:38:16 -0700
-From:   Vito Caputo <vcaputo@pengaru.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
-Subject: Re: [QUESTION] Sharing a `struct page` across multiple `struct
- address_space` instances
-Message-ID: <20200727193816.cialb45mbf6okkba@shells.gnugeneration.com>
-References: <20200725002221.dszdahfhqrbz43cz@shells.gnugeneration.com>
- <20200725031158.GD23808@casper.infradead.org>
+        Mon, 27 Jul 2020 15:47:03 -0400
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BFr1022KyzlhTrH;
+        Mon, 27 Jul 2020 21:47:00 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4BFr0w2zRPzlh8T4;
+        Mon, 27 Jul 2020 21:46:56 +0200 (CEST)
+Subject: Re: [PATCH v7 4/7] fs: Introduce O_MAYEXEC flag for openat2(2)
+To:     Florian Weimer <fweimer@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+References: <20200723171227.446711-1-mic@digikod.net>
+ <20200723171227.446711-5-mic@digikod.net>
+ <20200727042106.GB794331@ZenIV.linux.org.uk>
+ <87y2n55xzv.fsf@oldenburg2.str.redhat.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <eaf5bc42-e086-740b-a90c-93e67c535eee@digikod.net>
+Date:   Mon, 27 Jul 2020 21:46:55 +0200
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200725031158.GD23808@casper.infradead.org>
+In-Reply-To: <87y2n55xzv.fsf@oldenburg2.str.redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 25, 2020 at 04:11:58AM +0100, Matthew Wilcox wrote:
-> On Fri, Jul 24, 2020 at 05:22:21PM -0700, Vito Caputo wrote:
-> > Prior to looking at the code, conceptually I was envisioning the pages
-> > in the reflink source inode's address_space would simply get their
-> > refcounts bumped as they were added to the dest inode's address_space,
-> > with some CoW flag set to prevent writes.
-> > 
-> > But there seems to be a fundamental assumption that a `struct page`
-> > would only belong to a single `struct address_space` at a time, as it
-> > has single `mapping` and `index` members for reverse mapping the page
-> > to its address_space.
-> > 
-> > Am I completely lost here or does it really look like a rather
-> > invasive modification to support this feature?
-> > 
-> > I have vague memories of Dave Chinner mentioning work towards sharing
-> > pages across address spaces in the interests of getting reflink copies
-> > more competitive with overlayfs in terms of page cache utilization.
-> 
-> It's invasive.  Dave and I have chatted about this in the past.  I've done
-> no work towards it (... a little busy right now with THPs in the page
-> cache ...) but I have a design in mind.
-> 
-> The fundamental idea is to use the DAX support to refer to pages which
-> actually belong to a separate address space.  DAX entries are effectively
-> PFN entries.  So there would be a clear distinction between "I looked
-> up a page which actually belongs to this address space" and "I looked
-> up a page which is shared with a different address space".  My thinking
-> has been that if files A and B are reflinked, both A and B would see
-> DAX entries in their respective page caches.  The page would belong to
-> a third address space which might be the block device's address space,
-> or maybe there would be an address space per shared fragment (since
-> files can share fragments that are at different offsets from each other).
-> 
-> There are a lot of details to get right around this approach.
-> Importantly, there _shouldn't_ be a refcount from each of file A and
-> B on the page.  Instead the refcount from files A and B should be on
-> the fragment.  When the fragment's refcount goes to zero, we know there
-> are no more references to the fragment and all its pages can be freed.
-> 
-> That means that if we reflink B to C, we don't have to walk every page
-> in the file and increase its refcount again.
-> 
-> So, are you prepared to do a lot of work, or were you thinking this
-> would be a quick hack?  Because I'm willing to advise on a big project,
-> but if you're thinking this will be quick, and don't have time for a
-> big project, it's probably time to stop here.
-> 
 
-Thanks for the thoughtful response.  For the time being I'll just poke
-at the code and familiarize myself with how DAX works.  If it gets to
-where I'm effectively spending full-time on it anyways and feeling
-determined to run it to ground, I'll reach out.
-
-> ---
+On 27/07/2020 07:27, Florian Weimer wrote:
+> * Al Viro:
 > 
-> Something that did occur to me while writing this is that if you just want
-> read-only duplicates of files to work, you could make inode->i_mapping
-> point to a different address_space instead of &inode->i_data.  There's
-> probabyl a quick hack solution there.
+>> On Thu, Jul 23, 2020 at 07:12:24PM +0200, MickaÃ«l SalaÃ¼n wrote:
+>>> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
+>>> additional restrictions depending on a security policy managed by the
+>>> kernel through a sysctl or implemented by an LSM thanks to the
+>>> inode_permission hook.  This new flag is ignored by open(2) and
+>>> openat(2) because of their unspecified flags handling.  When used with
+>>> openat2(2), the default behavior is only to forbid to open a directory.
+>>
+>> Correct me if I'm wrong, but it looks like you are introducing a magical
+>> flag that would mean "let the Linux S&M take an extra special whip
+>> for this open()".
 
-I wonder if it's worth implementing something like this to at least
-get reflink enabled with file-granular CoW on tmpfs, then iterate from
-there to make things more granular.
+There is nothing magic, it doesn't only work with the LSM framework, and
+there is nothing painful nor humiliating here (except maybe this language).
 
-Regards,
-Vito Caputo
+>>
+>> Why is it done during open?  If the caller is passing it deliberately,
+>> why not have an explicit request to apply given torture device to an
+>> already opened file?  Why not sys_masochism(int fd, char *hurt_flavour),
+>> for that matter?
+> 
+> While I do not think this is appropriate language for a workplace, Al
+> has a point: If the auditing event can be generated on an already-open
+> descriptor, it would also cover scenarios like this one:
+> 
+>   perl < /path/to/script
+> 
+> Where the process that opens the file does not (and cannot) know that it
+> will be used for execution purposes.
+
+The check is done during open because the goal of this patch series is
+to address the problem of script execution when opening a script in well
+controlled systems (e.g. to enforce a "write xor execute" policy, to do
+an atomic integrity check [1], to check specific execute/read
+permissions, etc.). As discussed multiple times, controlling other means
+to interpret commands (stdin, environment variables, etc.) is out of
+scope and should be handled by interpreters (in userspace). Someone
+could still extend fcntl(2) to enable to check file descriptors, but it
+is an independent change not required for now.
+Specific audit features are also out of scope for now [2].
+
+[1] https://lore.kernel.org/lkml/1544699060.6703.11.camel@linux.ibm.com/
+[2] https://lore.kernel.org/lkml/202007160822.CCDB5478@keescook/
