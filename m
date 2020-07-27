@@ -2,74 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C0D5622FBB5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 23:57:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9612622FCEB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 01:24:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726171AbgG0V5H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 17:57:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55502 "EHLO mx2.suse.de"
+        id S1727975AbgG0XX6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 19:23:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726139AbgG0V5H (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 17:57:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 6DA9DAC97;
-        Mon, 27 Jul 2020 21:57:16 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id B4B781E12C7; Mon, 27 Jul 2020 23:57:05 +0200 (CEST)
-Date:   Mon, 27 Jul 2020 23:57:05 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/9] Fixes for fanotify name events
-Message-ID: <20200727215705.GO5284@quack2.suse.cz>
-References: <20200722125849.17418-1-amir73il@gmail.com>
+        id S1727957AbgG0XX5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Jul 2020 19:23:57 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CDCD2173E;
+        Mon, 27 Jul 2020 23:23:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595892236;
+        bh=VmwA5yULAMfmhKYTXg6cCjOLNQZggdm0KXFjrBNk3fc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=yH+jdhM5WeD6RmgMIWTdb9Q7NXHyoqYrNCF5Ekiq6I2QOKBYLu7PfN9h3bXE0AH/x
+         0/EQjjKgdeXS+2Jmh0CqYs+qP6ISNDMjkb0E+MSXhblckwWeu2ZKTJ1SNUqqTZ57PU
+         yyEkVOtgrix8D273163RBCuI4zHfC1OeuhN7mkmU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Daniele Albano <d.albano@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
+        io-uring@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.7 07/25] io_uring: always allow drain/link/hardlink/async sqe flags
+Date:   Mon, 27 Jul 2020 19:23:27 -0400
+Message-Id: <20200727232345.717432-7-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200727232345.717432-1-sashal@kernel.org>
+References: <20200727232345.717432-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200722125849.17418-1-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 22-07-20 15:58:40, Amir Goldstein wrote:
-> Jan,
-> 
-> Following your feedback [1] to fanotify name events, I wrote some LTP
-> tests [2] to add missing test coverage:
-> 
-> 1) dnotify/inotify: report event to both parent and child -
->    catches the dnotify bug I had in v4 after unified event patch
-> 
-> 2) fanotify10: add groups with FAN_REPORT_NAME to the setup -
->    catches the bug you noticed in fanotify_group_event_mask()
-> 
-> 3) fanotify10: add test cases with ignored mask on watching parent -
->    catches the inconsistecy with ignored masks that you noticed [*]
-> 
-> The patches in this series apply to your fsnotify branch and are
-> avaiable on my fsnotify-fixes branch [3].
-> 
-> Patch 1 fixes issue #2 above
-> Patch 2 fixes another issue found by tests
-> Patch 3 fixes a minor issue found by code review
-> Patches 4-6 simplify the code based on your suggestions
-> Patch 7 depends on 4-6 and fixes issue #3 above [*]
-> 
-> Optional patches:
-> Patch 8 implements your suggestion of simplified handler_event()
-> Patch 9 is a possible fix for kernel test robot reported performance
-> regression. I did not get any feedback on it, but it is trivial.
+From: Daniele Albano <d.albano@gmail.com>
 
-OK, so I've added patches 1-8 to my tree. I've checked that the final
-resulting source after my patch reorg is the same as after just applying
-the patches. LTP tests pass so I've pushed out everything to linux-next to
-give it some more beating. So everything should be ready for the merge
-window.
+[ Upstream commit 61710e437f2807e26a3402543bdbb7217a9c8620 ]
 
-								Honza
+We currently filter these for timeout_remove/async_cancel/files_update,
+but we only should be filtering for fixed file and buffer select. This
+also causes a second read of sqe->flags, which isn't needed.
+
+Just check req->flags for the relevant bits. This then allows these
+commands to be used in links, for example, like everything else.
+
+Signed-off-by: Daniele Albano <d.albano@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/io_uring.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 51be3a20ade17..12ab983474dff 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4803,7 +4803,9 @@ static int io_timeout_remove_prep(struct io_kiocb *req,
+ {
+ 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+ 		return -EINVAL;
+-	if (sqe->flags || sqe->ioprio || sqe->buf_index || sqe->len)
++	if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
++		return -EINVAL;
++	if (sqe->ioprio || sqe->buf_index || sqe->len)
+ 		return -EINVAL;
+ 
+ 	req->timeout.addr = READ_ONCE(sqe->addr);
+@@ -5009,8 +5011,9 @@ static int io_async_cancel_prep(struct io_kiocb *req,
+ {
+ 	if (unlikely(req->ctx->flags & IORING_SETUP_IOPOLL))
+ 		return -EINVAL;
+-	if (sqe->flags || sqe->ioprio || sqe->off || sqe->len ||
+-	    sqe->cancel_flags)
++	if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
++		return -EINVAL;
++	if (sqe->ioprio || sqe->off || sqe->len || sqe->cancel_flags)
+ 		return -EINVAL;
+ 
+ 	req->cancel.addr = READ_ONCE(sqe->addr);
+@@ -5028,7 +5031,9 @@ static int io_async_cancel(struct io_kiocb *req)
+ static int io_files_update_prep(struct io_kiocb *req,
+ 				const struct io_uring_sqe *sqe)
+ {
+-	if (sqe->flags || sqe->ioprio || sqe->rw_flags)
++	if (unlikely(req->flags & (REQ_F_FIXED_FILE | REQ_F_BUFFER_SELECT)))
++		return -EINVAL;
++	if (sqe->ioprio || sqe->rw_flags)
+ 		return -EINVAL;
+ 
+ 	req->files_update.offset = READ_ONCE(sqe->off);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.1
+
