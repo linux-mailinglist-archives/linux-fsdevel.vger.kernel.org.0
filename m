@@ -2,84 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CE1C22F39E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 17:17:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A82422F3A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 17:17:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728811AbgG0PRC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 11:17:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47322 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728627AbgG0PRB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 11:17:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 27EA1AC61;
-        Mon, 27 Jul 2020 15:17:11 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 82EF41E12C5; Mon, 27 Jul 2020 17:17:00 +0200 (CEST)
-Date:   Mon, 27 Jul 2020 17:17:00 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/9] fanotify: fix reporting event to sb/mount marks
-Message-ID: <20200727151700.GD5284@quack2.suse.cz>
-References: <20200722125849.17418-1-amir73il@gmail.com>
- <20200722125849.17418-2-amir73il@gmail.com>
+        id S1729095AbgG0PRs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 11:17:48 -0400
+Received: from netrider.rowland.org ([192.131.102.5]:56667 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1729016AbgG0PRr (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Jul 2020 11:17:47 -0400
+Received: (qmail 1470770 invoked by uid 1000); 27 Jul 2020 11:17:46 -0400
+Date:   Mon, 27 Jul 2020 11:17:46 -0400
+From:   Alan Stern <stern@rowland.harvard.edu>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        "Paul E . McKenney" <paulmck@kernel.org>,
+        linux-fsdevel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] tools/memory-model: document the "one-time init" pattern
+Message-ID: <20200727151746.GC1468275@rowland.harvard.edu>
+References: <20200717044427.68747-1-ebiggers@kernel.org>
+ <20200717174750.GQ12769@casper.infradead.org>
+ <20200718013839.GD2183@sol.localdomain>
+ <20200718021304.GS12769@casper.infradead.org>
+ <20200718052818.GF2183@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200722125849.17418-2-amir73il@gmail.com>
+In-Reply-To: <20200718052818.GF2183@sol.localdomain>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 22-07-20 15:58:41, Amir Goldstein wrote:
-> When reporting event with parent/name info, we should not skip sb/mount
-> marks mask if event has FAN_EVENT_ON_CHILD in the mask.
-> 
-> This check is a leftover from the time when the event on child was
-> reported in a separate callback than the event on parent and we did
-> not want to get duplicate events for sb/mount mark.
-> 
-> Fixes: eca4784cbb18 ("fsnotify: send event to parent and child with single callback")
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+On Fri, Jul 17, 2020 at 10:28:18PM -0700, Eric Biggers wrote:
+> I'm still not sure this is the best API.
 
-OK, I've decided to just drop "fanotify: report both events on parent and
-child with single callback" because it didn't improve anything and amend
-eca4784cbb18 with this change...
+I cast my vote for something along the following lines.  It's simple,
+easily understood and easily used.  The approach has two variants: One
+that returns an integer and one that returns a pointer.  I'll use the
+pointer variant to illustrate.
 
-								Honza
+Given a type "T", an object x of type pointer-to-T, and a function
+"func" that takes various arguments and returns a pointer-to-T, the
+accepted API for calling func once would be to create once_func() as
+follows:
 
-> ---
->  fs/notify/fanotify/fanotify.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index a24f08a9c50f..36ea0cd6387e 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -265,13 +265,11 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
->  			continue;
->  
->  		/*
-> -		 * If the event is for a child and this mark doesn't care about
-> -		 * events on a child, don't send it!
-> -		 * The special object type "child" always cares about events on
-> -		 * a child, because it refers to the child inode itself.
-> +		 * If the event is for a child and this mark is on a parent not
-> +		 * watching children, don't send it!
->  		 */
->  		if (event_mask & FS_EVENT_ON_CHILD &&
-> -		    type != FSNOTIFY_OBJ_TYPE_CHILD &&
-> +		    type == FSNOTIFY_OBJ_TYPE_INODE &&
->  		    !(mark->mask & FS_EVENT_ON_CHILD))
->  			continue;
->  
-> -- 
-> 2.17.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+T *once_func(T **ppt, args...)
+{
+	static DEFINE_MUTEX(mut);
+	T *p;
+
+	p = smp_load_acquire(ppt);	/* Mild optimization */
+	if (p)
+		return p;
+
+	mutex_lock(mut);
+	p = smp_load_acquire(ppt);
+	if (!p) {
+		p = func(args...);
+		if (!IS_ERR_OR_NULL(p))
+			smp_store_release(ppt, p);
+	}
+	mutex_unlock(mut);
+	return p;
+}
+
+Users then would have to call once_func(&x, args...) and check the
+result.  Different x objects would constitute different "once"
+domains.
+
+(In the integer variant, x, p and the return type of func are all int,
+and ppt is an int *.  Everything else is the same.  This variant would
+be used in cases where you're not allocating anything, you're doing
+some other sort of initialization only once.)
+
+While this would be a perfectly good recipe in itself, the whole thing
+can be made much simpler for users by creating a MAKE_ONCE_FUNC macro
+which would generate once_func given the type T, the name "func", and
+the args.  The result is type-safe.
+
+IMO the fact that once_func() is not inline is an advantage, not a
+drawback.  Yes, it doesn't actually do any allocation or anything like
+that -- the idea is that once_func's purpose is merely to ensure that
+func is successfully called only once.  Any memory allocation or other
+stuff of that sort should be handled by func.
+
+In fact, the only drawback I can think of is that because this relies
+on a single mutex for all the different possible x's, it might lead to
+locking conflicts (if func had to call once_func() recursively, for
+example).  In most reasonable situations such conflicts would not
+arise.
+
+Alan Stern
