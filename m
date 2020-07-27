@@ -2,123 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F40322F967
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 21:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFD1322FA28
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 22:34:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbgG0TrD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 15:47:03 -0400
-Received: from smtp-8fa9.mail.infomaniak.ch ([83.166.143.169]:46041 "EHLO
-        smtp-8fa9.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728990AbgG0TrD (ORCPT
+        id S1729330AbgG0Ued (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 16:34:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38898 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729247AbgG0Uec (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 15:47:03 -0400
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BFr1022KyzlhTrH;
-        Mon, 27 Jul 2020 21:47:00 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4BFr0w2zRPzlh8T4;
-        Mon, 27 Jul 2020 21:46:56 +0200 (CEST)
-Subject: Re: [PATCH v7 4/7] fs: Introduce O_MAYEXEC flag for openat2(2)
-To:     Florian Weimer <fweimer@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-References: <20200723171227.446711-1-mic@digikod.net>
- <20200723171227.446711-5-mic@digikod.net>
- <20200727042106.GB794331@ZenIV.linux.org.uk>
- <87y2n55xzv.fsf@oldenburg2.str.redhat.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <eaf5bc42-e086-740b-a90c-93e67c535eee@digikod.net>
-Date:   Mon, 27 Jul 2020 21:46:55 +0200
-User-Agent: 
+        Mon, 27 Jul 2020 16:34:32 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7CF4C0619D5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jul 2020 13:34:32 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id o1so8781350plk.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jul 2020 13:34:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1e9h0tE+ElK0HWRPXiuc5VM0AhTp1F0sLszAnPFX/o4=;
+        b=ZafaxclzPZhVsXz8l83xVPlfPaaHGIsnBsq3YYS+6u818LolWPB9JvqcfE5gaa8xTt
+         xMeKMiEUoOBjhQEN30y00OvB3GJvnZCmHen3WlDqQl1atnjPNZzXQnXq13xWBdO0RqDk
+         UjBeZR8HAFCSn6EgK2imAOBWV4HTBBMGp+cS1LMXd97OoXjDVUB7TSQtJTGuKlyPFlGv
+         47hzCZYu25rqnnw5lCBm48U/PxTUsLm9HQwDcpHJ8BS5Iqy1eq8Y1QSbIF+igXGeLiaw
+         5kQb4Je9qd10su3MNHjyZt2WiZXA5AoXdEge+klxew2Fz7tViQhLADlu2el1GkI3bMX9
+         ko6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1e9h0tE+ElK0HWRPXiuc5VM0AhTp1F0sLszAnPFX/o4=;
+        b=Sx4DHYUE7Ef+AK3ivbWzrHfbVCqrdKlZCMiqCod68Wl8SmR6llDSKwaD/Oueb8ISwa
+         2gRu7kWmk6+dRtB+/0To+YPCRs9ColhI+nNSEXkbUhXuGSlXDHs7jVkoWrZNcpUvGwkV
+         nA9jRymEJi/DWedR6wTre9G610Taajp9CFr9goZhiWZWaXQb6srO8PrhrLGa232+hkSK
+         Iehlr5Pb3E3+ry6waTxUPClVp3MhzEINmyH0ITJ+Ad2dvtlgNpFkRRH1GZK1MsXV61iB
+         kaowExtk4D+tKLiwnsWlz7jDSVGbY2mpg4VAV5dD56yc6vGOBHxB3kds9kuJyl8Ber4O
+         n7rg==
+X-Gm-Message-State: AOAM533aoAnFQT41CCVMRN+JhL8ngh7Wrzpt5k5+lqNl0k/D56Me0826
+        UG7sJuGwCL16DSdH8JH7RyMT6g==
+X-Google-Smtp-Source: ABdhPJwgxPuj693Id+Oo3CVUmOizUrGVehGlzvteg1ajBPCJTwzcrqE4V3UY3qCfXHxGAvoiCewkzg==
+X-Received: by 2002:a17:90b:120a:: with SMTP id gl10mr927614pjb.44.1595882072153;
+        Mon, 27 Jul 2020 13:34:32 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id u26sm16345833pfn.54.2020.07.27.13.34.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jul 2020 13:34:31 -0700 (PDT)
+Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
+To:     Kanchan Joshi <joshiiitr@gmail.com>
+Cc:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-api@vger.kernel.org, SelvaKumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+References: <1595605762-17010-1-git-send-email-joshi.k@samsung.com>
+ <CGME20200724155350epcas5p3b8f1d59eda7f8fbb38c828f692d42fd6@epcas5p3.samsung.com>
+ <1595605762-17010-7-git-send-email-joshi.k@samsung.com>
+ <f5416bd4-93b3-4d14-3266-bdbc4ae1990b@kernel.dk>
+ <CA+1E3rJAa3E2Ti0fvvQTzARP797qge619m4aYLjXeR3wxdFwWw@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b0b7159d-ed10-08ad-b6c7-b85d45f60d16@kernel.dk>
+Date:   Mon, 27 Jul 2020 14:34:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <87y2n55xzv.fsf@oldenburg2.str.redhat.com>
+In-Reply-To: <CA+1E3rJAa3E2Ti0fvvQTzARP797qge619m4aYLjXeR3wxdFwWw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 27/07/2020 07:27, Florian Weimer wrote:
-> * Al Viro:
-> 
->> On Thu, Jul 23, 2020 at 07:12:24PM +0200, MickaÃ«l SalaÃ¼n wrote:
->>> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
->>> additional restrictions depending on a security policy managed by the
->>> kernel through a sysctl or implemented by an LSM thanks to the
->>> inode_permission hook.  This new flag is ignored by open(2) and
->>> openat(2) because of their unspecified flags handling.  When used with
->>> openat2(2), the default behavior is only to forbid to open a directory.
+On 7/27/20 1:16 PM, Kanchan Joshi wrote:
+> On Fri, Jul 24, 2020 at 10:00 PM Jens Axboe <axboe@kernel.dk> wrote:
 >>
->> Correct me if I'm wrong, but it looks like you are introducing a magical
->> flag that would mean "let the Linux S&M take an extra special whip
->> for this open()".
-
-There is nothing magic, it doesn't only work with the LSM framework, and
-there is nothing painful nor humiliating here (except maybe this language).
-
+>> On 7/24/20 9:49 AM, Kanchan Joshi wrote:
+>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>> index 7809ab2..6510cf5 100644
+>>> --- a/fs/io_uring.c
+>>> +++ b/fs/io_uring.c
+>>> @@ -1284,8 +1301,15 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
+>>>       cqe = io_get_cqring(ctx);
+>>>       if (likely(cqe)) {
+>>>               WRITE_ONCE(cqe->user_data, req->user_data);
+>>> -             WRITE_ONCE(cqe->res, res);
+>>> -             WRITE_ONCE(cqe->flags, cflags);
+>>> +             if (unlikely(req->flags & REQ_F_ZONE_APPEND)) {
+>>> +                     if (likely(res > 0))
+>>> +                             WRITE_ONCE(cqe->res64, req->rw.append_offset);
+>>> +                     else
+>>> +                             WRITE_ONCE(cqe->res64, res);
+>>> +             } else {
+>>> +                     WRITE_ONCE(cqe->res, res);
+>>> +                     WRITE_ONCE(cqe->flags, cflags);
+>>> +             }
 >>
->> Why is it done during open?  If the caller is passing it deliberately,
->> why not have an explicit request to apply given torture device to an
->> already opened file?  Why not sys_masochism(int fd, char *hurt_flavour),
->> for that matter?
+>> This would be nice to keep out of the fast path, if possible.
 > 
-> While I do not think this is appropriate language for a workplace, Al
-> has a point: If the auditing event can be generated on an already-open
-> descriptor, it would also cover scenarios like this one:
-> 
->   perl < /path/to/script
-> 
-> Where the process that opens the file does not (and cannot) know that it
-> will be used for execution purposes.
+> I was thinking of keeping a function-pointer (in io_kiocb) during
+> submission. That would have avoided this check......but argument count
+> differs, so it did not add up.
 
-The check is done during open because the goal of this patch series is
-to address the problem of script execution when opening a script in well
-controlled systems (e.g. to enforce a "write xor execute" policy, to do
-an atomic integrity check [1], to check specific execute/read
-permissions, etc.). As discussed multiple times, controlling other means
-to interpret commands (stdin, environment variables, etc.) is out of
-scope and should be handled by interpreters (in userspace). Someone
-could still extend fcntl(2) to enable to check file descriptors, but it
-is an independent change not required for now.
-Specific audit features are also out of scope for now [2].
+But that'd grow the io_kiocb just for this use case, which is arguably
+even worse. Unless you can keep it in the per-request private data,
+but there's no more room there for the regular read/write side.
 
-[1] https://lore.kernel.org/lkml/1544699060.6703.11.camel@linux.ibm.com/
-[2] https://lore.kernel.org/lkml/202007160822.CCDB5478@keescook/
+>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>>> index 92c2269..2580d93 100644
+>>> --- a/include/uapi/linux/io_uring.h
+>>> +++ b/include/uapi/linux/io_uring.h
+>>> @@ -156,8 +156,13 @@ enum {
+>>>   */
+>>>  struct io_uring_cqe {
+>>>       __u64   user_data;      /* sqe->data submission passed back */
+>>> -     __s32   res;            /* result code for this event */
+>>> -     __u32   flags;
+>>> +     union {
+>>> +             struct {
+>>> +                     __s32   res;    /* result code for this event */
+>>> +                     __u32   flags;
+>>> +             };
+>>> +             __s64   res64;  /* appending offset for zone append */
+>>> +     };
+>>>  };
+>>
+>> Is this a compatible change, both for now but also going forward? You
+>> could randomly have IORING_CQE_F_BUFFER set, or any other future flags.
+> 
+> Sorry, I didn't quite understand the concern. CQE_F_BUFFER is not
+> used/set for write currently, so it looked compatible at this point.
+
+Not worried about that, since we won't ever use that for writes. But it
+is a potential headache down the line for other flags, if they apply to
+normal writes.
+
+> Yes, no room for future flags for this operation.
+> Do you see any other way to enable this support in io-uring?
+
+Honestly I think the only viable option is as we discussed previously,
+pass in a pointer to a 64-bit type where we can copy the additional
+completion information to.
+
+>> Layout would also be different between big and little endian, so not
+>> even that easy to set aside a flag for this. But even if that was done,
+>> we'd still have this weird API where liburing or the app would need to
+>> distinguish this cqe from all others based on... the user_data? Hence
+>> liburing can't do it, only the app would be able to.
+>>
+>> Just seems like a hack to me.
+> 
+> Yes, only user_data to distinguish. Do liburing helpers need to look
+> at cqe->res (and decide something) before returning the cqe to
+> application?
+
+They generally don't, outside of the internal timeout. But it's an issue
+for the API, as it forces applications to handle the CQEs a certain way.
+Normally there's flexibility. This makes the append writes behave
+differently than everything else, which is never a good idea.
+
+-- 
+Jens Axboe
+
