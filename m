@@ -2,172 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFD1322FA28
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 22:34:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B871D22FA36
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 22:40:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729330AbgG0Ued (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 16:34:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38898 "EHLO
+        id S1726194AbgG0UkH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 16:40:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729247AbgG0Uec (ORCPT
+        with ESMTP id S1726110AbgG0UkG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 16:34:32 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7CF4C0619D5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jul 2020 13:34:32 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id o1so8781350plk.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jul 2020 13:34:32 -0700 (PDT)
+        Mon, 27 Jul 2020 16:40:06 -0400
+Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A492C0619D4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jul 2020 13:40:06 -0700 (PDT)
+Received: by mail-qk1-x744.google.com with SMTP id l23so16652083qkk.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jul 2020 13:40:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1e9h0tE+ElK0HWRPXiuc5VM0AhTp1F0sLszAnPFX/o4=;
-        b=ZafaxclzPZhVsXz8l83xVPlfPaaHGIsnBsq3YYS+6u818LolWPB9JvqcfE5gaa8xTt
-         xMeKMiEUoOBjhQEN30y00OvB3GJvnZCmHen3WlDqQl1atnjPNZzXQnXq13xWBdO0RqDk
-         UjBeZR8HAFCSn6EgK2imAOBWV4HTBBMGp+cS1LMXd97OoXjDVUB7TSQtJTGuKlyPFlGv
-         47hzCZYu25rqnnw5lCBm48U/PxTUsLm9HQwDcpHJ8BS5Iqy1eq8Y1QSbIF+igXGeLiaw
-         5kQb4Je9qd10su3MNHjyZt2WiZXA5AoXdEge+klxew2Fz7tViQhLADlu2el1GkI3bMX9
-         ko6g==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H5mkeIUP0mOEiGviUE7WNaFeT77sNuynQLFroF00uM0=;
+        b=ndaW31KyuJq5CflqHCgledXt6cwUJPQJEHmUkVLZn5LzMK9Qmep+K2g/zpXAWQMQho
+         pEwa9PyhAWywue6kD87lrQWp9cktZBi6ogYvfB5tPT1QwXsdM1S5TdLFXhOQtWkg0nZ/
+         85+0VKQvI36D+k7UVliYasEXiaX/wFunjRN3P7ALI05hRyOKSoH5oovDiK+3e5fKUNk7
+         j5/PHcj70JYX2+Ard2EYT0IXuR6Yj1IYHsbFAj7CI5t+C0ZSIjkUXwNRUxq+Z21p3dmm
+         YbvqHtAl9zFh+2ch1NBB8sQgaeCFujs+677S5bnLzmux6uVkzfPfX2rqMwoOV6yo5EFc
+         wSyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1e9h0tE+ElK0HWRPXiuc5VM0AhTp1F0sLszAnPFX/o4=;
-        b=Sx4DHYUE7Ef+AK3ivbWzrHfbVCqrdKlZCMiqCod68Wl8SmR6llDSKwaD/Oueb8ISwa
-         2gRu7kWmk6+dRtB+/0To+YPCRs9ColhI+nNSEXkbUhXuGSlXDHs7jVkoWrZNcpUvGwkV
-         nA9jRymEJi/DWedR6wTre9G610Taajp9CFr9goZhiWZWaXQb6srO8PrhrLGa232+hkSK
-         Iehlr5Pb3E3+ry6waTxUPClVp3MhzEINmyH0ITJ+Ad2dvtlgNpFkRRH1GZK1MsXV61iB
-         kaowExtk4D+tKLiwnsWlz7jDSVGbY2mpg4VAV5dD56yc6vGOBHxB3kds9kuJyl8Ber4O
-         n7rg==
-X-Gm-Message-State: AOAM533aoAnFQT41CCVMRN+JhL8ngh7Wrzpt5k5+lqNl0k/D56Me0826
-        UG7sJuGwCL16DSdH8JH7RyMT6g==
-X-Google-Smtp-Source: ABdhPJwgxPuj693Id+Oo3CVUmOizUrGVehGlzvteg1ajBPCJTwzcrqE4V3UY3qCfXHxGAvoiCewkzg==
-X-Received: by 2002:a17:90b:120a:: with SMTP id gl10mr927614pjb.44.1595882072153;
-        Mon, 27 Jul 2020 13:34:32 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id u26sm16345833pfn.54.2020.07.27.13.34.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jul 2020 13:34:31 -0700 (PDT)
-Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
-To:     Kanchan Joshi <joshiiitr@gmail.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-api@vger.kernel.org, SelvaKumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-References: <1595605762-17010-1-git-send-email-joshi.k@samsung.com>
- <CGME20200724155350epcas5p3b8f1d59eda7f8fbb38c828f692d42fd6@epcas5p3.samsung.com>
- <1595605762-17010-7-git-send-email-joshi.k@samsung.com>
- <f5416bd4-93b3-4d14-3266-bdbc4ae1990b@kernel.dk>
- <CA+1E3rJAa3E2Ti0fvvQTzARP797qge619m4aYLjXeR3wxdFwWw@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b0b7159d-ed10-08ad-b6c7-b85d45f60d16@kernel.dk>
-Date:   Mon, 27 Jul 2020 14:34:28 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H5mkeIUP0mOEiGviUE7WNaFeT77sNuynQLFroF00uM0=;
+        b=S6/xlckubjiZn9l6fxP9B8HYIMDyYlgLtJb8Zz86UHnrx06/IufYAClwvaOpN1NKuY
+         nXCSz6MzJPOtSjY2T+iJmU1byH2Sd9SiGUXk/Bxyemwy3lYagwQOj0V1tG4zjRGmuCpm
+         oawMR6nyjsiuifQJfpiy9hPM+6froduXzR8R4+qafTVJ0k8GPTIEDWTgp/PdpobHOzlr
+         Ng9jkZuiHMsf5GTacOWbwTI55n4X0SOct9DgpgbBr7p0xt4GWdh74YwmzS0+jirnOGgG
+         lZbvd9sACzpW7GmoMtvKtIJqDV6XSdLdiRfTP9wJoKk0Mw7M49SnqHwP8wyjMSyP5fyI
+         osVw==
+X-Gm-Message-State: AOAM530YHuSQIyoNO/8gmVYl+hKeyXM2D5C8ZUBYS7Gv3S7DN03alzj8
+        lhr7usmWJevbo1qB/3XWA9XbaVa+rRNJPi7Oh8qbeQ==
+X-Google-Smtp-Source: ABdhPJyCDq02r0UswNpJp+FxF2hE3dfe281amCGBoaEXOi/lXtIkBn4jVTKVTXz6GfkFkjZhXH8EL7FDiQijATDf730=
+X-Received: by 2002:a05:620a:21d2:: with SMTP id h18mr6352807qka.407.1595882405152;
+ Mon, 27 Jul 2020 13:40:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CA+1E3rJAa3E2Ti0fvvQTzARP797qge619m4aYLjXeR3wxdFwWw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <000000000000862c0305ab6fc661@google.com>
+In-Reply-To: <000000000000862c0305ab6fc661@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 27 Jul 2020 22:39:53 +0200
+Message-ID: <CACT4Y+Z=j1fo-24HtkhJLpq9azXP7bXNMtr9Uz=FCrFx42qnqg@mail.gmail.com>
+Subject: Re: WARNING: ODEBUG bug in delete_node
+To:     syzbot <syzbot+062ee7c41cfd844a3a9a@syzkaller.appspotmail.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/27/20 1:16 PM, Kanchan Joshi wrote:
-> On Fri, Jul 24, 2020 at 10:00 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 7/24/20 9:49 AM, Kanchan Joshi wrote:
->>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>> index 7809ab2..6510cf5 100644
->>> --- a/fs/io_uring.c
->>> +++ b/fs/io_uring.c
->>> @@ -1284,8 +1301,15 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
->>>       cqe = io_get_cqring(ctx);
->>>       if (likely(cqe)) {
->>>               WRITE_ONCE(cqe->user_data, req->user_data);
->>> -             WRITE_ONCE(cqe->res, res);
->>> -             WRITE_ONCE(cqe->flags, cflags);
->>> +             if (unlikely(req->flags & REQ_F_ZONE_APPEND)) {
->>> +                     if (likely(res > 0))
->>> +                             WRITE_ONCE(cqe->res64, req->rw.append_offset);
->>> +                     else
->>> +                             WRITE_ONCE(cqe->res64, res);
->>> +             } else {
->>> +                     WRITE_ONCE(cqe->res, res);
->>> +                     WRITE_ONCE(cqe->flags, cflags);
->>> +             }
->>
->> This would be nice to keep out of the fast path, if possible.
-> 
-> I was thinking of keeping a function-pointer (in io_kiocb) during
-> submission. That would have avoided this check......but argument count
-> differs, so it did not add up.
+On Mon, Jul 27, 2020 at 7:37 PM syzbot
+<syzbot+062ee7c41cfd844a3a9a@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    e9a523ff Add linux-next specific files for 20200727
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17ad9108900000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2cbc23e6202df3d0
+> dashboard link: https://syzkaller.appspot.com/bug?extid=062ee7c41cfd844a3a9a
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+062ee7c41cfd844a3a9a@syzkaller.appspotmail.com
+>
+> ------------[ cut here ]------------
+> ODEBUG: activate active (active state 1) object type: rcu_head hint: 0x0
+> WARNING: CPU: 1 PID: 16220 at lib/debugobjects.c:485 debug_print_object+0x160/0x250 lib/debugobjects.c:485
+> Kernel panic - not syncing: panic_on_warn set ...
+> CPU: 1 PID: 16220 Comm: syz-executor.0 Not tainted 5.8.0-rc7-next-20200727-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x18f/0x20d lib/dump_stack.c:118
+>  panic+0x2e3/0x75c kernel/panic.c:231
+>  __warn.cold+0x20/0x45 kernel/panic.c:600
+>  report_bug+0x1bd/0x210 lib/bug.c:198
+>  handle_bug+0x38/0x90 arch/x86/kernel/traps.c:234
+>  exc_invalid_op+0x14/0x40 arch/x86/kernel/traps.c:254
+>  asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:545
+> RIP: 0010:debug_print_object+0x160/0x250 lib/debugobjects.c:485
+> Code: dd a0 12 94 88 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 bf 00 00 00 48 8b 14 dd a0 12 94 88 48 c7 c7 00 08 94 88 e8 e2 87 a6 fd <0f> 0b 83 05 13 a1 1a 07 01 48 83 c4 20 5b 5d 41 5c 41 5d c3 48 89
+> RSP: 0018:ffffc900065e7958 EFLAGS: 00010282
+> RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000000000
+> RDX: ffff8880a1a18280 RSI: ffffffff815d93b7 RDI: fffff52000cbcf1d
+> RBP: 0000000000000001 R08: 0000000000000001 R09: ffff8880ae7318a7
+> R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff89c52a00
+> R13: 0000000000000000 R14: 1ffff92000cbcf36 R15: ffffffff89c52a00
+>  debug_object_activate+0x2da/0x3e0 lib/debugobjects.c:652
+>  debug_object_activate+0x337/0x3e0 lib/debugobjects.c:682
+>  debug_rcu_head_queue kernel/rcu/rcu.h:176 [inline]
+>  __call_rcu kernel/rcu/tree.c:2869 [inline]
+>  call_rcu+0x2c/0x7e0 kernel/rcu/tree.c:2957
+>  radix_tree_node_free lib/radix-tree.c:309 [inline]
+>  delete_node+0xe5/0x8a0 lib/radix-tree.c:572
 
-But that'd grow the io_kiocb just for this use case, which is arguably
-even worse. Unless you can keep it in the per-request private data,
-but there's no more room there for the regular read/write side.
++Matthew, I am not sure if this adds any actionable info, but FWIW
+this looks related to the "WARNING in delete_node (2)" issue you
+looked at few day ago:
+https://lore.kernel.org/lkml/20200726032115.GE23808@casper.infradead.org/
 
->>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->>> index 92c2269..2580d93 100644
->>> --- a/include/uapi/linux/io_uring.h
->>> +++ b/include/uapi/linux/io_uring.h
->>> @@ -156,8 +156,13 @@ enum {
->>>   */
->>>  struct io_uring_cqe {
->>>       __u64   user_data;      /* sqe->data submission passed back */
->>> -     __s32   res;            /* result code for this event */
->>> -     __u32   flags;
->>> +     union {
->>> +             struct {
->>> +                     __s32   res;    /* result code for this event */
->>> +                     __u32   flags;
->>> +             };
->>> +             __s64   res64;  /* appending offset for zone append */
->>> +     };
->>>  };
->>
->> Is this a compatible change, both for now but also going forward? You
->> could randomly have IORING_CQE_F_BUFFER set, or any other future flags.
-> 
-> Sorry, I didn't quite understand the concern. CQE_F_BUFFER is not
-> used/set for write currently, so it looked compatible at this point.
-
-Not worried about that, since we won't ever use that for writes. But it
-is a potential headache down the line for other flags, if they apply to
-normal writes.
-
-> Yes, no room for future flags for this operation.
-> Do you see any other way to enable this support in io-uring?
-
-Honestly I think the only viable option is as we discussed previously,
-pass in a pointer to a 64-bit type where we can copy the additional
-completion information to.
-
->> Layout would also be different between big and little endian, so not
->> even that easy to set aside a flag for this. But even if that was done,
->> we'd still have this weird API where liburing or the app would need to
->> distinguish this cqe from all others based on... the user_data? Hence
->> liburing can't do it, only the app would be able to.
->>
->> Just seems like a hack to me.
-> 
-> Yes, only user_data to distinguish. Do liburing helpers need to look
-> at cqe->res (and decide something) before returning the cqe to
-> application?
-
-They generally don't, outside of the internal timeout. But it's an issue
-for the API, as it forces applications to handle the CQEs a certain way.
-Normally there's flexibility. This makes the append writes behave
-differently than everything else, which is never a good idea.
-
--- 
-Jens Axboe
-
+>  __radix_tree_delete+0x190/0x370 lib/radix-tree.c:1378
+>  radix_tree_delete_item+0xe7/0x230 lib/radix-tree.c:1429
+>  mnt_free_id fs/namespace.c:131 [inline]
+>  cleanup_mnt+0x3db/0x500 fs/namespace.c:1140
+>  task_work_run+0xdd/0x190 kernel/task_work.c:135
+>  exit_task_work include/linux/task_work.h:25 [inline]
+>  do_exit+0xb7d/0x29f0 kernel/exit.c:806
+>  do_group_exit+0x125/0x310 kernel/exit.c:903
+>  __do_sys_exit_group kernel/exit.c:914 [inline]
+>  __se_sys_exit_group kernel/exit.c:912 [inline]
+>  __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:912
+>  do_syscall_64+0x60/0xe0 arch/x86/entry/common.c:384
+>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> RIP: 0033:0x45c369
+> Code: Bad RIP value.
+> RSP: 002b:00007fff0e2003e8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> RAX: ffffffffffffffda RBX: 0000000000000016 RCX: 000000000045c369
+> RDX: 0000000000415e00 RSI: 0000000000ca85f0 RDI: 0000000000000043
+> RBP: 00000000004d0de8 R08: 000000000000000c R09: 0000000000000000
+> R10: 00000000023fc940 R11: 0000000000000246 R12: 0000000000000003
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000744ca0
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000862c0305ab6fc661%40google.com.
