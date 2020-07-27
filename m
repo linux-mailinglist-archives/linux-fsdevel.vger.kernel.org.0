@@ -2,91 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA76922F3E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 17:33:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A23922F422
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 17:55:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729793AbgG0Pdz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 11:33:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55728 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727784AbgG0Pdz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 11:33:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 79BE2AD76;
-        Mon, 27 Jul 2020 15:34:04 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id E96741E12C5; Mon, 27 Jul 2020 17:33:53 +0200 (CEST)
-Date:   Mon, 27 Jul 2020 17:33:53 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/9] audit: do not set FS_EVENT_ON_CHILD in audit marks
- mask
-Message-ID: <20200727153353.GF5284@quack2.suse.cz>
-References: <20200722125849.17418-1-amir73il@gmail.com>
- <20200722125849.17418-4-amir73il@gmail.com>
+        id S1730912AbgG0PzB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 11:55:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51822 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728466AbgG0PzA (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Jul 2020 11:55:00 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 654A3C061794;
+        Mon, 27 Jul 2020 08:55:00 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k05Sn-003kD8-JD; Mon, 27 Jul 2020 15:54:53 +0000
+Date:   Mon, 27 Jul 2020 16:54:53 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Song Liu <song@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 18/23] init: open code setting up stdin/stdout/stderr
+Message-ID: <20200727155453.GE794331@ZenIV.linux.org.uk>
+References: <20200714190427.4332-1-hch@lst.de>
+ <20200714190427.4332-19-hch@lst.de>
+ <20200727030534.GD795125@ZenIV.linux.org.uk>
+ <20200727054625.GA1241@lst.de>
+ <20200727060322.GC794331@ZenIV.linux.org.uk>
+ <20200727064828.GA2317@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200722125849.17418-4-amir73il@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200727064828.GA2317@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 22-07-20 15:58:43, Amir Goldstein wrote:
-> The audit groups marks mask does not contain any events possible on
-> child,so setting the flag FS_EVENT_ON_CHILD in the mask is counter
-> productive.
+On Mon, Jul 27, 2020 at 08:48:28AM +0200, Christoph Hellwig wrote:
+> On Mon, Jul 27, 2020 at 07:03:22AM +0100, Al Viro wrote:
+> > On Mon, Jul 27, 2020 at 07:46:25AM +0200, Christoph Hellwig wrote:
+> > > On Mon, Jul 27, 2020 at 04:05:34AM +0100, Al Viro wrote:
+> > > > On Tue, Jul 14, 2020 at 09:04:22PM +0200, Christoph Hellwig wrote:
+> > > > > Don't rely on the implicit set_fs(KERNEL_DS) for ksys_open to work, but
+> > > > > instead open a struct file for /dev/console and then install it as FD
+> > > > > 0/1/2 manually.
+> > > > 
+> > > > I really hate that one.  Every time we exposed the internal details to
+> > > > the fucking early init code, we paid for that afterwards.  And this
+> > > > goes over the top wrt the level of details being exposed.
+> > > > 
+> > > > _IF_ you want to keep that thing, move it to fs/file.c, with dire comment
+> > > > re that being very special shite for init and likely cause of subsequent
+> > > > trouble whenever anything gets changed, a gnat farts somewhere, etc.
+> > > 
+> > > Err, while I'm all for keeping internals internal, fd_install and
+> > > get_unused_fd_flags are exported routines with tons of users of this
+> > > pattern all over.
+> > 
+> > get_file_rcu_many()?  All over the place?  Besides, that's _not_ the normal
+> > pattern for get_unused_fd() - there's a very special reason we don't expect
+> > an error from it here.
 > 
-> It may lead to the undesired outcome of setting the dentry flag
-> DCACHE_FSNOTIFY_PARENT_WATCHED on a directory inode even though it is
-> not watching children, because the audit mark contribute the flag
-> FS_EVENT_ON_CHILD to the inode's fsnotify_mask and another mark could
-> be contributing an event that is possible on child to the inode's mask.
-> 
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Oh well.  I can add an init_dup2, but that should probably go after
+> the series adding fs/for-init.c or fs/init.c.  I'll skip it for the
+> current set of fixups and will send it once we have a stable branch for
+> that.
 
-The same as for patch 2/9...
-
-								Honza
-
-> ---
->  kernel/audit_fsnotify.c | 2 +-
->  kernel/audit_watch.c    | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/audit_fsnotify.c b/kernel/audit_fsnotify.c
-> index 30ca239285a3..bd3a6b79316a 100644
-> --- a/kernel/audit_fsnotify.c
-> +++ b/kernel/audit_fsnotify.c
-> @@ -36,7 +36,7 @@ static struct fsnotify_group *audit_fsnotify_group;
->  
->  /* fsnotify events we care about. */
->  #define AUDIT_FS_EVENTS (FS_MOVE | FS_CREATE | FS_DELETE | FS_DELETE_SELF |\
-> -			 FS_MOVE_SELF | FS_EVENT_ON_CHILD)
-> +			 FS_MOVE_SELF)
->  
->  static void audit_fsnotify_mark_free(struct audit_fsnotify_mark *audit_mark)
->  {
-> diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-> index 61fd601f1edf..e23d54bcc587 100644
-> --- a/kernel/audit_watch.c
-> +++ b/kernel/audit_watch.c
-> @@ -53,7 +53,7 @@ static struct fsnotify_group *audit_watch_group;
->  
->  /* fsnotify events we care about. */
->  #define AUDIT_FS_WATCH (FS_MOVE | FS_CREATE | FS_DELETE | FS_DELETE_SELF |\
-> -			FS_MOVE_SELF | FS_EVENT_ON_CHILD | FS_UNMOUNT)
-> +			FS_MOVE_SELF | FS_UNMOUNT)
->  
->  static void audit_free_parent(struct audit_parent *parent)
->  {
-> -- 
-> 2.17.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+OK.  The really serious ones are around f_pos uses and d_genocide() one.
+FWIW, cleanup_rootfs() should probably be removed - it looks rather
+pointless.
