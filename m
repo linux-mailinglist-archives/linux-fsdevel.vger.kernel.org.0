@@ -2,148 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E2D9222E9B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 12:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81ACC22E9B5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 12:03:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727775AbgG0KCd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 06:02:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53052 "EHLO
+        id S1726984AbgG0KDT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 06:03:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbgG0KCd (ORCPT
+        with ESMTP id S1726139AbgG0KDT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 06:02:33 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85E86C061794
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jul 2020 03:02:33 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id j8so3943619ioe.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jul 2020 03:02:33 -0700 (PDT)
+        Mon, 27 Jul 2020 06:03:19 -0400
+Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 157FEC061794;
+        Mon, 27 Jul 2020 03:03:19 -0700 (PDT)
+Received: by mail-il1-x142.google.com with SMTP id j9so9165170ilc.11;
+        Mon, 27 Jul 2020 03:03:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8AHNGZDZTykJ+1/Y27dtghbTBD3NqB6ChYdcFC+b58w=;
-        b=SiHOiDGfrAWjcgoapPfWeuJotJZI5XJM7tjOyKVEBqn1E+jnW72uQ64sdPkQrDKgWc
-         CJoPDoyOsI3gXrThKMWTIHvWgFHeIJ3MPKJzh6qULaYr7eqDTrKsoImol9IXULvdOn2K
-         gihAnYZe2JV0qdgW/zjKan/IpCZsgv5ZMQiW/x0pckwxMDmtczrA8xtPJqrJAx6LJpQI
-         2NXagp70nKzsjlGWbn0eLOWS/5YidOr2InZh28h/CYp+9P5pz/1IDO7SzYkjodACMwyx
-         EgOWFmaTiLOkPkWxqljPBfrghX2OC0pEZlGEeCAxVjg8xowHRjOlTTixLIPXiCu0IryG
-         NXmw==
+        bh=SbcIk9QRVNmTa64FQw2LUqJ0DwejPGC1RXXC9k0XwjI=;
+        b=H88LdCbSw6dH961YkMIE7I7REvkthDXLwiokY35x5QKJe+KgovD4xNQNHCYC2B2smH
+         hMvJQOZ8f1lzV0rwAT2fZGHlWcciAuUiw4yawOGZb1OgEXBvguPS4Vkvgui/UAvqZeR4
+         g1LoiCRi7IrrYF51ggb/CK4qoYdO68669xmNVUxDJbglXy1x+SeOgN1uO6w+U2/YFcHw
+         wOJXZKtvoqUG2LBWoZpFJda+vvJoKH8Ms+zt/UZYkMMr5lMb1WSlfcZ8VvxLKIA3RSK4
+         xHsaQtMH8I1+rn6MLe+Fr+ryuPLgjKpUd1nbBYmH0nkXH20Aqc3b9V4Ef33XrbFgWLN+
+         7cag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8AHNGZDZTykJ+1/Y27dtghbTBD3NqB6ChYdcFC+b58w=;
-        b=SaUPcgSs0cWoRmLY0VkQ4UE9uMM+0HMnlUhSWB67N/JSRJa7LL1KzYLQPnjT1GGfxs
-         t2osrWcBWfv2ShGKwNY04mnpiE6h/enOWCamQV56GxUuOI87okzUmh7wmqBlOvw5fPRe
-         156rZHEhgVzVRCaxAUj9uuVF5s8xskx4xx2hWuhaHZ5dY26r17Q5DSZVCk2jsjzXlBA/
-         fS3lhQ5YNOkLa3FHh8ZlrYBTAKfWRaBHOoEjAD2yyhxjUCr+bt0RbApEKe5Ww6TVr6Az
-         w6Z8lvi7myovBWX8xo4fsMCMCk4T8QRprvANUvWTQ7dmkSQhFyICu81+8XomhmCZ11qu
-         FCQA==
-X-Gm-Message-State: AOAM533bjI5ppLNkEZ3r0DMlFSZgSFG3OrNXRq0apD9PnZz6qsfvE1kL
-        BomNnYyvtnG/TXt/g4AJM9NuOimqtxn6UEyaSxjbYW0x
-X-Google-Smtp-Source: ABdhPJzjGkrKv/tts/4PqUuZobWocoIezkI+/NUmQWIm70WasYQZcCnqN36qU15yC895e3Ht/lh6Wxx13+TZ3MM3kmg=
-X-Received: by 2002:a02:a986:: with SMTP id q6mr24365012jam.93.1595844152754;
- Mon, 27 Jul 2020 03:02:32 -0700 (PDT)
+        bh=SbcIk9QRVNmTa64FQw2LUqJ0DwejPGC1RXXC9k0XwjI=;
+        b=JLoA2JFVGOM7Pa6obJ5M6yebJWdy2oghB1t2t4zG3nSfXUmuJe5Q/8DOSRmtKf6G/F
+         cAI1+25z5Abv/pfB3ExqPiqTYu7bVusAHeSFkEBOMiLDZfGlL9Z3fv3i6B9bFbJY6md6
+         9f1++7WIUj/6T5DzGGg+p28FTTEu6ZazNuTXh9spvPEmdjIzscfTraoEud2noZBJvqKU
+         U3q+QLanmgitDuGlTkQ55U+khb3fEyESGmQ/gmFz2PUpqk2nB/8k/SYgIOEPlC9VatN2
+         FmefpfDZss5JiaWd6X1Qa+SgS+BjROgtVhUC75QCnGHqMhGXHv5yRAM7y+vFQDSYO/e4
+         wwBw==
+X-Gm-Message-State: AOAM531uql5L497t1JiLfDujs3Kz0mJs1vih6XKSIWLTUV3UnX92jziD
+        z5jrBeoMBRXeN7AJgJCgBOBUfNJM7BPNGaVx66ewNz62
+X-Google-Smtp-Source: ABdhPJxJSBcMJciRLSTi9EnWlJPB63Ai95H7UpZj0ExgEiiivXRREnUn9J5JqqB/sEzaPW4V0p/djZBaW8EAeKmCTjE=
+X-Received: by 2002:a92:730e:: with SMTP id o14mr15302562ilc.203.1595844198388;
+ Mon, 27 Jul 2020 03:03:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200612093343.5669-1-amir73il@gmail.com> <20200612093343.5669-2-amir73il@gmail.com>
- <20200703140342.GD21364@quack2.suse.cz> <CAOQ4uxgJkmSgt6nSO3C4y2Mc=T92ky5K5eis0f1Ofr-wDq7Wrw@mail.gmail.com>
- <20200706110526.GA3913@quack2.suse.cz> <CAOQ4uxi5Zpp7rCKdOkdw9Nkd=uGC-K2AuLqOFc0WQc_CgJQP2Q@mail.gmail.com>
- <CAOQ4uxgYpufPyhivOQyEhUQ0g+atKLwAAuefkSwaWXYAyMgw5Q@mail.gmail.com> <20200727074417.GB23179@quack2.suse.cz>
-In-Reply-To: <20200727074417.GB23179@quack2.suse.cz>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 27 Jul 2020 13:02:21 +0300
-Message-ID: <CAOQ4uxjc72vm7yqbH+w5mQ=uNbhRjhqFfn8R+LXVZRiExy-NXA@mail.gmail.com>
-Subject: Re: fsnotify: minimise overhead when there are no marks related to sb
-To:     Jan Kara <jack@suse.cz>
-Cc:     Mel Gorman <mgorman@techsingularity.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20200726145726.1484-1-laoar.shao@gmail.com> <20200726160400.GF23808@casper.infradead.org>
+In-Reply-To: <20200726160400.GF23808@casper.infradead.org>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Mon, 27 Jul 2020 18:02:42 +0800
+Message-ID: <CALOAHbBVK2qK0y3vtU7VgxaWOGTk1VAV_k9LSgGcXgy85dJDhQ@mail.gmail.com>
+Subject: Re: [PATCH v3] xfs: introduce task->in_fstrans for transaction
+ reservation recursion protection
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Michal Hocko <mhocko@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Linux MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 27, 2020 at 10:44 AM Jan Kara <jack@suse.cz> wrote:
+On Mon, Jul 27, 2020 at 12:04 AM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> On Sun 26-07-20 18:20:26, Amir Goldstein wrote:
-> > On Thu, Jul 9, 2020 at 8:56 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > >
-> > > > > > Otherwise the patch looks good. One observation though: The (mask &
-> > > > > > FS_MODIFY) check means that all vfs_write() calls end up going through the
-> > > > > > "slower" path iterating all mark types and checking whether there are marks
-> > > > > > anyway. That could be relatively simply optimized using a hidden mask flag
-> > > > > > like FS_ALWAYS_RECEIVE_MODIFY which would be set when there's some mark
-> > > > > > needing special handling of FS_MODIFY... Not sure if we care enough at this
-> > > > > > point...
-> > > > >
-> > > > > Yeh that sounds low hanging.
-> > > > > Actually, I Don't think we need to define a flag for that.
-> > > > > __fsnotify_recalc_mask() can add FS_MODIFY to the object's mask if needed.
-> > > >
-> > > > Yes, that would be even more elegant.
-> > > >
-> > > > > I will take a look at that as part of FS_PRE_MODIFY work.
-> > > > > But in general, we should fight the urge to optimize theoretic
-> > > > > performance issues...
-> > > >
-> > > > Agreed. I just suspect this may bring measurable benefit for hackbench pipe
-> > > > or tiny tmpfs writes after seeing Mel's results. But as I wrote this is a
-> > > > separate idea and without some numbers confirming my suspicion I don't
-> > > > think the complication is worth it so I don't want you to burn time on this
-> > > > unless you're really interested :).
-> > > >
-> > >
-> > > You know me ;-)
-> > > FS_MODIFY optimization pushed to fsnotify_pre_modify branch.
-> > > Only tested that LTP tests pass.
-> > >
-> > > Note that this is only expected to improve performance in case there *are*
-> > > marks, but not marks with ignore mask, because there is an earlier
-> > > optimization in fsnotify() for the no marks case.
-> > >
-> >
-> > Hi Mel,
-> >
-> > After following up on Jan's suggestion above, I realized there is another
-> > low hanging optimization we can make.
-> >
-> > As you may remember, one of the solutions we considered was to exclude
-> > special or internal sb's from notifications based on some SB flag, but making
-> > assumptions about which sb are expected to provide notifications turned out
-> > to be a risky game.
-> >
-> > We can however, keep a counter on sb to *know* there are no watches
-> > on any object in this sb, so the test:
-> >
-> >         if (!sb->s_fsnotify_marks &&
-> >             (!mnt || !mnt->mnt_fsnotify_marks) &&
-> >             (!inode || !inode->i_fsnotify_marks))
-> >                 return 0;
-> >
-> > Which is not so nice for inlining, can be summarized as:
-> >
-> >         if (atomic_long_read(&inode->i_sb->s_fsnotify_obj_refs) == 0)
-> >                 return 0;
-> >
-> > Which is nicer for inlining.
+> On Sun, Jul 26, 2020 at 10:57:26AM -0400, Yafang Shao wrote:
+> > Bellow comment is quoted from Dave,
 >
-> That's a nice idea. I was just wondering why do you account only inode
-> references in the superblock. Because if there's only say mount watch,
-> s_fsnotify_obj_refs will be 0 and you will wrongly skip reporting. Or am I
-> misunderstanding something? I'd rather have counter like
-> sb->s_fsnotify_connectors, that will account all connectors related to the
-> superblock - i.e., connectors attached to the superblock, mounts referring
-> to the superblock, or inodes referring to the superblock...
+> FYI, you mean "Below", not "Bellow".  Dave doesn't often bellow.
+
+Ah, thanks for pointing that out. I often make that kind of misstake.
+
+>
+> > As a result, we should reintroduce PF_FSTRANS. Because PF_FSTRANS is only
+> > set by current, we can move it out of task->flags to avoid being out of PF_
+> > flags. So a new flag in_fstrans is introduced.
+>
+> I don't think we need a new flag for this.  I think you can just set
+> current->journal_info to a non-NULL value.
+
+Seems like a good suggestion.
+I will think about it.
+
+>
+> > +++ b/fs/xfs/xfs_linux.h
+> > @@ -111,6 +111,20 @@ typedef __u32                    xfs_nlink_t;
+> >  #define current_restore_flags_nested(sp, f)  \
+> >               (current->flags = ((current->flags & ~(f)) | (*(sp) & (f))))
+> >
+> > +static inline unsigned int xfs_trans_context_start(void)
+> > +{
+> > +     unsigned int flags = current->in_fstrans;
+> > +
+> > +     current->in_fstrans = 1;
+> > +
+> > +     return flags;
+> > +}
+> > +
+> > +static inline void xfs_trans_context_end(unsigned int flags)
+> > +{
+> > +     current->in_fstrans = flags ? 1 : 0;
+> > +}
+>
+> Does XFS support nested transactions?  If we're just using
+> current->journal_info, we can pretend its an unsigned long and use it
+> as a counter rather than handle the nesting the same way as the GFP flags.
 >
 
-Yeh, that is what I did.
-Those two commits change the former s_fsnotify_inode_refs
-to s_fsnotify_obj_refs which counts objects (inodes/mounts/sb) pointed to
-be connectors.
-I agree that s_fsnotify_connectors may be a better choice of name ;-)
 
-de1255f8a64c fsnotify: count all objects with attached connectors
-5e6c3af6e2df fsnotify: count s_fsnotify_inode_refs for attached connectors
-
-Thanks,
-Amir.
+-- 
+Thanks
+Yafang
