@@ -2,71 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ADC222F433
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 17:58:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8A8C22F43A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 18:01:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbgG0P6d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 11:58:33 -0400
-Received: from verein.lst.de ([213.95.11.211]:44198 "EHLO verein.lst.de"
+        id S1728245AbgG0QBM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 12:01:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727097AbgG0P6c (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 11:58:32 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 91E3C68B05; Mon, 27 Jul 2020 17:58:29 +0200 (CEST)
-Date:   Mon, 27 Jul 2020 17:58:29 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Song Liu <song@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-raid@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 18/23] init: open code setting up stdin/stdout/stderr
-Message-ID: <20200727155829.GA7225@lst.de>
-References: <20200714190427.4332-1-hch@lst.de> <20200714190427.4332-19-hch@lst.de> <20200727030534.GD795125@ZenIV.linux.org.uk> <20200727054625.GA1241@lst.de> <20200727060322.GC794331@ZenIV.linux.org.uk> <20200727064828.GA2317@lst.de> <20200727155453.GE794331@ZenIV.linux.org.uk>
+        id S1726800AbgG0QBM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Jul 2020 12:01:12 -0400
+Received: from paulmck-ThinkPad-P72.home (50-39-111-31.bvtn.or.frontiernet.net [50.39.111.31])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 783DD20672;
+        Mon, 27 Jul 2020 16:01:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595865671;
+        bh=TyuIfn7O9yjs35JfR7DUagieEalz1hEmViE6CiWVKtg=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=lkp/GaXkC6lAfR/wK8oDYvOQqYth2ZXVH7Uhzgb3o/iMjOB1Q8fUH3mSxHi/I4iAD
+         uSjxRHv+RXxfRcHKo/KJrHBJX1bHA+xaf6+A+qRlqELWL9MdwJqkRKav4K/Zuxn7VV
+         Xip0UI7L6rUHyd2GcT6nqKuKn0B7XDwh/tee/GR8=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 37CDA3522AF4; Mon, 27 Jul 2020 09:01:11 -0700 (PDT)
+Date:   Mon, 27 Jul 2020 09:01:11 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] tools/memory-model: document the "one-time init" pattern
+Message-ID: <20200727160111.GH9247@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20200717044427.68747-1-ebiggers@kernel.org>
+ <20200717174750.GQ12769@casper.infradead.org>
+ <20200718013839.GD2183@sol.localdomain>
+ <20200718021304.GS12769@casper.infradead.org>
+ <20200718052818.GF2183@sol.localdomain>
+ <20200727151746.GC1468275@rowland.harvard.edu>
+ <20200727152827.GM23808@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200727155453.GE794331@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200727152827.GM23808@casper.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 27, 2020 at 04:54:53PM +0100, Al Viro wrote:
-> On Mon, Jul 27, 2020 at 08:48:28AM +0200, Christoph Hellwig wrote:
-> > On Mon, Jul 27, 2020 at 07:03:22AM +0100, Al Viro wrote:
-> > > On Mon, Jul 27, 2020 at 07:46:25AM +0200, Christoph Hellwig wrote:
-> > > > On Mon, Jul 27, 2020 at 04:05:34AM +0100, Al Viro wrote:
-> > > > > On Tue, Jul 14, 2020 at 09:04:22PM +0200, Christoph Hellwig wrote:
-> > > > > > Don't rely on the implicit set_fs(KERNEL_DS) for ksys_open to work, but
-> > > > > > instead open a struct file for /dev/console and then install it as FD
-> > > > > > 0/1/2 manually.
-> > > > > 
-> > > > > I really hate that one.  Every time we exposed the internal details to
-> > > > > the fucking early init code, we paid for that afterwards.  And this
-> > > > > goes over the top wrt the level of details being exposed.
-> > > > > 
-> > > > > _IF_ you want to keep that thing, move it to fs/file.c, with dire comment
-> > > > > re that being very special shite for init and likely cause of subsequent
-> > > > > trouble whenever anything gets changed, a gnat farts somewhere, etc.
-> > > > 
-> > > > Err, while I'm all for keeping internals internal, fd_install and
-> > > > get_unused_fd_flags are exported routines with tons of users of this
-> > > > pattern all over.
-> > > 
-> > > get_file_rcu_many()?  All over the place?  Besides, that's _not_ the normal
-> > > pattern for get_unused_fd() - there's a very special reason we don't expect
-> > > an error from it here.
+On Mon, Jul 27, 2020 at 04:28:27PM +0100, Matthew Wilcox wrote:
+> On Mon, Jul 27, 2020 at 11:17:46AM -0400, Alan Stern wrote:
+> > Given a type "T", an object x of type pointer-to-T, and a function
+> > "func" that takes various arguments and returns a pointer-to-T, the
+> > accepted API for calling func once would be to create once_func() as
+> > follows:
 > > 
-> > Oh well.  I can add an init_dup2, but that should probably go after
-> > the series adding fs/for-init.c or fs/init.c.  I'll skip it for the
-> > current set of fixups and will send it once we have a stable branch for
-> > that.
+> > T *once_func(T **ppt, args...)
+> > {
+> > 	static DEFINE_MUTEX(mut);
+> > 	T *p;
+> > 
+> > 	p = smp_load_acquire(ppt);	/* Mild optimization */
+> > 	if (p)
+> > 		return p;
+> > 
+> > 	mutex_lock(mut);
+> > 	p = smp_load_acquire(ppt);
+> > 	if (!p) {
+> > 		p = func(args...);
+> > 		if (!IS_ERR_OR_NULL(p))
+> > 			smp_store_release(ppt, p);
+> > 	}
+> > 	mutex_unlock(mut);
+> > 	return p;
+> > }
+> > 
+> > Users then would have to call once_func(&x, args...) and check the
+> > result.  Different x objects would constitute different "once"
+> > domains.
+> [...]
+> > In fact, the only drawback I can think of is that because this relies
+> > on a single mutex for all the different possible x's, it might lead to
+> > locking conflicts (if func had to call once_func() recursively, for
+> > example).  In most reasonable situations such conflicts would not
+> > arise.
 > 
-> OK.  The really serious ones are around f_pos uses and d_genocide() one.
-> FWIW, cleanup_rootfs() should probably be removed - it looks rather
-> pointless.
+> Another drawback for this approach relative to my get_foo() approach
+> upthread is that, because we don't have compiler support, there's no
+> enforcement that accesses to 'x' go through once_func().  My approach
+> wraps accesses in a deliberately-opaque struct so you have to write
+> some really ugly code to get at the raw value, and it's just easier to
+> call get_foo().
 
-I've got all that in a series I've tested this morning, and which
-I really should post now..
+Could ACCESS_PRIVATE() help in this case?  This relies on sparse rather
+than the compiler, but some of the testing services do run sparse
+regularly.
+
+							Thanx, Paul
