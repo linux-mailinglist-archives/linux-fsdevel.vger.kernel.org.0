@@ -2,163 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1911C22F8C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 21:17:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D02F22F916
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 21:32:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbgG0TQ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 15:16:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728049AbgG0TQ5 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 15:16:57 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A13CAC061794;
-        Mon, 27 Jul 2020 12:16:56 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id t142so9483728wmt.4;
-        Mon, 27 Jul 2020 12:16:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Fmgy8aOrOaosUqw8qw2R0Byip/Q6rVp5BO1Fak+JZ30=;
-        b=Ciph4lQ202oxMhxwuDhqC+FaifmbEaM4ku6yFaGBlpMsJ/TBl2hquhabMSj3Ctc68y
-         71l5lAisoevj4vjsC3D4Xvz2XPMwRkq0hk+wpcUH15DSQbUpBhvD5QR+D0A7VC75dOs8
-         8ZmcuCXrRtXD3nxfdQ1zhCaMFqf7ejIIzp+tNmrd8TvjijIU35BHnQSaNcfx1E+HFXRz
-         7nv5RpdBVUuJX/j1WYJ5iaVimObT+9TyGtFbpPbbRE01qD9FZcIkATukdYSXoBVxYhSw
-         6sC+q5osarJDE00mlIiAvfMDyM28rLwIV7WK7WG1TEBQFNjLeHl+ITPIVRJBL1pHJPbY
-         UwzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Fmgy8aOrOaosUqw8qw2R0Byip/Q6rVp5BO1Fak+JZ30=;
-        b=M6ooYpysUgY/E/J/mTDvsBHauO1hberhbKDpACsaMEAodpo3CFpiBlhqKlHXl5dMJq
-         g0aGRFL83egBjKPwQqLFnM9jS9qg+d4nioDgyYIi9bun33lmd24WLqxG344UAAM9ZEwg
-         m/W0A0l9vBAGIhfIrCRTATkg4YZq7DW6nKC5KdAUBKJZp95DnpY03Kk4AFNRPDk2djwl
-         vOTqkFW2qviMcAcnH3UFSB8b+GZlepKb4whFHt5t3CKEWnmWrAGkp8n5USFnH9RUYU9x
-         NNWf4CV29tmVAxzSX1Kjtj1oXVKE4m/dvtAl628+qqGpppaHJftgIDiyYmcJ1klXFjhZ
-         oKQg==
-X-Gm-Message-State: AOAM532L06FFEhbk0LQ0UJge0eWqiafHiSixM7V4kbuqK2+p2H39Poip
-        8ciaJWUMa1PyLPbBzzQEJPGI49k1Ajw4pmiSK1U=
-X-Google-Smtp-Source: ABdhPJz5ci8PtopFnwl2wC3FFEjn8xB7o/gSCRHwfaULk/Ae+T/JB/W5PEyS1njIUPBTOUz96mZD/TBgW6vKMjQ0LSY=
-X-Received: by 2002:a7b:c841:: with SMTP id c1mr679956wml.25.1595877415006;
- Mon, 27 Jul 2020 12:16:55 -0700 (PDT)
+        id S1726800AbgG0TcV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 15:32:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42506 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726222AbgG0TcU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Jul 2020 15:32:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 3FED1AD43;
+        Mon, 27 Jul 2020 19:32:29 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 8C2DE1E12C7; Mon, 27 Jul 2020 21:32:18 +0200 (CEST)
+Date:   Mon, 27 Jul 2020 21:32:18 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/9] fsnotify: simplify dir argument to handle_event()
+Message-ID: <20200727193218.GH5284@quack2.suse.cz>
+References: <20200722125849.17418-1-amir73il@gmail.com>
+ <20200722125849.17418-6-amir73il@gmail.com>
 MIME-Version: 1.0
-References: <1595605762-17010-1-git-send-email-joshi.k@samsung.com>
- <CGME20200724155350epcas5p3b8f1d59eda7f8fbb38c828f692d42fd6@epcas5p3.samsung.com>
- <1595605762-17010-7-git-send-email-joshi.k@samsung.com> <f5416bd4-93b3-4d14-3266-bdbc4ae1990b@kernel.dk>
-In-Reply-To: <f5416bd4-93b3-4d14-3266-bdbc4ae1990b@kernel.dk>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Tue, 28 Jul 2020 00:46:28 +0530
-Message-ID: <CA+1E3rJAa3E2Ti0fvvQTzARP797qge619m4aYLjXeR3wxdFwWw@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-api@vger.kernel.org, SelvaKumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200722125849.17418-6-amir73il@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 10:00 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 7/24/20 9:49 AM, Kanchan Joshi wrote:
-> > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> > index 7809ab2..6510cf5 100644
-> > --- a/fs/io_uring.c
-> > +++ b/fs/io_uring.c
-> > @@ -1284,8 +1301,15 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
-> >       cqe = io_get_cqring(ctx);
-> >       if (likely(cqe)) {
-> >               WRITE_ONCE(cqe->user_data, req->user_data);
-> > -             WRITE_ONCE(cqe->res, res);
-> > -             WRITE_ONCE(cqe->flags, cflags);
-> > +             if (unlikely(req->flags & REQ_F_ZONE_APPEND)) {
-> > +                     if (likely(res > 0))
-> > +                             WRITE_ONCE(cqe->res64, req->rw.append_offset);
-> > +                     else
-> > +                             WRITE_ONCE(cqe->res64, res);
-> > +             } else {
-> > +                     WRITE_ONCE(cqe->res, res);
-> > +                     WRITE_ONCE(cqe->flags, cflags);
-> > +             }
->
-> This would be nice to keep out of the fast path, if possible.
+On Wed 22-07-20 15:58:45, Amir Goldstein wrote:
+> The meaning of dir argument could be simplified a lot to just the base
+> of file_name it we let the only backends that care about it (fanotify and
+> dnotify) cope with the case of NULL file_name themselves, which is easy.
+> 
+> This will make dir argument meaning generic enough so we can use the
+> same argument for fsnotify() without causing confusion.
+> 
+> Fixes: e2c9d9039c3f ("fsnotify: pass dir argument to handle_event() callback")
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-I was thinking of keeping a function-pointer (in io_kiocb) during
-submission. That would have avoided this check......but argument count
-differs, so it did not add up.
+I've folded this patch into "fsnotify: pass dir argument to handle_event()
+callback" and int "fanotify: add basic support for FAN_REPORT_DIR_FID".
 
-> > diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-> > index 92c2269..2580d93 100644
-> > --- a/include/uapi/linux/io_uring.h
-> > +++ b/include/uapi/linux/io_uring.h
-> > @@ -156,8 +156,13 @@ enum {
-> >   */
-> >  struct io_uring_cqe {
-> >       __u64   user_data;      /* sqe->data submission passed back */
-> > -     __s32   res;            /* result code for this event */
-> > -     __u32   flags;
-> > +     union {
-> > +             struct {
-> > +                     __s32   res;    /* result code for this event */
-> > +                     __u32   flags;
-> > +             };
-> > +             __s64   res64;  /* appending offset for zone append */
-> > +     };
-> >  };
->
-> Is this a compatible change, both for now but also going forward? You
-> could randomly have IORING_CQE_F_BUFFER set, or any other future flags.
+								Honza
 
-Sorry, I didn't quite understand the concern. CQE_F_BUFFER is not
-used/set for write currently, so it looked compatible at this point.
-Yes, no room for future flags for this operation.
-Do you see any other way to enable this support in io-uring?
-
-> Layout would also be different between big and little endian, so not
-> even that easy to set aside a flag for this. But even if that was done,
-> we'd still have this weird API where liburing or the app would need to
-> distinguish this cqe from all others based on... the user_data? Hence
-> liburing can't do it, only the app would be able to.
->
-> Just seems like a hack to me.
-
-Yes, only user_data to distinguish. Do liburing helpers need to look
-at cqe->res (and decide something) before returning the cqe to
-application?
-I see that happening at once place, but not sure when it would hit
-LIBURING_DATA_TIMEOUT condition.
-__io_uring_peek_cqe()
-{
-           do {
-                io_uring_for_each_cqe(ring, head, cqe)
-                        break;
-                if (cqe) {
-                        if (cqe->user_data == LIBURING_UDATA_TIMEOUT) {
-                                if (cqe->res < 0)
-                                        err = cqe->res;
-                                io_uring_cq_advance(ring, 1);
-                                if (!err)
-                                        continue;
-                                cqe = NULL;
-                        }
-                }
-                break;
-        } while (1);
-}
-
-
-
+> ---
+>  fs/notify/dnotify/dnotify.c      | 2 +-
+>  fs/notify/fanotify/fanotify.c    | 7 ++++---
+>  fs/notify/fsnotify.c             | 2 +-
+>  include/linux/fsnotify_backend.h | 4 +---
+>  4 files changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
+> index 305e5559560a..ca78d3f78da8 100644
+> --- a/fs/notify/dnotify/dnotify.c
+> +++ b/fs/notify/dnotify/dnotify.c
+> @@ -112,7 +112,7 @@ static int dnotify_handle_event(struct fsnotify_group *group, u32 mask,
+>  	struct fsnotify_mark *child_mark = fsnotify_iter_child_mark(iter_info);
+>  
+>  	/* not a dir, dnotify doesn't care */
+> -	if (!dir)
+> +	if (!dir && !(mask & FS_ISDIR))
+>  		return 0;
+>  
+>  	if (WARN_ON(fsnotify_iter_vfsmount_mark(iter_info)))
+> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+> index 36ea0cd6387e..03e3dce2a97c 100644
+> --- a/fs/notify/fanotify/fanotify.c
+> +++ b/fs/notify/fanotify/fanotify.c
+> @@ -245,7 +245,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
+>  			return 0;
+>  	} else if (!(fid_mode & FAN_REPORT_FID)) {
+>  		/* Do we have a directory inode to report? */
+> -		if (!dir)
+> +		if (!dir && !(event_mask & FS_ISDIR))
+>  			return 0;
+>  	}
+>  
+> @@ -525,12 +525,13 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+>  	struct fanotify_event *event = NULL;
+>  	gfp_t gfp = GFP_KERNEL_ACCOUNT;
+>  	struct inode *id = fanotify_fid_inode(mask, data, data_type, dir);
+> +	struct inode *dirid = fanotify_dfid_inode(mask, data, data_type, dir);
+>  	const struct path *path = fsnotify_data_path(data, data_type);
+>  	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
+>  	struct inode *child = NULL;
+>  	bool name_event = false;
+>  
+> -	if ((fid_mode & FAN_REPORT_DIR_FID) && dir) {
+> +	if ((fid_mode & FAN_REPORT_DIR_FID) && dirid) {
+>  		/*
+>  		 * With both flags FAN_REPORT_DIR_FID and FAN_REPORT_FID, we
+>  		 * report the child fid for events reported on a non-dir child
+> @@ -540,7 +541,7 @@ static struct fanotify_event *fanotify_alloc_event(struct fsnotify_group *group,
+>  		    (mask & FAN_EVENT_ON_CHILD) && !(mask & FAN_ONDIR))
+>  			child = id;
+>  
+> -		id = fanotify_dfid_inode(mask, data, data_type, dir);
+> +		id = dirid;
+>  
+>  		/*
+>  		 * We record file name only in a group with FAN_REPORT_NAME
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 277af3d5efce..834775f61f6b 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -365,7 +365,7 @@ int fsnotify(struct inode *to_tell, __u32 mask, const void *data, int data_type,
+>  	const struct path *path = fsnotify_data_path(data, data_type);
+>  	struct fsnotify_iter_info iter_info = {};
+>  	struct super_block *sb = to_tell->i_sb;
+> -	struct inode *dir = S_ISDIR(to_tell->i_mode) ? to_tell : NULL;
+> +	struct inode *dir = file_name ? to_tell : NULL;
+>  	struct mount *mnt = NULL;
+>  	struct inode *child = NULL;
+>  	int ret = 0;
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index 9bd75d0582b4..d94a50e0445a 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -123,9 +123,7 @@ struct mem_cgroup;
+>   * @data_type:	type of object for fanotify_data_XXX() accessors
+>   * @dir:	optional directory associated with event -
+>   *		if @file_name is not NULL, this is the directory that
+> - *		@file_name is relative to. Otherwise, @dir is the object
+> - *		inode if event happened on directory and NULL if event
+> - *		happenned on a non-directory.
+> + *		@file_name is relative to
+>   * @file_name:	optional file name associated with event
+>   * @cookie:	inotify rename cookie
+>   * @iter_info:	array of marks from this group that are interested in the event
+> -- 
+> 2.17.1
+> 
 -- 
-Joshi
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
