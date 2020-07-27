@@ -2,64 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 74FEB22F6DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 19:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BE4A22F6EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 19:42:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbgG0Rk5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 13:40:57 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49847 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728935AbgG0Rk4 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 13:40:56 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1k077O-0001vZ-V6; Mon, 27 Jul 2020 17:40:55 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] binfmt_elf: fix unsigned regset0_size compared to less than zero
-Date:   Mon, 27 Jul 2020 18:40:54 +0100
-Message-Id: <20200727174054.154765-1-colin.king@canonical.com>
+        id S1730893AbgG0Rmx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 13:42:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36790 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729097AbgG0Rmx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Jul 2020 13:42:53 -0400
+Received: from sol.hsd1.ca.comcast.net (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA0AD20714;
+        Mon, 27 Jul 2020 17:42:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595871772;
+        bh=ozOE6UcON1RhZRLjtldC0B+EDLULU+0SvtdCa41mDdc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LBdDwGb+BxMrhL4dI59/DVNUo1GjKSYw9URg4Hdmy6WB9h2T62oHc1A0I16S8ljl5
+         p+CHUA2oy0y3SbsAUmcAwQjQG5cYXYlPo0dIM/Y0h7r8X3w3buT6d7oKCvoh2+fpwP
+         M+QvmPMnjg/IvpmdNKk4ahflJ0mRWcmjC968YWAA=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, Satya Tangirala <satyat@google.com>,
+        Dave Chinner <david@fromorbit.com>
+Subject: [PATCH] fscrypt: don't load ->i_crypt_info before it's known to be valid
+Date:   Mon, 27 Jul 2020 10:41:58 -0700
+Message-Id: <20200727174158.121456-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Eric Biggers <ebiggers@google.com>
 
-Variable regset0_size is an unsigned int and it is being checked
-for an error by checking if it is less than zero, and hence this
-check is always going to be false.  Fix this by making the variable
-regset0_size signed.
+In fscrypt_set_bio_crypt_ctx(), ->i_crypt_info isn't known to be
+non-NULL until we check fscrypt_inode_uses_inline_crypto().  So, load
+->i_crypt_info after the check rather than before.  This makes no
+difference currently, but it prevents people from introducing bugs where
+the pointer is dereferenced when it may be NULL.
 
-Addresses-Coverity: ("Unsigned compared against 0")
-Fixes: 0f17865d8847 ("introduction of regset ->get() wrappers, switching ELF coredumps to those")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Suggested-by: Dave Chinner <david@fromorbit.com>
+Cc: Satya Tangirala <satyat@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/binfmt_elf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/crypto/inline_crypt.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 6a171a28bdf7..13d053982dd7 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1821,7 +1821,7 @@ static int fill_thread_core_info(struct elf_thread_core_info *t,
- 				 long signr, size_t *total)
+diff --git a/fs/crypto/inline_crypt.c b/fs/crypto/inline_crypt.c
+index dfb06375099ae..b6b8574caa13c 100644
+--- a/fs/crypto/inline_crypt.c
++++ b/fs/crypto/inline_crypt.c
+@@ -244,11 +244,12 @@ static void fscrypt_generate_dun(const struct fscrypt_info *ci, u64 lblk_num,
+ void fscrypt_set_bio_crypt_ctx(struct bio *bio, const struct inode *inode,
+ 			       u64 first_lblk, gfp_t gfp_mask)
  {
- 	unsigned int i;
--	unsigned int regset0_size;
-+	int regset0_size;
+-	const struct fscrypt_info *ci = inode->i_crypt_info;
++	const struct fscrypt_info *ci;
+ 	u64 dun[BLK_CRYPTO_DUN_ARRAY_SIZE];
  
- 	/*
- 	 * NT_PRSTATUS is the one special case, because the regset data
+ 	if (!fscrypt_inode_uses_inline_crypto(inode))
+ 		return;
++	ci = inode->i_crypt_info;
+ 
+ 	fscrypt_generate_dun(ci, first_lblk, dun);
+ 	bio_crypt_set_ctx(bio, &ci->ci_enc_key.blk_key->base, dun, gfp_mask);
 -- 
 2.27.0
 
