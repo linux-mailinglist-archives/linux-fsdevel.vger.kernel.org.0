@@ -2,148 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B45A22F666
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 19:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 167B522F68D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jul 2020 19:25:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730657AbgG0RQS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 13:16:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728021AbgG0RQR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 13:16:17 -0400
-Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9042206E7;
-        Mon, 27 Jul 2020 17:16:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595870176;
-        bh=7UCQgSoiooCyBil8fOSJp8RobRWZr1sCpOea8qGPx3c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xLeAxijvamdVYBWP2+Xvnj2jRciZbuOyQV+Kr2OvyHP74SUbz5bInn0yjxVioK8iA
-         8RWxuGNDB39zHQEMFVvnNN+Y241XtQ8jBcC1cBB46iXnudHmAJqjUxgGzvnF30XsHK
-         t5+RylcDIYaB/36yRNq39qkw5MkMKxUWNmCGlon4=
-Date:   Mon, 27 Jul 2020 10:16:15 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Satya Tangirala <satyat@google.com>, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v4 3/7] iomap: support direct I/O with fscrypt using
- blk-crypto
-Message-ID: <20200727171615.GJ1138@sol.localdomain>
-References: <20200722211629.GE2005@dread.disaster.area>
- <20200722223404.GA76479@sol.localdomain>
- <20200723220752.GF2005@dread.disaster.area>
- <20200723230345.GB870@sol.localdomain>
- <20200724013910.GH2005@dread.disaster.area>
- <20200724034628.GC870@sol.localdomain>
- <20200724053130.GO2005@dread.disaster.area>
- <20200724174132.GB819@sol.localdomain>
- <20200725234751.GR2005@dread.disaster.area>
- <20200726024211.GA14321@sol.localdomain>
+        id S1730735AbgG0RZl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 13:25:41 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:59595 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbgG0RZk (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Jul 2020 13:25:40 -0400
+Received: from mail-qk1-f170.google.com ([209.85.222.170]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MC2o9-1k5MDf3aZx-00COYp; Mon, 27 Jul 2020 19:25:39 +0200
+Received: by mail-qk1-f170.google.com with SMTP id 2so11868100qkf.10;
+        Mon, 27 Jul 2020 10:25:38 -0700 (PDT)
+X-Gm-Message-State: AOAM53133EXYITZmZGW14vx4amvBuI9bqNv3y8GMdxF943w3XFgZZ4ii
+        QaobYtlLaYT0WJh+8pLguWbn8ZgdeikONE4SRYk=
+X-Google-Smtp-Source: ABdhPJyHnciMJIel1lwAD5bow/zb/QGlp3YciXK2/NVdtnimMUPJo7yU6pZ4mJlHkwU8BKDS8Pa279r2z6tHPp7qb+M=
+X-Received: by 2002:a37:b484:: with SMTP id d126mr23840011qkf.394.1595870737385;
+ Mon, 27 Jul 2020 10:25:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200726024211.GA14321@sol.localdomain>
+References: <20200727162935.31714-1-rppt@kernel.org> <20200727162935.31714-5-rppt@kernel.org>
+In-Reply-To: <20200727162935.31714-5-rppt@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 27 Jul 2020 19:25:20 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3Lbjdx_43-b0i1FXEfqaNPbaoXLraa2WikfPHrOZ6Kog@mail.gmail.com>
+Message-ID: <CAK8P3a3Lbjdx_43-b0i1FXEfqaNPbaoXLraa2WikfPHrOZ6Kog@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] arch, mm: wire up memfd_secret system call were relevant
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, linux-nvdimm@lists.01.org,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Palmer Dabbelt <palmerdabbelt@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:EceBZqwyo4B1UVEZn/Xgzc7AE01Hrl25zqNiNRQE1nSOWMZWle+
+ g7N+PnXRbCSAMr0XnZ49UfT+iW8IunuS9TPM822G37AEvmA3W7in5ND1Ye/8UnvHrrPI383
+ kEGT+CmwlBf7zuvI0Sxkpzl1sWD2ck3PNJ8qOBybMEfmYFG+9s9wlKoe6v/QgUZ1P6d1R0y
+ H6Ut5jTjR1+YQzurNJp/w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:tC2Xp4XT5xY=:L/0NRMbXw9YElq6rjWLtqI
+ 0Mr9VzUM7WLH9qn8aC+ng9oz0Sm/BE8sB2tVVg2loLmdQaSofHRMLqW5Y4pNJei7bc/dercWN
+ Udlmt5WUOCU5zpzqvUwLUPFT1sF+o2a7pUVSA3ztLs1q3SQSiolebs104pJWejE1eanEdHu7h
+ pAhPGDX0lgydu5PmjGhTyfOA8u60UZaG0ikMSmXVINfSK6/dGwD4fVJwwLUcNjdV1HKqQFsAz
+ wPopjZsfVAljmtbwysL9ASZIYsxnDh+58NyIrxvgUsBHlBWS/2NqXJ+LFKj42LfOuycfr5IfT
+ WxpeZ1lDMmGa+s6smQ5KisI2ySFTw6K5//f55QKlnKOakHMxaur1L1Ef7k+k+GOZPAu3QUwA4
+ t8W299OnR0zZuJeJkGlWSA3Y7VfAIAIxe7nVI+nSLk7EakTipPaIfnOAX5/qMZjlyRKhNO4BI
+ BH8MJ9WdtDzwQVfPL1vkRZmMy1eOT9G4EdhMn0GUm+fv59547if+HFv0N3b+biOXTql/861pT
+ KHIzur9/Hbh+Yh+DJB2cE9PLgDdoAAjMk/cnxGxcvXXBv11dVaHYlwkWpZKM1inB91LtXdLLy
+ RcD9NvwaM079xjiYEMzK10x5QNBWQbPw3/BgGFEC3hlmBdpws93U5bYzxakGXe+kPHcUuvRlC
+ 8CDFQNf2US/HaGllrd7w+cF30C/4IzgboUYrmJagytrGukMNmGcW4NUyu3nfUkvTn2kDYAEvj
+ i56M62rt8WzjSv5WG1rSSs9FrJ46Gh/iFbQQR0NCTmAPCDfvWcWTDQYuBOL4SqCzbNwnXTvJ7
+ Kgy40VpSpa6qgmeZpTDKScN3kXt34wbCVeakSB3aZT6XILnzTAKiComYlrxspK0Fo6uZVWuH6
+ vkzqNYYGpLawOe0Ip2Ef50B7uOKtHKYGNL/mKbZgdfm/V5w7QJrno9H2Fk4Fe6BqnQudOSvK7
+ E3ALx286dghNqXnZ9IkRNbDxpAQ8CTsKB8F0EmYmxlKE74AA0CKlJ
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jul 25, 2020 at 07:42:11PM -0700, Eric Biggers wrote:
-> > Exactly my point. Requiring infrastructure and storage layers to
-> > obey completely new, undefined, undiscoverable, opaque and variable
-> > definition of the block devices' "atomic unit of IO", then that's
-> > simply a non-starter. That requires a complete re-architecture of
-> > the block layers and how things interface and transmit information
-> > through them. At minimum, high level IO alignment constraints must
-> > be generic and not be hidden in context specific crypto structures.
-> 
-> Do you have any specific examples in mind of where *encrypted* I/O may broken at
-> only a logical_block_size boundary?  Remember that encrypted I/O with a
-> particular data_unit_size is only issued if the request_queue has declared that
-> it supports encryption with that data_unit_size.  In the case of a layered
-> device, that means that every layer would have to opt-into supporting encryption
-> as well as the specific data_unit_size.
-> 
-> Also, the alignment requirement is already passed down the stack as part of the
-> bio_crypt_ctx.  If there do turn out to be places that need to use it, we could
-> easily define generic helper functions:
-> 
-> unsigned int bio_required_alignment(struct bio *bio)
-> {
->         unsigned int alignmask = queue_logical_block_size(bio->bi_disk->queue) - 1;
-> 
-> #ifdef CONFIG_BLK_INLINE_ENCRYPTION
->         if (bio->bi_crypt_context)
->                 alignmask |= bio->bi_crypt_context->bc_key->crypto_cfg.data_unit_size - 1;
-> #endif
-> 
->         return alignmask + 1;
-> }
-> 
-> unsigned int rq_required_alignment(struct request *rq)
-> {
->         unsigned int alignmask = queue_logical_block_size(rq->q) - 1;
-> 
-> #ifdef CONFIG_BLK_INLINE_ENCRYPTION
->         if (rq->crypt_ctx)
->                 alignmask |= rq->crypt_ctx->bc_key->crypto_cfg.data_unit_size - 1;
-> #endif
-> 
->         return alignmask + 1;
-> }
-> 
-> Sure, we could also add a new alignment_required field to struct bio and struct
-> request, but it would be unnecessary since all the information is already there.
-> 
-> > > Is it your opinion that inline encryption should only be supported when
-> > > data_unit_size <= logical_block_size?  The problems with that are
-> > 
-> > Pretty much.
-> > 
-> > >     (a) Using an unnecessarily small data_unit_size degrades performance a
-> > > 	lot -- for *all* I/O, not just direct I/O.  This is because there are a
-> > > 	lot more separate encryptions/decryptions to do, and there's a fixed
-> > > 	overhead to each one (much of which is intrinsic in the crypto
-> > > 	algorithms themselves, i.e. this isn't simply an implementation quirk).
-> > 
-> > Performance is irrelevant if correctness is not possible.
-> > 
-> 
-> As far as I know, data_unit_size > logical_block_size is working for everyone
-> who has used it so far.
-> 
-> So again, I'm curious if you have any specific examples in mind.  Is this a
-> real-world problem, or just a theoretical case where (in the future) someone
-> could declare support for some data_unit_size in their 'struct request_queue'
-> (possibly for a layered device) without correctly handling alignment in all
-> cases?
-> 
-> I do see that logical_block_size is used for discard, write_same, and zeroout.
-> But that isn't encrypted I/O.
-> 
-> BTW, there might very well be hardware that *only* supports
-> data_unit_size > logical_block_size.
+On Mon, Jul 27, 2020 at 6:30 PM Mike Rapoport <rppt@kernel.org> wrote:
+>
+> From: Mike Rapoport <rppt@linux.ibm.com>
+>
+> Wire up memfd_secret system call on architectures that define
+> ARCH_HAS_SET_DIRECT_MAP, namely arm64, risc-v and x86.
+>
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
 
-I found get_max_io_size() in block/blk-merge.c.  I'll check if that needs to be
-updated.
-
-Let me know if you have any objection to the fscrypt inline encryption patches
-*without direct I/O support* going into 5.9.  Note that fscrypt doesn't directly
-care about this block layer stuff at all; instead it uses
-blk_crypto_config_supported() to check whether inline encryption with the
-specified (crypto_mode, data_unit_size, dun_bytes) combination is supported on
-the filesystem's device(s).  Only then will fscrypt use inline encryption
-instead of the traditional filesystem-layer encryption.
-
-So if blk_crypto_config_supported() is saying that some crypto configuration is
-supported when it isn't, then that's a bug in the blk-crypto patches that went
-into the block layer in 5.8, which we need to fix there.  (Ideally by fixing any
-cases where encrypted I/O may be split in the middle of a data unit.  But in the
-worst case, we could easily make blk_crypto_config_supported() return false when
-'data_unit_size > logical_block_size' for now.)
-
-- Eric
+Acked-by: Arnd Bergmann <arnd@arndb.de>
