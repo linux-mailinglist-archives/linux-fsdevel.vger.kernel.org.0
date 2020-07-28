@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A0318230B11
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 15:11:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08718230B16
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 15:11:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730012AbgG1NLH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1729998AbgG1NLH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 28 Jul 2020 09:11:07 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37764 "EHLO
+Received: from linux.microsoft.com ([13.77.154.182]:37780 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729126AbgG1NLE (ORCPT
+        with ESMTP id S1729992AbgG1NLD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 09:11:04 -0400
+        Tue, 28 Jul 2020 09:11:03 -0400
 Received: from localhost.localdomain (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 5F08A20B490A;
-        Tue, 28 Jul 2020 06:11:01 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5F08A20B490A
+        by linux.microsoft.com (Postfix) with ESMTPSA id 35EF720B490C;
+        Tue, 28 Jul 2020 06:11:02 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 35EF720B490C
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1595941862;
-        bh=OZu1yPFbyEzIVjDAN8OqyOEkz38xe1dWw+AeD/DACgE=;
+        bh=8Vxha6xG5iZEw3wvrMCm+5RmpGmvMZada0wtXeD9y+A=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=VG2Osgg9paicCBTa6gJkRmLr9Ki9+dDbqrV+zYqWR7A/SsLcPSkA9wYYE1gA6kPjm
-         hC9FEcLgF+8jD9V9A31OBvIYHWE8Km10/AkOh3U4ExKlW7vBlzhzVJNYSU086AdSm+
-         6kd70Oqr4vSqDmsjHrXWyaFjTW5WpOmmzKqjLAI0=
+        b=Zelt39lGKsDTqpf+B5KIBob2G2aSNP3d2dICWZ2pAI4O7+mYJ1o3rMJZM+ta1LBFe
+         My84y/3nj6OMcfg6VvYOSJHbwcHzyazxuBzfljnbMntH9BAE8jiqNR+HBZMvy6tC87
+         CEAIa/3w8Z+GlTF6lqrgxbBMstTNru2mXoJYPUTU=
 From:   madvenka@linux.microsoft.com
 To:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
@@ -30,9 +30,9 @@ To:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, oleg@redhat.com,
         x86@kernel.org, madvenka@linux.microsoft.com
-Subject: [PATCH v1 2/4] [RFC] x86/trampfd: Provide support for the trampoline file descriptor
-Date:   Tue, 28 Jul 2020 08:10:48 -0500
-Message-Id: <20200728131050.24443-3-madvenka@linux.microsoft.com>
+Subject: [PATCH v1 3/4] [RFC] arm64/trampfd: Provide support for the trampoline file descriptor
+Date:   Tue, 28 Jul 2020 08:10:49 -0500
+Message-Id: <20200728131050.24443-4-madvenka@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200728131050.24443-1-madvenka@linux.microsoft.com>
 References: <aefc85852ea518982e74b233e11e16d2e707bc32>
@@ -44,7 +44,7 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
 
-Implement 32-bit and 64-bit X86 support for the trampoline file descriptor.
+Implement 64-bit ARM support for the trampoline file descriptor.
 
 	- Define architecture specific register names
 	- Handle the trampoline invocation page fault
@@ -53,222 +53,236 @@ Implement 32-bit and 64-bit X86 support for the trampoline file descriptor.
 
 Signed-off-by: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
 ---
- arch/x86/entry/syscalls/syscall_32.tbl |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl |   1 +
- arch/x86/include/uapi/asm/ptrace.h     |  38 +++
- arch/x86/kernel/Makefile               |   2 +
- arch/x86/kernel/trampfd.c              | 313 +++++++++++++++++++++++++
- arch/x86/mm/fault.c                    |  11 +
- 6 files changed, 366 insertions(+)
- create mode 100644 arch/x86/kernel/trampfd.c
+ arch/arm64/include/asm/ptrace.h      |   9 +
+ arch/arm64/include/asm/unistd.h      |   2 +-
+ arch/arm64/include/asm/unistd32.h    |   2 +
+ arch/arm64/include/uapi/asm/ptrace.h |  57 ++++++
+ arch/arm64/kernel/Makefile           |   2 +
+ arch/arm64/kernel/trampfd.c          | 278 +++++++++++++++++++++++++++
+ arch/arm64/mm/fault.c                |  15 +-
+ 7 files changed, 361 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm64/kernel/trampfd.c
 
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index d8f8a1a69ed1..77eb50414591 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -443,3 +443,4 @@
- 437	i386	openat2			sys_openat2
- 438	i386	pidfd_getfd		sys_pidfd_getfd
- 439	i386	faccessat2		sys_faccessat2
-+440	i386	trampfd_create		sys_trampfd_create
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 78847b32e137..9d962de1d21f 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -360,6 +360,7 @@
- 437	common	openat2			sys_openat2
- 438	common	pidfd_getfd		sys_pidfd_getfd
- 439	common	faccessat2		sys_faccessat2
-+440	common	trampfd_create		sys_trampfd_create
+diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+index 953b6a1ce549..dad6cdbd59c6 100644
+--- a/arch/arm64/include/asm/ptrace.h
++++ b/arch/arm64/include/asm/ptrace.h
+@@ -232,6 +232,15 @@ static inline unsigned long user_stack_pointer(struct pt_regs *regs)
+ 	return regs->sp;
+ }
  
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/arch/x86/include/uapi/asm/ptrace.h b/arch/x86/include/uapi/asm/ptrace.h
-index 85165c0edafc..b031598f857e 100644
---- a/arch/x86/include/uapi/asm/ptrace.h
-+++ b/arch/x86/include/uapi/asm/ptrace.h
-@@ -9,6 +9,44 @@
++static inline void user_stack_pointer_set(struct pt_regs *regs,
++					  unsigned long val)
++{
++	if (compat_user_mode(regs))
++		regs->compat_sp = val;
++	else
++		regs->sp = val;
++}
++
+ extern int regs_query_register_offset(const char *name);
+ extern unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
+ 					       unsigned int n);
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 3b859596840d..b3b2019f8d16 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -38,7 +38,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
  
- #ifndef __ASSEMBLY__
+-#define __NR_compat_syscalls		440
++#define __NR_compat_syscalls		441
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index 6d95d0c8bf2f..821ddcaf9683 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -885,6 +885,8 @@ __SYSCALL(__NR_openat2, sys_openat2)
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+ #define __NR_faccessat2 439
+ __SYSCALL(__NR_faccessat2, sys_faccessat2)
++#define __NR_trampfd_create 440
++__SYSCALL(__NR_trampfd_create, sys_trampfd_create)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
+index 42cbe34d95ce..f4d1974dd795 100644
+--- a/arch/arm64/include/uapi/asm/ptrace.h
++++ b/arch/arm64/include/uapi/asm/ptrace.h
+@@ -88,6 +88,63 @@ struct user_pt_regs {
+ 	__u64		pstate;
+ };
  
 +/*
 + * These register names are to be used by 32-bit applications.
 + */
 +enum reg_32_name {
-+	x32_eax,
-+	x32_ebx,
-+	x32_ecx,
-+	x32_edx,
-+	x32_esi,
-+	x32_edi,
-+	x32_ebp,
-+	x32_eip,
-+	x32_max,
++	arm_r0,
++	arm_r1,
++	arm_r2,
++	arm_r3,
++	arm_r4,
++	arm_r5,
++	arm_r6,
++	arm_r7,
++	arm_r8,
++	arm_r9,
++	arm_r10,
++	arm_ip,
++	arm_pc,
++	arm_max,
 +};
 +
 +/*
 + * These register names are to be used by 64-bit applications.
 + */
 +enum reg_64_name {
-+	x64_rax = x32_max,
-+	x64_rbx,
-+	x64_rcx,
-+	x64_rdx,
-+	x64_rsi,
-+	x64_rdi,
-+	x64_rbp,
-+	x64_r8,
-+	x64_r9,
-+	x64_r10,
-+	x64_r11,
-+	x64_r12,
-+	x64_r13,
-+	x64_r14,
-+	x64_r15,
-+	x64_rip,
-+	x64_max,
++	arm64_r0 = arm_max,
++	arm64_r1,
++	arm64_r2,
++	arm64_r3,
++	arm64_r4,
++	arm64_r5,
++	arm64_r6,
++	arm64_r7,
++	arm64_r8,
++	arm64_r9,
++	arm64_r10,
++	arm64_r11,
++	arm64_r12,
++	arm64_r13,
++	arm64_r14,
++	arm64_r15,
++	arm64_r16,
++	arm64_r17,
++	arm64_r18,
++	arm64_r19,
++	arm64_r20,
++	arm64_r21,
++	arm64_r22,
++	arm64_r23,
++	arm64_r24,
++	arm64_r25,
++	arm64_r26,
++	arm64_r27,
++	arm64_r28,
++	arm64_pc,
++	arm64_max,
 +};
 +
- #ifdef __i386__
- /* this struct defines the way the registers are stored on the
-    stack during a system call. */
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index e77261db2391..5d968ac4c7d9 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -157,3 +157,5 @@ ifeq ($(CONFIG_X86_64),y)
+ struct user_fpsimd_state {
+ 	__uint128_t	vregs[32];
+ 	__u32		fpsr;
+diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+index a561cbb91d4d..18d373fb1208 100644
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -71,3 +71,5 @@ extra-y					+= $(head-y) vmlinux.lds
+ ifeq ($(CONFIG_DEBUG_EFI),y)
+ AFLAGS_head.o += -DVMLINUX_PATH="\"$(realpath $(objtree)/vmlinux)\""
  endif
- 
- obj-$(CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT)	+= ima_arch.o
 +
 +obj-$(CONFIG_TRAMPFD)			+= trampfd.o
-diff --git a/arch/x86/kernel/trampfd.c b/arch/x86/kernel/trampfd.c
+diff --git a/arch/arm64/kernel/trampfd.c b/arch/arm64/kernel/trampfd.c
 new file mode 100644
-index 000000000000..f6b5507134d2
+index 000000000000..d79e749e0c30
 --- /dev/null
-+++ b/arch/x86/kernel/trampfd.c
-@@ -0,0 +1,313 @@
++++ b/arch/arm64/kernel/trampfd.c
+@@ -0,0 +1,278 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Trampoline File Descriptor - X86 support.
++ * Trampoline File Descriptor - ARM64 support.
 + *
 + * Author: Madhavan T. Venkataraman (madvenka@linux.microsoft.com)
 + *
 + * Copyright (c) 2020, Microsoft Corporation.
 + */
 +
-+#include <linux/thread_info.h>
-+#include <linux/mm_types.h>
 +#include <linux/trampfd.h>
++#include <linux/mm_types.h>
 +#include <linux/uaccess.h>
 +
 +/* ---------------------------- Register Context ---------------------------- */
 +
 +static inline bool is_compat(void)
 +{
-+	return (IS_ENABLED(CONFIG_X86_32) ||
-+		(IS_ENABLED(CONFIG_COMPAT) && test_thread_flag(TIF_ADDR32)));
++	return is_compat_thread(task_thread_info(current));
 +}
 +
 +static void set_reg_32(struct pt_regs *pt_regs, u32 name, u64 value)
 +{
 +	switch (name) {
-+	case x32_eax:
-+		pt_regs->ax = (unsigned long)value;
++	case arm_r0:
++	case arm_r1:
++	case arm_r2:
++	case arm_r3:
++	case arm_r4:
++	case arm_r5:
++	case arm_r6:
++	case arm_r7:
++	case arm_r8:
++	case arm_r9:
++	case arm_r10:
++		pt_regs->regs[name] = (__u64)value;
 +		break;
-+	case x32_ebx:
-+		pt_regs->bx = (unsigned long)value;
++	case arm_ip:
++		pt_regs->regs[arm64_r16 - arm_max] = (__u64)value;
 +		break;
-+	case x32_ecx:
-+		pt_regs->cx = (unsigned long)value;
-+		break;
-+	case x32_edx:
-+		pt_regs->dx = (unsigned long)value;
-+		break;
-+	case x32_esi:
-+		pt_regs->si = (unsigned long)value;
-+		break;
-+	case x32_edi:
-+		pt_regs->di = (unsigned long)value;
-+		break;
-+	case x32_ebp:
-+		pt_regs->bp = (unsigned long)value;
-+		break;
-+	case x32_eip:
-+		pt_regs->ip = (unsigned long)value;
++	case arm_pc:
++		pt_regs->pc = (__u64)value;
 +		break;
 +	default:
 +		WARN(1, "%s: Illegal register name %d\n", __func__, name);
 +		break;
 +	}
 +}
-+
-+#ifdef __i386__
-+
-+static void set_reg_64(struct pt_regs *pt_regs, u32 name, u64 value)
-+{
-+}
-+
-+#else
 +
 +static void set_reg_64(struct pt_regs *pt_regs, u32 name, u64 value)
 +{
 +	switch (name) {
-+	case x64_rax:
-+		pt_regs->ax = (unsigned long)value;
++	case arm64_r0:
++	case arm64_r1:
++	case arm64_r2:
++	case arm64_r3:
++	case arm64_r4:
++	case arm64_r5:
++	case arm64_r6:
++	case arm64_r7:
++	case arm64_r8:
++	case arm64_r9:
++	case arm64_r10:
++	case arm64_r11:
++	case arm64_r12:
++	case arm64_r13:
++	case arm64_r14:
++	case arm64_r15:
++	case arm64_r16:
++	case arm64_r17:
++	case arm64_r18:
++	case arm64_r19:
++	case arm64_r20:
++	case arm64_r21:
++	case arm64_r22:
++	case arm64_r23:
++	case arm64_r24:
++	case arm64_r25:
++	case arm64_r26:
++	case arm64_r27:
++	case arm64_r28:
++		pt_regs->regs[name - arm_max] = (__u64)value;
 +		break;
-+	case x64_rbx:
-+		pt_regs->bx = (unsigned long)value;
-+		break;
-+	case x64_rcx:
-+		pt_regs->cx = (unsigned long)value;
-+		break;
-+	case x64_rdx:
-+		pt_regs->dx = (unsigned long)value;
-+		break;
-+	case x64_rsi:
-+		pt_regs->si = (unsigned long)value;
-+		break;
-+	case x64_rdi:
-+		pt_regs->di = (unsigned long)value;
-+		break;
-+	case x64_rbp:
-+		pt_regs->bp = (unsigned long)value;
-+		break;
-+	case x64_r8:
-+		pt_regs->r8 = (unsigned long)value;
-+		break;
-+	case x64_r9:
-+		pt_regs->r9 = (unsigned long)value;
-+		break;
-+	case x64_r10:
-+		pt_regs->r10 = (unsigned long)value;
-+		break;
-+	case x64_r11:
-+		pt_regs->r11 = (unsigned long)value;
-+		break;
-+	case x64_r12:
-+		pt_regs->r12 = (unsigned long)value;
-+		break;
-+	case x64_r13:
-+		pt_regs->r13 = (unsigned long)value;
-+		break;
-+	case x64_r14:
-+		pt_regs->r14 = (unsigned long)value;
-+		break;
-+	case x64_r15:
-+		pt_regs->r15 = (unsigned long)value;
-+		break;
-+	case x64_rip:
-+		pt_regs->ip = (unsigned long)value;
++	case arm64_pc:
++		pt_regs->pc = (__u64)value;
 +		break;
 +	default:
 +		WARN(1, "%s: Illegal register name %d\n", __func__, name);
 +		break;
 +	}
 +}
-+
-+#endif /* __i386__ */
 +
 +static void set_regs(struct pt_regs *pt_regs, struct trampfd_regs *tregs)
 +{
@@ -296,12 +310,12 @@ index 000000000000..f6b5507134d2
 +
 +	if (is_compat()) {
 +		min = 0;
-+		pc_name = x32_eip;
-+		max = x32_max;
++		pc_name = arm_pc;
++		max = arm_max;
 +	} else {
-+		min = x32_max;
-+		pc_name = x64_rip;
-+		max = x64_max;
++		min = arm_max;
++		pc_name = arm64_pc;
++		max = arm64_max;
 +	}
 +
 +	for (; reg < reg_end; reg++) {
@@ -329,7 +343,7 @@ index 000000000000..f6b5507134d2
 +	if (!allowed_pcs)
 +		return true;
 +
-+	pc_name = is_compat() ? x32_eip : x64_rip;
++	pc_name = is_compat() ? arm_pc : arm64_pc;
 +
 +	/*
 +	 * Find the PC register and its value. If the PC register has been
@@ -358,14 +372,10 @@ index 000000000000..f6b5507134d2
 +	unsigned long	sp;
 +
 +	sp = user_stack_pointer(pt_regs) - tstack->size - tstack->offset;
-+	if (tstack->flags & TRAMPFD_SET_SP) {
-+		if (is_compat())
-+			sp = ((sp + 4) & -16ul) - 4;
-+		else
-+			sp = round_down(sp, 16) - 8;
-+	}
++	if (tstack->flags & TRAMPFD_SET_SP)
++		sp = round_down(sp, 16);
 +
-+	if (!access_ok(sp, user_stack_pointer(pt_regs) - sp))
++	if (!access_ok((void *)sp, user_stack_pointer(pt_regs) - sp))
 +		return -EFAULT;
 +
 +	if (copy_to_user(USERPTR(sp), tstack->data, tstack->size))
@@ -397,7 +407,7 @@ index 000000000000..f6b5507134d2
 +	 * the kernel.
 +	 */
 +	addr = vma->vm_start + trampfd->map.ioffset;
-+	if (addr != pt_regs->ip) {
++	if (addr != pt_regs->pc) {
 +		rc = -EINVAL;
 +		goto unlock;
 +	}
@@ -454,49 +464,61 @@ index 000000000000..f6b5507134d2
 +}
 +EXPORT_SYMBOL_GPL(trampfd_fault);
 +
-+/* ------------------------- Arch Initialization ------------------------- */
++/* ---------------------------- Miscellaneous ---------------------------- */
 +
 +int trampfd_check_arch(struct trampfd *trampfd)
 +{
 +	return 0;
 +}
 +EXPORT_SYMBOL_GPL(trampfd_check_arch);
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 1ead568c0101..a1432ee2a1a2 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -18,6 +18,7 @@
- #include <linux/uaccess.h>		/* faulthandler_disabled()	*/
- #include <linux/efi.h>			/* efi_recover_from_page_fault()*/
- #include <linux/mm_types.h>
-+#include <linux/trampfd.h>		/* trampoline invocation */
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 8afb238ff335..6e5e3193919a 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -23,6 +23,7 @@
+ #include <linux/perf_event.h>
+ #include <linux/preempt.h>
+ #include <linux/hugetlb.h>
++#include <linux/trampfd.h>
  
- #include <asm/cpufeature.h>		/* boot_cpu_has, ...		*/
- #include <asm/traps.h>			/* dotraplinkage, ...		*/
-@@ -1142,6 +1143,7 @@ void do_user_addr_fault(struct pt_regs *regs,
- 	struct mm_struct *mm;
- 	vm_fault_t fault, major = 0;
- 	unsigned int flags = FAULT_FLAG_DEFAULT;
-+	unsigned long tflags = X86_PF_INSTR | X86_PF_USER;
+ #include <asm/acpi.h>
+ #include <asm/bug.h>
+@@ -404,7 +405,8 @@ static void do_bad_area(unsigned long addr, unsigned int esr, struct pt_regs *re
+ #define VM_FAULT_BADACCESS	0x020000
  
- 	tsk = current;
- 	mm = tsk->mm;
-@@ -1275,6 +1277,15 @@ void do_user_addr_fault(struct pt_regs *regs,
+ static vm_fault_t __do_page_fault(struct mm_struct *mm, unsigned long addr,
+-			   unsigned int mm_flags, unsigned long vm_flags)
++			   unsigned int mm_flags, unsigned long vm_flags,
++			   struct pt_regs *regs)
+ {
+ 	struct vm_area_struct *vma = find_vma(mm, addr);
+ 
+@@ -426,8 +428,15 @@ static vm_fault_t __do_page_fault(struct mm_struct *mm, unsigned long addr,
+ 	 * Check that the permissions on the VMA allow for the fault which
+ 	 * occurred.
  	 */
- good_area:
- 	if (unlikely(access_error(hw_error_code, vma))) {
+-	if (!(vma->vm_flags & vm_flags))
++	if (!(vma->vm_flags & vm_flags)) {
 +		/*
-+		 * If it is a user execute fault, it could be a trampoline
++		 * If it is an execute fault, it could be a trampoline
 +		 * invocation.
 +		 */
-+		if ((hw_error_code & tflags) == tflags &&
-+		    trampfd_fault(vma, regs)) {
-+			mmap_read_unlock(mm);
-+			return;
-+		}
- 		bad_area_access_error(regs, hw_error_code, address, vma);
- 		return;
++		if ((vm_flags & VM_EXEC) && trampfd_fault(vma, regs))
++			return 0;
+ 		return VM_FAULT_BADACCESS;
++	}
+ 	return handle_mm_fault(vma, addr & PAGE_MASK, mm_flags);
+ }
+ 
+@@ -516,7 +525,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
+ #endif
  	}
+ 
+-	fault = __do_page_fault(mm, addr, mm_flags, vm_flags);
++	fault = __do_page_fault(mm, addr, mm_flags, vm_flags, regs);
+ 	major |= fault & VM_FAULT_MAJOR;
+ 
+ 	/* Quick path to respond to signals */
 -- 
 2.17.1
 
