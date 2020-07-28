@@ -2,74 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 35FC022FDA4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 01:29:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF23222FE73
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 02:20:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728121AbgG0XYR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jul 2020 19:24:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35202 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728107AbgG0XYQ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jul 2020 19:24:16 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 942A322B43;
-        Mon, 27 Jul 2020 23:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595892254;
-        bh=ynynujcxmyyhcNW5Tocpx7HlDZIU0je/hY3rdK5Rswg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lCgoIiCnqFrO0Z3kiiy8ePsIqUb2D/juIxRRN/hflgFE4WreoqzEiLbXdpEEauBnc
-         7x+YkNLlS655vk+t3lEVZf69uvzCKdpXdV7PFB62gPVw+H35guBdN4CNkDxhhNUAYq
-         Rijgmf+ymGOYQRn9D/QjJMDh6O56+cWApKM5a3ZM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 21/25] io_uring: missed req_init_async() for IOSQE_ASYNC
-Date:   Mon, 27 Jul 2020 19:23:41 -0400
-Message-Id: <20200727232345.717432-21-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200727232345.717432-1-sashal@kernel.org>
-References: <20200727232345.717432-1-sashal@kernel.org>
+        id S1726825AbgG1AU0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 27 Jul 2020 20:20:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45636 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbgG1AUX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 27 Jul 2020 20:20:23 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30ECBC0619D2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jul 2020 17:20:23 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id g6so6597892ljn.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jul 2020 17:20:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Nc/nP5wKiguMneXbXSJeuwd2J2JdfIPm6d2gp9TDTp4=;
+        b=K57xCEgmCnx3un1myMyG3doUk8PfyAxh6wpSJCXTTatOfILXA2k61QBey0SYiLzT6A
+         hv0hibIl7n/ebSO6pNjoOBnaxB83yqhWFxsPhJVnk4N1s8fiN/QkHPTbrqWUojBe3AIK
+         n2Dy++TUdhfTGTKqOsw1597ysxfLrxiEzAnKY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Nc/nP5wKiguMneXbXSJeuwd2J2JdfIPm6d2gp9TDTp4=;
+        b=nWVuyGMObB173NecD6srdbtt2A6erZCCVRri6y2XDfG2uxTlFFit5F7Iti2wrc38x2
+         qYMZR/rJrznHsqPa1jfBvt2BBdwTlJ+fyelZrAfl97fwNyZYqcYQoUkKa0NeyCnHXe5J
+         lUG//bnUkckA3lsE2LzhSa/tFTQb8tBPpdgkEvsaR4iXtF/6psGJLGzdNuT+gENvaJKV
+         3epsNZfoRMwuQ4xhtWQavTwC6GXP16ZBht+4iXMa+k0OxOBlHxzw+i3fLzmyTFLeIdQ7
+         gAsXUg7+ku+SZMLqzZXY6OsfNLpRpfMPGD6q88I/LpZvBzghJd9W6f3nhf/avGxDaNLy
+         +yPg==
+X-Gm-Message-State: AOAM531U94lwINdOwM9jdNDqKf64arc0poZMEjJ7c73zxYs8s/WUDSAY
+        4PguZlUS3+Pm0hxXZgj7kRfu4tU5wYg=
+X-Google-Smtp-Source: ABdhPJxGVFNADXOvWzqgoIbhGc+ANnQ+qQcRuC4xTFZD+92u8UPUCzsXN9Cf0Sc77UotEmUSIrJnuQ==
+X-Received: by 2002:a2e:95d6:: with SMTP id y22mr11452378ljh.316.1595895621270;
+        Mon, 27 Jul 2020 17:20:21 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id r11sm753907lji.104.2020.07.27.17.20.20
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jul 2020 17:20:20 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id d2so4379637lfj.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 27 Jul 2020 17:20:20 -0700 (PDT)
+X-Received: by 2002:ac2:522b:: with SMTP id i11mr13077378lfl.30.1595895619719;
+ Mon, 27 Jul 2020 17:20:19 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <87h7tsllgw.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87h7tsllgw.fsf@x220.int.ebiederm.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 27 Jul 2020 17:20:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj34Pq1oqFVg1iWYAq_YdhCyvhyCYxiy-CG-o76+UXydQ@mail.gmail.com>
+Message-ID: <CAHk-=wj34Pq1oqFVg1iWYAq_YdhCyvhyCYxiy-CG-o76+UXydQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH] exec: Freeze the other threads during a
+ multi-threaded exec
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>, Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Pavel Begunkov <asml.silence@gmail.com>
+On Mon, Jul 27, 2020 at 2:06 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> Therefore make it simpler to get exec correct by freezing the other
+> threads at the beginning of exec.  This removes an entire class of
+> races, and makes it tractable to fix some of the long standing
+> issues with exec.
 
-[ Upstream commit 3e863ea3bb1a2203ae648eb272db0ce6a1a2072c ]
+I hate the global state part of the freezer.
 
-IOSQE_ASYNC branch of io_queue_sqe() is another place where an
-unitialised req->work can be accessed (i.e. prior io_req_init_async()).
-Nothing really bad though, it just looses IO_WQ_WORK_CONCURRENT flag.
+It's also pointless. We don't want to trigger all the tests that
+various random driver kernel threads do.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/io_uring.c | 1 +
- 1 file changed, 1 insertion(+)
+I also really don't like how now execve() by any random person will
+suddenly impact everything that might be doing freezing.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 12ab983474dff..5153286345714 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5794,6 +5794,7 @@ static void io_queue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		 * Never try inline submit of IOSQE_ASYNC is set, go straight
- 		 * to async execution.
- 		 */
-+		io_req_init_async(req);
- 		req->work.flags |= IO_WQ_WORK_CONCURRENT;
- 		io_queue_async_work(req);
- 	} else {
--- 
-2.25.1
+It also makes for a possible _huge_ latency regression for execve(),
+since freezing really has never been a very low-latency operation.
 
+Other threads doing IO can now basically block execve() for a long
+long long time.
+
+Finally, I think your patch is fundamentally broken for another
+reason: it depends on CONFIG_FREEZER, and that isn't even required to
+be set!
+
+So no, this is not at all acceptable in that form.
+
+Now, maybe we could _make_ it acceptable, by
+
+ (a) add a per-process freezer count to avoid the global state for this case
+
+ (b)  make a small subset of the freezing code available for the
+!CONFIG_FREEZER thing
+
+ (c) fix this "simple freezer" to not actually force wakeups etc, but
+catch things in the
+
+but honestly, at that point nothing of the "CONFIG_FREEZER" code even
+really exists any more. It would be more of a "execve_synchronize()"
+thing, where we'd catch things in the scheduler and/or system call
+entry/exit or whatever.
+
+Also, that makes these kinds of nasty hacks that just make the
+existign freezer code even harder to figure out:
+
+> A new function exec_freeze_threads based upon
+> kernel/power/process.c:try_to_freeze_tasks is added.  To play well
+> with other uses of the kernel freezer it uses a killable sleep wrapped
+> with freezer_do_not_count/freezer_count.
+
+Ugh. Just _ugly_.
+
+And honestly, completely and utterly broken. See above.
+
+I understand the wish to re-use existing infrastructure. But the fact
+is, the FREEZER code is just about the _last_ thing you should want to
+use. That, and stop_machine(), is just too much of a big hammer.
+
+                Linus
