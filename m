@@ -2,60 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F8A1230C4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 16:23:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3D0F230C76
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 16:31:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730319AbgG1OXI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 10:23:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34620 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729410AbgG1OXH (ORCPT
+        id S1730420AbgG1Obl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 10:31:41 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:59162 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729410AbgG1Obl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 10:23:07 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7151DC061794
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 07:23:07 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id x9so9972709plr.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 07:23:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=0gezrYAszKsYKcLXi9TMmF45AfpArZp7tf2tQTcsIB4=;
-        b=D7/86MC1Tqp9oc0VICIhfafxb3tBKrlVgTQgo74JcMWGNVZjzmkRkSPO+UaELTUEwa
-         hA2GW+HERh5M2odXF3L1QZNAFFoTOnxCUqDuUqd+xD54MgRqydkWiLasAWQmucuiUX9y
-         /HA6vqfiAYDwCMBvJQPsnzD96xliQ3O0e++hOjll/2Z5APzOuNu7gH9zfRs4jk1u/4VI
-         49V7Y+MZGeI3h+zO6gZkKACbWgKi3SBDGtM0OP0OKRBoHDlHCLafa/fTo8q2s2AnY2mL
-         fhpECbWQwe8VhAil1beOIe84mykJJtKhpx/KmcnDNs3QlX6d51VI87/q+vivCNN/VjqH
-         7mig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=0gezrYAszKsYKcLXi9TMmF45AfpArZp7tf2tQTcsIB4=;
-        b=aJv6rtfdj+truPhkoYGAwxiUBrSVp0mlnG6GJ7K38LhXw7dleUcdMdInw5daWQxHm0
-         DUy/iuCzNSU6+orxnvhKyAWJC85EdYqPPfpsbXKq4vIEOitCgJfym97mpr7I5oNb+E7J
-         eytHeU4PHIlJ/L7K+ivZEecOIughAoYrRN8BJD2bn2waHmb1wO1g2GfyRwJObaUwOMdI
-         7P6TLmjEuG3TMLweDz8/seHuLRwr9OwmlZxHht77ksslWcQ4uFzVYiamMKVD6aOPKYZ8
-         4KttsduyotCGkC7HV+fuY+qEYYuuNnRsQX5lmwEp9kPGcnLEDKrWCif780Tvm+I0Zufj
-         5KXA==
-X-Gm-Message-State: AOAM533Nmn2z/Znw0voPgW0lEKtRnr51SS5b36Ft7ewEPm2nh3jzJjoY
-        /64J366rxw6yBvXpbm+qp4QkIA==
-X-Google-Smtp-Source: ABdhPJwGmlsbEVuJXdrA5FyCMv/IW/fPnSTAHwkj6VyQa14OnWq1IW5Sje+yw0TWIJZrFoMkdQtvhw==
-X-Received: by 2002:a17:90a:ce0c:: with SMTP id f12mr4957417pju.19.1595946186974;
-        Tue, 28 Jul 2020 07:23:06 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:1c3a:e74b:bd16:b3ab? ([2601:646:c200:1ef2:1c3a:e74b:bd16:b3ab])
-        by smtp.gmail.com with ESMTPSA id 4sm18047374pgk.68.2020.07.28.07.23.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jul 2020 07:23:06 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
+        Tue, 28 Jul 2020 10:31:41 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06SERiHc170671;
+        Tue, 28 Jul 2020 14:30:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=y8nRRhLN76Gwdv6TWjBbydsC8jIHLobFpUQt86BWPsY=;
+ b=vkMbbZV/fcuVoPAdAm2bnVKwhjUpJrQeuFup74jUcdeMFSVB6NMvDDvMHSKYXPSlQuGZ
+ q+vnDlQQJonIJRLOWE5PZnxfEEw+fM6A0EQ19EYLT30r5asL+xwE/rzdNesWu91snpuh
+ akKWpVib71YeaHKh35MBFpSpdWbJj3ZAopIy+4wGvcxopkcl5uE4lpMgdA8KrOCwHXD2
+ j9NbZ3FCXMY0jAlu8w5KVQTJxwUR+PHUm99l0NsvT/xbqPXPHTy4ufinvEW5t1IEdm5H
+ BstCBqpoE9y27OkfC6IbL0I9zMs9oRopKmCtuxJjqoPC9HARM4JkdEh6Uw3Ky9KWgjpK Bw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 32hu1jfucq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 28 Jul 2020 14:30:55 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06SETMwu090377;
+        Tue, 28 Jul 2020 14:30:55 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 32hu5st7n0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 28 Jul 2020 14:30:54 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 06SEUkvZ012418;
+        Tue, 28 Jul 2020 14:30:46 GMT
+Received: from [10.39.227.185] (/10.39.227.185)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 28 Jul 2020 07:30:46 -0700
 Subject: Re: [RFC PATCH 0/5] madvise MADV_DOEXEC
-Date:   Tue, 28 Jul 2020 07:23:03 -0700
-Message-Id: <1764B08C-CC1E-4636-944A-DB95B81C7A8E@amacapital.net>
-References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
+To:     Andy Lutomirski <luto@amacapital.net>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, linux-arch@vger.kernel.org, mhocko@kernel.org,
         tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
@@ -64,39 +52,52 @@ Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         gerg@linux-m68k.org, ktkhai@virtuozzo.com,
         christian.brauner@ubuntu.com, peterz@infradead.org,
         esyr@redhat.com, jgg@ziepe.ca, christian@kellner.me,
-        areber@redhat.com, cyphar@cyphar.com, steven.sistare@oracle.com
-In-Reply-To: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
-To:     Anthony Yznaga <anthony.yznaga@oracle.com>
-X-Mailer: iPhone Mail (17F80)
+        areber@redhat.com, cyphar@cyphar.com
+References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
+ <1764B08C-CC1E-4636-944A-DB95B81C7A8E@amacapital.net>
+From:   Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <54599ed9-99f1-378e-bccf-ba41ef1f8217@oracle.com>
+Date:   Tue, 28 Jul 2020 10:30:41 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <1764B08C-CC1E-4636-944A-DB95B81C7A8E@amacapital.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9695 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999 mlxscore=0
+ suspectscore=0 bulkscore=0 malwarescore=0 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007280111
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9695 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 mlxlogscore=999
+ malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ suspectscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007280111
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 7/28/2020 10:23 AM, Andy Lutomirski wrote:
+>> On Jul 27, 2020, at 10:02 AM, Anthony Yznaga <anthony.yznaga@oracle.com> wrote:
+>>
+>> ﻿This patchset adds support for preserving an anonymous memory range across
+>> exec(3) using a new madvise MADV_DOEXEC argument.  The primary benefit for
+>> sharing memory in this manner, as opposed to re-attaching to a named shared
+>> memory segment, is to ensure it is mapped at the same virtual address in
+>> the new process as it was in the old one.  An intended use for this is to
+>> preserve guest memory for guests using vfio while qemu exec's an updated
+>> version of itself.  By ensuring the memory is preserved at a fixed address,
+>> vfio mappings and their associated kernel data structures can remain valid.
+>> In addition, for the qemu use case, qemu instances that back guest RAM with
+>> anonymous memory can be updated.
+> 
+> This will be an amazing attack surface. Perhaps use of this flag should require no_new_privs?  Arguably it should also require a special flag to execve() to honor it.  Otherwise library helpers that do vfork()+exec() or posix_spawn() could be quite surprised.
 
+Preservation is disabled across fork, so fork/exec combo's are not affected.  We forgot to document that.
 
-> On Jul 27, 2020, at 10:02 AM, Anthony Yznaga <anthony.yznaga@oracle.com> w=
-rote:
->=20
-> =EF=BB=BFThis patchset adds support for preserving an anonymous memory ran=
-ge across
-> exec(3) using a new madvise MADV_DOEXEC argument.  The primary benefit for=
-
-> sharing memory in this manner, as opposed to re-attaching to a named share=
-d
-> memory segment, is to ensure it is mapped at the same virtual address in
-> the new process as it was in the old one.  An intended use for this is to
-> preserve guest memory for guests using vfio while qemu exec's an updated
-> version of itself.  By ensuring the memory is preserved at a fixed address=
-,
-> vfio mappings and their associated kernel data structures can remain valid=
-.
-> In addition, for the qemu use case, qemu instances that back guest RAM wit=
-h
-> anonymous memory can be updated.
-
-This will be an amazing attack surface. Perhaps use of this flag should requ=
-ire no_new_privs?  Arguably it should also require a special flag to execve(=
-) to honor it.  Otherwise library helpers that do vfork()+exec() or posix_sp=
-awn() could be quite surprised.
-
+- Steve
