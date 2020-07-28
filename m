@@ -2,190 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F3407230A7E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 14:42:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B9F7230AB2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 14:55:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729873AbgG1Mm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 08:42:58 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:53462 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729618AbgG1Mm5 (ORCPT
+        id S1729393AbgG1Myo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 08:54:44 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:25515 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728604AbgG1Myn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 08:42:57 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1k0OwZ-0005JD-K7; Tue, 28 Jul 2020 06:42:55 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1k0OwY-0007iG-Ng; Tue, 28 Jul 2020 06:42:55 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, Pavel Machek <pavel@ucw.cz>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linux PM <linux-pm@vger.kernel.org>
-References: <87h7tsllgw.fsf@x220.int.ebiederm.org>
-        <CAHk-=wj34Pq1oqFVg1iWYAq_YdhCyvhyCYxiy-CG-o76+UXydQ@mail.gmail.com>
-Date:   Tue, 28 Jul 2020 07:39:48 -0500
-In-Reply-To: <CAHk-=wj34Pq1oqFVg1iWYAq_YdhCyvhyCYxiy-CG-o76+UXydQ@mail.gmail.com>
-        (Linus Torvalds's message of "Mon, 27 Jul 2020 17:20:03 -0700")
-Message-ID: <87d04fhkyz.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 28 Jul 2020 08:54:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1595940883; x=1627476883;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=i73cQScyOXtQNhKCgBM0j0yco6YrKjuowVHgFUDbKic=;
+  b=KDHZem/fs0oWN6xNLGu8x57unl7jYSTLsjFyhe8uj+us84zFR8FjPXO8
+   4gvVvRnWtrw2lBBCHedt4IKaH5bbIOESvFpmWEcqwQc1ESjDNhxu4tihW
+   dlODcQxAY0ehMzLeuQzA3xHqxruIMshojvHGXmnJpb80LaPB+WqOwKP3c
+   xc3yhnoettSq5xLdKjLSCoM/BcZozMWWAze4SxYeaTR+VGmbm7yNNrcTO
+   YhWmfvXAxqT85ahFD8SiRuuex+MNOrGgsJ5BtJIkq5r6RPMWUxP4neso/
+   mfsYmg6+5fYS3b5c3mS9JfC8mJB7IZt9rCDcBjHsLTRCKqKefKLftR0o2
+   g==;
+IronPort-SDR: ZFjmBZNE+HTETK1BTJfuK9E5kELLB9K3qIMYsBmSaucJluK0rxKtkojYstYRoSkpXY8WiWG2la
+ UvfEp5GNLboONN/wSoycnzeVcxZAR/ltMpaTLLPKCOrVnkIYZnIXWxIfSMas5iuiNNgYFLhDZA
+ CwDx/fbvhBYYrzKqoSu/hhLb2BD3Wbo92HO0KFQ8Sbg5vnMFw47qj01umN0suxSQPnmKd0sd0Z
+ arNbRsQp5TKIPPsGHsJXu5OdKVFUy3b7ZGoOnNsHDCDQBw12Hm+bi25DMM5xhrgNxfmSCW5oDy
+ 800=
+X-IronPort-AV: E=Sophos;i="5.75,406,1589212800"; 
+   d="scan'208";a="252888668"
+Received: from mail-dm6nam11lp2175.outbound.protection.outlook.com (HELO NAM11-DM6-obe.outbound.protection.outlook.com) ([104.47.57.175])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jul 2020 20:54:42 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ftw5FfjvDA6RiLM5wmPGnArTun/1FxPjUlh9FghplwcHO+jRMognSMRrNWdr9knODMPvkQVU8p2DqfuI9klJu/n5r3uXDKHW/303DwAoqWh5SA39QER+mtiMwHYcHkUvbLeA9oJ1iTRzxJLsWbrLUhiJOJaraV1r3QYrA/PfKYHss8zJNiWFgKdLC+/9vDKytTUiu89F9aUYNzC1GIblWE/Pl54y1Z0/ciF1y9QItuer/yLyAsrID3NvkM4HbcM6SQz2b7AJl11O5zA0owIhTszd+8SuleY8J6Bl11JOYrLpL0K8J9OMOZeQaQp0qyVzV5m0KEsHwm70O/VzIYyfaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i73cQScyOXtQNhKCgBM0j0yco6YrKjuowVHgFUDbKic=;
+ b=WDqmh3qry9I9w5Sd/aI1KG3uEBzlX0uGy3lic/bjV81TZWaU5dy28v1YA5Mgd5kSF1Cw5k3KsmBR9EV4Np6kr6U/QhdGFm+qOJYSEQWNvFiJcMcqsU160UDsPoXl0HUPl8C2nPhUa3C2tZVzERthzGHgpHs76gGufPFSh4Y5X+w8p04eQ6hBl6jfmOJDCz0ASEgIxYG9pBh1Up3CmFsK5w66nwcXMQeAUWya9nx15yrYF5mnQw1vmZa8IHMQfmGzvZlDlXv9e9jTo4ct11M8yKBAMtUmuJW8nrJOichf4IAz8DwdyuAtSPY0DPH2QhfJFLXnVl9iB/bdB3yvO12VhQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i73cQScyOXtQNhKCgBM0j0yco6YrKjuowVHgFUDbKic=;
+ b=SUZQTNu9cUdP+Vnavdl52Et44KxjvwANxWJVvXmxxtSYAdo/8v+KLFKJA60/7IVtPeOv7evuYz5BLO3U6ZPU3NvN731SIjA71VcbqQ67J8QDluqaLAWkcJ+b4tr8kPYzFeP2oj0w5q1ueU5LqDVFdQn2V3jE/SrxRHMBsf/fWOs=
+Received: from DM5PR0401MB3591.namprd04.prod.outlook.com (2603:10b6:4:7e::15)
+ by DM6PR04MB5322.namprd04.prod.outlook.com (2603:10b6:5:106::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3216.26; Tue, 28 Jul
+ 2020 12:54:40 +0000
+Received: from DM5PR0401MB3591.namprd04.prod.outlook.com
+ ([fe80::c862:9cd5:689a:8573]) by DM5PR0401MB3591.namprd04.prod.outlook.com
+ ([fe80::c862:9cd5:689a:8573%5]) with mapi id 15.20.3216.033; Tue, 28 Jul 2020
+ 12:54:40 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+CC:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+        Richard Weinberger <richard@nod.at>,
+        Minchan Kim <minchan@kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>
+Subject: Re: [PATCH 12/14] bdi: replace BDI_CAP_STABLE_WRITES with a queue and
+ a sb flag
+Thread-Topic: [PATCH 12/14] bdi: replace BDI_CAP_STABLE_WRITES with a queue
+ and a sb flag
+Thread-Index: AQHWYYzciyAO2mhny0WEWIk3W3JOpQ==
+Date:   Tue, 28 Jul 2020 12:54:40 +0000
+Message-ID: <DM5PR0401MB35918B36977C0B2EBB7F262F9B730@DM5PR0401MB3591.namprd04.prod.outlook.com>
+References: <20200724073313.138789-1-hch@lst.de>
+ <20200724073313.138789-13-hch@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: lst.de; dkim=none (message not signed)
+ header.d=none;lst.de; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 31e0b3d0-c47a-48ca-363a-08d832f56489
+x-ms-traffictypediagnostic: DM6PR04MB5322:
+x-microsoft-antispam-prvs: <DM6PR04MB53220BC8FC684C251C6EBF5A9B730@DM6PR04MB5322.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:1728;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: T/yPeA8qh/rQgzQmjI8BQDmycI+yvDKNgThgiXWHNjjuusLVniiHii7Xs5llqxBhzac32Ut9f0viphdg31/ZsThTIyPqI5410dgXg03CTDavZ56Jb4tZ/soLeUBLtny8yY6GWx3630tBjArX6WgZH+9SOYv8vZZKWgNEMttX9pXEV1XFj1df7m6yFLJBLVAWYBbGjrY5v3iVtenDV0MR7r/L5Bo87zjS5MLbGJLN2jhgQkZKo1VeWXVkQ9UhJkWM9YiAN/iuhoRDeNDNE/shz2Yq3xZHNfYcF0TCV+47fUxZsNU2+XFquWXJoxb2hnWs32mbyGM2TgpG1XyMVZwpzQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR0401MB3591.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(396003)(346002)(136003)(376002)(366004)(39860400002)(5660300002)(8676002)(66556008)(66476007)(66946007)(66446008)(19618925003)(9686003)(7696005)(186003)(26005)(64756008)(86362001)(478600001)(55016002)(6506007)(8936002)(52536014)(7416002)(71200400001)(110136005)(558084003)(4270600006)(33656002)(4326008)(76116006)(91956017)(316002)(2906002)(54906003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: 89maTvJPspOuacsDUS3LL+WKq2F7jyIjTk8KzJ2Po3vc17ENqkU1PZWitO7B5q9juIQetGeGZKXbM8bzrWPVhbbgWcjUHUOMknY6kXKP8GAbTbvVnsoY9eEp1N1W1OlIagv1h2hmqg4dghSfyuAlTOE7crGQ/Amikns3b2F3ob4sz2TN9Q/1VhtI/mo5mZv6qed+N0X0woUA9O3jRMoD8m3+EOD5x+6HhhRe2NfxczaPaf4lkVMgQ9n9ynt4h4yXiKVZEwuZtFol8C3hQEuPcYaE4O6DaoDwsUhF9OtW2pC9zUwA5Srerm/9ahGHmCz3xGCnMIj9gV4X5PJppHXN6Cd2w8bblTWF5YfLAwMHQ0nQEtFoOZnVXH4kFmbrYiCYxiGzlRlM8MQif1zxN8vg9wlaeYVVabFiGMIdoW1Lvdsvo+t5eysmJMIBtaSpZgMBtfy8/CqBQpGTFGh5zr2+ZJ/WDZprkP9gqOi3+E2Kr33BTDWPGVwrvXfIsFGqgNUL
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1k0OwY-0007iG-Ng;;;mid=<87d04fhkyz.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+orpJOfA4E1RYpBdWcznCcQQLAlVJoQF8=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa08.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.7 XMSubLong Long Subject
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa08 0; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: ; sa08 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 567 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 11 (2.0%), b_tie_ro: 10 (1.7%), parse: 0.79
-        (0.1%), extract_message_metadata: 14 (2.4%), get_uri_detail_list: 2.0
-        (0.4%), tests_pri_-1000: 15 (2.6%), tests_pri_-950: 1.32 (0.2%),
-        tests_pri_-900: 1.16 (0.2%), tests_pri_-90: 88 (15.5%), check_bayes:
-        85 (15.0%), b_tokenize: 8 (1.4%), b_tok_get_all: 11 (1.9%),
-        b_comp_prob: 3.3 (0.6%), b_tok_touch_all: 59 (10.4%), b_finish: 0.98
-        (0.2%), tests_pri_0: 424 (74.8%), check_dkim_signature: 0.81 (0.1%),
-        check_dkim_adsp: 11 (1.9%), poll_dns_idle: 0.52 (0.1%), tests_pri_10:
-        2.1 (0.4%), tests_pri_500: 7 (1.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC][PATCH] exec: Freeze the other threads during a multi-threaded exec
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR0401MB3591.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31e0b3d0-c47a-48ca-363a-08d832f56489
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2020 12:54:40.7335
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QBI2uUsV/Gk1eL8gdBglcrLdbO2lk0xAj739ocxmoqy8Nk+RjXyhOxkQVQKoyZDOUS5VeCs6KZsHMf6P74GQXM7paCXcP6VgrWIwoAnDBoc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB5322
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
-
-> On Mon, Jul 27, 2020 at 2:06 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>
->> Therefore make it simpler to get exec correct by freezing the other
->> threads at the beginning of exec.  This removes an entire class of
->> races, and makes it tractable to fix some of the long standing
->> issues with exec.
->
-> I hate the global state part of the freezer.
->
-> It's also pointless. We don't want to trigger all the tests that
-> various random driver kernel threads do.
->
-> I also really don't like how now execve() by any random person will
-> suddenly impact everything that might be doing freezing.
-
-Yes.  system_freezing_cnt as an enable/disable that affects all
-tasks in the system does seem like a misfeature for use in the context
-of exec where only a few tasks need to be dealt with.
-
-> It also makes for a possible _huge_ latency regression for execve(),
-> since freezing really has never been a very low-latency operation.
->
-> Other threads doing IO can now basically block execve() for a long
-> long long time.
-
-Hmm.  Potentially.  The synchronization with the other threads must
-happen in a multi-threaded exec in de_thread.
-
-So I need to look at the differences between where de_thread thread
-can kill a thread and the freezer can not freeze a thread.  I am hoping
-that the freezer has already instrumented most of those sleeps but I
-admit I have not looked yet.
-
-> Finally, I think your patch is fundamentally broken for another
-> reason: it depends on CONFIG_FREEZER, and that isn't even required to
-> be set!
-
-Very true.  I absolutely missed that detail.
-
-> So no, this is not at all acceptable in that form.
->
-> Now, maybe we could _make_ it acceptable, by
->
->  (a) add a per-process freezer count to avoid the global state for this case
-
-Perhaps even a single bit.
-
-
->  (b)  make a small subset of the freezing code available for the
-> !CONFIG_FREEZER thing
-
-The code that is controlled by CONFIG_FREEZER is just kernel/freezer.c,
-and include/linux/freezer.h.  Which is 177 + 303 lines respectively
-so not much.
-
-Or are you thinking about all of the locations that already include
-freezable sleeps?
-
->  (c) fix this "simple freezer" to not actually force wakeups etc, but
-> catch things in the
-
-To catch things in the scheduler I presume?
-
-The thing is the freezer code does not wake up anything if it is in a
-sleep that it has wrapped.  Which I thought was just about all
-significant ones but I need to verify that.
-
-> but honestly, at that point nothing of the "CONFIG_FREEZER" code even
-> really exists any more. It would be more of a "execve_synchronize()"
-> thing, where we'd catch things in the scheduler and/or system call
-> entry/exit or whatever.
-
-Yes.  Where we catch things seems to be key.  I believe if all sleeps
-that are killable plus system call exit should be enough, to be a noop.
-As those are the places where the code can be killed now.
-
-The tricky part is to mark processes that are sleeping in such a way
-that then they wake up they go into a slow path and they get trapped
-by the freezing code.
-
-> Also, that makes these kinds of nasty hacks that just make the
-> existign freezer code even harder to figure out:
-
-
->> A new function exec_freeze_threads based upon
->> kernel/power/process.c:try_to_freeze_tasks is added.  To play well
->> with other uses of the kernel freezer it uses a killable sleep wrapped
->> with freezer_do_not_count/freezer_count.
->
-> Ugh. Just _ugly_.
->
-> And honestly, completely and utterly broken. See above.
->
-> I understand the wish to re-use existing infrastructure. But the fact
-> is, the FREEZER code is just about the _last_ thing you should want to
-> use. That, and stop_machine(), is just too much of a big hammer.
-
-Part of my challenge is that it the more layers that get put around a
-sleep the trickier it is to subsequently wrap.
-
-I can see the point of building something very simple and more
-fundamental that doesn't need as much support as the current freezer.
-Perhaps something the freezer can the be rebuilt upon.
-
-
-If the basic idea of stopping other threads early before we kill them in
-exec sounds plausible then I will see what I can do.
-
-Eric
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
