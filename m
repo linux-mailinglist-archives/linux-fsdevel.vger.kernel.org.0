@@ -2,163 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 59C2423121A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 21:01:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04C3F23126F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 21:21:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729198AbgG1TBP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 15:01:15 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:55922 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728334AbgG1TBO (ORCPT
+        id S1732782AbgG1TUU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 15:20:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52472 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732674AbgG1TUT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 15:01:14 -0400
-Received: from [192.168.254.32] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 4BC4420B4908;
-        Tue, 28 Jul 2020 12:01:13 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4BC4420B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595962873;
-        bh=zjLEFTK4Orgld2wOZdcW94az96+FP6KvaYi2k5aZSPI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=eyOucZIcQn3R6OEntESHtyelkaFVjV2UK/nFkDNLCPLGXdph7ZdzSj8TIdGEPaGtU
-         HNfLQEbH03jQTrCFJfGmYdF0TdR5xD3V/YFVr3NEjScCz38PMbJbBy0OdJ42NGgnrr
-         Ehzo1Gfr/DDSOvCbbINwW1aQjqHKXsQAPhe9ttIA=
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
-References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <8b28f4a5-2d9e-0686-40e5-2ea9e37c5933@linux.microsoft.com>
-Date:   Tue, 28 Jul 2020 14:01:12 -0500
+        Tue, 28 Jul 2020 15:20:19 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 590EEC0619D2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 12:20:19 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id m22so12593091pgv.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 12:20:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6vfxP0xAICcExvQMz/4lQvBsGt+MbkdQCG7TPtmY2IU=;
+        b=Y9eOezwVV/XNy3ss0E8zEQZN46Jwp7Vwk2F4dYKq4GF+o38CPH9bXtrUXOyKXIv0qi
+         IxCEGapawUVePV3q40k2ellTesiBEzVplHJE1NvfhyL5RCl83HKGBpQJX0QM6eO0a6fq
+         K4eY6mGRbq51nbLdHdV0aIyuHM8uJTGXUryQRTt7Lj0uw/Rn/vzZ7q/sGIcO2+P5vKXM
+         D+ek+rXJ/oXKvUiOA/SsGJJtECe80pX2lqhwV2Mek5vNpO9+e9YTmFR2Dc+dekaVJzW8
+         tm1bitx5pVI4Q4Wm0OEfzMIXB/vw2Lt3V5PNJbWz7GH/REb/D7Ra0sQgFciGhg/c8Ve4
+         LbsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6vfxP0xAICcExvQMz/4lQvBsGt+MbkdQCG7TPtmY2IU=;
+        b=SDDzdFpOz7Wm2RsevjioTTgKMsQseKEWuKTJpv/GJvEONL7KIZTUOHhpD3r31ct2P9
+         svs+x9PsukiQUOmBbMajyxafrElY9QvJkL8L0dv56lNqjWtsow0JD+Bn/46euCgs9CU1
+         yo3uOSMNr4Z39Ljq8evQZTcS3afB3VfhI/3Hy3tRZ4vJsvSAHvTKPVwbKh9MGiJ+0+RS
+         Uq8GjQRPQ7TQLDuFdEjHw5UCGhhI5Kq1Sq5G/gWYxQmbEe8onmcFkZYG/ga2AXcSEDjV
+         QRBnRN9PFXnOUueBQy80HcHFTa6X9dhLf8xM4thIi2AVerYgaF3OPP33SpTf991v0u4t
+         LicQ==
+X-Gm-Message-State: AOAM531wTMW6Q0eILua4h0QCyEdOwKRXYc4U3ByHrKNDhhmGNk52grY0
+        6Wp8EpLH0/n9nAqKsWT6WfM23g==
+X-Google-Smtp-Source: ABdhPJxBQ70KSlhfE4UBk48wOVO+oTR3dAvGMGkYXZNgophmfDok6SYnNj9+4QpInUFKqraP2ypplA==
+X-Received: by 2002:a63:3c16:: with SMTP id j22mr26658462pga.335.1595964018789;
+        Tue, 28 Jul 2020 12:20:18 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id e8sm8642552pfd.34.2020.07.28.12.20.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jul 2020 12:20:18 -0700 (PDT)
+Subject: Re: bdi cleanups v3
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+        Richard Weinberger <richard@nod.at>,
+        Minchan Kim <minchan@kernel.org>,
+        linux-mtd@lists.infradead.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-raid@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        cgroups@vger.kernel.org
+References: <20200724073313.138789-1-hch@lst.de>
+ <0b2b59d4-da4c-33df-82b4-0d4935b91e6e@kernel.dk>
+Message-ID: <08ded32a-cf3a-55b0-6a88-19d201edac93@kernel.dk>
+Date:   Tue, 28 Jul 2020 13:20:09 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
+In-Reply-To: <0b2b59d4-da4c-33df-82b4-0d4935b91e6e@kernel.dk>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I am working on a response to this. I will send it soon.
-
-Thanks.
-
-Madhavan
-
-On 7/28/20 12:31 PM, Andy Lutomirski wrote:
->> On Jul 28, 2020, at 6:11 AM, madvenka@linux.microsoft.com wrote:
+On 7/28/20 9:41 AM, Jens Axboe wrote:
+> On 7/24/20 1:32 AM, Christoph Hellwig wrote:
+>> Hi Jens,
 >>
->> ﻿From: "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
->>
->> The kernel creates the trampoline mapping without any permissions. When
->> the trampoline is executed by user code, a page fault happens and the
->> kernel gets control. The kernel recognizes that this is a trampoline
->> invocation. It sets up the user registers based on the specified
->> register context, and/or pushes values on the user stack based on the
->> specified stack context, and sets the user PC to the requested target
->> PC. When the kernel returns, execution continues at the target PC.
->> So, the kernel does the work of the trampoline on behalf of the
->> application.
-> This is quite clever, but now I’m wondering just how much kernel help
-> is really needed. In your series, the trampoline is an non-executable
-> page.  I can think of at least two alternative approaches, and I'd
-> like to know the pros and cons.
->
-> 1. Entirely userspace: a return trampoline would be something like:
->
-> 1:
-> pushq %rax
-> pushq %rbc
-> pushq %rcx
-> ...
-> pushq %r15
-> movq %rsp, %rdi # pointer to saved regs
-> leaq 1b(%rip), %rsi # pointer to the trampoline itself
-> callq trampoline_handler # see below
->
-> You would fill a page with a bunch of these, possibly compacted to get
-> more per page, and then you would remap as many copies as needed.  The
-> 'callq trampoline_handler' part would need to be a bit clever to make
-> it continue to work despite this remapping.  This will be *much*
-> faster than trampfd. How much of your use case would it cover?  For
-> the inverse, it's not too hard to write a bit of asm to set all
-> registers and jump somewhere.
->
-> 2. Use existing kernel functionality.  Raise a signal, modify the
-> state, and return from the signal.  This is very flexible and may not
-> be all that much slower than trampfd.
->
-> 3. Use a syscall.  Instead of having the kernel handle page faults,
-> have the trampoline code push the syscall nr register, load a special
-> new syscall nr into the syscall nr register, and do a syscall. On
-> x86_64, this would be:
->
-> pushq %rax
-> movq __NR_magic_trampoline, %rax
-> syscall
->
-> with some adjustment if the stack slot you're clobbering is important.
->
->
-> Also, will using trampfd cause issues with various unwinders?  I can
-> easily imagine unwinders expecting code to be readable, although this
-> is slowly going away for other reasons.
->
-> All this being said, I think that the kernel should absolutely add a
-> sensible interface for JITs to use to materialize their code.  This
-> would integrate sanely with LSMs and wouldn't require hacks like using
-> files, etc.  A cleverly designed JIT interface could function without
-> seriailization IPIs, and even lame architectures like x86 could
-> potentially avoid shootdown IPIs if the interface copied code instead
-> of playing virtual memory games.  At its very simplest, this could be:
->
-> void *jit_create_code(const void *source, size_t len);
->
-> and the result would be a new anonymous mapping that contains exactly
-> the code requested.  There could also be:
->
-> int jittfd_create(...);
->
-> that does something similar but creates a memfd.  A nicer
-> implementation for short JIT sequences would allow appending more code
-> to an existing JIT region.  On x86, an appendable JIT region would
-> start filled with 0xCC, and I bet there's a way to materialize new
-> code into a previously 0xcc-filled virtual page wthout any
-> synchronization.  One approach would be to start with:
->
-> <some code>
-> 0xcc
-> 0xcc
-> ...
-> 0xcc
->
-> and to create a whole new page like:
->
-> <some code>
-> <some more code>
-> 0xcc
-> ...
-> 0xcc
->
-> so that the only difference is that some code changed to some more
-> code.  Then replace the PTE to swap from the old page to the new page,
-> and arrange to avoid freeing the old page until we're sure it's gone
-> from all TLBs.  This may not work if <some more code> spans a page
-> boundary.  The #BP fixup would zap the TLB and retry.  Even just
-> directly copying code over some 0xcc bytes almost works, but there's a
-> nasty corner case involving instructions that fetch I$ fetch
-> boundaries.  I'm not sure to what extent I$ snooping helps.
->
-> --Andy
+>> this series contains a bunch of different BDI cleanups.  The biggest item
+>> is to isolate block drivers from the BDI in preparation of changing the
+>> lifetime of the block device BDI in a follow up series.
+> 
+> Applied, thanks.
+
+Dropped:
+
+  CC      block/blk-sysfs.o
+block/blk-sysfs.c:608:16: error: ‘blk_throtl_sample_show’ undeclared here (not in a function); did you mean ‘blk_throtl_sample_entry’?
+  608 | QUEUE_RW_ENTRY(blk_throtl_sample, "throttle_sample_time");
+      |                ^~~~~~~~~~~~~~~~~
+block/blk-sysfs.c:563:10: note: in definition of macro ‘QUEUE_RW_ENTRY’
+  563 |  .show = _prefix##_show,   \
+      |          ^~~~~~~
+block/blk-sysfs.c:608:16: error: ‘blk_throtl_sample_store’ undeclared here (not in a function); did you mean ‘blk_throtl_sample_entry’?
+  608 | QUEUE_RW_ENTRY(blk_throtl_sample, "throttle_sample_time");
+      |                ^~~~~~~~~~~~~~~~~
+block/blk-sysfs.c:564:11: note: in definition of macro ‘QUEUE_RW_ENTRY’
+  564 |  .store = _prefix##_store,   \
+      |           ^~~~~~~
+block/blk-sysfs.c:657:3: error: ‘blk_throtl_sample_time_entry’ undeclared here (not in a function); did you mean ‘blk_throtl_sample_time_store’?
+  657 |  &blk_throtl_sample_time_entry.attr,
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |   blk_throtl_sample_time_store
+block/blk-sysfs.c:608:16: warning: ‘blk_throtl_sample_entry’ defined but not used [-Wunused-variable]
+  608 | QUEUE_RW_ENTRY(blk_throtl_sample, "throttle_sample_time");
+      |                ^~~~~~~~~~~~~~~~~
+block/blk-sysfs.c:561:33: note: in definition of macro ‘QUEUE_RW_ENTRY’
+  561 | static struct queue_sysfs_entry _prefix##_entry = { \
+      |                                 ^~~~~~~
+make[1]: *** [scripts/Makefile.build:281: block/blk-sysfs.o] Error 1
+make: *** [Makefile:1756: block] Error 2
+
+from "block: add helper macros for queue sysfs entries"
+
+This has not seen a full compile test even...
+
+-- 
+Jens Axboe
 
