@@ -2,95 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D98792307CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 12:39:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D90D23082E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 12:55:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728699AbgG1KjV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 06:39:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56556 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728566AbgG1KjV (ORCPT
+        id S1728940AbgG1KzQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 06:55:16 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:43386 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728801AbgG1KzQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 06:39:21 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEF3EC061794;
-        Tue, 28 Jul 2020 03:39:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ypNJAwGRLRbYYnJEfcTCKIzmFirwGZ/k/RvbvuVZ8q4=; b=ZxsoqojnivhdOtNFQ7ijw8tFIS
-        DW2+ZZdVqI+YTlXRfXfozGEbH0saMYPSlKwQFgNptwke3nKub9qOKLzuTljpCmSmuIi4DoV5ZmT+a
-        ORDvwrsMfcuqK3Ko+zIHqF3P99gL9wRxJQHCLF8Fgx7lh7EslkDSBjnJ55dmRuZNkWhL0idV+rLVt
-        MLT4DVYgUuZ2T/1BHmgk0so5e2riO7lt2CnymYnKd1s0zn87qz7kg+AcOzOe38dctjCghsWQdxtcB
-        co4YxEvoJTQ21Q67Z6VyRIfwG33K2mPvRHnXc9YJRwSelSn+vgiQvyxBxhi5mdEa8Msv9zrnyTlHD
-        rCwmh9nw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k0N0n-0006gK-NF; Tue, 28 Jul 2020 10:39:09 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 561D2304BAE;
-        Tue, 28 Jul 2020 12:39:07 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 20888238A58A4; Tue, 28 Jul 2020 12:39:07 +0200 (CEST)
-Date:   Tue, 28 Jul 2020 12:39:07 +0200
-From:   peterz@infradead.org
-To:     Xi Wang <xii@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, suravee.suthikulpanit@amd.com,
-        thomas.lendacky@amd.com
-Subject: Re: [PATCH] sched: Make select_idle_sibling search domain
- configurable
-Message-ID: <20200728103907.GT119549@hirez.programming.kicks-ass.net>
-References: <20200728070131.1629670-1-xii@google.com>
+        Tue, 28 Jul 2020 06:55:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1595933714;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=+IOlI7psZ+ZKyfa5KLTmjqmr8VdFZPqQBMXCO0Tdr+E=;
+        b=LUzo+D0bXPMKlO2NCEUU/1HrVngjAKAWid1ciGswVLDmy6XEizzUtDn7Xd1cAvqMaafVYT
+        VfATAlU57u3esQgV3QhH/1txyWtASiNH/u5uytoF30dhKoVHQlyjAqL4EH1NxMQ7Z/fb6c
+        6GHVkj5/zgXVjuKM+kjtCyMmrXsUoFc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-491-vkATyfRuO0yrL38-0VB9-Q-1; Tue, 28 Jul 2020 06:55:12 -0400
+X-MC-Unique: vkATyfRuO0yrL38-0VB9-Q-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7BE0679EC0;
+        Tue, 28 Jul 2020 10:55:11 +0000 (UTC)
+Received: from work-vm (ovpn-114-178.ams2.redhat.com [10.36.114.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 25F7C726BA;
+        Tue, 28 Jul 2020 10:55:05 +0000 (UTC)
+Date:   Tue, 28 Jul 2020 11:55:03 +0100
+From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     stefanha@redhat.com, groug@kaod.org, mszeredi@redhat.com,
+        vgoyal@redhat.com, gscrivan@redhat.com, dwalsh@redhat.com,
+        chirantan@chromium.org
+Subject: xattr names for unprivileged stacking?
+Message-ID: <20200728105503.GE2699@work-vm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200728070131.1629670-1-xii@google.com>
+User-Agent: Mutt/1.14.5 (2020-06-23)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 28, 2020 at 12:01:31AM -0700, Xi Wang wrote:
-> The scope of select_idle_sibling idle cpu search is LLC. This
-> becomes a problem for the AMD CCX architecture, as the sd_llc is only
-> 4 cores. On a many core machine, the range of search is too small to
-> reach a satisfactory level of statistical multiplexing / efficient
-> utilization of short idle time slices.
-> 
-> With this patch idle sibling search is detached from LLC and it
-> becomes run time configurable. To reduce search and migration
-> overheads, a presearch domain is added. The presearch domain will be
-> searched first before the "main search" domain, e.g.:
-> 
-> sysctl_sched_wake_idle_domain == 2 ("MC" domain)
-> sysctl_sched_wake_idle_presearch_domain == 1 ("DIE" domain)
-> 
-> Presearch will go through 4 cores of a CCX. If no idle cpu is found
-> during presearch, full search will go through the remaining cores of
-> a cpu socket.
+Hi,
+  Are there any standards for mapping xattr names/classes when
+a restricted view of the filesystem needs to think it's root?
 
-*groan*, this is horrific :-(
+e.g. VMs that mount host filesystems, remote filesystems etc and the
+client kernel tries to set a trusted. or security. xattr and you want
+to store that on an underlying normal filesystem, but your
+VM system doesn't want to have CAP_SYS_ADMIN and/or doesn't want to
+interfere with the real hosts security.
 
-It is also in direct conflict with people wanting to make it smaller.
+I can see some existing examples:
 
-On top of that, a domain number is a terrible terrible interface. They
-aren't even available without SCHED_DEBUG on.
+  9p in qemu
+     maps system.posix_acl_* to user.virtfs.system.posix_acl_*
+          stops the guest accessing any user.virtfs.*
 
-What is the inter-L3 latency? Going by this that had better be awesome.
-And if this Infinity Fabric stuff if highly effective in effectively
-merging L3s -- analogous to what Intel does with it's cache slices, then
-should we not change the AMD topology setup instead of this 'thing'?
+   overlayfs
+      uses trusted.overlay.* on upper layer and blocks that from 
+           clients
 
-Also, this commit:
+   fuse-overlayfs
+      uses trusted.overlay.* for compatibiltiy if it has perms,
+      otherwise falls back to user.fuseoverlayfs.*
 
-  051f3ca02e46 ("sched/topology: Introduce NUMA identity node sched domain")
+   crosvm's virtiofs
+      maps "security.sehash" to "user.virtiofs.security.sehash"
+      and blocks the guest from accessing user.virtiofs.*
 
-seems to suggest L3 is actually bigger. Suravee, can you please comment?
+Does anyone know of any others?
+
+It all seems quite adhoc;  these all fall to bits when you
+stack them or when you write a filesystem using one of these
+schemes and then mount it with another.
+
+(I'm about to do a similar mapping for virtiofs's C daemon)
+
+Thanks in advance,
+
+Dave 
+
+--
+Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+
