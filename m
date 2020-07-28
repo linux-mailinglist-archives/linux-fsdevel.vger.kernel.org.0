@@ -2,136 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93114230BEA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 15:58:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ADEA230C47
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 16:20:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730282AbgG1N6s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 09:58:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59146 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730278AbgG1N6r (ORCPT
+        id S1730064AbgG1OUr convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 10:20:47 -0400
+Received: from customer-201-134-139-73.uninet-ide.com.mx ([201.134.139.73]:46418
+        "EHLO correo.tlalpan.gob.mx" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729410AbgG1OUr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 09:58:47 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E40B6C0619D4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 06:58:46 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id 3so11375534wmi.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 06:58:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LTjUuKu28q4AP2apkOdAzx1cK7jJDnTHDeP/9uZly44=;
-        b=KqeArdqygfldyaA4gJRiGfTgCwK4wgPCAMC7uombuUYQ1buL6zCp8yoRWk5H+Vp2qt
-         M36J4wt9gCrJShAOCDVpPvxoVn5Osk7fRw15JUm/WE0gwcmaIwLFFiYS3d0f5MnFSxq/
-         iQOkoFGM5zyBIuGT0vXj0lazqprYYPD+oNhM0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LTjUuKu28q4AP2apkOdAzx1cK7jJDnTHDeP/9uZly44=;
-        b=YfoluAu6oywE/+jeHdtyygP7LX9XRGkrOOpo8VkFt6nViMddu1BCZJuLk6L1d+23Lg
-         QEjFJhpjW28MLyzVQZsjRPo3dRCsmSUqzsYPCsIoSsfFdKnxPGbBJjcymuwnUELb5n32
-         h7M6ZMEacQMb/lUs/ppLI4Jo/lr6fGGPKXJQvrL65UlQ+e3841gCm77JoK6L2LygC0tN
-         EG+e3Z1dXAXkb9+iWLJOwsCcU+aKqR+amQ8Y6C7j2mx8owaPgcopeC4/ontMJB2Tziju
-         nGLRwlFSg1Uw6OCDiYwszatwRQry34WzFQti7YKkNjXzB48Zgwk+9uNiDIDjVlMKvH//
-         lDmw==
-X-Gm-Message-State: AOAM531/QQgRqGS1+T3WjwdtsVZrntWpOeDKCFTRB2YyxL2HJO2QO3IF
-        NjA4HO9cr5eAvHKRoFepnLxJYg==
-X-Google-Smtp-Source: ABdhPJzN7u/m6RCqY38cX52hSfOrqIs4C8PfjuXHcoP5UoM1XsD3zH2RZL3E9SBC/M2256p1vsiwQw==
-X-Received: by 2002:a7b:c403:: with SMTP id k3mr4097843wmi.35.1595944725621;
-        Tue, 28 Jul 2020 06:58:45 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id q6sm4505414wma.22.2020.07.28.06.58.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jul 2020 06:58:44 -0700 (PDT)
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-To:     DRI Development <dri-devel@lists.freedesktop.org>
-Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-        Dave Chinner <david@fromorbit.com>, Qian Cai <cai@lca.pw>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas_os@shipmail.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@mellanox.com>, linux-mm@kvack.org,
-        linux-rdma@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: [PATCH] dma-resv: lockdep-prime address_space->i_mmap_rwsem for dma-resv
-Date:   Tue, 28 Jul 2020 15:58:39 +0200
-Message-Id: <20200728135839.1035515-1-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.27.0
+        Tue, 28 Jul 2020 10:20:47 -0400
+X-Greylist: delayed 19308 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Jul 2020 10:20:46 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by correo.tlalpan.gob.mx (Postfix) with ESMTP id 52516448782;
+        Tue, 28 Jul 2020 04:12:22 -0500 (CDT)
+Received: from correo.tlalpan.gob.mx ([127.0.0.1])
+        by localhost (correo.tlalpan.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id D-65kQ8CLxd5; Tue, 28 Jul 2020 04:12:22 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+        by correo.tlalpan.gob.mx (Postfix) with ESMTP id 9A0AF42CB2A;
+        Tue, 28 Jul 2020 03:40:47 -0500 (CDT)
+X-Virus-Scanned: amavisd-new at tlalpan.gob.mx
+Received: from correo.tlalpan.gob.mx ([127.0.0.1])
+        by localhost (correo.tlalpan.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id L5S64fxZNTpC; Tue, 28 Jul 2020 03:40:47 -0500 (CDT)
+Received: from [10.85.108.11] (unknown [105.8.2.12])
+        by correo.tlalpan.gob.mx (Postfix) with ESMTPSA id 75258411234;
+        Tue, 28 Jul 2020 03:26:29 -0500 (CDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Covid_19_Wohlt=C3=A4tigkeitsfonds?=
+To:     Recipients <aguayenergia@tlalpan.gob.mx>
+From:   ''Tayeb Souami'' <aguayenergia@tlalpan.gob.mx>
+Date:   Tue, 28 Jul 2020 10:30:46 +0200
+Reply-To: Tayebsouam.spende@gmail.com
+Message-Id: <20200728082630.75258411234@correo.tlalpan.gob.mx>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-GPU drivers need this in their shrinkers, to be able to throw out
-mmap'ed buffers. Note that we also need dma_resv_lock in shrinkers,
-but that loop is resolved by trylocking in shrinkers.
+Lieber Freund,
 
-So full hierarchy is now (ignore some of the other branches we already
-have primed):
+Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden, um meine Gewinne zu überprüfen, sehen Sie bitte meine You Tube Seite unten.
 
-mmap_read_lock -> dma_resv -> shrinkers -> i_mmap_lock_write
+UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
 
-I hope that's not inconsistent with anything mm or fs does, adding
-relevant people.
 
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: "Christian König" <christian.koenig@amd.com>
-Cc: linux-media@vger.kernel.org
-Cc: linaro-mm-sig@lists.linaro.org
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Qian Cai <cai@lca.pw>
-Cc: linux-xfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: Thomas Hellström (Intel) <thomas_os@shipmail.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: linux-mm@kvack.org
-Cc: linux-rdma@vger.kernel.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
----
- drivers/dma-buf/dma-resv.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Das ist dein Spendencode: [TS530342018]
 
-diff --git a/drivers/dma-buf/dma-resv.c b/drivers/dma-buf/dma-resv.c
-index 0e6675ec1d11..9678162a4ac5 100644
---- a/drivers/dma-buf/dma-resv.c
-+++ b/drivers/dma-buf/dma-resv.c
-@@ -104,12 +104,14 @@ static int __init dma_resv_lockdep(void)
- 	struct mm_struct *mm = mm_alloc();
- 	struct ww_acquire_ctx ctx;
- 	struct dma_resv obj;
-+	struct address_space mapping;
- 	int ret;
- 
- 	if (!mm)
- 		return -ENOMEM;
- 
- 	dma_resv_init(&obj);
-+	address_space_init_once(&mapping);
- 
- 	mmap_read_lock(mm);
- 	ww_acquire_init(&ctx, &reservation_ww_class);
-@@ -117,6 +119,9 @@ static int __init dma_resv_lockdep(void)
- 	if (ret == -EDEADLK)
- 		dma_resv_lock_slow(&obj, &ctx);
- 	fs_reclaim_acquire(GFP_KERNEL);
-+	/* for unmap_mapping_range on trylocked buffer objects in shrinkers */
-+	i_mmap_lock_write(&mapping);
-+	i_mmap_unlock_write(&mapping);
- #ifdef CONFIG_MMU_NOTIFIER
- 	lock_map_acquire(&__mmu_notifier_invalidate_range_start_map);
- 	__dma_fence_might_wait();
--- 
-2.27.0
 
+Antworten Sie mit dem SPENDE-CODE an diese
+
+E-Mail:Tayebsouam.spende@gmail.com
+
+
+Ich hoffe, Sie und Ihre Familie glücklich zu machen.
+
+Grüße
+Herr Tayeb Souami
