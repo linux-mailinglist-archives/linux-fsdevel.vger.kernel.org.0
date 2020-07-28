@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E28422314DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 23:38:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6F082314BC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 23:37:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729585AbgG1Vg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 17:36:29 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:47292 "EHLO
+        id S1729635AbgG1Vge (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 17:36:34 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:47302 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729505AbgG1Vg2 (ORCPT
+        with ESMTP id S1729542AbgG1Vga (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 17:36:28 -0400
+        Tue, 28 Jul 2020 17:36:30 -0400
 Received: from dede-linux-virt.corp.microsoft.com (unknown [131.107.160.54])
-        by linux.microsoft.com (Postfix) with ESMTPSA id D58C720B490E;
-        Tue, 28 Jul 2020 14:36:27 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D58C720B490E
+        by linux.microsoft.com (Postfix) with ESMTPSA id 1E75820B490F;
+        Tue, 28 Jul 2020 14:36:28 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1E75820B490F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
         s=default; t=1595972188;
-        bh=SC6FlQIH3oTzgF1y4D27CLLK+qOAyAobEQYvHVcHTHk=;
+        bh=OyfGxNLHUXoMygiBFeBitqcUbFqwNCVeHtj51iLYf0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S+D5bKJEHEeORe6p0ptieKrrFuKRBHRW6qN8UsOllSrIINbMexMwHdoy4Kg73eQkP
-         OTe1Kmkeoud8luOi4mCHdXScdJe3qQvd2Uw6OZmbgRugmK7GQQ4BUdcBZKI7o5GzNk
-         mB+n13CQz6OJPcg31CF9Qb3/8GKWm7HboxL0dXEk=
+        b=pH1A5+8GOYW8dBfMbdHjaWVppCU0AOjFd0TCTg62F1vc2V088nXqooUYuJdtBYrVV
+         hJsred48H507VRRYTKHw3jdi4QWMefeUIeRtcfHWGqjRUYnA3u29sDkBO6xoYBY42T
+         M1DZncBJ03+F+bmdgU3Dc+uHmGJ6BSQh29VdY7YA=
 From:   Deven Bowers <deven.desai@linux.microsoft.com>
 To:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
         jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
@@ -36,9 +36,9 @@ Cc:     tyhicks@linux.microsoft.com, linux-kernel@vger.kernel.org,
         corbet@lwn.net, sashal@kernel.org,
         jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
         nramas@linux.microsoft.com, pasha.tatashin@soleen.com
-Subject: [RFC PATCH v5 05/11] fs: add security blob and hooks for block_device
-Date:   Tue, 28 Jul 2020 14:36:05 -0700
-Message-Id: <20200728213614.586312-6-deven.desai@linux.microsoft.com>
+Subject: [RFC PATCH v5 06/11] dm-verity: move signature check after tree validation
+Date:   Tue, 28 Jul 2020 14:36:06 -0700
+Message-Id: <20200728213614.586312-7-deven.desai@linux.microsoft.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
 References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
@@ -49,258 +49,456 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a security blob and associated allocation, deallocation and set hooks
-for a block_device structure.
+The CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG introduced by Jaskaran was
+intended to be used to allow an LSM to enforce verifications for all
+dm-verity volumes.
+
+However, with it's current implementation, this signature verification
+occurs after the merkel-tree is validated, as a result the signature can
+pass initial verification by passing a matching root-hash and signature.
+This results in an unreadable block_device, but that has passed signature
+validation (and subsequently, would be marked as verified).
+
+This change moves the signature verification to after the merkel-tree has
+finished validation.
 
 Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 ---
- fs/block_dev.c                |  8 ++++
- include/linux/fs.h            |  1 +
- include/linux/lsm_hook_defs.h |  5 +++
- include/linux/lsm_hooks.h     | 12 ++++++
- include/linux/security.h      | 22 +++++++++++
- security/security.c           | 74 +++++++++++++++++++++++++++++++++++
- 6 files changed, 122 insertions(+)
+ drivers/md/dm-verity-target.c     |  44 ++++------
+ drivers/md/dm-verity-verify-sig.c | 140 ++++++++++++++++++++++--------
+ drivers/md/dm-verity-verify-sig.h |  24 +++--
+ drivers/md/dm-verity.h            |   2 +-
+ 4 files changed, 134 insertions(+), 76 deletions(-)
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 0ae656e022fd..8602dd62c3e2 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -34,6 +34,7 @@
- #include <linux/falloc.h>
- #include <linux/uaccess.h>
- #include <linux/suspend.h>
-+#include <linux/security.h>
- #include "internal.h"
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index eec9f252e935..fabc173aa7b3 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -471,9 +471,9 @@ static int verity_verify_io(struct dm_verity_io *io)
+ 	struct bvec_iter start;
+ 	unsigned b;
+ 	struct crypto_wait wait;
++	int r;
  
- struct bdev_inode {
-@@ -768,11 +769,18 @@ static struct inode *bdev_alloc_inode(struct super_block *sb)
- 	struct bdev_inode *ei = kmem_cache_alloc(bdev_cachep, GFP_KERNEL);
- 	if (!ei)
- 		return NULL;
-+
-+	if (unlikely(security_bdev_alloc(&ei->bdev))) {
-+		kmem_cache_free(bdev_cachep, ei);
-+		return NULL;
+ 	for (b = 0; b < io->n_blocks; b++) {
+-		int r;
+ 		sector_t cur_block = io->block + b;
+ 		struct ahash_request *req = verity_io_hash_req(v, io);
+ 
+@@ -530,6 +530,16 @@ static int verity_verify_io(struct dm_verity_io *io)
+ 			return -EIO;
+ 	}
+ 
++	/*
++	 * At this point, the merkel tree has finished validating.
++	 * if signature was specified, validate the signature here.
++	 */
++	r = verity_verify_root_hash(v);
++	if (r < 0) {
++		DMERR_LIMIT("signature mismatch");
++		return r;
 +	}
 +
- 	return &ei->vfs_inode;
- }
- 
- static void bdev_free_inode(struct inode *inode)
- {
-+	security_bdev_free(&BDEV_I(inode)->bdev);
- 	kmem_cache_free(bdev_cachep, BDEV_I(inode));
- }
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f5abba86107d..42d7e3ce7712 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -509,6 +509,7 @@ struct block_device {
- 	int			bd_fsfreeze_count;
- 	/* Mutex for freeze */
- 	struct mutex		bd_fsfreeze_mutex;
-+	void			*security;
- } __randomize_layout;
- 
- /* XArray tags, for tagging dirty and writeback pages in the pagecache. */
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index af998f93d256..f3c0da0db4e8 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -391,3 +391,8 @@ LSM_HOOK(void, LSM_RET_VOID, perf_event_free, struct perf_event *event)
- LSM_HOOK(int, 0, perf_event_read, struct perf_event *event)
- LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
- #endif /* CONFIG_PERF_EVENTS */
-+
-+LSM_HOOK(int, 0, bdev_alloc_security, struct block_device *bdev)
-+LSM_HOOK(void, LSM_RET_VOID, bdev_free_security, struct block_device *bdev)
-+LSM_HOOK(int, 0, bdev_setsecurity, struct block_device *bdev, const char *name,
-+	 const void *value, size_t size)
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 95b7c1d32062..8670c19a8cef 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -1507,6 +1507,17 @@
-  *
-  *     @what: kernel feature being accessed
-  *
-+ * @bdev_alloc_security:
-+ *	Initialize the security field inside a block_device structure.
-+ *
-+ * @bdev_free_security:
-+ *	Cleanup the security information stored inside a block_device structure.
-+ *
-+ * @bdev_setsecurity:
-+ *	Set a security property associated with @name for @bdev with
-+ *	value @value. @size indicates the size of @value in bytes.
-+ *	If a @name is not implemented, return -ENOSYS.
-+ *
-  * Security hooks for perf events
-  *
-  * @perf_event_open:
-@@ -1553,6 +1564,7 @@ struct lsm_blob_sizes {
- 	int	lbs_ipc;
- 	int	lbs_msg_msg;
- 	int	lbs_task;
-+	int	lbs_bdev;
- };
- 
- /*
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 0a0a03b36a3b..8f83fdc6c65d 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -451,6 +451,11 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
- int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
- int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
- int security_locked_down(enum lockdown_reason what);
-+int security_bdev_alloc(struct block_device *bdev);
-+void security_bdev_free(struct block_device *bdev);
-+int security_bdev_setsecurity(struct block_device *bdev,
-+			      const char *name, const void *value,
-+			      size_t size);
- #else /* CONFIG_SECURITY */
- 
- static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
-@@ -1291,6 +1296,23 @@ static inline int security_locked_down(enum lockdown_reason what)
- {
  	return 0;
  }
-+
-+static inline int security_bdev_alloc(struct block_device *bdev)
-+{
-+	return 0;
-+}
-+
-+static inline void security_bdev_free(struct block_device *bdev)
-+{
-+}
-+
-+static inline int security_bdev_setsecurity(struct block_device *bdev,
-+					    const char *name,
-+					    const void *value, size_t size)
-+{
-+	return 0;
-+}
-+
- #endif	/* CONFIG_SECURITY */
  
- #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
-diff --git a/security/security.c b/security/security.c
-index 70a7ad357bc6..fff445eba400 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -28,6 +28,7 @@
- #include <linux/string.h>
- #include <linux/msg.h>
- #include <net/flow.h>
-+#include <linux/fs.h>
+@@ -728,7 +738,7 @@ static void verity_status(struct dm_target *ti, status_type_t type,
+ 			args++;
+ 		if (v->validated_blocks)
+ 			args++;
+-		if (v->signature_key_desc)
++		if (v->sig)
+ 			args += DM_VERITY_ROOT_HASH_VERIFICATION_OPTS;
+ 		if (!args)
+ 			return;
+@@ -751,9 +761,9 @@ static void verity_status(struct dm_target *ti, status_type_t type,
+ 		if (v->validated_blocks)
+ 			DMEMIT(" " DM_VERITY_OPT_AT_MOST_ONCE);
+ 		sz = verity_fec_status_table(v, sz, result, maxlen);
+-		if (v->signature_key_desc)
++		if (v->sig)
+ 			DMEMIT(" " DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG_KEY
+-				" %s", v->signature_key_desc);
++				" %s", v->sig->signature_key_desc);
+ 		break;
+ 	}
+ }
+@@ -819,7 +829,7 @@ static void verity_dtr(struct dm_target *ti)
  
- #define MAX_LSM_EVM_XATTR	2
+ 	verity_fec_dtr(v);
  
-@@ -202,6 +203,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
- 	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
- 	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
- 	lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
-+	lsm_set_blob_size(&needed->lbs_bdev, &blob_sizes.lbs_bdev);
+-	kfree(v->signature_key_desc);
++	verity_verify_dtr(v);
+ 
+ 	kfree(v);
+ }
+@@ -876,8 +886,7 @@ static int verity_alloc_zero_digest(struct dm_verity *v)
+ 	return r;
  }
  
- /* Prepare LSM for initialization. */
-@@ -337,6 +339,7 @@ static void __init ordered_lsm_init(void)
- 	init_debug("ipc blob size      = %d\n", blob_sizes.lbs_ipc);
- 	init_debug("msg_msg blob size  = %d\n", blob_sizes.lbs_msg_msg);
- 	init_debug("task blob size     = %d\n", blob_sizes.lbs_task);
-+	init_debug("bdev blob size     = %d\n", blob_sizes.lbs_bdev);
+-static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
+-				 struct dm_verity_sig_opts *verify_args)
++static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v)
+ {
+ 	int r;
+ 	unsigned argc;
+@@ -927,9 +936,7 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
+ 				return r;
+ 			continue;
+ 		} else if (verity_verify_is_sig_opt_arg(arg_name)) {
+-			r = verity_verify_sig_parse_opt_args(as, v,
+-							     verify_args,
+-							     &argc, arg_name);
++			r = verity_verify_sig_parse_opt_args(as, v, &argc);
+ 			if (r)
+ 				return r;
+ 			continue;
+@@ -960,7 +967,6 @@ static int verity_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
+ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ {
+ 	struct dm_verity *v;
+-	struct dm_verity_sig_opts verify_args = {0};
+ 	struct dm_arg_set as;
+ 	unsigned int num;
+ 	unsigned long long num_ll;
+@@ -968,7 +974,6 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 	int i;
+ 	sector_t hash_position;
+ 	char dummy;
+-	char *root_hash_digest_to_validate;
  
- 	/*
- 	 * Create any kmem_caches needed for blobs
-@@ -654,6 +657,28 @@ static int lsm_msg_msg_alloc(struct msg_msg *mp)
+ 	v = kzalloc(sizeof(struct dm_verity), GFP_KERNEL);
+ 	if (!v) {
+@@ -1102,7 +1107,6 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 		r = -EINVAL;
+ 		goto bad;
+ 	}
+-	root_hash_digest_to_validate = argv[8];
+ 
+ 	if (strcmp(argv[9], "-")) {
+ 		v->salt_size = strlen(argv[9]) / 2;
+@@ -1128,20 +1132,11 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 		as.argc = argc;
+ 		as.argv = argv;
+ 
+-		r = verity_parse_opt_args(&as, v, &verify_args);
++		r = verity_parse_opt_args(&as, v);
+ 		if (r < 0)
+ 			goto bad;
+ 	}
+ 
+-	/* Root hash signature is  a optional parameter*/
+-	r = verity_verify_root_hash(root_hash_digest_to_validate,
+-				    strlen(root_hash_digest_to_validate),
+-				    verify_args.sig,
+-				    verify_args.sig_size);
+-	if (r < 0) {
+-		ti->error = "Root hash verification failed";
+-		goto bad;
+-	}
+ 	v->hash_per_block_bits =
+ 		__fls((1 << v->hash_dev_block_bits) / v->digest_size);
+ 
+@@ -1207,13 +1202,10 @@ static int verity_ctr(struct dm_target *ti, unsigned argc, char **argv)
+ 	ti->per_io_data_size = roundup(ti->per_io_data_size,
+ 				       __alignof__(struct dm_verity_io));
+ 
+-	verity_verify_sig_opts_cleanup(&verify_args);
+-
  	return 0;
+ 
+ bad:
+ 
+-	verity_verify_sig_opts_cleanup(&verify_args);
+ 	verity_dtr(ti);
+ 
+ 	return r;
+diff --git a/drivers/md/dm-verity-verify-sig.c b/drivers/md/dm-verity-verify-sig.c
+index 614e43db93aa..27dac8aa2e5a 100644
+--- a/drivers/md/dm-verity-verify-sig.c
++++ b/drivers/md/dm-verity-verify-sig.c
+@@ -22,6 +22,16 @@ MODULE_PARM_DESC(require_signatures,
+ #define DM_VERITY_IS_SIG_FORCE_ENABLED() \
+ 	(require_signatures != false)
+ 
++static void destroy_verity_sig(struct dm_verity_sig *sig_info)
++{
++	if (!sig_info)
++		return;
++
++	kfree(sig_info->sig);
++	kfree(sig_info->signature_key_desc);
++	kfree(sig_info);
++}
++
+ bool verity_verify_is_sig_opt_arg(const char *arg_name)
+ {
+ 	return (!strcasecmp(arg_name,
+@@ -29,7 +39,7 @@ bool verity_verify_is_sig_opt_arg(const char *arg_name)
+ }
+ 
+ static int verity_verify_get_sig_from_key(const char *key_desc,
+-					struct dm_verity_sig_opts *sig_opts)
++					  struct dm_verity_sig  *sig_info)
+ {
+ 	struct key *key;
+ 	const struct user_key_payload *ukp;
+@@ -48,14 +58,14 @@ static int verity_verify_get_sig_from_key(const char *key_desc,
+ 		goto end;
+ 	}
+ 
+-	sig_opts->sig = kmalloc(ukp->datalen, GFP_KERNEL);
+-	if (!sig_opts->sig) {
++	sig_info->sig = kmalloc(ukp->datalen, GFP_KERNEL);
++	if (!sig_info->sig) {
+ 		ret = -ENOMEM;
+ 		goto end;
+ 	}
+-	sig_opts->sig_size = ukp->datalen;
++	sig_info->sig_size = ukp->datalen;
+ 
+-	memcpy(sig_opts->sig, ukp->data, sig_opts->sig_size);
++	memcpy(sig_info->sig, ukp->data, sig_info->sig_size);
+ 
+ end:
+ 	up_read(&key->sem);
+@@ -64,70 +74,128 @@ static int verity_verify_get_sig_from_key(const char *key_desc,
+ 	return ret;
  }
  
 +/**
-+ * lsm_bdev_alloc - allocate a composite block_device blob
-+ * @bdev: the block_device that needs a blob
++ * Parse any signature verification arguments.
++ *	This function will populate v->sig, it is the caller's
++ *	responsibility to free this structure via verity_verify_dtr
 + *
-+ * Allocate the block_device blob for all the modules
-+ *
-+ * Returns 0, or -ENOMEM if memory can't be allocated.
++ * @as: argument set passed in to parse
++ * @v: verity context structure. Should have a NULL v->sig member.
++ * @argc: current argument number
 + */
-+static int lsm_bdev_alloc(struct block_device *bdev)
-+{
-+	if (blob_sizes.lbs_bdev == 0) {
-+		bdev->security = NULL;
-+		return 0;
-+	}
-+
-+	bdev->security = kzalloc(blob_sizes.lbs_bdev, GFP_KERNEL);
-+	if (!bdev->security)
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
- /**
-  * lsm_early_task - during initialization allocate a composite task blob
-  * @task: the task that needs a blob
-@@ -2516,6 +2541,55 @@ int security_locked_down(enum lockdown_reason what)
- }
- EXPORT_SYMBOL(security_locked_down);
- 
-+int security_bdev_alloc(struct block_device *bdev)
-+{
-+	int rc = 0;
-+
-+	rc = lsm_bdev_alloc(bdev);
-+	if (unlikely(rc))
-+		return rc;
-+
-+	rc = call_int_hook(bdev_alloc_security, 0, bdev);
-+	if (unlikely(rc))
-+		security_bdev_free(bdev);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(security_bdev_alloc);
-+
-+void security_bdev_free(struct block_device *bdev)
-+{
-+	if (!bdev->security)
-+		return;
-+
-+	call_void_hook(bdev_free_security, bdev);
-+
-+	kfree(bdev->security);
-+	bdev->security = NULL;
-+}
-+EXPORT_SYMBOL(security_bdev_free);
-+
-+int security_bdev_setsecurity(struct block_device *bdev,
-+			      const char *name, const void *value,
-+			      size_t size)
-+{
-+	int rc = 0;
-+	struct security_hook_list *p;
-+
-+	hlist_for_each_entry(p, &security_hook_heads.bdev_setsecurity, list) {
-+		rc = p->hook.bdev_setsecurity(bdev, name, value, size);
-+
-+		if (rc == -ENOSYS)
-+			rc = 0;
-+
-+		if (rc != 0)
-+			break;
-+	}
-+
-+	return rc;
-+}
-+EXPORT_SYMBOL(security_bdev_setsecurity);
-+
- #ifdef CONFIG_PERF_EVENTS
- int security_perf_event_open(struct perf_event_attr *attr, int type)
+ int verity_verify_sig_parse_opt_args(struct dm_arg_set *as,
+ 				     struct dm_verity *v,
+-				     struct dm_verity_sig_opts *sig_opts,
+-				     unsigned int *argc,
+-				     const char *arg_name)
++				     unsigned int *argc)
  {
+ 	struct dm_target *ti = v->ti;
++	struct dm_verity_sig *sig_info = NULL;
+ 	int ret = 0;
+ 	const char *sig_key = NULL;
+ 
+ 	if (!*argc) {
+ 		ti->error = DM_VERITY_VERIFY_ERR("Signature key not specified");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto cleanup;
++	}
++
++	sig_info = kzalloc(sizeof(*sig_info), GFP_KERNEL);
++	if (!sig_info) {
++		ret = -ENOMEM;
++		goto cleanup;
+ 	}
+ 
+ 	sig_key = dm_shift_arg(as);
+ 	(*argc)--;
+ 
+-	ret = verity_verify_get_sig_from_key(sig_key, sig_opts);
+-	if (ret < 0)
++	ret = verity_verify_get_sig_from_key(sig_key, sig_info);
++	if (ret < 0) {
+ 		ti->error = DM_VERITY_VERIFY_ERR("Invalid key specified");
++		goto cleanup;
++	}
+ 
+-	v->signature_key_desc = kstrdup(sig_key, GFP_KERNEL);
+-	if (!v->signature_key_desc)
+-		return -ENOMEM;
++	sig_info->signature_key_desc = kstrdup(sig_key, GFP_KERNEL);
++	if (!sig_info->signature_key_desc) {
++		ret = -ENOMEM;
++		goto cleanup;
++	}
+ 
++	v->sig = sig_info;
++	sig_info = NULL;
++cleanup:
++	if (sig_info)
++		destroy_verity_sig(sig_info);
+ 	return ret;
+ }
+ 
+-/*
++/**
+  * verify_verify_roothash - Verify the root hash of the verity hash device
+  *			     using builtin trusted keys.
+  *
+- * @root_hash: For verity, the roothash/data to be verified.
+- * @root_hash_len: Size of the roothash/data to be verified.
+- * @sig_data: The trusted signature that verifies the roothash/data.
+- * @sig_len: Size of the signature.
++ * @v: dm_verity structure containing all context for the dm_verity
++ *	operation.
+  *
+  */
+-int verity_verify_root_hash(const void *root_hash, size_t root_hash_len,
+-			    const void *sig_data, size_t sig_len)
++int verity_verify_root_hash(const struct dm_verity *v)
+ {
+-	int ret;
++	int ret = 0;
++	char *root_hash = NULL;
++	size_t root_hash_size = 0;
++	struct dm_verity_sig *sig_target = NULL;
++
++	if (!v || !v->ti || !v->root_digest || v->digest_size == 0) {
++		ret = -EINVAL;
++		goto cleanup;
++	}
++
++	sig_target = v->sig;
++
++	if (!sig_target || !sig_target->sig || sig_target->sig_size == 0) {
++		if (DM_VERITY_IS_SIG_FORCE_ENABLED()) {
++			ret = -ENOKEY;
++			goto cleanup;
++		} else {
++			goto cleanup;
++		}
++	}
+ 
+-	if (!root_hash || root_hash_len == 0)
+-		return -EINVAL;
++	/*
++	 * If signature has passed validation once, assume
++	 * that future signatures will pass.
++	 */
++	if (sig_target->passed)
++		goto cleanup;
+ 
+-	if (!sig_data  || sig_len == 0) {
+-		if (DM_VERITY_IS_SIG_FORCE_ENABLED())
+-			return -ENOKEY;
+-		else
+-			return 0;
++	root_hash_size = v->digest_size * 2;
++	root_hash = kzalloc(root_hash_size, GFP_KERNEL);
++	if (!root_hash) {
++		ret = -ENOMEM;
++		goto cleanup;
+ 	}
+ 
+-	ret = verify_pkcs7_signature(root_hash, root_hash_len, sig_data,
+-				sig_len, NULL, VERIFYING_UNSPECIFIED_SIGNATURE,
+-				NULL, NULL);
++	bin2hex(root_hash, v->root_digest, v->digest_size);
++
++	ret = verify_pkcs7_signature(root_hash, root_hash_size, v->sig->sig,
++				     v->sig->sig_size, NULL,
++				     VERIFYING_UNSPECIFIED_SIGNATURE, NULL,
++				     NULL);
++	if (ret != 0)
++		goto cleanup;
+ 
++	sig_target->passed = true;
++cleanup:
++	kfree(root_hash);
+ 	return ret;
+ }
+ 
+-void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts)
++/**
++ * Performs destruction / cleanup of a valid dm_verity_sig struct
++ *
++ * @v: dm_verity structure containing the dm_verity_sig struct to
++ *	be freed.
++ */
++
++void verity_verify_dtr(struct dm_verity *v)
+ {
+-	kfree(sig_opts->sig);
+-	sig_opts->sig = NULL;
+-	sig_opts->sig_size = 0;
++	destroy_verity_sig(v->sig);
++	v->sig = NULL;
+ }
+diff --git a/drivers/md/dm-verity-verify-sig.h b/drivers/md/dm-verity-verify-sig.h
+index 19b1547aa741..7de8409fa9fa 100644
+--- a/drivers/md/dm-verity-verify-sig.h
++++ b/drivers/md/dm-verity-verify-sig.h
+@@ -11,48 +11,46 @@
+ #define DM_VERITY_ROOT_HASH_VERIFICATION "DM Verity Sig Verification"
+ #define DM_VERITY_ROOT_HASH_VERIFICATION_OPT_SIG_KEY "root_hash_sig_key_desc"
+ 
+-struct dm_verity_sig_opts {
++struct dm_verity_sig {
++	char *signature_key_desc;
+ 	unsigned int sig_size;
+ 	u8 *sig;
++	bool passed;
+ };
+ 
+ #ifdef CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG
+ 
+ #define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS 2
+ 
+-int verity_verify_root_hash(const void *data, size_t data_len,
+-			    const void *sig_data, size_t sig_len);
++int verity_verify_root_hash(const struct dm_verity *v);
+ bool verity_verify_is_sig_opt_arg(const char *arg_name);
+ 
+ int verity_verify_sig_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
+-				    struct dm_verity_sig_opts *sig_opts,
+-				    unsigned int *argc, const char *arg_name);
++				    unsigned int *argc);
+ 
+-void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts);
++void verity_verify_dtr(struct dm_verity *v);
+ 
+ #else
+ 
+ #define DM_VERITY_ROOT_HASH_VERIFICATION_OPTS 0
+ 
+-int verity_verify_root_hash(const void *data, size_t data_len,
+-			    const void *sig_data, size_t sig_len)
++inline int verity_verify_root_hash(const struct dm_verity *v)
+ {
+ 	return 0;
+ }
+ 
+-bool verity_verify_is_sig_opt_arg(const char *arg_name)
++inline bool verity_verify_is_sig_opt_arg(const char *arg_name)
+ {
+ 	return false;
+ }
+ 
+-int verity_verify_sig_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
+-				    struct dm_verity_sig_opts *sig_opts,
+-				    unsigned int *argc, const char *arg_name)
++inline int verity_verify_sig_parse_opt_args(struct dm_arg_set *as, struct dm_verity *v,
++					    unsigned int *argc)
+ {
+ 	return -EINVAL;
+ }
+ 
+-void verity_verify_sig_opts_cleanup(struct dm_verity_sig_opts *sig_opts)
++inline void verity_verify_dtr(struct dm_verity *v)
+ {
+ }
+ 
+diff --git a/drivers/md/dm-verity.h b/drivers/md/dm-verity.h
+index 641b9e3a399b..995c495decad 100644
+--- a/drivers/md/dm-verity.h
++++ b/drivers/md/dm-verity.h
+@@ -64,7 +64,7 @@ struct dm_verity {
+ 	struct dm_verity_fec *fec;	/* forward error correction */
+ 	unsigned long *validated_blocks; /* bitset blocks validated */
+ 
+-	char *signature_key_desc; /* signature keyring reference */
++	struct dm_verity_sig *sig; /* signature verification */
+ };
+ 
+ struct dm_verity_io {
 -- 
 2.27.0
 
