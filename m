@@ -2,113 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD4CC230B63
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 15:24:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C1C230B5B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 15:23:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730100AbgG1NXv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 09:23:51 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:32900 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729984AbgG1NXv (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 09:23:51 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1k0Pa8-0008S8-In; Tue, 28 Jul 2020 07:23:48 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1k0Pa7-0004Jh-IY; Tue, 28 Jul 2020 07:23:48 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, Pavel Machek <pavel@ucw.cz>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linux PM <linux-pm@vger.kernel.org>
-References: <87h7tsllgw.fsf@x220.int.ebiederm.org>
-        <CAHk-=wj34Pq1oqFVg1iWYAq_YdhCyvhyCYxiy-CG-o76+UXydQ@mail.gmail.com>
-        <87d04fhkyz.fsf@x220.int.ebiederm.org>
-Date:   Tue, 28 Jul 2020 08:20:41 -0500
-In-Reply-To: <87d04fhkyz.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Tue, 28 Jul 2020 07:39:48 -0500")
-Message-ID: <87h7trg4ie.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1730012AbgG1NXb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 09:23:31 -0400
+Received: from relay.sw.ru ([185.231.240.75]:37472 "EHLO relay3.sw.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729433AbgG1NXb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Jul 2020 09:23:31 -0400
+Received: from [192.168.15.36]
+        by relay3.sw.ru with esmtp (Exim 4.93)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1k0PYr-0004Hm-NN; Tue, 28 Jul 2020 16:22:30 +0300
+Subject: Re: [RFC PATCH 5/5] mm: introduce MADV_DOEXEC
+To:     Anthony Yznaga <anthony.yznaga@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org
+Cc:     mhocko@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org, arnd@arndb.de,
+        ebiederm@xmission.com, keescook@chromium.org, gerg@linux-m68k.org,
+        christian.brauner@ubuntu.com, peterz@infradead.org,
+        esyr@redhat.com, jgg@ziepe.ca, christian@kellner.me,
+        areber@redhat.com, cyphar@cyphar.com, steven.sistare@oracle.com
+References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
+ <1595869887-23307-6-git-send-email-anthony.yznaga@oracle.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <743a51db-dc27-c49c-9c65-ac164f5283ba@virtuozzo.com>
+Date:   Tue, 28 Jul 2020 16:22:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1k0Pa7-0004Jh-IY;;;mid=<87h7trg4ie.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/Lsxp9D29SGoF42ZMFfbqoBJ10C5tdn2s=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 314 ms - load_scoreonly_sql: 0.14 (0.0%),
-        signal_user_changed: 12 (3.7%), b_tie_ro: 10 (3.2%), parse: 0.96
-        (0.3%), extract_message_metadata: 16 (5.0%), get_uri_detail_list: 1.29
-        (0.4%), tests_pri_-1000: 15 (4.7%), tests_pri_-950: 1.49 (0.5%),
-        tests_pri_-900: 1.27 (0.4%), tests_pri_-90: 57 (18.2%), check_bayes:
-        55 (17.7%), b_tokenize: 6 (2.0%), b_tok_get_all: 7 (2.1%),
-        b_comp_prob: 2.3 (0.7%), b_tok_touch_all: 37 (11.9%), b_finish: 0.88
-        (0.3%), tests_pri_0: 198 (63.2%), check_dkim_signature: 0.59 (0.2%),
-        check_dkim_adsp: 2.4 (0.8%), poll_dns_idle: 0.68 (0.2%), tests_pri_10:
-        2.1 (0.7%), tests_pri_500: 7 (2.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC][PATCH] exec: Freeze the other threads during a multi-threaded exec
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <1595869887-23307-6-git-send-email-anthony.yznaga@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
+On 27.07.2020 20:11, Anthony Yznaga wrote:
+> madvise MADV_DOEXEC preserves a memory range across exec.  Initially
+> only supported for non-executable, non-stack, anonymous memory.
+> MADV_DONTEXEC reverts the effect of a previous MADV_DOXEXEC call and
+> undoes the preservation of the range.  After a successful exec call,
+> the behavior of all ranges reverts to MADV_DONTEXEC.
+> 
+> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
+> Signed-off-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+> ---
+>  include/uapi/asm-generic/mman-common.h |  3 +++
+>  mm/madvise.c                           | 25 +++++++++++++++++++++++++
+>  2 files changed, 28 insertions(+)
+> 
+> diff --git a/include/uapi/asm-generic/mman-common.h b/include/uapi/asm-generic/mman-common.h
+> index f94f65d429be..7c5f616b28f7 100644
+> --- a/include/uapi/asm-generic/mman-common.h
+> +++ b/include/uapi/asm-generic/mman-common.h
+> @@ -72,6 +72,9 @@
+>  #define MADV_COLD	20		/* deactivate these pages */
+>  #define MADV_PAGEOUT	21		/* reclaim these pages */
+>  
+> +#define MADV_DOEXEC	22		/* do inherit across exec */
+> +#define MADV_DONTEXEC	23		/* don't inherit across exec */
+> +
+>  /* compatibility flags */
+>  #define MAP_FILE	0
+>  
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index dd1d43cf026d..b447fa748649 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -103,6 +103,26 @@ static long madvise_behavior(struct vm_area_struct *vma,
+>  	case MADV_KEEPONFORK:
+>  		new_flags &= ~VM_WIPEONFORK;
+>  		break;
+> +	case MADV_DOEXEC:
 
-> Linus Torvalds <torvalds@linux-foundation.org> writes:
->
->> It also makes for a possible _huge_ latency regression for execve(),
->> since freezing really has never been a very low-latency operation.
->>
->> Other threads doing IO can now basically block execve() for a long
->> long long time.
->
-> Hmm.  Potentially.  The synchronization with the other threads must
-> happen in a multi-threaded exec in de_thread.
->
-> So I need to look at the differences between where de_thread thread
-> can kill a thread and the freezer can not freeze a thread.  I am hoping
-> that the freezer has already instrumented most of those sleeps but I
-> admit I have not looked yet.
+For me MADV_KEEPONEXEC sounds better as it's symmetric to MADV_KEEPONFORK.
 
-Alright I have looked at the freezer a bit more and I now see that the
-point of marking things freezable is for kernel threads rather that user
-space threads.  I think there are 5 maybe 6 places the code sleeps
-reachable by userspace threads that are marked as freezable and most
-of those are callable from get_signal.
-
-For exec all I care about are user space threads.  So it appears the
-freezer infrastructure adds very little.
-
-Now to see if I can find another way to divert a task into a slow path
-as it wakes up, so I don't need to manually wrap all of the sleeping
-calls.  Something that plays nice with the scheduler.
-
-Eric
+> +		/*
+> +		 * MADV_DOEXEC is only supported on private, non-executable,
+> +		 * non-stack anonymous memory and if the VM_EXEC_KEEP flag
+> +		 * is available.
+> +		 */
+> +		if (!VM_EXEC_KEEP || vma->vm_file || vma->vm_flags & (VM_EXEC|VM_SHARED|VM_STACK)) {
+> +			error = -EINVAL;
+> +			goto out;
+> +		}
+> +		new_flags |= (new_flags & ~VM_MAYEXEC) | VM_EXEC_KEEP;
+> +		break;
+> +	case MADV_DONTEXEC:
+> +		if (!VM_EXEC_KEEP) {
+> +			error = -EINVAL;
+> +			goto out;
+> +		}
+> +		if (new_flags & VM_EXEC_KEEP)
+> +			new_flags |= (new_flags & ~VM_EXEC_KEEP) | VM_MAYEXEC;
+> +		break;
+>  	case MADV_DONTDUMP:
+>  		new_flags |= VM_DONTDUMP;
+>  		break;
+> @@ -983,6 +1003,8 @@ static int madvise_inject_error(int behavior,
+>  	case MADV_SOFT_OFFLINE:
+>  	case MADV_HWPOISON:
+>  #endif
+> +	case MADV_DOEXEC:
+> +	case MADV_DONTEXEC:
+>  		return true;
+>  
+>  	default:
+> @@ -1037,6 +1059,9 @@ static int madvise_inject_error(int behavior,
+>   *  MADV_DONTDUMP - the application wants to prevent pages in the given range
+>   *		from being included in its core dump.
+>   *  MADV_DODUMP - cancel MADV_DONTDUMP: no longer exclude from core dump.
+> + *  MADV_DOEXEC - On exec, preserve and duplicate this area in the new process
+> + *		  if the new process allows it.
+> + *  MADV_DONTEXEC - Undo the effect of MADV_DOEXEC.
+>   *
+>   * return values:
+>   *  zero    - success
+> 
 
