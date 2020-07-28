@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4E62231501
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 23:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E28422314DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 23:38:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730002AbgG1Vht (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 17:37:49 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:47276 "EHLO
+        id S1729585AbgG1Vg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 17:36:29 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:47292 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729491AbgG1Vg2 (ORCPT
+        with ESMTP id S1729505AbgG1Vg2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 28 Jul 2020 17:36:28 -0400
 Received: from dede-linux-virt.corp.microsoft.com (unknown [131.107.160.54])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 9885320B490D;
+        by linux.microsoft.com (Postfix) with ESMTPSA id D58C720B490E;
         Tue, 28 Jul 2020 14:36:27 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9885320B490D
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D58C720B490E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595972187;
-        bh=qDBhra6RZyxVVfdRleQ/T358fYx5mtSorhMjepv44Ls=;
+        s=default; t=1595972188;
+        bh=SC6FlQIH3oTzgF1y4D27CLLK+qOAyAobEQYvHVcHTHk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DHp5PLmpO6dKK8504JJ/H6SMEztyP8wiso8zbFrhpW/FNQNuAbpfTePtVZ/vj3wXo
-         RURM+HpB2Q5YD+dtYNRd+wqdJ6PMiZn2iJsMLsqslTQJNkh7ohRlLgUZhT6vnQZ0ku
-         +pm+0794Mm73X8A96/OkofRiBPB6f8i2YTAhKSuI=
+        b=S+D5bKJEHEeORe6p0ptieKrrFuKRBHRW6qN8UsOllSrIINbMexMwHdoy4Kg73eQkP
+         OTe1Kmkeoud8luOi4mCHdXScdJe3qQvd2Uw6OZmbgRugmK7GQQ4BUdcBZKI7o5GzNk
+         mB+n13CQz6OJPcg31CF9Qb3/8GKWm7HboxL0dXEk=
 From:   Deven Bowers <deven.desai@linux.microsoft.com>
 To:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
         jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
@@ -36,9 +36,9 @@ Cc:     tyhicks@linux.microsoft.com, linux-kernel@vger.kernel.org,
         corbet@lwn.net, sashal@kernel.org,
         jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
         nramas@linux.microsoft.com, pasha.tatashin@soleen.com
-Subject: [RFC PATCH v5 04/11] ipe: add property for trust of boot volume
-Date:   Tue, 28 Jul 2020 14:36:04 -0700
-Message-Id: <20200728213614.586312-5-deven.desai@linux.microsoft.com>
+Subject: [RFC PATCH v5 05/11] fs: add security blob and hooks for block_device
+Date:   Tue, 28 Jul 2020 14:36:05 -0700
+Message-Id: <20200728213614.586312-6-deven.desai@linux.microsoft.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
 References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
@@ -49,504 +49,258 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a property for IPE policy to express trust of the first superblock
-where a file would be evaluated to determine trust.
+Add a security blob and associated allocation, deallocation and set hooks
+for a block_device structure.
 
 Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 ---
- security/ipe/Kconfig                    |  2 +
- security/ipe/Makefile                   |  4 ++
- security/ipe/ipe-engine.c               |  4 ++
- security/ipe/ipe-hooks.c                | 19 +++++
- security/ipe/ipe-hooks.h                |  2 +
- security/ipe/ipe-pin.c                  | 93 +++++++++++++++++++++++++
- security/ipe/ipe-pin.h                  | 36 ++++++++++
- security/ipe/ipe.c                      | 28 +++++++-
- security/ipe/properties/Kconfig         | 15 ++++
- security/ipe/properties/Makefile        | 11 +++
- security/ipe/properties/boot-verified.c | 82 ++++++++++++++++++++++
- security/ipe/properties/prop-entry.h    | 20 ++++++
- security/ipe/utility.h                  | 22 ++++++
- 13 files changed, 337 insertions(+), 1 deletion(-)
- create mode 100644 security/ipe/ipe-pin.c
- create mode 100644 security/ipe/ipe-pin.h
- create mode 100644 security/ipe/properties/Kconfig
- create mode 100644 security/ipe/properties/Makefile
- create mode 100644 security/ipe/properties/boot-verified.c
- create mode 100644 security/ipe/properties/prop-entry.h
- create mode 100644 security/ipe/utility.h
+ fs/block_dev.c                |  8 ++++
+ include/linux/fs.h            |  1 +
+ include/linux/lsm_hook_defs.h |  5 +++
+ include/linux/lsm_hooks.h     | 12 ++++++
+ include/linux/security.h      | 22 +++++++++++
+ security/security.c           | 74 +++++++++++++++++++++++++++++++++++
+ 6 files changed, 122 insertions(+)
 
-diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
-index 665524fc3ca4..469ef78c2f4f 100644
---- a/security/ipe/Kconfig
-+++ b/security/ipe/Kconfig
-@@ -43,4 +43,6 @@ config SECURITY_IPE_PERMISSIVE_SWITCH
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 0ae656e022fd..8602dd62c3e2 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -34,6 +34,7 @@
+ #include <linux/falloc.h>
+ #include <linux/uaccess.h>
+ #include <linux/suspend.h>
++#include <linux/security.h>
+ #include "internal.h"
  
- 	  If unsure, answer Y.
- 
-+source "security/ipe/properties/Kconfig"
+ struct bdev_inode {
+@@ -768,11 +769,18 @@ static struct inode *bdev_alloc_inode(struct super_block *sb)
+ 	struct bdev_inode *ei = kmem_cache_alloc(bdev_cachep, GFP_KERNEL);
+ 	if (!ei)
+ 		return NULL;
 +
- endif
-diff --git a/security/ipe/Makefile b/security/ipe/Makefile
-index 7d6da33dd0c4..7e98982c5035 100644
---- a/security/ipe/Makefile
-+++ b/security/ipe/Makefile
-@@ -26,3 +26,7 @@ obj-$(CONFIG_SECURITY_IPE) += \
- 	ipe-secfs.o \
- 
- clean-files := ipe-bp.c
-+
-+obj-$(CONFIG_IPE_BOOT_PROP) += ipe-pin.o
-+
-+obj-$(CONFIG_SECURITY_IPE) += properties/
-diff --git a/security/ipe/ipe-engine.c b/security/ipe/ipe-engine.c
-index ac526d4ea5e6..0291ced99d64 100644
---- a/security/ipe/ipe-engine.c
-+++ b/security/ipe/ipe-engine.c
-@@ -9,6 +9,8 @@
- #include "ipe-policy.h"
- #include "ipe-engine.h"
- #include "ipe-audit.h"
-+#include "ipe-pin.h"
-+#include "utility.h"
- 
- #include <linux/types.h>
- #include <linux/fs.h>
-@@ -197,6 +199,8 @@ int ipe_process_event(const struct file *file, enum ipe_op op,
- 	if (IS_ERR(ctx))
- 		goto cleanup;
- 
-+	ipe_pin_superblock(ctx->file);
-+
- 	rc = evaluate(ctx);
- 
- cleanup:
-diff --git a/security/ipe/ipe-hooks.c b/security/ipe/ipe-hooks.c
-index 071c4af23a3d..45efe022be04 100644
---- a/security/ipe/ipe-hooks.c
-+++ b/security/ipe/ipe-hooks.c
-@@ -6,6 +6,7 @@
- #include "ipe.h"
- #include "ipe-hooks.h"
- #include "ipe-engine.h"
-+#include "ipe-pin.h"
- 
- #include <linux/types.h>
- #include <linux/fs.h>
-@@ -147,3 +148,21 @@ int ipe_on_kernel_load_data(enum kernel_load_data_id id)
- 					 ipe_hook_kernel_load);
- 	}
- }
-+
-+/**
-+ * ipe_sb_free_security: LSM hook called on sb_free_security.
-+ * @mnt_sb: Super block that is being freed.
-+ *
-+ * IPE does not currently utilize the super block security hook,
-+ * it utilizes this hook to invalidate the saved super block for
-+ * the boot_verified property.
-+ *
-+ * For more information, see the LSM hook, sb_free_security.
-+ *
-+ * Return:
-+ * 0 - OK
-+ */
-+void ipe_sb_free_security(struct super_block *mnt_sb)
-+{
-+	ipe_invalidate_pinned_sb(mnt_sb);
-+}
-diff --git a/security/ipe/ipe-hooks.h b/security/ipe/ipe-hooks.h
-index 806659b7cdbe..5e46726f2562 100644
---- a/security/ipe/ipe-hooks.h
-+++ b/security/ipe/ipe-hooks.h
-@@ -58,4 +58,6 @@ int ipe_on_kernel_read(struct file *file, enum kernel_read_file_id id);
- 
- int ipe_on_kernel_load_data(enum kernel_load_data_id id);
- 
-+void ipe_sb_free_security(struct super_block *mnt_sb);
-+
- #endif /* IPE_HOOK_H */
-diff --git a/security/ipe/ipe-pin.c b/security/ipe/ipe-pin.c
-new file mode 100644
-index 000000000000..a963be8e5321
---- /dev/null
-+++ b/security/ipe/ipe-pin.c
-@@ -0,0 +1,93 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * This file has been heavily adapted from the source code of the
-+ * loadpin LSM. The source code for loadpin is co-located in the linux
-+ * tree under security/loadpin/loadpin.c.
-+ *
-+ * Please see loadpin.c for up-to-date information about
-+ * loadpin.
-+ */
-+
-+#include "ipe.h"
-+
-+#include <linux/types.h>
-+#include <linux/spinlock_types.h>
-+#include <linux/fs.h>
-+#include <linux/mount.h>
-+#include <linux/magic.h>
-+#include <linux/mm.h>
-+#include <linux/mman.h>
-+
-+static DEFINE_SPINLOCK(pinned_sb_spinlock);
-+
-+static struct super_block *pinned_sb;
-+
-+/**
-+ * ipe_is_from_pinned_sb: Determine if @file originates from the initial
-+ *			  super block that a file was executed from.
-+ * @file: File to check if it originates from the super block.
-+ *
-+ * Return:
-+ * true - File originates from the initial super block
-+ * false - File does not originate from the initial super block
-+ */
-+bool ipe_is_from_pinned_sb(const struct file *file)
-+{
-+	bool rv = false;
-+
-+	spin_lock(&pinned_sb_spinlock);
-+
-+	/*
-+	 * Check if pinned_sb is set:
-+	 *  NULL == not set -> exit
-+	 *  ERR == was once set (and has been unmounted) -> exit
-+	 * AND check that the pinned sb is the same as the file's.
-+	 */
-+	if (!IS_ERR_OR_NULL(pinned_sb) &&
-+	    file->f_path.mnt->mnt_sb == pinned_sb) {
-+		rv = true;
-+		goto cleanup;
++	if (unlikely(security_bdev_alloc(&ei->bdev))) {
++		kmem_cache_free(bdev_cachep, ei);
++		return NULL;
 +	}
 +
-+cleanup:
-+	spin_unlock(&pinned_sb_spinlock);
-+	return rv;
-+}
-+
-+/**
-+ * ipe_pin_superblock: Attempt to save a file's super block address to later
-+ *		       determine if a file originates from a super block.
-+ * @file: File to source the super block from.
-+ */
-+void ipe_pin_superblock(const struct file *file)
-+{
-+	spin_lock(&pinned_sb_spinlock);
-+
-+	/* if set, return */
-+	if (pinned_sb || !file)
-+		goto cleanup;
-+
-+	pinned_sb = file->f_path.mnt->mnt_sb;
-+cleanup:
-+	spin_unlock(&pinned_sb_spinlock);
-+}
-+
-+/**
-+ * ipe_invalidate_pinned_sb: Invalidate the saved super block.
-+ * @mnt_sb: Super block to compare against the saved super block.
-+ *
-+ * This avoids authorizing a file when the super block does not exist anymore.
-+ */
-+void ipe_invalidate_pinned_sb(const struct super_block *mnt_sb)
-+{
-+	spin_lock(&pinned_sb_spinlock);
-+
-+	/*
-+	 * On pinned sb unload - invalidate the pinned address
-+	 * by setting the pinned_sb to ERR_PTR(-EIO)
-+	 */
-+	if (!IS_ERR_OR_NULL(pinned_sb) && mnt_sb == pinned_sb)
-+		pinned_sb = ERR_PTR(-EIO);
-+
-+	spin_unlock(&pinned_sb_spinlock);
-+}
-diff --git a/security/ipe/ipe-pin.h b/security/ipe/ipe-pin.h
-new file mode 100644
-index 000000000000..b707e6253c33
---- /dev/null
-+++ b/security/ipe/ipe-pin.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
-+ */
-+#ifndef IPE_PIN_H
-+#define IPE_PIN_H
-+
-+#include <linux/types.h>
-+#include <linux/fs.h>
-+
-+#ifdef CONFIG_IPE_BOOT_PROP
-+
-+bool ipe_is_from_pinned_sb(const struct file *file);
-+
-+void ipe_pin_superblock(const struct file *file);
-+
-+void ipe_invalidate_pinned_sb(const struct super_block *mnt_sb);
-+
-+#else /* CONFIG_IPE_BOOT_PROP */
-+
-+static inline bool ipe_is_from_pinned_sb(const struct file *file)
-+{
-+	return false;
-+}
-+
-+static inline void ipe_pin_superblock(const struct file *file)
-+{
-+}
-+
-+static inline void ipe_invalidate_pinned_sb(const struct super_block *mnt_sb)
-+{
-+}
-+
-+#endif /* !CONFIG_IPE_BOOT_PROP */
-+
-+#endif /* IPE_PIN_H */
-diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-index 6e3b9a10813c..706ff38083c6 100644
---- a/security/ipe/ipe.c
-+++ b/security/ipe/ipe.c
-@@ -6,6 +6,7 @@
- #include "ipe.h"
- #include "ipe-policy.h"
- #include "ipe-hooks.h"
-+#include "properties/prop-entry.h"
+ 	return &ei->vfs_inode;
+ }
  
- #include <linux/module.h>
- #include <linux/lsm_hooks.h>
-@@ -21,8 +22,27 @@ static struct security_hook_list ipe_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(kernel_read_file, ipe_on_kernel_read),
- 	LSM_HOOK_INIT(kernel_load_data, ipe_on_kernel_load_data),
- 	LSM_HOOK_INIT(file_mprotect, ipe_on_mprotect),
-+	LSM_HOOK_INIT(sb_free_security, ipe_sb_free_security),
+ static void bdev_free_inode(struct inode *inode)
+ {
++	security_bdev_free(&BDEV_I(inode)->bdev);
+ 	kmem_cache_free(bdev_cachep, BDEV_I(inode));
+ }
+ 
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f5abba86107d..42d7e3ce7712 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -509,6 +509,7 @@ struct block_device {
+ 	int			bd_fsfreeze_count;
+ 	/* Mutex for freeze */
+ 	struct mutex		bd_fsfreeze_mutex;
++	void			*security;
+ } __randomize_layout;
+ 
+ /* XArray tags, for tagging dirty and writeback pages in the pagecache. */
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index af998f93d256..f3c0da0db4e8 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -391,3 +391,8 @@ LSM_HOOK(void, LSM_RET_VOID, perf_event_free, struct perf_event *event)
+ LSM_HOOK(int, 0, perf_event_read, struct perf_event *event)
+ LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
+ #endif /* CONFIG_PERF_EVENTS */
++
++LSM_HOOK(int, 0, bdev_alloc_security, struct block_device *bdev)
++LSM_HOOK(void, LSM_RET_VOID, bdev_free_security, struct block_device *bdev)
++LSM_HOOK(int, 0, bdev_setsecurity, struct block_device *bdev, const char *name,
++	 const void *value, size_t size)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 95b7c1d32062..8670c19a8cef 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1507,6 +1507,17 @@
+  *
+  *     @what: kernel feature being accessed
+  *
++ * @bdev_alloc_security:
++ *	Initialize the security field inside a block_device structure.
++ *
++ * @bdev_free_security:
++ *	Cleanup the security information stored inside a block_device structure.
++ *
++ * @bdev_setsecurity:
++ *	Set a security property associated with @name for @bdev with
++ *	value @value. @size indicates the size of @value in bytes.
++ *	If a @name is not implemented, return -ENOSYS.
++ *
+  * Security hooks for perf events
+  *
+  * @perf_event_open:
+@@ -1553,6 +1564,7 @@ struct lsm_blob_sizes {
+ 	int	lbs_ipc;
+ 	int	lbs_msg_msg;
+ 	int	lbs_task;
++	int	lbs_bdev;
  };
  
-+/**
-+ * ipe_load_properties: Call the property entry points for all the IPE modules
-+ *			that were selected at kernel build-time.
-+ *
-+ * Return:
-+ * 0 - OK
-+ */
-+static int __init ipe_load_properties(void)
+ /*
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 0a0a03b36a3b..8f83fdc6c65d 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -451,6 +451,11 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+ int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
+ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
+ int security_locked_down(enum lockdown_reason what);
++int security_bdev_alloc(struct block_device *bdev);
++void security_bdev_free(struct block_device *bdev);
++int security_bdev_setsecurity(struct block_device *bdev,
++			      const char *name, const void *value,
++			      size_t size);
+ #else /* CONFIG_SECURITY */
+ 
+ static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
+@@ -1291,6 +1296,23 @@ static inline int security_locked_down(enum lockdown_reason what)
+ {
+ 	return 0;
+ }
++
++static inline int security_bdev_alloc(struct block_device *bdev)
 +{
-+	int rc = 0;
++	return 0;
++}
 +
-+	rc = ipe_init_bootv();
-+	if (rc != 0)
-+		return rc;
++static inline void security_bdev_free(struct block_device *bdev)
++{
++}
 +
-+	return rc;
++static inline int security_bdev_setsecurity(struct block_device *bdev,
++					    const char *name,
++					    const void *value, size_t size)
++{
++	return 0;
++}
++
+ #endif	/* CONFIG_SECURITY */
+ 
+ #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
+diff --git a/security/security.c b/security/security.c
+index 70a7ad357bc6..fff445eba400 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -28,6 +28,7 @@
+ #include <linux/string.h>
+ #include <linux/msg.h>
+ #include <net/flow.h>
++#include <linux/fs.h>
+ 
+ #define MAX_LSM_EVM_XATTR	2
+ 
+@@ -202,6 +203,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+ 	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
+ 	lsm_set_blob_size(&needed->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
+ 	lsm_set_blob_size(&needed->lbs_task, &blob_sizes.lbs_task);
++	lsm_set_blob_size(&needed->lbs_bdev, &blob_sizes.lbs_bdev);
+ }
+ 
+ /* Prepare LSM for initialization. */
+@@ -337,6 +339,7 @@ static void __init ordered_lsm_init(void)
+ 	init_debug("ipc blob size      = %d\n", blob_sizes.lbs_ipc);
+ 	init_debug("msg_msg blob size  = %d\n", blob_sizes.lbs_msg_msg);
+ 	init_debug("task blob size     = %d\n", blob_sizes.lbs_task);
++	init_debug("bdev blob size     = %d\n", blob_sizes.lbs_bdev);
+ 
+ 	/*
+ 	 * Create any kmem_caches needed for blobs
+@@ -654,6 +657,28 @@ static int lsm_msg_msg_alloc(struct msg_msg *mp)
+ 	return 0;
+ }
+ 
++/**
++ * lsm_bdev_alloc - allocate a composite block_device blob
++ * @bdev: the block_device that needs a blob
++ *
++ * Allocate the block_device blob for all the modules
++ *
++ * Returns 0, or -ENOMEM if memory can't be allocated.
++ */
++static int lsm_bdev_alloc(struct block_device *bdev)
++{
++	if (blob_sizes.lbs_bdev == 0) {
++		bdev->security = NULL;
++		return 0;
++	}
++
++	bdev->security = kzalloc(blob_sizes.lbs_bdev, GFP_KERNEL);
++	if (!bdev->security)
++		return -ENOMEM;
++
++	return 0;
 +}
 +
  /**
-  * ipe_init: Entry point of IPE.
-  *
-@@ -38,12 +58,18 @@ static struct security_hook_list ipe_hooks[] __lsm_ro_after_init = {
-  */
- static int __init ipe_init(void)
- {
-+	int rc;
-+
-+	rc = ipe_load_properties();
-+	if (rc != 0)
-+		panic("IPE: properties failed to load");
-+
- 	pr_info("mode=%s", (ipe_enforce == 1) ? IPE_MODE_ENFORCE :
- 						IPE_MODE_PERMISSIVE);
- 
- 	security_add_hooks(ipe_hooks, ARRAY_SIZE(ipe_hooks), "IPE");
- 
--	return 0;
-+	return rc;
+  * lsm_early_task - during initialization allocate a composite task blob
+  * @task: the task that needs a blob
+@@ -2516,6 +2541,55 @@ int security_locked_down(enum lockdown_reason what)
  }
+ EXPORT_SYMBOL(security_locked_down);
  
- DEFINE_LSM(ipe) = {
-diff --git a/security/ipe/properties/Kconfig b/security/ipe/properties/Kconfig
-new file mode 100644
-index 000000000000..75c6c6ff6cd8
---- /dev/null
-+++ b/security/ipe/properties/Kconfig
-@@ -0,0 +1,15 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Integrity Policy Enforcement (IPE) configuration
-+#
-+
-+config IPE_BOOT_PROP
-+	bool "Enable trust for boot volume"
-+	help
-+	  This option enables the property "boot_verified" in IPE policy.
-+	  This property 'pins' the initial superblock when something is
-+	  evaluated as an execution. This property will evaluate to true
-+	  when the file being evaluated originates from the initial
-+	  superblock.
-+
-+	  if unsure, answer N.
-diff --git a/security/ipe/properties/Makefile b/security/ipe/properties/Makefile
-new file mode 100644
-index 000000000000..e3e7fe17cf58
---- /dev/null
-+++ b/security/ipe/properties/Makefile
-@@ -0,0 +1,11 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (C) Microsoft Corporation. All rights reserved.
-+#
-+# Makefile for building the properties that IPE uses
-+# as part of the kernel tree.
-+#
-+
-+obj-$(CONFIG_SECURITY_IPE) += properties.o
-+
-+properties-$(CONFIG_IPE_BOOT_PROP) += boot-verified.o
-diff --git a/security/ipe/properties/boot-verified.c b/security/ipe/properties/boot-verified.c
-new file mode 100644
-index 000000000000..eb9e6ebe34fa
---- /dev/null
-+++ b/security/ipe/properties/boot-verified.c
-@@ -0,0 +1,82 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
-+ */
-+
-+#include "../ipe.h"
-+#include "../ipe-pin.h"
-+#include "../ipe-property.h"
-+#include "../utility.h"
-+
-+#include <linux/types.h>
-+#include <linux/slab.h>
-+#include <linux/fs.h>
-+#include <linux/mount.h>
-+#include <linux/audit.h>
-+
-+#define PROPERTY_NAME "boot_verified"
-+
-+static void audit(struct audit_buffer *ab, bool value)
++int security_bdev_alloc(struct block_device *bdev)
 +{
-+	audit_log_format(ab, "%s", (value) ? "TRUE" : "FALSE");
-+}
++	int rc = 0;
 +
-+static inline void audit_rule_value(struct audit_buffer *ab,
-+				    const void *value)
-+{
-+	audit(ab, (bool)value);
-+}
++	rc = lsm_bdev_alloc(bdev);
++	if (unlikely(rc))
++		return rc;
 +
-+static inline void audit_ctx(struct audit_buffer *ab,
-+			     const struct ipe_engine_ctx *ctx)
-+{
-+	bool b = has_sb(ctx->file) && ipe_is_from_pinned_sb(ctx->file);
-+
-+	audit(ab, b);
-+}
-+
-+static bool evaluate(const struct ipe_engine_ctx *ctx,
-+		     const void *value)
-+{
-+	bool expect = (bool)value;
-+
-+	if (!ctx->file || !has_sb(ctx->file))
-+		return false;
-+
-+	return ipe_is_from_pinned_sb(ctx->file) == expect;
-+}
-+
-+static int parse(const char *val_str, void **value)
-+{
-+	if (strcmp("TRUE", val_str) == 0)
-+		*value = (void *)true;
-+	else if (strcmp("FALSE", val_str) == 0)
-+		*value = (void *)false;
-+	else
-+		return -EBADMSG;
++	rc = call_int_hook(bdev_alloc_security, 0, bdev);
++	if (unlikely(rc))
++		security_bdev_free(bdev);
 +
 +	return 0;
 +}
++EXPORT_SYMBOL(security_bdev_alloc);
 +
-+static inline int duplicate(const void *src, void **dest)
++void security_bdev_free(struct block_device *bdev)
 +{
-+	*dest = (void *)(bool)src;
++	if (!bdev->security)
++		return;
 +
-+	return 0;
++	call_void_hook(bdev_free_security, bdev);
++
++	kfree(bdev->security);
++	bdev->security = NULL;
 +}
++EXPORT_SYMBOL(security_bdev_free);
 +
-+static const struct ipe_property boot_verified = {
-+	.property_name = PROPERTY_NAME,
-+	.version = 1,
-+	.eval = evaluate,
-+	.rule_audit = audit_rule_value,
-+	.ctx_audit = audit_ctx,
-+	.parse = parse,
-+	.dup = duplicate,
-+	.free_val = NULL,
-+};
-+
-+int ipe_init_bootv(void)
++int security_bdev_setsecurity(struct block_device *bdev,
++			      const char *name, const void *value,
++			      size_t size)
 +{
-+	return ipe_register_property(&boot_verified);
++	int rc = 0;
++	struct security_hook_list *p;
++
++	hlist_for_each_entry(p, &security_hook_heads.bdev_setsecurity, list) {
++		rc = p->hook.bdev_setsecurity(bdev, name, value, size);
++
++		if (rc == -ENOSYS)
++			rc = 0;
++
++		if (rc != 0)
++			break;
++	}
++
++	return rc;
 +}
-diff --git a/security/ipe/properties/prop-entry.h b/security/ipe/properties/prop-entry.h
-new file mode 100644
-index 000000000000..f598dd9608b9
---- /dev/null
-+++ b/security/ipe/properties/prop-entry.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
-+ */
++EXPORT_SYMBOL(security_bdev_setsecurity);
 +
-+#include <linux/types.h>
-+
-+#ifndef IPE_PROP_ENTRY_H
-+#define IPE_PROP_ENTRY_H
-+
-+#ifndef CONFIG_IPE_BOOT_PROP
-+static inline int __init ipe_init_bootv(void)
-+{
-+	return 0;
-+}
-+#else
-+int __init ipe_init_bootv(void);
-+#endif /* CONFIG_IPE_BOOT_PROP */
-+
-+#endif /* IPE_PROP_ENTRY_H */
-diff --git a/security/ipe/utility.h b/security/ipe/utility.h
-new file mode 100644
-index 000000000000..a13089bb0d8f
---- /dev/null
-+++ b/security/ipe/utility.h
-@@ -0,0 +1,22 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
-+ */
-+
-+#ifndef IPE_UTILITY_H
-+#define IPE_UTILITY_H
-+
-+#include <linux/types.h>
-+#include <linux/fs.h>
-+
-+static inline bool has_mount(const struct file *file)
-+{
-+	return file && file->f_path.mnt;
-+}
-+
-+static inline bool has_sb(const struct file *file)
-+{
-+	return has_mount(file) && file->f_path.mnt->mnt_sb;
-+}
-+
-+#endif /* IPE_UTILITY_H */
+ #ifdef CONFIG_PERF_EVENTS
+ int security_perf_event_open(struct perf_event_attr *attr, int type)
+ {
 -- 
 2.27.0
 
