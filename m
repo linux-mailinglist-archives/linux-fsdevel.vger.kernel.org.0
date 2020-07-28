@@ -2,117 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3774C230FC5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 18:37:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 847E5231014
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 18:49:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731812AbgG1QfK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 12:35:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55120 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731478AbgG1QfJ (ORCPT
+        id S1731579AbgG1QtM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 12:49:12 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:38868 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731474AbgG1QtM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 12:35:09 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 194C5C061794;
-        Tue, 28 Jul 2020 09:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=i1H+gCppzv/oG+6sLkbZmKQE2JPL8SjqHA8WTb2gSvU=; b=LxM66CH3HTPccSmCXgX61L4i3x
-        lcFVojpvIzaXLMSJtSHVOjYQc1VPg8nqUMGKn26icgHeCTDwa8cHthtW0NyH9IL7x2K6H/JISRVQ8
-        JPjpG3xAigGpx594tGH/CGBwTS6i+qC6/bKK6FkfnsZJZTHT+M/4vF+It4SBOG2cwOdDfrVoib8bQ
-        SKzq5r8Fy6WzZpVjLBXx+/sapnEvfU8lNNYQaRCR8MWe4VeeF/i1AciLsd00Ig8++1b8MByywdmZX
-        UNpBAk8J1tPn5xuPMOXn0AlyHrb5reNQLbLvHkH954tGZ9cpRydpCm4IgPR8ell8DTsT3PERwJxOn
-        5Vw0CBQg==;
-Received: from [2001:4bb8:180:6102:fd04:50d8:4827:5508] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k0SZD-00075W-DO; Tue, 28 Jul 2020 16:35:04 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Subject: [PATCH 23/23] init: add an init_dup helper
-Date:   Tue, 28 Jul 2020 18:34:16 +0200
-Message-Id: <20200728163416.556521-24-hch@lst.de>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200728163416.556521-1-hch@lst.de>
-References: <20200728163416.556521-1-hch@lst.de>
+        Tue, 28 Jul 2020 12:49:12 -0400
+Received: from [192.168.254.32] (unknown [47.187.206.220])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 00A5820B4908;
+        Tue, 28 Jul 2020 09:49:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 00A5820B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1595954951;
+        bh=Wp9lMVW/v/maF95Uhld2YeppHP7BkSsiQSbIpc2iGG8=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=WcBQe+flSDX55q/ewMf9Af18CEdGVpPWvr4lx2WIFz5MF35ysP3AWSLhovuuIPJcA
+         R3zbmGw3qgHmAG6CF4LvqSk2K2IKdZOIS5Qx4ZwAsGDJLulERBJPTE+dh47a06ZwIC
+         G6ZCs/L/b81Zc5VW94CZcASUxH6PlX38Z+nqyTKc=
+Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org
+References: <aefc85852ea518982e74b233e11e16d2e707bc32>
+ <20200728131050.24443-1-madvenka@linux.microsoft.com>
+ <3fd22f92-7f45-1b0f-e4fe-857f3bceedd0@schaufler-ca.com>
+From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Message-ID: <80dd0421-062b-bfaa-395a-e52b169acea4@linux.microsoft.com>
+Date:   Tue, 28 Jul 2020 11:49:10 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <3fd22f92-7f45-1b0f-e4fe-857f3bceedd0@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a simple helper to grab a reference to a file and install it at
-the next available fd, and switch the early init code over to it.
+Thanks.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/init.c                     | 12 ++++++++++++
- include/linux/init_syscalls.h |  1 +
- init/main.c                   |  7 +++----
- 3 files changed, 16 insertions(+), 4 deletions(-)
+On 7/28/20 11:05 AM, Casey Schaufler wrote:
+>> In this solution, the kernel recognizes certain sequences of instructions
+>> as "well-known" trampolines. When such a trampoline is executed, a page
+>> fault happens because the trampoline page does not have execute permission.
+>> The kernel recognizes the trampoline and emulates it. Basically, the
+>> kernel does the work of the trampoline on behalf of the application.
+> What prevents a malicious process from using the "well-known" trampoline
+> to its own purposes? I expect it is obvious, but I'm not seeing it. Old
+> eyes, I suppose.
 
-diff --git a/fs/init.c b/fs/init.c
-index db5c48a85644fa..730e05acda2392 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -8,6 +8,7 @@
- #include <linux/namei.h>
- #include <linux/fs.h>
- #include <linux/fs_struct.h>
-+#include <linux/file.h>
- #include <linux/init_syscalls.h>
- #include <linux/security.h>
- #include "internal.h"
-@@ -251,3 +252,14 @@ int __init init_utimes(char *filename, struct timespec64 *ts)
- 	path_put(&path);
- 	return error;
- }
-+
-+int __init init_dup(struct file *file)
-+{
-+	int fd;
-+
-+	fd = get_unused_fd_flags(0);
-+	if (fd < 0)
-+		return fd;
-+	fd_install(get_unused_fd_flags(0), get_file(file));
-+	return 0;
-+}
-diff --git a/include/linux/init_syscalls.h b/include/linux/init_syscalls.h
-index 3654b525ac0b17..92045d18cbfc99 100644
---- a/include/linux/init_syscalls.h
-+++ b/include/linux/init_syscalls.h
-@@ -16,3 +16,4 @@ int __init init_unlink(const char *pathname);
- int __init init_mkdir(const char *pathname, umode_t mode);
- int __init init_rmdir(const char *pathname);
- int __init init_utimes(char *filename, struct timespec64 *ts);
-+int __init init_dup(struct file *file);
-diff --git a/init/main.c b/init/main.c
-index 1c710d3e1d461a..089e21504b1fc1 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -1467,10 +1467,9 @@ void __init console_on_rootfs(void)
- 		pr_err("Warning: unable to open an initial console.\n");
- 		return;
- 	}
--	get_file_rcu_many(file, 2);
--	fd_install(get_unused_fd_flags(0), file);
--	fd_install(get_unused_fd_flags(0), file);
--	fd_install(get_unused_fd_flags(0), file);
-+	init_dup(file);
-+	init_dup(file);
-+	init_dup(file);
- }
- 
- static noinline void __init kernel_init_freeable(void)
--- 
-2.27.0
+You are quite right. As I note below, the attack surface is the
+buffer that contains the trampoline code. Since the kernel does
+check the instruction sequence, the sequence cannot be
+changed by a hacker. But the hacker can presumably change
+the register values and redirect the PC to his desired location.
 
+The assumption with trampoline emulation is that the
+system will have security settings that will prevent pages from
+having both write and execute permissions. So, a hacker
+cannot load his own code in a page and redirect the PC to
+it and execute his own code. But he can probably set the
+PC to point to arbitrary locations. For instance, jump to
+the middle of a C library function.
+>
+>> Here, the attack surface is the buffer that contains the trampoline.
+>> The attack surface is narrower than before. A hacker may still be able to
+>> modify what gets loaded in the registers or modify the target PC to point
+>> to arbitrary locations.
+...
+>> Work that is pending
+>> --------------------
+>>
+>> - I am working on implementing an SELinux setting called "exectramp"
+>>   similar to "execmem" to allow the use of trampfd on a per application
+>>   basis.
+> You could make a separate LSM to do these checks instead of limiting
+> it to SELinux. Your use case, your call, of course.
+
+OK. I will research this.
+
+Madhavan
