@@ -2,147 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DCA2231119
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 19:45:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00653231125
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 19:53:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732068AbgG1RpB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 13:45:01 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48854 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731948AbgG1RpB (ORCPT
+        id S1732083AbgG1RxE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 13:53:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39004 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728292AbgG1RxD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 13:45:01 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06SHbdhO119251;
-        Tue, 28 Jul 2020 17:44:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=bAxoxVqkxvfHt6SEE10MiPl/V0wf4gBcQL+oBZHzmbs=;
- b=k8sAiZsjkapHCiwl7lQCXXq7V2xxPlwd/o/Vi0qSxmuLhMd4JONU5FHb26rdfvNQs2cl
- gClofoapoK+hGLjV9p85pBAk2ttgdD1jqmeX72M98WQbGx7BT6TtvpO5H2Zi50hBWISx
- P/QhLgs5v+mAIMdT1RQL0nhx7z1AXTcwxF6MR/k3PKLVGq5zJkmwfGvktQvblRwJHG2d
- UeHbz7qHtE9BL/LanTq9wTR7k9+SEWeH7UugAHkSsFFOjARjUfUJapTkgiyhxSbAFtAV
- sbaDy+mEjMb7nRo7EFT/BFsOYcnznLegrOibQBScrEQ0TENTotzx5WXy8zf/MZSojQKy iw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 32hu1jgya4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 28 Jul 2020 17:44:23 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06SHWi3i162287;
-        Tue, 28 Jul 2020 17:44:22 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 32hu5ug1g1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 Jul 2020 17:44:22 +0000
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 06SHiFYe032078;
-        Tue, 28 Jul 2020 17:44:16 GMT
-Received: from [10.154.121.35] (/10.154.121.35)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 28 Jul 2020 10:44:15 -0700
-Subject: Re: [RFC PATCH 3/5] mm: introduce VM_EXEC_KEEP
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, mhocko@kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-        hpa@zytor.com, viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        arnd@arndb.de, keescook@chromium.org, gerg@linux-m68k.org,
-        ktkhai@virtuozzo.com, christian.brauner@ubuntu.com,
-        peterz@infradead.org, esyr@redhat.com, jgg@ziepe.ca,
-        christian@kellner.me, areber@redhat.com, cyphar@cyphar.com,
-        steven.sistare@oracle.com
-References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
- <1595869887-23307-4-git-send-email-anthony.yznaga@oracle.com>
- <87365bg3nx.fsf@x220.int.ebiederm.org>
-From:   Anthony Yznaga <anthony.yznaga@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <7694af9d-dfb9-8c44-dc41-79f58bb14413@oracle.com>
-Date:   Tue, 28 Jul 2020 10:44:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 28 Jul 2020 13:53:03 -0400
+Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 880E7C061794
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 10:53:03 -0700 (PDT)
+Received: by mail-ot1-x341.google.com with SMTP id o72so9945090ota.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 10:53:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oKg/T7h0+IcTaK5sUlD4aWvye+DlJgPV3ZmHWAi13uI=;
+        b=JfCcznYJ81m3a0At/Be2Y2JYfjKwPlt6ZvDDzpat6zy5UirlLyfFw6bwxGRMSxiv45
+         crBwqmJglqNwLoQfJQv+/LKg874OK2/ESad0O1E9lMCHBrW8zGNpzL1vssmEioQjgpqi
+         eO/ohUweePRfsKX+Gl9ov0i94DSrukleVQA33EPxcMA4mCoNb8zVExwu8Trdg9E3zPPS
+         FWOAo1Ac1L5He1cXSbtt0JIgTTi05SMihVLcv4ewsOPcx9c3DPuiASTuAeO5Kun1aqoo
+         S+kiCfXuXe/6AXpm9G7CHHwrSKECYDDkVTZ+BrxW6K3Ee3iTihaAKAw/Zp1HHjnoXSY2
+         kuoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oKg/T7h0+IcTaK5sUlD4aWvye+DlJgPV3ZmHWAi13uI=;
+        b=uhmRs7laOgQOICAut6s2Ldezt+9bc4zG1ziOTOc64DaqEiPLEIXGCevWEflRhcOGIv
+         WmKsAX/zeIzeHSoDaOAyQqVgk2gGVfbMBcZTyAtoV0ML2AZqkFXFqJjJLNqwZaxv8qTM
+         P+83STgmJ+onmVEUjtdZDP/xmQjOu2l5Y3sek/VZOi+o9nElZs5CGcZyaBlmS5lMUpka
+         D1HWB+s/8m8jkIj5jVcHJkRFSWjDAZwzjoB4OCtbpLPQOV562KKcOuP4KmFwJlV+Vp06
+         5NHm6CqyLb0LIcn8DilDE/XmW+PQ4esUcNPaIj8BEnoe+FlKvCXZ+AeOYyb7MqL8k3E+
+         f7Tg==
+X-Gm-Message-State: AOAM533Q4VpNfsKsgYr9yxmgCX4YJOq3AVmvXixWp2yb+Rn0/Veltunz
+        NScsckBVJ3IwgO/nf0J5cFehM/RbaAmY9yVFsgZNcgk5K0E=
+X-Google-Smtp-Source: ABdhPJzmXx1pqXlX+hxB+cERg9Jlz6OfIP6uiv1gDCb0IzhgSzQ22bcKV9NI+dVTtlhbop5X1LpMpzz/rU1r99oj5qg=
+X-Received: by 2002:a05:6830:1093:: with SMTP id y19mr25784978oto.204.1595958782660;
+ Tue, 28 Jul 2020 10:53:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87365bg3nx.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9696 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- mlxscore=0 adultscore=0 spamscore=0 phishscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007280128
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9696 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 mlxlogscore=999
- malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0 phishscore=0
- suspectscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2007280128
+References: <20200728070131.1629670-1-xii@google.com> <20200728103907.GT119549@hirez.programming.kicks-ass.net>
+In-Reply-To: <20200728103907.GT119549@hirez.programming.kicks-ass.net>
+From:   Xi Wang <xii@google.com>
+Date:   Tue, 28 Jul 2020 10:54:22 -0700
+Message-ID: <CAOBoifg6Cm2P+HUH0mS1tNpVMa1giWDwKbQ6FofWGZoz1tTt5A@mail.gmail.com>
+Subject: Re: [PATCH] sched: Make select_idle_sibling search domain configurable
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mel Gorman <mgorman@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, suravee.suthikulpanit@amd.com,
+        thomas.lendacky@amd.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 7/28/20 6:38 AM, ebiederm@xmission.com wrote:
-> Anthony Yznaga <anthony.yznaga@oracle.com> writes:
+On Tue, Jul 28, 2020 at 3:39 AM <peterz@infradead.org> wrote:
 >
->> A vma with the VM_EXEC_KEEP flag is preserved across exec.  For anonymous
->> vmas only.  For safety, overlap with fixed address VMAs created in the new
->> mm during exec (e.g. the stack and elf load segments) is not permitted and
->> will cause the exec to fail.
->> (We are studying how to guarantee there are no conflicts. Comments welcome.)
->>
->> diff --git a/fs/exec.c b/fs/exec.c
->> index 262112e5f9f8..1de09c4eef00 100644
->> --- a/fs/exec.c
->> +++ b/fs/exec.c
->> @@ -1069,6 +1069,20 @@ ssize_t read_code(struct file *file, unsigned long addr, loff_t pos, size_t len)
->>  EXPORT_SYMBOL(read_code);
->>  #endif
->>  
->> +static int vma_dup_some(struct mm_struct *old_mm, struct mm_struct *new_mm)
->> +{
->> +	struct vm_area_struct *vma;
->> +	int ret;
->> +
->> +	for (vma = old_mm->mmap; vma; vma = vma->vm_next)
->> +		if (vma->vm_flags & VM_EXEC_KEEP) {
->> +			ret = vma_dup(vma, new_mm);
->> +			if (ret)
->> +				return ret;
->> +		}
->> +	return 0;
->> +}
->> +
->>  /*
->>   * Maps the mm_struct mm into the current task struct.
->>   * On success, this function returns with the mutex
->> @@ -1104,6 +1118,12 @@ static int exec_mmap(struct mm_struct *mm)
->>  			mutex_unlock(&tsk->signal->exec_update_mutex);
->>  			return -EINTR;
->>  		}
->> +		ret = vma_dup_some(old_mm, mm);
->                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> On Tue, Jul 28, 2020 at 12:01:31AM -0700, Xi Wang wrote:
+> > The scope of select_idle_sibling idle cpu search is LLC. This
+> > becomes a problem for the AMD CCX architecture, as the sd_llc is only
+> > 4 cores. On a many core machine, the range of search is too small to
+> > reach a satisfactory level of statistical multiplexing / efficient
+> > utilization of short idle time slices.
+> >
+> > With this patch idle sibling search is detached from LLC and it
+> > becomes run time configurable. To reduce search and migration
+> > overheads, a presearch domain is added. The presearch domain will be
+> > searched first before the "main search" domain, e.g.:
+> >
+> > sysctl_sched_wake_idle_domain == 2 ("MC" domain)
+> > sysctl_sched_wake_idle_presearch_domain == 1 ("DIE" domain)
+> >
+> > Presearch will go through 4 cores of a CCX. If no idle cpu is found
+> > during presearch, full search will go through the remaining cores of
+> > a cpu socket.
 >
-> Ouch! An unconditional loop through all of the vmas of the execing
-> process, just in case there is a VM_EXEC_KEEP vma.
+> *groan*, this is horrific :-(
 >
-> I know we already walk the list in exit_mmap, but I get the feeling this
-> will slow exec down when this feature is not enabled, especially when
-> a process with a lot of vmas is calling exec.
-Patch 4 changes this to only call vma_dup_some() if the new
-binary has opted in to accepting preserved memory.
+> It is also in direct conflict with people wanting to make it smaller.
+>
+> On top of that, a domain number is a terrible terrible interface. They
+> aren't even available without SCHED_DEBUG on.
+>
+> What is the inter-L3 latency? Going by this that had better be awesome.
+> And if this Infinity Fabric stuff if highly effective in effectively
+> merging L3s -- analogous to what Intel does with it's cache slices, then
+> should we not change the AMD topology setup instead of this 'thing'?
+>
+> Also, this commit:
+>
+>   051f3ca02e46 ("sched/topology: Introduce NUMA identity node sched domain")
+>
+> seems to suggest L3 is actually bigger. Suravee, can you please comment?
 
-Anthony
->
->                 
->> +		if (ret) {
->> +			mmap_read_unlock(old_mm);
->> +			mutex_unlock(&tsk->signal->exec_update_mutex);
->> +			return ret;
->> +		}
->>  	}
->>  
->>  	task_lock(tsk);
+I think 051f3ca02e46 was still saying 4 cores sharing an L3 but there
+is another numa layer which is 8 cores or 2 * 4 core L3 groups. This
+should be the chiplet layer.
 
+I don't have precise data but some anecdotes are: The latency
+difference between inter 4 core group access and inter 8 core group
+access is not huge. Also my experience from Intel machines was that
+accessing L3 data across numa domains (also across cpu socket) was not
+too bad until the link bandwidth was saturated. I am hoping the
+bandwidth situation is better for AMD as L3 groups are smaller.
+Another factor is sometimes the trade off is spending 10s of us of
+sched overhead vs time slicing at ~12.5ms latency.
+
+What makes the decision trickly is the configuration can depend on
+applications and the scale of the system. For a system with 8 cores,
+running it the old way with 2 * 4 core LLCs might be the best
+decision. For a system with a lot more cores, the number of threads on
+the machine would also scale up, which means more potential to create
+a dynamic imbalance. I have another (even more horrific) patch for
+auto configuring the sysctls, which has (nnext is the size of the next
+higher sched domain):
+
+/*
+* Widen the range of idle core search if llc domain is too small, both in
+* absolute sense and when compared to the next higher level domain.
+*/
+if (nllc < min(24, nnext / 4)) {
+        sysctl_sched_wake_idle_domain = next_level;
+        sysctl_sched_wake_idle_presearch_domain = llc_level;
+        /* Also make new idle search domain params more like default llc */
+        sysctl_sched_wake_idle_domain_tune_flags = 1;
+}
+
+-Xi
