@@ -2,65 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ADEA230C47
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 16:20:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D97E230C63
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 16:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730064AbgG1OUr convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 10:20:47 -0400
-Received: from customer-201-134-139-73.uninet-ide.com.mx ([201.134.139.73]:46418
-        "EHLO correo.tlalpan.gob.mx" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729410AbgG1OUr (ORCPT
+        id S1730313AbgG1O1L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 10:27:11 -0400
+Received: from 18.mo1.mail-out.ovh.net ([46.105.35.72]:55393 "EHLO
+        18.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729410AbgG1O1L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 10:20:47 -0400
-X-Greylist: delayed 19308 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Jul 2020 10:20:46 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by correo.tlalpan.gob.mx (Postfix) with ESMTP id 52516448782;
-        Tue, 28 Jul 2020 04:12:22 -0500 (CDT)
-Received: from correo.tlalpan.gob.mx ([127.0.0.1])
-        by localhost (correo.tlalpan.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id D-65kQ8CLxd5; Tue, 28 Jul 2020 04:12:22 -0500 (CDT)
-Received: from localhost (localhost [127.0.0.1])
-        by correo.tlalpan.gob.mx (Postfix) with ESMTP id 9A0AF42CB2A;
-        Tue, 28 Jul 2020 03:40:47 -0500 (CDT)
-X-Virus-Scanned: amavisd-new at tlalpan.gob.mx
-Received: from correo.tlalpan.gob.mx ([127.0.0.1])
-        by localhost (correo.tlalpan.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id L5S64fxZNTpC; Tue, 28 Jul 2020 03:40:47 -0500 (CDT)
-Received: from [10.85.108.11] (unknown [105.8.2.12])
-        by correo.tlalpan.gob.mx (Postfix) with ESMTPSA id 75258411234;
-        Tue, 28 Jul 2020 03:26:29 -0500 (CDT)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 28 Jul 2020 10:27:11 -0400
+X-Greylist: delayed 3604 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Jul 2020 10:27:10 EDT
+Received: from player696.ha.ovh.net (unknown [10.110.103.132])
+        by mo1.mail-out.ovh.net (Postfix) with ESMTP id 7B6911D1A0A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 15:09:11 +0200 (CEST)
+Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
+        (Authenticated sender: groug@kaod.org)
+        by player696.ha.ovh.net (Postfix) with ESMTPSA id 7FFC414CE4113;
+        Tue, 28 Jul 2020 13:09:00 +0000 (UTC)
+Authentication-Results: garm.ovh; auth=pass (GARM-97G002b58cb82c-eff5-4db6-a291-f5e5dc050bf0,96196EA346850768E7E70500A314E772A5EF2CEB) smtp.auth=groug@kaod.org
+Date:   Tue, 28 Jul 2020 15:08:59 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, stefanha@redhat.com,
+        mszeredi@redhat.com, vgoyal@redhat.com, gscrivan@redhat.com,
+        dwalsh@redhat.com, chirantan@chromium.org,
+        Christian Schoenebeck <schoenebeck@crudebyte.com>
+Subject: Re: xattr names for unprivileged stacking?
+Message-ID: <20200728150859.0ad6ea79@bahia.lan>
+In-Reply-To: <20200728105503.GE2699@work-vm>
+References: <20200728105503.GE2699@work-vm>
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: =?utf-8?q?Covid_19_Wohlt=C3=A4tigkeitsfonds?=
-To:     Recipients <aguayenergia@tlalpan.gob.mx>
-From:   ''Tayeb Souami'' <aguayenergia@tlalpan.gob.mx>
-Date:   Tue, 28 Jul 2020 10:30:46 +0200
-Reply-To: Tayebsouam.spende@gmail.com
-Message-Id: <20200728082630.75258411234@correo.tlalpan.gob.mx>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 2555511317785123122
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduiedriedvgdehkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkjghfofggtgfgsehtjeertdertddvnecuhfhrohhmpefirhgvghcumfhurhiiuceoghhrohhugheskhgrohgurdhorhhgqeenucggtffrrghtthgvrhhnpefhuddtveelgeevffetjeffjeffieevhefhteehheehhfeuudehfffftdeijeeukeenucffohhmrghinhepvhhirhhtihhofhhsrdhsvggtuhhrihhthienucfkpheptddrtddrtddrtddpkedvrddvheefrddvtdekrddvgeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhlrgihvghrieeliedrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehgrhhouhhgsehkrghougdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Lieber Freund,
+On Tue, 28 Jul 2020 11:55:03 +0100
+"Dr. David Alan Gilbert" <dgilbert@redhat.com> wrote:
 
-Ich bin Herr Tayeb Souami, New Jersey, Vereinigte Staaten von Amerika, der Mega-Gewinner von $ 315million In Mega Millions Jackpot, spende ich an 5 zufällige Personen, wenn Sie diese E-Mail erhalten, dann wurde Ihre E-Mail nach einem Spinball ausgewählt.Ich habe den größten Teil meines Vermögens auf eine Reihe von Wohltätigkeitsorganisationen und Organisationen verteilt.Ich habe mich freiwillig dazu entschieden, die Summe von € 2.000.000,00 an Sie als eine der ausgewählten 5 zu spenden, um meine Gewinne zu überprüfen, sehen Sie bitte meine You Tube Seite unten.
+> Hi,
+>   Are there any standards for mapping xattr names/classes when
+> a restricted view of the filesystem needs to think it's root?
+> 
+> e.g. VMs that mount host filesystems, remote filesystems etc and the
+> client kernel tries to set a trusted. or security. xattr and you want
+> to store that on an underlying normal filesystem, but your
+> VM system doesn't want to have CAP_SYS_ADMIN and/or doesn't want to
+> interfere with the real hosts security.
+> 
+> I can see some existing examples:
+> 
+>   9p in qemu
+>      maps system.posix_acl_* to user.virtfs.system.posix_acl_*
+>           stops the guest accessing any user.virtfs.*
+> 
+>    overlayfs
+>       uses trusted.overlay.* on upper layer and blocks that from 
+>            clients
+> 
+>    fuse-overlayfs
+>       uses trusted.overlay.* for compatibiltiy if it has perms,
+>       otherwise falls back to user.fuseoverlayfs.*
+> 
+>    crosvm's virtiofs
+>       maps "security.sehash" to "user.virtiofs.security.sehash"
+>       and blocks the guest from accessing user.virtiofs.*
+> 
+> Does anyone know of any others?
+> 
 
-UHR MICH HIER: https://www.youtube.com/watch?v=Z6ui8ZDQ6Ks
+Hi Dave,
 
+Sorry, I'm not aware of any other example.
 
-Das ist dein Spendencode: [TS530342018]
+Cc'ing Christian Schoenebeck, the new 9p maintainer in QEMU in case
+he has some information to share in this area.
 
+Cheers,
 
-Antworten Sie mit dem SPENDE-CODE an diese
+--
+Greg
 
-E-Mail:Tayebsouam.spende@gmail.com
+> It all seems quite adhoc;  these all fall to bits when you
+> stack them or when you write a filesystem using one of these
+> schemes and then mount it with another.
+> 
+> (I'm about to do a similar mapping for virtiofs's C daemon)
+> 
+> Thanks in advance,
+> 
+> Dave 
+> 
+> --
+> Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+> 
 
-
-Ich hoffe, Sie und Ihre Familie glücklich zu machen.
-
-Grüße
-Herr Tayeb Souami
