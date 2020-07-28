@@ -2,82 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FC5C230CDB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 16:59:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85B0B230D5F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 17:15:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730569AbgG1O6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 10:58:55 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:52920 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730483AbgG1O6y (ORCPT
+        id S1730745AbgG1POK convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 11:14:10 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:50303 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730719AbgG1PNT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 10:58:54 -0400
-Received: from [192.168.254.32] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id ADCF720B4908;
-        Tue, 28 Jul 2020 07:58:53 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com ADCF720B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595948334;
-        bh=flkKl1tOpheQSP4WOnmrqgHroHnRne5MuepSoCZsgK0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Gy0qVxQM4lbk87aNiGP/UQJRoHbBkHY8gEBUc9LVHq/JBTxqOXbHBPRz/CbPhTddU
-         WUFnsrL5KmEIrg/s5uke5Hfo8z21XAplUP+QdHA3P0SR/cp8ACNVes2cfOeGq1ux6M
-         Pg8UVJmBdVVeaMAdNOiCJj8wDe04E7A1iipg0+LM=
-Subject: Re: [PATCH v1 1/4] [RFC] fs/trampfd: Implement the trampoline file
- descriptor API
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
+        Tue, 28 Jul 2020 11:13:19 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-235-JJgRaiMhNeeB2BdH3JMmbA-1; Tue, 28 Jul 2020 16:13:13 +0100
+X-MC-Unique: JJgRaiMhNeeB2BdH3JMmbA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 28 Jul 2020 16:13:12 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 28 Jul 2020 16:13:12 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "'madvenka@linux.microsoft.com'" <madvenka@linux.microsoft.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: RE: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+Thread-Topic: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+Thread-Index: AQHWZOCQT+e4gDrzGEmP/30MMvDTCqkdFOrw
+Date:   Tue, 28 Jul 2020 15:13:12 +0000
+Message-ID: <c23de6ec47614f489943e1a89a21dfa3@AcuMS.aculab.com>
 References: <aefc85852ea518982e74b233e11e16d2e707bc32>
  <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <20200728131050.24443-2-madvenka@linux.microsoft.com>
- <20200728145013.GA9972@redhat.com>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <dc41589a-647a-ba59-5376-abbf5d07c6e7@linux.microsoft.com>
-Date:   Tue, 28 Jul 2020 09:58:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200728145013.GA9972@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200728131050.24443-1-madvenka@linux.microsoft.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks. See inline..
+From:  madvenka@linux.microsoft.com
+> Sent: 28 July 2020 14:11
+...
+> The kernel creates the trampoline mapping without any permissions. When
+> the trampoline is executed by user code, a page fault happens and the
+> kernel gets control. The kernel recognizes that this is a trampoline
+> invocation. It sets up the user registers based on the specified
+> register context, and/or pushes values on the user stack based on the
+> specified stack context, and sets the user PC to the requested target
+> PC. When the kernel returns, execution continues at the target PC.
+> So, the kernel does the work of the trampoline on behalf of the
+> application.
 
-On 7/28/20 9:50 AM, Oleg Nesterov wrote:
-> On 07/28, madvenka@linux.microsoft.com wrote:
->> +bool is_trampfd_vma(struct vm_area_struct *vma)
->> +{
->> +	struct file	*file = vma->vm_file;
->> +
->> +	if (!file)
->> +		return false;
->> +	return !strcmp(file->f_path.dentry->d_name.name, trampfd_name);
-> Hmm, this looks obviously wrong or I am totally confused. A user can
-> create a file named "[trampfd]", mmap it, and fool trampfd_fault() ?
->
-> Why not
->
-> 	return file->f_op == trampfd_fops;
+Isn't the performance of this going to be horrid?
 
-This is definitely the correct check. I will fix it.
->
-> ?
->
->> +EXPORT_SYMBOL_GPL(is_trampfd_vma);
-> why is it exported?
+If you don't care that much about performance the fixup can
+all be done in userspace within the fault signal handler.
 
-This is in common code and is called by arch code. Should I not export it?
-I guess since the symbol is not used by any modules, I don't need to
-export it. Please confirm and I will fix this.
+Since whatever you do needs the application changed why
+not change the implementation of nested functions to not
+need on-stack executable trampolines.
 
-Madhavan
+I can think of other alternatives that don't need much more
+than an array of 'push constant; jump trampoline' instructions
+be created (all jump to the same place).
+
+You might want something to create an executable page of such
+instructions.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
