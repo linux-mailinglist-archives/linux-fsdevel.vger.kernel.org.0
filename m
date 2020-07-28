@@ -2,106 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D97E230C63
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 16:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83AE8230C4C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 16:22:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730313AbgG1O1L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 10:27:11 -0400
-Received: from 18.mo1.mail-out.ovh.net ([46.105.35.72]:55393 "EHLO
-        18.mo1.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729410AbgG1O1L (ORCPT
+        id S1730331AbgG1OWC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 10:22:02 -0400
+Received: from lizzy.crudebyte.com ([91.194.90.13]:42147 "EHLO
+        lizzy.crudebyte.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730064AbgG1OWC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 10:27:11 -0400
-X-Greylist: delayed 3604 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Jul 2020 10:27:10 EDT
-Received: from player696.ha.ovh.net (unknown [10.110.103.132])
-        by mo1.mail-out.ovh.net (Postfix) with ESMTP id 7B6911D1A0A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 15:09:11 +0200 (CEST)
-Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
-        (Authenticated sender: groug@kaod.org)
-        by player696.ha.ovh.net (Postfix) with ESMTPSA id 7FFC414CE4113;
-        Tue, 28 Jul 2020 13:09:00 +0000 (UTC)
-Authentication-Results: garm.ovh; auth=pass (GARM-97G002b58cb82c-eff5-4db6-a291-f5e5dc050bf0,96196EA346850768E7E70500A314E772A5EF2CEB) smtp.auth=groug@kaod.org
-Date:   Tue, 28 Jul 2020 15:08:59 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, stefanha@redhat.com,
+        Tue, 28 Jul 2020 10:22:02 -0400
+X-Greylist: delayed 1566 seconds by postgrey-1.27 at vger.kernel.org; Tue, 28 Jul 2020 10:22:00 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=crudebyte.com; s=lizzy; h=Content-Type:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        Content-ID:Content-Description;
+        bh=bLi8O3eJbsokZo71I1/Qz7Qu0cmHpk0FaJ4k5AQd2To=; b=KrEOW34ZbBeJgyc26b6+NlPBoz
+        sVdvKlXGefQxYPrMdVsoNkPUWL4Gsx8ZBTDtJK3AdMbp95mmY/QsGVA0VPqb3t6jiopOo9AUNPGqb
+        vmqhF+hrI+DEzNGazAghGPdEQ/t1Df5xQ69tEGyqX46T7xbpoK/uQXqltKviZFI7qydoxpUhkIpcZ
+        d1ItezA48Hn9hQVbO3/UH74iGCGTx/qBWQ9QSm+ERJj9XKydPvHiMdKBT4wFa/71tFqECSSCEEg19
+        tc8aN2JGpRo5RLTB7Edf5jvBktqoRXVD+dAGyISE6wrN2/89xVBXLR+1IDG6iIB0kOaYtI2E+6gZR
+        /F8lfNhA==;
+From:   Christian Schoenebeck <qemu_oss@crudebyte.com>
+To:     Greg Kurz <groug@kaod.org>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        linux-fsdevel@vger.kernel.org, stefanha@redhat.com,
         mszeredi@redhat.com, vgoyal@redhat.com, gscrivan@redhat.com,
-        dwalsh@redhat.com, chirantan@chromium.org,
-        Christian Schoenebeck <schoenebeck@crudebyte.com>
+        dwalsh@redhat.com, chirantan@chromium.org
 Subject: Re: xattr names for unprivileged stacking?
-Message-ID: <20200728150859.0ad6ea79@bahia.lan>
-In-Reply-To: <20200728105503.GE2699@work-vm>
-References: <20200728105503.GE2699@work-vm>
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+Date:   Tue, 28 Jul 2020 15:55:51 +0200
+Message-ID: <2071310.X8v6e1yvPo@silver>
+In-Reply-To: <20200728150859.0ad6ea79@bahia.lan>
+References: <20200728105503.GE2699@work-vm> <20200728150859.0ad6ea79@bahia.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 2555511317785123122
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeduiedriedvgdehkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkjghfofggtgfgsehtjeertdertddvnecuhfhrohhmpefirhgvghcumfhurhiiuceoghhrohhugheskhgrohgurdhorhhgqeenucggtffrrghtthgvrhhnpefhuddtveelgeevffetjeffjeffieevhefhteehheehhfeuudehfffftdeijeeukeenucffohhmrghinhepvhhirhhtihhofhhsrdhsvggtuhhrihhthienucfkpheptddrtddrtddrtddpkedvrddvheefrddvtdekrddvgeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhlrgihvghrieeliedrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehgrhhouhhgsehkrghougdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 28 Jul 2020 11:55:03 +0100
-"Dr. David Alan Gilbert" <dgilbert@redhat.com> wrote:
+On Dienstag, 28. Juli 2020 15:08:59 CEST Greg Kurz wrote:
+> On Tue, 28 Jul 2020 11:55:03 +0100
+> 
+> "Dr. David Alan Gilbert" <dgilbert@redhat.com> wrote:
+> > Hi,
+> > 
+> >   Are there any standards for mapping xattr names/classes when
+> > 
+> > a restricted view of the filesystem needs to think it's root?
+> > 
+> > e.g. VMs that mount host filesystems, remote filesystems etc and the
+> > client kernel tries to set a trusted. or security. xattr and you want
+> > to store that on an underlying normal filesystem, but your
+> > VM system doesn't want to have CAP_SYS_ADMIN and/or doesn't want to
+> > interfere with the real hosts security.
+> > 
+> > I can see some existing examples:
+> >   9p in qemu
+> >   
+> >      maps system.posix_acl_* to user.virtfs.system.posix_acl_*
+> >      
+> >           stops the guest accessing any user.virtfs.*
 
-> Hi,
->   Are there any standards for mapping xattr names/classes when
-> a restricted view of the filesystem needs to think it's root?
-> 
-> e.g. VMs that mount host filesystems, remote filesystems etc and the
-> client kernel tries to set a trusted. or security. xattr and you want
-> to store that on an underlying normal filesystem, but your
-> VM system doesn't want to have CAP_SYS_ADMIN and/or doesn't want to
-> interfere with the real hosts security.
-> 
-> I can see some existing examples:
-> 
->   9p in qemu
->      maps system.posix_acl_* to user.virtfs.system.posix_acl_*
->           stops the guest accessing any user.virtfs.*
-> 
->    overlayfs
->       uses trusted.overlay.* on upper layer and blocks that from 
->            clients
-> 
->    fuse-overlayfs
->       uses trusted.overlay.* for compatibiltiy if it has perms,
->       otherwise falls back to user.fuseoverlayfs.*
-> 
->    crosvm's virtiofs
->       maps "security.sehash" to "user.virtiofs.security.sehash"
->       and blocks the guest from accessing user.virtiofs.*
-> 
-> Does anyone know of any others?
-> 
+Not that they were remapped, but the 'local' 9pfs fs driver also actively 
+interprets:
 
-Hi Dave,
+	user.virtfs.uid
+	user.virtfs.gid
+	user.virtfs.mode
+	user.virtfs.rdev
 
-Sorry, I'm not aware of any other example.
+> >    overlayfs
+> >    
+> >       uses trusted.overlay.* on upper layer and blocks that from
+> >       
+> >            clients
+> >    
+> >    fuse-overlayfs
+> >    
+> >       uses trusted.overlay.* for compatibiltiy if it has perms,
+> >       otherwise falls back to user.fuseoverlayfs.*
+> >    
+> >    crosvm's virtiofs
+> >    
+> >       maps "security.sehash" to "user.virtiofs.security.sehash"
+> >       and blocks the guest from accessing user.virtiofs.*
+> > 
+> > Does anyone know of any others?
 
-Cc'ing Christian Schoenebeck, the new 9p maintainer in QEMU in case
-he has some information to share in this area.
+Well, depends on how large you draw the scope here. For instance Samba has a 
+bunch VFS modules which also uses and hence prohibits certain xattrs. For 
+instance for supporting (NTFS) alternate data streams (a.k.a. resource forks) 
+of Windows clients it uses user.DosStream.*:
 
-Cheers,
+https://www.samba.org/samba/docs/current/man-html/vfs_streams_xattr.8.html
 
---
-Greg
+as well as "user.DOSATTRIB".
 
-> It all seems quite adhoc;  these all fall to bits when you
-> stack them or when you write a filesystem using one of these
-> schemes and then mount it with another.
-> 
-> (I'm about to do a similar mapping for virtiofs's C daemon)
-> 
-> Thanks in advance,
-> 
-> Dave 
-> 
-> --
-> Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
-> 
+And as macOS heavily relies on resource forks (i.e. macOS doesn't work without 
+them), there are a bunch of xattr remappings in the dedicated Apple VFS 
+module, like "aapl_*":
+
+https://www.samba.org/samba/docs/current/man-html/vfs_fruit.8.html
+https://github.com/samba-team/samba/blob/master/source3/modules/vfs_fruit.c
+
+Best regards,
+Christian Schoenebeck
+
 
