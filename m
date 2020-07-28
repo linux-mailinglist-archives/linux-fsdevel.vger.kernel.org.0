@@ -2,106 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 89A0F230C41
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 16:17:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F8A1230C4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 16:23:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730319AbgG1ORY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 10:17:24 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:46806 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730008AbgG1ORY (ORCPT
+        id S1730319AbgG1OXI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 10:23:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34620 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729410AbgG1OXH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 10:17:24 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06SEBjJA129609;
-        Tue, 28 Jul 2020 14:17:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=zaeXQtBSxbwu6nJ+bSTQBejub++NhL0BQ3dLvo4rkDw=;
- b=skRp4ywMekCDJ8j09fKXAharqCNzyWyO5TxaXpQTCndnhgc69Lqc5c0HMuTCWNnJ0H2t
- olPpFfs8xKq0rWAi+sONTV2lF5z79CMYEn5Mcbnx4Jf6jY5Hhrx7kz/gFGiZv/iG5EwO
- NXKnSz+A58cfSWDcgs+RA6h5eFlt4qdMV784gzxeyHLd1PPZtedxUMMrTkqiEPUlTkYY
- OAyCflJ1+487Hyaniw0XoCtxonIR9xc8j454u1BOdmQF5HFGMH48+QeS+B1qB6fr8k2p
- 27ZtD/a5SzKgdM5ZYItIlqlE8khA83k6f8inQFdEfK32k/8/B66LT9SwSB+CDi7QSlSG PA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 32hu1jfrsc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 28 Jul 2020 14:17:17 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06SEEZ8E063100;
-        Tue, 28 Jul 2020 14:17:16 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 32hu5synxt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 Jul 2020 14:17:16 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 06SEH9Wh004315;
-        Tue, 28 Jul 2020 14:17:10 GMT
-Received: from anon-dhcp-152.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 28 Jul 2020 07:17:09 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: Re: [PATCH v3 02/10] xattr: add a function to check if a namespace is
- supported
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <CAHk-=wj=gr3F3ZTnz8fnpSqfxivYKaFLvB+8UJOq3nTF9gzzyw@mail.gmail.com>
-Date:   Tue, 28 Jul 2020 10:17:07 -0400
-Cc:     Frank van der Linden <fllinden@amazon.com>,
-        Bruce Fields <bfields@fieldses.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+        Tue, 28 Jul 2020 10:23:07 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7151DC061794
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 07:23:07 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id x9so9972709plr.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 07:23:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=0gezrYAszKsYKcLXi9TMmF45AfpArZp7tf2tQTcsIB4=;
+        b=D7/86MC1Tqp9oc0VICIhfafxb3tBKrlVgTQgo74JcMWGNVZjzmkRkSPO+UaELTUEwa
+         hA2GW+HERh5M2odXF3L1QZNAFFoTOnxCUqDuUqd+xD54MgRqydkWiLasAWQmucuiUX9y
+         /HA6vqfiAYDwCMBvJQPsnzD96xliQ3O0e++hOjll/2Z5APzOuNu7gH9zfRs4jk1u/4VI
+         49V7Y+MZGeI3h+zO6gZkKACbWgKi3SBDGtM0OP0OKRBoHDlHCLafa/fTo8q2s2AnY2mL
+         fhpECbWQwe8VhAil1beOIe84mykJJtKhpx/KmcnDNs3QlX6d51VI87/q+vivCNN/VjqH
+         7mig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=0gezrYAszKsYKcLXi9TMmF45AfpArZp7tf2tQTcsIB4=;
+        b=aJv6rtfdj+truPhkoYGAwxiUBrSVp0mlnG6GJ7K38LhXw7dleUcdMdInw5daWQxHm0
+         DUy/iuCzNSU6+orxnvhKyAWJC85EdYqPPfpsbXKq4vIEOitCgJfym97mpr7I5oNb+E7J
+         eytHeU4PHIlJ/L7K+ivZEecOIughAoYrRN8BJD2bn2waHmb1wO1g2GfyRwJObaUwOMdI
+         7P6TLmjEuG3TMLweDz8/seHuLRwr9OwmlZxHht77ksslWcQ4uFzVYiamMKVD6aOPKYZ8
+         4KttsduyotCGkC7HV+fuY+qEYYuuNnRsQX5lmwEp9kPGcnLEDKrWCif780Tvm+I0Zufj
+         5KXA==
+X-Gm-Message-State: AOAM533Nmn2z/Znw0voPgW0lEKtRnr51SS5b36Ft7ewEPm2nh3jzJjoY
+        /64J366rxw6yBvXpbm+qp4QkIA==
+X-Google-Smtp-Source: ABdhPJwGmlsbEVuJXdrA5FyCMv/IW/fPnSTAHwkj6VyQa14OnWq1IW5Sje+yw0TWIJZrFoMkdQtvhw==
+X-Received: by 2002:a17:90a:ce0c:: with SMTP id f12mr4957417pju.19.1595946186974;
+        Tue, 28 Jul 2020 07:23:06 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:1ef2:1c3a:e74b:bd16:b3ab? ([2601:646:c200:1ef2:1c3a:e74b:bd16:b3ab])
+        by smtp.gmail.com with ESMTPSA id 4sm18047374pgk.68.2020.07.28.07.23.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jul 2020 07:23:06 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <03E295AE-984E-47B1-ABC2-167C69D6DCC2@oracle.com>
-References: <20200623223927.31795-1-fllinden@amazon.com>
- <20200623223927.31795-3-fllinden@amazon.com>
- <20200625204157.GB10231@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
- <20200714171328.GB24687@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
- <CAHk-=wj=gr3F3ZTnz8fnpSqfxivYKaFLvB+8UJOq3nTF9gzzyw@mail.gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9695 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0 bulkscore=0
- malwarescore=0 suspectscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2007280109
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9695 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 mlxlogscore=999
- malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0 phishscore=0
- suspectscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2007280109
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH 0/5] madvise MADV_DOEXEC
+Date:   Tue, 28 Jul 2020 07:23:03 -0700
+Message-Id: <1764B08C-CC1E-4636-944A-DB95B81C7A8E@amacapital.net>
+References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, mhocko@kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        arnd@arndb.de, ebiederm@xmission.com, keescook@chromium.org,
+        gerg@linux-m68k.org, ktkhai@virtuozzo.com,
+        christian.brauner@ubuntu.com, peterz@infradead.org,
+        esyr@redhat.com, jgg@ziepe.ca, christian@kellner.me,
+        areber@redhat.com, cyphar@cyphar.com, steven.sistare@oracle.com
+In-Reply-To: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
+To:     Anthony Yznaga <anthony.yznaga@oracle.com>
+X-Mailer: iPhone Mail (17F80)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus-
 
-> On Jul 14, 2020, at 2:46 PM, Linus Torvalds =
-<torvalds@linux-foundation.org> wrote:
+
+> On Jul 27, 2020, at 10:02 AM, Anthony Yznaga <anthony.yznaga@oracle.com> w=
+rote:
 >=20
-> On Tue, Jul 14, 2020 at 10:13 AM Frank van der Linden
-> <fllinden@amazon.com> wrote:
->>=20
->> Again, Linus - this is a pretty small change, doesn't affect any =
-existing
->> codepaths, and it's already in the tree Chuck is setting up for 5.9. =
-Could
->> this go in through that directly?
->=20
-> Both ok by me, but I'd like to have Al ack them. Al?
+> =EF=BB=BFThis patchset adds support for preserving an anonymous memory ran=
+ge across
+> exec(3) using a new madvise MADV_DOEXEC argument.  The primary benefit for=
 
-I have the NFSD user xattr patches in the current series waiting to be
-merged into v5.9. I'd like to create the nfsd-5.9 merge tag soon, but I
-haven't heard any review comments from Al. How would you like me to
-proceed?
+> sharing memory in this manner, as opposed to re-attaching to a named share=
+d
+> memory segment, is to ensure it is mapped at the same virtual address in
+> the new process as it was in the old one.  An intended use for this is to
+> preserve guest memory for guests using vfio while qemu exec's an updated
+> version of itself.  By ensuring the memory is preserved at a fixed address=
+,
+> vfio mappings and their associated kernel data structures can remain valid=
+.
+> In addition, for the qemu use case, qemu instances that back guest RAM wit=
+h
+> anonymous memory can be updated.
 
-
---
-Chuck Lever
-
-
+This will be an amazing attack surface. Perhaps use of this flag should requ=
+ire no_new_privs?  Arguably it should also require a special flag to execve(=
+) to honor it.  Otherwise library helpers that do vfork()+exec() or posix_sp=
+awn() could be quite surprised.
 
