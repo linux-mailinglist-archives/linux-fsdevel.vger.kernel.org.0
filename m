@@ -2,87 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AA9A230677
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 11:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 989CA2306DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 11:47:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbgG1JXF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 05:23:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44758 "EHLO
+        id S1728377AbgG1Jrc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 05:47:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728072AbgG1JXF (ORCPT
+        with ESMTP id S1728050AbgG1Jrc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 05:23:05 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2565BC061794;
-        Tue, 28 Jul 2020 02:23:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=4UCo16YZAgo21iB1/5TNNcfQzePmrfQa/TCIlwmqQMw=; b=FlKygivAItuT2wHUokA1ITYibF
-        wDLTCx3Jy8n1jR9eiAu1S8KOcJaTue2PCQRreXwNhzbUZ+xz1y3Js2FwQ6fJOF/g5WhKk3g8QUe1p
-        QAt5WHGjP7xvK/S9gvVOHHeIKRQcL3bjMNBMuTNL+uDloOxJUyz9h+RV5xkhdEChPnzs8UvuNBEr6
-        OIs4BLl1kzrSi8ETKyjIc32l4MSpwvEm8CU3Qkn8GO7Czgg4pH7/Yabc5psLJsQtL8NO/gqvuY76s
-        Y9BuaM0RR/TFpRMLES6Sjwmh/2P+rzsNdy8Yy3BtH/OR4P1eAMiDdsKoNIW4aEbp/hwThxIrBSoBo
-        FOIeZmmA==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k0Lp7-0000ER-2w; Tue, 28 Jul 2020 09:23:01 +0000
-Date:   Tue, 28 Jul 2020 10:23:01 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iomap: Ensure iop->uptodate matches PageUptodate
-Message-ID: <20200728092301.GA32142@infradead.org>
-References: <20200726091052.30576-1-willy@infradead.org>
- <20200726230657.GT2005@dread.disaster.area>
- <20200726232022.GH23808@casper.infradead.org>
- <20200726235335.GU2005@dread.disaster.area>
+        Tue, 28 Jul 2020 05:47:32 -0400
+X-Greylist: delayed 366 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 28 Jul 2020 02:47:32 PDT
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050::465:202])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24775C061794;
+        Tue, 28 Jul 2020 02:47:32 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4BGBWj2tvzzQlKZ;
+        Tue, 28 Jul 2020 11:41:21 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id mL45Y320Mr-I; Tue, 28 Jul 2020 11:41:17 +0200 (CEST)
+Date:   Tue, 28 Jul 2020 19:41:09 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        linux-pm@vger.kernel.org
+Subject: Re: [RFC][PATCH] exec: Freeze the other threads during a
+ multi-threaded exec
+Message-ID: <20200728092359.jrv7ygt6dwktwsgp@yavin.dot.cyphar.com>
+References: <87h7tsllgw.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ifgp4clg667prhsz"
 Content-Disposition: inline
-In-Reply-To: <20200726235335.GU2005@dread.disaster.area>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <87h7tsllgw.fsf@x220.int.ebiederm.org>
+X-MBO-SPAM-Probability: 0
+X-Rspamd-Score: -4.89 / 15.00 / 15.00
+X-Rspamd-Queue-Id: E1EE11837
+X-Rspamd-UID: 106a35
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jul 27, 2020 at 09:53:35AM +1000, Dave Chinner wrote:
-> Yes, I understand the code accepts it can happen; what I dislike is
-> code that asserts subtle behaviour can happen, then doesn't describe
-> that exactly why/how that condition can occur. And then, because we
-> don't know exactly how something happens, we add work arounds to
-> hide issues we can't reason through fully. That's .... suboptimal.
-> 
-> Christoph might know off the top of his head how we get into this
-> state. Once we work it out, then we need to add comments...
 
-Unfortunately I don't know offhand.  I'll need to spend some more
-quality time with this code first.
+--ifgp4clg667prhsz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > Way ahead of you
-> > http://git.infradead.org/users/willy/pagecache.git/commitdiff/5a1de6fc4f815797caa4a2f37c208c67afd7c20b
-> 
-> *nod*
-> 
-> I would suggest breaking that out as a separate cleanup patch and
-> not hide is in a patch that contains both THP modifications and bug
-> fixes. It stands alone as a valid cleanup.
+On 2020-07-27, Eric W. Biederman <ebiederm@xmission.com> wrote:
+> To the best of my knowledge processes with more than one thread
+> calling exec are not common, and as all of the threads will be killed
+> by exec there does not appear to be any useful work a thread can
+> reliably do during exec.
 
-I'm pretty sure I already suggested that when it first showed up.
+Every Go program which calls exec (this includes runc, Docker, LXD,
+Kubernetes, et al) fills the niche of "multi-threaded program that calls
+exec" -- all Go programs are multi-threaded and there's no way of
+disabling this. This will most likely cause pretty bad performance
+regression for basically all container workloads.
 
-That being said I have another somewhat related thing in this area
-that I really want to get done before THP support, and maybe I can
-offload it to willy:
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-Currently we always allocate the iomap_page structure for blocksize
-< PAGE_SIZE.  While this was easy to implement and a major improvement
-over the buffer heads it actually is quite silly, as we only actually
-need it if we either have sub-page uptodate state, or have extents
-boundaries in the page.  So what I'd like to do is to only actually
-allocate it in that case.  By doing the allocation lazy it should also
-help to never allocate one that is marked all uptodate from the start.
+--ifgp4clg667prhsz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXx/ysgAKCRCdlLljIbnQ
+EkKKAQDoy8ZD4VcTpwNYsy7hTgaSyJYCrr3BEVWWGgivWDOsTAD/YSG2mqdY6Xxb
+/MSwhLo3kjae0B+Zbr6HVENFaTzZjgc=
+=1hzK
+-----END PGP SIGNATURE-----
+
+--ifgp4clg667prhsz--
