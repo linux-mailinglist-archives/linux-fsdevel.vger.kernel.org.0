@@ -2,72 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BB51230ED3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 18:07:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80839230F5D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 18:33:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731286AbgG1QG7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 12:06:59 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:28288 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731272AbgG1QG6 (ORCPT
+        id S1731487AbgG1Qcf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 12:32:35 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:36752 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731286AbgG1Qce (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 12:06:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1595952417;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=z+gquV6V93SZjNhpxmQp1P7xpjOdqg2rKp5124tI0vU=;
-        b=VYlA/t8ATUl2/Bv+xtBHeDu/KBNcItxQ7WF4YHiVLsh8i7QYj08fKDXw5sTt05Bngf/OvU
-        RVjo3R/K7tmv4/ucj51fzhPAbFLRyJ3mj596lDOZxdHDxa3aiKYGIcXd4fzc+hUpIKlJ2N
-        nbZVU+M6XWz0+O65QE9mzuUGAZCnVmE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-214-wqHAHkFqOp6s6jbiuk_hkA-1; Tue, 28 Jul 2020 12:06:55 -0400
-X-MC-Unique: wqHAHkFqOp6s6jbiuk_hkA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4FACB801E6A;
-        Tue, 28 Jul 2020 16:06:53 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.181])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 18C4F1001B2C;
-        Tue, 28 Jul 2020 16:06:50 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 28 Jul 2020 18:06:52 +0200 (CEST)
-Date:   Tue, 28 Jul 2020 18:06:49 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v1 1/4] [RFC] fs/trampfd: Implement the trampoline file
- descriptor API
-Message-ID: <20200728160649.GB9972@redhat.com>
+        Tue, 28 Jul 2020 12:32:34 -0400
+Received: from [192.168.254.32] (unknown [47.187.206.220])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 46AA720B4908;
+        Tue, 28 Jul 2020 09:32:33 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 46AA720B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1595953953;
+        bh=Rb0cIoD+PBZ6iPo4SV0GEZ6L0o4DvfLkYqFF52aPh2A=;
+        h=Subject:To:References:From:Date:In-Reply-To:From;
+        b=NGYC9tEdPV6xnCVOdwIeqZvN2dKm0x9MAjUMmotn+8mMWAF3jwAU9jFcfsdT1zLtI
+         b7kaqYuzPMht/pDkpeohuuGK2OeqJMq4r2wVIMvJUufeWS2YydUzzEWfndiFPJ2qGr
+         mIHtInG/DXexeidbSrB3P9fJodqZv03UsuUKNwbM=
+Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+To:     David Laight <David.Laight@ACULAB.COM>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "x86@kernel.org" <x86@kernel.org>
 References: <aefc85852ea518982e74b233e11e16d2e707bc32>
  <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <20200728131050.24443-2-madvenka@linux.microsoft.com>
- <20200728145013.GA9972@redhat.com>
- <dc41589a-647a-ba59-5376-abbf5d07c6e7@linux.microsoft.com>
+ <c23de6ec47614f489943e1a89a21dfa3@AcuMS.aculab.com>
+From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Message-ID: <f5cfd11b-04fe-9db7-9d67-7ee898636edb@linux.microsoft.com>
+Date:   Tue, 28 Jul 2020 11:32:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dc41589a-647a-ba59-5376-abbf5d07c6e7@linux.microsoft.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <c23de6ec47614f489943e1a89a21dfa3@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/28, Madhavan T. Venkataraman wrote:
+Thanks. See inline..
+
+On 7/28/20 10:13 AM, David Laight wrote:
+> From:  madvenka@linux.microsoft.com
+>> Sent: 28 July 2020 14:11
+> ...
+>> The kernel creates the trampoline mapping without any permissions. When
+>> the trampoline is executed by user code, a page fault happens and the
+>> kernel gets control. The kernel recognizes that this is a trampoline
+>> invocation. It sets up the user registers based on the specified
+>> register context, and/or pushes values on the user stack based on the
+>> specified stack context, and sets the user PC to the requested target
+>> PC. When the kernel returns, execution continues at the target PC.
+>> So, the kernel does the work of the trampoline on behalf of the
+>> application.
+> Isn't the performance of this going to be horrid?
+
+It takes about the same amount of time as getpid(). So, it is
+one quick trip into the kernel. I expect that applications will
+typically not care about this extra overhead as long as
+they are able to run.
+
+But I agree that if there is an application that cannot tolerate
+this extra overhead, then it is an issue. See below for further
+discussion.
+
+In the libffi changes I have included in the cover letter, I have
+done it in such a way that trampfd is chosen when current
+security settings don't allow other methods such as
+loading trampoline code into a file and mapping it. In this
+case, the application can at least run with trampfd.
+
 >
-> I guess since the symbol is not used by any modules, I don't need to
-> export it.
+> If you don't care that much about performance the fixup can
+> all be done in userspace within the fault signal handler.
 
-Yes,
+I do care about performance.
 
-Oleg.
+This is a framework to address trampolines. In this initial
+work, I want to establish one basic way for things to work.
+In the future, trampfd can be enhanced for performance.
+For instance, it is easy for an architecture to generate
+the exact instructions required to load specified registers,
+push specified values on the stack and jump to a target
+PC. The kernel can map a page with the generated code
+with execute permissions. In this case, the performance
+issue goes away.
+> Since whatever you do needs the application changed why
+> not change the implementation of nested functions to not
+> need on-stack executable trampolines.
+
+I kinda agree with your suggestion.
+
+But it is up to the GCC folks to change its implementation.
+I am trying to provide a way for their existing implementation
+to work in a more secure way.
+> I can think of other alternatives that don't need much more
+> than an array of 'push constant; jump trampoline' instructions
+> be created (all jump to the same place).
+>
+> You might want something to create an executable page of such
+> instructions.
+
+Agreed. And that can be done within this framework as
+I have mentioned above.
+
+But it is not just this trampoline type that I have implemented
+in this patchset. In the future, other types can be implemented
+and other contexts can be defined. Basically, the approach is
+for the user to supply a recipe to the kernel and leave it up to
+the kernel to do it in the best way possible. I am hoping that
+other forms of dynamic code can be addressed in the future
+using the same framework.
+
+*Purely as a hypothetical example*, a user can supply
+instructions in a language such as BPF that the kernel
+understands and have the kernel arrange for that to
+be executed in user context.
+
+Madhavan
+
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
 
