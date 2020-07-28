@@ -2,130 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16CDA2310DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 19:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FAA22310F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 19:32:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731980AbgG1R3N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 13:29:13 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:36914 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731779AbgG1R3M (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 13:29:12 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06SHHeLa087169;
-        Tue, 28 Jul 2020 17:28:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=gfcnzZS+pACnKP3O6i/6oeBSyg3BfNE44V5fbhOhYKA=;
- b=NsSPSQZGKciMBL7sa84M+iSzT2U0jJhtu+UdEOXKuLKi72Ei67TtcctOb8GExL/DmskM
- K63EPeoxyYxWsVTq9Q6enw2hxIVtMIkKC/e4yxemW11QUlgq4eY8nhoNdxX/cYEraq8c
- i5NM3VfN2vQHLQ5GuXthCI7w/Sxl9vkFuNVkFuvae23t9wsUtb/ym4w2MP4xv7iPbgE8
- F8zx3dwyIutsmg4W6+QlDyqRQZ9tdkpuD4uzmqn582fCbsZBUrFlrR9HGA09Q8aviQdx
- yYAirhOF5q3fryvsxEfRr4XmCo+H3l1juOmfAx4N0YtJmpAYtGENCTafn1LV0Y7Sffot jQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 32hu1jgvqn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 28 Jul 2020 17:28:23 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06SHCiVr081715;
-        Tue, 28 Jul 2020 17:28:23 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3030.oracle.com with ESMTP id 32hu5ufj71-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 28 Jul 2020 17:28:22 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 06SHS9Nb024053;
-        Tue, 28 Jul 2020 17:28:10 GMT
-Received: from [10.154.121.35] (/10.154.121.35)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 28 Jul 2020 10:28:09 -0700
-Subject: Re: [RFC PATCH 0/5] madvise MADV_DOEXEC
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org
-Cc:     mhocko@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
-        viro@zeniv.linux.org.uk, akpm@linux-foundation.org, arnd@arndb.de,
-        ebiederm@xmission.com, keescook@chromium.org, gerg@linux-m68k.org,
-        christian.brauner@ubuntu.com, peterz@infradead.org,
-        esyr@redhat.com, jgg@ziepe.ca, christian@kellner.me,
-        areber@redhat.com, cyphar@cyphar.com, steven.sistare@oracle.com
-References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
- <46891e3b-ca08-197d-935f-fa0a52a60051@virtuozzo.com>
-From:   Anthony Yznaga <anthony.yznaga@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <e6699d15-8c86-8f9a-b840-7c3872e3ec8c@oracle.com>
-Date:   Tue, 28 Jul 2020 10:28:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1732010AbgG1RcO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 13:32:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45794 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731973AbgG1RcO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Jul 2020 13:32:14 -0400
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E59F721775
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 17:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595957533;
+        bh=9/DO98f4NNb2r87lGlZR0IYODVEjduHFQ1okay382Kw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=00hywb4ZCFn7lczpn0BiOMeOm9xDGiOqlvQj8/th2fDX/IzE1putRyI2doIv2tI36
+         gO4lphP9SFo10v3da6m5h1BH07cHRR/okVnVy90sS8zQtt5pSIghUkUXx0ikOM7Nd0
+         h6O5+kD6MR7Vr5ux5UT9pRxsLHVuGsY6clVQqbF0=
+Received: by mail-wr1-f52.google.com with SMTP id r12so19043641wrj.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jul 2020 10:32:12 -0700 (PDT)
+X-Gm-Message-State: AOAM53326Z2CC4SwGIcBqLeGjkIS+971C5Bi+FRGdCCrrIJ7/mPl7vMK
+        nDh5Ep8Cw7QU+R9J4yo6jGE/6ZMZWGrrk3WTLqBnHg==
+X-Google-Smtp-Source: ABdhPJxq1bq+hNP4spnLcyA3rbDMq8utpwpjTxFxTkTrdf+BFedxKdyd+N85+0IDFv89rVq0CIoCx1Y8N9iYBQx1zm4=
+X-Received: by 2002:a5d:5273:: with SMTP id l19mr25476365wrc.257.1595957531409;
+ Tue, 28 Jul 2020 10:32:11 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <46891e3b-ca08-197d-935f-fa0a52a60051@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9696 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- mlxscore=0 adultscore=0 spamscore=0 phishscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007280127
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9696 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 mlxlogscore=999
- malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0 phishscore=0
- suspectscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2007280127
+References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
+In-Reply-To: <20200728131050.24443-1-madvenka@linux.microsoft.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 28 Jul 2020 10:31:59 -0700
+X-Gmail-Original-Message-ID: <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
+Message-ID: <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
+Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+To:     madvenka@linux.microsoft.com
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 7/28/20 4:34 AM, Kirill Tkhai wrote:
-> On 27.07.2020 20:11, Anthony Yznaga wrote:
->> This patchset adds support for preserving an anonymous memory range across
->> exec(3) using a new madvise MADV_DOEXEC argument.  The primary benefit for
->> sharing memory in this manner, as opposed to re-attaching to a named shared
->> memory segment, is to ensure it is mapped at the same virtual address in
->> the new process as it was in the old one.  An intended use for this is to
->> preserve guest memory for guests using vfio while qemu exec's an updated
->> version of itself.  By ensuring the memory is preserved at a fixed address,
-> So, the goal is an update of QEMU binary without a stopping of virtual machine?
-Essentially, yes.  The VM is paused very briefly.
-
-Anthony
+> On Jul 28, 2020, at 6:11 AM, madvenka@linux.microsoft.com wrote:
 >
->> vfio mappings and their associated kernel data structures can remain valid.
->> In addition, for the qemu use case, qemu instances that back guest RAM with
->> anonymous memory can be updated.
->>
->> Patches 1 and 2 ensure that loading of ELF load segments does not silently
->> clobber existing VMAS, and remove assumptions that the stack is the only
->> VMA in the mm when the stack is set up.  Patch 1 re-introduces the use of
->> MAP_FIXED_NOREPLACE to load ELF binaries that addresses the previous issues
->> and could be considered on its own.
->>
->> Patches 3, 4, and 5 introduce the feature and an opt-in method for its use
->> using an ELF note.
->>
->> Anthony Yznaga (5):
->>   elf: reintroduce using MAP_FIXED_NOREPLACE for elf executable mappings
->>   mm: do not assume only the stack vma exists in setup_arg_pages()
->>   mm: introduce VM_EXEC_KEEP
->>   exec, elf: require opt-in for accepting preserved mem
->>   mm: introduce MADV_DOEXEC
->>
->>  arch/x86/Kconfig                       |   1 +
->>  fs/binfmt_elf.c                        | 196 +++++++++++++++++++++++++--------
->>  fs/exec.c                              |  33 +++++-
->>  include/linux/binfmts.h                |   7 +-
->>  include/linux/mm.h                     |   5 +
->>  include/uapi/asm-generic/mman-common.h |   3 +
->>  kernel/fork.c                          |   2 +-
->>  mm/madvise.c                           |  25 +++++
->>  mm/mmap.c                              |  47 ++++++++
->>  9 files changed, 266 insertions(+), 53 deletions(-)
->>
+> =EF=BB=BFFrom: "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+>
 
+> The kernel creates the trampoline mapping without any permissions. When
+> the trampoline is executed by user code, a page fault happens and the
+> kernel gets control. The kernel recognizes that this is a trampoline
+> invocation. It sets up the user registers based on the specified
+> register context, and/or pushes values on the user stack based on the
+> specified stack context, and sets the user PC to the requested target
+> PC. When the kernel returns, execution continues at the target PC.
+> So, the kernel does the work of the trampoline on behalf of the
+> application.
+
+This is quite clever, but now I=E2=80=99m wondering just how much kernel he=
+lp
+is really needed. In your series, the trampoline is an non-executable
+page.  I can think of at least two alternative approaches, and I'd
+like to know the pros and cons.
+
+1. Entirely userspace: a return trampoline would be something like:
+
+1:
+pushq %rax
+pushq %rbc
+pushq %rcx
+...
+pushq %r15
+movq %rsp, %rdi # pointer to saved regs
+leaq 1b(%rip), %rsi # pointer to the trampoline itself
+callq trampoline_handler # see below
+
+You would fill a page with a bunch of these, possibly compacted to get
+more per page, and then you would remap as many copies as needed.  The
+'callq trampoline_handler' part would need to be a bit clever to make
+it continue to work despite this remapping.  This will be *much*
+faster than trampfd. How much of your use case would it cover?  For
+the inverse, it's not too hard to write a bit of asm to set all
+registers and jump somewhere.
+
+2. Use existing kernel functionality.  Raise a signal, modify the
+state, and return from the signal.  This is very flexible and may not
+be all that much slower than trampfd.
+
+3. Use a syscall.  Instead of having the kernel handle page faults,
+have the trampoline code push the syscall nr register, load a special
+new syscall nr into the syscall nr register, and do a syscall. On
+x86_64, this would be:
+
+pushq %rax
+movq __NR_magic_trampoline, %rax
+syscall
+
+with some adjustment if the stack slot you're clobbering is important.
+
+
+Also, will using trampfd cause issues with various unwinders?  I can
+easily imagine unwinders expecting code to be readable, although this
+is slowly going away for other reasons.
+
+All this being said, I think that the kernel should absolutely add a
+sensible interface for JITs to use to materialize their code.  This
+would integrate sanely with LSMs and wouldn't require hacks like using
+files, etc.  A cleverly designed JIT interface could function without
+seriailization IPIs, and even lame architectures like x86 could
+potentially avoid shootdown IPIs if the interface copied code instead
+of playing virtual memory games.  At its very simplest, this could be:
+
+void *jit_create_code(const void *source, size_t len);
+
+and the result would be a new anonymous mapping that contains exactly
+the code requested.  There could also be:
+
+int jittfd_create(...);
+
+that does something similar but creates a memfd.  A nicer
+implementation for short JIT sequences would allow appending more code
+to an existing JIT region.  On x86, an appendable JIT region would
+start filled with 0xCC, and I bet there's a way to materialize new
+code into a previously 0xcc-filled virtual page wthout any
+synchronization.  One approach would be to start with:
+
+<some code>
+0xcc
+0xcc
+...
+0xcc
+
+and to create a whole new page like:
+
+<some code>
+<some more code>
+0xcc
+...
+0xcc
+
+so that the only difference is that some code changed to some more
+code.  Then replace the PTE to swap from the old page to the new page,
+and arrange to avoid freeing the old page until we're sure it's gone
+from all TLBs.  This may not work if <some more code> spans a page
+boundary.  The #BP fixup would zap the TLB and retry.  Even just
+directly copying code over some 0xcc bytes almost works, but there's a
+nasty corner case involving instructions that fetch I$ fetch
+boundaries.  I'm not sure to what extent I$ snooping helps.
+
+--Andy
