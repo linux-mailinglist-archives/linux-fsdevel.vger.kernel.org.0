@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C4F52314D4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 23:37:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFB0C2314C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 23:37:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729839AbgG1VhC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 17:37:02 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:47338 "EHLO
+        id S1729655AbgG1Vgf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 17:36:35 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:47292 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729406AbgG1Vgb (ORCPT
+        with ESMTP id S1729560AbgG1Vga (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 17:36:31 -0400
+        Tue, 28 Jul 2020 17:36:30 -0400
 Received: from dede-linux-virt.corp.microsoft.com (unknown [131.107.160.54])
-        by linux.microsoft.com (Postfix) with ESMTPSA id A676720B4913;
+        by linux.microsoft.com (Postfix) with ESMTPSA id E94BB20B4916;
         Tue, 28 Jul 2020 14:36:28 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A676720B4913
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E94BB20B4916
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595972188;
-        bh=Zf8p4FOnzTtA2GNF/nEMzC73a9zkGHq8/jrdmEeEUo0=;
+        s=default; t=1595972189;
+        bh=DwuN3lMsKoJor7oyJ4PDhforl2EL5d2MZQdT2xusZcc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HF6q0B6UAFrQWhVnOijYafS3CukaN5P9bEU40hGuYXIhG3a6uiNRZ0tULCp6vlbLI
-         I5VclqVx7HgBIcI7t/gxCKnKi8c4vEBZLCNJtSPMgXSYDu3F+ewAXY1cFjdS9ISB++
-         n94zGtKNhMs3bY2YyjTHWMf+GahPKzKiq+0t/Nmo=
+        b=BCkI4a0CRIZAWxhXndb9PoKEGhx0cs1tND6LSp438pFrU7cuTR89sRstNPk/OyZoh
+         VUWjC08xAJ9axkPNZPcy0WI7Dp9I9j3K6EBdshAHu+pt4ppBJXLm0G4t7cH9ddkK/B
+         81P6lpeJVtTNyCEsiil4ZGwc2gXGLhDG0sxhJShc=
 From:   Deven Bowers <deven.desai@linux.microsoft.com>
 To:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
         jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
@@ -36,9 +36,9 @@ Cc:     tyhicks@linux.microsoft.com, linux-kernel@vger.kernel.org,
         corbet@lwn.net, sashal@kernel.org,
         jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
         nramas@linux.microsoft.com, pasha.tatashin@soleen.com
-Subject: [RFC PATCH v5 08/11] ipe: add property for signed dmverity volumes
-Date:   Tue, 28 Jul 2020 14:36:08 -0700
-Message-Id: <20200728213614.586312-9-deven.desai@linux.microsoft.com>
+Subject: [RFC PATCH v5 09/11] dm-verity: add bdev_setsecurity hook for root-hash
+Date:   Tue, 28 Jul 2020 14:36:09 -0700
+Message-Id: <20200728213614.586312-10-deven.desai@linux.microsoft.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
 References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
@@ -49,356 +49,159 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Allow IPE to leverage the stacked security blob infrastructure,
-and enlighten IPE to the block_device security blob.
-
-This allows IPE to have a property to express rules around a device-mapper
-verity volume whose root-hash has been signed, and the signature has been
-verified against the system keyring. This is property is also added in
-this patch.
+Add a security hook call to set a security property of a block_device
+in dm-verity with the root-hash that was verified to match the merkel-tree.
 
 Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
 ---
- security/ipe/Kconfig                         |  2 +-
- security/ipe/Makefile                        |  1 +
- security/ipe/ipe-blobs.c                     | 84 ++++++++++++++++++++
- security/ipe/ipe-blobs.h                     | 18 +++++
- security/ipe/ipe-engine.c                    |  4 +
- security/ipe/ipe-engine.h                    |  9 +++
- security/ipe/ipe-hooks.c                     |  1 +
- security/ipe/ipe-hooks.h                     |  7 ++
- security/ipe/ipe.c                           | 18 +++++
- security/ipe/ipe.h                           |  2 +
- security/ipe/properties/Kconfig              | 10 +++
- security/ipe/properties/Makefile             |  1 +
- security/ipe/properties/dmverity-signature.c | 82 +++++++++++++++++++
- security/ipe/properties/prop-entry.h         |  9 +++
- security/ipe/utility.h                       | 10 +++
- 15 files changed, 257 insertions(+), 1 deletion(-)
- create mode 100644 security/ipe/ipe-blobs.c
- create mode 100644 security/ipe/ipe-blobs.h
- create mode 100644 security/ipe/properties/dmverity-signature.c
+ drivers/md/dm-verity-target.c               |   8 +
+ include/linux/device-mapper.h               |   1 +
+ security/ipe/ipe-blobs.c                    |  11 ++
+ security/ipe/ipe-engine.h                   |   3 +
+ security/ipe/ipe.c                          |   4 +
+ security/ipe/properties/Kconfig             |  13 +-
+ security/ipe/properties/Makefile            |   1 +
+ security/ipe/properties/dmverity-roothash.c | 153 ++++++++++++++++++++
+ security/ipe/properties/prop-entry.h        |   9 ++
+ 9 files changed, 202 insertions(+), 1 deletion(-)
+ create mode 100644 security/ipe/properties/dmverity-roothash.c
 
-diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
-index 469ef78c2f4f..11b50ef9abca 100644
---- a/security/ipe/Kconfig
-+++ b/security/ipe/Kconfig
-@@ -5,7 +5,7 @@
+diff --git a/drivers/md/dm-verity-target.c b/drivers/md/dm-verity-target.c
+index fabc173aa7b3..7f609906af16 100644
+--- a/drivers/md/dm-verity-target.c
++++ b/drivers/md/dm-verity-target.c
+@@ -16,8 +16,10 @@
+ #include "dm-verity.h"
+ #include "dm-verity-fec.h"
+ #include "dm-verity-verify-sig.h"
++#include "dm-core.h"
+ #include <linux/module.h>
+ #include <linux/reboot.h>
++#include <linux/security.h>
  
- menuconfig SECURITY_IPE
- 	bool "Integrity Policy Enforcement (IPE)"
--	depends on SECURITY && AUDIT
-+	depends on SECURITY && AUDIT && BLOCK
- 	select SYSTEM_DATA_VERIFICATION
- 	select SECURITYFS
- 	select CRYPTO_SHA1
-diff --git a/security/ipe/Makefile b/security/ipe/Makefile
-index 7e98982c5035..98a2245b6956 100644
---- a/security/ipe/Makefile
-+++ b/security/ipe/Makefile
-@@ -24,6 +24,7 @@ obj-$(CONFIG_SECURITY_IPE) += \
- 	ipe-property.o \
- 	ipe-hooks.o \
- 	ipe-secfs.o \
-+	ipe-blobs.o \
+ #define DM_MSG_PREFIX			"verity"
  
- clean-files := ipe-bp.c
+@@ -530,6 +532,12 @@ static int verity_verify_io(struct dm_verity_io *io)
+ 			return -EIO;
+ 	}
  
++	r = security_bdev_setsecurity(dm_table_get_md(v->ti->table)->bdev,
++				      DM_VERITY_ROOTHASH_SEC_NAME,
++				      v->root_digest, v->digest_size);
++	if (unlikely(r < 0))
++		return r;
++
+ 	/*
+ 	 * At this point, the merkel tree has finished validating.
+ 	 * if signature was specified, validate the signature here.
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index 02be0be21d38..b82e8223d52a 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -625,5 +625,6 @@ static inline unsigned long to_bytes(sector_t n)
+ }
+ 
+ #define DM_VERITY_SIGNATURE_SEC_NAME DM_NAME	".verity-sig"
++#define DM_VERITY_ROOTHASH_SEC_NAME DM_NAME	".verity-rh"
+ 
+ #endif	/* _LINUX_DEVICE_MAPPER_H */
 diff --git a/security/ipe/ipe-blobs.c b/security/ipe/ipe-blobs.c
-new file mode 100644
-index 000000000000..041d7d47b723
---- /dev/null
+index 041d7d47b723..6a09d5c6dea8 100644
+--- a/security/ipe/ipe-blobs.c
 +++ b/security/ipe/ipe-blobs.c
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
-+ */
-+
-+#include "ipe.h"
-+#include "ipe-engine.h"
-+#include "ipe-blobs.h"
-+
-+#include <linux/types.h>
-+#include <linux/fs.h>
-+#include <linux/device-mapper.h>
-+
-+/**
-+ * ipe_bdev_alloc_security: Performs the initialization of IPE's security blob.
-+ * @bdev: The block device to source the security blob from.
-+ *
-+ * The allocation is performed earlier by the LSM infrastructure,
-+ * (on behalf of all LSMs) in lsm_alloc_bdev. At the moment, IPE uses
-+ * this time to zero out the region of memory reserved for IPE.
-+ *
-+ * Return:
-+ * 0 - OK
-+ */
-+int ipe_bdev_alloc_security(struct block_device *bdev)
-+{
-+	struct ipe_bdev_blob *bdev_sec = ipe_bdev(bdev);
-+
-+	memset(bdev_sec, 0x0, sizeof(*bdev_sec));
-+
-+	return 0;
-+}
-+
-+/**
-+ * ipe_bdev_free_security: Frees all fields of IPE's block dev security blob.
-+ * @bdev: The block device to source the security blob from.
-+ *
-+ * The deallocation of the blob itself is performed later by the LSM
-+ * infrastructure, (on behalf of all LSMs) in lsm_free_bdev.
-+ *
-+ * Pointers allocated by the bdev_setsecurity hook and alloc_security
-+ * hook need to be deallocated here.
-+ */
-+void ipe_bdev_free_security(struct block_device *bdev)
-+{
-+	struct ipe_bdev_blob *bdev_sec = ipe_bdev(bdev);
-+
-+	kfree(bdev_sec->dmverity_rh_sig);
-+
-+	memset(bdev_sec, 0x0, sizeof(*bdev_sec));
-+}
-+
-+/**
-+ * ipe_bdev_setsecurity: Sets the a certain field of a block device security
-+ *			 blob, based on @key.
-+ * @bdev: The block device to source the security blob from.
-+ * @key: The key representing the information to be stored.
-+ * @value: The value to be stored.
-+ * @len: The length of @value.
-+ *
-+ * As block-devices are a generic implementation across specific stacks,
-+ * this allows information to be stored from various stacks.
-+ *
-+ * Return:
-+ * 0 - OK
-+ * !0 - Error
-+ */
-+int ipe_bdev_setsecurity(struct block_device *bdev, const char *key,
-+			 const void *value, size_t len)
-+{
-+	struct ipe_bdev_blob *bdev_sec = ipe_bdev(bdev);
-+
-+	if (!strcmp(key, DM_VERITY_SIGNATURE_SEC_NAME)) {
-+		bdev_sec->dmverity_rh_sig = kmemdup(value, len, GFP_KERNEL);
-+		if (!bdev_sec->dmverity_rh_sig)
+@@ -46,6 +46,7 @@ void ipe_bdev_free_security(struct block_device *bdev)
+ 	struct ipe_bdev_blob *bdev_sec = ipe_bdev(bdev);
+ 
+ 	kfree(bdev_sec->dmverity_rh_sig);
++	kfree(bdev_sec->dmverity_rh);
+ 
+ 	memset(bdev_sec, 0x0, sizeof(*bdev_sec));
+ }
+@@ -80,5 +81,15 @@ int ipe_bdev_setsecurity(struct block_device *bdev, const char *key,
+ 		return 0;
+ 	}
+ 
++	if (!strcmp(key, DM_VERITY_ROOTHASH_SEC_NAME)) {
++		bdev_sec->dmverity_rh = kmemdup(value, len, GFP_KERNEL);
++		if (!bdev_sec->dmverity_rh)
 +			return -ENOMEM;
 +
-+		bdev_sec->dmv_rh_sig_len = len;
++		bdev_sec->rh_size = len;
 +
 +		return 0;
 +	}
 +
-+	return -ENOSYS;
-+}
-diff --git a/security/ipe/ipe-blobs.h b/security/ipe/ipe-blobs.h
-new file mode 100644
-index 000000000000..7561f4cef558
---- /dev/null
-+++ b/security/ipe/ipe-blobs.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) Microsoft Corporation. All rights reserved.
-+ */
-+#include <linux/types.h>
-+#include <linux/fs.h>
-+
-+#include "ipe.h"
-+
-+#ifndef IPE_BLOB_H
-+#define IPE_BLOB_H
-+
-+static inline struct ipe_bdev_blob *ipe_bdev(struct block_device *bdev)
-+{
-+	return bdev->security + ipe_blobs.lbs_bdev;
-+}
-+
-+#endif /* IPE_BLOB_H */
-diff --git a/security/ipe/ipe-engine.c b/security/ipe/ipe-engine.c
-index 0291ced99d64..043faf64ceef 100644
---- a/security/ipe/ipe-engine.c
-+++ b/security/ipe/ipe-engine.c
-@@ -10,6 +10,7 @@
- #include "ipe-engine.h"
- #include "ipe-audit.h"
- #include "ipe-pin.h"
-+#include "ipe-blobs.h"
- #include "utility.h"
- 
- #include <linux/types.h>
-@@ -112,6 +113,9 @@ static struct ipe_engine_ctx *build_ctx(const struct file *file,
- 	local->op = op;
- 	local->hook = hook;
- 
-+	if (has_bdev(file))
-+		local->sec_bdev = ipe_bdev(bdev(file));
-+
- 	return local;
+ 	return -ENOSYS;
  }
- 
 diff --git a/security/ipe/ipe-engine.h b/security/ipe/ipe-engine.h
-index d9a95674e70d..038c39a8973e 100644
+index 038c39a8973e..696baaa423ff 100644
 --- a/security/ipe/ipe-engine.h
 +++ b/security/ipe/ipe-engine.h
-@@ -3,20 +3,29 @@
-  * Copyright (C) Microsoft Corporation. All rights reserved.
-  */
- 
-+#include "ipe.h"
- #include "ipe-hooks.h"
- 
- #include <linux/types.h>
- #include <linux/rbtree.h>
- #include <linux/fs.h>
- 
-+#include <crypto/pkcs7.h>
+@@ -18,6 +18,9 @@
+ struct ipe_bdev_blob {
+ 	u8	*dmverity_rh_sig;
+ 	size_t	dmv_rh_sig_len;
 +
- #ifndef IPE_ENGINE_H
- #define IPE_ENGINE_H
- 
-+struct ipe_bdev_blob {
-+	u8	*dmverity_rh_sig;
-+	size_t	dmv_rh_sig_len;
-+};
-+
- struct ipe_engine_ctx {
- 	enum ipe_op op;
- 	enum ipe_hook hook;
- 	const struct file *file;
- 	const char *audit_pathname;
-+	const struct ipe_bdev_blob *sec_bdev;
++	u8 *dmverity_rh;
++	size_t rh_size;
  };
  
- struct ipe_prop_cache {
-diff --git a/security/ipe/ipe-hooks.c b/security/ipe/ipe-hooks.c
-index 45efe022be04..18ab2dcd74d1 100644
---- a/security/ipe/ipe-hooks.c
-+++ b/security/ipe/ipe-hooks.c
-@@ -15,6 +15,7 @@
- #include <linux/mman.h>
- #include <linux/mm.h>
- #include <linux/security.h>
-+#include <linux/device-mapper.h>
- 
- /**
-  * ipe_on_exec: LSM hook called on the exec family of system calls.
-diff --git a/security/ipe/ipe-hooks.h b/security/ipe/ipe-hooks.h
-index 5e46726f2562..b2417831cfc1 100644
---- a/security/ipe/ipe-hooks.h
-+++ b/security/ipe/ipe-hooks.h
-@@ -60,4 +60,11 @@ int ipe_on_kernel_load_data(enum kernel_load_data_id id);
- 
- void ipe_sb_free_security(struct super_block *mnt_sb);
- 
-+int ipe_bdev_alloc_security(struct block_device *bdev);
-+
-+void ipe_bdev_free_security(struct block_device *bdev);
-+
-+int ipe_bdev_setsecurity(struct block_device *bdev, const char *key,
-+			 const void *value, size_t len);
-+
- #endif /* IPE_HOOK_H */
+ struct ipe_engine_ctx {
 diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-index 706ff38083c6..8a612eb62879 100644
+index 8a612eb62879..8f4dfb8c547f 100644
 --- a/security/ipe/ipe.c
 +++ b/security/ipe/ipe.c
-@@ -23,6 +23,9 @@ static struct security_hook_list ipe_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(kernel_load_data, ipe_on_kernel_load_data),
- 	LSM_HOOK_INIT(file_mprotect, ipe_on_mprotect),
- 	LSM_HOOK_INIT(sb_free_security, ipe_sb_free_security),
-+	LSM_HOOK_INIT(bdev_alloc_security, ipe_bdev_alloc_security),
-+	LSM_HOOK_INIT(bdev_free_security, ipe_bdev_free_security),
-+	LSM_HOOK_INIT(bdev_setsecurity, ipe_bdev_setsecurity),
- };
- 
- /**
-@@ -40,6 +43,10 @@ static int __init ipe_load_properties(void)
+@@ -47,6 +47,10 @@ static int __init ipe_load_properties(void)
  	if (rc != 0)
  		return rc;
  
-+	rc = ipe_init_dm_verity_signature();
++	rc = ipe_init_dm_verity_rh();
 +	if (rc != 0)
 +		return rc;
 +
  	return rc;
  }
  
-@@ -72,9 +79,20 @@ static int __init ipe_init(void)
- 	return rc;
- }
- 
-+struct lsm_blob_sizes ipe_blobs = {
-+	.lbs_cred = 0,
-+	.lbs_file = 0,
-+	.lbs_inode = 0,
-+	.lbs_ipc = 0,
-+	.lbs_msg_msg = 0,
-+	.lbs_task = 0,
-+	.lbs_bdev = sizeof(struct ipe_bdev_blob),
-+};
-+
- DEFINE_LSM(ipe) = {
- 	.name = "ipe",
- 	.init = ipe_init,
-+	.blobs = &ipe_blobs,
- };
- 
- bool ipe_enforce = true;
-diff --git a/security/ipe/ipe.h b/security/ipe/ipe.h
-index af72bb574f73..a59cae2deec6 100644
---- a/security/ipe/ipe.h
-+++ b/security/ipe/ipe.h
-@@ -10,11 +10,13 @@
- 
- #include <linux/types.h>
- #include <linux/fs.h>
-+#include <linux/lsm_hooks.h>
- 
- #define IPE_MODE_ENFORCE	"enforce"
- #define IPE_MODE_PERMISSIVE	"permissive"
- 
- extern bool ipe_enforce;
- extern bool ipe_success_audit;
-+extern struct lsm_blob_sizes ipe_blobs;
- 
- #endif /* IPE_H */
 diff --git a/security/ipe/properties/Kconfig b/security/ipe/properties/Kconfig
-index 75c6c6ff6cd8..4046f7e5eaef 100644
+index 4046f7e5eaef..4f09092522d9 100644
 --- a/security/ipe/properties/Kconfig
 +++ b/security/ipe/properties/Kconfig
-@@ -13,3 +13,13 @@ config IPE_BOOT_PROP
- 	  superblock.
+@@ -14,8 +14,19 @@ config IPE_BOOT_PROP
  
  	  if unsure, answer N.
-+
-+config IPE_DM_VERITY_SIGNATURE
-+	bool "Enable property for signature verified dm-verity volumes"
-+	depends on DM_VERITY_VERIFY_ROOTHASH_SIG
+ 
++config IPE_DM_VERITY_ROOTHASH
++	bool "Enable property for authorizing dm-verity volumes via root-hash"
++	depends on DM_VERITY
 +	help
-+	  This option enables IPE's integration with Device-Mapper Verity's
-+	  signed root-hashes. This enables the usage of the property,
-+	  "dmverity_signature" in IPE's policy.
++	  This option enables IPE's integration with Device-Mapper Verity.
++	  This enables the usage of the property "dmverity_roothash" in IPE's
++	  policy. This property allows authorization or revocation via a
++	  a hex-string representing the roothash of a dmverity volume.
 +
 +	  if unsure, answer Y.
++
+ config IPE_DM_VERITY_SIGNATURE
+-	bool "Enable property for signature verified dm-verity volumes"
++	bool "Enable property for verified dm-verity volumes"
+ 	depends on DM_VERITY_VERIFY_ROOTHASH_SIG
+ 	help
+ 	  This option enables IPE's integration with Device-Mapper Verity's
 diff --git a/security/ipe/properties/Makefile b/security/ipe/properties/Makefile
-index e3e7fe17cf58..6b67cbe36e31 100644
+index 6b67cbe36e31..d9a3807797f4 100644
 --- a/security/ipe/properties/Makefile
 +++ b/security/ipe/properties/Makefile
-@@ -9,3 +9,4 @@
- obj-$(CONFIG_SECURITY_IPE) += properties.o
+@@ -10,3 +10,4 @@ obj-$(CONFIG_SECURITY_IPE) += properties.o
  
  properties-$(CONFIG_IPE_BOOT_PROP) += boot-verified.o
-+properties-$(CONFIG_IPE_DM_VERITY_SIGNATURE) += dmverity-signature.o
-diff --git a/security/ipe/properties/dmverity-signature.c b/security/ipe/properties/dmverity-signature.c
+ properties-$(CONFIG_IPE_DM_VERITY_SIGNATURE) += dmverity-signature.o
++properties-$(CONFIG_IPE_DM_VERITY_ROOTHASH) += dmverity-roothash.o
+diff --git a/security/ipe/properties/dmverity-roothash.c b/security/ipe/properties/dmverity-roothash.c
 new file mode 100644
-index 000000000000..819222f226b7
+index 000000000000..09112e1af753
 --- /dev/null
-+++ b/security/ipe/properties/dmverity-signature.c
-@@ -0,0 +1,82 @@
++++ b/security/ipe/properties/dmverity-roothash.c
+@@ -0,0 +1,153 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * Copyright (C) Microsoft Corporation. All rights reserved.
@@ -412,61 +215,132 @@ index 000000000000..819222f226b7
 +#include <linux/types.h>
 +#include <linux/slab.h>
 +#include <linux/fs.h>
-+#include <linux/audit.h>
 +#include <linux/mount.h>
++#include <linux/audit.h>
++#include <linux/kernel.h>
 +
-+#define PROPERTY_NAME "dmverity_signature"
++#define PROPERTY_NAME "dmverity_roothash"
 +
-+static void audit(struct audit_buffer *ab, bool value)
++struct counted_array {
++	u8 *arr;
++	size_t len;
++};
++
++static void audit(struct audit_buffer *ab, const void *value)
 +{
-+	audit_log_format(ab, "%s", (value) ? "TRUE" : "FALSE");
++	const struct counted_array *a = (const struct counted_array *)value;
++
++	if (!a || a->len == 0)
++		audit_log_format(ab, "NULL");
++	else
++		audit_log_n_hex(ab, a->arr, a->len);
 +}
 +
 +static inline void audit_rule_value(struct audit_buffer *ab,
 +				    const void *value)
 +{
-+	audit(ab, (bool)value);
++	audit(ab, value);
 +}
 +
 +static inline void audit_ctx(struct audit_buffer *ab,
 +			     const struct ipe_engine_ctx *ctx)
 +{
-+	bool b = has_bdev(ctx->file) && ctx->sec_bdev->dmverity_rh_sig;
++	struct counted_array a;
 +
-+	audit(ab, b);
++	if (!has_bdev(ctx->file))
++		return audit(ab, NULL);
++
++	a.arr = ctx->sec_bdev->dmverity_rh;
++	a.len = ctx->sec_bdev->rh_size;
++
++	return audit(ab, &a);
 +}
 +
 +static bool evaluate(const struct ipe_engine_ctx *ctx,
 +		     const void *value)
 +{
-+	bool expect = (bool)value;
++	const struct counted_array *a = (const struct counted_array *)value;
 +
 +	if (!has_bdev(ctx->file))
 +		return false;
 +
-+	return ((bool)ctx->sec_bdev->dmverity_rh_sig) == expect;
++	if (a->len != ctx->sec_bdev->rh_size)
++		return false;
++
++	return memcmp(a->arr, ctx->sec_bdev->dmverity_rh, a->len) == 0;
 +}
 +
 +static int parse(const char *val_str, void **value)
 +{
-+	if (strcmp("TRUE", val_str) == 0)
-+		*value = (void *)true;
-+	else if (strcmp("FALSE", val_str) == 0)
-+		*value = (void *)false;
-+	else
-+		return -EBADMSG;
++	struct counted_array *arr = NULL;
++	int rv = 0;
 +
-+	return 0;
++	arr = kzalloc(sizeof(*arr), GFP_KERNEL);
++	if (!arr) {
++		rv = -ENOMEM;
++		goto err;
++	}
++
++	arr->len = strlen(val_str) / 2;
++
++	arr->arr = kzalloc(arr->len, GFP_KERNEL);
++	if (!arr->arr) {
++		rv = -ENOMEM;
++		goto err;
++	}
++
++	rv = hex2bin(arr->arr, val_str, arr->len);
++	if (rv != 0)
++		goto err;
++
++	*value = arr;
++	return rv;
++err:
++	if (arr)
++		kfree(arr->arr);
++	kfree(arr);
++	return rv;
 +}
 +
-+static inline int duplicate(const void *src, void **dest)
++static int duplicate(const void *src, void **dest)
 +{
-+	*dest = (void *)(bool)src;
++	struct counted_array *arr = NULL;
++	const struct counted_array *src_arr = src;
++	int rv = 0;
 +
-+	return 0;
++	arr = kmemdup(src_arr, sizeof(*arr), GFP_KERNEL);
++	if (!arr) {
++		rv = -ENOMEM;
++		goto err;
++	}
++
++	arr->arr = kmemdup(src_arr->arr, src_arr->len, GFP_KERNEL);
++	if (!arr->arr) {
++		rv = -ENOMEM;
++		goto err;
++	}
++
++	*dest = arr;
++	return rv;
++err:
++	if (arr)
++		kfree(arr->arr);
++	kfree(arr);
++
++	return rv;
 +}
 +
-+static const struct ipe_property dmv_signature = {
++static void free_val(void **value)
++{
++	struct counted_array *a = (struct counted_array *)*value;
++
++	if (a)
++		kfree(a->arr);
++	kfree(a);
++	*value = NULL;
++}
++
++static const struct ipe_property dmv_roothash = {
 +	.property_name = PROPERTY_NAME,
 +	.version = 1,
 +	.eval = evaluate,
@@ -474,50 +348,31 @@ index 000000000000..819222f226b7
 +	.rule_audit = audit_rule_value,
 +	.ctx_audit = audit_ctx,
 +	.dup = duplicate,
-+	.free_val = NULL,
++	.free_val = free_val,
 +};
 +
-+int ipe_init_dm_verity_signature(void)
++int ipe_init_dm_verity_rh(void)
 +{
-+	return ipe_register_property(&dmv_signature);
++	return ipe_register_property(&dmv_roothash);
 +}
 diff --git a/security/ipe/properties/prop-entry.h b/security/ipe/properties/prop-entry.h
-index f598dd9608b9..85366366ff0d 100644
+index 85366366ff0d..86a360570f3b 100644
 --- a/security/ipe/properties/prop-entry.h
 +++ b/security/ipe/properties/prop-entry.h
-@@ -17,4 +17,13 @@ static inline int __init ipe_init_bootv(void)
- int __init ipe_init_bootv(void);
- #endif /* CONFIG_IPE_BOOT_PROP */
+@@ -26,4 +26,13 @@ static inline int __init ipe_init_dm_verity_signature(void)
+ int __init ipe_init_dm_verity_signature(void);
+ #endif /* CONFIG_IPE_DM_VERITY_SIGNATURE */
  
-+#ifndef CONFIG_IPE_DM_VERITY_SIGNATURE
-+static inline int __init ipe_init_dm_verity_signature(void)
++#ifndef CONFIG_IPE_DM_VERITY_ROOTHASH
++static inline int __init ipe_init_dm_verity_rh(void)
 +{
 +	return 0;
 +}
 +#else
-+int __init ipe_init_dm_verity_signature(void);
-+#endif /* CONFIG_IPE_DM_VERITY_SIGNATURE */
++int __init ipe_init_dm_verity_rh(void);
++#endif /* CONFIG_IPE_DM_VERITY_ROOTHASH */
 +
  #endif /* IPE_PROP_ENTRY_H */
-diff --git a/security/ipe/utility.h b/security/ipe/utility.h
-index a13089bb0d8f..7580f17274a3 100644
---- a/security/ipe/utility.h
-+++ b/security/ipe/utility.h
-@@ -19,4 +19,14 @@ static inline bool has_sb(const struct file *file)
- 	return has_mount(file) && file->f_path.mnt->mnt_sb;
- }
- 
-+static inline bool has_bdev(const struct file *file)
-+{
-+	return has_sb(file) && file->f_path.mnt->mnt_sb->s_bdev;
-+}
-+
-+static inline struct block_device *bdev(const struct file *file)
-+{
-+	return file->f_path.mnt->mnt_sb->s_bdev;
-+}
-+
- #endif /* IPE_UTILITY_H */
 -- 
 2.27.0
 
