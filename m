@@ -2,67 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F04E223107D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 19:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B69723109D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 19:11:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731861AbgG1RIu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 13:08:50 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:41328 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731510AbgG1RIu (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 13:08:50 -0400
-Received: from [192.168.254.32] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 3CB1720B4908;
-        Tue, 28 Jul 2020 10:08:49 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3CB1720B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595956129;
-        bh=/7IJcSJkmnGhyvhTN0w/k6D0iSgWl3GbtIXdsg8Fv5A=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZuOaQbdU5uYtFJaEiOblvnFbeGROFNYKRjF3F43kJ1vUkhEErX0fbDaPkJowjRf06
-         4DasCLQblFzecv0eF8w7mUhf1hXAgudt5JEdU8ofWsRvm0zC9iTlBhH+fSyTWj70K7
-         RgZPV6XJ7g6uzFeyOC7P2FKqWtU5gXy/jZ/r8ZHI=
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-To:     James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org
-References: <aefc85852ea518982e74b233e11e16d2e707bc32>
- <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <3fd22f92-7f45-1b0f-e4fe-857f3bceedd0@schaufler-ca.com>
- <alpine.LRH.2.21.2007290300400.31310@namei.org>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <a909e0b0-0d82-d869-fe49-cc974680ac23@linux.microsoft.com>
-Date:   Tue, 28 Jul 2020 12:08:48 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.2007290300400.31310@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1731832AbgG1RLP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 13:11:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731070AbgG1RLP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 28 Jul 2020 13:11:15 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.213])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B599E20792;
+        Tue, 28 Jul 2020 17:11:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595956275;
+        bh=MR8mg3/IJgrM9SZbw474ePJSLyQfESFHDMAInBpWuhE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Ofm5DMIzcN6j+Cha4R0mw1pUbT1n3f9mVPYx0hue/a0Ot7cJk5nom/ged2M7RNngu
+         ZWQ0yxelrt+kwWo/XbT9oZ71iwKI2chnFMsQhSDAnsPwuklcCGKR9KShwFDMpb3or/
+         oI2ba8c7N3TQHJk86dU7tzg9SueKWVovgPRdtI+s=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/4] anon_inodes: Make _anon_inode_getfile() static
+Date:   Tue, 28 Jul 2020 19:11:06 +0200
+Message-Id: <20200728171109.28687-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+_anon_inode_getfile() function is not used outside so make it static to
+fix W=1 warning:
 
+    fs/anon_inodes.c:80:14: warning: no previous prototype for '_anon_inode_getfile' [-Wmissing-prototypes]
+       80 | struct file *_anon_inode_getfile(const char *name,
 
-On 7/28/20 12:05 PM, James Morris wrote:
-> On Tue, 28 Jul 2020, Casey Schaufler wrote:
->
->> You could make a separate LSM to do these checks instead of limiting
->> it to SELinux. Your use case, your call, of course.
-> It's not limited to SELinux. This is hooked via the LSM API and 
-> implementable by any LSM (similar to execmem, execstack etc.)
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ fs/anon_inodes.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Yes. I have an implementation that I am testing right now that
-defines the hook for exectramp and implements it for
-SELinux. That is why I mentioned SELinux.
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index 25d92c64411e..90b022960027 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -77,11 +77,11 @@ static struct inode *anon_inode_make_secure_inode(
+ 	return inode;
+ }
+ 
+-struct file *_anon_inode_getfile(const char *name,
+-				 const struct file_operations *fops,
+-				 void *priv, int flags,
+-				 const struct inode *context_inode,
+-				 bool secure)
++static struct file *_anon_inode_getfile(const char *name,
++					const struct file_operations *fops,
++					void *priv, int flags,
++					const struct inode *context_inode,
++					bool secure)
+ {
+ 	struct inode *inode;
+ 	struct file *file;
+-- 
+2.17.1
 
-Madhavan
