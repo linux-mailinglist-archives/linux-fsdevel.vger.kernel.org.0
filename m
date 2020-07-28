@@ -2,108 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 72B58230B3B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 15:15:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD4CC230B63
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 15:24:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730062AbgG1NPJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 09:15:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52428 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729853AbgG1NPI (ORCPT
+        id S1730100AbgG1NXv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 09:23:51 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:32900 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729984AbgG1NXv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 09:15:08 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 604A5C061794;
-        Tue, 28 Jul 2020 06:15:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ZHMkQDJHn0zeY8FYCEBJ2eds7Y8bNR+OKpl6shmcGbI=; b=b/7l3miILmZezVLADSpph+v5Or
-        Xn6wZxOT4Aa7YplNd7piMOxm73z0wsg6c709ExUWYVuIh6qVekx78kXSHmB1TigNQlG4OWgaqydae
-        /ljo9oqOdRgDmBlhGej+pTENWzR9KAER2L5RQQnF7VAPr6fcNelXyvggF00BeO7oQim50GaFjS3xv
-        zseW3J0Ps0Xtpb9ji5+/m5G9M6szb4vLNjcEJAAbUoETTYdvQJr1902KyTcfnszq0K04vZ4Nae6gL
-        LdAWObKGeK3HqYvhyaGX69eFD0FHSW1OLAJMlHjkvoAB/qK1CduggVaApPJeftgsph60MsUGx+s8f
-        0iWrzlBQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k0PRh-0004V8-63; Tue, 28 Jul 2020 13:15:05 +0000
-Date:   Tue, 28 Jul 2020 14:15:05 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Brian Foster <bfoster@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iomap: Ensure iop->uptodate matches PageUptodate
-Message-ID: <20200728131505.GQ23808@casper.infradead.org>
-References: <20200726091052.30576-1-willy@infradead.org>
- <20200726230657.GT2005@dread.disaster.area>
- <20200726232022.GH23808@casper.infradead.org>
- <20200726235335.GU2005@dread.disaster.area>
- <20200728092301.GA32142@infradead.org>
+        Tue, 28 Jul 2020 09:23:51 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k0Pa8-0008S8-In; Tue, 28 Jul 2020 07:23:48 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k0Pa7-0004Jh-IY; Tue, 28 Jul 2020 07:23:48 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>, Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+References: <87h7tsllgw.fsf@x220.int.ebiederm.org>
+        <CAHk-=wj34Pq1oqFVg1iWYAq_YdhCyvhyCYxiy-CG-o76+UXydQ@mail.gmail.com>
+        <87d04fhkyz.fsf@x220.int.ebiederm.org>
+Date:   Tue, 28 Jul 2020 08:20:41 -0500
+In-Reply-To: <87d04fhkyz.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Tue, 28 Jul 2020 07:39:48 -0500")
+Message-ID: <87h7trg4ie.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200728092301.GA32142@infradead.org>
+Content-Type: text/plain
+X-XM-SPF: eid=1k0Pa7-0004Jh-IY;;;mid=<87h7trg4ie.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/Lsxp9D29SGoF42ZMFfbqoBJ10C5tdn2s=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Linus Torvalds <torvalds@linux-foundation.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 314 ms - load_scoreonly_sql: 0.14 (0.0%),
+        signal_user_changed: 12 (3.7%), b_tie_ro: 10 (3.2%), parse: 0.96
+        (0.3%), extract_message_metadata: 16 (5.0%), get_uri_detail_list: 1.29
+        (0.4%), tests_pri_-1000: 15 (4.7%), tests_pri_-950: 1.49 (0.5%),
+        tests_pri_-900: 1.27 (0.4%), tests_pri_-90: 57 (18.2%), check_bayes:
+        55 (17.7%), b_tokenize: 6 (2.0%), b_tok_get_all: 7 (2.1%),
+        b_comp_prob: 2.3 (0.7%), b_tok_touch_all: 37 (11.9%), b_finish: 0.88
+        (0.3%), tests_pri_0: 198 (63.2%), check_dkim_signature: 0.59 (0.2%),
+        check_dkim_adsp: 2.4 (0.8%), poll_dns_idle: 0.68 (0.2%), tests_pri_10:
+        2.1 (0.7%), tests_pri_500: 7 (2.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC][PATCH] exec: Freeze the other threads during a multi-threaded exec
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jul 28, 2020 at 10:23:01AM +0100, Christoph Hellwig wrote:
-> On Mon, Jul 27, 2020 at 09:53:35AM +1000, Dave Chinner wrote:
-> > Yes, I understand the code accepts it can happen; what I dislike is
-> > code that asserts subtle behaviour can happen, then doesn't describe
-> > that exactly why/how that condition can occur. And then, because we
-> > don't know exactly how something happens, we add work arounds to
-> > hide issues we can't reason through fully. That's .... suboptimal.
-> > 
-> > Christoph might know off the top of his head how we get into this
-> > state. Once we work it out, then we need to add comments...
-> 
-> Unfortunately I don't know offhand.  I'll need to spend some more
-> quality time with this code first.
+ebiederm@xmission.com (Eric W. Biederman) writes:
 
-The code reads like you had several ideas for how the uptodate array
-works, changing your mind as you went along, and it didn't quite get to
-a coherent state before it was merged.  For example, there are parts
-of the code which think that a clear bit in the uptodate array means
-there's a hole in the file, eg
+> Linus Torvalds <torvalds@linux-foundation.org> writes:
+>
+>> It also makes for a possible _huge_ latency regression for execve(),
+>> since freezing really has never been a very low-latency operation.
+>>
+>> Other threads doing IO can now basically block execve() for a long
+>> long long time.
+>
+> Hmm.  Potentially.  The synchronization with the other threads must
+> happen in a multi-threaded exec in de_thread.
+>
+> So I need to look at the differences between where de_thread thread
+> can kill a thread and the freezer can not freeze a thread.  I am hoping
+> that the freezer has already instrumented most of those sleeps but I
+> admit I have not looked yet.
 
-fs/iomap/seek.c:page_seek_hole_data() calls iomap_is_partially_uptodate()
+Alright I have looked at the freezer a bit more and I now see that the
+point of marking things freezable is for kernel threads rather that user
+space threads.  I think there are 5 maybe 6 places the code sleeps
+reachable by userspace threads that are marked as freezable and most
+of those are callable from get_signal.
 
-but we set the uptodate bits when zeroing the parts of the page which
-are covered by holes in iomap_readpage_actor()
+For exec all I care about are user space threads.  So it appears the
+freezer infrastructure adds very little.
 
-> > > Way ahead of you
-> > > http://git.infradead.org/users/willy/pagecache.git/commitdiff/5a1de6fc4f815797caa4a2f37c208c67afd7c20b
-> > 
-> > *nod*
-> > 
-> > I would suggest breaking that out as a separate cleanup patch and
-> > not hide is in a patch that contains both THP modifications and bug
-> > fixes. It stands alone as a valid cleanup.
-> 
-> I'm pretty sure I already suggested that when it first showed up.
-> 
-> That being said I have another somewhat related thing in this area
-> that I really want to get done before THP support, and maybe I can
-> offload it to willy:
-> 
-> Currently we always allocate the iomap_page structure for blocksize
-> < PAGE_SIZE.  While this was easy to implement and a major improvement
-> over the buffer heads it actually is quite silly, as we only actually
-> need it if we either have sub-page uptodate state, or have extents
-> boundaries in the page.  So what I'd like to do is to only actually
-> allocate it in that case.  By doing the allocation lazy it should also
-> help to never allocate one that is marked all uptodate from the start.
+Now to see if I can find another way to divert a task into a slow path
+as it wakes up, so I don't need to manually wrap all of the sleeping
+calls.  Something that plays nice with the scheduler.
 
-Hah, I want to do that too, and I was afraid I was going to have to
-argue with you about it!
+Eric
 
-My thinking was to skip the allocation if the page lies entirely within
-an iomap extent.  That will let us skip the allocation even for THPs
-unless the file is fragmented.
-
-I don't think it needs to get done before THP support, they're pretty
-orthogonal.
