@@ -2,110 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A68702309DC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 14:22:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 662792309E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jul 2020 14:23:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbgG1MVs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 08:21:48 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:36608 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728458AbgG1MVs (ORCPT
+        id S1729395AbgG1MXY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 08:23:24 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:50387 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728300AbgG1MXW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 08:21:48 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1k0Oc4-0000u9-90; Tue, 28 Jul 2020 06:21:44 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1k0Oc3-000583-HD; Tue, 28 Jul 2020 06:21:44 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>, Pavel Machek <pavel@ucw.cz>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        linux-pm@vger.kernel.org
-References: <87h7tsllgw.fsf@x220.int.ebiederm.org>
-        <20200728092359.jrv7ygt6dwktwsgp@yavin.dot.cyphar.com>
-Date:   Tue, 28 Jul 2020 07:18:37 -0500
-In-Reply-To: <20200728092359.jrv7ygt6dwktwsgp@yavin.dot.cyphar.com> (Aleksa
-        Sarai's message of "Tue, 28 Jul 2020 19:41:09 +1000")
-Message-ID: <87bljzkf36.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 28 Jul 2020 08:23:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1595939002; x=1627475002;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+  b=PwD/AoUoCODzcuWQDM/WxDTZ3VqrJdl8wM50xgrppVvVcMDKwnB0oLvj
+   qQAnYRP8NzJJ3obaH56MlQUPqwPPtaEMXgSepmhH1H85nuRRWAHci8J/u
+   XJ4DWm6Qp4PIv+Z/4Del5Ikl4JbGXsfVg9AHxz7Vmkfk7UYqCxo/CKkBe
+   gVXSZxpfb5XRXWr3GqHVvpBPIqf+tvHYYhqIleQ+OtCg+pBvCpLHA4zYa
+   Mj++FbnxTL+41R8WzbChuHJDLyCUNN+QXFlTXsMLf6e5AypU7xCLcCFSs
+   +mhN+U5swU/4fQ69qXwa9PBdXldIdSGnaCyMRM+5vw+Kda/xbq7ApV3B5
+   Q==;
+IronPort-SDR: nHwbTT2+vn9pF4EhYRMEHd7dKsa9G1qeLWUPXheti+Pz3Zc6oYAIeAym0RRYqLmfr3T7gCN13G
+ hGUz1YRjBCThLrtiqVTJa8cS1sQp4CPgdkA9in8VzEE5kTj2vnkwgaK64Iii88kcCzIgmi6wen
+ AUEmIBeY8P41CBdaTiqKM/XwD5j3Fpul8EVgqwwd7Es16E9eGa2oOEVE1xqXnBJ/5VcRhq1v5+
+ 5E8EKshIWQwQZ0tKScwy/wyU9aex3Q0n5Z6OBelkg73aa73WV6Apm74oXSQgjsQi4xYXvn3a1B
+ VXY=
+X-IronPort-AV: E=Sophos;i="5.75,406,1589212800"; 
+   d="scan'208";a="147859977"
+Received: from mail-bl2nam02lp2050.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([104.47.38.50])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Jul 2020 20:23:20 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=dS58XHLfiOtAEZJ+0Nn9Kp1Y+ynt023kt+dNFh1PIXxff/XCNva3qhpj660DpW8+OZryh/j5l2/uaShUIP4YoKZH9Ns9F1XwjO6V+cdtF3pVVCEJxwsHdip/+NIAT2sQHpibPzk4X007cIlY7FdM1lTxIImQ9m3A9ZGjkbGsFzmCBzGcBx8MTKAO/uKwt43ikXDTK6MaRAytzvOreBMqAaOE9OeePpYy1qhtstjx4Q8a0xRGS0syWeFWXhlGPvwFuksyurODsDk73eaWMUjNsovF0kDrQ82DTL8MhfUVcsBdEEMF/H5KHgTOOMWNB++eBdLx2PK+O/kN944MEOvKyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=UUrVjbjEDAVWVmx7RzmSwpZrceWs22zKEfHHwqQIBJUh0n9k7hN8FGmQxMRTt6qmuCu4MnZfBP709cFx7zZ4NExyZQkfA8iamW2zux1d6678qGdsTJYToE9MRHXHlem+qQrvAVPA7FptHR0F1NPqWCOq4qJ/o3DOWOYtb8qLqbFU5VJsFwV3KHi3j1GpFNbTd0laipFgYCEmzh4nJj9wV0FIpr7AbHMyAoqXZEOGVf3vRmtgralmh92iVQF5jAlxkKFzZMASK4cc6DCSWw5eKBwNb7U5e+2DhaPZb6XDUq0x+T2kXWDnNbsKCzjO71Tv1hOQSBXXee85Qqke8FW8ng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=QxItiRavHzYveDOEBW0UFViPWLwou38pbhYILYA52HxEGG6xoH1TcyNk5d4ns+x4D29on9arDMVefwoulp+6ZW4Xz21E5Y0RbdPrrH+Z9xiDAw3FbBAgR2Oo+pHcMCf1U3yTO1onnBdWoZmPCw0D8As+T1yeKLZXQiVl3fqsoUM=
+Received: from DM5PR0401MB3591.namprd04.prod.outlook.com (2603:10b6:4:7e::15)
+ by DM6PR04MB6042.namprd04.prod.outlook.com (2603:10b6:5:128::32) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3216.23; Tue, 28 Jul
+ 2020 12:23:18 +0000
+Received: from DM5PR0401MB3591.namprd04.prod.outlook.com
+ ([fe80::c862:9cd5:689a:8573]) by DM5PR0401MB3591.namprd04.prod.outlook.com
+ ([fe80::c862:9cd5:689a:8573%5]) with mapi id 15.20.3216.033; Tue, 28 Jul 2020
+ 12:23:18 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+CC:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+        Richard Weinberger <richard@nod.at>,
+        Minchan Kim <minchan@kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>
+Subject: Re: [PATCH 06/14] block: lift setting the readahead size into the
+ block layer
+Thread-Topic: [PATCH 06/14] block: lift setting the readahead size into the
+ block layer
+Thread-Index: AQHWYYzl+a7Eqk4s2ka3fXGEsbV2jg==
+Date:   Tue, 28 Jul 2020 12:23:18 +0000
+Message-ID: <DM5PR0401MB359169BADDBE6B9F611B9BF19B730@DM5PR0401MB3591.namprd04.prod.outlook.com>
+References: <20200724073313.138789-1-hch@lst.de>
+ <20200724073313.138789-7-hch@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: lst.de; dkim=none (message not signed)
+ header.d=none;lst.de; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [129.253.240.72]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 41c6ceb7-578c-4100-8b52-08d832f102a7
+x-ms-traffictypediagnostic: DM6PR04MB6042:
+x-microsoft-antispam-prvs: <DM6PR04MB6042DE20A315424F8D2533529B730@DM6PR04MB6042.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:1728;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: CZdHaPqnktjMFEGBYJsxb6FTC8d0ugTzRNcXhnKqt0egUiYzymkMqsNmW+Sz+Zf41My3LEET5GE2/h6rewehBYCLLmhpPoo95Jknf2TLBh2ODw5HyNAVk811121hHOZaQKEhJ8PaWKQ0WIn+2hlH4+DiVdTWbCHeLI3cHqi7uDqxu2Ge9rav/L2d3nEceqktRk9ElOjv7nz/t+9qpwh4PnvZWbaytY1p/n+KxPI+g+IOo3NHQxqw2ky/VaNZ6lv4gFc2o+RBLt8SFnutCas2YVU9Ap4wrWe3FuH9TMibD597SVAKof4PlE8G8nYCwICGH9AN87jzKgfEkXpDUNA7Xw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR0401MB3591.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(376002)(39860400002)(136003)(396003)(366004)(346002)(54906003)(7696005)(110136005)(19618925003)(558084003)(64756008)(66446008)(66946007)(6506007)(66556008)(66476007)(71200400001)(186003)(76116006)(26005)(91956017)(52536014)(478600001)(4270600006)(5660300002)(33656002)(86362001)(8936002)(55016002)(9686003)(4326008)(7416002)(316002)(2906002)(8676002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: whG+n3jqlXJuOd6kui3pyChonTerxMiCSOqI7YGRrP+w2/lRGm2YL+RH+sZDESLaYiv+hXSVyC+hCanAINAYHE3T0cIiuj7qMZyyVBMaSRh74e/m6YCVa1XRy+rIzSUrGV3Veif+hGffucuTeI5wfVIGfDGpkdjEwCrjfY1qMWUuIcWi4rFl5NZjezh6zdAiR4swYp/L0bWIRaeDmQCWR3DiHT4tYWidkpdCFupctf6ZVCbcp4J5w1FPd3rezNFP8RdDSrQNtKXvs5AWWDOltg2cTlcCRgJV6xZcDn6mkMBPEodOUhcWCzHAZfSVkKTBEPthT/VmbhGxAe/gGXOU8PV+YNRoXlozvPTtHS8781xPEAoDyhl6uvsegR9WK4jZ6a5IpllTfEeZ/5vo1mIlSyca0+Z8kXeiRYCFQg3cX2GstzQQ13tQjfCYKMeKVI3Q5dxbr67m8RD87SwzKzc3JXcRSLx0XyGkKxOX5aWrA9zqA3oCRgcYu/PP+wDuBt/6
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1k0Oc3-000583-HD;;;mid=<87bljzkf36.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/ELoIme8I02gfNTorAJ93bwztnllU2YKA=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,XMSubLong
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  1.5 TR_Symld_Words too many words that have symbols inside
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Aleksa Sarai <cyphar@cyphar.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 377 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 9 (2.5%), b_tie_ro: 8 (2.1%), parse: 0.80 (0.2%),
-        extract_message_metadata: 14 (3.7%), get_uri_detail_list: 1.16 (0.3%),
-        tests_pri_-1000: 15 (3.9%), tests_pri_-950: 1.30 (0.3%),
-        tests_pri_-900: 1.13 (0.3%), tests_pri_-90: 82 (21.6%), check_bayes:
-        80 (21.1%), b_tokenize: 7 (1.8%), b_tok_get_all: 6 (1.6%),
-        b_comp_prob: 2.3 (0.6%), b_tok_touch_all: 61 (16.0%), b_finish: 1.04
-        (0.3%), tests_pri_0: 239 (63.2%), check_dkim_signature: 0.77 (0.2%),
-        check_dkim_adsp: 2.5 (0.7%), poll_dns_idle: 0.49 (0.1%), tests_pri_10:
-        3.5 (0.9%), tests_pri_500: 9 (2.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFC][PATCH] exec: Freeze the other threads during a multi-threaded exec
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR0401MB3591.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41c6ceb7-578c-4100-8b52-08d832f102a7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2020 12:23:18.5057
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: T9oxUAcaQH+FRTbrT5RxUaoJfIoRjFxeQz8cgTzgE7hbb+uOz8DI/06Y5E+Q81ZT8diU2rriYFvNdP2IraoC0vrCA3qPZPm+bSa7MmJ1F+k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB6042
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Aleksa Sarai <cyphar@cyphar.com> writes:
-
-> On 2020-07-27, Eric W. Biederman <ebiederm@xmission.com> wrote:
->> To the best of my knowledge processes with more than one thread
->> calling exec are not common, and as all of the threads will be killed
->> by exec there does not appear to be any useful work a thread can
->> reliably do during exec.
->
-> Every Go program which calls exec (this includes runc, Docker, LXD,
-> Kubernetes, et al) fills the niche of "multi-threaded program that calls
-> exec" -- all Go programs are multi-threaded and there's no way of
-> disabling this. This will most likely cause pretty bad performance
-> regression for basically all container workloads.
-
-So it is a good point that container runtimes use Go, and that
-fundamentally anything that uses Go will be multi-threaded.  Having just
-looked closely at this I don't think in practice this is an issue even
-at this early state of my code.
-
-If those other threads are sleeping the code I have implemented should
-be a no-op.
-
-If those threads aren't sleeping you have undefined behavior, as at
-some point the kernel will come through and kill those threads.
-
-Further unless I am completely mistaken the container runtimes use
-forkAndExecInChild from go/src/syscall/exec_linux.go which performs a
-vfork before performing the exec.
-
-Eric
-
+Looks good,=0A=
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
