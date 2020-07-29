@@ -2,100 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C0E3B231C68
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jul 2020 12:02:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1AA7231E7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jul 2020 14:24:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbgG2KCA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jul 2020 06:02:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46788 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726208AbgG2KB7 (ORCPT
+        id S1726519AbgG2MX7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jul 2020 08:23:59 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:33720 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726476AbgG2MX7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jul 2020 06:01:59 -0400
-Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0979C061794;
-        Wed, 29 Jul 2020 03:01:59 -0700 (PDT)
-Received: by mail-pj1-x1041.google.com with SMTP id c6so1651447pje.1;
-        Wed, 29 Jul 2020 03:01:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:cc:references:to:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dhqS/TVn+QryUKiM9kjYSdz+2PsU5CHJr52Pd8ZYJLU=;
-        b=jTGn5BBRGJieUMUNIYAc34bvJJ5Z19vAtcH5jNHg8608wPX+lXlJu5e8EVnw2RJM8C
-         tkbzoqVGwMS0V6qbqDpzlFXytGQc8Yt4wG7xR5jxtxD4nvvXO+6P4hLOfbXXS6GdKPIC
-         +EKaZejqDXEsuk0yVDsME6T0E/iC6awjr/EETG6YVXHJCHOk+jycp3we2epVk4ik0Pev
-         UYHcLsF4TvuLL08VWzLRZzdyn1Ey/GRVYLrmO68b5Z7SKphnyxmdqupMSsc89IV2PO6N
-         Zanpk1whq9sbH11u4+DAF93rGN7v2atRJweIvDZ2YIntbMLFUwOWosH0tbHh3ztHZiuE
-         vMKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:cc:references:to:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dhqS/TVn+QryUKiM9kjYSdz+2PsU5CHJr52Pd8ZYJLU=;
-        b=R8OfEYrL9vXXCSBLflD7Ww+UoTgPzNf/WQglKYrEOfZVqzCGxKJsXB3IaGBul7Dh9+
-         Wg/+rli8bot7UQlmJ7xBWkgdpqXqI0eAHQ/HJQwTUm04lPUhFEGDCF0byUln0bb1+MAF
-         QqMivJqvPERz0Mp0QdgQO73hrLEqPFClQrjMPsp4xTZLKRvLJ9WPhlnUChjTUmn5InSP
-         ZxO6hstDwcDe0neH8P264L1FBZw4kbDuhBLycqFljQPvCrbHS5LVyiSdOwPrkUMDPwrI
-         Uzezh/YFtvxKe/ikzPbElXcc9qAXQOlkOT7bM68HnT786vl09id20Vb7X9Ycq82nV+Lx
-         RdHg==
-X-Gm-Message-State: AOAM5312bJgMZA8b/2gD+e6MxUlWS3fzj1xf99pWzp0KI4oYyTS1uwl3
-        zc3abZ7jXk6gLf3qcrUl3nhSlp5x6QQ=
-X-Google-Smtp-Source: ABdhPJyz+O2zYB03eEDr+E6YXyvetH6FE51ND1NxpfVQ3sUGC2nxxxM6JOuebrri1jMzFdwF3k5D0A==
-X-Received: by 2002:a17:902:ee54:: with SMTP id 20mr27271592plo.197.1596016918944;
-        Wed, 29 Jul 2020 03:01:58 -0700 (PDT)
-Received: from ?IPv6:2404:7a87:83e0:f800:ccae:99d9:bebb:d2c4? ([2404:7a87:83e0:f800:ccae:99d9:bebb:d2c4])
-        by smtp.gmail.com with ESMTPSA id f15sm1797383pfk.58.2020.07.29.03.01.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jul 2020 03:01:58 -0700 (PDT)
-Subject: Re: [PATCH v2] exfat: integrates dir-entry getting and validation
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200715012249.16378-1-kohada.t2@gmail.com>
-To:     Sungjong Seo <sj1557.seo@samsung.com>
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-Message-ID: <3959d0a7-8457-e722-88ce-8ad28423c12f@gmail.com>
-Date:   Wed, 29 Jul 2020 19:01:56 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200715012249.16378-1-kohada.t2@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 29 Jul 2020 08:23:59 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06TCHlxd074429;
+        Wed, 29 Jul 2020 12:23:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=RBTsiZ1Fq2Xqu4KecE3CvmLgU0UOG2nLZCW6tCZnvMc=;
+ b=WdTib8RAv9BG+Ogl5kM3m7jP3mfBu4mkMoPHO+0PeH/yzW0AeGy93paU25OqdvQVvPIT
+ DkRm95HCbwOGYN9m70pMrL1qzmIsYeHGaLjsnJOoqfVhqGnB+tS2ExjtmI5xl+67oBtt
+ 39BYGrQtBn7WjMe28eWWnrf1DxXuH7m9wLeOeH8m7zRWTkDsJbxe//Rp+L8MJKZb7MRG
+ /rod5IpiPjoiegTk+n74lSY13fw9UKPOGx4MJ0fIDoHXB0jEK3drye+R5VgkT1msz2Ym
+ 1R7QUC2kSNWQAHAQZlOXEXafzir97wfVRex2Xp1SI4d8IX4Pw2SA2v8TcJH3hwAmeZC0 +g== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 32hu1jn8hg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 29 Jul 2020 12:23:54 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06TCCkGX013164;
+        Wed, 29 Jul 2020 12:23:53 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 32hu5vp6qd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 29 Jul 2020 12:23:53 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 06TCNprr000689;
+        Wed, 29 Jul 2020 12:23:51 GMT
+Received: from anon-dhcp-152.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 29 Jul 2020 05:23:51 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
+Subject: Re: [PATCH v3 02/10] xattr: add a function to check if a namespace is
+ supported
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <20200728143307.GB951209@ZenIV.linux.org.uk>
+Date:   Wed, 29 Jul 2020 08:23:50 -0400
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Frank van der Linden <fllinden@amazon.com>,
+        Bruce Fields <bfields@fieldses.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0BAC8FEB-2B2A-40F3-9A1F-B37BF2F79D90@oracle.com>
+References: <20200623223927.31795-1-fllinden@amazon.com>
+ <20200623223927.31795-3-fllinden@amazon.com>
+ <20200625204157.GB10231@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+ <20200714171328.GB24687@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+ <CAHk-=wj=gr3F3ZTnz8fnpSqfxivYKaFLvB+8UJOq3nTF9gzzyw@mail.gmail.com>
+ <03E295AE-984E-47B1-ABC2-167C69D6DCC2@oracle.com>
+ <20200728143307.GB951209@ZenIV.linux.org.uk>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9696 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ mlxscore=0 adultscore=0 spamscore=0 phishscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2007290081
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9696 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 mlxlogscore=999
+ malwarescore=0 impostorscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ suspectscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007290081
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/07/15 10:22, Tetsuhiro Kohada wrote:
-> Add validation for num, bh and type on getting dir-entry.
-> ('file' and 'stream-ext' dir-entries are pre-validated to ensure success)
-> Renamed exfat_get_dentry_cached() to exfat_get_validated_dentry() due to
-> a change in functionality.
-> 
-> Integrate type-validation with simplified.
-> This will also recognize a dir-entry set that contains 'benign secondary'
-> dir-entries.
-> 
-> And, rename TYPE_EXTEND to TYPE_NAME.
-> 
-> Suggested-by: Sungjong Seo <sj1557.seo@samsung.com>
-> Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
-> ---
-> Changes in v2
->   - Change verification order
->   - Verification loop start with index 2
-
-Ping.
-Is there anything I should do?
 
 
-BR
----
-Tetsuhiro Kohada <kohada.t2@gmail.com>
+> On Jul 28, 2020, at 10:33 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>=20
+> On Tue, Jul 28, 2020 at 10:17:07AM -0400, Chuck Lever wrote:
+>> Hi Linus-
+>>=20
+>>> On Jul 14, 2020, at 2:46 PM, Linus Torvalds =
+<torvalds@linux-foundation.org> wrote:
+>>>=20
+>>> On Tue, Jul 14, 2020 at 10:13 AM Frank van der Linden
+>>> <fllinden@amazon.com> wrote:
+>>>>=20
+>>>> Again, Linus - this is a pretty small change, doesn't affect any =
+existing
+>>>> codepaths, and it's already in the tree Chuck is setting up for =
+5.9. Could
+>>>> this go in through that directly?
+>>>=20
+>>> Both ok by me, but I'd like to have Al ack them. Al?
+>>=20
+>> I have the NFSD user xattr patches in the current series waiting to =
+be
+>> merged into v5.9. I'd like to create the nfsd-5.9 merge tag soon, but =
+I
+>> haven't heard any review comments from Al. How would you like me to
+>> proceed?
+>=20
+> Looks sane, AFAICS.  Sorry, still digging myself from under the mounds =
+of
+> mail...
+
+No problem at all. Thanks!
+
+--
+Chuck Lever
+
+
+
