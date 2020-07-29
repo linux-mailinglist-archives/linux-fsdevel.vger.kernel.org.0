@@ -2,107 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 67863231782
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jul 2020 04:04:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D670323183F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jul 2020 05:44:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730881AbgG2CER (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 22:04:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58462 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728401AbgG2CEQ (ORCPT
+        id S1726825AbgG2Dos (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 23:44:48 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:52800 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726245AbgG2Dos (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 22:04:16 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADD28C0619D2;
-        Tue, 28 Jul 2020 19:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=ptZ4CaB+9ZPFK7eW316fU2oYVkH0yzLQ4pZT4nFsjOA=; b=L8btYvGdt15/+hqPaBMVifuHFP
-        mj1IC0WwS/5cB699Ff1misVVzWwylEgRgEeikp3o/HEiq+IyuXdd6WoWiXKDbcNet35tUEacF9F+9
-        mTYW32EXz7eJ/JSPU2++z/q2bQfBo5prJ2CKpSn404aT0xYiDT1cZoVI4cZ1GREvWMq8SK5FNhqgv
-        Lx/3DW/HMBwZBVDr0Rr7vmXvNb+UYGm6DsZZr5TKt+r2yhEvRq/kp4Jmg8cTkHauBvfjZeKgZL2CG
-        SCwjA23ZuC+u/AqV2hlZ4HIYdHMxBYe7VnBlWw0ukpM+T48gLB8uyjhAHWYmM98XD1fqBBbKRt2bI
-        LjM9hGDQ==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k0bS1-0001A0-Q2; Wed, 29 Jul 2020 02:04:14 +0000
-Subject: Re: mmotm 2020-07-27-18-18 uploaded (mm/page_alloc.c)
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
-References: <20200728011914.S-8vAYUK0%akpm@linux-foundation.org>
- <ae87385b-f830-dbdf-ebc7-1afb82a7fed0@infradead.org>
- <20200728145553.2a69fa2080de01922b3a74e0@linux-foundation.org>
- <048cef07-ad4b-8788-94a4-e144de731ab6@infradead.org>
- <20200728184419.4b137162844987c9199542bb@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <bdd0b49f-2cdd-02e1-3c91-d96b4f806490@infradead.org>
-Date:   Tue, 28 Jul 2020 19:04:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 28 Jul 2020 23:44:48 -0400
+X-IronPort-AV: E=Sophos;i="5.75,408,1589212800"; 
+   d="scan'208";a="97041138"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 29 Jul 2020 11:44:42 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id 0B1834CE38CB;
+        Wed, 29 Jul 2020 11:44:38 +0800 (CST)
+Received: from G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Wed, 29 Jul 2020 11:44:37 +0800
+Received: from localhost.localdomain (10.167.225.206) by
+ G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.2 via Frontend Transport; Wed, 29 Jul 2020 11:44:37 +0800
+From:   Hao Li <lihao2018.fnst@cn.fujitsu.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <dan.j.williams@intel.com>, <willy@infradead.org>, <jack@suse.cz>,
+        <linux-fsdevel@vger.kernel.org>, <linux-nvdimm@lists.01.org>,
+        <linux-kernel@vger.kernel.org>, <lihao2018.fnst@cn.fujitsu.com>
+Subject: [PATCH] dax: Fix wrong error-number passed into xas_set_err()
+Date:   Wed, 29 Jul 2020 11:44:36 +0800
+Message-ID: <20200729034436.24267-1-lihao2018.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <20200728184419.4b137162844987c9199542bb@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: 0B1834CE38CB.A1DB9
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: lihao2018.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/28/20 6:44 PM, Andrew Morton wrote:
-> On Tue, 28 Jul 2020 15:39:21 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->> On 7/28/20 2:55 PM, Andrew Morton wrote:
->>> On Tue, 28 Jul 2020 05:33:58 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
->>>
->>>> On 7/27/20 6:19 PM, Andrew Morton wrote:
->>>>> The mm-of-the-moment snapshot 2020-07-27-18-18 has been uploaded to
->>>>>
->>>>>    http://www.ozlabs.org/~akpm/mmotm/
->>
->>
->>>> on x86_64:
->>>>
->>>> ../mm/page_alloc.c:8355:48: warning: ‘struct compact_control’ declared inside parameter list will not be visible outside of this definition or declaration
->>>>  static int __alloc_contig_migrate_range(struct compact_control *cc,
->>>>                                                 ^~~~~~~~~~~~~~~
->>>
->>> As is usually the case with your reports, I can't figure out how to
->>> reproduce it.  I copy then .config, run `make oldconfig' (need to hit
->>> enter a zillion times because the .config is whacky) then the build
->>> succeeds.  What's the secret?
->>
->> I was not aware that there was a problem. cp .config and make oldconfig
->> should be sufficient -- and I don't understand why you would need to hit
->> enter many times.
->>
->> I repeated this on my system without having to answer any oldconfig prompts
->> and still got build errors.
->>
->> There is no secret that I know of, but it would be good to get to the
->> bottom of this problem.
-> 
-> Well the first thing I hit was
-> 
-> Support for big SMP systems with more than 8 CPUs (X86_BIGSMP) [N/y/?] (NEW) 
-> 
-> and your .config doesn't mention that.
+The error-number passed into xas_set_err() should be negative. Otherwise,
+the xas_error() will return 0, and grab_mapping_entry() will return the
+found entry instead of a SIGBUS error when the entry is not a value.
+And then, the subsequent code path would be wrong.
 
-It's an x86_32 symbol and my config was for x86_64.
+Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
+---
+ fs/dax.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-
-> make mrproper
-> cp ~/config-randy .config
-> make oldconfig
-
-make ARCH=x86_64 oldconfig
-
-HTH.
+diff --git a/fs/dax.c b/fs/dax.c
+index 11b16729b86f..acac675fe7a6 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -488,7 +488,7 @@ static void *grab_mapping_entry(struct xa_state *xas,
+ 		if (dax_is_conflict(entry))
+ 			goto fallback;
+ 		if (!xa_is_value(entry)) {
+-			xas_set_err(xas, EIO);
++			xas_set_err(xas, -EIO);
+ 			goto out_unlock;
+ 		}
+ 
 -- 
-~Randy
+2.28.0
+
+
 
