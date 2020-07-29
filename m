@@ -2,118 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 221172320D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jul 2020 16:43:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F12323210F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jul 2020 16:55:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbgG2OnA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jul 2020 10:43:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58458 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726385AbgG2Om7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jul 2020 10:42:59 -0400
-Received: from hubcapsc.lan (adsl-074-187-101-087.sip.mia.bellsouth.net [74.187.101.87])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D7C2207E8;
-        Wed, 29 Jul 2020 14:42:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596033778;
-        bh=OwrbhncfCKO6z/ltZs+KPkLCy6nqvm6yJF0AbIBe4x8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=zENp/GQ+d3SSisYPIT32mljpVTHyBJrBB7JogpMDx3qFnuINuxN7M6qOHwgfHrK5w
-         kCVx0jemCPxxKWUK8Fu3WJ4h613s7oVhkEFo8vL3NVZmJ7dEycoYAZhpirwaEeNeYz
-         Fu+4dQJ71J1mw1wAFVKVGE5JnMO5QVMAYH32/0js=
-From:   hubcap@kernel.org
-To:     torvalds@linux-foundation.org
-Cc:     Mike Marshall <hubcap@omnibond.com>, linux-fsdevel@vger.kernel.org
-Subject: [RFC] orangefs: posix acl fix...
-Date:   Wed, 29 Jul 2020 10:42:48 -0400
-Message-Id: <20200729144248.1381026-1-hubcap@kernel.org>
-X-Mailer: git-send-email 2.25.4
+        id S1727069AbgG2OzO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jul 2020 10:55:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35678 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbgG2OzM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 Jul 2020 10:55:12 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3068C061794;
+        Wed, 29 Jul 2020 07:55:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ZYyKJX8gyBkW6F9daVA0jWm+9kP2lb8jGX/Ef1mBZlk=; b=qf71CeE4YFlWKzhXY4jhV1Z2s8
+        BM8w59AJ99z+q6KHcBdm+y7itJs+KYqHI3K4NOJP26VlQDBaE8ABd4i5IBmWvbokFj4XqWBqsUkxa
+        JtzKXE8sFPW3gtlDTmJR0s9gKPQiE1zx/C8RyXROY3uf4u6msv0xZ0fWSOQ2ZgAvsJfLql928FetY
+        HtmeyJFQzjOXtvwiGK18rY3Lb0IkdAiSGR2LQU0EuqebwrN3pJWNXck9qkHpFZsW5KHSir/Wo29uX
+        EhgENoTSAjawl0mjMPXBHi/oK5HOja3Rk3itmGCyEf18ds59WWlUX1dqwazUQWx2QlQp0FT9JEx3A
+        WHOEPDqA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k0nU3-0003wK-Eq; Wed, 29 Jul 2020 14:55:07 +0000
+Date:   Wed, 29 Jul 2020 15:55:07 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@kernel.org, will@kernel.org, a.darwish@linutronix.de,
+        tglx@linutronix.de, paulmck@kernel.org, bigeasy@linutronix.de,
+        rostedt@goodmis.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/5] seqlock: Fold seqcount_LOCKNAME_t definition
+Message-ID: <20200729145507.GW23808@casper.infradead.org>
+References: <20200729135249.567415950@infradead.org>
+ <20200729140142.347671778@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200729140142.347671778@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mike Marshall <hubcap@omnibond.com>
+On Wed, Jul 29, 2020 at 03:52:51PM +0200, Peter Zijlstra wrote:
+> Manual repetition is boring and error prone.
 
-Al Viro pointed out that I broke some acl functionality...
+Yes, but generated functions are hard to grep for, and I'm pretty sure
+that kernel-doc doesn't know how to expand macros into comments that it
+can then extract documentation from.
 
- * ACLs could not be fully removed
- * posix_acl_chmod would be called while the old ACL was still cached
- * new mode propagated to orangefs server before ACL.
+I've been thinking about how to cure this (mostly in the context
+of page-flags.h).  I don't particularly like the C preprocessor, but
+m4 is worse and defining our own preprocessing language seems like a
+terrible idea.
 
-... when I tried to make sure that modes that got changed as a
-result of ACL-sets would be sent back to the orangefs server.
-
-Not wanting to try and change the code without having some cases to
-test it with, I began to hunt for setfacl examples that were expressible
-in pure mode. Along the way I found examples like the following
-which confused me:
-
-  user A had a file (/home/A/asdf) with mode 740
-  user B was in user A's group
-  user C was not in user A's group
-
-  setfacl -m u:C:rwx /home/A/asdf
-
-  The above setfacl caused ls -l /home/A/asdf to show a mode of 770,
-  making it appear that all users in user A's group now had full access
-  to /home/A/asdf, however, user B still only had read acces. Madness.
-
-Anywho, I finally found that the above (whacky as it is) appears to
-be "posixly on purpose" and explained in acl(5):
-
-  If the ACL has an ACL_MASK entry, the group permissions correspond
-  to the permissions of the ACL_MASK entry.
-
-Signed-off-by: Mike Marshall <hubcap@omnibond.com>
----
- fs/orangefs/acl.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/fs/orangefs/acl.c b/fs/orangefs/acl.c
-index eced272a3c57..a25e6c890975 100644
---- a/fs/orangefs/acl.c
-+++ b/fs/orangefs/acl.c
-@@ -122,6 +122,8 @@ int orangefs_set_acl(struct inode *inode, struct posix_acl *acl, int type)
- 	struct iattr iattr;
- 	int rc;
- 
-+	memset(&iattr, 0, sizeof iattr);
-+
- 	if (type == ACL_TYPE_ACCESS && acl) {
- 		/*
- 		 * posix_acl_update_mode checks to see if the permissions
-@@ -138,18 +140,17 @@ int orangefs_set_acl(struct inode *inode, struct posix_acl *acl, int type)
- 			return error;
- 		}
- 
--		if (acl) {
--			rc = __orangefs_set_acl(inode, acl, type);
--		} else {
-+		if (inode->i_mode != iattr.ia_mode)
- 			iattr.ia_valid = ATTR_MODE;
--			rc = __orangefs_setattr(inode, &iattr);
--		}
- 
--		return rc;
--
--	} else {
--		return -EINVAL;
- 	}
-+
-+	rc = __orangefs_set_acl(inode, acl, type);
-+
-+	if (!rc && (iattr.ia_valid == ATTR_MODE))
-+		rc = __orangefs_setattr(inode, &iattr);
-+
-+	return rc;
- }
- 
- int orangefs_init_acl(struct inode *inode, struct inode *dir)
--- 
-2.25.4
-
+So I was thinking about moving the current contents of page-flags.h
+to include/src/page-flags.h, making linux/page-flags.h depend on
+src/page-flags.h and run '$(CPP) -C' to generate it.  I've been a little
+busy recently and haven't had time to do more than muse about this, but
+I think it might make sense for some of our more heavily macro-templated
+header files.
