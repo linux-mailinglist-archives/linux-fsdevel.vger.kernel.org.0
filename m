@@ -2,89 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 70E6F23167E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jul 2020 01:55:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 793AD231691
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 29 Jul 2020 02:03:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730437AbgG1Xzc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 28 Jul 2020 19:55:32 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:36258 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730005AbgG1Xzb (ORCPT
+        id S1730381AbgG2ADf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jul 2020 20:03:35 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44821 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730203AbgG2ADf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 28 Jul 2020 19:55:31 -0400
-Received: from [10.137.106.139] (unknown [131.107.174.11])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 206D720B4908;
-        Tue, 28 Jul 2020 16:55:31 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 206D720B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1595980531;
-        bh=w20ZeApysxkNgENHQge66diVoP/SQfne/ezQvvgUqcM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nnq1/Ln3/IaJyZh6MpEpyRjnynpp3gggyXPT/zMkvX1w1syPnu2hKbPS6qxyDZnxS
-         iKMgtnrSyFqUCEF9u5XDmKjPxBkR+ecBgizOPG2aHqejlOosEDxXCEWUMINrbBhQeK
-         UE1cUIuE1lbhP1MNi/Lq5CeWTt4iiPMyWIVFTjTo=
-Subject: Re: [RFC PATCH v5 05/11] fs: add security blob and hooks for
- block_device
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        paul@paul-moore.com, eparis@redhat.com, jannh@google.com,
-        dm-devel@redhat.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-audit@redhat.com, tyhicks@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, corbet@lwn.net, sashal@kernel.org,
-        jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
-        nramas@linux.microsoft.com, pasha.tatashin@soleen.com
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
- <20200728213614.586312-6-deven.desai@linux.microsoft.com>
- <ef0fff6f-410a-6444-f1e3-03499a2f52b7@schaufler-ca.com>
- <20200728224003.GC951209@ZenIV.linux.org.uk>
-From:   Deven Bowers <deven.desai@linux.microsoft.com>
-Message-ID: <f6bda37a-e6f8-3de9-2bae-25d2296f3424@linux.microsoft.com>
-Date:   Tue, 28 Jul 2020 16:55:30 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 28 Jul 2020 20:03:35 -0400
+Received: by mail-io1-f65.google.com with SMTP id v6so7452298iow.11;
+        Tue, 28 Jul 2020 17:03:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=IXFD10Rv0JjmKa9mG+dTSJx3WQvF526rNjwfbt0NjXM=;
+        b=ANDpmPiTaSs5jNscq58ZL65K393RdyRbCs9EBeDZzf16wocbx+Y/XBabj/zE67JZRq
+         UVQbGVGUJTEmrI+V227ge1oi7cjVGtpSohrF2axYjH0GCUwC1SXC0g+GRLHrBkv25gBr
+         aDECyVWRS8Z+gC2MJ97XIphpDNz+AifkrPMe8fqx0y7FstXVrYrb9uxuHbdZey/aHnb1
+         ohmMV3iMgsgzaH5MgQzvWXyTlzu4t72Ld5xyeAgWWx96ZME8i2g7DxFXzbIJwBMbf4EH
+         PBI/nPHv8NGhH04KdJQUGDxUJfVYnfliaVth29uCa24FpXex0BwcD3IUHWX9Q3u7ubSD
+         eGFg==
+X-Gm-Message-State: AOAM531YlaIOAgVLAXIFq9PAUqm5hM/Q12LJV0z6wYRD4QDR/SVJGWwi
+        B8ge8jsTz7AuCze7m0BpB1c=
+X-Google-Smtp-Source: ABdhPJyq/gYnInd7DJmO9UKPCgu93jZ8qEVsvuBCvut/ojTyuY6YfLYQG5pz5kGlUv8BXEFqcuvKmw==
+X-Received: by 2002:a05:6602:160b:: with SMTP id x11mr24882338iow.52.1595981014221;
+        Tue, 28 Jul 2020 17:03:34 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id 4sm218492ilt.6.2020.07.28.17.03.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jul 2020 17:03:33 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 5796340945; Wed, 29 Jul 2020 00:03:32 +0000 (UTC)
+Date:   Wed, 29 Jul 2020 00:03:32 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Julius Hemanth Pitti <jpitti@cisco.com>, mingo@elte.hu,
+        akpm@linux-foundation.org, yzaikin@google.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, xe-linux-external@cisco.com,
+        jannh@google.com
+Subject: Re: [PATCH] proc/sysctl: make protected_* world readable
+Message-ID: <20200729000332.GJ4332@42.do-not-panic.com>
+References: <20200709235115.56954-1-jpitti@cisco.com>
+ <202007092122.782EE053@keescook>
 MIME-Version: 1.0
-In-Reply-To: <20200728224003.GC951209@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202007092122.782EE053@keescook>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Jul 09, 2020 at 09:31:37PM -0700, Kees Cook wrote:
+> On Thu, Jul 09, 2020 at 04:51:15PM -0700, Julius Hemanth Pitti wrote:
+> > protected_* files have 600 permissions which prevents
+> > non-superuser from reading them.
+> > 
+> > Container like "AWS greengrass" refuse to launch unless
+> > protected_hardlinks and protected_symlinks are set. When
+> > containers like these run with "userns-remap" or "--user"
+> > mapping container's root to non-superuser on host, they
+> > fail to run due to denied read access to these files.
+> > 
+> > As these protections are hardly a secret, and do not
+> > possess any security risk, making them world readable.
+> > 
+> > Though above greengrass usecase needs read access to
+> > only protected_hardlinks and protected_symlinks files,
+> > setting all other protected_* files to 644 to keep
+> > consistency.
+> > 
+> > Fixes: 800179c9b8a1 ("fs: add link restrictions")
+> > Signed-off-by: Julius Hemanth Pitti <jpitti@cisco.com>
+> 
+> Acked-by: Kees Cook <keescook@chromium.org>
+> 
+> I had originally proposed it as 0644, but Ingo asked that it have
+> a more conservative default value[1]. I figured that given the settings
+> can be discovered easily, it's not worth much. And if there are legit
+> cases where things are improved, I don't have a problem switching this
+> back.
 
+If we're going to to do this, can we please document why these are
+"protected" then?
 
-On 7/28/2020 3:40 PM, Al Viro wrote:
-> On Tue, Jul 28, 2020 at 03:22:59PM -0700, Casey Schaufler wrote:
-> 
->>> +	hlist_for_each_entry(p, &security_hook_heads.bdev_setsecurity, list) {
->>> +		rc = p->hook.bdev_setsecurity(bdev, name, value, size);
->>> +
->>> +		if (rc == -ENOSYS)
->>> +			rc = 0;
->>> +
->>> +		if (rc != 0)
->>
->> Perhaps:
->> 		else if (rc != 0)
->>
->>> +			break;
->>> +	}
->>> +
->>> +	return rc;
-> 
-> 	hlist_for_each_entry(p, &security_hook_heads.bdev_setsecurity, list) {
-> 		rc = p->hook.bdev_setsecurity(bdev, name, value, size);
-> 		if (rc && rc != -ENOSYS)
-> 			return rc;
-> 	}
-> 	return 0;
-> 
-> Easier to reason about that way...
-> 
+  Luis
 
-Yeah, this is cleaner. I'll make the change for v6.
+> 
+> Ingo, any thoughts on this now, 8 years later in the age of containers?
+> :)
+> 
+> (One devil's advocate question: as a workaround, you are able to just
+> change those files to 0644 after mounting /proc, yes? But regardless,
+> why get in people's way for no justifiable reason.)
+> 
+> -Kees
+> 
+> [1] https://lore.kernel.org/lkml/20120105091704.GB3249@elte.hu/
+> 
+> -- 
+> Kees Cook
