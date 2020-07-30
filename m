@@ -2,118 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D317D2338EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 21:25:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A326323391B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 21:34:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730439AbgG3TZj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 15:25:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46020 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726581AbgG3TZj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 15:25:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 977A3AFC0;
-        Thu, 30 Jul 2020 19:25:50 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id CD50F1E12CB; Thu, 30 Jul 2020 21:25:37 +0200 (CEST)
-Date:   Thu, 30 Jul 2020 21:25:37 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [bug report] fsnotify: pass dir and inode arguments to fsnotify()
-Message-ID: <20200730192537.GB13525@quack2.suse.cz>
-References: <20200730111339.GA54272@mwanda>
- <CAOQ4uxgEG9PNtdoMXw52_C4oaUQpi2DVx34_QEHeV195e3kYdg@mail.gmail.com>
+        id S1730485AbgG3Tes (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 15:34:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45844 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728616AbgG3Ter (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Jul 2020 15:34:47 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C4D8C061575
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jul 2020 12:34:47 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id z6so29483480iow.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jul 2020 12:34:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=S2cxBjoQxqxK4peClB1baOHSFoZL+Yj5o/jId09Ervw=;
+        b=yV0lYXoR+mqd/SzhhBLEqFe2z/OHz5ZaPxBuVNBV2Bu2Yc+gK98PiKbSSaxOA8fZQJ
+         xPaW6ZYdYndj0dCUQlYGJUyuWi+TkvwoN1//Rt8BUkiJ9Jh0BKYPI+oztdDLbnRz7YeD
+         qsuA7hhHZWiGed5zySaE9JpdPjc6IqaicExOpvsR72LlQVc9PmhSQPavwo/BKSwyZjMi
+         Y5hy8hDT1HknicHEl2VvsRA4nbliyB5Zyz8MdmfFd5guleqQE3myjmV5ZqkYA5V4NXuN
+         zCYfIq2BgDRWoQQ5jgWzaonHRDR7zf0hO/Q/XnNuQqhOFd8s8j4WwK6uMdeq+LBz7cMy
+         QtXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=S2cxBjoQxqxK4peClB1baOHSFoZL+Yj5o/jId09Ervw=;
+        b=dg2rpyPSpE1ThdDG9Cgg2chOkTcvosVtZGoZMPP61jYjTRllyvnzlzRyFfBwU2L8LV
+         NAfhnkSxm6UHYJq2fUl6vTcRJTFeP6Lcvk0DOJztGd3FsEe0UzTMCfXLkFoFm9M3FY+F
+         9yQ5ENLBWO0Xg+pkRb8+xt87fJAiSlwJr52CIPlEm1lHNnWg1D7ZP0nIcVfNj6kkbinx
+         WYcwIodIxghlpWdKk4wp2o+EmGEr6pNEJkPND71l2iAeHpGo12SEHckXMmIQE/dogo6H
+         mPth/mw45sWjBTA9K1YGqF5/eMxjy0qJUY3y09z/fSzTz1M4ruDlEdSZFqHaRzAOSfpv
+         IwGg==
+X-Gm-Message-State: AOAM533j1BMqrZgTpRP3kTNOAceTq/DG1dwz4PRQNLiy4VDxtP6T4fsm
+        EFJDlsVtptpXBQiBgnvo+W+03g==
+X-Google-Smtp-Source: ABdhPJyGX3EoUChA60mN8Z9VraISoHTk8hPnjL2b4aDG0Dd5gnLyRZYKRdS5SjnJFFEHslJH4WODZQ==
+X-Received: by 2002:a5e:980f:: with SMTP id s15mr132306ioj.5.1596137686835;
+        Thu, 30 Jul 2020 12:34:46 -0700 (PDT)
+Received: from [192.168.1.58] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id 142sm3466284ilc.40.2020.07.30.12.34.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jul 2020 12:34:46 -0700 (PDT)
+Subject: Re: KASAN: use-after-free Read in io_uring_setup (2)
+To:     syzbot <syzbot+9d46305e76057f30c74e@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <000000000000a3709905abad9335@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fcb86aa5-3b91-bf85-7d3a-8ca2a60e05d9@kernel.dk>
+Date:   Thu, 30 Jul 2020 13:34:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgEG9PNtdoMXw52_C4oaUQpi2DVx34_QEHeV195e3kYdg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <000000000000a3709905abad9335@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 30-07-20 14:55:11, Amir Goldstein wrote:
-> On Thu, Jul 30, 2020 at 2:13 PM <dan.carpenter@oracle.com> wrote:
-> >
-> > Hello Amir Goldstein,
-> >
-> > This is a semi-automatic email about new static checker warnings.
-> >
-> > The patch 40a100d3adc1: "fsnotify: pass dir and inode arguments to
-> > fsnotify()" from Jul 22, 2020, leads to the following Smatch
-> > complaint:
+On 7/30/20 1:21 PM, syzbot wrote:
+> Hello,
 > 
-> That's an odd report, because...
+> syzbot found the following issue on:
 > 
-> >
-> >     fs/notify/fsnotify.c:460 fsnotify()
-> >     warn: variable dereferenced before check 'inode' (see line 449)
+> HEAD commit:    04b45717 Add linux-next specific files for 20200729
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=173774b8900000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=ec68f65b459f1ed
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9d46305e76057f30c74e
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+9d46305e76057f30c74e@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KASAN: use-after-free in io_account_mem fs/io_uring.c:7397 [inline]
+> BUG: KASAN: use-after-free in io_uring_create fs/io_uring.c:8369 [inline]
+> BUG: KASAN: use-after-free in io_uring_setup+0x2797/0x2910 fs/io_uring.c:8400
+> Read of size 1 at addr ffff888087a41044 by task syz-executor.5/18145
 
-Yeah, I've noticed a similar report from Coverity.
+Quick guess would be that the ring is closed in a race before we do the
+accounting. The below should fix that, by ensuring that we account the
+memory before we install the fd.
 
-> > fs/notify/fsnotify.c
-> >    448          }
-> >    449          sb = inode->i_sb;
-> >                      ^^^^^^^^^^^
-> > New dreference.
-> 
-> First of all, two lines above we have
-> if (!inode) inode = dir;
-> 
-> This function does not assert (inode || dir), but must it??
-> This is even documented:
-> 
->  * @inode:      optional inode associated with event -
->  *              either @dir or @inode must be non-NULL.
-> 
-> Second,
-> The line above was indeed added by:
-> 40a100d3adc1: "fsnotify: pass dir and inode arguments to fsnotify()"
-> 
-> However...
-> 
-> >
-> >    450
-> >    451          /*
-> >    452           * Optimization: srcu_read_lock() has a memory barrier which can
-> >    453           * be expensive.  It protects walking the *_fsnotify_marks lists.
-> >    454           * However, if we do not walk the lists, we do not have to do
-> >    455           * SRCU because we have no references to any objects and do not
-> >    456           * need SRCU to keep them "alive".
-> >    457           */
-> >    458          if (!sb->s_fsnotify_marks &&
-> >    459              (!mnt || !mnt->mnt_fsnotify_marks) &&
-> >    460              (!inode || !inode->i_fsnotify_marks) &&
-> >                      ^^^^^^
-> > Check too late.  Presumably this check can be removed?
-> 
-> But this line was only added later by:
-> 9b93f33105f5 fsnotify: send event with parent/name info to
-> sb/mount/non-dir marks
-> 
-> So, yes, the check could be removed.
-> It is a leftover from a previous revision, but even though it is a leftover
-> I kind of like the code better this way.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index fabf0b692384..eb99994de5e2 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -8329,6 +8329,11 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 		ret = -EFAULT;
+ 		goto err;
+ 	}
++
++	io_account_mem(ctx, ring_pages(p->sq_entries, p->cq_entries),
++		       ACCT_LOCKED);
++	ctx->limit_mem = limit_mem;
++
+ 	/*
+ 	 * Install ring fd as the very last thing, so we don't risk someone
+ 	 * having closed it before we finish setup
+@@ -8338,9 +8343,6 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
+ 		goto err;
+ 
+ 	trace_io_uring_create(ret, ctx, p->sq_entries, p->cq_entries, p->flags);
+-	io_account_mem(ctx, ring_pages(p->sq_entries, p->cq_entries),
+-		       ACCT_LOCKED);
+-	ctx->limit_mem = limit_mem;
+ 	return ret;
+ err:
+ 	io_ring_ctx_wait_and_kill(ctx);
 
-And after looking at it my conclusion was the same. I like the symmetry of
-the code despite some checks are actually unnecessary...
-
-> In principle, an event on sb/mnt that is not associated with any inode
-> (for example
-> FS_UNMOUNT) could be added in the future.
-> And then we will have to fix documentation and the inode dereference above.
-> 
-> In any case, thank you for the report, but I don't see a reason to make any
-> changes right now.
-
-Agreed.
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jens Axboe
+
