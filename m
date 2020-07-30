@@ -2,235 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5565C23348A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 16:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 584AE233493
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 16:38:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729570AbgG3Oee (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 10:34:34 -0400
-Received: from relay.sw.ru ([185.231.240.75]:39762 "EHLO relay3.sw.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726275AbgG3Oed (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 10:34:33 -0400
-Received: from [192.168.15.64]
-        by relay3.sw.ru with esmtp (Exim 4.93)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1k19dO-0004Qm-Co; Thu, 30 Jul 2020 17:34:14 +0300
-Subject: Re: [PATCH 01/23] ns: Add common refcount into ns_common add use it
- as counter for net_ns
-To:     Christian Brauner <christian.brauner@ubuntu.com>
+        id S1729109AbgG3Ohz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 10:37:55 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:53194 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbgG3Ohy (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Jul 2020 10:37:54 -0400
+Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1k19gi-00015a-5C; Thu, 30 Jul 2020 14:37:40 +0000
+Date:   Thu, 30 Jul 2020 16:37:39 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
 Cc:     viro@zeniv.linux.org.uk, adobriyan@gmail.com, davem@davemloft.net,
         ebiederm@xmission.com, akpm@linux-foundation.org,
         areber@redhat.com, serge@hallyn.com, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 04/23] pid: Use generic ns_common::count
+Message-ID: <20200730143739.2llx5fl5r3jehehg@wittgenstein>
 References: <159611007271.535980.15362304262237658692.stgit@localhost.localdomain>
- <159611036589.535980.1765795847221907147.stgit@localhost.localdomain>
- <20200730143049.m3isrpwrktxnh7pz@wittgenstein>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <2f922e05-fd2b-f176-727a-f8b913087891@virtuozzo.com>
-Date:   Thu, 30 Jul 2020 17:34:28 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ <159611038184.535980.10101517435778277457.stgit@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20200730143049.m3isrpwrktxnh7pz@wittgenstein>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <159611038184.535980.10101517435778277457.stgit@localhost.localdomain>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 30.07.2020 17:30, Christian Brauner wrote:
-> On Thu, Jul 30, 2020 at 02:59:25PM +0300, Kirill Tkhai wrote:
->> Currently, every type of namespaces has its own counter,
->> which is stored in ns-specific part. Say, @net has
->> struct net::count, @pid has struct pid_namespace::kref, etc.
->>
->> This patchset introduces unified counter for all types
->> of namespaces, and converts net namespace to use it first.
->>
->> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
->> ---
->>  include/linux/ns_common.h     |    1 +
->>  include/net/net_namespace.h   |   11 ++++-------
->>  net/core/net-sysfs.c          |    6 +++---
->>  net/core/net_namespace.c      |    6 +++---
->>  net/ipv4/inet_timewait_sock.c |    4 ++--
->>  net/ipv4/tcp_metrics.c        |    2 +-
->>  6 files changed, 14 insertions(+), 16 deletions(-)
->>
->> diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
->> index 5fbc4000358f..27db02ebdf36 100644
->> --- a/include/linux/ns_common.h
->> +++ b/include/linux/ns_common.h
->> @@ -8,6 +8,7 @@ struct ns_common {
->>  	atomic_long_t stashed;
->>  	const struct proc_ns_operations *ops;
->>  	unsigned int inum;
->> +	refcount_t count;
+On Thu, Jul 30, 2020 at 02:59:41PM +0300, Kirill Tkhai wrote:
+> Convert pid namespace to use generic counter.
 > 
-> Hm, I wonder whether it's worth to have this addition be in a separate
-> patch but probably not and even if there'd be no need to resend.
-> 
-> Though I wonder, isn't this missing an include for refcount_t or is
-> there some header-magic we're doing during pre-processing?
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> ---
 
-We have to add, I think. I'll resend with #include <linux/refcount.h>
-in this file. Can I keep your Ack here on resend?
- 
-> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-> 
-> Thanks!
-> Christian
-> 
->>  };
->>  
->>  #endif
->> diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
->> index 2ee5901bec7a..cb4b33d7834b 100644
->> --- a/include/net/net_namespace.h
->> +++ b/include/net/net_namespace.h
->> @@ -60,9 +60,6 @@ struct net {
->>  	refcount_t		passive;	/* To decide when the network
->>  						 * namespace should be freed.
->>  						 */
->> -	refcount_t		count;		/* To decided when the network
->> -						 *  namespace should be shut down.
->> -						 */
->>  	spinlock_t		rules_mod_lock;
->>  
->>  	unsigned int		dev_unreg_count;
->> @@ -245,7 +242,7 @@ void __put_net(struct net *net);
->>  
->>  static inline struct net *get_net(struct net *net)
->>  {
->> -	refcount_inc(&net->count);
->> +	refcount_inc(&net->ns.count);
->>  	return net;
->>  }
->>  
->> @@ -256,14 +253,14 @@ static inline struct net *maybe_get_net(struct net *net)
->>  	 * exists.  If the reference count is zero this
->>  	 * function fails and returns NULL.
->>  	 */
->> -	if (!refcount_inc_not_zero(&net->count))
->> +	if (!refcount_inc_not_zero(&net->ns.count))
->>  		net = NULL;
->>  	return net;
->>  }
->>  
->>  static inline void put_net(struct net *net)
->>  {
->> -	if (refcount_dec_and_test(&net->count))
->> +	if (refcount_dec_and_test(&net->ns.count))
->>  		__put_net(net);
->>  }
->>  
->> @@ -275,7 +272,7 @@ int net_eq(const struct net *net1, const struct net *net2)
->>  
->>  static inline int check_net(const struct net *net)
->>  {
->> -	return refcount_read(&net->count) != 0;
->> +	return refcount_read(&net->ns.count) != 0;
->>  }
->>  
->>  void net_drop_ns(void *);
->> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
->> index 9de33b594ff2..655a88b0071c 100644
->> --- a/net/core/net-sysfs.c
->> +++ b/net/core/net-sysfs.c
->> @@ -1025,7 +1025,7 @@ net_rx_queue_update_kobjects(struct net_device *dev, int old_num, int new_num)
->>  	while (--i >= new_num) {
->>  		struct kobject *kobj = &dev->_rx[i].kobj;
->>  
->> -		if (!refcount_read(&dev_net(dev)->count))
->> +		if (!refcount_read(&dev_net(dev)->ns.count))
->>  			kobj->uevent_suppress = 1;
->>  		if (dev->sysfs_rx_queue_group)
->>  			sysfs_remove_group(kobj, dev->sysfs_rx_queue_group);
->> @@ -1603,7 +1603,7 @@ netdev_queue_update_kobjects(struct net_device *dev, int old_num, int new_num)
->>  	while (--i >= new_num) {
->>  		struct netdev_queue *queue = dev->_tx + i;
->>  
->> -		if (!refcount_read(&dev_net(dev)->count))
->> +		if (!refcount_read(&dev_net(dev)->ns.count))
->>  			queue->kobj.uevent_suppress = 1;
->>  #ifdef CONFIG_BQL
->>  		sysfs_remove_group(&queue->kobj, &dql_group);
->> @@ -1850,7 +1850,7 @@ void netdev_unregister_kobject(struct net_device *ndev)
->>  {
->>  	struct device *dev = &ndev->dev;
->>  
->> -	if (!refcount_read(&dev_net(ndev)->count))
->> +	if (!refcount_read(&dev_net(ndev)->ns.count))
->>  		dev_set_uevent_suppress(dev, 1);
->>  
->>  	kobject_get(&dev->kobj);
->> diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
->> index dcd61aca343e..5f658cbedd34 100644
->> --- a/net/core/net_namespace.c
->> +++ b/net/core/net_namespace.c
->> @@ -44,7 +44,7 @@ static struct key_tag init_net_key_domain = { .usage = REFCOUNT_INIT(1) };
->>  #endif
->>  
->>  struct net init_net = {
->> -	.count		= REFCOUNT_INIT(1),
->> +	.ns.count	= REFCOUNT_INIT(1),
->>  	.dev_base_head	= LIST_HEAD_INIT(init_net.dev_base_head),
->>  #ifdef CONFIG_KEYS
->>  	.key_domain	= &init_net_key_domain,
->> @@ -248,7 +248,7 @@ int peernet2id_alloc(struct net *net, struct net *peer, gfp_t gfp)
->>  {
->>  	int id;
->>  
->> -	if (refcount_read(&net->count) == 0)
->> +	if (refcount_read(&net->ns.count) == 0)
->>  		return NETNSA_NSID_NOT_ASSIGNED;
->>  
->>  	spin_lock(&net->nsid_lock);
->> @@ -328,7 +328,7 @@ static __net_init int setup_net(struct net *net, struct user_namespace *user_ns)
->>  	int error = 0;
->>  	LIST_HEAD(net_exit_list);
->>  
->> -	refcount_set(&net->count, 1);
->> +	refcount_set(&net->ns.count, 1);
->>  	refcount_set(&net->passive, 1);
->>  	get_random_bytes(&net->hash_mix, sizeof(u32));
->>  	net->dev_base_seq = 1;
->> diff --git a/net/ipv4/inet_timewait_sock.c b/net/ipv4/inet_timewait_sock.c
->> index c411c87ae865..437afe392e66 100644
->> --- a/net/ipv4/inet_timewait_sock.c
->> +++ b/net/ipv4/inet_timewait_sock.c
->> @@ -272,14 +272,14 @@ void inet_twsk_purge(struct inet_hashinfo *hashinfo, int family)
->>  				continue;
->>  			tw = inet_twsk(sk);
->>  			if ((tw->tw_family != family) ||
->> -				refcount_read(&twsk_net(tw)->count))
->> +				refcount_read(&twsk_net(tw)->ns.count))
->>  				continue;
->>  
->>  			if (unlikely(!refcount_inc_not_zero(&tw->tw_refcnt)))
->>  				continue;
->>  
->>  			if (unlikely((tw->tw_family != family) ||
->> -				     refcount_read(&twsk_net(tw)->count))) {
->> +				     refcount_read(&twsk_net(tw)->ns.count))) {
->>  				inet_twsk_put(tw);
->>  				goto restart;
->>  			}
->> diff --git a/net/ipv4/tcp_metrics.c b/net/ipv4/tcp_metrics.c
->> index 279db8822439..39710c417565 100644
->> --- a/net/ipv4/tcp_metrics.c
->> +++ b/net/ipv4/tcp_metrics.c
->> @@ -887,7 +887,7 @@ static void tcp_metrics_flush_all(struct net *net)
->>  		pp = &hb->chain;
->>  		for (tm = deref_locked(*pp); tm; tm = deref_locked(*pp)) {
->>  			match = net ? net_eq(tm_net(tm), net) :
->> -				!refcount_read(&tm_net(tm)->count);
->> +				!refcount_read(&tm_net(tm)->ns.count);
->>  			if (match) {
->>  				*pp = tm->tcpm_next;
->>  				kfree_rcu(tm, rcu_head);
->>
->>
+Looks good!
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
+>  include/linux/pid_namespace.h |    4 +---
+>  kernel/pid.c                  |    2 +-
+>  kernel/pid_namespace.c        |   13 +++----------
+>  3 files changed, 5 insertions(+), 14 deletions(-)
+> 
+> diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
+> index 5a5cb45ac57e..7c7e627503d2 100644
+> --- a/include/linux/pid_namespace.h
+> +++ b/include/linux/pid_namespace.h
+> @@ -8,7 +8,6 @@
+>  #include <linux/workqueue.h>
+>  #include <linux/threads.h>
+>  #include <linux/nsproxy.h>
+> -#include <linux/kref.h>
+>  #include <linux/ns_common.h>
+>  #include <linux/idr.h>
+>  
+> @@ -18,7 +17,6 @@
+>  struct fs_pin;
+>  
+>  struct pid_namespace {
+> -	struct kref kref;
+>  	struct idr idr;
+>  	struct rcu_head rcu;
+>  	unsigned int pid_allocated;
+> @@ -43,7 +41,7 @@ extern struct pid_namespace init_pid_ns;
+>  static inline struct pid_namespace *get_pid_ns(struct pid_namespace *ns)
+>  {
+>  	if (ns != &init_pid_ns)
+> -		kref_get(&ns->kref);
+> +		refcount_inc(&ns->ns.count);
+>  	return ns;
+>  }
+>  
+> diff --git a/kernel/pid.c b/kernel/pid.c
+> index de9d29c41d77..3b9e67736ef4 100644
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -72,7 +72,7 @@ int pid_max_max = PID_MAX_LIMIT;
+>   * the scheme scales to up to 4 million PIDs, runtime.
+>   */
+>  struct pid_namespace init_pid_ns = {
+> -	.kref = KREF_INIT(2),
+> +	.ns.count = REFCOUNT_INIT(2),
+>  	.idr = IDR_INIT(init_pid_ns.idr),
+>  	.pid_allocated = PIDNS_ADDING,
+>  	.level = 0,
+> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
+> index 0e5ac162c3a8..d02dc1696edf 100644
+> --- a/kernel/pid_namespace.c
+> +++ b/kernel/pid_namespace.c
+> @@ -102,7 +102,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
+>  		goto out_free_idr;
+>  	ns->ns.ops = &pidns_operations;
+>  
+> -	kref_init(&ns->kref);
+> +	refcount_set(&ns->ns.count, 1);
+>  	ns->level = level;
+>  	ns->parent = get_pid_ns(parent_pid_ns);
+>  	ns->user_ns = get_user_ns(user_ns);
+> @@ -148,22 +148,15 @@ struct pid_namespace *copy_pid_ns(unsigned long flags,
+>  	return create_pid_namespace(user_ns, old_ns);
+>  }
+>  
+> -static void free_pid_ns(struct kref *kref)
+> -{
+> -	struct pid_namespace *ns;
+> -
+> -	ns = container_of(kref, struct pid_namespace, kref);
+> -	destroy_pid_namespace(ns);
+> -}
+> -
+>  void put_pid_ns(struct pid_namespace *ns)
+>  {
+>  	struct pid_namespace *parent;
+>  
+>  	while (ns != &init_pid_ns) {
+>  		parent = ns->parent;
+> -		if (!kref_put(&ns->kref, free_pid_ns))
+> +		if (!refcount_dec_and_test(&ns->ns.count))
+>  			break;
+> +		destroy_pid_namespace(ns);
+>  		ns = parent;
+>  	}
+>  }
+> 
+> 
