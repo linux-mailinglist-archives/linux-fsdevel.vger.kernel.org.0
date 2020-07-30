@@ -2,191 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87E5D233146
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 13:51:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ACC823314D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 13:55:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbgG3Lvn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 07:51:43 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:35525 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727776AbgG3Lvn (ORCPT
+        id S1726794AbgG3LzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 07:55:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59680 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726615AbgG3LzY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 07:51:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596109901;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=XbbtDAwlbqFbl9LRgvVvqdOJ/w6Qt8l6sHZuVLApgCc=;
-        b=UQD1Ik9n7l+3El0T+pzDeBH8w19lUMPzS13CBg2x5ZpnPA+R0reEsiQB6LIt6P7Ckbkk2x
-        2QeCLY0E54N9mE5t/5H86zz0c6LDSwM8yg8MQQdXyur1kxkO69em2IevcfBIDVDL2uJHXL
-        zu90CuHOZXDO2eAuMgkFdV4OH7rtnVo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-446-lpsWJq8MMBO5dqJYqQQUdg-1; Thu, 30 Jul 2020 07:51:37 -0400
-X-MC-Unique: lpsWJq8MMBO5dqJYqQQUdg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0FB6D79EDC;
-        Thu, 30 Jul 2020 11:51:34 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ABF8B10002CA;
-        Thu, 30 Jul 2020 11:51:16 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Jeff Layton <jlayton@redhat.com>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Upcoming: fscache rewrite
+        Thu, 30 Jul 2020 07:55:24 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C877C061794
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jul 2020 04:55:23 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id a5so12643167ioa.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jul 2020 04:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G9gIZhR3sJgnE+GwQ+VNDDJBn0xqTyF/KGDLhuwY780=;
+        b=OhkgSX/HddmdTRnWU6lVJcbKIDe9NPhqaRP4lley0oIB2+BkKJXwlJU5ZZ1xbUkKvI
+         2wEzq41YGPefc3zqpeUch1ZS3BqbKCx+zgAXCXIMtNPoAuIzmE/cwUMN/hO6rkzqEI2C
+         Bnap//TR1gVLIctdsLnDPBfRqeh21VGjF2pWeSmaufdDdAVzSnZx1UvzqhxvlKY9MroR
+         IrRBKNIBdbEfdwixftd7tOVOJ3JADZF16ZaKLE/x7hKKY4Juf8BWq+qTpgRIjcoXr9SF
+         51IbSVgXwATkQe4hNGSwDzLF062pqFb+KY+Z3AdkRPn4xAAbnUscV0TtlptO+xit1tFi
+         vRww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G9gIZhR3sJgnE+GwQ+VNDDJBn0xqTyF/KGDLhuwY780=;
+        b=DIWeoim+MzgXEXZp1GWNINR6t00v2MMnfTXCUwANkQOsoSNtGbxWsoieV9fsKs2ixW
+         QlYtYwpuPhl3egcRkc+mFVsO2dMX44n5uVnKAbweyMhzZMCZH4oG6+DzxNMV5b9sWtU9
+         EZSlD9bGAH/nZfC6ba3Pak8XHVrRkaAPx2iMIDJLVcw+5T5IIcw4+bpSDOYawpKG1zp1
+         nJtOyyROM+4P3oMN8fN9Tq8Jg2YJT0J4a39kbKTx1qk3Ifh6s12dD6eBe7vrAQJKsRSe
+         +l/0o/1wL7wV8ZI7pUqr8xjNG3/iCe4vxumacASKp0mnQ0T1483XHsswhcspX/BP4esj
+         fORw==
+X-Gm-Message-State: AOAM530QcJpJg4XYvStVkxA6wLrhLbcJTqhB8z+wfqdHZjdnysaoY3JC
+        VZMLRN1j02uNIzY2dFAnpaOg3cxTYiUoRj4Pcq+tOATf
+X-Google-Smtp-Source: ABdhPJxL9rwDmRP5j5p7i2ocgoYyDhk1hTIWEymDA4OLIA+9Gv8eRKizESiGKYVufsz4lunIXBQ9XF0qc/s0BWVX/8I=
+X-Received: by 2002:a5e:980f:: with SMTP id s15mr23209125ioj.5.1596110122828;
+ Thu, 30 Jul 2020 04:55:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <447451.1596109876.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 30 Jul 2020 12:51:16 +0100
-Message-ID: <447452.1596109876@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <20200730111339.GA54272@mwanda>
+In-Reply-To: <20200730111339.GA54272@mwanda>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 30 Jul 2020 14:55:11 +0300
+Message-ID: <CAOQ4uxgEG9PNtdoMXw52_C4oaUQpi2DVx34_QEHeV195e3kYdg@mail.gmail.com>
+Subject: Re: [bug report] fsnotify: pass dir and inode arguments to fsnotify()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus, Trond/Anna, Steve, Eric,
+On Thu, Jul 30, 2020 at 2:13 PM <dan.carpenter@oracle.com> wrote:
+>
+> Hello Amir Goldstein,
+>
+> This is a semi-automatic email about new static checker warnings.
+>
+> The patch 40a100d3adc1: "fsnotify: pass dir and inode arguments to
+> fsnotify()" from Jul 22, 2020, leads to the following Smatch
+> complaint:
 
-I have an fscache rewrite that I'm tempted to put in for the next merge
-window:
+That's an odd report, because...
 
-	https://lore.kernel.org/linux-fsdevel/159465784033.1376674.18106463693989=
-811037.stgit@warthog.procyon.org.uk/
+>
+>     fs/notify/fsnotify.c:460 fsnotify()
+>     warn: variable dereferenced before check 'inode' (see line 449)
+>
+> fs/notify/fsnotify.c
+>    448          }
+>    449          sb = inode->i_sb;
+>                      ^^^^^^^^^^^
+> New dreference.
 
-It improves the code by:
+First of all, two lines above we have
+if (!inode) inode = dir;
 
- (*) Ripping out the stuff that uses page cache snooping and kernel_write(=
-)
-     and using kiocb instead.  This gives multiple wins: uses async DIO ra=
-ther
-     than snooping for updated pages and then copying them, less VM overhe=
-ad.
+This function does not assert (inode || dir), but must it??
+This is even documented:
 
- (*) Object management is also simplified, getting rid of the state machin=
-e
-     that was managing things and using a much simplified thread pool inst=
-ead.
+ * @inode:      optional inode associated with event -
+ *              either @dir or @inode must be non-NULL.
 
- (*) Object invalidation creates a tmpfile and diverts new activity to tha=
-t so
-     that it doesn't have to synchronise in-flight ADIO.
+Second,
+The line above was indeed added by:
+40a100d3adc1: "fsnotify: pass dir and inode arguments to fsnotify()"
 
- (*) Using a bitmap stored in an xattr rather than using bmap to find out =
-if
-     a block is present in the cache.  Probing the backing filesystem's
-     metadata to find out is not reliable in modern extent-based filesyste=
-ms
-     as them may insert or remove blocks of zeros.  Even SEEK_HOLE/SEEK_DA=
-TA
-     are problematic since they don't distinguish transparently inserted
-     bridging.
+However...
 
-I've provided a read helper that handles ->readpage, ->readpages, and
-preparatory writes in ->write_begin.  Willy is looking at using this as a =
-way
-to roll his new ->readahead op out into filesystems.  A good chunk of this
-will move into MM code.
+>
+>    450
+>    451          /*
+>    452           * Optimization: srcu_read_lock() has a memory barrier which can
+>    453           * be expensive.  It protects walking the *_fsnotify_marks lists.
+>    454           * However, if we do not walk the lists, we do not have to do
+>    455           * SRCU because we have no references to any objects and do not
+>    456           * need SRCU to keep them "alive".
+>    457           */
+>    458          if (!sb->s_fsnotify_marks &&
+>    459              (!mnt || !mnt->mnt_fsnotify_marks) &&
+>    460              (!inode || !inode->i_fsnotify_marks) &&
+>                      ^^^^^^
+> Check too late.  Presumably this check can be removed?
 
-The code is simpler, and this is nice too:
+But this line was only added later by:
+9b93f33105f5 fsnotify: send event with parent/name info to
+sb/mount/non-dir marks
 
- 67 files changed, 5947 insertions(+), 8294 deletions(-)
+So, yes, the check could be removed.
+It is a leftover from a previous revision, but even though it is a leftover
+I kind of like the code better this way.
 
-not including documentation changes, which I need to convert to rst format
-yet.  That removes a whole bunch more lines.
+In principle, an event on sb/mnt that is not associated with any inode
+(for example
+FS_UNMOUNT) could be added in the future.
+And then we will have to fix documentation and the inode dereference above.
 
-But there are reasons you might not want to take it yet:
+In any case, thank you for the report, but I don't see a reason to make any
+changes right now.
 
- (1) It starts off by disabling fscache support in all the filesystems tha=
-t
-     use it: afs, nfs, cifs, ceph and 9p.  I've taken care of afs, Dave
-     Wysochanski has patches for nfs:
-
-	https://lore.kernel.org/linux-nfs/1596031949-26793-1-git-send-email-dwyso=
-cha@redhat.com/
-
-     but they haven't been reviewed by Trond or Anna yet, and Jeff Layton =
-has
-     patches for ceph:
-
-	https://marc.info/?l=3Dceph-devel&m=3D159541538914631&w=3D2
-
-     and I've briefly discussed cifs with Steve, but nothing has started t=
-here
-     yet.  9p I've not looked at yet.
-
-     Now, if we're okay for going a kernel release with 4/5 filesystems wi=
-th
-     caching disabled and then pushing the changes for individual filesyst=
-ems
-     through their respective trees, it might be easier.
-
-     Unfortunately, I wasn't able to get together with Trond and Anna at L=
-SF
-     to discuss this.
-
- (2) The patched afs fs passed xfstests -g quick (unlike the upstream code
-     that oopses pretty quickly with caching enabled).  Dave and Jeff's nf=
-s
-     and ceph code is getting close, but not quite there yet.
-
- (3) Al has objections to the ITER_MAPPING iov_iter type that I added
-
-	https://lore.kernel.org/linux-fsdevel/20200719014436.GG2786714@ZenIV.linu=
-x.org.uk/
-
-     but note that iov_iter_for_each_range() is not actually used by anyth=
-ing.
-
-     However, Willy likes it and would prefer to make it ITER_XARRAY inste=
-ad
-     as he might be able to use it in other places, though there's an issu=
-e
-     where I'm calling find_get_pages_contig() which takes a mapping (thou=
-gh
-     all it does is then get the xarray out of it).
-
-     Instead I would have to use ITER_BVEC, which has quite a high overhea=
-d,
-     though it would mean that the RCU read lock wouldn't be necessary.  T=
-his
-     would require 1K of memory for every 256K block the cache wants to re=
-ad;
-     for any read >1M, I'd have to use vmalloc() instead.
-
-     I'd also prefer not to use ITER_BVEC because the offset and length ar=
-e
-     superfluous here.  If ITER_MAPPING is not good, would it be possible =
-to
-     have an ITER_PAGEARRAY that just takes a page array instead?  Or, eve=
-n,
-     create a transient xarray?
-
- (4) The way object culling is managed needs overhauling too, but that's a
-     whole 'nother patchset.  We could wait till that's done too, but its =
-lack
-     doesn't prevent what we have now being used.
-
-Thoughts?
-
-David
-
+Thanks,
+Amir.
