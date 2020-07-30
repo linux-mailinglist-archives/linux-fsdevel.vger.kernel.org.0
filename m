@@ -2,102 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 01E992330CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 13:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87E5D233146
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 13:51:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbgG3LNt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 07:13:49 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:44214 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbgG3LNs (ORCPT
+        id S1727845AbgG3Lvn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 07:51:43 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:35525 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727776AbgG3Lvn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 07:13:48 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06UB6tcI130925;
-        Thu, 30 Jul 2020 11:13:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=YsQkXRLkmGYEVr03Tuj+SbGjYBA/aaol6l5jtVzpjMA=;
- b=U2wKHsGbgQSUFrVA4GPbBcZOnpTXbQTG073NAprRQR2kKP1ZKSRgv3E0QLrUcjVJJALQ
- cFDZm0tg8hIOGmpQhl244RZvHKEKYr4Aun4udrSCvBi18iCnxEbP0XbHXXBKG3Excdu6
- 8YAAl4adWoj1RNxzLQiOPJokZlDS32OGAgp84TuFI47TMun1wdx1MNmqFWnDmiZmqX8M
- 5GxU9PoPc4WjwXE2rLEcVL37qp35T8m3587DG4c3UuD2FG169X9vQmQj6Hw+rGb8J0qS
- 7nvk8O0d0q22hqfUSO9+RvihLX3OEJZOYvlThdNWXDTQaXcGrosEFVNdcrDGPlQ6Gdre zA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2130.oracle.com with ESMTP id 32hu1jk2st-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 30 Jul 2020 11:13:46 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06UBDR26149977;
-        Thu, 30 Jul 2020 11:13:46 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 32hu5wh0dj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Jul 2020 11:13:45 +0000
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 06UBDi0v027256;
-        Thu, 30 Jul 2020 11:13:44 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 30 Jul 2020 04:13:44 -0700
-Date:   Thu, 30 Jul 2020 14:13:39 +0300
-From:   <dan.carpenter@oracle.com>
-To:     <amir73il@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [bug report] fsnotify: pass dir and inode arguments to fsnotify()
-Message-ID: <20200730111339.GA54272@mwanda>
+        Thu, 30 Jul 2020 07:51:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1596109901;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=XbbtDAwlbqFbl9LRgvVvqdOJ/w6Qt8l6sHZuVLApgCc=;
+        b=UQD1Ik9n7l+3El0T+pzDeBH8w19lUMPzS13CBg2x5ZpnPA+R0reEsiQB6LIt6P7Ckbkk2x
+        2QeCLY0E54N9mE5t/5H86zz0c6LDSwM8yg8MQQdXyur1kxkO69em2IevcfBIDVDL2uJHXL
+        zu90CuHOZXDO2eAuMgkFdV4OH7rtnVo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-446-lpsWJq8MMBO5dqJYqQQUdg-1; Thu, 30 Jul 2020 07:51:37 -0400
+X-MC-Unique: lpsWJq8MMBO5dqJYqQQUdg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0FB6D79EDC;
+        Thu, 30 Jul 2020 11:51:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ABF8B10002CA;
+        Thu, 30 Jul 2020 11:51:16 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@redhat.com>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Upcoming: fscache rewrite
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9697 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=676 mlxscore=0
- suspectscore=3 bulkscore=0 malwarescore=0 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2007300083
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9697 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 clxscore=1011
- malwarescore=0 spamscore=0 suspectscore=3 bulkscore=0 priorityscore=1501
- phishscore=0 mlxlogscore=688 lowpriorityscore=0 impostorscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2007300082
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <447451.1596109876.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 30 Jul 2020 12:51:16 +0100
+Message-ID: <447452.1596109876@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Amir Goldstein,
+Hi Linus, Trond/Anna, Steve, Eric,
 
-This is a semi-automatic email about new static checker warnings.
+I have an fscache rewrite that I'm tempted to put in for the next merge
+window:
 
-The patch 40a100d3adc1: "fsnotify: pass dir and inode arguments to
-fsnotify()" from Jul 22, 2020, leads to the following Smatch
-complaint:
+	https://lore.kernel.org/linux-fsdevel/159465784033.1376674.18106463693989=
+811037.stgit@warthog.procyon.org.uk/
 
-    fs/notify/fsnotify.c:460 fsnotify()
-    warn: variable dereferenced before check 'inode' (see line 449)
+It improves the code by:
 
-fs/notify/fsnotify.c
-   448		}
-   449		sb = inode->i_sb;
-                     ^^^^^^^^^^^
-New dreference.
+ (*) Ripping out the stuff that uses page cache snooping and kernel_write(=
+)
+     and using kiocb instead.  This gives multiple wins: uses async DIO ra=
+ther
+     than snooping for updated pages and then copying them, less VM overhe=
+ad.
 
-   450	
-   451		/*
-   452		 * Optimization: srcu_read_lock() has a memory barrier which can
-   453		 * be expensive.  It protects walking the *_fsnotify_marks lists.
-   454		 * However, if we do not walk the lists, we do not have to do
-   455		 * SRCU because we have no references to any objects and do not
-   456		 * need SRCU to keep them "alive".
-   457		 */
-   458		if (!sb->s_fsnotify_marks &&
-   459		    (!mnt || !mnt->mnt_fsnotify_marks) &&
-   460		    (!inode || !inode->i_fsnotify_marks) &&
-                     ^^^^^^
-Check too late.  Presumably this check can be removed?
+ (*) Object management is also simplified, getting rid of the state machin=
+e
+     that was managing things and using a much simplified thread pool inst=
+ead.
 
-   461		    (!child || !child->i_fsnotify_marks))
-   462			return 0;
+ (*) Object invalidation creates a tmpfile and diverts new activity to tha=
+t so
+     that it doesn't have to synchronise in-flight ADIO.
 
-regards,
-dan carpenter
+ (*) Using a bitmap stored in an xattr rather than using bmap to find out =
+if
+     a block is present in the cache.  Probing the backing filesystem's
+     metadata to find out is not reliable in modern extent-based filesyste=
+ms
+     as them may insert or remove blocks of zeros.  Even SEEK_HOLE/SEEK_DA=
+TA
+     are problematic since they don't distinguish transparently inserted
+     bridging.
+
+I've provided a read helper that handles ->readpage, ->readpages, and
+preparatory writes in ->write_begin.  Willy is looking at using this as a =
+way
+to roll his new ->readahead op out into filesystems.  A good chunk of this
+will move into MM code.
+
+The code is simpler, and this is nice too:
+
+ 67 files changed, 5947 insertions(+), 8294 deletions(-)
+
+not including documentation changes, which I need to convert to rst format
+yet.  That removes a whole bunch more lines.
+
+But there are reasons you might not want to take it yet:
+
+ (1) It starts off by disabling fscache support in all the filesystems tha=
+t
+     use it: afs, nfs, cifs, ceph and 9p.  I've taken care of afs, Dave
+     Wysochanski has patches for nfs:
+
+	https://lore.kernel.org/linux-nfs/1596031949-26793-1-git-send-email-dwyso=
+cha@redhat.com/
+
+     but they haven't been reviewed by Trond or Anna yet, and Jeff Layton =
+has
+     patches for ceph:
+
+	https://marc.info/?l=3Dceph-devel&m=3D159541538914631&w=3D2
+
+     and I've briefly discussed cifs with Steve, but nothing has started t=
+here
+     yet.  9p I've not looked at yet.
+
+     Now, if we're okay for going a kernel release with 4/5 filesystems wi=
+th
+     caching disabled and then pushing the changes for individual filesyst=
+ems
+     through their respective trees, it might be easier.
+
+     Unfortunately, I wasn't able to get together with Trond and Anna at L=
+SF
+     to discuss this.
+
+ (2) The patched afs fs passed xfstests -g quick (unlike the upstream code
+     that oopses pretty quickly with caching enabled).  Dave and Jeff's nf=
+s
+     and ceph code is getting close, but not quite there yet.
+
+ (3) Al has objections to the ITER_MAPPING iov_iter type that I added
+
+	https://lore.kernel.org/linux-fsdevel/20200719014436.GG2786714@ZenIV.linu=
+x.org.uk/
+
+     but note that iov_iter_for_each_range() is not actually used by anyth=
+ing.
+
+     However, Willy likes it and would prefer to make it ITER_XARRAY inste=
+ad
+     as he might be able to use it in other places, though there's an issu=
+e
+     where I'm calling find_get_pages_contig() which takes a mapping (thou=
+gh
+     all it does is then get the xarray out of it).
+
+     Instead I would have to use ITER_BVEC, which has quite a high overhea=
+d,
+     though it would mean that the RCU read lock wouldn't be necessary.  T=
+his
+     would require 1K of memory for every 256K block the cache wants to re=
+ad;
+     for any read >1M, I'd have to use vmalloc() instead.
+
+     I'd also prefer not to use ITER_BVEC because the offset and length ar=
+e
+     superfluous here.  If ITER_MAPPING is not good, would it be possible =
+to
+     have an ITER_PAGEARRAY that just takes a page array instead?  Or, eve=
+n,
+     create a transient xarray?
+
+ (4) The way object culling is managed needs overhauling too, but that's a
+     whole 'nother patchset.  We could wait till that's done too, but its =
+lack
+     doesn't prevent what we have now being used.
+
+Thoughts?
+
+David
+
