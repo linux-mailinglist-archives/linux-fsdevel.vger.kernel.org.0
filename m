@@ -2,135 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E676233861
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 20:28:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F39622338E3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 21:21:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbgG3S2I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 14:28:08 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:36808 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbgG3S2H (ORCPT
+        id S1730440AbgG3TVV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 15:21:21 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:49579 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728644AbgG3TVT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 14:28:07 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06UIGvNI092335;
-        Thu, 30 Jul 2020 18:27:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=Mrk5eWbP8fSGwrV33j3TTul01WXb6p2DuUr4h0aNQjE=;
- b=EVFXOxKNsyjLE7Mz9OC5iCUHTCcKYcSYOvVSBF6GvCRP1fPAUb1vsi8UbE5YhDKmTK/h
- u4q8dX3diP8UavnbfzQ2elsGw/j5XuLY2t1czN0ce8N9sx/TBhNGiCMuVFKYqCxkZCvA
- On4v9NhMLT4fRyGOjSByg3SQSp2UVC9x7iONmyLjntPdtdGFFyHZFVA2Q9MQ+I/jGdFx
- rfqOKHCti5lUSjYhQHLkrI/zoyeou+pvBdayRhDRPE+r0OMsLmorCvDgTF8iDvMOZ6Wl
- KWUE641IG2TKXQZyG88aaRJ0fUoBIVhV1oTDSIj9fYF6THvVIA3gXFDS4Gvl7vtVjOVO zw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 32hu1jna4c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 30 Jul 2020 18:27:33 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06UIIoKJ054143;
-        Thu, 30 Jul 2020 18:27:32 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 32hu5xrwua-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 30 Jul 2020 18:27:32 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 06UIRP4c002811;
-        Thu, 30 Jul 2020 18:27:26 GMT
-Received: from [10.39.200.60] (/10.39.200.60)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 30 Jul 2020 11:27:25 -0700
-Subject: Re: [RFC PATCH 0/5] madvise MADV_DOEXEC
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Anthony Yznaga <anthony.yznaga@oracle.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, mhocko@kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
-        hpa@zytor.com, viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
-        arnd@arndb.de, ebiederm@xmission.com, keescook@chromium.org,
-        gerg@linux-m68k.org, ktkhai@virtuozzo.com,
-        christian.brauner@ubuntu.com, peterz@infradead.org,
-        esyr@redhat.com, jgg@ziepe.ca, christian@kellner.me,
-        areber@redhat.com, cyphar@cyphar.com
-References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
- <20200730152250.GG23808@casper.infradead.org>
- <db3bdbae-eb0f-1ae3-94dd-045e37bc94ba@oracle.com>
- <20200730171251.GI23808@casper.infradead.org>
- <63a7404c-e4f6-a82e-257b-217585b0277f@oracle.com>
- <20200730174956.GK23808@casper.infradead.org>
-From:   Steven Sistare <steven.sistare@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <ab7a25bf-3321-77c8-9bc3-28a223a14032@oracle.com>
-Date:   Thu, 30 Jul 2020 14:27:21 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 30 Jul 2020 15:21:19 -0400
+Received: by mail-io1-f72.google.com with SMTP id f7so13558914ioj.16
+        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jul 2020 12:21:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=zcGvcLBkmLVIiitWjC0dTjPKNOWpI78/MjOsV9KI+nI=;
+        b=M0fLdULX0fEW0JemqHooddkY2IcI57kS9N7iP6j6w2bZsyzBA5KCTOT4fYAr9Z9/yW
+         BYUe2/OYN6Cbq437yUKQL1FXf6hem5Vmd12kAshf0erkumCq74k6a3JW1Fhq2fehjMe+
+         0ltcMtVSd/DPeG+x4uXNSWwNFm44OYL2ItMsZxPTOlEtOqx2SJt90ZGYdbD7b9ubsvG3
+         iXLih9xZ7TV1RqYXqfcJCn4TpjkR4LAjE/GSQkWo5+u7FkvZXBVdTfdERJU8c7+Mzk2F
+         6CHhRiOakWIpbhhP7X2pUKSoEy5vYt1Y1I2+Rt1YQflUVoWvfsK8VcYR4bca8L9fwbhw
+         JoVA==
+X-Gm-Message-State: AOAM533GioQPhkc7DjeBQjFTSRBoqE9UBnkv50lPaNBk5SlLxbIiiHTU
+        GRBIm4s1O6grYwYNWIiXwrLEGrIpsd+ypGDfT1x6Ku9pbmEG
+X-Google-Smtp-Source: ABdhPJxA1XVBHHgevcFGRcm19/FogHJVO/W/fLEMw40v6yi3auJFWHjZ0mPyzWWj13H7vbhXlSAjTVVJacoHQ30dUKZz5gJjN5gF
 MIME-Version: 1.0
-In-Reply-To: <20200730174956.GK23808@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9698 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- mlxscore=0 adultscore=0 spamscore=0 phishscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007300130
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9698 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 clxscore=1015
- malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0 priorityscore=1501
- phishscore=0 mlxlogscore=999 lowpriorityscore=0 impostorscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2007300130
+X-Received: by 2002:a05:6e02:c1:: with SMTP id r1mr119662ilq.34.1596136878205;
+ Thu, 30 Jul 2020 12:21:18 -0700 (PDT)
+Date:   Thu, 30 Jul 2020 12:21:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a3709905abad9335@google.com>
+Subject: KASAN: use-after-free Read in io_uring_setup (2)
+From:   syzbot <syzbot+9d46305e76057f30c74e@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/30/2020 1:49 PM, Matthew Wilcox wrote:
-> On Thu, Jul 30, 2020 at 01:35:51PM -0400, Steven Sistare wrote:
->> mshare + VA reservation is another possible solution.
->>
->> Or MADV_DOEXEC alone, which is ready now.  I hope we can get back to reviewing that.
-> 
-> We are.  This is the part of the review process where we explore other
-> solutions to the problem.
-> 
->>>> Also, we need to support updating legacy processes that already created anon segments.
->>>> We inject code that calls MADV_DOEXEC for such segments.
->>>
->>> Yes, I was assuming you'd inject code that called mshare().
->>
->> OK, mshare works on existing memory and builds a new vma.
-> 
-> Actually, reparents an existing VMA, and reuses the existing page tables.
-> 
->>> Actually, since you're injecting code, why do you need the kernel to
->>> be involved?  You can mmap the new executable and any libraries it depends
->>> upon, set up a new stack and jump to the main() entry point, all without
->>> calling exec().  I appreciate it'd be a fair amount of code, but it'd all
->>> be in userspace and you can probably steal / reuse code from ld.so (I'm
->>> not familiar with the details of how setting up an executable is done).
->>
->> Duplicating all the work that the kernel and loader do to exec a process would
->> be error prone, require ongoing maintenance, and be redundant.  Better to define 
->> a small kernel extension and leave exec to the kernel.
-> 
-> Either this is a one-off kind of thing, in which case it doesn't need
-> ongoing maintenance, or it's something with broad applicability, in
-> which case it can live as its own userspace project.  It could even
-> start off life as part of qemu and then fork into its own project.
+Hello,
 
-exec will be enhanced over time in the kernel.  A separate user space implementation
-would need to track that.
+syzbot found the following issue on:
 
-Reimplementing exec in userland would be a big gross mess.  Not a good solution when
-we have simple and concise ways of solving the problem.
+HEAD commit:    04b45717 Add linux-next specific files for 20200729
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=173774b8900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ec68f65b459f1ed
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d46305e76057f30c74e
+compiler:       gcc (GCC) 10.1.0-syz 20200507
 
-> The idea of tagging an ELF executable to say "I can cope with having
-> chunks of my address space provided to me by my executor" is ... odd.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-I don't disagree.  But it is useful.  We already pass a block of data containing
-environment variables and arguments from one process to the next.  Preserving 
-additional segments is not a big leap from there.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9d46305e76057f30c74e@syzkaller.appspotmail.com
 
-- Steve
+==================================================================
+BUG: KASAN: use-after-free in io_account_mem fs/io_uring.c:7397 [inline]
+BUG: KASAN: use-after-free in io_uring_create fs/io_uring.c:8369 [inline]
+BUG: KASAN: use-after-free in io_uring_setup+0x2797/0x2910 fs/io_uring.c:8400
+Read of size 1 at addr ffff888087a41044 by task syz-executor.5/18145
+
+CPU: 0 PID: 18145 Comm: syz-executor.5 Not tainted 5.8.0-rc7-next-20200729-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x18f/0x20d lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:383
+ __kasan_report mm/kasan/report.c:513 [inline]
+ kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
+ io_account_mem fs/io_uring.c:7397 [inline]
+ io_uring_create fs/io_uring.c:8369 [inline]
+ io_uring_setup+0x2797/0x2910 fs/io_uring.c:8400
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45c429
+Code: 8d b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 5b b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f8f121d0c78 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
+RAX: ffffffffffffffda RBX: 0000000000008540 RCX: 000000000045c429
+RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000196
+RBP: 000000000078bf38 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000078bf0c
+R13: 00007fff86698cff R14: 00007f8f121d19c0 R15: 000000000078bf0c
+
+Allocated by task 18145:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:461
+ kmem_cache_alloc_trace+0x16e/0x2c0 mm/slab.c:3550
+ kmalloc include/linux/slab.h:554 [inline]
+ kzalloc include/linux/slab.h:666 [inline]
+ io_ring_ctx_alloc fs/io_uring.c:1042 [inline]
+ io_uring_create fs/io_uring.c:8313 [inline]
+ io_uring_setup+0x4df/0x2910 fs/io_uring.c:8400
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Freed by task 15583:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
+ kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0xd8/0x120 mm/kasan/common.c:422
+ __cache_free mm/slab.c:3418 [inline]
+ kfree+0x103/0x2c0 mm/slab.c:3756
+ process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
+ kthread+0x3b5/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+Last call_rcu():
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2883 [inline]
+ call_rcu+0x14f/0x7e0 kernel/rcu/tree.c:2957
+ __percpu_ref_switch_to_atomic lib/percpu-refcount.c:192 [inline]
+ __percpu_ref_switch_mode+0x365/0x700 lib/percpu-refcount.c:237
+ percpu_ref_kill_and_confirm+0x94/0x350 lib/percpu-refcount.c:350
+ percpu_ref_kill include/linux/percpu-refcount.h:136 [inline]
+ io_ring_ctx_wait_and_kill+0x38/0x600 fs/io_uring.c:7799
+ io_uring_release+0x3e/0x50 fs/io_uring.c:7831
+ __fput+0x285/0x920 fs/file_table.c:281
+ task_work_run+0xdd/0x190 kernel/task_work.c:135
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:139 [inline]
+ exit_to_user_mode_prepare+0x195/0x1c0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x59/0x2b0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The buggy address belongs to the object at ffff888087a41000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 68 bytes inside of
+ 2048-byte region [ffff888087a41000, ffff888087a41800)
+The buggy address belongs to the page:
+page:000000007a29a6b9 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x87a41
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffffea0002386288 ffffea000253c0c8 ffff8880aa000800
+raw: 0000000000000000 ffff888087a41000 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888087a40f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888087a40f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888087a41000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                           ^
+ ffff888087a41080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888087a41100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
