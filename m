@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9329D23317C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 14:01:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76F15233180
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 14:01:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbgG3MBS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 08:01:18 -0400
-Received: from relay.sw.ru ([185.231.240.75]:57218 "EHLO relay3.sw.ru"
+        id S1728947AbgG3MBY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 08:01:24 -0400
+Received: from relay.sw.ru ([185.231.240.75]:57242 "EHLO relay3.sw.ru"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728737AbgG3MBR (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 08:01:17 -0400
+        id S1728918AbgG3MBV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Jul 2020 08:01:21 -0400
 Received: from [192.168.15.64] (helo=localhost.localdomain)
         by relay3.sw.ru with esmtp (Exim 4.93)
         (envelope-from <ktkhai@virtuozzo.com>)
-        id 1k17F5-00030I-Fo; Thu, 30 Jul 2020 15:00:59 +0300
-Subject: [PATCH 21/23] mnt: Add mount namespaces into ns_idr
+        id 1k17FA-00030d-Pn; Thu, 30 Jul 2020 15:01:04 +0300
+Subject: [PATCH 22/23] cgroup: Add cgroup namespaces into ns_idr
 From:   Kirill Tkhai <ktkhai@virtuozzo.com>
 To:     viro@zeniv.linux.org.uk, adobriyan@gmail.com, davem@davemloft.net,
         ebiederm@xmission.com, akpm@linux-foundation.org,
         christian.brauner@ubuntu.com, areber@redhat.com, serge@hallyn.com,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         ktkhai@virtuozzo.com
-Date:   Thu, 30 Jul 2020 15:01:13 +0300
-Message-ID: <159611047332.535980.13828558388565780541.stgit@localhost.localdomain>
+Date:   Thu, 30 Jul 2020 15:01:18 +0300
+Message-ID: <159611047870.535980.3790860133632973446.stgit@localhost.localdomain>
 In-Reply-To: <159611007271.535980.15362304262237658692.stgit@localhost.localdomain>
 References: <159611007271.535980.15362304262237658692.stgit@localhost.localdomain>
 User-Agent: StGit/0.19
@@ -39,63 +39,87 @@ Now they are exposed in /proc/namespace/ directory.
 
 Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 ---
- fs/mount.h     |    1 +
- fs/namespace.c |   10 +++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ include/linux/cgroup.h    |    1 +
+ kernel/cgroup/namespace.c |   23 +++++++++++++++++++----
+ 2 files changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/fs/mount.h b/fs/mount.h
-index f296862032ec..cde7f7bed8ec 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -23,6 +23,7 @@ struct mnt_namespace {
- 	u64 event;
- 	unsigned int		mounts; /* # of mounts in the namespace */
- 	unsigned int		pending_mounts;
+diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
+index 451c2d26a5db..38913d91fa92 100644
+--- a/include/linux/cgroup.h
++++ b/include/linux/cgroup.h
+@@ -858,6 +858,7 @@ struct cgroup_namespace {
+ 	struct user_namespace	*user_ns;
+ 	struct ucounts		*ucounts;
+ 	struct css_set          *root_cset;
 +	struct rcu_head		rcu;
- } __randomize_layout;
+ };
  
- struct mnt_pcp {
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 8c39810e6ec3..756e43fd21f3 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3258,7 +3258,7 @@ static void free_mnt_ns(struct mnt_namespace *ns)
- 		ns_free_inum(&ns->ns);
- 	dec_mnt_namespaces(ns->ucounts);
+ extern struct cgroup_namespace init_cgroup_ns;
+diff --git a/kernel/cgroup/namespace.c b/kernel/cgroup/namespace.c
+index f5e8828c109c..64393bbafb2c 100644
+--- a/kernel/cgroup/namespace.c
++++ b/kernel/cgroup/namespace.c
+@@ -39,11 +39,12 @@ static struct cgroup_namespace *alloc_cgroup_ns(void)
+ 
+ void free_cgroup_ns(struct cgroup_namespace *ns)
+ {
++	ns_idr_unregister(&ns->ns);
+ 	put_css_set(ns->root_cset);
+ 	dec_cgroup_namespaces(ns->ucounts);
  	put_user_ns(ns->user_ns);
+ 	ns_free_inum(&ns->ns);
 -	kfree(ns);
 +	kfree_rcu(ns, rcu);
  }
+ EXPORT_SYMBOL(free_cgroup_ns);
  
- /*
-@@ -3382,6 +3382,12 @@ struct mnt_namespace *copy_mnt_ns(unsigned long flags, struct mnt_namespace *ns,
- 	if (pwdmnt)
- 		mntput(pwdmnt);
+@@ -54,6 +55,7 @@ struct cgroup_namespace *copy_cgroup_ns(unsigned long flags,
+ 	struct cgroup_namespace *new_ns;
+ 	struct ucounts *ucounts;
+ 	struct css_set *cset;
++	int err;
  
-+	if (ns_idr_register(&new_ns->ns) < 0) {
-+		drop_collected_mounts(&new_ns->root->mnt);
-+		free_mnt_ns(new_ns);
-+		new_ns = ERR_PTR(-ENOMEM);
-+	}
+ 	BUG_ON(!old_ns);
+ 
+@@ -78,16 +80,28 @@ struct cgroup_namespace *copy_cgroup_ns(unsigned long flags,
+ 
+ 	new_ns = alloc_cgroup_ns();
+ 	if (IS_ERR(new_ns)) {
+-		put_css_set(cset);
+-		dec_cgroup_namespaces(ucounts);
+-		return new_ns;
++		err = PTR_ERR(new_ns);
++		goto err_put_css_set;
+ 	}
+ 
+ 	new_ns->user_ns = get_user_ns(user_ns);
+ 	new_ns->ucounts = ucounts;
+ 	new_ns->root_cset = cset;
+ 
++	err = ns_idr_register(&new_ns->ns);
++	if (err < 0)
++		goto err_put_user_ns;
 +
  	return new_ns;
++
++err_put_user_ns:
++	put_user_ns(new_ns->user_ns);
++	ns_free_inum(&new_ns->ns);
++	kfree(new_ns);
++err_put_css_set:
++	put_css_set(cset);
++	dec_cgroup_namespaces(ucounts);
++	return ERR_PTR(err);
  }
  
-@@ -3824,6 +3830,7 @@ static void __init init_mount_tree(void)
- 	list_add(&m->mnt_list, &ns->list);
- 	init_task.nsproxy->mnt_ns = ns;
- 	get_mnt_ns(ns);
-+	WARN_ON(ns_idr_register(&ns->ns) < 0);
+ static inline struct cgroup_namespace *to_cg_ns(struct ns_common *ns)
+@@ -152,6 +166,7 @@ const struct proc_ns_operations cgroupns_operations = {
  
- 	root.mnt = mnt;
- 	root.dentry = mnt->mnt_root;
-@@ -3872,6 +3879,7 @@ void put_mnt_ns(struct mnt_namespace *ns)
+ static __init int cgroup_namespaces_init(void)
  {
- 	if (!refcount_dec_and_test(&ns->ns.count))
- 		return;
-+	ns_idr_unregister(&ns->ns);
- 	drop_collected_mounts(&ns->root->mnt);
- 	free_mnt_ns(ns);
++	WARN_ON(ns_idr_register(&init_cgroup_ns.ns) < 0);
+ 	return 0;
  }
+ subsys_initcall(cgroup_namespaces_init);
 
 
