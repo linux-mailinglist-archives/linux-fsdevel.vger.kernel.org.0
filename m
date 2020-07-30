@@ -2,122 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B77A92331E8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 14:18:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C98F2331F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 14:23:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbgG3MSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 08:18:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35032 "EHLO
+        id S1727907AbgG3MXs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 08:23:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbgG3MSj (ORCPT
+        with ESMTP id S1726631AbgG3MXr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 08:18:39 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 274ADC061794;
-        Thu, 30 Jul 2020 05:18:38 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id d190so5503437wmd.4;
-        Thu, 30 Jul 2020 05:18:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ssgOwtuSxoojGbvdK992E6f0RKSl1f4hgxlzsy7IsF8=;
-        b=Gb+/IzTEV4sYLdPjwCAufl3SIMkTrf7Ghq2qHVnA5WWB7gdQv2990KjOYSQnbhaSji
-         /bVDEXYlhBTpAmM6ZZjyvoDrerJIYIE3F5W+xiSA20K5P8zcxQ+yRo27hYHr3V2vi79w
-         AwOJZVu5uqWrKo2KEbnz3GcoZTT7NvXqUbH5+adqWAllFA6hewf2mXAyEzZ3Ma9cAGkO
-         Lm6if8gvmHKeq8mV0xReInuXsYu796sSkwQEizHrdz4Y8nyqaEu8ctaOCIe5Sugeq7n0
-         LkwAzxOwhfb7FLKZwUjjis4MQnByI5PkH+f2xRuksl3weRUlv0GMrm0kM200Fw6dc0Dl
-         Xazw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ssgOwtuSxoojGbvdK992E6f0RKSl1f4hgxlzsy7IsF8=;
-        b=lL7cxPAzLbx7hAS0UjPJKnjzFr6xmKncVrnnrN06ZLHuGzz6b2hl1dcbDpjKD5AN8i
-         l1D+35zZMz2ZLr/VZabHqHwHnUuk+51waiUM01BfdqT+fYQOuUkGRPfuEzhxu+4Lu2Gv
-         kEfF+ztYs3McuT15EnZffUrx6raPDpPeve0LYisra30u6TeBQkew9ckCwfU63t4goi47
-         Nm5hBL2is2Mcog8sVuUP1YYFupxPZlethedthZOaaeA9cABIZcA3atGGUTmOKsLMAM1n
-         Bmr5hG9ZX0cuxPgl0/zwjlF0+Pn/qYNkMP7ECPyAZq17KlhCYa7wZpxNj0D2Dk0dc6S3
-         +LuA==
-X-Gm-Message-State: AOAM533hmxthVcPGBTLPH6zU1R7yDtjMvRNqvYK72cZINpGbFwa6s54I
-        lulmstzO5C3c9pMjav0xGA==
-X-Google-Smtp-Source: ABdhPJxr2iK8oMOGAetqp7RzY1WlShHwp0N8nVXqtU70Bj1DWnnzIadhjm9Dvzuv/HOuZe6fi8CZVA==
-X-Received: by 2002:a1c:1f0d:: with SMTP id f13mr13734335wmf.53.1596111516899;
-        Thu, 30 Jul 2020 05:18:36 -0700 (PDT)
-Received: from localhost.localdomain ([46.53.251.89])
-        by smtp.gmail.com with ESMTPSA id i66sm9600776wma.35.2020.07.30.05.18.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jul 2020 05:18:36 -0700 (PDT)
-Date:   Thu, 30 Jul 2020 15:18:34 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
+        Thu, 30 Jul 2020 08:23:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A600FC061794;
+        Thu, 30 Jul 2020 05:23:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=IT3v0Hh8vnx5zaKRHtOH95ARGWeTEDbEFgcfcKeku4Y=; b=o1Z+YuKKUhGP2mMcZG3HwQ1XDy
+        +g0pF/YGFnpA5Ik90W5jj8n0UfvoB2rQCfKsHtmFCuhVTTILtbQZA4P57BVJJbTB16Wto5krB2G+m
+        AOXUgzisnmWPRIQV3t88b9j3QCKkherCng35P6EslkIqnUJryw+SfoUs3pOTNw3koaw4giJonUQ/6
+        fgcDNMGdWZeLJ+9OG1l3isRH9QrXD9+iCDbiAxuIsvCrl8CS5Up02idOVJ+YWdNAzfu7RNrH7JhmN
+        n/oBpDtvfnFHISXfG6SpoaSPoUXJS/8wfxiMOsv/buoV7hY3RwsMjiLj5Ykgsyy2LQL8khawvWd7T
+        A9trhPYA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k17ah-0003nb-UL; Thu, 30 Jul 2020 12:23:20 +0000
+Date:   Thu, 30 Jul 2020 13:23:19 +0100
+From:   Matthew Wilcox <willy@infradead.org>
 To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     viro@zeniv.linux.org.uk, davem@davemloft.net,
+Cc:     viro@zeniv.linux.org.uk, adobriyan@gmail.com, davem@davemloft.net,
         ebiederm@xmission.com, akpm@linux-foundation.org,
         christian.brauner@ubuntu.com, areber@redhat.com, serge@hallyn.com,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 11/23] fs: Add /proc/namespaces/ directory
-Message-ID: <20200730121834.GA4490@localhost.localdomain>
+Subject: Re: [PATCH 09/23] ns: Introduce ns_idr to be able to iterate all
+ allocated namespaces in the system
+Message-ID: <20200730122319.GC23808@casper.infradead.org>
 References: <159611007271.535980.15362304262237658692.stgit@localhost.localdomain>
- <159611041929.535980.14513096920129728440.stgit@localhost.localdomain>
+ <159611040870.535980.13460189038999722608.stgit@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <159611041929.535980.14513096920129728440.stgit@localhost.localdomain>
+In-Reply-To: <159611040870.535980.13460189038999722608.stgit@localhost.localdomain>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 30, 2020 at 03:00:19PM +0300, Kirill Tkhai wrote:
+On Thu, Jul 30, 2020 at 03:00:08PM +0300, Kirill Tkhai wrote:
+> This patch introduces a new IDR and functions to add/remove and iterate
+> registered namespaces in the system. It will be used to list namespaces
+> in /proc/namespaces/... in next patches.
 
-> # ls /proc/namespaces/ -l
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'cgroup:[4026531835]' -> 'cgroup:[4026531835]'
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'ipc:[4026531839]' -> 'ipc:[4026531839]'
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'mnt:[4026531840]' -> 'mnt:[4026531840]'
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'mnt:[4026531861]' -> 'mnt:[4026531861]'
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'mnt:[4026532133]' -> 'mnt:[4026532133]'
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'mnt:[4026532134]' -> 'mnt:[4026532134]'
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'mnt:[4026532135]' -> 'mnt:[4026532135]'
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'mnt:[4026532136]' -> 'mnt:[4026532136]'
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'net:[4026531993]' -> 'net:[4026531993]'
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'pid:[4026531836]' -> 'pid:[4026531836]'
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'time:[4026531834]' -> 'time:[4026531834]'
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'user:[4026531837]' -> 'user:[4026531837]'
-> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'uts:[4026531838]' -> 'uts:[4026531838]'
+Looks like you could use an XArray for this and it would be fewer lines of
+code.
 
-I'd say make it '%s-%llu'. The brackets don't carry any information.
-And ':' forces quoting with recent coreutils.
+>  
+>  static struct vfsmount *nsfs_mnt;
+> +static DEFINE_SPINLOCK(ns_lock);
+> +static DEFINE_IDR(ns_idr);
 
-> +static int parse_namespace_dentry_name(const struct dentry *dentry,
-> +		const char **type, unsigned int *type_len, unsigned int *inum)
+XArray includes its own spinlock.
+
+> +/*
+> + * Add a newly created ns to ns_idr. The ns must be fully
+> + * initialized since it becomes available for ns_get_next()
+> + * right after we exit this function.
+> + */
+> +int ns_idr_register(struct ns_common *ns)
 > +{
-> +	const char *p, *name;
-> +	int count;
+> +	int ret, id = ns->inum - PROC_NS_MIN_INO;
 > +
-> +	*type = name = dentry->d_name.name;
-> +	p = strchr(name, ':');
-> +	*type_len = p - name;
-> +	if (!p || p == name)
-> +		return -ENOENT;
+> +	if (WARN_ON(id < 0))
+> +		return -EINVAL;
 > +
-> +	p += 1;
-> +	if (sscanf(p, "[%u]%n", inum, &count) != 1 || *(p + count) != '\0' ||
-> +	    *inum < PROC_NS_MIN_INO)
-> +		return -ENOENT;
+> +	idr_preload(GFP_KERNEL);
+> +	spin_lock_irq(&ns_lock);
+> +	ret = idr_alloc(&ns_idr, ns, id, id + 1, GFP_ATOMIC);
+> +	spin_unlock_irq(&ns_lock);
+> +	idr_preload_end();
+> +	return ret < 0 ? ret : 0;
 
-sscanf is banned from lookup code due to lax whitespace rules.
-See
+This would simply be return xa_insert_irq(...);
 
-	commit ac7f1061c2c11bb8936b1b6a94cdb48de732f7a4
-	proc: fix /proc/*/map_files lookup
+> +}
+> +
+> +/*
+> + * Remove a dead ns from ns_idr. Note, that ns memory must
+> + * be freed not earlier then one RCU grace period after
+> + * this function, since ns_get_next() uses RCU to iterate the IDR.
+> + */
+> +void ns_idr_unregister(struct ns_common *ns)
+> +{
+> +	int id = ns->inum - PROC_NS_MIN_INO;
+> +	unsigned long flags;
+> +
+> +	if (WARN_ON(id < 0))
+> +		return;
+> +
+> +	spin_lock_irqsave(&ns_lock, flags);
+> +	idr_remove(&ns_idr, id);
+> +	spin_unlock_irqrestore(&ns_lock, flags);
+> +}
 
-Of course someone sneaked in 1 instance, yikes.
+xa_erase_irqsave();
 
-	$ grep -e scanf -n -r fs/proc/
-	fs/proc/base.c:1596:            err = sscanf(pos, "%9s %lld %lu", clock,
+> +
+> +/*
+> + * This returns ns with inum greater than @id or NULL.
+> + * @id is updated to refer the ns inum.
+> + */
+> +struct ns_common *ns_get_next(unsigned int *id)
+> +{
+> +	struct ns_common *ns;
+> +
+> +	if (*id < PROC_NS_MIN_INO - 1)
+> +		*id = PROC_NS_MIN_INO - 1;
+> +
+> +	*id += 1;
+> +	*id -= PROC_NS_MIN_INO;
+> +
+> +	rcu_read_lock();
+> +	do {
+> +		ns = idr_get_next(&ns_idr, id);
+> +		if (!ns)
+> +			break;
 
-> +static int proc_namespaces_readdir(struct file *file, struct dir_context *ctx)
+xa_find_after();
 
-> +		len = snprintf(name, sizeof(name), "%s:[%u]", ns->ops->name, inum);
+You'll want a temporary unsigned long to work with ...
 
-[] -- no need.
+> +		if (!refcount_inc_not_zero(&ns->count)) {
+> +			ns = NULL;
+> +			*id += 1;
+
+you won't need this increment.
+
