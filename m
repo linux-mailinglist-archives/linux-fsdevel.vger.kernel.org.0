@@ -2,53 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 63208232A80
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 05:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE033232AA8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 06:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbgG3Dju (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jul 2020 23:39:50 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:34836 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726774AbgG3Dju (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jul 2020 23:39:50 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 8A30C1EE9F9AFAA22382;
-        Thu, 30 Jul 2020 11:39:46 +0800 (CST)
-Received: from [127.0.0.1] (10.174.179.103) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.487.0; Thu, 30 Jul 2020
- 11:39:38 +0800
-Subject: Re: [RFC PATCH] iomap: add support to track dirty state of sub pages
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <hch@infradead.org>, <darrick.wong@oracle.com>,
-        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>
-References: <20200730011901.2840886-1-yukuai3@huawei.com>
- <20200730031934.GA23808@casper.infradead.org>
-From:   "yukuai (C)" <yukuai3@huawei.com>
-Message-ID: <98b561be-5aca-148f-5f69-2fd2b5dedff4@huawei.com>
-Date:   Thu, 30 Jul 2020 11:39:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726261AbgG3EBI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 00:01:08 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:49647 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725765AbgG3EBI (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Jul 2020 00:01:08 -0400
+Received: from callcc.thunk.org (pool-96-230-252-158.bstnma.fios.verizon.net [96.230.252.158])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 06U40hmE028092
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 30 Jul 2020 00:00:44 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id B1260420304; Thu, 30 Jul 2020 00:00:43 -0400 (EDT)
+Date:   Thu, 30 Jul 2020 00:00:43 -0400
+From:   tytso@mit.edu
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 3/3] iomap: fall back to buffered writes for invalidation
+ failures
+Message-ID: <20200730040043.GA202592@mit.edu>
+References: <20200721183157.202276-1-hch@lst.de>
+ <20200721183157.202276-4-hch@lst.de>
+ <20200722231352.GE848607@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20200730031934.GA23808@casper.infradead.org>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.179.103]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200722231352.GE848607@magnolia>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/7/30 11:19, Matthew Wilcox wrote:
-> Maybe let the discussion on removing the ->uptodate array finish
-> before posting another patch for review?
+On Wed, Jul 22, 2020 at 04:13:52PM -0700, Darrick J. Wong wrote:
+> Hey Ted,
+> 
+> Could you please review the fs/ext4/ part of this patch (it's the
+> follow-on to the directio discussion I had with you last week) so that I
+> can get this moving for 5.9? Thx,
 
-Hi, Matthew!
+Reviewed-by: Theodore Ts'o <tytso@mit.edu> # for ext4
 
-Of course, I missed the discussion thread before sending this path.
-And thanks for your suggestions.
-
-Best regards,
-Yu Kuai
-
+	     	      	   		     - Ted
