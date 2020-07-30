@@ -2,206 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1396C2334E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 17:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4868F23350F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 17:08:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbgG3PB2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 11:01:28 -0400
-Received: from relay.sw.ru ([185.231.240.75]:46850 "EHLO relay3.sw.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726275AbgG3PB2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 11:01:28 -0400
-Received: from [192.168.15.64]
-        by relay3.sw.ru with esmtp (Exim 4.93)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1k1A3O-0004lX-J4; Thu, 30 Jul 2020 18:01:06 +0300
-Subject: Re: [PATCH 00/23] proc: Introduce /proc/namespaces/ directory to
- expose namespaces lineary
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     viro@zeniv.linux.org.uk, adobriyan@gmail.com, davem@davemloft.net,
-        akpm@linux-foundation.org, christian.brauner@ubuntu.com,
-        areber@redhat.com, serge@hallyn.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-References: <159611007271.535980.15362304262237658692.stgit@localhost.localdomain>
- <87k0yl5axy.fsf@x220.int.ebiederm.org>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <56928404-f194-4194-5f2a-59acb15b1a04@virtuozzo.com>
-Date:   Thu, 30 Jul 2020 18:01:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1729675AbgG3PIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 11:08:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33062 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbgG3PIu (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Jul 2020 11:08:50 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A694C061574;
+        Thu, 30 Jul 2020 08:08:50 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k1AAU-005j5Y-G1; Thu, 30 Jul 2020 15:08:26 +0000
+Date:   Thu, 30 Jul 2020 16:08:26 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 22/23] fs: default to generic_file_splice_read for files
+ having ->read_iter
+Message-ID: <20200730150826.GA1236603@ZenIV.linux.org.uk>
+References: <20200707174801.4162712-1-hch@lst.de>
+ <20200707174801.4162712-23-hch@lst.de>
+ <20200730000544.GC1236929@ZenIV.linux.org.uk>
+ <20200730070329.GB18653@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <87k0yl5axy.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200730070329.GB18653@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 30.07.2020 17:34, Eric W. Biederman wrote:
-> Kirill Tkhai <ktkhai@virtuozzo.com> writes:
+On Thu, Jul 30, 2020 at 09:03:29AM +0200, Christoph Hellwig wrote:
+> On Thu, Jul 30, 2020 at 01:05:44AM +0100, Al Viro wrote:
+> > On Tue, Jul 07, 2020 at 07:48:00PM +0200, Christoph Hellwig wrote:
+> > > If a file implements the ->read_iter method, the iter based splice read
+> > > works and is always preferred over the ->read based one.  Use it by
+> > > default in do_splice_to and remove all the direct assignment of
+> > > generic_file_splice_read to file_operations.
+> > 
+> > The worst problem here is the assumption that all ->read_iter() instances
+> > will take pipe-backed destination; that's _not_ automatically true.
+> > In particular, it's almost certainly false for tap_read_iter() (as
+> > well as tun_chr_read_iter() in IFF_VNET_HDR case).
+> > 
+> > Other potentially interesting cases: cuse and hugetlbfs.
+> > 
+> > But in any case, that blind assertion ("iter based splice read works")
+> > really needs to be backed by something.
 > 
->> Currently, there is no a way to list or iterate all or subset of namespaces
->> in the system. Some namespaces are exposed in /proc/[pid]/ns/ directories,
->> but some also may be as open files, which are not attached to a process.
->> When a namespace open fd is sent over unix socket and then closed, it is
->> impossible to know whether the namespace exists or not.
->>
->> Also, even if namespace is exposed as attached to a process or as open file,
->> iteration over /proc/*/ns/* or /proc/*/fd/* namespaces is not fast, because
->> this multiplies at tasks and fds number.
-> 
-> I am very dubious about this.
-> 
-> I have been avoiding exactly this kind of interface because it can
-> create rather fundamental problems with checkpoint restart.
+> I think we need to fix that in the instances, as we really expect
+> ->splice_read to just work instead of the caller knowing what could
+> work and what might not.
 
-restart/restore :)
+Er...  generic_file_splice_read() is a library helper; the decision to use
+is up to the filesystem/driver/protocol in question, and so's making sure
+it's not used with ->read_iter() that isn't fit for it.
 
-> You do have some filtering and the filtering is not based on current.
-> Which is good.
-> 
-> A view that is relative to a user namespace might be ok.    It almost
-> certainly does better as it's own little filesystem than as an extension
-> to proc though.
-> 
-> The big thing we want to ensure is that if you migrate you can restore
-> everything.  I don't see how you will be able to restore these files
-> after migration.  Anything like this without having a complete
-> checkpoint/restore story is a non-starter.
+Note that we *do* have instances where we have different ->splice_read()
+(sometimes using generic_file_splice_read(), sometimes not) even though
+->read_iter() is there.
 
-There is no difference between files in /proc/namespaces/ directory and /proc/[pid]/ns/.
+Your patch ignores those (thankfully), but commit message is rather
+misleading - it strongly implies that generic_file_splice_read() is
+*always* the right thing when ->read_iter() is there, not just that
+in such cases it makes a better fallback than default_file_splice_read().
 
-CRIU can restore open files in /proc/[pid]/ns, the same will be with /proc/namespaces/ files.
-As a person who worked deeply for pid_ns and user_ns support in CRIU, I don't see any
-problem here.
+And even the latter assumption is not obvious - AFAICS, we do have
+counterexamples.
 
-If you have a specific worries about, let's discuss them.
+I'm not saying that e.g. tun/tap don't need fixing for other reasons and
+it's quite possible that they will become suitable for generic_file_splice_read()
+after that's done.  But I'm really unhappy about the implied change of
+generic_file_splice_read() role; if nothing else, commit message should
+be very clear that if you have ->read_iter() and generic_file_splice_read()
+won't do the right thing, you MUST provide ->splice_read() of your own.
+Probably worth Documentation/filesystem/porting entry as well.
 
-CC: Pavel Tikhomirov CRIU maintainer, who knows everything about namespaces C/R.
- 
-> Further by not going through the processes it looks like you are
-> bypassing the existing permission checks.  Which has the potential
-> to allow someone to use a namespace who would not be able to otherwise.
+Alternatively, if you really want to change the role of that thing,
+we need to go through all instances that are *not* generic_file_splice_read()
+and see what's going on in those.  Starting with the sockets.
 
-I agree, and I wrote to Christian, that permissions should be more strict.
-This just should be formalized. Let's discuss this.
+The list right now is:
+fs/fuse/dev.c:2263:     .splice_read    = fuse_dev_splice_read,
+fs/overlayfs/file.c:786:        .splice_read    = ovl_splice_read,
+net/socket.c:164:       .splice_read =  sock_splice_read,
+kernel/relay.c:1331:    .splice_read    = relay_file_splice_read,
+kernel/trace/trace.c:7081:      .splice_read    = tracing_splice_read_pipe,
+kernel/trace/trace.c:7149:      .splice_read    = tracing_buffers_splice_read,
+kernel/trace/trace.c:7712:      .splice_read    = tracing_buffers_splice_read,
 
-> So I think this goes one step too far but I am willing to be persuaded
-> otherwise.
-> 
-> Eric
-> 
-> 
-> 
-> 
->> This patchset introduces a new /proc/namespaces/ directory, which exposes
->> subset of permitted namespaces in linear view:
->>
->> # ls /proc/namespaces/ -l
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'cgroup:[4026531835]' -> 'cgroup:[4026531835]'
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'ipc:[4026531839]' -> 'ipc:[4026531839]'
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'mnt:[4026531840]' -> 'mnt:[4026531840]'
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'mnt:[4026531861]' -> 'mnt:[4026531861]'
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'mnt:[4026532133]' -> 'mnt:[4026532133]'
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'mnt:[4026532134]' -> 'mnt:[4026532134]'
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'mnt:[4026532135]' -> 'mnt:[4026532135]'
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'mnt:[4026532136]' -> 'mnt:[4026532136]'
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'net:[4026531993]' -> 'net:[4026531993]'
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'pid:[4026531836]' -> 'pid:[4026531836]'
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'time:[4026531834]' -> 'time:[4026531834]'
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'user:[4026531837]' -> 'user:[4026531837]'
->> lrwxrwxrwx 1 root root 0 Jul 29 16:50 'uts:[4026531838]' -> 'uts:[4026531838]'
->>
->> Namespace ns is exposed, in case of its user_ns is permitted from /proc's pid_ns.
->> I.e., /proc is related to pid_ns, so in /proc/namespace we show only a ns, which is
->>
->> 	in_userns(pid_ns->user_ns, ns->user_ns).
->>
->> In case of ns is a user_ns:
->>
->> 	in_userns(pid_ns->user_ns, ns).
->>
->> The patchset follows this steps:
->>
->> 1)A generic counter in ns_common is introduced instead of separate
->>   counters for every ns type (net::count, uts_namespace::kref,
->>   user_namespace::count, etc). Patches [1-8];
->> 2)Patch [9] introduces IDR to link and iterate alive namespaces;
->> 3)Patch [10] is refactoring;
->> 4)Patch [11] actually adds /proc/namespace directory and fs methods;
->> 5)Patches [12-23] make every namespace to use the added methods
->>   and to appear in /proc/namespace directory.
->>
->> This may be usefull to write effective debug utils (say, fast build
->> of networks topology) and checkpoint/restore software.
->> ---
->>
->> Kirill Tkhai (23):
->>       ns: Add common refcount into ns_common add use it as counter for net_ns
->>       uts: Use generic ns_common::count
->>       ipc: Use generic ns_common::count
->>       pid: Use generic ns_common::count
->>       user: Use generic ns_common::count
->>       mnt: Use generic ns_common::count
->>       cgroup: Use generic ns_common::count
->>       time: Use generic ns_common::count
->>       ns: Introduce ns_idr to be able to iterate all allocated namespaces in the system
->>       fs: Rename fs/proc/namespaces.c into fs/proc/task_namespaces.c
->>       fs: Add /proc/namespaces/ directory
->>       user: Free user_ns one RCU grace period after final counter put
->>       user: Add user namespaces into ns_idr
->>       net: Add net namespaces into ns_idr
->>       pid: Eextract child_reaper check from pidns_for_children_get()
->>       proc_ns_operations: Add can_get method
->>       pid: Add pid namespaces into ns_idr
->>       uts: Free uts namespace one RCU grace period after final counter put
->>       uts: Add uts namespaces into ns_idr
->>       ipc: Add ipc namespaces into ns_idr
->>       mnt: Add mount namespaces into ns_idr
->>       cgroup: Add cgroup namespaces into ns_idr
->>       time: Add time namespaces into ns_idr
->>
->>
->>  fs/mount.h                     |    4 
->>  fs/namespace.c                 |   14 +
->>  fs/nsfs.c                      |   78 ++++++++
->>  fs/proc/Makefile               |    1 
->>  fs/proc/internal.h             |   18 +-
->>  fs/proc/namespaces.c           |  382 +++++++++++++++++++++++++++-------------
->>  fs/proc/root.c                 |   17 ++
->>  fs/proc/task_namespaces.c      |  183 +++++++++++++++++++
->>  include/linux/cgroup.h         |    6 -
->>  include/linux/ipc_namespace.h  |    3 
->>  include/linux/ns_common.h      |   11 +
->>  include/linux/pid_namespace.h  |    4 
->>  include/linux/proc_fs.h        |    1 
->>  include/linux/proc_ns.h        |   12 +
->>  include/linux/time_namespace.h |   10 +
->>  include/linux/user_namespace.h |   10 +
->>  include/linux/utsname.h        |   10 +
->>  include/net/net_namespace.h    |   11 -
->>  init/version.c                 |    2 
->>  ipc/msgutil.c                  |    2 
->>  ipc/namespace.c                |   17 +-
->>  ipc/shm.c                      |    1 
->>  kernel/cgroup/cgroup.c         |    2 
->>  kernel/cgroup/namespace.c      |   25 ++-
->>  kernel/pid.c                   |    2 
->>  kernel/pid_namespace.c         |   46 +++--
->>  kernel/time/namespace.c        |   20 +-
->>  kernel/user.c                  |    2 
->>  kernel/user_namespace.c        |   23 ++
->>  kernel/utsname.c               |   23 ++
->>  net/core/net-sysfs.c           |    6 -
->>  net/core/net_namespace.c       |   18 +-
->>  net/ipv4/inet_timewait_sock.c  |    4 
->>  net/ipv4/tcp_metrics.c         |    2 
->>  34 files changed, 746 insertions(+), 224 deletions(-)
->>  create mode 100644 fs/proc/task_namespaces.c
->>
->> --
->> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+The first 3 have ->read_iter(); the rest (kernel/* stuff) doesn't.
+Socket case uses generic_file_splice_read() unless the protocol provides
+an override; SMC, TCP, TCPv6, AF_UNIX STREAM and KCM SEQPACKET do that.
 
+I hadn't looked into the socket side of things for 5 years or so, so I'd
+have to dig the notes out first.  It wasn't pleasant...
