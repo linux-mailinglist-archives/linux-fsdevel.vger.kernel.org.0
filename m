@@ -2,176 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18288233679
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 18:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 011B5233686
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 18:17:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbgG3QOC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 12:14:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43116 "EHLO
+        id S1729484AbgG3QRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 12:17:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729806AbgG3QOA (ORCPT
+        with ESMTP id S1726353AbgG3QRP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 12:14:00 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88488C061757
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jul 2020 09:14:00 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id u10so5090293plr.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jul 2020 09:14:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=2cEXkEXVTWwLucH9omujSAfOqa3WLkWR4PelWjXQFNg=;
-        b=VP/dlrNE4R3fh1kC0zEFNVslfKeWiqHg2rvnG3XvMO07cpQGdmqp1i+GAdgwDXQ548
-         baQ8y57LmBTqQhwBesX4FCAiukcf+aLMcOY1K2XaEmz1fU1G+P6bYrK8OPRXyiSMU/VX
-         GFxZF3EyY+OvPy3BEbR1gOZ37VRpyEcUTnT+0ZR2Z1iOJ2p3IN870t/aTJRb3HipmO22
-         1Tuj5S3jgOO/XEQUo8AB3NvrinwFrH5SAnkrxF/g9dayxQza2pg5EiNhiDQPmWpvtcJ7
-         6ksBjlZNdtzEJTd9RO1LYI2wKShLlpjQ2Cx6aF+CsXn8NnMUuaty0oYsysIntLRNUKrd
-         bbqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2cEXkEXVTWwLucH9omujSAfOqa3WLkWR4PelWjXQFNg=;
-        b=i3WE8zM9d61Rqcqrg2/rr1nkiCa/7Oap/esYgJjRLrwnWDE/Hw09f7+mBvioBSC42S
-         Lfl6LbEP/3oNuSPGO/omaawUKg36mJ/tnQySRzbJ/A3hRMPZX5aq2J06XXyiSemulxIY
-         ODiZmL+sKVigZaD7yav9uCMk16yQZNdbnJkFqSRvzZOB+F3JyLnZ+RcG3x7ko/2ugIwG
-         rXBxSwrfdGd80TiasyLTSVoZBfSOo3ZgMOp6y9uPgwddVMVBPSYFQei5Jm+Yvs4oq8ql
-         htozVRie4j6CV/jFilT0Rn25PNViyQt5PAMbxEmqR0D1Ovwq3yC3v865chxmaP5rOxTV
-         t2jw==
-X-Gm-Message-State: AOAM533ZmvjO1P5dTrS7/C0N2fnG8FPOxC48SJXVHwLwjRtwQyBGF1+2
-        +4PJGoNtlKPTXMFDIJ6cIqP+nw==
-X-Google-Smtp-Source: ABdhPJwjyBVK7W6BHEhO7L1UnGYqerVAaCNgXaICwWaIii4F/KcpzVLHAKaxC/zFM550+qDWayd5hA==
-X-Received: by 2002:a17:90a:14a5:: with SMTP id k34mr16416649pja.37.1596125639842;
-        Thu, 30 Jul 2020 09:13:59 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c085:21e8::11c1? ([2620:10d:c090:400::5:6c5a])
-        by smtp.gmail.com with ESMTPSA id i196sm6694268pgc.55.2020.07.30.09.13.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jul 2020 09:13:59 -0700 (PDT)
-Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Kanchan Joshi <joshiiitr@gmail.com>
-Cc:     Kanchan Joshi <joshi.k@samsung.com>, viro@zeniv.linux.org.uk,
-        bcrl@kvack.org, Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-api@vger.kernel.org,
-        SelvaKumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-References: <1595605762-17010-1-git-send-email-joshi.k@samsung.com>
- <CGME20200724155350epcas5p3b8f1d59eda7f8fbb38c828f692d42fd6@epcas5p3.samsung.com>
- <1595605762-17010-7-git-send-email-joshi.k@samsung.com>
- <f5416bd4-93b3-4d14-3266-bdbc4ae1990b@kernel.dk>
- <CA+1E3rJAa3E2Ti0fvvQTzARP797qge619m4aYLjXeR3wxdFwWw@mail.gmail.com>
- <b0b7159d-ed10-08ad-b6c7-b85d45f60d16@kernel.dk>
- <e871eef2-8a93-fdbc-b762-2923526a2db4@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <80d27717-080a-1ced-50d5-a3a06cf06cd3@kernel.dk>
-Date:   Thu, 30 Jul 2020 10:13:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 30 Jul 2020 12:17:15 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 653D7C061574;
+        Thu, 30 Jul 2020 09:17:15 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k1BEr-005l18-1M; Thu, 30 Jul 2020 16:17:01 +0000
+Date:   Thu, 30 Jul 2020 17:17:01 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 22/23] fs: default to generic_file_splice_read for files
+ having ->read_iter
+Message-ID: <20200730161701.GB1236603@ZenIV.linux.org.uk>
+References: <20200707174801.4162712-1-hch@lst.de>
+ <20200707174801.4162712-23-hch@lst.de>
+ <20200730000544.GC1236929@ZenIV.linux.org.uk>
+ <20200730070329.GB18653@lst.de>
+ <20200730150826.GA1236603@ZenIV.linux.org.uk>
+ <20200730152046.GA21192@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <e871eef2-8a93-fdbc-b762-2923526a2db4@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200730152046.GA21192@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 7/30/20 10:08 AM, Pavel Begunkov wrote:
-> On 27/07/2020 23:34, Jens Axboe wrote:
->> On 7/27/20 1:16 PM, Kanchan Joshi wrote:
->>> On Fri, Jul 24, 2020 at 10:00 PM Jens Axboe <axboe@kernel.dk> wrote:
->>>>
->>>> On 7/24/20 9:49 AM, Kanchan Joshi wrote:
->>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>>>> index 7809ab2..6510cf5 100644
->>>>> --- a/fs/io_uring.c
->>>>> +++ b/fs/io_uring.c
->>>>> @@ -1284,8 +1301,15 @@ static void __io_cqring_fill_event(struct io_kiocb *req, long res, long cflags)
->>>>>       cqe = io_get_cqring(ctx);
->>>>>       if (likely(cqe)) {
->>>>>               WRITE_ONCE(cqe->user_data, req->user_data);
->>>>> -             WRITE_ONCE(cqe->res, res);
->>>>> -             WRITE_ONCE(cqe->flags, cflags);
->>>>> +             if (unlikely(req->flags & REQ_F_ZONE_APPEND)) {
->>>>> +                     if (likely(res > 0))
->>>>> +                             WRITE_ONCE(cqe->res64, req->rw.append_offset);
->>>>> +                     else
->>>>> +                             WRITE_ONCE(cqe->res64, res);
->>>>> +             } else {
->>>>> +                     WRITE_ONCE(cqe->res, res);
->>>>> +                     WRITE_ONCE(cqe->flags, cflags);
->>>>> +             }
->>>>
->>>> This would be nice to keep out of the fast path, if possible.
->>>
->>> I was thinking of keeping a function-pointer (in io_kiocb) during
->>> submission. That would have avoided this check......but argument count
->>> differs, so it did not add up.
->>
->> But that'd grow the io_kiocb just for this use case, which is arguably
->> even worse. Unless you can keep it in the per-request private data,
->> but there's no more room there for the regular read/write side.
->>
->>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->>>>> index 92c2269..2580d93 100644
->>>>> --- a/include/uapi/linux/io_uring.h
->>>>> +++ b/include/uapi/linux/io_uring.h
->>>>> @@ -156,8 +156,13 @@ enum {
->>>>>   */
->>>>>  struct io_uring_cqe {
->>>>>       __u64   user_data;      /* sqe->data submission passed back */
->>>>> -     __s32   res;            /* result code for this event */
->>>>> -     __u32   flags;
->>>>> +     union {
->>>>> +             struct {
->>>>> +                     __s32   res;    /* result code for this event */
->>>>> +                     __u32   flags;
->>>>> +             };
->>>>> +             __s64   res64;  /* appending offset for zone append */
->>>>> +     };
->>>>>  };
->>>>
->>>> Is this a compatible change, both for now but also going forward? You
->>>> could randomly have IORING_CQE_F_BUFFER set, or any other future flags.
->>>
->>> Sorry, I didn't quite understand the concern. CQE_F_BUFFER is not
->>> used/set for write currently, so it looked compatible at this point.
->>
->> Not worried about that, since we won't ever use that for writes. But it
->> is a potential headache down the line for other flags, if they apply to
->> normal writes.
->>
->>> Yes, no room for future flags for this operation.
->>> Do you see any other way to enable this support in io-uring?
->>
->> Honestly I think the only viable option is as we discussed previously,
->> pass in a pointer to a 64-bit type where we can copy the additional
->> completion information to.
-> 
-> TBH, I hate the idea of such overhead/latency at times when SSDs can
-> serve writes in less than 10ms. Any chance you measured how long does it
+On Thu, Jul 30, 2020 at 05:20:46PM +0200, Christoph Hellwig wrote:
 
-10us? :-)
+> Fortunately I think the fix is pretty easy - remove the special pipe
+> zero copy optimization from copy_page_to_iter, and just have the
+> callers actually want it because they have pagecache or similar
+> refcountable pages use it explicitly for the ITER_PIPE case.  That gives
+> us a safe default with an opt-in into the optimized variant.  I'm
+> currently auditing all the users of for how it is used and that looks
+> pretty promising.
 
-> take to drag through task_work?
-
-A 64-bit value copy is really not a lot of overhead... But yes, we'd
-need to push the completion through task_work at that point, as we can't
-do it from the completion side. That's not a lot of overhead, and most
-notably, it's overhead that only affects this particular type.
-
-That's not a bad starting point, and something that can always be
-optimized later if need be. But I seriously doubt it'd be anything to
-worry about.
-
--- 
-Jens Axboe
-
+Huh?  What does that have to do with anything?
