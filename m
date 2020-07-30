@@ -2,118 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ADDBA2328C7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 02:32:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0CF4232968
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 03:18:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728327AbgG3AbZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 29 Jul 2020 20:31:25 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:54214 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbgG3AbX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 29 Jul 2020 20:31:23 -0400
-Received: from dede-linux-virt.corp.microsoft.com (unknown [131.107.160.54])
-        by linux.microsoft.com (Postfix) with ESMTPSA id B1DD220B4916;
-        Wed, 29 Jul 2020 17:31:21 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B1DD220B4916
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1596069081;
-        bh=BO1cenWUnGNayuyBmKqbXIIbsqyXRIWwZdTmlpXz42M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MRq4ebC3OfWPm6Ck/QM0mn4m8rnTgMBtnUzKYKUFL/18OwXkvgZzIiauDU/Im4gQB
-         2Dsh/36xRComRKOg+hJn5xImaAug9DOd4HedWObHDUCgnXOgcouVk6ctacYQH3yxyO
-         0ya6lHYOM7jrzIcB6K8/t2t8ZbNkyYZERZXqsnNM=
-From:   Deven Bowers <deven.desai@linux.microsoft.com>
-To:     agk@redhat.com, axboe@kernel.dk, snitzer@redhat.com,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        viro@zeniv.linux.org.uk, paul@paul-moore.com, eparis@redhat.com,
-        jannh@google.com, dm-devel@redhat.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-audit@redhat.com
-Cc:     tyhicks@linux.microsoft.com, linux-kernel@vger.kernel.org,
-        corbet@lwn.net, sashal@kernel.org,
-        jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
-        nramas@linux.microsoft.com, pasha.tatashin@soleen.com
-Subject: [RFC PATCH v6 11/11] cleanup: uapi/linux/audit.h
-Date:   Wed, 29 Jul 2020 17:31:13 -0700
-Message-Id: <20200730003113.2561644-12-deven.desai@linux.microsoft.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200730003113.2561644-1-deven.desai@linux.microsoft.com>
-References: <20200730003113.2561644-1-deven.desai@linux.microsoft.com>
+        id S1726341AbgG3BS5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 29 Jul 2020 21:18:57 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39260 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725851AbgG3BS5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 29 Jul 2020 21:18:57 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 4CD56A7A3968656C05A9;
+        Thu, 30 Jul 2020 09:18:54 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.487.0; Thu, 30 Jul 2020
+ 09:18:45 +0800
+From:   Yu Kuai <yukuai3@huawei.com>
+To:     <hch@infradead.org>, <darrick.wong@oracle.com>
+CC:     <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
+        <yukuai3@huawei.com>
+Subject: [RFC PATCH] iomap: add support to track dirty state of sub pages
+Date:   Thu, 30 Jul 2020 09:19:01 +0800
+Message-ID: <20200730011901.2840886-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove trailing whitespaces and align the integrity #defines in
-linux/uapi/audit.h
+commit 9dc55f1389f9 ("iomap: add support for sub-pagesize buffered I/O
+without buffer heads") replace the per-block structure buffer_head with
+the per-page structure iomap_page. However, iomap_page can't track the
+dirty state of sub pages, which will cause performance issue since sub
+pages will be writeback even if they are not dirty.
 
-Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+For example, if block size is 4k and page size is 64k:
+
+dd if=/dev/zero of=testfile bs=4k count=16 oflag=sync
+
+With buffer_head implementation, the above dd cmd will writeback 4k in
+each round. However, with iomap_page implementation, the range of
+writeback in each round is from the start of the page to the end offset
+we just wrote.
+
+Thus add support to track dirty state for sub pages in iomap_page.
+
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- include/uapi/linux/audit.h | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ fs/iomap/buffered-io.c | 51 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 50 insertions(+), 1 deletion(-)
 
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 5a634cca1d42..609b4a5e8a80 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -48,7 +48,7 @@
-  * 2500 - 2999 future user space (maybe integrity labels and related events)
-  *
-  * Messages from 1000-1199 are bi-directional. 1200-1299 & 2100 - 2999 are
-- * exclusively user space. 1300-2099 is kernel --> user space 
-+ * exclusively user space. 1300-2099 is kernel --> user space
-  * communication.
-  */
- #define AUDIT_GET		1000	/* Get status */
-@@ -78,7 +78,7 @@
- #define AUDIT_LAST_USER_MSG	1199
- #define AUDIT_FIRST_USER_MSG2	2100	/* More user space messages */
- #define AUDIT_LAST_USER_MSG2	2999
-- 
-+
- #define AUDIT_DAEMON_START      1200    /* Daemon startup record */
- #define AUDIT_DAEMON_END        1201    /* Daemon normal stop record */
- #define AUDIT_DAEMON_ABORT      1202    /* Daemon error stop record */
-@@ -140,20 +140,20 @@
- #define AUDIT_MAC_CALIPSO_ADD	1418	/* NetLabel: add CALIPSO DOI entry */
- #define AUDIT_MAC_CALIPSO_DEL	1419	/* NetLabel: del CALIPSO DOI entry */
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index bcfc288dba3f..ac2676146b98 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -29,7 +29,9 @@ struct iomap_page {
+ 	atomic_t		read_count;
+ 	atomic_t		write_count;
+ 	spinlock_t		uptodate_lock;
++	spinlock_t		dirty_lock;
+ 	DECLARE_BITMAP(uptodate, PAGE_SIZE / 512);
++	DECLARE_BITMAP(dirty, PAGE_SIZE / 512);
+ };
  
--#define AUDIT_FIRST_KERN_ANOM_MSG   1700
--#define AUDIT_LAST_KERN_ANOM_MSG    1799
--#define AUDIT_ANOM_PROMISCUOUS      1700 /* Device changed promiscuous mode */
--#define AUDIT_ANOM_ABEND            1701 /* Process ended abnormally */
--#define AUDIT_ANOM_LINK		    1702 /* Suspicious use of file links */
--#define AUDIT_ANOM_CREAT	    1703 /* Suspicious file creation */
--#define AUDIT_INTEGRITY_DATA	    1800 /* Data integrity verification */
--#define AUDIT_INTEGRITY_METADATA    1801 /* Metadata integrity verification */
--#define AUDIT_INTEGRITY_STATUS	    1802 /* Integrity enable status */
--#define AUDIT_INTEGRITY_HASH	    1803 /* Integrity HASH type */
--#define AUDIT_INTEGRITY_PCR	    1804 /* PCR invalidation msgs */
--#define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
--#define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
--#define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
-+#define AUDIT_FIRST_KERN_ANOM_MSG	1700
-+#define AUDIT_LAST_KERN_ANOM_MSG	1799
-+#define AUDIT_ANOM_PROMISCUOUS		1700 /* Device changed promiscuous mode */
-+#define AUDIT_ANOM_ABEND		1701 /* Process ended abnormally */
-+#define AUDIT_ANOM_LINK			1702 /* Suspicious use of file links */
-+#define AUDIT_ANOM_CREAT		1703 /* Suspicious file creation */
-+#define AUDIT_INTEGRITY_DATA		1800 /* Data integrity verification */
-+#define AUDIT_INTEGRITY_METADATA	1801 /* Metadata integrity verification */
-+#define AUDIT_INTEGRITY_STATUS		1802 /* Integrity enable status */
-+#define AUDIT_INTEGRITY_HASH		1803 /* Integrity HASH type */
-+#define AUDIT_INTEGRITY_PCR		1804 /* PCR invalidation msgs */
-+#define AUDIT_INTEGRITY_RULE		1805 /* policy rule */
-+#define AUDIT_INTEGRITY_EVM_XATTR	1806 /* New EVM-covered xattr */
-+#define AUDIT_INTEGRITY_POLICY_RULE	1807 /* IMA policy rules */
- #define AUDIT_INTEGRITY_POLICY_LOAD	1808 /* IPE Policy Load */
- #define AUDIT_INTEGRITY_POLICY_ACTIVATE	1809 /* IPE Policy Activation */
- #define AUDIT_INTEGRITY_EVENT		1810 /* IPE Evaluation Event */
+ static inline struct iomap_page *to_iomap_page(struct page *page)
+@@ -53,7 +55,9 @@ iomap_page_create(struct inode *inode, struct page *page)
+ 	atomic_set(&iop->read_count, 0);
+ 	atomic_set(&iop->write_count, 0);
+ 	spin_lock_init(&iop->uptodate_lock);
++	spin_lock_init(&iop->dirty_lock);
+ 	bitmap_zero(iop->uptodate, PAGE_SIZE / SECTOR_SIZE);
++	bitmap_zero(iop->dirty, PAGE_SIZE / SECTOR_SIZE);
+ 
+ 	/*
+ 	 * migrate_page_move_mapping() assumes that pages with private data have
+@@ -135,6 +139,44 @@ iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
+ 	*lenp = plen;
+ }
+ 
++static void
++iomap_iop_set_or_clear_range_dirty(
++	struct page *page,
++	unsigned int off,
++	unsigned int len,
++	bool is_set)
++{
++	struct iomap_page *iop = to_iomap_page(page);
++	struct inode *inode = page->mapping->host;
++	unsigned int first = off >> inode->i_blkbits;
++	unsigned int last = (off + len - 1) >> inode->i_blkbits;
++	unsigned long flags;
++	unsigned int i;
++
++	spin_lock_irqsave(&iop->dirty_lock, flags);
++	for (i = first; i <= last; i++)
++		if (is_set)
++			set_bit(i, iop->dirty);
++		else
++			clear_bit(i, iop->dirty);
++	spin_unlock_irqrestore(&iop->dirty_lock, flags);
++}
++
++static void
++iomap_set_or_clear_range_dirty(
++	struct page *page,
++	unsigned int off,
++	unsigned int len,
++	bool is_set)
++{
++	if (PageError(page))
++		return;
++
++	if (page_has_private(page))
++		iomap_iop_set_or_clear_range_dirty(
++			page, off, len, is_set);
++}
++
+ static void
+ iomap_iop_set_range_uptodate(struct page *page, unsigned off, unsigned len)
+ {
+@@ -705,6 +747,8 @@ __iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
+ 	if (unlikely(copied < len && !PageUptodate(page)))
+ 		return 0;
+ 	iomap_set_range_uptodate(page, offset_in_page(pos), len);
++	iomap_set_or_clear_range_dirty(
++		page, offset_in_page(pos), len, true);
+ 	iomap_set_page_dirty(page);
+ 	return copied;
+ }
+@@ -1030,6 +1074,8 @@ iomap_page_mkwrite_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		WARN_ON_ONCE(!PageUptodate(page));
+ 		iomap_page_create(inode, page);
+ 		set_page_dirty(page);
++		iomap_set_or_clear_range_dirty(
++			page, offset_in_page(pos), length, true);
+ 	}
+ 
+ 	return length;
+@@ -1386,7 +1432,8 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 	for (i = 0, file_offset = page_offset(page);
+ 	     i < (PAGE_SIZE >> inode->i_blkbits) && file_offset < end_offset;
+ 	     i++, file_offset += len) {
+-		if (iop && !test_bit(i, iop->uptodate))
++		if (iop && (!test_bit(i, iop->uptodate) ||
++		    !test_bit(i, iop->dirty)))
+ 			continue;
+ 
+ 		error = wpc->ops->map_blocks(wpc, inode, file_offset);
+@@ -1435,6 +1482,8 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 		 */
+ 		set_page_writeback_keepwrite(page);
+ 	} else {
++		iomap_set_or_clear_range_dirty(
++			page, 0, end_offset - page_offset(page) + 1, false);
+ 		clear_page_dirty_for_io(page);
+ 		set_page_writeback(page);
+ 	}
 -- 
-2.27.0
+2.25.4
 
