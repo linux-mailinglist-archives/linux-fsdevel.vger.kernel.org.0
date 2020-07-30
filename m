@@ -2,131 +2,213 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ACC823314D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 13:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51C39233153
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 13:59:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbgG3LzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 07:55:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59680 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726615AbgG3LzY (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 07:55:24 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C877C061794
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jul 2020 04:55:23 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id a5so12643167ioa.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 30 Jul 2020 04:55:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=G9gIZhR3sJgnE+GwQ+VNDDJBn0xqTyF/KGDLhuwY780=;
-        b=OhkgSX/HddmdTRnWU6lVJcbKIDe9NPhqaRP4lley0oIB2+BkKJXwlJU5ZZ1xbUkKvI
-         2wEzq41YGPefc3zqpeUch1ZS3BqbKCx+zgAXCXIMtNPoAuIzmE/cwUMN/hO6rkzqEI2C
-         Bnap//TR1gVLIctdsLnDPBfRqeh21VGjF2pWeSmaufdDdAVzSnZx1UvzqhxvlKY9MroR
-         IrRBKNIBdbEfdwixftd7tOVOJ3JADZF16ZaKLE/x7hKKY4Juf8BWq+qTpgRIjcoXr9SF
-         51IbSVgXwATkQe4hNGSwDzLF062pqFb+KY+Z3AdkRPn4xAAbnUscV0TtlptO+xit1tFi
-         vRww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=G9gIZhR3sJgnE+GwQ+VNDDJBn0xqTyF/KGDLhuwY780=;
-        b=DIWeoim+MzgXEXZp1GWNINR6t00v2MMnfTXCUwANkQOsoSNtGbxWsoieV9fsKs2ixW
-         QlYtYwpuPhl3egcRkc+mFVsO2dMX44n5uVnKAbweyMhzZMCZH4oG6+DzxNMV5b9sWtU9
-         EZSlD9bGAH/nZfC6ba3Pak8XHVrRkaAPx2iMIDJLVcw+5T5IIcw4+bpSDOYawpKG1zp1
-         nJtOyyROM+4P3oMN8fN9Tq8Jg2YJT0J4a39kbKTx1qk3Ifh6s12dD6eBe7vrAQJKsRSe
-         +l/0o/1wL7wV8ZI7pUqr8xjNG3/iCe4vxumacASKp0mnQ0T1483XHsswhcspX/BP4esj
-         fORw==
-X-Gm-Message-State: AOAM530QcJpJg4XYvStVkxA6wLrhLbcJTqhB8z+wfqdHZjdnysaoY3JC
-        VZMLRN1j02uNIzY2dFAnpaOg3cxTYiUoRj4Pcq+tOATf
-X-Google-Smtp-Source: ABdhPJxL9rwDmRP5j5p7i2ocgoYyDhk1hTIWEymDA4OLIA+9Gv8eRKizESiGKYVufsz4lunIXBQ9XF0qc/s0BWVX/8I=
-X-Received: by 2002:a5e:980f:: with SMTP id s15mr23209125ioj.5.1596110122828;
- Thu, 30 Jul 2020 04:55:22 -0700 (PDT)
+        id S1727113AbgG3L7c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 07:59:32 -0400
+Received: from relay.sw.ru ([185.231.240.75]:56344 "EHLO relay3.sw.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726774AbgG3L7a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Jul 2020 07:59:30 -0400
+Received: from [192.168.15.64] (helo=localhost.localdomain)
+        by relay3.sw.ru with esmtp (Exim 4.93)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1k17DM-0002ux-03; Thu, 30 Jul 2020 14:59:12 +0300
+Subject: [PATCH 01/23] ns: Add common refcount into ns_common add use it as
+ counter for net_ns
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     viro@zeniv.linux.org.uk, adobriyan@gmail.com, davem@davemloft.net,
+        ebiederm@xmission.com, akpm@linux-foundation.org,
+        christian.brauner@ubuntu.com, areber@redhat.com, serge@hallyn.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        ktkhai@virtuozzo.com
+Date:   Thu, 30 Jul 2020 14:59:25 +0300
+Message-ID: <159611036589.535980.1765795847221907147.stgit@localhost.localdomain>
+In-Reply-To: <159611007271.535980.15362304262237658692.stgit@localhost.localdomain>
+References: <159611007271.535980.15362304262237658692.stgit@localhost.localdomain>
+User-Agent: StGit/0.19
 MIME-Version: 1.0
-References: <20200730111339.GA54272@mwanda>
-In-Reply-To: <20200730111339.GA54272@mwanda>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 30 Jul 2020 14:55:11 +0300
-Message-ID: <CAOQ4uxgEG9PNtdoMXw52_C4oaUQpi2DVx34_QEHeV195e3kYdg@mail.gmail.com>
-Subject: Re: [bug report] fsnotify: pass dir and inode arguments to fsnotify()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 30, 2020 at 2:13 PM <dan.carpenter@oracle.com> wrote:
->
-> Hello Amir Goldstein,
->
-> This is a semi-automatic email about new static checker warnings.
->
-> The patch 40a100d3adc1: "fsnotify: pass dir and inode arguments to
-> fsnotify()" from Jul 22, 2020, leads to the following Smatch
-> complaint:
+Currently, every type of namespaces has its own counter,
+which is stored in ns-specific part. Say, @net has
+struct net::count, @pid has struct pid_namespace::kref, etc.
 
-That's an odd report, because...
+This patchset introduces unified counter for all types
+of namespaces, and converts net namespace to use it first.
 
->
->     fs/notify/fsnotify.c:460 fsnotify()
->     warn: variable dereferenced before check 'inode' (see line 449)
->
-> fs/notify/fsnotify.c
->    448          }
->    449          sb = inode->i_sb;
->                      ^^^^^^^^^^^
-> New dreference.
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+---
+ include/linux/ns_common.h     |    1 +
+ include/net/net_namespace.h   |   11 ++++-------
+ net/core/net-sysfs.c          |    6 +++---
+ net/core/net_namespace.c      |    6 +++---
+ net/ipv4/inet_timewait_sock.c |    4 ++--
+ net/ipv4/tcp_metrics.c        |    2 +-
+ 6 files changed, 14 insertions(+), 16 deletions(-)
 
-First of all, two lines above we have
-if (!inode) inode = dir;
+diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
+index 5fbc4000358f..27db02ebdf36 100644
+--- a/include/linux/ns_common.h
++++ b/include/linux/ns_common.h
+@@ -8,6 +8,7 @@ struct ns_common {
+ 	atomic_long_t stashed;
+ 	const struct proc_ns_operations *ops;
+ 	unsigned int inum;
++	refcount_t count;
+ };
+ 
+ #endif
+diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+index 2ee5901bec7a..cb4b33d7834b 100644
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -60,9 +60,6 @@ struct net {
+ 	refcount_t		passive;	/* To decide when the network
+ 						 * namespace should be freed.
+ 						 */
+-	refcount_t		count;		/* To decided when the network
+-						 *  namespace should be shut down.
+-						 */
+ 	spinlock_t		rules_mod_lock;
+ 
+ 	unsigned int		dev_unreg_count;
+@@ -245,7 +242,7 @@ void __put_net(struct net *net);
+ 
+ static inline struct net *get_net(struct net *net)
+ {
+-	refcount_inc(&net->count);
++	refcount_inc(&net->ns.count);
+ 	return net;
+ }
+ 
+@@ -256,14 +253,14 @@ static inline struct net *maybe_get_net(struct net *net)
+ 	 * exists.  If the reference count is zero this
+ 	 * function fails and returns NULL.
+ 	 */
+-	if (!refcount_inc_not_zero(&net->count))
++	if (!refcount_inc_not_zero(&net->ns.count))
+ 		net = NULL;
+ 	return net;
+ }
+ 
+ static inline void put_net(struct net *net)
+ {
+-	if (refcount_dec_and_test(&net->count))
++	if (refcount_dec_and_test(&net->ns.count))
+ 		__put_net(net);
+ }
+ 
+@@ -275,7 +272,7 @@ int net_eq(const struct net *net1, const struct net *net2)
+ 
+ static inline int check_net(const struct net *net)
+ {
+-	return refcount_read(&net->count) != 0;
++	return refcount_read(&net->ns.count) != 0;
+ }
+ 
+ void net_drop_ns(void *);
+diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+index 9de33b594ff2..655a88b0071c 100644
+--- a/net/core/net-sysfs.c
++++ b/net/core/net-sysfs.c
+@@ -1025,7 +1025,7 @@ net_rx_queue_update_kobjects(struct net_device *dev, int old_num, int new_num)
+ 	while (--i >= new_num) {
+ 		struct kobject *kobj = &dev->_rx[i].kobj;
+ 
+-		if (!refcount_read(&dev_net(dev)->count))
++		if (!refcount_read(&dev_net(dev)->ns.count))
+ 			kobj->uevent_suppress = 1;
+ 		if (dev->sysfs_rx_queue_group)
+ 			sysfs_remove_group(kobj, dev->sysfs_rx_queue_group);
+@@ -1603,7 +1603,7 @@ netdev_queue_update_kobjects(struct net_device *dev, int old_num, int new_num)
+ 	while (--i >= new_num) {
+ 		struct netdev_queue *queue = dev->_tx + i;
+ 
+-		if (!refcount_read(&dev_net(dev)->count))
++		if (!refcount_read(&dev_net(dev)->ns.count))
+ 			queue->kobj.uevent_suppress = 1;
+ #ifdef CONFIG_BQL
+ 		sysfs_remove_group(&queue->kobj, &dql_group);
+@@ -1850,7 +1850,7 @@ void netdev_unregister_kobject(struct net_device *ndev)
+ {
+ 	struct device *dev = &ndev->dev;
+ 
+-	if (!refcount_read(&dev_net(ndev)->count))
++	if (!refcount_read(&dev_net(ndev)->ns.count))
+ 		dev_set_uevent_suppress(dev, 1);
+ 
+ 	kobject_get(&dev->kobj);
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index dcd61aca343e..5f658cbedd34 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -44,7 +44,7 @@ static struct key_tag init_net_key_domain = { .usage = REFCOUNT_INIT(1) };
+ #endif
+ 
+ struct net init_net = {
+-	.count		= REFCOUNT_INIT(1),
++	.ns.count	= REFCOUNT_INIT(1),
+ 	.dev_base_head	= LIST_HEAD_INIT(init_net.dev_base_head),
+ #ifdef CONFIG_KEYS
+ 	.key_domain	= &init_net_key_domain,
+@@ -248,7 +248,7 @@ int peernet2id_alloc(struct net *net, struct net *peer, gfp_t gfp)
+ {
+ 	int id;
+ 
+-	if (refcount_read(&net->count) == 0)
++	if (refcount_read(&net->ns.count) == 0)
+ 		return NETNSA_NSID_NOT_ASSIGNED;
+ 
+ 	spin_lock(&net->nsid_lock);
+@@ -328,7 +328,7 @@ static __net_init int setup_net(struct net *net, struct user_namespace *user_ns)
+ 	int error = 0;
+ 	LIST_HEAD(net_exit_list);
+ 
+-	refcount_set(&net->count, 1);
++	refcount_set(&net->ns.count, 1);
+ 	refcount_set(&net->passive, 1);
+ 	get_random_bytes(&net->hash_mix, sizeof(u32));
+ 	net->dev_base_seq = 1;
+diff --git a/net/ipv4/inet_timewait_sock.c b/net/ipv4/inet_timewait_sock.c
+index c411c87ae865..437afe392e66 100644
+--- a/net/ipv4/inet_timewait_sock.c
++++ b/net/ipv4/inet_timewait_sock.c
+@@ -272,14 +272,14 @@ void inet_twsk_purge(struct inet_hashinfo *hashinfo, int family)
+ 				continue;
+ 			tw = inet_twsk(sk);
+ 			if ((tw->tw_family != family) ||
+-				refcount_read(&twsk_net(tw)->count))
++				refcount_read(&twsk_net(tw)->ns.count))
+ 				continue;
+ 
+ 			if (unlikely(!refcount_inc_not_zero(&tw->tw_refcnt)))
+ 				continue;
+ 
+ 			if (unlikely((tw->tw_family != family) ||
+-				     refcount_read(&twsk_net(tw)->count))) {
++				     refcount_read(&twsk_net(tw)->ns.count))) {
+ 				inet_twsk_put(tw);
+ 				goto restart;
+ 			}
+diff --git a/net/ipv4/tcp_metrics.c b/net/ipv4/tcp_metrics.c
+index 279db8822439..39710c417565 100644
+--- a/net/ipv4/tcp_metrics.c
++++ b/net/ipv4/tcp_metrics.c
+@@ -887,7 +887,7 @@ static void tcp_metrics_flush_all(struct net *net)
+ 		pp = &hb->chain;
+ 		for (tm = deref_locked(*pp); tm; tm = deref_locked(*pp)) {
+ 			match = net ? net_eq(tm_net(tm), net) :
+-				!refcount_read(&tm_net(tm)->count);
++				!refcount_read(&tm_net(tm)->ns.count);
+ 			if (match) {
+ 				*pp = tm->tcpm_next;
+ 				kfree_rcu(tm, rcu_head);
 
-This function does not assert (inode || dir), but must it??
-This is even documented:
 
- * @inode:      optional inode associated with event -
- *              either @dir or @inode must be non-NULL.
-
-Second,
-The line above was indeed added by:
-40a100d3adc1: "fsnotify: pass dir and inode arguments to fsnotify()"
-
-However...
-
->
->    450
->    451          /*
->    452           * Optimization: srcu_read_lock() has a memory barrier which can
->    453           * be expensive.  It protects walking the *_fsnotify_marks lists.
->    454           * However, if we do not walk the lists, we do not have to do
->    455           * SRCU because we have no references to any objects and do not
->    456           * need SRCU to keep them "alive".
->    457           */
->    458          if (!sb->s_fsnotify_marks &&
->    459              (!mnt || !mnt->mnt_fsnotify_marks) &&
->    460              (!inode || !inode->i_fsnotify_marks) &&
->                      ^^^^^^
-> Check too late.  Presumably this check can be removed?
-
-But this line was only added later by:
-9b93f33105f5 fsnotify: send event with parent/name info to
-sb/mount/non-dir marks
-
-So, yes, the check could be removed.
-It is a leftover from a previous revision, but even though it is a leftover
-I kind of like the code better this way.
-
-In principle, an event on sb/mnt that is not associated with any inode
-(for example
-FS_UNMOUNT) could be added in the future.
-And then we will have to fix documentation and the inode dereference above.
-
-In any case, thank you for the report, but I don't see a reason to make any
-changes right now.
-
-Thanks,
-Amir.
