@@ -2,138 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C98F2331F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 14:23:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C19923324F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 14:36:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbgG3MXs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 08:23:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35820 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbgG3MXr (ORCPT
+        id S1727930AbgG3Mga (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 08:36:30 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38745 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727797AbgG3Mg3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 08:23:47 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A600FC061794;
-        Thu, 30 Jul 2020 05:23:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=IT3v0Hh8vnx5zaKRHtOH95ARGWeTEDbEFgcfcKeku4Y=; b=o1Z+YuKKUhGP2mMcZG3HwQ1XDy
-        +g0pF/YGFnpA5Ik90W5jj8n0UfvoB2rQCfKsHtmFCuhVTTILtbQZA4P57BVJJbTB16Wto5krB2G+m
-        AOXUgzisnmWPRIQV3t88b9j3QCKkherCng35P6EslkIqnUJryw+SfoUs3pOTNw3koaw4giJonUQ/6
-        fgcDNMGdWZeLJ+9OG1l3isRH9QrXD9+iCDbiAxuIsvCrl8CS5Up02idOVJ+YWdNAzfu7RNrH7JhmN
-        n/oBpDtvfnFHISXfG6SpoaSPoUXJS/8wfxiMOsv/buoV7hY3RwsMjiLj5Ykgsyy2LQL8khawvWd7T
-        A9trhPYA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k17ah-0003nb-UL; Thu, 30 Jul 2020 12:23:20 +0000
-Date:   Thu, 30 Jul 2020 13:23:19 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     viro@zeniv.linux.org.uk, adobriyan@gmail.com, davem@davemloft.net,
-        ebiederm@xmission.com, akpm@linux-foundation.org,
-        christian.brauner@ubuntu.com, areber@redhat.com, serge@hallyn.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 09/23] ns: Introduce ns_idr to be able to iterate all
- allocated namespaces in the system
-Message-ID: <20200730122319.GC23808@casper.infradead.org>
-References: <159611007271.535980.15362304262237658692.stgit@localhost.localdomain>
- <159611040870.535980.13460189038999722608.stgit@localhost.localdomain>
+        Thu, 30 Jul 2020 08:36:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1596112588;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=31PzmvZoLrb+VBxM22N3vxrRxLtADMFNugnbQ/5/Q1U=;
+        b=CRUSw+V2sn26NN5Tk0vnVHg0OoEUvUn5JKpcU2BM1XlDpfg35C9nDfgARgsVeev1G+XGaj
+        XBpJyBELSp5NO4D2GMlBvWfv50TmR7JGzVXFX4uL/JE7I7DTpo4jtl0YHosx0VTPPa4V9i
+        0NuWVz9F1obYN48dnHyzgoNCsNCAAfw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-25-RA2a7GGdO5qhhZezBS-zyQ-1; Thu, 30 Jul 2020 08:36:24 -0400
+X-MC-Unique: RA2a7GGdO5qhhZezBS-zyQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C9F0C800685;
+        Thu, 30 Jul 2020 12:36:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 895FC87B07;
+        Thu, 30 Jul 2020 12:36:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200730121622.GB23808@casper.infradead.org>
+References: <20200730121622.GB23808@casper.infradead.org> <447452.1596109876@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Jeff Layton <jlayton@redhat.com>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Upcoming: fscache rewrite
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <159611040870.535980.13460189038999722608.stgit@localhost.localdomain>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <488586.1596112574.1@warthog.procyon.org.uk>
+Date:   Thu, 30 Jul 2020 13:36:14 +0100
+Message-ID: <488587.1596112574@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 30, 2020 at 03:00:08PM +0300, Kirill Tkhai wrote:
-> This patch introduces a new IDR and functions to add/remove and iterate
-> registered namespaces in the system. It will be used to list namespaces
-> in /proc/namespaces/... in next patches.
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Looks like you could use an XArray for this and it would be fewer lines of
-code.
+> I suspect you don't need to call find_get_pages_contig().  If you look
+> at __readahead_batch() in pagemap.h, it does basically what you want
+> (other than being wrapped up inside the readahead iterator).  You require
+> the pages already be pinned in the xarray, so there's no need for the
+> page_cache_get_speculative() dance that find_get_pages_contig) does,
+> nor the check for xa_is_value().
 
->  
->  static struct vfsmount *nsfs_mnt;
-> +static DEFINE_SPINLOCK(ns_lock);
-> +static DEFINE_IDR(ns_idr);
+I'll have a look at that.
 
-XArray includes its own spinlock.
+> My main concern with your patchset is that it introduces a new page flag
 
-> +/*
-> + * Add a newly created ns to ns_idr. The ns must be fully
-> + * initialized since it becomes available for ns_get_next()
-> + * right after we exit this function.
-> + */
-> +int ns_idr_register(struct ns_common *ns)
-> +{
-> +	int ret, id = ns->inum - PROC_NS_MIN_INO;
-> +
-> +	if (WARN_ON(id < 0))
-> +		return -EINVAL;
-> +
-> +	idr_preload(GFP_KERNEL);
-> +	spin_lock_irq(&ns_lock);
-> +	ret = idr_alloc(&ns_idr, ns, id, id + 1, GFP_ATOMIC);
-> +	spin_unlock_irq(&ns_lock);
-> +	idr_preload_end();
-> +	return ret < 0 ? ret : 0;
+Technically, the flag already exists - I'm just using it for something
+different than the old fscache code used it for.
 
-This would simply be return xa_insert_irq(...);
+> to sleep on which basically means "I am writing this page to the fscache".
+> I don't understand why you need it; you've elevated the refcount on
+> the pages so they're not going to get reused for another purpose.
+> All it does (as far as I can tell) is make a task calling truncate()
+> wait for the page to finish being written to cache, which isn't actually
+> necessary.
 
-> +}
-> +
-> +/*
-> + * Remove a dead ns from ns_idr. Note, that ns memory must
-> + * be freed not earlier then one RCU grace period after
-> + * this function, since ns_get_next() uses RCU to iterate the IDR.
-> + */
-> +void ns_idr_unregister(struct ns_common *ns)
-> +{
-> +	int id = ns->inum - PROC_NS_MIN_INO;
-> +	unsigned long flags;
-> +
-> +	if (WARN_ON(id < 0))
-> +		return;
-> +
-> +	spin_lock_irqsave(&ns_lock, flags);
-> +	idr_remove(&ns_idr, id);
-> +	spin_unlock_irqrestore(&ns_lock, flags);
-> +}
+It's also used to prevent starting overlapping async DIO writes to the cache.
 
-xa_erase_irqsave();
+See fscache_read_done(), where it's set to cover writing what we've just read
+from the server to the cache, and afs_write_back_from_locked_page(), where
+it's set to cover writing the data to be written back to the cache.
 
-> +
-> +/*
-> + * This returns ns with inum greater than @id or NULL.
-> + * @id is updated to refer the ns inum.
-> + */
-> +struct ns_common *ns_get_next(unsigned int *id)
-> +{
-> +	struct ns_common *ns;
-> +
-> +	if (*id < PROC_NS_MIN_INO - 1)
-> +		*id = PROC_NS_MIN_INO - 1;
-> +
-> +	*id += 1;
-> +	*id -= PROC_NS_MIN_INO;
-> +
-> +	rcu_read_lock();
-> +	do {
-> +		ns = idr_get_next(&ns_idr, id);
-> +		if (!ns)
-> +			break;
-
-xa_find_after();
-
-You'll want a temporary unsigned long to work with ...
-
-> +		if (!refcount_inc_not_zero(&ns->count)) {
-> +			ns = NULL;
-> +			*id += 1;
-
-you won't need this increment.
+David
 
