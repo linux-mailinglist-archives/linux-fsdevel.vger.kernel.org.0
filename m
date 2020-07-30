@@ -2,89 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D8D8232C44
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 09:10:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 950EC232F2E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 11:06:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbgG3HKM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 03:10:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43978 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726133AbgG3HKM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 03:10:12 -0400
-Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67BECC061794;
-        Thu, 30 Jul 2020 00:10:12 -0700 (PDT)
-From:   Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1596093010;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+w/sK1SsZKUn1Dn3lJ80Y6FqshMKdUhZKeHK5jUWI9U=;
-        b=ualbdPWSrWD9PSFYMBEowro0ByFP1H1D4BeTAwCZW4ISWnwsM5iMmiNENi5qqV4RjOyw/x
-        R1oSCVNNteKIA5s1lUB6/vMdWwAkQ8ZAgavxGnttNkEkVQZ8vzdPCRQDFw0uG0ONKiZlGS
-        T2rkCJcl+kcF9dsal0D6S9BuNjC7Yyd6EKfovGsM5vN8uqWQSEkLSmDkElzI4eCmzcW8TK
-        BsHWMgLtB/HX1A4e7Ny72q/tomkBWw3SdExv+1Rdg7B779+JlgSgAu4u0rF7y9qddw00IJ
-        V25WpzpgjaDxONHNpVkEuN9o1Segs20XrxpK6j4H31qpW7eWtITiyzhxo1yiRw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1596093010;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+w/sK1SsZKUn1Dn3lJ80Y6FqshMKdUhZKeHK5jUWI9U=;
-        b=pzTikaBTF7mRs6nV0Yky0Nu4FOX/qXu1LiyRtHFUpxCVd5vZMZPgxyN+t23SxBmvm3qe+A
-        Bozdd5Yp3DDSWBCA==
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 15/23] seq_file: switch over direct seq_read method calls to seq_read_iter
-In-Reply-To: <20200729205919.GB1236929@ZenIV.linux.org.uk>
-References: <20200707174801.4162712-1-hch@lst.de> <20200707174801.4162712-16-hch@lst.de> <87eep9rgqu.fsf@nanos.tec.linutronix.de> <20200729205919.GB1236929@ZenIV.linux.org.uk>
-Date:   Thu, 30 Jul 2020 09:10:10 +0200
-Message-ID: <87eeota371.fsf@nanos.tec.linutronix.de>
+        id S1728959AbgG3JGY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 05:06:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42144 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728528AbgG3JGX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 30 Jul 2020 05:06:23 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFDC92072A;
+        Thu, 30 Jul 2020 09:06:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596099983;
+        bh=ieC3UQSH9xTQQlFP1mBTpQK8Jaet0JuMdqnPvTiLzSc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z/OlMNCjgJjVCDEAUFFVbS7j9qnE79NsrCIar3YE+oLzkykZo4SyLPjtjBmvhhkcD
+         T9PkgtjWLgbnsiDPD6gD6YwuUd+7hajjK66mABoLrTUlc/yFV744DxvWyv+/e12Zv2
+         o7cXTtiuU4bHGqJbB2DKVrNBS9iI30MBTfDZpeMY=
+Date:   Thu, 30 Jul 2020 11:06:12 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     madvenka@linux.microsoft.com
+Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org
+Subject: Re: [PATCH v1 2/4] [RFC] x86/trampfd: Provide support for the
+ trampoline file descriptor
+Message-ID: <20200730090612.GA900546@kroah.com>
+References: <aefc85852ea518982e74b233e11e16d2e707bc32>
+ <20200728131050.24443-1-madvenka@linux.microsoft.com>
+ <20200728131050.24443-3-madvenka@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200728131050.24443-3-madvenka@linux.microsoft.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
-> On Fri, Jul 17, 2020 at 11:09:13PM +0200, Thomas Gleixner wrote:
->> 
->> Needs some thought and maybe some cocci help from Julia, but that's way
->> better than this brute force sed thing which results in malformed crap
->> like this:
->> 
->> static const struct file_operations debug_stats_fops = {
->> 	.open		= debug_stats_open,
->> 	.read_iter		= seq_read_iter,
->> 	.llseek		= seq_lseek,
->> 	.release	= single_release,
->> };
->> 
->> and proliferates the copy and paste voodoo programming.
->
-> Better copy and paste than templates, IMO; at least the former is
-> greppable; fucking DEFINE_..._ATRIBUTE is *NOT*, especially due
-> to the use of ##.
+On Tue, Jul 28, 2020 at 08:10:48AM -0500, madvenka@linux.microsoft.com wrote:
+> +EXPORT_SYMBOL_GPL(trampfd_valid_regs);
 
-Copy and paste itself is not the issue, but once the copy and paste orgy
-starts you end up with more subtle bugs and silly differences than
-copies. I spent enough time cleaning such crap up just to figure out
-that once you've finished a full tree sweep you can start over.
+Why are all of these exported?  I don't see a module user in this
+series, or did I miss it somehow?
 
-grep for these things is a nuisance, but it's not rocket science to
-figure it out. I rather have to figure that out than staring at a
-gazillion of broken implementations.
+EXPORT_SYMBOL* is only needed for symbols to be used by modules, not by
+code that is built into the kernel.
 
-Thanks,
+thanks,
 
-        tglx
+greg k-h
