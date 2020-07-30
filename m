@@ -2,239 +2,234 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0353123349A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 16:39:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 032C82334AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 30 Jul 2020 16:42:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729092AbgG3OjQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 30 Jul 2020 10:39:16 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:53237 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726535AbgG3OjQ (ORCPT
+        id S1729685AbgG3OmZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 30 Jul 2020 10:42:25 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:52692 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726873AbgG3OmZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 30 Jul 2020 10:39:16 -0400
-Received: from ip5f5af08c.dynamic.kabel-deutschland.de ([95.90.240.140] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1k19i5-0001C8-BN; Thu, 30 Jul 2020 14:39:05 +0000
-Date:   Thu, 30 Jul 2020 16:39:04 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     viro@zeniv.linux.org.uk, adobriyan@gmail.com, davem@davemloft.net,
-        ebiederm@xmission.com, akpm@linux-foundation.org,
-        areber@redhat.com, serge@hallyn.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 01/23] ns: Add common refcount into ns_common add use it
- as counter for net_ns
-Message-ID: <20200730143904.liappabxaretvah6@wittgenstein>
-References: <159611007271.535980.15362304262237658692.stgit@localhost.localdomain>
- <159611036589.535980.1765795847221907147.stgit@localhost.localdomain>
- <20200730143049.m3isrpwrktxnh7pz@wittgenstein>
- <2f922e05-fd2b-f176-727a-f8b913087891@virtuozzo.com>
+        Thu, 30 Jul 2020 10:42:25 -0400
+Received: from [192.168.254.32] (unknown [47.187.206.220])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 447E220B4908;
+        Thu, 30 Jul 2020 07:42:23 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 447E220B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1596120143;
+        bh=JKjym+PetFsYNW9wkVDAjo/yZX3EUJAVDZIUKswMGaQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=fr+aQ6wg1KgTGw6nIBKQ+VD8DP0JAdoWoTqnBCw0HXWZsTUfyvrUFPowTbotbg6+R
+         PVwyphPu3guW5xqko6YXK0fQawCA7Fnc48ucO0Im672RcBmUhK33lx+YLAS4Ec/fWH
+         sWTg9Z+ywbm24khHImc0gMC6bx02ZKnhzr1M/S3I=
+Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
+References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
+ <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
+From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Message-ID: <2352c2b5-053d-fd33-80b0-4f2175dbb607@linux.microsoft.com>
+Date:   Thu, 30 Jul 2020 09:42:22 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2f922e05-fd2b-f176-727a-f8b913087891@virtuozzo.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 30, 2020 at 05:34:28PM +0300, Kirill Tkhai wrote:
-> On 30.07.2020 17:30, Christian Brauner wrote:
-> > On Thu, Jul 30, 2020 at 02:59:25PM +0300, Kirill Tkhai wrote:
-> >> Currently, every type of namespaces has its own counter,
-> >> which is stored in ns-specific part. Say, @net has
-> >> struct net::count, @pid has struct pid_namespace::kref, etc.
-> >>
-> >> This patchset introduces unified counter for all types
-> >> of namespaces, and converts net namespace to use it first.
-> >>
-> >> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> >> ---
-> >>  include/linux/ns_common.h     |    1 +
-> >>  include/net/net_namespace.h   |   11 ++++-------
-> >>  net/core/net-sysfs.c          |    6 +++---
-> >>  net/core/net_namespace.c      |    6 +++---
-> >>  net/ipv4/inet_timewait_sock.c |    4 ++--
-> >>  net/ipv4/tcp_metrics.c        |    2 +-
-> >>  6 files changed, 14 insertions(+), 16 deletions(-)
-> >>
-> >> diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
-> >> index 5fbc4000358f..27db02ebdf36 100644
-> >> --- a/include/linux/ns_common.h
-> >> +++ b/include/linux/ns_common.h
-> >> @@ -8,6 +8,7 @@ struct ns_common {
-> >>  	atomic_long_t stashed;
-> >>  	const struct proc_ns_operations *ops;
-> >>  	unsigned int inum;
-> >> +	refcount_t count;
-> > 
-> > Hm, I wonder whether it's worth to have this addition be in a separate
-> > patch but probably not and even if there'd be no need to resend.
-> > 
-> > Though I wonder, isn't this missing an include for refcount_t or is
-> > there some header-magic we're doing during pre-processing?
-> 
-> We have to add, I think. I'll resend with #include <linux/refcount.h>
-> in this file. Can I keep your Ack here on resend?
+For some reason my email program is not delivering to all the
+recipients because of some formatting issues. I am resending.
+I apologize. I will try to get this fixed.
 
-Sure.
+Sorry for the delay. I just needed to think about it a little.
+I will respond to your first suggestion in this email. I will
+respond to the others in separate emails if that is alright
+with you.
 
->  
-> > Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > 
-> > Thanks!
-> > Christian
-> > 
-> >>  };
-> >>  
-> >>  #endif
-> >> diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
-> >> index 2ee5901bec7a..cb4b33d7834b 100644
-> >> --- a/include/net/net_namespace.h
-> >> +++ b/include/net/net_namespace.h
-> >> @@ -60,9 +60,6 @@ struct net {
-> >>  	refcount_t		passive;	/* To decide when the network
-> >>  						 * namespace should be freed.
-> >>  						 */
-> >> -	refcount_t		count;		/* To decided when the network
-> >> -						 *  namespace should be shut down.
-> >> -						 */
-> >>  	spinlock_t		rules_mod_lock;
-> >>  
-> >>  	unsigned int		dev_unreg_count;
-> >> @@ -245,7 +242,7 @@ void __put_net(struct net *net);
-> >>  
-> >>  static inline struct net *get_net(struct net *net)
-> >>  {
-> >> -	refcount_inc(&net->count);
-> >> +	refcount_inc(&net->ns.count);
-> >>  	return net;
-> >>  }
-> >>  
-> >> @@ -256,14 +253,14 @@ static inline struct net *maybe_get_net(struct net *net)
-> >>  	 * exists.  If the reference count is zero this
-> >>  	 * function fails and returns NULL.
-> >>  	 */
-> >> -	if (!refcount_inc_not_zero(&net->count))
-> >> +	if (!refcount_inc_not_zero(&net->ns.count))
-> >>  		net = NULL;
-> >>  	return net;
-> >>  }
-> >>  
-> >>  static inline void put_net(struct net *net)
-> >>  {
-> >> -	if (refcount_dec_and_test(&net->count))
-> >> +	if (refcount_dec_and_test(&net->ns.count))
-> >>  		__put_net(net);
-> >>  }
-> >>  
-> >> @@ -275,7 +272,7 @@ int net_eq(const struct net *net1, const struct net *net2)
-> >>  
-> >>  static inline int check_net(const struct net *net)
-> >>  {
-> >> -	return refcount_read(&net->count) != 0;
-> >> +	return refcount_read(&net->ns.count) != 0;
-> >>  }
-> >>  
-> >>  void net_drop_ns(void *);
-> >> diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-> >> index 9de33b594ff2..655a88b0071c 100644
-> >> --- a/net/core/net-sysfs.c
-> >> +++ b/net/core/net-sysfs.c
-> >> @@ -1025,7 +1025,7 @@ net_rx_queue_update_kobjects(struct net_device *dev, int old_num, int new_num)
-> >>  	while (--i >= new_num) {
-> >>  		struct kobject *kobj = &dev->_rx[i].kobj;
-> >>  
-> >> -		if (!refcount_read(&dev_net(dev)->count))
-> >> +		if (!refcount_read(&dev_net(dev)->ns.count))
-> >>  			kobj->uevent_suppress = 1;
-> >>  		if (dev->sysfs_rx_queue_group)
-> >>  			sysfs_remove_group(kobj, dev->sysfs_rx_queue_group);
-> >> @@ -1603,7 +1603,7 @@ netdev_queue_update_kobjects(struct net_device *dev, int old_num, int new_num)
-> >>  	while (--i >= new_num) {
-> >>  		struct netdev_queue *queue = dev->_tx + i;
-> >>  
-> >> -		if (!refcount_read(&dev_net(dev)->count))
-> >> +		if (!refcount_read(&dev_net(dev)->ns.count))
-> >>  			queue->kobj.uevent_suppress = 1;
-> >>  #ifdef CONFIG_BQL
-> >>  		sysfs_remove_group(&queue->kobj, &dql_group);
-> >> @@ -1850,7 +1850,7 @@ void netdev_unregister_kobject(struct net_device *ndev)
-> >>  {
-> >>  	struct device *dev = &ndev->dev;
-> >>  
-> >> -	if (!refcount_read(&dev_net(ndev)->count))
-> >> +	if (!refcount_read(&dev_net(ndev)->ns.count))
-> >>  		dev_set_uevent_suppress(dev, 1);
-> >>  
-> >>  	kobject_get(&dev->kobj);
-> >> diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-> >> index dcd61aca343e..5f658cbedd34 100644
-> >> --- a/net/core/net_namespace.c
-> >> +++ b/net/core/net_namespace.c
-> >> @@ -44,7 +44,7 @@ static struct key_tag init_net_key_domain = { .usage = REFCOUNT_INIT(1) };
-> >>  #endif
-> >>  
-> >>  struct net init_net = {
-> >> -	.count		= REFCOUNT_INIT(1),
-> >> +	.ns.count	= REFCOUNT_INIT(1),
-> >>  	.dev_base_head	= LIST_HEAD_INIT(init_net.dev_base_head),
-> >>  #ifdef CONFIG_KEYS
-> >>  	.key_domain	= &init_net_key_domain,
-> >> @@ -248,7 +248,7 @@ int peernet2id_alloc(struct net *net, struct net *peer, gfp_t gfp)
-> >>  {
-> >>  	int id;
-> >>  
-> >> -	if (refcount_read(&net->count) == 0)
-> >> +	if (refcount_read(&net->ns.count) == 0)
-> >>  		return NETNSA_NSID_NOT_ASSIGNED;
-> >>  
-> >>  	spin_lock(&net->nsid_lock);
-> >> @@ -328,7 +328,7 @@ static __net_init int setup_net(struct net *net, struct user_namespace *user_ns)
-> >>  	int error = 0;
-> >>  	LIST_HEAD(net_exit_list);
-> >>  
-> >> -	refcount_set(&net->count, 1);
-> >> +	refcount_set(&net->ns.count, 1);
-> >>  	refcount_set(&net->passive, 1);
-> >>  	get_random_bytes(&net->hash_mix, sizeof(u32));
-> >>  	net->dev_base_seq = 1;
-> >> diff --git a/net/ipv4/inet_timewait_sock.c b/net/ipv4/inet_timewait_sock.c
-> >> index c411c87ae865..437afe392e66 100644
-> >> --- a/net/ipv4/inet_timewait_sock.c
-> >> +++ b/net/ipv4/inet_timewait_sock.c
-> >> @@ -272,14 +272,14 @@ void inet_twsk_purge(struct inet_hashinfo *hashinfo, int family)
-> >>  				continue;
-> >>  			tw = inet_twsk(sk);
-> >>  			if ((tw->tw_family != family) ||
-> >> -				refcount_read(&twsk_net(tw)->count))
-> >> +				refcount_read(&twsk_net(tw)->ns.count))
-> >>  				continue;
-> >>  
-> >>  			if (unlikely(!refcount_inc_not_zero(&tw->tw_refcnt)))
-> >>  				continue;
-> >>  
-> >>  			if (unlikely((tw->tw_family != family) ||
-> >> -				     refcount_read(&twsk_net(tw)->count))) {
-> >> +				     refcount_read(&twsk_net(tw)->ns.count))) {
-> >>  				inet_twsk_put(tw);
-> >>  				goto restart;
-> >>  			}
-> >> diff --git a/net/ipv4/tcp_metrics.c b/net/ipv4/tcp_metrics.c
-> >> index 279db8822439..39710c417565 100644
-> >> --- a/net/ipv4/tcp_metrics.c
-> >> +++ b/net/ipv4/tcp_metrics.c
-> >> @@ -887,7 +887,7 @@ static void tcp_metrics_flush_all(struct net *net)
-> >>  		pp = &hb->chain;
-> >>  		for (tm = deref_locked(*pp); tm; tm = deref_locked(*pp)) {
-> >>  			match = net ? net_eq(tm_net(tm), net) :
-> >> -				!refcount_read(&tm_net(tm)->count);
-> >> +				!refcount_read(&tm_net(tm)->ns.count);
-> >>  			if (match) {
-> >>  				*pp = tm->tcpm_next;
-> >>  				kfree_rcu(tm, rcu_head);
-> >>
-> >>
-> 
+On 7/28/20 12:31 PM, Andy Lutomirski wrote:
+>> On Jul 28, 2020, at 6:11 AM, madvenka@linux.microsoft.com wrote:
+>>
+>> ﻿From: "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+>>
+>> The kernel creates the trampoline mapping without any permissions. When
+>> the trampoline is executed by user code, a page fault happens and the
+>> kernel gets control. The kernel recognizes that this is a trampoline
+>> invocation. It sets up the user registers based on the specified
+>> register context, and/or pushes values on the user stack based on the
+>> specified stack context, and sets the user PC to the requested target
+>> PC. When the kernel returns, execution continues at the target PC.
+>> So, the kernel does the work of the trampoline on behalf of the
+>> application.
+> This is quite clever, but now I’m wondering just how much kernel help
+> is really needed. In your series, the trampoline is an non-executable
+> page.  I can think of at least two alternative approaches, and I'd
+> like to know the pros and cons.
+>
+> 1. Entirely userspace: a return trampoline would be something like:
+>
+> 1:
+> pushq %rax
+> pushq %rbc
+> pushq %rcx
+> ...
+> pushq %r15
+> movq %rsp, %rdi # pointer to saved regs
+> leaq 1b(%rip), %rsi # pointer to the trampoline itself
+> callq trampoline_handler # see below
+>
+> You would fill a page with a bunch of these, possibly compacted to get
+> more per page, and then you would remap as many copies as needed.  The
+> 'callq trampoline_handler' part would need to be a bit clever to make
+> it continue to work despite this remapping.  This will be *much*
+> faster than trampfd. How much of your use case would it cover?  For
+> the inverse, it's not too hard to write a bit of asm to set all
+> registers and jump somewhere.
+
+Let me state my understanding of what you are suggesting. Correct me if
+I get anything wrong. If you don't mind, I will also take the liberty
+of generalizing and paraphrasing your suggestion.
+
+The goal is to create two page mappings that are adjacent to each other:
+
+- a code page that contains template code for a trampoline. Since the
+  template code would tend to be small in size, pack as many of them
+  as possible within a page to conserve memory. In other words, create
+  an array of the template code fragments. Each element in the array
+  would be used for one trampoline instance.
+
+- a data page that contains an array of data elements. Corresponding
+  to each code element in the code page, there would be a data element
+  in the data page that would contain data that is specific to a
+  trampoline instance.
+
+- Code will access data using PC-relative addressing.
+
+The management of the code pages and allocation for each trampoline
+instance would all be done in user space.
+
+Is this the general idea?
+
+Creating a code page
+----------------------------
+
+We can do this in one of the following ways:
+- Allocate a writable page at run time, write the template code into
+  the page and have execute permissions on the page.
+
+- Allocate a writable page at run time, write the template code into
+  the page and remap the page with just execute permissions.
+
+- Allocate a writable page at run time, write the template code into
+  the page, write the page into a temporary file and map the file with
+  execute permissions.
+
+- Include the template code in a code page at build time itself and
+  just remap the code page each time you need a code page.
+
+Pros and Cons
+-------------------
+
+As long as the OS provides the functionality to do this and the security
+subsystem in the OS allows the actions, this is totally feasible. If not,
+we need something like trampfd.
+
+As Floren mentioned, libffi does implement something like this for MACH.
+
+In fact, in my libffi changes, I use trampfd only after all the other methods
+have failed because of security settings.
+
+But the above approach only solves the problem for this simple type of
+trampoline. It does not provide a framework for addressing more complex types
+or even other forms of dynamic code.
+
+Also, each application would need to implement this solution for itself
+as opposed to relying on one implementation provided by the kernel.
+
+Trampfd-based solution
+-------------------------------
+
+I outlined an enhancement to trampfd in a response to David Laight. In this
+enhancement, the kernel is the one that would set up the code page.
+
+The kernel would call an arch-specific support function to generate the
+code required to load registers, push values on the stack and jump to a PC
+for a trampoline instance based on its current context. The trampoline
+instance data could be baked into the code.
+
+My initial idea was to only have one trampoline instance per page. But I
+think I can implement multiple instances per page. I just have to manage
+the trampfd file private data and VMA private data accordingly to map an
+element in a code page to its trampoline object.
+
+The two approaches are similar except for the detail about who sets up
+and manages the trampoline pages. In both approaches, the performance problem
+is addressed. But trampfd can be used even when security settings are
+restrictive.
+
+Is my solution acceptable?
+
+A couple of things
+------------------------
+
+- In the current trampfd implementation, no physical pages are actually
+  allocated. It is just a virtual mapping. From a memory footprint
+  perspective, this is good. May be, we can let the user specify if
+  he wants a fast trampoline that consumes memory or a slow one that doesn't?
+
+- In the future, we may define additional types that need the kernel to do
+  the job. Examples:
+
+    - The kernel may have a trampoline type for which it is not willing
+       or able to generate code
+
+    - The kernel could emulate dynamic code for the user
+
+     - The kernel could interpret dynamic code for the user
+
+     - The kernel could allow the user to access some kernel functionality
+        using the framework
+
+  In such cases, there isn't any physical code page that gets mapped into
+  the user address space. We need the kernel to handle the address fault
+  and provide the functionality.
+
+One question for the reviewers
+----------------------------------------
+
+Do you think that the file descriptor based approach is fine? Or, does this
+need a regular system call based implementation? There are some advantages
+with a regular system call:
+
+- We don't consume file descriptors. E.g., in libffi, we have to
+  keep the file descriptor open for a closure until the closure
+  is freed.
+
+- Trampoline operations can be performed based on the trampoline
+  address instead of an fd.
+
+- Sharing of objects across processes can be implemented through
+  a regular ID based method rather than sending the file descriptor
+  over a unix domain socket.
+
+- Shared objects can be persistent.
+
+- An fd based API does structure parsing in read()/write() calls
+  to obtain arguments. With a regular system call, that is not
+  necessary.
+
+Please let me know your thoughts.
+
+Madhavan
