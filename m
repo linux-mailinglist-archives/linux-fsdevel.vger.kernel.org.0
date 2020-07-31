@@ -2,184 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DFC4C234951
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 18:44:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9107C2349B4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 18:53:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732140AbgGaQoF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jul 2020 12:44:05 -0400
-Received: from m15111.mail.126.com ([220.181.15.111]:44032 "EHLO
-        m15111.mail.126.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729074AbgGaQoF (ORCPT
+        id S1732892AbgGaQxV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jul 2020 12:53:21 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:46164 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728958AbgGaQxV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jul 2020 12:44:05 -0400
-X-Greylist: delayed 1922 seconds by postgrey-1.27 at vger.kernel.org; Fri, 31 Jul 2020 12:44:01 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=eWSI7
-        L8NGq/27v/T6lDLZQTISBFxShctwfHHbupILPw=; b=qTCDi5DHFwHcZrKqLpf2a
-        j7v+1QUAZke/Rm8d+7cQnzgAKFyvy2IYZ6oGugY4xEHzruyTdE6voPY3ZJL9z15C
-        dmn9JeDjPKT78uudy9Ye6733lPZzZFG4maT+VPX/Vf2CRngnviFZ1I3ymqKduAMF
-        ajBpExJvLuZ5XYSqNdvP6w=
-Received: from 192.168.137.249 (unknown [112.10.84.202])
-        by smtp1 (Coremail) with SMTP id C8mowACHv0dxQiRfuzR5IA--.15697S3;
-        Sat, 01 Aug 2020 00:10:28 +0800 (CST)
-From:   Xianting Tian <xianting_tian@126.com>
-To:     viro@zeniv.linux.org.uk, tytso@mit.edu, adilger.kernel@dilger.ca
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: [PATCH] ext4: move buffer_mapped() to proper position
-Date:   Fri, 31 Jul 2020 12:10:25 -0400
-Message-Id: <1596211825-8750-1-git-send-email-xianting_tian@126.com>
-X-Mailer: git-send-email 1.8.3.1
+        Fri, 31 Jul 2020 12:53:21 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k1YHW-003sY1-8H; Fri, 31 Jul 2020 10:53:18 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k1YHV-0000kf-F7; Fri, 31 Jul 2020 10:53:18 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>, Pavel Machek <pavel@ucw.cz>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+References: <87h7tsllgw.fsf@x220.int.ebiederm.org>
+        <CAHk-=wj34Pq1oqFVg1iWYAq_YdhCyvhyCYxiy-CG-o76+UXydQ@mail.gmail.com>
+        <87d04fhkyz.fsf@x220.int.ebiederm.org>
+        <87h7trg4ie.fsf@x220.int.ebiederm.org>
+        <CAHk-=wj+ynePRJC3U5Tjn+ZBRAE3y7=anc=zFhL=ycxyKP8BxA@mail.gmail.com>
+        <878sf16t34.fsf@x220.int.ebiederm.org>
+        <87pn8c1uj6.fsf_-_@x220.int.ebiederm.org>
+        <20200731062804.GA26171@redhat.com>
+Date:   Fri, 31 Jul 2020 11:50:07 -0500
+In-Reply-To: <20200731062804.GA26171@redhat.com> (Oleg Nesterov's message of
+        "Fri, 31 Jul 2020 08:28:05 +0200")
+Message-ID: <87sgd7zl1c.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: C8mowACHv0dxQiRfuzR5IA--.15697S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxtw17Aw1furW7CF1fCryxGrg_yoW7tF47pr
-        nIkFWjgF4kJ3W29rsFvF4Yq3WrX3ZxZFyxWrnagr47ZFnrGF1aqryUtF48GFW5Xws7X342
-        qr15Gw18Kw1rJaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jw-B_UUUUU=
-X-Originating-IP: [112.10.84.202]
-X-CM-SenderInfo: h0ld03plqjs3xldqqiyswou0bp/1tbiwRRypFpD+6DxHgAAsu
+Content-Type: text/plain
+X-XM-SPF: eid=1k1YHV-0000kf-F7;;;mid=<87sgd7zl1c.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19AdY/PVTkYjPBRhTuY/YJb2t9RCuO9C/M=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,XMSubLong
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4982]
+        *  0.7 XMSubLong Long Subject
+        *  1.5 TR_Symld_Words too many words that have symbols inside
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Oleg Nesterov <oleg@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 404 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 11 (2.8%), b_tie_ro: 10 (2.5%), parse: 1.09
+        (0.3%), extract_message_metadata: 4.1 (1.0%), get_uri_detail_list:
+        1.84 (0.5%), tests_pri_-1000: 3.5 (0.9%), tests_pri_-950: 1.19 (0.3%),
+        tests_pri_-900: 1.07 (0.3%), tests_pri_-90: 97 (24.0%), check_bayes:
+        96 (23.6%), b_tokenize: 7 (1.8%), b_tok_get_all: 7 (1.6%),
+        b_comp_prob: 2.1 (0.5%), b_tok_touch_all: 76 (18.8%), b_finish: 0.90
+        (0.2%), tests_pri_0: 259 (64.1%), check_dkim_signature: 0.55 (0.1%),
+        check_dkim_adsp: 2.5 (0.6%), poll_dns_idle: 0.93 (0.2%), tests_pri_10:
+        2.6 (0.6%), tests_pri_500: 14 (3.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC][PATCH] exec: Conceal the other threads from wakeups during exec
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As you know, commit a17712c8 has added below code to aviod a
-crash( 'BUG_ON(!buffer_mapped(bh))' in submit_bh_wbc) when
-device hot-removed(a physical device is unpluged from pcie slot
-or a nbd device's network is shutdown).
-static int ext4_commit_super():
- 	if (!sbh || block_device_ejected(sb))
- 		return error;
-+
-+	/*
-+	 * The superblock bh should be mapped, but it might not be if the
-+	 * device was hot-removed. Not much we can do but fail the I/O.
-+	 */
-+	if (!buffer_mapped(sbh))
-+		return error;
+Oleg Nesterov <oleg@redhat.com> writes:
 
-And the call trace, which leads to the crash, as below:
-ext4_commit_super()
-  __sync_dirty_buffer()
-    submit_bh()
-      submit_bh_wbc()
-        BUG_ON(!buffer_mapped(bh));
+> Eric, I won't comment the intent, but I too do not understand this idea.
+>
+> On 07/30, Eric W. Biederman wrote:
+>>
+>> [This change requires more work to handle TASK_STOPPED and TASK_TRACED]
+>
+> Yes. And it is not clear to me how can you solve this.
 
-But recently we met the same crash(with very low probability) when
-device hot-removed even though the kernel already contained
-above exception protection code. Still, the crash is caused by
-'BUG_ON(!buffer_mapped(bh))' in submit_bh_wbc(), and the same
-call trace as below.
+I was imagining something putting TASK_STOPPED and TASK_TRACED in a loop
+that verified they should be in that state before exiting so they could
+handle spurious wake ups.
 
-As my understanding and below code，there are still some more
-codes needs to run between 'buffer_mapped(sbh)'(which is added
-by commit a17712c8) and 'BUG_ON(!buffer_mapped(bh))' in
-submit_bh_wbc(), especially lock_buffer is called two times(sometimes,
-it may take more times to get the lock). So when do the test of
-device hot-remove, there is low probability that the sbh is mapped
-when executing 'buffer_mapped(sbh)'(which is added by commit a17712c8)
-but sbh is not mapped when executing 'BUG_ON(!buffer_mapped(bh))'
-in submit_bh_wbc().
-Code path:
-ext4_commit_super
-    judge if 'buffer_mapped(sbh)' is false, return <== commit a17712c8
-          lock_buffer(sbh)
-          ...
-          unlock_buffer(sbh)
-               __sync_dirty_buffer(sbh,...
-                    lock_buffer(sbh)
-                        judge if 'buffer_mapped(sbh))' is false, return <== added by this patch
-                            submit_bh(...,sbh)
-                                submit_bh_wbc(...,sbh,...)
+There are a many subtlties in that code, especially in the conversion
+fo TASK_STOPPED to TASK_TRACED.  So I suspect something more would be
+required but I have not looked yet to see how tricky that would be.
 
-This patch is to move the check of 'buffer_mapped(sbh)' to the place just
-before calling 'BUG_ON(!buffer_mapped(bh))' in submit_bh_wbc().
+>> [This adds a new lock ordering dependency siglock -> pi_lock -> rq_lock ]
+>
+> Not really, ttwu() can be safely called with siglock held and it takes
+> pi_lock + rq_lock. Say, signal_wake_up().
 
-[100722.966497] kernel BUG at fs/buffer.c:3095! <== BUG_ON(!buffer_mapped(bh))' in submit_bh_wbc()
-[100722.966503] invalid opcode: 0000 [#1] SMP
-[100722.966566] task: ffff8817e15a9e40 task.stack: ffffc90024744000
-[100722.966574] RIP: 0010:submit_bh_wbc+0x180/0x190
-[100722.966575] RSP: 0018:ffffc90024747a90 EFLAGS: 00010246
-[100722.966576] RAX: 0000000000620005 RBX: ffff8818a80603a8 RCX: 0000000000000000
-[100722.966576] RDX: ffff8818a80603a8 RSI: 0000000000020800 RDI: 0000000000000001
-[100722.966577] RBP: ffffc90024747ac0 R08: 0000000000000000 R09: ffff88207f94170d
-[100722.966578] R10: 00000000000437c8 R11: 0000000000000001 R12: 0000000000020800
-[100722.966578] R13: 0000000000000001 R14: 000000000bf9a438 R15: ffff88195f333000
-[100722.966580] FS:  00007fa2eee27700(0000) GS:ffff88203d840000(0000) knlGS:0000000000000000
-[100722.966580] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[100722.966581] CR2: 0000000000f0b008 CR3: 000000201a622003 CR4: 00000000007606e0
-[100722.966582] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[100722.966583] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[100722.966583] PKRU: 55555554
-[100722.966583] Call Trace:
-[100722.966588]  __sync_dirty_buffer+0x6e/0xd0
-[100722.966614]  ext4_commit_super+0x1d8/0x290 [ext4]
-[100722.966626]  __ext4_std_error+0x78/0x100 [ext4]
-[100722.966635]  ? __ext4_journal_get_write_access+0xca/0x120 [ext4]
-[100722.966646]  ext4_reserve_inode_write+0x58/0xb0 [ext4]
-[100722.966655]  ? ext4_dirty_inode+0x48/0x70 [ext4]
-[100722.966663]  ext4_mark_inode_dirty+0x53/0x1e0 [ext4]
-[100722.966671]  ? __ext4_journal_start_sb+0x6d/0xf0 [ext4]
-[100722.966679]  ext4_dirty_inode+0x48/0x70 [ext4]
-[100722.966682]  __mark_inode_dirty+0x17f/0x350
-[100722.966686]  generic_update_time+0x87/0xd0
-[100722.966687]  touch_atime+0xa9/0xd0
-[100722.966690]  generic_file_read_iter+0xa09/0xcd0
-[100722.966694]  ? page_cache_tree_insert+0xb0/0xb0
-[100722.966704]  ext4_file_read_iter+0x4a/0x100 [ext4]
-[100722.966707]  ? __inode_security_revalidate+0x4f/0x60
-[100722.966709]  __vfs_read+0xec/0x160
-[100722.966711]  vfs_read+0x8c/0x130
-[100722.966712]  SyS_pread64+0x87/0xb0
-[100722.966716]  do_syscall_64+0x67/0x1b0
-[100722.966719]  entry_SYSCALL64_slow_path+0x25/0x25
+Good point.
 
-Signed-off-by: Xianting Tian <xianting_tian@126.com>
----
- fs/buffer.c     | 9 +++++++++
- fs/ext4/super.c | 7 -------
- 2 files changed, 9 insertions(+), 7 deletions(-)
+>> +int make_task_wakekill(struct task_struct *p)
+>> +{
+>> +	unsigned long flags;
+>> +	int cpu, success = 0;
+>> +	struct rq_flags rf;
+>> +	struct rq *rq;
+>> +	long state;
+>> +
+>> +	/* Assumes p != current */
+>> +	preempt_disable();
+>> +	/*
+>> +	 * If we are going to change a thread waiting for CONDITION we
+>> +	 * need to ensure that CONDITION=1 done by the caller can not be
+>> +	 * reordered with p->state check below. This pairs with mb() in
+>> +	 * set_current_state() the waiting thread does.
+>> +	 */
+>> +	raw_spin_lock_irqsave(&p->pi_lock, flags);
+>> +	smp_mb__after_spinlock();
+>> +	state = p->state;
+>> +
+>> +	/* FIXME handle TASK_STOPPED and TASK_TRACED */
+>> +	if ((state == TASK_KILLABLE) ||
+>> +	    (state == TASK_INTERRUPTIBLE)) {
+>> +		success = 1;
+>> +		cpu = task_cpu(p);
+>> +		rq = cpu_rq(cpu);
+>> +		rq_lock(rq, &rf);
+>> +		p->state = TASK_WAKEKILL;
+>
+> You can only do this if the task was already deactivated. Just suppose it
+> is preempted or does something like
+>
+> 	set_current_sate(TASK_INTERRUPTIBLE);
+>
+> 	if (CONDITION) {
+> 		// make_task_wakekill() sets state = TASK_WAKEKILL
+> 		__set_current_state(TASK_RUNNING);
+> 		return;
+> 	}
+>
+> 	schedule();
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 64fe82e..75a8849 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -3160,6 +3160,15 @@ int __sync_dirty_buffer(struct buffer_head *bh, int op_flags)
- 	WARN_ON(atomic_read(&bh->b_count) < 1);
- 	lock_buffer(bh);
- 	if (test_clear_buffer_dirty(bh)) {
-+		/*
-+		 * The bh should be mapped, but it might not be if the
-+		 * device was hot-removed. Not much we can do but fail the I/O.
-+		 */
-+		if (!buffer_mapped(bh)) {
-+			unlock_buffer(bh);
-+			return -EIO;
-+		}
-+
- 		get_bh(bh);
- 		bh->b_end_io = end_buffer_write_sync;
- 		ret = submit_bh(REQ_OP_WRITE, op_flags, bh);
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 330957e..1c22044 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5171,13 +5171,6 @@ static int ext4_commit_super(struct super_block *sb, int sync)
- 		return error;
- 
- 	/*
--	 * The superblock bh should be mapped, but it might not be if the
--	 * device was hot-removed. Not much we can do but fail the I/O.
--	 */
--	if (!buffer_mapped(sbh))
--		return error;
--
--	/*
- 	 * If the file system is mounted read-only, don't update the
- 	 * superblock write time.  This avoids updating the superblock
- 	 * write time when we are mounting the root file system
--- 
-1.8.3.1
+You are quite right.
+
+So that bit of code would need to be:
+	if (!task->on_rq)
+        	goto out;
+	if ((state == TASK_KILLABLE) ||
+            (state == TASK_INTERRUPTIBLE)) {
+            ...
+
+Eric
 
