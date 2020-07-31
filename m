@@ -2,115 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F14B234C12
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 22:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C88C234DD8
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Aug 2020 01:02:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbgGaUSq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jul 2020 16:18:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726588AbgGaUSp (ORCPT
+        id S1726535AbgGaXCU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jul 2020 19:02:20 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50860 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbgGaXCU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jul 2020 16:18:45 -0400
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCFD8C061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jul 2020 13:18:45 -0700 (PDT)
-Received: by mail-io1-xd42.google.com with SMTP id v6so17628382iow.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jul 2020 13:18:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=B2TF1ffdPSO7uW3sFl++Y0S3B01EUc1/65nVQ0Oovr8=;
-        b=AFw9o3XhditiNNNw+LVqDWvJIGg51sRVIHhF2ovYMJaqUieJGjdLhwTGW49u/QdYaz
-         iuxBXMVM9SNN3NLkMBm96+OQRkTCiCDwt2dVjSq97t2V/poRIVM6XgAF260fY9PcHRIV
-         WQcvKthHnNvPQViZ5fdZiFyu7Oluw6DMq8fsOkvsfCrzw8pGHTxgSIrv6Wiaqj1CcI81
-         UWuaNvC8/6/NJZ2Nn7Z61gdiTxU5BMKKHYNUArxB/sRN5sgaI3iE9MWvisRpIvP6tX72
-         1qVIEaI1MoUbh4RmvljEUi5lPRZPvTKeWPPIDVSWJWRO2CtFzC6ALp/Wgf+B72wmcZ9T
-         NxzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=B2TF1ffdPSO7uW3sFl++Y0S3B01EUc1/65nVQ0Oovr8=;
-        b=gkIkaNk1Ayx6Kq4MysewyS58Rk/MEdvUrvFJ7HB7dkWpdxcFvRg91uEsX2ulPwrDpl
-         V6ZnCChUj0BYVGadM3Iq8aHMq1dB1sH+BbEXU5M/8+NUbC6QGhzXKedM0KP0szvqsgPz
-         8LXCi600Vz+VWUpcbJLiDXtO5wFGoTPRh4v0fK6R/MlQNQ8Ilp5QSgvk2argvLMxMkgJ
-         CHEiG3ufI/xrjVRl/COo7fAgVv3cHyq5Od+LDoC752etEjR+NplDlymzgVDdE+6Ls94L
-         EPPQfYm6Kp7sPefSQP62l7y/w2yGFYH4/zh/PWVDEBVdZywSzFu6tOz5yaOxRWq6Oo6a
-         QffQ==
-X-Gm-Message-State: AOAM532PXaUfSoAFOHl9lFAOuCs9Z9dBTugKA1Sf7p6qmp+iNuDMA6QJ
-        nVWCYZhzVs3lGhCMpICB0Wdv4BHHXgdNuLwGhQt9/wmzSmI=
-X-Google-Smtp-Source: ABdhPJwgrDQgcss2Udl7XHMaOk7HbeMGacQG+AfIF9nW3jK6Vr6qoYS4FLvsW1xt/b8gJ1t2QA0M4qTPqzvES5r9PUg=
-X-Received: by 2002:a05:6602:2d43:: with SMTP id d3mr3613076iow.39.1596226721794;
- Fri, 31 Jul 2020 13:18:41 -0700 (PDT)
+        Fri, 31 Jul 2020 19:02:20 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06VMvUaj003670;
+        Fri, 31 Jul 2020 23:02:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=Ysn7B1AJN6hApgHtkqVJAM9nKKIap1U+4nGN5nEJsQc=;
+ b=B3QoGt/EoLaLDGBx76tbmKAeBH/L+O78iqdH0B0p9B0d0usiDpznoBbslJUSWogzFWPd
+ EBdXpBECeKtI6qgMW85E2xHAo14maIE1AI4Z4S/hrqe7NaWWzEg6aJ7eR7dKVr3u8zLE
+ 8wF60SVfRa+UHNJybHhNdzO/6CGs5CWs+RxFKR++zdQDf8689/x6mK2wW4o3PeXj6eZq
+ 299BLzZD7FAJyUdH/XZtZUSNyphmW4F0/AN1kh8wmEcZM8QETFCPUgBhm95AR/kVV+T4
+ k5xH4hqP3ies9HVNdwGU759MDQIWrdH0JiapTtbT3NMBwaUWsDJzvwxzOgwdG5DdvWZD lg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 32hu1jujua-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 31 Jul 2020 23:02:13 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06VMqj8N046635;
+        Fri, 31 Jul 2020 23:02:12 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 32mf715gcu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 31 Jul 2020 23:02:12 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 06VN27ia008571;
+        Fri, 31 Jul 2020 23:02:07 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 31 Jul 2020 16:02:06 -0700
+Date:   Fri, 31 Jul 2020 16:02:06 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [ANNOUNCE] xfs-linux: iomap-5.9-merge updated to 66143873c6a0
+Message-ID: <20200731230206.GA67805@magnolia>
 MIME-Version: 1.0
-From:   =?UTF-8?B?Q8Opc2FyIERI?= <cesardhg@gmail.com>
-Date:   Fri, 31 Jul 2020 13:18:30 -0700
-Message-ID: <CAMj1_kTBDmGgSYPhxThFAr7vO4faSuHz8TwjVrPtXpLN0sRBKg@mail.gmail.com>
-Subject: Device "minor overflow" behavior differences in register_chrdev_region
- vs alloc_chrdev_region
-To:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9699 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=2 spamscore=0
+ mlxlogscore=999 adultscore=0 malwarescore=0 mlxscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007310163
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9699 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 suspectscore=2 bulkscore=0 priorityscore=1501
+ phishscore=0 mlxlogscore=999 lowpriorityscore=0 impostorscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007310163
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Hi folks,
 
-I tried my best to be concise. It's my first time reaching out to a
-maintainer so if this is not the proper channel for this type of thing
-please correct me.
+The iomap-5.9-merge branch of the xfs-linux repository at:
 
-I'm trying to learn about device drivers from
-https://lwn.net/Kernel/LDD3/, and  I read that a large-enough
-requested minor range might spill over to the next major number when
-using register_chrdev_region (chapter 3 page 45)
+	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-I decided to verify this claim on a toy module (basic c sample module
-and makefile):
-https://github.com/cdhg/module-minor-spill
+has just been updated.
 
-The code requests 2 devices starting from the last available minor,
-which overflows by one.
-The module will use alloc_chrdev_region or register_chrdev_region
-depending on whether 'alloc' was #defined.
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.  This was one last rebase to pick up a few more late
+reviews on the head commit in the branch.
 
-register_chrdev_region just works, and I can see two major entries in
-/proc/devices for "mydevice" (with the code above, that would be
-majors 400 and 401 if available). The unregister code cleanly removes
-those two entries as well.
+The new head of the iomap-5.9-merge branch is commit:
 
-alloc_chrdev_region, however, fails on my recent (5.4) kernel with:
-CHRDEV "mydevice" minor range requested (1048575-1048576) is out of
-range of maximum range (0-1048575) for a single major
+66143873c6a0 iomap: fall back to buffered writes for invalidation failures
 
-Which led me to this patch from just last year:
-https://lore.kernel.org/patchwork/patch/1042784/
+New Commits:
 
-If I'm reading this correctly, the patch claims that
-register_chrdev_region was already doing such a check, so it would
-make sense to add the same check to alloc_chrdev_region via
-__register_chrdev_region.
+Andreas Gruenbacher (1):
+      [d1b4f507d71d] iomap: Make sure iomap_end is called after iomap_begin
 
-But register_chrdev_region seems to handle this cleanly, as the book
-I'm reading suggests. I don't understand why alloc_chrdev_region was
-modified to fail then.
+Christoph Hellwig (2):
+      [00dccd7bf406] xfs: use ENOTBLK for direct I/O to buffered I/O fallback
+      [66143873c6a0] iomap: fall back to buffered writes for invalidation failures
 
-I tried on an earlier kernel (4.19) that I believe doesn't have this
-patch, and the same call to alloc_chrdev_region succeeded. However, I
-did notice only one major appears on /proc/devices and that
-unregistering does not seem to make the entry go away. So perhaps that
-was already broken in another way?
+Dave Chinner (1):
+      [6fa1c383e783] iomap: Only invalidate page cache pages on direct IO writes
 
-Are these differences in behavior intentional? It almost seems like
-the above patch introduced a bug (or partially fixed an older bug) but
-I suppose it's likely that I just misunderstand something. I also
-suppose nobody's exercising the overflowing behavior so it's likely
-nobody has cared even if it was a real bug. At least the current
-behavior fails which seems cleaner than passing and not letting me
-unregister later. But register_chrdev_region just works everywhere, so
-this felt like a bug. I wasn't able to find any reports about this
-either.
 
-Thanks,
--Cesar
+Code Diffstat:
+
+ fs/ext4/file.c       |  2 ++
+ fs/gfs2/file.c       |  3 ++-
+ fs/iomap/apply.c     | 13 +++++++++----
+ fs/iomap/direct-io.c | 37 +++++++++++++++++++++----------------
+ fs/iomap/trace.h     |  1 +
+ fs/xfs/xfs_file.c    |  8 ++++----
+ fs/zonefs/super.c    |  7 +++++--
+ 7 files changed, 44 insertions(+), 27 deletions(-)
