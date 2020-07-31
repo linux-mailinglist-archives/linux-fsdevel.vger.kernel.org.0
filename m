@@ -2,182 +2,339 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11B71233FA3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 09:01:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A78D233FBC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 09:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731648AbgGaHBc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jul 2020 03:01:32 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:19692 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731384AbgGaHBb (ORCPT
+        id S1731511AbgGaHI5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jul 2020 03:08:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39346 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731367AbgGaHI4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jul 2020 03:01:31 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 06V6WCoY059876;
-        Fri, 31 Jul 2020 03:01:17 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32mc8wk8nc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Jul 2020 03:01:17 -0400
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 06V6oCOo103706;
-        Fri, 31 Jul 2020 03:01:16 -0400
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 32mc8wk8mh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Jul 2020 03:01:16 -0400
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 06V70YTs023783;
-        Fri, 31 Jul 2020 07:01:14 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma02fra.de.ibm.com with ESMTP id 32gcq0v9c4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 31 Jul 2020 07:01:14 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 06V71BHi25362690
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 31 Jul 2020 07:01:11 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 614075205A;
-        Fri, 31 Jul 2020 07:01:11 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.33.112])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 1B13252079;
-        Fri, 31 Jul 2020 07:01:08 +0000 (GMT)
-Subject: Re: [PATCH 3/3] iomap: fall back to buffered writes for invalidation
- failures
-To:     Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>
-Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>
-References: <20200721183157.202276-1-hch@lst.de>
- <20200721183157.202276-4-hch@lst.de>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Fri, 31 Jul 2020 12:31:08 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Fri, 31 Jul 2020 03:08:56 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67F39C061574;
+        Fri, 31 Jul 2020 00:08:56 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id q76so7057533wme.4;
+        Fri, 31 Jul 2020 00:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Hgf0ZyaqGaOKn5USuc2ZOpRRDGLtIAC8Tr9KyFjHJwE=;
+        b=qzgH58pV3DMb/4Ewr9Yr9X7E9skTZcUoQ60AdF1bBwanjaUFIBvXKfVmPAPCtCTqKl
+         471rJMY99JixEck+lNFPL25W4b28DVGdzLlyvQ0nWgA72T0RLsuQtQrAhpLIadB6bt9/
+         HPFpavfv5pOk86v5hsqCrNEwAuux02YtDtbc5YozL/9mSEZxEsJ3VYKjwapPkByD7bIH
+         EijXJuGlF+s9lz+5MsvcdX4xW1MFOOXQdo8QSowupkEAf0x+z26Lsk39oVp75zXfXDDD
+         qTPSCyt/hqW+WPAkT/WO1u0pe4Js4Qx15pZVAOYswYdAPIx4EBlDVDB38p3Ol+r6NIyj
+         G2jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Hgf0ZyaqGaOKn5USuc2ZOpRRDGLtIAC8Tr9KyFjHJwE=;
+        b=FL8aT8o479SfFlfledkRrube5NY4IsRvghqYhPFIgyTczvRXMTnePquUq6eZGs1eoO
+         Lshdl1kG2GOyeWXLQg0ccuBmn6mJrYSorgoGSH5xBLe9oKBYP8qP0OvpInljwdoIaXu+
+         rKKe7JOBiZl3bwIh9vEiwb84BBgRDnqDi1GpmwrOtmur4cs/sH3Gncn/sYU5l4K4ysxB
+         EIDr0ku8KAWRRiTWilxN+/lqgKCp7etoTcfShSc0ikYzRkmCN8pTH5ukc6T1OrFSgkW5
+         4Gi2B1v9aSPM9AigYjhzgcukyFAVwmuzGkW1udS6ngNf9O9CpidUTEWWsX7dxhisxwMZ
+         Hmvg==
+X-Gm-Message-State: AOAM533Pr5L7874l5K3nm4ea/KwhAdmaV6AG2x8i0lGFDqjBT5fgblLj
+        UumlY5S+avT8lWGpjQzXSfG8eBd7V1zGxEajmLc=
+X-Google-Smtp-Source: ABdhPJz6NYUTdZqrjqLEtWANyrKKrQxMtZMwnfn6c7g699kvaunkKDuMMoMBV+R78TbbJwNOByEF+TB9vGjWZxsTlkk=
+X-Received: by 2002:a1c:32c3:: with SMTP id y186mr2494080wmy.15.1596179334716;
+ Fri, 31 Jul 2020 00:08:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200721183157.202276-4-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Message-Id: <20200731070109.1B13252079@d06av21.portsmouth.uk.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-31_01:2020-07-30,2020-07-31 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
- impostorscore=0 mlxscore=0 spamscore=0 adultscore=0 phishscore=0
- lowpriorityscore=0 suspectscore=2 bulkscore=0 mlxlogscore=999
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2007310045
+References: <1595605762-17010-1-git-send-email-joshi.k@samsung.com>
+ <CGME20200724155350epcas5p3b8f1d59eda7f8fbb38c828f692d42fd6@epcas5p3.samsung.com>
+ <1595605762-17010-7-git-send-email-joshi.k@samsung.com> <f5416bd4-93b3-4d14-3266-bdbc4ae1990b@kernel.dk>
+ <CA+1E3rJAa3E2Ti0fvvQTzARP797qge619m4aYLjXeR3wxdFwWw@mail.gmail.com>
+ <b0b7159d-ed10-08ad-b6c7-b85d45f60d16@kernel.dk> <e871eef2-8a93-fdbc-b762-2923526a2db4@gmail.com>
+ <80d27717-080a-1ced-50d5-a3a06cf06cd3@kernel.dk> <da4baa8c-76b0-7255-365c-d8b58e322fd0@gmail.com>
+ <65a7e9a6-aede-31ce-705c-b7f94f079112@kernel.dk> <d4f9a5d3-1df2-1060-94fa-f77441a89299@gmail.com>
+ <CA+1E3rJ3SoLU9aYcugAQgJnSPnJtcCwjZdMREXS3FTmXgy3yow@mail.gmail.com>
+ <f030a338-cd52-2e83-e1da-bdbca910d49e@kernel.dk> <CA+1E3rKxZk2CatTuPcQq5d14vXL9_9LVb2_+AfR2m9xn2WTZdg@mail.gmail.com>
+ <MWHPR04MB3758DC08EA17780E498E9EC0E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+In-Reply-To: <MWHPR04MB3758DC08EA17780E498E9EC0E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Fri, 31 Jul 2020 12:38:27 +0530
+Message-ID: <CA+1E3rJ5j6MeG3O5Xa7unWLMRz6BacvLVN8xpeEz6AVyJWT55Q@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "bcrl@kvack.org" <bcrl@kvack.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        SelvaKumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Jul 31, 2020 at 12:12 PM Damien Le Moal <Damien.LeMoal@wdc.com> wro=
+te:
+>
+> On 2020/07/31 3:26, Kanchan Joshi wrote:
+> > On Thu, Jul 30, 2020 at 11:24 PM Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> On 7/30/20 11:51 AM, Kanchan Joshi wrote:
+> >>> On Thu, Jul 30, 2020 at 11:10 PM Pavel Begunkov <asml.silence@gmail.c=
+om> wrote:
+> >>>>
+> >>>> On 30/07/2020 20:16, Jens Axboe wrote:
+> >>>>> On 7/30/20 10:26 AM, Pavel Begunkov wrote:
+> >>>>>> On 30/07/2020 19:13, Jens Axboe wrote:
+> >>>>>>> On 7/30/20 10:08 AM, Pavel Begunkov wrote:
+> >>>>>>>> On 27/07/2020 23:34, Jens Axboe wrote:
+> >>>>>>>>> On 7/27/20 1:16 PM, Kanchan Joshi wrote:
+> >>>>>>>>>> On Fri, Jul 24, 2020 at 10:00 PM Jens Axboe <axboe@kernel.dk> =
+wrote:
+> >>>>>>>>>>>
+> >>>>>>>>>>> On 7/24/20 9:49 AM, Kanchan Joshi wrote:
+> >>>>>>>>>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> >>>>>>>>>>>> index 7809ab2..6510cf5 100644
+> >>>>>>>>>>>> --- a/fs/io_uring.c
+> >>>>>>>>>>>> +++ b/fs/io_uring.c
+> >>>>>>>>>>>> @@ -1284,8 +1301,15 @@ static void __io_cqring_fill_event(st=
+ruct io_kiocb *req, long res, long cflags)
+> >>>>>>>>>>>>       cqe =3D io_get_cqring(ctx);
+> >>>>>>>>>>>>       if (likely(cqe)) {
+> >>>>>>>>>>>>               WRITE_ONCE(cqe->user_data, req->user_data);
+> >>>>>>>>>>>> -             WRITE_ONCE(cqe->res, res);
+> >>>>>>>>>>>> -             WRITE_ONCE(cqe->flags, cflags);
+> >>>>>>>>>>>> +             if (unlikely(req->flags & REQ_F_ZONE_APPEND)) =
+{
+> >>>>>>>>>>>> +                     if (likely(res > 0))
+> >>>>>>>>>>>> +                             WRITE_ONCE(cqe->res64, req->rw=
+.append_offset);
+> >>>>>>>>>>>> +                     else
+> >>>>>>>>>>>> +                             WRITE_ONCE(cqe->res64, res);
+> >>>>>>>>>>>> +             } else {
+> >>>>>>>>>>>> +                     WRITE_ONCE(cqe->res, res);
+> >>>>>>>>>>>> +                     WRITE_ONCE(cqe->flags, cflags);
+> >>>>>>>>>>>> +             }
+> >>>>>>>>>>>
+> >>>>>>>>>>> This would be nice to keep out of the fast path, if possible.
+> >>>>>>>>>>
+> >>>>>>>>>> I was thinking of keeping a function-pointer (in io_kiocb) dur=
+ing
+> >>>>>>>>>> submission. That would have avoided this check......but argume=
+nt count
+> >>>>>>>>>> differs, so it did not add up.
+> >>>>>>>>>
+> >>>>>>>>> But that'd grow the io_kiocb just for this use case, which is a=
+rguably
+> >>>>>>>>> even worse. Unless you can keep it in the per-request private d=
+ata,
+> >>>>>>>>> but there's no more room there for the regular read/write side.
+> >>>>>>>>>
+> >>>>>>>>>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/li=
+nux/io_uring.h
+> >>>>>>>>>>>> index 92c2269..2580d93 100644
+> >>>>>>>>>>>> --- a/include/uapi/linux/io_uring.h
+> >>>>>>>>>>>> +++ b/include/uapi/linux/io_uring.h
+> >>>>>>>>>>>> @@ -156,8 +156,13 @@ enum {
+> >>>>>>>>>>>>   */
+> >>>>>>>>>>>>  struct io_uring_cqe {
+> >>>>>>>>>>>>       __u64   user_data;      /* sqe->data submission passed=
+ back */
+> >>>>>>>>>>>> -     __s32   res;            /* result code for this event =
+*/
+> >>>>>>>>>>>> -     __u32   flags;
+> >>>>>>>>>>>> +     union {
+> >>>>>>>>>>>> +             struct {
+> >>>>>>>>>>>> +                     __s32   res;    /* result code for thi=
+s event */
+> >>>>>>>>>>>> +                     __u32   flags;
+> >>>>>>>>>>>> +             };
+> >>>>>>>>>>>> +             __s64   res64;  /* appending offset for zone a=
+ppend */
+> >>>>>>>>>>>> +     };
+> >>>>>>>>>>>>  };
+> >>>>>>>>>>>
+> >>>>>>>>>>> Is this a compatible change, both for now but also going forw=
+ard? You
+> >>>>>>>>>>> could randomly have IORING_CQE_F_BUFFER set, or any other fut=
+ure flags.
+> >>>>>>>>>>
+> >>>>>>>>>> Sorry, I didn't quite understand the concern. CQE_F_BUFFER is =
+not
+> >>>>>>>>>> used/set for write currently, so it looked compatible at this =
+point.
+> >>>>>>>>>
+> >>>>>>>>> Not worried about that, since we won't ever use that for writes=
+. But it
+> >>>>>>>>> is a potential headache down the line for other flags, if they =
+apply to
+> >>>>>>>>> normal writes.
+> >>>>>>>>>
+> >>>>>>>>>> Yes, no room for future flags for this operation.
+> >>>>>>>>>> Do you see any other way to enable this support in io-uring?
+> >>>>>>>>>
+> >>>>>>>>> Honestly I think the only viable option is as we discussed prev=
+iously,
+> >>>>>>>>> pass in a pointer to a 64-bit type where we can copy the additi=
+onal
+> >>>>>>>>> completion information to.
+> >>>>>>>>
+> >>>>>>>> TBH, I hate the idea of such overhead/latency at times when SSDs=
+ can
+> >>>>>>>> serve writes in less than 10ms. Any chance you measured how long=
+ does it
+> >>>>>>>
+> >>>>>>> 10us? :-)
+> >>>>>>
+> >>>>>> Hah, 10us indeed :)
+> >>>>>>
+> >>>>>>>
+> >>>>>>>> take to drag through task_work?
+> >>>>>>>
+> >>>>>>> A 64-bit value copy is really not a lot of overhead... But yes, w=
+e'd
+> >>>>>>> need to push the completion through task_work at that point, as w=
+e can't
+> >>>>>>> do it from the completion side. That's not a lot of overhead, and=
+ most
+> >>>>>>> notably, it's overhead that only affects this particular type.
+> >>>>>>>
+> >>>>>>> That's not a bad starting point, and something that can always be
+> >>>>>>> optimized later if need be. But I seriously doubt it'd be anythin=
+g to
+> >>>>>>> worry about.
+> >>>>>>
+> >>>>>> I probably need to look myself how it's really scheduled, but if y=
+ou don't
+> >>>>>> mind, here is a quick question: if we do work_add(task) when the t=
+ask is
+> >>>>>> running in the userspace, wouldn't the work execution wait until t=
+he next
+> >>>>>> syscall/allotted time ends up?
+> >>>>>
+> >>>>> It'll get the task to enter the kernel, just like signal delivery. =
+The only
+> >>>>> tricky part is really if we have a dependency waiting in the kernel=
+, like
+> >>>>> the recent eventfd fix.
+> >>>>
+> >>>> I see, thanks for sorting this out!
+> >>>
+> >>> Few more doubts about this (please mark me wrong if that is the case)=
+:
+> >>>
+> >>> - Task-work makes me feel like N completions waiting to be served by
+> >>> single task.
+> >>> Currently completions keep arriving and CQEs would be updated with
+> >>> result, but the user-space (submitter task) would not be poked.
+> >>>
+> >>> - Completion-code will set the task-work. But post that it cannot go
+> >>> immediately to its regular business of picking cqe and updating
+> >>> res/flags, as we cannot afford user-space to see the cqe before the
+> >>> pointer update. So it seems completion-code needs to spawn another
+> >>> work which will allocate/update cqe after waiting for pointer-update
+> >>> from task-work?
+> >>
+> >> The task work would post the completion CQE for the request after
+> >> writing the offset.
+> >
+> > Got it, thank you for making it simple.
+> > Overall if I try to put the tradeoffs of moving to indirect-offset
+> > (compared to current scheme)=E2=80=93
+> >
+> > Upside:
+> > - cqe res/flags would be intact, avoids future-headaches as you mention=
+ed
+> > - short-write cases do not have to be failed in lower-layers (as
+> > cqe->res is there to report bytes-copied)
+>
+> I personally think it is a super bad idea to allow short asynchronous app=
+end
+> writes. The interface should allow the async zone append write to proceed=
+ only
+> and only if it can be stuffed entirely into a single BIO which necessaril=
+ly will
+> be a single request on the device side. Otherwise, the application would =
+have no
+> guarantees as to where a split may happen, and since this is zone append,=
+ the
+> next async append will not leave any hole to complete a previous short wr=
+ite.
+> This will wreak the structure of the application data.
+>
+> For the sync case, this is fine. The application can just issue a new app=
+end
+> write with the remaining unwritten data from the previous append write. B=
+ut in
+> the async case, if one write =3D=3D one data record (e.g. a key-value tup=
+le for an
+> SSTable in an LSM tree), then allowing a short write will destroy the rec=
+ord:
+> the partial write will be garbage data that will need garbage collection.=
+..
+
+There are cases when short-write is fine, isn't it? For example I can
+serve only 8K write (either because of space, or because of those file
+limits), but application sent 12K.....iov_iter_gets truncated to 8K
+and the write is successful. At least that's what O_APPEND and
+RWF_APPEND behaves currently.
+But in the current scheme there is no way to report number-of-bytes
+copied in io-uring, so I had to fail such short-write in lower-layer
+(which does not know whether it is talking to io_uring or aio).
+Failing such short-write is perhaps fine for zone-appened, but is it
+fine for generic file-append?
+
+> > Downside:
+> > - We may not be able to use RWF_APPEND, and need exposing a new
+> > type/flag (RWF_INDIRECT_OFFSET etc.) user-space. Not sure if this
+> > sounds outrageous, but is it OK to have uring-only flag which can be
+> > combined with RWF_APPEND?
+>
+> Why ? Where is the problem ? O_APPEND/RWF_APPEND is currently meaningless=
+ for
+> raw block device accesses. We could certainly define a meaning for these =
+in the
+> context of zoned block devices.
+But application using O_APPEND/RWF_APPEND does not pass a pointer to
+be updated by kernel.
+While in kernel we would expect that, and may start writing something
+which is not a pointer.
+
+> I already commented on the need for first defining an interface (flags et=
+c) and
+> its semantic (e.g. do we allow short zone append or not ? What happens fo=
+r
+> regular files ? etc). Did you read my comment ? We really need to first a=
+gree on
+> something to clarify what needs to be done.
+
+I read and was planning to respond, sorry. But it seemed important to
+get the clarity on the uring-interface, as this seems to decide how
+this whole thing looks like (to application and to lower layers as
+well).
+
+> > -  Expensive compared to sending results in cqe itself. But I agree
+> > that this may not be major, and only for one type of write.
+> >
+> >
+>
+>
+> --
+> Damien Le Moal
+> Western Digital Research
 
 
-On 7/22/20 12:01 AM, Christoph Hellwig wrote:
-> Failing to invalid the page cache means data in incoherent, which is
-> a very bad state for the system.  Always fall back to buffered I/O
-> through the page cache if we can't invalidate mappings.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Dave Chinner <dchinner@redhat.com>
-> Reviewed-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
 
-
-Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
-  mainly for ext4 part.
-
-
-> ---
->   fs/ext4/file.c       |  2 ++
->   fs/gfs2/file.c       |  3 ++-
->   fs/iomap/direct-io.c | 16 +++++++++++-----
->   fs/iomap/trace.h     |  1 +
->   fs/xfs/xfs_file.c    |  4 ++--
->   fs/zonefs/super.c    |  7 +++++--
->   6 files changed, 23 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 2a01e31a032c4c..129cc1dd6b7952 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -544,6 +544,8 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->   		iomap_ops = &ext4_iomap_overwrite_ops;
->   	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
->   			   is_sync_kiocb(iocb) || unaligned_io || extend);
-> +	if (ret == -ENOTBLK)
-> +		ret = 0;
-> 
->   	if (extend)
->   		ret = ext4_handle_inode_extension(inode, offset, ret, count);
-> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-> index bebde537ac8cf2..b085a3bea4f0fd 100644
-> --- a/fs/gfs2/file.c
-> +++ b/fs/gfs2/file.c
-> @@ -835,7 +835,8 @@ static ssize_t gfs2_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
-> 
->   	ret = iomap_dio_rw(iocb, from, &gfs2_iomap_ops, NULL,
->   			   is_sync_kiocb(iocb));
-> -
-> +	if (ret == -ENOTBLK)
-> +		ret = 0;
->   out:
->   	gfs2_glock_dq(&gh);
->   out_uninit:
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 190967e87b69e4..c1aafb2ab99072 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -10,6 +10,7 @@
->   #include <linux/backing-dev.h>
->   #include <linux/uio.h>
->   #include <linux/task_io_accounting_ops.h>
-> +#include "trace.h"
-> 
->   #include "../internal.h"
-> 
-> @@ -401,6 +402,9 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
->    * can be mapped into multiple disjoint IOs and only a subset of the IOs issued
->    * may be pure data writes. In that case, we still need to do a full data sync
->    * completion.
-> + *
-> + * Returns -ENOTBLK In case of a page invalidation invalidation failure for
-> + * writes.  The callers needs to fall back to buffered I/O in this case.
->    */
->   ssize_t
->   iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> @@ -478,13 +482,15 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->   	if (iov_iter_rw(iter) == WRITE) {
->   		/*
->   		 * Try to invalidate cache pages for the range we are writing.
-> -		 * If this invalidation fails, tough, the write will still work,
-> -		 * but racing two incompatible write paths is a pretty crazy
-> -		 * thing to do, so we don't support it 100%.
-> +		 * If this invalidation fails, let the caller fall back to
-> +		 * buffered I/O.
->   		 */
->   		if (invalidate_inode_pages2_range(mapping, pos >> PAGE_SHIFT,
-> -				end >> PAGE_SHIFT))
-> -			dio_warn_stale_pagecache(iocb->ki_filp);
-> +				end >> PAGE_SHIFT)) {
-> +			trace_iomap_dio_invalidate_fail(inode, pos, count);
-> +			ret = -ENOTBLK;
-> +			goto out_free_dio;
-> +		}
-> 
->   		if (!wait_for_completion && !inode->i_sb->s_dio_done_wq) {
->   			ret = sb_init_dio_done_wq(inode->i_sb);
-
-Just as a note. So if the driver returns -ENOTBLK (from ->iomap_end)then
-iomap considers it as a magic value to fall back to buffered-io and it
-changes ret=0 And now with this patch, iomap could also return
--ENOTBLK if it gets an error while doing above operation and so the
-driver is free to consider this as a fallback mechanism to buffered-io.
+--=20
+Joshi
