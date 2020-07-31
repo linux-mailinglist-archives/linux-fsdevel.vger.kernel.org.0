@@ -2,215 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CFE8234830
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 17:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BBB523486F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 17:27:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbgGaPIE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jul 2020 11:08:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56574 "EHLO
+        id S2387527AbgGaP1u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jul 2020 11:27:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728697AbgGaPIE (ORCPT
+        with ESMTP id S2387521AbgGaP1t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jul 2020 11:08:04 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF326C061574;
-        Fri, 31 Jul 2020 08:08:03 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id z18so24745934wrm.12;
-        Fri, 31 Jul 2020 08:08:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=85y9XZIAhdFrSxuJrcnrzsatwqiXZnaeoI8u9MGBgtM=;
-        b=fFFPMMK7xEeboEuM9TpGf+G/ZYPfTaKG5i5Ejhza78kDiyr3MIdoNI5Ufz4P4NysJO
-         dZTF7XL8KamTxce/IZmn4sFOHHJVnO8YsNWsCkyQ532iHs1alDBhwO1zuDQnl9YUCygD
-         uSf3UF9/7insMKOSTynpcef+WwYjqbLO9442pOMHg+jWcnjTXPEOmmeIUZngmzMCcR/d
-         og0U0K5miCxuVk1ovO6NF3mhVtGchiWnyvzVLM/SICzzSnt5rTCxrrDll4VMtl9GuiQl
-         iliRGORh32YdOJH2IzKFVyN9MKQMhH4aacClAj9sYru6PPRv+xs6aCLdcfmGgxbfdZjv
-         MuQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=85y9XZIAhdFrSxuJrcnrzsatwqiXZnaeoI8u9MGBgtM=;
-        b=r/Hea3E0oix0fWMJZl+wVnhM7jRk/JYjdpJN7SbsDyYhzqaTwZqddzHHaNDEpSxkGt
-         qDETXvJPysNhCiE0ec18XYnx98g3KAD5mCJxsb9iGTT8vyXg6PxSROd6p5fHaJbU9yVf
-         02nWcDSoLKuXV6Wh2md5kV2CpC2EPqGEKcp+AVIooQLR9pwDBzKLCK+Vqq7E1xQx73wx
-         7uzCUmcrdjgHzP/34hNVpKhGqwt5cVThhkXsePWMgHTAfQfH3lC8zvie1R+kMkTW8Too
-         23MFe0MDNvb3IEgY91cNUrvDhA5Q2wBlZd2Cgw5tJZAvPqw4kqyF/J4dCpc0ZXhaaHhG
-         ezXA==
-X-Gm-Message-State: AOAM531EXZEwZEGR0dCamI0ptG1c0cFrDUsbglyQMh6BlxMTRAxSJnvM
-        IycLKrI0gxmYMOscp8bkwO5CzbD8t45fgEEiJqA=
-X-Google-Smtp-Source: ABdhPJzxaoTSidV3fwT9KU1KuP5Nfoicm9e8ljT1UwmUKcsEKIGiIUz4tXNjnKaseFpyXNKlAauBimsG/8bxFAtElAM=
-X-Received: by 2002:a5d:4a0b:: with SMTP id m11mr3804806wrq.407.1596208082356;
- Fri, 31 Jul 2020 08:08:02 -0700 (PDT)
+        Fri, 31 Jul 2020 11:27:49 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80C35C061574;
+        Fri, 31 Jul 2020 08:27:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Bsi9xPmSMWSxHDG9tcc/ZmIBBdGYL5RzEu0Vz8YRBRg=; b=bUfjRImbe/fazmrVUlDrO7qo7p
+        XgRpbbXCL+hV9Dqk/dBw8POrfT022WbSD15UpCQDAUPlUSCj2PAkbM6R27OpRxymm3L7YOi9/BRsE
+        bv2W18JgDF5Ly5bKpeM0CCQ7+yi743p5SNM7I+rvEAIj9H9IPF/tng3FU+e05ZLNmFhnNekqIlmza
+        vSvqMrer1bN0iDbn5NqpSaCs1kvaVoKWoWUp2Gpx77GizjAvaRAxBEUhnzKvD5XQqPT/XiLxluoz4
+        c9QcsZn1yG6uCThYdwdvrosh9soo50ts83HhDciRmV5KgPv5kXW8Xl0ou3kXFg9C6gLHxfHE1RCkv
+        ArFe76MA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k1Wwa-0002d9-3F; Fri, 31 Jul 2020 15:27:36 +0000
+Date:   Fri, 31 Jul 2020 16:27:36 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Steven Sistare <steven.sistare@oracle.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, mhocko@kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        arnd@arndb.de, keescook@chromium.org, gerg@linux-m68k.org,
+        ktkhai@virtuozzo.com, christian.brauner@ubuntu.com,
+        peterz@infradead.org, esyr@redhat.com, jgg@ziepe.ca,
+        christian@kellner.me, areber@redhat.com, cyphar@cyphar.com
+Subject: Re: [RFC PATCH 0/5] madvise MADV_DOEXEC
+Message-ID: <20200731152736.GP23808@casper.infradead.org>
+References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
+ <20200730152250.GG23808@casper.infradead.org>
+ <db3bdbae-eb0f-1ae3-94dd-045e37bc94ba@oracle.com>
+ <20200730171251.GI23808@casper.infradead.org>
+ <63a7404c-e4f6-a82e-257b-217585b0277f@oracle.com>
+ <20200730174956.GK23808@casper.infradead.org>
+ <ab7a25bf-3321-77c8-9bc3-28a223a14032@oracle.com>
+ <87y2n03brx.fsf@x220.int.ebiederm.org>
+ <689d6348-6029-5396-8de7-a26bc3c017e5@oracle.com>
 MIME-Version: 1.0
-References: <MWHPR04MB3758DC08EA17780E498E9EC0E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <20200731064526.GA25674@infradead.org> <MWHPR04MB37581344328A42EA7F5ED13EE74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <CA+1E3rLM4G4SwzD6RWsK6Ssp7NmhiPedZDjrqN3kORQr9fxCtw@mail.gmail.com>
- <MWHPR04MB375863C20C1EF2CB27E62703E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <20200731091416.GA29634@infradead.org> <MWHPR04MB37586D39CA389296CE0252A4E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <20200731094135.GA4104@infradead.org> <MWHPR04MB3758A4B2967DB1FABAAD9265E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <20200731125110.GA11500@infradead.org> <20200731130802.GA16665@infradead.org>
-In-Reply-To: <20200731130802.GA16665@infradead.org>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Fri, 31 Jul 2020 20:37:35 +0530
-Message-ID: <CA+1E3r+7ZChHK+ZH06LitijEbZ0=UhOtAzLpw4SWVY1ZN4HOSw@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
-To:     "hch@infradead.org" <hch@infradead.org>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        SelvaKumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <689d6348-6029-5396-8de7-a26bc3c017e5@oracle.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 31, 2020 at 6:38 PM hch@infradead.org <hch@infradead.org> wrote:
->
-> And FYI, this is what I'd do for a hacky aio-only prototype (untested):
->
->
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 91e7cc4a9f179b..42b1934e38758b 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -1438,7 +1438,10 @@ static void aio_complete_rw(struct kiocb *kiocb, long res, long res2)
->         }
->
->         iocb->ki_res.res = res;
-> -       iocb->ki_res.res2 = res2;
-> +       if ((kiocb->ki_flags & IOCB_REPORT_OFFSET) && res > 0)
-> +               iocb->ki_res.res2 = kiocb->ki_pos - res;
-> +       else
-> +               iocb->ki_res.res2 = res2;
->         iocb_put(iocb);
->  }
->
-> @@ -1452,6 +1455,8 @@ static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb)
->         req->ki_flags = iocb_flags(req->ki_filp);
->         if (iocb->aio_flags & IOCB_FLAG_RESFD)
->                 req->ki_flags |= IOCB_EVENTFD;
-> +       if (iocb->aio_flags & IOCB_FLAG_REPORT_OFFSET)
-> +               req->ki_flags |= IOCB_REPORT_OFFSET;
->         req->ki_hint = ki_hint_validate(file_write_hint(req->ki_filp));
->         if (iocb->aio_flags & IOCB_FLAG_IOPRIO) {
->                 /*
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index f5abba86107d86..522b0a3437d420 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -316,6 +316,7 @@ enum rw_hint {
->  #define IOCB_WRITE             (1 << 6)
->  #define IOCB_NOWAIT            (1 << 7)
->  #define IOCB_NOIO              (1 << 9)
-> +#define IOCB_REPORT_OFFSET     (1 << 10)
->
->  struct kiocb {
->         struct file             *ki_filp;
-> diff --git a/include/uapi/linux/aio_abi.h b/include/uapi/linux/aio_abi.h
-> index 8387e0af0f768a..e4313d7aa3b7e7 100644
-> --- a/include/uapi/linux/aio_abi.h
-> +++ b/include/uapi/linux/aio_abi.h
-> @@ -55,6 +55,7 @@ enum {
->   */
->  #define IOCB_FLAG_RESFD                (1 << 0)
->  #define IOCB_FLAG_IOPRIO       (1 << 1)
-> +#define IOCB_FLAG_REPORT_OFFSET        (1 << 2)
->
->  /* read() from /dev/aio returns these structures. */
->  struct io_event {
+On Fri, Jul 31, 2020 at 10:57:44AM -0400, Steven Sistare wrote:
+> Matthews sileby/mshare proposal has the same issue.  If a process opts-in
+> and mmap's an address in the shared region, then content becomes mapped at
+> a VA that was known to the pre-fork or pre-exec process.  Trust must still
+> be established.
 
-Looks good, but it drops io_uring.
-How about two flags -
-1. RWF_REPORT_OFFSET (only for aio)  ----> aio fails the second one
-2. RWF_REPORT_OFFSET_INDIRECT (for io_uring).  ----> uring fails the first one
-Since these are RWF flags, they can be used by other sync/async
-transports also in future if need be.
-Either of these flags will set single IOCB_REPORT_OFFSET, which can be
-used by FS/Block etc (they don't have to worry how uring/aio sends it
-up).
+It's up to the recipient whether they try to map it at the same address
+or at a fresh address.  The intended use case is a "semi-shared" address
+space between two processes (ie partway between a threaded, fully-shared
+address space and a forked un-shared address space), in which case
+there's a certain amount of trust and cooperation between the processes.
 
-This is what I mean in code -
+Your preservation-across-exec use-case might or might not need the
+VMA to be mapped at the same address.  I don't know whether qemu stores
+pointers in this VMA which are absolute within the qemu address space.
+If it's just the emulated process's address space, then everything will
+be absolute within its own address space and everything will be opaque
+to qemu.  If qemu is storing its own pointers in it, then it has to be
+mapped at the same address.
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 91e7cc4a9f17..307dfbfb04f7 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -1472,6 +1472,11 @@ static int aio_prep_rw(struct kiocb *req, const
-struct iocb *iocb)
-        ret = kiocb_set_rw_flags(req, iocb->aio_rw_flags);
-        if (unlikely(ret))
-                return ret;
-+       /* support only direct offset */
-+       if (unlikely(iocb->aio_rw_flags & RWF_REPORT_OFFSET_INDIRECT))
-+               return -EOPNOTSUPP;
-+
-        req->ki_flags &= ~IOCB_HIPRI; /* no one is going to poll for this I/O */
-        return 0;
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 3e406bc1f855..5fa21644251f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2451,6 +2451,7 @@ static int io_prep_rw(struct io_kiocb *req,
-const struct io_uring_sqe *sqe,
-        struct kiocb *kiocb = &req->rw.kiocb;
-        unsigned ioprio;
-        int ret;
-+       rwf_t rw_flags;
+> > Here is another suggestion.
+> > 
+> > Have a very simple program that does:
+> > 
+> > 	for (;;) {
+> > 		handle = dlopen("/my/real/program");
+> > 		real_main = dlsym(handle, "main");
+> > 		real_main(argc, argv, envp);
+> > 		dlclose(handle);
+> > 	}
+> > 
+> > With whatever obvious adjustments are needed to fit your usecase.
+> > 
+> > That should give the same level of functionality, be portable to all
+> > unices, and not require you to duplicate code.  It belive it limits you
+> > to not upgrading libc, or librt but that is a comparatively small
+> > limitation.
+> > 
+> > 
+> > Given that in general the interesting work is done in userspace and that
+> > userspace has provided an interface for reusing that work already.
+> > I don't see the justification for adding anything to exec at this point. 
+> 
+> Thanks for the suggestion.  That is clever, and would make a fun project,
+> but I would not trust it for production.  These few lines are just
+> the first of many that it would take to reset the environment to the
+> well-defined post-exec initial conditions that all executables expect,
+> and incrementally tearing down state will be prone to bugs.  Getting a
+> clean slate from a kernel exec is a much more reliable design.  The use
+> case is creating long-lived apps that never go down, and the simplest
+> implementation will have the fewest bugs and is the best.  MADV_DOEXEC is
+> simple, and does not even require a new system call, and the kernel already
+> knows how to exec without bugs.
 
-        if (S_ISREG(file_inode(req->file)->i_mode))
-                req->flags |= REQ_F_ISREG;
-@@ -2462,9 +2463,13 @@ static int io_prep_rw(struct io_kiocb *req,
-const struct io_uring_sqe *sqe,
-        }
-        kiocb->ki_hint = ki_hint_validate(file_write_hint(kiocb->ki_filp));
-        kiocb->ki_flags = iocb_flags(kiocb->ki_filp);
--       ret = kiocb_set_rw_flags(kiocb, READ_ONCE(sqe->rw_flags));
-+       rw_flags = READ_ONCE(sqe->rw_flags);
-+       ret = kiocb_set_rw_flags(kiocb, rw_flags);
-        if (unlikely(ret))
-                return ret;
-+       /* support only indirect offset */
-+       if (unlikely(rw_flags & RWF_REPORT_OFFSET_DIRECT))
-+               return -EOPNOTSUPP;
-
-        ioprio = READ_ONCE(sqe->ioprio);
-        if (ioprio) {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 8a00ba99284e..fe2f1f5c5d33 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3296,8 +3296,17 @@ static inline int kiocb_set_rw_flags(struct
-kiocb *ki, rwf_t flags)
-                ki->ki_flags |= IOCB_DSYNC;
-        if (flags & RWF_SYNC)
-                ki->ki_flags |= (IOCB_DSYNC | IOCB_SYNC);
--       if (flags & RWF_APPEND)
-+       if (flags & RWF_APPEND) {
-                ki->ki_flags |= IOCB_APPEND;
-+               /*
-+                * 1. These flags do not make sense when used standalone
-+                * 2. RWF_REPORT_OFFSET_DIRECT = report result
-directly (for aio)
-+                * 3. RWF_REPORT_INDIRECT_OFFSER = use pointer (for io_uring)
-+                * */
-+               if (flags & RWF_REPORT_OFFSET_DIRECT ||
-+                               flags & RWF_REPORT_OFFSET_INDIRECT)
-+                       ki->ki_flags |= IOCB_REPORT_OFFSET;
+It's a net increase of 200 lines of kernel code.  If 4 lines of userspace
+code removes 200 lines of kernel code, I think I know which I prefer ...
