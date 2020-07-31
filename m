@@ -2,202 +2,465 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F20C2340F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 10:14:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 140F423415F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 10:41:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731838AbgGaIO1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jul 2020 04:14:27 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:49520 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731522AbgGaIO0 (ORCPT
+        id S1731879AbgGaIlZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jul 2020 04:41:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53608 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730233AbgGaIlZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jul 2020 04:14:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1596183265; x=1627719265;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=w8N9/fNDKoEUsRyUaywAQOVfNdW7Zpoh1TPo6fZflCU=;
-  b=Jkw6cGLC2qLsgrfHbfojS1Z6K5tKWWr6JDgY//ghErK8Gz3+984GBNTk
-   2UAAP/2FPJLZ/55g2n5o3TZHohG5HwYObo8aiQwNhYa5p79ZnLE1Pqvz4
-   JNJ5yo9+57bKdbp1nKg+5tdSzMZDDgrXS54ni0vBcNXYctdcoQy/uNsww
-   HkyZHz94BkM3sRIq00xbkL+p3JPfwYk99Dtvb7/qgEx1fopAs4zaIbccU
-   1B3fAs5hO1Xzg5AEBrrmSRCAGEcEnRwBirB/1ZQEsda+tcvAtfztxwtis
-   uAna7IqkAm18ZUrTF5e3az2c0YrpXhTxU6Kysoo+y2CURziBDGsz6V4Ok
-   g==;
-IronPort-SDR: uBJpJVK5qupXcnq2qec+No96Bn1Su7vZUKrObZeMz9TxmZEoxQs3MrVcZADYxMrwrzropmqvR4
- 0siwJAJiFCU24eDELkpYEZdKiFC3kj+Yn4eDabXVjNBQPQGiCq+p/WyOaAaNujCVquG/h+Sfb6
- QUaulFBO0mIe3SbodRF7p/JDr72uz3u7jguWcPyfOq7gGmeBa9oWaRRurllOdneThZBjR2GiLA
- O3cWiyGR+C2P3GxiC3qtx8RqnXVd1Htl/Du6g7vNYZv4WZjwhfOiXbgiWGSVQk84Z5wwfaEV1I
- zB0=
-X-IronPort-AV: E=Sophos;i="5.75,417,1589212800"; 
-   d="scan'208";a="143823494"
-Received: from mail-dm6nam11lp2171.outbound.protection.outlook.com (HELO NAM11-DM6-obe.outbound.protection.outlook.com) ([104.47.57.171])
-  by ob1.hgst.iphmx.com with ESMTP; 31 Jul 2020 16:14:23 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Fp3KlrD0YfcZA9RcdLG0l60N2c6WeYyAeu/Ue21xan1ZW1tszvHvpuiyDhGCtunLs0eEftsVRk/VBXQfEPAsmtrhpQOshnWK5Tzbpa7qzbYrtqeZAWP5DTyFfm/WuMMNvvLUQgcW82JAd7qMHjSZsbpl24mckwRZVKbGxCje3y1CPyF6EB9BajLrw0QIr5W6EnkJ8FGc6urYejkFq60n0qFvjDkL0T7ulvn4wlOn+LiT+cJtQzknlnu04N6yx1AZi6LxzgowDof2nWJB+7Tb4Cy048aSPLtKbm+QUo5Z9IZq7LZDT/aJVamRRBzqwLYjK9hKSCBUBZoa0JTm1c8KUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aGJ38TF5L8LfGiFWM+86oM00tsRNUhHIwOuAYpXyoEI=;
- b=DwRfpCsfhI87yi4IcIfdtdB1vvUK/76hBHjg778Hm6XtswzUDwiolGNmXWh/RtA7m6XvSMbzC2hNCO6fA8I9WtI2P1ssfrM5h0PNEfQZmXZGbaCwxtfd1q8awJnpBfCLdTbrKtfwrBw1tXRUW+PslJPYSVkHVeoxKxxltEMwLa4+Tic1A5nXENDdHPEhr72vfe4WbbFKosBVSrWksoCge9NyFTKEnHriwsJt66ZQW4oVySGdZTFxG7Mm3hMXPmsgJ57e67hTwYBjmCbofGuwk69FbPzfS6533nZ9ccBgkTU045hMMOTlkhxG0nzvuuStQP/Gu6driwSgGpSG91q8OQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Fri, 31 Jul 2020 04:41:25 -0400
+Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C61A3C061575
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jul 2020 01:41:24 -0700 (PDT)
+Received: by mail-vs1-xe43.google.com with SMTP id s20so15362697vsq.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jul 2020 01:41:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aGJ38TF5L8LfGiFWM+86oM00tsRNUhHIwOuAYpXyoEI=;
- b=TmpI7OVMM3pE8/B0Njtx8iyOw74KW8SXkJPt+ddpFl4L3FG3lHH3LHdIqZ5g2SAb7QxCGUCYM3G4W4/pJlWF/OYcjZyeUfAxn+6GAOLC5LAF5DJJvsX+25zbCNpaEv4G3L8Swc1bybC9ivBoE/VYEaIB5UlLmpRO1qu0By3nZgE=
-Received: from MWHPR04MB3758.namprd04.prod.outlook.com (2603:10b6:300:fb::8)
- by MWHPR04MB0879.namprd04.prod.outlook.com (2603:10b6:301:42::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3239.17; Fri, 31 Jul
- 2020 08:14:22 +0000
-Received: from MWHPR04MB3758.namprd04.prod.outlook.com
- ([fe80::718a:d477:a4f1:c137]) by MWHPR04MB3758.namprd04.prod.outlook.com
- ([fe80::718a:d477:a4f1:c137%7]) with mapi id 15.20.3239.017; Fri, 31 Jul 2020
- 08:14:22 +0000
-From:   Damien Le Moal <Damien.LeMoal@wdc.com>
-To:     Kanchan Joshi <joshiiitr@gmail.com>
-CC:     "hch@infradead.org" <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        SelvaKumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
-Thread-Topic: [PATCH v4 6/6] io_uring: add support for zone-append
-Thread-Index: AQHWYdbcc0q15qREKECGO7brHi6zEg==
-Date:   Fri, 31 Jul 2020 08:14:22 +0000
-Message-ID: <MWHPR04MB375863C20C1EF2CB27E62703E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
-References: <b0b7159d-ed10-08ad-b6c7-b85d45f60d16@kernel.dk>
- <e871eef2-8a93-fdbc-b762-2923526a2db4@gmail.com>
- <80d27717-080a-1ced-50d5-a3a06cf06cd3@kernel.dk>
- <da4baa8c-76b0-7255-365c-d8b58e322fd0@gmail.com>
- <65a7e9a6-aede-31ce-705c-b7f94f079112@kernel.dk>
- <d4f9a5d3-1df2-1060-94fa-f77441a89299@gmail.com>
- <CA+1E3rJ3SoLU9aYcugAQgJnSPnJtcCwjZdMREXS3FTmXgy3yow@mail.gmail.com>
- <f030a338-cd52-2e83-e1da-bdbca910d49e@kernel.dk>
- <CA+1E3rKxZk2CatTuPcQq5d14vXL9_9LVb2_+AfR2m9xn2WTZdg@mail.gmail.com>
- <MWHPR04MB3758DC08EA17780E498E9EC0E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <20200731064526.GA25674@infradead.org>
- <MWHPR04MB37581344328A42EA7F5ED13EE74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <CA+1E3rLM4G4SwzD6RWsK6Ssp7NmhiPedZDjrqN3kORQr9fxCtw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [129.253.182.57]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f78441f6-822e-4509-3638-08d83529bb26
-x-ms-traffictypediagnostic: MWHPR04MB0879:
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MWHPR04MB0879F1DF3BA69A681BC9C4D4E74E0@MWHPR04MB0879.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: fng2fgnS3hAEue6bztyLPK7OvkR+53v2RKMsCSMoMiDDATVVffCuqwfPzXryUGeg1k66bvsfBuCAwjKZsGd/Yt37uePWneM/dP68tb3IaTDwmKL+HbXsmGzdP9mfadDnRttAcXXQALQYhHQNluANKzaS/LDVIaAD1uEBY30hPeVNKtDbZlJo84mJ0pOJe9NNDT/C+vUFSiAmnU51qSanD5lZKhZ0KolbS9bxX6OOWMayklcwDo8vmBO6TXxZDezUHPRXM2TVYLkuGWNBD/Vl1GwiMkGnHC0lahCyAUz4GHELYrXLPM32a+rWtVZpjyx3026nUCBJipfAJMA8a5pokA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR04MB3758.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(39860400002)(366004)(376002)(396003)(346002)(136003)(316002)(5660300002)(9686003)(86362001)(55016002)(6916009)(6506007)(8936002)(54906003)(33656002)(83380400001)(53546011)(71200400001)(4326008)(478600001)(7696005)(186003)(64756008)(66446008)(66476007)(52536014)(7416002)(66556008)(66946007)(76116006)(26005)(91956017)(8676002)(2906002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: C8lmsBnUcnBdthwdE0qV3xDD+WNmqfNKhw/d+7JfpGpVG9FGqLAuVmgHU7cSxgteSZhif3mETqDCR/WrlNCjF80tXtCIDFR1N9HUFy741t3bMnX0KIDpyIu1NyfUzPgQxpPoknA2h9Iy842f7VMv43x/LxNqRUN3QpqYoRb/hRABeyOeDPvBJoNOpMg6wCvrR5c2VyXFrK+a1v2Aa9jhMtqH5npqkex6+2BuZVRM9+SBQraj1740EvWWW48oIc7QbyrHjPKEX3TEJMJsvyUJ2HPQfphTJ3fGAme5g3tVjX5FckRt+4BbMOaXmVA1LbGuVZaM2JcL/VuMUE/6v9ttjKGhkGu8+26441fI1URDwrvcIGT19uk4SXaH2yw9OZ9SMMjvbvHc7+ILaoN/kEwtE5+8yOeL+YDEm50iFCoWnfXpqkioKFcV6w2x1sjdRfGGDAMSKxWdx9As2/ZPwa6ZeaFbVSgoKEbjBxXOfoy3CWpcVaO7/hAc2tXslgRSBU/JVaMLJ13KIrMdpnO+ubWxShaHJy6ZbKy8QRm/qrWSxlRBgBHl8sPWpIOnevIYiHJYjSdk/t8E56FtcOktOHeoq3gUZl0x3tECaVe/6y0NjA58HT9JLpx2pr0XAoDfzo6U4zpnFQczva1BzMhOoffWZw==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=y63oAJuw+Me3PZc6ce5WsDrbSV4mt+J1F7499sphZYM=;
+        b=VhXTI/wkMh6FSf+lij/Wc0W8VW9FEWZAk9akoxgJRV3UCXTvH0vgvfFOXO6OuUIODQ
+         ovABBlVaLIIbZ7I/2I0gZKLwRk0aWHyhn4uPzTeLLYrX8rsd6sVLZ8z7ztT1DVf6dy8j
+         H7t2RC4o2LMBrCaElZpZqKwUjIaZ7Gbdqi/0UkQMhOYDCTmq6lXcPoCB/J/Xsz2deIeu
+         fLWOOKHUltesrhyqvGAoEcxgWmLP0FVN2bVs27vgbo6em7ooU8GofSdvOLJ0/b1sM2VN
+         CEx9g8cLbU+XWL7U2bHXkNKSXUHG0wi5U9lj0OBBUGPFQ4+OurahPGpcxq7SUz1mW4HT
+         6bew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=y63oAJuw+Me3PZc6ce5WsDrbSV4mt+J1F7499sphZYM=;
+        b=BW0oPKY95FOVLbTnMqau82WE3lNdVPZALuL+4wfwUnHhV4MbvTFwaPgTdjndkE6Ujd
+         JQgP2BZXQHduXYSkbDn8ph21q1Ik/mfnAwEpfw0Bi7CDmf4yru2BY+rXstEeH1xf7zGq
+         WMclklNiN92iIw9ne+cEN8reeujP7ze7888kC/FtSsEPwcGEvZy6ZqkHYHZ+sLWXyG/m
+         KNwWAwnuzp3+0xOJ49mSBFpVeZInfVMv755nTk7tjy9mfAFn+MxQNZ1cJcYXbFNHXGt7
+         1wKGizDytYr/f2C7Ayr2UeNfbBonFgXvSlbzZsS/x834j7O0+WvqVJfJu+0Sa8jnjuLv
+         KF8w==
+X-Gm-Message-State: AOAM5322DZbdrssDexqtb/VwxUZfMQy3pT//R8niz7CSt7Q/VsgalhWQ
+        j3ArKNoUVYb0dYjw1PSa53d4jYbvsh/2h47TO0KNmw==
+X-Google-Smtp-Source: ABdhPJyMv/+GMEvEskdPMp4oeXoWW0VaZBNK6A0V7CnAuElnA7ojDXe0TGgKMVchrDxSKyCk0pP5oMjr37TXEGLJ5FU=
+X-Received: by 2002:a67:e412:: with SMTP id d18mr2316019vsf.41.1596184883711;
+ Fri, 31 Jul 2020 01:41:23 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR04MB3758.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f78441f6-822e-4509-3638-08d83529bb26
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2020 08:14:22.1030
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dqyMjdRWZCRxLPLB3QQc8kWxOH+glnqDW2ky0shuMsW2RyaKrFx77R6rPAdOI9ICqO/a9hb+oY0kLpDPfomo3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0879
+References: <20200726160401.311569-1-hch@lst.de> <20200726160401.311569-2-hch@lst.de>
+ <20200730173437.GA1172439@ubuntu-n2-xlarge-x86>
+In-Reply-To: <20200730173437.GA1172439@ubuntu-n2-xlarge-x86>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 31 Jul 2020 14:11:11 +0530
+Message-ID: <CA+G9fYs0ZJCp39qh2Zs6v=Pb6S=1PYDEA1+Dk7Q8=RL45_P7NQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] arm64: stop using <asm/compat.h> directly
+To:     Christoph Hellwig <hch@lst.de>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Cc:     X86 ML <x86@kernel.org>, Jan Kara <jack@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        lkft-triage@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/07/31 16:59, Kanchan Joshi wrote:=0A=
-> On Fri, Jul 31, 2020 at 12:29 PM Damien Le Moal <Damien.LeMoal@wdc.com> w=
-rote:=0A=
->>=0A=
->> On 2020/07/31 15:45, hch@infradead.org wrote:=0A=
->>> On Fri, Jul 31, 2020 at 06:42:10AM +0000, Damien Le Moal wrote:=0A=
->>>>> - We may not be able to use RWF_APPEND, and need exposing a new=0A=
->>>>> type/flag (RWF_INDIRECT_OFFSET etc.) user-space. Not sure if this=0A=
->>>>> sounds outrageous, but is it OK to have uring-only flag which can be=
-=0A=
->>>>> combined with RWF_APPEND?=0A=
->>>>=0A=
->>>> Why ? Where is the problem ? O_APPEND/RWF_APPEND is currently meaningl=
-ess for=0A=
->>>> raw block device accesses. We could certainly define a meaning for the=
-se in the=0A=
->>>> context of zoned block devices.=0A=
->>>=0A=
->>> We can't just add a meaning for O_APPEND on block devices now,=0A=
->>> as it was previously silently ignored.  I also really don't think any=
-=0A=
->>> of these semantics even fit the block device to start with.  If you=0A=
->>> want to work on raw zones use zonefs, that's what is exists for.=0A=
->>=0A=
->> Which is fine with me. Just trying to say that I think this is exactly t=
-he=0A=
->> discussion we need to start with. What interface do we implement...=0A=
->>=0A=
->> Allowing zone append only through zonefs as the raw block device equival=
-ent, all=0A=
->> the O_APPEND/RWF_APPEND semantic is defined and the "return written offs=
-et"=0A=
->> implementation in VFS would be common for all file systems, including re=
-gular=0A=
->> ones. Beside that, there is I think the question of short writes... Not =
-sure if=0A=
->> short writes can currently happen with async RWF_APPEND writes to regula=
-r files.=0A=
->> I think not but that may depend on the FS.=0A=
-> =0A=
-> generic_write_check_limits (called by generic_write_checks, used by=0A=
-> most FS) may make it short, and AFAIK it does not depend on=0A=
-> async/sync.=0A=
-=0A=
-Johannes has a patch (not posted yet) fixing all this for zonefs,=0A=
-differentiating sync and async cases, allow short writes or not, etc. This =
-was=0A=
-done by not using generic_write_check_limits() and instead writing a=0A=
-zonefs_check_write() function that is zone append friendly.=0A=
-=0A=
-We can post that as a base for the discussion on semantic if you want...=0A=
-=0A=
-> This was one of the reason why we chose to isolate the operation by a=0A=
-> different IOCB flag and not by IOCB_APPEND alone.=0A=
-=0A=
-For zonefs, the plan is:=0A=
-* For the sync write case, zone append is always used.=0A=
-* For the async write case, if we see IOCB_APPEND, then zone append BIOs ar=
-e=0A=
-used. If not, regular write BIOs are used.=0A=
-=0A=
-Simple enough I think. No need for a new flag.=0A=
-=0A=
--- =0A=
-Damien Le Moal=0A=
-Western Digital Research=0A=
+On Thu, 30 Jul 2020 at 23:04, Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Sun, Jul 26, 2020 at 06:03:58PM +0200, Christoph Hellwig wrote:
+> > Always use <linux/compat.h> so that we can move more declarations to
+> > common code.  In two of the three cases the asm include was in addition
+> > to an existing one for <linux/compat.h> anyway.
+> >
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >  arch/arm64/include/asm/stat.h | 2 +-
+> >  arch/arm64/kernel/process.c   | 1 -
+> >  arch/arm64/kernel/ptrace.c    | 1 -
+> >  3 files changed, 1 insertion(+), 3 deletions(-)
+> >
+> > diff --git a/arch/arm64/include/asm/stat.h b/arch/arm64/include/asm/sta=
+t.h
+> > index 3b4a62f5aeb0c3..1b5ac1ef5d04cc 100644
+> > --- a/arch/arm64/include/asm/stat.h
+> > +++ b/arch/arm64/include/asm/stat.h
+> > @@ -10,7 +10,7 @@
+> >  #ifdef CONFIG_COMPAT
+> >
+> >  #include <linux/time.h>
+> > -#include <asm/compat.h>
+> > +#include <linux/compat.h>
+>
+> This breaks arm64 defconfig:
+>
+> $ make -skj"$(nproc)" ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux- distcle=
+an defconfig init/main.o
+> In file included from ./include/linux/compat.h:17,
+>                  from ./arch/arm64/include/asm/stat.h:13,
+>                  from ./include/linux/stat.h:6,
+>                  from ./include/linux/sysfs.h:22,
+>                  from ./include/linux/kobject.h:20,
+>                  from ./include/linux/of.h:17,
+>                  from ./include/linux/irqdomain.h:35,
+>                  from ./include/linux/acpi.h:13,
+>                  from ./include/acpi/apei.h:9,
+>                  from ./include/acpi/ghes.h:5,
+>                  from ./include/linux/arm_sdei.h:8,
+>                  from arch/arm64/kernel/asm-offsets.c:10:
+> ./include/linux/fs.h: In function 'vfs_whiteout':
+> ./include/linux/fs.h:1736:32: error: 'S_IFCHR' undeclared (first use in t=
+his function)
+>  1736 |  return vfs_mknod(dir, dentry, S_IFCHR | WHITEOUT_MODE, WHITEOUT_=
+DEV);
+>       |                                ^~~~~~~
+> ./include/linux/fs.h:1736:32: note: each undeclared identifier is reporte=
+d only once for each function it appears in
+> ./include/linux/fs.h: At top level:
+> ./include/linux/fs.h:1886:46: warning: 'struct kstat' declared inside par=
+ameter list will not be visible outside of this definition or declaration
+>  1886 |  int (*getattr) (const struct path *, struct kstat *, u32, unsign=
+ed int);
+>       |                                              ^~~~~
+> ./include/linux/fs.h: In function '__mandatory_lock':
+> ./include/linux/fs.h:2372:25: error: 'S_ISGID' undeclared (first use in t=
+his function); did you mean 'SIGIO'?
+>  2372 |  return (ino->i_mode & (S_ISGID | S_IXGRP)) =3D=3D S_ISGID;
+>       |                         ^~~~~~~
+>       |                         SIGIO
+> ./include/linux/fs.h:2372:35: error: 'S_IXGRP' undeclared (first use in t=
+his function)
+>  2372 |  return (ino->i_mode & (S_ISGID | S_IXGRP)) =3D=3D S_ISGID;
+>       |                                   ^~~~~~~
+> ...
+>
+> $ git bisect log
+> # bad: [7b287a5c6ac518c415a258f2aa7b1ebb25c263d2] Add linux-next specific=
+ files for 20200730
+> # good: [d3590ebf6f91350192737dd1d1b219c05277f067] Merge tag 'audit-pr-20=
+200729' of git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit
+> git bisect start '7b287a5c6ac518c415a258f2aa7b1ebb25c263d2' 'd3590ebf6f91=
+350192737dd1d1b219c05277f067'
+> # bad: [1f1ed12be70e9eb4e05ac206c6ad6a5a31f5b921] Merge remote-tracking b=
+ranch 'crypto/master'
+> git bisect bad 1f1ed12be70e9eb4e05ac206c6ad6a5a31f5b921
+> # bad: [07fad673c2f1a02440c879c34f8182b12786a735] Merge remote-tracking b=
+ranch 'hid/for-next'
+> git bisect bad 07fad673c2f1a02440c879c34f8182b12786a735
+> # good: [7a77c92312546a74d3507484b256ae17bfb2cfe2] Merge remote-tracking =
+branch 'm68knommu/for-next'
+> git bisect good 7a77c92312546a74d3507484b256ae17bfb2cfe2
+> # good: [40dd62f180e38317e744d7f82c98af31a24fd2c9] Merge remote-tracking =
+branch 'f2fs/dev'
+> git bisect good 40dd62f180e38317e744d7f82c98af31a24fd2c9
+> # bad: [52138dfdd2192bcfc7d3bc2e79475966ee4b20c4] Merge remote-tracking b=
+ranch 'printk/for-next'
+> git bisect bad 52138dfdd2192bcfc7d3bc2e79475966ee4b20c4
+> # good: [a37c3e37fa3fa1381e03d918d708f82927ddd160] Merge remote-tracking =
+branch 'xfs/for-next'
+> git bisect good a37c3e37fa3fa1381e03d918d708f82927ddd160
+> # good: [4e523547e2bf755d40cb10e85795c2f9620ff3fb] nvme-pci: add a blank =
+line after declarations
+> git bisect good 4e523547e2bf755d40cb10e85795c2f9620ff3fb
+> # bad: [5066741180729f7bad9401de34efda3766c3274a] Merge branches 'fixes' =
+and 'work.quota-compat' into for-next
+> git bisect bad 5066741180729f7bad9401de34efda3766c3274a
+> # good: [4ff8a356daafaafbf90141ee7a3b8fdc18e560a8] ia64: switch to ->regs=
+et_get()
+> git bisect good 4ff8a356daafaafbf90141ee7a3b8fdc18e560a8
+> # good: [ce327e1c54119179066d6f3573a28001febc9265] regset: kill user_regs=
+et_copyout{,_zero}()
+> git bisect good ce327e1c54119179066d6f3573a28001febc9265
+> # good: [1697a322e28ba96d35953c5d824540d172546d36] [elf-fdpic] switch cor=
+edump to regsets
+> git bisect good 1697a322e28ba96d35953c5d824540d172546d36
+> # good: [259bf01c1bd1f049958496a089c4f334fe0c8a48] Merge branches 'work.m=
+isc', 'work.regset' and 'work.fdpic' into for-next
+> git bisect good 259bf01c1bd1f049958496a089c4f334fe0c8a48
+> # bad: [0a3a4497a1de8e68e809a693b549c7ec2f195301] compat: lift compat_s64=
+ and compat_u64 to <linux/compat.h>
+> git bisect bad 0a3a4497a1de8e68e809a693b549c7ec2f195301
+> # bad: [b902bfb3f0e9d07ec9f48256e57e5c5de6108f8c] arm64: stop using <asm/=
+compat.h> directly
+> git bisect bad b902bfb3f0e9d07ec9f48256e57e5c5de6108f8c
+> # first bad commit: [b902bfb3f0e9d07ec9f48256e57e5c5de6108f8c] arm64: sto=
+p using <asm/compat.h> directly
+>
+> I assume the stat header order should be messed around with but I am not
+> sure what exactly that would entail to make sure that nothing else
+> breaks, hence just the report.
+
+FYI,
+We have also noticed this arm64 build break on linux next 20200730
+with gcc-8.x, gcc-9.x and gcc-10.x
+
+make -sk KBUILD_BUILD_USER=3DTuxBuild -C/linux -j16 ARCH=3Darm64
+CROSS_COMPILE=3Daarch64-linux-gnu- HOSTCC=3Dgcc CC=3D"sccache
+aarch64-linux-gnu-gcc" O=3Dbuild Image
+#
+In file included from ../include/linux/compat.h:17,
+                 from ../arch/arm64/include/asm/stat.h:13,
+                 from ../include/linux/stat.h:6,
+                 from ../include/linux/sysfs.h:22,
+                 from ../include/linux/kobject.h:20,
+                 from ../include/linux/of.h:17,
+                 from ../include/linux/irqdomain.h:35,
+                 from ../include/linux/acpi.h:13,
+                 from ../include/acpi/apei.h:9,
+                 from ../include/acpi/ghes.h:5,
+                 from ../include/linux/arm_sdei.h:8,
+                 from ../arch/arm64/kernel/asm-offsets.c:10:
+../include/linux/fs.h: In function =E2=80=98vfs_whiteout=E2=80=99:
+../include/linux/fs.h:1709:32: error: =E2=80=98S_IFCHR=E2=80=99 undeclared =
+(first use
+in this function)
+ 1709 |  return vfs_mknod(dir, dentry, S_IFCHR | WHITEOUT_MODE, WHITEOUT_DE=
+V);
+      |                                ^~~~~~~
+../include/linux/fs.h:1709:32: note: each undeclared identifier is
+reported only once for each function it appears in
+../include/linux/fs.h: At top level:
+../include/linux/fs.h:1855:46: warning: =E2=80=98struct kstat=E2=80=99 decl=
+ared inside
+parameter list will not be visible outside of this definition or
+declaration
+ 1855 |  int (*getattr) (const struct path *, struct kstat *, u32,
+unsigned int);
+      |                                              ^~~~~
+../include/linux/fs.h: In function =E2=80=98__mandatory_lock=E2=80=99:
+../include/linux/fs.h:2325:25: error: =E2=80=98S_ISGID=E2=80=99 undeclared =
+(first use
+in this function); did you mean =E2=80=98SIGIO=E2=80=99?
+ 2325 |  return (ino->i_mode & (S_ISGID | S_IXGRP)) =3D=3D S_ISGID;
+      |                         ^~~~~~~
+      |                         SIGIO
+../include/linux/fs.h:2325:35: error: =E2=80=98S_IXGRP=E2=80=99 undeclared =
+(first use
+in this function)
+ 2325 |  return (ino->i_mode & (S_ISGID | S_IXGRP)) =3D=3D S_ISGID;
+      |                                   ^~~~~~~
+../include/linux/fs.h: In function =E2=80=98invalidate_remote_inode=E2=80=
+=99:
+../include/linux/fs.h:2588:6: error: implicit declaration of function
+=E2=80=98S_ISREG=E2=80=99 [-Werror=3Dimplicit-function-declaration]
+ 2588 |  if (S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
+      |      ^~~~~~~
+../include/linux/fs.h:2588:32: error: implicit declaration of function
+=E2=80=98S_ISDIR=E2=80=99; did you mean =E2=80=98EISDIR=E2=80=99?
+[-Werror=3Dimplicit-function-declaration]
+ 2588 |  if (S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
+      |                                ^~~~~~~
+      |                                EISDIR
+../include/linux/fs.h:2589:6: error: implicit declaration of function
+=E2=80=98S_ISLNK=E2=80=99 [-Werror=3Dimplicit-function-declaration]
+ 2589 |      S_ISLNK(inode->i_mode))
+      |      ^~~~~~~
+../include/linux/fs.h: In function =E2=80=98execute_ok=E2=80=99:
+../include/linux/fs.h:2768:26: error: =E2=80=98S_IXUGO=E2=80=99 undeclared =
+(first use
+in this function)
+ 2768 |  return (inode->i_mode & S_IXUGO) || S_ISDIR(inode->i_mode);
+      |                          ^~~~~~~
+In file included from ../include/linux/compat.h:17,
+                 from ../arch/arm64/include/asm/stat.h:13,
+                 from ../include/linux/stat.h:6,
+                 from ../include/linux/sysfs.h:22,
+                 from ../include/linux/kobject.h:20,
+                 from ../include/linux/of.h:17,
+                 from ../include/linux/irqdomain.h:35,
+                 from ../include/linux/acpi.h:13,
+                 from ../include/acpi/apei.h:9,
+                 from ../include/acpi/ghes.h:5,
+                 from ../include/linux/arm_sdei.h:8,
+                 from ../arch/arm64/kernel/asm-offsets.c:10:
+../include/linux/fs.h: At top level:
+../include/linux/fs.h:3141:53: warning: =E2=80=98struct kstat=E2=80=99 decl=
+ared inside
+parameter list will not be visible outside of this definition or
+declaration
+ 3141 | extern void generic_fillattr(struct inode *, struct kstat *);
+      |                                                     ^~~~~
+../include/linux/fs.h:3142:58: warning: =E2=80=98struct kstat=E2=80=99 decl=
+ared inside
+parameter list will not be visible outside of this definition or
+declaration
+ 3142 | extern int vfs_getattr_nosec(const struct path *, struct kstat
+*, u32, unsigned int);
+      |                                                          ^~~~~
+../include/linux/fs.h:3143:52: warning: =E2=80=98struct kstat=E2=80=99 decl=
+ared inside
+parameter list will not be visible outside of this definition or
+declaration
+ 3143 | extern int vfs_getattr(const struct path *, struct kstat *,
+u32, unsigned int);
+      |                                                    ^~~~~
+../include/linux/fs.h:3160:60: warning: =E2=80=98struct kstat=E2=80=99 decl=
+ared inside
+parameter list will not be visible outside of this definition or
+declaration
+ 3160 | extern int vfs_statx(int, const char __user *, int, struct
+kstat *, u32);
+      |                                                            ^~~~~
+../include/linux/fs.h:3161:46: warning: =E2=80=98struct kstat=E2=80=99 decl=
+ared inside
+parameter list will not be visible outside of this definition or
+declaration
+ 3161 | extern int vfs_statx_fd(unsigned int, struct kstat *, u32,
+unsigned int);
+      |                                              ^~~~~
+../include/linux/fs.h:3163:64: warning: =E2=80=98struct kstat=E2=80=99 decl=
+ared inside
+parameter list will not be visible outside of this definition or
+declaration
+ 3163 | static inline int vfs_stat(const char __user *filename, struct
+kstat *stat)
+      |                                                                ^~~~=
+~
+../include/linux/fs.h: In function =E2=80=98vfs_stat=E2=80=99:
+../include/linux/fs.h:3166:11: error: =E2=80=98STATX_BASIC_STATS=E2=80=99 u=
+ndeclared
+(first use in this function)
+ 3166 |     stat, STATX_BASIC_STATS);
+      |           ^~~~~~~~~~~~~~~~~
+../include/linux/fs.h:3166:5: error: passing argument 4 of =E2=80=98vfs_sta=
+tx=E2=80=99
+from incompatible pointer type [-Werror=3Dincompatible-pointer-types]
+ 3166 |     stat, STATX_BASIC_STATS);
+      |     ^~~~
+      |     |
+      |     struct kstat *
+../include/linux/fs.h:3160:53: note: expected =E2=80=98struct kstat *=E2=80=
+=99 but
+argument is of type =E2=80=98struct kstat *=E2=80=99
+ 3160 | extern int vfs_statx(int, const char __user *, int, struct
+kstat *, u32);
+      |                                                     ^~~~~~~~~~~~~~
+../include/linux/fs.h: At top level:
+../include/linux/fs.h:3168:61: warning: =E2=80=98struct kstat=E2=80=99 decl=
+ared inside
+parameter list will not be visible outside of this definition or
+declaration
+ 3168 | static inline int vfs_lstat(const char __user *name, struct kstat *=
+stat)
+      |                                                             ^~~~~
+../include/linux/fs.h: In function =E2=80=98vfs_lstat=E2=80=99:
+../include/linux/fs.h:3171:11: error: =E2=80=98STATX_BASIC_STATS=E2=80=99 u=
+ndeclared
+(first use in this function)
+ 3171 |     stat, STATX_BASIC_STATS);
+      |           ^~~~~~~~~~~~~~~~~
+../include/linux/fs.h:3171:5: error: passing argument 4 of =E2=80=98vfs_sta=
+tx=E2=80=99
+from incompatible pointer type [-Werror=3Dincompatible-pointer-types]
+ 3171 |     stat, STATX_BASIC_STATS);
+      |     ^~~~
+      |     |
+      |     struct kstat *
+../include/linux/fs.h:3160:53: note: expected =E2=80=98struct kstat *=E2=80=
+=99 but
+argument is of type =E2=80=98struct kstat *=E2=80=99
+ 3160 | extern int vfs_statx(int, const char __user *, int, struct
+kstat *, u32);
+      |                                                     ^~~~~~~~~~~~~~
+../include/linux/fs.h: At top level:
+../include/linux/fs.h:3174:17: warning: =E2=80=98struct kstat=E2=80=99 decl=
+ared inside
+parameter list will not be visible outside of this definition or
+declaration
+ 3174 |          struct kstat *stat, int flags)
+      |                 ^~~~~
+../include/linux/fs.h: In function =E2=80=98vfs_fstatat=E2=80=99:
+../include/linux/fs.h:3177:11: error: =E2=80=98STATX_BASIC_STATS=E2=80=99 u=
+ndeclared
+(first use in this function)
+ 3177 |     stat, STATX_BASIC_STATS);
+      |           ^~~~~~~~~~~~~~~~~
+../include/linux/fs.h:3177:5: error: passing argument 4 of =E2=80=98vfs_sta=
+tx=E2=80=99
+from incompatible pointer type [-Werror=3Dincompatible-pointer-types]
+ 3177 |     stat, STATX_BASIC_STATS);
+      |     ^~~~
+      |     |
+      |     struct kstat *
+../include/linux/fs.h:3160:53: note: expected =E2=80=98struct kstat *=E2=80=
+=99 but
+argument is of type =E2=80=98struct kstat *=E2=80=99
+ 3160 | extern int vfs_statx(int, const char __user *, int, struct
+kstat *, u32);
+      |                                                     ^~~~~~~~~~~~~~
+../include/linux/fs.h: At top level:
+../include/linux/fs.h:3179:44: warning: =E2=80=98struct kstat=E2=80=99 decl=
+ared inside
+parameter list will not be visible outside of this definition or
+declaration
+ 3179 | static inline int vfs_fstat(int fd, struct kstat *stat)
+      |                                            ^~~~~
+../include/linux/fs.h: In function =E2=80=98vfs_fstat=E2=80=99:
+../include/linux/fs.h:3181:32: error: =E2=80=98STATX_BASIC_STATS=E2=80=99 u=
+ndeclared
+(first use in this function)
+ 3181 |  return vfs_statx_fd(fd, stat, STATX_BASIC_STATS, 0);
+      |                                ^~~~~~~~~~~~~~~~~
+../include/linux/fs.h:3181:26: error: passing argument 2 of
+=E2=80=98vfs_statx_fd=E2=80=99 from incompatible pointer type
+[-Werror=3Dincompatible-pointer-types]
+ 3181 |  return vfs_statx_fd(fd, stat, STATX_BASIC_STATS, 0);
+      |                          ^~~~
+      |                          |
+      |                          struct kstat *
+../include/linux/fs.h:3161:39: note: expected =E2=80=98struct kstat *=E2=80=
+=99 but
+argument is of type =E2=80=98struct kstat *=E2=80=99
+ 3161 | extern int vfs_statx_fd(unsigned int, struct kstat *, u32,
+unsigned int);
+      |                                       ^~~~~~~~~~~~~~
+../include/linux/fs.h: At top level:
+../include/linux/fs.h:3206:55: warning: =E2=80=98struct kstat=E2=80=99 decl=
+ared inside
+parameter list will not be visible outside of this definition or
+declaration
+ 3206 | extern int simple_getattr(const struct path *, struct kstat *,
+u32, unsigned int);
+      |                                                       ^~~~~
+../include/linux/fs.h: In function =E2=80=98vma_is_fsdax=E2=80=99:
+../include/linux/fs.h:3289:6: error: implicit declaration of function
+=E2=80=98S_ISCHR=E2=80=99 [-Werror=3Dimplicit-function-declaration]
+ 3289 |  if (S_ISCHR(inode->i_mode))
+      |      ^~~~~~~
+../include/linux/fs.h: In function =E2=80=98is_sxid=E2=80=99:
+../include/linux/fs.h:3428:17: error: =E2=80=98S_ISUID=E2=80=99 undeclared =
+(first use
+in this function)
+ 3428 |  return (mode & S_ISUID) || ((mode & S_ISGID) && (mode & S_IXGRP));
+      |                 ^~~~~~~
+../include/linux/fs.h:3428:38: error: =E2=80=98S_ISGID=E2=80=99 undeclared =
+(first use
+in this function); did you mean =E2=80=98SIGIO=E2=80=99?
+ 3428 |  return (mode & S_ISUID) || ((mode & S_ISGID) && (mode & S_IXGRP));
+      |                                      ^~~~~~~
+      |                                      SIGIO
+../include/linux/fs.h:3428:58: error: =E2=80=98S_IXGRP=E2=80=99 undeclared =
+(first use
+in this function)
+ 3428 |  return (mode & S_ISUID) || ((mode & S_ISGID) && (mode & S_IXGRP));
+      |                                                          ^~~~~~~
+../include/linux/fs.h: In function =E2=80=98check_sticky=E2=80=99:
+../include/linux/fs.h:3433:22: error: =E2=80=98S_ISVTX=E2=80=99 undeclared =
+(first use
+in this function)
+ 3433 |  if (!(dir->i_mode & S_ISVTX))
+      |                      ^~~~~~~
+cc1: some warnings being treated as errors
+make[2]: *** [../scripts/Makefile.build:114:
+arch/arm64/kernel/asm-offsets.s] Error 1
+
+
+kernel config:
+https://builds.tuxbuild.com/BsPWKexQQ3JXC2WwDQSoQg/kernel.config
+
+- Naresh
+>
+> Cheers,
+> Nathan
