@@ -2,197 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5DE4234B30
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 20:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D3C5234BB0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 21:42:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387827AbgGaShv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jul 2020 14:37:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60650 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387818AbgGaShu (ORCPT
+        id S1729162AbgGaTmg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jul 2020 15:42:36 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:56088 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbgGaTmg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jul 2020 14:37:50 -0400
-Received: from mail-qk1-x749.google.com (mail-qk1-x749.google.com [IPv6:2607:f8b0:4864:20::749])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA8B0C06174A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jul 2020 11:37:50 -0700 (PDT)
-Received: by mail-qk1-x749.google.com with SMTP id a186so5195339qke.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jul 2020 11:37:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=5v86mhTzM4SZYwpUDzMMNrk+SN/FmVXE8SoMYa53F6Y=;
-        b=kSNBHuhvWiu3Edhc80EshTZNiBJwW7/jgs6V28cgkNyxmuvHy7vqFAFbcpT5BtWxoh
-         gZ0IV7fMZlyWMviQSeHw/mWYkqtXLjPVr1Umbt5L3Mk+43Msb33WT/fLBgwpDyV4ZX2w
-         rInWxFkHHL9er683V4RC0fWxdftbZ4D5mGsLGvW0aYLQ5TOBI9MvQym9To7xht1lLt6F
-         4839tMbjgQBpMh5PHT/P/cnss4XwATs5lqiRn+TyG219C6xvydjpIVAllNALhq+uolGP
-         8WAM3y3vsmxQKxw0gUpzOrYB497D+jxud8jvp1LlhWLmTXfbnlkWn/B+iju5MmT5p3su
-         d/3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=5v86mhTzM4SZYwpUDzMMNrk+SN/FmVXE8SoMYa53F6Y=;
-        b=N+vCw1Yszwt8UWbULNyuKkNXnU6xdlsZW0ndVzlofiD9l3ZDFp8oRWcBsPkt1okVhi
-         vVzC/adTmGhkeBcOkB2Z1ChFyxR6VpvJWN5oD1D64cy40lqKkGg/0DeuXCXNcbleL6xA
-         G+DdSQzPOoIxu0+jj9ftT9NgETlyIR/27ZLAcvXYm6OiR0f7He6XXRD/z8721Ft5Q4Y5
-         x4ivI2qOUX8/jvsiqWaioHQcBtmd8ajHKXRWOtwllAXoWd7+9B1itmuoQ1XLW8tVqPT3
-         WxmdOzi43PRDuqo6kNxgy9q2Pp/hI/70IWCpvNGx/8IuZgix+TkdoQrgjF1w8EHcvz4z
-         oNJw==
-X-Gm-Message-State: AOAM530ibWrRXQZ/9qWVGe2el5LWkASsdRRjvK+9xyuMfBiB/QbYUUyu
-        XCTwEziM3alaw6M2HkBnccs2GwM6lUKAkE8=
-X-Google-Smtp-Source: ABdhPJwjzJJL2kQeuj1qJzZxqRaRImKtWaLo5X70m4f+HV9AozHw6bI9+HYOgUTiJdz2IxZ3sUVEDtCfABQ2Xls=
-X-Received: by 2002:a0c:ec86:: with SMTP id u6mr5351729qvo.58.1596220669859;
- Fri, 31 Jul 2020 11:37:49 -0700 (PDT)
-Date:   Fri, 31 Jul 2020 14:37:44 -0400
-In-Reply-To: <20200731183745.1669355-1-ckennelly@google.com>
-Message-Id: <20200731183745.1669355-3-ckennelly@google.com>
-Mime-Version: 1.0
-References: <20200731183745.1669355-1-ckennelly@google.com>
-X-Mailer: git-send-email 2.28.0.163.g6104cc2f0b6-goog
-Subject: [PATCH 2/2 v2] Add self-test for verifying load alignment.
-From:   Chris Kennelly <ckennelly@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Song Liu <songliubraving@fb.com>
-Cc:     David Rientjes <rientjes@google.com>,
-        Ian Rogers <irogers@google.com>,
-        Hugh Dickens <hughd@google.com>,
-        Andrew Morton <akpm@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Sandeep Patil <sspatil@google.com>,
-        Fangrui Song <maskray@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        clang-built-linux@googlegroups.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chris Kennelly <ckennelly@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 31 Jul 2020 15:42:36 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06VJfmfq036480;
+        Fri, 31 Jul 2020 19:41:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2020-01-29;
+ bh=jBXujslfGLcy/uxKVs6euah0Afp+K2q+zLyuafXCuYs=;
+ b=V/UmbF9Z6fJS4SNlcf5gW/z+uk4ICCEH8d4bET9Wtn05VqGE/OlnQz5vRv/uaNPNJaLw
+ AITqFHUxx8k58B03kImuXfXECS84E2NdizSoF1QGowa4+AA4DNISVFwcOOWODSuMzlSe
+ /m9zGzOt6EJY4i2WEv5QRKNIp86f27WCmDKN26BHEv+MR9DzX0S1qSabTHYVXqYtNik6
+ aVhd0xjbspLZuw2A7+Sn8WTNNh0Knq+tgBnSU3LrKK3CtvaXShIzu8OrRNvThBujA9P/
+ hjigm1cWus2RjREhOdziWMIReYoyuBNkUhGILrwGmBghQ1onIgZdpxQAQJcsokVkwAL4 ng== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 32mf7036up-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 31 Jul 2020 19:41:57 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 06VJIc20163330;
+        Fri, 31 Jul 2020 19:41:56 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 32hu64wdy6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 31 Jul 2020 19:41:56 +0000
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 06VJff9C019420;
+        Fri, 31 Jul 2020 19:41:42 GMT
+Received: from [10.39.235.87] (/10.39.235.87)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 31 Jul 2020 12:41:41 -0700
+Subject: Re: [RFC PATCH 0/5] madvise MADV_DOEXEC
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org
+Cc:     mhocko@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org, arnd@arndb.de,
+        ebiederm@xmission.com, keescook@chromium.org, gerg@linux-m68k.org,
+        ktkhai@virtuozzo.com, christian.brauner@ubuntu.com,
+        peterz@infradead.org, esyr@redhat.com, jgg@ziepe.ca,
+        christian@kellner.me, areber@redhat.com, cyphar@cyphar.com
+References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
+From:   Steven Sistare <steven.sistare@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <389f79f9-f1a5-963e-dd05-4d0aaabb5346@oracle.com>
+Date:   Fri, 31 Jul 2020 15:41:37 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
+MIME-Version: 1.0
+In-Reply-To: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9699 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0 bulkscore=0
+ malwarescore=0 mlxscore=0 spamscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007310142
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9699 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 suspectscore=0
+ spamscore=0 impostorscore=0 clxscore=1015 phishscore=0 priorityscore=1501
+ adultscore=0 mlxlogscore=999 malwarescore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2007310143
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This produces a PIE binary with a variety of p_align requirements,
-suitable for verifying that the load address meets that alignment
-requirement.
+On 7/27/2020 1:11 PM, Anthony Yznaga wrote:
+> This patchset adds support for preserving an anonymous memory range across
+> exec(3) using a new madvise MADV_DOEXEC argument.  The primary benefit for
+> sharing memory in this manner, as opposed to re-attaching to a named shared
+> memory segment, is to ensure it is mapped at the same virtual address in
+> the new process as it was in the old one.  An intended use for this is to
+> preserve guest memory for guests using vfio while qemu exec's an updated
+> version of itself.  By ensuring the memory is preserved at a fixed address,
+> vfio mappings and their associated kernel data structures can remain valid.
+> In addition, for the qemu use case, qemu instances that back guest RAM with
+> anonymous memory can be updated.
 
-Signed-off-by: Chris Kennelly <ckennelly@google.com>
----
- tools/testing/selftests/exec/.gitignore     |  1 +
- tools/testing/selftests/exec/Makefile       |  9 ++-
- tools/testing/selftests/exec/load_address.c | 68 +++++++++++++++++++++
- 3 files changed, 76 insertions(+), 2 deletions(-)
- create mode 100644 tools/testing/selftests/exec/load_address.c
+I forgot to mention, our use case is not just theoretical.  It has been implemented
+and is pretty cool (but I am biased).  The pause time for the guest is in the
+100 - 200 msec range.  We submitted qemu patches for review based on the MADV_DOEXEC
+proposal.  In case you are curious:
+  https://lore.kernel.org/qemu-devel/1596122076-341293-1-git-send-email-steven.sistare@oracle.com/
 
-diff --git a/tools/testing/selftests/exec/.gitignore b/tools/testing/selftests/exec/.gitignore
-index 94b02a18f230b..80f57881e9146 100644
---- a/tools/testing/selftests/exec/.gitignore
-+++ b/tools/testing/selftests/exec/.gitignore
-@@ -7,6 +7,7 @@ execveat.moved
- execveat.path.ephemeral
- execveat.ephemeral
- execveat.denatured
-+/load_address_*
- /recursion-depth
- xxxxxxxx*
- pipe
-diff --git a/tools/testing/selftests/exec/Makefile b/tools/testing/selftests/exec/Makefile
-index 4453b8f8def37..81cd5d9860629 100644
---- a/tools/testing/selftests/exec/Makefile
-+++ b/tools/testing/selftests/exec/Makefile
-@@ -4,7 +4,7 @@ CFLAGS += -Wno-nonnull
- CFLAGS += -D_GNU_SOURCE
- 
- TEST_PROGS := binfmt_script
--TEST_GEN_PROGS := execveat
-+TEST_GEN_PROGS := execveat load_address_4096 load_address_2097152 load_address_16777216
- TEST_GEN_FILES := execveat.symlink execveat.denatured script subdir pipe
- # Makefile is a run-time dependency, since it's accessed by the execveat test
- TEST_FILES := Makefile
-@@ -26,4 +26,9 @@ $(OUTPUT)/execveat.symlink: $(OUTPUT)/execveat
- $(OUTPUT)/execveat.denatured: $(OUTPUT)/execveat
- 	cp $< $@
- 	chmod -x $@
--
-+$(OUTPUT)/load_address_4096: load_address.c
-+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,-z,max-page-size=0x1000 -pie $< -o $@
-+$(OUTPUT)/load_address_2097152: load_address.c
-+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,-z,max-page-size=0x200000 -pie $< -o $@
-+$(OUTPUT)/load_address_16777216: load_address.c
-+	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,-z,max-page-size=0x1000000 -pie $< -o $@
-diff --git a/tools/testing/selftests/exec/load_address.c b/tools/testing/selftests/exec/load_address.c
-new file mode 100644
-index 0000000000000..d487c2f6a6150
---- /dev/null
-+++ b/tools/testing/selftests/exec/load_address.c
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+#ifndef _GNU_SOURCE
-+#define _GNU_SOURCE
-+#endif
-+#include <link.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+
-+struct Statistics {
-+	unsigned long long load_address;
-+	unsigned long long alignment;
-+};
-+
-+int ExtractStatistics(struct dl_phdr_info *info, size_t size, void *data)
-+{
-+	struct Statistics *stats = (struct Statistics *) data;
-+	int i;
-+
-+	if (info->dlpi_name != NULL && info->dlpi_name[0] != '\0') {
-+		// Ignore headers from other than the executable.
-+		return 2;
-+	}
-+
-+	stats->load_address = (unsigned long long) info->dlpi_addr;
-+	stats->alignment = 0;
-+
-+	for (i = 0; i < info->dlpi_phnum; i++) {
-+		if (info->dlpi_phdr[i].p_type != PT_LOAD)
-+			continue;
-+
-+		if (info->dlpi_phdr[i].p_align > stats->alignment)
-+			stats->alignment = info->dlpi_phdr[i].p_align;
-+	}
-+
-+	return 1;  // Terminate dl_iterate_phdr.
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	struct Statistics extracted;
-+	unsigned long long misalign;
-+	int ret;
-+
-+	ret = dl_iterate_phdr(ExtractStatistics, &extracted);
-+	if (ret != 1) {
-+		fprintf(stderr, "FAILED\n");
-+		return 1;
-+	}
-+
-+	if (extracted.alignment == 0) {
-+		fprintf(stderr, "No alignment found\n");
-+		return 1;
-+	} else if (extracted.alignment & (extracted.alignment - 1)) {
-+		fprintf(stderr, "Alignment is not a power of 2\n");
-+		return 1;
-+	}
-+
-+	misalign = extracted.load_address & (extracted.alignment - 1);
-+	if (misalign) {
-+		printf("alignment = %llu, load_address = %llu\n",
-+			extracted.alignment, extracted.load_address);
-+		fprintf(stderr, "FAILED\n");
-+		return 1;
-+	}
-+
-+	fprintf(stderr, "PASS\n");
-+	return 0;
-+}
--- 
-2.28.0.163.g6104cc2f0b6-goog
+- Steve
 
