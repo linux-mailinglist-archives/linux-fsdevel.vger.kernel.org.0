@@ -2,160 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DE664233FD2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 09:16:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F39732340A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 09:59:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731611AbgGaHQM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jul 2020 03:16:12 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:64568 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731419AbgGaHQL (ORCPT
+        id S1731824AbgGaH6x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jul 2020 03:58:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47080 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731684AbgGaH6w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jul 2020 03:16:11 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200731071606epoutp022ed7026072f574efc9bf954790a3ffba~mxQp2MZuM0681106811epoutp02G
-        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jul 2020 07:16:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200731071606epoutp022ed7026072f574efc9bf954790a3ffba~mxQp2MZuM0681106811epoutp02G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1596179766;
-        bh=4SMhoMDZ+g/ZxupeHB0cPQCfoqh9ufC2P1BT67WkeBQ=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=IT36sDG/yjeYdw3BIzlix3yKusmfL/6hjkc/Y01ONtxRddmmAtI4oOaW6hXhekCbM
-         UBjnJc6YI7kihhP+UvO8ksJ07b4OwvlwCKZIYanJfAdkKJH2NaiU7MhxeESRb1/Y+C
-         pwoiHednqDZ8grlkPIeclKvVU/LsOPXH+oYAzXBY=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20200731071606epcas1p35bb68c26a8cfcb12b1d0bc0fd06aba5c~mxQpcI3pF1463614636epcas1p3Q;
-        Fri, 31 Jul 2020 07:16:06 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4BHz8j1vWczMqYkf; Fri, 31 Jul
-        2020 07:16:05 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        43.EF.28581.535C32F5; Fri, 31 Jul 2020 16:16:05 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200731071604epcas1p39fe86c3931c5adf9073817c12fb15f1d~mxQoRpr3z1463614636epcas1p3H;
-        Fri, 31 Jul 2020 07:16:04 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200731071604epsmtrp2da4d3e21a9aef2da88bce72632205d35~mxQoQxJWF1033210332epsmtrp2O;
-        Fri, 31 Jul 2020 07:16:04 +0000 (GMT)
-X-AuditID: b6c32a38-2e3ff70000006fa5-86-5f23c5359ac1
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        31.51.08303.435C32F5; Fri, 31 Jul 2020 16:16:04 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200731071604epsmtip2260e51e90659e0df3cdd76b0f780fd9e~mxQoEZI660325003250epsmtip2d;
-        Fri, 31 Jul 2020 07:16:04 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-Cc:     "'Eric Sandeen'" <sandeen@sandeen.net>,
-        "'Goldwyn Rodrigues'" <rgoldwyn@suse.com>,
-        "'Nicolas Boos'" <nicolas.boos@wanadoo.fr>,
-        <sedat.dilek@gmail.com>, "'Hyunchul Lee'" <hyc.lee@gmail.com>,
-        "'Luca Stefani'" <luca.stefani.ge1@gmail.com>,
-        "'Matthieu CASTET'" <castet.matthieu@free.fr>,
-        "'Sven Hoexter'" <sven@stormbind.net>,
-        "'Ethan Sommer'" <e5ten.arch@gmail.com>,
-        "'Hyeongseok Kim'" <hyeongseok@gmail.com>,
-        =?UTF-8?Q?'Sven_H=C3=B6xter'?= <sven@stormbind.net>
-Subject: exfatprogs-1.0.4 version released
-Date:   Fri, 31 Jul 2020 16:16:04 +0900
-Message-ID: <002901d6670a$742e8cf0$5c8ba6d0$@samsung.com>
+        Fri, 31 Jul 2020 03:58:52 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B01BC061574;
+        Fri, 31 Jul 2020 00:58:52 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id g8so7782904wmk.3;
+        Fri, 31 Jul 2020 00:58:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cTyazyYhJvUjN7a2Z4vhY4OPwuV7RiSwhqqKSl6uwS4=;
+        b=cqcr9/BGTVGV5eLNZYxJLpiQ9zQ9uUBx0U9phhALKfBmj3H1Ly5IjBDuCR8W6fB43t
+         Z/+OylPZCJR+MuNTHsIH2hggC/RuHaGQ6B0nlf/ZI0AcnhG1twITAS4fET/myTe8HQ9c
+         l33p4GTO7epKW9P+rpzY85naKonMEwkUBVbxsuQ4TQVmlJaGYBj3cjymi5aglGlEPS4Q
+         6scVBWiakVdV5WPNCQ8JNjoiQQFRRTfxiIyP/1DmUnZn4f93aE0oR8gSLGC5s79KaOYD
+         s1aXsGM6/VUA6w8NHWBfjIjWPFWhxFPsIq5yNMQqlyXoH/cmzyoPY1mKaOlwAzpuXNAN
+         BXZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cTyazyYhJvUjN7a2Z4vhY4OPwuV7RiSwhqqKSl6uwS4=;
+        b=rosesuFqrodKRlgvhlzq4nhl8nWOnv+CQYPAaflh7RWZWLCgCs3L3IyAeYKlCKVq6z
+         RSZR7jLjsJ8tiABwovNJOTX/wWM7n66DGZrZDhxo9xlSeS8Ni6iqy8zX46MG4s3yyfLE
+         LkXKSG9qg7gq8Pfr4Dr72E/JsB7aBQ3lbBRm5QLh3QF/zAPhAKikOZJ3wWoaFyEvhczX
+         LzRAW12y/LzS7freXEOl0YPwaei2nN7lRMB/dKCkC+AakWGu/9xAxpZQTNAjy8pVS6z9
+         Tior3FCvb1+RpCIV6JI5KBrCqoGGfVASSkdQWRzeLzaojhfuWI1ttE0k7n+5IdduhLvX
+         eI/w==
+X-Gm-Message-State: AOAM533sIU6CM9qFHWx/jshyL7IyyNqvYFqi62+Xovv3iy49rf4xmrVu
+        NJeDLAu0a6ILRzC633d1CtEXSJT1g2im+T9WWpA=
+X-Google-Smtp-Source: ABdhPJxNw7Svuw5TllltfhvwrWmcKb/9/XdA7oHnRTAloSkB3rov2jCYV3IjcA5AbRGDfz1qzi3lBfppauTNKt8MG64=
+X-Received: by 2002:a05:600c:21cd:: with SMTP id x13mr2898582wmj.155.1596182331066;
+ Fri, 31 Jul 2020 00:58:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AdZnAYiNJ63jpeDNQxqEFU9jjd0R3Q==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmrq7pUeV4g1n9vBafb/ayW3Qeecpm
-        ce3+e3aLvxM/MVns2XuSxeLyrjlsFv/WN7NbNBw7wmLR9ncXq0XrFS2LdVNPsFi83vCM1YHH
-        o3/dZ1aPnbPusntsWfyQyWPij2lsHuu3XGXx+LxJzuPz3fWsAexROTYZqYkpqUUKqXnJ+SmZ
-        eem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QIcqKZQl5pQChQISi4uV9O1sivJL
-        S1IVMvKLS2yVUgtScgoMDQr0ihNzi0vz0vWS83OtDA0MjEyBKhNyMq5cbmIt+MFTsbGxlbmB
-        8QFnFyMnh4SAiUT3pGssXYxcHEICOxglDkx6ygThfGKU+DK/mRnC+cwo8fXcF3aYluVL+6Cq
-        djFKtDU3MUI4LxklVly5wAJSxSagK/Hvz342EFtEIFli3+v9YEXMAreYJT7uXcMEkhAW0JLY
-        dOwLM4jNIqAqsaF9D1gzr4ClRNP1DmYIW1Di5MwnYHFmAXmJ7W/nMEOcoSDx8+kyVogFehLr
-        3h9lhqgRkZjd2QZVs4VD4sVkKQjbReLP03tMELawxKvjW6DekZL4/G4v0KEcQHa1xMf9UK0d
-        jBIvvttC2MYSN9dvYAUpYRbQlFi/Sx8irCix8/dcRoitfBLvvvawQkzhlehoE4IoUZXou3QY
-        aqm0RFf7B6ilHhKPDkxhncCoOAvJj7OQ/DgLyS+zEBYvYGRZxSiWWlCcm55abFhgghzZmxjB
-        iVjLYgfj3Lcf9A4xMnEwHmKU4GBWEuFt51KIF+JNSaysSi3Kjy8qzUktPsRoCgz1icxSosn5
-        wFyQVxJvaGpkbGxsYWJmbmZqrCTO+/AWUJNAemJJanZqakFqEUwfEwenVAPT/O2LlW7tmD1h
-        XvBJkY3P3ecFfy9W7G5c8zD5v672LlObGZzh08pOr5I8FSG98aT4vveuRZcv9XmsyxP3DK5a
-        al14tXttoe+iUj0bSaW/9+VvJ30qYbKVXFVVcJFhI3Ol+pr8ndczvF32C8nKu7WtdXNPmnPk
-        +KxtG1SUt6n0LmFTO5jT7GV8d+nUQ6v25n2YpTdRdqbCXfmcWUEqD1RF1s/f+W77fU/mf5fu
-        fH40adb57boGb/pvRq+Z+DB18tQlyVk73Tn7D3JWnP9Q1WJ8c+stM8cup7c9p0vr7tlsN1rV
-        y2zVEFGj+kvJoidsqYzuR+0DUjL1GooJ3oHTxNf77Vn2LqltRopZgPzj6g+sSizFGYmGWsxF
-        xYkA5qkRRE0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42LZdlhJXtfkqHK8wdcNZhafb/ayW3Qeecpm
-        ce3+e3aLvxM/MVns2XuSxeLyrjlsFv/WN7NbNBw7wmLR9ncXq0XrFS2LdVNPsFi83vCM1YHH
-        o3/dZ1aPnbPusntsWfyQyWPij2lsHuu3XGXx+LxJzuPz3fWsAexRXDYpqTmZZalF+nYJXBlX
-        LjexFvzgqdjY2MrcwPiAs4uRk0NCwERi+dI+pi5GLg4hgR2MEi1PzjFCJKQljp04w9zFyAFk
-        C0scPlwMUfOcUaLv2BUWkBo2AV2Jf3/2s4HYIgLJEvte72cEKWIWeMQssfL+anaQhLCAlsSm
-        Y1+YQWwWAVWJDe17wJp5BSwlmq53MEPYghInZz4BizMLaEv0PmxlhLDlJba/ncMMcZCCxM+n
-        y1ghlulJrHt/lBmiRkRidmcb8wRGwVlIRs1CMmoWklGzkLQsYGRZxSiZWlCcm55bbFhglJda
-        rlecmFtcmpeul5yfu4kRHGNaWjsY96z6oHeIkYmD8RCjBAezkghvO5dCvBBvSmJlVWpRfnxR
-        aU5q8SFGaQ4WJXHer7MWxgkJpCeWpGanphakFsFkmTg4pRqYGg1beb/831s+ZWZ3u/abP6b6
-        p0T9n3zvl05JXZ/HsXTx3S8+XzQXf1vqab3vVlD/gcPbVpy/4NdSVG7ps8l1GeO62mfxjQYM
-        c3aEsv16l3jLdne+9CW9tev7Jx5U0txq2bBpMtcWuz+cgZJlaoum+G/MsNM0eXt+c06C2cSp
-        t7OK+3fX1j3LPuxRIHki6H7h3Xf7Oq5+STiWukbtGh/fh7+bN3mYq876s13+y/LNlVkiCQ7h
-        irzx52L7Zf3D+Fwyrv8NUJpRcVfy6FYuW4mmv+vXCcyduNn4cqfqNfPVTxMvX3y0gzVlct62
-        evnXDxecL6jc+jO8SclpgULwhF8G86etZjy7reudkIcG+46vM5VYijMSDbWYi4oTAZlToMMg
-        AwAA
-X-CMS-MailID: 20200731071604epcas1p39fe86c3931c5adf9073817c12fb15f1d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200731071604epcas1p39fe86c3931c5adf9073817c12fb15f1d
-References: <CGME20200731071604epcas1p39fe86c3931c5adf9073817c12fb15f1d@epcas1p3.samsung.com>
+References: <b0b7159d-ed10-08ad-b6c7-b85d45f60d16@kernel.dk>
+ <e871eef2-8a93-fdbc-b762-2923526a2db4@gmail.com> <80d27717-080a-1ced-50d5-a3a06cf06cd3@kernel.dk>
+ <da4baa8c-76b0-7255-365c-d8b58e322fd0@gmail.com> <65a7e9a6-aede-31ce-705c-b7f94f079112@kernel.dk>
+ <d4f9a5d3-1df2-1060-94fa-f77441a89299@gmail.com> <CA+1E3rJ3SoLU9aYcugAQgJnSPnJtcCwjZdMREXS3FTmXgy3yow@mail.gmail.com>
+ <f030a338-cd52-2e83-e1da-bdbca910d49e@kernel.dk> <CA+1E3rKxZk2CatTuPcQq5d14vXL9_9LVb2_+AfR2m9xn2WTZdg@mail.gmail.com>
+ <MWHPR04MB3758DC08EA17780E498E9EC0E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+ <20200731064526.GA25674@infradead.org> <MWHPR04MB37581344328A42EA7F5ED13EE74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+In-Reply-To: <MWHPR04MB37581344328A42EA7F5ED13EE74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+From:   Kanchan Joshi <joshiiitr@gmail.com>
+Date:   Fri, 31 Jul 2020 13:28:24 +0530
+Message-ID: <CA+1E3rLM4G4SwzD6RWsK6Ssp7NmhiPedZDjrqN3kORQr9fxCtw@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     "hch@infradead.org" <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "bcrl@kvack.org" <bcrl@kvack.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        SelvaKumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folk,
+On Fri, Jul 31, 2020 at 12:29 PM Damien Le Moal <Damien.LeMoal@wdc.com> wrote:
+>
+> On 2020/07/31 15:45, hch@infradead.org wrote:
+> > On Fri, Jul 31, 2020 at 06:42:10AM +0000, Damien Le Moal wrote:
+> >>> - We may not be able to use RWF_APPEND, and need exposing a new
+> >>> type/flag (RWF_INDIRECT_OFFSET etc.) user-space. Not sure if this
+> >>> sounds outrageous, but is it OK to have uring-only flag which can be
+> >>> combined with RWF_APPEND?
+> >>
+> >> Why ? Where is the problem ? O_APPEND/RWF_APPEND is currently meaningless for
+> >> raw block device accesses. We could certainly define a meaning for these in the
+> >> context of zoned block devices.
+> >
+> > We can't just add a meaning for O_APPEND on block devices now,
+> > as it was previously silently ignored.  I also really don't think any
+> > of these semantics even fit the block device to start with.  If you
+> > want to work on raw zones use zonefs, that's what is exists for.
+>
+> Which is fine with me. Just trying to say that I think this is exactly the
+> discussion we need to start with. What interface do we implement...
+>
+> Allowing zone append only through zonefs as the raw block device equivalent, all
+> the O_APPEND/RWF_APPEND semantic is defined and the "return written offset"
+> implementation in VFS would be common for all file systems, including regular
+> ones. Beside that, there is I think the question of short writes... Not sure if
+> short writes can currently happen with async RWF_APPEND writes to regular files.
+> I think not but that may depend on the FS.
 
-In this release, The performance of fsck have been much improved and
-the new option in mkfs have been added to adjust boundary alignment.
+generic_write_check_limits (called by generic_write_checks, used by
+most FS) may make it short, and AFAIK it does not depend on
+async/sync.
+This was one of the reason why we chose to isolate the operation by a
+different IOCB flag and not by IOCB_APPEND alone.
 
-As the result below, The fsck performance is improved close to windows's fsck
-and much faster than the one in exfat-utils package.
+For block-device these checks are not done, but there is another place
+when it receives writes spanning beyond EOF and iov_iter_truncate()
+adjusts it before sending it down.
+And we return failure for that case in V4-  "Ref: [PATCH v4 3/6] uio:
+return status with iov truncation"
 
-We measured the performance on Samsung 64GB Pro microSDXC UHS-I Class 10 which
-was filled up to 35GB with 9948 directories and 16506 files.
 
-| Implementation       | version           | execution time (seconds) |
-|--------------------- |-------------------|--------------------------|
-| **exfatprogs fsck**  | 1.0.4             | 11.561                   |
-| Windows fsck         | Windows 10 1809   | 11.449                   |
-| [exfat-fuse fsck]    | 1.3.0             | 68.977                   |
-
-And we have been preparing to add fsck repair feature in the next version.
-Any feedback is welcome!:)
-
-CHANGES :
- * fsck.exfat: display sector, cluster, and volume sizes in the human
-   readable format.
- * fsck.exfat: reduce the elapsed time using read-ahead.
-
-NEW FEATURES :
- * mkfs.exfat: generate pseudo unique serials while creating filesystems.
- * mkfs.exfat: add the "-b" option to align the start offset of FAT and
-   data clusters.
- * fsck.exfat: repair zero-byte files which have the NoFatChain attribute.
-
-BUG FIXES :
- * Fix memory leaks on error handling paths.
- * fsck.exfat: fix the bug that cannot access space beyond 2TB.
-
-The git tree is at:
-      https://github.com/exfatprogs/exfatprogs
-
-The tarballs can be found at:
-      https://github.com/exfatprogs/exfatprogs/releases/download/1.0.4/exfatprogs-1.0.4.tar.gz
-
+-- 
+Joshi
