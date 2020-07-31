@@ -2,339 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A78D233FBC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 09:09:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE664233FD2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 09:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731511AbgGaHI5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jul 2020 03:08:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39346 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731367AbgGaHI4 (ORCPT
+        id S1731611AbgGaHQM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jul 2020 03:16:12 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:64568 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731419AbgGaHQL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jul 2020 03:08:56 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67F39C061574;
-        Fri, 31 Jul 2020 00:08:56 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id q76so7057533wme.4;
-        Fri, 31 Jul 2020 00:08:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Hgf0ZyaqGaOKn5USuc2ZOpRRDGLtIAC8Tr9KyFjHJwE=;
-        b=qzgH58pV3DMb/4Ewr9Yr9X7E9skTZcUoQ60AdF1bBwanjaUFIBvXKfVmPAPCtCTqKl
-         471rJMY99JixEck+lNFPL25W4b28DVGdzLlyvQ0nWgA72T0RLsuQtQrAhpLIadB6bt9/
-         HPFpavfv5pOk86v5hsqCrNEwAuux02YtDtbc5YozL/9mSEZxEsJ3VYKjwapPkByD7bIH
-         EijXJuGlF+s9lz+5MsvcdX4xW1MFOOXQdo8QSowupkEAf0x+z26Lsk39oVp75zXfXDDD
-         qTPSCyt/hqW+WPAkT/WO1u0pe4Js4Qx15pZVAOYswYdAPIx4EBlDVDB38p3Ol+r6NIyj
-         G2jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Hgf0ZyaqGaOKn5USuc2ZOpRRDGLtIAC8Tr9KyFjHJwE=;
-        b=FL8aT8o479SfFlfledkRrube5NY4IsRvghqYhPFIgyTczvRXMTnePquUq6eZGs1eoO
-         Lshdl1kG2GOyeWXLQg0ccuBmn6mJrYSorgoGSH5xBLe9oKBYP8qP0OvpInljwdoIaXu+
-         rKKe7JOBiZl3bwIh9vEiwb84BBgRDnqDi1GpmwrOtmur4cs/sH3Gncn/sYU5l4K4ysxB
-         EIDr0ku8KAWRRiTWilxN+/lqgKCp7etoTcfShSc0ikYzRkmCN8pTH5ukc6T1OrFSgkW5
-         4Gi2B1v9aSPM9AigYjhzgcukyFAVwmuzGkW1udS6ngNf9O9CpidUTEWWsX7dxhisxwMZ
-         Hmvg==
-X-Gm-Message-State: AOAM533Pr5L7874l5K3nm4ea/KwhAdmaV6AG2x8i0lGFDqjBT5fgblLj
-        UumlY5S+avT8lWGpjQzXSfG8eBd7V1zGxEajmLc=
-X-Google-Smtp-Source: ABdhPJz6NYUTdZqrjqLEtWANyrKKrQxMtZMwnfn6c7g699kvaunkKDuMMoMBV+R78TbbJwNOByEF+TB9vGjWZxsTlkk=
-X-Received: by 2002:a1c:32c3:: with SMTP id y186mr2494080wmy.15.1596179334716;
- Fri, 31 Jul 2020 00:08:54 -0700 (PDT)
+        Fri, 31 Jul 2020 03:16:11 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200731071606epoutp022ed7026072f574efc9bf954790a3ffba~mxQp2MZuM0681106811epoutp02G
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jul 2020 07:16:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200731071606epoutp022ed7026072f574efc9bf954790a3ffba~mxQp2MZuM0681106811epoutp02G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1596179766;
+        bh=4SMhoMDZ+g/ZxupeHB0cPQCfoqh9ufC2P1BT67WkeBQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=IT36sDG/yjeYdw3BIzlix3yKusmfL/6hjkc/Y01ONtxRddmmAtI4oOaW6hXhekCbM
+         UBjnJc6YI7kihhP+UvO8ksJ07b4OwvlwCKZIYanJfAdkKJH2NaiU7MhxeESRb1/Y+C
+         pwoiHednqDZ8grlkPIeclKvVU/LsOPXH+oYAzXBY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200731071606epcas1p35bb68c26a8cfcb12b1d0bc0fd06aba5c~mxQpcI3pF1463614636epcas1p3Q;
+        Fri, 31 Jul 2020 07:16:06 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.165]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4BHz8j1vWczMqYkf; Fri, 31 Jul
+        2020 07:16:05 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        43.EF.28581.535C32F5; Fri, 31 Jul 2020 16:16:05 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200731071604epcas1p39fe86c3931c5adf9073817c12fb15f1d~mxQoRpr3z1463614636epcas1p3H;
+        Fri, 31 Jul 2020 07:16:04 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200731071604epsmtrp2da4d3e21a9aef2da88bce72632205d35~mxQoQxJWF1033210332epsmtrp2O;
+        Fri, 31 Jul 2020 07:16:04 +0000 (GMT)
+X-AuditID: b6c32a38-2e3ff70000006fa5-86-5f23c5359ac1
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        31.51.08303.435C32F5; Fri, 31 Jul 2020 16:16:04 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200731071604epsmtip2260e51e90659e0df3cdd76b0f780fd9e~mxQoEZI660325003250epsmtip2d;
+        Fri, 31 Jul 2020 07:16:04 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+Cc:     "'Eric Sandeen'" <sandeen@sandeen.net>,
+        "'Goldwyn Rodrigues'" <rgoldwyn@suse.com>,
+        "'Nicolas Boos'" <nicolas.boos@wanadoo.fr>,
+        <sedat.dilek@gmail.com>, "'Hyunchul Lee'" <hyc.lee@gmail.com>,
+        "'Luca Stefani'" <luca.stefani.ge1@gmail.com>,
+        "'Matthieu CASTET'" <castet.matthieu@free.fr>,
+        "'Sven Hoexter'" <sven@stormbind.net>,
+        "'Ethan Sommer'" <e5ten.arch@gmail.com>,
+        "'Hyeongseok Kim'" <hyeongseok@gmail.com>,
+        =?UTF-8?Q?'Sven_H=C3=B6xter'?= <sven@stormbind.net>
+Subject: exfatprogs-1.0.4 version released
+Date:   Fri, 31 Jul 2020 16:16:04 +0900
+Message-ID: <002901d6670a$742e8cf0$5c8ba6d0$@samsung.com>
 MIME-Version: 1.0
-References: <1595605762-17010-1-git-send-email-joshi.k@samsung.com>
- <CGME20200724155350epcas5p3b8f1d59eda7f8fbb38c828f692d42fd6@epcas5p3.samsung.com>
- <1595605762-17010-7-git-send-email-joshi.k@samsung.com> <f5416bd4-93b3-4d14-3266-bdbc4ae1990b@kernel.dk>
- <CA+1E3rJAa3E2Ti0fvvQTzARP797qge619m4aYLjXeR3wxdFwWw@mail.gmail.com>
- <b0b7159d-ed10-08ad-b6c7-b85d45f60d16@kernel.dk> <e871eef2-8a93-fdbc-b762-2923526a2db4@gmail.com>
- <80d27717-080a-1ced-50d5-a3a06cf06cd3@kernel.dk> <da4baa8c-76b0-7255-365c-d8b58e322fd0@gmail.com>
- <65a7e9a6-aede-31ce-705c-b7f94f079112@kernel.dk> <d4f9a5d3-1df2-1060-94fa-f77441a89299@gmail.com>
- <CA+1E3rJ3SoLU9aYcugAQgJnSPnJtcCwjZdMREXS3FTmXgy3yow@mail.gmail.com>
- <f030a338-cd52-2e83-e1da-bdbca910d49e@kernel.dk> <CA+1E3rKxZk2CatTuPcQq5d14vXL9_9LVb2_+AfR2m9xn2WTZdg@mail.gmail.com>
- <MWHPR04MB3758DC08EA17780E498E9EC0E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
-In-Reply-To: <MWHPR04MB3758DC08EA17780E498E9EC0E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
-From:   Kanchan Joshi <joshiiitr@gmail.com>
-Date:   Fri, 31 Jul 2020 12:38:27 +0530
-Message-ID: <CA+1E3rJ5j6MeG3O5Xa7unWLMRz6BacvLVN8xpeEz6AVyJWT55Q@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        SelvaKumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdZnAYiNJ63jpeDNQxqEFU9jjd0R3Q==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFJsWRmVeSWpSXmKPExsWy7bCmrq7pUeV4g1n9vBafb/ayW3Qeecpm
+        ce3+e3aLvxM/MVns2XuSxeLyrjlsFv/WN7NbNBw7wmLR9ncXq0XrFS2LdVNPsFi83vCM1YHH
+        o3/dZ1aPnbPusntsWfyQyWPij2lsHuu3XGXx+LxJzuPz3fWsAexROTYZqYkpqUUKqXnJ+SmZ
+        eem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QIcqKZQl5pQChQISi4uV9O1sivJL
+        S1IVMvKLS2yVUgtScgoMDQr0ihNzi0vz0vWS83OtDA0MjEyBKhNyMq5cbmIt+MFTsbGxlbmB
+        8QFnFyMnh4SAiUT3pGssXYxcHEICOxglDkx6ygThfGKU+DK/mRnC+cwo8fXcF3aYluVL+6Cq
+        djFKtDU3MUI4LxklVly5wAJSxSagK/Hvz342EFtEIFli3+v9YEXMAreYJT7uXcMEkhAW0JLY
+        dOwLM4jNIqAqsaF9D1gzr4ClRNP1DmYIW1Di5MwnYHFmAXmJ7W/nMEOcoSDx8+kyVogFehLr
+        3h9lhqgRkZjd2QZVs4VD4sVkKQjbReLP03tMELawxKvjW6DekZL4/G4v0KEcQHa1xMf9UK0d
+        jBIvvttC2MYSN9dvYAUpYRbQlFi/Sx8irCix8/dcRoitfBLvvvawQkzhlehoE4IoUZXou3QY
+        aqm0RFf7B6ilHhKPDkxhncCoOAvJj7OQ/DgLyS+zEBYvYGRZxSiWWlCcm55abFhgghzZmxjB
+        iVjLYgfj3Lcf9A4xMnEwHmKU4GBWEuFt51KIF+JNSaysSi3Kjy8qzUktPsRoCgz1icxSosn5
+        wFyQVxJvaGpkbGxsYWJmbmZqrCTO+/AWUJNAemJJanZqakFqEUwfEwenVAPT/O2LlW7tmD1h
+        XvBJkY3P3ecFfy9W7G5c8zD5v672LlObGZzh08pOr5I8FSG98aT4vveuRZcv9XmsyxP3DK5a
+        al14tXttoe+iUj0bSaW/9+VvJ30qYbKVXFVVcJFhI3Ol+pr8ndczvF32C8nKu7WtdXNPmnPk
+        +KxtG1SUt6n0LmFTO5jT7GV8d+nUQ6v25n2YpTdRdqbCXfmcWUEqD1RF1s/f+W77fU/mf5fu
+        fH40adb57boGb/pvRq+Z+DB18tQlyVk73Tn7D3JWnP9Q1WJ8c+stM8cup7c9p0vr7tlsN1rV
+        y2zVEFGj+kvJoidsqYzuR+0DUjL1GooJ3oHTxNf77Vn2LqltRopZgPzj6g+sSizFGYmGWsxF
+        xYkA5qkRRE0EAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42LZdlhJXtfkqHK8wdcNZhafb/ayW3Qeecpm
+        ce3+e3aLvxM/MVns2XuSxeLyrjlsFv/WN7NbNBw7wmLR9ncXq0XrFS2LdVNPsFi83vCM1YHH
+        o3/dZ1aPnbPusntsWfyQyWPij2lsHuu3XGXx+LxJzuPz3fWsAexRXDYpqTmZZalF+nYJXBlX
+        LjexFvzgqdjY2MrcwPiAs4uRk0NCwERi+dI+pi5GLg4hgR2MEi1PzjFCJKQljp04w9zFyAFk
+        C0scPlwMUfOcUaLv2BUWkBo2AV2Jf3/2s4HYIgLJEvte72cEKWIWeMQssfL+anaQhLCAlsSm
+        Y1+YQWwWAVWJDe17wJp5BSwlmq53MEPYghInZz4BizMLaEv0PmxlhLDlJba/ncMMcZCCxM+n
+        y1ghlulJrHt/lBmiRkRidmcb8wRGwVlIRs1CMmoWklGzkLQsYGRZxSiZWlCcm55bbFhglJda
+        rlecmFtcmpeul5yfu4kRHGNaWjsY96z6oHeIkYmD8RCjBAezkghvO5dCvBBvSmJlVWpRfnxR
+        aU5q8SFGaQ4WJXHer7MWxgkJpCeWpGanphakFsFkmTg4pRqYGg1beb/831s+ZWZ3u/abP6b6
+        p0T9n3zvl05JXZ/HsXTx3S8+XzQXf1vqab3vVlD/gcPbVpy/4NdSVG7ps8l1GeO62mfxjQYM
+        c3aEsv16l3jLdne+9CW9tev7Jx5U0txq2bBpMtcWuz+cgZJlaoum+G/MsNM0eXt+c06C2cSp
+        t7OK+3fX1j3LPuxRIHki6H7h3Xf7Oq5+STiWukbtGh/fh7+bN3mYq876s13+y/LNlVkiCQ7h
+        irzx52L7Zf3D+Fwyrv8NUJpRcVfy6FYuW4mmv+vXCcyduNn4cqfqNfPVTxMvX3y0gzVlct62
+        evnXDxecL6jc+jO8SclpgULwhF8G86etZjy7reudkIcG+46vM5VYijMSDbWYi4oTAZlToMMg
+        AwAA
+X-CMS-MailID: 20200731071604epcas1p39fe86c3931c5adf9073817c12fb15f1d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200731071604epcas1p39fe86c3931c5adf9073817c12fb15f1d
+References: <CGME20200731071604epcas1p39fe86c3931c5adf9073817c12fb15f1d@epcas1p3.samsung.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 31, 2020 at 12:12 PM Damien Le Moal <Damien.LeMoal@wdc.com> wro=
-te:
->
-> On 2020/07/31 3:26, Kanchan Joshi wrote:
-> > On Thu, Jul 30, 2020 at 11:24 PM Jens Axboe <axboe@kernel.dk> wrote:
-> >>
-> >> On 7/30/20 11:51 AM, Kanchan Joshi wrote:
-> >>> On Thu, Jul 30, 2020 at 11:10 PM Pavel Begunkov <asml.silence@gmail.c=
-om> wrote:
-> >>>>
-> >>>> On 30/07/2020 20:16, Jens Axboe wrote:
-> >>>>> On 7/30/20 10:26 AM, Pavel Begunkov wrote:
-> >>>>>> On 30/07/2020 19:13, Jens Axboe wrote:
-> >>>>>>> On 7/30/20 10:08 AM, Pavel Begunkov wrote:
-> >>>>>>>> On 27/07/2020 23:34, Jens Axboe wrote:
-> >>>>>>>>> On 7/27/20 1:16 PM, Kanchan Joshi wrote:
-> >>>>>>>>>> On Fri, Jul 24, 2020 at 10:00 PM Jens Axboe <axboe@kernel.dk> =
-wrote:
-> >>>>>>>>>>>
-> >>>>>>>>>>> On 7/24/20 9:49 AM, Kanchan Joshi wrote:
-> >>>>>>>>>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
-> >>>>>>>>>>>> index 7809ab2..6510cf5 100644
-> >>>>>>>>>>>> --- a/fs/io_uring.c
-> >>>>>>>>>>>> +++ b/fs/io_uring.c
-> >>>>>>>>>>>> @@ -1284,8 +1301,15 @@ static void __io_cqring_fill_event(st=
-ruct io_kiocb *req, long res, long cflags)
-> >>>>>>>>>>>>       cqe =3D io_get_cqring(ctx);
-> >>>>>>>>>>>>       if (likely(cqe)) {
-> >>>>>>>>>>>>               WRITE_ONCE(cqe->user_data, req->user_data);
-> >>>>>>>>>>>> -             WRITE_ONCE(cqe->res, res);
-> >>>>>>>>>>>> -             WRITE_ONCE(cqe->flags, cflags);
-> >>>>>>>>>>>> +             if (unlikely(req->flags & REQ_F_ZONE_APPEND)) =
-{
-> >>>>>>>>>>>> +                     if (likely(res > 0))
-> >>>>>>>>>>>> +                             WRITE_ONCE(cqe->res64, req->rw=
-.append_offset);
-> >>>>>>>>>>>> +                     else
-> >>>>>>>>>>>> +                             WRITE_ONCE(cqe->res64, res);
-> >>>>>>>>>>>> +             } else {
-> >>>>>>>>>>>> +                     WRITE_ONCE(cqe->res, res);
-> >>>>>>>>>>>> +                     WRITE_ONCE(cqe->flags, cflags);
-> >>>>>>>>>>>> +             }
-> >>>>>>>>>>>
-> >>>>>>>>>>> This would be nice to keep out of the fast path, if possible.
-> >>>>>>>>>>
-> >>>>>>>>>> I was thinking of keeping a function-pointer (in io_kiocb) dur=
-ing
-> >>>>>>>>>> submission. That would have avoided this check......but argume=
-nt count
-> >>>>>>>>>> differs, so it did not add up.
-> >>>>>>>>>
-> >>>>>>>>> But that'd grow the io_kiocb just for this use case, which is a=
-rguably
-> >>>>>>>>> even worse. Unless you can keep it in the per-request private d=
-ata,
-> >>>>>>>>> but there's no more room there for the regular read/write side.
-> >>>>>>>>>
-> >>>>>>>>>>>> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/li=
-nux/io_uring.h
-> >>>>>>>>>>>> index 92c2269..2580d93 100644
-> >>>>>>>>>>>> --- a/include/uapi/linux/io_uring.h
-> >>>>>>>>>>>> +++ b/include/uapi/linux/io_uring.h
-> >>>>>>>>>>>> @@ -156,8 +156,13 @@ enum {
-> >>>>>>>>>>>>   */
-> >>>>>>>>>>>>  struct io_uring_cqe {
-> >>>>>>>>>>>>       __u64   user_data;      /* sqe->data submission passed=
- back */
-> >>>>>>>>>>>> -     __s32   res;            /* result code for this event =
-*/
-> >>>>>>>>>>>> -     __u32   flags;
-> >>>>>>>>>>>> +     union {
-> >>>>>>>>>>>> +             struct {
-> >>>>>>>>>>>> +                     __s32   res;    /* result code for thi=
-s event */
-> >>>>>>>>>>>> +                     __u32   flags;
-> >>>>>>>>>>>> +             };
-> >>>>>>>>>>>> +             __s64   res64;  /* appending offset for zone a=
-ppend */
-> >>>>>>>>>>>> +     };
-> >>>>>>>>>>>>  };
-> >>>>>>>>>>>
-> >>>>>>>>>>> Is this a compatible change, both for now but also going forw=
-ard? You
-> >>>>>>>>>>> could randomly have IORING_CQE_F_BUFFER set, or any other fut=
-ure flags.
-> >>>>>>>>>>
-> >>>>>>>>>> Sorry, I didn't quite understand the concern. CQE_F_BUFFER is =
-not
-> >>>>>>>>>> used/set for write currently, so it looked compatible at this =
-point.
-> >>>>>>>>>
-> >>>>>>>>> Not worried about that, since we won't ever use that for writes=
-. But it
-> >>>>>>>>> is a potential headache down the line for other flags, if they =
-apply to
-> >>>>>>>>> normal writes.
-> >>>>>>>>>
-> >>>>>>>>>> Yes, no room for future flags for this operation.
-> >>>>>>>>>> Do you see any other way to enable this support in io-uring?
-> >>>>>>>>>
-> >>>>>>>>> Honestly I think the only viable option is as we discussed prev=
-iously,
-> >>>>>>>>> pass in a pointer to a 64-bit type where we can copy the additi=
-onal
-> >>>>>>>>> completion information to.
-> >>>>>>>>
-> >>>>>>>> TBH, I hate the idea of such overhead/latency at times when SSDs=
- can
-> >>>>>>>> serve writes in less than 10ms. Any chance you measured how long=
- does it
-> >>>>>>>
-> >>>>>>> 10us? :-)
-> >>>>>>
-> >>>>>> Hah, 10us indeed :)
-> >>>>>>
-> >>>>>>>
-> >>>>>>>> take to drag through task_work?
-> >>>>>>>
-> >>>>>>> A 64-bit value copy is really not a lot of overhead... But yes, w=
-e'd
-> >>>>>>> need to push the completion through task_work at that point, as w=
-e can't
-> >>>>>>> do it from the completion side. That's not a lot of overhead, and=
- most
-> >>>>>>> notably, it's overhead that only affects this particular type.
-> >>>>>>>
-> >>>>>>> That's not a bad starting point, and something that can always be
-> >>>>>>> optimized later if need be. But I seriously doubt it'd be anythin=
-g to
-> >>>>>>> worry about.
-> >>>>>>
-> >>>>>> I probably need to look myself how it's really scheduled, but if y=
-ou don't
-> >>>>>> mind, here is a quick question: if we do work_add(task) when the t=
-ask is
-> >>>>>> running in the userspace, wouldn't the work execution wait until t=
-he next
-> >>>>>> syscall/allotted time ends up?
-> >>>>>
-> >>>>> It'll get the task to enter the kernel, just like signal delivery. =
-The only
-> >>>>> tricky part is really if we have a dependency waiting in the kernel=
-, like
-> >>>>> the recent eventfd fix.
-> >>>>
-> >>>> I see, thanks for sorting this out!
-> >>>
-> >>> Few more doubts about this (please mark me wrong if that is the case)=
-:
-> >>>
-> >>> - Task-work makes me feel like N completions waiting to be served by
-> >>> single task.
-> >>> Currently completions keep arriving and CQEs would be updated with
-> >>> result, but the user-space (submitter task) would not be poked.
-> >>>
-> >>> - Completion-code will set the task-work. But post that it cannot go
-> >>> immediately to its regular business of picking cqe and updating
-> >>> res/flags, as we cannot afford user-space to see the cqe before the
-> >>> pointer update. So it seems completion-code needs to spawn another
-> >>> work which will allocate/update cqe after waiting for pointer-update
-> >>> from task-work?
-> >>
-> >> The task work would post the completion CQE for the request after
-> >> writing the offset.
-> >
-> > Got it, thank you for making it simple.
-> > Overall if I try to put the tradeoffs of moving to indirect-offset
-> > (compared to current scheme)=E2=80=93
-> >
-> > Upside:
-> > - cqe res/flags would be intact, avoids future-headaches as you mention=
-ed
-> > - short-write cases do not have to be failed in lower-layers (as
-> > cqe->res is there to report bytes-copied)
->
-> I personally think it is a super bad idea to allow short asynchronous app=
-end
-> writes. The interface should allow the async zone append write to proceed=
- only
-> and only if it can be stuffed entirely into a single BIO which necessaril=
-ly will
-> be a single request on the device side. Otherwise, the application would =
-have no
-> guarantees as to where a split may happen, and since this is zone append,=
- the
-> next async append will not leave any hole to complete a previous short wr=
-ite.
-> This will wreak the structure of the application data.
->
-> For the sync case, this is fine. The application can just issue a new app=
-end
-> write with the remaining unwritten data from the previous append write. B=
-ut in
-> the async case, if one write =3D=3D one data record (e.g. a key-value tup=
-le for an
-> SSTable in an LSM tree), then allowing a short write will destroy the rec=
-ord:
-> the partial write will be garbage data that will need garbage collection.=
-..
+Hi folk,
 
-There are cases when short-write is fine, isn't it? For example I can
-serve only 8K write (either because of space, or because of those file
-limits), but application sent 12K.....iov_iter_gets truncated to 8K
-and the write is successful. At least that's what O_APPEND and
-RWF_APPEND behaves currently.
-But in the current scheme there is no way to report number-of-bytes
-copied in io-uring, so I had to fail such short-write in lower-layer
-(which does not know whether it is talking to io_uring or aio).
-Failing such short-write is perhaps fine for zone-appened, but is it
-fine for generic file-append?
+In this release, The performance of fsck have been much improved and
+the new option in mkfs have been added to adjust boundary alignment.
 
-> > Downside:
-> > - We may not be able to use RWF_APPEND, and need exposing a new
-> > type/flag (RWF_INDIRECT_OFFSET etc.) user-space. Not sure if this
-> > sounds outrageous, but is it OK to have uring-only flag which can be
-> > combined with RWF_APPEND?
->
-> Why ? Where is the problem ? O_APPEND/RWF_APPEND is currently meaningless=
- for
-> raw block device accesses. We could certainly define a meaning for these =
-in the
-> context of zoned block devices.
-But application using O_APPEND/RWF_APPEND does not pass a pointer to
-be updated by kernel.
-While in kernel we would expect that, and may start writing something
-which is not a pointer.
+As the result below, The fsck performance is improved close to windows's fsck
+and much faster than the one in exfat-utils package.
 
-> I already commented on the need for first defining an interface (flags et=
-c) and
-> its semantic (e.g. do we allow short zone append or not ? What happens fo=
-r
-> regular files ? etc). Did you read my comment ? We really need to first a=
-gree on
-> something to clarify what needs to be done.
+We measured the performance on Samsung 64GB Pro microSDXC UHS-I Class 10 which
+was filled up to 35GB with 9948 directories and 16506 files.
 
-I read and was planning to respond, sorry. But it seemed important to
-get the clarity on the uring-interface, as this seems to decide how
-this whole thing looks like (to application and to lower layers as
-well).
+| Implementation       | version           | execution time (seconds) |
+|--------------------- |-------------------|--------------------------|
+| **exfatprogs fsck**  | 1.0.4             | 11.561                   |
+| Windows fsck         | Windows 10 1809   | 11.449                   |
+| [exfat-fuse fsck]    | 1.3.0             | 68.977                   |
 
-> > -  Expensive compared to sending results in cqe itself. But I agree
-> > that this may not be major, and only for one type of write.
-> >
-> >
->
->
-> --
-> Damien Le Moal
-> Western Digital Research
+And we have been preparing to add fsck repair feature in the next version.
+Any feedback is welcome!:)
 
+CHANGES :
+ * fsck.exfat: display sector, cluster, and volume sizes in the human
+   readable format.
+ * fsck.exfat: reduce the elapsed time using read-ahead.
 
+NEW FEATURES :
+ * mkfs.exfat: generate pseudo unique serials while creating filesystems.
+ * mkfs.exfat: add the "-b" option to align the start offset of FAT and
+   data clusters.
+ * fsck.exfat: repair zero-byte files which have the NoFatChain attribute.
 
---=20
-Joshi
+BUG FIXES :
+ * Fix memory leaks on error handling paths.
+ * fsck.exfat: fix the bug that cannot access space beyond 2TB.
+
+The git tree is at:
+      https://github.com/exfatprogs/exfatprogs
+
+The tarballs can be found at:
+      https://github.com/exfatprogs/exfatprogs/releases/download/1.0.4/exfatprogs-1.0.4.tar.gz
+
