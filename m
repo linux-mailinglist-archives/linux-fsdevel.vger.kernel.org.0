@@ -2,192 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24696234AAC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 20:10:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB6AB234B16
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 20:31:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387736AbgGaSKC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jul 2020 14:10:02 -0400
-Received: from foss.arm.com ([217.140.110.172]:35830 "EHLO foss.arm.com"
+        id S2387724AbgGaSbx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jul 2020 14:31:53 -0400
+Received: from foss.arm.com ([217.140.110.172]:36014 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730040AbgGaSKB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jul 2020 14:10:01 -0400
+        id S1730040AbgGaSbw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 31 Jul 2020 14:31:52 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC48631B;
-        Fri, 31 Jul 2020 11:10:00 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0C9130E;
+        Fri, 31 Jul 2020 11:31:51 -0700 (PDT)
 Received: from C02TD0UTHF1T.local (unknown [10.57.4.61])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD9B03F71F;
-        Fri, 31 Jul 2020 11:09:58 -0700 (PDT)
-Date:   Fri, 31 Jul 2020 19:09:55 +0100
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48D163F71F;
+        Fri, 31 Jul 2020 11:31:49 -0700 (PDT)
+Date:   Fri, 31 Jul 2020 19:31:46 +0100
 From:   Mark Rutland <mark.rutland@arm.com>
-To:     madvenka@linux.microsoft.com
-Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org
+To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
 Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-Message-ID: <20200731180955.GC67415@C02TD0UTHF1T.local>
-References: <aefc85852ea518982e74b233e11e16d2e707bc32>
- <20200728131050.24443-1-madvenka@linux.microsoft.com>
+Message-ID: <20200731183146.GD67415@C02TD0UTHF1T.local>
+References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
+ <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
+ <6540b4b7-3f70-adbf-c922-43886599713a@linux.microsoft.com>
+ <CALCETrWnNR5v3ZCLfBVQGYK8M0jAvQMaAc9uuO05kfZuh-4d6w@mail.gmail.com>
+ <46a1adef-65f0-bd5e-0b17-54856fb7e7ee@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200728131050.24443-1-madvenka@linux.microsoft.com>
+In-Reply-To: <46a1adef-65f0-bd5e-0b17-54856fb7e7ee@linux.microsoft.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-On Tue, Jul 28, 2020 at 08:10:46AM -0500, madvenka@linux.microsoft.com wrote:
-> From: "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-> Trampoline code is placed either in a data page or in a stack page. In
-> order to execute a trampoline, the page it resides in needs to be mapped
-> with execute permissions. Writable pages with execute permissions provide
-> an attack surface for hackers. Attackers can use this to inject malicious
-> code, modify existing code or do other harm.
-
-For the purpose of below, IIUC this assumes the adversary has an
-arbitrary write.
-
-> To mitigate this, LSMs such as SELinux may not allow pages to have both
-> write and execute permissions. This prevents trampolines from executing
-> and blocks applications that use trampolines. To allow genuine applications
-> to run, exceptions have to be made for them (by setting execmem, etc).
-> In this case, the attack surface is just the pages of such applications.
+On Fri, Jul 31, 2020 at 12:13:49PM -0500, Madhavan T. Venkataraman wrote:
+> On 7/30/20 3:54 PM, Andy Lutomirski wrote:
+> > On Thu, Jul 30, 2020 at 7:24 AM Madhavan T. Venkataraman
+> > <madvenka@linux.microsoft.com> wrote:
+> Dealing with multiple architectures
+> -----------------------------------------------
 > 
-> An application that is not allowed to have writable executable pages
-> may try to load trampoline code into a file and map the file with execute
-> permissions. In this case, the attack surface is just the buffer that
-> contains trampoline code. However, a successful exploit may provide the
-> hacker with means to load his own code in a file, map it and execute it.
+> One good reason to use trampfd is multiple architecture support. The
+> trampoline table in a code page approach is neat. I don't deny that at
+> all. But my question is - can it be used in all cases?
+> 
+> It requires PC-relative data references. I have not worked on all architectures.
+> So, I need to study this. But do all ISAs support PC-relative data references?
 
-It's not clear to me what power the adversary is assumed to have here,
-and consequently it's not clear to me how the proposal mitigates this.
+Not all do, but pretty much any recent ISA will as it's a practical
+necessity for fast position-independent code.
 
-For example, if the attack can control the arguments to syscalls, and
-has an arbitrary write as above, what prevents them from creating a
-trampfd of their own?
+> Even in an ISA that supports it, there would be a maximum supported offset
+> from the current PC that can be reached for a data reference. That maximum
+> needs to be at least the size of a base page in the architecture. This is because
+> the code page and the data page need to be separate for security reasons.
+> Do all ISAs support a sufficiently large offset?
+
+ISAs with pc-relative addessing can usually generate PC-relative
+addresses into a GPR, from which they can apply an arbitrarily large
+offset.
+
+> When the kernel generates the code for a trampoline, it can hard code data values
+> in the generated code itself so it does not need PC-relative data referencing.
+> 
+> And, for ISAs that do support the large offset, we do have to implement and
+> maintain the code page stuff for different ISAs for each application and library
+> if we did not use trampfd.
+
+Trampoline code is architecture specific today, so I don't see that as a
+major issue. Common structural bits can probably be shared even if the
+specifid machine code cannot.
 
 [...]
 
-> GCC has traditionally used trampolines for implementing nested
-> functions. The trampoline is placed on the user stack. So, the stack
-> needs to be executable.
+> Security
+> -----------
+> 
+> With the user level trampoline table approach, the data part of the trampoline table
+> can be hacked by an attacker if an application has a vulnerability. Specifically, the
+> target PC can be altered to some arbitrary location. Trampfd implements an
+> "Allowed PCS" context. In the libffi changes, I have created a read-only array of
+> all ABI handlers used in closures for each architecture. This read-only array
+> can be used to restrict the PC values for libffi trampolines to prevent hacking.
+> 
+> To generalize, we can implement security rules/features if the trampoline
+> object is in the kernel.
 
-IIUC generally nested functions are avoided these days, specifically to
-prevent the creation of gadgets on the stack. So I don't think those are
-relevant as a cased to care about. Applications using them should move
-to not using them, and would be more secure generally for doing so.
+I don't follow this argument. If it's possible to statically define that
+in the kernel, it's also possible to do that in userspace without any
+new kernel support.
 
 [...]
 
-> Trampoline File Descriptor (trampfd)
-> --------------------------
-> 
-> I am proposing a kernel API using anonymous file descriptors that
-> can be used to create and execute trampolines with the help of the
-> kernel. In this solution also, the kernel does the work of the trampoline.
+> Trampfd is a framework that can be used to implement multiple things. May be,
+> a few of those things can also be implemented in user land itself. But I think having
+> just one mechanism to execute dynamic code objects is preferable to having
+> multiple mechanisms not standardized across all applications.
 
-What's the rationale for the kernel emulating the trampoline here?
+In abstract, having a common interface sounds nice, but in practice
+elements of this are always architecture-specific (e.g. interactiosn
+with HW CFI), and that common interface can result in more pain as it
+doesn't fit naturally into the context that ISAs were designed for (e.g. 
+where control-flow instructions are extended with new semantics).
 
-In ther case of EMUTRAMP this was necessary to work with existing
-application binaries and kernel ABIs which placed instructions onto the
-stack, and the stack needed to remain RW for other reasons. That
-restriction doesn't apply here.
-
-Assuming trampfd creation is somehow authenticated, the code could be
-placed in a r-x page (which the kernel could refuse to add write
-permission), in order to prevent modification. If that's sufficient,
-it's not much of a leap to allow userspace to generate the code.
-
-> The kernel creates the trampoline mapping without any permissions. When
-> the trampoline is executed by user code, a page fault happens and the
-> kernel gets control. The kernel recognizes that this is a trampoline
-> invocation. It sets up the user registers based on the specified
-> register context, and/or pushes values on the user stack based on the
-> specified stack context, and sets the user PC to the requested target
-> PC. When the kernel returns, execution continues at the target PC.
-> So, the kernel does the work of the trampoline on behalf of the
-> application.
-> 
-> In this case, the attack surface is the context buffer. A hacker may
-> attack an application with a vulnerability and may be able to modify the
-> context buffer. So, when the register or stack context is set for
-> a trampoline, the values may have been tampered with. From an attack
-> surface perspective, this is similar to Trampoline Emulation. But
-> with trampfd, user code can retrieve a trampoline's context from the
-> kernel and add defensive checks to see if the context has been
-> tampered with.
-
-Can you elaborate on this: what sort of checks would be applied, and
-how?
-
-Why is this not possible in a r-x user page?
-
-[...]
-
-> - trampfd provides a basic framework. In the future, new trampoline types
->   can be implemented, new contexts can be defined, and additional rules
->   can be implemented for security purposes.
-
-From a kernel developer perspective, this reads as "this ABI will become
-more complex", which I think is worrisome.
-
-I'm also worried that this is liable to have nasty interaction with HW
-CFI mechanisms (e.g. PAC+BTI on arm64) either now or in future, and that
-we bake incompatibility into ABI.
-
-> - For instance, trampfd defines an "Allowed PCs" context in this initial
->   work. As an example, libffi can create a read-only array of all ABI
->   handlers for an architecture at build time. This array can be used to
->   set the list of allowed PCs for a trampoline. This will mean that a hacker
->   cannot hack the PC part of the register context and make it point to
->   arbitrary locations.
-
-I'm not exactly sure what's meant here. Do you mean that this prevents
-userspace from branching into the middle of a trampoline, or that the
-trampfd code prevents where the trampoline itself can branch to?
-
-Both x86 and arm64 have upcoming HW CFI (CET and BTI) to deal with the
-former, and I believe the latter can also be implemented in userspace
-with defensive checks in the trampolines, provided that they are
-protected read-only.
-
-> - An SELinux setting called "exectramp" can be implemented along the
->   lines of "execmem", "execstack" and "execheap" to selectively allow the
->   use of trampolines on a per application basis.
-> 
-> - User code can add defensive checks in the code before invoking a
->   trampoline to make sure that a hacker has not modified the context data.
->   It can do this by getting the trampoline context from the kernel and
->   double checking it.
-
-As above, without examples it's not clear to me what sort of chacks are
-possible nor where they wouild need to be made. So it's difficult to see
-whether that's actually possible or subject to TOCTTOU races and
-similar.
-
-> - In the future, if the kernel can be enhanced to use a safe code
->   generation component, that code can be placed in the trampoline mapping
->   pages. Then, the trampoline invocation does not have to incur a trip
->   into the kernel.
-> 
-> - Also, if the kernel can be enhanced to use a safe code generation
->   component, other forms of dynamic code such as JIT code can be
->   addressed by the trampfd framework.
-
-I don't see why it's necessary for the kernel to generate code at all.
-If the trampfd creation requests can be trusted, what prevents trusting
-a sealed set of instructions generated in userspace?
-
-> - Trampolines can be shared across processes which can give rise to
->   interesting uses in the future.
-
-This sounds like the use-case of a sealed memfd. Is a sealed executable
-memfd not sufficient?
+It also meass that you can't share the rough approach across OSs which
+do not implement an identical mechanism, so for code abstracting by ISA
+first, then by platform/ABI, there isn't much saving.
 
 Thanks,
 Mark.
