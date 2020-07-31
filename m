@@ -2,122 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AB6AB234B16
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 20:31:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABEB2234B31
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 31 Jul 2020 20:38:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387724AbgGaSbx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 31 Jul 2020 14:31:53 -0400
-Received: from foss.arm.com ([217.140.110.172]:36014 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730040AbgGaSbw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 31 Jul 2020 14:31:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0C9130E;
-        Fri, 31 Jul 2020 11:31:51 -0700 (PDT)
-Received: from C02TD0UTHF1T.local (unknown [10.57.4.61])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48D163F71F;
-        Fri, 31 Jul 2020 11:31:49 -0700 (PDT)
-Date:   Fri, 31 Jul 2020 19:31:46 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-Message-ID: <20200731183146.GD67415@C02TD0UTHF1T.local>
-References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
- <6540b4b7-3f70-adbf-c922-43886599713a@linux.microsoft.com>
- <CALCETrWnNR5v3ZCLfBVQGYK8M0jAvQMaAc9uuO05kfZuh-4d6w@mail.gmail.com>
- <46a1adef-65f0-bd5e-0b17-54856fb7e7ee@linux.microsoft.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <46a1adef-65f0-bd5e-0b17-54856fb7e7ee@linux.microsoft.com>
+        id S2387794AbgGaShu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 31 Jul 2020 14:37:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60642 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387693AbgGaSht (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 31 Jul 2020 14:37:49 -0400
+Received: from mail-qv1-xf49.google.com (mail-qv1-xf49.google.com [IPv6:2607:f8b0:4864:20::f49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54932C06174A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jul 2020 11:37:49 -0700 (PDT)
+Received: by mail-qv1-xf49.google.com with SMTP id v18so15830616qvi.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 31 Jul 2020 11:37:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=xWSYjHc+nNdSzqwJCR0Bklwg1NIcyWlbe0Z3kPyxnWY=;
+        b=UHl+j2V9dhsDIpXllhTd7jR0aoK7gz3zEDu2e8D2wo87p2jNh2PEv05B77btBa2WHg
+         t4q9x8YrBGZ9mWVt2w/JAycC+YM363ctKxR6EZAiLJ1H2iARbDjGX7llw1Nc+VeYE9es
+         yLcU/z3RRBx0nUqSGNv5//jg5qgnMt5Wu8m3R/7GIOqQxw0kKjBTswm1QjKpSO78MsPD
+         3QPrOmOcbwtKQa5BO4IsGOI0g/U7+2GEkC1glS9jR40LCLfy1gPodeZY8yYY8H+aPQMA
+         RSRRVYFCS/Ib7J0kJ1dmF/hxt8HVvPuyhMZglgFrgZH3/I5FkvLkG/kOCu9yAgBrbpJl
+         xHlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=xWSYjHc+nNdSzqwJCR0Bklwg1NIcyWlbe0Z3kPyxnWY=;
+        b=KS3FbknfrVmw9DsUhn3MqYw2Wo3wGgIPSG7SDrXfpW5yoWJNYn2b2PNJ5DazSQYpVg
+         dbKm76yH2jrSlKeolTf3mvcn/YbI7O5V3c5f9145VuliTlv+4EXbbHUqZyuhR6QFFDNQ
+         j9du3bA3A8NFu7V/xNeyCxI8Qvk0IFAwLH5yXKG8bsw5+eQIiBakQpl92U3ek4RogvHP
+         6uiV6fySx8cz/bW5RGZm1y98VM2X1Y+Pjl5uSOHClqiXxnxzwEL+Ys2dckeDMaofAKMx
+         hOT3BDZpvi6ydDtVdxOY2Y5jGXy6Oj7QdKfPZDZdomgYk2ITIjV7X85zrwGJ2mwBFuok
+         eA4Q==
+X-Gm-Message-State: AOAM533t92GmfzyCaTZrHK0Da66NP2hEznfOrT8bPY4JQiBJ5YYI1/dk
+        sMe1DCcbBKfIOT92UDA53xJuIQ4htAIz9hM=
+X-Google-Smtp-Source: ABdhPJwXJL3gk9kvQMJJpLmkcSGCU6nZqceKkw9xlltDxuzwPaAHb7crDooksHey6e2zSNoOpkyE2MgqTt+x1Wk=
+X-Received: by 2002:a0c:d44e:: with SMTP id r14mr5459448qvh.105.1596220668284;
+ Fri, 31 Jul 2020 11:37:48 -0700 (PDT)
+Date:   Fri, 31 Jul 2020 14:37:42 -0400
+Message-Id: <20200731183745.1669355-1-ckennelly@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.28.0.163.g6104cc2f0b6-goog
+Subject: [PATCH 0/2 v2] Selecting Load Addresses According to p_align
+From:   Chris Kennelly <ckennelly@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Song Liu <songliubraving@fb.com>
+Cc:     David Rientjes <rientjes@google.com>,
+        Ian Rogers <irogers@google.com>,
+        Hugh Dickens <hughd@google.com>,
+        Andrew Morton <akpm@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Fangrui Song <maskray@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux@googlegroups.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chris Kennelly <ckennelly@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 31, 2020 at 12:13:49PM -0500, Madhavan T. Venkataraman wrote:
-> On 7/30/20 3:54 PM, Andy Lutomirski wrote:
-> > On Thu, Jul 30, 2020 at 7:24 AM Madhavan T. Venkataraman
-> > <madvenka@linux.microsoft.com> wrote:
-> Dealing with multiple architectures
-> -----------------------------------------------
-> 
-> One good reason to use trampfd is multiple architecture support. The
-> trampoline table in a code page approach is neat. I don't deny that at
-> all. But my question is - can it be used in all cases?
-> 
-> It requires PC-relative data references. I have not worked on all architectures.
-> So, I need to study this. But do all ISAs support PC-relative data references?
+The current ELF loading mechancism provides page-aligned mappings.  This
+can lead to the program being loaded in a way unsuitable for
+file-backed, transparent huge pages when handling PIE executables.
 
-Not all do, but pretty much any recent ISA will as it's a practical
-necessity for fast position-independent code.
+While specifying -z,max-page-size=0x200000 to the linker will generate
+suitably aligned segments for huge pages on x86_64, the executable needs
+to be loaded at a suitably aligned address as well.  This alignment
+requires the binary's cooperation, as distinct segments need to be
+appropriately paddded to be eligible for THP.
 
-> Even in an ISA that supports it, there would be a maximum supported offset
-> from the current PC that can be reached for a data reference. That maximum
-> needs to be at least the size of a base page in the architecture. This is because
-> the code page and the data page need to be separate for security reasons.
-> Do all ISAs support a sufficiently large offset?
+For binaries built with increased alignment, this limits the number of
+bits usable for ASLR, but provides some randomization over using fixed
+load addresses/non-PIE binaries.
 
-ISAs with pc-relative addessing can usually generate PC-relative
-addresses into a GPR, from which they can apply an arbitrarily large
-offset.
+Changes V1 -> V2:
+* Added test
 
-> When the kernel generates the code for a trampoline, it can hard code data values
-> in the generated code itself so it does not need PC-relative data referencing.
-> 
-> And, for ISAs that do support the large offset, we do have to implement and
-> maintain the code page stuff for different ISAs for each application and library
-> if we did not use trampfd.
+Chris Kennelly (2):
+  fs/binfmt_elf: Use PT_LOAD p_align values for suitable start address.
+  Add self-test for verifying load alignment.
 
-Trampoline code is architecture specific today, so I don't see that as a
-major issue. Common structural bits can probably be shared even if the
-specifid machine code cannot.
+ fs/binfmt_elf.c                             | 24 ++++++++
+ tools/testing/selftests/exec/.gitignore     |  1 +
+ tools/testing/selftests/exec/Makefile       |  9 ++-
+ tools/testing/selftests/exec/load_address.c | 68 +++++++++++++++++++++
+ 4 files changed, 100 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/exec/load_address.c
 
-[...]
+-- 
+2.28.0.163.g6104cc2f0b6-goog
 
-> Security
-> -----------
-> 
-> With the user level trampoline table approach, the data part of the trampoline table
-> can be hacked by an attacker if an application has a vulnerability. Specifically, the
-> target PC can be altered to some arbitrary location. Trampfd implements an
-> "Allowed PCS" context. In the libffi changes, I have created a read-only array of
-> all ABI handlers used in closures for each architecture. This read-only array
-> can be used to restrict the PC values for libffi trampolines to prevent hacking.
-> 
-> To generalize, we can implement security rules/features if the trampoline
-> object is in the kernel.
-
-I don't follow this argument. If it's possible to statically define that
-in the kernel, it's also possible to do that in userspace without any
-new kernel support.
-
-[...]
-
-> Trampfd is a framework that can be used to implement multiple things. May be,
-> a few of those things can also be implemented in user land itself. But I think having
-> just one mechanism to execute dynamic code objects is preferable to having
-> multiple mechanisms not standardized across all applications.
-
-In abstract, having a common interface sounds nice, but in practice
-elements of this are always architecture-specific (e.g. interactiosn
-with HW CFI), and that common interface can result in more pain as it
-doesn't fit naturally into the context that ISAs were designed for (e.g. 
-where control-flow instructions are extended with new semantics).
-
-It also meass that you can't share the rough approach across OSs which
-do not implement an identical mechanism, so for code abstracting by ISA
-first, then by platform/ABI, there isn't much saving.
-
-Thanks,
-Mark.
