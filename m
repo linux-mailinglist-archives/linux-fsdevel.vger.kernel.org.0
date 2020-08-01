@@ -2,669 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F9F235132
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Aug 2020 10:45:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6966823519B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Aug 2020 12:15:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726364AbgHAIp2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Aug 2020 04:45:28 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:55574 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbgHAIp2 (ORCPT
+        id S1728496AbgHAKO2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Aug 2020 06:14:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34378 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725931AbgHAKOX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Aug 2020 04:45:28 -0400
-Received: by mail-io1-f70.google.com with SMTP id k10so22661528ioh.22
-        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Aug 2020 01:45:26 -0700 (PDT)
+        Sat, 1 Aug 2020 06:14:23 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17909C06174A;
+        Sat,  1 Aug 2020 03:14:23 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id g19so20022962ejc.9;
+        Sat, 01 Aug 2020 03:14:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Acn0jSIh9NBRILU7W8oPVuEq6OOoEX0D3oLMOLxMsqA=;
+        b=lDzeCWP8xKVae2lw65X9s16ZXugWowHQBAcMWj7TiCGG12D1HquXzQ9NphUg7tABEY
+         l6q56394LBhSQ50+5p3396cdylq7ERbN08FXcMTfHRHWgCUHwhfEvsIn+lPT7/XwVIZR
+         JyvrnrhvCIWjTHr/ex277wdHjsmnTsAoTNEz5EUJSa2MOacX8KDTTYp0PEy0dRSH9q/6
+         wsk8DjN3pWsDCbpG+HV/jTayRb7rvXm/4knFhe6tOMIh2Fl5MtaD28U+Bf9UT+GPgA8P
+         o+tPFcB20L389sfxsoznZe8LBEGfbyVoA5efplLNpxPWYEKyxNoE4Ut6ThzElZyxKPdy
+         /ETA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=BBZutkTacxr13XLgNd/6w5PuH2prdsr2nIYsAbJDDKU=;
-        b=GDm+qYsHsGAJyu/dQUUdnwdMFmgPKLy8uvV1AwHxMdcr0IyJFZg2sTiC+/9cmwZKNS
-         uUGrTyRhftOKGewrRuZmSEbOgqBN7ZjfBUiaiLCNV04Q/2zl9R6T4BuU978RBxt7atD3
-         Svz2iPyyH08MwVFQhGkygRkCbU3SRCd5sfkTQsQaDaQ0HcpaG/LMqYSXltKxkrekKFkB
-         JctWpbFX+wo5nLyKyAh4QOTZtIIYAJo163iDJcakfo0eSxQqtabwQpJIUKvufHw2ssoS
-         APWp0YuSLlDf88ei172KhnclLcit/edWReI3xVvsehVVV8JSmP8iQsPT/UaUtHF7IVtE
-         ddXQ==
-X-Gm-Message-State: AOAM533SEP5SdryptJFgU3u2lCK7DRLQgMFTvmaAypAPeayJGuVZt9FU
-        iXbjMbVGlLJIvdQ3/QNTJJozMG4XMv16FwwmIlGlGQBAETtM
-X-Google-Smtp-Source: ABdhPJykFeeU+YUoXWj37adu0JRTJ55m2zCkK8xSDPcBzGxRSfISmpe2Y+PHMJwhN/AFjPEOl2lvM7QjOgY1cmngMeUyZw0TmY/E
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Acn0jSIh9NBRILU7W8oPVuEq6OOoEX0D3oLMOLxMsqA=;
+        b=o40PeAO+QVB+VD1aeMftr9zQ+kx9jMttWAt5jkUywJJ3LRFPam7rMI0xOIcKDO/gYD
+         j93tF3OGP9CRk5Ghe3bkOTh5rcMqhxFKwzpP5lgmMfh7JrjO/bP6OWezutZObYLsudP6
+         8cHTHm4X9XnVAPJiK6jIItNKw5tPM1Kf5ntIbYOCm7+J7mnVLr9ghcsG7d/SJMSJAkcI
+         HBPYfoSC+0cqVWhVrNIDz2vJ9fls2/tvv9lwQF6Et1cx/dgIFJXo/tFRC8GvwGmTFIpz
+         xZWxW586C9ARVgjH0yCj142OVXj30GvId0mh4UCQXSRK3EKH37EjRZ81INY0ArsWhmw1
+         2TTA==
+X-Gm-Message-State: AOAM532Vj2QMCNmII4D4aoxtiJzN9K6sI3d/IPw+/CZpkFWXyHuWNDP/
+        VTIfjDnVlDGvc8yYj0PSn79ssKMK
+X-Google-Smtp-Source: ABdhPJzNLu0YP9rY7XFeRZXEl2ID2rpI1R2jmhYLfUyJdG3u8u0ixOFTwv+BHcjzUP5KuMwMd3Uelw==
+X-Received: by 2002:a17:906:7a16:: with SMTP id d22mr8205695ejo.478.1596276860281;
+        Sat, 01 Aug 2020 03:14:20 -0700 (PDT)
+Received: from [192.168.43.105] ([5.100.193.69])
+        by smtp.gmail.com with ESMTPSA id b18sm11000606ejc.41.2020.08.01.03.14.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Aug 2020 03:14:19 -0700 (PDT)
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <12375b7baa741f0596d54eafc6b1cfd2489dd65a.1579553271.git.asml.silence@gmail.com>
+ <20200130165425.GA8872@infradead.org>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Subject: Re: [PATCH] splice: direct call for default_file_splice*()
+Message-ID: <0618f315-7061-c3fd-15d3-c19cea48cc4c@gmail.com>
+Date:   Sat, 1 Aug 2020 13:12:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:da10:: with SMTP id z16mr7687513ilm.293.1596271525997;
- Sat, 01 Aug 2020 01:45:25 -0700 (PDT)
-Date:   Sat, 01 Aug 2020 01:45:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000045b3fe05abcced2f@google.com>
-Subject: INFO: task hung in pipe_read (2)
-From:   syzbot <syzbot+96cc7aba7e969b1d305c@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200130165425.GA8872@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 30/01/2020 19:54, Christoph Hellwig wrote:
+> On Mon, Jan 20, 2020 at 11:49:46PM +0300, Pavel Begunkov wrote:
+>> Indirect calls could be very expensive nowadays, so try to use direct calls
+>> whenever possible.
 
-syzbot found the following issue on:
+Hah, I'm surprised to find it as
+00c285d0d0fe4 ("fs: simplify do_splice_from").
 
-HEAD commit:    01830e6c Add linux-next specific files for 20200731
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b922e0900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2e226b2d1364112c
-dashboard link: https://syzkaller.appspot.com/bug?extid=96cc7aba7e969b1d305c
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140e5d5c900000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+96cc7aba7e969b1d305c@syzkaller.appspotmail.com
-
-INFO: task syz-execprog:6857 blocked for more than 143 seconds.
-      Not tainted 5.8.0-rc7-next-20200731-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-execprog    D27640  6857   6837 0x00004000
-Call Trace:
- context_switch kernel/sched/core.c:3669 [inline]
- __schedule+0x8e5/0x21e0 kernel/sched/core.c:4418
- schedule+0xd0/0x2a0 kernel/sched/core.c:4493
- schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4552
- __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
- __mutex_lock+0x3e2/0x10e0 kernel/locking/mutex.c:1103
- __pipe_lock fs/pipe.c:87 [inline]
- pipe_read+0x136/0x13d0 fs/pipe.c:247
- call_read_iter include/linux/fs.h:1870 [inline]
- new_sync_read+0x5b3/0x6e0 fs/read_write.c:414
- vfs_read+0x383/0x5a0 fs/read_write.c:493
- ksys_read+0x1ee/0x250 fs/read_write.c:624
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x4ad88b
-Code: Bad RIP value.
-RSP: 002b:000000c00002ae10 EFLAGS: 00000202 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 000000c000020800 RCX: 00000000004ad88b
-RDX: 0000000000010000 RSI: 000000c000390000 RDI: 0000000000000008
-RBP: 000000c00002ae60 R08: 0000000000000001 R09: 0000000000000002
-R10: 000000c000380000 R11: 0000000000000202 R12: 0000000000000003
-R13: 000000c000082a80 R14: 000000c000310600 R15: 0000000000000000
-INFO: task syz-executor.0:17080 blocked for more than 143 seconds.
-      Not tainted 5.8.0-rc7-next-20200731-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor.0  D29144 17080  16608 0x00000000
-Call Trace:
- context_switch kernel/sched/core.c:3669 [inline]
- __schedule+0x8e5/0x21e0 kernel/sched/core.c:4418
- schedule+0xd0/0x2a0 kernel/sched/core.c:4493
- schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4552
- __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
- __mutex_lock+0x3e2/0x10e0 kernel/locking/mutex.c:1103
- __pipe_lock fs/pipe.c:87 [inline]
- pipe_write+0x12c/0x16c0 fs/pipe.c:435
- call_write_iter include/linux/fs.h:1876 [inline]
- new_sync_write+0x422/0x650 fs/read_write.c:515
- vfs_write+0x5ad/0x730 fs/read_write.c:595
- ksys_write+0x1ee/0x250 fs/read_write.c:648
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45cc79
-Code: Bad RIP value.
-RSP: 002b:00007fff6c963cf8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000037d40 RCX: 000000000045cc79
-RDX: 000000000208e24b RSI: 0000000020000040 RDI: 0000000000000000
-RBP: 000000000078bf40 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000790378
-R13: 0000000000000000 R14: 0000000000000df5 R15: 000000000078bf0c
-INFO: task syz-executor.0:17140 blocked for more than 144 seconds.
-      Not tainted 5.8.0-rc7-next-20200731-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor.0  D29144 17140  16608 0x00000000
-Call Trace:
- context_switch kernel/sched/core.c:3669 [inline]
- __schedule+0x8e5/0x21e0 kernel/sched/core.c:4418
- schedule+0xd0/0x2a0 kernel/sched/core.c:4493
- schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4552
- __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
- __mutex_lock+0x3e2/0x10e0 kernel/locking/mutex.c:1103
- __pipe_lock fs/pipe.c:87 [inline]
- pipe_write+0x12c/0x16c0 fs/pipe.c:435
- call_write_iter include/linux/fs.h:1876 [inline]
- new_sync_write+0x422/0x650 fs/read_write.c:515
- vfs_write+0x5ad/0x730 fs/read_write.c:595
- ksys_write+0x1ee/0x250 fs/read_write.c:648
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45cc79
-Code: Bad RIP value.
-RSP: 002b:00007fff6c963cf8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000037d40 RCX: 000000000045cc79
-RDX: 000000000208e24b RSI: 0000000020000040 RDI: 0000000000000000
-RBP: 000000000078bf40 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000790378
-R13: 0000000000000000 R14: 0000000000000df5 R15: 000000000078bf0c
-INFO: task syz-executor.0:17145 blocked for more than 145 seconds.
-      Not tainted 5.8.0-rc7-next-20200731-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor.0  D29144 17145  16608 0x00000000
-Call Trace:
- context_switch kernel/sched/core.c:3669 [inline]
- __schedule+0x8e5/0x21e0 kernel/sched/core.c:4418
- schedule+0xd0/0x2a0 kernel/sched/core.c:4493
- schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4552
- __mutex_lock_common kernel/locking/mutex.c:1033 [inline]
- __mutex_lock+0x3e2/0x10e0 kernel/locking/mutex.c:1103
- __pipe_lock fs/pipe.c:87 [inline]
- pipe_write+0x12c/0x16c0 fs/pipe.c:435
- call_write_iter include/linux/fs.h:1876 [inline]
- new_sync_write+0x422/0x650 fs/read_write.c:515
- vfs_write+0x5ad/0x730 fs/read_write.c:595
- ksys_write+0x1ee/0x250 fs/read_write.c:648
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45cc79
-Code: Bad RIP value.
-RSP: 002b:00007fff6c963cf8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000037d40 RCX: 000000000045cc79
-RDX: 000000000208e24b RSI: 0000000020000040 RDI: 0000000000000000
-RBP: 000000000078bf40 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000790378
-R13: 0000000000000000 R14: 0000000000000df5 R15: 000000000078bf0c
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/1170:
- #0: ffffffff89c52a80 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:5823
-1 lock held by systemd-udevd/3906:
-1 lock held by in:imklog/6629:
- #0: ffff8880996bf930 (&f->f_pos_lock){+.+.}-{3:3}, at: __fdget_pos+0xe9/0x100 fs/file.c:930
-1 lock held by syz-execprog/6857:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_read+0x136/0x13d0 fs/pipe.c:247
-1 lock held by syz-executor.0/16822:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x5bd/0x16c0 fs/pipe.c:580
-1 lock held by syz-executor.0/17080:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17140:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17145:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17209:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17222:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17312:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17314:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17317:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17333:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17360:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17363:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17369:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17377:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17382:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17385:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17390:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17400:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17410:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17415:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17441:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17489:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17501:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17516:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17524:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17531:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17574:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17579:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17582:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17584:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17587:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17590:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17593:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17595:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17600:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17605:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17610:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17612:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17615:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17625:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17632:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17637:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17661:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17691:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17731:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17752:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17764:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17781:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17786:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17791:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17794:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17819:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17829:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17876:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17891:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17894:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17896:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/17906:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18001:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18044:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18054:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18067:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18087:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18093:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18098:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18105:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18130:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18133:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18146:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18149:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18153:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18165:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18173:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18185:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18190:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18195:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18202:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18207:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18217:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18222:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18225:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18237:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18250:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18255:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18269:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18286:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18296:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18304:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18306:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18311:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18321:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18335:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18340:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18343:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18358:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18361:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18363:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18378:
-1 lock held by syz-executor.0/18409:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/18792:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/19006:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/19154:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/19338:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/20014:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/20107:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/20266:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/20673:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/20961:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/21389:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/21601:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/21778:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/21835:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/21965:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/22161:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/22243:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/22293:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/22530:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/22681:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/22732:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/22837:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/23154:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/23328:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/23804:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/24439:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/24641:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/24706:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/24903:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/25118:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/25179:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/25463:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/25472:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/25518:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/25592:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/25594:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/25880:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/25891:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/25902:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/25953:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/26037:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/26090:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/26218:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/26292:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/26496:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/26671:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/26755:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/26764:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/27070:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/27105:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/27176:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/27637:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-1 lock held by syz-executor.0/27730:
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:87 [inline]
- #0: ffff888092562068 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x12c/0x16c0 fs/pipe.c:435
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 1170 Comm: khungtaskd Not tainted 5.8.0-rc7-next-20200731-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x18f/0x20d lib/dump_stack.c:118
- nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
- nmi_trigger_cpumask_backtrace+0x1b3/0x223 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
- watchdog+0xd89/0xf30 kernel/hung_task.c:339
- kthread+0x3b5/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 3905 Comm: systemd-journal Not tainted 5.8.0-rc7-next-20200731-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0033:0x7ffc39794990
-Code: ff ff ff 7f 48 8d 05 0f b7 ff ff 48 8d 15 08 e7 ff ff 48 0f 44 c2 48 85 ff 48 8b 40 20 74 03 48 89 07 c3 0f 1f 80 00 00 00 00 <55> 48 89 e5 41 55 4c 63 ef 41 54 49 89 f4 48 83 ec 08 41 83 fd 0f
-RSP: 002b:00007ffc397271d8 EFLAGS: 00000206
-RAX: 00007ffc39794990 RBX: 0000000000000000 RCX: 00000000000000cc
-RDX: 00000000000003e7 RSI: 00007ffc39727200 RDI: 0000000000000000
-RBP: 00007ffc39727200 R08: 00005615fdccd3e5 R09: 0000000000000018
-R10: 0000000000000069 R11: 0000000000000246 R12: 000000000000014d
-R13: 00000000000012bf R14: 0000000000000033 R15: 00007ffc397276f0
-FS:  00007fade38dd8c0 GS:  0000000000000000
+Christoph, even though this one is not a big deal, I'm finding the
+practice of taking others patches and silently sending them as yours
+own in general disgusting. Just for you to know.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> ... and independent of that your new version is much shorter and easier
+> to read.  But it could be improved a tiny little bit further:
+> 
+>>  	if (out->f_op->splice_write)
+>> -		splice_write = out->f_op->splice_write;
+>> +		return out->f_op->splice_write(pipe, out, ppos, len, flags);
+>>  	else
+>> -		splice_write = default_file_splice_write;
+>> -
+>> -	return splice_write(pipe, out, ppos, len, flags);
+>> +		return default_file_splice_write(pipe, out, ppos, len, flags);
+> 
+> No need for the else after an return.
+> 
+>>  	if (in->f_op->splice_read)
+>> -		splice_read = in->f_op->splice_read;
+>> +		return in->f_op->splice_read(in, ppos, pipe, len, flags);
+>>  	else
+>> -		splice_read = default_file_splice_read;
+>> -
+>> -	return splice_read(in, ppos, pipe, len, flags);
+>> +		return default_file_splice_read(in, ppos, pipe, len, flags);
+> 
+> Same here.
+> 
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+Pavel Begunkov
