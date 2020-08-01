@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AEFB235311
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Aug 2020 17:47:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D1D5235313
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  1 Aug 2020 17:47:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbgHAPrJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 1 Aug 2020 11:47:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56772 "EHLO
+        id S1726847AbgHAPrM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 1 Aug 2020 11:47:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725841AbgHAPrI (ORCPT
+        with ESMTP id S1725841AbgHAPrM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 1 Aug 2020 11:47:08 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2E03C06174A;
-        Sat,  1 Aug 2020 08:47:08 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id g19so6148737plq.0;
-        Sat, 01 Aug 2020 08:47:08 -0700 (PDT)
+        Sat, 1 Aug 2020 11:47:12 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF998C06174A;
+        Sat,  1 Aug 2020 08:47:11 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id a9so8725591pjd.3;
+        Sat, 01 Aug 2020 08:47:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Mntg9taWes2IQ/63EyCAMBFQrt4r0EuOq++DeO6vhCU=;
-        b=pCTnwJf3v3CtEPpkp/TmvlpTE5l3PmW5NUc45HZbvb18erR72HOH9vChUUZ3YypEyO
-         pOEn+Y6kYFg12fDAXLjxmkkbrloT5baTLdylazRVuGcWyWbHNplhBTFGsHBS3CfSY+2K
-         ZBbY7lcT6b3XDrGT6F4ErIzfUi1DslpZzJhhJT80tMKqGOFgZq3fHliRCoxY3j0MTrwH
-         xaHWwOOL97SXN96TpJXkBVLs1QileWyBIrDM2KDZMp70zWezI8KETWo+zVKFUctCfd7M
-         ZN07e0MHPDGZyxiugOuJhANAGjWuw5kdtYehMPA6KE05ot7lAQKCMW9zrb812vnxcSZF
-         qKiA==
+        bh=7sn5nj5K2mT9YPFbrjVs3ZZ1R61/BfXwFYxBFfJ6XlE=;
+        b=WXZy8PnFAFEjF9HExI/OyY8vbo2HOFHAGUtecaNRc66uU3xuZCgsq11Exl4W7OxFx5
+         78FMft2ckNv1uf3smNQ4MOXhhjUV2e26n3QaC0pBrPk/s4TfXeeaGcZZWgSYODQuicHN
+         js3VQYmCt57Tz3LNvcCjiT27K/uKz+ZLP0VT/vFpMKn6/hK3Re3vodYZ+zzQ5PEkyR7/
+         TH1+l2Q4DAMkjjOZhPHiTXzsCpJfpu2ptcaiJg23xJppl4LMJ8HdrVatpydBLKdsOFCB
+         ZFuHYI48eILqIG1YFQA4rB4Lwj5Dq7Q8AF51IaOUSaZNUqUATIp0Z31feclYEPDkfL4m
+         AqDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Mntg9taWes2IQ/63EyCAMBFQrt4r0EuOq++DeO6vhCU=;
-        b=nPLRmvz1sDtn+gXZQT3vQzghV7/0I7KUNrrpJ5PZvXi/ITc+mXfsKGJw7WHAyI6OTx
-         guYvVr7/TTr24l0wFPrOEw/ilnuez0Nk8m00GCiWSaulSrePkfg5Vy4D/9gQ7Zen1nxa
-         sxjHkzWZ6FyfFWKwEMEcF7PSWGr480knDO5n6pv9Avw+wf3QRiHI6za88TVpFU6vcTPq
-         TVFsBtoHLUwoEBbyG758rKgqrMbB+R9CykEAGFWlZlWADhvCoM5rpUEI9sPCfwVSIHso
-         Pou5J8JMeLQf3iJwZ7Khg5NylRfKr1bFgzLMp6RKcA/XpF1X+CmdLBYg3SBAopPmdh9M
-         lNbg==
-X-Gm-Message-State: AOAM53386x19cUH5jZ8slaGYbtbQUuLTUuvBLUKeIf51mbrTj3y4vl8i
-        gl4u9cItP74TcgcDz0q6uWY=
-X-Google-Smtp-Source: ABdhPJzMVdJHi1GV+1Q4tvZMc/xr8ImvgRh9hFVdynekX3JhUv9ic2u08w6+W3V3yISXmtC/v+MQDw==
-X-Received: by 2002:a17:902:8bc3:: with SMTP id r3mr8070864plo.112.1596296828074;
-        Sat, 01 Aug 2020 08:47:08 -0700 (PDT)
+        bh=7sn5nj5K2mT9YPFbrjVs3ZZ1R61/BfXwFYxBFfJ6XlE=;
+        b=jww/JKIDl+lpXbHOFoNwGpvTkfm6EuVy+jtH2Okuh8ccBjF1X3xYsFgHUvzzMhoETD
+         NW5gx2GyrqRRb904RjjgoAQKDb5MoXf7T7i2p6lXjfO6GeB86X3Hbr75gKbiiQSzvYJf
+         A+0+6HfkGeYihJcAnGcovmyw7EuYbE1kqeamfPg1y99V27jrjubpxRX9D6FStOr+J+dk
+         wiVRPnJyWkDstw7D7qRvQTLIYh4qz7Uu4tP2Hg7vNup6SjZXQ1bmpDgLJYvM/rtt0fV7
+         fPhBtOEJrl/ni4ih/bPW/XQAl8s0iq5iLGRMbjM3kCq1QlwhdDO7M/ucc1T9lYxxsunH
+         mTHQ==
+X-Gm-Message-State: AOAM5322a6wPE9GszbTUKEg6I7NkATHtyurjXjs0V7relo4wmg5+cgkJ
+        QHUu2w4jaj4Jzn5EyNHV1pM=
+X-Google-Smtp-Source: ABdhPJyEY70AqCN170uMP2H1hBdWEjUl5eZqpIuyCIkzjjCerv+GZNmTs1ydRMBZzWuLBgP2trglpQ==
+X-Received: by 2002:a17:90a:bb81:: with SMTP id v1mr8792826pjr.168.1596296831292;
+        Sat, 01 Aug 2020 08:47:11 -0700 (PDT)
 Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id j26sm13717331pfe.200.2020.08.01.08.47.05
+        by smtp.gmail.com with ESMTPSA id j26sm13717331pfe.200.2020.08.01.08.47.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Aug 2020 08:47:07 -0700 (PDT)
+        Sat, 01 Aug 2020 08:47:10 -0700 (PDT)
 From:   Yafang Shao <laoar.shao@gmail.com>
 To:     david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com,
         mhocko@kernel.org, willy@infradead.org
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org, Yafang Shao <shaoyafang@didiglobal.com>
-Subject: [PATCH v4 1/2] xfs: avoid double restore PF_MEMALLOC_NOFS if transaction reservation fails
-Date:   Sat,  1 Aug 2020 11:46:31 -0400
-Message-Id: <20200801154632.866356-2-laoar.shao@gmail.com>
+Subject: [PATCH v4 2/2] xfs: avoid transaction reservation recursion
+Date:   Sat,  1 Aug 2020 11:46:32 -0400
+Message-Id: <20200801154632.866356-3-laoar.shao@gmail.com>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20200801154632.866356-1-laoar.shao@gmail.com>
 References: <20200801154632.866356-1-laoar.shao@gmail.com>
@@ -65,10 +65,37 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Yafang Shao <shaoyafang@didiglobal.com>
 
-In xfs_trans_alloc(), if xfs_trans_reserve() fails, it will call
-xfs_trans_cancel(), in which it will restore the flag PF_MEMALLOC_NOFS.
-However this flags has been restored in xfs_trans_reserve(). Although
-this behavior doesn't introduce any obvious issue, we'd better improve it.
+PF_FSTRANS which is used to avoid transaction reservation recursion, is
+dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
+PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
+memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
+means to avoid filesystem reclaim recursion. That change is subtle.
+Let's take the exmple of the check of WARN_ON_ONCE(current->flags &
+PF_MEMALLOC_NOFS)) to explain why this abstraction from PF_FSTRANS to
+PF_MEMALLOC_NOFS is not proper.
+Below comment is quoted from Dave,
+> It wasn't for memory allocation recursion protection in XFS - it was for
+> transaction reservation recursion protection by something trying to flush
+> data pages while holding a transaction reservation. Doing
+> this could deadlock the journal because the existing reservation
+> could prevent the nested reservation for being able to reserve space
+> in the journal and that is a self-deadlock vector.
+> IOWs, this check is not protecting against memory reclaim recursion
+> bugs at all (that's the previous check [1]). This check is
+> protecting against the filesystem calling writepages directly from a
+> context where it can self-deadlock.
+> So what we are seeing here is that the PF_FSTRANS ->
+> PF_MEMALLOC_NOFS abstraction lost all the actual useful information
+> about what type of error this check was protecting against.
+
+As a result, we should reintroduce PF_FSTRANS. As current->journal_info
+isn't used in XFS, we can reuse it to indicate whehter the task is in
+fstrans or not.
+
+[1]. Below check is to avoid memory reclaim recursion.
+if (WARN_ON_ONCE((current->flags & (PF_MEMALLOC|PF_KSWAPD)) ==
+        PF_MEMALLOC))
+        goto redirty;
 
 Signed-off-by: Yafang Shao <shaoyafang@didiglobal.com>
 Cc: Dave Chinner <david@fromorbit.com>
@@ -77,54 +104,147 @@ Cc: Michal Hocko <mhocko@kernel.org>
 Cc: Darrick J. Wong <darrick.wong@oracle.com>
 Cc: Matthew Wilcox <willy@infradead.org>
 ---
- fs/xfs/xfs_trans.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ fs/iomap/buffered-io.c    |  4 ++--
+ fs/xfs/libxfs/xfs_btree.c |  2 ++
+ fs/xfs/xfs_aops.c         |  3 +++
+ fs/xfs/xfs_linux.h        | 19 +++++++++++++++++++
+ fs/xfs/xfs_trans.c        |  8 +++++++-
+ 5 files changed, 33 insertions(+), 3 deletions(-)
 
-diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
-index 3c94e5ff4316..9ff41970d0c7 100644
---- a/fs/xfs/xfs_trans.c
-+++ b/fs/xfs/xfs_trans.c
-@@ -162,10 +162,9 @@ xfs_trans_reserve(
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index bcfc288dba3f..b3f66b6b5116 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1500,9 +1500,9 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
+ 
+ 	/*
+ 	 * Given that we do not allow direct reclaim to call us, we should
+-	 * never be called in a recursive filesystem reclaim context.
++	 * never be called while in a filesystem transaction.
  	 */
- 	if (blocks > 0) {
- 		error = xfs_mod_fdblocks(mp, -((int64_t)blocks), rsvd);
--		if (error != 0) {
--			current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+		if (error != 0)
- 			return -ENOSPC;
--		}
-+
- 		tp->t_blk_res += blocks;
- 	}
+-	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
++	if (WARN_ON_ONCE(current->journal_info))
+ 		goto redirty;
  
-@@ -240,8 +239,6 @@ xfs_trans_reserve(
- 		tp->t_blk_res = 0;
- 	}
+ 	/*
+diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
+index 2d25bab68764..0795511f9e6a 100644
+--- a/fs/xfs/libxfs/xfs_btree.c
++++ b/fs/xfs/libxfs/xfs_btree.c
+@@ -2825,6 +2825,7 @@ xfs_btree_split_worker(
+ 	if (args->kswapd)
+ 		new_pflags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
  
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
--
- 	return error;
++	xfs_trans_context_start();
+ 	current_set_flags_nested(&pflags, new_pflags);
+ 
+ 	args->result = __xfs_btree_split(args->cur, args->level, args->ptrp,
+@@ -2832,6 +2833,7 @@ xfs_btree_split_worker(
+ 	complete(args->done);
+ 
+ 	current_restore_flags_nested(&pflags, new_pflags);
++	xfs_trans_context_end();
  }
  
-@@ -972,6 +969,7 @@ xfs_trans_roll(
- 	struct xfs_trans	**tpp)
- {
- 	struct xfs_trans	*trans = *tpp;
-+	struct xfs_trans        *tp;
- 	struct xfs_trans_res	tres;
- 	int			error;
- 
-@@ -1005,5 +1003,10 @@ xfs_trans_roll(
- 	 * the prior and the next transactions.
+ /*
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index b35611882ff9..39ef95acdd8e 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -63,6 +63,8 @@ xfs_setfilesize_trans_alloc(
+ 	 * clear the flag here.
  	 */
- 	tres.tr_logflags = XFS_TRANS_PERM_LOG_RES;
--	return xfs_trans_reserve(*tpp, &tres, 0, 0);
-+	tp = *tpp;
-+	error = xfs_trans_reserve(tp, &tres, 0, 0);
-+	if (error)
-+		current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
+ 	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++	xfs_trans_context_end();
 +
-+	return error;
+ 	return 0;
+ }
+ 
+@@ -125,6 +127,7 @@ xfs_setfilesize_ioend(
+ 	 * thus we need to mark ourselves as being in a transaction manually.
+ 	 * Similarly for freeze protection.
+ 	 */
++	xfs_trans_context_start();
+ 	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
+ 	__sb_writers_acquired(VFS_I(ip)->i_sb, SB_FREEZE_FS);
+ 
+diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
+index 9f70d2f68e05..1192b660a968 100644
+--- a/fs/xfs/xfs_linux.h
++++ b/fs/xfs/xfs_linux.h
+@@ -111,6 +111,25 @@ typedef __u32			xfs_nlink_t;
+ #define current_restore_flags_nested(sp, f)	\
+ 		(current->flags = ((current->flags & ~(f)) | (*(sp) & (f))))
+ 
++static inline void xfs_trans_context_start(void)
++{
++	long flags = (long)current->journal_info;
++
++	/*
++	 * Reuse journal_info to indicate whehter the current is in fstrans
++	 * or not.
++	 */
++	current->journal_info = (void *)(flags + 1);
++}
++
++static inline void xfs_trans_context_end(void)
++{
++	long flags = (long)current->journal_info;
++
++	WARN_ON_ONCE(flags <= 0);
++	current->journal_info = ((void *)(flags - 1));
++}
++
+ #define NBBY		8		/* number of bits per byte */
+ 
+ /*
+diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
+index 9ff41970d0c7..38d94679ad41 100644
+--- a/fs/xfs/xfs_trans.c
++++ b/fs/xfs/xfs_trans.c
+@@ -153,6 +153,7 @@ xfs_trans_reserve(
+ 	bool			rsvd = (tp->t_flags & XFS_TRANS_RESERVE) != 0;
+ 
+ 	/* Mark this thread as being in a transaction */
++	xfs_trans_context_start();
+ 	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
+ 
+ 	/*
+@@ -859,6 +860,7 @@ __xfs_trans_commit(
+ 	xfs_log_commit_cil(mp, tp, &commit_lsn, regrant);
+ 
+ 	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++	xfs_trans_context_end();
+ 	xfs_trans_free(tp);
+ 
+ 	/*
+@@ -891,6 +893,7 @@ __xfs_trans_commit(
+ 		tp->t_ticket = NULL;
+ 	}
+ 	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++	xfs_trans_context_end();
+ 	xfs_trans_free_items(tp, !!error);
+ 	xfs_trans_free(tp);
+ 
+@@ -952,6 +955,7 @@ xfs_trans_cancel(
+ 
+ 	/* mark this thread as no longer being in a transaction */
+ 	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++	xfs_trans_context_end();
+ 
+ 	xfs_trans_free_items(tp, dirty);
+ 	xfs_trans_free(tp);
+@@ -1005,8 +1009,10 @@ xfs_trans_roll(
+ 	tres.tr_logflags = XFS_TRANS_PERM_LOG_RES;
+ 	tp = *tpp;
+ 	error = xfs_trans_reserve(tp, &tres, 0, 0);
+-	if (error)
++	if (error) {
+ 		current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++		xfs_trans_context_end();
++	}
+ 
+ 	return error;
  }
 -- 
 2.18.1
