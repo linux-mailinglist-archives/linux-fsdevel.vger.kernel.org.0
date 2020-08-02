@@ -2,120 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C009235593
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Aug 2020 07:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCF702355F6
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Aug 2020 10:23:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725882AbgHBFZv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Aug 2020 01:25:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40184 "EHLO
+        id S1726212AbgHBIXg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 Aug 2020 04:23:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbgHBFZv (ORCPT
+        with ESMTP id S1725819AbgHBIXg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Aug 2020 01:25:51 -0400
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA6ECC06174A
-        for <linux-fsdevel@vger.kernel.org>; Sat,  1 Aug 2020 22:25:50 -0700 (PDT)
-Received: by mail-qk1-x743.google.com with SMTP id d14so32531044qke.13
-        for <linux-fsdevel@vger.kernel.org>; Sat, 01 Aug 2020 22:25:50 -0700 (PDT)
+        Sun, 2 Aug 2020 04:23:36 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C1D9C06174A;
+        Sun,  2 Aug 2020 01:23:35 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id di22so17957437edb.12;
+        Sun, 02 Aug 2020 01:23:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=Q88G6sppSxIX0pplwKPE04Ypo1Vd7dthljabY9nsEyY=;
-        b=c1aDkf3N1oirRr4hEjjSjDfKhY6HLj9eJttmIu2Zh4YiBtsYG9vO6/uKfwRucL4I7R
-         n2h84v4SMqNOnLTrc/lmWb6QE89nkwunpI0oW9RatURybcfZH4HE+Q2cehx7TW3q0rUb
-         vNTJLMrkyzRQpoJtrJZM1+FqoEsBYN0NvFHXF8exk5PbDSwm0ScJ2KKG1QVfR5OK3ltL
-         kOafCVTIDWPLbmBc21pOmMscRXKH5rH2pkRXJyjivN9nRy7nd+gdqEoejrRvFL2Xhq8f
-         FFWtGXMC/ybACTFbTlJhCX0Eo2Ihvx2BtkVfpVm/KWqGNcUAfD0xqxFcmOqZ2WwAF13+
-         DlXw==
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MNHtMF6SaHt8XzThykqv6rSllMw+pjTCpEaY8gG/qQ8=;
+        b=Hg/JqGmpJ0YwKhBEGkeymeJe0m4GYg6v7TdB58F+GJawYgCO5/7f3j19HC0F5h9/hV
+         /SQT8IQxthSoRfPwOyiPf7oC3yimVoNEg/2VcpUdPZT81rVR9JP9Mw/Suep+A1SrLsOX
+         a2/SUhSalN6t1m8M3DKph2Run8qOjMOlqdqGDFBdpvx52a0YyxUM01YV8zpWhsEUZIdW
+         G0jiqMaUCpaHd72bmq55PTzIGt71W32tsx12h+sw/ThR8SU/UWYSJu65t/4nMO8dvCVj
+         yZjKHX+GMtLwmF7BZhg+sMPhSgMdrRUiVey3/DHzxljPl++v3qxAZEcpglSmwxeQ4S4z
+         yEvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=Q88G6sppSxIX0pplwKPE04Ypo1Vd7dthljabY9nsEyY=;
-        b=cEGII/AwKMhbGFI3TG5YI4A/Bq7eALYLvgy7583zmPSY9TU18BlQjtpwMyBUf2II8i
-         eUcAK9f673DV26RfBnHDUsub3VubnqBwPk5O68wFhULYahakDngrUkFBEdzdyPlDTM+w
-         oY93imTY0g69MbhfDkxaDKzUBzZa3SAhBwXZ8E3+1DY8zn3QO/6vjLU4ry5OY79ByjRN
-         Y2cnf9JEg+7GiBPE/Tuq1wwKD8pPZBT6RzoBRoYE0TvaqQU84OBX8KM1KZUUlq7Fd/mb
-         sVB8rjqz0m7qt/lLKfMTdMngFS7t0Cs3r+HGigisXZZJVTfB/J2Uxln/ZSbma92LSjxL
-         G++g==
-X-Gm-Message-State: AOAM530k4Y8nmlmbrtvrFCgKaG0IGRGPT6E90FZQsHT4ReZO/BK4J0au
-        /aD8A0UY8tKh1U3vk96a12FmVA==
-X-Google-Smtp-Source: ABdhPJx2XEQW+vlnz4WBQHArLHqV+Fwe3Ix1H14p3IpuTokxVzcUWNZ0wmISRzmPl0gd8Fl92/Br9A==
-X-Received: by 2002:a37:8f07:: with SMTP id r7mr10765958qkd.480.1596345948371;
-        Sat, 01 Aug 2020 22:25:48 -0700 (PDT)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id g129sm16074916qkb.39.2020.08.01.22.25.45
-        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Sat, 01 Aug 2020 22:25:47 -0700 (PDT)
-Date:   Sat, 1 Aug 2020 22:25:34 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Randy Dunlap <rdunlap@infradead.org>
-cc:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chris Down <chris@chrisdown.name>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH mmotm] tmpfs: support 64-bit inums per-sb fix
-In-Reply-To: <4d2af3f7-eb4f-6313-1719-b1c532c9a96d@infradead.org>
-Message-ID: <alpine.LSU.2.11.2008012218190.13826@eggly.anvils>
-References: <cover.1594661218.git.chris@chrisdown.name> <8b23758d0c66b5e2263e08baf9c4b6a7565cbd8f.1594661218.git.chris@chrisdown.name> <alpine.LSU.2.11.2008011223120.10700@eggly.anvils> <alpine.LSU.2.11.2008011928010.13320@eggly.anvils>
- <4d2af3f7-eb4f-6313-1719-b1c532c9a96d@infradead.org>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        h=x-gm-message-state:subject:to:references:from:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MNHtMF6SaHt8XzThykqv6rSllMw+pjTCpEaY8gG/qQ8=;
+        b=AKP4+b/dSL0AtCvfHn8OGD+2NJExQZL46Ldi01Zh/q3NJiQwsCk0aArN/zXJh2r//f
+         241llDKC1Gp4uIjkFmq6QrXyU0syTcDwal71ePvYtINWYyDbTvqBJJpyeTxQwQlscmhM
+         nyYZg698yFgIPByvlxKRz9fVAM1Nt7Qn9kX4sZ0xmQ3sVxCALGl73/5zih8fMn61aLm6
+         UuLEkOVSma8KIXZQWDW4uD7NZPHtUawMsGW8K/hpogxSNsPDtxbavxrpI9lG+w/H6iRy
+         Exnfr+ZSklfQ+P5beOKk7Q+qde+545Qr+RGwbMrRMiWdOGGSkN/IZUJHeknjEvk09gOR
+         L0eg==
+X-Gm-Message-State: AOAM531fsDC7X37iaJRgGNuVgoB1fN2cYNmTevtiXtUGo9ykrxC1OYkY
+        jpwe3IHL8GfsMFzMKQOhWbDEd9P8
+X-Google-Smtp-Source: ABdhPJxYxZp8Qj6fHpCmYn1M2JopuTAq058t3nniXx9TIsQx6PIx738ZmalmUfBBI2WDIpr9e4zC4w==
+X-Received: by 2002:a05:6402:1427:: with SMTP id c7mr11314352edx.245.1596356612657;
+        Sun, 02 Aug 2020 01:23:32 -0700 (PDT)
+Received: from [192.168.43.215] ([5.100.193.69])
+        by smtp.gmail.com with ESMTPSA id dc23sm13209587edb.50.2020.08.02.01.23.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Aug 2020 01:23:32 -0700 (PDT)
+Subject: Re: [PATCH] fs: optimise kiocb_set_rw_flags()
+To:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <e523f51f59ad6ecdad4ad22c560cb9c913e96e1a.1596277420.git.asml.silence@gmail.com>
+ <636faf6f-4c85-0582-2482-b99002888d0d@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <108d9157-3149-e424-c792-99ca9e1628d9@gmail.com>
+Date:   Sun, 2 Aug 2020 11:21:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <636faf6f-4c85-0582-2482-b99002888d0d@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 1 Aug 2020, Randy Dunlap wrote:
-> On 8/1/20 7:37 PM, Hugh Dickins wrote:
-> > Expanded Chris's Documentation and Kconfig help on tmpfs inode64.
-> > TMPFS_INODE64 still there, still default N, but writing down its very
-> > limited limitation does make me wonder again if we want the option.
-> > 
-> > Signed-off-by: Hugh Dickins <hughd@google.com>
-> > ---
-> > Andrew, please fold into tmpfs-support-64-bit-inums-per-sb.patch later.
-> > 
-> > Randy, you're very active on Documentation and linux-next: may I ask you
-> > please to try applying this patch to latest, and see if tmpfs.rst comes
-> > out looking right to you?  I'm an old dog still stuck in the days of
+On 01/08/2020 20:02, Jens Axboe wrote:
+> On 8/1/20 4:36 AM, Pavel Begunkov wrote:
+>> Use a local var to collect flags in kiocb_set_rw_flags(). That spares
+>> some memory writes and allows to replace most of the jumps with MOVEcc.
 > 
-> Hi Hugh,
-> It looks fine.
+> I've picked this one up.
 
-Thank you so much, Randy.
+Thanks
 
-> 
-> > tmpfs.txt, hoping to avoid new tricks for a while.  Thanks!  (Bonus
-> > points if you can explain what the "::" on line 122 is about. I started
-> > out reading Documentation/doc-guide/sphinx.rst, but... got diverted.
-> > Perhaps I should ask Mauro or Jon, but turning for help first to you.)
-> 
-> That's the correct file. Around line 216, it says:
-> 
-> * For inserting fixed width text blocks (for code examples, use case
->   examples, etc.), use ``::`` for anything that doesn't really benefit
->   from syntax highlighting, especially short snippets. Use
->   ``.. code-block:: <language>`` for longer code blocks that benefit
->   from highlighting. For a short snippet of code embedded in the text, use \`\`.
-> 
-> 
-> so it's just for a (short) code example block, fixed font...
-
-Bonus points awarded, thanks...ish. I'll have to look around for more
-examples of where that's done, and I think it'll only make real sense
-to me, when I'm further along, producing the proper output, then seeing
-how bad something looks without the "::".
-
-Thanks again,
-Hugh
+-- 
+Pavel Begunkov
