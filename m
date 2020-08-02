@@ -2,73 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 726F4235746
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Aug 2020 15:57:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D08D235753
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Aug 2020 16:03:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725863AbgHBN5p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Aug 2020 09:57:45 -0400
-Received: from albireo.enyo.de ([37.24.231.21]:57926 "EHLO albireo.enyo.de"
+        id S1725881AbgHBODC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 Aug 2020 10:03:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725290AbgHBN5p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Aug 2020 09:57:45 -0400
-Received: from [172.17.203.2] (helo=deneb.enyo.de)
-        by albireo.enyo.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        id 1k2EUc-0007uG-D1; Sun, 02 Aug 2020 13:57:38 +0000
-Received: from fw by deneb.enyo.de with local (Exim 4.92)
-        (envelope-from <fw@deneb.enyo.de>)
-        id 1k2EUZ-0006B6-7g; Sun, 02 Aug 2020 15:57:35 +0200
-From:   Florian Weimer <fw@deneb.enyo.de>
-To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
-        <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
-        <6540b4b7-3f70-adbf-c922-43886599713a@linux.microsoft.com>
-        <CALCETrWnNR5v3ZCLfBVQGYK8M0jAvQMaAc9uuO05kfZuh-4d6w@mail.gmail.com>
-        <46a1adef-65f0-bd5e-0b17-54856fb7e7ee@linux.microsoft.com>
-Date:   Sun, 02 Aug 2020 15:57:35 +0200
-In-Reply-To: <46a1adef-65f0-bd5e-0b17-54856fb7e7ee@linux.microsoft.com>
-        (Madhavan T. Venkataraman's message of "Fri, 31 Jul 2020 12:13:49
-        -0500")
-Message-ID: <87o8nttak0.fsf@mid.deneb.enyo.de>
+        id S1725290AbgHBODC (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 2 Aug 2020 10:03:02 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C47E206DA;
+        Sun,  2 Aug 2020 14:03:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596376981;
+        bh=MfDHqqMit+hSKntxVK7N8UOl+i+Xf4TOcn3dkPfEHKU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KCCoZzei4YlvGLCmLc3F1NM+BrofKE3kQF8HLCrDkY2lDxQxTw63qkeOGAHmCRD76
+         GVUrM5QtLJnVKiPvc7hYGcIT3AdB0B0ALUf7lporEw3MmHSSbo4UmpFVUge1Ch2cLu
+         O6MjbhBEky6VmkG385W9qB/PYFp2LofpLD5oHFF0=
+Date:   Sun, 2 Aug 2020 10:03:00 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Deven Bowers <deven.desai@linux.microsoft.com>, agk@redhat.com,
+        axboe@kernel.dk, snitzer@redhat.com, jmorris@namei.org,
+        serge@hallyn.com, zohar@linux.ibm.com, viro@zeniv.linux.org.uk,
+        paul@paul-moore.com, eparis@redhat.com, jannh@google.com,
+        dm-devel@redhat.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-audit@redhat.com, tyhicks@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        jaskarankhurana@linux.microsoft.com, mdsakib@microsoft.com,
+        nramas@linux.microsoft.com, pasha.tatashin@soleen.com
+Subject: Re: [RFC PATCH v5 00/11] Integrity Policy Enforcement LSM (IPE)
+Message-ID: <20200802140300.GA2975990@sasha-vm>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
+ <20200802115545.GA1162@bug>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20200802115545.GA1162@bug>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Madhavan T. Venkataraman:
-
-> Standardization
-> ---------------------
+On Sun, Aug 02, 2020 at 01:55:45PM +0200, Pavel Machek wrote:
+>Hi!
 >
-> Trampfd is a framework that can be used to implement multiple
-> things. May be, a few of those things can also be implemented in
-> user land itself. But I think having just one mechanism to execute
-> dynamic code objects is preferable to having multiple mechanisms not
-> standardized across all applications.
+>> IPE is a Linux Security Module which allows for a configurable
+>> policy to enforce integrity requirements on the whole system. It
+>> attempts to solve the issue of Code Integrity: that any code being
+>> executed (or files being read), are identical to the version that
+>> was built by a trusted source.
 >
-> As an example, let us say that I am able to implement support for
-> JIT code. Let us say that an interpreter uses libffi to execute a
-> generated function. The interpreter would use trampfd for the JIT
-> code object and get an address. Then, it would pass that to libffi
-> which would then use trampfd for the trampoline. So, trampfd based
-> code objects can be chained.
+>How is that different from security/integrity/ima?
 
-There is certainly value in coordination.  For example, it would be
-nice if unwinders could recognize the trampolines during all phases
-and unwind correctly through them (including when interrupted by an
-asynchronous symbol).  That requires some level of coordination with
-the unwinder and dynamic linker.
+Maybe if you would have read the cover letter all the way down to the
+5th paragraph which explains how IPE is different from IMA we could
+avoided this mail exchange...
 
-A kernel solution could hide the intermediate state in a kernel-side
-trap handler, but I think it wouldn't reduce the overall complexity.
+-- 
+Thanks,
+Sasha
