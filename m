@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 36398235605
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Aug 2020 10:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84DA023560A
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Aug 2020 10:52:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgHBInz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Aug 2020 04:43:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42008 "EHLO
+        id S1725992AbgHBIvz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 Aug 2020 04:51:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725882AbgHBInz (ORCPT
+        with ESMTP id S1725819AbgHBIvz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Aug 2020 04:43:55 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE1B3C06174A;
-        Sun,  2 Aug 2020 01:43:54 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id o18so10734735eds.10;
-        Sun, 02 Aug 2020 01:43:54 -0700 (PDT)
+        Sun, 2 Aug 2020 04:51:55 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07F14C06174A;
+        Sun,  2 Aug 2020 01:51:54 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id a26so9777064ejc.2;
+        Sun, 02 Aug 2020 01:51:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=I2GwtSuZF7wcBG1XXTZ3G3JqTIUbBotfbfQlAqBXUkI=;
-        b=IJEDAUK/KhOOArr4HCI5irqfgClIwiSrAYkfhJ6TUtlHCbxW504a17/nNgQnFgC/lW
-         ggVL575xhpwhfM480HyWmkpAqoYO7pqQRTmpIIYaxfMz+DlF+W9gEBjYfBqX1JLwK2tw
-         C8j4j9oXc3ydNOVH5IfUA9c+ikgwzyrPafH+7m6xhIvwedFKGgjn8DTIgwkoQ9xzOlrt
-         OS0xstsx/WEaBp9DsqRl1pDy6shbiAwE7kdwFcDUYmdCAR1rDBceQeigJXOEnarZsVJl
-         YyWPPmufdr2tLv5kZIg+v7CHuxv5tRg84ZLnA9xQzYinY7bcss6GQY+MTTGZp9hq/iHG
-         2R7Q==
+        bh=zZ8TImNdC9DtEEprdQ1tyd5gm6hken4wBCiy5wzrb4A=;
+        b=pCo6Yaysv4klGIy5rsACwX8oOfLKJhzhtZwdDJCYSWAqyJbk+q+e+LNZim+g3mJTzd
+         HzjMj1/GPAtFaoPDlzYHU8EcOWFhc1LzfvuTABr8fhrkI+g2oEMi3GLWckNeNJ5rJRtp
+         HDviG5ZBIXw2fkkk1MwvEymHqIPMZZNE51rPKJbn6Q1hLtuqnGYwybsI+PzJabQOMfx3
+         1C0qFKybxz0BGIT7bRQQ7mo5t64+tx5wIZWb0rF76G87cq16TVziDhLR6t9Xyfn171+Y
+         BW2bgQf6DpJfE2HnjcDVnm7kpS10hb3AIsoaFklkYtA9MTLFtsxrwUNdc1aKp6puTOub
+         jmrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=I2GwtSuZF7wcBG1XXTZ3G3JqTIUbBotfbfQlAqBXUkI=;
-        b=MVTbRIzj4enl/gs9tyUmrJWph8qqOXt6Pbn4wpUSsikBbZeQly+MqzGcW+fOs3P1DT
-         oj4lRgiXYF1AO7CEf3fZay4UQpnBTOwHcKQiSPBbXh7wJGC+6CqaCPTDDhqkZ1pRXmxN
-         3jtQg1ZvXsoKiD1u/H+gRYyjvA8fTLXnh+Yxuh+HN564hdwUMU3BoT84cYWUWXCkpsAy
-         xiOylAzLWqYqYU3adWCHenchE/CcRC+OB9xd6rDz63CsfOLF2gu/203P9iNgJPArWqO8
-         Q/lgAY/sxf84w4qtjiuzJOwvrFUqGsrHMY6hPz7POmY9SzxVv95JDEjchZxfCrW8wlts
-         JLYg==
-X-Gm-Message-State: AOAM530WIwskOpTs/hCAbLno/gUrO791vkykBnkqyuPyau9QI9hpud+k
-        Th01ryHAsZ0jWcdwZJNC+o2gKgwX
-X-Google-Smtp-Source: ABdhPJxa0Xm2fvc3K5WDqIBiJX0wSUq60Czws/T+eI4/KvP4RgU6kPb8C0BKEdfBNlquylRdfa1Jag==
-X-Received: by 2002:a50:a6d2:: with SMTP id f18mr10736136edc.374.1596357833455;
-        Sun, 02 Aug 2020 01:43:53 -0700 (PDT)
+        bh=zZ8TImNdC9DtEEprdQ1tyd5gm6hken4wBCiy5wzrb4A=;
+        b=MCSKKCb9Bc06UdbPwhGkDqSEtCJnc7zqHkPquUzfC6nW6CrlzVDqKfT7bvSP6Ck53n
+         IkOinyTNYSghLgS/YaV7EE3lVJIF3QgL9NuysGuFJKgLmKXW3tMvYuLlF0K95zZwgc/E
+         EqnAuJO3deDIAHpgZnESzMsJsJrzMReBqopoOKG0suhVdy2Gcx/YejM6okQBj+qH2n6i
+         fAkYTcJ+Xw05zVN61NJTBSjsZa1kb1RIptR4MWpOAcUKovvU/UM8LQg81b2eADBPlQyM
+         mB5hlBN2DO0zZa47emMA8In1l8+JGbuAErHgIERKWhcQc4arSlCU7jfuTGIFomzu7F0t
+         mVTA==
+X-Gm-Message-State: AOAM5301Nzv5M3Gi+6Hoz/HqKLCiW8VoxH1i2XFul0p8uUPuxzonLPNU
+        xNdph+WxXM8pN7NiQhzfmhopC5W4
+X-Google-Smtp-Source: ABdhPJxQeBQPFFAeZ9ARR6t9KkIrZgezIGpEUsQxTMb9+Q+unlEWGSkcA58HIgKYpZaX/XGboVbX7w==
+X-Received: by 2002:a17:906:2542:: with SMTP id j2mr11380873ejb.442.1596358313055;
+        Sun, 02 Aug 2020 01:51:53 -0700 (PDT)
 Received: from [192.168.43.215] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id w22sm12948722ejj.123.2020.08.02.01.43.52
+        by smtp.gmail.com with ESMTPSA id rv14sm12896267ejb.33.2020.08.02.01.51.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Aug 2020 01:43:52 -0700 (PDT)
-Subject: Re: [PATCH] fs: optimise kiocb_set_rw_flags()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Sun, 02 Aug 2020 01:51:52 -0700 (PDT)
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <e523f51f59ad6ecdad4ad22c560cb9c913e96e1a.1596277420.git.asml.silence@gmail.com>
- <20200801153711.GV23808@casper.infradead.org>
+References: <12375b7baa741f0596d54eafc6b1cfd2489dd65a.1579553271.git.asml.silence@gmail.com>
+ <20200130165425.GA8872@infradead.org>
+ <0618f315-7061-c3fd-15d3-c19cea48cc4c@gmail.com>
+ <20200801174110.GA8535@infradead.org>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -100,39 +100,44 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Message-ID: <fae64393-397e-6745-607e-b9a0f517af72@gmail.com>
-Date:   Sun, 2 Aug 2020 11:41:55 +0300
+Subject: Re: [PATCH] splice: direct call for default_file_splice*()
+Message-ID: <7eb5960a-4e92-a479-127d-6a0462e43e55@gmail.com>
+Date:   Sun, 2 Aug 2020 11:49:54 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20200801153711.GV23808@casper.infradead.org>
+In-Reply-To: <20200801174110.GA8535@infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01/08/2020 18:37, Matthew Wilcox wrote:
-> On Sat, Aug 01, 2020 at 01:36:33PM +0300, Pavel Begunkov wrote:
->> Use a local var to collect flags in kiocb_set_rw_flags(). That spares
->> some memory writes and allows to replace most of the jumps with MOVEcc.
+On 01/08/2020 20:41, Christoph Hellwig wrote:
+> On Sat, Aug 01, 2020 at 01:12:22PM +0300, Pavel Begunkov wrote:
+>> On 30/01/2020 19:54, Christoph Hellwig wrote:
+>>> On Mon, Jan 20, 2020 at 11:49:46PM +0300, Pavel Begunkov wrote:
+>>>> Indirect calls could be very expensive nowadays, so try to use direct calls
+>>>> whenever possible.
 >>
->> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> Hah, I'm surprised to find it as
+>> 00c285d0d0fe4 ("fs: simplify do_splice_from").
+>>
+>> Christoph, even though this one is not a big deal, I'm finding the
+>> practice of taking others patches and silently sending them as yours
+>> own in general disgusting. Just for you to know.
 > 
-> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Err, what makes you think I took your patch vs just not remembering
+> and pointlessly doing the same cleanup again?  If I had rembered your
+> patch I would have just added to the series with your credit as I've
+> done for plenty other patches..
 
-Thanks for reviewing it
-
-> 
-> If you want to improve the codegen here further, I would suggest that
-> renumbering the IOCB flags to match the RWF flags would lead to better
-> codegen (can't do it the other way around; RWF flags are userspace ABI,
-> IOCB flags are not).  iocb_flags() probably doesn't get any worse because
-> the IOCB_ flags don't have the same numbers as the O_ bits (which differ
-> by arch anyway).
-> 
+I have no intention of picking it to pieces or something, it doesn't
+worth our time, and glad that's by accident, but you may guess how it
+looks -- you commented on it, and after not being picked, the patch
+reappears slightly rebranded.
 
 -- 
 Pavel Begunkov
