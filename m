@@ -2,59 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 33F78235603
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Aug 2020 10:38:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36398235605
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  2 Aug 2020 10:43:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbgHBIfi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Aug 2020 04:35:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40732 "EHLO
+        id S1726358AbgHBInz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 2 Aug 2020 04:43:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728009AbgHBIfh (ORCPT
+        with ESMTP id S1725882AbgHBInz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Aug 2020 04:35:37 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93A4FC06174A;
-        Sun,  2 Aug 2020 01:35:37 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id n2so25146418edr.5;
-        Sun, 02 Aug 2020 01:35:37 -0700 (PDT)
+        Sun, 2 Aug 2020 04:43:55 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE1B3C06174A;
+        Sun,  2 Aug 2020 01:43:54 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id o18so10734735eds.10;
+        Sun, 02 Aug 2020 01:43:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HcEorL6RdbpAx3JOgtt0ANHG2Mw6V5cDmG7jSZXjErQ=;
-        b=rsRxv5ktA2uYPu/J3dkvpEK88PatuQkRwwgZPtKAW/FUTU1QUxVKa41oxdtLtHF4ed
-         Kixc7ev1j3dC9+yaAnrTlN8kWGDE6hkZ6S69pS7Sws6vef6HpP2KzZr9n+m7pK14DWci
-         MJOIBXOMV0bFyf4n8ez1EHsfyS6HmD3b00sxJetHokydTWFK5GO9doUIYDmDKmwppPZ4
-         dH1ZCkK1kRptjJllr34+GZK0VmoKLj4iQyXwkRdnfyj2GuIypVym51gfGnf16AFym3Ch
-         4y0qJ9ebimgXCGlcadgx5fgDz506CloblNtISjFYZ2dxKqL8A1GUjhI/M9wYxLjRW15B
-         jYzQ==
+        bh=I2GwtSuZF7wcBG1XXTZ3G3JqTIUbBotfbfQlAqBXUkI=;
+        b=IJEDAUK/KhOOArr4HCI5irqfgClIwiSrAYkfhJ6TUtlHCbxW504a17/nNgQnFgC/lW
+         ggVL575xhpwhfM480HyWmkpAqoYO7pqQRTmpIIYaxfMz+DlF+W9gEBjYfBqX1JLwK2tw
+         C8j4j9oXc3ydNOVH5IfUA9c+ikgwzyrPafH+7m6xhIvwedFKGgjn8DTIgwkoQ9xzOlrt
+         OS0xstsx/WEaBp9DsqRl1pDy6shbiAwE7kdwFcDUYmdCAR1rDBceQeigJXOEnarZsVJl
+         YyWPPmufdr2tLv5kZIg+v7CHuxv5tRg84ZLnA9xQzYinY7bcss6GQY+MTTGZp9hq/iHG
+         2R7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=HcEorL6RdbpAx3JOgtt0ANHG2Mw6V5cDmG7jSZXjErQ=;
-        b=jDbEkbFOCXy6Exr0AnANWWIor+5FylErjR9x1GjhiEVx4HI/ylVXlIo2SiOXdnTd78
-         vVS2WgXB3mXCU3+aE3aomDAJhXlw6NgvilhqjrVzlm/h9kOa2vM5dOpu4xF+lPDHkM4u
-         vWmxbDtxyKVhS0QFYyXSNUw8o+jwFe1CTt6zATWS517eBzJ9u/lITiewSHFTlSf6Pn3Y
-         f2KPeMTPupsCLUwo1vJT+ODnHEwbtul/9N07vHF32LogLqsjDIj40cCmJZF40T26phk5
-         XBkackg+zNlgsckrXRQ8D6IJT87PG7J6F2sXqHPheVzsUePvTwUcp9xAHA2rmbuPFPzf
-         NDyA==
-X-Gm-Message-State: AOAM5330pMy7oWf9WeTxh1P+s3G0GXelVyxWnlKU5/9mfS/Jh/qIZCfY
-        INO/7Jm7rEKb5g1Sb0bUrAzHrL4v
-X-Google-Smtp-Source: ABdhPJxKuWXbDH6KBzOF4BPx7lNPtYkTPWK2gUaJoKmE69CE031jHoQhDJKryobCtWTg0HjncN/e+g==
-X-Received: by 2002:a05:6402:1c07:: with SMTP id ck7mr2646288edb.84.1596357336113;
-        Sun, 02 Aug 2020 01:35:36 -0700 (PDT)
+        bh=I2GwtSuZF7wcBG1XXTZ3G3JqTIUbBotfbfQlAqBXUkI=;
+        b=MVTbRIzj4enl/gs9tyUmrJWph8qqOXt6Pbn4wpUSsikBbZeQly+MqzGcW+fOs3P1DT
+         oj4lRgiXYF1AO7CEf3fZay4UQpnBTOwHcKQiSPBbXh7wJGC+6CqaCPTDDhqkZ1pRXmxN
+         3jtQg1ZvXsoKiD1u/H+gRYyjvA8fTLXnh+Yxuh+HN564hdwUMU3BoT84cYWUWXCkpsAy
+         xiOylAzLWqYqYU3adWCHenchE/CcRC+OB9xd6rDz63CsfOLF2gu/203P9iNgJPArWqO8
+         Q/lgAY/sxf84w4qtjiuzJOwvrFUqGsrHMY6hPz7POmY9SzxVv95JDEjchZxfCrW8wlts
+         JLYg==
+X-Gm-Message-State: AOAM530WIwskOpTs/hCAbLno/gUrO791vkykBnkqyuPyau9QI9hpud+k
+        Th01ryHAsZ0jWcdwZJNC+o2gKgwX
+X-Google-Smtp-Source: ABdhPJxa0Xm2fvc3K5WDqIBiJX0wSUq60Czws/T+eI4/KvP4RgU6kPb8C0BKEdfBNlquylRdfa1Jag==
+X-Received: by 2002:a50:a6d2:: with SMTP id f18mr10736136edc.374.1596357833455;
+        Sun, 02 Aug 2020 01:43:53 -0700 (PDT)
 Received: from [192.168.43.215] ([5.100.193.69])
-        by smtp.gmail.com with ESMTPSA id u13sm12757925ejc.72.2020.08.02.01.35.34
+        by smtp.gmail.com with ESMTPSA id w22sm12948722ejj.123.2020.08.02.01.43.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Aug 2020 01:35:35 -0700 (PDT)
-To:     Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Sun, 02 Aug 2020 01:43:52 -0700 (PDT)
+Subject: Re: [PATCH] fs: optimise kiocb_set_rw_flags()
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <e523f51f59ad6ecdad4ad22c560cb9c913e96e1a.1596277420.git.asml.silence@gmail.com>
  <20200801153711.GV23808@casper.infradead.org>
- <debd12e1-8ba5-723d-75ad-47af99db05a0@kernel.dk>
 From:   Pavel Begunkov <asml.silence@gmail.com>
 Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
@@ -99,43 +100,39 @@ Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
  UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
  m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
  OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
-Subject: Re: [PATCH] fs: optimise kiocb_set_rw_flags()
-Message-ID: <48d1c305-6302-daaf-9153-8cdc85911a88@gmail.com>
-Date:   Sun, 2 Aug 2020 11:33:37 +0300
+Message-ID: <fae64393-397e-6745-607e-b9a0f517af72@gmail.com>
+Date:   Sun, 2 Aug 2020 11:41:55 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <debd12e1-8ba5-723d-75ad-47af99db05a0@kernel.dk>
+In-Reply-To: <20200801153711.GV23808@casper.infradead.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 01/08/2020 20:01, Jens Axboe wrote:
-> On 8/1/20 9:37 AM, Matthew Wilcox wrote:
->> On Sat, Aug 01, 2020 at 01:36:33PM +0300, Pavel Begunkov wrote:
->>> Use a local var to collect flags in kiocb_set_rw_flags(). That spares
->>> some memory writes and allows to replace most of the jumps with MOVEcc.
->>>
->>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+On 01/08/2020 18:37, Matthew Wilcox wrote:
+> On Sat, Aug 01, 2020 at 01:36:33PM +0300, Pavel Begunkov wrote:
+>> Use a local var to collect flags in kiocb_set_rw_flags(). That spares
+>> some memory writes and allows to replace most of the jumps with MOVEcc.
 >>
->> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
->>
->> If you want to improve the codegen here further, I would suggest that
->> renumbering the IOCB flags to match the RWF flags would lead to better
->> codegen (can't do it the other way around; RWF flags are userspace ABI,
->> IOCB flags are not).  iocb_flags() probably doesn't get any worse because
->> the IOCB_ flags don't have the same numbers as the O_ bits (which differ
->> by arch anyway).
+>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
 > 
-> Yeah that's not a bad idea, would kill a lot of branches.
+> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Is that common here to do so? I've done this for io_uring flags a while
-ago, but left RWF alone at the time, reluctant to check for possible
-complications (e.g. bit magic).
+Thanks for reviewing it
+
+> 
+> If you want to improve the codegen here further, I would suggest that
+> renumbering the IOCB flags to match the RWF flags would lead to better
+> codegen (can't do it the other way around; RWF flags are userspace ABI,
+> IOCB flags are not).  iocb_flags() probably doesn't get any worse because
+> the IOCB_ flags don't have the same numbers as the O_ bits (which differ
+> by arch anyway).
+> 
 
 -- 
 Pavel Begunkov
