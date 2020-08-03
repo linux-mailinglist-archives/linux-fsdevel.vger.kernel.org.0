@@ -2,100 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5281223A7DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 15:42:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A4A723A7F7
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 15:58:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbgHCNmE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 09:42:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53930 "EHLO
+        id S1727838AbgHCN60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 09:58:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726785AbgHCNmD (ORCPT
+        with ESMTP id S1726785AbgHCN6Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 09:42:03 -0400
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 854FDC06174A;
-        Mon,  3 Aug 2020 06:42:03 -0700 (PDT)
-Received: by mail-oi1-x241.google.com with SMTP id z22so2660754oid.1;
-        Mon, 03 Aug 2020 06:42:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=n1O9BpBkGKm0Dn1d9dK+DgN04J7paPhI+arHj4RxQqc=;
-        b=BzpkbIFAc7As9Wym8RKGqk6I4F1OJEEtLMtRyBlh3IoB7rJNlIT1odIF3gRrxit8qx
-         EwcUmL+FGwcYKufF3XqRap+T6SRfHWDIc6vVpon7z4O/24jfujo2nrxRPCqaBQqQmDWG
-         21l6Cx/kZTiUQxDod1FFaLNpAYrg8RimD+3dp4Vpt577FqGNpy5pvEgDJ+8NNnJ6n5M5
-         SRa/DP/UjKBJZJKZspg3/M+cQWJQj0x9DpBLvShILLdzcR88gCRsT/an6BPdEVvwfleL
-         bBBdV5B73iquzgbAMHUo2bjHIoIee1a17Bn+DSpbtlwXci3SGFsvgzaTGje5KOn/bl/7
-         kTcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=n1O9BpBkGKm0Dn1d9dK+DgN04J7paPhI+arHj4RxQqc=;
-        b=mbY+qt0Y0VMs9MQ5ljdR4n6dPE2Kw5C/wjhgh9Giq8RYSCRb60SxhsDiljE9czpRxO
-         NE2uDDhswh9eL7kjlEiMHduO8iArIj1VDJckmvpp//0XOPe6IHQN199oe6SvjzAI8LYN
-         sufx6Ue0x3xvq3oOm/cL05IzSz1D/XsYx7+YSY+my0AOpMl9A2Rad8nJynfJ+9KAOouG
-         s2mOtfTt7Lr5ouXRQQVtnAGLzw/mv/wR108Ls3Mahqb3slWHMg6rAFTFbMDecaAyqySw
-         zVNfBQETfrl56sCECx/pFqE2wh0RMCxLQrR5bCSQmC8Kzxbrga7Qk7z3iwaGChjqcDXi
-         aIgw==
-X-Gm-Message-State: AOAM532V8x4YgYdVyG3HQsw8l6HIWmow5yBsG6CVc/AoT8c+Gd1Qi8xe
-        EIavaz9VhRQC4EdqP6rIi9sntDsArPM8TdxkYAc=
-X-Google-Smtp-Source: ABdhPJy2s7JnnAMZg+Xjgd7o2046/kvLCZ5lfDdRATFloMgGUURRfOJSzm3J9BVGqcakar8pvBhf+VKMRGJfuuONzlk=
-X-Received: by 2002:a05:6808:b36:: with SMTP id t22mr12769611oij.159.1596462118081;
- Mon, 03 Aug 2020 06:41:58 -0700 (PDT)
+        Mon, 3 Aug 2020 09:58:25 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7E31C06174A
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Aug 2020 06:58:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=BH9HSd/AqV6LidMBIrGy9n33CQxj+9jQt9Z9fvEU60c=; b=VMJA1PSCXJR4gEg2fWvi4J9NRG
+        oH4dAde8kb75B85dFbEHxc7twu6tz5pzRyG0P4a2AbJI/OgPVe6zCEUlIeXBq3aaBzlcnwkKB739K
+        wvC6l2imDy1qNPtOv/J6yJuMCg98pA4bFbqfoW5yyO+E3VdpjNRc2cr0teBmWc9S2owCWq0BYcpas
+        z8PFB/FlR6i/CZM866KRM2WLZYhFasMRN1A4t47XhvQ5Paiyf8E2G/BPt+k4d7BQuCPy11hBxHJ9N
+        JdQo5tPtlSB43AUCtNih7yUjJe079/+eiDVmWYt8mXkxaDFxHLUlS1hQxxdnuHdLQ0NbVh5JAICMK
+        fA+rBhrQ==;
+Received: from 93-43-212-104.ip93.fastwebnet.it ([93.43.212.104] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k2ayq-0002Iu-Mq; Mon, 03 Aug 2020 13:58:21 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     viro@zeniv.linux.org.uk
+Cc:     sfr@canb.auug.org.au, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] init: fix init_dup
+Date:   Mon,  3 Aug 2020 15:58:19 +0200
+Message-Id: <20200803135819.751465-1-hch@lst.de>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <CAKgNAkjyXcXZkEczRz2yvJRFBy2zAwTaNfyiSmskAFWN_3uY1g@mail.gmail.com>
- <2007335.1595587534@warthog.procyon.org.uk>
-In-Reply-To: <2007335.1595587534@warthog.procyon.org.uk>
-Reply-To: mtk.manpages@gmail.com
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date:   Mon, 3 Aug 2020 15:41:46 +0200
-Message-ID: <CAKgNAkgYZ4HrFpOW_n8BshbR8d=03wetmxX2zNv7hX4ZmeQPmg@mail.gmail.com>
-Subject: Re: Mount API manual pages
-To:     David Howells <dhowells@redhat.com>
-Cc:     Petr Vorel <pvorel@suse.cz>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 24 Jul 2020 at 12:45, David Howells <dhowells@redhat.com> wrote:
->
-> Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
->
-> > Would you be willing to do the following please:
-> >
-> > 1. Review the pages that you already wrote to see what needs to be
-> > updated. (I did take a look at some of those pages a while back, and
-> > some pieces--I don't recall the details--were out of sync with the
-> > implementation.)
-> >
-> > 2. Resend the pages, one patch per page.
-> >
-> > 3. Please CC linux-man@, linux-api@, linux-kernel@, and the folk in CC
-> > on this message.
->
-> For this week and next, I have an online language course taking up 8-10 hours
-> a day.  I'll pick it up in August, if that's okay with you.
+Don't allocate an unused fd for each call.  Also drop the extra
+reference from filp_open after the init_dup calls while we're at it.
 
-Hi David,
+Fixes: 36e96b411649 ("init: add an init_dup helper")
+Reported-by Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
 
-This is just a reminder mail :-).
+Al, feel free to fold this into the original patch, as that is the
+last one in the branch.
 
-Cheers,
+ fs/init.c   | 2 +-
+ init/main.c | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-Michael
+diff --git a/fs/init.c b/fs/init.c
+index 730e05acda2392..e9c320a48cf157 100644
+--- a/fs/init.c
++++ b/fs/init.c
+@@ -260,6 +260,6 @@ int __init init_dup(struct file *file)
+ 	fd = get_unused_fd_flags(0);
+ 	if (fd < 0)
+ 		return fd;
+-	fd_install(get_unused_fd_flags(0), get_file(file));
++	fd_install(fd, get_file(file));
+ 	return 0;
+ }
+diff --git a/init/main.c b/init/main.c
+index 089e21504b1fc1..9dae9c4f806bb9 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1470,6 +1470,7 @@ void __init console_on_rootfs(void)
+ 	init_dup(file);
+ 	init_dup(file);
+ 	init_dup(file);
++	fput(file);
+ }
+ 
+ static noinline void __init kernel_init_freeable(void)
+-- 
+2.27.0
 
-
-
---
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
