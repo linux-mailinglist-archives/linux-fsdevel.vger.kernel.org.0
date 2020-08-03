@@ -2,99 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4347623A765
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 15:22:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A777323A767
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 15:22:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbgHCNWd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 09:22:33 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58933 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726433AbgHCNWd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 09:22:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596460952;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mx+XnSqPKa3Akxkos0XzQtZs6KN1ZPJwxB+Tb5prv7Q=;
-        b=MZ8L9++CVtJxApSh6g7UjAC3XCJHw0rPcKptRTr12pwNcCbpPvVX+zPc17Ha46Z7xxn3Kx
-        twwCigqLrx+dzj9PvE7rLE8a6tjG7YreTGJzSL5LoXEv5XobHLd+r6I2U6btTAatvcy+uA
-        maiu0vfp/SnaiQZgA6vZ55SrNNV/QcA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-85-QRmJ_ZPqPwqCQfIhnN5q1w-1; Mon, 03 Aug 2020 09:22:28 -0400
-X-MC-Unique: QRmJ_ZPqPwqCQfIhnN5q1w-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726916AbgHCNWs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 09:22:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47192 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726579AbgHCNWs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Aug 2020 09:22:48 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3CA84101C8A0;
-        Mon,  3 Aug 2020 13:22:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6788F75559;
-        Mon,  3 Aug 2020 13:22:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <159645997768.1779777.8286723139418624756.stgit@warthog.procyon.org.uk>
-References: <159645997768.1779777.8286723139418624756.stgit@warthog.procyon.org.uk>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, linux-security-module@vger.kernel.org,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        nicolas.dichtel@6wind.com, raven@themaw.net, christian@brauner.io,
-        jlayton@redhat.com, kzak@redhat.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Mount notifications [ver #2]
+        by mail.kernel.org (Postfix) with ESMTPSA id D8CDF206DA;
+        Mon,  3 Aug 2020 13:22:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596460967;
+        bh=ufsL/pmWSkngby8zuQJiW/P+em3p9n7UYjlbBqngg+M=;
+        h=Subject:From:To:Cc:Date:From;
+        b=QbZjVL4iBwJgcqvXVR1Yqhu2PzHPcTAM+hNSQ0Pa9kdp3yP2CnzSeV8jRSjcOhLQ0
+         MVEH1wd2aLLvJwePqcC9Z4fXaS3lzh+BAShZG5A6zon8wvZ1CL7AvLUphT/d+CL/C8
+         YUn0cYYFhZrwovYq4+96Z9AcszoH9Q+7OfZYCWaQ=
+Message-ID: <56a44e097a1408a6bf593270bc5e5d4bcc8b3766.camel@kernel.org>
+Subject: [GIT PULL] file locking fix for 5.9
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     yangerkun <yangerkun@huawei.com>,
+        Bruce Fields <bfields@fieldses.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Mon, 03 Aug 2020 09:22:46 -0400
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.4 (3.36.4-1.fc32) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 03 Aug 2020 14:22:22 +0100
-Message-ID: <1782773.1596460942@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The following changes since commit 3d77e6a8804abcc0504c904bd6e5cdf3a5cf8162:
 
-David Howells <dhowells@redhat.com> wrote:
+  Linux 5.7 (2020-05-31 16:49:15 -0700)
 
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> SIGNIFICANT CHANGES
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
->  ver #2:
->=20
->  (*) Make the ID fields in the mount notification 64-bits.  They're left
->      referring to the mount ID here, but switched to the mount unique ID =
-in
->      the patch in fsinfo that adds that. [Requested by Mikl=C3=B3s Szered=
-i]
->=20
->  (*) Dropped the event counters from the mount notification message.
->      [Requested by Mikl=C3=B3s].
->=20
->      This can easily be added back later as the message length can be
->      increased to show it.
->=20
->  (*) Moved the mount event counters over to the fsinfo patchset.
+are available in the Git repository at:
 
-Also:
+  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/filelock-v5.9-1
 
- (*) Added limitations on the number of concurrent watches that can be held
-     by a user.  [Requested by Linus]
+for you to fetch changes up to 5ef159681309621aa8fe06d94397b85b51974d55:
 
- (*) Removed the unused NOTIFY_MOUNT_IS_RECURSIVE flag.  [Requested by
-     Mikl=C3=B3s]
+  locks: add locks_move_blocks in posix_lock_inode (2020-06-02 12:08:25 -0400)
 
-David
+----------------------------------------------------------------
+Hi Linus,
+
+Just a single, one-line patch to fix an inefficiency in the posix
+locking code that can lead to it doing more wakeups than necessary.
+
+Thanks!
+Jeff
+----------------------------------------------------------------
+yangerkun (1):
+      locks: add locks_move_blocks in posix_lock_inode
+
+ fs/locks.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+-- 
+Jeff Layton <jlayton@kernel.org>
 
