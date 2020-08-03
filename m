@@ -2,55 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A80723A8D2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 16:50:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1913623A8D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 16:50:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbgHCOrs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 10:47:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35840 "EHLO
+        id S1727892AbgHCOuV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 10:50:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbgHCOrq (ORCPT
+        with ESMTP id S1728005AbgHCOrt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 10:47:46 -0400
-Received: from mail-qt1-x84a.google.com (mail-qt1-x84a.google.com [IPv6:2607:f8b0:4864:20::84a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 985C0C061756
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Aug 2020 07:47:46 -0700 (PDT)
-Received: by mail-qt1-x84a.google.com with SMTP id k1so13111044qtp.20
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Aug 2020 07:47:46 -0700 (PDT)
+        Mon, 3 Aug 2020 10:47:49 -0400
+Received: from mail-qv1-xf49.google.com (mail-qv1-xf49.google.com [IPv6:2607:f8b0:4864:20::f49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1644C06179E
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Aug 2020 07:47:48 -0700 (PDT)
+Received: by mail-qv1-xf49.google.com with SMTP id d9so16966107qvl.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Aug 2020 07:47:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=exegq5bRss6SDj4yQZt05Kc3+gr2w1N7iotmmiqvfaE=;
-        b=mGbuS+pGC2mlZ1nnEmD1UyJJXrsA49ua7zPcaT6Pb99vdkfquF0DlxLELzi2UVFHnz
-         UQUik19iARwlMzlIFxykMeRfQ6oge5n7bchL6BZu8lyh6evqernJZXAnv0/9WYrja5HD
-         Q9W8tFLfkY4oPAcwJ4a0TnaLj217q3Daa7ocYAM6w+zVg8lJ9OjeITJ9jMx9RHiIcrB7
-         v5SJIb3A7rjAEpFPOqH6WpNaQLYoBGUgvH3dH8xM+4XSyt1OAM6VgEjlSccwOg8rJXEw
-         qlBvT/iCSh0JFz0QGdWGzwIzM+bYQPBo/ooJ6ucHbeDPUskeVvdf+SxdjQ3AyeiIHfZk
-         ZuQg==
+        bh=yEtE51ZkZ89myWk79FRCGMzR6DiPPNgcqkWBItHzQ6s=;
+        b=t1rTR3609fZavoZD6hGkSsSWDr9nI1/YkdhLNf0ojphXhpqrjYtn2QmhC+W/gkvimg
+         AMTj6PP4Rr26vC5qnxMVLP8ZXj2mvSyHcLtN7NTD3GvFDmmeReFr0s4F/UMZqW82I1g+
+         Dr2Z/WzdPu1RdbA1YmGLFdz8BghYnww1NBBlSY+6I9r3aq9SpAN2yEXku55avULjgjeR
+         wbdd0+d7Js097V3esnE9Zp3yRqLvLrD/D5lAoObteLNHtFqv+wIpvThQwIPjxSfSQHJA
+         7Nvv9QfJik4hcZHlF/286VGx9pliyj8hQuAw0OzqKiZAgbFEPs15yA8D9Br8GJTj/mTJ
+         PaOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=exegq5bRss6SDj4yQZt05Kc3+gr2w1N7iotmmiqvfaE=;
-        b=nQvffvMLa+VFWHuHTwWyghR1g1SY2eJZYXBkx+LhXGtpJ85YblNeFvymGiAdIn2F2K
-         urA0S0MgSUyu6wn9SdQLfP8HEFkI7K6Xg2Y4jZEpMWZYXLETb6bsjHmPG71J2Dq5ZFFy
-         OvwJ8Ai0uEKOpdv0lozTxWKFdaABFB1wochrPSqD0e0CA2Q6C+G4npIiAcn0IFMWz+di
-         nrU6R1fcaI3+Hs5RaTs4c4X/puNybVsGhiNHwmU+V/ZDnnDphtzknrTRFVIM6sDcrPp9
-         2B2kcPSaAn0W8IiCSWwFkpN1ILCzdnQq40BujaGE4KFLBqEpCh6H26hzxcKpXAkXe4eT
-         cgHA==
-X-Gm-Message-State: AOAM532kDX0g2hFSoWL25maAxfwNYoMB9jj5Pqe1nE/lXIwUhX6XNvPe
-        WMSfrIDhzxS51amoLTCroUYLK0gA0TZa4vBbmA==
-X-Google-Smtp-Source: ABdhPJzDwQ0aX/7NlvPVgwHIaoyHgpXGgCOEtbhY3RvNh0Xr+RtcQtfdf3+ncwToVPid9YW6tzvTvt4z+owCWodSjw==
-X-Received: by 2002:a0c:b743:: with SMTP id q3mr16777556qve.229.1596466065553;
- Mon, 03 Aug 2020 07:47:45 -0700 (PDT)
-Date:   Mon,  3 Aug 2020 14:47:18 +0000
+        bh=yEtE51ZkZ89myWk79FRCGMzR6DiPPNgcqkWBItHzQ6s=;
+        b=F44GW1jFFOBfanT7geDNmhInq4+x6Vyi9WMQQMhKACx/ZVa17x2MPVHpO96/V8Nl+B
+         GBMnsfrkxQS3QxBjH01FaEb9WWo0Mqpjqw0i7ty2p5cmuOJWACpm2TbEdy9+7EiAcLff
+         2RcFkEt3dLmrtDV0hZPy9Q6+UL6l7OzUoGCKiy0Bi5zh++Z8q1XyDho0fCLkEfKUZEXC
+         OVV2NAGaQZygnfxNH3hvp3iUVPKEo+B7BGS+EYRoCVt2O1JSakysrh2Ska+z1e/MFqyy
+         UtWahmZDrd4tg2xfN/YNDng0YfxqRantnRXdQadBaM+MWGLD25Q6f9OvgiiH3lWrnMTu
+         2iRw==
+X-Gm-Message-State: AOAM531b4Wiuy/gzXPPfsGQt52SDyKDVijHh+uTrAh8ChB3NOPM6M/HP
+        YZnNVpeGBt2123c+EIJ3Jv7rxbgMoS+4KPdqmw==
+X-Google-Smtp-Source: ABdhPJw9FuulIu0ymOE9kGuQtwFH4SdlEeYnPFzJ+4tzAm9Tdqz+V6p7Q/zMMMduM+pHUwYFb/16WTJ/nRJFAJbl1A==
+X-Received: by 2002:a0c:c3d0:: with SMTP id p16mr17210039qvi.54.1596466068074;
+ Mon, 03 Aug 2020 07:47:48 -0700 (PDT)
+Date:   Mon,  3 Aug 2020 14:47:19 +0000
 In-Reply-To: <20200803144719.3184138-1-kaleshsingh@google.com>
-Message-Id: <20200803144719.3184138-2-kaleshsingh@google.com>
+Message-Id: <20200803144719.3184138-3-kaleshsingh@google.com>
 Mime-Version: 1.0
 References: <20200803144719.3184138-1-kaleshsingh@google.com>
 X-Mailer: git-send-email 2.28.0.163.g6104cc2f0b6-goog
-Subject: [PATCH 1/2] fs: Add fd_install file operation
+Subject: [PATCH 2/2] dmabuf/tracing: Add dma-buf trace events
 From:   Kalesh Singh <kaleshsingh@google.com>
 To:     Jonathan Corbet <corbet@lwn.net>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -71,58 +71,177 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provides a per process hook for the acquisition of file descriptors,
-despite the method used to obtain the descriptor.
+Being able to analyze the per process usage of shared
+dma buffers prodives useful insights in situations where
+the system is experiencing high memory pressure. This would
+allow us to see exactly which processes are holding references
+to the shared buffer.
 
 Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
 ---
- Documentation/filesystems/vfs.rst | 5 +++++
- fs/file.c                         | 3 +++
- include/linux/fs.h                | 1 +
- 3 files changed, 9 insertions(+)
+ drivers/dma-buf/dma-buf.c      | 29 +++++++++++++
+ include/trace/events/dma_buf.h | 77 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 106 insertions(+)
+ create mode 100644 include/trace/events/dma_buf.h
 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index ed17771c212b..95b30142c8d9 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -1123,6 +1123,11 @@ otherwise noted.
- ``fadvise``
- 	possibly called by the fadvise64() system call.
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index 1ca609f66fdf..1729191ac9ca 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -29,6 +29,9 @@
+ #include <uapi/linux/dma-buf.h>
+ #include <uapi/linux/magic.h>
  
-+``fd_install``
-+	called by the VFS when a file descriptor is installed in the
-+	process's file descriptor table, regardless how the file descriptor
-+	was acquired -- be it via the open syscall, received over IPC, etc.
++#define CREATE_TRACE_POINTS
++#include <trace/events/dma_buf.h>
 +
- Note that the file operations are implemented by the specific
- filesystem in which the inode resides.  When opening a device node
- (character or block special) most filesystems will call special
-diff --git a/fs/file.c b/fs/file.c
-index abb8b7081d7a..f5db8622b851 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -616,6 +616,9 @@ void __fd_install(struct files_struct *files, unsigned int fd,
- void fd_install(unsigned int fd, struct file *file)
+ static inline int is_dma_buf_file(struct file *);
+ 
+ struct dma_buf_list {
+@@ -110,6 +113,15 @@ static struct file_system_type dma_buf_fs_type = {
+ 	.kill_sb = kill_anon_super,
+ };
+ 
++static void dma_buf_vma_close(struct vm_area_struct *area)
++{
++	trace_dma_buf_map_ref_dec(current, area->vm_file);
++}
++
++static const struct vm_operations_struct dma_buf_vm_ops = {
++	.close = dma_buf_vma_close,
++};
++
+ static int dma_buf_mmap_internal(struct file *file, struct vm_area_struct *vma)
  {
- 	__fd_install(current->files, fd, file);
+ 	struct dma_buf *dmabuf;
+@@ -128,6 +140,9 @@ static int dma_buf_mmap_internal(struct file *file, struct vm_area_struct *vma)
+ 	    dmabuf->size >> PAGE_SHIFT)
+ 		return -EINVAL;
+ 
++	trace_dma_buf_map_ref_inc(current, file);
++	vma->vm_ops = &dma_buf_vm_ops;
 +
-+	if (file->f_op->fd_install)
-+		file->f_op->fd_install(fd, file);
+ 	return dmabuf->ops->mmap(dmabuf, vma);
  }
  
- EXPORT_SYMBOL(fd_install);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f5abba86107d..b976fbe8c902 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1864,6 +1864,7 @@ struct file_operations {
- 				   struct file *file_out, loff_t pos_out,
- 				   loff_t len, unsigned int remap_flags);
- 	int (*fadvise)(struct file *, loff_t, loff_t, int);
-+	void (*fd_install)(int, struct file *);
- } __randomize_layout;
+@@ -410,6 +425,17 @@ static void dma_buf_show_fdinfo(struct seq_file *m, struct file *file)
+ 	spin_unlock(&dmabuf->name_lock);
+ }
  
- struct inode_operations {
++static int dma_buf_flush(struct file *filp, fl_owner_t id)
++{
++	trace_dma_buf_fd_ref_dec(current, filp);
++	return 0;
++}
++
++static void dma_buf_fd_install(int fd, struct file *filp)
++{
++	trace_dma_buf_fd_ref_inc(current, filp);
++}
++
+ static const struct file_operations dma_buf_fops = {
+ 	.mmap		= dma_buf_mmap_internal,
+ 	.llseek		= dma_buf_llseek,
+@@ -417,6 +443,8 @@ static const struct file_operations dma_buf_fops = {
+ 	.unlocked_ioctl	= dma_buf_ioctl,
+ 	.compat_ioctl	= compat_ptr_ioctl,
+ 	.show_fdinfo	= dma_buf_show_fdinfo,
++	.fd_install	= dma_buf_fd_install,
++	.flush		= dma_buf_flush,
+ };
+ 
+ /*
+@@ -1177,6 +1205,7 @@ int dma_buf_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma,
+ 		if (oldfile)
+ 			fput(oldfile);
+ 	}
++
+ 	return ret;
+ 
+ }
+diff --git a/include/trace/events/dma_buf.h b/include/trace/events/dma_buf.h
+new file mode 100644
+index 000000000000..05af336cd849
+--- /dev/null
++++ b/include/trace/events/dma_buf.h
+@@ -0,0 +1,77 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM dma_buf
++
++#if !defined(_TRACE_DMA_BUF_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_DMA_BUF_H
++
++#include <linux/dma-buf.h>
++#include <linux/tracepoint.h>
++#include <linux/types.h>
++
++#define UNKNOWN "<unknown>"
++
++#ifdef CREATE_TRACE_POINTS
++static inline struct dma_buf *dma_buffer(struct file *filp)
++{
++	return filp->private_data;
++}
++#endif
++
++DECLARE_EVENT_CLASS(dma_buf_ref_template,
++
++	TP_PROTO(struct task_struct *task, struct file *filp),
++
++	TP_ARGS(task,  filp),
++
++	TP_STRUCT__entry(
++		__field(u32, tgid)
++		__field(u32, pid)
++		__field(u64, size)
++		__field(s64, count)
++		__string(exp_name, dma_buffer(filp)->exp_name)
++		__string(name, dma_buffer(filp)->name ? dma_buffer(filp)->name : UNKNOWN)
++		__field(u64, i_ino)
++	),
++
++	TP_fast_assign(
++		__entry->tgid = task->tgid;
++		__entry->pid = task->pid;
++		__entry->size = dma_buffer(filp)->size;
++		__entry->count = file_count(filp);
++		__assign_str(exp_name, dma_buffer(filp)->exp_name);
++		__assign_str(name, dma_buffer(filp)->name ? dma_buffer(filp)->name : UNKNOWN);
++		__entry->i_ino = filp->f_inode->i_ino;
++	),
++
++	TP_printk("tgid=%u pid=%u size=%llu count=%lld exp_name=%s name=%s i_ino=%llu",
++		__entry->tgid,
++		__entry->pid,
++		__entry->size,
++		__entry->count,
++		__get_str(exp_name),
++		__get_str(name),
++		__entry->i_ino
++	)
++);
++
++DEFINE_EVENT(dma_buf_ref_template, dma_buf_fd_ref_inc,
++	TP_PROTO(struct task_struct *task, struct file *filp),
++	TP_ARGS(task,  filp));
++
++DEFINE_EVENT(dma_buf_ref_template, dma_buf_fd_ref_dec,
++	TP_PROTO(struct task_struct *task, struct file *filp),
++	TP_ARGS(task,  filp));
++
++DEFINE_EVENT(dma_buf_ref_template, dma_buf_map_ref_inc,
++	TP_PROTO(struct task_struct *task, struct file *filp),
++	TP_ARGS(task,  filp));
++
++DEFINE_EVENT(dma_buf_ref_template, dma_buf_map_ref_dec,
++	TP_PROTO(struct task_struct *task, struct file *filp),
++	TP_ARGS(task,  filp));
++
++#endif /* _TRACE_DMA_BUF_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
 -- 
 2.28.0.163.g6104cc2f0b6-goog
 
