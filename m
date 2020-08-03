@@ -2,102 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 933EE23A7D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 15:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5281223A7DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 15:42:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbgHCNjq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 09:39:46 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:48902 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727104AbgHCNjq (ORCPT
+        id S1727118AbgHCNmE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 09:42:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53930 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726785AbgHCNmD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 09:39:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596461984;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ghWxgCtP6DOJs2jlobm5OHTZI32yY8LeVsVq2n2kfjI=;
-        b=hFXyqJEm+8Q4zfW/Sgd5ouS/uEh8qsxwDgZ4RaziVRV1Y/Ca1KA4rk3RuqnVB9iHZ8HmvJ
-        aHi3v1gA/riR+9IJnEbJve4ftdDTcRGa1eGx6Rp6STVdBnxkhdC78OEUak5/4gVwfPT9jf
-        J79hFJzDpd6kLmzASTaEk/gD/FvIf1s=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-329-LTGAt8n1OzWawJK_1tWwRg-1; Mon, 03 Aug 2020 09:39:40 -0400
-X-MC-Unique: LTGAt8n1OzWawJK_1tWwRg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CE27891279;
-        Mon,  3 Aug 2020 13:39:13 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 831A974F58;
-        Mon,  3 Aug 2020 13:39:11 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 18/18] samples: add error state information to test-fsinfo.c
- [ver #21]
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     Jeff Layton <jlayton@kernel.org>, dhowells@redhat.com,
-        torvalds@linux-foundation.org, raven@themaw.net,
-        mszeredi@redhat.com, christian@brauner.io, jannh@google.com,
-        darrick.wong@oracle.com, kzak@redhat.com, jlayton@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 03 Aug 2020 14:39:10 +0100
-Message-ID: <159646195075.1784947.11356745961373523948.stgit@warthog.procyon.org.uk>
-In-Reply-To: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
-References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Mon, 3 Aug 2020 09:42:03 -0400
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 854FDC06174A;
+        Mon,  3 Aug 2020 06:42:03 -0700 (PDT)
+Received: by mail-oi1-x241.google.com with SMTP id z22so2660754oid.1;
+        Mon, 03 Aug 2020 06:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=n1O9BpBkGKm0Dn1d9dK+DgN04J7paPhI+arHj4RxQqc=;
+        b=BzpkbIFAc7As9Wym8RKGqk6I4F1OJEEtLMtRyBlh3IoB7rJNlIT1odIF3gRrxit8qx
+         EwcUmL+FGwcYKufF3XqRap+T6SRfHWDIc6vVpon7z4O/24jfujo2nrxRPCqaBQqQmDWG
+         21l6Cx/kZTiUQxDod1FFaLNpAYrg8RimD+3dp4Vpt577FqGNpy5pvEgDJ+8NNnJ6n5M5
+         SRa/DP/UjKBJZJKZspg3/M+cQWJQj0x9DpBLvShILLdzcR88gCRsT/an6BPdEVvwfleL
+         bBBdV5B73iquzgbAMHUo2bjHIoIee1a17Bn+DSpbtlwXci3SGFsvgzaTGje5KOn/bl/7
+         kTcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=n1O9BpBkGKm0Dn1d9dK+DgN04J7paPhI+arHj4RxQqc=;
+        b=mbY+qt0Y0VMs9MQ5ljdR4n6dPE2Kw5C/wjhgh9Giq8RYSCRb60SxhsDiljE9czpRxO
+         NE2uDDhswh9eL7kjlEiMHduO8iArIj1VDJckmvpp//0XOPe6IHQN199oe6SvjzAI8LYN
+         sufx6Ue0x3xvq3oOm/cL05IzSz1D/XsYx7+YSY+my0AOpMl9A2Rad8nJynfJ+9KAOouG
+         s2mOtfTt7Lr5ouXRQQVtnAGLzw/mv/wR108Ls3Mahqb3slWHMg6rAFTFbMDecaAyqySw
+         zVNfBQETfrl56sCECx/pFqE2wh0RMCxLQrR5bCSQmC8Kzxbrga7Qk7z3iwaGChjqcDXi
+         aIgw==
+X-Gm-Message-State: AOAM532V8x4YgYdVyG3HQsw8l6HIWmow5yBsG6CVc/AoT8c+Gd1Qi8xe
+        EIavaz9VhRQC4EdqP6rIi9sntDsArPM8TdxkYAc=
+X-Google-Smtp-Source: ABdhPJy2s7JnnAMZg+Xjgd7o2046/kvLCZ5lfDdRATFloMgGUURRfOJSzm3J9BVGqcakar8pvBhf+VKMRGJfuuONzlk=
+X-Received: by 2002:a05:6808:b36:: with SMTP id t22mr12769611oij.159.1596462118081;
+ Mon, 03 Aug 2020 06:41:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <CAKgNAkjyXcXZkEczRz2yvJRFBy2zAwTaNfyiSmskAFWN_3uY1g@mail.gmail.com>
+ <2007335.1595587534@warthog.procyon.org.uk>
+In-Reply-To: <2007335.1595587534@warthog.procyon.org.uk>
+Reply-To: mtk.manpages@gmail.com
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Date:   Mon, 3 Aug 2020 15:41:46 +0200
+Message-ID: <CAKgNAkgYZ4HrFpOW_n8BshbR8d=03wetmxX2zNv7hX4ZmeQPmg@mail.gmail.com>
+Subject: Re: Mount API manual pages
+To:     David Howells <dhowells@redhat.com>
+Cc:     Petr Vorel <pvorel@suse.cz>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
+On Fri, 24 Jul 2020 at 12:45, David Howells <dhowells@redhat.com> wrote:
+>
+> Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
+>
+> > Would you be willing to do the following please:
+> >
+> > 1. Review the pages that you already wrote to see what needs to be
+> > updated. (I did take a look at some of those pages a while back, and
+> > some pieces--I don't recall the details--were out of sync with the
+> > implementation.)
+> >
+> > 2. Resend the pages, one patch per page.
+> >
+> > 3. Please CC linux-man@, linux-api@, linux-kernel@, and the folk in CC
+> > on this message.
+>
+> For this week and next, I have an online language course taking up 8-10 hours
+> a day.  I'll pick it up in August, if that's okay with you.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Hi David,
 
- samples/vfs/test-fsinfo.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+This is just a reminder mail :-).
 
-diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
-index 596fa5e71762..c359c3f52871 100644
---- a/samples/vfs/test-fsinfo.c
-+++ b/samples/vfs/test-fsinfo.c
-@@ -430,6 +430,15 @@ static void dump_afs_fsinfo_server_address(void *reply, unsigned int size)
- 	printf("family=%u\n", ss->ss_family);
- }
- 
-+static void dump_fsinfo_generic_error_state(void *reply, unsigned int size)
-+{
-+	struct fsinfo_error_state *es = reply;
-+
-+	printf("\n");
-+	printf("\tlatest error : %d (%s)\n", es->wb_error_last, strerror(es->wb_error_last));
-+	printf("\tcookie       : 0x%x\n", es->wb_error_cookie);
-+}
-+
- static void dump_string(void *reply, unsigned int size)
- {
- 	char *s = reply, *p;
-@@ -518,6 +527,7 @@ static const struct fsinfo_attribute fsinfo_attributes[] = {
- 	FSINFO_STRING	(FSINFO_ATTR_AFS_CELL_NAME,	string),
- 	FSINFO_STRING	(FSINFO_ATTR_AFS_SERVER_NAME,	string),
- 	FSINFO_LIST_N	(FSINFO_ATTR_AFS_SERVER_ADDRESSES, afs_fsinfo_server_address),
-+	FSINFO_VSTRUCT  (FSINFO_ATTR_ERROR_STATE,       fsinfo_generic_error_state),
- 	{}
- };
- 
+Cheers,
+
+Michael
 
 
+
+--
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
