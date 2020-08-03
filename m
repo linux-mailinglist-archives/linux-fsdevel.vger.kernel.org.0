@@ -2,99 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77BEB23AA08
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 17:59:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CE4A23AA10
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 18:01:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728156AbgHCP7G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 11:59:06 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:43092 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbgHCP7G (ORCPT
+        id S1728269AbgHCQAO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 12:00:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47136 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726660AbgHCQAO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 11:59:06 -0400
-Received: from [192.168.254.32] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0B58220B4908;
-        Mon,  3 Aug 2020 08:59:04 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0B58220B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1596470345;
-        bh=61JblHzq4qhtQkPzj2G3tGZ75oReI0NIx105fosLKrI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=CmZKNOH/KALtRXbeh0M5SY5+FforFJaVBEotq9VkjW4009Y9gJ4Y8SiPFK60B63Ek
-         PKT5VksgRHxxB2UeKRaW8GTHJZ0qNSXo3Bv3a1oHMYNew4GGXbm8WZ2IzEPQtDPc28
-         jbSZxdwUc01p8o/CYVhWcBeeqUmlISxGx9Y/uaWA=
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-To:     David Laight <David.Laight@ACULAB.COM>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
-References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
- <3b916198-3a98-bd19-9a1c-f2d8d44febe8@linux.microsoft.com>
- <a5fb2778a86f45b58ef5dd35228d950b@AcuMS.aculab.com>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <8f938da2-a10d-ca15-56f0-70315c678771@linux.microsoft.com>
-Date:   Mon, 3 Aug 2020 10:59:04 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 3 Aug 2020 12:00:14 -0400
+Received: from mail-vk1-xa41.google.com (mail-vk1-xa41.google.com [IPv6:2607:f8b0:4864:20::a41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED240C061756
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Aug 2020 09:00:13 -0700 (PDT)
+Received: by mail-vk1-xa41.google.com with SMTP id l184so7423496vki.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Aug 2020 09:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AQC5OSI+ot4HICgMI1hBiF+Gos4KF9rtoTAXqBLWz5k=;
+        b=gP0hGxdZpv7oi/HJF0iairUbhXDSeECExkx/WUmvKbJIKYqRHFbhrSant0W/qarBAu
+         pt2QS00SD0C3sScBrjjH8PuJSo/uiRusGI8NdinY72x5wOlbs+la767nkgtU1+AdO/4R
+         sVgh/KH5EXT8KXDfD+VCxBTK4X1AEadmwBpBrMVvntYBujslfuoMPSdeAJPR+0zoXtmU
+         az8f0YQ3IGNq2/+IKVQAVs5iYU/bcziJbdbgOWftXf0g+mybpPTS5/8EnV/nQwq4dSqm
+         ZRV9gMwTdIcvKiJF/9J0XUaNMTR7Pm4yz/Nv7W/qKW98y0pV5r5ge3KKLHyEx2GZZhW8
+         O0Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AQC5OSI+ot4HICgMI1hBiF+Gos4KF9rtoTAXqBLWz5k=;
+        b=NTUnYZN43FV9++q281h/L7qiyCWIogjgK7z7AgVbsu4BzKrOWRlhho4wUfR4cq2zpM
+         E6/GgkeCTT9zGOrVNjK9sBGxNkMlrt7Z+9w0hC5udmVUm/MP94+EC295mkHvI9LtC/R9
+         cy6FL9oysLKWTBR+lUuxgBzWKjlv9MRDX4CT6yKB3h8c/FLqQtF3SAqUdOuffn+8KAo/
+         zz3S9zRDIpO/LY3efKqN6lCNB25QZ0HMUpUbPZ4jf7Q2CIpjUnm5yCz2peh615IRnwMv
+         /8Ch6Nb98D4HJkYAgkWzBT/v4lWyjhBJs/5wMJnGVyD5Ll9lhHSTaFERgWPhUxcKUfKA
+         J+tg==
+X-Gm-Message-State: AOAM532Unlvzz3ZLsfefTWUlFecOkzenkhqiSIswOWvXTrGGtWNBYFqU
+        qDI+0IQ8aQbKCmbjeEjzGQ9FiWywLX2YCu5SPvdQRw==
+X-Google-Smtp-Source: ABdhPJxBkWFzXg/y1w5xTYtUJSHjvCQFO/a1nE0RcfXFpI2HgJqGujkazyU0S+p/ymKJ5J9VS+bR1YpMln1PD/g9du0=
+X-Received: by 2002:a1f:9651:: with SMTP id y78mr1828501vkd.5.1596470412618;
+ Mon, 03 Aug 2020 09:00:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <a5fb2778a86f45b58ef5dd35228d950b@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20200803144719.3184138-1-kaleshsingh@google.com>
+ <20200803144719.3184138-3-kaleshsingh@google.com> <20200803154125.GA23808@casper.infradead.org>
+In-Reply-To: <20200803154125.GA23808@casper.infradead.org>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Mon, 3 Aug 2020 09:00:00 -0700
+Message-ID: <CAJuCfpFLikjaoopvt+vGN3W=m9auoK+DLQNgUf-xUbYfC=83Mw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dmabuf/tracing: Add dma-buf trace events
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Kalesh Singh <kaleshsingh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-doc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        linaro-mm-sig@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+        Hridya Valsaraju <hridya@google.com>,
+        Ioannis Ilkos <ilkos@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        kernel-team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 8/3/20 3:23 AM, David Laight wrote:
-> From: Madhavan T. Venkataraman
->> Sent: 02 August 2020 19:55
->> To: Andy Lutomirski <luto@kernel.org>
->> Cc: Kernel Hardening <kernel-hardening@lists.openwall.com>; Linux API <linux-api@vger.kernel.org>;
->> linux-arm-kernel <linux-arm-kernel@lists.infradead.org>; Linux FS Devel <linux-
->> fsdevel@vger.kernel.org>; linux-integrity <linux-integrity@vger.kernel.org>; LKML <linux-
->> kernel@vger.kernel.org>; LSM List <linux-security-module@vger.kernel.org>; Oleg Nesterov
->> <oleg@redhat.com>; X86 ML <x86@kernel.org>
->> Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
->>
->> More responses inline..
->>
->> On 7/28/20 12:31 PM, Andy Lutomirski wrote:
->>>> On Jul 28, 2020, at 6:11 AM, madvenka@linux.microsoft.com wrote:
->>>>
->>>> ﻿From: "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
->>>>
->>> 2. Use existing kernel functionality.  Raise a signal, modify the
->>> state, and return from the signal.  This is very flexible and may not
->>> be all that much slower than trampfd.
->> Let me understand this. You are saying that the trampoline code
->> would raise a signal and, in the signal handler, set up the context
->> so that when the signal handler returns, we end up in the target
->> function with the context correctly set up. And, this trampoline code
->> can be generated statically at build time so that there are no
->> security issues using it.
->>
->> Have I understood your suggestion correctly?
-> I was thinking that you'd just let the 'not executable' page fault
-> signal happen (SIGSEGV?) when the code jumps to on-stack trampoline
-> is executed.
+On Mon, Aug 3, 2020 at 8:41 AM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> The user signal handler can then decode the faulting instruction
-> and, if it matches the expected on-stack trampoline, modify the
-> saved registers before returning from the signal.
+> On Mon, Aug 03, 2020 at 02:47:19PM +0000, Kalesh Singh wrote:
+> > +static void dma_buf_fd_install(int fd, struct file *filp)
+> > +{
+> > +     trace_dma_buf_fd_ref_inc(current, filp);
+> > +}
 >
-> No kernel changes and all you need to add to the program is
-> an architecture-dependant signal handler.
+> You're adding a new file_operation in order to just add a new tracepoint?
+> NACK.
 
-Understood.
-
-Madhavan
+Hi Matthew,
+The plan is to attach a BPF to this tracepoint in order to track
+dma-buf users. If you feel this is an overkill, what would you suggest
+as an alternative?
