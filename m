@@ -2,73 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E68523A29C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 12:15:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3D1D23A2A8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 12:18:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726142AbgHCKPS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 06:15:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50436 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726058AbgHCKPS (ORCPT
+        id S1726142AbgHCKSS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 06:18:18 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:57813 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725951AbgHCKSS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 06:15:18 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2417C061756
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Aug 2020 03:15:17 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id l4so37947822ejd.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Aug 2020 03:15:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jkw2/EmVNCjRVxtadc/w9Al3qslsL1S9Hi4Qs74qTxI=;
-        b=LOEy3o4VZahFXFtZNHaUDERDe9gXJFDuIURw84jtpCz2oCjzqatjdxi85ruUk216Rv
-         v1hJrrxqx8zLrfY9r1ihrTmN4sgTnxd05WcEdMfRaOyKXOp4b1gmudzZ/v+M3UkTRYbw
-         aBOfrlcwOIbQ//4dguLte5uNTppdI99KZ26kA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jkw2/EmVNCjRVxtadc/w9Al3qslsL1S9Hi4Qs74qTxI=;
-        b=m6fY8Lq63yjd5lY0AIb7R+3jTxb4qsOmKG+pvEyb5a+MbvZyWYq1WpsM0oDEITbsl4
-         EZhRCiHqNpJrwa38j6gb+N38yGJZ27IS4bBoJ6KoD76h3fOUyMv9rdMDFuY7rLWxQMXt
-         QhH4RJEdRuN9UnCLnnHFG5eYiKeHsUGDl0adArF5czwJXJbMNzJInOAOtIAR7aKOFHez
-         x2A6ImecYT8yL5YvoVefBU6iWuhwY1ESf5ShFjWQH/ykFYw9rjTb/wZBXsUycds4DkTI
-         uhMlLFE7rliTpvGuW5XA3mleh5PhRSS/rGYZshVjXv/WjuHfztRPVh1aZHfVV4b4tj91
-         29+A==
-X-Gm-Message-State: AOAM530HSvxnae5FRzU/c9Q/4cAbHnKRN8mj6gHVoeecTlIuW1GvntPt
-        dYA4xZPL7Fr34k0oKz/LKDkQdqjgbq0BKmKeOjlZqMdt
-X-Google-Smtp-Source: ABdhPJxldC6i2ZnyBDDSZP0XTrPLNJsfOi7DQqJ4v7/Qk9xwwbpA48xl/6f5v/lX2ThB5om64KLM7AUyrmnk4DKrzxU=
-X-Received: by 2002:a17:906:3c59:: with SMTP id i25mr15537030ejg.202.1596449716662;
- Mon, 03 Aug 2020 03:15:16 -0700 (PDT)
+        Mon, 3 Aug 2020 06:18:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1596449897;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bfXMCNI/Os0PHSTlvW49y4Nr2+FnMZYDapmptaEW04U=;
+        b=B8HwQSBzhnZlF3GsU4oSozJl+h2kdi2b4ZyY/513XHkttI6JEVZ5PtQpa16+EdKo1xA4Up
+        bV4/bPNSqWXmVJYKRH7lsDpiKICs+0kRSGqkx09gNeHn4hDCKmGmQtfcLrHZB2CBNK3R4s
+        /msAuyMgcwyTBBTvKK1AKgJFnEF5BxA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-368-K_5LoHEKMdSlR3ZUeqZ2fw-1; Mon, 03 Aug 2020 06:18:16 -0400
+X-MC-Unique: K_5LoHEKMdSlR3ZUeqZ2fw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 449B81005504;
+        Mon,  3 Aug 2020 10:18:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 17FC888F20;
+        Mon,  3 Aug 2020 10:18:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAJfpegsT_3YqHPWCZGX7Lr+sE0NVmczWz5L6cN8CzsVz4YKLCQ@mail.gmail.com>
+References: <CAJfpegsT_3YqHPWCZGX7Lr+sE0NVmczWz5L6cN8CzsVz4YKLCQ@mail.gmail.com> <1293241.1595501326@warthog.procyon.org.uk> <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com> <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk> <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk> <2003787.1595585999@warthog.procyon.org.uk> <865566fb800a014868a9a7e36a00a14430efb11e.camel@themaw.net> <2023286.1595590563@warthog.procyon.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com, Ian Kent <raven@themaw.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
+        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and attribute change notifications [ver #5]
 MIME-Version: 1.0
-References: <20200723164311.29169-1-andrealmeid@collabora.com>
-In-Reply-To: <20200723164311.29169-1-andrealmeid@collabora.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 3 Aug 2020 12:15:05 +0200
-Message-ID: <CAJfpegtXfEQFhwV4MEOf6zQa3KCPmFzffDgDDMJ5=1n+irV7qA@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Update project homepage
-To:     =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@collabora.com>
-Cc:     linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        kernel@collabora.com, linux-fsdevel@vger.kernel.org,
-        Nikolaus Rath <nikolaus@rath.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1283474.1596449889.1@warthog.procyon.org.uk>
+Date:   Mon, 03 Aug 2020 11:18:09 +0100
+Message-ID: <1283475.1596449889@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jul 23, 2020 at 6:43 PM Andr=C3=A9 Almeida <andrealmeid@collabora.c=
-om> wrote:
->
-> As stated in https://sourceforge.net/projects/fuse/, "the FUSE project ha=
-s
-> moved to https://github.com/libfuse/" in 22-Dec-2015. Update URLs to
-> reflect this.
->
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@collabora.com>
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-Thanks, applied.
+> > fsinfo() then allows you to retrieve them by path or by mount ID.
+> 
+> Shouldn't the notification interface provide the unique ID?
 
-Miklos
+Hmmm...  If I'm going to do that, I have to put the fsinfo-core branch first
+otherwise you can't actually retrieve the unique ID - and thus won't be able
+to make sense of the notification record.  Such a rearrangement might make
+sense anyway since Ian and Karel have been primarily concentrating on fsinfo
+and only more recently started adding notification support.
+
+David
+
