@@ -2,158 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54EB8239CEA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 00:59:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E5BE239FFC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 09:06:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbgHBW7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 2 Aug 2020 18:59:02 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:57188 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726257AbgHBW7C (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 2 Aug 2020 18:59:02 -0400
-Received: from [192.168.254.32] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 2BD5420B4908;
-        Sun,  2 Aug 2020 15:59:00 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2BD5420B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1596409140;
-        bh=Q7q31WyGpO6J3iZ6HoTSTxcyY2RYOO3HoBrVjNyqpPA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=pT2y52UBji3W0nv8oaWqlXsVHl+hqxrTJnSZ5683V0Vq7481OEdHqda3OONYprXUp
-         pUvC7Ja7yH7A7A7PnhVPoN4/nCrqBhOuCsyTs5k8KgsuxVR6rM+c6V/PJxlx37f+KW
-         8krLq5y3aSQx9KIXxSdL4F/U4BEfCPv/l8nRqqTQ=
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
-References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
- <3b916198-3a98-bd19-9a1c-f2d8d44febe8@linux.microsoft.com>
- <CALCETrUJ2hBmJujyCtEqx4=pknRvjvi1-Gj9wfRcMMzejjKQsQ@mail.gmail.com>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <0fa7d888-c4fd-aeb3-db08-151ea648558d@linux.microsoft.com>
-Date:   Sun, 2 Aug 2020 17:58:59 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1725844AbgHCHFu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 03:05:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725826AbgHCHFu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Aug 2020 03:05:50 -0400
+Received: from sol.localdomain (c-107-3-166-239.hsd1.ca.comcast.net [107.3.166.239])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB12A206D7;
+        Mon,  3 Aug 2020 07:05:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596438349;
+        bh=1/YYBhx6gDgPn0W0PUaqgcbPBPyOY+oUseS5B1Y5aXs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=zJFv3N8oSMbXQHLMge43sKxec8eqkF9HVvyR6GngT5yMahB7DlBsWaPzNqQKzte4+
+         eCG0tD+mZ/WqVT7u/0+LsUeWT4cMeGecpf21MhCCWB13nNqebGh/SD7R5k87vU+IcZ
+         41DHrflgqWuzyzYSdovDJh7xRxY5DiXqAVMLyU6w=
+Date:   Mon, 3 Aug 2020 00:05:47 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Satya Tangirala <satyat@google.com>
+Subject: [GIT PULL] fscrypt updates for 5.9
+Message-ID: <20200803070547.GA24480@sol.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrUJ2hBmJujyCtEqx4=pknRvjvi1-Gj9wfRcMMzejjKQsQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The following changes since commit dcb7fd82c75ee2d6e6f9d8cc71c52519ed52e258:
 
+  Linux 5.8-rc4 (2020-07-05 16:20:22 -0700)
 
-On 8/2/20 3:00 PM, Andy Lutomirski wrote:
-> On Sun, Aug 2, 2020 at 11:54 AM Madhavan T. Venkataraman
-> <madvenka@linux.microsoft.com> wrote:
->> More responses inline..
->>
->> On 7/28/20 12:31 PM, Andy Lutomirski wrote:
->>>> On Jul 28, 2020, at 6:11 AM, madvenka@linux.microsoft.com wrote:
->>>>
->>>> ﻿From: "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
->>>>
->>> 2. Use existing kernel functionality.  Raise a signal, modify the
->>> state, and return from the signal.  This is very flexible and may not
->>> be all that much slower than trampfd.
->> Let me understand this. You are saying that the trampoline code
->> would raise a signal and, in the signal handler, set up the context
->> so that when the signal handler returns, we end up in the target
->> function with the context correctly set up. And, this trampoline code
->> can be generated statically at build time so that there are no
->> security issues using it.
->>
->> Have I understood your suggestion correctly?
-> yes.
->
->> So, my argument would be that this would always incur the overhead
->> of a trip to the kernel. I think twice the overhead if I am not mistaken.
->> With trampfd, we can have the kernel generate the code so that there
->> is no performance penalty at all.
-> I feel like trampfd is too poorly defined at this point to evaluate.
-> There are three general things it could do.  It could generate actual
-> code that varies by instance.  It could have static code that does not
-> vary.  And it could actually involve a kernel entry.
->
-> If it involves a kernel entry, then it's slow.  Maybe this is okay for
-> some use cases.
+are available in the Git repository at:
 
-Yes. IMO, it is OK for most cases except where dynamic code
-is used specifically for enhancing performance such as interpreters
-using JIT code for frequently executed sequences and dynamic
-binary translation.
+  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fscrypt-for-linus
 
-> If it involves only static code, I see no good reason that it should
-> be in the kernel.
+for you to fetch changes up to 55e32c54bbd5741cad462c9ee00c453c72fa74b9:
 
-It does not involve only static code. This is meant for dynamic code.
-However, see below.
+  fscrypt: don't load ->i_crypt_info before it's known to be valid (2020-07-30 14:21:50 -0700)
 
-> If it involves dynamic code, then I think it needs a clearly defined
-> use case that actually requires dynamic code.
+----------------------------------------------------------------
 
-Fair enough. I will work on this and get back to you. This might take
-a little time. So, bear with me.
+This release, we add support for inline encryption via the blk-crypto
+framework which was added in 5.8.  Now when an ext4 or f2fs filesystem
+is mounted with '-o inlinecrypt', the contents of encrypted files will
+be encrypted/decrypted via blk-crypto, instead of directly using the
+crypto API.  This model allows taking advantage of the inline encryption
+hardware that is integrated into the UFS or eMMC host controllers on
+most mobile SoCs.  Note that this is just an alternate implementation;
+the ciphertext written to disk stays the same.
 
-But I would like to make one point here. There are many applications
-and libraries out there that use trampolines. They may all require the
-same sort of things:
+(This pull request does *not* include support for direct I/O on
+encrypted files, which blk-crypto makes possible, since that part is
+still being discussed.)
 
-    - set register context
-    - push stuff on stack
-    - jump to a target PC
+Besides the above feature update, there are also a few fixes and
+cleanups, e.g. strengthening some memory barriers that may be too weak.
 
-But in each case, the context would be different:
+All these patches have been in linux-next with no reported issues.  I've
+also tested them with the fscrypt xfstests, as usual.  It's also been
+tested that the inline encryption support works with the support for
+Qualcomm and Mediatek inline encryption hardware that will be in the
+scsi pull request for 5.9.  Also, several SoC vendors are already using
+a previous, functionally equivalent version of these patches.
 
-    - only register context
-    - only stack context
-    - both register and stack contexts
-    - different registers
-    - different values pushed on the stack
-    - different target PCs
+----------------------------------------------------------------
+Eric Biggers (9):
+      ext4: add inline encryption support
+      fscrypt: add comments that describe the HKDF info strings
+      fscrypt: rename FS_KEY_DERIVATION_NONCE_SIZE
+      fscrypt: restrict IV_INO_LBLK_* to AES-256-XTS
+      fscrypt: switch fscrypt_do_sha256() to use the SHA-256 library
+      fscrypt: use smp_load_acquire() for fscrypt_prepared_key
+      fscrypt: use smp_load_acquire() for ->s_master_keys
+      fscrypt: use smp_load_acquire() for ->i_crypt_info
+      fscrypt: don't load ->i_crypt_info before it's known to be valid
 
-If we had to do this purely at user level, each application/library would
-need to roll its own solution, the solution has to be implemented for
-each supported architecture and maintained. While the code is static
-in each separate case, it is dynamic across all of them.
+Satya Tangirala (4):
+      fs: introduce SB_INLINECRYPT
+      fscrypt: add inline encryption support
+      f2fs: add inline encryption support
+      fscrypt: document inline encryption support
 
-That is, the kernel will generate the code on the fly for each trampoline
-instance based on its current context. It will not maintain any static
-trampoline code at all.
-
-Basically, it will supply the context to an arch-specific function and say:
-
-    - generate instructions for loading these regs with these values
-    - generate instructions to push these values on the stack
-    - generate an instruction to jump to this target PC
-
-It will place all of those generated instructions on a page and return the address.
-
-So, even with the static case, there is a lot of value in the kernel providing
-this. Plus, it has the framework to handle dynamic code.
-
->> Also, signals are asynchronous. So, they are vulnerable to race conditions.
->> To prevent other signals from coming in while handling the raised signal,
->> we would need to block and unblock signals. This will cause more
->> overhead.
-> If you're worried about raise() racing against signals from out of
-> thread, you have bigger problems to deal with.
-
-Agreed. The signal blocking is just one example of problems related
-to signals. There are other bigger problems as well. So, let us remove
-the signal-based approach from our discussions.
-
-Thanks.
-
-Madhavan
+ Documentation/admin-guide/ext4.rst    |   7 +
+ Documentation/filesystems/f2fs.rst    |   7 +
+ Documentation/filesystems/fscrypt.rst |  25 ++-
+ fs/buffer.c                           |   7 +-
+ fs/crypto/Kconfig                     |   8 +-
+ fs/crypto/Makefile                    |   1 +
+ fs/crypto/bio.c                       |  51 +++++
+ fs/crypto/crypto.c                    |   4 +-
+ fs/crypto/fname.c                     |  45 ++---
+ fs/crypto/fscrypt_private.h           | 144 ++++++++++---
+ fs/crypto/inline_crypt.c              | 367 ++++++++++++++++++++++++++++++++++
+ fs/crypto/keyring.c                   |  21 +-
+ fs/crypto/keysetup.c                  |  91 ++++++---
+ fs/crypto/keysetup_v1.c               |  20 +-
+ fs/crypto/policy.c                    |  20 +-
+ fs/ext4/inode.c                       |   4 +-
+ fs/ext4/page-io.c                     |   6 +-
+ fs/ext4/readpage.c                    |  11 +-
+ fs/ext4/super.c                       |  12 ++
+ fs/f2fs/compress.c                    |   2 +-
+ fs/f2fs/data.c                        |  79 ++++++--
+ fs/f2fs/super.c                       |  35 ++++
+ include/linux/fs.h                    |   1 +
+ include/linux/fscrypt.h               | 111 +++++++++-
+ 24 files changed, 940 insertions(+), 139 deletions(-)
+ create mode 100644 fs/crypto/inline_crypt.c
