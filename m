@@ -2,89 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 101A923AC56
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 20:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8952F23AC75
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 20:36:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728675AbgHCS1E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 14:27:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41574 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgHCS1B (ORCPT
+        id S1728708AbgHCSgf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 14:36:35 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:34356 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgHCSgf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 14:27:01 -0400
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EC78C06174A
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Aug 2020 11:27:00 -0700 (PDT)
-Received: by mail-vs1-xe41.google.com with SMTP id j23so13489308vsq.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Aug 2020 11:27:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=kP+FsGwT7Ong6g9Z4afLp/eWEQkLU5G56u7wCNQ8PbY=;
-        b=AJgTtJOfq33QtwVrHYsaLOFspsbTiqgCrzwxWUY4KSq8nn719n+LK296FDkKFWb8T/
-         zvbXOvclUTRqLQF7WTykx9gCeghXvWxet31NMy9+UG+NrC+4/FTyOer5i1CmCmMo0PV1
-         yVvi/nIBZZJzUWIh9DtK+klhMtAxhPJ/ulejuNnLSgm60MrsJ2Q90/Typ5lUScJ085mD
-         jNUdQOdm/4sVykvl/EH4WQG63v+mYA/ZS0d7HyrbkkRQjRXYZewhg6AiAQGcJcvP7FiZ
-         olFj/Vgfz+QhA0pdRP+9yyIHjYV4J8WcoUK+EPB37dwI4LCLmCkX5KRmdpei3BwBnw5p
-         +4Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=kP+FsGwT7Ong6g9Z4afLp/eWEQkLU5G56u7wCNQ8PbY=;
-        b=Lheg70kfU+0JTGGOaPrfk8Gic+nIU0v/YUWiUVmPoKic6KX4jUoTOLHf1jeQzgo1rU
-         AZdRQ59pdMEI9fze2K1ylrQwdH5i0fAR4feaoODlQ8GBfsdvGehE30ll9BOnjgd+mssR
-         9WqMeSuc+Wwk8Odl6MRGWkpWykmei3G3gK430F0zR9Xm0p/zxs8I+QHHyC7Z4a7iEl0K
-         RB+J+d8eFbGUwt3sgPaucd7qBC/M0FbPCqbaNcrlDKe0DU7Hw3TtJN4bDesJfXrnWNlr
-         7rDRwj+6IX7cJ8C2MczCST4wP3O4L74wlCNLPJKItbBDPIoc8qH8E3+UZWEhfKv3uUvh
-         OcIw==
-X-Gm-Message-State: AOAM5329CIswQ8YzO7UOMJjpcn+tHwl4u5rQRcvAc4F0D01tzFt0bzeY
-        mQ2a6R1ZiXSTK+eB++uUwLwM+Q==
-X-Google-Smtp-Source: ABdhPJyU6H1ORSnyrbL6pgwSK5k0t4nkRLWrE1WiAHAQSrIO/HfrXXNuBwmpKt88ZgedOp1BLgmXJw==
-X-Received: by 2002:a67:8084:: with SMTP id b126mr12585151vsd.163.1596479219744;
-        Mon, 03 Aug 2020 11:26:59 -0700 (PDT)
-Received: from google.com (182.71.196.35.bc.googleusercontent.com. [35.196.71.182])
-        by smtp.gmail.com with ESMTPSA id o3sm1766447vka.42.2020.08.03.11.26.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2020 11:26:59 -0700 (PDT)
-Date:   Mon, 3 Aug 2020 18:26:56 +0000
-From:   Kalesh Singh <kaleshsingh@google.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-fsdevel@vger.kernel.org,
-        Suren Baghdasaryan <surenb@google.com>,
-        Hridya Valsaraju <hridya@google.com>,
-        Ioannis Ilkos <ilkos@google.com>,
-        John Stultz <john.stultz@linaro.org>, kernel-team@android.com
-Subject: Re: [PATCH 1/2] fs: Add fd_install file operation
-Message-ID: <20200803182656.GA3230172@google.com>
-References: <20200803144719.3184138-1-kaleshsingh@google.com>
- <20200803144719.3184138-2-kaleshsingh@google.com>
- <20200803163429.GA15200@infradead.org>
+        Mon, 3 Aug 2020 14:36:35 -0400
+Received: from [192.168.254.32] (unknown [47.187.206.220])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 5A65A20B4908;
+        Mon,  3 Aug 2020 11:36:34 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5A65A20B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1596479794;
+        bh=k+NMDSjwm5TFPTN2F24vsuQ9bd+RBG4+Qztk9DA9N5w=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=DNQfd/jCHwvRYMF2gK893vUrxekiycxCw0OhCzNbUMcGiKSE03vK/bnQsLmcTSru/
+         CtasfSm4QG8N9N4kZy69f3Os63Oj8jZa3a7vBD8/vw/IvmURd5dLVfTDYQE1RJ5X5C
+         mMYCQph3slcm10L5a4Kvnyc+0DO+POBFk3obO0wY=
+Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
+References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
+ <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
+ <3b916198-3a98-bd19-9a1c-f2d8d44febe8@linux.microsoft.com>
+ <CALCETrUJ2hBmJujyCtEqx4=pknRvjvi1-Gj9wfRcMMzejjKQsQ@mail.gmail.com>
+From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Message-ID: <dbc3bdcf-170c-4ffd-0efc-69495c8df11e@linux.microsoft.com>
+Date:   Mon, 3 Aug 2020 13:36:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200803163429.GA15200@infradead.org>
+In-Reply-To: <CALCETrUJ2hBmJujyCtEqx4=pknRvjvi1-Gj9wfRcMMzejjKQsQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 03, 2020 at 05:34:29PM +0100, Christoph Hellwig wrote:
-> On Mon, Aug 03, 2020 at 02:47:18PM +0000, Kalesh Singh wrote:
-> > Provides a per process hook for the acquisition of file descriptors,
-> > despite the method used to obtain the descriptor.
-> > 
-> > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> 
-> I strongly disagree with this.  The file operation has no business
-> hooking into installing the fd.
-Hi Christoph. I am exploring the alternative suggested by Matthew in
-Patch 2/2. Thanks :)
+
+
+On 8/2/20 3:00 PM, Andy Lutomirski wrote:
+> I feel like trampfd is too poorly defined at this point to evaluate.
+
+Point taken. It is because I wanted to start with something small
+and specific and expand it in the future. So, I did not really describe the big
+picture - the overall vision, future work, that sort of thing. In retrospect,
+may be, I should have done that.
+
+I will take all of the input I have received so far and all of the responses
+I have given, refine the definition of trampfd and send it out. Please
+review that and let me know if anything is still missing from the
+definition.
+
+Thanks.
+
+Madhavan
+
