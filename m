@@ -2,244 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F9423A7C8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 15:38:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6CE423A7CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 15:38:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728369AbgHCNin (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 09:38:43 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:29606 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbgHCNie (ORCPT
+        id S1728373AbgHCNio (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 09:38:44 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:34245 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728363AbgHCNin (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 09:38:34 -0400
+        Mon, 3 Aug 2020 09:38:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596461913;
+        s=mimecast20190719; t=1596461921;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/AwV8WBhuqPeelgBaxBkgLyMvJZx/53MPZJnj+q0yps=;
-        b=DSbsan4l8wTF2YjuF8cijfRE3Ftg4BsAb+jd18ddY9DMFKV5m5OrFsMwMWDT5i3eytj7oi
-        U89jfc+EhW3VBQbOvC0O+wnsbRfp2Qr5H26gNpg+Zd1gWThdcnnlK9tencnEMY3MpcRps8
-        Amd5AeQ7FqmVohZw+sOPQFZUvuD19Ts=
+        bh=9FgqlpRd9Eo4t9LGr/l3M8CdILQDq+BRyXvCmCAnvV4=;
+        b=LgVycm5z+c0L7qslONADJ24c0LWfDcKr/5WYM49LUlhRXzxOYFl50Mn1sTetJJ/B5n9qlj
+        xgV+6JPqKnocPAsVCJsFOK6D2Elm1cg819O7EETx5Lgxp18uqP+PE+P+/+2aKXpfaAeQja
+        2JS8mnTk/rrnsvL/nQ/U+DBvNoi8RL4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-8-vMeBDm6kPvyfAUd1PnObMQ-1; Mon, 03 Aug 2020 09:38:31 -0400
-X-MC-Unique: vMeBDm6kPvyfAUd1PnObMQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-257-wj6Tle1tNEGDr0196ps-ww-1; Mon, 03 Aug 2020 09:38:39 -0400
+X-MC-Unique: wj6Tle1tNEGDr0196ps-ww-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3EB8357;
-        Mon,  3 Aug 2020 13:38:29 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E166D1DE9;
+        Mon,  3 Aug 2020 13:38:37 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2BEFE87E2C;
-        Mon,  3 Aug 2020 13:38:25 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 49B571001B2B;
+        Mon,  3 Aug 2020 13:38:35 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 14/18] fsinfo: Add support to ext4 [ver #21]
+Subject: [PATCH 15/18] fsinfo: Add an attribute that lists all the visible
+ mounts in a namespace [ver #21]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Eric Biggers <ebiggers@kernel.org>, linux-ext4@vger.kernel.org,
-        dhowells@redhat.com, torvalds@linux-foundation.org,
+Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
         raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
         jannh@google.com, darrick.wong@oracle.com, kzak@redhat.com,
         jlayton@redhat.com, linux-api@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 03 Aug 2020 14:38:25 +0100
-Message-ID: <159646190516.1784947.7453810619136216278.stgit@warthog.procyon.org.uk>
+Date:   Mon, 03 Aug 2020 14:38:34 +0100
+Message-ID: <159646191446.1784947.11228235431863356055.stgit@warthog.procyon.org.uk>
 In-Reply-To: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
 References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add support to ext4, including the following:
+Add a filesystem attribute that exports a list of all the visible mounts in
+a namespace, given the caller's chroot setting.  The returned list is an
+array of:
 
- (1) FSINFO_ATTR_SUPPORTS: Information about supported STATX attributes and
-     support for ioctls like FS_IOC_[GS]ETFLAGS and FS_IOC_FS[GS]ETXATTR.
+	struct fsinfo_mount_child {
+		__u64	mnt_unique_id;
+		__u32	mnt_id;
+		__u32	parent_id;
+		__u32	mnt_notify_sum;
+		__u32	sb_notify_sum;
+	};
 
- (2) FSINFO_ATTR_FEATURES: Information about features supported by an ext4
-     filesystem, such as whether version counting, birth time and name case
-     folding are in operation.
+where each element contains a once-in-a-system-lifetime unique ID, the
+mount ID (which may get reused), the parent mount ID and sums of the
+notification/change counters for the mount and its superblock.
 
- (3) FSINFO_ATTR_VOLUME_NAME: The volume name from the superblock.
+This works with a read lock on the namespace_sem, but ideally would do it
+under the RCU read lock only.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-cc: "Theodore Ts'o" <tytso@mit.edu>
-cc: Andreas Dilger <adilger.kernel@dilger.ca>
-cc: Eric Biggers <ebiggers@kernel.org>
-cc: linux-ext4@vger.kernel.org
 ---
 
- fs/ext4/Makefile |    1 +
- fs/ext4/ext4.h   |    6 +++
- fs/ext4/fsinfo.c |   97 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/ext4/super.c  |    3 ++
- 4 files changed, 107 insertions(+)
- create mode 100644 fs/ext4/fsinfo.c
+ fs/fsinfo.c                 |    1 +
+ fs/internal.h               |    1 +
+ fs/namespace.c              |   37 +++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/fsinfo.h |    4 ++++
+ samples/vfs/test-fsinfo.c   |   22 ++++++++++++++++++++++
+ 5 files changed, 65 insertions(+)
 
-diff --git a/fs/ext4/Makefile b/fs/ext4/Makefile
-index 2e42f47a7f98..ad67812bf7d0 100644
---- a/fs/ext4/Makefile
-+++ b/fs/ext4/Makefile
-@@ -17,3 +17,4 @@ ext4-$(CONFIG_EXT4_FS_SECURITY)		+= xattr_security.o
- ext4-inode-test-objs			+= inode-test.o
- obj-$(CONFIG_EXT4_KUNIT_TESTS)		+= ext4-inode-test.o
- ext4-$(CONFIG_FS_VERITY)		+= verity.o
-+ext4-$(CONFIG_FSINFO)			+= fsinfo.o
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 42f5060f3cdf..99a737cf6308 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -43,6 +43,7 @@
+diff --git a/fs/fsinfo.c b/fs/fsinfo.c
+index 0540cce89555..f230124ffdf5 100644
+--- a/fs/fsinfo.c
++++ b/fs/fsinfo.c
+@@ -296,6 +296,7 @@ static const struct fsinfo_attribute fsinfo_common_attributes[] = {
+ 	FSINFO_STRING	(FSINFO_ATTR_MOUNT_POINT,	fsinfo_generic_mount_point),
+ 	FSINFO_STRING	(FSINFO_ATTR_MOUNT_POINT_FULL,	fsinfo_generic_mount_point_full),
+ 	FSINFO_LIST	(FSINFO_ATTR_MOUNT_CHILDREN,	fsinfo_generic_mount_children),
++	FSINFO_LIST	(FSINFO_ATTR_MOUNT_ALL,		fsinfo_generic_mount_all),
+ 	{}
+ };
  
- #include <linux/fscrypt.h>
- #include <linux/fsverity.h>
-+#include <linux/fsinfo.h>
+diff --git a/fs/internal.h b/fs/internal.h
+index cb5edcc7125a..267b4aaf0271 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -102,6 +102,7 @@ extern int fsinfo_generic_mount_topology(struct path *, struct fsinfo_context *)
+ extern int fsinfo_generic_mount_point(struct path *, struct fsinfo_context *);
+ extern int fsinfo_generic_mount_point_full(struct path *, struct fsinfo_context *);
+ extern int fsinfo_generic_mount_children(struct path *, struct fsinfo_context *);
++extern int fsinfo_generic_mount_all(struct path *, struct fsinfo_context *);
  
- #include <linux/compiler.h>
+ /*
+  * fs_struct.c
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 122c12f9512b..1f2e06507244 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4494,4 +4494,41 @@ int fsinfo_generic_mount_children(struct path *path, struct fsinfo_context *ctx)
+ 	return ctx->usage;
+ }
  
-@@ -3233,6 +3234,11 @@ extern const struct inode_operations ext4_file_inode_operations;
- extern const struct file_operations ext4_file_operations;
- extern loff_t ext4_llseek(struct file *file, loff_t offset, int origin);
- 
-+/* fsinfo.c */
-+#ifdef CONFIG_FSINFO
-+extern int ext4_fsinfo(struct path *path, struct fsinfo_context *ctx);
-+#endif
-+
- /* inline.c */
- extern int ext4_get_max_inline_size(struct inode *inode);
- extern int ext4_find_inline_data_nolock(struct inode *inode);
-diff --git a/fs/ext4/fsinfo.c b/fs/ext4/fsinfo.c
-new file mode 100644
-index 000000000000..1d4093ef32e7
---- /dev/null
-+++ b/fs/ext4/fsinfo.c
-@@ -0,0 +1,97 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Filesystem information for ext4
-+ *
-+ * Copyright (C) 2020 Red Hat, Inc. All Rights Reserved.
-+ * Written by David Howells (dhowells@redhat.com)
++/*
++ * Return information about all the mounts in the namespace referenced by the
++ * path.
 + */
-+
-+#include <linux/mount.h>
-+#include "ext4.h"
-+
-+static int ext4_fsinfo_supports(struct path *path, struct fsinfo_context *ctx)
++int fsinfo_generic_mount_all(struct path *path, struct fsinfo_context *ctx)
 +{
-+	struct fsinfo_supports *p = ctx->buffer;
-+	struct inode *inode = d_inode(path->dentry);
-+	struct ext4_inode_info *ei = EXT4_I(inode);
-+	struct ext4_inode *raw_inode;
-+	u32 flags;
++	struct mnt_namespace *ns;
++	struct mount *m, *p;
++	struct path chroot;
++	bool allow;
 +
-+	fsinfo_generic_supports(path, ctx);
-+	p->stx_attributes |= (STATX_ATTR_APPEND |
-+			      STATX_ATTR_COMPRESSED |
-+			      STATX_ATTR_ENCRYPTED |
-+			      STATX_ATTR_IMMUTABLE |
-+			      STATX_ATTR_NODUMP |
-+			      STATX_ATTR_VERITY);
-+	if (EXT4_FITS_IN_INODE(raw_inode, ei, i_crtime))
-+		p->stx_mask |= STATX_BTIME;
++	m = real_mount(path->mnt);
++	ns = m->mnt_ns;
 +
-+	flags = EXT4_FL_USER_VISIBLE;
-+	if (S_ISREG(inode->i_mode))
-+		flags &= ~EXT4_PROJINHERIT_FL;
-+	p->fs_ioc_getflags = flags;
-+	flags &= EXT4_FL_USER_MODIFIABLE;
-+	p->fs_ioc_setflags_set = flags;
-+	p->fs_ioc_setflags_clear = flags;
++	get_fs_root(current->fs, &chroot);
++	rcu_read_lock();
++	allow = are_paths_connected(&chroot, path) || capable(CAP_SYS_ADMIN);
++	rcu_read_unlock();
++	path_put(&chroot);
++	if (!allow)
++		return -EPERM;
 +
-+	p->fs_ioc_fsgetxattr_xflags = EXT4_FL_XFLAG_VISIBLE;
-+	p->fs_ioc_fssetxattr_xflags_set = EXT4_FL_XFLAG_VISIBLE;
-+	p->fs_ioc_fssetxattr_xflags_clear = EXT4_FL_XFLAG_VISIBLE;
-+	return sizeof(*p);
-+}
++	down_read(&namespace_sem);
 +
-+static int ext4_fsinfo_features(struct path *path, struct fsinfo_context *ctx)
-+{
-+	struct fsinfo_features *p = ctx->buffer;
-+	struct super_block *sb = path->dentry->d_sb;
-+	struct inode *inode = d_inode(path->dentry);
-+	struct ext4_inode_info *ei = EXT4_I(inode);
-+	struct ext4_inode *raw_inode;
++	list_for_each_entry(p, &ns->list, mnt_list) {
++		struct path mnt_root;
 +
-+	fsinfo_generic_features(path, ctx);
-+	fsinfo_set_unix_features(p);
-+	fsinfo_set_feature(p, FSINFO_FEAT_VOLUME_UUID);
-+	fsinfo_set_feature(p, FSINFO_FEAT_VOLUME_NAME);
-+	fsinfo_set_feature(p, FSINFO_FEAT_O_SYNC);
-+	fsinfo_set_feature(p, FSINFO_FEAT_O_DIRECT);
-+	fsinfo_set_feature(p, FSINFO_FEAT_ADV_LOCKS);
-+
-+	if (test_opt(sb, XATTR_USER))
-+		fsinfo_set_feature(p, FSINFO_FEAT_XATTRS);
-+	if (ext4_has_feature_journal(sb))
-+		fsinfo_set_feature(p, FSINFO_FEAT_JOURNAL);
-+	if (ext4_has_feature_casefold(sb))
-+		fsinfo_set_feature(p, FSINFO_FEAT_NAME_CASE_INDEP);
-+
-+	if (sb->s_flags & SB_I_VERSION &&
-+	    !test_opt2(sb, HURD_COMPAT) &&
-+	    EXT4_INODE_SIZE(sb) > EXT4_GOOD_OLD_INODE_SIZE) {
-+		fsinfo_set_feature(p, FSINFO_FEAT_IVER_DATA_CHANGE);
-+		fsinfo_set_feature(p, FSINFO_FEAT_IVER_MONO_INCR);
++		mnt_root.mnt	= &p->mnt;
++		mnt_root.dentry	= p->mnt.mnt_root;
++		if (are_paths_connected(path, &mnt_root))
++			fsinfo_store_mount(ctx, p, p == m);
 +	}
 +
-+	if (EXT4_FITS_IN_INODE(raw_inode, ei, i_crtime))
-+		fsinfo_set_feature(p, FSINFO_FEAT_HAS_BTIME);
-+	return sizeof(*p);
++	up_read(&namespace_sem);
++	return ctx->usage;
 +}
 +
-+static int ext4_fsinfo_get_volume_name(struct path *path, struct fsinfo_context *ctx)
+ #endif /* CONFIG_FSINFO */
+diff --git a/include/uapi/linux/fsinfo.h b/include/uapi/linux/fsinfo.h
+index 81329de6905e..e40192d98648 100644
+--- a/include/uapi/linux/fsinfo.h
++++ b/include/uapi/linux/fsinfo.h
+@@ -37,6 +37,7 @@
+ #define FSINFO_ATTR_MOUNT_POINT_FULL	0x203	/* Absolute path of mount (string) */
+ #define FSINFO_ATTR_MOUNT_TOPOLOGY	0x204	/* Mount object topology */
+ #define FSINFO_ATTR_MOUNT_CHILDREN	0x205	/* Children of this mount (list) */
++#define FSINFO_ATTR_MOUNT_ALL		0x206	/* List all mounts in a namespace (list) */
+ 
+ #define FSINFO_ATTR_AFS_CELL_NAME	0x300	/* AFS cell name (string) */
+ #define FSINFO_ATTR_AFS_SERVER_NAME	0x301	/* Name of the Nth server (string) */
+@@ -128,6 +129,8 @@ struct fsinfo_mount_topology {
+ /*
+  * Information struct element for fsinfo(FSINFO_ATTR_MOUNT_CHILDREN).
+  * - An extra element is placed on the end representing the parent mount.
++ *
++ * Information struct element for fsinfo(FSINFO_ATTR_MOUNT_ALL).
+  */
+ struct fsinfo_mount_child {
+ 	__u64	mnt_unique_id;		/* Kernel-lifetime unique mount ID */
+@@ -139,6 +142,7 @@ struct fsinfo_mount_child {
+ };
+ 
+ #define FSINFO_ATTR_MOUNT_CHILDREN__STRUCT struct fsinfo_mount_child
++#define FSINFO_ATTR_MOUNT_ALL__STRUCT struct fsinfo_mount_child
+ 
+ /*
+  * Information struct for fsinfo(FSINFO_ATTR_STATFS).
+diff --git a/samples/vfs/test-fsinfo.c b/samples/vfs/test-fsinfo.c
+index 374825ab85b0..596fa5e71762 100644
+--- a/samples/vfs/test-fsinfo.c
++++ b/samples/vfs/test-fsinfo.c
+@@ -365,6 +365,27 @@ static void dump_fsinfo_generic_mount_children(void *reply, unsigned int size)
+ 	       (unsigned long long)r->mnt_notify_sum, mp);
+ }
+ 
++static void dump_fsinfo_generic_mount_all(void *reply, unsigned int size)
 +{
-+	const struct ext4_sb_info *sbi = EXT4_SB(path->mnt->mnt_sb);
-+	const struct ext4_super_block *es = sbi->s_es;
++	struct fsinfo_mount_child *r = reply;
++	ssize_t mplen;
++	char path[32], *mp;
 +
-+	memcpy(ctx->buffer, es->s_volume_name, sizeof(es->s_volume_name));
-+	return strlen(ctx->buffer) + 1;
++	struct fsinfo_params params = {
++		.flags		= FSINFO_FLAGS_QUERY_MOUNT,
++		.request	= FSINFO_ATTR_MOUNT_POINT_FULL,
++	};
++
++	sprintf(path, "%u", r->mnt_id);
++	mplen = get_fsinfo(path, "FSINFO_ATTR_MOUNT_POINT_FULL", &params, (void **)&mp);
++	if (mplen < 0)
++		mp = "-";
++
++	printf("%5x %5x %12llx %10llu %s\n",
++	       r->mnt_id, r->parent_id, (unsigned long long)r->mnt_unique_id,
++	       r->mnt_notify_sum, mp);
 +}
 +
-+static const struct fsinfo_attribute ext4_fsinfo_attributes[] = {
-+	FSINFO_VSTRUCT	(FSINFO_ATTR_SUPPORTS,		ext4_fsinfo_supports),
-+	FSINFO_VSTRUCT	(FSINFO_ATTR_FEATURES,		ext4_fsinfo_features),
-+	FSINFO_STRING	(FSINFO_ATTR_VOLUME_NAME,	ext4_fsinfo_get_volume_name),
-+	{}
-+};
-+
-+int ext4_fsinfo(struct path *path, struct fsinfo_context *ctx)
-+{
-+	return fsinfo_get_attribute(path, ctx, ext4_fsinfo_attributes);
-+}
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 330957ed1f05..47f349620176 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1481,6 +1481,9 @@ static const struct super_operations ext4_sops = {
- 	.freeze_fs	= ext4_freeze,
- 	.unfreeze_fs	= ext4_unfreeze,
- 	.statfs		= ext4_statfs,
-+#ifdef CONFIG_FSINFO
-+	.fsinfo		= ext4_fsinfo,
-+#endif
- 	.remount_fs	= ext4_remount,
- 	.show_options	= ext4_show_options,
- #ifdef CONFIG_QUOTA
+ static void dump_afs_fsinfo_server_address(void *reply, unsigned int size)
+ {
+ 	struct fsinfo_afs_server_address *f = reply;
+@@ -492,6 +513,7 @@ static const struct fsinfo_attribute fsinfo_attributes[] = {
+ 	FSINFO_STRING_N	(FSINFO_ATTR_MOUNT_POINT,	string),
+ 	FSINFO_STRING_N	(FSINFO_ATTR_MOUNT_POINT_FULL,	string),
+ 	FSINFO_LIST	(FSINFO_ATTR_MOUNT_CHILDREN,	fsinfo_generic_mount_children),
++	FSINFO_LIST	(FSINFO_ATTR_MOUNT_ALL,		fsinfo_generic_mount_all),
+ 
+ 	FSINFO_STRING	(FSINFO_ATTR_AFS_CELL_NAME,	string),
+ 	FSINFO_STRING	(FSINFO_ATTR_AFS_SERVER_NAME,	string),
 
 
