@@ -2,97 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 121B523AB26
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 19:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BB4223AB9A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 19:23:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbgHCRAH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 13:00:07 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:50684 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbgHCRAG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 13:00:06 -0400
-Received: from [192.168.254.32] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 78F6120B4908;
-        Mon,  3 Aug 2020 10:00:05 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 78F6120B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1596474006;
-        bh=xPQidYuoj27KLcDBCgI71AQFyVVUOYWMoSSTSHUPbW8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=aFVPc1Gu41xtINHxdFGnzfv2HBq0EGEd0iH8amloyMh8tYfeAU7clLOSMb6TuEJmU
-         hfVT4JzlCTZI9FgI54InEHWWr99xf3Egvr+DSd/z2OzTw7yIg+2Z6TOublxySEu1T5
-         rUlm/3leT/O5FXJfSA+UW2fG5vVktd6bCmKVR4as=
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-To:     David Laight <David.Laight@ACULAB.COM>,
-        'Mark Rutland' <mark.rutland@arm.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
-References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
- <6540b4b7-3f70-adbf-c922-43886599713a@linux.microsoft.com>
- <CALCETrWnNR5v3ZCLfBVQGYK8M0jAvQMaAc9uuO05kfZuh-4d6w@mail.gmail.com>
- <46a1adef-65f0-bd5e-0b17-54856fb7e7ee@linux.microsoft.com>
- <20200731183146.GD67415@C02TD0UTHF1T.local>
- <a3068e3126a942c7a3e7ac115499deb1@AcuMS.aculab.com>
- <7fdc102e-75ea-6d91-d2a3-7fe8c91802ce@linux.microsoft.com>
- <f87f84e466a041fbabd2bba84f4592a5@AcuMS.aculab.com>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <b28abf39-8b62-f861-1325-aa7ce28fa6d3@linux.microsoft.com>
-Date:   Mon, 3 Aug 2020 12:00:04 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1728419AbgHCRWm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 13:22:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45480 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728107AbgHCRWl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Aug 2020 13:22:41 -0400
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7850F20792;
+        Mon,  3 Aug 2020 17:22:38 +0000 (UTC)
+Date:   Mon, 3 Aug 2020 13:22:38 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 08/22] bootconfig: init: Allow admin to use
+ bootconfig for init command line
+Message-ID: <20200803132238.1e40aa37@oasis.local.home>
+In-Reply-To: <20200803152959.GA1168816@rani.riverdale.lan>
+References: <157867220019.17873.13377985653744804396.stgit@devnote2>
+        <157867229521.17873.654222294326542349.stgit@devnote2>
+        <202002070954.C18E7F58B@keescook>
+        <20200207144603.30688b94@oasis.local.home>
+        <20200802023318.GA3981683@rani.riverdale.lan>
+        <20200804000345.f5727ac28647aa8c092cc109@kernel.org>
+        <20200803152959.GA1168816@rani.riverdale.lan>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <f87f84e466a041fbabd2bba84f4592a5@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, 3 Aug 2020 11:29:59 -0400
+Arvind Sankar <nivedita@alum.mit.edu> wrote:
 
+> > +	/* parse_args() stops at '--' and returns an address */
+> > +	if (!IS_ERR(err) && err)
+> > +		initargs_found = true;
+> > +  
+> 
+> I think you can drop the second IS_ERR, since we already checked that.
 
-On 8/3/20 11:57 AM, David Laight wrote:
-> From: Madhavan T. Venkataraman
->> Sent: 03 August 2020 17:03
->>
->> On 8/3/20 3:27 AM, David Laight wrote:
->>> From: Mark Rutland
->>>> Sent: 31 July 2020 19:32
->>> ...
->>>>> It requires PC-relative data references. I have not worked on all architectures.
->>>>> So, I need to study this. But do all ISAs support PC-relative data references?
->>>> Not all do, but pretty much any recent ISA will as it's a practical
->>>> necessity for fast position-independent code.
->>> i386 has neither PC-relative addressing nor moves from %pc.
->>> The cpu architecture knows that the sequence:
->>> 	call	1f
->>> 1:	pop	%reg
->>> is used to get the %pc value so is treated specially so that
->>> it doesn't 'trash' the return stack.
->>>
->>> So PIC code isn't too bad, but you have to use the correct
->>> sequence.
->> Is that true only for 32-bit systems only? I thought RIP-relative addressing was
->> introduced in 64-bit mode. Please confirm.
-> I said i386 not amd64 or x86-64.
+Masami,
 
-I am sorry. My bad.
+Can you send this with the update as a normal patch (not a Cc to this
+thread). That way it gets caught by my patchwork scanning of my inbox.
 
->
-> So yes, 64bit code has PC-relative addressing.
-> But I'm pretty sure it has no other way to get the PC itself
-> except using call - certainly nothing in the 'usual' instructions.
+Thanks!
 
-OK.
+(/me is currently going through all his patchwork patches to pull in
+for the merge window.)
 
-Madhavan
+-- Steve
