@@ -2,129 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF10523A95A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 17:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD81623A960
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 17:31:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbgHCPaD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 11:30:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42334 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726007AbgHCPaD (ORCPT
+        id S1726797AbgHCPbr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 11:31:47 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:47446 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgHCPbr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 11:30:03 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8966C06174A;
-        Mon,  3 Aug 2020 08:30:02 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id l64so28658434qkb.8;
-        Mon, 03 Aug 2020 08:30:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OMhY71TYhIpQ58Fii8pWBwWswtVlW8CJODU9kCbY3/U=;
-        b=o0k5n7eaBR20GSUZPKeqWlBn0CweK6sVQ7UUSjeOuNQBFuw89IiGlcuaGueTxPMRPY
-         7zbyA0Z3NFkwInzGHlEFfdHYvcfAWDpZFbIlc4H1QfKHMf0lnLwgyinURc6ITKGeI6gz
-         6OB9a+J3UbjDqNvOLmViKvjXLhm6YgHgvAvxpiMZLJwZ4yLfW3nrAzgDbGn55TIX1CDp
-         SDABD4FT6a+agwVPPhOM+GHjW2NBqj0pcrxO7XEWuQwKr8AYrT3Nyaa1tTexzddwUgNI
-         OOTpPVd+VoKn5ydheEDwPbrKCUj06W56W3DOq3Nq2jDXrO0/dpyYZCpImbI5PG60sy3K
-         IlkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=OMhY71TYhIpQ58Fii8pWBwWswtVlW8CJODU9kCbY3/U=;
-        b=Y04aTo94EIgUZxKBGwn+RKH7LxjnfBdecSJo7c+A3PaLwcMhTixu2Om6W298pe0dvl
-         OZIhe+vQzdHFEytEVUfgw4a/mzPR2LFr9On7J8yItrxZHFgjvOxl5BnhHPzZKDLNzH0E
-         b3BTndQDOcOAHabbn9JvIgvrEPZ35t6UhHR6wUqIZxqtSGJaTd8kwdnD2A2yK74ts6Wi
-         HGuXAnNZu4eV/s+ckJxC6rG8nc2N0JPGMhJKx5AV512Cps92jBUMN5GLKVA7+zp2+rYs
-         nzbw85Dqhcas6oBVoFAj+99O8N4Vzex5YuhYeac8Ebt1CV4PApmCfNZFlAMptRRkqv2o
-         jmMQ==
-X-Gm-Message-State: AOAM533BFM9fXLzJD0eGcsPMUMWadi6KOck0rN8XYsZR0KorQe9xYQQ6
-        BFKiQrraGPbXWb0nQCC2oec=
-X-Google-Smtp-Source: ABdhPJzRBkzm3T5R70vwD3kXwb8PED/sN1IlSegMrVygUPMhyNSjXdIHiypE+Tei2fqltxXyDy5R6g==
-X-Received: by 2002:a37:9b15:: with SMTP id d21mr17317313qke.9.1596468601800;
-        Mon, 03 Aug 2020 08:30:01 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id l64sm18811222qkc.21.2020.08.03.08.30.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Aug 2020 08:30:01 -0700 (PDT)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Mon, 3 Aug 2020 11:29:59 -0400
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 08/22] bootconfig: init: Allow admin to use bootconfig
- for init command line
-Message-ID: <20200803152959.GA1168816@rani.riverdale.lan>
-References: <157867220019.17873.13377985653744804396.stgit@devnote2>
- <157867229521.17873.654222294326542349.stgit@devnote2>
- <202002070954.C18E7F58B@keescook>
- <20200207144603.30688b94@oasis.local.home>
- <20200802023318.GA3981683@rani.riverdale.lan>
- <20200804000345.f5727ac28647aa8c092cc109@kernel.org>
+        Mon, 3 Aug 2020 11:31:47 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k2cR0-00877r-MU; Mon, 03 Aug 2020 09:31:30 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k2cQz-00048L-7z; Mon, 03 Aug 2020 09:31:30 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Steven Sistare <steven.sistare@oracle.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org, mhocko@kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, x86@kernel.org,
+        hpa@zytor.com, viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        arnd@arndb.de, keescook@chromium.org, gerg@linux-m68k.org,
+        ktkhai@virtuozzo.com, christian.brauner@ubuntu.com,
+        peterz@infradead.org, esyr@redhat.com, jgg@ziepe.ca,
+        christian@kellner.me, areber@redhat.com, cyphar@cyphar.com
+References: <1595869887-23307-1-git-send-email-anthony.yznaga@oracle.com>
+        <20200730152250.GG23808@casper.infradead.org>
+        <db3bdbae-eb0f-1ae3-94dd-045e37bc94ba@oracle.com>
+        <20200730171251.GI23808@casper.infradead.org>
+        <63a7404c-e4f6-a82e-257b-217585b0277f@oracle.com>
+        <20200730174956.GK23808@casper.infradead.org>
+        <ab7a25bf-3321-77c8-9bc3-28a223a14032@oracle.com>
+        <87y2n03brx.fsf@x220.int.ebiederm.org>
+        <689d6348-6029-5396-8de7-a26bc3c017e5@oracle.com>
+Date:   Mon, 03 Aug 2020 10:28:14 -0500
+In-Reply-To: <689d6348-6029-5396-8de7-a26bc3c017e5@oracle.com> (Steven
+        Sistare's message of "Fri, 31 Jul 2020 10:57:44 -0400")
+Message-ID: <877dufvje9.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200804000345.f5727ac28647aa8c092cc109@kernel.org>
+Content-Type: text/plain
+X-XM-SPF: eid=1k2cQz-00048L-7z;;;mid=<877dufvje9.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/TnIbHCfTWSuRtxPvgCFD72EF12cavVvA=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels
+        autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4767]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Steven Sistare <steven.sistare@oracle.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 773 ms - load_scoreonly_sql: 0.08 (0.0%),
+        signal_user_changed: 12 (1.6%), b_tie_ro: 11 (1.4%), parse: 1.88
+        (0.2%), extract_message_metadata: 19 (2.5%), get_uri_detail_list: 3.3
+        (0.4%), tests_pri_-1000: 16 (2.0%), tests_pri_-950: 1.42 (0.2%),
+        tests_pri_-900: 1.23 (0.2%), tests_pri_-90: 170 (22.0%), check_bayes:
+        168 (21.7%), b_tokenize: 17 (2.2%), b_tok_get_all: 12 (1.6%),
+        b_comp_prob: 6 (0.8%), b_tok_touch_all: 128 (16.6%), b_finish: 1.14
+        (0.1%), tests_pri_0: 532 (68.9%), check_dkim_signature: 0.60 (0.1%),
+        check_dkim_adsp: 2.3 (0.3%), poll_dns_idle: 0.57 (0.1%), tests_pri_10:
+        2.2 (0.3%), tests_pri_500: 11 (1.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC PATCH 0/5] madvise MADV_DOEXEC
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 04, 2020 at 12:03:45AM +0900, Masami Hiramatsu wrote:
-> On Sat, 1 Aug 2020 22:33:18 -0400
-> Arvind Sankar <nivedita@alum.mit.edu> wrote:
-> > 
-> > I came across this as I was poking around some of the command line
-> > parsing. AFAICT, initargs_found will never be set to true here, because
-> > parse_args handles "--" itself by immediately returning: it doesn't
-> > invoke the callback for it. So you'd instead have to check the return of
-> > parse_args("bootconfig"...) to detect the initargs_found case.
-> 
-> Oops, good catch!
-> Does this fixes the problem?
+Steven Sistare <steven.sistare@oracle.com> writes:
 
-Note I found the issue by code inspection, I don't have an actual test
-case. But the change looks good to me, with one comment below.
+> On 7/30/2020 5:58 PM, ebiederm@xmission.com wrote:
+>> Here is another suggestion.
+>> 
+>> Have a very simple program that does:
+>> 
+>> 	for (;;) {
+>> 		handle = dlopen("/my/real/program");
+>> 		real_main = dlsym(handle, "main");
+>> 		real_main(argc, argv, envp);
+>> 		dlclose(handle);
+>> 	}
+>> 
+>> With whatever obvious adjustments are needed to fit your usecase.
+>> 
+>> That should give the same level of functionality, be portable to all
+>> unices, and not require you to duplicate code.  It belive it limits you
+>> to not upgrading libc, or librt but that is a comparatively small
+>> limitation.
+>> 
+>> 
+>> Given that in general the interesting work is done in userspace and that
+>> userspace has provided an interface for reusing that work already.
+>> I don't see the justification for adding anything to exec at this point. 
+>
+> Thanks for the suggestion.  That is clever, and would make a fun project,
+> but I would not trust it for production.  These few lines are just
+> the first of many that it would take to reset the environment to the
+> well-defined post-exec initial conditions that all executables expect,
+> and incrementally tearing down state will be prone to bugs.
 
-> 
->  	strlcpy(tmp_cmdline, boot_command_line, COMMAND_LINE_SIZE);
-> -	parse_args("bootconfig", tmp_cmdline, NULL, 0, 0, 0, NULL,
-> -		   bootconfig_params);
-> +	err = parse_args("bootconfig", tmp_cmdline, NULL, 0, 0, 0, NULL,
-> +			 bootconfig_params);
->  
-> -	if (!bootconfig_found)
-> +	if (IS_ERR(err) || !bootconfig_found)
->  		return;
->  
-> +	/* parse_args() stops at '--' and returns an address */
-> +	if (!IS_ERR(err) && err)
-> +		initargs_found = true;
-> +
+Agreed.
 
-I think you can drop the second IS_ERR, since we already checked that.
+> Getting a clean slate from a kernel exec is a much more reliable
+> design.
 
->  	if (!data) {
->  		pr_err("'bootconfig' found on command line, but no bootconfig found\n");
->  		return;
-> -- 
-> 2.25.1
+Except you are explicitly throwing that out the window, by preserving
+VMAs.  You very much need to have a clean bug free shutdown to pass VMAs
+reliably.
+
+> The use case is creating long-lived apps that never go down, and the
+> simplest implementation will have the fewest bugs and is the best.
+> MADV_DOEXEC is simple, and does not even require a new system call,
+> and the kernel already knows how to exec without bugs.
+
+*ROFL*  I wish the kernel knew how to exec things without bugs.
+The bugs are hard to hit but the ones I am aware of are not straight
+forward to fix.
+
+MADV_DOEXEC is not conceptually simple.  It completely violates the
+guarantees that exec is known to make about the contents of the memory
+of the new process.  This makes it very difficult to reason about.  Nor
+will MADV_DOEXEC be tested very much as it has only one or two users.
+Which means in the fullness of time it is likely someone will change
+something that will break the implementation subtlely and the bug report
+probably won't come in for 3 years, or maybe a decade.  At which point
+it won't be clear if the bug even can be fixed as something else might
+rely on it.
+
+What is wrong with live migration between one qemu process and another
+qemu process on the same machine not work for this use case?
+
+Just reusing live migration would seem to be the simplest path of all,
+as the code is already implemented.  Further if something goes wrong
+with the live migration you can fallback to the existing process.  With
+exec there is no fallback if the new version does not properly support
+the handoff protocol of the old version.
+
+Eric
