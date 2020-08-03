@@ -2,181 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 038DC23A910
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 17:04:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E216123A922
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 17:08:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbgHCPDy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 11:03:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47380 "EHLO mail.kernel.org"
+        id S1727884AbgHCPIH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 11:08:07 -0400
+Received: from verein.lst.de ([213.95.11.211]:39081 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726189AbgHCPDx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 11:03:53 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A94420775;
-        Mon,  3 Aug 2020 15:03:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596467032;
-        bh=VgYBpfCh+3wvKx5qa1i7epOht5IPxmnIi4NnDsqf3aU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=E41ov8+ZhoApVBXsj5oknZt2xOSS0wtzfMGrn86vnBcUm4QdzZANM9Dp8sVKBMIm+
-         7BOvhbCHkmFRN+0PjSDHbE/XcS5IQGcbAVM4Y3lgBfs8zDPOq53KYkr86VlBbQRCL4
-         7+YQu7dwGCZYc0uKH9PqbsWoUUwjFAWwVDRxpS+w=
-Date:   Tue, 4 Aug 2020 00:03:45 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Kees Cook <keescook@chromium.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        id S1726276AbgHCPIH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Aug 2020 11:08:07 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id E766D68BFE; Mon,  3 Aug 2020 17:08:02 +0200 (CEST)
+Date:   Mon, 3 Aug 2020 17:08:02 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 08/22] bootconfig: init: Allow admin to use
- bootconfig for init command line
-Message-Id: <20200804000345.f5727ac28647aa8c092cc109@kernel.org>
-In-Reply-To: <20200802023318.GA3981683@rani.riverdale.lan>
-References: <157867220019.17873.13377985653744804396.stgit@devnote2>
-        <157867229521.17873.654222294326542349.stgit@devnote2>
-        <202002070954.C18E7F58B@keescook>
-        <20200207144603.30688b94@oasis.local.home>
-        <20200802023318.GA3981683@rani.riverdale.lan>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org
+Subject: Re: add file system helpers that take kernel pointers for the init
+ code v4
+Message-ID: <20200803150802.GA19112@lst.de>
+References: <20200728163416.556521-1-hch@lst.de> <20200803145622.GB4631@lca.pw>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200803145622.GB4631@lca.pw>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 1 Aug 2020 22:33:18 -0400
-Arvind Sankar <nivedita@alum.mit.edu> wrote:
-
-> On Fri, Feb 07, 2020 at 02:46:03PM -0500, Steven Rostedt wrote:
+On Mon, Aug 03, 2020 at 10:56:23AM -0400, Qian Cai wrote:
+> On Tue, Jul 28, 2020 at 06:33:53PM +0200, Christoph Hellwig wrote:
+> > Hi Al and Linus,
 > > 
-> > diff --git a/init/main.c b/init/main.c
-> > index 491f1cdb3105..113c8244e5f0 100644
-> > --- a/init/main.c
-> > +++ b/init/main.c
-> > @@ -142,6 +142,15 @@ static char *extra_command_line;
-> >  /* Extra init arguments */
-> >  static char *extra_init_args;
-> >  
-> > +#ifdef CONFIG_BOOT_CONFIG
-> > +/* Is bootconfig on command line? */
-> > +static bool bootconfig_found;
-> > +static bool initargs_found;
-> > +#else
-> > +# define bootconfig_found false
-> > +# define initargs_found false
-> > +#endif
-> > +
-> >  static char *execute_command;
-> >  static char *ramdisk_execute_command;
-> >  
-> > @@ -336,17 +345,32 @@ u32 boot_config_checksum(unsigned char *p, u32 size)
-> >  	return ret;
-> >  }
-> >  
-> > +static int __init bootconfig_params(char *param, char *val,
-> > +				    const char *unused, void *arg)
-> > +{
-> > +	if (strcmp(param, "bootconfig") == 0) {
-> > +		bootconfig_found = true;
-> > +	} else if (strcmp(param, "--") == 0) {
-> > +		initargs_found = true;
-> > +	}
-> > +	return 0;
-> > +}
-> > +
+> > currently a lot of the file system calls in the early in code (and the
+> > devtmpfs kthread) rely on the implicit set_fs(KERNEL_DS) during boot.
+> > This is one of the few last remaining places we need to deal with to kill
+> > off set_fs entirely, so this series adds new helpers that take kernel
+> > pointers.  These helpers are in init/ and marked __init and thus will
+> > be discarded after bootup.  A few also need to be duplicated in devtmpfs,
+> > though unfortunately.
 > 
-> I came across this as I was poking around some of the command line
-> parsing. AFAICT, initargs_found will never be set to true here, because
-> parse_args handles "--" itself by immediately returning: it doesn't
-> invoke the callback for it. So you'd instead have to check the return of
-> parse_args("bootconfig"...) to detect the initargs_found case.
+> Reverting this series from next-20200803 fixed the crash below on shutdown.
 
-Oops, good catch!
-Does this fixes the problem?
+Please try this patch:
 
-From b078e8b02ad54aea74f8c3645fc11dd3a1cdc1e7 Mon Sep 17 00:00:00 2001
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Date: Mon, 3 Aug 2020 23:57:29 +0900
-Subject: [PATCH] bootconfig: Fix to find the initargs correctly
-
-Since the parse_args() stops parsing at '--', bootconfig_params()
-will never get the '--' as param and initargs_found never be true.
-In the result, if we pass some init arguments via the bootconfig,
-those are always appended to the kernel command line with '--'
-and user will see double '--'.
-
-To fix this correctly, check the return value of parse_args()
-and set initargs_found true if the return value is not an error
-but a valid address.
-
-Fixes: f61872bb58a1 ("bootconfig: Use parse_args() to find bootconfig and '--'")
-Cc: stable@vger.kernel.org
-Reported-by: Arvind Sankar <nivedita@alum.mit.edu>
-Suggested-by: Arvind Sankar <nivedita@alum.mit.edu>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- init/main.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+From 6448eebe2fe7189cedc5136ab3464517956922b7 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Mon, 3 Aug 2020 15:56:18 +0200
+Subject: init: fix init_dup
 
-diff --git a/init/main.c b/init/main.c
-index 0ead83e86b5a..627f9230dbe8 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -387,8 +387,6 @@ static int __init bootconfig_params(char *param, char *val,
- {
- 	if (strcmp(param, "bootconfig") == 0) {
- 		bootconfig_found = true;
--	} else if (strcmp(param, "--") == 0) {
--		initargs_found = true;
- 	}
+Don't allocate an unused fd for each call.  Also drop the extra
+reference from filp_open after the init_dup calls while we're at it.
+
+Fixes: 36e96b411649 ("init: add an init_dup helper")
+Reported-by Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/init.c   | 2 +-
+ init/main.c | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/init.c b/fs/init.c
+index 730e05acda2392..e9c320a48cf157 100644
+--- a/fs/init.c
++++ b/fs/init.c
+@@ -260,6 +260,6 @@ int __init init_dup(struct file *file)
+ 	fd = get_unused_fd_flags(0);
+ 	if (fd < 0)
+ 		return fd;
+-	fd_install(get_unused_fd_flags(0), get_file(file));
++	fd_install(fd, get_file(file));
  	return 0;
  }
-@@ -399,19 +397,23 @@ static void __init setup_boot_config(const char *cmdline)
- 	const char *msg;
- 	int pos;
- 	u32 size, csum;
--	char *data, *copy;
-+	char *data, *copy, *err;
- 	int ret;
+diff --git a/init/main.c b/init/main.c
+index 089e21504b1fc1..9dae9c4f806bb9 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -1470,6 +1470,7 @@ void __init console_on_rootfs(void)
+ 	init_dup(file);
+ 	init_dup(file);
+ 	init_dup(file);
++	fput(file);
+ }
  
- 	/* Cut out the bootconfig data even if we have no bootconfig option */
- 	data = get_boot_config_from_initrd(&size, &csum);
- 
- 	strlcpy(tmp_cmdline, boot_command_line, COMMAND_LINE_SIZE);
--	parse_args("bootconfig", tmp_cmdline, NULL, 0, 0, 0, NULL,
--		   bootconfig_params);
-+	err = parse_args("bootconfig", tmp_cmdline, NULL, 0, 0, 0, NULL,
-+			 bootconfig_params);
- 
--	if (!bootconfig_found)
-+	if (IS_ERR(err) || !bootconfig_found)
- 		return;
- 
-+	/* parse_args() stops at '--' and returns an address */
-+	if (!IS_ERR(err) && err)
-+		initargs_found = true;
-+
- 	if (!data) {
- 		pr_err("'bootconfig' found on command line, but no bootconfig found\n");
- 		return;
+ static noinline void __init kernel_init_freeable(void)
 -- 
-2.25.1
+2.27.0
+
