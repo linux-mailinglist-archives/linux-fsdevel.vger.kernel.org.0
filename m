@@ -2,104 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5566123A26D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 12:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C4A123A275
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 12:03:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbgHCKCh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 06:02:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48238 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726533AbgHCKCb (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 06:02:31 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61911C061757
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Aug 2020 03:02:31 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id f24so17499214ejx.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Aug 2020 03:02:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vsw86Ioh4FX2LjY9IRNgVl3ySN874HqeJp7Mv8isep4=;
-        b=RpfQtFsHlbz8r366bIDazEG7v/rOLrIkoCqHg8rE2DUKq52Z8mwzP137tJ/5s7tPUj
-         VLb1iezTLNPzIJG1c0Pkm89UBzyKPJeX6JGIivqYWsnaSCB6ZaglPy5t0gDZQCPFTCU7
-         8llZA5AlGWWNzDr8tBx5EpJDGB/QTw7bpfPc8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vsw86Ioh4FX2LjY9IRNgVl3ySN874HqeJp7Mv8isep4=;
-        b=M/YmnffqjNb+CMEIZhDQ7ao7CJd3kfaTG0y4K1Efb8OlAflDjf+ZIYBfhlyvYZl2N0
-         E3PoPo4xTrznxAtcTa5bD+ypcmCtGQTMse7TMs2BJRLvpD9gpzd8qDmoilYNsgitjqej
-         vL12fBnnVNTsqT1FxXWhMS3BM7lbjPnwH9YCK9sNQgKtievofkyB0xkUp48WXjktHhdV
-         0Xl7HNUXzTO12JKWQNbz+DBO8mFwTFS7QfgyEg/pNhhpcy4skPHJDDDDjFaa244IjRZc
-         CU4CY3aviQqa/P52Romp5dHMJiMDQ/RvUCiH+nmckCTwlzZig00ej2yZrHrRzXjsC1pH
-         Pn0Q==
-X-Gm-Message-State: AOAM533wungjW7WwWVzurtqNBzEW4hylsO97AIfscJzj4sKsMkKySLDj
-        A8YnfMgqhVM78YRiZE410TEzDqaT/HH5FCH10J4ZPg==
-X-Google-Smtp-Source: ABdhPJyBZEAYQ6WLR1Z0AfPVD+Khagrgtzu1YRtwovnq6WreKbtRGY02vgjzms1nTRrPans2kaPI2wtS5NWP0loHJ+k=
-X-Received: by 2002:a17:906:4c46:: with SMTP id d6mr16814326ejw.14.1596448949388;
- Mon, 03 Aug 2020 03:02:29 -0700 (PDT)
+        id S1726548AbgHCKD3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 06:03:29 -0400
+Received: from relay.sw.ru ([185.231.240.75]:34516 "EHLO relay3.sw.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726034AbgHCKD2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 3 Aug 2020 06:03:28 -0400
+Received: from [192.168.15.50]
+        by relay3.sw.ru with esmtp (Exim 4.93)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1k2XJ4-0002KM-0N; Mon, 03 Aug 2020 13:02:58 +0300
+Subject: Re: [PATCH 00/23] proc: Introduce /proc/namespaces/ directory to
+ expose namespaces lineary
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        viro@zeniv.linux.org.uk, adobriyan@gmail.com
+Cc:     davem@davemloft.net, akpm@linux-foundation.org,
+        christian.brauner@ubuntu.com, areber@redhat.com, serge@hallyn.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+References: <159611007271.535980.15362304262237658692.stgit@localhost.localdomain>
+ <87k0yl5axy.fsf@x220.int.ebiederm.org>
+ <56928404-f194-4194-5f2a-59acb15b1a04@virtuozzo.com>
+ <875za43b3w.fsf@x220.int.ebiederm.org>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <9ceb5049-6aea-1429-e35f-d86480f10d72@virtuozzo.com>
+Date:   Mon, 3 Aug 2020 13:03:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <1293241.1595501326@warthog.procyon.org.uk> <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com>
- <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
- <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
- <2003787.1595585999@warthog.procyon.org.uk> <865566fb800a014868a9a7e36a00a14430efb11e.camel@themaw.net>
- <2023286.1595590563@warthog.procyon.org.uk>
-In-Reply-To: <2023286.1595590563@warthog.procyon.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 3 Aug 2020 12:02:18 +0200
-Message-ID: <CAJfpegsT_3YqHPWCZGX7Lr+sE0NVmczWz5L6cN8CzsVz4YKLCQ@mail.gmail.com>
-Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and attribute
- change notifications [ver #5]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Ian Kent <raven@themaw.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
-        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <875za43b3w.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 1:36 PM David Howells <dhowells@redhat.com> wrote:
+On 31.07.2020 01:13, Eric W. Biederman wrote:
+> Kirill Tkhai <ktkhai@virtuozzo.com> writes:
+> 
+>> On 30.07.2020 17:34, Eric W. Biederman wrote:
+>>> Kirill Tkhai <ktkhai@virtuozzo.com> writes:
+>>>
+>>>> Currently, there is no a way to list or iterate all or subset of namespaces
+>>>> in the system. Some namespaces are exposed in /proc/[pid]/ns/ directories,
+>>>> but some also may be as open files, which are not attached to a process.
+>>>> When a namespace open fd is sent over unix socket and then closed, it is
+>>>> impossible to know whether the namespace exists or not.
+>>>>
+>>>> Also, even if namespace is exposed as attached to a process or as open file,
+>>>> iteration over /proc/*/ns/* or /proc/*/fd/* namespaces is not fast, because
+>>>> this multiplies at tasks and fds number.
+>>>
+>>> I am very dubious about this.
+>>>
+>>> I have been avoiding exactly this kind of interface because it can
+>>> create rather fundamental problems with checkpoint restart.
+>>
+>> restart/restore :)
+>>
+>>> You do have some filtering and the filtering is not based on current.
+>>> Which is good.
+>>>
+>>> A view that is relative to a user namespace might be ok.    It almost
+>>> certainly does better as it's own little filesystem than as an extension
+>>> to proc though.
+>>>
+>>> The big thing we want to ensure is that if you migrate you can restore
+>>> everything.  I don't see how you will be able to restore these files
+>>> after migration.  Anything like this without having a complete
+>>> checkpoint/restore story is a non-starter.
+>>
+>> There is no difference between files in /proc/namespaces/ directory and /proc/[pid]/ns/.
+>>
+>> CRIU can restore open files in /proc/[pid]/ns, the same will be with /proc/namespaces/ files.
+>> As a person who worked deeply for pid_ns and user_ns support in CRIU, I don't see any
+>> problem here.
+> 
+> An obvious diffference is that you are adding the inode to the inode to
+> the file name.  Which means that now you really do have to preserve the
+> inode numbers during process migration.
 >
-> Ian Kent <raven@themaw.net> wrote:
->
-> > I was wondering about id re-use.
-> >
-> > Assuming that ids that are returned to the idr db are re-used
-> > what would the chance that a recently used id would end up
-> > being used?
-> >
-> > Would that chance increase as ids are consumed and freed over
-> > time?
->
-> I've added something to deal with that in the fsinfo branch.  I've given each
-> mount object and superblock a supplementary 64-bit unique ID that's not likely
-> to repeat before we're no longer around to have to worry about it.
->
-> fsinfo() then allows you to retrieve them by path or by mount ID.
+> Which means now we have to do all of the work to make inode number
+> restoration possible.  Which means now we need to have multiple
+> instances of nsfs so that we can restore inode numbers.
+> 
+> I think this is still possible but we have been delaying figuring out
+> how to restore inode numbers long enough that may be actual technical
+> problems making it happen.
 
-Shouldn't the notification interface provide the unique ID?
+Yeah, this matters. But it looks like here is not a dead end. We just need
+change the names the namespaces are exported to particular fs and to support
+rename().
 
-Thanks,
-Miklos
+Before introduction a principally new filesystem type for this, can't
+this be solved in current /proc?
 
->
-> So, yes, mnt_id and s_dev are not unique and may be reused very quickly, but
-> I'm also providing uniquifiers that you can check.
->
-> David
->
+Alexey, does rename() is prohibited for /proc fs?
+ 
+> Now maybe CRIU can handle the names of the files changing during
+> migration but you have just increased the level of difficulty for doing
+> that.
+> 
+>> If you have a specific worries about, let's discuss them.
+> 
+> I was asking and I am asking that it be described in the patch
+> description how a container using this feature can be migrated
+> from one machine to another.  This code is so close to being problematic
+> that we need be very careful we don't fundamentally break CRIU while
+> trying to make it's job simpler and easier.
+> 
+>> CC: Pavel Tikhomirov CRIU maintainer, who knows everything about namespaces C/R.
+>>  
+>>> Further by not going through the processes it looks like you are
+>>> bypassing the existing permission checks.  Which has the potential
+>>> to allow someone to use a namespace who would not be able to otherwise.
+>>
+>> I agree, and I wrote to Christian, that permissions should be more strict.
+>> This just should be formalized. Let's discuss this.
+>>
+>>> So I think this goes one step too far but I am willing to be persuaded
+>>> otherwise.
+>>>
+> 
+> Eric
+> 
+
