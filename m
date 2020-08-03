@@ -2,100 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E890F23A117
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 10:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F8CE23A1BE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Aug 2020 11:30:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725945AbgHCIcZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Aug 2020 04:32:25 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:42224 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725806AbgHCIcZ (ORCPT
+        id S1725948AbgHCJ3y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Aug 2020 05:29:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43166 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbgHCJ3m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Aug 2020 04:32:25 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-27-9fQDUxYuOgOUDRJWjNab7Q-1; Mon, 03 Aug 2020 09:32:20 +0100
-X-MC-Unique: 9fQDUxYuOgOUDRJWjNab7Q-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 3 Aug 2020 09:32:19 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 3 Aug 2020 09:32:19 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Steven Sistare' <steven.sistare@oracle.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "gerg@linux-m68k.org" <gerg@linux-m68k.org>,
-        "ktkhai@virtuozzo.com" <ktkhai@virtuozzo.com>,
-        "christian.brauner@ubuntu.com" <christian.brauner@ubuntu.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "esyr@redhat.com" <esyr@redhat.com>,
-        "christian@kellner.me" <christian@kellner.me>,
-        "areber@redhat.com" <areber@redhat.com>,
-        "cyphar@cyphar.com" <cyphar@cyphar.com>
-Subject: RE: [RFC PATCH 0/5] madvise MADV_DOEXEC
-Thread-Topic: [RFC PATCH 0/5] madvise MADV_DOEXEC
-Thread-Index: AQHWZ2PceK06OQMZZUSyBX/76a/FaakmEZEQ
-Date:   Mon, 3 Aug 2020 08:32:19 +0000
-Message-ID: <09ce47c0a97c482b95b8b521e9ee33d4@AcuMS.aculab.com>
-References: <20200730171251.GI23808@casper.infradead.org>
- <63a7404c-e4f6-a82e-257b-217585b0277f@oracle.com>
- <20200730174956.GK23808@casper.infradead.org>
- <ab7a25bf-3321-77c8-9bc3-28a223a14032@oracle.com>
- <87y2n03brx.fsf@x220.int.ebiederm.org>
- <689d6348-6029-5396-8de7-a26bc3c017e5@oracle.com>
- <20200731152736.GP23808@casper.infradead.org>
- <9ba26063-0098-e796-9431-8c1d0c076ffc@oracle.com>
- <20200731165649.GG24045@ziepe.ca>
- <71ddd3c1-bb59-3e63-e137-99b88ace454d@oracle.com>
- <20200731174837.GH24045@ziepe.ca>
- <f4ce3f4a-bdee-ec43-986c-8e4d8b1d2ddc@oracle.com>
-In-Reply-To: <f4ce3f4a-bdee-ec43-986c-8e4d8b1d2ddc@oracle.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 3 Aug 2020 05:29:42 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78AD5C06179F
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Aug 2020 02:29:40 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id c2so20861844edx.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Aug 2020 02:29:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=owNLFqTMe1SU5EaKmrLtcVAQ4KDndakWi4Xb0Cu0Z7c=;
+        b=E5LkGHz5hRcvvUwxDdXSDeNZX1oJy9nnYaDR4Qa2WN7LPbOyqMkQToA2KaIosRDx2l
+         /vAExylwGECGrMNjwVPDmYo7pNQ2YqGjS2ohu2O6bKfvmdR8zsidyAa/NkbgnEMDSLHI
+         4UqRBKbGyq8XWb5T0s7zheGCNIklGnT6FDvMg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=owNLFqTMe1SU5EaKmrLtcVAQ4KDndakWi4Xb0Cu0Z7c=;
+        b=LYZqUGVOO+Ro16kHXDMasetHAzBSu4FGh/L6OyYYhvfVI0frQzDmG7PfC79Y0Gq8iU
+         Kk9/vmMTBnK7bJwE5sdNHoCtI2Jm3vgEWQKpfBdjJRIvQGO0sj4JvwHwuLUVrOOmxzoa
+         fSUvHqREG3YZqWq0Sw16xSsLskhte6qjRhiLJwwqBAX/7n4JqVgkwN+1nCPCTasF6izh
+         3U7QfMC82OKT/ArdttYek0YYHPwShCK18B5V0g7XfPticQyduGzO5pWkT9t1HBlbNcyO
+         kR0lxCebOypjjXhSiTvee30KL3Fk52pOshbE0I6LnNiwEHAhhVDrLDWCGSAYv0WrRZGQ
+         oA2g==
+X-Gm-Message-State: AOAM530yy2kJ3MngLmTtpFC/25nnu/I2FXM82YPh/5FcBYiwcoolH7EU
+        UnH8p5/ltuolE7gsQX3tz5It1tbAgf4qioFanZDtbFkY
+X-Google-Smtp-Source: ABdhPJwwRwE/z9+48aOsHKHN045IllUewS+ZVaDKVLXEbNVYV6u3PqSbaJ4L7LCc7hyeEJUAG7ii5G7P1/+cTZ4bZsc=
+X-Received: by 2002:aa7:c915:: with SMTP id b21mr15388861edt.17.1596446978906;
+ Mon, 03 Aug 2020 02:29:38 -0700 (PDT)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
+ <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
+ <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com> <1293241.1595501326@warthog.procyon.org.uk>
+In-Reply-To: <1293241.1595501326@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 3 Aug 2020 11:29:27 +0200
+Message-ID: <CAJfpeguvLMCw1H8+DPsfZE_k0sEiRtA17pD9HjnceSsAvqqAZw@mail.gmail.com>
+Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and attribute
+ change notifications [ver #5]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Ian Kent <raven@themaw.net>,
+        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
+        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBNYXliZS4gIFdlIHN0aWxsIG5lZWQgdG8gcHJlc2VydmUgYW4gYW5vbnltb3VzIHNlZ21lbnQs
-IHRob3VnaC4gIE1BRFZfRE9FWEVDLCBvciBtc2hhcmUsDQo+IG9yIHNvbWV0aGluZyBlbHNlLiAg
-QW5kIEkgdGhpbmsgdGhlIGFiaWxpdHkgdG8gcHJlc2VydmUgbWVtb3J5IGNvbnRhaW5pbmcgcG9p
-bnRlcnMgdG8gaXRzZWxmDQo+IGlzIGFuIGludGVyZXN0aW5nIHVzZSBjYXNlLCB0aG91Z2ggbm90
-IG91cnMuDQoNCldoeSBkb2VzIGFsbCB0aGlzIHJlbWluZCBtZSBvZiB0aGUgb2xkIHNlbmRtYWls
-IGNvZGUuDQpBZnRlciBwYXJzaW5nIHRoZSBjb25maWcgZmlsZSBpdCB1c2VkIHRvIHdyaXRlIGl0
-cyBlbnRpcmUgZGF0YQ0KYXJlYSBvdXQgdG8gYSBmaWxlLg0KT24gcmVzdGFydCwgaWYgdGhlIGNv
-bmZpZyBmaWxlIGhhZG4ndCBjaGFuZ2VkIGl0IHdvdWxkIHJlYWQgaXQgYmFjayBpdC4NCg0KSXQg
-c29ydCBvZiB3b3JrZWQgLSB1bnRpbCBzaGFyZWQgbGlicmFyaWVzIGNhbWUgYWxvbmcuDQpUaGVu
-IGl0IGhhZCBhIGhhYml0IG9mIGdlbmVyYXRpbmcgcmFuZG9tIGNyYXNoZXMuDQoNCglEYXZpZA0K
-DQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFy
-bSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAo
-V2FsZXMpDQo=
+On Thu, Jul 23, 2020 at 12:48 PM David Howells <dhowells@redhat.com> wrote:
 
+>
+> > >                 __u32   topology_changes;
+> > >                 __u32   attr_changes;
+> > >                 __u32   aux_topology_changes;
+> >
+> > Being 32bit this introduces wraparound effects.  Is that really worth it?
+>
+> You'd have to make 2 billion changes without whoever's monitoring getting a
+> chance to update their counters.  But maybe it's not worth it putting them
+> here.  If you'd prefer, I can make the counters all 64-bit and just retrieve
+> them with fsinfo().
+
+Yes, I think that would be preferable.
+
+> > >         n->watch.info & NOTIFY_MOUNT_IS_RECURSIVE if true indicates that
+> > >         the notifcation was generated by an event (eg. SETATTR) that was
+> > >         applied recursively.  The notification is only generated for the
+> > >         object that initially triggered it.
+> >
+> > Unused in this patchset.  Please don't add things to the API which are not
+> > used.
+>
+> Christian Brauner has patches for mount_setattr() that will need to use this.
+
+Fine, then that patch can add the flag.
+
+Thanks,
+Miklos
