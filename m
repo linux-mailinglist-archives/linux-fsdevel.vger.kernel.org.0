@@ -2,186 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AA8623BA65
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Aug 2020 14:33:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0931323BB11
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Aug 2020 15:21:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbgHDMdD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Aug 2020 08:33:03 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:36261 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727779AbgHDMcQ (ORCPT
+        id S1728602AbgHDNVF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Aug 2020 09:21:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46546 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728595AbgHDNTX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Aug 2020 08:32:16 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.nyi.internal (Postfix) with ESMTP id C94F6580552;
-        Tue,  4 Aug 2020 08:32:13 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 04 Aug 2020 08:32:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        GQrvTmzmmFYdgKDOjC8EuXBs0YT7HCIH7S0aDNWKxu4=; b=clTQFpIMSolCW6jY
-        xc99NEC4kl0YqyNOsm6qSVHOkZFRyhaNemvV42oGz7IHHSv3+EpRvRgaPZX4cMIy
-        uG0kY97csqAYzzeIO62vthsBgZrguMDBKu/4hEXIjO4S9A+KjMpZagxQ5rSB+eIx
-        O5n0AO9Qqsy1lDc9obh3cjdW33gc9VxRh7KFRLYeHawdsj7/3L8vr7yb2w8VxEy4
-        6F9I8qHqZYZzJPQ2+9u5WHdCut/HdViUN3H6TEGza9MYaxUCBpBxQSfW58VjyVwo
-        /k3Ao5jizSrnCh6TCBW6h/8qVBg4fpTax4o6yrywHYuGXFDhRak1DbcxlLj+7Lht
-        VWfBLA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=GQrvTmzmmFYdgKDOjC8EuXBs0YT7HCIH7S0aDNWKx
-        u4=; b=CdBBGHL97gKyORvrfh7sIlaBs00XY1tMVHmMDPzGTQSg4+bSBCCqF0hFt
-        IEOc0mHjwjmFv+oIHhMtp9t73oOn8Cksi2OJH0E+hhO5fxCI2oRe2y2ODq1db5vE
-        GjMdoyORzN3OkoEAWJJkbhe/oM+BTvd34+WwFilOZM1ls0pcUHGNrzmgJupL0lwh
-        ZmXqcQagnbWVfqbkqhUP6hOgg1Y6/bJVv9Xw4qEUzBuicH9wojYTrZau8RYBRimo
-        kL6iylsRcEy5jdV1F/iCrShzmtZ0eV4NnoWaj6K31/l79V0bN9nFYTr5bevOyUts
-        izE9B7fraIwpvRSS6TWlVZ+ve9TtQ==
-X-ME-Sender: <xms:TFUpX4-ox1o4MRnKnWdE272jhCVKtxE-9wztQZddi5qFKWRXZKovwQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeeigdehgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
-    peduudekrddvtdekrdegjedrudeiudenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:TFUpXwtbPbbZc6pREsPaXvlLpznOoU3pBIZOBhXXNNcVQ2h0mLttnw>
-    <xmx:TFUpX-D9bye0WAANnM0viVcGOmAzEJX1_LFFaakEqE-0b_L9nXh0Yg>
-    <xmx:TFUpX4fEKfhE8UMAm7Q4DP_ltPtsf8PFO0R1s9TQiYNAy1w7fbTTDQ>
-    <xmx:TVUpXwoVZSDciaCCPlUM353wOLXDPtV5BJH8lEGIxW6IJfby6hy0zw>
-Received: from mickey.themaw.net (unknown [118.208.47.161])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 078F830600A6;
-        Tue,  4 Aug 2020 08:32:07 -0400 (EDT)
-Message-ID: <3341383b655b39697b4dcdb9f64c5f3bc46a6ac4.camel@themaw.net>
-Subject: Re: [PATCH 06/18] fsinfo: Add a uniquifier ID to struct mount [ver
- #21]
-From:   Ian Kent <raven@themaw.net>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        mszeredi@redhat.com, christian@brauner.io, jannh@google.com,
-        darrick.wong@oracle.com, kzak@redhat.com, jlayton@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 04 Aug 2020 20:32:04 +0800
-In-Reply-To: <20200804104108.GC32719@miu.piliscsaba.redhat.com>
-References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
-         <159646183662.1784947.5709738540440380373.stgit@warthog.procyon.org.uk>
-         <20200804104108.GC32719@miu.piliscsaba.redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Tue, 4 Aug 2020 09:19:23 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D543C06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Aug 2020 06:19:18 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id a21so42374341ejj.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Aug 2020 06:19:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1tiNv5DVcOXdEPntNp/BHigQ6vn1IdXaRNNTHtn8xqU=;
+        b=KEhgw4sBlsPCdz3kxw6pOlJHSKiC7Xhrls74Blf9MLTBsZBCWCUz06ysPssFA9U19y
+         Yr1EAIthn/gCTRdcIfAYF+6wn1SeTRE1WGDZQperfGWrs4+nANZWMbHukGdUWX4kW5Ms
+         t0R69K52Mm+kNPbIdl2Wftun28JL8wpQIioC8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1tiNv5DVcOXdEPntNp/BHigQ6vn1IdXaRNNTHtn8xqU=;
+        b=KS7HnfSnzQgaoWhCHUTwArtr1mo+LprtMSJGA3lSL3+jvd43qR0n7GJHdTdgdbQkY6
+         AVuoUCsBJapeGS/qYP3rU0vEzKFDt2KEI1XKwVZswqheA5znfEmR6sOvvamPID1SY7AW
+         3Hel2laIqx4bBP0rNdHF7Beb2lvfTAs+LDQzATAZGTPNc1QMedEGuFQavI163KIYQBs1
+         e6txaqn/7B5NCeBW7s8z6Lkj78r13nuje81/qnvAZ6WI3VciyYLmQ6oCxfTUkYhHJHCj
+         SMhiNTIc7mCUuZnyPwwcoVau6yhs6sHppLnnHhYTzplM3lk/jER1ZeiYUoKlavLtSFS0
+         7CEQ==
+X-Gm-Message-State: AOAM532Kqc03UGLqUIo8HugVnyZ7Ioxx2G+Yptn/iq9OdYRMi/3sFLQn
+        pF1m4/VFkKWWQbLFpooHiUaSNFmYCNZ+eHN8Qi3lFA==
+X-Google-Smtp-Source: ABdhPJyoWlMhvjqTJH7OiyxKhB5EGgaKJVZv6f4IRwD539FbIC9dkAFHWgaT/ph3af6QlUQF5Jf2SpagpjgID6l9h+k=
+X-Received: by 2002:a17:907:405f:: with SMTP id ns23mr3966025ejb.511.1596547156596;
+ Tue, 04 Aug 2020 06:19:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
+ <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
+ <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com>
+ <1293241.1595501326@warthog.procyon.org.uk> <CAJfpeguvLMCw1H8+DPsfZE_k0sEiRtA17pD9HjnceSsAvqqAZw@mail.gmail.com>
+ <43c061d26ddef2aa3ca1ac726da7db9ab461e7be.camel@themaw.net>
+In-Reply-To: <43c061d26ddef2aa3ca1ac726da7db9ab461e7be.camel@themaw.net>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 4 Aug 2020 15:19:05 +0200
+Message-ID: <CAJfpeguFkDDhz7+70pSUv_j=xY5L08ESpaE+jER9vE5p+ZmfFw@mail.gmail.com>
+Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and attribute
+ change notifications [ver #5]
+To:     Ian Kent <raven@themaw.net>
+Cc:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
+        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-08-04 at 12:41 +0200, Miklos Szeredi wrote:
-> On Mon, Aug 03, 2020 at 02:37:16PM +0100, David Howells wrote:
-> > Add a uniquifier ID to struct mount that is effectively unique over
-> > the
-> > kernel lifetime to deal around mnt_id values being reused.  This
-> > can then
-> > be exported through fsinfo() to allow detection of replacement
-> > mounts that
-> > happen to end up with the same mount ID.
-> > 
-> > The normal mount handle is still used for referring to a particular
-> > mount.
-> > 
-> > The mount notification is then changed to convey these unique mount
-> > IDs
-> > rather than the mount handle.
-> > 
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > ---
-> > 
-> >  fs/mount.h        |    3 +++
-> >  fs/mount_notify.c |    4 ++--
-> >  fs/namespace.c    |    3 +++
-> >  3 files changed, 8 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/mount.h b/fs/mount.h
-> > index 85456a5f5a3a..1037781be055 100644
-> > --- a/fs/mount.h
-> > +++ b/fs/mount.h
-> > @@ -79,6 +79,9 @@ struct mount {
-> >  	int mnt_expiry_mark;		/* true if marked for
-> > expiry */
-> >  	struct hlist_head mnt_pins;
-> >  	struct hlist_head mnt_stuck_children;
-> > +#ifdef CONFIG_FSINFO
-> > +	u64	mnt_unique_id;		/* ID unique over lifetime of
-> > kernel */
-> > +#endif
-> 
-> Not sure if it's worth making conditional.
-> 
-> >  #ifdef CONFIG_MOUNT_NOTIFICATIONS
-> >  	struct watch_list *mnt_watchers; /* Watches on dentries within
-> > this mount */
-> >  #endif
-> > diff --git a/fs/mount_notify.c b/fs/mount_notify.c
-> > index 44f570e4cebe..d8ba66ed5f77 100644
-> > --- a/fs/mount_notify.c
-> > +++ b/fs/mount_notify.c
-> > @@ -90,7 +90,7 @@ void notify_mount(struct mount *trigger,
-> >  	n.watch.type	= WATCH_TYPE_MOUNT_NOTIFY;
-> >  	n.watch.subtype	= subtype;
-> >  	n.watch.info	= info_flags | watch_sizeof(n);
-> > -	n.triggered_on	= trigger->mnt_id;
-> > +	n.triggered_on	= trigger->mnt_unique_id;
-> >  
-> >  	switch (subtype) {
-> >  	case NOTIFY_MOUNT_EXPIRY:
-> > @@ -102,7 +102,7 @@ void notify_mount(struct mount *trigger,
-> >  	case NOTIFY_MOUNT_UNMOUNT:
-> >  	case NOTIFY_MOUNT_MOVE_FROM:
-> >  	case NOTIFY_MOUNT_MOVE_TO:
-> > -		n.auxiliary_mount	= aux->mnt_id;
-> > +		n.auxiliary_mount = aux->mnt_unique_id;
-> 
-> Hmm, so we now have two ID's:
-> 
->  - one can be used to look up the mount
->  - one is guaranteed to be unique
-> 
-> With this change the mount cannot be looked up with
-> FSINFO_FLAGS_QUERY_MOUNT,
-> right?
-> 
-> Should we be merging the two ID's into a single one which has both
-> properties?
+On Tue, Aug 4, 2020 at 1:39 PM Ian Kent <raven@themaw.net> wrote:
+>
+> On Mon, 2020-08-03 at 11:29 +0200, Miklos Szeredi wrote:
+> > On Thu, Jul 23, 2020 at 12:48 PM David Howells <dhowells@redhat.com>
+> > wrote:
+> >
+> > > > >                 __u32   topology_changes;
+> > > > >                 __u32   attr_changes;
+> > > > >                 __u32   aux_topology_changes;
+> > > >
+> > > > Being 32bit this introduces wraparound effects.  Is that really
+> > > > worth it?
+> > >
+> > > You'd have to make 2 billion changes without whoever's monitoring
+> > > getting a
+> > > chance to update their counters.  But maybe it's not worth it
+> > > putting them
+> > > here.  If you'd prefer, I can make the counters all 64-bit and just
+> > > retrieve
+> > > them with fsinfo().
+> >
+> > Yes, I think that would be preferable.
+>
+> I think this is the source of the recommendation for removing the
+> change counters from the notification message, correct?
+>
+> While it looks like I may not need those counters for systemd message
+> buffer overflow handling myself I think removing them from the
+> notification message isn't a sensible thing to do.
+>
+> If you need to detect missing messages, perhaps due to message buffer
+> overflow, then you need change counters that are relevant to the
+> notification message itself. That's so the next time you get a message
+> for that object you can be sure that change counter comparisons you
+> you make relate to object notifications you have processed.
 
-I'd been thinking we would probably need to change to 64 bit ids
-for a while now and I thought that was what was going to happen.
+I don't quite get it.  Change notification is just that: a
+notification.   You need to know what object that notification relates
+to, to be able to retrieve the up to date attributes of said object.
 
-We'll need to change libmount and current code but better early
-on than later.
+What happens if you get a change counter N in the notification
+message, then get a change counter N + 1 in the attribute retrieval?
+You know that another change happened, and you haven't yet processed
+the notification yet.  So when the notification with N + 1 comes in,
+you can optimize away the attribute retrieve.
 
-Ian
+Nice optimization, but it's optimizing a race condition, and I don't
+think that's warranted.  I don't see any other use for the change
+counter in the notification message.
 
-> 
-> >  		break;
-> >  
-> >  	default:
-> > diff --git a/fs/namespace.c b/fs/namespace.c
-> > index b2b9920ffd3c..1db8a64cd76f 100644
-> > --- a/fs/namespace.c
-> > +++ b/fs/namespace.c
-> > @@ -115,6 +115,9 @@ static int mnt_alloc_id(struct mount *mnt)
-> >  	if (res < 0)
-> >  		return res;
-> >  	mnt->mnt_id = res;
-> > +#ifdef CONFIG_FSINFO
-> > +	mnt->mnt_unique_id = atomic64_inc_return(&vfs_unique_counter);
-> > +#endif
-> >  	return 0;
-> >  }
-> >  
-> > 
-> > 
 
+> Yes, I know it isn't quite that simple, but tallying up what you have
+> processed in the current batch of messages (or in multiple batches of
+> messages if more than one read has been possible) to perform the check
+> is a user space responsibility. And it simply can't be done if the
+> counters consistency is in question which it would be if you need to
+> perform another system call to get it.
+>
+> It's way more useful to have these in the notification than obtainable
+> via fsinfo() IMHO.
+
+What is it useful for?
+
+If the notification itself would contain the list of updated
+attributes and their new values, then yes, this would make sense.  If
+the notification just tells us that the object was modified, but not
+the modifications themselves, then I don't see how the change counter
+in itself could add any information (other than optimizing the race
+condition above).
+
+Thanks,
+Miklos
+
+Thanks,
+
+
+
+>
+> >
+> > > > >         n->watch.info & NOTIFY_MOUNT_IS_RECURSIVE if true
+> > > > > indicates that
+> > > > >         the notifcation was generated by an event (eg. SETATTR)
+> > > > > that was
+> > > > >         applied recursively.  The notification is only
+> > > > > generated for the
+> > > > >         object that initially triggered it.
+> > > >
+> > > > Unused in this patchset.  Please don't add things to the API
+> > > > which are not
+> > > > used.
+> > >
+> > > Christian Brauner has patches for mount_setattr() that will need to
+> > > use this.
+> >
+> > Fine, then that patch can add the flag.
+> >
+> > Thanks,
+> > Miklos
+>
