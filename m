@@ -2,154 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E433923B8F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Aug 2020 12:41:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62E7623B946
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Aug 2020 13:15:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729596AbgHDKlP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Aug 2020 06:41:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50466 "EHLO
+        id S1730111AbgHDLPA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Aug 2020 07:15:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728217AbgHDKlN (ORCPT
+        with ESMTP id S1730016AbgHDLO6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Aug 2020 06:41:13 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7600C061757
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Aug 2020 03:41:12 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id i6so3848569edy.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Aug 2020 03:41:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=HJDGqnBNBibFjObEixMOV83HWOZyXU89o9TO01hMyLI=;
-        b=RsP0Dez4CRPGgZm75GnJjeLxJeymavBEExZwCbGNsxvzH9OVH+kmlD7Ldhp3eNAs7I
-         8vyA8lcp9xzI4MBspyZMRog4UFEg00GloukWpE58T2vOYxFEpgJtiSOUn73KEJmnc2Uh
-         EdkcgdhRO4zxRCvdu7IVVBcqAfMPVu35vt85I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HJDGqnBNBibFjObEixMOV83HWOZyXU89o9TO01hMyLI=;
-        b=TALqKxWL5/6erf+IQI3DkdlHoKbD5q+wvY/7B5lUEtdwKI3hljIgrRO8LbWq9dAkgX
-         0pDkQXk12K1v2NM3z8Dt0M7VTqZ/pBcP69crylArkTOvWCRu+ShvzfV2FrPY+saR4SjA
-         SU9K8NGabng08BXNtPYJgKtR8OMHqu+hvkWKnK+PpzzYeYEx5D4dyd09o2ynH/RKs/gB
-         ZoQfiwqpD/xDa3iIYIFbJWSCILRjgeMnJXBQuphdCHIfY3nblD/k7ZkaEreDuGnZ94nJ
-         UvPVWcxipgpOvWnTOfxXojnRyF150nKUR/POP0MCVZ1NK5jSGTnUHtLCHXQ8buTrR5yy
-         Z0cA==
-X-Gm-Message-State: AOAM533W+KB+K3Gv4zq2O4jvM18/aIJdetZYfsxq7aqlAdAe09VYkTmH
-        X21yMGEiNif2nvWW1EgSpE83Vg==
-X-Google-Smtp-Source: ABdhPJwyySilMxuE+LAsWOY2Y0iK4ietlusLfHz1j0+yzFekAp6FeWunyjURnbnr9K5sXQ47ys4WCQ==
-X-Received: by 2002:a05:6402:b1b:: with SMTP id bm27mr14223356edb.140.1596537671215;
-        Tue, 04 Aug 2020 03:41:11 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (94-21-100-63.pool.digikabel.hu. [94.21.100.63])
-        by smtp.gmail.com with ESMTPSA id c18sm18357270eja.13.2020.08.04.03.41.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Aug 2020 03:41:10 -0700 (PDT)
-Date:   Tue, 4 Aug 2020 12:41:08 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
-        raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
-        jannh@google.com, darrick.wong@oracle.com, kzak@redhat.com,
-        jlayton@redhat.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 06/18] fsinfo: Add a uniquifier ID to struct mount [ver
- #21]
-Message-ID: <20200804104108.GC32719@miu.piliscsaba.redhat.com>
-References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
- <159646183662.1784947.5709738540440380373.stgit@warthog.procyon.org.uk>
+        Tue, 4 Aug 2020 07:14:58 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4885C06179E;
+        Tue,  4 Aug 2020 04:13:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=JW6B2OD0Jc1EExGD+ptuOCacpQEjtzVk2AEqTGdI46A=; b=PzwSj9y3HWvWL1Rp+pmHIne3rH
+        wKYMzFQT6F4iULIoYFz7BrP4Dn/r6IX7jpbgu0fYM7o1HJRyfr2gSwgW9KrJ6pbleU7wTrQDUxj2/
+        lzfw0wgiy7rHpZv8tVGkaRHJmVFnwtdV+CIjmaC5GkUqGi1ySTIZJFOHyiYulFLVqHmOhrLioUBbh
+        h4uzdEkGQe/1O77PFpozs6gKfiUHIoS1YcwCUk42qCOmRDr/WMylVhNTmG7k5iIsLcN0TiQQByPz3
+        xX/j8+YSud/d3gYpvv8BkRFyI1J/G+3C5zz4BYPiT76mQ6WLKu3vDFAD67oSnwWwCK+/mghapqqcG
+        LlnoD+pQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k2use-000476-F4; Tue, 04 Aug 2020 11:13:16 +0000
+Date:   Tue, 4 Aug 2020 12:13:16 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     'James Bottomley' <James.Bottomley@hansenpartnership.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "gerg@linux-m68k.org" <gerg@linux-m68k.org>,
+        "ktkhai@virtuozzo.com" <ktkhai@virtuozzo.com>,
+        "christian.brauner@ubuntu.com" <christian.brauner@ubuntu.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "esyr@redhat.com" <esyr@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+        "christian@kellner.me" <christian@kellner.me>,
+        "areber@redhat.com" <areber@redhat.com>,
+        "cyphar@cyphar.com" <cyphar@cyphar.com>
+Subject: Re: [RFC PATCH 0/5] madvise MADV_DOEXEC
+Message-ID: <20200804111316.GE23808@casper.infradead.org>
+References: <db3bdbae-eb0f-1ae3-94dd-045e37bc94ba@oracle.com>
+ <20200730171251.GI23808@casper.infradead.org>
+ <63a7404c-e4f6-a82e-257b-217585b0277f@oracle.com>
+ <20200730174956.GK23808@casper.infradead.org>
+ <ab7a25bf-3321-77c8-9bc3-28a223a14032@oracle.com>
+ <87y2n03brx.fsf@x220.int.ebiederm.org>
+ <689d6348-6029-5396-8de7-a26bc3c017e5@oracle.com>
+ <877dufvje9.fsf@x220.int.ebiederm.org>
+ <1596469370.29091.13.camel@HansenPartnership.com>
+ <9371b8272fd84280ae40b409b260bab3@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <159646183662.1784947.5709738540440380373.stgit@warthog.procyon.org.uk>
+In-Reply-To: <9371b8272fd84280ae40b409b260bab3@AcuMS.aculab.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 03, 2020 at 02:37:16PM +0100, David Howells wrote:
-> Add a uniquifier ID to struct mount that is effectively unique over the
-> kernel lifetime to deal around mnt_id values being reused.  This can then
-> be exported through fsinfo() to allow detection of replacement mounts that
-> happen to end up with the same mount ID.
-> 
-> The normal mount handle is still used for referring to a particular mount.
-> 
-> The mount notification is then changed to convey these unique mount IDs
-> rather than the mount handle.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
-> 
->  fs/mount.h        |    3 +++
->  fs/mount_notify.c |    4 ++--
->  fs/namespace.c    |    3 +++
->  3 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/mount.h b/fs/mount.h
-> index 85456a5f5a3a..1037781be055 100644
-> --- a/fs/mount.h
-> +++ b/fs/mount.h
-> @@ -79,6 +79,9 @@ struct mount {
->  	int mnt_expiry_mark;		/* true if marked for expiry */
->  	struct hlist_head mnt_pins;
->  	struct hlist_head mnt_stuck_children;
-> +#ifdef CONFIG_FSINFO
-> +	u64	mnt_unique_id;		/* ID unique over lifetime of kernel */
-> +#endif
-
-Not sure if it's worth making conditional.
-
->  #ifdef CONFIG_MOUNT_NOTIFICATIONS
->  	struct watch_list *mnt_watchers; /* Watches on dentries within this mount */
->  #endif
-> diff --git a/fs/mount_notify.c b/fs/mount_notify.c
-> index 44f570e4cebe..d8ba66ed5f77 100644
-> --- a/fs/mount_notify.c
-> +++ b/fs/mount_notify.c
-> @@ -90,7 +90,7 @@ void notify_mount(struct mount *trigger,
->  	n.watch.type	= WATCH_TYPE_MOUNT_NOTIFY;
->  	n.watch.subtype	= subtype;
->  	n.watch.info	= info_flags | watch_sizeof(n);
-> -	n.triggered_on	= trigger->mnt_id;
-> +	n.triggered_on	= trigger->mnt_unique_id;
->  
->  	switch (subtype) {
->  	case NOTIFY_MOUNT_EXPIRY:
-> @@ -102,7 +102,7 @@ void notify_mount(struct mount *trigger,
->  	case NOTIFY_MOUNT_UNMOUNT:
->  	case NOTIFY_MOUNT_MOVE_FROM:
->  	case NOTIFY_MOUNT_MOVE_TO:
-> -		n.auxiliary_mount	= aux->mnt_id;
-> +		n.auxiliary_mount = aux->mnt_unique_id;
-
-Hmm, so we now have two ID's:
-
- - one can be used to look up the mount
- - one is guaranteed to be unique
-
-With this change the mount cannot be looked up with FSINFO_FLAGS_QUERY_MOUNT,
-right?
-
-Should we be merging the two ID's into a single one which has both properties?
-
->  		break;
->  
->  	default:
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index b2b9920ffd3c..1db8a64cd76f 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -115,6 +115,9 @@ static int mnt_alloc_id(struct mount *mnt)
->  	if (res < 0)
->  		return res;
->  	mnt->mnt_id = res;
-> +#ifdef CONFIG_FSINFO
-> +	mnt->mnt_unique_id = atomic64_inc_return(&vfs_unique_counter);
-> +#endif
->  	return 0;
->  }
->  
+On Tue, Aug 04, 2020 at 08:44:42AM +0000, David Laight wrote:
+> From: James Bottomley
+> > Sent: 03 August 2020 16:43
+> > 
+> > On Mon, 2020-08-03 at 10:28 -0500, Eric W. Biederman wrote:
+> > [...]
+> > > What is wrong with live migration between one qemu process and
+> > > another qemu process on the same machine not work for this use case?
+> > >
+> > > Just reusing live migration would seem to be the simplest path of
+> > > all, as the code is already implemented.  Further if something goes
+> > > wrong with the live migration you can fallback to the existing
+> > > process.  With exec there is no fallback if the new version does not
+> > > properly support the handoff protocol of the old version.
+> > 
+> > Actually, could I ask this another way: the other patch set you sent to
+> > the KVM list was to snapshot the VM to a PKRAM capsule preserved across
+> > kexec using zero copy for extremely fast save/restore.  The original
+> > idea was to use this as part of a CRIU based snapshot, kexec to new
+> > system, restore.  However, why can't you do a local snapshot, restart
+> > qemu, restore using the PKRAM capsule to achieve exactly the same as
+> > MADV_DOEXEC does but using a system that's easy to reason about?  It
+> > may be slightly slower, but I think we're still talking milliseconds.
 > 
 > 
+> I've had another idea (that is probably impossible...).
+> What about a 'reverse mmap' operation.
+> Something that creates an fd whose contents are a chunk of the
+> processes address space.
+
+http://www.wil.cx/~willy/linux/sileby.html
