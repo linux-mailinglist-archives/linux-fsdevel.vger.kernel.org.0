@@ -2,212 +2,237 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3834C23C23B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 01:35:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18DAC23C248
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 01:50:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbgHDXft (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Aug 2020 19:35:49 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:50416 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725946AbgHDXft (ORCPT
+        id S1727055AbgHDXur (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Aug 2020 19:50:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59010 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726899AbgHDXur (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Aug 2020 19:35:49 -0400
-Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 2F6FC3A45EE;
-        Wed,  5 Aug 2020 09:35:43 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1k36T7-0000S4-UF; Wed, 05 Aug 2020 09:35:41 +1000
-Date:   Wed, 5 Aug 2020 09:35:41 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     hch@infradead.org, darrick.wong@oracle.com, mhocko@kernel.org,
-        willy@infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Yafang Shao <shaoyafang@didiglobal.com>
-Subject: Re: [PATCH v4 2/2] xfs: avoid transaction reservation recursion
-Message-ID: <20200804233541.GE2114@dread.disaster.area>
+        Tue, 4 Aug 2020 19:50:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B41EC06174A;
+        Tue,  4 Aug 2020 16:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=9KAVH8XxKK6xJEgnKPVNlHuH4H6EARdVe0XtOFXtKX4=; b=HfKdcwHNyINidsUuEmksj7WOWw
+        gcF1Clylu7b5CIaIEQ0g3f4Rl1Bal3syUpMEoH6IT7MqjkXLuzULZUvuTtHo+T7VI2u8gFd+bxHkz
+        gYnP2nXpnGlIYCaxS3tpCClV51yspi6P8azCK35CsaoSf4ObKafUzILFNAcn1jDngAxJLgfhjLe78
+        NU2k4VNT5Mx4rf1z85uMTl2xkJeVh81VlVFTTZb59UyBnmLX/CS6psX1TAEPXYRLlzsy4Yrlq4ROX
+        yeJ2MlbllcxgkLBwmv4mr1dl7BQRSz95nUjX72ip6+nDqqgb+MWiYSvBOFOCwVynXdek+af+yZfVI
+        jTH/jJ/A==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k36ha-00083x-4K; Tue, 04 Aug 2020 23:50:38 +0000
+Date:   Wed, 5 Aug 2020 00:50:38 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Yafang Shao <laoar.shao@gmail.com>, hch@infradead.org,
+        darrick.wong@oracle.com, mhocko@kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Yafang Shao <shaoyafang@didiglobal.com>
+Subject: Re: [PATCH v4 1/2] xfs: avoid double restore PF_MEMALLOC_NOFS if
+ transaction reservation fails
+Message-ID: <20200804235038.GL23808@casper.infradead.org>
 References: <20200801154632.866356-1-laoar.shao@gmail.com>
- <20200801154632.866356-3-laoar.shao@gmail.com>
+ <20200801154632.866356-2-laoar.shao@gmail.com>
+ <20200804232005.GD2114@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200801154632.866356-3-laoar.shao@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LPwYv6e9 c=1 sm=1 tr=0
-        a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
-        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=DyMV3BnNAAAA:8 a=7-415B0cAAAA:8
-        a=hviAvM6Ym9aLxgkzF5oA:9 a=CjuIK1q_8ugA:10 a=9s3JYx_stmTtqx6mgxhK:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200804232005.GD2114@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 01, 2020 at 11:46:32AM -0400, Yafang Shao wrote:
-> From: Yafang Shao <shaoyafang@didiglobal.com>
-> 
-> PF_FSTRANS which is used to avoid transaction reservation recursion, is
-> dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
-> PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
-> memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
-> means to avoid filesystem reclaim recursion. That change is subtle.
-> Let's take the exmple of the check of WARN_ON_ONCE(current->flags &
-> PF_MEMALLOC_NOFS)) to explain why this abstraction from PF_FSTRANS to
-> PF_MEMALLOC_NOFS is not proper.
-> Below comment is quoted from Dave,
-> > It wasn't for memory allocation recursion protection in XFS - it was for
-> > transaction reservation recursion protection by something trying to flush
-> > data pages while holding a transaction reservation. Doing
-> > this could deadlock the journal because the existing reservation
-> > could prevent the nested reservation for being able to reserve space
-> > in the journal and that is a self-deadlock vector.
-> > IOWs, this check is not protecting against memory reclaim recursion
-> > bugs at all (that's the previous check [1]). This check is
-> > protecting against the filesystem calling writepages directly from a
-> > context where it can self-deadlock.
-> > So what we are seeing here is that the PF_FSTRANS ->
-> > PF_MEMALLOC_NOFS abstraction lost all the actual useful information
-> > about what type of error this check was protecting against.
-> 
-> As a result, we should reintroduce PF_FSTRANS. As current->journal_info
-> isn't used in XFS, we can reuse it to indicate whehter the task is in
-> fstrans or not.
+On Wed, Aug 05, 2020 at 09:20:05AM +1000, Dave Chinner wrote:
+> Also, please convert these to memalloc_nofs_save()/restore() calls
+> as that is the way we are supposed to mark these regions now.
 
-IF we are just going to use ->journal_info, do it the simple way.
-
-> index 2d25bab68764..0795511f9e6a 100644
-> --- a/fs/xfs/libxfs/xfs_btree.c
-> +++ b/fs/xfs/libxfs/xfs_btree.c
-> @@ -2825,6 +2825,7 @@ xfs_btree_split_worker(
->  	if (args->kswapd)
->  		new_pflags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
->  
-> +	xfs_trans_context_start();
-
-Not really. We are transferring a transaction context here, not
-starting one. Hence this reads somewhat strangely.
-
-This implies that the helper function should be something like:
-
-	xfs_trans_context_set(tp);
+I have a patch for that!
 
 
->  	current_set_flags_nested(&pflags, new_pflags);
->  
->  	args->result = __xfs_btree_split(args->cur, args->level, args->ptrp,
-> @@ -2832,6 +2833,7 @@ xfs_btree_split_worker(
->  	complete(args->done);
->  
->  	current_restore_flags_nested(&pflags, new_pflags);
-> +	xfs_trans_context_end();
+From 7830a7dc66f349e16ef34bd408b9962f4c4bcdba Mon Sep 17 00:00:00 2001
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Date: Fri, 27 Mar 2020 13:01:57 -0400
+Subject: [PATCH 3/6] xfs: Convert to memalloc_nofs_save
+To: linux-kernel@vger.kernel.org,
+    linux-mm@kvack.org
+Cc: linux-xfs@vger.kernel.org,
+    dm-devel@redhat.com,
+    Mikulas Patocka <mpatocka@redhat.com>,
+    Jens Axboe <axboe@kernel.dk>,
+    NeilBrown <neilb@suse.de>
 
-And this is more likely xfs_trans_context_clear(tp)
+Instead of using custom macros to set/restore PF_MEMALLOC_NOFS, use
+memalloc_nofs_save() like the rest of the kernel.
 
-Reasons for this will become clear soon...
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/xfs/kmem.c      |  2 +-
+ fs/xfs/xfs_aops.c  |  4 ++--
+ fs/xfs/xfs_buf.c   |  2 +-
+ fs/xfs/xfs_linux.h |  6 ------
+ fs/xfs/xfs_trans.c | 14 +++++++-------
+ fs/xfs/xfs_trans.h |  2 +-
+ 6 files changed, 12 insertions(+), 18 deletions(-)
 
->  }
->  
->  /*
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index b35611882ff9..39ef95acdd8e 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -63,6 +63,8 @@ xfs_setfilesize_trans_alloc(
->  	 * clear the flag here.
->  	 */
->  	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-> +	xfs_trans_context_end();
-
-Note the repeated pairing of functions in this patch?
-
-> +
->  	return 0;
->  }
->  
-> @@ -125,6 +127,7 @@ xfs_setfilesize_ioend(
->  	 * thus we need to mark ourselves as being in a transaction manually.
->  	 * Similarly for freeze protection.
->  	 */
-> +	xfs_trans_context_start();
->  	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
->  	__sb_writers_acquired(VFS_I(ip)->i_sb, SB_FREEZE_FS);
->  
-> diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-> index 9f70d2f68e05..1192b660a968 100644
-> --- a/fs/xfs/xfs_linux.h
-> +++ b/fs/xfs/xfs_linux.h
-> @@ -111,6 +111,25 @@ typedef __u32			xfs_nlink_t;
->  #define current_restore_flags_nested(sp, f)	\
->  		(current->flags = ((current->flags & ~(f)) | (*(sp) & (f))))
->  
-> +static inline void xfs_trans_context_start(void)
-> +{
-> +	long flags = (long)current->journal_info;
-> +
-> +	/*
-> +	 * Reuse journal_info to indicate whehter the current is in fstrans
-> +	 * or not.
-> +	 */
-> +	current->journal_info = (void *)(flags + 1);
-> +}
-> +
-> +static inline void xfs_trans_context_end(void)
-> +{
-> +	long flags = (long)current->journal_info;
-> +
-> +	WARN_ON_ONCE(flags <= 0);
-> +	current->journal_info = ((void *)(flags - 1));
-> +}
-
-This is overly complex, and cannot be used for validation that we
-are clearing the transaction context we expect to be clearing. These
-are really "set" and "clear" operations, and for rolling
-transactions we are going to need an "update" operation, too.
-
-As per my comments about the previous patch, _set() would be done
-in xfs_trans_alloc(), _clear() would be done on the final
-xfs_trans_commit() or _cancel() and _update() would be done when the
-transaction rolls.
-
-Then we can roll in the NOFS updates, and we get these three helper
-functions that keep all the per-transaction thread state coherent:
-
-static inline void
-xfs_trans_context_set(struct xfs_trans *tp)
-{
-	ASSERT(!current->journal_info);
-	current->journal_info = tp;
-	tp->t_flags = memalloc_nofs_save();
-}
-
-static inline void
-xfs_trans_context_update(struct xfs_trans *old, struct xfs_trans *new)
-{
-	ASSERT(current->journal_info == old);
-	current->journal_info = new;
-	new->t_flags = old->t_flags;
-}
-
-static inline void
-xfs_trans_context_clear(struct xfs_trans *tp)
-{
-	ASSERT(current->journal_info == tp);
-	current->journal_info = NULL;
-	memalloc_nofs_restore(tp->t_flags);
-}
-
-static bool
-xfs_trans_context_active(void)
-{
-	return current->journal_info != NULL;
-}
-
-
-Cheers,
-
-Dave.
+diff --git a/fs/xfs/kmem.c b/fs/xfs/kmem.c
+index f1366475c389..c2d237159bfc 100644
+--- a/fs/xfs/kmem.c
++++ b/fs/xfs/kmem.c
+@@ -35,7 +35,7 @@ kmem_alloc(size_t size, xfs_km_flags_t flags)
+  * __vmalloc() will allocate data pages and auxiliary structures (e.g.
+  * pagetables) with GFP_KERNEL, yet we may be under GFP_NOFS context here. Hence
+  * we need to tell memory reclaim that we are in such a context via
+- * PF_MEMALLOC_NOFS to prevent memory reclaim re-entering the filesystem here
++ * memalloc_nofs to prevent memory reclaim re-entering the filesystem here
+  * and potentially deadlocking.
+  */
+ static void *
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index b35611882ff9..e3a4806e519d 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -62,7 +62,7 @@ xfs_setfilesize_trans_alloc(
+ 	 * We hand off the transaction to the completion thread now, so
+ 	 * clear the flag here.
+ 	 */
+-	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++	memalloc_nofs_restore(tp->t_memalloc);
+ 	return 0;
+ }
+ 
+@@ -125,7 +125,7 @@ xfs_setfilesize_ioend(
+ 	 * thus we need to mark ourselves as being in a transaction manually.
+ 	 * Similarly for freeze protection.
+ 	 */
+-	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++	tp->t_memalloc = memalloc_nofs_save();
+ 	__sb_writers_acquired(VFS_I(ip)->i_sb, SB_FREEZE_FS);
+ 
+ 	/* we abort the update if there was an IO error */
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index 20b748f7e186..b2c3d01c690b 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -470,7 +470,7 @@ _xfs_buf_map_pages(
+ 		 * vm_map_ram() will allocate auxiliary structures (e.g.
+ 		 * pagetables) with GFP_KERNEL, yet we are likely to be under
+ 		 * GFP_NOFS context here. Hence we need to tell memory reclaim
+-		 * that we are in such a context via PF_MEMALLOC_NOFS to prevent
++		 * that we are in such a context via memalloc_nofs to prevent
+ 		 * memory reclaim re-entering the filesystem here and
+ 		 * potentially deadlocking.
+ 		 */
+diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
+index 9f70d2f68e05..e1daf242a53b 100644
+--- a/fs/xfs/xfs_linux.h
++++ b/fs/xfs/xfs_linux.h
+@@ -104,12 +104,6 @@ typedef __u32			xfs_nlink_t;
+ #define current_cpu()		(raw_smp_processor_id())
+ #define current_pid()		(current->pid)
+ #define current_test_flags(f)	(current->flags & (f))
+-#define current_set_flags_nested(sp, f)		\
+-		(*(sp) = current->flags, current->flags |= (f))
+-#define current_clear_flags_nested(sp, f)	\
+-		(*(sp) = current->flags, current->flags &= ~(f))
+-#define current_restore_flags_nested(sp, f)	\
+-		(current->flags = ((current->flags & ~(f)) | (*(sp) & (f))))
+ 
+ #define NBBY		8		/* number of bits per byte */
+ 
+diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
+index 3c94e5ff4316..4ef1a0ff0a11 100644
+--- a/fs/xfs/xfs_trans.c
++++ b/fs/xfs/xfs_trans.c
+@@ -118,7 +118,7 @@ xfs_trans_dup(
+ 
+ 	ntp->t_rtx_res = tp->t_rtx_res - tp->t_rtx_res_used;
+ 	tp->t_rtx_res = tp->t_rtx_res_used;
+-	ntp->t_pflags = tp->t_pflags;
++	ntp->t_memalloc = tp->t_memalloc;
+ 
+ 	/* move deferred ops over to the new tp */
+ 	xfs_defer_move(ntp, tp);
+@@ -153,7 +153,7 @@ xfs_trans_reserve(
+ 	bool			rsvd = (tp->t_flags & XFS_TRANS_RESERVE) != 0;
+ 
+ 	/* Mark this thread as being in a transaction */
+-	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++	tp->t_memalloc = memalloc_nofs_save();
+ 
+ 	/*
+ 	 * Attempt to reserve the needed disk blocks by decrementing
+@@ -163,7 +163,7 @@ xfs_trans_reserve(
+ 	if (blocks > 0) {
+ 		error = xfs_mod_fdblocks(mp, -((int64_t)blocks), rsvd);
+ 		if (error != 0) {
+-			current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++			memalloc_nofs_restore(tp->t_memalloc);
+ 			return -ENOSPC;
+ 		}
+ 		tp->t_blk_res += blocks;
+@@ -240,7 +240,7 @@ xfs_trans_reserve(
+ 		tp->t_blk_res = 0;
+ 	}
+ 
+-	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++	memalloc_nofs_restore(tp->t_memalloc);
+ 
+ 	return error;
+ }
+@@ -861,7 +861,7 @@ __xfs_trans_commit(
+ 
+ 	xfs_log_commit_cil(mp, tp, &commit_lsn, regrant);
+ 
+-	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++	memalloc_nofs_restore(tp->t_memalloc);
+ 	xfs_trans_free(tp);
+ 
+ 	/*
+@@ -893,7 +893,7 @@ __xfs_trans_commit(
+ 			xfs_log_ticket_ungrant(mp->m_log, tp->t_ticket);
+ 		tp->t_ticket = NULL;
+ 	}
+-	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++	memalloc_nofs_restore(tp->t_memalloc);
+ 	xfs_trans_free_items(tp, !!error);
+ 	xfs_trans_free(tp);
+ 
+@@ -954,7 +954,7 @@ xfs_trans_cancel(
+ 	}
+ 
+ 	/* mark this thread as no longer being in a transaction */
+-	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
++	memalloc_nofs_restore(tp->t_memalloc);
+ 
+ 	xfs_trans_free_items(tp, dirty);
+ 	xfs_trans_free(tp);
+diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
+index 8308bf6d7e40..7aa2d5ff9245 100644
+--- a/fs/xfs/xfs_trans.h
++++ b/fs/xfs/xfs_trans.h
+@@ -118,6 +118,7 @@ typedef struct xfs_trans {
+ 	unsigned int		t_rtx_res;	/* # of rt extents resvd */
+ 	unsigned int		t_rtx_res_used;	/* # of resvd rt extents used */
+ 	unsigned int		t_flags;	/* misc flags */
++	unsigned int		t_memalloc;	/* saved memalloc state */
+ 	xfs_fsblock_t		t_firstblock;	/* first block allocated */
+ 	struct xlog_ticket	*t_ticket;	/* log mgr ticket */
+ 	struct xfs_mount	*t_mountp;	/* ptr to fs mount struct */
+@@ -144,7 +145,6 @@ typedef struct xfs_trans {
+ 	struct list_head	t_items;	/* log item descriptors */
+ 	struct list_head	t_busy;		/* list of busy extents */
+ 	struct list_head	t_dfops;	/* deferred operations */
+-	unsigned long		t_pflags;	/* saved process flags state */
+ } xfs_trans_t;
+ 
+ /*
 -- 
-Dave Chinner
-david@fromorbit.com
+2.27.0
+
