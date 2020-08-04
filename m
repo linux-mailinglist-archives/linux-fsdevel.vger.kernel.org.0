@@ -2,160 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ABEB23BB75
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Aug 2020 15:54:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E71F23BB82
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Aug 2020 15:56:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbgHDNyT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Aug 2020 09:54:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51952 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728200AbgHDNyR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Aug 2020 09:54:17 -0400
-Received: from mail-vk1-xa44.google.com (mail-vk1-xa44.google.com [IPv6:2607:f8b0:4864:20::a44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA9ACC06174A
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Aug 2020 06:54:17 -0700 (PDT)
-Received: by mail-vk1-xa44.google.com with SMTP id s81so4171719vkb.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Aug 2020 06:54:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Gjh1CQhNcX/dKpwghpqe5PsnWMgHIT7SFzJs24h1UQM=;
-        b=MqpYAiWijmvg7loVHczpUKtn2+LJz7S2aV+N438n2Y65/hPVYPyLQR3Af4s3W2Ukz5
-         gLYAov6l7shRm+JJpOMpNLndV0/ZN4ObOy7kmt1MItL+zU2Z+xVsuMjvEyJd2qOdyWo0
-         FylGqdCVn+1NMjtq4E5q0zRZFh8pRB+uxba1HCcuNm9M02q8JFldhPwgCaiZOYCWBq17
-         hVfSRFG/p6V6p2i8FPTcnBgv1pNvvWSi1HNczyO13FgS09NjRa2VVtLpmtPOcrBkTVBA
-         UyvW53IFCMp5nvhUMLZR17cge+of0Ri0a1fQv4QKYnq9ADROB24CM2+wvliFp9MVw8OR
-         sPIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Gjh1CQhNcX/dKpwghpqe5PsnWMgHIT7SFzJs24h1UQM=;
-        b=dyagov+pHwQo5Q54bXxEm64iblpA4WZAhBSl3LxW7Yr/y+H32J/0iiBCyxrhsWXCz+
-         8Yczt2PVIkVzdmJLBEyj4mWgwny5Fi3cn0FpHRmNLEmz3Ms5SrHWBMhXjIWqv4O3Y53R
-         lYgMBQHUrgBUQdJkY1Kysft1l2d2hJQIzLxdNvo0vuEI4yjxpmFhv7Tz9Xzgx4L6xZ1Z
-         G8PYu84255L21+QFUtafJO7ilkX+/8Hr6uXAdbhtreUAh7w4qZr+s+45XU+oyDF8051i
-         vCr4TYuqBW44hwofq3Zy+IlbJy9EBvivcZWSF/lOeGwrisv5SD9znVuS8yQ1e/oSRPZK
-         2Hgw==
-X-Gm-Message-State: AOAM530VNeWuFIK9+OqKuUNMsyooUBOM56XTldXASFUvK8G2LC5ojyJV
-        o1J3mEcfMd35dazJ3GUe+WnL/A==
-X-Google-Smtp-Source: ABdhPJywEqRIB+C/laAdsWyb753dUVCT2rmRqL5RBMcCSf76aIKKVtfXUnjQ/uxnkDArh3Jzj6HeBQ==
-X-Received: by 2002:a1f:bd02:: with SMTP id n2mr14859615vkf.1.1596549256680;
-        Tue, 04 Aug 2020 06:54:16 -0700 (PDT)
-Received: from google.com (182.71.196.35.bc.googleusercontent.com. [35.196.71.182])
-        by smtp.gmail.com with ESMTPSA id n62sm3130893vke.12.2020.08.04.06.54.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Aug 2020 06:54:15 -0700 (PDT)
-Date:   Tue, 4 Aug 2020 13:54:12 +0000
-From:   Kalesh Singh <kaleshsingh@google.com>
-To:     Joel Fernandes <joelaf@google.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-fsdevel@vger.kernel.org,
-        Suren Baghdasaryan <surenb@google.com>,
-        Hridya Valsaraju <hridya@google.com>,
-        Ioannis Ilkos <ilkos@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        "Cc: Android Kernel" <kernel-team@android.com>
-Subject: Re: [PATCH 1/2] fs: Add fd_install file operation
-Message-ID: <20200804135412.GA934259@google.com>
-References: <20200803144719.3184138-1-kaleshsingh@google.com>
- <20200803144719.3184138-2-kaleshsingh@google.com>
- <CAJWu+orzhpO5hPfUWd0EJp-ViWMifeQ_Ng+R4fHf7xabL+Bggw@mail.gmail.com>
+        id S1728467AbgHDN4K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Aug 2020 09:56:10 -0400
+Received: from foss.arm.com ([217.140.110.172]:44226 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726897AbgHDN4J (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 4 Aug 2020 09:56:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 987D431B;
+        Tue,  4 Aug 2020 06:56:08 -0700 (PDT)
+Received: from C02TD0UTHF1T.local (unknown [10.57.37.104])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 585463F718;
+        Tue,  4 Aug 2020 06:56:06 -0700 (PDT)
+Date:   Tue, 4 Aug 2020 14:55:58 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
+Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+Message-ID: <20200804135558.GA7440@C02TD0UTHF1T.local>
+References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
+ <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
+ <6540b4b7-3f70-adbf-c922-43886599713a@linux.microsoft.com>
+ <CALCETrWnNR5v3ZCLfBVQGYK8M0jAvQMaAc9uuO05kfZuh-4d6w@mail.gmail.com>
+ <46a1adef-65f0-bd5e-0b17-54856fb7e7ee@linux.microsoft.com>
+ <20200731183146.GD67415@C02TD0UTHF1T.local>
+ <86625441-80f3-2909-2f56-e18e2b60957d@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJWu+orzhpO5hPfUWd0EJp-ViWMifeQ_Ng+R4fHf7xabL+Bggw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <86625441-80f3-2909-2f56-e18e2b60957d@linux.microsoft.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 03, 2020 at 08:30:59PM -0400, Joel Fernandes wrote:
-> On Mon, Aug 3, 2020 at 10:47 AM 'Kalesh Singh' via kernel-team
-> <kernel-team@android.com> wrote:
-> >
-> > Provides a per process hook for the acquisition of file descriptors,
-> > despite the method used to obtain the descriptor.
-> >
+On Mon, Aug 03, 2020 at 12:58:04PM -0500, Madhavan T. Venkataraman wrote:
+> On 7/31/20 1:31 PM, Mark Rutland wrote:
+> > On Fri, Jul 31, 2020 at 12:13:49PM -0500, Madhavan T. Venkataraman wrote:
+> >> On 7/30/20 3:54 PM, Andy Lutomirski wrote:
+> >>> On Thu, Jul 30, 2020 at 7:24 AM Madhavan T. Venkataraman
+> >>> <madvenka@linux.microsoft.com> wrote:
+>> >> When the kernel generates the code for a trampoline, it can hard code data values
+> >> in the generated code itself so it does not need PC-relative data referencing.
+> >>
+> >> And, for ISAs that do support the large offset, we do have to implement and
+> >> maintain the code page stuff for different ISAs for each application and library
+> >> if we did not use trampfd.
+> > Trampoline code is architecture specific today, so I don't see that as a
+> > major issue. Common structural bits can probably be shared even if the
+> > specifid machine code cannot.
 > 
-> Hi,
-> So apart from all of the comments received, I think it is hard to
-> understand what the problem is, what the front-end looks like etc.
-> Your commit message is 1 line only.
+> True. But an implementor may prefer a standard mechanism provided by
+> the kernel so all of his architectures can be supported easily with less
+> effort.
 > 
-> I do remember some of the challenges discussed before, but it would
-> describe the problem in the commit message in detail and then discuss
-> why this solution is fit.  Please read submitting-patches.rst
-> especially "2) Describe your changes".
-> 
-> thanks,
-> 
->  - Joel
+> If you look at the libffi reference patch I have included, the architecture
+> specific changes to use trampfd just involve a single C function call to
+> a common code function.
 
-Thanks for the advice Joel :)
+Sure but in addition to that each architecture backend had to define a
+set of arguments to that. I view the C function is analagous to the
+"common structural bits".
+
+I appreciate that your patch is small today (and architectures seem to
+largely align on what they need), but I don't think it's necessarily
+true that things will remain so simple as architecture are extended and
+their calling conventions evolve, and I also don't think it's clear that
+this will work for more complex cases elsewhere.
+
+[...]
+
+> >> With the user level trampoline table approach, the data part of the trampoline table
+> >> can be hacked by an attacker if an application has a vulnerability. Specifically, the
+> >> target PC can be altered to some arbitrary location. Trampfd implements an
+> >> "Allowed PCS" context. In the libffi changes, I have created a read-only array of
+> >> all ABI handlers used in closures for each architecture. This read-only array
+> >> can be used to restrict the PC values for libffi trampolines to prevent hacking.
+> >>
+> >> To generalize, we can implement security rules/features if the trampoline
+> >> object is in the kernel.
+> > I don't follow this argument. If it's possible to statically define that
+> > in the kernel, it's also possible to do that in userspace without any
+> > new kernel support.
+> It is not statically defined in the kernel.
 > 
+> Let us take the libffi example. In the 64-bit X86 arch code, there are 3
+> ABI handlers:
 > 
-> > Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> > ---
-> >  Documentation/filesystems/vfs.rst | 5 +++++
-> >  fs/file.c                         | 3 +++
-> >  include/linux/fs.h                | 1 +
-> >  3 files changed, 9 insertions(+)
-> >
-> > diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> > index ed17771c212b..95b30142c8d9 100644
-> > --- a/Documentation/filesystems/vfs.rst
-> > +++ b/Documentation/filesystems/vfs.rst
-> > @@ -1123,6 +1123,11 @@ otherwise noted.
-> >  ``fadvise``
-> >         possibly called by the fadvise64() system call.
-> >
-> > +``fd_install``
-> > +       called by the VFS when a file descriptor is installed in the
-> > +       process's file descriptor table, regardless how the file descriptor
-> > +       was acquired -- be it via the open syscall, received over IPC, etc.
-> > +
-> >  Note that the file operations are implemented by the specific
-> >  filesystem in which the inode resides.  When opening a device node
-> >  (character or block special) most filesystems will call special
-> > diff --git a/fs/file.c b/fs/file.c
-> > index abb8b7081d7a..f5db8622b851 100644
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -616,6 +616,9 @@ void __fd_install(struct files_struct *files, unsigned int fd,
-> >  void fd_install(unsigned int fd, struct file *file)
-> >  {
-> >         __fd_install(current->files, fd, file);
-> > +
-> > +       if (file->f_op->fd_install)
-> > +               file->f_op->fd_install(fd, file);
-> >  }
-> >
-> >  EXPORT_SYMBOL(fd_install);
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index f5abba86107d..b976fbe8c902 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -1864,6 +1864,7 @@ struct file_operations {
-> >                                    struct file *file_out, loff_t pos_out,
-> >                                    loff_t len, unsigned int remap_flags);
-> >         int (*fadvise)(struct file *, loff_t, loff_t, int);
-> > +       void (*fd_install)(int, struct file *);
-> >  } __randomize_layout;
-> >
-> >  struct inode_operations {
-> > --
-> > 2.28.0.163.g6104cc2f0b6-goog
-> >
-> > --
-> > To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
-> >
+>     ffi_closure_unix64_sse
+>     ffi_closure_unix64
+>     ffi_closure_win64
+> 
+> I could create an "Allowed PCs" context like this:
+> 
+> struct my_allowed_pcs {
+>     struct trampfd_values    pcs;
+>     __u64                             pc_values[3];
+> };
+> 
+> const struct my_allowed_pcs    my_allowed_pcs = {
+>     { 3, 0 },
+>     (uintptr_t) ffi_closure_unix64_sse,
+>     (uintptr_t) ffi_closure_unix64,
+>     (uintptr_t) ffi_closure_win64,
+> };
+> 
+> I have created a read-only array of allowed ABI handlers that closures use.
+> 
+> When I set up the context for a closure trampoline, I could do this:
+> 
+>     pwrite(trampfd, &my_allowed_pcs, sizeof(my_allowed_pcs), TRAMPFD_ALLOWED_PCS_OFFSET);
+>    
+> This copies the array into the trampoline object in the kernel.
+> When the register context is set for the trampoline, the kernel checks
+> the PC register value against allowed PCs.
+> 
+> Because my_allowed_pcs is read-only, a hacker cannot modify it. So, the only
+> permitted target PCs enforced by the kernel are the ABI handlers.
+
+Sorry, when I said "statically define" meant when you knew legitimate
+targets ahead of time when you create the trampoline (i.e. whether you
+could enumerate those and know they would not change dynamically).
+
+My point was that you can achieve the same in userspace if the
+trampoline and array of legitimate targets are in read-only memory,
+without having to trap to the kernel.
+
+I think the key point here is that an adversary must be prevented from
+altering a trampoline and any associated metadata, and I think that
+there are ways of achieving that without having to trap into the kernel,
+and without the kernel having to be intimately aware of the calling
+conventions used in userspace.
+
+[...]
+
+> >> Trampfd is a framework that can be used to implement multiple things. May be,
+> >> a few of those things can also be implemented in user land itself. But I think having
+> >> just one mechanism to execute dynamic code objects is preferable to having
+> >> multiple mechanisms not standardized across all applications.
+> > In abstract, having a common interface sounds nice, but in practice
+> > elements of this are always architecture-specific (e.g. interactiosn
+> > with HW CFI), and that common interface can result in more pain as it
+> > doesn't fit naturally into the context that ISAs were designed for (e.g. 
+> > where control-flow instructions are extended with new semantics).
+> 
+> In the case of trampfd, the code generation is indeed architecture
+> specific. But that is in the kernel. The application is not affected by it.
+
+As an ABI detail, applications are *definitely* affected by this, and it
+is wrong to suggest they are not even if you don't have a specific case
+in mind today. As this forms a contract between userspace and the kernel
+it's overly simplistic to say that it's the kernel's problem
+
+For example, in the case of BTI on arm64, what should the trampoline
+set PSTATE.BTYPE to? Different use-cases *will* want different values,
+and not necessarily the value of PSTATE at the instant the call to the
+trampoline was made. In the case of libffi specifically using the
+original value of PSTATE.BTYPE probably is sound, but other code
+sequences may need to restrict/broaden or entirely change that.
+
+> Again, referring to the libffi reference patch, I have defined wrapper
+> functions for trampfd in common code. The architecture specific code
+> in libffi only calls the set_context function defined in common code.
+> Even this is required only because register names are specific to each
+> architecture and the target PC (to the ABI handler) is specific to
+> each architecture-ABI combo.
+> 
+> > It also meass that you can't share the rough approach across OSs which
+> > do not implement an identical mechanism, so for code abstracting by ISA
+> > first, then by platform/ABI, there isn't much saving.
+> 
+> Why can you not share the same approach across OSes? In fact,
+> I have tried to design it so that other OSes can use the same
+> mechanism.
+
+Sure, but where they *don't*, you must fall back to the existing
+purely-userspace mechanisms, and so a codebase now has the burden of
+maintaining two distinct mechanisms.
+
+Whereas if there's a way of doing this in userspace with (stronger)
+enforcement of memory permissions the trampoline code can be common for
+when this is present or absent, which is much easier for a codebase rto
+maintain, and could make use of weaker existing mechanisms to improve
+the situation on systems without the new functionality.
+
+Thanks,
+Mark.
