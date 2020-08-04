@@ -2,134 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BB5223B99B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Aug 2020 13:34:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 491F523B9B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Aug 2020 13:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730208AbgHDLey (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Aug 2020 07:34:54 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40438 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726400AbgHDLev (ORCPT
+        id S1730256AbgHDLjM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Aug 2020 07:39:12 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:55241 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730114AbgHDLjL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Aug 2020 07:34:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596540888;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=etjlVeN4UH1qO9OU1bYP1CrExEJDSItCGo2UFGYinfY=;
-        b=ZySsi+t7LQe8pn3C4JPSzc0CimRZKRNhht5dpsc6IF+U9CQ7uRWhyPoQMES5tAjcuCHV42
-        esJ8LCZmFiP56t0fHJeBewYQroKvdc3okzyKfJvORDbdB8IgEfMp/rDkOSz7nU45G53ArM
-        hxh7gkxv6wwZuMikliuYXMI4EPXt5uM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-362--PWjaPm2NvK-pYOXQjXF9w-1; Tue, 04 Aug 2020 07:34:47 -0400
-X-MC-Unique: -PWjaPm2NvK-pYOXQjXF9w-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7591D10059A9;
-        Tue,  4 Aug 2020 11:34:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D2C771764;
-        Tue,  4 Aug 2020 11:34:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200804101659.GA32719@miu.piliscsaba.redhat.com>
-References: <20200804101659.GA32719@miu.piliscsaba.redhat.com> <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk> <159646180259.1784947.223853053048725752.stgit@warthog.procyon.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-api@vger.kernel.org, torvalds@linux-foundation.org,
-        raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
-        jannh@google.com, darrick.wong@oracle.com, kzak@redhat.com,
-        jlayton@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 02/18] fsinfo: Add fsinfo() syscall to query filesystem information [ver #21]
+        Tue, 4 Aug 2020 07:39:11 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id DB1925804D6;
+        Tue,  4 Aug 2020 07:39:09 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 04 Aug 2020 07:39:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        GQ35A9QLvt3V3tS5rPqimLchSew/FSuuzCyzXhgfQ1A=; b=kgmfeQ16/whTJorz
+        oDXKB2tNiHs4zASSvo8rupSnw6le9xoRXka0xaj7eV1wl3KlXxBhK9jvlsTpW2I5
+        xsqmOgAxEZ04mc47DOuGlA4WLwH8ReSGT3CX0oWl0cPaE9WRB0c2N5PNFPwImKjp
+        UzO2vax/wxc0UYA6hmwLJxwZrqt5pa4iUidvhF6dqCQK426CwvYxw555f30uYIvR
+        5H59ywR/VBrOYplxFR96RIqaR1p3Kpveny5vknoRtvERGVbcu6gcbZSXfoNGICLf
+        JSUc+2qau2R1fVjOXNFZ5Wse4yAxvWD38Gjvifzg2oiXG9T4x8N2VfojR17r6pCH
+        aNJubw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=GQ35A9QLvt3V3tS5rPqimLchSew/FSuuzCyzXhgfQ
+        1A=; b=SuTtTF54ZVjtLRGZxW/mCEyxi8WJ79N7TT0VougsywuI0KnekAV1lIaze
+        Mx1dJTOV5LinaEM9B5OTBio4cyf+3MoG0+iQnJj+ueVaURezbQgrwYwqk/kjPkNc
+        YqS8C6ENPzYQ3Ym50YC0gOcx/LETOp+69CC//o2YoAMmr/E+f7i4ojaapVtSI6SH
+        Zp93f+pg0914IfG1V/AgFvOs8e+RYREM3C/TI0SzgWmbOTDPR/4l1Z1h+n1qUu22
+        5ui/Ha//jDx8ms2B66MAeki0JL+UEbsOPON1qFpCa8eHEiYGFzONdv+6DCO1m6y7
+        zvN+SH0dYq0xvo4S75gUgveK5q8yg==
+X-ME-Sender: <xms:3EgpX400z3VYmHzvXLn-oWTZ1iL2u1k5Etyw-8b3mvwLK_HyCvjXew>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeeigdeggecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
+    peduudekrddvtdekrdegjedrudeiudenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:3EgpXzEqYlIuPLrgIGwJdakWHmizB75srQO8z2eYXH5NDgNKEgOzmA>
+    <xmx:3EgpXw5VQKDqee8BLKXJOzLC_HOH9vQlxbfxh6OuHS9C1VUnONq_OA>
+    <xmx:3EgpXx03mtl9O9w5GDGW8D_W8prLa__CUW0Sw40CfzWxL_07Mloh9Q>
+    <xmx:3UgpX6cESCXEwV8tzUkYv1s_c-6OOit-Sn19G8ePNtnYk8yaV_5zcw>
+Received: from mickey.themaw.net (unknown [118.208.47.161])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 61C5D30600A6;
+        Tue,  4 Aug 2020 07:39:03 -0400 (EDT)
+Message-ID: <43c061d26ddef2aa3ca1ac726da7db9ab461e7be.camel@themaw.net>
+Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and
+ attribute change notifications [ver #5]
+From:   Ian Kent <raven@themaw.net>
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
+        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 04 Aug 2020 19:38:59 +0800
+In-Reply-To: <CAJfpeguvLMCw1H8+DPsfZE_k0sEiRtA17pD9HjnceSsAvqqAZw@mail.gmail.com>
+References: <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
+         <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
+         <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com>
+         <1293241.1595501326@warthog.procyon.org.uk>
+         <CAJfpeguvLMCw1H8+DPsfZE_k0sEiRtA17pD9HjnceSsAvqqAZw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2041167.1596540881.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 04 Aug 2020 12:34:41 +0100
-Message-ID: <2041168.1596540881@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Mon, 2020-08-03 at 11:29 +0200, Miklos Szeredi wrote:
+> On Thu, Jul 23, 2020 at 12:48 PM David Howells <dhowells@redhat.com>
+> wrote:
+> 
+> > > >                 __u32   topology_changes;
+> > > >                 __u32   attr_changes;
+> > > >                 __u32   aux_topology_changes;
+> > > 
+> > > Being 32bit this introduces wraparound effects.  Is that really
+> > > worth it?
+> > 
+> > You'd have to make 2 billion changes without whoever's monitoring
+> > getting a
+> > chance to update their counters.  But maybe it's not worth it
+> > putting them
+> > here.  If you'd prefer, I can make the counters all 64-bit and just
+> > retrieve
+> > them with fsinfo().
+> 
+> Yes, I think that would be preferable.
 
-> > 		__u32	Mth;
-> =
+I think this is the source of the recommendation for removing the
+change counters from the notification message, correct?
 
-> The Mth field seems to be unused in this patchset.  Since the struct is
-> extensible, I guess there's no point in adding it now.
+While it looks like I may not need those counters for systemd message
+buffer overflow handling myself I think removing them from the
+notification message isn't a sensible thing to do.
 
-Yeah - I was using it to index through the server address lists for networ=
-k
-filesystems (ie. the Mth address of the Nth server), but I've dropped the =
-nfs
-patch and made afs return an array of addresses for the Nth server since t=
-he
-address list can get reordered.
+If you need to detect missing messages, perhaps due to message buffer
+overflow, then you need change counters that are relevant to the
+notification message itself. That's so the next time you get a message
+for that object you can be sure that change counter comparisons you
+you make relate to object notifications you have processed.
 
-Ordinarily, I'd just take it out, but I don't want to cause the patchset t=
-o
-get dropped for yet another merge cycle :-/
+Yes, I know it isn't quite that simple, but tallying up what you have
+processed in the current batch of messages (or in multiple batches of
+messages if more than one read has been possible) to perform the check
+is a user space responsibility. And it simply can't be done if the
+counters consistency is in question which it would be if you need to
+perform another system call to get it.
 
-> > +#define FSINFO_ATTR_FSINFO_ATTRIBUTE_INFO 0x100	/* Information about =
-attr N (for path) */
-> > +#define FSINFO_ATTR_FSINFO_ATTRIBUTES	0x101	/* List of supported attr=
-s (for path) */
-> =
+It's way more useful to have these in the notification than obtainable
+via fsinfo() IMHO.
 
-> I think it would make sense to move the actual attributes to a separate =
-patch
-> and leave this just being the infrastructure.
-
-Maybe.  If there are no attributes, then it makes it a bit hard to test.
-
-> > +struct fsinfo_u128 {
-> ...
-> =
-
-> Shouldn't this belong in <linux/types.h>?
-
-Maybe.  Ideally, I'd use a proper C type rather than a struct.
-
-> Is there a reason these are 128 wide fields?  Are we approaching the lim=
-its of
-> 64bits?
-
-Dave Chinner was talking at LSF a couple of years ago, IIRC, about looking
-beyond the 16 Exa limit in XFS.  I've occasionally talked to people who ha=
-ve
-multi-Peta data sets in AFS or whatever they were using, streamed from sci=
-ence
-experiments, so the limit isn't necessarily all *that* far off.
-
-> > +struct fsinfo_limits {
-> > +	struct fsinfo_u128 max_file_size;	/* Maximum file size */
-> > +	struct fsinfo_u128 max_ino;		/* Maximum inode number */
-> =
-
-> Again, what's the reason.  AFACT we are not yet worried about overflowin=
-g 64
-> bits.  Future proofing is good, but there has to be some rules and reaso=
-ns
-> behind the decisions.
-
-This is cheap to do.  This information is expected to be static for the
-lifetime a superblock and, for most filesystems, of the running kernel, so
-simply copying it with memcpy() from rodata is going to suffice most of th=
-e
-time.
-
-But don't worry - 640K is sufficient for everyone ;-)
-
-David
+> 
+> > > >         n->watch.info & NOTIFY_MOUNT_IS_RECURSIVE if true
+> > > > indicates that
+> > > >         the notifcation was generated by an event (eg. SETATTR)
+> > > > that was
+> > > >         applied recursively.  The notification is only
+> > > > generated for the
+> > > >         object that initially triggered it.
+> > > 
+> > > Unused in this patchset.  Please don't add things to the API
+> > > which are not
+> > > used.
+> > 
+> > Christian Brauner has patches for mount_setattr() that will need to
+> > use this.
+> 
+> Fine, then that patch can add the flag.
+> 
+> Thanks,
+> Miklos
 
