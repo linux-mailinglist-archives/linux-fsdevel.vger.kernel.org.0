@@ -2,141 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C9F723C0B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Aug 2020 22:27:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1DAE23C0C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Aug 2020 22:32:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbgHDU1G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Aug 2020 16:27:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56000 "EHLO
+        id S1726752AbgHDUcK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Aug 2020 16:32:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbgHDU1E (ORCPT
+        with ESMTP id S1726534AbgHDUcH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Aug 2020 16:27:04 -0400
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42A2EC06174A
-        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Aug 2020 13:27:04 -0700 (PDT)
-Received: by mail-ot1-x343.google.com with SMTP id v6so20803286ota.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Aug 2020 13:27:04 -0700 (PDT)
+        Tue, 4 Aug 2020 16:32:07 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CE7AC06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Aug 2020 13:32:07 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id p138so30378857yba.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 04 Aug 2020 13:32:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0F8rJxKPxKz2kW50sM0y8YM2E+x9jT63SdZPiQc6zzs=;
-        b=H1OkZhq6MBz2mPG9yOilf7cdzsWYCtSOv60OIb+5hLEevjbdyWf7y6zN3c0E7hXpmz
-         h5lFdwXRUFdjjKeYyzRJtXDM/RqOzDOyYo2ne5wLglfg9bXb9hPawWzSekTisfu8h1dX
-         R7s/m3G0iFxouoE7x6KyzkmAX9u+BXsLebYBI=
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=TE39gsqa8qAtAr57skK2bIVW3cJaqxb5kdkpRE6BXx4=;
+        b=PRIjpcg+RHpob503zkgZ/kH0zrL/dFq+o15VbDIE+7fG//gkTUyv+BUYuFJGk77mXH
+         J7o0LRArbZY03nboYkobXyq5Mclw1iNcylfxM3oqjztUXa4b16oc9VAe8xlPpDq3VbNL
+         HI7knhb8Bd2R6LXwLc4T7PdFbknrVoH3KQ1n0BjGHFivqbIbJQfRFJ1y0AwH6+9NVr43
+         HUWdRLf+B2SEM4ZF4dJMT3G/MR6QGRE36f/gVO+YIJZKdCGAn9ByjwNRcb+g7GrstnU4
+         +4PcVun0xBJKIGgBUNUyn3FwtjVmpVdQelavHxqvU9qFVlEhe7P2/E9kh/EoaHxvU/jH
+         Rtsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0F8rJxKPxKz2kW50sM0y8YM2E+x9jT63SdZPiQc6zzs=;
-        b=kFv6HwD3kvHOIxaAJrTKsueoGa0bSJ4MeXTwF89Zp9gm3/HJn/j9RMJUSq/2IZFtEv
-         zAb5jDVuZ34NHqvNkqp4qnoB3R6OhxsHT0V2RNoOynfFD6zQ/EkjvIxVR4JuOhbjA9s/
-         GvkSgIzcb7B20N9E6EP0kwLY/BFVR/cQmw71KZ1BeZj5UQ0txKnoCcgxNUoKHcAKebk6
-         HS1s/lOAdiqHTC2I0yGzn8WYOQuSuAqYQvUcuz6+lrjJ3SQxasUx4h1Fypd/Jdn0RE/w
-         PYD02ZqEpK7WSV4N7oMP1t5bj0WGdkKZx47B4DAV6r8gGO2R8ZBwtzIEqeoqq+9b8OCY
-         FDwQ==
-X-Gm-Message-State: AOAM532eZGMHQeKQJMgMH5N04FFTP2bcRhFUdW8PgpME8kmpJQwnCGf1
-        sKU/0qyjbbYs9EO6BT/RVroxRP47TPI9uH9swqWmWQ==
-X-Google-Smtp-Source: ABdhPJxM2ghXnkojx/uwK1Wl/TqwXOe7oku/3H3udwDC+13SefY0iT978E6kQ/Oj5VS0nPAZGxZz1fIHsTOzPTz/qVk=
-X-Received: by 2002:a05:6830:1e71:: with SMTP id m17mr20159797otr.188.1596572823562;
- Tue, 04 Aug 2020 13:27:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200803144719.3184138-1-kaleshsingh@google.com>
- <20200803144719.3184138-3-kaleshsingh@google.com> <20200803154125.GA23808@casper.infradead.org>
- <CAJuCfpFLikjaoopvt+vGN3W=m9auoK+DLQNgUf-xUbYfC=83Mw@mail.gmail.com>
- <20200803161230.GB23808@casper.infradead.org> <CAJuCfpGot1Lr+eS_AU30gqrrjc0aFWikxySe0667_GTJNsGTMw@mail.gmail.com>
- <20200803222831.GI1236603@ZenIV.linux.org.uk>
-In-Reply-To: <20200803222831.GI1236603@ZenIV.linux.org.uk>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Tue, 4 Aug 2020 22:26:52 +0200
-Message-ID: <CAKMK7uE7V-0=2Z04-vkvFmExeEuKf5zihTO8su1GrHYy=sRKMg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dmabuf/tracing: Add dma-buf trace events
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:DMA BUFFER SHARING FRAMEWORK" 
-        <linux-media@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>, linux-fsdevel@vger.kernel.org,
-        Hridya Valsaraju <hridya@google.com>,
-        Ioannis Ilkos <ilkos@google.com>,
-        John Stultz <john.stultz@linaro.org>,
-        kernel-team <kernel-team@android.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=TE39gsqa8qAtAr57skK2bIVW3cJaqxb5kdkpRE6BXx4=;
+        b=ogqT93zUp6j5XP+Uc3+3lgJY1kVhJ7knp/KgCVSVL6+oF9L+zGRXcNhUA212+Ez4W/
+         tTdOut4JRxEc8mYXrVlvSIffWekR9RDu5vWuW2v1pmcJoRpWpRdMErGMoKSnGtvjtkuJ
+         ufiYLY+situ6Fd14UBcc1O9kEQXRTzlUDlmJMVcZUp0azrtNch9fPjXw9PdE8xe7HAZa
+         BVbISYS2J/e87lfMjyQER/MtdCMd3Tz5PRkO92jWn+EZ7WLie5kIbmoLG0eIsJo9boA0
+         j2woK9fAv5dHky77d2WKV/a1xF7r76XzxwjUvZrgUwuwbKuMvOklYGOfMkM0nmlT4wjN
+         wlzA==
+X-Gm-Message-State: AOAM533qEuwHDShGysNyPmutQUITWB6YLUasjZ0HWBZ7QGEdHIyB48LR
+        A8JhSAQCefD6b6rr16HmAc1LCE0QCEgIesYlHQ==
+X-Google-Smtp-Source: ABdhPJwoK3L7KaN/vfgdTz0aHbC7HLz0oYVW6btJ16u62KFo8LdFftIZhnnFvgmftUX1Ybc35y0qD4s/OLoD5NuXFg==
+X-Received: by 2002:a25:d946:: with SMTP id q67mr33939817ybg.423.1596573126838;
+ Tue, 04 Aug 2020 13:32:06 -0700 (PDT)
+Date:   Tue,  4 Aug 2020 13:31:55 -0700
+Message-Id: <20200804203155.2181099-1-lokeshgidra@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.28.0.163.g6104cc2f0b6-goog
+Subject: [PATCH] Userfaultfd: Avoid double free of userfault_ctx and remove O_CLOEXEC
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     viro@zeniv.linux.org.uk, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com, jmorris@namei.org
+Cc:     kaleshsingh@google.com, dancol@dancol.org, surenb@google.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nnk@google.com, jeffv@google.com, calin@google.com,
+        kernel-team@android.com, yanfei.xu@windriver.com,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        syzbot+75867c44841cb6373570@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 4, 2020 at 12:28 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Mon, Aug 03, 2020 at 09:22:53AM -0700, Suren Baghdasaryan wrote:
-> > On Mon, Aug 3, 2020 at 9:12 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > On Mon, Aug 03, 2020 at 09:00:00AM -0700, Suren Baghdasaryan wrote:
-> > > > On Mon, Aug 3, 2020 at 8:41 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > > > >
-> > > > > On Mon, Aug 03, 2020 at 02:47:19PM +0000, Kalesh Singh wrote:
-> > > > > > +static void dma_buf_fd_install(int fd, struct file *filp)
-> > > > > > +{
-> > > > > > +     trace_dma_buf_fd_ref_inc(current, filp);
-> > > > > > +}
-> > > > >
-> > > > > You're adding a new file_operation in order to just add a new tracepoint?
-> > > > > NACK.
-> > > >
-> > > > Hi Matthew,
-> > > > The plan is to attach a BPF to this tracepoint in order to track
-> > > > dma-buf users. If you feel this is an overkill, what would you suggest
-> > > > as an alternative?
-> > >
-> > > I'm sure BPF can attach to fd_install and filter on file->f_ops belonging
-> > > to dma_buf, for example.
-> >
-> > Sounds like a workable solution. Will explore that direction. Thanks Matthew!
->
-> No, it is not a solution at all.
->
-> What kind of locking would you use?  With _any_ of those approaches.
->
-> How would you use the information that is hopelessly out of date/incoherent/whatnot
-> at the very moment you obtain it?
->
-> IOW, what the hell is that horror for?  You do realize, for example, that there's
-> such thing as dup(), right?  And dup2() as well.  And while we are at it, how
-> do you keep track of removals, considering the fact that you can stick a file
-> reference into SCM_RIGHTS datagram sent to yourself, close descriptors and an hour
-> later pick that datagram, suddenly getting descriptor back?
->
-> Besides, "I have no descriptors left" != "I can't be currently sitting in the middle
-> of syscall on that sucker"; close() does *NOT* terminate ongoing operations.
->
-> You are looking at the drastically wrong abstraction level.  Please, describe what
-> it is that you are trying to achieve.
+when get_unused_fd_flags returns error, ctx will be freed by
+userfaultfd's release function, which is indirectly called by fput().
+Also, if anon_inode_getfile_secure() returns an error, then
+userfaultfd_ctx_put() is called, which calls mmdrop() and frees ctx.
 
-For added entertainment (since this is specifically about dma-buf) you
-can stuff them into various gpu drivers, and convert to a native gpu
-driver handle thing. That's actually the expected use case, first a
-buffer sharing gets established with AF_UNIX, then both sides close
-the dma-buf fd handle.
+Also, the O_CLOEXEC was inadvertently added to the call to
+get_unused_fd_flags() [1].
 
-GPU drivers then internally cache the struct file so that we can hand
-out the same (to avoid confusion when re-importing it on some other
-driver), so for the case of dma-buf the "it's not actually an
-installed fd anywhere for unlimited time" is actually the normal
-use-case, not some odd corner.
+Adding Al Viro's suggested-by, based on [2].
 
-Cheers, Daniel
+[1] https://lore.kernel.org/lkml/1f69c0ab-5791-974f-8bc0-3997ab1d61ea@dancol.org/
+[2] https://lore.kernel.org/lkml/20200719165746.GJ2786714@ZenIV.linux.org.uk/
+
+Fixes: d08ac70b1e0d (Wire UFFD up to SELinux)
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Reported-by: syzbot+75867c44841cb6373570@syzkaller.appspotmail.com
+Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+---
+ fs/userfaultfd.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index ae859161908f..e15eb8fdc083 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -2042,24 +2042,18 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
+ 		O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS),
+ 		NULL);
+ 	if (IS_ERR(file)) {
+-		fd = PTR_ERR(file);
+-		goto out;
++		userfaultfd_ctx_put(ctx);
++		return PTR_ERR(file);
+ 	}
+ 
+-	fd = get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
++	fd = get_unused_fd_flags(O_RDONLY);
+ 	if (fd < 0) {
+ 		fput(file);
+-		goto out;
++		return fd;
+ 	}
+ 
+ 	ctx->owner = file_inode(file);
+ 	fd_install(fd, file);
+-
+-out:
+-	if (fd < 0) {
+-		mmdrop(ctx->mm);
+-		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
+-	}
+ 	return fd;
+ }
+ 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.28.0.163.g6104cc2f0b6-goog
+
