@@ -2,41 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DBB223C3A9
+	by mail.lfdr.de (Postfix) with ESMTP id EA27223C3AA
 	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 04:49:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbgHECs5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Aug 2020 22:48:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57992 "EHLO
+        id S1727785AbgHECtI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Aug 2020 22:49:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbgHECs5 (ORCPT
+        with ESMTP id S1725950AbgHECtH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Aug 2020 22:48:57 -0400
+        Tue, 4 Aug 2020 22:49:07 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6C78C06174A;
-        Tue,  4 Aug 2020 19:48:56 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0EC3C06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Aug 2020 19:49:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
         Content-Description:In-Reply-To:References;
-        bh=45+4tsZh43voqjT3pyHG/7x1QXao2XdBpQJpfMWnUws=; b=gtSqY2NBABTLkNBfCxPB95KMUT
-        sQe54gmhDEkq26K3Nai9vrsCgXEpFzZODeQdJoTX2n7kLGibiYhLrulxCDIdidU1yAD0o+5R8Lp8f
-        DR3l/ktJdpMJ+aJEG/awzgolaYr+v4bO5CJdNaueEVKXm6l8G16/HtdzGxsZQuTKqhfi+4zSLD6lM
-        f6XP+ISw3Hgj3nq1vxIRDQbinYvEQIg/x108fyHihZX9HhhW7GByCZW9g19GgcA6h8YIPnnFlFrwg
-        UTtotBA4bAkeo3q68UZYuLxGCXSJ+V/WkPriHtr0ouf//PBb4RVCbMpF5cs+8nfe7RxEUNnD1wF6+
-        NS6RHTcA==;
+        bh=5DypN0ijHBHZ/kAe3LdCZQtmJcp7UEsHJipKJHyPuuQ=; b=kKh9f2l/S0/nSj/UvVZxlyJJtj
+        y1dcDO6LAfTSCckksXAC7RNnkefLKfR5SAiTC+BeGSg7n722Aoav10+giskT2J205FGYFMuHn3gW4
+        EJ0B/taRpqUge0VNvNtc2ojYnFBaM/8UjjWGszx83j3/GYkdBBlHVodz2PIDWS3lN3qCUHO2cgcWc
+        qyXT1lgzuF28bKN8IzIg58AQFs9jCuS8TAfGpmSdP3x8K/KE3loJw4UBbJ9XnybT0BmoiatAuOw1P
+        nVZUZmacJAKplH6RKk9VPWjEencKD2Fvqg584u8rTgjlcm7r/QsUQxDWxkTwZa7OUJvKo8UxwQYQW
+        UWEu6F/w==;
 Received: from [2601:1c0:6280:3f0::19c2] (helo=smtpauth.infradead.org)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k39U5-0007TM-W2; Wed, 05 Aug 2020 02:48:54 +0000
+        id 1k39UG-0007Ux-TU; Wed, 05 Aug 2020 02:49:06 +0000
 From:   Randy Dunlap <rdunlap@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org
-Subject: [PATCH] ext4: delete duplicated words + other fixes
-Date:   Tue,  4 Aug 2020 19:48:50 -0700
-Message-Id: <20200805024850.12129-1-rdunlap@infradead.org>
+        Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net
+Subject: [PATCH] jfs: delete duplicated words + other fixes
+Date:   Tue,  4 Aug 2020 19:49:01 -0700
+Message-Id: <20200805024901.12181-1-rdunlap@infradead.org>
 X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -45,94 +44,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Delete repeated words in fs/ext4/.
-{the, this, of, we, after}
-
-Also change spelling of "xttr" in inline.c to "xattr" in 2 places.
+Delete repeated words in fs/jfs/.
+{for, allocation, if, the}
+Insert "is" in one place to correct the grammar.
 
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 To: linux-fsdevel@vger.kernel.org
-Cc: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: linux-ext4@vger.kernel.org
+Cc: Dave Kleikamp <shaggy@kernel.org>
+Cc: jfs-discussion@lists.sourceforge.net
 ---
- fs/ext4/extents.c  |    2 +-
- fs/ext4/indirect.c |    2 +-
- fs/ext4/inline.c   |    4 ++--
- fs/ext4/inode.c    |    2 +-
- fs/ext4/mballoc.c  |    4 ++--
- 5 files changed, 7 insertions(+), 7 deletions(-)
+ fs/jfs/jfs_dmap.c   |    2 +-
+ fs/jfs/jfs_extent.c |    2 +-
+ fs/jfs/jfs_extent.h |    2 +-
+ fs/jfs/jfs_logmgr.h |    2 +-
+ fs/jfs/jfs_txnmgr.c |    2 +-
+ fs/jfs/jfs_xtree.c  |    2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
---- linux-next-20200804.orig/fs/ext4/extents.c
-+++ linux-next-20200804/fs/ext4/extents.c
-@@ -4029,7 +4029,7 @@ static int get_implied_cluster_alloc(str
-  * down_read(&EXT4_I(inode)->i_data_sem) if not allocating file system block
-  * (ie, create is zero). Otherwise down_write(&EXT4_I(inode)->i_data_sem)
+--- linux-next-20200804.orig/fs/jfs/jfs_dmap.c
++++ linux-next-20200804/fs/jfs/jfs_dmap.c
+@@ -668,7 +668,7 @@ unlock:
+  *		this does not succeed, we finally try to allocate anywhere
+  *		within the aggregate.
   *
-- * return > 0, number of of blocks already mapped/allocated
-+ * return > 0, number of blocks already mapped/allocated
-  *          if create == 0 and these are pre-allocated blocks
-  *          	buffer head is unmapped
-  *          otherwise blocks are mapped
---- linux-next-20200804.orig/fs/ext4/indirect.c
-+++ linux-next-20200804/fs/ext4/indirect.c
-@@ -1035,7 +1035,7 @@ static void ext4_free_branches(handle_t
- 			brelse(bh);
- 
- 			/*
--			 * Everything below this this pointer has been
-+			 * Everything below this pointer has been
- 			 * released.  Now let this top-of-subtree go.
- 			 *
- 			 * We want the freeing of this indirect block to be
---- linux-next-20200804.orig/fs/ext4/inline.c
-+++ linux-next-20200804/fs/ext4/inline.c
-@@ -276,7 +276,7 @@ static int ext4_create_inline_data(handl
- 		len = 0;
- 	}
- 
--	/* Insert the the xttr entry. */
-+	/* Insert the xattr entry. */
- 	i.value = value;
- 	i.value_len = len;
- 
-@@ -354,7 +354,7 @@ static int ext4_update_inline_data(handl
- 	if (error)
- 		goto out;
- 
--	/* Update the xttr entry. */
-+	/* Update the xattr entry. */
- 	i.value = value;
- 	i.value_len = len;
- 
---- linux-next-20200804.orig/fs/ext4/inode.c
-+++ linux-next-20200804/fs/ext4/inode.c
-@@ -2786,7 +2786,7 @@ retry:
- 		 * ext4_journal_stop() can wait for transaction commit
- 		 * to finish which may depend on writeback of pages to
- 		 * complete or on page lock to be released.  In that
--		 * case, we have to wait until after after we have
-+		 * case, we have to wait until after we have
- 		 * submitted all the IO, released page locks we hold,
- 		 * and dropped io_end reference (for extent conversion
- 		 * to be able to complete) before stopping the handle.
---- linux-next-20200804.orig/fs/ext4/mballoc.c
-+++ linux-next-20200804/fs/ext4/mballoc.c
-@@ -124,7 +124,7 @@
-  * /sys/fs/ext4/<partition>/mb_group_prealloc. The value is represented in
-  * terms of number of blocks. If we have mounted the file system with -O
-  * stripe=<value> option the group prealloc request is normalized to the
-- * the smallest multiple of the stripe value (sbi->s_stripe) which is
-+ * smallest multiple of the stripe value (sbi->s_stripe) which is
-  * greater than the default mb_group_prealloc.
+- *		we also try to allocate anywhere within the aggregate for
++ *		we also try to allocate anywhere within the aggregate
+  *		for allocation requests larger than the allocation group
+  *		size or requests that specify no hint value.
   *
-  * The regular allocator (using the buddy cache) supports a few tunables.
-@@ -2026,7 +2026,7 @@ void ext4_mb_complex_scan_group(struct e
- 			/*
- 			 * IF we have corrupt bitmap, we won't find any
- 			 * free blocks even though group info says we
--			 * we have free blocks
-+			 * have free blocks
- 			 */
- 			ext4_grp_locked_error(sb, e4b->bd_group, 0, 0,
- 					"%d free clusters as per "
+--- linux-next-20200804.orig/fs/jfs/jfs_extent.c
++++ linux-next-20200804/fs/jfs/jfs_extent.c
+@@ -575,7 +575,7 @@ extBalloc(struct inode *ip, s64 hint, s6
+  *	blkno	 - starting block number of the extents current allocation.
+  *	nblks	 - number of blocks within the extents current allocation.
+  *	newnblks - pointer to a s64 value.  on entry, this value is the
+- *		   the new desired extent size (number of blocks).  on
++ *		   new desired extent size (number of blocks).  on
+  *		   successful exit, this value is set to the extent's actual
+  *		   new size (new number of blocks).
+  *	newblkno - the starting block number of the extents new allocation.
+--- linux-next-20200804.orig/fs/jfs/jfs_extent.h
++++ linux-next-20200804/fs/jfs/jfs_extent.h
+@@ -5,7 +5,7 @@
+ #ifndef	_H_JFS_EXTENT
+ #define _H_JFS_EXTENT
+ 
+-/*  get block allocation allocation hint as location of disk inode */
++/*  get block allocation hint as location of disk inode */
+ #define	INOHINT(ip)	\
+ 	(addressPXD(&(JFS_IP(ip)->ixpxd)) + lengthPXD(&(JFS_IP(ip)->ixpxd)) - 1)
+ 
+--- linux-next-20200804.orig/fs/jfs/jfs_logmgr.h
++++ linux-next-20200804/fs/jfs/jfs_logmgr.h
+@@ -132,7 +132,7 @@ struct logpage {
+  * (this comment should be rewritten !)
+  * jfs uses only "after" log records (only a single writer is allowed
+  * in a page, pages are written to temporary paging space if
+- * if they must be written to disk before commit, and i/o is
++ * they must be written to disk before commit, and i/o is
+  * scheduled for modified pages to their home location after
+  * the log records containing the after values and the commit
+  * record is written to the log on disk, undo discards the copy
+--- linux-next-20200804.orig/fs/jfs/jfs_txnmgr.c
++++ linux-next-20200804/fs/jfs/jfs_txnmgr.c
+@@ -1474,7 +1474,7 @@ static int diLog(struct jfs_log * log, s
+ 		 * For the LOG_NOREDOINOEXT record, we need
+ 		 * to pass the IAG number and inode extent
+ 		 * index (within that IAG) from which the
+-		 * the extent being released.  These have been
++		 * extent is being released.  These have been
+ 		 * passed to us in the iplist[1] and iplist[2].
+ 		 */
+ 		lrd->log.noredoinoext.iagnum =
+--- linux-next-20200804.orig/fs/jfs/jfs_xtree.c
++++ linux-next-20200804/fs/jfs/jfs_xtree.c
+@@ -3684,7 +3684,7 @@ s64 xtTruncate(tid_t tid, struct inode *
+  *
+  * function:
+  *	Perform truncate to zero length for deleted file, leaving the
+- *	the xtree and working map untouched.  This allows the file to
++ *	xtree and working map untouched.  This allows the file to
+  *	be accessed via open file handles, while the delete of the file
+  *	is committed to disk.
+  *
