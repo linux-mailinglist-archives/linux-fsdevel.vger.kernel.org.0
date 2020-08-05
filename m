@@ -2,84 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5C0423C839
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 10:54:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 780AD23C8D2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 11:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727921AbgHEIxy convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 5 Aug 2020 04:53:54 -0400
-Received: from mx1.emlix.com ([188.40.240.192]:45754 "EHLO mx1.emlix.com"
+        id S1728536AbgHEJMp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 05:12:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44346 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbgHEIxx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Aug 2020 04:53:53 -0400
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id DB9D65F98C;
-        Wed,  5 Aug 2020 10:53:51 +0200 (CEST)
-From:   Rolf Eike Beer <eb@emlix.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Ralf Baechle <ralf@linux-mips.org>
-Subject: binfmt_elf: simplify error handling in load_elf_phdrs()
-Date:   Wed, 05 Aug 2020 10:53:51 +0200
-Message-ID: <3284126.HYjqi5uYoC@devpool35>
-Organization: emlix GmbH
-In-Reply-To: <6469675.ETGqQKjL3G@devpool35>
-References: <6469675.ETGqQKjL3G@devpool35>
+        id S1728109AbgHEJMH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 Aug 2020 05:12:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 7B671B66E;
+        Wed,  5 Aug 2020 09:12:22 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id A0A0B1E12CB; Wed,  5 Aug 2020 11:12:05 +0200 (CEST)
+Date:   Wed, 5 Aug 2020 11:12:05 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: [GIT PULL] ext2, udf, reiserfs, quota cleanups and minor fixes for
+ 5.9-rc1
+Message-ID: <20200805091205.GD4117@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
----
- fs/binfmt_elf.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+  Hello Linus,
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 251298d25c8c..64b4b47448af 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -434,7 +434,7 @@ static struct elf_phdr *load_elf_phdrs(const struct elfhdr *elf_ex,
- 				       struct file *elf_file)
- {
- 	struct elf_phdr *elf_phdata = NULL;
--	int retval, err = -1;
-+	int retval = -1;
- 	unsigned int size;
- 
- 	/*
-@@ -456,15 +456,9 @@ static struct elf_phdr *load_elf_phdrs(const struct elfhdr *elf_ex,
- 
- 	/* Read in the program headers */
- 	retval = elf_read(elf_file, elf_phdata, size, elf_ex->e_phoff);
--	if (retval < 0) {
--		err = retval;
--		goto out;
--	}
- 
--	/* Success! */
--	err = 0;
- out:
--	if (err) {
-+	if (retval) {
- 		kfree(elf_phdata);
- 		elf_phdata = NULL;
- 	}
+  could you please pull from
+
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git for_v5.9-rc1
+
+to get a few ext2 fixups and then several (mostly comment and
+documentation) cleanups in ext2, udf, reiserfs, and quota.
+
+Top of the tree is 9436fb4d8993. The full shortlog is:
+
+Alexander A. Klimov (2):
+      Replace HTTP links with HTTPS ones: DISKQUOTA
+      udf: Replace HTTP links with HTTPS ones
+
+Chengguang Xu (4):
+      ext2: fix improper assignment for e_value_offs
+      ext2: remove nocheck option
+      ext2: fix some incorrect comments in inode.c
+      ext2: initialize quota info in ext2_xattr_set()
+
+Jan Kara (1):
+      quota: Fixup http links in quota doc
+
+Mikulas Patocka (1):
+      ext2: fix missing percpu_counter_inc
+
+Randy Dunlap (4):
+      ext2: ext2.h: fix duplicated word + typos
+      reiserfs: reiserfs.h: delete a duplicated word
+      udf: osta_udf.h: delete a duplicated word
+      reiserfs: delete duplicated words
+
+zhangyi (F) (2):
+      ext2: propagate errors up to ext2_find_entry()'s callers
+      ext2: ext2_find_entry() return -ENOENT if no entry found
+
+The diffstat is
+
+ Documentation/filesystems/quota.rst | 12 ++++----
+ Documentation/filesystems/udf.rst   |  2 +-
+ fs/ext2/dir.c                       | 55 ++++++++++++++++++-------------------
+ fs/ext2/ext2.h                      |  8 +++---
+ fs/ext2/ialloc.c                    |  3 +-
+ fs/ext2/inode.c                     |  7 ++---
+ fs/ext2/namei.c                     | 39 ++++++++++++++++----------
+ fs/ext2/super.c                     | 10 +------
+ fs/ext2/xattr.c                     |  6 +++-
+ fs/quota/Kconfig                    |  2 +-
+ fs/reiserfs/dir.c                   |  8 +++---
+ fs/reiserfs/fix_node.c              |  4 +--
+ fs/reiserfs/journal.c               |  2 +-
+ fs/reiserfs/reiserfs.h              |  2 +-
+ fs/reiserfs/xattr_acl.c             |  2 +-
+ fs/udf/ecma_167.h                   |  2 +-
+ fs/udf/osta_udf.h                   |  2 +-
+ fs/udf/super.c                      |  4 +--
+ 18 files changed, 86 insertions(+), 84 deletions(-)
+
+							Thanks
+								Honza
+
 -- 
-2.28.0
-
-
--- 
-Rolf Eike Beer, emlix GmbH, http://www.emlix.com
-Fon +49 551 30664-0, Fax +49 551 30664-11
-Gothaer Platz 3, 37083 Göttingen, Germany
-Sitz der Gesellschaft: Göttingen, Amtsgericht Göttingen HR B 3160
-Geschäftsführung: Heike Jordan, Dr. Uwe Kracke – Ust-IdNr.: DE 205 198 055
-
-emlix - smart embedded open source
-
-
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
