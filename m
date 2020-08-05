@@ -2,127 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2907423C755
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 10:05:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4609323C7A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 10:19:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbgHEIBz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Aug 2020 04:01:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49658 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbgHEIA7 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Aug 2020 04:00:59 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DDADC061757
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Aug 2020 01:00:59 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id l23so18099870edv.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Aug 2020 01:00:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EIQ0uWOdJ++JxFUQ1HmZt5yCmSysMlWXqs04qnIH2t8=;
-        b=JovMMmze/ttNrmY/DnMqXihEEGGKa1uofyYf/oxNV+TQQ3LTkh7OFwnGTAZBtxLtN7
-         Fqtd03a+AYZjCg4MXAQq4qkV8JK1Zn4i7HA8oyPn2uEnw5ialjz4BT2tZqSfpNJMETkT
-         WOt0pIcGbePrTBjouZ25xUAWlLwbmu6AqBFVU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EIQ0uWOdJ++JxFUQ1HmZt5yCmSysMlWXqs04qnIH2t8=;
-        b=lAKkaVEO7LJY6iSnCSFOKtf08wNfF7IsOnD5VS2tkg6pu7Wa7y1l4zGT4NAFO569SG
-         bibhFGq98OWm/MhW1bL3+4FtwqS8FpdApwtwiM9Z65ah9nxGK4+n2p/G8kNYUf8o0mg3
-         dsI+mTKElWp7PTK44vgQQ71BOOFXwMsAnPaFxSOZDnn/KGiKGxMyeW8nPCytb5NJUE9I
-         kTBkqjBP2sLPgGoBip/qTxafgrMLbUz8T1Iu1UrFamndmy/vNO8Fe2MR+74UOYYYAkcK
-         3jUwx/sb4fQ/0Pw1xdMqNcViMZnM2e8BMGMNQJvt0E4iuXKzem5o4t6gWFEhsFcPdLpk
-         Hxyg==
-X-Gm-Message-State: AOAM531l2T/H+9TBdQNGXXGaVzUz+mPUbH+79t4UxD+/FwGuOtsWIWKZ
-        meL7vP8UorkrgFZ9B6zj6bJAerhIHH/adk348XEWAw==
-X-Google-Smtp-Source: ABdhPJzVZYXjEjW7cAtLmzaSw4Xs0qoUixG31YHsCBZaYZ//RRu9nnPEXdKwKct7yCvGc0tKDbvT1z98gPurWd/4pPA=
-X-Received: by 2002:a05:6402:1bc5:: with SMTP id ch5mr1589677edb.364.1596614457770;
- Wed, 05 Aug 2020 01:00:57 -0700 (PDT)
+        id S1726459AbgHEISU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 04:18:20 -0400
+Received: from mga06.intel.com ([134.134.136.31]:18340 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725809AbgHEIST (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 Aug 2020 04:18:19 -0400
+IronPort-SDR: rpXm4H6gbrKxtp3SskOrATkoJwzdIPJT+vkoAKcVYVdPRdmp+1DFMfptnxN9kkv2lI6TFcRarH
+ RR0IoI6bUnSw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9703"; a="214022895"
+X-IronPort-AV: E=Sophos;i="5.75,436,1589266800"; 
+   d="scan'208";a="214022895"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2020 01:18:19 -0700
+IronPort-SDR: ASmk9kk8VKanGzp/ne7r+C1ASc9zeMFeRoVPS6SNGsa2QzXGGqLJUV5LHLGkmZr0ZObCBMNF6s
+ 78HgUHq2jw0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,436,1589266800"; 
+   d="scan'208";a="396846698"
+Received: from lkp-server02.sh.intel.com (HELO 37a337f97289) ([10.239.97.151])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Aug 2020 01:18:16 -0700
+Received: from kbuild by 37a337f97289 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1k3Ecp-0000fU-Ge; Wed, 05 Aug 2020 08:18:15 +0000
+Date:   Wed, 5 Aug 2020 16:17:50 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>, viro@zeniv.linux.org.uk,
+        adobriyan@gmail.com, davem@davemloft.net, ebiederm@xmission.com,
+        akpm@linux-foundation.org, christian.brauner@ubuntu.com,
+        areber@redhat.com, serge@hallyn.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     kbuild-all@lists.01.org
+Subject: [RFC PATCH] fs: namespaces_dentry_operations can be static
+Message-ID: <20200805081750.GA61141@34299a1dbcdc>
+References: <159611041929.535980.14513096920129728440.stgit@localhost.localdomain>
 MIME-Version: 1.0
-References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com> <dd1a41a129cd6e8d13525a14807e6dc65b52e0bf.camel@themaw.net>
-In-Reply-To: <dd1a41a129cd6e8d13525a14807e6dc65b52e0bf.camel@themaw.net>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 5 Aug 2020 10:00:46 +0200
-Message-ID: <CAJfpegvQdCr+u51_xkpbS7eMZyNqtnk_tdK1KVhsiCuiFWWJJw@mail.gmail.com>
-Subject: Re: [GIT PULL] Filesystem Information
-To:     Ian Kent <raven@themaw.net>
-Cc:     David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <159611041929.535980.14513096920129728440.stgit@localhost.localdomain>
+X-Patchwork-Hint: ignore
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 5, 2020 at 3:33 AM Ian Kent <raven@themaw.net> wrote:
->
 
-> On Tue, 2020-08-04 at 16:36 +0200, Miklos Szeredi wrote:
-> > And notice how similar the above interface is to getxattr(), or the
-> > proposed readfile().  Where has the "everything is  a file"
-> > philosophy
-> > gone?
->
-> Maybe, but that philosophy (in a roundabout way) is what's resulted
-> in some of the problems we now have. Granted it's blind application
-> of that philosophy rather than the philosophy itself but that is
-> what happens.
+Signed-off-by: kernel test robot <lkp@intel.com>
+---
+ namespaces.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Agree.   What people don't seem to realize, even though there are
-blindingly obvious examples, that binary interfaces like the proposed
-fsinfo(2) syscall can also result in a multitude of problems at the
-same time as solving some others.
-
-There's no magic solution in API design,  it's not balck and white.
-We just need to strive for a good enough solution.  The problem seems
-to be that trying to discuss the merits of other approaches seems to
-hit a brick wall.  We just see repeated pull requests from David,
-without any real discussion of the proposed alternatives.
-
->
-> I get that your comments are driven by the way that philosophy should
-> be applied which is more of a "if it works best doing it that way then
-> do it that way, and that's usually a file".
->
-> In this case there is a logical division of various types of file
-> system information and the underlying suggestion is maybe it's time
-> to move away from the "everything is a file" hard and fast rule,
-> and get rid of some of the problems that have resulted from it.
->
-> The notifications is an example, yes, the delivery mechanism is
-> a "file" but the design of the queueing mechanism makes a lot of
-> sense for the throughput that's going to be needed as time marches
-> on. Then there's different sub-systems each with unique information
-> that needs to be deliverable some other way because delivering "all"
-> the information via the notification would be just plain wrong so
-> a multi-faceted information delivery mechanism makes the most
-> sense to allow specific targeted retrieval of individual items of
-> information.
->
-> But that also supposes your at least open to the idea that "maybe
-> not everything should be a file".
-
-Sure.  I've learned pragmatism, although idealist at heart.  And I'm
-not saying all API's from David are shit.  statx(2) is doing fine.
-It's a simple binary interface that does its job well.   Compare the
-header files for statx and fsinfo, though, and maybe you'll see what
-I'm getting at...
-
-Thanks,
-Miklos
+diff --git a/fs/proc/namespaces.c b/fs/proc/namespaces.c
+index ab47e15556197..63f27f66a96a4 100644
+--- a/fs/proc/namespaces.c
++++ b/fs/proc/namespaces.c
+@@ -182,7 +182,7 @@ static int namespace_delete_dentry(const struct dentry *dentry)
+ 	return 0;
+ }
+ 
+-const struct dentry_operations namespaces_dentry_operations = {
++static const struct dentry_operations namespaces_dentry_operations = {
+ 	.d_delete	= namespace_delete_dentry,
+ };
+ 
