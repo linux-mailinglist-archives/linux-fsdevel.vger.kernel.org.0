@@ -2,109 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23C4523D19B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 22:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEB5823D449
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Aug 2020 01:52:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbgHEUDJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Aug 2020 16:03:09 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:52164 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727863AbgHEQii (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:38:38 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 075GM5nn154546;
-        Wed, 5 Aug 2020 16:38:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=b91EhdBrtRf++crUMvU1v/okOqyDZ/p6+WllKgxua24=;
- b=bh0uu4nrsi2S5qBOLMoUoWyyOCFcW8wJRK2qxlPYKZGMsxuECStoUme98FKfA4V+Pfn+
- MT8GQE4mupsAb++iZS1GmIr9H3Ve6g7SwPELF4xT53THa0ihgTf54fNRwjRVOzREhfWC
- k8LTFNGnx/mHv04cU4GrNbCXlgT/ICQArMOM1oTj4LFfeHtbcIykZdL1NukBn8lp036a
- 8Vl7cV48YWgV+so495ZZbfdrEXqxmnNYizovLZ+2sKSBYiUlYQa/3LZ8jOO1alGLFeLk
- bRaqwXPCP/9IL+3sVa/4t40X8BSVqtuLaNf9p1VmcPinoWiieXF2xZyrPzzjq5XOkSA+ yA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 32qnd43e1v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 05 Aug 2020 16:38:22 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 075GJB9S061054;
-        Wed, 5 Aug 2020 16:38:22 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 32p5gu1evy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 05 Aug 2020 16:38:22 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 075GcLuM002243;
-        Wed, 5 Aug 2020 16:38:21 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 05 Aug 2020 09:38:21 -0700
-Date:   Wed, 5 Aug 2020 09:38:20 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        agruenba@redhat.com
-Subject: [ANNOUNCE] xfs-linux: iomap-5.9-merge rebased to 60263d5889e6
-Message-ID: <20200805163820.GB6090@magnolia>
+        id S1726630AbgHEXwZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 19:52:25 -0400
+Received: from namei.org ([65.99.196.166]:57738 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725779AbgHEXwY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 Aug 2020 19:52:24 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 075Npvex020649;
+        Wed, 5 Aug 2020 23:51:57 GMT
+Date:   Thu, 6 Aug 2020 09:51:57 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
+        snitzer@redhat.com, dm-devel@redhat.com,
+        tyhicks@linux.microsoft.com, agk@redhat.com, paul@paul-moore.com,
+        corbet@lwn.net, nramas@linux.microsoft.com, serge@hallyn.com,
+        pasha.tatashin@soleen.com, jannh@google.com,
+        linux-block@vger.kernel.org, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, mdsakib@microsoft.com,
+        linux-kernel@vger.kernel.org, eparis@redhat.com,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        jaskarankhurana@linux.microsoft.com
+Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
+ LSM (IPE)
+In-Reply-To: <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
+Message-ID: <alpine.LRH.2.21.2008060949410.20084@namei.org>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>   <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>   <20200802143143.GB20261@amd>   <1596386606.4087.20.camel@HansenPartnership.com>   <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
+  <1596639689.3457.17.camel@HansenPartnership.com>  <alpine.LRH.2.21.2008050934060.28225@namei.org> <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9704 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 bulkscore=0
- phishscore=0 spamscore=0 adultscore=0 suspectscore=2 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008050132
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9704 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 clxscore=1015 mlxscore=0
- priorityscore=1501 mlxlogscore=999 malwarescore=0 adultscore=0
- lowpriorityscore=0 spamscore=0 bulkscore=0 phishscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008050132
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On Wed, 5 Aug 2020, Mimi Zohar wrote:
 
-The iomap-5.9-merge branch of the xfs-linux repository at:
+> If block layer integrity was enough, there wouldn't have been a need
+> for fs-verity.   Even fs-verity is limited to read only filesystems,
+> which makes validating file integrity so much easier.  From the
+> beginning, we've said that fs-verity signatures should be included in
+> the measurement list.  (I thought someone signed on to add that support
+> to IMA, but have not yet seen anything.)
+> 
+> Going forward I see a lot of what we've accomplished being incorporated
+> into the filesystems.  When IMA will be limited to defining a system
+> wide policy, I'll have completed my job.
 
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+What are your thoughts on IPE being a standalone LSM? Would you prefer to 
+see its functionality integrated into IMA?
 
-has just been rebased to remove email virus scanner debris from a patch
-commit log.
-
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.
-
-The new head of the iomap-5.9-merge branch is commit:
-
-60263d5889e6 iomap: fall back to buffered writes for invalidation failures
-
-New Commits:
-
-Andreas Gruenbacher (1):
-      [856473cd5d17] iomap: Make sure iomap_end is called after iomap_begin
-
-Christoph Hellwig (2):
-      [80e543ae24db] xfs: use ENOTBLK for direct I/O to buffered I/O fallback
-      [60263d5889e6] iomap: fall back to buffered writes for invalidation failures
-
-Dave Chinner (1):
-      [54752de928c4] iomap: Only invalidate page cache pages on direct IO writes
-
-
-Code Diffstat:
-
- fs/ext4/file.c       |  2 ++
- fs/gfs2/file.c       |  3 ++-
- fs/iomap/apply.c     | 13 +++++++++----
- fs/iomap/direct-io.c | 37 +++++++++++++++++++++----------------
- fs/iomap/trace.h     |  1 +
- fs/xfs/xfs_file.c    |  8 ++++----
- fs/zonefs/super.c    |  7 +++++--
- 7 files changed, 44 insertions(+), 27 deletions(-)
