@@ -2,71 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BBEE223D128
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 21:57:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB1523D0E5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 21:54:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728948AbgHET5C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Aug 2020 15:57:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45408 "EHLO
+        id S1728669AbgHETx7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 15:53:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbgHEQoM (ORCPT
+        with ESMTP id S1728034AbgHEQtT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:44:12 -0400
+        Wed, 5 Aug 2020 12:49:19 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE2B5C034625;
-        Wed,  5 Aug 2020 06:05:43 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71793C034626;
+        Wed,  5 Aug 2020 06:11:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=da1gRr0zZ2t7B4lRqNuRkoPDQjMi6ltCJuE8Al1tVCE=; b=HWXVkRHwN832dRG05UXHB0oBIw
-        bVIHmST3idcP9ekdGW3zfjwF0Pw9NtKHZriMtDEWG2IfLDr6OCBzltDSMhOl6UaR4VB+MKj5TLP04
-        D+y2OfSJNRXduO2wurxCTyIhNrEbjOfxiC3fQ9kowloxLDsXYz+qNZBWskWkV4r67YJb5rni6tnxu
-        zEaPdgkZf+diFOhUAogaiUm5PlxPfMHj+JY1pUqMrnKYwv3swkoiKxzB+3OAJw82jZfkAD5C/RvSG
-        ZSbD7oGskSaQ/+z+rKi6n9bG70XhVIbZNtZ+0+ODNHwM6cKpRLNKr0S7UXSrAbxLcx/udZsOs7w26
-        cmMvbHww==;
+        MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=aQaNuTuKrv/QpgSuKkWo+skzZpmsy56Ti//TuRZUJ/o=; b=KAxbeNa8Sc0qbF7vMs7exLRKW/
+        r07rdTZDoU658JGP/zM4K8pbrXHc8vZ8F1lfh6xl5Cwz+XrgNLZecJDGyeFLJ+E3enVzL97zS/J9E
+        X4XY7H+djuNDSTwr0ehHq3NlnUysRoTIA4HpKVLnIWZ46mOeRLPNj9tRfe78qoatIVWJZbZyVEEu0
+        FjUACpRyQOCkVYcKm7eBRV7O3l6tMrxKYN+g6C7QGeYE6ETxFGPmwA2Iyl7uWAqDpDgP4AFs+yMxO
+        2AX4kRFtc96qYaEa9MfM7kC/BpoCHXGSpl8RkYFnTGsyyOO2LIh3X2Mbbl7HucEO5DAKf9lNjLZm1
+        VMfw+f2Q==;
 Received: from [2601:1c0:6280:3f0::19c2]
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k3J6n-0003pL-49; Wed, 05 Aug 2020 13:05:31 +0000
-Subject: Re: [PATCH v3 3/6] mm: introduce memfd_secret system call to create
- "secret" memory areas
-To:     Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
-        x86@kernel.org
-References: <20200804095035.18778-1-rppt@kernel.org>
- <20200804095035.18778-4-rppt@kernel.org>
+        id 1k3JCg-00045d-SL; Wed, 05 Aug 2020 13:11:35 +0000
+To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
 From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <1f52d43e-29e4-b175-73d5-0aa3c3e79f23@infradead.org>
-Date:   Wed, 5 Aug 2020 06:05:18 -0700
+Subject: [PATCH -next] fs: mount_notify.c: fix build without CONFIG_FSINFO
+Message-ID: <cb34df80-d6af-507d-9935-1685b787f7a3@infradead.org>
+Date:   Wed, 5 Aug 2020 06:11:32 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200804095035.18778-4-rppt@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -75,25 +48,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/4/20 2:50 AM, Mike Rapoport wrote:
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index f2104cc0d35c..8378175e72a4 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -872,4 +872,8 @@ config ARCH_HAS_HUGEPD
->  config MAPPING_DIRTY_HELPERS
->          bool
->  
-> +config SECRETMEM
-> +        def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
+From: Randy Dunlap <rdunlap@infradead.org>
 
-use tab above, not spaces.
+Fix mount_notify.c build errors when CONFIG_FSINFO is not set/enabled:
 
-> +	select GENERIC_ALLOCATOR
-> +
->  endmenu
+../fs/mount_notify.c:94:28: error: 'struct mount' has no member named 'mnt_unique_id'; did you mean 'mnt_group_id'?
+../fs/mount_notify.c:109:28: error: 'struct mount' has no member named 'mnt_unique_id'; did you mean 'mnt_group_id'?
 
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+---
+ fs/mount_notify.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
--- 
-~Randy
+--- linux-next-20200805.orig/fs/mount_notify.c
++++ linux-next-20200805/fs/mount_notify.c
+@@ -91,7 +91,9 @@ void notify_mount(struct mount *trigger,
+ 	n.watch.type	= WATCH_TYPE_MOUNT_NOTIFY;
+ 	n.watch.subtype	= subtype;
+ 	n.watch.info	= info_flags | watch_sizeof(n);
++#ifdef CONFIG_FSINFO
+ 	n.triggered_on	= trigger->mnt_unique_id;
++#endif
+ 
+ 	smp_wmb(); /* See fsinfo_generic_mount_info(). */
+ 
+@@ -106,7 +108,9 @@ void notify_mount(struct mount *trigger,
+ 	case NOTIFY_MOUNT_UNMOUNT:
+ 	case NOTIFY_MOUNT_MOVE_FROM:
+ 	case NOTIFY_MOUNT_MOVE_TO:
++#ifdef CONFIG_FSINFO
+ 		n.auxiliary_mount = aux->mnt_unique_id;
++#endif
+ 		atomic_long_inc(&trigger->mnt_topology_changes);
+ 		atomic_long_inc(&aux->mnt_topology_changes);
+ 		break;
 
