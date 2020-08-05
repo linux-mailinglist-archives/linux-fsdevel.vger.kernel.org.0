@@ -2,92 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 795DF23D25E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 22:12:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B25C923D2AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 22:15:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729754AbgHEUMK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Aug 2020 16:12:10 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:38234 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726897AbgHEQZe (ORCPT
+        id S1729014AbgHEUPC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 16:15:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:21436 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726547AbgHEQUv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:25:34 -0400
+        Wed, 5 Aug 2020 12:20:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596644702;
+        s=mimecast20190719; t=1596644449;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=RDiNTwaajX9EstP2+rkOoaOqP4Sp0ty/xDldPk1nRuY=;
-        b=ZLdpXk/HNS+AUi3ROo21rtg5Qv/XEfMrWtwgHBP6n1uUNof4vHLTDb87x3rxT0koc07SI1
-        KTy/QnlzYkehHheLsKET1MfkI4cCZ3DuAAVbypP255ovHcsjVT2UagoKVgj5mgELRtEPhL
-        jo0xtTQdhi26UO7nuMhsfxoSWEsvsFk=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-218-ZgJkMwTZMt6hgl4TE4nnUw-1; Wed, 05 Aug 2020 11:54:43 -0400
-X-MC-Unique: ZgJkMwTZMt6hgl4TE4nnUw-1
-Received: by mail-oi1-f200.google.com with SMTP id 11so18437142oii.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Aug 2020 08:54:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RDiNTwaajX9EstP2+rkOoaOqP4Sp0ty/xDldPk1nRuY=;
-        b=o8EfbB4+POxy5/BhHKiEMSz3r7faqorAhVgvp7KABou6OEcioOM66K5G8mary+8IJv
-         W5DrpILXjDTPoNC5c4pX3MKNgzG72k5K4VyEZB8uRNIP9kfWy5x5UDVJTuCwQy5javYV
-         ZyMLtZJvp0kL3b/hAlvcQk+UHN6ZU3sOW0inuUZkHtKVAHH4ntgbiOZiJWN1Cshtfyu6
-         oT6+o/PB6+4SmlAchFsiZT4TtzbWPmIB8LCINFAQAYzkhHYV690G9C7bYRUnwZX75zYC
-         vtmSfJO57oaKVZJNnCzh3NdpzI14Y1hlLEC3EgjUd/1z3RzxAUBu+Hc1OQPu5fMxscXM
-         Zzuw==
-X-Gm-Message-State: AOAM530mGPChA9/fHoUBtdi+zyMpU0krdPoTD1wVEpEWHOy9Y6pQDiiW
-        ufJ7cqSmZf3ri7GMxfxtmPVTDDxoe4xU9V5CUkjSuPZTJYxkDCK95ye8S1jGr7bSGkaLv3LZcBN
-        DY93+SPhYXJokySeHT/f+EF0VwXfADGzCHFcDOIM1wQ==
-X-Received: by 2002:a9d:3784:: with SMTP id x4mr3040067otb.95.1596642882738;
-        Wed, 05 Aug 2020 08:54:42 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxFNuf696slwlPSZJynKjLvYPlN0RCiKIOzOVmS4vUbpxiRMAJuurwOtGRZDzCz52Sm2DXwT3decGCiphYpc3o=
-X-Received: by 2002:a9d:3784:: with SMTP id x4mr3040047otb.95.1596642882501;
- Wed, 05 Aug 2020 08:54:42 -0700 (PDT)
+        bh=DHFlZmfElMYNy0WR9YIOE++ShLmq+Nylm/oekejIBn8=;
+        b=eUrfOov91pCGRCux7Vq/UqdrAwLhBzd6Yuht5RSPzxzbK7XLO/SSTpkDGHpjOvBstb4WE+
+        RcPdAT3MNQb2DjoKO++incdyOgk5lTEzp4jD3vNCRU7fR8cbyFYpH5AC3e3YqDKQrGOO07
+        8048aqyilUVBh5AAu5n5LvDJJ6PZtTM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-307-oiElo-DiOHyMD5tPH4SYlQ-1; Wed, 05 Aug 2020 12:07:07 -0400
+X-MC-Unique: oiElo-DiOHyMD5tPH4SYlQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9B20558;
+        Wed,  5 Aug 2020 16:07:02 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 96B4B87E2A;
+        Wed,  5 Aug 2020 16:06:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200804135641.GE32719@miu.piliscsaba.redhat.com>
+References: <20200804135641.GE32719@miu.piliscsaba.redhat.com> <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk> <159646187082.1784947.4293611877413578847.stgit@warthog.procyon.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        torvalds@linux-foundation.org, raven@themaw.net,
+        mszeredi@redhat.com, christian@brauner.io, jannh@google.com,
+        darrick.wong@oracle.com, kzak@redhat.com, jlayton@redhat.com,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/18] fsinfo: Provide notification overrun handling support [ver #21]
 MIME-Version: 1.0
-References: <20200805153214.GA6090@magnolia>
-In-Reply-To: <20200805153214.GA6090@magnolia>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Wed, 5 Aug 2020 17:54:31 +0200
-Message-ID: <CAHc6FU6yMnuKdVsAXkWgwr2ViMSXJdBXksrQDvHwaaw4p8u0rQ@mail.gmail.com>
-Subject: Re: [GIT PULL] iomap: new code for 5.9-rc1
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Christoph Hellwig <hch@lst.de>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, riteshh@linux.ibm.com,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2320581.1596643618.1@warthog.procyon.org.uk>
+Date:   Wed, 05 Aug 2020 17:06:58 +0100
+Message-ID: <2320582.1596643618@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Darrick,
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-On Wed, Aug 5, 2020 at 5:40 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> ----------------------------------------------------------------
-> Andreas Gruenbacher (1):
->       iomap: Make sure iomap_end is called after iomap_begin
+> Shoun't we just make sure that the likelyhood of overruns is low
 
-that commit (d1b4f507d71de) contains the following garbage in the
-commit message:
+That's not necessarily easy.  To avoid overruns you need a bigger buffer.  The
+buffer is preallocated from unswappable kernel space.  Yes, you can increase
+the size of the buffer, but it eats out of your pipe bufferage limit.
 
-    The message from this sender included one or more files
-    which could not be scanned for virus detection; do not
-    open these files unless you are certain of the sender's intent.
+Further, it's a *general* notifications queue, not just for a specific
+purpose, but that means it might get connected to multiple sources, and doing
+something like tearing down a container might generate enough notifications to
+overrun the queue.
 
-    ----------------------------------------------------------------------
+> and if it happens, just reinitialize everthing from scratch (shouldn't be
+> *that* expensive).
 
-How did it come to that?
+If you then spend time reinitialising everything, you're increasing the
+likelihood of racing with further events.  Further, there multiple expenses:
+firstly, you have to tear down and discard all the data that you've spent time
+setting up; secondly, it takes time doing all this; thirdly, it takes cpu
+cycles away from applications.
 
-Thanks,
-Andreas
+The reason I put the event counters in there and made it so that fsinfo()
+could read all the mounts in a subtree and their event counters in one go is
+to make it faster for the user to find out what changed in the event that a
+notification is lost.
+
+I have a patch (not included here as it occasionally induces oopses) that
+attempts to make this doable under the RCU read lock so that it doesn't
+prevent mounts from taking place during the scan.
+
+David
 
