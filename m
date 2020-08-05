@@ -2,95 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A039423CFDF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 21:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7143623CFBE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 21:25:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729001AbgHET0K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Aug 2020 15:26:10 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:38181 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728684AbgHEROA (ORCPT
+        id S1728798AbgHER0i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 13:26:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53028 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728832AbgHER0T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Aug 2020 13:14:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596647638;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=yTnFp3FGNnUMIV+drG+EiP28NPY1kzNtc5gU15VKTgg=;
-        b=EPFQ+szwIY5F62w8zr2I2fjpdpckbH7cE/mKO500e5Z2FY5u5l5us7dqhV/PNScv64ZY6+
-        ryH4fDs8xkJtta7Mc3G0sHwUiK85UkV78lhlGTuOH/bcpT7ceLV5jMIUag0rRkkD0ihpXO
-        vqY9RXcf5GpJyr7QAFBrplc0ttcqEHE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-404-CVKT19CpOAaHFqv9tWctXA-1; Wed, 05 Aug 2020 13:13:57 -0400
-X-MC-Unique: CVKT19CpOAaHFqv9tWctXA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3CC2D80183C;
-        Wed,  5 Aug 2020 17:13:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 089C25D9DC;
-        Wed,  5 Aug 2020 17:13:48 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <1596555579.10158.23.camel@HansenPartnership.com>
-References: <1596555579.10158.23.camel@HansenPartnership.com> <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>, linux-ext4@vger.kernel.org,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-api@vger.kernel.org, torvalds@linux-foundation.org,
-        raven@themaw.net, mszeredi@redhat.com, christian@brauner.io,
-        jannh@google.com, kzak@redhat.com, jlayton@redhat.com,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/18] VFS: Filesystem information [ver #21]
+        Wed, 5 Aug 2020 13:26:19 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0327DC061756
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Aug 2020 10:26:18 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id qc22so32466398ejb.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Aug 2020 10:26:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PfhfFAEDblzsRQWrMzcI0diRWe/CNXK92mcngQaYd7Q=;
+        b=H+qsmC3Z3MgedQ/Jm+u3qVYeVXWyqQH33iCIHKK2tbGxBQbr38frgchQxuf3EzgvmP
+         MNh03Ji3AV40eKkq2AvkoWr7v+NFfyOdrJJ5S474gQ999/lCCin015tia0j+ezaTWqZV
+         /DOijvZvYoY+sBt3AM+Ygy+/Povj5zubYWXtk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PfhfFAEDblzsRQWrMzcI0diRWe/CNXK92mcngQaYd7Q=;
+        b=ZJyp6WDlYqWpoo4iwFJPSKLZHKLV77z2ghMv8PoNMrm/v01gB388hoBylmLjHnpYQp
+         f4iiJ5/4L04O2RVDwhq1diFJc8k3U2yjNl542YtT11b9Dh8ZYIpdQcXB5uzhVJ4i3FjI
+         +eD/OLmVV61RTiikZ6zdp2iKMbzxZPyBwzLTllyVwikghgYTuLYxc7BDTah1p4lUqDDE
+         vucS8QgeD8vUkQwKPoaTFrMTcTCQ7TK+cE7gYoudXm4RHXgDfYK54qrVxrkj4SVESypK
+         wmixtwbYZtLp0l/MD/ZK6WcR2woBALgfJBvKybMnxGft/Hx8hEZimiihyZCjHC1J677H
+         kkbA==
+X-Gm-Message-State: AOAM530qQ85KlLgFjMdGFp5Kxuyw+6dOoyd+QMU8PXIFp/hTt3nB8DCg
+        7LSsIis0HkRhO1vmuDs3ebaA8asYaVUS4fjccBHZDg==
+X-Google-Smtp-Source: ABdhPJzdEHOuUAQwwJud++YQFGRBiDh0v606aODVa0hZTrCfoTE6lVJhbEjcB37S7JrGgIPTV8fOte9EbRFoUEgvB4o=
+X-Received: by 2002:a17:906:4c46:: with SMTP id d6mr379886ejw.14.1596648377290;
+ Wed, 05 Aug 2020 10:26:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2329128.1596647628.1@warthog.procyon.org.uk>
-Date:   Wed, 05 Aug 2020 18:13:48 +0100
-Message-ID: <2329129.1596647628@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
+ <159646187082.1784947.4293611877413578847.stgit@warthog.procyon.org.uk>
+ <20200804135641.GE32719@miu.piliscsaba.redhat.com> <2320582.1596643618@warthog.procyon.org.uk>
+In-Reply-To: <2320582.1596643618@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 5 Aug 2020 19:26:06 +0200
+Message-ID: <CAJfpegvpjjk3JNgTfY1yOGToPLF1mXG5+UkUZqVOGDkvzEr5HQ@mail.gmail.com>
+Subject: Re: [PATCH 10/18] fsinfo: Provide notification overrun handling
+ support [ver #21]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+On Wed, Aug 5, 2020 at 6:07 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> > Shoun't we just make sure that the likelyhood of overruns is low
+>
+> That's not necessarily easy.  To avoid overruns you need a bigger buffer.  The
+> buffer is preallocated from unswappable kernel space.  Yes, you can increase
+> the size of the buffer, but it eats out of your pipe bufferage limit.
+>
+> Further, it's a *general* notifications queue, not just for a specific
+> purpose, but that means it might get connected to multiple sources, and doing
+> something like tearing down a container might generate enough notifications to
+> overrun the queue.
+>
+> > and if it happens, just reinitialize everthing from scratch (shouldn't be
+> > *that* expensive).
+>
+> If you then spend time reinitialising everything, you're increasing the
+> likelihood of racing with further events.  Further, there multiple expenses:
+> firstly, you have to tear down and discard all the data that you've spent time
+> setting up; secondly, it takes time doing all this; thirdly, it takes cpu
+> cycles away from applications.
+>
+> The reason I put the event counters in there and made it so that fsinfo()
+> could read all the mounts in a subtree and their event counters in one go is
+> to make it faster for the user to find out what changed in the event that a
+> notification is lost.
 
-> It sort of petered out into a long winding thread about why not use
-> sysfs instead, which really doesn't look like a good idea to me.
+That's just overdesigning it, IMO.
 
-It seemed to turn into a set of procfs symlinks that pointed at a bunch of
-sysfs stuff - or possibly some special filesystem.
+If the protocol is extensible (as you state) then the counters can be
+added as needed.  And unless the above CPU cycle wastage is actually
+observed in practice, the whole thing is unnecessary.
 
-> Could I make a suggestion about how this should be done in a way that
-> doesn't actually require the fsinfo syscall at all: it could just be
-> done with fsconfig.
-
-I'd prefer to keep it separate.  The interface for fsconfig() is intended to
-move stuff into the kernel, not out of it.  Better to add a parallel syscall
-to go the other way (kind of like we have setxattr/getxattr, sendmsg/recvmsg).
-
-Further, fsinfo() can refer directly to a file/fd/mount/whatever, but
-fsconfig() doesn't do that.  You have to use fspick() to get a context before
-you can use fsconfig().  Now, that's fine if you want to gather several pieces
-of information from a particular object, but it's not so good if you want to
-get one piece of information from each of several objects.
-
-> ... make it table configured...
-
-I did, kind of (though I didn't call it that).  Al rewrote the code to get rid
-of it.
-
-David
-
+Thanks,
+Miklos
