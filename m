@@ -2,90 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F146423CC0E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 18:20:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 371F523CD1F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 19:20:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbgHEQUm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Aug 2020 12:20:42 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41347 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726217AbgHEQS5 (ORCPT
+        id S1728453AbgHERUt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 13:20:49 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:38988 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728495AbgHERSR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:18:57 -0400
+        Wed, 5 Aug 2020 13:18:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596644320;
+        s=mimecast20190719; t=1596647894;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=NOmiaPGZyWfLelA46Ml6D9sENv38lZYZOuC+13qLzsM=;
-        b=VhawphbVb4CjWVesMD3drTw0fAFthTjG0BGyIZu7Szw43G2DPylX4xoPF6IPxx0AGj3Y8D
-        Xef1/JyfSV62bCGHNQSUIo6AGTUz+w599WN+sog5XzOdsPcwAq7lrm8am/y8AUD7CB6y7k
-        G+MQd6vxqu3Ykd9dZVvEYrMRItKfv7c=
+        bh=7dizVWiIXd9zC97fZn3S5tjxTFtcwUz/YOaFNcDsaNo=;
+        b=dGp6JrlikQJ5bObcSBC86bFo7WkJigMXS7eqhbPkazSDNkb/JtvOwbQEUTNUjg8Z42zDCJ
+        q1Xk89ngC6ILBr7KPPvus+SCDqV4rqFrRfCsZN7GTLh/VH0ZDuHSkeTAUTqW8TEA2aAPcb
+        DcKIPMeNqar8tC2O7s47jqv92nLPvt8=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-3-AxTiy8ZWOS-ruwjeo1BfXg-1; Wed, 05 Aug 2020 11:37:36 -0400
-X-MC-Unique: AxTiy8ZWOS-ruwjeo1BfXg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+ us-mta-511-iDJLuTjkO4KTzKuCgAPGSg-1; Wed, 05 Aug 2020 09:59:47 -0400
+X-MC-Unique: iDJLuTjkO4KTzKuCgAPGSg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 666F057;
-        Wed,  5 Aug 2020 15:37:34 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 819D718C63C0;
+        Wed,  5 Aug 2020 13:59:46 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-112-32.rdu2.redhat.com [10.10.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F20B45D9E2;
-        Wed,  5 Aug 2020 15:37:31 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E9CD1002382;
+        Wed,  5 Aug 2020 13:59:45 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20200804133817.GD32719@miu.piliscsaba.redhat.com>
-References: <20200804133817.GD32719@miu.piliscsaba.redhat.com> <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk> <159646185371.1784947.14555585307218856883.stgit@warthog.procyon.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        torvalds@linux-foundation.org, raven@themaw.net,
-        mszeredi@redhat.com, christian@brauner.io, jannh@google.com,
-        darrick.wong@oracle.com, kzak@redhat.com, jlayton@redhat.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/18] fsinfo: Allow mount topology and propagation info to be retrieved [ver #21]
+In-Reply-To: <cb34df80-d6af-507d-9935-1685b787f7a3@infradead.org>
+References: <cb34df80-d6af-507d-9935-1685b787f7a3@infradead.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     dhowells@redhat.com,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH -next] fs: mount_notify.c: fix build without CONFIG_FSINFO
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2316805.1596641851.1@warthog.procyon.org.uk>
+Content-ID: <2303938.1596635984.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 05 Aug 2020 16:37:31 +0100
-Message-ID: <2316806.1596641851@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Date:   Wed, 05 Aug 2020 14:59:44 +0100
+Message-ID: <2303939.1596635984@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
+Hi Randy,
 
-> > +	__u32	shared_group_id;	/* Shared: mount group ID */
-> > +	__u32	dependent_source_id;	/* Dependent: source mount group ID */
-> > +	__u32	dependent_clone_of_id;	/* Dependent: ID of mount this was clon=
-ed from */
+> From: Randy Dunlap <rdunlap@infradead.org>
 > =
 
-> Another set of ID's that are currently 32bit *internally* but that doesn=
-'t
-> mean they will always be 32 bit.
+> Fix mount_notify.c build errors when CONFIG_FSINFO is not set/enabled:
 > =
 
-> And that last one (apart from "slave" being obfuscated)
+> ../fs/mount_notify.c:94:28: error: 'struct mount' has no member named 'm=
+nt_unique_id'; did you mean 'mnt_group_id'?
+> ../fs/mount_notify.c:109:28: error: 'struct mount' has no member named '=
+mnt_unique_id'; did you mean 'mnt_group_id'?
+> =
 
-I had "slave" in there.  It got objected to.  See
-Documentation/process/coding-style.rst section 4.
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
 
-> is simply incorrect.  It has nothing to do with cloning.  It's the "ID o=
-f
-> the closest peer group in the propagation chain that has a representativ=
-e
-> mount in the current root".
-
-You appear to be in disagreement with others that I've asked.
+That's not quite the right solution.  I'm going to use the attached instea=
+d.
 
 David
+---
+commit 830d864747b00d979914f15adaad58ccb9fd77f6
+Author: Randy Dunlap <rdunlap@infradead.org>
+Date:   Wed Aug 5 06:11:32 2020 -0700
+
+    fs: mount_notify.c: fix build without CONFIG_FSINFO
+    =
+
+    Fix mount_notify.c build errors when CONFIG_FSINFO is not set/enabled:
+    =
+
+    ../fs/mount_notify.c:94:28: error: 'struct mount' has no member named =
+'mnt_unique_id'; did you mean 'mnt_group_id'?
+    ../fs/mount_notify.c:109:28: error: 'struct mount' has no member named=
+ 'mnt_unique_id'; did you mean 'mnt_group_id'?
+    =
+
+    [DH: Fix this to use mnt_id if CONFIG_FSINFO=3Dn rather than not setti=
+ng
+    anything]
+    =
+
+    Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+    Cc: David Howells <dhowells@redhat.com>
+    Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+    Cc: linux-fsdevel@vger.kernel.org
+    Signed-off-by: David Howells <dhowells@redhat.com>
+
+diff --git a/fs/mount_notify.c b/fs/mount_notify.c
+index 57995c27ca88..254090b6d5ac 100644
+--- a/fs/mount_notify.c
++++ b/fs/mount_notify.c
+@@ -91,7 +91,11 @@ void notify_mount(struct mount *trigger,
+ 	n.watch.type	=3D WATCH_TYPE_MOUNT_NOTIFY;
+ 	n.watch.subtype	=3D subtype;
+ 	n.watch.info	=3D info_flags | watch_sizeof(n);
++#ifdef CONFIG_FSINFO
+ 	n.triggered_on	=3D trigger->mnt_unique_id;
++#else
++	n.triggered_on	=3D trigger->mnt_id;
++#endif
+ =
+
+ 	smp_wmb(); /* See fsinfo_generic_mount_info(). */
+ =
+
+@@ -106,7 +110,11 @@ void notify_mount(struct mount *trigger,
+ 	case NOTIFY_MOUNT_UNMOUNT:
+ 	case NOTIFY_MOUNT_MOVE_FROM:
+ 	case NOTIFY_MOUNT_MOVE_TO:
++#ifdef CONFIG_FSINFO
+ 		n.auxiliary_mount =3D aux->mnt_unique_id;
++#else
++		n.auxiliary_mount =3D aux->mnt_id;
++#endif
+ 		atomic_long_inc(&trigger->mnt_topology_changes);
+ 		atomic_long_inc(&aux->mnt_topology_changes);
+ 		break;
 
