@@ -2,65 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49A1C23D106
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 21:55:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBEE223D128
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 21:57:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbgHETzj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Aug 2020 15:55:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46308 "EHLO
+        id S1728948AbgHET5C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 15:57:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727991AbgHEQqQ (ORCPT
+        with ESMTP id S1727999AbgHEQoM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:46:16 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB30BC034618
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Aug 2020 05:50:34 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id y206so12358674pfb.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Aug 2020 05:50:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pxHZlGFs7n3hLhzw5QUyYbZXnsLYTvT69Yo2dhG5PnE=;
-        b=s4mcYaszZB72uzAiUc1f6UxgpxOUVAK+bqa8bpBtpi4bAsVpiuMKN77nWwmHFGx6xu
-         /aJCTtRlsTUOuOUSp9LdjxuecSIYwISApjdBOMMEYW67l/kzMq95fbtpJ5D0Bnw/B4FK
-         WF6SO5eghuT6axWjy0u2JVJyCxIneYDL5u7OZKIKClodsGDMeirU4Q/r0WkaxWDSs6BC
-         iNMGM5fOmMmKM4akmwx7idL7u4YkdsAOHrRxWUTDy+TEXU0ANzuTk0dmdQfoPa2RK9UQ
-         W7WehElPojoe5rRSjM2qZypZ7Es1UB0SZK/aR1PpN6IdsSlmTuZe9BLzhJZRGLKQmFFM
-         UikQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pxHZlGFs7n3hLhzw5QUyYbZXnsLYTvT69Yo2dhG5PnE=;
-        b=dEAhK3pWpvf9MvgqItdXp9nZpSJsaHX2/WnL5eWba1ipGaFKNwgHgogoL1x6Pp+5hM
-         i8F6sfa68WyLOi+PSkRYW8EZarWey+3txtiZ0/PS1PSlbmpsPV62Q2wYiku/WHmVTyke
-         wDJASZ2RHl47E7m2843+aMIGir4mgzdN9/fq4CVwGFGSsCfp6ghBnZKS2bjsGieCf6Cp
-         vytTpZpj+odUOmWkA8MPKjtfH/ycobanj5IGYCPmcKPxdYXbCwcgrTwNfjr84cvCvZm0
-         flnjCyhPgNH5thUyme/avfIDUbO/aqUj1mOyT4PBk19DJolLQrizUXbv5enzRK0FF0L6
-         ixqA==
-X-Gm-Message-State: AOAM532h2BmN8HF6yMUzvINYHb8inhuYtJFlui7A0QASziBLbjaMoGxG
-        TzGtnFOHHnyBaK2jVQz9C3gGwg==
-X-Google-Smtp-Source: ABdhPJzOcIElnG1OKuAwYY+GNfFtXM3ZLcXTRiuliXNpSfqW+BynlCZ/gdnSW61DbVIUXDJycMEtjA==
-X-Received: by 2002:aa7:8f0d:: with SMTP id x13mr3175421pfr.193.1596631834158;
-        Wed, 05 Aug 2020 05:50:34 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id e14sm3576167pfh.108.2020.08.05.05.50.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Aug 2020 05:50:33 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: Fix NULL pointer dereference in loop_rw_iter()
-To:     Guoyu Huang <hgy5945@gmail.com>, viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200805110247.GA103385@ubuntu>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <b3cc7c68-a76d-8efd-4d2d-bd4c06efe177@kernel.dk>
-Date:   Wed, 5 Aug 2020 06:50:31 -0600
+        Wed, 5 Aug 2020 12:44:12 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE2B5C034625;
+        Wed,  5 Aug 2020 06:05:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=da1gRr0zZ2t7B4lRqNuRkoPDQjMi6ltCJuE8Al1tVCE=; b=HWXVkRHwN832dRG05UXHB0oBIw
+        bVIHmST3idcP9ekdGW3zfjwF0Pw9NtKHZriMtDEWG2IfLDr6OCBzltDSMhOl6UaR4VB+MKj5TLP04
+        D+y2OfSJNRXduO2wurxCTyIhNrEbjOfxiC3fQ9kowloxLDsXYz+qNZBWskWkV4r67YJb5rni6tnxu
+        zEaPdgkZf+diFOhUAogaiUm5PlxPfMHj+JY1pUqMrnKYwv3swkoiKxzB+3OAJw82jZfkAD5C/RvSG
+        ZSbD7oGskSaQ/+z+rKi6n9bG70XhVIbZNtZ+0+ODNHwM6cKpRLNKr0S7UXSrAbxLcx/udZsOs7w26
+        cmMvbHww==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k3J6n-0003pL-49; Wed, 05 Aug 2020 13:05:31 +0000
+Subject: Re: [PATCH v3 3/6] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+To:     Mike Rapoport <rppt@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+References: <20200804095035.18778-1-rppt@kernel.org>
+ <20200804095035.18778-4-rppt@kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <1f52d43e-29e4-b175-73d5-0aa3c3e79f23@infradead.org>
+Date:   Wed, 5 Aug 2020 06:05:18 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200805110247.GA103385@ubuntu>
+In-Reply-To: <20200804095035.18778-4-rppt@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,71 +75,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/5/20 5:02 AM, Guoyu Huang wrote:
-> loop_rw_iter() does not check whether the file has a read or
-> write function. This can lead to NULL pointer dereference
-> when the user passes in a file descriptor that does not have
-> read or write function.
-> 
-> The crash log looks like this:
-> 
-> [   99.834071] BUG: kernel NULL pointer dereference, address: 0000000000000000
-> [   99.835364] #PF: supervisor instruction fetch in kernel mode
-> [   99.836522] #PF: error_code(0x0010) - not-present page
-> [   99.837771] PGD 8000000079d62067 P4D 8000000079d62067 PUD 79d8c067 PMD 0
-> [   99.839649] Oops: 0010 [#2] SMP PTI
-> [   99.840591] CPU: 1 PID: 333 Comm: io_wqe_worker-0 Tainted: G      D           5.8.0 #2
-> [   99.842622] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1 04/01/2014
-> [   99.845140] RIP: 0010:0x0
-> [   99.845840] Code: Bad RIP value.
-> [   99.846672] RSP: 0018:ffffa1c7c01ebc08 EFLAGS: 00010202
-> [   99.848018] RAX: 0000000000000000 RBX: ffff92363bd67300 RCX: ffff92363d461208
-> [   99.849854] RDX: 0000000000000010 RSI: 00007ffdbf696bb0 RDI: ffff92363bd67300
-> [   99.851743] RBP: ffffa1c7c01ebc40 R08: 0000000000000000 R09: 0000000000000000
-> [   99.853394] R10: ffffffff9ec692a0 R11: 0000000000000000 R12: 0000000000000010
-> [   99.855148] R13: 0000000000000000 R14: ffff92363d461208 R15: ffffa1c7c01ebc68
-> [   99.856914] FS:  0000000000000000(0000) GS:ffff92363dd00000(0000) knlGS:0000000000000000
-> [   99.858651] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   99.860032] CR2: ffffffffffffffd6 CR3: 000000007ac66000 CR4: 00000000000006e0
-> [   99.861979] Call Trace:
-> [   99.862617]  loop_rw_iter.part.0+0xad/0x110
-> [   99.863838]  io_write+0x2ae/0x380
-> [   99.864644]  ? kvm_sched_clock_read+0x11/0x20
-> [   99.865595]  ? sched_clock+0x9/0x10
-> [   99.866453]  ? sched_clock_cpu+0x11/0xb0
-> [   99.867326]  ? newidle_balance+0x1d4/0x3c0
-> [   99.868283]  io_issue_sqe+0xd8f/0x1340
-> [   99.869216]  ? __switch_to+0x7f/0x450
-> [   99.870280]  ? __switch_to_asm+0x42/0x70
-> [   99.871254]  ? __switch_to_asm+0x36/0x70
-> [   99.872133]  ? lock_timer_base+0x72/0xa0
-> [   99.873155]  ? switch_mm_irqs_off+0x1bf/0x420
-> [   99.874152]  io_wq_submit_work+0x64/0x180
-> [   99.875192]  ? kthread_use_mm+0x71/0x100
-> [   99.876132]  io_worker_handle_work+0x267/0x440
-> [   99.877233]  io_wqe_worker+0x297/0x350
-> [   99.878145]  kthread+0x112/0x150
-> [   99.878849]  ? __io_worker_unuse+0x100/0x100
-> [   99.879935]  ? kthread_park+0x90/0x90
-> [   99.880874]  ret_from_fork+0x22/0x30
-> [   99.881679] Modules linked in:
-> [   99.882493] CR2: 0000000000000000
-> [   99.883324] ---[ end trace 4453745f4673190b ]---
-> [   99.884289] RIP: 0010:0x0
-> [   99.884837] Code: Bad RIP value.
-> [   99.885492] RSP: 0018:ffffa1c7c01ebc08 EFLAGS: 00010202
-> [   99.886851] RAX: 0000000000000000 RBX: ffff92363acd7f00 RCX: ffff92363d461608
-> [   99.888561] RDX: 0000000000000010 RSI: 00007ffe040d9e10 RDI: ffff92363acd7f00
-> [   99.890203] RBP: ffffa1c7c01ebc40 R08: 0000000000000000 R09: 0000000000000000
-> [   99.891907] R10: ffffffff9ec692a0 R11: 0000000000000000 R12: 0000000000000010
-> [   99.894106] R13: 0000000000000000 R14: ffff92363d461608 R15: ffffa1c7c01ebc68
-> [   99.896079] FS:  0000000000000000(0000) GS:ffff92363dd00000(0000) knlGS:0000000000000000
-> [   99.898017] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   99.899197] CR2: ffffffffffffffd6 CR3: 000000007ac66000 CR4: 00000000000006e0
+On 8/4/20 2:50 AM, Mike Rapoport wrote:
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index f2104cc0d35c..8378175e72a4 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -872,4 +872,8 @@ config ARCH_HAS_HUGEPD
+>  config MAPPING_DIRTY_HELPERS
+>          bool
+>  
+> +config SECRETMEM
+> +        def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
 
-Thanks, applied (slightly modified for current -git), and marked with the right
-fixes tag and stable CC'ed.
+use tab above, not spaces.
+
+> +	select GENERIC_ALLOCATOR
+> +
+>  endmenu
+
 
 -- 
-Jens Axboe
+~Randy
 
