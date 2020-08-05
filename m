@@ -2,172 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D25CD23C318
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 03:44:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0685323C32E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 03:54:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726282AbgHEBop (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Aug 2020 21:44:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48142 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbgHEBom (ORCPT
+        id S1726584AbgHEByA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Aug 2020 21:54:00 -0400
+Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:48731 "EHLO
+        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725904AbgHEBx7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Aug 2020 21:44:42 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AFDAC06174A;
-        Tue,  4 Aug 2020 18:44:42 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id 17so1407181pfw.9;
-        Tue, 04 Aug 2020 18:44:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=H7BJuPQcZ5V/7UBDAvP8UACTKplyPBFmmLy/DLb8wI8=;
-        b=MAKSAnD05LKUMQ8kuUvEdsOfKICcqnCV29ChGGtTJNnr4IpU5YOKzBryRhhhg54ib7
-         kdZeZT+5+GjlzQM6LCeSo2zj5q1kj8XS90fPAjb2tNOTt9g9C+a6VE2J98pi/bAa4xwg
-         eXwQIfGW+fr671TiIH8FcS0JKWhu2jtTpS9bBtQG6O5pPyE1jJnhvYqd+/5koSqr5iIN
-         SsO7yy6IiPv+7cEk10gBZ8m0keJpkcNGLMTqt5W+cBiY0cLfQXGrn3LK5pBzUqwyMAJa
-         6m9banQHsTzcoaKEHMvPVyhyT06LQDul29CTt2CqsXOx3PuDAqT/JLOSRDzEGi1vfbqv
-         lvdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=H7BJuPQcZ5V/7UBDAvP8UACTKplyPBFmmLy/DLb8wI8=;
-        b=gMVaLEeIsh8YSktcihiKkENv3giubhrWzuqObK16XYCUIysZ9S1lDhvGidMJVXbR6q
-         PSfNSOPtGIwYR//XOgsfJ5BINibWq2zGplJ/Y4gqG+Ihmq/9Qyuld5vkkMECFYddOelM
-         X+XmW6O33Kk0RadtgJEmYzvcCT08B1RXKbJWiWl8We/OOf2J9VhGexY+XmRQk7fnkYPA
-         HiPWghvobSko1aUGq3PCUbAYmtRHqNTKYgfa+Z7wnigXb08k2JNdgHXadawOTudO4VGv
-         rgf2R0zMuZHfxvUiiQHu2oLdK62U0nKnCdBL8uEP3OIu1w5V6MfNMH8NyAHWSKxegAt/
-         ASxA==
-X-Gm-Message-State: AOAM533zSYRhSQtIoXe2cUCt6+zY02TpTSotW+7x3l2dnjQvhY8RTdcy
-        PH9rLSpISpmTyoWdqygCJ1CSo2MO
-X-Google-Smtp-Source: ABdhPJwIk329Jse0FHZbrQnU0oOrRPnSdv1tfi6sxSo70DizzLpuKPvIUSHCr/ieY3v0WidLQkb7Kg==
-X-Received: by 2002:aa7:9e5d:: with SMTP id z29mr1127451pfq.122.1596591881763;
-        Tue, 04 Aug 2020 18:44:41 -0700 (PDT)
-Received: from ?IPv6:2404:7a87:83e0:f800:d05c:a260:d7a2:2303? ([2404:7a87:83e0:f800:d05c:a260:d7a2:2303])
-        by smtp.gmail.com with ESMTPSA id c9sm510042pjr.35.2020.08.04.18.44.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Aug 2020 18:44:41 -0700 (PDT)
-Subject: Re: [PATCH v2] exfat: integrates dir-entry getting and validation
-To:     Namjae Jeon <namjae.jeon@samsung.com>,
-        Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp
-Cc:     Mori.Takahiro@ab.MitsubishiElectric.co.jp,
-        Motai.Hirotaka@aj.MitsubishiElectric.co.jp,
-        'Sungjong Seo' <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20200715012304epcas1p23e9f45415afc551beea122e4e1bdb933@epcas1p2.samsung.com>
- <20200715012249.16378-1-kohada.t2@gmail.com>
- <015d01d6663e$1eb8c780$5c2a5680$@samsung.com>
- <TY2PR01MB287579A95A7994DE2B34E425904D0@TY2PR01MB2875.jpnprd01.prod.outlook.com>
- <001c01d669fe$8ab7cf80$a0276e80$@samsung.com>
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-Message-ID: <05c5c1e9-2ccf-203d-5e8c-1c951004a7f9@gmail.com>
-Date:   Wed, 5 Aug 2020 10:44:36 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Tue, 4 Aug 2020 21:53:59 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id CB856601;
+        Tue,  4 Aug 2020 21:53:57 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Tue, 04 Aug 2020 21:53:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        rPYF5yA8hLNR4c7pU4Df6+cNnwOEB80CCSVmFwv4puA=; b=YE+d82rIPbXuqxKn
+        CXWvxCQaWgzhv0XBh1YVuS/u8Fz0WWKMS//bQaBDHULPvdD5yvCyzb+jBcSJ3Mdh
+        1mUsM4K1IdFBQfkLZ0yAYYF+34SvOvlgsIs94InE758/8SOWYBZfj36o9d0cB545
+        nUafKcJcssT+8CBoAFNAlVaWgAC4X7wHow2XrOFUfdVWrtSlfz7MyL4uHBh6AI2G
+        ycpE8qcsRdXa90ejYNkcz5NKCUQZYBBGovcRLN+zL0L6eB7Cs7/xlZ/npofRWONZ
+        1oUZqJt3HQ8033SHLXsx1sqCfRXt64zZ+zNeX6Iq2cD4lBee121EAawySjv89w5c
+        nTw2fA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=rPYF5yA8hLNR4c7pU4Df6+cNnwOEB80CCSVmFwv4p
+        uA=; b=jgUjtgUfMjrVXlKCmnCFFqJRatOzXD+NEJFZq47Rzhx6N0/vyRokeyTfD
+        mTjr2N5w0ddJEQ1yGJWC/6+6DI9G9M218fx1WUJhn2aAzI9cAC0dFyW7vbCBWL9/
+        OluyU20xC54EE0Cj0pbj49mXIG1fDRenSPdSJluKS2nQdDvCIUS7mjxxBIUH5oTh
+        wJh2M5bhy4GNcwK/2qMZdvpM1V6K7A+HzDrsLSp/FtebaGTkmigfFVjKV8nVr92N
+        m4LMH8JGBwkpUm+LOkmox3+ZliFks7+8Sdh8P9bUCyvbUQLP/4Dwrys5FRAf4X6m
+        4wwPNlTdaggnYdC2c/HTHizozvNAg==
+X-ME-Sender: <xms:NBEqXymkRrlVO5xktKBzf0ANqsZ26TDxhaukMJRmDd1jnt-UyUNGPQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeejgdehfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
+    peehkedrjedrvdehhedrvddvtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:NBEqX53XUobCLoxk8ViEmFPfFVxhV4n8SkdnTKtrD2roLlpm_3zv0Q>
+    <xmx:NBEqXwo0GYEBS0IXO-_Zm0V5YRX6VOjmYI6gjRgvIoEiku8QKQ7K6g>
+    <xmx:NBEqX2mQl4ZOb1JottGZERsKA41UNsdkW4kNX_47B1jazMOc-geySQ>
+    <xmx:NREqX2N-KA3YGhusO26WSXjOI-4EW_NPYYrRQwx1c6rLZ1aEeZrtip8tmpM>
+Received: from mickey.themaw.net (58-7-255-220.dyn.iinet.net.au [58.7.255.220])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 94858328005D;
+        Tue,  4 Aug 2020 21:53:50 -0400 (EDT)
+Message-ID: <c558fc4af785f62a2751be3b297d1ccbbfcfa969.camel@themaw.net>
+Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and
+ attribute change notifications [ver #5]
+From:   Ian Kent <raven@themaw.net>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
+        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
+        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 05 Aug 2020 09:53:46 +0800
+In-Reply-To: <CAJfpeguFkDDhz7+70pSUv_j=xY5L08ESpaE+jER9vE5p+ZmfFw@mail.gmail.com>
+References: <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
+         <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
+         <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com>
+         <1293241.1595501326@warthog.procyon.org.uk>
+         <CAJfpeguvLMCw1H8+DPsfZE_k0sEiRtA17pD9HjnceSsAvqqAZw@mail.gmail.com>
+         <43c061d26ddef2aa3ca1ac726da7db9ab461e7be.camel@themaw.net>
+         <CAJfpeguFkDDhz7+70pSUv_j=xY5L08ESpaE+jER9vE5p+ZmfFw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-In-Reply-To: <001c01d669fe$8ab7cf80$a0276e80$@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, 2020-08-04 at 15:19 +0200, Miklos Szeredi wrote:
+> On Tue, Aug 4, 2020 at 1:39 PM Ian Kent <raven@themaw.net> wrote:
+> > On Mon, 2020-08-03 at 11:29 +0200, Miklos Szeredi wrote:
+> > > On Thu, Jul 23, 2020 at 12:48 PM David Howells <
+> > > dhowells@redhat.com>
+> > > wrote:
+> > > 
+> > > > > >                 __u32   topology_changes;
+> > > > > >                 __u32   attr_changes;
+> > > > > >                 __u32   aux_topology_changes;
+> > > > > 
+> > > > > Being 32bit this introduces wraparound effects.  Is that
+> > > > > really
+> > > > > worth it?
+> > > > 
+> > > > You'd have to make 2 billion changes without whoever's
+> > > > monitoring
+> > > > getting a
+> > > > chance to update their counters.  But maybe it's not worth it
+> > > > putting them
+> > > > here.  If you'd prefer, I can make the counters all 64-bit and
+> > > > just
+> > > > retrieve
+> > > > them with fsinfo().
+> > > 
+> > > Yes, I think that would be preferable.
+> > 
+> > I think this is the source of the recommendation for removing the
+> > change counters from the notification message, correct?
+> > 
+> > While it looks like I may not need those counters for systemd
+> > message
+> > buffer overflow handling myself I think removing them from the
+> > notification message isn't a sensible thing to do.
+> > 
+> > If you need to detect missing messages, perhaps due to message
+> > buffer
+> > overflow, then you need change counters that are relevant to the
+> > notification message itself. That's so the next time you get a
+> > message
+> > for that object you can be sure that change counter comparisons you
+> > you make relate to object notifications you have processed.
+> 
+> I don't quite get it.  Change notification is just that: a
+> notification.   You need to know what object that notification
+> relates
+> to, to be able to retrieve the up to date attributes of said object.
+> 
+> What happens if you get a change counter N in the notification
+> message, then get a change counter N + 1 in the attribute retrieval?
+> You know that another change happened, and you haven't yet processed
+> the notification yet.  So when the notification with N + 1 comes in,
+> you can optimize away the attribute retrieve.
+> 
+> Nice optimization, but it's optimizing a race condition, and I don't
+> think that's warranted.  I don't see any other use for the change
+> counter in the notification message.
+> 
+> 
+> > Yes, I know it isn't quite that simple, but tallying up what you
+> > have
+> > processed in the current batch of messages (or in multiple batches
+> > of
+> > messages if more than one read has been possible) to perform the
+> > check
+> > is a user space responsibility. And it simply can't be done if the
+> > counters consistency is in question which it would be if you need
+> > to
+> > perform another system call to get it.
+> > 
+> > It's way more useful to have these in the notification than
+> > obtainable
+> > via fsinfo() IMHO.
+> 
+> What is it useful for?
 
->>>> +	i = 2;
->>>> +	while ((ep = exfat_get_validated_dentry(es, i++, TYPE_NAME))) {
->>> As Sungjong said, I think that TYPE_NAME seems right to be validated in exfat_get_dentry_set().
->>
->> First, it is possible to correctly determine that "Immediately follow the Stream Extension directory
->> entry as a consecutive series"
->> whether the TYPE_NAME check is implemented here or exfat_get_dentry_set().
->> It's functionally same, so it is also right to validate in either.
->>
->> Second, the current implementation does not care for NameLength field, as I replied to Sungjong.
->> If name is not terminated with zero, the name will be incorrect.(With or without my patch) I think
->> TYPE_NAME and NameLength validation should not be separated from the name extraction.
->> If validate TYPE_NAME in exfat_get_dentry_set(), NameLength validation and name extraction should also
->> be implemented there.
->> (Otherwise, a duplication check with exfat_get_dentry_set() and here.) I will add NameLength
->> validation here.
-> Okay.
+Only to verify that you have seen all the notifications.
 
-Thank you for your understanding.
+If you have to grab that info with a separate call then the count
+isn't necessarily consistent because other notifications can occur
+while you grab it.
 
->> Therefore, TYPE_NAME validation here should not be omitted.
->>
->> Third, getting dentry and entry-type validation should be integrated.
->> These no longer have to be primitive.
->> The integration simplifies caller error checking.
+My per-object rant isn't quite right, what's needed is a consistent
+way to verify you have seen everything you were supposed to.
 
+I think your point is that if you grab the info in another call and
+it doesn't match you need to refresh and that's fine but I think it's
+better to be able to verify you have got everything that was sent as
+you go and avoid the need for the refresh more often.
 
+> 
+> If the notification itself would contain the list of updated
+> attributes and their new values, then yes, this would make sense.  If
+> the notification just tells us that the object was modified, but not
+> the modifications themselves, then I don't see how the change counter
+> in itself could add any information (other than optimizing the race
+> condition above).
+> 
+> Thanks,
+> Miklos
+> 
+> Thanks,
+> 
+> 
+> 
+> > > > > >         n->watch.info & NOTIFY_MOUNT_IS_RECURSIVE if true
+> > > > > > indicates that
+> > > > > >         the notifcation was generated by an event (eg.
+> > > > > > SETATTR)
+> > > > > > that was
+> > > > > >         applied recursively.  The notification is only
+> > > > > > generated for the
+> > > > > >         object that initially triggered it.
+> > > > > 
+> > > > > Unused in this patchset.  Please don't add things to the API
+> > > > > which are not
+> > > > > used.
+> > > > 
+> > > > Christian Brauner has patches for mount_setattr() that will
+> > > > need to
+> > > > use this.
+> > > 
+> > > Fine, then that patch can add the flag.
+> > > 
+> > > Thanks,
+> > > Miklos
 
->>>> diff --git a/fs/exfat/file.c b/fs/exfat/file.c index
->>>> 6707f3eb09b5..b6b458e6f5e3 100644
->>>> --- a/fs/exfat/file.c
->>>> +++ b/fs/exfat/file.c
->>>> @@ -160,8 +160,8 @@ int __exfat_truncate(struct inode *inode, loff_t new_size)
->>>>   				ES_ALL_ENTRIES);
->>>>   		if (!es)
->>>>   			return -EIO;
->>>> -		ep = exfat_get_dentry_cached(es, 0);
->>>> -		ep2 = exfat_get_dentry_cached(es, 1);
->>>> +		ep = exfat_get_validated_dentry(es, 0, TYPE_FILE);
->>>> +		ep2 = exfat_get_validated_dentry(es, 1, TYPE_STREAM);
->>> TYPE_FILE and TYPE_STREAM was already validated in exfat_get_dentry_set().
->>> Isn't it unnecessary duplication check ?
->>
->> No, as you say.
->> Although TYPE is specified, it is not good not to check the null of ep/ep2.
->> However, with TYPE_ALL, it becomes difficult to understand what purpose ep/ep2 is used for.
->> Therefore, I proposed adding ep_file/ep_stream to es, and here
->> 	ep = es->ep_file;
->> 	ep2 = es->ep_stream;
->>
->> How about this?
-> You can factor out exfat_get_dentry_cached() from exfat_get_validated_dentry() and use it here.
-
-I actually implemented and use it, but I feel it is not so good.
-- Since there are two functions to get from es, so it's a bit confusing which one is better for use.
-- There was the same anxiety as using exfat_get_validated_dentry() in that there is no NULL check of
-   ep got with exfat_get_dentry_cached().
-
-Whichever function I use, there are places where I check the return value and where I don't.
-This will cause  missing entry-type validation or missing return value check,in the future.
-I think it's easier to use by including it as a validated object in the member of exfat_entry_set_cache.
-
-> And then, You can rename ep and ep2 to ep_file and ep_stream.
-
-I propose a slightly different approach than last.
-Add members to exfat_entry_set_cache as below.
-     struct exfat_de_file *de_file;
-     struct exfat_de_stream *de_stream;
-And, use these as below.
-     es->de_file->attr = cpu_to_le16(exfat_make_attr(inode));
-     es->de_stream->valid_size = cpu_to_le64(on_disk_size);
-
-exfat_de_file/exfat_de_stream corresponds to the file dir-entry/stream dir-enty structure in the exfat_dentry union.
-We can use the validated valid values ​​directly.
-Furthermore, these are strongly typed.
-
-
->> Or is it better to specify TYPE_ALL?
->>
->>
->> BTW
->> It's been about a month since I posted this patch.
->> In the meantime, I created a NameLength check and a checksum validation based on this patch.
->> Can you review those as well?
-> Let me see the patches.
-
-Thanks a lot.
-For now, I will create and post a V3 patch with this proposal.
-After that, I will recreate the NameLength check and a checksum validation patches based on the V3 patch and post them.
-(Should I post these as an RFC?)
-
-BR
----
-Kohada Tetsuhiro <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
