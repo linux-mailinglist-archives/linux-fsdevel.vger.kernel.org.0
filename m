@@ -2,100 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CFE423D051
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 21:47:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E77323D042
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 21:46:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbgHERBT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Aug 2020 13:01:19 -0400
-Received: from namei.org ([65.99.196.166]:57602 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728217AbgHERAT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Aug 2020 13:00:19 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 075Gxe6x030131;
-        Wed, 5 Aug 2020 16:59:42 GMT
-Date:   Wed, 5 Aug 2020 09:59:40 -0700 (PDT)
-From:   James Morris <jmorris@namei.org>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-cc:     Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, zohar@linux.ibm.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com, paul@paul-moore.com,
-        corbet@lwn.net, nramas@linux.microsoft.com, serge@hallyn.com,
-        pasha.tatashin@soleen.com, jannh@google.com,
-        linux-block@vger.kernel.org, viro@zeniv.linux.org.uk,
-        axboe@kernel.dk, mdsakib@microsoft.com,
-        linux-kernel@vger.kernel.org, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
- LSM (IPE)
-In-Reply-To: <1596639689.3457.17.camel@HansenPartnership.com>
-Message-ID: <alpine.LRH.2.21.2008050934060.28225@namei.org>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>  <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>  <20200802143143.GB20261@amd>  <1596386606.4087.20.camel@HansenPartnership.com>  <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
- <1596639689.3457.17.camel@HansenPartnership.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1729413AbgHETqv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 15:46:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44636 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729079AbgHETdZ (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 5 Aug 2020 15:33:25 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09B86C061575;
+        Wed,  5 Aug 2020 12:33:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=BjUxyEqkYiqtsdR/KvRwz6ZbXTHnw0kNXap/n+8pwLc=; b=d99BKyoGx9hy4YcJdLSUMJqThT
+        5nqIKVLtODQNoljLBcp8S5Qe51texKqOh2lHfYRF6oE9Eennni9qvKXvoNCBo1BmBItdODcTP8rr0
+        d9fwQtJqhR7ZefvrgjrymVDmQgC18lF3oe0V6z2N2edcUvDcRkE+9XOUCafaUKs24HosE1ZjfNpyP
+        orzIgTlu+kNLZ8DcTbs9SzVLlHxhTCkbT8b6BA/62VFAu20gPM6e4dugjgbyb55pQ8ZyZvQxTDPzk
+        tMeIVEAdm2vkbkv0U8ueOK/GHFSZ2Sv4iPAT4k3TV9OgjyznmX+JjL+tR/NszZzvUQ9KYpokZ96xB
+        mE2m1QXA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k3P9r-0005s8-TN; Wed, 05 Aug 2020 19:33:03 +0000
+Date:   Wed, 5 Aug 2020 20:33:03 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ian Kent <raven@themaw.net>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 06/18] fsinfo: Add a uniquifier ID to struct mount [ver
+ #21]
+Message-ID: <20200805193303.GM23808@casper.infradead.org>
+References: <CAJfpegtOguKOGWxv-sA_C9eSWG_3Srnj_k=oW-wSHNprCipFVg@mail.gmail.com>
+ <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
+ <159646183662.1784947.5709738540440380373.stgit@warthog.procyon.org.uk>
+ <20200804104108.GC32719@miu.piliscsaba.redhat.com>
+ <2306029.1596636828@warthog.procyon.org.uk>
+ <2315925.1596641410@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2315925.1596641410@warthog.procyon.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 5 Aug 2020, James Bottomley wrote:
+On Wed, Aug 05, 2020 at 04:30:10PM +0100, David Howells wrote:
+> Miklos Szeredi <miklos@szeredi.hu> wrote:
+> 
+> > idr_alloc_cyclic() seems to be a good template for doing the lower
+> > 32bit allocation, and we can add code to increment the high 32bit on
+> > wraparound.
+> > 
+> > Lots of code uses idr_alloc_cyclic() so I guess it shouldn't be too
+> > bad in terms of memory use or performance.
+> 
+> It's optimised for shortness of path and trades memory for performance.  It's
+> currently implemented using an xarray, so memory usage is dependent on the
+> sparseness of the tree.  Each node in the tree is 576 bytes and in the worst
+> case, each one node will contain one mount - and then you have to backfill the
+> ancestry, though for lower memory costs.
+> 
+> Systemd makes life more interesting since it sets up a whole load of
+> propagations.  Each mount you make may cause several others to be created, but
+> that would likely make the tree more efficient.
 
-> I'll leave Mimi to answer, but really this is exactly the question that
-> should have been asked before writing IPE.  However, since we have the
-> cart before the horse, let me break the above down into two specific
-> questions.
+I would recommend using xa_alloc and ignoring the ID assigned from
+xa_alloc.  Looking up by unique ID is then a matter of iterating every
+mount (xa_for_each()) looking for a matching unique ID in the mount
+struct.  That's O(n) search, but it's faster than a linked list, and we
+don't have that many mounts in a system.
 
-The question is valid and it was asked. We decided to first prototype what 
-we needed and then evaluate if it should be integrated with IMA. We 
-discussed this plan in person with Mimi (at LSS-NA in 2019), and presented 
-a more mature version of IPE to LSS-NA in 2020, with the expectation that 
-such a discussion may come up (it did not).
-
-These patches are still part of this process and 'RFC' status.
-
->    1. Could we implement IPE in IMA (as in would extensions to IMA cover
->       everything).  I think the answers above indicate this is a "yes".
-
-It could be done, if needed.
-
->    2. Should we extend IMA to implement it?  This is really whether from a
->       usability standpoint two seperate LSMs would make sense to cover the
->       different use cases.
-
-One issue here is that IMA is fundamentally a measurement & appraisal 
-scheme which has been extended to include integrity enforcement. IPE was 
-designed from scratch to only perform integrity enforcement. As such, it 
-is a cleaner design -- "do one thing and do it well" is a good design 
-pattern.
-
-In our use-case, we utilize _both_ IMA and IPE, for attestation and code 
-integrity respectively. It is useful to be able to separate these 
-concepts. They really are different:
-
-- Code integrity enforcement ensures that code running locally is of known 
-provenance and has not been modified prior to execution.
-
-- Attestation is about measuring the health of a system and having that 
-measurement validated by a remote system. (Local attestation is useless).
-
-I'm not sure there is value in continuing to shoe-horn both of these into 
-IMA.
-
-
->  I've got to say the least attractive thing
->       about separation is the fact that you now both have a policy parser.
->        You've tried to differentiate yours by making it more Kconfig
->       based, but policy has a way of becoming user space supplied because
->       the distros hate config options, so I think you're going to end up
->       with a policy parser very like IMAs.
-
-
--- 
-James Morris
-<jmorris@namei.org>
-
+The maple tree will handle this case more effectively, but I can't
+recommend waiting for that to be ready.
