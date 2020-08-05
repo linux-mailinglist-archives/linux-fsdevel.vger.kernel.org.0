@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7E123D298
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 22:14:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F88E23D293
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 22:14:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729591AbgHEUO1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Aug 2020 16:14:27 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:33995 "EHLO
+        id S1727022AbgHEUOI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 16:14:08 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:36325 "EHLO
         wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726630AbgHEQX0 (ORCPT
+        by vger.kernel.org with ESMTP id S1726627AbgHEQX0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 5 Aug 2020 12:23:26 -0400
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id C2975896;
-        Wed,  5 Aug 2020 07:14:05 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 05 Aug 2020 07:14:06 -0400
+        by mailnew.west.internal (Postfix) with ESMTP id E931D95C;
+        Wed,  5 Aug 2020 07:23:18 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 05 Aug 2020 07:23:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
         message-id:subject:from:to:cc:date:in-reply-to:references
         :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        FVkQ6ze2JnvmGPoYApJAFrAYvt8zexmv/OJPsQaZMgU=; b=SN6O21jHLK0jauIv
-        DHnrckspKjX+uHVpnvEe4ydIfNyWICmVz5vDuIWkrhD6BDOFY0TkwrbAZRk6w+1n
-        b0JOgpMtOaA0CdCItQ1I7EP2XGvtxxkIXzXKr6pJzrkg1imkIHrw6qdEr5usv770
-        TF94RSGVQzI1I1xhTD81JGRpO0o1CXFMC1fOaDHeMuFz6zLfH1gh/4sZb45Sypzp
-        nxt9P31drzNGLf82/3m7ou6Qi0MeUCQz4nUovrm1phU4nAmFwgWNorQqxTKuOZrE
-        cX+zbtVKnadGSqYxJYPKNSm6hVeiZBjSiqrm31nXRfRBqHJf92PTpJZ8ojGEvp9T
-        cY6Lug==
+        26J/RpIA9Dzs/j/8HMkMSuIzptW47JbejMg/q+iS3MA=; b=k+tuYhnIwwJqPC4a
+        ARmLeCMtIylGfe41ZB2xKZDmYvrKjpecqduRXwP+9BBuVWQgIaFmKGJTo3YJYXAx
+        Ypn3UJy81+Nvgtt39qeUW24jGFuqamg9GKZuaAL46pkTIrKEv0spYSGUItue51qM
+        BMEYBbtZSz2Afm8rvLkRPQLA3UQu5OFEeZcXaBtC28KAaWyED2HYsD1gD22fjByH
+        XaKZUEkNIEy+8yie9mVabtLESGXmRThqMwg8kT3n8Zks1mkufq0xGuTjVWrBZKJy
+        t+U0BtxJPwxVTRyKfTgopI4oCy+E+f9Q/YEOlFvgNxyDd/r3mZ38tXZoMCCaxSe8
+        BzA7cQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:content-type
         :date:from:in-reply-to:message-id:mime-version:references
         :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=FVkQ6ze2JnvmGPoYApJAFrAYvt8zexmv/OJPsQaZM
-        gU=; b=l6X0RVD4SEfucgzG7MU9P4LWBYpQeenQulu7vIeLEodV4OgRrxT8p5V7d
-        SX+i0vqXNgN/pYIF94Vw+/Nny8YMre3j+pMQ0VIcIXobZM3QRawB+4Y0nJOE5oXI
-        KOCq53RP+0gfhifZeaDjotj0XF5st0cm5xdyFeS60gNJPGMOnLD7GqsRKoa2CmkV
-        LF080vlM7qNt+pzSo5yWegq5WhzlQgbJz4+Fzzsa9Pynj0hFWWtUKcqfDDfdHDXT
-        b0MMmHgxM4tETeVo4tYY1IwgGGa9BKZ5NePS1ZUEMhjXNUbxFc2hRtG6/XEyaZ4v
-        IPiwEYwE9Clglld0sB+of3asGsH0g==
-X-ME-Sender: <xms:fJQqX3YA6t9GhKywLlioHdvjAPLUKQoeO-w2HpxmGXhTOWuEfFbO_g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeekgdegtdcutefuodetggdotefrodftvf
+        :x-sasl-enc; s=fm3; bh=26J/RpIA9Dzs/j/8HMkMSuIzptW47JbejMg/q+iS3
+        MA=; b=UlVjy0fzxkWVFYnPUQXHQ3/SyandLHZI25k0hCWN2r2/1tUCxtdEGSYjm
+        GXKGrXAJ+D4IS9BdU05Xkvg4CRigWZWia+z/Rs8q9s8R/stmJ+fTTsh3K5yKFOem
+        sQyOz2u1x9OepQCiE0ydYQhN55yHJPMCnEtdrWPUXDOEOUk4FPLvn0WPOC9D0Sxy
+        93Xdzz7yWniafh0KlABxeImu8+TU6nNiOg1rz2EELtjJ21wVjypuFoLPPVVFFNQz
+        hTD2PklgWGLzAxRJZAnJYy8D5VV2qhj/k7v9pPO6mIPWTh7vUkxwxSWcVeSGgrKc
+        UmXy8Xn804pK0z1jYUQdrELOQxWwg==
+X-ME-Sender: <xms:pZYqXyxcpqQd8fkTI6CfOrrv8tj2qzF8np8tJRa1_efpe0JMgQiGkw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeekgdegudcutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
     fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
@@ -47,38 +47,38 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrjeekgdegtdcutefuodetggdote
     efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
     peehkedrjedrvdehhedrvddvtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
     epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:fJQqX2ZSypsPRmH_WPh6Sn6WnkeTZD5BzdfzmwHtuNQSc1OfyePtoQ>
-    <xmx:fJQqX58RlXwDK3acV11t81Cv0jisurrfQMtArHXlzDZZB43U0xvcAg>
-    <xmx:fJQqX9rGxF5_oGzFN9o9XGL1hKRia1bhRkTp65swupz3FRzBIFvAsQ>
-    <xmx:fZQqXx1SYZGX-rvfKFPpEzq0vN_0iaQlPqCCpIxnDdLEADGFuTzMz10KcRw>
+X-ME-Proxy: <xmx:pZYqX-TiKvrEJ-MB-FbK2Btrf7kE1Tw3EkDuTNy2v6yvzsOy2SlEgw>
+    <xmx:pZYqX0XLq-Ut0c4cHHkycDFeDRjTfcKY2AARmx6vEU009KfSrHB6bQ>
+    <xmx:pZYqX4j2RKFEQXdNPE9IPUWmO_fQ8BMKzSb1-ncgv31k1b-0y7ht3A>
+    <xmx:ppYqX0vJJE9yQ9CN4XXM-SnCkV-X0bG9y8hV4wWuiBbvkYky1I3se41MUu4>
 Received: from mickey.themaw.net (58-7-255-220.dyn.iinet.net.au [58.7.255.220])
-        by mail.messagingengine.com (Postfix) with ESMTPA id D79573280060;
-        Wed,  5 Aug 2020 07:13:59 -0400 (EDT)
-Message-ID: <c44b1c225b0aec20969aace1ba1b7900ddda5a5e.camel@themaw.net>
-Subject: Re: [GIT PULL] Filesystem Information
+        by mail.messagingengine.com (Postfix) with ESMTPA id 40FB530600B4;
+        Wed,  5 Aug 2020 07:23:12 -0400 (EDT)
+Message-ID: <e1caad2bff5faf9b24b59fe4ee51df255412cc56.camel@themaw.net>
+Subject: Re: [PATCH 10/18] fsinfo: Provide notification overrun handling
+ support [ver #21]
 From:   Ian Kent <raven@themaw.net>
 To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
         Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
         Linux API <linux-api@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org,
         LSM <linux-security-module@vger.kernel.org>,
         linux-kernel@vger.kernel.org
-Date:   Wed, 05 Aug 2020 19:13:55 +0800
-In-Reply-To: <CAJfpegvQdCr+u51_xkpbS7eMZyNqtnk_tdK1KVhsiCuiFWWJJw@mail.gmail.com>
-References: <1842689.1596468469@warthog.procyon.org.uk>
-         <1845353.1596469795@warthog.procyon.org.uk>
-         <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
-         <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
-         <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
-         <dd1a41a129cd6e8d13525a14807e6dc65b52e0bf.camel@themaw.net>
-         <CAJfpegvQdCr+u51_xkpbS7eMZyNqtnk_tdK1KVhsiCuiFWWJJw@mail.gmail.com>
+Date:   Wed, 05 Aug 2020 19:23:07 +0800
+In-Reply-To: <CAJfpegs1NLaamFA12f=EJRN4B3_iC+Uzi2NQKTV-fBSypcufLQ@mail.gmail.com>
+References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
+         <159646187082.1784947.4293611877413578847.stgit@warthog.procyon.org.uk>
+         <20200804135641.GE32719@miu.piliscsaba.redhat.com>
+         <94bba6f200bb2bbf83f4945faa2ccb83fd947540.camel@themaw.net>
+         <5078554c6028e29c91d815c63e2af1ffac2ecbbb.camel@themaw.net>
+         <CAJfpegs1NLaamFA12f=EJRN4B3_iC+Uzi2NQKTV-fBSypcufLQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
@@ -88,63 +88,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-08-05 at 10:00 +0200, Miklos Szeredi wrote:
-> On Wed, Aug 5, 2020 at 3:33 AM Ian Kent <raven@themaw.net> wrote:
-> > On Tue, 2020-08-04 at 16:36 +0200, Miklos Szeredi wrote:
-> > > And notice how similar the above interface is to getxattr(), or
-> > > the
-> > > proposed readfile().  Where has the "everything is  a file"
-> > > philosophy
-> > > gone?
+On Wed, 2020-08-05 at 09:45 +0200, Miklos Szeredi wrote:
+> On Wed, Aug 5, 2020 at 4:46 AM Ian Kent <raven@themaw.net> wrote:
+> > Coming back to an actual use case.
 > > 
-> > Maybe, but that philosophy (in a roundabout way) is what's resulted
-> > in some of the problems we now have. Granted it's blind application
-> > of that philosophy rather than the philosophy itself but that is
-> > what happens.
-> 
-> Agree.   What people don't seem to realize, even though there are
-> blindingly obvious examples, that binary interfaces like the proposed
-> fsinfo(2) syscall can also result in a multitude of problems at the
-> same time as solving some others.
-> 
-> There's no magic solution in API design,  it's not balck and white.
-> We just need to strive for a good enough solution.  The problem seems
-> to be that trying to discuss the merits of other approaches seems to
-> hit a brick wall.  We just see repeated pull requests from David,
-> without any real discussion of the proposed alternatives.
-> 
-> > I get that your comments are driven by the way that philosophy
-> > should
-> > be applied which is more of a "if it works best doing it that way
-> > then
-> > do it that way, and that's usually a file".
+> > What I said above is one aspect but, since I'm looking at this
+> > right
+> > now with systemd, and I do have the legacy code to fall back to,
+> > the
+> > "just reset everything" suggestion does make sense.
 > > 
-> > In this case there is a logical division of various types of file
-> > system information and the underlying suggestion is maybe it's time
-> > to move away from the "everything is a file" hard and fast rule,
-> > and get rid of some of the problems that have resulted from it.
-> > 
-> > The notifications is an example, yes, the delivery mechanism is
-> > a "file" but the design of the queueing mechanism makes a lot of
-> > sense for the throughput that's going to be needed as time marches
-> > on. Then there's different sub-systems each with unique information
-> > that needs to be deliverable some other way because delivering
-> > "all"
-> > the information via the notification would be just plain wrong so
-> > a multi-faceted information delivery mechanism makes the most
-> > sense to allow specific targeted retrieval of individual items of
-> > information.
-> > 
-> > But that also supposes your at least open to the idea that "maybe
-> > not everything should be a file".
+> > But I'm struggling to see how I can identify notification buffer
+> > overrun in libmount, and overrun is just one possibility for lost
+> > notifications, so I like the idea that, as a library user, I can
+> > work out that I need to take action based on what I have in the
+> > notifications themselves.
 > 
-> Sure.  I've learned pragmatism, although idealist at heart.  And I'm
-> not saying all API's from David are shit.  statx(2) is doing fine.
-> It's a simple binary interface that does its job well.   Compare the
-> header files for statx and fsinfo, though, and maybe you'll see what
-> I'm getting at...
+> Hmm, what's the other possibility for lost notifications?
 
-Yeah, but I'm biased so not much joy there ... ;)
+In user space that is:
 
+Multi-threaded application races, single threaded applications and
+signal processing races, other bugs ...
+
+For example systemd has it's own event handling sub-system and handles
+half a dozen or so event types of which the mount changes are one. It's
+fairly complex so I find myself wondering if I can trust it and
+wondering if there are undiscovered bugs in it. The answer to the
+former is probably yes but the answer to the later is also probably
+yes.
+
+Maybe I just paranoid!
 Ian
+
 
