@@ -2,88 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C88323C407
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 05:40:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80FB023C412
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 05:48:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726130AbgHEDkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Aug 2020 23:40:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37692 "EHLO
+        id S1726056AbgHEDsW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Aug 2020 23:48:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbgHEDks (ORCPT
+        with ESMTP id S1725904AbgHEDsV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Aug 2020 23:40:48 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75F0EC06174A;
-        Tue,  4 Aug 2020 20:40:48 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id m8so15048379pfh.3;
-        Tue, 04 Aug 2020 20:40:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=rzzRqXjFEunIT1yZSSg1CKlJvEECBfp+MgDWsFWjUvI=;
-        b=iY9JbyNSBtjDkkcBBtYVJi6/b9GolFcvDtU5KawfaZyA0+9dTCDa1AK05EKbNQITlD
-         XTfONIbcJTPP3ZlXxb4BOXtL6LD1cZLatdjtewM/9xZyu7gJFP9niti9X8PGmvHJYE64
-         iXQCVANYc8YQwGDsJ+JxDHMKno8uNzqF/czmj2ldHbVJ5aXtDjugL+Z+QkoIlcS9X0xq
-         eZi8mAl5v78paw8vu84acHnxcbZ+nIiFJZ8khS7u56z0GW6mN5Zpxv4fhZJ1fVqX5OVD
-         q/XxF4V7t825zQNceionDeEusM3nNlgIB3dlA/JeDXfRMIkVUrClZTIjBV6NOUWRHJ0x
-         b5vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=rzzRqXjFEunIT1yZSSg1CKlJvEECBfp+MgDWsFWjUvI=;
-        b=jNy8FOZoQUWBjJmJc5T/4TZ+ccfovBxWiQFhDA5NpEVAZ22ShJa/AYhkekrJbYKa4p
-         M8R/ujcDobwBWertH4YsZsbrC7LxtD5wxJ3sSdsmU1DdDy8mlb+oNfc6KGeNCh3xv8Ul
-         AoqabSqRf7RMcr1qcRv3/zvIN1tosZZ2iwj4HBD28TcaKBpRI3SfgN872cKk5WZ8V57K
-         QuwuTWzPR6N/nsqoMJXJn4B8LSDjjSG9JSUvI2V0XH8XwhbEFKFUBWhdRJXIwZKXDeUd
-         Sirl2DDAY+vh2g35Fc21YPIv5IdHbhedn6+JYySefxeTPpeI9G8p/0CPdUU6/4Diw7lW
-         s3AA==
-X-Gm-Message-State: AOAM530e/CWrEsgAxlW4dAFTK3Rn9Vf93tTSpeFH/iFykv++SZO+aEd1
-        S+9Ixv3WD1LpNJh9FUjUqNO7+VF0ned95w==
-X-Google-Smtp-Source: ABdhPJx1HdDmTQsmnl2GToZoJYpx9vzI2MF9PZc28RwIEtemGRYvTPfbA+FHPNR1D3IEHrHbsCiJ5A==
-X-Received: by 2002:aa7:810c:: with SMTP id b12mr1449191pfi.69.1596598847760;
-        Tue, 04 Aug 2020 20:40:47 -0700 (PDT)
-Received: from localhost ([104.192.108.9])
-        by smtp.gmail.com with ESMTPSA id fh14sm810632pjb.38.2020.08.04.20.40.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Aug 2020 20:40:47 -0700 (PDT)
-Date:   Tue, 4 Aug 2020 20:40:42 -0700
-From:   Guoyu Huang <hgy5945@gmail.com>
-To:     axboe@kernel.dk, viro@zeniv.linux.org.uk
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] io_uring: Fix use-after-free in io_sq_wq_submit_work()
-Message-ID: <20200805034042.GA29805@ubuntu>
+        Tue, 4 Aug 2020 23:48:21 -0400
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [IPv6:2001:67c:2050::465:103])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C058C06174A;
+        Tue,  4 Aug 2020 20:48:21 -0700 (PDT)
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4BLyJb1zSNzKmR9;
+        Wed,  5 Aug 2020 05:48:15 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
+        with ESMTP id E-94TVlXGldS; Wed,  5 Aug 2020 05:48:10 +0200 (CEST)
+Date:   Wed, 5 Aug 2020 13:47:58 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Lokesh Gidra <lokeshgidra@google.com>
+Cc:     viro@zeniv.linux.org.uk, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com, jmorris@namei.org, kaleshsingh@google.com,
+        dancol@dancol.org, surenb@google.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nnk@google.com, jeffv@google.com, calin@google.com,
+        kernel-team@android.com, yanfei.xu@windriver.com,
+        syzbot+75867c44841cb6373570@syzkaller.appspotmail.com
+Subject: Re: [PATCH] Userfaultfd: Avoid double free of userfault_ctx and
+ remove O_CLOEXEC
+Message-ID: <20200805034758.lrobunwdcqtknsvz@yavin.dot.cyphar.com>
+References: <20200804203155.2181099-1-lokeshgidra@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jx4te5hbjl6sds64"
 Content-Disposition: inline
+In-Reply-To: <20200804203155.2181099-1-lokeshgidra@google.com>
+X-MBO-SPAM-Probability: 0
+X-Rspamd-Score: -7.10 / 15.00 / 15.00
+X-Rspamd-Queue-Id: F24341768
+X-Rspamd-UID: 5729ac
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-when ctx->sqo_mm is zero, io_sq_wq_submit_work() frees 'req'
-without deleting it from 'task_list'. After that, 'req' is
-accessed in io_ring_ctx_wait_and_kill() which lead to
-a use-after-free.
 
-Signed-off-by: Guoyu Huang <hgy5945@gmail.com>
----
- fs/io_uring.c | 1 +
- 1 file changed, 1 insertion(+)
+--jx4te5hbjl6sds64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index e0200406765c..4b5ac381c67f 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2242,6 +2242,7 @@ static void io_sq_wq_submit_work(struct work_struct *work)
- 		if (io_sqe_needs_user(sqe) && !cur_mm) {
- 			if (!mmget_not_zero(ctx->sqo_mm)) {
- 				ret = -EFAULT;
-+				goto end_req;
- 			} else {
- 				cur_mm = ctx->sqo_mm;
- 				use_mm(cur_mm);
---
-2.25.1
+On 2020-08-04, Lokesh Gidra <lokeshgidra@google.com> wrote:
+> when get_unused_fd_flags returns error, ctx will be freed by
+> userfaultfd's release function, which is indirectly called by fput().
+> Also, if anon_inode_getfile_secure() returns an error, then
+> userfaultfd_ctx_put() is called, which calls mmdrop() and frees ctx.
+>=20
+> Also, the O_CLOEXEC was inadvertently added to the call to
+> get_unused_fd_flags() [1].
 
+I disagree that it is "wrong" to do O_CLOEXEC-by-default (after all,
+it's trivial to disable O_CLOEXEC, but it's non-trivial to enable it on
+an existing file descriptor because it's possible for another thread to
+exec() before you set the flag). Several new syscalls and fd-returning
+facilities are O_CLOEXEC-by-default now (the most obvious being pidfds
+and seccomp notifier fds).
+
+At the very least there should be a new flag added that sets O_CLOEXEC.
+
+> Adding Al Viro's suggested-by, based on [2].
+>=20
+> [1] https://lore.kernel.org/lkml/1f69c0ab-5791-974f-8bc0-3997ab1d61ea@dan=
+col.org/
+> [2] https://lore.kernel.org/lkml/20200719165746.GJ2786714@ZenIV.linux.org=
+=2Euk/
+>=20
+> Fixes: d08ac70b1e0d (Wire UFFD up to SELinux)
+> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+> Reported-by: syzbot+75867c44841cb6373570@syzkaller.appspotmail.com
+> Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+> ---
+>  fs/userfaultfd.c | 14 ++++----------
+>  1 file changed, 4 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> index ae859161908f..e15eb8fdc083 100644
+> --- a/fs/userfaultfd.c
+> +++ b/fs/userfaultfd.c
+> @@ -2042,24 +2042,18 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
+>  		O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS),
+>  		NULL);
+>  	if (IS_ERR(file)) {
+> -		fd =3D PTR_ERR(file);
+> -		goto out;
+> +		userfaultfd_ctx_put(ctx);
+> +		return PTR_ERR(file);
+>  	}
+> =20
+> -	fd =3D get_unused_fd_flags(O_RDONLY | O_CLOEXEC);
+> +	fd =3D get_unused_fd_flags(O_RDONLY);
+>  	if (fd < 0) {
+>  		fput(file);
+> -		goto out;
+> +		return fd;
+>  	}
+> =20
+>  	ctx->owner =3D file_inode(file);
+>  	fd_install(fd, file);
+> -
+> -out:
+> -	if (fd < 0) {
+> -		mmdrop(ctx->mm);
+> -		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
+> -	}
+>  	return fd;
+>  }
+> =20
+> --=20
+> 2.28.0.163.g6104cc2f0b6-goog
+>=20
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--jx4te5hbjl6sds64
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXyor6wAKCRCdlLljIbnQ
+EvlBAP9yT6247DlCIs/Tflt7TprvwpvnjAbnWJ/71XH7JGf3EgEA0OLS0YoSm9zV
+dHgGAW0D6J8tKTslxFA785dqofjTKQ4=
+=l25V
+-----END PGP SIGNATURE-----
+
+--jx4te5hbjl6sds64--
