@@ -2,68 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED76B23C71B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 09:43:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C8F423C722
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 09:46:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726008AbgHEHny (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Aug 2020 03:43:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47016 "EHLO
+        id S1726980AbgHEHqH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 03:46:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725920AbgHEHnv (ORCPT
+        with ESMTP id S1726524AbgHEHqF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Aug 2020 03:43:51 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7EEBC061756
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Aug 2020 00:43:50 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id m20so22301826eds.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Aug 2020 00:43:50 -0700 (PDT)
+        Wed, 5 Aug 2020 03:46:05 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6D45C06174A
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Aug 2020 00:46:04 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id f24so24837240ejx.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Aug 2020 00:46:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=c7MS/sDmqsu2UeEHE/y1WIBOLGRyoL/hTSKDaerW230=;
-        b=G2U85/Sh33+IcIW0dxhFoe+oW0YUFI67TOMZGh5yXHDRtVNTTIES6+/5ghbYizPlrA
-         NxqWRNYE+WiZQ5x/6V5NBGxTNuIsiyaYdE1+DK4um+EutgPdxUhLgshYgl+AqycDH9vs
-         4dvJRUCTUHLDjtWW+GCIgH/TbkBbaYm/yDD6c=
+        bh=JcRNpeqICVUMdW+eQV6cNmoTKrDCq48jfX1KaVHDvwQ=;
+        b=Feg85hqy7+vcolCIrLFilOaGgrOtXj8thXykBp3Bp0XpYsuPfElOh4nm8I3SnyS62b
+         64JD9H/zVxxGypHdTvYO2f1EJ0uPlTosWe53MpIC26xzA7XHbleGbFMLSSofhpx5X7gL
+         6fThps3gz64rNFTjpg3m0BIu77PqTCGcRQciM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=c7MS/sDmqsu2UeEHE/y1WIBOLGRyoL/hTSKDaerW230=;
-        b=sruqOK3WTt8WTB5jSrfenZMr18thMYRx7MRthgVJ2jwMF1ucN9re58Rm4j7rU/ygJ8
-         +vBgPQnVpOLkD9fDWn2eoLeMvQhxBBkNvo/fJILz5GRPItiENfXfThtiVfdmDOSaNoJn
-         XnjLq6tU2umAtB7afkfRpEp6/Xvu2enwJ3s2sb/lakJKTQEB6/tPa1gBNbAgme5siuBE
-         8IZoByxMMQ2gPuUabFEMoxrqg0KbFLxzVFsVmdBj2igsO98xlXxVLqnpXqf2C8gRNvk/
-         a7W4XoG29io88lu9d0ym/qL7002RamILEd2vuCREGWPc5S2mg/ZdNOeRnzDV3QBPAayL
-         R34w==
-X-Gm-Message-State: AOAM530VIx6CZIdnHMT2tAil7EL4XrUK9dwi3pwZYH9ZWe3pmI5NIk7w
-        J2woyVYXLwxEZGkpPD/tCfw0vwj/r1hDUKsjS8XkDQ==
-X-Google-Smtp-Source: ABdhPJxB/evMZ5+0ZnmBx4YzSXoXDzPSNs9Cjc++wXkfuUDJKvalsR0eiNz5UMmlIUDOEP5Cy96B5iGq/jW2A8IePJ4=
-X-Received: by 2002:a50:fb10:: with SMTP id d16mr1638111edq.134.1596613429317;
- Wed, 05 Aug 2020 00:43:49 -0700 (PDT)
+        bh=JcRNpeqICVUMdW+eQV6cNmoTKrDCq48jfX1KaVHDvwQ=;
+        b=N0WC+h3GPEvuXh9CYc0rL/TUr5QirIK2zogO3BDtq28PuRq7iTT/jtpBV6w6vKnbjz
+         bNX9RfdujGx9h3mBavj6dGXeaWSgnoBlSca64A2m9ChvoJXinXjkwgds1MZyQxnnqPUD
+         jMsb65aL6Ex6iY3M5uF2mJ9ZDkt/zZdkwSFZL2enc5Pd19sfJH4vSeXZw21RwKG5Pcw+
+         3ks7kVS98Fz17JkiszIWIl9vQEQH/WkiM7GZWxIuWJVZiIZZtgY08kaGT1HfiuvEDFGK
+         g2OLOzXPrGwq9V8owe5WYm5sBSFDhfzWfZggUM7sj7FBAgWWvCbG2e6rbLv86LgUVx+0
+         XVqw==
+X-Gm-Message-State: AOAM533y5q53u/lXTU6cuKla/+Nq2Bm/pXERWj+mebct42G9jcO5bPe/
+        RsvqvEPMZ/8KNy7XGb5Lv3o024wAe8ogp+jX+zVgMg==
+X-Google-Smtp-Source: ABdhPJwSzf7ZyfM06Ap8zJ46vCH2qMZs0q/mJf/FF/mKV8B2cn3vTn5+kSxcusIr/7oVCz9jGqzaVrb7ONfCeuEjpiI=
+X-Received: by 2002:a17:907:405f:: with SMTP id ns23mr1832194ejb.511.1596613563524;
+ Wed, 05 Aug 2020 00:46:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <158454378820.2863966.10496767254293183123.stgit@warthog.procyon.org.uk>
- <158454391302.2863966.1884682840541676280.stgit@warthog.procyon.org.uk>
- <CAJfpegspWA6oUtdcYvYF=3fij=Bnq03b8VMbU9RNMKc+zzjbag@mail.gmail.com>
- <1293241.1595501326@warthog.procyon.org.uk> <CAJfpeguvLMCw1H8+DPsfZE_k0sEiRtA17pD9HjnceSsAvqqAZw@mail.gmail.com>
- <43c061d26ddef2aa3ca1ac726da7db9ab461e7be.camel@themaw.net>
- <CAJfpeguFkDDhz7+70pSUv_j=xY5L08ESpaE+jER9vE5p+ZmfFw@mail.gmail.com> <c558fc4af785f62a2751be3b297d1ccbbfcfa969.camel@themaw.net>
-In-Reply-To: <c558fc4af785f62a2751be3b297d1ccbbfcfa969.camel@themaw.net>
+References: <159646178122.1784947.11705396571718464082.stgit@warthog.procyon.org.uk>
+ <159646187082.1784947.4293611877413578847.stgit@warthog.procyon.org.uk>
+ <20200804135641.GE32719@miu.piliscsaba.redhat.com> <94bba6f200bb2bbf83f4945faa2ccb83fd947540.camel@themaw.net>
+ <5078554c6028e29c91d815c63e2af1ffac2ecbbb.camel@themaw.net>
+In-Reply-To: <5078554c6028e29c91d815c63e2af1ffac2ecbbb.camel@themaw.net>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 5 Aug 2020 09:43:38 +0200
-Message-ID: <CAJfpegvxKTy+4Zk6banvxQ83PeFV7Xnt2Qv=kkOg57rxFKqVEg@mail.gmail.com>
-Subject: Re: [PATCH 13/17] watch_queue: Implement mount topology and attribute
- change notifications [ver #5]
+Date:   Wed, 5 Aug 2020 09:45:52 +0200
+Message-ID: <CAJfpegs1NLaamFA12f=EJRN4B3_iC+Uzi2NQKTV-fBSypcufLQ@mail.gmail.com>
+Subject: Re: [PATCH 10/18] fsinfo: Provide notification overrun handling
+ support [ver #21]
 To:     Ian Kent <raven@themaw.net>
 Cc:     David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>, andres@anarazel.de,
-        Jeff Layton <jlayton@redhat.com>, dray@redhat.com,
-        Karel Zak <kzak@redhat.com>, keyrings@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Christian Brauner <christian@brauner.io>,
+        Jann Horn <jannh@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
         Linux API <linux-api@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org,
         LSM <linux-security-module@vger.kernel.org>,
@@ -74,29 +71,22 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 5, 2020 at 3:54 AM Ian Kent <raven@themaw.net> wrote:
+On Wed, Aug 5, 2020 at 4:46 AM Ian Kent <raven@themaw.net> wrote:
 >
 
-> > > It's way more useful to have these in the notification than
-> > > obtainable
-> > > via fsinfo() IMHO.
-> >
-> > What is it useful for?
+> Coming back to an actual use case.
 >
-> Only to verify that you have seen all the notifications.
+> What I said above is one aspect but, since I'm looking at this right
+> now with systemd, and I do have the legacy code to fall back to, the
+> "just reset everything" suggestion does make sense.
 >
-> If you have to grab that info with a separate call then the count
-> isn't necessarily consistent because other notifications can occur
-> while you grab it.
+> But I'm struggling to see how I can identify notification buffer
+> overrun in libmount, and overrun is just one possibility for lost
+> notifications, so I like the idea that, as a library user, I can
+> work out that I need to take action based on what I have in the
+> notifications themselves.
 
-No, no no.   The watch queue will signal an overflow, without any
-additional overhead for the normal case.  If you think of this as a
-protocol stack, then the overflow detection happens on the transport
-layer, instead of the application layer.  The application layer is
-responsible for restoring state in case of a transport layer error,
-but detection of that error is not the responsibility of the
-application layer.
-
+Hmm, what's the other possibility for lost notifications?
 
 Thanks,
 Miklos
