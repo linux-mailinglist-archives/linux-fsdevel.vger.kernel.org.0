@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 180FB23C6D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 09:18:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76BAF23C6D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Aug 2020 09:19:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbgHEHS0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Aug 2020 03:18:26 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:38165 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbgHEHSX (ORCPT
+        id S1726707AbgHEHTT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 03:19:19 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:36793 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725981AbgHEHTQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Aug 2020 03:18:23 -0400
-Received: by mail-io1-f70.google.com with SMTP id a65so22125560iog.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Aug 2020 00:18:23 -0700 (PDT)
+        Wed, 5 Aug 2020 03:19:16 -0400
+Received: by mail-il1-f198.google.com with SMTP id o191so30184619ila.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Aug 2020 00:19:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Fa0gLd9XVcoRN25QyrKmn6yha622efdv80gtOrAX5uA=;
-        b=GzD0yryJrYNoKw9bmHEIVgUK7p7SS0ZKO0POIPyXnaU1vN8iJUpfchNDOVcbdkkSP5
-         tWygVsqy9xMbPt4Unx66VtS2AAWSZQofKuckWLzCwV01EDLHPlweVvtFawIYAReRUVx/
-         +DTE0YaqQxYJ5uiZsHJRYYKDu1psrZYqjQMnypLtq/KqpaU3BB+ppqOZCoYyoI+8dKTE
-         bVZpeVpIOASDVXlcx6Uttsywd1jI2mCU1btp5xNrMi9c4RbWN76gzujDOiSto3XUquEH
-         acAy0XiDyq0hbvmxWmOnNk7ftWVJYwA/Y08IL/ClfPe71x6yTbuJKJOoaApTXt6EDaoJ
-         ej9g==
-X-Gm-Message-State: AOAM530tVWwOA2MwplQo6CjyMx03D1bZXnyM+Bm1nQXMqKXE6AfJli62
-        jJyqZdVm250TgRLYCFh4EE11p5hZ9Xa8uIv1oH4gTEAZSl8Y
-X-Google-Smtp-Source: ABdhPJx37KgKaXdMV9jxRlO8ttoO67P5NQABfCZCP2MWRuE2Mzy+hPYLLl/H4xpv1mwfNNh78hENiSdgUk2zrje3gvEUZYqE/ha4
+        bh=wF3UY0YQWKMbkrNh/DziM3pU9MCBg/u9elqEKmJT0tg=;
+        b=fj3O+0qsuDuHbJOGAgKOq1yFvA3RNI2F4KOFXNtcu3lOu1x25G3ZTUFUCJku7pfeEm
+         jX5arLemOjEH1EN8BhLcI/cD0GZQ5Kua0MKy++qiwns41vPWv8nW+S6E40+QaKE1Qz9b
+         eHsfrtBeuMHhM6+LCtvsBluhQNGZrJFJ9YK7vhyozQUxIbMhnyrR4G76elYpevbevo5x
+         ezIrJw+GQ9kr+CBpVUAHRfX/TeOtJqYUDEvnddTPzcN5eLNwfIdoU5jAOjNU53/yMIeS
+         nWYhHTP52m8A+3ajI9pe+OvmBWecvvVfg/ClaCDjheT6eL/YptA8nK5VUfi2HzoMA8EZ
+         43ig==
+X-Gm-Message-State: AOAM532JkbrnDAT35MnanujV6eNigfJoxGHVttP/9lNSZQ61JKVW6fYx
+        a6gPuyfWWWofSqQMgYWBl9tcjAOgNwYJ9MVZyGmS3emHhQcx
+X-Google-Smtp-Source: ABdhPJzcZtJo9iP2ruSsjoMxVlQE/kRlZlzvnkbNCGgqkQFpiuu9yQGgpcbUoVTeN1qiqOp/80SkZTkEx5lIUK14grEjs+v24pCe
 MIME-Version: 1.0
-X-Received: by 2002:a92:7010:: with SMTP id l16mr2547146ilc.91.1596611902772;
- Wed, 05 Aug 2020 00:18:22 -0700 (PDT)
-Date:   Wed, 05 Aug 2020 00:18:22 -0700
+X-Received: by 2002:a6b:7610:: with SMTP id g16mr1991011iom.115.1596611956346;
+ Wed, 05 Aug 2020 00:19:16 -0700 (PDT)
+Date:   Wed, 05 Aug 2020 00:19:16 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004f1bb205ac1c2dce@google.com>
-Subject: upstream test error: WARNING in ep_scan_ready_list
-From:   syzbot <syzbot+d99fcdc44745d2f54a57@syzkaller.appspotmail.com>
+Message-ID: <00000000000080940e05ac1c301e@google.com>
+Subject: upstream test error: WARNING in do_epoll_wait
+From:   syzbot <syzbot+4429670d8213f5f26352@syzkaller.appspotmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
@@ -48,20 +48,21 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    3950e975 Merge branch 'exec-linus' of git://git.kernel.org..
+HEAD commit:    4f30a60a Merge tag 'close-range-v5.9' of git://git.kernel...
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13be87cc900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c2b75627f23a2ff9
-dashboard link: https://syzkaller.appspot.com/bug?extid=d99fcdc44745d2f54a57
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c5a7da900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8bdd9944dedf0f16
+dashboard link: https://syzkaller.appspot.com/bug?extid=4429670d8213f5f26352
 compiler:       clang version 11.0.0 (https://github.com/llvm/llvm-project.git ca2dcbd030eadbf0aa9b660efe864ff08af6e18b)
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d99fcdc44745d2f54a57@syzkaller.appspotmail.com
+Reported-by: syzbot+4429670d8213f5f26352@syzkaller.appspotmail.com
 
 ------------[ cut here ]------------
-WARNING: CPU: 1 PID: 1 at fs/eventpoll.c:688 ep_scan_ready_list+0x9f/0x470 fs/eventpoll.c:688
+WARNING: CPU: 1 PID: 8728 at fs/eventpoll.c:1828 ep_poll fs/eventpoll.c:1828 [inline]
+WARNING: CPU: 1 PID: 8728 at fs/eventpoll.c:1828 do_epoll_wait+0x337/0x920 fs/eventpoll.c:2333
 Kernel panic - not syncing: panic_on_warn set ...
-CPU: 1 PID: 1 Comm: systemd Not tainted 5.8.0-syzkaller #0
+CPU: 1 PID: 8728 Comm: syz-fuzzer Not tainted 5.8.0-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  __dump_stack lib/dump_stack.c:77 [inline]
@@ -72,30 +73,28 @@ Call Trace:
  handle_bug+0x4d/0x90 arch/x86/kernel/traps.c:235
  exc_invalid_op+0x16/0x70 arch/x86/kernel/traps.c:255
  asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:547
-RIP: 0010:ep_scan_ready_list+0x9f/0x470 fs/eventpoll.c:688
-Code: 37 d4 c6 ff 85 db 74 1d e8 1e d0 c6 ff 40 84 ed 75 0c eb 1d e8 12 d0 c6 ff 40 84 ed 74 13 e8 08 d0 c6 ff eb 1c e8 01 d0 c6 ff <0f> 0b 40 84 ed 75 ed e8 f5 cf c6 ff 4c 89 f7 44 89 fe e8 1a 8b a5
-RSP: 0000:ffffc90000c73dc8 EFLAGS: 00010293
-RAX: ffffffff81853bff RBX: 0000000000000000 RCX: ffff88812b766040
+RIP: 0010:ep_poll fs/eventpoll.c:1828 [inline]
+RIP: 0010:do_epoll_wait+0x337/0x920 fs/eventpoll.c:2333
+Code: 41 be 01 00 00 00 31 c0 48 89 44 24 20 45 31 e4 e9 7f 01 00 00 e8 59 ab c6 ff 41 bc f2 ff ff ff e9 c8 03 00 00 e8 49 ab c6 ff <0f> 0b e9 58 fe ff ff 49 bf ff ff ff ff ff ff ff 7f e9 f0 fe ff ff
+RSP: 0018:ffffc90000e1fe28 EFLAGS: 00010293
+RAX: ffffffff81856297 RBX: ffff888120fafa00 RCX: ffff88811e196400
 RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff81853bd9 R09: 0000ffff88619eb7
-R10: 0000ffffffffffff R11: 0000000000000000 R12: 0000000000000000
-R13: ffffc90000c73de8 R14: ffff8881297af600 R15: 0000000000000000
- ep_send_events fs/eventpoll.c:1788 [inline]
- ep_poll fs/eventpoll.c:1944 [inline]
- do_epoll_wait+0x55c/0x920 fs/eventpoll.c:2333
- __do_sys_epoll_wait fs/eventpoll.c:2343 [inline]
- __se_sys_epoll_wait fs/eventpoll.c:2340 [inline]
- __x64_sys_epoll_wait+0x4d/0x60 fs/eventpoll.c:2340
+RBP: 0000000000000000 R08: ffffffff818560d8 R09: 0000ffff88619eb7
+R10: 0000ffffffffffff R11: 0000000000000000 R12: 00007ffffffff000
+R13: 0000000000000080 R14: 0000000000000001 R15: 0000000000000003
+ __do_sys_epoll_pwait fs/eventpoll.c:2364 [inline]
+ __se_sys_epoll_pwait fs/eventpoll.c:2350 [inline]
+ __x64_sys_epoll_pwait+0x92/0x150 fs/eventpoll.c:2350
  do_syscall_64+0x6a/0xe0 arch/x86/entry/common.c:384
  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x7f310b8db303
-Code: 49 89 ca b8 e8 00 00 00 0f 05 48 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 0b c2 00 00 48 89 04 24 49 89 ca b8 e8 00 00 00 0f 05 <48> 8b 3c 24 48 89 c2 e8 51 c2 00 00 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007ffdc7ffa4c0 EFLAGS: 00000293 ORIG_RAX: 00000000000000e8
-RAX: ffffffffffffffda RBX: 000055e909e78f50 RCX: 00007f310b8db303
-RDX: 0000000000000025 RSI: 00007ffdc7ffa4d0 RDI: 0000000000000004
-RBP: 00007ffdc7ffa790 R08: 846474467368a395 R09: 00000000000061c0
-R10: 00000000ffffffff R11: 0000000000000293 R12: 00007ffdc7ffa4d0
-R13: 0000000000000001 R14: ffffffffffffffff R15: 0000000000000002
+RIP: 0033:0x469240
+Code: 0f 05 89 44 24 20 c3 cc cc cc 8b 7c 24 08 48 8b 74 24 10 8b 54 24 18 44 8b 54 24 1c 49 c7 c0 00 00 00 00 b8 19 01 00 00 0f 05 <89> 44 24 20 c3 cc cc cc cc cc cc cc cc cc cc cc 8b 7c 24 08 48 c7
+RSP: 002b:000000c00004b7f0 EFLAGS: 00000246 ORIG_RAX: 0000000000000119
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 0000000000469240
+RDX: 0000000000000080 RSI: 000000c00004b840 RDI: 0000000000000003
+RBP: 000000c00004be40 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000246 R12: 0000000000000003
+R13: 000000c00009cc00 R14: 000000c00032c180 R15: 0000000000000000
 Kernel Offset: disabled
 Rebooting in 86400 seconds..
 
