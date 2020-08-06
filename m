@@ -2,242 +2,695 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6576323D4C6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Aug 2020 02:43:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5716C23D4EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Aug 2020 03:02:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbgHFAnV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Aug 2020 20:43:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35924 "EHLO
+        id S1726013AbgHFBCx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Aug 2020 21:02:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725779AbgHFAnR (ORCPT
+        with ESMTP id S1725920AbgHFBCt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Aug 2020 20:43:17 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F1E2C061574
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Aug 2020 17:43:16 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id f7so42369326wrw.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Aug 2020 17:43:16 -0700 (PDT)
+        Wed, 5 Aug 2020 21:02:49 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F5CAC061574;
+        Wed,  5 Aug 2020 18:02:47 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id d4so5608212pjx.5;
+        Wed, 05 Aug 2020 18:02:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XqxrCBcebzwTBSlBbZQuXod3klRM9Vw/uQ+yD1TuH7k=;
-        b=pOlNC5FY3C1j9IhvS3DZJb3ce7tSIc2UV2rOiD19AqeDsDU6X2ZtoTUxi0h30RYqEK
-         gYmhMR6IVLr2uD47iFLfmwma8Ek3R5C3GGzB976sl8id8ELyIIW3wAyBWhhLyNLO+Wd+
-         6SwPLjCD9e35MNeMm/FsFQ+2lesscQoPVJdGgjT+3sjNQGE/gmTFjE0nW5hwe4BASOeV
-         L+DVV3e4ZyL0aJjl7Rc8/0BhWFHXQEu4ZyOIItROM2xfIt7uJ+EimpiVziSllgi8FQKX
-         5wgoTsrhWUMIqK7EQND6bJdn1LIIWxZ8MPML/bzXGk8/lDZMI89Q3rrI5P/v7BPKKR+k
-         DuLA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NXI2Cfg2OOvbPMbVbcs5r+BVhLUB8nxOX4a5E/f1xXo=;
+        b=QMKrELLtQH+fhIQ90tnkRkKM6jffybu//m7bx7u6/2AtjlF9a1tzs3/uTXezik99Tm
+         RHeopm32BNmTJW17v7TdT8jiZ0W8DDRD+VVdXoivKLD0oOxgoBLM6K5jSq94+Ku58mHB
+         +i5WCjDyLzQ8se+3RdLVjCB8r/cZ2V8WaTpb/3DI/iB5Kx/Eq7YnGmNNU6cljkcllZUV
+         BcDFyfmIOukCDxr4JXeoynhoxrrGR8uhaAp4Y+qLWdQ1QTEQcDliD0eJL83wDe7w+JW1
+         KZ1ktJvuQu02FrrYWFJvlBBqbnhzV/QBX0V9NhrQi2k84pv1beA9urZmObj7omIAxjOe
+         qfmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XqxrCBcebzwTBSlBbZQuXod3klRM9Vw/uQ+yD1TuH7k=;
-        b=XbiW+FaonCdNjqujDy5IRH5VqNAuHbdN0zToAWK4/zo2GznY/S2+gR12ZpRKW4bWYR
-         ej8KGV5Utnyvoqhkh7sFQI0xSpEX3uCWWQmrtcFGrTHMqVaSbI6a9fszGyYnmpvNQnaq
-         mTAH9vhs5gPObbqVD85Wvhq37c3wgZn57vc5CCG6dMLCOQ+TJYjODc5TVMhF9upgsTYm
-         kR6rj6RKYnA4+L53QNb0piwgWm75F5wavK/WfMvmbfL75P0TUpTNmOPyxJAyjPJmKaMM
-         gVGW7B7kJawo5Nc/0tdANiHobdZ3drHEXIOeUPBBBCCPz77S6RG6qA/qoc+XAMZc0rJL
-         pEkQ==
-X-Gm-Message-State: AOAM530HYc8/l+oHsPBueB5yNyC5ZXbUtf4Vr4mcXYhX90DXEVzBVktM
-        WPVwj7Wr+p6tpDuBu0EDCmPAN0wPjjxLNrq9o6911w==
-X-Google-Smtp-Source: ABdhPJzHi47nTFBCo846dKdF9YxlwujEkFvFwbOkqOtw0t5sK+Tcjgm9k2TxUTaYkaFADpMa0GvVP2txhNLBZIpAKuo=
-X-Received: by 2002:a5d:5704:: with SMTP id a4mr4760122wrv.318.1596674594491;
- Wed, 05 Aug 2020 17:43:14 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NXI2Cfg2OOvbPMbVbcs5r+BVhLUB8nxOX4a5E/f1xXo=;
+        b=Z7Zarvr1LjJfGkDcv3quVEcxTvUjzd/a2mnUoqxd4tewbDCc0KB39ZJ3pyafTDUk1R
+         zb44GqcBjy6P9boF3/vO67OelNE9+EW6HoPN0eejHZQcs5ANHv5MPY3880TWbTYYQCKg
+         P7zukgFIh/MNtjt4QXVLYM2mCWyVbuH+pkqSgesAGxK2XknQPXTAYuqDdpAMY+2i2LAV
+         ekpV+klXQVdVjEK6MGvGdhhlsEdnUUVCjemXWvtoGOgidb20P7FT6wjzqQ82LGYCyOBZ
+         rOiFtAR8ERXL24F3AGvBPGaZUkDWOYuQML06HyMhCI/IRrwb5Mj/XfGy93idmCi00G/q
+         11ig==
+X-Gm-Message-State: AOAM531J//9oW1zj7w0+Jn1q5KDg7TAyn0qUVMZL8j6JkOgl0JTTSWSk
+        hBc5Fqegd3BMl1hbal79/hI=
+X-Google-Smtp-Source: ABdhPJyv3zvRyZQK+CynaeCEkjYoIZkGH9xCZUem5o4s7WXm2bzUB5pT3fxqkqecPxSgiIv/iuy25Q==
+X-Received: by 2002:a17:90a:94c4:: with SMTP id j4mr5830250pjw.155.1596675766386;
+        Wed, 05 Aug 2020 18:02:46 -0700 (PDT)
+Received: from dc803.localdomain (FL1-218-42-16-224.hyg.mesh.ad.jp. [218.42.16.224])
+        by smtp.gmail.com with ESMTPSA id z5sm4633134pfk.15.2020.08.05.18.02.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Aug 2020 18:02:45 -0700 (PDT)
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+To:     kohada.t2@gmail.com
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] exfat: integrates dir-entry getting and validation
+Date:   Thu,  6 Aug 2020 10:02:29 +0900
+Message-Id: <20200806010229.24690-1-kohada.t2@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20200508125314-mutt-send-email-mst@kernel.org>
- <20200520045938.GC26186@redhat.com> <202005200921.2BD5A0ADD@keescook>
- <20200520194804.GJ26186@redhat.com> <20200520195134.GK26186@redhat.com>
- <CA+EESO4wEQz3CMxNLh8mQmTpUHdO+zZbV10zUfYGKEwfRPK2nQ@mail.gmail.com>
- <20200520211634.GL26186@redhat.com> <CABXk95A-E4NYqA5qVrPgDF18YW-z4_udzLwa0cdo2OfqVsy=SQ@mail.gmail.com>
- <CA+EESO4kLaje0yTOyMSxHfSLC0n86zAF+M1DWB_XrwFDLOCawQ@mail.gmail.com>
- <CAFJ0LnGfrzvVgtyZQ+UqRM6F3M7iXOhTkUBTc+9sV+=RrFntyQ@mail.gmail.com> <20200724093852-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20200724093852-mutt-send-email-mst@kernel.org>
-From:   Nick Kralevich <nnk@google.com>
-Date:   Wed, 5 Aug 2020 17:43:02 -0700
-Message-ID: <CAFJ0LnEZghYj=d3w8Fmko4GZAWw6Qc5rgAMmXj-8qgXtyU3bZQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] Add a new sysctl knob: unprivileged_userfaultfd_user_mode_only
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Lokesh Gidra <lokeshgidra@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Xu <peterx@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Jerome Glisse <jglisse@redhat.com>, Shaohua Li <shli@fb.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Minchan Kim <minchan@google.com>,
-        Sandeep Patil <sspatil@google.com>, kernel@android.com,
-        Daniel Colascione <dancol@dancol.org>,
-        Kalesh Singh <kaleshsingh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 6:40 AM Michael S. Tsirkin <mst@redhat.com> wrote:
->
-> On Thu, Jul 23, 2020 at 05:13:28PM -0700, Nick Kralevich wrote:
-> > On Thu, Jul 23, 2020 at 10:30 AM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> > > From the discussion so far it seems that there is a consensus that
-> > > patch 1/2 in this series should be upstreamed in any case. Is there
-> > > anything that is pending on that patch?
-> >
-> > That's my reading of this thread too.
-> >
-> > > > > Unless I'm mistaken that you can already enforce bit 1 of the second
-> > > > > parameter of the userfaultfd syscall to be set with seccomp-bpf, this
-> > > > > would be more a question to the Android userland team.
-> > > > >
-> > > > > The question would be: does it ever happen that a seccomp filter isn't
-> > > > > already applied to unprivileged software running without
-> > > > > SYS_CAP_PTRACE capability?
-> > > >
-> > > > Yes.
-> > > >
-> > > > Android uses selinux as our primary sandboxing mechanism. We do use
-> > > > seccomp on a few processes, but we have found that it has a
-> > > > surprisingly high performance cost [1] on arm64 devices so turning it
-> > > > on system wide is not a good option.
-> > > >
-> > > > [1] https://lore.kernel.org/linux-security-module/202006011116.3F7109A@keescook/T/#m82ace19539ac595682affabdf652c0ffa5d27dad
-> >
-> > As Jeff mentioned, seccomp is used strategically on Android, but is
-> > not applied to all processes. It's too expensive and impractical when
-> > simpler implementations (such as this sysctl) can exist. It's also
-> > significantly simpler to test a sysctl value for correctness as
-> > opposed to a seccomp filter.
->
-> Given that selinux is already used system-wide on Android, what is wrong
-> with using selinux to control userfaultfd as opposed to seccomp?
+Add validation for num, bh and type on getting dir-entry.
+Renamed exfat_get_dentry_cached() to exfat_get_validated_dentry() due to
+a change in functionality.
 
-Userfaultfd file descriptors will be generally controlled by SELinux.
-You can see the patchset at
-https://lore.kernel.org/lkml/20200401213903.182112-3-dancol@google.com/
-(which is also referenced in the original commit message for this
-patchset). However, the SELinux patchset doesn't include the ability
-to control FAULT_FLAG_USER / UFFD_USER_MODE_ONLY directly.
+Integrate type-validation with simplified.
+This will also recognize a dir-entry set that contains 'benign secondary'
+dir-entries.
 
-SELinux already has the ability to control who gets CAP_SYS_PTRACE,
-which combined with this patch, is largely equivalent to direct
-UFFD_USER_MODE_ONLY checks. Additionally, with the SELinux patch
-above, movement of userfaultfd file descriptors can be mediated by
-SELinux, preventing one process from acquiring userfaultfd descriptors
-of other processes unless allowed by security policy.
+Pre-Validated 'file' and 'stream-ext' dir-entries are provided as member
+variables of exfat_entry_set_cache.
 
-It's an interesting question whether finer-grain SELinux support for
-controlling UFFD_USER_MODE_ONLY should be added. I can see some
-advantages to implementing this. However, we don't need to decide that
-now.
+And, rename TYPE_EXTEND to TYPE_NAME.
 
-Kernel security checks generally break down into DAC (discretionary
-access control) and MAC (mandatory access control) controls. Most
-kernel security features check via both of these mechanisms. Security
-attributes of the system should be settable without necessarily
-relying on an LSM such as SELinux. This patch follows the same basic
-model -- system wide control of a hardening feature is provided by the
-unprivileged_userfaultfd_user_mode_only sysctl (DAC), and if needed,
-SELinux support for this can also be implemented on top of the DAC
-controls.
+Suggested-by: Sungjong Seo <sj1557.seo@samsung.com>
+Suggested-by: Namjae Jeon <namjae.jeon@samsung.com>
+Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
+---
+Changes in v2
+ - Change verification order
+ - Verification loop start with index 2
+Changes in v3
+ - Fix indent 
+ - Fix comment of exfat_get_dentry_set()
+ - Add de_file/de_stream in exfat_entry_set_cache
+ - Add srtuct tag name for each dir-entry type in exfat_dentry
+ - Add description about de_file/de_stream to commit-log
 
-This DAC/MAC split has been successful in several other security
-features. For example, the ability to map at page zero is controlled
-in DAC via the mmap_min_addr sysctl [1], and via SELinux via the
-mmap_zero access vector [2]. Similarly, access to the kernel ring
-buffer is controlled both via DAC as the dmesg_restrict sysctl [3], as
-well as the SELinux syslog_read [2] check. Indeed, the dmesg_restrict
-sysctl is very similar to this patch -- it introduces a capability
-(CAP_SYSLOG, CAP_SYS_PTRACE) check on access to a sensitive resource.
+ fs/exfat/dir.c       | 147 +++++++++++++++++--------------------------
+ fs/exfat/exfat_fs.h  |  17 +++--
+ fs/exfat/exfat_raw.h |  10 +--
+ fs/exfat/file.c      |  25 ++++----
+ fs/exfat/inode.c     |  49 ++++++---------
+ fs/exfat/namei.c     |  36 +++++------
+ 6 files changed, 122 insertions(+), 162 deletions(-)
 
-If we want to ensure that a security feature will be well tested and
-vetted, it's important to not limit its use to LSMs only. This ensures
-that kernel and application developers will always be able to test the
-effects of a security feature, without relying on LSMs like SELinux.
-It also ensures that all distributions can enable this security
-mitigation should it be necessary for their unique environments,
-without introducing an SELinux dependency. And this patch does not
-preclude an SELinux implementation should it be necessary.
-
-Even if we decide to implement fine-grain SELinux controls on
-UFFD_USER_MODE_ONLY, we still need this patch. We shouldn't make this
-an either/or choice between SELinux and this patch. Both are
-necessary.
-
--- Nick
-
-[1] https://wiki.debian.org/mmap_min_addr
-[2] https://selinuxproject.org/page/NB_ObjectClassesPermissions
-[3] https://www.kernel.org/doc/Documentation/sysctl/kernel.txt
-
->
->
-> > > > >
-> > > > >
-> > > > > If answer is "no" the behavior of the new sysctl in patch 2/2 (in
-> > > > > subject) should be enforceable with minor changes to the BPF
-> > > > > assembly. Otherwise it'd require more changes.
-> >
-> > It would be good to understand what these changes are.
-> >
-> > > > > Why exactly is it preferable to enlarge the surface of attack of the
-> > > > > kernel and take the risk there is a real bug in userfaultfd code (not
-> > > > > just a facilitation of exploiting some other kernel bug) that leads to
-> > > > > a privilege escalation, when you still break 99% of userfaultfd users,
-> > > > > if you set with option "2"?
-> >
-> > I can see your point if you think about the feature as a whole.
-> > However, distributions (such as Android) have specialized knowledge of
-> > their security environments, and may not want to support the typical
-> > usages of userfaultfd. For such distributions, providing a mechanism
-> > to prevent userfaultfd from being useful as an exploit primitive,
-> > while still allowing the very limited use of userfaultfd for userspace
-> > faults only, is desirable. Distributions shouldn't be forced into
-> > supporting 100% of the use cases envisioned by userfaultfd when their
-> > needs may be more specialized, and this sysctl knob empowers
-> > distributions to make this choice for themselves.
-> >
-> > > > > Is the system owner really going to purely run on his systems CRIU
-> > > > > postcopy live migration (which already runs with CAP_SYS_PTRACE) and
-> > > > > nothing else that could break?
-> >
-> > This is a great example of a capability which a distribution may not
-> > want to support, due to distribution specific security policies.
-> >
-> > > > >
-> > > > > Option "2" to me looks with a single possible user, and incidentally
-> > > > > this single user can already enforce model "2" by only tweaking its
-> > > > > seccomp-bpf filters without applying 2/2. It'd be a bug if android
-> > > > > apps runs unprotected by seccomp regardless of 2/2.
-> >
-> > Can you elaborate on what bug is present by processes being
-> > unprotected by seccomp?
-> >
-> > Seccomp cannot be universally applied on Android due to previously
-> > mentioned performance concerns. Seccomp is used in Android primarily
-> > as a tool to enforce the list of allowed syscalls, so that such
-> > syscalls can be audited before being included as part of the Android
-> > API.
-> >
-> > -- Nick
-> >
-> > --
-> > Nick Kralevich | nnk@google.com
->
-
-
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index 573659bfbc55..91cdbede0fd1 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -33,6 +33,7 @@ static void exfat_get_uniname_from_ext_entry(struct super_block *sb,
+ {
+ 	int i;
+ 	struct exfat_entry_set_cache *es;
++	struct exfat_dentry *ep;
+ 
+ 	es = exfat_get_dentry_set(sb, p_dir, entry, ES_ALL_ENTRIES);
+ 	if (!es)
+@@ -44,13 +45,9 @@ static void exfat_get_uniname_from_ext_entry(struct super_block *sb,
+ 	 * Third entry  : first file-name entry
+ 	 * So, the index of first file-name dentry should start from 2.
+ 	 */
+-	for (i = 2; i < es->num_entries; i++) {
+-		struct exfat_dentry *ep = exfat_get_dentry_cached(es, i);
+-
+-		/* end of name entry */
+-		if (exfat_get_entry_type(ep) != TYPE_EXTEND)
+-			break;
+ 
++	i = 2;
++	while ((ep = exfat_get_validated_dentry(es, i++, TYPE_NAME))) {
+ 		exfat_extract_uni_name(ep, uniname);
+ 		uniname += EXFAT_FILE_NAME_LEN;
+ 	}
+@@ -372,7 +369,7 @@ unsigned int exfat_get_entry_type(struct exfat_dentry *ep)
+ 		if (ep->type == EXFAT_STREAM)
+ 			return TYPE_STREAM;
+ 		if (ep->type == EXFAT_NAME)
+-			return TYPE_EXTEND;
++			return TYPE_NAME;
+ 		if (ep->type == EXFAT_ACL)
+ 			return TYPE_ACL;
+ 		return TYPE_CRITICAL_SEC;
+@@ -388,7 +385,7 @@ static void exfat_set_entry_type(struct exfat_dentry *ep, unsigned int type)
+ 		ep->type &= EXFAT_DELETE;
+ 	} else if (type == TYPE_STREAM) {
+ 		ep->type = EXFAT_STREAM;
+-	} else if (type == TYPE_EXTEND) {
++	} else if (type == TYPE_NAME) {
+ 		ep->type = EXFAT_NAME;
+ 	} else if (type == TYPE_BITMAP) {
+ 		ep->type = EXFAT_BITMAP;
+@@ -421,7 +418,7 @@ static void exfat_init_name_entry(struct exfat_dentry *ep,
+ {
+ 	int i;
+ 
+-	exfat_set_entry_type(ep, TYPE_EXTEND);
++	exfat_set_entry_type(ep, TYPE_NAME);
+ 	ep->dentry.name.flags = 0x0;
+ 
+ 	for (i = 0; i < EXFAT_FILE_NAME_LEN; i++) {
+@@ -594,13 +591,12 @@ void exfat_update_dir_chksum_with_entry_set(struct exfat_entry_set_cache *es)
+ 	struct exfat_dentry *ep;
+ 
+ 	for (i = 0; i < es->num_entries; i++) {
+-		ep = exfat_get_dentry_cached(es, i);
++		ep = exfat_get_validated_dentry(es, i, TYPE_ALL);
+ 		chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, chksum,
+ 					     chksum_type);
+ 		chksum_type = CS_DEFAULT;
+ 	}
+-	ep = exfat_get_dentry_cached(es, 0);
+-	ep->dentry.file.checksum = cpu_to_le16(chksum);
++	es->de_file->checksum = cpu_to_le16(chksum);
+ 	es->modified = true;
+ }
+ 
+@@ -741,92 +737,64 @@ struct exfat_dentry *exfat_get_dentry(struct super_block *sb,
+ 	return (struct exfat_dentry *)((*bh)->b_data + off);
+ }
+ 
+-enum exfat_validate_dentry_mode {
+-	ES_MODE_STARTED,
+-	ES_MODE_GET_FILE_ENTRY,
+-	ES_MODE_GET_STRM_ENTRY,
+-	ES_MODE_GET_NAME_ENTRY,
+-	ES_MODE_GET_CRITICAL_SEC_ENTRY,
+-};
+-
+-static bool exfat_validate_entry(unsigned int type,
+-		enum exfat_validate_dentry_mode *mode)
+-{
+-	if (type == TYPE_UNUSED || type == TYPE_DELETED)
+-		return false;
+-
+-	switch (*mode) {
+-	case ES_MODE_STARTED:
+-		if  (type != TYPE_FILE && type != TYPE_DIR)
+-			return false;
+-		*mode = ES_MODE_GET_FILE_ENTRY;
+-		return true;
+-	case ES_MODE_GET_FILE_ENTRY:
+-		if (type != TYPE_STREAM)
+-			return false;
+-		*mode = ES_MODE_GET_STRM_ENTRY;
+-		return true;
+-	case ES_MODE_GET_STRM_ENTRY:
+-		if (type != TYPE_EXTEND)
+-			return false;
+-		*mode = ES_MODE_GET_NAME_ENTRY;
+-		return true;
+-	case ES_MODE_GET_NAME_ENTRY:
+-		if (type == TYPE_STREAM)
+-			return false;
+-		if (type != TYPE_EXTEND) {
+-			if (!(type & TYPE_CRITICAL_SEC))
+-				return false;
+-			*mode = ES_MODE_GET_CRITICAL_SEC_ENTRY;
+-		}
+-		return true;
+-	case ES_MODE_GET_CRITICAL_SEC_ENTRY:
+-		if (type == TYPE_EXTEND || type == TYPE_STREAM)
+-			return false;
+-		if ((type & TYPE_CRITICAL_SEC) != TYPE_CRITICAL_SEC)
+-			return false;
+-		return true;
+-	default:
+-		WARN_ON_ONCE(1);
+-		return false;
+-	}
+-}
+-
+-struct exfat_dentry *exfat_get_dentry_cached(
+-	struct exfat_entry_set_cache *es, int num)
++struct exfat_dentry *exfat_get_validated_dentry(struct exfat_entry_set_cache *es,
++		int num, unsigned int type)
+ {
+ 	int off = es->start_off + num * DENTRY_SIZE;
+-	struct buffer_head *bh = es->bh[EXFAT_B_TO_BLK(off, es->sb)];
+-	char *p = bh->b_data + EXFAT_BLK_OFFSET(off, es->sb);
++	struct buffer_head *bh;
++	struct exfat_dentry *ep;
+ 
+-	return (struct exfat_dentry *)p;
++	if (num >= es->num_entries)
++		return NULL;
++
++	bh = es->bh[EXFAT_B_TO_BLK(off, es->sb)];
++	if (!bh)
++		return NULL;
++
++	ep = (struct exfat_dentry *)
++		(bh->b_data + EXFAT_BLK_OFFSET(off, es->sb));
++
++	switch (type) {
++	case TYPE_ALL: /* accept any */
++		break;
++	case TYPE_FILE:
++		if (ep->type != EXFAT_FILE)
++			return NULL;
++		break;
++	case TYPE_SECONDARY:
++		if (!(type & exfat_get_entry_type(ep)))
++			return NULL;
++		break;
++	default:
++		if (type != exfat_get_entry_type(ep))
++			return NULL;
++	}
++	return ep;
+ }
+ 
+ /*
+  * Returns a set of dentries for a file or dir.
+  *
+- * Note It provides a direct pointer to bh->data via exfat_get_dentry_cached().
++ * Note It provides a direct pointer to bh->data via exfat_get_validated_dentry().
+  * User should call exfat_get_dentry_set() after setting 'modified' to apply
+  * changes made in this entry set to the real device.
+  *
+  * in:
+  *   sb+p_dir+entry: indicates a file/dir
+- *   type:  specifies how many dentries should be included.
++ *   max_entries:  specifies how many dentries should be included.
+  * return:
+  *   pointer of entry set on success,
+  *   NULL on failure.
+  */
+ struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
+-		struct exfat_chain *p_dir, int entry, unsigned int type)
++		struct exfat_chain *p_dir, int entry, int max_entries)
+ {
+ 	int ret, i, num_bh;
+-	unsigned int off, byte_offset, clu = 0;
++	unsigned int byte_offset, clu = 0;
+ 	sector_t sec;
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+ 	struct exfat_entry_set_cache *es;
+ 	struct exfat_dentry *ep;
+-	int num_entries;
+-	enum exfat_validate_dentry_mode mode = ES_MODE_STARTED;
+ 	struct buffer_head *bh;
+ 
+ 	if (p_dir->dir == DIR_DELETED) {
+@@ -844,13 +812,13 @@ struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
+ 		return NULL;
+ 	es->sb = sb;
+ 	es->modified = false;
++	es->num_entries = 1;
+ 
+ 	/* byte offset in cluster */
+ 	byte_offset = EXFAT_CLU_OFFSET(byte_offset, sbi);
+ 
+ 	/* byte offset in sector */
+-	off = EXFAT_BLK_OFFSET(byte_offset, sb);
+-	es->start_off = off;
++	es->start_off = EXFAT_BLK_OFFSET(byte_offset, sb);
+ 
+ 	/* sector offset in cluster */
+ 	sec = EXFAT_B_TO_BLK(byte_offset, sb);
+@@ -861,15 +829,13 @@ struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
+ 		goto free_es;
+ 	es->bh[es->num_bh++] = bh;
+ 
+-	ep = exfat_get_dentry_cached(es, 0);
+-	if (!exfat_validate_entry(exfat_get_entry_type(ep), &mode))
++	ep = exfat_get_validated_dentry(es, 0, TYPE_FILE);
++	if (!ep)
+ 		goto free_es;
++	es->de_file = &ep->dentry.file;
++	es->num_entries = min(es->de_file->num_ext + 1, max_entries);
+ 
+-	num_entries = type == ES_ALL_ENTRIES ?
+-		ep->dentry.file.num_ext + 1 : type;
+-	es->num_entries = num_entries;
+-
+-	num_bh = EXFAT_B_TO_BLK_ROUND_UP(off + num_entries * DENTRY_SIZE, sb);
++	num_bh = EXFAT_B_TO_BLK_ROUND_UP(es->start_off  + es->num_entries * DENTRY_SIZE, sb);
+ 	for (i = 1; i < num_bh; i++) {
+ 		/* get the next sector */
+ 		if (exfat_is_last_sector_in_cluster(sbi, sec)) {
+@@ -889,11 +855,16 @@ struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
+ 	}
+ 
+ 	/* validiate cached dentries */
+-	for (i = 1; i < num_entries; i++) {
+-		ep = exfat_get_dentry_cached(es, i);
+-		if (!exfat_validate_entry(exfat_get_entry_type(ep), &mode))
++	ep = exfat_get_validated_dentry(es, 1, TYPE_STREAM);
++	if (!ep)
++		goto free_es;
++	es->de_stream = &ep->dentry.stream;
++
++	for (i = 2; i < es->num_entries; i++) {
++		if (!exfat_get_validated_dentry(es, i, TYPE_SECONDARY))
+ 			goto free_es;
+ 	}
++
+ 	return es;
+ 
+ free_es:
+@@ -1028,7 +999,7 @@ int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
+ 			}
+ 
+ 			brelse(bh);
+-			if (entry_type == TYPE_EXTEND) {
++			if (entry_type == TYPE_NAME) {
+ 				unsigned short entry_uniname[16], unichar;
+ 
+ 				if (step != DIRENT_STEP_NAME) {
+@@ -1144,7 +1115,7 @@ int exfat_count_ext_entries(struct super_block *sb, struct exfat_chain *p_dir,
+ 
+ 		type = exfat_get_entry_type(ext_ep);
+ 		brelse(bh);
+-		if (type == TYPE_EXTEND || type == TYPE_STREAM)
++		if (type == TYPE_NAME || type == TYPE_STREAM)
+ 			count++;
+ 		else
+ 			break;
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 95d717f8620c..b88b7abc25bd 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -40,7 +40,7 @@ enum {
+  * Type Definitions
+  */
+ #define ES_2_ENTRIES		2
+-#define ES_ALL_ENTRIES		0
++#define ES_ALL_ENTRIES		256
+ 
+ #define DIR_DELETED		0xFFFF0321
+ 
+@@ -56,7 +56,7 @@ enum {
+ #define TYPE_FILE		0x011F
+ #define TYPE_CRITICAL_SEC	0x0200
+ #define TYPE_STREAM		0x0201
+-#define TYPE_EXTEND		0x0202
++#define TYPE_NAME		0x0202
+ #define TYPE_ACL		0x0203
+ #define TYPE_BENIGN_PRI		0x0400
+ #define TYPE_GUID		0x0401
+@@ -65,6 +65,9 @@ enum {
+ #define TYPE_BENIGN_SEC		0x0800
+ #define TYPE_ALL		0x0FFF
+ 
++#define TYPE_PRIMARY		(TYPE_CRITICAL_PRI | TYPE_BENIGN_PRI)
++#define TYPE_SECONDARY		(TYPE_CRITICAL_SEC | TYPE_BENIGN_SEC)
++
+ #define MAX_CHARSET_SIZE	6 /* max size of multi-byte character */
+ #define MAX_NAME_LENGTH		255 /* max len of file name excluding NULL */
+ #define MAX_VFSNAME_BUF_SIZE	((MAX_NAME_LENGTH + 1) * MAX_CHARSET_SIZE)
+@@ -171,7 +174,9 @@ struct exfat_entry_set_cache {
+ 	unsigned int start_off;
+ 	int num_bh;
+ 	struct buffer_head *bh[DIR_CACHE_SIZE];
+-	unsigned int num_entries;
++	int num_entries;
++	struct exfat_de_file *de_file;
++	struct exfat_de_stream *de_stream;
+ };
+ 
+ struct exfat_dir_entry {
+@@ -458,10 +463,10 @@ int exfat_find_location(struct super_block *sb, struct exfat_chain *p_dir,
+ struct exfat_dentry *exfat_get_dentry(struct super_block *sb,
+ 		struct exfat_chain *p_dir, int entry, struct buffer_head **bh,
+ 		sector_t *sector);
+-struct exfat_dentry *exfat_get_dentry_cached(struct exfat_entry_set_cache *es,
+-		int num);
++struct exfat_dentry *exfat_get_validated_dentry(struct exfat_entry_set_cache *es,
++		int num, unsigned int type);
+ struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
+-		struct exfat_chain *p_dir, int entry, unsigned int type);
++		struct exfat_chain *p_dir, int entry, int max_entries);
+ int exfat_free_dentry_set(struct exfat_entry_set_cache *es, int sync);
+ int exfat_count_dir_entries(struct super_block *sb, struct exfat_chain *p_dir);
+ 
+diff --git a/fs/exfat/exfat_raw.h b/fs/exfat/exfat_raw.h
+index 6aec6288e1f2..b2ece0bf4ecd 100644
+--- a/fs/exfat/exfat_raw.h
++++ b/fs/exfat/exfat_raw.h
+@@ -105,7 +105,7 @@ struct boot_sector {
+ struct exfat_dentry {
+ 	__u8 type;
+ 	union {
+-		struct {
++		struct exfat_de_file {
+ 			__u8 num_ext;
+ 			__le16 checksum;
+ 			__le16 attr;
+@@ -123,7 +123,7 @@ struct exfat_dentry {
+ 			__u8 access_tz;
+ 			__u8 reserved2[7];
+ 		} __packed file; /* file directory entry */
+-		struct {
++		struct exfat_de_stream {
+ 			__u8 flags;
+ 			__u8 reserved1;
+ 			__u8 name_len;
+@@ -134,17 +134,17 @@ struct exfat_dentry {
+ 			__le32 start_clu;
+ 			__le64 size;
+ 		} __packed stream; /* stream extension directory entry */
+-		struct {
++		struct exfat_de_name {
+ 			__u8 flags;
+ 			__le16 unicode_0_14[EXFAT_FILE_NAME_LEN];
+ 		} __packed name; /* file name directory entry */
+-		struct {
++		struct exfat_de_bitmap {
+ 			__u8 flags;
+ 			__u8 reserved[18];
+ 			__le32 start_clu;
+ 			__le64 size;
+ 		} __packed bitmap; /* allocation bitmap directory entry */
+-		struct {
++		struct exfat_de_upcase {
+ 			__u8 reserved1[3];
+ 			__le32 checksum;
+ 			__u8 reserved2[12];
+diff --git a/fs/exfat/file.c b/fs/exfat/file.c
+index f41f523a58ad..04f6cc79ed43 100644
+--- a/fs/exfat/file.c
++++ b/fs/exfat/file.c
+@@ -152,7 +152,6 @@ int __exfat_truncate(struct inode *inode, loff_t new_size)
+ 	/* update the directory entry */
+ 	if (!evict) {
+ 		struct timespec64 ts;
+-		struct exfat_dentry *ep, *ep2;
+ 		struct exfat_entry_set_cache *es;
+ 		int err;
+ 
+@@ -160,32 +159,30 @@ int __exfat_truncate(struct inode *inode, loff_t new_size)
+ 				ES_ALL_ENTRIES);
+ 		if (!es)
+ 			return -EIO;
+-		ep = exfat_get_dentry_cached(es, 0);
+-		ep2 = exfat_get_dentry_cached(es, 1);
+ 
+ 		ts = current_time(inode);
+ 		exfat_set_entry_time(sbi, &ts,
+-				&ep->dentry.file.modify_tz,
+-				&ep->dentry.file.modify_time,
+-				&ep->dentry.file.modify_date,
+-				&ep->dentry.file.modify_time_cs);
+-		ep->dentry.file.attr = cpu_to_le16(ei->attr);
++				&es->de_file->modify_tz,
++				&es->de_file->modify_time,
++				&es->de_file->modify_date,
++				&es->de_file->modify_time_cs);
++		es->de_file->attr = cpu_to_le16(ei->attr);
+ 
+ 		/* File size should be zero if there is no cluster allocated */
+ 		if (ei->start_clu == EXFAT_EOF_CLUSTER) {
+-			ep2->dentry.stream.valid_size = 0;
+-			ep2->dentry.stream.size = 0;
++			es->de_stream->valid_size = 0;
++			es->de_stream->size = 0;
+ 		} else {
+-			ep2->dentry.stream.valid_size = cpu_to_le64(new_size);
+-			ep2->dentry.stream.size = ep2->dentry.stream.valid_size;
++			es->de_stream->valid_size = cpu_to_le64(new_size);
++			es->de_stream->size = es->de_stream->valid_size;
+ 		}
+ 
+ 		if (new_size == 0) {
+ 			/* Any directory can not be truncated to zero */
+ 			WARN_ON(ei->type != TYPE_FILE);
+ 
+-			ep2->dentry.stream.flags = ALLOC_FAT_CHAIN;
+-			ep2->dentry.stream.start_clu = EXFAT_FREE_CLUSTER;
++			es->de_stream->flags = ALLOC_FAT_CHAIN;
++			es->de_stream->start_clu = EXFAT_FREE_CLUSTER;
+ 		}
+ 
+ 		exfat_update_dir_chksum_with_entry_set(es);
+diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+index 7f90204adef5..358457c82270 100644
+--- a/fs/exfat/inode.c
++++ b/fs/exfat/inode.c
+@@ -20,7 +20,6 @@
+ static int __exfat_write_inode(struct inode *inode, int sync)
+ {
+ 	unsigned long long on_disk_size;
+-	struct exfat_dentry *ep, *ep2;
+ 	struct exfat_entry_set_cache *es = NULL;
+ 	struct super_block *sb = inode->i_sb;
+ 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+@@ -45,26 +44,24 @@ static int __exfat_write_inode(struct inode *inode, int sync)
+ 	es = exfat_get_dentry_set(sb, &(ei->dir), ei->entry, ES_ALL_ENTRIES);
+ 	if (!es)
+ 		return -EIO;
+-	ep = exfat_get_dentry_cached(es, 0);
+-	ep2 = exfat_get_dentry_cached(es, 1);
+ 
+-	ep->dentry.file.attr = cpu_to_le16(exfat_make_attr(inode));
++	es->de_file->attr = cpu_to_le16(exfat_make_attr(inode));
+ 
+ 	/* set FILE_INFO structure using the acquired struct exfat_dentry */
+ 	exfat_set_entry_time(sbi, &ei->i_crtime,
+-			&ep->dentry.file.create_tz,
+-			&ep->dentry.file.create_time,
+-			&ep->dentry.file.create_date,
+-			&ep->dentry.file.create_time_cs);
++			&es->de_file->create_tz,
++			&es->de_file->create_time,
++			&es->de_file->create_date,
++			&es->de_file->create_time_cs);
+ 	exfat_set_entry_time(sbi, &inode->i_mtime,
+-			&ep->dentry.file.modify_tz,
+-			&ep->dentry.file.modify_time,
+-			&ep->dentry.file.modify_date,
+-			&ep->dentry.file.modify_time_cs);
++			&es->de_file->modify_tz,
++			&es->de_file->modify_time,
++			&es->de_file->modify_date,
++			&es->de_file->modify_time_cs);
+ 	exfat_set_entry_time(sbi, &inode->i_atime,
+-			&ep->dentry.file.access_tz,
+-			&ep->dentry.file.access_time,
+-			&ep->dentry.file.access_date,
++			&es->de_file->access_tz,
++			&es->de_file->access_time,
++			&es->de_file->access_date,
+ 			NULL);
+ 
+ 	/* File size should be zero if there is no cluster allocated */
+@@ -73,8 +70,8 @@ static int __exfat_write_inode(struct inode *inode, int sync)
+ 	if (ei->start_clu == EXFAT_EOF_CLUSTER)
+ 		on_disk_size = 0;
+ 
+-	ep2->dentry.stream.valid_size = cpu_to_le64(on_disk_size);
+-	ep2->dentry.stream.size = ep2->dentry.stream.valid_size;
++	es->de_stream->valid_size = cpu_to_le64(on_disk_size);
++	es->de_stream->size = es->de_stream->valid_size;
+ 
+ 	exfat_update_dir_chksum_with_entry_set(es);
+ 	return exfat_free_dentry_set(es, sync);
+@@ -219,7 +216,6 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
+ 		*clu = new_clu.dir;
+ 
+ 		if (ei->dir.dir != DIR_DELETED && modified) {
+-			struct exfat_dentry *ep;
+ 			struct exfat_entry_set_cache *es;
+ 			int err;
+ 
+@@ -227,17 +223,12 @@ static int exfat_map_cluster(struct inode *inode, unsigned int clu_offset,
+ 				ES_ALL_ENTRIES);
+ 			if (!es)
+ 				return -EIO;
+-			/* get stream entry */
+-			ep = exfat_get_dentry_cached(es, 1);
+-
+-			/* update directory entry */
+-			ep->dentry.stream.flags = ei->flags;
+-			ep->dentry.stream.start_clu =
+-				cpu_to_le32(ei->start_clu);
+-			ep->dentry.stream.valid_size =
+-				cpu_to_le64(i_size_read(inode));
+-			ep->dentry.stream.size =
+-				ep->dentry.stream.valid_size;
++
++			/* update stream directory entry */
++			es->de_stream->flags = ei->flags;
++			es->de_stream->start_clu = cpu_to_le32(ei->start_clu);
++			es->de_stream->valid_size = cpu_to_le64(i_size_read(inode));
++			es->de_stream->size = es->de_stream->valid_size;
+ 
+ 			exfat_update_dir_chksum_with_entry_set(es);
+ 			err = exfat_free_dentry_set(es, inode_needs_sync(inode));
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index e73f20f66cb2..a65d60ef93f4 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -658,25 +658,21 @@ static int exfat_find(struct inode *dir, struct qstr *qname,
+ 
+ 		info->num_subdirs = count;
+ 	} else {
+-		struct exfat_dentry *ep, *ep2;
+ 		struct exfat_entry_set_cache *es;
+ 
+ 		es = exfat_get_dentry_set(sb, &cdir, dentry, ES_2_ENTRIES);
+ 		if (!es)
+ 			return -EIO;
+-		ep = exfat_get_dentry_cached(es, 0);
+-		ep2 = exfat_get_dentry_cached(es, 1);
+ 
+-		info->type = exfat_get_entry_type(ep);
+-		info->attr = le16_to_cpu(ep->dentry.file.attr);
+-		info->size = le64_to_cpu(ep2->dentry.stream.valid_size);
++		info->attr = le16_to_cpu(es->de_file->attr);
++		info->type = (info->attr & ATTR_SUBDIR) ? TYPE_DIR : TYPE_FILE;
++		info->size = le64_to_cpu(es->de_stream->valid_size);
+ 		if ((info->type == TYPE_FILE) && (info->size == 0)) {
+ 			info->flags = ALLOC_NO_FAT_CHAIN;
+ 			info->start_clu = EXFAT_EOF_CLUSTER;
+ 		} else {
+-			info->flags = ep2->dentry.stream.flags;
+-			info->start_clu =
+-				le32_to_cpu(ep2->dentry.stream.start_clu);
++			info->flags = es->de_stream->flags;
++			info->start_clu = le32_to_cpu(es->de_stream->start_clu);
+ 		}
+ 
+ 		if (ei->start_clu == EXFAT_FREE_CLUSTER) {
+@@ -688,19 +684,19 @@ static int exfat_find(struct inode *dir, struct qstr *qname,
+ 		}
+ 
+ 		exfat_get_entry_time(sbi, &info->crtime,
+-				ep->dentry.file.create_tz,
+-				ep->dentry.file.create_time,
+-				ep->dentry.file.create_date,
+-				ep->dentry.file.create_time_cs);
++				es->de_file->create_tz,
++				es->de_file->create_time,
++				es->de_file->create_date,
++				es->de_file->create_time_cs);
+ 		exfat_get_entry_time(sbi, &info->mtime,
+-				ep->dentry.file.modify_tz,
+-				ep->dentry.file.modify_time,
+-				ep->dentry.file.modify_date,
+-				ep->dentry.file.modify_time_cs);
++				es->de_file->modify_tz,
++				es->de_file->modify_time,
++				es->de_file->modify_date,
++				es->de_file->modify_time_cs);
+ 		exfat_get_entry_time(sbi, &info->atime,
+-				ep->dentry.file.access_tz,
+-				ep->dentry.file.access_time,
+-				ep->dentry.file.access_date,
++				es->de_file->access_tz,
++				es->de_file->access_time,
++				es->de_file->access_date,
+ 				0);
+ 		exfat_free_dentry_set(es, false);
+ 
 -- 
-Nick Kralevich | nnk@google.com
+2.25.1
+
