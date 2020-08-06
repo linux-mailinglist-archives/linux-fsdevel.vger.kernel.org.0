@@ -2,179 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A9C2C23D8DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Aug 2020 11:43:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A904023D924
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Aug 2020 12:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbgHFJnk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Aug 2020 05:43:40 -0400
-Received: from foss.arm.com ([217.140.110.172]:41644 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729027AbgHFJnh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Aug 2020 05:43:37 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10F511045;
-        Thu,  6 Aug 2020 02:43:14 -0700 (PDT)
-Received: from [10.163.65.54] (unknown [10.163.65.54])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C8FB3F9AB;
-        Thu,  6 Aug 2020 02:43:10 -0700 (PDT)
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, rafael@kernel.org
-From:   Vikas Kumar <vikas.kumar2@arm.com>
-Subject: [LTP-FAIL][02/21] fs: refactor ksys_umount
-Message-ID: <d28d2235-9b1c-0403-59ca-e57ac5d0460e@arm.com>
-Date:   Thu, 6 Aug 2020 15:13:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1729250AbgHFKL1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Aug 2020 06:11:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38188 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728971AbgHFKLO (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Aug 2020 06:11:14 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0BEBC061575
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Aug 2020 03:11:13 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id h8so25803900lfp.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Aug 2020 03:11:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=FmHNrmiGc1oEc9Yta/aBuQn+1EulEN2xZuLGLoeLXHQ=;
+        b=vdAe04pQJi4piGZ5+mZ0j2zhjTn6XVtWXoKVvfYvjkZt497I/uZbgq0bCXUw9yqxv1
+         aDwbG4fQLRxllT940g4JJIoLaihdHAzLTznrUByrMW1Sxn0NV4LG6ITrocLkxfQ/UbR8
+         /22r5p3LxUUJDP/bT5Lo9OvmnoXmRxUSyOPo0gH4uKUH+elU8Mn1VlYg4xH7/Swt6AEz
+         woNXvCrI7kpsrhxnMJDhchfVxMGgUKsXYC/i/xUa92sA04Rdaab+RLuwLDiP7hERRYMU
+         MGSXXRnFS4yE+plzwECIlQPOIq5Q9sL11BNdJXjz4h7FpV4jOJJQ0vybui6R3DGZ4y4F
+         e/Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=FmHNrmiGc1oEc9Yta/aBuQn+1EulEN2xZuLGLoeLXHQ=;
+        b=ZtPOg+5VaEGhdFASf/Eo+bZE6Ybu6l3AiTbbeOsQOhOgTiZjDwPcDh9QuGcgC+E8wI
+         hLxJndg+S0EQOBcRBItCdXFEuqto6n5flN0OHfJ/Wam/5aTpra7uNB8P6ru84MFGF2VS
+         bN3AQFWcHKE5CbHr0JoW+UP5mARzmcq/J1r33ginq7gNVt6vTk8CwKdJheyyJX4BQHGr
+         y0/IO08z3hwBIpYKrPs+/wqmkPG+Uv05tneGjLL33YfbbQB0uP1YA+Km4TXB9lwresps
+         krpl3dRE5mY6CmUIbkDN5JOW71TT75sdljd5pDiWoizj0XFdnc+j1jPfJJjOdcCLUyHo
+         U0dA==
+X-Gm-Message-State: AOAM531r9gA8wgZlBZjCjX2JSmLjJyBJUAE1RLxCNPNJPdQvaastjj36
+        Wzhh7noEqUtClFhQ7rRpg7OemA==
+X-Google-Smtp-Source: ABdhPJztxQdmUqdlmLCUV07uqArQbN1pckvCcR5Q9hxz1Dr0Q7jnsmbBT95GM1N8CkcdipmeoNGGIA==
+X-Received: by 2002:a19:70c:: with SMTP id 12mr3611270lfh.207.1596708665300;
+        Thu, 06 Aug 2020 03:11:05 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id v9sm2356183lja.81.2020.08.06.03.11.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Aug 2020 03:11:04 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 92823102E1B; Thu,  6 Aug 2020 13:11:12 +0300 (+03)
+Date:   Thu, 6 Aug 2020 13:11:12 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-nvdimm@lists.01.org, linux-riscv@lists.infradead.org,
+        x86@kernel.org
+Subject: Re: [PATCH v3 1/6] mm: add definition of PMD_PAGE_ORDER
+Message-ID: <20200806101112.bjw4mxu2odpsg2hh@box>
+References: <20200804095035.18778-1-rppt@kernel.org>
+ <20200804095035.18778-2-rppt@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200804095035.18778-2-rppt@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christoph,
+On Tue, Aug 04, 2020 at 12:50:30PM +0300, Mike Rapoport wrote:
+> From: Mike Rapoport <rppt@linux.ibm.com>
+> 
+> The definition of PMD_PAGE_ORDER denoting the number of base pages in the
+> second-level leaf page is already used by DAX and maybe handy in other
+> cases as well.
+> 
+> Several architectures already have definition of PMD_ORDER as the size of
+> second level page table, so to avoid conflict with these definitions use
+> PMD_PAGE_ORDER name and update DAX respectively.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> ---
+>  fs/dax.c                | 10 +++++-----
+>  include/linux/pgtable.h |  3 +++
+>  2 files changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 11b16729b86f..b91d8c8dda45 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -50,7 +50,7 @@ static inline unsigned int pe_order(enum page_entry_size pe_size)
+>  #define PG_PMD_NR	(PMD_SIZE >> PAGE_SHIFT)
+>  
+>  /* The order of a PMD entry */
+> -#define PMD_ORDER	(PMD_SHIFT - PAGE_SHIFT)
+> +#define PMD_PAGE_ORDER	(PMD_SHIFT - PAGE_SHIFT)
 
-We have seen LTP test(utime06 and umount03) failure in Next Master with 
-commit Id 41525f56e256("fs: refactor ksys_umount").
-I didn't analysis root cause of problem, i am reporting this issue.
+Hm. Wouldn't it conflict with definition in pgtable.h? Or should we
+include it instead?
 
----------------------------------------------
-LTP Testcase    Result    Exit Value
------------------------------------ ---------
-umount03          FAIL           4
-utime06             FAIL           2
---------------------------------------------
+> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> index 56c1e8eb7bb0..79f8443609e7 100644
+> --- a/include/linux/pgtable.h
+> +++ b/include/linux/pgtable.h
+> @@ -28,6 +28,9 @@
+>  #define USER_PGTABLES_CEILING	0UL
+>  #endif
+>  
+> +/* Number of base pages in a second level leaf page */
+> +#define PMD_PAGE_ORDER	(PMD_SHIFT - PAGE_SHIFT)
+> +
+>  /*
+>   * A page table page can be thought of an array like this: pXd_t[PTRS_PER_PxD]
+>   *
 
-LTP utime06 Fail Log:
-/dev/loop0 is mounted; will not make a filesystem here!
-utime06     0  TINFO  :  Using test device LTP_DEV='/dev/loop0'
-utime06     0  TINFO  :  Formatting /dev/loop0 with ext2 opts='' extra 
-opts=''
-utime06     1  TBROK  :  tst_mkfs.c:102: utime06.c:122: mkfs.ext2 failed 
-with 1
-utime06     2  TBROK  :  tst_mkfs.c:102: Remaining cases broken
-
-LTP umount03 Fail Log:
-tst_device.c:262: INFO: Using test device LTP_DEV='/dev/loop0'
-tst_mkfs.c:89: INFO: Formatting /dev/loop0 with ext2 opts='' extra opts=''
-mke2fs 1.44.5 (15-Dec-2018)
-tst_test.c:1244: INFO: Timeout per run is 0h 05m 00s
-umount03.c:35: PASS: umount() fails as expected: EPERM (1)
-tst_device.c:383: INFO: umount('mntpoint') failed with EBUSY, try 1...
-tst_device.c:387: INFO: Likely gvfsd-trash is probing newly mounted fs, 
-kill it to speed up tests.
-tst_device.c:383: INFO: umount('mntpoint') failed with EBUSY, try 2...
-tst_device.c:383: INFO: umount('mntpoint') failed with EBUSY, try 3...
-tst_device.c:383: INFO: umount('mntpoint') failed with EBUSY, try 48...
-tst_device.c:383: INFO: umount('mntpoint') failed with EBUSY, try 49...
-tst_device.c:383: INFO: umount('mntpoint') failed with EBUSY, try 50...
-tst_device.c:394: WARN: Failed to umount('mntpoint') after 50 retries
-tst_tmpdir.c:336: WARN: tst_rmdir: rmobj(/scratch/ltp-Lnmh7tbxY6/gx0hJU) 
-failed: remove(/scratch/ltp-Lnmh7tbxY6/gx0hJU/mntpoint) failed; 
-errno=16: EBUSY
-
-Regards,
-
-Vikas
-
-
-Below Commit ID 41525f56e256 Bisected for This fail:
-
-     commit 41525f56e2564c2feff4fb2824823900efb3a39f
-     Author: Christoph Hellwig <hch@lst.de>
-     Date:   Tue Jul 21 10:54:34 2020 +0200
-
-     fs: refactor ksys_umount
-
-     Factor out a path_umount helper that takes a struct path * instead 
-of the
-     actual file name.  This will allow to convert the init and devtmpfs 
-code
-     to properly mount based on a kernel pointer instead of relying on the
-     implicit set_fs(KERNEL_DS) during early init.
-
-     Signed-off-by: Christoph Hellwig <hch@lst.de>
-
----
-  fs/namespace.c | 40 ++++++++++++++++++----------------------
-  1 file changed, 18 insertions(+), 22 deletions(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 6f8234f74bed90..43834b59eff6c3 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1706,36 +1706,19 @@ static inline bool may_mandlock(void)
-  }
-  #endif
-
--/*
-- * Now umount can handle mount points as well as block devices.
-- * This is important for filesystems which use unnamed block devices.
-- *
-- * We now support a flag for forced unmount like the other 'big iron'
-- * unixes. Our API is identical to OSF/1 to avoid making a mess of AMD
-- */
--
--int ksys_umount(char __user *name, int flags)
-+static int path_umount(struct path *path, int flags)
-  {
--    struct path path;
-      struct mount *mnt;
-      int retval;
--    int lookup_flags = LOOKUP_MOUNTPOINT;
-
-      if (flags & ~(MNT_FORCE | MNT_DETACH | MNT_EXPIRE | UMOUNT_NOFOLLOW))
-          return -EINVAL;
--
-      if (!may_mount())
-          return -EPERM;
-
--    if (!(flags & UMOUNT_NOFOLLOW))
--        lookup_flags |= LOOKUP_FOLLOW;
--
--    retval = user_path_at(AT_FDCWD, name, lookup_flags, &path);
--    if (retval)
--        goto out;
--    mnt = real_mount(path.mnt);
-+    mnt = real_mount(path->mnt);
-      retval = -EINVAL;
--    if (path.dentry != path.mnt->mnt_root)
-+    if (path->dentry != path->mnt->mnt_root)
-          goto dput_and_out;
-      if (!check_mnt(mnt))
-          goto dput_and_out;
-@@ -1748,12 +1731,25 @@ int ksys_umount(char __user *name, int flags)
-      retval = do_umount(mnt, flags);
-  dput_and_out:
-      /* we mustn't call path_put() as that would clear mnt_expiry_mark */
--    dput(path.dentry);
-+    dput(path->dentry);
-      mntput_no_expire(mnt);
--out:
-      return retval;
-  }
-
-+int ksys_umount(char __user *name, int flags)
-+{
-+    int lookup_flags = LOOKUP_MOUNTPOINT;
-+    struct path path;
-+    int ret;
-+
-+    if (!(flags & UMOUNT_NOFOLLOW))
-+        lookup_flags |= LOOKUP_FOLLOW;
-+    ret = user_path_at(AT_FDCWD, name, lookup_flags, &path);
-+    if (ret)
-+        return ret;
-+    return path_umount(&path, flags);
-+}
-+
-SYSCALL_DEFINE2(umount, char __user *, name, int, flags)
-  {
-
-
+-- 
+ Kirill A. Shutemov
