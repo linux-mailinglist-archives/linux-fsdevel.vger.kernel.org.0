@@ -2,258 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 196A623DE77
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Aug 2020 19:26:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D86423DF1D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Aug 2020 19:38:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730325AbgHFR0K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Aug 2020 13:26:10 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:59224 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbgHFR0F (ORCPT
+        id S1729794AbgHFRel (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Aug 2020 13:34:41 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39642 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729382AbgHFRbn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Aug 2020 13:26:05 -0400
-Received: from [192.168.254.32] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 2A06620B4908;
-        Thu,  6 Aug 2020 10:26:03 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2A06620B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1596734763;
-        bh=SKMTpymjM2dm1WgVhMrKQuNr9tnwmD1sIq+q78ljXI4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=e52b+HsfeIrZBK4wd2YokPWiDGtVrTgHsUcshaMv/Q+OZ4/ixW20KNmfWuWvqGZx5
-         tyqKKklbNwZq0c9vHJI4FRFVgiMVS4haqJy4sZeFyMsivmCKtipv1WlRbXCzCUMjOy
-         zCggK+Qp7AEqHKECbf1qqN6OApZ4JBNLNtAf0X/s=
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        Thu, 6 Aug 2020 13:31:43 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 076EXCZP003778;
+        Thu, 6 Aug 2020 10:33:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=MrweLZr65tdDL5CZMf8GqFvMQW1Pa0eEhdhRCa8/Rl8=;
+ b=bMeu9VLDdOGfRt59JZ1nCfEW4qn+TnVsKMh7ZkE8Rbrz6IK6zZ/7V46qw6msXhAK3x3X
+ WjoZCzT0Ehh04xKqenqoLHPKjddYRzPlVLlwo0rvNkJONfmMk9hWFUn3gGoi9qORgbef
+ 32sJwQ/xgAERC6vf3KcXSSnnB965i3l14tRIlHRYbOCneBpg7S9UM2Paxc44hy9tP/1b
+ pFNra3BULZG4i/NbCagg6W43vHCisfiqrky2Mcd4icM8ZW2zw6zVwKEzYc7YfS/ZtwdJ
+ VEY1Kcrpu3t5N+mG7D02qhqDv/Gl7cvl1TlVuzBDna74gIikinGUNqb1lsXYhKz0nv7R JQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32rhhk4k4a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Aug 2020 10:33:33 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 076EXXS5005245;
+        Thu, 6 Aug 2020 10:33:33 -0400
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 32rhhk4k38-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Aug 2020 10:33:32 -0400
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 076EVGC6007671;
+        Thu, 6 Aug 2020 14:33:30 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma02fra.de.ibm.com with ESMTP id 32n018bdfn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 06 Aug 2020 14:33:30 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 076EW1RT62521766
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 6 Aug 2020 14:32:01 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D7DB4A4054;
+        Thu,  6 Aug 2020 14:33:27 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A08B0A405B;
+        Thu,  6 Aug 2020 14:33:22 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.58.181])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  6 Aug 2020 14:33:22 +0000 (GMT)
+Message-ID: <eb7a2f5b5cd22cf9231aa0fd8fdb77c729a83428.camel@linux.ibm.com>
+Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
+ LSM (IPE)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     James Morris <jmorris@namei.org>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
+        snitzer@redhat.com, dm-devel@redhat.com,
+        tyhicks@linux.microsoft.com, agk@redhat.com, paul@paul-moore.com,
+        corbet@lwn.net, nramas@linux.microsoft.com, serge@hallyn.com,
+        pasha.tatashin@soleen.com, jannh@google.com,
+        linux-block@vger.kernel.org, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, mdsakib@microsoft.com,
+        linux-kernel@vger.kernel.org, eparis@redhat.com,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
         linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org
-References: <aefc85852ea518982e74b233e11e16d2e707bc32>
- <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <20200731180955.GC67415@C02TD0UTHF1T.local>
- <6236adf7-4bed-534e-0956-fddab4fd96b6@linux.microsoft.com>
- <20200804143018.GB7440@C02TD0UTHF1T.local>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <b3368692-afe6-89b5-d634-12f4f0a601f8@linux.microsoft.com>
-Date:   Thu, 6 Aug 2020 12:26:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200804143018.GB7440@C02TD0UTHF1T.local>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        jaskarankhurana@linux.microsoft.com
+Date:   Thu, 06 Aug 2020 10:33:21 -0400
+In-Reply-To: <alpine.LRH.2.21.2008060949410.20084@namei.org>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
+           <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
+           <20200802143143.GB20261@amd>
+           <1596386606.4087.20.camel@HansenPartnership.com>
+           <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
+         <1596639689.3457.17.camel@HansenPartnership.com>
+          <alpine.LRH.2.21.2008050934060.28225@namei.org>
+         <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
+         <alpine.LRH.2.21.2008060949410.20084@namei.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-06_09:2020-08-06,2020-08-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 bulkscore=0 impostorscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 mlxlogscore=999 phishscore=0 spamscore=0 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008060104
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks for the lively discussion. I have tried to answer some of the
-comments below.
+On Thu, 2020-08-06 at 09:51 +1000, James Morris wrote:
+> On Wed, 5 Aug 2020, Mimi Zohar wrote:
+> 
+> > If block layer integrity was enough, there wouldn't have been a need
+> > for fs-verity.   Even fs-verity is limited to read only filesystems,
+> > which makes validating file integrity so much easier.  From the
+> > beginning, we've said that fs-verity signatures should be included in
+> > the measurement list.  (I thought someone signed on to add that support
+> > to IMA, but have not yet seen anything.)
+> > 
+> > Going forward I see a lot of what we've accomplished being incorporated
+> > into the filesystems.  When IMA will be limited to defining a system
+> > wide policy, I'll have completed my job.
+> 
+> What are your thoughts on IPE being a standalone LSM? Would you prefer to 
+> see its functionality integrated into IMA?
 
-On 8/4/20 9:30 AM, Mark Rutland wrote:
->
->> So, the context is - if security settings in a system disallow a page to have
->> both write and execute permissions, how do you allow the execution of
->> genuine trampolines that are runtime generated and placed in a data
->> page or a stack page?
-> There are options today, e.g.
->
-> a) If the restriction is only per-alias, you can have distinct aliases
->    where one is writable and another is executable, and you can make it
->    hard to find the relationship between the two.
->
-> b) If the restriction is only temporal, you can write instructions into
->    an RW- buffer, transition the buffer to R--, verify the buffer
->    contents, then transition it to --X.
->
-> c) You can have two processes A and B where A generates instrucitons into
->    a buffer that (only) B can execute (where B may be restricted from
->    making syscalls like write, mprotect, etc).
+Improving the integrity subsystem would be preferred.
 
-The general principle of the mitigation is W^X. I would argue that
-the above options are violations of the W^X principle. If they are
-allowed today, they must be fixed. And they will be. So, we cannot
-rely on them.
+Mimi
 
-a) This requires a remap operation. Two mappings point to the same
-     physical page. One mapping has W and the other one has X. This
-     is a violation of W^X.
-
-b) This is again a violation. The kernel should refuse to give execute
-     permission to a page that was writeable in the past and refuse to
-     give write permission to a page that was executable in the past.
-
-c) This is just a variation of (a).
-
-In general, the problem with user-level methods to map and execute
-dynamic code is that the kernel cannot tell if a genuine application is
-using them or an attacker is using them or piggy-backing on them.
-If a security subsystem blocks all user-level methods for this reason,
-we need a kernel mechanism to deal with the problem.
-
-The kernel mechanism is not to be a backdoor. It is there to define
-ways in which safe dynamic code can be executed.
-
-I admit I have to provide more proof that my API and framework can
-cover different cases. So, that is what I am doing now. I am in the process
-of identifying other examples (per Andy's comment) and attempting to
-show that this API and framework can address them. It will take a little time.
-
-
->>
->> IIUC, you are suggesting that the user hands the kernel a code fragment
->> and requests it to be placed in an r-x page, correct? However, the
->> kernel cannot trust any code given to it by the user. Nor can it scan any
->> piece of code and reliably decide if it is safe or not.
-> Per that same logic the kernel cannot trust trampfd creation calls to be
-> legitimate as the adversary could mess with the arguments. It doesn't
-> matter if the kernel's codegen is trustworthy if it's potentially driven
-> by an adversary.
-
-That is not true. IMO, this is not a deficiency in trampfd. This is
-something that is there even for regular system calls. For instance,
-the write() system call will faithfully write out a buffer to a file
-even if the buffer contents have been hacked by an attacker.
-A system call can perform certain checks on incoming arguments.
-But it cannot tell if a hacker has modified them.
-
-So, there are two aspects in dynamic code that I am considering -
-data and code. I submit that the data part can be hacked if an
-application has a vulnerability such as buffer overflow. I don't see
-how we can ever help that.
-
-So, I am focused on the code generation part. Not all dynamic code
-is the same. They have different degrees of trust.
-
-Off the top of my head, I have tried to identify some examples
-where we can have more trust on dynamic code and have the kernel
-permit its execution.
-
-1. If the kernel can do the job, then that is one safe way. Here, the kernel
-    is the code. There is no code generation involved. This is what I
-    have presented in the patch series as the first cut.
-
-2. If the kernel can generate the code, then that code has a measure
-    of trust. For trampolines, I agreed to do this for performance.
-
-3. If the code resides in a signed file, then we know that it comes from
-    an known source and it was generated at build time. So, it is not
-    hacker generated. So, there is a measure of trust.
-
-    This is not just program text. This could also be a buffer that contains
-    trampoline code that resides in the read-only data section of a binary.
-
-4. If the code resides in a signed file and is emulated (e.g. by QEMU)
-    and we generate code for dynamic binary translation, we should
-    be able to do that provided the code generator itself is not suspect.
-    See the next point.   
-
-5. The above are examples of actual machine code or equivalent.
-    We could also have source code from which we generate machine
-    code. E.g., JIT code from Java byte code. In this case, if the source
-   code is in a signed file, we have a measure of trust on the source.
-   If the kernel uses its own trusted code generator to generate the
-   object code from the source code, then that object code has a
-   measure of trust.
-
-Anyway, these are just examples. The principle is - if we can identify
-dynamic code that has a certain measure of trust, can the kernel
-permit their execution?
-
-All other code that cannot really be trusted by the kernel cannot be
-executed safely (unless we find some safe and efficient way to
-sandbox such code and limit the effects of the code to within
-the sandbox). This is outside the scope of what I am doing.
-
->> So, the problem of executing dynamic code when security settings are
->> restrictive cannot be solved in userland. The only option I can think of is
->> to have the kernel provide support for dynamic code. It must have one
->> or more safe, trusted code generation components and an API to use
->> the components.
->>
->> My goal is to introduce an API and start off by supporting simple, regular
->> trampolines that are widely used. Then, evolve the feature over a period
->> of time to include other forms of dynamic code such as JIT code.
-> I think that you're making a leap to this approach without sufficient
-> justification that it actually solves the problem, and I believe that
-> there will be ABI issues with this approach which can be sidestepped by
-> other potential approaches.
->
-> Taking a step back, I think it's necessary to better describe the
-> problem and constraints that you believe apply before attempting to
-> justify any potential solution.
-
-I totally agree that more justification is needed and I am working on it.
-
-As I have mentioned above, I intend to have the kernel generate code
-only if the code generation is simple enough. For more complicated cases,
-I plan to use a user-level code generator that is for exclusive kernel use.
-I have yet to work out the details on how this would work. Need time.
-
->
-> [...]
->
->>
->> 1. Create a trampoline by calling trampfd_create()
->> 2. Set the register and/or stack contexts for the trampoline.
->> 3. mmap() the trampoline to get an address
->> 4a. Retrieve the register and stack context for the trampoline from the
->>       kernel and check if anything has been altered. If yes, abort.
->> 4b. Invoke the trampoline using the address
-> As above, you can also do this when using mprotect today, transitioning
-> the buffer RWX -> R-- -> R-X. If you're worried about subsequent
-> modification via an alias, a sealed memfd would work assuming that can
-> be mapped R-X.
-
-This is a violation of W^X and the security subsystem must be fixed
-if it permits it.
-
-> This approach is applicable to trampfd, but it isn't a specific benefit
-> of trampfd.
->
-> [...] 
->
->>>> - In the future, if the kernel can be enhanced to use a safe code
->>>>   generation component, that code can be placed in the trampoline mapping
->>>>   pages. Then, the trampoline invocation does not have to incur a trip
->>>>   into the kernel.
->>>>
->>>> - Also, if the kernel can be enhanced to use a safe code generation
->>>>   component, other forms of dynamic code such as JIT code can be
->>>>   addressed by the trampfd framework.
->>> I don't see why it's necessary for the kernel to generate code at all.
->>> If the trampfd creation requests can be trusted, what prevents trusting
->>> a sealed set of instructions generated in userspace?
->> Let us consider a system in which:
->>     - a process is not permitted to have pages with both write and execute
->>     - a process is not permitted to map any file as executable unless it
->>       is properly signed. In other words, cryptographically verified.
->>
->> Then, the process cannot execute any code that is runtime generated.
->> That includes trampolines. Only trampoline code that is part of program
->> text at build time would be permitted to execute.
->>
->> In this scenario, trampfd requests are coming from signed code. So, they
->> are trusted by the kernel. But trampoline code could be dynamically generated.
->> The kernel will not trust it.
-> I think this a very hand-wavy argument, as it suggests that generated
-> code is not trusted, but what is effectively a generated bytecode is.
-> If certain codegen can be trusted, then we can add mechanisms to permit
-> the results of this to be mapped r-x. If that is not possible, then the
-> same argument says that trampfd requests cannot be trusted.
-
-There is certainly an extra measure of trust in code that is in
-signature verified files as compared to code that is generated
-on the fly. At least, we know that the place from which we get
-that code is known and the file was generated at build time
-and not hacker generated. Such files could still contain a vulnerability.
-But because these files are maintained by a known source, chances
-are that there is nothing malicious in them.
-
-Thanks.
-
-Madhavan
