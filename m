@@ -2,90 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CC3523DEC3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Aug 2020 19:32:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9732523E276
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Aug 2020 21:44:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729498AbgHFR3b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Aug 2020 13:29:31 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:22171 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729950AbgHFR31 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Aug 2020 13:29:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596734965;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MwHd6CcJYEmEuf+YoO55dE8m5E0R87S7YH74U/aXf1A=;
-        b=c+p2GS8REHBTha1O1fRJlO1jUL7HaIZiALXfZ1UvVvW0U2TtTklcDDV1A6SiaPO1k/CnnN
-        8YwelaABwc1L5TjMZrMaG42yRYyWCqc8qtJMdAWmvzEBdMIOdMobzpwqFQk0wSRxTYMV7J
-        G3pBLEeo02leTJnqQ65NXAHaXZfjs3Y=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-121-yw4yRZZJNTKvU8TjJjHtNg-1; Thu, 06 Aug 2020 13:28:10 -0400
-X-MC-Unique: yw4yRZZJNTKvU8TjJjHtNg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 34FF6106F8C4;
-        Thu,  6 Aug 2020 17:28:09 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-112-23.rdu2.redhat.com [10.10.112.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D74767C0E5;
-        Thu,  6 Aug 2020 17:28:02 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 47886220441; Thu,  6 Aug 2020 13:28:02 -0400 (EDT)
-Date:   Thu, 6 Aug 2020 13:28:02 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 31/38] virtio_fs: convert to LE accessors
-Message-ID: <20200806172802.GD367847@redhat.com>
-References: <20200805134226.1106164-1-mst@redhat.com>
- <20200805134226.1106164-32-mst@redhat.com>
+        id S1726094AbgHFTo4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Aug 2020 15:44:56 -0400
+Received: from mga18.intel.com ([134.134.136.126]:12094 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725947AbgHFToz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 6 Aug 2020 15:44:55 -0400
+IronPort-SDR: wg6dMaRWx4I+UnjiMDDjN1x991CKzAUgpckcCIkN5/uDgpko69ZNORAACN/TtHkubNh/fv2ssb
+ 2NLKY18bl3Lg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9705"; a="140507789"
+X-IronPort-AV: E=Sophos;i="5.75,443,1589266800"; 
+   d="scan'208";a="140507789"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2020 12:44:55 -0700
+IronPort-SDR: nycQsiqLFmbGL0LtGtGFYgb+gTscrpr/0xgzIYgwxbr49DUCUbwZL9hBeN1k9fG89L9bEYw1DC
+ JtW7ybZiE1XA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,443,1589266800"; 
+   d="scan'208";a="323540390"
+Received: from orsmsx604.amr.corp.intel.com ([10.22.229.17])
+  by orsmga008.jf.intel.com with ESMTP; 06 Aug 2020 12:44:54 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX604.amr.corp.intel.com (10.22.229.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 6 Aug 2020 12:44:54 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 6 Aug 2020 12:44:54 -0700
+Received: from orsmsx612.amr.corp.intel.com ([10.22.229.25]) by
+ ORSMSX612.amr.corp.intel.com ([10.22.229.25]) with mapi id 15.01.1713.004;
+ Thu, 6 Aug 2020 12:44:54 -0700
+From:   "Verma, Vishal L" <vishal.l.verma@intel.com>
+To:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+CC:     "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Subject: Re: [PATCH 0/4] Remove nrexceptional tracking
+Thread-Topic: [PATCH 0/4] Remove nrexceptional tracking
+Thread-Index: AQHWanrcgiyE+gZ1T06GDixOiuOZv6kr8b+A
+Date:   Thu, 6 Aug 2020 19:44:54 +0000
+Message-ID: <898e058f12c7340703804ed9d05df5ead9ecb50d.camel@intel.com>
+References: <20200804161755.10100-1-willy@infradead.org>
+In-Reply-To: <20200804161755.10100-1-willy@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+x-originating-ip: [10.254.22.71]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6DAC71C4E387FB48878F27E18F96C0B8@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200805134226.1106164-32-mst@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 05, 2020 at 09:44:39AM -0400, Michael S. Tsirkin wrote:
-> Virtio fs is modern-only. Use LE accessors for config space.
-> 
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-
-Acked-by: Vivek Goyal <vgoyal@redhat.com>
-
-Vivek
-
-> ---
->  fs/fuse/virtio_fs.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index 4c4ef5d69298..104f35de5270 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -606,8 +606,8 @@ static int virtio_fs_setup_vqs(struct virtio_device *vdev,
->  	unsigned int i;
->  	int ret = 0;
->  
-> -	virtio_cread(vdev, struct virtio_fs_config, num_request_queues,
-> -		     &fs->num_request_queues);
-> +	virtio_cread_le(vdev, struct virtio_fs_config, num_request_queues,
-> +			&fs->num_request_queues);
->  	if (fs->num_request_queues == 0)
->  		return -EINVAL;
->  
-> -- 
-> MST
-> 
-
+T24gVHVlLCAyMDIwLTA4LTA0IGF0IDE3OjE3ICswMTAwLCBNYXR0aGV3IFdpbGNveCAoT3JhY2xl
+KSB3cm90ZToNCj4gV2UgYWN0dWFsbHkgdXNlIG5yZXhjZXB0aW9uYWwgZm9yIHZlcnkgbGl0dGxl
+IHRoZXNlIGRheXMuICBJdCdzIGENCj4gY29uc3RhbnQNCj4gc291cmNlIG9mIHBhaW4gd2l0aCB0
+aGUgVEhQIHBhdGNoZXMgYmVjYXVzZSB3ZSBkb24ndCBrbm93IGhvdyBsYXJnZSBhDQo+IHNoYWRv
+dyBlbnRyeSBpcywgc28gZWl0aGVyIHdlIGhhdmUgdG8gYXNrIHRoZSB4YXJyYXkgaG93IG1hbnkg
+aW5kaWNlcw0KPiBpdCBjb3ZlcnMsIG9yIHN0b3JlIHRoYXQgaW5mb3JtYXRpb24gaW4gdGhlIHNo
+YWRvdyBlbnRyeSAoYW5kIHJlZHVjZQ0KPiB0aGUgYW1vdW50IG9mIG90aGVyIGluZm9ybWF0aW9u
+IGluIHRoZSBzaGFkb3cgZW50cnkgcHJvcG9ydGlvbmFsbHkpLg0KPiBXaGlsZSB0cmFja2luZyBk
+b3duIHRoZSBtb3N0IHJlY2VudCBjYXNlIG9mICJldmljdCB0ZWxscyBtZSBJJ3ZlIGdvdA0KPiB0
+aGUgYWNjb3VudGluZyB3cm9uZyBhZ2FpbiIsIEkgd29uZGVyZWQgaWYgaXQgbWlnaHQgbm90IGJl
+IHNpbXBsZXIgdG8NCj4ganVzdCByZW1vdmUgaXQuICBTbyBoZXJlJ3MgYSBwYXRjaCBzZXQgdG8g
+ZG8ganVzdCB0aGF0LiAgSSB0aGluayBlYWNoDQo+IG9mIHRoZXNlIHBhdGNoZXMgaXMgYW4gaW1w
+cm92ZW1lbnQgaW4gaXNvbGF0aW9uLCBidXQgdGhlIGNvbWJpbmF0aW9uDQo+IG9mDQo+IGFsbCBm
+b3VyIGlzIGxhcmdlciB0aGFuIHRoZSBzdW0gb2YgaXRzIHBhcnRzLg0KPiANCj4gSSdtIHJ1bm5p
+bmcgeGZzdGVzdHMgb24gdGhpcyBwYXRjaHNldCByaWdodCBub3cuICBJZiBvbmUgb2YgdGhlIERB
+WA0KPiBwZW9wbGUgY291bGQgdHJ5IGl0IG91dCwgdGhhdCdkIGJlIGZhbnRhc3RpYy4NCj4gDQo+
+IE1hdHRoZXcgV2lsY294IChPcmFjbGUpICg0KToNCj4gICBtbTogSW50cm9kdWNlIGFuZCB1c2Ug
+cGFnZV9jYWNoZV9lbXB0eQ0KPiAgIG1tOiBTdG9wIGFjY291bnRpbmcgc2hhZG93IGVudHJpZXMN
+Cj4gICBkYXg6IEFjY291bnQgREFYIGVudHJpZXMgYXMgbnJwYWdlcw0KPiAgIG1tOiBSZW1vdmUg
+bnJleGNlcHRpb25hbCBmcm9tIGlub2RlDQoNCkhpIE1hdHRoZXcsDQoNCkkgYXBwbGllZCB0aGVz
+ZSBvbiB0b3Agb2YgNS44IGFuZCByYW4gdGhlbSB0aHJvdWdoIHRoZSBudmRpbW0gdW5pdCB0ZXN0
+DQpzdWl0ZSwgYW5kIHNhdyBzb21lIHRlc3QgZmFpbHVyZXMuIFRoZSBmaXJzdCBmYWlsaW5nIHRl
+c3Qgc2lnbmF0dXJlIGlzOg0KDQogICsgdW1vdW50IHRlc3RfZGF4X21udA0KICAuL2RheC1leHQ0
+LnNoOiBsaW5lIDYyOiAxNTc0OSBTZWdtZW50YXRpb24gZmF1bHQgICAgICB1bW91bnQgJE1OVA0K
+ICBGQUlMIGRheC1leHQ0LnNoIChleGl0IHN0YXR1czogMTM5KQ0KDQpUaGUgbGluZSBpczogaHR0
+cHM6Ly9naXRodWIuY29tL3BtZW0vbmRjdGwvYmxvYi9tYXN0ZXIvdGVzdC9kYXguc2gjTDc5DQpB
+bmQgdGhlIGZhaWxpbmcgdW1vdW50IGhhcHBlbnMgcmlnaHQgYWZ0ZXIgJ3J1bl90ZXN0Jywgd2hp
+Y2ggY2FsbHMgdGhpczoNCmh0dHBzOi8vZ2l0aHViLmNvbS9wbWVtL25kY3RsL2Jsb2IvbWFzdGVy
+L3Rlc3QvZGF4LXBtZC5jDQoNCg0KPiANCj4gIGZzL2Jsb2NrX2Rldi5jICAgICAgICAgIHwgIDIg
+Ky0NCj4gIGZzL2RheC5jICAgICAgICAgICAgICAgIHwgIDggKysrKy0tLS0NCj4gIGZzL2lub2Rl
+LmMgICAgICAgICAgICAgIHwgIDIgKy0NCj4gIGluY2x1ZGUvbGludXgvZnMuaCAgICAgIHwgIDIg
+LS0NCj4gIGluY2x1ZGUvbGludXgvcGFnZW1hcC5oIHwgIDUgKysrKysNCj4gIG1tL2ZpbGVtYXAu
+YyAgICAgICAgICAgIHwgMTUgLS0tLS0tLS0tLS0tLS0tDQo+ICBtbS90cnVuY2F0ZS5jICAgICAg
+ICAgICB8IDE5ICsrKy0tLS0tLS0tLS0tLS0tLS0NCj4gIG1tL3dvcmtpbmdzZXQuYyAgICAgICAg
+IHwgIDEgLQ0KPiAgOCBmaWxlcyBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCA0MCBkZWxldGlv
+bnMoLSkNCj4gDQo=
