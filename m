@@ -2,150 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 122D523E9C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 11:07:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7D6E23EA40
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 11:23:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbgHGJHN convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 7 Aug 2020 05:07:13 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:58015 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726987AbgHGJHL (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Aug 2020 05:07:11 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-14-hYsxTjzNMdCVWgdtGXWhDw-1; Fri, 07 Aug 2020 10:07:07 +0100
-X-MC-Unique: hYsxTjzNMdCVWgdtGXWhDw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 7 Aug 2020 10:07:06 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 7 Aug 2020 10:07:06 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christoph Hellwig' <hch@lst.de>,
-        "x86@kernel.org" <x86@kernel.org>, "Jan Kara" <jack@suse.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Subject: RE: [PATCH 3/3] quota: simplify the quotactl compat handling
-Thread-Topic: [PATCH 3/3] quota: simplify the quotactl compat handling
-Thread-Index: AQHWZzVGHzqazLGYN0OsEvz6unAGWaksY9+A
-Date:   Fri, 7 Aug 2020 09:07:06 +0000
-Message-ID: <97285a880c434a4ea9072ff1b9c238e7@AcuMS.aculab.com>
-References: <20200731122202.213333-1-hch@lst.de>
- <20200731122202.213333-4-hch@lst.de>
-In-Reply-To: <20200731122202.213333-4-hch@lst.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1726971AbgHGJW7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Aug 2020 05:22:59 -0400
+Received: from tretyak2.mcst.ru ([212.5.119.215]:48360 "EHLO tretyak2.mcst.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726756AbgHGJW7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Aug 2020 05:22:59 -0400
+X-Greylist: delayed 431 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Aug 2020 05:22:58 EDT
+Received: from tretyak2.mcst.ru (localhost [127.0.0.1])
+        by tretyak2.mcst.ru (Postfix) with ESMTP id 21A8520C1D;
+        Fri,  7 Aug 2020 12:15:46 +0300 (MSK)
+Received: from frog.lab.sun.mcst.ru (frog.lab.sun.mcst.ru [172.16.4.50])
+        by tretyak2.mcst.ru (Postfix) with ESMTP id 0673620C65;
+        Fri,  7 Aug 2020 12:15:36 +0300 (MSK)
+Received: from [192.168.1.7] (e2k7 [192.168.1.7])
+        by frog.lab.sun.mcst.ru (8.13.4/8.12.11) with ESMTP id 0779FTVw022461;
+        Fri, 7 Aug 2020 12:15:29 +0300
+To:     linux-fsdevel@vger.kernel.org,
+        "viro@zeniv.linux.org.uk >> Al Viro" <viro@zeniv.linux.org.uk>
+From:   "Pavel V. Panteleev" <panteleev_p@mcst.ru>
+Subject: timestamp_truncate() incorrect truncate
+Message-ID: <5F2D1BB1.6000202@mcst.ru>
+Date:   Fri, 7 Aug 2020 12:15:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Icedove/38.8.0
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=koi8-r; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus: Kaspersky Anti-Virus for Linux Mail Server 5.6.39/RELEASE,
+         bases: 20111107 #2745587, check: 20200807 notchecked
+X-AV-Checked: ClamAV using ClamSMTP
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christoph Hellwig
-> Sent: 31 July 2020 13:22
->
-> Fold the misaligned u64 workarounds into the main quotactl flow instead
-> of implementing a separate compat syscall handler.
-> 
-...
-> diff --git a/fs/quota/compat.h b/fs/quota/compat.h
-> new file mode 100644
-> index 00000000000000..ef7d1e12d650b3
-> --- /dev/null
-> +++ b/fs/quota/compat.h
-> @@ -0,0 +1,34 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/compat.h>
-> +
-> +struct compat_if_dqblk {
-> +	compat_u64			dqb_bhardlimit;
-> +	compat_u64			dqb_bsoftlimit;
-> +	compat_u64			dqb_curspace;
-> +	compat_u64			dqb_ihardlimit;
-> +	compat_u64			dqb_isoftlimit;
-> +	compat_u64			dqb_curinodes;
-> +	compat_u64			dqb_btime;
-> +	compat_u64			dqb_itime;
-> +	compat_uint_t			dqb_valid;
-> +};
-> +
-> +struct compat_fs_qfilestat {
-> +	compat_u64			dqb_bhardlimit;
-> +	compat_u64			qfs_nblks;
-> +	compat_uint_t			qfs_nextents;
-> +};
-> +
-> +struct compat_fs_quota_stat {
-> +	__s8				qs_version;
-> +	__u16				qs_flags;
-> +	__s8				qs_pad;
-> +	struct compat_fs_qfilestat	qs_uquota;
-> +	struct compat_fs_qfilestat	qs_gquota;
-> +	compat_uint_t			qs_incoredqs;
-> +	compat_int_t			qs_btimelimit;
-> +	compat_int_t			qs_itimelimit;
-> +	compat_int_t			qs_rtbtimelimit;
-> +	__u16				qs_bwarnlimit;
-> +	__u16				qs_iwarnlimit;
-> +};
-> diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-> index 5444d3c4d93f37..e1e9d05a14c3e4 100644
-> --- a/fs/quota/quota.c
-> +++ b/fs/quota/quota.c
-> @@ -19,6 +19,7 @@
->  #include <linux/types.h>
->  #include <linux/writeback.h>
->  #include <linux/nospec.h>
-> +#include "compat.h"
-> 
->  static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
->  				     qid_t id)
-> @@ -211,8 +212,18 @@ static int quota_getquota(struct super_block *sb, int type, qid_t id,
->  	if (ret)
->  		return ret;
->  	copy_to_if_dqblk(&idq, &fdq);
-> -	if (copy_to_user(addr, &idq, sizeof(idq)))
-> -		return -EFAULT;
-> +
-> +	if (compat_need_64bit_alignment_fixup()) {
-> +		struct compat_if_dqblk __user *compat_dqblk = addr;
-> +
-> +		if (copy_to_user(compat_dqblk, &idq, sizeof(*compat_dqblk)))
-> +			return -EFAULT;
-> +		if (put_user(idq.dqb_valid, &compat_dqblk->dqb_valid))
-> +			return -EFAULT;
+Hello,
 
-Isn't this always copying the same value again?
-I don't think Linux has any 64 bit systems with a 32bit compat
-layer that have 64bit 'int'.
-Since the only difference in the structures is the 'end padding'
-isn't it enough to just copy the size of the 'compat' structure
-in a compat system call?
-It might even be that gcc will optimise the condition away
-when the structure sizes match.
+timestamp_truncate() truncates nsec to 0, if sec is 0 for nfs v3. There 
+is a test:
 
-The same is true for a lot of the rest of this file.
+$ cat ./t.c
 
-	David
+#define _GNU_SOURCE
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+#include <fcntl.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
+int
+main (void)
+{
+   const char *fname = "./delme.log";
+   int fd;
+   struct stat sb;
+   const struct timespec ts[2] = {{0, 199}, {0, 999}};
+
+   unlink (fname);
+   fd = open (fname, O_CREAT | O_TRUNC, 0660);
+
+   if (futimens(fd, ts) != 0)
+     {
+       perror ("futimens()");
+       return 1;
+     }
+
+   close (fd);
+
+   stat (fname, &sb);
+
+   printf ("atim: sec == %ld, nsec == %ld\n",
+           (long) sb.st_atim.tv_sec,
+           (long) sb.st_atim.tv_nsec);
+
+   printf ("mtim: sec == %ld, nsec == %ld\n",
+           (long) sb.st_mtim.tv_sec,
+           (long) sb.st_mtim.tv_nsec);
+
+   if (sb.st_atim.tv_sec != ts[0].tv_sec
+       || sb.st_atim.tv_nsec != ts[0].tv_nsec
+       || sb.st_mtim.tv_sec != ts[1].tv_sec
+       || sb.st_mtim.tv_nsec != ts[1].tv_nsec)
+     return 1;
+
+   return 0;
+}
+
+(sec + nsec = nsec) is inside of interval, supported by nfs v3. Why nsec 
+is truncated to 0?
