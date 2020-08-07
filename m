@@ -2,51 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2658423F467
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 23:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 960E423F45F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 23:30:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbgHGV3f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Aug 2020 17:29:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53444 "EHLO
+        id S1727831AbgHGVaq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Aug 2020 17:30:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbgHGV3f (ORCPT
+        with ESMTP id S1727087AbgHGV3l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Aug 2020 17:29:35 -0400
+        Fri, 7 Aug 2020 17:29:41 -0400
 Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D4BC061757
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Aug 2020 14:29:35 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id x10so4299389ybj.19
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Aug 2020 14:29:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC3A8C061A2A
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Aug 2020 14:29:38 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id u189so4350709ybg.17
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Aug 2020 14:29:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=2Epbq3zd+57RV+c5a3tR14Y8EZnVI9kXEnkZqe3uwAA=;
-        b=W4JL+gkPyvYfdfwk6ydvYnTnosTt4pvJ7tL6kLXU+WUTb6rftiPRdMePYrbZabnBTD
-         +ISkyoN5LHfFW3Z6CwOyFJX0djyFH2uNFR35eVqx4/Y/Qi47Gs+4ceJ48kzO4YJo7Gux
-         deL3jBPiYpM3y+EqgYB+N5By3UQ0F55MxwqLYjl/Awc3revSFDBw4yahIaJqx+SGgXOg
-         vquf/jHyOotjcNWthbAW3uUC7wpRsVMjWeVPbcdTZppHRp2GfKlamKeJ1xDUvV2FIBM8
-         PYK8Tlv+XXASS++2PpJDsFc0cd4D+NzUwhVxDOepLelhsNX9Zlr+hx87Y8ZZOIZF3C1g
-         i+rw==
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=YqcIVHjBu4NPaIW6FP/UQkn1mH1Qjgwx8CMe4FP79m0=;
+        b=kC/tsEMJKSSFTlfYQ75Bn0L/DjLRTDD0Y8p3TmDAWsIkMY2zUSRHdR9qspxmpESMV1
+         AGyJvORrpQmokA+/mFqp3MI9XFQCYXXCINiLLgA5qUCc482Cn88dlyNtpSZ8ZYaTvWdt
+         Vb+1QpePZ3pesgDCHtlgI5q2es8R9rRdgGwmiMZXXWVo2c08wP/BqwaOAKfMeWuBi279
+         18BzEk6nuFCp89CXK0kgczMt0Pt34W1I3FCBEuxIEAFQ5oinTQijsNNtS3j7cchgC9y9
+         oCA2evl6PMZfioWngsEPF3kXhutd7PecJMyg9cjGKCEPldQhAsShAY8SEpHKIUHGbGVH
+         /aMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=2Epbq3zd+57RV+c5a3tR14Y8EZnVI9kXEnkZqe3uwAA=;
-        b=UbnawseaQrg6VbTnDtxhUWiVw1s8cK4yZ3ibm64U20tP8MPM73XalI4kKl0g5c8vB1
-         f/F5tpOBgrpgf5CSyPsVAURL1CkVNVSegXTSVbUbgkXrlYiYxH2JeSKVbPDoh1cVVZ17
-         QRV5IvsgrbmzsfLh9P9lV7pl64Xx+CL4Q3zUK1fbLUZKYnLrvBLYQMOjNHfA8L/xXFgP
-         iQUIeW8C5kmMof3BYgbjDHo9g72IZdhVUCeq2BfLnOLmnI/fXOoLJU6Bhr4Uy5ux3kga
-         ZwcnR91c933tXJsksAmMcwEvWLxcRPj6UzOcIB4g4+tnw21BKrDjC75LlqlbtmWAtFJe
-         L7/Q==
-X-Gm-Message-State: AOAM531Qw4nJb44lNy4BMxtbwKIplGeEqFLIzYsLmhRt8hhMI3xywveH
-        hd/gWuEAUVEtqr9TYUwbajjhW5if0/c=
-X-Google-Smtp-Source: ABdhPJwpYiGEXI6N/WmSc1sNe+MKpn0dLtZLyveRHzfSP1IyYqPUCszF3totD/1mcAxmqwETOm6E5qQykQ85
-X-Received: by 2002:a25:d709:: with SMTP id o9mr21697023ybg.392.1596835774334;
- Fri, 07 Aug 2020 14:29:34 -0700 (PDT)
-Date:   Fri,  7 Aug 2020 14:29:09 -0700
-Message-Id: <20200807212916.2883031-1-jwadams@google.com>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=YqcIVHjBu4NPaIW6FP/UQkn1mH1Qjgwx8CMe4FP79m0=;
+        b=Zwu7CnrsBcChcB4FjSEpwBFEkxUePkBCxhOr70y3LJCTR1QGs2ZFd6glpdIpkHPk33
+         wgtzvQLMEQ4cyyHEqzY3J2iXFUE8SnFkL4s3TO5r1IyGbmy2x5zIFcpo801pCCQb6rIx
+         1cF1APN46c9ea9yv+ZHdo9xXu5FTMbKAP8ucgiK0Cy0UwOHqaoBm7u/5mVmmdP0mz9rh
+         tH7VCkay2r9AG/aB/ARbtoUkK5xwZdYKUWvsw3v3TvqNQQ0CsvPrgJYtRTO6QdyzEp0e
+         +OOA91UMwU9oo+T2BZdRavBKU/daJoecQRk80AL0ia241NAVwaaldq8hHI33yAmKbTqh
+         axGQ==
+X-Gm-Message-State: AOAM532ji7G4wt2IcRCpCYDbEx3hi4jlBFU/yjFI4jYOjyXOviPF2R05
+        /2lG1W4JxYo2TOGcmJHp/kc1hi3bYgk=
+X-Google-Smtp-Source: ABdhPJzL7no4SqOfner8mZRGL7LSd6SVD5kl+gmR3qkYIa0Eg/JlfzKIvlPGiL5n0PLe+YI5aoTTct88tJhU
+X-Received: by 2002:a25:8105:: with SMTP id o5mr2771130ybk.495.1596835778097;
+ Fri, 07 Aug 2020 14:29:38 -0700 (PDT)
+Date:   Fri,  7 Aug 2020 14:29:11 -0700
+In-Reply-To: <20200807212916.2883031-1-jwadams@google.com>
+Message-Id: <20200807212916.2883031-3-jwadams@google.com>
 Mime-Version: 1.0
+References: <20200807212916.2883031-1-jwadams@google.com>
 X-Mailer: git-send-email 2.28.0.236.gb10cc79966-goog
-Subject: [RFC PATCH 0/7] metricfs metric file system and examples
+Subject: [RFC PATCH 2/7] core/metricfs: add support for percpu metricfs files
 From:   Jonathan Adams <jwadams@google.com>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     netdev@vger.kernel.org, kvm@vger.kernel.org,
@@ -61,157 +65,194 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[resending to widen the CC lists per rdunlap@infradead.org's suggestion
-original posting to lkml here: https://lkml.org/lkml/2020/8/5/1009]
+Add a simple mechanism for exporting percpu data through metricfs.
+The API follows the existing metricfs pattern.  A percpu file is
+defined with:
 
-To try to restart the discussion of kernel statistics started by the
-statsfs patchsets (https://lkml.org/lkml/2020/5/26/332), I wanted
-to share the following set of patches which are Google's 'metricfs'
-implementation and some example uses.  Google has been using metricfs
-internally since 2012 as a way to export various statistics to our
-telemetry systems (similar to OpenTelemetry), and we have over 200
-statistics exported on a typical machine.
+    METRIC_EXPORT_PERCPU_INT(name, desc, fn)
+    METRIC_EXPORT_PERCPU_COUNTER(name, desc, fn)
 
-These patches have been cleaned up and modernized v.s. the versions
-in production; I've included notes under the fold in the patches.
-They're based on v5.8-rc6.
+The first defines a file for exposing a percpu int.  The second is
+similar, but is for a counter that accumulates since boot.  The
+'name' is used as the metricfs file.  The 'desc' is a description
+of the metric.  The 'fn' is a callback function to emit a single
+percpu value:
 
-The statistics live under debugfs, in a tree rooted at:
+    void (*fn)(struct metric_emitter *e, int cpu);
 
-	/sys/kernel/debug/metricfs
+The callback must call METRIC_EMIT_PERCPU_INT with the value for
+the specified CPU.
 
-Each metric is a directory, with four files in it.  For example, the '
-core/metricfs: Create metricfs, standardized files under debugfs.' patch
-includes a simple 'metricfs_presence' metric, whose files look like:
-/sys/kernel/debug/metricfs:
- metricfs_presence/annotations
-  DESCRIPTION A\ basic\ presence\ metric.
- metricfs_presence/fields
-  value
-  int
- metricfs_presence/values
-  1
- metricfs_presence/version
-  1
+Signed-off-by: Jonathan Adams <jwadams@google.com>
 
-(The "version" field always says '1', and is kind of vestigial)
+---
 
-An example of a more complicated stat is the networking stats.
-For example, the tx_bytes stat looks like:
+jwadams@google.com: rebased to 5.6-pre6, renamed funcs to start with
+	metric_.  This is work originally done by another engineer at
+	google, who would rather not have their name associated with this
+	patchset. They're okay with me sending it under my name.
+---
+ include/linux/metricfs.h | 28 +++++++++++++++++++
+ kernel/metricfs.c        | 58 ++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 81 insertions(+), 5 deletions(-)
 
-net/dev/stats/tx_bytes/annotations
-  DESCRIPTION net\ device\ transmited\ bytes\ count
-  CUMULATIVE
-net/dev/stats/tx_bytes/fields
-  interface value
-  str int
-net/dev/stats/tx_bytes/values
-  lo 4394430608
-  eth0 33353183843
-  eth1 16228847091
-net/dev/stats/tx_bytes/version
-  1
-
-The per-cpu statistics show up in the schedulat stat info and x86
-IRQ counts.  For example:
-
-stat/user/annotations
-  DESCRIPTION time\ in\ user\ mode\ (nsec)
-  CUMULATIVE
-stat/user/fields
-  cpu value
-  int int
-stat/user/values
-  0 1183486517734
-  1 1038284237228
-  ...
-stat/user/version
-  1
-
-The full set of example metrics I've included are:
-
-core/metricfs: Create metricfs, standardized files under debugfs.
-  metricfs_presence
-core/metricfs: metric for kernel warnings
-  warnings/values
-core/metricfs: expose scheduler stat information through metricfs
-  stat/*
-net-metricfs: Export /proc/net/dev via metricfs.
-  net/dev/stats/[tr]x_*
-core/metricfs: expose x86-specific irq information through metricfs
-  irq_x86/*
-
-The general approach is called out in kernel/metricfs.c:
-
-The kernel provides:
-  - A description of the metric
-  - The subsystem for the metric (NULL is ok)
-  - Type information about the metric, and
-  - A callback function which supplies metric values.
-
-Limitations:
-  - "values" files are at MOST 64K. We truncate the file at that point.
-  - The list of fields and types is at most 1K.
-  - Metrics may have at most 2 fields.
-
-Best Practices:
-  - Emit the most important data first! Once the 64K per-metric buffer
-    is full, the emit* functions won't do anything.
-  - In userspace, open(), read(), and close() the file quickly! The kernel
-    allocation for the metric is alive as long as the file is open. This
-    permits users to seek around the contents of the file, while
-    permitting an atomic view of the data.
-
-Note that since the callbacks are called and the data is generated at
-file open() time, the relative consistency is only between members of
-a given metric; the rx_bytes stat for every network interface will
-be read at almost the same time, but if you want to get rx_bytes
-and rx_packets, there could be a bunch of slew between the two file
-opens.  (So this doesn't entirely address Andrew Lunn's comments in
-https://lkml.org/lkml/2020/5/26/490)
-
-This also doesn't address one of the basic parts of the statsfs work:
-moving the statistics out of debugfs to avoid lockdown interactions.
-
-Google has found a lot of value in having a generic interface for adding
-these kinds of statistics with reasonably low overhead (reading them
-is O(number of statistics), not number of objects in each statistic).
-There are definitely warts in the interface, but does the basic approach
-make sense to folks?
-
-Thanks,
-- Jonathan
-
-Jonathan Adams (5):
-  core/metricfs: add support for percpu metricfs files
-  core/metricfs: metric for kernel warnings
-  core/metricfs: expose softirq information through metricfs
-  core/metricfs: expose scheduler stat information through metricfs
-  core/metricfs: expose x86-specific irq information through metricfs
-
-Justin TerAvest (1):
-  core/metricfs: Create metricfs, standardized files under debugfs.
-
-Laurent Chavey (1):
-  net-metricfs: Export /proc/net/dev via metricfs.
-
- arch/x86/kernel/irq.c      |  80 ++++
- fs/proc/stat.c             |  57 +++
- include/linux/metricfs.h   | 131 +++++++
- kernel/Makefile            |   2 +
- kernel/metricfs.c          | 775 +++++++++++++++++++++++++++++++++++++
- kernel/metricfs_examples.c | 151 ++++++++
- kernel/panic.c             | 131 +++++++
- kernel/softirq.c           |  45 +++
- lib/Kconfig.debug          |  18 +
- net/core/Makefile          |   1 +
- net/core/net_metricfs.c    | 194 ++++++++++
- 11 files changed, 1585 insertions(+)
- create mode 100644 include/linux/metricfs.h
- create mode 100644 kernel/metricfs.c
- create mode 100644 kernel/metricfs_examples.c
- create mode 100644 net/core/net_metricfs.c
-
+diff --git a/include/linux/metricfs.h b/include/linux/metricfs.h
+index 65a1baa8e8c1..f103dc8c44ec 100644
+--- a/include/linux/metricfs.h
++++ b/include/linux/metricfs.h
+@@ -22,6 +22,19 @@ void metric_exit_##name(void) \
+ 	metric_unregister(metric_##name); \
+ }
+ 
++#define METRIC_EXPORT_PERCPU(name, desc, fn, cumulative) \
++static struct metric *metric_##name; \
++void metric_init_##name(struct metricfs_subsys *parent) \
++{ \
++	metric_##name = metric_register_percpu(__stringify(name), (parent), \
++					(desc), (fn), \
++					(cumulative), THIS_MODULE); \
++} \
++void metric_exit_##name(void) \
++{ \
++	metric_unregister(metric_##name); \
++}
++
+ /*
+  * Metricfs only deals with two types: int64_t and const char*.
+  *
+@@ -47,6 +60,11 @@ void metric_exit_##name(void) \
+ 	METRIC_EXPORT_GENERIC(name, (desc), (fname0), (fname1), (fn), \
+ 				true, false)
+ 
++#define METRIC_EXPORT_PERCPU_INT(name, desc, fn) \
++	METRIC_EXPORT_PERCPU(name, (desc), (fn), false)
++#define METRIC_EXPORT_PERCPU_COUNTER(name, desc, fn) \
++	METRIC_EXPORT_PERCPU(name, (desc), (fn), true)
++
+ /* Subsystem support. */
+ /* Pass NULL as 'parent' to create a new top-level subsystem. */
+ struct metricfs_subsys *metricfs_create_subsys(const char *name,
+@@ -69,6 +87,8 @@ struct metric_emitter;
+ 	metric_emit_int_value((e), (v), (f0), (f1))
+ #define METRIC_EMIT_STR(e, v, f0, f1) \
+ 	metric_emit_str_value((e), (v), (f0), (f1))
++#define METRIC_EMIT_PERCPU_INT(e, cpu, v) \
++	metric_emit_percpu_int_value((e), (cpu), (v))
+ 
+ /* Users don't have to call any functions below;
+  * use the macro definitions above instead.
+@@ -77,6 +97,7 @@ void metric_emit_int_value(struct metric_emitter *e,
+ 			   int64_t v, const char *f0, const char *f1);
+ void metric_emit_str_value(struct metric_emitter *e,
+ 			   const char *v, const char *f0, const char *f1);
++void metric_emit_percpu_int_value(struct metric_emitter *e, int cpu, int64_t v);
+ 
+ struct metric *metric_register(const char *name,
+ 			       struct metricfs_subsys *parent,
+@@ -98,6 +119,13 @@ struct metric *metric_register_parm(const char *name,
+ 				    bool is_cumulative,
+ 				    struct module *owner);
+ 
++struct metric *metric_register_percpu(const char *name,
++			       struct metricfs_subsys *parent,
++			       const char *description,
++			       void (*fn)(struct metric_emitter *e, int cpu),
++			       bool is_cumulative,
++			       struct module *owner);
++
+ void metric_unregister(struct metric *m);
+ 
+ #endif /* _METRICFS_H_ */
+diff --git a/kernel/metricfs.c b/kernel/metricfs.c
+index 676b7b04aa2b..992fdd9a4d0a 100644
+--- a/kernel/metricfs.c
++++ b/kernel/metricfs.c
+@@ -76,6 +76,8 @@ struct metric {
+ 	bool is_string;
+ 	bool is_cumulative;
+ 	bool has_parm;
++	bool is_percpu;
++	void (*percpu_fn)(struct metric_emitter *e, int cpu);
+ 
+ 	/* dentry for the directory that contains the metric */
+ 	struct dentry *dentry;
+@@ -285,6 +287,19 @@ void metric_emit_str_value(struct metric_emitter *e, const char *v,
+ }
+ EXPORT_SYMBOL(metric_emit_str_value);
+ 
++void metric_emit_percpu_int_value(struct metric_emitter *e, int cpu, int64_t v)
++{
++	char *ckpt = e->buf;
++	bool ok = true;
++
++	ok &= emit_int(e, cpu);
++	ok &= emit_string(e, " ");
++	ok &= emit_int(e, v);
++	ok &= emit_string(e, "\n");
++	if (!ok)
++		e->buf = ckpt;
++}
++
+ /* Contains file data generated at open() */
+ struct metricfs_file_private {
+ 	size_t bytes_written;
+@@ -400,11 +415,15 @@ static int metricfs_fields_open(struct inode *inode, struct file *filp)
+ 	}
+ 	ok &= emit_string(&e, "value\n");
+ 
+-	if (m->fname0)
+-		ok &= emit_string(&e, "str ");
+-	if (m->fname1)
+-		ok &= emit_string(&e, "str ");
+-	ok &= emit_string(&e, (m->is_string) ? "str\n" : "int\n");
++	if (m->is_percpu) {
++		ok &= emit_string(&e, "int int\n");
++	} else {
++		if (m->fname0)
++			ok &= emit_string(&e, "str ");
++		if (m->fname1)
++			ok &= emit_string(&e, "str ");
++		ok &= emit_string(&e, (m->is_string) ? "str\n" : "int\n");
++	}
+ 
+ 	/* Emit all or nothing. */
+ 	if (ok) {
+@@ -640,6 +659,35 @@ struct metric *metric_register(const char *name,
+ }
+ EXPORT_SYMBOL(metric_register);
+ 
++static void metric_emit_percpu(struct metric_emitter *e)
++{
++	int cpu;
++
++	for_each_possible_cpu(cpu)
++		e->metric->percpu_fn(e, cpu);
++}
++
++struct metric *metric_register_percpu(const char *name,
++				struct metricfs_subsys *parent,
++				const char *description,
++				void (*fn)(struct metric_emitter *e, int cpu),
++				bool is_cumulative,
++				struct module *owner)
++{
++	struct metric *metric =
++		metric_register(name, parent, description,
++				"cpu", NULL,
++				metric_emit_percpu,
++				false,
++				is_cumulative, owner);
++	if (metric) {
++		metric->is_percpu = true;
++		metric->percpu_fn = fn;
++	}
++	return metric;
++}
++EXPORT_SYMBOL(metric_register_percpu);
++
+ struct metric *metric_register_parm(const char *name,
+ 				    struct metricfs_subsys *parent,
+ 				    const char *description,
 -- 
 2.28.0.236.gb10cc79966-goog
 
