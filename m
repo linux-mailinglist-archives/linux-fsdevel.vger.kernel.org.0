@@ -2,240 +2,238 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3097B23E696
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 06:12:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 858F823E70C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 07:32:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725845AbgHGEM0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Aug 2020 00:12:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35526 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725263AbgHGEMZ (ORCPT
+        id S1726045AbgHGFb7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Aug 2020 01:31:59 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:45478 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725379AbgHGFb7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Aug 2020 00:12:25 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6569C061574;
-        Thu,  6 Aug 2020 21:12:24 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id g14so656493iom.0;
-        Thu, 06 Aug 2020 21:12:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tR46+jH5HAE5RBYT73wIlj3eTY5WLMg+m88DMWq/IdQ=;
-        b=t5oLN1mBhXv0gHC6lx0fidZIOb7WEf4YcNP2+rKWfNA0NznbT8k/QFWao3Gnk3aUHp
-         KqYQbJSzuUY2SVeBgT9QBeSaK/PjcyyIibRkILH5P2I1Hf/pzA5O6G5xmjgSYHlC9l4G
-         REVHH1baJYlrFX0BwXX2oiE5Dae5zxIE2GJ2Wvrl2oy/dBQYvzVTpVDPGtZ+syhOohvm
-         U60oiQiLr5tD93JQmf+BBdyP3jxGEqE2mMXaGAFnxIRsIe2ZUZpwu+9WoKDSgCs4jHPh
-         g5SsfNNkzOA1IsevHd7UNrqeadGBDiYITPsEr1AQ01BcA2KCjLKBT+EkdLu0usaokWOK
-         pV9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tR46+jH5HAE5RBYT73wIlj3eTY5WLMg+m88DMWq/IdQ=;
-        b=nx5Vrw/lsWJLHYU45R+xUy//KZ2yBYUy+DmDo3UGYOQLKrw/0O/4614pEw+dQxauPC
-         8D+4VsJz1pd1c5574XBKy0/bSlToGoe0PnVjr0PAqEhk60wGt2h0gAIWIX8xnt5Q6WSu
-         blkQiKgp0deyc263P86Jeej22zwpiPwG5P9Wz34r+Hp/cWwnVJAovEj52D1c2jt7GVCx
-         f5HAbnSsIXFdNUUHDGHKrUMZYH0EdnSIVMBn6s6oMjQlHFfbL061BSG1hOKNvSlYCTZO
-         BjTNEyvG81Ek+VFU4WN3UomXhj/UZQFVlRJ+AJR4TtoCQaHeG81LbhSuFOpuPV4MAaP3
-         mrEg==
-X-Gm-Message-State: AOAM532IB163vb43ct9whYW2yIayABNLf5dFPalrbvW2N3r2d2niAvCO
-        pRuLlbUu14Fk9epsr9IBRLGxq5UWFsYaqvJItZU=
-X-Google-Smtp-Source: ABdhPJzdDcMpFQJ83WorZ3S8PJ+sGu+ca3vrkSQnrfd38VFioTPUGK3RJQ9ZSZYPqkq3SPJFwn0xRQXqjCugePJlQZ0=
-X-Received: by 2002:a02:a905:: with SMTP id n5mr2836770jam.64.1596773544199;
- Thu, 06 Aug 2020 21:12:24 -0700 (PDT)
+        Fri, 7 Aug 2020 01:31:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1596778316;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qE3AQC88ybbZXSV6i1eK7/q3sJlMno8WZMq0jGptd7M=;
+        b=GcoJo3tNz4B4vHyB67d6bQBYZ0SlEccJZOsBZ7T/i9htNInl+BU7imKbpMOGV+vkYu8FMt
+        z+mKW2OVNzeN0ypq+ikWlEZ9rvLsyojhBiEYrGfIGHihUw+6qenu2eTB5FZdNJKHYMiPLC
+        PS7klYM9JFseG9UNHLt4630IjaW1cqs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-156-7cMgRDB0MRCH973SukvGog-1; Fri, 07 Aug 2020 01:31:51 -0400
+X-MC-Unique: 7cMgRDB0MRCH973SukvGog-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 94FB457;
+        Fri,  7 Aug 2020 05:31:49 +0000 (UTC)
+Received: from mail (ovpn-114-184.rdu2.redhat.com [10.10.114.184])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 191E75DA7A;
+        Fri,  7 Aug 2020 05:31:49 +0000 (UTC)
+Date:   Fri, 7 Aug 2020 01:31:48 -0400
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        syzbot <syzbot+96cc7aba7e969b1d305c@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: INFO: task hung in pipe_read (2)
+Message-ID: <20200807053148.GA10409@redhat.com>
+References: <00000000000045b3fe05abcced2f@google.com>
+ <fc097a54-0384-9d21-323f-c3ca52cdb956@I-love.SAKURA.ne.jp>
+ <CAHk-=wj15SDiHjP2wPiC=Ru-RrUjOuT4AoULj6N_9pVvSXaWiw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200801154632.866356-1-laoar.shao@gmail.com> <20200801154632.866356-3-laoar.shao@gmail.com>
- <20200804233541.GE2114@dread.disaster.area>
-In-Reply-To: <20200804233541.GE2114@dread.disaster.area>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Fri, 7 Aug 2020 12:11:48 +0800
-Message-ID: <CALOAHbCbyx8HSG2vRcK7dtDCk_abUiHwmXBgvNPRkrvnUsOZyw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] xfs: avoid transaction reservation recursion
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linux MM <linux-mm@kvack.org>,
-        Yafang Shao <shaoyafang@didiglobal.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj15SDiHjP2wPiC=Ru-RrUjOuT4AoULj6N_9pVvSXaWiw@mail.gmail.com>
+User-Agent: Mutt/1.14.5 (2020-06-23)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 5, 2020 at 7:35 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Sat, Aug 01, 2020 at 11:46:32AM -0400, Yafang Shao wrote:
-> > From: Yafang Shao <shaoyafang@didiglobal.com>
-> >
-> > PF_FSTRANS which is used to avoid transaction reservation recursion, is
-> > dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
-> > PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
-> > memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
-> > means to avoid filesystem reclaim recursion. That change is subtle.
-> > Let's take the exmple of the check of WARN_ON_ONCE(current->flags &
-> > PF_MEMALLOC_NOFS)) to explain why this abstraction from PF_FSTRANS to
-> > PF_MEMALLOC_NOFS is not proper.
-> > Below comment is quoted from Dave,
-> > > It wasn't for memory allocation recursion protection in XFS - it was for
-> > > transaction reservation recursion protection by something trying to flush
-> > > data pages while holding a transaction reservation. Doing
-> > > this could deadlock the journal because the existing reservation
-> > > could prevent the nested reservation for being able to reserve space
-> > > in the journal and that is a self-deadlock vector.
-> > > IOWs, this check is not protecting against memory reclaim recursion
-> > > bugs at all (that's the previous check [1]). This check is
-> > > protecting against the filesystem calling writepages directly from a
-> > > context where it can self-deadlock.
-> > > So what we are seeing here is that the PF_FSTRANS ->
-> > > PF_MEMALLOC_NOFS abstraction lost all the actual useful information
-> > > about what type of error this check was protecting against.
-> >
-> > As a result, we should reintroduce PF_FSTRANS. As current->journal_info
-> > isn't used in XFS, we can reuse it to indicate whehter the task is in
-> > fstrans or not.
->
-> IF we are just going to use ->journal_info, do it the simple way.
->
-> > index 2d25bab68764..0795511f9e6a 100644
-> > --- a/fs/xfs/libxfs/xfs_btree.c
-> > +++ b/fs/xfs/libxfs/xfs_btree.c
-> > @@ -2825,6 +2825,7 @@ xfs_btree_split_worker(
-> >       if (args->kswapd)
-> >               new_pflags |= PF_MEMALLOC | PF_SWAPWRITE | PF_KSWAPD;
-> >
-> > +     xfs_trans_context_start();
->
-> Not really. We are transferring a transaction context here, not
-> starting one. Hence this reads somewhat strangely.
->
-> This implies that the helper function should be something like:
->
->         xfs_trans_context_set(tp);
->
->
-> >       current_set_flags_nested(&pflags, new_pflags);
-> >
-> >       args->result = __xfs_btree_split(args->cur, args->level, args->ptrp,
-> > @@ -2832,6 +2833,7 @@ xfs_btree_split_worker(
-> >       complete(args->done);
-> >
-> >       current_restore_flags_nested(&pflags, new_pflags);
-> > +     xfs_trans_context_end();
->
-> And this is more likely xfs_trans_context_clear(tp)
->
-> Reasons for this will become clear soon...
->
-> >  }
-> >
-> >  /*
-> > diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> > index b35611882ff9..39ef95acdd8e 100644
-> > --- a/fs/xfs/xfs_aops.c
-> > +++ b/fs/xfs/xfs_aops.c
-> > @@ -63,6 +63,8 @@ xfs_setfilesize_trans_alloc(
-> >        * clear the flag here.
-> >        */
-> >       current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-> > +     xfs_trans_context_end();
->
-> Note the repeated pairing of functions in this patch?
->
-> > +
-> >       return 0;
-> >  }
-> >
-> > @@ -125,6 +127,7 @@ xfs_setfilesize_ioend(
-> >        * thus we need to mark ourselves as being in a transaction manually.
-> >        * Similarly for freeze protection.
-> >        */
-> > +     xfs_trans_context_start();
-> >       current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-> >       __sb_writers_acquired(VFS_I(ip)->i_sb, SB_FREEZE_FS);
-> >
-> > diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-> > index 9f70d2f68e05..1192b660a968 100644
-> > --- a/fs/xfs/xfs_linux.h
-> > +++ b/fs/xfs/xfs_linux.h
-> > @@ -111,6 +111,25 @@ typedef __u32                    xfs_nlink_t;
-> >  #define current_restore_flags_nested(sp, f)  \
-> >               (current->flags = ((current->flags & ~(f)) | (*(sp) & (f))))
-> >
-> > +static inline void xfs_trans_context_start(void)
-> > +{
-> > +     long flags = (long)current->journal_info;
-> > +
-> > +     /*
-> > +      * Reuse journal_info to indicate whehter the current is in fstrans
-> > +      * or not.
-> > +      */
-> > +     current->journal_info = (void *)(flags + 1);
-> > +}
-> > +
-> > +static inline void xfs_trans_context_end(void)
-> > +{
-> > +     long flags = (long)current->journal_info;
-> > +
-> > +     WARN_ON_ONCE(flags <= 0);
-> > +     current->journal_info = ((void *)(flags - 1));
-> > +}
->
-> This is overly complex, and cannot be used for validation that we
-> are clearing the transaction context we expect to be clearing. These
-> are really "set" and "clear" operations, and for rolling
-> transactions we are going to need an "update" operation, too.
->
-> As per my comments about the previous patch, _set() would be done
-> in xfs_trans_alloc(), _clear() would be done on the final
-> xfs_trans_commit() or _cancel() and _update() would be done when the
-> transaction rolls.
->
-> Then we can roll in the NOFS updates, and we get these three helper
-> functions that keep all the per-transaction thread state coherent:
->
-> static inline void
-> xfs_trans_context_set(struct xfs_trans *tp)
-> {
->         ASSERT(!current->journal_info);
->         current->journal_info = tp;
->         tp->t_flags = memalloc_nofs_save();
-> }
->
-> static inline void
-> xfs_trans_context_update(struct xfs_trans *old, struct xfs_trans *new)
-> {
->         ASSERT(current->journal_info == old);
->         current->journal_info = new;
->         new->t_flags = old->t_flags;
-> }
->
-> static inline void
-> xfs_trans_context_clear(struct xfs_trans *tp)
-> {
->         ASSERT(current->journal_info == tp);
->         current->journal_info = NULL;
->         memalloc_nofs_restore(tp->t_flags);
-> }
->
+Hello!
 
-Below helper will be used in fs/iomap/buffered-io.c, so I think we'd
-better name it with fstrans_context_active() and put it in
-include/linux/iomap.h, while regarding the other three helpers I think
-we'd better put them in fs/xfs/xfs_trans.h.
-> static bool
-> xfs_trans_context_active(void)
-> {
->         return current->journal_info != NULL;
-> }
->
+On Sat, Aug 01, 2020 at 10:39:00AM -0700, Linus Torvalds wrote:
+> On Sat, Aug 1, 2020 at 8:30 AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >
+> > Waiting for response at https://lkml.kernel.org/r/45a9b2c8-d0b7-8f00-5b30-0cfe3e028b28@I-love.SAKURA.ne.jp .
+> 
+> I think handle_userfault() should have a (shortish) timeout, and just
+> return VM_FAULT_RETRY.
 
-Many thanks for the detailed explanation, I will update with your
-suggestion in the next version.
+The 1sec timeout if applied only to kernel faults (not the case yet
+but it'd be enough to solve the hangcheck timer), will work perfectly
+for Android, but it will break qemu.
 
--- 
-Thanks
-Yafang
+[  916.954313] INFO: task syz-executor.0:61593 blocked for more than 40 seconds.
+
+If you want to enforce a timeout, 40 seconds or something of the order
+of the hangcheck timer would be more reasonable.
+
+1sec is of the same order of magnitude of latency that you'd get with
+an host kernel upgrade in place with kexec (with the guest memory
+being preserved in RAM) that you'd suffer occasionally from in most public clouds.
+
+So postcopy live migration should be allowed to take 1 sec latency and
+it shouldn't become a deal breaker, that results in the VM getting killed.
+
+> The code is overly complex anyway, because it predates the "just return RETRY".
+> 
+> And because we can't wait forever when the source of the fault is a
+> kernel exception, I think we should add some extra logic to just say
+> "if this is a retry, we've already done this once, just return an
+> error".
+
+Until the uffp-wp was merged recently, we never needed more than one
+VM_FAULT_RETRY to handle uffd-missing faults, you seem to want to go
+back to that which again would be fine for uffd-missing faults.
+
+I haven't had time to read and test the testcase properly yet, but at
+first glance from reading the hangcheck report it looks like there
+would be just one userfault? So I don't see an immediate connection.
+
+The change adding a 1sec timeout would definitely fix this issue, but
+it'll also break qemu and probably the vast majority of the users.
+
+> This is a TEST PATCH ONLY. I think we'll actually have to do something
+> like this, but I think the final version might need to allow a couple
+> of retries, rather than just give up after just one second.
+> 
+> But for testing your case, this patch might be enough to at least show
+> that "yeah, this kind of approach works".
+> 
+> Andrea? Comments? As mentioned, this is probably much too aggressive,
+> but I do think we need to limit the time that the kernel will wait for
+> page faults.
+
+Why is pipe preventing to SIGKILL the task that is blocked on the
+mutex_lock? Is there any good reason for it or it simply has margin
+for improvement regardless of the hangcheck report? It'd be great if
+we can look into that before looking into the uffd specific bits.
+
+The hangcheck timer would have zero issues with tasks that can be
+killed, if only the pipe code could be improved to use mutex_lock_killable.
+
+		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
+		if (t->state == TASK_UNINTERRUPTIBLE)
+			check_hung_task(t, timeout);
+
+The hangcheck report is just telling us one task was in D state a
+little too long, but it wasn't fatal error and the kernel wasn't
+actually destabilized and the only malfunction reported is that a task
+was unkillable for too long.
+
+Now if it's impossible to improve the pipe code so it works better not
+just for uffd, there's still no reason to worry: we could disable uffd
+in the pipe context. For example ptrace opts-out of uffds, so that gdb
+doesn't get stuck if you read a pointer that should be handled by the
+process that is under debug. I hope it won't be necessary but it
+wouldn't be a major issue, certainly it wouldn't risk breaking qemu
+(and non-cooperative APIs are privileged so it could still skip the
+timeout).
+
+> Because userfaultfd has become a huge source of security holes as a
+> way to time kernel faults or delay them indefinitely.
+
+I assume you refer to the below:
+
+https://duasynt.com/blog/cve-2016-6187-heap-off-by-one-exploit
+https://blog.lizzie.io/using-userfaultfd.html
+
+These reports don't happen to mention CONFIG_SLAB_FREELIST_RANDOM=y
+which is already enabled by default in enterprise kernels for a reason
+and they don't mention the more recent CONFIG_SLAB_FREELIST_HARDENED
+and CONFIG_SHUFFLE_PAGE_ALLOCATOR.
+
+Can they test it with those options enabled again, does it still work
+so good or not anymore? That would be very helpful to know.
+
+Randomizing which is the next page that gets allocated is much more
+important than worrying about uffd because if you removed uffd you may
+still have other ways to temporarily stop the page fault depending on
+the setup. Example:
+
+https://bugs.chromium.org/p/project-zero/issues/detail?id=808
+
+The above one doesn't use uffd, but it uses fuse. So is fuse also a
+source of security holes given they even use it for the exploit in a
+preferential way instead of uffd?
+
+"This can be done by abusing the writev() syscall and FUSE: The
+attacker mounts a FUSE filesystem that artificially delays read
+accesses, then mmap()s a file containing a struct iovec from that FUSE
+filesystem and passes the result of mmap() to writev(). (Another way
+to do this would be to use the userfaultfd() syscall.)"
+
+It's not just uffd and fuse: even if you set
+/proc/sys/vm/unprivileged_userfaultfd to 0 and you drop fuse, swapin
+and pagein from NFS can be attacked through the network. The fact
+there's a timeout won't make those less useful.
+
+Enlarging the race window to 1sec or 40sec won't help much. What would
+be useful if something is to add a delay to the wakeup event, not to
+add a timeout, but even if we do that, the bug may still be
+reproducible and it may eventually win the race regardless, by just
+waiting longer.
+
+It's impossible to obtain maximum features, maximum security and
+maximum performance all at the same time, something has to give in and
+we clearly want to support the enhanced-robustness secure setup where
+all other unprivileged_* sysctl are tweaked too (not just uffd), and
+we already do with the sysctl we added for it. In this respect uffd is
+not different from other features that also shouldn't be accessible
+without privilege in those setup. It's part of the tradeoff.
+
+Most important the default container runtime seccomp filters blocks
+uffd so all containers are at zero risk unless they use uffd actively
+and opt-in explicitly using the OCI schema seccomp filter, in which
+case the previous sentence applies.
+
+Anybody running a secure setup but not wrapping everything under at
+least the default seccomp filter of the container runtime, is not
+really secure anyway so even the sysctl is meaningless in reality. Way
+more useful than the sysctl in practice is that container runtime
+needs an hard denylist/allowlist that cannot be opted out of the OCI
+schema and in paranoid setups some syscalls could be added to it,
+despite it may break stuff.
+
+Randomizing the allocations so the timing don't matter anymore is most
+certainly worth it because it will work not just for uffd, but also
+for fuse, swapin from nfs under malicious network flood and any other
+source of page fault controllable stalls.
+
+The last complaint received on the uffd security topic was the
+suggestion that uffd being allowed to block kernel faults was a
+concern for lockdown confidentiality mode. I answered to that here and
+I repeated some part in the above as well:
+
+https://lkml.kernel.org/r/20200520040608.GB26186@redhat.com
+
+(if no time to read the above: the short version is that lockdown
+confidentiality is not a robustness/probabilistic feature. It's a
+black and white feature and such it shouldn't even try to be robust
+against kernel bugs by design. If we turn confidentiality mode in an
+"hardening" kernel feature, then the sky is the limit and it'll become
+a growing black hole that will drop more and more and it won't be
+possible to draw a sure line where to stop dropping, until what's left
+will be too little or too slow to be useful)
+
+Thanks,
+Andrea
+
+(On the seccomp topic, and this would open a new huge thread,
+absolutely we need to change the default of spec_store_bypass_disable
+and spectre_v2_user to prctl, we can't keep it to seccomp, most
+userland including the container runtimes already opted-out with
+SECCOMP_FILTER_FLAG_SPEC_ALLOW, the longer we wait the more it'll be
+pointless to even leave a =seccomp option as opt-in later, I'll try to
+work on submitting something soon to fix this)
+
