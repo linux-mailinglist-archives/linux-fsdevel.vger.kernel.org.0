@@ -2,97 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DBE6423EA86
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 11:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F332C23EB97
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 12:35:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728113AbgHGJip convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 7 Aug 2020 05:38:45 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:30485 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727912AbgHGJin (ORCPT
+        id S1727791AbgHGKfW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Aug 2020 06:35:22 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:53066 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbgHGKfV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Aug 2020 05:38:43 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-16-5qKKb2pWNfK428LdGWcIog-1; Fri, 07 Aug 2020 10:38:39 +0100
-X-MC-Unique: 5qKKb2pWNfK428LdGWcIog-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 7 Aug 2020 10:38:38 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 7 Aug 2020 10:38:38 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christoph Hellwig' <hch@lst.de>,
-        "x86@kernel.org" <x86@kernel.org>, "Jan Kara" <jack@suse.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>
-Subject: RE: [PATCH 3/3] quota: simplify the quotactl compat handling
-Thread-Topic: [PATCH 3/3] quota: simplify the quotactl compat handling
-Thread-Index: AQHWZzVGHzqazLGYN0OsEvz6unAGWaksbb8Q
-Date:   Fri, 7 Aug 2020 09:38:38 +0000
-Message-ID: <f894de9f065f4bf9a451668dfbf35591@AcuMS.aculab.com>
-References: <20200731122202.213333-1-hch@lst.de>
- <20200731122202.213333-4-hch@lst.de>
-In-Reply-To: <20200731122202.213333-4-hch@lst.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 7 Aug 2020 06:35:21 -0400
+Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 077AZDUx016685;
+        Fri, 7 Aug 2020 19:35:13 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav101.sakura.ne.jp);
+ Fri, 07 Aug 2020 19:35:13 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav101.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 077AZCcr016659
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 7 Aug 2020 19:35:12 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: splice: infinite busy loop lockup bug
+To:     syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <00000000000084b59f05abe928ee@google.com>
+Cc:     syzbot <syzbot+61acc40a49a3e46e25ea@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <29de15ff-15e9-5c52-cf87-e0ebdfa1a001@I-love.SAKURA.ne.jp>
+Date:   Fri, 7 Aug 2020 19:35:08 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <00000000000084b59f05abe928ee@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christoph Hellwig
-> Sent: 31 July 2020 13:22
-> 
-> Fold the misaligned u64 workarounds into the main quotactl flow instead
-> of implementing a separate compat syscall handler.
-> 
-...
-> +static int compat_copy_fs_quota_stat(struct compat_fs_quota_stat __user *to,
-> +		struct fs_quota_stat *from)
-> +{
-> +	if (put_user(from->qs_version, &to->qs_version) ||
-> +	    put_user(from->qs_flags, &to->qs_flags) ||
-> +	    put_user(from->qs_pad, &to->qs_pad) ||
-> +	    compat_copy_fs_qfilestat(&to->qs_uquota, &from->qs_uquota) ||
-> +	    compat_copy_fs_qfilestat(&to->qs_gquota, &from->qs_gquota) ||
-> +	    put_user(from->qs_incoredqs, &to->qs_incoredqs) ||
-> +	    put_user(from->qs_btimelimit, &to->qs_btimelimit) ||
-> +	    put_user(from->qs_itimelimit, &to->qs_itimelimit) ||
-> +	    put_user(from->qs_rtbtimelimit, &to->qs_rtbtimelimit) ||
-> +	    put_user(from->qs_bwarnlimit, &to->qs_bwarnlimit) ||
-> +	    put_user(from->qs_iwarnlimit, &to->qs_iwarnlimit))
-> +		return -EFAULT;
-> +	return 0;
-> +}
+syzbot is reporting hung task at pipe_release() [1], for for_each_bvec() from
+iterate_bvec() from iterate_all_kinds() from iov_iter_alignment() from
+ext4_unaligned_io() from ext4_dio_write_iter() from ext4_file_write_iter() from
+call_write_iter() from do_iter_readv_writev() from do_iter_write() from
+vfs_iter_write() from iter_file_splice_write() falls into infinite busy loop
+with pipe->mutex held.
 
-That might look better as a 'noinline' function that copied
-all the fields into an on-stack struct compat_fs_quota_stat
-and then did a single copy_to_user().
+The reason of falling into infinite busy loop is that iter_file_splice_write()
+for some reason generates "struct bio_vec" entry with .bv_len=0 and .bv_offset=0
+while for_each_bvec() cannot handle .bv_len == 0.
 
-(I do 'like' qs_pad - I wonder what the person who added
-it was smoking.)
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -747,6 +747,14 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 		}
+ 
+ 		iov_iter_bvec(&from, WRITE, array, n, sd.total_len - left);
++		if (!strncmp(current->comm, "syz-executor", 12)) {
++			int i;
++			printk("Starting vfs_write_iter from.type=%d from.iov_offset=%zu from.count=%zu n=%u sd.total_len=%zu left=%zu\n",
++			       from.type, from.iov_offset, from.count, n, sd.total_len, left);
++			for (i = 0; i < n; i++)
++				printk("  array[%u]: bv_page=%px bv_len=%u bv_offset=%u\n",
++				       i, array[i].bv_page, array[i].bv_len, array[i].bv_offset);
++		}
+ 		ret = vfs_iter_write(out, &from, &sd.pos, 0);
+ 		if (ret <= 0)
+ 			break;
 
-	David
+When splice() from pipe to file works.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+[   31.704915][ T6552] Starting vfs_write_iter from.type=17 from.iov_offset=0 from.count=4096 n=1 sd.total_len=65504 left=61408
+[   31.709098][ T6552]   array[0]: bv_page=ffffea000870a7c0 bv_len=4096 bv_offset=0
+
+When splice() from pipe to file falls into infinite busy loop.
+
+[   31.717178][ T6553] Starting vfs_write_iter from.type=17 from.iov_offset=0 from.count=4096 n=2 sd.total_len=65504 left=61408
+[   31.720983][ T6553]   array[0]: bv_page=ffffea0008706680 bv_len=0 bv_offset=0
+[   31.723565][ T6553]   array[1]: bv_page=ffffea00086f4e80 bv_len=4096 bv_offset=0
+
+Is it normal behavior that an empty page is linked to pipe's array?
+If yes, don't we need to skip empty pages when iter_file_splice_write() fills in "struct bio_vec *array" ?
+
+[1] https://syzkaller.appspot.com/bug?id=2ccac875e85dc852911a0b5b788ada82dc0a081e
 
