@@ -2,112 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F99B23F34E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 21:56:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADD5E23F350
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 21:56:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbgHGT4U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Aug 2020 15:56:20 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53020 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726985AbgHGTz4 (ORCPT
+        id S1727838AbgHGT4d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Aug 2020 15:56:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22709 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726635AbgHGTzz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Aug 2020 15:55:56 -0400
+        Fri, 7 Aug 2020 15:55:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596830155;
+        s=mimecast20190719; t=1596830154;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=qdlNr90CBeIrDZm/k8M3WSYgAxr0kUHBQSfXY3HBR3M=;
-        b=OEtcWCE8O5fZ4rbGITleBlsU0WLxb7Ef7hxXcd01DHmtitoBa3RrwXzJ2bSNVOSz8WIaAE
-        NlVvekfuoTCWwJJjrf+rsMOUKqg4bk51ghjCsDLtUr1lYF4hBcP6eWW058k/9+i7ek5DNs
-        bTG07R6oi+v53wt4Nr0zM8gLhCGCv0g=
+        bh=MNhZc9pvovR9Cq1uBbizVm5zzTun4Iu/OyAwM/glcug=;
+        b=akHGDvF0V30KptZ5bMgCyN55au+55f1Y/goXdfJmFjVdX2E4pnFAKLs3T1xX8XJiPNWq7o
+        8NeVoZ9tXZshMiB7FGTG0HDJJsAdpGu+qCG83HBqfPwwn5MIpLbaISA3Sq6p6C9qwz41Xt
+        kUK9DYSHqjpTWtzqjWY9FzcK1eiCvWM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-456-fTI0CLrNPD-IHN_fsiNHLQ-1; Fri, 07 Aug 2020 15:55:53 -0400
-X-MC-Unique: fTI0CLrNPD-IHN_fsiNHLQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+ us-mta-291-FFTQ3eGHNwGOcza_pXEmRw-1; Fri, 07 Aug 2020 15:55:48 -0400
+X-MC-Unique: FFTQ3eGHNwGOcza_pXEmRw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8351A1005510;
-        Fri,  7 Aug 2020 19:55:52 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 79EC41005504;
+        Fri,  7 Aug 2020 19:55:47 +0000 (UTC)
 Received: from horse.redhat.com (ovpn-113-142.rdu2.redhat.com [10.10.113.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 60A975C1D0;
-        Fri,  7 Aug 2020 19:55:52 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 598202DE74;
+        Fri,  7 Aug 2020 19:55:47 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 19357222E5E; Fri,  7 Aug 2020 15:55:39 -0400 (EDT)
+        id 2881E222E5F; Fri,  7 Aug 2020 15:55:39 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         virtio-fs@redhat.com
 Cc:     vgoyal@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
         dgilbert@redhat.com
-Subject: [PATCH v2 16/20] fuse,virtiofs: Define dax address space operations
-Date:   Fri,  7 Aug 2020 15:55:22 -0400
-Message-Id: <20200807195526.426056-17-vgoyal@redhat.com>
+Subject: [PATCH v2 17/20] fuse,virtiofs: Maintain a list of busy elements
+Date:   Fri,  7 Aug 2020 15:55:23 -0400
+Message-Id: <20200807195526.426056-18-vgoyal@redhat.com>
 In-Reply-To: <20200807195526.426056-1-vgoyal@redhat.com>
 References: <20200807195526.426056-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is done along the lines of ext4 and xfs. I primarily wanted ->writepages
-hook at this time so that I could call into dax_writeback_mapping_range().
-This in turn will decide which pfns need to be written back.
+This list will be used selecting fuse_dax_mapping to free when number of
+free mappings drops below a threshold.
 
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 ---
- fs/fuse/file.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ fs/fuse/file.c   | 22 ++++++++++++++++++++++
+ fs/fuse/fuse_i.h |  7 +++++++
+ fs/fuse/inode.c  |  4 ++++
+ 3 files changed, 33 insertions(+)
 
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 00ad27216cc3..54708cb24da0 100644
+index 54708cb24da0..ecd2a42f6e30 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -2669,6 +2669,16 @@ static int fuse_writepages_fill(struct page *page,
- 	return err;
+@@ -213,6 +213,23 @@ static struct fuse_dax_mapping *alloc_dax_mapping(struct fuse_conn *fc)
+ 	return dmap;
  }
  
-+static int fuse_dax_writepages(struct address_space *mapping,
-+				struct writeback_control *wbc)
++/* This assumes fc->lock is held */
++static void __dmap_remove_busy_list(struct fuse_conn *fc,
++				    struct fuse_dax_mapping *dmap)
 +{
-+
-+	struct inode *inode = mapping->host;
-+	struct fuse_conn *fc = get_fuse_conn(inode);
-+
-+	return dax_writeback_mapping_range(mapping, fc->dax_dev, wbc);
++	list_del_init(&dmap->busy_list);
++	WARN_ON(fc->nr_busy_ranges == 0);
++	fc->nr_busy_ranges--;
 +}
 +
- static int fuse_writepages(struct address_space *mapping,
- 			   struct writeback_control *wbc)
- {
-@@ -4030,6 +4040,13 @@ static const struct address_space_operations fuse_file_aops  = {
- 	.write_end	= fuse_write_end,
- };
- 
-+static const struct address_space_operations fuse_dax_file_aops  = {
-+	.writepages	= fuse_dax_writepages,
-+	.direct_IO	= noop_direct_IO,
-+	.set_page_dirty	= noop_set_page_dirty,
-+	.invalidatepage	= noop_invalidatepage,
-+};
++static void dmap_remove_busy_list(struct fuse_conn *fc,
++				  struct fuse_dax_mapping *dmap)
++{
++	spin_lock(&fc->lock);
++	__dmap_remove_busy_list(fc, dmap);
++	spin_unlock(&fc->lock);
++}
 +
- void fuse_init_file_inode(struct inode *inode)
- {
- 	struct fuse_inode *fi = get_fuse_inode(inode);
-@@ -4045,6 +4062,8 @@ void fuse_init_file_inode(struct inode *inode)
- 	fi->writepages = RB_ROOT;
- 	fi->dmap_tree = RB_ROOT_CACHED;
- 
--	if (fc->dax_dev)
-+	if (fc->dax_dev) {
- 		inode->i_flags |= S_DAX;
-+		inode->i_data.a_ops = &fuse_dax_file_aops;
-+	}
+ /* This assumes fc->lock is held */
+ static void __dmap_add_to_free_pool(struct fuse_conn *fc,
+ 				struct fuse_dax_mapping *dmap)
+@@ -266,6 +283,10 @@ static int fuse_setup_one_mapping(struct inode *inode, unsigned long start_idx,
+ 		/* Protected by fi->i_dmap_sem */
+ 		interval_tree_insert(&dmap->itn, &fi->dmap_tree);
+ 		fi->nr_dmaps++;
++		spin_lock(&fc->lock);
++		list_add_tail(&dmap->busy_list, &fc->busy_ranges);
++		fc->nr_busy_ranges++;
++		spin_unlock(&fc->lock);
+ 	}
+ 	return 0;
  }
+@@ -335,6 +356,7 @@ static void dmap_reinit_add_to_free_pool(struct fuse_conn *fc,
+ 	pr_debug("fuse: freeing memory range start_idx=0x%lx end_idx=0x%lx "
+ 		 "window_offset=0x%llx length=0x%llx\n", dmap->itn.start,
+ 		 dmap->itn.last, dmap->window_offset, dmap->length);
++	__dmap_remove_busy_list(fc, dmap);
+ 	dmap->itn.start = dmap->itn.last = 0;
+ 	__dmap_add_to_free_pool(fc, dmap);
+ }
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 1ddf526330a5..f84ec9c661ab 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -80,6 +80,9 @@ struct fuse_dax_mapping {
+ 	/* For interval tree in file/inode */
+ 	struct interval_tree_node itn;
+ 
++	/* Will connect in fc->busy_ranges to keep track busy memory */
++	struct list_head busy_list;
++
+ 	/** Position in DAX window */
+ 	u64 window_offset;
+ 
+@@ -812,6 +815,10 @@ struct fuse_conn {
+ 	/** DAX device, non-NULL if DAX is supported */
+ 	struct dax_device *dax_dev;
+ 
++	/* List of memory ranges which are busy */
++	unsigned long nr_busy_ranges;
++	struct list_head busy_ranges;
++
+ 	/*
+ 	 * DAX Window Free Ranges
+ 	 */
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 4bd965d0ecf6..cfc04c5eda73 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -636,6 +636,8 @@ static void fuse_free_dax_mem_ranges(struct list_head *mem_list)
+ 	/* Free All allocated elements */
+ 	list_for_each_entry_safe(range, temp, mem_list, list) {
+ 		list_del(&range->list);
++		if (!list_empty(&range->busy_list))
++			list_del(&range->busy_list);
+ 		kfree(range);
+ 	}
+ }
+@@ -680,6 +682,7 @@ static int fuse_dax_mem_range_init(struct fuse_conn *fc,
+ 		 */
+ 		range->window_offset = i * FUSE_DAX_SZ;
+ 		range->length = FUSE_DAX_SZ;
++		INIT_LIST_HEAD(&range->busy_list);
+ 		list_add_tail(&range->list, &mem_ranges);
+ 	}
+ 
+@@ -727,6 +730,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct user_namespace *user_ns,
+ 	fc->user_ns = get_user_ns(user_ns);
+ 	fc->max_pages = FUSE_DEFAULT_MAX_PAGES_PER_REQ;
+ 	INIT_LIST_HEAD(&fc->free_ranges);
++	INIT_LIST_HEAD(&fc->busy_ranges);
+ }
+ EXPORT_SYMBOL_GPL(fuse_conn_init);
+ 
 -- 
 2.25.4
 
