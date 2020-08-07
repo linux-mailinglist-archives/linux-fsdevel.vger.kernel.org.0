@@ -2,157 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4234D23E98A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 10:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 122D523E9C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 11:07:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbgHGIsI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Aug 2020 04:48:08 -0400
-Received: from relay.sw.ru ([185.231.240.75]:45292 "EHLO relay3.sw.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727820AbgHGIsH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Aug 2020 04:48:07 -0400
-Received: from [192.168.15.98]
-        by relay3.sw.ru with esmtp (Exim 4.93)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1k3y2b-0007gU-S6; Fri, 07 Aug 2020 11:47:53 +0300
-Subject: Re: [PATCH 00/23] proc: Introduce /proc/namespaces/ directory to
- expose namespaces lineary
-To:     Andrei Vagin <avagin@gmail.com>, adobriyan@gmail.com
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        viro@zeniv.linux.org.uk, davem@davemloft.net,
-        akpm@linux-foundation.org, christian.brauner@ubuntu.com,
-        areber@redhat.com, serge@hallyn.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-References: <159611007271.535980.15362304262237658692.stgit@localhost.localdomain>
- <87k0yl5axy.fsf@x220.int.ebiederm.org>
- <56928404-f194-4194-5f2a-59acb15b1a04@virtuozzo.com>
- <875za43b3w.fsf@x220.int.ebiederm.org>
- <9ceb5049-6aea-1429-e35f-d86480f10d72@virtuozzo.com>
- <20200806080540.GA18865@gmail.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <2d65ca28-bcfa-b217-e201-09163640ebc2@virtuozzo.com>
-Date:   Fri, 7 Aug 2020 11:47:57 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
-MIME-Version: 1.0
-In-Reply-To: <20200806080540.GA18865@gmail.com>
-Content-Type: text/plain; charset=koi8-r
+        id S1727828AbgHGJHN convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 7 Aug 2020 05:07:13 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:58015 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726987AbgHGJHL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Aug 2020 05:07:11 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-14-hYsxTjzNMdCVWgdtGXWhDw-1; Fri, 07 Aug 2020 10:07:07 +0100
+X-MC-Unique: hYsxTjzNMdCVWgdtGXWhDw-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 7 Aug 2020 10:07:06 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 7 Aug 2020 10:07:06 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christoph Hellwig' <hch@lst.de>,
+        "x86@kernel.org" <x86@kernel.org>, "Jan Kara" <jack@suse.com>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>
+Subject: RE: [PATCH 3/3] quota: simplify the quotactl compat handling
+Thread-Topic: [PATCH 3/3] quota: simplify the quotactl compat handling
+Thread-Index: AQHWZzVGHzqazLGYN0OsEvz6unAGWaksY9+A
+Date:   Fri, 7 Aug 2020 09:07:06 +0000
+Message-ID: <97285a880c434a4ea9072ff1b9c238e7@AcuMS.aculab.com>
+References: <20200731122202.213333-1-hch@lst.de>
+ <20200731122202.213333-4-hch@lst.de>
+In-Reply-To: <20200731122202.213333-4-hch@lst.de>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 06.08.2020 11:05, Andrei Vagin wrote:
-> On Mon, Aug 03, 2020 at 01:03:17PM +0300, Kirill Tkhai wrote:
->> On 31.07.2020 01:13, Eric W. Biederman wrote:
->>> Kirill Tkhai <ktkhai@virtuozzo.com> writes:
->>>
->>>> On 30.07.2020 17:34, Eric W. Biederman wrote:
->>>>> Kirill Tkhai <ktkhai@virtuozzo.com> writes:
->>>>>
->>>>>> Currently, there is no a way to list or iterate all or subset of namespaces
->>>>>> in the system. Some namespaces are exposed in /proc/[pid]/ns/ directories,
->>>>>> but some also may be as open files, which are not attached to a process.
->>>>>> When a namespace open fd is sent over unix socket and then closed, it is
->>>>>> impossible to know whether the namespace exists or not.
->>>>>>
->>>>>> Also, even if namespace is exposed as attached to a process or as open file,
->>>>>> iteration over /proc/*/ns/* or /proc/*/fd/* namespaces is not fast, because
->>>>>> this multiplies at tasks and fds number.
->>>>>
->>>>> I am very dubious about this.
->>>>>
->>>>> I have been avoiding exactly this kind of interface because it can
->>>>> create rather fundamental problems with checkpoint restart.
->>>>
->>>> restart/restore :)
->>>>
->>>>> You do have some filtering and the filtering is not based on current.
->>>>> Which is good.
->>>>>
->>>>> A view that is relative to a user namespace might be ok.    It almost
->>>>> certainly does better as it's own little filesystem than as an extension
->>>>> to proc though.
->>>>>
->>>>> The big thing we want to ensure is that if you migrate you can restore
->>>>> everything.  I don't see how you will be able to restore these files
->>>>> after migration.  Anything like this without having a complete
->>>>> checkpoint/restore story is a non-starter.
->>>>
->>>> There is no difference between files in /proc/namespaces/ directory and /proc/[pid]/ns/.
->>>>
->>>> CRIU can restore open files in /proc/[pid]/ns, the same will be with /proc/namespaces/ files.
->>>> As a person who worked deeply for pid_ns and user_ns support in CRIU, I don't see any
->>>> problem here.
->>>
->>> An obvious diffference is that you are adding the inode to the inode to
->>> the file name.  Which means that now you really do have to preserve the
->>> inode numbers during process migration.
->>>
->>> Which means now we have to do all of the work to make inode number
->>> restoration possible.  Which means now we need to have multiple
->>> instances of nsfs so that we can restore inode numbers.
->>>
->>> I think this is still possible but we have been delaying figuring out
->>> how to restore inode numbers long enough that may be actual technical
->>> problems making it happen.
->>
->> Yeah, this matters. But it looks like here is not a dead end. We just need
->> change the names the namespaces are exported to particular fs and to support
->> rename().
->>
->> Before introduction a principally new filesystem type for this, can't
->> this be solved in current /proc?
+From: Christoph Hellwig
+> Sent: 31 July 2020 13:22
+>
+> Fold the misaligned u64 workarounds into the main quotactl flow instead
+> of implementing a separate compat syscall handler.
 > 
-> do you mean to introduce names for namespaces which users will be able
-> to change? By default, this can be uuid.
-
-Yes, I mean this.
-
-Currently I won't give a final answer about UUID, but I planned to show some
-default names, which based on namespace type and inode num. Completely custom
-names for any /proc by default will waste too much memory.
-
-So, I think the good way will be:
-
-1)Introduce a function, which returns a hash/uuid based on ino, ns type and some static
-random seed, which is generated on boot;
-
-2)Use the hash/uuid as default names in newly create /proc/namespaces: pid-{hash/uuid(ino, "pid")}
-
-3)Allow rename, and allocate space only for renamed names.
-
-Maybe 2 and 3 will be implemented as shrinkable dentries and non-shrinkable.
-
-> And I have a suggestion about the structure of /proc/namespaces/.
+...
+> diff --git a/fs/quota/compat.h b/fs/quota/compat.h
+> new file mode 100644
+> index 00000000000000..ef7d1e12d650b3
+> --- /dev/null
+> +++ b/fs/quota/compat.h
+> @@ -0,0 +1,34 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include <linux/compat.h>
+> +
+> +struct compat_if_dqblk {
+> +	compat_u64			dqb_bhardlimit;
+> +	compat_u64			dqb_bsoftlimit;
+> +	compat_u64			dqb_curspace;
+> +	compat_u64			dqb_ihardlimit;
+> +	compat_u64			dqb_isoftlimit;
+> +	compat_u64			dqb_curinodes;
+> +	compat_u64			dqb_btime;
+> +	compat_u64			dqb_itime;
+> +	compat_uint_t			dqb_valid;
+> +};
+> +
+> +struct compat_fs_qfilestat {
+> +	compat_u64			dqb_bhardlimit;
+> +	compat_u64			qfs_nblks;
+> +	compat_uint_t			qfs_nextents;
+> +};
+> +
+> +struct compat_fs_quota_stat {
+> +	__s8				qs_version;
+> +	__u16				qs_flags;
+> +	__s8				qs_pad;
+> +	struct compat_fs_qfilestat	qs_uquota;
+> +	struct compat_fs_qfilestat	qs_gquota;
+> +	compat_uint_t			qs_incoredqs;
+> +	compat_int_t			qs_btimelimit;
+> +	compat_int_t			qs_itimelimit;
+> +	compat_int_t			qs_rtbtimelimit;
+> +	__u16				qs_bwarnlimit;
+> +	__u16				qs_iwarnlimit;
+> +};
+> diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+> index 5444d3c4d93f37..e1e9d05a14c3e4 100644
+> --- a/fs/quota/quota.c
+> +++ b/fs/quota/quota.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/types.h>
+>  #include <linux/writeback.h>
+>  #include <linux/nospec.h>
+> +#include "compat.h"
 > 
-> Each namespace is owned by one of user namespaces. Maybe it makes sense
-> to group namespaces by their user-namespaces?
-> 
-> /proc/namespaces/
->                  user
->                  mnt-X
->                  mnt-Y
->                  pid-X
->                  uts-Z
->                  user-X/
->                         user
->                         mnt-A
->                         mnt-B
->                         user-C
->                         user-C/
->                                user
->                  user-Y/
->                         user
+>  static int check_quotactl_permission(struct super_block *sb, int type, int cmd,
+>  				     qid_t id)
+> @@ -211,8 +212,18 @@ static int quota_getquota(struct super_block *sb, int type, qid_t id,
+>  	if (ret)
+>  		return ret;
+>  	copy_to_if_dqblk(&idq, &fdq);
+> -	if (copy_to_user(addr, &idq, sizeof(idq)))
+> -		return -EFAULT;
+> +
+> +	if (compat_need_64bit_alignment_fixup()) {
+> +		struct compat_if_dqblk __user *compat_dqblk = addr;
+> +
+> +		if (copy_to_user(compat_dqblk, &idq, sizeof(*compat_dqblk)))
+> +			return -EFAULT;
+> +		if (put_user(idq.dqb_valid, &compat_dqblk->dqb_valid))
+> +			return -EFAULT;
 
-Hm, I don't think that user namespace is a generic key value for everybody.
-For generic people tasks a user namespace is just a namespace among another
-namespace types. For me it will look a bit strage to iterate some user namespaces
-to build container net topology.
+Isn't this always copying the same value again?
+I don't think Linux has any 64 bit systems with a 32bit compat
+layer that have 64bit 'int'.
+Since the only difference in the structures is the 'end padding'
+isn't it enough to just copy the size of the 'compat' structure
+in a compat system call?
+It might even be that gcc will optimise the condition away
+when the structure sizes match.
 
-> Do we try to invent cgroupfs for namespaces?
+The same is true for a lot of the rest of this file.
 
-Could you clarify your thought?
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
