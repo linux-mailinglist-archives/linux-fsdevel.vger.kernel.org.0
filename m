@@ -2,66 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BC1B23EFD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 17:12:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC8F23F080
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 18:08:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726212AbgHGPML (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Aug 2020 11:12:11 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:58802 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbgHGPML (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Aug 2020 11:12:11 -0400
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 077FBgaq066051;
-        Sat, 8 Aug 2020 00:11:42 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp);
- Sat, 08 Aug 2020 00:11:42 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 077FBfdj066037
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 8 Aug 2020 00:11:41 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: splice: infinite busy loop lockup bug
-To:     Matthew Wilcox <willy@infradead.org>,
-        Ming Lei <ming.lei@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+61acc40a49a3e46e25ea@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>
-References: <00000000000084b59f05abe928ee@google.com>
- <29de15ff-15e9-5c52-cf87-e0ebdfa1a001@I-love.SAKURA.ne.jp>
- <20200807122727.GR1236603@ZenIV.linux.org.uk>
- <20200807123854.GS1236603@ZenIV.linux.org.uk> <20200807134114.GA2114050@T590>
- <20200807141148.GD17456@casper.infradead.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <c83c6931-b3fb-3d8e-8a09-533cc3d6a287@i-love.sakura.ne.jp>
-Date:   Sat, 8 Aug 2020 00:11:38 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        id S1725934AbgHGQIr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Aug 2020 12:08:47 -0400
+Received: from mx01-sz.bfs.de ([194.94.69.67]:63522 "EHLO mx01-sz.bfs.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725815AbgHGQIq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Aug 2020 12:08:46 -0400
+X-Greylist: delayed 594 seconds by postgrey-1.27 at vger.kernel.org; Fri, 07 Aug 2020 12:08:44 EDT
+Received: from SRVEX01-MUC.bfs.intern (unknown [10.161.90.31])
+        by mx01-sz.bfs.de (Postfix) with ESMTPS id 5DC312044F;
+        Fri,  7 Aug 2020 17:58:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
+        t=1596815929;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=as4a5sTv+OirA4HP3Wd1Bplg57ogAEiNOBZxXPaklv4=;
+        b=xQtvHB6SURA8NysVioy5AVeXExEompe9z01r9p24W2PR03Hsubv/sf3Ogq8czQUB2OYSMR
+        cEOEBRO4mm5KdYusOwj2mFB30EsZ+NRcNXZja1k2Y5DV/yw/X+XkZy7stClF6NaEY4UhNX
+        pz0uKpeNBVJhCkyGdxTnULrU64r9DW7bX14YcZ/zsjCX6OPJ+9neG9bzvGRdVF7RCBZFaF
+        iP4osP0DIbSxdkI5ylNXvJ+M1fLn3iEJWuixeByPcgwk1EGKrTMu+OJGwTZf55k5pz2j2+
+        khbh/gfTuDh+2HD16u3/Xv7n0r1csOHV+cNusgiPp80xw966rHsQehXTtItLtw==
+Received: from SRVEX01-MUC.bfs.intern (10.161.90.31) by SRVEX01-MUC.bfs.intern
+ (10.161.90.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2044.4; Fri, 7 Aug 2020
+ 17:58:48 +0200
+Received: from SRVEX01-MUC.bfs.intern ([fe80::5d64:49:5476:e21f]) by
+ SRVEX01-MUC.bfs.intern ([fe80::5d64:49:5476:e21f%4]) with mapi id
+ 15.01.2044.004; Fri, 7 Aug 2020 17:58:48 +0200
+From:   Walter Harms <wharms@bfs.de>
+To:     David Howells <dhowells@redhat.com>,
+        "mtk.manpages@gmail.com" <mtk.manpages@gmail.com>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "christian.brauner@ubuntu.com" <christian.brauner@ubuntu.com>,
+        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: AW: [PATCH 5/5] Add manpage for fsconfig(2)
+Thread-Topic: [PATCH 5/5] Add manpage for fsconfig(2)
+Thread-Index: AQHWbMQ0XBZ8wH0Poku30knI5+vNu6kszUyO
+Date:   Fri, 7 Aug 2020 15:58:48 +0000
+Message-ID: <a2fe568438aa45e9a63a3a7d9d64a73f@bfs.de>
+References: <159680892602.29015.6551860260436544999.stgit@warthog.procyon.org.uk>,<159680897140.29015.15318866561972877762.stgit@warthog.procyon.org.uk>
+In-Reply-To: <159680897140.29015.15318866561972877762.stgit@warthog.procyon.org.uk>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.137.16.40]
+x-tm-as-product-ver: SMEX-14.0.0.3031-8.6.1012-25590.000
+x-tm-as-result: No-10--4.703800-5.000000
+x-tmase-matchedrid: WWTMasqpueHRubRCcrbc5pzEHTUOuMX33dCmvEa6IiHgYNP0+4v1ntnf
+        JrUSEbFDek1qkjXpN8Ke6V/Q38YAYGcV4sYfqMYe9u1rQ4BgXPLgt7TT//RoatI0b1xCCWEs6f0
+        gaty5G7F4FTWzKCjc1QRWs9urnAvn0KaUpJQo+cKrm7DrUlmNkF+24nCsUSFNjaPj0W1qn0TKay
+        T/BQTiGkq2k3whZ8xxvVJAfGcGfeOlvZnjL+42kEbYU3IgrRYpI6QS6h22s/KaQOZk1X5dlPjVg
+        cODqhdYucvAmOOZZmqPxfJezaaFzHXUTYbpXgymcCmyZvDwQy2t5ahRvDIGLa2t1VXHehFe6qFM
+        gJg4Un8=
+x-tm-as-user-approved-sender: No
+x-tm-as-user-blocked-sender: No
+x-tmase-result: 10--4.703800-5.000000
+x-tmase-version: SMEX-14.0.0.3031-8.6.1012-25590.000
+x-tm-snts-smtp: 2289D2C892B8C694DF00C263AB61F0F5F41A33377B31D172F20F64C9B603E6272000:9
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <20200807141148.GD17456@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=1.45
+X-Spam-Level: *
+Authentication-Results: mx01-sz.bfs.de;
+        none
+X-Spamd-Result: default: False [1.45 / 7.00];
+         ARC_NA(0.00)[];
+         TO_DN_EQ_ADDR_SOME(0.00)[];
+         HAS_XOIP(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         FREEMAIL_ENVRCPT(0.00)[gmail.com];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         BAYES_HAM(-0.05)[59.33%];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[7];
+         NEURAL_HAM(-0.00)[-0.996];
+         FREEMAIL_TO(0.00)[redhat.com,gmail.com];
+         RCVD_NO_TLS_LAST(0.10)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         RCVD_COUNT_TWO(0.00)[2];
+         MID_RHS_MATCH_FROM(0.00)[];
+         SUSPICIOUS_RECIPS(1.50)[]
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/08/07 23:11, Matthew Wilcox wrote:
-> (I find the whole bvec handling a mess of confusing macros and would
-> welcome more of it being inline functions, in general).
+hi,
+thx for you efford,
+maybe it is obvious but i did not see it ..
+starting with what kernel version are these features available ?
 
-Indeed. Inlined functions will be more useful than macros when syzbot
-calculates the location of the source code from address for reporting.
-I spent a lot of time where
+re,
+ wh
+________________________________________
+Von: linux-man-owner@vger.kernel.org [linux-man-owner@vger.kernel.org] im A=
+uftrag von David Howells [dhowells@redhat.com]
+Gesendet: Freitag, 7. August 2020 16:02
+An: mtk.manpages@gmail.com; viro@zeniv.linux.org.uk
+Cc: dhowells@redhat.com; linux-fsdevel@vger.kernel.org; christian.brauner@u=
+buntu.com; linux-man@vger.kernel.org; linux-api@vger.kernel.org; linux-kern=
+el@vger.kernel.org
+Betreff: [PATCH 5/5] Add manpage for fsconfig(2)
 
-  RIP: 0010:iov_iter_alignment+0x39e/0x850 lib/iov_iter.c:1236
+Add a manual page to document the fsconfig() system call.
 
-within the complicated macros is. If inlined line numbers were available,
-I could have narrowed down the location of infinite loop faster...
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+
+
