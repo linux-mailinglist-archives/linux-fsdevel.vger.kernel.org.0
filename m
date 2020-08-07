@@ -2,121 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5314423F37A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 22:03:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CDA923F3CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 22:29:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbgHGUDF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Aug 2020 16:03:05 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:58521 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725893AbgHGUDE (ORCPT
+        id S1726305AbgHGU3h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Aug 2020 16:29:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44268 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbgHGU3g (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Aug 2020 16:03:04 -0400
-Received: from callcc.thunk.org (pool-96-230-252-158.bstnma.fios.verizon.net [96.230.252.158])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 077K2sxo017388
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 7 Aug 2020 16:02:55 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 2FA1A420263; Fri,  7 Aug 2020 16:02:54 -0400 (EDT)
-Date:   Fri, 7 Aug 2020 16:02:54 -0400
-From:   tytso@mit.edu
-To:     Xianting Tian <xianting_tian@126.com>
-Cc:     viro@zeniv.linux.org.uk, adilger.kernel@dilger.ca,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org
-Subject: Re: [PATCH] ext4: move buffer_mapped() to proper position
-Message-ID: <20200807200254.GY7657@mit.edu>
-References: <1596211825-8750-1-git-send-email-xianting_tian@126.com>
+        Fri, 7 Aug 2020 16:29:36 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD37DC061756;
+        Fri,  7 Aug 2020 13:29:36 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id z17so2834611ill.6;
+        Fri, 07 Aug 2020 13:29:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uq3Rm3BodEbHoD3xpm4HpbWX1fCXnHobKwQS9eSoca4=;
+        b=BM8RHOdk46N+DeGLK9WTKkMYUkIB4fexT7uOlF79JjFH11zN1g/IDmLcSQCtkuwngn
+         r46/DeVJjrv9lKfKrdHHQuVScjeQiOaKJSwY9wjuNTdWsvRjDUnl/HHzqs9EO/081Miq
+         wdI2AiaNkAx1NGAuG5qdMcXHvZpdqekA0Kev49MF9WOrn83XpMBgp7ehIKkOjE7e46lU
+         0z4BAQ/F1aXYZRnjf9q0LZ3RtANjeAyQlZf/9+8HxqhjShyGSfgA08uIf/J6h/3t12Z7
+         CFEZMpvZW0kN1Vv59hHqIaQOdsKTVw9clSzgmhVFD88DVHzDLqks3CY76+d/yK4x4VWx
+         It1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uq3Rm3BodEbHoD3xpm4HpbWX1fCXnHobKwQS9eSoca4=;
+        b=bMAg/EcUny46Z97LH0cHSqCgGJmNXfSrV2vcBSCRl+TMFvyfKxrKH4ifVabVszmNDu
+         HBoHINHjapbQ0hwukZwJ0AWAQoPmD+GDv1bMG0TPk2ciKJd/eLC/i6FRx5Li+X/Gtfcz
+         4nl6iqoAI/P0xRR1qmdQzzq36QyvT8lkKlkHJaKlEgG69SnzzEdPymfFICVFmxRZHi+f
+         KC55Hx9pt63Qh1sUNsIIYomMlITeiNEvLp8WM5G3WQBxfuaIlm06ky1YWpcWGnJD61UQ
+         LkUmLw4F2KUqNj9kIQBaGjToSt1DAis9P3FtAH1kM/x6NUE1gfsZ0zldGATrn5O6/heC
+         wnEg==
+X-Gm-Message-State: AOAM531qq0Qd2m/95YfFoor9JwYgELQZPX46AGeXviqu2IZDDBgwxXn6
+        ROPhsftgCf9R+0eBnjq+soJuReE0vm6/HwCfK10=
+X-Google-Smtp-Source: ABdhPJwC9P+sOC25h3PoOSP50YpPCTyAOEUT0secwM5VyYf3NZXaBzxAMi6eRm+95YX8Kh14rxVqTZmqDD/zYQktLX0=
+X-Received: by 2002:a92:5e9c:: with SMTP id f28mr6357090ilg.302.1596832176074;
+ Fri, 07 Aug 2020 13:29:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1596211825-8750-1-git-send-email-xianting_tian@126.com>
+References: <20200709182642.1773477-1-keescook@chromium.org> <20200709182642.1773477-4-keescook@chromium.org>
+In-Reply-To: <20200709182642.1773477-4-keescook@chromium.org>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Fri, 7 Aug 2020 13:29:24 -0700
+Message-ID: <CANcMJZAcDAG7Dq7vo=M-SZwujj+BOKMh7wKvywHq+tEX3GDbBQ@mail.gmail.com>
+Subject: Re: [PATCH v7 3/9] net/scm: Regularize compat handling of scm_detach_fds()
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Laight <David.Laight@aculab.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Matt Denton <mpdenton@google.com>,
+        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
+        Robert Sesek <rsesek@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Amit Pundir <amit.pundir@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks, applied, although I rewrote the commit description to make it
-be a bit more clearer:
+On Thu, Jul 9, 2020 at 11:28 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> Duplicate the cleanups from commit 2618d530dd8b ("net/scm: cleanup
+> scm_detach_fds") into the compat code.
+>
+> Replace open-coded __receive_sock() with a call to the helper.
+>
+> Move the check added in commit 1f466e1f15cf ("net: cleanly handle kernel
+> vs user buffers for ->msg_control") to before the compat call, even
+> though it should be impossible for an in-kernel call to also be compat.
+>
+> Correct the int "flags" argument to unsigned int to match fd_install()
+> and similar APIs.
+>
+> Regularize any remaining differences, including a whitespace issue,
+> a checkpatch warning, and add the check from commit 6900317f5eff ("net,
+> scm: fix PaX detected msg_controllen overflow in scm_detach_fds") which
+> fixed an overflow unique to 64-bit. To avoid confusion when comparing
+> the compat handler to the native handler, just include the same check
+> in the compat handler.
+>
+> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
 
-    fs: prevent BUG_ON in submit_bh_wbc()
-    
-    If a device is hot-removed --- for example, when a physical device is
-    unplugged from pcie slot or a nbd device's network is shutdown ---
-    this can result in a BUG_ON() crash in submit_bh_wbc().  This is
-    because the when the block device dies, the buffer heads will have
-    their Buffer_Mapped flag get cleared, leading to the crash in
-    submit_bh_wbc.
-    
-    We had attempted to work around this problem in commit a17712c8
-    ("ext4: check superblock mapped prior to committing").  Unfortunately,
-    it's still possible to hit the BUG_ON(!buffer_mapped(bh)) if the
-    device dies between when the work-around check in ext4_commit_super()
-    and when submit_bh_wbh() is finally called:
-    
-    Code path:
-    ext4_commit_super
-        judge if 'buffer_mapped(sbh)' is false, return <== commit a17712c8
-              lock_buffer(sbh)
-              ...
-              unlock_buffer(sbh)
-                   __sync_dirty_buffer(sbh,...
-                        lock_buffer(sbh)
-                            judge if 'buffer_mapped(sbh))' is false, return <== added by this patch
-                                submit_bh(...,sbh)
-                                    submit_bh_wbc(...,sbh,...)
-    
-    [100722.966497] kernel BUG at fs/buffer.c:3095! <== BUG_ON(!buffer_mapped(bh))' in submit_bh_wbc()
-    [100722.966503] invalid opcode: 0000 [#1] SMP
-    [100722.966566] task: ffff8817e15a9e40 task.stack: ffffc90024744000
-    [100722.966574] RIP: 0010:submit_bh_wbc+0x180/0x190
-    [100722.966575] RSP: 0018:ffffc90024747a90 EFLAGS: 00010246
-    [100722.966576] RAX: 0000000000620005 RBX: ffff8818a80603a8 RCX: 0000000000000000
-    [100722.966576] RDX: ffff8818a80603a8 RSI: 0000000000020800 RDI: 0000000000000001
-    [100722.966577] RBP: ffffc90024747ac0 R08: 0000000000000000 R09: ffff88207f94170d
-    [100722.966578] R10: 00000000000437c8 R11: 0000000000000001 R12: 0000000000020800
-    [100722.966578] R13: 0000000000000001 R14: 000000000bf9a438 R15: ffff88195f333000
-    [100722.966580] FS:  00007fa2eee27700(0000) GS:ffff88203d840000(0000) knlGS:0000000000000000
-    [100722.966580] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-    [100722.966581] CR2: 0000000000f0b008 CR3: 000000201a622003 CR4: 00000000007606e0
-    [100722.966582] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-    [100722.966583] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-    [100722.966583] PKRU: 55555554
-    [100722.966583] Call Trace:
-    [100722.966588]  __sync_dirty_buffer+0x6e/0xd0
-    [100722.966614]  ext4_commit_super+0x1d8/0x290 [ext4]
-    [100722.966626]  __ext4_std_error+0x78/0x100 [ext4]
-    [100722.966635]  ? __ext4_journal_get_write_access+0xca/0x120 [ext4]
-    [100722.966646]  ext4_reserve_inode_write+0x58/0xb0 [ext4]
-    [100722.966655]  ? ext4_dirty_inode+0x48/0x70 [ext4]
-    [100722.966663]  ext4_mark_inode_dirty+0x53/0x1e0 [ext4]
-    [100722.966671]  ? __ext4_journal_start_sb+0x6d/0xf0 [ext4]
-    [100722.966679]  ext4_dirty_inode+0x48/0x70 [ext4]
-    [100722.966682]  __mark_inode_dirty+0x17f/0x350
-    [100722.966686]  generic_update_time+0x87/0xd0
-    [100722.966687]  touch_atime+0xa9/0xd0
-    [100722.966690]  generic_file_read_iter+0xa09/0xcd0
-    [100722.966694]  ? page_cache_tree_insert+0xb0/0xb0
-    [100722.966704]  ext4_file_read_iter+0x4a/0x100 [ext4]
-    [100722.966707]  ? __inode_security_revalidate+0x4f/0x60
-    [100722.966709]  __vfs_read+0xec/0x160
-    [100722.966711]  vfs_read+0x8c/0x130
-    [100722.966712]  SyS_pread64+0x87/0xb0
-    [100722.966716]  do_syscall_64+0x67/0x1b0
-    [100722.966719]  entry_SYSCALL64_slow_path+0x25/0x25
-    
-    To address this, add the check of 'buffer_mapped(bh)' to
-    __sync_dirty_buffer().  This also has the benefit of fixing this for
-    other file systems.
-    
-    With this addition, we can drop the workaround in ext4_commit_supper().
-    
-    [ Commit description rewritten by tytso. ]
-    
-    Signed-off-by: Xianting Tian <xianting_tian@126.com>
-    Link: https://lore.kernel.org/r/1596211825-8750-1-git-send-email-xianting_tian@126.com
-    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Hey Kees,
+  So during the merge window (while chasing a few other regressions),
+I noticed occasionally my Dragonboard 845c running AOSP having trouble
+with the web browser crashing or other apps hanging, and I've bisected
+the issue down to this change.
 
-							- Ted
+Unfortunately it doesn't revert cleanly so I can't validate reverting
+it sorts things against linus/HEAD.  Anyway, I wanted to check and see
+if you had any other reports of similar or any ideas what might be
+going wrong?
+
+thanks
+-john
