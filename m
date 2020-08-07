@@ -2,56 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D49F23F457
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 23:30:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B4F023F455
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 23:30:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727930AbgHGVa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Aug 2020 17:30:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53484 "EHLO
+        id S1727861AbgHGVaS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Aug 2020 17:30:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727813AbgHGV3s (ORCPT
+        with ESMTP id S1727821AbgHGV3s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 7 Aug 2020 17:29:48 -0400
-Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9027DC061D7F
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Aug 2020 14:29:46 -0700 (PDT)
-Received: by mail-pf1-x449.google.com with SMTP id d3so2763658pfh.17
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Aug 2020 14:29:46 -0700 (PDT)
+Received: from mail-pj1-x104a.google.com (mail-pj1-x104a.google.com [IPv6:2607:f8b0:4864:20::104a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FFE6C061757
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Aug 2020 14:29:48 -0700 (PDT)
+Received: by mail-pj1-x104a.google.com with SMTP id ei10so2512854pjb.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Aug 2020 14:29:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=1TZQegrBgPNN+SZZCsJyOP7eFX7H3/9/2zydOordKRU=;
-        b=ieZHYo04XCdbBogCHiXjbZeFR1bV303kMQGvEtUCo3MyCZv4PiQWUZOtUp5UOdsJms
-         OBTC87r+1D0ws9FbjFeU+TDngcJIVQp/zIa7cOyLrT+Kfwkksir2bzMZMZM71wB478Ek
-         KoeuqdI4fr1vD4oXtX+BT3zcMk4kACaAfsSllWPfE1XV9+yGzGNku5ufgoJtirVr8ZaS
-         pKG4jrzoRlV6GzhJsAabu9U1sMqMRLkG8XujccP5ELANmH4hQZEIMJBKDEnHRH+KpJy8
-         hSiEyisrJRZ8PcdacCUH3tpzWxbzlRwGl7dvUMXeAkWcUTPXKhKYFM0reJax5bPpfGFV
-         iRkQ==
+        bh=LfxCPN/4iZPLCZVOVhzdLvyoPvK+axLJbpywb7N3FLc=;
+        b=VIBg3oqpKZQpugF58zmKqStuZ5KBBnpMO9QTOrnjznu3Umo3cQqhRuUY+u1Vo1ME8f
+         dVB/ezp2eLRF/M1OihMCsccbSEBWLB9GxfwdGRwkeIFuRPo3roBkeWAbbHEB4ZB7JSsC
+         viG7KdWxZ5LfFPd7WviOf0CtToGYdrRn2CboKmRkbG0ygI1tVLIDSQGcH7+bhLyAnT2O
+         9Kabzp4Oe4O8CXOa2yf4LfK75nVvxwpPciAU+kWlaIW8O6j4Wb9Bgv/JZBDZa2phCJHm
+         z0MHMOm+P+Gzyeec/BJx3I+Sgas6eGPW+bIJKumLJwFOhgIW+slujH5jW0XT1TKk8HRl
+         v/Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=1TZQegrBgPNN+SZZCsJyOP7eFX7H3/9/2zydOordKRU=;
-        b=c23TBBCbxsHKTBOvR92xhRvOXLnzB8hZHqyJ80ipeBrQ8TVRO7PEMCfCG5gB7NI76y
-         onzdo2Rdi1CSoBdDBP40FgJsuXNqZi+mgh8455FAiDkARyICL8SmO5xvqsQHTF//D791
-         9T2YZEV9YFkVeapsw9Af9PdMHtw7zXFwXB3/GqcB6p65y2sY3vlY96xVwpstXmCz/rHC
-         UOMnaOnUcPTYfaEbfFz1ZJKJ3auQJzzYKUmJsrfSq8skVSY0QWhk/iWye4RiCDnGFz1k
-         Nqm3M2pG2CHejXCKoregtIWzVipH7hZR9lwJ94TEJof+8VtQXs/DuiqNcFA2MPZUjOWF
-         MfjA==
-X-Gm-Message-State: AOAM5306GEBIwtnp1BS3/fuSfYyM/DbavoKtDo6vGNKbL7KPvDyF7hL4
-        so51zufRLdnNxEmufMpik0xiQE338tM=
-X-Google-Smtp-Source: ABdhPJz+2C/PgoKritkxy8QCsvDLemjrofpIEPFwkhIfTB+Eqa7wlcLaV2OWCQg+F4nEAB7Hu1Xv9XgPH0tp
-X-Received: by 2002:a17:90b:1254:: with SMTP id gx20mr16269548pjb.117.1596835785342;
- Fri, 07 Aug 2020 14:29:45 -0700 (PDT)
-Date:   Fri,  7 Aug 2020 14:29:15 -0700
+        bh=LfxCPN/4iZPLCZVOVhzdLvyoPvK+axLJbpywb7N3FLc=;
+        b=jbHDSKG4dn4WuCy88YKt4YoCoNh13R7XHazQYp/RfuMHYIJoI106X1E421QL6f1Jum
+         0sc9Qw3Ntl9fGiVwpN+Eu1cPP33VRmtsLmZoznSdr+apkNW4tLSzWexVd1bg1jkP1yX4
+         XDZ7/9bjYFHURperzpX4RfAHOicUMbS6h25Xz1dZrv6suGladBCcXdUXbgfCNbPQnxEb
+         4QKyn6NG7Xes7BXGdQxDwvY2Jr23uzIjk6PPvvSDYyvrYqNXJ28QA8F8B9IStCHlAb5p
+         1AUA4WQFqMYdSwBhkFt9zIIMkIBkbsLOOoxr1Qi6hk11vs9gSGPVn8afHwF5ArpWZit0
+         c8wg==
+X-Gm-Message-State: AOAM530X889vz0oYaejykRIikpusdIRhzVlyoB9vGDtwMTijJsgPMb3Q
+        CrPwrNZ4+++y4glz2G5rbbffRTs5lj0=
+X-Google-Smtp-Source: ABdhPJyoavtOmq/7H4LPduK/k9+4umyJYh/qUDlGhNEQwJMHeb8u/v/EJaYmce8YVr9gCjxz+YCKFwc8o4TE
+X-Received: by 2002:a17:90a:1a13:: with SMTP id 19mr14039860pjk.167.1596835787619;
+ Fri, 07 Aug 2020 14:29:47 -0700 (PDT)
+Date:   Fri,  7 Aug 2020 14:29:16 -0700
 In-Reply-To: <20200807212916.2883031-1-jwadams@google.com>
-Message-Id: <20200807212916.2883031-7-jwadams@google.com>
+Message-Id: <20200807212916.2883031-8-jwadams@google.com>
 Mime-Version: 1.0
 References: <20200807212916.2883031-1-jwadams@google.com>
 X-Mailer: git-send-email 2.28.0.236.gb10cc79966-goog
-Subject: [RFC PATCH 6/7] core/metricfs: expose x86-specific irq information
- through metricfs
+Subject: [RFC PATCH 7/7] net-metricfs: Export /proc/net/dev via metricfs.
 From:   Jonathan Adams <jwadams@google.com>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     netdev@vger.kernel.org, kvm@vger.kernel.org,
@@ -59,127 +58,244 @@ Cc:     netdev@vger.kernel.org, kvm@vger.kernel.org,
         Greg KH <gregkh@linuxfoundation.org>,
         Jim Mattson <jmattson@google.com>,
         David Rientjes <rientjes@google.com>,
-        Jonathan Adams <jwadams@google.com>
+        Jonathan Adams <jwadams@google.com>,
+        Laurent Chavey <chavey@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add metricfs support for displaying percpu irq counters for x86.
-The top directory is /sys/kernel/debug/metricfs/irq_x86.
-Then there is a subdirectory for each x86-specific irq counter.
-For example:
+From: Laurent Chavey <chavey@google.com>
 
-    cat /sys/kernel/debug/metricfs/irq_x86/TLB/values
+Export /proc/net/dev statistics via metricfs.
 
+The implementation reports all the devices that are in the same
+network namespace as the process reading metricfs.
+
+The implementation does not report devices across network namespaces
+
+Signed-off-by: Laurent Chavey <chavey@google.com>
+[jwadams@google.com: ported code to 5.8-pre6, cleaned up googleisms ]
 Signed-off-by: Jonathan Adams <jwadams@google.com>
-
 ---
+ net/core/Makefile       |   1 +
+ net/core/net_metricfs.c | 194 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 195 insertions(+)
+ create mode 100644 net/core/net_metricfs.c
 
-jwadams@google.com: rebased to 5.8-pre6
-	This is work originally done by another engineer at
-	google, who would rather not have their name associated with
-	this patchset. They're okay with me sending it under my name.
----
- arch/x86/kernel/irq.c | 80 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
-
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index 181060247e3c..ffacbbc4066c 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -12,6 +12,7 @@
- #include <linux/delay.h>
- #include <linux/export.h>
- #include <linux/irq.h>
+diff --git a/net/core/Makefile b/net/core/Makefile
+index 3e2c378e5f31..7647380b9679 100644
+--- a/net/core/Makefile
++++ b/net/core/Makefile
+@@ -27,6 +27,7 @@ obj-$(CONFIG_NET_PTP_CLASSIFY) += ptp_classifier.o
+ obj-$(CONFIG_CGROUP_NET_PRIO) += netprio_cgroup.o
+ obj-$(CONFIG_CGROUP_NET_CLASSID) += netclassid_cgroup.o
+ obj-$(CONFIG_LWTUNNEL) += lwtunnel.o
++obj-$(CONFIG_METRICFS) += net_metricfs.o
+ obj-$(CONFIG_LWTUNNEL_BPF) += lwt_bpf.o
+ obj-$(CONFIG_BPF_STREAM_PARSER) += sock_map.o
+ obj-$(CONFIG_DST_CACHE) += dst_cache.o
+diff --git a/net/core/net_metricfs.c b/net/core/net_metricfs.c
+new file mode 100644
+index 000000000000..82f0f797b0b0
+--- /dev/null
++++ b/net/core/net_metricfs.c
+@@ -0,0 +1,194 @@
++// SPDX-License-Identifier: GPL-2.0
++/* net_metricfs: Exports network counters using metricfs.
++ */
++#include <linux/init.h>
++#include <linux/kernel.h>
 +#include <linux/metricfs.h>
- 
- #include <asm/irq_stack.h>
- #include <asm/apic.h>
-@@ -374,3 +375,82 @@ void fixup_irqs(void)
- 	}
- }
- #endif
++#include <linux/netdevice.h>
++#include <linux/nsproxy.h>
++#include <linux/rcupdate.h>
++#include <linux/stddef.h>
++#include <linux/types.h>
++#include <net/net_namespace.h>
 +
-+#ifdef CONFIG_METRICFS
-+#define METRICFS_ITEM(name, field, desc) \
-+static void \
-+metricfs_##name(struct metric_emitter *e, int cpu) \
-+{ \
-+	int64_t v = irq_stats(cpu)->field; \
-+	METRIC_EMIT_PERCPU_INT(e, cpu, v); \
-+} \
-+METRIC_EXPORT_PERCPU_COUNTER(name, desc, metricfs_##name)
++struct metric_def {
++	struct metric *metric;
++	size_t off;
++	char *name;
++	char *desc;
++};
 +
-+METRICFS_ITEM(NMI, __nmi_count, "Non-maskable interrupts");
-+#ifdef CONFIG_X86_LOCAL_APIC
-+METRICFS_ITEM(LOC, apic_timer_irqs, "Local timer interrupts");
-+METRICFS_ITEM(SPU, irq_spurious_count, "Spurious interrupts");
-+METRICFS_ITEM(PMI, apic_perf_irqs, "Performance monitoring interrupts");
-+METRICFS_ITEM(IWI, apic_irq_work_irqs, "IRQ work interrupts");
-+METRICFS_ITEM(RTR, icr_read_retry_count, "APIC ICR read retries");
-+#endif
-+METRICFS_ITEM(PLT, x86_platform_ipis, "Platform interrupts");
-+#ifdef CONFIG_SMP
-+METRICFS_ITEM(RES, irq_resched_count, "Rescheduling interrupts");
-+METRICFS_ITEM(CAL, irq_call_count, "Function call interrupts");
-+METRICFS_ITEM(TLB, irq_tlb_count, "TLB shootdowns");
-+#endif
-+#ifdef CONFIG_X86_THERMAL_VECTOR
-+METRICFS_ITEM(TRM, irq_thermal_count, "Thermal event interrupts");
-+#endif
-+#ifdef CONFIG_X86_MCE_THRESHOLD
-+METRICFS_ITEM(THR, irq_threshold_count, "Threshold APIC interrupts");
-+#endif
-+#ifdef CONFIG_X86_MCE_AMD
-+METRICFS_ITEM(DFR, irq_deferred_error_count, "Deferred Error APIC interrupts");
-+#endif
-+#ifdef CONFIG_HAVE_KVM
-+METRICFS_ITEM(PIN, kvm_posted_intr_ipis, "Posted-interrupt notification event");
-+METRICFS_ITEM(PIW, kvm_posted_intr_wakeup_ipis,
-+	"Posted-interrupt wakeup event");
-+#endif
++/* If needed, we could export this via a function for other /net users */
++static struct metricfs_subsys *net_root_subsys;
++static struct metricfs_subsys *dev_subsys;
++static struct metricfs_subsys *dev_stats_subsys;
 +
-+static int __init init_irq_metricfs(void)
++static struct metric_def metric_def[] = {
++	{NULL, offsetof(struct rtnl_link_stats64, rx_bytes),
++	 "rx_bytes", "net device received bytes count"},
++	{NULL, offsetof(struct rtnl_link_stats64, rx_packets),
++	 "rx_packets", "net device received packets count"},
++	{NULL, offsetof(struct rtnl_link_stats64, rx_errors),
++	 "rx_errors", "net device received errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, rx_dropped),
++	 "rx_dropped", "net device dropped packets count"},
++	{NULL, offsetof(struct rtnl_link_stats64, rx_missed_errors),
++	 "rx_missed_errors",  "net device missed errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, rx_fifo_errors),
++	 "rx_fifo_errors", "net device fifo errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, rx_length_errors),
++	 "rx_length_errors", "net device length errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, rx_over_errors),
++	 "rx_over_errors", "net device received overflow errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, rx_crc_errors),
++	 "rx_crc_errors", "net device received crc errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, rx_frame_errors),
++	 "rx_frame_errors", "net device received frame errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, rx_compressed),
++	 "rx_compressed", "net device received compressed packet count"},
++	{NULL, offsetof(struct rtnl_link_stats64, multicast),
++	 "rx_multicast", "net device received multicast packet count"},
++	{NULL, offsetof(struct rtnl_link_stats64, tx_bytes),
++	 "tx_bytes", "net device transmited bytes count"},
++	{NULL, offsetof(struct rtnl_link_stats64, tx_packets),
++	 "tx_packets", "net device transmited packets count"},
++	{NULL, offsetof(struct rtnl_link_stats64, tx_errors),
++	 "tx_errors", "net device transmited errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, tx_dropped),
++	 "tx_dropped", "net device transmited packet drop count"},
++	{NULL, offsetof(struct rtnl_link_stats64, tx_fifo_errors),
++	 "tx_fifo_errors", "net device transmit fifo errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, collisions),
++	 "tx_collision", "net device transmit collisions count"},
++	{NULL, offsetof(struct rtnl_link_stats64, tx_carrier_errors),
++	 "tx_carrier_errors", "net device transmit carrier errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, tx_aborted_errors),
++	 "tx_aborted_errors", "net device transmit aborted errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, tx_window_errors),
++	 "tx_window_errors", "net device transmit window errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, tx_heartbeat_errors),
++	 "tx_heartbeat_errors", "net device transmit heartbeat errors count"},
++	{NULL, offsetof(struct rtnl_link_stats64, tx_compressed),
++	 "tx_compressed_errors", "net device transmit compressed count"},
++};
++
++static __init int init_net_subsys(void)
 +{
-+	struct metricfs_subsys *subsys;
-+
-+	subsys = metricfs_create_subsys("irq_x86", NULL);
-+
-+	metric_init_NMI(subsys);
-+#ifdef CONFIG_X86_LOCAL_APIC
-+	metric_init_LOC(subsys);
-+	metric_init_SPU(subsys);
-+	metric_init_PMI(subsys);
-+	metric_init_IWI(subsys);
-+	metric_init_RTR(subsys);
-+#endif
-+	metric_init_PLT(subsys);
-+#ifdef CONFIG_SMP
-+	metric_init_RES(subsys);
-+	metric_init_CAL(subsys);
-+	metric_init_TLB(subsys);
-+#endif
-+#ifdef CONFIG_X86_THERMAL_VECTOR
-+	metric_init_TRM(subsys);
-+#endif
-+#ifdef CONFIG_X86_MCE_THRESHOLD
-+	metric_init_THR(subsys);
-+#endif
-+#ifdef CONFIG_X86_MCE_AMD
-+	metric_init_DFR(subsys);
-+#endif
-+#ifdef CONFIG_HAVE_KVM
-+	metric_init_PIN(subsys);
-+	metric_init_PIW(subsys);
-+#endif
-+
++	net_root_subsys = metricfs_create_subsys("net", NULL);
++	if (!net_root_subsys) {
++		WARN_ONCE(1, "Net metricfs root not created.");
++		return -1;
++	}
 +	return 0;
 +}
-+module_init(init_irq_metricfs);
 +
-+#endif
++late_initcall(init_net_subsys);
++
++static void dev_stats_emit(struct metric_emitter *e,
++			   struct net_device *dev,
++			   struct metric_def *metricd)
++{
++	struct rtnl_link_stats64 temp;
++	const struct rtnl_link_stats64 *stats = dev_get_stats(dev, &temp);
++
++	if (stats) {
++		__u8 *ptr = (((__u8 *)stats) + metricd->off);
++
++		METRIC_EMIT_INT(e, *(__u64 *)ptr, dev->name, NULL);
++	}
++}
++
++/* metricfs export function */
++static void dev_stats_fn(struct metric_emitter *e, void *parm)
++{
++	struct net_device *dev;
++	struct net *net;
++	struct nsproxy *nsproxy = current->nsproxy;
++
++	rcu_read_lock();
++	for_each_net_rcu(net) {
++		/* skip namespaces not associated with the caller */
++		if (nsproxy->net_ns != net)
++			continue;
++		for_each_netdev_rcu(net, dev) {
++			dev_stats_emit(e, dev, (struct metric_def *)parm);
++		}
++	}
++	rcu_read_unlock();
++}
++
++static void clean_dev_stats_subsys(void)
++{
++	int x;
++	int metric_count = sizeof(metric_def) / sizeof(struct metric_def);
++
++	for (x = 0; x < metric_count; x++) {
++		if (metric_def[x].metric) {
++			metric_unregister(metric_def[x].metric);
++			metric_def[x].metric = NULL;
++		}
++	}
++	if (dev_stats_subsys)
++		metricfs_destroy_subsys(dev_stats_subsys);
++	if (dev_subsys)
++		metricfs_destroy_subsys(dev_subsys);
++	dev_stats_subsys = NULL;
++	dev_subsys = NULL;
++}
++
++static int __init init_dev_stats_subsys(void)
++{
++	int x;
++	int metric_count = sizeof(metric_def) / sizeof(struct metric_def);
++
++	dev_subsys = NULL;
++	dev_stats_subsys = NULL;
++	if (!net_root_subsys) {
++		WARN_ONCE(1, "Net metricfs root not initialized.");
++		goto error;
++	}
++	dev_subsys =
++		metricfs_create_subsys("dev", net_root_subsys);
++	if (!dev_subsys) {
++		WARN_ONCE(1, "Net metricfs dev not created.");
++		goto error;
++	}
++	dev_stats_subsys =
++		metricfs_create_subsys("stats", dev_subsys);
++	if (!dev_stats_subsys) {
++		WARN_ONCE(1, "Dev metricfs stats not created.");
++		goto error;
++	}
++
++	/* initialize each of the metrics */
++	for (x = 0; x < metric_count; x++) {
++		metric_def[x].metric =
++			metric_register_parm(metric_def[x].name,
++					     dev_stats_subsys,
++					     metric_def[x].desc,
++					     "interface",
++					     NULL,
++					     dev_stats_fn,
++					     (void *)&metric_def[x],
++					     false,
++					     true,  /* this is a counter */
++					     THIS_MODULE);
++		if (!metric_def[x].metric) {
++			WARN_ONCE(1, "Dev metricfs stats %s not registered.",
++				  metric_def[x].name);
++			goto error;
++		}
++	}
++	return 0;
++error:
++	clean_dev_stats_subsys();
++	return -1;
++}
++
++/* need to wait for metricfs and net metricfs root to be initialized */
++late_initcall_sync(init_dev_stats_subsys);
++
++static void __exit dev_stats_exit(void)
++{
++	clean_dev_stats_subsys();
++}
 -- 
 2.28.0.236.gb10cc79966-goog
 
