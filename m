@@ -2,53 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BCB4123F226
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 19:47:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8024823F22E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Aug 2020 19:50:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726067AbgHGRrM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Aug 2020 13:47:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726015AbgHGRrM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Aug 2020 13:47:12 -0400
-Subject: Re: [git pull] Christoph's init series
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596822431;
-        bh=XaF+TXRGYPcpEwVJNCXx1yR4LaoiYKIFq9gk49g5Vwc=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=kEFR5TI9e7wy0xF3RuAS1t8iDL2J05CFzs+uUYLKcuchSDiJ6U5QxjTOdDupaneaa
-         S4mirrPaniimR9hLfZP38RoqGQlvmGAS6Ml4yyLeF9KcncnEnaNsxkB3Mh4ZAvWtyA
-         qTf1/+1vjjFg/oMv+lBSvXCHl1agqCr9K2iPkHEA=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200805042144.GN1236603@ZenIV.linux.org.uk>
-References: <20200805042144.GN1236603@ZenIV.linux.org.uk>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200805042144.GN1236603@ZenIV.linux.org.uk>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git hch.init_path
-X-PR-Tracked-Commit-Id: f073531070d24bbb82cb2658952d949f4851024b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e1ec517e18acc0aa9795ff92c15f0adabcb12db9
-Message-Id: <159682243162.18750.5622265495411736387.pr-tracker-bot@kernel.org>
-Date:   Fri, 07 Aug 2020 17:47:11 +0000
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+        id S1728068AbgHGRt5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Aug 2020 13:49:57 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:37728 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726038AbgHGRt4 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 7 Aug 2020 13:49:56 -0400
+Received: from callcc.thunk.org (pool-96-230-252-158.bstnma.fios.verizon.net [96.230.252.158])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 077HnP53001823
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 7 Aug 2020 13:49:25 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 2D34B420263; Fri,  7 Aug 2020 13:49:25 -0400 (EDT)
+Date:   Fri, 7 Aug 2020 13:49:25 -0400
+From:   tytso@mit.edu
+To:     "zhangyi (F)" <yi.zhang@huawei.com>
+Cc:     <linux-ext4@vger.kernel.org>, <jack@suse.cz>,
+        <adilger.kernel@dilger.ca>, <zhangxiaoxu5@huawei.com>,
+        <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] ext4: abort the filesystem if failed to async
+ write metadata buffer
+Message-ID: <20200807174925.GV7657@mit.edu>
+References: <20200620025427.1756360-1-yi.zhang@huawei.com>
+ <20200620025427.1756360-2-yi.zhang@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200620025427.1756360-2-yi.zhang@huawei.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Wed, 5 Aug 2020 05:21:44 +0100:
+On Sat, Jun 20, 2020 at 10:54:23AM +0800, zhangyi (F) wrote:
+> There is a risk of filesystem inconsistency if we failed to async write
+> back metadata buffer in the background. Because of current buffer's end
+> io procedure is handled by end_buffer_async_write() in the block layer,
+> and it only clear the buffer's uptodate flag and mark the write_io_error
+> flag, so ext4 cannot detect such failure immediately. In most cases of
+> getting metadata buffer (e.g. ext4_read_inode_bitmap()), although the
+> buffer's data is actually uptodate, it may still read data from disk
+> because the buffer's uptodate flag has been cleared. Finally, it may
+> lead to on-disk filesystem inconsistency if reading old data from the
+> disk successfully and write them out again.
+> 
+> This patch detect bdev mapping->wb_err when getting journal's write
+> access and mark the filesystem error if bdev's mapping->wb_err was
+> increased, this could prevent further writing and potential
+> inconsistency.
+> 
+> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+> Suggested-by: Jan Kara <jack@suse.cz>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git hch.init_path
+Thanks, applied.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e1ec517e18acc0aa9795ff92c15f0adabcb12db9
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+							- Ted
