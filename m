@@ -2,227 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B89B123F861
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Aug 2020 19:48:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F74B23F864
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Aug 2020 19:48:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbgHHRrx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Aug 2020 13:47:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42038 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbgHHRrw (ORCPT
+        id S1726507AbgHHRsA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Aug 2020 13:48:00 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:26182 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbgHHRr4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Aug 2020 13:47:52 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88A52C061756;
-        Sat,  8 Aug 2020 10:47:52 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id l15so4411118ils.2;
-        Sat, 08 Aug 2020 10:47:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=iAERPz4z58eGuOuIGzzCzTvYKP+G7EsrZYPNaIwIkBM=;
-        b=P0gAuPQ47Tu14WAl0b/RnZ8e7XM1gkyf7C4ycQ3E8cmslLdc3NaUeP+dXiFtRrz/tw
-         prwwEJtevGzqTEWjf4vI39cXT2gtu7vDdjMmD64XXE61xen1gO/P5uzWTUhsAYhvnSSH
-         n3VQ0DabWJifz+ldMjW0lSq9ZP7B56sv1BSPTOTqvRHDneZGtU4fqqANw/9Hc8nMezRz
-         w5CcLd112m/n6WBgMMnOMghbhEJ3l3E3gzRyt4m1SScrD5JBzjr0kJSzFwL+2zpvvtDq
-         72oVdPWv6C75Eh8Q2xRKLhI0Dpazk07OGYNqNyCXwDvP5wzs9vQ+S/i/hMEdXoe0YLIc
-         NHUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=iAERPz4z58eGuOuIGzzCzTvYKP+G7EsrZYPNaIwIkBM=;
-        b=CUeZ3VAaMX0JH67jIK++diZ/CFgXwPEcQnJx60WCrV6YDFJOpc58hg1OAT6mLiz/Hv
-         Somi3yWm7XzWqwlhtHOXIi0asdNUO2dx+akfoZVBIXmP4FThykLrQfgDMzGABnDn3Px7
-         2kW1lfYnFHSThlnTjnY19likAGl9g9aOYMnnBDGYheyMvWRvYft5U7yQBPOuQMHYUGXQ
-         CBO/10QrrJgHXb8pQRlq41mLGjrMWbww4rgYt14lx+PD+emp/iM2pig30zdooD0v1KQV
-         4I0a/UfdosF/mKezys1p9TIlJo3zhL6KP+EzOUMPaDx70saGzmdC2chpUBZFIEv6TaUc
-         arkQ==
-X-Gm-Message-State: AOAM5309rAX1LMfzvCL10ZOkD2hdyoIpLcnybcNUZomxtw7PvXXgtvnt
-        233hA24mWOkKzyu6pTQUEac=
-X-Google-Smtp-Source: ABdhPJydDmiI01T5SSyOAkJmMCCoQ+jGkp7ojV9L+HpzqptYX/IPDvH/2YIt/u9cOo0zm++buEz1sw==
-X-Received: by 2002:a92:340d:: with SMTP id b13mr10699165ila.78.1596908871622;
-        Sat, 08 Aug 2020 10:47:51 -0700 (PDT)
-Received: from anon-dhcp-152.1015granger.net (c-68-61-232-219.hsd1.mi.comcast.net. [68.61.232.219])
-        by smtp.gmail.com with ESMTPSA id o74sm1908900ilb.40.2020.08.08.10.47.49
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 08 Aug 2020 10:47:50 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement LSM
- (IPE)
-From:   Chuck Lever <chucklever@gmail.com>
-In-Reply-To: <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
-Date:   Sat, 8 Aug 2020 13:47:48 -0400
-Cc:     Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
+        Sat, 8 Aug 2020 13:47:56 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200808174751epoutp04e3511dbab36004102d42035b2498a3db~pXCh_DURv0573505735epoutp04L
+        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Aug 2020 17:47:51 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200808174751epoutp04e3511dbab36004102d42035b2498a3db~pXCh_DURv0573505735epoutp04L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1596908871;
+        bh=z6YHluQ4GNDsHPkqQwY6Xcb1ell9rkc8pLldCIBH4Vk=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=arts7RstdR68osA72ioOAFndXzj1VJ+Lw9Dy7XQ2ONgCqUIsTf1viBuWkYNPfzKDg
+         Nzcwpxkn7QjLhyynbaYSRs4vXK3luVtCD07ub2Fm6ljwuiL/aT8ov4NSY5J0YxJsS2
+         rZMktJ7TND249FWnk39wHdjvZ65LQ1BdqkoxxTHo=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200808174750epcas1p2809ba10462b4f80ddd4ac895319cc406~pXCg6ut5v3191631916epcas1p24;
+        Sat,  8 Aug 2020 17:47:50 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.161]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4BP8nx5zntzMqYlh; Sat,  8 Aug
+        2020 17:47:49 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        61.44.19033.545EE2F5; Sun,  9 Aug 2020 02:47:49 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200808174748epcas1p39109727ea50b9daeca1fe2b4734f62a3~pXCfK3IlR0332503325epcas1p3i;
+        Sat,  8 Aug 2020 17:47:48 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200808174748epsmtrp16dd84074adde5359b0cd0e665dee8a3a~pXCfKcH-m2787527875epsmtrp1I;
+        Sat,  8 Aug 2020 17:47:48 +0000 (GMT)
+X-AuditID: b6c32a36-16fff70000004a59-b5-5f2ee54519d4
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        53.0A.08382.445EE2F5; Sun,  9 Aug 2020 02:47:48 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200808174748epsmtip2539caf750d654e6d5dff32166975e04e~pXCe9J8TI2772827728epsmtip2N;
+        Sat,  8 Aug 2020 17:47:48 +0000 (GMT)
+From:   "Sungjong Seo" <sj1557.seo@samsung.com>
+To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
+Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
+        <mori.takahiro@ab.mitsubishielectric.co.jp>,
+        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
+        "'Namjae Jeon'" <namjae.jeon@samsung.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <c635e965-6b78-436a-3959-e4777e1732c1@gmail.com>
+Subject: RE: [PATCH v3] exfat: remove EXFAT_SB_DIRTY flag
+Date:   Sun, 9 Aug 2020 02:47:48 +0900
+Message-ID: <000301d66dac$07b9fc00$172df400$@samsung.com>
+MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
- <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
- <20200802143143.GB20261@amd> <1596386606.4087.20.camel@HansenPartnership.com>
- <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
- <1596639689.3457.17.camel@HansenPartnership.com>
- <alpine.LRH.2.21.2008050934060.28225@namei.org>
- <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQF0BoMPlscPSpT3Th8lCwQKqdMbhQJGtMGMAcFEUC0CM27r7AJXiyRiAvP59PyplxD30A==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmrq7rU714g0fX1Sx+zL3NYvHm5FQW
+        iz17T7JYXN41h83i8v9PLBbLvkxmsfgxvd6B3ePLnOPsHm2T/7F7NB9byeaxc9Zddo++LasY
+        PT5vkgtgi8qxyUhNTEktUkjNS85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXL
+        zAE6RUmhLDGnFCgUkFhcrKRvZ1OUX1qSqpCRX1xiq5RakJJTYGhQoFecmFtcmpeul5yfa2Vo
+        YGBkClSZkJMxc+1WtoLT0hVfpt9mbWDcJtrFyMkhIWAi0XH8PEsXIxeHkMAORokj+58yQzif
+        GCWer53ICOF8Y5Q48HERM0zLzcONbBCJvYwSHy+vYYJwXjJKbF32mB2kik1AV+LJjZ9gHSIC
+        ehInT15nA7GZBRqZJE68zAaxOQVsJRof3AZawcEhLGApsfC6MkiYRUBF4viB20wgNi9QeOf9
+        X6wQtqDEyZlPWCDGaEssW/ga6iAFid2fjrJCrAqTONJ7iRGiRkRidmcb2DsSAjM5JJbvvc4C
+        0eAi0fv5MiOELSzx6vgWdghbSuJlfxuUXS/xf/5adojmFkaJh5+2MYEcKiFgL/H+kgWIySyg
+        KbF+lz5EuaLEzt9zofbySbz72sMKUc0r0dEmBFGiIvH9w04WmE1XflxlmsCoNAvJZ7OQfDYL
+        yQezEJYtYGRZxSiWWlCcm55abFhghBzZmxjByVTLbAfjpLcf9A4xMnEwHmKU4GBWEuHNeqEd
+        L8SbklhZlVqUH19UmpNafIjRFBjWE5mlRJPzgek8ryTe0NTI2NjYwsTM3MzUWEmc9+EthXgh
+        gfTEktTs1NSC1CKYPiYOTqkGpsjkre+bjkrd0Hs6Kebx2c+P0/MNOGSWFW3d+vT5yQP7LRQ6
+        Te6df6l8hd/i+LwbxSFtt3TshZPDlNxs5/uZ/Js0lf9EjYvUVGubGQXRU0VFpobLbijt35cs
+        NXWKxwJL5lJRpu4p7mqmV/W3phXd2rxsQuPW+Xk+8psbPKP5bznXKU823exzm+Fy6EnJL5JL
+        zt79/svJSy/JNsH8G9tCD43co9x/WbkMQp7opKToLEnLOlX63fbxdq2th/YtyeredFzgo3z9
+        7/v2pXF3Pi28xhwqvTbIofGY2/wb/fuXmWwour32zQ/tdVGLhUyT71czLhfTS8rZekR02QEJ
+        /fpLOxfdOSceFPxn5u4lGQEewkosxRmJhlrMRcWJAFfR5uEvBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42LZdlhJXtflqV68wftHmhY/5t5msXhzciqL
+        xZ69J1ksLu+aw2Zx+f8nFotlXyazWPyYXu/A7vFlznF2j7bJ/9g9mo+tZPPYOesuu0ffllWM
+        Hp83yQWwRXHZpKTmZJalFunbJXBlfN71gK3gtnTFhEXfmRsYd4l2MXJySAiYSNw83MjWxcjF
+        ISSwm1Hi0OIu5i5GDqCElMTBfZoQprDE4cPFECXPGSUmXGxgAellE9CVeHLjJzOILSKgJ3Hy
+        5HWwOcwCzUwSrV+amSA6jjNJPFh8gwmkilPAVqLxwW1GkKnCApYSC68rg4RZBFQkjh+4DVbC
+        CxTeef8XK4QtKHFy5hOwZcwC2hJPbz6Fs5ctfM0M8YCCxO5PR1khjgiTONJ7iRGiRkRidmcb
+        8wRG4VlIRs1CMmoWklGzkLQsYGRZxSiZWlCcm55bbFhgmJdarlecmFtcmpeul5yfu4kRHFVa
+        mjsYt6/6oHeIkYmD8RCjBAezkghv1gvteCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8NwoXxgkJ
+        pCeWpGanphakFsFkmTg4pRqYwnKe/zugNFfad73s3cMmTm9WnGpJf+YsaPbpPOsT1X1H758L
+        0us6IdUZnsww6WKgTevHSucjd55cO91YbOTptu7xiZaf3GwyfXY6/ia7Zy1lXmnH3LD0TmKy
+        zLntlqahtW7Tn3vu+XL4+qr9TMZSq4skZn06c27qNsngzh6Nv58S26KPBSslmqezpuivjWvt
+        23u/QsLq2g2puz9c736zS+BJjL1c6bLIU2nO0p83pm79+GBW9jM7wXyO368+H3jUeNTyfY2d
+        fX+uoHzO1jNVmRP3T/3HLMzTu/CZxv/oiSenP/Bff37Kp11ej0Q0uAR7uXz2L/l81k3ss7dq
+        7/TWD/v/tRe1LORY7nf8hBNfvxJLcUaioRZzUXEiAE6CBbIZAwAA
+X-CMS-MailID: 20200808174748epcas1p39109727ea50b9daeca1fe2b4734f62a3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200616021816epcas1p2bb235df44c0b6f74cdec2f12072891e3
+References: <CGME20200616021816epcas1p2bb235df44c0b6f74cdec2f12072891e3@epcas1p2.samsung.com>
+        <20200616021808.5222-1-kohada.t2@gmail.com>
+        <414101d64477$ccb661f0$662325d0$@samsung.com>
+        <aac9d6c7-1d62-a85d-9bcb-d3c0ddc8fcd6@gmail.com>
+        <500801d64572$0bdd2940$23977bc0$@samsung.com>
+        <c635e965-6b78-436a-3959-e4777e1732c1@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-> On Aug 5, 2020, at 2:15 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> On 2020/06/18 22:11, Sungjong Seo wrote:
+> >> BTW
+> >> Even with this patch applied,  VOL_DIRTY remains until synced in the
+> >> above case.
+> >> It's not  easy to reproduce as rmdir, but I'll try to fix it in the
+> future.
+> >
+> > I think it's not a problem not to clear VOL_DIRTY under real errors,
+> > because VOL_DIRTY is just like a hint to note that write was not
+> finished clearly.
+> >
+> > If you mean there are more situation like ENOTEMPTY you mentioned,
+> > please make new patch to fix them.
 >=20
-> On Wed, 2020-08-05 at 09:59 -0700, James Morris wrote:
->> On Wed, 5 Aug 2020, James Bottomley wrote:
->>=20
->>> I'll leave Mimi to answer, but really this is exactly the question =
-that
->>> should have been asked before writing IPE.  However, since we have =
-the
->>> cart before the horse, let me break the above down into two specific
->>> questions.
->>=20
->> The question is valid and it was asked. We decided to first prototype =
-what=20
->> we needed and then evaluate if it should be integrated with IMA. We=20=
-
->> discussed this plan in person with Mimi (at LSS-NA in 2019), and =
-presented=20
->> a more mature version of IPE to LSS-NA in 2020, with the expectation =
-that=20
->> such a discussion may come up (it did not).
 >=20
-> When we first spoke the concepts weren't fully formulated, at least to
-> me.
->>=20
->> These patches are still part of this process and 'RFC' status.
->>=20
->>>   1. Could we implement IPE in IMA (as in would extensions to IMA =
-cover
->>>      everything).  I think the answers above indicate this is a =
-"yes".
->>=20
->> It could be done, if needed.
->>=20
->>>   2. Should we extend IMA to implement it?  This is really whether =
-from a
->>>      usability standpoint two seperate LSMs would make sense to =
-cover the
->>>      different use cases.
->>=20
->> One issue here is that IMA is fundamentally a measurement & appraisal=20=
-
->> scheme which has been extended to include integrity enforcement. IPE =
-was=20
->> designed from scratch to only perform integrity enforcement. As such, =
-it=20
->> is a cleaner design -- "do one thing and do it well" is a good design=20=
-
->> pattern.
->>=20
->> In our use-case, we utilize _both_ IMA and IPE, for attestation and =
-code=20
->> integrity respectively. It is useful to be able to separate these=20
->> concepts. They really are different:
->>=20
->> - Code integrity enforcement ensures that code running locally is of =
-known=20
->> provenance and has not been modified prior to execution.
-
-My interest is in code integrity enforcement for executables stored
-in NFS files.
-
-My struggle with IPE is that due to its dependence on dm-verity, it
-does not seem to able to protect content that is stored separately
-from its execution environment and accessed via a file access
-protocol (FUSE, SMB, NFS, etc).
-
-
->> - Attestation is about measuring the health of a system and having =
-that=20
->> measurement validated by a remote system. (Local attestation is =
-useless).
->>=20
->> I'm not sure there is value in continuing to shoe-horn both of these =
-into=20
->> IMA.
+> When should VOL_DIRTY be cleared?
 >=20
-> True, IMA was originally limited to measurement and attestation, but
-> most of the original EVM concepts were subsequently included in IMA.=20=
-
-> (Remember, Reiner Sailer wrote the original IMA, which I inherited.  I
-> was originially working on EVM code integrity.)  =46rom a naming
-> perspective including EVM code integrity in IMA was a mistake.  My
-> thinking at the time was that as IMA was already calculating the file
-> hash, instead of re-calculating the file hash for integrity, calculate
-> the file hash once and re-use it for multiple things - measurement,=20
-> integrity, and audit.   At the same time define a single system wide
-> policy.
+> The current behavior is ...
 >=20
-> When we first started working on IMA, EVM, trusted, and encrypted =
-keys,
-> the general kernel community didn't see a need for any of it.  Thus, a
-> lot of what was accomplished has been accomplished without the backing
-> of the real core filesystem people.
+> Case of  mkdir, rmdir, rename:
+>    - set VOL_DIRTY before operation
+>    - set VOL_CLEAN after operating.
+> In async mode, it is actually written to the media after 30 seconds.
 >=20
-> If block layer integrity was enough, there wouldn't have been a need
-> for fs-verity.   Even fs-verity is limited to read only filesystems,
-> which makes validating file integrity so much easier.  =46rom the
-> beginning, we've said that fs-verity signatures should be included in
-> the measurement list.  (I thought someone signed on to add that =
-support
-> to IMA, but have not yet seen anything.)
-
-Mimi, when you and I discussed this during LSS NA 2019, I didn't fully
-understand that you expected me to implement signed Merkle trees for all
-filesystems. At the time, it sounded to me like you wanted signed Merkle
-trees only for NFS files. Is that still the case?
-
-The first priority (for me, anyway) therefore is getting the ability to
-move IMA metadata between NFS clients and servers shoveled into the NFS
-protocol, but that's been blocked for various legal reasons.
-
-IMO we need agreement from everyone (integrity developers, FS
-implementers, and Linux distributors) that a signed Merkle tree IMA
-metadata format, stored in either an xattr or appended to an executable
-file, will be the way forward for IMA in all filesystems.
-
-
-> Going forward I see a lot of what we've accomplished being =
-incorporated
-> into the filesystems.  When IMA will be limited to defining a system
-> wide policy, I'll have completed my job.
+> Case of  cp, touch:
+>    - set VOL_DIRTY before operation
+>    - however, VOL_CLEAN is not called in this context.
+> VOL_CLEAN will call by sync_fs or unmount.
 >=20
-> Mimi
+> I added VOL_CLEAN in last of __exfat_write_inode() and exfat_map_cluster(=
+).
+> As a result, VOL_DIRTY is cleared with cp and touch.
+> However, when copying a many files ...
+>   - Async mode: VOL_DIRTY is written to the media twice every 30 seconds.
+>   - Sync mode: Of course,  VOL_DIRTY and VOL_CLEAN to the media for each
+> file.
 >=20
->>=20
->>> I've got to say the least attractive thing
->>>      about separation is the fact that you now both have a policy =
-parser.
->>>       You've tried to differentiate yours by making it more Kconfig
->>>      based, but policy has a way of becoming user space supplied =
-because
->>>      the distros hate config options, so I think you're going to end =
-up
->>>      with a policy parser very like IMAs.
+> Frequent writing VOL_DIRTY and VOL_CLEAN  increases the risk of boot-
+> sector curruption.
+> If the boot-sector corrupted, it causes the following serious problems  o=
+n
+> some OSs.
+>   - misjudge as unformatted
+>   - can't judge as exfat
+>   - can't repair
+>=20
+> I want to minimize boot sector writes, to reduce these risk.
+>=20
+> I looked vfat/udf implementation, which manages similar dirty information
+> on linux, and found that they ware mark-dirty at mount and cleared at
+> unmount.
+>=20
+> Here are some ways to clear VOL_DIRTY.
+>=20
+> (A) VOL_CLEAN after every write operation.
+>    :-) Ejectable at any time after a write operation.
+>    :-( Many times write to Boot-sector.
+>=20
+> (B) dirty at mount, clear at unmount (same as vfat/udf)
+>    :-) Write to boot-sector twice.
+>    :-( It remains dirty unless unmounted.
+>    :-( Write to boot-sector even if there is no write operation.
+>=20
+> (C) dirty on first write operation, clear on unmount
+>    :-) Writing to boot-sector is minimal.
+>    :-) Will not write to the boot-sector if there is no write operation.
+>    :-( It remains dirty unless unmounted.
+>=20
+> (D) dirty on first write operation,  clear on sync-fs/unmount
+>   :-) Writing to boot-sector can be reduced.
+>   :-) Will not write to the boot-sector if there is no write operation.
+>   :-) sync-fs makes it clean and ejectable immidiately.
+>   :-( It remains dirty unless sync-fs or unmount.
+>   :-( Frequent sync-fs will  increases writes to boot-sector.
+>=20
+> I think it should be (C) or(D).
+> What do you think?
+>=20
+
+First of all, I'm sorry for the late reply.
+And thank you for the suggestion.
+
+Most of the NAND flash devices and HDDs have wear leveling and bad sector r=
+eplacement algorithms applied.
+So I think that the life of the boot sector will not be exhausted first.
+
+Currently the volume dirty/clean policy of exfat-fs is not perfect,
+but I think it behaves similarly to the policy of MS Windows.
+
+Therefore,
+I think code improvements should be made to reduce volume flag records whil=
+e maintaining the current policy.
+
+BR
+Sungjong Seo
+>=20
+>=20
+> BR
+> ---
+> Tetsuhiro Kohada <kohada.t2=40gmail.com>
 
