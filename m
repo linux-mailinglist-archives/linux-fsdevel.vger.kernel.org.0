@@ -2,85 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C894923F5E5
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Aug 2020 04:06:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 623DF23F67A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Aug 2020 06:36:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbgHHCGV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Aug 2020 22:06:21 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:47030 "EHLO vps0.lunn.ch"
+        id S1726335AbgHHEf6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Aug 2020 00:35:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726262AbgHHCGV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Aug 2020 22:06:21 -0400
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
-        (envelope-from <andrew@lunn.ch>)
-        id 1k4EFV-008g5y-NR; Sat, 08 Aug 2020 04:06:17 +0200
-Date:   Sat, 8 Aug 2020 04:06:17 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Jonathan Adams <jwadams@google.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jim Mattson <jmattson@google.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [RFC PATCH 0/7] metricfs metric file system and examples
-Message-ID: <20200808020617.GD2028541@lunn.ch>
-References: <20200807212916.2883031-1-jwadams@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200807212916.2883031-1-jwadams@google.com>
+        id S1726084AbgHHEf6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 8 Aug 2020 00:35:58 -0400
+Subject: Re: [git pull] regression fix in syscalls-for-init series
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596861357;
+        bh=fbEKI5UJt4oAvWLs7qkrQjT/6IkiZBbqxvsZzRQBtec=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=Zpa3ij64/rPOEJZ8F36REKtOt9Gn8gcifW3llw3BsxbOJ/7PvshfVZsNTtz71LQiZ
+         tXOeoDHgbBkUHcj2JlAuOq68Ul8WCYgbt9gwcVlYT23kneBm+MuFvyQzElbzBZhx0m
+         GdZ9V47zN1Agq6Z6SdsdAlNIIDkbinPfxfhLDB+0=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200807232353.GX1236603@ZenIV.linux.org.uk>
+References: <20200807232353.GX1236603@ZenIV.linux.org.uk>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200807232353.GX1236603@ZenIV.linux.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
+X-PR-Tracked-Commit-Id: 25ccd24ffd9119c452d711efa2604a7a0c35956e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d57b2b5bc4301f37d1b07e3351d575bd634c7300
+Message-Id: <159686135788.18048.17800758162649652453.pr-tracker-bot@kernel.org>
+Date:   Sat, 08 Aug 2020 04:35:57 +0000
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> net/dev/stats/tx_bytes/annotations
->   DESCRIPTION net\ device\ transmited\ bytes\ count
->   CUMULATIVE
-> net/dev/stats/tx_bytes/fields
->   interface value
->   str int
-> net/dev/stats/tx_bytes/values
->   lo 4394430608
->   eth0 33353183843
->   eth1 16228847091
+The pull request you sent on Sat, 8 Aug 2020 00:23:53 +0100:
 
-This is a rather small system. Have you tested it at scale? An
-Ethernet switch with 64 physical interfaces, and say 32 VLAN
-interfaces stack on top. So this one file will contain 2048 entries?
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes
 
-And generally, you are not interested in one statistic, but many
-statistics. So you will need to cat each file, not just one file. And
-the way this is implemented:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d57b2b5bc4301f37d1b07e3351d575bd634c7300
 
-+static void dev_stats_emit(struct metric_emitter *e,
-+                          struct net_device *dev,
-+                          struct metric_def *metricd)
-+{
-+       struct rtnl_link_stats64 temp;
-+       const struct rtnl_link_stats64 *stats = dev_get_stats(dev, &temp);
-+
-+       if (stats) {
-+               __u8 *ptr = (((__u8 *)stats) + metricd->off);
-+
-+               METRIC_EMIT_INT(e, *(__u64 *)ptr, dev->name, NULL);
-+       }
-+}
+Thank you!
 
-means you are going to be calling dev_get_stats() for each file, and
-there are 23 files if i counted correctly. So dev_get_stats() will be
-called 47104 times, in this made up example. And this is not always
-cheap, these counts can be atomic.
-
-So i personally don't think netdev statistics is a good idea, i doubt
-it scales.
-
-I also think you are looking at the wrong set of netdev counters. I
-would be more interested in ethtool -S counters. But it appears you
-make the assumption that each object you are collecting metrics for
-has the same set of counters. This is untrue for network interfaces,
-where each driver can export whatever counters it wants, and they can
-be dynamic.
-
-	Andrew
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
