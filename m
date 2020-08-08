@@ -2,134 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ADF223F6A2
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Aug 2020 07:47:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66C0B23F6CA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Aug 2020 09:18:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbgHHFq7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Aug 2020 01:46:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726084AbgHHFq7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Aug 2020 01:46:59 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9988B20855;
-        Sat,  8 Aug 2020 05:46:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596865618;
-        bh=xrVQkv5zXrjsh+ypiZ3p5okFdR9ZJ5Lla8NwIloJgBI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CgH8+piv/FhjLc1XCHrjSAoGsFzXSiTjchCTJpTmdb7KYDgvaTH4CvLKnWvs6XlaQ
-         b7cOFyjsFr9xG3zkHajvVq9H68GMEHYwxveiWdsvGyuSOOnqcrKeRGmVs6acF5xJ15
-         rCoVwXYodi0la1FI3AzCbhMCNMefhV5ZEA/6HVRs=
-Date:   Sat, 8 Aug 2020 07:46:55 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Jonathan Adams <jwadams@google.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jim Mattson <jmattson@google.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [RFC PATCH 4/7] core/metricfs: expose softirq information
- through metricfs
-Message-ID: <20200808054655.GE1037591@kroah.com>
-References: <20200807212916.2883031-1-jwadams@google.com>
- <20200807212916.2883031-5-jwadams@google.com>
+        id S1726205AbgHHHR7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Aug 2020 03:17:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59080 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725786AbgHHHR6 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 8 Aug 2020 03:17:58 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00619C061A27
+        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Aug 2020 00:17:57 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id f9so2142363pju.4
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Aug 2020 00:17:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=eCir4Ayk72PEJKd/j3pe7BJGzgEnAkyDXiuG2Izic9E=;
+        b=J7Jeyp1bV8d1URPGbqvopRR/3Xv35lGlgk3bx/aVLux30Z0Cmt4M/ru2/CBSKrc2Yn
+         LEJbOfinClv/JPRyH+MHFh9ugxQs5r4SbmaNlbh5n8VMkUwpagi9FtI+PHeqB3dPKLZF
+         bpEda01yNbqZ47Ba6PWHX3rxvgyf6J7BQX6EQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=eCir4Ayk72PEJKd/j3pe7BJGzgEnAkyDXiuG2Izic9E=;
+        b=aLTgXD9/eMYBTCJ5xyJTVKaMvm0maPF7qYZAptM+i+y0+dlkM8HicJHJsHaQtwpxQe
+         jDnMsuOqfkgBh20URwNOR73S4vmVcOJmjEz1GnqF+v9n+TvAuhpbXmzMoX/GASlFldsQ
+         y7OQtNlMpuPS5LUvA+ncUpBu4AR54dnxMYopm/I3RUETNahKDLj7LIni0JrISksw8AiM
+         dXjNHUjOyb8WLvor1Mwm6x3UPM0TnxIYEtq1wASlSEfljwR0VCFxjsQ+teqMfWmNDmZO
+         qbdyPzOdF4PYHkwWR4mS5QLFjf4bczU5jhC34xWUeNKukPfxjBkTGUYpzqWLSxYYWgbC
+         T1nQ==
+X-Gm-Message-State: AOAM531AtjbRSGuCcBT9GY9gwZCbdiiUxveH4leBNBKtAahdSNadkodt
+        OJM5lzWlEeQnqI4HcAm2voCKsw==
+X-Google-Smtp-Source: ABdhPJx+ciLdH6ySwDMsUNQtApGD+XkDqifS0PpDf22ilxzYv3YOdIibv7N9AvGktGE1tc4I58GOOA==
+X-Received: by 2002:a17:90a:bc41:: with SMTP id t1mr16615267pjv.181.1596871077273;
+        Sat, 08 Aug 2020 00:17:57 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id j142sm16303934pfd.100.2020.08.08.00.17.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Aug 2020 00:17:56 -0700 (PDT)
+Date:   Sat, 8 Aug 2020 00:17:55 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Laight <David.Laight@aculab.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Matt Denton <mpdenton@google.com>,
+        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
+        Robert Sesek <rsesek@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Amit Pundir <amit.pundir@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v7 3/9] net/scm: Regularize compat handling of
+ scm_detach_fds()
+Message-ID: <202008080017.1298B0C@keescook>
+References: <20200709182642.1773477-1-keescook@chromium.org>
+ <20200709182642.1773477-4-keescook@chromium.org>
+ <CANcMJZAcDAG7Dq7vo=M-SZwujj+BOKMh7wKvywHq+tEX3GDbBQ@mail.gmail.com>
+ <202008071516.83432C389@keescook>
+ <CALAqxLXqjEN0S+eGeFA_obaunBK_+xqKbQtdQj1w+wegz-6U5w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200807212916.2883031-5-jwadams@google.com>
+In-Reply-To: <CALAqxLXqjEN0S+eGeFA_obaunBK_+xqKbQtdQj1w+wegz-6U5w@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 07, 2020 at 02:29:13PM -0700, Jonathan Adams wrote:
-> Add metricfs support for displaying percpu softirq counters.  The
-> top directory is /sys/kernel/debug/metricfs/softirq.  Then there
-> is a subdirectory for each softirq type.  For example:
+On Fri, Aug 07, 2020 at 05:02:15PM -0700, John Stultz wrote:
+> On Fri, Aug 7, 2020 at 3:18 PM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > On Fri, Aug 07, 2020 at 01:29:24PM -0700, John Stultz wrote:
+> > > On Thu, Jul 9, 2020 at 11:28 AM Kees Cook <keescook@chromium.org> wrote:
+> > > >
+> > > > Duplicate the cleanups from commit 2618d530dd8b ("net/scm: cleanup
+> > > > scm_detach_fds") into the compat code.
+> > > >
+> > > > Replace open-coded __receive_sock() with a call to the helper.
+> > > >
+> > > > Move the check added in commit 1f466e1f15cf ("net: cleanly handle kernel
+> > > > vs user buffers for ->msg_control") to before the compat call, even
+> > > > though it should be impossible for an in-kernel call to also be compat.
+> > > >
+> > > > Correct the int "flags" argument to unsigned int to match fd_install()
+> > > > and similar APIs.
+> > > >
+> > > > Regularize any remaining differences, including a whitespace issue,
+> > > > a checkpatch warning, and add the check from commit 6900317f5eff ("net,
+> > > > scm: fix PaX detected msg_controllen overflow in scm_detach_fds") which
+> > > > fixed an overflow unique to 64-bit. To avoid confusion when comparing
+> > > > the compat handler to the native handler, just include the same check
+> > > > in the compat handler.
+> > > >
+> > > > Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > > > ---
+> > >
+> > > Hey Kees,
+> > >   So during the merge window (while chasing a few other regressions),
+> > > I noticed occasionally my Dragonboard 845c running AOSP having trouble
+> > > with the web browser crashing or other apps hanging, and I've bisected
+> > > the issue down to this change.
+> > >
+> > > Unfortunately it doesn't revert cleanly so I can't validate reverting
+> > > it sorts things against linus/HEAD.  Anyway, I wanted to check and see
+> > > if you had any other reports of similar or any ideas what might be
+> > > going wrong?
+> >
+> > Hi; Yes, sorry for the trouble. I had a typo in a refactor of
+> > SCM_RIGHTS. I suspect it'll be fixed by this:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=1fa2c0a0c814fbae0eb3e79a510765225570d043
+> >
+> > Can you verify Linus's latest tree works for you? If not, there might be
+> > something else hiding in the corners...
 > 
->     cat /sys/kernel/debug/metricfs/softirq/NET_RX/values
+> Thanks so much! Yes, I just updated to Linus' latest and the issue has
+> disappeared!
 > 
-> Signed-off-by: Jonathan Adams <jwadams@google.com>
-> 
-> ---
-> 
-> jwadams@google.com: rebased to 5.8-pre6
-> 	This is work originally done by another engineer at
-> 	google, who would rather not have their name associated with this
-> 	patchset. They're okay with me sending it under my name.
-> ---
->  kernel/softirq.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 45 insertions(+)
-> 
-> diff --git a/kernel/softirq.c b/kernel/softirq.c
-> index c4201b7f42b1..1ae3a540b789 100644
-> --- a/kernel/softirq.c
-> +++ b/kernel/softirq.c
-> @@ -25,6 +25,8 @@
->  #include <linux/smpboot.h>
->  #include <linux/tick.h>
->  #include <linux/irq.h>
-> +#include <linux/jump_label.h>
-> +#include <linux/metricfs.h>
->  
->  #define CREATE_TRACE_POINTS
->  #include <trace/events/irq.h>
-> @@ -738,3 +740,46 @@ unsigned int __weak arch_dynirq_lower_bound(unsigned int from)
->  {
->  	return from;
->  }
-> +
-> +#ifdef CONFIG_METRICFS
-> +
-> +#define METRICFS_ITEM(name) \
-> +static void \
-> +metricfs_##name(struct metric_emitter *e, int cpu) \
-> +{ \
-> +	int64_t v = kstat_softirqs_cpu(name##_SOFTIRQ, cpu); \
-> +	METRIC_EMIT_PERCPU_INT(e, cpu, v); \
-> +} \
-> +METRIC_EXPORT_PERCPU_COUNTER(name, #name " softirq", metricfs_##name)
-> +
-> +METRICFS_ITEM(HI);
-> +METRICFS_ITEM(TIMER);
-> +METRICFS_ITEM(NET_TX);
-> +METRICFS_ITEM(NET_RX);
-> +METRICFS_ITEM(BLOCK);
-> +METRICFS_ITEM(IRQ_POLL);
-> +METRICFS_ITEM(TASKLET);
-> +METRICFS_ITEM(SCHED);
-> +METRICFS_ITEM(HRTIMER);
-> +METRICFS_ITEM(RCU);
-> +
-> +static int __init init_softirq_metricfs(void)
-> +{
-> +	struct metricfs_subsys *subsys;
-> +
-> +	subsys = metricfs_create_subsys("softirq", NULL);
-> +	metric_init_HI(subsys);
-> +	metric_init_TIMER(subsys);
-> +	metric_init_NET_TX(subsys);
-> +	metric_init_NET_RX(subsys);
-> +	metric_init_BLOCK(subsys);
-> +	metric_init_IRQ_POLL(subsys);
-> +	metric_init_TASKLET(subsys);
-> +	metric_init_SCHED(subsys);
-> +	metric_init_RCU(subsys);
-> +
-> +	return 0;
-> +}
-> +module_init(init_softirq_metricfs);
+> thanks again!
 
-I like the "simple" ways these look, and think you will be better off
-just adding this type of api to debugfs.  That way people can use them
-anywhere they currently use debugfs.
+Whew; sorry again and thanks for testing! :)
 
-But note, we already have simple ways of exporting single variable data
-in debugfs, so why do we need yet-another-macro for them?
-
-thanks,
-
-greg k-h
+-- 
+Kees Cook
