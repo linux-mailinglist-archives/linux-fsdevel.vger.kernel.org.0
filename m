@@ -2,86 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F69423F948
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Aug 2020 00:17:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08B3523FB84
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Aug 2020 01:50:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726084AbgHHWRw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Aug 2020 18:17:52 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:37712 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725779AbgHHWRw (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Aug 2020 18:17:52 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id EAB141C0BDA; Sun,  9 Aug 2020 00:17:49 +0200 (CEST)
-Date:   Sun, 9 Aug 2020 00:17:48 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-Message-ID: <20200808221748.GA1020@bug>
-References: <aefc85852ea518982e74b233e11e16d2e707bc32>
- <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <20200731180955.GC67415@C02TD0UTHF1T.local>
- <6236adf7-4bed-534e-0956-fddab4fd96b6@linux.microsoft.com>
- <20200804143018.GB7440@C02TD0UTHF1T.local>
- <b3368692-afe6-89b5-d634-12f4f0a601f8@linux.microsoft.com>
+        id S1727083AbgHHXgy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Aug 2020 19:36:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49638 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727063AbgHHXgx (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 8 Aug 2020 19:36:53 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9AD0207FB;
+        Sat,  8 Aug 2020 23:36:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596929812;
+        bh=VEdUDKOT/j4tNNjAZhf9dajJ/UBZ+sm27EXjtBHuY3Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YyL9ObPA4RKCl6slRgn+FRHgDINBStjHdo+494zB+OSEB4gcRmcLqRkd0fS7fbIMC
+         w9rBGUHTBWsijmDi/AWLHWZcyEUN50hr281pmb2BV2lhFD1ngkQJMEZyQeZBkY+5z6
+         KSk5j2TcBQRZpFgr2UpamwkNVBihOm/7zUppDQto=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Hristo Venev <hristo@venev.name>, io-uring@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.8 48/72] io_uring: fix sq array offset calculation
+Date:   Sat,  8 Aug 2020 19:35:17 -0400
+Message-Id: <20200808233542.3617339-48-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200808233542.3617339-1-sashal@kernel.org>
+References: <20200808233542.3617339-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b3368692-afe6-89b5-d634-12f4f0a601f8@linux.microsoft.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi!
+From: Dmitry Vyukov <dvyukov@google.com>
 
-> Thanks for the lively discussion. I have tried to answer some of the
-> comments below.
+[ Upstream commit b36200f543ff07a1cb346aa582349141df2c8068 ]
 
-> > There are options today, e.g.
-> >
-> > a) If the restriction is only per-alias, you can have distinct aliases
-> >    where one is writable and another is executable, and you can make it
-> >    hard to find the relationship between the two.
-> >
-> > b) If the restriction is only temporal, you can write instructions into
-> >    an RW- buffer, transition the buffer to R--, verify the buffer
-> >    contents, then transition it to --X.
-> >
-> > c) You can have two processes A and B where A generates instrucitons into
-> >    a buffer that (only) B can execute (where B may be restricted from
-> >    making syscalls like write, mprotect, etc).
-> 
-> The general principle of the mitigation is W^X. I would argue that
-> the above options are violations of the W^X principle. If they are
-> allowed today, they must be fixed. And they will be. So, we cannot
-> rely on them.
+rings_size() sets sq_offset to the total size of the rings (the returned
+value which is used for memory allocation). This is wrong: sq array should
+be located within the rings, not after them. Set sq_offset to where it
+should be.
 
-Would you mind describing your threat model?
+Fixes: 75b28affdd6a ("io_uring: allocate the two rings together")
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Acked-by: Hristo Venev <hristo@venev.name>
+Cc: io-uring@vger.kernel.org
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/io_uring.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Because I believe you are using model different from everyone else.
-
-In particular, I don't believe b) is a problem or should be fixed.
-
-I'll add d), application mmaps a file(R--), and uses write syscall to change
-trampolines in it.
-
-> b) This is again a violation. The kernel should refuse to give execute
-> ???????? permission to a page that was writeable in the past and refuse to
-> ???????? give write permission to a page that was executable in the past.
-
-Why?
-
-										Pavel
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 493e5047e67c9..edb5e9d6ae3a4 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -7086,6 +7086,9 @@ static unsigned long rings_size(unsigned sq_entries, unsigned cq_entries,
+ 		return SIZE_MAX;
+ #endif
+ 
++	if (sq_offset)
++		*sq_offset = off;
++
+ 	sq_array_size = array_size(sizeof(u32), sq_entries);
+ 	if (sq_array_size == SIZE_MAX)
+ 		return SIZE_MAX;
+@@ -7093,9 +7096,6 @@ static unsigned long rings_size(unsigned sq_entries, unsigned cq_entries,
+ 	if (check_add_overflow(off, sq_array_size, &off))
+ 		return SIZE_MAX;
+ 
+-	if (sq_offset)
+-		*sq_offset = off;
+-
+ 	return off;
+ }
+ 
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+2.25.1
+
