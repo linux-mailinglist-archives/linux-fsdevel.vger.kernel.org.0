@@ -2,76 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE73623F539
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Aug 2020 01:26:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3CA223F570
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Aug 2020 02:20:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726149AbgHGX03 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Aug 2020 19:26:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43198 "EHLO
+        id S1726386AbgHHAUN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Aug 2020 20:20:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbgHGX03 (ORCPT
+        with ESMTP id S1726346AbgHHAUK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Aug 2020 19:26:29 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F862C061756;
-        Fri,  7 Aug 2020 16:26:28 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k4Bkp-00BQKJ-4u; Fri, 07 Aug 2020 23:26:27 +0000
-Date:   Sat, 8 Aug 2020 00:26:27 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] assorted vfs patches
-Message-ID: <20200807232627.GY1236603@ZenIV.linux.org.uk>
+        Fri, 7 Aug 2020 20:20:10 -0400
+Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17310C061A29
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Aug 2020 17:02:27 -0700 (PDT)
+Received: by mail-ot1-x341.google.com with SMTP id t7so2951096otp.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Aug 2020 17:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5V4fSeXIIf10FVBMF3ZwZcNjvm3OCHIjH9V8C29Y8lQ=;
+        b=raa038CaUF9eWBraNH4WEyPuTHJSK6iOiV7k6AYrMeNgIhzFx6ZewrZSuo5lrAVEdK
+         9bOtaWtNfF07d9UEYUqPA6aNkM20agULeekqUYoS5Qe3Z22dBLbZuaZdwc0zac2dFT8n
+         N3xMKrgLDJwJrCyj4e9MYB3+ZJJ1gVbN1ypxreVVkfRzZh9Lwqwz7wDfTV0KYta5fshZ
+         OdIZMeVdyM0/ehI67+Kizp9fRZugyLsg7B4FbHuK8BMDqZEVUpWK0PH5DX68JkBYxfMs
+         aOpiQcc5HKPaKOyUagtLwMCbgtum4v9yvrQ01rY6uf9g56CM5kjZ1vx+55Z+jpg2jETd
+         tMrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5V4fSeXIIf10FVBMF3ZwZcNjvm3OCHIjH9V8C29Y8lQ=;
+        b=mtPgFmd9ZNqrfcjoFlCZfM1GLTRkaIPvEJOgu+rDOZ8Z2yiJvU5yjBQUfDjmt4q15+
+         vB4j5sBq/Ar5AfVyOkFmAMDeSrWoZa03NetR0gfpFIN8Hiv7QnMq47h/T8mHIpZI7Wtv
+         BZCWYMEnp2YAFlebRlyYDNQ6PuQ6Qk6Gn55J0gMU3GznKzDCxUsRbBUEfNTmwifY6Slr
+         bnfuWM7zUTKbe3F4/OMBGQBeLcGzlEAt0XLUnvBnS5bMZd1JvEWa4zdUmqgu/lXbUZ75
+         0saeKlX/hHOQUpVPq11HslBPJ6ImJe0elJZIFvoPInhZHJHeZ3VvG/62vmtE8u6bFgWF
+         2awg==
+X-Gm-Message-State: AOAM532CN8Nxe7guHLn4SMhEVj32Toj5qrNRynaqDaNKtw16FZHgW7sk
+        jq9YgoZjkGoIdW7rhjiYeMB3IpiESOu/7WXiY6ercQ==
+X-Google-Smtp-Source: ABdhPJyt2wG3ZDTNWblVENQs5ccUnTXPuZbzbj0BnXWicp6XtJM28SQrhwmJ/s4VEOh4n6cv6N5dnVLVJsMlDVkrD+Y=
+X-Received: by 2002:a05:6830:237b:: with SMTP id r27mr13338417oth.352.1596844946630;
+ Fri, 07 Aug 2020 17:02:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20200709182642.1773477-1-keescook@chromium.org>
+ <20200709182642.1773477-4-keescook@chromium.org> <CANcMJZAcDAG7Dq7vo=M-SZwujj+BOKMh7wKvywHq+tEX3GDbBQ@mail.gmail.com>
+ <202008071516.83432C389@keescook>
+In-Reply-To: <202008071516.83432C389@keescook>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Fri, 7 Aug 2020 17:02:15 -0700
+Message-ID: <CALAqxLXqjEN0S+eGeFA_obaunBK_+xqKbQtdQj1w+wegz-6U5w@mail.gmail.com>
+Subject: Re: [PATCH v7 3/9] net/scm: Regularize compat handling of scm_detach_fds()
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Christian Brauner <christian@brauner.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Laight <David.Laight@aculab.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Matt Denton <mpdenton@google.com>,
+        Jann Horn <jannh@google.com>, Chris Palmer <palmer@google.com>,
+        Robert Sesek <rsesek@google.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Amit Pundir <amit.pundir@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	misc pile; there's more locally, but the rest hadn't sat in -next,
-so...  No common topic whatsoever in those, sorry.
+On Fri, Aug 7, 2020 at 3:18 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Fri, Aug 07, 2020 at 01:29:24PM -0700, John Stultz wrote:
+> > On Thu, Jul 9, 2020 at 11:28 AM Kees Cook <keescook@chromium.org> wrote:
+> > >
+> > > Duplicate the cleanups from commit 2618d530dd8b ("net/scm: cleanup
+> > > scm_detach_fds") into the compat code.
+> > >
+> > > Replace open-coded __receive_sock() with a call to the helper.
+> > >
+> > > Move the check added in commit 1f466e1f15cf ("net: cleanly handle kernel
+> > > vs user buffers for ->msg_control") to before the compat call, even
+> > > though it should be impossible for an in-kernel call to also be compat.
+> > >
+> > > Correct the int "flags" argument to unsigned int to match fd_install()
+> > > and similar APIs.
+> > >
+> > > Regularize any remaining differences, including a whitespace issue,
+> > > a checkpatch warning, and add the check from commit 6900317f5eff ("net,
+> > > scm: fix PaX detected msg_controllen overflow in scm_detach_fds") which
+> > > fixed an overflow unique to 64-bit. To avoid confusion when comparing
+> > > the compat handler to the native handler, just include the same check
+> > > in the compat handler.
+> > >
+> > > Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > > ---
+> >
+> > Hey Kees,
+> >   So during the merge window (while chasing a few other regressions),
+> > I noticed occasionally my Dragonboard 845c running AOSP having trouble
+> > with the web browser crashing or other apps hanging, and I've bisected
+> > the issue down to this change.
+> >
+> > Unfortunately it doesn't revert cleanly so I can't validate reverting
+> > it sorts things against linus/HEAD.  Anyway, I wanted to check and see
+> > if you had any other reports of similar or any ideas what might be
+> > going wrong?
+>
+> Hi; Yes, sorry for the trouble. I had a typo in a refactor of
+> SCM_RIGHTS. I suspect it'll be fixed by this:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=1fa2c0a0c814fbae0eb3e79a510765225570d043
+>
+> Can you verify Linus's latest tree works for you? If not, there might be
+> something else hiding in the corners...
 
-The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
+Thanks so much! Yes, I just updated to Linus' latest and the issue has
+disappeared!
 
-  Linux 5.8-rc1 (2020-06-14 12:45:04 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.misc
-
-for you to fetch changes up to 6414e9b09ffd197803f8e86ce2fafdaf1de4e8e4:
-
-  fs: define inode flags using bit numbers (2020-07-27 14:39:53 -0400)
-
-----------------------------------------------------------------
-Al Viro (1):
-      dlmfs: clean up dlmfs_file_{read,write}() a bit
-
-Eric Biggers (1):
-      fs: define inode flags using bit numbers
-
-Herbert Xu (1):
-      iov_iter: Move unnecessary inclusion of crypto/hash.h
-
- arch/s390/lib/test_unwind.c                    |  1 +
- drivers/dma/sf-pdma/sf-pdma.c                  |  1 +
- drivers/dma/st_fdma.c                          |  1 +
- drivers/dma/uniphier-xdmac.c                   |  1 +
- drivers/misc/uacce/uacce.c                     |  1 +
- drivers/mtd/mtdpstore.c                        |  1 +
- drivers/mtd/nand/raw/cadence-nand-controller.c |  1 +
- drivers/remoteproc/qcom_q6v5_mss.c             |  1 +
- drivers/soc/qcom/pdr_interface.c               |  1 +
- fs/btrfs/inode.c                               |  1 +
- fs/ocfs2/dlmfs/dlmfs.c                         | 52 ++++----------------------
- fs/ocfs2/dlmfs/userdlm.c                       | 12 ++----
- fs/ocfs2/dlmfs/userdlm.h                       |  4 +-
- include/linux/fs.h                             | 36 +++++++++---------
- include/linux/skbuff.h                         |  1 +
- include/linux/socket.h                         |  1 +
- include/linux/uio.h                            |  1 -
- lib/iov_iter.c                                 |  3 +-
- 18 files changed, 45 insertions(+), 75 deletions(-)
+thanks again!
+-john
