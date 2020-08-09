@@ -2,180 +2,285 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E10D723FC3F
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Aug 2020 04:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D33123FE03
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Aug 2020 13:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726242AbgHICuR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Aug 2020 22:50:17 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:22099 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725988AbgHICuQ (ORCPT
+        id S1726392AbgHILqn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Aug 2020 07:46:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36844 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbgHILql (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Aug 2020 22:50:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1596941414;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5vwi+xqRl0iyLXLH/ypzw2pXZxpVvRbjBDnPD7xhC3I=;
-        b=IEtypn46sp2nMPHhm5qNYiQ6V8PaaTgTcRU6dj/WNurtBYEX35DDgFRUlpPkrJpTjVxGi5
-        ljNC+P6u9//t5YZ5mwDHtSSKPFspVyfKixW0XbR3RD36hgb6oSIvKx8REu+os7oUzbjPc5
-        LZ4RHIMPzLXrxYfab5A5PU9MHdT1MbY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-27-m7uh_Sb6NS2MlY7NwnDz7g-1; Sat, 08 Aug 2020 22:50:12 -0400
-X-MC-Unique: m7uh_Sb6NS2MlY7NwnDz7g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id EB16710059A9;
-        Sun,  9 Aug 2020 02:50:10 +0000 (UTC)
-Received: from T590 (ovpn-12-63.pek2.redhat.com [10.72.12.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E29A01002397;
-        Sun,  9 Aug 2020 02:50:02 +0000 (UTC)
-Date:   Sun, 9 Aug 2020 10:49:57 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzkaller-bugs@googlegroups.com,
-        syzbot <syzbot+61acc40a49a3e46e25ea@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: splice: infinite busy loop lockup bug
-Message-ID: <20200809024957.GD2134904@T590>
-References: <00000000000084b59f05abe928ee@google.com>
- <29de15ff-15e9-5c52-cf87-e0ebdfa1a001@I-love.SAKURA.ne.jp>
- <20200807122727.GR1236603@ZenIV.linux.org.uk>
- <20200807123854.GS1236603@ZenIV.linux.org.uk>
- <20200807134114.GA2114050@T590>
- <20200807141148.GD17456@casper.infradead.org>
- <20200809023123.GB2134904@T590>
+        Sun, 9 Aug 2020 07:46:41 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 749C4C061756
+        for <linux-fsdevel@vger.kernel.org>; Sun,  9 Aug 2020 04:46:41 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id l60so3276514pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Aug 2020 04:46:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tfZN55ghx6kyrOr9htmdAtXQNqLYCOsGgIWdC0RY4bQ=;
+        b=KI6MB1vHUn5OrFuZ6LQ4kfMcai4/b6KRGi/ZyOkWaM3jibY0WKGYuul51x1E4iMy+l
+         n91G+WOdSxgXpTvgbY5G+Zvvo2sK5G4eTjW8gBw++3KqwCQUmrP5IIFYL5xxQ8cn6l/d
+         KJQG7R8wWyDn5BaHqehqfUKXcS1/aB1Izg1KngwQUrwSZGgJ3omykax/rzfxW47y5bwg
+         gF+fV3e40C2xRs3DvPTC8suSLs3pLVq/SBIUVNkXWt/WirjTP7tz+3XodxWdNu1Ccw93
+         exgINcoMRwvzqGR66XDqVByRBRCj56HPper4NcRf4svJp+PbYp/1eyKD2XLphp4+z3Uj
+         J7tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tfZN55ghx6kyrOr9htmdAtXQNqLYCOsGgIWdC0RY4bQ=;
+        b=ZJc/3nOpFK8N4eQwGCS5Pb53Ku9eTZFpiAiMX8XM+SJxFCkmDI2iSrRNeRsLsVTEo5
+         cSJFppy6DVu/shWaJnK2IqXrh16LP8f/3UFf94FuEy0LxrTTPQ849p4IsEK4sCJl1jiE
+         5xQ+/lArR3DOgTzKkcQ3MYgzRTb3s0hQrOhg6F9PKvPXgivpG9bdRBDJ5t4Y4UQkQWS3
+         XfRaayLsx1Hw86xLA3GGaYgv6BKhirRW/JCKtS0r0Bfcj19UZWJz4p87c0OewEamnR2U
+         UFknfX6ng9N9R23/snO5wk597tbtVd2bf6lAGWpIZFpsgoEwCIAJlSYoQXtMUfYA9XRR
+         9G0w==
+X-Gm-Message-State: AOAM5312tEjA7QY+voYszjjB0ByPJ1CLdL/Fx1EurSIKbRXXoKx49bxc
+        nUkR8JAFnZLB5wHvA91YgIvNYN44HEA=
+X-Google-Smtp-Source: ABdhPJxj6NtsfUolytiXik+L9JzBczaA570DhJYXWTh0tL1dxZKC2VS5XzMT/z6Yh3H2boOg9MVKFw==
+X-Received: by 2002:a17:902:9a09:: with SMTP id v9mr13891476plp.331.1596973599944;
+        Sun, 09 Aug 2020 04:46:39 -0700 (PDT)
+Received: from localhost.localdomain ([147.46.114.52])
+        by smtp.gmail.com with ESMTPSA id o15sm829542pfu.167.2020.08.09.04.46.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Aug 2020 04:46:39 -0700 (PDT)
+From:   Injae Kang <abcinje@gmail.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Injae Kang <abcinje@gmail.com>
+Subject: [PATCH] fs: dcache: fix coding style
+Date:   Sun,  9 Aug 2020 11:46:33 +0000
+Message-Id: <20200809114633.1412161-1-abcinje@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200809023123.GB2134904@T590>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 09, 2020 at 10:31:23AM +0800, Ming Lei wrote:
-> On Fri, Aug 07, 2020 at 03:11:48PM +0100, Matthew Wilcox wrote:
-> > On Fri, Aug 07, 2020 at 09:41:14PM +0800, Ming Lei wrote:
-> > > On Fri, Aug 07, 2020 at 01:38:54PM +0100, Al Viro wrote:
-> > > > FWIW, my preference would be to have for_each_bvec() advance past zero-length
-> > > > segments; I'll need to go through its uses elsewhere in the tree first, though
-> > > > (after I grab some sleep),
-> > > 
-> > > Usually block layer doesn't allow/support zero bvec, however we can make
-> > > for_each_bvec() to support it only.
-> > > 
-> > > Tetsuo, can you try the following patch?
-> > > 
-> > > diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-> > > index ac0c7299d5b8..b03c793dd28d 100644
-> > > --- a/include/linux/bvec.h
-> > > +++ b/include/linux/bvec.h
-> > > @@ -117,11 +117,19 @@ static inline bool bvec_iter_advance(const struct bio_vec *bv,
-> > >  	return true;
-> > >  }
-> > >  
-> > > +static inline void bvec_iter_skip_zero_vec(const struct bio_vec *bv,
-> > > +		struct bvec_iter *iter)
-> > > +{
-> > > +	iter->bi_idx++;
-> > > +	iter->bi_bvec_done = 0;
-> > > +}
-> > > +
-> > >  #define for_each_bvec(bvl, bio_vec, iter, start)			\
-> > >  	for (iter = (start);						\
-> > >  	     (iter).bi_size &&						\
-> > > -		((bvl = bvec_iter_bvec((bio_vec), (iter))), 1);	\
-> > > -	     bvec_iter_advance((bio_vec), &(iter), (bvl).bv_len))
-> > > +		((bvl = bvec_iter_bvec((bio_vec), (iter))), 1);		\
-> > > +	  (bvl).bv_len ? bvec_iter_advance((bio_vec), &(iter), (bvl).bv_len) : \
-> > > +			bvec_iter_skip_zero_vec((bio_vec), &(iter)))
-> > 
-> > Uhm, bvec_iter_advance() already skips over zero length bio_vecs.
-> > 
-> >         while (bytes && bytes >= bv[idx].bv_len) {
-> >                 bytes -= bv[idx].bv_len;
-> >                 idx++;
-> >         }
-> 
-> The issue is that zero (bvl).bv_len passed to bvec_iter_advance(), so
-> the iterator can't move on.
-> 
-> And I tried to avoid change to bvec_iter_advance() since this exact
-> issue only exists on for_each_bvec, and block layer won't support/allow
-> zero-length bvec.
-> 
-> > 
-> > The problem is when the _first_ bio_vec is zero length.
-> 
-> It can be any zero-length bvec during the iterating. 
-> 
-> > Maybe something more
-> > like this (which doesn't even compile, but hopefully makes my point):
-> > 
-> > @@ -86,12 +86,24 @@ struct bvec_iter_all {
-> >         (mp_bvec_iter_page((bvec), (iter)) +                    \
-> >          mp_bvec_iter_page_idx((bvec), (iter)))
-> >  
-> > -#define bvec_iter_bvec(bvec, iter)                             \
-> > -((struct bio_vec) {                                            \
-> > -       .bv_page        = bvec_iter_page((bvec), (iter)),       \
-> > -       .bv_len         = bvec_iter_len((bvec), (iter)),        \
-> > -       .bv_offset      = bvec_iter_offset((bvec), (iter)),     \
-> > -})
-> > +static inline bool bvec_iter_bvec(struct bio_vec *bv, struct bio_vec *bvec,
-> > +               struct bvec_iter *iter)
-> > +{
-> > +       unsigned int idx = iter->bi_idx;
-> > +
-> > +       if (!iter->bi_size)
-> > +               return false;
-> > +
-> > +       while (!bv[idx].bv_len)
-> > +               idx++;
-> > +       iter->bi_idx = idx;
-> > +
-> > +       bv->bv_page = bvec_iter_page(bvec, *iter);
-> > +       bv->bv_len = bvec_iter_len(bvec, *iter);
-> > +       bv->bv_offset = bvec_iter_offset(bvec, *iter);
-> > +
-> > +       return true;
-> > +}
-> >  
-> >  static inline bool bvec_iter_advance(const struct bio_vec *bv,
-> >                 struct bvec_iter *iter, unsigned bytes)
-> > @@ -119,8 +131,7 @@ static inline bool bvec_iter_advance(const struct bio_vec *bv,
-> >  
-> >  #define for_each_bvec(bvl, bio_vec, iter, start)                       \
-> >         for (iter = (start);                                            \
-> > -            (iter).bi_size &&                                          \
-> > -               ((bvl = bvec_iter_bvec((bio_vec), (iter))), 1); \
-> > +            bvec_iter_bvec(&(bvl), (bio_vec), &(iter));                \
-> >              bvec_iter_advance((bio_vec), &(iter), (bvl).bv_len))
-> >  
-> >  /* for iterating one bio from start to end */
-> > 
-> > (I find the whole bvec handling a mess of confusing macros and would
-> > welcome more of it being inline functions, in general).
-> 
-> The above change may bring more code duplication. Meantime, it can't
-> work because (bvl).bv_len isn't taken into account into bvec_iter_bvec(),
-> then how can the iterator advance?
+Fix coding style of dcache.c
 
-oops, looks you change bvec_iter_bvec() only for skipping zero length bvec,
-and this way might work(still ->bi_bvec_done isn't reset). However the
-change is ugly, cause the iterator is supposed to not be updated in
-bvec_iter_bvec(). Also block layer code doesn't require such change.
+Signed-off-by: Injae Kang <abcinje@gmail.com>
+---
+ fs/dcache.c | 54 ++++++++++++++++++++++++++---------------------------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
 
-BTW, I agree on switching to inline if performance isn't affected.
-
-
-Thanks,
-Ming
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 361ea7ab30ea..3fe4bd610cc2 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -193,7 +193,7 @@ int proc_nr_dentry(struct ctl_table *table, int write, void *buffer,
+  */
+ static inline int dentry_string_cmp(const unsigned char *cs, const unsigned char *ct, unsigned tcount)
+ {
+-	unsigned long a,b,mask;
++	unsigned long a, b, mask;
+ 
+ 	for (;;) {
+ 		a = read_word_at_a_time(cs);
+@@ -268,7 +268,7 @@ static void __d_free(struct rcu_head *head)
+ {
+ 	struct dentry *dentry = container_of(head, struct dentry, d_u.d_rcu);
+ 
+-	kmem_cache_free(dentry_cache, dentry); 
++	kmem_cache_free(dentry_cache, dentry);
+ }
+ 
+ static void __d_free_external(struct rcu_head *head)
+@@ -354,7 +354,7 @@ static void dentry_free(struct dentry *dentry)
+  * Release the dentry's inode, using the filesystem
+  * d_iput() operation if defined.
+  */
+-static void dentry_unlink_inode(struct dentry * dentry)
++static void dentry_unlink_inode(struct dentry *dentry)
+ 	__releases(dentry->d_lock)
+ 	__releases(dentry->d_inode->i_lock)
+ {
+@@ -393,7 +393,7 @@ static void dentry_unlink_inode(struct dentry * dentry)
+  * These helper functions make sure we always follow the
+  * rules. d_lock must be held by the caller.
+  */
+-#define D_FLAG_VERIFY(dentry,x) WARN_ON_ONCE(((dentry)->d_flags & (DCACHE_LRU_LIST | DCACHE_SHRINK_LIST)) != (x))
++#define D_FLAG_VERIFY(dentry, x) WARN_ON_ONCE(((dentry)->d_flags & (DCACHE_LRU_LIST | DCACHE_SHRINK_LIST)) != (x))
+ static void d_lru_add(struct dentry *dentry)
+ {
+ 	D_FLAG_VERIFY(dentry, 0);
+@@ -830,7 +830,7 @@ static inline bool fast_dput(struct dentry *dentry)
+ }
+ 
+ 
+-/* 
++/*
+  * This is dput
+  *
+  * This is complicated by the fact that we do not want to put
+@@ -849,7 +849,7 @@ static inline bool fast_dput(struct dentry *dentry)
+ 
+ /*
+  * dput - release a dentry
+- * @dentry: dentry to release 
++ * @dentry: dentry to release
+  *
+  * Release a dentry. This will drop the usage count and if appropriate
+  * call the dentry unlink method as well as removing it from the queues and
+@@ -960,7 +960,7 @@ struct dentry *dget_parent(struct dentry *dentry)
+ }
+ EXPORT_SYMBOL(dget_parent);
+ 
+-static struct dentry * __d_find_any_alias(struct inode *inode)
++static struct dentry *__d_find_any_alias(struct inode *inode)
+ {
+ 	struct dentry *alias;
+ 
+@@ -1012,7 +1012,7 @@ static struct dentry *__d_find_alias(struct inode *inode)
+ 
+ 	hlist_for_each_entry(alias, &inode->i_dentry, d_u.d_alias) {
+ 		spin_lock(&alias->d_lock);
+- 		if (!d_unhashed(alias)) {
++		if (!d_unhashed(alias)) {
+ 			__dget_dlock(alias);
+ 			spin_unlock(&alias->d_lock);
+ 			return alias;
+@@ -1460,7 +1460,7 @@ int d_set_mounted(struct dentry *dentry)
+ 			ret = 0;
+ 		}
+ 	}
+- 	spin_unlock(&dentry->d_lock);
++	spin_unlock(&dentry->d_lock);
+ out:
+ 	write_sequnlock(&rename_lock);
+ 	return ret;
+@@ -1699,7 +1699,7 @@ EXPORT_SYMBOL(d_invalidate);
+  * available. On a success the dentry is returned. The name passed in is
+  * copied and the copy passed in may be reused after this call.
+  */
+- 
++
+ static struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+ {
+ 	struct dentry *dentry;
+@@ -1726,14 +1726,14 @@ static struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+ 						  GFP_KERNEL_ACCOUNT |
+ 						  __GFP_RECLAIMABLE);
+ 		if (!p) {
+-			kmem_cache_free(dentry_cache, dentry); 
++			kmem_cache_free(dentry_cache, dentry);
+ 			return NULL;
+ 		}
+ 		atomic_set(&p->u.count, 1);
+ 		dname = p->name;
+ 	} else  {
+ 		dname = dentry->d_iname;
+-	}	
++	}
+ 
+ 	dentry->d_name.len = name->len;
+ 	dentry->d_name.hash = name->hash;
+@@ -1783,7 +1783,7 @@ static struct dentry *__d_alloc(struct super_block *sb, const struct qstr *name)
+  * available. On a success the dentry is returned. The name passed in is
+  * copied and the copy passed in may be reused after this call.
+  */
+-struct dentry *d_alloc(struct dentry * parent, const struct qstr *name)
++struct dentry *d_alloc(struct dentry *parent, const struct qstr *name)
+ {
+ 	struct dentry *dentry = __d_alloc(parent->d_sb, name);
+ 	if (!dentry)
+@@ -1808,7 +1808,7 @@ struct dentry *d_alloc_anon(struct super_block *sb)
+ }
+ EXPORT_SYMBOL(d_alloc_anon);
+ 
+-struct dentry *d_alloc_cursor(struct dentry * parent)
++struct dentry *d_alloc_cursor(struct dentry *parent)
+ {
+ 	struct dentry *dentry = d_alloc_anon(parent->d_sb);
+ 	if (dentry) {
+@@ -1965,8 +1965,8 @@ static void __d_instantiate(struct dentry *dentry, struct inode *inode)
+  * (or otherwise set) by the caller to indicate that it is now
+  * in use by the dcache.
+  */
+- 
+-void d_instantiate(struct dentry *entry, struct inode * inode)
++
++void d_instantiate(struct dentry *entry, struct inode *inode)
+ {
+ 	BUG_ON(!hlist_unhashed(&entry->d_u.d_alias));
+ 	if (inode) {
+@@ -2175,7 +2175,7 @@ struct dentry *d_add_ci(struct dentry *dentry, struct inode *inode,
+ 		if (!found) {
+ 			iput(inode);
+ 			return ERR_PTR(-ENOMEM);
+-		} 
++		}
+ 	}
+ 	res = d_splice_alias(inode, found);
+ 	if (res) {
+@@ -2384,7 +2384,7 @@ struct dentry *__d_lookup(const struct dentry *parent, const struct qstr *name)
+ 	 * See Documentation/filesystems/path-lookup.txt for more details.
+ 	 */
+ 	rcu_read_lock();
+-	
++
+ 	hlist_bl_for_each_entry_rcu(dentry, node, b, d_hash) {
+ 
+ 		if (dentry->d_name.hash != hash)
+@@ -2405,10 +2405,10 @@ struct dentry *__d_lookup(const struct dentry *parent, const struct qstr *name)
+ 		break;
+ next:
+ 		spin_unlock(&dentry->d_lock);
+- 	}
+- 	rcu_read_unlock();
++	}
++	rcu_read_unlock();
+ 
+- 	return found;
++	return found;
+ }
+ 
+ /**
+@@ -2447,7 +2447,7 @@ EXPORT_SYMBOL(d_hash_and_lookup);
+  * it from the hash queues and waiting for
+  * it to be deleted later when it has no users
+  */
+- 
++
+ /**
+  * d_delete - delete a dentry
+  * @dentry: The dentry to delete
+@@ -2455,8 +2455,8 @@ EXPORT_SYMBOL(d_hash_and_lookup);
+  * Turn the dentry into a negative dentry if possible, otherwise
+  * remove it from the hash queues so it can be deleted later
+  */
+- 
+-void d_delete(struct dentry * dentry)
++
++void d_delete(struct dentry *dentry)
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 
+@@ -2491,8 +2491,8 @@ static void __d_rehash(struct dentry *entry)
+  *
+  * Adds a dentry to the hash according to its name.
+  */
+- 
+-void d_rehash(struct dentry * entry)
++
++void d_rehash(struct dentry *entry)
+ {
+ 	spin_lock(&entry->d_lock);
+ 	__d_rehash(entry);
+@@ -3082,7 +3082,7 @@ EXPORT_SYMBOL(d_splice_alias);
+  * Returns false otherwise.
+  * Caller must ensure that "new_dentry" is pinned before calling is_subdir()
+  */
+-  
++
+ bool is_subdir(struct dentry *new_dentry, struct dentry *old_dentry)
+ {
+ 	bool result;
+-- 
+2.25.1
 
