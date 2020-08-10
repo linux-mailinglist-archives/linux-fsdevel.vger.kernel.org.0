@@ -2,136 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87D9A24138B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 01:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E566241394
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 01:05:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbgHJXDa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Aug 2020 19:03:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49770 "EHLO
+        id S1727863AbgHJXF3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Aug 2020 19:05:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbgHJXDa (ORCPT
+        with ESMTP id S1726722AbgHJXF3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Aug 2020 19:03:30 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7D0AC061756
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Aug 2020 16:03:29 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id c10so628109pjn.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Aug 2020 16:03:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RhGl5aAnfF/BQXqz/MC7L9FOMBP1d+PqSfo/ugCUrnc=;
-        b=vKzfUH8mbF/lhof7jqzTDAHUZg2nS8pYqAocFG+3PGEPxsrMyQYSoVhkjSrt63Ugjo
-         3mzhxjfv0Rm3DVkE8BiamPLYiwqpUOsYeZkY+W+EBp4KRiexXmERkpUFMbn8jYE0sTdS
-         MfhvSYIPzaWdV3C6E21CsVDz4rpJUdIyB59cAWL4/98gJwUeSSTTogyyEyOXh1GMQjBG
-         S9CsrDhpAKnCcV74+chwfTO+BQuJKcw6pHsIrC8zvHCx/9B67dL1n2ObhQ/wUIhmx9O9
-         FNmsUCkH5l+VeKFlR2BJPOGxAs5ErebttAMIucVy2/QjIQtbUPDd/nM3NzduIKcWMGXH
-         Z0tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RhGl5aAnfF/BQXqz/MC7L9FOMBP1d+PqSfo/ugCUrnc=;
-        b=kpr3ugWVgqWoXkpu1HjiIpSGKap8FXSX4kDJzERUN7BvHM3u0eOEsjd7S+C20v8QBd
-         zxFbsSAgjN3rEk4pFguthTbtmxU4eAH4II1Cg1fpUQbMwfUvYWKJS5DFafv1wtfvCz3h
-         olHY1rv/TC3SSLdehoUNGTB0OM0dukI5k0LHeyKGSuMEXkB3DopdpBGs9BSMNz9wO6NM
-         HOWv1zVOtFYc4IidzGZmFg3u4BgPgYtNRBnO8S8mX8HiyLxHY7LLForZk4jvQ2QqJUnA
-         IwebnxBltuppGJu9DZi47qYZ0s7W3FeIRqE3+AA0aVrcMMsiMu+zOhdhbPSB/Ym3YxiR
-         E7MA==
-X-Gm-Message-State: AOAM532qWKtwC15/cHUlyBXU0BgHOEtITJ1BkH9snd+VVD8wl1PflFir
-        5h7Svyef1YwNn3Xv2a2mVdE+ZA==
-X-Google-Smtp-Source: ABdhPJxaG+83Ln1EMRF7FhBciv88ind8OKJkJj4KMWNkMA4RDPdpHXJzQxhM3X6nIafRMxmlUU1yFQ==
-X-Received: by 2002:a17:902:aa91:: with SMTP id d17mr26879095plr.27.1597100609171;
-        Mon, 10 Aug 2020 16:03:29 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id z25sm23545541pfg.150.2020.08.10.16.03.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Aug 2020 16:03:28 -0700 (PDT)
-Subject: Re: [PATCH 05/15] mm: allow read-ahead with IOCB_NOWAIT set
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        Johannes Weiner <hannes@cmpxchg.org>
-References: <20200618144355.17324-1-axboe@kernel.dk>
- <20200618144355.17324-6-axboe@kernel.dk>
- <20200624010253.GB5369@dread.disaster.area>
- <20200624014645.GJ21350@casper.infradead.org>
- <bad52be9-ae44-171b-8dbf-0d98eedcadc0@kernel.dk>
- <70b0427c-7303-8f45-48bd-caa0562a2951@kernel.dk>
- <20200624164127.GP21350@casper.infradead.org>
- <8835b6f2-b3c5-c9a0-2119-1fb161cf87dd@kernel.dk>
- <20200810225601.GE2079@dread.disaster.area>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cf2384d3-8707-3a83-a667-8a0024867cdb@kernel.dk>
-Date:   Mon, 10 Aug 2020 17:03:27 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 10 Aug 2020 19:05:29 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2515DC06174A;
+        Mon, 10 Aug 2020 16:05:29 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k5Gr3-00DImD-1Q; Mon, 10 Aug 2020 23:05:21 +0000
+Date:   Tue, 11 Aug 2020 00:05:21 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v7 0/7] Add support for O_MAYEXEC
+Message-ID: <20200810230521.GG1236603@ZenIV.linux.org.uk>
+References: <20200723171227.446711-1-mic@digikod.net>
+ <202007241205.751EBE7@keescook>
+ <0733fbed-cc73-027b-13c7-c368c2d67fb3@digikod.net>
+ <20200810202123.GC1236603@ZenIV.linux.org.uk>
+ <917bb071-8b1a-3ba4-dc16-f8d7b4cc849f@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <20200810225601.GE2079@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <917bb071-8b1a-3ba4-dc16-f8d7b4cc849f@digikod.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/10/20 4:56 PM, Dave Chinner wrote:
-> On Wed, Jun 24, 2020 at 10:44:21AM -0600, Jens Axboe wrote:
->> On 6/24/20 10:41 AM, Matthew Wilcox wrote:
->>> On Wed, Jun 24, 2020 at 09:35:19AM -0600, Jens Axboe wrote:
->>>> On 6/24/20 9:00 AM, Jens Axboe wrote:
->>>>> On 6/23/20 7:46 PM, Matthew Wilcox wrote:
->>>>>> I'd be quite happy to add a gfp_t to struct readahead_control.
->>>>>> The other thing I've been looking into for other reasons is adding
->>>>>> a memalloc_nowait_{save,restore}, which would avoid passing down
->>>>>> the gfp_t.
->>>>>
->>>>> That was my first thought, having the memalloc_foo_save/restore for
->>>>> this. I don't think adding a gfp_t to readahead_control is going
->>>>> to be super useful, seems like the kind of thing that should be
->>>>> non-blocking by default.
->>>>
->>>> We're already doing memalloc_nofs_save/restore in
->>>> page_cache_readahead_unbounded(), so I think all we need is to just do a
->>>> noio dance in generic_file_buffered_read() and that should be enough.
->>>
->>> I think we can still sleep though, right?  I was thinking more
->>> like this:
->>>
->>> http://git.infradead.org/users/willy/linux.git/shortlog/refs/heads/memalloc
->>
->> Yeah, that's probably better. How do we want to handle this? I've already
->> got the other bits queued up. I can either add them to the series, or
->> pull a branch that'll go into Linus as well.
-> 
-> Jens, Willy,
-> 
-> Now that this patch has been merged and IOCB_NOWAIT semantics ifor
-> buffered reads are broken in Linus' tree, what's the plan to get
-> this regression fixed before 5.9 releases?
+On Tue, Aug 11, 2020 at 12:43:52AM +0200, Mickaël Salaün wrote:
 
-Not sure where Willy's work went on this topic, but it is on my radar. But
-I think we can do something truly simple now that we have IOCB_NOIO:
+> Hooking on open is a simple design that enables processes to check files
+> they intend to open, before they open them.
 
+Which is a good thing, because...?
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bd7ec3eaeed0..f1cca4bfdd7b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3293,7 +3293,7 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
- 	if (flags & RWF_NOWAIT) {
- 		if (!(ki->ki_filp->f_mode & FMODE_NOWAIT))
- 			return -EOPNOTSUPP;
--		kiocb_flags |= IOCB_NOWAIT;
-+		kiocb_flags |= IOCB_NOWAIT | IOCB_NOIO;
- 	}
- 	if (flags & RWF_HIPRI)
- 		kiocb_flags |= IOCB_HIPRI;
+> From an API point of view,
+> this series extends openat2(2) with one simple flag: O_MAYEXEC. The
+> enforcement is then subject to the system policy (e.g. mount points,
+> file access rights, IMA, etc.).
 
--- 
-Jens Axboe
+That's what "unspecified" means - as far as the kernel concerned, it's
+"something completely opaque, will let these hooks to play, semantics is
+entirely up to them".
+ 
+> Checking on open enables to not open a file if it does not meet some
+> requirements, the same way as if the path doesn't exist or (for whatever
+> reasons, including execution permission) if access is denied. It is a
+> good practice to check as soon as possible such properties, and it may
+> enables to avoid (user space) time-of-check to time-of-use (TOCTOU)
+> attacks (i.e. misuse of already open resources).
 
+?????  You explicitly assume a cooperating caller.  If it can't be trusted
+to issue the check between open and use, or can be manipulated (ptraced,
+etc.) into not doing so, how can you rely upon the flag having been passed
+in the first place?  And TOCTOU window is definitely not wider that way.
+
+If you want to have it done immediately after open(), bloody well do it
+immediately after open.  If attacker has subverted your control flow to the
+extent that allows them to hit descriptor table in the interval between
+these two syscalls, you have already lost - they'll simply prevent that
+flag from being passed.
+
+What's the point of burying it inside openat2()?  A convenient multiplexor
+to hook into?  We already have one - it's called do_syscall_...
