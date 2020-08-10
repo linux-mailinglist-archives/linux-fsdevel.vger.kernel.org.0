@@ -2,82 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B47BB24066D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 15:08:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51D122406F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 15:47:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbgHJNI0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Aug 2020 09:08:26 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:42755 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726330AbgHJNIZ (ORCPT
+        id S1726806AbgHJNrZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Aug 2020 09:47:25 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:20021 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726582AbgHJNrY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Aug 2020 09:08:25 -0400
+        Mon, 10 Aug 2020 09:47:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597064904;
+        s=mimecast20190719; t=1597067243;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=pbpPyMxeUTZufAlT4TB0KbZ9dM5w1NZ9B6YwnpXi1/s=;
-        b=hJM2otlYUoPY7VxeCg+9S/SuDdXK/EMb63r95YBavEpwFYYx2bHe7xw5vabFMzkA9bv3aG
-        GO+rnV5h9LFmhpGEzzGShn29p21HXvBnVGFrRX+y6S4jLgkre3rLGiwT2g0SAsWo7octz4
-        xzEhTG6JX1B3/EzsojREJRmGfBPmSv8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-98-bwrUS9gAOm6o0zWQN2BguA-1; Mon, 10 Aug 2020 09:08:21 -0400
-X-MC-Unique: bwrUS9gAOm6o0zWQN2BguA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7B63918A0F03;
-        Mon, 10 Aug 2020 13:08:20 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.10.115.251])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B5EAE10013C2;
-        Mon, 10 Aug 2020 13:08:10 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 3286022036A; Mon, 10 Aug 2020 09:08:09 -0400 (EDT)
-Date:   Mon, 10 Aug 2020 09:08:09 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
+        bh=z8HxGZRX0ri3hL7o0UjLbQAuAiwO1V2HqhDwK8CAsEc=;
+        b=ItWuB8pPNi0nxCVULljQkIlIeACHv7HM5byelrZmuCeZ9y/eoCqanYwvV77jVDK1UZ9Anm
+        /XY9UTjC4Jcw4RjK1qXRd4IEnp9+LS/O0l11ATZqd/SS3v7FTScG8kl9IJwVluC7zEpySf
+        adkNg59/X8aX/qIyEtWhIYxoliKfklg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-493-0DSijqLUMh2cqASImrVfCA-1; Mon, 10 Aug 2020 09:47:21 -0400
+X-MC-Unique: 0DSijqLUMh2cqASImrVfCA-1
+Received: by mail-wm1-f72.google.com with SMTP id g72so2807724wme.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Aug 2020 06:47:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=z8HxGZRX0ri3hL7o0UjLbQAuAiwO1V2HqhDwK8CAsEc=;
+        b=PGpggSk8/yEvBZ3SL0zQAy8OCm9G9gEtdoiK1hVo77dB9cPGRAJdo5T1yYAdlvGajG
+         +9L9hJwXPHZlCpqbHAbAto3p8i+FBRbcDKR4vAEu53e0UM8+rjAG/s1uKDJW8sIDFrIL
+         lZ+ax+8NCDVnVkkoFPFEUsYR/6wK+ic6Df7R0C/Kb9+aO/ITEzi3eiTqNGGN4+5mio8w
+         w/PbEDf6JLJaPQxigEbldt7ihOdtvDT0TyC0EUO7PYWqUjcPJOONyondlEXMPTetHurd
+         qaqcYSCfcN1jvolpqnAP96Ele2U8+tLXdAf3/Js/ZmYQj7z6gEVCxE2X+qt/4RKtrWvP
+         W8/A==
+X-Gm-Message-State: AOAM532Wo05eDYRcg7OmPSI3WZkbvHYAuw/x+zDK+MB/BZvdc4idh+E6
+        GY7LbflwHLR3GRFMBYtjYALHZjB1hSLffBq29AEcrhyPCiDNtOFdEhlFVvXGvpVhp+5SYyJKLMd
+        n88LWjwuxucaD+oIybVNi/rPKOA==
+X-Received: by 2002:a1c:1b93:: with SMTP id b141mr25773831wmb.150.1597067239974;
+        Mon, 10 Aug 2020 06:47:19 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxiKr4k+daNBgpJsJdAPnBhBio+aWOVADeV99EvpK7df75SgAQYK1b8ZOE3OtN5IXqUpVc1HA==
+X-Received: by 2002:a1c:1b93:: with SMTP id b141mr25773815wmb.150.1597067239779;
+        Mon, 10 Aug 2020 06:47:19 -0700 (PDT)
+Received: from redhat.com ([192.117.173.58])
+        by smtp.gmail.com with ESMTPSA id g188sm24329476wma.5.2020.08.10.06.47.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Aug 2020 06:47:18 -0700 (PDT)
+Date:   Mon, 10 Aug 2020 09:47:15 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v2 00/20] virtiofs: Add DAX support
-Message-ID: <20200810130809.GA455528@redhat.com>
+        virtio-fs@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
+        dgilbert@redhat.com, Sebastien Boeuf <sebastien.boeuf@intel.com>,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH v2 03/20] virtio: Add get_shm_region method
+Message-ID: <20200810094548-mutt-send-email-mst@kernel.org>
 References: <20200807195526.426056-1-vgoyal@redhat.com>
- <CAJfpegtboe-XssmqrcvsJm1R0FBP8fYFrTMv5cuBhfmebiGfQw@mail.gmail.com>
+ <20200807195526.426056-4-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegtboe-XssmqrcvsJm1R0FBP8fYFrTMv5cuBhfmebiGfQw@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <20200807195526.426056-4-vgoyal@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 10, 2020 at 09:29:47AM +0200, Miklos Szeredi wrote:
-> On Fri, Aug 7, 2020 at 9:55 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
+On Fri, Aug 07, 2020 at 03:55:09PM -0400, Vivek Goyal wrote:
+> From: Sebastien Boeuf <sebastien.boeuf@intel.com>
 > 
-> > Most of the changes are limited to fuse/virtiofs. There are couple
-> > of changes needed in generic dax infrastructure and couple of changes
-> > in virtio to be able to access shared memory region.
+> Virtio defines 'shared memory regions' that provide a continuously
+> shared region between the host and guest.
 > 
-> So what's the plan for merging the different subsystems?  I can take
-> all that into the fuse tree, but would need ACKs from the respective
-> maintainers.
+> Provide a method to find a particular region on a device.
+> 
+> Signed-off-by: Sebastien Boeuf <sebastien.boeuf@intel.com>
+> Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
+> Cc: kvm@vger.kernel.org
+> Cc: "Michael S. Tsirkin" <mst@redhat.com>
 
-I am assuming for DAX patches we need ACK from Dan Williams and for
-virtio patches we need ack from Michael S. Tsirkin.
+I'm not sure why doesn't b4 pick up reset of this
+patchset. where can I find it?
 
-Dan, Michael, can you please review the dax and virtio patches
-respectively and if there are no concerns, please provide ACK. Or
-suggest an alternative way of how these patches can be merged.
 
-Thanks
-Vivek
+IIUC all this is 5.10 material, right?
+
+
+> ---
+>  include/linux/virtio_config.h | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/include/linux/virtio_config.h b/include/linux/virtio_config.h
+> index bb4cc4910750..c859f000a751 100644
+> --- a/include/linux/virtio_config.h
+> +++ b/include/linux/virtio_config.h
+> @@ -10,6 +10,11 @@
+>  
+>  struct irq_affinity;
+>  
+> +struct virtio_shm_region {
+> +       u64 addr;
+> +       u64 len;
+> +};
+> +
+>  /**
+>   * virtio_config_ops - operations for configuring a virtio device
+>   * Note: Do not assume that a transport implements all of the operations
+> @@ -65,6 +70,7 @@ struct irq_affinity;
+>   *      the caller can then copy.
+>   * @set_vq_affinity: set the affinity for a virtqueue (optional).
+>   * @get_vq_affinity: get the affinity for a virtqueue (optional).
+> + * @get_shm_region: get a shared memory region based on the index.
+>   */
+>  typedef void vq_callback_t(struct virtqueue *);
+>  struct virtio_config_ops {
+> @@ -88,6 +94,8 @@ struct virtio_config_ops {
+>  			       const struct cpumask *cpu_mask);
+>  	const struct cpumask *(*get_vq_affinity)(struct virtio_device *vdev,
+>  			int index);
+> +	bool (*get_shm_region)(struct virtio_device *vdev,
+> +			       struct virtio_shm_region *region, u8 id);
+>  };
+>  
+>  /* If driver didn't advertise the feature, it will never appear. */
+> @@ -250,6 +258,15 @@ int virtqueue_set_affinity(struct virtqueue *vq, const struct cpumask *cpu_mask)
+>  	return 0;
+>  }
+>  
+> +static inline
+> +bool virtio_get_shm_region(struct virtio_device *vdev,
+> +                         struct virtio_shm_region *region, u8 id)
+> +{
+> +	if (!vdev->config->get_shm_region)
+> +		return false;
+> +	return vdev->config->get_shm_region(vdev, region, id);
+> +}
+> +
+>  static inline bool virtio_is_little_endian(struct virtio_device *vdev)
+>  {
+>  	return virtio_has_feature(vdev, VIRTIO_F_VERSION_1) ||
+> -- 
+> 2.25.4
 
