@@ -2,138 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF2BA2409FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 17:37:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 945DB240A67
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 17:41:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbgHJPhj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Aug 2020 11:37:39 -0400
-Received: from mail-il1-f198.google.com ([209.85.166.198]:57115 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728705AbgHJPhT (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Aug 2020 11:37:19 -0400
-Received: by mail-il1-f198.google.com with SMTP id x15so8046391ilg.23
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Aug 2020 08:37:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=vgKXH4WJ5mL8jBHkC4QRYXqac1PdnedowUxx7rlEsuM=;
-        b=acIW8b3GyqYNKmFOV4fhZBNYBuZOKfHVBSvUXTh7azd2xBKdfkaWBPuhRVZ4360mL9
-         0WpwhxwCQ/iPHZwsz95+szq1kRnt7dN5Hcw44bqUUgFtGx/Ia0z9lOQnGg4m1Fh6W0z5
-         gFJYA7qOxO6oxm1zV3CME7Vc7AWB/jO8ujxxcFo0n4QjtcFxaBCDZzMrtFwasL/VPCYX
-         8MhM6pCv7w7CY7y2tIogjwqB3sD+wk0p5CoQZ4hVH2Tcxx9wu1L4t5kOj7HMTd9WLkfD
-         y33MmO7JlCeg2ELGZ0Ap8Y10p4zEH2D0+TZXBzKt8h3P6pf/e/0pVszLIl/+3FWLs74Y
-         J30Q==
-X-Gm-Message-State: AOAM5310Cr7vxALjd4xpfOTIO18cCdKli5pvWunk6JUlun3d4nw9ELyd
-        qYXXuwUAzcOaD0NWG8RkrDm48z4fm+JGpZUPahDU4nJWvAsD
-X-Google-Smtp-Source: ABdhPJwD0PYJDlH/aA+YionM4F0yS0UeZ+HmBNJlwl9iWQ+7lRzbMHmYr6o24OoWR3/2wrpeUcHk4LmvarRQkZICd8vhhm4wa+T7
+        id S1728273AbgHJPl0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Aug 2020 11:41:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53242 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728489AbgHJPlW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 Aug 2020 11:41:22 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E123420774;
+        Mon, 10 Aug 2020 15:41:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597074081;
+        bh=/DZI2CFBXPZXY6W2D41iKfNlsWTLOnIsj8qhKNBhXyc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FnzRu9GImI9oEyDWHQAcntUlob1mf068CGlKWLj/oKXM7dkyIU9SLC12tkja3BnsT
+         n2FUkDjXa/QIF0ivhbsZFXgkn6CmJyJaK/GQhtEx1N6TZ8wpLHSU1No/9ZcbQWCnnD
+         vQwOK+h0ldJSALe1FJ9TNCb9dImTC6q9cE1JKX+I=
+Date:   Mon, 10 Aug 2020 17:41:32 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Eugene Lubarsky <elubarsky.linux@gmail.com>
+Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, adobriyan@gmail.com,
+        avagin@gmail.com, dsahern@gmail.com
+Subject: Re: [RFC PATCH 0/5] Introduce /proc/all/ to gather stats from all
+ processes
+Message-ID: <20200810154132.GA4171851@kroah.com>
+References: <20200810145852.9330-1-elubarsky.linux@gmail.com>
+ <20200810150453.GB3962761@kroah.com>
+ <20200811012700.2c349082@eug-lubuntu>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c7ae:: with SMTP id f14mr19137037ilk.39.1597073838340;
- Mon, 10 Aug 2020 08:37:18 -0700 (PDT)
-Date:   Mon, 10 Aug 2020 08:37:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d07f9605ac87ba9e@google.com>
-Subject: possible deadlock in io_queue_linked_timeout
-From:   syzbot <syzbot+d4586d3028284ff8a0be@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200811012700.2c349082@eug-lubuntu>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Aug 11, 2020 at 01:27:00AM +1000, Eugene Lubarsky wrote:
+> On Mon, 10 Aug 2020 17:04:53 +0200
+> Greg KH <gregkh@linuxfoundation.org> wrote:
+> > How many syscalls does this save on?
+> > 
+> > Perhaps you want my proposed readfile(2) syscall:
+> > 	https://lore.kernel.org/r/20200704140250.423345-1-gregkh@linuxfoundation.org
+> > to help out with things like this?  :)
+> 
+> The proposed readfile sounds great and would help, but if there are
+> 1000 processes wouldn't that require 1000 readfile calls to read their
+> proc files?
 
-syzbot found the following issue on:
+Yes, but that should be better than 1000 open, 1000 read, and then 1000
+close calls, right?  :)
 
-HEAD commit:    06a81c1c Merge tag 'arm64-fixes' of git://git.kernel.org/p..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13fbac1c900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf68a13f867fd1b4
-dashboard link: https://syzkaller.appspot.com/bug?extid=d4586d3028284ff8a0be
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1362024e900000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1672fd34900000
+> With something like this the stats for 1000 processes could be
+> retrieved with an open, a few reads and a close.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d4586d3028284ff8a0be@syzkaller.appspotmail.com
+And have you benchmarked any of this?  Try working with the common tools
+that want this information and see if it actually is noticeable (hint, I
+have been doing that with the readfile work and it's surprising what the
+results are in places...)
 
-============================================
-WARNING: possible recursive locking detected
-5.8.0-syzkaller #0 Not tainted
---------------------------------------------
-syz-executor880/6847 is trying to acquire lock:
-ffff8880a19214d8 (&ctx->completion_lock){....}-{2:2}, at: spin_lock_irq include/linux/spinlock.h:379 [inline]
-ffff8880a19214d8 (&ctx->completion_lock){....}-{2:2}, at: io_queue_linked_timeout+0x4c/0x200 fs/io_uring.c:5928
+> 
+> > 
+> > > The proposed files in this proof-of-concept patch set are:
+> > > 
+> > > * /proc/all/stat
+> > 
+> > I think the problem will be defining "all" in the case of the specific
+> > namespace you are dealing with, right?  How will this handle all of
+> > those issues properly for all of these different statisics?
+> > 
+> 
+> Currently I'm trying to re-use the existing code in fs/proc that
+> controls which PIDs are visible, but may well be missing something..
 
-but task is already holding lock:
-ffff8880a19214d8 (&ctx->completion_lock){....}-{2:2}, at: io_cqring_overflow_flush+0x814/0xaa0 fs/io_uring.c:1333
+Try it out and see if it works correctly.  And pid namespaces are not
+the only thing these days from what I call :)
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+thanks,
 
-       CPU0
-       ----
-  lock(&ctx->completion_lock);
-  lock(&ctx->completion_lock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-1 lock held by syz-executor880/6847:
- #0: ffff8880a19214d8 (&ctx->completion_lock){....}-{2:2}, at: io_cqring_overflow_flush+0x814/0xaa0 fs/io_uring.c:1333
-
-stack backtrace:
-CPU: 1 PID: 6847 Comm: syz-executor880 Not tainted 5.8.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x18f/0x20d lib/dump_stack.c:118
- print_deadlock_bug kernel/locking/lockdep.c:2391 [inline]
- check_deadlock kernel/locking/lockdep.c:2432 [inline]
- validate_chain kernel/locking/lockdep.c:3202 [inline]
- __lock_acquire.cold+0x115/0x396 kernel/locking/lockdep.c:4426
- lock_acquire+0x1f1/0xad0 kernel/locking/lockdep.c:5005
- __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
- _raw_spin_lock_irq+0x5b/0x80 kernel/locking/spinlock.c:167
- spin_lock_irq include/linux/spinlock.h:379 [inline]
- io_queue_linked_timeout+0x4c/0x200 fs/io_uring.c:5928
- __io_queue_async_work+0x1f8/0x4c0 fs/io_uring.c:1192
- __io_queue_deferred fs/io_uring.c:1237 [inline]
- io_commit_cqring+0x456/0x7a0 fs/io_uring.c:1265
- io_cqring_overflow_flush+0x5b8/0xaa0 fs/io_uring.c:1359
- io_ring_ctx_wait_and_kill+0x30e/0x600 fs/io_uring.c:7808
- io_uring_release+0x3e/0x50 fs/io_uring.c:7829
- __fput+0x285/0x920 fs/file_table.c:281
- task_work_run+0xdd/0x190 kernel/task_work.c:135
- exit_task_work include/linux/task_work.h:25 [inline]
- do_exit+0xb7d/0x29f0 kernel/exit.c:806
- do_group_exit+0x125/0x310 kernel/exit.c:903
- __do_sys_exit_group kernel/exit.c:914 [inline]
- __se_sys_exit_group kernel/exit.c:912 [inline]
- __x64_sys_exit_group+0x3a/0x50 kernel/exit.c:912
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x43f598
-Code: Bad RIP value.
-RSP: 002b:00007ffd3a4fbaa8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043f598
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00000000004beda8 R08: 00000000000000e7 R09: ffffffffffffffd0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00000000006d11a0 R14: 0000000000000000 R15: 0000000000000000
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+greg k-h
