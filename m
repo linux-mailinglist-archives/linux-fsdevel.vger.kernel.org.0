@@ -2,111 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 98A8D241361
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 00:47:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EECD024136E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 00:56:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbgHJWri (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Aug 2020 18:47:38 -0400
-Received: from smtp-190e.mail.infomaniak.ch ([185.125.25.14]:39725 "EHLO
-        smtp-190e.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726722AbgHJWri (ORCPT
+        id S1726949AbgHJW4I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Aug 2020 18:56:08 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:50413 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726775AbgHJW4H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Aug 2020 18:47:38 -0400
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BQWLw2sdNzlhVPK;
-        Tue, 11 Aug 2020 00:47:36 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4BQWLr3MG5zlh8TP;
-        Tue, 11 Aug 2020 00:47:32 +0200 (CEST)
-Subject: Re: [PATCH v7 0/7] Add support for O_MAYEXEC
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Laight <David.Laight@aculab.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <20200723171227.446711-1-mic@digikod.net>
- <202007241205.751EBE7@keescook>
- <0733fbed-cc73-027b-13c7-c368c2d67fb3@digikod.net>
- <20200810202123.GC1236603@ZenIV.linux.org.uk>
- <30b8c003f49d4280be5215f634ca2c06@AcuMS.aculab.com>
- <20200810222838.GF1236603@ZenIV.linux.org.uk>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <2531a0e8-5122-867c-ba06-5d2e623a3834@digikod.net>
-Date:   Tue, 11 Aug 2020 00:47:32 +0200
-User-Agent: 
+        Mon, 10 Aug 2020 18:56:07 -0400
+Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 8616D822D55;
+        Tue, 11 Aug 2020 08:56:02 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1k5Gi1-00085Z-FF; Tue, 11 Aug 2020 08:56:01 +1000
+Date:   Tue, 11 Aug 2020 08:56:01 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Matthew Wilcox <willy@infradead.org>, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH 05/15] mm: allow read-ahead with IOCB_NOWAIT set
+Message-ID: <20200810225601.GE2079@dread.disaster.area>
+References: <20200618144355.17324-1-axboe@kernel.dk>
+ <20200618144355.17324-6-axboe@kernel.dk>
+ <20200624010253.GB5369@dread.disaster.area>
+ <20200624014645.GJ21350@casper.infradead.org>
+ <bad52be9-ae44-171b-8dbf-0d98eedcadc0@kernel.dk>
+ <70b0427c-7303-8f45-48bd-caa0562a2951@kernel.dk>
+ <20200624164127.GP21350@casper.infradead.org>
+ <8835b6f2-b3c5-c9a0-2119-1fb161cf87dd@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <20200810222838.GF1236603@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8835b6f2-b3c5-c9a0-2119-1fb161cf87dd@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=QKgWuTDL c=1 sm=1 tr=0
+        a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
+        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8
+        a=eRodIBkOSM2l2XYf1zsA:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 11/08/2020 00:28, Al Viro wrote:
-> On Mon, Aug 10, 2020 at 10:09:09PM +0000, David Laight wrote:
->>> On Mon, Aug 10, 2020 at 10:11:53PM +0200, Mickaël Salaün wrote:
->>>> It seems that there is no more complains nor questions. Do you want me
->>>> to send another series to fix the order of the S-o-b in patch 7?
->>>
->>> There is a major question regarding the API design and the choice of
->>> hooking that stuff on open().  And I have not heard anything resembling
->>> a coherent answer.
->>
->> To me O_MAYEXEC is just the wrong name.
->> The bit would be (something like) O_INTERPRET to indicate
->> what you want to do with the contents.
-
-The properties is "execute permission". This can then be checked by
-interpreters or other applications, then the generic O_MAYEXEC name.
-
+On Wed, Jun 24, 2020 at 10:44:21AM -0600, Jens Axboe wrote:
+> On 6/24/20 10:41 AM, Matthew Wilcox wrote:
+> > On Wed, Jun 24, 2020 at 09:35:19AM -0600, Jens Axboe wrote:
+> >> On 6/24/20 9:00 AM, Jens Axboe wrote:
+> >>> On 6/23/20 7:46 PM, Matthew Wilcox wrote:
+> >>>> I'd be quite happy to add a gfp_t to struct readahead_control.
+> >>>> The other thing I've been looking into for other reasons is adding
+> >>>> a memalloc_nowait_{save,restore}, which would avoid passing down
+> >>>> the gfp_t.
+> >>>
+> >>> That was my first thought, having the memalloc_foo_save/restore for
+> >>> this. I don't think adding a gfp_t to readahead_control is going
+> >>> to be super useful, seems like the kind of thing that should be
+> >>> non-blocking by default.
+> >>
+> >> We're already doing memalloc_nofs_save/restore in
+> >> page_cache_readahead_unbounded(), so I think all we need is to just do a
+> >> noio dance in generic_file_buffered_read() and that should be enough.
+> > 
+> > I think we can still sleep though, right?  I was thinking more
+> > like this:
+> > 
+> > http://git.infradead.org/users/willy/linux.git/shortlog/refs/heads/memalloc
 > 
-> ... which does not answer the question - name of constant is the least of
-> the worries here.  Why the hell is "apply some unspecified checks to
-> file" combined with opening it, rather than being an independent primitive
-> you apply to an already opened file?  Just in case - "'cuz that's how we'd
-> done it" does not make a good answer...
-> 
+> Yeah, that's probably better. How do we want to handle this? I've already
+> got the other bits queued up. I can either add them to the series, or
+> pull a branch that'll go into Linus as well.
 
-That is not the case, see
-https://lore.kernel.org/lkml/917bb071-8b1a-3ba4-dc16-f8d7b4cc849f@digikod.net/
+Jens, Willy,
+
+Now that this patch has been merged and IOCB_NOWAIT semantics ifor
+buffered reads are broken in Linus' tree, what's the plan to get
+this regression fixed before 5.9 releases?
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
