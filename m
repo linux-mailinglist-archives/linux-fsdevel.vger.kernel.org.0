@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BC9D240808
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 16:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11394240806
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 16:59:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbgHJO7T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Aug 2020 10:59:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59966 "EHLO
+        id S1727800AbgHJO7W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Aug 2020 10:59:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727123AbgHJO7K (ORCPT
+        with ESMTP id S1727789AbgHJO7P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Aug 2020 10:59:10 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44E5DC061756;
-        Mon, 10 Aug 2020 07:59:10 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id u20so5527252pfn.0;
-        Mon, 10 Aug 2020 07:59:10 -0700 (PDT)
+        Mon, 10 Aug 2020 10:59:15 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FE24C061787;
+        Mon, 10 Aug 2020 07:59:13 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id t10so5006804plz.10;
+        Mon, 10 Aug 2020 07:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Cha7rnpRi4xpgmDPF7CsOih8am/jsjcB9lLAioEKTb0=;
-        b=m+7zEMrCxnOsC5MPGuxT74CMpXZuPQWPmkQVqiLheycGqhlGH8oQga5z7vS2SaU7QY
-         D2Qzuensekq1rbTUBI7WmvlC+dLL4OX8/n6Lhq0VqhbtWRY6Pl2pxA5tX+n2DxRlHrjT
-         xV6nDFcRP1+ilSfclFpZ+tPtMyUuNfDTn0f9P0qqXi7eEf+Tby/kxmwU3JGZZV9uLV57
-         a6LdKyDmMULgOCJ8vzozktQjUkdI8sboYmAMWUob2V4s+QZW8qNqVbsvpiyBuxLJt6K9
-         KQjsEefcu1Rlr6rKIt5V8TzmVKTJU+ybrBrJonjr62hTdWWWhi04OMLswn6jdotS3u2h
-         Eibg==
+        bh=K9ANqD1SHthCWhjAN+oUkgPbsB9QxwwtNBqjFnceaq8=;
+        b=g+tH9zFTraAvqoYMnKdnrb7hRM0x6oGDZ9FV2iYf31Fn4qA7UVi9xR8djova0Sh1W2
+         02Q6zpC5GlKAw5+CLMgM1xTSmCXEy/3jynABl4DoqPT1qDGu6FAGwJqgjLTpXM7kIXj5
+         eMoGKsLmQnmRoQMG8rM+/Dc5ke7QJtamjx38XFBBUJ+iNQosVIFPKZdT0i50uAFFUbeN
+         YYJaRyega+Vt1Mohi0DtO1WU4SdlbUvtdscxCbRg1M0r+uKjPp9xrL1HkDpr24791Qo2
+         mT43G1ewfcIyN5zf0oAhM85vX1gY8LM1yPL/7jFhu5RY+p4Jjt2plhyaxFhukoOXkZF4
+         19eQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Cha7rnpRi4xpgmDPF7CsOih8am/jsjcB9lLAioEKTb0=;
-        b=dduVOj3i+0XQOyenoGNV9pUmpBqIu+0dhBuJ8axCrEugHaxds3l0VXK2ylZIw4xjOF
-         W7QxDtN6X6IoncP8+hlNlxthuX7hsf+tCukzEQ9b0wmtT7RfaKifkuWR46EVtnCFa+lD
-         CLDz6GpxXKGx6scbfGHcMBcS5zD/78ekpg5jk0pfw1vQtMoSRgG/7dJnsgAtAwWp8J11
-         DRKbfmzGOVfOVac28/iczzxPd+uWKoEraDVRwQPXs6y+0BdyLDoMXntKQn+EUZEFN5Q1
-         2DuoaZ1mIEQpMKDsnF6P7y6K6033W5Iuv65SzrD+V3PFEN2yMhrFyxMSXFeC+na9ExD4
-         uEqg==
-X-Gm-Message-State: AOAM533YVl63Vuc1/ETVZcfQtvLdvQfgNtvqUtWeEbVgmd3j7XS6EOyn
-        qtGDHVlWiiZg0SJ2Kpu/c2XfTXu8uUk=
-X-Google-Smtp-Source: ABdhPJwyxBHCJCppYNb7kqBboZFk0vxRlQinVRMMd6rHHY87o7D0qdVNYm/yv98gngKpHYLG2Y7IYA==
-X-Received: by 2002:a63:4c5f:: with SMTP id m31mr18445720pgl.403.1597071549666;
-        Mon, 10 Aug 2020 07:59:09 -0700 (PDT)
+        bh=K9ANqD1SHthCWhjAN+oUkgPbsB9QxwwtNBqjFnceaq8=;
+        b=A3fwVxJFoUZX8YGMZFpaK9K/J1H+voLMjv7e4TvWMqCKnLyuwiSbQ9kKJ+/pIHgj7Y
+         ut3AK64hgGIfJjDp5E6HVzCf2/IbM2FnTAJ2efOfPO4dBW5KSN5UhwpxPNBidiwUZ838
+         RwTSKdQ+PWS5VmcC5znt+MVHZhSU9xWLPPoa3YPjFQ8oyHdpHDTOte9g7xmS2J8Z4ZIp
+         BIh7PkFAHmwpQogu9EeyiKbzOHpJF/cJQaqaFOIw6SkxyQc6qjfieJ0Q7KUDlPNUGcxz
+         ntgt5/kn518MxoQtHWoHvv0NTLQmC79BQJHoQBeWlt1OuodbBnmLZK+O+AJPxkuozLIF
+         TDCQ==
+X-Gm-Message-State: AOAM533JzGRzzIb/T3f5/2RrHLGIsmeU+/wKU9OUje/Ilx6C70O3toQL
+        1qoNwpWFlYXmXJGmS8yc/vVpToMHS8Y=
+X-Google-Smtp-Source: ABdhPJyG1x70qGUPKTM3nyeJWwLc0QtgduyTRoBs995n1XWXNoigT0mWbpM2bEuLwWO9rF8ZpGX1YA==
+X-Received: by 2002:a17:90a:640b:: with SMTP id g11mr14898731pjj.176.1597071552501;
+        Mon, 10 Aug 2020 07:59:12 -0700 (PDT)
 Received: from localhost.localdomain ([124.170.227.101])
-        by smtp.gmail.com with ESMTPSA id o192sm25631162pfg.81.2020.08.10.07.59.07
+        by smtp.gmail.com with ESMTPSA id o192sm25631162pfg.81.2020.08.10.07.59.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Aug 2020 07:59:09 -0700 (PDT)
+        Mon, 10 Aug 2020 07:59:12 -0700 (PDT)
 From:   Eugene Lubarsky <elubarsky.linux@gmail.com>
 To:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, adobriyan@gmail.com,
         avagin@gmail.com, dsahern@gmail.com
-Subject: [RFC PATCH 4/5] fs/proc: Introduce /proc/all/io
-Date:   Tue, 11 Aug 2020 00:58:51 +1000
-Message-Id: <20200810145852.9330-5-elubarsky.linux@gmail.com>
+Subject: [RFC PATCH 5/5] fs/proc: Introduce /proc/all/statx
+Date:   Tue, 11 Aug 2020 00:58:52 +1000
+Message-Id: <20200810145852.9330-6-elubarsky.linux@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200810145852.9330-1-elubarsky.linux@gmail.com>
 References: <20200810145852.9330-1-elubarsky.linux@gmail.com>
@@ -65,133 +65,79 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Returns io info for all visible processes.
+Gathers info from stat, statm and io files.
 
-The data is the same as /proc/[pid]/io but formatted as a series
-of numbers on a single line. A PID column is also prepended.
+The purpose is not so much to reduce syscall numbers but to help
+userspace not have to store data in e.g. hashtables in order to
+gather it from separate /proc/all files.
+
+The format starts with an unchanged stat line and begins the
+statm & io lines with "m" or "io", repeating these for each process.
+
+e.g.
+...
+25 (cat) R 1 1 0 0 -1 4194304 185 0 16 0 2 0 0 0 20 ...
+m 662 188 167 5 0 112 0
+io 4292 0 12 0 0 0 0
+...
 
 Signed-off-by: Eugene Lubarsky <elubarsky.linux@gmail.com>
 ---
- fs/proc/base.c | 66 ++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 59 insertions(+), 7 deletions(-)
+ fs/proc/base.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
 diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 5982fd43dd21..03d48225b6d1 100644
+index 03d48225b6d1..5c6010c2ea1c 100644
 --- a/fs/proc/base.c
 +++ b/fs/proc/base.c
-@@ -2910,9 +2910,8 @@ static const struct file_operations proc_coredump_filter_operations = {
+@@ -3944,6 +3944,31 @@ static int proc_all_io(struct seq_file *m, void *v)
+ }
  #endif
  
- #ifdef CONFIG_TASK_IO_ACCOUNTING
--static int do_io_accounting(struct task_struct *task, struct seq_file *m, int whole)
-+static int calc_io_accounting(struct task_struct *task, struct task_io_accounting *acct, int whole)
- {
--	struct task_io_accounting acct = task->ioac;
- 	unsigned long flags;
- 	int result;
- 
-@@ -2928,12 +2927,27 @@ static int do_io_accounting(struct task_struct *task, struct seq_file *m, int wh
- 	if (whole && lock_task_sighand(task, &flags)) {
- 		struct task_struct *t = task;
- 
--		task_io_accounting_add(&acct, &task->signal->ioac);
-+		task_io_accounting_add(acct, &task->signal->ioac);
- 		while_each_thread(task, t)
--			task_io_accounting_add(&acct, &t->ioac);
-+			task_io_accounting_add(acct, &t->ioac);
- 
- 		unlock_task_sighand(task, &flags);
- 	}
-+	result = 0;
-+
-+out_unlock:
-+	mutex_unlock(&task->signal->exec_update_mutex);
-+	return result;
-+}
-+static int do_io_accounting(struct task_struct *task, struct seq_file *m, int whole)
-+{
-+	struct task_io_accounting acct = task->ioac;
-+	int result;
-+
-+	result = calc_io_accounting(task, &acct, whole);
-+	if (result)
-+		return result;
-+
- 	seq_printf(m,
- 		   "rchar: %llu\n"
- 		   "wchar: %llu\n"
-@@ -2949,10 +2963,7 @@ static int do_io_accounting(struct task_struct *task, struct seq_file *m, int wh
- 		   (unsigned long long)acct.read_bytes,
- 		   (unsigned long long)acct.write_bytes,
- 		   (unsigned long long)acct.cancelled_write_bytes);
--	result = 0;
- 
--out_unlock:
--	mutex_unlock(&task->signal->exec_update_mutex);
- 	return result;
- }
- 
-@@ -3896,7 +3907,42 @@ static int proc_all_statm(struct seq_file *m, void *v)
- 	return proc_pid_statm(m, ns, pid, task);
- }
- 
-+#ifdef CONFIG_TASK_IO_ACCOUNTING
-+static int proc_all_io_print_one(struct seq_file *m, struct task_struct *task)
-+{
-+	struct task_io_accounting acct = task->ioac;
-+	int result;
- 
-+	result = calc_io_accounting(task, &acct, 1);
-+	if (result)
-+		return result;
-+
-+	seq_printf(m,
-+		   "%llu %llu %llu %llu %llu %llu %llu\n",
-+		   (unsigned long long)acct.rchar,
-+		   (unsigned long long)acct.wchar,
-+		   (unsigned long long)acct.syscr,
-+		   (unsigned long long)acct.syscw,
-+		   (unsigned long long)acct.read_bytes,
-+		   (unsigned long long)acct.write_bytes,
-+		   (unsigned long long)acct.cancelled_write_bytes);
-+
-+	return result;
-+}
-+
-+static int proc_all_io(struct seq_file *m, void *v)
++static int proc_all_statx(struct seq_file *m, void *v)
 +{
 +	struct all_iter *iter = (struct all_iter *) v;
 +	struct pid_namespace *ns = iter->ns;
++	struct pid *pid = iter->tgid_iter.task->thread_pid;
 +	struct task_struct *task = iter->tgid_iter.task;
-+	struct pid *pid = task->thread_pid;
++	int err;
 +
-+	seq_put_decimal_ull(m, "", pid_nr_ns(pid, ns));
-+	seq_puts(m, " ");
++	err = proc_tgid_stat(m, ns, pid, task);
++	if (err)
++		return err;
 +
-+	return proc_all_io_print_one(m, task);
-+}
++	seq_puts(m, "m ");
++	err = proc_pid_statm(m, ns, pid, task);
++	if (err)
++		return err;
++
++#ifdef CONFIG_TASK_IO_ACCOUNTING
++	seq_puts(m, "io ");
++	err = proc_all_io_print_one(m, task);
 +#endif
- 
++
++	return err;
++}
++
  static int proc_all_status(struct seq_file *m, void *v)
  {
-@@ -3915,6 +3961,9 @@ static int proc_all_status(struct seq_file *m, void *v)
+ 	struct all_iter *iter = (struct all_iter *) v;
+@@ -3960,6 +3985,7 @@ static int proc_all_status(struct seq_file *m, void *v)
+ 
  PROC_ALL_OPS(stat);
  PROC_ALL_OPS(statm);
++PROC_ALL_OPS(statx);
  PROC_ALL_OPS(status);
-+#ifdef CONFIG_TASK_IO_ACCOUNTING
-+	PROC_ALL_OPS(io);
-+#endif
+ #ifdef CONFIG_TASK_IO_ACCOUNTING
+ 	PROC_ALL_OPS(io);
+@@ -3980,6 +4006,7 @@ void __init proc_all_init(void)
  
- #define PROC_ALL_CREATE(NAME) \
- 	do { \
-@@ -3932,4 +3981,7 @@ void __init proc_all_init(void)
  	PROC_ALL_CREATE(stat);
  	PROC_ALL_CREATE(statm);
++	PROC_ALL_CREATE(statx);
  	PROC_ALL_CREATE(status);
-+#ifdef CONFIG_TASK_IO_ACCOUNTING
-+	PROC_ALL_CREATE(io);
-+#endif
- }
+ #ifdef CONFIG_TASK_IO_ACCOUNTING
+ 	PROC_ALL_CREATE(io);
 -- 
 2.25.1
 
