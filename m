@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65EF32409C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 17:36:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2927824096C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 17:33:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729071AbgHJPfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Aug 2020 11:35:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33944 "EHLO mail.kernel.org"
+        id S1729208AbgHJPbj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Aug 2020 11:31:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728106AbgHJP14 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Aug 2020 11:27:56 -0400
+        id S1729205AbgHJPb1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 10 Aug 2020 11:31:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 153DC22CF7;
-        Mon, 10 Aug 2020 15:27:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69F45207FF;
+        Mon, 10 Aug 2020 15:31:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597073275;
-        bh=eFV6/1DVxbuvKgaNF9KshFIO2aypYMCe3MCJB+UeSnk=;
+        s=default; t=1597073486;
+        bh=VmtNeDwcA6stexLMf4wzZ7iMfns6+tPogp0ojJ3LmcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nxuv4+tVlj30SIrW9JNRWUYqwUDfZXN3PAkSGLGudHo7d+DmyFpL5jt2jaGSa2uo0
-         BppYIxFSZCA9N18YtaqjmyEKFtMiRWPr420mQoGFUAc2aGqBXcTE7Wqmb1tblf5qDL
-         0sO71FW7ulY03DEdmuNNRfFtM5yVNtDDeKAJe/l4=
+        b=VSUvT82kNAh1gs+D1ExWItsuMtv7AOHGMxQojqJshRUqTzM4KdBtf59IAKTSHHPI1
+         xsiJp6QmsW28Zhusf0tpUnn6p1h+EPKSCs6rTlFIG/HPZ0SDbGDWjnYnTva1X0LEZY
+         Z/BRiKWYrF22F5xabr4ziaR+ptfWuVHPIaMJL24I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Frank van der Linden <fllinden@amazon.com>,
         Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH 5.4 47/67] xattr: break delegations in {set,remove}xattr
-Date:   Mon, 10 Aug 2020 17:21:34 +0200
-Message-Id: <20200810151811.758822254@linuxfoundation.org>
+Subject: [PATCH 4.19 31/48] xattr: break delegations in {set,remove}xattr
+Date:   Mon, 10 Aug 2020 17:21:53 +0200
+Message-Id: <20200810151805.747153401@linuxfoundation.org>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200810151809.438685785@linuxfoundation.org>
-References: <20200810151809.438685785@linuxfoundation.org>
+In-Reply-To: <20200810151804.199494191@linuxfoundation.org>
+References: <20200810151804.199494191@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -70,7 +70,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/fs/xattr.c
 +++ b/fs/xattr.c
-@@ -204,10 +204,22 @@ int __vfs_setxattr_noperm(struct dentry
+@@ -203,10 +203,22 @@ int __vfs_setxattr_noperm(struct dentry
  	return error;
  }
  
@@ -96,7 +96,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  {
  	struct inode *inode = dentry->d_inode;
  	int error;
-@@ -216,15 +228,40 @@ vfs_setxattr(struct dentry *dentry, cons
+@@ -215,15 +227,40 @@ vfs_setxattr(struct dentry *dentry, cons
  	if (error)
  		return error;
  
@@ -138,7 +138,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	return error;
  }
  EXPORT_SYMBOL_GPL(vfs_setxattr);
-@@ -378,8 +415,18 @@ __vfs_removexattr(struct dentry *dentry,
+@@ -377,8 +414,18 @@ __vfs_removexattr(struct dentry *dentry,
  }
  EXPORT_SYMBOL(__vfs_removexattr);
  
@@ -158,7 +158,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  {
  	struct inode *inode = dentry->d_inode;
  	int error;
-@@ -388,11 +435,14 @@ vfs_removexattr(struct dentry *dentry, c
+@@ -387,11 +434,14 @@ vfs_removexattr(struct dentry *dentry, c
  	if (error)
  		return error;
  
@@ -174,7 +174,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	error = __vfs_removexattr(dentry, name);
  
  	if (!error) {
-@@ -401,12 +451,32 @@ vfs_removexattr(struct dentry *dentry, c
+@@ -400,12 +450,32 @@ vfs_removexattr(struct dentry *dentry, c
  	}
  
  out:
