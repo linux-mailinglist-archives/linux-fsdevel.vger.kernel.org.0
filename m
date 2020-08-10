@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 48CDF2401E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 08:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81E072401F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 08:19:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbgHJGNe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Aug 2020 02:13:34 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:35408 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725849AbgHJGNd (ORCPT
+        id S1726173AbgHJGTV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Aug 2020 02:19:21 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:26464 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbgHJGTV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Aug 2020 02:13:33 -0400
+        Mon, 10 Aug 2020 02:19:21 -0400
 Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200810061330epoutp02a09b9a929bd069b1224388ac93cf7a53~p022J2EKz3269932699epoutp02D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Aug 2020 06:13:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200810061330epoutp02a09b9a929bd069b1224388ac93cf7a53~p022J2EKz3269932699epoutp02D
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200810061917epoutp04f3287d1d3da8fcc55c448a692aed1b08~p075gvY7v0109901099epoutp04S
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Aug 2020 06:19:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200810061917epoutp04f3287d1d3da8fcc55c448a692aed1b08~p075gvY7v0109901099epoutp04S
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1597040010;
-        bh=sVPhD786G5RSI7VpSeDq+N2HMw4cX49OUlz/9umjFjw=;
+        s=mail20170921; t=1597040357;
+        bh=pl/vEqyNjLEKOCD7oTujFun7nuCZY4kYMueXZFaegQM=;
         h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=lKxda/VVZm69bBvS+0PXCpFC6QMp9K14RMAv80svDKfNetHV9aveXQ/2Y8xLBLYJn
-         /ZgbfFddBHUmrdtO0Jfo03IKnC8WYtV0d+POZ3Vp/sy56yFyLUWR+efm6WDEwEHycs
-         xFDy/PtxvoNt446/fwMiyzvyUgJBLf2z5fUp5YFs=
+        b=pB3dJ4AQ20Hqfnu6Cc3OczED5hJxKv/71DBb1Fa/i58gZEfSjQ4DlK6MNuFvRGbEt
+         ldBy38dhGMd2wGdzwpELZeOLjjZs0gU8L/CxnnqOL+45LE9+VKSsVOlrJyXmjCMYV7
+         j+vz3RU3JS6mW+0AElDQsx9PXLJhZZhPw9ROXMPQ=
 Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200810061330epcas1p1ff04f76adca509aafc6566661b5cf6dc~p0214tUPv2157521575epcas1p1P;
-        Mon, 10 Aug 2020 06:13:30 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.164]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4BQ5Hs2WwFzMqYkk; Mon, 10 Aug
-        2020 06:13:29 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        01.86.19033.685E03F5; Mon, 10 Aug 2020 15:13:26 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20200810061326epcas1p45c82807cc8d4a0b90c28160caa566812~p02yN7dAk0090500905epcas1p4t;
-        Mon, 10 Aug 2020 06:13:26 +0000 (GMT)
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200810061917epcas1p48d74d72d3de45310ea8076bf1de9ceb0~p075OLRDW1771417714epcas1p4B;
+        Mon, 10 Aug 2020 06:19:17 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.162]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4BQ5QX1rGrzMqYkt; Mon, 10 Aug
+        2020 06:19:16 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CD.AE.29173.4E6E03F5; Mon, 10 Aug 2020 15:19:16 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200810061915epcas1p167bead5d44e5038f0ba5c7cc472f2ba4~p07386pIy1084210842epcas1p1I;
+        Mon, 10 Aug 2020 06:19:15 +0000 (GMT)
 Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200810061326epsmtrp2af80ad4670f3934966e3c7a40b3bee42~p02yNVGWN1918219182epsmtrp2d;
-        Mon, 10 Aug 2020 06:13:26 +0000 (GMT)
-X-AuditID: b6c32a36-159ff70000004a59-2b-5f30e586b39e
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200810061915epsmtrp16003c7318a60fa7d5ca4e502567e5676~p0738LOLe0465504655epsmtrp1r;
+        Mon, 10 Aug 2020 06:19:15 +0000 (GMT)
+X-AuditID: b6c32a37-9cdff700000071f5-f4-5f30e6e454a2
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
         epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        30.2E.08382.585E03F5; Mon, 10 Aug 2020 15:13:25 +0900 (KST)
+        0A.EE.08382.3E6E03F5; Mon, 10 Aug 2020 15:19:15 +0900 (KST)
 Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20200810061325epsmtip2e233ecb93e63bc89904320f22fc277e7~p02yBDhmj1343413434epsmtip2J;
-        Mon, 10 Aug 2020 06:13:25 +0000 (GMT)
+        20200810061915epsmtip2262d7bb9731e5b5216cfa16f58d71e42~p073zuWOI1954919549epsmtip2Y;
+        Mon, 10 Aug 2020 06:19:15 +0000 (GMT)
 From:   "Namjae Jeon" <namjae.jeon@samsung.com>
 To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
 Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
@@ -56,123 +56,139 @@ Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
         <motai.hirotaka@aj.mitsubishielectric.co.jp>,
         "'Sungjong Seo'" <sj1557.seo@samsung.com>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200806055653.9329-1-kohada.t2@gmail.com>
-Subject: RE: [PATCH 1/2] exfat: add NameLength check when extracting name
-Date:   Mon, 10 Aug 2020 15:13:25 +0900
-Message-ID: <003d01d66edd$5baf4810$130dd830$@samsung.com>
+In-Reply-To: <20200807073049.24959-1-kohada.t2@gmail.com>
+Subject: RE: [PATCH 1/2] exfat: add dir-entry set checksum validation
+Date:   Mon, 10 Aug 2020 15:19:15 +0900
+Message-ID: <003e01d66ede$2c2fe620$848fb260$@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGPHLM6XNMdYK+OwXwRZrdCO4AVLgGp1IjqqbIx7ZA=
+Thread-Index: AQLsnZ32wlxHCUqEzWOkR1uvxcSCrQHsAWFWpvUfkPA=
 Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmnm7bU4N4g3cnDS1+zL3NYvHm5FQW
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmge6TZwbxBofWc1v8mHubxeLNyaks
+        Fnv2nmSxuLxrDpvF5f+fWCyWfZnMYrHl3xFWB3aPL3OOs3u0Tf7H7tF8bCWbx85Zd9k9+ras
+        YvT4vEkugC0qxyYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DX
+        LTMH6BYlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToGhQYFecWJucWleul5yfq6V
+        oYGBkSlQZUJOxtLnbgV/RCsmz+5nbWB8LtjFyMkhIWAiceLDNLYuRi4OIYEdjBJntrSzgiSE
+        BD4xSjy/VwSR+MYocWPuK2aYjul/j7JDJPYCJRZsZ4FwXjJK/H7ygQWkik1AV+Lfn/1sILaI
+        gJ7EyZPXwXYwCzQySSw/8QVsFKeApcSW+bPB9gkLuErcu7cFrJlFQFVi3+ErjCA2L1DNlEmP
+        mSFsQYmTM5+A1TALyEtsfzsH6iQFiZ9PlwHN4QBaZiXxdYIiRImIxOzONmaQvRICCzkkZnVN
+        hap3kei4fZcJwhaWeHV8CzuELSXxsr+NHWSOhEC1xMf9UOUdjBIvvttC2MYSN9dvAFvFLKAp
+        sX6XPkRYUWLn77mMEGv5JN597WGFmMIr0dEmBFGiKtF36TDUUmmJrvYP7BMYlWYh+WsWkr9m
+        IXlgFsKyBYwsqxjFUguKc9NTiw0LjJGjehMjOJVqme9gnPb2g94hRiYOxkOMEhzMSiK8dnf1
+        44V4UxIrq1KL8uOLSnNSiw8xmgJDeiKzlGhyPjCZ55XEG5oaGRsbW5iYmZuZGiuJ8z68pRAv
+        JJCeWJKanZpakFoE08fEwSnVwDQ9WyLzfFmNdd+ckLXz7Zatm+riwXNi7YSMOAuvpPbUxyeu
+        n/9dzud5ZOfMpbN3bw7z2bqgZG7M2U5r9SmuglWXNa8wP2H81+JkGKOh+7qCg/sk2y2huNov
+        7RuE97p/dzvIUZc36Vfi8w889fGnu48dnzyr+P5Tu+qE2nX6/o4vJ4X+Svf5rBrGvVXhZ7ZN
+        yZ9plUf4BMJer5jIL8Hf2XBIdq322qS6w1czNqwWrUrIu8GynFsmRyv/Zn9Y47384x7Rc+ax
+        aleb/2Hb1t6XIiYjf/iGZuMBFZFfJnxbWKbqX5a4nvBoYUbg3YZs/jlav7ddjpSprv9Z6n7a
+        2f+uTccytvWpKzPOJOv2eeyMVWIpzkg01GIuKk4EAOsYJT0uBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplkeLIzCtJLcpLzFFi42LZdlhJXvfxM4N4gwO/9Cx+zL3NYvHm5FQW
         iz17T7JYXN41h83i8v9PLBbLvkxmsdjy7wirA7vHlznH2T3aJv9j92g+tpLNY+esu+wefVtW
-        MXp83iQXwBaVY5ORmpiSWqSQmpecn5KZl26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6Dr
-        lpkDdIuSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4xFYptSAlp8DQoECvODG3uDQvXS85P9fK
-        0MDAyBSoMiEnY8vmn4wFf4Qqmq/uZm9gXM3fxcjJISFgIvFh4TOmLkYuDiGBHYwS1zomMkM4
-        nxgllj5cwgLhfGOU6Pl8ma2LkQOs5eghL4j4XkaJWV962SGcl4wSS77+ZAeZyyagK/Hvz342
-        EFtEQE/i5MnrbCBFzAKNTBLLT3xhBklwClhI/PmzjRXEFhbwlNjWOhnMZhFQlVi84hITiM0r
-        YClxcdd3KFtQ4uTMJywgNrOAvMT2t3OYIZ5QkPj5dBkryHUiAlYS6w6VQJSISMzubAN7R0Jg
-        IYdE4/r5LBAfuEjsf2YB0Sos8er4FnYIW0ri87u9UE9WS3zcDzW9g1HixXdbCNtY4ub6DWCb
-        mAU0Jdbv0ocIK0rs/D2XEWIrn8S7rz2sEFN4JTrahCBKVCX6Lh1mgrClJbraP7BPYFSaheSt
-        WUjemoXk/lkIyxYwsqxiFEstKM5NTy02LDBCjupNjOBUqmW2g3HS2w96hxiZOBgPMUpwMCuJ
-        8Nrd1Y8X4k1JrKxKLcqPLyrNSS0+xGgKDOiJzFKiyfnAZJ5XEm9oamRsbGxhYmZuZmqsJM77
-        8JZCvJBAemJJanZqakFqEUwfEwenVAPT0k1PhQ33eV1d8uaVcGDyLcWlC9Ijmk7PKFy4c+LD
-        v8xs6aK2lvk2gpOkv2z1rP+Y5aosVtG8qa/60ksTY9H+XdMaj65+cL5onbeq/Ofap5OTrdQf
-        9S1nWK9uuKQ9gDFsjn9W7bXNzwQtd0aHPpL26Ei0nBm959A7zpkBv2Tf6dczLrxdUXtQVjdt
-        Pj9v5Kd7FXe/Sjn/+2lSXGil/iV03QNb6WDxPct7yjfZMVq7OBXWGhzdxJsa/GaLX/Tb5OuN
-        Z+etjitxne5mzzw77nLzg3xb4bv7EpmSTIXMzVZEm6pGf+W/Ple5XUmcrzNc0ujh7mDB9pCu
-        g4bf7mVs6028YWHndtTljusBOfvdzUosxRmJhlrMRcWJAK12MoMuBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplkeLIzCtJLcpLzFFi42LZdlhJXrf1qUG8wbGLVhY/5t5msXhzciqL
-        xZ69J1ksLu+aw2Zx+f8nFotlXyazWGz5d4TVgd3jy5zj7B5tk/+xezQfW8nmsXPWXXaPvi2r
-        GD0+b5ILYIvisklJzcksSy3St0vgytiy+SdjwR+hiuaru9kbGFfzdzFycEgImEgcPeTVxcjF
-        ISSwm1GiYc579i5GTqC4tMSxE2eYIWqEJQ4fLoaoec4oce7nRCaQGjYBXYl/f/azgdgiAnoS
-        J09eZwMpYhZoZpL49mwJM0RHJ6PEgqYusCpOAQuJP3+2sYLYwgKeEttaJ4PZLAKqEotXXAKb
-        yitgKXFx13coW1Di5MwnLCBXMANtaNvICBJmFpCX2P52DjPEoQoSP58uYwUpERGwklh3qASi
-        RERidmcb8wRG4VlIBs1CGDQLyaBZSDoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P
-        3cQIjiktzR2M21d90DvEyMTBeIhRgoNZSYTX7q5+vBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXHe
-        G4UL44QE0hNLUrNTUwtSi2CyTBycUg1MHZ6z7zk8WXdoqYKDEEvXrxMvFGc9Y/UPuMNgWVG5
-        z6h+hsTiS35Tr/cnVCxW1gn3c9GV3uH+7pHdc6fm6ijj/0LdmRs/LGXbHP3fKvJkgMSB94Zh
-        wrxyk65q3X3Re+1e0s2NpevfPF7qL1lstSjoE+fSEnfj3s5vDF3v280uaefYvA6QCNOTC3b+
-        1nF+Ts/P+TNFDs/zW1jxpHHTtTJLrYOH1bb0trdc4m0WlPn6xtOg5i2726On3Rdl/WuFl/My
-        7Tv/nePW/PKQduEd9643dZtfiZ3cKOvSo+B25Jf/vRs3IuUNbXuvzXpip9aT1araUrDA7tN+
-        e7Pbyoo/39jeEhYrWrO+Ml1+9s2PZs5KLMUZiYZazEXFiQD0VPqlGAMAAA==
-X-CMS-MailID: 20200810061326epcas1p45c82807cc8d4a0b90c28160caa566812
+        MXp83iQXwBbFZZOSmpNZllqkb5fAlbH0uVvBH9GKybP7WRsYnwt2MXJySAiYSEz/e5S9i5GL
+        Q0hgN6PEps13mCES0hLHTpwBsjmAbGGJw4eLIWqeM0p8aL/GAlLDJqAr8e/PfjYQW0RAT+Lk
+        yetsIEXMAs1MEt+eLWGG6OhilHhwupkVpIpTwFJiy/zZYLawgKvEvXtbwCaxCKhK7Dt8hRHE
+        5gWqmTLpMTOELShxcuYTFpArmIE2tG0EK2EWkJfY/nYO1KEKEj+fLmMFKRERsJL4OkERokRE
+        YnZnG/MERuFZSAbNQhg0C8mgWUg6FjCyrGKUTC0ozk3PLTYsMMxLLdcrTswtLs1L10vOz93E
+        CI4pLc0djNtXfdA7xMjEwXiIUYKDWUmE1+6ufrwQb0piZVVqUX58UWlOavEhRmkOFiVx3huF
+        C+OEBNITS1KzU1MLUotgskwcnFINTNPMKoTeaczetunHXNstCwPn/AtvXXlC4OPBu9+El31u
+        E5gatC1O8l30p7+5QrxVeySKb53mjHXcvIUjfY24zY8Ohe8tZ46rmBbbzH/nMtHZoFHnZvOF
+        hvitH8X4PjzZURDI8TdZcO3+K9dn5Qa8eGe/rNZISNLrRZrUPVPRvU3L+7dMa/h7YLZW3keN
+        CW/VbR6nbfQ6/uRS8u0SNbFrNU+CH//6UNRUI+Fx8bfP/5meHM4qe00bnTzuPUt/uv5+2/oy
+        pk/rOdiTmdySHCxDPItbLXe/qc46Wi5genfeQdfUe7f7376Zctvhg/LUvBcdQvEKfQYO/x36
+        lyvNWO94bd1hA6572ff2aHyuO/A4hFGJpTgj0VCLuag4EQD6M1sCGAMAAA==
+X-CMS-MailID: 20200810061915epcas1p167bead5d44e5038f0ba5c7cc472f2ba4
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: SVC_REQ_APPROVE
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200806055718epcas1p1763d92dbf47e2a331a74d0bb9ea03c15
-References: <CGME20200806055718epcas1p1763d92dbf47e2a331a74d0bb9ea03c15@epcas1p1.samsung.com>
-        <20200806055653.9329-1-kohada.t2@gmail.com>
+X-CMS-RootMailID: 20200807073101epcas1p43ba30d0ff54cb09f90b7dc69c746d3e6
+References: <CGME20200807073101epcas1p43ba30d0ff54cb09f90b7dc69c746d3e6@epcas1p4.samsung.com>
+        <20200807073049.24959-1-kohada.t2@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> The current implementation doesn't care NameLength when extracting the name from Name dir-entries, so
-> the name may be incorrect.
-> (Without null-termination, Insufficient Name dir-entry, etc) Add a NameLength check when extracting
-> the name from Name dir-entries to extract correct name.
-> And, change to get the information of file/stream-ext dir-entries via the member variable of
-> exfat_entry_set_cache.
+> Add checksum validation for dir-entry set when getting it.
+> exfat_calc_dir_chksum_with_entry_set() also validates entry-type.
 > 
 > ** This patch depends on:
->   '[PATCH v3] exfat: integrates dir-entry getting and validation'.
+>   '[PATCH v3] exfat: integrates dir-entry getting and validation'
 > 
 > Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
 > ---
->  fs/exfat/dir.c | 81 ++++++++++++++++++++++++--------------------------
->  1 file changed, 39 insertions(+), 42 deletions(-)
+>  fs/exfat/dir.c | 34 ++++++++++++++++++++++------------
+>  1 file changed, 22 insertions(+), 12 deletions(-)
 > 
-> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c index 91cdbede0fd1..545bb73b95e9 100644
+> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c index c9715c7a55a1..2e79ac464f5f 100644
 > --- a/fs/exfat/dir.c
 > +++ b/fs/exfat/dir.c
-> @@ -28,16 +28,15 @@ static int exfat_extract_uni_name(struct exfat_dentry *ep,
-> 
+> @@ -563,18 +563,27 @@ int exfat_remove_entries(struct inode *inode, struct exfat_chain *p_dir,
+>  	return 0;
 >  }
 > 
-> -static void exfat_get_uniname_from_ext_entry(struct super_block *sb,
-> -		struct exfat_chain *p_dir, int entry, unsigned short *uniname)
-> +static int exfat_get_uniname_from_name_entries(struct exfat_entry_set_cache *es,
-> +		struct exfat_uni_name *uniname)
+> -void exfat_update_dir_chksum_with_entry_set(struct exfat_entry_set_cache *es)
+> +static int exfat_calc_dir_chksum_with_entry_set(struct
+> +exfat_entry_set_cache *es, u16 *chksum)
 >  {
-> -	int i;
-> -	struct exfat_entry_set_cache *es;
-> +	int n, l, i;
+> -	int chksum_type = CS_DIR_ENTRY, i;
+> -	unsigned short chksum = 0;
 >  	struct exfat_dentry *ep;
+> +	int i;
 > 
-> -	es = exfat_get_dentry_set(sb, p_dir, entry, ES_ALL_ENTRIES);
-> -	if (!es)
-> -		return;
-> +	uniname->name_len = es->de_stream->name_len;
-> +	if (uniname->name_len == 0)
-> +		return -EIO;
-Can we validate ->name_len and name entry ->type in exfat_get_dentry_set() ?
-> 
->  	/*
->  	 * First entry  : file entry
-> @@ -45,14 +44,15 @@ static void exfat_get_uniname_from_ext_entry(struct super_block *sb,
->  	 * Third entry  : first file-name entry
->  	 * So, the index of first file-name dentry should start from 2.
->  	 */
-> -
-> -	i = 2;
-> -	while ((ep = exfat_get_validated_dentry(es, i++, TYPE_NAME))) {
-> -		exfat_extract_uni_name(ep, uniname);
-> -		uniname += EXFAT_FILE_NAME_LEN;
-> +	for (l = 0, n = 2; l < uniname->name_len; n++) {
-> +		ep = exfat_get_validated_dentry(es, n, TYPE_NAME);
+> -	for (i = 0; i < es->num_entries; i++) {
+> -		ep = exfat_get_validated_dentry(es, i, TYPE_ALL);
+> -		chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, chksum,
+> -					     chksum_type);
+> -		chksum_type = CS_DEFAULT;
+> +	ep = container_of(es->de_file, struct exfat_dentry, dentry.file);
+> +	*chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, 0, CS_DIR_ENTRY);
+> +	for (i = 0; i < es->de_file->num_ext; i++) {
+> +		ep = exfat_get_validated_dentry(es, 1 + i, TYPE_SECONDARY);
 > +		if (!ep)
 > +			return -EIO;
-> +		for (i = 0; l < uniname->name_len && i < EXFAT_FILE_NAME_LEN; i++, l++)
-> +			uniname->name[l] = le16_to_cpu(ep->dentry.name.unicode_0_14[i]);
+> +		*chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, *chksum, CS_DEFAULT);
 >  	}
-> -
-> -	exfat_free_dentry_set(es, false);
-> +	uniname->name[l] = 0;
 > +	return 0;
+We can return checksum after removing u16 *chksum argument.
+> +}
+> +
+> +void exfat_update_dir_chksum_with_entry_set(struct
+> +exfat_entry_set_cache *es) {
+> +	u16 chksum;
+> +
+> +	exfat_calc_dir_chksum_with_entry_set(es, &chksum);
+>  	es->de_file->checksum = cpu_to_le16(chksum);
+>  	es->modified = true;
 >  }
+> @@ -775,6 +784,7 @@ struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
+>  	struct exfat_entry_set_cache *es;
+>  	struct exfat_dentry *ep;
+>  	struct buffer_head *bh;
+> +	u16 chksum;
+> 
+>  	if (p_dir->dir == DIR_DELETED) {
+>  		exfat_err(sb, "access to deleted dentry"); @@ -839,10 +849,10 @@ struct
+> exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
+>  		goto free_es;
+>  	es->de_stream = &ep->dentry.stream;
+> 
+> -	for (i = 2; i < es->num_entries; i++) {
+> -		if (!exfat_get_validated_dentry(es, i, TYPE_SECONDARY))
+> -			goto free_es;
+> -	}
+> +	if (max_entries == ES_ALL_ENTRIES &&
+> +	    ((exfat_calc_dir_chksum_with_entry_set(es, &chksum) ||
+> +	      chksum != le16_to_cpu(es->de_file->checksum))))
+Please add error print log if checksum mismatch error happen.
+> +		goto free_es;
+> 
+>  	return es;
+> 
+> --
+> 2.25.1
+
 
