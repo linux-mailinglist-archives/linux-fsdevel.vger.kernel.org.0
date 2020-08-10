@@ -2,105 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 363D524055D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 13:29:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16E182405D1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 14:25:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726529AbgHJL3G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Aug 2020 07:29:06 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:60745 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbgHJL1h (ORCPT
+        id S1726656AbgHJMZ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Aug 2020 08:25:28 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:35804 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbgHJMZ2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Aug 2020 07:27:37 -0400
-Received: from [192.168.1.155] ([95.118.172.217]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1Mf0Jg-1kcmsV1RHO-00gXQe; Mon, 10 Aug 2020 13:27:21 +0200
-Subject: Re: srvfs: file system for posting open file descriptors into fs
- namespace
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <55ef0e9a-fb70-7c4a-e945-4d521180221c@metux.net>
- <20200807162305.GT1236603@ZenIV.linux.org.uk>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <6c2ab429-eab6-1dbe-08d4-9646f736a4c1@metux.net>
-Date:   Mon, 10 Aug 2020 13:27:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200807162305.GT1236603@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: tl
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:I8J4cWwsf8UrgmKuCBe5ULP9f//08aGVHtF3aYtFREwY62dXxA1
- +PoNrFfa5r8al362mkR0260yWa8UjW+V/dFXhqG/WBU+ZSEaes24ehkOZSDHVxl/SIq2iWa
- mQ2dcKcYsRaekivcuKtO8Bgu/Gv7PqQ+Zs7qW/9FnC1YqfBqe5uaFc6/vUA+b3IliFssio6
- HBAE8ymndpDFnWPCQVLKg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FwPCCU2owKk=:QRciTeG+KCXOBZWI36zjZC
- YEBcLAsjeB7DQ5f6YcS4GjYwene+prQeCmdfuCjLf/6qA/Tcywn/1vzD3rjY6WtbGRIaWX4zQ
- BvuwGB0uqjPoxRTGpasg4DG/jI+NeKApy8rQsbfU0Plj1yn0U4aTTIuKWY2RW03AdexIp4y5v
- HT15qsGQ5t/u+jKySeqYJ9nDYZgS6k7VvrwCpeiHsePgNrpK4lL3aj8vMvh8eGLOD+5b9ddUn
- aT1wOwBPcgmG934p8QXGYd48cFCDE7Ixkr2xAutBjeWI7R8jCZ2GG+NPzIE3G5cQe1j0Rk2WL
- FnuH3qt5WoISKAaSZrTXkmtogHbr0wC+yTcaMzf4nL20mRLaPyoh0ZYIC+oKKN98IExKo0lQd
- A07O7ScTqIJygBMl+SZbGL/NRI4G0tTmyAIsW9B/WaXuhGvVfIq4f02cafKW8b4jyieNXRHsh
- r9kwXVabjtodit2B4zH0p/Mv3+wVXk9IH60uiIYP8JQc0LjSG/bbPqvKKAe9pcmfnf+lOyoOu
- SO4zVnWdOng9qMe3CjQusE7hm/sk0hpqauJESal/qo2F84oCYxLIL0goAMY7FSR3+OnQykAhl
- 8ipRi/UDCVzahRKJqGWEx1NZrkbA7jp6dxo3q2gHofSBq0q8HfT/w7WV7EPQESosKMuqwFjw3
- W7PsIbpGNfuaQUvq6ypGewFuRFEzz/+rZZiay49c233RevqP9NjFdBCyGW9kttbU8fg8I3QKu
- +Ft6nqvgufbuDOpKMNEfSDuzC9yaQS7FcAM74uTjPHj134wzN5HAcQ9kqcB9DmA3qxR14nfs9
- kKIyTxT9Wuf95FiNMyNwifPt7dkt7pR/6VFQfusFATeFgu3+47No/CjZQOIFNLBxIOF6iYs
+        Mon, 10 Aug 2020 08:25:28 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07ACGVaX182587;
+        Mon, 10 Aug 2020 12:25:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=LHGAkcFYSyuaEFdv/TGZUvxSEINDvA0B41yBg/c6SCw=;
+ b=lWO4TZW6vjoZZdMr0YgLUAuFsqEV37EnHoL6zkRbnCBUoeyTNLwytQ3xYqhMjbPqA0P6
+ Yg3rEEkajyM2AlaWmKlQFdTbO5/mI2HII1zGxIOoyKGmLW5wwExIZUFycPl00yXPeaAV
+ r6/a9pFEl7zGMV29d2ZFKYwSy4TN24aksQ3v0QCgCZ/iC5MMtzJSo4Dt005rSY7w4gLi
+ zpizs2Pkej0tkjkqdXuS0B67jDvn4zyenRs9CL/4HtYeD293U0ZDD3VSTspkk2gjzRU3
+ PCzbAStfl4nSbvJkPVC96wRWcy7Bkymv8P0goBbLx8kdDjWDE901ysGO++3fhgU6MXcO ng== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 32smpn64f6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 10 Aug 2020 12:25:18 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07ACJFAn052752;
+        Mon, 10 Aug 2020 12:25:18 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 32t5y0py2n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 10 Aug 2020 12:25:17 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 07ACPGHe006184;
+        Mon, 10 Aug 2020 12:25:16 GMT
+Received: from anon-dhcp-152.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 10 Aug 2020 12:25:15 +0000
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
+Subject: Re: Please pull NFS server updates for v5.9
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <20200810090349.64bce58f@canb.auug.org.au>
+Date:   Mon, 10 Aug 2020 08:25:14 -0400
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Trond Myklebust <trondmy@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <EC1AA9E7-4AC1-49C6-B138-B6A3E4ED7A0B@oracle.com>
+References: <F9B8940D-9F7B-47F5-9946-D77C17CF959A@oracle.com>
+ <20200810090349.64bce58f@canb.auug.org.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9708 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008100092
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9708 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 impostorscore=0 phishscore=0 clxscore=1011 spamscore=0
+ malwarescore=0 adultscore=0 mlxlogscore=999 mlxscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2008100092
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07.08.20 18:23, Al Viro wrote:
-
-Hi,
-
->> This is a concept from Plan9. The main purpose is allowing applications
->> "dialing" some connection, do initial handshakes (eg. authentication)
->> and then publish the connection to other applications, that now can now
->> make use of the already dialed connection.
-> 
-> Yeah, but...  Linux open() always gets a new struct file instance; 
-
-I know :(
-
-> how
-> do you work around that?  Some variant of ->atomic_open() API change?
-> Details, please.
-
-Proxy struct file. Yes, this adds lots of bloat :(
-
-https://github.com/metux/linux-srvfs-oot/blob/master/kernel/proxy.c
-
-I thought about some possible ugly tricks of copying over one into
-another, but that could easily end up in a desaster.
-
-Another idea would be adding a new fs-op that returns it's own struct
-file - basically kinda per-fs open() syscall - which is called instead
-of .open, if defined.
-
-But for now, I tried to implement it as oot-module (and submit for
-mainline later), so it could also be used on existing distro kernels.
-
-Maybe that's not the best idea at all :o
-
-What'd be your suggestion ?
 
 
+> On Aug 9, 2020, at 7:03 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>=20
+> Hi Chuck,
+>=20
+> On Sun, 9 Aug 2020 11:44:15 -0400 Chuck Lever <chuck.lever@oracle.com> =
+wrote:
+>>=20
+>> The following changes since commit =
+11ba468877bb23f28956a35e896356252d63c983:
+>>=20
+>>  Linux 5.8-rc5 (2020-07-12 16:34:50 -0700)
+>>=20
+>> are available in the Git repository at:
+>>=20
+>>  git://git.linux-nfs.org/projects/cel/cel-2.6.git tags/nfsd-5.9
+>>=20
+>> for you to fetch changes up to =
+b297fed699ad9e50315b27e78de42ac631c9990d:
+>>=20
+>>  svcrdma: CM event handler clean up (2020-07-28 10:18:15 -0400)
+>=20
+> Despite you having a branch included in linux-next, only one of these
+> commits has been in linux-next :-( (and that via Trond's nfs tree)
 
---mtx
+Is there something I need to change? The public copy of the cel-testing
+branch has had this content for the past 12 days.
 
--- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+
+--
+Chuck Lever
+
+
+
