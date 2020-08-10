@@ -2,65 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 808582403F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 11:23:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23F3A240461
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 11:58:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbgHJJXq convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Aug 2020 05:23:46 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:47444 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbgHJJXp (ORCPT
+        id S1726820AbgHJJ6Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Aug 2020 05:58:16 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:54537 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbgHJJ6P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Aug 2020 05:23:45 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 3BC9F1C0BD7; Mon, 10 Aug 2020 11:23:42 +0200 (CEST)
-Date:   Mon, 10 Aug 2020 11:23:22 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Jonathan Adams <jwadams@google.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        netdev@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jim Mattson <jmattson@google.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [RFC PATCH 0/7] metricfs metric file system and examples
-Message-ID: <20200810092322.GA12913@localhost>
-References: <20200807212916.2883031-1-jwadams@google.com>
+        Mon, 10 Aug 2020 05:58:15 -0400
+Received: by mail-io1-f69.google.com with SMTP id z25so6586241ioh.21
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Aug 2020 02:58:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=EZdx3h6CcuB/A3YH4E2rNOxNnzoeylwQGXBumWPwur8=;
+        b=BAd5yReCWudlaX0etP2bphz3ziVsIRlEwn6lvSfqybsY5c3QcYL2Cdsq/x40AoYLgv
+         F4R0UePSg2BjTY+EwuS/Hq1L/ZMLTRFsfyAa8B0rJw0nfj81D1PNiHFoLPhcD3OGsLhS
+         pasyGgFdFjVHMgbLBG3Eq1OineMIX9hdxFKxkjo2MrWmeXW/V69aT3uJxPHcEMTc+49w
+         FZEw4IdE0thtk/J393UBtau0Zbwchyxxawf+TRM8d4JFrFN/9UbNVoi7NXrGBJMJqaXL
+         wltwvaC/wkUmFkjtOXJwjWCJf+FYwSbRlf/G9YvN85SJbpFt/O4w54dPvW7fuJLx1qUB
+         JdGQ==
+X-Gm-Message-State: AOAM531YxF/C/GBu3ffLIn+o3VF1mU3AM6uUw0n3iNWu+gXoPKnzHXO+
+        GjU0HbFRPdvrqDyvS/Y3B0G4UF3RLgTf8g9oRJltVbAN1kkb
+X-Google-Smtp-Source: ABdhPJzvhXm66kwpK/KNsTcMSQVLGwfYR+Z73cIGZewuTCT2Nd2dRaEHuVytEfcM6cVxylhzXqC2glmT7ms79rqVFYp0uzVFUCAW
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20200807212916.2883031-1-jwadams@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a92:d292:: with SMTP id p18mr16124770ilp.281.1597053494375;
+ Mon, 10 Aug 2020 02:58:14 -0700 (PDT)
+Date:   Mon, 10 Aug 2020 02:58:14 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000038399005ac82fef7@google.com>
+Subject: KCSAN: data-race in __io_cqring_fill_event / io_uring_poll
+From:   syzbot <syzbot+3020eb77f81ef0772fbe@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 2020-08-07 14:29:09, Jonathan Adams wrote:
-> [resending to widen the CC lists per rdunlap@infradead.org's suggestion
-> original posting to lkml here: https://lkml.org/lkml/2020/8/5/1009]
-> 
-> To try to restart the discussion of kernel statistics started by the
-> statsfs patchsets (https://lkml.org/lkml/2020/5/26/332), I wanted
-> to share the following set of patches which are Google's 'metricfs'
-> implementation and some example uses.  Google has been using metricfs
-> internally since 2012 as a way to export various statistics to our
-> telemetry systems (similar to OpenTelemetry), and we have over 200
-> statistics exported on a typical machine.
-> 
-> These patches have been cleaned up and modernized v.s. the versions
-> in production; I've included notes under the fold in the patches.
-> They're based on v5.8-rc6.
-> 
-> The statistics live under debugfs, in a tree rooted at:
-> 
-> 	/sys/kernel/debug/metricfs
+Hello,
 
-Is debugfs right place for this? It looks like something where people
-would expect compatibility guarantees...
+syzbot found the following issue on:
 
-								Pavel
+HEAD commit:    86cfccb6 Merge tag 'dlm-5.9' of git://git.kernel.org/pub/s..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=171cf11a900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3757fa75ecfde8e0
+dashboard link: https://syzkaller.appspot.com/bug?extid=3020eb77f81ef0772fbe
+compiler:       clang version 11.0.0 (https://github.com/llvm/llvm-project.git ca2dcbd030eadbf0aa9b660efe864ff08af6e18b)
 
--- 
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3020eb77f81ef0772fbe@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in __io_cqring_fill_event / io_uring_poll
+
+write to 0xffff8880a04325c0 of 4 bytes by task 12088 on cpu 1:
+ io_get_cqring fs/io_uring.c:1282 [inline]
+ __io_cqring_fill_event+0x116/0x430 fs/io_uring.c:1386
+ io_cqring_add_event fs/io_uring.c:1420 [inline]
+ __io_req_complete+0xdb/0x1b0 fs/io_uring.c:1458
+ io_complete_rw_common fs/io_uring.c:2208 [inline]
+ __io_complete_rw+0x2c9/0x2e0 fs/io_uring.c:2289
+ kiocb_done fs/io_uring.c:2533 [inline]
+ io_write fs/io_uring.c:3199 [inline]
+ io_issue_sqe+0x4fb1/0x7140 fs/io_uring.c:5530
+ io_wq_submit_work+0x23e/0x340 fs/io_uring.c:5775
+ io_worker_handle_work+0xa69/0xcf0 fs/io-wq.c:527
+ io_wqe_worker+0x1f2/0x860 fs/io-wq.c:569
+ kthread+0x20d/0x230 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+
+read to 0xffff8880a04325c0 of 4 bytes by task 12086 on cpu 0:
+ io_cqring_events fs/io_uring.c:1937 [inline]
+ io_uring_poll+0x105/0x140 fs/io_uring.c:7751
+ vfs_poll include/linux/poll.h:90 [inline]
+ __io_arm_poll_handler+0x176/0x3f0 fs/io_uring.c:4735
+ io_arm_poll_handler+0x293/0x5c0 fs/io_uring.c:4792
+ __io_queue_sqe+0x413/0x760 fs/io_uring.c:5988
+ io_queue_sqe+0x81/0x2b0 fs/io_uring.c:6060
+ io_submit_sqe+0x333/0x560 fs/io_uring.c:6130
+ io_submit_sqes+0x8c6/0xfc0 fs/io_uring.c:6327
+ __do_sys_io_uring_enter fs/io_uring.c:8036 [inline]
+ __se_sys_io_uring_enter+0x1c2/0x720 fs/io_uring.c:7995
+ __x64_sys_io_uring_enter+0x74/0x80 fs/io_uring.c:7995
+ do_syscall_64+0x39/0x80 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 PID: 12086 Comm: syz-executor.5 Not tainted 5.8.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
