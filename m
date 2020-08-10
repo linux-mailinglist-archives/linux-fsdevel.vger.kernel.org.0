@@ -2,113 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 54F032407DB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 16:50:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB1822407F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 16:59:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727094AbgHJOug (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Aug 2020 10:50:36 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:24655 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727055AbgHJOue (ORCPT
+        id S1726910AbgHJO7A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Aug 2020 10:59:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59934 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbgHJO67 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Aug 2020 10:50:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597071032;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=CmPgr4Q4WAZKNKGFTE7tvM8ImvK/kVdmqG/HrVAHjUk=;
-        b=AoYquAH5Ckyn8Q166gqX30yWxoJwLDticVMB3kUc2dsIdoOrshCmUAJI6D5R0Ie+mI5450
-        kxeax4mqVbGSD1G5HhHjqKgWnA/E+yfwAShVm6co4+fcWnpYIYTVH+/gXYeExAsGond/Fr
-        Y9dDdYaG/xqw+TnIDwFz+7bugwePKvo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-496-nDAT6UYOOhuk0ykGpsGy3g-1; Mon, 10 Aug 2020 10:50:30 -0400
-X-MC-Unique: nDAT6UYOOhuk0ykGpsGy3g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5C9AE80BCA6;
-        Mon, 10 Aug 2020 14:50:29 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.10.115.251])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B1B7310016E8;
-        Mon, 10 Aug 2020 14:50:19 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 41C7722036A; Mon, 10 Aug 2020 10:50:19 -0400 (EDT)
-Date:   Mon, 10 Aug 2020 10:50:19 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com, Sebastien Boeuf <sebastien.boeuf@intel.com>,
-        kbuild test robot <lkp@intel.com>, kvm@vger.kernel.org
-Subject: Re: [PATCH v2 04/20] virtio: Implement get_shm_region for PCI
- transport
-Message-ID: <20200810145019.GB455528@redhat.com>
-References: <20200807195526.426056-1-vgoyal@redhat.com>
- <20200807195526.426056-5-vgoyal@redhat.com>
- <20200810100327-mutt-send-email-mst@kernel.org>
+        Mon, 10 Aug 2020 10:58:59 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01CDC061756;
+        Mon, 10 Aug 2020 07:58:58 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id r4so5024974pls.2;
+        Mon, 10 Aug 2020 07:58:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3EOXOOWYYlAj99G6WV2By0kWl8SEe77hw4rKVyQwu0k=;
+        b=jSa433kL6JihAjzQB2FOaVyp+FMxCEVWBQ6/BOiywhrd3vANIBjSxgF2SUz3ypRjxA
+         mDMRPSEPY3SB6ePtMUgBmIBhojD2LNaRH/ZBoUNpDgZ0IVzoJpvYYbC54yvQutNIsYo8
+         Vn+oNNp+cmzYEyRbML8I0jGD7bry7/jM48QFfvXlL/0oM+t7lpiamVNewmAEKcT15kZh
+         geWKthbuDMVElHXDFzXXNXMUnrmTnimWaB+2tv89sg361HXEw4e7nnuLiIWDzsnClwRC
+         TUMd2f2TCX0nNbVdUbdQRtpxN9T6EncjWaZosRo4lN2a4eCB3Xh9qPh0deEoWahfOy7T
+         JR/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3EOXOOWYYlAj99G6WV2By0kWl8SEe77hw4rKVyQwu0k=;
+        b=bGbhXnfiT9Rt2Ey/BgOrmVWaVXgNr5eZbW5gd0TeHIfvMXbqvfemabtAuuXAHH9Mzq
+         pea64+1Xsp8NSHRLY7pO+R4zaVdpBO9v+Uip0F8Z5mUJ241ZNl4Umg5xoG5z0ZZ6AbCj
+         iW6P/OGjixu3T5vM6Bmce/5gwsA8AXmWXBwGkNgI/0EuLon8X0k+Aalo61Vzc65D1O9F
+         YusXZniZGOkOMFyIW49o0+HeLcrrGWYTJassRzuSAcRUhjDuLog5Qk6U4ljaG0iK2Skz
+         k63y1uUj6ENQ2RtgQWgOnUfeUThEUDbq9DRzxTKUMS+aBYkUYKuPw1q5hjn3BTIljvKW
+         2y6w==
+X-Gm-Message-State: AOAM531FRZpxQaonYvA8jd00Vh3b1BWfiwnj9BfEocw5apByba+z5aUB
+        TCTYG/M0iXUGlymr9sK2FteLAP39v/A=
+X-Google-Smtp-Source: ABdhPJxCbs4JlT5SLgTjn/gn7TmQM2XGF2gJa9n1eCk5hEQdNQtxFDZYx4GB+O3XbN3A8gOfHpnX/A==
+X-Received: by 2002:a17:90a:ff85:: with SMTP id hf5mr26790162pjb.79.1597071538285;
+        Mon, 10 Aug 2020 07:58:58 -0700 (PDT)
+Received: from localhost.localdomain ([124.170.227.101])
+        by smtp.gmail.com with ESMTPSA id o192sm25631162pfg.81.2020.08.10.07.58.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Aug 2020 07:58:57 -0700 (PDT)
+From:   Eugene Lubarsky <elubarsky.linux@gmail.com>
+To:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, adobriyan@gmail.com,
+        avagin@gmail.com, dsahern@gmail.com
+Subject: [RFC PATCH 0/5] Introduce /proc/all/ to gather stats from all processes
+Date:   Tue, 11 Aug 2020 00:58:47 +1000
+Message-Id: <20200810145852.9330-1-elubarsky.linux@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200810100327-mutt-send-email-mst@kernel.org>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 10, 2020 at 10:05:17AM -0400, Michael S. Tsirkin wrote:
-> On Fri, Aug 07, 2020 at 03:55:10PM -0400, Vivek Goyal wrote:
-> > From: Sebastien Boeuf <sebastien.boeuf@intel.com>
-> > 
-> > On PCI the shm regions are found using capability entries;
-> > find a region by searching for the capability.
-> > 
-> > Signed-off-by: Sebastien Boeuf <sebastien.boeuf@intel.com>
-> > Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
-> > Signed-off-by: kbuild test robot <lkp@intel.com>
-> > Cc: kvm@vger.kernel.org
-> > Cc: "Michael S. Tsirkin" <mst@redhat.com>
-> 
-> Acked-by: Michael S. Tsirkin <mst@redhat.com>
-> 
+This is an idea for substantially reducing the number of syscalls needed
+by monitoring tools whilst mostly re-using the existing API.
 
-[..]
-> > +static bool vp_get_shm_region(struct virtio_device *vdev,
-> > +			      struct virtio_shm_region *region, u8 id)
-> > +{
-> > +	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
-> > +	struct pci_dev *pci_dev = vp_dev->pci_dev;
-> > +	u8 bar;
-> > +	u64 offset, len;
-> > +	phys_addr_t phys_addr;
-> > +	size_t bar_len;
-> > +
-> > +	if (!virtio_pci_find_shm_cap(pci_dev, id, &bar, &offset, &len)) {
-> > +		return false;
-> > +	}
-> > +
-> > +	phys_addr = pci_resource_start(pci_dev, bar);
-> > +	bar_len = pci_resource_len(pci_dev, bar);
-> > +
-> > +	if ((offset + len) < offset) {
-> > +		dev_err(&pci_dev->dev, "%s: cap offset+len overflow detected\n",
-> > +			__func__);
-> > +		return false;
-> > +	}
-> > +
-> > +	if (offset + len > bar_len) {
-> > +		dev_err(&pci_dev->dev, "%s: bar shorter than cap offset+len\n",
-> > +			__func__);
-> > +		return false;
-> > +	}
-> 
-> Maybe move this to a common header so the checks can be reused by
-> other transports? Can be a patch on top.
+The proposed files in this proof-of-concept patch set are:
 
-Will do as patch on top once these patches get merged. 
+* /proc/all/stat
+      A stat line for each process in the existing format.
 
-Thanks
-Vivek
+* /proc/all/statm
+      statm lines but starting with a PID column.
+
+* /proc/all/status
+      status info for all processes in the existing format.
+
+* /proc/all/io
+      The existing /proc/pid/io data but formatted as a single line for
+      each process, similarly to stat/statm, with a PID column added.
+
+* /proc/all/statx
+      Gathers info from stat, statm and io; the purpose is actually
+      not so much to reduce syscalls but to help userspace be more
+      efficient by not having to store data in e.g. hashtables in order
+      to gather it from separate /proc/all/ files.
+
+      The format proposed here starts with the unchanged stat line
+      and begins the other info with a few characters, repeating for
+      each process:
+
+      ...
+      25 (cat) R 1 1 0 0 -1 4194304 185 0 16 0 2 0 0 0 20 ...
+      m 662 188 167 5 0 112 0
+      io 4292 0 12 0 0 0 0
+      ...
+
+
+There has been a proposal with some overlapping goals: /proc/task-diag
+(https://github.com/avagin/linux-task-diag), but I'm not sure about
+its current status.
+
+
+
+Best Wishes,
+
+Eugene
+
+
+Eugene Lubarsky (5):
+  fs/proc: Introduce /proc/all/stat
+  fs/proc: Introduce /proc/all/statm
+  fs/proc: Introduce /proc/all/status
+  fs/proc: Introduce /proc/all/io
+  fs/proc: Introduce /proc/all/statx
+
+ fs/proc/base.c     | 215 +++++++++++++++++++++++++++++++++++++++++++--
+ fs/proc/internal.h |   1 +
+ fs/proc/root.c     |   1 +
+ 3 files changed, 210 insertions(+), 7 deletions(-)
+
+-- 
+2.25.1
 
