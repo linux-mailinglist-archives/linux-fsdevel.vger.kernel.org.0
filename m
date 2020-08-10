@@ -2,95 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F91B240062
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 01:04:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40E5424011F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 05:11:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726478AbgHIXDx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Aug 2020 19:03:53 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:60825 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726323AbgHIXDw (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Aug 2020 19:03:52 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1726415AbgHJDLJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Aug 2020 23:11:09 -0400
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:37705 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726344AbgHJDLH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 9 Aug 2020 23:11:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597029066;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EVsTKZVAhLuAKibZpYFBoxm72PqIuSfiBe/k0pSgc0c=;
+        b=fBPUsgNq9vuSEfSSKsJN3hRGpeBH9zagjqCXDHLujuD7S5L2nasCbp57IQp1m3qoZqYObp
+        nzwG6LtnxihVJ1/BBGEwj1rlD2Iybi+kPXonGJ0Q6rHwjDtBnE9YVqkBqQ3UtGu7hc1wOa
+        YvQz4CbGUndBMngkGFi90ai1z1/ojEk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-387-e-SOMQe-OtaQmNQwNTvuiA-1; Sun, 09 Aug 2020 23:11:02 -0400
+X-MC-Unique: e-SOMQe-OtaQmNQwNTvuiA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BPvm621Mgz9sRN;
-        Mon, 10 Aug 2020 09:03:50 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1597014230;
-        bh=8+FYoUMfOB2DGkg2rvx7MSZ+VDwo2cGk6z7z/iLJ1CY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=U+UoGNrqw4BQbq28RXKC6vYf6dKXOa44/GxpVkjbk0HoFQ9yWnhVVVofNtwBXaZCI
-         HCmh2dsvAEwj7EkPAbZd9dlXMIxHoKP5OS1/wgohcIafTRNlDZBrmrYxP+9HobD7CS
-         GcxuVub/yYVaNsEzbO6IsdQdIofSGd/OOuHBhyPuFUhJ/fIDAzgM4Aw0m1a6yPeijL
-         XeQZ14QsonCmkQtmTu5SMu+1hkRQnUBaPqZLoDvP8fqW25GhLfkmyDf17uPAQkKeip
-         PYGaAK8l53LNe3tSJ2scQz7qNfGIgVAlftsT8hQRqnGP9NkPJgAF8zyV3jJzFbgWpj
-         82ipXZesc4++A==
-Date:   Mon, 10 Aug 2020 09:03:49 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Trond Myklebust <trondmy@gmail.com>
-Subject: Re: Please pull NFS server updates for v5.9
-Message-ID: <20200810090349.64bce58f@canb.auug.org.au>
-In-Reply-To: <F9B8940D-9F7B-47F5-9946-D77C17CF959A@oracle.com>
-References: <F9B8940D-9F7B-47F5-9946-D77C17CF959A@oracle.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0A7F91005504;
+        Mon, 10 Aug 2020 03:11:01 +0000 (UTC)
+Received: from T590 (ovpn-13-99.pek2.redhat.com [10.72.13.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6F59D1001901;
+        Mon, 10 Aug 2020 03:10:54 +0000 (UTC)
+Date:   Mon, 10 Aug 2020 11:10:49 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: Very slow qemu device access
+Message-ID: <20200810031049.GA2202641@T590>
+References: <20200807174416.GF17456@casper.infradead.org>
+ <20200809024005.GC2134904@T590>
+ <20200809142522.GI17456@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/tsh/2wjsP/ZVCBtHdm.gcwh";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200809142522.GI17456@casper.infradead.org>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/tsh/2wjsP/ZVCBtHdm.gcwh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Aug 09, 2020 at 03:25:22PM +0100, Matthew Wilcox wrote:
+> On Sun, Aug 09, 2020 at 10:40:05AM +0800, Ming Lei wrote:
+> > Hello Matthew,
+> > 
+> > On Fri, Aug 07, 2020 at 06:44:16PM +0100, Matthew Wilcox wrote:
+> > > 
+> > > Everything starts going very slowly after this commit:
+> > > 
+> > > commit 37f4a24c2469a10a4c16c641671bd766e276cf9f (refs/bisect/bad)
+> > > Author: Ming Lei <ming.lei@redhat.com>
+> > > Date:   Tue Jun 30 22:03:57 2020 +0800
+> > > 
+> > >     blk-mq: centralise related handling into blk_mq_get_driver_tag
+> > 
+> > Yeah, the above is one known bad commit, which is reverted in
+> > 4e2f62e566b5 ("Revert "blk-mq: put driver tag when this request is completed")
+> > 
+> > Finally the fixed patch of 'blk-mq: centralise related handling into blk_mq_get_driver_tag'
+> > is merged as 568f27006577 ("blk-mq: centralise related handling into blk_mq_get_driver_tag").
+> > 
+> > So please test either 4e2f62e566b5 or 568f27006577 and see if there is
+> > such issue.
+> 
+> 4e2f62e566b5 is good
+> 568f27006577 is bad
 
-Hi Chuck,
+Please try the following patch, and we shouldn't take flush request
+account into driver tag allocation, because it always shares the
+data request's tag:
 
-On Sun, 9 Aug 2020 11:44:15 -0400 Chuck Lever <chuck.lever@oracle.com> wrot=
-e:
->
-> The following changes since commit 11ba468877bb23f28956a35e896356252d63c9=
-83:
->=20
->   Linux 5.8-rc5 (2020-07-12 16:34:50 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.linux-nfs.org/projects/cel/cel-2.6.git tags/nfsd-5.9
->=20
-> for you to fetch changes up to b297fed699ad9e50315b27e78de42ac631c9990d:
->=20
->   svcrdma: CM event handler clean up (2020-07-28 10:18:15 -0400)
+From d508415eee08940ff9c78efe0eddddf594afdb94 Mon Sep 17 00:00:00 2001
+From: Ming Lei <ming.lei@redhat.com>
+Date: Mon, 10 Aug 2020 11:06:15 +0800
+Subject: [PATCH] block: don't double account of flush request's driver tag
 
-Despite you having a branch included in linux-next, only one of these
-commits has been in linux-next :-( (and that via Trond's nfs tree)
+In case of none scheduler, we share data request's driver tag for
+flush request, so have to mark the flush request as INFLIGHT for
+avoiding double account of this driver tag.
 
---=20
-Cheers,
-Stephen Rothwell
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Fixes: 568f27006577 ("blk-mq: centralise related handling into blk_mq_get_driver_tag")
+Reported-by: Matthew Wilcox <willy@infradead.org>
+---
+ block/blk-flush.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
---Sig_/tsh/2wjsP/ZVCBtHdm.gcwh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+diff --git a/block/blk-flush.c b/block/blk-flush.c
+index 6e1543c10493..53abb5c73d99 100644
+--- a/block/blk-flush.c
++++ b/block/blk-flush.c
+@@ -308,9 +308,16 @@ static void blk_kick_flush(struct request_queue *q, struct blk_flush_queue *fq,
+ 	flush_rq->mq_ctx = first_rq->mq_ctx;
+ 	flush_rq->mq_hctx = first_rq->mq_hctx;
+ 
+-	if (!q->elevator)
++	if (!q->elevator) {
+ 		flush_rq->tag = first_rq->tag;
+-	else
++
++		/*
++		 * We borrow data request's driver tag, so have to mark
++		 * this flush request as INFLIGHT for avoiding double
++		 * account of this driver tag
++		 */
++		flush_rq->rq_flags |= RQF_MQ_INFLIGHT;
++	} else
+ 		flush_rq->internal_tag = first_rq->internal_tag;
+ 
+ 	flush_rq->cmd_flags = REQ_OP_FLUSH | REQ_PREFLUSH;
+-- 
+2.25.2
 
------BEGIN PGP SIGNATURE-----
+ 
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8wgNUACgkQAVBC80lX
-0GzUNgf/VEb6yo8no0+KOY97aSywexi39rsxt1uSY65fs1slhdub5ENU/7S2cXDc
-xeG4cj0GihL8VPEg7gAo+okayHNTK5uI/7gRU227AOPOfaGfomAoqWd6XyTANyi4
-9plvlCne/AYVbykYuq9jka0l/bfgTpcgzv7KgAfl0ZtKicilpuoQyMKewv2kGiXl
-7naDhkhbhwMdCK30sjLPg7OzL0EGZ3y/NekG+rX8QwHW9L3dHexf2lMLTqPDmqow
-VpFWTAOoiT7GOiuUgWkaJ7Awog13W1ZKA3MnTJ0zPpzciX2PpXuNhsFVSw7BBYA+
-qPyKWwM5PfuK6Sf9qqo0wYsHbQ0idw==
-=C5Y9
------END PGP SIGNATURE-----
+thanks,
+Ming
 
---Sig_/tsh/2wjsP/ZVCBtHdm.gcwh--
