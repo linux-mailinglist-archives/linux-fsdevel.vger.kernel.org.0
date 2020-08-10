@@ -2,82 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EE91724051D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 13:17:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 363D524055D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 13:29:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726515AbgHJLRF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Aug 2020 07:17:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54128 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbgHJLRB (ORCPT
+        id S1726529AbgHJL3G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Aug 2020 07:29:06 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:60745 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbgHJL1h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Aug 2020 07:17:01 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94C8EC061756;
-        Mon, 10 Aug 2020 04:17:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=LF7J00zPGvE5+TvNb+kSZ/mLnQ6lmd1ykbbcKN0G5P0=; b=OCNWmeSiZDDpjF5Hgiofx6N6ON
-        mkqo524ZrkTmjYeAH/LOzFSErW1eK+WyzkAZsFnVA34VOuSVBXoSGM7MZ+/9KklSyZN05mfuOyT0s
-        2YhgWUkFXY+JSuAnnaw4NmrKz7wA57V3jBIlZHPNkZdhVqDXFnmhvk2JKjby9cP7BlVaWDfAzs53N
-        lkQLlrm4o/LDXG8+jPi57WYiSsbgy1qMRGEEL8mYfBJh/Cz0n3tZebBXT9ZPwoMDjAhbgQ2MQPDaJ
-        U4AvMZQcyGTR2UWCtkSXx4VKMEPJLjTvF5HALWCUljf51bkVR9AU8RSTIPChGPGHGBS0dNqkiVmpQ
-        /ZGi0Vig==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k55nV-0002Ra-ET; Mon, 10 Aug 2020 11:16:57 +0000
-Date:   Mon, 10 Aug 2020 12:16:57 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, darrick.wong@oracle.com,
-        dan.j.williams@intel.com, david@fromorbit.com, hch@lst.de,
-        rgoldwyn@suse.de, qi.fuli@fujitsu.com, y-goto@fujitsu.com
-Subject: Re: [RFC PATCH 0/8] fsdax: introduce FS query interface to support
- reflink
-Message-ID: <20200810111657.GL17456@casper.infradead.org>
-References: <20200807131336.318774-1-ruansy.fnst@cn.fujitsu.com>
- <20200807133857.GC17456@casper.infradead.org>
- <9673ed3c-9e42-3d01-000b-b01cda9832ce@cn.fujitsu.com>
+        Mon, 10 Aug 2020 07:27:37 -0400
+Received: from [192.168.1.155] ([95.118.172.217]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1Mf0Jg-1kcmsV1RHO-00gXQe; Mon, 10 Aug 2020 13:27:21 +0200
+Subject: Re: srvfs: file system for posting open file descriptors into fs
+ namespace
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <55ef0e9a-fb70-7c4a-e945-4d521180221c@metux.net>
+ <20200807162305.GT1236603@ZenIV.linux.org.uk>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <6c2ab429-eab6-1dbe-08d4-9646f736a4c1@metux.net>
+Date:   Mon, 10 Aug 2020 13:27:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20200807162305.GT1236603@ZenIV.linux.org.uk>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: tl
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9673ed3c-9e42-3d01-000b-b01cda9832ce@cn.fujitsu.com>
+X-Provags-ID: V03:K1:I8J4cWwsf8UrgmKuCBe5ULP9f//08aGVHtF3aYtFREwY62dXxA1
+ +PoNrFfa5r8al362mkR0260yWa8UjW+V/dFXhqG/WBU+ZSEaes24ehkOZSDHVxl/SIq2iWa
+ mQ2dcKcYsRaekivcuKtO8Bgu/Gv7PqQ+Zs7qW/9FnC1YqfBqe5uaFc6/vUA+b3IliFssio6
+ HBAE8ymndpDFnWPCQVLKg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:FwPCCU2owKk=:QRciTeG+KCXOBZWI36zjZC
+ YEBcLAsjeB7DQ5f6YcS4GjYwene+prQeCmdfuCjLf/6qA/Tcywn/1vzD3rjY6WtbGRIaWX4zQ
+ BvuwGB0uqjPoxRTGpasg4DG/jI+NeKApy8rQsbfU0Plj1yn0U4aTTIuKWY2RW03AdexIp4y5v
+ HT15qsGQ5t/u+jKySeqYJ9nDYZgS6k7VvrwCpeiHsePgNrpK4lL3aj8vMvh8eGLOD+5b9ddUn
+ aT1wOwBPcgmG934p8QXGYd48cFCDE7Ixkr2xAutBjeWI7R8jCZ2GG+NPzIE3G5cQe1j0Rk2WL
+ FnuH3qt5WoISKAaSZrTXkmtogHbr0wC+yTcaMzf4nL20mRLaPyoh0ZYIC+oKKN98IExKo0lQd
+ A07O7ScTqIJygBMl+SZbGL/NRI4G0tTmyAIsW9B/WaXuhGvVfIq4f02cafKW8b4jyieNXRHsh
+ r9kwXVabjtodit2B4zH0p/Mv3+wVXk9IH60uiIYP8JQc0LjSG/bbPqvKKAe9pcmfnf+lOyoOu
+ SO4zVnWdOng9qMe3CjQusE7hm/sk0hpqauJESal/qo2F84oCYxLIL0goAMY7FSR3+OnQykAhl
+ 8ipRi/UDCVzahRKJqGWEx1NZrkbA7jp6dxo3q2gHofSBq0q8HfT/w7WV7EPQESosKMuqwFjw3
+ W7PsIbpGNfuaQUvq6ypGewFuRFEzz/+rZZiay49c233RevqP9NjFdBCyGW9kttbU8fg8I3QKu
+ +Ft6nqvgufbuDOpKMNEfSDuzC9yaQS7FcAM74uTjPHj134wzN5HAcQ9kqcB9DmA3qxR14nfs9
+ kKIyTxT9Wuf95FiNMyNwifPt7dkt7pR/6VFQfusFATeFgu3+47No/CjZQOIFNLBxIOF6iYs
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 10, 2020 at 04:15:50PM +0800, Ruan Shiyang wrote:
-> 
-> 
-> On 2020/8/7 下午9:38, Matthew Wilcox wrote:
-> > On Fri, Aug 07, 2020 at 09:13:28PM +0800, Shiyang Ruan wrote:
-> > > This patchset is a try to resolve the problem of tracking shared page
-> > > for fsdax.
-> > > 
-> > > Instead of per-page tracking method, this patchset introduces a query
-> > > interface: get_shared_files(), which is implemented by each FS, to
-> > > obtain the owners of a shared page.  It returns an owner list of this
-> > > shared page.  Then, the memory-failure() iterates the list to be able
-> > > to notify each process using files that sharing this page.
-> > > 
-> > > The design of the tracking method is as follow:
-> > > 1. dax_assocaite_entry() associates the owner's info to this page
-> > 
-> > I think that's the first problem with this design.  dax_associate_entry is
-> > a horrendous idea which needs to be ripped out, not made more important.
-> > It's all part of the general problem of trying to do something on a
-> > per-page basis instead of per-extent basis.
-> > 
-> 
-> The memory-failure needs to track owners info from a dax page, so I should
-> associate the owner with this page.  In this version, I associate the block
-> device to the dax page, so that the memory-failure is able to iterate the
-> owners by the query interface provided by filesystem.
+On 07.08.20 18:23, Al Viro wrote:
 
-No, it doesn't need to track owner info from a DAX page.  What it needs to
-do is ask the filesystem.
+Hi,
+
+>> This is a concept from Plan9. The main purpose is allowing applications
+>> "dialing" some connection, do initial handshakes (eg. authentication)
+>> and then publish the connection to other applications, that now can now
+>> make use of the already dialed connection.
+> 
+> Yeah, but...  Linux open() always gets a new struct file instance; 
+
+I know :(
+
+> how
+> do you work around that?  Some variant of ->atomic_open() API change?
+> Details, please.
+
+Proxy struct file. Yes, this adds lots of bloat :(
+
+https://github.com/metux/linux-srvfs-oot/blob/master/kernel/proxy.c
+
+I thought about some possible ugly tricks of copying over one into
+another, but that could easily end up in a desaster.
+
+Another idea would be adding a new fs-op that returns it's own struct
+file - basically kinda per-fs open() syscall - which is called instead
+of .open, if defined.
+
+But for now, I tried to implement it as oot-module (and submit for
+mainline later), so it could also be used on existing distro kernels.
+
+Maybe that's not the best idea at all :o
+
+What'd be your suggestion ?
+
+
+
+--mtx
+
+-- 
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
