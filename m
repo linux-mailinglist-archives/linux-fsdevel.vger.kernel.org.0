@@ -2,93 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CEAC240ACD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 17:48:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1E91240ADC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Aug 2020 17:55:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727893AbgHJPsq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Aug 2020 11:48:46 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54129 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727771AbgHJPsn (ORCPT
+        id S1727800AbgHJPzV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Aug 2020 11:55:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40398 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbgHJPzU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Aug 2020 11:48:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597074522;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Y+8H4sunugYTPEP17gYgZeRm0j2x6oBz82Cd5n7+MRU=;
-        b=KJBwSeujlYNbvq7wmRO7QSeJJarCcUpFejTnh/qqi7zi36DqxzCDsNONgQXdpa8Jg9Wyv0
-        JQN5neDD0mFltP6fhUk3SxoJ9fNEz/TDFjGbFxxR4/Kpyi/JOcOTurx5EhbJ/sWBIu+U/D
-        hqMI8nO9MT2srN+z4x1ccPzOE3QlKVY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-62-oWSMvl2ROSekPVq1HXnlEA-1; Mon, 10 Aug 2020 11:48:38 -0400
-X-MC-Unique: oWSMvl2ROSekPVq1HXnlEA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 86F08107ACCA;
-        Mon, 10 Aug 2020 15:48:37 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.10.115.251])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2C2CF19D7E;
-        Mon, 10 Aug 2020 15:48:31 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 9DDAD22036A; Mon, 10 Aug 2020 11:48:30 -0400 (EDT)
-Date:   Mon, 10 Aug 2020 11:48:30 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH v2 18/20] fuse: Release file in process context
-Message-ID: <20200810154830.GC455528@redhat.com>
-References: <20200807195526.426056-1-vgoyal@redhat.com>
- <20200807195526.426056-19-vgoyal@redhat.com>
- <CAJfpegs1CtPMaVmbDc__N0Fc3FkNEe=vQOkrr8RKiiS6NqTyHA@mail.gmail.com>
+        Mon, 10 Aug 2020 11:55:20 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58CBBC061788
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Aug 2020 08:55:20 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id x15so381852plr.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Aug 2020 08:55:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=zhOM5a+db+03fu+9y+KxnwpweHHDcuys502DsmoxXhA=;
+        b=RvBExdkmAnkEgOU6Nk2vKZAwFQtYELi1S05QGaY2btfkBADpiYjpkJ7NP5nf0OsOa4
+         UQM/FJqfeF+8Wa8px8VUNM1HFR1xfquXIGgc1HGYIeCGWPzy35fia4JArsDV98K8vu7D
+         LvpzHFUSJ3Cr3ZdwkymRADgiY2ZI2BLDxjcMsR9UJ+Up6xwwNzh+c1qUWauE/l9KM6u6
+         LYAS2XW1wns6e7aSBI4M5yjsgixUuRivdxtxmhuxm6MqnbTcc5m0Mzm1a5QbabZgBcdV
+         vm5N9gAjWyyepf7xoba8s/OH/wop7ELxgVk/cVuJOgVVHkP7qbu0XeOPDd+pLnmo42xP
+         udRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zhOM5a+db+03fu+9y+KxnwpweHHDcuys502DsmoxXhA=;
+        b=I0Xb8anFpVbwg77vdeFQP83wC6zli+vWBiIY7XaidZgXYV4F9pFBFQddyr3M5gPTR3
+         FqNqEjPJRxGEJ6SO+35uaqY33F6PbDq+yD8mogc2t2+gY6xjuaOtzN0193eeyQDP4hPa
+         J7VnMYwok+e191OXizxzIrf4d0fOEgfaMlPLI5G6GzBFrCioDoLlbtAMN2UKrLpb9cvS
+         pFCd3UQJUaFC9utpwZ453DUfphlCYij+Da0eutNMZjWsjzVOzRDuopa2HXjbf0lQl2dg
+         OYrxn9PZY6ZqDRRGwVkkIBRZzExT4epO/+6UOsWmgtqni4piiVHxbR2K02P2vWIvXNrM
+         G5Bw==
+X-Gm-Message-State: AOAM532kghI4g6BefMWaXQWxR9/MbXEw8DOhcK4Ks3tlUODggqGSMEZX
+        URMzIG9YHiYCVaYSv2niPlVH5w==
+X-Google-Smtp-Source: ABdhPJzS8pMd0LP91YQq4K7gL3JBidwfv5SgjeMK+Al5ZyYEWz94BQMEK2mULY/PgMZVaibUFKaGZQ==
+X-Received: by 2002:a17:90a:4e42:: with SMTP id t2mr8373707pjl.121.1597074919593;
+        Mon, 10 Aug 2020 08:55:19 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id x22sm22145374pfn.41.2020.08.10.08.55.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Aug 2020 08:55:19 -0700 (PDT)
+Subject: Re: possible deadlock in __io_queue_deferred
+To:     syzbot <syzbot+996f91b6ec3812c48042@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <00000000000035fdf505ac87b7f9@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <76cc7c43-2ebb-180d-c2c8-912972a3f258@kernel.dk>
+Date:   Mon, 10 Aug 2020 09:55:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegs1CtPMaVmbDc__N0Fc3FkNEe=vQOkrr8RKiiS6NqTyHA@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <00000000000035fdf505ac87b7f9@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 10, 2020 at 10:29:13AM +0200, Miklos Szeredi wrote:
-> On Fri, Aug 7, 2020 at 9:55 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > fuse_file_put(sync) can be called with sync=true/false. If sync=true,
-> > it waits for release request response and then calls iput() in the
-> > caller's context. If sync=false, it does not wait for release request
-> > response, frees the fuse_file struct immediately and req->end function
-> > does the iput().
-> >
-> > iput() can be a problem with DAX if called in req->end context. If this
-> > is last reference to inode (VFS has let go its reference already), then
-> > iput() will clean DAX mappings as well and send REMOVEMAPPING requests
-> > and wait for completion. (All the the worker thread context which is
-> > processing fuse replies from daemon on the host).
-> >
-> > That means it blocks worker thread and it stops processing further
-> > replies and system deadlocks.
+On 8/10/20 9:36 AM, syzbot wrote:
+> Hello,
 > 
-> Is this reasoning specific to DAX?  Seems to me this is a virtio-fs
-> specific issue.
+> syzbot found the following issue on:
+> 
+> HEAD commit:    449dc8c9 Merge tag 'for-v5.9' of git://git.kernel.org/pub/..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14d41e02900000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9d25235bf0162fbc
+> dashboard link: https://syzkaller.appspot.com/bug?extid=996f91b6ec3812c48042
+> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=133c9006900000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1191cb1a900000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+996f91b6ec3812c48042@syzkaller.appspotmail.com
 
-I would think it is virtio-fs + DAX issues. virtio-fs without DAX does
-not have this problem.
+Thanks, the below should fix this one.
 
-If making this conditional on DAX an issue, I am wondering, can
-we now set args->may_block instead. Now virtiofs will do completion
-in a separate worker thread if ->may_block is set. That means, 
-worker will block till REMOVEMAPPING completes and then be woken
-up.
 
-Do let me know if you like setting args->may_block approach better.
-I can give that a try.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 443eecdfeda9..f9be665d1c5e 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -898,6 +898,7 @@ static void io_put_req(struct io_kiocb *req);
+ static void io_double_put_req(struct io_kiocb *req);
+ static void __io_double_put_req(struct io_kiocb *req);
+ static struct io_kiocb *io_prep_linked_timeout(struct io_kiocb *req);
++static void __io_queue_linked_timeout(struct io_kiocb *req);
+ static void io_queue_linked_timeout(struct io_kiocb *req);
+ static int __io_sqe_files_update(struct io_ring_ctx *ctx,
+ 				 struct io_uring_files_update *ip,
+@@ -1179,7 +1180,7 @@ static void io_prep_async_link(struct io_kiocb *req)
+ 			io_prep_async_work(cur);
+ }
+ 
+-static void __io_queue_async_work(struct io_kiocb *req)
++static struct io_kiocb *__io_queue_async_work(struct io_kiocb *req)
+ {
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_kiocb *link = io_prep_linked_timeout(req);
+@@ -1187,16 +1188,19 @@ static void __io_queue_async_work(struct io_kiocb *req)
+ 	trace_io_uring_queue_async_work(ctx, io_wq_is_hashed(&req->work), req,
+ 					&req->work, req->flags);
+ 	io_wq_enqueue(ctx->io_wq, &req->work);
+-
+-	if (link)
+-		io_queue_linked_timeout(link);
++	return link;
+ }
+ 
+ static void io_queue_async_work(struct io_kiocb *req)
+ {
++	struct io_kiocb *link;
++
+ 	/* init ->work of the whole link before punting */
+ 	io_prep_async_link(req);
+-	__io_queue_async_work(req);
++	link = __io_queue_async_work(req);
++
++	if (link)
++		io_queue_linked_timeout(link);
+ }
+ 
+ static void io_kill_timeout(struct io_kiocb *req)
+@@ -1229,12 +1233,19 @@ static void __io_queue_deferred(struct io_ring_ctx *ctx)
+ 	do {
+ 		struct io_defer_entry *de = list_first_entry(&ctx->defer_list,
+ 						struct io_defer_entry, list);
++		struct io_kiocb *link;
+ 
+ 		if (req_need_defer(de->req, de->seq))
+ 			break;
+ 		list_del_init(&de->list);
+ 		/* punt-init is done before queueing for defer */
+-		__io_queue_async_work(de->req);
++		link = __io_queue_async_work(de->req);
++		if (link) {
++			__io_queue_linked_timeout(link);
++			/* drop submission reference */
++			link->flags |= REQ_F_COMP_LOCKED;
++			io_put_req(link);
++		}
+ 		kfree(de);
+ 	} while (!list_empty(&ctx->defer_list));
+ }
+@@ -5945,15 +5956,12 @@ static enum hrtimer_restart io_link_timeout_fn(struct hrtimer *timer)
+ 	return HRTIMER_NORESTART;
+ }
+ 
+-static void io_queue_linked_timeout(struct io_kiocb *req)
++static void __io_queue_linked_timeout(struct io_kiocb *req)
+ {
+-	struct io_ring_ctx *ctx = req->ctx;
+-
+ 	/*
+ 	 * If the list is now empty, then our linked request finished before
+ 	 * we got a chance to setup the timer
+ 	 */
+-	spin_lock_irq(&ctx->completion_lock);
+ 	if (!list_empty(&req->link_list)) {
+ 		struct io_timeout_data *data = &req->io->timeout;
+ 
+@@ -5961,6 +5969,14 @@ static void io_queue_linked_timeout(struct io_kiocb *req)
+ 		hrtimer_start(&data->timer, timespec64_to_ktime(data->ts),
+ 				data->mode);
+ 	}
++}
++
++static void io_queue_linked_timeout(struct io_kiocb *req)
++{
++	struct io_ring_ctx *ctx = req->ctx;
++
++	spin_lock_irq(&ctx->completion_lock);
++	__io_queue_linked_timeout(req);
+ 	spin_unlock_irq(&ctx->completion_lock);
+ 
+ 	/* drop submission reference */
 
-Vivek
+-- 
+Jens Axboe
 
