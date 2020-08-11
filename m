@@ -2,121 +2,223 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 60AD024220B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 23:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF79024227F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 00:28:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726505AbgHKVfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 17:35:40 -0400
-Received: from sonic312-30.consmr.mail.ne1.yahoo.com ([66.163.191.211]:39404
-        "EHLO sonic312-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726258AbgHKVfh (ORCPT
+        id S1726271AbgHKW2O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 18:28:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40044 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbgHKW2M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 17:35:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1597181736; bh=8w+EvcZsCqHpbTMb7B5p6NtPpopAs+8fJLhaCvPEguQ=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=i91CjXySd1TgYGOpZu2BTool5O+P8ufWcekoPfjnGFQp9kbbp4YCkeAzRTkM7AH8X3sfZ6sfWbJLK+FvddMQew7r5WK2dolRfKKtYB/IZ1DsFL0lWIv4vHJ6llQU/fFMYQo5h9TPmE2ayh6tItTnfAL5+Ldx4qBqCuG9VTH2MM1IvZNd3bBP7AM5qSRczXL+Efnqqm+SOq+gjKKb/sI1EIIzZwMj+/Ia3qfxdmSawd9ZwDE8hgiq5af6YRVSlcAoHNrMxSWpOiaE488/kd6fbcE3rRxpBnlnfLD5g9qRaB5lNZ34ODqUJtSClBjL7H+bCwvj7G5Pij/onFn6TBN22w==
-X-YMail-OSG: WpZ3b0IVM1lOWflYFjwxd55lge1PeLe6UFcnTAkXmNFz68kn9XRwy3GlteeHBPi
- dzQAo.fvGwnt0N1bdticMs1as11oix7oMxoAXjzv0YmACD9HGQ38XBuJScIsbASifn4MIcIOmcv4
- 5iDwRWMvXuDPIY37R38Rfeo_swDDA0w5ecqTDEoAzH7cQMPjz6fkj_1BQPYXJkMetYuxZXB2fivU
- .TFgOCK.C4_82teyT5tKiHwgfYzrZIf3jCUML8pZDLKqf202bzrDoP9wycwhqKzdAyd7pVbvfL10
- DL4oIU2JdaN5ri6mfHU.cqraJdoCGf2ptndpgPnU_6L_YRyd2XjM814y1ZbKtsQKnWSXjoljv6pw
- wwVoumV.nOdtp49.GffNPS1g3zcAaP.TYdSORXIyA_24BsvEkbuxr8hNRo86mdawuxIWbTaKtaHO
- 0rKTCWQeXircV8F3XrgiK5XQgOype7HvJAddh0tN2JUVNRLKFsYVafPZEuqk68G9FQmBZAY.AYIa
- 5TUFl23mEH7o6gG9Z8sE7hgq_.3IdEGf761nmp6qmbXFS75A12MamD_dc2Fbfo5ui7gDfQAGGb0W
- 3UE8LNRuOuQ16wqoob86h4FrYVQVesPXlEBlSyUhAQPUG5TP_P2T0I56X2_frrGULaI.wsvS94kL
- rIASWAkB3Bp..fw0Ag3zYlfR4oGMB6uXa65aGnMvoqsfEYt7ORRyyP0oiSQsJzKM1n5mr3oFDaWY
- Bs4afdjlRC.A0dyd9FboZFNgTzHwgdo_Yg1NhlQEDUJZ1hbzvsWLB12qQInlMTfcBondpNmP34fk
- IhIwj0tfBbuguSuudR98cKAf_DioUGANHc1nIGTidBz4BSbS.1Oa7O_JjpWi4O4WAp_7RBfNt3MA
- S3NpsokMdgsIOKTlZVp7eN3mK18dczJs0_.0Xi21tc6.ohEr70gLejLMbbjhREn9kURu..k1gdNr
- EUYPJOSwDZf5eaGQd9j7.VH8Asu16xztRa9cmxzyNZGyF2WqcOOrGbkvhfAuOGe0zd7yfh0WKAQI
- 8B3AoCYRz.wccr9hd.lS7kNel5rjpCUfpweZK_cP66XAZ_fCyoKDdLFOElU6zKQFdzGTCGEyMlyn
- ATPwA6O1Qe2ruuFkx.y6HLhdHAQ85jMhnNpdRFY4KedHWYsdnAG..cS9lxAfTM81z31E.3fcOOhx
- DvKyYL_YM7HhsGmX6wiXskyDSzS7H1jNTqei_OTjrr2j2m7lZQKDVMEYv6n3yhaTgbwxkSX8gGNP
- 5PWXqcKMMQ8A5YDvuNBAhk1LJgXBnD6D5xJep6cmbHeyeC_JVyL1wRB_dAyYUNBscorpkn0D5hY_
- IxFJD0tiQhnl2tetFuJqrpq_NGHIR8aIq4ZkkHC1D4fys0ELI59Iq_CK1iV_6bLhFJKGZMrcSImc
- kvVBYO4myW2zF9GmT33nOUpmciPoyK_pdh_NHRQSECyWXoWVsu_ju8Wc7OgY8bnn9mTKZrflDwcB
- _B5SCzE92E6IdAorK8ll.vqIRtuhjgePlgw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 Aug 2020 21:35:36 +0000
-Received: by smtp415.mail.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 96b01fe5efcd5843237bda437e1afa7c;
-          Tue, 11 Aug 2020 21:35:35 +0000 (UTC)
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Tue, 11 Aug 2020 18:28:12 -0400
+Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5E9FC061787
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 15:28:12 -0700 (PDT)
+Received: by mail-oi1-x243.google.com with SMTP id h3so40848oie.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 15:28:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J5T/nvak5wlxXblbVTDHVOmc2hAwvvYVV2Vb3CvH/W8=;
+        b=FkoozWqxK2C1WKuQ4NC4YGvyueUcXzIWWlOKER9Qe8T8H340YvtTUs4QELxhSsGo5o
+         Oa9yC282vrk51zpjZb5oBHDIZOZVumtTCq7RKubo5TU7hzKGc0TmqZKUSfIHvOv1PY1l
+         dw/x5whCK+oeYF+D3N1iLnOBTkPA9AmvZMhRo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J5T/nvak5wlxXblbVTDHVOmc2hAwvvYVV2Vb3CvH/W8=;
+        b=cPbiKPdNLy2JgUr2PlwNAk5JFRGb7nO5bT0WW5kYfw/UqyUDGicMtdYCxDazMj2O6d
+         3z3TnS5pXTLcyOEB7U9WxYo2ihSDPxKYHxQ/UsgyELyUTNZsEOHuRI2AldS0Dy8uYwgC
+         Y+UoQdYCJmzeySClvK+T2CsRGELM/LVgBppmIoBo92I9mgg4cSBAIFAnJfTWR/hrXrdz
+         gCYBCvNjGGFsLKrg5gd4niMKNRHaki0QznAvJ/TpKDRyu5WWjP8RmVKZ3aJxPvMJ5cSp
+         XX0g46voppQOBvFcCUmrSvA6MGAkjrhsWgyBCSW8J/oC3upQEEXR7aLYqdxg9Jbtx7wM
+         kA4w==
+X-Gm-Message-State: AOAM5339JTHa6vRHG0gBfbuYSlzSnHJfzhY4kFzAbP2NJr9jGOyIKZ7h
+        BwkbrOHRUm2iwUcnxYzSwEtMA4pQKDE=
+X-Google-Smtp-Source: ABdhPJx/6R87UtohjzEQ/WkYwP5qfUTLNSsZE7FoVNPZ6oRQnrSp6u/2k+KUhO/yQ9ANMXfvVWRV+g==
+X-Received: by 2002:aca:4e92:: with SMTP id c140mr5044717oib.70.1597184892059;
+        Tue, 11 Aug 2020 15:28:12 -0700 (PDT)
+Received: from ravnica.hsd1.co.comcast.net ([2601:285:8380:9270:7220:84ff:fe09:9945])
+        by smtp.gmail.com with ESMTPSA id v36sm4582934ooi.46.2020.08.11.15.28.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Aug 2020 15:28:11 -0700 (PDT)
+From:   Ross Zwisler <zwisler@chromium.org>
+X-Google-Original-From: Ross Zwisler <zwisler@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org
+Cc:     Mattias Nissler <mnissler@chromium.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Gordon <bmgordon@google.com>,
         David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <5C8E0FA8-274E-4B56-9B5A-88E768D01F3A@amacapital.net>
- <a6cd01ed-918a-0ed7-aa87-0585db7b6852@schaufler-ca.com>
- <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <c013f32e-3931-f832-5857-2537a0b3d634@schaufler-ca.com>
-Date:   Tue, 11 Aug 2020 14:35:33 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Dmitry Torokhov <dtor@google.com>,
+        Jesse Barnes <jsbarnes@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Micah Morton <mortonm@google.com>,
+        Raul Rangel <rrangel@google.com>,
+        Ross Zwisler <zwisler@google.com>
+Subject: [PATCH v7] Add a "nosymfollow" mount option.
+Date:   Tue, 11 Aug 2020 16:28:03 -0600
+Message-Id: <20200811222803.3224434-1-zwisler@google.com>
+X-Mailer: git-send-email 2.28.0.236.gb10cc79966-goog
 MIME-Version: 1.0
-In-Reply-To: <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.16455 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/11/2020 1:28 PM, Miklos Szeredi wrote:
-> On Tue, Aug 11, 2020 at 6:17 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
->> Since a////////b has known meaning, and lots of applications
->> play loose with '/', its really dangerous to treat the string as
->> special. We only get away with '.' and '..' because their behavior
->> was defined before many of y'all were born.
-> So the founding fathers have set things in stone and now we can't
-> change it.   Right?
+From: Mattias Nissler <mnissler@chromium.org>
 
-The founders did lots of things that, in retrospect, weren't
-such great ideas, but that we have to live with.
+For mounts that have the new "nosymfollow" option, don't follow symlinks
+when resolving paths. The new option is similar in spirit to the
+existing "nodev", "noexec", and "nosuid" options, as well as to the
+LOOKUP_NO_SYMLINKS resolve flag in the openat2(2) syscall. Various BSD
+variants have been supporting the "nosymfollow" mount option for a long
+time with equivalent implementations.
 
-> Well that's how it looks... but let's think a little; we have '/' and
-> '\0' that can't be used in filenames.  Also '.' and '..' are
-> prohibited names. It's not a trivial limitation, so applications are
-> probably not used to dumping binary data into file names.
+Note that symlinks may still be created on file systems mounted with
+the "nosymfollow" option present. readlink() remains functional, so
+user space code that is aware of symlinks can still choose to follow
+them explicitly.
 
-Hee Hee. Back in the early days of UNIX (the 1970s) there was command
-dsw(1) "delete from switches" because files with untypeible names where
-unfortunately common. I would question the assertion that "applications
-are not used to dumping binary data into file names", based on how
-often I've wished we still had dsw(1).
+Setting the "nosymfollow" mount option helps prevent privileged
+writers from modifying files unintentionally in case there is an
+unexpected link along the accessed path. The "nosymfollow" option is
+thus useful as a defensive measure for systems that need to deal with
+untrusted file systems in privileged contexts.
 
->   And that
-> means it's probably possible to find a fairly short combination that
-> is never used in practice (probably containing the "/." sequence).
+More information on the history and motivation for this patch can be
+found here:
 
-You'd think, but you'd be wrong. In the UNIX days we tried everything
-from "..." to ".NO_HID." and there always arose a problem or two. Not
-the least of which is that a "magic" pathname generated on an old system,
-then mounted on a new system will never give you the results you want.
+https://sites.google.com/a/chromium.org/dev/chromium-os/chromiumos-design-docs/hardening-against-malicious-stateful-data#TOC-Restricting-symlink-traversal
 
+Signed-off-by: Mattias Nissler <mnissler@chromium.org>
+Signed-off-by: Ross Zwisler <zwisler@google.com>
+---
+Changes since v6 [1]:
+ * Rebased onto v5.8.
+ * Another round of testing including readlink(1), readlink(2),
+   realpath(1), realpath(3), statfs(2) and mount(2) to make sure
+   everything still works.
 
-> Why couldn't we reserve such a combination now?
->
-> I have no idea how to find such it, but other than that, I see no
-> theoretical problem with extending the list of reserved filenames.
+After this lands I will upstream changes to util-linux[2] and man-pages
+[3].
 
-You need a sequence that is never used in any language, and
-that has never been used as a magic shell sequence. If you want
-a fun story to tell over beers, look up how using the "@" as the
-erase character on a TTY33 lead to it being used in email addresses.
+[1]: https://lkml.org/lkml/2020/3/4/770
+[2]: https://github.com/rzwisler/util-linux/commit/7f8771acd85edb70d97921c026c55e1e724d4e15
+[3]: https://github.com/rzwisler/man-pages/commit/b8fe8079f64b5068940c0144586e580399a71668
+---
+ fs/namei.c                 | 3 ++-
+ fs/namespace.c             | 2 ++
+ fs/proc_namespace.c        | 1 +
+ fs/statfs.c                | 2 ++
+ include/linux/mount.h      | 3 ++-
+ include/linux/statfs.h     | 1 +
+ include/uapi/linux/mount.h | 1 +
+ 7 files changed, 11 insertions(+), 2 deletions(-)
 
-> Thanks,
-> Miklos
+diff --git a/fs/namei.c b/fs/namei.c
+index 72d4219c93acb..ed68478fb1fb6 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1626,7 +1626,8 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
+ 			return ERR_PTR(error);
+ 	}
+ 
+-	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS))
++	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS) ||
++			unlikely(nd->path.mnt->mnt_flags & MNT_NOSYMFOLLOW))
+ 		return ERR_PTR(-ELOOP);
+ 
+ 	if (!(nd->flags & LOOKUP_RCU)) {
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 4a0f600a33285..1cbbf5a9b954f 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3167,6 +3167,8 @@ long do_mount(const char *dev_name, const char __user *dir_name,
+ 		mnt_flags &= ~(MNT_RELATIME | MNT_NOATIME);
+ 	if (flags & MS_RDONLY)
+ 		mnt_flags |= MNT_READONLY;
++	if (flags & MS_NOSYMFOLLOW)
++		mnt_flags |= MNT_NOSYMFOLLOW;
+ 
+ 	/* The default atime for remount is preservation */
+ 	if ((flags & MS_REMOUNT) &&
+diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+index 3059a9394c2d6..e59d4bb3a89e4 100644
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -70,6 +70,7 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
+ 		{ MNT_NOATIME, ",noatime" },
+ 		{ MNT_NODIRATIME, ",nodiratime" },
+ 		{ MNT_RELATIME, ",relatime" },
++		{ MNT_NOSYMFOLLOW, ",nosymfollow" },
+ 		{ 0, NULL }
+ 	};
+ 	const struct proc_fs_opts *fs_infop;
+diff --git a/fs/statfs.c b/fs/statfs.c
+index 2616424012ea7..59f33752c1311 100644
+--- a/fs/statfs.c
++++ b/fs/statfs.c
+@@ -29,6 +29,8 @@ static int flags_by_mnt(int mnt_flags)
+ 		flags |= ST_NODIRATIME;
+ 	if (mnt_flags & MNT_RELATIME)
+ 		flags |= ST_RELATIME;
++	if (mnt_flags & MNT_NOSYMFOLLOW)
++		flags |= ST_NOSYMFOLLOW;
+ 	return flags;
+ }
+ 
+diff --git a/include/linux/mount.h b/include/linux/mount.h
+index de657bd211fa6..aaf343b38671c 100644
+--- a/include/linux/mount.h
++++ b/include/linux/mount.h
+@@ -30,6 +30,7 @@ struct fs_context;
+ #define MNT_NODIRATIME	0x10
+ #define MNT_RELATIME	0x20
+ #define MNT_READONLY	0x40	/* does the user want this to be r/o? */
++#define MNT_NOSYMFOLLOW	0x80
+ 
+ #define MNT_SHRINKABLE	0x100
+ #define MNT_WRITE_HOLD	0x200
+@@ -46,7 +47,7 @@ struct fs_context;
+ #define MNT_SHARED_MASK	(MNT_UNBINDABLE)
+ #define MNT_USER_SETTABLE_MASK  (MNT_NOSUID | MNT_NODEV | MNT_NOEXEC \
+ 				 | MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME \
+-				 | MNT_READONLY)
++				 | MNT_READONLY | MNT_NOSYMFOLLOW)
+ #define MNT_ATIME_MASK (MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME )
+ 
+ #define MNT_INTERNAL_FLAGS (MNT_SHARED | MNT_WRITE_HOLD | MNT_INTERNAL | \
+diff --git a/include/linux/statfs.h b/include/linux/statfs.h
+index 9bc69edb8f188..fac4356ea1bfc 100644
+--- a/include/linux/statfs.h
++++ b/include/linux/statfs.h
+@@ -40,6 +40,7 @@ struct kstatfs {
+ #define ST_NOATIME	0x0400	/* do not update access times */
+ #define ST_NODIRATIME	0x0800	/* do not update directory access times */
+ #define ST_RELATIME	0x1000	/* update atime relative to mtime/ctime */
++#define ST_NOSYMFOLLOW	0x2000	/* do not follow symlinks */
+ 
+ struct dentry;
+ extern int vfs_get_fsid(struct dentry *dentry, __kernel_fsid_t *fsid);
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+index 96a0240f23fed..dd8306ea336c1 100644
+--- a/include/uapi/linux/mount.h
++++ b/include/uapi/linux/mount.h
+@@ -16,6 +16,7 @@
+ #define MS_REMOUNT	32	/* Alter flags of a mounted FS */
+ #define MS_MANDLOCK	64	/* Allow mandatory locks on an FS */
+ #define MS_DIRSYNC	128	/* Directory modifications are synchronous */
++#define MS_NOSYMFOLLOW	256	/* Do not follow symlinks */
+ #define MS_NOATIME	1024	/* Do not update access times. */
+ #define MS_NODIRATIME	2048	/* Do not update directory access times */
+ #define MS_BIND		4096
+-- 
+2.28.0.236.gb10cc79966-goog
+
