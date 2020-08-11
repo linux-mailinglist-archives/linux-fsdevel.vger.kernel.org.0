@@ -2,69 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FA53241C0A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 16:04:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A00DC241C16
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 16:09:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728856AbgHKODP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 10:03:15 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53632 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728516AbgHKODP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 10:03:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 92157B0A5;
-        Tue, 11 Aug 2020 14:03:34 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 5B948DA83C; Tue, 11 Aug 2020 16:02:12 +0200 (CEST)
-Date:   Tue, 11 Aug 2020 16:02:11 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: btrfs crash in kobject_del while running xfstest
-Message-ID: <20200811140211.GQ2026@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, John Hubbard <jhubbard@nvidia.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <200e5b49-5c51-bbe5-de93-c6bd6339bb7f@nvidia.com>
- <2a3eb48d-6ca1-61c6-20cf-ba2fbda21f45@nvidia.com>
+        id S1728750AbgHKOIo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 10:08:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47574 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728516AbgHKOIm (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Aug 2020 10:08:42 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2557CC06174A;
+        Tue, 11 Aug 2020 07:08:42 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k5Ux7-00DbzY-IB; Tue, 11 Aug 2020 14:08:33 +0000
+Date:   Tue, 11 Aug 2020 15:08:33 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: file metadata via fs API  (was: [GIT PULL] Filesystem
+ Information)
+Message-ID: <20200811140833.GH1236603@ZenIV.linux.org.uk>
+References: <1842689.1596468469@warthog.procyon.org.uk>
+ <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2a3eb48d-6ca1-61c6-20cf-ba2fbda21f45@nvidia.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 11, 2020 at 04:19:47AM -0700, John Hubbard wrote:
-> Somehow the copy-paste of Chris Mason's name failed (user error
-> on my end), sorry about that Chris!
+On Tue, Aug 11, 2020 at 03:54:19PM +0200, Miklos Szeredi wrote:
+> On Wed, Aug 05, 2020 at 10:24:23AM +0200, Miklos Szeredi wrote:
+> > On Tue, Aug 4, 2020 at 4:36 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > 
+> > > I think we already lost that with the xattr API, that should have been
+> > > done in a way that fits this philosophy.  But given that we  have "/"
+> > > as the only special purpose char in filenames, and even repetitions
+> > > are allowed, it's hard to think of a good way to do that.  Pity.
+> > 
+> > One way this could be solved is to allow opting into an alternative
+> > path resolution mode.
+> > 
+> > E.g.
+> >   openat(AT_FDCWD, "foo/bar//mnt/info", O_RDONLY | O_ALT);
 > 
-> On 8/11/20 4:17 AM, John Hubbard wrote:
-> > Hi,
-> > 
-> > Here's an early warning of a possible problem.
-> > 
-> > I'm seeing a new btrfs crash when running xfstests, as of
-> > 00e4db51259a5f936fec1424b884f029479d3981 ("Merge tag
-> > 'perf-tools-2020-08-10' of
-> > git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux") in linux.git.
-> > 
-> > This doesn't crash in v5.8, so I attempted to bisect, but ended up with
-> > the net-next merge commit as the offending one: commit
-> > 47ec5303d73ea344e84f46660fff693c57641386 ("Merge
-> > git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next"), which
-> > doesn't really help because it's 2088 files changed, of course.
+> Proof of concept patch and test program below.
+> 
+> Opted for triple slash in the hope that just maybe we could add a global
+> /proc/sys/fs/resolve_alt knob to optionally turn on alternative (non-POSIX) path
+> resolution without breaking too many things.  Will try that later...
+> 
+> Comments?
 
-Thanks for the report, it's already known and patch is on the way to
-Linus' tree (ETA before rc1). You can apply
-https://lore.kernel.org/linux-btrfs/20200803062011.17291-1-wqu@suse.com/
-locally.
+Hell, NO.  This is unspeakably tasteless.  And full of lovely corner cases wrt
+symlink bodies, etc.
+
+Consider that one NAKed.  I'm seriously unhappy with the entire fsinfo thing
+in general, but this one is really over the top.
