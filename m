@@ -2,94 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC8B2421D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 23:20:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3F202421FE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 23:32:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbgHKVUZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 17:20:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57780 "EHLO
+        id S1726430AbgHKVce (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 17:32:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726020AbgHKVUY (ORCPT
+        with ESMTP id S1726164AbgHKVcd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 17:20:24 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A2B2C06174A;
-        Tue, 11 Aug 2020 14:20:24 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k5bgs-00DlEE-SY; Tue, 11 Aug 2020 21:20:14 +0000
-Date:   Tue, 11 Aug 2020 22:20:14 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-Message-ID: <20200811212014.GN1236603@ZenIV.linux.org.uk>
-References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <5C8E0FA8-274E-4B56-9B5A-88E768D01F3A@amacapital.net>
- <a6cd01ed-918a-0ed7-aa87-0585db7b6852@schaufler-ca.com>
- <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
+        Tue, 11 Aug 2020 17:32:33 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 575FCC06174A;
+        Tue, 11 Aug 2020 14:32:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xoesQASABFe9SwD8nRdEL82v49tr3QLmBanAXleWpZU=; b=QOZLZ/epsASplsdljPsEwKW2HT
+        qK212HspGz0/v02cQTpc9XmeTUIgVLLnvtlGmkDKPcXSBgdCSdxFn5QoQvHL6TarYgdMKbxXPfpc/
+        HKxkNKv6yrdwZ+FKqAtJkJyE4/w3WpdNm1Z3Wf87craATSb8VCUbN6zSa28i6bibuuJuLNBptGFcm
+        +wt5LTkDLgXWap9dgMKV7C6qmAIlr6DZsgp6DbD6HwgaHoD5c8Lprdo0CQFBvIzzyGXs6I9rXSAQQ
+        XFY6EOGCrtGkO4Ai2QgfWKQxVI69OzMXdUt8nJGn0vTfvvnUZ7ewrZfS4LnEMo5AdaxSIG4JM6Uwv
+        gNjabORA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k5bsk-0002qc-LI; Tue, 11 Aug 2020 21:32:30 +0000
+Date:   Tue, 11 Aug 2020 22:32:30 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] iomap: Add iomap_iter
+Message-ID: <20200811213230.GX17456@casper.infradead.org>
+References: <20200728173216.7184-1-willy@infradead.org>
+ <20200728173216.7184-2-willy@infradead.org>
+ <20200811210127.GG6107@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
+In-Reply-To: <20200811210127.GG6107@magnolia>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 11, 2020 at 10:28:31PM +0200, Miklos Szeredi wrote:
-> On Tue, Aug 11, 2020 at 6:17 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Tue, Aug 11, 2020 at 02:01:27PM -0700, Darrick J. Wong wrote:
+> On Tue, Jul 28, 2020 at 06:32:14PM +0100, Matthew Wilcox (Oracle) wrote:
+> > The iomap_iter provides a convenient way to package up and maintain
+> > all the arguments to the various mapping and operation functions.
+> > iomi_advance() moves the iterator forward to the next chunk of the file.
+> > This approach has only one callback to the filesystem -- the iomap_next_t
+> > instead of the separate iomap_begin / iomap_end calls.  This slightly
+> > complicates the filesystems, but is more efficient.  The next function
 > 
-> > Since a////////b has known meaning, and lots of applications
-> > play loose with '/', its really dangerous to treat the string as
-> > special. We only get away with '.' and '..' because their behavior
-> > was defined before many of y'all were born.
+> How much more efficient?  I've wondered since the start of
+
+I haven't done any performance measurements.  Not entirely sure what
+I'd do to measure it, to be honest.  I suppose I should also note the
+decreased stack depth here, although I do mention that in the next patch.
+
+> > +/**
+> > + * struct iomap_iter - Iterate through a range of a file.
+> > + * @inode: Set at the start of the iteration and should not change.
+> > + * @pos: The current file position we are operating on.  It is updated by
+> > + *	calls to iomap_iter().  Treat as read-only in the body.
+> > + * @len: The remaining length of the file segment we're operating on.
+> > + *	It is updated at the same time as @pos.
+> > + * @ret: What we want our declaring function to return.  It is initialised
+> > + *	to zero and is the cumulative number of bytes processed so far.
+> > + *	It is updated at the same time as @pos.
+> > + * @copied: The number of bytes operated on by the body in the most
+> > + *	recent iteration.  If no bytes were operated on, it may be set to
+> > + *	a negative errno.  0 is treated as -EIO.
+> > + * @flags: Zero or more of the iomap_begin flags above.
+> > + * @iomap: ...
+> > + * @srcma:s ...
 > 
-> So the founding fathers have set things in stone and now we can't
-> change it.   Right?
+> ...? :)
 
-Right.
+I ran out of tuits.  If this approach makes people happy, I can finish it
+off.
 
-> Well that's how it looks... but let's think a little; we have '/' and
-> '\0' that can't be used in filenames.  Also '.' and '..' are
-> prohibited names. It's not a trivial limitation, so applications are
-> probably not used to dumping binary data into file names.  And that
-> means it's probably possible to find a fairly short combination that
-> is never used in practice (probably containing the "/." sequence).
-
-No, it is not.  Miklos, get real - you will end up with obscure
-pathname produced once in a while by a script fragment from hell
-spewed out by crusty piece of awk buried in a piece of shit
-makefile from hell (and you are lucky if it won't be an automake
-output, while we are at it).  Exercised only when some shipped
-turd needs to be regenerated.  Have you _ever_ tried to debug e.g.
-gcc build problems?  I have, and it's extremely unpleasant.  Failures
-tend to be obscure as hell, backtracking them through the makefiles
-is a massive PITA and figuring out why said piece of awk produces
-what it does...
-
-I know what I would've done if the likely 5 hours of cursing everything
-would have ended up with discovery that some luser had assumed that
-surely, no sane software would ever generate this sequence of characters
-in anything used as a pathname, and that for this reason I'm looking
-forward to several more hours of playing with utterly revolting crap
-to convince it to stay away from that sequence...
-
-> Why couldn't we reserve such a combination now?
+> > + */
+> > +struct iomap_iter {
+> > +	struct inode *inode;
+> > +	loff_t pos;
+> > +	u64 len;
 > 
-> I have no idea how to find such it, but other than that, I see no
-> theoretical problem with extending the list of reserved filenames.
+> Thanks for leaving this u64 :)
+> 
+> > +	loff_t ret;
+> > +	ssize_t copied;
+> 
+> Is this going to be sufficient for SEEK_{HOLE,DATA} when it wants to
+> jump ahead by more than 2GB?
 
-"not breaking userland", for one.
+That's a good point.  loff_t, I guess.  Even though the current users
+of iomap don't support extents larger than 2GB ;-)
+
+> > +	unsigned flags;
+> > +	struct iomap iomap;
+> > +	struct iomap srcmap;
+> > +};
+> > +
+> > +#define IOMAP_ITER(name, _inode, _pos, _len, _flags)			\
+> > +	struct iomap_iter name = {					\
+> > +		.inode = _inode,					\
+> > +		.pos = _pos,						\
+> > +		.len = _len,						\
+> > +		.flags = _flags,					\
+> > +	}
+> > +
+> > +typedef int (*iomap_next_t)(const struct iomap_iter *,
+> > +		struct iomap *iomap, struct iomap *srcmap);
+> 
+> I muttered in my other reply how these probably should be called
+> iomap_iter_advance_t since they actually do the upper level work of
+> advancing the iterator to the next mapping.
+
+nono, the iterator is const!  They don't move the iterator at all,
+they just get the next iomap/srcmap.
+
