@@ -2,111 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 50811241D29
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 17:30:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB1A2241D38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 17:32:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728833AbgHKPat (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 11:30:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60268 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728903AbgHKPaq (ORCPT
+        id S1729008AbgHKPcx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 11:32:53 -0400
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:41116 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728859AbgHKPcx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 11:30:46 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DF7DC06174A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 08:30:44 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id a26so13576255ejc.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 08:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2+Iq2qCHUHVaNAKHuF0ZSvBIxw9aZEr5eRrwEH0pyDM=;
-        b=UHuiqJr7X2atxIGSHLT+svSK5gdNsubwckkEdoLhXVa0P5T2fMneByo6aZKzG8LldX
-         T1q+WwMY0FUEt+jhdI91DgqUpJ4E3NQyPft4lnwP2z3OP679ywggUOEnwc9ZpPQSZeqm
-         UJZcOolg7KSv4Nk5wS9SsRafbH+gx/jq+8o2c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2+Iq2qCHUHVaNAKHuF0ZSvBIxw9aZEr5eRrwEH0pyDM=;
-        b=GUryDvMWu2B0pBKmrKchYfZoi7Nj3ayb5CS0JgY3BaqmUtsjgCkzkXozMZ64Rrsiws
-         LoMi2V0Hp8q2KlBq4b9fyzwWT3QYMXGHMcQX8Jq9HIUubfyfmWJRsRDW6M0PpJoSJIzp
-         iqH75lMu58ReHpIUukGtVZNpIanSBDqZyB0yEzqtSD4KTa+f3nI03KfAOuRJhWymw8FQ
-         bRKQlQ68dms6GQ1MDmOKS3Ss5XZ73aYLkZ9kvLwK9lGsyA+0phFuwYbRsSSiT//xnByW
-         pl2EBMNcbOqhh/Wk99WyL2mk6WxYGsFJ6fxXLJjj2MIZMuaOPmKvJT/hS43cYjCHPh+5
-         27LQ==
-X-Gm-Message-State: AOAM532E5BrwOJTlx3YAULXly7Oj24SYxJ+iGZW/IFcSrD90qmR8q+py
-        6bTW0IivdIMaaqyLi2vcJKNqEdsg+AW/YlH5ihgJIw==
-X-Google-Smtp-Source: ABdhPJzBzum8mnm+vTGkWQzIaTCUoEszBkoemTUzdbDb+99lWLtwfHPa77uVvxYBE8u6HRWpehJ7Yt8BQd5fvoZKDLs=
-X-Received: by 2002:a17:907:94ca:: with SMTP id dn10mr26676759ejc.110.1597159843363;
- Tue, 11 Aug 2020 08:30:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
- <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
- <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
-In-Reply-To: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 11 Aug 2020 17:30:32 +0200
-Message-ID: <CAJfpegtWai+5Tzxi1_G+R2wEZz0q66uaOFndNE0YEQSDjq0f_A@mail.gmail.com>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Tue, 11 Aug 2020 11:32:53 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id E738F8EE19D;
+        Tue, 11 Aug 2020 08:32:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1597159972;
+        bh=wWrttx+iJhZF4TwfmlzLv+L9PM0TdD9Fc3uir7nFLMM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=XjfA1fqdWroJDmq6NYLlvqAen2Eu9mx40k7dwajpO5cdqxz8OBHTAj7LtnXt5D77r
+         yHD8FpZ2B8DPuLh9B0vQ3+a4we6/g8GeUBH/MEhQmafs87XW0uTaOy4AkMr/y85xEu
+         no3iCijZ0aDY7SPirzPrfB1ZKiYDgL37sKqkoDNM=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id b3YM1B3UJc5Z; Tue, 11 Aug 2020 08:32:51 -0700 (PDT)
+Received: from [153.66.254.174] (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7D8168EE149;
+        Tue, 11 Aug 2020 08:32:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1597159971;
+        bh=wWrttx+iJhZF4TwfmlzLv+L9PM0TdD9Fc3uir7nFLMM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=LWfToPsdUAM4OHjosIhR5/dzJ35cRneHKHc+1ZzcbqKKxvJcvDFZvI6pjja2WIkmc
+         +K+U4TpQP2HX9w8ZGbglVlC1eURNIPwla3RFrIuEXR75FGSSeUnGceNMM64gUYwCq7
+         IZjHJh9XO1JkIu1Kj6UVNO92zS1mMzzP3p+jQrFY=
+Message-ID: <1597159969.4325.21.camel@HansenPartnership.com>
+Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
+ LSM (IPE)
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Chuck Lever <chucklever@gmail.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
+        snitzer@redhat.com, dm-devel@redhat.com,
+        tyhicks@linux.microsoft.com, agk@redhat.com,
+        Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
+        serge@hallyn.com, pasha.tatashin@soleen.com,
+        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
+        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        jaskarankhurana@linux.microsoft.com
+Date:   Tue, 11 Aug 2020 08:32:49 -0700
+In-Reply-To: <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
+         <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
+         <20200802143143.GB20261@amd>
+         <1596386606.4087.20.camel@HansenPartnership.com>
+         <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
+         <1596639689.3457.17.camel@HansenPartnership.com>
+         <alpine.LRH.2.21.2008050934060.28225@namei.org>
+         <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
+         <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
+         <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
+         <1597073737.3966.12.camel@HansenPartnership.com>
+         <6E907A22-02CC-42DD-B3CD-11D304F3A1A8@gmail.com>
+         <1597124623.30793.14.camel@HansenPartnership.com>
+         <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 11, 2020 at 5:20 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> [ I missed the beginning of this discussion, so maybe this was already
-> suggested ]
->
-> On Tue, Aug 11, 2020 at 6:54 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > >
-> > > E.g.
-> > >   openat(AT_FDCWD, "foo/bar//mnt/info", O_RDONLY | O_ALT);
-> >
-> > Proof of concept patch and test program below.
->
-> I don't think this works for the reasons Al says, but a slight
-> modification might.
->
-> IOW, if you do something more along the lines of
->
->        fd = open(""foo/bar", O_PATH);
->        metadatafd = openat(fd, "metadataname", O_ALT);
->
-> it might be workable.
+On Tue, 2020-08-11 at 10:48 -0400, Chuck Lever wrote:
+> > On Aug 11, 2020, at 1:43 AM, James Bottomley
+> > <James.Bottomley@HansenPartnership.com> wrote:
+> > On Mon, 2020-08-10 at 19:36 -0400, Chuck Lever wrote:
+[...]
+> > > Thanks for the help! I just want to emphasize that documentation
+> > > (eg, a specification) will be critical for remote filesystems.
+> > > 
+> > > If any of this is to be supported by a remote filesystem, then we
+> > > need an unencumbered description of the new metadata format
+> > > rather than code. GPL-encumbered formats cannot be contributed to
+> > > the NFS standard, and are probably difficult for other
+> > > filesystems that are not Linux-native, like SMB, as well.
+> > 
+> > I don't understand what you mean by GPL encumbered formats.  The
+> > GPL is a code licence not a data or document licence.
+> 
+> IETF contributions occur under a BSD-style license incompatible
+> with the GPL.
+> 
+> https://trustee.ietf.org/trust-legal-provisions.html
+> 
+> Non-Linux implementers (of OEM storage devices) rely on such
+> standards processes to indemnify them against licensing claims.
 
-That would have been my backup suggestion, in case the unified
-namespace doesn't work out.
+Well, that simply means we won't be contributing the Linux
+implementation, right? However, IETF doesn't require BSD for all
+implementations, so that's OK.
 
-I wouldn't think the normal lookup rules really get in the way if we
-explicitly enable alternative path lookup with a flag.  The rules just
-need to be documented.
+> Today, there is no specification for existing IMA metadata formats,
+> there is only code. My lawyer tells me that because the code that
+> implements these formats is under GPL, the formats themselves cannot
+> be contributed to, say, the IETF without express permission from the
+> authors of that code. There are a lot of authors of the Linux IMA
+> code, so this is proving to be an impediment to contribution. That
+> blocks the ability to provide a fully-specified NFS protocol
+> extension to support IMA metadata formats.
 
-What's the disadvantage of doing it with a single lookup WITH an enabling flag?
+Well, let me put the counterpoint: I can write a book about how linux
+device drivers work (which includes describing the data formats), for
+instance, without having to get permission from all the authors ... or
+is your lawyer taking the view we should be suing Jonathan Corbet,
+Alessandro Rubini, and Greg Kroah-Hartman for licence infringement?  In
+fact do they think we now have a huge class action possibility against
+O'Reilly  and a host of other publishers ...
 
-It's definitely not going to break anything, so no backward
-compatibility issues whatsoever.
+> > The way the spec process works in Linux is that we implement or
+> > evolve a data format under a GPL implementaiton, but that
+> > implementation doesn't implicate the later standardisation of the
+> > data format and people are free to reimplement under any licence
+> > they choose.
+> 
+> That technology transfer can happen only if all the authors of that
+> prototype agree to contribute to a standard. That's much easier if
+> that agreement comes before an implementation is done. The current
+> IMA code base is more than a decade old, and there are more than a
+> hundred authors who have contributed to that base.
+> 
+> Thus IMO we want an unencumbered description of any IMA metadata
+> format that is to be contributed to an open standards body (as it
+> would have to be to extend, say, the NFS protocol).
 
-Thanks,
-Miklos
+Fine, good grief, people who take a sensible view of this can write the
+data format down and publish it under any licence you like then you can
+pick it up again safely.  Would CC0 be OK? ... neither GPL nor BSD are
+document licences and we shouldn't perpetuate bad practice by licensing
+documentation under them.
+
+James
+
