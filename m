@@ -2,75 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68DF2242194
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 23:03:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32B4A2421B9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 23:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbgHKVDs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 17:03:48 -0400
-Received: from namei.org ([65.99.196.166]:58742 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726235AbgHKVDs (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 17:03:48 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 07BL3Cw3013028;
-        Tue, 11 Aug 2020 21:03:12 GMT
-Date:   Wed, 12 Aug 2020 07:03:12 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Chuck Lever <chucklever@gmail.com>
-cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
- LSM (IPE)
-In-Reply-To: <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
-Message-ID: <alpine.LRH.2.21.2008120643370.10591@namei.org>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com> <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm> <20200802143143.GB20261@amd> <1596386606.4087.20.camel@HansenPartnership.com> <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
- <1596639689.3457.17.camel@HansenPartnership.com> <alpine.LRH.2.21.2008050934060.28225@namei.org> <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com> <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        id S1726420AbgHKVMj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 17:12:39 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:56550 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbgHKVMi (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 11 Aug 2020 17:12:38 -0400
+Received: from [192.168.254.32] (unknown [47.187.206.220])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 350B220B4908;
+        Tue, 11 Aug 2020 14:12:36 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 350B220B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1597180356;
+        bh=4RKuxHHBb7b5iqoFVfv+liebsOKw+3ZpCCbnWU4Izrc=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=GKnVs4LQPwyJJDTbgh/E+llQavrF1igeYdqSs/KtlP37M/ixyQ49CNvUROa65XiKy
+         vY9P6pc4JVMLo39cfyxELw3Fs+HHxOWFipo7Z7h+KmYJb8bIKAvb4eskbhRZ2Qqhj+
+         uyNIBa/8urLrbQLYUanD11AtvTtlwu/mpJChgXgQ=
+Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>, X86 ML <x86@kernel.org>
+References: <20200728131050.24443-1-madvenka@linux.microsoft.com>
+ <CALCETrVy5OMuUx04-wWk9FJbSxkrT2vMfN_kANinudrDwC4Cig@mail.gmail.com>
+ <3b916198-3a98-bd19-9a1c-f2d8d44febe8@linux.microsoft.com>
+ <CALCETrUJ2hBmJujyCtEqx4=pknRvjvi1-Gj9wfRcMMzejjKQsQ@mail.gmail.com>
+ <5f4e024b-cc14-8fe9-dc4a-df09da2a98ae@linux.microsoft.com>
+Message-ID: <5f621248-7deb-8c3d-d347-f481296037f5@linux.microsoft.com>
+Date:   Tue, 11 Aug 2020 16:12:35 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <5f4e024b-cc14-8fe9-dc4a-df09da2a98ae@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 8 Aug 2020, Chuck Lever wrote:
+I am working on version 2 of trampfd. Will send it out soon.
 
-> My interest is in code integrity enforcement for executables stored
-> in NFS files.
+Thanks for all the comments so far!
+
+Madhavan
+
+On 8/10/20 12:34 PM, Madhavan T. Venkataraman wrote:
+> Resending because of mailer problems. Some of the recipients did not receive
+> my email. I apologize. Sigh.
 > 
-> My struggle with IPE is that due to its dependence on dm-verity, it
-> does not seem to able to protect content that is stored separately
-> from its execution environment and accessed via a file access
-> protocol (FUSE, SMB, NFS, etc).
-
-It's not dependent on DM-Verity, that's just one possible integrity 
-verification mechanism, and one of two supported in this initial 
-version. The other is 'boot_verified' for a verified or otherwise trusted 
-rootfs. Future versions will support FS-Verity, at least.
-
-IPE was designed to be extensible in this way, with a strong separation of 
-mechanism and policy.
-
-Whatever is implemented for NFS should be able to plug in to IPE pretty 
-easily.
-
-
--- 
-James Morris
-<jmorris@namei.org>
-
+> Here is a redefinition of trampfd based on review comments.
+> 
+> I wanted to address dynamic code in 3 different ways:
+> 
+>     Remove the need for dynamic code where possible
+>     --------------------------------------------------------------------
+> 
+>     If the kernel itself can perform the work of some dynamic code, then
+>     the code can be replaced by the kernel.
+> 
+>     This is what I implemented in the patchset. But reviewers objected
+>     to the performance impact. One trip to the kernel was needed for each
+>     trampoline invocation. So, I have decided to defer this approach.
+> 
+>     Convert dynamic code to static code where possible
+>     ----------------------------------------------------------------------
+> 
+>     This is possible with help from the kernel. This has no performance
+>     impact and can be used in libffi, GCC nested functions, etc. I have
+>     described the approach below.
+> 
+>     Deal with code generation
+>     -----------------------------------
+> 
+>     For cases like generating JIT code from Java byte code, I wanted to
+>     establish a framework. However, reviewers felt that details are missing.
+> 
+>     Should the kernel generate code or should it use a user-level code generator?
+>     How do you make sure that a user level code generator can be trusted?
+>     How would the communication work? ABI details? Architecture support?
+>     Support for different types - JIT, DBT, etc?
+> 
+>     I have come to the conclusion that this is best done separately.
+> 
+> My main interest is to provide a way to convert dynamic code such as
+> trampolines to static code without any special architecture support.
+> This can be done with the kernel's help. Any code that gets written in
+> the future can conform to this as well.
+> 
+> So, in version 2 of the Trampfd RFC, I would like to simplify trampfd and
+> just address item 2. I will reimplement the support in libffi and present it.
+> 
+> Convert dynamic code to static code
+> ------------------------------------------------
+> 
+> One problem with dynamic code is that it cannot be verified or authenticated
+> by the kernel. The kernel cannot tell the difference between genuine dynamic
+> code and an attacker's code. Where possible, dynamic code should be converted
+> to static code and placed in the text segment of a binary file. This allows
+> the kernel to verify the code by verifying the signature of the file.
+> 
+> The other problem is using user-level methods to load and execute dynamic code
+> can potentially be exploited by an attacker to inject his code and have it be
+> executed. To prevent this, a system may enforce W^X. If W^X is enforced
+> properly, genuine dynamic code will not be able to run. This is another
+> reason to convert dynamic code to static code.
+> 
+> The issue in converting dynamic code to static code is that the data is
+> dynamic. The code does not know before hand where the data is going to be
+> at runtime.
+> 
+> Some architectures support PC-relative data references. So, if you co-locate
+> code and data, then the code can find the data at runtime. But this is not
+> supported on all architectures. When supported, there may be limitations to
+> deal with. Plus you have to take the trouble to co-locate code and data.
+> And, to deal with W^X, code and data need to be in different pages.
+> 
+> All architectures must be supported without any limitations. Fortunately,
+> the kernel can solve this problem quite easily. I suggest the following:
+> 
+> Convert dynamic code to static code like this:
+> 
+>     - Decide which register should point to the data that the code needs.
+>       Call it register R.
+> 
+>     - Write the static code assuming that R already points to the data.
+> 
+>     - Use trampfd and pass the following to the kernel:
+> 
+>         - pointers to the code and data
+>         - the name of the register R
+> 
+> The kernel will write the following instructions in a trampoline page
+> mapped into the caller's address space with R-X.
+> 
+>     - Load the data address in register R
+>     - Jump to the static code
+> 
+> Basically, the kernel provides a trampoline to jump to the user's code
+> and returns the kernel-provided trampoline's address to the user.
+> 
+> It is trivial to implement a trampoline table in the trampoline page to
+> conserve memory.
+> 
+> Issues raised previously
+> -------------------------------
+> 
+> I believe that the following issues that were raised by reviewers is not
+> a problem in this scheme. Please rereview.
+> 
+>     - Florian mentioned the libffi trampoline table. Trampoline tables can be
+>       implemented in this scheme easily.
+> 
+>     - Florian mentioned stack unwinders. I am not an expert on unwinders.
+>       But I don't see an issue with unwinders.
+> 
+>     - Mark Rutland mentioned Intel's CET and CFI. Don't see a problem there.
+> 
+>     - Mark Rutland mentioned PAC+BTI on ARM64. Don't see a problem there.
+> 
+> If I have missed addressing any previously raised issue, I apologize.
+> Please let me know.
+> 
+> Thanks!
+> 
+> Madhavan
+> 
+> 
