@@ -2,112 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B740B241C3C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 16:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24FDB241C44
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 16:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728802AbgHKOVR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 10:21:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49502 "EHLO
+        id S1728781AbgHKOWc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 10:22:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728741AbgHKOVQ (ORCPT
+        with ESMTP id S1728737AbgHKOWb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 10:21:16 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89210C061788
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 07:21:15 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id p1so6891149pls.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 07:21:15 -0700 (PDT)
+        Tue, 11 Aug 2020 10:22:31 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52C1AC06178A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 07:22:31 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id kq25so13301638ejb.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 07:22:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kpp0GdsRYi0omTcELeAUu1IMsTjPcKqE7Mbm6MS6NsM=;
-        b=nIVENNECr3scMV3Vs0Pk19gB4ND0y15sXhPBCf6HIrSOLZcwArP5jkRsMgiiQTGGTT
-         K0gMxPkFjppSFqMHHcUessGfQrn6yLDwJVujYkXTbgWxsrBk81BWCRbILztlDnoLnIeC
-         BpyLr590T6RGyyAtJD9fxl1IUWlqdwNvb5Ln8ftjU4NOEtRmEp3zQx5JmssgcR4DzXi8
-         Mp19H0InTGtz41UCno+m+z6cPqH/ruxaU9dY8w9qr1hSyROsHdH5a71TiiykxPR+G4pq
-         9HkTKlqfovpph0d9YnJbb1rMkgNhlWiWtUDEkRgHqMjRBFvZoWMi20V++sq6rE6Jkni8
-         pRpw==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gzcmWAX8jCtD02rUKXqb4jDkg1pG/t/2SdCoCWri0i0=;
+        b=RHsbOPLKErKudyyVkI0V4WBg3g/e/AwSdYYNz7ERyMqdsGtU/TNdLpbNe8Rwq92uu1
+         YqiWSVykozP45Monynqi4JD8jg46N/3ugkI18MzqXluT4ZhEHaI7kEqBACZl+teReLAw
+         hAoNbEl8kOadhLCHGzz7ENI7iNyBfYiok5hH8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kpp0GdsRYi0omTcELeAUu1IMsTjPcKqE7Mbm6MS6NsM=;
-        b=SrKXRgSemzYwz4woZU/BEDo4xuAH1aeCsJXSMXBje0+m+2aoN0wSdQ7V+Ukm78zav/
-         Laexir+UT8HbUlinBGIlvfIuDFR5n2czpX3D4+ZZ/vuNsaQWWRX57O8KvV4ymrDnCoQq
-         KH5j91ichttgPBLYYJSNVs7wy4w92rIjvQy700p5dB13hkyXF+4npu0CwzQK0IjGivPf
-         8FM5wWJQjcewPKOJkm4+e4DX0CkuVT59ruE9n6O7ANelw0uJVfvwvGIl5QrNskLFRFJu
-         NBehKmAJF0eeVuSPpAuf2vikXokjDRWwvH5eiuoWV6y+iQpJk1dAP8eyUeP/uqkhcbjk
-         v3iA==
-X-Gm-Message-State: AOAM531rycXg2LZe3pxaQ99b1UDKfigWUw6KnAc4wr/UxbdUbEWyem6b
-        m8GlnTDKKw+jCNk67HSL8/C4Kw==
-X-Google-Smtp-Source: ABdhPJxfOVBzlRW7S7Ar5cYVRxLsJ7EGz70ufrLcvD+osyMmeYUOi6NLWrhlSTcaWP9RyHAaH9gABA==
-X-Received: by 2002:a17:902:b941:: with SMTP id h1mr1142974pls.200.1597155674883;
-        Tue, 11 Aug 2020 07:21:14 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id j13sm26263358pfa.149.2020.08.11.07.21.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2020 07:21:14 -0700 (PDT)
-Subject: Re: possible deadlock in __io_queue_deferred
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     syzbot <syzbot+996f91b6ec3812c48042@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <00000000000035fdf505ac87b7f9@google.com>
- <76cc7c43-2ebb-180d-c2c8-912972a3f258@kernel.dk>
- <20200811140010.gigc2amchytqmrkk@steredhat>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <504b4b08-30c1-4ca8-ab3b-c9f0b58f0cfa@kernel.dk>
-Date:   Tue, 11 Aug 2020 08:21:12 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gzcmWAX8jCtD02rUKXqb4jDkg1pG/t/2SdCoCWri0i0=;
+        b=MFq+zhGvjZ+Wkm+yYpzyOb2tqCKxr5SmS45J7TPbT0GhL7APi/iQFyT45GON9geFF/
+         fgX244p+Vf7hyPE/IXKVvNjhJmviGfy5rD+b2eiC3OLAyRcctW1Dhk7C6xX2pMI7FIn0
+         ot9iH2WyyhtAZeCg97IYUYE4agqpjUbY9aMTbyEW6AZ6Gu8mM5VHgbHFzmxDE19+gHrI
+         M+s7EL9f6bL//i305BrZqgjWsJmDhS5e98bdCLtSGZXc9J2dEvT+9au0WR48esI2oZB6
+         VwP2CLyu1DZQvw6e7EbbIxoN8YaSPah53KVCInl6R2viEwmOUE9hnbthb7XpxU/xbEUE
+         8hiw==
+X-Gm-Message-State: AOAM531BSUwsH9ZCEgk0KykBHtSnirEEglj68kd9u6iSOowV++8U+sB6
+        TpMkR/d2lIREI8AXUKSJRcxLdp5R/OYRnKrS57331g==
+X-Google-Smtp-Source: ABdhPJwtjUZIBSyYZXWSJGJJGH3SkGerPXKC4xXr3G1y7wIriLyMaiXNyTwH0gWco/O/k+Wun4UiMgEd2S4g3VfqTco=
+X-Received: by 2002:a17:906:4c46:: with SMTP id d6mr28057620ejw.14.1597155750007;
+ Tue, 11 Aug 2020 07:22:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200811140010.gigc2amchytqmrkk@steredhat>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <20200811140833.GH1236603@ZenIV.linux.org.uk>
+In-Reply-To: <20200811140833.GH1236603@ZenIV.linux.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 11 Aug 2020 16:22:19 +0200
+Message-ID: <CAJfpegsNj55pTXe97qE_i-=zFwca1=2W_NqFdn=rHqc_AJjr8Q@mail.gmail.com>
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/11/20 8:00 AM, Stefano Garzarella wrote:
-> On Mon, Aug 10, 2020 at 09:55:17AM -0600, Jens Axboe wrote:
->> On 8/10/20 9:36 AM, syzbot wrote:
->>> Hello,
->>>
->>> syzbot found the following issue on:
->>>
->>> HEAD commit:    449dc8c9 Merge tag 'for-v5.9' of git://git.kernel.org/pub/..
->>> git tree:       upstream
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=14d41e02900000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=9d25235bf0162fbc
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=996f91b6ec3812c48042
->>> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
->>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=133c9006900000
->>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1191cb1a900000
->>>
->>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>> Reported-by: syzbot+996f91b6ec3812c48042@syzkaller.appspotmail.com
->>
->> Thanks, the below should fix this one.
-> 
-> Yeah, it seems right to me, since only __io_queue_deferred() (invoked by
-> io_commit_cqring()) can be called with 'completion_lock' held.
+On Tue, Aug 11, 2020 at 4:08 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Tue, Aug 11, 2020 at 03:54:19PM +0200, Miklos Szeredi wrote:
+> > On Wed, Aug 05, 2020 at 10:24:23AM +0200, Miklos Szeredi wrote:
+> > > On Tue, Aug 4, 2020 at 4:36 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > >
+> > > > I think we already lost that with the xattr API, that should have been
+> > > > done in a way that fits this philosophy.  But given that we  have "/"
+> > > > as the only special purpose char in filenames, and even repetitions
+> > > > are allowed, it's hard to think of a good way to do that.  Pity.
+> > >
+> > > One way this could be solved is to allow opting into an alternative
+> > > path resolution mode.
+> > >
+> > > E.g.
+> > >   openat(AT_FDCWD, "foo/bar//mnt/info", O_RDONLY | O_ALT);
+> >
+> > Proof of concept patch and test program below.
+> >
+> > Opted for triple slash in the hope that just maybe we could add a global
+> > /proc/sys/fs/resolve_alt knob to optionally turn on alternative (non-POSIX) path
+> > resolution without breaking too many things.  Will try that later...
+> >
+> > Comments?
+>
+> Hell, NO.  This is unspeakably tasteless.  And full of lovely corner cases wrt
+> symlink bodies, etc.
 
-Right
+It's disabled inside symlink body resolution.
 
-> Just out of curiosity, while exploring the code I noticed that we call
-> io_commit_cqring() always with the 'completion_lock' held, except in the
-> io_poll_* functions.
-> 
-> That's because then there can't be any concurrency?
+Rules are simple:
 
-Do you mean the iopoll functions? Because we're definitely holding it
-for the io_poll_* functions.
+ - strip off trailing part after first instance of ///
+ - perform path lookup as normal
+ - resolve meta path after /// on result of normal lookup
 
--- 
-Jens Axboe
-
+Thanks,
+Miklos
