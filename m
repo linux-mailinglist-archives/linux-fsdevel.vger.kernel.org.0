@@ -2,111 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F78A241B63
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 15:08:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A43F9241B84
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 15:19:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728668AbgHKNIl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 09:08:41 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:41556 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728557AbgHKNIk (ORCPT
+        id S1728721AbgHKNT1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 09:19:27 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:43640 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728708AbgHKNT0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 09:08:40 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id C95DF1C0BD8; Tue, 11 Aug 2020 15:08:37 +0200 (CEST)
-Date:   Tue, 11 Aug 2020 15:08:37 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-Message-ID: <20200811130837.hi6wllv6g67j5wds@duo.ucw.cz>
-References: <aefc85852ea518982e74b233e11e16d2e707bc32>
- <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <20200731180955.GC67415@C02TD0UTHF1T.local>
- <6236adf7-4bed-534e-0956-fddab4fd96b6@linux.microsoft.com>
- <20200804143018.GB7440@C02TD0UTHF1T.local>
- <b3368692-afe6-89b5-d634-12f4f0a601f8@linux.microsoft.com>
- <20200808221748.GA1020@bug>
- <6cca8eac-f767-b891-dc92-eaa7504a0e8b@linux.microsoft.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="yvr4rtdsyfwruwtq"
-Content-Disposition: inline
-In-Reply-To: <6cca8eac-f767-b891-dc92-eaa7504a0e8b@linux.microsoft.com>
-User-Agent: NeoMutt/20180716
+        Tue, 11 Aug 2020 09:19:26 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07BDHqln106898;
+        Tue, 11 Aug 2020 13:19:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=eHL++QnHphPePYIhSoVVQ5kFXWG75NQVIwJipObuJ7U=;
+ b=JGVXJMHJt+IaTtIQbe6SxGOsd5bLj94dRZDZcX2xTzybcbx3ntA0y4g9Adc5ELzZILa3
+ 9m1T+8dcHWO2HZjUWLWOrwNS89HOiVhnnK0dzgkvpqpG9dABUIHrHR2Lm5Jgsjz5MK+P
+ bLGavXTHBUCt813ICH+wiG4TzNh0ynFiH4CNFPnJR3h69Aun5XWtoaJgwuE8yY/hhUDc
+ KvrtyX64Pf2VpI09OAfUvBk91x60POKJVASV+Nv6CCtFjuZlDyElUaqBzsGRjWM8OKuT
+ 4PzEty/v/zSf08jb1XDPpnTMPUo0mlDvhbRpJjF7VEk4G0uKf5ahzQNBBaZiwJR6RYOk Kw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 32t2ydjwdy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Aug 2020 13:19:20 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07BDJIUe177486;
+        Tue, 11 Aug 2020 13:19:19 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 32t5y3yg5c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Aug 2020 13:19:19 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 07BDJ5Im010666;
+        Tue, 11 Aug 2020 13:19:05 GMT
+Received: from anon-dhcp-152.1015granger.net (/68.61.232.219)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 Aug 2020 13:19:05 +0000
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
+Subject: Re: Please pull NFS server updates for v5.9
+From:   Chuck Lever <chuck.lever@oracle.com>
+In-Reply-To: <20200811161518.0896c1e8@canb.auug.org.au>
+Date:   Tue, 11 Aug 2020 09:19:03 -0400
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Trond Myklebust <trondmy@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5D3B9AC6-6A27-4795-A256-C9CE0D459D15@oracle.com>
+References: <F9B8940D-9F7B-47F5-9946-D77C17CF959A@oracle.com>
+ <20200810090349.64bce58f@canb.auug.org.au>
+ <EC1AA9E7-4AC1-49C6-B138-B6A3E4ED7A0B@oracle.com>
+ <20200811161518.0896c1e8@canb.auug.org.au>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9709 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008110092
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9709 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 priorityscore=1501
+ malwarescore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 phishscore=0 adultscore=0 spamscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2008110092
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
---yvr4rtdsyfwruwtq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> >> Thanks for the lively discussion. I have tried to answer some of the
-> >> comments below.
-> >=20
-> >>> There are options today, e.g.
-> >>>
-> >>> a) If the restriction is only per-alias, you can have distinct aliases
-> >>>    where one is writable and another is executable, and you can make =
-it
-> >>>    hard to find the relationship between the two.
-> >>>
-> >>> b) If the restriction is only temporal, you can write instructions in=
-to
-> >>>    an RW- buffer, transition the buffer to R--, verify the buffer
-> >>>    contents, then transition it to --X.
-> >>>
-> >>> c) You can have two processes A and B where A generates instrucitons =
-into
-> >>>    a buffer that (only) B can execute (where B may be restricted from
-> >>>    making syscalls like write, mprotect, etc).
-> >>
-> >> The general principle of the mitigation is W^X. I would argue that
-> >> the above options are violations of the W^X principle. If they are
-> >> allowed today, they must be fixed. And they will be. So, we cannot
-> >> rely on them.
-> >=20
-> > Would you mind describing your threat model?
-> >=20
-> > Because I believe you are using model different from everyone else.
-> >=20
-> > In particular, I don't believe b) is a problem or should be fixed.
+> On Aug 11, 2020, at 2:15 AM, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >=20
-> It is a problem because a kernel that implements W^X properly
-> will not allow it. It has no idea what has been done in userland.
-> It has no idea that the user has checked and verified the buffer
-> contents after transitioning the page to R--.
+> Hi Chuck,
+>=20
+> On Mon, 10 Aug 2020 08:25:14 -0400 Chuck Lever =
+<chuck.lever@oracle.com> wrote:
+>>=20
+>> Is there something I need to change? The public copy of the =
+cel-testing
+>> branch has had this content for the past 12 days.
+>=20
+> You just need to keep your cel-next branch up to the top commit that =
+is
+> ready.  That is the branch you told me to fetch.  It is currently at =
+commit
+>=20
+>  0a8e7b7d0846 ("SUNRPC: Revert 241b1f419f0e ("SUNRPC: Remove =
+xdr_buf_trim()")")
+>=20
+> It looks like that is what Linus merged into v5.7-rc2.
 
-No, it is not a problem. W^X is designed to protect from attackers
-doing buffer overflows, not attackers doing arbitrary syscalls.
+Ah. I thought you were pulling cel-testing, so I deleted cel-next. I =
+will
+rehydrate cel-next right now.
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+--
+Chuck Lever
 
---yvr4rtdsyfwruwtq
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iF0EARECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXzKYVQAKCRAw5/Bqldv6
-8ukgAJ9NvrVhKohEnNz0+UYVlo/02QCYaACgiTn7V4hdsKUqG2xCfqc/g1HOnV4=
-=VFJ2
------END PGP SIGNATURE-----
-
---yvr4rtdsyfwruwtq--
