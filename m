@@ -2,132 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 79871241D0E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 17:20:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81D72241D18
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 17:23:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbgHKPUq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 11:20:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58730 "EHLO
+        id S1728929AbgHKPXj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 11:23:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728833AbgHKPUq (ORCPT
+        with ESMTP id S1728783AbgHKPXi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 11:20:46 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B768C061788
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 08:20:45 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id v15so6857633lfg.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 08:20:45 -0700 (PDT)
+        Tue, 11 Aug 2020 11:23:38 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ECEDC06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 08:23:38 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id e4so2046698pjd.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 08:23:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bx6crtxCZeThOx4D4bD3ehsUEC/VPmmXSGnr3LbBSBM=;
-        b=fuVOZ6VXbzk9u1owlS5IWY/26dqpjDl8Zn92+ZwUfu1Iht5ylUjVdvAnr4KRzCh7VV
-         901ieKbmeI/uj2OiDMkFTEr6IDlawY4EVR5ym128Z6kvWcI5hAIhMBgVCcgpeT57dS6W
-         FJmGAlO9FQumMVHcvcBKzUuxybYBj4tt5eXdQ=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=HxieFkRZWq00JV9lR+5XbSvCe+B5iPNdODCDbUs/JLU=;
+        b=IuRuu3zgNiX229uq7mxEp/i2KZS867qZt/oBDZ0AV1DvlqipwojqjckR+lTiTssbDE
+         hlZCn6+Kdk6eAoXSRPaWoiqjvvUsdGDilV1ttLg0qebK3u/Ihfb/HA8+tQmc/KREiXbz
+         gk0PTE7Hptl275Uc3ikPL3xK4gAXnfUlmg8weqeEnDpVh6Acejw5pNhkjT/Erq2WWjZ1
+         pFj8zOA+mW4KO4fS6Fs3PSxYmLLuc9MThwRdEj62vuHL5EpAikPsF8mAm0zFTuFXE1XD
+         WeIx8Wav5UYIdMq8FaAekec28Mv1HDQB9RdWFtr2nj2x+yQo9vsc5XMCkD12DuqXclBz
+         +TRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bx6crtxCZeThOx4D4bD3ehsUEC/VPmmXSGnr3LbBSBM=;
-        b=KjKIMnC59U36SolUEev/ZV1tOvwYGZO/Q80VEFQs078aYetMswtC0mVYJOl2QznLWi
-         kWj9b0W+M6ocQQ7jozBgEaJCtI86QxuaF+QuZoJmc8ACygdjhr5lGa3Y16iBJUtxxuX/
-         /HyvqGh2IhDbdpMC0wU2Kph+V3UfHLBqbzAHMGJ5CkBdd6laLcQuXm/qn+o3LeG2WN8K
-         ppL6HHVw6TcntjA8sGFwDGvi3XTrDiSzykENHFa76QeAJWAaXY2wXEhM/y4nnwQ62nSr
-         opQfQ9/O0UE49A0KwXvpGZtxfTs29ZEWKIAAif0CdZjfe1+tvsLPB9c25lxRm68ainL8
-         a0bw==
-X-Gm-Message-State: AOAM531SEkcFVpAYywHN35YhBx2YoKMO7UAroYgVTCvvNMWUdyC5lyDY
-        AvEAyUnb42gZBLDdQtlPba7zZZjqfVM=
-X-Google-Smtp-Source: ABdhPJzhI9OezhOkaNuIJVGmFz9wnJb/yVc3QRfuPprJGkAZrQrCvVIPm2YgZQzqDag/mMbK2l+Dow==
-X-Received: by 2002:a19:8095:: with SMTP id b143mr3470220lfd.175.1597159242549;
-        Tue, 11 Aug 2020 08:20:42 -0700 (PDT)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id x13sm11719199lfr.95.2020.08.11.08.20.40
-        for <linux-fsdevel@vger.kernel.org>
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HxieFkRZWq00JV9lR+5XbSvCe+B5iPNdODCDbUs/JLU=;
+        b=bz3p926125uxJxAfP9XPKUDoxA4nmU8WSEMyb+Ab3EFNLrIGroQ6JqV255aJn1Kko4
+         KSicc9uSasNE9PjA5JdGrFIHiZ/1vGsgFbSDyjR/ZPx0ubo92s9icYLV1vfKSGJPoY+o
+         /aK2XYQJPcW2MPVbw6rxldcFmF1RFXpUovkjQR5w04qy6mmgKsb5FdihtKJ+we2M7NsU
+         0cM0+xIcB8k31/8xsp0YpEJNG4UQTZqttHYPtmebdZPdBoC0u66aOSHhAQBsglMskIGi
+         GRGzfSsVsz2VDC8MgFu/jr0HcyfHKnoEH/C6RLEpI+2eDcOGvt7/4Wz8T9sD/MbGjzhv
+         NQZg==
+X-Gm-Message-State: AOAM532zNSzjnBoenoSP+ZCO/hFm1v8qGKIBb0pxiv/KtNxNjTc5gcPP
+        axhOC/tMpou7NNBuzDWRcnQ2mQ==
+X-Google-Smtp-Source: ABdhPJzqE8fat8E/a9WshMnlyZXkqIzxXRD7Dte7Dcpc5pqILimdLBh1UNgUOIomdLKQe5eqoxP2ug==
+X-Received: by 2002:a17:90a:cd06:: with SMTP id d6mr1527683pju.202.1597159417674;
+        Tue, 11 Aug 2020 08:23:37 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id a26sm21521948pgm.20.2020.08.11.08.23.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2020 08:20:41 -0700 (PDT)
-Received: by mail-lj1-f178.google.com with SMTP id h19so13935077ljg.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 08:20:40 -0700 (PDT)
-X-Received: by 2002:a2e:545:: with SMTP id 66mr3363842ljf.285.1597159240486;
- Tue, 11 Aug 2020 08:20:40 -0700 (PDT)
+        Tue, 11 Aug 2020 08:23:37 -0700 (PDT)
+Subject: Re: memory leak in io_submit_sqes
+From:   Jens Axboe <axboe@kernel.dk>
+To:     syzbot <syzbot+a730016dc0bdce4f6ff5@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <000000000000f50fb505ac9a72c9@google.com>
+ <b8c5db23-c3cf-7daf-6a0a-8a5f713e9803@kernel.dk>
+Message-ID: <f0386716-eba3-392c-b6b6-35109a1b009b@kernel.dk>
+Date:   Tue, 11 Aug 2020 09:23:35 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
- <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com> <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
-In-Reply-To: <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 11 Aug 2020 08:20:24 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
-Message-ID: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b8c5db23-c3cf-7daf-6a0a-8a5f713e9803@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ I missed the beginning of this discussion, so maybe this was already
-suggested ]
+On 8/11/20 8:59 AM, Jens Axboe wrote:
+> On 8/11/20 7:57 AM, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    d6efb3ac Merge tag 'tty-5.9-rc1' of git://git.kernel.org/p..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=13cb0762900000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=42163327839348a9
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=a730016dc0bdce4f6ff5
+>> compiler:       gcc (GCC) 10.1.0-syz 20200507
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e877dc900000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1608291a900000
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+a730016dc0bdce4f6ff5@syzkaller.appspotmail.com
+>>
+>> executing program
+>> executing program
+>> executing program
+>> executing program
+>> executing program
+>> BUG: memory leak
+>> unreferenced object 0xffff888124949100 (size 256):
+>>   comm "syz-executor808", pid 6480, jiffies 4294949911 (age 33.960s)
+>>   hex dump (first 32 bytes):
+>>     00 78 74 2a 81 88 ff ff 00 00 00 00 00 00 00 00  .xt*............
+>>     90 b0 51 81 ff ff ff ff 00 00 00 00 00 00 00 00  ..Q.............
+>>   backtrace:
+>>     [<0000000084e46f34>] io_alloc_req fs/io_uring.c:1503 [inline]
+>>     [<0000000084e46f34>] io_submit_sqes+0x5dc/0xc00 fs/io_uring.c:6306
+>>     [<000000006d4e19eb>] __do_sys_io_uring_enter+0x582/0x830 fs/io_uring.c:8036
+>>     [<00000000a4116b07>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+>>     [<0000000067b2aefc>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>
+>> BUG: memory leak
+>> unreferenced object 0xffff88811751d200 (size 96):
+>>   comm "syz-executor808", pid 6480, jiffies 4294949911 (age 33.960s)
+>>   hex dump (first 32 bytes):
+>>     00 78 74 2a 81 88 ff ff 00 00 00 00 00 00 00 00  .xt*............
+>>     0e 01 00 00 00 00 75 22 00 00 00 00 00 0f 1f 04  ......u"........
+>>   backtrace:
+>>     [<00000000073ea2ba>] kmalloc include/linux/slab.h:555 [inline]
+>>     [<00000000073ea2ba>] io_arm_poll_handler fs/io_uring.c:4773 [inline]
+>>     [<00000000073ea2ba>] __io_queue_sqe+0x445/0x6b0 fs/io_uring.c:5988
+>>     [<000000001551bde0>] io_queue_sqe+0x309/0x550 fs/io_uring.c:6060
+>>     [<000000002dfb908f>] io_submit_sqe fs/io_uring.c:6130 [inline]
+>>     [<000000002dfb908f>] io_submit_sqes+0x8b8/0xc00 fs/io_uring.c:6327
+>>     [<000000006d4e19eb>] __do_sys_io_uring_enter+0x582/0x830 fs/io_uring.c:8036
+>>     [<00000000a4116b07>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+>>     [<0000000067b2aefc>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> This one looks very odd, and I cannot reproduce it. The socket() calls
+> reliably fails for me, and even if I hack it to use 0 for protocol instead
+> of 2, I don't see anything interesting happening here. An IORING_OP_WRITEV
+> is submitted on the socket, which just fails with ENOTCONN.
 
-On Tue, Aug 11, 2020 at 6:54 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> >
-> > E.g.
-> >   openat(AT_FDCWD, "foo/bar//mnt/info", O_RDONLY | O_ALT);
->
-> Proof of concept patch and test program below.
+Dug a bit deeper and found the missing option, I can now reproduce this!
+I'll take a look.
 
-I don't think this works for the reasons Al says, but a slight
-modification might.
+-- 
+Jens Axboe
 
-IOW, if you do something more along the lines of
-
-       fd = open(""foo/bar", O_PATH);
-       metadatafd = openat(fd, "metadataname", O_ALT);
-
-it might be workable.
-
-So you couldn't do it with _one_ pathname, because that is always
-fundamentally going to hit pathname lookup rules.
-
-But if you start a new path lookup with new rules, that's fine.
-
-This is what I think xattrs should always have done, because they are
-broken garbage.
-
-In fact, if we do it right, I think we could have "getxattr()" be 100%
-equivalent to (modulo all the error handling that this doesn't do, of
-course):
-
-  ssize_t getxattr(const char *path, const char *name,
-                        void *value, size_t size)
-  {
-     int fd, attrfd;
-
-     fd = open(path, O_PATH);
-     attrfd = openat(fd, name, O_ALT);
-     close(fd);
-     read(attrfd, value, size);
-     close(attrfd);
-  }
-
-and you'd still use getxattr() and friends as a shorthand (and for
-POSIX compatibility), but internally in the kernel we'd have a
-interface around that "xattrs are just file handles" model.
-
-               Linus
