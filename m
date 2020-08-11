@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD59A2420A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 21:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2543A2420B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 22:02:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbgHKTyq convert rfc822-to-8bit (ORCPT
+        id S1726503AbgHKUCI convert rfc822-to-8bit (ORCPT
         <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 15:54:46 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:33894 "EHLO
+        Tue, 11 Aug 2020 16:02:08 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:35828 "EHLO
         out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726274AbgHKTyp (ORCPT
+        with ESMTP id S1726405AbgHKUCH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 15:54:45 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
+        Tue, 11 Aug 2020 16:02:07 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
         by out02.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <ebiederm@xmission.com>)
-        id 1k5aM2-006w1u-2J; Tue, 11 Aug 2020 13:54:38 -0600
+        id 1k5aT7-006wlI-Uo; Tue, 11 Aug 2020 14:01:57 -0600
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1k5aM0-0006qV-DY; Tue, 11 Aug 2020 13:54:37 -0600
+        id 1k5aT3-000724-Hg; Tue, 11 Aug 2020 14:01:57 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
 To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
@@ -60,62 +60,58 @@ Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
         linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Randy Dunlap <rdunlap@infradead.org>
 References: <20200723171227.446711-1-mic@digikod.net>
-        <20200723171227.446711-5-mic@digikod.net>
-Date:   Tue, 11 Aug 2020 14:51:10 -0500
-In-Reply-To: <20200723171227.446711-5-mic@digikod.net> (=?utf-8?Q?=22Micka?=
+        <20200723171227.446711-6-mic@digikod.net>
+Date:   Tue, 11 Aug 2020 14:58:26 -0500
+In-Reply-To: <20200723171227.446711-6-mic@digikod.net> (=?utf-8?Q?=22Micka?=
  =?utf-8?Q?=C3=ABl_Sala=C3=BCn=22's?=
-        message of "Thu, 23 Jul 2020 19:12:24 +0200")
-Message-ID: <87mu31klld.fsf@x220.int.ebiederm.org>
+        message of "Thu, 23 Jul 2020 19:12:25 +0200")
+Message-ID: <87364tkl99.fsf@x220.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1k5aM0-0006qV-DY;;;mid=<87mu31klld.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19RgEacPTOOZLsDHrqkrRNQrFXSZ8c0Z8c=
+X-XM-SPF: eid=1k5aT3-000724-Hg;;;mid=<87364tkl99.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19rITbsSsTilej25+k/6+RxpQ5JB7ovp1w=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
-X-Spam-Level: ****
-X-Spam-Status: No, score=4.8 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,LotsOfNums_01,TR_Symld_Words,T_TM2_M_HEADER_IN_MSG,
-        T_TooManySym_01,T_TooManySym_02,T_TooManySym_03,T_XMDrugObfuBody_08,
-        XMBrknScrpt_02,XMSubLong,XM_B_SpammyWords,XM_B_Unicode
-        autolearn=disabled version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,T_XMDrugObfuBody_08,XMSubLong,XM_B_SpammyWords,
+        XM_B_Unicode autolearn=disabled version=3.4.2
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
         *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
         *      [score: 0.5000]
-        *  1.5 TR_Symld_Words too many words that have symbols inside
         *  0.7 XMSubLong Long Subject
         *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
         *  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.4 XMBrknScrpt_02 Possible Broken Spam Script
-        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
         *  0.0 T_TooManySym_01 4+ unique symbols in subject
         *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
         *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
-X-Spam-DCC: ; sa05 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: =?ISO-8859-1?Q?****;Micka=c3=abl Sala=c3=bcn <mic@digikod.net>?=
+X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: =?ISO-8859-1?Q?*;Micka=c3=abl Sala=c3=bcn <mic@digikod.net>?=
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 1087 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 10 (0.9%), b_tie_ro: 9 (0.8%), parse: 1.45 (0.1%),
-         extract_message_metadata: 29 (2.7%), get_uri_detail_list: 7 (0.6%),
-        tests_pri_-1000: 13 (1.2%), tests_pri_-950: 1.17 (0.1%),
-        tests_pri_-900: 1.03 (0.1%), tests_pri_-90: 256 (23.6%), check_bayes:
-        228 (21.0%), b_tokenize: 35 (3.3%), b_tok_get_all: 20 (1.8%),
-        b_comp_prob: 6 (0.6%), b_tok_touch_all: 163 (15.0%), b_finish: 1.45
-        (0.1%), tests_pri_0: 752 (69.2%), check_dkim_signature: 0.79 (0.1%),
-        check_dkim_adsp: 5 (0.5%), poll_dns_idle: 0.26 (0.0%), tests_pri_10:
-        2.1 (0.2%), tests_pri_500: 16 (1.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v7 4/7] fs: Introduce O_MAYEXEC flag for openat2(2)
+X-Spam-Timing: total 3904 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 11 (0.3%), b_tie_ro: 10 (0.3%), parse: 3.5 (0.1%),
+         extract_message_metadata: 76 (2.0%), get_uri_detail_list: 14 (0.4%),
+        tests_pri_-1000: 24 (0.6%), tests_pri_-950: 1.27 (0.0%),
+        tests_pri_-900: 1.10 (0.0%), tests_pri_-90: 293 (7.5%), check_bayes:
+        260 (6.7%), b_tokenize: 50 (1.3%), b_tok_get_all: 61 (1.6%),
+        b_comp_prob: 10 (0.3%), b_tok_touch_all: 134 (3.4%), b_finish: 1.01
+        (0.0%), tests_pri_0: 1300 (33.3%), check_dkim_signature: 1.27 (0.0%),
+        check_dkim_adsp: 11 (0.3%), poll_dns_idle: 2162 (55.4%), tests_pri_10:
+        10 (0.3%), tests_pri_500: 2178 (55.8%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v7 5/7] fs,doc: Enable to enforce noexec mounts or file exec through O_MAYEXEC
 X-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -123,227 +119,307 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Mickaël Salaün <mic@digikod.net> writes:
 
-> When the O_MAYEXEC flag is passed, openat2(2) may be subject to
-> additional restrictions depending on a security policy managed by the
-> kernel through a sysctl or implemented by an LSM thanks to the
-> inode_permission hook.  This new flag is ignored by open(2) and
-> openat(2) because of their unspecified flags handling.  When used with
-> openat2(2), the default behavior is only to forbid to open a directory.
->
-> The underlying idea is to be able to restrict scripts interpretation
-> according to a policy defined by the system administrator.  For this to
-> be possible, script interpreters must use the O_MAYEXEC flag
-> appropriately.  To be fully effective, these interpreters also need to
-> handle the other ways to execute code: command line parameters (e.g.,
-> option -e for Perl), module loading (e.g., option -m for Python), stdin,
-> file sourcing, environment variables, configuration files, etc.
-> According to the threat model, it may be acceptable to allow some script
-> interpreters (e.g. Bash) to interpret commands from stdin, may it be a
-> TTY or a pipe, because it may not be enough to (directly) perform
-> syscalls.  Further documentation can be found in a following patch.
->
-> Even without enforced security policy, userland interpreters can set it
-> to enforce the system policy at their level, knowing that it will not
-> break anything on running systems which do not care about this feature.
-> However, on systems which want this feature enforced, there will be
-> knowledgeable people (i.e. sysadmins who enforced O_MAYEXEC
-> deliberately) to manage it.  A simple security policy implementation,
-> configured through a dedicated sysctl, is available in a following
-> patch.
->
-> O_MAYEXEC should not be confused with the O_EXEC flag which is intended
-> for execute-only, which obviously doesn't work for scripts.  However, a
-> similar behavior could be implemented in userland with O_PATH:
-> https://lore.kernel.org/lkml/1e2f6913-42f2-3578-28ed-567f6a4bdda1@digikod.net/
->
-> The implementation of O_MAYEXEC almost duplicates what execve(2) and
-> uselib(2) are already doing: setting MAY_OPENEXEC in acc_mode (which can
-> then be checked as MAY_EXEC, if enforced).
+> Allow for the enforcement of the O_MAYEXEC openat2(2) flag.  Thanks to
+> the noexec option from the underlying VFS mount, or to the file execute
+> permission, userspace can enforce these execution policies.  This may
+> allow script interpreters to check execution permission before reading
+> commands from a file, or dynamic linkers to allow shared object
+> loading.
 
-You are allowing S_IFBLK, S_IFCHR, S_IFIFO, S_IFSOCK as targets for
-O_MAYEXEC?
+Ick!!!!!
 
-You are not requiring the opened script be executable?
+This feels like being so open minded your brains fall out.
 
-You are not requring path_noexec?  Despite the original patch that
-inspired this was checking path_noexec?
+I can see having a sysctl that allows the new open flag to be ignored
+so that the existing lack of enforcement when the flag is passed
+continues.
 
-I honestly think this patch is buggy.  If you could reuse MAY_EXEC in
-the kernel and mean what exec means when it says MAY_EXEC that would be
-useful.
+But having the sysctl be fine grained seems like way too much rope.
 
-As it is this patch appears wrong and dangerously confusing as it implies
-execness but does not implement execness.
+I don't think the code needs to do more than enforce or not enforce this
+logic.
 
-If you were simply defining O_EXEC and reusing MAY_EXEC as it exists
-or exists with cleanups in the kernel this would be a small change that
-would seem to make reasonable sense.  But as you are not reusing
-anything from MAY_EXEC this code does not make any sense as I am reading
-it.
+You can test the sysctl once when you process O_MAYEXEC.  But code such
+as may_open should not have the conditional behavior.  It should get an
+appropriate set of flags that are always enforced.  With the madness of
+what to do left at the edge of userspace.
+
+Anything else appears to be madness, overengineering, and a failure to
+separate concerns.
 
 Eric
 
 
-> This is an updated subset of the patch initially written by Vincent
-> Strubel for CLIP OS 4:
-> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-> This patch has been used for more than 12 years with customized script
-> interpreters.  Some examples (with the original O_MAYEXEC) can be found
-> here:
-> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+> Add a new sysctl fs.open_mayexec_enforce to enable system administrators
+> to enforce two complementary security policies according to the
+> installed system: enforce the noexec mount option, and enforce
+> executable file permission.  Indeed, because of compatibility with
+> installed systems, only system administrators are able to check that
+> this new enforcement is in line with the system mount points and file
+> permissions.  A following patch adds documentation.
 >
-> Co-developed-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
-> Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
-> Co-developed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-> Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+> Being able to restrict execution also enables to protect the kernel by
+> restricting arbitrary syscalls that an attacker could perform with a
+> crafted binary or certain script languages.  It also improves multilevel
+> isolation by reducing the ability of an attacker to use side channels
+> with specific code.  These restrictions can natively be enforced for ELF
+> binaries (with the noexec mount option) but require this kernel
+> extension to properly handle scripts (e.g., Python, Perl).  To get a
+> consistent execution policy, additional memory restrictions should also
+> be enforced (e.g. thanks to SELinux).
+>
+> Because the O_MAYEXEC flag is a meant to enforce a system-wide security
+> policy (but not application-centric policies), it does not make sense
+> for userland to check the sysctl value.  Indeed, this new flag only
+> enables to extend the system ability to enforce a policy thanks to (some
+> trusted) userland collaboration.  Moreover, additional security policies
+> could be managed by LSMs.  This is a best-effort approach from the
+> application developer point of view:
+> https://lore.kernel.org/lkml/1477d3d7-4b36-afad-7077-a38f42322238@digikod.net/
+>
 > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
 > Cc: Aleksa Sarai <cyphar@cyphar.com>
 > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Deven Bowers <deven.desai@linux.microsoft.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
 > Cc: Kees Cook <keescook@chromium.org>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
 > ---
 >
 > Changes since v6:
-> * Do not set __FMODE_EXEC for now because of inconsistent behavior:
->   https://lore.kernel.org/lkml/202007160822.CCDB5478@keescook/
-> * Returns EISDIR when opening a directory with O_MAYEXEC.
-> * Removed Deven Bowers and Kees Cook Reviewed-by tags because of the
->   current update.
+> * Allow opening pipes, block devices and character devices with
+>   O_MAYEXEC when there is no enforced policy, but forbid any non-regular
+>   file opened with O_MAYEXEC otherwise (i.e. for any enforced policy).
+> * Add a paragraph about the non-regular files policy.
+> * Move path_noexec() calls out of the fast-path (suggested by Kees
+>   Cook).
 >
 > Changes since v5:
-> * Update commit message.
+> * Remove the static enforcement configuration through Kconfig because it
+>   makes the code more simple like this, and because the current sysctl
+>   configuration can only be set with CAP_SYS_ADMIN, the same way mount
+>   options (i.e. noexec) can be set.  If an harden distro wants to
+>   enforce a configuration, it should restrict capabilities or sysctl
+>   configuration.  Furthermore, an LSM can easily leverage O_MAYEXEC to
+>   fit its need.
+> * Move checks from inode_permission() to may_open() and make the error
+>   codes more consistent according to file types (in line with a previous
+>   commit): opening a directory with O_MAYEXEC returns EISDIR and other
+>   non-regular file types may return EACCES.
+> * In may_open(), when OMAYEXEC_ENFORCE_FILE is set, replace explicit
+>   call to generic_permission() with an artificial MAY_EXEC to avoid
+>   double calls.  This makes sense especially when an LSM policy forbids
+>   execution of a file.
+> * Replace the custom proc_omayexec() with
+>   proc_dointvec_minmax_sysadmin(), and then replace the CAP_MAC_ADMIN
+>   check with a CAP_SYS_ADMIN one (suggested by Kees Cook and Stephen
+>   Smalley).
+> * Use BIT() (suggested by Kees Cook).
+> * Rename variables (suggested by Kees Cook).
+> * Reword the kconfig help.
+> * Import the documentation patch (suggested by Kees Cook):
+>   https://lore.kernel.org/lkml/20200505153156.925111-6-mic@digikod.net/
+> * Update documentation and add LWN.net article.
+>
+> Changes since v4:
+> * Add kernel configuration options to enforce O_MAYEXEC at build time,
+>   and disable the sysctl in such case (requested by James Morris).
+> * Reword commit message.
 >
 > Changes since v3:
-> * Switch back to O_MAYEXEC, but only handle it with openat2(2) which
->   checks unknown flags (suggested by Aleksa Sarai). Cf.
->   https://lore.kernel.org/lkml/20200430015429.wuob7m5ofdewubui@yavin.dot.cyphar.com/
+> * Update comment with O_MAYEXEC.
 >
 > Changes since v2:
-> * Replace O_MAYEXEC with RESOLVE_MAYEXEC from openat2(2).  This change
->   enables to not break existing application using bogus O_* flags that
->   may be ignored by current kernels by using a new dedicated flag, only
->   usable through openat2(2) (suggested by Jeff Layton).  Using this flag
->   will results in an error if the running kernel does not support it.
->   User space needs to manage this case, as with other RESOLVE_* flags.
->   The best effort approach to security (for most common distros) will
->   simply consists of ignoring such an error and retry without
->   RESOLVE_MAYEXEC.  However, a fully controlled system may which to
->   error out if such an inconsistency is detected.
+> * Cosmetic changes.
 >
 > Changes since v1:
-> * Set __FMODE_EXEC when using O_MAYEXEC to make this information
->   available through the new fanotify/FAN_OPEN_EXEC event (suggested by
->   Jan Kara and Matthew Bobrowski):
->   https://lore.kernel.org/lkml/20181213094658.GA996@lithium.mbobrowski.org/
+> * Move code from Yama to the FS subsystem (suggested by Kees Cook).
+> * Make omayexec_inode_permission() static (suggested by Jann Horn).
+> * Use mode 0600 for the sysctl.
+> * Only match regular files (not directories nor other types), which
+>   follows the same semantic as commit 73601ea5b7b1 ("fs/open.c: allow
+>   opening only regular files during execve()").
 > ---
->  fs/fcntl.c                       | 2 +-
->  fs/namei.c                       | 4 ++--
->  fs/open.c                        | 6 ++++++
->  include/linux/fcntl.h            | 2 +-
->  include/linux/fs.h               | 2 ++
->  include/uapi/asm-generic/fcntl.h | 7 +++++++
->  6 files changed, 19 insertions(+), 4 deletions(-)
+>  Documentation/admin-guide/sysctl/fs.rst | 49 +++++++++++++++++++++++++
+>  fs/namei.c                              | 24 ++++++++++++
+>  include/linux/fs.h                      |  1 +
+>  kernel/sysctl.c                         | 12 +++++-
+>  4 files changed, 84 insertions(+), 2 deletions(-)
 >
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 2e4c0fa2074b..0357ad667563 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -1033,7 +1033,7 @@ static int __init fcntl_init(void)
->  	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
->  	 * is defined as O_NONBLOCK on some platforms and not on others.
->  	 */
-> -	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-> +	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
->  		HWEIGHT32(
->  			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
->  			__FMODE_EXEC | __FMODE_NONOTIFY));
+> diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
+> index 2a45119e3331..ce6e2081d3a9 100644
+> --- a/Documentation/admin-guide/sysctl/fs.rst
+> +++ b/Documentation/admin-guide/sysctl/fs.rst
+> @@ -37,6 +37,7 @@ Currently, these files are in /proc/sys/fs:
+>  - inode-nr
+>  - inode-state
+>  - nr_open
+> +- open_mayexec_enforce
+>  - overflowuid
+>  - overflowgid
+>  - pipe-user-pages-hard
+> @@ -165,6 +166,54 @@ system needs to prune the inode list instead of allocating
+>  more.
+>  
+>  
+> +open_mayexec_enforce
+> +--------------------
+> +
+> +While being ignored by :manpage:`open(2)` and :manpage:`openat(2)`, the
+> +``O_MAYEXEC`` flag can be passed to :manpage:`openat2(2)` to only open regular
+> +files that are expected to be executable.  If the file is not identified as
+> +executable, then the syscall returns -EACCES.  This may allow a script
+> +interpreter to check executable permission before reading commands from a file,
+> +or a dynamic linker to only load executable shared objects.  One interesting
+> +use case is to enforce a "write xor execute" policy through interpreters.
+> +
+> +The ability to restrict code execution must be thought as a system-wide policy,
+> +which first starts by restricting mount points with the ``noexec`` option.
+> +This option is also automatically applied to special filesystems such as /proc .
+> +This prevents files on such mount points to be directly executed by the kernel
+> +or mapped as executable memory (e.g. libraries).  With script interpreters
+> +using the ``O_MAYEXEC`` flag, the executable permission can then be checked
+> +before reading commands from files. This makes it possible to enforce the
+> +``noexec`` at the interpreter level, and thus propagates this security policy
+> +to scripts.  To be fully effective, these interpreters also need to handle the
+> +other ways to execute code: command line parameters (e.g., option ``-e`` for
+> +Perl), module loading (e.g., option ``-m`` for Python), stdin, file sourcing,
+> +environment variables, configuration files, etc.  According to the threat
+> +model, it may be acceptable to allow some script interpreters (e.g. Bash) to
+> +interpret commands from stdin, may it be a TTY or a pipe, because it may not be
+> +enough to (directly) perform syscalls.
+> +
+> +There are two complementary security policies: enforce the ``noexec`` mount
+> +option, and enforce executable file permission.  These policies are handled by
+> +the ``fs.open_mayexec_enforce`` sysctl (writable only with ``CAP_SYS_ADMIN``)
+> +as a bitmask:
+> +
+> +1 - Mount restriction: checks that the mount options for the underlying VFS
+> +    mount do not prevent execution.
+> +
+> +2 - File permission restriction: checks that the to-be-opened file is marked as
+> +    executable for the current process (e.g., POSIX permissions).
+> +
+> +Note that as long as a policy is enforced, opening any non-regular file with
+> +``O_MAYEXEC`` is denied (e.g. TTYs, pipe), even when such a file is marked as
+> +executable or is on an executable mount point.
+> +
+> +Code samples can be found in tools/testing/selftests/openat2/omayexec_test.c
+> +and interpreter patches (for the original O_MAYEXEC version) may be found at
+> +https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC .
+> +See also an overview article: https://lwn.net/Articles/820000/ .
+> +
+> +
+>  overflowgid & overflowuid
+>  -------------------------
+>  
 > diff --git a/fs/namei.c b/fs/namei.c
-> index ddc9b25540fe..3f074ec77390 100644
+> index 3f074ec77390..8ec13c7fd403 100644
 > --- a/fs/namei.c
 > +++ b/fs/namei.c
-> @@ -428,7 +428,7 @@ static int sb_permission(struct super_block *sb, struct inode *inode, int mask)
+> @@ -39,6 +39,7 @@
+>  #include <linux/bitops.h>
+>  #include <linux/init_task.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/sysctl.h>
+>  
+>  #include "internal.h"
+>  #include "mount.h"
+> @@ -425,6 +426,11 @@ static int sb_permission(struct super_block *sb, struct inode *inode, int mask)
+>  	return 0;
+>  }
+>  
+> +#define OPEN_MAYEXEC_ENFORCE_MOUNT	BIT(0)
+> +#define OPEN_MAYEXEC_ENFORCE_FILE	BIT(1)
+> +
+> +int sysctl_open_mayexec_enforce __read_mostly;
+> +
 >  /**
 >   * inode_permission - Check for access rights to a given inode
 >   * @inode: Inode to check permission on
-> - * @mask: Right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC)
-> + * @mask: Right to check for (%MAY_READ, %MAY_WRITE, %MAY_EXEC, %MAY_OPENEXEC)
->   *
->   * Check for read/write/execute permissions on an inode.  We use fs[ug]id for
->   * this, letting us set arbitrary permissions for filesystem access without
-> @@ -2849,7 +2849,7 @@ static int may_open(const struct path *path, int acc_mode, int flag)
->  	case S_IFLNK:
->  		return -ELOOP;
->  	case S_IFDIR:
-> -		if (acc_mode & (MAY_WRITE | MAY_EXEC))
-> +		if (acc_mode & (MAY_WRITE | MAY_EXEC | MAY_OPENEXEC))
->  			return -EISDIR;
+> @@ -2861,11 +2867,29 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+>  	case S_IFSOCK:
+>  		if (acc_mode & MAY_EXEC)
+>  			return -EACCES;
+> +		/*
+> +		 * Opening devices (e.g. TTYs) or pipes with O_MAYEXEC may be
+> +		 * legitimate when there is no enforced policy.
+> +		 */
+> +		if ((acc_mode & MAY_OPENEXEC) && sysctl_open_mayexec_enforce)
+> +			return -EACCES;
+>  		flag &= ~O_TRUNC;
 >  		break;
->  	case S_IFBLK:
-> diff --git a/fs/open.c b/fs/open.c
-> index 623b7506a6db..21c2c1020574 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -987,6 +987,8 @@ inline struct open_how build_open_how(int flags, umode_t mode)
->  		.mode = mode & S_IALLUGO,
->  	};
+>  	case S_IFREG:
+>  		if ((acc_mode & MAY_EXEC) && path_noexec(path))
+>  			return -EACCES;
+> +		if (acc_mode & MAY_OPENEXEC) {
+> +			if ((sysctl_open_mayexec_enforce & OPEN_MAYEXEC_ENFORCE_MOUNT)
+> +					&& path_noexec(path))
+> +				return -EACCES;
+> +			if (sysctl_open_mayexec_enforce & OPEN_MAYEXEC_ENFORCE_FILE)
+> +				/*
+> +				 * Because acc_mode may change here, the next and only
+> +				 * use of acc_mode should then be by the following call
+> +				 * to inode_permission().
+> +				 */
+> +				acc_mode |= MAY_EXEC;
+> +		}
+>  		break;
+>  	}
 >  
-> +	/* O_MAYEXEC is ignored by syscalls relying on build_open_how(). */
-> +	how.flags &= ~O_MAYEXEC;
->  	/* O_PATH beats everything else. */
->  	if (how.flags & O_PATH)
->  		how.flags &= O_PATH_FLAGS;
-> @@ -1054,6 +1056,10 @@ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
->  	if (flags & __O_SYNC)
->  		flags |= O_DSYNC;
->  
-> +	/* Checks execution permissions on open. */
-> +	if (flags & O_MAYEXEC)
-> +		acc_mode |= MAY_OPENEXEC;
-> +
->  	op->open_flag = flags;
->  
->  	/* O_TRUNC implies we need access checks for write permissions */
-> diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-> index 7bcdcf4f6ab2..e188a360fa5f 100644
-> --- a/include/linux/fcntl.h
-> +++ b/include/linux/fcntl.h
-> @@ -10,7 +10,7 @@
->  	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
->  	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
->  	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
-> -	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-> +	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_MAYEXEC)
->  
->  /* List of all valid flags for the how->upgrade_mask argument: */
->  #define VALID_UPGRADE_FLAGS \
 > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index f5abba86107d..56f835c9a87a 100644
+> index 56f835c9a87a..071f37707ccc 100644
 > --- a/include/linux/fs.h
 > +++ b/include/linux/fs.h
-> @@ -101,6 +101,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  #define MAY_CHDIR		0x00000040
->  /* called from RCU mode, don't block */
->  #define MAY_NOT_BLOCK		0x00000080
-> +/* the inode is opened with O_MAYEXEC */
-> +#define MAY_OPENEXEC		0x00000100
+> @@ -83,6 +83,7 @@ extern int sysctl_protected_symlinks;
+>  extern int sysctl_protected_hardlinks;
+>  extern int sysctl_protected_fifos;
+>  extern int sysctl_protected_regular;
+> +extern int sysctl_open_mayexec_enforce;
 >  
->  /*
->   * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
-> diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-> index 9dc0bf0c5a6e..bca90620119f 100644
-> --- a/include/uapi/asm-generic/fcntl.h
-> +++ b/include/uapi/asm-generic/fcntl.h
-> @@ -97,6 +97,13 @@
->  #define O_NDELAY	O_NONBLOCK
->  #endif
+>  typedef __kernel_rwf_t rwf_t;
 >  
-> +/*
-> + * Code execution from file is intended, checks such permission.  A simple
-> + * policy can be enforced system-wide as explained in
-> + * Documentation/admin-guide/sysctl/fs.rst .
-> + */
-> +#define O_MAYEXEC	040000000
-> +
->  #define F_DUPFD		0	/* dup */
->  #define F_GETFD		1	/* get close_on_exec */
->  #define F_SETFD		2	/* set/clear close_on_exec */
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index db1ce7af2563..5008a2566e79 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -113,6 +113,7 @@ static int sixty = 60;
+>  
+>  static int __maybe_unused neg_one = -1;
+>  static int __maybe_unused two = 2;
+> +static int __maybe_unused three = 3;
+>  static int __maybe_unused four = 4;
+>  static unsigned long zero_ul;
+>  static unsigned long one_ul = 1;
+> @@ -888,7 +889,6 @@ static int proc_taint(struct ctl_table *table, int write,
+>  	return err;
+>  }
+>  
+> -#ifdef CONFIG_PRINTK
+>  static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
+>  				void *buffer, size_t *lenp, loff_t *ppos)
+>  {
+> @@ -897,7 +897,6 @@ static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
+>  
+>  	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+>  }
+> -#endif
+>  
+>  /**
+>   * struct do_proc_dointvec_minmax_conv_param - proc_dointvec_minmax() range checking structure
+> @@ -3264,6 +3263,15 @@ static struct ctl_table fs_table[] = {
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= &two,
+>  	},
+> +	{
+> +		.procname       = "open_mayexec_enforce",
+> +		.data           = &sysctl_open_mayexec_enforce,
+> +		.maxlen         = sizeof(int),
+> +		.mode           = 0600,
+> +		.proc_handler	= proc_dointvec_minmax_sysadmin,
+> +		.extra1		= SYSCTL_ZERO,
+> +		.extra2		= &three,
+> +	},
+>  #if defined(CONFIG_BINFMT_MISC) || defined(CONFIG_BINFMT_MISC_MODULE)
+>  	{
+>  		.procname	= "binfmt_misc",
