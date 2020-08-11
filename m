@@ -2,133 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81BDC2417F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 10:09:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D400E241868
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 10:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbgHKIJR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 04:09:17 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:44165 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727998AbgHKIJR (ORCPT
+        id S1728322AbgHKIpg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 04:45:36 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:48671 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728301AbgHKIpf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 04:09:17 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mtapsc-6-6yjApz6GO-e2kdqAupHRLw-1; Tue, 11 Aug 2020 09:09:13 +0100
-X-MC-Unique: 6yjApz6GO-e2kdqAupHRLw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 11 Aug 2020 09:09:10 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 11 Aug 2020 09:09:10 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     =?iso-8859-1?Q?=27Micka=EBl_Sala=FCn=27?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>
-CC:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        "Alexei Starovoitov" <ast@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Christian Brauner" <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "Eric Biggers" <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        "Florian Weimer" <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?iso-8859-1?Q?Philippe_Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        "Scott Shell" <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH v7 0/7] Add support for O_MAYEXEC
-Thread-Topic: [PATCH v7 0/7] Add support for O_MAYEXEC
-Thread-Index: AQHWb1PwbfAzth+cK0yvrOzhTaEjE6kx5WiAgAAMbuyAAJu5IA==
-Date:   Tue, 11 Aug 2020 08:09:10 +0000
-Message-ID: <26a4a8378f3b4ad28eaa476853092716@AcuMS.aculab.com>
-References: <20200723171227.446711-1-mic@digikod.net>
- <202007241205.751EBE7@keescook>
- <0733fbed-cc73-027b-13c7-c368c2d67fb3@digikod.net>
- <20200810202123.GC1236603@ZenIV.linux.org.uk>
- <30b8c003f49d4280be5215f634ca2c06@AcuMS.aculab.com>
- <20200810222838.GF1236603@ZenIV.linux.org.uk>
- <2531a0e8-5122-867c-ba06-5d2e623a3834@digikod.net>
-In-Reply-To: <2531a0e8-5122-867c-ba06-5d2e623a3834@digikod.net>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 11 Aug 2020 04:45:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1597135535; x=1628671535;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3QR/fZGXYtzOi7dYupt95OCb87b/iCpow+vQND0CFIg=;
+  b=SPzg9BvyGUsA3BrwkHm8HpxMGCMTVaHP+5ou17OluHta4AsFcZjtdvZ4
+   s05xo2mQRH4i281mW7r18kTCb0DHJ69kOpqnIVljzypkmxvk9wbNf3WOD
+   kkgHBNRdhYjIxdatdaVJgePBNVO2DeHPygKLTKtA3OtXUf3SAxR7iLHtK
+   AIuzhVPs/TES/l/nfMabOItkK3vCREyGce+W6sNywZGW5aJLT06EkruxQ
+   Yw1Mzfp/CmzFwU4uZ3r4swv3NDIKGuipqtUhDmURthV/5qZhhrUyAQiIW
+   xQ+1HlHHgvd7PKleKOpQ3OZMivssvXnB7rwANyweRDHiLB+VINRny2/la
+   Q==;
+IronPort-SDR: cNzn24BM6GNkKEktZhZCUrh8QDC9MfK1bQXNbWwzXV+cpDfPcFKNjBYEa9UraezuxngAh1ipDJ
+ CG38jvsY4w3Ab5MQJa1cYo+CEBUlbr7y8L+OWqy4J78TzxZlN240WyTmVq3b7ZHqAeI1dTyMXL
+ spPLhC9kRz/9/B7cD4EqXE6VeZfKzbCbufc3va2VZ6Rho/CD1Y2a16XSTmZuuwuxbqvufsSXi8
+ 7WSYmlARIB4DyD+h0IioZrU9YOThYhMs28yYW/WfW6MZCUspFmMaHhW9BDzyjrrTk4C27Fo7qq
+ NKc=
+X-IronPort-AV: E=Sophos;i="5.75,460,1589212800"; 
+   d="scan'208";a="145882292"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 11 Aug 2020 16:45:35 +0800
+IronPort-SDR: XL6FEoxmGJh7c9ieZ7YabG5JBMZWzfvf4U4VBRik3Z1XPIhVaCVuPuVwLkBv5y7BKeN43dFttw
+ dTWiTCta+b3A==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2020 01:32:45 -0700
+IronPort-SDR: YI5ZSe3fKDs83PxEqAfXOMxLMsuOTU4qQNF6pkPB2pQ6vEvZlBYtpBc3t/l662Uo2RnN0x9tHd
+ 8gHSI/LdPPXA==
+WDCIronportException: Internal
+Received: from washi.fujisawa.hgst.com ([10.149.53.254])
+  by uls-op-cesaip02.wdc.com with ESMTP; 11 Aug 2020 01:45:34 -0700
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] zonefs changes for X.Y-rcZ
+Date:   Tue, 11 Aug 2020 17:45:31 +0900
+Message-Id: <20200811084531.677853-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> On 11/08/2020 00:28, Al Viro wrote:
-> > On Mon, Aug 10, 2020 at 10:09:09PM +0000, David Laight wrote:
-> >>> On Mon, Aug 10, 2020 at 10:11:53PM +0200, Mickaël Salaün wrote:
-> >>>> It seems that there is no more complains nor questions. Do you want me
-> >>>> to send another series to fix the order of the S-o-b in patch 7?
-> >>>
-> >>> There is a major question regarding the API design and the choice of
-> >>> hooking that stuff on open().  And I have not heard anything resembling
-> >>> a coherent answer.
-> >>
-> >> To me O_MAYEXEC is just the wrong name.
-> >> The bit would be (something like) O_INTERPRET to indicate
-> >> what you want to do with the contents.
-> 
-> The properties is "execute permission". This can then be checked by
-> interpreters or other applications, then the generic O_MAYEXEC name.
+Linus,
 
-The english sense of MAYEXEC is just wrong for what you are trying
-to check.
+The following changes since commit 00e4db51259a5f936fec1424b884f029479d3981:
 
-> > ... which does not answer the question - name of constant is the least of
-> > the worries here.  Why the hell is "apply some unspecified checks to
-> > file" combined with opening it, rather than being an independent primitive
-> > you apply to an already opened file?  Just in case - "'cuz that's how we'd
-> > done it" does not make a good answer...
+  Merge tag 'perf-tools-2020-08-10' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux (2020-08-10 19:21:38 -0700)
 
-Maybe an access_ok() that acts on an open fd would be more
-appropriate.
-Which might end up being an fcntrl() action.
-That would give you a full 32bit mask of options.
+are available in the Git repository at:
 
-	David
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs.git/ tags/zonefs-5.9-rc1
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+for you to fetch changes up to 4c96870e58f8bce1c7eba5f92ec69089ae6798f4:
 
+  zonefs: update documentation to reflect zone size vs capacity (2020-08-11 17:42:25 +0900)
+
+----------------------------------------------------------------
+zonefs changes for 5.9-rc1
+
+A single change for this cycle adding support for zone capacities
+smaller than the zone size, from Johannes.
+
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+
+----------------------------------------------------------------
+Johannes Thumshirn (2):
+      zonefs: add zone-capacity support
+      zonefs: update documentation to reflect zone size vs capacity
+
+ Documentation/filesystems/zonefs.rst | 22 ++++++++++++----------
+ fs/zonefs/super.c                    | 16 ++++++++++++----
+ fs/zonefs/zonefs.h                   |  3 +++
+ 3 files changed, 27 insertions(+), 14 deletions(-)
