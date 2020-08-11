@@ -2,112 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A43F9241B84
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 15:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFADE241BCD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 15:53:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbgHKNT1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 09:19:27 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:43640 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728708AbgHKNT0 (ORCPT
+        id S1728735AbgHKNxD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 09:53:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45162 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728619AbgHKNw7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 09:19:26 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07BDHqln106898;
-        Tue, 11 Aug 2020 13:19:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=eHL++QnHphPePYIhSoVVQ5kFXWG75NQVIwJipObuJ7U=;
- b=JGVXJMHJt+IaTtIQbe6SxGOsd5bLj94dRZDZcX2xTzybcbx3ntA0y4g9Adc5ELzZILa3
- 9m1T+8dcHWO2HZjUWLWOrwNS89HOiVhnnK0dzgkvpqpG9dABUIHrHR2Lm5Jgsjz5MK+P
- bLGavXTHBUCt813ICH+wiG4TzNh0ynFiH4CNFPnJR3h69Aun5XWtoaJgwuE8yY/hhUDc
- KvrtyX64Pf2VpI09OAfUvBk91x60POKJVASV+Nv6CCtFjuZlDyElUaqBzsGRjWM8OKuT
- 4PzEty/v/zSf08jb1XDPpnTMPUo0mlDvhbRpJjF7VEk4G0uKf5ahzQNBBaZiwJR6RYOk Kw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 32t2ydjwdy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Aug 2020 13:19:20 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07BDJIUe177486;
-        Tue, 11 Aug 2020 13:19:19 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 32t5y3yg5c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 Aug 2020 13:19:19 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 07BDJ5Im010666;
-        Tue, 11 Aug 2020 13:19:05 GMT
-Received: from anon-dhcp-152.1015granger.net (/68.61.232.219)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 11 Aug 2020 13:19:05 +0000
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: Re: Please pull NFS server updates for v5.9
-From:   Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <20200811161518.0896c1e8@canb.auug.org.au>
-Date:   Tue, 11 Aug 2020 09:19:03 -0400
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Trond Myklebust <trondmy@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5D3B9AC6-6A27-4795-A256-C9CE0D459D15@oracle.com>
-References: <F9B8940D-9F7B-47F5-9946-D77C17CF959A@oracle.com>
- <20200810090349.64bce58f@canb.auug.org.au>
- <EC1AA9E7-4AC1-49C6-B138-B6A3E4ED7A0B@oracle.com>
- <20200811161518.0896c1e8@canb.auug.org.au>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9709 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0
- suspectscore=0 mlxscore=0 adultscore=0 bulkscore=0 phishscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008110092
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9709 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 priorityscore=1501
- malwarescore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0
- suspectscore=0 phishscore=0 adultscore=0 spamscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008110092
+        Tue, 11 Aug 2020 09:52:59 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C448C06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 06:52:59 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id t11so6843798plr.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 06:52:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=hBzW2ieVn9S8WRpjKKZgk2Q3k8ADXArcvCAn26f+FAQ=;
+        b=orVavcgkq+oqS6qEImOMZ7TduLcai2+huD3HOzc8GZ81U9cIjaQ3KO3g8aRDLC5qhm
+         tBkfM656WfiKaIUq7+ys9Tb3NWPAseTKmhaVbeuD2Qse6kHpyMmmzW4QyfQkZDQnMztJ
+         TwJrhe5Nm814ITfkYa1qv8vLqdavM8GecCVkKJPgolAmQPdogKIacoekFViV0SxRm2Fr
+         5FJhC2BRs0m09S+5VGzFyFMZJc0VT/idJguqhrnc+TUbXLzHOGAiCIeQlAzclGvpsFlI
+         EYlb7tdV0SvpeGIdNQjFpafNS6HvZuC5vDCYvrX0izWvA8d7Kk2ZIX84hyRMqvpuKqli
+         EbnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hBzW2ieVn9S8WRpjKKZgk2Q3k8ADXArcvCAn26f+FAQ=;
+        b=mbE4XFQPGlswKzYMRZykBO41NXS/ch0yi0CWswrDQwezXTD7Ffg5ZgSYXk42KI5s14
+         XgfUNNVksDBnJjoqMpN39969JpicObrFhyg+t8LEfBw9A9CUziRlDUhGXrTBIPQZM6/f
+         LpNd4we53Ch8R6gk5s2BNR6Als+YBJ2GSFGlYcqSDkOEyI1UQ1/sqPpXi/MoJvAvFvDs
+         jfFJ1QbFVwlyNXu5PJIjZFto0vGuxmc3VmmNDKkUXsnKIj3KvittSxcKlCMjUbicJkQ7
+         OwFqhH8tbC981dTMXcxN3JuKAhAjU0h78Tjk88SGjzabLKsOYDTCTvxV75jbpgRCZmqo
+         XMxw==
+X-Gm-Message-State: AOAM531TK1UoMnZReR74hGxDM6KzZgyLrHLYRoWWY7jKRhraQlRlXoZ+
+        HS/ujrYfR8Y87Z1Ve3sRA3fFWQ==
+X-Google-Smtp-Source: ABdhPJx12PhBcxf+TNd8YFsjKf2yGKjJp+AULNeiYiPgLCw5lrr7juZl0TULuUBcIPn0OeevPFd6kg==
+X-Received: by 2002:a17:90b:164a:: with SMTP id il10mr1284815pjb.2.1597153978420;
+        Tue, 11 Aug 2020 06:52:58 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id in12sm2924184pjb.29.2020.08.11.06.52.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Aug 2020 06:52:57 -0700 (PDT)
+Subject: Re: KASAN: use-after-free Read in io_async_task_func
+To:     syzbot <syzbot+9b260fc33297966f5a8e@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <0000000000002753ac05ac9471f4@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <4acc639d-ec4a-e630-3a0b-33c4f675b41d@kernel.dk>
+Date:   Tue, 11 Aug 2020 07:52:55 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <0000000000002753ac05ac9471f4@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 8/11/20 12:47 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    fc80c51f Merge tag 'kbuild-v5.9' of git://git.kernel.org/p..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17601ab2900000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d48472fcc2f68903
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9b260fc33297966f5a8e
+> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174272b2900000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+9b260fc33297966f5a8e@syzkaller.appspotmail.com
 
+I think the below should fix it, for this use case and potentially others.
+If the ring is closed and the task_work bound req is holding the last
+reference, we need to hold a ctx reference around it.
 
-> On Aug 11, 2020, at 2:15 AM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> Hi Chuck,
->=20
-> On Mon, 10 Aug 2020 08:25:14 -0400 Chuck Lever =
-<chuck.lever@oracle.com> wrote:
->>=20
->> Is there something I need to change? The public copy of the =
-cel-testing
->> branch has had this content for the past 12 days.
->=20
-> You just need to keep your cel-next branch up to the top commit that =
-is
-> ready.  That is the branch you told me to fetch.  It is currently at =
-commit
->=20
->  0a8e7b7d0846 ("SUNRPC: Revert 241b1f419f0e ("SUNRPC: Remove =
-xdr_buf_trim()")")
->=20
-> It looks like that is what Linus merged into v5.7-rc2.
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 5488698189da..cc4bb16ff570 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -1821,8 +1821,10 @@ static void __io_req_task_submit(struct io_kiocb *req)
+ static void io_req_task_submit(struct callback_head *cb)
+ {
+ 	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
++	struct io_ring_ctx *ctx = req->ctx;
+ 
+ 	__io_req_task_submit(req);
++	percpu_ref_put(&ctx->refs);
+ }
+ 
+ static void io_req_task_queue(struct io_kiocb *req)
+@@ -1830,6 +1832,7 @@ static void io_req_task_queue(struct io_kiocb *req)
+ 	int ret;
+ 
+ 	init_task_work(&req->task_work, io_req_task_submit);
++	percpu_ref_get(&req->ctx->refs);
+ 
+ 	ret = io_req_task_work_add(req, &req->task_work);
+ 	if (unlikely(ret)) {
+@@ -2318,6 +2321,8 @@ static void io_rw_resubmit(struct callback_head *cb)
+ 		refcount_inc(&req->refs);
+ 		io_queue_async_work(req);
+ 	}
++
++	percpu_ref_put(&ctx->refs);
+ }
+ #endif
+ 
+@@ -2330,6 +2335,8 @@ static bool io_rw_reissue(struct io_kiocb *req, long res)
+ 		return false;
+ 
+ 	init_task_work(&req->task_work, io_rw_resubmit);
++	percpu_ref_get(&req->ctx->refs);
++
+ 	ret = io_req_task_work_add(req, &req->task_work);
+ 	if (!ret)
+ 		return true;
+@@ -3033,6 +3040,8 @@ static int io_async_buf_func(struct wait_queue_entry *wait, unsigned mode,
+ 	list_del_init(&wait->entry);
+ 
+ 	init_task_work(&req->task_work, io_req_task_submit);
++	percpu_ref_get(&req->ctx->refs);
++
+ 	/* submit ref gets dropped, acquire a new one */
+ 	refcount_inc(&req->refs);
+ 	ret = io_req_task_work_add(req, &req->task_work);
+@@ -4565,6 +4574,8 @@ static int __io_async_wake(struct io_kiocb *req, struct io_poll_iocb *poll,
+ 
+ 	req->result = mask;
+ 	init_task_work(&req->task_work, func);
++	percpu_ref_get(&req->ctx->refs);
++
+ 	/*
+ 	 * If this fails, then the task is exiting. When a task exits, the
+ 	 * work gets canceled, so just cancel this request as well instead
+@@ -4652,11 +4663,13 @@ static void io_poll_task_handler(struct io_kiocb *req, struct io_kiocb **nxt)
+ static void io_poll_task_func(struct callback_head *cb)
+ {
+ 	struct io_kiocb *req = container_of(cb, struct io_kiocb, task_work);
++	struct io_ring_ctx *ctx = req->ctx;
+ 	struct io_kiocb *nxt = NULL;
+ 
+ 	io_poll_task_handler(req, &nxt);
+ 	if (nxt)
+ 		__io_req_task_submit(nxt);
++	percpu_ref_put(&ctx->refs);
+ }
+ 
+ static int io_poll_double_wake(struct wait_queue_entry *wait, unsigned mode,
+@@ -4752,6 +4765,7 @@ static void io_async_task_func(struct callback_head *cb)
+ 
+ 	if (io_poll_rewait(req, &apoll->poll)) {
+ 		spin_unlock_irq(&ctx->completion_lock);
++		percpu_ref_put(&ctx->refs);
+ 		return;
+ 	}
+ 
 
-Ah. I thought you were pulling cel-testing, so I deleted cel-next. I =
-will
-rehydrate cel-next right now.
-
---
-Chuck Lever
-
-
+-- 
+Jens Axboe
 
