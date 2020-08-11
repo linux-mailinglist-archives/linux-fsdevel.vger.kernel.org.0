@@ -2,143 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E4873241D4F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 17:39:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8DFD241D93
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 17:49:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728952AbgHKPjc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 11:39:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33388 "EHLO
+        id S1728903AbgHKPtc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 11:49:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728907AbgHKPj3 (ORCPT
+        with ESMTP id S1728873AbgHKPtb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 11:39:29 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E07BDC061787
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 08:39:28 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id l60so2054416pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 08:39:28 -0700 (PDT)
+        Tue, 11 Aug 2020 11:49:31 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C15C061787
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 08:49:31 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id o13so6917657pgf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 08:49:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=k5Vv6xhQn88lB15k7GWg1mV+u5XAmiBOD5QRLYqo0NY=;
-        b=nHEtCEzA+K3xCyhNyTZMcv8HcHHns+1Hk8pycDEXFieqNICHleSe+O63Dg8nrD0ywV
-         o9FxDHPVmLM0E84TppnHf8iG7S6jFvmUO80JLVLQouLtTWeM771ruHtVW5aDq9qPlFD/
-         nPvs2QyLb4JcANu1Lw9v6YsDaxc4gzzjaYoAo+A4op1aaTwKJdGjDEBtT2htvCkHP/QB
-         M2r/LMeVxfL75GbnkDd0Rr7a/6JSOT1h/M4gxH2FCh1IUGFdbam1qcqLH8k5yRdjSkoQ
-         WGIhvHaJscZeR6w7h6ionNs/EknZAEI60DlrcQnPgdDW7ZSAV7EvgtRxy0pWXvYZnNYr
-         I/wA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=1RoNYDYvCgpLLRWCuumNMoAb1U/U13+su+iqhg08vrA=;
+        b=G+ZaOUTABRY2uaa7exuF9V693p1+/Aq92mMnUXDM0xSjDLxYZHnk2loQum0lmZklvu
+         gavDX8FnkFLF3m0LF13jEKwqunJXhebTR9C+PVK0+27BF2MdYni5G5s0QMPclcDbw33y
+         pivUFiiYDDl+K8jkY08D8WSKQhccYO0eANN2qrLBsppanGGSLmyM0rg1KFCIuXeRtd5W
+         ja2xxU/wZU1/K/GUKfE56yofuh/+8iY4+fq3391Id0hYaYmIJORKt4333Q+mZLEJVtyO
+         uKh1JW/lNXMQvUmN3hcPiqbKSCdjLrPHI20sUx5TlnAAiAxsU/etOwfVJHX+qNmBBM9i
+         LC4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=k5Vv6xhQn88lB15k7GWg1mV+u5XAmiBOD5QRLYqo0NY=;
-        b=U9tSQ8Ijh32PA6Kg/2l8dQWcH99+Bsnlcr5b8+DuEcTeu4VOAWitg/ypQzFXHXiXaD
-         qfrOqf5qCPoxuIZRhho9q6Fh8spTvWM0uI6KJjmMNT6dr5UpL4W5tObkpa3cnqKk/oHI
-         SktjOhAFV2tVvYtxiKLpoZVqfl+nP1c+zcyBjCz4DXeaz+poo1dgjKjRnI2SejeKnv4G
-         gCMWY3G7acK29v5J/1Jn2dTqDjob/02o3/gpW4BzhgpfKf7yya9/3IhluEO4SOM5lesy
-         JGuIzabtBOg//6XjNpvsRdAwQ/nQp81w09eOKy13vjGBnUt7FxOpvgonQh2UmOqwDIvq
-         gBTA==
-X-Gm-Message-State: AOAM533HUU+L68RzTVL+d5zsTe8NP9iU94u6e8zHAdGzIT3ctjATXo9U
-        L8YVWnanltWpfi4zrgGFliAu/g==
-X-Google-Smtp-Source: ABdhPJy0yB+Dw1/CiiHffwfE44OfK3nBhmxE+9kmrh4+Xqbf7oNah664PCqIvEwN6uoP1FczdMwiuQ==
-X-Received: by 2002:a17:902:8693:: with SMTP id g19mr1455443plo.66.1597160368219;
-        Tue, 11 Aug 2020 08:39:28 -0700 (PDT)
-Received: from ?IPv6:2601:646:c200:1ef2:6127:e67c:651c:a994? ([2601:646:c200:1ef2:6127:e67c:651c:a994])
-        by smtp.gmail.com with ESMTPSA id 193sm25644247pfu.169.2020.08.11.08.39.27
+        h=x-gm-message-state:subject:from:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1RoNYDYvCgpLLRWCuumNMoAb1U/U13+su+iqhg08vrA=;
+        b=fIoGcrtXGhPuCImhSK1AlHzfOKsGBhEA2NEU9t/69xJftsToMzA6xh0TGmnIgt6MA7
+         dVe5Yip0nkhQtisr4j04CtY23dwmC4oQSfTTY4Fbl+vzXYG7J+sEeZMMpWIPH5o9fNCV
+         qKa7YFdZEsxFDtmSXSx1pVhDVvYoOuA+C4c18VMV8EpkjpanFJfqWWTL3t6bUAR0NIaT
+         jDU1qGYaTebxPgMKpP6LtaF4n8DHxYGR9nwddgAdhwyDHKOjjJNLIxgZleo4PnLwWepV
+         c0EuT9uQ1zS6sO5e69QoJiYR7oTnZmqFKj1BNQxbUNlF7IH8GSkcL6Fdv3tl65ux9a7z
+         9Xaw==
+X-Gm-Message-State: AOAM530ZAPQVY6MoUm9Juqmwhf+m0+a9qCgD8j0mD2Ne9wxzbNQ+9hI2
+        8uRj3uzzPRhXkvzmB90lqYgQPg==
+X-Google-Smtp-Source: ABdhPJyImT5VS2jSW7cIWKnDAuCFRuBhWkOy7HCCCtavJT7faPpml2SIfF69oV5pKG86DD3ZalrbtQ==
+X-Received: by 2002:a65:4103:: with SMTP id w3mr1362290pgp.426.1597160970982;
+        Tue, 11 Aug 2020 08:49:30 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id bf8sm3311237pjb.4.2020.08.11.08.49.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2020 08:39:27 -0700 (PDT)
+        Tue, 11 Aug 2020 08:49:30 -0700 (PDT)
+Subject: Re: memory leak in io_submit_sqes
+From:   Jens Axboe <axboe@kernel.dk>
+To:     syzbot <syzbot+a730016dc0bdce4f6ff5@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <000000000000f50fb505ac9a72c9@google.com>
+ <b8c5db23-c3cf-7daf-6a0a-8a5f713e9803@kernel.dk>
+ <f0386716-eba3-392c-b6b6-35109a1b009b@kernel.dk>
+Message-ID: <f6595321-fc08-6c5a-c39c-dc3a2fbb83ed@kernel.dk>
+Date:   Tue, 11 Aug 2020 09:49:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <f0386716-eba3-392c-b6b6-35109a1b009b@kernel.dk>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Andy Lutomirski <luto@amacapital.net>
-Mime-Version: 1.0 (1.0)
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-Date:   Tue, 11 Aug 2020 08:39:26 -0700
-Message-Id: <5C8E0FA8-274E-4B56-9B5A-88E768D01F3A@amacapital.net>
-References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-In-Reply-To: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-X-Mailer: iPhone Mail (17G68)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 8/11/20 9:23 AM, Jens Axboe wrote:
+> On 8/11/20 8:59 AM, Jens Axboe wrote:
+>> On 8/11/20 7:57 AM, syzbot wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following issue on:
+>>>
+>>> HEAD commit:    d6efb3ac Merge tag 'tty-5.9-rc1' of git://git.kernel.org/p..
+>>> git tree:       upstream
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=13cb0762900000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=42163327839348a9
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=a730016dc0bdce4f6ff5
+>>> compiler:       gcc (GCC) 10.1.0-syz 20200507
+>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16e877dc900000
+>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1608291a900000
+>>>
+>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>> Reported-by: syzbot+a730016dc0bdce4f6ff5@syzkaller.appspotmail.com
+>>>
+>>> executing program
+>>> executing program
+>>> executing program
+>>> executing program
+>>> executing program
+>>> BUG: memory leak
+>>> unreferenced object 0xffff888124949100 (size 256):
+>>>   comm "syz-executor808", pid 6480, jiffies 4294949911 (age 33.960s)
+>>>   hex dump (first 32 bytes):
+>>>     00 78 74 2a 81 88 ff ff 00 00 00 00 00 00 00 00  .xt*............
+>>>     90 b0 51 81 ff ff ff ff 00 00 00 00 00 00 00 00  ..Q.............
+>>>   backtrace:
+>>>     [<0000000084e46f34>] io_alloc_req fs/io_uring.c:1503 [inline]
+>>>     [<0000000084e46f34>] io_submit_sqes+0x5dc/0xc00 fs/io_uring.c:6306
+>>>     [<000000006d4e19eb>] __do_sys_io_uring_enter+0x582/0x830 fs/io_uring.c:8036
+>>>     [<00000000a4116b07>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+>>>     [<0000000067b2aefc>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>
+>>> BUG: memory leak
+>>> unreferenced object 0xffff88811751d200 (size 96):
+>>>   comm "syz-executor808", pid 6480, jiffies 4294949911 (age 33.960s)
+>>>   hex dump (first 32 bytes):
+>>>     00 78 74 2a 81 88 ff ff 00 00 00 00 00 00 00 00  .xt*............
+>>>     0e 01 00 00 00 00 75 22 00 00 00 00 00 0f 1f 04  ......u"........
+>>>   backtrace:
+>>>     [<00000000073ea2ba>] kmalloc include/linux/slab.h:555 [inline]
+>>>     [<00000000073ea2ba>] io_arm_poll_handler fs/io_uring.c:4773 [inline]
+>>>     [<00000000073ea2ba>] __io_queue_sqe+0x445/0x6b0 fs/io_uring.c:5988
+>>>     [<000000001551bde0>] io_queue_sqe+0x309/0x550 fs/io_uring.c:6060
+>>>     [<000000002dfb908f>] io_submit_sqe fs/io_uring.c:6130 [inline]
+>>>     [<000000002dfb908f>] io_submit_sqes+0x8b8/0xc00 fs/io_uring.c:6327
+>>>     [<000000006d4e19eb>] __do_sys_io_uring_enter+0x582/0x830 fs/io_uring.c:8036
+>>>     [<00000000a4116b07>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+>>>     [<0000000067b2aefc>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>
+>> This one looks very odd, and I cannot reproduce it. The socket() calls
+>> reliably fails for me, and even if I hack it to use 0 for protocol instead
+>> of 2, I don't see anything interesting happening here. An IORING_OP_WRITEV
+>> is submitted on the socket, which just fails with ENOTCONN.
+> 
+> Dug a bit deeper and found the missing option, I can now reproduce this!
+> I'll take a look.
 
+This should fix it.
 
-> On Aug 11, 2020, at 8:20 AM, Linus Torvalds <torvalds@linux-foundation.org=
-> wrote:
->=20
-> =EF=BB=BF[ I missed the beginning of this discussion, so maybe this was al=
-ready
-> suggested ]
->=20
->> On Tue, Aug 11, 2020 at 6:54 AM Miklos Szeredi <miklos@szeredi.hu> wrote:=
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 99582cf5106b..8a2afd8c33c9 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -4883,7 +4883,7 @@ static bool io_arm_poll_handler(struct io_kiocb *req)
+ 
+ 	ret = __io_arm_poll_handler(req, &apoll->poll, &ipt, mask,
+ 					io_async_wake);
+-	if (ret) {
++	if (ret || ipt.error) {
+ 		io_poll_remove_double(req, apoll->double_poll);
+ 		spin_unlock_irq(&ctx->completion_lock);
+ 		kfree(apoll->double_poll);
 
->>=20
->>>=20
->>> E.g.
->>>  openat(AT_FDCWD, "foo/bar//mnt/info", O_RDONLY | O_ALT);
->>=20
->> Proof of concept patch and test program below.
->=20
-> I don't think this works for the reasons Al says, but a slight
-> modification might.
->=20
-> IOW, if you do something more along the lines of
->=20
->       fd =3D open(""foo/bar", O_PATH);
->       metadatafd =3D openat(fd, "metadataname", O_ALT);
->=20
-> it might be workable.
->=20
-> So you couldn't do it with _one_ pathname, because that is always
-> fundamentally going to hit pathname lookup rules.
->=20
-> But if you start a new path lookup with new rules, that's fine.
->=20
-> This is what I think xattrs should always have done, because they are
-> broken garbage.
->=20
-> In fact, if we do it right, I think we could have "getxattr()" be 100%
-> equivalent to (modulo all the error handling that this doesn't do, of
-> course):
->=20
->  ssize_t getxattr(const char *path, const char *name,
->                        void *value, size_t size)
->  {
->     int fd, attrfd;
->=20
->     fd =3D open(path, O_PATH);
->     attrfd =3D openat(fd, name, O_ALT);
->     close(fd);
->     read(attrfd, value, size);
->     close(attrfd);
->  }
->=20
-> and you'd still use getxattr() and friends as a shorthand (and for
-> POSIX compatibility), but internally in the kernel we'd have a
-> interface around that "xattrs are just file handles" model.
->=20
->=20
+-- 
+Jens Axboe
 
-This is a lot like a less nutty version of NTFS streams, whereas the /// ide=
-a is kind of like an extra-nutty version of NTFS streams.
-
-I am personally not a fan of the in-band signaling implications of overloadi=
-ng /.  For example, there is plenty of code out there that thinks that (a + =E2=
-=80=9C/=E2=80=9C + b) concatenates paths. With /// overloaded, this stops be=
-ing true.=
