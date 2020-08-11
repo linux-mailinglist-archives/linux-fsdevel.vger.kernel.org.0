@@ -2,95 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E9D624163A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 08:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B30C4241675
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 08:47:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbgHKGPY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 02:15:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59578 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbgHKGPY (ORCPT
+        id S1728167AbgHKGrT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 02:47:19 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:50143 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727981AbgHKGrT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 02:15:24 -0400
-Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC6C5C06174A;
-        Mon, 10 Aug 2020 23:15:23 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BQjHW61Pqz9sTM;
-        Tue, 11 Aug 2020 16:15:19 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1597126520;
-        bh=vmA+U6yYordllIlIbbA0NQplZPeDri+hoiMGp1wkbEM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=rVFvNdvDn+0X42UKxMtre6LFZycz0m0HXH2n0WFRWQRcQ1MZ0ga42i8Ev/4GGN8lw
-         gJDXFsgo1OwUATt9NCedr7N+sBd9p5GCHyU3O4ewmhU0wXa3kwLiLtNZgiguByjJ5P
-         b+cPlHiyw8iRsyQhnab+mX+ShF2qJW6WtWeIHZGlAJKWo3kUoe8Kq0om6YRcOoawmN
-         5YDjIz1btmZ2UNs8Nc53etiG2rshjvYlyJN0FBfcgnThzb3EWxyfONA8ny00FD0bwT
-         +tK1ZWbPukfWkvcqtUjDs8hm2wj8X94mTaSliePXUOiQPtILPMclAZwuOtexzF268L
-         ef+8mu0DXqqfg==
-Date:   Tue, 11 Aug 2020 16:15:18 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Chuck Lever <chuck.lever@oracle.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Trond Myklebust <trondmy@gmail.com>
-Subject: Re: Please pull NFS server updates for v5.9
-Message-ID: <20200811161518.0896c1e8@canb.auug.org.au>
-In-Reply-To: <EC1AA9E7-4AC1-49C6-B138-B6A3E4ED7A0B@oracle.com>
-References: <F9B8940D-9F7B-47F5-9946-D77C17CF959A@oracle.com>
-        <20200810090349.64bce58f@canb.auug.org.au>
-        <EC1AA9E7-4AC1-49C6-B138-B6A3E4ED7A0B@oracle.com>
+        Tue, 11 Aug 2020 02:47:19 -0400
+Received: by mail-io1-f71.google.com with SMTP id c1so5481329ioh.16
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Aug 2020 23:47:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ALLgFYzJu8xYow6jwfC/O/mtKqGLcRdyWSt6PNLRIOE=;
+        b=nC0SylSXoFIX7VasEvy4olbaY0p+AamvdeLpzJYsgnu1TQFDEYJtlTw7SKGMZJlmIE
+         FX62VxDD3vYllOdJXoqhCWAVynGrzxjT8/zOxPWunh42cZXrRKkgr4HjUvJO3MUbtFTf
+         trqJwgMhwdQPFmBaoeUzAyYNKY4OwzPzDBLgDT8l0PbZc5S31IuxUuhmYiR+3U3o0RrG
+         xv5WKH0VV2PdKgVrqXqUbSjgkyoF2DjaRMLiqD55XyjUHIxxpTVdt4Qi5T//ZI5hnEZS
+         QGF+/Hl84dg8LPP3VGx4hMfN/CK8qPMdKYEa9AmY+Z+ER0+sOdb3wuFm9lBRiGy2YuSO
+         9XNw==
+X-Gm-Message-State: AOAM533Q1fylRlJ/l2K8wr+xb5bLlHLjTJAayhBhTDT78Kwv5Co1PfOF
+        g8XOA4JPyl3ENOI+gsN4p9StjddiKkh7/i9FlDvTrqOpalAc
+X-Google-Smtp-Source: ABdhPJwsQJoDHRXwvBGadlNgxs/TtlOVxU5vI+1XAOWQ07/0G8DKpifSYhjJFyWYQFFnzzwuWqpPnogZ1ICepLxDeXQ1restm2Gb
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/uT/4_Xdt=yeslqAXJ+Bf_QJ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Received: by 2002:a5d:9d8a:: with SMTP id 10mr21911301ion.195.1597128437091;
+ Mon, 10 Aug 2020 23:47:17 -0700 (PDT)
+Date:   Mon, 10 Aug 2020 23:47:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002753ac05ac9471f4@google.com>
+Subject: KASAN: use-after-free Read in io_async_task_func
+From:   syzbot <syzbot+9b260fc33297966f5a8e@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/uT/4_Xdt=yeslqAXJ+Bf_QJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi Chuck,
+syzbot found the following issue on:
 
-On Mon, 10 Aug 2020 08:25:14 -0400 Chuck Lever <chuck.lever@oracle.com> wro=
-te:
->=20
-> Is there something I need to change? The public copy of the cel-testing
-> branch has had this content for the past 12 days.
+HEAD commit:    fc80c51f Merge tag 'kbuild-v5.9' of git://git.kernel.org/p..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17601ab2900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d48472fcc2f68903
+dashboard link: https://syzkaller.appspot.com/bug?extid=9b260fc33297966f5a8e
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=174272b2900000
 
-You just need to keep your cel-next branch up to the top commit that is
-ready.  That is the branch you told me to fetch.  It is currently at commit
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9b260fc33297966f5a8e@syzkaller.appspotmail.com
 
-  0a8e7b7d0846 ("SUNRPC: Revert 241b1f419f0e ("SUNRPC: Remove xdr_buf_trim(=
-)")")
+==================================================================
+BUG: KASAN: use-after-free in instrument_atomic_read include/linux/instrumented.h:56 [inline]
+BUG: KASAN: use-after-free in atomic64_read include/asm-generic/atomic-instrumented.h:837 [inline]
+BUG: KASAN: use-after-free in atomic_long_read include/asm-generic/atomic-long.h:29 [inline]
+BUG: KASAN: use-after-free in __mutex_unlock_slowpath+0x88/0x590 kernel/locking/mutex.c:1237
+Read of size 8 at addr ffff8880952503c0 by task syz-executor.1/23201
 
-It looks like that is what Linus merged into v5.7-rc2.
---=20
-Cheers,
-Stephen Rothwell
+CPU: 0 PID: 23201 Comm: syz-executor.1 Not tainted 5.8.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1f0/0x31e lib/dump_stack.c:118
+ print_address_description+0x66/0x620 mm/kasan/report.c:383
+ __kasan_report mm/kasan/report.c:513 [inline]
+ kasan_report+0x132/0x1d0 mm/kasan/report.c:530
+ check_memory_region_inline mm/kasan/generic.c:183 [inline]
+ check_memory_region+0x2b5/0x2f0 mm/kasan/generic.c:192
+ instrument_atomic_read include/linux/instrumented.h:56 [inline]
+ atomic64_read include/asm-generic/atomic-instrumented.h:837 [inline]
+ atomic_long_read include/asm-generic/atomic-long.h:29 [inline]
+ __mutex_unlock_slowpath+0x88/0x590 kernel/locking/mutex.c:1237
+ io_async_task_func+0x485/0x610 fs/io_uring.c:4689
+ task_work_run+0x137/0x1c0 kernel/task_work.c:135
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:139 [inline]
+ exit_to_user_mode_prepare+0xfa/0x1c0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x5e/0x1a0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45ce69
+Code: 2d b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb b5 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f6719775c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
+RAX: fffffffffffffffe RBX: 0000000000004f40 RCX: 000000000045ce69
+RDX: 0000000000000043 RSI: 0000000000000000 RDI: 0000000000000006
+RBP: 000000000118c010 R08: 0000000020000140 R09: 0000000000000000
+R10: 0000000020000000 R11: 0000000000000246 R12: 000000000118bfcc
+R13: 00007fff62cc118f R14: 00007f67197769c0 R15: 000000000118bfcc
 
---Sig_/uT/4_Xdt=yeslqAXJ+Bf_QJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Allocated by task 23153:
+ kasan_save_stack mm/kasan/common.c:48 [inline]
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc+0x100/0x130 mm/kasan/common.c:461
+ kmem_cache_alloc_trace+0x1f6/0x2f0 mm/slab.c:3550
+ kmalloc include/linux/slab.h:554 [inline]
+ kzalloc include/linux/slab.h:666 [inline]
+ io_ring_ctx_alloc fs/io_uring.c:1030 [inline]
+ io_uring_create fs/io_uring.c:8308 [inline]
+ io_uring_setup fs/io_uring.c:8401 [inline]
+ __do_sys_io_uring_setup fs/io_uring.c:8407 [inline]
+ __se_sys_io_uring_setup+0x5ce/0x2c70 fs/io_uring.c:8404
+ do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
------BEGIN PGP SIGNATURE-----
+Freed by task 5:
+ kasan_save_stack mm/kasan/common.c:48 [inline]
+ kasan_set_track+0x3d/0x70 mm/kasan/common.c:56
+ kasan_set_free_info+0x17/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0xdd/0x110 mm/kasan/common.c:422
+ __cache_free mm/slab.c:3418 [inline]
+ kfree+0x10a/0x220 mm/slab.c:3756
+ process_one_work+0x789/0xfc0 kernel/workqueue.c:2269
+ worker_thread+0xaa4/0x1460 kernel/workqueue.c:2415
+ kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8yN3YACgkQAVBC80lX
-0GwXGwf/X1xza4u2L2jJX6O8CmpIPjjZeO69GKzmnyVVRoOXVzjthv1JJk+wg+7l
-7FxHlD8dqgtxuxE+A2Y4OGzpnG+phqoA15e6k5dxscbV9r7LRcweAZNeNO1E/05q
-iXJgeV32+PTsRQFLuTQyfyCQjYZDqUt9H2Uh2m4F7xOot+FY8t9PTDw4gbwoYTPT
-rZJH1myqDPB++EIWdsZhb3xJuY6I6znFLIceYia+b55DMF7nCATpjOeZxq7sSHIo
-2gZlAv7pYw/eANhL+mSn9xgnsYS/VVdEu0BhDoWgJLKWMPjM3f8ZvzuEpaIkoguD
-qscoOtH3WIqd5h1S8GFUpOkM920XTA==
-=iHxj
------END PGP SIGNATURE-----
+Last call_rcu():
+ kasan_save_stack+0x27/0x50 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x7b/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2894 [inline]
+ call_rcu+0x139/0x840 kernel/rcu/tree.c:2968
+ __percpu_ref_switch_to_atomic lib/percpu-refcount.c:192 [inline]
+ __percpu_ref_switch_mode+0x2c1/0x4f0 lib/percpu-refcount.c:237
+ percpu_ref_kill_and_confirm+0x8f/0x130 lib/percpu-refcount.c:350
+ percpu_ref_kill include/linux/percpu-refcount.h:136 [inline]
+ io_ring_ctx_wait_and_kill+0x3c/0x570 fs/io_uring.c:7797
+ io_uring_release+0x59/0x70 fs/io_uring.c:7829
+ __fput+0x34f/0x7b0 fs/file_table.c:281
+ task_work_run+0x137/0x1c0 kernel/task_work.c:135
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:139 [inline]
+ exit_to_user_mode_prepare+0xfa/0x1c0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x5e/0x1a0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
---Sig_/uT/4_Xdt=yeslqAXJ+Bf_QJ--
+Second to last call_rcu():
+ kasan_save_stack+0x27/0x50 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x7b/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2894 [inline]
+ call_rcu+0x139/0x840 kernel/rcu/tree.c:2968
+ __percpu_ref_switch_to_atomic lib/percpu-refcount.c:192 [inline]
+ __percpu_ref_switch_mode+0x2c1/0x4f0 lib/percpu-refcount.c:237
+ percpu_ref_kill_and_confirm+0x8f/0x130 lib/percpu-refcount.c:350
+ percpu_ref_kill include/linux/percpu-refcount.h:136 [inline]
+ io_ring_ctx_wait_and_kill+0x3c/0x570 fs/io_uring.c:7797
+ io_uring_release+0x59/0x70 fs/io_uring.c:7829
+ __fput+0x34f/0x7b0 fs/file_table.c:281
+ task_work_run+0x137/0x1c0 kernel/task_work.c:135
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:139 [inline]
+ exit_to_user_mode_prepare+0xfa/0x1c0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x5e/0x1a0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The buggy address belongs to the object at ffff888095250000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 960 bytes inside of
+ 2048-byte region [ffff888095250000, ffff888095250800)
+The buggy address belongs to the page:
+page:000000005a2c89d9 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x95250
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffffea00024ca6c8 ffffea00024d8c48 ffff8880aa440800
+raw: 0000000000000000 ffff888095250000 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888095250280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888095250300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888095250380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                           ^
+ ffff888095250400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888095250480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
