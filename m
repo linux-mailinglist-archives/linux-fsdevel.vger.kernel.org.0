@@ -2,79 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBB38241634
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 08:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E9D624163A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Aug 2020 08:15:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbgHKGNU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 02:13:20 -0400
-Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:37833 "EHLO
-        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726154AbgHKGNU (ORCPT
+        id S1727915AbgHKGPY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 02:15:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59578 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbgHKGPY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 02:13:20 -0400
-Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
-        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 91FE9760815;
-        Tue, 11 Aug 2020 16:13:16 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1k5NX8-0002CA-9F; Tue, 11 Aug 2020 16:13:14 +1000
-Date:   Tue, 11 Aug 2020 16:13:14 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fs: RWF_NOWAIT should imply IOCB_NOIO
-Message-ID: <20200811061314.GF2079@dread.disaster.area>
-References: <e8325bef-7e91-5fd4-fa25-74cfa169ffd2@kernel.dk>
+        Tue, 11 Aug 2020 02:15:24 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC6C5C06174A;
+        Mon, 10 Aug 2020 23:15:23 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BQjHW61Pqz9sTM;
+        Tue, 11 Aug 2020 16:15:19 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1597126520;
+        bh=vmA+U6yYordllIlIbbA0NQplZPeDri+hoiMGp1wkbEM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=rVFvNdvDn+0X42UKxMtre6LFZycz0m0HXH2n0WFRWQRcQ1MZ0ga42i8Ev/4GGN8lw
+         gJDXFsgo1OwUATt9NCedr7N+sBd9p5GCHyU3O4ewmhU0wXa3kwLiLtNZgiguByjJ5P
+         b+cPlHiyw8iRsyQhnab+mX+ShF2qJW6WtWeIHZGlAJKWo3kUoe8Kq0om6YRcOoawmN
+         5YDjIz1btmZ2UNs8Nc53etiG2rshjvYlyJN0FBfcgnThzb3EWxyfONA8ny00FD0bwT
+         +tK1ZWbPukfWkvcqtUjDs8hm2wj8X94mTaSliePXUOiQPtILPMclAZwuOtexzF268L
+         ef+8mu0DXqqfg==
+Date:   Tue, 11 Aug 2020 16:15:18 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Chuck Lever <chuck.lever@oracle.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Trond Myklebust <trondmy@gmail.com>
+Subject: Re: Please pull NFS server updates for v5.9
+Message-ID: <20200811161518.0896c1e8@canb.auug.org.au>
+In-Reply-To: <EC1AA9E7-4AC1-49C6-B138-B6A3E4ED7A0B@oracle.com>
+References: <F9B8940D-9F7B-47F5-9946-D77C17CF959A@oracle.com>
+        <20200810090349.64bce58f@canb.auug.org.au>
+        <EC1AA9E7-4AC1-49C6-B138-B6A3E4ED7A0B@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8325bef-7e91-5fd4-fa25-74cfa169ffd2@kernel.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LPwYv6e9 c=1 sm=1 tr=0
-        a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
-        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=7-415B0cAAAA:8 a=20KFwNOVAAAA:8
-        a=4G0RZZJQyTIlTLWZrEUA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: multipart/signed; boundary="Sig_/uT/4_Xdt=yeslqAXJ+Bf_QJ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 10, 2020 at 06:48:19PM -0600, Jens Axboe wrote:
-> With the change allowing read-ahead for IOCB_NOWAIT, we changed the
-> RWF_NOWAIT semantics of only doing cached reads. Since we know have
-> IOCB_NOIO to manage that specific side of it, just make RWF_NOWAIT
-> imply IOCB_NOIO as well to restore the previous behavior.
-> 
-> Fixes: 2e85abf053b9 ("mm: allow read-ahead with IOCB_NOWAIT set")
-> Reported-by: Dave Chinner <david@fromorbit.com>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> ---
-> 
-> This was a known change with the buffered async read change, but we
-> didn't have IOCB_NOIO until late in 5.8. Now that bases are synced,
-> make the change to make RWF_NOWAIT behave like past kernels.
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index bd7ec3eaeed0..f1cca4bfdd7b 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3293,7 +3293,7 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
->  	if (flags & RWF_NOWAIT) {
->  		if (!(ki->ki_filp->f_mode & FMODE_NOWAIT))
->  			return -EOPNOTSUPP;
-> -		kiocb_flags |= IOCB_NOWAIT;
-> +		kiocb_flags |= IOCB_NOWAIT | IOCB_NOIO;
->  	}
->  	if (flags & RWF_HIPRI)
->  		kiocb_flags |= IOCB_HIPRI;
+--Sig_/uT/4_Xdt=yeslqAXJ+Bf_QJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Looks good.
+Hi Chuck,
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+On Mon, 10 Aug 2020 08:25:14 -0400 Chuck Lever <chuck.lever@oracle.com> wro=
+te:
+>=20
+> Is there something I need to change? The public copy of the cel-testing
+> branch has had this content for the past 12 days.
 
--- 
-Dave Chinner
-david@fromorbit.com
+You just need to keep your cel-next branch up to the top commit that is
+ready.  That is the branch you told me to fetch.  It is currently at commit
+
+  0a8e7b7d0846 ("SUNRPC: Revert 241b1f419f0e ("SUNRPC: Remove xdr_buf_trim(=
+)")")
+
+It looks like that is what Linus merged into v5.7-rc2.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/uT/4_Xdt=yeslqAXJ+Bf_QJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl8yN3YACgkQAVBC80lX
+0GwXGwf/X1xza4u2L2jJX6O8CmpIPjjZeO69GKzmnyVVRoOXVzjthv1JJk+wg+7l
+7FxHlD8dqgtxuxE+A2Y4OGzpnG+phqoA15e6k5dxscbV9r7LRcweAZNeNO1E/05q
+iXJgeV32+PTsRQFLuTQyfyCQjYZDqUt9H2Uh2m4F7xOot+FY8t9PTDw4gbwoYTPT
+rZJH1myqDPB++EIWdsZhb3xJuY6I6znFLIceYia+b55DMF7nCATpjOeZxq7sSHIo
+2gZlAv7pYw/eANhL+mSn9xgnsYS/VVdEu0BhDoWgJLKWMPjM3f8ZvzuEpaIkoguD
+qscoOtH3WIqd5h1S8GFUpOkM920XTA==
+=iHxj
+-----END PGP SIGNATURE-----
+
+--Sig_/uT/4_Xdt=yeslqAXJ+Bf_QJ--
