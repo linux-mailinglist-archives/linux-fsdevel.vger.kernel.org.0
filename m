@@ -2,223 +2,194 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF79024227F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 00:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3594C242284
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 00:31:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbgHKW2O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 18:28:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40044 "EHLO
+        id S1726105AbgHKWbT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 18:31:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbgHKW2M (ORCPT
+        with ESMTP id S1725987AbgHKWbT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 18:28:12 -0400
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5E9FC061787
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 15:28:12 -0700 (PDT)
-Received: by mail-oi1-x243.google.com with SMTP id h3so40848oie.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 15:28:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=J5T/nvak5wlxXblbVTDHVOmc2hAwvvYVV2Vb3CvH/W8=;
-        b=FkoozWqxK2C1WKuQ4NC4YGvyueUcXzIWWlOKER9Qe8T8H340YvtTUs4QELxhSsGo5o
-         Oa9yC282vrk51zpjZb5oBHDIZOZVumtTCq7RKubo5TU7hzKGc0TmqZKUSfIHvOv1PY1l
-         dw/x5whCK+oeYF+D3N1iLnOBTkPA9AmvZMhRo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=J5T/nvak5wlxXblbVTDHVOmc2hAwvvYVV2Vb3CvH/W8=;
-        b=cPbiKPdNLy2JgUr2PlwNAk5JFRGb7nO5bT0WW5kYfw/UqyUDGicMtdYCxDazMj2O6d
-         3z3TnS5pXTLcyOEB7U9WxYo2ihSDPxKYHxQ/UsgyELyUTNZsEOHuRI2AldS0Dy8uYwgC
-         Y+UoQdYCJmzeySClvK+T2CsRGELM/LVgBppmIoBo92I9mgg4cSBAIFAnJfTWR/hrXrdz
-         gCYBCvNjGGFsLKrg5gd4niMKNRHaki0QznAvJ/TpKDRyu5WWjP8RmVKZ3aJxPvMJ5cSp
-         XX0g46voppQOBvFcCUmrSvA6MGAkjrhsWgyBCSW8J/oC3upQEEXR7aLYqdxg9Jbtx7wM
-         kA4w==
-X-Gm-Message-State: AOAM5339JTHa6vRHG0gBfbuYSlzSnHJfzhY4kFzAbP2NJr9jGOyIKZ7h
-        BwkbrOHRUm2iwUcnxYzSwEtMA4pQKDE=
-X-Google-Smtp-Source: ABdhPJx/6R87UtohjzEQ/WkYwP5qfUTLNSsZE7FoVNPZ6oRQnrSp6u/2k+KUhO/yQ9ANMXfvVWRV+g==
-X-Received: by 2002:aca:4e92:: with SMTP id c140mr5044717oib.70.1597184892059;
-        Tue, 11 Aug 2020 15:28:12 -0700 (PDT)
-Received: from ravnica.hsd1.co.comcast.net ([2601:285:8380:9270:7220:84ff:fe09:9945])
-        by smtp.gmail.com with ESMTPSA id v36sm4582934ooi.46.2020.08.11.15.28.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Aug 2020 15:28:11 -0700 (PDT)
-From:   Ross Zwisler <zwisler@chromium.org>
-X-Google-Original-From: Ross Zwisler <zwisler@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org
-Cc:     Mattias Nissler <mnissler@chromium.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Gordon <bmgordon@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Jesse Barnes <jsbarnes@google.com>,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Micah Morton <mortonm@google.com>,
-        Raul Rangel <rrangel@google.com>,
-        Ross Zwisler <zwisler@google.com>
-Subject: [PATCH v7] Add a "nosymfollow" mount option.
-Date:   Tue, 11 Aug 2020 16:28:03 -0600
-Message-Id: <20200811222803.3224434-1-zwisler@google.com>
-X-Mailer: git-send-email 2.28.0.236.gb10cc79966-goog
+        Tue, 11 Aug 2020 18:31:19 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FF2FC06174A;
+        Tue, 11 Aug 2020 15:31:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=A/hI0S7gtfY9mSqdqK890h1+rXEGA4FIpXNQ4i01M7A=; b=vf/VQwYxBp8OzecyfjMKdWCA6T
+        94Ol3tP5mE7Ye/rYCnB04ZCtg6XfRJMbQ9SX+tjnde21FkKvP+7QT2v7USa/yrubVjDhMZBun0s1V
+        XzolBzCpqOh5HFrqeLsWK7sCpUCghykfM6N6bCJX8+n9IPMpOrV3twyzv32tzlmOFuXZhv0OE6W6J
+        rvMVjItojIO0e2bSLVo9PUCGaTRaWMm8tMdwaPwbsK3eSScTGP5/5uPN/j5rvtOLrflrdgMFqOtm7
+        lBvSSMK5/dPKiorh0C8IEgKbnAVsQIBDax9IcdKACpHAZpMMeyHvJ/XVF7zYYSlhJ6qHGcls6YWxG
+        J4smetkA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k5cnc-000626-Th; Tue, 11 Aug 2020 22:31:17 +0000
+Date:   Tue, 11 Aug 2020 23:31:16 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iomap: Convert readahead to iomap_iter
+Message-ID: <20200811223116.GY17456@casper.infradead.org>
+References: <20200728173216.7184-1-willy@infradead.org>
+ <20200728173216.7184-3-willy@infradead.org>
+ <20200811205314.GF6107@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200811205314.GF6107@magnolia>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mattias Nissler <mnissler@chromium.org>
+On Tue, Aug 11, 2020 at 01:56:13PM -0700, Darrick J. Wong wrote:
+> > @@ -625,7 +625,14 @@ STATIC void
+> >  xfs_vm_readahead(
+> >  	struct readahead_control	*rac)
+> >  {
+> > -	iomap_readahead(rac, &xfs_read_iomap_ops);
+> > +	IOMAP_ITER(iomi, rac->mapping->host, readahead_pos(rac),
+> > +			readahead_length(rac), 0);
+> > +	struct iomap_readpage_ctx ctx = {
+> > +		.rac = rac,
+> > +	};
+> > +
+> > +	while (iomap_iter(&iomi, xfs_iomap_next_read))
+> > +		iomi.copied = iomap_readahead(&iomi, &ctx);
+> 
+> Why not have iomap_readahead set iomi.copied on its way out?  The actor
+> function is supposed to set iomi.ret if an error happens, right?
 
-For mounts that have the new "nosymfollow" option, don't follow symlinks
-when resolving paths. The new option is similar in spirit to the
-existing "nodev", "noexec", and "nosuid" options, as well as to the
-LOOKUP_NO_SYMLINKS resolve flag in the openat2(2) syscall. Various BSD
-variants have been supporting the "nosymfollow" mount option for a long
-time with equivalent implementations.
+I actually wanted to make iomap_readahead take a const pointer.
+This should do the trick.
 
-Note that symlinks may still be created on file systems mounted with
-the "nosymfollow" option present. readlink() remains functional, so
-user space code that is aware of symlinks can still choose to follow
-them explicitly.
-
-Setting the "nosymfollow" mount option helps prevent privileged
-writers from modifying files unintentionally in case there is an
-unexpected link along the accessed path. The "nosymfollow" option is
-thus useful as a defensive measure for systems that need to deal with
-untrusted file systems in privileged contexts.
-
-More information on the history and motivation for this patch can be
-found here:
-
-https://sites.google.com/a/chromium.org/dev/chromium-os/chromiumos-design-docs/hardening-against-malicious-stateful-data#TOC-Restricting-symlink-traversal
-
-Signed-off-by: Mattias Nissler <mnissler@chromium.org>
-Signed-off-by: Ross Zwisler <zwisler@google.com>
----
-Changes since v6 [1]:
- * Rebased onto v5.8.
- * Another round of testing including readlink(1), readlink(2),
-   realpath(1), realpath(3), statfs(2) and mount(2) to make sure
-   everything still works.
-
-After this lands I will upstream changes to util-linux[2] and man-pages
-[3].
-
-[1]: https://lkml.org/lkml/2020/3/4/770
-[2]: https://github.com/rzwisler/util-linux/commit/7f8771acd85edb70d97921c026c55e1e724d4e15
-[3]: https://github.com/rzwisler/man-pages/commit/b8fe8079f64b5068940c0144586e580399a71668
----
- fs/namei.c                 | 3 ++-
- fs/namespace.c             | 2 ++
- fs/proc_namespace.c        | 1 +
- fs/statfs.c                | 2 ++
- include/linux/mount.h      | 3 ++-
- include/linux/statfs.h     | 1 +
- include/uapi/linux/mount.h | 1 +
- 7 files changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 72d4219c93acb..ed68478fb1fb6 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1626,7 +1626,8 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
- 			return ERR_PTR(error);
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index fff23ed6a682..3ca128a3b044 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -377,7 +377,8 @@ EXPORT_SYMBOL_GPL(iomap_readpage);
+  * function is called with memalloc_nofs set, so allocations will not cause
+  * the filesystem to be reentered.
+  */
+-loff_t iomap_readahead(struct iomap_iter *iomi, struct iomap_readpage_ctx *ctx)
++loff_t iomap_readahead(const struct iomap_iter *iomi,
++		struct iomap *iomap, struct iomap_readpage_ctx *ctx)
+ {
+ 	loff_t done, ret, length = iomap_length(iomi);
+ 
+@@ -393,8 +394,7 @@ loff_t iomap_readahead(struct iomap_iter *iomi, struct iomap_readpage_ctx *ctx)
+ 			ctx->cur_page_in_bio = false;
+ 		}
+ 		ret = iomap_readpage_actor(iomi->inode, iomi->pos + done,
+-				length - done, ctx,
+-				&iomi->iomap, &iomi->srcmap);
++				length - done, ctx, iomap, NULL);
  	}
  
--	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS))
-+	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS) ||
-+			unlikely(nd->path.mnt->mnt_flags & MNT_NOSYMFOLLOW))
- 		return ERR_PTR(-ELOOP);
- 
- 	if (!(nd->flags & LOOKUP_RCU)) {
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 4a0f600a33285..1cbbf5a9b954f 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3167,6 +3167,8 @@ long do_mount(const char *dev_name, const char __user *dir_name,
- 		mnt_flags &= ~(MNT_RELATIME | MNT_NOATIME);
- 	if (flags & MS_RDONLY)
- 		mnt_flags |= MNT_READONLY;
-+	if (flags & MS_NOSYMFOLLOW)
-+		mnt_flags |= MNT_NOSYMFOLLOW;
- 
- 	/* The default atime for remount is preservation */
- 	if ((flags & MS_REMOUNT) &&
-diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-index 3059a9394c2d6..e59d4bb3a89e4 100644
---- a/fs/proc_namespace.c
-+++ b/fs/proc_namespace.c
-@@ -70,6 +70,7 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
- 		{ MNT_NOATIME, ",noatime" },
- 		{ MNT_NODIRATIME, ",nodiratime" },
- 		{ MNT_RELATIME, ",relatime" },
-+		{ MNT_NOSYMFOLLOW, ",nosymfollow" },
- 		{ 0, NULL }
+ 	if (iomi->len == done) {
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 2884752e40e8..62777daefe94 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -632,7 +632,7 @@ xfs_vm_readahead(
  	};
- 	const struct proc_fs_opts *fs_infop;
-diff --git a/fs/statfs.c b/fs/statfs.c
-index 2616424012ea7..59f33752c1311 100644
---- a/fs/statfs.c
-+++ b/fs/statfs.c
-@@ -29,6 +29,8 @@ static int flags_by_mnt(int mnt_flags)
- 		flags |= ST_NODIRATIME;
- 	if (mnt_flags & MNT_RELATIME)
- 		flags |= ST_RELATIME;
-+	if (mnt_flags & MNT_NOSYMFOLLOW)
-+		flags |= ST_NOSYMFOLLOW;
- 	return flags;
+ 
+ 	while (iomap_iter(&iomi, xfs_iomap_next_read))
+-		iomi.copied = iomap_readahead(&iomi, &ctx);
++		iomi.copied = iomap_readahead(&iomi, &iomi.iomap, &ctx);
  }
  
-diff --git a/include/linux/mount.h b/include/linux/mount.h
-index de657bd211fa6..aaf343b38671c 100644
---- a/include/linux/mount.h
-+++ b/include/linux/mount.h
-@@ -30,6 +30,7 @@ struct fs_context;
- #define MNT_NODIRATIME	0x10
- #define MNT_RELATIME	0x20
- #define MNT_READONLY	0x40	/* does the user want this to be r/o? */
-+#define MNT_NOSYMFOLLOW	0x80
+ static int
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index 4842b85ce36d..6ae51bf1d77c 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -99,7 +99,7 @@ static void zonefs_readahead(struct readahead_control *rac)
+ 	};
  
- #define MNT_SHRINKABLE	0x100
- #define MNT_WRITE_HOLD	0x200
-@@ -46,7 +47,7 @@ struct fs_context;
- #define MNT_SHARED_MASK	(MNT_UNBINDABLE)
- #define MNT_USER_SETTABLE_MASK  (MNT_NOSUID | MNT_NODEV | MNT_NOEXEC \
- 				 | MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME \
--				 | MNT_READONLY)
-+				 | MNT_READONLY | MNT_NOSYMFOLLOW)
- #define MNT_ATIME_MASK (MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME )
+ 	while (iomap_iter(&iomi, zonefs_iomap_next))
+-		iomi.copied = iomap_readahead(&iomi, &ctx);
++		iomi.copied = iomap_readahead(&iomi, &iomi.iomap, &ctx);
+ }
  
- #define MNT_INTERNAL_FLAGS (MNT_SHARED | MNT_WRITE_HOLD | MNT_INTERNAL | \
-diff --git a/include/linux/statfs.h b/include/linux/statfs.h
-index 9bc69edb8f188..fac4356ea1bfc 100644
---- a/include/linux/statfs.h
-+++ b/include/linux/statfs.h
-@@ -40,6 +40,7 @@ struct kstatfs {
- #define ST_NOATIME	0x0400	/* do not update access times */
- #define ST_NODIRATIME	0x0800	/* do not update directory access times */
- #define ST_RELATIME	0x1000	/* update atime relative to mtime/ctime */
-+#define ST_NOSYMFOLLOW	0x2000	/* do not follow symlinks */
+ /*
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index dd9bfed85c4f..11a104129a04 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -305,7 +305,8 @@ struct iomap_readpage_ctx {
+ 	struct readahead_control *rac;
+ };
  
- struct dentry;
- extern int vfs_get_fsid(struct dentry *dentry, __kernel_fsid_t *fsid);
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 96a0240f23fed..dd8306ea336c1 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -16,6 +16,7 @@
- #define MS_REMOUNT	32	/* Alter flags of a mounted FS */
- #define MS_MANDLOCK	64	/* Allow mandatory locks on an FS */
- #define MS_DIRSYNC	128	/* Directory modifications are synchronous */
-+#define MS_NOSYMFOLLOW	256	/* Do not follow symlinks */
- #define MS_NOATIME	1024	/* Do not update access times. */
- #define MS_NODIRATIME	2048	/* Do not update directory access times */
- #define MS_BIND		4096
--- 
-2.28.0.236.gb10cc79966-goog
+-loff_t iomap_readahead(struct iomap_iter *, struct iomap_readpage_ctx *);
++loff_t iomap_readahead(const struct iomap_iter *, struct iomap *,
++		struct iomap_readpage_ctx *);
+ 
+ /*
+  * Flags for direct I/O ->end_io:
 
+> Oh wait no, the actor function returns a positive copied value, or a
+> negative error code, and then it's up to the _next_read function to
+> notice if copied is negative, stuff it in ret, and then return false to
+> stop the iteration?
+
+I want to handle all the changes to iomap_iter in iomap_iter() and
+iomi_advance() so people writing new things that use iomap_iter don't
+need to think about what they should modify.  Just return the error;
+done.
+
+One of the more convoluted bits of this is making sure that both the
+filesystem and the body of the loop get the chance to clean up their state
+if the other encounters an error.  So if 'copied' is set to an errno by
+the body, then we call next() anyway (and stop the iteration).  And if
+next() returns an error, we iterate the body once more.  We'll still
+call next() again even if it did return an error, because it might not
+have realised that returning a completely bogus iomap was an error.
+
+> > +int
+> > +xfs_iomap_next_read(
+> > +	const struct iomap_iter *iomi,
+> > +	struct iomap		*iomap,
+> > +	struct iomap		*srcmap)
+> 
+> Aren't these last two parameters already in the iomap iter?
+> Are they passed separately to work around the pointer being const?
+
+Exactly.
+
+> > +{
+> > +	if (iomi->copied < 0)
+> > +		return iomi->copied;
+> 
+> Is this boilerplate going to end up in every single iomap_next_t
+> function?  If so, it should probably just go in iomap_iter prior to the
+> next() call, right?
+
+This is to give the next_t the opportunity to clean up after itself.
+ie it's for the things currently done in ->iomap_end().  So when we
+replace xfs_buffered_write_iomap_ops, you'll see it used then.
+
+> > +	if (iomi->copied >= iomi->len)
+> > +		return 0;
+> 
+> Er... if we copied more than we asked for, doesn't that imply something
+> bad just happened?
+
+erm ... maybe?  We don't currently sanity-check the return value from
+actor() in iomap_apply().  Perhaps we should?
+
+> > +
+> > +	return xfs_read_iomap_begin(iomi->inode, iomi->pos + iomi->copied,
+> > +			iomi->len - iomi->copied, iomi->flags, iomap, srcmap);
+> 
+> Would be kinda nice if you could just pass the whole iomap_iter, but I
+> get that we're probably stuck with this until the entirety gets
+> converted.
+
+Yeah.  I could probably do it the other way round where
+xfs_read_iomap_begin() constructs an iomap_iter on the stack and passes
+it to xfs_read_iomap_begin().  I don't think it makes much difference.
