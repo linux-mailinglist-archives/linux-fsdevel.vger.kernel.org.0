@@ -2,165 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E352242804
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 12:07:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 436B624281C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 12:14:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbgHLKG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 06:06:57 -0400
-Received: from foss.arm.com ([217.140.110.172]:43570 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726722AbgHLKG5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 06:06:57 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AAB2AD6E;
-        Wed, 12 Aug 2020 03:06:55 -0700 (PDT)
-Received: from C02TD0UTHF1T.local (unknown [10.57.41.8])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 521E23F22E;
-        Wed, 12 Aug 2020 03:06:53 -0700 (PDT)
-Date:   Wed, 12 Aug 2020 11:06:50 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-Message-ID: <20200812100650.GB28154@C02TD0UTHF1T.local>
-References: <aefc85852ea518982e74b233e11e16d2e707bc32>
- <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <20200731180955.GC67415@C02TD0UTHF1T.local>
- <6236adf7-4bed-534e-0956-fddab4fd96b6@linux.microsoft.com>
- <20200804143018.GB7440@C02TD0UTHF1T.local>
- <b3368692-afe6-89b5-d634-12f4f0a601f8@linux.microsoft.com>
+        id S1727821AbgHLKOV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 06:14:21 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:57518 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727108AbgHLKOV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Aug 2020 06:14:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597227260;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xlMaPj1QKypnrQ0JYf3BSvOZztYvxS9nKRk9zqeHA7Y=;
+        b=Isi6oYcuaQL/N5QcBPC06FeukL+0Z42GTgP/TBPHqA3thEmAptzRQn4XOwuyRX7mXH4eyo
+        ehyjI5ECuIBCj6SvgDZomHldUAJFyhivKGdPGoVGJDBgrg5mgWmb4/KCrOTfwaidESwh09
+        mbGMPqyhlQFJcSurNHcIOKiOG+HzUlo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-50-nnbUiC46N7C0aUmdRLKZbg-1; Wed, 12 Aug 2020 06:14:16 -0400
+X-MC-Unique: nnbUiC46N7C0aUmdRLKZbg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 580991DE0;
+        Wed, 12 Aug 2020 10:14:14 +0000 (UTC)
+Received: from ws.net.home (unknown [10.40.193.69])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B7C6B60C84;
+        Wed, 12 Aug 2020 10:14:08 +0000 (UTC)
+Date:   Wed, 12 Aug 2020 12:14:05 +0200
+From:   Karel Zak <kzak@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+Message-ID: <20200812101405.brquf7xxt2q22dd3@ws.net.home>
+References: <1842689.1596468469@warthog.procyon.org.uk>
+ <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
+ <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b3368692-afe6-89b5-d634-12f4f0a601f8@linux.microsoft.com>
+In-Reply-To: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 06, 2020 at 12:26:02PM -0500, Madhavan T. Venkataraman wrote:
-> Thanks for the lively discussion. I have tried to answer some of the
-> comments below.
+On Tue, Aug 11, 2020 at 08:20:24AM -0700, Linus Torvalds wrote:
+> IOW, if you do something more along the lines of
 > 
-> On 8/4/20 9:30 AM, Mark Rutland wrote:
-> >
-> >> So, the context is - if security settings in a system disallow a page to have
-> >> both write and execute permissions, how do you allow the execution of
-> >> genuine trampolines that are runtime generated and placed in a data
-> >> page or a stack page?
-> > There are options today, e.g.
-> >
-> > a) If the restriction is only per-alias, you can have distinct aliases
-> >    where one is writable and another is executable, and you can make it
-> >    hard to find the relationship between the two.
-> >
-> > b) If the restriction is only temporal, you can write instructions into
-> >    an RW- buffer, transition the buffer to R--, verify the buffer
-> >    contents, then transition it to --X.
-> >
-> > c) You can have two processes A and B where A generates instrucitons into
-> >    a buffer that (only) B can execute (where B may be restricted from
-> >    making syscalls like write, mprotect, etc).
+>        fd = open(""foo/bar", O_PATH);
+>        metadatafd = openat(fd, "metadataname", O_ALT);
 > 
-> The general principle of the mitigation is W^X. I would argue that
-> the above options are violations of the W^X principle. If they are
-> allowed today, they must be fixed. And they will be. So, we cannot
-> rely on them.
+> it might be workable.
 
-Hold on.
+I have thought we want to replace mountinfo to reduce overhead. If I
+understand your idea than we will need openat()+read()+close() for
+each attribute? Sounds like a pretty expensive interface.
 
-Contemporary W^X means that a given virtual alias cannot be writeable
-and executeable simultaneously, permitting (a) and (b). If you read the
-references on the Wikipedia page for W^X you'll see the OpenBSD 3.3
-release notes and related presentation make this clear, and further they
-expect (b) to occur with JITS flipping W/X with mprotect().
+The question is also how consistent results you get if you will read
+information about the same mountpoint by multiple openat()+read()+close()
+calls. 
 
-Please don't conflate your assumed stronger semantics with the general
-principle. It not matching you expectations does not necessarily mean
-that it is wrong.
+For example,  by fsinfo(FSINFO_ATTR_MOUNT_TOPOLOGY) you get all
+mountpoint propagation setting and relations by one syscall, with
+your idea you will read parent, slave and flags by multiple read() and
+without any lock. Sounds like you can get a mess if someone moves or
+reconfigure the mountpoint or so.
+  
 
-If you want a stronger W^X semantics, please refer to this specifically
-with a distinct name.
+openat(O_ALT) seems elegant at first glance, but it will be necessary to 
+provide a richer (complex) answers by read() to reduce overhead and 
+to make it more consistent for userspace. 
 
-> a) This requires a remap operation. Two mappings point to the same
->      physical page. One mapping has W and the other one has X. This
->      is a violation of W^X.
-> 
-> b) This is again a violation. The kernel should refuse to give execute
->      permission to a page that was writeable in the past and refuse to
->      give write permission to a page that was executable in the past.
-> 
-> c) This is just a variation of (a).
+It would be also nice to avoid some strings formatting and separators
+like we use in the current mountinfo.
 
-As above, this is not true.
+I can imagine multiple values separated by binary header (like we already 
+have for watch_notification, inotify, etc):
 
-If you have a rationale for why this is desirable or necessary, please
-justify that before using this as justification for additional features.
+  fd = openat(fd, "mountinfo", O_ALT);
 
-> In general, the problem with user-level methods to map and execute
-> dynamic code is that the kernel cannot tell if a genuine application is
-> using them or an attacker is using them or piggy-backing on them.
+  sz = read(fd, buf, BUFSZ);
+  p = buf;
 
-Yes, and as I pointed out the same is true for trampfd unless you can
-somehow authenticate the calls are legitimate (in both callsite and the
-set of arguments), and I don't see any reasonable way of doing that.
+  while (sz) {
+     struct alt_metadata *alt = (struct alt_metadata *) p;
 
-If you relax your threat model to an attacker not being able to make
-arbitrary syscalls, then your suggestion that userspace can perorm
-chceks between syscalls may be sufficient, but as I pointed out that's
-equally true for a sealed memfd or similar.
+     char *varname = alt->name;
+     char *data = alt->data;
+     int len  = alt->len;
 
-> Off the top of my head, I have tried to identify some examples
-> where we can have more trust on dynamic code and have the kernel
-> permit its execution.
-> 
-> 1. If the kernel can do the job, then that is one safe way. Here, the kernel
->     is the code. There is no code generation involved. This is what I
->     have presented in the patch series as the first cut.
+     sz -= len;
+     p += len;
+  }
 
-This is sleight-of-hand; it doesn't matter where the logic is performed
-if the power is identical. Practically speaking this is equivalent to
-some dynamic code generation.
 
-I think that it's misleading to say that because the kernel emulates
-something it is safe when the provenance of the syscall arguments cannot
-be verified.
+  Karel
 
-[...]
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
 
-> Anyway, these are just examples. The principle is - if we can identify
-> dynamic code that has a certain measure of trust, can the kernel
-> permit their execution?
-
-My point generally is that the kernel cannot identify this, and if
-usrspace code is trusted to dynamically generate trampfd arguments it
-can equally be trusted to dyncamilly generate code.
-
-[...]
-
-> As I have mentioned above, I intend to have the kernel generate code
-> only if the code generation is simple enough. For more complicated cases,
-> I plan to use a user-level code generator that is for exclusive kernel use.
-> I have yet to work out the details on how this would work. Need time.
-
-This reads to me like trampfd is only dealing with a few special cases
-and we know that we need a more general solution.
-
-I hope I am mistaken, but I get the strong impression that you're trying
-to justify your existing solution rather than trying to understand the
-problem space.
-
-To be clear, my strong opinion is that we should not be trying to do
-this sort of emulation or code generation within the kernel. I do think
-it's worthwhile to look at mechanisms to make it harder to subvert
-dynamic userspace code generation, but I think the code generation
-itself needs to live in userspace (e.g. for ABI reasons I previously
-mentioned).
-
-Mark.
