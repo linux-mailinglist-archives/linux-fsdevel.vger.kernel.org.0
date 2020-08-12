@@ -2,76 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CE2FB24241E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 04:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A734242439
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 05:17:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbgHLCoP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 22:44:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51176 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726405AbgHLCoO (ORCPT
+        id S1726510AbgHLDRS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 23:17:18 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:52292 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbgHLDRS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 22:44:14 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5085AC061787
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 19:44:14 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id 17so260350pfw.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 19:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=0tE7MUBsHJE0Mpx1+XVH5JlNGfMN16YjoWq2ffNV8zc=;
-        b=iGUfgGuLhp5glfj9+Q0pWAZxeqRc+45tVwKSXeadF0a/5VRBYSXZvzBjI/pIVeGlaY
-         r1jI++wR9oMMv/M07yVeSZEOdZVtzqAOPdYlBpG5XGo6OH0muGHWFxAVKCthjOlNRJHX
-         3gx3vhWjA71m9uwrn2dkm1NM+Kssj/QgzRu1no70ml1wAF88WA6TohQ6gN+CZQ2619nx
-         WK6o/OxsEA9Jet9ONq433Sq3fD5uD9HhGAIWPWZr3HaPHODpZlQOH3Serg9yTtSECxIi
-         0Kxvea5B+5SHfJigBC5SznJ5QKK7G5jER/Rnuwx6So2XCjXpv/u+vIHqJgVAOFFBsloU
-         o7Og==
+        Tue, 11 Aug 2020 23:17:18 -0400
+Received: by mail-io1-f72.google.com with SMTP id n16so626574iop.19
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 20:17:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0tE7MUBsHJE0Mpx1+XVH5JlNGfMN16YjoWq2ffNV8zc=;
-        b=Hpj0Jp0HoLV/ErZaz/fk/CSwm6kW/0zVFjF+H6sL8IXEnHWUmdtRhcdDAvQyl+QZiv
-         2HaLKXHuVGf03ybXguJXGd5D3BOMi4ceCIAvbeOWKtzrF+yNi5p8TOSvnxYeMdWzyiJY
-         pvpe2op6IF1NpX6FNflAG8M6Al7MZ4ViiznT/fO+AxWd8meJn6T6mz56MpSJ350QC81N
-         GN5prgEFw0zsOtm4NXliF+BweCYwoVbDtjH0XSrjBCeK5Y25IwsSOculf9CyMmItSRKv
-         Vn+G26Bmts6GiAoos37l8JsxgnY11pI7jPDOH6qQ95m5lYN71OAFwK0BPOzFwo6dRrip
-         pcIw==
-X-Gm-Message-State: AOAM531+/6n/76UIsUPPu7YfURJKj0DZiXJvq1H+0l/NzcVZan/eR/AG
-        uviAAbhHnGr3rQiBHnahgsfOrA==
-X-Google-Smtp-Source: ABdhPJxIC7s/N3U1+eyQRUwRFQ1XN7DSLT80VYkwubWr1q+bYuMwnlIB4hpElOY20MAM3xaNdrea/w==
-X-Received: by 2002:a65:63d4:: with SMTP id n20mr3349103pgv.213.1597200253567;
-        Tue, 11 Aug 2020 19:44:13 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id 196sm455852pfc.178.2020.08.11.19.44.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Aug 2020 19:44:13 -0700 (PDT)
-Subject: Re: KASAN: use-after-free Read in __io_req_task_submit
-To:     syzbot <syzbot+3c72ce3136524268d7af@syzkaller.appspotmail.com>,
-        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-References: <000000000000e5b60405aca4c517@google.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e6759a68-4789-e2de-30b4-8be0d34a099d@kernel.dk>
-Date:   Tue, 11 Aug 2020 20:44:11 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=2FxaZz2wzxy2yGxxRulgV5SYGolbOKGdFSA96kJFpbE=;
+        b=UcMoSSOgw1sXrZOpdg73nUOsk1o+7MoxaDtFoZ9fBEvl6q/S/sXjkYPKqY9FEUQeix
+         ngwqyyIC//HJzFUoXHcSHEteRc8+6D/dK9+iulf93xOmnu9nYf7K7XdlE6ADDif9sslv
+         2UkoY4PryroyhD6VUMPDzSBMcx7B5ih8yYqzXDwCKkYsC9PBlFO+qu1bRT72508Dow3u
+         GTgIK90odzcR2kHdbfBV2nqXV/vxUBO/th2/WshemdFvoYWPs2Lz/f8fUpCbRzPiybt9
+         kqC3vtU16iJVifj52GYxnTMYNW8H+JDkfpjCrCWW03s75C0BCH0gH6In1ixqoTTrv9EY
+         4Fig==
+X-Gm-Message-State: AOAM531L7HxpIEUN1dy/Stj5rWj3SWE5oLowkfmZuDcrODa522B1jovl
+        gZ5L7fOtyksiYwaYgXnlBOmQwkUG23Budnpgol469UsrtW6H
+X-Google-Smtp-Source: ABdhPJyhViwJRe11cEFZ/5sPX7qOSHXuy/RZXOu9nQNmAP9bJCnnNMWBXMKSc/bmO4qQY0ZfTyVqxMslTn2CbN8qkg+8DWhHrmfE
 MIME-Version: 1.0
-In-Reply-To: <000000000000e5b60405aca4c517@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a5e:991a:: with SMTP id t26mr25266609ioj.7.1597202236468;
+ Tue, 11 Aug 2020 20:17:16 -0700 (PDT)
+Date:   Tue, 11 Aug 2020 20:17:16 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f0724405aca59f64@google.com>
+Subject: KASAN: use-after-free Read in path_init (2)
+From:   syzbot <syzbot+bbeb1c88016c7db4aa24@syzkaller.appspotmail.com>
+To:     arnd@arndb.de, christian.brauner@ubuntu.com, hch@lst.de,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-#syz dup: KASAN: use-after-free Read in io_async_task_func
+Hello,
 
--- 
-Jens Axboe
+syzbot found the following issue on:
 
+HEAD commit:    5631c5e0 Merge tag 'xfs-5.9-merge-7' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17076984900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=afba7c06f91e56eb
+dashboard link: https://syzkaller.appspot.com/bug?extid=bbeb1c88016c7db4aa24
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1502ce02900000
+
+The issue was bisected to:
+
+commit e24ab0ef689de43649327f54cd1088f3dad25bb3
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Tue Jul 21 08:48:15 2020 +0000
+
+    fs: push the getname from do_rmdir into the callers
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=155f36c2900000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=175f36c2900000
+console output: https://syzkaller.appspot.com/x/log.txt?x=135f36c2900000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bbeb1c88016c7db4aa24@syzkaller.appspotmail.com
+Fixes: e24ab0ef689d ("fs: push the getname from do_rmdir into the callers")
+
+==================================================================
+BUG: KASAN: use-after-free in path_init+0x116b/0x13c0 fs/namei.c:2207
+Read of size 8 at addr ffff88807853c940 by task syz-executor.2/8233
+
+CPU: 0 PID: 8233 Comm: syz-executor.2 Not tainted 5.8.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x18f/0x20d lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xae/0x436 mm/kasan/report.c:383
+ __kasan_report mm/kasan/report.c:513 [inline]
+ kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
+ path_init+0x116b/0x13c0 fs/namei.c:2207
+ path_parentat+0x22/0x1b0 fs/namei.c:2384
+ filename_parentat+0x188/0x560 fs/namei.c:2407
+ do_rmdir+0xa8/0x440 fs/namei.c:3732
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x45ce79
+Code: 2d b6 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb b5 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f756fb2bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000054
+RAX: ffffffffffffffda RBX: 00000000000260c0 RCX: 000000000045ce79
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000200000c0
+RBP: 000000000118bff0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118bfcc
+R13: 00007ffedeb9931f R14: 00007f756fb2c9c0 R15: 000000000118bfcc
+
+Allocated by task 8233:
+ save_stack+0x1b/0x40 mm/kasan/common.c:48
+ set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc.constprop.0+0xc2/0xd0 mm/kasan/common.c:494
+ slab_post_alloc_hook mm/slab.h:586 [inline]
+ slab_alloc mm/slab.c:3320 [inline]
+ kmem_cache_alloc+0x12c/0x3b0 mm/slab.c:3484
+ getname_flags.part.0+0x50/0x4f0 fs/namei.c:138
+ getname_flags include/linux/audit.h:320 [inline]
+ getname fs/namei.c:209 [inline]
+ __do_sys_rmdir fs/namei.c:3783 [inline]
+ __se_sys_rmdir fs/namei.c:3781 [inline]
+ __x64_sys_rmdir+0xb1/0x100 fs/namei.c:3781
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Freed by task 8233:
+ save_stack+0x1b/0x40 mm/kasan/common.c:48
+ set_track mm/kasan/common.c:56 [inline]
+ kasan_set_free_info mm/kasan/common.c:316 [inline]
+ __kasan_slab_free+0xf5/0x140 mm/kasan/common.c:455
+ __cache_free mm/slab.c:3426 [inline]
+ kmem_cache_free+0x7f/0x310 mm/slab.c:3694
+ putname+0xe1/0x120 fs/namei.c:259
+ do_rmdir+0x145/0x440 fs/namei.c:3773
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The buggy address belongs to the object at ffff88807853c940
+ which belongs to the cache names_cache of size 4096
+The buggy address is located 0 bytes inside of
+ 4096-byte region [ffff88807853c940, ffff88807853d940)
+The buggy address belongs to the page:
+page:ffffea0001e14f00 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 head:ffffea0001e14f00 order:1 compound_mapcount:0
+flags: 0xfffe0000010200(slab|head)
+raw: 00fffe0000010200 ffffea0001e14e88 ffffea0001e14f88 ffff8880aa246380
+raw: 0000000000000000 ffff88807853c940 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88807853c800: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88807853c880: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88807853c900: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+                                           ^
+ ffff88807853c980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88807853ca00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
