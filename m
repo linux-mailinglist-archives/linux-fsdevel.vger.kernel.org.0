@@ -2,191 +2,214 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 19A38242388
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 02:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D18072423AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 03:24:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbgHLAxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 20:53:54 -0400
-Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:53521 "EHLO
-        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726333AbgHLAxy (ORCPT
+        id S1726402AbgHLBXx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 21:23:53 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:33920 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726235AbgHLBXx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 20:53:54 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id 57EADB10;
-        Tue, 11 Aug 2020 20:53:52 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 11 Aug 2020 20:53:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        cPWWSWjp5+yRqK3+DqGTMH/lSARmGj5rks/w1/txg0w=; b=TQfG91XIX1ygqwLM
-        4sfnV7xe4g4iEY5T2ZgoPGIvuSUQw+4Hf0WlavPnkJH899yiUIYsRzhXtEorXMX6
-        JAjvuuyWT1VNZIPp5VFu+F/GckYHBFLgVBBlZX3enRz9VH6EXmkGNTuYIOF+Pfie
-        N0Nc+c2F1+NDnBuqWPJZrMqWJcOSrBnnqHlWAYHiuaTQdT9c6JPPrReJyKqTh2zm
-        No2QYEQU3HDNmmEoy/TTxJT8NjkMiNy7TnYqJSxosnnLuWRdzPKhyemSRNRdWOOX
-        nJv1YGH8vIspNblClS2yjsYAnEuDv2lO8WXcUJOh1kj5w7MnPoVwFwYeRZ8fIj/K
-        bsvHPA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=cPWWSWjp5+yRqK3+DqGTMH/lSARmGj5rks/w1/txg
-        0w=; b=GKFvGOVtMQ4f6ZSR6opBfHGjXI8/Gi3A9rXrmNwm17kxUUGeU/gCtQnQb
-        wLMCvOJHSAJMdDPy/WOUoEYBESKjUUr4GrKdc2/d2uTtoVhOhqYs9EY65Xy2ZMUO
-        Y8NBx/ctIdwH0H9DpWZet46rZr13YJby/IiCTlBYIQHDMaK0zOaTBxM+mCo2bCYg
-        pHXAnI3K+nqlWKfqrESxED1CKyXKT+2gR/zo/upH3VBlDaWgQ8pUkpzGQBwWAHBH
-        hoJXrRDIKWLWCQmMI/pm4/chCHou6osTKG0Kjdttd8wEHWZlv0b9Q8cTCHl1BK7a
-        zqEnQqzoM+HB0wWq+tPKpw17f3Tdg==
-X-ME-Sender: <xms:nz0zXzjMSOgJ2xYPBvOcU-Ha_7ok9jmXV1szTmzx9oAbUQylQwt_ig>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrledugdeflecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
-    peehkedrjedrvddtfedruddugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:nz0zXwBgD2ob41umt3OPIRxuqE-g0HsfHsGO8Ae0YGqbihrt08cUNQ>
-    <xmx:nz0zXzE4LHDsOlcxqYR__fNM67Gt9hc6dTIOMjTlpFY0PrJeOvz26A>
-    <xmx:nz0zXwRfXw2PKoUB9Y2MCwNnLb_YXNKnq7azqZl4ax9OitEysQiqTw>
-    <xmx:nz0zX1q-mYvkP_QKgcFtn6lCIncYt0j7rJdpNseI8r85f0aJ5AKup7fACM4>
-Received: from mickey.themaw.net (58-7-203-114.dyn.iinet.net.au [58.7.203.114])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4BC3F30600A6;
-        Tue, 11 Aug 2020 20:53:45 -0400 (EDT)
-Message-ID: <78ff6a85f5fc5f3e72f899728520a39b358b10c7.camel@themaw.net>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem
- Information)
-From:   Ian Kent <raven@themaw.net>
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Wed, 12 Aug 2020 08:53:42 +0800
-In-Reply-To: <20200811193916.zcwebstmbyvushau@wittgenstein>
-References: <1842689.1596468469@warthog.procyon.org.uk>
-         <1845353.1596469795@warthog.procyon.org.uk>
-         <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
-         <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
-         <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
-         <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
-         <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
-         <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
-         <CAJfpegtWai+5Tzxi1_G+R2wEZz0q66uaOFndNE0YEQSDjq0f_A@mail.gmail.com>
-         <CAHk-=wg_bfVf5eazwH2uXTG-auCYZUpq-xb1kDeNjY7yaXS7bw@mail.gmail.com>
-         <20200811193916.zcwebstmbyvushau@wittgenstein>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Tue, 11 Aug 2020 21:23:53 -0400
+Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 898DB3A9005;
+        Wed, 12 Aug 2020 11:23:48 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1k5fUX-0000Xy-TX; Wed, 12 Aug 2020 11:23:45 +1000
+Date:   Wed, 12 Aug 2020 11:23:45 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
+        dgilbert@redhat.com
+Subject: Re: [PATCH v2 15/20] fuse, dax: Take ->i_mmap_sem lock during dax
+ page fault
+Message-ID: <20200812012345.GG2079@dread.disaster.area>
+References: <20200807195526.426056-1-vgoyal@redhat.com>
+ <20200807195526.426056-16-vgoyal@redhat.com>
+ <20200810222238.GD2079@dread.disaster.area>
+ <20200811175530.GB497326@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200811175530.GB497326@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
+        a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
+        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=7-415B0cAAAA:8
+        a=cCKMqcOPnOhVYIV9LdMA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-08-11 at 21:39 +0200, Christian Brauner wrote:
-> On Tue, Aug 11, 2020 at 09:05:22AM -0700, Linus Torvalds wrote:
-> > On Tue, Aug 11, 2020 at 8:30 AM Miklos Szeredi <miklos@szeredi.hu>
-> > wrote:
-> > > What's the disadvantage of doing it with a single lookup WITH an
-> > > enabling flag?
+On Tue, Aug 11, 2020 at 01:55:30PM -0400, Vivek Goyal wrote:
+> On Tue, Aug 11, 2020 at 08:22:38AM +1000, Dave Chinner wrote:
+> > On Fri, Aug 07, 2020 at 03:55:21PM -0400, Vivek Goyal wrote:
+> > > We need some kind of locking mechanism here. Normal file systems like
+> > > ext4 and xfs seems to take their own semaphore to protect agains
+> > > truncate while fault is going on.
 > > > 
-> > > It's definitely not going to break anything, so no backward
-> > > compatibility issues whatsoever.
+> > > We have additional requirement to protect against fuse dax memory range
+> > > reclaim. When a range has been selected for reclaim, we need to make sure
+> > > no other read/write/fault can try to access that memory range while
+> > > reclaim is in progress. Once reclaim is complete, lock will be released
+> > > and read/write/fault will trigger allocation of fresh dax range.
+> > > 
+> > > Taking inode_lock() is not an option in fault path as lockdep complains
+> > > about circular dependencies. So define a new fuse_inode->i_mmap_sem.
 > > 
-> > No backwards compatibility issues for existing programs, no.
+> > That's precisely why filesystems like ext4 and XFS define their own
+> > rwsem.
 > > 
-> > But your suggestion is fundamentally ambiguous, and you most
-> > definitely *can* hit that if people start using this in new
-> > programs.
-> > 
-> > Where does that "unified" pathname come from? It will be generated
-> > from "base filename + metadata name" in user space, and
-> > 
-> >  (a) the base filename might have double or triple slashes in it
-> > for
-> > whatever reasons.
-> > 
-> > This is not some "made-up gotcha" thing - I see double slashes
-> > *all*
-> > the time when we have things like Makefiles doing
-> > 
-> >     srctree=../../src/
-> > 
-> > and then people do "$(srctree)/". If you haven't seen that kind of
-> > pattern where the pathname has two (or sometimes more!) slashes in
-> > the
-> > middle, you've led a very sheltered life.
-> > 
-> >  (b) even if the new user space were to think about that, and
-> > remove
-> > those (hah! when have you ever seen user space do that?), as Al
-> > mentioned, the user *filesystem* might have pathnames with double
-> > slashes as part of symlinks.
-> > 
-> > So now we'd have to make sure that when we traverse symlinks, that
-> > O_ALT gets cleared. Which means that it's not a unified namespace
-> > after all, because you can't make symlinks point to metadata.
-> > 
-> > Or we'd retroactively change the semantics of a symlink, and that
-> > _is_
-> > a backwards compatibility issue. Not with old software, no, but it
-> > changes the meaning of old symlinks!
-> > 
-> > So no, I don't think a unified namespace ends up working.
-> > 
-> > And I say that as somebody who actually loves the concept. Ask Al:
-> > I
-> > have a few times pushed for "let's allow directory behavior on
-> > regular
-> > files", so that you could do things like a tar-filesystem, and
-> > access
-> > the contents of a tar-file by just doing
-> > 
-> >     cat my-file.tar/inside/the/archive.c
-> > 
-> > or similar.
-> > 
-> > Al has convinced me it's a horrible idea (and there you have a
-> > non-ambiguous marker: the slash at the end of a pathname that
-> > otherwise looks and acts as a non-directory)
-> > 
+> > Note that this isn't a DAX requirement - the page fault
+> > serialisation is actually a requirement of hole punching...
 > 
-> Putting my kernel hat down, putting my userspace hat on.
+> Hi Dave,
 > 
-> I'm looking at this from a potential user of this interface.
-> I'm not a huge fan of the metadata fd approach I'd much rather have a
-> dedicated system call rather than opening a side-channel metadata fd
-> that I can read binary data from. Maybe I'm alone in this but I was
-> under the impression that other users including Ian, Lennart, and
-> Karel
-> have said on-list in some form that they would prefer this approach.
-> There are even patches for systemd and libmount, I thought?
+> I noticed that fuse code currently does not seem to have a rwsem which
+> can provide mutual exclusion between truncation/hole_punch path
+> and page fault path. I am wondering does that mean there are issues
+> with existing code or something else makes it unnecessary to provide
+> this mutual exlusion.
 
-Not quite sure what you mean here.
+I don't know enough about the fuse implementation to say. What I'm
+saying is that nothing in the core mm/ or VFS serilises page cache
+access to the data against direct filesystem manipulations of the
+underlying filesystem structures.
 
-Karel (with some contributions by me) has implemented the interfaces
-for David's mount notifications and fsinfo() call in libmount. We
-still have a little more to do on that.
+i.e. nothing in the VFS or page fault IO path prevents this race
+condition:
 
-I also have a systemd implementation that uses these libmount features
-for mount table handling that works quite well, with a couple more
-things to do to complete it, that Lennart has done an initial review
-for.
+P0				P1
+fallocate
+page cache invalidation
+				page fault
+				read data
+punch out data extents
+				<data exposed to userspace is stale>
+				<data exposed to userspace has no
+				backing store allocated>
 
-It's no secret that I don't like the proc file system in general
-but it is really useful for many things, that's just the way it
-is.
 
-Ian
+That's where the ext4 and XFS internal rwsem come into play:
 
+fallocate
+down_write(mmaplock)
+page cache invalidation
+				page fault
+				down_read(mmaplock)
+				<blocks>
+punch out data
+up_write(mmaplock)
+				<unblocks>
+				<sees hole>
+				<allocates zeroed pages in page cache>
+
+And there's not stale data exposure to userspace.
+
+It's the same reason that we use the i_rwsem to prevent concurrent
+IO while a truncate or hole punch is in progress. The IO could map
+the extent, then block in the IO path, while the filesytsem
+re-allocates and writes new data or metadata to those blocks. That's
+another potential non-owner data exposure problem.
+
+And if you don't drain AIO+DIO before truncate/hole punch, the
+i_rwsem does not protect you against concurrent IO as that gets
+dropped after the AIO is submitted and returns EIOCBQUEUED to the
+AIO layer. Hence there's IO in flight that isn't tracked by the
+i_rwsem or the MMAPLOCK, and if you punch out the blocks and
+reallocate them while the IO is in flight....
+
+> > > @@ -3849,9 +3856,11 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
+> > >  			file_update_time(file);
+> > >  	}
+> > >  
+> > > -	if (mode & FALLOC_FL_PUNCH_HOLE)
+> > > +	if (mode & FALLOC_FL_PUNCH_HOLE) {
+> > > +		down_write(&fi->i_mmap_sem);
+> > >  		truncate_pagecache_range(inode, offset, offset + length - 1);
+> > > -
+> > > +		up_write(&fi->i_mmap_sem);
+> > > +	}
+> > >  	fuse_invalidate_attr(inode);
+> > 
+> > 
+> > I'm not sure this is sufficient. You have to lock page faults out
+> > for the entire time the hole punch is being performed, not just while
+> > the mapping is being invalidated.
+> > 
+> > That is, once you've taken the inode lock and written back the dirty
+> > data over the range being punched, you can then take a page fault
+> > and dirty the page again. Then after you punch the hole out,
+> > you have a dirty page with non-zero data in it, and that can get
+> > written out before the page cache is truncated.
+> 
+> Just for my better udnerstanding of the issue, I am wondering what
+> problem will it lead to.
+> If one process is doing punch_hole and other is writing in the
+> range being punched, end result could be anything. Either we will
+> read zeroes from punched_hole pages or we will read the data
+> written by process writing to mmaped page, depending on in what
+> order it got executed. 
+>
+> If that's the case, then holding fi->i_mmap_sem for the whole
+> duration might not matter. What am I missing?
+
+That it is safe to invalidate the page cache after the hole has been
+punched.
+
+There is nothing stopping, say, memory reclaim from reclaiming pages
+over the range while the hole is being punched, then having the
+application refault them while the backing store is being freed.
+While the page fault read IO is in progress, there's nothing
+stopping the filesystem from freeing those blocks, nor reallocating
+them and writing something else to them (e.g. metadata). So they
+could read someone elses data.
+
+Even worse: the page fault is a write fault, it lands in a hole, has
+space allocated, the page cache is zeroed, page marked dirty, and
+then the hole punch calls truncate_pagecache_range() which tosses
+away the zeroed page and the data the userspace application wrote
+to the page.
+
+The application then refaults the page, reading stale data off
+disk instead of seeing what it had already written to the page....
+
+And unlike truncated pages, the mm/ code cannot reliably detect
+invalidation races on lockless lookup of pages that are within EOF.
+They rely on truncate changing the file size before page
+invalidation to detect races as page->index then points beyond EOF.
+Hole punching does not change inode size, so the page cache lookups
+cannot tell the difference between a new page that just needs IO to
+initialise the data and a page that has just been invalidated....
+
+IOWs, there are many ways things can go wrong with hole punch, and
+the only way to avoid them all is to do invalidate and lock out the
+page cache before starting the fallocate operation. i.e.:
+
+	1. lock up the entire IO path (vfs and page fault)
+	2. drain the AIO+DIO path
+	3. write back dirty pages
+	4. invalidate the page cache
+
+Because this is the only way we can guarantee that nothing can access
+the filesystem's backing store for the range we are about to
+directly manipulate the data in while we perform an "offloaded" data
+transformation on that range...
+
+This isn't just hole punch - the same problems exist with
+FALLOC_FL_ZERO_RANGE and FALLOC_FL_{INSERT,COLLAPSE}_RANGE because
+they change data with extent manipulations and/or hardware offloads
+that provide no guarantees of specific data state or integrity until
+they complete....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
