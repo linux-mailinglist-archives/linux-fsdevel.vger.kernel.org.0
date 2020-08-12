@@ -2,123 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BD1FA242F99
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 21:50:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2ED1242FAB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 21:53:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbgHLTuv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 15:50:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39460 "EHLO
+        id S1726631AbgHLTx3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 15:53:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbgHLTut (ORCPT
+        with ESMTP id S1726554AbgHLTx3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 15:50:49 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B744C061384
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 12:50:49 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id b11so1792441lfe.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 12:50:49 -0700 (PDT)
+        Wed, 12 Aug 2020 15:53:29 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3CF8C061384
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 12:53:28 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id qc22so3618378ejb.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 12:53:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=l0LPNTEWbU2mq6BgRpzsioeNr4RPYOF2TnDOgMD6NIs=;
-        b=U1hdSpOUSLOjOrO72XqzG+q96d1pIF0cv/aZqt7kBp+fkvgL9591I+FRTAk0LrnIxR
-         8JT4UZPZRO/zc5YAudhwHewQ4vDe1rgRhtOdIJf44K3wQIjkVGrwuKfqWiz5aOBB7xzw
-         NmuJO1e6+UoXEurWxTmy0lrzQtpRHAgwv0Dgc=
+        bh=GmEw2lBQdSo1OmXLViAxouuUh1Sga07TNO5tCBoeOis=;
+        b=FSWju80bwOEltiHCw7tX99gPQ4f23rdiK+9U9OE6cbeApFclbDUtAJb8pXkcbF1jw+
+         HFVehzWGJbU5PGrV17qiayxw4nQ7+mjz21bnbn/NCLlp+l6uGWSjEXUrTlRlcv99rMA2
+         Mdx/PMdKNsGqZFZyedF1Z7kk2Fp7oIFZYcB5I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=l0LPNTEWbU2mq6BgRpzsioeNr4RPYOF2TnDOgMD6NIs=;
-        b=jLZiFUvjqMbsuEp6XJbxeWArfAX0zIGKugOd91S+99J1/OOlCsHxx5txzPCSx40ASB
-         4+8B2zcfMkRJ6ltNXbrB05IKcbAnRZ1mmq4SwDmpiVdk+QZnMeehSLmjzK9r7oF6ySnD
-         OCKmxDlTSLPvnIjcm2v1eTVXMKMwL8l1tNmA6e3jEQf8FGTBm1zDEOYBGpHzpu6BxRlH
-         NdbO8rpuxuAhkGV7BZ08C46Nq84O+B0P28jNVwka6IUsNdOEaxG7ob3Kh2zj0AIiSarH
-         Qwyyhs3742Ez6Qw+qrVMeuyB/27tTw2Wv+mpoWySrFZqn5d8fRDRlum3rKqPaqK8GDAr
-         J0pw==
-X-Gm-Message-State: AOAM532rnOPwzUywrOJly+1yaXkbboT4XMK1eZviViJ6HvUV3K6hBAiJ
-        +P0MoYU+uAPDXXTmpVsqNB4bMUeHIgk=
-X-Google-Smtp-Source: ABdhPJy3efwaV7LA49Za/X6p0DbR5Fl8cs0xROR1feXqB+uhNaIEMs67++ZFaUUYypjzMWEMB5aNpg==
-X-Received: by 2002:a19:8957:: with SMTP id l84mr471584lfd.66.1597261847287;
-        Wed, 12 Aug 2020 12:50:47 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id t16sm650321ljo.27.2020.08.12.12.50.46
+        bh=GmEw2lBQdSo1OmXLViAxouuUh1Sga07TNO5tCBoeOis=;
+        b=DNzKYEIzhsYokdZRB22W8IM2j+ZIUfbYJp0ttDcY2QmPxlmxdIqofm7J7OjUQtxElk
+         NfK4Y5hI8PcY4QH3yA7DJ4b1olHzkGnT/rp1kZeCkCXlHLZ9xRBeZOkA8sHU/Pnjg6im
+         /RX1gzAyuseAWwJy5A2iLQl0keDwnUzwyB7v9iigveJ2letYm65J3GriNHZ8cOFNPzuU
+         JY6tYm6vk5Ni9WOeVqB2Lhy5djk7KQVQLVv/0lEv6OQ3c0lijHKC01DA8/BBFI0UkIfZ
+         +TP0NFxe/Rt7/pGm1sngvdh+R6ihBlUX0XPGZ8rhdQe9/X0H6DSa5JPt6EP0pnMy4EvY
+         Tx7Q==
+X-Gm-Message-State: AOAM532rs+f4hTRisfWMsmB4BynfC5Tst5Ts4hys4caoLjaJrEQHWrAC
+        s+Hm0fvoeU5yUii1bOGGKN+iCxFWpfA=
+X-Google-Smtp-Source: ABdhPJxXcExnjRnefiePvmGQJEAtJWNnEuwskq4BR0sBPA/ZPRfrETbolMizjDwdcJNvQzlM8TXZ+w==
+X-Received: by 2002:a17:906:2c4a:: with SMTP id f10mr1458027ejh.352.1597262005975;
+        Wed, 12 Aug 2020 12:53:25 -0700 (PDT)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id q2sm2201526edb.82.2020.08.12.12.53.24
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Aug 2020 12:50:46 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id j22so1816750lfm.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 12:50:46 -0700 (PDT)
-X-Received: by 2002:a05:6512:3b7:: with SMTP id v23mr500353lfp.10.1597261845653;
- Wed, 12 Aug 2020 12:50:45 -0700 (PDT)
+        Wed, 12 Aug 2020 12:53:24 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id qc22so3618300ejb.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 12:53:24 -0700 (PDT)
+X-Received: by 2002:a17:906:fa19:: with SMTP id lo25mr1471647ejb.456.1597262004337;
+ Wed, 12 Aug 2020 12:53:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
- <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
- <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <52483.1597190733@warthog.procyon.org.uk> <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
- <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com>
-In-Reply-To: <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 12 Aug 2020 12:50:28 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
-Message-ID: <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
-Subject: Re: file metadata via fs API
-To:     Steven Whitehouse <swhiteho@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20200811222803.3224434-1-zwisler@google.com> <20200812183557.GB17456@casper.infradead.org>
+In-Reply-To: <20200812183557.GB17456@casper.infradead.org>
+From:   Ross Zwisler <zwisler@chromium.org>
+Date:   Wed, 12 Aug 2020 13:53:12 -0600
+X-Gmail-Original-Message-ID: <CAGRrVHwCYRXixfft1FCnwU-1UzuoUF3iVayRjD8G_QXX2+nOcQ@mail.gmail.com>
+Message-ID: <CAGRrVHwCYRXixfft1FCnwU-1UzuoUF3iVayRjD8G_QXX2+nOcQ@mail.gmail.com>
+Subject: Re: [PATCH v7] Add a "nosymfollow" mount option.
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mattias Nissler <mnissler@chromium.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Gordon <bmgordon@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Jesse Barnes <jsbarnes@google.com>,
+        linux-fsdevel@vger.kernel.org, Micah Morton <mortonm@google.com>,
+        Raul Rangel <rrangel@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 12, 2020 at 12:34 PM Steven Whitehouse <swhiteho@redhat.com> wrote:
+On Wed, Aug 12, 2020 at 12:36 PM Matthew Wilcox <willy@infradead.org> wrote:
+> On Tue, Aug 11, 2020 at 04:28:03PM -0600, Ross Zwisler wrote:
+> > diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> > index 96a0240f23fed..dd8306ea336c1 100644
+> > --- a/include/uapi/linux/mount.h
+> > +++ b/include/uapi/linux/mount.h
+> > @@ -16,6 +16,7 @@
+> >  #define MS_REMOUNT   32      /* Alter flags of a mounted FS */
+> >  #define MS_MANDLOCK  64      /* Allow mandatory locks on an FS */
+> >  #define MS_DIRSYNC   128     /* Directory modifications are synchronous */
+> > +#define MS_NOSYMFOLLOW       256     /* Do not follow symlinks */
+> >  #define MS_NOATIME   1024    /* Do not update access times. */
+> >  #define MS_NODIRATIME        2048    /* Do not update directory access times */
+> >  #define MS_BIND              4096
 >
-> The point of this is to give us the ability to monitor mounts from
-> userspace.
+> Does this need to be added to MS_RMT_MASK too?
 
-We haven't had that before, I don't see why it's suddenly such a big deal.
+I don't think so, because IIUC that is only for "superblock flags",
+i.e. flags which are part of the sb_flags definition in
+do_mount()/path_mount()?
 
-The notification side I understand. Polling /proc files is not the answer.
+https://github.com/torvalds/linux/blob/master/fs/namespace.c#L3172
 
-But the whole "let's design this crazy subsystem for it" seems way
-overkill. I don't see anybody caring that deeply.
+With the current code I'm able to remount and flip nosymfollow both
+directions without issue.  Similarly, MS_NOEXEC can be turned on and
+off at will, and it's not part of MS_RMT_MASK nor sb_flags.
 
-It really smells like "do it because we can, not because we must".
+Interestingly, though, if you change MS_RMT_MASK to be 0, I would
+expect us to be unable to twiddle all the flags which are currently
+part of it, but that isn't the case.   I was still able to change
+between RO/RW, and turn on lazytime.
 
-Who the hell cares about monitoring mounts at a kHz frequencies? If
-this is for MIS use, you want a nice GUI and not wasting CPU time
-polling.
-
-I'm starting to ignore the pull requests from David Howells, because
-by now they have had the same pattern for a couple of years now:
-esoteric new interfaces that seem overdesigned for corner-cases that
-I'm not seeing people clamoring for.
-
-I need (a) proof this is actualyl something real users care about and
-(b) way more open discussion and implementation from multiple parties.
-
-Because right now it looks like a small in-cabal of a couple of people
-who have wild ideas but I'm not seeing the wider use of it.
-
-Convince me otherwise. AGAIN. This is the exact same issue I had with
-the notification queues that I really wanted actual use-cases for, and
-feedback from actual outside users.
-
-I really think this is engineering for its own sake, rather than
-responding to actual user concerns.
-
-               Linus
+So, I think this flag is working as expected, but that there is
+probably a bug in there somewhere WRT the handling of MS_RMT_MASK.
