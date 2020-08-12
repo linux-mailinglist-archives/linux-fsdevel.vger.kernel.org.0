@@ -2,173 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B684242AB4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 15:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C0C4242AFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 16:11:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728038AbgHLN4X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 09:56:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41362 "EHLO
+        id S1726567AbgHLOLJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 10:11:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbgHLN4V (ORCPT
+        with ESMTP id S1726468AbgHLOLJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 09:56:21 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88409C061383;
-        Wed, 12 Aug 2020 06:56:21 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id p16so1701652ile.0;
-        Wed, 12 Aug 2020 06:56:21 -0700 (PDT)
+        Wed, 12 Aug 2020 10:11:09 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7EB7C061383
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 07:11:08 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id kq25so2429710ejb.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 07:11:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=L10aSxHQCG16LTPX2VDKvrZoq6RMS4QxZCBViQUa0lE=;
-        b=pgS1Tr5ueTVxZumiz4wki6pU3O7plai+CT/VVA46teg+WQ4G7PjFw9jXbAkPep9RIa
-         Qt0wI4PUBiBgdym8VglqLFW8DwHtKbEn+DJ12ycZHuBY1Hss9F4m/wniM5H6PPOyoPrr
-         aD1cP9CgF3plaa4a2rWA37vrYnNk36dBkvnN0CzxGf5V7CEDaL4rwXqc1PVCiSbQ1n3u
-         cYycOsymBZn+8+Ehk8H+x4wh9NSawJCwlPkYBa8Z/rsitOHLjQ9KDv+s1bD5Zhyjh+T4
-         bi4L+psJ7MGWE/aYjZx+bKzn5FstLg5haAZaUzahe8f8Oc9Ex0JzBt7j+4/BDOW+ev+K
-         eFog==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iAI5XSM3iLSzZtbpzf+lyAZodExx8Fv/UVCtkgNqIpw=;
+        b=Ev5v2cO14QrSiyYcOC/Fz6swER260kegAoQqygVAc1l4xp7iWj9y1sNUklptY5fWyh
+         UpTrThzpnTLffpSrHOf2H63dAcVssZmBeRiLgorfycUPPCMMTFGXSVEqYOgJikBrkCYO
+         UVuT7X9u60ilNRyU6Ttwt5duD6hAUjAYWcjFk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=L10aSxHQCG16LTPX2VDKvrZoq6RMS4QxZCBViQUa0lE=;
-        b=J4jshY8n9JJCDSXNOImKEHpEeULokLFqrzFDjzkJDiQBi1tfS6bLeIkD121hUgejiZ
-         ejCQatumfnnXTDotKL2mjDgaZGL7fu2whO+OcEKUit8HQIVcUrvkDROQWljtkXDePbLj
-         wi+CmjtLXd1wlX59WKegUppAr6G8byZxMdvMxrgx01jOkRRFHjqEbJIhjFBsjV8UAFQ6
-         OmKTJhkQygyEJ4CI+JWBj86ubND2riKVMXGH1uhPglO/lM0xWeigdF7ZdJm4WT6hxV0W
-         ptnvANBzFqL/H+xsM3KUYazXgoezVSivknB54MH+otFsrOUq1vLQ4xxXfE0KzlnIkmYL
-         mgQg==
-X-Gm-Message-State: AOAM531jeD3O2pwdaznwOo0mqNujqw5Drjb58iY0ywoX+4u378tQXsfK
-        /BXL6+xqUN4prztmNdIkS6w=
-X-Google-Smtp-Source: ABdhPJx/cW3b6ZCypx93XUp2fbLhIViYbxQNo1qPh97cr/CWUQguPl3jz7RLGcshibVycc8x8OWdVg==
-X-Received: by 2002:a92:9adc:: with SMTP id c89mr6878133ill.272.1597240580818;
-        Wed, 12 Aug 2020 06:56:20 -0700 (PDT)
-Received: from anon-dhcp-152.1015granger.net (c-68-61-232-219.hsd1.mi.comcast.net. [68.61.232.219])
-        by smtp.gmail.com with ESMTPSA id u62sm1117047ilc.87.2020.08.12.06.56.18
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Aug 2020 06:56:19 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement LSM
- (IPE)
-From:   Chuck Lever <chucklever@gmail.com>
-In-Reply-To: <1597170509.4325.55.camel@HansenPartnership.com>
-Date:   Wed, 12 Aug 2020 09:56:17 -0400
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iAI5XSM3iLSzZtbpzf+lyAZodExx8Fv/UVCtkgNqIpw=;
+        b=I1c6/MitJWezAe5vAvSE8uAI1e/zZeb9FjCFJSF7Z6VugTUKTtJ/4YyQOvespDB8dd
+         CG7QvXc1tIvwrmQZHejv9lrD3S9EYtwZ7o1Au8v+9hXFvsnAauSaGi4IYdtxxmNHiqla
+         2+3WdR2YGwusiSWjmW91DoGavVgWS1JzSG6zIWBTPvwM7R/TVV8kkTnl87rqIUC0K7CT
+         c37goJ8dtaOMXwKtXY0qntfIaRm+VDrScIizQC4afy4n7orSJck50RyUI6HRMj39vE7S
+         VfPIp0zaiCAqClv157j+R3WrbAxDNWNlr4WGpyEx3PsMookEX0H2KgrhGD+0ZKgjvdRv
+         0lGQ==
+X-Gm-Message-State: AOAM533Ph7VSHSXnwrmp6T90PVSAZm8IEdRFgULvTlFS322AHzZX4PLe
+        txKBlyDIzRVzkr7U2nfwohcUHb+H055K3ELfe6cz+Q==
+X-Google-Smtp-Source: ABdhPJx3PJ9aL5obqkNAu7vPQ/SqsQ9TATEfUryRI39r11CbP3IrD6FZDXg7ftvqa1wiyALQ92/dDqI6E8aZplVgzoI=
+X-Received: by 2002:a17:906:4e4f:: with SMTP id g15mr16755594ejw.443.1597241467668;
+ Wed, 12 Aug 2020 07:11:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <135551.1597240486@warthog.procyon.org.uk>
+In-Reply-To: <135551.1597240486@warthog.procyon.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 12 Aug 2020 16:10:56 +0200
+Message-ID: <CAJfpegvLaoQHZTm1-QKorzsL3ZDnTOcHpcAJn36yF=n-YymCow@mail.gmail.com>
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2CA41152-6445-4716-B5EE-2D14E5C59368@gmail.com>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
- <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
- <20200802143143.GB20261@amd> <1596386606.4087.20.camel@HansenPartnership.com>
- <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
- <1596639689.3457.17.camel@HansenPartnership.com>
- <alpine.LRH.2.21.2008050934060.28225@namei.org>
- <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
- <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
- <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
- <1597073737.3966.12.camel@HansenPartnership.com>
- <6E907A22-02CC-42DD-B3CD-11D304F3A1A8@gmail.com>
- <1597124623.30793.14.camel@HansenPartnership.com>
- <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
- <1597170509.4325.55.camel@HansenPartnership.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Aug 12, 2020 at 3:54 PM David Howells <dhowells@redhat.com> wrote:
+>
+> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>
+> > IOW, if you do something more along the lines of
+> >
+> >        fd = open(""foo/bar", O_PATH);
+> >        metadatafd = openat(fd, "metadataname", O_ALT);
+> >
+> > it might be workable.
+>
+> What is it going to walk through?  You need to end up with an inode and dentry
+> from somewhere.
+>
+> It sounds like this would have to open up a procfs-like magic filesystem, and
+> walk into it.  But how would that actually work?  Would you create a new
+> superblock each time you do this, labelled with the starting object (say the
+> dentry for "foo/bar" in this case), and then walk from the root?
+>
+> An alternative, maybe, could be to make a new dentry type, say, and include it
+> in the superblock of the object being queried - and let the filesystems deal
+> with it.  That would mean that non-dir dentries would then have virtual
+> children.  You could then even use this to implement resource forks...
+>
+> Another alternative would be to note O_ALT and then skip pathwalk entirely,
+> but just use the name as a key to the attribute, creating an anonfd to read
+> it.  But then why use openat() at all?  You could instead do:
+>
+>         metadatafd = openmeta(fd, "metadataname");
+>
+> and save the page flag.  You could even merge the two opens and do:
+>
+>         metadatafd = openmeta("foo/bar", "metadataname");
+>
+> Why not even combine this with Miklos's readfile() idea:
+>
+>         readmeta(AT_FDCWD, "foo/bar", "metadataname", buf, sizeof(buf));
 
+And writemeta() and createmeta() and readdirmeta() and ...
 
-> On Aug 11, 2020, at 2:28 PM, James Bottomley =
-<James.Bottomley@HansenPartnership.com> wrote:
->=20
-> On Tue, 2020-08-11 at 10:48 -0400, Chuck Lever wrote:
->> Mimi's earlier point is that any IMA metadata format that involves
->> unsigned digests is exposed to an alteration attack at rest or in
->> transit, thus will not provide a robust end-to-end integrity
->> guarantee.
->=20
-> I don't believe that is Mimi's point, because it's mostly not correct:
-> the xattr mechanism does provide this today.  The point is the
-> mechanism we use for storing IMA hashes and signatures today is xattrs
-> because they have robust security properties for local filesystems =
-that
-> the kernel enforces.  This use goes beyond IMA, selinux labels for
-> instance use this property as well.
+The point is that generic operations already exist and no need to add
+new, specialized ones to access metadata.
 
-I don't buy this for a second. If storing a security label in a
-local xattr is so secure, we wouldn't have any need for EVM.
-
-
-> What I think you're saying is that NFS can't provide the robust
-> security for xattrs we've been relying on, so you need some other
-> mechanism for storing them.
-
-For NFS, there's a network traversal which is an attack surface.
-
-A local xattr can be attacked as well: a device or bus malfunction
-can corrupt the content of an xattr, or a privileged user can modify
-it.
-
-How does that metadata get from the software provider to the end
-user? It's got to go over a network, stored in various ways, some
-of which will not be trusted. To attain an unbroken chain of
-provenance, that metadata has to be signed.
-
-I don't think the question is the storage mechanism, but rather the
-protection mechanism. Signing the metadata protects it in all of
-these cases.
-
-
-> I think Mimi's other point is actually that IMA uses a flat hash which
-> we derive by reading the entire file and then watching for mutations.=20=
-
-> Since you cannot guarantee we get notice of mutation with NFS, the
-> entire IMA mechanism can't really be applied in its current form and =
-we
-> have to resort to chunk at a time verifications that a Merkel tree
-> would provide.
-
-I'm not sure what you mean by this. An NFS client relies on notification
-of mutation to maintain the integrity of its cache of NFS file content,
-and it's done that since the 1980s.
-
-In addition to examining a file's mtime and ctime as maintained by
-the NFS server, a client can rely on the file's NFSv4 change attribute
-or an NFSv4 delegation.
-
-
-> Doesn't this make moot any thinking about
-> standardisation in NFS for the current IMA flat hash mechanism because
-> we simply can't use it ... If I were to construct a prototype I'd have
-> to work out and securely cache the hash of ever chunk when verifying
-> the flat hash so I could recheck on every chunk read.  I think that's
-> infeasible for large files.
->=20
-> James
->=20
-
---
-Chuck Lever
-chucklever@gmail.com
-
-
-
+Thanks,
+Miklos
