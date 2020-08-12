@@ -2,149 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 40382242B67
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 16:33:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 487C1242B7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 16:40:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726529AbgHLOdh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 10:33:37 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:32294 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726434AbgHLOdh (ORCPT
+        id S1726634AbgHLOkN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 10:40:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48146 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbgHLOkN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 10:33:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597242815;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/Ptz149Dzz4Oa9+r9hICCY5f9CezxQ0mTEhoFjgcr4M=;
-        b=OWrsbejdsyiSlNHxUdlBhvU/MZQjr++S/4IQHzjal0rgJOT9t0CaTBJ8zpOyZgZP2AX9sn
-        MU2HG/uCWp34mC//PKGLYdopfmJnKwdRmc9HNYVLeSqRd2jmrVjeTYuRLbohDfFlCwzvj4
-        p2kLOlGtwgPpzMAETKPEFFqrm9DD+vE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-297-3WZOfEj5Miu7lNt4ix_emQ-1; Wed, 12 Aug 2020 10:33:32 -0400
-X-MC-Unique: 3WZOfEj5Miu7lNt4ix_emQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1342C18B9F77;
-        Wed, 12 Aug 2020 14:33:31 +0000 (UTC)
-Received: from work-vm (ovpn-113-233.ams2.redhat.com [10.36.113.233])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3AE9F5D6BD;
-        Wed, 12 Aug 2020 14:33:26 +0000 (UTC)
-Date:   Wed, 12 Aug 2020 15:33:23 +0100
-From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     Christian Schoenebeck <qemu_oss@crudebyte.com>
-Cc:     Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
-        stefanha@redhat.com, mszeredi@redhat.com, vgoyal@redhat.com,
-        gscrivan@redhat.com, dwalsh@redhat.com, chirantan@chromium.org
-Subject: Re: xattr names for unprivileged stacking?
-Message-ID: <20200812143323.GF2810@work-vm>
-References: <20200728105503.GE2699@work-vm>
- <2627251.EZXEZLLarb@silver>
- <20200812111819.GE2810@work-vm>
- <12480108.dgM6XvcGr8@silver>
+        Wed, 12 Aug 2020 10:40:13 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D5F3C061383;
+        Wed, 12 Aug 2020 07:40:13 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k5rv3-00E7t1-1a; Wed, 12 Aug 2020 14:39:57 +0000
+Date:   Wed, 12 Aug 2020 15:39:57 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+Message-ID: <20200812143957.GQ1236603@ZenIV.linux.org.uk>
+References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <5C8E0FA8-274E-4B56-9B5A-88E768D01F3A@amacapital.net>
+ <a6cd01ed-918a-0ed7-aa87-0585db7b6852@schaufler-ca.com>
+ <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
+ <CAG48ez3Li+HjJ6-wJwN-A84WT2MFE131Dt+6YiU96s+7NO5wkQ@mail.gmail.com>
+ <CAJfpeguh5VaDBdVkV3FJtRsMAvXHWUcBfEpQrYPEuX9wYzg9dA@mail.gmail.com>
+ <CAHk-=whE42mFLi8CfNcdB6Jc40tXsG3sR+ThWAFihhBwfUbczA@mail.gmail.com>
+ <CAJfpegtXtj2Q1wsR-3eUNA0S=_skzHF0CEmcK_Krd8dtKkWkGA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <12480108.dgM6XvcGr8@silver>
-User-Agent: Mutt/1.14.6 (2020-07-11)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <CAJfpegtXtj2Q1wsR-3eUNA0S=_skzHF0CEmcK_Krd8dtKkWkGA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-* Christian Schoenebeck (qemu_oss@crudebyte.com) wrote:
-> On Mittwoch, 12. August 2020 13:18:19 CEST Dr. David Alan Gilbert wrote:
-> > * Christian Schoenebeck (qemu_oss@crudebyte.com) wrote:
-> > > On Dienstag, 4. August 2020 13:28:01 CEST Dr. David Alan Gilbert wrote:
-> > > > > Well, depends on how large you draw the scope here. For instance Samba
-> > > > > has
-> > > > > a bunch VFS modules which also uses and hence prohibits certain
-> > > > > xattrs.
-> > > > > For instance for supporting (NTFS) alternate data streams (a.k.a.
-> > > > > resource forks) of Windows clients it uses user.DosStream.*:
-> > > > > 
-> > > > > https://www.samba.org/samba/docs/current/man-html/vfs_streams_xattr.8.
-> > > > > html
-> > > > > 
-> > > > > as well as "user.DOSATTRIB".
-> > > > > 
-> > > > > And as macOS heavily relies on resource forks (i.e. macOS doesn't work
-> > > > > without them), there are a bunch of xattr remappings in the dedicated
-> > > > > Apple VFS module, like "aapl_*":
-> > > > > 
-> > > > > https://www.samba.org/samba/docs/current/man-html/vfs_fruit.8.html
-> > > > > https://github.com/samba-team/samba/blob/master/source3/modules/vfs_fr
-> > > > > uit.
-> > > > > c
-> > > > 
-> > > > Thanks;  what I've added to virtiofsd at the moment is a generic
-> > > > remapping thing that lets me add any prefix and block/drop any xattr.
-> > > 
-> > > Right, makes absolutely sense to make it configurable. There are too many
-> > > use cases for xattrs, and the precise xattr names are often configurable
-> > > as well, like with the mentioned Samba VFS modules.
-> > > 
-> > > > The other samba-ism I found was mvxattr(1) which lets you rename xattr's
-> > > > ona  directory tree; which is quite useful.
-> > > 
-> > > Haven't seen that before, interesting.
-> > > 
-> > > BTW, I have plans for adding support for file forks [1] (a.k.a. alternate
-> > > streams, a.k.a. resource forks) on Linux kernel side, so I will probably
-> > > come up with an RFC in couple weeks to see whether there would be
-> > > acceptance for that at all and if yes in which form.
-> > > 
-> > > That would open a similar problematic to virtiofsd on the long term, as
-> > > file forks have a namespace on their own.
-> > 
-> > Yeh I'm sure that'll need wiring into lots of things in weird ways!
-> > I guess the main difference between an extended attribute and a
-> > file-fork is that you can access the fork using an fd and it feels more
-> > like a file?
-> 
-> Well, that's a very short reduction of its purpose, but it is a common core 
-> feature, yes.
-> 
-> xattrs are only suitable for very small data (currently <= 64 kiB on Linux), 
-> whereas file forks can be as large as any regular file. And yes, forks 
-> commonly work with fd, so they allow you to do all kinds of I/O operations on 
-> them. Theoretically though you could even allow to use forks with any other 
-> function that accepts an fd.
-> 
-> The main issue is that file forks are not in POSIX. So every OS currently has 
-> its own concept and API, which probably makes a consensus more difficult for 
-> Linux.
-> 
-> For instance Solaris allows you to set different ownership and permissions on 
-> forks as well. It does not allow you to create sub-forks though, nor directory 
-> structures for forks.
+On Wed, Aug 12, 2020 at 09:23:23AM +0200, Miklos Szeredi wrote:
 
-Yeh that's quite a change in semantics.
+> Anyway, starting with just introducing the alt namespace without
+> unification seems to be a good first step. If that turns out to be
+> workable, we can revisit unification later.
 
-> On macOS there was (or actually still is) even a quite complex API which 
-> separated forks into "resource forks" and "data forks", where resource forks 
-> were typically used as components of an application binary (e.g. menu 
-> structure, icons, executable binary modules, text and translations). So 
-> resource forks not only had names, they also had predefined 16-bit type 
-> identifiers:
-> https://en.wikipedia.org/wiki/Resource_fork
+Start with coming up with answers to the questions on semantics
+upthread.  To spare you the joy of digging through the branches
+of that thread, how's that for starters?
 
-Yeh, lots of different ways.
-
-In a way, if you had a way to drop the 64kiB limit on xattr, then you
-could have one type of object, but then add new ways of accessing them
-as forks.
-
-Dave
-
-> Best regards,
-> Christian Schoenebeck
-> 
-> 
--- 
-Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
-
+"Can those suckers be passed to
+...at() as starting points?  Can they be bound in namespace?
+Can something be bound *on* them?  What do they have for inodes
+and what maintains their inumbers (and st_dev, while we are at
+it)?  Can _they_ have secondaries like that (sensu Swift)?
+Is that a flat space, or can they be directories?"
