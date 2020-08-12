@@ -2,92 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB55D2427CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 11:43:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81F562427FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 12:04:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbgHLJnT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 05:43:19 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:37356 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726409AbgHLJnT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 05:43:19 -0400
-Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id 68D2CE2067FFFE97BEB1;
-        Wed, 12 Aug 2020 17:43:16 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notes_smtp.zte.com.cn [10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id 07C9h3tN084104;
-        Wed, 12 Aug 2020 17:43:03 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2020081217432418-4584713 ;
-          Wed, 12 Aug 2020 17:43:24 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
-        wang.liang82@zte.com.cn, Liao Pingfang <liao.pingfang@zte.com.cn>
-Subject: [PATCH] fs: Fix some comments in open.c and read_write.c
-Date:   Wed, 12 Aug 2020 17:46:28 +0800
-Message-Id: <1597225588-7737-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2020-08-12 17:43:24,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2020-08-12 17:43:06,
-        Serialize complete at 2020-08-12 17:43:06
-X-MAIL: mse-fl1.zte.com.cn 07C9h3tN084104
+        id S1727108AbgHLKE3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 06:04:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33986 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726722AbgHLKE2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Aug 2020 06:04:28 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3E2FC06174A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 03:04:27 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id i6so1078385edy.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 03:04:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kveMn0CgVzgGdVO37SLre07hhA5DE1v0+4qD8NOY8tw=;
+        b=meHCbgohoEeC4hc/3sMZ6QCAEA9FUFcIJ64vE/4XOtBGCJ8LFfjQFEgukMJIh2Pvot
+         /fmUuiXKdoiBfNWEPbdJ4AkbQdQM3NmC8zm334GGtWtQYCqSraq0qRmdpMys765+69Pb
+         tPGVyqcwlBQnoez3b76geaZ2Dtsd59vUcEg7M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kveMn0CgVzgGdVO37SLre07hhA5DE1v0+4qD8NOY8tw=;
+        b=eJjKQUpwn0GLA3tGsm4xDuONSvgS+As0Jz1uGHDVCEn4qpzRueMibXZGdqN+7UL81C
+         Zu/mtERBp6BALzJXFgNj85+cYE2OQLNiXw2ofCH2dzTOedEpUg4wzGvziPNoZZs0kaXy
+         mnMj0q5bUnK3343hXu6Ief5um/dmlPtNjgUCOCIQbKHIsvz24vOe2EZMPW26Swb57htR
+         QBCFUK93LBUnjmOguYBxcOINqanTrRev5Vpd+SzqS607y9VGmAYWgdktTMTnAO7GY/Ug
+         oDgMJ5duDkEWLQisWBtQmrfnCh4dPdzbGjvV11mZLp460bJoAUvJMr0tyCvYxngXhcYD
+         utxg==
+X-Gm-Message-State: AOAM530XMs9nWWsHHKpNPGwloPasbp3wT0T/d5ckMIQ9xP5WHW8sK1rz
+        hc2baRMEb5zpm0Zt81/w/IGGx6NZbcRWv0R2rHF1Aw==
+X-Google-Smtp-Source: ABdhPJwfjFZ9rdnzWnYSUjRsmmzORGZKTAagxP8wu7SkP1m0JpqC5Md7Y+EUKS8tVWs1GLaPgrI/CGuiH4LIFXoeUG4=
+X-Received: by 2002:aa7:d688:: with SMTP id d8mr30572344edr.168.1597226666050;
+ Wed, 12 Aug 2020 03:04:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk> <CAJfpegt=cQ159kEH9zCYVHV7R_08jwMxF0jKrSUV5E=uBg4Lzw@mail.gmail.com>
+ <98802.1597220949@warthog.procyon.org.uk> <CAJfpegsVJo9e=pHf3YGWkE16fT0QaNGhgkUdq4KUQypXaD=OgQ@mail.gmail.com>
+ <d2d179c7-9b60-ca1a-0c9f-d308fc7af5ce@redhat.com>
+In-Reply-To: <d2d179c7-9b60-ca1a-0c9f-d308fc7af5ce@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 12 Aug 2020 12:04:14 +0200
+Message-ID: <CAJfpeguMjU+n-JXE6aUQQGeMpCS4bsy4HQ37NHJ8aD8Aeg2qhA@mail.gmail.com>
+Subject: Re: file metadata via fs API
+To:     Steven Whitehouse <swhiteho@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Liao Pingfang <liao.pingfang@zte.com.cn>
+On Wed, Aug 12, 2020 at 11:43 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
+>
+> Hi,
+>
+> On 12/08/2020 09:37, Miklos Szeredi wrote:
+> [snip]
+> >
+> > b) The awarded performance boost is not warranted for the use cases it
+> > is designed for.
 
-Correct comments in open.c, since the parameter(opened/cred)
-is not used anymore. Also correct size to maxsize in
-read_write.c.
+>
+> This is a key point. One of the main drivers for this work is the
+> efficiency improvement for large numbers of mounts. Ian and Karel have
+> already provided performance measurements showing a significant benefit
+> compared with what we have today. If you want to propose this
+> alternative interface then you need to show that it can sustain similar
+> levels of performance, otherwise it doesn't solve the problem. So
+> performance numbers here would be helpful.
 
-Signed-off-by: Liao Pingfang <liao.pingfang@zte.com.cn>
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
----
- fs/open.c       | 2 --
- fs/read_write.c | 2 +-
- 2 files changed, 1 insertion(+), 3 deletions(-)
+Definitely.   Will measure performance with the interface which Linus proposed.
 
-diff --git a/fs/open.c b/fs/open.c
-index c80e9f497e9b..fa54a7d313e9 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -875,7 +875,6 @@ static int do_dentry_open(struct file *f,
-  * @file: file pointer
-  * @dentry: pointer to dentry
-  * @open: open callback
-- * @opened: state of open
-  *
-  * This can be used to finish opening a file passed to i_op->atomic_open().
-  *
-@@ -929,7 +928,6 @@ EXPORT_SYMBOL(file_path);
-  * vfs_open - open the file at the given path
-  * @path: path to open
-  * @file: newly allocated file with f_flag initialized
-- * @cred: credentials to use
-  */
- int vfs_open(const struct path *path, struct file *file)
- {
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 5db58b8c78d0..058563ee26fd 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -71,7 +71,7 @@ EXPORT_SYMBOL(vfs_setpos);
-  * @file:	file structure to seek on
-  * @offset:	file offset to seek to
-  * @whence:	type of seek
-- * @size:	max size of this file in file system
-+ * @maxsize:	max size of this file in file system
-  * @eof:	offset used for SEEK_END position
-  *
-  * This is a variant of generic_file_llseek that allows passing in a custom
--- 
-2.26.1
+I'm not worried, though; the problem with the previous interface was
+that it resulted in the complete mount table being re-parsed on each
+individual event resulting in quadratic behavior.  This doesn't affect
+any interface that can query individual mount/superblock objects.
 
+> Also - I may have missed this earlier in the discussion, what are the
+> atomicity guarantees with this proposal? This is the other key point for
+> the API, so it would be good to see that clearly stated (i.e. how does
+> one use it in combination with the notifications to provide an up to
+> date, consistent view of the kernel's mounts)
+
+fsinfo(2) provides version counters on mount and superblock objects to
+verify consistency of returned data, since not all data is returned in
+a single call.  Same method could be used with the open/read based
+interface to verify consistency in case multiple attributes/attribute
+groups need to be queried.
+
+Thanks,
+Miklos
