@@ -2,129 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85E6F242DD4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 19:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 539AD242DEF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 19:16:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbgHLRHO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 13:07:14 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:33702 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726459AbgHLRHN (ORCPT
+        id S1726503AbgHLRQv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 13:16:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44078 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbgHLRQu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 13:07:13 -0400
-Received: from [10.137.106.139] (unknown [131.107.174.11])
-        by linux.microsoft.com (Postfix) with ESMTPSA id E097C20B4908;
-        Wed, 12 Aug 2020 10:07:04 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E097C20B4908
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1597252032;
-        bh=SIe2k0peitBjW17yZJXqD0TtHRPmDC1R6Lbe35xyn4c=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PLIfautqDTtZvkV5njfOIjkAj6r6JznMM7OdDU7PlLhgZqfL4Pe2paFWOZNHYGde0
-         y2m6/Jc5+vr2IziCujXNmDEaBARiGhY57RfU99LHHeOdaXuDYd4ISc2lqnTHN222lU
-         zRHuYBYjX8OqIJoFSc8A8rzTUreTmp+o7KtpdsMg=
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement LSM
- (IPE)
-To:     Chuck Lever <chucklever@gmail.com>,
-        James Morris <jmorris@namei.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
- <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
- <20200802143143.GB20261@amd> <1596386606.4087.20.camel@HansenPartnership.com>
- <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
- <1596639689.3457.17.camel@HansenPartnership.com>
- <alpine.LRH.2.21.2008050934060.28225@namei.org>
- <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
- <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
- <alpine.LRH.2.21.2008120643370.10591@namei.org>
- <70603A4E-A548-4ECB-97D4-D3102CE77701@gmail.com>
-From:   Deven Bowers <deven.desai@linux.microsoft.com>
-Message-ID: <5edd58e3-7f12-10af-ef1c-4c1b32cf99e4@linux.microsoft.com>
-Date:   Wed, 12 Aug 2020 10:07:04 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Wed, 12 Aug 2020 13:16:50 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6792C061383
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 10:16:49 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id ba10so2118294edb.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 10:16:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=l2X1UTNYtxtD9AqiCPxyGHdXjAbLFgoKechHodwc0Uo=;
+        b=nAulnfLe5uw3GGbI4m3Tum5zj3laHAl5lzMTlbg9w0RQxUXyfMRVW0PUksH7Rp6ZFN
+         Yq1nSYnweoNegqNGWk3syhijVezp9QgoP5+S2Di2gSfqAOOXVBABYvP7X+VVxFs5wL3L
+         ah3L2fnd4E2PFbne2qLQvAQDr2nPtHrCw32E8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l2X1UTNYtxtD9AqiCPxyGHdXjAbLFgoKechHodwc0Uo=;
+        b=t6m9ZcCRlOMdJxveUfqqa2RYSf1eTTm0GGCWfVpeZd8sZ8dkVvHu7CaHQCpbgc/UP8
+         eGtW0Wof3WOmKdz2VSy/iilo6hMaPg86LezDi+Z03BptIHP2PRguwTQpXp8Nd59INueP
+         vSwjQ24uFVi0vqHhhcm2iRfoZJX5EOBlRvY8or2Ytq67hmhBPcToe3XFtdtyPvzE40PF
+         1waMC+1Xz0hq5vn32rO9UmLwziuXt5B0JyZURD0a6thIfAo262pktmOa3meE1Vow6SU4
+         kmdYNaXn98h4hkXefoIT5+vhnoCqUSdNUM/aQJUDObgycwbqAONITR3GMk7XlLGMTTfs
+         F0PQ==
+X-Gm-Message-State: AOAM532jJj7OdTnJ/yE4mlLYlHUiWYjUnZ/bup0DzTw+IQMdq3cVbhw6
+        fhQ8ZGAVT4GMqHwqWga4yje4uExH+Lp6b65rw0JLkw==
+X-Google-Smtp-Source: ABdhPJxug2NLkyVDrt4SDzElrjaxLcJAHADPULDoz4hIsy0nzQPyH+wfb4erX3M7q+SBR4y2ScqFzLhktBpqx/PV0jA=
+X-Received: by 2002:a05:6402:12c4:: with SMTP id k4mr905858edx.358.1597252608671;
+ Wed, 12 Aug 2020 10:16:48 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <70603A4E-A548-4ECB-97D4-D3102CE77701@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <a6cd01ed-918a-0ed7-aa87-0585db7b6852@schaufler-ca.com>
+ <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
+ <CAG48ez3Li+HjJ6-wJwN-A84WT2MFE131Dt+6YiU96s+7NO5wkQ@mail.gmail.com>
+ <CAJfpeguh5VaDBdVkV3FJtRsMAvXHWUcBfEpQrYPEuX9wYzg9dA@mail.gmail.com>
+ <CAHk-=whE42mFLi8CfNcdB6Jc40tXsG3sR+ThWAFihhBwfUbczA@mail.gmail.com>
+ <CAJfpegtXtj2Q1wsR-3eUNA0S=_skzHF0CEmcK_Krd8dtKkWkGA@mail.gmail.com>
+ <20200812143957.GQ1236603@ZenIV.linux.org.uk> <CAJfpegvFBdp3v9VcCp-wNDjZnQF3q6cufb-8PJieaGDz14sbBg@mail.gmail.com>
+ <20200812150807.GR1236603@ZenIV.linux.org.uk> <CAJfpegsQF1aN4XJ_8j977rnQESxc=Kcn7Z2C+LnVDWXo4PKhTQ@mail.gmail.com>
+ <20200812163347.GS1236603@ZenIV.linux.org.uk>
+In-Reply-To: <20200812163347.GS1236603@ZenIV.linux.org.uk>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 12 Aug 2020 19:16:37 +0200
+Message-ID: <CAJfpegv8MTnO9YAiFUJPjr3ryeT82=KWHUpLFmgRNOcQfeS17w@mail.gmail.com>
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Aug 12, 2020 at 6:33 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Wed, Aug 12, 2020 at 05:13:14PM +0200, Miklos Szeredi wrote:
 
+> > Why does it have to have a struct mount?  It does not have to use
+> > dentry/mount based path lookup.
+>
+> What the fuck?  So we suddenly get an additional class of objects
+> serving as kinda-sorta analogues of dentries *AND* now struct file
+> might refer to that instead of a dentry/mount pair - all on the VFS
+> level?  And so do all the syscalls you want to allow for such "pathnames"?
 
-On 8/12/2020 7:18 AM, Chuck Lever wrote:
-> 
-> 
->> On Aug 11, 2020, at 5:03 PM, James Morris <jmorris@namei.org> wrote:
->>
->> On Sat, 8 Aug 2020, Chuck Lever wrote:
->>
->>> My interest is in code integrity enforcement for executables stored
->>> in NFS files.
->>>
->>> My struggle with IPE is that due to its dependence on dm-verity, it
->>> does not seem to able to protect content that is stored separately
->>> from its execution environment and accessed via a file access
->>> protocol (FUSE, SMB, NFS, etc).
->>
->> It's not dependent on DM-Verity, that's just one possible integrity
->> verification mechanism, and one of two supported in this initial
->> version. The other is 'boot_verified' for a verified or otherwise trusted
->> rootfs. Future versions will support FS-Verity, at least.
->>
->> IPE was designed to be extensible in this way, with a strong separation of
->> mechanism and policy.
-> 
-> I got that, but it looked to me like the whole system relied on having
-> access to the block device under the filesystem. That's not possible
-> for a remote filesystem like Ceph or NFS.
+The only syscall I'd want to allow is open, everything else would be
+on the open files themselves.
 
-Block device structure no, (though that's what the currently used, to be
-fair). It really has a hard dependency on the file structure,
-specifically the ability to determine whether that file structure can be 
-used to navigate back to the integrity claim provided by the mechanism.
+file->f_path can refer to an anon mount/inode, the real object is
+referred to by file->private_data.
 
-In the current world of IPE, the integrity claim is the root-hash or 
-root-hash-signature on the block device, provided by dm-verity's 
-setsecurity hooks (also introduced in this series).
+The change to namei.c would be on the order of ~10 lines.  No other
+parts of the VFS would be affected.   Maybe I'm optimistic; we'll
+see...
 
-> 
-> I'm happy to take a closer look if someone can point me the right way.
-> 
+Now off to something completely different.  Back on Tuesday.
 
-Sure, if you look at the 2nd patch, you want to look at the file 
-"security/ipe/ipe-property.h", it defines what methods are required to
-be implemented by a mechanism to work with IPE. It passes the engine
-context which is defined as:
-
-  struct ipe_engine_ctx {
-  	enum ipe_op op;
-  	enum ipe_hook hook;
-  	const struct file *file;
-  	const char *audit_pathname;
-	const struct ipe_bdev_blob *sec_bdev;
-  };
-
-Now, if the security blob existed for the block_device, it would be
-in sec_bdev, but that may be NULL, as well to be fair.
-
-If you want a more worked example of how integration works, patches 8
-and 10 introduce the dm-verity properties mentioned in this patch.
+Thanks,
+Miklos
