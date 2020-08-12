@@ -2,155 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D124242BF7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 17:13:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F151242C0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 17:17:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbgHLPNj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 11:13:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53284 "EHLO
+        id S1726567AbgHLPRN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 11:17:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbgHLPN3 (ORCPT
+        with ESMTP id S1726477AbgHLPRJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 11:13:29 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3C47C061383
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 08:13:28 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id ba10so1811656edb.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 08:13:28 -0700 (PDT)
+        Wed, 12 Aug 2020 11:17:09 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB2E1C061383;
+        Wed, 12 Aug 2020 08:17:08 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id l60so1291820pjb.3;
+        Wed, 12 Aug 2020 08:17:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VN6ir83bMjgYQIdeAbdj93K7AbOe8f4BRPi3nEgO7zE=;
-        b=VndYFHLsjboSueemTm/gTWyU/6d+bUbeH7HKxWM99Yng+XUQUYNG/AbXbblBZBH/An
-         /D674H4Y7QIjzxINCgZkEWjRdtLus6PyQhylX/IDuaUQ2j/48lydT4RO0vFLUPvqjs0i
-         laNjZmgU04BRpDmsumDv8mvr+p3mwHETI4Oyo=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OPdbgPZo5jPPRPHIcS+vE4PWrAHpzcBRc1OSWPUvjGw=;
+        b=HcVh8d5bXzhnDcRk6obxAbO9kDFuVZLMJYBoDa/NCGKVegm43fqC/mrZbv0E6BL96x
+         w4oyfcYaWtHxY5ZT9Z0pChvq/X/oswR6mAdZ3z84kU2++AcL0Gis2xvqBvydx66j4Lqz
+         9TgAdvtUGgsz8KKuyqz0SWC+e+nUU7+YFeIyXiCrlit/M/JfWH9vMTgXCUsd47gr5s2C
+         ohtQat7gZRzwbpj6z7S1OwRjeJmVVIB6G2hs1Ox/86sXuVfxBZ4Q3gdfRP5KUhDya7Z5
+         ZYspTxFJQOzSzjZKThNimM4cQ/qNwutv4pmEdNBjgUEQ9yg7XbufInFRwT38enUR9qBw
+         wQ1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VN6ir83bMjgYQIdeAbdj93K7AbOe8f4BRPi3nEgO7zE=;
-        b=bLaj4JLkgClYZH9gLphOJMM9eVvzbNfFaRKwMzqTscYGSW8J1KTHuZ7VdWv86zGVDV
-         AAGvuuOOlTjxuZMz9FBmOUSPQ/51wTcE2qrhusnKfR6aUTBWJk5Rj8NkPpkiYGjYzJSr
-         9YYWrzaO1tVC5SnAS5XX8Enan0SZ0jekBuvxbTKJevNmaepJ+S/0asQTl1qZTmp6GeR4
-         7DNUSr4adCKARtNFWz3iBpfYqQzlNb9/Cl85fE+HRwdsHGMInSS0+QNHk+jknhAQd9tm
-         PHoFqJxJHxpSLSztjTZSIp4zO7B0a7SjzQadcdYtCH5MHvcbqKStoMuimKB8l+nFnpEq
-         nqFg==
-X-Gm-Message-State: AOAM533JCwGtaIvrCRVY0INTf5zgVHwcoobs3LRC1kx1yrmgq0kA21b4
-        5Zktm+vXuLUja5ypl/bhaZpfRT2CQtZtct4OUm8IpA==
-X-Google-Smtp-Source: ABdhPJx4u1q1FLW556zPlIsLcP302q5ujVZaE+rGeWv7TC31XhI4j+ua8W7rg17I4ZmHnOSV4oPmxDB/frsEThGPkcc=
-X-Received: by 2002:a05:6402:13d4:: with SMTP id a20mr368514edx.161.1597245205349;
- Wed, 12 Aug 2020 08:13:25 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OPdbgPZo5jPPRPHIcS+vE4PWrAHpzcBRc1OSWPUvjGw=;
+        b=Z7A5O6oTIZxLLfzbK9gqytCEQPwF3ssyQZ42n+SKB1+LH465Zd4Gr9FZfBUrMG0D6v
+         SkLVe1pSpB57NOVKjR5Q17ABnOquzOTTzqB19J4kkEHu75PG/eIl6Ua53QMUjbzEMyF7
+         TCfR2H4c53Ml6SPtxGkgaYoo1MNdrUYV+fo4dhEiIXrPiK85GXOv9EVgNpF+QJmmPz5B
+         IVPGaj8El14MXNq/stH/Sm/K8DhqpP8rTj9ZlD4gtQ3O8uGcWDfrV+pfraLhqKSdZt+z
+         3oCtGomk1K3V3mgokA2gMYUUHAL1J0DpcyOeFQ6vvMxTxIvn7FOGdTQONgLamppcA45a
+         tcFg==
+X-Gm-Message-State: AOAM530gBUoJQq6TfmIqZd5WggA+AGiy0jjB2qs4R9W0vl1+6qwexOSl
+        PlUKT27LyT78IALwi7CjFiIlphBg
+X-Google-Smtp-Source: ABdhPJy/oLGw62eQRU1A+7OxhwYHUA6OMPtfhcQ648vOdyOIXznDgsiWKRWzWoY69pr+OVBSwknOuQ==
+X-Received: by 2002:a17:902:76cb:: with SMTP id j11mr5889298plt.29.1597245428056;
+        Wed, 12 Aug 2020 08:17:08 -0700 (PDT)
+Received: from ?IPv6:2404:7a87:83e0:f800:5c24:508b:d8c0:f3b? ([2404:7a87:83e0:f800:5c24:508b:d8c0:f3b])
+        by smtp.gmail.com with ESMTPSA id mr21sm2513142pjb.57.2020.08.12.08.17.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Aug 2020 08:17:07 -0700 (PDT)
+Subject: Re: [PATCH 1/2] exfat: add dir-entry set checksum validation
+To:     Namjae Jeon <namjae.jeon@samsung.com>
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        'Sungjong Seo' <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20200807073101epcas1p43ba30d0ff54cb09f90b7dc69c746d3e6@epcas1p4.samsung.com>
+ <20200807073049.24959-1-kohada.t2@gmail.com>
+ <003e01d66ede$2c2fe620$848fb260$@samsung.com>
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+Message-ID: <55c049e9-f32a-486b-b150-79bf1fbb886c@gmail.com>
+Date:   Thu, 13 Aug 2020 00:17:05 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <5C8E0FA8-274E-4B56-9B5A-88E768D01F3A@amacapital.net> <a6cd01ed-918a-0ed7-aa87-0585db7b6852@schaufler-ca.com>
- <CAJfpegvUBpb+C2Ab=CLAwWffOaeCedr-b7ZZKZnKvF4ph1nJrw@mail.gmail.com>
- <CAG48ez3Li+HjJ6-wJwN-A84WT2MFE131Dt+6YiU96s+7NO5wkQ@mail.gmail.com>
- <CAJfpeguh5VaDBdVkV3FJtRsMAvXHWUcBfEpQrYPEuX9wYzg9dA@mail.gmail.com>
- <CAHk-=whE42mFLi8CfNcdB6Jc40tXsG3sR+ThWAFihhBwfUbczA@mail.gmail.com>
- <CAJfpegtXtj2Q1wsR-3eUNA0S=_skzHF0CEmcK_Krd8dtKkWkGA@mail.gmail.com>
- <20200812143957.GQ1236603@ZenIV.linux.org.uk> <CAJfpegvFBdp3v9VcCp-wNDjZnQF3q6cufb-8PJieaGDz14sbBg@mail.gmail.com>
- <20200812150807.GR1236603@ZenIV.linux.org.uk>
-In-Reply-To: <20200812150807.GR1236603@ZenIV.linux.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 12 Aug 2020 17:13:14 +0200
-Message-ID: <CAJfpegsQF1aN4XJ_8j977rnQESxc=Kcn7Z2C+LnVDWXo4PKhTQ@mail.gmail.com>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jann Horn <jannh@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <003e01d66ede$2c2fe620$848fb260$@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 12, 2020 at 5:08 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Wed, Aug 12, 2020 at 04:46:20PM +0200, Miklos Szeredi wrote:
->
-> > > "Can those suckers be passed to
-> > > ...at() as starting points?
-> >
-> > No.
->
-> Lovely.  And what of fchdir() to those?
+Thnak you for your reply.
 
-Not allowed.
+>> -void exfat_update_dir_chksum_with_entry_set(struct exfat_entry_set_cache *es)
+>> +static int exfat_calc_dir_chksum_with_entry_set(struct
+>> +exfat_entry_set_cache *es, u16 *chksum)
+>>   {
+>> -	int chksum_type = CS_DIR_ENTRY, i;
+>> -	unsigned short chksum = 0;
+>>   	struct exfat_dentry *ep;
+>> +	int i;
+>>
+>> -	for (i = 0; i < es->num_entries; i++) {
+>> -		ep = exfat_get_validated_dentry(es, i, TYPE_ALL);
+>> -		chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, chksum,
+>> -					     chksum_type);
+>> -		chksum_type = CS_DEFAULT;
+>> +	ep = container_of(es->de_file, struct exfat_dentry, dentry.file);
+>> +	*chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, 0, CS_DIR_ENTRY);
+>> +	for (i = 0; i < es->de_file->num_ext; i++) {
+>> +		ep = exfat_get_validated_dentry(es, 1 + i, TYPE_SECONDARY);
+>> +		if (!ep)
+>> +			return -EIO;
+>> +		*chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, *chksum, CS_DEFAULT);
+>>   	}
+>> +	return 0;
+> We can return checksum after removing u16 *chksum argument.
 
-> Are they all non-directories?
-> Because the starting point of ...at() can be simulated that way...
->
-> > >  Can they be bound in namespace?
-> >
-> > No.
-> >
-> > > Can something be bound *on* them?
-> >
-> > No.
-> >
-> > >  What do they have for inodes
-> > > and what maintains their inumbers (and st_dev, while we are at
-> > > it)?
-> >
-> > Irrelevant.  Can be some anon dev + shared inode.
-> >
-> > The only attribute of an attribute that I can think of that makes
-> > sense would be st_size, but even that is probably unimportant.
-> >
-> > >  Can _they_ have secondaries like that (sensu Swift)?
-> >
-> > Reference?
->
-> http://www.online-literature.com/swift/3515/
->         So, naturalists observe, a flea
->         Has smaller fleas that on him prey;
->         And these have smaller still to bite 'em,
->         And so proceed ad infinitum.
-> of course ;-)
-> IOW, can the things in those trees have secondary trees on them, etc.?
-> Not "will they have it in your originally intended use?" - "do we need
-> the architecture of the entire thing to be capable to deal with that?"
+I want to do that too!
+How should I return the error?
 
-No.
+Right now, I found that the type of chksum is not 'u16'.
+I'll fix in v2.
 
->
-> > > Is that a flat space, or can they be directories?"
-> >
-> > Yes it has a directory tree.   But you can't mkdir, rename, link,
-> > symlink, etc on anything in there.
->
-> That kills the "shared inode" part - you'll get deadlocks from
-> hell that way.
 
-No.  The shared inode is not for lookup, just for the open file.
+>> +}
+>> +
+>> +void exfat_update_dir_chksum_with_entry_set(struct
+>> +exfat_entry_set_cache *es) {
+>> +	u16 chksum;
+>> +
+>> +	exfat_calc_dir_chksum_with_entry_set(es, &chksum);
+>>   	es->de_file->checksum = cpu_to_le16(chksum);
+>>   	es->modified = true;
+>>   }
+>> @@ -775,6 +784,7 @@ struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
+>>   	struct exfat_entry_set_cache *es;
+>>   	struct exfat_dentry *ep;
+>>   	struct buffer_head *bh;
+>> +	u16 chksum;
+>>
+>>   	if (p_dir->dir == DIR_DELETED) {
+>>   		exfat_err(sb, "access to deleted dentry"); @@ -839,10 +849,10 @@ struct
+>> exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
+>>   		goto free_es;
+>>   	es->de_stream = &ep->dentry.stream;
+>>
+>> -	for (i = 2; i < es->num_entries; i++) {
+>> -		if (!exfat_get_validated_dentry(es, i, TYPE_SECONDARY))
+>> -			goto free_es;
+>> -	}
+>> +	if (max_entries == ES_ALL_ENTRIES &&
+>> +	    ((exfat_calc_dir_chksum_with_entry_set(es, &chksum) ||
+>> +	      chksum != le16_to_cpu(es->de_file->checksum))))
+> Please add error print log if checksum mismatch error happen.
 
->  "Can't mkdir" doesn't save you from that.  BTW,
-> what of unlink()?  If the tree shape is not a hardwired constant,
-> you get to decide how it's initially populated...
->
-> Next: what will that tree be attached to?  As in, "what's the parent
-> of its root"?  And while we are at it, what will be the struct mount
-> used with those - same as the original file, something different
-> attached to it, something created on the fly for each pathwalk and
-> lazy-umounted?  And see above re fchdir() - if they can be directories,
-> it's very much in the game.
+OK.
+I'll add in v2.
 
-Why does it have to have a struct mount?  It does not have to use
-dentry/mount based path lookup.
 
-Thanks,
-Miklos
+BR
+---
+Tetsuhiro Kohada <kohada.t2@gmail.com>
