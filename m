@@ -2,107 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D4AA2427CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 11:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB55D2427CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 11:43:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbgHLJnx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 05:43:53 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:51459 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727017AbgHLJnx (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 05:43:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597225431;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OdzUOSJMEbqrLIXBeiGU3Aa/BNw7IZScNhKdcrSD0Jw=;
-        b=MvAgy4OJZt4+1W3P50zRujnQtyNLV7VOKeMN8fgc5qVJFw2q2+znW9Odxt2CGuJGBQKE7B
-        QPkVU7ovwZX8qdZ3CZeluTgSeTKVmlQKNvt7Wgk4/0uhwNKerWu3AGi/pNWgAZmiKkVsOt
-        ROOzX2i1p+HG6HhuuhtQ85jXcwawgdw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-139-ws1TaZzyOwGDwINq-6ki_Q-1; Wed, 12 Aug 2020 05:43:50 -0400
-X-MC-Unique: ws1TaZzyOwGDwINq-6ki_Q-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4387279ED6;
-        Wed, 12 Aug 2020 09:43:48 +0000 (UTC)
-Received: from fogou.chygwyn.com (unknown [10.33.36.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7BCF019D7B;
-        Wed, 12 Aug 2020 09:43:33 +0000 (UTC)
-Subject: Re: file metadata via fs API
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1842689.1596468469@warthog.procyon.org.uk>
- <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
- <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
- <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
- <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <52483.1597190733@warthog.procyon.org.uk>
- <CAJfpegt=cQ159kEH9zCYVHV7R_08jwMxF0jKrSUV5E=uBg4Lzw@mail.gmail.com>
- <98802.1597220949@warthog.procyon.org.uk>
- <CAJfpegsVJo9e=pHf3YGWkE16fT0QaNGhgkUdq4KUQypXaD=OgQ@mail.gmail.com>
-From:   Steven Whitehouse <swhiteho@redhat.com>
-Message-ID: <d2d179c7-9b60-ca1a-0c9f-d308fc7af5ce@redhat.com>
-Date:   Wed, 12 Aug 2020 10:43:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
-MIME-Version: 1.0
-In-Reply-To: <CAJfpegsVJo9e=pHf3YGWkE16fT0QaNGhgkUdq4KUQypXaD=OgQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+        id S1726618AbgHLJnT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 05:43:19 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:37356 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726409AbgHLJnT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Aug 2020 05:43:19 -0400
+Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
+        by Forcepoint Email with ESMTPS id 68D2CE2067FFFE97BEB1;
+        Wed, 12 Aug 2020 17:43:16 +0800 (CST)
+Received: from notes_smtp.zte.com.cn (notes_smtp.zte.com.cn [10.30.1.239])
+        by mse-fl1.zte.com.cn with ESMTP id 07C9h3tN084104;
+        Wed, 12 Aug 2020 17:43:03 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2020081217432418-4584713 ;
+          Wed, 12 Aug 2020 17:43:24 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        wang.liang82@zte.com.cn, Liao Pingfang <liao.pingfang@zte.com.cn>
+Subject: [PATCH] fs: Fix some comments in open.c and read_write.c
+Date:   Wed, 12 Aug 2020 17:46:28 +0800
+Message-Id: <1597225588-7737-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2020-08-12 17:43:24,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2020-08-12 17:43:06,
+        Serialize complete at 2020-08-12 17:43:06
+X-MAIL: mse-fl1.zte.com.cn 07C9h3tN084104
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+From: Liao Pingfang <liao.pingfang@zte.com.cn>
 
-On 12/08/2020 09:37, Miklos Szeredi wrote:
-[snip]
->
-> b) The awarded performance boost is not warranted for the use cases it
-> is designed for.
->
-> Thanks,
-> Miklos
->
+Correct comments in open.c, since the parameter(opened/cred)
+is not used anymore. Also correct size to maxsize in
+read_write.c.
 
-This is a key point. One of the main drivers for this work is the 
-efficiency improvement for large numbers of mounts. Ian and Karel have 
-already provided performance measurements showing a significant benefit 
-compared with what we have today. If you want to propose this 
-alternative interface then you need to show that it can sustain similar 
-levels of performance, otherwise it doesn't solve the problem. So 
-performance numbers here would be helpful.
+Signed-off-by: Liao Pingfang <liao.pingfang@zte.com.cn>
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+---
+ fs/open.c       | 2 --
+ fs/read_write.c | 2 +-
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-Also - I may have missed this earlier in the discussion, what are the 
-atomicity guarantees with this proposal? This is the other key point for 
-the API, so it would be good to see that clearly stated (i.e. how does 
-one use it in combination with the notifications to provide an up to 
-date, consistent view of the kernel's mounts)
-
-Steve.
-
+diff --git a/fs/open.c b/fs/open.c
+index c80e9f497e9b..fa54a7d313e9 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -875,7 +875,6 @@ static int do_dentry_open(struct file *f,
+  * @file: file pointer
+  * @dentry: pointer to dentry
+  * @open: open callback
+- * @opened: state of open
+  *
+  * This can be used to finish opening a file passed to i_op->atomic_open().
+  *
+@@ -929,7 +928,6 @@ EXPORT_SYMBOL(file_path);
+  * vfs_open - open the file at the given path
+  * @path: path to open
+  * @file: newly allocated file with f_flag initialized
+- * @cred: credentials to use
+  */
+ int vfs_open(const struct path *path, struct file *file)
+ {
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 5db58b8c78d0..058563ee26fd 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -71,7 +71,7 @@ EXPORT_SYMBOL(vfs_setpos);
+  * @file:	file structure to seek on
+  * @offset:	file offset to seek to
+  * @whence:	type of seek
+- * @size:	max size of this file in file system
++ * @maxsize:	max size of this file in file system
+  * @eof:	offset used for SEEK_END position
+  *
+  * This is a variant of generic_file_llseek that allows passing in a custom
+-- 
+2.26.1
 
