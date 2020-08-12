@@ -2,99 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 986F9242721
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 10:59:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4ECF242758
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 11:19:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbgHLI7S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 04:59:18 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:57430 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726572AbgHLI7R (ORCPT
+        id S1727768AbgHLJTg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 05:19:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55332 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbgHLJTg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 04:59:17 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07C8pwEP159483;
-        Wed, 12 Aug 2020 08:59:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=fX5Hq12QB3O54zKi56LfEX/5PhMYcRNizebtS1uhJZQ=;
- b=z95BENQnuCk+9ZFmipY4ugqKKVuN5wdZa3NCOnxx8GsoNTFsTNUGlUUwRGwlJl6oq0h0
- 6DZY0KCiVtzVp/Q/gGx07HLD5UDiVXf6ffX80cbrR9My/cF85N9pfEpF4cbut05WaQy8
- 5ISY+hiv86gIwjC0VbQaLZ2GKwrbQsvMxGCH2ETye018Y7Ln6V+GTtYi1XqwiZ3dFx25
- +uQzAO8NTZZxtcWvKzwvPN98rxrnnRyYhyADWJHtS8MfKQAWHZjDPE8AERycH92HoDZH
- z0RKErQKqsotkdHJk8ta3suUVlezia62jBO0WSSNFNnWp/RaH/qd/JYpIdgEtSH6gk2G iw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 32t2ydqunn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Aug 2020 08:59:12 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07C8rLm8092500;
-        Wed, 12 Aug 2020 08:59:11 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 32t5y6cah2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Aug 2020 08:59:11 +0000
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 07C8xAgB015682;
-        Wed, 12 Aug 2020 08:59:11 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 12 Aug 2020 08:59:10 +0000
-Date:   Wed, 12 Aug 2020 11:59:04 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Peilin Ye <yepeilin.cs@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [Linux-kernel-mentees] [PATCH] hfs, hfsplus: Fix NULL pointer
- dereference in hfs_find_init()
-Message-ID: <20200812085904.GA16441@kadam>
-References: <20200812065556.869508-1-yepeilin.cs@gmail.com>
- <20200812070827.GA1304640@kroah.com>
- <20200812071306.GA869606@PWN>
+        Wed, 12 Aug 2020 05:19:36 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09026C06174A;
+        Wed, 12 Aug 2020 02:19:36 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id ep8so799372pjb.3;
+        Wed, 12 Aug 2020 02:19:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WlYNV8beXV5Vw0HrTWkAMqyzmumvTyxegzIkSbtVuJU=;
+        b=otUc5QtbHy7kSIt/M4/LTuSA7YXiAmNUh/C6x+qCsRMC+jHpMil50LbBQ66xbLUoK5
+         ANyJpms8NTqA2y2HNhSmJCPHemnYZ24bH4oL2YCG/0dfyZONk+21niOfiHqTS9Bs4Ee0
+         cuXQZx6DGGCitx0uGhzzciCgWNp6GDKlgVGoQXmjonC1E4My2mvoVq2SHFToX3IGX7/4
+         QfABa7yCRo7HRx9EaMRc5jnwjrmX8pUHfo0KlsaPP2XpHv9osdH9FaQCIDdCwIjYBr7M
+         78iEoZ1FHgbHOs8OIefPtO6gVULNk/37oTCJ6ngCJWuogz+F6QVWG9hteoTz1Iua/oWZ
+         uGCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WlYNV8beXV5Vw0HrTWkAMqyzmumvTyxegzIkSbtVuJU=;
+        b=krbOnybZkujp4g1fk25NpqaKUSwF+mT0Kzr004fUMo2TBZ78ecO+7jrPq5ZYUlp2u9
+         EAVwapnL1MrcoWptHBZA3L6+3eDCUS8+Nr2ldy7T1LfZdQby/7Cp+XNhvXqZvrds7dhl
+         +MABI/OxJlCDIzgR1avqqqnbXU1XIn24xpaCxFKeCPBbFCuBZveRnQ/7S7DVFD4rkxX5
+         gJ6HgMHQQxCWUy6yUNP+YOd2lbp+nz6gds8vpft8seqkceBkRft/5rNV+iOhr4dG+YJU
+         cU2JeSL8FdmzeLKtCE1guko1JBCOdBYCYpTe1KbDRvdDVsvXxq5pHu457OAkvrCShMlF
+         gThA==
+X-Gm-Message-State: AOAM533nCxtFa0uw+SZgVzftUkM2XUOql9XwQsXmEBvA1U2uYzzLJSv6
+        JUHCvB8o4plAV/cZJkNH7PUGvGZb
+X-Google-Smtp-Source: ABdhPJwg0+HFJ8i6X7IWQ/Zh+9/ChDwvFwCzWXvenqIcYkwbUVHcFMe5kA4mMnitN5qkPu1+crVkbQ==
+X-Received: by 2002:a17:90a:e551:: with SMTP id ei17mr5091349pjb.214.1597223975013;
+        Wed, 12 Aug 2020 02:19:35 -0700 (PDT)
+Received: from ?IPv6:2404:7a87:83e0:f800:5c24:508b:d8c0:f3b? ([2404:7a87:83e0:f800:5c24:508b:d8c0:f3b])
+        by smtp.gmail.com with ESMTPSA id 205sm1758873pfy.9.2020.08.12.02.19.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 12 Aug 2020 02:19:34 -0700 (PDT)
+Subject: Re: [PATCH v3] exfat: remove EXFAT_SB_DIRTY flag
+To:     Sungjong Seo <sj1557.seo@samsung.com>
+Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
+        mori.takahiro@ab.mitsubishielectric.co.jp,
+        motai.hirotaka@aj.mitsubishielectric.co.jp,
+        'Namjae Jeon' <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20200616021816epcas1p2bb235df44c0b6f74cdec2f12072891e3@epcas1p2.samsung.com>
+ <20200616021808.5222-1-kohada.t2@gmail.com>
+ <414101d64477$ccb661f0$662325d0$@samsung.com>
+ <aac9d6c7-1d62-a85d-9bcb-d3c0ddc8fcd6@gmail.com>
+ <500801d64572$0bdd2940$23977bc0$@samsung.com>
+ <c635e965-6b78-436a-3959-e4777e1732c1@gmail.com>
+ <000301d66dac$07b9fc00$172df400$@samsung.com>
+From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
+Message-ID: <490837eb-6765-c7be-bb80-b30fe34adb55@gmail.com>
+Date:   Wed, 12 Aug 2020 18:19:32 +0900
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200812071306.GA869606@PWN>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9710 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0
- suspectscore=0 mlxscore=0 adultscore=0 bulkscore=0 phishscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008120064
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9710 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 priorityscore=1501
- malwarescore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0
- suspectscore=0 phishscore=0 adultscore=0 spamscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008120064
+In-Reply-To: <000301d66dac$07b9fc00$172df400$@samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Yeah, the patch doesn't work at all.  I looked at one call tree and it
-is:
+>>
+>> When should VOL_DIRTY be cleared?
+>>
+>> The current behavior is ...
+>>
+>> Case of  mkdir, rmdir, rename:
+>>     - set VOL_DIRTY before operation
+>>     - set VOL_CLEAN after operating.
+>> In async mode, it is actually written to the media after 30 seconds.
+>>
+>> Case of  cp, touch:
+>>     - set VOL_DIRTY before operation
+>>     - however, VOL_CLEAN is not called in this context.
+>> VOL_CLEAN will call by sync_fs or unmount.
+>>
+>> I added VOL_CLEAN in last of __exfat_write_inode() and exfat_map_cluster().
+>> As a result, VOL_DIRTY is cleared with cp and touch.
+>> However, when copying a many files ...
+>>    - Async mode: VOL_DIRTY is written to the media twice every 30 seconds.
+>>    - Sync mode: Of course,  VOL_DIRTY and VOL_CLEAN to the media for each
+>> file.
+>>
+>> Frequent writing VOL_DIRTY and VOL_CLEAN  increases the risk of boot-
+>> sector curruption.
+>> If the boot-sector corrupted, it causes the following serious problems  on
+>> some OSs.
+>>    - misjudge as unformatted
+>>    - can't judge as exfat
+>>    - can't repair
+>>
+>> I want to minimize boot sector writes, to reduce these risk.
+>>
+>> I looked vfat/udf implementation, which manages similar dirty information
+>> on linux, and found that they ware mark-dirty at mount and cleared at
+>> unmount.
+>>
+>> Here are some ways to clear VOL_DIRTY.
+>>
+>> (A) VOL_CLEAN after every write operation.
+>>     :-) Ejectable at any time after a write operation.
+>>     :-( Many times write to Boot-sector.
+>>
+>> (B) dirty at mount, clear at unmount (same as vfat/udf)
+>>     :-) Write to boot-sector twice.
+>>     :-( It remains dirty unless unmounted.
+>>     :-( Write to boot-sector even if there is no write operation.
+>>
+>> (C) dirty on first write operation, clear on unmount
+>>     :-) Writing to boot-sector is minimal.
+>>     :-) Will not write to the boot-sector if there is no write operation.
+>>     :-( It remains dirty unless unmounted.
+>>
+>> (D) dirty on first write operation,  clear on sync-fs/unmount
+>>    :-) Writing to boot-sector can be reduced.
+>>    :-) Will not write to the boot-sector if there is no write operation.
+>>    :-) sync-fs makes it clean and ejectable immidiately.
+>>    :-( It remains dirty unless sync-fs or unmount.
+>>    :-( Frequent sync-fs will  increases writes to boot-sector.
+>>
+>> I think it should be (C) or(D).
+>> What do you think?
+>>
+> 
+> First of all, I'm sorry for the late reply.
+> And thank you for the suggestion.
 
-hfs_mdb_get() tries to allocate HFS_SB(sb)->ext_tree.
+Thanks for thinking on this complicated issue.
 
-	HFS_SB(sb)->ext_tree = hfs_btree_open(sb, HFS_EXT_CNID, hfs_ext_keycmp);
-                    ^^^^^^^^
 
-hfs_btree_open() calls page = read_mapping_page(mapping, 0, NULL);
-read_mapping_page() calls mapping->a_ops->readpage() which leads to
-hfs_readpage() which leads to hfs_ext_read_extent() which calls
-res = hfs_find_init(HFS_SB(inode->i_sb)->ext_tree, &fd);
-                                         ^^^^^^^^
+> Most of the NAND flash devices and HDDs have wear leveling and bad sector replacement algorithms applied.
+> So I think that the life of the boot sector will not be exhausted first.
 
-So we need ->ext_tree to be non-NULL before we can set ->ext_tree to be
-non-NULL...  :/
+I'm not too worried about the life of the boot-sector.
+I'm worried about write failures caused by external factors.
+(power failure/system down/vibration/etc. during writing)
+They rarely occur on SD cards, but occur on many HDDs, some SSDs and USB storages by 0.1% or more.
+Especially with AFT-HDD, not only boot-sector but also the following multiple sectors become unreadable.
+It is not possible to completely solve this problem, as long as writing to the boot-sector.
+(I think it's a exFAT's specification defect)
+The only effective way to reduce this problem is to reduce writes to the boot-sector.
 
-I wonder how long this has been broken and if we should just delete the
-AFS file system.
 
-regards,
-dan carpenter
+> Currently the volume dirty/clean policy of exfat-fs is not perfect,
+
+Thank you for sharing the problem with you.
+
+
+> but I think it behaves similarly to the policy of MS Windows.
+
+On Windows10, the dirty flag is cleared after more than 15 seconds after all write operations are completed.
+(dirty-flag is never updated during the write operation continues)
+
+
+> Therefore,
+> I think code improvements should be made to reduce volume flag records while maintaining the current policy.
+
+Current policy is inconsistent.
+As I wrote last mail, the problem with the current implementation is that the dirty-flag may not be cleared
+after the write operation.(even if sync is enabled or disabled)
+Because, some write operations clear the dirty-flag but some don't clear.
+Unmount or sync command is the only way to ensure that the dirty-flag is cleared.
+This has no effect on clearing the dirty-flag after a write operations, it only increases risk of destroying
+the boot-sector.
+  - Clear the dirty-flag after every write operation.
+  - Never clear the dirty-flag after every write operation.
+Unless unified to either one,  I think that sync policy cannot be consistent.
+
+How do you think?
+
+
+BR
+---
+etsuhiro Kohada <kohada.t2@gmail.com>
 
