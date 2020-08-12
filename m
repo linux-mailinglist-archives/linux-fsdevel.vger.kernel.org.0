@@ -2,35 +2,35 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 812A1242EFF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 21:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9098242EFC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 21:15:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbgHLTPg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1726673AbgHLTPg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 12 Aug 2020 15:15:36 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:49308 "EHLO
+Received: from linux.microsoft.com ([13.77.154.182]:49318 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbgHLTPf (ORCPT
+        with ESMTP id S1726641AbgHLTPf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 12 Aug 2020 15:15:35 -0400
 Received: from localhost.localdomain (c-73-172-233-15.hsd1.md.comcast.net [73.172.233.15])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 99B6220B490D;
-        Wed, 12 Aug 2020 12:15:33 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 99B6220B490D
+        by linux.microsoft.com (Postfix) with ESMTPSA id 66F1C20B490F;
+        Wed, 12 Aug 2020 12:15:34 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 66F1C20B490F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1597259734;
-        bh=h0J5zXRS82FdnJWHfZ2GyfbHIqLimH6f5CETRRANugM=;
+        s=default; t=1597259735;
+        bh=TWaa5J7FL27uITC423BFjVEEdl8/5m1i6QAGc4Mk748=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IPTNf+AAB/gHjcp2nEVZ6YE01NMHqQtqWFgNJwZIqNz/7TOAX7osA0GmBz4Nc6Xn0
-         yxQyzxWltKqjadSD71S8O00cedJjVAV0Z3qBhmEb2s49vO2o77OQi4n80GwzjRV19C
-         L6WkY/oxHDSpefMCYmHlDx66SVcqQtePhVxmuT78=
+        b=hOva4hYJRXvonlUrfkYrNKYzSAFdxngxjLgWb9GRx9nlZRkNv2x77vkzJJXv9fRac
+         sC/4Clc6TfsYiV19d43DzkUgij6dJmT5t3wfhOioXm1nAeSXmMqQDueWm8kIMaAGsT
+         V8HGo5ggoNYz7TWKjVWH6OAsDXz7yYhMD8FzT/0o=
 From:   Daniel Burgener <dburgener@linux.microsoft.com>
 To:     selinux@vger.kernel.org
 Cc:     stephen.smalley.work@gmail.com, omosnace@redhat.com,
         paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
         viro@zeniv.linux.org.uk
-Subject: [PATCH v2 2/4] selinux: Refactor selinuxfs directory populating functions
-Date:   Wed, 12 Aug 2020 15:15:23 -0400
-Message-Id: <20200812191525.1120850-3-dburgener@linux.microsoft.com>
+Subject: [PATCH v2 3/4] selinux: Standardize string literal usage for selinuxfs directory names
+Date:   Wed, 12 Aug 2020 15:15:24 -0400
+Message-Id: <20200812191525.1120850-4-dburgener@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20200812191525.1120850-1-dburgener@linux.microsoft.com>
 References: <20200812191525.1120850-1-dburgener@linux.microsoft.com>
@@ -41,140 +41,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make sel_make_bools and sel_make_classes take the specific elements of
-selinux_fs_info that they need rather than the entire struct.
-
-This will allow a future patch to pass temporary elements that are not in
-the selinux_fs_info struct to these functions so that the original elements
-can be preserved until we are ready to perform the switch over.
+Switch class and policy_capabilities directory names to be referred to with
+global constants, consistent with booleans directory name.  This will allow
+for easy consistency of naming in future development.
 
 Signed-off-by: Daniel Burgener <dburgener@linux.microsoft.com>
 ---
- security/selinux/selinuxfs.c | 45 ++++++++++++++++++++----------------
- 1 file changed, 25 insertions(+), 20 deletions(-)
+ security/selinux/selinuxfs.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index fc914facb48f..9657c3acfc8f 100644
+index 9657c3acfc8f..f09afdb90ddd 100644
 --- a/security/selinux/selinuxfs.c
 +++ b/security/selinux/selinuxfs.c
-@@ -346,10 +346,12 @@ static const struct file_operations sel_policyvers_ops = {
- };
+@@ -117,6 +117,10 @@ static void selinux_fs_info_free(struct super_block *sb)
+ #define SEL_POLICYCAP_INO_OFFSET	0x08000000
+ #define SEL_INO_MASK			0x00ffffff
  
- /* declaration for sel_write_load */
--static int sel_make_bools(struct selinux_fs_info *fsi,
--			struct selinux_policy *newpolicy);
--static int sel_make_classes(struct selinux_fs_info *fsi,
--			struct selinux_policy *newpolicy);
-+static int sel_make_bools(struct selinux_policy *newpolicy, struct dentry *bool_dir,
-+			  unsigned int *bool_num, char ***bool_pending_names,
-+			  unsigned int **bool_pending_values);
-+static int sel_make_classes(struct selinux_policy *newpolicy,
-+			    struct dentry *class_dir,
-+			    unsigned long *last_class_ino);
- 
- /* declaration for sel_make_class_dirs */
- static struct dentry *sel_make_dir(struct dentry *dir, const char *name,
-@@ -541,13 +543,15 @@ static int sel_make_policy_nodes(struct selinux_fs_info *fsi,
- 
- 	sel_remove_old_policy_nodes(fsi);
- 
--	ret = sel_make_bools(fsi, newpolicy);
-+	ret = sel_make_bools(newpolicy, fsi->bool_dir, &fsi->bool_num,
-+			     &fsi->bool_pending_names, &fsi->bool_pending_values);
- 	if (ret) {
- 		pr_err("SELinux: failed to load policy booleans\n");
- 		return ret;
- 	}
- 
--	ret = sel_make_classes(fsi, newpolicy);
-+	ret = sel_make_classes(newpolicy, fsi->class_dir,
-+			       &fsi->last_class_ino);
- 	if (ret) {
- 		pr_err("SELinux: failed to load policy classes\n");
- 		return ret;
-@@ -1361,13 +1365,13 @@ static void sel_remove_entries(struct dentry *de)
- 
- #define BOOL_DIR_NAME "booleans"
- 
--static int sel_make_bools(struct selinux_fs_info *fsi,
--			struct selinux_policy *newpolicy)
-+static int sel_make_bools(struct selinux_policy *newpolicy, struct dentry *bool_dir,
-+			  unsigned int *bool_num, char ***bool_pending_names,
-+			  unsigned int **bool_pending_values)
- {
- 	int ret;
- 	ssize_t len;
- 	struct dentry *dentry = NULL;
--	struct dentry *dir = fsi->bool_dir;
- 	struct inode *inode = NULL;
- 	struct inode_security_struct *isec;
- 	char **names = NULL, *page;
-@@ -1386,12 +1390,12 @@ static int sel_make_bools(struct selinux_fs_info *fsi,
- 
- 	for (i = 0; i < num; i++) {
- 		ret = -ENOMEM;
--		dentry = d_alloc_name(dir, names[i]);
-+		dentry = d_alloc_name(bool_dir, names[i]);
- 		if (!dentry)
- 			goto out;
- 
- 		ret = -ENOMEM;
--		inode = sel_make_inode(dir->d_sb, S_IFREG | S_IRUGO | S_IWUSR);
-+		inode = sel_make_inode(bool_dir->d_sb, S_IFREG | S_IRUGO | S_IWUSR);
- 		if (!inode) {
- 			dput(dentry);
- 			goto out;
-@@ -1420,9 +1424,9 @@ static int sel_make_bools(struct selinux_fs_info *fsi,
- 		inode->i_ino = i|SEL_BOOL_INO_OFFSET;
- 		d_add(dentry, inode);
- 	}
--	fsi->bool_num = num;
--	fsi->bool_pending_names = names;
--	fsi->bool_pending_values = values;
-+	*bool_num = num;
-+	*bool_pending_names = names;
-+	*bool_pending_values = values;
- 
- 	free_page((unsigned long)page);
- 	return 0;
-@@ -1435,7 +1439,7 @@ static int sel_make_bools(struct selinux_fs_info *fsi,
- 		kfree(names);
- 	}
- 	kfree(values);
--	sel_remove_entries(dir);
-+	sel_remove_entries(bool_dir);
- 
- 	return ret;
- }
-@@ -1882,8 +1886,9 @@ static int sel_make_class_dir_entries(struct selinux_policy *newpolicy,
- 	return rc;
++#define BOOL_DIR_NAME "booleans"
++#define CLASS_DIR_NAME "class"
++#define POLICYCAP_DIR_NAME "policy_capabilities"
++
+ #define TMPBUFLEN	12
+ static ssize_t sel_read_enforce(struct file *filp, char __user *buf,
+ 				size_t count, loff_t *ppos)
+@@ -1363,8 +1367,6 @@ static void sel_remove_entries(struct dentry *de)
+ 	shrink_dcache_parent(de);
  }
  
--static int sel_make_classes(struct selinux_fs_info *fsi,
--			struct selinux_policy *newpolicy)
-+static int sel_make_classes(struct selinux_policy *newpolicy,
-+			    struct dentry *class_dir,
-+			    unsigned long *last_class_ino)
- {
+-#define BOOL_DIR_NAME "booleans"
+-
+ static int sel_make_bools(struct selinux_policy *newpolicy, struct dentry *bool_dir,
+ 			  unsigned int *bool_num, char ***bool_pending_names,
+ 			  unsigned int **bool_pending_values)
+@@ -2080,14 +2082,14 @@ static int sel_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	if (ret)
+ 		goto err;
  
- 	int rc, nclasses, i;
-@@ -1894,13 +1899,13 @@ static int sel_make_classes(struct selinux_fs_info *fsi,
- 		return rc;
+-	fsi->class_dir = sel_make_dir(sb->s_root, "class", &fsi->last_ino);
++	fsi->class_dir = sel_make_dir(sb->s_root, CLASS_DIR_NAME, &fsi->last_ino);
+ 	if (IS_ERR(fsi->class_dir)) {
+ 		ret = PTR_ERR(fsi->class_dir);
+ 		fsi->class_dir = NULL;
+ 		goto err;
+ 	}
  
- 	/* +2 since classes are 1-indexed */
--	fsi->last_class_ino = sel_class_to_ino(nclasses + 2);
-+	*last_class_ino = sel_class_to_ino(nclasses + 2);
- 
- 	for (i = 0; i < nclasses; i++) {
- 		struct dentry *class_name_dir;
- 
--		class_name_dir = sel_make_dir(fsi->class_dir, classes[i],
--					      &fsi->last_class_ino);
-+		class_name_dir = sel_make_dir(class_dir, classes[i],
-+					      last_class_ino);
- 		if (IS_ERR(class_name_dir)) {
- 			rc = PTR_ERR(class_name_dir);
- 			goto out;
+-	fsi->policycap_dir = sel_make_dir(sb->s_root, "policy_capabilities",
++	fsi->policycap_dir = sel_make_dir(sb->s_root, POLICYCAP_DIR_NAME,
+ 					  &fsi->last_ino);
+ 	if (IS_ERR(fsi->policycap_dir)) {
+ 		ret = PTR_ERR(fsi->policycap_dir);
 -- 
 2.25.4
 
