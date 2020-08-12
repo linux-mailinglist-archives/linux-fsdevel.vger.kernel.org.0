@@ -2,247 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D21592423D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 03:43:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30FE82423FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 04:16:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbgHLBno (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 21:43:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41836 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbgHLBno (ORCPT
+        id S1726468AbgHLCQU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 22:16:20 -0400
+Received: from mail-il1-f199.google.com ([209.85.166.199]:55758 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726355AbgHLCQT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 21:43:44 -0400
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050::465:101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04E1EC06174A;
-        Tue, 11 Aug 2020 18:43:44 -0700 (PDT)
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4BRCCc5sllzKmjr;
-        Wed, 12 Aug 2020 03:43:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id MgTaKt_bYsTh; Wed, 12 Aug 2020 03:43:36 +0200 (CEST)
-Date:   Wed, 12 Aug 2020 11:43:24 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Ross Zwisler <zwisler@chromium.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org,
-        Mattias Nissler <mnissler@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Gordon <bmgordon@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Jesse Barnes <jsbarnes@google.com>,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Micah Morton <mortonm@google.com>,
-        Raul Rangel <rrangel@google.com>,
-        Ross Zwisler <zwisler@google.com>
-Subject: Re: [PATCH v7] Add a "nosymfollow" mount option.
-Message-ID: <20200812014324.rtvlhvopifgkw4mi@yavin.dot.cyphar.com>
-References: <20200811222803.3224434-1-zwisler@google.com>
+        Tue, 11 Aug 2020 22:16:19 -0400
+Received: by mail-il1-f199.google.com with SMTP id q17so695203ile.22
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Aug 2020 19:16:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=NNCxy25Gvyij/389iQlJ89u2Pz3SqdiYvWLTR0AE4O8=;
+        b=CM0kU9z9Tdm/m9wQfey3Zodps1r1uhxMJrYwzr2xjWWT7uigXapLSdPr0ePfs9cbp2
+         2+pPhR5T2DilLRlLStVruYpFWPfyiGr65aqUZxNqOJJe5kT7epfXUxVwf1NnUsKREj5B
+         en/F3mAqSQuwW0epAFFDPafsAh5cfrtvWh/NrjcknclGjSbG66TJRNkXrDmhabNlUXB3
+         /incTZHgCeiBV4TQVvwT/09DakVHXNNx8yDBlQB+YdD4F0Coic8o+9C1XONbHJQJhGnD
+         RVTgqOldJ+DoYTkTj7MgN+/mVfSP7KUNWTVgBNvpq33/+6omNXQccDdKJaMeRAwH66n7
+         y9VQ==
+X-Gm-Message-State: AOAM530hSdcUKT7gW5r/I+/SNUXeV1whbmVgWh55lLZKTNt5NsrfijMy
+        3CMCKTlAw5lo3l6byhIDwxyuTypSPjefz+ruj+Cks232Vm3E
+X-Google-Smtp-Source: ABdhPJwNMFFhKuLifgs5sVAm3qlVQwWlzTLqn0XgcmQt3wpKSQlnCTt43sGaeI0lxHeABUahCY05/+sVSYHLc70+VvLMIZfwntuY
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cin4lu5msomn5ja6"
-Content-Disposition: inline
-In-Reply-To: <20200811222803.3224434-1-zwisler@google.com>
-X-MBO-SPAM-Probability: 
-X-Rspamd-Score: -10.21 / 15.00 / 15.00
-X-Rspamd-Queue-Id: 30C491816
-X-Rspamd-UID: 9b5518
+X-Received: by 2002:a02:dc3:: with SMTP id 186mr28483226jax.46.1597198578332;
+ Tue, 11 Aug 2020 19:16:18 -0700 (PDT)
+Date:   Tue, 11 Aug 2020 19:16:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e5b60405aca4c517@google.com>
+Subject: KASAN: use-after-free Read in __io_req_task_submit
+From:   syzbot <syzbot+3c72ce3136524268d7af@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello,
 
---cin4lu5msomn5ja6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot found the following issue on:
 
-On 2020-08-11, Ross Zwisler <zwisler@chromium.org> wrote:
-> From: Mattias Nissler <mnissler@chromium.org>
->=20
-> For mounts that have the new "nosymfollow" option, don't follow symlinks
-> when resolving paths. The new option is similar in spirit to the
-> existing "nodev", "noexec", and "nosuid" options, as well as to the
-> LOOKUP_NO_SYMLINKS resolve flag in the openat2(2) syscall. Various BSD
-> variants have been supporting the "nosymfollow" mount option for a long
-> time with equivalent implementations.
->=20
-> Note that symlinks may still be created on file systems mounted with
-> the "nosymfollow" option present. readlink() remains functional, so
-> user space code that is aware of symlinks can still choose to follow
-> them explicitly.
->=20
-> Setting the "nosymfollow" mount option helps prevent privileged
-> writers from modifying files unintentionally in case there is an
-> unexpected link along the accessed path. The "nosymfollow" option is
-> thus useful as a defensive measure for systems that need to deal with
-> untrusted file systems in privileged contexts.
->=20
-> More information on the history and motivation for this patch can be
-> found here:
->=20
-> https://sites.google.com/a/chromium.org/dev/chromium-os/chromiumos-design=
--docs/hardening-against-malicious-stateful-data#TOC-Restricting-symlink-tra=
-versal
+HEAD commit:    00e4db51 Merge tag 'perf-tools-2020-08-10' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13829022900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=64a3282e09356140
+dashboard link: https://syzkaller.appspot.com/bug?extid=3c72ce3136524268d7af
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1612cee2900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e3b1b2900000
 
-Looks good. Did you plan to add an in-tree test for this (you could
-shove it in tools/testing/selftests/mount)?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3c72ce3136524268d7af@syzkaller.appspotmail.com
 
-Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
+==================================================================
+BUG: KASAN: use-after-free in instrument_atomic_read include/linux/instrumented.h:56 [inline]
+BUG: KASAN: use-after-free in atomic64_read include/asm-generic/atomic-instrumented.h:837 [inline]
+BUG: KASAN: use-after-free in atomic_long_read include/asm-generic/atomic-long.h:29 [inline]
+BUG: KASAN: use-after-free in __mutex_unlock_slowpath+0x8e/0x610 kernel/locking/mutex.c:1237
+Read of size 8 at addr ffff88809de9c3c0 by task syz-executor338/1394
 
-> Signed-off-by: Mattias Nissler <mnissler@chromium.org>
-> Signed-off-by: Ross Zwisler <zwisler@google.com>
-> ---
-> Changes since v6 [1]:
->  * Rebased onto v5.8.
->  * Another round of testing including readlink(1), readlink(2),
->    realpath(1), realpath(3), statfs(2) and mount(2) to make sure
->    everything still works.
->=20
-> After this lands I will upstream changes to util-linux[2] and man-pages
-> [3].
->=20
-> [1]: https://lkml.org/lkml/2020/3/4/770
-> [2]: https://github.com/rzwisler/util-linux/commit/7f8771acd85edb70d97921=
-c026c55e1e724d4e15
-> [3]: https://github.com/rzwisler/man-pages/commit/b8fe8079f64b5068940c014=
-4586e580399a71668
-> ---
->  fs/namei.c                 | 3 ++-
->  fs/namespace.c             | 2 ++
->  fs/proc_namespace.c        | 1 +
->  fs/statfs.c                | 2 ++
->  include/linux/mount.h      | 3 ++-
->  include/linux/statfs.h     | 1 +
->  include/uapi/linux/mount.h | 1 +
->  7 files changed, 11 insertions(+), 2 deletions(-)
->=20
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 72d4219c93acb..ed68478fb1fb6 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -1626,7 +1626,8 @@ static const char *pick_link(struct nameidata *nd, =
-struct path *link,
->  			return ERR_PTR(error);
->  	}
-> =20
-> -	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS))
-> +	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS) ||
-> +			unlikely(nd->path.mnt->mnt_flags & MNT_NOSYMFOLLOW))
->  		return ERR_PTR(-ELOOP);
-> =20
->  	if (!(nd->flags & LOOKUP_RCU)) {
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 4a0f600a33285..1cbbf5a9b954f 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -3167,6 +3167,8 @@ long do_mount(const char *dev_name, const char __us=
-er *dir_name,
->  		mnt_flags &=3D ~(MNT_RELATIME | MNT_NOATIME);
->  	if (flags & MS_RDONLY)
->  		mnt_flags |=3D MNT_READONLY;
-> +	if (flags & MS_NOSYMFOLLOW)
-> +		mnt_flags |=3D MNT_NOSYMFOLLOW;
-> =20
->  	/* The default atime for remount is preservation */
->  	if ((flags & MS_REMOUNT) &&
-> diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-> index 3059a9394c2d6..e59d4bb3a89e4 100644
-> --- a/fs/proc_namespace.c
-> +++ b/fs/proc_namespace.c
-> @@ -70,6 +70,7 @@ static void show_mnt_opts(struct seq_file *m, struct vf=
-smount *mnt)
->  		{ MNT_NOATIME, ",noatime" },
->  		{ MNT_NODIRATIME, ",nodiratime" },
->  		{ MNT_RELATIME, ",relatime" },
-> +		{ MNT_NOSYMFOLLOW, ",nosymfollow" },
->  		{ 0, NULL }
->  	};
->  	const struct proc_fs_opts *fs_infop;
-> diff --git a/fs/statfs.c b/fs/statfs.c
-> index 2616424012ea7..59f33752c1311 100644
-> --- a/fs/statfs.c
-> +++ b/fs/statfs.c
-> @@ -29,6 +29,8 @@ static int flags_by_mnt(int mnt_flags)
->  		flags |=3D ST_NODIRATIME;
->  	if (mnt_flags & MNT_RELATIME)
->  		flags |=3D ST_RELATIME;
-> +	if (mnt_flags & MNT_NOSYMFOLLOW)
-> +		flags |=3D ST_NOSYMFOLLOW;
->  	return flags;
->  }
-> =20
-> diff --git a/include/linux/mount.h b/include/linux/mount.h
-> index de657bd211fa6..aaf343b38671c 100644
-> --- a/include/linux/mount.h
-> +++ b/include/linux/mount.h
-> @@ -30,6 +30,7 @@ struct fs_context;
->  #define MNT_NODIRATIME	0x10
->  #define MNT_RELATIME	0x20
->  #define MNT_READONLY	0x40	/* does the user want this to be r/o? */
-> +#define MNT_NOSYMFOLLOW	0x80
-> =20
->  #define MNT_SHRINKABLE	0x100
->  #define MNT_WRITE_HOLD	0x200
-> @@ -46,7 +47,7 @@ struct fs_context;
->  #define MNT_SHARED_MASK	(MNT_UNBINDABLE)
->  #define MNT_USER_SETTABLE_MASK  (MNT_NOSUID | MNT_NODEV | MNT_NOEXEC \
->  				 | MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME \
-> -				 | MNT_READONLY)
-> +				 | MNT_READONLY | MNT_NOSYMFOLLOW)
->  #define MNT_ATIME_MASK (MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME )
-> =20
->  #define MNT_INTERNAL_FLAGS (MNT_SHARED | MNT_WRITE_HOLD | MNT_INTERNAL |=
- \
-> diff --git a/include/linux/statfs.h b/include/linux/statfs.h
-> index 9bc69edb8f188..fac4356ea1bfc 100644
-> --- a/include/linux/statfs.h
-> +++ b/include/linux/statfs.h
-> @@ -40,6 +40,7 @@ struct kstatfs {
->  #define ST_NOATIME	0x0400	/* do not update access times */
->  #define ST_NODIRATIME	0x0800	/* do not update directory access times */
->  #define ST_RELATIME	0x1000	/* update atime relative to mtime/ctime */
-> +#define ST_NOSYMFOLLOW	0x2000	/* do not follow symlinks */
-> =20
->  struct dentry;
->  extern int vfs_get_fsid(struct dentry *dentry, __kernel_fsid_t *fsid);
-> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-> index 96a0240f23fed..dd8306ea336c1 100644
-> --- a/include/uapi/linux/mount.h
-> +++ b/include/uapi/linux/mount.h
-> @@ -16,6 +16,7 @@
->  #define MS_REMOUNT	32	/* Alter flags of a mounted FS */
->  #define MS_MANDLOCK	64	/* Allow mandatory locks on an FS */
->  #define MS_DIRSYNC	128	/* Directory modifications are synchronous */
-> +#define MS_NOSYMFOLLOW	256	/* Do not follow symlinks */
->  #define MS_NOATIME	1024	/* Do not update access times. */
->  #define MS_NODIRATIME	2048	/* Do not update directory access times */
->  #define MS_BIND		4096
-> --=20
-> 2.28.0.236.gb10cc79966-goog
->=20
+CPU: 1 PID: 1394 Comm: syz-executor338 Not tainted 5.8.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x18f/0x20d lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:383
+ __kasan_report mm/kasan/report.c:513 [inline]
+ kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
+ check_memory_region_inline mm/kasan/generic.c:186 [inline]
+ check_memory_region+0x13d/0x180 mm/kasan/generic.c:192
+ instrument_atomic_read include/linux/instrumented.h:56 [inline]
+ atomic64_read include/asm-generic/atomic-instrumented.h:837 [inline]
+ atomic_long_read include/asm-generic/atomic-long.h:29 [inline]
+ __mutex_unlock_slowpath+0x8e/0x610 kernel/locking/mutex.c:1237
+ __io_req_task_submit+0x8a/0xe0 fs/io_uring.c:1760
+ task_work_run+0xdd/0x190 kernel/task_work.c:135
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:139 [inline]
+ exit_to_user_mode_prepare+0x1aa/0x1d0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x59/0x2b0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x449b99
+Code: e8 3c e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b 06 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f4c0bec2cf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: 0000000000000000 RBX: 00000000006e5a38 RCX: 0000000000449b99
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00000000006e5a38
+RBP: 00000000006e5a30 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006e5a3c
+R13: 00007ffdb6e3600f R14: 00007f4c0bec39c0 R15: 20c49ba5e353f7cf
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+Allocated by task 1347:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:461
+ kmem_cache_alloc_trace+0x16e/0x2c0 mm/slab.c:3550
+ kmalloc include/linux/slab.h:554 [inline]
+ kzalloc include/linux/slab.h:666 [inline]
+ io_ring_ctx_alloc fs/io_uring.c:1030 [inline]
+ io_uring_create fs/io_uring.c:8308 [inline]
+ io_uring_setup+0x4df/0x28c0 fs/io_uring.c:8401
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
---cin4lu5msomn5ja6
-Content-Type: application/pgp-signature; name="signature.asc"
+Freed by task 6838:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
+ kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0xd8/0x120 mm/kasan/common.c:422
+ __cache_free mm/slab.c:3418 [inline]
+ kfree+0x103/0x2c0 mm/slab.c:3756
+ process_one_work+0x94c/0x1670 kernel/workqueue.c:2269
+ worker_thread+0x64c/0x1120 kernel/workqueue.c:2415
+ kthread+0x3b5/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
 
------BEGIN PGP SIGNATURE-----
+Last call_rcu():
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2894 [inline]
+ call_rcu+0x14f/0x7e0 kernel/rcu/tree.c:2968
+ __percpu_ref_switch_to_atomic lib/percpu-refcount.c:192 [inline]
+ __percpu_ref_switch_mode+0x365/0x700 lib/percpu-refcount.c:237
+ percpu_ref_kill_and_confirm+0x94/0x350 lib/percpu-refcount.c:350
+ percpu_ref_kill include/linux/percpu-refcount.h:136 [inline]
+ io_ring_ctx_wait_and_kill+0x38/0x600 fs/io_uring.c:7797
+ io_uring_release+0x3e/0x50 fs/io_uring.c:7829
+ __fput+0x285/0x920 fs/file_table.c:281
+ task_work_run+0xdd/0x190 kernel/task_work.c:135
+ tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:139 [inline]
+ exit_to_user_mode_prepare+0x1aa/0x1d0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x59/0x2b0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXzNJLQAKCRCdlLljIbnQ
-EsDjAQDDwisyM9fOuV+Ed0MJ00dzw040RQ7+LVK/5aoQkBbRmQEAr67/mlNPDrRB
-npO+QCicLL7SvDb22zFE3wueer23Hwk=
-=Fd7y
------END PGP SIGNATURE-----
+Second to last call_rcu():
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2894 [inline]
+ call_rcu+0x14f/0x7e0 kernel/rcu/tree.c:2968
+ __percpu_ref_switch_to_atomic lib/percpu-refcount.c:192 [inline]
+ __percpu_ref_switch_mode+0x365/0x700 lib/percpu-refcount.c:237
+ percpu_ref_kill_and_confirm+0x94/0x350 lib/percpu-refcount.c:350
+ percpu_ref_kill include/linux/percpu-refcount.h:136 [inline]
+ io_ring_ctx_wait_and_kill+0x38/0x600 fs/io_uring.c:7797
+ io_uring_release+0x3e/0x50 fs/io_uring.c:7829
+ __fput+0x285/0x920 fs/file_table.c:281
+ task_work_run+0xdd/0x190 kernel/task_work.c:135
+ exit_task_work include/linux/task_work.h:25 [inline]
+ do_exit+0xb7d/0x29f0 kernel/exit.c:806
+ do_group_exit+0x125/0x310 kernel/exit.c:903
+ get_signal+0x40b/0x1ee0 kernel/signal.c:2743
+ arch_do_signal+0x82/0x2520 arch/x86/kernel/signal.c:811
+ exit_to_user_mode_loop kernel/entry/common.c:135 [inline]
+ exit_to_user_mode_prepare+0x172/0x1d0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x59/0x2b0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
---cin4lu5msomn5ja6--
+The buggy address belongs to the object at ffff88809de9c000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 960 bytes inside of
+ 2048-byte region [ffff88809de9c000, ffff88809de9c800)
+The buggy address belongs to the page:
+page:00000000f914c910 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x9de9c
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffffea0002422c08 ffffea0002765948 ffff8880aa040800
+raw: 0000000000000000 ffff88809de9c000 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88809de9c280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88809de9c300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88809de9c380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                           ^
+ ffff88809de9c400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88809de9c480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
