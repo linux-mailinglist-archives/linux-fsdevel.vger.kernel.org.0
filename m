@@ -2,119 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77A26242F1B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 21:23:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DC29242F68
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 21:34:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbgHLTXe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 15:23:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35252 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbgHLTXd (ORCPT
+        id S1726773AbgHLTea (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 15:34:30 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47115 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726756AbgHLTe2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 15:23:33 -0400
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEEDFC061383;
-        Wed, 12 Aug 2020 12:23:33 -0700 (PDT)
-Received: by mail-ot1-x342.google.com with SMTP id k12so2904933otr.1;
-        Wed, 12 Aug 2020 12:23:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P3Cr4pfPW/YIMfrMO6Kop+sRalHz9diw410o8LHQ/e4=;
-        b=IJJWjqChkDN7AxslJValrnXD0Nk6xe9QloctxKFdCrofiMt2mIufNNb/1MGHukP5eh
-         fC9RA8ZfP1m6vDPBsR40Z7rozTQcN2nC8dh/Xu7C8PEKOaKPXw+w6PErZPBGJ7eb0Olt
-         0D1VJFkiVcpAt+trbAx3RRm2pHS+qVI7e7LZ8VJSNut9qQgMq87KMAWkCF5FbFaaH9Xz
-         0j/hS9NfpgbW9uX12feHv1PSpgaGQGJKNzxn8kdqYHd4VC1/XPl/KpBeztLdAvKEam4K
-         +TiAkPKlEt9fcQaqqHuDSWx+UnrUUwwGrgsnReFWO3XS62M01QyL1oBFSrtoVZAVAhht
-         zstw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P3Cr4pfPW/YIMfrMO6Kop+sRalHz9diw410o8LHQ/e4=;
-        b=QGrSI8vhPLvfNKxQElL0SkN5Z6M3BHlrZCiCBBd+EThFvBqaBsZKfJDb+2dQ5bDg1s
-         GsIr+DfCI2ZZ97JSPAJmZwhyHMrl9xZ/EB2+q1T1EvJrVdztsbisnNqvT0rK5xWKs50w
-         w3JnzYXrzXTbZJwpV2nXdg8R+iopErM929ycVeE5q2i6brs3SBfwUJSY/V5Dz+VcuDlH
-         Uib9LyUSt8W3F1eCkpCxi+dSDbxzwRGCJ8LTMgisTQFRZcc3nbZRprybd8Vv89ydg9rC
-         CEiz4Lk7VZ/luxUtA0Cn1w6bTlVyMYx3FF/cNs9o1S4mTxwg+ijPztqxxe5nonONhiH4
-         2rpw==
-X-Gm-Message-State: AOAM531q2oaDdJBsTUvdsR15rg2TS+8Dbq8ifGHsZFRfeolsrv6QFtZT
-        ZARZy1VzJuv072W3MibcUS+1iMRL64Ra6PF9bxs=
-X-Google-Smtp-Source: ABdhPJwj7n8XKdePeQxHzI7WTX70roxjqjWF2x4UouMgk2LTW19UlThhC6SmyW2s2o29f7MbMfFsg/haBYQCPy+b+Rg=
-X-Received: by 2002:a9d:67d3:: with SMTP id c19mr1166532otn.162.1597260212865;
- Wed, 12 Aug 2020 12:23:32 -0700 (PDT)
+        Wed, 12 Aug 2020 15:34:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597260866;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9pSEoniKEkFNSbD4TVkJ4Otoswkj5jDImE3i/ppi82o=;
+        b=XzEheugoQtlYzcbFfnnod43CgVF2mWOJpalaOEUxK3g4qw1aIxdwyNUjylFSg6SfLh7CQL
+        /pqYKVFNw3SYlGWlkz9+MJfTiO+8FQ5cDP/3RsfzwQ7Qnti5UnZ995C0oTFG4kwcS8ImcL
+        pCo4h9En890oxqdIb7vYMlwsXe8e7aY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-394-PsWf2ViBP-2ePLGug1Gcog-1; Wed, 12 Aug 2020 15:34:23 -0400
+X-MC-Unique: PsWf2ViBP-2ePLGug1Gcog-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B39E61902EB3;
+        Wed, 12 Aug 2020 19:34:20 +0000 (UTC)
+Received: from fogou.chygwyn.com (unknown [10.33.36.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 239A3100AE52;
+        Wed, 12 Aug 2020 19:34:13 +0000 (UTC)
+Subject: Re: file metadata via fs API
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1842689.1596468469@warthog.procyon.org.uk>
+ <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
+ <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk>
+ <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+From:   Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com>
+Date:   Wed, 12 Aug 2020 20:34:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-References: <20200812191525.1120850-1-dburgener@linux.microsoft.com> <20200812191525.1120850-2-dburgener@linux.microsoft.com>
-In-Reply-To: <20200812191525.1120850-2-dburgener@linux.microsoft.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Wed, 12 Aug 2020 15:21:58 -0400
-Message-ID: <CAEjxPJ61+Dusa-i_uggdGDQ-3iGb7+JDJkbsC48DpKpx_gEJSA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] selinux: Create function for selinuxfs directory cleanup
-To:     Daniel Burgener <dburgener@linux.microsoft.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 12, 2020 at 3:15 PM Daniel Burgener
-<dburgener@linux.microsoft.com> wrote:
->
-> Separating the cleanup from the creation will simplify two things in
-> future patches in this series.  First, the creation can be made generic,
-> to create directories not tied to the selinux_fs_info structure.  Second,
-> we will ultimately want to reorder creation and deletion so that the
-> deletions aren't performed until the new directory structures have already
-> been moved into place.
->
-> Signed-off-by: Daniel Burgener <dburgener@linux.microsoft.com>
-> ---
->  security/selinux/selinuxfs.c | 41 ++++++++++++++++++++++++------------
->  1 file changed, 27 insertions(+), 14 deletions(-)
->
-> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> index 131816878e50..fc914facb48f 100644
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@ -355,6 +355,9 @@ static int sel_make_classes(struct selinux_fs_info *fsi,
->  static struct dentry *sel_make_dir(struct dentry *dir, const char *name,
->                         unsigned long *ino);
->
-> +/* declaration for sel_remove_old_policy_nodes */
-> +static void sel_remove_entries(struct dentry *de);
-> +
->  static ssize_t sel_read_mls(struct file *filp, char __user *buf,
->                                 size_t count, loff_t *ppos)
->  {
-> @@ -509,11 +512,35 @@ static const struct file_operations sel_policy_ops = {
->         .llseek         = generic_file_llseek,
->  };
->
-> +static void sel_remove_old_policy_nodes(struct selinux_fs_info *fsi)
-> +{
-> +       u32 i;
-> +
-> +       /* bool_dir cleanup */
-> +       for (i = 0; i < fsi->bool_num; i++)
-> +               kfree(fsi->bool_pending_names[i]);
-> +       kfree(fsi->bool_pending_names);
-> +       kfree(fsi->bool_pending_values);
-> +       fsi->bool_num = 0;
-> +       fsi->bool_pending_names = NULL;
-> +       fsi->bool_pending_values = NULL;
-> +
-> +       sel_remove_entries(fsi->bool_dir);
-> +
-> +       /* class_dir cleanup */
-> +       sel_remove_entries(fsi->class_dir);
-> +
-> +       /* policycap_dir cleanup */
-> +       sel_remove_entries(fsi->policycap_dir);
+Hi,
 
-This one shouldn't have its entries removed anymore.
+On 12/08/2020 19:18, Linus Torvalds wrote:
+> On Tue, Aug 11, 2020 at 5:05 PM David Howells <dhowells@redhat.com> wrote:
+>> Well, the start of it was my proposal of an fsinfo() system call.
+> Ugh. Ok, it's that thing.
+>
+> This all seems *WAY* over-designed - both your fsinfo and Miklos' version.
+>
+> What's wrong with fstatfs()? All the extra magic metadata seems to not
+> really be anything people really care about.
+>
+> What people are actually asking for seems to be some unique mount ID,
+> and we have 16 bytes of spare information in 'struct statfs64'.
+>
+> All the other fancy fsinfo stuff seems to be "just because", and like
+> complete overdesign.
+>
+> Let's not add system calls just because we can.
+>
+>               Linus
+>
+
+The point of this is to give us the ability to monitor mounts from 
+userspace. The original inspiration was rtnetlink, in that we need a 
+"dump" operation to give us a snapshot of the current mount state, plus 
+then a stream of events which allow us to keep that state updated. The 
+tricky question is what happens in case of overflow of the events queue, 
+and just like netlink, that needs a resync of the current state to fix 
+that, since we can't block mounts, of course.
+
+The fsinfo syscall was designed to be the "dump" operation in this 
+system. David's other patch set provides the stream of events. So the 
+two are designed to work together. We had the discussion on using 
+netlink, of whatever form a while back, and there are a number of 
+reasons why that doesn't work (namespace being one).
+
+I think fstatfs might also suffer from the issue of not being easy to 
+call on things for which you have no path (e.g. over-mounted mounts) 
+Plus we need to know which paths to query, which is why we need to 
+enumerate the mounts in the first place - how would we get the fds for 
+each mount? It might give you some sb info, but it doesn't tell you the 
+options that the sb is mounted with, and it doesn't tell you where it is 
+mounted either.
+
+The overall aim is to solve some issues relating to scaling to large 
+numbers of mount in systemd and autofs, and also to provide a 
+generically useful interface that other tools may use to monitor mounts 
+in due course too. Currently parsing /proc/mounts is the only option, 
+and that tends to be slow and is certainly not atomic. Extension to 
+other sb related messages is a future goal, quota being one possible 
+application for the notifications.
+
+If there is a simpler way to get to that goal, then thats all to the 
+good, and we should definitely consider it,
+
+Steve.
+
+
+
+
