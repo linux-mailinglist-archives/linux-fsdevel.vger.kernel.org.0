@@ -2,97 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C5A3B24269A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 10:18:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E619F2426B4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 10:29:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbgHLISn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 04:18:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46100 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726712AbgHLISn (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 04:18:43 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726572AbgHLI3S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 04:29:18 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36404 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726264AbgHLI3R (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Aug 2020 04:29:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597220956;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tM7fbBAWWXBkVIey9wZ7wkJQvmojNxlSppUNG5+gS7I=;
+        b=VMsxZERnqmd8x13tXOnHF+vmYVWmCDiZtq/yoGXdkGQVjTdKDjjsnFCEs5rBEr94xcWn0X
+        BhhvcDB0WSSm+82UoSxJsCE2pgQ6a9wDqyWoskwbZlMunWna9BS58AjdXUqNw10r/0dDoa
+        If3Oz8ZF8RCJJHobawfTyzyG8FwJZHk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-99-TlqZyLRKPRmUg1gFsceu9A-1; Wed, 12 Aug 2020 04:29:15 -0400
+X-MC-Unique: TlqZyLRKPRmUg1gFsceu9A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5255620774;
-        Wed, 12 Aug 2020 08:18:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597220322;
-        bh=DZe4rDhjzxljBRgO7VQ+ytJ53LFjK1MMm84lYaTTDBg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aoTbN6qbRHC8oLTWGWsg1IOq4qT55TJQzev+Ml+0+6WYL2d5Rr5res40LMxOW9Stk
-         h6SlHs3E9bKMCM42TIdi3JvHICDxpR9+DIqlAw1cQrvA7JDwU6hA1GtOEVR1FymycK
-         dmyF1wg1RL7LMKxfQKwABHqtuEwdM/q+lI94p+ww=
-Date:   Wed, 12 Aug 2020 10:18:52 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Peilin Ye <yepeilin.cs@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [Linux-kernel-mentees] [PATCH] hfs, hfsplus: Fix NULL pointer
- dereference in hfs_find_init()
-Message-ID: <20200812081852.GA851575@kroah.com>
-References: <20200812065556.869508-1-yepeilin.cs@gmail.com>
- <20200812070827.GA1304640@kroah.com>
- <20200812071306.GA869606@PWN>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5C7551853DB1;
+        Wed, 12 Aug 2020 08:29:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E72998AD14;
+        Wed, 12 Aug 2020 08:29:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAJfpegt=cQ159kEH9zCYVHV7R_08jwMxF0jKrSUV5E=uBg4Lzw@mail.gmail.com>
+References: <CAJfpegt=cQ159kEH9zCYVHV7R_08jwMxF0jKrSUV5E=uBg4Lzw@mail.gmail.com> <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk> <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com> <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net> <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com> <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com> <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com> <52483.1597190733@warthog.procyon.org.uk>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     dhowells@redhat.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200812071306.GA869606@PWN>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <98801.1597220949.1@warthog.procyon.org.uk>
+Date:   Wed, 12 Aug 2020 09:29:09 +0100
+Message-ID: <98802.1597220949@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 12, 2020 at 03:13:06AM -0400, Peilin Ye wrote:
-> On Wed, Aug 12, 2020 at 09:08:27AM +0200, Greg Kroah-Hartman wrote:
-> > On Wed, Aug 12, 2020 at 02:55:56AM -0400, Peilin Ye wrote:
-> > > Prevent hfs_find_init() from dereferencing `tree` as NULL.
-> > > 
-> > > Reported-and-tested-by: syzbot+7ca256d0da4af073b2e2@syzkaller.appspotmail.com
-> > > Signed-off-by: Peilin Ye <yepeilin.cs@gmail.com>
-> > > ---
-> > >  fs/hfs/bfind.c     | 3 +++
-> > >  fs/hfsplus/bfind.c | 3 +++
-> > >  2 files changed, 6 insertions(+)
-> > > 
-> > > diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
-> > > index 4af318fbda77..880b7ea2c0fc 100644
-> > > --- a/fs/hfs/bfind.c
-> > > +++ b/fs/hfs/bfind.c
-> > > @@ -16,6 +16,9 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
-> > >  {
-> > >  	void *ptr;
-> > >  
-> > > +	if (!tree)
-> > > +		return -EINVAL;
-> > > +
-> > >  	fd->tree = tree;
-> > >  	fd->bnode = NULL;
-> > >  	ptr = kmalloc(tree->max_key_len * 2 + 4, GFP_KERNEL);
-> > > diff --git a/fs/hfsplus/bfind.c b/fs/hfsplus/bfind.c
-> > > index ca2ba8c9f82e..85bef3e44d7a 100644
-> > > --- a/fs/hfsplus/bfind.c
-> > > +++ b/fs/hfsplus/bfind.c
-> > > @@ -16,6 +16,9 @@ int hfs_find_init(struct hfs_btree *tree, struct hfs_find_data *fd)
-> > >  {
-> > >  	void *ptr;
-> > >  
-> > > +	if (!tree)
-> > > +		return -EINVAL;
-> > > +
-> > 
-> > How can tree ever be NULL in these calls?  Shouldn't that be fixed as
-> > the root problem here?
-> 
-> I see, I will try to figure out what is going on with the reproducer.
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-That's good to figure out.  Note, your patch might be the correct thing
-to do, as that might be an allowed way to call the function.  But in
-looking at all the callers, they seem to think they have a valid pointer
-at the moment, so perhaps if this check is added, some other root
-problem is papered over to be only found later on?
+> Worried about performance?  Io-uring will allow you to do all those
+> five syscalls (or many more) with just one I/O submission.
 
-thanks,
+io_uring isn't going to help here.  We're talking about synchronous reads.
+AIUI, you're adding a couple more syscalls to the list and running stuff in a
+side thread to save the effort of going in and out of the kernel five times.
+But you still have to pay the set up/tear down costs on the fds and do the
+pathwalks.  io_uring doesn't magically make that cost disappear.
 
-greg k-h
+io_uring also requires resources such as a kernel accessible ring buffer to
+make it work.
+
+You're proposing making everything else more messy just to avoid a dedicated
+syscall.  Could you please set out your reasoning for that?
+
+David
+
