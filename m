@@ -2,211 +2,586 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D1AC3242C5C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 17:51:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBD3C242CF5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 18:15:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726506AbgHLPv0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 11:51:26 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:56702 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726226AbgHLPvZ (ORCPT
+        id S1726531AbgHLQPL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 12:15:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34588 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbgHLQPL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 11:51:25 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 72FB68EE1E5;
-        Wed, 12 Aug 2020 08:51:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1597247484;
-        bh=+M44FI+gFzjgWGz17wPIjNuU1mPjCW1F5/zFjc3Nc88=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ScQOuqd3qNMM6ORoKcpNR3RYVK6vnRaBwQEeiRVrrvTPdjgJmH3DffLpjUmfS5SzE
-         3nIwiQOeQf0V7ZUjoRF2xP65+evu6LLpNfrqKqWkQEPLubR5SFc9CgF/WyDTuOZO8M
-         BkIxrthipgyDGerQmnxKF55e8vLiujMSIDgjmSQ8=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id SMLlUWr0kVGi; Wed, 12 Aug 2020 08:51:24 -0700 (PDT)
-Received: from [153.66.254.174] (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 087128EE0C7;
-        Wed, 12 Aug 2020 08:51:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1597247484;
-        bh=+M44FI+gFzjgWGz17wPIjNuU1mPjCW1F5/zFjc3Nc88=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ScQOuqd3qNMM6ORoKcpNR3RYVK6vnRaBwQEeiRVrrvTPdjgJmH3DffLpjUmfS5SzE
-         3nIwiQOeQf0V7ZUjoRF2xP65+evu6LLpNfrqKqWkQEPLubR5SFc9CgF/WyDTuOZO8M
-         BkIxrthipgyDGerQmnxKF55e8vLiujMSIDgjmSQ8=
-Message-ID: <1597247482.7293.18.camel@HansenPartnership.com>
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
- LSM (IPE)
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Chuck Lever <chucklever@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Date:   Wed, 12 Aug 2020 08:51:22 -0700
-In-Reply-To: <02D551EF-C975-4B91-86CA-356FA0FF515C@gmail.com>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
-         <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
-         <20200802143143.GB20261@amd>
-         <1596386606.4087.20.camel@HansenPartnership.com>
-         <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
-         <1596639689.3457.17.camel@HansenPartnership.com>
-         <alpine.LRH.2.21.2008050934060.28225@namei.org>
-         <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
-         <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
-         <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
-         <1597073737.3966.12.camel@HansenPartnership.com>
-         <6E907A22-02CC-42DD-B3CD-11D304F3A1A8@gmail.com>
-         <1597124623.30793.14.camel@HansenPartnership.com>
-         <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
-         <1597161218.4325.38.camel@HansenPartnership.com>
-         <02D551EF-C975-4B91-86CA-356FA0FF515C@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 12 Aug 2020 12:15:11 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A287C061383
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 09:15:08 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id g75so2484703wme.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 09:15:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=P5L8bP8w8sdYaa93LT6ui9hXg+bMeXAbPa0x/OSaa4Q=;
+        b=uH6SbdPCmzKRTM8Pi7bVlGPZtQ6nyYz0MRBspLVwLckhxCweqWWqzKsat2ToYUsHwG
+         dihgOPN7/j1Q1Z8WGFaCpkq0OCQaAYUuQT2nG3ne+89ToInL052olMic9Xxf8tOAVxob
+         WtgOkuRBV14PZKcMjnRbEZPjDlHfOP5kVSP9Yx7/84eJNODgi7kPSBD4qt7bDWMIiH/z
+         rHMrN1LkVMpdhIrsd0sdpUBDwTShekB2EXTIV2wBR5JgjVZj4z1jQnNwfTLWut7Ict0K
+         /GhbgIc8hlVyfZ+ujE2I+YKl4lfez0eZf+qt8h937ckAzdSW4Mgw834+/WaYupa22Rpb
+         3dbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=P5L8bP8w8sdYaa93LT6ui9hXg+bMeXAbPa0x/OSaa4Q=;
+        b=Lp7rFAWWNzzftcKvFHABKccJtt7rvRrN48QWI6/gFit8NWr8pUIxuNgFu7ycf4Np/v
+         xvdHnOrkZLOijPwtybCO3xSgCCDoWBQ/4hkIB8tEqB8+2iUBdCMEED2Idg/CLFmoWg8e
+         qboafKDBbGcsruWcnpJm0vSht7wrJd8V4ENWLManIaTOlhw7eyNHU4Xk1kHtGcV2gjl9
+         S7nKE6maNYA8AX/multN9jr8akU7rUSHSRkBk629OQ3tNRf0I89H8CFXcaxTSgDwbpq8
+         8ek3lpLdPUfn+Ps9IOix1znfTa8CvYXX+A7jbay+ar2uZhZ3Q43HEDUQhaOd7bRYyFom
+         JgKw==
+X-Gm-Message-State: AOAM532+BAgT1uXqKCjl1bn8Y+QaLlszZCu4JCuR5Q8nt2K+rTVOTaX0
+        te4a9GbK8aHriaglPkxrMkjYhQ==
+X-Google-Smtp-Source: ABdhPJzKsAEpvUfaOPMjlxFfkAwZiKQBycZXmVNAh3RW/7OTu/VZgGjy6ZBqs5mgExYiCVECce9wuw==
+X-Received: by 2002:a1c:e907:: with SMTP id q7mr419384wmc.155.1597248905533;
+        Wed, 12 Aug 2020 09:15:05 -0700 (PDT)
+Received: from balsini.lon.corp.google.com ([2a00:79e0:d:210:7220:84ff:fe09:7d5c])
+        by smtp.gmail.com with ESMTPSA id l10sm4718995wru.3.2020.08.12.09.15.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Aug 2020 09:15:04 -0700 (PDT)
+From:   Alessio Balsini <balsini@android.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        Nikhilesh Reddy <reddyn@codeaurora.org>
+Cc:     Akilesh Kailash <akailash@google.com>,
+        David Anderson <dvander@google.com>,
+        Eric Yan <eric.yan@oneplus.com>, Jann Horn <jannh@google.com>,
+        Martijn Coenen <maco@android.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Lawrence <paullawrence@google.com>,
+        Stefano Duo <stefanoduo@google.com>,
+        Zimuzo Ezeozue <zezeozue@google.com>, kernel-team@android.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6] fuse: Add support for passthrough read/write
+Date:   Wed, 12 Aug 2020 17:14:52 +0100
+Message-Id: <20200812161452.3086303-1-balsini@android.com>
+X-Mailer: git-send-email 2.28.0.236.gb10cc79966-goog
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-08-12 at 10:15 -0400, Chuck Lever wrote:
-> > On Aug 11, 2020, at 11:53 AM, James Bottomley
-> > <James.Bottomley@HansenPartnership.com> wrote:
-> > 
-> > On Tue, 2020-08-11 at 10:48 -0400, Chuck Lever wrote:
-[...]
-> > > > 
-> > > > and what is nice to have to speed up the verification
-> > > > process.  The choice for the latter is cache or reconstruct
-> > > > depending on the resources available.  If the tree gets cached
-> > > > on the server, that would be a server implementation detail
-> > > > invisible to the client.
-> > > 
-> > > We assume that storage targets (for block or file) are not
-> > > trusted. Therefore storage clients cannot rely on intermediate
-> > > results (eg, middle nodes in a Merkle tree) unless those results
-> > > are generated within the client's trust envelope.
-> > 
-> > Yes, they can ... because supplied nodes can be verified.  That's
-> > the whole point of a merkle tree.  As long as I'm sure of the root
-> > hash I can verify all the rest even if supplied by an untrusted
-> > source.  If you consider a simple merkle tree covering 4 blocks:
-> > 
-> >       R
-> >     /   \
-> >  H11     H12
-> >  / \     / \
-> > H21 H22 H23 H24
-> > >    |   |   |
-> > 
-> > B1   B2  B3  B4
-> > 
-> > Assume I have the verified root hash R.  If you supply B3 you also
-> > supply H24 and H11 as proof.  I verify by hashing B3 to produce H23
-> > then hash H23 and H24 to produce H12 and if H12 and your supplied
-> > H11 hash to R the tree is correct and the B3 you supplied must
-> > likewise be correct.
-> 
-> I'm not sure what you are proving here. Obviously this has to work
-> in order for a client to reconstruct the file's Merkle tree given
-> only R and the file content.
+Add support for filesystem passthrough read/write of files when enabled in
+userspace through the option FUSE_PASSTHROUGH.
 
-You implied the server can't be trusted to generate the merkel tree. 
-I'm showing above it can because of the tree path based verification.
+There are filesystems based on FUSE that are intended to enforce special
+policies or trigger complicate decision makings at the file operations
+level.  Android, for example, uses FUSE to enforce fine-grained access
+policies that also depend on the file contents.
+Sometimes it happens that at open or create time a file is identified as
+not requiring additional checks for consequent reads/writes, thus FUSE
+would simply act as a passive bridge between the process accessing the FUSE
+filesystem and the lower filesystem. Splicing and caching help reducing the
+FUSE overhead, but there are still read/write operations forwarded to the
+userspace FUSE daemon that could be avoided.
 
-> It's the construction of the tree and verification of the hashes that
-> are potentially expensive. The point of caching intermediate hashes
-> is so that the client verifies them as few times as possible.  I
-> don't see value in caching those hashes on an untrusted server --
-> the client will have to reverify them anyway, and there will be no
-> savings.
+When the FUSE_PASSTHROUGH capability is enabled the FUSE daemon may decide
+while handling the open or create operations if the given file can be
+accessed in passthrough mode, meaning that all the further read and write
+operations would be forwarded by the kernel directly to the lower
+filesystem rather than to the FUSE daemon. All requests that are not reads
+or writes are still handled by the userspace FUSE daemon.
+This allows for improved performance on reads and writes. Benchmarks show
+improved performance that is close to native filesystem access when doing
+massive manipulations on a single opened file, especially in the case of
+random reads, for which the bandwidth increased by almost 2X or sequential
+writes for which the improvement is close to 3X.
 
-I'm not making any claim about server caching, I'm just saying the
-client can request pieces of the tree from the server without having to
-reconstruct the whole thing itself because it can verify their
-correctness.
+The creation of this direct connection (passthrough) between FUSE file
+objects and file objects in the lower filesystem happens in a way that
+reminds of passing file descriptors via sockets:
+- a process opens a file handled by FUSE, so the kernel forwards the
+  request to the FUSE daemon;
+- the FUSE daemon opens the target file in the lower filesystem, getting
+  its file descriptor;
+- the file descriptor is passed to the kernel via /dev/fuse;
+- the kernel gets the file pointer navigating through the opened files of
+  the "current" process and stores it in an additional field in the
+  fuse_file owned by the process accessing the FUSE filesystem.
+From now all the read/write operations performed by that process will be
+redirected to the file pointer pointing at the lower filesystem's file.
 
-> Cache once, as close as you can to where the data will be used.
-> 
-> 
-> > > So: if the storage target is considered inside the client's trust
-> > > envelope, it can cache or store durably any intermediate parts of
-> > > the verification process. If not, the network and file storage is
-> > > considered untrusted, and the client has to rely on nothing but
-> > > the signed digest of the tree root.
-> > > 
-> > > We could build a scheme around, say, fscache, that might save the
-> > > intermediate results durably and locally.
-> > 
-> > I agree we want caching on the client, but we can always page in
-> > from the remote as long as we page enough to verify up to R, so
-> > we're always sure the remote supplied genuine information.
-> 
-> Agreed.
-> 
-> 
-> > > > > For this reason, the idea was to save only the signature of
-> > > > > the tree's root on durable storage. The client would retrieve
-> > > > > that signature possibly at open time, and reconstruct the
-> > > > > tree at that time.
-> > > > 
-> > > > Right that's the integrity data you must have.
-> > > > 
-> > > > > Or the tree could be partially constructed on-demand at the
-> > > > > time each unit is to be checked (say, as part of 2. above).
-> > > > 
-> > > > Whether it's reconstructed or cached can be an implementation
-> > > > detail. You clearly have to reconstruct once, but whether you
-> > > > have to do it again depends on the memory available for caching
-> > > > and all the other resource calls in the system.
-> > > > 
-> > > > > The client would have to reconstruct that tree again if
-> > > > > memory pressure caused some or all of the tree to be evicted,
-> > > > > so perhaps an on-demand mechanism is preferable.
-> > > > 
-> > > > Right, but I think that's implementation detail.  Probably what
-> > > > we need is a way to get the log(N) verification hashes from the
-> > > > server and it's up to the client whether it caches them or not.
-> > > 
-> > > Agreed, these are implementation details. But see above about the
-> > > trustworthiness of the intermediate hashes. If they are conveyed
-> > > on an untrusted network, then they can't be trusted either.
-> > 
-> > Yes, they can, provided enough of them are asked for to verify.  If
-> > you look at the simple example above, suppose I have cached H11 and
-> > H12, but I've lost the entire H2X layer.  I want to verify B3 so I
-> > also ask you for your copy of H24.  Then I generate H23 from B3 and
-> > Hash H23 and H24.  If this doesn't hash to H12 I know either you
-> > supplied me the wrong block or lied about H24.  However, if it all
-> > hashes correctly I know you supplied me with both the correct B3
-> > and the correct H24.
-> 
-> My point is there is a difference between a trusted cache and an
-> untrusted cache. I argue there is not much value in a cache where
-> the hashes have to be verified again.
+Signed-off-by: Nikhilesh Reddy <reddyn@codeaurora.org>
+Signed-off-by: Alessio Balsini <balsini@android.com>
+--
 
-And my point isn't about caching, it's about where the tree comes from.
- I claim and you agree the client can get the tree from the server a
-piece at a time (because it can path verify it) and doesn't have to
-generate it itself.  How much of the tree the client has to store and
-whether the server caches, reads it in from somewhere or reconstructs
-it is an implementation detail.
+    Performance
 
-James
+What follows has been performed with this change rebased on top of a
+vanilla v5.8 Linux kernel, using a custom passthrough_hp FUSE daemon that
+enables pass-through for each file that is opened during both “open” and
+“create”. Tests were run on an Intel Xeon E5-2678V3, 32GiB of RAM, with an
+ext4-formatted SSD as the lower filesystem, with no special tuning, e.g.,
+all the involved processes are SCHED_OTHER, ondemand is the frequency
+governor with no frequency restrictions, and turbo-boost, as well as
+p-state, are active. This is because I noticed that, for such high-level
+benchmarks, results consistency was minimally affected by these features.
+
+The source code of the updated libfuse library and passthrough_hp is shared
+at the following repository:
+
+    https://github.com/balsini/libfuse/tree/fuse-passthrough-stable-v.3.9.4
+
+Two different kinds of benchmarks were done for this change, the first set
+of tests evaluates the bandwidth improvements when manipulating a huge
+single file, the second set of tests verify that no performance regressions
+were introduced when handling many small files.
+
+The first benchmarks were done by running FIO (fio-3.21) with:
+- bs=4Ki;
+- file size: 50Gi;
+- ioengine: sync;
+- fsync_on_close: true.
+The target file has been chosen large enough to avoid it to be entirely
+loaded into the page cache.
+Results are presented in the following table:
+
++-----------+--------+-------------+--------+
+| Bandwidth |  FUSE  |     FUSE    |  Bind  |
+|  (KiB/s)  |        | passthrough |  mount |
++-----------+--------+-------------+--------+
+| read      | 468897 |      502085 | 516830 |
++-----------+--------+-------------+--------+
+| randread  |  15773 |       26632 |  21386 |
++-----------+--------+-------------+--------+
+| write     |  58185 |      141272 | 141671 |
++-----------+--------+-------------+--------+
+| randwrite |  59892 |       75236 |  76486 |
++-----------+--------+-------------+--------+
+
+As long as this patch has the primary objective of improving bandwidth,
+another set of tests has been performed to see how this behaves on a
+totally different scenario that involves accessing many small files. For
+this purpose, measuring the build time of the Linux kernel has been chosen
+as a well-known workload.
+The kernel has been built with as many processes as the number of logical
+CPUs (-j $(nproc)), that besides being a reasonable number, is also enough
+to saturate the processor’s utilization thanks to the additional FUSE
+daemon’s threads, making it even harder to get closer to the native
+filesystem performance.
+The following table shows the total build times in the different
+configurations:
+
++------------------+--------------+-----------+
+|                  | AVG duration |  Standard |
+|                  |     (sec)    | deviation |
++------------------+--------------+-----------+
+| FUSE             |      144.566 |     0.697 |
++------------------+--------------+-----------+
+| FUSE passthrough |      133.820 |     0.341 |
++------------------+--------------+-----------+
+| Raw              |      109.423 |     0.724 |
++------------------+--------------+-----------+
+
+Further testing and performance evaluations are welcome.
+
+Changes in v6:
+* Port to kernel v5.8:
+  * fuse_file_{read,write}_iter() changed since the v5 of this patch was
+    proposed.
+* Simplify fuse_simple_request().
+* Merge fuse_passthrough.h into fuse_i.h
+* Refactor of passthrough.c:
+  * Remove BUG_ON()s.
+  * Simplified error checking and request arguments indexing.
+  * Use call_{read,write}_iter() utility functions.
+  * Remove get_file() and fputs() during read/write: handle the extra FUSE
+    references to the lower file object when the fuse_file is
+    created/deleted.
+  [Proposed by Jann Horn]
+
+Changes in v5:
+* Fix the check when setting the passthrough file.
+  [Found when testing by Mike Shal]
+
+Changes in v3 and v4:
+* Use the fs_stack_depth to prevent further stacking and a minor fix.
+  [Proposed by Jann Horn]
+
+Changes in v2:
+* Changed the feature name to passthrough from stacked_io.
+  [Proposed by Linus Torvalds]
+---
+ fs/fuse/Makefile          |   1 +
+ fs/fuse/dev.c             |   3 ++
+ fs/fuse/dir.c             |   2 +
+ fs/fuse/file.c            |  25 ++++++---
+ fs/fuse/fuse_i.h          |  18 +++++++
+ fs/fuse/inode.c           |   9 +++-
+ fs/fuse/passthrough.c     | 110 ++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/fuse.h |   4 +-
+ 8 files changed, 164 insertions(+), 8 deletions(-)
+ create mode 100644 fs/fuse/passthrough.c
+
+diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
+index 3e8cebfb59b7..6971454a2bdf 100644
+--- a/fs/fuse/Makefile
++++ b/fs/fuse/Makefile
+@@ -8,4 +8,5 @@ obj-$(CONFIG_CUSE) += cuse.o
+ obj-$(CONFIG_VIRTIO_FS) += virtiofs.o
+ 
+ fuse-objs := dev.o dir.o file.o inode.o control.o xattr.o acl.o readdir.o
++fuse-objs += passthrough.o
+ virtiofs-y += virtio_fs.o
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 02b3c36b3676..c2131301eeba 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -506,6 +506,7 @@ ssize_t fuse_simple_request(struct fuse_conn *fc, struct fuse_args *args)
+ 		BUG_ON(args->out_numargs == 0);
+ 		ret = args->out_args[args->out_numargs - 1].size;
+ 	}
++	args->passthrough_filp = req->passthrough_filp;
+ 	fuse_put_request(fc, req);
+ 
+ 	return ret;
+@@ -1897,6 +1898,8 @@ static ssize_t fuse_dev_do_write(struct fuse_dev *fud,
+ 		err = copy_out_args(cs, req->args, nbytes);
+ 	fuse_copy_finish(cs);
+ 
++	fuse_setup_passthrough(fc, req);
++
+ 	spin_lock(&fpq->lock);
+ 	clear_bit(FR_LOCKED, &req->flags);
+ 	if (!fpq->connected)
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 26f028bc760b..531de0c5c9e8 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -477,6 +477,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 	args.out_args[0].value = &outentry;
+ 	args.out_args[1].size = sizeof(outopen);
+ 	args.out_args[1].value = &outopen;
++	args.passthrough_filp = NULL;
+ 	err = fuse_simple_request(fc, &args);
+ 	if (err)
+ 		goto out_free_ff;
+@@ -489,6 +490,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 	ff->fh = outopen.fh;
+ 	ff->nodeid = outentry.nodeid;
+ 	ff->open_flags = outopen.open_flags;
++	ff->passthrough_filp = args.passthrough_filp;
+ 	inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
+ 			  &outentry.attr, entry_attr_timeout(&outentry), 0);
+ 	if (!inode) {
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 83d917f7e542..c3289ff0cd33 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -33,10 +33,12 @@ static struct page **fuse_pages_alloc(unsigned int npages, gfp_t flags,
+ }
+ 
+ static int fuse_send_open(struct fuse_conn *fc, u64 nodeid, struct file *file,
+-			  int opcode, struct fuse_open_out *outargp)
++			  int opcode, struct fuse_open_out *outargp,
++			  struct file **passthrough_filp)
+ {
+ 	struct fuse_open_in inarg;
+ 	FUSE_ARGS(args);
++	int ret;
+ 
+ 	memset(&inarg, 0, sizeof(inarg));
+ 	inarg.flags = file->f_flags & ~(O_CREAT | O_EXCL | O_NOCTTY);
+@@ -51,7 +53,10 @@ static int fuse_send_open(struct fuse_conn *fc, u64 nodeid, struct file *file,
+ 	args.out_args[0].size = sizeof(*outargp);
+ 	args.out_args[0].value = outargp;
+ 
+-	return fuse_simple_request(fc, &args);
++	ret = fuse_simple_request(fc, &args);
++	*passthrough_filp = args.passthrough_filp;
++
++	return ret;
+ }
+ 
+ struct fuse_release_args {
+@@ -144,14 +149,16 @@ int fuse_do_open(struct fuse_conn *fc, u64 nodeid, struct file *file,
+ 	/* Default for no-open */
+ 	ff->open_flags = FOPEN_KEEP_CACHE | (isdir ? FOPEN_CACHE_DIR : 0);
+ 	if (isdir ? !fc->no_opendir : !fc->no_open) {
++		struct file *passthrough_filp;
+ 		struct fuse_open_out outarg;
+ 		int err;
+ 
+-		err = fuse_send_open(fc, nodeid, file, opcode, &outarg);
++		err = fuse_send_open(fc, nodeid, file, opcode, &outarg,
++				     &passthrough_filp);
+ 		if (!err) {
+ 			ff->fh = outarg.fh;
+ 			ff->open_flags = outarg.open_flags;
+-
++			ff->passthrough_filp = passthrough_filp;
+ 		} else if (err != -ENOSYS) {
+ 			fuse_file_free(ff);
+ 			return err;
+@@ -281,6 +288,8 @@ void fuse_release_common(struct file *file, bool isdir)
+ 	struct fuse_release_args *ra = ff->release_args;
+ 	int opcode = isdir ? FUSE_RELEASEDIR : FUSE_RELEASE;
+ 
++	fuse_passthrough_release(ff);
++
+ 	fuse_prepare_release(fi, ff, file->f_flags, opcode);
+ 
+ 	if (ff->flock) {
+@@ -1543,7 +1552,9 @@ static ssize_t fuse_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	if (is_bad_inode(file_inode(file)))
+ 		return -EIO;
+ 
+-	if (!(ff->open_flags & FOPEN_DIRECT_IO))
++	if (ff->passthrough_filp)
++		return fuse_passthrough_read_iter(iocb, to);
++	else if (!(ff->open_flags & FOPEN_DIRECT_IO))
+ 		return fuse_cache_read_iter(iocb, to);
+ 	else
+ 		return fuse_direct_read_iter(iocb, to);
+@@ -1557,7 +1568,9 @@ static ssize_t fuse_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (is_bad_inode(file_inode(file)))
+ 		return -EIO;
+ 
+-	if (!(ff->open_flags & FOPEN_DIRECT_IO))
++	if (ff->passthrough_filp)
++		return fuse_passthrough_write_iter(iocb, from);
++	else if (!(ff->open_flags & FOPEN_DIRECT_IO))
+ 		return fuse_cache_write_iter(iocb, from);
+ 	else
+ 		return fuse_direct_write_iter(iocb, from);
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 740a8a7d7ae6..5d6f2f913c71 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -208,6 +208,12 @@ struct fuse_file {
+ 
+ 	} readdir;
+ 
++	/**
++	 * Reference to lower filesystem file for read/write operations
++	 * handled in pass-through mode
++	 */
++	struct file *passthrough_filp;
++
+ 	/** RB node to be linked on fuse_conn->polled_files */
+ 	struct rb_node polled_node;
+ 
+@@ -252,6 +258,7 @@ struct fuse_args {
+ 	bool may_block:1;
+ 	struct fuse_in_arg in_args[3];
+ 	struct fuse_arg out_args[2];
++	struct file *passthrough_filp;
+ 	void (*end)(struct fuse_conn *fc, struct fuse_args *args, int error);
+ };
+ 
+@@ -353,6 +360,9 @@ struct fuse_req {
+ 		struct fuse_out_header h;
+ 	} out;
+ 
++	/** Lower filesystem file pointer used in pass-through mode */
++	struct file *passthrough_filp;
++
+ 	/** Used to wake up the task waiting for completion of request*/
+ 	wait_queue_head_t waitq;
+ 
+@@ -720,6 +730,9 @@ struct fuse_conn {
+ 	/* Do not show mount options */
+ 	unsigned int no_mount_options:1;
+ 
++	/** Pass-through mode for read/write IO */
++	unsigned int passthrough:1;
++
+ 	/** The number of requests waiting for completion */
+ 	atomic_t num_waiting;
+ 
+@@ -1093,4 +1106,9 @@ unsigned int fuse_len_args(unsigned int numargs, struct fuse_arg *args);
+ u64 fuse_get_unique(struct fuse_iqueue *fiq);
+ void fuse_free_conn(struct fuse_conn *fc);
+ 
++void fuse_setup_passthrough(struct fuse_conn *fc, struct fuse_req *req);
++ssize_t fuse_passthrough_read_iter(struct kiocb *iocb, struct iov_iter *to);
++ssize_t fuse_passthrough_write_iter(struct kiocb *iocb, struct iov_iter *from);
++void fuse_passthrough_release(struct fuse_file *ff);
++
+ #endif /* _FS_FUSE_I_H */
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index bba747520e9b..eb223130a917 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -965,6 +965,12 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_args *args,
+ 					min_t(unsigned int, FUSE_MAX_MAX_PAGES,
+ 					max_t(unsigned int, arg->max_pages, 1));
+ 			}
++			if (arg->flags & FUSE_PASSTHROUGH) {
++				fc->passthrough = 1;
++				/* Prevent further stacking */
++				fc->sb->s_stack_depth =
++					FILESYSTEM_MAX_STACK_DEPTH;
++			}
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
+@@ -1002,7 +1008,8 @@ void fuse_send_init(struct fuse_conn *fc)
+ 		FUSE_WRITEBACK_CACHE | FUSE_NO_OPEN_SUPPORT |
+ 		FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
+ 		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
+-		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA;
++		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
++		FUSE_PASSTHROUGH;
+ 	ia->args.opcode = FUSE_INIT;
+ 	ia->args.in_numargs = 1;
+ 	ia->args.in_args[0].size = sizeof(ia->in);
+diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+new file mode 100644
+index 000000000000..02786a55c3ab
+--- /dev/null
++++ b/fs/fuse/passthrough.c
+@@ -0,0 +1,110 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include "fuse_i.h"
++
++#include <linux/aio.h>
++#include <linux/fs_stack.h>
++
++void fuse_setup_passthrough(struct fuse_conn *fc, struct fuse_req *req)
++{
++	struct super_block *passthrough_sb;
++	struct inode *passthrough_inode;
++	struct fuse_open_out *open_out;
++	struct file *passthrough_filp;
++	unsigned short open_out_index;
++	int fs_stack_depth;
++
++	req->passthrough_filp = NULL;
++
++	if (!fc->passthrough)
++		return;
++
++	if (!(req->in.h.opcode == FUSE_OPEN && req->args->out_numargs == 1) &&
++	    !(req->in.h.opcode == FUSE_CREATE && req->args->out_numargs == 2))
++		return;
++
++	open_out_index = req->args->out_numargs - 1;
++
++	if (req->args->out_args[open_out_index].size != sizeof(*open_out))
++		return;
++
++	open_out = req->args->out_args[open_out_index].value;
++
++	if (!(open_out->open_flags & FOPEN_PASSTHROUGH))
++		return;
++
++	if (open_out->fd < 0)
++		return;
++
++	passthrough_filp = fget_raw(open_out->fd);
++	if (!passthrough_filp)
++		return;
++
++	passthrough_inode = file_inode(passthrough_filp);
++	passthrough_sb = passthrough_inode->i_sb;
++	fs_stack_depth = passthrough_sb->s_stack_depth + 1;
++	if (fs_stack_depth > FILESYSTEM_MAX_STACK_DEPTH) {
++		fput(passthrough_filp);
++		return;
++	}
++
++	req->passthrough_filp = passthrough_filp;
++}
++
++static inline ssize_t fuse_passthrough_read_write_iter(struct kiocb *iocb,
++						       struct iov_iter *iter,
++						       bool write)
++{
++	struct file *fuse_filp = iocb->ki_filp;
++	struct fuse_file *ff = fuse_filp->private_data;
++	struct file *passthrough_filp = ff->passthrough_filp;
++	struct inode *passthrough_inode;
++	struct inode *fuse_inode;
++	ssize_t ret = -EIO;
++
++	fuse_inode = fuse_filp->f_path.dentry->d_inode;
++	passthrough_inode = file_inode(passthrough_filp);
++
++	iocb->ki_filp = passthrough_filp;
++
++	if (write) {
++		if (!passthrough_filp->f_op->write_iter)
++			goto out;
++
++		ret = call_write_iter(passthrough_filp, iocb, iter);
++		if (ret >= 0 || ret == -EIOCBQUEUED) {
++			fsstack_copy_inode_size(fuse_inode, passthrough_inode);
++			fsstack_copy_attr_times(fuse_inode, passthrough_inode);
++		}
++	} else {
++		if (!passthrough_filp->f_op->read_iter)
++			goto out;
++
++		ret = call_read_iter(passthrough_filp, iocb, iter);
++		if (ret >= 0 || ret == -EIOCBQUEUED)
++			fsstack_copy_attr_atime(fuse_inode, passthrough_inode);
++	}
++
++out:
++	iocb->ki_filp = fuse_filp;
++
++	return ret;
++}
++
++ssize_t fuse_passthrough_read_iter(struct kiocb *iocb, struct iov_iter *to)
++{
++	return fuse_passthrough_read_write_iter(iocb, to, false);
++}
++
++ssize_t fuse_passthrough_write_iter(struct kiocb *iocb, struct iov_iter *from)
++{
++	return fuse_passthrough_read_write_iter(iocb, from, true);
++}
++
++void fuse_passthrough_release(struct fuse_file *ff)
++{
++	if (ff->passthrough_filp) {
++		fput(ff->passthrough_filp);
++		ff->passthrough_filp = NULL;
++	}
++}
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 373cada89815..e50bd775210a 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -283,6 +283,7 @@ struct fuse_file_lock {
+ #define FOPEN_NONSEEKABLE	(1 << 2)
+ #define FOPEN_CACHE_DIR		(1 << 3)
+ #define FOPEN_STREAM		(1 << 4)
++#define FOPEN_PASSTHROUGH	(1 << 5)
+ 
+ /**
+  * INIT request/reply flags
+@@ -342,6 +343,7 @@ struct fuse_file_lock {
+ #define FUSE_NO_OPENDIR_SUPPORT (1 << 24)
+ #define FUSE_EXPLICIT_INVAL_DATA (1 << 25)
+ #define FUSE_MAP_ALIGNMENT	(1 << 26)
++#define FUSE_PASSTHROUGH	(1 << 27)
+ 
+ /**
+  * CUSE INIT request/reply flags
+@@ -591,7 +593,7 @@ struct fuse_create_in {
+ struct fuse_open_out {
+ 	uint64_t	fh;
+ 	uint32_t	open_flags;
+-	uint32_t	padding;
++	int32_t		fd;
+ };
+ 
+ struct fuse_release_in {
+-- 
+2.28.0.236.gb10cc79966-goog
 
