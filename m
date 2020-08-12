@@ -2,160 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62E302426D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 10:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 986F9242721
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 10:59:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbgHLIjN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 04:39:13 -0400
-Received: from foss.arm.com ([217.140.110.172]:42788 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726712AbgHLIjN (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 04:39:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AACB4D6E;
-        Wed, 12 Aug 2020 01:39:12 -0700 (PDT)
-Received: from [192.168.1.179] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6792E3F22E;
-        Wed, 12 Aug 2020 01:39:10 -0700 (PDT)
-Subject: Re: [PATCH 2/2] mm: proc: smaps_rollup: do not stall write attempts
- on mmap_lock
-To:     Chinwen Chang <chinwen.chang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michel Lespinasse <walken@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Song Liu <songliubraving@fb.com>,
-        Jimmy Assarsson <jimmyassarsson@gmail.com>,
-        Huang Ying <ying.huang@intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        wsd_upstream@mediatek.com
-References: <1597120955-16495-1-git-send-email-chinwen.chang@mediatek.com>
- <1597120955-16495-3-git-send-email-chinwen.chang@mediatek.com>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <bf40676e-b14b-44cd-75ce-419c70194783@arm.com>
-Date:   Wed, 12 Aug 2020 09:39:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726946AbgHLI7S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 04:59:18 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:57430 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726572AbgHLI7R (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 12 Aug 2020 04:59:17 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07C8pwEP159483;
+        Wed, 12 Aug 2020 08:59:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=fX5Hq12QB3O54zKi56LfEX/5PhMYcRNizebtS1uhJZQ=;
+ b=z95BENQnuCk+9ZFmipY4ugqKKVuN5wdZa3NCOnxx8GsoNTFsTNUGlUUwRGwlJl6oq0h0
+ 6DZY0KCiVtzVp/Q/gGx07HLD5UDiVXf6ffX80cbrR9My/cF85N9pfEpF4cbut05WaQy8
+ 5ISY+hiv86gIwjC0VbQaLZ2GKwrbQsvMxGCH2ETye018Y7Ln6V+GTtYi1XqwiZ3dFx25
+ +uQzAO8NTZZxtcWvKzwvPN98rxrnnRyYhyADWJHtS8MfKQAWHZjDPE8AERycH92HoDZH
+ z0RKErQKqsotkdHJk8ta3suUVlezia62jBO0WSSNFNnWp/RaH/qd/JYpIdgEtSH6gk2G iw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 32t2ydqunn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Aug 2020 08:59:12 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07C8rLm8092500;
+        Wed, 12 Aug 2020 08:59:11 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 32t5y6cah2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Aug 2020 08:59:11 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 07C8xAgB015682;
+        Wed, 12 Aug 2020 08:59:11 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 12 Aug 2020 08:59:10 +0000
+Date:   Wed, 12 Aug 2020 11:59:04 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Peilin Ye <yepeilin.cs@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: Re: [Linux-kernel-mentees] [PATCH] hfs, hfsplus: Fix NULL pointer
+ dereference in hfs_find_init()
+Message-ID: <20200812085904.GA16441@kadam>
+References: <20200812065556.869508-1-yepeilin.cs@gmail.com>
+ <20200812070827.GA1304640@kroah.com>
+ <20200812071306.GA869606@PWN>
 MIME-Version: 1.0
-In-Reply-To: <1597120955-16495-3-git-send-email-chinwen.chang@mediatek.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200812071306.GA869606@PWN>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9710 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008120064
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9710 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 priorityscore=1501
+ malwarescore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 phishscore=0 adultscore=0 spamscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2008120064
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/08/2020 05:42, Chinwen Chang wrote:
-> smaps_rollup will try to grab mmap_lock and go through the whole vma
-> list until it finishes the iterating. When encountering large processes,
-> the mmap_lock will be held for a longer time, which may block other
-> write requests like mmap and munmap from progressing smoothly.
-> 
-> There are upcoming mmap_lock optimizations like range-based locks, but
-> the lock applied to smaps_rollup would be the coarse type, which doesn't
-> avoid the occurrence of unpleasant contention.
-> 
-> To solve aforementioned issue, we add a check which detects whether
-> anyone wants to grab mmap_lock for write attempts.
-> 
-> Signed-off-by: Chinwen Chang <chinwen.chang@mediatek.com>
-> ---
->   fs/proc/task_mmu.c | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
-> 
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index dbda449..4b51f25 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -856,6 +856,27 @@ static int show_smaps_rollup(struct seq_file *m, void *v)
->   	for (vma = priv->mm->mmap; vma; vma = vma->vm_next) {
->   		smap_gather_stats(vma, &mss);
->   		last_vma_end = vma->vm_end;
-> +
-> +		/*
-> +		 * Release mmap_lock temporarily if someone wants to
-> +		 * access it for write request.
-> +		 */
-> +		if (mmap_lock_is_contended(mm)) {
-> +			mmap_read_unlock(mm);
-> +			ret = mmap_read_lock_killable(mm);
-> +			if (ret) {
-> +				release_task_mempolicy(priv);
-> +				goto out_put_mm;
-> +			}
-> +
-> +			/* Check whether current vma is available */
-> +			vma = find_vma(mm, last_vma_end - 1);
-> +			if (vma && vma->vm_start < last_vma_end)
+Yeah, the patch doesn't work at all.  I looked at one call tree and it
+is:
 
-I may be wrong, but this looks like it could return incorrect results. 
-For example if we start reading with the following VMAs:
+hfs_mdb_get() tries to allocate HFS_SB(sb)->ext_tree.
 
-  +------+------+-----------+
-  | VMA1 | VMA2 | VMA3      |
-  +------+------+-----------+
-  |      |      |           |
-4k     8k     16k         400k
+	HFS_SB(sb)->ext_tree = hfs_btree_open(sb, HFS_EXT_CNID, hfs_ext_keycmp);
+                    ^^^^^^^^
 
-Then after reading VMA2 we drop the lock due to contention. So:
+hfs_btree_open() calls page = read_mapping_page(mapping, 0, NULL);
+read_mapping_page() calls mapping->a_ops->readpage() which leads to
+hfs_readpage() which leads to hfs_ext_read_extent() which calls
+res = hfs_find_init(HFS_SB(inode->i_sb)->ext_tree, &fd);
+                                         ^^^^^^^^
 
-   last_vma_end = 16k
+So we need ->ext_tree to be non-NULL before we can set ->ext_tree to be
+non-NULL...  :/
 
-Then if VMA2 is freed while the lock is dropped, so we have:
+I wonder how long this has been broken and if we should just delete the
+AFS file system.
 
-  +------+      +-----------+
-  | VMA1 |      | VMA3      |
-  +------+      +-----------+
-  |      |      |           |
-4k     8k     16k         400k
-
-find_vma(mm, 16k-1) will then return VMA3 and the condition vm_start < 
-last_vma_end will be false.
-
-> +				continue;
-> +
-> +			/* Current vma is not available, just break */
-> +			break;
-
-Which means we break out here and report an incomplete output (the 
-numbers will be much smaller than reality).
-
-Would it be better to have a loop like:
-
-	for (vma = priv->mm->mmap; vma;) {
-		smap_gather_stats(vma, &mss);
-		last_vma_end = vma->vm_end;
-
-		if (contended) {
-			/* drop/acquire lock */
-
-			vma = find_vma(mm, last_vma_end - 1);
-			if (!vma)
-				break;
-			if (vma->vm_start >= last_vma_end)
-				continue;
-		}
-		vma = vma->vm_next;
-	}
-
-that way if the VMA is removed while the lock is dropped the loop can 
-just continue from the next VMA.
-
-Or perhaps I missed something obvious? I haven't actually tested 
-anything above.
-
-Steve
-
-> +		}
->   	}
->   
->   	show_vma_header_prefix(m, priv->mm->mmap->vm_start,
-> 
+regards,
+dan carpenter
 
