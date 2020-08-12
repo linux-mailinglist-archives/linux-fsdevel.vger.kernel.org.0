@@ -2,214 +2,247 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D18072423AA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 03:24:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D21592423D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 03:43:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726402AbgHLBXx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Aug 2020 21:23:53 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:33920 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726235AbgHLBXx (ORCPT
+        id S1726492AbgHLBno (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Aug 2020 21:43:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41836 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbgHLBno (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Aug 2020 21:23:53 -0400
-Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 898DB3A9005;
-        Wed, 12 Aug 2020 11:23:48 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1k5fUX-0000Xy-TX; Wed, 12 Aug 2020 11:23:45 +1000
-Date:   Wed, 12 Aug 2020 11:23:45 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com
-Subject: Re: [PATCH v2 15/20] fuse, dax: Take ->i_mmap_sem lock during dax
- page fault
-Message-ID: <20200812012345.GG2079@dread.disaster.area>
-References: <20200807195526.426056-1-vgoyal@redhat.com>
- <20200807195526.426056-16-vgoyal@redhat.com>
- <20200810222238.GD2079@dread.disaster.area>
- <20200811175530.GB497326@redhat.com>
+        Tue, 11 Aug 2020 21:43:44 -0400
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050::465:101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04E1EC06174A;
+        Tue, 11 Aug 2020 18:43:44 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4BRCCc5sllzKmjr;
+        Wed, 12 Aug 2020 03:43:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id MgTaKt_bYsTh; Wed, 12 Aug 2020 03:43:36 +0200 (CEST)
+Date:   Wed, 12 Aug 2020 11:43:24 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Ross Zwisler <zwisler@chromium.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org,
+        Mattias Nissler <mnissler@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Gordon <bmgordon@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Jesse Barnes <jsbarnes@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Micah Morton <mortonm@google.com>,
+        Raul Rangel <rrangel@google.com>,
+        Ross Zwisler <zwisler@google.com>
+Subject: Re: [PATCH v7] Add a "nosymfollow" mount option.
+Message-ID: <20200812014324.rtvlhvopifgkw4mi@yavin.dot.cyphar.com>
+References: <20200811222803.3224434-1-zwisler@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cin4lu5msomn5ja6"
 Content-Disposition: inline
-In-Reply-To: <20200811175530.GB497326@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0
-        a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
-        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=7-415B0cAAAA:8
-        a=cCKMqcOPnOhVYIV9LdMA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200811222803.3224434-1-zwisler@google.com>
+X-MBO-SPAM-Probability: 
+X-Rspamd-Score: -10.21 / 15.00 / 15.00
+X-Rspamd-Queue-Id: 30C491816
+X-Rspamd-UID: 9b5518
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 11, 2020 at 01:55:30PM -0400, Vivek Goyal wrote:
-> On Tue, Aug 11, 2020 at 08:22:38AM +1000, Dave Chinner wrote:
-> > On Fri, Aug 07, 2020 at 03:55:21PM -0400, Vivek Goyal wrote:
-> > > We need some kind of locking mechanism here. Normal file systems like
-> > > ext4 and xfs seems to take their own semaphore to protect agains
-> > > truncate while fault is going on.
-> > > 
-> > > We have additional requirement to protect against fuse dax memory range
-> > > reclaim. When a range has been selected for reclaim, we need to make sure
-> > > no other read/write/fault can try to access that memory range while
-> > > reclaim is in progress. Once reclaim is complete, lock will be released
-> > > and read/write/fault will trigger allocation of fresh dax range.
-> > > 
-> > > Taking inode_lock() is not an option in fault path as lockdep complains
-> > > about circular dependencies. So define a new fuse_inode->i_mmap_sem.
-> > 
-> > That's precisely why filesystems like ext4 and XFS define their own
-> > rwsem.
-> > 
-> > Note that this isn't a DAX requirement - the page fault
-> > serialisation is actually a requirement of hole punching...
-> 
-> Hi Dave,
-> 
-> I noticed that fuse code currently does not seem to have a rwsem which
-> can provide mutual exclusion between truncation/hole_punch path
-> and page fault path. I am wondering does that mean there are issues
-> with existing code or something else makes it unnecessary to provide
-> this mutual exlusion.
 
-I don't know enough about the fuse implementation to say. What I'm
-saying is that nothing in the core mm/ or VFS serilises page cache
-access to the data against direct filesystem manipulations of the
-underlying filesystem structures.
+--cin4lu5msomn5ja6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-i.e. nothing in the VFS or page fault IO path prevents this race
-condition:
+On 2020-08-11, Ross Zwisler <zwisler@chromium.org> wrote:
+> From: Mattias Nissler <mnissler@chromium.org>
+>=20
+> For mounts that have the new "nosymfollow" option, don't follow symlinks
+> when resolving paths. The new option is similar in spirit to the
+> existing "nodev", "noexec", and "nosuid" options, as well as to the
+> LOOKUP_NO_SYMLINKS resolve flag in the openat2(2) syscall. Various BSD
+> variants have been supporting the "nosymfollow" mount option for a long
+> time with equivalent implementations.
+>=20
+> Note that symlinks may still be created on file systems mounted with
+> the "nosymfollow" option present. readlink() remains functional, so
+> user space code that is aware of symlinks can still choose to follow
+> them explicitly.
+>=20
+> Setting the "nosymfollow" mount option helps prevent privileged
+> writers from modifying files unintentionally in case there is an
+> unexpected link along the accessed path. The "nosymfollow" option is
+> thus useful as a defensive measure for systems that need to deal with
+> untrusted file systems in privileged contexts.
+>=20
+> More information on the history and motivation for this patch can be
+> found here:
+>=20
+> https://sites.google.com/a/chromium.org/dev/chromium-os/chromiumos-design=
+-docs/hardening-against-malicious-stateful-data#TOC-Restricting-symlink-tra=
+versal
 
-P0				P1
-fallocate
-page cache invalidation
-				page fault
-				read data
-punch out data extents
-				<data exposed to userspace is stale>
-				<data exposed to userspace has no
-				backing store allocated>
+Looks good. Did you plan to add an in-tree test for this (you could
+shove it in tools/testing/selftests/mount)?
 
+Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
 
-That's where the ext4 and XFS internal rwsem come into play:
+> Signed-off-by: Mattias Nissler <mnissler@chromium.org>
+> Signed-off-by: Ross Zwisler <zwisler@google.com>
+> ---
+> Changes since v6 [1]:
+>  * Rebased onto v5.8.
+>  * Another round of testing including readlink(1), readlink(2),
+>    realpath(1), realpath(3), statfs(2) and mount(2) to make sure
+>    everything still works.
+>=20
+> After this lands I will upstream changes to util-linux[2] and man-pages
+> [3].
+>=20
+> [1]: https://lkml.org/lkml/2020/3/4/770
+> [2]: https://github.com/rzwisler/util-linux/commit/7f8771acd85edb70d97921=
+c026c55e1e724d4e15
+> [3]: https://github.com/rzwisler/man-pages/commit/b8fe8079f64b5068940c014=
+4586e580399a71668
+> ---
+>  fs/namei.c                 | 3 ++-
+>  fs/namespace.c             | 2 ++
+>  fs/proc_namespace.c        | 1 +
+>  fs/statfs.c                | 2 ++
+>  include/linux/mount.h      | 3 ++-
+>  include/linux/statfs.h     | 1 +
+>  include/uapi/linux/mount.h | 1 +
+>  7 files changed, 11 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 72d4219c93acb..ed68478fb1fb6 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -1626,7 +1626,8 @@ static const char *pick_link(struct nameidata *nd, =
+struct path *link,
+>  			return ERR_PTR(error);
+>  	}
+> =20
+> -	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS))
+> +	if (unlikely(nd->flags & LOOKUP_NO_SYMLINKS) ||
+> +			unlikely(nd->path.mnt->mnt_flags & MNT_NOSYMFOLLOW))
+>  		return ERR_PTR(-ELOOP);
+> =20
+>  	if (!(nd->flags & LOOKUP_RCU)) {
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 4a0f600a33285..1cbbf5a9b954f 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -3167,6 +3167,8 @@ long do_mount(const char *dev_name, const char __us=
+er *dir_name,
+>  		mnt_flags &=3D ~(MNT_RELATIME | MNT_NOATIME);
+>  	if (flags & MS_RDONLY)
+>  		mnt_flags |=3D MNT_READONLY;
+> +	if (flags & MS_NOSYMFOLLOW)
+> +		mnt_flags |=3D MNT_NOSYMFOLLOW;
+> =20
+>  	/* The default atime for remount is preservation */
+>  	if ((flags & MS_REMOUNT) &&
+> diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
+> index 3059a9394c2d6..e59d4bb3a89e4 100644
+> --- a/fs/proc_namespace.c
+> +++ b/fs/proc_namespace.c
+> @@ -70,6 +70,7 @@ static void show_mnt_opts(struct seq_file *m, struct vf=
+smount *mnt)
+>  		{ MNT_NOATIME, ",noatime" },
+>  		{ MNT_NODIRATIME, ",nodiratime" },
+>  		{ MNT_RELATIME, ",relatime" },
+> +		{ MNT_NOSYMFOLLOW, ",nosymfollow" },
+>  		{ 0, NULL }
+>  	};
+>  	const struct proc_fs_opts *fs_infop;
+> diff --git a/fs/statfs.c b/fs/statfs.c
+> index 2616424012ea7..59f33752c1311 100644
+> --- a/fs/statfs.c
+> +++ b/fs/statfs.c
+> @@ -29,6 +29,8 @@ static int flags_by_mnt(int mnt_flags)
+>  		flags |=3D ST_NODIRATIME;
+>  	if (mnt_flags & MNT_RELATIME)
+>  		flags |=3D ST_RELATIME;
+> +	if (mnt_flags & MNT_NOSYMFOLLOW)
+> +		flags |=3D ST_NOSYMFOLLOW;
+>  	return flags;
+>  }
+> =20
+> diff --git a/include/linux/mount.h b/include/linux/mount.h
+> index de657bd211fa6..aaf343b38671c 100644
+> --- a/include/linux/mount.h
+> +++ b/include/linux/mount.h
+> @@ -30,6 +30,7 @@ struct fs_context;
+>  #define MNT_NODIRATIME	0x10
+>  #define MNT_RELATIME	0x20
+>  #define MNT_READONLY	0x40	/* does the user want this to be r/o? */
+> +#define MNT_NOSYMFOLLOW	0x80
+> =20
+>  #define MNT_SHRINKABLE	0x100
+>  #define MNT_WRITE_HOLD	0x200
+> @@ -46,7 +47,7 @@ struct fs_context;
+>  #define MNT_SHARED_MASK	(MNT_UNBINDABLE)
+>  #define MNT_USER_SETTABLE_MASK  (MNT_NOSUID | MNT_NODEV | MNT_NOEXEC \
+>  				 | MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME \
+> -				 | MNT_READONLY)
+> +				 | MNT_READONLY | MNT_NOSYMFOLLOW)
+>  #define MNT_ATIME_MASK (MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME )
+> =20
+>  #define MNT_INTERNAL_FLAGS (MNT_SHARED | MNT_WRITE_HOLD | MNT_INTERNAL |=
+ \
+> diff --git a/include/linux/statfs.h b/include/linux/statfs.h
+> index 9bc69edb8f188..fac4356ea1bfc 100644
+> --- a/include/linux/statfs.h
+> +++ b/include/linux/statfs.h
+> @@ -40,6 +40,7 @@ struct kstatfs {
+>  #define ST_NOATIME	0x0400	/* do not update access times */
+>  #define ST_NODIRATIME	0x0800	/* do not update directory access times */
+>  #define ST_RELATIME	0x1000	/* update atime relative to mtime/ctime */
+> +#define ST_NOSYMFOLLOW	0x2000	/* do not follow symlinks */
+> =20
+>  struct dentry;
+>  extern int vfs_get_fsid(struct dentry *dentry, __kernel_fsid_t *fsid);
+> diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+> index 96a0240f23fed..dd8306ea336c1 100644
+> --- a/include/uapi/linux/mount.h
+> +++ b/include/uapi/linux/mount.h
+> @@ -16,6 +16,7 @@
+>  #define MS_REMOUNT	32	/* Alter flags of a mounted FS */
+>  #define MS_MANDLOCK	64	/* Allow mandatory locks on an FS */
+>  #define MS_DIRSYNC	128	/* Directory modifications are synchronous */
+> +#define MS_NOSYMFOLLOW	256	/* Do not follow symlinks */
+>  #define MS_NOATIME	1024	/* Do not update access times. */
+>  #define MS_NODIRATIME	2048	/* Do not update directory access times */
+>  #define MS_BIND		4096
+> --=20
+> 2.28.0.236.gb10cc79966-goog
+>=20
 
-fallocate
-down_write(mmaplock)
-page cache invalidation
-				page fault
-				down_read(mmaplock)
-				<blocks>
-punch out data
-up_write(mmaplock)
-				<unblocks>
-				<sees hole>
-				<allocates zeroed pages in page cache>
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
-And there's not stale data exposure to userspace.
+--cin4lu5msomn5ja6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-It's the same reason that we use the i_rwsem to prevent concurrent
-IO while a truncate or hole punch is in progress. The IO could map
-the extent, then block in the IO path, while the filesytsem
-re-allocates and writes new data or metadata to those blocks. That's
-another potential non-owner data exposure problem.
+-----BEGIN PGP SIGNATURE-----
 
-And if you don't drain AIO+DIO before truncate/hole punch, the
-i_rwsem does not protect you against concurrent IO as that gets
-dropped after the AIO is submitted and returns EIOCBQUEUED to the
-AIO layer. Hence there's IO in flight that isn't tracked by the
-i_rwsem or the MMAPLOCK, and if you punch out the blocks and
-reallocate them while the IO is in flight....
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXzNJLQAKCRCdlLljIbnQ
+EsDjAQDDwisyM9fOuV+Ed0MJ00dzw040RQ7+LVK/5aoQkBbRmQEAr67/mlNPDrRB
+npO+QCicLL7SvDb22zFE3wueer23Hwk=
+=Fd7y
+-----END PGP SIGNATURE-----
 
-> > > @@ -3849,9 +3856,11 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
-> > >  			file_update_time(file);
-> > >  	}
-> > >  
-> > > -	if (mode & FALLOC_FL_PUNCH_HOLE)
-> > > +	if (mode & FALLOC_FL_PUNCH_HOLE) {
-> > > +		down_write(&fi->i_mmap_sem);
-> > >  		truncate_pagecache_range(inode, offset, offset + length - 1);
-> > > -
-> > > +		up_write(&fi->i_mmap_sem);
-> > > +	}
-> > >  	fuse_invalidate_attr(inode);
-> > 
-> > 
-> > I'm not sure this is sufficient. You have to lock page faults out
-> > for the entire time the hole punch is being performed, not just while
-> > the mapping is being invalidated.
-> > 
-> > That is, once you've taken the inode lock and written back the dirty
-> > data over the range being punched, you can then take a page fault
-> > and dirty the page again. Then after you punch the hole out,
-> > you have a dirty page with non-zero data in it, and that can get
-> > written out before the page cache is truncated.
-> 
-> Just for my better udnerstanding of the issue, I am wondering what
-> problem will it lead to.
-> If one process is doing punch_hole and other is writing in the
-> range being punched, end result could be anything. Either we will
-> read zeroes from punched_hole pages or we will read the data
-> written by process writing to mmaped page, depending on in what
-> order it got executed. 
->
-> If that's the case, then holding fi->i_mmap_sem for the whole
-> duration might not matter. What am I missing?
-
-That it is safe to invalidate the page cache after the hole has been
-punched.
-
-There is nothing stopping, say, memory reclaim from reclaiming pages
-over the range while the hole is being punched, then having the
-application refault them while the backing store is being freed.
-While the page fault read IO is in progress, there's nothing
-stopping the filesystem from freeing those blocks, nor reallocating
-them and writing something else to them (e.g. metadata). So they
-could read someone elses data.
-
-Even worse: the page fault is a write fault, it lands in a hole, has
-space allocated, the page cache is zeroed, page marked dirty, and
-then the hole punch calls truncate_pagecache_range() which tosses
-away the zeroed page and the data the userspace application wrote
-to the page.
-
-The application then refaults the page, reading stale data off
-disk instead of seeing what it had already written to the page....
-
-And unlike truncated pages, the mm/ code cannot reliably detect
-invalidation races on lockless lookup of pages that are within EOF.
-They rely on truncate changing the file size before page
-invalidation to detect races as page->index then points beyond EOF.
-Hole punching does not change inode size, so the page cache lookups
-cannot tell the difference between a new page that just needs IO to
-initialise the data and a page that has just been invalidated....
-
-IOWs, there are many ways things can go wrong with hole punch, and
-the only way to avoid them all is to do invalidate and lock out the
-page cache before starting the fallocate operation. i.e.:
-
-	1. lock up the entire IO path (vfs and page fault)
-	2. drain the AIO+DIO path
-	3. write back dirty pages
-	4. invalidate the page cache
-
-Because this is the only way we can guarantee that nothing can access
-the filesystem's backing store for the range we are about to
-directly manipulate the data in while we perform an "offloaded" data
-transformation on that range...
-
-This isn't just hole punch - the same problems exist with
-FALLOC_FL_ZERO_RANGE and FALLOC_FL_{INSERT,COLLAPSE}_RANGE because
-they change data with extent manipulations and/or hardware offloads
-that provide no guarantees of specific data state or integrity until
-they complete....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--cin4lu5msomn5ja6--
