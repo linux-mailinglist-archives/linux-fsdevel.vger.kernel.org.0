@@ -2,119 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F33D242A6D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 15:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FC05242AA9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 15:55:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbgHLNe2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 09:34:28 -0400
-Received: from lizzy.crudebyte.com ([91.194.90.13]:55419 "EHLO
-        lizzy.crudebyte.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbgHLNeX (ORCPT
+        id S1728038AbgHLNy4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 09:54:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:54678 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727780AbgHLNy4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 09:34:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=crudebyte.com; s=lizzy; h=Content-Type:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        Content-ID:Content-Description;
-        bh=+XDbLf/mNp/3qY81Ajxy0LYyiR5ahihDvGXF7OzXih8=; b=gKuMRv7gTg2PROTxJ8h5yTNYtY
-        ISDEx+alfS3Kh7gOL9gvA3Dep6sulN+daFh8ptRnHGDcswURcrqemcs7SpogO8qBDsXsqzbr11Z0g
-        OepmwX8RcBPn1/CP8ww+btVBhVgtlvmxHoeytPxf/w5nvA3b0JzBUfoac6TprL43oxoLRiy0mrFwb
-        l1wuE/o6BoUCUwa9BIuOKtYp1nTVvDJgSSJuJCknuKWOUzdSUgoxbq3L7ZtVlu0PRThnaFgI1AtD9
-        mEkcWgHwPOS2jNqMGcCNeNsUjeIxVvKzfzTXB1XBu2eXexStGO5A+zMSqQAOCK8u8YB0ap4sS4C+F
-        uSC7BOXg==;
-From:   Christian Schoenebeck <qemu_oss@crudebyte.com>
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc:     Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
-        stefanha@redhat.com, mszeredi@redhat.com, vgoyal@redhat.com,
-        gscrivan@redhat.com, dwalsh@redhat.com, chirantan@chromium.org
-Subject: Re: xattr names for unprivileged stacking?
-Date:   Wed, 12 Aug 2020 15:34:19 +0200
-Message-ID: <12480108.dgM6XvcGr8@silver>
-In-Reply-To: <20200812111819.GE2810@work-vm>
-References: <20200728105503.GE2699@work-vm> <2627251.EZXEZLLarb@silver> <20200812111819.GE2810@work-vm>
+        Wed, 12 Aug 2020 09:54:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597240494;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1TkqhIHAzlrLj7I5xdhISZ7mj66OJ1mZ2fQ987mrYKM=;
+        b=g/LYwh6tpsMyYnBcTk4BRCIhn3SxqTIrn/eFVvbrL2/CPbEYu1ke09jO//SbvMzg7Nkcb6
+        4/engHAlnbjWC/Q0CVAQcAiJpnpxMTWyOzWyG+PBMm+zmsQI2WkgNdGvhQhzK0C0cDKim2
+        agIEwTGZLe8y+r1nkJeyKwo4GvwRBMc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-222-LT3TPafRN1yp_5xqry4Ptg-1; Wed, 12 Aug 2020 09:54:52 -0400
+X-MC-Unique: LT3TPafRN1yp_5xqry4Ptg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7C33291274;
+        Wed, 12 Aug 2020 13:54:50 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A17DF60BF3;
+        Wed, 12 Aug 2020 13:54:47 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+References: <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com> <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk> <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com> <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net> <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com> <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com> <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
+Content-ID: <135550.1597240486.1@warthog.procyon.org.uk>
+Date:   Wed, 12 Aug 2020 14:54:46 +0100
+Message-ID: <135551.1597240486@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mittwoch, 12. August 2020 13:18:19 CEST Dr. David Alan Gilbert wrote:
-> * Christian Schoenebeck (qemu_oss@crudebyte.com) wrote:
-> > On Dienstag, 4. August 2020 13:28:01 CEST Dr. David Alan Gilbert wrote:
-> > > > Well, depends on how large you draw the scope here. For instance Samba
-> > > > has
-> > > > a bunch VFS modules which also uses and hence prohibits certain
-> > > > xattrs.
-> > > > For instance for supporting (NTFS) alternate data streams (a.k.a.
-> > > > resource forks) of Windows clients it uses user.DosStream.*:
-> > > > 
-> > > > https://www.samba.org/samba/docs/current/man-html/vfs_streams_xattr.8.
-> > > > html
-> > > > 
-> > > > as well as "user.DOSATTRIB".
-> > > > 
-> > > > And as macOS heavily relies on resource forks (i.e. macOS doesn't work
-> > > > without them), there are a bunch of xattr remappings in the dedicated
-> > > > Apple VFS module, like "aapl_*":
-> > > > 
-> > > > https://www.samba.org/samba/docs/current/man-html/vfs_fruit.8.html
-> > > > https://github.com/samba-team/samba/blob/master/source3/modules/vfs_fr
-> > > > uit.
-> > > > c
-> > > 
-> > > Thanks;  what I've added to virtiofsd at the moment is a generic
-> > > remapping thing that lets me add any prefix and block/drop any xattr.
-> > 
-> > Right, makes absolutely sense to make it configurable. There are too many
-> > use cases for xattrs, and the precise xattr names are often configurable
-> > as well, like with the mentioned Samba VFS modules.
-> > 
-> > > The other samba-ism I found was mvxattr(1) which lets you rename xattr's
-> > > ona  directory tree; which is quite useful.
-> > 
-> > Haven't seen that before, interesting.
-> > 
-> > BTW, I have plans for adding support for file forks [1] (a.k.a. alternate
-> > streams, a.k.a. resource forks) on Linux kernel side, so I will probably
-> > come up with an RFC in couple weeks to see whether there would be
-> > acceptance for that at all and if yes in which form.
-> > 
-> > That would open a similar problematic to virtiofsd on the long term, as
-> > file forks have a namespace on their own.
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> IOW, if you do something more along the lines of
 > 
-> Yeh I'm sure that'll need wiring into lots of things in weird ways!
-> I guess the main difference between an extended attribute and a
-> file-fork is that you can access the fork using an fd and it feels more
-> like a file?
+>        fd = open(""foo/bar", O_PATH);
+>        metadatafd = openat(fd, "metadataname", O_ALT);
+> 
+> it might be workable.
 
-Well, that's a very short reduction of its purpose, but it is a common core 
-feature, yes.
+What is it going to walk through?  You need to end up with an inode and dentry
+from somewhere.
 
-xattrs are only suitable for very small data (currently <= 64 kiB on Linux), 
-whereas file forks can be as large as any regular file. And yes, forks 
-commonly work with fd, so they allow you to do all kinds of I/O operations on 
-them. Theoretically though you could even allow to use forks with any other 
-function that accepts an fd.
+It sounds like this would have to open up a procfs-like magic filesystem, and
+walk into it.  But how would that actually work?  Would you create a new
+superblock each time you do this, labelled with the starting object (say the
+dentry for "foo/bar" in this case), and then walk from the root?
 
-The main issue is that file forks are not in POSIX. So every OS currently has 
-its own concept and API, which probably makes a consensus more difficult for 
-Linux.
+An alternative, maybe, could be to make a new dentry type, say, and include it
+in the superblock of the object being queried - and let the filesystems deal
+with it.  That would mean that non-dir dentries would then have virtual
+children.  You could then even use this to implement resource forks...
 
-For instance Solaris allows you to set different ownership and permissions on 
-forks as well. It does not allow you to create sub-forks though, nor directory 
-structures for forks.
+Another alternative would be to note O_ALT and then skip pathwalk entirely,
+but just use the name as a key to the attribute, creating an anonfd to read
+it.  But then why use openat() at all?  You could instead do:
 
-On macOS there was (or actually still is) even a quite complex API which 
-separated forks into "resource forks" and "data forks", where resource forks 
-were typically used as components of an application binary (e.g. menu 
-structure, icons, executable binary modules, text and translations). So 
-resource forks not only had names, they also had predefined 16-bit type 
-identifiers:
-https://en.wikipedia.org/wiki/Resource_fork
+	metadatafd = openmeta(fd, "metadataname");
 
-Best regards,
-Christian Schoenebeck
+and save the page flag.  You could even merge the two opens and do:
 
+	metadatafd = openmeta("foo/bar", "metadataname");
+
+Why not even combine this with Miklos's readfile() idea:
+
+	readmeta(AT_FDCWD, "foo/bar", "metadataname", buf, sizeof(buf));
+
+and we're now down to one syscall and no fds and you don't even need a magic
+filesystem to make it work.
+
+There's another consideration too: Paths are not unique handles to mounts.
+It's entirely possible to have colocated mounts.  We need to be able to query
+all the mounts on a mountpoint.
+
+David
 
