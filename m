@@ -2,282 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BADA243065
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 23:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75FA0243075
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 23:28:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbgHLVKe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 17:10:34 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:54077 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726508AbgHLVKd (ORCPT
+        id S1726542AbgHLV2Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 17:28:16 -0400
+Received: from mail-il1-f197.google.com ([209.85.166.197]:39015 "EHLO
+        mail-il1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726508AbgHLV2P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 17:10:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597266631;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lajmu4EexvaCOeWvbC8/EUC4iJVRcqbVaB2CSLh8m28=;
-        b=UNkru5zVQ/vqnSH2vnzGQ7f+3nJmo/uAON7leIy91E63Os+HV9Uq3jUZ9jmyv8EX07N7c0
-        bv9YcyLKgUtfpsVVl2ci8ehaBK19EmJrLQVXBVuyblWAv4fP8ektBrA10Pbxsn2cz+s0TD
-        Flm6IJvH95hhGG22zPIfOJpPtUKbBmM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-404-bZk2_DJxO-mIxuPXAOKWKg-1; Wed, 12 Aug 2020 17:10:21 -0400
-X-MC-Unique: bZk2_DJxO-mIxuPXAOKWKg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9EA0A57;
-        Wed, 12 Aug 2020 21:10:20 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-118-134.rdu2.redhat.com [10.10.118.134])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 37A7719D7D;
-        Wed, 12 Aug 2020 21:10:13 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id BCBCC220264; Wed, 12 Aug 2020 17:10:12 -0400 (EDT)
-Date:   Wed, 12 Aug 2020 17:10:12 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com
-Subject: Re: [PATCH v2 15/20] fuse, dax: Take ->i_mmap_sem lock during dax
- page fault
-Message-ID: <20200812211012.GA540706@redhat.com>
-References: <20200807195526.426056-1-vgoyal@redhat.com>
- <20200807195526.426056-16-vgoyal@redhat.com>
- <20200810222238.GD2079@dread.disaster.area>
- <20200811175530.GB497326@redhat.com>
- <20200812012345.GG2079@dread.disaster.area>
+        Wed, 12 Aug 2020 17:28:15 -0400
+Received: by mail-il1-f197.google.com with SMTP id i66so2763247ile.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Aug 2020 14:28:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=ilCTY64RuUG02GFuuWjDIx1Ci3e/PJFPZPYdOkrJo64=;
+        b=gPalZwtZkjLXy1VB5dXvwxgJ2DtGKlTKY86fjeMedTKk2DBWuwJSbFbfeSaz+32bfZ
+         LXXCqXAkmdAw2f+rur9xM+aar794CL4lorT1rO9Ww/mR71w1WmDK0HdDTOSffx1GhI+s
+         7qHZ9+o5Rq6g18RxwNhiotJsQnNnbP+wERG+nIoWlJgGkNs0cx+0ATilmBctmg1W5un3
+         KlnK9wZoRsNvlIkzrnwJXzfQQkISLqneXgP7mWS4/VuSiEwi9lu1J/eE7tLQ1bbS+8Rm
+         +cHyyGCW8NTaDq5+4BxU5YEL5I3cfErztEYU9hfHG2rjhYWys14zMR2Ztjj0LZ5J6D1C
+         qAtQ==
+X-Gm-Message-State: AOAM5336m/w2QzJanxlJxhEKtGMzoO/8LZyjrIyKSSo/AYN9+o4IgcLM
+        KC0R5CObOrPYti/chN9B7+U53WVg1ZlIr8BDd2N4v6Hoye5v
+X-Google-Smtp-Source: ABdhPJw33yFNC2zXSn+p5lX5ZDyAPSvDLXh/be+FiUata4vDh7uXDJLRiUIDIPGB5q7w3Dy5crJD3YjdBt0+8CgnWYplEalN/W0s
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200812012345.GG2079@dread.disaster.area>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Received: by 2002:a92:aa4b:: with SMTP id j72mr1651939ili.141.1597267694581;
+ Wed, 12 Aug 2020 14:28:14 -0700 (PDT)
+Date:   Wed, 12 Aug 2020 14:28:14 -0700
+In-Reply-To: <000000000000f0724405aca59f64@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008bfef305acb4ddee@google.com>
+Subject: Re: KASAN: use-after-free Read in path_init (2)
+From:   syzbot <syzbot+bbeb1c88016c7db4aa24@syzkaller.appspotmail.com>
+To:     arnd@arndb.de, christian.brauner@ubuntu.com, hch@lst.de,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
+        syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 12, 2020 at 11:23:45AM +1000, Dave Chinner wrote:
-> On Tue, Aug 11, 2020 at 01:55:30PM -0400, Vivek Goyal wrote:
-> > On Tue, Aug 11, 2020 at 08:22:38AM +1000, Dave Chinner wrote:
-> > > On Fri, Aug 07, 2020 at 03:55:21PM -0400, Vivek Goyal wrote:
-> > > > We need some kind of locking mechanism here. Normal file systems like
-> > > > ext4 and xfs seems to take their own semaphore to protect agains
-> > > > truncate while fault is going on.
-> > > > 
-> > > > We have additional requirement to protect against fuse dax memory range
-> > > > reclaim. When a range has been selected for reclaim, we need to make sure
-> > > > no other read/write/fault can try to access that memory range while
-> > > > reclaim is in progress. Once reclaim is complete, lock will be released
-> > > > and read/write/fault will trigger allocation of fresh dax range.
-> > > > 
-> > > > Taking inode_lock() is not an option in fault path as lockdep complains
-> > > > about circular dependencies. So define a new fuse_inode->i_mmap_sem.
-> > > 
-> > > That's precisely why filesystems like ext4 and XFS define their own
-> > > rwsem.
-> > > 
-> > > Note that this isn't a DAX requirement - the page fault
-> > > serialisation is actually a requirement of hole punching...
-> > 
-> > Hi Dave,
-> > 
-> > I noticed that fuse code currently does not seem to have a rwsem which
-> > can provide mutual exclusion between truncation/hole_punch path
-> > and page fault path. I am wondering does that mean there are issues
-> > with existing code or something else makes it unnecessary to provide
-> > this mutual exlusion.
-> 
-> I don't know enough about the fuse implementation to say. What I'm
-> saying is that nothing in the core mm/ or VFS serilises page cache
-> access to the data against direct filesystem manipulations of the
-> underlying filesystem structures.
+syzbot has found a reproducer for the following issue on:
 
-Hi Dave,
+HEAD commit:    fb893de3 Merge tag 'tag-chrome-platform-for-v5.9' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16139be2900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f1fedc63022bf07e
+dashboard link: https://syzkaller.appspot.com/bug?extid=bbeb1c88016c7db4aa24
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15fa83e2900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15920c4a900000
 
-Got it. I was checking nfs and they also seem to be calling filemap_fault
-and not taking any locks to block faults. fallocate() (nfs42_fallocate)
-seems to block read/write/aio/dio but does not seem to do anything
-about blocking faults. I am wondering if remote filesystem are
-little different in this aspect. Especially fuse does not maintain
-any filesystem block/extent data. It is file server which is doing
-all that.
+The issue was bisected to:
 
-> 
-> i.e. nothing in the VFS or page fault IO path prevents this race
-> condition:
-> 
-> P0				P1
-> fallocate
-> page cache invalidation
-> 				page fault
-> 				read data
-> punch out data extents
-> 				<data exposed to userspace is stale>
-> 				<data exposed to userspace has no
-> 				backing store allocated>
-> 
-> 
-> That's where the ext4 and XFS internal rwsem come into play:
-> 
-> fallocate
-> down_write(mmaplock)
-> page cache invalidation
-> 				page fault
-> 				down_read(mmaplock)
-> 				<blocks>
-> punch out data
-> up_write(mmaplock)
-> 				<unblocks>
-> 				<sees hole>
-> 				<allocates zeroed pages in page cache>
-> 
-> And there's not stale data exposure to userspace.
+commit e24ab0ef689de43649327f54cd1088f3dad25bb3
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Tue Jul 21 08:48:15 2020 +0000
 
-Got it. I noticed that both fuse/nfs seem to have reversed the
-order of operation. They call server to punch out data first
-and then truncate page cache. And that should mean that even
-if mmap reader will not see stale data after fallocate(punch_hole)
-has finished.
+    fs: push the getname from do_rmdir into the callers
 
-> 
-> It's the same reason that we use the i_rwsem to prevent concurrent
-> IO while a truncate or hole punch is in progress. The IO could map
-> the extent, then block in the IO path, while the filesytsem
-> re-allocates and writes new data or metadata to those blocks. That's
-> another potential non-owner data exposure problem.
-> 
-> And if you don't drain AIO+DIO before truncate/hole punch, the
-> i_rwsem does not protect you against concurrent IO as that gets
-> dropped after the AIO is submitted and returns EIOCBQUEUED to the
-> AIO layer. Hence there's IO in flight that isn't tracked by the
-> i_rwsem or the MMAPLOCK, and if you punch out the blocks and
-> reallocate them while the IO is in flight....
-> 
-> > > > @@ -3849,9 +3856,11 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
-> > > >  			file_update_time(file);
-> > > >  	}
-> > > >  
-> > > > -	if (mode & FALLOC_FL_PUNCH_HOLE)
-> > > > +	if (mode & FALLOC_FL_PUNCH_HOLE) {
-> > > > +		down_write(&fi->i_mmap_sem);
-> > > >  		truncate_pagecache_range(inode, offset, offset + length - 1);
-> > > > -
-> > > > +		up_write(&fi->i_mmap_sem);
-> > > > +	}
-> > > >  	fuse_invalidate_attr(inode);
-> > > 
-> > > 
-> > > I'm not sure this is sufficient. You have to lock page faults out
-> > > for the entire time the hole punch is being performed, not just while
-> > > the mapping is being invalidated.
-> > > 
-> > > That is, once you've taken the inode lock and written back the dirty
-> > > data over the range being punched, you can then take a page fault
-> > > and dirty the page again. Then after you punch the hole out,
-> > > you have a dirty page with non-zero data in it, and that can get
-> > > written out before the page cache is truncated.
-> > 
-> > Just for my better udnerstanding of the issue, I am wondering what
-> > problem will it lead to.
-> > If one process is doing punch_hole and other is writing in the
-> > range being punched, end result could be anything. Either we will
-> > read zeroes from punched_hole pages or we will read the data
-> > written by process writing to mmaped page, depending on in what
-> > order it got executed. 
-> >
-> > If that's the case, then holding fi->i_mmap_sem for the whole
-> > duration might not matter. What am I missing?
-> 
-> That it is safe to invalidate the page cache after the hole has been
-> punched.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=155f36c2900000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=175f36c2900000
+console output: https://syzkaller.appspot.com/x/log.txt?x=135f36c2900000
 
-That's precisely both fuse and nfs seem to be doing. truncate page
-cache after server has hole punched the file. (nfs42_proc_deallocate()
-and fuse_file_fallocate()). I don't understand the nfs code, but
-that seems to be the case from a quick look.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bbeb1c88016c7db4aa24@syzkaller.appspotmail.com
+Fixes: e24ab0ef689d ("fs: push the getname from do_rmdir into the callers")
 
-> 
-> There is nothing stopping, say, memory reclaim from reclaiming pages
-> over the range while the hole is being punched, then having the
-> application refault them while the backing store is being freed.
-> While the page fault read IO is in progress, there's nothing
-> stopping the filesystem from freeing those blocks, nor reallocating
-> them and writing something else to them (e.g. metadata). So they
-> could read someone elses data.
-> 
-> Even worse: the page fault is a write fault, it lands in a hole, has
-> space allocated, the page cache is zeroed, page marked dirty, and
-> then the hole punch calls truncate_pagecache_range() which tosses
-> away the zeroed page and the data the userspace application wrote
-> to the page.
+==================================================================
+BUG: KASAN: use-after-free in path_init+0x116b/0x13c0 fs/namei.c:2207
+Read of size 8 at addr ffff8880950a8a80 by task syz-executor167/6821
 
-But isn't that supposed to happen. If fallocate(hole_punch) and mmaped
-write are happening at the same time, then there is no guarantee
-in what order they will execute. App might read back data it wrote
-or might read back zeros depdening on order it was executed. (Even
-with proper locking).
+CPU: 0 PID: 6821 Comm: syz-executor167 Not tainted 5.8.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x18f/0x20d lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:383
+ __kasan_report mm/kasan/report.c:513 [inline]
+ kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
+ path_init+0x116b/0x13c0 fs/namei.c:2207
+ path_parentat+0x22/0x1b0 fs/namei.c:2384
+ filename_parentat+0x188/0x560 fs/namei.c:2407
+ do_rmdir+0xa8/0x440 fs/namei.c:3732
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x4403e9
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffd4e3bdb58 EFLAGS: 00000246 ORIG_RAX: 0000000000000054
+RAX: ffffffffffffffda RBX: 69662f7375622f2e RCX: 00000000004403e9
+RDX: 00000000004403e9 RSI: 00000000004403e9 RDI: 0000000020000080
+RBP: 2f31656c69662f2e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401bf0
+R13: 0000000000401c80 R14: 0000000000000000 R15: 0000000000000000
 
-> 
-> The application then refaults the page, reading stale data off
-> disk instead of seeing what it had already written to the page....
-> 
-> And unlike truncated pages, the mm/ code cannot reliably detect
-> invalidation races on lockless lookup of pages that are within EOF.
-> They rely on truncate changing the file size before page
-> invalidation to detect races as page->index then points beyond EOF.
-> Hole punching does not change inode size, so the page cache lookups
-> cannot tell the difference between a new page that just needs IO to
-> initialise the data and a page that has just been invalidated....
-> 
-> IOWs, there are many ways things can go wrong with hole punch, and
-> the only way to avoid them all is to do invalidate and lock out the
-> page cache before starting the fallocate operation. i.e.:
-> 
-> 	1. lock up the entire IO path (vfs and page fault)
-> 	2. drain the AIO+DIO path
-> 	3. write back dirty pages
-> 	4. invalidate the page cache
+Allocated by task 6821:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:461
+ slab_post_alloc_hook mm/slab.h:518 [inline]
+ slab_alloc mm/slab.c:3312 [inline]
+ kmem_cache_alloc+0x138/0x3a0 mm/slab.c:3482
+ getname_flags.part.0+0x50/0x4f0 fs/namei.c:138
+ getname_flags include/linux/audit.h:320 [inline]
+ getname fs/namei.c:209 [inline]
+ __do_sys_rmdir fs/namei.c:3783 [inline]
+ __se_sys_rmdir fs/namei.c:3781 [inline]
+ __x64_sys_rmdir+0xb1/0x100 fs/namei.c:3781
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-I see that this is definitely safe. Stop all read/write/faults/aio/dio
-before proceeding with punching hole and invalidating page cache.
+Freed by task 6821:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
+ kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0xd8/0x120 mm/kasan/common.c:422
+ __cache_free mm/slab.c:3418 [inline]
+ kmem_cache_free.part.0+0x67/0x1f0 mm/slab.c:3693
+ putname+0xe1/0x120 fs/namei.c:259
+ do_rmdir+0x145/0x440 fs/namei.c:3773
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-I think for my purpose, I need to take fi->i_mmap_sem in memory
-range freeing path and need to exactly do all the above to make
-sure that no I/O, fault or AIO/DIO is going on before I take
-away the memory range I have allocated for that inode offset. This
-is I think very similar to assigning blocks/extents and taking
-these away. In that code path I am already taking care of
-taking inode lock as well as i_mmap_sem. But I have not taken
-care of AIO/DIO stuff. I will introduce that too.
+The buggy address belongs to the object at ffff8880950a8a80
+ which belongs to the cache names_cache of size 4096
+The buggy address is located 0 bytes inside of
+ 4096-byte region [ffff8880950a8a80, ffff8880950a9a80)
+The buggy address belongs to the page:
+page:00000000c8532513 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x950a8
+head:00000000c8532513 order:1 compound_mapcount:0
+flags: 0xfffe0000010200(slab|head)
+raw: 00fffe0000010200 ffffea0002540e88 ffffea000251ef88 ffff88821bc47a00
+raw: 0000000000000000 ffff8880950a8a80 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
 
-For the time being I will handle this fallocate/ftruncate possible
-races in a separate patch series. To me it makes sense to do what
-ext4/xfs are doing. But there might be more to it when it comes
-to remote filesystems... 
-
-Miklos, WDYT. Shall I modify fuse fallocate/ftruncate code to 
-block all faults/AIO/DIO as well before we get down to the
-task of writing back pages, truncating page cache and punching
-hole.
-
-> 
-> Because this is the only way we can guarantee that nothing can access
-> the filesystem's backing store for the range we are about to
-> directly manipulate the data in while we perform an "offloaded" data
-> transformation on that range...
-> 
-> This isn't just hole punch - the same problems exist with
-> FALLOC_FL_ZERO_RANGE and FALLOC_FL_{INSERT,COLLAPSE}_RANGE because
-> they change data with extent manipulations and/or hardware offloads
-> that provide no guarantees of specific data state or integrity until
-> they complete....
-
-Ok. As of now fuse seems to have blocked all extra fallocate operations
-like ZERO_RANGE, INSERT, COLLAPSE.
-
-Thanks
-Vivek
+Memory state around the buggy address:
+ ffff8880950a8980: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8880950a8a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff8880950a8a80: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff8880950a8b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880950a8b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
