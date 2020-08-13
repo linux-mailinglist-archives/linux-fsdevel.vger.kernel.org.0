@@ -2,78 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E952624370F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 11:01:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA781243711
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 11:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbgHMJBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 05:01:41 -0400
-Received: from lizzy.crudebyte.com ([91.194.90.13]:49545 "EHLO
-        lizzy.crudebyte.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726131AbgHMJBl (ORCPT
+        id S1726419AbgHMJBw convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 05:01:52 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:36514 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726174AbgHMJBw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 05:01:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=crudebyte.com; s=lizzy; h=Content-Type:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        Content-ID:Content-Description;
-        bh=xoEU/e+t3YPzZhroZXeZdFynEC84Ts4q65Sao1+LTas=; b=XLEZSsXO4be6wRTPpunR4waBQx
-        qkkew2+Flofmq8uLdJ1kYjYg65q1Fiw2fXiHE4oqI1oDX3QDxLKOSft6+zhxlxbG+zpMRKM2xcUwR
-        BT5BZBf1Mim9lAh8ZFtT4STmw6afx461okxIPhGRNk9neWL9nzBAXFi7kbbScDUKnmtG7+ivvQfJJ
-        JFigffrLRBKBZHdg97dsIjAilcJiu1JMVAM4q8MemWoHjnlwXEfExRsYMovcfZRleMhHCTOzjyc9Q
-        /wZJOQnKqDWb4AaRppdNLCBirIMpwBzpo03SsVZpPG8IotFXhPTh+foEFXhov8BSdEQA4nPPFrSG2
-        ah1vlBvw==;
-From:   Christian Schoenebeck <qemu_oss@crudebyte.com>
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc:     Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
-        stefanha@redhat.com, mszeredi@redhat.com, vgoyal@redhat.com,
-        gscrivan@redhat.com, dwalsh@redhat.com, chirantan@chromium.org
-Subject: Re: xattr names for unprivileged stacking?
-Date:   Thu, 13 Aug 2020 11:01:36 +0200
-Message-ID: <27541158.PQPtYaGs59@silver>
-In-Reply-To: <20200812143323.GF2810@work-vm>
-References: <20200728105503.GE2699@work-vm> <12480108.dgM6XvcGr8@silver> <20200812143323.GF2810@work-vm>
+        Thu, 13 Aug 2020 05:01:52 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-138-e8H63y_oORuTtNJUDzGgeQ-1; Thu, 13 Aug 2020 10:01:48 +0100
+X-MC-Unique: e8H63y_oORuTtNJUDzGgeQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 13 Aug 2020 10:01:48 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 13 Aug 2020 10:01:48 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christoph Hellwig' <hch@infradead.org>,
+        Daniel Axtens <dja@axtens.net>
+CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] fs/select.c: batch user writes in do_sys_poll
+Thread-Topic: [PATCH] fs/select.c: batch user writes in do_sys_poll
+Thread-Index: AQHWcUPllYrYWDsW9k2hVZh5/SyFEKk1vNpg
+Date:   Thu, 13 Aug 2020 09:01:48 +0000
+Message-ID: <edb8988b36b44ef392b2948c7ee1a8e9@AcuMS.aculab.com>
+References: <20200813071120.2113039-1-dja@axtens.net>
+ <20200813073220.GB15436@infradead.org>
+In-Reply-To: <20200813073220.GB15436@infradead.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mittwoch, 12. August 2020 16:33:23 CEST Dr. David Alan Gilbert wrote:
-> > On macOS there was (or actually still is) even a quite complex API which
-> > separated forks into "resource forks" and "data forks", where resource
-> > forks were typically used as components of an application binary (e.g.
-> > menu structure, icons, executable binary modules, text and translations).
-> > So resource forks not only had names, they also had predefined 16-bit
-> > type identifiers:
-> > https://en.wikipedia.org/wiki/Resource_fork
+From: Christoph Hellwig
+> Sent: 13 August 2020 08:32
 > 
-> Yeh, lots of different ways.
+> On Thu, Aug 13, 2020 at 05:11:20PM +1000, Daniel Axtens wrote:
+> > When returning results to userspace, do_sys_poll repeatedly calls
+> > put_user() - once per fd that it's watching.
+> >
+> > This means that on architectures that support some form of
+> > kernel-to-userspace access protection, we end up enabling and disabling
+> > access once for each file descripter we're watching. This is inefficent
+> > and we can improve things by batching the accesses together.
+> >
+> > To make sure there's not too much happening in the window when user
+> > accesses are permitted, we don't walk the linked list with accesses on.
+> > This leads to some slightly messy code in the loop, unfortunately.
+> >
+> > Unscientific benchmarking with the poll2_threads microbenchmark from
+> > will-it-scale, run as `./poll2_threads -t 1 -s 15`:
+> >
+> >  - Bare-metal Power9 with KUAP: ~48.8% speed-up
+> >  - VM on amd64 laptop with SMAP: ~25.5% speed-up
+> >
+> > Signed-off-by: Daniel Axtens <dja@axtens.net>
 > 
-> In a way, if you had a way to drop the 64kiB limit on xattr, then you
-> could have one type of object, but then add new ways of accessing them
-> as forks.
+> Seem like this could simply use a copy_to_user to further simplify
+> things?
 
-That's yet another question: should xattrs and forks share the same data- and 
-namespace, or rather be orthogonal to each other.
+That would copy out 8 bytes/fd instead of 2.
+So a slight change for 32bit kernels.
+However the 'user copy hardening' checks that copy_to_user()
+does probably make a measurable difference.
 
-Say forks would (one day) have their own ownership and permissions, then 
-restricted environments would want to project forks' permissions onto xattrs, 
-which would suggest an orthogonal approach (i.e. forks having their own 
-xattrs).
+> Also please don't pointlessly add overly long lines.
 
-OTOH a shared namespace would allow a mellow transition for heterogenous 
-systems and their apps from in-memory-only xattrs towards I/O based forks.
+Shorten the error label?
 
-Another option: shared namespace, but allowing forks having subforks. That 
-would e.g. allow restricted environments to project permissions onto subforks, 
-and the latter in turn being accessible by xattr API at the same time.
+	David
 
-Or yet another option: shared data space, but nesting the namespace of one 
-side under prefix on the other side (e.g. fork "foo" <=> xattr "fork.foo").
-
-Best regards,
-Christian Schoenebeck
-
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
