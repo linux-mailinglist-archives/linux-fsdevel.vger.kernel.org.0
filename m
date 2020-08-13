@@ -2,145 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 43669243E29
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 19:19:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCDC6243E4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 19:28:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726522AbgHMRTX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 13:19:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40448 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726384AbgHMRTX (ORCPT
+        id S1726522AbgHMR20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 13:28:26 -0400
+Received: from mail-il1-f199.google.com ([209.85.166.199]:46809 "EHLO
+        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbgHMR2Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 13:19:23 -0400
-Received: from mail-qv1-xf42.google.com (mail-qv1-xf42.google.com [IPv6:2607:f8b0:4864:20::f42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4F47C061383
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 10:19:22 -0700 (PDT)
-Received: by mail-qv1-xf42.google.com with SMTP id x6so2969356qvr.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 10:19:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gG3QhBSmvxEmkeggBu4YpeOeDbfqTTnXI4PDot46vj4=;
-        b=YL0Vf/WekjB5AM1fC7TEY+E6+AVRqgLtZXfd25s9QHxsEHencNoK4s9J8XEWbUDCyW
-         eipm4TQKkJVy8x2OpmcGo/sSjuWf6h1Ph9avHZp3SteAHGcWiS94x3uw7HzqpCzxgTIE
-         D+FH60umOiEqnTrvVxKMqMaOflUpIvT5m6kMH+MLbYn1/puoRaw2wFJmWDCBJkinxKHj
-         axsDdmko2LluqA+kzh89WeY+fF+/RFduhpJHvBSQ4nddTp2aOnUXLZ2wtToC5hYz14dz
-         XUBVgKD4pu9wtN/UovuOeR8caAetpMTxc5RWl/MaEC9UKQv3mEKOai25E/h/okkbAbxs
-         BnGg==
+        Thu, 13 Aug 2020 13:28:24 -0400
+Received: by mail-il1-f199.google.com with SMTP id q19so4872705ilt.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 10:28:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gG3QhBSmvxEmkeggBu4YpeOeDbfqTTnXI4PDot46vj4=;
-        b=hUnIZwo1+NQlRFIcV169OQS6IZF0GppqaoLFOs/wlsAtaaYQyl6HRHXbT6UVHRxPb4
-         IqVMhRIPH4ecyrZdTWXbEy55iADw0PoRkn0A4VXaUgldALh3spzOytQAOucJfhLQM7de
-         Oznp5zqgdx3od+Fxs3Z86OhOG4EY8h9LWFO4xD0hMboBdbcv2X08G53WW+4XzZtQNY3F
-         lwVTwPaPL0GV5GS/fsawtGXXBcSZ/gPjD4+qf9rW/ViY4LXKcRgutwrtnz50P1vHo/pg
-         Y6hLHfgEYmGE6kgwbloA4tySrYTSXeYfL0BCaOJB4dFSHpumrN9SjW4okhdjKAm4XVS7
-         Ax1A==
-X-Gm-Message-State: AOAM532+NsNDhyjclPFJKMZdTLC6BbOUk64cGZo5nDwrvopdYd+pkEaD
-        teWOe7aelCbwp4Dzb3ccd6jqTw==
-X-Google-Smtp-Source: ABdhPJwWp3EFYJ40IG50E8vXi2UTR2lQo5LyYbQiLWLmjIS0cYtoZwiOj9S4sgM/8CXPlK0MQJKrYg==
-X-Received: by 2002:a0c:f64a:: with SMTP id s10mr5666652qvm.196.1597339160681;
-        Thu, 13 Aug 2020 10:19:20 -0700 (PDT)
-Received: from ?IPv6:2620:10d:c0a8:11d9::10a7? ([2620:10d:c091:480::1:fe9c])
-        by smtp.gmail.com with ESMTPSA id l13sm6749820qth.77.2020.08.13.10.19.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Aug 2020 10:19:19 -0700 (PDT)
-Subject: Re: [PATCH][v2] proc: use vmalloc for our kernel buffer
-To:     Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-team@fb.com, willy@infradead.org
-References: <20200813145305.805730-1-josef@toxicpanda.com>
- <20200813153356.857625-1-josef@toxicpanda.com>
- <20200813153722.GA13844@lst.de>
- <974e469e-e73d-6c3e-9167-fad003f1dfb9@toxicpanda.com>
- <20200813154117.GA14149@lst.de> <20200813162002.GX1236603@ZenIV.linux.org.uk>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <9e4d3860-5829-df6f-aad4-44d07c62535b@toxicpanda.com>
-Date:   Thu, 13 Aug 2020 13:19:18 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.11.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ldpXwfigXaNaYABjkX+Qet8HDUWG+klcFP4raS2Jo7A=;
+        b=QWrscC9lHZnLHeBPOLYhrUvi5E4tQ5bHVw71Qy51Frcj/J0bcz6qAR3arDM4rcWzgV
+         j4empSIdHYH2qpQynTECIAcYGhov3u7xHAS1qUkRYlGeRvUU1rnSQfo3FXXCJHNY9xLj
+         WD2eWMzeU1RzfedHEkVdBuqe9eA04duIBZHn7EDV1yZ9wWoI3lw0vSTfdfJheNzjjo7T
+         fUosYt/TVaLQMunRLfjVxZV1K+W2Mwmaj4hHftMrpT4mWFOjfvsqO34a/f17dw73kjLh
+         pQ+sTIh6V0NGSX1BSBMJ+7HEOmrte5N7vaAJ1qjJ1ltE3t3RPifg0WR8N8tXJcHziadq
+         AKAg==
+X-Gm-Message-State: AOAM531UYuUx9TPT9KD6jg3bCaIaSLLmVqN0pkDfLlDcrNl/Vzk0PHaK
+        NHBVa42B4dQdwIne3R9IqL04hZoZFfLfYOgCxuFeT7wXodvF
+X-Google-Smtp-Source: ABdhPJwbgt9PtKppPlYaFBH6G6aIb7jTr/Ctd9L+MfCY7sbdaIrxp7xhpQHysBI5O4lbn8iuGlizudWC0obKLgG3JC6lB+qLSQWk
 MIME-Version: 1.0
-In-Reply-To: <20200813162002.GX1236603@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:1005:: with SMTP id r5mr6363265jab.116.1597339702885;
+ Thu, 13 Aug 2020 10:28:22 -0700 (PDT)
+Date:   Thu, 13 Aug 2020 10:28:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000093837f05acc5a11f@google.com>
+Subject: KASAN: use-after-free Read in idr_for_each
+From:   syzbot <syzbot+25d82ed5cc4b474f1df8@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/13/20 12:20 PM, Al Viro wrote:
-> On Thu, Aug 13, 2020 at 05:41:17PM +0200, Christoph Hellwig wrote:
->> On Thu, Aug 13, 2020 at 11:40:00AM -0400, Josef Bacik wrote:
->>> On 8/13/20 11:37 AM, Christoph Hellwig wrote:
->>>> On Thu, Aug 13, 2020 at 11:33:56AM -0400, Josef Bacik wrote:
->>>>> Since
->>>>>
->>>>>     sysctl: pass kernel pointers to ->proc_handler
->>>>>
->>>>> we have been pre-allocating a buffer to copy the data from the proc
->>>>> handlers into, and then copying that to userspace.  The problem is this
->>>>> just blind kmalloc()'s the buffer size passed in from the read, which in
->>>>> the case of our 'cat' binary was 64kib.  Order-4 allocations are not
->>>>> awesome, and since we can potentially allocate up to our maximum order,
->>>>> use vmalloc for these buffers.
->>>>>
->>>>> Fixes: 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
->>>>> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
->>>>> ---
->>>>> v1->v2:
->>>>> - Make vmemdup_user_nul actually do the right thing...sorry about that.
->>>>>
->>>>>    fs/proc/proc_sysctl.c  |  6 +++---
->>>>>    include/linux/string.h |  1 +
->>>>>    mm/util.c              | 27 +++++++++++++++++++++++++++
->>>>>    3 files changed, 31 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
->>>>> index 6c1166ccdaea..207ac6e6e028 100644
->>>>> --- a/fs/proc/proc_sysctl.c
->>>>> +++ b/fs/proc/proc_sysctl.c
->>>>> @@ -571,13 +571,13 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
->>>>>    		goto out;
->>>>>      	if (write) {
->>>>> -		kbuf = memdup_user_nul(ubuf, count);
->>>>> +		kbuf = vmemdup_user_nul(ubuf, count);
->>>>
->>>> Given that this can also do a kmalloc and thus needs to be paired
->>>> with kvfree shouldn't it be kvmemdup_user_nul?
->>>>
->>>
->>> There's an existing vmemdup_user that does kvmalloc, so I followed the
->>> existing naming convention.  Do you want me to change them both?  Thanks,
->>
->> I personally would, and given that it only has a few users it might
->> even be feasible.
-> 
-> FWIW, how about following or combining that with "allocate count + 1 bytes on
-> the read side"?  Allows some nice cleanups - e.g.
->                  len = sprintf(tmpbuf, "0x%04x", *(unsigned int *) table->data);
->                  if (len > left)
->                          len = left;
->                  memcpy(buffer, tmpbuf, len);
->                  if ((left -= len) > 0) {
->                          *((char *)buffer + len) = '\n';
->                          left--;
->                  }
-> in sunrpc proc_dodebug() turns into
-> 		left -= snprintf(buffer, left, "0x%04x\n",
-> 				 *(unsigned int *) table->data);
-> and that's not the only example.
-> 
+Hello,
 
-We wouldn't even need the extra +1 part, since we're only copying in how much 
-the user wants anyway, we could just go ahead and convert this to
+syzbot found the following issue on:
 
-left -= snprintf(buffer, left, "0x%04x\n", *(unsigned int *) table->data);
+HEAD commit:    fb893de3 Merge tag 'tag-chrome-platform-for-v5.9' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=167ed216900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f1fedc63022bf07e
+dashboard link: https://syzkaller.appspot.com/bug?extid=25d82ed5cc4b474f1df8
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=107bc222900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a09d06900000
 
-and be fine, right?  Or am I misunderstanding what you're looking for?  Thanks,
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+25d82ed5cc4b474f1df8@syzkaller.appspotmail.com
 
-Josef
+==================================================================
+BUG: KASAN: use-after-free in radix_tree_next_slot include/linux/radix-tree.h:421 [inline]
+BUG: KASAN: use-after-free in idr_for_each+0x206/0x220 lib/idr.c:202
+Read of size 8 at addr ffff888082058c78 by task syz-executor999/3765
+
+CPU: 1 PID: 3765 Comm: syz-executor999 Not tainted 5.8.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x18f/0x20d lib/dump_stack.c:118
+ print_address_description.constprop.0.cold+0xae/0x497 mm/kasan/report.c:383
+ __kasan_report mm/kasan/report.c:513 [inline]
+ kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
+ radix_tree_next_slot include/linux/radix-tree.h:421 [inline]
+ idr_for_each+0x206/0x220 lib/idr.c:202
+ io_ring_ctx_wait_and_kill+0x374/0x600 fs/io_uring.c:7810
+ io_uring_release+0x3e/0x50 fs/io_uring.c:7829
+ __fput+0x285/0x920 fs/file_table.c:281
+ task_work_run+0xdd/0x190 kernel/task_work.c:135
+ exit_task_work include/linux/task_work.h:25 [inline]
+ do_exit+0xb7d/0x29f0 kernel/exit.c:806
+ do_group_exit+0x125/0x310 kernel/exit.c:903
+ get_signal+0x40b/0x1ee0 kernel/signal.c:2743
+ arch_do_signal+0x82/0x2520 arch/x86/kernel/signal.c:811
+ exit_to_user_mode_loop kernel/entry/common.c:135 [inline]
+ exit_to_user_mode_prepare+0x172/0x1d0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x59/0x2b0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x447179
+Code: Bad RIP value.
+RSP: 002b:00007f049661dcf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00000000006dbc38 RCX: 0000000000447179
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00000000006dbc38
+RBP: 00000000006dbc30 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc3c
+R13: 00007ffd1e2340df R14: 00007f049661e9c0 R15: 0000000000000001
+
+Allocated by task 3747:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track mm/kasan/common.c:56 [inline]
+ __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:461
+ slab_post_alloc_hook mm/slab.h:518 [inline]
+ slab_alloc mm/slab.c:3312 [inline]
+ kmem_cache_alloc+0x138/0x3a0 mm/slab.c:3482
+ radix_tree_node_alloc.constprop.0+0x7c/0x320 lib/radix-tree.c:275
+ idr_get_free+0x4b0/0x8e0 lib/radix-tree.c:1505
+ idr_alloc_u32+0x170/0x2d0 lib/idr.c:46
+ idr_alloc_cyclic+0x102/0x230 lib/idr.c:125
+ io_register_personality fs/io_uring.c:8454 [inline]
+ __io_uring_register fs/io_uring.c:8575 [inline]
+ __do_sys_io_uring_register+0x606/0x33f0 fs/io_uring.c:8615
+ do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Freed by task 16:
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_set_track+0x1c/0x30 mm/kasan/common.c:56
+ kasan_set_free_info+0x1b/0x30 mm/kasan/generic.c:355
+ __kasan_slab_free+0xd8/0x120 mm/kasan/common.c:422
+ __cache_free mm/slab.c:3418 [inline]
+ kmem_cache_free.part.0+0x67/0x1f0 mm/slab.c:3693
+ rcu_do_batch kernel/rcu/tree.c:2428 [inline]
+ rcu_core+0x5c7/0x1190 kernel/rcu/tree.c:2656
+ __do_softirq+0x2de/0xa24 kernel/softirq.c:298
+
+Last call_rcu():
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2894 [inline]
+ call_rcu+0x14f/0x7e0 kernel/rcu/tree.c:2968
+ radix_tree_node_free lib/radix-tree.c:309 [inline]
+ delete_node+0x587/0x8a0 lib/radix-tree.c:572
+ __radix_tree_delete+0x190/0x370 lib/radix-tree.c:1378
+ radix_tree_delete_item+0xe7/0x230 lib/radix-tree.c:1429
+ io_remove_personalities+0x1b/0xb0 fs/io_uring.c:7769
+ idr_for_each+0x113/0x220 lib/idr.c:208
+ io_ring_ctx_wait_and_kill+0x374/0x600 fs/io_uring.c:7810
+ io_uring_release+0x3e/0x50 fs/io_uring.c:7829
+ __fput+0x285/0x920 fs/file_table.c:281
+ task_work_run+0xdd/0x190 kernel/task_work.c:135
+ exit_task_work include/linux/task_work.h:25 [inline]
+ do_exit+0xb7d/0x29f0 kernel/exit.c:806
+ do_group_exit+0x125/0x310 kernel/exit.c:903
+ get_signal+0x40b/0x1ee0 kernel/signal.c:2743
+ arch_do_signal+0x82/0x2520 arch/x86/kernel/signal.c:811
+ exit_to_user_mode_loop kernel/entry/common.c:135 [inline]
+ exit_to_user_mode_prepare+0x172/0x1d0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x59/0x2b0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Second to last call_rcu():
+ kasan_save_stack+0x1b/0x40 mm/kasan/common.c:48
+ kasan_record_aux_stack+0x82/0xb0 mm/kasan/generic.c:346
+ __call_rcu kernel/rcu/tree.c:2894 [inline]
+ call_rcu+0x14f/0x7e0 kernel/rcu/tree.c:2968
+ radix_tree_node_free lib/radix-tree.c:309 [inline]
+ delete_node+0x587/0x8a0 lib/radix-tree.c:572
+ __radix_tree_delete+0x190/0x370 lib/radix-tree.c:1378
+ radix_tree_delete_item+0xe7/0x230 lib/radix-tree.c:1429
+ io_remove_personalities+0x1b/0xb0 fs/io_uring.c:7769
+ idr_for_each+0x113/0x220 lib/idr.c:208
+ io_ring_ctx_wait_and_kill+0x374/0x600 fs/io_uring.c:7810
+ io_uring_release+0x3e/0x50 fs/io_uring.c:7829
+ __fput+0x285/0x920 fs/file_table.c:281
+ task_work_run+0xdd/0x190 kernel/task_work.c:135
+ exit_task_work include/linux/task_work.h:25 [inline]
+ do_exit+0xb7d/0x29f0 kernel/exit.c:806
+ do_group_exit+0x125/0x310 kernel/exit.c:903
+ get_signal+0x40b/0x1ee0 kernel/signal.c:2743
+ arch_do_signal+0x82/0x2520 arch/x86/kernel/signal.c:811
+ exit_to_user_mode_loop kernel/entry/common.c:135 [inline]
+ exit_to_user_mode_prepare+0x172/0x1d0 kernel/entry/common.c:166
+ syscall_exit_to_user_mode+0x59/0x2b0 kernel/entry/common.c:241
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+The buggy address belongs to the object at ffff888082058c40
+ which belongs to the cache radix_tree_node of size 576
+The buggy address is located 56 bytes inside of
+ 576-byte region [ffff888082058c40, ffff888082058e80)
+The buggy address belongs to the page:
+page:0000000023bf3329 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888082058ffb pfn:0x82058
+flags: 0xfffe0000000200(slab)
+raw: 00fffe0000000200 ffffea0002080ac8 ffffea0002080cc8 ffff8880aa06f000
+raw: ffff888082058ffb ffff888082058140 0000000100000005 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888082058b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888082058b80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>ffff888082058c00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+                                                                ^
+ ffff888082058c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888082058d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
