@@ -2,109 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EF0FB2436F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 10:53:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E952624370F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 11:01:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbgHMIxI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 04:53:08 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:42799 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726106AbgHMIxI (ORCPT
+        id S1726102AbgHMJBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 05:01:41 -0400
+Received: from lizzy.crudebyte.com ([91.194.90.13]:49545 "EHLO
+        lizzy.crudebyte.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726131AbgHMJBl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 04:53:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597308786;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bHxBlhSxxa/67DKNkFk3S3CDohJlBQmN8kkHMo7F2jw=;
-        b=ZbUslsAHu3sgveWvWXm2hALTSdsK9dX/3JkGXB4b+UCMKx822LO3HPQV9I4yGSxgUF9euO
-        bo5LAD/dXjbcOct/IgncvqNQanaouLkcjbWY1RvKP/LVCCQecivyu46ZbAUQU4wRzHYklM
-        ee7FHFmRuas+pu7o89+BI6yeugZGu+Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-170-g7xpvjS9Pg-ZPkk-XNFWnQ-1; Thu, 13 Aug 2020 04:53:01 -0400
-X-MC-Unique: g7xpvjS9Pg-ZPkk-XNFWnQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6D1BF80046F;
-        Thu, 13 Aug 2020 08:52:59 +0000 (UTC)
-Received: from ws.net.home (unknown [10.40.193.69])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8FE145D9F3;
-        Thu, 13 Aug 2020 08:52:55 +0000 (UTC)
-Date:   Thu, 13 Aug 2020 10:52:52 +0200
-From:   Karel Zak <kzak@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Steven Whitehouse <swhiteho@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: file metadata via fs API
-Message-ID: <20200813085252.ezwd46ahyjiz4flh@ws.net.home>
-References: <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
- <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <52483.1597190733@warthog.procyon.org.uk>
- <CAJfpegt=cQ159kEH9zCYVHV7R_08jwMxF0jKrSUV5E=uBg4Lzw@mail.gmail.com>
- <98802.1597220949@warthog.procyon.org.uk>
- <CAJfpegsVJo9e=pHf3YGWkE16fT0QaNGhgkUdq4KUQypXaD=OgQ@mail.gmail.com>
- <d2d179c7-9b60-ca1a-0c9f-d308fc7af5ce@redhat.com>
- <CAJfpeguMjU+n-JXE6aUQQGeMpCS4bsy4HQ37NHJ8aD8Aeg2qhA@mail.gmail.com>
- <20200812112825.b52tqeuro2lquxlw@ws.net.home>
- <CAJfpegv4sC2zm+N5tvEmYaEFvvWJRHfdGqXUoBzbeKj81uNCvQ@mail.gmail.com>
+        Thu, 13 Aug 2020 05:01:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=crudebyte.com; s=lizzy; h=Content-Type:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        Content-ID:Content-Description;
+        bh=xoEU/e+t3YPzZhroZXeZdFynEC84Ts4q65Sao1+LTas=; b=XLEZSsXO4be6wRTPpunR4waBQx
+        qkkew2+Flofmq8uLdJ1kYjYg65q1Fiw2fXiHE4oqI1oDX3QDxLKOSft6+zhxlxbG+zpMRKM2xcUwR
+        BT5BZBf1Mim9lAh8ZFtT4STmw6afx461okxIPhGRNk9neWL9nzBAXFi7kbbScDUKnmtG7+ivvQfJJ
+        JFigffrLRBKBZHdg97dsIjAilcJiu1JMVAM4q8MemWoHjnlwXEfExRsYMovcfZRleMhHCTOzjyc9Q
+        /wZJOQnKqDWb4AaRppdNLCBirIMpwBzpo03SsVZpPG8IotFXhPTh+foEFXhov8BSdEQA4nPPFrSG2
+        ah1vlBvw==;
+From:   Christian Schoenebeck <qemu_oss@crudebyte.com>
+To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Cc:     Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
+        stefanha@redhat.com, mszeredi@redhat.com, vgoyal@redhat.com,
+        gscrivan@redhat.com, dwalsh@redhat.com, chirantan@chromium.org
+Subject: Re: xattr names for unprivileged stacking?
+Date:   Thu, 13 Aug 2020 11:01:36 +0200
+Message-ID: <27541158.PQPtYaGs59@silver>
+In-Reply-To: <20200812143323.GF2810@work-vm>
+References: <20200728105503.GE2699@work-vm> <12480108.dgM6XvcGr8@silver> <20200812143323.GF2810@work-vm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegv4sC2zm+N5tvEmYaEFvvWJRHfdGqXUoBzbeKj81uNCvQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 12, 2020 at 02:43:32PM +0200, Miklos Szeredi wrote:
-> On Wed, Aug 12, 2020 at 1:28 PM Karel Zak <kzak@redhat.com> wrote:
+On Mittwoch, 12. August 2020 16:33:23 CEST Dr. David Alan Gilbert wrote:
+> > On macOS there was (or actually still is) even a quite complex API which
+> > separated forks into "resource forks" and "data forks", where resource
+> > forks were typically used as components of an application binary (e.g.
+> > menu structure, icons, executable binary modules, text and translations).
+> > So resource forks not only had names, they also had predefined 16-bit
+> > type identifiers:
+> > https://en.wikipedia.org/wiki/Resource_fork
 > 
-> > The proposal is based on paths and open(), how do you plan to deal
-> > with mount IDs? David's fsinfo() allows to ask for mount info by mount
-> > ID and it works well with mount notification where you get the ID. The
-> > collaboration with notification interface is critical for our use-cases.
+> Yeh, lots of different ways.
 > 
-> One would use the notification to keep an up to date set of attributes
-> for each watched mount, right?
-> 
-> That presumably means the mount ID <-> mount path mapping already
-> exists, which means it's just possible to use the open(mount_path,
-> O_PATH) to obtain the base fd.
+> In a way, if you had a way to drop the 64kiB limit on xattr, then you
+> could have one type of object, but then add new ways of accessing them
+> as forks.
 
-The notification also reports new mount nodes, so we have no mount ID
-<-> mount path mapping in userspace yet.
+That's yet another question: should xattrs and forks share the same data- and 
+namespace, or rather be orthogonal to each other.
 
-The another problem is that open(path) cannot be used if you have multiple
-filesystems on the same mount point -- in this case (at least in theory)
-you can get ID for by-path inaccessible filesystem.
+Say forks would (one day) have their own ownership and permissions, then 
+restricted environments would want to project forks' permissions onto xattrs, 
+which would suggest an orthogonal approach (i.e. forks having their own 
+xattrs).
 
-> A new syscall that returns an fd pointing to the root of the mount
-> might be the best solution:
-> 
->    int open_mount(int root_fd, u64 mntid, int flags);
+OTOH a shared namespace would allow a mellow transition for heterogenous 
+systems and their apps from in-memory-only xattrs towards I/O based forks.
 
-Yes, something like this is necessary. You do not want to depend
-on paths if you want to read information about mountpoints.
+Another option: shared namespace, but allowing forks having subforks. That 
+would e.g. allow restricted environments to project permissions onto subforks, 
+and the latter in turn being accessible by xattr API at the same time.
 
- Karel
+Or yet another option: shared data space, but nesting the namespace of one 
+side under prefix on the other side (e.g. fork "foo" <=> xattr "fork.foo").
 
--- 
- Karel Zak  <kzak@redhat.com>
- http://karelzak.blogspot.com
+Best regards,
+Christian Schoenebeck
+
 
