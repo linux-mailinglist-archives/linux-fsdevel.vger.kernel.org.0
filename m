@@ -2,91 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D74BA24414D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 00:34:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D6DD2441C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 01:41:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgHMWe0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 18:34:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60622 "EHLO
+        id S1726615AbgHMXlR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 19:41:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbgHMWe0 (ORCPT
+        with ESMTP id S1726546AbgHMXlP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 18:34:26 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 069FFC061383
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 15:34:25 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id t13so6893926ile.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 15:34:25 -0700 (PDT)
+        Thu, 13 Aug 2020 19:41:15 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B48C061383
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 16:41:15 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id y10so1778564plr.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 16:41:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=WGCypL7QzTFJaW2l6fBN1sjnNdhFBpni9fSR4MPrGnE=;
-        b=rVtuwskctvwFmTmk+H43JJ78nsS56swzq8woMDmBqn+8IMtY/rSRFBv2iLN42zm+fc
-         S4Q3lt2EmefhAt384ggHZ+fFS6rYGnsiQMyWxBVA6e+tVn0eGP5VD1H83rhBkLDgZlau
-         5hzG2+Tovo5grIJxgcAX1mJjvcMHBTFWjAuXgMKIOuaVpAJMEoiHF/z+UjJocLU6BEbp
-         wmTJVrz8wTjUjgkNtbpO9MKFaV1qZd2aqc+igjQM0oIf/9HAUSSwTJgsR85wd4VBhUrP
-         80iNmR4xEdEsMimC2BxkjGKT1DGdNk8a02JYYTkqtKkIyuNydq7WyV2OfLHm+AbIAKAJ
-         7HRA==
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DNFaF9Cs3zWjUt9HSYNd3IiEMGEapz2J+4l77dIbrwo=;
+        b=YqAyRutnch7+HUjZuopyDsiGfCywjczK9n7Y36NbctjUu+vKatqfahA/LreTvE5GWy
+         jEaSQg0hkkqfoOh+4OP2I2bOYRwtjgbrQ/Rjz96FHaVhfLHbg0Akdly3BHhXIH8T3FAN
+         2OBMDl60WBBGrqHM2DPvcl/ZxoR3kkxSBO+WM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=WGCypL7QzTFJaW2l6fBN1sjnNdhFBpni9fSR4MPrGnE=;
-        b=deCS3dGez1OGFEjeFvfFtcP46/ahj+UPK96Q5oeOR2H6YUSK6ofeq+pRP///9UYYLQ
-         d+GHKtHRLhBYxa6/yBgbk+J4NtR2qzOyTTFHd0Y1IO0gxuFC41jP820HyZJ5XwPQzo8O
-         KppWdjZCfEnZpTPH1B604PZuBTmSYRBOK7NAylKNTNWPK9f7XzDFa9erKS4Zr0rMLew7
-         ygdNdHDbGAe4vuzq57Ly3476Xg7EDxjceIrW/kg5YIQeiybCY95kiOnFQSiSXGof87rf
-         d69g2OZ0X2D0333hEo86evA7IUx+htoCiA1o/vECjrDA5PLzPhbBx71znAZSg2MoPTEJ
-         1Eaw==
-X-Gm-Message-State: AOAM532dvf+HCf7L1AjVpbIRBPpA2eT5/v6FD/rePAgh35OIv/ILPNMy
-        Smft3qIBAvvnjLhR4TZlqot56592WIHNaAPkG1c=
-X-Google-Smtp-Source: ABdhPJzZa1Dw9Hlbcdk73H3yL7hFJ/3b4qdt1rJykfoq0YHzsDgL4eDsd/YCZHpjEvd8jI2bNsUSVR9TG1mGshhLrCc=
-X-Received: by 2002:a92:b05:: with SMTP id b5mr75239ilf.14.1597358064692; Thu,
- 13 Aug 2020 15:34:24 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DNFaF9Cs3zWjUt9HSYNd3IiEMGEapz2J+4l77dIbrwo=;
+        b=l5skvlZuIbWcgWietKsFdrhA51eTs9aIzdoWCKIGz9eRVy2KMPuroRNDFyn65+wKvR
+         j1uF9PIQtxskwWT9u6LuSR4oWrAcQTCq0qqyacS4S3jopBXt96S6bnH0RPymRW0k/gXD
+         kmDhym0xp28RS2w8OTn5oNG6Nss9ZHGwajqGDDzOaMC+JJZFt6vDak3mpZHxZqSZsPbb
+         eYwZaDhQNF9MOp7MPIDwElRk7Vi52WmUjXCm5dSo0VXy0syCHfrmjFzp1pAHvNW8jY1T
+         jYq+ozljdojGWKeqjCnV1ZzseVEunQZbD3Y3SJ3IWK7RYoQIc7oouTFMg22qxxJ+sgxL
+         u3Gg==
+X-Gm-Message-State: AOAM532wIx0eD/fNCTqtY0TPYufZ2UzUMGaOmdIHpwePJwNLmiJ/Z8Ak
+        jTHO7YcuJREWbUNiZ25QwgZf4Q==
+X-Google-Smtp-Source: ABdhPJynsUbEReqNAmxYQBBQqGDLPisu8l4W6L65z9vkH//QubpuHH8fiKiN7JZht+DiFf8FYCNLOA==
+X-Received: by 2002:a17:90b:c90:: with SMTP id o16mr39974pjz.79.1597362074860;
+        Thu, 13 Aug 2020 16:41:14 -0700 (PDT)
+Received: from localhost (2001-44b8-111e-5c00-c1ec-6af7-db57-0688.static.ipv6.internode.on.net. [2001:44b8:111e:5c00:c1ec:6af7:db57:688])
+        by smtp.gmail.com with ESMTPSA id n10sm6329937pgf.7.2020.08.13.16.41.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Aug 2020 16:41:14 -0700 (PDT)
+From:   Daniel Axtens <dja@axtens.net>
+To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     David.Laight@ACULAB.COM, hch@infradead.org,
+        Daniel Axtens <dja@axtens.net>
+Subject: [PATCH v2] fs/select.c: batch user writes in do_sys_poll
+Date:   Fri, 14 Aug 2020 09:41:10 +1000
+Message-Id: <20200813234110.2156475-1-dja@axtens.net>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Received: by 2002:a05:6638:20f:0:0:0:0 with HTTP; Thu, 13 Aug 2020 15:34:24
- -0700 (PDT)
-Reply-To: u.s.a.worldbank.u.n2@gmail.com
-From:   FRANK WHYTE <pauldouglas002@gmail.com>
-Date:   Thu, 13 Aug 2020 23:34:24 +0100
-Message-ID: <CAJDTHFw6hDg0nRbBoP5_sxCX3_BrReDLJ+tFZzjC2pPa3tPJiA@mail.gmail.com>
-Subject: Claims Requirements:
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+When returning results to userspace, do_sys_poll repeatedly calls
+put_user() - once per fd that it's watching.
+
+This means that on architectures that support some form of
+kernel-to-userspace access protection, we end up enabling and disabling
+access once for each file descripter we're watching. This is inefficent
+and we can improve things. We could do careful batching of the opening
+and closing of the access window, or we could just copy the entire walk
+entries structure. While that copies more data, it potentially does so
+more efficiently, and the overhead is much less than the lock/unlock
+overhead.
+
+Unscientific benchmarking with the poll2_threads microbenchmark from
+will-it-scale, run as `./poll2_threads -t 1 -s 15`:
+
+  - Bare-metal Power9 with KUAP: ~49% speed-up
+  - VM on amd64 laptop with SMAP: ~25% speed-up
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+
+---
+
+v2: Use copy_to_user instead of put_user, thanks Christoph Hellwig.
+---
+ fs/select.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/fs/select.c b/fs/select.c
+index 7aef49552d4c..52118cdddf77 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -1012,12 +1012,10 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
+ 	poll_freewait(&table);
+ 
+ 	for (walk = head; walk; walk = walk->next) {
+-		struct pollfd *fds = walk->entries;
+-		int j;
+-
+-		for (j = 0; j < walk->len; j++, ufds++)
+-			if (__put_user(fds[j].revents, &ufds->revents))
+-				goto out_fds;
++		if (copy_to_user(ufds, walk->entries,
++				 sizeof(struct pollfd) * walk->len))
++			goto out_fds;
++		ufds += walk->len;
+   	}
+ 
+ 	err = fdcount;
 -- 
-From World Bank Switzerland ,
-No 1 Postfach CH 4002 Basel Switzerland.
-Global Financial Security Monitoring Unit
-Compensation Approved Sum Of US$1,500,000 million dollars.
+2.25.1
 
-Urgent Attention beneficiary
-
-Congratulations: You have been selected among the Covid-19 Outbreak
-Crisis Donation Funds by World Bank Groups. US$1,500,000 Thousand
-United State Dollars
-
-The WORLD BANK like to formal notify you that you have been chosen as
-one of the final recipients of Global Covid-19 Outbreak Crisis
-depressing and looming Global Financial Investment and Closure of some
-Multinational Companies and Cooperation in most super countries of the
-World,  Payments in Asian, American Region and European Region, Middle
-East and African Region are to receive The Donation Funds giving out
-of US$1,500,000. This was assignment and Approved into Law on the
-14th-18th JULY Meetings held in Switzerland and it was Approved by the
-Committee.
-
-Claims Requirements:
-1. Full Name:
-2. Address:
-3. Nationality:
-4. Occupation:
-5. Phone:
-
-Your Urgent Response will be appreciated.
-Regards
-Mr. Frank Whyte
