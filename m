@@ -2,97 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B08E2436E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 10:48:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF0FB2436F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 10:53:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbgHMIs2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 04:48:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46296 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbgHMIs2 (ORCPT
+        id S1726253AbgHMIxI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 04:53:08 -0400
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:42799 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726106AbgHMIxI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 04:48:28 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FB0C061383
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 01:48:27 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id p37so2486473pgl.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 01:48:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=tQ+XJ86Q75z7YMaMgzrVYfwbmUJG1wIysexAed3omC4=;
-        b=R0EO8jRcC3b+HX/0l95QKw8su+E0KG2JmljzjyRkm3AY86mnG11Aj1wi053m12GdNk
-         ilxSrERwKMSWBcEXaRo2P/VGtoy00QPIPiD2jln5gmu8TbKfAOVzl8OhoKUDjL3I50cF
-         L4AI7veL3ihxcTrgIk861Er16COfz4Azj9IZs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=tQ+XJ86Q75z7YMaMgzrVYfwbmUJG1wIysexAed3omC4=;
-        b=uUJ/+T/VEMedx2Jd1UpEcyFHJe3OKDbfjKNtL6fF4cctVjSRiy4eavI0RpkDSQ535G
-         TmlCXieiJfr6xjFaQ5tgxv+uRRvDUWyDXzrRqWnCJaLpp8zoxhpiVOERGMeyxNe/Q0Ww
-         RrWcMemuCsgGZHFrPn1ADHC6ao0Jv4qdYTseM2gu1PtxdKa3+zS8McgEqv55yNdF+ncp
-         0dOQUn4+kSKMaEJDEqcg7m/gmO6NX7W/ibbmdLru3pWPZLMaxl4uNRDKCKY/cFNIj/o2
-         P7vaE/Q5bmtKdeVcx64Qqzfw+T6VvmWnSq950/eclpLWplyiro3btMcHdrXsXXAn93wI
-         MqSw==
-X-Gm-Message-State: AOAM530CTBRZ7xsC8P4Ds7EGsA20ECSDdAaVw+QuLUcKutk+LUBglLfI
-        PyobmHXrsdxAtmB1QnQGda9iww==
-X-Google-Smtp-Source: ABdhPJwn00mgylH0fW+1CfjtqqDDYplaEK62eGDUC3ycdST3x9u88Bsm2CX7lGAsQu0GIJ2jmrxJJw==
-X-Received: by 2002:a62:7785:: with SMTP id s127mr3256200pfc.196.1597308507353;
-        Thu, 13 Aug 2020 01:48:27 -0700 (PDT)
-Received: from localhost (2001-44b8-1113-6700-b095-181e-17b3-2e29.static.ipv6.internode.on.net. [2001:44b8:1113:6700:b095:181e:17b3:2e29])
-        by smtp.gmail.com with ESMTPSA id s6sm4469130pjn.48.2020.08.13.01.48.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Aug 2020 01:48:26 -0700 (PDT)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/select.c: batch user writes in do_sys_poll
-In-Reply-To: <20200813073220.GB15436@infradead.org>
-References: <20200813071120.2113039-1-dja@axtens.net> <20200813073220.GB15436@infradead.org>
-Date:   Thu, 13 Aug 2020 18:48:18 +1000
-Message-ID: <87zh6zlynh.fsf@dja-thinkpad.axtens.net>
+        Thu, 13 Aug 2020 04:53:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597308786;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bHxBlhSxxa/67DKNkFk3S3CDohJlBQmN8kkHMo7F2jw=;
+        b=ZbUslsAHu3sgveWvWXm2hALTSdsK9dX/3JkGXB4b+UCMKx822LO3HPQV9I4yGSxgUF9euO
+        bo5LAD/dXjbcOct/IgncvqNQanaouLkcjbWY1RvKP/LVCCQecivyu46ZbAUQU4wRzHYklM
+        ee7FHFmRuas+pu7o89+BI6yeugZGu+Q=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-170-g7xpvjS9Pg-ZPkk-XNFWnQ-1; Thu, 13 Aug 2020 04:53:01 -0400
+X-MC-Unique: g7xpvjS9Pg-ZPkk-XNFWnQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6D1BF80046F;
+        Thu, 13 Aug 2020 08:52:59 +0000 (UTC)
+Received: from ws.net.home (unknown [10.40.193.69])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8FE145D9F3;
+        Thu, 13 Aug 2020 08:52:55 +0000 (UTC)
+Date:   Thu, 13 Aug 2020 10:52:52 +0200
+From:   Karel Zak <kzak@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Steven Whitehouse <swhiteho@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: file metadata via fs API
+Message-ID: <20200813085252.ezwd46ahyjiz4flh@ws.net.home>
+References: <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
+ <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk>
+ <CAJfpegt=cQ159kEH9zCYVHV7R_08jwMxF0jKrSUV5E=uBg4Lzw@mail.gmail.com>
+ <98802.1597220949@warthog.procyon.org.uk>
+ <CAJfpegsVJo9e=pHf3YGWkE16fT0QaNGhgkUdq4KUQypXaD=OgQ@mail.gmail.com>
+ <d2d179c7-9b60-ca1a-0c9f-d308fc7af5ce@redhat.com>
+ <CAJfpeguMjU+n-JXE6aUQQGeMpCS4bsy4HQ37NHJ8aD8Aeg2qhA@mail.gmail.com>
+ <20200812112825.b52tqeuro2lquxlw@ws.net.home>
+ <CAJfpegv4sC2zm+N5tvEmYaEFvvWJRHfdGqXUoBzbeKj81uNCvQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegv4sC2zm+N5tvEmYaEFvvWJRHfdGqXUoBzbeKj81uNCvQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> writes:
+On Wed, Aug 12, 2020 at 02:43:32PM +0200, Miklos Szeredi wrote:
+> On Wed, Aug 12, 2020 at 1:28 PM Karel Zak <kzak@redhat.com> wrote:
+> 
+> > The proposal is based on paths and open(), how do you plan to deal
+> > with mount IDs? David's fsinfo() allows to ask for mount info by mount
+> > ID and it works well with mount notification where you get the ID. The
+> > collaboration with notification interface is critical for our use-cases.
+> 
+> One would use the notification to keep an up to date set of attributes
+> for each watched mount, right?
+> 
+> That presumably means the mount ID <-> mount path mapping already
+> exists, which means it's just possible to use the open(mount_path,
+> O_PATH) to obtain the base fd.
 
-> On Thu, Aug 13, 2020 at 05:11:20PM +1000, Daniel Axtens wrote:
->> When returning results to userspace, do_sys_poll repeatedly calls
->> put_user() - once per fd that it's watching.
->> 
->> This means that on architectures that support some form of
->> kernel-to-userspace access protection, we end up enabling and disabling
->> access once for each file descripter we're watching. This is inefficent
->> and we can improve things by batching the accesses together.
->> 
->> To make sure there's not too much happening in the window when user
->> accesses are permitted, we don't walk the linked list with accesses on.
->> This leads to some slightly messy code in the loop, unfortunately.
->> 
->> Unscientific benchmarking with the poll2_threads microbenchmark from
->> will-it-scale, run as `./poll2_threads -t 1 -s 15`:
->> 
->>  - Bare-metal Power9 with KUAP: ~48.8% speed-up
->>  - VM on amd64 laptop with SMAP: ~25.5% speed-up
->> 
->> Signed-off-by: Daniel Axtens <dja@axtens.net>
->
-> Seem like this could simply use a copy_to_user to further simplify
-> things?
+The notification also reports new mount nodes, so we have no mount ID
+<-> mount path mapping in userspace yet.
 
-I'll benchmark it and find out.
+The another problem is that open(path) cannot be used if you have multiple
+filesystems on the same mount point -- in this case (at least in theory)
+you can get ID for by-path inaccessible filesystem.
 
-> Also please don't pointlessly add overly long lines.
+> A new syscall that returns an fd pointing to the root of the mount
+> might be the best solution:
+> 
+>    int open_mount(int root_fd, u64 mntid, int flags);
 
-Weird, I ran the commit through checkpatch and it didn't pick it
-up. I'll check the next version more carefully.
+Yes, something like this is necessary. You do not want to depend
+on paths if you want to read information about mountpoints.
 
-Regards,
-Daniel
+ Karel
+
+-- 
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
+
