@@ -2,84 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7469A24398D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 14:02:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 278532439A7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 14:14:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbgHMMCi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 08:02:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbgHMMBf (ORCPT
+        id S1726467AbgHMMNz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 08:13:55 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:58318 "EHLO
+        galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgHMMNy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 08:01:35 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63AE4C061757;
-        Thu, 13 Aug 2020 05:00:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=i41Yc10MxJ8SD/RmIm1p0LXK6Fe4vVxPBwR0fO9tHsU=; b=wUkEP4gznD8yhOKXfehUrg6u+p
-        4PCOcBf33WvByOdBvWwLPp6R8/WwxJlEYyQ3CY9ej+Zc55i7MERAd+5CuKACgEOMwJkJpICIjvu6D
-        4s1dRmOfQoghu7xdIO1fYpsEAEON7cEh4NTueg4+NtGD15C7xchhSji6EQqceguowmv1PUXzJ7Nts
-        a0pAqKr+kEI15dkeOFh7FsqIvbIZKziG+7HYp+GACowqL/3hO1OafqdRTUrgk5GEc79FmzQH2KoHP
-        UeKSdlIY4bl8Zozt8Pc5cSWRv3VGquq0YjgcJVVK0c7xUZQ0+VQiSFpdainJpwi+h0C1SJd8c8qzl
-        p9a5QjuA==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k6Bu5-0003VD-3H; Thu, 13 Aug 2020 12:00:17 +0000
-Date:   Thu, 13 Aug 2020 13:00:17 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     peterz@infradead.org
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Jacob Wen <jian.w.wen@oracle.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: insert a general SMP memory barrier before
- wake_up_bit()
-Message-ID: <20200813120017.GH17456@casper.infradead.org>
-References: <20200813024438.13170-1-jian.w.wen@oracle.com>
- <20200813073115.GA15436@infradead.org>
- <20200813114050.GW2674@hirez.programming.kicks-ass.net>
+        Thu, 13 Aug 2020 08:13:54 -0400
+From:   Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1597320831;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tQYvkqXE5EdBVdiO0ISKqxb3rBUgEsMwquDtXOKueGI=;
+        b=GHwpL9zFdxYNR/AGJIiDNIbyE8avRxZkeurRafXu2kWcZkSqLM90dTdOxJJxJsZ8GR0CSh
+        QoKjOqhN6WHbJaSDaH5yyjtJ9ZfvPyw6tmQ3RX5JhqhCAFnqPn7SEchjI6hQW953o9jYAA
+        masmnprKB/aNpB0oS6rBOBL3CfjWLMeJC3pGHvVULsfuRYm0SPa8kj5oWZQ8D9vYvOUaco
+        0qnERYUF7ST3RB9mO2M73iGWMW4cD4j3VDWcCHbrHgsgN9Dhzyltf/Iisawi1PX7HJUjNA
+        98yuKdJ0qNCIEtkD9pyhXp66DvdL7NGOpQNajKWsKtCbhsTU1/g+I3XPnDZBug==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1597320831;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tQYvkqXE5EdBVdiO0ISKqxb3rBUgEsMwquDtXOKueGI=;
+        b=oNP2h9DqtdR+YQ2kEQK018T5aZHXQYYJHc4PVSs8iIXRffNBf4hwBEkf5zMpCzVqlkqAtK
+        61E86EtGA/GAg/DA==
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Adams <jwadams@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     netdev@vger.kernel.org, kvm@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jim Mattson <jmattson@google.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: [RFC PATCH 6/7] core/metricfs: expose x86-specific irq information through metricfs
+In-Reply-To: <2500b04e-a890-2621-2f19-be08dfe2e862@redhat.com>
+References: <20200807212916.2883031-1-jwadams@google.com> <20200807212916.2883031-7-jwadams@google.com> <87mu2yluso.fsf@nanos.tec.linutronix.de> <2500b04e-a890-2621-2f19-be08dfe2e862@redhat.com>
+Date:   Thu, 13 Aug 2020 14:13:50 +0200
+Message-ID: <87a6yylp4x.fsf@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200813114050.GW2674@hirez.programming.kicks-ass.net>
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 13, 2020 at 01:40:50PM +0200, peterz@infradead.org wrote:
-> On Thu, Aug 13, 2020 at 08:31:15AM +0100, Christoph Hellwig wrote:
-> > On Thu, Aug 13, 2020 at 10:44:38AM +0800, Jacob Wen wrote:
-> > > wake_up_bit() uses waitqueue_active() that needs the explicit smp_mb().
-> > 
-> > Sounds like the barrier should go into wake_up_bit then..
-> 
-> Oh, thanks for reminding me..
-> 
-> https://lkml.kernel.org/r/20190624165012.GH3436@hirez.programming.kicks-ass.net
-> 
-> I'll try and get back to that.
+Paolo Bonzini <pbonzini@redhat.com> writes:
 
-+++ b/drivers/bluetooth/btmtkuart.c
-@@ -340,11 +340,8 @@ static int btmtkuart_recv_event(struct hci_dev *hdev, struct sk_buff *skb)
- 
- 	if (hdr->evt == HCI_EV_VENDOR) {
- 		if (test_and_clear_bit(BTMTKUART_TX_WAIT_VND_EVT,
--				       &bdev->tx_state)) {
--			/* Barrier to sync with other CPUs */
--			smp_mb__after_atomic();
-+				       &bdev->tx_state))
- 			wake_up_bit(&bdev->tx_state, BTMTKUART_TX_WAIT_VND_EVT);
--		}
- 	}
- 
- 	return 0;
+> On 13/08/20 12:11, Thomas Gleixner wrote:
+>>> Add metricfs support for displaying percpu irq counters for x86.
+>>> The top directory is /sys/kernel/debug/metricfs/irq_x86.
+>>> Then there is a subdirectory for each x86-specific irq counter.
+>>> For example:
+>>>
+>>>    cat /sys/kernel/debug/metricfs/irq_x86/TLB/values
+>> What is 'TLB'? I'm not aware of any vector which is named TLB.
+>
+> There's a "TLB" entry in /proc/interrupts.
 
-It'd be nice to be able to write:
+It's TLB shootdowns and not TLB.
 
-	if (hdr->evt == HCI_EV_VENDOR)
-		test_clear_and_wake_up_bit(&bdev->tx_state,
-						BTMTKUART_TX_WAIT_VND_EVT);
+Thanks,
 
-... maybe with a better name.
+        tglx
+
