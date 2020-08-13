@@ -2,98 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EA781243711
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 11:01:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 009FE243801
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 11:53:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbgHMJBw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 05:01:52 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:36514 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726174AbgHMJBw (ORCPT
+        id S1726467AbgHMJxe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 05:53:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56254 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbgHMJxd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 05:01:52 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-138-e8H63y_oORuTtNJUDzGgeQ-1; Thu, 13 Aug 2020 10:01:48 +0100
-X-MC-Unique: e8H63y_oORuTtNJUDzGgeQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 13 Aug 2020 10:01:48 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 13 Aug 2020 10:01:48 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christoph Hellwig' <hch@infradead.org>,
-        Daniel Axtens <dja@axtens.net>
-CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] fs/select.c: batch user writes in do_sys_poll
-Thread-Topic: [PATCH] fs/select.c: batch user writes in do_sys_poll
-Thread-Index: AQHWcUPllYrYWDsW9k2hVZh5/SyFEKk1vNpg
-Date:   Thu, 13 Aug 2020 09:01:48 +0000
-Message-ID: <edb8988b36b44ef392b2948c7ee1a8e9@AcuMS.aculab.com>
-References: <20200813071120.2113039-1-dja@axtens.net>
- <20200813073220.GB15436@infradead.org>
-In-Reply-To: <20200813073220.GB15436@infradead.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 13 Aug 2020 05:53:33 -0400
+Received: from mail-yb1-xb44.google.com (mail-yb1-xb44.google.com [IPv6:2607:f8b0:4864:20::b44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F1C4C061757
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 02:53:33 -0700 (PDT)
+Received: by mail-yb1-xb44.google.com with SMTP id q16so2983052ybk.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 02:53:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Yul9D5KaapMfO0wSYYumb3nXfH25wAQuTtPB6LytFFQ=;
+        b=g4mDUYV/kR2xqvMovbB9tOP1UwfQk6O047mQnaEfU/wAgqPu1NK8GhI6gfzcY5gZQ3
+         kZdFLbxgB7OqRvASEeMmcEe99LPAOZaz1kZskBXb/8XLTVke3a8uOYyXOpCAh4FedTtR
+         9E7hUlfMGcRn3WfwvWi5YlF/FOSHG3E+wgdpSgj+p9Y2eLtGyRueVDENXxuIaA1s3otY
+         fFOfdc7Cz1qEY35Es+aJJFSnpioiFZWGZk+LMsIWu/gGIUaAk2if4K2HJi4QVVS8cDdU
+         ckMfr+jW5QSRMSVhuiCR8ex32+qd5wmgdgLepZcJIB/BCSs6gIOX0NPYuRcry/7YIAgL
+         JPPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Yul9D5KaapMfO0wSYYumb3nXfH25wAQuTtPB6LytFFQ=;
+        b=Qve9fLV82BUXenIbrdEtVLsQapQV6vbJ67Ex/5/hcsnwb2Uxhxd3Ul9YPEb/UJey9K
+         XWwcg6+0i81qBs4vT/lv3iITB2QBi1D/VjJOkM5JfsxuyKQBg7C9gRvPnaPEmRgzlcqh
+         lRDw+N1qKFmAQeGHGJRQQiUcvXulh3vt94F+SUYcsw5KpwLLp8PUn1aszIpmLvL4+iUv
+         xMWBzwZq51Bv/mLZQ8e64+sm0dv5vkfQOBuHvhlQ+4cy++4kiH6fzsuP5xdIDJ3E8K+D
+         Pxzn6RoJExjnloljZUlRzggkyndOsIkoAK3/wPfS4o/9dheBdIYB7iVDOO2vHM6A4WCI
+         m5pQ==
+X-Gm-Message-State: AOAM530y9R/IDcmehVQmqTT475gFKcpNQ8OcPTH7p6qajW322uGLI1QN
+        eDkeK9NQiLsQUqpAaLvPrRYKQSPk9gexrscL7gLkxQ==
+X-Google-Smtp-Source: ABdhPJzfpaSBTx1xrZzflOrcYcv5QD4lOFsRlbhX3DHwVGqruN6Tmp191fs//DhyO/wYUtsNm9az23vyctAAcFPz7n0=
+X-Received: by 2002:a25:ab34:: with SMTP id u49mr5170276ybi.516.1597312412264;
+ Thu, 13 Aug 2020 02:53:32 -0700 (PDT)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <1597284810-17454-1-git-send-email-chinwen.chang@mediatek.com>
+In-Reply-To: <1597284810-17454-1-git-send-email-chinwen.chang@mediatek.com>
+From:   Michel Lespinasse <walken@google.com>
+Date:   Thu, 13 Aug 2020 02:53:20 -0700
+Message-ID: <CANN689G0DkL-wpxMha=nyysPYG6LM3Aw7060k2xQTxTA4PAf-w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Try to release mmap_lock temporarily in smaps_rollup
+To:     Chinwen Chang <chinwen.chang@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Steven Price <steven.price@arm.com>,
+        Song Liu <songliubraving@fb.com>,
+        Jimmy Assarsson <jimmyassarsson@gmail.com>,
+        Huang Ying <ying.huang@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        wsd_upstream@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christoph Hellwig
-> Sent: 13 August 2020 08:32
-> 
-> On Thu, Aug 13, 2020 at 05:11:20PM +1000, Daniel Axtens wrote:
-> > When returning results to userspace, do_sys_poll repeatedly calls
-> > put_user() - once per fd that it's watching.
-> >
-> > This means that on architectures that support some form of
-> > kernel-to-userspace access protection, we end up enabling and disabling
-> > access once for each file descripter we're watching. This is inefficent
-> > and we can improve things by batching the accesses together.
-> >
-> > To make sure there's not too much happening in the window when user
-> > accesses are permitted, we don't walk the linked list with accesses on.
-> > This leads to some slightly messy code in the loop, unfortunately.
-> >
-> > Unscientific benchmarking with the poll2_threads microbenchmark from
-> > will-it-scale, run as `./poll2_threads -t 1 -s 15`:
-> >
-> >  - Bare-metal Power9 with KUAP: ~48.8% speed-up
-> >  - VM on amd64 laptop with SMAP: ~25.5% speed-up
-> >
-> > Signed-off-by: Daniel Axtens <dja@axtens.net>
-> 
-> Seem like this could simply use a copy_to_user to further simplify
-> things?
+On Wed, Aug 12, 2020 at 7:14 PM Chinwen Chang
+<chinwen.chang@mediatek.com> wrote:
+> Recently, we have observed some janky issues caused by unpleasantly long
+> contention on mmap_lock which is held by smaps_rollup when probing large
+> processes. To address the problem, we let smaps_rollup detect if anyone
+> wants to acquire mmap_lock for write attempts. If yes, just release the
+> lock temporarily to ease the contention.
+>
+> smaps_rollup is a procfs interface which allows users to summarize the
+> process's memory usage without the overhead of seq_* calls. Android uses it
+> to sample the memory usage of various processes to balance its memory pool
+> sizes. If no one wants to take the lock for write requests, smaps_rollup
+> with this patch will behave like the original one.
+>
+> Although there are on-going mmap_lock optimizations like range-based locks,
+> the lock applied to smaps_rollup would be the coarse one, which is hard to
+> avoid the occurrence of aforementioned issues. So the detection and
+> temporary release for write attempts on mmap_lock in smaps_rollup is still
+> necessary.
 
-That would copy out 8 bytes/fd instead of 2.
-So a slight change for 32bit kernels.
-However the 'user copy hardening' checks that copy_to_user()
-does probably make a measurable difference.
+I do not mind extending the mmap lock API as needed. However, in the
+past I have tried adding rwsem_is_contended to mlock(), and later to
+mm_populate() paths, and IIRC gotten pushback on it both times. I
+don't feel strongly on this, but would prefer if someone else approved
+the rwsem_is_contended() use case.
 
-> Also please don't pointlessly add overly long lines.
+Couple related questions, how many VMAs are we looking at here ? Would
+need_resched() be workable too ?
 
-Shorten the error label?
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+-- 
+Michel "Walken" Lespinasse
+A program is never fully debugged until the last user dies.
