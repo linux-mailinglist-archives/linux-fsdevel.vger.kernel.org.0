@@ -2,281 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8800D243388
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 07:12:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3304F2433B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 07:44:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgHMFMt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 01:12:49 -0400
-Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:37228 "EHLO
+        id S1726044AbgHMFo0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 01:44:26 -0400
+Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:37826 "EHLO
         mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725915AbgHMFMs (ORCPT
+        by vger.kernel.org with ESMTP id S1725949AbgHMFo0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 01:12:48 -0400
+        Thu, 13 Aug 2020 01:44:26 -0400
 Received: from dread.disaster.area (pa49-180-53-24.pa.nsw.optusnet.com.au [49.180.53.24])
-        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id B14EA1A8D4F;
-        Thu, 13 Aug 2020 15:12:40 +1000 (AEST)
+        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id B48491A951B;
+        Thu, 13 Aug 2020 15:44:20 +1000 (AEST)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1k65Xa-0001Uw-B8; Thu, 13 Aug 2020 15:12:38 +1000
-Date:   Thu, 13 Aug 2020 15:12:38 +1000
+        id 1k662E-0001gE-Lg; Thu, 13 Aug 2020 15:44:18 +1000
+Date:   Thu, 13 Aug 2020 15:44:18 +1000
 From:   Dave Chinner <david@fromorbit.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com
-Subject: Re: [PATCH v2 15/20] fuse, dax: Take ->i_mmap_sem lock during dax
- page fault
-Message-ID: <20200813051238.GA3339@dread.disaster.area>
-References: <20200807195526.426056-1-vgoyal@redhat.com>
- <20200807195526.426056-16-vgoyal@redhat.com>
- <20200810222238.GD2079@dread.disaster.area>
- <20200811175530.GB497326@redhat.com>
- <20200812012345.GG2079@dread.disaster.area>
- <20200812211012.GA540706@redhat.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, darrick.wong@oracle.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, khlebnikov@yandex-team.ru
+Subject: Re: WARN_ON_ONCE(1) in iomap_dio_actor()
+Message-ID: <20200813054418.GB3339@dread.disaster.area>
+References: <20200619211750.GA1027@lca.pw>
+ <20200620001747.GC8681@bombadil.infradead.org>
+ <20200724182431.GA4871@lca.pw>
+ <20200726152412.GA26614@infradead.org>
+ <20200811020302.GD5307@lca.pw>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200812211012.GA540706@redhat.com>
+In-Reply-To: <20200811020302.GD5307@lca.pw>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Optus-CM-Score: 0
 X-Optus-CM-Analysis: v=2.3 cv=LPwYv6e9 c=1 sm=1 tr=0
         a=moVtWZxmCkf3aAMJKIb/8g==:117 a=moVtWZxmCkf3aAMJKIb/8g==:17
-        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=7-415B0cAAAA:8
-        a=dml2hL0GLVIsGKko77gA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=F2pTjGBfAAAA:20 a=7-415B0cAAAA:8
+        a=_eiJewZb4kaZAsKqs4MA:9 a=4YkHEp-ugCOE0eHm:21 a=rzLbzqL5k24iaUm9:21
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 12, 2020 at 05:10:12PM -0400, Vivek Goyal wrote:
-> On Wed, Aug 12, 2020 at 11:23:45AM +1000, Dave Chinner wrote:
-> > On Tue, Aug 11, 2020 at 01:55:30PM -0400, Vivek Goyal wrote:
-> > > On Tue, Aug 11, 2020 at 08:22:38AM +1000, Dave Chinner wrote:
-> > > > On Fri, Aug 07, 2020 at 03:55:21PM -0400, Vivek Goyal wrote:
-> > > > > We need some kind of locking mechanism here. Normal file systems like
-> > > > > ext4 and xfs seems to take their own semaphore to protect agains
-> > > > > truncate while fault is going on.
+On Mon, Aug 10, 2020 at 10:03:03PM -0400, Qian Cai wrote:
+> On Sun, Jul 26, 2020 at 04:24:12PM +0100, Christoph Hellwig wrote:
+> > On Fri, Jul 24, 2020 at 02:24:32PM -0400, Qian Cai wrote:
+> > > On Fri, Jun 19, 2020 at 05:17:47PM -0700, Matthew Wilcox wrote:
+> > > > On Fri, Jun 19, 2020 at 05:17:50PM -0400, Qian Cai wrote:
+> > > > > Running a syscall fuzzer by a normal user could trigger this,
 > > > > > 
-> > > > > We have additional requirement to protect against fuse dax memory range
-> > > > > reclaim. When a range has been selected for reclaim, we need to make sure
-> > > > > no other read/write/fault can try to access that memory range while
-> > > > > reclaim is in progress. Once reclaim is complete, lock will be released
-> > > > > and read/write/fault will trigger allocation of fresh dax range.
+> > > > > [55649.329999][T515839] WARNING: CPU: 6 PID: 515839 at fs/iomap/direct-io.c:391 iomap_dio_actor+0x29c/0x420
+> > > > ...
+> > > > > 371 static loff_t
+> > > > > 372 iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+> > > > > 373                 void *data, struct iomap *iomap, struct iomap *srcmap)
+> > > > > 374 {
+> > > > > 375         struct iomap_dio *dio = data;
+> > > > > 376
+> > > > > 377         switch (iomap->type) {
+> > > > > 378         case IOMAP_HOLE:
+> > > > > 379                 if (WARN_ON_ONCE(dio->flags & IOMAP_DIO_WRITE))
+> > > > > 380                         return -EIO;
+> > > > > 381                 return iomap_dio_hole_actor(length, dio);
+> > > > > 382         case IOMAP_UNWRITTEN:
+> > > > > 383                 if (!(dio->flags & IOMAP_DIO_WRITE))
+> > > > > 384                         return iomap_dio_hole_actor(length, dio);
+> > > > > 385                 return iomap_dio_bio_actor(inode, pos, length, dio, iomap);
+> > > > > 386         case IOMAP_MAPPED:
+> > > > > 387                 return iomap_dio_bio_actor(inode, pos, length, dio, iomap);
+> > > > > 388         case IOMAP_INLINE:
+> > > > > 389                 return iomap_dio_inline_actor(inode, pos, length, dio, iomap);
+> > > > > 390         default:
+> > > > > 391                 WARN_ON_ONCE(1);
+> > > > > 392                 return -EIO;
+> > > > > 393         }
+> > > > > 394 }
 > > > > > 
-> > > > > Taking inode_lock() is not an option in fault path as lockdep complains
-> > > > > about circular dependencies. So define a new fuse_inode->i_mmap_sem.
+> > > > > Could that be iomap->type == IOMAP_DELALLOC ? Looking throught the logs,
+> > > > > it contains a few pread64() calls until this happens,
 > > > > 
-> > > > That's precisely why filesystems like ext4 and XFS define their own
-> > > > rwsem.
-> > > > 
-> > > > Note that this isn't a DAX requirement - the page fault
-> > > > serialisation is actually a requirement of hole punching...
+> > > > It _shouldn't_ be able to happen.  XFS writes back ranges which exist
+> > > > in the page cache upon seeing an O_DIRECT I/O.  So it's not supposed to
+> > > > be possible for there to be an extent which is waiting for the contents
+> > > > of the page cache to be written back.
 > > > 
-> > > Hi Dave,
-> > > 
-> > > I noticed that fuse code currently does not seem to have a rwsem which
-> > > can provide mutual exclusion between truncation/hole_punch path
-> > > and page fault path. I am wondering does that mean there are issues
-> > > with existing code or something else makes it unnecessary to provide
-> > > this mutual exlusion.
+> > > Okay, it is IOMAP_DELALLOC. We have,
 > > 
-> > I don't know enough about the fuse implementation to say. What I'm
-> > saying is that nothing in the core mm/ or VFS serilises page cache
-> > access to the data against direct filesystem manipulations of the
-> > underlying filesystem structures.
+> > Can you share the fuzzer?  If we end up with delalloc space here we
+> > probably need to fix a bug in the cache invalidation code.
 > 
-> Hi Dave,
+> Here is a simple reproducer (I believe it can also be reproduced using xfstests
+> generic/503 on a plain xfs without DAX when SCRATCH_MNT == TEST_DIR),
 > 
-> Got it. I was checking nfs and they also seem to be calling filemap_fault
-> and not taking any locks to block faults. fallocate() (nfs42_fallocate)
-> seems to block read/write/aio/dio but does not seem to do anything
-> about blocking faults. I am wondering if remote filesystem are
-> little different in this aspect. Especially fuse does not maintain
-> any filesystem block/extent data. It is file server which is doing
-> all that.
+> # git clone https://gitlab.com/cailca/linux-mm
+> # cd linux-mm; make
+> # ./random 14
 
-I suspect they have all the same problems, and worse, the behaviour
-will largely be dependent on the server side behaviour that is out
-of the user's control.
+Ok:
 
-Essentially, nobody except us XFS folks seem to regard hole punching
-corrupting data or exposing stale data as being a problem that needs
-to be avoided or fixed. The only reason ext4 has the i_mmap_sem is
-because ext4 wanted to support DAX, and us XFS developers said "DAX
-absolutely requires that the filesystem can lock out physical access
-to the storage" and so they had no choice in the matter.
+file.fd_write = safe_open("./testfile", O_RDWR|O_CREAT);
+....
+file.fd_read = safe_open("./testfile", O_RDWR|O_CREAT|O_DIRECT);
+....
+file.ptr = safe_mmap(NULL, fsize, PROT_READ|PROT_WRITE, MAP_SHARED,
+			file.fd_write, 0);
 
-Other than that, nobody really seems to understand or care about all
-these nasty little mmap() corner cases that we've seen corrupt user
-data or expose stale data to users over many years.....
+So this is all IO to the same inode....
 
-> > i.e. nothing in the VFS or page fault IO path prevents this race
-> > condition:
-> > 
-> > P0				P1
-> > fallocate
-> > page cache invalidation
-> > 				page fault
-> > 				read data
-> > punch out data extents
-> > 				<data exposed to userspace is stale>
-> > 				<data exposed to userspace has no
-> > 				backing store allocated>
-> > 
-> > 
-> > That's where the ext4 and XFS internal rwsem come into play:
-> > 
-> > fallocate
-> > down_write(mmaplock)
-> > page cache invalidation
-> > 				page fault
-> > 				down_read(mmaplock)
-> > 				<blocks>
-> > punch out data
-> > up_write(mmaplock)
-> > 				<unblocks>
-> > 				<sees hole>
-> > 				<allocates zeroed pages in page cache>
-> > 
-> > And there's not stale data exposure to userspace.
-> 
-> Got it. I noticed that both fuse/nfs seem to have reversed the
-> order of operation. They call server to punch out data first
-> and then truncate page cache. And that should mean that even
-> if mmap reader will not see stale data after fallocate(punch_hole)
-> has finished.
+and you loop
 
-Yes, but that doesn't prevent page fault races from occuring, it
-just changes the nature of them.. Such as.....
+while !done {
 
-> > There is nothing stopping, say, memory reclaim from reclaiming pages
-> > over the range while the hole is being punched, then having the
-> > application refault them while the backing store is being freed.
-> > While the page fault read IO is in progress, there's nothing
-> > stopping the filesystem from freeing those blocks, nor reallocating
-> > them and writing something else to them (e.g. metadata). So they
-> > could read someone elses data.
-> > 
-> > Even worse: the page fault is a write fault, it lands in a hole, has
-> > space allocated, the page cache is zeroed, page marked dirty, and
-> > then the hole punch calls truncate_pagecache_range() which tosses
-> > away the zeroed page and the data the userspace application wrote
-> > to the page.
-> 
-> But isn't that supposed to happen.
+	do {
+		rc = pread(file.fd_read, file.ptr + read, fsize - read,
+			read);
+		if (rc > 0)
+			read += rc;
+	} while (rc > 0);
 
-Right, it isn;'t supposed to happen, but it can happen if
-page_mkwrite doesn't serialise against fallocate(). i.e. without a
-i_mmap_sem, nothing in the mm page fault paths serialise the page
-fault against the filesystem fallocate operation in progress.
+	rc = safe_fallocate(file.fd_write,
+			FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+			0, fsize);
+}
 
-Indeed, looking at fuse_page_mkwrite(), it just locks the page,
-checks the page->mapping hasn't changed (that's one of those
-"doesn't work for hole punching page invalidation" checks that I
-mentioned!) and then it waits for page writeback to complete. IOWs,
-fuse will allow a clean page in cache to be dirtied without the
-filesystem actually locking anything or doing any sort of internal
-serialisation operation.
+On two threads at once?
 
-IOWs, there is nothing stopping an application on fuse from hitting
-this data corruption when a concurrent hole punch is run:
+So, essentially, you do a DIO read into a mmap()d range from the
+same file, with DIO read ascending and the mmap() range descending,
+then once that is done you hole punch the file and do it again?
 
- P0				P1
- <read() loop to find zeros>
- fallocate
- write back dirty data
- punch out data extents
- .....
- 				<app reads data via mmap>
-				  read fault, clean page in cache!
- 				<app writes data via mmap>
- 				  write page fault
-				  page_mkwrite
-				    <page is locked just fine>
-				  page is dirtied.
-				<app writes new data to page>
- .....
- page cache invalidation
-   <app's dirty page thrown away>
-				.....
-				<app reads data via mmap>
-				  read page fault
-				    <maps punched hole, returns zeros>
-				app detects data corruption
+IOWs, this is a racing page_mkwrite()/DIO read workload, and the
+moment the two threads hit the same block of the file with a
+DIO read and a page_mkwrite at the same time, it throws a warning.
 
-That can happen quite easily - just go put a "sparsify" script into
-cron so that runs of zeroes in files are converted into holes to
-free up disk space every night....
+Well, that's completely expected behaviour. DIO is not serialised
+against mmap() access at all, and so if the page_mkwrite occurs
+between the writeback and the iomap_apply() call in the dio path,
+then it will see the delalloc block taht the page-mkwrite allocated.
 
-> If fallocate(hole_punch) and mmaped
-> write are happening at the same time, then there is no guarantee
-> in what order they will execute.
-
-It's not "order of exceution" that is the problem here - it's
-guaranteeing *atomic execution* that is the problem. See the example
-above - by not locking out page faults, fallocate() does not execute
-atomically w.r.t. to mmap() access to the file, and hence we end up
-losing changes the to data made via mmap.
-
-That's precisely what the i_mmap_sem fixes. It *guarantees* the
-ordering of the fallocate() operation and the page fault based
-access to the underlying data by ensuring that the *operations
-execute atomically* with respect to each other. And, by definition,
-that atomicity of execution removes all the races that can lead to
-data loss, corruption and/or stale data exposure....
-
-> App might read back data it wrote
-> or might read back zeros depdening on order it was executed. (Even
-> with proper locking).
-
-That behaviour is what "proper locking" provides. If you don't
-have an i_mmap_sem to guarantee serialisation of page faults against
-fallocate (i.e. "unproper locking"), then you also can get stale
-data, the wrong data, data loss, access-after-free, overwrite of
-metadata or other people's data, etc.
-
-> > The application then refaults the page, reading stale data off
-> > disk instead of seeing what it had already written to the page....
-> > 
-> > And unlike truncated pages, the mm/ code cannot reliably detect
-> > invalidation races on lockless lookup of pages that are within EOF.
-> > They rely on truncate changing the file size before page
-> > invalidation to detect races as page->index then points beyond EOF.
-> > Hole punching does not change inode size, so the page cache lookups
-> > cannot tell the difference between a new page that just needs IO to
-> > initialise the data and a page that has just been invalidated....
-> > 
-> > IOWs, there are many ways things can go wrong with hole punch, and
-> > the only way to avoid them all is to do invalidate and lock out the
-> > page cache before starting the fallocate operation. i.e.:
-> > 
-> > 	1. lock up the entire IO path (vfs and page fault)
-> > 	2. drain the AIO+DIO path
-> > 	3. write back dirty pages
-> > 	4. invalidate the page cache
-> 
-> I see that this is definitely safe. Stop all read/write/faults/aio/dio
-> before proceeding with punching hole and invalidating page cache.
-> 
-> I think for my purpose, I need to take fi->i_mmap_sem in memory
-> range freeing path and need to exactly do all the above to make
-> sure that no I/O, fault or AIO/DIO is going on before I take
-> away the memory range I have allocated for that inode offset. This
-> is I think very similar to assigning blocks/extents and taking
-> these away. In that code path I am already taking care of
-> taking inode lock as well as i_mmap_sem. But I have not taken
-> care of AIO/DIO stuff. I will introduce that too.
-> 
-> For the time being I will handle this fallocate/ftruncate possible
-> races in a separate patch series. To me it makes sense to do what
-> ext4/xfs are doing. But there might be more to it when it comes
-> to remote filesystems... 
-
-Remote filesystems introduce a whole new range of data coherency
-problems that are outside the scope of mmap() vs fallocate()
-serialisation. That is, page fault vs fallocate serialisation is a
-local client serialisation condition, not a remote filesystem
-data coherency issue...
+No sane application would ever do this, it's behaviour as expected,
+so I don't think there's anything to care about here.
 
 Cheers,
 
