@@ -2,163 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D003243BF4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 16:53:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DC23243BFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 16:56:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbgHMOxK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 10:53:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46060 "EHLO
+        id S1726637AbgHMO4W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 10:56:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbgHMOxK (ORCPT
+        with ESMTP id S1726419AbgHMO4V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 10:53:10 -0400
-Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A6CC061383
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 07:53:09 -0700 (PDT)
-Received: by mail-qv1-xf44.google.com with SMTP id o2so2739205qvk.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 07:53:09 -0700 (PDT)
+        Thu, 13 Aug 2020 10:56:21 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B79CC061757;
+        Thu, 13 Aug 2020 07:56:21 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id q14so5773814ilj.8;
+        Thu, 13 Aug 2020 07:56:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QuYyyEUf06CmnNYAz7kwB5OeYF/6966Caycqxe7vEQ0=;
-        b=OU0ZUnoLeM1DwRoOITnt86qC2+PnWCy+k9kfNjiMlfeaWL7l+d4UxDzgQAHqy3dBQD
-         hovu5kZyylIbQoPzZ5FbnD4BgRo10pRkjiN/X6IckpchwJ3ILFXxJXBybLaHdEtW4+jd
-         vbsR3bzIh6eXQ0yE7t88x5wbKq4K0JKg2P+1qMROTgnbaa7V89sx1FJPrxzjzbJEp9rI
-         fvNEf9j7zojY4EwizrI3rdhZnLCqcLMk5uYsdIClc9feasQPHkt55dYaf3kWaRAlJvNC
-         MUa981mSnEfuc6kaCxX39Yw/l7ugpQnjZGW7QrSyL1bTDXVwNCTPsonJXeqJEZs4zTT8
-         l5UA==
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=h86jHgXoGDrr6y1H8GyRJonT43XDQUGwHsyIjrhVClo=;
+        b=B+mU/7AA7XkCB/WQIaZ0Uw35rHqx3FZlWfVE1DyqFdBseBLhVBC2WXmEUnX3bL16N8
+         hifCnG0SzU/B3z/g5mM/0gMgqgHnAOEjMlQVmeIU8eE+dQ6csS+IMG8Gl/UoKYRJREj6
+         NQ4WjR5wKqRWsM3czQOCG90hF1K6Vx45EDKHGAqlVH3bzn/7iiCVMJ09eMdZYto61Iui
+         Vtv0Zo2FsoOleYy80RSEuRQZhxjh3nvjgxT3tiEqpHB0ywRU2SsawHnqZmvn2Mb98EY6
+         y1DRK8Kp2eDEvN1Majj+vLY0Sex6QY6W/VvqHhrl1HUG2iimWg4iqdfx6vtZu8hHHSPT
+         us9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QuYyyEUf06CmnNYAz7kwB5OeYF/6966Caycqxe7vEQ0=;
-        b=JOJRGtY42uMyRVGjZPBwc8W2bZrcDP4AeLomYelg4I03bb3T+65I1vQeDp/QXFroYP
-         AaF3+kY43I4idcB7eMR3BXXSYUJABlODyqPs3cy+/O2RvJcp8b359ruf1+uTzf/Qg0Qe
-         wVwK4n2lceTWlmfeHgPVBzt39+cb7ynbAHPXLQl5d1GuRM2kSWVxqLVDBnWRjnWFaMjt
-         DhSZ5uMoeEyozkrjVjkcPFiwy/iyemu9ahEdq4emkxxoaHESYPytStova3rzr9Yev5KK
-         Edg830TTxkK/rEn+QxQIAKXHJ6rK2Tv4zVjyOocOTaGRbhRlZqyx7LvWXl0kIX8vnO0g
-         6dew==
-X-Gm-Message-State: AOAM531oB+2+U+JHU2dLrxNuDHDeqOHOsLra5Fm/PS4AwInz8vu1ZDQp
-        omAIEqhD+I8+qTnrMVqmN3+u0YhTLDq7Cw==
-X-Google-Smtp-Source: ABdhPJwVQph4UB/Lye91a1yKRdFfpibnEOA2suh+gJICEklsFUB5lOQIhhQ3OhNt9t405rUTR0aWNw==
-X-Received: by 2002:ad4:4a27:: with SMTP id n7mr5048422qvz.184.1597330387282;
-        Thu, 13 Aug 2020 07:53:07 -0700 (PDT)
-Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id 9sm6559668qtg.4.2020.08.13.07.53.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Aug 2020 07:53:06 -0700 (PDT)
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     hch@lst.de, viro@ZenIV.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: [PATCH] proc: use vmalloc for our kernel buffer
-Date:   Thu, 13 Aug 2020 10:53:05 -0400
-Message-Id: <20200813145305.805730-1-josef@toxicpanda.com>
-X-Mailer: git-send-email 2.24.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=h86jHgXoGDrr6y1H8GyRJonT43XDQUGwHsyIjrhVClo=;
+        b=Hrgnrvd08hwLM9g34ydyyhGTRXG0lkxFKWCdE8ozC5KkLeAROJHE9qCwoeDBjhnCqL
+         bJHI0xU7unN68le6mKH+y77BMbXLI6x/qkQBuXCSkGkt6498bxAnf9LZ24kPHPetPvX4
+         5ll7rNEnsKJFOXKnlIZMfMebEls5NXIpRln/url6AwWXY4MdLbUOoFVeZwOqdvo6TtDv
+         I/TpENCZRo7isiT93nvExlWMfZuQdIpnzQoSTgbGkwh0HP5dFEU1ohhcYfVzw80N/fqj
+         e17Kg2Klhl335IboOTeWiU3TkmPcWjKTo650AAgURH5ucOE4d6C1Wjhzz74dLU8M5/4y
+         7ioA==
+X-Gm-Message-State: AOAM533WqLk0n1rs6aYFsHnUng+6GKJmBPiPyWkJedStOVa7TMasN6Fe
+        LVGB3PiitBnwVab5wvKlzEA=
+X-Google-Smtp-Source: ABdhPJyufAWBDkWl0rbFsm4iCNiuMOHAC/vQfunIPsTD3bDPGN/H0DAGcWooZcr1d23PB42mHpq9Dw==
+X-Received: by 2002:a92:99ca:: with SMTP id t71mr2876299ilk.143.1597330580641;
+        Thu, 13 Aug 2020 07:56:20 -0700 (PDT)
+Received: from anon-dhcp-152.1015granger.net (c-68-61-232-219.hsd1.mi.comcast.net. [68.61.232.219])
+        by smtp.gmail.com with ESMTPSA id p13sm2089843ilb.61.2020.08.13.07.56.18
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Aug 2020 07:56:19 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
+Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement LSM
+ (IPE)
+From:   Chuck Lever <chucklever@gmail.com>
+In-Reply-To: <1597329763.3708.13.camel@HansenPartnership.com>
+Date:   Thu, 13 Aug 2020 10:56:17 -0400
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
+        snitzer@redhat.com, dm-devel@redhat.com,
+        tyhicks@linux.microsoft.com, agk@redhat.com,
+        Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
+        serge@hallyn.com, pasha.tatashin@soleen.com,
+        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
+        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
+        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        jaskarankhurana@linux.microsoft.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <49A45475-20D8-456E-92AD-F63DBC71F900@gmail.com>
+References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
+ <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
+ <20200802143143.GB20261@amd> <1596386606.4087.20.camel@HansenPartnership.com>
+ <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
+ <1596639689.3457.17.camel@HansenPartnership.com>
+ <alpine.LRH.2.21.2008050934060.28225@namei.org>
+ <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
+ <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
+ <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
+ <1597073737.3966.12.camel@HansenPartnership.com>
+ <6E907A22-02CC-42DD-B3CD-11D304F3A1A8@gmail.com>
+ <1597124623.30793.14.camel@HansenPartnership.com>
+ <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
+ <1597170509.4325.55.camel@HansenPartnership.com>
+ <2CA41152-6445-4716-B5EE-2D14E5C59368@gmail.com>
+ <1597246946.7293.9.camel@HansenPartnership.com>
+ <3F328A12-25DD-418B-A7D0-64DA09236E1C@gmail.com>
+ <1597329763.3708.13.camel@HansenPartnership.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+X-Mailer: Apple Mail (2.3608.80.23.2.2)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since
 
-  sysctl: pass kernel pointers to ->proc_handler
 
-we have been pre-allocating a buffer to copy the data from the proc
-handlers into, and then copying that to userspace.  The problem is this
-just blind kmalloc()'s the buffer size passed in from the read, which in
-the case of our 'cat' binary was 64kib.  Order-4 allocations are not
-awesome, and since we can potentially allocate up to our maximum order,
-use vmalloc for these buffers.
+> On Aug 13, 2020, at 10:42 AM, James Bottomley =
+<James.Bottomley@HansenPartnership.com> wrote:
+>=20
+> On Thu, 2020-08-13 at 10:21 -0400, Chuck Lever wrote:
+>>> On Aug 12, 2020, at 11:42 AM, James Bottomley <James.Bottomley@Hans
+>>> enPartnership.com> wrote:
+> [...]
+>>> For most people the security mechanism of local xattrs is
+>>> sufficient.  If you're paranoid, you don't believe it is and you
+>>> use EVM.
+>>=20
+>> When IMA metadata happens to be stored in local filesystems in
+>> a trusted xattr, it's going to enjoy the protection you describe
+>> without needing the addition of a cryptographic signature.
+>>=20
+>> However, that metadata doesn't live its whole life there. It
+>> can reside in a tar file, it can cross a network, it can live
+>> on a back-up tape. I think we agree that any time that metadata
+>> is in transit or at rest outside of a Linux local filesystem, it
+>> is exposed.
+>>=20
+>> Thus I'm interested in a metadata protection mechanism that does
+>> not rely on the security characteristics of a particular storage
+>> container. For me, a cryptographic signature fits that bill
+>> nicely.
+>=20
+> Sure, but one of the points about IMA is a separation of mechanism =
+from
+> policy.  Signed hashes (called appraisal in IMA terms) is just one
+> policy you can decide to require or not or even make it conditional on
+> other things.
 
-Fixes: 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
----
- fs/proc/proc_sysctl.c  |  6 +++---
- include/linux/string.h |  1 +
- mm/util.c              | 26 ++++++++++++++++++++++++++
- 3 files changed, 30 insertions(+), 3 deletions(-)
+AFAICT, the current EVM_IMA_DIGSIG and EVM_PORTABLE_DIGSIG formats are
+always signed. The policy choice is whether or not to verify the
+signature, not whether or not the metadata format is signed.
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 6c1166ccdaea..207ac6e6e028 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -571,13 +571,13 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
- 		goto out;
- 
- 	if (write) {
--		kbuf = memdup_user_nul(ubuf, count);
-+		kbuf = vmemdup_user_nul(ubuf, count);
- 		if (IS_ERR(kbuf)) {
- 			error = PTR_ERR(kbuf);
- 			goto out;
- 		}
- 	} else {
--		kbuf = kzalloc(count, GFP_KERNEL);
-+		kbuf = kvzalloc(count, GFP_KERNEL);
- 		if (!kbuf)
- 			goto out;
- 	}
-@@ -600,7 +600,7 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
- 
- 	error = count;
- out_free_buf:
--	kfree(kbuf);
-+	kvfree(kbuf);
- out:
- 	sysctl_head_finish(head);
- 
-diff --git a/include/linux/string.h b/include/linux/string.h
-index 9b7a0632e87a..aee3689fb865 100644
---- a/include/linux/string.h
-+++ b/include/linux/string.h
-@@ -12,6 +12,7 @@
- extern char *strndup_user(const char __user *, long);
- extern void *memdup_user(const void __user *, size_t);
- extern void *vmemdup_user(const void __user *, size_t);
-+extern void *vmemdup_user_nul(const void __user *, size_t);
- extern void *memdup_user_nul(const void __user *, size_t);
- 
- /*
-diff --git a/mm/util.c b/mm/util.c
-index 5ef378a2a038..4de3b4b0f358 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -208,6 +208,32 @@ void *vmemdup_user(const void __user *src, size_t len)
- }
- EXPORT_SYMBOL(vmemdup_user);
- 
-+/**
-+ * vmemdup_user - duplicate memory region from user space and NUL-terminate
-+ *
-+ * @src: source address in user space
-+ * @len: number of bytes to copy
-+ *
-+ * Return: an ERR_PTR() on failure.  Result may be not
-+ * physically contiguous.  Use kvfree() to free.
-+ */
-+void *vmemdup_user_nul(const void __user *src, size_t len)
-+{
-+	void *p;
-+
-+	p = kvmalloc(len, GFP_USER);
-+	if (!p)
-+		return ERR_PTR(-ENOMEM);
-+
-+	if (copy_from_user(p, src, len)) {
-+		kvfree(p);
-+		return ERR_PTR(-EFAULT);
-+	}
-+
-+	return p;
-+}
-+EXPORT_SYMBOL(vmemdup_user_nul);
-+
- /**
-  * strndup_user - duplicate an existing string from user space
-  * @s: The string to duplicate
--- 
-2.24.1
+
+--
+Chuck Lever
+chucklever@gmail.com
+
+
 
