@@ -2,88 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C9DF324307D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Aug 2020 23:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8594E2431EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 03:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbgHLVa6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 17:30:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54832 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbgHLVa6 (ORCPT
+        id S1726567AbgHMBBp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 21:01:45 -0400
+Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:60243 "EHLO
+        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726078AbgHMBBo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 17:30:58 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F36C061383;
-        Wed, 12 Aug 2020 14:30:58 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k5yKX-00EISw-Ml; Wed, 12 Aug 2020 21:30:41 +0000
-Date:   Wed, 12 Aug 2020 22:30:41 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jann Horn <jannh@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Andy Lutomirski <luto@amacapital.net>,
+        Wed, 12 Aug 2020 21:01:44 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.west.internal (Postfix) with ESMTP id 2FEF5B4F;
+        Wed, 12 Aug 2020 21:01:42 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Wed, 12 Aug 2020 21:01:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
+        JG1tgGZ/mQI9+jPnvtxoNjrRjRVSVgKjSvfLuuK+16o=; b=YsGy5BPCab5tRtyn
+        T6XQlYKFThZ2rbXRsDmInqLDn3V+VijsKNYx70VBFA3doBccGyS0GW3fKT/FMT7L
+        CrBLO4cZrRIcshJcwe9IrNnzTbQ68p1q2X2pwGhtlBs5HglthTBZAr9KpLoQjJv2
+        oi3NcyHfLBdsPSsGxsnMx9SDmhTd4aF9faRx6U0qZeJQ9XTEsd8UeWvulViu7sgz
+        M4BI3M18nX91VCBQwn6GqhfMJyQl+83/+Zgn6d6HB/KuWfm3VcPRTriQhajyAxxV
+        oz3FU48W8KTuaXUBTFi+LZgxdGqB1WmQTFh/FqrIUtfGRkz1Rq0PIghWQmGxto1f
+        lWNgew==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=JG1tgGZ/mQI9+jPnvtxoNjrRjRVSVgKjSvfLuuK+1
+        6o=; b=RH5FLj2bOOLTC4WTSYiN1K8+Bst9j2gJtQjvt1s4rIUBCFWcgvSQNu7mr
+        pitZlBaELSNmB5K6TdX/oxfSa6WSs86X76XCrRuzYGg2ufjODnJNYaqveT/zepbA
+        BndAAner4iGUjtl59qs5PZL69w/6x+vmR9fuAcrwvpaXx0Pv6YYmESh4Ca+Hd43W
+        glFdlaDtbCVVeTgI1kGiVMR0KpGy/bOtopMb+wMeycysNBh0E7KPyqGwmG2Ot6m5
+        ttCYaDmLSvbz0bSoBlQlaGHIoTzdyFlF/BhEw2Tt8rA7TPEVZbT1nQ1kxycxsFzX
+        /XT9WtixMxBZ6UL5iT3K+hMPRHNtQ==
+X-ME-Sender: <xms:9JA0X-Fv-D3nOwj7nvd5kBrnL1tU_QBWutemZ9nnRS87eH-bFHP78A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrleefgdegfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
+    peehkedrjedrvddtfedruddugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:9JA0X_XkrSBnRmi74Bg3JzuS8s5qttogVC2Mn6oDIYDVmqCQx28qvg>
+    <xmx:9JA0X4Ly-qQ4urlCcGK9tYnFrRqqOIwfyz55PKmNa2Zi8KWvxi28aw>
+    <xmx:9JA0X4F5dUXrRhj6BYFcFd0QMbTsHSfXVHw4YEq8q7Dw4oBH4GFblg>
+    <xmx:9ZA0X9MTb5f9KI-jQamiXciLjfeovByEMET6DTE8mqkLLPmnmUxzutIpcsM>
+Received: from mickey.themaw.net (58-7-203-114.dyn.iinet.net.au [58.7.203.114])
+        by mail.messagingengine.com (Postfix) with ESMTPA id AF46D3280065;
+        Wed, 12 Aug 2020 21:01:35 -0400 (EDT)
+Message-ID: <989bb93754a4af69c02a9f42b05549f7e72630b3.camel@themaw.net>
+Subject: Re: file metadata via fs API
+From:   Ian Kent <raven@themaw.net>
+To:     David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Karel Zak <kzak@redhat.com>,
+        Steven Whitehouse <swhiteho@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Karel Zak <kzak@redhat.com>, Jeff Layton <jlayton@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@redhat.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Nicolas Dichtel <nicolas.dichtel@6wind.com>,
         Christian Brauner <christian@brauner.io>,
         Lennart Poettering <lennart@poettering.net>,
         Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
         LSM <linux-security-module@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
-Message-ID: <20200812213041.GV1236603@ZenIV.linux.org.uk>
-References: <CAHk-=whE42mFLi8CfNcdB6Jc40tXsG3sR+ThWAFihhBwfUbczA@mail.gmail.com>
- <CAJfpegtXtj2Q1wsR-3eUNA0S=_skzHF0CEmcK_Krd8dtKkWkGA@mail.gmail.com>
- <20200812143957.GQ1236603@ZenIV.linux.org.uk>
- <CAJfpegvFBdp3v9VcCp-wNDjZnQF3q6cufb-8PJieaGDz14sbBg@mail.gmail.com>
- <20200812150807.GR1236603@ZenIV.linux.org.uk>
- <CAJfpegsQF1aN4XJ_8j977rnQESxc=Kcn7Z2C+LnVDWXo4PKhTQ@mail.gmail.com>
- <20200812163347.GS1236603@ZenIV.linux.org.uk>
- <CAJfpegv8MTnO9YAiFUJPjr3ryeT82=KWHUpLFmgRNOcQfeS17w@mail.gmail.com>
- <20200812173911.GT1236603@ZenIV.linux.org.uk>
- <20200812183326.GU1236603@ZenIV.linux.org.uk>
+Date:   Thu, 13 Aug 2020 09:01:31 +0800
+In-Reply-To: <131358.1597237585@warthog.procyon.org.uk>
+References: <CAJfpegv4sC2zm+N5tvEmYaEFvvWJRHfdGqXUoBzbeKj81uNCvQ@mail.gmail.com>
+         <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+         <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+         <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
+         <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+         <52483.1597190733@warthog.procyon.org.uk>
+         <CAJfpegt=cQ159kEH9zCYVHV7R_08jwMxF0jKrSUV5E=uBg4Lzw@mail.gmail.com>
+         <98802.1597220949@warthog.procyon.org.uk>
+         <CAJfpegsVJo9e=pHf3YGWkE16fT0QaNGhgkUdq4KUQypXaD=OgQ@mail.gmail.com>
+         <d2d179c7-9b60-ca1a-0c9f-d308fc7af5ce@redhat.com>
+         <CAJfpeguMjU+n-JXE6aUQQGeMpCS4bsy4HQ37NHJ8aD8Aeg2qhA@mail.gmail.com>
+         <20200812112825.b52tqeuro2lquxlw@ws.net.home>
+         <131358.1597237585@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200812183326.GU1236603@ZenIV.linux.org.uk>
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 12, 2020 at 07:33:26PM +0100, Al Viro wrote:
-
-> BTW, what would such opened files look like from /proc/*/fd/* POV?  And
-> what would happen if you walk _through_ that symlink, with e.g. ".."
-> following it?  Or with names of those attributes, for that matter...
-> What about a normal open() of such a sucker?  It won't know where to
-> look for your ->private_data...
+On Wed, 2020-08-12 at 14:06 +0100, David Howells wrote:
+> Miklos Szeredi <miklos@szeredi.hu> wrote:
 > 
-> FWIW, you keep refering to regularity of this stuff from the syscall
-> POV, but it looks like you have no real idea of what subset of the
-> things available for normal descriptors will be available for those.
+> > That presumably means the mount ID <-> mount path mapping already
+> > exists, which means it's just possible to use the open(mount_path,
+> > O_PATH) to obtain the base fd.
+> 
+> No, you can't.  A path more correspond to multiple mounts stacked on
+> top of
+> each other, e.g.:
+> 
+> 	mount -t tmpfs none /mnt
+> 	mount -t tmpfs none /mnt
+> 	mount -t tmpfs none /mnt
+> 
+> Now you have three co-located mounts and you can't use the path to
+> differentiate them.  I think this might be an issue in autofs, but
+> Ian would
+> need to comment on that.
 
-Another question: what should happen with that sucker on umount of
-the filesystem holding the underlying object?  Should it be counted
-as pinning that fs?
+It is a problem for autofs, direct mounts in particular, but also
+for mount ordering at times when umounting a tree of mounts where
+mounts are covered or at shutdown.
 
-Who controls what's in that tree?  If we plan to have xattrs there,
-will they be in a flat tree, or should it mirror the hierarchy of
-xattrs?  When is it populated?  open() time?  What happens if we
-add/remove an xattr after that point?
+Ian
 
-If we open the same file several times, what should we get?  A full
-copy of the tree every time, with all coherency being up to whatever's
-putting attributes there?
-
-What are the permissions needed to do lookups in that thing?
-
-All of that is about semantics and the answers are needed before we
-start looking into implementations.  "Whatever my implementation
-does" is _not_ a good way to go, especially since that'll be cast
-in stone as soon as API becomes exposed to userland...
