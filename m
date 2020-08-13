@@ -2,123 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8594E2431EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 03:01:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97C12243264
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 04:14:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbgHMBBp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 21:01:45 -0400
-Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:60243 "EHLO
-        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726078AbgHMBBo (ORCPT
+        id S1726635AbgHMCNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 22:13:50 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:48592 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726605AbgHMCNu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 21:01:44 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailnew.west.internal (Postfix) with ESMTP id 2FEF5B4F;
-        Wed, 12 Aug 2020 21:01:42 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Wed, 12 Aug 2020 21:01:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm3; bh=
-        JG1tgGZ/mQI9+jPnvtxoNjrRjRVSVgKjSvfLuuK+16o=; b=YsGy5BPCab5tRtyn
-        T6XQlYKFThZ2rbXRsDmInqLDn3V+VijsKNYx70VBFA3doBccGyS0GW3fKT/FMT7L
-        CrBLO4cZrRIcshJcwe9IrNnzTbQ68p1q2X2pwGhtlBs5HglthTBZAr9KpLoQjJv2
-        oi3NcyHfLBdsPSsGxsnMx9SDmhTd4aF9faRx6U0qZeJQ9XTEsd8UeWvulViu7sgz
-        M4BI3M18nX91VCBQwn6GqhfMJyQl+83/+Zgn6d6HB/KuWfm3VcPRTriQhajyAxxV
-        oz3FU48W8KTuaXUBTFi+LZgxdGqB1WmQTFh/FqrIUtfGRkz1Rq0PIghWQmGxto1f
-        lWNgew==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=JG1tgGZ/mQI9+jPnvtxoNjrRjRVSVgKjSvfLuuK+1
-        6o=; b=RH5FLj2bOOLTC4WTSYiN1K8+Bst9j2gJtQjvt1s4rIUBCFWcgvSQNu7mr
-        pitZlBaELSNmB5K6TdX/oxfSa6WSs86X76XCrRuzYGg2ufjODnJNYaqveT/zepbA
-        BndAAner4iGUjtl59qs5PZL69w/6x+vmR9fuAcrwvpaXx0Pv6YYmESh4Ca+Hd43W
-        glFdlaDtbCVVeTgI1kGiVMR0KpGy/bOtopMb+wMeycysNBh0E7KPyqGwmG2Ot6m5
-        ttCYaDmLSvbz0bSoBlQlaGHIoTzdyFlF/BhEw2Tt8rA7TPEVZbT1nQ1kxycxsFzX
-        /XT9WtixMxBZ6UL5iT3K+hMPRHNtQ==
-X-ME-Sender: <xms:9JA0X-Fv-D3nOwj7nvd5kBrnL1tU_QBWutemZ9nnRS87eH-bFHP78A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrleefgdegfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
-    peehkedrjedrvddtfedruddugeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:9JA0X_XkrSBnRmi74Bg3JzuS8s5qttogVC2Mn6oDIYDVmqCQx28qvg>
-    <xmx:9JA0X4Ly-qQ4urlCcGK9tYnFrRqqOIwfyz55PKmNa2Zi8KWvxi28aw>
-    <xmx:9JA0X4F5dUXrRhj6BYFcFd0QMbTsHSfXVHw4YEq8q7Dw4oBH4GFblg>
-    <xmx:9ZA0X9MTb5f9KI-jQamiXciLjfeovByEMET6DTE8mqkLLPmnmUxzutIpcsM>
-Received: from mickey.themaw.net (58-7-203-114.dyn.iinet.net.au [58.7.203.114])
-        by mail.messagingengine.com (Postfix) with ESMTPA id AF46D3280065;
-        Wed, 12 Aug 2020 21:01:35 -0400 (EDT)
-Message-ID: <989bb93754a4af69c02a9f42b05549f7e72630b3.camel@themaw.net>
-Subject: Re: file metadata via fs API
-From:   Ian Kent <raven@themaw.net>
-To:     David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Karel Zak <kzak@redhat.com>,
-        Steven Whitehouse <swhiteho@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Thu, 13 Aug 2020 09:01:31 +0800
-In-Reply-To: <131358.1597237585@warthog.procyon.org.uk>
-References: <CAJfpegv4sC2zm+N5tvEmYaEFvvWJRHfdGqXUoBzbeKj81uNCvQ@mail.gmail.com>
-         <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
-         <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
-         <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
-         <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
-         <52483.1597190733@warthog.procyon.org.uk>
-         <CAJfpegt=cQ159kEH9zCYVHV7R_08jwMxF0jKrSUV5E=uBg4Lzw@mail.gmail.com>
-         <98802.1597220949@warthog.procyon.org.uk>
-         <CAJfpegsVJo9e=pHf3YGWkE16fT0QaNGhgkUdq4KUQypXaD=OgQ@mail.gmail.com>
-         <d2d179c7-9b60-ca1a-0c9f-d308fc7af5ce@redhat.com>
-         <CAJfpeguMjU+n-JXE6aUQQGeMpCS4bsy4HQ37NHJ8aD8Aeg2qhA@mail.gmail.com>
-         <20200812112825.b52tqeuro2lquxlw@ws.net.home>
-         <131358.1597237585@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Wed, 12 Aug 2020 22:13:50 -0400
+X-UUID: dfad2300fe9a44c3b23ad3781c03596b-20200813
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=aF1D+BCyiRCtqB/9T1GyAsWkEq1ttG2TVqo5h3JEkxo=;
+        b=lhd/2RrY8T0f6YKQIjm4brzBv6gAsEKFXZ5XX0tHceBMZOLPU0+mNhyrtBsWIxCc9HfwvRXRm3hOogf+C4nB6RInkLlfK3bYVsaFyv87lrTFFeMy30OU8Nugdgyhd/NvPD1pgLYQlfxJL9QvSYFkdrefIKPNBE8Q7SIb66tY8K4=;
+X-UUID: dfad2300fe9a44c3b23ad3781c03596b-20200813
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <chinwen.chang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 631092834; Thu, 13 Aug 2020 10:13:46 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Thu, 13 Aug 2020 10:13:45 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Thu, 13 Aug 2020 10:13:45 +0800
+From:   Chinwen Chang <chinwen.chang@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Michel Lespinasse <walken@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Chinwen Chang <chinwen.chang@mediatek.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Steven Price <steven.price@arm.com>,
+        Song Liu <songliubraving@fb.com>,
+        Jimmy Assarsson <jimmyassarsson@gmail.com>,
+        Huang Ying <ying.huang@intel.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-fsdevel@vger.kernel.org>, <wsd_upstream@mediatek.com>
+Subject: [PATCH v2 0/2] Try to release mmap_lock temporarily in smaps_rollup
+Date:   Thu, 13 Aug 2020 10:13:28 +0800
+Message-ID: <1597284810-17454-1-git-send-email-chinwen.chang@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2020-08-12 at 14:06 +0100, David Howells wrote:
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
-> 
-> > That presumably means the mount ID <-> mount path mapping already
-> > exists, which means it's just possible to use the open(mount_path,
-> > O_PATH) to obtain the base fd.
-> 
-> No, you can't.  A path more correspond to multiple mounts stacked on
-> top of
-> each other, e.g.:
-> 
-> 	mount -t tmpfs none /mnt
-> 	mount -t tmpfs none /mnt
-> 	mount -t tmpfs none /mnt
-> 
-> Now you have three co-located mounts and you can't use the path to
-> differentiate them.  I think this might be an issue in autofs, but
-> Ian would
-> need to comment on that.
-
-It is a problem for autofs, direct mounts in particular, but also
-for mount ordering at times when umounting a tree of mounts where
-mounts are covered or at shutdown.
-
-Ian
+UmVjZW50bHksIHdlIGhhdmUgb2JzZXJ2ZWQgc29tZSBqYW5reSBpc3N1ZXMgY2F1c2VkIGJ5IHVu
+cGxlYXNhbnRseSBsb25nDQpjb250ZW50aW9uIG9uIG1tYXBfbG9jayB3aGljaCBpcyBoZWxkIGJ5
+IHNtYXBzX3JvbGx1cCB3aGVuIHByb2JpbmcgbGFyZ2UNCnByb2Nlc3Nlcy4gVG8gYWRkcmVzcyB0
+aGUgcHJvYmxlbSwgd2UgbGV0IHNtYXBzX3JvbGx1cCBkZXRlY3QgaWYgYW55b25lDQp3YW50cyB0
+byBhY3F1aXJlIG1tYXBfbG9jayBmb3Igd3JpdGUgYXR0ZW1wdHMuIElmIHllcywganVzdCByZWxl
+YXNlIHRoZQ0KbG9jayB0ZW1wb3JhcmlseSB0byBlYXNlIHRoZSBjb250ZW50aW9uLg0KDQpzbWFw
+c19yb2xsdXAgaXMgYSBwcm9jZnMgaW50ZXJmYWNlIHdoaWNoIGFsbG93cyB1c2VycyB0byBzdW1t
+YXJpemUgdGhlDQpwcm9jZXNzJ3MgbWVtb3J5IHVzYWdlIHdpdGhvdXQgdGhlIG92ZXJoZWFkIG9m
+IHNlcV8qIGNhbGxzLiBBbmRyb2lkIHVzZXMgaXQNCnRvIHNhbXBsZSB0aGUgbWVtb3J5IHVzYWdl
+IG9mIHZhcmlvdXMgcHJvY2Vzc2VzIHRvIGJhbGFuY2UgaXRzIG1lbW9yeSBwb29sDQpzaXplcy4g
+SWYgbm8gb25lIHdhbnRzIHRvIHRha2UgdGhlIGxvY2sgZm9yIHdyaXRlIHJlcXVlc3RzLCBzbWFw
+c19yb2xsdXANCndpdGggdGhpcyBwYXRjaCB3aWxsIGJlaGF2ZSBsaWtlIHRoZSBvcmlnaW5hbCBv
+bmUuDQoNCkFsdGhvdWdoIHRoZXJlIGFyZSBvbi1nb2luZyBtbWFwX2xvY2sgb3B0aW1pemF0aW9u
+cyBsaWtlIHJhbmdlLWJhc2VkIGxvY2tzLA0KdGhlIGxvY2sgYXBwbGllZCB0byBzbWFwc19yb2xs
+dXAgd291bGQgYmUgdGhlIGNvYXJzZSBvbmUsIHdoaWNoIGlzIGhhcmQgdG8NCmF2b2lkIHRoZSBv
+Y2N1cnJlbmNlIG9mIGFmb3JlbWVudGlvbmVkIGlzc3Vlcy4gU28gdGhlIGRldGVjdGlvbiBhbmQN
+CnRlbXBvcmFyeSByZWxlYXNlIGZvciB3cml0ZSBhdHRlbXB0cyBvbiBtbWFwX2xvY2sgaW4gc21h
+cHNfcm9sbHVwIGlzIHN0aWxsDQpuZWNlc3NhcnkuDQoNCkNoYW5nZSBzaW5jZSB2MToNCi0gSWYg
+Y3VycmVudCBWTUEgaXMgZnJlZWQgYWZ0ZXIgZHJvcHBpbmcgdGhlIGxvY2ssIGl0IHdpbGwgcmV0
+dXJuDQotIGluY29tcGxldGUgcmVzdWx0LiBUbyBmaXggdGhpcyBpc3N1ZSwgcmVmaW5lIHRoZSBj
+b2RlIGZsb3cgYXMNCi0gc3VnZ2VzdGVkIGJ5IFN0ZXZlLiBbMV0NCg0KWzFdIGh0dHBzOi8vbG9y
+ZS5rZXJuZWwub3JnL2xrbWwvYmY0MDY3NmUtYjE0Yi00NGNkLTc1Y2UtNDE5YzcwMTk0NzgzQGFy
+bS5jb20vDQoNCg0KQ2hpbndlbiBDaGFuZyAoMik6DQogIG1tYXAgbG9ja2luZyBBUEk6IGFkZCBt
+bWFwX2xvY2tfaXNfY29udGVuZGVkKCkNCiAgbW06IHByb2M6IHNtYXBzX3JvbGx1cDogZG8gbm90
+IHN0YWxsIHdyaXRlIGF0dGVtcHRzIG9uIG1tYXBfbG9jaw0KDQogZnMvcHJvYy90YXNrX21tdS5j
+ICAgICAgICB8IDU3ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLQ0KIGlu
+Y2x1ZGUvbGludXgvbW1hcF9sb2NrLmggfCAgNSArKysrDQogMiBmaWxlcyBjaGFuZ2VkLCA2MSBp
+bnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0p
 
