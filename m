@@ -2,107 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CBC5243DB0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 18:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2433243E09
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 19:09:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726249AbgHMQtm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 12:49:42 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43066 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbgHMQtl (ORCPT
+        id S1726596AbgHMRIy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 13:08:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38822 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbgHMRIx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 12:49:41 -0400
-Received: by mail-io1-f65.google.com with SMTP id k23so7946750iom.10;
-        Thu, 13 Aug 2020 09:49:40 -0700 (PDT)
+        Thu, 13 Aug 2020 13:08:53 -0400
+Received: from mail-qv1-xf41.google.com (mail-qv1-xf41.google.com [IPv6:2607:f8b0:4864:20::f41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07A12C061383
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 10:08:52 -0700 (PDT)
+Received: by mail-qv1-xf41.google.com with SMTP id v1so1110063qvn.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 10:08:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=NmNovEDZlcWHy1ny9mfMxwEkyJh8qjK2WB5f1VhQ5Jk=;
+        b=YJux2siIvei4QmzcMG2WxFrcVF3HetJD0AOZrZjr4wCCvD9XIxA/bT08r9OrTO/uJz
+         SN1KlxCU4qabzO4I/pjgyhiTKTb03pgYi2rq/3ZPZLkhdOd2c/911Pi0kQpKU5K6IKDB
+         DphHqJbzNANS1TFNZtCMGHAey2kjYTqI/rIzGxbiK/AqdEKMSv6WEFzgfsJPUkCgOHz+
+         mqk72KdcdnW8sWes0FOiT169XVvRjSE3qzkY0Ap08AoCwc/MXJbdjJto5MRGFLEEu+wT
+         TTzYwrB34WFCVDvSEiv9mP1sl9KQaOrE6+zqznwGmpVb4BXuBWxhQ4q23D3FKJml+py5
+         M16w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oZ19wRQzUr4AIajJEmDg571mMOTdhTENNwtyK08+5cg=;
-        b=FK9VIY0Ayv6PUizRaDPyZVx4KLucmfY0aIt4WppXirWNvcNKkdO7qGdhE119vme7T0
-         XSsyB6wsUTbpz7qgkg+pnspxqOnM5titEpG7+vIIh9mz3+5YOHNsMeHiJ7bm28Pn3C8H
-         qlwHvEP4S2Xt1GpO6eOPDs2HZjHW8VvssZrfB7a9tRsykFmONvL7pc/CAgmOujSt+Xvj
-         PRAfdfiGBPfaMZQxuMo7kVZfDI79T5HiXtlG36G8MdICf+KgpSLtWmnG53AX3t1wLIkC
-         NqvgkaoHvfK3+GLUtndnLTNonP19w+CMHs3/zSxqHBvZB3ERg4KguVy/FCQFfvtCtB2p
-         H3pg==
-X-Gm-Message-State: AOAM530YchXWVPQLWzw1hupyE0OwB8l0octfhMLIjQVjhpP3AegFRdVY
-        XeloTJrmJO0b8y2KRXmns9k=
-X-Google-Smtp-Source: ABdhPJyK6lV5GsIYKeXz7YeFZNYInTHphj60xDI7tJFaCtsyu1+NskpY4ZE+xYBdPC2MbeoNR4o9bQ==
-X-Received: by 2002:a6b:b513:: with SMTP id e19mr5672184iof.167.1597337380470;
-        Thu, 13 Aug 2020 09:49:40 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id m13sm2899141iov.35.2020.08.13.09.49.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Aug 2020 09:49:39 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id E29C7403DC; Thu, 13 Aug 2020 16:49:31 +0000 (UTC)
-Date:   Thu, 13 Aug 2020 16:49:31 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Yang Yingliang <yangyingliang@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        keescook@chromium.org, yzaikin@google.com, willy@infradead.org,
-        hch@lst.de
-Subject: Re: [PATCH -next] sysctl: fix memleak in proc_sys_call_handler()
-Message-ID: <20200813164931.GW4332@42.do-not-panic.com>
-References: <20200804154503.3863200-1-yangyingliang@huawei.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NmNovEDZlcWHy1ny9mfMxwEkyJh8qjK2WB5f1VhQ5Jk=;
+        b=rI9padfeBHxNRoF5JsWXwS+injN8qdp0xSCE4xP+GFlTr8ni8AGiR3yPeFzB9T4IKb
+         re9mJJnEpoDklH2+ilwP/8zVURKVjzLC43YKWDBv23Ko6eotphsLirVszW1wbieSbotK
+         iTaJ0FT30rFYAxw4u0CKTpW9bkoj48C/dsstI7rHoqpK9xR05DfwXCcIfEzdpXhSkyjA
+         pq0u8u9o5vvyHvzwBS9s00DRQFjfK2tiFR0cEotYj87JCYrIangaeGTaUdiMjU4XG3mz
+         /Aq0xGCEyfKjG/b9yhYJtPjIObeNsu3BoMJDpxtW3qO5TPZT9dzx3TWkv6VKsNit3ncd
+         AHSA==
+X-Gm-Message-State: AOAM5323e9chxH0VhbiHaJqGtHMOH4ZNSgYu1EszysYS6pZRdjH0pZqx
+        d/u1LbPXmV+YbM/pQTKd2hbfDQ==
+X-Google-Smtp-Source: ABdhPJyUBrakPKr2w44MWVC7H8LAiHsfTAcql04AVLj1TrZRj+3lq0DcZdtx8B5TeWcs0/ULjjX5SQ==
+X-Received: by 2002:a0c:b52b:: with SMTP id d43mr5659507qve.158.1597338531900;
+        Thu, 13 Aug 2020 10:08:51 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c0a8:11d9::10a7? ([2620:10d:c091:480::1:fe9c])
+        by smtp.gmail.com with ESMTPSA id k31sm7048362qtd.60.2020.08.13.10.08.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Aug 2020 10:08:51 -0700 (PDT)
+Subject: Re: [PATCH] proc: use vmalloc for our kernel buffer
+To:     David Laight <David.Laight@ACULAB.COM>, "hch@lst.de" <hch@lst.de>,
+        "viro@ZenIV.linux.org.uk" <viro@ZenIV.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-team@fb.com" <kernel-team@fb.com>
+References: <20200813145305.805730-1-josef@toxicpanda.com>
+ <714c8baabe1a4d0191f8cdaf6e28a32d@AcuMS.aculab.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <72ea0ff5-4706-d2e9-c2cf-c8827e576399@toxicpanda.com>
+Date:   Thu, 13 Aug 2020 13:08:49 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200804154503.3863200-1-yangyingliang@huawei.com>
+In-Reply-To: <714c8baabe1a4d0191f8cdaf6e28a32d@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 04, 2020 at 03:45:03PM +0000, Yang Yingliang wrote:
-> I got a memleak report when doing some fuzz test:
+On 8/13/20 12:19 PM, David Laight wrote:
+> From: Josef Bacik
+>> Sent: 13 August 2020 15:53
+>>
+>>    sysctl: pass kernel pointers to ->proc_handler
+>>
+>> we have been pre-allocating a buffer to copy the data from the proc
+>> handlers into, and then copying that to userspace.  The problem is this
+>> just blind kmalloc()'s the buffer size passed in from the read, which in
+>> the case of our 'cat' binary was 64kib.  Order-4 allocations are not
+>> awesome, and since we can potentially allocate up to our maximum order,
+>> use vmalloc for these buffers.
 > 
-> BUG: memory leak
-> unreferenced object 0xffff888103f3da00 (size 64):
-> comm "syz-executor.0", pid 2270, jiffies 4295404698 (age 46.593s)
-> hex dump (first 32 bytes):
-> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
-> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
-> backtrace:
-> [<000000004f2c0607>] kmalloc include/linux/slab.h:559 [inline]
-> [<000000004f2c0607>] kzalloc include/linux/slab.h:666 [inline]
-> [<000000004f2c0607>] proc_sys_call_handler+0x1d4/0x480 fs/proc/proc_sysctl.c:574
-> [<000000005ec6a16b>] call_write_iter include/linux/fs.h:1876 [inline]
-> [<000000005ec6a16b>] new_sync_write+0x3c5/0x5b0 fs/read_write.c:515
-> [<00000000bbeebb83>] vfs_write+0x4e8/0x670 fs/read_write.c:595
-> [<000000009d967c93>] ksys_write+0x10c/0x220 fs/read_write.c:648
-> [<00000000139f6002>] do_syscall_64+0x33/0x40 arch/x86/entry/common.c:46
-> [<00000000b7d61f44>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> What happens if I run 'dd bs=16M ...' ?
 > 
-> Go to free buff when copy_from_iter_full() is failed.
+> 	David
 > 
-> Fixes: 1dea05cbc0d7 ("sysctl: Convert to iter interfaces")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+         /* don't even try if the size is too large */
+         error = -ENOMEM;
+         if (count >= KMALLOC_MAX_SIZE)
+                 goto out;
 
-Good catch.
+is above this code, thanks,
 
-  Luis
-> ---
->  fs/proc/proc_sysctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 9f6b9c3e3fda..a4a3122f8a58 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -578,7 +578,7 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
->  	if (write) {
->  		error = -EFAULT;
->  		if (!copy_from_iter_full(kbuf, count, iter))
-> -			goto out;
-> +			goto out_free_buf;
->  		kbuf[count] = '\0';
->  	}
->  
-> -- 
-> 2.25.1
-> 
+Josef
