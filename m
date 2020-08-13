@@ -2,168 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 000F2243291
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 04:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59166243297
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 05:01:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726609AbgHMCxN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Aug 2020 22:53:13 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:30002 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbgHMCxM (ORCPT
+        id S1726526AbgHMDA4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Aug 2020 23:00:56 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:37854 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726284AbgHMDAz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Aug 2020 22:53:12 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200813025309epoutp01c80bfb1823a3d99c06906ab5de76cd94~qtDxZsCsi3083830838epoutp01X
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 02:53:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200813025309epoutp01c80bfb1823a3d99c06906ab5de76cd94~qtDxZsCsi3083830838epoutp01X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1597287189;
-        bh=MhLS3hiSKvnM3/ughr97TehaOG7NwJ0QCjLMWwWTnog=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=E1mdURy9i4tXrR/uzVBp4xdGJqeFkXrVFI3C3uj3gfPWHtyTrM+65weldWYFFayoP
-         WIoeEhYD4pBhe22y86uZqHurJbfG4bnUSQEI+8uZA6CadsaZPhqsXqvU+XfgwU/efu
-         mgCNfFc9O8kLTkyjXYCGkF0gXgjOGkMxLtr+SVvc=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200813025308epcas1p13262255658a8ea7d09bed57c07af4b87~qtDw1xbMr2939229392epcas1p1k;
-        Thu, 13 Aug 2020 02:53:08 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.164]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4BRrjH3VlxzMqYm2; Thu, 13 Aug
-        2020 02:53:07 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B3.1E.28581.31BA43F5; Thu, 13 Aug 2020 11:53:07 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200813025306epcas1p359c49c1668e81716dfc9055fc234e657~qtDvSSYDS2388023880epcas1p3M;
-        Thu, 13 Aug 2020 02:53:06 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20200813025306epsmtrp21bc505bb706af3aea140c0579b5419d6~qtDvRibw02473124731epsmtrp2e;
-        Thu, 13 Aug 2020 02:53:06 +0000 (GMT)
-X-AuditID: b6c32a38-2cdff70000006fa5-93-5f34ab13597c
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        54.A8.08382.21BA43F5; Thu, 13 Aug 2020 11:53:06 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200813025306epsmtip12f911e2ce7e705e3ef9d43c54060848a~qtDvIN64K2150121501epsmtip1u;
-        Thu, 13 Aug 2020 02:53:06 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
-Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
-        <mori.takahiro@ab.mitsubishielectric.co.jp>,
-        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
-        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <ed561c17-3b85-9bf1-e765-5d9a15786585@gmail.com>
-Subject: RE: [PATCH 1/2] exfat: add NameLength check when extracting name
-Date:   Thu, 13 Aug 2020 11:53:06 +0900
-Message-ID: <001001d6711c$def48c80$9cdda580$@samsung.com>
+        Wed, 12 Aug 2020 23:00:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1597287654; x=1628823654;
+  h=from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=bQ8lr1PWyJ40TwS/HigAGqUEV3ZnnzWreh2TWiVNx1o=;
+  b=hwAvnfd6MI6OYC8ieehrV98xAyOHDOwf/4ouXvA33XxEBBjcSNokK4e8
+   ViMr51JB2SXWgX4hpafLT1dT0l95t72ZW76NYuBRQH+AHfi1YcsKJ7060
+   jPQyafpBTC5WOzeeuvaIui/GjDEPGSn2m619smdF+QOBCMuvDL+DchhOH
+   KAFDoBmtnBwMQInEdjO7vn3gSlDm24KYmEB94GZImST5j+8ebPgjF+69F
+   RdTNPUo4A4f2RuZxgMbleZ18spm0iBtzh3HqdzomcZ1BZ+GU9MwXT7i25
+   lKOSSjjzO3CUqKVMdu3YOOviRCaiSXmyliCSiPM4OguGcuPexuTxda5lG
+   A==;
+IronPort-SDR: fDrpgYvI4RpVCxtxFcAMaRn5TH5NYs7T4+rMAK/OcSqGHh0dIHkIZsHHAf8RaB0ZZV9ZH+9XQm
+ NSXUAxYl+8GJ0DYI8w5ABs8cvMAzXILRyM30hjTHg3ogTzJNVzhcOTZ3++tGekwhFzVTWJFWwZ
+ ZbxHJ9yZBKoygymn5qOGO02gHAsl/MZrGzUwFu5vbfpjYnGpbWP94gabeq+expE/OmXlI7pBVm
+ tqBUSkwsqaqA+7rOv2jUJRHsqY7vk+siRJZo84+MCDpVVgxfbUUr4Npad/tQV8B2VBdGpoNNFR
+ 6oA=
+X-IronPort-AV: E=Sophos;i="5.76,306,1592841600"; 
+   d="scan'208";a="144813513"
+Received: from mail-bn8nam12lp2176.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.176])
+  by ob1.hgst.iphmx.com with ESMTP; 13 Aug 2020 11:00:53 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=P66/tdTHDp4X7V830PaJGiQXbkzo2NeqtoYUXMURtNVFa6qH5uk367rMdWfAmgUndn7VQssRWvR3zbgqf5uofoZjNpsvOAauFR59FPNFbHaMaZX2v2Nzfkk6iUyeYYtkLJwnFd3BqytXo6AIqShHDyy/dRIbZhlbtygsUBMh565R95h73m8paWjt+RozErLORhsZAM2dGk8CCo5oVOz509pZbzlQwykuPy9YAQlITAWgDTje0h2Z0TnP4glqESZS0H+lX7Bf/SYXgJ91TQg84yU2xy9z993dneevV3tCHc3Ef8Vq2xOwVO7vp03IIsEEm4UvKyBwuZhCUmT/rhQa/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bQ8lr1PWyJ40TwS/HigAGqUEV3ZnnzWreh2TWiVNx1o=;
+ b=MB32/0VWawWTTawVvvaXrgfo/psnNu57tvv3c5yNz/RvTx0mVwzxlQ8UpbCHCsew/+JDSfRSAF4pBEDTb8iV37Cy1cVIalhBB9VtbWs+VSxD1h2GQSz5iAWzm5GYgRyuab97+op9PAzrS8yTS/yW1i7eHuax+tSOKNdYum3T7ZUgl8sJw0bmcg5ojCxmajjdXrvWGgv3GqWjYQM/BorkKwgDA9ZJiPsTrKmrrtvx+MB86rtWjbIJHwcA+w1BztglxU4ftRoWeRT2uoP/JrSCZzKEJpqwhNCaF1yPAwgms8nfZBpk8R6HE8l0DSM3HX2YZH3bt6MlItvHorZsy6bNDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bQ8lr1PWyJ40TwS/HigAGqUEV3ZnnzWreh2TWiVNx1o=;
+ b=zz8nQSQAwYQDoJoMswHfRTh8KndaSfROdPDHQwl3pxT2CBtFzOCFrfB8mlBsfO4awEhnY+HwEJ7NY6SsbwaRoEchZHLZosshPfRThiP6xiDjb6LVziRP+H7oRXD57wmCM5qu5xfn4BavGdAxNnO7FxVwRnFUEjeMMLszymkINOU=
+Received: from BYAPR04MB4965.namprd04.prod.outlook.com (2603:10b6:a03:4d::25)
+ by BY5PR04MB6849.namprd04.prod.outlook.com (2603:10b6:a03:228::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3283.16; Thu, 13 Aug
+ 2020 03:00:53 +0000
+Received: from BYAPR04MB4965.namprd04.prod.outlook.com
+ ([fe80::98a4:d2c9:58c5:dee4]) by BYAPR04MB4965.namprd04.prod.outlook.com
+ ([fe80::98a4:d2c9:58c5:dee4%5]) with mapi id 15.20.3261.025; Thu, 13 Aug 2020
+ 03:00:53 +0000
+From:   Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>
+To:     Jacob Wen <jian.w.wen@oracle.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] block: insert a general SMP memory barrier before
+ wake_up_bit()
+Thread-Topic: [PATCH] block: insert a general SMP memory barrier before
+ wake_up_bit()
+Thread-Index: AQHWcRv/yzPrpHN5K0eDRQ61fXSrww==
+Date:   Thu, 13 Aug 2020 03:00:53 +0000
+Message-ID: <BYAPR04MB496566C1445F60DFD2A05E0C86430@BYAPR04MB4965.namprd04.prod.outlook.com>
+References: <20200813024438.13170-1-jian.w.wen@oracle.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: oracle.com; dkim=none (message not signed)
+ header.d=none;oracle.com; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [199.255.45.62]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 30002274-2cef-45ce-f8ae-08d83f351760
+x-ms-traffictypediagnostic: BY5PR04MB6849:
+x-microsoft-antispam-prvs: <BY5PR04MB684986A7E1F7AFD13E25565486430@BY5PR04MB6849.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:935;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: x8YnCmoCsGwpyuXOTRYI5j54mDR3PVn7i0zgbGWKplOmBKD+qeJOiZJfs03UMGZxYZYdfrDHxCSpeoBr1HL/6RMuBwKLdghzLh31vixcj8iOTpaL7OCLCdZ6NHBFJbTosNT+P4Q8nAYfQTN7KdrbABrV9j4ACq3NS6ItS3claKvVutUdVl2jFpKdKqP0TU4xuUF2GSuFCtiC30XxXsmb8P55LTb/a3nXgs3C38I94U+36o8eN4igoKMjR16MeEl0ddHGEbFWqi2l/WVkgLBPKAWAPSDdybI/036sV6ctGrf8gvVGBxwtRbBQ4PjuT0ffVMOQxEUvhzh9tRpA//MxqA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR04MB4965.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(346002)(396003)(39860400002)(366004)(136003)(26005)(5660300002)(558084003)(186003)(66946007)(55016002)(478600001)(53546011)(6506007)(9686003)(110136005)(76116006)(33656002)(316002)(66446008)(2906002)(71200400001)(7696005)(8936002)(66476007)(64756008)(66556008)(86362001)(52536014)(8676002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: HtMGKqp78OSupJdwyae3hEMZIfYGKpEh7Xw/IoiFs2jTkWfcvDqRZN6iNS/zjLLTW73vsKsUsyarebul+VaFiG7HLodDEvK3POhMzVxe3C5BFphnZFgFezQSCuTMr1IKBYdqEjif/7z5iYC+cXp+YAmE+7UFEneYFAbnCgAxNZpQsiqBuatvrH5AHhEG7XRWqf464T6KH3VPze3NAwbByRpsnhn9QOxl5zOnvwuKlgNECsJfkBgOkOk/7HTsATfFYnejhXiYdOsOUAzMsCI6QLzAdvX9NMTICm6uzXnWbLZUCpgtDLMqyC4CowX8UEF2DgQf9JcScyu7vXHSKfDoCcDBrmdqS97GsMmf3e2a7WIf0/NAqInFTqgohgNsILWyVLlnydbJzLF8d+xB2WOlif2DZxG5Rxouz9G7K5k5Qv0jetxy5je/wU9gT2QISCIo3+pBQy7HkginAHl3HowzAr5lT6f9w9Lm9SHLkKqPHaCbQOqmTJAGd293GhTxYs9jLItmaxW2oRS6gmPabt4PwmMHy5K4lucwfqBTQvaBjnO4OdD1ICbS1On6N7eInNAmE1zS+M4o/swgLj2sGMEx3ABHvuNi7G+87dicdfbBcWpozgB6yQadjOQ7vzVJ4RdVPP84iyqih/JOS6uUfXCafw==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGPHLM6XNMdYK+OwXwRZrdCO4AVLgGp1IjqAWFBSrABxrnHLamdZzLg
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmga7wapN4g6atEhY/5t5msXhzciqL
-        xZ69J1ksLu+aw2Zx+f8nFotlXyazWGz5d4TVgd3jy5zj7B5tk/+xezQfW8nmsXPWXXaPvi2r
-        GD0+b5ILYIvKsclITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1
-        y8wBukVJoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BoUKBXnJhbXJqXrpecn2tl
-        aGBgZApUmZCTMXnKT/aCo4IVr390sDQwruPrYuTkkBAwkXjWt4ipi5GLQ0hgB6PE2z2vWCGc
-        T4wSC05fZIdwvjFKbNm8mxmm5dKaTcwQib2MElv79jJCOC8ZJfraJ7GBVLEJ6Er8+7MfzBYR
-        0JM4efI6G0gRs0Ajk8TyE1/ARnEK2EqsfLqOEcQWFvCU2NY6mRXEZhFQlfi27j/QVRwcvAKW
-        Em/3BoGEeQUEJU7OfMICYjMLyEtsfzsH6iIFiZ9Pl7FC7HKT+HLzJiNEjYjE7M42sEslBBZy
-        SLxtu8sO0eAicXjLPxYIW1ji1fEtUHEpic/v9rKB7JUQqJb4uB9qfgejxIvvthC2scTN9RtY
-        QUqYBTQl1u/ShwgrSuz8PRdqLZ/Eu689rBBTeCU62oQgSlQl+i4dZoKwpSW62j+wT2BUmoXk
-        sVlIHpuF5IFZCMsWMLKsYhRLLSjOTU8tNiwwQY7sTYzgdKplsYNx7tsPeocYmTgYDzFKcDAr
-        ifAyXzaOF+JNSaysSi3Kjy8qzUktPsRoCgzpicxSosn5wISeVxJvaGpkbGxsYWJmbmZqrCTO
-        +/CWQryQQHpiSWp2ampBahFMHxMHp1QDU1vSNd+Fe3VZH0w/XzT3/ZZTLB3d51atsVe+madj
-        0qxjc/T1meLFe4IUe3r9yr2WMc189E3RuH395qM3EpfdzdgQVSjS9+TR/IVp3Is3GUx5yVby
-        pZFVae7zs0tOS7x/abjobCPDcaOt02f7/blb8nrXX71bn9YVsXvaZhy5XbImPLLU4Nmhna4T
-        NU7EyrS0tqnMqImTePqle9tJk+b7UhqfuvinMMp3mF0UrNTokljcG3azXWE/s3GBaKbWiqTe
-        ycuWr//HMU8saVe9y8mtAX+/SMp8+BPZfv3ucQmNvbM8PaJfp960qmi/mzFpv69rf4PrCnPm
-        rKXTbb8wLZDjOugxiU96tsqtt0Em3sUVS5RYijMSDbWYi4oTAVtd+fAwBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgkeLIzCtJLcpLzFFi42LZdlhJTldotUm8Qd9jQ4sfc2+zWLw5OZXF
-        Ys/ekywWl3fNYbO4/P8Ti8WyL5NZLLb8O8LqwO7xZc5xdo+2yf/YPZqPrWTz2DnrLrtH35ZV
-        jB6fN8kFsEVx2aSk5mSWpRbp2yVwZUye8pO94KhgxesfHSwNjOv4uhg5OSQETCQurdnE3MXI
-        xSEksJtR4uv8N8wQCWmJYyfOANkcQLawxOHDxRA1zxkl5kx6CFbDJqAr8e/PfjYQW0RAT+Lk
-        yetsIEXMAs1MEt+eLYGa+oJR4tuc2awgVZwCthIrn65jBLGFBTwltrVOBouzCKhKfFv3nwlk
-        G6+ApcTbvUEgYV4BQYmTM5+wgNjMAtoSvQ9bGSFseYntb+dAHaog8fPpMlaII9wkvty8CVUj
-        IjG7s415AqPwLCSjZiEZNQvJqFlIWhYwsqxilEwtKM5Nzy02LDDMSy3XK07MLS7NS9dLzs/d
-        xAiOLC3NHYzbV33QO8TIxMF4iFGCg1lJhJf5snG8EG9KYmVValF+fFFpTmrxIUZpDhYlcd4b
-        hQvjhATSE0tSs1NTC1KLYLJMHJxSDUwb3e9ruRanKblsf8DDqsa1IGBqyul95qLTT/Ja8qxf
-        Jpemt/GE5K3KApbtB5d/3L31lte2nrrzEakTt547EzA5Jbzue/YFt+izW+ziDDIMjzdkOD/7
-        +kdo/uYfwdsbS1auO7Tvbml36E+5nRMfaPBbe3P89EqNmZew5a/bXqZVd3rasvqtOfvu3gnn
-        nvItg/mva3FpgGWur8R7+b0qSRs+T/daHWOXc09V8UTk/74l7xzDVp/hfHFrzYGJS+6/msom
-        a1NhEG/W9EJnz162nxWZJxamFJx66aRpcW7Luo9Vh3hdjp54+iSZU/DO427H/9oi2mYawV72
-        Fx1WykxadHR9CvvZaZM4p/6cL2m5ZlGLEktxRqKhFnNRcSIAJaHdGBsDAAA=
-X-CMS-MailID: 20200813025306epcas1p359c49c1668e81716dfc9055fc234e657
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200806055718epcas1p1763d92dbf47e2a331a74d0bb9ea03c15
-References: <CGME20200806055718epcas1p1763d92dbf47e2a331a74d0bb9ea03c15@epcas1p1.samsung.com>
-        <20200806055653.9329-1-kohada.t2@gmail.com>
-        <003d01d66edd$5baf4810$130dd830$@samsung.com>
-        <ed561c17-3b85-9bf1-e765-5d9a15786585@gmail.com>
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR04MB4965.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30002274-2cef-45ce-f8ae-08d83f351760
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Aug 2020 03:00:53.0303
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ixUP7EODDFUILMsZfzeBTEgZvz5uRbqiLBNwOB/OyaSCswUAhNfr8CMnYgMfsvhfy8EAYm2/WdV5vSTmDHOOPyWQ/Nfl8N5Qj2CWNLrPOT0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR04MB6849
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Thank you for your reply.
-> 
-> >> -static void exfat_get_uniname_from_ext_entry(struct super_block *sb,
-> >> -		struct exfat_chain *p_dir, int entry, unsigned short *uniname)
-> >> +static int exfat_get_uniname_from_name_entries(struct exfat_entry_set_cache *es,
-> >> +		struct exfat_uni_name *uniname)
-> >>   {
-> >> -	int i;
-> >> -	struct exfat_entry_set_cache *es;
-> >> +	int n, l, i;
-> >>   	struct exfat_dentry *ep;
-> >>
-> >> -	es = exfat_get_dentry_set(sb, p_dir, entry, ES_ALL_ENTRIES);
-> >> -	if (!es)
-> >> -		return;
-> >> +	uniname->name_len = es->de_stream->name_len;
-> >> +	if (uniname->name_len == 0)
-> >> +		return -EIO;
-> > Can we validate ->name_len and name entry ->type in exfat_get_dentry_set() ?
-> 
-> Yes.
-> As I wrote in a previous email, entry type validation, name-length validation, and name extraction
-> should not be separated, so implement all of these in exfat_get_dentry_set().
-> It can be easily implemented by adding uniname to exfat_entry_set_cache and calling
-> exfat_get_uniname_from_name_entries() from exfat_get_dentry_set().
-No, We can check stream->name_len and name entry type in exfat_get_dentry_set().
-And you are already checking entry type with TYPE_SECONDARY in
-exfat_get_dentry_set(). Why do we have to check twice?
-
->
-> However, that would be over-implementation.
-> Not all callers of exfat_get_dentry_set() need a name.
-Where? It will not checked with ES_2_ENTRIES.
-
-> It is enough to validate the name when it is needed.
-> This is a file-system driver, not fsck.
-Sorry, I don't understand what you are talking about. If there is a problem
-in ondisk-metadata, Filesystem should return error.
-
-> Validation is possible in exfat_get_dentry_set(), but unnecessary.
-> 
-> Why do you want to validate the name in exfat_get_dentry_set()?
-exfat_get_dentry_set validates file, stream entry. And you are trying to check
-name entries with type_secondary. In addition, trying add the checksum check.
-Conversely, Why would you want to add those checks to exfat_get_dentry_set()?
-Why do we check only name entries separately? Aren't you intent to return
-validated entry set in exfat_get_dentry_set()?
-> 
-> 
-> BR
-> ---
-> Tetsuhiro Kohada <kohada.t2@gmail.com>
-
+On 8/12/20 19:46, Jacob Wen wrote:=0A=
+> wake_up_bit() uses waitqueue_active() that needs the explicit smp_mb().=
+=0A=
+> =0A=
+> Signed-off-by: Jacob Wen<jian.w.wen@oracle.com>=0A=
+=0A=
+As per wake_up_bit() documentation this looks good.=0A=
+=0A=
+Reviewed-by: Chaitanya Kulkarni<chaitanya.kulkarni@wdc.com>=0A=
