@@ -2,75 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F4032243D23
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 18:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54915243D24
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 18:20:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbgHMQTe convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 12:19:34 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:21615 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726249AbgHMQTc (ORCPT
+        id S1726851AbgHMQUK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 12:20:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59494 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbgHMQUI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 12:19:32 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-144-HFvdjctTMHyprBW8119_ew-1; Thu, 13 Aug 2020 17:19:28 +0100
-X-MC-Unique: HFvdjctTMHyprBW8119_ew-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 13 Aug 2020 17:19:28 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 13 Aug 2020 17:19:28 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Josef Bacik' <josef@toxicpanda.com>, "hch@lst.de" <hch@lst.de>,
-        "viro@ZenIV.linux.org.uk" <viro@ZenIV.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-team@fb.com" <kernel-team@fb.com>
-Subject: RE: [PATCH] proc: use vmalloc for our kernel buffer
-Thread-Topic: [PATCH] proc: use vmalloc for our kernel buffer
-Thread-Index: AQHWcYF4YUlfHEUFrEai+1gWcwt4Jak2N4WQ
-Date:   Thu, 13 Aug 2020 16:19:27 +0000
-Message-ID: <714c8baabe1a4d0191f8cdaf6e28a32d@AcuMS.aculab.com>
+        Thu, 13 Aug 2020 12:20:08 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4263C061757;
+        Thu, 13 Aug 2020 09:20:07 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k6FxS-00EzAD-Ij; Thu, 13 Aug 2020 16:20:02 +0000
+Date:   Thu, 13 Aug 2020 17:20:02 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
+        willy@infradead.org
+Subject: Re: [PATCH][v2] proc: use vmalloc for our kernel buffer
+Message-ID: <20200813162002.GX1236603@ZenIV.linux.org.uk>
 References: <20200813145305.805730-1-josef@toxicpanda.com>
-In-Reply-To: <20200813145305.805730-1-josef@toxicpanda.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+ <20200813153356.857625-1-josef@toxicpanda.com>
+ <20200813153722.GA13844@lst.de>
+ <974e469e-e73d-6c3e-9167-fad003f1dfb9@toxicpanda.com>
+ <20200813154117.GA14149@lst.de>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200813154117.GA14149@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Josef Bacik
-> Sent: 13 August 2020 15:53
+On Thu, Aug 13, 2020 at 05:41:17PM +0200, Christoph Hellwig wrote:
+> On Thu, Aug 13, 2020 at 11:40:00AM -0400, Josef Bacik wrote:
+> > On 8/13/20 11:37 AM, Christoph Hellwig wrote:
+> >> On Thu, Aug 13, 2020 at 11:33:56AM -0400, Josef Bacik wrote:
+> >>> Since
+> >>>
+> >>>    sysctl: pass kernel pointers to ->proc_handler
+> >>>
+> >>> we have been pre-allocating a buffer to copy the data from the proc
+> >>> handlers into, and then copying that to userspace.  The problem is this
+> >>> just blind kmalloc()'s the buffer size passed in from the read, which in
+> >>> the case of our 'cat' binary was 64kib.  Order-4 allocations are not
+> >>> awesome, and since we can potentially allocate up to our maximum order,
+> >>> use vmalloc for these buffers.
+> >>>
+> >>> Fixes: 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
+> >>> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> >>> ---
+> >>> v1->v2:
+> >>> - Make vmemdup_user_nul actually do the right thing...sorry about that.
+> >>>
+> >>>   fs/proc/proc_sysctl.c  |  6 +++---
+> >>>   include/linux/string.h |  1 +
+> >>>   mm/util.c              | 27 +++++++++++++++++++++++++++
+> >>>   3 files changed, 31 insertions(+), 3 deletions(-)
+> >>>
+> >>> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> >>> index 6c1166ccdaea..207ac6e6e028 100644
+> >>> --- a/fs/proc/proc_sysctl.c
+> >>> +++ b/fs/proc/proc_sysctl.c
+> >>> @@ -571,13 +571,13 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
+> >>>   		goto out;
+> >>>     	if (write) {
+> >>> -		kbuf = memdup_user_nul(ubuf, count);
+> >>> +		kbuf = vmemdup_user_nul(ubuf, count);
+> >>
+> >> Given that this can also do a kmalloc and thus needs to be paired
+> >> with kvfree shouldn't it be kvmemdup_user_nul?
+> >>
+> >
+> > There's an existing vmemdup_user that does kvmalloc, so I followed the 
+> > existing naming convention.  Do you want me to change them both?  Thanks,
 > 
->   sysctl: pass kernel pointers to ->proc_handler
-> 
-> we have been pre-allocating a buffer to copy the data from the proc
-> handlers into, and then copying that to userspace.  The problem is this
-> just blind kmalloc()'s the buffer size passed in from the read, which in
-> the case of our 'cat' binary was 64kib.  Order-4 allocations are not
-> awesome, and since we can potentially allocate up to our maximum order,
-> use vmalloc for these buffers.
+> I personally would, and given that it only has a few users it might
+> even be feasible.
 
-What happens if I run 'dd bs=16M ...' ?
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+FWIW, how about following or combining that with "allocate count + 1 bytes on
+the read side"?  Allows some nice cleanups - e.g.
+                len = sprintf(tmpbuf, "0x%04x", *(unsigned int *) table->data);
+                if (len > left)
+                        len = left;
+                memcpy(buffer, tmpbuf, len);
+                if ((left -= len) > 0) {
+                        *((char *)buffer + len) = '\n';
+                        left--;
+                }
+in sunrpc proc_dodebug() turns into
+		left -= snprintf(buffer, left, "0x%04x\n",
+				 *(unsigned int *) table->data);
+and that's not the only example.
