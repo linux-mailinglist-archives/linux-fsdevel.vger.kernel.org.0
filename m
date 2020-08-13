@@ -2,173 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B18B3243C39
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 17:10:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CD70243C86
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 17:32:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbgHMPKW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 11:10:22 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:40852 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726334AbgHMPKU (ORCPT
+        id S1726698AbgHMPcC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 11:32:02 -0400
+Received: from smtp-bc08.mail.infomaniak.ch ([45.157.188.8]:53633 "EHLO
+        smtp-bc08.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726486AbgHMPb7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 11:10:20 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 31D6D8EE1E5;
-        Thu, 13 Aug 2020 08:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1597331419;
-        bh=3o0Gk5U5c/tgboU6is0RXdqjpM4d/4IJwBiUFG8jMuA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=UXxGSZzb46QTJOqy/JWeOyqw626U8bbIwuEYbPim6fbMyyL04cdp0qwwJKvmyfbNr
-         UEM7+n2fjQro3OPR+d/0IwaOPThCF0S2IiZVh8i0RvltCmlgynmf81fQxVjRPrZJrD
-         VwN5qGlaATNYTzytjZ828B9lKPRGjJv7sHKFKj4I=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id jxbPeuibIPjQ; Thu, 13 Aug 2020 08:10:19 -0700 (PDT)
-Received: from [153.66.254.174] (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B99EB8EE0F8;
-        Thu, 13 Aug 2020 08:10:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1597331418;
-        bh=3o0Gk5U5c/tgboU6is0RXdqjpM4d/4IJwBiUFG8jMuA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=x+VnzAVj+2h2xN4tfyE/FLRLHz0e4JjMHIuRNpMRmGGydOuuD3MXZ92u9QxCCpuy8
-         /P6QJ618zgdYz9/h9V2XOl+QoySrm5cdkOm6q1yiNBqMdfPyKCaoZZignH3VT/LZKu
-         KlGKtuSb51ELidAyvRI6WiT5Zd7nq6+fKNWHN0PQ=
-Message-ID: <1597331416.3708.26.camel@HansenPartnership.com>
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement
- LSM (IPE)
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Chuck Lever <chucklever@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
+        Thu, 13 Aug 2020 11:31:59 -0400
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BS9XG4mmCzlhLv2;
+        Thu, 13 Aug 2020 17:31:26 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4BS9XC0vpZzlh8T5;
+        Thu, 13 Aug 2020 17:31:23 +0200 (CEST)
+Subject: Re: [PATCH v7 3/7] exec: Move path_noexec() check earlier
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Date:   Thu, 13 Aug 2020 08:10:16 -0700
-In-Reply-To: <D470BA4B-EF1A-49CA-AFB9-0F7FFC4C6001@gmail.com>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
-         <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
-         <20200802143143.GB20261@amd>
-         <1596386606.4087.20.camel@HansenPartnership.com>
-         <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
-         <1596639689.3457.17.camel@HansenPartnership.com>
-         <alpine.LRH.2.21.2008050934060.28225@namei.org>
-         <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
-         <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
-         <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
-         <1597073737.3966.12.camel@HansenPartnership.com>
-         <6E907A22-02CC-42DD-B3CD-11D304F3A1A8@gmail.com>
-         <1597124623.30793.14.camel@HansenPartnership.com>
-         <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
-         <1597161218.4325.38.camel@HansenPartnership.com>
-         <02D551EF-C975-4B91-86CA-356FA0FF515C@gmail.com>
-         <1597247482.7293.18.camel@HansenPartnership.com>
-         <D470BA4B-EF1A-49CA-AFB9-0F7FFC4C6001@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200723171227.446711-1-mic@digikod.net>
+ <20200723171227.446711-4-mic@digikod.net>
+ <87a6z1m0u1.fsf@x220.int.ebiederm.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <89b6bb7f-d841-cf0a-8d5c-26c611b56ae7@digikod.net>
+Date:   Thu, 13 Aug 2020 17:31:22 +0200
+User-Agent: 
+MIME-Version: 1.0
+In-Reply-To: <87a6z1m0u1.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2020-08-13 at 10:42 -0400, Chuck Lever wrote:
-> > On Aug 12, 2020, at 11:51 AM, James Bottomley <James.Bottomley@Hans
-> > enPartnership.com> wrote:
-> > On Wed, 2020-08-12 at 10:15 -0400, Chuck Lever wrote:
-> > > > On Aug 11, 2020, at 11:53 AM, James Bottomley
-> > > > <James.Bottomley@HansenPartnership.com> wrote:
-> > > > On Tue, 2020-08-11 at 10:48 -0400, Chuck Lever wrote:
-[...]
-> > > > > > > The client would have to reconstruct that tree again if
-> > > > > > > memory pressure caused some or all of the tree to be
-> > > > > > > evicted, so perhaps an on-demand mechanism is preferable.
-> > > > > > 
-> > > > > > Right, but I think that's implementation detail.  Probably
-> > > > > > what we need is a way to get the log(N) verification hashes
-> > > > > > from the server and it's up to the client whether it caches
-> > > > > > them or not.
-> > > > > 
-> > > > > Agreed, these are implementation details. But see above about
-> > > > > the trustworthiness of the intermediate hashes. If they are
-> > > > > conveyed on an untrusted network, then they can't be trusted
-> > > > > either.
-> > > > 
-> > > > Yes, they can, provided enough of them are asked for to
-> > > > verify.  If you look at the simple example above, suppose I
-> > > > have cached H11 and H12, but I've lost the entire H2X layer.  I
-> > > > want to verify B3 so I also ask you for your copy of H24.  Then
-> > > > I generate H23 from B3 and Hash H23 and H24.  If this doesn't
-> > > > hash to H12 I know either you supplied me the wrong block or
-> > > > lied about H24.  However, if it all hashes correctly I know you
-> > > > supplied me with both the correct B3 and the correct H24.
-> > > 
-> > > My point is there is a difference between a trusted cache and an
-> > > untrusted cache. I argue there is not much value in a cache where
-> > > the hashes have to be verified again.
-> > 
-> > And my point isn't about caching, it's about where the tree comes
-> > from. I claim and you agree the client can get the tree from the
-> > server a piece at a time (because it can path verify it) and
-> > doesn't have to generate it itself.
+Kees Cook wrote this patch, which is in Andrew Morton's tree, but I
+think you're talking about O_MAYEXEC, not this patch specifically.
+
+On 11/08/2020 21:36, Eric W. Biederman wrote:
+> Mickaël Salaün <mic@digikod.net> writes:
 > 
-> OK, let's focus on where the tree comes from. It is certainly
-> possible to build protocol to exchange parts of a Merkle tree.
-
-Which is what I think we need to extend IMA to do.
-
->  The question is how it might be stored on the server.
-
-I think the only thing the server has to guarantee to store is the head
-hash, possibly signed.
-
->  There are some underlying assumptions about the metadata storage
-> mechanism that should be stated up front.
+>> From: Kees Cook <keescook@chromium.org>
+>>
+>> The path_noexec() check, like the regular file check, was happening too
+>> late, letting LSMs see impossible execve()s. Check it earlier as well
+>> in may_open() and collect the redundant fs/exec.c path_noexec() test
+>> under the same robustness comment as the S_ISREG() check.
+>>
+>> My notes on the call path, and related arguments, checks, etc:
 > 
-> Current forms of IMA metadata are limited in size and stored in a
-> container that is read and written in a single operation. If we stick
-> with that container format, I don't see a way to store a Merkle tree
-> in there for all file sizes.
+> A big question arises, that I think someone already asked.
 
-Well, I don't think you need to.  The only thing that needs to be
-stored is the head hash.  Everything else can be reconstructed.  If you
-asked me to implement it locally, I'd probably put the head hash in an
-xattr but use a CAM based cache for the merkel trees and construct the
-tree on first access if it weren't already in the cache.
+Al Viro and Jann Horn expressed such concerns for O_MAYEXEC:
+https://lore.kernel.org/lkml/0cc94c91-afd3-27cd-b831-8ea16ca8ca93@digikod.net/
 
-However, the above isn't what fs-verity does: it stores the tree in a
-hidden section of the file.  That's why I don't think we'd mandate
-anything about tree storage.  Just describe the partial retrieval
-properties we'd like and leave the rest as an implementation detail.
+> 
+> Why perform this test in may_open directly instead of moving
+> it into inode_permission.  That way the code can be shared with
+> faccessat, and any other code path that wants it?
 
-> Thus it seems to me that we cannot begin to consider the tree-on-the-
-> server model unless there is a proposed storage mechanism for that
-> whole tree. Otherwise, the client must have the primary role in
-> unpacking and verifying the tree.
+This patch is just a refactoring.
 
-Well, as I said,  I don't think you need to store the tree.  You
-certainly could decide to store the entire tree (as fs-verity does) if
-it fitted your use case, but it's not required.  Perhaps even in my
-case I'd make the CAM based cache persistent, like android's dalvik
-cache.
+About O_MAYEXEC, path-based LSM, IMA and IPE need to work on a struct
+file, whereas inode_permission() only gives a struct inode. However,
+faccessat2(2) (with extended flags) seems to be the perfect candidate if
+we want to be able to check file descriptors.
 
-James
+> 
+> That would look to provide a more maintainable kernel.
 
+Why would it be more maintainable?
 
-> Storing only the tree root in the metadata means the metadata format
-> is nicely bounded in size.
+> 
+> Eric
+> 
+> 
+>> do_open_execat()
+>>     struct open_flags open_exec_flags = {
+>>         .open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
+>>         .acc_mode = MAY_EXEC,
+>>         ...
+>>     do_filp_open(dfd, filename, open_flags)
+>>         path_openat(nameidata, open_flags, flags)
+>>             file = alloc_empty_file(open_flags, current_cred());
+>>             do_open(nameidata, file, open_flags)
+>>                 may_open(path, acc_mode, open_flag)
+>>                     /* new location of MAY_EXEC vs path_noexec() test */
+>>                     inode_permission(inode, MAY_OPEN | acc_mode)
+>>                         security_inode_permission(inode, acc_mode)
+>>                 vfs_open(path, file)
+>>                     do_dentry_open(file, path->dentry->d_inode, open)
+>>                         security_file_open(f)
+>>                         open()
+>>     /* old location of path_noexec() test */
+>>
+>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>> Link: https://lore.kernel.org/r/20200605160013.3954297-4-keescook@chromium.org
+>> ---
+>>  fs/exec.c  | 12 ++++--------
+>>  fs/namei.c |  4 ++++
+>>  2 files changed, 8 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/fs/exec.c b/fs/exec.c
+>> index bdc6a6eb5dce..4eea20c27b01 100644
+>> --- a/fs/exec.c
+>> +++ b/fs/exec.c
+>> @@ -147,10 +147,8 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
+>>  	 * and check again at the very end too.
+>>  	 */
+>>  	error = -EACCES;
+>> -	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)))
+>> -		goto exit;
+>> -
+>> -	if (path_noexec(&file->f_path))
+>> +	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
+>> +			 path_noexec(&file->f_path)))
+>>  		goto exit;
+>>  
+>>  	fsnotify_open(file);
+>> @@ -897,10 +895,8 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+>>  	 * and check again at the very end too.
+>>  	 */
+>>  	err = -EACCES;
+>> -	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode)))
+>> -		goto exit;
+>> -
+>> -	if (path_noexec(&file->f_path))
+>> +	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
+>> +			 path_noexec(&file->f_path)))
+>>  		goto exit;
+>>  
+>>  	err = deny_write_access(file);
+>> diff --git a/fs/namei.c b/fs/namei.c
+>> index a559ad943970..ddc9b25540fe 100644
+>> --- a/fs/namei.c
+>> +++ b/fs/namei.c
+>> @@ -2863,6 +2863,10 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+>>  			return -EACCES;
+>>  		flag &= ~O_TRUNC;
+>>  		break;
+>> +	case S_IFREG:
+>> +		if ((acc_mode & MAY_EXEC) && path_noexec(path))
+>> +			return -EACCES;
+>> +		break;
+>>  	}
+>>  
+>>  	error = inode_permission(inode, MAY_OPEN | acc_mode);
