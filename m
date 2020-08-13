@@ -2,96 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91F7B243BC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 16:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8389243BEB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 16:49:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbgHMOnD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 10:43:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44492 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726106AbgHMOnC (ORCPT
+        id S1726244AbgHMOtU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 10:49:20 -0400
+Received: from smtp-42ac.mail.infomaniak.ch ([84.16.66.172]:52127 "EHLO
+        smtp-42ac.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726106AbgHMOtU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 10:43:02 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B25CC061757;
-        Thu, 13 Aug 2020 07:43:02 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id q14so2307573ilm.2;
-        Thu, 13 Aug 2020 07:43:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=KILfYV/I05r54w/N5CnfJ8WQSq/xdrIhozq/NImqQxA=;
-        b=u6yr2cPYLbsp0FY2jcfsj63AymEpRTt8W3791CfmIUPIk/5L3SvNbtHZRVZWBrlbPk
-         jKv3ONmiIYd5hAExxn/hZgIwXgq5eHVQVUeeI8edHrzV7aK5MlHkMEUSSNIl1ycr+b1D
-         Fpng/plc1joX8uAJQyUhLNFtln8+irNRYbKn8sqgvyZGmWJED1QzUqmCTucDZB35begs
-         DhZEFAbwh1vXutp+wb3VOmcdf0aQ3uL3mYh818/lbvxt312DIqq6GHGsugK4Zn2Z3LyL
-         N5a2KQWmF5sL2LJwPM4wnmaNMsBgN23Hx+ulLtnWCSjZve6lk3oGKbzR26CAKJZXupsD
-         7vpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=KILfYV/I05r54w/N5CnfJ8WQSq/xdrIhozq/NImqQxA=;
-        b=S2KX/ci/Th0oZqrmd1qyfveuLsNEX77u+MvB/+R8ybCogN6MLje51oOYx2z8X/R71K
-         as7PFyIJVbPZ5YwS4zPyERQtpL6dtnZfqDo1aFRJuBklaO5NabH44xeSrcoeVT8l0/05
-         iJ9B/3CsKepGAG8tRGh+kXnPRY+6M2L/ogOCjv+oWPzBU7CP7VUWNTci1hVUBbeTAmyX
-         3RsnAnF2YN3sP6pouRP/XVjVLl4C4/H8I4J4gRHudW/flQSo5xb+rqPBmqXHD/EswzHQ
-         SstpX7H2lP7N65hOUUKlQWVyJQkwlnnfT3Wq8bba3Iv0ElVKNO6/jD6PD5DioxNSHWfG
-         PKpw==
-X-Gm-Message-State: AOAM530+TTkSoMxA6rqFsRy/J1GkmuILrTziuVVHNLdtx82SoYr7SfCV
-        1vz6ah7L2KcOeO1g83O2cvU=
-X-Google-Smtp-Source: ABdhPJxgrClyrzQX/PJcUbPmit0CzIEDPN6RcrMwhHvO56Hl7Nl5nMW+4QTSjkyJORRGbVY/nG4opg==
-X-Received: by 2002:a05:6e02:d48:: with SMTP id h8mr5047638ilj.295.1597329781813;
-        Thu, 13 Aug 2020 07:43:01 -0700 (PDT)
-Received: from anon-dhcp-152.1015granger.net (c-68-61-232-219.hsd1.mi.comcast.net. [68.61.232.219])
-        by smtp.gmail.com with ESMTPSA id v17sm2821661ilj.33.2020.08.13.07.42.59
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Aug 2020 07:43:00 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement LSM
- (IPE)
-From:   Chuck Lever <chucklever@gmail.com>
-In-Reply-To: <1597247482.7293.18.camel@HansenPartnership.com>
-Date:   Thu, 13 Aug 2020 10:42:57 -0400
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
+        Thu, 13 Aug 2020 10:49:20 -0400
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BS8bZ2pDnzlhdFf;
+        Thu, 13 Aug 2020 16:49:14 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4BS8bX057hzlh8TN;
+        Thu, 13 Aug 2020 16:49:11 +0200 (CEST)
+Subject: Re: [PATCH v7 5/7] fs,doc: Enable to enforce noexec mounts or file
+ exec through O_MAYEXEC
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D470BA4B-EF1A-49CA-AFB9-0F7FFC4C6001@gmail.com>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
- <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
- <20200802143143.GB20261@amd> <1596386606.4087.20.camel@HansenPartnership.com>
- <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
- <1596639689.3457.17.camel@HansenPartnership.com>
- <alpine.LRH.2.21.2008050934060.28225@namei.org>
- <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
- <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
- <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
- <1597073737.3966.12.camel@HansenPartnership.com>
- <6E907A22-02CC-42DD-B3CD-11D304F3A1A8@gmail.com>
- <1597124623.30793.14.camel@HansenPartnership.com>
- <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
- <1597161218.4325.38.camel@HansenPartnership.com>
- <02D551EF-C975-4B91-86CA-356FA0FF515C@gmail.com>
- <1597247482.7293.18.camel@HansenPartnership.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Randy Dunlap <rdunlap@infradead.org>
+References: <20200723171227.446711-1-mic@digikod.net>
+ <20200723171227.446711-6-mic@digikod.net>
+ <87364tkl99.fsf@x220.int.ebiederm.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <79e4d55f-a80b-5361-e18d-d8fa67ae640b@digikod.net>
+Date:   Thu, 13 Aug 2020 16:49:11 +0200
+User-Agent: 
+MIME-Version: 1.0
+In-Reply-To: <87364tkl99.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -99,190 +79,337 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-> On Aug 12, 2020, at 11:51 AM, James Bottomley =
-<James.Bottomley@HansenPartnership.com> wrote:
->=20
-> On Wed, 2020-08-12 at 10:15 -0400, Chuck Lever wrote:
->>> On Aug 11, 2020, at 11:53 AM, James Bottomley
->>> <James.Bottomley@HansenPartnership.com> wrote:
->>>=20
->>> On Tue, 2020-08-11 at 10:48 -0400, Chuck Lever wrote:
-> [...]
->>>>>=20
->>>>> and what is nice to have to speed up the verification
->>>>> process.  The choice for the latter is cache or reconstruct
->>>>> depending on the resources available.  If the tree gets cached
->>>>> on the server, that would be a server implementation detail
->>>>> invisible to the client.
->>>>=20
->>>> We assume that storage targets (for block or file) are not
->>>> trusted. Therefore storage clients cannot rely on intermediate
->>>> results (eg, middle nodes in a Merkle tree) unless those results
->>>> are generated within the client's trust envelope.
->>>=20
->>> Yes, they can ... because supplied nodes can be verified.  That's
->>> the whole point of a merkle tree.  As long as I'm sure of the root
->>> hash I can verify all the rest even if supplied by an untrusted
->>> source.  If you consider a simple merkle tree covering 4 blocks:
->>>=20
->>>      R
->>>    /   \
->>> H11     H12
->>> / \     / \
->>> H21 H22 H23 H24
->>>>   |   |   |
->>>=20
->>> B1   B2  B3  B4
->>>=20
->>> Assume I have the verified root hash R.  If you supply B3 you also
->>> supply H24 and H11 as proof.  I verify by hashing B3 to produce H23
->>> then hash H23 and H24 to produce H12 and if H12 and your supplied
->>> H11 hash to R the tree is correct and the B3 you supplied must
->>> likewise be correct.
->>=20
->> I'm not sure what you are proving here. Obviously this has to work
->> in order for a client to reconstruct the file's Merkle tree given
->> only R and the file content.
->=20
-> You implied the server can't be trusted to generate the merkel tree.=20=
+On 11/08/2020 21:58, Eric W. Biederman wrote:
+> Mickaël Salaün <mic@digikod.net> writes:
+> 
+>> Allow for the enforcement of the O_MAYEXEC openat2(2) flag.  Thanks to
+>> the noexec option from the underlying VFS mount, or to the file execute
+>> permission, userspace can enforce these execution policies.  This may
+>> allow script interpreters to check execution permission before reading
+>> commands from a file, or dynamic linkers to allow shared object
+>> loading.
+> 
+> Ick!!!!!
+> 
+> This feels like being so open minded your brains fall out.
 
-> I'm showing above it can because of the tree path based verification.
+Really? :)
 
-What I was implying is that clients can't trust intermediate Merkle
-tree content that is not also signed. So far we are talking about
-signing only the tree root.
+> 
+> I can see having a sysctl that allows the new open flag to be ignored
+> so that the existing lack of enforcement when the flag is passed
+> continues.
 
-The storage server can store the tree durably, but if the intermediate
-parts of the tree are not signed, the client has to verify them anyway,
-and that reduces the value of storing potentially large data structures.
+And that could break distros (i.e. multiple interpreters, with or
+without O_MAYEXEC, different versions, and different kernels).
 
+> 
+> But having the sysctl be fine grained seems like way too much rope.
 
->> It's the construction of the tree and verification of the hashes that
->> are potentially expensive. The point of caching intermediate hashes
->> is so that the client verifies them as few times as possible.  I
->> don't see value in caching those hashes on an untrusted server --
->> the client will have to reverify them anyway, and there will be no
->> savings.
->=20
-> I'm not making any claim about server caching, I'm just saying the
-> client can request pieces of the tree from the server without having =
-to
-> reconstruct the whole thing itself because it can verify their
-> correctness.
+This follow the same rational: file permissions and mount options can
+change but they are controled by the sysadmin, how also configure sysctl
+values.
 
-To be clear, my concern is about how much of the tree might be stored
-in a Merkle-based metadata format. I just don't see that it has much
-value to store more than the signed tree root, because the client will
-have to reconstitute or verify some tree contents on most every read.
+> 
+> I don't think the code needs to do more than enforce or not enforce this
+> logic.
 
-For sufficiently large files, the tree itself can be larger than what
-can be stored in an xattr. This is the same problem that fs-verity
-faces. And, as I stated earlier, xattr objects are read in their
-entirety, they can't be seeked into or read piecemeal.
+I think this is the more viable behavior for an eclectic set of distros
+(and different use cases).
 
-What it seemed to me that you were suggesting was an offloaded cache
-of the Merkle tree. Either the whole tree is stored on the storage
-server, or the storage server provides a service that reconstitutes
-that tree on behalf of clients. (Please correct me if I misunderstood).
-I just don't think that will be practicable or provide the kind of
-benefit you might want.
+> 
+> You can test the sysctl once when you process O_MAYEXEC.  But code such
+> as may_open should not have the conditional behavior.  It should get an
+> appropriate set of flags that are always enforced.  With the madness of
+> what to do left at the edge of userspace.
 
+The problem is that this userspace is not in charge of the system-wide
+policy, the sysadmin is. As pointed out by the commit message, please
+take a look at the rational:
+https://lore.kernel.org/lkml/1477d3d7-4b36-afad-7077-a38f42322238@digikod.net/
 
->> Cache once, as close as you can to where the data will be used.
->>=20
->>=20
->>>> So: if the storage target is considered inside the client's trust
->>>> envelope, it can cache or store durably any intermediate parts of
->>>> the verification process. If not, the network and file storage is
->>>> considered untrusted, and the client has to rely on nothing but
->>>> the signed digest of the tree root.
->>>>=20
->>>> We could build a scheme around, say, fscache, that might save the
->>>> intermediate results durably and locally.
->>>=20
->>> I agree we want caching on the client, but we can always page in
->>> from the remote as long as we page enough to verify up to R, so
->>> we're always sure the remote supplied genuine information.
->>=20
->> Agreed.
->>=20
->>=20
->>>>>> For this reason, the idea was to save only the signature of
->>>>>> the tree's root on durable storage. The client would retrieve
->>>>>> that signature possibly at open time, and reconstruct the
->>>>>> tree at that time.
->>>>>=20
->>>>> Right that's the integrity data you must have.
->>>>>=20
->>>>>> Or the tree could be partially constructed on-demand at the
->>>>>> time each unit is to be checked (say, as part of 2. above).
->>>>>=20
->>>>> Whether it's reconstructed or cached can be an implementation
->>>>> detail. You clearly have to reconstruct once, but whether you
->>>>> have to do it again depends on the memory available for caching
->>>>> and all the other resource calls in the system.
->>>>>=20
->>>>>> The client would have to reconstruct that tree again if
->>>>>> memory pressure caused some or all of the tree to be evicted,
->>>>>> so perhaps an on-demand mechanism is preferable.
->>>>>=20
->>>>> Right, but I think that's implementation detail.  Probably what
->>>>> we need is a way to get the log(N) verification hashes from the
->>>>> server and it's up to the client whether it caches them or not.
->>>>=20
->>>> Agreed, these are implementation details. But see above about the
->>>> trustworthiness of the intermediate hashes. If they are conveyed
->>>> on an untrusted network, then they can't be trusted either.
->>>=20
->>> Yes, they can, provided enough of them are asked for to verify.  If
->>> you look at the simple example above, suppose I have cached H11 and
->>> H12, but I've lost the entire H2X layer.  I want to verify B3 so I
->>> also ask you for your copy of H24.  Then I generate H23 from B3 and
->>> Hash H23 and H24.  If this doesn't hash to H12 I know either you
->>> supplied me the wrong block or lied about H24.  However, if it all
->>> hashes correctly I know you supplied me with both the correct B3
->>> and the correct H24.
->>=20
->> My point is there is a difference between a trusted cache and an
->> untrusted cache. I argue there is not much value in a cache where
->> the hashes have to be verified again.
->=20
-> And my point isn't about caching, it's about where the tree comes =
-from.
-> I claim and you agree the client can get the tree from the server a
-> piece at a time (because it can path verify it) and doesn't have to
-> generate it itself.
+> 
+> Anything else appears to be madness, overengineering, and a failure to
+> separate concerns.
 
-OK, let's focus on where the tree comes from. It is certainly
-possible to build protocol to exchange parts of a Merkle tree. The
-question is how it might be stored on the server. There are some
-underlying assumptions about the metadata storage mechanism that
-should be stated up front.
+Oh! What a conclusion! :)
 
-Current forms of IMA metadata are limited in size and stored in a
-container that is read and written in a single operation. If we stick
-with that container format, I don't see a way to store a Merkle tree
-in there for all file sizes.
+I'd say it is a pragmatic approach.
 
-Thus it seems to me that we cannot begin to consider the tree-on-the-
-server model unless there is a proposed storage mechanism for that
-whole tree. Otherwise, the client must have the primary role in
-unpacking and verifying the tree.
-
-Storing only the tree root in the metadata means the metadata format
-is nicely bounded in size.
-
-
-> How much of the tree the client has to store and
-> whether the server caches, reads it in from somewhere or reconstructs
-> it is an implementation detail.
-
-Sure.
-
-
---
-Chuck Lever
-chucklever@gmail.com
-
-
-
+> 
+> Eric
+> 
+> 
+>> Add a new sysctl fs.open_mayexec_enforce to enable system administrators
+>> to enforce two complementary security policies according to the
+>> installed system: enforce the noexec mount option, and enforce
+>> executable file permission.  Indeed, because of compatibility with
+>> installed systems, only system administrators are able to check that
+>> this new enforcement is in line with the system mount points and file
+>> permissions.  A following patch adds documentation.
+>>
+>> Being able to restrict execution also enables to protect the kernel by
+>> restricting arbitrary syscalls that an attacker could perform with a
+>> crafted binary or certain script languages.  It also improves multilevel
+>> isolation by reducing the ability of an attacker to use side channels
+>> with specific code.  These restrictions can natively be enforced for ELF
+>> binaries (with the noexec mount option) but require this kernel
+>> extension to properly handle scripts (e.g., Python, Perl).  To get a
+>> consistent execution policy, additional memory restrictions should also
+>> be enforced (e.g. thanks to SELinux).
+>>
+>> Because the O_MAYEXEC flag is a meant to enforce a system-wide security
+>> policy (but not application-centric policies), it does not make sense
+>> for userland to check the sysctl value.  Indeed, this new flag only
+>> enables to extend the system ability to enforce a policy thanks to (some
+>> trusted) userland collaboration.  Moreover, additional security policies
+>> could be managed by LSMs.  This is a best-effort approach from the
+>> application developer point of view:
+>> https://lore.kernel.org/lkml/1477d3d7-4b36-afad-7077-a38f42322238@digikod.net/
+>>
+>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+>> Cc: Aleksa Sarai <cyphar@cyphar.com>
+>> Cc: Al Viro <viro@zeniv.linux.org.uk>
+>> Cc: Jonathan Corbet <corbet@lwn.net>
+>> Cc: Kees Cook <keescook@chromium.org>
+>> Cc: Randy Dunlap <rdunlap@infradead.org>
+>> ---
+>>
+>> Changes since v6:
+>> * Allow opening pipes, block devices and character devices with
+>>   O_MAYEXEC when there is no enforced policy, but forbid any non-regular
+>>   file opened with O_MAYEXEC otherwise (i.e. for any enforced policy).
+>> * Add a paragraph about the non-regular files policy.
+>> * Move path_noexec() calls out of the fast-path (suggested by Kees
+>>   Cook).
+>>
+>> Changes since v5:
+>> * Remove the static enforcement configuration through Kconfig because it
+>>   makes the code more simple like this, and because the current sysctl
+>>   configuration can only be set with CAP_SYS_ADMIN, the same way mount
+>>   options (i.e. noexec) can be set.  If an harden distro wants to
+>>   enforce a configuration, it should restrict capabilities or sysctl
+>>   configuration.  Furthermore, an LSM can easily leverage O_MAYEXEC to
+>>   fit its need.
+>> * Move checks from inode_permission() to may_open() and make the error
+>>   codes more consistent according to file types (in line with a previous
+>>   commit): opening a directory with O_MAYEXEC returns EISDIR and other
+>>   non-regular file types may return EACCES.
+>> * In may_open(), when OMAYEXEC_ENFORCE_FILE is set, replace explicit
+>>   call to generic_permission() with an artificial MAY_EXEC to avoid
+>>   double calls.  This makes sense especially when an LSM policy forbids
+>>   execution of a file.
+>> * Replace the custom proc_omayexec() with
+>>   proc_dointvec_minmax_sysadmin(), and then replace the CAP_MAC_ADMIN
+>>   check with a CAP_SYS_ADMIN one (suggested by Kees Cook and Stephen
+>>   Smalley).
+>> * Use BIT() (suggested by Kees Cook).
+>> * Rename variables (suggested by Kees Cook).
+>> * Reword the kconfig help.
+>> * Import the documentation patch (suggested by Kees Cook):
+>>   https://lore.kernel.org/lkml/20200505153156.925111-6-mic@digikod.net/
+>> * Update documentation and add LWN.net article.
+>>
+>> Changes since v4:
+>> * Add kernel configuration options to enforce O_MAYEXEC at build time,
+>>   and disable the sysctl in such case (requested by James Morris).
+>> * Reword commit message.
+>>
+>> Changes since v3:
+>> * Update comment with O_MAYEXEC.
+>>
+>> Changes since v2:
+>> * Cosmetic changes.
+>>
+>> Changes since v1:
+>> * Move code from Yama to the FS subsystem (suggested by Kees Cook).
+>> * Make omayexec_inode_permission() static (suggested by Jann Horn).
+>> * Use mode 0600 for the sysctl.
+>> * Only match regular files (not directories nor other types), which
+>>   follows the same semantic as commit 73601ea5b7b1 ("fs/open.c: allow
+>>   opening only regular files during execve()").
+>> ---
+>>  Documentation/admin-guide/sysctl/fs.rst | 49 +++++++++++++++++++++++++
+>>  fs/namei.c                              | 24 ++++++++++++
+>>  include/linux/fs.h                      |  1 +
+>>  kernel/sysctl.c                         | 12 +++++-
+>>  4 files changed, 84 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
+>> index 2a45119e3331..ce6e2081d3a9 100644
+>> --- a/Documentation/admin-guide/sysctl/fs.rst
+>> +++ b/Documentation/admin-guide/sysctl/fs.rst
+>> @@ -37,6 +37,7 @@ Currently, these files are in /proc/sys/fs:
+>>  - inode-nr
+>>  - inode-state
+>>  - nr_open
+>> +- open_mayexec_enforce
+>>  - overflowuid
+>>  - overflowgid
+>>  - pipe-user-pages-hard
+>> @@ -165,6 +166,54 @@ system needs to prune the inode list instead of allocating
+>>  more.
+>>  
+>>  
+>> +open_mayexec_enforce
+>> +--------------------
+>> +
+>> +While being ignored by :manpage:`open(2)` and :manpage:`openat(2)`, the
+>> +``O_MAYEXEC`` flag can be passed to :manpage:`openat2(2)` to only open regular
+>> +files that are expected to be executable.  If the file is not identified as
+>> +executable, then the syscall returns -EACCES.  This may allow a script
+>> +interpreter to check executable permission before reading commands from a file,
+>> +or a dynamic linker to only load executable shared objects.  One interesting
+>> +use case is to enforce a "write xor execute" policy through interpreters.
+>> +
+>> +The ability to restrict code execution must be thought as a system-wide policy,
+>> +which first starts by restricting mount points with the ``noexec`` option.
+>> +This option is also automatically applied to special filesystems such as /proc .
+>> +This prevents files on such mount points to be directly executed by the kernel
+>> +or mapped as executable memory (e.g. libraries).  With script interpreters
+>> +using the ``O_MAYEXEC`` flag, the executable permission can then be checked
+>> +before reading commands from files. This makes it possible to enforce the
+>> +``noexec`` at the interpreter level, and thus propagates this security policy
+>> +to scripts.  To be fully effective, these interpreters also need to handle the
+>> +other ways to execute code: command line parameters (e.g., option ``-e`` for
+>> +Perl), module loading (e.g., option ``-m`` for Python), stdin, file sourcing,
+>> +environment variables, configuration files, etc.  According to the threat
+>> +model, it may be acceptable to allow some script interpreters (e.g. Bash) to
+>> +interpret commands from stdin, may it be a TTY or a pipe, because it may not be
+>> +enough to (directly) perform syscalls.
+>> +
+>> +There are two complementary security policies: enforce the ``noexec`` mount
+>> +option, and enforce executable file permission.  These policies are handled by
+>> +the ``fs.open_mayexec_enforce`` sysctl (writable only with ``CAP_SYS_ADMIN``)
+>> +as a bitmask:
+>> +
+>> +1 - Mount restriction: checks that the mount options for the underlying VFS
+>> +    mount do not prevent execution.
+>> +
+>> +2 - File permission restriction: checks that the to-be-opened file is marked as
+>> +    executable for the current process (e.g., POSIX permissions).
+>> +
+>> +Note that as long as a policy is enforced, opening any non-regular file with
+>> +``O_MAYEXEC`` is denied (e.g. TTYs, pipe), even when such a file is marked as
+>> +executable or is on an executable mount point.
+>> +
+>> +Code samples can be found in tools/testing/selftests/openat2/omayexec_test.c
+>> +and interpreter patches (for the original O_MAYEXEC version) may be found at
+>> +https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC .
+>> +See also an overview article: https://lwn.net/Articles/820000/ .
+>> +
+>> +
+>>  overflowgid & overflowuid
+>>  -------------------------
+>>  
+>> diff --git a/fs/namei.c b/fs/namei.c
+>> index 3f074ec77390..8ec13c7fd403 100644
+>> --- a/fs/namei.c
+>> +++ b/fs/namei.c
+>> @@ -39,6 +39,7 @@
+>>  #include <linux/bitops.h>
+>>  #include <linux/init_task.h>
+>>  #include <linux/uaccess.h>
+>> +#include <linux/sysctl.h>
+>>  
+>>  #include "internal.h"
+>>  #include "mount.h"
+>> @@ -425,6 +426,11 @@ static int sb_permission(struct super_block *sb, struct inode *inode, int mask)
+>>  	return 0;
+>>  }
+>>  
+>> +#define OPEN_MAYEXEC_ENFORCE_MOUNT	BIT(0)
+>> +#define OPEN_MAYEXEC_ENFORCE_FILE	BIT(1)
+>> +
+>> +int sysctl_open_mayexec_enforce __read_mostly;
+>> +
+>>  /**
+>>   * inode_permission - Check for access rights to a given inode
+>>   * @inode: Inode to check permission on
+>> @@ -2861,11 +2867,29 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+>>  	case S_IFSOCK:
+>>  		if (acc_mode & MAY_EXEC)
+>>  			return -EACCES;
+>> +		/*
+>> +		 * Opening devices (e.g. TTYs) or pipes with O_MAYEXEC may be
+>> +		 * legitimate when there is no enforced policy.
+>> +		 */
+>> +		if ((acc_mode & MAY_OPENEXEC) && sysctl_open_mayexec_enforce)
+>> +			return -EACCES;
+>>  		flag &= ~O_TRUNC;
+>>  		break;
+>>  	case S_IFREG:
+>>  		if ((acc_mode & MAY_EXEC) && path_noexec(path))
+>>  			return -EACCES;
+>> +		if (acc_mode & MAY_OPENEXEC) {
+>> +			if ((sysctl_open_mayexec_enforce & OPEN_MAYEXEC_ENFORCE_MOUNT)
+>> +					&& path_noexec(path))
+>> +				return -EACCES;
+>> +			if (sysctl_open_mayexec_enforce & OPEN_MAYEXEC_ENFORCE_FILE)
+>> +				/*
+>> +				 * Because acc_mode may change here, the next and only
+>> +				 * use of acc_mode should then be by the following call
+>> +				 * to inode_permission().
+>> +				 */
+>> +				acc_mode |= MAY_EXEC;
+>> +		}
+>>  		break;
+>>  	}
+>>  
+>> diff --git a/include/linux/fs.h b/include/linux/fs.h
+>> index 56f835c9a87a..071f37707ccc 100644
+>> --- a/include/linux/fs.h
+>> +++ b/include/linux/fs.h
+>> @@ -83,6 +83,7 @@ extern int sysctl_protected_symlinks;
+>>  extern int sysctl_protected_hardlinks;
+>>  extern int sysctl_protected_fifos;
+>>  extern int sysctl_protected_regular;
+>> +extern int sysctl_open_mayexec_enforce;
+>>  
+>>  typedef __kernel_rwf_t rwf_t;
+>>  
+>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+>> index db1ce7af2563..5008a2566e79 100644
+>> --- a/kernel/sysctl.c
+>> +++ b/kernel/sysctl.c
+>> @@ -113,6 +113,7 @@ static int sixty = 60;
+>>  
+>>  static int __maybe_unused neg_one = -1;
+>>  static int __maybe_unused two = 2;
+>> +static int __maybe_unused three = 3;
+>>  static int __maybe_unused four = 4;
+>>  static unsigned long zero_ul;
+>>  static unsigned long one_ul = 1;
+>> @@ -888,7 +889,6 @@ static int proc_taint(struct ctl_table *table, int write,
+>>  	return err;
+>>  }
+>>  
+>> -#ifdef CONFIG_PRINTK
+>>  static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
+>>  				void *buffer, size_t *lenp, loff_t *ppos)
+>>  {
+>> @@ -897,7 +897,6 @@ static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
+>>  
+>>  	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+>>  }
+>> -#endif
+>>  
+>>  /**
+>>   * struct do_proc_dointvec_minmax_conv_param - proc_dointvec_minmax() range checking structure
+>> @@ -3264,6 +3263,15 @@ static struct ctl_table fs_table[] = {
+>>  		.extra1		= SYSCTL_ZERO,
+>>  		.extra2		= &two,
+>>  	},
+>> +	{
+>> +		.procname       = "open_mayexec_enforce",
+>> +		.data           = &sysctl_open_mayexec_enforce,
+>> +		.maxlen         = sizeof(int),
+>> +		.mode           = 0600,
+>> +		.proc_handler	= proc_dointvec_minmax_sysadmin,
+>> +		.extra1		= SYSCTL_ZERO,
+>> +		.extra2		= &three,
+>> +	},
+>>  #if defined(CONFIG_BINFMT_MISC) || defined(CONFIG_BINFMT_MISC_MODULE)
+>>  	{
+>>  		.procname	= "binfmt_misc",
