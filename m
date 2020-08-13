@@ -2,248 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CF9B243C9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 17:34:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53C20243C95
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Aug 2020 17:34:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726870AbgHMPeR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Aug 2020 11:34:17 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:47468 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726844AbgHMPeQ (ORCPT
+        id S1726815AbgHMPeE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Aug 2020 11:34:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52384 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726732AbgHMPeA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Aug 2020 11:34:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597332854;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xzivr37W6Sz/OFkat8WISQrphMPdi2PlV4uzOfubSgg=;
-        b=bkVQWdeaeCSY2Xu/HmtuTS+Gio4ZCrfUgEDQl82PWa2+ZcmsDiNupzq3plmaghmyh/PiBC
-        X03J9tUG7Jhqkti1vaAzubsqa5iU5igYOm1OjrqGBA9F3U+Xak4thA5+7FM0ipu3rhp7h4
-        Wb4Fno/f08dsnJ9U/lzg2g0gDJnbxzg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-391-14sqnvJ0PGe7-Ac8Ox3DLQ-1; Thu, 13 Aug 2020 11:34:10 -0400
-X-MC-Unique: 14sqnvJ0PGe7-Ac8Ox3DLQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C53A1807321;
-        Thu, 13 Aug 2020 15:34:08 +0000 (UTC)
-Received: from steredhat.redhat.com (ovpn-113-140.ams2.redhat.com [10.36.113.140])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6443C60C04;
-        Thu, 13 Aug 2020 15:33:49 +0000 (UTC)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <asarai@suse.de>,
-        io-uring@vger.kernel.org
-Subject: [PATCH v4 3/3] io_uring: allow disabling rings during the creation
-Date:   Thu, 13 Aug 2020 17:32:54 +0200
-Message-Id: <20200813153254.93731-4-sgarzare@redhat.com>
-In-Reply-To: <20200813153254.93731-1-sgarzare@redhat.com>
-References: <20200813153254.93731-1-sgarzare@redhat.com>
+        Thu, 13 Aug 2020 11:34:00 -0400
+Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EED27C061757
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 08:33:59 -0700 (PDT)
+Received: by mail-qv1-xf43.google.com with SMTP id w2so2794440qvh.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 08:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
+         :content-transfer-encoding;
+        bh=ezijkfx0Y5DorrGX8/YWq9ouXTyf+zW2VdpyaeIcFao=;
+        b=qDYeaWFLKTNgjRfAfZohibiECyItuS3oMZUnILoFBX8iTUtxUnigrWwfg2amqlh5KM
+         kyfL1zNnz0tm8K1XD90feWYeZFRXu09RcA4Glp56T2BpFM6rE75iB+p8z+kqC2IwHAA8
+         2+aDzbP6gT6ToL8EtuItNlng3DgdUF8kV3P8NoyU66zmJj6zXfQWZHJstKBRRMKYW8vj
+         xlDq2+7WStOHiOH6xR5/vGwSVl3oPItrOlGaHSxtTM/2IXQeheUoKld1ob/TBI8NpHAk
+         eZ5AZmTI4VK2tKpbC3SzihCLuKMJ2v2n+3JHvW+ofUbIjJxli3KGIHYQnWaOaJqWwpC1
+         xjgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ezijkfx0Y5DorrGX8/YWq9ouXTyf+zW2VdpyaeIcFao=;
+        b=m83ghntLW9U3f796i5TmACT5dW0R+UXKXGaoxyH6nUobBjnz0vuQ7MVaiBtZzW9lDJ
+         hlLGKcY0q5aePOiP+/QMeW/vxy7nfjweCWN2407l19mMw4KjAiQVi0L1qQl+ekJuBYXG
+         RiaxPaV9sjHrfPwiaEb+YbISKXHuyXoAAZLCFfvjT3XYsqPKsQTnTbS5ECUlPGv88hXJ
+         o17Pcq1XOspJW2fOI0mt2H/HoHgK6BtzzywJzIUwHfh8ZHN9bQ4YbyiM7kcSO15Qm6t7
+         h55OU+K2NWwAMcHjFyXD6WGKDS0cMuxlbXDOsPcYxcRy1jeBBR5w0rmw8xMj08CoZ1bZ
+         yBwQ==
+X-Gm-Message-State: AOAM530+r8r3/lhCkXvvnQf3Gid3zYukFL0UKPbJAoUrsL0MYiG0Kr2b
+        tR3K2Fse5WhDj/6CepILTm+epg==
+X-Google-Smtp-Source: ABdhPJzW2g4O8d3zoBeCYopEB+n7a4zLaABB0qlEdfWfB/LmLR6LYK/+D2eWkuiuFTTIausl+jr1Mw==
+X-Received: by 2002:ad4:4806:: with SMTP id g6mr5112072qvy.39.1597332839042;
+        Thu, 13 Aug 2020 08:33:59 -0700 (PDT)
+Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id l66sm6861647qte.48.2020.08.13.08.33.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Aug 2020 08:33:58 -0700 (PDT)
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     hch@lst.de, viro@ZenIV.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, kernel-team@fb.com,
+        willy@infradead.org
+Subject: [PATCH][v2] proc: use vmalloc for our kernel buffer
+Date:   Thu, 13 Aug 2020 11:33:56 -0400
+Message-Id: <20200813153356.857625-1-josef@toxicpanda.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200813145305.805730-1-josef@toxicpanda.com>
+References: <20200813145305.805730-1-josef@toxicpanda.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch adds a new IORING_SETUP_R_DISABLED flag to start the
-rings disabled, allowing the user to register restrictions,
-buffers, files, before to start processing SQEs.
+Since
 
-When IORING_SETUP_R_DISABLED is set, SQE are not processed and
-SQPOLL kthread is not started.
+  sysctl: pass kernel pointers to ->proc_handler
 
-The restrictions registration are allowed only when the rings
-are disable to prevent concurrency issue while processing SQEs.
+we have been pre-allocating a buffer to copy the data from the proc
+handlers into, and then copying that to userspace.  The problem is this
+just blind kmalloc()'s the buffer size passed in from the read, which in
+the case of our 'cat' binary was 64kib.  Order-4 allocations are not
+awesome, and since we can potentially allocate up to our maximum order,
+use vmalloc for these buffers.
 
-The rings can be enabled using IORING_REGISTER_ENABLE_RINGS
-opcode with io_uring_register(2).
-
-Suggested-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+Fixes: 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
 ---
-v4:
- - fixed io_uring_enter() exit path when ring is disabled
+v1->v2:
+- Make vmemdup_user_nul actually do the right thing...sorry about that.
 
-v3:
- - enabled restrictions only when the rings start
+ fs/proc/proc_sysctl.c  |  6 +++---
+ include/linux/string.h |  1 +
+ mm/util.c              | 27 +++++++++++++++++++++++++++
+ 3 files changed, 31 insertions(+), 3 deletions(-)
 
-RFC v2:
- - removed return value of io_sq_offload_start()
----
- fs/io_uring.c                 | 52 ++++++++++++++++++++++++++++++-----
- include/uapi/linux/io_uring.h |  2 ++
- 2 files changed, 47 insertions(+), 7 deletions(-)
-
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index cb365e6e0af7..09fedc380a41 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -226,6 +226,7 @@ struct io_restriction {
- 	DECLARE_BITMAP(sqe_op, IORING_OP_LAST);
- 	u8 sqe_flags_allowed;
- 	u8 sqe_flags_required;
-+	bool registered;
- };
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 6c1166ccdaea..207ac6e6e028 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -571,13 +571,13 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
+ 		goto out;
  
- struct io_ring_ctx {
-@@ -7420,8 +7421,8 @@ static int io_init_wq_offload(struct io_ring_ctx *ctx,
- 	return ret;
- }
- 
--static int io_sq_offload_start(struct io_ring_ctx *ctx,
--			       struct io_uring_params *p)
-+static int io_sq_offload_create(struct io_ring_ctx *ctx,
-+				struct io_uring_params *p)
- {
- 	int ret;
- 
-@@ -7458,7 +7459,6 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
- 			ctx->sqo_thread = NULL;
- 			goto err;
+ 	if (write) {
+-		kbuf = memdup_user_nul(ubuf, count);
++		kbuf = vmemdup_user_nul(ubuf, count);
+ 		if (IS_ERR(kbuf)) {
+ 			error = PTR_ERR(kbuf);
+ 			goto out;
  		}
--		wake_up_process(ctx->sqo_thread);
- 	} else if (p->flags & IORING_SETUP_SQ_AFF) {
- 		/* Can't have SQ_AFF without SQPOLL */
- 		ret = -EINVAL;
-@@ -7479,6 +7479,12 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
- 	return ret;
- }
- 
-+static void io_sq_offload_start(struct io_ring_ctx *ctx)
-+{
-+	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sqo_thread)
-+		wake_up_process(ctx->sqo_thread);
-+}
-+
- static inline void __io_unaccount_mem(struct user_struct *user,
- 				      unsigned long nr_pages)
- {
-@@ -8218,6 +8224,9 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 	if (!percpu_ref_tryget(&ctx->refs))
- 		goto out_fput;
- 
-+	if (ctx->flags & IORING_SETUP_R_DISABLED)
-+		goto out_fput;
-+
- 	/*
- 	 * For SQ polling, the thread will do all submissions and completions.
- 	 * Just return the requested submit count, and wake the thread if
-@@ -8532,10 +8541,13 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	if (ret)
- 		goto err;
- 
--	ret = io_sq_offload_start(ctx, p);
-+	ret = io_sq_offload_create(ctx, p);
- 	if (ret)
- 		goto err;
- 
-+	if (!(p->flags & IORING_SETUP_R_DISABLED))
-+		io_sq_offload_start(ctx);
-+
- 	memset(&p->sq_off, 0, sizeof(p->sq_off));
- 	p->sq_off.head = offsetof(struct io_rings, sq.head);
- 	p->sq_off.tail = offsetof(struct io_rings, sq.tail);
-@@ -8598,7 +8610,8 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
- 
- 	if (p.flags & ~(IORING_SETUP_IOPOLL | IORING_SETUP_SQPOLL |
- 			IORING_SETUP_SQ_AFF | IORING_SETUP_CQSIZE |
--			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ))
-+			IORING_SETUP_CLAMP | IORING_SETUP_ATTACH_WQ |
-+			IORING_SETUP_R_DISABLED))
- 		return -EINVAL;
- 
- 	return  io_uring_create(entries, &p, params);
-@@ -8681,8 +8694,12 @@ static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
- 	size_t size;
- 	int i, ret;
- 
-+	/* Restrictions allowed only if rings started disabled */
-+	if (!(ctx->flags & IORING_SETUP_R_DISABLED))
-+		return -EINVAL;
-+
- 	/* We allow only a single restrictions registration */
--	if (ctx->restricted)
-+	if (ctx->restrictions.registered)
- 		return -EBUSY;
- 
- 	if (!arg || nr_args > IORING_MAX_RESTRICTIONS)
-@@ -8732,7 +8749,7 @@ static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
- 		}
+ 	} else {
+-		kbuf = kzalloc(count, GFP_KERNEL);
++		kbuf = kvzalloc(count, GFP_KERNEL);
+ 		if (!kbuf)
+ 			goto out;
  	}
+@@ -600,7 +600,7 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
  
--	ctx->restricted = 1;
-+	ctx->restrictions.registered = true;
- 
- 	ret = 0;
+ 	error = count;
+ out_free_buf:
+-	kfree(kbuf);
++	kvfree(kbuf);
  out:
-@@ -8744,6 +8761,21 @@ static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
- 	return ret;
+ 	sysctl_head_finish(head);
+ 
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 9b7a0632e87a..aee3689fb865 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -12,6 +12,7 @@
+ extern char *strndup_user(const char __user *, long);
+ extern void *memdup_user(const void __user *, size_t);
+ extern void *vmemdup_user(const void __user *, size_t);
++extern void *vmemdup_user_nul(const void __user *, size_t);
+ extern void *memdup_user_nul(const void __user *, size_t);
+ 
+ /*
+diff --git a/mm/util.c b/mm/util.c
+index 5ef378a2a038..9d0ad7aafc27 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -208,6 +208,33 @@ void *vmemdup_user(const void __user *src, size_t len)
  }
+ EXPORT_SYMBOL(vmemdup_user);
  
-+static int io_register_enable_rings(struct io_ring_ctx *ctx)
++/**
++ * vmemdup_user_nul - duplicate memory region from user space and NUL-terminate
++ *
++ * @src: source address in user space
++ * @len: number of bytes to copy
++ *
++ * Return: an ERR_PTR() on failure.  Result may be not
++ * physically contiguous.  Use kvfree() to free.
++ */
++void *vmemdup_user_nul(const void __user *src, size_t len)
 +{
-+	if (!(ctx->flags & IORING_SETUP_R_DISABLED))
-+		return -EINVAL;
++	char *p;
 +
-+	if (ctx->restrictions.registered)
-+		ctx->restricted = 1;
++	p = kvmalloc(len + 1, GFP_USER);
++	if (!p)
++		return ERR_PTR(-ENOMEM);
 +
-+	ctx->flags &= ~IORING_SETUP_R_DISABLED;
++	if (copy_from_user(p, src, len)) {
++		kvfree(p);
++		return ERR_PTR(-EFAULT);
++	}
++	p[len] = '\0';
 +
-+	io_sq_offload_start(ctx);
-+
-+	return 0;
++	return p;
 +}
++EXPORT_SYMBOL(vmemdup_user_nul);
 +
- static bool io_register_op_must_quiesce(int op)
- {
- 	switch (op) {
-@@ -8865,6 +8897,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 			break;
- 		ret = io_unregister_personality(ctx, nr_args);
- 		break;
-+	case IORING_REGISTER_ENABLE_RINGS:
-+		ret = -EINVAL;
-+		if (arg || nr_args)
-+			break;
-+		ret = io_register_enable_rings(ctx);
-+		break;
- 	case IORING_REGISTER_RESTRICTIONS:
- 		ret = io_register_restrictions(ctx, arg, nr_args);
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index be54bc3cf173..ddb30513e027 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -95,6 +95,7 @@ enum {
- #define IORING_SETUP_CQSIZE	(1U << 3)	/* app defines CQ size */
- #define IORING_SETUP_CLAMP	(1U << 4)	/* clamp SQ/CQ ring sizes */
- #define IORING_SETUP_ATTACH_WQ	(1U << 5)	/* attach to existing wq */
-+#define IORING_SETUP_R_DISABLED	(1U << 6)	/* start with ring disabled */
- 
- enum {
- 	IORING_OP_NOP,
-@@ -268,6 +269,7 @@ enum {
- 	IORING_REGISTER_PERSONALITY,
- 	IORING_UNREGISTER_PERSONALITY,
- 	IORING_REGISTER_RESTRICTIONS,
-+	IORING_REGISTER_ENABLE_RINGS,
- 
- 	/* this goes last */
- 	IORING_REGISTER_LAST
+ /**
+  * strndup_user - duplicate an existing string from user space
+  * @s: The string to duplicate
 -- 
-2.26.2
+2.24.1
 
