@@ -2,106 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D54B244C90
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 18:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E002244D43
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 19:05:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbgHNQVp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Aug 2020 12:21:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55024 "EHLO
+        id S1728129AbgHNRFb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Aug 2020 13:05:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728327AbgHNQVj (ORCPT
+        with ESMTP id S1726796AbgHNRFb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Aug 2020 12:21:39 -0400
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72A86C061361
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Aug 2020 09:21:34 -0700 (PDT)
-Received: by mail-il1-x141.google.com with SMTP id j9so8889286ilc.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Aug 2020 09:21:34 -0700 (PDT)
+        Fri, 14 Aug 2020 13:05:31 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FB19C061386
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Aug 2020 10:05:30 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id i80so5148123lfi.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Aug 2020 10:05:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=lqyz283T/dIOw03L8mirawXjATrSpRlBUoTDYx+lgsQ=;
-        b=gyY5H/5vJAZIF41HdVXvfm/nb+tVf8WsemPL6xpr4ShXUpbfajq6tMU9YWLyvrpnRj
-         mf98uk05Hgg/bRuc24FznoqmWRsG6eHfczQTa6sDKMHCHfaE3mesb14ByT+bcfUVxQkZ
-         PH9t47wUpeacfw90j525MxzR8qMx3H09sN4i35byNKdi87AbL6Mh9AKsLKpymfXKAk9P
-         bbH2RIRm5qva1vGSO7uCPlU+XyaTe0YWEPSxO3fdWICWq9vQ4Hg5doJv7hKlH9E2wyVw
-         xCA1fjm1FqJwD0XNVJAThNQEGLaQLVpK8xYdpvXMtoQHkLaITNKC0SFcZR/Zty6SEBUt
-         2Baw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qYuJ9NHHO+qnoSaHW0PlHI0fiXCW7zDlZFu/ah5uFho=;
+        b=QZC+eNnnLcPaczh2E7Iym7nx2PQpiiDURT50bzxJZUsdtO86YlDCUBTiiWPJAXsWnA
+         U49+U2ao8O1Ymle/LvRAFOmnKYrXWnRy0koTc1q4uPH3YiU1H0Bu0Wp5Fx58rMDOEorn
+         lZP3mAReqkIBPzLDybNfptRtvd5sif7WdrmnA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=lqyz283T/dIOw03L8mirawXjATrSpRlBUoTDYx+lgsQ=;
-        b=paTZ8nUWJYgnJBTJrd5wAhQcojEQJ2+chUocySDytPnv3yQaargCjK+io4/CxMi9WC
-         IibVNWURLQJRR4wkgaSTTC0xpA/Wman8ZOm1USQqF90AJDC5IArI3Cv6fTDM4Ac8jQwx
-         KB6JMQ1kEzvZoiqDIhYmEEqBw6IiZEX2qk6pNTOBdLAqOKEpTPv//56W3eDTDnlDG3sn
-         PMg6OgQOKZed8mttD5wqWrGNxuLeYbdp5XWCm+lg+llu+duU+HUxc5HMTqIiIRK0svOb
-         +KgsjIDUEEyLEqODu98vzij7ktU8/u2FUOcf99jJlJLEDm94O/QMcTuLBy2NLgVkZtfI
-         L4yA==
-X-Gm-Message-State: AOAM530UR3alU/5aUosAoAE3htZdL+BKI5c5pRO3mD6/pi5Sm6RgwsWT
-        eQMpdITUuFq07cx/UucBhma/416hyLDddwKgGMI=
-X-Google-Smtp-Source: ABdhPJyk234eBtmEaejOVdTmn3CdA+BnV6fbwYtIpel30We2B16rINXHcKwP3MSLkRIrDtLMeI39VAvzuj1Vrm7gK4g=
-X-Received: by 2002:a92:354b:: with SMTP id c72mr3008546ila.307.1597422088377;
- Fri, 14 Aug 2020 09:21:28 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qYuJ9NHHO+qnoSaHW0PlHI0fiXCW7zDlZFu/ah5uFho=;
+        b=MMHGLB7x7zqwjIPHnbC7rqxQKnBu8S0PTH1NPFclW98IUiRH0CYtCKJyBP9d4vxtvn
+         bk0SKpvGxk1+opV1iBEPl7jdhCq7faiTSeYvWN7/qjraxcZrI7L5x/Yglybx3PJBnaxS
+         yXiNhwU7dAnr8Z28drmTLjMnW6ya/fPdxBWOsm99YiR00vKfSq+DXKDjiXYqd//LVwF5
+         83h8AyYw7BFvlHyre/b5HYLDD3jJ+u4dy9nHgRlpEdIRkz0nf+dBW9/YZ/SpIH3KOPEn
+         AO9m7Sb1KE/GN1kc5/7/puajDIUdBHppnQ63sbi1xlV2NIPIwP3xjK5tw4H8loNz54FR
+         TYFQ==
+X-Gm-Message-State: AOAM532zV4mDMMQYuL7bMm1ax52yJDMp2jYbEvBo390QJBzXUhWzwKI+
+        /81vOFcZ1J9isbra01LAgrHiWjgD3WhLKA==
+X-Google-Smtp-Source: ABdhPJw8bbFWSFHzFZE1X5ABEG9nK9m5f4NckxZzcOEq7vTo6aAIjjePKLRWTn+NPMk8P3RzvhHYbg==
+X-Received: by 2002:a19:3c7:: with SMTP id 190mr1666759lfd.14.1597424728279;
+        Fri, 14 Aug 2020 10:05:28 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id y17sm1785749ljc.18.2020.08.14.10.05.26
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Aug 2020 10:05:26 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 185so10654465ljj.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Aug 2020 10:05:26 -0700 (PDT)
+X-Received: by 2002:a2e:9a11:: with SMTP id o17mr1629608lji.314.1597424726058;
+ Fri, 14 Aug 2020 10:05:26 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a05:6602:20d4:0:0:0:0 with HTTP; Fri, 14 Aug 2020 09:21:27
- -0700 (PDT)
-Reply-To: info.usbanking1@gmail.com
-From:   "MR.ANDY CECERE" <mr.davidelli@gmail.com>
-Date:   Fri, 14 Aug 2020 09:21:27 -0700
-Message-ID: <CAB5Lhp2O_eEpjmbLAm5Y=W6VEnuSDN-SK5Pz3QGLCH6UJ3egkQ@mail.gmail.com>
-Subject: REF:- INSTRUCTION TO CREDIT YOUR ACCOUNT WITH THE SUM OF (US$5Million)
-To:     undisclosed-recipients:;
+References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk> <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+ <679456f1-5867-4017-b1d6-95197d2fa81b@auristor.com>
+In-Reply-To: <679456f1-5867-4017-b1d6-95197d2fa81b@auristor.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 14 Aug 2020 10:05:09 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whLhwum2E+qperD=TypGHXxoBtXOu-HHDd9L9_XFFyiaA@mail.gmail.com>
+Message-ID: <CAHk-=whLhwum2E+qperD=TypGHXxoBtXOu-HHDd9L9_XFFyiaA@mail.gmail.com>
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+To:     Jeffrey E Altman <jaltman@auristor.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
--- 
-Us Bank.1025 Connecticut Ave.
-NW, Ste. 510. Washington, DC 20036.
-Tell: (213) 537-2170
-E-mail: info.usbanking1@gmail.com
+On Wed, Aug 12, 2020 at 8:53 PM Jeffrey E Altman <jaltman@auristor.com> wrote:
+>
+> For the AFS community, fsinfo offers a method of exposing some server
+> and volume properties that are obtained via "path ioctls" in OpenAFS and
+> AuriStorFS.  Some example of properties that might be exposed include
+> answers to questions such as:
 
-REF:- INSTRUCTION TO CREDIT YOUR ACCOUNT WITH THE SUM OF (US$5Million)
+Note that several of the questions you ask aren't necessarily
+mount-related at all.
 
-This is the second time we are notifying you about this said fund. After
-due vetting and evaluation of your file that was sent to us by the Nigerian
-Government in conjunction with the Ministry of Finance and Central Bank of
-the Federal Republic of Nigeria.
+Doing it by mount ends up being completely the wrong thing.
 
-This bank has an instruction to see to the immediate release of the sum of
-(US $5Million) of your claim that has been holding since is transferred
-into your bank Account from their Domiciliary Account with this bank.
+For example, at a minimum, these guys may well be per-directory (or
+even possibly per-file):
 
-We were meant to understand from our findings that you have been going
-through hard ways by paying a lot of charges to see to the release of your
-fund (US$5Million), which has been the handwork of some miscreant elements
-from that Country.
+>  * where is a mounted volume hosted? which fileservers, named by uuid
+>  * what is the block size? 1K, 4K, ...
+>  * are directories just-send-8, case-sensitive, case-preserving, or
+>    case-insensitive?
+>  * if not just-send-8, what character set is used?
+>  * if Unicode, what normalization rules? etc.
+>  * what volume security policy (authn, integ, priv) is assigned, if any?
+>  * what is the replication policy, if any?
+>  * what is the volume encryption policy, if any?
 
-We advice that you stop further communication with any correspondence from
-any bank , or anywhere concerning your funds as you will receive your fund
-from this bank if you follow our instruction.
+and trying to solve this with some kind of "mount info" is pure garbage.
 
-We know your representatives in Nigeria or anywhere will advice you to
-still go ahead with them, which will be on your own risk. Your
-(US$5Million) will reflect in your designated bank account within five Bank
-working days.
+Honestly, I really think you may want an extended [f]statfs(), not
+some mount tracking.
 
-Do not go through anybody again but through this Bank if you really want
-your fund. Finally, you are advice to re-confirm these to us,
-
-Your Full Name,
-Contact address,
-Occupation
-Telephone and Fax Number for easy communication.
-
-We need your second email gmail or hotmail for security and private reasons.
-
-Yours sincerely,
-MR.ANDY CECERE,
-Tel:.(213) 537-2170
-Assistance Secretary,
-U.S Bank.
-Email address ( info.usbanking1@gmail.com )
+                 Linus
