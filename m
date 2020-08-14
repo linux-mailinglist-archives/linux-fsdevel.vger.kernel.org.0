@@ -2,266 +2,393 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0416244B2C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 16:21:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5073244BB2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 17:12:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbgHNOVd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Aug 2020 10:21:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36470 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbgHNOVd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Aug 2020 10:21:33 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E149FC061384;
-        Fri, 14 Aug 2020 07:21:32 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id h4so10926543ioe.5;
-        Fri, 14 Aug 2020 07:21:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=ceuzR87451Cc6ZPbAaw/Ws6GJIlBw8/7uWYzi3GVwJA=;
-        b=C5OHUt9hkrJlft1M32KFKYTyDqxhz82XwvNEyxU/08xkdhL8x2QV8l/0TPiGZYMDuX
-         E5OqS6P3mai/ZNmOTipfn0aw5I/0T/f03dt8iu2Z/RwQZ0K1yokX/8J66TvPLawOhabj
-         7CMGvUcmCnlXl4qLbkHcGTqMo0sE8RKFEGMVxjd7wwN3C1/NN/1Hd7fG5ktpMrNNVWsF
-         nET2RKC6Ijlx4bUbXnQVFrO1NwVR6Rso9e1R2b8hlH0IuK0L9Kgu3cNMhrBSzB7jjSNd
-         Og6a6Xp1G22BiKLdIxIg7iGSMhTUbG7mQo4NPHgpzUuVE42qnZqN0KFkyMfFclNcIbpM
-         krhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=ceuzR87451Cc6ZPbAaw/Ws6GJIlBw8/7uWYzi3GVwJA=;
-        b=crRlRDseBo8b+xuowjQJmmTGdDFChnYTVvS0dKPN0sdpwdsmWfpVSZ3l4TOM23/rit
-         1tsOVhXaA8I26gYBweFjni3PqCKB4A1s8JVV4AH/buo8bfq0QyiZDdyEAVULvEqsomXT
-         kZn96UviRzE4YvBGL3aF0a3qtBHHvX9WOmRNNCNsZhbklA//s1MkdlD+Avknjnxe0ibk
-         f3IsbmZjkRSwrp6+sr0agJsDyl1lPI+nMIvHUzUav6bQp2F/t0iFweyOix3BJMq+5Vqc
-         6Rl+k7lqLv2bJFlV5mF/nNIFR09mDVP3nIRM3QoSKysCkJXJFc0bSG37r3Y+LmOBcLQR
-         7+mw==
-X-Gm-Message-State: AOAM5330TXlvyBsYW87lY6pqA/tJyBi1b91kEUYi+YQY+BEMhRzsHW/r
-        GvAZO6W9bs5Rnl9HmGePUGg=
-X-Google-Smtp-Source: ABdhPJweSZedFvqsUMFWyIpazr8WaDF573/xdtkmOjFpEuaDTmOAqcznkxDaJ7yyQKrPSVkkZ6yu+w==
-X-Received: by 2002:a6b:b74b:: with SMTP id h72mr2392562iof.52.1597414892064;
-        Fri, 14 Aug 2020 07:21:32 -0700 (PDT)
-Received: from anon-dhcp-152.1015granger.net (c-68-61-232-219.hsd1.mi.comcast.net. [68.61.232.219])
-        by smtp.gmail.com with ESMTPSA id c4sm118316ioi.44.2020.08.14.07.21.28
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Aug 2020 07:21:30 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.80.23.2.2\))
-Subject: Re: [dm-devel] [RFC PATCH v5 00/11] Integrity Policy Enforcement LSM
- (IPE)
-From:   Chuck Lever <chucklever@gmail.com>
-In-Reply-To: <1597331416.3708.26.camel@HansenPartnership.com>
-Date:   Fri, 14 Aug 2020 10:21:26 -0400
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Pavel Machek <pavel@ucw.cz>, Sasha Levin <sashal@kernel.org>,
-        snitzer@redhat.com, dm-devel@redhat.com,
-        tyhicks@linux.microsoft.com, agk@redhat.com,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, nramas@linux.microsoft.com,
-        serge@hallyn.com, pasha.tatashin@soleen.com,
-        Jann Horn <jannh@google.com>, linux-block@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, mdsakib@microsoft.com,
-        open list <linux-kernel@vger.kernel.org>, eparis@redhat.com,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        jaskarankhurana@linux.microsoft.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5A966AA7-9E39-4F59-A9B7-4308AF6F3333@gmail.com>
-References: <20200728213614.586312-1-deven.desai@linux.microsoft.com>
- <20200802115545.GA1162@bug> <20200802140300.GA2975990@sasha-vm>
- <20200802143143.GB20261@amd> <1596386606.4087.20.camel@HansenPartnership.com>
- <fb35a1f7-7633-a678-3f0f-17cf83032d2b@linux.microsoft.com>
- <1596639689.3457.17.camel@HansenPartnership.com>
- <alpine.LRH.2.21.2008050934060.28225@namei.org>
- <b08ae82102f35936427bf138085484f75532cff1.camel@linux.ibm.com>
- <329E8DBA-049E-4959-AFD4-9D118DEB176E@gmail.com>
- <da6f54d0438ee3d3903b2c75fcfbeb0afdf92dc2.camel@linux.ibm.com>
- <1597073737.3966.12.camel@HansenPartnership.com>
- <6E907A22-02CC-42DD-B3CD-11D304F3A1A8@gmail.com>
- <1597124623.30793.14.camel@HansenPartnership.com>
- <16C3BF97-A7D3-488A-9D26-7C9B18AD2084@gmail.com>
- <1597161218.4325.38.camel@HansenPartnership.com>
- <02D551EF-C975-4B91-86CA-356FA0FF515C@gmail.com>
- <1597247482.7293.18.camel@HansenPartnership.com>
- <D470BA4B-EF1A-49CA-AFB9-0F7FFC4C6001@gmail.com>
- <1597331416.3708.26.camel@HansenPartnership.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-X-Mailer: Apple Mail (2.3608.80.23.2.2)
+        id S1727969AbgHNPMK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Aug 2020 11:12:10 -0400
+Received: from relay.sw.ru ([185.231.240.75]:59972 "EHLO relay3.sw.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726185AbgHNPMJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 Aug 2020 11:12:09 -0400
+Received: from [192.168.15.122]
+        by relay3.sw.ru with esmtp (Exim 4.93)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1k6bN4-0007UY-8q; Fri, 14 Aug 2020 18:11:54 +0300
+Subject: Re: [PATCH 00/23] proc: Introduce /proc/namespaces/ directory to
+ expose namespaces lineary
+To:     Andrei Vagin <avagin@gmail.com>
+Cc:     adobriyan@gmail.com, "Eric W. Biederman" <ebiederm@xmission.com>,
+        viro@zeniv.linux.org.uk, davem@davemloft.net,
+        akpm@linux-foundation.org, christian.brauner@ubuntu.com,
+        areber@redhat.com, serge@hallyn.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+References: <87k0yl5axy.fsf@x220.int.ebiederm.org>
+ <56928404-f194-4194-5f2a-59acb15b1a04@virtuozzo.com>
+ <875za43b3w.fsf@x220.int.ebiederm.org>
+ <9ceb5049-6aea-1429-e35f-d86480f10d72@virtuozzo.com>
+ <20200806080540.GA18865@gmail.com>
+ <2d65ca28-bcfa-b217-e201-09163640ebc2@virtuozzo.com>
+ <20200810173431.GA68662@gmail.com>
+ <33565447-9b97-a820-bc2c-a4ff53a7675a@virtuozzo.com>
+ <20200812175338.GA596568@gmail.com>
+ <8f3c9414-9efc-cc01-fb2a-4d83266e96b2@virtuozzo.com>
+ <20200814011649.GA611947@gmail.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <0af3f2fa-f2c3-fb7d-b57e-9c41fe94ca58@virtuozzo.com>
+Date:   Fri, 14 Aug 2020 18:11:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
+MIME-Version: 1.0
+In-Reply-To: <20200814011649.GA611947@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 14.08.2020 04:16, Andrei Vagin wrote:
+> On Thu, Aug 13, 2020 at 11:12:45AM +0300, Kirill Tkhai wrote:
+>> On 12.08.2020 20:53, Andrei Vagin wrote:
+>>> On Tue, Aug 11, 2020 at 01:23:35PM +0300, Kirill Tkhai wrote:
+>>>> On 10.08.2020 20:34, Andrei Vagin wrote:
+>>>>> On Fri, Aug 07, 2020 at 11:47:57AM +0300, Kirill Tkhai wrote:
+>>>>>> On 06.08.2020 11:05, Andrei Vagin wrote:
+>>>>>>> On Mon, Aug 03, 2020 at 01:03:17PM +0300, Kirill Tkhai wrote:
+>>>>>>>> On 31.07.2020 01:13, Eric W. Biederman wrote:
+>>>>>>>>> Kirill Tkhai <ktkhai@virtuozzo.com> writes:
+>>>>>>>>>
+>>>>>>>>>> On 30.07.2020 17:34, Eric W. Biederman wrote:
+>>>>>>>>>>> Kirill Tkhai <ktkhai@virtuozzo.com> writes:
+>>>>>>>>>>>
+>>>>>>>>>>>> Currently, there is no a way to list or iterate all or subset of namespaces
+>>>>>>>>>>>> in the system. Some namespaces are exposed in /proc/[pid]/ns/ directories,
+>>>>>>>>>>>> but some also may be as open files, which are not attached to a process.
+>>>>>>>>>>>> When a namespace open fd is sent over unix socket and then closed, it is
+>>>>>>>>>>>> impossible to know whether the namespace exists or not.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Also, even if namespace is exposed as attached to a process or as open file,
+>>>>>>>>>>>> iteration over /proc/*/ns/* or /proc/*/fd/* namespaces is not fast, because
+>>>>>>>>>>>> this multiplies at tasks and fds number.
+>>>>>>>>>>>
+>>>>>>>>>>> I am very dubious about this.
+>>>>>>>>>>>
+>>>>>>>>>>> I have been avoiding exactly this kind of interface because it can
+>>>>>>>>>>> create rather fundamental problems with checkpoint restart.
+>>>>>>>>>>
+>>>>>>>>>> restart/restore :)
+>>>>>>>>>>
+>>>>>>>>>>> You do have some filtering and the filtering is not based on current.
+>>>>>>>>>>> Which is good.
+>>>>>>>>>>>
+>>>>>>>>>>> A view that is relative to a user namespace might be ok.    It almost
+>>>>>>>>>>> certainly does better as it's own little filesystem than as an extension
+>>>>>>>>>>> to proc though.
+>>>>>>>>>>>
+>>>>>>>>>>> The big thing we want to ensure is that if you migrate you can restore
+>>>>>>>>>>> everything.  I don't see how you will be able to restore these files
+>>>>>>>>>>> after migration.  Anything like this without having a complete
+>>>>>>>>>>> checkpoint/restore story is a non-starter.
+>>>>>>>>>>
+>>>>>>>>>> There is no difference between files in /proc/namespaces/ directory and /proc/[pid]/ns/.
+>>>>>>>>>>
+>>>>>>>>>> CRIU can restore open files in /proc/[pid]/ns, the same will be with /proc/namespaces/ files.
+>>>>>>>>>> As a person who worked deeply for pid_ns and user_ns support in CRIU, I don't see any
+>>>>>>>>>> problem here.
+>>>>>>>>>
+>>>>>>>>> An obvious diffference is that you are adding the inode to the inode to
+>>>>>>>>> the file name.  Which means that now you really do have to preserve the
+>>>>>>>>> inode numbers during process migration.
+>>>>>>>>>
+>>>>>>>>> Which means now we have to do all of the work to make inode number
+>>>>>>>>> restoration possible.  Which means now we need to have multiple
+>>>>>>>>> instances of nsfs so that we can restore inode numbers.
+>>>>>>>>>
+>>>>>>>>> I think this is still possible but we have been delaying figuring out
+>>>>>>>>> how to restore inode numbers long enough that may be actual technical
+>>>>>>>>> problems making it happen.
+>>>>>>>>
+>>>>>>>> Yeah, this matters. But it looks like here is not a dead end. We just need
+>>>>>>>> change the names the namespaces are exported to particular fs and to support
+>>>>>>>> rename().
+>>>>>>>>
+>>>>>>>> Before introduction a principally new filesystem type for this, can't
+>>>>>>>> this be solved in current /proc?
+>>>>>>>
+>>>>>>> do you mean to introduce names for namespaces which users will be able
+>>>>>>> to change? By default, this can be uuid.
+>>>>>>
+>>>>>> Yes, I mean this.
+>>>>>>
+>>>>>> Currently I won't give a final answer about UUID, but I planned to show some
+>>>>>> default names, which based on namespace type and inode num. Completely custom
+>>>>>> names for any /proc by default will waste too much memory.
+>>>>>>
+>>>>>> So, I think the good way will be:
+>>>>>>
+>>>>>> 1)Introduce a function, which returns a hash/uuid based on ino, ns type and some static
+>>>>>> random seed, which is generated on boot;
+>>>>>>
+>>>>>> 2)Use the hash/uuid as default names in newly create /proc/namespaces: pid-{hash/uuid(ino, "pid")}
+>>>>>>
+>>>>>> 3)Allow rename, and allocate space only for renamed names.
+>>>>>>
+>>>>>> Maybe 2 and 3 will be implemented as shrinkable dentries and non-shrinkable.
+>>>>>>
+>>>>>>> And I have a suggestion about the structure of /proc/namespaces/.
+>>>>>>>
+>>>>>>> Each namespace is owned by one of user namespaces. Maybe it makes sense
+>>>>>>> to group namespaces by their user-namespaces?
+>>>>>>>
+>>>>>>> /proc/namespaces/
+>>>>>>>                  user
+>>>>>>>                  mnt-X
+>>>>>>>                  mnt-Y
+>>>>>>>                  pid-X
+>>>>>>>                  uts-Z
+>>>>>>>                  user-X/
+>>>>>>>                         user
+>>>>>>>                         mnt-A
+>>>>>>>                         mnt-B
+>>>>>>>                         user-C
+>>>>>>>                         user-C/
+>>>>>>>                                user
+>>>>>>>                  user-Y/
+>>>>>>>                         user
+>>>>>>
+>>>>>> Hm, I don't think that user namespace is a generic key value for everybody.
+>>>>>> For generic people tasks a user namespace is just a namespace among another
+>>>>>> namespace types. For me it will look a bit strage to iterate some user namespaces
+>>>>>> to build container net topology.
+>>>>>
+>>>>> I can’t agree with you that the user namespace is one of others. It is
+>>>>> the namespace for namespaces. It sets security boundaries in the system
+>>>>> and we need to know them to understand the whole system.
+>>>>>
+>>>>> If user namespaces are not used in the system or on a container, you
+>>>>> will see all namespaces in one directory. But if the system has a more
+>>>>> complicated structure, you will be able to build a full picture of it.
+>>>>>
+>>>>> You said that one of the users of this feature is CRIU (the tool to
+>>>>> checkpoint/restore containers)  and you said that it would be good if
+>>>>> CRIU will be able to collect all container namespaces before dumping
+>>>>> processes, sockets, files etc. But how will we be able to do this if we
+>>>>> will list all namespaces in one directory?
+>>>>
+>>>> There is no a problem, this looks rather simple. Two cases are possible:
+>>>>
+>>>> 1)a container has dedicated namespaces set, and CRIU just has to iterate
+>>>>   files in /proc/namespaces of root pid namespace of the container.
+>>>>   The relationships between parents and childs of pid and user namespaces
+>>>>   are founded via ioctl(NS_GET_PARENT).
+>>>>   
+>>>> 2)container has no dedicated namespaces set. Then CRIU just has to iterate
+>>>>   all host namespaces. There is no another way to do that, because container
+>>>>   may have any host namespaces, and hierarchy in /proc/namespaces won't
+>>>>   help you.
+>>>>
+>>>>> Here are my thoughts why we need to the suggested structure is better
+>>>>> than just a list of namespaces:
+>>>>>
+>>>>> * Users will be able to understand securies bondaries in the system.
+>>>>>   Each namespace in the system is owned by one of user namespace and we
+>>>>>   need to know these relationshipts to understand the whole system.
+>>>>
+>>>> Here are already NS_GET_PARENT and NS_GET_USERNS. What is the problem to use
+>>>> this interfaces?
+>>>
+>>> We can use these ioctl-s, but we will need to enumerate all namespaces in
+>>> the system to build a view of the namespace hierarchy. This will be very
+>>> expensive. The kernel can show this hierarchy without additional cost.
+>>
+>> No. We will have to iterate /proc/namespaces of a specific container to get
+>> its namespaces. It's a subset of all namespaces in system, and these all the
+>> namespaces, which are potentially allowed for the container.
+> 
+> """
+> Every /proc is related to a pid_namespace, and the pid_namespace
+> is related to a user_namespace. The items, we show in this
+> /proc/namespaces/ directory, are the namespaces,
+> whose user_namespaces are the same as /proc's user_namespace,
+> or their descendants.
+> """ // [PATCH 11/23] fs: Add /proc/namespaces/ directory
+> 
+> This means that if a user want to find out all container namespaces, it
+> has to have access to the container procfs and the container should
+> a separate pid namespace.
+> 
+> I would say these are two big limitations. The first one will not affect
+> CRIU and I agree CRIU can use this interface in its current form.
+> 
+> The second one will be still the issue for CRIU. And they both will
+> affect other users.
+> 
+> For end users, it will be a pain. They will need to create a pid
+> namespaces in a specified user-namespace, if a container doesn't have
+> its own. Then they will need to mount /proc from the container pid
+> namespace and only then they will be able to enumerate namespaces.
 
+In case of a container does not have its own pid namespace, CRIU already
+sucks. Every file in /proc directory is not reliable after restore,
+so /proc/namespaces is just one of them. Container, who may access files
+in /proc, does have to have its own pid namespace.
 
-> On Aug 13, 2020, at 11:10 AM, James Bottomley =
-<James.Bottomley@HansenPartnership.com> wrote:
->=20
-> On Thu, 2020-08-13 at 10:42 -0400, Chuck Lever wrote:
->>> On Aug 12, 2020, at 11:51 AM, James Bottomley <James.Bottomley@Hans
->>> enPartnership.com> wrote:
->>> On Wed, 2020-08-12 at 10:15 -0400, Chuck Lever wrote:
->>>>> On Aug 11, 2020, at 11:53 AM, James Bottomley
->>>>> <James.Bottomley@HansenPartnership.com> wrote:
->>>>> On Tue, 2020-08-11 at 10:48 -0400, Chuck Lever wrote:
-> [...]
->>>>>>>> The client would have to reconstruct that tree again if
->>>>>>>> memory pressure caused some or all of the tree to be
->>>>>>>> evicted, so perhaps an on-demand mechanism is preferable.
->>>>>>>=20
->>>>>>> Right, but I think that's implementation detail.  Probably
->>>>>>> what we need is a way to get the log(N) verification hashes
->>>>>>> from the server and it's up to the client whether it caches
->>>>>>> them or not.
->>>>>>=20
->>>>>> Agreed, these are implementation details. But see above about
->>>>>> the trustworthiness of the intermediate hashes. If they are
->>>>>> conveyed on an untrusted network, then they can't be trusted
->>>>>> either.
->>>>>=20
->>>>> Yes, they can, provided enough of them are asked for to
->>>>> verify.  If you look at the simple example above, suppose I
->>>>> have cached H11 and H12, but I've lost the entire H2X layer.  I
->>>>> want to verify B3 so I also ask you for your copy of H24.  Then
->>>>> I generate H23 from B3 and Hash H23 and H24.  If this doesn't
->>>>> hash to H12 I know either you supplied me the wrong block or
->>>>> lied about H24.  However, if it all hashes correctly I know you
->>>>> supplied me with both the correct B3 and the correct H24.
->>>>=20
->>>> My point is there is a difference between a trusted cache and an
->>>> untrusted cache. I argue there is not much value in a cache where
->>>> the hashes have to be verified again.
->>>=20
->>> And my point isn't about caching, it's about where the tree comes
->>> from. I claim and you agree the client can get the tree from the
->>> server a piece at a time (because it can path verify it) and
->>> doesn't have to generate it itself.
->>=20
->> OK, let's focus on where the tree comes from. It is certainly
->> possible to build protocol to exchange parts of a Merkle tree.
->=20
-> Which is what I think we need to extend IMA to do.
->=20
->> The question is how it might be stored on the server.
->=20
-> I think the only thing the server has to guarantee to store is the =
-head
-> hash, possibly signed.
->=20
->> There are some underlying assumptions about the metadata storage
->> mechanism that should be stated up front.
->>=20
->> Current forms of IMA metadata are limited in size and stored in a
->> container that is read and written in a single operation. If we stick
->> with that container format, I don't see a way to store a Merkle tree
->> in there for all file sizes.
->=20
-> Well, I don't think you need to.  The only thing that needs to be
-> stored is the head hash.  Everything else can be reconstructed.  If =
-you
-> asked me to implement it locally, I'd probably put the head hash in an
-> xattr but use a CAM based cache for the merkel trees and construct the
-> tree on first access if it weren't already in the cache.
+Even if we imagine an unreal situation, when the rest of /proc files are reliable,
+sub-directories won't help in this case also. In case of we introduce user ns
+hierarchy, the namespaces names above container's user ns, will still
+be unchangeble:
 
-The contents of the security.ima xattr might be modeled after
-EVM_IMA_DIGSIG:
+/proc/namespaces/parent_user_ns/container_user_ns/...
 
-- a format enumerator (used by all IMA metadata formats)
-- the tree's unit size
-- a fingerprint of the signer's certificate
-  - digest algorithm name and full digest
-- the root hash, always signed
-  - signing algorithm name and signature
+Path to container_user_ns is fixed. If container accesses /proc/namespace/parent_user_ns
+file, it will suck a pow after restore again.
 
-The rest of the hash tree is always stored somewhere else or
-constructed on-demand.
+So, the suggested sub-directories just don't work.
 
-My experience of security communities both within and outside the
-IETF is that they would insist on always having a signature.
+> But to build a view of a hierarchy of these namespaces, they will need to
+> use a binary tool which will open each of these namespaces, call
+> NS_GET_PARENT and NS_GET_USERNS ioctl-s and build a tree.
 
-If one doesn't care about signing, a self-signed certificate can be
-automatically provisioned when ima-evm-utils is installed that can
-be used for those cases. That would make the signature process
-invisible to any administrator who doesn't care about signed
-metadata.
+Yes, it's the same way we have on a construction of tasks tree.
 
-Because storage in NFS would cross trust boundaries, it would have
-to require the use of a signed root hash. I don't want to be in the
-position where copying a file with an unsigned root hash into NFS
-makes it unreadable because of a change in policy.
+Linear /proc/namespaces is rather natural way. The sense is "all namespaces,
+which are available for tasks in this /proc directory".
 
+Grouping by user ns directories looks odd. CRIU is only util, who needs
+such the grouping. But even for CRIU performance advantages look dubious.
 
-> However, the above isn't what fs-verity does: it stores the tree in a
-> hidden section of the file.  That's why I don't think we'd mandate
-> anything about tree storage.  Just describe the partial retrieval
-> properties we'd like and leave the rest as an implementation detail.
+For another utils, the preference of user ns grouping over another hierarchy
+namespaces looks just weirdy weird.
 
-I'm starting to consider how much compatibility with fs-verity is
-required. There are several forms of hash-tree, and a specification
-of the IMA metadata format would need to describe exactly how to
-form the tree root. If we want compatibility with fs-verity, then
-it is reasonable to assume that this IMA metadata format might be
-required to use the same hash tree construction algorithm that
-fs-verity uses.
+I can agree with an idea of separate top-level sub-directories for different
+namespaces types like:
 
-The original Merkle tree concept was patented 40 years ago. I'm not
-clear yet on whether the patent encumbers the use of Merkle trees
-in any way, but since their usage seems pretty widespread in P2P
-and BitCoin applications, I'm guessing the answer to that is
-favorable. More research needed.
+/proc/namespaces/uts/
+/proc/namespaces/user/
+/proc/namespaces/pid/
+...
 
-There is an implementation used by several GNU utilities that is
-available as a piece of GPL code. It could be a potential blocker
-if that was the tree algorithm that fs-verity uses -- as discussed
-in the other thread.
+But grouping of all another namespaces by user ns sub-directories absolutely
+does not look sane for me.
+ 
+>>
+>>>>
+>>>>> * This is simplify collecting namespaces which belong to one container.
+>>>>>
+>>>>> For example, CRIU collects all namespaces before dumping file
+>>>>> descriptors. Then it collects all sockets with socket-diag in network
+>>>>> namespaces and collects mount points via /proc/pid/mountinfo in mount
+>>>>> namesapces. Then these information is used to dump socket file
+>>>>> descriptors and opened files.
+>>>>
+>>>> This is just the thing I say. This allows to avoid writing recursive dump.
+>>>
+>>> I don't understand this. How are you going to collect namespaces in CRIU
+>>> without knowing which are used by a dumped container?
+>>
+>> My patchset exports only the namespaces, which are allowed for a specific
+>> container, and no more above this. All exported namespaces are alive,
+>> so someone holds a reference on every of it. So they are used.
+>>
+>> It seems you haven't understood the way I suggested here. See patch [11/23]
+>> for the details. It's about permissions, and the subset of exported namespaces
+>> is formalized there.
+> 
+> Honestly, I have not read all patches in this series and you didn't
+> describe this behavior in the cover letter. Thank you for pointing out
+> to the 11 patch, but I still think it doesn't solve the problem
+> completely. More details is in the comment which is a few lines above
+> this one.
+> 
+>>
+>>>> But this has nothing about advantages of hierarchy in /proc/namespaces.
+> 
+> Yes, it has. For example, in cases when a container doesn't have its own
+> pid namespaces.
+> 
+>>>
+>>> Really? You said that you implemented this series to help CRIU dumping
+>>> namespaces. I think we need to implement the CRIU part to prove that
+>>> this interface is usable for this case. Right now, I have doubts about
+>>> this.
+>>
+>> Yes, really. See my comment above and patch [11/23].
+>>
+>>>>
+>>>>> * We are going to assign names to namespaces. But this means that we
+>>>>> need to guarantee that all names in one directory are unique. The
+>>>>> initial proposal was to enumerate all namespaces in one proc directory,
+>>>>> that means names of all namespaces have to be unique. This can be
+>>>>> problematic in some cases. For example, we may want to dump a container
+>>>>> and then restore it more than once on the same host. How are we going to
+>>>>> avoid namespace name conficts in such cases?
+>>>>
+>>>> Previous message I wrote about .rename of proc files, Alexey Dobriyan
+>>>> said this is not a taboo. Are there problem which doesn't cover the case
+>>>> you point?
+>>>
+>>> Yes, there is. Namespace names will be visible from a container, so they
+>>> have to be restored. But this means that two containers can't be
+>>> restored from the same snapshot due to namespace name conflicts.
+>>>
+>>> But if we will show namespaces how I suggest, each container will see
+>>> only its sub-tree of namespaces and we will be able to specify any name
+>>> for the container root user namespace.
+>>
+>> Now I'm sure you missed my idea. See proc_namespaces_readdir() in [11/23].
+>>
+>> I do export sub-tree.
+> 
+> I got your idea, but it is unclear how your are going to avoid name
+> conflicts.
+> 
+> In the root container, you will show all namespaces in the system. These
+> means that all namespaces have to have unique names. This means we will
+> not able to restore two containers from the same snapshot without
+> renaming namespaces. But we can't change namespace names, because they
+> are visible from containers and container processes can use them.
 
-Apparently there are some known weaknesses in older hash tree
-algorithms, including at least one CVE. We could choose a recent
-algorithm, but perhaps there needs to be a degree of extensibility
-in case that algorithm needs to be updated due to a subsequent
-security issue.
+Grouping by user ns sub-directories does not solve a problem with names
+of containers w/o own pid ns. See above.
 
-Tree construction could include a few items besides file content to
-help secure the hash further. For instance the file's size and mtime,
-as well as the depth of the tree, could be included in the signature.
-But that depends on whether it can be done while maintaining
-compatibility with fs-verity.
-
-I would feel better if someone with more domain expertise chimed in.
-
-
->> Thus it seems to me that we cannot begin to consider the tree-on-the-
->> server model unless there is a proposed storage mechanism for that
->> whole tree. Otherwise, the client must have the primary role in
->> unpacking and verifying the tree.
->=20
-> Well, as I said,  I don't think you need to store the tree.
-
-We basically agree there.
-
-
-> You certainly could decide to store the entire tree (as fs-verity =
-does) if
-> it fitted your use case, but it's not required.  Perhaps even in my
-> case I'd make the CAM based cache persistent, like android's dalvik
-> cache.
->=20
-> James
->=20
->=20
->> Storing only the tree root in the metadata means the metadata format
->> is nicely bounded in size.
-
---
-Chuck Lever
-chucklever@gmail.com
-
-
+>>
+>>>>
+>>>>> If we will have per-user-namespace directories, we will need to
+>>>>> guarantee that names are unique only inside one user namespace.
+>>>>
+>>>> Unique names inside one user namespace won't introduce a new /proc
+>>>> mount. You can't pass a sub-directory of /proc/namespaces/ to a specific
+>>>> container. To give a virtualized name you have to have a dedicated pid ns.
+>>>>
+>>>> Let we have in one /proc mount:
+>>>>
+>>>> /mnt1/proc/namespaces/userns1/.../[namespaceX_name1 -- inode XXX]
+>>>>
+>>>> In another another /proc mount we have:
+>>>>
+>>>> /mnt2/proc/namespaces/userns1/.../[namespaceX_name1_synonym -- inode XXX]
+>>>>
+>>>> The virtualization is made per /proc (i.e., per pid ns). Container should
+>>>> receive either /mnt1/proc or /mnt2/proc on restore as it's /proc.
+>>>>
+>>>> There is no a sense of directory hierarchy for virtualization, since
+>>>> you can't use specific sub-directory as a root directory of /proc/namespaces
+>>>> to a container. You still have to introduce a new pid ns to have virtualized
+>>>> /proc.
+>>>
+>>> I think we can figure out how to implement this. As the first idea, we
+>>> can use the same way how /proc/net is implemented.
+>>>
+>>>>
+>>>>> * With the suggested structure, for each user namepsace, we will show
+>>>>>   only its subtree of namespaces. This looks more natural than
+>>>>>   filltering content of one directory.
+>>>>
+>>>> It's rather subjectively I think. /proc is related to pid ns, and user ns
+>>>> hierarchy does not look more natural for me.
+>>>
+>>> or /proc is wrong place for this
 
