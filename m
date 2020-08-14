@@ -2,61 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87022244684
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 10:35:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB32D2446C6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 11:08:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbgHNIfv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Aug 2020 04:35:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39732 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726050AbgHNIfv (ORCPT
+        id S1726990AbgHNJIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Aug 2020 05:08:13 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:41751 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726012AbgHNJIN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Aug 2020 04:35:51 -0400
-Received: from mail-yb1-xb44.google.com (mail-yb1-xb44.google.com [IPv6:2607:f8b0:4864:20::b44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01681C061384
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Aug 2020 01:35:50 -0700 (PDT)
-Received: by mail-yb1-xb44.google.com with SMTP id x2so4778761ybf.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Aug 2020 01:35:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AdqxtBBzE8zkm3kxwd6M5EQuKDKvTyliTVOnv4Gy5lw=;
-        b=oqVy0fpsXt6mcaf8A0SC3B/hbz8tbu1sLp+p2pRxvv8AbXvXwBHIFsfkMCRqNri3GF
-         qJ5LaxL7IMvfVknso37KHelMIw8Dd2z7cxXhdshfuODzyH2Xseg89iJdaKUlQjvHq7Hq
-         lhVM/0EfF59L/acBDsdGpzOFVzg978mH+5YR0Xnus5a+hauEXlwXVyH0k/uzyUQXeOV+
-         GoD9sItD5ZTLV2cb+jVfv+1qVPtgrDmNyETiLEcVRayEQDHThAdY1wjwZE3Exe3WMAGf
-         B0CMyWrcmpON8PTov2dXTjRTU6wL6B8HVQWcoUhp+BuAHQUBWllyB0qzr6niC+D7+S2F
-         fxHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AdqxtBBzE8zkm3kxwd6M5EQuKDKvTyliTVOnv4Gy5lw=;
-        b=r8dgaYVreA2ShYgFSJDES0Muc/hcvWi8/BD+DyFDoNQe+E+427POae+NHgLHs/5yQ4
-         NGkdfDL1RhHslVlA7iSQV2IogGdQOXm5FHU5s34+prRbLa5RsocTJ/LxuaIp3Zx6SW2l
-         II3PVzvtbnpx7CuSDi7GRuggijtqcSrPJK8neOO8CrgDWadlHTlkTQiw07AbhzbV5U6f
-         mW+eLkGQ/zt9r0O0RNcWAn9QAxufkbYx+gnBOuO9OzdAwNgzSGOQctpZJGt0WhpE11y8
-         eY1+4a6m1wDZdmnJObTSsTIm9UWaTUgS99iUqdrg6F2BnlhDw/Uvgszixv1u47SozB69
-         b5Cg==
-X-Gm-Message-State: AOAM531ugYWFI07jlpqlv8kWwhGPPlk/sbyEz4JSSkrlNKWso4fyDm1X
-        4DhtQq6q1YDKUJS9q8emKvN0xDVGFcwILk4UhBllkQ==
-X-Google-Smtp-Source: ABdhPJy4hZxzSJG2zp9/9fyOvZB1bpfPoOKRLt/YSmrRg6wSBSlJmdqUtSRvhcYGxO1/TjNY1yNIgU0oMFRVQUhfajs=
-X-Received: by 2002:a25:7455:: with SMTP id p82mr2121422ybc.287.1597394149918;
- Fri, 14 Aug 2020 01:35:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <1597284810-17454-1-git-send-email-chinwen.chang@mediatek.com> <1597284810-17454-3-git-send-email-chinwen.chang@mediatek.com>
-In-Reply-To: <1597284810-17454-3-git-send-email-chinwen.chang@mediatek.com>
-From:   Michel Lespinasse <walken@google.com>
-Date:   Fri, 14 Aug 2020 01:35:37 -0700
-Message-ID: <CANN689FtCsC71cjAjs0GPspOhgo_HRj+diWsoU1wr98YPktgWg@mail.gmail.com>
+        Fri, 14 Aug 2020 05:08:13 -0400
+X-UUID: 78cb32c72773403db31525536ab039cb-20200814
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=Uz5ripoV/+pUZcgYYnjGHaVEtX3lTJMQY1UuM8dECro=;
+        b=Q8Iy3+0igqsaru66x1pWQmfZx9rUW7611iexjivvXFooJMbrTk3BQMjSjxdaCp9sa3iuGruzoE+EpKygf0EZKk57lUvp/J9bSEBrA44AGiy7SPlOqfYCQP5OH1UEVLmdCSfC1TwgIYU1JJd5uxRC0rASv4HquAIJrsuXkPUi5x8=;
+X-UUID: 78cb32c72773403db31525536ab039cb-20200814
+Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
+        (envelope-from <chinwen.chang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1062976827; Fri, 14 Aug 2020 17:08:03 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Fri, 14 Aug 2020 17:08:00 +0800
+Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Fri, 14 Aug 2020 17:08:00 +0800
+Message-ID: <1597396082.32469.58.camel@mtkswgap22>
 Subject: Re: [PATCH v2 2/2] mm: proc: smaps_rollup: do not stall write
  attempts on mmap_lock
-To:     Chinwen Chang <chinwen.chang@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+From:   Chinwen Chang <chinwen.chang@mediatek.com>
+To:     Michel Lespinasse <walken@google.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Vlastimil Babka <vbabka@suse.cz>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        "Daniel Jordan" <daniel.m.jordan@oracle.com>,
         Davidlohr Bueso <dbueso@suse.de>,
         Alexey Dobriyan <adobriyan@gmail.com>,
         "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -66,32 +45,46 @@ Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
         Jimmy Assarsson <jimmyassarsson@gmail.com>,
         Huang Ying <ying.huang@intel.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        wsd_upstream@mediatek.com
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-fsdevel@vger.kernel.org>, <wsd_upstream@mediatek.com>
+Date:   Fri, 14 Aug 2020 17:08:02 +0800
+In-Reply-To: <CANN689FtCsC71cjAjs0GPspOhgo_HRj+diWsoU1wr98YPktgWg@mail.gmail.com>
+References: <1597284810-17454-1-git-send-email-chinwen.chang@mediatek.com>
+         <1597284810-17454-3-git-send-email-chinwen.chang@mediatek.com>
+         <CANN689FtCsC71cjAjs0GPspOhgo_HRj+diWsoU1wr98YPktgWg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+MIME-Version: 1.0
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 12, 2020 at 7:13 PM Chinwen Chang
-<chinwen.chang@mediatek.com> wrote:
-> smaps_rollup will try to grab mmap_lock and go through the whole vma
-> list until it finishes the iterating. When encountering large processes,
-> the mmap_lock will be held for a longer time, which may block other
-> write requests like mmap and munmap from progressing smoothly.
->
-> There are upcoming mmap_lock optimizations like range-based locks, but
-> the lock applied to smaps_rollup would be the coarse type, which doesn't
-> avoid the occurrence of unpleasant contention.
->
-> To solve aforementioned issue, we add a check which detects whether
-> anyone wants to grab mmap_lock for write attempts.
+T24gRnJpLCAyMDIwLTA4LTE0IGF0IDAxOjM1IC0wNzAwLCBNaWNoZWwgTGVzcGluYXNzZSB3cm90
+ZToNCj4gT24gV2VkLCBBdWcgMTIsIDIwMjAgYXQgNzoxMyBQTSBDaGlud2VuIENoYW5nDQo+IDxj
+aGlud2VuLmNoYW5nQG1lZGlhdGVrLmNvbT4gd3JvdGU6DQo+ID4gc21hcHNfcm9sbHVwIHdpbGwg
+dHJ5IHRvIGdyYWIgbW1hcF9sb2NrIGFuZCBnbyB0aHJvdWdoIHRoZSB3aG9sZSB2bWENCj4gPiBs
+aXN0IHVudGlsIGl0IGZpbmlzaGVzIHRoZSBpdGVyYXRpbmcuIFdoZW4gZW5jb3VudGVyaW5nIGxh
+cmdlIHByb2Nlc3NlcywNCj4gPiB0aGUgbW1hcF9sb2NrIHdpbGwgYmUgaGVsZCBmb3IgYSBsb25n
+ZXIgdGltZSwgd2hpY2ggbWF5IGJsb2NrIG90aGVyDQo+ID4gd3JpdGUgcmVxdWVzdHMgbGlrZSBt
+bWFwIGFuZCBtdW5tYXAgZnJvbSBwcm9ncmVzc2luZyBzbW9vdGhseS4NCj4gPg0KPiA+IFRoZXJl
+IGFyZSB1cGNvbWluZyBtbWFwX2xvY2sgb3B0aW1pemF0aW9ucyBsaWtlIHJhbmdlLWJhc2VkIGxv
+Y2tzLCBidXQNCj4gPiB0aGUgbG9jayBhcHBsaWVkIHRvIHNtYXBzX3JvbGx1cCB3b3VsZCBiZSB0
+aGUgY29hcnNlIHR5cGUsIHdoaWNoIGRvZXNuJ3QNCj4gPiBhdm9pZCB0aGUgb2NjdXJyZW5jZSBv
+ZiB1bnBsZWFzYW50IGNvbnRlbnRpb24uDQo+ID4NCj4gPiBUbyBzb2x2ZSBhZm9yZW1lbnRpb25l
+ZCBpc3N1ZSwgd2UgYWRkIGEgY2hlY2sgd2hpY2ggZGV0ZWN0cyB3aGV0aGVyDQo+ID4gYW55b25l
+IHdhbnRzIHRvIGdyYWIgbW1hcF9sb2NrIGZvciB3cml0ZSBhdHRlbXB0cy4NCj4gDQo+IEkgdGhp
+bmsgeW91ciByZXRyeSBtZWNoYW5pc20gc3RpbGwgZG9lc24ndCBoYW5kbGUgYWxsIGNhc2VzLiBX
+aGVuIHlvdQ0KPiBnZXQgYmFjayB0aGUgbW1hcCBsb2NrLCB0aGUgYWRkcmVzcyB3aGVyZSB5b3Ug
+c3RvcHBlZCBsYXN0IHRpbWUgY291bGQNCj4gbm93IGJlIGluIHRoZSBtaWRkbGUgb2YgYSB2bWEu
+IEkgdGhpbmsgdGhlIGNvbnNpc3RlbnQgdGhpbmcgdG8gZG8gaW4NCj4gdGhhdCBjYXNlIHdvdWxk
+IGJlIHRvIHJldHJ5IHNjYW5uaW5nIGZyb20gdGhlIGFkZHJlc3MgeW91IHN0b3BwZWQgYXQsDQo+
+IGV2ZW4gaWYgaXQncyBub3Qgb24gYSB2bWEgYm91bmRhcnkgYW55bW9yZS4gWW91IG1heSBoYXZl
+IHRvIGNoYW5nZQ0KPiBzbWFwX2dhdGhlcl9zdGF0cyB0byBzdXBwb3J0IHRoYXQsIHRob3VnaC4N
+Cg0KSGkgTWljaGVsLA0KDQpJIHRoaW5rIEkgZ290IHlvdXIgcG9pbnQuIExldCBtZSB0cnkgdG8g
+cHJlcGFyZSBuZXcgcGF0Y2ggc2VyaWVzIGZvcg0KZnVydGhlciByZXZpZXdzLg0KDQpUaGFuayB5
+b3UgZm9yIHlvdXIgc3VnZ2VzdGlvbiA6KQ0KDQpDaGlud2VuDQo=
 
-I think your retry mechanism still doesn't handle all cases. When you
-get back the mmap lock, the address where you stopped last time could
-now be in the middle of a vma. I think the consistent thing to do in
-that case would be to retry scanning from the address you stopped at,
-even if it's not on a vma boundary anymore. You may have to change
-smap_gather_stats to support that, though.
