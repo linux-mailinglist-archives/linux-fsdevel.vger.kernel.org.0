@@ -2,89 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB32D2446C6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 11:08:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BCD6244956
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 14:04:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbgHNJIN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Aug 2020 05:08:13 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41751 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726012AbgHNJIN (ORCPT
+        id S1727908AbgHNMEc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Aug 2020 08:04:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43556 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726681AbgHNMEb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Aug 2020 05:08:13 -0400
-X-UUID: 78cb32c72773403db31525536ab039cb-20200814
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=Uz5ripoV/+pUZcgYYnjGHaVEtX3lTJMQY1UuM8dECro=;
-        b=Q8Iy3+0igqsaru66x1pWQmfZx9rUW7611iexjivvXFooJMbrTk3BQMjSjxdaCp9sa3iuGruzoE+EpKygf0EZKk57lUvp/J9bSEBrA44AGiy7SPlOqfYCQP5OH1UEVLmdCSfC1TwgIYU1JJd5uxRC0rASv4HquAIJrsuXkPUi5x8=;
-X-UUID: 78cb32c72773403db31525536ab039cb-20200814
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
-        (envelope-from <chinwen.chang@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1062976827; Fri, 14 Aug 2020 17:08:03 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 14 Aug 2020 17:08:00 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 14 Aug 2020 17:08:00 +0800
-Message-ID: <1597396082.32469.58.camel@mtkswgap22>
-Subject: Re: [PATCH v2 2/2] mm: proc: smaps_rollup: do not stall write
- attempts on mmap_lock
-From:   Chinwen Chang <chinwen.chang@mediatek.com>
-To:     Michel Lespinasse <walken@google.com>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Daniel Jordan" <daniel.m.jordan@oracle.com>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Steven Price <steven.price@arm.com>,
-        Song Liu <songliubraving@fb.com>,
-        Jimmy Assarsson <jimmyassarsson@gmail.com>,
-        Huang Ying <ying.huang@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-fsdevel@vger.kernel.org>, <wsd_upstream@mediatek.com>
-Date:   Fri, 14 Aug 2020 17:08:02 +0800
-In-Reply-To: <CANN689FtCsC71cjAjs0GPspOhgo_HRj+diWsoU1wr98YPktgWg@mail.gmail.com>
-References: <1597284810-17454-1-git-send-email-chinwen.chang@mediatek.com>
-         <1597284810-17454-3-git-send-email-chinwen.chang@mediatek.com>
-         <CANN689FtCsC71cjAjs0GPspOhgo_HRj+diWsoU1wr98YPktgWg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        Fri, 14 Aug 2020 08:04:31 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23294C061384;
+        Fri, 14 Aug 2020 05:04:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=zcIN3o7nFZcsDHO6slakDMVz6rP7Gh3OIOKHo+4Ripk=; b=o7pOkJqix8h4n8IfLn2Y+C4bnN
+        NAS93wz3etTRWKWCkhPZYrKM0H+6XReBTPxs5I4XvfRTP7YqjYOZOz/5feL4W/hwVbHSG+Nc3sQba
+        aBdx4NgUvbBWjQhL+bVVSLe21m6KKY3iPx7/UXWq2LqsDkLGKQHuQKIM/aVwmOPvuNqbk9ecxon/A
+        KHTdlymSifqJv36Rwv5TrG7pfDzsJd7y7e/ZwawtyOmoUr6+r7Yi2OQuZfk9Wg+6M/9cqQJ7S0x2Z
+        jK9oog66MXYCVHaRUkfEphDoX8dVWOshqKi0CMQQmaXY2P2yIeQ7o5bNyCqJoR2cap9BEYD7gLNsE
+        osXH/Fcg==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k6YRa-0000ck-NZ; Fri, 14 Aug 2020 12:04:22 +0000
+Date:   Fri, 14 Aug 2020 13:04:22 +0100
+From:   "hch@infradead.org" <hch@infradead.org>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     "hch@infradead.org" <hch@infradead.org>,
+        Kanchan Joshi <joshiiitr@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "bcrl@kvack.org" <bcrl@kvack.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        SelvaKumar S <selvakuma.s1@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>
+Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
+Message-ID: <20200814120422.GA1872@infradead.org>
+References: <CA+1E3rLM4G4SwzD6RWsK6Ssp7NmhiPedZDjrqN3kORQr9fxCtw@mail.gmail.com>
+ <MWHPR04MB375863C20C1EF2CB27E62703E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+ <20200731091416.GA29634@infradead.org>
+ <MWHPR04MB37586D39CA389296CE0252A4E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+ <20200731094135.GA4104@infradead.org>
+ <MWHPR04MB3758A4B2967DB1FABAAD9265E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
+ <20200731125110.GA11500@infradead.org>
+ <CY4PR04MB37517D633920E4D31AC6EA0DE74B0@CY4PR04MB3751.namprd04.prod.outlook.com>
+ <20200814081411.GA16943@infradead.org>
+ <CY4PR04MB3751DE1ECCA4099902AABAA6E7400@CY4PR04MB3751.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY4PR04MB3751DE1ECCA4099902AABAA6E7400@CY4PR04MB3751.namprd04.prod.outlook.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gRnJpLCAyMDIwLTA4LTE0IGF0IDAxOjM1IC0wNzAwLCBNaWNoZWwgTGVzcGluYXNzZSB3cm90
-ZToNCj4gT24gV2VkLCBBdWcgMTIsIDIwMjAgYXQgNzoxMyBQTSBDaGlud2VuIENoYW5nDQo+IDxj
-aGlud2VuLmNoYW5nQG1lZGlhdGVrLmNvbT4gd3JvdGU6DQo+ID4gc21hcHNfcm9sbHVwIHdpbGwg
-dHJ5IHRvIGdyYWIgbW1hcF9sb2NrIGFuZCBnbyB0aHJvdWdoIHRoZSB3aG9sZSB2bWENCj4gPiBs
-aXN0IHVudGlsIGl0IGZpbmlzaGVzIHRoZSBpdGVyYXRpbmcuIFdoZW4gZW5jb3VudGVyaW5nIGxh
-cmdlIHByb2Nlc3NlcywNCj4gPiB0aGUgbW1hcF9sb2NrIHdpbGwgYmUgaGVsZCBmb3IgYSBsb25n
-ZXIgdGltZSwgd2hpY2ggbWF5IGJsb2NrIG90aGVyDQo+ID4gd3JpdGUgcmVxdWVzdHMgbGlrZSBt
-bWFwIGFuZCBtdW5tYXAgZnJvbSBwcm9ncmVzc2luZyBzbW9vdGhseS4NCj4gPg0KPiA+IFRoZXJl
-IGFyZSB1cGNvbWluZyBtbWFwX2xvY2sgb3B0aW1pemF0aW9ucyBsaWtlIHJhbmdlLWJhc2VkIGxv
-Y2tzLCBidXQNCj4gPiB0aGUgbG9jayBhcHBsaWVkIHRvIHNtYXBzX3JvbGx1cCB3b3VsZCBiZSB0
-aGUgY29hcnNlIHR5cGUsIHdoaWNoIGRvZXNuJ3QNCj4gPiBhdm9pZCB0aGUgb2NjdXJyZW5jZSBv
-ZiB1bnBsZWFzYW50IGNvbnRlbnRpb24uDQo+ID4NCj4gPiBUbyBzb2x2ZSBhZm9yZW1lbnRpb25l
-ZCBpc3N1ZSwgd2UgYWRkIGEgY2hlY2sgd2hpY2ggZGV0ZWN0cyB3aGV0aGVyDQo+ID4gYW55b25l
-IHdhbnRzIHRvIGdyYWIgbW1hcF9sb2NrIGZvciB3cml0ZSBhdHRlbXB0cy4NCj4gDQo+IEkgdGhp
-bmsgeW91ciByZXRyeSBtZWNoYW5pc20gc3RpbGwgZG9lc24ndCBoYW5kbGUgYWxsIGNhc2VzLiBX
-aGVuIHlvdQ0KPiBnZXQgYmFjayB0aGUgbW1hcCBsb2NrLCB0aGUgYWRkcmVzcyB3aGVyZSB5b3Ug
-c3RvcHBlZCBsYXN0IHRpbWUgY291bGQNCj4gbm93IGJlIGluIHRoZSBtaWRkbGUgb2YgYSB2bWEu
-IEkgdGhpbmsgdGhlIGNvbnNpc3RlbnQgdGhpbmcgdG8gZG8gaW4NCj4gdGhhdCBjYXNlIHdvdWxk
-IGJlIHRvIHJldHJ5IHNjYW5uaW5nIGZyb20gdGhlIGFkZHJlc3MgeW91IHN0b3BwZWQgYXQsDQo+
-IGV2ZW4gaWYgaXQncyBub3Qgb24gYSB2bWEgYm91bmRhcnkgYW55bW9yZS4gWW91IG1heSBoYXZl
-IHRvIGNoYW5nZQ0KPiBzbWFwX2dhdGhlcl9zdGF0cyB0byBzdXBwb3J0IHRoYXQsIHRob3VnaC4N
-Cg0KSGkgTWljaGVsLA0KDQpJIHRoaW5rIEkgZ290IHlvdXIgcG9pbnQuIExldCBtZSB0cnkgdG8g
-cHJlcGFyZSBuZXcgcGF0Y2ggc2VyaWVzIGZvcg0KZnVydGhlciByZXZpZXdzLg0KDQpUaGFuayB5
-b3UgZm9yIHlvdXIgc3VnZ2VzdGlvbiA6KQ0KDQpDaGlud2VuDQo=
+On Fri, Aug 14, 2020 at 08:27:13AM +0000, Damien Le Moal wrote:
+> > 
+> > O_APPEND pretty much implies out of order, as there is no way for an
+> > application to know which thread wins the race to write the next chunk.
+> 
+> Yes and no. If the application threads do not synchronize their calls to
+> io_submit(), then yes indeed, things can get out of order. But if the
+> application threads are synchronized, then the offset set for each append AIO
+> will be in sequence of submission, so the user will not see its writes
+> completing at different write offsets than this implied offsets.
 
+Nothing gurantees any kind of ordering for two separate io_submit calls.
+The kernel may delay one of them for any reason.
+
+Now if you are doing two fully synchronous write calls on an
+O_APPEND fd, yes they are serialized.  But using Zone Append won't
+change that.
