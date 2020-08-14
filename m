@@ -2,92 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A559244C48
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 17:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D54B244C90
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 18:21:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727886AbgHNPov (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Aug 2020 11:44:51 -0400
-Received: from sonic302-27.consmr.mail.ne1.yahoo.com ([66.163.186.153]:43562
-        "EHLO sonic302-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726360AbgHNPou (ORCPT
+        id S1728348AbgHNQVp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Aug 2020 12:21:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55024 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728327AbgHNQVj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Aug 2020 11:44:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1597419889; bh=ljMTuwKrqWkkWYdOmTtthmbN/XW+/rs+OF/GwBjGrBw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=ErpnedFsPZRbMGEsJw200Lp0vuzgd1/boPU1Rv+jwRb2wxSEC8ikJ5OThfSO10tR/S32c9QJbLg4y940/5xeUebxB474e6BA42w0CYFVFbLTqZ3B+N26Hn7JF3eBjpz5TQXH9q3ySFFQ+syK+1k6kv2VJ4ziJ9UnI8xT1SdkJ0GTMj2MZyLNZFjwxhyEuHF2aajeKHL3q11/W5fyaJcQSbKnABo+2Kekb8C2Ir1ADdSby+T5LBzfT32HezLFRgQl68O+2NvzAZIT6e9FLBmKDXyh8JCjMMEMARgAyOxs80LnGBWRELnEzpWhIzUIuccCbWeIBCRtJ2VYJkhtHlZ2qw==
-X-YMail-OSG: xA0MxCcVM1mRxT2g.XuvwZrozYnabCC57fe3kjrBynO.K9BFv8zAVnlX198W4lz
- b5dlK6ZZ4KxOsAiybM3VX99A9Mpx1iiYPo7np8mM2H0aVY9Va7yXc7jT.xQXaEGqLSKZLYCO504I
- ssslaRLAUp5p6S4kUiLCTr5tIXt.L54.U29jMFQitytVqJXLwD45IahJUclkbkxaik.EuM_2.TPG
- YeK5Wmbz_gnwXOEVICOOnNrTWc0zTNlul3KgU4eyCw6wOVV4Q4OLe_S1c.Y3.4Qe6fIs0ghW2fSq
- A6CWeNU7r_RneNHXohSqJjJAx1LURp_WwR0h8c_qMXZN1vLUE8F5q4ukH8Egx3zeSCkwB08UXPoc
- qVxYBXV0tqq8hd6PPC.v5wGBd4N3yMzvzl6PMC0dQBLSpK_qHhakUQHIiKqBx1_2gsG7uDAjHAQT
- kMf3aOmFngHxXZbSefrXV0SSufDbOSf3XorkhuNFA7X9kA_3UaWdNm3rTlYJPC082Pi8WxxBzo5W
- c0AdUFJknDuFw_jiSkYaOLTFYToEsxaHaN.Q_etSVkK3aZuCIUZKjR0_DBQSg_r3bNdE1CYyHQHd
- kjILf4AQOn.vgQt8W7E8MTqOFENOOokSGL3ZMwipzKdb9iZs1z6veXgdSRMPpMuPx5lGJGX1po10
- ndr6siUCWb7rRaSA8QRoMRCIY.qXCVUMYR7FZIvfVu1tpDsgPdYKnwiNxBFJUpMfBg6SS6OUIWfh
- WKP6dktrhdF_FVW8lpc.uJVhUj4qCf49.ZaOszSrfbiZbNbbhcVP7Hbyn1K.dWdLYNcCMEF1w3ZI
- a8r4rQa3yuaKZHjaGz3_vv_TkLyzIAfKHi61RqPGWgxr4Qsr7OofeGrYYs5Jxby1rsxPMS2xcQAd
- RhAt.HVSKi1Ku94UpEvtY5e32gF0pm1oa.n117gCw9nI1v.JjllcZeiuKIKCsx1uUV3qnsE0HaHJ
- A4lybxdlQvKUGBqGXcPpixrijMsmWinDdOw9X1PNlHlEVFG5da_yHczwROJ6an41zcZWzZR4xIyA
- BhE0GN8nXel0UAnfUKuYb1uHFRBVMs2_Dalqcp0oCGMSbHfws6W8bLqznTiNVXZEouSflFA1aszt
- pl9nnGFzYNC4bIuknXbnYnqIfrBmDjSoqiXHHebfOlzXBMDxmWfFEzkypB.9PqDHCZgnanhzbh82
- ifxsFRHcZS13.UYYS35gHbE1_rArMFsztvgGRPkYfo2Xltpqna_IKb8MQnRY_EhuVGqpC.eiywQ8
- b8pShJvR_6QiDKde6JEQMAyTOxvDd51177u1aTrcgp5q8rdRlLPmHigl_Bd80DK.FB3iauBcrXb.
- mNnHbdnqeeQmARNc2RLO4gzTv58J7O3orz5TjGy54eplMTb5O_WcDqC7deKaCq5Fkz0CEJrrBQzC
- nFSvRJff5.Do4rm.8LLUdqRdzhEyUf3p6XE6n16DUZBTnai2HpgH_H_SbPjvlq.IcIYyIpi6vJP9
- v9EuJcTv_KJ9g
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Fri, 14 Aug 2020 15:44:49 +0000
-Received: by smtp418.mail.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 6f53f5395e5d6d626ec2c1ba3b2dcae2;
-          Fri, 14 Aug 2020 15:44:49 +0000 (UTC)
-Subject: Re: [RESEND] [PATCHv4 1/2] uapi: fuse: Add FUSE_SECURITY_CTX
-To:     Chirantan Ekbote <chirantan@chromium.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Dylan Reid <dgreid@chromium.org>,
-        Suleiman Souhlal <suleiman@chromium.org>,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        SElinux list <selinux@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20200722090758.3221812-1-chirantan@chromium.org>
- <CAJFHJrr+B=xszNvdkmksG5ULPy_nKpn4_MS9_Pnq6ySkkb5y6g@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <1dfa1ae5-bb5a-67ea-f38a-b9d9a545dd0a@schaufler-ca.com>
-Date:   Fri, 14 Aug 2020 08:44:47 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Fri, 14 Aug 2020 12:21:39 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72A86C061361
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Aug 2020 09:21:34 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id j9so8889286ilc.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Aug 2020 09:21:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=lqyz283T/dIOw03L8mirawXjATrSpRlBUoTDYx+lgsQ=;
+        b=gyY5H/5vJAZIF41HdVXvfm/nb+tVf8WsemPL6xpr4ShXUpbfajq6tMU9YWLyvrpnRj
+         mf98uk05Hgg/bRuc24FznoqmWRsG6eHfczQTa6sDKMHCHfaE3mesb14ByT+bcfUVxQkZ
+         PH9t47wUpeacfw90j525MxzR8qMx3H09sN4i35byNKdi87AbL6Mh9AKsLKpymfXKAk9P
+         bbH2RIRm5qva1vGSO7uCPlU+XyaTe0YWEPSxO3fdWICWq9vQ4Hg5doJv7hKlH9E2wyVw
+         xCA1fjm1FqJwD0XNVJAThNQEGLaQLVpK8xYdpvXMtoQHkLaITNKC0SFcZR/Zty6SEBUt
+         2Baw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=lqyz283T/dIOw03L8mirawXjATrSpRlBUoTDYx+lgsQ=;
+        b=paTZ8nUWJYgnJBTJrd5wAhQcojEQJ2+chUocySDytPnv3yQaargCjK+io4/CxMi9WC
+         IibVNWURLQJRR4wkgaSTTC0xpA/Wman8ZOm1USQqF90AJDC5IArI3Cv6fTDM4Ac8jQwx
+         KB6JMQ1kEzvZoiqDIhYmEEqBw6IiZEX2qk6pNTOBdLAqOKEpTPv//56W3eDTDnlDG3sn
+         PMg6OgQOKZed8mttD5wqWrGNxuLeYbdp5XWCm+lg+llu+duU+HUxc5HMTqIiIRK0svOb
+         +KgsjIDUEEyLEqODu98vzij7ktU8/u2FUOcf99jJlJLEDm94O/QMcTuLBy2NLgVkZtfI
+         L4yA==
+X-Gm-Message-State: AOAM530UR3alU/5aUosAoAE3htZdL+BKI5c5pRO3mD6/pi5Sm6RgwsWT
+        eQMpdITUuFq07cx/UucBhma/416hyLDddwKgGMI=
+X-Google-Smtp-Source: ABdhPJyk234eBtmEaejOVdTmn3CdA+BnV6fbwYtIpel30We2B16rINXHcKwP3MSLkRIrDtLMeI39VAvzuj1Vrm7gK4g=
+X-Received: by 2002:a92:354b:: with SMTP id c72mr3008546ila.307.1597422088377;
+ Fri, 14 Aug 2020 09:21:28 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAJFHJrr+B=xszNvdkmksG5ULPy_nKpn4_MS9_Pnq6ySkkb5y6g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.16455 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
+Received: by 2002:a05:6602:20d4:0:0:0:0 with HTTP; Fri, 14 Aug 2020 09:21:27
+ -0700 (PDT)
+Reply-To: info.usbanking1@gmail.com
+From:   "MR.ANDY CECERE" <mr.davidelli@gmail.com>
+Date:   Fri, 14 Aug 2020 09:21:27 -0700
+Message-ID: <CAB5Lhp2O_eEpjmbLAm5Y=W6VEnuSDN-SK5Pz3QGLCH6UJ3egkQ@mail.gmail.com>
+Subject: REF:- INSTRUCTION TO CREDIT YOUR ACCOUNT WITH THE SUM OF (US$5Million)
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/13/2020 10:20 PM, Chirantan Ekbote wrote:
-> On Wed, Jul 22, 2020 at 6:09 PM Chirantan Ekbote <chirantan@chromium.org> wrote:
->> Add the FUSE_SECURITY_CTX flag for the `flags` field of the
->> fuse_init_out struct.  When this flag is set the kernel will append the
->> security context for a newly created inode to the request (create,
->> mkdir, mknod, and symlink).  The server is responsible for ensuring that
->> the inode appears atomically with the requested security context.
->>
->> For example, if the server is backed by a "real" linux file system then
->> it can write the security context value to
->> /proc/thread-self/attr/fscreate before making the syscall to create the
->> inode.
->>
-> Friendly ping. Will this (and the next patch in the series) be merged into 5.9?
+-- 
+Us Bank.1025 Connecticut Ave.
+NW, Ste. 510. Washington, DC 20036.
+Tell: (213) 537-2170
+E-mail: info.usbanking1@gmail.com
 
-This really needed to go to the LSM List <linux-security-module@vger.kernel.org>.
+REF:- INSTRUCTION TO CREDIT YOUR ACCOUNT WITH THE SUM OF (US$5Million)
 
+This is the second time we are notifying you about this said fund. After
+due vetting and evaluation of your file that was sent to us by the Nigerian
+Government in conjunction with the Ministry of Finance and Central Bank of
+the Federal Republic of Nigeria.
 
->
-> Chirantan
->
->
-> Chirantan
+This bank has an instruction to see to the immediate release of the sum of
+(US $5Million) of your claim that has been holding since is transferred
+into your bank Account from their Domiciliary Account with this bank.
+
+We were meant to understand from our findings that you have been going
+through hard ways by paying a lot of charges to see to the release of your
+fund (US$5Million), which has been the handwork of some miscreant elements
+from that Country.
+
+We advice that you stop further communication with any correspondence from
+any bank , or anywhere concerning your funds as you will receive your fund
+from this bank if you follow our instruction.
+
+We know your representatives in Nigeria or anywhere will advice you to
+still go ahead with them, which will be on your own risk. Your
+(US$5Million) will reflect in your designated bank account within five Bank
+working days.
+
+Do not go through anybody again but through this Bank if you really want
+your fund. Finally, you are advice to re-confirm these to us,
+
+Your Full Name,
+Contact address,
+Occupation
+Telephone and Fax Number for easy communication.
+
+We need your second email gmail or hotmail for security and private reasons.
+
+Yours sincerely,
+MR.ANDY CECERE,
+Tel:.(213) 537-2170
+Assistance Secretary,
+U.S Bank.
+Email address ( info.usbanking1@gmail.com )
