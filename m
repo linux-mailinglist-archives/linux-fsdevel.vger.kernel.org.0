@@ -2,77 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EB912444A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 07:49:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4145E2444C3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 08:02:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbgHNFtK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Aug 2020 01:49:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42512 "EHLO
+        id S1726555AbgHNGCJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Aug 2020 02:02:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726006AbgHNFtJ (ORCPT
+        with ESMTP id S1726278AbgHNGCI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Aug 2020 01:49:09 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68090C061757
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 22:49:09 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id k20so6912309wmi.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Aug 2020 22:49:09 -0700 (PDT)
+        Fri, 14 Aug 2020 02:02:08 -0400
+Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD48BC061757;
+        Thu, 13 Aug 2020 23:02:07 -0700 (PDT)
+Received: by mail-qv1-xf44.google.com with SMTP id cs12so3840754qvb.2;
+        Thu, 13 Aug 2020 23:02:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tfz-net.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fBBZ1VE6Pl61w02scuLSTrYPkXkkmltKzTwwdi9Dq0s=;
-        b=cvBvSNsGQMXqH9DBta9cyj9+60K2gEDrczZHyxiE8AJxJRKljzClHw97cLtJ2F07aW
-         jswI2vSz37+TmOVWQFyqYFrCFMNaRh3Vc9wE0fxjHcNjto+yZaFcbEpQy+MKkzLBufLu
-         AkOHko/GEmRONQjkTQ4mZ3G3AEI8SX6yV3rPr0ZVIm9J7fGisb+kbHJWf1x86bnHsKr3
-         3/MtNrjD7waRFt6sUM0f/2BIoXNbufacioD1ZVbHY+ZusXgJM9PNp7iQ+he+amu3U9Xc
-         qNVrG52Qft+BPLUAmqlG1i4TeCsna6iyk2EtqF8zJzrr3VwjEOPtrt3fRwCXRly++M7Y
-         TgRg==
+        bh=DDwq2jLH7Z/8I2tVmA1pXnX4UVfXpdExIQSA7o0Az28=;
+        b=nw4z1jgEC+ZzG2yfevMqbWbUdDugX9izk6zIU0VDMcgUVAXdqS5teoigKYCmqW+7/d
+         tj32jRdBP6c/Q6Au1/lwwcRnf4yJDlQUO666o6eWrro6nCs60+ZGeIhDzVH1wrCWR8GY
+         67AzBv4Nh2mWzufDLgfth/bsonmWu7Q/6cBqYVZKXrxk7qLZge/jHOlS/fHXw1m1ywB/
+         lpRwpEHnapN4ER9EcGjjOmy8zXsUT7u+3RaF9zaiTr8/ImrVdDva36GMfD24KesnShI2
+         VueENmhq1TBP/LEmD7CBxotEZ8mmkXTEZ9L+4yYBLtjAZaVv8dmmD3KwhTea1Bt/54+f
+         qj6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fBBZ1VE6Pl61w02scuLSTrYPkXkkmltKzTwwdi9Dq0s=;
-        b=Lvp9hI9lLqoNAjpau1uQZLb2Ft7Rm/UL5+dSh9LDgI14if4cfhYrCnnIPMTtTUG2ym
-         63NYHK0nzTnOgKTcb0FBKi0D8Ue5ehq1Beg8FOB7/sTQR8hm16yNyJGOdOSAjmoIeQir
-         I3CI/rXqnX9BnDmdUd2z7GBZlI3O3KJbkubFx1iVhCpzDxtp1dzJ6/CjeVU1BX9tNCcb
-         dyVZQw0//tA66IgnEUPGHNRWT82opD91Jrxm34HspXlRpEALt3UGIAQgbhkgmu+bvErt
-         Cveus9nOjPgnMMKJk8/zGaviqFEgaX9qCJIE+4KnSNpQS0JlzY0WvqN5/htiyoH7lAxu
-         Aekw==
-X-Gm-Message-State: AOAM533lY5/UNxXnMDbSsFxQ390a6pH/8ksZEaSQI+QoJPPKoGvbcORN
-        lc/jhm+I5F6ki+mAPpgZKDRuq6TlNjDIvOGbFncJqg==
-X-Google-Smtp-Source: ABdhPJzmBEbq57a5AKVMkRh0f1Dj6D+omdtilofEgPXHIXGj3ylfJN8FqdFPh71kSsTOYaOAgWrNM0Gf9GAGwnRCIOI=
-X-Received: by 2002:a1c:bd56:: with SMTP id n83mr916007wmf.64.1597384145882;
- Thu, 13 Aug 2020 22:49:05 -0700 (PDT)
+        bh=DDwq2jLH7Z/8I2tVmA1pXnX4UVfXpdExIQSA7o0Az28=;
+        b=C26CNepb7+dDF/GnEAcLG74ucgF3IJFzXRjfzOCbOu3LLK+J58W5/YOA8PAuthX0lC
+         +MS3UQMQiMiqaZXQYnfXH1ll+2M2HQ4dyIDibIIs7yntBbh6393zai4c7wrFQ7kIcZV6
+         CaeeXdWva6g9+VltkG+UnqIzXBKuVI2jkzdEd/uKdF+qln27Na4cw0NnCy7AQ8VFjLch
+         OosBRtu8XT3px53mla+8d5WMPyDiVR2r16M87GXxPMfDjRgJ1gkoxBcFbbB0EAVodW34
+         TlAhShI0ELu2aPS10a/DcM+j0eWu1qfIu3pRZzlVyNZF4fMH3cwmVrsdhenwNI0iOlIC
+         2oIw==
+X-Gm-Message-State: AOAM532hwdm8NT8wV2SavOUpkVPCLQkYL0XeqQLGlCic4P6gFkMBpN9f
+        MLDMbWbGh4UM49e0HplASWy8Ef9UE4TzGCakaj/Gx49CYuQ=
+X-Google-Smtp-Source: ABdhPJxad+N2kXs2XjZ/LDHd6mg9yVzq7AQ8BoLlcxJpRIIythu0do6WVVNT+TE+1u4HkGlYPa1U8nC0vsq1yizeOQk=
+X-Received: by 2002:a05:6214:3e8:: with SMTP id cf8mr1331214qvb.74.1597384927120;
+ Thu, 13 Aug 2020 23:02:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200814035453.210716-1-kalou@tfz.net> <20200814035453.210716-3-kalou@tfz.net>
- <20200814052801.GA10141@infradead.org>
-In-Reply-To: <20200814052801.GA10141@infradead.org>
-From:   Pascal Bouchareine <kalou@tfz.net>
-Date:   Thu, 13 Aug 2020 22:48:55 -0700
-Message-ID: <CAGbU3_kOhXEx2s19P==F2-CyHFGbX_qKVWhPi+kPe3tmsY=HfA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] fcntl: introduce F_SET_DESCRIPTION
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        "J. Bruce Fields" <bfields@fieldses.org>
+References: <20200729151740.GA3430@haolee.github.io>
+In-Reply-To: <20200729151740.GA3430@haolee.github.io>
+From:   Hao Lee <haolee.swjtu@gmail.com>
+Date:   Fri, 14 Aug 2020 14:01:50 +0800
+Message-ID: <CA+PpKP=cz4n2zzv4NrJ_Yg=PHqpfCHYnAhgUD2BLTUJmQSrizg@mail.gmail.com>
+Subject: Re: [PATCH] fs: Eliminate a local variable to make the code more clear
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 13, 2020 at 10:28 PM Christoph Hellwig <hch@infradead.org> wrote:
-> > One intended usage is to allow processes to self-document sockets
-> > for netstat and friends to report
->
-> NAK.  There is no way we're going to bloat a criticial structure like
-> struct file for some vanity information like this.
+Ping
 
-The useful case is for sockets - Is there a more suited place to do that?
-Do you think adding a setsockopt and sk_description to struct sock
-would work, or would be considered the same?
+On Wed, Jul 29, 2020 at 11:21 PM Hao Lee <haolee.swjtu@gmail.com> wrote:
+>
+> The dentry local variable is introduced in 'commit 84d17192d2afd ("get
+> rid of full-hash scan on detaching vfsmounts")' to reduce the length of
+> some long statements for example
+> mutex_lock(&path->dentry->d_inode->i_mutex). We have already used
+> inode_lock(dentry->d_inode) to do the same thing now, and its length is
+> acceptable. Furthermore, it seems not concise that assign path->dentry
+> to local variable dentry in the statement before goto. So, this function
+> would be more clear if we eliminate the local variable dentry.
+>
+> The function logic is not changed.
+>
+> Signed-off-by: Hao Lee <haolee.swjtu@gmail.com>
+> ---
+>  fs/namespace.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 4a0f600a3328..fcb93586fcc9 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -2187,20 +2187,19 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+>  static struct mountpoint *lock_mount(struct path *path)
+>  {
+>         struct vfsmount *mnt;
+> -       struct dentry *dentry = path->dentry;
+>  retry:
+> -       inode_lock(dentry->d_inode);
+> -       if (unlikely(cant_mount(dentry))) {
+> -               inode_unlock(dentry->d_inode);
+> +       inode_lock(path->dentry->d_inode);
+> +       if (unlikely(cant_mount(path->dentry))) {
+> +               inode_unlock(path->dentry->d_inode);
+>                 return ERR_PTR(-ENOENT);
+>         }
+>         namespace_lock();
+>         mnt = lookup_mnt(path);
+>         if (likely(!mnt)) {
+> -               struct mountpoint *mp = get_mountpoint(dentry);
+> +               struct mountpoint *mp = get_mountpoint(path->dentry);
+>                 if (IS_ERR(mp)) {
+>                         namespace_unlock();
+> -                       inode_unlock(dentry->d_inode);
+> +                       inode_unlock(path->dentry->d_inode);
+>                         return mp;
+>                 }
+>                 return mp;
+> @@ -2209,7 +2208,7 @@ static struct mountpoint *lock_mount(struct path *path)
+>         inode_unlock(path->dentry->d_inode);
+>         path_put(path);
+>         path->mnt = mnt;
+> -       dentry = path->dentry = dget(mnt->mnt_root);
+> +       path->dentry = dget(mnt->mnt_root);
+>         goto retry;
+>  }
+>
+> --
+> 2.24.1
+>
