@@ -2,142 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A307A244C29
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 17:30:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A559244C48
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Aug 2020 17:44:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726782AbgHNPaX convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Aug 2020 11:30:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57234 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbgHNPaU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Aug 2020 11:30:20 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 6A58EAE2C;
-        Fri, 14 Aug 2020 15:30:41 +0000 (UTC)
-From:   =?utf-8?Q?Aur=C3=A9lien?= Aptel <aaptel@suse.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] fs: NTFS read-write driver GPL implementation by
- Paragon Software.
-In-Reply-To: <2911ac5cd20b46e397be506268718d74@paragon-software.com>
-References: <2911ac5cd20b46e397be506268718d74@paragon-software.com>
-Date:   Fri, 14 Aug 2020 17:30:16 +0200
-Message-ID: <87h7t5454n.fsf@suse.com>
+        id S1727886AbgHNPov (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Aug 2020 11:44:51 -0400
+Received: from sonic302-27.consmr.mail.ne1.yahoo.com ([66.163.186.153]:43562
+        "EHLO sonic302-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726360AbgHNPou (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 14 Aug 2020 11:44:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1597419889; bh=ljMTuwKrqWkkWYdOmTtthmbN/XW+/rs+OF/GwBjGrBw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=ErpnedFsPZRbMGEsJw200Lp0vuzgd1/boPU1Rv+jwRb2wxSEC8ikJ5OThfSO10tR/S32c9QJbLg4y940/5xeUebxB474e6BA42w0CYFVFbLTqZ3B+N26Hn7JF3eBjpz5TQXH9q3ySFFQ+syK+1k6kv2VJ4ziJ9UnI8xT1SdkJ0GTMj2MZyLNZFjwxhyEuHF2aajeKHL3q11/W5fyaJcQSbKnABo+2Kekb8C2Ir1ADdSby+T5LBzfT32HezLFRgQl68O+2NvzAZIT6e9FLBmKDXyh8JCjMMEMARgAyOxs80LnGBWRELnEzpWhIzUIuccCbWeIBCRtJ2VYJkhtHlZ2qw==
+X-YMail-OSG: xA0MxCcVM1mRxT2g.XuvwZrozYnabCC57fe3kjrBynO.K9BFv8zAVnlX198W4lz
+ b5dlK6ZZ4KxOsAiybM3VX99A9Mpx1iiYPo7np8mM2H0aVY9Va7yXc7jT.xQXaEGqLSKZLYCO504I
+ ssslaRLAUp5p6S4kUiLCTr5tIXt.L54.U29jMFQitytVqJXLwD45IahJUclkbkxaik.EuM_2.TPG
+ YeK5Wmbz_gnwXOEVICOOnNrTWc0zTNlul3KgU4eyCw6wOVV4Q4OLe_S1c.Y3.4Qe6fIs0ghW2fSq
+ A6CWeNU7r_RneNHXohSqJjJAx1LURp_WwR0h8c_qMXZN1vLUE8F5q4ukH8Egx3zeSCkwB08UXPoc
+ qVxYBXV0tqq8hd6PPC.v5wGBd4N3yMzvzl6PMC0dQBLSpK_qHhakUQHIiKqBx1_2gsG7uDAjHAQT
+ kMf3aOmFngHxXZbSefrXV0SSufDbOSf3XorkhuNFA7X9kA_3UaWdNm3rTlYJPC082Pi8WxxBzo5W
+ c0AdUFJknDuFw_jiSkYaOLTFYToEsxaHaN.Q_etSVkK3aZuCIUZKjR0_DBQSg_r3bNdE1CYyHQHd
+ kjILf4AQOn.vgQt8W7E8MTqOFENOOokSGL3ZMwipzKdb9iZs1z6veXgdSRMPpMuPx5lGJGX1po10
+ ndr6siUCWb7rRaSA8QRoMRCIY.qXCVUMYR7FZIvfVu1tpDsgPdYKnwiNxBFJUpMfBg6SS6OUIWfh
+ WKP6dktrhdF_FVW8lpc.uJVhUj4qCf49.ZaOszSrfbiZbNbbhcVP7Hbyn1K.dWdLYNcCMEF1w3ZI
+ a8r4rQa3yuaKZHjaGz3_vv_TkLyzIAfKHi61RqPGWgxr4Qsr7OofeGrYYs5Jxby1rsxPMS2xcQAd
+ RhAt.HVSKi1Ku94UpEvtY5e32gF0pm1oa.n117gCw9nI1v.JjllcZeiuKIKCsx1uUV3qnsE0HaHJ
+ A4lybxdlQvKUGBqGXcPpixrijMsmWinDdOw9X1PNlHlEVFG5da_yHczwROJ6an41zcZWzZR4xIyA
+ BhE0GN8nXel0UAnfUKuYb1uHFRBVMs2_Dalqcp0oCGMSbHfws6W8bLqznTiNVXZEouSflFA1aszt
+ pl9nnGFzYNC4bIuknXbnYnqIfrBmDjSoqiXHHebfOlzXBMDxmWfFEzkypB.9PqDHCZgnanhzbh82
+ ifxsFRHcZS13.UYYS35gHbE1_rArMFsztvgGRPkYfo2Xltpqna_IKb8MQnRY_EhuVGqpC.eiywQ8
+ b8pShJvR_6QiDKde6JEQMAyTOxvDd51177u1aTrcgp5q8rdRlLPmHigl_Bd80DK.FB3iauBcrXb.
+ mNnHbdnqeeQmARNc2RLO4gzTv58J7O3orz5TjGy54eplMTb5O_WcDqC7deKaCq5Fkz0CEJrrBQzC
+ nFSvRJff5.Do4rm.8LLUdqRdzhEyUf3p6XE6n16DUZBTnai2HpgH_H_SbPjvlq.IcIYyIpi6vJP9
+ v9EuJcTv_KJ9g
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Fri, 14 Aug 2020 15:44:49 +0000
+Received: by smtp418.mail.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 6f53f5395e5d6d626ec2c1ba3b2dcae2;
+          Fri, 14 Aug 2020 15:44:49 +0000 (UTC)
+Subject: Re: [RESEND] [PATCHv4 1/2] uapi: fuse: Add FUSE_SECURITY_CTX
+To:     Chirantan Ekbote <chirantan@chromium.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Dylan Reid <dgreid@chromium.org>,
+        Suleiman Souhlal <suleiman@chromium.org>,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        SElinux list <selinux@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20200722090758.3221812-1-chirantan@chromium.org>
+ <CAJFHJrr+B=xszNvdkmksG5ULPy_nKpn4_MS9_Pnq6ySkkb5y6g@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <1dfa1ae5-bb5a-67ea-f38a-b9d9a545dd0a@schaufler-ca.com>
+Date:   Fri, 14 Aug 2020 08:44:47 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
+In-Reply-To: <CAJFHJrr+B=xszNvdkmksG5ULPy_nKpn4_MS9_Pnq6ySkkb5y6g@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.16455 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I've tried this using libntfs-3g mkfs.ntfs
+On 8/13/2020 10:20 PM, Chirantan Ekbote wrote:
+> On Wed, Jul 22, 2020 at 6:09 PM Chirantan Ekbote <chirantan@chromium.org> wrote:
+>> Add the FUSE_SECURITY_CTX flag for the `flags` field of the
+>> fuse_init_out struct.  When this flag is set the kernel will append the
+>> security context for a newly created inode to the request (create,
+>> mkdir, mknod, and symlink).  The server is responsible for ensuring that
+>> the inode appears atomically with the requested security context.
+>>
+>> For example, if the server is backed by a "real" linux file system then
+>> it can write the security context value to
+>> /proc/thread-self/attr/fscreate before making the syscall to create the
+>> inode.
+>>
+> Friendly ping. Will this (and the next patch in the series) be merged into 5.9?
 
-# mkfs.ntfs /dev/vb1
-# mount -t ntfs3 /dev/vb1 /mnt
-
-This already triggered UBSAN:
-
- ================================================================================
- UBSAN: object-size-mismatch in fs/ntfs3/super.c:834:16
- load of address 000000006ae096b5 with insufficient space
- for an object of type 'const char'
- CPU: 3 PID: 1248 Comm: mount Not tainted 5.8.0+ #4
- Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-gf21b5a4-rebuilt.opensuse.org 04/01/2014
- Call Trace:
-  dump_stack+0x78/0xa0
-  ubsan_epilogue+0x5/0x40
-  ubsan_type_mismatch_common.cold+0xc8/0xcd
-  __ubsan_handle_type_mismatch_v1+0x32/0x37
-  ntfs_fill_super+0x9f/0x13e0
-  ? vsnprintf+0x1ef/0x4f0
-  mount_bdev+0x193/0x1c0
-
-Which points to:
-
-	sb->s_magic = *(unsigned long *)s_magic; /* TODO */
-
-Maybe store ('n'<<32)|('t'<<24)|('f'<<16)|('s'<<8) ?
-Seems harmless.
-
-* * *
-
-Then I've tried to copy /etc into it:
-
-# cp -rp /etc /mnt
-
-But this triggered a NULL ptr deref:
-
- BUG: kernel NULL pointer dereference, address: 0000000000000028
- #PF: supervisor read access in kernel mode
- #PF: error_code(0x0000) - not-present page
- PGD 0 P4D 0 
- Oops: 0000 [#1] SMP NOPTI
- CPU: 0 PID: 1255 Comm: cp Not tainted 5.8.0+ #4
- Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-gf21b5a4-rebuilt.opensuse.org 04/01/2014
- RIP: 0010:ntfs_insert_security+0x187/0x4a0
- Code: 00 48 83 c4 18 85 c0 0f 85 54 01 00 00 48 8b 44 24 50 49 8d b5 d8 01 00 00 8b 54 24 60 83 c3 14 48 89 74 24 30 48 85 c0 74 3a <39> 58 28 0f 84 7e 01 00 00 49 89 e8 48 8d 4c 24 50 4c 89 f2 4c 89
- RSP: 0018:ffffac73403dfc58 EFLAGS: 00010246
- RAX: 0000000000000000 RBX: 0000000000000064 RCX: 0000000000000010
- RDX: 00000000000000b0 RSI: 0000000000000000 RDI: 0000000000000000
- RBP: ffff94154ed5fe00 R08: 0000000000000000 R09: 0000000000000001
- R10: ffff9415781a6180 R11: 0000000000000003 R12: ffff94155c989800
- R13: ffff94151e8d2a38 R14: ffff9415781a6170 R15: ffff9415781173f0
- FS:  00007fd19b86e580(0000) GS:ffff94157dc00000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000000000000028 CR3: 000000001ac2a000 CR4: 0000000000350ef0
- Call Trace:
-  ? mark_held_locks+0x49/0x70
-  ? lockdep_hardirqs_on_prepare+0xf7/0x190
-  ? ktime_get_coarse_real_ts64+0x9e/0xd0
-  ? trace_hardirqs_on+0x1c/0xe0
-  ntfs_create_inode+0x2db/0x11c0
-  ntfs_mkdir+0x58/0x90
-  vfs_mkdir+0x109/0x1f0
-  do_mkdirat+0x81/0x120
-  do_syscall_64+0x33/0x40
-  entry_SYSCALL_64_after_hwframe+0x44/0xa9
- RIP: 0033:0x7fd19ad54dd7
- Code: 00 b8 ff ff ff ff c3 0f 1f 40 00 48 8b 05 b9 70 2c 00 64 c7 00 5f 00 00 00 b8 ff ff ff ff c3 0f 1f 40 00 b8 53 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 91 70 2c 00 f7 d8 64 89 01 48
- RSP: 002b:00007ffec3c41588 EFLAGS: 00000206 ORIG_RAX: 0000000000000053
- RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fd19ad54dd7
- RDX: 00000000000c0001 RSI: 00000000000001c0 RDI: 000055cad585fcf0
- RBP: 00007ffec3c41990 R08: 00007ffec3c41b50 R09: 00007fd19ada55c0
- R10: 00000000000001ef R11: 0000000000000206 R12: 00007ffec3c41b50
- R13: 0000000000000000 R14: 0000000000000000 R15: 00007ffec3c437be
+This really needed to go to the LSM List <linux-security-module@vger.kernel.org>.
 
 
-(gdb) list *(ntfs_insert_security+0x187)
-0xffffffff814e5097 is in ntfs_insert_security (fs/ntfs3/fsntfs.c:1811).
-1806
-1807            if (!e)
-1808                    goto insert_security;
-1809
-1810    next_security:
-1811            if (le32_to_cpu(e->sec_hdr.size) != new_sec_size)
-1812                    goto skip_read_sds;
-1813
-1814            err = ntfs_read_run_nb(sbi, &ni->file.run, le64_to_cpu(e->sec_hdr.off),
-1815                                   d_security, new_sec_size, NULL);
-
-(gdb) disas /s ntfs_insert_security
-....
-1811            if (le32_to_cpu(e->sec_hdr.size) != new_sec_size)
-   0xffffffff814e5097 <+391>:   cmp    %ebx,0x28(%rax) <=====
-   0xffffffff814e509a <+394>:   je     0xffffffff814e521e <ntfs_insert_security+782>
-
-(gdb) p/x (int)&((NTFS_DE_SDH*)0)->sec_hdr.size
-$4 = 0x28
-
-So I think 'e' is NULL. Not sure how it can happen.
-
-Cheers,
--- 
-Aurélien Aptel / SUSE Labs Samba Team
-GPG: 1839 CB5F 9F5B FB9B AA97  8C99 03C8 A49B 521B D5D3
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg, DE
-GF: Felix Imendörffer, Mary Higgins, Sri Rasiah HRB 247165 (AG München)
+>
+> Chirantan
+>
+>
+> Chirantan
