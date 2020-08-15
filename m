@@ -2,64 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16EEB245329
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Aug 2020 23:59:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0282245284
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Aug 2020 23:52:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbgHOV6x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Aug 2020 17:58:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45638 "EHLO
+        id S1729107AbgHOVwd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Aug 2020 17:52:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728935AbgHOVvy (ORCPT
+        with ESMTP id S1729073AbgHOVwZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Aug 2020 17:51:54 -0400
-Received: from mail-il1-x145.google.com (mail-il1-x145.google.com [IPv6:2607:f8b0:4864:20::145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4435BC0F26F9
-        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Aug 2020 11:15:04 -0700 (PDT)
-Received: by mail-il1-x145.google.com with SMTP id t79so8898988ild.5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Aug 2020 11:15:04 -0700 (PDT)
+        Sat, 15 Aug 2020 17:52:25 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD79BC0F26FC
+        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Aug 2020 11:15:49 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id f193so6096266pfa.12
+        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Aug 2020 11:15:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:references:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=cgr9lRuKidkQIN9VikhOAh92WJNaoQaxLNAuYBGK56A=;
+        b=e6PWsULuK1ZSnLzAcLaCBxDm6omzMQsVIJecKyrN7HSU4hXEnzWV60RwOx7FNce0Hj
+         Ke+ZSTpcDU3JIhDtJRiZvJgsp122dUidCpvjhkRKTwv4T2amwjdG2UIi79GZF9VbMCRc
+         Ic8PK+2wuWD2Bm6eQZbWs8D3M+V9nhh2hzO1z95l3MlCIRKCGscsoer6Qj6nDTn2LmPA
+         4Zb19YxRviqttOYunp4fH/bLzZvrkhQVnFyHcwGDJTPLf2C0W7BZQ0DYeqM9vBfrf65i
+         5A8NFr8SWQ9gJwZpKTSRbtl/NV2ezk4rIYpB93OYN6gxUYxpSekq7y8hqke+WXPgT2WU
+         YH1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to:cc;
-        bh=4xpDMl3NeXZcwdAiC+yVFHrHRUJEIDgJ5ulLpZwqEjI=;
-        b=YVX76WoNb8a/kmckWSLXrmRknRo+JlzKrkSdD1qm7fM454YInwbYsjb/mdH7GI1fcq
-         Wra4Bndeb8+WafGOMBrB3ZM9xZ6B0TeA7laul6bMomU77G0E1T10DAjAaCJz1NZ2m6nj
-         /+X0Vl4rsYyytg14it4lUqTlsjyGk2Nsupw4wHVJpIXU9Hj3cIB71hIa74Y4+u6vJBNP
-         DGWpL9gfPjeVENxAteOYdUMC4T93F53WcDomuhLga7hZqo9tNjzOJmTCi+iFfyypsRSD
-         zpybKED1FEisJf4n1xHRB0Z+Od6gAHpJK25LZUIu8jS4FaLbV6FMnGzbemCjzPIbmeTU
-         o1ww==
-X-Gm-Message-State: AOAM531nzdEdLDQfK90fwKjL/fdh4G1Yfdq5XKGN8VdmHHuqOpGFCybT
-        yf3tFUawZKDzD57aldhttN2cHHlf6RzLH997w5K8wERUUcgl
-X-Google-Smtp-Source: ABdhPJwWbQqFhbKiJRtugfK4oKOj21an5kZquR9VFiI9RweoGgikPQvFcrcRyVgyQeEnOHoeb3Up7TqAFi6Ze2gqNRsgMi9v/td7
+        h=x-gm-message-state:from:subject:to:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cgr9lRuKidkQIN9VikhOAh92WJNaoQaxLNAuYBGK56A=;
+        b=UmBeouCCoZKdSmlTpwd4K1UzabH8MQI2hB4I/QTsYYBKw4LbmDTg5au1VGCLmwEdBn
+         Y4lz26cGl5ZNji8iPhXN3Zl3ekQVQRU66ckJPw40R7ybQhPtoU5ECz+ltmYBwgPbxKI6
+         Ni1/RQm06hJgIdW8F0sOR7hr5zIIf2e/xcH6aHCjh89S4sd1SsCt06PkC6SjKN34EYec
+         R+Nb6zaThkUys0k0vTc4M+j/un+rOcNTG1rhRqRZ4Lkz6lUncJ5JDJdiVwfupYQLT5LN
+         xc9LM36rnwMgeCmGMdU+ZWTQE1+VQm/KPZ3MOlU4N6k1Wh6/mQGw/wfYLM6pryG6K0Lo
+         Qj0A==
+X-Gm-Message-State: AOAM532GwKVWst1CsfC/YnW0wSW1hdSDJvkrKXQRyYGCtrJs+FKx0ZAA
+        jBet4Gra8Ke0HF4XGoHjZnExLg==
+X-Google-Smtp-Source: ABdhPJzM1CZhjXBL0TtrdKhbrHniS7YBWuX7Am0ORQZPsO3178OMkcj+cFPwslOf9e4QBeTzu5pGhQ==
+X-Received: by 2002:a62:8cd3:: with SMTP id m202mr5746565pfd.184.1597515346498;
+        Sat, 15 Aug 2020 11:15:46 -0700 (PDT)
+Received: from ?IPv6:2605:e000:100e:8c61:6299:2df1:e468:6351? ([2605:e000:100e:8c61:6299:2df1:e468:6351])
+        by smtp.gmail.com with ESMTPSA id z77sm13633210pfc.199.2020.08.15.11.15.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 15 Aug 2020 11:15:45 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: Re: possible deadlock in io_poll_double_wake
+To:     syzbot <syzbot+0d56cfeec64f045baffc@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <000000000000923cee05acee6f61@google.com>
+Message-ID: <f9436b5a-c8d5-1c45-3039-6e2ddea3a313@kernel.dk>
+Date:   Sat, 15 Aug 2020 11:15:44 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:85c8:: with SMTP id f191mr7591361ilh.242.1597515302467;
- Sat, 15 Aug 2020 11:15:02 -0700 (PDT)
-Date:   Sat, 15 Aug 2020 11:15:02 -0700
-In-Reply-To: <e3494c53-f84e-5152-42b0-f8ddd3ad4ccb@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000207e2405acee84f5@google.com>
-Subject: Re: Re: possible deadlock in io_poll_double_wake
-From:   syzbot <syzbot+0d56cfeec64f045baffc@syzkaller.appspotmail.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <000000000000923cee05acee6f61@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> #syz dupe general protection fault in io_poll_double_wake
+#syz dup general protection fault in io_poll_double_wake
 
-unknown command "dupe"
+-- 
+Jens Axboe
 
->
-> -- 
-> Jens Axboe
->
-> -- 
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/e3494c53-f84e-5152-42b0-f8ddd3ad4ccb%40kernel.dk.
