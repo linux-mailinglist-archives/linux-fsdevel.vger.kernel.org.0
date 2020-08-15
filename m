@@ -2,133 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 04571245285
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Aug 2020 23:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0D45245341
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Aug 2020 23:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbgHOVwe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Aug 2020 17:52:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45648 "EHLO
+        id S1729606AbgHOV7r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Aug 2020 17:59:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729072AbgHOVwZ (ORCPT
+        with ESMTP id S1728871AbgHOVvi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Aug 2020 17:52:25 -0400
-Received: from mail-il1-x145.google.com (mail-il1-x145.google.com [IPv6:2607:f8b0:4864:20::145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3ED9C0F26EE
-        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Aug 2020 11:14:18 -0700 (PDT)
-Received: by mail-il1-x145.google.com with SMTP id u13so568490ilc.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Aug 2020 11:14:18 -0700 (PDT)
+        Sat, 15 Aug 2020 17:51:38 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D77CAC0F26F6
+        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Aug 2020 11:15:01 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id m71so6116445pfd.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Aug 2020 11:15:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=BIuH6kISmbFa5kGRXf8C1zMlDZ6CK7mUtowqlOF0/dI=;
+        b=N7LAbLrRiARO/ku0BNslWmbNZ5KMCXLYS4qzRJQeD3ePz5Yc0oZPSKTy+Q+tKlLaSZ
+         vw4sOnwZUbHIwBkpaULk8Dqk1m0Ks89+CTMi2qyHyNAhT49JzM0/RZm4qt0hZ/wedgnT
+         nca35p5YbcomCaOpAzEKL0DcuitU3yNF+7APgnu2ircedVIIIkJb3bDwhLaBmRHPIcvj
+         p4Gzixsux1Po9Z+nJQoK/7ZRuqxIibSsvwuMfnEeEiYNN118g0/aECXWk0JIf8Zqmitp
+         R4cMpAJMWrzNAoJt+US7GHgi+0ITpXxHm49DrtT77cwixLU8EFf1Q6pad9Pfenz+XvZ1
+         sOaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=Tsrf0W3zdR8N6Sz4q9zL/K2/kh+E+ME01i4FhEUCMRQ=;
-        b=P92rMJiAzTeU1oG11JVa4Vr2bMuTcgNd5gzPHZDkxvN0pgYVHFG6AELMSOwgIUmZky
-         +myho4RMiZLnFr+fpKhh8J2jTuvawKo5u5RCG5jvXxXu48/tcYBS4PwgUOgKRI0OqUCJ
-         TGBfTwriYg3k0TVVAgwruhvk4LE8FIu3ptH38pofWUXdUTHr6DF6ua+d6IM+IQpIkguy
-         xFisW0p5w9w8TFePzYoigj4l3WVWXjw6FaQTpyxxMLu1OeDATdlZv7RgrPH7yiKrBfee
-         DbKrT3zirhc6q1RGKz+SDkUUrcDjEGdcsl1JApXMnXhHIgLdMAC+5ectglrmGaF7fvWk
-         j+bQ==
-X-Gm-Message-State: AOAM530PXPofR7T185WaPjgiOhun0g9pc9RXgPDmfR81mCAxOS6HrCXd
-        /hjVzuIKIh698gZWm0vSMKd/74LY5TTwSn2GLw9lWeo3v+Hr
-X-Google-Smtp-Source: ABdhPJxYqKqeKYXpBI+HjSS1BvnO9LP/5Zfu3IqMgkk1OcFJhfjveTF2PxtjTI1vWp6rJMeM+xx5/uYZ8rnvmalXEbxnC2kMkSXi
-MIME-Version: 1.0
-X-Received: by 2002:a92:d4cc:: with SMTP id o12mr7100103ilm.90.1597515257724;
- Sat, 15 Aug 2020 11:14:17 -0700 (PDT)
-Date:   Sat, 15 Aug 2020 11:14:17 -0700
-In-Reply-To: <000000000000923cee05acee6f61@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000075c7e805acee8158@google.com>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BIuH6kISmbFa5kGRXf8C1zMlDZ6CK7mUtowqlOF0/dI=;
+        b=QUrn48pbiVjGD4qf6nAQtrl20emkviwc0r8s3z16GMp8/S5Z4laCAwSfDW5GpOPean
+         UzscxC/H9G7h2U12sC9wh1t52bjfKL8ilGd6QmxFKhOaMOLunD80lpyeDspf3dViigoD
+         wBtLlt5KK3WgzcDjVdFPdVtCmImff+tFTGExeYg+i7Z/HjfxR7tsBgq5JUyyTvWLZkLb
+         czP9v4HAYUqXNx5s96l5Mr20mTg0cZlBdIpoNhIGeDgMuVTkD5hNYcHnQ2H+AsZ8ejSZ
+         AYkqSbht6BUfZddEll/r2gpP2bnDRAjoenbX6AhUTVH8NaqbbMoLkcVDAMwOwMmPwFso
+         66lg==
+X-Gm-Message-State: AOAM532J9WfC+sTHa3nJA09QtokX/tNhqUtaBvbCR84tlFR4gMImVEdo
+        NqVskOqCgBE/LF6xq9KB4ZcNxw==
+X-Google-Smtp-Source: ABdhPJyfy8cQiabf33POMoUVdvZFoEvwy1OBJwtbtdWdmCXbYJDDDjojpV/LcyrdhWnFkCXCxmfsvQ==
+X-Received: by 2002:a63:143:: with SMTP id 64mr5167393pgb.343.1597515300385;
+        Sat, 15 Aug 2020 11:15:00 -0700 (PDT)
+Received: from ?IPv6:2605:e000:100e:8c61:6299:2df1:e468:6351? ([2605:e000:100e:8c61:6299:2df1:e468:6351])
+        by smtp.gmail.com with ESMTPSA id j94sm11734141pje.44.2020.08.15.11.14.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 15 Aug 2020 11:14:59 -0700 (PDT)
 Subject: Re: possible deadlock in io_poll_double_wake
-From:   syzbot <syzbot+0d56cfeec64f045baffc@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+To:     syzbot <syzbot+0d56cfeec64f045baffc@syzkaller.appspotmail.com>,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+References: <000000000000923cee05acee6f61@google.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <e3494c53-f84e-5152-42b0-f8ddd3ad4ccb@kernel.dk>
+Date:   Sat, 15 Aug 2020 11:14:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <000000000000923cee05acee6f61@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+#syz dupe general protection fault in io_poll_double_wake
 
-HEAD commit:    c9c9735c Merge tag 'scsi-misc' of git://git.kernel.org/pub..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=165d3b6a900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=adea84f38e7bc8d
-dashboard link: https://syzkaller.appspot.com/bug?extid=0d56cfeec64f045baffc
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1018494a900000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c8e1e2900000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0d56cfeec64f045baffc@syzkaller.appspotmail.com
-
-============================================
-WARNING: possible recursive locking detected
-5.8.0-syzkaller #0 Not tainted
---------------------------------------------
-syz-executor639/6830 is trying to acquire lock:
-ffff8880a6bc5530 (&tty->write_wait){-.-.}-{2:2}, at: spin_lock include/linux/spinlock.h:354 [inline]
-ffff8880a6bc5530 (&tty->write_wait){-.-.}-{2:2}, at: io_poll_double_wake+0x108/0x360 fs/io_uring.c:4599
-
-but task is already holding lock:
-ffff8880a6bc5530 (&tty->write_wait){-.-.}-{2:2}, at: __wake_up_common_lock kernel/sched/wait.c:122 [inline]
-ffff8880a6bc5530 (&tty->write_wait){-.-.}-{2:2}, at: __wake_up+0xb8/0x150 kernel/sched/wait.c:142
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&tty->write_wait);
-  lock(&tty->write_wait);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-4 locks held by syz-executor639/6830:
- #0: ffff8880a6bc5098 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x21/0x70 drivers/tty/tty_ldisc.c:267
- #1: ffff8880a6bc52e8 (&tty->termios_rwsem){++++}-{3:3}, at: tty_set_termios+0xc5/0x1510 drivers/tty/tty_ioctl.c:328
- #2: ffff8880a6bc5098 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref+0x18/0x80 drivers/tty/tty_ldisc.c:288
- #3: ffff8880a6bc5530 (&tty->write_wait){-.-.}-{2:2}, at: __wake_up_common_lock kernel/sched/wait.c:122 [inline]
- #3: ffff8880a6bc5530 (&tty->write_wait){-.-.}-{2:2}, at: __wake_up+0xb8/0x150 kernel/sched/wait.c:142
-
-stack backtrace:
-CPU: 0 PID: 6830 Comm: syz-executor639 Not tainted 5.8.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1f0/0x31e lib/dump_stack.c:118
- print_deadlock_bug kernel/locking/lockdep.c:2391 [inline]
- check_deadlock kernel/locking/lockdep.c:2432 [inline]
- validate_chain+0x69a4/0x88a0 kernel/locking/lockdep.c:3202
- __lock_acquire+0x1161/0x2ab0 kernel/locking/lockdep.c:4426
- lock_acquire+0x160/0x730 kernel/locking/lockdep.c:5005
- __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
- _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
- spin_lock include/linux/spinlock.h:354 [inline]
- io_poll_double_wake+0x108/0x360 fs/io_uring.c:4599
- __wake_up_common+0x30a/0x4e0 kernel/sched/wait.c:93
- __wake_up_common_lock kernel/sched/wait.c:123 [inline]
- __wake_up+0xd4/0x150 kernel/sched/wait.c:142
- n_tty_set_termios+0xa60/0x1080 drivers/tty/n_tty.c:1874
- tty_set_termios+0xcac/0x1510 drivers/tty/tty_ioctl.c:341
- set_termios+0x4a1/0x580 drivers/tty/tty_ioctl.c:414
- tty_mode_ioctl+0x7b2/0xa80 drivers/tty/tty_ioctl.c:770
- tty_ioctl+0xf81/0x15c0 drivers/tty/tty_io.c:2665
- vfs_ioctl fs/ioctl.c:48 [inline]
- __do_sys_ioctl fs/ioctl.c:753 [inline]
- __se_sys_ioctl+0xfb/0x170 fs/ioctl.c:739
- do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x4405b9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffdae6bfd28 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00000000004405b9
-RDX: 0000000020000000 RSI: 0000000000005404 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401e20
-R13: 0000000000401eb0 R14: 0000000000000000 R15: 0000000000000000
+-- 
+Jens Axboe
 
