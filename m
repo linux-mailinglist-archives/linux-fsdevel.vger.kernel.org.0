@@ -2,97 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C844D2457F4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Aug 2020 16:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E002459F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 00:56:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbgHPO3Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Aug 2020 10:29:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57142 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729466AbgHPO2x (ORCPT
+        id S1726165AbgHPW4f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Aug 2020 18:56:35 -0400
+Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:56746 "EHLO
+        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725873AbgHPW4e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Aug 2020 10:28:53 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28953C06134C
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Aug 2020 07:28:34 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id f18so11609998wmc.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Aug 2020 07:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=Duxa+mmNF3T3C2WDKsmzowR2OzvdY892XFjTPp0RWRI=;
-        b=NAKDDu3zYGlp6/1rTFA3zLXzfLNUWElMFpld1DGXTqZ3f2C1G5vMMGgQBtzYdv61gR
-         j0gW2VjYzcAEQEK9JcrA+yGSHFEXNhE9RNkaz3uxkanP37gacJrIVytgT7/c7zGkA2Dy
-         XJB3L8ToVDoWAD9Rvm7U849RIrxncLk9xI9S/Uu5ZGT/cXsim2IUQmYeZsKFSBsv6kJT
-         3kDR9KLYjND6JPpx0YTAndrQaTelzP3558OkivI4ykhj79/nak1F6z80uX1/EQIXmTKV
-         I+kUa6Zt2XAbNuMItIuLndMdaWWyo32PYvWKoOywYCMLUV2UDlYdbpJ66arhF+MiPCa0
-         yMKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=Duxa+mmNF3T3C2WDKsmzowR2OzvdY892XFjTPp0RWRI=;
-        b=C/f+Xe0B4Nwcy054So2gOc9EUMOCT24N0grCFmnnQsa46DEzllPAgSHT5Dc7PMmJAA
-         zzv7sqaZuNkLQ8AyPGFoMFRFSxhqI+PJ2GvalxJkwHafRo3rm3IicuGy51ZkdHKGcNCW
-         tsz4LO8gNsVQvFlbikuwXZ6IgHCfqaNLrT7AxP5422FBgvd/Ky4yGCmtUpOyS/tnUJOY
-         C7Aa9doHItRTbHz3dIDb4NKbOjvMi/aZYmNAdFAJeJpLE1/ZgpWgctZ7GhB9creyDBlq
-         /AvDv7Tw3gIBObKIHu0M6yAhIBwLfL790YHL5aq9whFgAGMPJkcMdHrJTQH+n0G32XMV
-         Lijw==
-X-Gm-Message-State: AOAM530oBAttHZhVo2L9AN4IRU9731Lb08UHVvJr6/7lSZzls8mn1O7u
-        5znDPJ6O8Am1dSbokULFssMvPOEtxMxCYVCZhCY=
-X-Google-Smtp-Source: ABdhPJydZZ8FQlFGmrB/EDLy0Z8gH5X03F6EFXypW4K1vf8iv94WhLhI3iwPKgeJEaRZZocHWED4lUmYPOBkTFPeX+4=
-X-Received: by 2002:a1c:a1c7:: with SMTP id k190mr10461870wme.1.1597588111746;
- Sun, 16 Aug 2020 07:28:31 -0700 (PDT)
+        Sun, 16 Aug 2020 18:56:34 -0400
+Received: from dread.disaster.area (pa49-181-146-199.pa.nsw.optusnet.com.au [49.181.146.199])
+        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id 0BE371A9F4F;
+        Mon, 17 Aug 2020 08:56:21 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1k7RZc-0007fV-AP; Mon, 17 Aug 2020 08:56:20 +1000
+Date:   Mon, 17 Aug 2020 08:56:20 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christian Schoenebeck <qemu_oss@crudebyte.com>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
+        stefanha@redhat.com, mszeredi@redhat.com, vgoyal@redhat.com,
+        gscrivan@redhat.com, dwalsh@redhat.com, chirantan@chromium.org
+Subject: Re: xattr names for unprivileged stacking?
+Message-ID: <20200816225620.GA28218@dread.disaster.area>
+References: <20200728105503.GE2699@work-vm>
+ <12480108.dgM6XvcGr8@silver>
+ <20200812143323.GF2810@work-vm>
+ <27541158.PQPtYaGs59@silver>
 MIME-Version: 1.0
-Received: by 2002:a5d:6cd3:0:0:0:0:0 with HTTP; Sun, 16 Aug 2020 07:28:30
- -0700 (PDT)
-Reply-To: sctnld11170@tlen.pl
-From:   "Mr. Scott Donald" <confianzayrentabilidad@gmail.com>
-Date:   Sun, 16 Aug 2020 07:28:30 -0700
-Message-ID: <CANrrfX7wwL97G=jb--8nb9jH8oRO8T90L6NGSfg1HfnzMyyHcw@mail.gmail.com>
-Subject: Hello, Please
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27541158.PQPtYaGs59@silver>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=LPwYv6e9 c=1 sm=1 tr=0
+        a=GorAHYkI+xOargNMzM6qxQ==:117 a=GorAHYkI+xOargNMzM6qxQ==:17
+        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=8pif782wAAAA:8 a=7-415B0cAAAA:8
+        a=Cr2eSUj7GmzywrZnyUcA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=20
-Dear Friend,
+On Thu, Aug 13, 2020 at 11:01:36AM +0200, Christian Schoenebeck wrote:
+> On Mittwoch, 12. August 2020 16:33:23 CEST Dr. David Alan Gilbert wrote:
+> > > On macOS there was (or actually still is) even a quite complex API which
+> > > separated forks into "resource forks" and "data forks", where resource
+> > > forks were typically used as components of an application binary (e.g.
+> > > menu structure, icons, executable binary modules, text and translations).
+> > > So resource forks not only had names, they also had predefined 16-bit
+> > > type identifiers:
+> > > https://en.wikipedia.org/wiki/Resource_fork
+> > 
+> > Yeh, lots of different ways.
+> > 
+> > In a way, if you had a way to drop the 64kiB limit on xattr, then you
+> > could have one type of object, but then add new ways of accessing them
+> > as forks.
+> 
+> That's yet another question: should xattrs and forks share the same data- and 
+> namespace, or rather be orthogonal to each other.
 
-I'm Mr. Scott Donald a Successful businessMan dealing with
-Exportation, I got your mail contact through search to let you know my
-intension and my Ugly Situation Am a dying Man here in Los Angeles
-California Hospital Bed in (USA), I Lost my Wife and my only Daughter
-for Covid-19 and I also have a problem in my Health and I can die
-anytime I Know,
+Completely orthogonal. Alternate data streams are not xattrs, and
+xattrs are not ADS....
 
-I have a project that I am about to hand over to you. and I already
-instructed the Bankia S.A. Madrid, Spain(BSA) to transfer my fund sum
-of =C2=A33,7M GBP. Equivalent to =E2=82=AC4,077,033.91 EUR, to you as to en=
-able you
-to give 50% of this fund to Charitable Home in your State and take 50%
-don't think otherwise and why would anybody send someone you barely
-know to help you deliver a message, help me do this for the happiness
-of my soul and for God to mercy me and my Family and give Us a good
-place.
+Indeed, most filesystems will not be able to implement ADS as
+xattrs. xattrs are implemented as atomicly journalled metadata on
+most filesytems, they cannot be used like a seekable file by
+userspace at all. If you want ADS to masquerade as an xattr, then
+you have to graft the entire file IO path onto filesytsem xattrs,
+and that just ain't gonna work without a -lot- of development in
+every filesystem that wants to support ADS.
 
-please, do as I said there was someone from your State that I deeply
-love so very very much and I miss her so badly I have no means to
-reach any Charitable Home there. that is why I go for a personal
-search of the Country and State and I got your mail contact through
-search to let you know my Bitterness and please, help me is getting
-Dark I ask my Doctor to help me keep you notice failure for me to
-reach you in person Your urgent Response, here is my Doctor Whats-app
-Number for urgent notice +13019692737
+We've already got a perfectly good presentation layer for user data
+files that are accessed by file descriptors (i.e. directories
+containing files), so that should be the presentation layer you seek
+to extend.
 
-Hope To Hear From You. I'm sending this email to you for the second
-time yet no response from you.
+IOWs, trying to use abuse xattrs for ADS support is a non-starter.
 
-My Regards.
+Cheers,
 
-Mr. Scott Donald
-CEO
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
