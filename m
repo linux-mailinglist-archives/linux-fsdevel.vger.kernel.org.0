@@ -2,59 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7502E245520
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Aug 2020 02:51:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCD6424551A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Aug 2020 02:43:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729302AbgHPAvv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 15 Aug 2020 20:51:51 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:33160 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726177AbgHPAvv (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 15 Aug 2020 20:51:51 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 150DBE3DEBCDAD6CE45D;
-        Sat, 15 Aug 2020 17:05:19 +0800 (CST)
-Received: from huawei.com (10.175.104.175) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.487.0; Sat, 15 Aug 2020
- 17:05:09 +0800
-From:   Miaohe Lin <linmiaohe@huawei.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linmiaohe@huawei.com>
-Subject: [PATCH] signalfd: Convert to use the preferred fallthrough macro
-Date:   Sat, 15 Aug 2020 05:04:05 -0400
-Message-ID: <20200815090405.18672-1-linmiaohe@huawei.com>
-X-Mailer: git-send-email 2.19.1
+        id S1728666AbgHPAnE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Aug 2020 20:43:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44268 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbgHPAnE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 15 Aug 2020 20:43:04 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C90AC061786;
+        Sat, 15 Aug 2020 17:43:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=o+wfFvyLhA+em4AovIaNYnXy15NfLyZt8dI3Gf4MNPg=; b=GYkSt1nq2R2qXTgU+gByKs4Lmx
+        /SVnvwplK1CMF+zm7WNQ78W1OnoUzIj+m9UxcYpdOMpsLTelQoy4tOPuhVwdMDTpm5NLrq1H4LhLW
+        ffeOhEKwlV0aXDKLRSKFR+Y+5c9b4o7Wn9zz0q/KZLSIZRB3P2aw3F+kkc1vq/FCCBwTxgle4AdqC
+        jzdl5pJUCqfjjo5pfOIxpyskQ9bxtBmrZ8rGZogeHbSS0yrPF4twuJU6SenahkylKb5hRltAKaCn9
+        46R5WCHQjGsi19+pQA1RfqMgCoHSx1x6P2fcQdwsTlC2uRlx2LArhzZ6HZgejUwVERWuh4mZlhgmY
+        M74Fi/0g==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k76lH-0008J5-CY; Sun, 16 Aug 2020 00:42:59 +0000
+Date:   Sun, 16 Aug 2020 01:42:59 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     dsterba@suse.cz,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] fs: NTFS read-write driver GPL implementation by Paragon
+ Software.
+Message-ID: <20200816004259.GD17456@casper.infradead.org>
+References: <2911ac5cd20b46e397be506268718d74@paragon-software.com>
+ <20200815190642.GZ2026@twin.jikos.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.104.175]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200815190642.GZ2026@twin.jikos.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert the uses of fallthrough comments to fallthrough macro.
+On Sat, Aug 15, 2020 at 09:06:42PM +0200, David Sterba wrote:
+> There's maybe more I missed, but hopefully HTH.
 
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
----
- fs/signalfd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+One thing you missed is adding support to fstests
+git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
 
-diff --git a/fs/signalfd.c b/fs/signalfd.c
-index 5b78719be445..456046e15873 100644
---- a/fs/signalfd.c
-+++ b/fs/signalfd.c
-@@ -176,7 +176,7 @@ static ssize_t signalfd_dequeue(struct signalfd_ctx *ctx, kernel_siginfo_t *info
- 		if (!nonblock)
- 			break;
- 		ret = -EAGAIN;
--		/* fall through */
-+		fallthrough;
- 	default:
- 		spin_unlock_irq(&current->sighand->siglock);
- 		return ret;
--- 
-2.19.1
+If it passes that torture test, I think we can have confidence that
+this is a really good implementation of a filesystem.
 
