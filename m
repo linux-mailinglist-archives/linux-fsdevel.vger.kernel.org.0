@@ -2,71 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0809424569D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Aug 2020 09:56:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C844D2457F4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Aug 2020 16:30:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726171AbgHPH4I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Aug 2020 03:56:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725986AbgHPH4H (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Aug 2020 03:56:07 -0400
-Received: from pali.im (pali.im [31.31.79.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0072F2065C;
-        Sun, 16 Aug 2020 07:56:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597564567;
-        bh=WBoK5fgAJLyzBGCPs2ZM73uEvs9Y4AnzIU1vghJTqvA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y3Z2ilzQuS9+MNNMUvFYwb4DdOAsh2dR6Kldq4ez4/qBX2pBUYOv/bA+voMZpnaA9
-         MooFmMorP1YSsum1MX1PuYoC/gsQ0nFG93G4bV2ijWzS6gSoZw+BNSV1dQCD+1U1QQ
-         dXrXun6sIQTpMEezw0j/hSPvrlI0WvFjSmQY1uO4=
-Received: by pali.im (Postfix)
-        id 677667BC; Sun, 16 Aug 2020 09:56:04 +0200 (CEST)
-Date:   Sun, 16 Aug 2020 09:56:04 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] fs: NTFS read-write driver GPL implementation by Paragon
- Software.
-Message-ID: <20200816075604.nx62kg5qz6ddp6gl@pali>
-References: <2911ac5cd20b46e397be506268718d74@paragon-software.com>
+        id S1729459AbgHPO3Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Aug 2020 10:29:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57142 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729466AbgHPO2x (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 16 Aug 2020 10:28:53 -0400
+Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28953C06134C
+        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Aug 2020 07:28:34 -0700 (PDT)
+Received: by mail-wm1-x32a.google.com with SMTP id f18so11609998wmc.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Aug 2020 07:28:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=Duxa+mmNF3T3C2WDKsmzowR2OzvdY892XFjTPp0RWRI=;
+        b=NAKDDu3zYGlp6/1rTFA3zLXzfLNUWElMFpld1DGXTqZ3f2C1G5vMMGgQBtzYdv61gR
+         j0gW2VjYzcAEQEK9JcrA+yGSHFEXNhE9RNkaz3uxkanP37gacJrIVytgT7/c7zGkA2Dy
+         XJB3L8ToVDoWAD9Rvm7U849RIrxncLk9xI9S/Uu5ZGT/cXsim2IUQmYeZsKFSBsv6kJT
+         3kDR9KLYjND6JPpx0YTAndrQaTelzP3558OkivI4ykhj79/nak1F6z80uX1/EQIXmTKV
+         I+kUa6Zt2XAbNuMItIuLndMdaWWyo32PYvWKoOywYCMLUV2UDlYdbpJ66arhF+MiPCa0
+         yMKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=Duxa+mmNF3T3C2WDKsmzowR2OzvdY892XFjTPp0RWRI=;
+        b=C/f+Xe0B4Nwcy054So2gOc9EUMOCT24N0grCFmnnQsa46DEzllPAgSHT5Dc7PMmJAA
+         zzv7sqaZuNkLQ8AyPGFoMFRFSxhqI+PJ2GvalxJkwHafRo3rm3IicuGy51ZkdHKGcNCW
+         tsz4LO8gNsVQvFlbikuwXZ6IgHCfqaNLrT7AxP5422FBgvd/Ky4yGCmtUpOyS/tnUJOY
+         C7Aa9doHItRTbHz3dIDb4NKbOjvMi/aZYmNAdFAJeJpLE1/ZgpWgctZ7GhB9creyDBlq
+         /AvDv7Tw3gIBObKIHu0M6yAhIBwLfL790YHL5aq9whFgAGMPJkcMdHrJTQH+n0G32XMV
+         Lijw==
+X-Gm-Message-State: AOAM530oBAttHZhVo2L9AN4IRU9731Lb08UHVvJr6/7lSZzls8mn1O7u
+        5znDPJ6O8Am1dSbokULFssMvPOEtxMxCYVCZhCY=
+X-Google-Smtp-Source: ABdhPJydZZ8FQlFGmrB/EDLy0Z8gH5X03F6EFXypW4K1vf8iv94WhLhI3iwPKgeJEaRZZocHWED4lUmYPOBkTFPeX+4=
+X-Received: by 2002:a1c:a1c7:: with SMTP id k190mr10461870wme.1.1597588111746;
+ Sun, 16 Aug 2020 07:28:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2911ac5cd20b46e397be506268718d74@paragon-software.com>
-User-Agent: NeoMutt/20180716
+Received: by 2002:a5d:6cd3:0:0:0:0:0 with HTTP; Sun, 16 Aug 2020 07:28:30
+ -0700 (PDT)
+Reply-To: sctnld11170@tlen.pl
+From:   "Mr. Scott Donald" <confianzayrentabilidad@gmail.com>
+Date:   Sun, 16 Aug 2020 07:28:30 -0700
+Message-ID: <CANrrfX7wwL97G=jb--8nb9jH8oRO8T90L6NGSfg1HfnzMyyHcw@mail.gmail.com>
+Subject: Hello, Please
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Friday 14 August 2020 12:29:01 Konstantin Komarov wrote:
-> This patch adds NTFS Read-Write driver to fs/ntfs3.
-> 
-> Having decades of expertise in commercial file systems development and huge
-> test coverage, we at Paragon Software GmbH want to make our contribution to
-> the Open Source Community by providing implementation of NTFS Read-Write
-> driver for the Linux Kernel.
-> 
-> This is fully functional NTFS Read-Write driver. Current version works with
-> NTFS(including v3.1) normal/compressed/sparse files and supports journal replaying.
-> 
-> We plan to support this version after the codebase once merged, and add new
-> features and fix bugs. For example, full journaling support over JBD will be
-> added in later updates.
-> 
-> The patch is too big to handle it within an e-mail body, so it is available to download 
-> on our server: https://dl.paragon-software.com/ntfs3/ntfs3.patch
-> 
-> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+--=20
+Dear Friend,
 
-Hello Konstantin! I agree with David that patch is big and could be
-split into smaller patches per file, like exfat driver was reviewed.
+I'm Mr. Scott Donald a Successful businessMan dealing with
+Exportation, I got your mail contact through search to let you know my
+intension and my Ugly Situation Am a dying Man here in Los Angeles
+California Hospital Bed in (USA), I Lost my Wife and my only Daughter
+for Covid-19 and I also have a problem in my Health and I can die
+anytime I Know,
 
-When you send a new version of ntfs driver, please add me to CC and I
-will try to find some time to do code review. Thanks!
+I have a project that I am about to hand over to you. and I already
+instructed the Bankia S.A. Madrid, Spain(BSA) to transfer my fund sum
+of =C2=A33,7M GBP. Equivalent to =E2=82=AC4,077,033.91 EUR, to you as to en=
+able you
+to give 50% of this fund to Charitable Home in your State and take 50%
+don't think otherwise and why would anybody send someone you barely
+know to help you deliver a message, help me do this for the happiness
+of my soul and for God to mercy me and my Family and give Us a good
+place.
+
+please, do as I said there was someone from your State that I deeply
+love so very very much and I miss her so badly I have no means to
+reach any Charitable Home there. that is why I go for a personal
+search of the Country and State and I got your mail contact through
+search to let you know my Bitterness and please, help me is getting
+Dark I ask my Doctor to help me keep you notice failure for me to
+reach you in person Your urgent Response, here is my Doctor Whats-app
+Number for urgent notice +13019692737
+
+Hope To Hear From You. I'm sending this email to you for the second
+time yet no response from you.
+
+My Regards.
+
+Mr. Scott Donald
+CEO
