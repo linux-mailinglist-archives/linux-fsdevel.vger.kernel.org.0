@@ -2,102 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 09A5D246E78
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 19:32:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1491246F86
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 19:48:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389520AbgHQRbu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Aug 2020 13:31:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44724 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388918AbgHQQ5d (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Aug 2020 12:57:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 2326AADE5;
-        Mon, 17 Aug 2020 16:57:57 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id BD1611E12CB; Mon, 17 Aug 2020 18:57:31 +0200 (CEST)
-Date:   Mon, 17 Aug 2020 18:57:31 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com, Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm@lists.01.org
-Subject: Re: [PATCH v2 01/20] dax: Modify bdev_dax_pgoff() to handle NULL bdev
-Message-ID: <20200817165731.GB22500@quack2.suse.cz>
-References: <20200807195526.426056-1-vgoyal@redhat.com>
- <20200807195526.426056-2-vgoyal@redhat.com>
+        id S2388798AbgHQRsb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Aug 2020 13:48:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39198 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390094AbgHQRsU (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 Aug 2020 13:48:20 -0400
+Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1k7jEY-0000AV-7b; Mon, 17 Aug 2020 17:47:46 +0000
+Date:   Mon, 17 Aug 2020 19:47:45 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Andrei Vagin <avagin@gmail.com>, adobriyan@gmail.com,
+        viro@zeniv.linux.org.uk, davem@davemloft.net,
+        akpm@linux-foundation.org, areber@redhat.com, serge@hallyn.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Subject: Re: [PATCH 00/23] proc: Introduce /proc/namespaces/ directory to
+ expose namespaces lineary
+Message-ID: <20200817174745.jssxjdcwoqxeg5pu@wittgenstein>
+References: <2d65ca28-bcfa-b217-e201-09163640ebc2@virtuozzo.com>
+ <20200810173431.GA68662@gmail.com>
+ <33565447-9b97-a820-bc2c-a4ff53a7675a@virtuozzo.com>
+ <20200812175338.GA596568@gmail.com>
+ <8f3c9414-9efc-cc01-fb2a-4d83266e96b2@virtuozzo.com>
+ <20200814011649.GA611947@gmail.com>
+ <0af3f2fa-f2c3-fb7d-b57e-9c41fe94ca58@virtuozzo.com>
+ <20200814192102.GA786465@gmail.com>
+ <56ed1fb9-4f1f-3528-3f09-78478b9dfcf2@virtuozzo.com>
+ <87d03pb7f2.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200807195526.426056-2-vgoyal@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <87d03pb7f2.fsf@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 07-08-20 15:55:07, Vivek Goyal wrote:
-> virtiofs does not have a block device but it has dax device.
-> Modify bdev_dax_pgoff() to be able to handle that.
+On Mon, Aug 17, 2020 at 10:48:01AM -0500, Eric W. Biederman wrote:
 > 
-> If there is no bdev, that means dax offset is 0. (It can't be a partition
-> block device starting at an offset in dax device).
+> Creating names in the kernel for namespaces is very difficult and
+> problematic.  I have not seen anything that looks like  all of the
+> problems have been solved with restoring these new names.
 > 
-> This is little hackish. There have been discussions about getting rid
-> of dax not supporting partitions.
+> When your filter for your list of namespaces is user namespace creating
+> a new directory in proc is highly questionable.
 > 
-> https://lore.kernel.org/linux-fsdevel/20200107125159.GA15745@infradead.org/
+> As everyone uses proc placing this functionality in proc also amplifies
+> the problem of creating names.
 > 
-> IMHO, this path can easily break exisitng users. For example
-> ioctl(BLKPG_ADD_PARTITION) will start breaking on block devices
-> supporting DAX. Also, I personally find it very useful to be able to
-> partition dax devices and still be able to use DAX.
 > 
-> Alternatively, I tried to store offset into dax device information in iomap
-> interface, but that got NACKed.
+> Rather than proc having a way to mount a namespace filesystem filter by
+> the user namespace of the mounter likely to have many many fewer
+> problems.  Especially as we are limiting/not allow new non-process
+> things and ideally finding a way to remove the non-process things.
 > 
-> https://lore.kernel.org/linux-fsdevel/20200217133117.GB20444@infradead.org/
 > 
-> I can't think of a good path to solve this issue properly. So to make
-> progress, it seems this patch is least bad option for now and I hope
-> we can take it.
+> Kirill you have a good point that taking the case where a pid namespace
+> does not exist in a user namespace is likely quite unrealistic.
 > 
-> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: linux-nvdimm@lists.01.org
+> Kirill mentioned upthread that the list of namespaces are the list that
+> can appear in a container.  Except by discipline in creating containers
+> it is not possible to know which namespaces may appear in attached to a
+> process.  It is possible to be very creative with setns, and violate any
+> constraint you may have.  Which means your filtered list of namespaces
+> may not contain all of the namespaces used by a set of processes.  This
 
-This patch looks OK to me. You can add:
+Indeed. We use setns() quite creatively when intercepting syscalls and
+when attaching to a container.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  drivers/dax/super.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> further argues that attaching the list of namespaces to proc does not
+> make sense.
 > 
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index 8e32345be0f7..c4bec437e88b 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -46,7 +46,8 @@ EXPORT_SYMBOL_GPL(dax_read_unlock);
->  int bdev_dax_pgoff(struct block_device *bdev, sector_t sector, size_t size,
->  		pgoff_t *pgoff)
->  {
-> -	phys_addr_t phys_off = (get_start_sect(bdev) + sector) * 512;
-> +	sector_t start_sect = bdev ? get_start_sect(bdev) : 0;
-> +	phys_addr_t phys_off = (start_sect + sector) * 512;
->  
->  	if (pgoff)
->  		*pgoff = PHYS_PFN(phys_off);
-> -- 
-> 2.25.4
+> Andrei has a good point that placing the names in a hierarchy by
+> user namespace has the potential to create more freedom when
+> assigning names to namespaces, as it means the names for namespaces
+> do not need to be globally unique, and while still allowing the names
+> to stay the same.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 
+> To recap the possibilities for names for namespaces that I have seen
+> mentioned in this thread are:
+>   - Names per mount
+>   - Names per user namespace
+> 
+> I personally suspect that names per mount are likely to be so flexibly
+> they are confusing, while names per user namespace are likely to be
+> rigid, possibly too rigid to use.
+> 
+> It all depends upon how everything is used.  I have yet to see a
+> complete story of how these names will be generated and used.  So I can
+> not really judge.
+
+So I haven't fully understood either what the motivation for this
+patchset is.
+I can just speak to the use-case I had when I started prototyping
+something similar: We needed a way to get a view on all namespaces
+that exist on the system because we wanted a way to do namespace
+debugging on a live system. This interface could've easily lived in
+debugfs. The main point was that it should contain all namespaces.
+Note, that it wasn't supposed to be a hierarchical format it was only
+mean to list all namespaces and accessible to real root.
+The interface here is way more flexible/complex and I haven't yet
+figured out what exactly it is supposed to be used for.
+
+> 
+> 
+> Let me add another take on this idea that might give this work a path
+> forward. If I were solving this I would explore giving nsfs directories
+> per user namespace, and a way to mount it that exposed the directory of
+> the mounters current user namespace (something like btrfs snapshots).
+> 
+> Hmm.  For the user namespace directory I think I would give it a file
+> "ns" that can be opened to get a file handle on the user namespace.
+> Plus a set of subdirectories "cgroup", "ipc", "mnt", "net", "pid",
+> "user", "uts") for each type of namespace.  In each directory I think
+> I would just have a 64bit counter and each new entry I would assign the
+> next number from that counter.
+> 
+> The restore could either have the ability to rename files or simply the
+> ability to bump the counter (like we do with pids) so the names of the
+> namespaces can be restored.
+> 
+> That winds up making a user namespace the namespace of namespaces, so
+> I am not 100% about the idea. 
+
+I think you're right that we need to understand better what the use-case
+is. If I understand your suggestion correctly it wouldn't allow to show
+nested user namespaces if the nsfs mount is per-user namespace.
+
+Let me throw in a crazy idea: couldn't we just make the ioctl_ns() walk
+a namespace hierarchy? For example, you could pass in a user namespace
+fd and then you'd get back a struct with handles for fds for the
+namespaces owned by that user namespace and then you could use
+NS_GET_USERNS/NS_GET_PARENT to walk upwards from the user namespace fd
+passed in initially and so on? Or something similar/simpler. This would
+also decouple this from procfs somewhat.
+
+Christian
