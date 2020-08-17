@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 084B3247A1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 00:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F680247A1A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 00:10:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730192AbgHQWKi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Aug 2020 18:10:38 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:33104 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730166AbgHQWKK (ORCPT
+        id S2387428AbgHQWK3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Aug 2020 18:10:29 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:46586 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730177AbgHQWKN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Aug 2020 18:10:10 -0400
+        Mon, 17 Aug 2020 18:10:13 -0400
 Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <ebiederm@xmission.com>)
-        id 1k7nKS-001H0V-Pl; Mon, 17 Aug 2020 16:10:09 -0600
+        id 1k7nKW-004vtM-PI; Mon, 17 Aug 2020 16:10:12 -0600
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.int.ebiederm.org)
         by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1k7nKS-0004PB-0O; Mon, 17 Aug 2020 16:10:08 -0600
+        id 1k7nKV-0004PB-W4; Mon, 17 Aug 2020 16:10:12 -0600
 From:   "Eric W. Biederman" <ebiederm@xmission.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, criu@openvz.org,
@@ -48,18 +48,18 @@ Cc:     linux-fsdevel@vger.kernel.org, criu@openvz.org,
         John Fastabend <john.fastabend@gmail.com>,
         KP Singh <kpsingh@chromium.org>,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Date:   Mon, 17 Aug 2020 17:04:17 -0500
-Message-Id: <20200817220425.9389-9-ebiederm@xmission.com>
+Date:   Mon, 17 Aug 2020 17:04:18 -0500
+Message-Id: <20200817220425.9389-10-ebiederm@xmission.com>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <87ft8l6ic3.fsf@x220.int.ebiederm.org>
 References: <87ft8l6ic3.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-XM-SPF: eid=1k7nKS-0004PB-0O;;;mid=<20200817220425.9389-9-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18XoryakreQpr9Brl3/jR/BCv6ZPxl9B9A=
+X-XM-SPF: eid=1k7nKV-0004PB-W4;;;mid=<20200817220425.9389-10-ebiederm@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/rGzp3jrWwVWIWQnolVzaJMEaOuCOGy6w=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa05.xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
 X-Spam-Level: *
 X-Spam-Status: No, score=1.3 required=8.0 tests=ALL_TRUSTED,BAYES_50,
         DCC_CHECK_NEGATIVE,T_TooManySym_01,XMNoVowels autolearn=disabled
@@ -69,22 +69,22 @@ X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
         *      [score: 0.5000]
         *  1.5 XMNoVowels Alpha-numberic number with no vowels
         * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa05 0; Body=1 Fuz1=1 Fuz2=1]
+        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
         *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: ; sa05 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
 X-Spam-Combo: *;linux-kernel@vger.kernel.org
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 382 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 12 (3.0%), b_tie_ro: 10 (2.6%), parse: 1.58
-        (0.4%), extract_message_metadata: 13 (3.4%), get_uri_detail_list: 1.53
-        (0.4%), tests_pri_-1000: 17 (4.5%), tests_pri_-950: 1.35 (0.4%),
-        tests_pri_-900: 1.16 (0.3%), tests_pri_-90: 78 (20.5%), check_bayes:
-        77 (20.1%), b_tokenize: 10 (2.5%), b_tok_get_all: 8 (2.1%),
-        b_comp_prob: 2.4 (0.6%), b_tok_touch_all: 54 (14.1%), b_finish: 0.86
-        (0.2%), tests_pri_0: 244 (63.7%), check_dkim_signature: 0.53 (0.1%),
-        check_dkim_adsp: 2.2 (0.6%), poll_dns_idle: 0.50 (0.1%), tests_pri_10:
-        2.4 (0.6%), tests_pri_500: 8 (2.2%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH 09/17] file: Implement fnext_task
+X-Spam-Timing: total 405 ms - load_scoreonly_sql: 0.08 (0.0%),
+        signal_user_changed: 11 (2.8%), b_tie_ro: 10 (2.4%), parse: 1.50
+        (0.4%), extract_message_metadata: 14 (3.3%), get_uri_detail_list: 1.99
+        (0.5%), tests_pri_-1000: 16 (3.9%), tests_pri_-950: 1.36 (0.3%),
+        tests_pri_-900: 1.21 (0.3%), tests_pri_-90: 76 (18.9%), check_bayes:
+        75 (18.5%), b_tokenize: 10 (2.5%), b_tok_get_all: 9 (2.3%),
+        b_comp_prob: 3.7 (0.9%), b_tok_touch_all: 48 (11.9%), b_finish: 0.90
+        (0.2%), tests_pri_0: 260 (64.3%), check_dkim_signature: 1.04 (0.3%),
+        check_dkim_adsp: 2.4 (0.6%), poll_dns_idle: 0.65 (0.2%), tests_pri_10:
+        3.3 (0.8%), tests_pri_500: 16 (3.9%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH 10/17] proc/fd: In proc_readfd_common use fnext_task
 X-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
 X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
@@ -93,64 +93,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As a companion to fget_task and fcheck_task implement fnext_task that
-will return the struct file for the first file descriptor show number
-is equal or greater than the fd argument value, or NULL if there is
-no such struct file.
+When discussing[1] exec and posix file locks it was realized that none
+of the callers of get_files_struct fundamentally needed to call
+get_files_struct, and that by switching them to helper functions
+instead it will both simplify their code and remove unnecessary
+increments of files_struct.count.  Those unnecessary increments can
+result in exec unnecessarily unsharing files_struct which breaking
+posix locks, and it can result in fget_light having to fallback to
+fget reducing system performance.
 
-This allows file descriptors of foreign processes to be iterated through
-safely, without needed to increment the count on files_struct.
+Using fnext_task simplifies proc_readfd_common, by moving the checking
+for the maximum file descritor into the generic code, and by
+remvoing the need for capturing and releasing a reference on
+files_struct.
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+[1] https://lkml.kernel.org/r/20180915160423.GA31461@redhat.com
+Suggested-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 ---
- fs/file.c               | 21 +++++++++++++++++++++
- include/linux/fdtable.h |  1 +
- 2 files changed, 22 insertions(+)
+ fs/proc/fd.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/fs/file.c b/fs/file.c
-index 8d4b385055e9..88f9f78869f8 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -876,6 +876,27 @@ struct file *fcheck_task(struct task_struct *task, unsigned int fd)
- 	return file;
- }
+diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+index abfdcb21cc79..d9fee5390fd7 100644
+--- a/fs/proc/fd.c
++++ b/fs/proc/fd.c
+@@ -218,7 +218,6 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
+ 			      instantiate_t instantiate)
+ {
+ 	struct task_struct *p = get_proc_task(file_inode(file));
+-	struct files_struct *files;
+ 	unsigned int fd;
  
-+struct file *fnext_task(struct task_struct *task, unsigned int *ret_fd)
-+{
-+	/* Must be called with rcu_read_lock held */
-+	struct files_struct *files;
-+	unsigned int fd = *ret_fd;
-+	struct file *file = NULL;
-+
-+	task_lock(task);
-+	files = task->files;
-+	if (files) {
-+		for (; fd < files_fdtable(files)->max_fds; fd++) {
-+			file = fcheck_files(files, fd);
-+			if (file)
-+				break;
-+		}
-+	}
-+	task_unlock(task);
-+	*ret_fd = fd;
-+	return file;
-+}
-+
- /*
-  * Lightweight file lookup - no refcnt increment if fd table isn't shared.
-  *
-diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index def9debd2ce2..a3a054084f49 100644
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -104,6 +104,7 @@ static inline struct file *fcheck_files(struct files_struct *files, unsigned int
-  */
- #define fcheck(fd)	fcheck_files(current->files, fd)
- struct file *fcheck_task(struct task_struct *task, unsigned int fd);
-+struct file *fnext_task(struct task_struct *task, unsigned int *fd);
+ 	if (!p)
+@@ -226,22 +225,18 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
  
- struct task_struct;
+ 	if (!dir_emit_dots(file, ctx))
+ 		goto out;
+-	files = get_files_struct(p);
+-	if (!files)
+-		goto out;
  
+ 	rcu_read_lock();
+-	for (fd = ctx->pos - 2;
+-	     fd < files_fdtable(files)->max_fds;
+-	     fd++, ctx->pos++) {
++	for (fd = ctx->pos - 2;; fd++, ctx->pos++) {
+ 		struct file *f;
+ 		struct fd_data data;
+ 		char name[10 + 1];
+ 		unsigned int len;
+ 
+-		f = fcheck_files(files, fd);
++		f = fnext_task(p, &fd);
++		ctx->pos = fd;
+ 		if (!f)
+-			continue;
++			break;
+ 		data.mode = f->f_mode;
+ 		rcu_read_unlock();
+ 		data.fd = fd;
+@@ -250,13 +245,11 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
+ 		if (!proc_fill_cache(file, ctx,
+ 				     name, len, instantiate, p,
+ 				     &data))
+-			goto out_fd_loop;
++			goto out;
+ 		cond_resched();
+ 		rcu_read_lock();
+ 	}
+ 	rcu_read_unlock();
+-out_fd_loop:
+-	put_files_struct(files);
+ out:
+ 	put_task_struct(p);
+ 	return 0;
 -- 
 2.25.0
 
