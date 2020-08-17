@@ -2,90 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB332245FA0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 10:23:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D04C0246068
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 10:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbgHQIXp convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Aug 2020 04:23:45 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:31938 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728027AbgHQIXR (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Aug 2020 04:23:17 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-180-lNRQs7-OMBKEt5epJ5rllg-1; Mon, 17 Aug 2020 09:23:12 +0100
-X-MC-Unique: lNRQs7-OMBKEt5epJ5rllg-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 17 Aug 2020 09:23:11 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 17 Aug 2020 09:23:11 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christoph Hellwig' <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "x86@kernel.org" <x86@kernel.org>
-CC:     Kees Cook <keescook@chromium.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: RE: [PATCH 09/11] x86: remove address space overrides using set_fs()
-Thread-Topic: [PATCH 09/11] x86: remove address space overrides using set_fs()
-Thread-Index: AQHWdGicIkTuqnSld0yWphpVxhe9Oqk79IHw
-Date:   Mon, 17 Aug 2020 08:23:11 +0000
-Message-ID: <935d551809894d14965e430e05d21057@AcuMS.aculab.com>
-References: <20200817073212.830069-1-hch@lst.de>
- <20200817073212.830069-10-hch@lst.de>
-In-Reply-To: <20200817073212.830069-10-hch@lst.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        id S1726633AbgHQIin (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Aug 2020 04:38:43 -0400
+Received: from foss.arm.com ([217.140.110.172]:50254 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726385AbgHQIim (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 Aug 2020 04:38:42 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B4B730E;
+        Mon, 17 Aug 2020 01:38:41 -0700 (PDT)
+Received: from [192.168.1.179] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8539A3F6CF;
+        Mon, 17 Aug 2020 01:38:38 -0700 (PDT)
+Subject: Re: [PATCH v3 2/3] mm: smaps*: extend smap_gather_stats to support
+ specified beginning
+To:     Chinwen Chang <chinwen.chang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michel Lespinasse <walken@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Song Liu <songliubraving@fb.com>,
+        Jimmy Assarsson <jimmyassarsson@gmail.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Daniel Kiss <daniel.kiss@arm.com>,
+        Laurent Dufour <ldufour@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        wsd_upstream@mediatek.com
+References: <1597472419-32314-1-git-send-email-chinwen.chang@mediatek.com>
+ <1597472419-32314-3-git-send-email-chinwen.chang@mediatek.com>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <5f4eb892-4980-8245-b93d-5358ffa01abe@arm.com>
+Date:   Mon, 17 Aug 2020 09:38:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0.001
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <1597472419-32314-3-git-send-email-chinwen.chang@mediatek.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christoph Hellwig
-> Sent: 17 August 2020 08:32
->
-> Stop providing the possibility to override the address space using
-> set_fs() now that there is no need for that any more.  To properly
-> handle the TASK_SIZE_MAX checking for 4 vs 5-level page tables on
-> x86 a new alternative is introduced, which just like the one in
-> entry_64.S has to use the hardcoded virtual address bits to escape
-> the fact that TASK_SIZE_MAX isn't actually a constant when 5-level
-> page tables are enabled.
-....
-> @@ -93,7 +69,7 @@ static inline bool pagefault_disabled(void);
->  #define access_ok(addr, size)					\
->  ({									\
->  	WARN_ON_IN_IRQ();						\
-> -	likely(!__range_not_ok(addr, size, user_addr_max()));		\
-> +	likely(!__range_not_ok(addr, size, TASK_SIZE_MAX));		\
->  })
+On 15/08/2020 07:20, Chinwen Chang wrote:
+> Extend smap_gather_stats to support indicated beginning address at
+> which it should start gathering. To achieve the goal, we add a new
+> parameter @start assigned by the caller and try to refactor it for
+> simplicity.
+> 
+> If @start is 0, it will use the range of @vma for gathering.
+> 
+> Change since v2:
+> - This is a new change to make the retry behavior of smaps_rollup
+> - more complete as suggested by Michel [1]
+> 
+> [1] https://lore.kernel.org/lkml/CANN689FtCsC71cjAjs0GPspOhgo_HRj+diWsoU1wr98YPktgWg@mail.gmail.com/
+> 
+> Signed-off-by: Chinwen Chang <chinwen.chang@mediatek.com>
+> CC: Michel Lespinasse <walken@google.com>
+> CC: Steven Price <steven.price@arm.com>
 
-Can't that always compare against a constant even when 5-levl
-page tables are enabled on x86-64?
+LGTM
 
-On x86-64 it can (probably) reduce to (addr | (addr + size)) < 0.
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-	David
+Steve
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+> ---
+>   fs/proc/task_mmu.c | 30 ++++++++++++++++++++++--------
+>   1 file changed, 22 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index dbda449..76e623a 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -723,9 +723,21 @@ static int smaps_hugetlb_range(pte_t *pte, unsigned long hmask,
+>   	.pte_hole		= smaps_pte_hole,
+>   };
+>   
+> +/*
+> + * Gather mem stats from @vma with the indicated beginning
+> + * address @start, and keep them in @mss.
+> + *
+> + * Use vm_start of @vma as the beginning address if @start is 0.
+> + */
+>   static void smap_gather_stats(struct vm_area_struct *vma,
+> -			     struct mem_size_stats *mss)
+> +		struct mem_size_stats *mss, unsigned long start)
+>   {
+> +	const struct mm_walk_ops *ops = &smaps_walk_ops;
+> +
+> +	/* Invalid start */
+> +	if (start >= vma->vm_end)
+> +		return;
+> +
+>   #ifdef CONFIG_SHMEM
+>   	/* In case of smaps_rollup, reset the value from previous vma */
+>   	mss->check_shmem_swap = false;
+> @@ -742,18 +754,20 @@ static void smap_gather_stats(struct vm_area_struct *vma,
+>   		 */
+>   		unsigned long shmem_swapped = shmem_swap_usage(vma);
+>   
+> -		if (!shmem_swapped || (vma->vm_flags & VM_SHARED) ||
+> -					!(vma->vm_flags & VM_WRITE)) {
+> +		if (!start && (!shmem_swapped || (vma->vm_flags & VM_SHARED) ||
+> +					!(vma->vm_flags & VM_WRITE))) {
+>   			mss->swap += shmem_swapped;
+>   		} else {
+>   			mss->check_shmem_swap = true;
+> -			walk_page_vma(vma, &smaps_shmem_walk_ops, mss);
+> -			return;
+> +			ops = &smaps_shmem_walk_ops;
+>   		}
+>   	}
+>   #endif
+>   	/* mmap_lock is held in m_start */
+> -	walk_page_vma(vma, &smaps_walk_ops, mss);
+> +	if (!start)
+> +		walk_page_vma(vma, ops, mss);
+> +	else
+> +		walk_page_range(vma->vm_mm, start, vma->vm_end, ops, mss);
+>   }
+>   
+>   #define SEQ_PUT_DEC(str, val) \
+> @@ -805,7 +819,7 @@ static int show_smap(struct seq_file *m, void *v)
+>   
+>   	memset(&mss, 0, sizeof(mss));
+>   
+> -	smap_gather_stats(vma, &mss);
+> +	smap_gather_stats(vma, &mss, 0);
+>   
+>   	show_map_vma(m, vma);
+>   
+> @@ -854,7 +868,7 @@ static int show_smaps_rollup(struct seq_file *m, void *v)
+>   	hold_task_mempolicy(priv);
+>   
+>   	for (vma = priv->mm->mmap; vma; vma = vma->vm_next) {
+> -		smap_gather_stats(vma, &mss);
+> +		smap_gather_stats(vma, &mss, 0);
+>   		last_vma_end = vma->vm_end;
+>   	}
+>   
+> 
 
