@@ -2,183 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B9072464AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 12:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1244C246589
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 13:33:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbgHQKmA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Aug 2020 06:42:00 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:40296 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726151AbgHQKmA (ORCPT
+        id S1726802AbgHQLdR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Aug 2020 07:33:17 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:28318 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726795AbgHQLdQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Aug 2020 06:42:00 -0400
+        Mon, 17 Aug 2020 07:33:16 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597660918;
+        s=mimecast20190719; t=1597663994;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PUJr2mnP6BBvGf0Kjd5lhs/X3Ec756z2m+nUcS2WOv0=;
-        b=DXRAYmXVXoKW5b6pqmLW90xNq61cKRBlPZ5GlbKU+AocaZ/XRYTTxMAPOOKgFLB67KOHfM
-        gOrREUogs5rlcrJuK4amd7hCcUsDGu4wjHm8k0ciXjHAHHN7oTf9zUhpNfus43UzcsO9Lz
-        eREDVXXZ8mZy+Mr0ekQDi6DFS+hvsmg=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-252-GyBc7orbNq-BKtLHgd-jGw-1; Mon, 17 Aug 2020 06:41:40 -0400
-X-MC-Unique: GyBc7orbNq-BKtLHgd-jGw-1
-Received: by mail-wr1-f70.google.com with SMTP id e14so6829024wrr.7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Aug 2020 03:41:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PUJr2mnP6BBvGf0Kjd5lhs/X3Ec756z2m+nUcS2WOv0=;
-        b=nMLtD1mZ6V7UMuj79rhQGEzHDzk15y9oq5xu8lOT+6z3AXgptF60bnfISiZs+olM2d
-         H897aaCRSV9jZzrHGQ+uDJVm+vKLHAIp6TneB+5WnwiZTcMRkqNJP52NM2zEJoODWWpe
-         IRFYn+lGrUsZL0ebtnsP12vz9FMkW+rBPV5RhgazwUmc6lqD1z9GENs5lOe5Gqsb/l5M
-         edni/u6z3fsIG6tpiTN40Tc2v18lwPI2mspiKpNiBYCG9bN/2p2RY/6NUmaP+4CcUfxv
-         qUwGehJciVj4CKKfKcGrKRn36Fz+M/fs3wgaBVml/MeHt5+Lkm1+z/zyLtFHYNBWOmAx
-         3ntg==
-X-Gm-Message-State: AOAM53192A815PIyNZbJTXk1acCMT9IESahT2O0zBuAZtF3VjFd8rwmi
-        Cq/LmS7b7OAfHo/VqcwbgPNAoxdWC2MKxQzyfBjoiTVZxdkuZmZ9lg1A77SYzKQp6y5F8xNTlDr
-        7QW3Vc2rFUYTSpeJMK92YK2dVug==
-X-Received: by 2002:a1c:1904:: with SMTP id 4mr13966081wmz.119.1597660899673;
-        Mon, 17 Aug 2020 03:41:39 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyqlBqWFxOiqPpRiM4LJ468Hm0058AImmVCARluPm+REFssSMQSBhWZ3F7LfJGZ19Vvr0lF6Q==
-X-Received: by 2002:a1c:1904:: with SMTP id 4mr13966061wmz.119.1597660899335;
-        Mon, 17 Aug 2020 03:41:39 -0700 (PDT)
-Received: from steredhat ([5.171.230.129])
-        by smtp.gmail.com with ESMTPSA id g14sm29251689wme.16.2020.08.17.03.41.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Aug 2020 03:41:38 -0700 (PDT)
-Date:   Mon, 17 Aug 2020 12:41:34 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     kernel test robot <lkp@intel.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, kbuild-all@lists.01.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: Re: [PATCH v4 2/3] io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
-Message-ID: <20200817104134.fgmrppzchno2hcci@steredhat>
-References: <20200813153254.93731-3-sgarzare@redhat.com>
- <202008140142.UYrgnsNY%lkp@intel.com>
+        bh=yGNaFx2Jg2/WUMJiM6JmNJk/uv+6+QM3rr6hE8Ya/eo=;
+        b=P8RqICs6QPjiwUtacccFnu0jwiFyLZsDk8jSw9IeK3IMB9MDqQ9cIYKeFJBmfVAamkeeoZ
+        sOSWA/CGZIyRKbbnsDMF3qiDYR8hPVXBRZlY/VLPxw7GMypgsXEAU+bYQ5MKe0UvyqsPkb
+        lf2Awukdd6s12GWVFLRsknC7lfYeu4c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-308-WwqY1EEVM_-CA6hqEqDjGw-1; Mon, 17 Aug 2020 07:33:07 -0400
+X-MC-Unique: WwqY1EEVM_-CA6hqEqDjGw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 98322E75C;
+        Mon, 17 Aug 2020 11:33:04 +0000 (UTC)
+Received: from fogou.chygwyn.com (unknown [10.33.36.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1AC7C7D66F;
+        Mon, 17 Aug 2020 11:32:57 +0000 (UTC)
+Subject: Re: file metadata via fs API
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1842689.1596468469@warthog.procyon.org.uk>
+ <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
+ <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk>
+ <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+ <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com>
+ <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
+From:   Steven Whitehouse <swhiteho@redhat.com>
+Message-ID: <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com>
+Date:   Mon, 17 Aug 2020 12:32:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202008140142.UYrgnsNY%lkp@intel.com>
+In-Reply-To: <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 14, 2020 at 01:42:15AM +0800, kernel test robot wrote:
-> Hi Stefano,
-> 
-> I love your patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on linus/master]
-> [also build test WARNING on v5.8 next-20200813]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Stefano-Garzarella/io_uring-add-restrictions-to-support-untrusted-applications-and-guests/20200813-233653
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git dc06fe51d26efc100ac74121607c01a454867c91
-> config: s390-randconfig-c003-20200813 (attached as .config)
-> compiler: s390-linux-gcc (GCC) 9.3.0
-> 
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
-> 
-> 
-> coccinelle warnings: (new ones prefixed by >>)
-> 
-> >> fs/io_uring.c:8516:7-14: WARNING opportunity for memdup_user
+Hi,
 
-Yeah, I think make sense.
+On 12/08/2020 20:50, Linus Torvalds wrote:
+> On Wed, Aug 12, 2020 at 12:34 PM Steven Whitehouse <swhiteho@redhat.com> wrote:
+>> The point of this is to give us the ability to monitor mounts from
+>> userspace.
+> We haven't had that before, I don't see why it's suddenly such a big deal.
+>
+> The notification side I understand. Polling /proc files is not the answer.
+>
+> But the whole "let's design this crazy subsystem for it" seems way
+> overkill. I don't see anybody caring that deeply.
+>
+> It really smells like "do it because we can, not because we must".
+>
+> Who the hell cares about monitoring mounts at a kHz frequencies? If
+> this is for MIS use, you want a nice GUI and not wasting CPU time
+> polling.
+>
+> I'm starting to ignore the pull requests from David Howells, because
+> by now they have had the same pattern for a couple of years now:
+> esoteric new interfaces that seem overdesigned for corner-cases that
+> I'm not seeing people clamoring for.
+>
+> I need (a) proof this is actualyl something real users care about and
+> (b) way more open discussion and implementation from multiple parties.
+>
+> Because right now it looks like a small in-cabal of a couple of people
+> who have wild ideas but I'm not seeing the wider use of it.
+>
+> Convince me otherwise. AGAIN. This is the exact same issue I had with
+> the notification queues that I really wanted actual use-cases for, and
+> feedback from actual outside users.
+>
+> I really think this is engineering for its own sake, rather than
+> responding to actual user concerns.
+>
+>                 Linus
+>
 
-I'll use memdup_user() in the next version.
+I've been hesitant to reply to this immediately, because I can see that 
+somehow there is a significant disconnect between what you expect to 
+happen, and what has actually happened in this case. Have pondered this 
+for a few days, I hope that the best way forward might be to explore 
+where the issues are, with the intention of avoiding a repeat in the 
+future. Sometimes email is a difficult medium for these kinds of 
+communication, and face to face is better, but with the lack of 
+conferences/travel at the moment, that option is not open in the near 
+future.
 
-> 
-> vim +8516 fs/io_uring.c
-> 
->   8497	
->   8498	static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
->   8499					    unsigned int nr_args)
->   8500	{
->   8501		struct io_uring_restriction *res;
->   8502		size_t size;
->   8503		int i, ret;
->   8504	
->   8505		/* We allow only a single restrictions registration */
->   8506		if (ctx->restricted)
->   8507			return -EBUSY;
->   8508	
->   8509		if (!arg || nr_args > IORING_MAX_RESTRICTIONS)
->   8510			return -EINVAL;
->   8511	
->   8512		size = array_size(nr_args, sizeof(*res));
->   8513		if (size == SIZE_MAX)
->   8514			return -EOVERFLOW;
->   8515	
-> > 8516		res = kmalloc(size, GFP_KERNEL);
->   8517		if (!res)
->   8518			return -ENOMEM;
->   8519	
->   8520		if (copy_from_user(res, arg, size)) {
->   8521			ret = -EFAULT;
->   8522			goto out;
->   8523		}
->   8524	
->   8525		for (i = 0; i < nr_args; i++) {
->   8526			switch (res[i].opcode) {
->   8527			case IORING_RESTRICTION_REGISTER_OP:
->   8528				if (res[i].register_op >= IORING_REGISTER_LAST) {
->   8529					ret = -EINVAL;
->   8530					goto out;
->   8531				}
->   8532	
->   8533				__set_bit(res[i].register_op,
->   8534					  ctx->restrictions.register_op);
->   8535				break;
->   8536			case IORING_RESTRICTION_SQE_OP:
->   8537				if (res[i].sqe_op >= IORING_OP_LAST) {
->   8538					ret = -EINVAL;
->   8539					goto out;
->   8540				}
->   8541	
->   8542				__set_bit(res[i].sqe_op, ctx->restrictions.sqe_op);
->   8543				break;
->   8544			case IORING_RESTRICTION_SQE_FLAGS_ALLOWED:
->   8545				ctx->restrictions.sqe_flags_allowed = res[i].sqe_flags;
->   8546				break;
->   8547			case IORING_RESTRICTION_SQE_FLAGS_REQUIRED:
->   8548				ctx->restrictions.sqe_flags_required = res[i].sqe_flags;
->   8549				break;
->   8550			default:
->   8551				ret = -EINVAL;
->   8552				goto out;
->   8553			}
->   8554		}
->   8555	
->   8556		ctx->restricted = 1;
->   8557	
->   8558		ret = 0;
->   8559	out:
->   8560		/* Reset all restrictions if an error happened */
->   8561		if (ret != 0)
->   8562			memset(&ctx->restrictions, 0, sizeof(ctx->restrictions));
->   8563	
->   8564		kfree(res);
->   8565		return ret;
->   8566	}
->   8567	
-> 
-> ---
-> 0-DAY CI Kernel Test Service, Intel Corporation
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+The whole plan here, leading towards the ability to get a "dump plus 
+updates" view of mounts in the kernel has been evolving over time. It 
+has been discussed at LSF over a number of years [1] and in fact the new 
+mount API which was merged recently - I wonder if this is what you are 
+referring to above as:
+
+> I'm starting to ignore the pull requests from David Howells, because
+> by now they have had the same pattern for a couple of years now
+
+was originally proposed by Al, and also worked on by Miklos[2] in 2017 
+and others. Community discussion resulted in that becoming a 
+prerequisite for the later notifications/fsinfo work. This was one of 
+the main reasons that David picked it up[3] to work on, but not the only 
+reason. That did also appear to be logical, in that cleaning up the way 
+in which arguments were handled during mount would make it much easier 
+to create future generic code to handle them.
+
+That said, the overall aim here is to solve the problem and if there are 
+better solutions available then I'm sure that everyone is very open to 
+those. I agree very much that monitoring at kHz frequencies is not 
+useful, but at the same time, there are cases which can generate large 
+amounts of mount changes in a very short time period. We want to be 
+reasonably efficient, but not to over-optimise, and sometimes that is a 
+fine line. We also don't want to block mounts if the notifications queue 
+fills up, so some kind of resync operation would be required in the 
+queue overflows. The notifications and fsinfo were designed very much as 
+two sides of the same coin, but submitted separately for ease of review 
+more than anything else.
+
+You recently requested some details of real users for the notifications, 
+and (I assumed) by extension fsinfo too. Ian wrote these emails [4][5] 
+in direct response to your request. That is what we thought you were 
+looking for, so if that isn't not quite what you meant, perhaps you 
+could clarify a bit more. Again, apologies if we've misinterpreted what 
+you were asking for.
+
+You also mention "...it looks like a small in-cabal of a couple of 
+people..." and I hope that it doesn't look that way, it is certainly not 
+our intention. There have been a fair number of people involved, and 
+we've done our best to ensure that the development is guided by the 
+potential users, such as autofs, AFS and systemd. If there are others 
+out there with use cases, and particularly so if the use case is a GUI 
+file manager type application who'd like to get involved, then please 
+do. We definitely want to see involvement from end users, since there is 
+no point in spending a large effort creating something that is then 
+never used. As you pointed that out above, this kind of application was 
+very much part of the original motivation, but we had started with the 
+other users since there were clearly defined use cases that could 
+demonstrate significant performance gains in those cases.
+
+So hopefully that helps to give a bit more background about where we are 
+and how we got here. Where we go next will no doubt depend on the 
+outcome of the current discussions, and any guidance you can give around 
+how we should have better approached this would be very helpful at this 
+stage,
+
+Steve.
+
+
+[1] https://lwn.net/Articles/718803/
+
+[2] https://lwn.net/Articles/718638/
+
+[3] https://lwn.net/Articles/753473/
+
+[4] https://lkml.org/lkml/2020/6/2/1182
+
+[5] 
+https://lore.kernel.org/linux-fsdevel/8eb2e52f1cbdbb8bcf5c5205a53bdc9aaa11a071.camel@themaw.net/
 
 
