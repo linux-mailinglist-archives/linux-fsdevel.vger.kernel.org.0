@@ -2,157 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EF89246D8F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 19:02:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D999246E59
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 19:28:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731193AbgHQRCx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Aug 2020 13:02:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48230 "EHLO
+        id S2389522AbgHQR2D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Aug 2020 13:28:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731166AbgHQRCo (ORCPT
+        with ESMTP id S2389566AbgHQRPa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Aug 2020 13:02:44 -0400
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C9BDC061389
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Aug 2020 10:02:44 -0700 (PDT)
-Received: by mail-il1-x12e.google.com with SMTP id r13so10719485iln.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Aug 2020 10:02:44 -0700 (PDT)
+        Mon, 17 Aug 2020 13:15:30 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22C26C061344
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Aug 2020 10:15:29 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id 185so18300058ljj.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Aug 2020 10:15:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=z/xTApNuRmjuImNJLZt8rI74ilUKCgdSz9ipdIgPFX0=;
-        b=n+86zwrZeFVQCUKh7JBN5laccODgw3J+MomGCsfVlbwdODvilUKwGQuqFmGQ8Vcdoo
-         IhMkdyR2tzipWt/BIXHxt5jPKr97MZoIDlL2jAcQuuo3eg4DAiAQu2/NoId0fbBF0WvN
-         sIZaz84WZMFZaQgvZ9Aljz70os6NJO/7iKpkbbHZ5ygvQCu9x7bZfgkKMij7ZNXctEZ3
-         x3JUvlVXHEj+yCq/ta4h47xpw6lTyO9Wd5eNNqhlEiQeDCDO8sXMg+iFNUnu15cVE6WF
-         UhMkULBHghKCk8xTQKA5ujE9HGO49Z8DkZBeiHVDDI6RJfBewAOPdhmW/dNMnnNKZy6m
-         WDzw==
+        bh=DTKpRQCJHedRM3FbZvyYbTIR6de/XsGxhtwq6dwi9YM=;
+        b=PMBxHujDdM06S7/LBYxWztuV9Qz9M9XMftYKfNncXrXEOWl8S9SfA8Rombi+0je/I0
+         A84g6y4oncHBFuyCuaStiv1xllCcI1u554NplHzJl+AHhh3aSCdz63J8MUzhGeEWT8sx
+         kXa9iLijsc9rTUTCiHyOc6bHkoxCbBHR8fr9M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=z/xTApNuRmjuImNJLZt8rI74ilUKCgdSz9ipdIgPFX0=;
-        b=ALGx5uDNmN+Jak9YTWbxiU7TfThA6RqqS0Hv78MIY4SG6da7azYc1aEHS846ctYN4/
-         bcXeRo17u2gAg1yWcyhoheM3QV5YN8PuscCM7U/g4IQ+nR6Fj5plX7we2eJ2ErBbMgRs
-         7C/uVKwoVwoGQxgPf0OHP+hEiO8+NhbPHpK8SvKVJY5aq9G4Hti//3hfszdE4kd+msWh
-         BenBNiawzGVvn2s+D0pv7acmtVyzYpv46lMsbgHKGsAazCGZv1FS7XLgl7vAUITyF0IQ
-         PV94Ql4uhnE5n4W5Tao7QPoUyYPmK5C+JmjP4b5CImzZokNcfvY1NrHtjwjVn6qs/QOX
-         9agw==
-X-Gm-Message-State: AOAM530nqql4f4SfEf/JvhwUDfLgxXmFMJyOBX66+LfDeZ9m5/TAt8K2
-        R2/rz4B5SZC+8KLdIqabBtE+jBryofR6OPJOqC4=
-X-Google-Smtp-Source: ABdhPJx2QTk6Qu49gkIfZnWEPIY5Rnax1nDLj645UuNFDh4JdyKq9M4YkGcyDUFrwf6qXlxxkjpOhdFMjJM4/Xg8Emo=
-X-Received: by 2002:a05:6e02:dc3:: with SMTP id l3mr14916147ilj.137.1597683762528;
- Mon, 17 Aug 2020 10:02:42 -0700 (PDT)
+        bh=DTKpRQCJHedRM3FbZvyYbTIR6de/XsGxhtwq6dwi9YM=;
+        b=i5YoXjA1noAoFrrTtHwfYuVmgxfQrTs/QxmYUevu73QhIBT9LYur52yD3l803rXGKz
+         2gdclqLbBLfgn5ZVuX6r9QpBqM1Lm0NGiupWs5fF1V+TZE2XOcmLqFfI8hXg4fWqskkC
+         xpotmqDKnKoYv/KAk6yeIQTyMao96Q3Ot6m3y9luuENHZUIszJkqf/DsBM42CCUx6b8v
+         B904kk9mLl6uGRU81p0u0Zrnp1pfr5mJ7oNE4GZAolj0ihj8jLtcP9DhkajYf4S1VPFV
+         sJEyJOdHB/tWSAuWcOg7RMVlezEPAiRoms4d0vfr5UaX66EpPNElyedBLWxIwd0RDPBm
+         UBwg==
+X-Gm-Message-State: AOAM533vopS47//GrLkKdcU9wWlsWnu4g5ddaXTPObMotg8Qm5W6l2M2
+        k0E7fG6QLE0ymNvo/mc0fut0/CffvrxyJQ==
+X-Google-Smtp-Source: ABdhPJyMhghZIi5a6Q4II5mVKY1t9RevRj6iJxgrruTXIYQ3lN7hQWEbE7MgQTF8mAIZCJGVEtUPDQ==
+X-Received: by 2002:a2e:9050:: with SMTP id n16mr7951364ljg.228.1597684525640;
+        Mon, 17 Aug 2020 10:15:25 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id z21sm5142313ljm.30.2020.08.17.10.15.25
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Aug 2020 10:15:25 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 185so18299989ljj.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Aug 2020 10:15:25 -0700 (PDT)
+X-Received: by 2002:a05:651c:503:: with SMTP id o3mr8363984ljp.312.1597684524581;
+ Mon, 17 Aug 2020 10:15:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <dde082eb-b3eb-859e-b442-a65846cff6fa@mail.de>
-In-Reply-To: <dde082eb-b3eb-859e-b442-a65846cff6fa@mail.de>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 17 Aug 2020 20:02:31 +0300
-Message-ID: <CAOQ4uxjEm=vj5Be5VoUyB9Q+YVq=+aO_4PfXp-iEYZA7qzO1Gw@mail.gmail.com>
-Subject: Re: fanotify feature request FAN_MARK_PID
-To:     Tycho Kirchner <tychokirchner@mail.de>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <1842689.1596468469@warthog.procyon.org.uk> <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com> <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk> <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+ <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com> <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
+ <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com>
+In-Reply-To: <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 17 Aug 2020 10:15:08 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wig0ZqWxgWtD9F1xZzE7jEmgLmXRWABhss0+er3ZRtb9g@mail.gmail.com>
+Message-ID: <CAHk-=wig0ZqWxgWtD9F1xZzE7jEmgLmXRWABhss0+er3ZRtb9g@mail.gmail.com>
+Subject: Re: file metadata via fs API
+To:     Steven Whitehouse <swhiteho@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 17, 2020 at 7:08 PM Tycho Kirchner <tychokirchner@mail.de> wrote:
+On Mon, Aug 17, 2020 at 4:33 AM Steven Whitehouse <swhiteho@redhat.com> wrote:
 >
-> Dear Amir Goldstein,
->
+> That said, the overall aim here is to solve the problem and if there are
+> better solutions available then I'm sure that everyone is very open to
+> those. I agree very much that monitoring at kHz frequencies is not
+> useful, but at the same time, there are cases which can generate large
+> amounts of mount changes in a very short time period.
 
-Hi Tycho,
+So the thing is, I absolutely believe in the kernel _notifying_ about
+changes so that people don't need to poll. It's why I did merge the
+notification queues, although I wanted to make sure that those worked.
 
+> You recently requested some details of real users for the notifications,
+> and (I assumed) by extension fsinfo too.
 
-> Dear Matthew Bobrowski,
->
-> Dear developers of the kernel filesystem,
->
-> First of all, thanks for your effort in improving Linux, especially your
-> work regarding fanotify, which I heavily use in one of my projects:
->
-> https://github.com/tycho-kirchner/shournal
->
+No, fsinfo wasn't on the table there. To me, notifications are a
+completely separate issue, because you *can* get the information from
+existing sources (ie things like /proc/mounts etc), and notification
+seemed to be the much more fundamental issue.
 
-Nice project!
+If you poll for changes, parsing something like /proc/mounts is
+obviously very heavy indeed. I don't find that particularly
+controversial. Plus the notification queues had other uses, even if it
+wasn't clear how many or who would use them.
 
-> For a more scientfic introduction please take a look at
-> Bashing irreproducibility with shournal
-> https://doi.org/10.1101/2020.08.03.232843
->
-> I wanted to kindly ask you, whether it is possible for you to add
-> another feature to fanotify, that is reporting only events of a PID or
-> any of its children.
-> This would be very useful, because especially in the world of
-> bioinformatics there is a huge need to automatically and efficiently
-> track file events on the shell, that is, you enter a command on the
-> shell (bash) and then track, which file events were modified by the
-> shell or any of its child-processes.
+But honestly, the actual fsinfo thing seems (a) overdesigned and (b)
+broken. I've now had two different people say how they want to use it
+to figure out whether a filesystem supports certain things that aren't
+even per-filesystem things in the first place.
 
-I am not sure if fanotify is the right tool for the job.
-fanotify is a *system* monitoring tool and its functionality is very limited.
-If you want to watch what file operations a process and its children are doing,
-you can use more powerful tracing tools like strace, seccomp, and eBPF.
-For starters, did you look at bcc tools, for example:
-https://github.com/iovisor/bcc/blob/master/tools/opensnoop.py
+And this feature is clearly controversial, with actual discussion about it.
 
-[...]
+And I find the whole thing confusing and over-engineered. If this was
+a better statfs(), that would be one thing. But it is designed to be
+this monstoer thing that does many different things, and I find it
+distasteful.  Yes, you can query "extended statfs" kind of data with
+it and get the per-file attributes. I find it really annoying how the
+vfs layer calls to the filesystems, that then call back to the vfs
+layer to fill things in, but I guess we have that nasty pattern from
+stat() already. I'd rather have the VFS layer just fill in all the
+default values and the stuff it already knows about, and then maybe
+have the filesystem callback fill in the ones the vfs *doesn't* know
+about, but whatever.
 
-> I imagine e.g. the following syscalls:
->
-> 1.
-> Use fanotify_mark to restrict the fanotify notification group to a
-> specific PID, optionally marking forked children as well.
-> fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_PID, FAN_EVENT_ON_CHILD,
-> pid, NULL);
-> // FAN_EVENT_ON_CHILD -> additional meaning: also forked child processes.
->
+But then you can *also* query odd things like mounts that aren't even
+visible, and the topology, and completely random error state.
 
-Technically, it is quite easy to filter out events generated by
-processes outside
-pid namespace (which would report pid 0), but I doubt if the use case you
-presented justifies that. Maybe there are other use cases...
+So it has this very complex "random structures of random things"
+implementation. It's a huge sign of over-design and "I don't know what
+the hell I want to expose, so I'll make this generic thing that can
+expose anything, and then I start adding random fields".
 
-> 2.
-> Use fanotify_mark to remove a PID from the notification group.
-> fanotify_mark(fan_fd, FAN_MARK_REMOVE | FAN_MARK_PID, 0, pid, NULL);
->
-> 3.
-> When reading from a fan_fd, which is marked for PID's which have all
-> ended or were removed, return e.g. ENOENT.
->
->
-> Independent of that it would be also useful, to be able to track
-> applications, which unshare their mount namespace as well (e.g.
-> flatpak). So in case a process, whose mount points are observed,
-> unshares, the new mount id's should also be added to the same fanotify
-> notification group. To preserve backwards compatibility I suggest
-> introducing a new flag FAN_MARK_MOUNT_REC:
-> fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT |
-> FAN_MARK_MOUNT_REC, mask, AT_FDCWD, path);
->
+Some things are per-file, some things are per-mount, and some things
+are per-namespace and cross mount boundaries.
 
-The inherited mark concept sounds useful.
-I also thought of a likewise flag for directories.
-The question is if and how you clean all the inherited marks when program
-removes the original mark. It's an API question. Not a trivial one IMO.
+And honestly, the "random binary interfaces" just turns me off a lot.
 
-The thing is, with FAN_MARK_FILESYSTEM (v5.1), you can sort of implement
-what you want in userspace with the opposite approach:
-1. Watch events on filesystem regardless of which mount
-2. When getting an event with an open fd, resolve the mount
-3. If you are NOT interested in that mount add a FAN_MARK_IGNORED
-    mask on that mount
-4. Soon, you will be left with only the events you care about
-5. When mount is unshared, you will get the events generated on that mount
+A simple and straightforward struct? Sure. But this random "whatever
+goes" thing? No.
 
-But that will only work if the unshared mount is visible in the mount namespace
-of the listener, so it is not a complete solution, but maybe it works for some
-of your use cases.
-
-Thanks,
-Amir.
+                 Linus
