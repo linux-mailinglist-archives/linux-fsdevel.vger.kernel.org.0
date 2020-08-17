@@ -2,188 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D7CC5246D5B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 18:54:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D34AC246D6E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 18:56:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388649AbgHQQy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Aug 2020 12:54:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42596 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389113AbgHQQxr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Aug 2020 12:53:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 07A5DAE25;
-        Mon, 17 Aug 2020 16:54:05 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 86E271E12CB; Mon, 17 Aug 2020 18:53:39 +0200 (CEST)
-Date:   Mon, 17 Aug 2020 18:53:39 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com, Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm@lists.01.org
-Subject: Re: [PATCH v2 02/20] dax: Create a range version of
- dax_layout_busy_page()
-Message-ID: <20200817165339.GA22500@quack2.suse.cz>
-References: <20200807195526.426056-1-vgoyal@redhat.com>
- <20200807195526.426056-3-vgoyal@redhat.com>
+        id S2389207AbgHQQ4q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Aug 2020 12:56:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47218 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389199AbgHQQ4M (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 17 Aug 2020 12:56:12 -0400
+Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC237C061345
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Aug 2020 09:56:11 -0700 (PDT)
+Received: by mail-qk1-x741.google.com with SMTP id p25so15611799qkp.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Aug 2020 09:56:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Sre2n1Pi8KkTqGTv1s6yeby+p8079BRqjBOJcwiSLww=;
+        b=e0lnhMNX4rbCpfxhO+gQeYAWXdMT9zu80lFA0njs6xwsW1qMBlgAAwdV2fB0ZrDmbI
+         DJwU3H9e/x24KArsI3bcQm9YF2fnooWNYRP2u0lBlOJpfLosNy8hnAKjfFXmNtk1tfH5
+         iHxLc3XXadcqboQN3EKUpEvNmXTEMAqp2DHM4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Sre2n1Pi8KkTqGTv1s6yeby+p8079BRqjBOJcwiSLww=;
+        b=kKnbG6ZTQHe8JTXH74YmjVFXG0Z23m7n5wrO2G0zZZD3xzighQi9fhIELbMe4dBhge
+         aSetSzqjIUMSNkKuEVSaO6osZBmJ2S13QaKw2cCOoabUni9pamr7zp/HOIBWSmkfrl9s
+         u+ACHRMtwpFeINgkKx1WMZ1CSILtSyTKjVbiVvxojGcfvGN4AVN/pqmXvVCe4/nD1SPA
+         111JN7q7eBcWSUaMO7KHv5RThCGiaIFtviQxWdom/Cc2AjNFy6SYPpGzvh1OtNVPuWUC
+         xGwo2TZeah40Oa5dwXW/QS8rDPmef8Nd47BnZXgEjGPdtj+iZtbDQdO1RQ1Ie9XgdHA6
+         pZog==
+X-Gm-Message-State: AOAM530uFvteMSCf+J+ecRJEI8mxjFNvijPG7rgo1QrVO/0HoO/1AAfV
+        6HZVulyf9zSOk5wd4LOA3cTBaQ==
+X-Google-Smtp-Source: ABdhPJxZri8aP3S0zZTZ5oc+FXv5KMWFUhk31+VgZOzDluuloBhLwcX29rp5YCOCLko4QBnQct7MsQ==
+X-Received: by 2002:a37:4144:: with SMTP id o65mr13531902qka.32.1597683370402;
+        Mon, 17 Aug 2020 09:56:10 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::1:47cc])
+        by smtp.gmail.com with ESMTPSA id n184sm17781669qkn.49.2020.08.17.09.56.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Aug 2020 09:56:09 -0700 (PDT)
+Date:   Mon, 17 Aug 2020 17:56:08 +0100
+From:   Chris Down <chris@chrisdown.name>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>
+Subject: Re: [RFC PATCH 1/8] memcg: Enable fine-grained control of over
+ memory.high action
+Message-ID: <20200817165608.GA58383@chrisdown.name>
+References: <20200817140831.30260-1-longman@redhat.com>
+ <20200817140831.30260-2-longman@redhat.com>
+ <CALvZod5V3N3K9-tDoaq=JgkeuAK=0TkRf97Vua0khXL+Lxw+Pg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20200807195526.426056-3-vgoyal@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALvZod5V3N3K9-tDoaq=JgkeuAK=0TkRf97Vua0khXL+Lxw+Pg@mail.gmail.com>
+User-Agent: Mutt/1.14.6 (2020-07-11)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 07-08-20 15:55:08, Vivek Goyal wrote:
-> virtiofs device has a range of memory which is mapped into file inodes
-> using dax. This memory is mapped in qemu on host and maps different
-> sections of real file on host. Size of this memory is limited
-> (determined by administrator) and depending on filesystem size, we will
-> soon reach a situation where all the memory is in use and we need to
-> reclaim some.
-> 
-> As part of reclaim process, we will need to make sure that there are
-> no active references to pages (taken by get_user_pages()) on the memory
-> range we are trying to reclaim. I am planning to use
-> dax_layout_busy_page() for this. But in current form this is per inode
-> and scans through all the pages of the inode.
-> 
-> We want to reclaim only a portion of memory (say 2MB page). So we want
-> to make sure that only that 2MB range of pages do not have any
-> references  (and don't want to unmap all the pages of inode).
-> 
-> Hence, create a range version of this function named
-> dax_layout_busy_page_range() which can be used to pass a range which
-> needs to be unmapped.
-> 
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: linux-nvdimm@lists.01.org
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Shakeel Butt writes:
+>> Sometimes, memory reclaim may not be able to recover memory in a rate
+>> that can catch up to the physical memory allocation rate especially
+>> when rotating disks are used for swapping or writing dirty pages. In
+>> this case, the physical memory consumption will keep on increasing.
+>
+>Isn't this the real underlying issue? Why not make the guarantees of
+>memory.high more strict instead of adding more interfaces and
+>complexity?
 
-The API looks OK. Some comments WRT the implementation below.
+Oh, thanks Shakeel for bringing this up. I missed this in the original 
+changelog and I'm surprised that it's mentioned, since we do have protections 
+against that.
 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 11b16729b86f..0d51b0fbb489 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -558,27 +558,20 @@ static void *grab_mapping_entry(struct xa_state *xas,
->  	return xa_mk_internal(VM_FAULT_FALLBACK);
->  }
->  
-> -/**
-> - * dax_layout_busy_page - find first pinned page in @mapping
-> - * @mapping: address space to scan for a page with ref count > 1
-> - *
-> - * DAX requires ZONE_DEVICE mapped pages. These pages are never
-> - * 'onlined' to the page allocator so they are considered idle when
-> - * page->count == 1. A filesystem uses this interface to determine if
-> - * any page in the mapping is busy, i.e. for DMA, or other
-> - * get_user_pages() usages.
-> - *
-> - * It is expected that the filesystem is holding locks to block the
-> - * establishment of new mappings in this address_space. I.e. it expects
-> - * to be able to run unmap_mapping_range() and subsequently not race
-> - * mapping_mapped() becoming true.
-> +/*
-> + * Partial pages are included. If end is LLONG_MAX, pages in the range from
-> + * start to end of the file are inluded.
->   */
-
-I think the big kerneldoc comment should stay with
-dax_layout_busy_page_range() since dax_layout_busy_page() will be just a
-trivial wrapper around it..
-
-> -struct page *dax_layout_busy_page(struct address_space *mapping)
-> +struct page *dax_layout_busy_page_range(struct address_space *mapping,
-> +					loff_t start, loff_t end)
->  {
-> -	XA_STATE(xas, &mapping->i_pages, 0);
->  	void *entry;
->  	unsigned int scanned = 0;
->  	struct page *page = NULL;
-> +	pgoff_t start_idx = start >> PAGE_SHIFT;
-> +	pgoff_t end_idx = end >> PAGE_SHIFT;
-> +	XA_STATE(xas, &mapping->i_pages, start_idx);
-> +	loff_t len, lstart = round_down(start, PAGE_SIZE);
->  
->  	/*
->  	 * In the 'limited' case get_user_pages() for dax is disabled.
-> @@ -589,6 +582,22 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
->  	if (!dax_mapping(mapping) || !mapping_mapped(mapping))
->  		return NULL;
->  
-> +	/* If end == LLONG_MAX, all pages from start to till end of file */
-> +	if (end == LLONG_MAX) {
-> +		end_idx = ULONG_MAX;
-> +		len = 0;
-> +	} else {
-> +		/* length is being calculated from lstart and not start.
-> +		 * This is due to behavior of unmap_mapping_range(). If
-> +		 * start is say 4094 and end is on 4096 then we want to
-> +		 * unamp two pages, idx 0 and 1. But unmap_mapping_range()
-> +		 * will unmap only page at idx 0. If we calculate len
-> +		 * from the rounded down start, this problem should not
-> +		 * happen.
-> +		 */
-> +		len = end - lstart + 1;
-> +	}
-
-Maybe it would be more understandable to use
-	unmap_mapping_pages(mapping, start_idx, end_idx - start_idx + 1);
-below and avoid all this rounding and special-casing.
-
-> +
->  	/*
->  	 * If we race get_user_pages_fast() here either we'll see the
->  	 * elevated page count in the iteration and wait, or
-> @@ -601,10 +610,10 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
->  	 * guaranteed to either see new references or prevent new
->  	 * references from being established.
->  	 */
-> -	unmap_mapping_range(mapping, 0, 0, 0);
-> +	unmap_mapping_range(mapping, start, len, 0);
->  
->  	xas_lock_irq(&xas);
-> -	xas_for_each(&xas, entry, ULONG_MAX) {
-> +	xas_for_each(&xas, entry, end_idx) {
->  		if (WARN_ON_ONCE(!xa_is_value(entry)))
->  			continue;
->  		if (unlikely(dax_is_locked(entry)))
-> @@ -625,6 +634,27 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
->  	xas_unlock_irq(&xas);
->  	return page;
->  }
-> +EXPORT_SYMBOL_GPL(dax_layout_busy_page_range);
-> +
-> +/**
-> + * dax_layout_busy_page - find first pinned page in @mapping
-> + * @mapping: address space to scan for a page with ref count > 1
-> + *
-> + * DAX requires ZONE_DEVICE mapped pages. These pages are never
-> + * 'onlined' to the page allocator so they are considered idle when
-> + * page->count == 1. A filesystem uses this interface to determine if
-> + * any page in the mapping is busy, i.e. for DMA, or other
-> + * get_user_pages() usages.
-> + *
-> + * It is expected that the filesystem is holding locks to block the
-> + * establishment of new mappings in this address_space. I.e. it expects
-> + * to be able to run unmap_mapping_range() and subsequently not race
-> + * mapping_mapped() becoming true.
-> + */
-> +struct page *dax_layout_busy_page(struct address_space *mapping)
-> +{
-> +	return dax_layout_busy_page_range(mapping, 0, 0);
-
-Should the 'end' rather be LLONG_MAX?
-
-Otherwise the patch looks good to me.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Waiman, we already added artificial throttling if memory reclaim is not 
+sufficiently achieved in 0e4b01df8659 ("mm, memcg: throttle allocators when 
+failing reclaim over memory.high"), which has been present since v5.4. This 
+should significantly inhibit physical memory consumption from increasing. What 
+problems are you having with that? :-)
