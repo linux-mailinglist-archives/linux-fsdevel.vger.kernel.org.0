@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 68947246808
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 16:10:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFE8E24681B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 16:11:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728899AbgHQOKE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Aug 2020 10:10:04 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42654 "EHLO
+        id S1729019AbgHQOLD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Aug 2020 10:11:03 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:58490 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728930AbgHQOKC (ORCPT
+        with ESMTP id S1728937AbgHQOKD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Aug 2020 10:10:02 -0400
+        Mon, 17 Aug 2020 10:10:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597673399;
+        s=mimecast20190719; t=1597673401;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=BkHtKKuY3b6GbgQQuDgz6i1v5ZDG8cyA2U/RRbTyPVc=;
-        b=LKwFOckCMrQkGgjJ4ba/cVuje05HGNboCl2WMZUmy2V7q+5eUxX/Iw5tS8fT11KYQhbPFr
-        0sUu6yYbBnlLAgchNobPaSBpNHB2lMdNIa1oWZJnBuaFo8zTbvr9BTaWityeLbQzQjsMNI
-        A0HUv5PSoFVFu0fNuE1ZAjKHy+uvQXE=
+        bh=7rpL6/EB1+EwHbaZQMk8wUHt9s1YSLWhla0Ecu2Wfro=;
+        b=YLRM2emLhkeuPyZaZpzgWutiU7YAvydmU+SLvuMY7yqEDsBe8DCZpGbWRMpwD53nzV77Ym
+        yj4wGvj603Ce6chiguYvtNT9A4+1cX4mxNwpCZ3w+xXY3JmsMznt5H7Hu30R8SGNpeMml7
+        sR4zc1Av9tRp8UqDFJ+n1X7dPj1n3mU=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-513-aHd89MD1M8ipxY_XcD-u6A-1; Mon, 17 Aug 2020 10:09:55 -0400
-X-MC-Unique: aHd89MD1M8ipxY_XcD-u6A-1
+ us-mta-179-7Pue4gy4ORSIsEQu0cavkw-1; Mon, 17 Aug 2020 10:09:57 -0400
+X-MC-Unique: 7Pue4gy4ORSIsEQu0cavkw-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9DB6D801AC9;
-        Mon, 17 Aug 2020 14:09:53 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8C45A425D4;
+        Mon, 17 Aug 2020 14:09:55 +0000 (UTC)
 Received: from llong.com (ovpn-118-35.rdu2.redhat.com [10.10.118.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DF0AC21E90;
-        Mon, 17 Aug 2020 14:09:51 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C792421E90;
+        Mon, 17 Aug 2020 14:09:53 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -46,9 +46,9 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
 Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
         linux-mm@kvack.org, Waiman Long <longman@redhat.com>
-Subject: [RFC PATCH 3/8] memcg: Allow the use of task RSS memory as over-high action trigger
-Date:   Mon, 17 Aug 2020 10:08:26 -0400
-Message-Id: <20200817140831.30260-4-longman@redhat.com>
+Subject: [RFC PATCH 4/8] fs/proc: Support a new procfs memctl file
+Date:   Mon, 17 Aug 2020 10:08:27 -0400
+Message-Id: <20200817140831.30260-5-longman@redhat.com>
 In-Reply-To: <20200817140831.30260-1-longman@redhat.com>
 References: <20200817140831.30260-1-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
@@ -57,194 +57,157 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The total memory consumption of a task as tracked by memory cgroup
-includes different types of memory like page caches, anonymous memory,
-share memory and kernel memory.
-
-In a memory cgroup with a multiple running tasks, using total memory
-consumption of all the tasks within the cgroup as action trigger may
-not be fair to tasks that don't contribute to excessive memory usage.
-
-Page cache memory can typically be shared between multiple tasks. It
-is also not easy to pin kernel memory usage to a specific task. That
-leaves a task's anonymous (RSS) memory usage as best proxy for a task's
-contribution to total memory consumption within the memory cgroup.
-
-So a new set of PR_MEMFLAG_RSS_* flags are added to enable the checking
-of a task's real RSS memory footprint as a trigger to over-high action
-provided that the total memory consumption of the cgroup has exceeded
-memory.high + the additional memcg memory limit.
+To allow system administrators to view and modify the over-high action
+settings of a running application, a new /proc/<pid>/memctl file is
+now added to show the over-high action parameters as well as allowing
+their modification.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- include/linux/memcontrol.h |  2 +-
- include/linux/sched.h      |  3 ++-
- include/uapi/linux/prctl.h | 14 +++++++++++---
- kernel/sys.c               |  4 ++--
- mm/memcontrol.c            | 32 ++++++++++++++++++++++++++++++--
- 5 files changed, 46 insertions(+), 9 deletions(-)
+ fs/proc/base.c | 109 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 109 insertions(+)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 40e6ceb8209b..562958cf79d8 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -447,7 +447,7 @@ void mem_cgroup_migrate(struct page *oldpage, struct page *newpage);
- 
- long mem_cgroup_over_high_get(struct task_struct *task, unsigned long item);
- long mem_cgroup_over_high_set(struct task_struct *task, unsigned long action,
--			      unsigned long limit);
-+			      unsigned long limit, unsigned long limit2);
- 
- static struct mem_cgroup_per_node *
- mem_cgroup_nodeinfo(struct mem_cgroup *memcg, int nid)
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 9ec1bd072334..a1e9ac8b9b16 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1265,11 +1265,12 @@ struct task_struct {
- 	/* Number of pages to reclaim on returning to userland: */
- 	unsigned int			memcg_nr_pages_over_high;
- 
--	/* Memory over-high action, flags, signal and limit */
-+	/* Memory over-high action, flags, signal and limits */
- 	unsigned char			memcg_over_high_action;
- 	unsigned char			memcg_over_high_signal;
- 	unsigned short			memcg_over_high_flags;
- 	unsigned int			memcg_over_high_climit;
-+	unsigned int			memcg_over_high_plimit;
- 	unsigned int			memcg_over_limit;
- 
- 	/* Used by memcontrol for targeted memcg charge: */
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 87970ae7b32c..ef8d84c94b4a 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -244,9 +244,10 @@ struct prctl_mm_map {
- 
- /*
-  * PR_SET_MEMCONTROL:
-- * 2 parameters are passed:
-+ * 3 parameters are passed:
-  *  - Action word
-  *  - Memory cgroup additional memory limit
-+ *  - Flag specific memory limit
-  *
-  * The action word consists of 3 bit fields:
-  *  - Bits  0-7 : over-memory-limit action code
-@@ -263,8 +264,14 @@ struct prctl_mm_map {
- # define PR_MEMACT_MAX			PR_MEMACT_KILL
- 
- /* Flags for PR_SET_MEMCONTROL */
--# define PR_MEMFLAG_SIGCONT		(1UL << 0) /* Continuous signal delivery */
--# define PR_MEMFLAG_MASK		PR_MEMFLAG_SIGCONT
-+# define PR_MEMFLAG_SIGCONT		(1UL <<  0) /* Continuous signal delivery */
-+# define PR_MEMFLAG_RSS_ANON		(1UL <<  8) /* Check anonymous pages */
-+# define PR_MEMFLAG_RSS_FILE		(1UL <<  9) /* Check file pages */
-+# define PR_MEMFLAG_RSS_SHMEM		(1UL << 10) /* Check shmem pages */
-+# define PR_MEMFLAG_RSS			(PR_MEMFLAG_RSS_ANON |\
-+					 PR_MEMFLAG_RSS_FILE |\
-+					 PR_MEMFLAG_RSS_SHMEM)
-+# define PR_MEMFLAG_MASK		(PR_MEMFLAG_SIGCONT | PR_MEMFLAG_RSS)
- 
- /* Action word masks */
- # define PR_MEMACT_MASK			0xff
-@@ -274,5 +281,6 @@ struct prctl_mm_map {
- /* Return specified value for PR_GET_MEMCONTROL */
- # define PR_MEMGET_ACTION		0
- # define PR_MEMGET_CLIMIT		1
-+# define PR_MEMGET_PLIMIT		2
- 
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 644b86235d7f..272f82227c2d 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2541,9 +2541,9 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 		error = mem_cgroup_over_high_get(me, arg2);
- 		break;
- 	case PR_SET_MEMCONTROL:
--		if (arg4 || arg5)
-+		if (arg5)
- 			return -EINVAL;
--		error = mem_cgroup_over_high_set(me, arg2, arg3);
-+		error = mem_cgroup_over_high_set(me, arg2, arg3, arg4);
- 		break;
- #endif
- 	default:
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 5cad7bb26d13..aa76bae7f408 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2629,6 +2629,12 @@ void mem_cgroup_handle_over_high(void)
- 	css_put(&memcg->css);
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 617db4e0faa0..3c9349ad1e37 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -88,6 +88,8 @@
+ #include <linux/user_namespace.h>
+ #include <linux/fs_struct.h>
+ #include <linux/slab.h>
++#include <linux/prctl.h>
++#include <linux/ctype.h>
+ #include <linux/sched/autogroup.h>
+ #include <linux/sched/mm.h>
+ #include <linux/sched/coredump.h>
+@@ -3145,6 +3147,107 @@ static int proc_stack_depth(struct seq_file *m, struct pid_namespace *ns,
  }
+ #endif /* CONFIG_STACKLEAK_METRICS */
  
-+static inline unsigned long
-+get_rss_counter(struct mm_struct *mm, int mm_bit, u16 flags, int rss_bit)
++#ifdef CONFIG_MEMCG
++/*
++ * Memory cgroup control parameters
++ * <over_high_action> <limit1> <limit2>
++ */
++static ssize_t proc_memctl_read(struct file *file, char __user *buf,
++				 size_t count, loff_t *ppos)
 +{
-+	return (flags & rss_bit) ? get_mm_counter(mm, mm_bit) : 0;
++	struct task_struct *task = get_proc_task(file_inode(file));
++	unsigned long action, limit1, limit2;
++	char buffer[80];
++	ssize_t len;
++
++	if (!task)
++		return -ESRCH;
++
++	action = task->memcg_over_high_action |
++		(task->memcg_over_high_signal << PR_MEMACT_SIG_SHIFT) |
++		(task->memcg_over_high_flags  << PR_MEMACT_FLG_SHIFT);
++	limit1 = (unsigned long)task->memcg_over_high_climit  * PAGE_SIZE;
++	limit2 = (unsigned long)task->memcg_over_high_plimit * PAGE_SIZE;
++
++	put_task_struct(task);
++	len = snprintf(buffer, sizeof(buffer), "%ld %ld %ld\n",
++		       action, limit1, limit2);
++	return simple_read_from_buffer(buf, count, ppos, buffer, len);
 +}
 +
- /*
-  * Task specific action when over the high limit.
-  * Return true if an action has been taken or further check is not needed,
-@@ -2656,6 +2662,22 @@ static bool __mem_cgroup_over_high_action(struct mem_cgroup *memcg, u8 action)
- 	if (mem <= memcg->memory.high + limit)
- 		goto out;
- 
-+	/*
-+	 * Check RSS memory if any of the PR_MEMFLAG_RSS flags is set.
-+	 */
-+	if (flags & PR_MEMFLAG_RSS) {
-+		mem = get_rss_counter(mm, MM_ANONPAGES, flags,
-+				      PR_MEMFLAG_RSS_ANON) +
-+		      get_rss_counter(mm, MM_FILEPAGES, flags,
-+				      PR_MEMFLAG_RSS_FILE) +
-+		      get_rss_counter(mm, MM_SHMEMPAGES, flags,
-+				      PR_MEMFLAG_RSS_SHMEM);
++static ssize_t proc_memctl_write(struct file *file, const char __user *buf,
++				  size_t count, loff_t *offs)
++{
++	struct task_struct *task = get_proc_task(file_inode(file));
++	unsigned long vals[3];
++	char buffer[80];
++	char *ptr, *next;
++	int i, err;
++	unsigned int action, signal, flags;
 +
-+		limit = READ_ONCE(current->memcg_over_high_plimit);
-+		if (mem <= limit)
++	if (!task)
++		return -ESRCH;
++	if (count  > sizeof(buffer) - 1)
++		count = sizeof(buffer) - 1;
++	if (copy_from_user(buffer, buf, count)) {
++		err = -EFAULT;
++		goto out;
++	}
++	buffer[count] = '\0';
++	next = buffer;
++
++	/*
++	 * Expect to find 3 numbers
++	 */
++	for (i = 0, ptr = buffer; i < 3; i++) {
++		ptr = skip_spaces(next);
++		if (!*ptr) {
++			err = -EINVAL;
 +			goto out;
++		}
++
++		/* Skip non-space characters for next */
++		for (next = ptr; *next && !isspace(*next); next++)
++			;
++		if (isspace(*next))
++			*next++ = '\0';
++
++		err = kstrtoul(ptr, 0, &vals[i]);
++		if (err)
++			break;
++	}
++	action = vals[0] & PR_MEMACT_MASK;
++	signal = (vals[0] >> PR_MEMACT_SIG_SHIFT) & PR_MEMACT_MASK;
++	flags  = vals[0] >> PR_MEMACT_FLG_SHIFT;
++
++	/* Round up limits to number of pages */
++	vals[1] = DIV_ROUND_UP(vals[1], PAGE_SIZE);
++	vals[2] = DIV_ROUND_UP(vals[2], PAGE_SIZE);
++
++	/* Check input values */
++	if ((action > PR_MEMACT_MAX) || (signal >= _NSIG) ||
++	    (flags & ~PR_MEMFLAG_MASK)) {
++		err = -EINVAL;
++		goto out;
 +	}
 +
- 	ret = true;
- 	switch (action) {
- 	case PR_MEMACT_ENOMEM:
-@@ -7063,12 +7085,15 @@ long mem_cgroup_over_high_get(struct task_struct *task, unsigned long item)
- 
- 	case PR_MEMGET_CLIMIT:
- 		return (long)task->memcg_over_high_climit * PAGE_SIZE;
++	WRITE_ONCE(task->memcg_over_high_action, action);
++	WRITE_ONCE(task->memcg_over_high_signal, signal);
++	WRITE_ONCE(task->memcg_over_high_flags,  flags);
++	WRITE_ONCE(task->memcg_over_high_climit, vals[1]);
++	WRITE_ONCE(task->memcg_over_high_plimit, vals[2]);
++out:
++	put_task_struct(task);
++	return err < 0 ? err : count;
++}
 +
-+	case PR_MEMGET_PLIMIT:
-+		return (long)task->memcg_over_high_plimit * PAGE_SIZE;
- 	}
- 	return -EINVAL;
- }
++const struct file_operations proc_memctl_operations = {
++	.read   = proc_memctl_read,
++	.write  = proc_memctl_write,
++	.llseek	= generic_file_llseek,
++};
++#endif /* CONFIG_MEMCG */
++
+ /*
+  * Thread groups
+  */
+@@ -3258,6 +3361,9 @@ static const struct pid_entry tgid_base_stuff[] = {
+ #ifdef CONFIG_PROC_PID_ARCH_STATUS
+ 	ONE("arch_status", S_IRUGO, proc_pid_arch_status),
+ #endif
++#ifdef CONFIG_MEMCG
++	REG("memctl", 0644, proc_memctl_operations),
++#endif
+ };
  
- long mem_cgroup_over_high_set(struct task_struct *task, unsigned long action,
--			      unsigned long limit)
-+			      unsigned long limit, unsigned long limit2)
- {
- 	unsigned char  cmd   = action & PR_MEMACT_MASK;
- 	unsigned char  sig   = (action >> PR_MEMACT_SIG_SHIFT) & PR_MEMACT_MASK;
-@@ -7084,12 +7109,15 @@ long mem_cgroup_over_high_set(struct task_struct *task, unsigned long action,
+ static int proc_tgid_base_readdir(struct file *file, struct dir_context *ctx)
+@@ -3587,6 +3693,9 @@ static const struct pid_entry tid_base_stuff[] = {
+ #ifdef CONFIG_PROC_PID_ARCH_STATUS
+ 	ONE("arch_status", S_IRUGO, proc_pid_arch_status),
+ #endif
++#ifdef CONFIG_MEMCG
++	REG("memctl", 0644, proc_memctl_operations),
++#endif
+ };
  
- 	if (cmd == PR_MEMACT_NONE) {
- 		WRITE_ONCE(task->memcg_over_high_climit, 0);
-+		WRITE_ONCE(task->memcg_over_high_plimit, 0);
- 	} else {
- 		/*
- 		 * Convert limits to # of pages
- 		 */
--		limit = DIV_ROUND_UP(limit, PAGE_SIZE);
-+		limit  = DIV_ROUND_UP(limit, PAGE_SIZE);
-+		limit2 = DIV_ROUND_UP(limit2, PAGE_SIZE);
- 		WRITE_ONCE(task->memcg_over_high_climit, limit);
-+		WRITE_ONCE(task->memcg_over_high_plimit, limit2);
- 	}
- 	return 0;
- }
+ static int proc_tid_base_readdir(struct file *file, struct dir_context *ctx)
 -- 
 2.18.1
 
