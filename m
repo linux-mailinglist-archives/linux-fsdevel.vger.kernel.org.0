@@ -2,199 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1244C246589
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 13:33:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28A8A24663D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Aug 2020 14:23:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbgHQLdR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Aug 2020 07:33:17 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:28318 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726795AbgHQLdQ (ORCPT
+        id S1726633AbgHQMXC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Aug 2020 08:23:02 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:56100 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726151AbgHQMW7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Aug 2020 07:33:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597663994;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=yGNaFx2Jg2/WUMJiM6JmNJk/uv+6+QM3rr6hE8Ya/eo=;
-        b=P8RqICs6QPjiwUtacccFnu0jwiFyLZsDk8jSw9IeK3IMB9MDqQ9cIYKeFJBmfVAamkeeoZ
-        sOSWA/CGZIyRKbbnsDMF3qiDYR8hPVXBRZlY/VLPxw7GMypgsXEAU+bYQ5MKe0UvyqsPkb
-        lf2Awukdd6s12GWVFLRsknC7lfYeu4c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-308-WwqY1EEVM_-CA6hqEqDjGw-1; Mon, 17 Aug 2020 07:33:07 -0400
-X-MC-Unique: WwqY1EEVM_-CA6hqEqDjGw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 98322E75C;
-        Mon, 17 Aug 2020 11:33:04 +0000 (UTC)
-Received: from fogou.chygwyn.com (unknown [10.33.36.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1AC7C7D66F;
-        Mon, 17 Aug 2020 11:32:57 +0000 (UTC)
-Subject: Re: file metadata via fs API
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Christian Brauner <christian@brauner.io>,
-        Lennart Poettering <lennart@poettering.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1842689.1596468469@warthog.procyon.org.uk>
- <1845353.1596469795@warthog.procyon.org.uk>
- <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
- <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
- <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
- <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
- <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
- <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
- <52483.1597190733@warthog.procyon.org.uk>
- <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
- <066f9aaf-ee97-46db-022f-5d007f9e6edb@redhat.com>
- <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
-From:   Steven Whitehouse <swhiteho@redhat.com>
-Message-ID: <94f907f0-996e-0456-db8a-7823e2ef3d3f@redhat.com>
-Date:   Mon, 17 Aug 2020 12:32:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Mon, 17 Aug 2020 08:22:59 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k7eA7-000KmM-Ae; Mon, 17 Aug 2020 06:22:51 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k7eA6-0002af-8E; Mon, 17 Aug 2020 06:22:51 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     willy@casper.infradead.org
+Cc:     Junxiao Bi <junxiao.bi@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
+        Srinivas Eeda <SRINIVAS.EEDA@oracle.com>,
+        "joe.jin\@oracle.com" <joe.jin@oracle.com>,
+        Wengang Wang <wen.gang.wang@oracle.com>
+References: <877dw3apn8.fsf@x220.int.ebiederm.org>
+        <2cf6af59-e86b-f6cc-06d3-84309425bd1d@oracle.com>
+        <87bllf87ve.fsf_-_@x220.int.ebiederm.org>
+        <caa9adf6-e1bb-167b-6f59-d17fd587d4fa@oracle.com>
+        <87k1036k9y.fsf@x220.int.ebiederm.org>
+        <68a1f51b-50bf-0770-2367-c3e1b38be535@oracle.com>
+        <87blle4qze.fsf@x220.int.ebiederm.org>
+        <20200620162752.GF8681@bombadil.infradead.org>
+        <39e9f488-110c-588d-d977-413da3dc5dfa@oracle.com>
+        <87d05r2kl3.fsf@x220.int.ebiederm.org>
+        <20200622154840.GA13945@casper.infradead.org>
+Date:   Mon, 17 Aug 2020 07:19:20 -0500
+In-Reply-To: <20200622154840.GA13945@casper.infradead.org> (willy's message of
+        "Mon, 22 Jun 2020 16:48:40 +0100")
+Message-ID: <87pn7pfos7.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgz5H-xYG4bOrHaEtY7rvFA1_6+mTSpjrgK8OsNbfF+Pw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain
+X-XM-SPF: eid=1k7eA6-0002af-8E;;;mid=<87pn7pfos7.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX199PaWcWs57yQD8GGhTzO34dIM9t6NcVmw=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4804]
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;willy@casper.infradead.org
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 706 ms - load_scoreonly_sql: 0.30 (0.0%),
+        signal_user_changed: 13 (1.8%), b_tie_ro: 10 (1.4%), parse: 1.07
+        (0.2%), extract_message_metadata: 13 (1.8%), get_uri_detail_list: 2.2
+        (0.3%), tests_pri_-1000: 17 (2.5%), tests_pri_-950: 1.36 (0.2%),
+        tests_pri_-900: 1.08 (0.2%), tests_pri_-90: 84 (11.9%), check_bayes:
+        82 (11.6%), b_tokenize: 9 (1.2%), b_tok_get_all: 7 (1.0%),
+        b_comp_prob: 2.9 (0.4%), b_tok_touch_all: 59 (8.4%), b_finish: 0.98
+        (0.1%), tests_pri_0: 519 (73.5%), check_dkim_signature: 0.65 (0.1%),
+        check_dkim_adsp: 2.5 (0.4%), poll_dns_idle: 0.86 (0.1%), tests_pri_10:
+        2.2 (0.3%), tests_pri_500: 51 (7.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] proc: Avoid a thundering herd of threads freeing proc dentries
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+willy@casper.infradead.org writes:
 
-On 12/08/2020 20:50, Linus Torvalds wrote:
-> On Wed, Aug 12, 2020 at 12:34 PM Steven Whitehouse <swhiteho@redhat.com> wrote:
->> The point of this is to give us the ability to monitor mounts from
->> userspace.
-> We haven't had that before, I don't see why it's suddenly such a big deal.
+> On Mon, Jun 22, 2020 at 10:20:40AM -0500, Eric W. Biederman wrote:
+>> Junxiao Bi <junxiao.bi@oracle.com> writes:
+>> > On 6/20/20 9:27 AM, Matthew Wilcox wrote:
+>> >> On Fri, Jun 19, 2020 at 05:42:45PM -0500, Eric W. Biederman wrote:
+>> >>> Junxiao Bi <junxiao.bi@oracle.com> writes:
+>> >>>> Still high lock contention. Collect the following hot path.
+>> >>> A different location this time.
+>> >>>
+>> >>> I know of at least exit_signal and exit_notify that take thread wide
+>> >>> locks, and it looks like exit_mm is another.  Those don't use the same
+>> >>> locks as flushing proc.
+>> >>>
+>> >>>
+>> >>> So I think you are simply seeing a result of the thundering herd of
+>> >>> threads shutting down at once.  Given that thread shutdown is fundamentally
+>> >>> a slow path there is only so much that can be done.
+>> >>>
+>> >>> If you are up for a project to working through this thundering herd I
+>> >>> expect I can help some.  It will be a long process of cleaning up
+>> >>> the entire thread exit process with an eye to performance.
+>> >> Wengang had some tests which produced wall-clock values for this problem,
+>> >> which I agree is more informative.
+>> >>
+>> >> I'm not entirely sure what the customer workload is that requires a
+>> >> highly threaded workload to also shut down quickly.  To my mind, an
+>> >> overall workload is normally composed of highly-threaded tasks that run
+>> >> for a long time and only shut down rarely (thus performance of shutdown
+>> >> is not important) and single-threaded tasks that run for a short time.
+>> >
+>> > The real workload is a Java application working in server-agent mode, issue
+>> > happened in agent side, all it do is waiting works dispatching from server and
+>> > execute. To execute one work, agent will start lots of short live threads, there
+>> > could be a lot of threads exit same time if there were a lots of work to
+>> > execute, the contention on the exit path caused a high %sys time which impacted
+>> > other workload.
+>> 
+>> If I understand correctly, the Java VM is not exiting.  Just some of
+>> it's threads.
+>> 
+>> That is a very different problem to deal with.  That are many
+>> optimizations that are possible when _all_ of the threads are exiting
+>> that are not possible when _many_ threads are exiting.
 >
-> The notification side I understand. Polling /proc files is not the answer.
+> Ah!  Now I get it.  This explains why the dput() lock contention was
+> so important.  A new thread starting would block on that lock as it
+> tried to create its new /proc/$pid/task/ directory.
 >
-> But the whole "let's design this crazy subsystem for it" seems way
-> overkill. I don't see anybody caring that deeply.
->
-> It really smells like "do it because we can, not because we must".
->
-> Who the hell cares about monitoring mounts at a kHz frequencies? If
-> this is for MIS use, you want a nice GUI and not wasting CPU time
-> polling.
->
-> I'm starting to ignore the pull requests from David Howells, because
-> by now they have had the same pattern for a couple of years now:
-> esoteric new interfaces that seem overdesigned for corner-cases that
-> I'm not seeing people clamoring for.
->
-> I need (a) proof this is actualyl something real users care about and
-> (b) way more open discussion and implementation from multiple parties.
->
-> Because right now it looks like a small in-cabal of a couple of people
-> who have wild ideas but I'm not seeing the wider use of it.
->
-> Convince me otherwise. AGAIN. This is the exact same issue I had with
-> the notification queues that I really wanted actual use-cases for, and
-> feedback from actual outside users.
->
-> I really think this is engineering for its own sake, rather than
-> responding to actual user concerns.
->
->                 Linus
->
+> Terminating thousands of threads but not the entire process isn't going
+> to hit many of the locks (eg exit_signal() and exit_mm() aren't going
+> to be called).  So we need a more sophisticated micro benchmark that is
+> continually starting threads and asking dozens-to-thousands of them to
+> stop at the same time.  Otherwise we'll try to fix lots of scalability
+> problems that our customer doesn't care about.
 
-I've been hesitant to reply to this immediately, because I can see that 
-somehow there is a significant disconnect between what you expect to 
-happen, and what has actually happened in this case. Have pondered this 
-for a few days, I hope that the best way forward might be to explore 
-where the issues are, with the intention of avoiding a repeat in the 
-future. Sometimes email is a difficult medium for these kinds of 
-communication, and face to face is better, but with the lack of 
-conferences/travel at the moment, that option is not open in the near 
-future.
+Has anyone come up with a more sophisticated microbenchmark or otherwise
+made any progress in tracking this down farther?
 
-The whole plan here, leading towards the ability to get a "dump plus 
-updates" view of mounts in the kernel has been evolving over time. It 
-has been discussed at LSF over a number of years [1] and in fact the new 
-mount API which was merged recently - I wonder if this is what you are 
-referring to above as:
-
-> I'm starting to ignore the pull requests from David Howells, because
-> by now they have had the same pattern for a couple of years now
-
-was originally proposed by Al, and also worked on by Miklos[2] in 2017 
-and others. Community discussion resulted in that becoming a 
-prerequisite for the later notifications/fsinfo work. This was one of 
-the main reasons that David picked it up[3] to work on, but not the only 
-reason. That did also appear to be logical, in that cleaning up the way 
-in which arguments were handled during mount would make it much easier 
-to create future generic code to handle them.
-
-That said, the overall aim here is to solve the problem and if there are 
-better solutions available then I'm sure that everyone is very open to 
-those. I agree very much that monitoring at kHz frequencies is not 
-useful, but at the same time, there are cases which can generate large 
-amounts of mount changes in a very short time period. We want to be 
-reasonably efficient, but not to over-optimise, and sometimes that is a 
-fine line. We also don't want to block mounts if the notifications queue 
-fills up, so some kind of resync operation would be required in the 
-queue overflows. The notifications and fsinfo were designed very much as 
-two sides of the same coin, but submitted separately for ease of review 
-more than anything else.
-
-You recently requested some details of real users for the notifications, 
-and (I assumed) by extension fsinfo too. Ian wrote these emails [4][5] 
-in direct response to your request. That is what we thought you were 
-looking for, so if that isn't not quite what you meant, perhaps you 
-could clarify a bit more. Again, apologies if we've misinterpreted what 
-you were asking for.
-
-You also mention "...it looks like a small in-cabal of a couple of 
-people..." and I hope that it doesn't look that way, it is certainly not 
-our intention. There have been a fair number of people involved, and 
-we've done our best to ensure that the development is guided by the 
-potential users, such as autofs, AFS and systemd. If there are others 
-out there with use cases, and particularly so if the use case is a GUI 
-file manager type application who'd like to get involved, then please 
-do. We definitely want to see involvement from end users, since there is 
-no point in spending a large effort creating something that is then 
-never used. As you pointed that out above, this kind of application was 
-very much part of the original motivation, but we had started with the 
-other users since there were clearly defined use cases that could 
-demonstrate significant performance gains in those cases.
-
-So hopefully that helps to give a bit more background about where we are 
-and how we got here. Where we go next will no doubt depend on the 
-outcome of the current discussions, and any guidance you can give around 
-how we should have better approached this would be very helpful at this 
-stage,
-
-Steve.
-
-
-[1] https://lwn.net/Articles/718803/
-
-[2] https://lwn.net/Articles/718638/
-
-[3] https://lwn.net/Articles/753473/
-
-[4] https://lkml.org/lkml/2020/6/2/1182
-
-[5] 
-https://lore.kernel.org/linux-fsdevel/8eb2e52f1cbdbb8bcf5c5205a53bdc9aaa11a071.camel@themaw.net/
-
-
+Eric
