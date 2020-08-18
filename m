@@ -2,90 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B068248266
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 11:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E8AF24827A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 12:04:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbgHRJ7a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 05:59:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37154 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbgHRJ72 (ORCPT
+        id S1726482AbgHRKEa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 06:04:30 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37736 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbgHRKEa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 05:59:28 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED336C061389;
-        Tue, 18 Aug 2020 02:59:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=AMCRlHQqFClUdfDgWF0Pc4T0d8x7BsArDzhjVVkMBFc=; b=xgXKcBxjIZlrJ2bfw/hT1bnAoS
-        kBjjfcb6QgfBLTcDMcHpy8F4bRDIAIYsX+KlAFGVgPJObGB0scLri+4ZnTtHvYjeaQF7lshfo8YNf
-        NFmwu+hYtQ1fCP1mgDGFnFFJkkKQHjZU4cWQWZDVowbL6lgdSb17nzCmGp+WBJ8GQIT+Y2soQbKo9
-        Zdjf17B1voahyFMG7Hhq4akH3EGdqexyEj9wWM+kB6N8masvpaQTPJ5wzSo62sMaUVtMNCUck34Y9
-        wNNgjNvKf/jG+0QOKa2zufhfKfliZLU8qGC4oj+TBUtiDaZ89RlznYJOt0N4MT4x2OoGYFzEugjqv
-        oU5eG/DA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k7yOf-0000ZR-Ew; Tue, 18 Aug 2020 09:59:13 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8B322300DB4;
-        Tue, 18 Aug 2020 11:59:10 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 64F6822E9BD55; Tue, 18 Aug 2020 11:59:10 +0200 (CEST)
-Date:   Tue, 18 Aug 2020 11:59:10 +0200
-From:   peterz@infradead.org
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Waiman Long <longman@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [RFC PATCH 0/8] memcg: Enable fine-grained per process memory
- control
-Message-ID: <20200818095910.GM2674@hirez.programming.kicks-ass.net>
-References: <20200817140831.30260-1-longman@redhat.com>
- <20200818091453.GL2674@hirez.programming.kicks-ass.net>
- <20200818092617.GN28270@dhcp22.suse.cz>
+        Tue, 18 Aug 2020 06:04:30 -0400
+Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1k7yTd-00008v-Jn; Tue, 18 Aug 2020 10:04:21 +0000
+Date:   Tue, 18 Aug 2020 12:04:20 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        criu@openvz.org, bpf@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
+        Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@debian.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Matthew Wilcox <matthew@wil.cx>,
+        Trond Myklebust <trond.myklebust@fys.uio.no>,
+        Chris Wright <chrisw@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>
+Subject: Re: [PATCH 01/17] exec: Move unshare_files to fix posix file locking
+ during exec
+Message-ID: <20200818100420.akdocgojdjhmq5z6@wittgenstein>
+References: <87ft8l6ic3.fsf@x220.int.ebiederm.org>
+ <20200817220425.9389-1-ebiederm@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200818092617.GN28270@dhcp22.suse.cz>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200817220425.9389-1-ebiederm@xmission.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 18, 2020 at 11:26:17AM +0200, Michal Hocko wrote:
-> On Tue 18-08-20 11:14:53, Peter Zijlstra wrote:
-> > On Mon, Aug 17, 2020 at 10:08:23AM -0400, Waiman Long wrote:
-> > > Memory controller can be used to control and limit the amount of
-> > > physical memory used by a task. When a limit is set in "memory.high" in
-> > > a v2 non-root memory cgroup, the memory controller will try to reclaim
-> > > memory if the limit has been exceeded. Normally, that will be enough
-> > > to keep the physical memory consumption of tasks in the memory cgroup
-> > > to be around or below the "memory.high" limit.
-> > > 
-> > > Sometimes, memory reclaim may not be able to recover memory in a rate
-> > > that can catch up to the physical memory allocation rate. In this case,
-> > > the physical memory consumption will keep on increasing. 
-> > 
-> > Then slow down the allocator? That's what we do for dirty pages too, we
-> > slow down the dirtier when we run against the limits.
+On Mon, Aug 17, 2020 at 05:04:09PM -0500, Eric W. Biederman wrote:
+> Many moons ago the binfmts were doing some very questionable things
+> with file descriptors and an unsharing of the file descriptor table
+> was added to make things better[1][2].  The helper steal_files was
+> added to avoid breaking the userspace programs[3][4][6].
 > 
-> This is what we actually do. Have a look at mem_cgroup_handle_over_high.
+> Unfortunately it turned out that steal_locks did not work for network
+> file systems[5], so it was removed to see if anyone would
+> complain[7][8].  It was thought at the time that NPTL would not be
+> affected as the unshare_files happened after the other threads were
+> killed[8].  Unfortunately because there was an unshare_files in
+> binfmt_elf.c before the threads were killed this analysis was
+> incorrect.
+> 
+> This unshare_files in binfmt_elf.c resulted in the unshares_files
+> happening whenever threads were present.  Which led to unshare_files
+> being moved to the start of do_execve[9].
+> 
+> Later the problems were rediscovered and suggested approach was to
+> readd steal_locks under a different name[10].  I happened to be
+> reviewing patches and I noticed that this approach was a step
+> backwards[11].
+> 
+> I proposed simply moving unshare_files[12] and it was pointed
+> out that moving unshare_files without auditing the code was
+> also unsafe[13].
+> 
+> There were then several attempts to solve this[14][15][16] and I even
+> posted this set of changes[17].  Unfortunately because auditing all of
+> execve is time consuming this change did not make it in at the time.
+> 
+> Well now that I am cleaning up exec I have made the time to read
+> through all of the binfmts and the only playing with file descriptors
+> is either the security modules closing them in
+> security_bprm_committing_creds or is in the generic code in fs/exec.c.
+> None of it happens before begin_new_exec is called.
+> 
+> So move unshare_files into begin_new_exec, after the point of no
+> return.  If memory is very very very low and the application calling
+> exec is sharing file descriptor tables between processes we might fail
+> past the point of no return.  Which is unfortunate but no different
+> than any of the other places where we allocate memory after the point
+> of no return.
+> 
+> This movement allows another process that shares the file table, or
+> another thread of the same process and that closes files or changes
+> their close on exec behavior and races with execve to cause some
+> unexpected things to happen.  There is only one time of check to time
 
-But then how can it run-away like Waiman suggested?
+It seems to only make the already existing race window wider by moving
+it from bprm_execve() to begin_new_exec() which isn't great but probably
+ok since done for a good reason.
 
-/me goes look... and finds MEMCG_MAX_HIGH_DELAY_JIFFIES.
+> of use race and it is just there so that execve fails instead of
+> an interpreter failing when it tries to open the file it is supposed
+> to be interpreting.   Failing later if userspace is being silly is
+> not a problem.
+> 
+> With this change it the following discription from the removal
+> of steal_locks[8] finally becomes true.
+> 
+>     Apps using NPTL are not affected, since all other threads are killed before
+>     execve.
+> 
+>     Apps using LinuxThreads are only affected if they
+> 
+>       - have multiple threads during exec (LinuxThreads doesn't kill other
+>         threads, the app may do it with pthread_kill_other_threads_np())
+>       - rely on POSIX locks being inherited across exec
+> 
+>     Both conditions are documented, but not their interaction.
+> 
+>     Apps using clone() natively are affected if they
+> 
+>       - use clone(CLONE_FILES)
+>       - rely on POSIX locks being inherited across exec
+> 
+> I have investigated some paths to make it possible to solve this
+> without moving unshare_files but they all look more complicated[18].
+> 
+> Reported-by: Daniel P. Berrangé <berrange@redhat.com>
+> Reported-by: Jeff Layton <jlayton@redhat.com>
+> History-tree: git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+> [1] 02cda956de0b ("[PATCH] unshare_files"
+> [2] 04e9bcb4d106 ("[PATCH] use new unshare_files helper")
+> [3] 088f5d7244de ("[PATCH] add steal_locks helper")
+> [4] 02c541ec8ffa ("[PATCH] use new steal_locks helper")
+> [5] https://lkml.kernel.org/r/E1FLIlF-0007zR-00@dorka.pomaz.szeredi.hu
+> [6] https://lkml.kernel.org/r/0060321191605.GB15997@sorel.sous-sol.org
+> [7] https://lkml.kernel.org/r/E1FLwjC-0000kJ-00@dorka.pomaz.szeredi.hu
+> [8] c89681ed7d0e ("[PATCH] remove steal_locks()")
+> [9] fd8328be874f ("[PATCH] sanitize handling of shared descriptor tables in failing execve()")
+> [10] https://lkml.kernel.org/r/20180317142520.30520-1-jlayton@kernel.org
+> [11] https://lkml.kernel.org/r/87r2nwqk73.fsf@xmission.com
+> [12] https://lkml.kernel.org/r/87bmfgvg8w.fsf@xmission.com
+> [13] https://lkml.kernel.org/r/20180322111424.GE30522@ZenIV.linux.org.uk
+> [14] https://lkml.kernel.org/r/20180827174722.3723-1-jlayton@kernel.org
+> [15] https://lkml.kernel.org/r/20180830172423.21964-1-jlayton@kernel.org
+> [16] https://lkml.kernel.org/r/20180914105310.6454-1-jlayton@kernel.org
+> [17] https://lkml.kernel.org/r/87a7ohs5ow.fsf@xmission.com
+> [18] https://lkml.kernel.org/r/87pn8c1uj6.fsf_-_@x220.int.ebiederm.org
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
 
-That's a fail... :-(
+Slightly scary change but it solves a problem.
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
