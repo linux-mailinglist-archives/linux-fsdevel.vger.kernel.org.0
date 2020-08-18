@@ -2,100 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 65096248EB2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 21:30:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAC56248EBA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 21:32:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbgHRTaP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 15:30:15 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:23026 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726723AbgHRTaM (ORCPT
+        id S1726694AbgHRTcp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 15:32:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43460 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726633AbgHRTcj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 15:30:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597779011;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TzOEgoxnjJc+44XQtv3kAPBEJXFL3VlSz++wwm59Khc=;
-        b=bQZrn8stH9h3pMfBCJVUXeTQnSdzdkfWOcXZo73QR9MsSPF5UZfMBOxXC6dGXZ/4wuPKx5
-        ipUUwtKSgh5JJ5u0aPZn85IohTCf9cOI2LNktbTLgO+fM97MsgDzDThMVczURFaQ8RYMHB
-        KnAPmWo9VUV1025q6meM9xnQ7kH5dbw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-318-Y-bE-SXNM8Om9V_jtabrsA-1; Tue, 18 Aug 2020 15:30:09 -0400
-X-MC-Unique: Y-bE-SXNM8Om9V_jtabrsA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6DCDC18686D7;
-        Tue, 18 Aug 2020 19:30:07 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-112-51.rdu2.redhat.com [10.10.112.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 046407DFD4;
-        Tue, 18 Aug 2020 19:30:02 +0000 (UTC)
-Subject: Re: [RFC PATCH 0/8] memcg: Enable fine-grained per process memory
- control
-To:     Chris Down <chris@chrisdown.name>, peterz@infradead.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20200817140831.30260-1-longman@redhat.com>
- <20200818091453.GL2674@hirez.programming.kicks-ass.net>
- <20200818092737.GA148695@chrisdown.name>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <b11ce701-e824-793c-cc7f-4c3bbe08cf80@redhat.com>
-Date:   Tue, 18 Aug 2020 15:30:02 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Tue, 18 Aug 2020 15:32:39 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 481F7C061342
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Aug 2020 12:32:38 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id c10so98743pjn.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Aug 2020 12:32:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=x0mSpyWuIZWEqnvKTrrktYzEB/1FdLaDkbrBBFQhHGI=;
+        b=YBL+4UJq3578y/m4bQy5uoo7Nos5o95utY8lW1upX/s0vb/FLrVGVMCzuFifk1dPhx
+         FS+7mdSK1xVpOroIiChvRnxET12YMP9nU64n53nNoOwXQ96vfIG4aiLfWcAX2C+39/Gk
+         ZoRUZ8tSedL0l/FxYUN3T4we0BDMxD7AK7+V0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=x0mSpyWuIZWEqnvKTrrktYzEB/1FdLaDkbrBBFQhHGI=;
+        b=kSz1toF2xs0L/LpOFhAAVwbQ1jxAUkkr91zPDxbcB3nMD0vitLRbipanNe/WH7JOEu
+         0y1iTU92+ka18a9Zn9D0pkLwG/u9T8CV17NzW8yRm9fEAi3TieCeDTNfnZoNy78tVfu3
+         4QbDE3h+CZVyyQ+CfbyNuP6gNIQei+V3Y1Jp+Oc4o42aA4/pSntL/uCYxLczg/sub5U0
+         erFKDVox8jF3422j6egyXQLvnDqfBKB3q1DhFG0I1KNz7/RPLC9dh/dqiCu9XIATmSPO
+         mkciTaM7tvYlveNjEjKyXb88CztzKrL87atfKE+/iM65nz2jsKk+KYwmUqUiczTlOAQM
+         0EgA==
+X-Gm-Message-State: AOAM53181qX4OlbafgBWTWftOgvEN34ZvbI0qlLbLGAmlJ9l4ojnfAZV
+        1m2FRaRmlfONQ0LKKdIiHU4CRQ==
+X-Google-Smtp-Source: ABdhPJw8jgdFZ3pGF84Ud3h+RrnX4Nws4z4yjNUuEJuoeNPBKsDHr98xigXexLsC3VVrIZx/qGKWvA==
+X-Received: by 2002:a17:90a:1d0f:: with SMTP id c15mr1201149pjd.180.1597779158415;
+        Tue, 18 Aug 2020 12:32:38 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id z6sm24659552pfg.68.2020.08.18.12.32.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Aug 2020 12:32:37 -0700 (PDT)
+Date:   Tue, 18 Aug 2020 12:32:36 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 06/11] lkdtm: disable set_fs-based tests for
+ !CONFIG_SET_FS
+Message-ID: <202008181228.D2DBEC6C6@keescook>
+References: <20200817073212.830069-1-hch@lst.de>
+ <20200817073212.830069-7-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20200818092737.GA148695@chrisdown.name>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200817073212.830069-7-hch@lst.de>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/18/20 5:27 AM, Chris Down wrote:
-> peterz@infradead.org writes:
->> On Mon, Aug 17, 2020 at 10:08:23AM -0400, Waiman Long wrote:
->>> Memory controller can be used to control and limit the amount of
->>> physical memory used by a task. When a limit is set in "memory.high" in
->>> a v2 non-root memory cgroup, the memory controller will try to reclaim
->>> memory if the limit has been exceeded. Normally, that will be enough
->>> to keep the physical memory consumption of tasks in the memory cgroup
->>> to be around or below the "memory.high" limit.
->>>
->>> Sometimes, memory reclaim may not be able to recover memory in a rate
->>> that can catch up to the physical memory allocation rate. In this case,
->>> the physical memory consumption will keep on increasing.
->>
->> Then slow down the allocator? That's what we do for dirty pages too, we
->> slow down the dirtier when we run against the limits.
->
-> We already do that since v5.4. I'm wondering whether Waiman's customer 
-> is just running with a too-old kernel without 0e4b01df865 ("mm, memcg: 
-> throttle allocators when failing reclaim over memory.high") backported.
->
-The fact is that we don't have that in RHEL8 yet and cgroup v2 is still 
-not the default at the moment.
+On Mon, Aug 17, 2020 at 09:32:07AM +0200, Christoph Hellwig wrote:
+> Once we can't manipulate the address limit, we also can't test what
+> happens when the manipulation is abused.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/misc/lkdtm/bugs.c     | 2 ++
+>  drivers/misc/lkdtm/core.c     | 4 ++++
+>  drivers/misc/lkdtm/usercopy.c | 2 ++
+>  3 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
+> index 4dfbfd51bdf774..66f1800b1cb82d 100644
+> --- a/drivers/misc/lkdtm/bugs.c
+> +++ b/drivers/misc/lkdtm/bugs.c
+> @@ -312,6 +312,7 @@ void lkdtm_CORRUPT_LIST_DEL(void)
+>  		pr_err("list_del() corruption not detected!\n");
+>  }
+>  
+> +#ifdef CONFIG_SET_FS
+>  /* Test if unbalanced set_fs(KERNEL_DS)/set_fs(USER_DS) check exists. */
+>  void lkdtm_CORRUPT_USER_DS(void)
+>  {
+> @@ -321,6 +322,7 @@ void lkdtm_CORRUPT_USER_DS(void)
+>  	/* Make sure we do not keep running with a KERNEL_DS! */
+>  	force_sig(SIGKILL);
+>  }
+> +#endif
 
-I am planning to backport the throttling patches to RHEL and hopefully 
-can switch to use cgroup v2 soon.
+Please let the test defined, but it should XFAIL with a message about
+the CONFIG (see similar ifdefs in lkdtm).
 
-Cheers,
-Longman
+>  /* Test that VMAP_STACK is actually allocating with a leading guard page */
+>  void lkdtm_STACK_GUARD_PAGE_LEADING(void)
+> diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
+> index a5e344df916632..aae08b33a7ee2a 100644
+> --- a/drivers/misc/lkdtm/core.c
+> +++ b/drivers/misc/lkdtm/core.c
+> @@ -112,7 +112,9 @@ static const struct crashtype crashtypes[] = {
+>  	CRASHTYPE(CORRUPT_STACK_STRONG),
+>  	CRASHTYPE(CORRUPT_LIST_ADD),
+>  	CRASHTYPE(CORRUPT_LIST_DEL),
+> +#ifdef CONFIG_SET_FS
+>  	CRASHTYPE(CORRUPT_USER_DS),
+> +#endif
+>  	CRASHTYPE(STACK_GUARD_PAGE_LEADING),
+>  	CRASHTYPE(STACK_GUARD_PAGE_TRAILING),
+>  	CRASHTYPE(UNSET_SMEP),
+> @@ -172,7 +174,9 @@ static const struct crashtype crashtypes[] = {
+>  	CRASHTYPE(USERCOPY_STACK_FRAME_FROM),
+>  	CRASHTYPE(USERCOPY_STACK_BEYOND),
+>  	CRASHTYPE(USERCOPY_KERNEL),
+> +#ifdef CONFIG_SET_FS
+>  	CRASHTYPE(USERCOPY_KERNEL_DS),
+> +#endif
+>  	CRASHTYPE(STACKLEAK_ERASING),
+>  	CRASHTYPE(CFI_FORWARD_PROTO),
 
+Then none of these are needed.
+
+>  #ifdef CONFIG_X86_32
+
+Hmpf, this ifdef was missed in ae56942c1474 ("lkdtm: Make arch-specific
+tests always available"). I will fix that.
+
+> diff --git a/drivers/misc/lkdtm/usercopy.c b/drivers/misc/lkdtm/usercopy.c
+> index b833367a45d053..4b632fe79ab6bb 100644
+> --- a/drivers/misc/lkdtm/usercopy.c
+> +++ b/drivers/misc/lkdtm/usercopy.c
+> @@ -325,6 +325,7 @@ void lkdtm_USERCOPY_KERNEL(void)
+>  	vm_munmap(user_addr, PAGE_SIZE);
+>  }
+>  
+> +#ifdef CONFIG_SET_FS
+>  void lkdtm_USERCOPY_KERNEL_DS(void)
+>  {
+>  	char __user *user_ptr =
+> @@ -339,6 +340,7 @@ void lkdtm_USERCOPY_KERNEL_DS(void)
+>  		pr_err("copy_to_user() to noncanonical address succeeded!?\n");
+>  	set_fs(old_fs);
+>  }
+> +#endif
+
+(Same here, please.)
+
+>  
+>  void __init lkdtm_usercopy_init(void)
+>  {
+> -- 
+> 2.28.0
+> 
+
+-- 
+Kees Cook
