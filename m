@@ -2,179 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD782248B3A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 18:13:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D2E8248BE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 18:45:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbgHRQNX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 12:13:23 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:34578 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbgHRQNV (ORCPT
+        id S1726985AbgHRQph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 12:45:37 -0400
+Received: from esa1.mentor.iphmx.com ([68.232.129.153]:11863 "EHLO
+        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726806AbgHRQpg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 12:13:21 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07IGCR6b076721;
-        Tue, 18 Aug 2020 16:12:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=Z4JyWG9GYx40D449jT2SjIZ+/FrA45k/t7nbWC1W2ME=;
- b=XedNvxk9JX13hSSYLNXrWjhgbNP1hh4R07ULkgct1y9+gFtvsgtt4PSEEH2fcM9j3uvM
- F2CZgJvb50atFE53NE8F5K91J9zov24NAuLsixCcSG/eU/Kilo/87u/ttgicq2UBv054
- +piXEOWrprHZler9cm0LBJUVBiL/tguVYpRmwq3jufop97+YSv75eIVYL309EPswKvrZ
- Mz0ew/U53+lZHRm1Bm2oeBFVZyxlIjuEncZ3gijk9AffvyZGb0Gtjt8DSeuO59MGkqbQ
- UQWjWzKK/NHj5kdXJ41j6TCUNw0LR2iwiWDYMT/4g2c52+sNz9dHbtpluYqIjNgJlbUM Bg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 32x74r5vc8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 18 Aug 2020 16:12:35 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07IFllTW076145;
-        Tue, 18 Aug 2020 16:12:34 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 32xsm37mj4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 18 Aug 2020 16:12:34 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 07IGCU8l025942;
-        Tue, 18 Aug 2020 16:12:30 GMT
-Received: from localhost (/10.159.245.241)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 18 Aug 2020 09:12:30 -0700
-Date:   Tue, 18 Aug 2020 09:12:29 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Yu Kuai <yukuai3@huawei.com>, hch@infradead.org,
-        david@fromorbit.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com
-Subject: Re: [RFC PATCH V2] iomap: add support to track dirty state of sub
- pages
-Message-ID: <20200818161229.GK6107@magnolia>
-References: <20200818134618.2345884-1-yukuai3@huawei.com>
- <20200818155305.GR17456@casper.infradead.org>
+        Tue, 18 Aug 2020 12:45:36 -0400
+IronPort-SDR: QGvGC+94m2CHtZyrNvUzm1RSd62BiUYpgiHrN4129CMNbKP2FTxlEpMvz76wrBSlktM9srnqtt
+ yeR6WJsj4I4oLhU4273mwWNWT4j7wiEiEhSjhwM+HJ/ChMIYIQ3UraidHYHKFsr8DJlbp0ktTL
+ j3vjkR7KsmP2/nayyGWU1FT4NuVEPKiZ5I4e4uJxzPbcloeoIzz9H9MpnM4fRkcCb5XTGcDTcE
+ 0MP1O1jN10QZ10Ox9ypYMa5HpSv7SRT/1+UCYMhLr9d2fyxfxQhTgOkbIvHRq2TIhA2gC/lE0k
+ HLI=
+X-IronPort-AV: E=Sophos;i="5.76,328,1592899200"; 
+   d="scan'208";a="54210262"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa1.mentor.iphmx.com with ESMTP; 18 Aug 2020 08:45:35 -0800
+IronPort-SDR: LNzWom/QVpUDAc+OGyrCLYIWndKeE6BAPtIoPS0YTQcsEU9gt1mjI+ag3y2MS7X9PG5fNyV83j
+ IcP6A+JgWGbKaLNnB47T5jbK6jdokew0r5JLGAjl3nb+ehqLOXZwnJyuDBdkXUcndM2MrmC6Z3
+ 6LW5QBs+CkAJPQxmBkqM5xr/wFfxyifzJkuUaVBM+wIPIVyRGVJOtLvwPVyogr9rngsVOsp1EX
+ SbqB2TUpUKFe6Fv5ljkwovsRyZ9LiJC+EP4QYNbGgqXsNsYXqgTcPHfCNJnEqWRApL4FfmOdJ7
+ WcA=
+Subject: Re: PROBLEM: Long Workqueue delays V2
+From:   Jim Baxter <jim_baxter@mentor.com>
+To:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-mm@kvack.org>
+CC:     "Resch Carsten (CM/ESO6)" <Carsten.Resch@de.bosch.com>,
+        "Rosca, Eugeniu (ADITG/ESB)" <erosca@de.adit-jv.com>
+References: <625615f2-3a6b-3136-35f9-2f2fb3c110cf@mentor.com>
+Message-ID: <d6845a3c-f139-fbaa-01d2-1ffa5397fd7a@mentor.com>
+Date:   Tue, 18 Aug 2020 17:45:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200818155305.GR17456@casper.infradead.org>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9716 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
- malwarescore=0 mlxscore=0 phishscore=0 spamscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008180113
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9717 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 impostorscore=0 mlxlogscore=999
- priorityscore=1501 phishscore=0 spamscore=0 mlxscore=0 adultscore=0
- suspectscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0 clxscore=1011
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008180114
+In-Reply-To: <625615f2-3a6b-3136-35f9-2f2fb3c110cf@mentor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-08.mgc.mentorg.com (139.181.222.8) To
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 18, 2020 at 04:53:05PM +0100, Matthew Wilcox wrote:
-> On Tue, Aug 18, 2020 at 09:46:18PM +0800, Yu Kuai wrote:
-> > changes from v1:
-> >  - separate set dirty and clear dirty functions
-> >  - don't test uptodate bit in iomap_writepage_map()
-> >  - use one bitmap array for uptodate and dirty.
-> 
-> This looks much better.
-> 
-> > +	spinlock_t		state_lock;
-> > +	/*
-> > +	 * The first half bits are used to track sub-page uptodate status,
-> > +	 * the second half bits are for dirty status.
-> > +	 */
-> > +	DECLARE_BITMAP(state, PAGE_SIZE / 256);
-> 
-> It would be better to use the same wording as below:
-> 
-> > +	bitmap_zero(iop->state, PAGE_SIZE * 2 / SECTOR_SIZE);
+Added linux-block List which may also be relevant to this issue.
 
-ISTR there was some reason why '512' was hardcoded in here instead of
-SECTOR_SIZE.  I /think/ it was so that iomap.h did not then have a hard
-dependency on blkdev.h and everything else that requires...
+On 18 Aug 2020 12:58, Jim Baxter wrote:
 
-https://lore.kernel.org/linux-xfs/20181215105155.GD1575@lst.de/
-
---D
-
+> I am asking this question again to include the fs-devel list.
 > 
-> [...]
 > 
-> > +static void
-> > +iomap_iop_set_range_dirty(struct page *page, unsigned int off,
-> > +		unsigned int len)
-> > +{
-> > +	struct iomap_page *iop = to_iomap_page(page);
-> > +	struct inode *inode = page->mapping->host;
-> > +	unsigned int total = PAGE_SIZE / SECTOR_SIZE;
-> > +	unsigned int first = off >> inode->i_blkbits;
-> > +	unsigned int last = (off + len - 1) >> inode->i_blkbits;
-> > +	unsigned long flags;
-> > +	unsigned int i;
-> > +
-> > +	spin_lock_irqsave(&iop->state_lock, flags);
-> > +	for (i = first; i <= last; i++)
-> > +		set_bit(i + total, iop->state);
-> > +	spin_unlock_irqrestore(&iop->state_lock, flags);
-> > +}
+> We have issues with the workqueue of the kernel overloading the CPU 0 
+> when we we disconnect a USB stick.
 > 
-> How about:
+> This results in other items on the shared workqueue being delayed by
+> around 6.5 seconds with a default kernel configuration and 2.3 seconds
+> on a config tailored for our RCar embedded platform.
 > 
-> -	unsigned int total = PAGE_SIZE / SECTOR_SIZE;
-> ...
-> +	first += PAGE_SIZE / SECTOR_SIZE;
-> +	last += PAGE_SIZE / SECTOR_SIZE;
-> ...
-> 	for (i = first; i <= last; i++)
-> -		set_bit(i + total, iop->state);
-> +		set_bit(i, iop->state);
 > 
-> We might want
 > 
-> #define	DIRTY_BITS(x)	((x) + PAGE_SIZE / SECTOR_SIZE)
+> We first noticed this issue on custom hardware and we have recreated it
+> on an RCar Starter Kit using a test module [1] to replicate the
+> behaviour, the test module outputs any delays of greater then 9ms.
 > 
-> and then we could do:
+> To run the test we have a 4GB random file on a USB stick and perform
+> the following test.
+> The stick is mounted as R/O and we are copying data from the stick:
 > 
-> +	unsigned int last = DIRTY_BITS((off + len - 1) >> inode->i_blkbits);
+> - Mount the stick.
+> mount -o ro,remount /dev/sda1
 > 
-> That might be overthinking things a bit though.
+> - Load the Module:
+> # taskset -c 0 modprobe latency-mon
 > 
-> > @@ -705,6 +767,7 @@ __iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
-> >  	if (unlikely(copied < len && !PageUptodate(page)))
-> >  		return 0;
-> >  	iomap_set_range_uptodate(page, offset_in_page(pos), len);
-> > +	iomap_set_range_dirty(page, offset_in_page(pos), len);
-> >  	iomap_set_page_dirty(page);
+> - Copy large amount of data from the stick:
+> # dd if=/run/media/sda1/sample.txt of=/dev/zero
+> [ 1437.517603] DELAY: 10
+> 8388607+1 records in
+> 8388607+1 records out
 > 
-> I would move the call to iomap_set_page_dirty() into
-> iomap_set_range_dirty() to parallel iomap_set_range_uptodate more closely.
-> We don't want a future change to add a call to iomap_set_range_dirty()
-> and miss the call to iomap_set_page_dirty().
 > 
-> >  	return copied;
-> >  }
-> > @@ -1030,6 +1093,7 @@ iomap_page_mkwrite_actor(struct inode *inode, loff_t pos, loff_t length,
-> >  		WARN_ON_ONCE(!PageUptodate(page));
-> >  		iomap_page_create(inode, page);
-> >  		set_page_dirty(page);
-> > +		iomap_set_range_dirty(page, offset_in_page(pos), length);
+> - Disconnect the USB stick:
+> [ 1551.796792] usb 2-1: USB disconnect, device number 2
+> [ 1558.625517] DELAY: 6782
 > 
-> I would move all this from the mkwrite_actor() to iomap_page_mkwrite()
-> and call it once with (0, PAGE_SIZE) rather than calling it once for
-> each extent in the page.
 > 
-> > @@ -1435,6 +1500,8 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
-> >  		 */
-> >  		set_page_writeback_keepwrite(page);
-> >  	} else {
-> > +		iomap_clear_range_dirty(page, 0,
-> > +				end_offset - page_offset(page) + 1);
-> >  		clear_page_dirty_for_io(page);
-> >  		set_page_writeback(page);
+> The Delay output 6782 is in milliseconds.
 > 
-> I'm not sure it's worth doing this calculation.  Better to just clear
-> the dirty bits on the entire page?  Opinions?
+> 
+> 
+> Using umount stops the issue occurring but is unfortunately not guaranteed
+> in our particular system.
+> 
+> 
+> From my analysis the hub_event workqueue kworker/0:1+usb thread uses around
+> 98% of the CPU.
+> 
+> I have traced the workqueue:workqueue_queue_work function while unplugging the USB
+> and there is no particular workqueue function being executed a lot more then the 
+> others for the kworker/0:1+usb thread.
+> 
+> 
+> Using perf I identified the hub_events workqueue was spending a lot of time in
+> invalidate_partition(), I have included a cut down the captured data from perf in
+> [2] which shows the additional functions where the kworker spends most of its time.
+> 
+> 
+> I am aware there will be delays on the shared workqueue, are the delays
+> we are seeing considered normal?
+> 
+> 
+> Is there any way to mitigate or identify where the delay is?
+> I am unsure if this is a memory or filesystem subsystem issue.
+> 
+> 
+> Thank you for you help.
+> 
+> Thanks,
+> Jim Baxter
+> 
+> [1] Test Module:
+> // SPDX-License-Identifier: GPL-2.0
+> /*
+>  * Simple WQ latency monitoring
+>  *
+>  * Copyright (C) 2020 Advanced Driver Information Technology.
+>  */
+> 
+> #include <linux/init.h>
+> #include <linux/ktime.h>
+> #include <linux/module.h>
+> 
+> #define PERIOD_MS 100
+> 
+> static struct delayed_work wq;
+> static u64 us_save;
+> 
+> static void wq_cb(struct work_struct *work)
+> {
+> 	u64 us = ktime_to_us(ktime_get());
+> 	u64 us_diff = us - us_save;
+> 	u64 us_print = 0;
+> 
+> 	if (!us_save)
+> 		goto skip_print;
+> 
+> 
+> 	us_print = us_diff / 1000 - PERIOD_MS;
+> 	if (us_print > 9)
+> 		pr_crit("DELAY: %lld\n", us_print);
+> 
+> skip_print:
+> 	us_save = us;
+> 	schedule_delayed_work(&wq, msecs_to_jiffies(PERIOD_MS));
+> }
+> 
+> static int latency_mon_init(void)
+> {
+> 	us_save = 0;
+> 	INIT_DELAYED_WORK(&wq, wq_cb);
+> 	schedule_delayed_work(&wq, msecs_to_jiffies(PERIOD_MS));
+> 
+> 	return 0;
+> }
+> 
+> static void latency_mon_exit(void)
+> {
+> 	cancel_delayed_work_sync(&wq);
+> 	pr_info("%s\n", __func__);
+> }
+> 
+> module_init(latency_mon_init);
+> module_exit(latency_mon_exit);
+> MODULE_AUTHOR("Eugeniu Rosca <erosca@de.adit-jv.com>");
+> MODULE_LICENSE("GPL");
+> 
+> 
+> [2] perf trace:
+>     95.22%     0.00%  kworker/0:2-eve  [kernel.kallsyms]
+>     |
+>     ---ret_from_fork
+>        kthread
+>        worker_thread
+>        |          
+>         --95.15%--process_one_work
+> 		  |          
+> 		   --94.99%--hub_event
+> 			 |          
+> 			  --94.99%--usb_disconnect
+> 			  <snip>
+> 				|  
+> 				--94.90%--invalidate_partition
+> 				   __invalidate_device
+> 				   |          
+> 				   |--64.55%--invalidate_bdev
+> 				   |  |          
+> 				   |   --64.13%--invalidate_mapping_pages
+> 				   |     |          
+> 				   |     |--24.09%--invalidate_inode_page
+> 				   |     |   |          
+> 				   |     |   --23.44%--remove_mapping
+> 				   |     |     |          
+> 				   |     |      --23.20%--__remove_mapping
+> 				   |     |        |          
+> 				   |     |         --21.90%--arch_local_irq_restore
+> 				   |     |          
+> 				   |     |--22.44%--arch_local_irq_enable
+> 				   |          
+> 					--30.35%--shrink_dcache_sb 
+> 					<snip>
+> 					  |      
+> 					  --30.17%--truncate_inode_pages_range
+> 
