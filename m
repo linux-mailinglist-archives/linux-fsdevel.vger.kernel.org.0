@@ -2,33 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D3C4248389
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 13:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 101882483C0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 13:25:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbgHRLGE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 07:06:04 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39898 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbgHRLGD (ORCPT
+        id S1726336AbgHRLVu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 07:21:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50146 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726145AbgHRLUd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 07:06:03 -0400
-Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1k7zRG-0005Sq-Q5; Tue, 18 Aug 2020 11:05:58 +0000
-Date:   Tue, 18 Aug 2020 13:05:56 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
-        criu@openvz.org, bpf <bpf@vger.kernel.org>,
+        Tue, 18 Aug 2020 07:20:33 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DCFAC061389;
+        Tue, 18 Aug 2020 04:20:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=uyOr0XTV/U1Wnr50U6EDLkhEOzYXzSvIRbmR+gqBx/Q=; b=HOvegqMgT3ap3TLiij4oEXYrek
+        5LVaYLmRTU5Hjf9rAkd8YDxhgwpWgqh9W+2Kl/V02gNpXoxzCHcmMz3bgNFFPBoN/Lspad+Oq1rKq
+        jFqNgl8/Jf5l1t/fsC9zJZSbPrUXtVXRf6ULjt0qRBj01fpcwZ1+HwiItoW7NzeogwvvZCxV0woKB
+        4fxfGOWiC19bL6rkUsiSpyPtKG4Kpnu0H/41NxcTiUO0y3Cf3GKQW46HsJPiYN10mi5bs1knXskUa
+        Tv/hr5AgtsiOlXHuMdRrsCHL0fxNHDGd5qdxFS88tWhXCl6EYCyUDuFLRJoZesUGnQtTWwG6OUCnE
+        MP5DwPRA==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k7zfB-0004Ym-0V; Tue, 18 Aug 2020 11:20:21 +0000
+Date:   Tue, 18 Aug 2020 12:20:20 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        criu@openvz.org, bpf@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
         Oleg Nesterov <oleg@redhat.com>,
         Cyrill Gorcunov <gorcunov@gmail.com>,
         Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
-        Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>,
+        "Daniel P. Berrang??" <berrange@redhat.com>,
         Jeff Layton <jlayton@redhat.com>,
         Miklos Szeredi <miklos@szeredi.hu>,
         Matthew Wilcox <willy@debian.org>,
@@ -43,60 +53,19 @@ Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         Andrii Nakryiko <andriin@fb.com>,
         John Fastabend <john.fastabend@gmail.com>,
         KP Singh <kpsingh@chromium.org>
-Subject: Re: [PATCH 09/17] file: Implement fnext_task
-Message-ID: <20200818110556.q5i5quflrcljv4wa@wittgenstein>
+Subject: Re: [PATCH 17/17] file: Rename __close_fd to close_fd and remove the
+ files parameter
+Message-ID: <20200818112020.GA17080@infradead.org>
 References: <87ft8l6ic3.fsf@x220.int.ebiederm.org>
- <20200817220425.9389-9-ebiederm@xmission.com>
- <CAHk-=whCU_psWXHod0-WqXXKB4gKzgW9q=d_ZEFPNATr3kG=QQ@mail.gmail.com>
- <875z9g7oln.fsf@x220.int.ebiederm.org>
- <CAHk-=wjk_CnGHt4LBi2WsOeYOxE5j79R8xHzZytCy8t-_9orQw@mail.gmail.com>
+ <20200817220425.9389-17-ebiederm@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjk_CnGHt4LBi2WsOeYOxE5j79R8xHzZytCy8t-_9orQw@mail.gmail.com>
+In-Reply-To: <20200817220425.9389-17-ebiederm@xmission.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 17, 2020 at 06:17:35PM -0700, Linus Torvalds wrote:
-> On Mon, Aug 17, 2020 at 6:06 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >
-> > I struggle with the fcheck name as I have not seen or at least not
-> > registed on the the user that just checks to see if the result is NULL.
-> > So the name fcheck never made a bit of sense to me.
-> 
-> Yeah, that name is not great. I just don't want to make things even worse.
-> 
-> > I will see if I can come up with some good descriptive comments around
-> > these functions.  Along with describing what these things are doing I am
-> > thinking maybe I should put "_rcu" in their names and have a debug check
-> > that verifies "_rcu" is held.
-> 
-> Yeah, something along the lines of "rcu_lookup_fd_task(tsk,fd)" would
-> be a *lot* more descriptive than fcheck_task().
-> 
-> And I think "fnext_task()" could be "rcu_lookup_next_fd_task(tsk,fd)".
-> 
-> Yes, those are much longer names, but it's not like you end up typing
-> them all that often, and I think being descriptive would be worth it.
-> 
-> And "fcheck()" and "fcheck_files()" would be good to rename too along
-> the same lines.
-> 
-> Something like "rcu_lookup_fd()" and "rcu_lookup_fd_files()" respectively?
-> 
-> I'm obviously trying to go for a "rcu_lookup_fd*()" kind of pattern,
-> and I'm not married to _that_ particular pattern but I think it would
-> be better than what we have now.
-
-In fs/inode.c and a few other places we have the *_rcu suffix pattern
-already so maybe:
-
-fcheck() -> fd_file_rcu() or lookup_fd_rcu()
-fcheck_files() -> fd_files_rcu() or lookup_fd_files_rcu()
-fnext_task() -> fd_file_from_task_rcu() or lookup_next_fd_from_task_rcu()
-
-rather than as prefix or sm.
-
-Christian
+Please kill off ksys_close as well while you're at it.
