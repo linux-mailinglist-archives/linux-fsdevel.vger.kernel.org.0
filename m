@@ -2,124 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C17C92480A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 10:31:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BE1D2481A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 11:15:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbgHRIbu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 04:31:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51470 "EHLO
+        id S1726705AbgHRJPS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 05:15:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726145AbgHRIbt (ORCPT
+        with ESMTP id S1726165AbgHRJPQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 04:31:49 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43FB6C061389
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Aug 2020 01:31:48 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id x24so9759362lfe.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Aug 2020 01:31:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q8GP7eS1LzqVo1eId0/J96ZQfgvz1Pc6gH5ak12QY8s=;
-        b=Wv+1pa2AmKmIwoKJdEL2ArgVsY1NxHFTuMHeNtykD6cHJqyOs6Ldd9+CJCFjNiNw1n
-         d//IcpMHQNlTzB1i8GiRa4VxLjdUliW2WYb/GTUaK1vaDU8mAYXpoo2Jc46qsC3kP5Wm
-         0pn0jblTpfNawL8JTIl/OAsSIKZMS4Sd0olHFj2Qds9nFW/nRCvT6D0zZUS+m7KgqxpJ
-         O7MvpSd5P3cLMl/q2NEF24plBojGwsdc7mNKcUet6FFV5RSF4oPL4Ina3hGzvu2YYh7C
-         TJKOo4Orwsi4xp3qCJiXrJvCnVL2jVGuBxHVWeLy2/eYHcNpXYbAf5wrxAilDZcXCJVk
-         kfFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q8GP7eS1LzqVo1eId0/J96ZQfgvz1Pc6gH5ak12QY8s=;
-        b=t6EdMmwsl54VljWGACt5cSOcMNPqVyEWjziXDLMtEGnXpnuAAyGivSXL54XpHKx1jA
-         UShFAtZMZLSGLqqJGmmMj5DQYEIOjFb3ii7lKnm9Q/7/n55+0Qnp3to1QjWtpeu3HCVm
-         0t8PgsZeZSrcjUhElLVPWL/uyaIeT2U2BrYG6I2d3KQzbRCadTyB7rOg2FNQUQ1DLDFl
-         zwVB3E0+Zv79yu2SGLfP+79Ik6qqKfs7q1n7vLi6FgikhXsyx8Fp1PjNGWRhdutc/g8d
-         lSmtWd1Rmw6PcK7HWpzNDBxlEhcdlyL4mFsJU83Ok9+o72ZhUaUw9xv4MlbWNMUpuoAO
-         U0Iw==
-X-Gm-Message-State: AOAM532/FqOeTPcAdYFSPStZfLfo2qkhq4HR1gD77y5iZXzOeNRQa+lP
-        mCTf5lg48vwTa44jcbsYnTJ+Sqmq9FVzIA/PKoq3pQ==
-X-Google-Smtp-Source: ABdhPJwOK2qkpFlid8UNu4o909xNlNZeU/CcgMi47GISHCDqEJo0W4B9K2Dvq8R5VeBxjw2o4Ig7Cozq0ziLwGTgteY=
-X-Received: by 2002:a19:4844:: with SMTP id v65mr9475947lfa.184.1597739506937;
- Tue, 18 Aug 2020 01:31:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200818061239.29091-1-jannh@google.com> <20200818061239.29091-5-jannh@google.com>
- <CAHk-=wiOqR-4jXpPe-5PBKSCwQQFDaiJwkJr6ULwhcN8DJoG0A@mail.gmail.com>
-In-Reply-To: <CAHk-=wiOqR-4jXpPe-5PBKSCwQQFDaiJwkJr6ULwhcN8DJoG0A@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 18 Aug 2020 10:31:20 +0200
-Message-ID: <CAG48ez3pMcPTHrbgjeVbCAV1n7VQW1tqJw8kNsL4wgRxV_Fr9Q@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] binfmt_elf, binfmt_elf_fdpic: Use a VMA list snapshot
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Tue, 18 Aug 2020 05:15:16 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD81BC061389;
+        Tue, 18 Aug 2020 02:15:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=UBwdQabxborBnUE/RMGD20d7Ru/Oheb0wmXWjUiC0/E=; b=YbqYH54dJpbZukfJbcHBX5gIe6
+        4fGR1JnoO2J5ou9rqay98pZf09b2sJvtXYzco+ShIGTbQCUJanYELbMUIKzdUJp8m6gqGDh2Vy5dz
+        Z85kRmbOcs2R9yO6b+qiXnRvxaiEOIVu1SfG+AZ1aEeGjWd8zXPOHQnLG0G/xaBKWZcnjPHK5THwY
+        NUFDfGvip/hUyZNwCTe8rH2KlZoyzIbkjSr4WisborRSryZSeC0mSG/mHjMtr6YgsnrQ7qlP834T9
+        2AXdgEs4etYbr2acZv2wBRyLfyez9vj90z97qq/VvNlLitUCukARb3errqkqzDH0jEAYtn4LMlLjg
+        uY4c2NiA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k7xhs-000568-8H; Tue, 18 Aug 2020 09:15:00 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7C4093060F2;
+        Tue, 18 Aug 2020 11:14:53 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 293DB2BDBFE38; Tue, 18 Aug 2020 11:14:53 +0200 (CEST)
+Date:   Tue, 18 Aug 2020 11:14:53 +0200
+From:   peterz@infradead.org
+To:     Waiman Long <longman@redhat.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [RFC PATCH 0/8] memcg: Enable fine-grained per process memory
+ control
+Message-ID: <20200818091453.GL2674@hirez.programming.kicks-ass.net>
+References: <20200817140831.30260-1-longman@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200817140831.30260-1-longman@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 18, 2020 at 10:18 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Mon, Aug 17, 2020 at 11:13 PM Jann Horn <jannh@google.com> wrote:
-> >
-> >         /*
-> >          * If this looks like the beginning of a DSO or executable mapping,
-> > +        * we'll check for an ELF header. If we find one, we'll dump the first
-> > +        * page to aid in determining what was mapped here.
-> > +        * However, we shouldn't sleep on userspace reads while holding the
-> > +        * mmap_lock, so we just return a placeholder for now that will be fixed
-> > +        * up later in vma_dump_size_fixup().
->
-> I still don't like this.
->
-> And I still don't think it's necessary.
->
-> The whole - and only - point of "check if it's an ELF header" is that
-> we don't want to dump data that could just be found by looking at the
-> original binary.
->
-> But by the time we get to this point, we already know that
->
->  (a) it's a private mapping with file backing, and it's the first page
-> of the file
->
->  (b) it has never been written to and it's mapped for reading
->
-> and the choice at this point is "don't dump at all", or "dump just the
-> first page".
->
-> And honestly, that whole "check if it has the ELF header" signature
-> was always just a heuristic. Nothing should depend on it anyway.
->
-> We already skip dumping file data under a lot of other circumstances
-> (and perhaps equally importantly, we already decided to dump it all
-> under other circumstances).
->
-> I think this DUMP_SIZE_MAYBE_ELFHDR_PLACEHOLDER hackery is worse than
-> just changing the heuristic.
->
-> So instead, just say "ok, if the file was executable, let's dump the
-> first page".
->
-> The test might be as simple as jjust checking
->
->        if (file_inode(vma->vm_file)->i_mode & 0111)
->
-> and you'd be done. That's likely a _better_ heuristic than the "let's
-> go look at the random first word in memory".
->
-> Your patches look otherwise fine, but I really really despise that
-> DUMP_SIZE_MAYBE_ELFHDR_PLACEHOLDER, and I don't think it's even
-> necessary.
+On Mon, Aug 17, 2020 at 10:08:23AM -0400, Waiman Long wrote:
+> Memory controller can be used to control and limit the amount of
+> physical memory used by a task. When a limit is set in "memory.high" in
+> a v2 non-root memory cgroup, the memory controller will try to reclaim
+> memory if the limit has been exceeded. Normally, that will be enough
+> to keep the physical memory consumption of tasks in the memory cgroup
+> to be around or below the "memory.high" limit.
+> 
+> Sometimes, memory reclaim may not be able to recover memory in a rate
+> that can catch up to the physical memory allocation rate. In this case,
+> the physical memory consumption will keep on increasing. 
 
-Yeah, good point, it's a pretty ugly hack. I'll make a new version
-along the lines of what you suggested.
+Then slow down the allocator? That's what we do for dirty pages too, we
+slow down the dirtier when we run against the limits.
+
