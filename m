@@ -2,120 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F243F248322
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 12:36:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB2C524832A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 12:37:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbgHRKg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 06:36:29 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39029 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbgHRKgZ (ORCPT
+        id S1726845AbgHRKgx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 06:36:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43138 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726836AbgHRKgt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 06:36:25 -0400
-Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1k7yyc-0002zb-TF; Tue, 18 Aug 2020 10:36:23 +0000
-Date:   Tue, 18 Aug 2020 12:36:16 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        criu@openvz.org, bpf@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
-        Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@debian.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Matthew Wilcox <matthew@wil.cx>,
-        Trond Myklebust <trond.myklebust@fys.uio.no>,
-        Chris Wright <chrisw@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>
-Subject: Re: [PATCH 08/17] proc/fd: In proc_fd_link use fcheck_task
-Message-ID: <20200818103616.u2fht5c6zeeivqg6@wittgenstein>
-References: <87ft8l6ic3.fsf@x220.int.ebiederm.org>
- <20200817220425.9389-8-ebiederm@xmission.com>
+        Tue, 18 Aug 2020 06:36:49 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90132C061389;
+        Tue, 18 Aug 2020 03:36:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=PxEaa92aYsiybSQz7oa3HYw1NYI/WkEv9koOqjkqg9g=; b=ZIG+qq8oCuBvwA6kUWik1qng6i
+        gsAHaPDDaBpBiqmSE+bS+HV0Am2meWwZ/5N2iApKqvG82BvkrYckosoFUPFeVdtoPIGxRJLIGHG5t
+        RE8DMo8VfBnHb1OVTyx9cXhLAtMAO79PAXH2sn7L5XgU7REAOmlfJIiASqIf6wGbS/Gxha5Z/XUzH
+        OAVioWo7QCzixURvFN8KwYPR/N9gkEcppIQDoY6sqf/DVwzGAhiOVqeRqAshnGTklMfHCDo6ojldT
+        7qUlMgUAAii5usQ4/2CQiOvYqv91YNC56GXLP24yc3ZhYTRLZsxbPnXU6bHz/Goss7ihx+L07PvAd
+        TK+aRVPg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k7yys-00020X-6A; Tue, 18 Aug 2020 10:36:38 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6D802305DD1;
+        Tue, 18 Aug 2020 12:36:37 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3214D2B2C8DCD; Tue, 18 Aug 2020 12:36:37 +0200 (CEST)
+Date:   Tue, 18 Aug 2020 12:36:37 +0200
+From:   peterz@infradead.org
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [RFC PATCH 0/8] memcg: Enable fine-grained per process memory
+ control
+Message-ID: <20200818103637.GR2674@hirez.programming.kicks-ass.net>
+References: <20200817140831.30260-1-longman@redhat.com>
+ <20200818091453.GL2674@hirez.programming.kicks-ass.net>
+ <20200818092617.GN28270@dhcp22.suse.cz>
+ <20200818095910.GM2674@hirez.programming.kicks-ass.net>
+ <20200818100516.GO28270@dhcp22.suse.cz>
+ <20200818101844.GO2674@hirez.programming.kicks-ass.net>
+ <20200818103059.GP28270@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200817220425.9389-8-ebiederm@xmission.com>
+In-Reply-To: <20200818103059.GP28270@dhcp22.suse.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 17, 2020 at 05:04:16PM -0500, Eric W. Biederman wrote:
-> When discussing[1] exec and posix file locks it was realized that none
-> of the callers of get_files_struct fundamentally needed to call
-> get_files_struct, and that by switching them to helper functions
-> instead it will both simplify their code and remove unnecessary
-> increments of files_struct.count.  Those unnecessary increments can
-> result in exec unnecessarily unsharing files_struct which breaking
-> posix locks, and it can result in fget_light having to fallback to
-> fget reducing system performance.
-> 
-> Using fcheck_task instead of get_files_struct simplifies proc_fd_link by
-> removing unnecessary locking, and reference counting.
-> 
-> [1] https://lkml.kernel.org/r/20180915160423.GA31461@redhat.com
-> Suggested-by: Oleg Nesterov <oleg@redhat.com>
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
+On Tue, Aug 18, 2020 at 12:30:59PM +0200, Michal Hocko wrote:
+> The proposal also aims at much richer interface to define the
+> oom behavior.
 
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Oh yeah, I'm not defending any of that prctl() nonsense.
 
->  fs/proc/fd.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-> index 4048a87c51ee..abfdcb21cc79 100644
-> --- a/fs/proc/fd.c
-> +++ b/fs/proc/fd.c
-> @@ -141,29 +141,23 @@ static const struct dentry_operations tid_fd_dentry_operations = {
->  
->  static int proc_fd_link(struct dentry *dentry, struct path *path)
->  {
-> -	struct files_struct *files = NULL;
->  	struct task_struct *task;
->  	int ret = -ENOENT;
->  
->  	task = get_proc_task(d_inode(dentry));
->  	if (task) {
-> -		files = get_files_struct(task);
-> -		put_task_struct(task);
-> -	}
-> -
-> -	if (files) {
->  		unsigned int fd = proc_fd(d_inode(dentry));
->  		struct file *fd_file;
->  
-> -		spin_lock(&files->file_lock);
-> -		fd_file = fcheck_files(files, fd);
-> +		rcu_read_lock();
-> +		fd_file = fcheck_task(task, fd);
->  		if (fd_file) {
->  			*path = fd_file->f_path;
->  			path_get(&fd_file->f_path);
->  			ret = 0;
->  		}
-> -		spin_unlock(&files->file_lock);
-> -		put_files_struct(files);
-> +		rcu_read_unlock();
-> +		put_task_struct(task);
->  	}
->  
->  	return ret;
-> -- 
-> 2.25.0
-> 
+Just saying that from a math / control theory point of view, the current
+thing is a abhorrent failure.
