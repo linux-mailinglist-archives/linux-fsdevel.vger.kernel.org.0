@@ -2,68 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EEC0248456
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 14:02:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4478F248555
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 14:52:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbgHRMCZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 08:02:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56602 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbgHRMCY (ORCPT
+        id S1726746AbgHRMwI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 08:52:08 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:60680 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbgHRMwF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 08:02:24 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D91DEC061389
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Aug 2020 05:02:23 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id y2so12106657ljc.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Aug 2020 05:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Q9Lpv5RpbWvMRmZFBU4Td2EHP8Sr5NPr9lqhNBZ0wcI=;
-        b=s5XIDqrYGSwFh1krjRHCLCMavWGrM/Zb8ilEu7oHVot1aiCQDb9plrBCipS9v5zfS4
-         eZgs3PaZXTl9xYgO2yzwtqSoue5b54s00fTR+5tr4C7p5u/4Ma0zaBAlWhgNPbZnuPf/
-         aZpL8lqjCQ1CVTPZoxhxXMkXLUZ6fzr1WZu8oSv2qNifF/l1Oyn+GSFN7Ut6bRLDmML8
-         Nbig1h2s8x2RA6V27wGBjyZV6FZsy5aKvTc8JNJ6QQwQdsOk+q41JE4V+BQfMgZss0Us
-         qa1Z67ZbcRmm82gbS56vlsbSFxth8GW91yzlfNcCFzGDjrBE3NfJoc0lLnA/30ohcrtz
-         zO/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Q9Lpv5RpbWvMRmZFBU4Td2EHP8Sr5NPr9lqhNBZ0wcI=;
-        b=kyLs01LQSNsj34EO0HZLo+zfsqndVQNJKWDRXO18QOazQ+BgviIzEeiIspRJDD/19W
-         4CQIJtMefa0p1RbfJRVqVpvXaWXK1X4FmudDnLYER7jXIk6Xfzo/ugbwpZUqiEkzxFxf
-         Ppzo6zEVT19GB+ik9atowgepBJUnHEADEErb9w/8/oVcP19PSPlIhhdodDA/wcpix4ZQ
-         5jcZpVsP8M87TyFZIy4ohPbebImYWxH2FfPIsn3zfKX+EblCbo03EwrzHjTUVI7AZATq
-         M2Vvj10vjO4t72JFM2cAN9TUHGOCBLhpTwAtoFpa6/BP+20fphgYf4MQU8ePGXQtDMt7
-         cNpw==
-X-Gm-Message-State: AOAM531CdH4GWjwyo3dpbdTEcp0X3hAx18KdcZId8n8KyPl8V25S4OjD
-        Grvjwg8SXNZiNY0lluVQmQSXo/wq7k9nDCUYIg4=
-X-Google-Smtp-Source: ABdhPJx4Fc6Gue43NlCiZeOSjS0euxPeQ3n0+q3DhFqy7zyCxqjffl1pckoaydlmxAWtzsXeKH0ZJIWIkSNofWR/Tvc=
-X-Received: by 2002:a2e:7a03:: with SMTP id v3mr8974564ljc.350.1597752142017;
- Tue, 18 Aug 2020 05:02:22 -0700 (PDT)
+        Tue, 18 Aug 2020 08:52:05 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k815n-002tHu-Ks; Tue, 18 Aug 2020 06:51:55 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k815m-0002uy-Vs; Tue, 18 Aug 2020 06:51:55 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        criu@openvz.org, bpf@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
+        "Daniel P. Berrang\?\?" <berrange@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@debian.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Matthew Wilcox <matthew@wil.cx>,
+        Trond Myklebust <trond.myklebust@fys.uio.no>,
+        Chris Wright <chrisw@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>
+References: <87ft8l6ic3.fsf@x220.int.ebiederm.org>
+        <20200817220425.9389-17-ebiederm@xmission.com>
+        <20200818112020.GA17080@infradead.org>
+Date:   Tue, 18 Aug 2020 07:48:21 -0500
+In-Reply-To: <20200818112020.GA17080@infradead.org> (Christoph Hellwig's
+        message of "Tue, 18 Aug 2020 12:20:20 +0100")
+Message-ID: <87blj83ysq.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Received: by 2002:a19:489:0:0:0:0:0 with HTTP; Tue, 18 Aug 2020 05:02:21 -0700 (PDT)
-Reply-To: lindsey4kindblers@hotmail.com
-From:   lindsey <adernsonphilips@gmail.com>
-Date:   Tue, 18 Aug 2020 12:02:21 +0000
-Message-ID: <CAFB0dsVTUzGAHSbdxTu1ocKPFCFMd78=v1trfjnUroZ24pAv=Q@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1k815m-0002uy-Vs;;;mid=<87blj83ysq.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19i1uubQLTFHwGCBALZbWaXu5opyhIYahI=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,XMNoVowels,
+        XMSubLong autolearn=disabled version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4768]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 0; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Christoph Hellwig <hch@infradead.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 279 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 10 (3.7%), b_tie_ro: 9 (3.2%), parse: 0.83 (0.3%),
+         extract_message_metadata: 10 (3.7%), get_uri_detail_list: 0.48 (0.2%),
+         tests_pri_-1000: 17 (6.0%), tests_pri_-950: 1.31 (0.5%),
+        tests_pri_-900: 1.07 (0.4%), tests_pri_-90: 72 (25.7%), check_bayes:
+        70 (25.1%), b_tokenize: 7 (2.5%), b_tok_get_all: 6 (2.2%),
+        b_comp_prob: 1.78 (0.6%), b_tok_touch_all: 52 (18.6%), b_finish: 0.91
+        (0.3%), tests_pri_0: 155 (55.4%), check_dkim_signature: 0.50 (0.2%),
+        check_dkim_adsp: 2.4 (0.9%), poll_dns_idle: 0.75 (0.3%), tests_pri_10:
+        2.1 (0.8%), tests_pri_500: 7 (2.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 17/17] file: Rename __close_fd to close_fd and remove the files parameter
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
--- 
-Hello dear friend
+Christoph Hellwig <hch@infradead.org> writes:
 
-        I'm Lindsey Kindlers,  from United states.
-I am very motivated and willing to learn, I am a very hard
- working , trustworthy person, I really want to be your friend with you,
-when I receive an answer, I will intruduce myself better,
+> Please kill off ksys_close as well while you're at it.
 
-Best regards
-      Sergeant Lindsey Kindbler.
+Good point.  ksys_close is just a trivial wrapper around close_fd.  So
+the one caller of ksys_close autofs_dev_ioctl_closemount can be
+trivially changed to call close_fd.
+
+Eric
