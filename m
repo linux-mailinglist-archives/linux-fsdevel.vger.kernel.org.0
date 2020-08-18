@@ -2,278 +2,223 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C30D2248723
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 16:17:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52209248893
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 17:01:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbgHRORe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 10:17:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727786AbgHROR0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 10:17:26 -0400
-Received: from aquarius.haifa.ibm.com (nesher1.haifa.il.ibm.com [195.110.40.7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DF68207FF;
-        Tue, 18 Aug 2020 14:17:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597760245;
-        bh=oysYEavAzZfVG+QM9pIpE7mplr7QxKfY0kI4p0rAXl0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vgM/1d+3Sc9LN+ygqstQ1ab9HA/+wldJhx7mVvIkIxNY+T+GPBUAaeuECAsnHiXtt
-         zKL7FLfcc/vFMeAojwvfSCJ8XGggFsL1o3JSGfJkhMrPf1ch7uQEDGuNm7/IVfmZqO
-         79fXt0odeNH7hRYEr822bqPTQJxIDaIr8fe5mE/c=
-From:   Mike Rapoport <rppt@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-riscv@lists.infradead.org, x86@kernel.org
-Subject: [PATCH v4 6/6] mm: secretmem: add ability to reserve memory at boot
-Date:   Tue, 18 Aug 2020 17:15:54 +0300
-Message-Id: <20200818141554.13945-7-rppt@kernel.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200818141554.13945-1-rppt@kernel.org>
-References: <20200818141554.13945-1-rppt@kernel.org>
+        id S1726691AbgHRPBp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 11:01:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57204 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727829AbgHRPBb (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 Aug 2020 11:01:31 -0400
+Received: from sequoia-grove.ad.secure-endpoints.com (sequoia-grove.secure-endpoints.com [IPv6:2001:470:1f07:f77:70f5:c082:a96a:5685])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE8CC061344
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Aug 2020 08:01:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/relaxed;
+        d=auristor.com; s=MDaemon; r=y; t=1597762881; x=1598367681;
+        i=jaltman@auristor.com; q=dns/txt; h=Subject:To:Cc:References:
+        From:Organization:Message-ID:Date:User-Agent:MIME-Version:
+        In-Reply-To:Content-Type; bh=Tcrx0CBuzXKry9+g+roR0MsjkXc6IXhaTNW
+        VyukqMro=; b=qodT9E7OE+FneZ3X9IuxqOAwJPIg8Hau0zhvom5bw6obTBB8Cu1
+        1OS6KvbuMWk9TLaniQu68d9UEFu5vonrQnArVKaSyNIxEpZekwUvklPFVKf3SVdL
+        2s1HnBoA/laPTPF4yqs2b2nfLudaV/Uznd8h7YrydIQxEMTdfwUG8f1k=
+X-MDAV-Result: clean
+X-MDAV-Processed: sequoia-grove.ad.secure-endpoints.com, Tue, 18 Aug 2020 11:01:21 -0400
+Received: from [IPv6:2604:2000:1741:8407:31b2:27ea:a55f:abe6] by auristor.com (IPv6:2001:470:1f07:f77:28d9:68fb:855d:c2a5) (MDaemon PRO v20.0.1) 
+        with ESMTPSA id md5001002630221.msg; Tue, 18 Aug 2020 11:01:19 -0400
+X-Spam-Processed: sequoia-grove.ad.secure-endpoints.com, Tue, 18 Aug 2020 11:01:19 -0400
+        (not processed: message from trusted or authenticated source)
+X-MDRemoteIP: 2604:2000:1741:8407:31b2:27ea:a55f:abe6
+X-MDHelo: [IPv6:2604:2000:1741:8407:31b2:27ea:a55f:abe6]
+X-MDArrival-Date: Tue, 18 Aug 2020 11:01:19 -0400
+X-MDOrigin-Country: United States, North America
+X-Authenticated-Sender: jaltman@auristor.com
+X-Return-Path: prvs=1499b3761b=jaltman@auristor.com
+X-Envelope-From: jaltman@auristor.com
+X-MDaemon-Deliver-To: linux-fsdevel@vger.kernel.org
+Subject: Re: file metadata via fs API (was: [GIT PULL] Filesystem Information)
+To:     "Linus Torvalds (torvalds@linux-foundation.org)" 
+        <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Karel Zak <kzak@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Christian Brauner <christian@brauner.io>,
+        Lennart Poettering <lennart@poettering.net>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1842689.1596468469@warthog.procyon.org.uk>
+ <1845353.1596469795@warthog.procyon.org.uk>
+ <CAJfpegunY3fuxh486x9ysKtXbhTE0745ZCVHcaqs9Gww9RV2CQ@mail.gmail.com>
+ <ac1f5e3406abc0af4cd08d818fe920a202a67586.camel@themaw.net>
+ <CAJfpegu8omNZ613tLgUY7ukLV131tt7owR+JJ346Kombt79N0A@mail.gmail.com>
+ <CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com>
+ <20200811135419.GA1263716@miu.piliscsaba.redhat.com>
+ <CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com>
+ <52483.1597190733@warthog.procyon.org.uk>
+ <CAHk-=wiPx0UJ6Q1X=azwz32xrSeKnTJcH8enySwuuwnGKkHoPA@mail.gmail.com>
+ <679456f1-5867-4017-b1d6-95197d2fa81b@auristor.com>
+ <CAHk-=whLhwum2E+qperD=TypGHXxoBtXOu-HHDd9L9_XFFyiaA@mail.gmail.com>
+From:   Jeffrey E Altman <jaltman@auristor.com>
+Organization: AuriStor, Inc.
+Message-ID: <cc774343-1782-6479-306b-4b0d7146bb6e@auristor.com>
+Date:   Tue, 18 Aug 2020 11:01:10 -0400
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=whLhwum2E+qperD=TypGHXxoBtXOu-HHDd9L9_XFFyiaA@mail.gmail.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms070203090704080909030005"
+X-MDCFSigsAdded: auristor.com
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mike Rapoport <rppt@linux.ibm.com>
+This is a cryptographically signed message in MIME format.
 
-Taking pages out from the direct map and bringing them back may create
-undesired fragmentation and usage of the smaller pages in the direct
-mapping of the physical memory.
+--------------ms070203090704080909030005
+Content-Type: multipart/mixed;
+ boundary="------------15A85830EC70DC04AB47698C"
+Content-Language: en-US
 
-This can be avoided if a significantly large area of the physical memory
-would be reserved for secretmem purposes at boot time.
+This is a multi-part message in MIME format.
+--------------15A85830EC70DC04AB47698C
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Add ability to reserve physical memory for secretmem at boot time using
-"secretmem" kernel parameter and then use that reserved memory as a global
-pool for secret memory needs.
+On 8/14/2020 1:05 PM, Linus Torvalds (torvalds@linux-foundation.org) wrot=
+e:
+> Honestly, I really think you may want an extended [f]statfs(), not
+> some mount tracking.
+>=20
+>                  Linus
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- mm/secretmem.c | 134 ++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 126 insertions(+), 8 deletions(-)
+Linus,
 
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index 333eb18fb483..54067ea62b2d 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -14,6 +14,7 @@
- #include <linux/pagemap.h>
- #include <linux/genalloc.h>
- #include <linux/syscalls.h>
-+#include <linux/memblock.h>
- #include <linux/pseudo_fs.h>
- #include <linux/set_memory.h>
- #include <linux/sched/signal.h>
-@@ -45,6 +46,39 @@ struct secretmem_ctx {
- 	unsigned int mode;
- };
- 
-+struct secretmem_pool {
-+	struct gen_pool *pool;
-+	unsigned long reserved_size;
-+	void *reserved;
-+};
-+
-+static struct secretmem_pool secretmem_pool;
-+
-+static struct page *secretmem_alloc_huge_page(gfp_t gfp)
-+{
-+	struct gen_pool *pool = secretmem_pool.pool;
-+	unsigned long addr = 0;
-+	struct page *page = NULL;
-+
-+	if (pool) {
-+		if (gen_pool_avail(pool) < PMD_SIZE)
-+			return NULL;
-+
-+		addr = gen_pool_alloc(pool, PMD_SIZE);
-+		if (!addr)
-+			return NULL;
-+
-+		page = virt_to_page(addr);
-+	} else {
-+		page = alloc_pages(gfp, PMD_PAGE_ORDER);
-+
-+		if (page)
-+			split_page(page, PMD_PAGE_ORDER);
-+	}
-+
-+	return page;
-+}
-+
- static int secretmem_pool_increase(struct secretmem_ctx *ctx, gfp_t gfp)
- {
- 	unsigned long nr_pages = (1 << PMD_PAGE_ORDER);
-@@ -53,12 +87,11 @@ static int secretmem_pool_increase(struct secretmem_ctx *ctx, gfp_t gfp)
- 	struct page *page;
- 	int err;
- 
--	page = alloc_pages(gfp, PMD_PAGE_ORDER);
-+	page = secretmem_alloc_huge_page(gfp);
- 	if (!page)
- 		return -ENOMEM;
- 
- 	addr = (unsigned long)page_address(page);
--	split_page(page, PMD_PAGE_ORDER);
- 
- 	err = gen_pool_add(pool, addr, PMD_SIZE, NUMA_NO_NODE);
- 	if (err) {
-@@ -267,11 +300,13 @@ SYSCALL_DEFINE1(memfd_secret, unsigned long, flags)
- 	return err;
- }
- 
--static void secretmem_cleanup_chunk(struct gen_pool *pool,
--				    struct gen_pool_chunk *chunk, void *data)
-+static void secretmem_recycle_range(unsigned long start, unsigned long end)
-+{
-+	gen_pool_free(secretmem_pool.pool, start, PMD_SIZE);
-+}
-+
-+static void secretmem_release_range(unsigned long start, unsigned long end)
- {
--	unsigned long start = chunk->start_addr;
--	unsigned long end = chunk->end_addr;
- 	unsigned long nr_pages, addr;
- 
- 	nr_pages = (end - start + 1) / PAGE_SIZE;
-@@ -281,6 +316,18 @@ static void secretmem_cleanup_chunk(struct gen_pool *pool,
- 		put_page(virt_to_page(addr));
- }
- 
-+static void secretmem_cleanup_chunk(struct gen_pool *pool,
-+				    struct gen_pool_chunk *chunk, void *data)
-+{
-+	unsigned long start = chunk->start_addr;
-+	unsigned long end = chunk->end_addr;
-+
-+	if (secretmem_pool.pool)
-+		secretmem_recycle_range(start, end);
-+	else
-+		secretmem_release_range(start, end);
-+}
-+
- static void secretmem_cleanup_pool(struct secretmem_ctx *ctx)
- {
- 	struct gen_pool *pool = ctx->pool;
-@@ -320,14 +367,85 @@ static struct file_system_type secretmem_fs = {
- 	.kill_sb	= kill_anon_super,
- };
- 
-+static int secretmem_reserved_mem_init(void)
-+{
-+	struct gen_pool *pool;
-+	struct page *page;
-+	void *addr;
-+	int err;
-+
-+	if (!secretmem_pool.reserved)
-+		return 0;
-+
-+	pool = gen_pool_create(PMD_SHIFT, NUMA_NO_NODE);
-+	if (!pool)
-+		return -ENOMEM;
-+
-+	err = gen_pool_add(pool, (unsigned long)secretmem_pool.reserved,
-+			   secretmem_pool.reserved_size, NUMA_NO_NODE);
-+	if (err)
-+		goto err_destroy_pool;
-+
-+	for (addr = secretmem_pool.reserved;
-+	     addr < secretmem_pool.reserved + secretmem_pool.reserved_size;
-+	     addr += PAGE_SIZE) {
-+		page = virt_to_page(addr);
-+		__ClearPageReserved(page);
-+		set_page_count(page, 1);
-+	}
-+
-+	secretmem_pool.pool = pool;
-+	page = virt_to_page(secretmem_pool.reserved);
-+	__kernel_map_pages(page, secretmem_pool.reserved_size / PAGE_SIZE, 0);
-+	return 0;
-+
-+err_destroy_pool:
-+	gen_pool_destroy(pool);
-+	return err;
-+}
-+
- static int secretmem_init(void)
- {
--	int ret = 0;
-+	int ret;
-+
-+	ret = secretmem_reserved_mem_init();
-+	if (ret)
-+		return ret;
- 
- 	secretmem_mnt = kern_mount(&secretmem_fs);
--	if (IS_ERR(secretmem_mnt))
-+	if (IS_ERR(secretmem_mnt)) {
-+		gen_pool_destroy(secretmem_pool.pool);
- 		ret = PTR_ERR(secretmem_mnt);
-+	}
- 
- 	return ret;
- }
- fs_initcall(secretmem_init);
-+
-+static int __init secretmem_setup(char *str)
-+{
-+	phys_addr_t align = PMD_SIZE;
-+	unsigned long reserved_size;
-+	void *reserved;
-+
-+	reserved_size = memparse(str, NULL);
-+	if (!reserved_size)
-+		return 0;
-+
-+	if (reserved_size * 2 > PUD_SIZE)
-+		align = PUD_SIZE;
-+
-+	reserved = memblock_alloc(reserved_size, align);
-+	if (!reserved) {
-+		pr_err("failed to reserve %lu bytes\n", secretmem_pool.reserved_size);
-+		return 0;
-+	}
-+
-+	secretmem_pool.reserved_size = reserved_size;
-+	secretmem_pool.reserved = reserved;
-+
-+	pr_info("reserved %luM\n", reserved_size >> 20);
-+
-+	return 1;
-+}
-+__setup("secretmem=", secretmem_setup);
--- 
-2.26.2
+Thank you for the reply.  Perhaps some of the communication disconnect
+is due to which thread this discussion is taking place on.  My
+understanding is that there were two separate pull requests.  One for
+mount notifications and the other for filesystem information.  This
+thread is derived from the pull request entitled "Filesystem
+Information" and my response was a request for use cases.  The
+assumption being that the request was related to the subject.
+
+I apologize for creating unnecessary noise due to my misinterpretation
+of your intended question.  The use cases I described and the types of
+filesystem information required to satisfy them do not require mount
+tracking.
+
+Jeffrey Altman
+
+
+--------------15A85830EC70DC04AB47698C
+Content-Type: text/x-vcard; charset=utf-8;
+ name="jaltman.vcf"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename="jaltman.vcf"
+
+begin:vcard
+fn:Jeffrey Altman
+n:Altman;Jeffrey
+org:AuriStor, Inc.
+adr:;;255 W 94TH ST STE 6B;New York;NY;10025-6985;United States
+email;internet:jaltman@auristor.com
+title:CEO
+tel;work:+1-212-769-9018
+url:https://www.linkedin.com/in/jeffreyaltman/
+version:2.1
+end:vcard
+
+
+--------------15A85830EC70DC04AB47698C--
+
+--------------ms070203090704080909030005
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+DGswggXSMIIEuqADAgECAhBAAW0B1qVVQ32wvx2EXYU6MA0GCSqGSIb3DQEBCwUAMDoxCzAJ
+BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEy
+MB4XDTE5MDkwNTE0MzE0N1oXDTIyMTEwMTE0MzE0N1owcDEvMC0GCgmSJomT8ixkAQETH0Ew
+MTQxMEMwMDAwMDE2RDAxRDZBNTQwMDAwMDQ0NDcxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
+YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQCY1TC9QeWnUgEoJ81FcAVnhGn/AWuzvkYRUG5/ZyXDdaM212e8
+ybCklgSmZweqNdrfaaHXk9vwjpvpD4YWgb07nJ1QBwlvRV/VPAaDdneIygJJWBCzaMVLttKO
+0VimH/I/HUwFBQT2mrktucCEf2qogdi2P+p5nuhnhIUiyZ71Fo43gF6cuXIMV/1rBNIJDuwM
+Q3H8zi6GL0p4mZFZDDKtbYq2l8+MNxFvMrYcLaJqejQNQRBuZVfv0Fq9pOGwNLAk19baIw3U
+xdwx+bGpTtS63Py1/57MQ0W/ZXE/Ocnt1qoDLpJeZIuEBKgMcn5/iN9+Ro5zAuOBEKg34wBS
+8QCTAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
+BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
+BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
+Mi5wN2MwHwYDVR0jBBgwFoAUpHPa72k1inXMoBl7CDL4a4nkQuwwCQYDVR0TBAIwADCCASsG
+A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
+L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
+bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
+aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
+YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
+ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
+dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTIuY3JsMB8GA1UdEQQY
+MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBR7pHsvL4H5GdzNToI9e5BuzV19
+bzAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAFlm
+JYk4Ff1v/n0foZkv661W4LCRtroBaVykOXetrDDOQNK2N6JdTa146uIZVgBeU+S/0DLvJBKY
+tkUHQ9ovjXJTsuCBmhIIw3YlHoFxbku0wHEpXMdFUHV3tUodFJJKF3MbC8j7dOMkag59/Mdz
+Sjszdvit0av9nTxWs/tRKKtSQQlxtH34TouIke2UgP/Nn901QLOrJYJmtjzVz8DW3IYVxfci
+SBHhbhJTdley5cuEzphELo5NR4gFjBNlxH7G57Hno9+EWILpx302FJMwTgodIBJbXLbPMHou
+xQbOL2anOTUMKO8oH0QdQHCtC7hpgoQa7UJYJxDBI+PRaQ/HObkwggaRMIIEeaADAgECAhEA
++d5Wf8lNDHdw+WAbUtoVOzANBgkqhkiG9w0BAQsFADBKMQswCQYDVQQGEwJVUzESMBAGA1UE
+ChMJSWRlblRydXN0MScwJQYDVQQDEx5JZGVuVHJ1c3QgQ29tbWVyY2lhbCBSb290IENBIDEw
+HhcNMTUwMjE4MjIyNTE5WhcNMjMwMjE4MjIyNTE5WjA6MQswCQYDVQQGEwJVUzESMBAGA1UE
+ChMJSWRlblRydXN0MRcwFQYDVQQDEw5UcnVzdElEIENBIEExMjCCASIwDQYJKoZIhvcNAQEB
+BQADggEPADCCAQoCggEBANGRTTzPCic0kq5L6ZrUJWt5LE/n6tbPXPhGt2Egv7plJMoEpvVJ
+JDqGqDYymaAsd8Hn9ZMAuKUEFdlx5PgCkfu7jL5zgiMNnAFVD9PyrsuF+poqmlxhlQ06sFY2
+hbhQkVVQ00KCNgUzKcBUIvjv04w+fhNPkwGW5M7Ae5K5OGFGwOoRck9GG6MUVKvTNkBw2/vN
+MOd29VGVTtR0tjH5PS5yDXss48Yl1P4hDStO2L4wTsW2P37QGD27//XGN8K6amWB6F2XOgff
+/PmlQjQOORT95PmLkwwvma5nj0AS0CVp8kv0K2RHV7GonllKpFDMT0CkxMQKwoj+tWEWJTiD
+KSsCAwEAAaOCAoAwggJ8MIGJBggrBgEFBQcBAQR9MHswMAYIKwYBBQUHMAGGJGh0dHA6Ly9j
+b21tZXJjaWFsLm9jc3AuaWRlbnRydXN0LmNvbTBHBggrBgEFBQcwAoY7aHR0cDovL3ZhbGlk
+YXRpb24uaWRlbnRydXN0LmNvbS9yb290cy9jb21tZXJjaWFscm9vdGNhMS5wN2MwHwYDVR0j
+BBgwFoAU7UQZwNPwBovupHu+QucmVMiONnYwDwYDVR0TAQH/BAUwAwEB/zCCASAGA1UdIASC
+ARcwggETMIIBDwYEVR0gADCCAQUwggEBBggrBgEFBQcCAjCB9DBFFj5odHRwczovL3NlY3Vy
+ZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDADAgEB
+GoGqVGhpcyBUcnVzdElEIENlcnRpZmljYXRlIGhhcyBiZWVuIGlzc3VlZCBpbiBhY2NvcmRh
+bmNlIHdpdGggSWRlblRydXN0J3MgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBQb2xpY3kgZm91bmQg
+YXQgaHR0cHM6Ly9zZWN1cmUuaWRlbnRydXN0LmNvbS9jZXJ0aWZpY2F0ZXMvcG9saWN5L3Rz
+L2luZGV4Lmh0bWwwSgYDVR0fBEMwQTA/oD2gO4Y5aHR0cDovL3ZhbGlkYXRpb24uaWRlbnRy
+dXN0LmNvbS9jcmwvY29tbWVyY2lhbHJvb3RjYTEuY3JsMB0GA1UdJQQWMBQGCCsGAQUFBwMC
+BggrBgEFBQcDBDAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0OBBYEFKRz2u9pNYp1zKAZewgy+GuJ
+5ELsMA0GCSqGSIb3DQEBCwUAA4ICAQAN4YKu0vv062MZfg+xMSNUXYKvHwvZIk+6H1pUmivy
+DI4I6A3wWzxlr83ZJm0oGIF6PBsbgKJ/fhyyIzb+vAYFJmyI8I/0mGlc+nIQNuV2XY8cypPo
+VJKgpnzp/7cECXkX8R4NyPtEn8KecbNdGBdEaG4a7AkZ3ujlJofZqYdHxN29tZPdDlZ8fR36
+/mAFeCEq0wOtOOc0Eyhs29+9MIZYjyxaPoTS+l8xLcuYX3RWlirRyH6RPfeAi5kySOEhG1qu
+NHe06QIwpigjyFT6v/vRqoIBr7WpDOSt1VzXPVbSj1PcWBgkwyGKHlQUOuSbHbHcjOD8w8wH
+SDbL+L2he8hNN54doy1e1wJHKmnfb0uBAeISoxRbJnMMWvgAlH5FVrQWlgajeH/6NbYbBSRx
+ALuEOqEQepmJM6qz4oD2sxdq4GMN5adAdYEswkY/o0bRKyFXTD3mdqeRXce0jYQbWm7oapqS
+ZBccFvUgYOrB78tB6c1bxIgaQKRShtWR1zMM0JfqUfD9u8Fg7G5SVO0IG/GcxkSvZeRjhYcb
+TfqF2eAgprpyzLWmdr0mou3bv1Sq4OuBhmTQCnqxAXr4yVTRYHkp5lCvRgeJAme1OTVpVPth
+/O7HJ7VuEP9GOr6kCXCXmjB4P3UJ2oU0NqfoQdcSSSt9hliALnExTEjii20B2nSDojGCAxQw
+ggMQAgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUGA1UEAxMO
+VHJ1c3RJRCBDQSBBMTICEEABbQHWpVVDfbC/HYRdhTowDQYJYIZIAWUDBAIBBQCgggGXMBgG
+CSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIwMDgxODE1MDExMVow
+LwYJKoZIhvcNAQkEMSIEIAkuzvlXuwfdOk2ODynS1rS+6qt7k5rG3/SoaaFfX13zMF0GCSsG
+AQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUGA1UE
+AxMOVHJ1c3RJRCBDQSBBMTICEEABbQHWpVVDfbC/HYRdhTowXwYLKoZIhvcNAQkQAgsxUKBO
+MDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQg
+Q0EgQTEyAhBAAW0B1qVVQ32wvx2EXYU6MGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUDBAEq
+MAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwIC
+AUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEAeHm9ImgiHtKp
+4+Ufhz7bRRfS2kv1Awy379Cg5bDYVj77f/IbAiPHo4ZD3f8LItjccOmy0nHeoJ2qk2b43IBX
+M/iNhyD46kX8OGvlKuBLW/GCDHVkpMnbo7LyOXUaQ75PDjjZ4LnImtLhYNVJrvbdNsxIju82
+H0cGlcrFbb1XaQobR+2cfYzmC8Wm/jya/kmlIUVNB88GsO5HrkrTP4M+T6+PCtYeHNz3UWMt
+VuTMO38QmW9Ry8FA/TYEUBS+oe1WlTved69Z0oPoKaUpdcAa8n+LVrO5NQG354h4A3M3xuzk
+zF+LJEh+SWzFklndVQ5GCswASXeI46/47TBEQLuaZAAAAAAAAA==
+--------------ms070203090704080909030005--
 
