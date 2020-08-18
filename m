@@ -2,81 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 29382248288
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 12:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C6C4248293
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 12:08:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbgHRKFT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 06:05:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47112 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726043AbgHRKFT (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 06:05:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3C6F9B12C;
-        Tue, 18 Aug 2020 10:05:43 +0000 (UTC)
-Date:   Tue, 18 Aug 2020 12:05:16 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     peterz@infradead.org
-Cc:     Waiman Long <longman@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [RFC PATCH 0/8] memcg: Enable fine-grained per process memory
- control
-Message-ID: <20200818100516.GO28270@dhcp22.suse.cz>
-References: <20200817140831.30260-1-longman@redhat.com>
- <20200818091453.GL2674@hirez.programming.kicks-ass.net>
- <20200818092617.GN28270@dhcp22.suse.cz>
- <20200818095910.GM2674@hirez.programming.kicks-ass.net>
+        id S1726590AbgHRKI1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 06:08:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37837 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726043AbgHRKI1 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 18 Aug 2020 06:08:27 -0400
+Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1k7yXW-0000UF-Pc; Tue, 18 Aug 2020 10:08:22 +0000
+Date:   Tue, 18 Aug 2020 12:08:21 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        criu@openvz.org, bpf@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
+        Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <berrange@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@debian.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Matthew Wilcox <matthew@wil.cx>,
+        Trond Myklebust <trond.myklebust@fys.uio.no>,
+        Chris Wright <chrisw@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>
+Subject: Re: [PATCH 02/17] exec: Simplify unshare_files
+Message-ID: <20200818100821.lvxkmw3l5bs56bls@wittgenstein>
+References: <87ft8l6ic3.fsf@x220.int.ebiederm.org>
+ <20200817220425.9389-2-ebiederm@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200818095910.GM2674@hirez.programming.kicks-ass.net>
+In-Reply-To: <20200817220425.9389-2-ebiederm@xmission.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 18-08-20 11:59:10, Peter Zijlstra wrote:
-> On Tue, Aug 18, 2020 at 11:26:17AM +0200, Michal Hocko wrote:
-> > On Tue 18-08-20 11:14:53, Peter Zijlstra wrote:
-> > > On Mon, Aug 17, 2020 at 10:08:23AM -0400, Waiman Long wrote:
-> > > > Memory controller can be used to control and limit the amount of
-> > > > physical memory used by a task. When a limit is set in "memory.high" in
-> > > > a v2 non-root memory cgroup, the memory controller will try to reclaim
-> > > > memory if the limit has been exceeded. Normally, that will be enough
-> > > > to keep the physical memory consumption of tasks in the memory cgroup
-> > > > to be around or below the "memory.high" limit.
-> > > > 
-> > > > Sometimes, memory reclaim may not be able to recover memory in a rate
-> > > > that can catch up to the physical memory allocation rate. In this case,
-> > > > the physical memory consumption will keep on increasing. 
-> > > 
-> > > Then slow down the allocator? That's what we do for dirty pages too, we
-> > > slow down the dirtier when we run against the limits.
-> > 
-> > This is what we actually do. Have a look at mem_cgroup_handle_over_high.
+On Mon, Aug 17, 2020 at 05:04:10PM -0500, Eric W. Biederman wrote:
+> Now that exec no longer needs to return the unshared files to their
+> previous value there is no reason to return displaced.
 > 
-> But then how can it run-away like Waiman suggested?
+> Instead when unshare_fd creates a copy of the file table, call
+> put_files_struct before returning from unshare_files.
+> 
+> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> ---
 
-As Chris mentioned in other reply. This functionality is quite new.
- 
-> /me goes look... and finds MEMCG_MAX_HIGH_DELAY_JIFFIES.
-
-We can certainly tune a different backoff delays but I suspect this is
-not the problem here.
- 
-> That's a fail... :-(
-
--- 
-Michal Hocko
-SUSE Labs
+Looks good.
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
