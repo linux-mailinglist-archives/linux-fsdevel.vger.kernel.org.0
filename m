@@ -2,27 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B20A248345
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 12:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D3C4248389
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 13:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726746AbgHRKnt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 06:43:49 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39312 "EHLO
+        id S1726605AbgHRLGE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 07:06:04 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:39898 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbgHRKns (ORCPT
+        with ESMTP id S1726273AbgHRLGD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 06:43:48 -0400
+        Tue, 18 Aug 2020 07:06:03 -0400
 Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1k7z5m-0003jk-JH; Tue, 18 Aug 2020 10:43:46 +0000
-Date:   Tue, 18 Aug 2020 12:43:45 +0200
+        id 1k7zRG-0005Sq-Q5; Tue, 18 Aug 2020 11:05:58 +0000
+Date:   Tue, 18 Aug 2020 13:05:56 +0200
 From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        criu@openvz.org, bpf@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        criu@openvz.org, bpf <bpf@vger.kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Oleg Nesterov <oleg@redhat.com>,
         Cyrill Gorcunov <gorcunov@gmail.com>,
@@ -42,39 +43,60 @@ Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Andrii Nakryiko <andriin@fb.com>,
         John Fastabend <john.fastabend@gmail.com>,
         KP Singh <kpsingh@chromium.org>
-Subject: Re: [PATCH 12/17] proc/fd: In fdinfo seq_show don't use
- get_files_struct
-Message-ID: <20200818104345.n5ugxlzuv5iuggqs@wittgenstein>
+Subject: Re: [PATCH 09/17] file: Implement fnext_task
+Message-ID: <20200818110556.q5i5quflrcljv4wa@wittgenstein>
 References: <87ft8l6ic3.fsf@x220.int.ebiederm.org>
- <20200817220425.9389-12-ebiederm@xmission.com>
+ <20200817220425.9389-9-ebiederm@xmission.com>
+ <CAHk-=whCU_psWXHod0-WqXXKB4gKzgW9q=d_ZEFPNATr3kG=QQ@mail.gmail.com>
+ <875z9g7oln.fsf@x220.int.ebiederm.org>
+ <CAHk-=wjk_CnGHt4LBi2WsOeYOxE5j79R8xHzZytCy8t-_9orQw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200817220425.9389-12-ebiederm@xmission.com>
+In-Reply-To: <CAHk-=wjk_CnGHt4LBi2WsOeYOxE5j79R8xHzZytCy8t-_9orQw@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 17, 2020 at 05:04:20PM -0500, Eric W. Biederman wrote:
-> When discussing[1] exec and posix file locks it was realized that none
-> of the callers of get_files_struct fundamentally needed to call
-> get_files_struct, and that by switching them to helper functions
-> instead it will both simplify their code and remove unnecessary
-> increments of files_struct.count.  Those unnecessary increments can
-> result in exec unnecessarily unsharing files_struct which breaking
-> posix locks, and it can result in fget_light having to fallback to
-> fget reducing system performance.
+On Mon, Aug 17, 2020 at 06:17:35PM -0700, Linus Torvalds wrote:
+> On Mon, Aug 17, 2020 at 6:06 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >
+> > I struggle with the fcheck name as I have not seen or at least not
+> > registed on the the user that just checks to see if the result is NULL.
+> > So the name fcheck never made a bit of sense to me.
 > 
-> Instead hold task_lock for the duration that task->files needs to be
-> stable in seq_show.  The task_lock was already taken in
-> get_files_struct, and so skipping get_files_struct performs less work
-> overall, and avoids the problems with the files_struct reference
-> count.
+> Yeah, that name is not great. I just don't want to make things even worse.
 > 
-> [1] https://lkml.kernel.org/r/20180915160423.GA31461@redhat.com
-> Suggested-by: Oleg Nesterov <oleg@redhat.com>
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
+> > I will see if I can come up with some good descriptive comments around
+> > these functions.  Along with describing what these things are doing I am
+> > thinking maybe I should put "_rcu" in their names and have a debug check
+> > that verifies "_rcu" is held.
+> 
+> Yeah, something along the lines of "rcu_lookup_fd_task(tsk,fd)" would
+> be a *lot* more descriptive than fcheck_task().
+> 
+> And I think "fnext_task()" could be "rcu_lookup_next_fd_task(tsk,fd)".
+> 
+> Yes, those are much longer names, but it's not like you end up typing
+> them all that often, and I think being descriptive would be worth it.
+> 
+> And "fcheck()" and "fcheck_files()" would be good to rename too along
+> the same lines.
+> 
+> Something like "rcu_lookup_fd()" and "rcu_lookup_fd_files()" respectively?
+> 
+> I'm obviously trying to go for a "rcu_lookup_fd*()" kind of pattern,
+> and I'm not married to _that_ particular pattern but I think it would
+> be better than what we have now.
 
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+In fs/inode.c and a few other places we have the *_rcu suffix pattern
+already so maybe:
+
+fcheck() -> fd_file_rcu() or lookup_fd_rcu()
+fcheck_files() -> fd_files_rcu() or lookup_fd_files_rcu()
+fnext_task() -> fd_file_from_task_rcu() or lookup_next_fd_from_task_rcu()
+
+rather than as prefix or sm.
+
+Christian
