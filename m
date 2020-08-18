@@ -2,220 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D2E8248BE0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 18:45:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 147EE248C03
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 18:50:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbgHRQph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 12:45:37 -0400
-Received: from esa1.mentor.iphmx.com ([68.232.129.153]:11863 "EHLO
-        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726806AbgHRQpg (ORCPT
+        id S1728366AbgHRQum (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 12:50:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46042 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726715AbgHRQuj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 12:45:36 -0400
-IronPort-SDR: QGvGC+94m2CHtZyrNvUzm1RSd62BiUYpgiHrN4129CMNbKP2FTxlEpMvz76wrBSlktM9srnqtt
- yeR6WJsj4I4oLhU4273mwWNWT4j7wiEiEhSjhwM+HJ/ChMIYIQ3UraidHYHKFsr8DJlbp0ktTL
- j3vjkR7KsmP2/nayyGWU1FT4NuVEPKiZ5I4e4uJxzPbcloeoIzz9H9MpnM4fRkcCb5XTGcDTcE
- 0MP1O1jN10QZ10Ox9ypYMa5HpSv7SRT/1+UCYMhLr9d2fyxfxQhTgOkbIvHRq2TIhA2gC/lE0k
- HLI=
-X-IronPort-AV: E=Sophos;i="5.76,328,1592899200"; 
-   d="scan'208";a="54210262"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa1.mentor.iphmx.com with ESMTP; 18 Aug 2020 08:45:35 -0800
-IronPort-SDR: LNzWom/QVpUDAc+OGyrCLYIWndKeE6BAPtIoPS0YTQcsEU9gt1mjI+ag3y2MS7X9PG5fNyV83j
- IcP6A+JgWGbKaLNnB47T5jbK6jdokew0r5JLGAjl3nb+ehqLOXZwnJyuDBdkXUcndM2MrmC6Z3
- 6LW5QBs+CkAJPQxmBkqM5xr/wFfxyifzJkuUaVBM+wIPIVyRGVJOtLvwPVyogr9rngsVOsp1EX
- SbqB2TUpUKFe6Fv5ljkwovsRyZ9LiJC+EP4QYNbGgqXsNsYXqgTcPHfCNJnEqWRApL4FfmOdJ7
- WcA=
-Subject: Re: PROBLEM: Long Workqueue delays V2
-From:   Jim Baxter <jim_baxter@mentor.com>
-To:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-mm@kvack.org>
-CC:     "Resch Carsten (CM/ESO6)" <Carsten.Resch@de.bosch.com>,
-        "Rosca, Eugeniu (ADITG/ESB)" <erosca@de.adit-jv.com>
-References: <625615f2-3a6b-3136-35f9-2f2fb3c110cf@mentor.com>
-Message-ID: <d6845a3c-f139-fbaa-01d2-1ffa5397fd7a@mentor.com>
-Date:   Tue, 18 Aug 2020 17:45:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 18 Aug 2020 12:50:39 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4DC9C061389;
+        Tue, 18 Aug 2020 09:50:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=qCqqjOiLMHkOe7OKrabPC0fHPBkc8WYvYKWB05C5lb0=; b=aQxoaYhPMx3PeS+HZ1YaCcl/Mr
+        uoDnpgLIyEXgYPI8xJjvMIbt/DTq3PCSe5U6hEPoeNU/Dh4zcNqQZ3DfOFTZgNxKYdu6VEvFGEltU
+        STWrIxlX2ZTKhM1NPG0QGV+FUxkpz5JC/mxZVJeKJGPbxupCmb8xSWflhqxMHCqvBt4eFMM8AwFAT
+        KK0tkNbk0B2u7xlQqhYH32pSr9GM7QOAYBEa6/v9kN0ZIQd8MOViZxGoBkQeVqED3pEdAYSRBB9o/
+        6N25+AyN7o1KMGn9eBkVVEb4mGMs0nPogrAFbPiqzivTAjBs2ahGJ8KtAkVnhhqlAcTW3Y+Tb58/W
+        KE6fszGQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1k84oV-0001GK-AE; Tue, 18 Aug 2020 16:50:19 +0000
+Date:   Tue, 18 Aug 2020 17:50:19 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Yu Kuai <yukuai3@huawei.com>, hch@infradead.org,
+        david@fromorbit.com, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com
+Subject: Re: [RFC PATCH V2] iomap: add support to track dirty state of sub
+ pages
+Message-ID: <20200818165019.GT17456@casper.infradead.org>
+References: <20200818134618.2345884-1-yukuai3@huawei.com>
+ <20200818155305.GR17456@casper.infradead.org>
+ <20200818161229.GK6107@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <625615f2-3a6b-3136-35f9-2f2fb3c110cf@mentor.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-08.mgc.mentorg.com (139.181.222.8) To
- SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200818161229.GK6107@magnolia>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Added linux-block List which may also be relevant to this issue.
+On Tue, Aug 18, 2020 at 09:12:29AM -0700, Darrick J. Wong wrote:
+> On Tue, Aug 18, 2020 at 04:53:05PM +0100, Matthew Wilcox wrote:
+> > It would be better to use the same wording as below:
+> > 
+> > > +	bitmap_zero(iop->state, PAGE_SIZE * 2 / SECTOR_SIZE);
+> 
+> ISTR there was some reason why '512' was hardcoded in here instead of
+> SECTOR_SIZE.  I /think/ it was so that iomap.h did not then have a hard
+> dependency on blkdev.h and everything else that requires...
 
-On 18 Aug 2020 12:58, Jim Baxter wrote:
+That ship already sailed.  I over-trimmed this line:
 
-> I am asking this question again to include the fs-devel list.
-> 
-> 
-> We have issues with the workqueue of the kernel overloading the CPU 0 
-> when we we disconnect a USB stick.
-> 
-> This results in other items on the shared workqueue being delayed by
-> around 6.5 seconds with a default kernel configuration and 2.3 seconds
-> on a config tailored for our RCar embedded platform.
-> 
-> 
-> 
-> We first noticed this issue on custom hardware and we have recreated it
-> on an RCar Starter Kit using a test module [1] to replicate the
-> behaviour, the test module outputs any delays of greater then 9ms.
-> 
-> To run the test we have a 4GB random file on a USB stick and perform
-> the following test.
-> The stick is mounted as R/O and we are copying data from the stick:
-> 
-> - Mount the stick.
-> mount -o ro,remount /dev/sda1
-> 
-> - Load the Module:
-> # taskset -c 0 modprobe latency-mon
-> 
-> - Copy large amount of data from the stick:
-> # dd if=/run/media/sda1/sample.txt of=/dev/zero
-> [ 1437.517603] DELAY: 10
-> 8388607+1 records in
-> 8388607+1 records out
-> 
-> 
-> - Disconnect the USB stick:
-> [ 1551.796792] usb 2-1: USB disconnect, device number 2
-> [ 1558.625517] DELAY: 6782
-> 
-> 
-> The Delay output 6782 is in milliseconds.
-> 
-> 
-> 
-> Using umount stops the issue occurring but is unfortunately not guaranteed
-> in our particular system.
-> 
-> 
-> From my analysis the hub_event workqueue kworker/0:1+usb thread uses around
-> 98% of the CPU.
-> 
-> I have traced the workqueue:workqueue_queue_work function while unplugging the USB
-> and there is no particular workqueue function being executed a lot more then the 
-> others for the kworker/0:1+usb thread.
-> 
-> 
-> Using perf I identified the hub_events workqueue was spending a lot of time in
-> invalidate_partition(), I have included a cut down the captured data from perf in
-> [2] which shows the additional functions where the kworker spends most of its time.
-> 
-> 
-> I am aware there will be delays on the shared workqueue, are the delays
-> we are seeing considered normal?
-> 
-> 
-> Is there any way to mitigate or identify where the delay is?
-> I am unsure if this is a memory or filesystem subsystem issue.
-> 
-> 
-> Thank you for you help.
-> 
-> Thanks,
-> Jim Baxter
-> 
-> [1] Test Module:
-> // SPDX-License-Identifier: GPL-2.0
-> /*
->  * Simple WQ latency monitoring
->  *
->  * Copyright (C) 2020 Advanced Driver Information Technology.
->  */
-> 
-> #include <linux/init.h>
-> #include <linux/ktime.h>
-> #include <linux/module.h>
-> 
-> #define PERIOD_MS 100
-> 
-> static struct delayed_work wq;
-> static u64 us_save;
-> 
-> static void wq_cb(struct work_struct *work)
-> {
-> 	u64 us = ktime_to_us(ktime_get());
-> 	u64 us_diff = us - us_save;
-> 	u64 us_print = 0;
-> 
-> 	if (!us_save)
-> 		goto skip_print;
-> 
-> 
-> 	us_print = us_diff / 1000 - PERIOD_MS;
-> 	if (us_print > 9)
-> 		pr_crit("DELAY: %lld\n", us_print);
-> 
-> skip_print:
-> 	us_save = us;
-> 	schedule_delayed_work(&wq, msecs_to_jiffies(PERIOD_MS));
-> }
-> 
-> static int latency_mon_init(void)
-> {
-> 	us_save = 0;
-> 	INIT_DELAYED_WORK(&wq, wq_cb);
-> 	schedule_delayed_work(&wq, msecs_to_jiffies(PERIOD_MS));
-> 
-> 	return 0;
-> }
-> 
-> static void latency_mon_exit(void)
-> {
-> 	cancel_delayed_work_sync(&wq);
-> 	pr_info("%s\n", __func__);
-> }
-> 
-> module_init(latency_mon_init);
-> module_exit(latency_mon_exit);
-> MODULE_AUTHOR("Eugeniu Rosca <erosca@de.adit-jv.com>");
-> MODULE_LICENSE("GPL");
-> 
-> 
-> [2] perf trace:
->     95.22%     0.00%  kworker/0:2-eve  [kernel.kallsyms]
->     |
->     ---ret_from_fork
->        kthread
->        worker_thread
->        |          
->         --95.15%--process_one_work
-> 		  |          
-> 		   --94.99%--hub_event
-> 			 |          
-> 			  --94.99%--usb_disconnect
-> 			  <snip>
-> 				|  
-> 				--94.90%--invalidate_partition
-> 				   __invalidate_device
-> 				   |          
-> 				   |--64.55%--invalidate_bdev
-> 				   |  |          
-> 				   |   --64.13%--invalidate_mapping_pages
-> 				   |     |          
-> 				   |     |--24.09%--invalidate_inode_page
-> 				   |     |   |          
-> 				   |     |   --23.44%--remove_mapping
-> 				   |     |     |          
-> 				   |     |      --23.20%--__remove_mapping
-> 				   |     |        |          
-> 				   |     |         --21.90%--arch_local_irq_restore
-> 				   |     |          
-> 				   |     |--22.44%--arch_local_irq_enable
-> 				   |          
-> 					--30.35%--shrink_dcache_sb 
-> 					<snip>
-> 					  |      
-> 					  --30.17%--truncate_inode_pages_range
-> 
+-       bitmap_zero(iop->uptodate, PAGE_SIZE / SECTOR_SIZE);
+
+Looks like Christoph changed his mind sometime between that message
+and the first commit: 9dc55f1389f9569acf9659e58dd836a9c70df217
+
+My THP patches convert the bit array to be per-block rather than
+per-sector, so this is all going to go away soon ;-)
+
+> https://lore.kernel.org/linux-xfs/20181215105155.GD1575@lst.de/
