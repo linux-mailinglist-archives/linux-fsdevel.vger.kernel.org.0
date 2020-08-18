@@ -2,112 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9000C248667
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 15:50:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 478F3248661
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 15:49:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbgHRNuQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 09:50:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45480 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbgHRNuO (ORCPT
+        id S1726630AbgHRNtH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 09:49:07 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:45002 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbgHRNtF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 09:50:14 -0400
-Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB6DEC061389
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Aug 2020 06:50:13 -0700 (PDT)
-Received: by mail-qt1-x842.google.com with SMTP id t23so15130729qto.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Aug 2020 06:50:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=i3gzOAPUdUUgkW+MfJiRBZzylD1SwKDup35ranLTE+8=;
-        b=gFo2tdrjm1qkUJWuDiFskzbeO0w5LJx6dyzsZOPwPfOmHDSXzdBGEcXIwDX7whrNV9
-         JEgVlPiTxZyMBirBuYCHGck9cYWCBQmt5ny0jayeNQ6gfZp4LNLHaLYVZRHrSHKeUY6e
-         uRSpvrjdgx5mqhJbaHjlzb+ptaePm6k7omgqsuP3hL/1RmdPdVTPoALIZZdr5eyJ54WL
-         dsftHxbUTIR9tXIDvqG8jN4H2/lH+Rf1hR50Z0vtfC6A7sLoLgtiM/v15If1BpTZRwDI
-         SAX24oCanz2Ny6U8qxDU6UGtpXs/jD/FGeqLm7SIrw5GSVnzTYUHBo7UfMACrG1lFPPe
-         a1mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=i3gzOAPUdUUgkW+MfJiRBZzylD1SwKDup35ranLTE+8=;
-        b=RAC1G9CELsG9jp7d7uH1N0rX9/X9OnXMJniNRaSi/4mT3Fiw0YVhRpmJzQ53bEY5fg
-         2uHnNrMzMV1KtMnZUPkf/hR4wKEJAudziNqrl/vJwAL9VZuCLNg+q7nKj97luMvxWiTU
-         p2DH8ffj8dr6a9cAx8AfSgYkBw8IEknLhU0I5u+SmcJgARaXsXMLmzdL2PpmtHE6t0b+
-         6gedfCsyXg5EPPzsdXLtb/n9aBT0S7CIHZiXiQq/2KZs0X+Q0NsWMIHmJaTdaEfO+xUn
-         lhWJMYGMFXEzD7Tu/0eIeJtNWEOMVliDUhuoTvhmQm9aSFxwFyfnNBOConMMv+1eilGo
-         tPRQ==
-X-Gm-Message-State: AOAM531SiJvkOrTnVHVEOv7ewyas4Jt7bsw+RBV4CEoihIh9rO4oSEgv
-        7wTIZvMNP5JoBRc/qe3+tkmelQ==
-X-Google-Smtp-Source: ABdhPJw0MsM7i8bwRZrEdghN116s3dEIEMDqeIJ6VBf7FQiar70mWUPczCEi3eXDG6n3hDEhYsCK4w==
-X-Received: by 2002:ac8:368f:: with SMTP id a15mr18218469qtc.288.1597758612969;
-        Tue, 18 Aug 2020 06:50:12 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:480::1:8b3])
-        by smtp.gmail.com with ESMTPSA id n15sm20639882qkk.28.2020.08.18.06.50.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Aug 2020 06:50:11 -0700 (PDT)
-Date:   Tue, 18 Aug 2020 09:49:00 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     peterz@infradead.org
-Cc:     Michal Hocko <mhocko@suse.com>, Waiman Long <longman@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [RFC PATCH 0/8] memcg: Enable fine-grained per process memory
- control
-Message-ID: <20200818134900.GA829964@cmpxchg.org>
-References: <20200817140831.30260-1-longman@redhat.com>
- <20200818091453.GL2674@hirez.programming.kicks-ass.net>
- <20200818092617.GN28270@dhcp22.suse.cz>
- <20200818095910.GM2674@hirez.programming.kicks-ass.net>
- <20200818100516.GO28270@dhcp22.suse.cz>
- <20200818101844.GO2674@hirez.programming.kicks-ass.net>
+        Tue, 18 Aug 2020 09:49:05 -0400
+Received: from localhost.localdomain (c-73-172-233-15.hsd1.md.comcast.net [73.172.233.15])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 6490A20B4908;
+        Tue, 18 Aug 2020 06:49:04 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6490A20B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1597758544;
+        bh=T2yh8CragD5gAZKWGzebieZXoBoIin/2BZRLU0ijlIo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=LndWXVZIYo5XrYYjcrule3QfyoWXcUitgMffPd72YDLVS++P1KZSoLC3qOTEg78v0
+         x+JFY2DflE1w8R1uEaxRh2glMOmClPVmv5J787yQuCf2Deek0pJnNpcFbipSeI1Fto
+         6Ql2Oiv0rE+5PXDTEaBtkP1shPJfbEk80+gJfrP4=
+Subject: Re: [PATCH v2 4/4] selinux: Create new booleans and class dirs out of
+ tree
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org
+Cc:     omosnace@redhat.com, paul@paul-moore.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+References: <20200812191525.1120850-1-dburgener@linux.microsoft.com>
+ <20200812191525.1120850-5-dburgener@linux.microsoft.com>
+ <8540e665-1722-35f9-ec39-f4038e1f90ca@gmail.com>
+From:   Daniel Burgener <dburgener@linux.microsoft.com>
+Message-ID: <bd7031f8-e4c5-a013-3a00-c89d603be152@linux.microsoft.com>
+Date:   Tue, 18 Aug 2020 09:49:03 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200818101844.GO2674@hirez.programming.kicks-ass.net>
+In-Reply-To: <8540e665-1722-35f9-ec39-f4038e1f90ca@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 18, 2020 at 12:18:44PM +0200, peterz@infradead.org wrote:
-> What you need is a feeback loop against the rate of freeing pages, and
-> when you near the saturation point, the allocation rate should exactly
-> match the freeing rate.
+On 8/13/20 12:25 PM, Stephen Smalley wrote:
+> On 8/12/20 3:15 PM, Daniel Burgener wrote:
+>
+>> In order to avoid concurrency issues around selinuxfs resource 
+>> availability
+>> during policy load, we first create new directories out of tree for
+>> reloaded resources, then swap them in, and finally delete the old 
+>> versions.
+>>
+>> This fix focuses on concurrency in each of the three subtrees 
+>> swapped, and
+>> not concurrency across the three trees.  This means that it is still 
+>> possible
+>> that subsequent reads to eg the booleans directory and the class 
+>> directory
+>> during a policy load could see the old state for one and the new for 
+>> the other.
+>> The problem of ensuring that policy loads are fully atomic from the 
+>> perspective
+>> of userspace is larger than what is dealt with here.  This commit 
+>> focuses on
+>> ensuring that the directories contents always match either the new or 
+>> the old
+>> policy state from the perspective of userspace.
+>>
+>> In the previous implementation, on policy load /sys/fs/selinux is 
+>> updated
+>> by deleting the previous contents of
+>> /sys/fs/selinux/{class,booleans} and then recreating them.  This means
+>> that there is a period of time when the contents of these directories 
+>> do not
+>> exist which can cause race conditions as userspace relies on them for
+>> information about the policy.  In addition, it means that error 
+>> recovery in
+>> the event of failure is challenging.
+>>
+>> In order to demonstrate the race condition that this series fixes, you
+>> can use the following commands:
+>>
+>> while true; do cat /sys/fs/selinux/class/service/perms/status
+>>> /dev/null; done &
+>> while true; do load_policy; done;
+>>
+>> In the existing code, this will display errors fairly often as the class
+>> lookup fails.  (In normal operation from systemd, this would result in a
+>> permission check which would be allowed or denied based on policy 
+>> settings
+>> around unknown object classes.) After applying this patch series you
+>> should expect to no longer see such error messages.
+>>
+>> Signed-off-by: Daniel Burgener <dburgener@linux.microsoft.com>
+>> ---
+>>   security/selinux/selinuxfs.c | 145 +++++++++++++++++++++++++++++------
+>>   1 file changed, 120 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+>> index f09afdb90ddd..d3a19170210a 100644
+>> --- a/security/selinux/selinuxfs.c
+>> +++ b/security/selinux/selinuxfs.c
+>> +    tmp_policycap_dir = sel_make_dir(tmp_parent, POLICYCAP_DIR_NAME, 
+>> &fsi->last_ino);
+>> +    if (IS_ERR(tmp_policycap_dir)) {
+>> +        ret = PTR_ERR(tmp_policycap_dir);
+>> +        goto out;
+>> +    }
+>
+> No need to re-create this one.
+>
+>> -    return 0;
+>> +    // booleans
+>> +    old_dentry = fsi->bool_dir;
+>> +    lock_rename(tmp_bool_dir, old_dentry);
+>> +    ret = vfs_rename(tmp_parent->d_inode, tmp_bool_dir, 
+>> fsi->sb->s_root->d_inode,
+>> +             fsi->bool_dir, NULL, RENAME_EXCHANGE);
+>
+> One issue with using vfs_rename() is that it will trigger all of the 
+> permission checks associated with renaming, and previously this was 
+> never required for selinuxfs and therefore might not be allowed in 
+> some policies even to a process allowed to reload policy.  So if you 
+> need to do this, you may want to override creds around this call to 
+> use the init cred (which will still require allowing it to the kernel 
+> domain but not necessarily to the process that is performing the 
+> policy load).  The other issue is that you then have to implement a 
+> rename inode operation and thus technically it is possible for 
+> userspace to also attempt renames on selinuxfs to the extent allowed 
+> by policy.  I see that debugfs has a debugfs_rename() that internally 
+> uses simple_rename() but I guess that doesn't cover the 
+> RENAME_EXCHANGE case.
 
-IO throttling solves a slightly different problem.
+Those are good points.  Do you see any problems with just calling 
+d_exchange() directly?  It seems to work fine in very limited initial 
+testing on my end. That should hopefully address all the problems you 
+mentioned here.
 
-IO occurs in parallel to the workload's execution stream, and you're
-trying to take the workload from dirtying at CPU speed to rate match
-to the independent IO stream.
+-Daniel
 
-With memory allocations, though, freeing happens from inside the
-execution stream of the workload. If you throttle allocations, you're
-most likely throttling the freeing rate as well. And you'll slow down
-reclaim scanning by the same amount as the page references, so it's
-not making reclaim more successful either. The alloc/use/free
-(im)balance is an inherent property of the workload, regardless of the
-speed you're executing it at.
-
-So the goal here is different. We're not trying to pace the workload
-into some form of sustainability. Rather, it's for OOM handling. When
-we detect the workload's alloc/use/free pattern is unsustainable given
-available memory, we slow it down just enough to allow userspace to
-implement OOM policy and job priorities (on containerized hosts these
-tend to be too complex to express in the kernel's oom scoring system).
-
-The exponential curve makes it look like we're trying to do some type
-of feedback system, but it's really only to let minor infractions pass
-and throttle unsustainable expansion ruthlessly. Drop-behind reclaim
-can be a bit bumpy because we batch on the allocation side as well as
-on the reclaim side, hence the fuzz factor there.
+>
+>> +    // Since the other temporary dirs are children of tmp_parent
+>> +    // this will handle all the cleanup in the case of a failure before
+>> +    // the swapover
+>
+> Don't use // style comments please, especially not for multi-line 
+> comments.  I think they are only used in selinux for the 
+> script-generated license lines.
+>
+>> +static struct dentry *sel_make_disconnected_dir(struct super_block *sb,
+>> +                        unsigned long *ino)
+>> +{
+>> +    struct inode *inode = sel_make_inode(sb, S_IFDIR | S_IRUGO | 
+>> S_IXUGO);
+>> +
+>> +    if (!inode)
+>> +        return ERR_PTR(-ENOMEM);
+>> +
+>> +    inode->i_op = &sel_dir_inode_operations;
+>> +    inode->i_fop = &simple_dir_operations;
+>> +    inode->i_ino = ++(*ino);
+>> +    /* directory inodes start off with i_nlink == 2 (for "." entry) */
+>> +    inc_nlink(inode);
+>> +    return d_obtain_alias(inode);
+>> +}
+>> +
+>
+> Since you are always incrementing the last_ino counter and never 
+> reusing the ones for the removed inodes, you could technically 
+> eventually end up with one of these directories have the same inode 
+> number as one of the inodes whose inode numbers are generated in 
+> specific ranges (i.e. for initial_contexts, booleans, classes, and 
+> policy capabilities). Optimally we'd just reuse the inode number for 
+> the inode we are replacing?
+>
