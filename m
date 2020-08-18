@@ -2,169 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E70524867B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 15:55:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8070C2486EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Aug 2020 16:16:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbgHRNzh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Aug 2020 09:55:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46300 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726398AbgHRNzf (ORCPT
+        id S1726815AbgHROPi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Aug 2020 10:15:38 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51544 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726794AbgHRONs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Aug 2020 09:55:35 -0400
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2542C061389;
-        Tue, 18 Aug 2020 06:55:34 -0700 (PDT)
-Received: by mail-ot1-x343.google.com with SMTP id v6so16268781ota.13;
-        Tue, 18 Aug 2020 06:55:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PkXVibwANyp1ezoNMRt9ZhpxiQyaMhZ/DtsBrdxHhyQ=;
-        b=UETCZL5PsM9y5l4XRE5O4/Wac+je8ocVByP17iujIdAwkf3+vCPZ4X99taR/CeksGj
-         b0fsI/Zt5N5alHGwkwFWazLzYdYfDOF9tQaZ7AO01zCHNAFkLqV8u0iK5SXJa3TMQ6yk
-         ycN5FRRXF0s9iixv0c8AaMWUHzTFZtXGgzY7iy8z0Y41K9v7jykHzmrDMY18sbyIv0iF
-         ItUh3EZ34PyBuDselHHN2ydY/8EmW2zJdHdkyo+o4Wt7PLh3QYjVcAn8kgI1VJICb9zB
-         v97UyqT1qXljyoxkNczmUbdp4ceAy2w0l2iEm0nynqr5lWyZih0z+qVz10tDXdwNgcSh
-         Ez2g==
+        Tue, 18 Aug 2020 10:13:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597760026;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc; bh=5mbAxZDicFpvBlanHGzWhCcTGWd2P55ViK8g3cXeULA=;
+        b=QTAppWxQlS3aBHN6EA1tWp9ZpxHPa+ntqHa76RuUlhHnQMy+UJVvoYJ2L9rnOsKdFR1CSy
+        AIMu0RMvRE6Z6hbHqlvyBm0VN8E6i2IyGr7xgoXZvECJgdwV/dvLaaP1kZUgy9rplenL/4
+        lRMSLHlNsfmC5uKC0YFk4Ay+GiFN5Ak=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-509-6mICOqzKMdaMEm8QvW9GRA-1; Tue, 18 Aug 2020 10:13:43 -0400
+X-MC-Unique: 6mICOqzKMdaMEm8QvW9GRA-1
+Received: by mail-qv1-f72.google.com with SMTP id f1so13388178qvx.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Aug 2020 07:13:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PkXVibwANyp1ezoNMRt9ZhpxiQyaMhZ/DtsBrdxHhyQ=;
-        b=MPbmKKvHuDusPQxV0U0sqaQnmqTonIhAjRI/RwYAL/4QznR/Glu+i8512kmh7LspTB
-         n8acxIzosqNc7SM0ht+8VFfQymikoG33wgUdnAwer1rlvJ2fAfdmfuI756qjWkapXE+k
-         Z5vafvkYdOam7TKiXgw4quek+aj4D3IJqcZVJzyKB+nMdH/JJNo17Qk0R/TjWdVMQccv
-         ahKGLko/xh0HCRkDe98hNQVQnER6t4e5gn9KyyiJbnH04140rOoiOMklDj0wd4m9Hp3V
-         M/CWOQuACuAry0knPwGAh8yxCB1DBchjKqA8fPQpZngyqS8Frbog+Eym8bgKdOPDjuHw
-         2ndQ==
-X-Gm-Message-State: AOAM531MEa3BR28/C6fIRyQq7Lfo3TuTfCXq4fUwIK/+kCIm9O0IYAre
-        8/WgEmGUTDHOExccii0E5E3KKtmvCihaGIUEMfQ9vRq/Mjw=
-X-Google-Smtp-Source: ABdhPJxRSOBcq0xMmRM7gcOpilN+NQcuKvF68z3yOvGPCJ+BmaO6QUVdvWHb5lsfHFSXPw3beKb4Ien/bsqpnEnNBKw=
-X-Received: by 2002:a05:6830:1305:: with SMTP id p5mr15527403otq.135.1597758933969;
- Tue, 18 Aug 2020 06:55:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200812191525.1120850-1-dburgener@linux.microsoft.com>
- <20200812191525.1120850-5-dburgener@linux.microsoft.com> <8540e665-1722-35f9-ec39-f4038e1f90ca@gmail.com>
- <bd7031f8-e4c5-a013-3a00-c89d603be152@linux.microsoft.com>
-In-Reply-To: <bd7031f8-e4c5-a013-3a00-c89d603be152@linux.microsoft.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Tue, 18 Aug 2020 09:55:23 -0400
-Message-ID: <CAEjxPJ7pT5NSkVc8gnVoGj=JT-PkrQcGDmPARBU6cs7W+u05TA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] selinux: Create new booleans and class dirs out of tree
-To:     Daniel Burgener <dburgener@linux.microsoft.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5mbAxZDicFpvBlanHGzWhCcTGWd2P55ViK8g3cXeULA=;
+        b=U9Vve7Cad/PV1UeI/uIw4rczhoZY1R6iQrsfEJ/6Zbim3yRIHQn1Yj0jyy46usf5FI
+         1MRgmOFlEVSpsN83s85VGTJ7CiP1MZYCPN4qEJfJ/i2x3nQxtW0lcGZFb+DRKoBujhvR
+         o1MLUxm7oeG6STplQsxMccL5UkdSqdlY1/t+qCrS6P+iAunpYcHlzgtjGCJQhlXMLUPZ
+         5aLVA32Sw1/qfx0zA9TacmrL+euI/fAjatTgkXLakql1WSUbfNF/JKvBuu7u2mM56tHw
+         vHcUDnyXoZTBpf6COcOgNB8QIHSshQPMnXBrKOZfJBAA4Pe43GDKsSjyBd8MvnJUv3gd
+         aCgw==
+X-Gm-Message-State: AOAM532g2LdtjhBpuWQ7c7pnYQukG2L42dwU1/vDF/fYHgRDAT3StS5S
+        378ntEnxBEE8vLCx7r03Y5bIAYFfwN3XmfsK4fhytZxbqvYpNGnLo+Se5JVFDo360hB01KOIt2p
+        tyQg3avqnqFRsDiwz3dNiOebydg==
+X-Received: by 2002:a37:654e:: with SMTP id z75mr17382722qkb.235.1597760022488;
+        Tue, 18 Aug 2020 07:13:42 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxcNERkf07f873dxUZbjCVeW5+bdQ+AxXl1IqnadX9c2qONRAsyr32ogfC81RXvDcda3rufsA==
+X-Received: by 2002:a37:654e:: with SMTP id z75mr17382672qkb.235.1597760021867;
+        Tue, 18 Aug 2020 07:13:41 -0700 (PDT)
+Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id 22sm20581510qkg.24.2020.08.18.07.13.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Aug 2020 07:13:41 -0700 (PDT)
+From:   trix@redhat.com
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tom Rix <trix@redhat.com>
+Subject: [PATCH] writeback: clear auto_free in initializaiton
+Date:   Tue, 18 Aug 2020 07:13:30 -0700
+Message-Id: <20200818141330.29134-1-trix@redhat.com>
+X-Mailer: git-send-email 2.18.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 18, 2020 at 9:49 AM Daniel Burgener
-<dburgener@linux.microsoft.com> wrote:
->
-> On 8/13/20 12:25 PM, Stephen Smalley wrote:
-> > On 8/12/20 3:15 PM, Daniel Burgener wrote:
-> >
-> >> In order to avoid concurrency issues around selinuxfs resource
-> >> availability
-> >> during policy load, we first create new directories out of tree for
-> >> reloaded resources, then swap them in, and finally delete the old
-> >> versions.
-> >>
-> >> This fix focuses on concurrency in each of the three subtrees
-> >> swapped, and
-> >> not concurrency across the three trees.  This means that it is still
-> >> possible
-> >> that subsequent reads to eg the booleans directory and the class
-> >> directory
-> >> during a policy load could see the old state for one and the new for
-> >> the other.
-> >> The problem of ensuring that policy loads are fully atomic from the
-> >> perspective
-> >> of userspace is larger than what is dealt with here.  This commit
-> >> focuses on
-> >> ensuring that the directories contents always match either the new or
-> >> the old
-> >> policy state from the perspective of userspace.
-> >>
-> >> In the previous implementation, on policy load /sys/fs/selinux is
-> >> updated
-> >> by deleting the previous contents of
-> >> /sys/fs/selinux/{class,booleans} and then recreating them.  This means
-> >> that there is a period of time when the contents of these directories
-> >> do not
-> >> exist which can cause race conditions as userspace relies on them for
-> >> information about the policy.  In addition, it means that error
-> >> recovery in
-> >> the event of failure is challenging.
-> >>
-> >> In order to demonstrate the race condition that this series fixes, you
-> >> can use the following commands:
-> >>
-> >> while true; do cat /sys/fs/selinux/class/service/perms/status
-> >>> /dev/null; done &
-> >> while true; do load_policy; done;
-> >>
-> >> In the existing code, this will display errors fairly often as the class
-> >> lookup fails.  (In normal operation from systemd, this would result in a
-> >> permission check which would be allowed or denied based on policy
-> >> settings
-> >> around unknown object classes.) After applying this patch series you
-> >> should expect to no longer see such error messages.
-> >>
-> >> Signed-off-by: Daniel Burgener <dburgener@linux.microsoft.com>
-> >> ---
-> >>   security/selinux/selinuxfs.c | 145 +++++++++++++++++++++++++++++------
-> >>   1 file changed, 120 insertions(+), 25 deletions(-)
-> >>
-> >> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-> >> index f09afdb90ddd..d3a19170210a 100644
-> >> --- a/security/selinux/selinuxfs.c
-> >> +++ b/security/selinux/selinuxfs.c
-> >> +    tmp_policycap_dir = sel_make_dir(tmp_parent, POLICYCAP_DIR_NAME,
-> >> &fsi->last_ino);
-> >> +    if (IS_ERR(tmp_policycap_dir)) {
-> >> +        ret = PTR_ERR(tmp_policycap_dir);
-> >> +        goto out;
-> >> +    }
-> >
-> > No need to re-create this one.
-> >
-> >> -    return 0;
-> >> +    // booleans
-> >> +    old_dentry = fsi->bool_dir;
-> >> +    lock_rename(tmp_bool_dir, old_dentry);
-> >> +    ret = vfs_rename(tmp_parent->d_inode, tmp_bool_dir,
-> >> fsi->sb->s_root->d_inode,
-> >> +             fsi->bool_dir, NULL, RENAME_EXCHANGE);
-> >
-> > One issue with using vfs_rename() is that it will trigger all of the
-> > permission checks associated with renaming, and previously this was
-> > never required for selinuxfs and therefore might not be allowed in
-> > some policies even to a process allowed to reload policy.  So if you
-> > need to do this, you may want to override creds around this call to
-> > use the init cred (which will still require allowing it to the kernel
-> > domain but not necessarily to the process that is performing the
-> > policy load).  The other issue is that you then have to implement a
-> > rename inode operation and thus technically it is possible for
-> > userspace to also attempt renames on selinuxfs to the extent allowed
-> > by policy.  I see that debugfs has a debugfs_rename() that internally
-> > uses simple_rename() but I guess that doesn't cover the
-> > RENAME_EXCHANGE case.
->
-> Those are good points.  Do you see any problems with just calling
-> d_exchange() directly?  It seems to work fine in very limited initial
-> testing on my end. That should hopefully address all the problems you
-> mentioned here.
+From: Tom Rix <trix@redhat.com>
 
-I was hoping the vfs folks would chime in but you may have to pose a
-more direct question to viro and linux-fsdevel to get a response.
-Possibly there should be a lower-level vfs helper that could be used
-internally by vfs_rename() and by things like debugfs_rename and a
-potential selinuxfs_rename.
+Review fs/fs-writeback.c bdi_split_work_to_wbs
+The CONFIG_CGROUP_WRITEBACK version contains this line
+	base_work->auto_free = 0;
+Which seems like a strange place to set auto_free as
+it is not where the rest of base_work is initialized.
+
+In the default version of bdi_split_work_to_wbs, if a
+successful malloc happens, base_work is copied and
+auto_free is set to 1, else the base_work is
+copied to another local valarible and its auto_free
+is set to 0.
+
+So move the clearing of auto_free to the
+initialization of the local base_work structures.
+
+Signed-off-by: Tom Rix <trix@redhat.com>
+---
+ fs/fs-writeback.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index a605c3dddabc..fa1106de2ab0 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -881,7 +881,6 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
+ 		work = &fallback_work;
+ 		*work = *base_work;
+ 		work->nr_pages = nr_pages;
+-		work->auto_free = 0;
+ 		work->done = &fallback_work_done;
+ 
+ 		wb_queue_work(wb, work);
+@@ -1055,10 +1054,8 @@ static void bdi_split_work_to_wbs(struct backing_dev_info *bdi,
+ {
+ 	might_sleep();
+ 
+-	if (!skip_if_busy || !writeback_in_progress(&bdi->wb)) {
+-		base_work->auto_free = 0;
++	if (!skip_if_busy || !writeback_in_progress(&bdi->wb))
+ 		wb_queue_work(&bdi->wb, base_work);
+-	}
+ }
+ 
+ #endif	/* CONFIG_CGROUP_WRITEBACK */
+@@ -2459,6 +2456,7 @@ static void __writeback_inodes_sb_nr(struct super_block *sb, unsigned long nr,
+ 		.done			= &done,
+ 		.nr_pages		= nr,
+ 		.reason			= reason,
++		.auto_free		= 0,
+ 	};
+ 
+ 	if (!bdi_has_dirty_io(bdi) || bdi == &noop_backing_dev_info)
+@@ -2538,6 +2536,7 @@ void sync_inodes_sb(struct super_block *sb)
+ 		.done		= &done,
+ 		.reason		= WB_REASON_SYNC,
+ 		.for_sync	= 1,
++		.auto_free	= 0,
+ 	};
+ 
+ 	/*
+-- 
+2.18.1
+
