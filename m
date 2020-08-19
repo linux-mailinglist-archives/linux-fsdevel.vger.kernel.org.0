@@ -2,113 +2,305 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B44C8249C91
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 13:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E4FE249CD7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 13:56:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728133AbgHSLvp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Aug 2020 07:51:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53874 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728406AbgHSLvN (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Aug 2020 07:51:13 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 138B5C061383
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Aug 2020 04:51:12 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id i92so1070999pje.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Aug 2020 04:51:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pantacor-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=i0tNVSZaTTSBSz1XMN9me4AeE1YySOZOXVNji2is7bI=;
-        b=KU2N9icZcino+gt7U3a/eLtnZKkt6AD9RvGBD4MmAH3rtUrB7er2x60jDj15eru501
-         n6OUx6p1tBA9eLbeZuReAAzUsCY1Lt/hyfK5uyf6FjzZNwyWQd4kf+pfQ2MM9WpeYuNi
-         0l+LF/A4LD1Nj6ac2Pl3HDcV3nweA93RqoQbo8g+vS9ThmMB3z6VxKmnngHpJ5k0Aqjy
-         8VKyXgJ1zkFtRPTjWNpaVaTdFypI6MzEC7bisjptgvH08my8JbmcoNvUW3rO/c3ZFpZu
-         CTT4FdA3cq10OH5awPwZwmYEJtN9pEymggM3p55bK0LDnrhO7oqtYKLOqBy/fTq+PDoA
-         37ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=i0tNVSZaTTSBSz1XMN9me4AeE1YySOZOXVNji2is7bI=;
-        b=KPo3lTLJxK9N0duATELYcTaZQr0F2crX0wEqqc7CSXNJaInkj9J1Fbcelvk7I8gMZN
-         APz1jujbjG+04feEyPRZKupzF/1DO50uobW7Z9Pxm6c4YQ4T3J6bZAnWLaucDpvQaBDa
-         W1/4ZG6ht7YA1e8efovqhQhRu2s6AA8xJHz921ogfEvbBBnHOd/wg/1Cs4YCTP15chqS
-         qBw/sfYdY1IKyNT7R6paxnrpq0P3QvgZDPljmE9dXoeU9sYAmAX4pehKstJGJl6M4zQf
-         YOaNQW6TecK7PC//Ku1+y2z+S6eQEaBS+6rXcWk+K9xCOoSeketX6fo5DplZYNxOVfXw
-         iFSg==
-X-Gm-Message-State: AOAM530aNn3jvR848B3XQX/tCTqB8RKc+6PiNP3FAQpllNiE8IrFLS0K
-        bgo5mAhqrekeXDN32dMPFmfxct99nhu8JBUWnq6WvO4cdeQtmxIb
-X-Google-Smtp-Source: ABdhPJxJ4K74YGSKKGp+gwdCR/YE8Cu+mBb+YPcVIXoxbrpUVMvtqsoUb6E4GNlLZcIzX1sHI08a1QqXY6O+2ACB0tg=
-X-Received: by 2002:a17:90b:1295:: with SMTP id fw21mr3563857pjb.81.1597837870565;
- Wed, 19 Aug 2020 04:51:10 -0700 (PDT)
+        id S1728150AbgHSL4F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Aug 2020 07:56:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56344 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728259AbgHSLzJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Aug 2020 07:55:09 -0400
+Received: from kernel.org (unknown [87.70.91.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FB6322CB2;
+        Wed, 19 Aug 2020 11:53:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597838028;
+        bh=nB9SuwtUizzYREhBl09f96wwqfl+6v1Nki9XxEYxFmg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XzrjsD+88ReKpEKVPxcwBs0sO7/deF5YmgL8LgJvrSN6vKteBo3UksVlQ439kYefA
+         pqi62Er1Ztem1X6xeUf0PcjYSye7F9ZeTEP4gsLHxxhVLZS4GHJvJhgTJYf67ZgHza
+         yH2N2HWN3WZDusoyvsFWvEe6drqcLGHPLKWZz18o=
+Date:   Wed, 19 Aug 2020 14:53:35 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-riscv@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v4 6/6] mm: secretmem: add ability to reserve memory at
+ boot
+Message-ID: <20200819115335.GU752365@kernel.org>
+References: <20200818141554.13945-1-rppt@kernel.org>
+ <20200818141554.13945-7-rppt@kernel.org>
+ <03ec586d-c00c-c57e-3118-7186acb7b823@redhat.com>
 MIME-Version: 1.0
-From:   Pranay Srivastava <pranay.srivastava@pantacor.com>
-Date:   Wed, 19 Aug 2020 17:20:59 +0530
-Message-ID: <CABfyVHc=oQmZG9NuJgu1G92VQqsxkynE+S9DosQzh9r+9G1Jbg@mail.gmail.com>
-Subject: mountinfo contents changed when rootfs is ramfs
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <03ec586d-c00c-c57e-3118-7186acb7b823@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, Aug 19, 2020 at 12:49:05PM +0200, David Hildenbrand wrote:
+> On 18.08.20 16:15, Mike Rapoport wrote:
+> > From: Mike Rapoport <rppt@linux.ibm.com>
+> > 
+> > Taking pages out from the direct map and bringing them back may create
+> > undesired fragmentation and usage of the smaller pages in the direct
+> > mapping of the physical memory.
+> > 
+> > This can be avoided if a significantly large area of the physical memory
+> > would be reserved for secretmem purposes at boot time.
+> > 
+> > Add ability to reserve physical memory for secretmem at boot time using
+> > "secretmem" kernel parameter and then use that reserved memory as a global
+> > pool for secret memory needs.
+> 
+> Wouldn't something like CMA be the better fit? Just wondering. Then, the
+> memory can actually be reused for something else while not needed.
 
-I'm running a system where rootfs is ramfs. For kernel version 5.2.11
+The memory allocated as secret is removed from the direct map and the
+boot time reservation is intended to reduce direct map fragmentatioan
+and to avoid splitting 1G pages there. So with CMA I'd still need to
+allocate 1G chunks for this and once 1G page is dropped from the direct
+map it still cannot be reused for anything else until it is freed.
 
-# cat /proc/self/mountinfo
-0 0 0:1 / / rw - rootfs rootfs rw
-%<---snip>%
+I could use CMA to do the boot time reservation, but doing the
+reservesion directly seemed simpler and more explicit to me.
 
-while for kernel 5.4.58
-# cat /proc/self/mountinfo
-0 0 0:1 / / rw - rootfs none rw
-%<---snip>%
 
-The reason for the above difference is because for kernel 5.2.11 the
-parse_param for
-rootfs was set to legacy_parse_param which handled the "source" param
-instead of
-ignoring it.
+> > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> > ---
+> >  mm/secretmem.c | 134 ++++++++++++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 126 insertions(+), 8 deletions(-)
+> > 
+> > diff --git a/mm/secretmem.c b/mm/secretmem.c
+> > index 333eb18fb483..54067ea62b2d 100644
+> > --- a/mm/secretmem.c
+> > +++ b/mm/secretmem.c
+> > @@ -14,6 +14,7 @@
+> >  #include <linux/pagemap.h>
+> >  #include <linux/genalloc.h>
+> >  #include <linux/syscalls.h>
+> > +#include <linux/memblock.h>
+> >  #include <linux/pseudo_fs.h>
+> >  #include <linux/set_memory.h>
+> >  #include <linux/sched/signal.h>
+> > @@ -45,6 +46,39 @@ struct secretmem_ctx {
+> >  	unsigned int mode;
+> >  };
+> >  
+> > +struct secretmem_pool {
+> > +	struct gen_pool *pool;
+> > +	unsigned long reserved_size;
+> > +	void *reserved;
+> > +};
+> > +
+> > +static struct secretmem_pool secretmem_pool;
+> > +
+> > +static struct page *secretmem_alloc_huge_page(gfp_t gfp)
+> > +{
+> > +	struct gen_pool *pool = secretmem_pool.pool;
+> > +	unsigned long addr = 0;
+> > +	struct page *page = NULL;
+> > +
+> > +	if (pool) {
+> > +		if (gen_pool_avail(pool) < PMD_SIZE)
+> > +			return NULL;
+> > +
+> > +		addr = gen_pool_alloc(pool, PMD_SIZE);
+> > +		if (!addr)
+> > +			return NULL;
+> > +
+> > +		page = virt_to_page(addr);
+> > +	} else {
+> > +		page = alloc_pages(gfp, PMD_PAGE_ORDER);
+> > +
+> > +		if (page)
+> > +			split_page(page, PMD_PAGE_ORDER);
+> > +	}
+> > +
+> > +	return page;
+> > +}
+> > +
+> >  static int secretmem_pool_increase(struct secretmem_ctx *ctx, gfp_t gfp)
+> >  {
+> >  	unsigned long nr_pages = (1 << PMD_PAGE_ORDER);
+> > @@ -53,12 +87,11 @@ static int secretmem_pool_increase(struct secretmem_ctx *ctx, gfp_t gfp)
+> >  	struct page *page;
+> >  	int err;
+> >  
+> > -	page = alloc_pages(gfp, PMD_PAGE_ORDER);
+> > +	page = secretmem_alloc_huge_page(gfp);
+> >  	if (!page)
+> >  		return -ENOMEM;
+> >  
+> >  	addr = (unsigned long)page_address(page);
+> > -	split_page(page, PMD_PAGE_ORDER);
+> >  
+> >  	err = gen_pool_add(pool, addr, PMD_SIZE, NUMA_NO_NODE);
+> >  	if (err) {
+> > @@ -267,11 +300,13 @@ SYSCALL_DEFINE1(memfd_secret, unsigned long, flags)
+> >  	return err;
+> >  }
+> >  
+> > -static void secretmem_cleanup_chunk(struct gen_pool *pool,
+> > -				    struct gen_pool_chunk *chunk, void *data)
+> > +static void secretmem_recycle_range(unsigned long start, unsigned long end)
+> > +{
+> > +	gen_pool_free(secretmem_pool.pool, start, PMD_SIZE);
+> > +}
+> > +
+> > +static void secretmem_release_range(unsigned long start, unsigned long end)
+> >  {
+> > -	unsigned long start = chunk->start_addr;
+> > -	unsigned long end = chunk->end_addr;
+> >  	unsigned long nr_pages, addr;
+> >  
+> >  	nr_pages = (end - start + 1) / PAGE_SIZE;
+> > @@ -281,6 +316,18 @@ static void secretmem_cleanup_chunk(struct gen_pool *pool,
+> >  		put_page(virt_to_page(addr));
+> >  }
+> >  
+> > +static void secretmem_cleanup_chunk(struct gen_pool *pool,
+> > +				    struct gen_pool_chunk *chunk, void *data)
+> > +{
+> > +	unsigned long start = chunk->start_addr;
+> > +	unsigned long end = chunk->end_addr;
+> > +
+> > +	if (secretmem_pool.pool)
+> > +		secretmem_recycle_range(start, end);
+> > +	else
+> > +		secretmem_release_range(start, end);
+> > +}
+> > +
+> >  static void secretmem_cleanup_pool(struct secretmem_ctx *ctx)
+> >  {
+> >  	struct gen_pool *pool = ctx->pool;
+> > @@ -320,14 +367,85 @@ static struct file_system_type secretmem_fs = {
+> >  	.kill_sb	= kill_anon_super,
+> >  };
+> >  
+> > +static int secretmem_reserved_mem_init(void)
+> > +{
+> > +	struct gen_pool *pool;
+> > +	struct page *page;
+> > +	void *addr;
+> > +	int err;
+> > +
+> > +	if (!secretmem_pool.reserved)
+> > +		return 0;
+> > +
+> > +	pool = gen_pool_create(PMD_SHIFT, NUMA_NO_NODE);
+> > +	if (!pool)
+> > +		return -ENOMEM;
+> > +
+> > +	err = gen_pool_add(pool, (unsigned long)secretmem_pool.reserved,
+> > +			   secretmem_pool.reserved_size, NUMA_NO_NODE);
+> > +	if (err)
+> > +		goto err_destroy_pool;
+> > +
+> > +	for (addr = secretmem_pool.reserved;
+> > +	     addr < secretmem_pool.reserved + secretmem_pool.reserved_size;
+> > +	     addr += PAGE_SIZE) {
+> > +		page = virt_to_page(addr);
+> > +		__ClearPageReserved(page);
+> > +		set_page_count(page, 1);
+> > +	}
+> > +
+> > +	secretmem_pool.pool = pool;
+> > +	page = virt_to_page(secretmem_pool.reserved);
+> > +	__kernel_map_pages(page, secretmem_pool.reserved_size / PAGE_SIZE, 0);
+> > +	return 0;
+> > +
+> > +err_destroy_pool:
+> > +	gen_pool_destroy(pool);
+> > +	return err;
+> > +}
+> > +
+> >  static int secretmem_init(void)
+> >  {
+> > -	int ret = 0;
+> > +	int ret;
+> > +
+> > +	ret = secretmem_reserved_mem_init();
+> > +	if (ret)
+> > +		return ret;
+> >  
+> >  	secretmem_mnt = kern_mount(&secretmem_fs);
+> > -	if (IS_ERR(secretmem_mnt))
+> > +	if (IS_ERR(secretmem_mnt)) {
+> > +		gen_pool_destroy(secretmem_pool.pool);
+> >  		ret = PTR_ERR(secretmem_mnt);
+> > +	}
+> >  
+> >  	return ret;
+> >  }
+> >  fs_initcall(secretmem_init);
+> > +
+> > +static int __init secretmem_setup(char *str)
+> > +{
+> > +	phys_addr_t align = PMD_SIZE;
+> > +	unsigned long reserved_size;
+> > +	void *reserved;
+> > +
+> > +	reserved_size = memparse(str, NULL);
+> > +	if (!reserved_size)
+> > +		return 0;
+> > +
+> > +	if (reserved_size * 2 > PUD_SIZE)
+> > +		align = PUD_SIZE;
+> > +
+> > +	reserved = memblock_alloc(reserved_size, align);
+> > +	if (!reserved) {
+> > +		pr_err("failed to reserve %lu bytes\n", secretmem_pool.reserved_size);
+> > +		return 0;
+> > +	}
+> > +
+> > +	secretmem_pool.reserved_size = reserved_size;
+> > +	secretmem_pool.reserved = reserved;
+> > +
+> > +	pr_info("reserved %luM\n", reserved_size >> 20);
+> > +
+> > +	return 1;
+> > +}
+> > +__setup("secretmem=", secretmem_setup);
+> > 
+> 
+> 
+> -- 
+> Thanks,
+> 
+> David / dhildenb
+> 
 
-With kernel 5.4.58 this is set to ramfs_parse_param which ignores any
-parameters not
-recognized and also returns 0 instead of -ENOPARAM. This causes
-vfs_parse_fs_param
-to not set the file context  source(fc->source) which results in "none" from
-alloc_vfs_mount(fc->source ? : "none")
-
-The commit which introduced the above change was
-
-commit f32356261d44d580649a7abce1156d15d49cf20f
-Author: David Howells <dhowells@redhat.com>
-Date:   Mon Mar 25 16:38:31 2019 +0000
-
-    vfs: Convert ramfs, shmem, tmpfs, devtmpfs, rootfs to use the new mount API
-
-I'm not sure if this is a regression? But if it is, do we handle it like
-
-diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
-index ee179a81b3da..47a39baa0535 100644
---- a/fs/ramfs/inode.c
-+++ b/fs/ramfs/inode.c
-
-@@ -200,7 +200,7 @@ static int ramfs_parse_param(struct fs_context
-*fc, struct fs_parameter *param)
-                 * and as it is used as a !CONFIG_SHMEM simple substitute
-                 * for tmpfs, better continue to ignore other mount options.
-                 */
--               if (opt == -ENOPARAM)
-+               if (opt == -ENOPARAM && strcmp(param->key, "source"))
-                        opt = 0;
-                return opt;
-        }
-
-so that mountinfo gives the same information as for earlier kernels.
-
-Thanks!
 -- 
-Regards,
-Pranay Srivastava
+Sincerely yours,
+Mike.
