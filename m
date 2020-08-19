@@ -2,193 +2,419 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 81C47249D62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 14:06:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD5B249D6C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 14:07:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbgHSMGN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Aug 2020 08:06:13 -0400
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:58259 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728063AbgHSMFg (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Aug 2020 08:05:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597838735;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=NA3ECXSKW/DVOnspa0nEEYBrqs7/jKx+mt/YRot/1Uo=;
-        b=Ralex2WoummTsFFKA1CnxKh0g4zcty9gyc0gIX1lfjukBPBWT68Qj+dM02RgXC0nDlEBtZ
-        4WrNG+rJroc/yCLz7b8MQ2raf6t7spwLKNX9c4cXYb3HM2b+C6IgzJab4YIz2Ni7ND+dfX
-        AGn703CzExqokS+07I2pr5vX1UcftJg=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-178-TtM9FzzQOzuiNFjA1DxWNw-1; Wed, 19 Aug 2020 08:05:30 -0400
-X-MC-Unique: TtM9FzzQOzuiNFjA1DxWNw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 233E0801ADD;
-        Wed, 19 Aug 2020 12:05:26 +0000 (UTC)
-Received: from [10.36.114.11] (ovpn-114-11.ams2.redhat.com [10.36.114.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4EDD8756C3;
-        Wed, 19 Aug 2020 12:05:19 +0000 (UTC)
-Subject: Re: [PATCH v4 0/6] mm: introduce memfd_secret system call to create
- "secret" memory areas
-To:     Mike Rapoport <rppt@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-riscv@lists.infradead.org, x86@kernel.org
-References: <20200818141554.13945-1-rppt@kernel.org>
- <e82ca20e-a88e-d7ff-e99b-4189aac54f3a@redhat.com>
- <20200819114244.GT752365@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat GmbH
-Message-ID: <e5738841-c673-13d6-a632-a6413ec94c43@redhat.com>
-Date:   Wed, 19 Aug 2020 14:05:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1728172AbgHSMGs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Aug 2020 08:06:48 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:43270 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727992AbgHSMGI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Aug 2020 08:06:08 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8F7DA30DB27519C12978;
+        Wed, 19 Aug 2020 20:06:02 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.487.0; Wed, 19 Aug 2020
+ 20:05:54 +0800
+From:   Yu Kuai <yukuai3@huawei.com>
+To:     <hch@infradead.org>, <darrick.wong@oracle.com>,
+        <willy@infradead.org>, <david@fromorbit.com>
+CC:     <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
+        <yi.zhang@huawei.com>
+Subject: [RFC PATCH V3] iomap: add support to track dirty state of sub pages
+Date:   Wed, 19 Aug 2020 20:05:42 +0800
+Message-ID: <20200819120542.3780727-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-In-Reply-To: <20200819114244.GT752365@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 19.08.20 13:42, Mike Rapoport wrote:
-> On Wed, Aug 19, 2020 at 12:47:54PM +0200, David Hildenbrand wrote:
->> On 18.08.20 16:15, Mike Rapoport wrote:
->>> From: Mike Rapoport <rppt@linux.ibm.com>
->>>
->>> Hi,
->>>
->>> This is an implementation of "secret" mappings backed by a file descriptor. 
->>>
->>> v4 changes:
->>> * rebase on v5.9-rc1
->>> * Do not redefine PMD_PAGE_ORDER in fs/dax.c, thanks Kirill
->>> * Make secret mappings exclusive by default and only require flags to
->>>   memfd_secret() system call for uncached mappings, thanks again Kirill :)
->>>
->>> v3 changes:
->>> * Squash kernel-parameters.txt update into the commit that added the
->>>   command line option.
->>> * Make uncached mode explicitly selectable by architectures. For now enable
->>>   it only on x86.
->>>
->>> v2 changes:
->>> * Follow Michael's suggestion and name the new system call 'memfd_secret'
->>> * Add kernel-parameters documentation about the boot option
->>> * Fix i386-tinyconfig regression reported by the kbuild bot.
->>>   CONFIG_SECRETMEM now depends on !EMBEDDED to disable it on small systems
->>>   from one side and still make it available unconditionally on
->>>   architectures that support SET_DIRECT_MAP.
->>>
->>>
->>> The file descriptor backing secret memory mappings is created using a
->>> dedicated memfd_secret system call The desired protection mode for the
->>> memory is configured using flags parameter of the system call. The mmap()
->>> of the file descriptor created with memfd_secret() will create a "secret"
->>> memory mapping. The pages in that mapping will be marked as not present in
->>> the direct map and will have desired protection bits set in the user page
->>> table. For instance, current implementation allows uncached mappings.
->>>
->>> Although normally Linux userspace mappings are protected from other users, 
->>> such secret mappings are useful for environments where a hostile tenant is
->>> trying to trick the kernel into giving them access to other tenants
->>> mappings.
->>>
->>> Additionally, the secret mappings may be used as a mean to protect guest
->>> memory in a virtual machine host.
->>>
->>
->> Just a general question. I assume such pages (where the direct mapping
->> was changed) cannot get migrated - I can spot a simple alloc_page(). So
->> essentially a process can just allocate a whole bunch of memory that is
->> unmovable, correct? Is there any limit? Is it properly accounted towards
->> the process (memctl) ?
-> 
-> The memory as accounted in the same way like with mlock(), so normal
-> user won't be able to allocate more than RLIMIT_MEMLOCK.
+changes from v2:
+ as suggested by Mathew:
+ - move iomap_set_page_dirty() into iomap_set_range_dirty()
+ - add DIRTY_BITS()
+ - move ioamp_set_rannge_dirty() from iomap_page_mkwrite_actor() to
+   iomap_page_mkwrite()
+ - clear the dirty bits of entire page in iomap_writepage_map
 
-Okay, thanks. AFAIU the difference to mlock() is that the pages here are
-not movable, fragment memory, and limit compaction. Hm.
+changes from v1:
+ - separate set dirty and clear dirty functions
+ - don't test uptodate bit in iomap_writepage_map()
+ - use one bitmap array for uptodate and dirty.
 
+commit 9dc55f1389f9 ("iomap: add support for sub-pagesize buffered I/O
+without buffer heads") replace the per-block structure buffer_head with
+the per-page structure iomap_page. However, iomap_page can't track the
+dirty state of sub pages, which will cause performance issue since sub
+pages will be writeback even if they are not dirty.
+
+For example, if block size is 4k and page size is 64k:
+
+dd if=/dev/zero of=testfile bs=4k count=16 oflag=sync
+
+With buffer_head implementation, the above dd cmd will writeback 4k in
+each round. However, with iomap_page implementation, the range of
+writeback in each round is from the start of the page to the end offset
+we just wrote.
+
+Thus add support to track dirty state in iomap_page.
+
+I tested this path with:
+test environment:
+	platform:	arm64
+	kernel:		v5.8
+	pagesize:	64k
+	blocksize:	4k
+
+test case:
+	dd if=/dev/zero of=/mnt/testfile bs=1M count=128
+	fio --ioengine=sync --rw=randwrite --iodepth=64 --name=test --filename=/mnt/testfile --bs=4k --fsync=1
+
+The test result is:
+a. with patch
+
+```
+Jobs: 1 (f=1): [w(1)][100.0%][r=0KiB/s,w=4460KiB/s][r=0,w=1115 IOPS][eta 00m:00s]
+test: (groupid=0, jobs=1): err= 0: pid=3158: Tue Aug 18 07:38:53 2020
+  write: IOPS=1087, BW=4350KiB/s (4455kB/s)(128MiB/30129msec)
+    clat (nsec): min=3020, max=22320, avg=4990.47, stdev=1613.56
+     lat (nsec): min=3180, max=23220, avg=5157.69, stdev=1617.42
+    clat percentiles (nsec):
+     |  1.00th=[ 3376],  5.00th=[ 3568], 10.00th=[ 3824], 20.00th=[ 4016],
+     | 30.00th=[ 4128], 40.00th=[ 4192], 50.00th=[ 4256], 60.00th=[ 4320],
+     | 70.00th=[ 4512], 80.00th=[ 7392], 90.00th=[ 7840], 95.00th=[ 8032],
+     | 99.00th=[ 8512], 99.50th=[ 8896], 99.90th=[12096], 99.95th=[14144],
+     | 99.99th=[20096]
+   bw (  KiB/s): min= 1504, max= 4496, per=100.00%, avg=4350.65, stdev=392.33, samples=60
+   iops        : min=  376, max= 1124, avg=1087.65, stdev=98.08, samples=60
+  lat (usec)   : 4=17.40%, 10=82.40%, 20=0.19%, 50=0.02%
+  fsync/fdatasync/sync_file_range:
+    sync (usec): min=677, max=24318, avg=903.99, stdev=455.75
+    sync percentiles (usec):
+     |  1.00th=[  685],  5.00th=[  693], 10.00th=[  701], 20.00th=[  701],
+     | 30.00th=[  709], 40.00th=[  709], 50.00th=[  717], 60.00th=[  717],
+     | 70.00th=[  725], 80.00th=[ 1467], 90.00th=[ 1483], 95.00th=[ 1500],
+     | 99.00th=[ 1532], 99.50th=[ 1762], 99.90th=[ 7767], 99.95th=[ 7832],
+     | 99.99th=[ 8094]
+  cpu          : usr=0.33%, sys=2.13%, ctx=98405, majf=0, minf=4
+  IO depths    : 1=200.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued rwts: total=0,32768,0,32767 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=64
+
+Run status group 0 (all jobs):
+  WRITE: bw=4350KiB/s (4455kB/s), 4350KiB/s-4350KiB/s (4455kB/s-4455kB/s), io=128MiB (134MB), run=30129-30129msec
+
+Disk stats (read/write):
+  sda: ios=4/65596, merge=0/5, ticks=3/30579, in_queue=58279, util=99.72%
+```
+
+b. without patch
+
+```
+Jobs: 1 (f=1): [w(1)][100.0%][r=0KiB/s,w=3003KiB/s][r=0,w=750 IOPS][eta 00m:00s]
+test: (groupid=0, jobs=1): err= 0: pid=9174: Tue Aug 18 04:17:16 2020
+  write: IOPS=678, BW=2714KiB/s (2780kB/s)(128MiB/48286msec)
+    clat (nsec): min=3420, max=26240, avg=5898.60, stdev=1824.49
+     lat (nsec): min=3600, max=26860, avg=6065.21, stdev=1826.90
+    clat percentiles (nsec):
+     |  1.00th=[ 3792],  5.00th=[ 4128], 10.00th=[ 4320], 20.00th=[ 4512],
+     | 30.00th=[ 4576], 40.00th=[ 4704], 50.00th=[ 4832], 60.00th=[ 4960],
+     | 70.00th=[ 7968], 80.00th=[ 8256], 90.00th=[ 8512], 95.00th=[ 8768],
+     | 99.00th=[ 9152], 99.50th=[ 9408], 99.90th=[11840], 99.95th=[13376],
+     | 99.99th=[18560]
+   bw (  KiB/s): min= 1016, max= 3128, per=99.92%, avg=2711.92, stdev=357.89, samples=96
+   iops        : min=  254, max=  782, avg=677.98, stdev=89.47, samples=96
+  lat (usec)   : 4=3.14%, 10=96.66%, 20=0.20%, 50=0.01%
+  fsync/fdatasync/sync_file_range:
+    sync (usec): min=814, max=24221, avg=1456.82, stdev=543.48
+    sync percentiles (usec):
+     |  1.00th=[  988],  5.00th=[  996], 10.00th=[  996], 20.00th=[ 1012],
+     | 30.00th=[ 1029], 40.00th=[ 1221], 50.00th=[ 1270], 60.00th=[ 1287],
+     | 70.00th=[ 1795], 80.00th=[ 1844], 90.00th=[ 2245], 95.00th=[ 2278],
+     | 99.00th=[ 2442], 99.50th=[ 2737], 99.90th=[ 5407], 99.95th=[ 5538],
+     | 99.99th=[ 5735]
+  cpu          : usr=0.19%, sys=1.54%, ctx=98412, majf=0, minf=4
+  IO depths    : 1=200.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued rwts: total=0,32768,0,32767 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=64
+
+Run status group 0 (all jobs):
+  WRITE: bw=2714KiB/s (2780kB/s), 2714KiB/s-2714KiB/s (2780kB/s-2780kB/s), io=128MiB (134MB), run=48286-48286msec
+
+Disk stats (read/write):
+  sda: ios=4/65344, merge=0/5, ticks=2/48198, in_queue=88938, util=99.83%
+```
+
+c. ext4
+
+```
+Jobs: 1 (f=1): [w(1)][100.0%][r=0KiB/s,w=3919KiB/s][r=0,w=979 IOPS][eta 00m:00s]
+test: (groupid=0, jobs=1): err= 0: pid=8682: Tue Aug 18 04:15:43 2020
+  write: IOPS=960, BW=3840KiB/s (3932kB/s)(128MiB/34133msec)
+    clat (usec): min=4, max=349, avg= 8.92, stdev= 2.94
+     lat (usec): min=4, max=349, avg= 9.06, stdev= 2.94
+    clat percentiles (nsec):
+     |  1.00th=[ 6112],  5.00th=[ 6624], 10.00th=[ 6880], 20.00th=[ 7200],
+     | 30.00th=[ 7456], 40.00th=[ 7712], 50.00th=[ 8032], 60.00th=[ 8384],
+     | 70.00th=[ 9024], 80.00th=[11712], 90.00th=[12608], 95.00th=[13120],
+     | 99.00th=[14272], 99.50th=[14656], 99.90th=[17536], 99.95th=[20352],
+     | 99.99th=[33536]
+   bw (  KiB/s): min= 1344, max= 3992, per=100.00%, avg=3839.88, stdev=314.69, samples=68
+   iops        : min=  336, max=  998, avg=959.97, stdev=78.67, samples=68
+  lat (usec)   : 10=74.64%, 20=25.31%, 50=0.05%, 100=0.01%, 500=0.01%
+  fsync/fdatasync/sync_file_range:
+    sync (usec): min=666, max=25174, avg=1021.69, stdev=871.62
+    sync percentiles (usec):
+     |  1.00th=[  685],  5.00th=[  693], 10.00th=[  701], 20.00th=[  701],
+     | 30.00th=[  709], 40.00th=[  717], 50.00th=[  717], 60.00th=[  725],
+     | 70.00th=[  734], 80.00th=[ 1500], 90.00th=[ 1516], 95.00th=[ 1532],
+     | 99.00th=[ 6128], 99.50th=[ 6128], 99.90th=[ 7832], 99.95th=[ 8225],
+     | 99.99th=[ 9634]
+  cpu          : usr=0.32%, sys=2.87%, ctx=90254, majf=0, minf=4
+  IO depths    : 1=200.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued rwts: total=0,32768,0,32767 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=64
+
+Run status group 0 (all jobs):
+  WRITE: bw=3840KiB/s (3932kB/s), 3840KiB/s-3840KiB/s (3932kB/s-3932kB/s), io=128MiB (134MB), run=34133-34133msec
+
+Disk stats (read/write):
+  sda: ios=0/75055, merge=0/8822, ticks=0/40565, in_queue=68469, util=99.80%
+```
+
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ fs/iomap/buffered-io.c | 99 +++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 83 insertions(+), 16 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index bcfc288dba3f..b6a7457d8581 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -21,15 +21,20 @@
+ 
+ #include "../internal.h"
+ 
++#define DIRTY_BITS(x)	((x) + PAGE_SIZE / SECTOR_SIZE)
+ /*
+  * Structure allocated for each page when block size < PAGE_SIZE to track
+- * sub-page uptodate status and I/O completions.
++ * sub-page status and I/O completions.
+  */
+ struct iomap_page {
+ 	atomic_t		read_count;
+ 	atomic_t		write_count;
+-	spinlock_t		uptodate_lock;
+-	DECLARE_BITMAP(uptodate, PAGE_SIZE / 512);
++	spinlock_t		state_lock;
++	/*
++	 * The first half bits are used to track sub-page uptodate status,
++	 * the second half bits are for dirty status.
++	 */
++	DECLARE_BITMAP(state, PAGE_SIZE * 2 / SECTOR_SIZE);
+ };
+ 
+ static inline struct iomap_page *to_iomap_page(struct page *page)
+@@ -52,8 +57,8 @@ iomap_page_create(struct inode *inode, struct page *page)
+ 	iop = kmalloc(sizeof(*iop), GFP_NOFS | __GFP_NOFAIL);
+ 	atomic_set(&iop->read_count, 0);
+ 	atomic_set(&iop->write_count, 0);
+-	spin_lock_init(&iop->uptodate_lock);
+-	bitmap_zero(iop->uptodate, PAGE_SIZE / SECTOR_SIZE);
++	spin_lock_init(&iop->state_lock);
++	bitmap_zero(iop->state, PAGE_SIZE * 2 / SECTOR_SIZE);
+ 
+ 	/*
+ 	 * migrate_page_move_mapping() assumes that pages with private data have
+@@ -101,7 +106,7 @@ iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
+ 
+ 		/* move forward for each leading block marked uptodate */
+ 		for (i = first; i <= last; i++) {
+-			if (!test_bit(i, iop->uptodate))
++			if (!test_bit(i, iop->state))
+ 				break;
+ 			*pos += block_size;
+ 			poff += block_size;
+@@ -111,7 +116,7 @@ iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
+ 
+ 		/* truncate len if we find any trailing uptodate block(s) */
+ 		for ( ; i <= last; i++) {
+-			if (test_bit(i, iop->uptodate)) {
++			if (test_bit(i, iop->state)) {
+ 				plen -= (last - i + 1) * block_size;
+ 				last = i - 1;
+ 				break;
+@@ -135,6 +140,66 @@ iomap_adjust_read_range(struct inode *inode, struct iomap_page *iop,
+ 	*lenp = plen;
+ }
+ 
++static void
++iomap_iop_set_range_dirty(struct page *page, unsigned int off,
++		unsigned int len)
++{
++	struct iomap_page *iop = to_iomap_page(page);
++	struct inode *inode = page->mapping->host;
++	unsigned int first = DIRTY_BITS(off >> inode->i_blkbits);
++	unsigned int last = DIRTY_BITS((off + len - 1) >> inode->i_blkbits);
++	unsigned long flags;
++	unsigned int i;
++
++	spin_lock_irqsave(&iop->state_lock, flags);
++	for (i = first; i <= last; i++)
++		set_bit(i, iop->state);
++
++	if (last >= first)
++		iomap_set_page_dirty(page);
++
++	spin_unlock_irqrestore(&iop->state_lock, flags);
++}
++
++static void
++iomap_set_range_dirty(struct page *page, unsigned int off,
++		unsigned int len)
++{
++	if (PageError(page))
++		return;
++
++	if (page_has_private(page))
++		iomap_iop_set_range_dirty(page, off, len);
++}
++
++static void
++iomap_iop_clear_range_dirty(struct page *page, unsigned int off,
++		unsigned int len)
++{
++	struct iomap_page *iop = to_iomap_page(page);
++	struct inode *inode = page->mapping->host;
++	unsigned int first = DIRTY_BITS(off >> inode->i_blkbits);
++	unsigned int last = DIRTY_BITS((off + len - 1) >> inode->i_blkbits);
++	unsigned long flags;
++	unsigned int i;
++
++	spin_lock_irqsave(&iop->state_lock, flags);
++	for (i = first; i <= last; i++)
++		clear_bit(i, iop->state);
++	spin_unlock_irqrestore(&iop->state_lock, flags);
++}
++
++static void
++iomap_clear_range_dirty(struct page *page, unsigned int off,
++		unsigned int len)
++{
++	if (PageError(page))
++		return;
++
++	if (page_has_private(page))
++		iomap_iop_clear_range_dirty(page, off, len);
++}
++
+ static void
+ iomap_iop_set_range_uptodate(struct page *page, unsigned off, unsigned len)
+ {
+@@ -146,17 +211,17 @@ iomap_iop_set_range_uptodate(struct page *page, unsigned off, unsigned len)
+ 	unsigned long flags;
+ 	unsigned int i;
+ 
+-	spin_lock_irqsave(&iop->uptodate_lock, flags);
++	spin_lock_irqsave(&iop->state_lock, flags);
+ 	for (i = 0; i < PAGE_SIZE / i_blocksize(inode); i++) {
+ 		if (i >= first && i <= last)
+-			set_bit(i, iop->uptodate);
+-		else if (!test_bit(i, iop->uptodate))
++			set_bit(i, iop->state);
++		else if (!test_bit(i, iop->state))
+ 			uptodate = false;
+ 	}
+ 
+ 	if (uptodate)
+ 		SetPageUptodate(page);
+-	spin_unlock_irqrestore(&iop->uptodate_lock, flags);
++	spin_unlock_irqrestore(&iop->state_lock, flags);
+ }
+ 
+ static void
+@@ -466,7 +531,7 @@ iomap_is_partially_uptodate(struct page *page, unsigned long from,
+ 
+ 	if (iop) {
+ 		for (i = first; i <= last; i++)
+-			if (!test_bit(i, iop->uptodate))
++			if (!test_bit(i, iop->state))
+ 				return 0;
+ 		return 1;
+ 	}
+@@ -705,7 +770,7 @@ __iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
+ 	if (unlikely(copied < len && !PageUptodate(page)))
+ 		return 0;
+ 	iomap_set_range_uptodate(page, offset_in_page(pos), len);
+-	iomap_set_page_dirty(page);
++	iomap_set_range_dirty(page, offset_in_page(pos), len);
+ 	return copied;
+ }
+ 
+@@ -1029,7 +1094,6 @@ iomap_page_mkwrite_actor(struct inode *inode, loff_t pos, loff_t length,
+ 	} else {
+ 		WARN_ON_ONCE(!PageUptodate(page));
+ 		iomap_page_create(inode, page);
+-		set_page_dirty(page);
+ 	}
+ 
+ 	return length;
+@@ -1039,7 +1103,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+ {
+ 	struct page *page = vmf->page;
+ 	struct inode *inode = file_inode(vmf->vma->vm_file);
+-	unsigned long length;
++	unsigned int length, bytes_in_page;
+ 	loff_t offset;
+ 	ssize_t ret;
+ 
+@@ -1048,6 +1112,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+ 	if (ret < 0)
+ 		goto out_unlock;
+ 	length = ret;
++	bytes_in_page = ret;
+ 
+ 	offset = page_offset(page);
+ 	while (length > 0) {
+@@ -1060,6 +1125,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops)
+ 		length -= ret;
+ 	}
+ 
++	iomap_set_range_dirty(page, 0, bytes_in_page);
+ 	wait_for_stable_page(page);
+ 	return VM_FAULT_LOCKED;
+ out_unlock:
+@@ -1386,7 +1452,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 	for (i = 0, file_offset = page_offset(page);
+ 	     i < (PAGE_SIZE >> inode->i_blkbits) && file_offset < end_offset;
+ 	     i++, file_offset += len) {
+-		if (iop && !test_bit(i, iop->uptodate))
++		if (iop && !test_bit(DIRTY_BITS(i), iop->state))
+ 			continue;
+ 
+ 		error = wpc->ops->map_blocks(wpc, inode, file_offset);
+@@ -1435,6 +1501,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 		 */
+ 		set_page_writeback_keepwrite(page);
+ 	} else {
++		iomap_clear_range_dirty(page, 0, PAGE_SIZE);
+ 		clear_page_dirty_for_io(page);
+ 		set_page_writeback(page);
+ 	}
 -- 
-Thanks,
-
-David / dhildenb
+2.25.4
 
