@@ -2,107 +2,184 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F61E24A604
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 20:32:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61C5924A658
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 20:54:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbgHSSca (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Aug 2020 14:32:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59762 "EHLO
+        id S1726819AbgHSSyU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Aug 2020 14:54:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbgHSScZ (ORCPT
+        with ESMTP id S1726689AbgHSSyT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Aug 2020 14:32:25 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CA80C061757
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Aug 2020 11:32:24 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id t6so26476136ljk.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Aug 2020 11:32:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PCuKkyRxcbup4ABdZGpC9XS5K02qBsfUZIlHBjZs1pc=;
-        b=YN7mKrskvwWbX56uQExfTWNmH6b7b06GM1t6v6PKQMs/53B4exuT41lXnTdk02Vy1a
-         kyWEZ0RcGu5BbhBuNhEnWP2R+82h3AWl7VuY+FT8Owk6ALwcQj9n43iDoTjn/PJjStUs
-         +r7PqpmcMgHSVrmWSkasonWj1JvkoFL9fZBlA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PCuKkyRxcbup4ABdZGpC9XS5K02qBsfUZIlHBjZs1pc=;
-        b=d6293D2u7WjOzhTsxxLhOsZBvmcima0UXYPXLL+spW3axFcmaBAo/5OJuXRE8GN6Mi
-         FWo2tm+qhcw481AKpeQQkmgqMOy2cGmsI4QsV8s+Hr1P9dfeKlDZjvEGwy2pIMhy+RA9
-         e1fX9edAwv7FSddpNz2XnvRTU6XWJIPLYWbkqs7GGrH8XFXl99pGJAQYJEYM761KXtAd
-         yyJJify9fyP26Gr+RSFczjl3cpXfTRe1de9iMazfDQgaPpmRPF4cwjC5hQblerOUX+A4
-         mEwPhohgZCckqgBA26YYi/OohxhT7wed1s51jNjiROi5OZ1nxFfCsi5Kt1TzPyyDX5w0
-         a5Eg==
-X-Gm-Message-State: AOAM532cXEiJ5asyGv3Fil6P9Fkkt6YnUAZM+fxCLGe9LVdyVovQ+N+S
-        SP4EUhPLSbFwywd9VIJkP7J1bYWZUYoArg==
-X-Google-Smtp-Source: ABdhPJyB3qBDzF9jxEYSTJdHHz2527nyY6S/6mFv38HOD1tRJQeXe3sfKlM+f4KN6YpJc3pF8I3Ojg==
-X-Received: by 2002:a05:651c:1349:: with SMTP id j9mr12076315ljb.392.1597861942580;
-        Wed, 19 Aug 2020 11:32:22 -0700 (PDT)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id b17sm6881871ljp.9.2020.08.19.11.32.21
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Aug 2020 11:32:22 -0700 (PDT)
-Received: by mail-lj1-f182.google.com with SMTP id v4so26530904ljd.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Aug 2020 11:32:21 -0700 (PDT)
-X-Received: by 2002:a2e:545:: with SMTP id 66mr13526311ljf.285.1597861941474;
- Wed, 19 Aug 2020 11:32:21 -0700 (PDT)
+        Wed, 19 Aug 2020 14:54:19 -0400
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A164C061342
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Aug 2020 11:54:17 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BWxlD0kK1zlhQGJ;
+        Wed, 19 Aug 2020 20:54:00 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4BWxlB6m3Xzlh8TC;
+        Wed, 19 Aug 2020 20:53:58 +0200 (CEST)
+Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
+To:     Mark Rutland <mark.rutland@arm.com>,
+        "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org
+References: <aefc85852ea518982e74b233e11e16d2e707bc32>
+ <20200728131050.24443-1-madvenka@linux.microsoft.com>
+ <20200731180955.GC67415@C02TD0UTHF1T.local>
+ <6236adf7-4bed-534e-0956-fddab4fd96b6@linux.microsoft.com>
+ <20200804143018.GB7440@C02TD0UTHF1T.local>
+ <b3368692-afe6-89b5-d634-12f4f0a601f8@linux.microsoft.com>
+ <20200812100650.GB28154@C02TD0UTHF1T.local>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <41c4de64-68d0-6fcb-e5c3-63ebd459262e@digikod.net>
+Date:   Wed, 19 Aug 2020 20:53:42 +0200
+User-Agent: 
 MIME-Version: 1.0
-References: <87ft8l6ic3.fsf@x220.int.ebiederm.org> <20200817220425.9389-9-ebiederm@xmission.com>
- <CAHk-=whCU_psWXHod0-WqXXKB4gKzgW9q=d_ZEFPNATr3kG=QQ@mail.gmail.com>
- <875z9g7oln.fsf@x220.int.ebiederm.org> <CAHk-=wjk_CnGHt4LBi2WsOeYOxE5j79R8xHzZytCy8t-_9orQw@mail.gmail.com>
- <20200818110556.q5i5quflrcljv4wa@wittgenstein> <87pn7m22kn.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87pn7m22kn.fsf@x220.int.ebiederm.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 19 Aug 2020 11:32:05 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj8BQbgJFLa+J0e=iT-1qpmCRTbPAJ8gd6MJQ=kbRPqyQ@mail.gmail.com>
-Message-ID: <CAHk-=wj8BQbgJFLa+J0e=iT-1qpmCRTbPAJ8gd6MJQ=kbRPqyQ@mail.gmail.com>
-Subject: Re: [PATCH 09/17] file: Implement fnext_task
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
-        criu@openvz.org, bpf <bpf@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
-        =?UTF-8?Q?Daniel_P=2E_Berrang=C3=A9?= <berrange@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@debian.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Matthew Wilcox <matthew@wil.cx>,
-        Trond Myklebust <trond.myklebust@fys.uio.no>,
-        Chris Wright <chrisw@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200812100650.GB28154@C02TD0UTHF1T.local>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 19, 2020 at 6:25 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> So I sat down and played with it and here is what I wound up with is:
->
-> __fcheck_files -> files_lookup_fd_raw
-> fcheck_files   -> files_lookup_fd_locked
-> fcheck_files   -> files_lookup_fd_rcu
-> fcheck         -> lookup_fd_rcu
-> ...
-> fcheck_task    -> task_lookup_fd_fcu
-> fnext_task     -> task_lookup_next_fd_rcu
 
-This certainly looks fine to me. No confusion about what it does. So Ack.
+On 12/08/2020 12:06, Mark Rutland wrote:
+> On Thu, Aug 06, 2020 at 12:26:02PM -0500, Madhavan T. Venkataraman wrote:
+>> Thanks for the lively discussion. I have tried to answer some of the
+>> comments below.
+>>
+>> On 8/4/20 9:30 AM, Mark Rutland wrote:
+>>>
+>>>> So, the context is - if security settings in a system disallow a page to have
+>>>> both write and execute permissions, how do you allow the execution of
+>>>> genuine trampolines that are runtime generated and placed in a data
+>>>> page or a stack page?
+>>> There are options today, e.g.
+>>>
+>>> a) If the restriction is only per-alias, you can have distinct aliases
+>>>    where one is writable and another is executable, and you can make it
+>>>    hard to find the relationship between the two.
+>>>
+>>> b) If the restriction is only temporal, you can write instructions into
+>>>    an RW- buffer, transition the buffer to R--, verify the buffer
+>>>    contents, then transition it to --X.
+>>>
+>>> c) You can have two processes A and B where A generates instrucitons into
+>>>    a buffer that (only) B can execute (where B may be restricted from
+>>>    making syscalls like write, mprotect, etc).
+>>
+>> The general principle of the mitigation is W^X. I would argue that
+>> the above options are violations of the W^X principle. If they are
+>> allowed today, they must be fixed. And they will be. So, we cannot
+>> rely on them.
+> 
+> Hold on.
+> 
+> Contemporary W^X means that a given virtual alias cannot be writeable
+> and executeable simultaneously, permitting (a) and (b). If you read the
+> references on the Wikipedia page for W^X you'll see the OpenBSD 3.3
+> release notes and related presentation make this clear, and further they
+> expect (b) to occur with JITS flipping W/X with mprotect().
 
-                   Linus
+W^X (with "permanent" mprotect restrictions [1]) goes back to 2000 with
+PaX [2] (which predates partial OpenBSD implementation from 2003).
+
+[1] https://pax.grsecurity.net/docs/mprotect.txt
+[2] https://undeadly.org/cgi?action=article;sid=20030417082752
+
+> 
+> Please don't conflate your assumed stronger semantics with the general
+> principle. It not matching you expectations does not necessarily mean
+> that it is wrong.
+> 
+> If you want a stronger W^X semantics, please refer to this specifically
+> with a distinct name.
+> 
+>> a) This requires a remap operation. Two mappings point to the same
+>>      physical page. One mapping has W and the other one has X. This
+>>      is a violation of W^X.
+>>
+>> b) This is again a violation. The kernel should refuse to give execute
+>>      permission to a page that was writeable in the past and refuse to
+>>      give write permission to a page that was executable in the past.
+>>
+>> c) This is just a variation of (a).
+> 
+> As above, this is not true.
+> 
+> If you have a rationale for why this is desirable or necessary, please
+> justify that before using this as justification for additional features.
+> 
+>> In general, the problem with user-level methods to map and execute
+>> dynamic code is that the kernel cannot tell if a genuine application is
+>> using them or an attacker is using them or piggy-backing on them.
+> 
+> Yes, and as I pointed out the same is true for trampfd unless you can
+> somehow authenticate the calls are legitimate (in both callsite and the
+> set of arguments), and I don't see any reasonable way of doing that.
+> 
+> If you relax your threat model to an attacker not being able to make
+> arbitrary syscalls, then your suggestion that userspace can perorm
+> chceks between syscalls may be sufficient, but as I pointed out that's
+> equally true for a sealed memfd or similar.
+> 
+>> Off the top of my head, I have tried to identify some examples
+>> where we can have more trust on dynamic code and have the kernel
+>> permit its execution.
+>>
+>> 1. If the kernel can do the job, then that is one safe way. Here, the kernel
+>>     is the code. There is no code generation involved. This is what I
+>>     have presented in the patch series as the first cut.
+> 
+> This is sleight-of-hand; it doesn't matter where the logic is performed
+> if the power is identical. Practically speaking this is equivalent to
+> some dynamic code generation.
+> 
+> I think that it's misleading to say that because the kernel emulates
+> something it is safe when the provenance of the syscall arguments cannot
+> be verified.
+> 
+> [...]
+> 
+>> Anyway, these are just examples. The principle is - if we can identify
+>> dynamic code that has a certain measure of trust, can the kernel
+>> permit their execution?
+> 
+> My point generally is that the kernel cannot identify this, and if
+> usrspace code is trusted to dynamically generate trampfd arguments it
+> can equally be trusted to dyncamilly generate code.
+> 
+> [...]
+> 
+>> As I have mentioned above, I intend to have the kernel generate code
+>> only if the code generation is simple enough. For more complicated cases,
+>> I plan to use a user-level code generator that is for exclusive kernel use.
+>> I have yet to work out the details on how this would work. Need time.
+> 
+> This reads to me like trampfd is only dealing with a few special cases
+> and we know that we need a more general solution.
+> 
+> I hope I am mistaken, but I get the strong impression that you're trying
+> to justify your existing solution rather than trying to understand the
+> problem space.
+> 
+> To be clear, my strong opinion is that we should not be trying to do
+> this sort of emulation or code generation within the kernel. I do think
+> it's worthwhile to look at mechanisms to make it harder to subvert
+> dynamic userspace code generation, but I think the code generation
+> itself needs to live in userspace (e.g. for ABI reasons I previously
+> mentioned).
+> 
+> Mark.
+> 
