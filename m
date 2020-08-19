@@ -2,28 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1775F24A777
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 22:07:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EF4924A778
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 22:07:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbgHSUHw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Aug 2020 16:07:52 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48812 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbgHSUHw (ORCPT
+        id S1726853AbgHSUH7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Aug 2020 16:07:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbgHSUH5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Aug 2020 16:07:52 -0400
+        Wed, 19 Aug 2020 16:07:57 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BAC8C061757
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Aug 2020 13:07:57 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id ADB66299804
+        with ESMTPSA id A9565299C0F
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     viro@zeniv.linux.org.uk, jaegeuk@kernel.org, chao@kernel.org
 Cc:     linux-fsdevel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
-        Jamie Liu <jamieliu@google.com>, kernel@collabora.com,
-        Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: [PATCH 1/2] direct-io: defer alignment check until after EOF check
-Date:   Wed, 19 Aug 2020 16:07:30 -0400
-Message-Id: <20200819200731.2972195-2-krisman@collabora.com>
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        kernel@collabora.com
+Subject: [PATCH 2/2] f2fs: Return EOF on unaligned end of file DIO read
+Date:   Wed, 19 Aug 2020 16:07:31 -0400
+Message-Id: <20200819200731.2972195-3-krisman@collabora.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200819200731.2972195-1-krisman@collabora.com>
 References: <20200819200731.2972195-1-krisman@collabora.com>
@@ -34,25 +37,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Jamie Liu <jamieliu@google.com>
-
-Prior to commit 9fe55eea7e4b ("Fix race when checking i_size on direct
-i/o read"), an unaligned direct read past end of file would trigger EOF,
-since generic_file_aio_read detected this read-at-EOF condition and
-skipped the direct IO read entirely, returning 0. After that change, the
-read now reaches dio_generic, which detects the misalignment and returns
-EINVAL.
-
-This consolidates the generic direct-io to follow the same behavior of
-filesystems.  Apparently, this fix will only affect ocfs2 since other
-filesystems do this verification before calling do_blockdev_direct_IO,
-with the exception of f2fs, which has the same bug, but is fixed in the
-next patch.
+Reading past end of file returns EOF for aligned reads but -EINVAL for
+unaligned reads on f2fs.  While documentation is not strict about this
+corner case, most filesystem returns EOF on this case, like iomap
+filesystems.  This patch consolidates the behavior for f2fs, by making
+it return EOF(0).
 
 it can be verified by a read loop on a file that does a partial read
-before EOF (On file that doesn't end at an aligned address).  The
-following code fails on an unaligned file on filesystems without
-prior validation without this patch, but not on btrfs, ext4, and xfs.
+before EOF (A file that doesn't end at an aligned address).  The
+following code fails on an unaligned file on f2fs, but not on
+btrfs, ext4, and xfs.
 
   while (done < total) {
     ssize_t delta = pread(fd, buf + done, total - done, off + done);
@@ -61,66 +55,29 @@ prior validation without this patch, but not on btrfs, ext4, and xfs.
     ...
   }
 
-Fix this regression by moving the misalignment check to after the EOF
-check added by commit 74cedf9b6c60 ("direct-io: Fix negative return from
-dio read beyond eof").
+It is arguable whether filesystems should actually return EOF or
+-EINVAL, but since iomap filesystems support it, and so does the
+original DIO code, it seems reasonable to consolidate on that.
 
-Signed-off-by: Jamie Liu <jamieliu@google.com>
-Co-developed-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 ---
- fs/direct-io.c | 31 ++++++++++++++++++-------------
- 1 file changed, 18 insertions(+), 13 deletions(-)
+ fs/f2fs/data.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 183299892465..77400b033d63 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1160,19 +1160,6 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	struct blk_plug plug;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5f527073143e..d9834ffe1da9 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -3510,6 +3510,9 @@ static int check_direct_IO(struct inode *inode, struct iov_iter *iter,
  	unsigned long align = offset | iov_iter_alignment(iter);
+ 	struct block_device *bdev = inode->i_sb->s_bdev;
  
--	/*
--	 * Avoid references to bdev if not absolutely needed to give
--	 * the early prefetch in the caller enough time.
--	 */
--
--	if (align & blocksize_mask) {
--		if (bdev)
--			blkbits = blksize_bits(bdev_logical_block_size(bdev));
--		blocksize_mask = (1 << blkbits) - 1;
--		if (align & blocksize_mask)
--			goto out;
--	}
--
- 	/* watch out for a 0 len io from a tricksy fs */
- 	if (iov_iter_rw(iter) == READ && !count)
- 		return 0;
-@@ -1217,6 +1204,24 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 		goto out;
- 	}
- 
-+	/*
-+	 * Avoid references to bdev if not absolutely needed to give
-+	 * the early prefetch in the caller enough time.
-+	 */
++	if (iov_iter_rw(iter) == READ && offset >= i_size_read(inode))
++		return 1;
 +
-+	if (align & blocksize_mask) {
-+		if (bdev)
-+			blkbits = blksize_bits(bdev_logical_block_size(bdev));
-+		blocksize_mask = (1 << blkbits) - 1;
-+		if (align & blocksize_mask) {
-+			if (iov_iter_rw(iter) == READ && dio->flags & DIO_LOCKING)
-+				inode_unlock(inode);
-+			kmem_cache_free(dio_cache, dio);
-+			retval = -EINVAL;
-+			goto out;
-+		}
-+	}
-+
- 	/*
- 	 * For file extending writes updating i_size before data writeouts
- 	 * complete can expose uninitialized blocks in dumb filesystems.
+ 	if (align & blocksize_mask) {
+ 		if (bdev)
+ 			blkbits = blksize_bits(bdev_logical_block_size(bdev));
 -- 
 2.28.0
 
