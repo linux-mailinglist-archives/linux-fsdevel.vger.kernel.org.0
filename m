@@ -2,36 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91E2324A750
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 21:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AD9224A752
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 21:59:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbgHST7m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Aug 2020 15:59:42 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:39324 "EHLO
+        id S1726862AbgHST7o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Aug 2020 15:59:44 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:39336 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726435AbgHST7m (ORCPT
+        with ESMTP id S1726435AbgHST7n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Aug 2020 15:59:42 -0400
+        Wed, 19 Aug 2020 15:59:43 -0400
 Received: from localhost.localdomain (c-73-172-233-15.hsd1.md.comcast.net [73.172.233.15])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C5D8620B4908;
-        Wed, 19 Aug 2020 12:59:40 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C5D8620B4908
+        by linux.microsoft.com (Postfix) with ESMTPSA id E09A320B490A;
+        Wed, 19 Aug 2020 12:59:41 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E09A320B490A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1597867181;
-        bh=J2L+Z0jTl2KqUCnQVGdnqWFslScIDnVerECXRgcn3+o=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ek8H9M4ataWyd0ga7FdtVy/XTjX452X0XsRq3rL3HewlsL3klIOr77U3JAZtLcp17
-         z5ixAqnyDdipUZukOW4jcfYivYjRoGW1mFyEi4IFaUVtfw5jBMvtqkKg/NNjdC1/hk
-         QjpdGFxRU4F8l1EavXEdPOo6akaSb8fhGV6bG4FQ=
+        s=default; t=1597867182;
+        bh=JLjW6kqfNC4bfwuCqsUVtHYApk01Zz9a6JXX3jmYcTw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=olNQ889oPc+v1FSPKXs9A83XFwdlaPJfYI2+rt+cQSeYYzciu59/m/K/6Q+xl57GS
+         pHVazd1arwqgOEa3X/sxoezAnZX220R42ai2mtjtmaDXAEyXGUlkEN676v8iy4zYsN
+         IputGk9lLpFP9GxbWe3aA4cIHIx96DtDO4oErN70=
 From:   Daniel Burgener <dburgener@linux.microsoft.com>
 To:     selinux@vger.kernel.org
 Cc:     stephen.smalley.work@gmail.com, omosnace@redhat.com,
         paul@paul-moore.com, linux-fsdevel@vger.kernel.org,
         viro@zeniv.linux.org.uk
-Subject: [PATCH v3 0/4] Update SELinuxfs out of tree and then swapover
-Date:   Wed, 19 Aug 2020 15:59:31 -0400
-Message-Id: <20200819195935.1720168-1-dburgener@linux.microsoft.com>
+Subject: [PATCH v3 1/4] selinux: Create function for selinuxfs directory cleanup
+Date:   Wed, 19 Aug 2020 15:59:32 -0400
+Message-Id: <20200819195935.1720168-2-dburgener@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.4
+In-Reply-To: <20200819195935.1720168-1-dburgener@linux.microsoft.com>
+References: <20200819195935.1720168-1-dburgener@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -39,59 +41,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-v2: Clean up commit messages to accurately reflect current scope of
-changes
-v3: Remove all policy_capabilities directory manipulation.  Switch from
-vfs_rename() to d_exchange() for directory exchanging.  Use appropriate
-comment style.  Reuse inodes for temporary directories.
+Separating the cleanup from the creation will simplify two things in
+future patches in this series.  First, the creation can be made generic,
+to create directories not tied to the selinux_fs_info structure.  Second,
+we will ultimately want to reorder creation and deletion so that the
+deletions aren't performed until the new directory structures have already
+been moved into place.
 
-In the current implementation, on policy load /sys/fs/selinux is updated
-by deleting the previous contents of
-/sys/fs/selinux/{class,booleans} and then recreating them.  This means
-that there is a period of time when the contents of these directories do
-not exist which can cause race conditions as userspace relies on them for
-information about the policy.  In addition, it means that error recovery
-in the event of failure is challenging.
+Signed-off-by: Daniel Burgener <dburgener@linux.microsoft.com>
+---
+ security/selinux/selinuxfs.c | 39 +++++++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 14 deletions(-)
 
-This patch series follows the design outlined by Al Viro in a previous
-e-mail to the list[1].  This approach is to first create the new
-directory structures out of tree, then to perform the swapover, and
-finally to delete the old directories.  Not handled in this series is
-error recovery in the event of failure.
-
-Error recovery in the selinuxfs recreation is unhandled in the current
-code, so this series will not cause any regression in this regard.
-Handling directory recreation in this manner is a prerequisite to make
-proper error handling possible.
-
-In order to demonstrate the race condition that this series fixes, you
-can use the following commands:
-
-while true; do cat /sys/fs/selinux/class/service/perms/status
->/dev/null; done &
-while true; do load_policy; done;
-
-In the existing code, this will display errors fairly often as the class
-lookup fails.  (In normal operation from systemd, this would result in a
-permission check which would be allowed or denied based on policy settings
-around unknown object classes.) After applying this patch series you
-should expect to no longer see such error messages.
-
-This series is relative to https://patchwork.kernel.org/patch/11705743/,
-Stephen Smalley's series to split policy loading into a prep and commit.
-
-[1] https://lore.kernel.org/selinux/20181002155810.GP32577@ZenIV.linux.org.uk/
-
-Daniel Burgener (4):
-  selinux: Create function for selinuxfs directory cleanup
-  selinux: Refactor selinuxfs directory populating functions
-  selinux: Standardize string literal usage for selinuxfs directory
-    names
-  selinux: Create new booleans and class dirs out of tree
-
- security/selinux/selinuxfs.c | 190 +++++++++++++++++++++++++++--------
- 1 file changed, 148 insertions(+), 42 deletions(-)
-
+diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+index 131816878e50..19670e9bcd72 100644
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -355,6 +355,9 @@ static int sel_make_classes(struct selinux_fs_info *fsi,
+ static struct dentry *sel_make_dir(struct dentry *dir, const char *name,
+ 			unsigned long *ino);
+ 
++/* declaration for sel_remove_old_policy_nodes */
++static void sel_remove_entries(struct dentry *de);
++
+ static ssize_t sel_read_mls(struct file *filp, char __user *buf,
+ 				size_t count, loff_t *ppos)
+ {
+@@ -509,11 +512,33 @@ static const struct file_operations sel_policy_ops = {
+ 	.llseek		= generic_file_llseek,
+ };
+ 
++static void sel_remove_old_policy_nodes(struct selinux_fs_info *fsi)
++{
++	u32 i;
++
++	/* bool_dir cleanup */
++	for (i = 0; i < fsi->bool_num; i++)
++		kfree(fsi->bool_pending_names[i]);
++	kfree(fsi->bool_pending_names);
++	kfree(fsi->bool_pending_values);
++	fsi->bool_num = 0;
++	fsi->bool_pending_names = NULL;
++	fsi->bool_pending_values = NULL;
++
++	sel_remove_entries(fsi->bool_dir);
++
++	/* class_dir cleanup */
++	sel_remove_entries(fsi->class_dir);
++
++}
++
+ static int sel_make_policy_nodes(struct selinux_fs_info *fsi,
+ 				struct selinux_policy *newpolicy)
+ {
+ 	int ret;
+ 
++	sel_remove_old_policy_nodes(fsi);
++
+ 	ret = sel_make_bools(fsi, newpolicy);
+ 	if (ret) {
+ 		pr_err("SELinux: failed to load policy booleans\n");
+@@ -1348,17 +1373,6 @@ static int sel_make_bools(struct selinux_fs_info *fsi,
+ 	int *values = NULL;
+ 	u32 sid;
+ 
+-	/* remove any existing files */
+-	for (i = 0; i < fsi->bool_num; i++)
+-		kfree(fsi->bool_pending_names[i]);
+-	kfree(fsi->bool_pending_names);
+-	kfree(fsi->bool_pending_values);
+-	fsi->bool_num = 0;
+-	fsi->bool_pending_names = NULL;
+-	fsi->bool_pending_values = NULL;
+-
+-	sel_remove_entries(dir);
+-
+ 	ret = -ENOMEM;
+ 	page = (char *)get_zeroed_page(GFP_KERNEL);
+ 	if (!page)
+@@ -1873,9 +1887,6 @@ static int sel_make_classes(struct selinux_fs_info *fsi,
+ 	int rc, nclasses, i;
+ 	char **classes;
+ 
+-	/* delete any existing entries */
+-	sel_remove_entries(fsi->class_dir);
+-
+ 	rc = security_get_classes(newpolicy, &classes, &nclasses);
+ 	if (rc)
+ 		return rc;
 -- 
 2.25.4
 
