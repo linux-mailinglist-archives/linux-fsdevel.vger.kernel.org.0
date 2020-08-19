@@ -2,103 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6888E249E65
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 14:44:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDCA7249ED1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 14:58:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbgHSMoH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Aug 2020 08:44:07 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:60925 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728282AbgHSMnD (ORCPT
+        id S1728573AbgHSM5q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Aug 2020 08:57:46 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:23696 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728525AbgHSM4r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Aug 2020 08:43:03 -0400
-Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 07JCguC9051644;
-        Wed, 19 Aug 2020 21:42:56 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav108.sakura.ne.jp);
- Wed, 19 Aug 2020 21:42:56 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav108.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 07JCgs0A051574
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 19 Aug 2020 21:42:56 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: [PATCH v2 (resend)] fput: Allow calling __fput_sync() from
- !PF_KTHREAD thread.
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org
-References: <20200708142409.8965-1-penguin-kernel@I-love.SAKURA.ne.jp>
- <1596027885-4730-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <2eaf00e5-df91-a0be-8d00-801fb1823f7b@i-love.sakura.ne.jp>
-Date:   Wed, 19 Aug 2020 21:42:54 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Wed, 19 Aug 2020 08:56:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1597841785;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NikvSouUV0hUDKCqhWTIlZU+t6Vx2BaHoXzoDwd88Bw=;
+        b=PusQ538LvdaZdMP5eVcJp93zXbCRNM25POG57TFwoJm4H65tCId+N10kNToYBv8EhL1ppN
+        pVfYWUKI2t+sl6ExvGgsG22YncAxbD1oNIPi+pQQi9zJjQyYzT/3bJzLrF7oahYYWOZbj+
+        j0gjUnC4lKlpXcu2QODOi6EkVrTQYUU=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-364-aiUJpIPhNh2tZ0RwLhPlmw-1; Wed, 19 Aug 2020 08:56:21 -0400
+X-MC-Unique: aiUJpIPhNh2tZ0RwLhPlmw-1
+Received: by mail-pf1-f199.google.com with SMTP id 19so15074362pfu.20
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Aug 2020 05:56:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NikvSouUV0hUDKCqhWTIlZU+t6Vx2BaHoXzoDwd88Bw=;
+        b=ui7WStWVeoqJp6jmXJoyFf6UJ/A3oJzb7vdaS2uGmbf87DpmExqh2nqRtcFi1ZP5Gt
+         +Ry2G/7rT7hH24P2HVHJ7hQPGjqH9GASOhPGmTiGrVFcWyNpy6+1AgL90ZTmn9U62mD8
+         g4qxMmtd5pF0NlsQJocsUvHJb72vlUIVtVu0HfAH5tWwyoCeBVjj3pQj4SrIfsqWbIGG
+         JEtzDKaNcMexF+ZVCBp9uCAF7j4ajBN/5ioJfgiD+1n2hu42nZ7FdZJykeYpch3wI2G0
+         3kSOFsocq5bRU0cj4OGPLL3hYDUGHgqnIm03mLGO2sWLEJL5FfVO67IMAA2eOnJ3/OU0
+         Rurg==
+X-Gm-Message-State: AOAM533vXfc5odKK1PoWyAny88uRzXvajoB1+lzkEaRrJYC15apgEbAQ
+        XGhveg5zss11GSFA5+vYy5N/LWMiUT8DlSNFsP+aBzsrYkgeJcG9nyoytfQop65DEGxwSkPYl4X
+        mHad2uLB9vdNC6jXtgdiM6X5s8A==
+X-Received: by 2002:a62:d10a:: with SMTP id z10mr19729317pfg.7.1597841780727;
+        Wed, 19 Aug 2020 05:56:20 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxKMvJu2W6zuenKGKGyYePa2IlXshPfXmDEyEQ0xqmP3T9rQWDHYkR2+7L1tPr4a/TCVvO07g==
+X-Received: by 2002:a62:d10a:: with SMTP id z10mr19729289pfg.7.1597841780387;
+        Wed, 19 Aug 2020 05:56:20 -0700 (PDT)
+Received: from xiangao.remote.csb ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id a7sm29385606pfd.194.2020.08.19.05.56.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Aug 2020 05:56:19 -0700 (PDT)
+Date:   Wed, 19 Aug 2020 20:56:08 +0800
+From:   Gao Xiang <hsiangkao@redhat.com>
+To:     Yu Kuai <yukuai3@huawei.com>
+Cc:     hch@infradead.org, darrick.wong@oracle.com, willy@infradead.org,
+        david@fromorbit.com, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com
+Subject: Re: [RFC PATCH V3] iomap: add support to track dirty state of sub
+ pages
+Message-ID: <20200819125608.GA24051@xiangao.remote.csb>
+References: <20200819120542.3780727-1-yukuai3@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <1596027885-4730-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200819120542.3780727-1-yukuai3@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-__fput_sync() was introduced by commit 4a9d4b024a3102fc ("switch fput to
-task_work_add") with BUG_ON(!(current->flags & PF_KTHREAD)) check, and
-the only user of __fput_sync() was introduced by commit 17c0a5aaffa63da6
-("make acct_kill() wait for file closing."). However, the latter commit is
-effectively calling __fput_sync() from !PF_KTHREAD thread because of
-schedule_work() call followed by immediate wait_for_completion() call.
-That is, there is no need to defer close_work() to a WQ context. I guess
-that the reason to defer was nothing but to bypass this BUG_ON() check.
-While we need to remain careful about calling __fput_sync(), we can remove
-bypassable BUG_ON() check from __fput_sync().
+On Wed, Aug 19, 2020 at 08:05:42PM +0800, Yu Kuai wrote:
 
-If this change is accepted, racy fput()+flush_delayed_fput() introduced
-by commit e2dc9bf3f5275ca3 ("umd: Transform fork_usermode_blob into
-fork_usermode_driver") will be replaced by this raceless __fput_sync().
+...
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- fs/file_table.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+> +static void
+> +iomap_iop_set_range_dirty(struct page *page, unsigned int off,
+> +		unsigned int len)
+> +{
+> +	struct iomap_page *iop = to_iomap_page(page);
+> +	struct inode *inode = page->mapping->host;
+> +	unsigned int first = DIRTY_BITS(off >> inode->i_blkbits);
+> +	unsigned int last = DIRTY_BITS((off + len - 1) >> inode->i_blkbits);
+> +	unsigned long flags;
+> +	unsigned int i;
+> +
+> +	spin_lock_irqsave(&iop->state_lock, flags);
+> +	for (i = first; i <= last; i++)
+> +		set_bit(i, iop->state);
+> +
+> +	if (last >= first)
+> +		iomap_set_page_dirty(page);
 
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 656647f..7c41251 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -359,20 +359,15 @@ void fput(struct file *file)
+set_page_dirty() in the atomic context?
+
+> +
+> +	spin_unlock_irqrestore(&iop->state_lock, flags);
+> +}
+> +
+> +static void
+> +iomap_set_range_dirty(struct page *page, unsigned int off,
+> +		unsigned int len)
+> +{
+> +	if (PageError(page))
+> +		return;
+> +
+> +	if (page_has_private(page))
+> +		iomap_iop_set_range_dirty(page, off, len);
+
+
+I vaguely remembered iomap doesn't always set up PagePrivate.
+
+
+@@ -705,7 +770,7 @@ __iomap_write_end(struct inode *inode, loff_t pos, unsigned len,
+ 	if (unlikely(copied < len && !PageUptodate(page)))
+ 		return 0;
+ 	iomap_set_range_uptodate(page, offset_in_page(pos), len);
+-	iomap_set_page_dirty(page);
++	iomap_set_range_dirty(page, offset_in_page(pos), len);
+ 	return copied;
  }
- 
- /*
-- * synchronous analog of fput(); for kernel threads that might be needed
-- * in some umount() (and thus can't use flush_delayed_fput() without
-- * risking deadlocks), need to wait for completion of __fput() and know
-- * for this specific struct file it won't involve anything that would
-- * need them.  Use only if you really need it - at the very least,
-- * don't blindly convert fput() by kernel thread to that.
-+ * synchronous analog of fput(); for threads that need to wait for completion
-+ * of __fput() and know for this specific struct file it won't involve anything
-+ * that would need them.  Use only if you really need it - at the very least,
-+ * don't blindly convert fput() to __fput_sync().
-  */
- void __fput_sync(struct file *file)
- {
--	if (atomic_long_dec_and_test(&file->f_count)) {
--		struct task_struct *task = current;
--		BUG_ON(!(task->flags & PF_KTHREAD));
-+	if (atomic_long_dec_and_test(&file->f_count))
- 		__fput(file);
--	}
- }
- 
- EXPORT_SYMBOL(fput);
--- 
-1.8.3.1
+
+so here could be suspectable, but I might be wrong here since
+I just take a quick look.
+
+Thanks,
+Gao Xiang
 
