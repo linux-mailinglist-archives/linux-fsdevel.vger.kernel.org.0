@@ -2,134 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F0AF324A6A1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 21:15:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71F8D24A74E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 21:58:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbgHSTPI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Aug 2020 15:15:08 -0400
-Received: from raptor.unsafe.ru ([5.9.43.93]:48548 "EHLO raptor.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbgHSTPE (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Aug 2020 15:15:04 -0400
-Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by raptor.unsafe.ru (Postfix) with ESMTPSA id 7461320A04;
-        Wed, 19 Aug 2020 19:15:01 +0000 (UTC)
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
+        id S1726852AbgHST6T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Aug 2020 15:58:19 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:39150 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbgHST6S (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Aug 2020 15:58:18 -0400
+Received: from localhost.localdomain (c-73-172-233-15.hsd1.md.comcast.net [73.172.233.15])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 9B8B420B4908;
+        Wed, 19 Aug 2020 12:58:17 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 9B8B420B4908
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1597867098;
+        bh=d2hYGlkdC8eRyfscyaduIWPc+nYyjgVi08Toa2/GEu8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ny8hW2/9yr0/iNlqZgmyqllUzwWs6QFzAI9BQMzHJULptl5+eKMXYt484lCzgf+zj
+         agrqsbWGLCd8Ta9TwkenWu0Ivcxrl3tBCeBOEMa7snWcZQe588FArd8+sQDxqEcWQA
+         ZuD5yfy3cD0fma0E37kc1Q326/17/acAJqVASKso=
+Subject: Re: [PATCH v2 4/4] selinux: Create new booleans and class dirs out of
+ tree
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     SElinux list <selinux@vger.kernel.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>
-Cc:     Alexey Gladkov <legion@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v2 2/2] Show /proc/self/net only for CAP_NET_ADMIN
-Date:   Wed, 19 Aug 2020 21:14:50 +0200
-Message-Id: <20200819191450.2550994-3-gladkov.alexey@gmail.com>
-X-Mailer: git-send-email 2.25.4
-In-Reply-To: <20200819191450.2550994-1-gladkov.alexey@gmail.com>
-References: <20200819191450.2550994-1-gladkov.alexey@gmail.com>
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <20200812191525.1120850-1-dburgener@linux.microsoft.com>
+ <20200812191525.1120850-5-dburgener@linux.microsoft.com>
+ <8540e665-1722-35f9-ec39-f4038e1f90ca@gmail.com>
+ <bd7031f8-e4c5-a013-3a00-c89d603be152@linux.microsoft.com>
+ <CAEjxPJ7pT5NSkVc8gnVoGj=JT-PkrQcGDmPARBU6cs7W+u05TA@mail.gmail.com>
+From:   Daniel Burgener <dburgener@linux.microsoft.com>
+Message-ID: <ab8a3403-75c1-a952-75be-dfe023f23bd2@linux.microsoft.com>
+Date:   Wed, 19 Aug 2020 15:58:16 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
+In-Reply-To: <CAEjxPJ7pT5NSkVc8gnVoGj=JT-PkrQcGDmPARBU6cs7W+u05TA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Wed, 19 Aug 2020 19:15:01 +0000 (UTC)
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Cache the mounters credentials and make access to the net directories
-contingent of the permissions of the mounter of proc.
+On 8/18/20 9:55 AM, Stephen Smalley wrote:
+> On Tue, Aug 18, 2020 at 9:49 AM Daniel Burgener
+> <dburgener@linux.microsoft.com> wrote:
+>> On 8/13/20 12:25 PM, Stephen Smalley wrote:
+>>> On 8/12/20 3:15 PM, Daniel Burgener wrote:
+>>>
+>>>> In order to avoid concurrency issues around selinuxfs resource
+>>>> availability
+>>>> during policy load, we first create new directories out of tree for
+>>>> reloaded resources, then swap them in, and finally delete the old
+>>>> versions.
+>>>>
+>>>> This fix focuses on concurrency in each of the three subtrees
+>>>> swapped, and
+>>>> not concurrency across the three trees.  This means that it is still
+>>>> possible
+>>>> that subsequent reads to eg the booleans directory and the class
+>>>> directory
+>>>> during a policy load could see the old state for one and the new for
+>>>> the other.
+>>>> The problem of ensuring that policy loads are fully atomic from the
+>>>> perspective
+>>>> of userspace is larger than what is dealt with here.  This commit
+>>>> focuses on
+>>>> ensuring that the directories contents always match either the new or
+>>>> the old
+>>>> policy state from the perspective of userspace.
+>>>>
+>>>> In the previous implementation, on policy load /sys/fs/selinux is
+>>>> updated
+>>>> by deleting the previous contents of
+>>>> /sys/fs/selinux/{class,booleans} and then recreating them.  This means
+>>>> that there is a period of time when the contents of these directories
+>>>> do not
+>>>> exist which can cause race conditions as userspace relies on them for
+>>>> information about the policy.  In addition, it means that error
+>>>> recovery in
+>>>> the event of failure is challenging.
+>>>>
+>>>> In order to demonstrate the race condition that this series fixes, you
+>>>> can use the following commands:
+>>>>
+>>>> while true; do cat /sys/fs/selinux/class/service/perms/status
+>>>>> /dev/null; done &
+>>>> while true; do load_policy; done;
+>>>>
+>>>> In the existing code, this will display errors fairly often as the class
+>>>> lookup fails.  (In normal operation from systemd, this would result in a
+>>>> permission check which would be allowed or denied based on policy
+>>>> settings
+>>>> around unknown object classes.) After applying this patch series you
+>>>> should expect to no longer see such error messages.
+>>>>
+>>>> Signed-off-by: Daniel Burgener <dburgener@linux.microsoft.com>
+>>>> ---
+>>>>    security/selinux/selinuxfs.c | 145 +++++++++++++++++++++++++++++------
+>>>>    1 file changed, 120 insertions(+), 25 deletions(-)
+>>>>
+>>>> diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+>>>> index f09afdb90ddd..d3a19170210a 100644
+>>>> --- a/security/selinux/selinuxfs.c
+>>>> +++ b/security/selinux/selinuxfs.c
+>>>> +    tmp_policycap_dir = sel_make_dir(tmp_parent, POLICYCAP_DIR_NAME,
+>>>> &fsi->last_ino);
+>>>> +    if (IS_ERR(tmp_policycap_dir)) {
+>>>> +        ret = PTR_ERR(tmp_policycap_dir);
+>>>> +        goto out;
+>>>> +    }
+>>> No need to re-create this one.
+>>>
+>>>> -    return 0;
+>>>> +    // booleans
+>>>> +    old_dentry = fsi->bool_dir;
+>>>> +    lock_rename(tmp_bool_dir, old_dentry);
+>>>> +    ret = vfs_rename(tmp_parent->d_inode, tmp_bool_dir,
+>>>> fsi->sb->s_root->d_inode,
+>>>> +             fsi->bool_dir, NULL, RENAME_EXCHANGE);
+>>> One issue with using vfs_rename() is that it will trigger all of the
+>>> permission checks associated with renaming, and previously this was
+>>> never required for selinuxfs and therefore might not be allowed in
+>>> some policies even to a process allowed to reload policy.  So if you
+>>> need to do this, you may want to override creds around this call to
+>>> use the init cred (which will still require allowing it to the kernel
+>>> domain but not necessarily to the process that is performing the
+>>> policy load).  The other issue is that you then have to implement a
+>>> rename inode operation and thus technically it is possible for
+>>> userspace to also attempt renames on selinuxfs to the extent allowed
+>>> by policy.  I see that debugfs has a debugfs_rename() that internally
+>>> uses simple_rename() but I guess that doesn't cover the
+>>> RENAME_EXCHANGE case.
+>> Those are good points.  Do you see any problems with just calling
+>> d_exchange() directly?  It seems to work fine in very limited initial
+>> testing on my end. That should hopefully address all the problems you
+>> mentioned here.
+> I was hoping the vfs folks would chime in but you may have to pose a
+> more direct question to viro and linux-fsdevel to get a response.
+> Possibly there should be a lower-level vfs helper that could be used
+> internally by vfs_rename() and by things like debugfs_rename and a
+> potential selinuxfs_rename.
 
-Show /proc/self/net only if mounter has CAP_NET_ADMIN and if proc is
-mounted with subset=pid option.
+I'll send a v3 with this switched to d_exchange() and the other issues 
+you mentioned fixed first.  That way they can at least look at the 
+latest version of things to help focus any conversation and save people 
+time.
 
-Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
----
- fs/proc/proc_net.c      | 8 ++++++++
- fs/proc/root.c          | 7 +++++++
- include/linux/proc_fs.h | 1 +
- 3 files changed, 16 insertions(+)
-
-diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
-index dba63b2429f0..c43fc5c907db 100644
---- a/fs/proc/proc_net.c
-+++ b/fs/proc/proc_net.c
-@@ -26,6 +26,7 @@
- #include <linux/uidgid.h>
- #include <net/net_namespace.h>
- #include <linux/seq_file.h>
-+#include <linux/security.h>
- 
- #include "internal.h"
- 
-@@ -275,6 +276,7 @@ static struct net *get_proc_task_net(struct inode *dir)
- 	struct task_struct *task;
- 	struct nsproxy *ns;
- 	struct net *net = NULL;
-+	struct proc_fs_info *fs_info = proc_sb_info(dir->i_sb);
- 
- 	rcu_read_lock();
- 	task = pid_task(proc_pid(dir), PIDTYPE_PID);
-@@ -287,6 +289,12 @@ static struct net *get_proc_task_net(struct inode *dir)
- 	}
- 	rcu_read_unlock();
- 
-+	if (net && (fs_info->pidonly == PROC_PIDONLY_ON) &&
-+	    security_capable(fs_info->mounter_cred, net->user_ns, CAP_NET_ADMIN, CAP_OPT_NONE) < 0) {
-+		put_net(net);
-+		net = NULL;
-+	}
-+
- 	return net;
- }
- 
-diff --git a/fs/proc/root.c b/fs/proc/root.c
-index c6bf74de1906..eeeda375cf85 100644
---- a/fs/proc/root.c
-+++ b/fs/proc/root.c
-@@ -184,6 +184,8 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
- 	s->s_fs_info = fs_info;
- 
- 	fs_info->pid_ns = get_pid_ns(ctx->pid_ns);
-+	fs_info->mounter_cred = get_cred(fc->cred);
-+
- 	proc_apply_options(s, fc, current_user_ns());
- 
- 	/*
-@@ -219,9 +221,13 @@ static int proc_fill_super(struct super_block *s, struct fs_context *fc)
- static int proc_reconfigure(struct fs_context *fc)
- {
- 	struct super_block *sb = fc->root->d_sb;
-+	struct proc_fs_info *fs_info = proc_sb_info(sb);
- 
- 	sync_filesystem(sb);
- 
-+	put_cred(fs_info->mounter_cred);
-+	fs_info->mounter_cred = get_cred(fc->cred);
-+
- 	proc_apply_options(sb, fc, current_user_ns());
- 	return 0;
- }
-@@ -276,6 +282,7 @@ static void proc_kill_sb(struct super_block *sb)
- 
- 	kill_anon_super(sb);
- 	put_pid_ns(fs_info->pid_ns);
-+	put_cred(fs_info->mounter_cred);
- 	kfree(fs_info);
- }
- 
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index d1eed1b43651..671c6dafc4ee 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -63,6 +63,7 @@ struct proc_fs_info {
- 	kgid_t pid_gid;
- 	enum proc_hidepid hide_pid;
- 	enum proc_pidonly pidonly;
-+	struct cred *mounter_cred;
- };
- 
- static inline struct proc_fs_info *proc_sb_info(struct super_block *sb)
--- 
-2.25.4
+-Daniel
 
