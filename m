@@ -2,350 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 43758249AFA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 12:50:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E387249B4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 13:00:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbgHSKt0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Aug 2020 06:49:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:36565 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728071AbgHSKtX (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Aug 2020 06:49:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597834161;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-        bh=fnMpmNkiQKFSMD4o4Zix40+pSX62ZQNzQSZ6IbxQ3p8=;
-        b=PncHqiQCk1zVCG6GHDOjFrKjv3SKWRWZ90CpSGBuQKsvUzPPaqdgktZBOnkQod/mbcZRMS
-        zpIfEwRksaWyLtGNEcufKymn4qa6Q4kFQQkfdtzpyPhDPtzVh/ohptRTtLULB1LFi40EGq
-        Jrho0bjT5nlQ2ohJWvPV45N/+m/SU8c=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-482-0zOlRlG-MXyHJMcMdVzMpQ-1; Wed, 19 Aug 2020 06:49:17 -0400
-X-MC-Unique: 0zOlRlG-MXyHJMcMdVzMpQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 042BF81F02C;
-        Wed, 19 Aug 2020 10:49:13 +0000 (UTC)
-Received: from [10.36.114.11] (ovpn-114-11.ams2.redhat.com [10.36.114.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AED557AEC0;
-        Wed, 19 Aug 2020 10:49:06 +0000 (UTC)
-Subject: Re: [PATCH v4 6/6] mm: secretmem: add ability to reserve memory at
- boot
-To:     Mike Rapoport <rppt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-riscv@lists.infradead.org, x86@kernel.org
-References: <20200818141554.13945-1-rppt@kernel.org>
- <20200818141554.13945-7-rppt@kernel.org>
-From:   David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat GmbH
-Message-ID: <03ec586d-c00c-c57e-3118-7186acb7b823@redhat.com>
-Date:   Wed, 19 Aug 2020 12:49:05 +0200
+        id S1727102AbgHSK74 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Aug 2020 06:59:56 -0400
+Received: from mout.gmx.net ([212.227.17.21]:56299 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726752AbgHSK7x (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Aug 2020 06:59:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1597834792;
+        bh=SrqxU0xbsavoq0YcefrpDo4RCPiBfZRQw4lftp6v4FY=;
+        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
+        b=Z/VPW/KcrWDqvHjehbNx3p0fZGbfbbEBFcS5//DzgpTBpQWrXyu+KZk1Cq1Ok6SVm
+         ApAV4kphc+yjEPcOJxWGE1NExN5G0u7eIQe0SMvoJxsraApxD/vllmZBy4m5A0corZ
+         FR/CaGdRRhjuDQdJZSHDevYIdpec72WVUJIZvAF8=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.com (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MC34X-1jw14k1EjN-00CUCp; Wed, 19
+ Aug 2020 12:59:51 +0200
+To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Cc:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+Subject: Is there anyway to ensure iov iter won't break a page copy?
+Autocrypt: addr=quwenruo.btrfs@gmx.com; prefer-encrypt=mutual; keydata=
+ mQENBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAG0IlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT6JAU4EEwEIADgCGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCXZw1oQAKCRDC
+ PZHzoSX+qCY6CACd+mWu3okGwRKXju6bou+7VkqCaHTdyXwWFTsr+/0ly5nUdDtT3yEVggPJ
+ 3VP70wjlrxUjNjFb6iIvGYxiPOrop1NGwGYvQktgRhaIhALG6rPoSSAhGNjwGVRw0km0PlIN
+ D29BTj/lYEk+jVM1YL0QLgAE1AI3krihg/lp/fQT53wLhR8YZIF8ETXbClQG1vJ0cllPuEEv
+ efKxRyiTSjB+PsozSvYWhXsPeJ+KKjFen7ebE5reQTPFzSHctCdPnoR/4jSPlnTlnEvLeqcD
+ ZTuKfQe1gWrPeevQzgCtgBF/WjIOeJs41klnYzC3DymuQlmFubss0jShLOW8eSOOWhLRuQEN
+ BFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcgaCbPEwhLj
+ 1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj/IrRUUka
+ 68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fNGSsRb+pK
+ EKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0q1eW4Jrv
+ 0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEvABEBAAGJ
+ ATwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCXZw1rgUJCWpOfwAKCRDCPZHz
+ oSX+qFcEB/95cs8cM1OQdE/GgOfCGxwgckMeWyzOR7bkAWW0lDVp2hpgJuxBW/gyfmtBnUai
+ fnggx3EE3ev8HTysZU9q0h+TJwwJKGv6sUc8qcTGFDtavnnl+r6xDUY7A6GvXEsSoCEEynby
+ 72byGeSovfq/4AWGNPBG1L61Exl+gbqfvbECP3ziXnob009+z9I4qXodHSYINfAkZkA523JG
+ ap12LndJeLk3gfWNZfXEWyGnuciRGbqESkhIRav8ootsCIops/SqXm0/k+Kcl4gGUO/iD/T5
+ oagaDh0QtOd8RWSMwLxwn8uIhpH84Q4X1LadJ5NCgGa6xPP5qqRuiC+9gZqbq4Nj
+Message-ID: <5a2d6a48-9407-7c81-f12a-9e66abdf927f@gmx.com>
+Date:   Wed, 19 Aug 2020 18:59:48 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <20200818141554.13945-7-rppt@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="YS3LfMq7Obc17Cgw34F1pmMF3e0U1OOEF"
+X-Provags-ID: V03:K1:Wo0KMuPMJ4G11sGCSnRPfQykVw55DQiYJ31DztLx7B5n0rn/K9n
+ Yhmc9otx+tP5OL+RlhwpxoR4mbQmT7wD8t9j+DLmIHdNiJV4vceMqeN61KjGJBADaglnsRC
+ 62AGkpyFQM26Vev4hLS+GpLEXczsCQC6OlBfe0B0qotq/k0O+/8TuCGdsv9YBGwOS1NnWmY
+ ySqYztBnsonnX8e+8x1Mw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:1bOYJQBHhpg=:tm7svYcAMaFupeBhwSiS0Y
+ feWMK9pXKtcxfvSNJrrgXufyjHuZEKmf/2/bj6GguSJSYt2gGU52IbHQwoZ0jGJnZM6BkFPqT
+ 3RAyA4otb2oALEh3u9+dObo4hBD+0R0JjozoYTYmuMQgTYD2WRiv485JtDbaJHlJ+tzgBVz+c
+ NyUFmLO2lfiK6rd8i2oXlIs+xQvPt3I2AlydP5nw3Gi8EyhWQV5RIiXdn4scN5dD1xxQoaaup
+ WFjamAy4+RCn8TeDMEP6socW/pfnq9rO+W5JoCHV+MzlL2bnV2BBSiDjKMDA8r8Z9EnHGGNc/
+ YeD2mNLib5gam8AU6DErncGmVV1pvwJi6QuwEBxz40jmtYjtsTacm6JH50sriHupSX3qHdVQS
+ Hd95AQtaKx+9dv/y7L1FRq5Y/MThWtJ8rMPZYCl55sDq2ciYFrK/Zf2RlaJ2mjvJ/CW1HWA24
+ q6fIbvICl5S9PWr+4QrOWf0sRs7xUEx9ZzVOFtdUY/Jq+0ZYio5CPuuS52UusKAl1XNLhGMaO
+ kJ/5HWmMJTMDxbqiOwiYz8rLjmbEmjrRM0ABQzUOkd+XSMhc9Vj06sPLnTi5I2VBh/z16+p0T
+ y6s7kEZB8pY9YFZXA8yNi/FM1d21ux7BvzidHcz9b/tE0udIA9HOFbeu+ZpgyTXWDQUbKIN2P
+ 6h7T3IY/osNWVZF+s4ZW6Kmf93Pj/x9Kl8kBeaLylCHDJhH61yckmOosupAHyJi8QtByTrc09
+ IdtnZbeQ7uvVkVnpYGhVFgf2L7ti2Trmff8MVtrXV6jMJnWKGUTekwTmD3Ke8/sgmNJnkM+zn
+ K17f9G4AJs42fKceoTQhEul8I5sDk1cpxPVu2u6I9oDWZIOAEt19isl7Op6fPiJYUtVej/utF
+ auhzPWAQS0Vx9B5XdeUNWrziMdFXvRYyDyDlI8uU/ESQ9xcZ+VPA3+eY/N0iA4AvP2AzQIrdw
+ PLGK/wXg1rsVTwMMb+Qzt4ymS3HNVRNgY35ixurC+4EOltIlYw9UFtX96pDqNVgRfRIhtwqUW
+ s1k0lTQxpJL1JRTe/ufeBidwAUsd209ZJiExNkSs8ZB7Krz8uBuFlrMu5HqsmHu/VNkwE6o5F
+ 8HFoTtKXgj/VDNXqbplDmKxqLOiQEJg7ZOSPL0D7TRiSwcvGQ41WjGfL76F0vbNiVy2MQ+/uJ
+ jLbkI7BvyUGUSqTZ6cq2quTqimbRXQXDuBS4KwkBA7mu+f5GfNu6Hpc7PjJaC3YpGjww3WMJm
+ 1pEmCe/cYemzq/ZcNsFRBr4OvOg4E9F8TMzZ+qw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 18.08.20 16:15, Mike Rapoport wrote:
-> From: Mike Rapoport <rppt@linux.ibm.com>
-> 
-> Taking pages out from the direct map and bringing them back may create
-> undesired fragmentation and usage of the smaller pages in the direct
-> mapping of the physical memory.
-> 
-> This can be avoided if a significantly large area of the physical memory
-> would be reserved for secretmem purposes at boot time.
-> 
-> Add ability to reserve physical memory for secretmem at boot time using
-> "secretmem" kernel parameter and then use that reserved memory as a global
-> pool for secret memory needs.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--YS3LfMq7Obc17Cgw34F1pmMF3e0U1OOEF
+Content-Type: multipart/mixed; boundary="Eq7kZzjyncPjVc5jCZKNwXX3H6yTyCHsT"
 
-Wouldn't something like CMA be the better fit? Just wondering. Then, the
-memory can actually be reused for something else while not needed.
+--Eq7kZzjyncPjVc5jCZKNwXX3H6yTyCHsT
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> ---
->  mm/secretmem.c | 134 ++++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 126 insertions(+), 8 deletions(-)
-> 
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index 333eb18fb483..54067ea62b2d 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -14,6 +14,7 @@
->  #include <linux/pagemap.h>
->  #include <linux/genalloc.h>
->  #include <linux/syscalls.h>
-> +#include <linux/memblock.h>
->  #include <linux/pseudo_fs.h>
->  #include <linux/set_memory.h>
->  #include <linux/sched/signal.h>
-> @@ -45,6 +46,39 @@ struct secretmem_ctx {
->  	unsigned int mode;
->  };
->  
-> +struct secretmem_pool {
-> +	struct gen_pool *pool;
-> +	unsigned long reserved_size;
-> +	void *reserved;
-> +};
-> +
-> +static struct secretmem_pool secretmem_pool;
-> +
-> +static struct page *secretmem_alloc_huge_page(gfp_t gfp)
-> +{
-> +	struct gen_pool *pool = secretmem_pool.pool;
-> +	unsigned long addr = 0;
-> +	struct page *page = NULL;
-> +
-> +	if (pool) {
-> +		if (gen_pool_avail(pool) < PMD_SIZE)
-> +			return NULL;
-> +
-> +		addr = gen_pool_alloc(pool, PMD_SIZE);
-> +		if (!addr)
-> +			return NULL;
-> +
-> +		page = virt_to_page(addr);
-> +	} else {
-> +		page = alloc_pages(gfp, PMD_PAGE_ORDER);
-> +
-> +		if (page)
-> +			split_page(page, PMD_PAGE_ORDER);
-> +	}
-> +
-> +	return page;
-> +}
-> +
->  static int secretmem_pool_increase(struct secretmem_ctx *ctx, gfp_t gfp)
->  {
->  	unsigned long nr_pages = (1 << PMD_PAGE_ORDER);
-> @@ -53,12 +87,11 @@ static int secretmem_pool_increase(struct secretmem_ctx *ctx, gfp_t gfp)
->  	struct page *page;
->  	int err;
->  
-> -	page = alloc_pages(gfp, PMD_PAGE_ORDER);
-> +	page = secretmem_alloc_huge_page(gfp);
->  	if (!page)
->  		return -ENOMEM;
->  
->  	addr = (unsigned long)page_address(page);
-> -	split_page(page, PMD_PAGE_ORDER);
->  
->  	err = gen_pool_add(pool, addr, PMD_SIZE, NUMA_NO_NODE);
->  	if (err) {
-> @@ -267,11 +300,13 @@ SYSCALL_DEFINE1(memfd_secret, unsigned long, flags)
->  	return err;
->  }
->  
-> -static void secretmem_cleanup_chunk(struct gen_pool *pool,
-> -				    struct gen_pool_chunk *chunk, void *data)
-> +static void secretmem_recycle_range(unsigned long start, unsigned long end)
-> +{
-> +	gen_pool_free(secretmem_pool.pool, start, PMD_SIZE);
-> +}
-> +
-> +static void secretmem_release_range(unsigned long start, unsigned long end)
->  {
-> -	unsigned long start = chunk->start_addr;
-> -	unsigned long end = chunk->end_addr;
->  	unsigned long nr_pages, addr;
->  
->  	nr_pages = (end - start + 1) / PAGE_SIZE;
-> @@ -281,6 +316,18 @@ static void secretmem_cleanup_chunk(struct gen_pool *pool,
->  		put_page(virt_to_page(addr));
->  }
->  
-> +static void secretmem_cleanup_chunk(struct gen_pool *pool,
-> +				    struct gen_pool_chunk *chunk, void *data)
-> +{
-> +	unsigned long start = chunk->start_addr;
-> +	unsigned long end = chunk->end_addr;
-> +
-> +	if (secretmem_pool.pool)
-> +		secretmem_recycle_range(start, end);
-> +	else
-> +		secretmem_release_range(start, end);
-> +}
-> +
->  static void secretmem_cleanup_pool(struct secretmem_ctx *ctx)
->  {
->  	struct gen_pool *pool = ctx->pool;
-> @@ -320,14 +367,85 @@ static struct file_system_type secretmem_fs = {
->  	.kill_sb	= kill_anon_super,
->  };
->  
-> +static int secretmem_reserved_mem_init(void)
-> +{
-> +	struct gen_pool *pool;
-> +	struct page *page;
-> +	void *addr;
-> +	int err;
-> +
-> +	if (!secretmem_pool.reserved)
-> +		return 0;
-> +
-> +	pool = gen_pool_create(PMD_SHIFT, NUMA_NO_NODE);
-> +	if (!pool)
-> +		return -ENOMEM;
-> +
-> +	err = gen_pool_add(pool, (unsigned long)secretmem_pool.reserved,
-> +			   secretmem_pool.reserved_size, NUMA_NO_NODE);
-> +	if (err)
-> +		goto err_destroy_pool;
-> +
-> +	for (addr = secretmem_pool.reserved;
-> +	     addr < secretmem_pool.reserved + secretmem_pool.reserved_size;
-> +	     addr += PAGE_SIZE) {
-> +		page = virt_to_page(addr);
-> +		__ClearPageReserved(page);
-> +		set_page_count(page, 1);
-> +	}
-> +
-> +	secretmem_pool.pool = pool;
-> +	page = virt_to_page(secretmem_pool.reserved);
-> +	__kernel_map_pages(page, secretmem_pool.reserved_size / PAGE_SIZE, 0);
-> +	return 0;
-> +
-> +err_destroy_pool:
-> +	gen_pool_destroy(pool);
-> +	return err;
-> +}
-> +
->  static int secretmem_init(void)
->  {
-> -	int ret = 0;
-> +	int ret;
-> +
-> +	ret = secretmem_reserved_mem_init();
-> +	if (ret)
-> +		return ret;
->  
->  	secretmem_mnt = kern_mount(&secretmem_fs);
-> -	if (IS_ERR(secretmem_mnt))
-> +	if (IS_ERR(secretmem_mnt)) {
-> +		gen_pool_destroy(secretmem_pool.pool);
->  		ret = PTR_ERR(secretmem_mnt);
-> +	}
->  
->  	return ret;
->  }
->  fs_initcall(secretmem_init);
-> +
-> +static int __init secretmem_setup(char *str)
-> +{
-> +	phys_addr_t align = PMD_SIZE;
-> +	unsigned long reserved_size;
-> +	void *reserved;
-> +
-> +	reserved_size = memparse(str, NULL);
-> +	if (!reserved_size)
-> +		return 0;
-> +
-> +	if (reserved_size * 2 > PUD_SIZE)
-> +		align = PUD_SIZE;
-> +
-> +	reserved = memblock_alloc(reserved_size, align);
-> +	if (!reserved) {
-> +		pr_err("failed to reserve %lu bytes\n", secretmem_pool.reserved_size);
-> +		return 0;
-> +	}
-> +
-> +	secretmem_pool.reserved_size = reserved_size;
-> +	secretmem_pool.reserved = reserved;
-> +
-> +	pr_info("reserved %luM\n", reserved_size >> 20);
-> +
-> +	return 1;
-> +}
-> +__setup("secretmem=", secretmem_setup);
-> 
+Hi,
 
+There are tons of short copy check for iov_iter_copy_from_user_atomic(),
+from the generic_performan_write() which checks the copied in the
+write_end().
 
--- 
+To iomap, which checks the copied in its iomap_write_end().
+
+But I'm wondering, all these call sites have called
+iov_iter_falut_in_read() to ensure the range we're copying from are
+accessible, and we prepared the pages by ourselves, how could a short
+copy happen?
+
+Is there any possible race that user space can invalidate some of its
+memory of the iov?
+
+If so, can we find a way to lock the iov to ensure all its content can
+be accessed without problem until the iov_iter_copy_from_user_atomic()
+finishes?
+
 Thanks,
+Qu
 
-David / dhildenb
 
+--Eq7kZzjyncPjVc5jCZKNwXX3H6yTyCHsT--
+
+--YS3LfMq7Obc17Cgw34F1pmMF3e0U1OOEF
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEELd9y5aWlW6idqkLhwj2R86El/qgFAl89BiQACgkQwj2R86El
+/qhcfQf/dLPdQdDNcgzc5E1TqOrvKcZCHmoQoN3+jP4fPxkyEPQ44KAfGdvuREdi
+ZNy6pNU+VNTXXM5uo42ThjUiazQnMoQUGFux2n95fsY4qMwu6Fl++1l1wu1SARWN
+zkPLqLvicZRReoxauvwRHRVxAOeDij1SCy+QFEobzC+Qk7gkoacc+4fQcS/bOtGp
+tIwyWkWOo6+QIZ+8ihoE2ql/oJCHg/LA6f9VvaFoMptxxxTb/b59P94JziI6OT4B
+LAEXHRwpU6CP9Aqwlm3Lkx2pggruL4R6R785CLJKbUhsxfpMy+lFiWNm4G+F+HIt
+xb3wsG9ZgiXjH5WiSwKLloWq2St9Yg==
+=UoDH
+-----END PGP SIGNATURE-----
+
+--YS3LfMq7Obc17Cgw34F1pmMF3e0U1OOEF--
