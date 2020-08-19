@@ -2,269 +2,256 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BFBCA24A930
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 00:22:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3854024A93E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 00:23:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbgHSWV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Aug 2020 18:21:57 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:24042 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727901AbgHSWVM (ORCPT
+        id S1727813AbgHSWXA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Aug 2020 18:23:00 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:24475 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727877AbgHSWVI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Aug 2020 18:21:12 -0400
+        Wed, 19 Aug 2020 18:21:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597875670;
+        s=mimecast20190719; t=1597875666;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=YNzImEKffgBBrRILbRqWkPn7W48F7RsVK64WzriJRtY=;
-        b=HHzxo9itGVP+02LblQlBP7FegrItxWyld7WZ42vIfABZlngVOLYECddTXm7uHF9yzWlGUB
-        IOfp0EZ21elCeb2cHHvAEWKszsAQKy5svgitxFLmcIyHL1wbwtot23VSYAuU15wdDhleRB
-        qOT3miU/Gx43gIPfwEZfWI0Op3SlJRY=
+        bh=Q2zRPiRf1LuVvr4XUg9MR8uGhP29GZ3Nl8VTq3KJoB8=;
+        b=TKkS4F25zl4n4QPC+UswXjkUrsLoz7eFDyQ2Rd5cKGuuTFlvzJQcRG5n1jnNidJfpyUsqe
+        JfA1oMx0n/d1iR34Fchum59nW7CsklQTlhPzvTR7m/Bk+3po2NvlCqT+MwHnd9gTpYNh7e
+        703hC6VvHhqTTH8lXJwlQ7Xz97dEAy8=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-439-G1v28SMvPaOjwJ9ww0lUIA-1; Wed, 19 Aug 2020 18:21:06 -0400
-X-MC-Unique: G1v28SMvPaOjwJ9ww0lUIA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-566-qM5crSEtOOKMfT2xiQSndw-1; Wed, 19 Aug 2020 18:21:02 -0400
+X-MC-Unique: qM5crSEtOOKMfT2xiQSndw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1C7DF1007472;
-        Wed, 19 Aug 2020 22:21:04 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AD321425D0;
+        Wed, 19 Aug 2020 22:21:01 +0000 (UTC)
 Received: from horse.redhat.com (ovpn-115-197.rdu2.redhat.com [10.10.115.197])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 66F0B756C8;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 74E567E307;
         Wed, 19 Aug 2020 22:21:01 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id F143C2256E6; Wed, 19 Aug 2020 18:20:53 -0400 (EDT)
+        id 028AF2256E7; Wed, 19 Aug 2020 18:20:54 -0400 (EDT)
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvdimm@lists.01.org, virtio-fs@redhat.com
 Cc:     vgoyal@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com, dan.j.williams@intel.com,
-        Sebastien Boeuf <sebastien.boeuf@intel.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>
-Subject: [PATCH v3 08/18] virtio_fs, dax: Set up virtio_fs dax_device
-Date:   Wed, 19 Aug 2020 18:19:46 -0400
-Message-Id: <20200819221956.845195-9-vgoyal@redhat.com>
+        dgilbert@redhat.com, dan.j.williams@intel.com
+Subject: [PATCH v3 09/18] fuse,virtiofs: Add a mount option to enable dax
+Date:   Wed, 19 Aug 2020 18:19:47 -0400
+Message-Id: <20200819221956.845195-10-vgoyal@redhat.com>
 In-Reply-To: <20200819221956.845195-1-vgoyal@redhat.com>
 References: <20200819221956.845195-1-vgoyal@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Stefan Hajnoczi <stefanha@redhat.com>
+Add a mount option to allow using dax with virtio_fs.
 
-Setup a dax device.
-
-Use the shm capability to find the cache entry and map it.
-
-The DAX window is accessed by the fs/dax.c infrastructure and must have
-struct pages (at least on x86).  Use devm_memremap_pages() to map the
-DAX window PCI BAR and allocate struct page.
-
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
-Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
 Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-Signed-off-by: Sebastien Boeuf <sebastien.boeuf@intel.com>
-Signed-off-by: Liu Bo <bo.liu@linux.alibaba.com>
 ---
- fs/fuse/virtio_fs.c            | 139 +++++++++++++++++++++++++++++++++
- include/uapi/linux/virtio_fs.h |   3 +
- 2 files changed, 142 insertions(+)
+ fs/fuse/fuse_i.h    |  7 ++++
+ fs/fuse/inode.c     |  3 ++
+ fs/fuse/virtio_fs.c | 82 +++++++++++++++++++++++++++++++++++++--------
+ 3 files changed, 78 insertions(+), 14 deletions(-)
 
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index cf5e675100ec..04fdd7c41bd1 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -486,10 +486,14 @@ struct fuse_fs_context {
+ 	bool destroy:1;
+ 	bool no_control:1;
+ 	bool no_force_umount:1;
++	bool dax:1;
+ 	unsigned int max_read;
+ 	unsigned int blksize;
+ 	const char *subtype;
+ 
++	/* DAX device, may be NULL */
++	struct dax_device *dax_dev;
++
+ 	/* fuse_dev pointer to fill in, should contain NULL on entry */
+ 	void **fudptr;
+ };
+@@ -761,6 +765,9 @@ struct fuse_conn {
+ 
+ 	/** List of device instances belonging to this connection */
+ 	struct list_head devices;
++
++	/** DAX device, non-NULL if DAX is supported */
++	struct dax_device *dax_dev;
+ };
+ 
+ static inline struct fuse_conn *get_fuse_conn_super(struct super_block *sb)
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 2ac5713c4c32..beac337ccc10 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -589,6 +589,8 @@ static int fuse_show_options(struct seq_file *m, struct dentry *root)
+ 		seq_printf(m, ",max_read=%u", fc->max_read);
+ 	if (sb->s_bdev && sb->s_blocksize != FUSE_DEFAULT_BLKSIZE)
+ 		seq_printf(m, ",blksize=%lu", sb->s_blocksize);
++	if (fc->dax_dev)
++		seq_printf(m, ",dax");
+ 	return 0;
+ }
+ 
+@@ -1207,6 +1209,7 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+ 	fc->destroy = ctx->destroy;
+ 	fc->no_control = ctx->no_control;
+ 	fc->no_force_umount = ctx->no_force_umount;
++	fc->dax_dev = ctx->dax_dev;
+ 
+ 	err = -ENOMEM;
+ 	root = fuse_get_root_inode(sb, ctx->rootmode);
 diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 47ecdc15f25d..0fd3b5cecc5f 100644
+index 0fd3b5cecc5f..741cad4abad8 100644
 --- a/fs/fuse/virtio_fs.c
 +++ b/fs/fuse/virtio_fs.c
-@@ -5,12 +5,16 @@
-  */
- 
- #include <linux/fs.h>
-+#include <linux/dax.h>
-+#include <linux/pci.h>
-+#include <linux/pfn_t.h>
- #include <linux/module.h>
- #include <linux/virtio.h>
+@@ -13,6 +13,7 @@
  #include <linux/virtio_fs.h>
  #include <linux/delay.h>
  #include <linux/fs_context.h>
++#include <linux/fs_parser.h>
  #include <linux/highmem.h>
-+#include <linux/uio.h>
+ #include <linux/uio.h>
  #include "fuse_i.h"
+@@ -81,6 +82,45 @@ struct virtio_fs_req_work {
+ static int virtio_fs_enqueue_req(struct virtio_fs_vq *fsvq,
+ 				 struct fuse_req *req, bool in_flight);
  
- /* List of virtio-fs device instances and a lock for the list. Also provides
-@@ -49,6 +53,12 @@ struct virtio_fs {
- 	struct virtio_fs_vq *vqs;
- 	unsigned int nvqs;               /* number of virtqueues */
- 	unsigned int num_request_queues; /* number of request queues */
-+	struct dax_device *dax_dev;
++enum {
++	OPT_DAX,
++};
 +
-+	/* DAX memory window where file contents are mapped */
-+	void *window_kaddr;
-+	phys_addr_t window_phys_addr;
-+	size_t window_len;
- };
- 
- struct virtio_fs_forget_req {
-@@ -686,6 +696,131 @@ static void virtio_fs_cleanup_vqs(struct virtio_device *vdev,
- 	vdev->config->del_vqs(vdev);
- }
- 
-+/* Map a window offset to a page frame number.  The window offset will have
-+ * been produced by .iomap_begin(), which maps a file offset to a window
-+ * offset.
-+ */
-+static long virtio_fs_direct_access(struct dax_device *dax_dev, pgoff_t pgoff,
-+				    long nr_pages, void **kaddr, pfn_t *pfn)
++static const struct fs_parameter_spec virtio_fs_parameters[] = {
++	fsparam_flag	("dax",		OPT_DAX),
++	{}
++};
++
++static int virtio_fs_parse_param(struct fs_context *fc,
++				 struct fs_parameter *param)
 +{
-+	struct virtio_fs *fs = dax_get_private(dax_dev);
-+	phys_addr_t offset = PFN_PHYS(pgoff);
-+	size_t max_nr_pages = fs->window_len/PAGE_SIZE - pgoff;
++	struct fs_parse_result result;
++	struct fuse_fs_context *ctx = fc->fs_private;
++	int opt;
 +
-+	if (kaddr)
-+		*kaddr = fs->window_kaddr + offset;
-+	if (pfn)
-+		*pfn = phys_to_pfn_t(fs->window_phys_addr + offset,
-+					PFN_DEV | PFN_MAP);
-+	return nr_pages > max_nr_pages ? max_nr_pages : nr_pages;
-+}
++	opt = fs_parse(fc, virtio_fs_parameters, param, &result);
++	if (opt < 0)
++		return opt;
 +
-+static size_t virtio_fs_copy_from_iter(struct dax_device *dax_dev,
-+				       pgoff_t pgoff, void *addr,
-+				       size_t bytes, struct iov_iter *i)
-+{
-+	return copy_from_iter(addr, bytes, i);
-+}
++	switch (opt) {
++	case OPT_DAX:
++		ctx->dax = 1;
++		break;
++	default:
++		return -EINVAL;
++	}
 +
-+static size_t virtio_fs_copy_to_iter(struct dax_device *dax_dev,
-+				       pgoff_t pgoff, void *addr,
-+				       size_t bytes, struct iov_iter *i)
-+{
-+	return copy_to_iter(addr, bytes, i);
-+}
-+
-+static int virtio_fs_zero_page_range(struct dax_device *dax_dev,
-+				     pgoff_t pgoff, size_t nr_pages)
-+{
-+	long rc;
-+	void *kaddr;
-+
-+	rc = dax_direct_access(dax_dev, pgoff, nr_pages, &kaddr, NULL);
-+	if (rc < 0)
-+		return rc;
-+	memset(kaddr, 0, nr_pages << PAGE_SHIFT);
-+	dax_flush(dax_dev, kaddr, nr_pages << PAGE_SHIFT);
 +	return 0;
 +}
 +
-+static const struct dax_operations virtio_fs_dax_ops = {
-+	.direct_access = virtio_fs_direct_access,
-+	.copy_from_iter = virtio_fs_copy_from_iter,
-+	.copy_to_iter = virtio_fs_copy_to_iter,
-+	.zero_page_range = virtio_fs_zero_page_range,
-+};
-+
-+static void virtio_fs_cleanup_dax(void *data)
++static void virtio_fs_free_fc(struct fs_context *fc)
 +{
-+	struct dax_device *dax_dev = data;
++	struct fuse_fs_context *ctx = fc->fs_private;
 +
-+	kill_dax(dax_dev);
-+	put_dax(dax_dev);
++	if (ctx)
++		kfree(ctx);
 +}
 +
-+static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
-+{
-+	struct virtio_shm_region cache_reg;
-+	struct dev_pagemap *pgmap;
-+	bool have_cache;
-+
-+	if (!IS_ENABLED(CONFIG_DAX_DRIVER))
-+		return 0;
-+
-+	/* Get cache region */
-+	have_cache = virtio_get_shm_region(vdev, &cache_reg,
-+					   (u8)VIRTIO_FS_SHMCAP_ID_CACHE);
-+	if (!have_cache) {
-+		dev_notice(&vdev->dev, "%s: No cache capability\n", __func__);
-+		return 0;
-+	}
-+
-+	if (!devm_request_mem_region(&vdev->dev, cache_reg.addr, cache_reg.len,
-+				     dev_name(&vdev->dev))) {
-+		dev_warn(&vdev->dev, "could not reserve region addr=0x%llx"
-+			 " len=0x%llx\n", cache_reg.addr, cache_reg.len);
-+		return -EBUSY;
-+	}
-+
-+	dev_notice(&vdev->dev, "Cache len: 0x%llx @ 0x%llx\n", cache_reg.len,
-+		   cache_reg.addr);
-+
-+	pgmap = devm_kzalloc(&vdev->dev, sizeof(*pgmap), GFP_KERNEL);
-+	if (!pgmap)
-+		return -ENOMEM;
-+
-+	pgmap->type = MEMORY_DEVICE_FS_DAX;
-+
-+	/* Ideally we would directly use the PCI BAR resource but
-+	 * devm_memremap_pages() wants its own copy in pgmap.  So
-+	 * initialize a struct resource from scratch (only the start
-+	 * and end fields will be used).
-+	 */
-+	pgmap->res = (struct resource){
-+		.name = "virtio-fs dax window",
-+		.start = (phys_addr_t) cache_reg.addr,
-+		.end = (phys_addr_t) cache_reg.addr + cache_reg.len - 1,
-+	};
-+
-+	fs->window_kaddr = devm_memremap_pages(&vdev->dev, pgmap);
-+	if (IS_ERR(fs->window_kaddr))
-+		return PTR_ERR(fs->window_kaddr);
-+
-+	fs->window_phys_addr = (phys_addr_t) cache_reg.addr;
-+	fs->window_len = (phys_addr_t) cache_reg.len;
-+
-+	dev_dbg(&vdev->dev, "%s: window kaddr 0x%px phys_addr 0x%llx"
-+		" len 0x%llx\n", __func__, fs->window_kaddr, cache_reg.addr,
-+		cache_reg.len);
-+
-+	fs->dax_dev = alloc_dax(fs, NULL, &virtio_fs_dax_ops, 0);
-+	if (IS_ERR(fs->dax_dev))
-+		return PTR_ERR(fs->dax_dev);
-+
-+	return devm_add_action_or_reset(&vdev->dev, virtio_fs_cleanup_dax,
-+					fs->dax_dev);
-+}
-+
- static int virtio_fs_probe(struct virtio_device *vdev)
+ static inline struct virtio_fs_vq *vq_to_fsvq(struct virtqueue *vq)
  {
- 	struct virtio_fs *fs;
-@@ -707,6 +842,10 @@ static int virtio_fs_probe(struct virtio_device *vdev)
+ 	struct virtio_fs *fs = vq->vdev->priv;
+@@ -1220,23 +1260,27 @@ static const struct fuse_iqueue_ops virtio_fs_fiq_ops = {
+ 	.release			= virtio_fs_fiq_release,
+ };
  
- 	/* TODO vq affinity */
- 
-+	ret = virtio_fs_setup_dax(vdev, fs);
-+	if (ret < 0)
-+		goto out_vqs;
+-static int virtio_fs_fill_super(struct super_block *sb)
++static inline void virtio_fs_ctx_set_defaults(struct fuse_fs_context *ctx)
++{
++	ctx->rootmode = S_IFDIR;
++	ctx->default_permissions = 1;
++	ctx->allow_other = 1;
++	ctx->max_read = UINT_MAX;
++	ctx->blksize = 512;
++	ctx->destroy = true;
++	ctx->no_control = true;
++	ctx->no_force_umount = true;
++}
 +
- 	/* Bring the device online in case the filesystem is mounted and
- 	 * requests need to be sent before we return.
- 	 */
-diff --git a/include/uapi/linux/virtio_fs.h b/include/uapi/linux/virtio_fs.h
-index 3056b6e9f8ce..bea38291421b 100644
---- a/include/uapi/linux/virtio_fs.h
-+++ b/include/uapi/linux/virtio_fs.h
-@@ -16,4 +16,7 @@ struct virtio_fs_config {
- 	__le32 num_request_queues;
- } __attribute__((packed));
++static int virtio_fs_fill_super(struct super_block *sb, struct fs_context *fsc)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn_super(sb);
+ 	struct virtio_fs *fs = fc->iq.priv;
++	struct fuse_fs_context *ctx = fsc->fs_private;
+ 	unsigned int i;
+ 	int err;
+-	struct fuse_fs_context ctx = {
+-		.rootmode = S_IFDIR,
+-		.default_permissions = 1,
+-		.allow_other = 1,
+-		.max_read = UINT_MAX,
+-		.blksize = 512,
+-		.destroy = true,
+-		.no_control = true,
+-		.no_force_umount = true,
+-	};
  
-+/* For the id field in virtio_pci_shm_cap */
-+#define VIRTIO_FS_SHMCAP_ID_CACHE 0
++	virtio_fs_ctx_set_defaults(ctx);
+ 	mutex_lock(&virtio_fs_mutex);
+ 
+ 	/* After holding mutex, make sure virtiofs device is still there.
+@@ -1260,8 +1304,10 @@ static int virtio_fs_fill_super(struct super_block *sb)
+ 	}
+ 
+ 	/* virtiofs allocates and installs its own fuse devices */
+-	ctx.fudptr = NULL;
+-	err = fuse_fill_super_common(sb, &ctx);
++	ctx->fudptr = NULL;
++	if (ctx->dax)
++		ctx->dax_dev = fs->dax_dev;
++	err = fuse_fill_super_common(sb, ctx);
+ 	if (err < 0)
+ 		goto err_free_fuse_devs;
+ 
+@@ -1372,7 +1418,7 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
+ 		return PTR_ERR(sb);
+ 
+ 	if (!sb->s_root) {
+-		err = virtio_fs_fill_super(sb);
++		err = virtio_fs_fill_super(sb, fsc);
+ 		if (err) {
+ 			deactivate_locked_super(sb);
+ 			return err;
+@@ -1387,11 +1433,19 @@ static int virtio_fs_get_tree(struct fs_context *fsc)
+ }
+ 
+ static const struct fs_context_operations virtio_fs_context_ops = {
++	.free		= virtio_fs_free_fc,
++	.parse_param	= virtio_fs_parse_param,
+ 	.get_tree	= virtio_fs_get_tree,
+ };
+ 
+ static int virtio_fs_init_fs_context(struct fs_context *fsc)
+ {
++	struct fuse_fs_context *ctx;
 +
- #endif /* _UAPI_LINUX_VIRTIO_FS_H */
++	ctx = kzalloc(sizeof(struct fuse_fs_context), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++	fsc->fs_private = ctx;
+ 	fsc->ops = &virtio_fs_context_ops;
+ 	return 0;
+ }
 -- 
 2.25.4
 
