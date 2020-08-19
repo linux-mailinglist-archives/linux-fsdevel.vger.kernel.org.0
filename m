@@ -2,108 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 73AE2249BFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 13:40:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1AE8249C03
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Aug 2020 13:43:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbgHSLkV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Aug 2020 07:40:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40212 "EHLO mail.kernel.org"
+        id S1727884AbgHSLnC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Aug 2020 07:43:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727856AbgHSLkF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Aug 2020 07:40:05 -0400
-Received: from localhost (unknown [213.57.247.131])
+        id S1727120AbgHSLm5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 19 Aug 2020 07:42:57 -0400
+Received: from kernel.org (unknown [87.70.91.42])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 919AE206FA;
-        Wed, 19 Aug 2020 11:40:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB23E206FA;
+        Wed, 19 Aug 2020 11:42:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597837205;
-        bh=Wo0rqqJfk2zBMXYOEoNqxy1AI9iRGPC/BxwzuJcTpFY=;
+        s=default; t=1597837376;
+        bh=oRLqxLOhAk2wnqABtg3LIfVpl96FyLYFzASr1U/ua+Y=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RE6hglFb/fU6P6Cy0VAzZtLIhqXqrAjgYG//DyGXvAi7YRn9Evs+UdI4lcoK0sOwU
-         v5jnzvyheAh0Ag+/6KKdgDm9EHj+c2x3XSNWbIGUCnw3E7YdDdq5PjlNmOQ6LA6BqP
-         MWK8vSg6UuFNPuLvXO5+IBZleXsI5Ldrqcqr4l68=
-Date:   Wed, 19 Aug 2020 14:40:01 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: Add function declaration of simple_dname
-Message-ID: <20200819114001.GU7555@unreal>
-References: <20200819083259.919838-1-leon@kernel.org>
- <20200819113424.GA17456@casper.infradead.org>
+        b=2Z9IophMNzk8pDJ8BdCg/mK2k2gQuqV8UM0qQAmx+Sn6zj919AK6cSjrUfOGKNQT4
+         FgdC+v6CR36y9JK0bGfz3O20UZlSub/rKj1DDNqRtiGiQklQFxbD8gym7lAVbdhBXm
+         bYUybp6KP1/X0bvM8WCYlmLMym+12jW5T0ZamYZo=
+Date:   Wed, 19 Aug 2020 14:42:44 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-riscv@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v4 0/6] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+Message-ID: <20200819114244.GT752365@kernel.org>
+References: <20200818141554.13945-1-rppt@kernel.org>
+ <e82ca20e-a88e-d7ff-e99b-4189aac54f3a@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200819113424.GA17456@casper.infradead.org>
+In-Reply-To: <e82ca20e-a88e-d7ff-e99b-4189aac54f3a@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 19, 2020 at 12:34:24PM +0100, Matthew Wilcox wrote:
-> On Wed, Aug 19, 2020 at 11:32:59AM +0300, Leon Romanovsky wrote:
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> >
-> > The simple_dname() is declared in internal header file as extern
-> > and this generates the following GCC warning.
->
-> The fact that it's declared as extern doesn't matter.  You don't need
-> the change to internal.h at all.  The use of 'extern' on a function
-> declaration is purely decorative:
->
->   5 If the declaration of an identifier for a function has no
->   storage-class specifier, its linkage is determined exactly as if it
->   were declared with the storage-class specifier extern.
+On Wed, Aug 19, 2020 at 12:47:54PM +0200, David Hildenbrand wrote:
+> On 18.08.20 16:15, Mike Rapoport wrote:
+> > From: Mike Rapoport <rppt@linux.ibm.com>
+> > 
+> > Hi,
+> > 
+> > This is an implementation of "secret" mappings backed by a file descriptor. 
+> > 
+> > v4 changes:
+> > * rebase on v5.9-rc1
+> > * Do not redefine PMD_PAGE_ORDER in fs/dax.c, thanks Kirill
+> > * Make secret mappings exclusive by default and only require flags to
+> >   memfd_secret() system call for uncached mappings, thanks again Kirill :)
+> > 
+> > v3 changes:
+> > * Squash kernel-parameters.txt update into the commit that added the
+> >   command line option.
+> > * Make uncached mode explicitly selectable by architectures. For now enable
+> >   it only on x86.
+> > 
+> > v2 changes:
+> > * Follow Michael's suggestion and name the new system call 'memfd_secret'
+> > * Add kernel-parameters documentation about the boot option
+> > * Fix i386-tinyconfig regression reported by the kbuild bot.
+> >   CONFIG_SECRETMEM now depends on !EMBEDDED to disable it on small systems
+> >   from one side and still make it available unconditionally on
+> >   architectures that support SET_DIRECT_MAP.
+> > 
+> > 
+> > The file descriptor backing secret memory mappings is created using a
+> > dedicated memfd_secret system call The desired protection mode for the
+> > memory is configured using flags parameter of the system call. The mmap()
+> > of the file descriptor created with memfd_secret() will create a "secret"
+> > memory mapping. The pages in that mapping will be marked as not present in
+> > the direct map and will have desired protection bits set in the user page
+> > table. For instance, current implementation allows uncached mappings.
+> > 
+> > Although normally Linux userspace mappings are protected from other users, 
+> > such secret mappings are useful for environments where a hostile tenant is
+> > trying to trick the kernel into giving them access to other tenants
+> > mappings.
+> > 
+> > Additionally, the secret mappings may be used as a mean to protect guest
+> > memory in a virtual machine host.
+> > 
+> 
+> Just a general question. I assume such pages (where the direct mapping
+> was changed) cannot get migrated - I can spot a simple alloc_page(). So
+> essentially a process can just allocate a whole bunch of memory that is
+> unmovable, correct? Is there any limit? Is it properly accounted towards
+> the process (memctl) ?
 
-So why do we need to keep extern keyword if we use intenral.h directly?
+The memory as accounted in the same way like with mlock(), so normal
+user won't be able to allocate more than RLIMIT_MEMLOCK.
 
->
-> I'd drop the change to internal.h and fix the changelog.
+> -- 
+> Thanks,
+> 
+> David / dhildenb
+> 
 
-Thanks
-
->
-> > fs/d_path.c:311:7: warning: no previous prototype for 'simple_dname' [-Wmissing-prototypes]
-> >   311 | char *simple_dname(struct dentry *dentry, char *buffer, int buflen)
-> >       |       ^~~~~~~~~~~~
-> >
-> > Instead of that extern, reuse the fact that internal.h file is internal to fs/* and
-> > declare simple_dname() like any other function.
-> >
-> > Fixes: 7e5f7bb08b8c ("unexport simple_dname()")
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > ---
-> >  fs/d_path.c   | 2 ++
-> >  fs/internal.h | 2 +-
-> >  2 files changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/d_path.c b/fs/d_path.c
-> > index 0f1fc1743302..4b89448cc78e 100644
-> > --- a/fs/d_path.c
-> > +++ b/fs/d_path.c
-> > @@ -8,6 +8,8 @@
-> >  #include <linux/prefetch.h>
-> >  #include "mount.h"
-> >
-> > +#include "internal.h"
-> > +
-> >  static int prepend(char **buffer, int *buflen, const char *str, int namelen)
-> >  {
-> >  	*buflen -= namelen;
-> > diff --git a/fs/internal.h b/fs/internal.h
-> > index 10517ece4516..2def264272f4 100644
-> > --- a/fs/internal.h
-> > +++ b/fs/internal.h
-> > @@ -164,7 +164,7 @@ extern int d_set_mounted(struct dentry *dentry);
-> >  extern long prune_dcache_sb(struct super_block *sb, struct shrink_control *sc);
-> >  extern struct dentry *d_alloc_cursor(struct dentry *);
-> >  extern struct dentry * d_alloc_pseudo(struct super_block *, const struct qstr *);
-> > -extern char *simple_dname(struct dentry *, char *, int);
-> > +char *simple_dname(struct dentry *d, char *buf, int len);
-> >  extern void dput_to_list(struct dentry *, struct list_head *);
-> >  extern void shrink_dentry_list(struct list_head *);
-> >
-> > --
-> > 2.26.2
-> >
+-- 
+Sincerely yours,
+Mike.
