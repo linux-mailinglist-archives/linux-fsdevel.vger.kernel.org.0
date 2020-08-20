@@ -2,57 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 642F724C0D7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 16:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21E0A24C0FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 16:53:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728335AbgHTOrP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 10:47:15 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:43338 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727791AbgHTOrG (ORCPT
+        id S1726950AbgHTOxC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 10:53:02 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:46092 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbgHTOw7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 10:47:06 -0400
+        Thu, 20 Aug 2020 10:52:59 -0400
 Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <ebiederm@xmission.com>)
-        id 1k8lqB-006zQX-6o; Thu, 20 Aug 2020 08:46:55 -0600
+        id 1k8lvs-00Aq9f-QJ; Thu, 20 Aug 2020 08:52:48 -0600
 Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
         by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.87)
         (envelope-from <ebiederm@xmission.com>)
-        id 1k8lqA-0001YY-E6; Thu, 20 Aug 2020 08:46:55 -0600
+        id 1k8lvr-0002V7-SF; Thu, 20 Aug 2020 08:52:48 -0600
 From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        christian.brauner@ubuntu.com, mingo@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
-        christian@kellner.me, areber@redhat.com, shakeelb@google.com,
-        cyphar@cyphar.com, adobriyan@gmail.com, akpm@linux-foundation.org,
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Suren Baghdasaryan <surenb@google.com>, timmurray@google.com,
+        mingo@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        esyr@redhat.com, christian@kellner.me, areber@redhat.com,
+        shakeelb@google.com, cyphar@cyphar.com, oleg@redhat.com,
+        adobriyan@gmail.com, akpm@linux-foundation.org,
         gladkov.alexey@gmail.com, walken@google.com,
         daniel.m.jordan@oracle.com, avagin@gmail.com,
         bernd.edlinger@hotmail.de, john.johansen@canonical.com,
-        laoar.shao@gmail.com, timmurray@google.com, minchan@kernel.org,
-        kernel-team@android.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+        laoar.shao@gmail.com, minchan@kernel.org, kernel-team@android.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
 References: <20200820002053.1424000-1-surenb@google.com>
         <87zh6pxzq6.fsf@x220.int.ebiederm.org>
         <20200820124241.GJ5033@dhcp22.suse.cz>
         <87lfi9xz7y.fsf@x220.int.ebiederm.org>
         <87d03lxysr.fsf@x220.int.ebiederm.org>
         <20200820132631.GK5033@dhcp22.suse.cz>
-        <874koxxwn5.fsf@x220.int.ebiederm.org>
-        <20200820140451.GC4546@redhat.com>
-Date:   Thu, 20 Aug 2020 09:43:18 -0500
-In-Reply-To: <20200820140451.GC4546@redhat.com> (Oleg Nesterov's message of
-        "Thu, 20 Aug 2020 16:04:52 +0200")
-Message-ID: <87364hwf7d.fsf@x220.int.ebiederm.org>
+        <20200820133454.ch24kewh42ax4ebl@wittgenstein>
+        <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
+        <20200820140054.fdkbotd4tgfrqpe6@wittgenstein>
+        <637ab0e7-e686-0c94-753b-b97d24bb8232@i-love.sakura.ne.jp>
+Date:   Thu, 20 Aug 2020 09:49:11 -0500
+In-Reply-To: <637ab0e7-e686-0c94-753b-b97d24bb8232@i-love.sakura.ne.jp>
+        (Tetsuo Handa's message of "Thu, 20 Aug 2020 23:18:40 +0900")
+Message-ID: <87k0xtv0d4.fsf@x220.int.ebiederm.org>
 User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-XM-SPF: eid=1k8lqA-0001YY-E6;;;mid=<87364hwf7d.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19Tnh/hUsIF58mi4H1Z7Pw+g9j5YSK3gCY=
+X-XM-SPF: eid=1k8lvr-0002V7-SF;;;mid=<87k0xtv0d4.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19eJAV7OrO6lFoLS+9WugMFiMdwgaSwTyw=
 X-SA-Exim-Connect-IP: 68.227.160.95
 X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa06.xmission.com
@@ -63,7 +66,7 @@ X-Spam-Status: No, score=2.0 required=8.0 tests=ALL_TRUSTED,BAYES_50,
         autolearn=disabled version=3.4.2
 X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
         *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4982]
+        *      [score: 0.5000]
         *  1.5 XMNoVowels Alpha-numberic number with no vowels
         *  0.7 XMSubLong Long Subject
         *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
@@ -73,18 +76,18 @@ X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
         *  0.0 T_TooManySym_01 4+ unique symbols in subject
         *  0.0 T_TooManySym_03 6+ unique symbols in subject
 X-Spam-DCC: ; sa06 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Oleg Nesterov <oleg@redhat.com>
+X-Spam-Combo: **;Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 X-Spam-Relay-Country: 
-X-Spam-Timing: total 365 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 11 (2.9%), b_tie_ro: 9 (2.5%), parse: 0.91 (0.2%),
-         extract_message_metadata: 3.3 (0.9%), get_uri_detail_list: 1.40
-        (0.4%), tests_pri_-1000: 4.3 (1.2%), tests_pri_-950: 1.31 (0.4%),
-        tests_pri_-900: 1.15 (0.3%), tests_pri_-90: 81 (22.3%), check_bayes:
-        80 (21.8%), b_tokenize: 9 (2.4%), b_tok_get_all: 8 (2.1%),
-        b_comp_prob: 2.4 (0.7%), b_tok_touch_all: 57 (15.7%), b_finish: 0.95
-        (0.3%), tests_pri_0: 243 (66.5%), check_dkim_signature: 0.55 (0.2%),
-        check_dkim_adsp: 2.4 (0.7%), poll_dns_idle: 0.65 (0.2%), tests_pri_10:
-        3.1 (0.8%), tests_pri_500: 8 (2.2%), rewrite_mail: 0.00 (0.0%)
+X-Spam-Timing: total 515 ms - load_scoreonly_sql: 0.10 (0.0%),
+        signal_user_changed: 12 (2.4%), b_tie_ro: 10 (2.0%), parse: 1.82
+        (0.4%), extract_message_metadata: 16 (3.1%), get_uri_detail_list: 3.4
+        (0.7%), tests_pri_-1000: 6 (1.2%), tests_pri_-950: 1.43 (0.3%),
+        tests_pri_-900: 1.15 (0.2%), tests_pri_-90: 126 (24.4%), check_bayes:
+        119 (23.0%), b_tokenize: 10 (1.9%), b_tok_get_all: 9 (1.7%),
+        b_comp_prob: 2.9 (0.6%), b_tok_touch_all: 94 (18.2%), b_finish: 0.95
+        (0.2%), tests_pri_0: 327 (63.5%), check_dkim_signature: 0.78 (0.2%),
+        check_dkim_adsp: 2.9 (0.6%), poll_dns_idle: 0.99 (0.2%), tests_pri_10:
+        3.6 (0.7%), tests_pri_500: 15 (2.8%), rewrite_mail: 0.00 (0.0%)
 Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in __set_oom_adj when not necessary
 X-Spam-Flag: No
 X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
@@ -94,70 +97,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Oleg Nesterov <oleg@redhat.com> writes:
+Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
 
-> On 08/20, Eric W. Biederman wrote:
->>
->> --- a/fs/exec.c
->> +++ b/fs/exec.c
->> @@ -1139,6 +1139,10 @@ static int exec_mmap(struct mm_struct *mm)
->>  	vmacache_flush(tsk);
->>  	task_unlock(tsk);
->>  	if (old_mm) {
->> +		mm->oom_score_adj = old_mm->oom_score_adj;
->> +		mm->oom_score_adj_min = old_mm->oom_score_adj_min;
->> +		if (tsk->vfork_done)
->> +			mm->oom_score_adj = tsk->vfork_oom_score_adj;
+> On 2020/08/20 23:00, Christian Brauner wrote:
+>> On Thu, Aug 20, 2020 at 10:48:43PM +0900, Tetsuo Handa wrote:
+>>> On 2020/08/20 22:34, Christian Brauner wrote:
+>>>> On Thu, Aug 20, 2020 at 03:26:31PM +0200, Michal Hocko wrote:
+>>>>> If you can handle vfork by other means then I am all for it. There were
+>>>>> no patches in that regard proposed yet. Maybe it will turn out simpler
+>>>>> then the heavy lifting we have to do in the oom specific code.
+>>>>
+>>>> Eric's not wrong. I fiddled with this too this morning but since
+>>>> oom_score_adj is fiddled with in a bunch of places this seemed way more
+>>>> code churn then what's proposed here.
+>>>
+>>> I prefer simply reverting commit 44a70adec910d692 ("mm, oom_adj: make sure
+>>> processes sharing mm have same view of oom_score_adj").
+>>>
+>>>   https://lore.kernel.org/patchwork/patch/1037208/
+>> 
+>> I guess this is a can of worms but just or the sake of getting more
+>> background: the question seems to be whether the oom adj score is a
+>> property of the task/thread-group or a property of the mm. I always
+>> thought the oom score is a property of the task/thread-group and not the
+>> mm which is also why it lives in struct signal_struct and not in struct
+>> mm_struct. But
+>> 
+>> 44a70adec910 ("mm, oom_adj: make sure processes sharing mm have same view of oom_score_adj")
+>> 
+>> reads like it is supposed to be a property of the mm or at least the
+>> change makes it so.
 >
-> too late, ->vfork_done is NULL after mm_release().
+> Yes, 44a70adec910 is trying to go towards changing from a property of the task/thread-group
+> to a property of mm. But I don't think we need to do it at the cost of "__set_oom_adj() latency
+> Yong-Taek Lee and Tim Murray have reported" and "complicity for supporting
+> vfork() => __set_oom_adj() => execve() sequence".
 
-Good point.  
+The thing is commit 44a70adec910d692 ("mm, oom_adj: make sure processes
+sharing mm have same view of oom_score_adj") has been in the tree for 4
+years.
 
-> And this can race with __set_oom_adj(). Yes, the current code is racy too,
-> but this change adds another race, __set_oom_adj() could already observe
-> ->mm != NULL and update mm->oom_score_adj.
+That someone is just now noticing a regression is their problem.  The
+change is semantics is done and decided.  We can not reasonably revert
+at this point without risking other regressions.
 
-I am not certain about races but we should be able to do something like:
-
-in exec_mmap:
-        if (old_mm) {
-		mm->oom_score_adj = old_mm->oom_score_adj;
-        	mm->oom_score_adj_min = old_mm->oom_score_adj_min;
-        	if (tsk->signal->vfork_oom_score_adj_set) {
-                	mm->oom_score_adj = tsk->vfork_oom_score_adj;
-                	tsk->signal->vfork_oom_score_adj_set = false;
-                }
-        }
-
-in __set_oom_adj:
-	if (mm) {
-		mm->oom_score_adj = oom_adj;
-                tsk->signal->vfork_oom_score_adj_set = false;
-        } else {
-		tsk->vfork_score_adj = old_mm->oom_score_adj;
-                tsk->signal->vfork_oom_score_adj_set = true;
-        }
-
-There might even be a special oom_score_adj value we can use instead of
-a separate flag.  I am just not familiar enough with oom_score_adj to know.
-
-We should be able to do something like that where we know the value is
-set and only use it if so.  And a subsequent _set_oom_adj without
-observing vfork_done set will clear the value in signal_struct.
-
-We have to be a bit careful to get the details right but it should be
-straight forward.
-
-
-Michal also has a point about oom_score_adj_min, and I really don't
-understand the oom logic value well enough to guess how that should
-work.
-
-
-Although to deal with some of the races it probably only makes sense
-to call complete_vfork_done in exec after the new mm has been installed,
-and while exec_update_mutex is held.  I don't think anyone every
-anticipated using vfork_done as a flag.
+Given that the decision has already been made to make oom_adj
+effectively per mm.  There is no point on have a debate if we should do
+it.
 
 Eric
+
 
