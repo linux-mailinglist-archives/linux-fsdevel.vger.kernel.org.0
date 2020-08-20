@@ -2,110 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AEE824B917
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 13:39:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0431624B90B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 13:39:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728985AbgHTLil (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 07:38:41 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40639 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730558AbgHTLat (ORCPT
+        id S1728855AbgHTLhg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 07:37:36 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:30148 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730790AbgHTLgs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 07:30:49 -0400
-Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1k8im0-0000Eh-8L; Thu, 20 Aug 2020 11:30:24 +0000
-Date:   Thu, 20 Aug 2020 13:30:23 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Suren Baghdasaryan <surenb@google.com>, mingo@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
-        christian@kellner.me, areber@redhat.com, shakeelb@google.com,
-        cyphar@cyphar.com, adobriyan@gmail.com, akpm@linux-foundation.org,
-        ebiederm@xmission.com, gladkov.alexey@gmail.com, walken@google.com,
-        daniel.m.jordan@oracle.com, avagin@gmail.com,
-        bernd.edlinger@hotmail.de, john.johansen@canonical.com,
-        laoar.shao@gmail.com, timmurray@google.com, minchan@kernel.org,
-        kernel-team@android.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
- __set_oom_adj when not necessary
-Message-ID: <20200820113023.rjxque4jveo4nj5o@wittgenstein>
-References: <20200820002053.1424000-1-surenb@google.com>
- <20200820105555.GA4546@redhat.com>
- <20200820111349.GE5033@dhcp22.suse.cz>
+        Thu, 20 Aug 2020 07:36:48 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07KB3UlD136298;
+        Thu, 20 Aug 2020 07:36:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=k7KfW0RZAjPIFH/IRXudnl5GCxnyZfPjYnmTz1S/C5Y=;
+ b=S6S/ND16urnI16ekC35Bzim6ncR9qjSNgBt1bQCUxuLhulf81CqteDAov5rK0Ni37LiP
+ yV4TUjgZ93y/cbhvLuDk5ydNxpp3klztxCn6SHypliuaMi/aGQD8gPVcBT3XH82Rnzmo
+ IBoj4l8qR0VJRORlP1hO6gC0qsMV2FdkoLRcTwUuYAtai32QUaS4strshSYKyEMAlem/
+ OstswIVmO34E953Y+tQdVcaT1sU/7f9X50NiWUP9F/TNw2PawHNKFr+v3lBQ5FuLbgye
+ okW6m/foRGI2J9iJeb9HZE0f/YDXv6yqt4zkb8urvmeVaYL1iFFfmy2/eqo9jmnfEOP8 pA== 
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3317ab369v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Aug 2020 07:36:43 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07KBW3hb019650;
+        Thu, 20 Aug 2020 11:36:41 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06ams.nl.ibm.com with ESMTP id 330tbvsseu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 Aug 2020 11:36:41 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07KBadUD26804618
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 20 Aug 2020 11:36:39 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 17C1CA4051;
+        Thu, 20 Aug 2020 11:36:39 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DD2F5A4059;
+        Thu, 20 Aug 2020 11:36:37 +0000 (GMT)
+Received: from localhost.localdomain.com (unknown [9.199.33.217])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 20 Aug 2020 11:36:37 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     jack@suse.cz, tytso@mit.edu, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: [RFC 0/1] Optimize ext4 DAX overwrites
+Date:   Thu, 20 Aug 2020 17:06:27 +0530
+Message-Id: <cover.1597855360.git.riteshh@linux.ibm.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200820111349.GE5033@dhcp22.suse.cz>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-20_02:2020-08-19,2020-08-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ bulkscore=0 mlxlogscore=825 phishscore=0 clxscore=1015 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2008200093
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 20, 2020 at 01:13:49PM +0200, Michal Hocko wrote:
-> On Thu 20-08-20 12:55:56, Oleg Nesterov wrote:
-> > On 08/19, Suren Baghdasaryan wrote:
-> > >
-> > > Since the combination of CLONE_VM and !CLONE_SIGHAND is rarely
-> > > used the additional mutex lock in that path of the clone() syscall should
-> > > not affect its overall performance. Clearing the MMF_PROC_SHARED flag
-> > > (when the last process sharing the mm exits) is left out of this patch to
-> > > keep it simple and because it is believed that this threading model is
-> > > rare.
-> > 
-> > vfork() ?
-> 
-> Could you be more specific?
+In case of dax writes, currently we start a journal txn irrespective of whether
+it's an overwrite or not. In case of an overwrite we don't need to start a
+jbd2 txn since the blocks are already allocated.
+So this patch optimizes away the txn start in case of DAX overwrites.
+This could significantly boost performance for multi-threaded random write
+(overwrite). Fio script used to collect perf numbers is mentioned below.
 
-vfork() implies CLONE_VM but !CLONE_THREAD. The way this patch is
-written the mutex lock will be taken every time you do a vfork().
+Below numbers were calculated on a QEMU setup on ppc64 box with simulated
+pmem device.
 
-(It's honestly also debatable whether it's that rare. For one, userspace
-stuff I maintain uses it too (see [1]).
-[1]: https://github.com/lxc/lxc/blob/9d3b7c97f0443adc9f0b0438437657ab42f5a1c3/src/lxc/start.c#L1676
-)
+Performance numbers with different threads - (~10x improvement)
+==========================================
 
-> 
-> > > --- a/kernel/fork.c
-> > > +++ b/kernel/fork.c
-> > > @@ -1403,6 +1403,15 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
-> > >  	if (clone_flags & CLONE_VM) {
-> > >  		mmget(oldmm);
-> > >  		mm = oldmm;
-> > > +		if (!(clone_flags & CLONE_SIGHAND)) {
-> > 
-> > I agree with Christian, you need CLONE_THREAD
-> 
-> This was my suggestion to Suren, likely because I've misrememberd which
-> clone flag is responsible for the signal delivery. But now, after double
-> checking we do explicitly disallow CLONE_SIGHAND && !CLONE_VM. So
-> CLONE_THREAD is the right thing to check.
-> 
-> > > +			/* We need to synchronize with __set_oom_adj */
-> > > +			mutex_lock(&oom_adj_lock);
-> > > +			set_bit(MMF_PROC_SHARED, &mm->flags);
-> > > +			/* Update the values in case they were changed after copy_signal */
-> > > +			tsk->signal->oom_score_adj = current->signal->oom_score_adj;
-> > > +			tsk->signal->oom_score_adj_min = current->signal->oom_score_adj_min;
-> > > +			mutex_unlock(&oom_adj_lock);
-> > 
-> > I don't understand how this can close the race with __set_oom_adj...
-> > 
-> > What if __set_oom_adj() is called right after mutex_unlock() ? It will see
-> > MMF_PROC_SHARED, but for_each_process() won't find the new child until
-> > copy_process() does list_add_tail_rcu(&p->tasks, &init_task.tasks) ?
-> 
-> Good point. Then we will have to move this thing there.
+vanilla_kernel(kIOPS)
+ 60 +-+---------------+-------+--------+--------+--------+-------+------+-+   
+     |                 +       +        +        +**      +       +        |   
+  55 +-+                                          **                     +-+   
+     |                                   **       **                       |   
+     |                                   **       **                       |   
+  50 +-+                                 **       **                     +-+   
+     |                                   **       **                       |   
+  45 +-+                                 **       **                     +-+   
+     |                                   **       **                       |   
+     |                                   **       **                       |   
+  40 +-+                                 **       **                     +-+   
+     |                                   **       **                       |   
+  35 +-+                        **       **       **                     +-+   
+     |                          **       **       **               **      |   
+     |                          **       **       **      **       **      |   
+  30 +-+               **       **       **       **      **       **    +-+   
+     |                 **      +**      +**      +**      **      +**      |   
+  25 +-+---------------**------+**------+**------+**------**------+**----+-+   
+                       1       2        4        8       12      16            
+                                     Threads                                   
+patched_kernel(kIOPS)
+  600 +-+--------------+--------+--------+-------+--------+-------+------+-+   
+      |                +        +        +       +        +       +**      |   
+      |                                                            **      |   
+  500 +-+                                                          **    +-+   
+      |                                                            **      |   
+      |                                                    **      **      |   
+  400 +-+                                                  **      **    +-+   
+      |                                                    **      **      |   
+  300 +-+                                         **       **      **    +-+   
+      |                                           **       **      **      |   
+      |                                           **       **      **      |   
+  200 +-+                                         **       **      **    +-+   
+      |                                  **       **       **      **      |   
+      |                                  **       **       **      **      |   
+  100 +-+                        **      **       **       **      **    +-+   
+      |                          **      **       **       **      **      |   
+      |                +**      +**      **      +**      +**     +**      |   
+    0 +-+--------------+**------+**------**------+**------+**-----+**----+-+   
+                       1        2        4       8       12      16            
+                                     Threads                                   
+fio script
+==========
+[global]
+rw=randwrite
+norandommap=1
+invalidate=0
+bs=4k
+numjobs=16 		--> changed this for different thread options
+time_based=1
+ramp_time=30
+runtime=60
+group_reporting=1
+ioengine=psync
+direct=1
+size=16G
+filename=file1.0.0:file1.0.1:file1.0.2:file1.0.3:file1.0.4:file1.0.5:file1.0.6:file1.0.7:file1.0.8:file1.0.9:file1.0.10:file1.0.11:file1.0.12:file1.0.13:file1.0.14:file1.0.15:file1.0.16:file1.0.17:file1.0.18:file1.0.19:file1.0.20:file1.0.21:file1.0.22:file1.0.23:file1.0.24:file1.0.25:file1.0.26:file1.0.27:file1.0.28:file1.0.29:file1.0.30:file1.0.31
+file_service_type=random
+nrfiles=32
+directory=/mnt/
 
-I was toying with moving this into sm like:
+[name]
+directory=/mnt/
+direct=1
 
-static inline copy_oom_score(unsigned long flags, struct task_struct *tsk)
+NOTE:
+======
+1. Looking at ~10x perf delta, I probed a bit deeper to understand what's causing
+this scalability problem. It seems when we are starting a jbd2 txn then slab
+alloc code is observing some serious contention around spinlock.
 
-trying to rely on set_bit() and test_bit() in copy_mm() being atomic and
-then calling it where Oleg said after the point of no return.
+Even though the spinlock contention could be related to some other
+issue (looking into it internally). But I could still see the perf improvement
+of close to ~2x on QEMU setup on x86 with simulated pmem device with the
+patched_kernel v/s vanilla_kernel with same fio workload.
 
-Christian
+perf report from vanilla_kernel (this is not seen with patched kernel) (ppc64)
+=======================================================================
+
+  47.86%  fio              [kernel.vmlinux]            [k] do_raw_spin_lock
+             |
+             ---do_raw_spin_lock
+                |
+                |--19.43%--_raw_spin_lock
+                |          |
+                |           --19.31%--0
+                |                     |
+                |                     |--9.77%--deactivate_slab.isra.61
+                |                     |          ___slab_alloc
+                |                     |          __slab_alloc
+                |                     |          kmem_cache_alloc
+                |                     |          jbd2__journal_start
+                |                     |          __ext4_journal_start_sb
+<...>
+
+2. Kept this as RFC, since maybe using the ext4_iomap_overwrite_ops,
+will be better here. We could check for overwrite in ext4_dax_write_iter(),
+like how we do for DIO writes. Thoughts?
+
+3. This problem was reported by Dan Williams at [1]
+
+Links
+======
+[1]: https://lore.kernel.org/linux-ext4/20190802144304.GP25064@quack2.suse.cz/T/
+
+Ritesh Harjani (1):
+  ext4: Optimize ext4 DAX overwrites
+
+ fs/ext4/ext4.h  | 1 +
+ fs/ext4/file.c  | 2 +-
+ fs/ext4/inode.c | 8 +++++++-
+ 3 files changed, 9 insertions(+), 2 deletions(-)
+
+-- 
+2.25.4
+
