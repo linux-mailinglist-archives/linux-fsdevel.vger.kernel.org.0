@@ -2,224 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AD4A24B440
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 12:01:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB62024B60D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 12:33:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730482AbgHTKAy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 06:00:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48806 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730472AbgHTKAd (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 06:00:33 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 678B520724;
-        Thu, 20 Aug 2020 10:00:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597917632;
-        bh=YZnMjO/6zwXyl+KT3ibEE6f9gUR4An819JMKRFtDwDw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UmlDL0CJqxVrA341MRzBt4f1da9kq1YX358lMOe1O8hM9CHgwCmD+57pA1iYOtxgc
-         BJIbzlDlQpstBztbSuFkewTQwaqFwNmWp3UBtk+BMfjjxS1RJju2HVQH1UQCKF0T0d
-         XoqINVGvavpudlgKy9e2vJ9WFyfhJgMVYEtpNXXI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Frank van der Linden <fllinden@amazon.com>,
-        Chuck Lever <chuck.lever@oracle.com>
-Subject: [PATCH 4.9 070/212] xattr: break delegations in {set,remove}xattr
-Date:   Thu, 20 Aug 2020 11:20:43 +0200
-Message-Id: <20200820091605.901394859@linuxfoundation.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200820091602.251285210@linuxfoundation.org>
-References: <20200820091602.251285210@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1731487AbgHTKbj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 06:31:39 -0400
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:33322 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731471AbgHTKUc (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Aug 2020 06:20:32 -0400
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id A05DE434;
+        Thu, 20 Aug 2020 13:20:26 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1597918826;
+        bh=zUeZ9txBd8CUV16UFvP7cKQBctMZ9i7FqExpSVprv0U=;
+        h=From:To:Subject:Date:References:In-Reply-To;
+        b=SlxKJFc7RTxAJr3+1nq6HBKiPgCtt/0/RImqgQN6Le5bCBF0FPkXlxp1TG8n8z650
+         HFpalwrq/efe9FT2/UBLsX8yHGLwhbtT9VVpw4imSF++7QLwaI9H92D4WJK1GnnWoD
+         KgGvh1DFigsWF0QGM5kPgxhD8O8/3UPeUKstvC+w=
+Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Thu, 20 Aug 2020 13:20:26 +0300
+Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
+ by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
+ id 15.01.1847.003; Thu, 20 Aug 2020 13:20:26 +0300
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To:     =?utf-8?B?QXVyw6lsaWVuIEFwdGVs?= <aaptel@suse.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH] fs: NTFS read-write driver GPL implementation by Paragon
+ Software.
+Thread-Topic: [PATCH] fs: NTFS read-write driver GPL implementation by Paragon
+ Software.
+Thread-Index: AdZyNcmjSkpkGje7R9K6YobJrVDyZ///6wOA//ag0SA=
+Date:   Thu, 20 Aug 2020 10:20:26 +0000
+Message-ID: <7538540ab82e4b398a0203564a1f1b23@paragon-software.com>
+References: <2911ac5cd20b46e397be506268718d74@paragon-software.com>
+ <87mu2x48wa.fsf@suse.com>
+In-Reply-To: <87mu2x48wa.fsf@suse.com>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.30.8.36]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Frank van der Linden <fllinden@amazon.com>
-
-commit 08b5d5014a27e717826999ad20e394a8811aae92 upstream.
-
-set/removexattr on an exported filesystem should break NFS delegations.
-This is true in general, but also for the upcoming support for
-RFC 8726 (NFSv4 extended attribute support). Make sure that they do.
-
-Additionally, they need to grow a _locked variant, since callers might
-call this with i_rwsem held (like the NFS server code).
-
-Cc: stable@vger.kernel.org # v4.9+
-Cc: linux-fsdevel@vger.kernel.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Frank van der Linden <fllinden@amazon.com>
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/xattr.c            |   84 +++++++++++++++++++++++++++++++++++++++++++++-----
- include/linux/xattr.h |    2 +
- 2 files changed, 79 insertions(+), 7 deletions(-)
-
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -203,10 +203,22 @@ int __vfs_setxattr_noperm(struct dentry
- 	return error;
- }
- 
--
-+/**
-+ * __vfs_setxattr_locked: set an extended attribute while holding the inode
-+ * lock
-+ *
-+ *  @dentry - object to perform setxattr on
-+ *  @name - xattr name to set
-+ *  @value - value to set @name to
-+ *  @size - size of @value
-+ *  @flags - flags to pass into filesystem operations
-+ *  @delegated_inode - on return, will contain an inode pointer that
-+ *  a delegation was broken on, NULL if none.
-+ */
- int
--vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
--		size_t size, int flags)
-+__vfs_setxattr_locked(struct dentry *dentry, const char *name,
-+		const void *value, size_t size, int flags,
-+		struct inode **delegated_inode)
- {
- 	struct inode *inode = dentry->d_inode;
- 	int error;
-@@ -215,15 +227,40 @@ vfs_setxattr(struct dentry *dentry, cons
- 	if (error)
- 		return error;
- 
--	inode_lock(inode);
- 	error = security_inode_setxattr(dentry, name, value, size, flags);
- 	if (error)
- 		goto out;
- 
-+	error = try_break_deleg(inode, delegated_inode);
-+	if (error)
-+		goto out;
-+
- 	error = __vfs_setxattr_noperm(dentry, name, value, size, flags);
- 
- out:
-+	return error;
-+}
-+EXPORT_SYMBOL_GPL(__vfs_setxattr_locked);
-+
-+int
-+vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
-+		size_t size, int flags)
-+{
-+	struct inode *inode = dentry->d_inode;
-+	struct inode *delegated_inode = NULL;
-+	int error;
-+
-+retry_deleg:
-+	inode_lock(inode);
-+	error = __vfs_setxattr_locked(dentry, name, value, size, flags,
-+	    &delegated_inode);
- 	inode_unlock(inode);
-+
-+	if (delegated_inode) {
-+		error = break_deleg_wait(&delegated_inode);
-+		if (!error)
-+			goto retry_deleg;
-+	}
- 	return error;
- }
- EXPORT_SYMBOL_GPL(vfs_setxattr);
-@@ -379,8 +416,18 @@ __vfs_removexattr(struct dentry *dentry,
- }
- EXPORT_SYMBOL(__vfs_removexattr);
- 
-+/**
-+ * __vfs_removexattr_locked: set an extended attribute while holding the inode
-+ * lock
-+ *
-+ *  @dentry - object to perform setxattr on
-+ *  @name - name of xattr to remove
-+ *  @delegated_inode - on return, will contain an inode pointer that
-+ *  a delegation was broken on, NULL if none.
-+ */
- int
--vfs_removexattr(struct dentry *dentry, const char *name)
-+__vfs_removexattr_locked(struct dentry *dentry, const char *name,
-+		struct inode **delegated_inode)
- {
- 	struct inode *inode = dentry->d_inode;
- 	int error;
-@@ -389,11 +436,14 @@ vfs_removexattr(struct dentry *dentry, c
- 	if (error)
- 		return error;
- 
--	inode_lock(inode);
- 	error = security_inode_removexattr(dentry, name);
- 	if (error)
- 		goto out;
- 
-+	error = try_break_deleg(inode, delegated_inode);
-+	if (error)
-+		goto out;
-+
- 	error = __vfs_removexattr(dentry, name);
- 
- 	if (!error) {
-@@ -402,12 +452,32 @@ vfs_removexattr(struct dentry *dentry, c
- 	}
- 
- out:
-+	return error;
-+}
-+EXPORT_SYMBOL_GPL(__vfs_removexattr_locked);
-+
-+int
-+vfs_removexattr(struct dentry *dentry, const char *name)
-+{
-+	struct inode *inode = dentry->d_inode;
-+	struct inode *delegated_inode = NULL;
-+	int error;
-+
-+retry_deleg:
-+	inode_lock(inode);
-+	error = __vfs_removexattr_locked(dentry, name, &delegated_inode);
- 	inode_unlock(inode);
-+
-+	if (delegated_inode) {
-+		error = break_deleg_wait(&delegated_inode);
-+		if (!error)
-+			goto retry_deleg;
-+	}
-+
- 	return error;
- }
- EXPORT_SYMBOL_GPL(vfs_removexattr);
- 
--
- /*
-  * Extended attribute SET operations
-  */
---- a/include/linux/xattr.h
-+++ b/include/linux/xattr.h
-@@ -51,8 +51,10 @@ ssize_t vfs_getxattr(struct dentry *, co
- ssize_t vfs_listxattr(struct dentry *d, char *list, size_t size);
- int __vfs_setxattr(struct dentry *, struct inode *, const char *, const void *, size_t, int);
- int __vfs_setxattr_noperm(struct dentry *, const char *, const void *, size_t, int);
-+int __vfs_setxattr_locked(struct dentry *, const char *, const void *, size_t, int, struct inode **);
- int vfs_setxattr(struct dentry *, const char *, const void *, size_t, int);
- int __vfs_removexattr(struct dentry *, const char *);
-+int __vfs_removexattr_locked(struct dentry *, const char *, struct inode **);
- int vfs_removexattr(struct dentry *, const char *);
- 
- ssize_t generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size);
-
-
+RnJvbTogQXVyw6lsaWVuIEFwdGVsIDxhYXB0ZWxAc3VzZS5jb20+DQpTZW50OiBGcmlkYXksIEF1
+Z3VzdCAxNCwgMjAyMCA1OjA5IFBNDQo+IA0KPiBIaSBLb25zdGFudGluLA0KPiANCj4gVGhhdCdz
+IGNvb2wgOikgQXMgTmlrb2xheSBzYWlkIGl0IG5lZWRzIGEgbGl0dGxlIGNoYW5nZSB0byB0aGUg
+bWFrZWZpbGVzDQo+IHRvIGV2ZW4gYnVpbGQuDQo+IA0KPiBBcmUgeW91IGFsc28gZ29pbmcgdG8g
+cHVibGlzaCB5b3VyIG93biBta2ZzLm50ZnMzIHRvb2w/IEkgZG9udCB0aGluayB0aGUNCj4gZXhp
+c3Rpbmcgb25lIHdvdWxkIHN1cHBvcnQgNjRrIGNsdXN0ZXJzLg0KDQpIaSBBdXLDqWxpZW4uIFRo
+YW5rcyBmb3IgeW91ciBmZWVkYmFjay4gV2UgcGxhbiB0byBwdWJsaXNoIG91ciBta2ZzLm50ZnMg
+dXRpbGl0eSBhcyB0aGUgb3BlbiBzb3VyY2UgYXMgd2VsbCAoYW5kIHBvc3NpYmx5IGZzY2hrLm50
+ZnMgLSBhZnRlciBta2ZzKS4gDQoNCj4gDQo+IEkgd291bGQgcmVjb21tZW5kIHRvIHJ1biBjaGVj
+a3BhdGNoIChJIHNlZSBhbHJlYWR5IDg3IHdhcm5pbmdzLi4uIHNvbWUNCj4gb2YgaXQgaXMgbm9p
+c2UpOg0KPiANCj4gICAkIC4vc2NyaXB0cy9jaGVja3BhdGNoLnBsIDxwYXRjaD4NCj4gDQo+IEFu
+ZCBzcGFyc2UgKEkgZG9udCBzZWUgbXVjaCk6DQo+IA0KPiAgICQgdG91Y2ggZnMvbnRmczMvKi5b
+Y2hdICYmIG1ha2UgQz0xDQo+IA0KPiBZb3UgbmVlZCBhIHJlY2VudCBidWlsZCBvZiBzcGFyc2Ug
+dG8gZG8gdGhhdCBsYXN0IG9uZS4gWW91IGNhbiBwYXNzIHlvdXINCj4gb3duIHNwYXJzZSBiaW4g
+KG1ha2UgQ0hFQ0s9fi9wcm9nL3NwYXJzZS9zcGFyc2UgQz0xKQ0KPiANCj4gVGhpcyB3aWxsIGJl
+IGEgZ29vZCBmaXJzdCBzdGVwLg0KDQpUaGUgc3BhcnNlIHV0aWxpdHkgaXMgcnVubmluZyBhZ2Fp
+bnN0IHRoZSBjb2RlLCBhcyB3ZWxsIGFzIGNoZWNrcGF0Y2gucGwuIFNwcmFzZSBvdXRwdXQgaXMg
+Y2xlYW4gbm93LiBDaGVja3BhdGNoJ3Mgc29tZWhvdyBpbXBvcnRhbnQgd2FybmluZ3Mgd2lsbCBi
+ZSBmaXhlZCBpbiB2MiAoZXhjZXB0IG1heWJlIHR5cGVkZWZzKS4gDQoNCj4gDQo+IEhhdmUgeW91
+IHRyaWVkIHRvIHJ1biB0aGUgeGZzdGVzdHMgc3VpdGUgYWdhaW5zdCBpdD8NCj4NCnhmc3Rlc3Rz
+IGFyZSBiZWluZyBvbmUgb2Ygb3VyIHN0YW5kYXJkIHRlc3Qgc3VpdGVzIGFtb25nIG90aGVycy4g
+Q3VycmVudGx5IHdlIGhhdmUgdGhlICdnZW5lcmljLzMzOScgYW5kICdnZW5lcmljLzAxMycgdGVz
+dCBjYXNlcyBmYWlsaW5nLCB3b3JraW5nIG9uIGl0IG5vdy4gT3RoZXIgdGVzdHMgZWl0aGVyIHBh
+c3Mgb3IgYmVpbmcgc2tpcHBlZCAoZHVlIHRvIG1pc3NpbmcgZmVhdHVyZXMgZS5nLiByZWZsaW5r
+KS4gDQogDQo+IENoZWVycywNCj4gLS0NCj4gQXVyw6lsaWVuIEFwdGVsIC8gU1VTRSBMYWJzIFNh
+bWJhIFRlYW0NCj4gR1BHOiAxODM5IENCNUYgOUY1QiBGQjlCIEFBOTcgIDhDOTkgMDNDOCBBNDlC
+IDUyMUIgRDVEMw0KPiBTVVNFIFNvZnR3YXJlIFNvbHV0aW9ucyBHZXJtYW55IEdtYkgsIE1heGZl
+bGRzdHIuIDUsIDkwNDA5IE7DvHJuYmVyZywgREUNCj4gR0Y6IEZlbGl4IEltZW5kw7ZyZmZlciwg
+TWFyeSBIaWdnaW5zLCBTcmkgUmFzaWFoIEhSQiAyNDcxNjUgKEFHIE3DvG5jaGVuKQ0K
