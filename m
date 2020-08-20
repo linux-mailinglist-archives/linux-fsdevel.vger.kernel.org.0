@@ -2,136 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 31A2124C3CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 18:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 448CB24C432
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 19:10:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730130AbgHTQ4Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 12:56:16 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:7416 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729223AbgHTQ4O (ORCPT
+        id S1730480AbgHTRKD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 13:10:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43018 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730390AbgHTRGy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 12:56:14 -0400
-Received: from ironmsg07-lv.qualcomm.com (HELO ironmsg07-lv.qulacomm.com) ([10.47.202.151])
-  by alexa-out.qualcomm.com with ESMTP; 20 Aug 2020 09:56:12 -0700
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by ironmsg07-lv.qulacomm.com with ESMTP/TLS/AES256-SHA; 20 Aug 2020 09:56:11 -0700
-Received: from c-ppvk-linux.qualcomm.com ([10.206.24.34])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 20 Aug 2020 22:26:01 +0530
-Received: by c-ppvk-linux.qualcomm.com (Postfix, from userid 2304101)
-        id 0A35A51FB; Thu, 20 Aug 2020 22:25:58 +0530 (IST)
-From:   Pradeep P V K <ppvk@codeaurora.org>
-To:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
-Cc:     stummala@codeaurora.org, sayalil@codeaurora.org,
-        Pradeep P V K <ppvk@codeaurora.org>
-Subject: [PATCH V1] fuse: Fix VM_BUG_ON_PAGE issue while accessing zero ref count page
-Date:   Thu, 20 Aug 2020 22:25:55 +0530
-Message-Id: <1597942555-904-1-git-send-email-ppvk@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 20 Aug 2020 13:06:54 -0400
+Received: from mail-qv1-xf4a.google.com (mail-qv1-xf4a.google.com [IPv6:2607:f8b0:4864:20::f4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD3FDC061345
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Aug 2020 10:05:50 -0700 (PDT)
+Received: by mail-qv1-xf4a.google.com with SMTP id l18so1788447qvq.16
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Aug 2020 10:05:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=b7DoUVnpxFkIRzDbY79jsojJy3aTV9fDe4Ip8iAfTxQ=;
+        b=G6qFHzRxH8tE+NQgVHe3aJDnjfVKpBi9JzEY++QUvnb6xoP4UL5YFe5sbFhKZ0gi1U
+         Pan9TBWTEC7BF+2aZc0mqBv/kQwlsn5r0K3h60LPx01FIqpJljvvKUtcQNEKCuUEIYcf
+         xG6AFaCuH19WI0tH9uTxHYIF5N/361YtX5GqJnekKRRACYb8RA6fhIvLnc1P/Yzeqr+H
+         nm9sZjaq1e7Q8Ernq2ssLtCOLiUok7gbm5TyYkyMnEZ27b7ZMzkQBlVSI2rs4r58X6mp
+         SViazal97l6xDrY5/0ApjBCUDFM/Mc0STSbbb38JOtssSGin/N/gfAXspNajLPcArkNT
+         TMrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=b7DoUVnpxFkIRzDbY79jsojJy3aTV9fDe4Ip8iAfTxQ=;
+        b=ecMD/6thKB5I7yzBfOeapL3myqJx0zvJVZgvHzva8+C6DYWtoL0mylcR/nTd6v0LlT
+         e8BnazkDBFZ4EGmzBpVq7H0oeMqglcPLyl/fv31EK0z3eGl+76zWO5hGu186ODASujku
+         VqwbOPeR6O/QCrO4ital/1/wQk/tSL8Z/H4XMa2ENB7fkk6SHksvTqo0DkMwCQmX5T2s
+         RoXpL3C8FgbbBpAKS1zTwufTMIFLb3dnXbZOWJetsFDDAC7FoQJrQCF3+cNkevp29bGt
+         r7THD2xKIVkaeGjicqH4a7YpyQmpbWQ5ZA5qomgKZ71gbrPhrp8CrLQoYSpQTIPRrpwG
+         Z6HQ==
+X-Gm-Message-State: AOAM532jYXTqLcoj5yWFjq4hp9fndgaQphQpvGrIzD7cLjKNhBbmQdM2
+        U/ImHs//0HqWAzuW+36l61nhOfbdkHM0Ia8=
+X-Google-Smtp-Source: ABdhPJzQ303gG3zC6FMNRV8/7nehOE6TV+ALYSqyVmfx5TexEd8BHJGo0+ecTS9riPmHAJYwqf3lo4sw1B8I4o0=
+X-Received: from ckennelly28.nyc.corp.google.com ([2620:0:1003:1003:3e52:82ff:fe5a:a91a])
+ (user=ckennelly job=sendgmr) by 2002:ad4:51c8:: with SMTP id
+ p8mr3882955qvq.31.1597943149942; Thu, 20 Aug 2020 10:05:49 -0700 (PDT)
+Date:   Thu, 20 Aug 2020 13:05:39 -0400
+Message-Id: <20200820170541.1132271-1-ckennelly@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
+Subject: [PATCH v3 0/2] Selecting Load Addresses According to p_align
+From:   Chris Kennelly <ckennelly@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Song Liu <songliubraving@fb.com>
+Cc:     David Rientjes <rientjes@google.com>,
+        Ian Rogers <irogers@google.com>,
+        Hugh Dickens <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        Fangrui Song <maskray@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        clang-built-linux@googlegroups.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chris Kennelly <ckennelly@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is a potential race between fuse_abort_conn() and
-fuse_copy_page() as shown below, due to which VM_BUG_ON_PAGE
-crash is observed.
+The current ELF loading mechancism provides page-aligned mappings.  This
+can lead to the program being loaded in a way unsuitable for
+file-backed, transparent huge pages when handling PIE executables.
 
-context#1:			context#2:
-fuse_dev_do_read()		fuse_abort_conn()
-->fuse_copy_args()		 ->end_requests()
- ->fuse_copy_pages()		  ->request_end()
-  ->fuse_copy_page()		   ->fuse_writepage_end)
-   ->fuse_ref_page()		    ->fuse_writepage_free()
-				     ->__free_page()
-				      ->put_page_testzero()
+While specifying -z,max-page-size=0x200000 to the linker will generate
+suitably aligned segments for huge pages on x86_64, the executable needs
+to be loaded at a suitably aligned address as well.  This alignment
+requires the binary's cooperation, as distinct segments need to be
+appropriately paddded to be eligible for THP.
 
-   ->get_page()
-    ->VM_BUG_ON_PAGE()
+For binaries built with increased alignment, this limits the number of
+bits usable for ASLR, but provides some randomization over using fixed
+load addresses/non-PIE binaries.
 
-This results in below crash as when ->put_page_testzero() in context#2
-decrease the page reference and get_page() in context#1 accessed it
-with zero page reference count.
+Changes V2 -> V3:
+* Minor code tweaks based on off-thread feedback
 
-[  174.391095]  (1)[10406:Thread-6]page dumped because:
-VM_BUG_ON_PAGE(((unsigned int) page_ref_count(page) + 127u <= 127u))
-[  174.391113]  (1)[10406:Thread-6]page allocated via order 0,
-migratetype Unmovable, gfp_mask
-0x620042(GFP_NOFS|__GFP_HIGHMEM|__GFP_HARDWALL), pid 261, ts 174390946312 ns
-[  174.391135]  (1)[10406:Thread-6] prep_new_page+0x13c/0x210
-[  174.391148]  (1)[10406:Thread-6] get_page_from_freelist+0x21ac/0x2370
-[  174.391161]  (1)[10406:Thread-6] __alloc_pages_nodemask+0x244/0x14a8
-[  174.391176]  (1)[10406:Thread-6] fuse_writepages_fill+0x150/0x708
-[  174.391190]  (1)[10406:Thread-6] write_cache_pages+0x3d8/0x550
-[  174.391202]  (1)[10406:Thread-6] fuse_writepages+0x94/0x130
-[  174.391214]  (1)[10406:Thread-6] do_writepages+0x74/0x140
-[  174.391228]  (1)[10406:Thread-6] __writeback_single_inode+0x168/0x788
-[  174.391239]  (1)[10406:Thread-6] writeback_sb_inodes+0x56c/0xab8
-[  174.391251]  (1)[10406:Thread-6] __writeback_inodes_wb+0x94/0x180
-[  174.391262]  (1)[10406:Thread-6] wb_writeback+0x318/0x618
-[  174.391274]  (1)[10406:Thread-6] wb_workfn+0x468/0x828
-[  174.391290]  (1)[10406:Thread-6] process_one_work+0x3d0/0x720
-[  174.391302]  (1)[10406:Thread-6] worker_thread+0x234/0x4c0
-[  174.391314]  (1)[10406:Thread-6] kthread+0x144/0x158
-[  174.391327]  (1)[10406:Thread-6] ret_from_fork+0x10/0x1c
-[  174.391363]  (1)[10406:Thread-6]------------[ cut here ]------------
-[  174.391371]  (1)[10406:Thread-6]kernel BUG at include/linux/mm.h:980!
-[  174.391381]  (1)[10406:Thread-6]Internal error: Oops - BUG: 0 [#1]
-...
-[  174.486928]  (1)[10406:Thread-6]pc : fuse_copy_page+0x750/0x790
-[  174.493029]  (1)[10406:Thread-6]lr : fuse_copy_page+0x750/0x790
-[  174.718831]  (1)[10406:Thread-6] fuse_copy_page+0x750/0x790
-[  174.718838]  (1)[10406:Thread-6] fuse_copy_args+0xb4/0x1e8
-[  174.718843]  (1)[10406:Thread-6] fuse_dev_do_read+0x424/0x888
-[  174.718848]  (1)[10406:Thread-6] fuse_dev_splice_read+0x94/0x200
-[  174.718856]  (1)[10406:Thread-6] __arm64_sys_splice+0x874/0xb20
-[  174.718864]  (1)[10406:Thread-6] el0_svc_common+0xc8/0x240
-[  174.718869]  (1)[10406:Thread-6] el0_svc_handler+0x6c/0x88
-[  174.718875]  (1)[10406:Thread-6] el0_svc+0x8/0xc
-[  174.778853]  (1)[10406:Thread-6]Kernel panic - not syncing: Fatal
+Changes V1 -> V2:
+* Added test
 
-Fix this by protecting fuse_copy_pages() with fc->lock.
+Chris Kennelly (2):
+  fs/binfmt_elf: Use PT_LOAD p_align values for suitable start address.
+  Add self-test for verifying load alignment.
 
-Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
----
- fs/fuse/dev.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/binfmt_elf.c                             | 23 +++++++
+ tools/testing/selftests/exec/.gitignore     |  1 +
+ tools/testing/selftests/exec/Makefile       |  9 ++-
+ tools/testing/selftests/exec/load_address.c | 68 +++++++++++++++++++++
+ 4 files changed, 99 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/exec/load_address.c
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 02b3c36..ca4f63c 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -948,22 +948,26 @@ static int fuse_copy_pages(struct fuse_copy_state *cs, unsigned nbytes,
- 			   int zeroing)
- {
- 	unsigned i;
-+	int err = 0;
- 	struct fuse_req *req = cs->req;
- 	struct fuse_args_pages *ap = container_of(req->args, typeof(*ap), args);
- 
--
-+	if (req->ff)
-+		spin_lock(&req->ff->fc->lock);
- 	for (i = 0; i < ap->num_pages && (nbytes || zeroing); i++) {
--		int err;
- 		unsigned int offset = ap->descs[i].offset;
- 		unsigned int count = min(nbytes, ap->descs[i].length);
- 
- 		err = fuse_copy_page(cs, &ap->pages[i], offset, count, zeroing);
- 		if (err)
--			return err;
-+			goto err;
- 
- 		nbytes -= count;
- 	}
--	return 0;
-+err:
-+	if (req->ff)
-+		spin_unlock(&req->ff->fc->lock);
-+	return err;
- }
- 
- /* Copy a single argument in the request to/from userspace buffer */
 -- 
-1.9.1
+2.28.0.297.g1956fa8f8d-goog
 
