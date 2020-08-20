@@ -2,91 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A113824B7BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 13:04:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8525124B83F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 13:14:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbgHTLEE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 07:04:04 -0400
-Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:58708 "EHLO
-        relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731373AbgHTK7X (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 06:59:23 -0400
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id CCF3A821EC;
-        Thu, 20 Aug 2020 13:59:15 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1597921155;
-        bh=/G4ClTatYbNc8NxLLIvGhk7wy/zotPptuhCDIH3E+SQ=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=NkfVgGe6ekDpYeVZB9ZORxdbkNwIVRGPvRJQ0rybcJlywu4honSmfpm1TfS46YYxz
-         UK2yZrfmvCgMMwyevyqWmLTqYgBx9lcQMb6tWSZxh5p6hL+ZYkPiiUKLP01AtD5gjW
-         SE8YHmKYhpxynd+MXu5EQN3DB6xHy675nukXT0Cs=
-Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Thu, 20 Aug 2020 13:59:15 +0300
-Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
- by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
- id 15.01.1847.003; Thu, 20 Aug 2020 13:59:15 +0300
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     "dsterba@suse.cz" <dsterba@suse.cz>
-CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH] fs: NTFS read-write driver GPL implementation by Paragon
- Software.
-Thread-Topic: [PATCH] fs: NTFS read-write driver GPL implementation by Paragon
- Software.
-Thread-Index: AdZyNcmjSkpkGje7R9K6YobJrVDyZ///4zWA//aNcGA=
-Date:   Thu, 20 Aug 2020 10:59:15 +0000
-Message-ID: <416846245360401380734c4ee2a82f5c@paragon-software.com>
-References: <2911ac5cd20b46e397be506268718d74@paragon-software.com>
- <20200814134056.GV2026@twin.jikos.cz>
-In-Reply-To: <20200814134056.GV2026@twin.jikos.cz>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.30.8.36]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1729599AbgHTLOm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 07:14:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44956 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729583AbgHTLOI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Aug 2020 07:14:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 16BF9B804;
+        Thu, 20 Aug 2020 11:14:22 +0000 (UTC)
+Date:   Thu, 20 Aug 2020 13:13:49 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Suren Baghdasaryan <surenb@google.com>,
+        christian.brauner@ubuntu.com, mingo@kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
+        christian@kellner.me, areber@redhat.com, shakeelb@google.com,
+        cyphar@cyphar.com, adobriyan@gmail.com, akpm@linux-foundation.org,
+        ebiederm@xmission.com, gladkov.alexey@gmail.com, walken@google.com,
+        daniel.m.jordan@oracle.com, avagin@gmail.com,
+        bernd.edlinger@hotmail.de, john.johansen@canonical.com,
+        laoar.shao@gmail.com, timmurray@google.com, minchan@kernel.org,
+        kernel-team@android.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
+ __set_oom_adj when not necessary
+Message-ID: <20200820111349.GE5033@dhcp22.suse.cz>
+References: <20200820002053.1424000-1-surenb@google.com>
+ <20200820105555.GA4546@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200820105555.GA4546@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: David Sterba <dsterba@suse.cz>
-Sent: Friday, August 14, 2020 4:41 PM
-> In case somebody wants to compile it, this fixup is needed to let 'make
-> fs/ntfs3/' actually work, besides enabling it in the config.
->=20
-> diff --git a/fs/Makefile b/fs/Makefile
-> index 1c7b0e3f6daa..b0b4ad8affa0 100644
-> --- a/fs/Makefile
-> +++ b/fs/Makefile
-> @@ -100,6 +100,7 @@ obj-$(CONFIG_SYSV_FS)		+=3D sysv/
->  obj-$(CONFIG_CIFS)		+=3D cifs/
->  obj-$(CONFIG_HPFS_FS)		+=3D hpfs/
->  obj-$(CONFIG_NTFS_FS)		+=3D ntfs/
-> +obj-$(CONFIG_NTFS3_FS)		+=3D ntfs3/
->  obj-$(CONFIG_UFS_FS)		+=3D ufs/
->  obj-$(CONFIG_EFS_FS)		+=3D efs/
->  obj-$(CONFIG_JFFS2_FS)		+=3D jffs2/
-> diff --git a/fs/ntfs3/Makefile b/fs/ntfs3/Makefile
-> index 4d4fe198b8b8..d99dd1af43aa 100644
-> --- a/fs/ntfs3/Makefile
-> +++ b/fs/ntfs3/Makefile
-> @@ -5,7 +5,7 @@
->=20
->  obj-$(CONFIG_NTFS3_FS) +=3D ntfs3.o
->=20
-> -ntfs3-objs :=3D bitfunc.o bitmap.o inode.o fsntfs.o frecord.o \
-> +ntfs3-y :=3D bitfunc.o bitmap.o inode.o fsntfs.o frecord.o \
->  	    index.o attrlist.o record.o attrib.o run.o xattr.o\
->  	    upcase.o super.o file.o dir.o namei.o lznt.o\
->  	    fslog.o
+On Thu 20-08-20 12:55:56, Oleg Nesterov wrote:
+> On 08/19, Suren Baghdasaryan wrote:
+> >
+> > Since the combination of CLONE_VM and !CLONE_SIGHAND is rarely
+> > used the additional mutex lock in that path of the clone() syscall should
+> > not affect its overall performance. Clearing the MMF_PROC_SHARED flag
+> > (when the last process sharing the mm exits) is left out of this patch to
+> > keep it simple and because it is believed that this threading model is
+> > rare.
+> 
+> vfork() ?
 
-Thanks! Indeed these fixups are needed to the patch (lost them during final=
- polishing of the code before submitting). Will be fixed in v2.
+Could you be more specific?
+
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -1403,6 +1403,15 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
+> >  	if (clone_flags & CLONE_VM) {
+> >  		mmget(oldmm);
+> >  		mm = oldmm;
+> > +		if (!(clone_flags & CLONE_SIGHAND)) {
+> 
+> I agree with Christian, you need CLONE_THREAD
+
+This was my suggestion to Suren, likely because I've misrememberd which
+clone flag is responsible for the signal delivery. But now, after double
+checking we do explicitly disallow CLONE_SIGHAND && !CLONE_VM. So
+CLONE_THREAD is the right thing to check.
+
+> > +			/* We need to synchronize with __set_oom_adj */
+> > +			mutex_lock(&oom_adj_lock);
+> > +			set_bit(MMF_PROC_SHARED, &mm->flags);
+> > +			/* Update the values in case they were changed after copy_signal */
+> > +			tsk->signal->oom_score_adj = current->signal->oom_score_adj;
+> > +			tsk->signal->oom_score_adj_min = current->signal->oom_score_adj_min;
+> > +			mutex_unlock(&oom_adj_lock);
+> 
+> I don't understand how this can close the race with __set_oom_adj...
+> 
+> What if __set_oom_adj() is called right after mutex_unlock() ? It will see
+> MMF_PROC_SHARED, but for_each_process() won't find the new child until
+> copy_process() does list_add_tail_rcu(&p->tasks, &init_task.tasks) ?
+
+Good point. Then we will have to move this thing there.
+
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
