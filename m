@@ -2,102 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6098E24B788
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 12:56:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB7CE24B891
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 13:23:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731156AbgHTK4Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 06:56:25 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:36690 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731162AbgHTK4P (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 06:56:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1597920974;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zXZn0ptz4OdIcD8qJiz0sPtwyG4FrJg7hkfvx+FDmUI=;
-        b=eHPlxY2oeWC4XWMqJE6WSK1OtX30R1j1PGoJBqSEbhHdHuh6gu4H+bEd5tKG26/AyQKSgx
-        EQ3W4pUUvqp0qqjdDWuh2JsMVb0dRAY3YX+kOoUvcqkhEy4/MtY+OzBsduQVTdFetCAds2
-        RpfdA5mcL1xNacf0nQNcw9x/V8QzCZs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-558-P_V1LyLiOz2MfwMupSW5mw-1; Thu, 20 Aug 2020 06:56:12 -0400
-X-MC-Unique: P_V1LyLiOz2MfwMupSW5mw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729583AbgHTLXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 07:23:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37066 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730085AbgHTKHK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Aug 2020 06:07:10 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 29506871803;
-        Thu, 20 Aug 2020 10:56:07 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.73])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 5E00C5D9F1;
-        Thu, 20 Aug 2020 10:55:57 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 20 Aug 2020 12:56:06 +0200 (CEST)
-Date:   Thu, 20 Aug 2020 12:55:56 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     mhocko@suse.com, christian.brauner@ubuntu.com, mingo@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
-        christian@kellner.me, areber@redhat.com, shakeelb@google.com,
-        cyphar@cyphar.com, adobriyan@gmail.com, akpm@linux-foundation.org,
-        ebiederm@xmission.com, gladkov.alexey@gmail.com, walken@google.com,
-        daniel.m.jordan@oracle.com, avagin@gmail.com,
-        bernd.edlinger@hotmail.de, john.johansen@canonical.com,
-        laoar.shao@gmail.com, timmurray@google.com, minchan@kernel.org,
-        kernel-team@android.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
- __set_oom_adj when not necessary
-Message-ID: <20200820105555.GA4546@redhat.com>
-References: <20200820002053.1424000-1-surenb@google.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id AB3662067C;
+        Thu, 20 Aug 2020 10:07:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597918029;
+        bh=g7N0/vZFIa6paeWPq/ZEJNnxKB6/Yh9dRDNC5swfV/w=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OhHJW/vr+RTqiyINyOT7nNB2N434w+eUfLsnnp9SX70e0wUHYJbcuUbmCPqL+3+tl
+         VNaFpGxpr1xXfbBKyJ9je8iOdSA9z+1Sk8fT6wfd8I4emSfaqbocxWQfV35b7kgXRH
+         v3hrtHbYofgjak8B4NoWJyqRyDXpOUkmUJZC2DlM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Frank van der Linden <fllinden@amazon.com>,
+        Chuck Lever <chuck.lever@oracle.com>
+Subject: [PATCH 4.14 029/228] xattr: break delegations in {set,remove}xattr
+Date:   Thu, 20 Aug 2020 11:20:04 +0200
+Message-Id: <20200820091608.992828603@linuxfoundation.org>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200820091607.532711107@linuxfoundation.org>
+References: <20200820091607.532711107@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200820002053.1424000-1-surenb@google.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08/19, Suren Baghdasaryan wrote:
->
-> Since the combination of CLONE_VM and !CLONE_SIGHAND is rarely
-> used the additional mutex lock in that path of the clone() syscall should
-> not affect its overall performance. Clearing the MMF_PROC_SHARED flag
-> (when the last process sharing the mm exits) is left out of this patch to
-> keep it simple and because it is believed that this threading model is
-> rare.
+From: Frank van der Linden <fllinden@amazon.com>
 
-vfork() ?
+commit 08b5d5014a27e717826999ad20e394a8811aae92 upstream.
 
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1403,6 +1403,15 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
->  	if (clone_flags & CLONE_VM) {
->  		mmget(oldmm);
->  		mm = oldmm;
-> +		if (!(clone_flags & CLONE_SIGHAND)) {
+set/removexattr on an exported filesystem should break NFS delegations.
+This is true in general, but also for the upcoming support for
+RFC 8726 (NFSv4 extended attribute support). Make sure that they do.
 
-I agree with Christian, you need CLONE_THREAD
+Additionally, they need to grow a _locked variant, since callers might
+call this with i_rwsem held (like the NFS server code).
 
-> +			/* We need to synchronize with __set_oom_adj */
-> +			mutex_lock(&oom_adj_lock);
-> +			set_bit(MMF_PROC_SHARED, &mm->flags);
-> +			/* Update the values in case they were changed after copy_signal */
-> +			tsk->signal->oom_score_adj = current->signal->oom_score_adj;
-> +			tsk->signal->oom_score_adj_min = current->signal->oom_score_adj_min;
-> +			mutex_unlock(&oom_adj_lock);
+Cc: stable@vger.kernel.org # v4.9+
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Frank van der Linden <fllinden@amazon.com>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-I don't understand how this can close the race with __set_oom_adj...
+---
+ fs/xattr.c            |   84 +++++++++++++++++++++++++++++++++++++++++++++-----
+ include/linux/xattr.h |    2 +
+ 2 files changed, 79 insertions(+), 7 deletions(-)
 
-What if __set_oom_adj() is called right after mutex_unlock() ? It will see
-MMF_PROC_SHARED, but for_each_process() won't find the new child until
-copy_process() does list_add_tail_rcu(&p->tasks, &init_task.tasks) ?
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -204,10 +204,22 @@ int __vfs_setxattr_noperm(struct dentry
+ 	return error;
+ }
+ 
+-
++/**
++ * __vfs_setxattr_locked: set an extended attribute while holding the inode
++ * lock
++ *
++ *  @dentry - object to perform setxattr on
++ *  @name - xattr name to set
++ *  @value - value to set @name to
++ *  @size - size of @value
++ *  @flags - flags to pass into filesystem operations
++ *  @delegated_inode - on return, will contain an inode pointer that
++ *  a delegation was broken on, NULL if none.
++ */
+ int
+-vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
+-		size_t size, int flags)
++__vfs_setxattr_locked(struct dentry *dentry, const char *name,
++		const void *value, size_t size, int flags,
++		struct inode **delegated_inode)
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 	int error;
+@@ -216,15 +228,40 @@ vfs_setxattr(struct dentry *dentry, cons
+ 	if (error)
+ 		return error;
+ 
+-	inode_lock(inode);
+ 	error = security_inode_setxattr(dentry, name, value, size, flags);
+ 	if (error)
+ 		goto out;
+ 
++	error = try_break_deleg(inode, delegated_inode);
++	if (error)
++		goto out;
++
+ 	error = __vfs_setxattr_noperm(dentry, name, value, size, flags);
+ 
+ out:
++	return error;
++}
++EXPORT_SYMBOL_GPL(__vfs_setxattr_locked);
++
++int
++vfs_setxattr(struct dentry *dentry, const char *name, const void *value,
++		size_t size, int flags)
++{
++	struct inode *inode = dentry->d_inode;
++	struct inode *delegated_inode = NULL;
++	int error;
++
++retry_deleg:
++	inode_lock(inode);
++	error = __vfs_setxattr_locked(dentry, name, value, size, flags,
++	    &delegated_inode);
+ 	inode_unlock(inode);
++
++	if (delegated_inode) {
++		error = break_deleg_wait(&delegated_inode);
++		if (!error)
++			goto retry_deleg;
++	}
+ 	return error;
+ }
+ EXPORT_SYMBOL_GPL(vfs_setxattr);
+@@ -380,8 +417,18 @@ __vfs_removexattr(struct dentry *dentry,
+ }
+ EXPORT_SYMBOL(__vfs_removexattr);
+ 
++/**
++ * __vfs_removexattr_locked: set an extended attribute while holding the inode
++ * lock
++ *
++ *  @dentry - object to perform setxattr on
++ *  @name - name of xattr to remove
++ *  @delegated_inode - on return, will contain an inode pointer that
++ *  a delegation was broken on, NULL if none.
++ */
+ int
+-vfs_removexattr(struct dentry *dentry, const char *name)
++__vfs_removexattr_locked(struct dentry *dentry, const char *name,
++		struct inode **delegated_inode)
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 	int error;
+@@ -390,11 +437,14 @@ vfs_removexattr(struct dentry *dentry, c
+ 	if (error)
+ 		return error;
+ 
+-	inode_lock(inode);
+ 	error = security_inode_removexattr(dentry, name);
+ 	if (error)
+ 		goto out;
+ 
++	error = try_break_deleg(inode, delegated_inode);
++	if (error)
++		goto out;
++
+ 	error = __vfs_removexattr(dentry, name);
+ 
+ 	if (!error) {
+@@ -403,12 +453,32 @@ vfs_removexattr(struct dentry *dentry, c
+ 	}
+ 
+ out:
++	return error;
++}
++EXPORT_SYMBOL_GPL(__vfs_removexattr_locked);
++
++int
++vfs_removexattr(struct dentry *dentry, const char *name)
++{
++	struct inode *inode = dentry->d_inode;
++	struct inode *delegated_inode = NULL;
++	int error;
++
++retry_deleg:
++	inode_lock(inode);
++	error = __vfs_removexattr_locked(dentry, name, &delegated_inode);
+ 	inode_unlock(inode);
++
++	if (delegated_inode) {
++		error = break_deleg_wait(&delegated_inode);
++		if (!error)
++			goto retry_deleg;
++	}
++
+ 	return error;
+ }
+ EXPORT_SYMBOL_GPL(vfs_removexattr);
+ 
+-
+ /*
+  * Extended attribute SET operations
+  */
+--- a/include/linux/xattr.h
++++ b/include/linux/xattr.h
+@@ -52,8 +52,10 @@ ssize_t vfs_getxattr(struct dentry *, co
+ ssize_t vfs_listxattr(struct dentry *d, char *list, size_t size);
+ int __vfs_setxattr(struct dentry *, struct inode *, const char *, const void *, size_t, int);
+ int __vfs_setxattr_noperm(struct dentry *, const char *, const void *, size_t, int);
++int __vfs_setxattr_locked(struct dentry *, const char *, const void *, size_t, int, struct inode **);
+ int vfs_setxattr(struct dentry *, const char *, const void *, size_t, int);
+ int __vfs_removexattr(struct dentry *, const char *);
++int __vfs_removexattr_locked(struct dentry *, const char *, struct inode **);
+ int vfs_removexattr(struct dentry *, const char *);
+ 
+ ssize_t generic_listxattr(struct dentry *dentry, char *buffer, size_t buffer_size);
 
-Oleg.
 
