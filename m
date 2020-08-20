@@ -2,109 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C1E3324C38D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 18:47:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A2124C3CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 18:56:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730289AbgHTQrv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 12:47:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40044 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730285AbgHTQrq (ORCPT
+        id S1730130AbgHTQ4Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 12:56:16 -0400
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:7416 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729223AbgHTQ4O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 12:47:46 -0400
-Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99D4EC061385
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Aug 2020 09:47:45 -0700 (PDT)
-Received: by mail-vs1-xe43.google.com with SMTP id n25so1420067vsq.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Aug 2020 09:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nFydOyAQ5fL3vfPVLLh49VOLqsGjFEw91D0MHzilX5M=;
-        b=Crs/WMRP2fmy0A72/nAxgdRh1jfjB94SUBuYbmOq48ob45Uzpcdl5nhkDGqNm7qoA2
-         TD0b4DY5l/Qw+s+OnoFycCHQUiOIXwSqelSRQpHr1zh8EFDyT3vVeonqlctaneuaw88I
-         oO2pgxaiumGK4NEBocYXkEPI1ZdXcSq/hos4GcXyz1FvH2fj44gjr6nA6FXGRfwKaDpU
-         Dn8WFQDKrdztr09XqxuJP3F6OcosPKMDku0vSq0NBDKqKRiiiE5noOi4Pa3KZgpo5hWf
-         J+unhSgn03KkLd+g1U+cyFBLi34TV4Ny1w1o7utrfI8/zFfa9dTq51x7FpHY6bUT5WB9
-         B4+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nFydOyAQ5fL3vfPVLLh49VOLqsGjFEw91D0MHzilX5M=;
-        b=BnHjs5OkXbex/KPYjKmzoRHhFzMF3xXR6+sRPs3Op2UskS8CA7gBqRCQWxI4As4awC
-         oSXiz2ISPLCmnlpSAX/YtYFZzH0j2phCNMN8AU3GGyDq/ZG+YGolt2kVyDAvdVLLgspD
-         SL49Rl4UlFjK73D3LzBUBgf2K/WIAHlpkxi092kFYBfG9v5nMRwyVKk5DKApCbHl43Ma
-         k3UAG9Thmk6fyIfodVexWGSW3JOewEYyBZIrFMinm8my5ZtQsdL6aJiDhNvXluVYQJBi
-         /BsXS+VAJVktF47MUUgmNGLuMZSKHB4Qk6TrJ/oNnRRoKs4bi875qYIyYInJB8hUEUA8
-         MEdg==
-X-Gm-Message-State: AOAM533wKlf8Bl8c5mJ5mH76bz+zsSBnyjQokFQSQcQn6hg4t2HmLX1y
-        6kyjywAmeZcthZrcwXDxZmY2cToq+WEnaKql9/rfGw==
-X-Google-Smtp-Source: ABdhPJxnUe2uAAoTjmaHQnh8K/T2EFQWZBMt0JSgkurOi8fetLFAZM9cBXHIfYSIjsnKPiy6LTpMFgA9pyZPBi2FClM=
-X-Received: by 2002:a67:f30e:: with SMTP id p14mr2079034vsf.119.1597942064479;
- Thu, 20 Aug 2020 09:47:44 -0700 (PDT)
-MIME-Version: 1.0
-References: <87lfi9xz7y.fsf@x220.int.ebiederm.org> <87d03lxysr.fsf@x220.int.ebiederm.org>
- <20200820132631.GK5033@dhcp22.suse.cz> <20200820133454.ch24kewh42ax4ebl@wittgenstein>
- <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
- <20200820140054.fdkbotd4tgfrqpe6@wittgenstein> <637ab0e7-e686-0c94-753b-b97d24bb8232@i-love.sakura.ne.jp>
- <87k0xtv0d4.fsf@x220.int.ebiederm.org> <CAJuCfpHsjisBnNiDNQbm8Yi92cznaptiXYPdc-aVa+_zkuaPhA@mail.gmail.com>
- <20200820162645.GP5033@dhcp22.suse.cz> <20200820162927.s275qsr4lkwizutu@wittgenstein>
-In-Reply-To: <20200820162927.s275qsr4lkwizutu@wittgenstein>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Thu, 20 Aug 2020 09:47:32 -0700
-Message-ID: <CAJuCfpFK9VRNA=hztFoEyyhkU_W4x4uF41J-fApyLZpXeUFuKQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
- __set_oom_adj when not necessary
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Tim Murray <timmurray@google.com>, mingo@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
-        christian@kellner.me, areber@redhat.com,
-        Shakeel Butt <shakeelb@google.com>, cyphar@cyphar.com,
-        Oleg Nesterov <oleg@redhat.com>, adobriyan@gmail.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        gladkov.alexey@gmail.com, Michel Lespinasse <walken@google.com>,
-        daniel.m.jordan@oracle.com, avagin@gmail.com,
-        bernd.edlinger@hotmail.de,
-        John Johansen <john.johansen@canonical.com>,
-        laoar.shao@gmail.com, Minchan Kim <minchan@kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 20 Aug 2020 12:56:14 -0400
+Received: from ironmsg07-lv.qualcomm.com (HELO ironmsg07-lv.qulacomm.com) ([10.47.202.151])
+  by alexa-out.qualcomm.com with ESMTP; 20 Aug 2020 09:56:12 -0700
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by ironmsg07-lv.qulacomm.com with ESMTP/TLS/AES256-SHA; 20 Aug 2020 09:56:11 -0700
+Received: from c-ppvk-linux.qualcomm.com ([10.206.24.34])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 20 Aug 2020 22:26:01 +0530
+Received: by c-ppvk-linux.qualcomm.com (Postfix, from userid 2304101)
+        id 0A35A51FB; Thu, 20 Aug 2020 22:25:58 +0530 (IST)
+From:   Pradeep P V K <ppvk@codeaurora.org>
+To:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
+Cc:     stummala@codeaurora.org, sayalil@codeaurora.org,
+        Pradeep P V K <ppvk@codeaurora.org>
+Subject: [PATCH V1] fuse: Fix VM_BUG_ON_PAGE issue while accessing zero ref count page
+Date:   Thu, 20 Aug 2020 22:25:55 +0530
+Message-Id: <1597942555-904-1-git-send-email-ppvk@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 20, 2020 at 9:29 AM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
->
-> On Thu, Aug 20, 2020 at 06:26:45PM +0200, Michal Hocko wrote:
-> > On Thu 20-08-20 08:56:53, Suren Baghdasaryan wrote:
-> > [...]
-> > > Catching up on the discussion which was going on while I was asleep...
-> > > So it sounds like there is a consensus that oom_adj should be moved to
-> > > mm_struct rather than trying to synchronize it among tasks sharing mm.
-> > > That sounds reasonable to me too. Michal answered all the earlier
-> > > questions about this patch, so I won't be reiterating them, thanks
-> > > Michal. If any questions are still lingering about the original patch
-> > > I'll be glad to answer them.
-> >
-> > I think it still makes some sense to go with a simpler (aka less tricky)
-> > solution which would be your original patch with an incremental fix for
-> > vfork and the proper ordering (http://lkml.kernel.org/r/20200820124109.GI5033@dhcp22.suse.cz)
-> > and then make a more complex shift to mm struct on top of that. The
-> > former will be less tricky to backport to stable IMHO.
->
-> /me nods
+There is a potential race between fuse_abort_conn() and
+fuse_copy_page() as shown below, due to which VM_BUG_ON_PAGE
+crash is observed.
 
-Ah, ok. Then I'll incorporate these changes, re-test and re-post as v2. Thanks!
+context#1:			context#2:
+fuse_dev_do_read()		fuse_abort_conn()
+->fuse_copy_args()		 ->end_requests()
+ ->fuse_copy_pages()		  ->request_end()
+  ->fuse_copy_page()		   ->fuse_writepage_end)
+   ->fuse_ref_page()		    ->fuse_writepage_free()
+				     ->__free_page()
+				      ->put_page_testzero()
 
->
-> Christian
+   ->get_page()
+    ->VM_BUG_ON_PAGE()
+
+This results in below crash as when ->put_page_testzero() in context#2
+decrease the page reference and get_page() in context#1 accessed it
+with zero page reference count.
+
+[  174.391095]  (1)[10406:Thread-6]page dumped because:
+VM_BUG_ON_PAGE(((unsigned int) page_ref_count(page) + 127u <= 127u))
+[  174.391113]  (1)[10406:Thread-6]page allocated via order 0,
+migratetype Unmovable, gfp_mask
+0x620042(GFP_NOFS|__GFP_HIGHMEM|__GFP_HARDWALL), pid 261, ts 174390946312 ns
+[  174.391135]  (1)[10406:Thread-6] prep_new_page+0x13c/0x210
+[  174.391148]  (1)[10406:Thread-6] get_page_from_freelist+0x21ac/0x2370
+[  174.391161]  (1)[10406:Thread-6] __alloc_pages_nodemask+0x244/0x14a8
+[  174.391176]  (1)[10406:Thread-6] fuse_writepages_fill+0x150/0x708
+[  174.391190]  (1)[10406:Thread-6] write_cache_pages+0x3d8/0x550
+[  174.391202]  (1)[10406:Thread-6] fuse_writepages+0x94/0x130
+[  174.391214]  (1)[10406:Thread-6] do_writepages+0x74/0x140
+[  174.391228]  (1)[10406:Thread-6] __writeback_single_inode+0x168/0x788
+[  174.391239]  (1)[10406:Thread-6] writeback_sb_inodes+0x56c/0xab8
+[  174.391251]  (1)[10406:Thread-6] __writeback_inodes_wb+0x94/0x180
+[  174.391262]  (1)[10406:Thread-6] wb_writeback+0x318/0x618
+[  174.391274]  (1)[10406:Thread-6] wb_workfn+0x468/0x828
+[  174.391290]  (1)[10406:Thread-6] process_one_work+0x3d0/0x720
+[  174.391302]  (1)[10406:Thread-6] worker_thread+0x234/0x4c0
+[  174.391314]  (1)[10406:Thread-6] kthread+0x144/0x158
+[  174.391327]  (1)[10406:Thread-6] ret_from_fork+0x10/0x1c
+[  174.391363]  (1)[10406:Thread-6]------------[ cut here ]------------
+[  174.391371]  (1)[10406:Thread-6]kernel BUG at include/linux/mm.h:980!
+[  174.391381]  (1)[10406:Thread-6]Internal error: Oops - BUG: 0 [#1]
+...
+[  174.486928]  (1)[10406:Thread-6]pc : fuse_copy_page+0x750/0x790
+[  174.493029]  (1)[10406:Thread-6]lr : fuse_copy_page+0x750/0x790
+[  174.718831]  (1)[10406:Thread-6] fuse_copy_page+0x750/0x790
+[  174.718838]  (1)[10406:Thread-6] fuse_copy_args+0xb4/0x1e8
+[  174.718843]  (1)[10406:Thread-6] fuse_dev_do_read+0x424/0x888
+[  174.718848]  (1)[10406:Thread-6] fuse_dev_splice_read+0x94/0x200
+[  174.718856]  (1)[10406:Thread-6] __arm64_sys_splice+0x874/0xb20
+[  174.718864]  (1)[10406:Thread-6] el0_svc_common+0xc8/0x240
+[  174.718869]  (1)[10406:Thread-6] el0_svc_handler+0x6c/0x88
+[  174.718875]  (1)[10406:Thread-6] el0_svc+0x8/0xc
+[  174.778853]  (1)[10406:Thread-6]Kernel panic - not syncing: Fatal
+
+Fix this by protecting fuse_copy_pages() with fc->lock.
+
+Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
+---
+ fs/fuse/dev.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 02b3c36..ca4f63c 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -948,22 +948,26 @@ static int fuse_copy_pages(struct fuse_copy_state *cs, unsigned nbytes,
+ 			   int zeroing)
+ {
+ 	unsigned i;
++	int err = 0;
+ 	struct fuse_req *req = cs->req;
+ 	struct fuse_args_pages *ap = container_of(req->args, typeof(*ap), args);
+ 
+-
++	if (req->ff)
++		spin_lock(&req->ff->fc->lock);
+ 	for (i = 0; i < ap->num_pages && (nbytes || zeroing); i++) {
+-		int err;
+ 		unsigned int offset = ap->descs[i].offset;
+ 		unsigned int count = min(nbytes, ap->descs[i].length);
+ 
+ 		err = fuse_copy_page(cs, &ap->pages[i], offset, count, zeroing);
+ 		if (err)
+-			return err;
++			goto err;
+ 
+ 		nbytes -= count;
+ 	}
+-	return 0;
++err:
++	if (req->ff)
++		spin_unlock(&req->ff->fc->lock);
++	return err;
+ }
+ 
+ /* Copy a single argument in the request to/from userspace buffer */
+-- 
+1.9.1
+
