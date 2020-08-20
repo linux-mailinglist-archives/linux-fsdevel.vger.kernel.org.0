@@ -2,116 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB50724C13B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 17:07:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FF0324C217
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 17:23:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728466AbgHTPHm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 11:07:42 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50849 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727920AbgHTPHl (ORCPT
+        id S1729026AbgHTPXw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 11:23:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55328 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728990AbgHTPXr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 11:07:41 -0400
-Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1k8m9Y-0005rd-Um; Thu, 20 Aug 2020 15:06:57 +0000
-Date:   Thu, 20 Aug 2020 17:06:55 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Michal Hocko <mhocko@suse.com>,
-        Suren Baghdasaryan <surenb@google.com>, timmurray@google.com,
-        mingo@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-        esyr@redhat.com, christian@kellner.me, areber@redhat.com,
-        shakeelb@google.com, cyphar@cyphar.com, oleg@redhat.com,
-        adobriyan@gmail.com, akpm@linux-foundation.org,
-        gladkov.alexey@gmail.com, walken@google.com,
-        daniel.m.jordan@oracle.com, avagin@gmail.com,
-        bernd.edlinger@hotmail.de, john.johansen@canonical.com,
-        laoar.shao@gmail.com, minchan@kernel.org, kernel-team@android.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
- __set_oom_adj when not necessary
-Message-ID: <20200820150655.ewjqommxs3axrsf6@wittgenstein>
-References: <87zh6pxzq6.fsf@x220.int.ebiederm.org>
- <20200820124241.GJ5033@dhcp22.suse.cz>
- <87lfi9xz7y.fsf@x220.int.ebiederm.org>
- <87d03lxysr.fsf@x220.int.ebiederm.org>
- <20200820132631.GK5033@dhcp22.suse.cz>
- <20200820133454.ch24kewh42ax4ebl@wittgenstein>
- <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
- <20200820140054.fdkbotd4tgfrqpe6@wittgenstein>
- <637ab0e7-e686-0c94-753b-b97d24bb8232@i-love.sakura.ne.jp>
- <87k0xtv0d4.fsf@x220.int.ebiederm.org>
+        Thu, 20 Aug 2020 11:23:47 -0400
+Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E231C061385;
+        Thu, 20 Aug 2020 08:23:47 -0700 (PDT)
+Received: by mail-qk1-x744.google.com with SMTP id j187so1810383qke.11;
+        Thu, 20 Aug 2020 08:23:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=qL5TkkkE9pAlsRexPTWC6FTHlHmqCvp0RW0Ns7VE8aY=;
+        b=d41PYKbV7PRXH0CoFSYkrhnObRoDTSH93E0MohpAsomaEQdl/fdt2dUlefB6sTpUm8
+         ThfwpxbBkO88f0hyQbSr7RD0osXvSQS5IHF02IW3uqAs0+3ysMfCMQ/9jKsTQm/HCfh7
+         vimxWvwk0KL9D5UEtjLYFrMSWJeglu5cN70yIVTtOGSDbxJ0p4j+8OCDo8Y6PFC/4rsP
+         OTwqvWf2XAMxQUerCgGLJ57DLx255kjJxCm3UJIFo7PLF9NKSw1/Y4HJBiQEMKoJfb16
+         7+e9PuyklyqbUQXEMGk6Qcf64wNMRBQ2n1pfWggyBFG6vmQ0j9NDPSRnAE3GjxIOaS1n
+         uTCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=qL5TkkkE9pAlsRexPTWC6FTHlHmqCvp0RW0Ns7VE8aY=;
+        b=Dp/65mL4tbkmhBMlRvDSQhNBLqzB9LBa5y5Pv80RM6CtJwLSmIRNxXfeOm9OpQhpPM
+         o0CGpr/3/KMVFiJTU+iURVFShHBfiDIrw2+6Jc/0sGqQBW0uLJ7yOVI2s0rCGkj07vBG
+         sORhUWh17I9VOA1CKzkgrCO8mCXloHyaS/Yf0TL2qW2nn/7TUJP17Jydbcco8qldcfQb
+         6tKmcjwg/ZmLKh5pVz4NL7cyMMhxCHFCtZI+y1qwZGIGlsBDFNRSKzP5YpSJn8V2pXG4
+         mEfvaXBIZtQiOsM4lsQGwhZPQODHkOOHK23sQ7M+0lYR7v+vTai4YgwRNT3uHTdtIEN/
+         ooBQ==
+X-Gm-Message-State: AOAM5331PvcRRjhEEizqeVbEJBUOwRpAhobzMl4sBfpYMo902DcnRzzl
+        GG9FkBvOGP9qwgLuyvmKL6I=
+X-Google-Smtp-Source: ABdhPJyXN0mo7HEU6FOR9uI6Ug+pjDqXR35Q5tSXIuNx5uebdfNOLmGbKI/4ct6meuiTVI77h9h3lA==
+X-Received: by 2002:a37:9a93:: with SMTP id c141mr2943309qke.145.1597937026596;
+        Thu, 20 Aug 2020 08:23:46 -0700 (PDT)
+Received: from [192.168.1.190] (pool-68-134-6-11.bltmmd.fios.verizon.net. [68.134.6.11])
+        by smtp.gmail.com with ESMTPSA id n4sm3241448qtr.73.2020.08.20.08.23.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Aug 2020 08:23:46 -0700 (PDT)
+Subject: Re: [PATCH v3 4/4] selinux: Create new booleans and class dirs out of
+ tree
+To:     Daniel Burgener <dburgener@linux.microsoft.com>,
+        selinux@vger.kernel.org
+Cc:     omosnace@redhat.com, paul@paul-moore.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+References: <20200819195935.1720168-1-dburgener@linux.microsoft.com>
+ <20200819195935.1720168-5-dburgener@linux.microsoft.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Message-ID: <5a97749a-bc84-785a-4b06-7dc6c2597175@gmail.com>
+Date:   Thu, 20 Aug 2020 11:23:45 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87k0xtv0d4.fsf@x220.int.ebiederm.org>
+In-Reply-To: <20200819195935.1720168-5-dburgener@linux.microsoft.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 20, 2020 at 09:49:11AM -0500, Eric W. Biederman wrote:
-> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
-> 
-> > On 2020/08/20 23:00, Christian Brauner wrote:
-> >> On Thu, Aug 20, 2020 at 10:48:43PM +0900, Tetsuo Handa wrote:
-> >>> On 2020/08/20 22:34, Christian Brauner wrote:
-> >>>> On Thu, Aug 20, 2020 at 03:26:31PM +0200, Michal Hocko wrote:
-> >>>>> If you can handle vfork by other means then I am all for it. There were
-> >>>>> no patches in that regard proposed yet. Maybe it will turn out simpler
-> >>>>> then the heavy lifting we have to do in the oom specific code.
-> >>>>
-> >>>> Eric's not wrong. I fiddled with this too this morning but since
-> >>>> oom_score_adj is fiddled with in a bunch of places this seemed way more
-> >>>> code churn then what's proposed here.
-> >>>
-> >>> I prefer simply reverting commit 44a70adec910d692 ("mm, oom_adj: make sure
-> >>> processes sharing mm have same view of oom_score_adj").
-> >>>
-> >>>   https://lore.kernel.org/patchwork/patch/1037208/
-> >> 
-> >> I guess this is a can of worms but just or the sake of getting more
-> >> background: the question seems to be whether the oom adj score is a
-> >> property of the task/thread-group or a property of the mm. I always
-> >> thought the oom score is a property of the task/thread-group and not the
-> >> mm which is also why it lives in struct signal_struct and not in struct
-> >> mm_struct. But
-> >> 
-> >> 44a70adec910 ("mm, oom_adj: make sure processes sharing mm have same view of oom_score_adj")
-> >> 
-> >> reads like it is supposed to be a property of the mm or at least the
-> >> change makes it so.
-> >
-> > Yes, 44a70adec910 is trying to go towards changing from a property of the task/thread-group
-> > to a property of mm. But I don't think we need to do it at the cost of "__set_oom_adj() latency
-> > Yong-Taek Lee and Tim Murray have reported" and "complicity for supporting
-> > vfork() => __set_oom_adj() => execve() sequence".
-> 
-> The thing is commit 44a70adec910d692 ("mm, oom_adj: make sure processes
-> sharing mm have same view of oom_score_adj") has been in the tree for 4
-> years.
-> 
-> That someone is just now noticing a regression is their problem.  The
-> change is semantics is done and decided.  We can not reasonably revert
-> at this point without risking other regressions.
-> 
-> Given that the decision has already been made to make oom_adj
-> effectively per mm.  There is no point on have a debate if we should do
-> it.
+On 8/19/20 3:59 PM, Daniel Burgener wrote:
 
-I mean yeah, I think no-one really was going to jump on the revert-train.
+> In order to avoid concurrency issues around selinuxfs resource availability
+> during policy load, we first create new directories out of tree for
+> reloaded resources, then swap them in, and finally delete the old versions.
+>
+> This fix focuses on concurrency in each of the two subtrees swapped, and
+> not concurrency between the trees.  This means that it is still possible
+> that subsequent reads to eg the booleans directory and the class directory
+> during a policy load could see the old state for one and the new for the other.
+> The problem of ensuring that policy loads are fully atomic from the perspective
+> of userspace is larger than what is dealt with here.  This commit focuses on
+> ensuring that the directories contents always match either the new or the old
+> policy state from the perspective of userspace.
+>
+> In the previous implementation, on policy load /sys/fs/selinux is updated
+> by deleting the previous contents of
+> /sys/fs/selinux/{class,booleans} and then recreating them.  This means
+> that there is a period of time when the contents of these directories do not
+> exist which can cause race conditions as userspace relies on them for
+> information about the policy.  In addition, it means that error recovery in
+> the event of failure is challenging.
+>
+> In order to demonstrate the race condition that this series fixes, you
+> can use the following commands:
+>
+> while true; do cat /sys/fs/selinux/class/service/perms/status
+>> /dev/null; done &
+> while true; do load_policy; done;
+>
+> In the existing code, this will display errors fairly often as the class
+> lookup fails.  (In normal operation from systemd, this would result in a
+> permission check which would be allowed or denied based on policy settings
+> around unknown object classes.) After applying this patch series you
+> should expect to no longer see such error messages.
+>
+> Signed-off-by: Daniel Burgener <dburgener@linux.microsoft.com>
 
-At least for me the historical background was quite important to know
-actually. The fact that by sharing the mm one can effectively be bound
-to the oom score of another thread-group is kinda suprising and the
-oom_score_adj section in man proc doesn't mention this.
+Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
 
-And I really think we need to document this. Either on the clone() or on
-the oom_score_adj page...
-
-Christian
