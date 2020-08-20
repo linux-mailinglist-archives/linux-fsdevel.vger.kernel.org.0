@@ -2,22 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B498024B968
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 13:46:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D723424B97F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 13:48:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730144AbgHTLoN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 07:44:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58460 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729335AbgHTLm6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 07:42:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 53FB8B18A;
-        Thu, 20 Aug 2020 11:43:23 +0000 (UTC)
-Date:   Thu, 20 Aug 2020 13:42:45 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
+        id S1730969AbgHTLsS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 07:48:18 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40951 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730554AbgHTLr3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Aug 2020 07:47:29 -0400
+Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1k8j26-0001SH-AW; Thu, 20 Aug 2020 11:47:02 +0000
+Date:   Thu, 20 Aug 2020 13:47:00 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Michal Hocko <mhocko@suse.com>
 Cc:     Oleg Nesterov <oleg@redhat.com>,
         Suren Baghdasaryan <surenb@google.com>, mingo@kernel.org,
         peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
@@ -31,22 +33,22 @@ Cc:     Oleg Nesterov <oleg@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
  __set_oom_adj when not necessary
-Message-ID: <20200820114245.GH5033@dhcp22.suse.cz>
+Message-ID: <20200820114700.bmla72v3t4ux7gsm@wittgenstein>
 References: <20200820002053.1424000-1-surenb@google.com>
  <20200820105555.GA4546@redhat.com>
  <20200820111349.GE5033@dhcp22.suse.cz>
- <20200820113023.rjxque4jveo4nj5o@wittgenstein>
+ <20200820112932.GG5033@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200820113023.rjxque4jveo4nj5o@wittgenstein>
+In-Reply-To: <20200820112932.GG5033@dhcp22.suse.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 20-08-20 13:30:23, Christian Brauner wrote:
-> On Thu, Aug 20, 2020 at 01:13:49PM +0200, Michal Hocko wrote:
+On Thu, Aug 20, 2020 at 01:29:32PM +0200, Michal Hocko wrote:
+> On Thu 20-08-20 13:13:55, Michal Hocko wrote:
 > > On Thu 20-08-20 12:55:56, Oleg Nesterov wrote:
 > > > On 08/19, Suren Baghdasaryan wrote:
 > > > >
@@ -60,19 +62,6 @@ On Thu 20-08-20 13:30:23, Christian Brauner wrote:
 > > > vfork() ?
 > > 
 > > Could you be more specific?
-> 
-> vfork() implies CLONE_VM but !CLONE_THREAD. The way this patch is
-> written the mutex lock will be taken every time you do a vfork().
-
-OK, I see. We definietely do not want to impact vfork so we likely have
-to check for CLONE_VFORK as well. Ohh, well our clone flags are really
-clear as mud.
-
-> (It's honestly also debatable whether it's that rare. For one, userspace
-> stuff I maintain uses it too (see [1]).
-> [1]: https://github.com/lxc/lxc/blob/9d3b7c97f0443adc9f0b0438437657ab42f5a1c3/src/lxc/start.c#L1676
-> )
-> 
 > > 
 > > > > --- a/kernel/fork.c
 > > > > +++ b/kernel/fork.c
@@ -88,32 +77,32 @@ clear as mud.
 > > clone flag is responsible for the signal delivery. But now, after double
 > > checking we do explicitly disallow CLONE_SIGHAND && !CLONE_VM. So
 > > CLONE_THREAD is the right thing to check.
-> > 
-> > > > +			/* We need to synchronize with __set_oom_adj */
-> > > > +			mutex_lock(&oom_adj_lock);
-> > > > +			set_bit(MMF_PROC_SHARED, &mm->flags);
-> > > > +			/* Update the values in case they were changed after copy_signal */
-> > > > +			tsk->signal->oom_score_adj = current->signal->oom_score_adj;
-> > > > +			tsk->signal->oom_score_adj_min = current->signal->oom_score_adj_min;
-> > > > +			mutex_unlock(&oom_adj_lock);
-> > > 
-> > > I don't understand how this can close the race with __set_oom_adj...
-> > > 
-> > > What if __set_oom_adj() is called right after mutex_unlock() ? It will see
-> > > MMF_PROC_SHARED, but for_each_process() won't find the new child until
-> > > copy_process() does list_add_tail_rcu(&p->tasks, &init_task.tasks) ?
-> > 
-> > Good point. Then we will have to move this thing there.
 > 
-> I was toying with moving this into sm like:
-> 
-> static inline copy_oom_score(unsigned long flags, struct task_struct *tsk)
-> 
-> trying to rely on set_bit() and test_bit() in copy_mm() being atomic and
-> then calling it where Oleg said after the point of no return.
+> I have tried to remember but I have to say that after reading man page I
+> am still confused. So what is the actual difference between CLONE_THREAD
+> and CLONE_SIGHAND? Essentially all we care about from the OOM (and
 
-No objections.
+CLONE_THREAD implies CLONE_SIGHAND
+CLONE_SIGHAND implies CLONE_VM but CLONE_SIGHAND doesn't imply CLONE_THREAD.
 
--- 
-Michal Hocko
-SUSE Labs
+> oom_score_adj) POV is that signals are delivered to all entities and
+> that thay share signal struct. copy_signal is checking for CLONE_THREAD
+
+If a thread has a separate sighand struct it can have separate handlers
+(Oleg will correct me if wrong.). But fatal signals will take the whole
+thread-group down and can't be ignored which is the only thing you care
+about with OOM afair.
+What you care about is that the oom_score_adj{_min} settings are shared
+and they live in struct signal_struct and whether that's shared or not
+is basically guided by CLONE_THREAD.
+
+> but CLONE_THREAD requires CLONE_SIGHAND AFAIU. So is there any cae where
+> checking for CLONE_SIGHAND would wrong for our purpose?
+
+Without having spent a long time thinking deeply about this it likely
+wouldn't. But using CLONE_SIGHAND is very irritating since it doesn't
+clearly express what you want this for. Especially since there's now a
+difference between the check in copy_signal() and copy_mm() and a
+disconnect to what is expressed in the commit message too, imho.
+
+Christian
