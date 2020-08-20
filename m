@@ -2,138 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 557D524BCD9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 14:55:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A70624BD26
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 15:00:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729872AbgHTMyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 08:54:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43960 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730541AbgHTMxD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 08:53:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3ECC6B0BA;
-        Thu, 20 Aug 2020 12:53:28 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id CCF4A1E1312; Thu, 20 Aug 2020 14:53:00 +0200 (CEST)
-Date:   Thu, 20 Aug 2020 14:53:00 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, jack@suse.cz, tytso@mit.edu,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [RFC 1/1] ext4: Optimize ext4 DAX overwrites
-Message-ID: <20200820125300.GK1902@quack2.suse.cz>
-References: <cover.1597855360.git.riteshh@linux.ibm.com>
- <696f5386f1c306e769be409c8b1d90a3358bbf8d.1597855360.git.riteshh@linux.ibm.com>
+        id S1729387AbgHTNAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 09:00:11 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:42122 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729051AbgHTM6f (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Aug 2020 08:58:35 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k8k97-00AeLu-MA; Thu, 20 Aug 2020 06:58:21 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1k8k96-0001vI-Nm; Thu, 20 Aug 2020 06:58:21 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Suren Baghdasaryan <surenb@google.com>,
+        christian.brauner@ubuntu.com, mingo@kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
+        christian@kellner.me, areber@redhat.com, shakeelb@google.com,
+        cyphar@cyphar.com, oleg@redhat.com, adobriyan@gmail.com,
+        akpm@linux-foundation.org, gladkov.alexey@gmail.com,
+        walken@google.com, daniel.m.jordan@oracle.com, avagin@gmail.com,
+        bernd.edlinger@hotmail.de, john.johansen@canonical.com,
+        laoar.shao@gmail.com, timmurray@google.com, minchan@kernel.org,
+        kernel-team@android.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20200820002053.1424000-1-surenb@google.com>
+        <87zh6pxzq6.fsf@x220.int.ebiederm.org>
+        <20200820124241.GJ5033@dhcp22.suse.cz>
+        <87lfi9xz7y.fsf@x220.int.ebiederm.org>
+Date:   Thu, 20 Aug 2020 07:54:44 -0500
+In-Reply-To: <87lfi9xz7y.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
+        message of "Thu, 20 Aug 2020 07:45:37 -0500")
+Message-ID: <87d03lxysr.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <696f5386f1c306e769be409c8b1d90a3358bbf8d.1597855360.git.riteshh@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-XM-SPF: eid=1k8k96-0001vI-Nm;;;mid=<87d03lxysr.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19E902mpzZ/0RJGbVRpvQ/hKnf/i0hasRo=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
+X-Spam-Level: **
+X-Spam-Status: No, score=2.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
+        T_TooManySym_02,T_TooManySym_03,XMNoVowels,XMSubLong,XM_B_SpammyWords
+        autolearn=disabled version=3.4.2
+X-Spam-Virus: No
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4911]
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa02 0; Body=1 Fuz1=1 Fuz2=1]
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  0.0 T_TooManySym_03 6+ unique symbols in subject
+        *  0.0 T_TooManySym_02 5+ unique symbols in subject
+        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
+X-Spam-DCC: ; sa02 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Michal Hocko <mhocko@suse.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 471 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 4.2 (0.9%), b_tie_ro: 3.0 (0.6%), parse: 1.10
+        (0.2%), extract_message_metadata: 15 (3.2%), get_uri_detail_list: 2.8
+        (0.6%), tests_pri_-1000: 17 (3.7%), tests_pri_-950: 0.96 (0.2%),
+        tests_pri_-900: 0.84 (0.2%), tests_pri_-90: 95 (20.2%), check_bayes:
+        91 (19.4%), b_tokenize: 8 (1.6%), b_tok_get_all: 10 (2.1%),
+        b_comp_prob: 2.4 (0.5%), b_tok_touch_all: 68 (14.4%), b_finish: 0.81
+        (0.2%), tests_pri_0: 322 (68.4%), check_dkim_signature: 0.40 (0.1%),
+        check_dkim_adsp: 2.1 (0.4%), poll_dns_idle: 0.26 (0.1%), tests_pri_10:
+        2.6 (0.5%), tests_pri_500: 9 (1.8%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in __set_oom_adj when not necessary
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 20-08-20 17:06:28, Ritesh Harjani wrote:
-> Currently in case of DAX, we are starting a transaction
-> everytime for IOMAP_WRITE case. This can be optimized
-> away in case of an overwrite (where the blocks were already
-> allocated). This could give a significant performance boost
-> for multi-threaded random writes.
-> 
-> Reported-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+ebiederm@xmission.com (Eric W. Biederman) writes:
 
-Thanks for returning to this and I'm glad to see how much this helped :)
-BTW, I'd suspect there could be also significant contention and cache line
-bouncing on j_state_lock and transaction's atomic counters...
+2> Michal Hocko <mhocko@suse.com> writes:
+>
+>> On Thu 20-08-20 07:34:41, Eric W. Biederman wrote:
+>>> Suren Baghdasaryan <surenb@google.com> writes:
+>>> 
+>>> > Currently __set_oom_adj loops through all processes in the system to
+>>> > keep oom_score_adj and oom_score_adj_min in sync between processes
+>>> > sharing their mm. This is done for any task with more that one mm_users,
+>>> > which includes processes with multiple threads (sharing mm and signals).
+>>> > However for such processes the loop is unnecessary because their signal
+>>> > structure is shared as well.
+>>> > Android updates oom_score_adj whenever a tasks changes its role
+>>> > (background/foreground/...) or binds to/unbinds from a service, making
+>>> > it more/less important. Such operation can happen frequently.
+>>> > We noticed that updates to oom_score_adj became more expensive and after
+>>> > further investigation found out that the patch mentioned in "Fixes"
+>>> > introduced a regression. Using Pixel 4 with a typical Android workload,
+>>> > write time to oom_score_adj increased from ~3.57us to ~362us. Moreover
+>>> > this regression linearly depends on the number of multi-threaded
+>>> > processes running on the system.
+>>> > Mark the mm with a new MMF_PROC_SHARED flag bit when task is created with
+>>> > CLONE_VM and !CLONE_SIGHAND. Change __set_oom_adj to use MMF_PROC_SHARED
+>>> > instead of mm_users to decide whether oom_score_adj update should be
+>>> > synchronized between multiple processes. To prevent races between clone()
+>>> > and __set_oom_adj(), when oom_score_adj of the process being cloned might
+>>> > be modified from userspace, we use oom_adj_mutex. Its scope is changed to
+>>> > global and it is renamed into oom_adj_lock for naming consistency with
+>>> > oom_lock. Since the combination of CLONE_VM and !CLONE_SIGHAND is rarely
+>>> > used the additional mutex lock in that path of the clone() syscall should
+>>> > not affect its overall performance. Clearing the MMF_PROC_SHARED flag
+>>> > (when the last process sharing the mm exits) is left out of this patch to
+>>> > keep it simple and because it is believed that this threading model is
+>>> > rare. Should there ever be a need for optimizing that case as well, it
+>>> > can be done by hooking into the exit path, likely following the
+>>> > mm_update_next_owner pattern.
+>>> > With the combination of CLONE_VM and !CLONE_SIGHAND being quite rare, the
+>>> > regression is gone after the change is applied.
+>>> 
+>>> So I am confused.
+>>> 
+>>> Is there any reason why we don't simply move signal->oom_score_adj to
+>>> mm->oom_score_adj and call it a day?
+>>
+>> Yes. Please read through 44a70adec910 ("mm, oom_adj: make sure processes
+>> sharing mm have same view of oom_score_adj")
+>
+> That explains why the scores are synchronized.
+>
+> It doesn't explain why we don't do the much simpler thing and move
+> oom_score_adj from signal_struct to mm_struct. Which is my question.
+>
+> Why not put the score where we need it to ensure that the oom score
+> is always synchronized?  AKA on the mm_struct, not the signal_struct.
 
-> ---
->  fs/ext4/ext4.h  | 1 +
->  fs/ext4/file.c  | 2 +-
->  fs/ext4/inode.c | 8 +++++++-
->  3 files changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 42f5060f3cdf..9a2138afc751 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3232,6 +3232,7 @@ extern const struct dentry_operations ext4_dentry_ops;
->  extern const struct inode_operations ext4_file_inode_operations;
->  extern const struct file_operations ext4_file_operations;
->  extern loff_t ext4_llseek(struct file *file, loff_t offset, int origin);
-> +extern bool ext4_overwrite_io(struct inode *inode, loff_t pos, loff_t len);
->  
->  /* inline.c */
->  extern int ext4_get_max_inline_size(struct inode *inode);
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 2a01e31a032c..51cd92ac1758 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -188,7 +188,7 @@ ext4_extending_io(struct inode *inode, loff_t offset, size_t len)
->  }
->  
->  /* Is IO overwriting allocated and initialized blocks? */
-> -static bool ext4_overwrite_io(struct inode *inode, loff_t pos, loff_t len)
-> +bool ext4_overwrite_io(struct inode *inode, loff_t pos, loff_t len)
->  {
->  	struct ext4_map_blocks map;
->  	unsigned int blkbits = inode->i_blkbits;
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 10dd470876b3..f0ac0ee9e991 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3423,6 +3423,7 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  	int ret;
->  	struct ext4_map_blocks map;
->  	u8 blkbits = inode->i_blkbits;
-> +	bool overwrite = false;
->  
->  	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
->  		return -EINVAL;
-> @@ -3430,6 +3431,9 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  	if (WARN_ON_ONCE(ext4_has_inline_data(inode)))
->  		return -ERANGE;
->  
-> +	if (IS_DAX(inode) && (flags & IOMAP_WRITE) &&
-> +	    ext4_overwrite_io(inode, offset, length))
-> +		overwrite = true;
+Apologies.  That 44a70adec910 does describe that some people have seen
+vfork users set oom_score.  No details unfortunately.
 
-So the patch looks correct but using ext4_overwrite_io() seems a bit
-foolish since under the hood it does ext4_map_blocks() only to be able to
-decide whether to call ext4_map_blocks() once again with exactly the same
-arguments :). So I'd rather slightly refactor the code in
-ext4_iomap_begin() to avoid this double calling of ext4_map_blocks() for
-the fast path.
+I will skip the part where posix calls this undefined behavior.  It
+breaks userspace to change.
 
-								Honza
+It still seems like the code should be able to buffer oom_adj during
+vfork, and only move the value onto mm_struct during exec.
 
->  	/*
->  	 * Calculate the first and last logical blocks respectively.
->  	 */
-> @@ -3437,13 +3441,15 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  	map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
->  			  EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
->  
-> -	if (flags & IOMAP_WRITE)
-> +	if ((flags & IOMAP_WRITE) && !overwrite)
->  		ret = ext4_iomap_alloc(inode, &map, flags);
->  	else
->  		ret = ext4_map_blocks(NULL, inode, &map, 0);
->  
->  	if (ret < 0)
->  		return ret;
-> +	if (IS_DAX(inode) && overwrite)
-> +		WARN_ON(!(map.m_flags & EXT4_MAP_MAPPED));
->  
->  	ext4_set_iomap(inode, iomap, &map, offset, length);
->  
-> -- 
-> 2.25.4
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Eric
+
