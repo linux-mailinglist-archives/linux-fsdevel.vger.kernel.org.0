@@ -2,111 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E09FF24AF13
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 08:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0FFB24B144
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 10:47:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725793AbgHTGLh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 02:11:37 -0400
-Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:56276 "EHLO
-        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725768AbgHTGLh (ORCPT
+        id S1726731AbgHTIrg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 04:47:36 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35196 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbgHTIr3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 02:11:37 -0400
-Received: from dread.disaster.area (pa49-181-146-199.pa.nsw.optusnet.com.au [49.181.146.199])
-        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id 47EDE1AACAD;
-        Thu, 20 Aug 2020 16:11:13 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1k8dn6-00054g-GM; Thu, 20 Aug 2020 16:11:12 +1000
-Date:   Thu, 20 Aug 2020 16:11:12 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     peterz@infradead.org, Chris Down <chris@chrisdown.name>,
-        Waiman Long <longman@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [RFC PATCH 0/8] memcg: Enable fine-grained per process memory
- control
-Message-ID: <20200820061112.GA7728@dread.disaster.area>
-References: <20200817140831.30260-1-longman@redhat.com>
- <20200818091453.GL2674@hirez.programming.kicks-ass.net>
- <20200818092737.GA148695@chrisdown.name>
- <20200818100444.GN2674@hirez.programming.kicks-ass.net>
- <20200818125559.GP17456@casper.infradead.org>
+        Thu, 20 Aug 2020 04:47:29 -0400
+Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1k8gDo-0002Tf-5o; Thu, 20 Aug 2020 08:46:56 +0000
+Date:   Thu, 20 Aug 2020 10:46:54 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     mhocko@suse.com, mingo@kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, esyr@redhat.com, christian@kellner.me,
+        areber@redhat.com, shakeelb@google.com, cyphar@cyphar.com,
+        oleg@redhat.com, adobriyan@gmail.com, akpm@linux-foundation.org,
+        ebiederm@xmission.com, gladkov.alexey@gmail.com, walken@google.com,
+        daniel.m.jordan@oracle.com, avagin@gmail.com,
+        bernd.edlinger@hotmail.de, john.johansen@canonical.com,
+        laoar.shao@gmail.com, timmurray@google.com, minchan@kernel.org,
+        kernel-team@android.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
+ __set_oom_adj when not necessary
+Message-ID: <20200820084654.jdl6jqgxsga7orvf@wittgenstein>
+References: <20200820002053.1424000-1-surenb@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200818125559.GP17456@casper.infradead.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=LPwYv6e9 c=1 sm=1 tr=0 cx=a_idp_d
-        a=GorAHYkI+xOargNMzM6qxQ==:117 a=GorAHYkI+xOargNMzM6qxQ==:17
-        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8
-        a=7-415B0cAAAA:8 a=cUD-o-zCZHVta4NZjWEA:9 a=CjuIK1q_8ugA:10
-        a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200820002053.1424000-1-surenb@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 18, 2020 at 01:55:59PM +0100, Matthew Wilcox wrote:
-> On Tue, Aug 18, 2020 at 12:04:44PM +0200, peterz@infradead.org wrote:
-> > On Tue, Aug 18, 2020 at 10:27:37AM +0100, Chris Down wrote:
-> > > peterz@infradead.org writes:
-> > > > On Mon, Aug 17, 2020 at 10:08:23AM -0400, Waiman Long wrote:
-> > > > > Memory controller can be used to control and limit the amount of
-> > > > > physical memory used by a task. When a limit is set in "memory.high" in
-> > > > > a v2 non-root memory cgroup, the memory controller will try to reclaim
-> > > > > memory if the limit has been exceeded. Normally, that will be enough
-> > > > > to keep the physical memory consumption of tasks in the memory cgroup
-> > > > > to be around or below the "memory.high" limit.
-> > > > > 
-> > > > > Sometimes, memory reclaim may not be able to recover memory in a rate
-> > > > > that can catch up to the physical memory allocation rate. In this case,
-> > > > > the physical memory consumption will keep on increasing.
-> > > > 
-> > > > Then slow down the allocator? That's what we do for dirty pages too, we
-> > > > slow down the dirtier when we run against the limits.
-> > > 
-> > > We already do that since v5.4. I'm wondering whether Waiman's customer is
-> > > just running with a too-old kernel without 0e4b01df865 ("mm, memcg: throttle
-> > > allocators when failing reclaim over memory.high") backported.
-> > 
-> > That commit is fundamentally broken, it doesn't guarantee anything.
-> > 
-> > Please go read how the dirty throttling works (unless people wrecked
-> > that since..).
+On Wed, Aug 19, 2020 at 05:20:53PM -0700, Suren Baghdasaryan wrote:
+> Currently __set_oom_adj loops through all processes in the system to
+> keep oom_score_adj and oom_score_adj_min in sync between processes
+> sharing their mm. This is done for any task with more that one mm_users,
+> which includes processes with multiple threads (sharing mm and signals).
+> However for such processes the loop is unnecessary because their signal
+> structure is shared as well.
+> Android updates oom_score_adj whenever a tasks changes its role
+> (background/foreground/...) or binds to/unbinds from a service, making
+> it more/less important. Such operation can happen frequently.
+> We noticed that updates to oom_score_adj became more expensive and after
+> further investigation found out that the patch mentioned in "Fixes"
+> introduced a regression. Using Pixel 4 with a typical Android workload,
+> write time to oom_score_adj increased from ~3.57us to ~362us. Moreover
+> this regression linearly depends on the number of multi-threaded
+> processes running on the system.
+> Mark the mm with a new MMF_PROC_SHARED flag bit when task is created with
+> CLONE_VM and !CLONE_SIGHAND. Change __set_oom_adj to use MMF_PROC_SHARED
+> instead of mm_users to decide whether oom_score_adj update should be
+> synchronized between multiple processes. To prevent races between clone()
+> and __set_oom_adj(), when oom_score_adj of the process being cloned might
+> be modified from userspace, we use oom_adj_mutex. Its scope is changed to
+> global and it is renamed into oom_adj_lock for naming consistency with
+> oom_lock. Since the combination of CLONE_VM and !CLONE_SIGHAND is rarely
+> used the additional mutex lock in that path of the clone() syscall should
+> not affect its overall performance. Clearing the MMF_PROC_SHARED flag
+> (when the last process sharing the mm exits) is left out of this patch to
+> keep it simple and because it is believed that this threading model is
+> rare. Should there ever be a need for optimizing that case as well, it
+> can be done by hooking into the exit path, likely following the
+> mm_update_next_owner pattern.
+> With the combination of CLONE_VM and !CLONE_SIGHAND being quite rare, the
+> regression is gone after the change is applied.
 > 
-> Of course they did.
+> Fixes: 44a70adec910 ("mm, oom_adj: make sure processes sharing mm have same view of oom_score_adj")
+> Reported-by: Tim Murray <timmurray@google.com>
+> Suggested-by: Michal Hocko <mhocko@kernel.org>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> ---
+>  fs/proc/base.c                 | 7 +++----
+>  include/linux/oom.h            | 1 +
+>  include/linux/sched/coredump.h | 1 +
+>  kernel/fork.c                  | 9 +++++++++
+>  mm/oom_kill.c                  | 2 ++
+>  5 files changed, 16 insertions(+), 4 deletions(-)
 > 
-> https://lore.kernel.org/linux-mm/ce7975cd-6353-3f29-b52c-7a81b1d07caa@kernel.dk/
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 617db4e0faa0..cff1a58a236c 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -1055,7 +1055,6 @@ static ssize_t oom_adj_read(struct file *file, char __user *buf, size_t count,
+>  
+>  static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+>  {
+> -	static DEFINE_MUTEX(oom_adj_mutex);
+>  	struct mm_struct *mm = NULL;
+>  	struct task_struct *task;
+>  	int err = 0;
+> @@ -1064,7 +1063,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+>  	if (!task)
+>  		return -ESRCH;
+>  
+> -	mutex_lock(&oom_adj_mutex);
+> +	mutex_lock(&oom_adj_lock);
+>  	if (legacy) {
+>  		if (oom_adj < task->signal->oom_score_adj &&
+>  				!capable(CAP_SYS_RESOURCE)) {
+> @@ -1095,7 +1094,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+>  		struct task_struct *p = find_lock_task_mm(task);
+>  
+>  		if (p) {
+> -			if (atomic_read(&p->mm->mm_users) > 1) {
+> +			if (test_bit(MMF_PROC_SHARED, &p->mm->flags)) {
+>  				mm = p->mm;
+>  				mmgrab(mm);
+>  			}
+> @@ -1132,7 +1131,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+>  		mmdrop(mm);
+>  	}
+>  err_unlock:
+> -	mutex_unlock(&oom_adj_mutex);
+> +	mutex_unlock(&oom_adj_lock);
+>  	put_task_struct(task);
+>  	return err;
+>  }
+> diff --git a/include/linux/oom.h b/include/linux/oom.h
+> index f022f581ac29..861f22bd4706 100644
+> --- a/include/linux/oom.h
+> +++ b/include/linux/oom.h
+> @@ -55,6 +55,7 @@ struct oom_control {
+>  };
+>  
+>  extern struct mutex oom_lock;
+> +extern struct mutex oom_adj_lock;
+>  
+>  static inline void set_current_oom_origin(void)
+>  {
+> diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
+> index ecdc6542070f..070629b722df 100644
+> --- a/include/linux/sched/coredump.h
+> +++ b/include/linux/sched/coredump.h
+> @@ -72,6 +72,7 @@ static inline int get_dumpable(struct mm_struct *mm)
+>  #define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
+>  #define MMF_OOM_VICTIM		25	/* mm is the oom victim */
+>  #define MMF_OOM_REAP_QUEUED	26	/* mm was queued for oom_reaper */
+> +#define MMF_PROC_SHARED	27	/* mm is shared while sighand is not */
+>  #define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
+>  
+>  #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 4d32190861bd..9177a76bf840 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1403,6 +1403,15 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
+>  	if (clone_flags & CLONE_VM) {
+>  		mmget(oldmm);
+>  		mm = oldmm;
+> +		if (!(clone_flags & CLONE_SIGHAND)) {
+> +			/* We need to synchronize with __set_oom_adj */
+> +			mutex_lock(&oom_adj_lock);
+> +			set_bit(MMF_PROC_SHARED, &mm->flags);
 
-Different thing. That's memory reclaim throttling, not dirty page
-throttling.  balance_dirty_pages() still works just fine as it does
-not look at device congestion. page cleaning rate is accounted in
-test_clear_page_writeback(), page dirtying rate is accounted
-directly in balance_dirty_pages(). That feedback loop has not been
-broken...
+This seems fine.
 
-And I compeltely agree with Peter here - the control theory we
-applied to the dirty throttling problem is still 100% valid and so
-the algorithm still just works all these years later. I've only been
-saying that allocation should use the same feedback model for
-reclaim throttling since ~2011...
+> +			/* Update the values in case they were changed after copy_signal */
+> +			tsk->signal->oom_score_adj = current->signal->oom_score_adj;
+> +			tsk->signal->oom_score_adj_min = current->signal->oom_score_adj_min;
 
-Cheers,
+But this seems wrong to me.
+copy_signal() should be the only place where ->signal is set. Just from
+a pure conceptual perspective. The copy_*() should be as self-contained
+as possible imho.
+Also, now I have to remember/look for two different locations where
+oom_score_adj{_min} is initialized during fork. And this also creates a
+dependency between copy_signal() and copy_mm() that doesn't need to be
+there imho. I'm not a fan.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Also, you're in a branch where you're not sharing signal struct. So
+after copy_signal() why would the parent changing their
+oom_score_adj{_min} value matter? If that "race" is really important to
+handle than you need to verify that the child has expected oom settings
+after process creation anyway and should probably set it again from
+userspace to make sure. This seems like an unnecessary optimization that
+just makes the code that tiny bit more complex than it needs to be.
+
+I'd really just do:
+
+if (!(clone_flags & CLONE_SIGHAND)) {
+	/* We need to synchronize with __set_oom_adj */
+	mutex_lock(&oom_adj_lock);
+	set_bit(MMF_PROC_SHARED, &mm->flags);
+	mutex_unlock(&oom_adj_lock);
+}
+
+makes this look way cleaner too imho.
+
+Christian
