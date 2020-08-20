@@ -2,76 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CDA624BFB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 15:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE9E124BFDF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 15:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbgHTNxO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 09:53:14 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:59341 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730149AbgHTNuh (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 09:50:37 -0400
-Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 07KDml2B045145;
-        Thu, 20 Aug 2020 22:48:47 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav107.sakura.ne.jp);
- Thu, 20 Aug 2020 22:48:47 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav107.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 07KDml2i045137
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 20 Aug 2020 22:48:47 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
- __set_oom_adj when not necessary
-To:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Suren Baghdasaryan <surenb@google.com>, timmurray@google.com
-Cc:     Michal Hocko <mhocko@suse.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, mingo@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
-        christian@kellner.me, areber@redhat.com, shakeelb@google.com,
-        cyphar@cyphar.com, oleg@redhat.com, adobriyan@gmail.com,
-        akpm@linux-foundation.org, gladkov.alexey@gmail.com,
-        walken@google.com, daniel.m.jordan@oracle.com, avagin@gmail.com,
-        bernd.edlinger@hotmail.de, john.johansen@canonical.com,
-        laoar.shao@gmail.com, minchan@kernel.org, kernel-team@android.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <20200820002053.1424000-1-surenb@google.com>
- <87zh6pxzq6.fsf@x220.int.ebiederm.org> <20200820124241.GJ5033@dhcp22.suse.cz>
- <87lfi9xz7y.fsf@x220.int.ebiederm.org> <87d03lxysr.fsf@x220.int.ebiederm.org>
- <20200820132631.GK5033@dhcp22.suse.cz>
- <20200820133454.ch24kewh42ax4ebl@wittgenstein>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
-Date:   Thu, 20 Aug 2020 22:48:43 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        id S1730743AbgHTN4E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 09:56:04 -0400
+Received: from raptor.unsafe.ru ([5.9.43.93]:41962 "EHLO raptor.unsafe.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728572AbgHTN4B (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Aug 2020 09:56:01 -0400
+Received: from comp-core-i7-2640m-0182e6.redhat.com (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by raptor.unsafe.ru (Postfix) with ESMTPSA id 510982052E;
+        Thu, 20 Aug 2020 13:55:50 +0000 (UTC)
+From:   Alexey Gladkov <gladkov.alexey@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>
+Cc:     Alexey Gladkov <legion@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH v3 0/2] proc: Relax check of mount visibility
+Date:   Thu, 20 Aug 2020 15:53:32 +0200
+Message-Id: <cover.1597931457.git.gladkov.alexey@gmail.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-In-Reply-To: <20200820133454.ch24kewh42ax4ebl@wittgenstein>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.1 (raptor.unsafe.ru [5.9.43.93]); Thu, 20 Aug 2020 13:55:54 +0000 (UTC)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/08/20 22:34, Christian Brauner wrote:
-> On Thu, Aug 20, 2020 at 03:26:31PM +0200, Michal Hocko wrote:
->> If you can handle vfork by other means then I am all for it. There were
->> no patches in that regard proposed yet. Maybe it will turn out simpler
->> then the heavy lifting we have to do in the oom specific code.
-> 
-> Eric's not wrong. I fiddled with this too this morning but since
-> oom_score_adj is fiddled with in a bunch of places this seemed way more
-> code churn then what's proposed here.
+If only the dynamic part of procfs is mounted (subset=pid), then there is no
+need to check if procfs is fully visible to the user in the new user namespace.
 
-I prefer simply reverting commit 44a70adec910d692 ("mm, oom_adj: make sure
-processes sharing mm have same view of oom_score_adj").
+Changelog
+---------
 
-  https://lore.kernel.org/patchwork/patch/1037208/
+v3:
+* Add 'const' to struct cred *mounter_cred (fix kernel test robot warning).
+
+v2:
+* cache the mounters credentials and make access to the net directories
+  contingent of the permissions of the mounter of procfs.
+
+Alexey Gladkov (2):
+  proc: Relax check of mount visibility
+  Show /proc/self/net only for CAP_NET_ADMIN
+
+ fs/namespace.c          | 27 ++++++++++++++++-----------
+ fs/proc/proc_net.c      |  8 ++++++++
+ fs/proc/root.c          | 21 +++++++++++++++------
+ include/linux/fs.h      |  1 +
+ include/linux/proc_fs.h |  1 +
+ 5 files changed, 41 insertions(+), 17 deletions(-)
+
+-- 
+2.25.4
+
