@@ -2,28 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8525124B83F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 13:14:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B58024B841
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 13:15:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbgHTLOm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 07:14:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44956 "EHLO mx2.suse.de"
+        id S1729303AbgHTLOw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 07:14:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46226 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729583AbgHTLOI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 07:14:08 -0400
+        id S1729824AbgHTLOr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Aug 2020 07:14:47 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 16BF9B804;
-        Thu, 20 Aug 2020 11:14:22 +0000 (UTC)
-Date:   Thu, 20 Aug 2020 13:13:49 +0200
+        by mx2.suse.de (Postfix) with ESMTP id B0AB0B80B;
+        Thu, 20 Aug 2020 11:15:12 +0000 (UTC)
+Date:   Thu, 20 Aug 2020 13:14:45 +0200
 From:   Michal Hocko <mhocko@suse.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        christian.brauner@ubuntu.com, mingo@kernel.org,
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Suren Baghdasaryan <surenb@google.com>, mingo@kernel.org,
         peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
         christian@kellner.me, areber@redhat.com, shakeelb@google.com,
-        cyphar@cyphar.com, adobriyan@gmail.com, akpm@linux-foundation.org,
-        ebiederm@xmission.com, gladkov.alexey@gmail.com, walken@google.com,
+        cyphar@cyphar.com, oleg@redhat.com, adobriyan@gmail.com,
+        akpm@linux-foundation.org, ebiederm@xmission.com,
+        gladkov.alexey@gmail.com, walken@google.com,
         daniel.m.jordan@oracle.com, avagin@gmail.com,
         bernd.edlinger@hotmail.de, john.johansen@canonical.com,
         laoar.shao@gmail.com, timmurray@google.com, minchan@kernel.org,
@@ -31,64 +31,39 @@ Cc:     Suren Baghdasaryan <surenb@google.com>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
  __set_oom_adj when not necessary
-Message-ID: <20200820111349.GE5033@dhcp22.suse.cz>
+Message-ID: <20200820111445.GF5033@dhcp22.suse.cz>
 References: <20200820002053.1424000-1-surenb@google.com>
- <20200820105555.GA4546@redhat.com>
+ <20200820084654.jdl6jqgxsga7orvf@wittgenstein>
+ <20200820090901.GD5033@dhcp22.suse.cz>
+ <20200820103248.vkzrndewvy5vlncz@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200820105555.GA4546@redhat.com>
+In-Reply-To: <20200820103248.vkzrndewvy5vlncz@wittgenstein>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 20-08-20 12:55:56, Oleg Nesterov wrote:
-> On 08/19, Suren Baghdasaryan wrote:
-> >
-> > Since the combination of CLONE_VM and !CLONE_SIGHAND is rarely
-> > used the additional mutex lock in that path of the clone() syscall should
-> > not affect its overall performance. Clearing the MMF_PROC_SHARED flag
-> > (when the last process sharing the mm exits) is left out of this patch to
-> > keep it simple and because it is believed that this threading model is
-> > rare.
+On Thu 20-08-20 12:32:48, Christian Brauner wrote:
+> On Thu, Aug 20, 2020 at 11:09:01AM +0200, Michal Hocko wrote:
+> > On Thu 20-08-20 10:46:54, Christian Brauner wrote:
+[...]
+> > > > which includes processes with multiple threads (sharing mm and signals).
+> > > > However for such processes the loop is unnecessary because their signal
+> > > > structure is shared as well.
 > 
-> vfork() ?
-
-Could you be more specific?
-
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -1403,6 +1403,15 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
-> >  	if (clone_flags & CLONE_VM) {
-> >  		mmget(oldmm);
-> >  		mm = oldmm;
-> > +		if (!(clone_flags & CLONE_SIGHAND)) {
+> and it seems you want to exclude threads, i.e. only update mm that is
+> shared not among threads in the same thread-group.
+> But struct signal and struct sighand_struct are different things, i.e.
+> they can be shared or not independent of each other. A non-shared
+> signal_struct where oom_score_adj{_min} live is only implied by
+> !CLONE_THREAD. So shouldn't this be:
 > 
-> I agree with Christian, you need CLONE_THREAD
+> if (!(clone_flags & CLONE_THREAD)) rather than CLONE_SIGHAND?
 
-This was my suggestion to Suren, likely because I've misrememberd which
-clone flag is responsible for the signal delivery. But now, after double
-checking we do explicitly disallow CLONE_SIGHAND && !CLONE_VM. So
-CLONE_THREAD is the right thing to check.
+You are right as I have already replied to Oleg.
 
-> > +			/* We need to synchronize with __set_oom_adj */
-> > +			mutex_lock(&oom_adj_lock);
-> > +			set_bit(MMF_PROC_SHARED, &mm->flags);
-> > +			/* Update the values in case they were changed after copy_signal */
-> > +			tsk->signal->oom_score_adj = current->signal->oom_score_adj;
-> > +			tsk->signal->oom_score_adj_min = current->signal->oom_score_adj_min;
-> > +			mutex_unlock(&oom_adj_lock);
-> 
-> I don't understand how this can close the race with __set_oom_adj...
-> 
-> What if __set_oom_adj() is called right after mutex_unlock() ? It will see
-> MMF_PROC_SHARED, but for_each_process() won't find the new child until
-> copy_process() does list_add_tail_rcu(&p->tasks, &init_task.tasks) ?
-
-Good point. Then we will have to move this thing there.
-
-Thanks!
 -- 
 Michal Hocko
 SUSE Labs
