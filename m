@@ -2,120 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 14FAC24BFB8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 15:53:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 165FF24BEE9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 15:35:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728790AbgHTNxT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 09:53:19 -0400
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:60528 "EHLO
-        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727902AbgHTJ0k (ORCPT
+        id S1728439AbgHTNfd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 09:35:33 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46882 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729727AbgHTNfa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 05:26:40 -0400
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id A5F4A1D0C;
-        Thu, 20 Aug 2020 12:26:35 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1597915595;
-        bh=3noQN8rOGv2yyitvWoJV96U2nOW/mwH5Vfw1lzFR83E=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=bdquysZzTTNsEgZmhWWSDjkJ4od2EtH31dCcK9nPTrMFLuzeeog3mPhGfs1+oREns
-         PuDEyKRa+EhK5NcJec2XfOo2MwaqbSbqzuj6zOTyGTAvF8kJJXiNd9IlJbtUNp7on2
-         AtM1BPTLSeGtOwrfni7AkK1uhdE02Os3GOyb2+zQ=
-Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Thu, 20 Aug 2020 12:26:35 +0300
-Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
- by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
- id 15.01.1847.003; Thu, 20 Aug 2020 12:26:35 +0300
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     "dsterba@suse.cz" <dsterba@suse.cz>
-CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH] fs: NTFS read-write driver GPL implementation by Paragon
- Software.
-Thread-Topic: [PATCH] fs: NTFS read-write driver GPL implementation by Paragon
- Software.
-Thread-Index: AdZyNcmjSkpkGje7R9K6YobJrVDyZ///4zWA//aneKA=
-Date:   Thu, 20 Aug 2020 09:26:35 +0000
-Message-ID: <dc291b0599c4400b9f7776f969ad5a81@paragon-software.com>
-References: <2911ac5cd20b46e397be506268718d74@paragon-software.com>
- <20200814134056.GV2026@twin.jikos.cz>
-In-Reply-To: <20200814134056.GV2026@twin.jikos.cz>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.30.8.36]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 20 Aug 2020 09:35:30 -0400
+Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1k8kiV-0006vu-SQ; Thu, 20 Aug 2020 13:34:55 +0000
+Date:   Thu, 20 Aug 2020 15:34:54 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Suren Baghdasaryan <surenb@google.com>, mingo@kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
+        christian@kellner.me, areber@redhat.com, shakeelb@google.com,
+        cyphar@cyphar.com, oleg@redhat.com, adobriyan@gmail.com,
+        akpm@linux-foundation.org, gladkov.alexey@gmail.com,
+        walken@google.com, daniel.m.jordan@oracle.com, avagin@gmail.com,
+        bernd.edlinger@hotmail.de, john.johansen@canonical.com,
+        laoar.shao@gmail.com, timmurray@google.com, minchan@kernel.org,
+        kernel-team@android.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
+ __set_oom_adj when not necessary
+Message-ID: <20200820133454.ch24kewh42ax4ebl@wittgenstein>
+References: <20200820002053.1424000-1-surenb@google.com>
+ <87zh6pxzq6.fsf@x220.int.ebiederm.org>
+ <20200820124241.GJ5033@dhcp22.suse.cz>
+ <87lfi9xz7y.fsf@x220.int.ebiederm.org>
+ <87d03lxysr.fsf@x220.int.ebiederm.org>
+ <20200820132631.GK5033@dhcp22.suse.cz>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200820132631.GK5033@dhcp22.suse.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> From: David Sterba <dsterba@suse.cz>
-> Sent: Friday, August 14, 2020 4:41 PM
-> On Fri, Aug 14, 2020 at 12:29:01PM +0000, Konstantin Komarov wrote:
-> > This patch adds NTFS Read-Write driver to fs/ntfs3.
-> >
-> > Having decades of expertise in commercial file systems development and =
-huge
-> > test coverage, we at Paragon Software GmbH want to make our contributio=
-n to
-> > the Open Source Community by providing implementation of NTFS Read-Writ=
-e
-> > driver for the Linux Kernel.
-> >
-> > This is fully functional NTFS Read-Write driver. Current version works =
-with
-> > NTFS(including v3.1) normal/compressed/sparse files and supports journa=
-l replaying.
-> >
-> > We plan to support this version after the codebase once merged, and add=
- new
-> > features and fix bugs. For example, full journaling support over JBD wi=
-ll be
-> > added in later updates.
-> >
-> > The patch is too big to handle it within an e-mail body, so it is avail=
-able to download
-> > on our server: https://dl.paragon-software.com/ntfs3/ntfs3.patch
-> >
-> > Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software=
-.com>
->=20
-> In case somebody wants to compile it, this fixup is needed to let 'make
-> fs/ntfs3/' actually work, besides enabling it in the config.
->=20
-> diff --git a/fs/Makefile b/fs/Makefile
-> index 1c7b0e3f6daa..b0b4ad8affa0 100644
-> --- a/fs/Makefile
-> +++ b/fs/Makefile
-> @@ -100,6 +100,7 @@ obj-$(CONFIG_SYSV_FS)		+=3D sysv/
->  obj-$(CONFIG_CIFS)		+=3D cifs/
->  obj-$(CONFIG_HPFS_FS)		+=3D hpfs/
->  obj-$(CONFIG_NTFS_FS)		+=3D ntfs/
-> +obj-$(CONFIG_NTFS3_FS)		+=3D ntfs3/
->  obj-$(CONFIG_UFS_FS)		+=3D ufs/
->  obj-$(CONFIG_EFS_FS)		+=3D efs/
->  obj-$(CONFIG_JFFS2_FS)		+=3D jffs2/
-> diff --git a/fs/ntfs3/Makefile b/fs/ntfs3/Makefile
-> index 4d4fe198b8b8..d99dd1af43aa 100644
-> --- a/fs/ntfs3/Makefile
-> +++ b/fs/ntfs3/Makefile
-> @@ -5,7 +5,7 @@
->=20
->  obj-$(CONFIG_NTFS3_FS) +=3D ntfs3.o
->=20
-> -ntfs3-objs :=3D bitfunc.o bitmap.o inode.o fsntfs.o frecord.o \
-> +ntfs3-y :=3D bitfunc.o bitmap.o inode.o fsntfs.o frecord.o \
->  	    index.o attrlist.o record.o attrib.o run.o xattr.o\
->  	    upcase.o super.o file.o dir.o namei.o lznt.o\
->  	    fslog.o
-> ---
-Hi David, thanks! Indeed these fixups are needed to the patch (lost them du=
-ring final polishing of the code before submitting). Will be fixed in v2.
+On Thu, Aug 20, 2020 at 03:26:31PM +0200, Michal Hocko wrote:
+> On Thu 20-08-20 07:54:44, Eric W. Biederman wrote:
+> > ebiederm@xmission.com (Eric W. Biederman) writes:
+> > 
+> > 2> Michal Hocko <mhocko@suse.com> writes:
+> > >
+> > >> On Thu 20-08-20 07:34:41, Eric W. Biederman wrote:
+> > >>> Suren Baghdasaryan <surenb@google.com> writes:
+> > >>> 
+> > >>> > Currently __set_oom_adj loops through all processes in the system to
+> > >>> > keep oom_score_adj and oom_score_adj_min in sync between processes
+> > >>> > sharing their mm. This is done for any task with more that one mm_users,
+> > >>> > which includes processes with multiple threads (sharing mm and signals).
+> > >>> > However for such processes the loop is unnecessary because their signal
+> > >>> > structure is shared as well.
+> > >>> > Android updates oom_score_adj whenever a tasks changes its role
+> > >>> > (background/foreground/...) or binds to/unbinds from a service, making
+> > >>> > it more/less important. Such operation can happen frequently.
+> > >>> > We noticed that updates to oom_score_adj became more expensive and after
+> > >>> > further investigation found out that the patch mentioned in "Fixes"
+> > >>> > introduced a regression. Using Pixel 4 with a typical Android workload,
+> > >>> > write time to oom_score_adj increased from ~3.57us to ~362us. Moreover
+> > >>> > this regression linearly depends on the number of multi-threaded
+> > >>> > processes running on the system.
+> > >>> > Mark the mm with a new MMF_PROC_SHARED flag bit when task is created with
+> > >>> > CLONE_VM and !CLONE_SIGHAND. Change __set_oom_adj to use MMF_PROC_SHARED
+> > >>> > instead of mm_users to decide whether oom_score_adj update should be
+> > >>> > synchronized between multiple processes. To prevent races between clone()
+> > >>> > and __set_oom_adj(), when oom_score_adj of the process being cloned might
+> > >>> > be modified from userspace, we use oom_adj_mutex. Its scope is changed to
+> > >>> > global and it is renamed into oom_adj_lock for naming consistency with
+> > >>> > oom_lock. Since the combination of CLONE_VM and !CLONE_SIGHAND is rarely
+> > >>> > used the additional mutex lock in that path of the clone() syscall should
+> > >>> > not affect its overall performance. Clearing the MMF_PROC_SHARED flag
+> > >>> > (when the last process sharing the mm exits) is left out of this patch to
+> > >>> > keep it simple and because it is believed that this threading model is
+> > >>> > rare. Should there ever be a need for optimizing that case as well, it
+> > >>> > can be done by hooking into the exit path, likely following the
+> > >>> > mm_update_next_owner pattern.
+> > >>> > With the combination of CLONE_VM and !CLONE_SIGHAND being quite rare, the
+> > >>> > regression is gone after the change is applied.
+> > >>> 
+> > >>> So I am confused.
+> > >>> 
+> > >>> Is there any reason why we don't simply move signal->oom_score_adj to
+> > >>> mm->oom_score_adj and call it a day?
+> > >>
+> > >> Yes. Please read through 44a70adec910 ("mm, oom_adj: make sure processes
+> > >> sharing mm have same view of oom_score_adj")
+> > >
+> > > That explains why the scores are synchronized.
+> > >
+> > > It doesn't explain why we don't do the much simpler thing and move
+> > > oom_score_adj from signal_struct to mm_struct. Which is my question.
+> > >
+> > > Why not put the score where we need it to ensure that the oom score
+> > > is always synchronized?  AKA on the mm_struct, not the signal_struct.
+> > 
+> > Apologies.  That 44a70adec910 does describe that some people have seen
+> > vfork users set oom_score.  No details unfortunately.
+> > 
+> > I will skip the part where posix calls this undefined behavior.  It
+> > breaks userspace to change.
+> > 
+> > It still seems like the code should be able to buffer oom_adj during
+> > vfork, and only move the value onto mm_struct during exec.
+> 
+> If you can handle vfork by other means then I am all for it. There were
+> no patches in that regard proposed yet. Maybe it will turn out simpler
+> then the heavy lifting we have to do in the oom specific code.
+
+Eric's not wrong. I fiddled with this too this morning but since
+oom_score_adj is fiddled with in a bunch of places this seemed way more
+code churn then what's proposed here.
+
+Christian
