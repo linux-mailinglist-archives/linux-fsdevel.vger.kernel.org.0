@@ -2,153 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F021224C292
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 17:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8639524C2A9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 17:57:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbgHTPwm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 11:52:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46228 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728809AbgHTPwk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 11:52:40 -0400
-Received: from kernel.org (unknown [87.70.91.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50D6F22D02;
-        Thu, 20 Aug 2020 15:52:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597938759;
-        bh=olFkF8WbsFuHtZd9ChmwDnMhq4dAB75kWwSK+0maCo0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rXdI/2i+uTIyui9Dqky2lOsnOB5jHumUoz9vyCWVksi+jCX/cin2X0NAhZkvzzrrA
-         kwB1mQk9tmImk5FV5Ln6HbAMWznc6VF7fXJ8iI6/UHeReZUV1SP7agq0ae+f8/MDDg
-         S/yXBOXnLzIrn/7Y0W5T1dTvbgWrpaeScrKjGVKk=
-Date:   Thu, 20 Aug 2020 18:52:28 +0300
-From:   Mike Rapoport <rppt@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-riscv@lists.infradead.org, x86@kernel.org
-Subject: Re: [PATCH v4 6/6] mm: secretmem: add ability to reserve memory at
- boot
-Message-ID: <20200820155228.GZ752365@kernel.org>
-References: <20200818141554.13945-1-rppt@kernel.org>
- <20200818141554.13945-7-rppt@kernel.org>
- <03ec586d-c00c-c57e-3118-7186acb7b823@redhat.com>
- <20200819115335.GU752365@kernel.org>
- <10bf57a9-c3c2-e13c-ca50-e872b7a2db0c@redhat.com>
- <20200819173347.GW752365@kernel.org>
- <6c8b30fb-1b6c-d446-0b09-255b79468f7c@redhat.com>
+        id S1728465AbgHTP5L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 11:57:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60480 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbgHTP5G (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Aug 2020 11:57:06 -0400
+Received: from mail-vk1-xa41.google.com (mail-vk1-xa41.google.com [IPv6:2607:f8b0:4864:20::a41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A2F9C061385
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Aug 2020 08:57:06 -0700 (PDT)
+Received: by mail-vk1-xa41.google.com with SMTP id x187so529397vkc.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Aug 2020 08:57:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q4d3kdKf0obUvj6BD1aZYTd/t86niyv+Yj9Gy9WROoE=;
+        b=YqSAg0s40etVJaOExgte1ifu2Pavm6LhmkJctcS7Eg9t88YKapWGgx/s/ThR4n3gI/
+         R7P41936QG3xrZ3aenbnC5iMcteiNtbfCqpJyel+R2T3a3+mmGnzlBu+eeX+G/uQJEKn
+         TXM6OdIOs0fbJPDydqUaZTNVwRmplSLNUJhI/nGXOc/ukhJ3Mb/mrOksdinhqE138+jw
+         vMEIr2c4YsjkZIz9JZLkdhKkoG1sFY5Xizkj+qcfkOOMqg4M7lmJFWGpLYY0ImbcvhIC
+         22rvhHNOcmw5ccAzPcMLQULrXkXH7gQrSt3Z4HLYiv8x9D/WH49eUPC/byTP6D7koGCa
+         Tjxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q4d3kdKf0obUvj6BD1aZYTd/t86niyv+Yj9Gy9WROoE=;
+        b=r930dgi6h5AGD4syBWCq9Ox2BfKyYyupLopuJDZTXvrcGYo8BSGAJeju4pHk9b2RwX
+         52bI+vXuA6QOmbg6guy/Gu2cD0sGAp5jls6FEm0G4Jul3i8pLHZx2vW7Vb31ne7Dw28y
+         YqkghL1i60Hm8IQt7a/1Ula0Jxk4/gLRVjVySx2EQRFjLHQwDFY7GOopt/pP8ObqkW+K
+         5n75ghx38nf2762XxU42BsNZV0R16mUQT2IdGf1qccBDRIMzMD+KXsJXxFyXrgsi7OTe
+         za+h6loCulTh78fFv3nKQT4/B8AJc9NST1TQKm2koJzYm12h6ywBDkvtuC1bWo8+FIYK
+         b4FQ==
+X-Gm-Message-State: AOAM533nQZYCg6pigkr0rNp8zsSx3QU6E9LC2j/cnjAMSmx70ZbvZi8e
+        sekTp/5nerhBaWDT6XAD7op2NIKi/SE0dVGsHgUKcQ==
+X-Google-Smtp-Source: ABdhPJziweArgy/me/pR4a4bp4DqBBECsdWvARMwhCbGMB4PwffKzdC/k6cgBhYQ/8RdLDMwP6Q8t3VpwQ5VK740eMI=
+X-Received: by 2002:a1f:5e4f:: with SMTP id s76mr2096168vkb.37.1597939025123;
+ Thu, 20 Aug 2020 08:57:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c8b30fb-1b6c-d446-0b09-255b79468f7c@redhat.com>
+References: <20200820002053.1424000-1-surenb@google.com> <87zh6pxzq6.fsf@x220.int.ebiederm.org>
+ <20200820124241.GJ5033@dhcp22.suse.cz> <87lfi9xz7y.fsf@x220.int.ebiederm.org>
+ <87d03lxysr.fsf@x220.int.ebiederm.org> <20200820132631.GK5033@dhcp22.suse.cz>
+ <20200820133454.ch24kewh42ax4ebl@wittgenstein> <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
+ <20200820140054.fdkbotd4tgfrqpe6@wittgenstein> <637ab0e7-e686-0c94-753b-b97d24bb8232@i-love.sakura.ne.jp>
+ <87k0xtv0d4.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87k0xtv0d4.fsf@x220.int.ebiederm.org>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Thu, 20 Aug 2020 08:56:53 -0700
+Message-ID: <CAJuCfpHsjisBnNiDNQbm8Yi92cznaptiXYPdc-aVa+_zkuaPhA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
+ __set_oom_adj when not necessary
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Tim Murray <timmurray@google.com>, mingo@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
+        christian@kellner.me, areber@redhat.com,
+        Shakeel Butt <shakeelb@google.com>, cyphar@cyphar.com,
+        Oleg Nesterov <oleg@redhat.com>, adobriyan@gmail.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        gladkov.alexey@gmail.com, Michel Lespinasse <walken@google.com>,
+        daniel.m.jordan@oracle.com, avagin@gmail.com,
+        bernd.edlinger@hotmail.de,
+        John Johansen <john.johansen@canonical.com>,
+        laoar.shao@gmail.com, Minchan Kim <minchan@kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 19, 2020 at 07:45:29PM +0200, David Hildenbrand wrote:
-> On 19.08.20 19:33, Mike Rapoport wrote:
-> > On Wed, Aug 19, 2020 at 02:10:43PM +0200, David Hildenbrand wrote:
-> >> On 19.08.20 13:53, Mike Rapoport wrote:
-> >>> On Wed, Aug 19, 2020 at 12:49:05PM +0200, David Hildenbrand wrote:
-> >>>> On 18.08.20 16:15, Mike Rapoport wrote:
-> >>>>> From: Mike Rapoport <rppt@linux.ibm.com>
-> >>>>>
-> >>>>> Taking pages out from the direct map and bringing them back may create
-> >>>>> undesired fragmentation and usage of the smaller pages in the direct
-> >>>>> mapping of the physical memory.
-> >>>>>
-> >>>>> This can be avoided if a significantly large area of the physical memory
-> >>>>> would be reserved for secretmem purposes at boot time.
-> >>>>>
-> >>>>> Add ability to reserve physical memory for secretmem at boot time using
-> >>>>> "secretmem" kernel parameter and then use that reserved memory as a global
-> >>>>> pool for secret memory needs.
+On Thu, Aug 20, 2020 at 7:53 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
+>
+> > On 2020/08/20 23:00, Christian Brauner wrote:
+> >> On Thu, Aug 20, 2020 at 10:48:43PM +0900, Tetsuo Handa wrote:
+> >>> On 2020/08/20 22:34, Christian Brauner wrote:
+> >>>> On Thu, Aug 20, 2020 at 03:26:31PM +0200, Michal Hocko wrote:
+> >>>>> If you can handle vfork by other means then I am all for it. There were
+> >>>>> no patches in that regard proposed yet. Maybe it will turn out simpler
+> >>>>> then the heavy lifting we have to do in the oom specific code.
 > >>>>
-> >>>> Wouldn't something like CMA be the better fit? Just wondering. Then, the
-> >>>> memory can actually be reused for something else while not needed.
+> >>>> Eric's not wrong. I fiddled with this too this morning but since
+> >>>> oom_score_adj is fiddled with in a bunch of places this seemed way more
+> >>>> code churn then what's proposed here.
 > >>>
-> >>> The memory allocated as secret is removed from the direct map and the
-> >>> boot time reservation is intended to reduce direct map fragmentatioan
-> >>> and to avoid splitting 1G pages there. So with CMA I'd still need to
-> >>> allocate 1G chunks for this and once 1G page is dropped from the direct
-> >>> map it still cannot be reused for anything else until it is freed.
+> >>> I prefer simply reverting commit 44a70adec910d692 ("mm, oom_adj: make sure
+> >>> processes sharing mm have same view of oom_score_adj").
 > >>>
-> >>> I could use CMA to do the boot time reservation, but doing the
-> >>> reservesion directly seemed simpler and more explicit to me.
+> >>>   https://lore.kernel.org/patchwork/patch/1037208/
 > >>
-> >> Well, using CMA would give you the possibility to let the memory be used
-> >> for other purposes until you decide it's the right time to take it +
-> >> remove the direct mapping etc.
-> > 
-> > I still can't say I follow you here. If I reseve a CMA area as a pool
-> > for secret memory 1G pages, it is still reserved and it still cannot be
-> > used for other purposes, right?
-> 
-> So, AFAIK, if you create a CMA pool it can be used for any MOVABLE
-> allocations (similar to ZONE_MOVABLE) until you actually allocate CMA
-> memory from that region. Other allocations on that are will then be
-> migrated away (using alloc_contig_range()).
-> 
-> For example, if you have a 1~GiB CMA area, you could allocate 4~MB pages
-> from that CMA area on demand (removing the direct mapping, etc ..), and
-> free when no longer needed (instantiating the direct mapping). The free
-> memory in that area could used for MOVABLE allocations.
+> >> I guess this is a can of worms but just or the sake of getting more
+> >> background: the question seems to be whether the oom adj score is a
+> >> property of the task/thread-group or a property of the mm. I always
+> >> thought the oom score is a property of the task/thread-group and not the
+> >> mm which is also why it lives in struct signal_struct and not in struct
+> >> mm_struct. But
+> >>
+> >> 44a70adec910 ("mm, oom_adj: make sure processes sharing mm have same view of oom_score_adj")
+> >>
+> >> reads like it is supposed to be a property of the mm or at least the
+> >> change makes it so.
+> >
+> > Yes, 44a70adec910 is trying to go towards changing from a property of the task/thread-group
+> > to a property of mm. But I don't think we need to do it at the cost of "__set_oom_adj() latency
+> > Yong-Taek Lee and Tim Murray have reported" and "complicity for supporting
+> > vfork() => __set_oom_adj() => execve() sequence".
+>
+> The thing is commit 44a70adec910d692 ("mm, oom_adj: make sure processes
+> sharing mm have same view of oom_score_adj") has been in the tree for 4
+> years.
+>
+> That someone is just now noticing a regression is their problem.  The
+> change is semantics is done and decided.  We can not reasonably revert
+> at this point without risking other regressions.
+>
+> Given that the decision has already been made to make oom_adj
+> effectively per mm.  There is no point on have a debate if we should do
+> it.
 
-The boot time resrvation is intended to avoid splitting 1G pages in the
-direct map. Without the boot time reservation, we maintain a pool of 2M
-pages so the 1G pages are split and 2M pages remain unsplit.
+Catching up on the discussion which was going on while I was asleep...
+So it sounds like there is a consensus that oom_adj should be moved to
+mm_struct rather than trying to synchronize it among tasks sharing mm.
+That sounds reasonable to me too. Michal answered all the earlier
+questions about this patch, so I won't be reiterating them, thanks
+Michal. If any questions are still lingering about the original patch
+I'll be glad to answer them.
 
-If I scale your example to match the requirement to avoid splitting 1G
-pages in the direct map, that would mean creating a CMA area of several
-tens of gigabytes and then doing cma_alloc() of 1G each time we need to
-refill the secretmem pool. 
-
-It is quite probable that we won't be able to get 1G from CMA after the
-system worked for some time.
-
-With boot time reservation we won't need physcally contiguous 1G to
-satisfy smaller allocation requests for secretmem because we don't need
-to maintain 1G mappings in the secretmem pool.
-
-That said, I believe the addition of the boot time reservation, either
-direct or with CMA, can be added as an incrememntal patch after the
-"core" functionality is merged.
-
-> Please let me know if I am missing something important.
-> 
-> -- 
-> Thanks,
-> 
-> David / dhildenb
-> 
-
--- 
-Sincerely yours,
-Mike.
+>
+> Eric
+>
+>
