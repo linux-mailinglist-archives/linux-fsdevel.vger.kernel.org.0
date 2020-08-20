@@ -2,24 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 910F424B8D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 13:30:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AEE824B917
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Aug 2020 13:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728824AbgHTL3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 07:29:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52438 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729922AbgHTL3f (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 07:29:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 341A4AC98;
-        Thu, 20 Aug 2020 11:30:00 +0000 (UTC)
-Date:   Thu, 20 Aug 2020 13:29:32 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        christian.brauner@ubuntu.com, mingo@kernel.org,
+        id S1728985AbgHTLil (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 07:38:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40639 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730558AbgHTLat (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Aug 2020 07:30:49 -0400
+Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1k8im0-0000Eh-8L; Thu, 20 Aug 2020 11:30:24 +0000
+Date:   Thu, 20 Aug 2020 13:30:23 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Suren Baghdasaryan <surenb@google.com>, mingo@kernel.org,
         peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
         christian@kellner.me, areber@redhat.com, shakeelb@google.com,
         cyphar@cyphar.com, adobriyan@gmail.com, akpm@linux-foundation.org,
@@ -31,12 +33,12 @@ Cc:     Suren Baghdasaryan <surenb@google.com>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
 Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
  __set_oom_adj when not necessary
-Message-ID: <20200820112932.GG5033@dhcp22.suse.cz>
+Message-ID: <20200820113023.rjxque4jveo4nj5o@wittgenstein>
 References: <20200820002053.1424000-1-surenb@google.com>
  <20200820105555.GA4546@redhat.com>
  <20200820111349.GE5033@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 In-Reply-To: <20200820111349.GE5033@dhcp22.suse.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -44,7 +46,7 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 20-08-20 13:13:55, Michal Hocko wrote:
+On Thu, Aug 20, 2020 at 01:13:49PM +0200, Michal Hocko wrote:
 > On Thu 20-08-20 12:55:56, Oleg Nesterov wrote:
 > > On 08/19, Suren Baghdasaryan wrote:
 > > >
@@ -58,6 +60,15 @@ On Thu 20-08-20 13:13:55, Michal Hocko wrote:
 > > vfork() ?
 > 
 > Could you be more specific?
+
+vfork() implies CLONE_VM but !CLONE_THREAD. The way this patch is
+written the mutex lock will be taken every time you do a vfork().
+
+(It's honestly also debatable whether it's that rare. For one, userspace
+stuff I maintain uses it too (see [1]).
+[1]: https://github.com/lxc/lxc/blob/9d3b7c97f0443adc9f0b0438437657ab42f5a1c3/src/lxc/start.c#L1676
+)
+
 > 
 > > > --- a/kernel/fork.c
 > > > +++ b/kernel/fork.c
@@ -73,19 +84,28 @@ On Thu 20-08-20 13:13:55, Michal Hocko wrote:
 > clone flag is responsible for the signal delivery. But now, after double
 > checking we do explicitly disallow CLONE_SIGHAND && !CLONE_VM. So
 > CLONE_THREAD is the right thing to check.
+> 
+> > > +			/* We need to synchronize with __set_oom_adj */
+> > > +			mutex_lock(&oom_adj_lock);
+> > > +			set_bit(MMF_PROC_SHARED, &mm->flags);
+> > > +			/* Update the values in case they were changed after copy_signal */
+> > > +			tsk->signal->oom_score_adj = current->signal->oom_score_adj;
+> > > +			tsk->signal->oom_score_adj_min = current->signal->oom_score_adj_min;
+> > > +			mutex_unlock(&oom_adj_lock);
+> > 
+> > I don't understand how this can close the race with __set_oom_adj...
+> > 
+> > What if __set_oom_adj() is called right after mutex_unlock() ? It will see
+> > MMF_PROC_SHARED, but for_each_process() won't find the new child until
+> > copy_process() does list_add_tail_rcu(&p->tasks, &init_task.tasks) ?
+> 
+> Good point. Then we will have to move this thing there.
 
-I have tried to remember but I have to say that after reading man page I
-am still confused. So what is the actual difference between CLONE_THREAD
-and CLONE_SIGHAND? Essentially all we care about from the OOM (and
-oom_score_adj) POV is that signals are delivered to all entities and
-that thay share signal struct. copy_signal is checking for CLONE_THREAD
-but CLONE_THREAD requires CLONE_SIGHAND AFAIU. So is there any cae where
-checking for CLONE_SIGHAND would wrong for our purpose?
+I was toying with moving this into sm like:
 
-This is mostly an academic question because I do agree that checking for
-CLONE_THREAD is likely more readable. And in fact the MMF_PROC_SHARED is
-likely more suitable to be set in copy_signal. 
+static inline copy_oom_score(unsigned long flags, struct task_struct *tsk)
 
--- 
-Michal Hocko
-SUSE Labs
+trying to rely on set_bit() and test_bit() in copy_mm() being atomic and
+then calling it where Oleg said after the point of no return.
+
+Christian
