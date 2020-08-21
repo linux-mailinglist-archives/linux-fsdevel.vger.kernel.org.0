@@ -2,118 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ECD424D806
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 17:08:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9329B24D892
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 17:29:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbgHUPIZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 11:08:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50396 "EHLO
+        id S1728276AbgHUP3P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 11:29:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbgHUPIV (ORCPT
+        with ESMTP id S1728177AbgHUP3B (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 11:08:21 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B2E8C061573
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 08:08:21 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id r13so1686508iln.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 08:08:21 -0700 (PDT)
+        Fri, 21 Aug 2020 11:29:01 -0400
+Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6D62C061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 08:29:00 -0700 (PDT)
+Received: by mail-vs1-xe43.google.com with SMTP id v138so1013486vsv.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 08:29:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cATovcDF6EIIZdeZ6DTsdMSJEoMk6qL5T5u7Q6ei1rg=;
-        b=jP8jPmAII5A/BaqiPZZXBQ/0nb55IKsHNPaIJCOCI9t3wpmalgbB3xtv+ZoD/sHlfF
-         P+2P1a6l/tNo3CGG6rHSJOb2IyuNmPFeHlVWbqMcSNj1CfYxBRCcIrHXmxjgYLGee9X+
-         U8S1nzS4XZPZ/BE4wN0ErVYadwOoNpmLpOool5rbLR3DdGUsHEPU4tGcNEpum1JuZxOz
-         m+02WpKlWQtfgjk6LTzXRBBSat40NNh3PIKAvsnsTHx+V6B91HpRAinkxOylKxG+3bCN
-         anLuNaN4N8xemHqYfRg4R+bxjkc6kGr5zSL4J420RagQmWnaJQ9IPgk4EFIg6Qw4I3lE
-         eM/A==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EfNlVXRvcKj6Y0hPR3mdXqrOmf9uMfzMQoJ/2wwN28s=;
+        b=TxXlzi+3Re0/Y9A0DJKuWYYfMbzRZqmxmjtsXj3fQuS4mqCgNSCPkMIQPvBngkmWlL
+         l+2M8q+GXYbPRKVD+IckYVampaZtFXiHooayDG34TdBXVrx9JkAMywZrNoMj4nxurTbK
+         hIEm/0LDDdzWPZXsTtvAUAku7YOeaXpfHpi8sX0O6l0dcRBbvZN7a84HeF1b02vhtebg
+         9YXjlG+gLFSzi9twT8LENDCNB7E555n/NpyTP1TmCq4IocXeoibGF8U+WhgTSQO/Qf/1
+         Dluhy83z8d9UtOK4Xcv0+yM9ul9o4AEHrED67jdkIUeyhJ3q18M4gxRHP/YJ7S+WD1Bl
+         y9tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cATovcDF6EIIZdeZ6DTsdMSJEoMk6qL5T5u7Q6ei1rg=;
-        b=T/l5TlbMQEqJ+qDGRY8YSGezh/F7b124IAvWgokWQsoKelyKctW9AZb6MlwQ5+jvUB
-         Mk/xU0UwKyi5WQFCSnjC3MqP9gKWnoHyI72zU4Wj11OLiRRiJrgrZ7Ww6E9A/wdthauX
-         AFVoGnSYttJVsQny8e6E/tZUtijpFAyNGQyEp0sVLGx6vz4HVfnM+jMC0pCCaR/ureuB
-         daN7K54ttK3XWy6oUMnQk27v5KT5JaZ3XeX2w/62GauFOL6vipYzYrXSaeymS6hkLBgd
-         0VH+8uPCAMvGs2wNXRLCHFEg8wKvaqeCKW6YpV2IEkWa4qs0jLww9j/JC9gQoy7aMNdM
-         bB/A==
-X-Gm-Message-State: AOAM533+v2PXHXM5k71DzI+tiLU1Z3mTUOhj/EFyzh2misjKj5SmAiuZ
-        xyI16ZFMFQAlSPBeZ6NT/4cc1w==
-X-Google-Smtp-Source: ABdhPJz7MRRaC85bkv/XmtISHRlp+BhEJvWp0fMl+7/CE/SMYUH37t/Cy8RTJG/mux9jGrmgdXSbsw==
-X-Received: by 2002:a05:6e02:1352:: with SMTP id k18mr2826675ilr.276.1598022499002;
-        Fri, 21 Aug 2020 08:08:19 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id 187sm1388945ile.52.2020.08.21.08.08.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Aug 2020 08:08:18 -0700 (PDT)
-Subject: Re: [PATCH v6 0/4] Charge loop device i/o to issuing cgroup
-To:     Dan Schatzberg <schatzberg.dan@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
-        Chris Down <chris@chrisdown.name>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
-        <linux-mm@kvack.org>
-References: <20200528135444.11508-1-schatzberg.dan@gmail.com>
- <CALvZod655MqFxmzwCf4ZLSh9QU+oLb0HL-Q_yKomh3fb-_W0Vg@mail.gmail.com>
- <20200821150405.GA4137@dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9b55ca3d-cca5-50ae-4085-5a1866f77308@kernel.dk>
-Date:   Fri, 21 Aug 2020 09:08:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EfNlVXRvcKj6Y0hPR3mdXqrOmf9uMfzMQoJ/2wwN28s=;
+        b=MsRDVisu0sZtrNxiKRnUYPGSQCIgfEqL+8yKZY8BB2yprV2QLkdGJofGOwdZB1v01Z
+         JUa9TsGwQdN27Jg2EjV3k+npyNwIamWe62VyRNiInSwPtacTR1r7VcvbgboBSssJgod2
+         Dtbi4Sq/I2rDbOyjsJqhVTYHH/FRtW/lR8x0n7CxhRdQfHJvZ+qONiVkUAtrt7MwNHBW
+         a/vIyZa4J1aAD1Z+UbbI4zX2KEYLjm0gbDeMczmUc//6I7OOj4MJsAe3J+4I1VVJEWT6
+         Fa1g3ddWED9K287sQQ29yN2mav4gLQuEl1zEm/kQ8SRX/BhYYjLSrMf/ZM6YOCORLflN
+         cXQg==
+X-Gm-Message-State: AOAM533I1Zdo8GWPd7VhUssFvM+56C/DSSL+BliI2TQAk25th/T2Ibfi
+        LpTZdVzbSch6JGe/gFG/OHJBx1g5LZvPL39M/DVJiQ==
+X-Google-Smtp-Source: ABdhPJzuHGDNNiJJ/NVWgNCFo1qYw+4Wfg2mv7fUfSmQoHgQcGFTX5WEJREfXbTaagyxn+o5RQxZ5jAycl8ogxstPMQ=
+X-Received: by 2002:a67:f30e:: with SMTP id p14mr2165736vsf.119.1598023739293;
+ Fri, 21 Aug 2020 08:28:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200821150405.GA4137@dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <87d03lxysr.fsf@x220.int.ebiederm.org> <20200820132631.GK5033@dhcp22.suse.cz>
+ <20200820133454.ch24kewh42ax4ebl@wittgenstein> <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
+ <20200820140054.fdkbotd4tgfrqpe6@wittgenstein> <637ab0e7-e686-0c94-753b-b97d24bb8232@i-love.sakura.ne.jp>
+ <87k0xtv0d4.fsf@x220.int.ebiederm.org> <CAJuCfpHsjisBnNiDNQbm8Yi92cznaptiXYPdc-aVa+_zkuaPhA@mail.gmail.com>
+ <20200820162645.GP5033@dhcp22.suse.cz> <87r1s0txxe.fsf@x220.int.ebiederm.org> <20200821111558.GG4546@redhat.com>
+In-Reply-To: <20200821111558.GG4546@redhat.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Fri, 21 Aug 2020 08:28:48 -0700
+Message-ID: <CAJuCfpF_GhTy5SCjxqyqTFUrJNaw3UGJzCi=WSCXfqPAcbThYg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
+ __set_oom_adj when not necessary
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tim Murray <timmurray@google.com>, mingo@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
+        christian@kellner.me, areber@redhat.com,
+        Shakeel Butt <shakeelb@google.com>, cyphar@cyphar.com,
+        adobriyan@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        gladkov.alexey@gmail.com, Michel Lespinasse <walken@google.com>,
+        daniel.m.jordan@oracle.com, avagin@gmail.com,
+        bernd.edlinger@hotmail.de,
+        John Johansen <john.johansen@canonical.com>,
+        laoar.shao@gmail.com, Minchan Kim <minchan@kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/21/20 9:04 AM, Dan Schatzberg wrote:
-> On Thu, Aug 20, 2020 at 10:06:44AM -0700, Shakeel Butt wrote:
->> On Thu, May 28, 2020 at 6:55 AM Dan Schatzberg <schatzberg.dan@gmail.com> wrote:
->>>
->>> Much of the discussion about this has died down. There's been a
->>> concern raised that we could generalize infrastructure across loop,
->>> md, etc. This may be possible, in the future, but it isn't clear to me
->>> how this would look like. I'm inclined to fix the existing issue with
->>> loop devices now (this is a problem we hit at FB) and address
->>> consolidation with other cases if and when those need to be addressed.
->>>
->>
->> What's the status of this series?
-> 
-> Thanks for reminding me about this. I haven't got any further
-> feedback. I'll bug Jens to take a look and see if he has any concerns
-> and if not send a rebased version.
+On Fri, Aug 21, 2020 at 4:16 AM Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> On 08/20, Eric W. Biederman wrote:
+> >
+> > That said if we are going for a small change why not:
+> >
+> >       /*
+> >        * Make sure we will check other processes sharing the mm if this is
+> >        * not vfrok which wants its own oom_score_adj.
+> >        * pin the mm so it doesn't go away and get reused after task_unlock
+> >        */
+> >       if (!task->vfork_done) {
+> >               struct task_struct *p = find_lock_task_mm(task);
+> >
+> >               if (p) {
+> > -                     if (atomic_read(&p->mm->mm_users) > 1) {
+> > +                     if (atomic_read(&p->mm->mm_users) > p->signal->nr_threads) {
+>
+> In theory this needs a barrier to avoid the race with do_exit(). And I'd
+> suggest to use signal->live, I think signal->nr_threads should die...
+> Something like
+>
+>         bool probably_has_other_mm_users(tsk)
+>         {
+>                 return  atomic_read_acquire(&tsk->mm->mm_users) >
+>                         atomic_read(&tsk->signal->live);
+>         }
+>
+> The barrier implied by _acquire ensures that if we race with the exiting
+> task and see the result of exit_mm()->mmput(mm), then we must also see
+> the result of atomic_dec_and_test(signal->live).
+>
+> Either way, if we want to fix the race with clone(CLONE_VM) we need other
+> changes.
 
-No immediate concerns, I think rebasing and sending one against the
-current tree is probably a good idea. Then we can hopefully get it
-queued up for 5.10.
+The way I understand this condition in __set_oom_adj() sync logic is
+that we would be ok with false positives (when we loop unnecessarily)
+but we can't tolerate false negatives (when oom_score_adj gets out of
+sync). With the clone(CLONE_VM) race not addressed we are allowing
+false negatives and IMHO that's not acceptable because it creates a
+possibility for userspace to get an inconsistent picture. When
+developing the patch I did think about using (p->mm->mm_users >
+p->signal->nr_threads) condition and had to reject it due to that
+reason.
 
--- 
-Jens Axboe
-
+>
+> Oleg.
+>
