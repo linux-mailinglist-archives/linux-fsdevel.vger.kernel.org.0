@@ -2,80 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CFE124D7B9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 16:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A893324D7F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 17:04:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbgHUOyN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 10:54:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48214 "EHLO
+        id S1727824AbgHUPEM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 11:04:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbgHUOyL (ORCPT
+        with ESMTP id S1725828AbgHUPEK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 10:54:11 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CBCEC061573
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 07:54:11 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id b2so1661602edw.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 07:54:11 -0700 (PDT)
+        Fri, 21 Aug 2020 11:04:10 -0400
+Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C0E8C061573;
+        Fri, 21 Aug 2020 08:04:10 -0700 (PDT)
+Received: by mail-qk1-x744.google.com with SMTP id j187so1604924qke.11;
+        Fri, 21 Aug 2020 08:04:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P8JqJ7RITgIzurlji1LRRQPoo/Vlt5Iw5NORag7G42Q=;
-        b=PF5nQ0yhXqC6cdiS0QHJ/VuBLy6pv4wFad2TzgpHPe0m9/AbF0MrCgH7ZOwn839T+y
-         ppa1BeyMv/4m6dQWPy5WScRu3mg4ShtrpD90yzFBkHvYXjWaDXOr3+0X49jXWBs4g6zL
-         D2vhDiA+A+4B1xcKULWc9V5Jv3RkCK4fDM8aA=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=1FzqZJ6ck6KUzOqSuKnj7ejxM9ufdWSJqP1xoW29qVs=;
+        b=YMyC8odRxwt4e+ebHOdmQFNxzIqRf1A3/okUdcouS+5ljxpc1mDGkbrRKCaOWLMRFr
+         tbYI+SM/yvrHIvogo40z5OqLqYJkChEfGfUzeEtpFZaCRIPZPxYLYEHSc17+Zo/0VE9d
+         TzKI7FDaqtwoQKWX9hUMNi6bHRg3MniqKbnRaJ20ycXK2km/LwmfJw14EqQ2fXHsyxJH
+         0cd8PXp02Ei2m+BYXl573s3GRyAK3iD/xnGq61OQAg6T9ndogxeZFI095Wf2QmPScfjg
+         nermWatu5yNdkT9mlCcjxRIfZTCkdBGzvDieCK0LVBtz3oicHcxtogJkOwk+IkcJnSXu
+         Ya/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P8JqJ7RITgIzurlji1LRRQPoo/Vlt5Iw5NORag7G42Q=;
-        b=OvY3ZF/1DKTYFVtFKArl84kp7WXdYyGWzp2BLsUqLh75upxOCvwg5XT8FLfqWh8i1I
-         DRHXqP7AGYD/4EQzG8Y4bAuDUsfE+9Lfrut0Dck3Yg8oJXrSs0IanX9I4U0G+hN5TEBl
-         pQ/GfvvT5a7JlxkUnBloGKFforU9ITJlwyt5daOXns/lMrbYZZFtTau/SlEMGuN50BD9
-         olxLfOAElrwG0AefSTPPzDVJkKBKDu5ShxESIBplfKjQ0cLzzdtbh9Bgv4trlmqr0FgV
-         7aSj1jtgEPwJ329Y0z/SNioBLd1PU+0AL0BbImKqcKz16K4mb2G9YsaAe9QJIB6N1vzJ
-         1xaA==
-X-Gm-Message-State: AOAM531i8jUhkvYoWjQERxCvBE0uL6Ze8hpmVKlOwl1Tf52ju/orNoSj
-        4KKoCqX03uwXUDW+j+lY1LCr0unJCNRltWqeMoDjMg==
-X-Google-Smtp-Source: ABdhPJzomExR6LM2W4ELJOVvg6ukzO5x+V45QeLrj3TBnzmA85z0YuQMA4zUCx2tCu3Da0aCaHiEmk+COKW3nbZ/omE=
-X-Received: by 2002:aa7:d5d0:: with SMTP id d16mr3099450eds.212.1598021649997;
- Fri, 21 Aug 2020 07:54:09 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1FzqZJ6ck6KUzOqSuKnj7ejxM9ufdWSJqP1xoW29qVs=;
+        b=iUJkRQeFuIukuRSEOMFErl0LkqrL0GhzAQyEUQlCYB5bVklpS1yEj+XAX66UPrmDuf
+         00YjYkUrT04sHR23bLHQ4Lk9/mfUbjvOe4yFZyp0T/a7KDGy/9/yEPKyRxHIcqM4sBKR
+         rVf5yAF9CBWPWFJk7Ekt+lF99XR3pZczL7zh+YbBmYCeA1/NaJL0iSOHYDoF43RtUnfK
+         Dpo0chkyE6ts3u5DGrkIn4BdE4fdRJVT2yS4Ai5DlGX0Kjf9T0gDdvfplaJjleS78VBZ
+         l1xqJbzaGbxMjIuYH4l3SMF3eLed3qwUj2iEh7eudzn4Ah7SXIQRKXitOzgfex6uJ7EO
+         sb6A==
+X-Gm-Message-State: AOAM530WGpk0dcBgs7pBgxdpKQNKzYBRjKI8hn0kaq82MMkDD9JJ+fEO
+        jPiy0dxR2yG/Fbo9kW0xXgw=
+X-Google-Smtp-Source: ABdhPJyBL+mb4e1OJT95Eq9kjSKGYgP7Np7BlljR/yVQfblx5fKS/WHmWdNwlkY/T6ACOLTj7g3OPw==
+X-Received: by 2002:a05:620a:24c9:: with SMTP id m9mr3122749qkn.487.1598022249324;
+        Fri, 21 Aug 2020 08:04:09 -0700 (PDT)
+Received: from dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com ([2620:10d:c091:480::1:4586])
+        by smtp.gmail.com with ESMTPSA id 65sm1942875qkf.33.2020.08.21.08.04.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Aug 2020 08:04:08 -0700 (PDT)
+Date:   Fri, 21 Aug 2020 11:04:05 -0400
+From:   Dan Schatzberg <schatzberg.dan@gmail.com>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>, Roman Gushchin <guro@fb.com>,
+        Chris Down <chris@chrisdown.name>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:FILESYSTEMS (VFS and infrastructure)" 
+        <linux-fsdevel@vger.kernel.org>,
+        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
+        <linux-mm@kvack.org>
+Subject: Re: [PATCH v6 0/4] Charge loop device i/o to issuing cgroup
+Message-ID: <20200821150405.GA4137@dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com>
+References: <20200528135444.11508-1-schatzberg.dan@gmail.com>
+ <CALvZod655MqFxmzwCf4ZLSh9QU+oLb0HL-Q_yKomh3fb-_W0Vg@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200724183812.19573-1-vgoyal@redhat.com> <20200724183812.19573-4-vgoyal@redhat.com>
-In-Reply-To: <20200724183812.19573-4-vgoyal@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 21 Aug 2020 16:53:59 +0200
-Message-ID: <CAJfpeguvMvc9rXChGrSuQsO9__Ln7exozmMWVY_1B8DrsV4rpQ@mail.gmail.com>
-Subject: Re: [PATCH 3/5] fuse: Add a flag FUSE_SETATTR_KILL_PRIV
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALvZod655MqFxmzwCf4ZLSh9QU+oLb0HL-Q_yKomh3fb-_W0Vg@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jul 24, 2020 at 8:38 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> With handle_killpriv_v2, server needs to kill suid/sgid on truncate (setattr)
-> but it does not know if caller has CAP_FSETID or not. So like write, send
-> killpriv information in fuse_setattr_in and add a flag FUSE_SETATTR_KILL_PRIV.
->
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+On Thu, Aug 20, 2020 at 10:06:44AM -0700, Shakeel Butt wrote:
+> On Thu, May 28, 2020 at 6:55 AM Dan Schatzberg <schatzberg.dan@gmail.com> wrote:
+> >
+> > Much of the discussion about this has died down. There's been a
+> > concern raised that we could generalize infrastructure across loop,
+> > md, etc. This may be possible, in the future, but it isn't clear to me
+> > how this would look like. I'm inclined to fix the existing issue with
+> > loop devices now (this is a problem we hit at FB) and address
+> > consolidation with other cases if and when those need to be addressed.
+> >
+> 
+> What's the status of this series?
 
-[...]
-
-> +/**
-> + * Setattr flags
-> + * FUSE_SETATTR_KILL_PRIV: kill suid and sgid bits. sgid should be killed
-> + * only if group execute bit (S_IXGRP) is set. Meant to be used together
-> + * with FUSE_HANDLE_KILLPRIV_V2.
-> + */
-> +#define FUSE_SETATTR_KILL_PRIV (1 << 0)
-
-Why not a FATTR_KILL_PRIV set in fuse_setattr_in.valid?
-
-Thanks,
-Miklos
+Thanks for reminding me about this. I haven't got any further
+feedback. I'll bug Jens to take a look and see if he has any concerns
+and if not send a rebased version.
