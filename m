@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 09E8D24CF7E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 09:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A71C24CF82
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 09:39:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbgHUHj0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 03:39:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36966 "EHLO
+        id S1727006AbgHUHjf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 03:39:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726002AbgHUHjD (ORCPT
+        with ESMTP id S1727824AbgHUHjF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 03:39:03 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 166BBC061346
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 00:39:02 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id h2so524620plr.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 00:39:02 -0700 (PDT)
+        Fri, 21 Aug 2020 03:39:05 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E394AC061348
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 00:39:04 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id d22so665662pfn.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 00:39:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=qXisnxwmeoeObWMPR3mFNC4S4siYwhBR12pikg1nHJw=;
-        b=t3PlAiOQmshc7a03MNXk5DSrA1ePUHGJUbsggq/VtCTRy/j3KzDbvw7ii815XMnr2N
-         VDeWLsqV9U/6DqyRnjb10yzmerpezZXJ1TGrDM3Q+EcRikM+YvyatBl1iGf+5qeIsStJ
-         nwi9LxsmC95pZIkURiNSuOX0900wBa0M1Dx/eyydKrI0pCZBz24nd2BUQ9fApR77YrQ1
-         ZAHk82UXIsJ7tWZKE2eTPnf5oIDc+UbcgKIWdMCznpj7gNuEKidNvGbQDP2s3FWz2a8E
-         ruLO6gFOMHbY9hfNqHhAfWtjAYi2y2IkMhHCCsG61/RWCMNeHT/qlnrON+qxpeV4UNwo
-         EvOw==
+        bh=9GetQ0cSgh6mo5E5JQEY0BxmidSIQPkJGp1hXEHz+P0=;
+        b=p9x73ryHhatyvppLJEA5d/IU2YeJTcd8JmSMJrj7zeVU/uKBuapu5y3T8UKqZ1LgUO
+         aDS83cr1aGuB3WOy+9ZHC8jx+HbPicjNWDfEtRV0T4fijG8dl7ZP/+8YBSA1vxIehKbn
+         7YUDw0yma9vQ366WvlfDoDbZ8x2xS5LED/gshkc6ajSOeD2aGhtWwJOyJu+0KgkJyHKc
+         xFkUkK39N6AELKvl4uFzYHyf3DIPcAKvvqgWn62cDpSe5Z5+9PmAZel0wroFrt/TP/64
+         OAhMHSlKNsaP+V2RWQHY8AKtQNrmwAmK5aJD/Qc+gsW8CbbjKbr+4LqZajBuO64N4EmD
+         sUpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=qXisnxwmeoeObWMPR3mFNC4S4siYwhBR12pikg1nHJw=;
-        b=MAdYjivThgmJNlQEvkclivyM1wUo1bOFwe8tLI6V1TXshTknBvDJEzT5r/Gc/r7gOu
-         YOSFvdTlUfXOFjQovqRxO/+yvspYvWE2/JH9gtGMHiDIGgTWevYtJy7u1jpMHiyruXL4
-         n4Kzp380heqFB86Y8M06Df4/pST1CUFxPeYXlp+JPPp5/9wdzZba2VmARdfpEg3xDlxV
-         yO9fa+JDnJvVyJ4sgouso+Mr7nAd6W/VQcrXzYUvJB3Cxxc+BPD6aoGJ1+fCsZ+T65hS
-         dvuy4Xms/0HE/OANMjRXzP7MFLUX6KCtdyv2e4gMVxbbqAQDIN1PiqpKUlxNRlsiVM8r
-         5Zzg==
-X-Gm-Message-State: AOAM5317Kd85EVOthfR+Fh5eM89ctW6OpH+BnQQ4+WUJJMFYif3mdVps
-        BHDeg48XUxf+qTFj0mCi3evLcVd5Q0fAAQ==
-X-Google-Smtp-Source: ABdhPJwVILao6rR4zT7AnI9ql7lDhQJxxNwBKPtlI4d4Gkr7/iewsNfEM/3e8ijIEx+iPSeLFIw5kg==
-X-Received: by 2002:a17:902:123:: with SMTP id 32mr1309399plb.143.1597995540347;
-        Fri, 21 Aug 2020 00:39:00 -0700 (PDT)
+        bh=9GetQ0cSgh6mo5E5JQEY0BxmidSIQPkJGp1hXEHz+P0=;
+        b=q0JDyU9RS4PwX70Tc1g8BQ3FYy57iRLtJxtoZkGiOQkNrae3uYDfnUBdOWMyumUk2A
+         QCwsm6BFph4VIcCd3BPmazYpPE4GCxEdkMOpOHXFHyEqn5J7V/xz4Or2lZr+dX2pjXEv
+         SuC8EwXLHMe5V0czVlMrcZQwjbpO8beCQGKUXHNSIf0UzS6xwe5r8CjOTB6NBD88qzwj
+         xd6Ew50Yc8d+m/1owfB19DqrE+48hMJORizZe8JcPFDSkHuusFKNzULpsEmpvcq++Iao
+         EyvkqjPtsnzfFhYTAsCZnhwCODh0J2fMKnSC2oAItf0/j5F+vQw/Ek/b/fhxO7Z1h6es
+         P01Q==
+X-Gm-Message-State: AOAM531Zg4bdg8CLH7YKeqdOdvieyfuCa7uRTDeZL0q1mVBNCEA1d6Wi
+        VRE5V5D92TNeUe5ipTD1ZEZOpq5LFGNSUg==
+X-Google-Smtp-Source: ABdhPJxvcJbToKH17zx8E73J9FmL1eAIE+moIEi6FBxMUv9Z6q/ISRLiRdHLcnQerifDHOT+N9EBzQ==
+X-Received: by 2002:a63:ff5f:: with SMTP id s31mr1465051pgk.333.1597995543129;
+        Fri, 21 Aug 2020 00:39:03 -0700 (PDT)
 Received: from exodia.tfbnw.net ([2620:10d:c090:400::5:f2a4])
-        by smtp.gmail.com with ESMTPSA id t10sm1220867pgp.15.2020.08.21.00.38.58
+        by smtp.gmail.com with ESMTPSA id t10sm1220867pgp.15.2020.08.21.00.39.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Aug 2020 00:38:59 -0700 (PDT)
+        Fri, 21 Aug 2020 00:39:02 -0700 (PDT)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -56,9 +56,9 @@ Cc:     Dave Chinner <david@fromorbit.com>, Jann Horn <jannh@google.com>,
         Amir Goldstein <amir73il@gmail.com>,
         Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
         kernel-team@fb.com
-Subject: [PATCH v5 4/9] btrfs: don't advance offset for compressed bios in btrfs_csum_one_bio()
-Date:   Fri, 21 Aug 2020 00:38:35 -0700
-Message-Id: <27758a7a731919591194696ddc651623481b9691.1597993855.git.osandov@osandov.com>
+Subject: [PATCH v5 5/9] btrfs: add ram_bytes and offset to btrfs_ordered_extent
+Date:   Fri, 21 Aug 2020 00:38:36 -0700
+Message-Id: <0a38de964b7f623b3cf25c334373cb10cab95b2d.1597993855.git.osandov@osandov.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <cover.1597993855.git.osandov@osandov.com>
 References: <cover.1597993855.git.osandov@osandov.com>
@@ -71,197 +71,295 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
-btrfs_csum_one_bio() loops over each filesystem block in the bio while
-keeping a cursor of its current logical position in the file in order to
-look up the ordered extent to add the checksums to. However, this
-doesn't make much sense for compressed extents, as a sector on disk does
-not correspond to a sector of decompressed file data. It happens to work
-because 1) the compressed bio always covers one ordered extent and 2)
-the size of the bio is always less than the size of the ordered extent.
-However, the second point will not always be true for encoded writes.
+Currently, we only create ordered extents when ram_bytes == num_bytes
+and offset == 0. However, RWF_ENCODED writes may create extents which
+only refer to a subset of the full unencoded extent, so we need to plumb
+these fields through the ordered extent infrastructure and pass them
+down to insert_reserved_file_extent().
 
-Let's add a boolean parameter to btrfs_csum_one_bio() to indicate that
-it can assume that the bio only covers one ordered extent. Since we're
-already changing the signature, let's get rid of the contig parameter
-and make it implied by the offset parameter, similar to the change we
-recently made to btrfs_lookup_bio_sums(). Additionally, let's rename
-nr_sectors to blockcount to make it clear that it's the number of
-filesystem blocks, not the number of 512-byte sectors.
+Since we're changing the btrfs_add_ordered_extent* signature, let's get
+rid of the trivial wrappers and add a kernel-doc.
 
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
 Signed-off-by: Omar Sandoval <osandov@fb.com>
 ---
- fs/btrfs/compression.c |  5 +++--
- fs/btrfs/ctree.h       |  2 +-
- fs/btrfs/file-item.c   | 35 ++++++++++++++++-------------------
- fs/btrfs/inode.c       |  8 ++++----
- 4 files changed, 24 insertions(+), 26 deletions(-)
+ fs/btrfs/inode.c        | 56 ++++++++++++++++++---------------
+ fs/btrfs/ordered-data.c | 68 ++++++++++++++++-------------------------
+ fs/btrfs/ordered-data.h | 16 ++++------
+ 3 files changed, 64 insertions(+), 76 deletions(-)
 
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index eeface30facd..aa292d285550 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -438,7 +438,8 @@ blk_status_t btrfs_submit_compressed_write(struct btrfs_inode *inode, u64 start,
- 			BUG_ON(ret); /* -ENOMEM */
- 
- 			if (!skip_sum) {
--				ret = btrfs_csum_one_bio(inode, bio, start, 1);
-+				ret = btrfs_csum_one_bio(inode, bio, start,
-+							 true);
- 				BUG_ON(ret); /* -ENOMEM */
- 			}
- 
-@@ -470,7 +471,7 @@ blk_status_t btrfs_submit_compressed_write(struct btrfs_inode *inode, u64 start,
- 	BUG_ON(ret); /* -ENOMEM */
- 
- 	if (!skip_sum) {
--		ret = btrfs_csum_one_bio(inode, bio, start, 1);
-+		ret = btrfs_csum_one_bio(inode, bio, start, true);
- 		BUG_ON(ret); /* -ENOMEM */
- 	}
- 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index a3b110ffbc93..cbbfaedd6e3c 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -2917,7 +2917,7 @@ int btrfs_csum_file_blocks(struct btrfs_trans_handle *trans,
- 			   struct btrfs_root *root,
- 			   struct btrfs_ordered_sum *sums);
- blk_status_t btrfs_csum_one_bio(struct btrfs_inode *inode, struct bio *bio,
--				u64 file_start, int contig);
-+				u64 offset, bool one_ordered);
- int btrfs_lookup_csums_range(struct btrfs_root *root, u64 start, u64 end,
- 			     struct list_head *list, int search_commit);
- void btrfs_extent_item_to_extent_map(struct btrfs_inode *inode,
-diff --git a/fs/btrfs/file-item.c b/fs/btrfs/file-item.c
-index 7d5ec71615b8..96026ba5c58d 100644
---- a/fs/btrfs/file-item.c
-+++ b/fs/btrfs/file-item.c
-@@ -516,28 +516,28 @@ int btrfs_lookup_csums_range(struct btrfs_root *root, u64 start, u64 end,
-  * btrfs_csum_one_bio - Calculates checksums of the data contained inside a bio
-  * @inode:	 Owner of the data inside the bio
-  * @bio:	 Contains the data to be checksummed
-- * @file_start:  offset in file this bio begins to describe
-- * @contig:	 Boolean. If true/1 means all bio vecs in this bio are
-- *		 contiguous and they begin at @file_start in the file. False/0
-- *		 means this bio can contains potentially discontigous bio vecs
-- *		 so the logical offset of each should be calculated separately.
-+ * @offset:      If (u64)-1, @bio may contain discontiguous bio vecs, so the
-+ *               file offsets are determined from the page offsets in the bio.
-+ *               Otherwise, this is the starting file offset of the bio vecs in
-+ *               @bio, which must be contiguous.
-+ * @one_ordered: If true, @bio only refers to one ordered extent.
-  */
- blk_status_t btrfs_csum_one_bio(struct btrfs_inode *inode, struct bio *bio,
--		       u64 file_start, int contig)
-+				u64 offset, bool one_ordered)
- {
- 	struct btrfs_fs_info *fs_info = inode->root->fs_info;
- 	SHASH_DESC_ON_STACK(shash, fs_info->csum_shash);
- 	struct btrfs_ordered_sum *sums;
- 	struct btrfs_ordered_extent *ordered = NULL;
-+	const bool page_offsets = (offset == (u64)-1);
- 	char *data;
- 	struct bvec_iter iter;
- 	struct bio_vec bvec;
- 	int index;
--	int nr_sectors;
-+	int blockcount;
- 	unsigned long total_bytes = 0;
- 	unsigned long this_sum_bytes = 0;
- 	int i;
--	u64 offset;
- 	unsigned nofs_flag;
- 	const u16 csum_size = btrfs_super_csum_size(fs_info->super_copy);
- 
-@@ -552,18 +552,13 @@ blk_status_t btrfs_csum_one_bio(struct btrfs_inode *inode, struct bio *bio,
- 	sums->len = bio->bi_iter.bi_size;
- 	INIT_LIST_HEAD(&sums->list);
- 
--	if (contig)
--		offset = file_start;
--	else
--		offset = 0; /* shut up gcc */
--
- 	sums->bytenr = (u64)bio->bi_iter.bi_sector << 9;
- 	index = 0;
- 
- 	shash->tfm = fs_info->csum_shash;
- 
- 	bio_for_each_segment(bvec, bio, iter) {
--		if (!contig)
-+		if (page_offsets)
- 			offset = page_offset(bvec.bv_page) + bvec.bv_offset;
- 
- 		if (!ordered) {
-@@ -571,13 +566,14 @@ blk_status_t btrfs_csum_one_bio(struct btrfs_inode *inode, struct bio *bio,
- 			BUG_ON(!ordered); /* Logic error */
- 		}
- 
--		nr_sectors = BTRFS_BYTES_TO_BLKS(fs_info,
-+		blockcount = BTRFS_BYTES_TO_BLKS(fs_info,
- 						 bvec.bv_len + fs_info->sectorsize
- 						 - 1);
- 
--		for (i = 0; i < nr_sectors; i++) {
--			if (offset >= ordered->file_offset + ordered->num_bytes ||
--			    offset < ordered->file_offset) {
-+		for (i = 0; i < blockcount; i++) {
-+			if (!one_ordered &&
-+			    (offset >= ordered->file_offset + ordered->num_bytes ||
-+			     offset < ordered->file_offset)) {
- 				unsigned long bytes_left;
- 
- 				sums->len = this_sum_bytes;
-@@ -608,7 +604,8 @@ blk_status_t btrfs_csum_one_bio(struct btrfs_inode *inode, struct bio *bio,
- 					    sums->sums + index);
- 			kunmap_atomic(data);
- 			index += csum_size;
--			offset += fs_info->sectorsize;
-+			if (!one_ordered)
-+				offset += fs_info->sectorsize;
- 			this_sum_bytes += fs_info->sectorsize;
- 			total_bytes += fs_info->sectorsize;
- 		}
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 144b9bd79cfb..847b92c93a7f 100644
+index 847b92c93a7f..e71fb848838d 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -2162,7 +2162,7 @@ static blk_status_t btrfs_submit_bio_start(void *private_data, struct bio *bio,
- {
- 	struct inode *inode = private_data;
+@@ -869,13 +869,12 @@ static noinline void submit_compressed_extents(struct async_chunk *async_chunk)
+ 			goto out_free_reserve;
+ 		free_extent_map(em);
  
--	return btrfs_csum_one_bio(BTRFS_I(inode), bio, 0, 0);
-+	return btrfs_csum_one_bio(BTRFS_I(inode), bio, (u64)-1, false);
- }
+-		ret = btrfs_add_ordered_extent_compress(inode,
+-						async_extent->start,
+-						ins.objectid,
+-						async_extent->ram_size,
+-						ins.offset,
+-						BTRFS_ORDERED_COMPRESSED,
+-						async_extent->compress_type);
++		ret = btrfs_add_ordered_extent(inode, async_extent->start,
++					       async_extent->ram_size,
++					       async_extent->ram_size,
++					       ins.objectid, ins.offset, 0,
++					       1 << BTRFS_ORDERED_COMPRESSED,
++					       async_extent->compress_type);
+ 		if (ret) {
+ 			btrfs_drop_extent_cache(inode, async_extent->start,
+ 						async_extent->start +
+@@ -1083,8 +1082,9 @@ static noinline int cow_file_range(struct btrfs_inode *inode,
+ 		}
+ 		free_extent_map(em);
  
- /*
-@@ -2225,7 +2225,7 @@ static blk_status_t btrfs_submit_bio_hook(struct inode *inode, struct bio *bio,
- 					  0, inode, btrfs_submit_bio_start);
- 		goto out;
- 	} else if (!skip_sum) {
--		ret = btrfs_csum_one_bio(BTRFS_I(inode), bio, 0, 0);
-+		ret = btrfs_csum_one_bio(BTRFS_I(inode), bio, (u64)-1, false);
+-		ret = btrfs_add_ordered_extent(inode, start, ins.objectid,
+-					       ram_size, cur_alloc_size, 0);
++		ret = btrfs_add_ordered_extent(inode, start, ram_size, ram_size,
++					       ins.objectid, cur_alloc_size, 0,
++					       0, BTRFS_COMPRESS_NONE);
  		if (ret)
+ 			goto out_drop_extent_cache;
+ 
+@@ -1716,10 +1716,11 @@ static noinline int run_delalloc_nocow(struct btrfs_inode *inode,
+ 				goto error;
+ 			}
+ 			free_extent_map(em);
+-			ret = btrfs_add_ordered_extent(inode, cur_offset,
+-						       disk_bytenr, num_bytes,
+-						       num_bytes,
+-						       BTRFS_ORDERED_PREALLOC);
++			ret = btrfs_add_ordered_extent(inode,
++					cur_offset, num_bytes, num_bytes,
++					disk_bytenr, num_bytes, 0,
++					1 << BTRFS_ORDERED_PREALLOC,
++					BTRFS_COMPRESS_NONE);
+ 			if (ret) {
+ 				btrfs_drop_extent_cache(inode, cur_offset,
+ 							cur_offset + num_bytes - 1,
+@@ -1728,9 +1729,11 @@ static noinline int run_delalloc_nocow(struct btrfs_inode *inode,
+ 			}
+ 		} else {
+ 			ret = btrfs_add_ordered_extent(inode, cur_offset,
++						       num_bytes, num_bytes,
+ 						       disk_bytenr, num_bytes,
+-						       num_bytes,
+-						       BTRFS_ORDERED_NOCOW);
++						       0,
++						       1 << BTRFS_ORDERED_NOCOW,
++						       BTRFS_COMPRESS_NONE);
+ 			if (ret)
+ 				goto error;
+ 		}
+@@ -2470,6 +2473,7 @@ static int insert_reserved_file_extent(struct btrfs_trans_handle *trans,
+ 	struct btrfs_key ins;
+ 	u64 disk_num_bytes = btrfs_stack_file_extent_disk_num_bytes(stack_fi);
+ 	u64 disk_bytenr = btrfs_stack_file_extent_disk_bytenr(stack_fi);
++	u64 offset = btrfs_stack_file_extent_offset(stack_fi);
+ 	u64 num_bytes = btrfs_stack_file_extent_num_bytes(stack_fi);
+ 	u64 ram_bytes = btrfs_stack_file_extent_ram_bytes(stack_fi);
+ 	int extent_inserted = 0;
+@@ -2525,7 +2529,8 @@ static int insert_reserved_file_extent(struct btrfs_trans_handle *trans,
+ 		goto out;
+ 
+ 	ret = btrfs_alloc_reserved_file_extent(trans, root, btrfs_ino(inode),
+-					       file_pos, qgroup_reserved, &ins);
++					       file_pos - offset,
++					       qgroup_reserved, &ins);
+ out:
+ 	btrfs_free_path(path);
+ 
+@@ -2552,19 +2557,19 @@ static int insert_ordered_extent_file_extent(struct btrfs_trans_handle *trans,
+ 					     struct btrfs_ordered_extent *oe)
+ {
+ 	struct btrfs_file_extent_item stack_fi;
+-	u64 logical_len;
++	u64 num_bytes = oe->num_bytes;
++	u64 ram_bytes = oe->ram_bytes;
+ 
+ 	memset(&stack_fi, 0, sizeof(stack_fi));
+ 	btrfs_set_stack_file_extent_type(&stack_fi, BTRFS_FILE_EXTENT_REG);
+ 	btrfs_set_stack_file_extent_disk_bytenr(&stack_fi, oe->disk_bytenr);
+ 	btrfs_set_stack_file_extent_disk_num_bytes(&stack_fi,
+ 						   oe->disk_num_bytes);
++	btrfs_set_stack_file_extent_offset(&stack_fi, oe->offset);
+ 	if (test_bit(BTRFS_ORDERED_TRUNCATED, &oe->flags))
+-		logical_len = oe->truncated_len;
+-	else
+-		logical_len = oe->num_bytes;
+-	btrfs_set_stack_file_extent_num_bytes(&stack_fi, logical_len);
+-	btrfs_set_stack_file_extent_ram_bytes(&stack_fi, logical_len);
++		num_bytes = ram_bytes = oe->truncated_len;
++	btrfs_set_stack_file_extent_num_bytes(&stack_fi, num_bytes);
++	btrfs_set_stack_file_extent_ram_bytes(&stack_fi, ram_bytes);
+ 	btrfs_set_stack_file_extent_compression(&stack_fi, oe->compress_type);
+ 	/* Encryption and other encoding is reserved and all 0 */
+ 
+@@ -6892,8 +6897,11 @@ static struct extent_map *btrfs_create_dio_extent(struct btrfs_inode *inode,
+ 		if (IS_ERR(em))
  			goto out;
  	}
-@@ -7609,7 +7609,7 @@ static blk_status_t btrfs_submit_bio_start_direct_io(void *private_data,
- {
- 	struct inode *inode = private_data;
- 
--	return btrfs_csum_one_bio(BTRFS_I(inode), bio, offset, 1);
-+	return btrfs_csum_one_bio(BTRFS_I(inode), bio, offset, false);
+-	ret = btrfs_add_ordered_extent_dio(inode, start, block_start, len,
+-					   block_len, type);
++	ret = btrfs_add_ordered_extent(inode, start, len, len, block_start,
++				       block_len, 0,
++				       (1 << type) |
++				       (1 << BTRFS_ORDERED_DIRECT),
++				       BTRFS_COMPRESS_NONE);
+ 	if (ret) {
+ 		if (em) {
+ 			free_extent_map(em);
+diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
+index 4732c5b89460..bdb6fb792c1f 100644
+--- a/fs/btrfs/ordered-data.c
++++ b/fs/btrfs/ordered-data.c
+@@ -153,16 +153,27 @@ static inline struct rb_node *tree_search(struct btrfs_ordered_inode_tree *tree,
+ 	return ret;
  }
  
- static void btrfs_end_dio_bio(struct bio *bio)
-@@ -7668,7 +7668,7 @@ static inline blk_status_t btrfs_submit_dio_bio(struct bio *bio,
- 		 * If we aren't doing async submit, calculate the csum of the
- 		 * bio now.
- 		 */
--		ret = btrfs_csum_one_bio(BTRFS_I(inode), bio, file_offset, 1);
-+		ret = btrfs_csum_one_bio(BTRFS_I(inode), bio, file_offset, false);
- 		if (ret)
- 			goto err;
- 	} else {
+-/*
+- * Allocate and add a new ordered_extent into the per-inode tree.
++/**
++ * btrfs_add_ordered_extent - Add an ordered extent to the per-inode tree.
++ * @inode: inode that this extent is for.
++ * @file_offset: Logical offset in file where the extent starts.
++ * @num_bytes: Logical length of extent in file.
++ * @ram_bytes: Full length of unencoded data.
++ * @disk_bytenr: Offset of extent on disk.
++ * @disk_num_bytes: Size of extent on disk.
++ * @offset: Offset into unencoded data where file data starts.
++ * @flags: Flags specifying type of extent (1 << BTRFS_ORDERED_*).
++ * @compress_type: Compression algorithm used for data.
++ *
++ * Most of these parameters correspond to &struct btrfs_file_extent_item. The
++ * tree is given a single reference on the ordered extent that was inserted.
+  *
+- * The tree is given a single reference on the ordered extent that was
+- * inserted.
++ * Return: 0 or -ENOMEM.
+  */
+-static int __btrfs_add_ordered_extent(struct btrfs_inode *inode, u64 file_offset,
+-				      u64 disk_bytenr, u64 num_bytes,
+-				      u64 disk_num_bytes, int type, int dio,
+-				      int compress_type)
++int btrfs_add_ordered_extent(struct btrfs_inode *inode, u64 file_offset,
++			     u64 num_bytes, u64 ram_bytes, u64 disk_bytenr,
++			     u64 disk_num_bytes, u64 offset, int flags,
++			     int compress_type)
+ {
+ 	struct btrfs_root *root = inode->root;
+ 	struct btrfs_fs_info *fs_info = root->fs_info;
+@@ -171,7 +182,8 @@ static int __btrfs_add_ordered_extent(struct btrfs_inode *inode, u64 file_offset
+ 	struct btrfs_ordered_extent *entry;
+ 	int ret;
+ 
+-	if (type == BTRFS_ORDERED_NOCOW || type == BTRFS_ORDERED_PREALLOC) {
++	if (flags &
++	    ((1 << BTRFS_ORDERED_NOCOW) | (1 << BTRFS_ORDERED_PREALLOC))) {
+ 		/* For nocow write, we can release the qgroup rsv right now */
+ 		ret = btrfs_qgroup_free_data(inode, NULL, file_offset, num_bytes);
+ 		if (ret < 0)
+@@ -191,21 +203,21 @@ static int __btrfs_add_ordered_extent(struct btrfs_inode *inode, u64 file_offset
+ 		return -ENOMEM;
+ 
+ 	entry->file_offset = file_offset;
+-	entry->disk_bytenr = disk_bytenr;
+ 	entry->num_bytes = num_bytes;
++	entry->ram_bytes = ram_bytes;
++	entry->disk_bytenr = disk_bytenr;
+ 	entry->disk_num_bytes = disk_num_bytes;
++	entry->offset = offset;
+ 	entry->bytes_left = num_bytes;
+ 	entry->inode = igrab(&inode->vfs_inode);
+ 	entry->compress_type = compress_type;
+ 	entry->truncated_len = (u64)-1;
+ 	entry->qgroup_rsv = ret;
+-	if (type != BTRFS_ORDERED_IO_DONE && type != BTRFS_ORDERED_COMPLETE)
+-		set_bit(type, &entry->flags);
+ 
+-	if (dio) {
++	entry->flags = flags;
++	if (flags & (1 << BTRFS_ORDERED_DIRECT)) {
+ 		percpu_counter_add_batch(&fs_info->dio_bytes, num_bytes,
+ 					 fs_info->delalloc_batch);
+-		set_bit(BTRFS_ORDERED_DIRECT, &entry->flags);
+ 	}
+ 
+ 	/* one ref for the tree */
+@@ -252,34 +264,6 @@ static int __btrfs_add_ordered_extent(struct btrfs_inode *inode, u64 file_offset
+ 	return 0;
+ }
+ 
+-int btrfs_add_ordered_extent(struct btrfs_inode *inode, u64 file_offset,
+-			     u64 disk_bytenr, u64 num_bytes, u64 disk_num_bytes,
+-			     int type)
+-{
+-	return __btrfs_add_ordered_extent(inode, file_offset, disk_bytenr,
+-					  num_bytes, disk_num_bytes, type, 0,
+-					  BTRFS_COMPRESS_NONE);
+-}
+-
+-int btrfs_add_ordered_extent_dio(struct btrfs_inode *inode, u64 file_offset,
+-				 u64 disk_bytenr, u64 num_bytes,
+-				 u64 disk_num_bytes, int type)
+-{
+-	return __btrfs_add_ordered_extent(inode, file_offset, disk_bytenr,
+-					  num_bytes, disk_num_bytes, type, 1,
+-					  BTRFS_COMPRESS_NONE);
+-}
+-
+-int btrfs_add_ordered_extent_compress(struct btrfs_inode *inode, u64 file_offset,
+-				      u64 disk_bytenr, u64 num_bytes,
+-				      u64 disk_num_bytes, int type,
+-				      int compress_type)
+-{
+-	return __btrfs_add_ordered_extent(inode, file_offset, disk_bytenr,
+-					  num_bytes, disk_num_bytes, type, 0,
+-					  compress_type);
+-}
+-
+ /*
+  * Add a struct btrfs_ordered_sum into the list of checksums to be inserted
+  * when an ordered extent is finished.  If the list covers more than one
+diff --git a/fs/btrfs/ordered-data.h b/fs/btrfs/ordered-data.h
+index 644258a7dfb1..23b9eb1e7ad1 100644
+--- a/fs/btrfs/ordered-data.h
++++ b/fs/btrfs/ordered-data.h
+@@ -72,9 +72,11 @@ struct btrfs_ordered_extent {
+ 	 * These fields directly correspond to the same fields in
+ 	 * btrfs_file_extent_item.
+ 	 */
+-	u64 disk_bytenr;
+ 	u64 num_bytes;
++	u64 ram_bytes;
++	u64 disk_bytenr;
+ 	u64 disk_num_bytes;
++	u64 offset;
+ 
+ 	/* number of bytes that still need writing */
+ 	u64 bytes_left;
+@@ -161,15 +163,9 @@ int btrfs_dec_test_first_ordered_pending(struct btrfs_inode *inode,
+ 				   u64 *file_offset, u64 io_size,
+ 				   int uptodate);
+ int btrfs_add_ordered_extent(struct btrfs_inode *inode, u64 file_offset,
+-			     u64 disk_bytenr, u64 num_bytes, u64 disk_num_bytes,
+-			     int type);
+-int btrfs_add_ordered_extent_dio(struct btrfs_inode *inode, u64 file_offset,
+-				 u64 disk_bytenr, u64 num_bytes,
+-				 u64 disk_num_bytes, int type);
+-int btrfs_add_ordered_extent_compress(struct btrfs_inode *inode, u64 file_offset,
+-				      u64 disk_bytenr, u64 num_bytes,
+-				      u64 disk_num_bytes, int type,
+-				      int compress_type);
++			     u64 num_bytes, u64 ram_bytes, u64 disk_bytenr,
++			     u64 disk_num_bytes, u64 offset, int flags,
++			     int compress_type);
+ void btrfs_add_ordered_sum(struct btrfs_ordered_extent *entry,
+ 			   struct btrfs_ordered_sum *sum);
+ struct btrfs_ordered_extent *btrfs_lookup_ordered_extent(struct btrfs_inode *inode,
 -- 
 2.28.0
 
