@@ -2,202 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0751C24CFB6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 09:41:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B22F24D0BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 10:48:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728464AbgHUHlg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 03:41:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37336 "EHLO
+        id S1727902AbgHUIsH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 04:48:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728407AbgHUHk6 (ORCPT
+        with ESMTP id S1726433AbgHUIsG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 03:40:58 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D80BAC061344
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 00:40:57 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id y206so657088pfb.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 00:40:57 -0700 (PDT)
+        Fri, 21 Aug 2020 04:48:06 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AF85C061385;
+        Fri, 21 Aug 2020 01:48:06 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id u126so973461iod.12;
+        Fri, 21 Aug 2020 01:48:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=83qY1yiGV6Av8ygbOO41/2N//qJALrswYkrshLQjEaI=;
-        b=lEgZZeZz3dHdOoJtt5d8VNuVhl8oh1GerNwL6riHZgnlCETtA26dy9skXtG8r4+LZd
-         DoASVZ0kDL/fuv4jLYePgszynxrI+WQs5E0FTiWaU4D6mQvcGDszmyowaArlV+h11YVN
-         3hjp7/cObCFoR+6rs+/fCl8S6fL85bTSWEVF+P32lm2sd11oyQo7nAqx0CNNuZx0noOa
-         YR4VEfJ1aic9wQJxsaWGUF8EZbBdgpDhGgqbImoHam6O0uu0lxCi62UG9tHVwFofrnnf
-         H8D/gorWe6W2zjrEcgLuxKrOSXbS01dIZCJT7QXLCu4jZKnE5bl2pFVJ/6GXpEdOGXCa
-         xSZQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wj6tNb8MQ+uzd2xcElvqANcy2YGwYQy9Y2WV55I0uYo=;
+        b=qVAK6qY1jf7p/9TYvT2qpp3U6sBiDfZ6nbXQaIQKRnqpk8uYSBeuytlf4OnPvzIwik
+         4JS/MK3xnCq6TmKCp8nRSx9NDI2FKjqh7DuenpM6GHtTGQLVwSFE/zlphwYiCGRKqJlT
+         71DtJD7g0MIETL2l5ZfxJOGO+1IpHN9YHUD7W3aAqIUNQ4iPUqBJF1xEx0/H9UUrkNyu
+         bzqEDp2ZFW8WgtFd1DBLU0QdY1n5on4nuTAKxc7wkXcAnSh5AZDtXqWNLDMzdohlvROy
+         hP0QuHBr36OatbeYMvjHZ5a2whAYOSFdRzl7Jkf4tAiHM/As/EuYffepy+VK4/NwCMqL
+         5LOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=83qY1yiGV6Av8ygbOO41/2N//qJALrswYkrshLQjEaI=;
-        b=LkAE6vEV9Ayhh0BxRfw4S47O6l1xwXhG2tLBCeAOiYwOXWhvKlVxC1xTKPi1StS5X/
-         Aezeb0HLyzzPoTJmjXYAW0nsq2h81O+QVZQjKSqm1pZc/O8sywg7TQ6MRgfATS+rd7Jc
-         BlOM58OsDWLwJvTTnWUGPoPmJJhq0oRXYfYgOtkPsfbvh7Ibklr6h+m9zf2MnvNo+VwW
-         Nj+Ac8+dWW1tsUXvuhGICV69ectp14zMVsnYndixb5PxutqGbT7U4GxHkzXERHPvQtu1
-         fEfy4Ix87/pSMllaB+H28WS8FuOI97+Gn48HTGC8ZS3rfBpqeaxjyspKCLfuL7Zi5IwK
-         pZqA==
-X-Gm-Message-State: AOAM533YoUSg21Nc1oDX5hklQYu907qPK+zxOjVWEL+7j7iPS4xmw3qg
-        6dn1DRcgUHUhHB2sUBvotGr2MQ==
-X-Google-Smtp-Source: ABdhPJwqhfIDFP068+V2W1ChVQO5SsJKLf5jPoSErAlzXLd7vD0uTnfmOQfhNU/zO9ptzsOqTDGIyA==
-X-Received: by 2002:a63:fe0a:: with SMTP id p10mr1391421pgh.255.1597995657124;
-        Fri, 21 Aug 2020 00:40:57 -0700 (PDT)
-Received: from exodia.tfbnw.net ([2620:10d:c090:400::5:f2a4])
-        by smtp.gmail.com with ESMTPSA id jb1sm1080875pjb.9.2020.08.21.00.40.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Aug 2020 00:40:55 -0700 (PDT)
-From:   Omar Sandoval <osandov@osandov.com>
-To:     linux-btrfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 11/11] btrfs-progs: receive: add tests for basic encoded_write send/receive
-Date:   Fri, 21 Aug 2020 00:40:10 -0700
-Message-Id: <ed0fbf9eed75975d31f61ee5a91b963d6ccba102.1597994354.git.osandov@osandov.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <cover.1597994106.git.osandov@osandov.com>
-References: <cover.1597994106.git.osandov@osandov.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wj6tNb8MQ+uzd2xcElvqANcy2YGwYQy9Y2WV55I0uYo=;
+        b=L69OG1olOZ0wTJOvi2ehXNXM2WmOVaStjwZnBQIZegjO9aNge++9y5nsvNbxjBrc5u
+         NnPJuRGvYcfD1PQAsWZvgTtmjz3ln7gZdWj4uAReAXeUiBbd5qOFRe5LY8ZPAYH15YJ4
+         oI/um3vFF34tvr/GZv5o0pmTyqdHd1M4H/vs0xQT4AucgUW84ylFLHCvbar87A3oyLyf
+         oVb4/2MjKvc9INMAKgsU3xdedlmO+hKV8H7Vn2gg33UnhEatPhPD/zBIfoiQEPtFm8K8
+         PXdmfAjZa6aiWzURHwn8l8bm6STlQ/zOIMAAyOsDeEUJS9qUcXE6OE95FHUWlR8Z5XgK
+         uJDQ==
+X-Gm-Message-State: AOAM530YzHRiSBPmQKqJriAy/Wi7zwv5wkUqK8cqZ0yxyjTOjwEF3D3L
+        KeMh4hryh8GkB2pzmXYlN6fM2Z3vZ7cdsjinRZI=
+X-Google-Smtp-Source: ABdhPJxHUqhMsZxtSDrWWscVGlYtVkca+kgAtqvi6tmLtrLoNOYtsApmRmHHtZrm2Uj2wTLwnuVfogBmE/JlQtkcYpI=
+X-Received: by 2002:a05:6602:1405:: with SMTP id t5mr1627205iov.72.1597999685260;
+ Fri, 21 Aug 2020 01:48:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1597993855.git.osandov@osandov.com> <9020a583581b644ae86b7c05de6a39fd5204f06d.1597993855.git.osandov@osandov.com>
+In-Reply-To: <9020a583581b644ae86b7c05de6a39fd5204f06d.1597993855.git.osandov@osandov.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 21 Aug 2020 11:47:54 +0300
+Message-ID: <CAOQ4uxi=QcV-Rg=bSpYGid24Qp4zOgjKuOH2E5QA+OMrA-EsLQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/9] fs: add RWF_ENCODED for reading/writing compressed data
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>, Aleksa Sarai <cyphar@cyphar.com>,
+        Linux API <linux-api@vger.kernel.org>, kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Boris Burkov <boris@bur.io>
+On Fri, Aug 21, 2020 at 10:38 AM Omar Sandoval <osandov@osandov.com> wrote:
+>
+> From: Omar Sandoval <osandov@fb.com>
+>
+> Btrfs supports transparent compression: data written by the user can be
+> compressed when written to disk and decompressed when read back.
+> However, we'd like to add an interface to write pre-compressed data
+> directly to the filesystem, and the matching interface to read
+> compressed data without decompressing it. This adds support for
+> so-called "encoded I/O" via preadv2() and pwritev2().
+>
+> A new RWF_ENCODED flags indicates that a read or write is "encoded". If
+> this flag is set, iov[0].iov_base points to a struct encoded_iov which
+> is used for metadata: namely, the compression algorithm, unencoded
+> (i.e., decompressed) length, and what subrange of the unencoded data
+> should be used (needed for truncated or hole-punched extents and when
+> reading in the middle of an extent). For reads, the filesystem returns
+> this information; for writes, the caller provides it to the filesystem.
+> iov[0].iov_len must be set to sizeof(struct encoded_iov), which can be
+> used to extend the interface in the future a la copy_struct_from_user().
+> The remaining iovecs contain the encoded extent.
+>
+> This adds the VFS helpers for supporting encoded I/O and documentation
+> for filesystem support.
+>
+> Signed-off-by: Omar Sandoval <osandov@fb.com>
+> ---
+>  Documentation/filesystems/encoded_io.rst |  74 ++++++++++
+>  Documentation/filesystems/index.rst      |   1 +
+>  include/linux/fs.h                       |  16 +++
+>  include/uapi/linux/fs.h                  |  33 ++++-
+>  mm/filemap.c                             | 166 +++++++++++++++++++++--
+>  5 files changed, 276 insertions(+), 14 deletions(-)
+>  create mode 100644 Documentation/filesystems/encoded_io.rst
+>
+> diff --git a/Documentation/filesystems/encoded_io.rst b/Documentation/filesystems/encoded_io.rst
+> new file mode 100644
+> index 000000000000..50405276d866
+> --- /dev/null
+> +++ b/Documentation/filesystems/encoded_io.rst
+> @@ -0,0 +1,74 @@
+> +===========
+> +Encoded I/O
+> +===========
+> +
+> +Encoded I/O is a mechanism for reading and writing encoded (e.g., compressed
+> +and/or encrypted) data directly from/to the filesystem. The userspace interface
+> +is thoroughly described in the :manpage:`encoded_io(7)` man page; this document
+> +describes the requirements for filesystem support.
+> +
+> +First of all, a filesystem supporting encoded I/O must indicate this by setting
+> +the ``FMODE_ENCODED_IO`` flag in its ``file_open`` file operation::
+> +
+> +    static int foo_file_open(struct inode *inode, struct file *filp)
+> +    {
+> +            ...
+> +            filep->f_mode |= FMODE_ENCODED_IO;
+> +            ...
+> +    }
+> +
+> +Encoded I/O goes through ``read_iter`` and ``write_iter``, designated by the
+> +``IOCB_ENCODED`` flag in ``kiocb->ki_flags``.
+> +
+> +Reads
+> +=====
+> +
+> +Encoded ``read_iter`` should:
+> +
+> +1. Call ``generic_encoded_read_checks()`` to validate the file and buffers
+> +   provided by userspace.
+> +2. Initialize the ``encoded_iov`` appropriately.
+> +3. Copy it to the user with ``copy_encoded_iov_to_iter()``.
+> +4. Copy the encoded data to the user.
+> +5. Advance ``kiocb->ki_pos`` by ``encoded_iov->len``.
+> +6. Return the size of the encoded data read, not including the ``encoded_iov``.
+> +
+> +There are a few details to be aware of:
+> +
+> +* Encoded ``read_iter`` should support reading unencoded data if the extent is
+> +  not encoded.
+> +* If the buffers provided by the user are not large enough to contain an entire
+> +  encoded extent, then ``read_iter`` should return ``-ENOBUFS``. This is to
+> +  avoid confusing userspace with truncated data that cannot be properly
+> +  decoded.
+> +* Reads in the middle of an encoded extent can be returned by setting
+> +  ``encoded_iov->unencoded_offset`` to non-zero.
+> +* Truncated unencoded data (e.g., because the file does not end on a block
+> +  boundary) may be returned by setting ``encoded_iov->len`` to a value smaller
+> +  value than ``encoded_iov->unencoded_len - encoded_iov->unencoded_offset``.
+> +
+> +Writes
+> +======
+> +
+> +Encoded ``write_iter`` should (in addition to the usual accounting/checks done
+> +by ``write_iter``):
+> +
+> +1. Call ``copy_encoded_iov_from_iter()`` to get and validate the
+> +   ``encoded_iov``.
+> +2. Call ``generic_encoded_write_checks()`` instead of
+> +   ``generic_write_checks()``.
+> +3. Check that the provided encoding in ``encoded_iov`` is supported.
+> +4. Advance ``kiocb->ki_pos`` by ``encoded_iov->len``.
+> +5. Return the size of the encoded data written.
+> +
+> +Again, there are a few details:
+> +
+> +* Encoded ``write_iter`` doesn't need to support writing unencoded data.
+> +* ``write_iter`` should either write all of the encoded data or none of it; it
+> +  must not do partial writes.
+> +* ``write_iter`` doesn't need to validate the encoded data; a subsequent read
+> +  may return, e.g., ``-EIO`` if the data is not valid.
+> +* The user may lie about the unencoded size of the data; a subsequent read
+> +  should truncate or zero-extend the unencoded data rather than returning an
+> +  error.
+> +* Be careful of page cache coherency.
 
-Adapt the existing send/receive tests by passing '-o --force-compress'
-to the mount commands in a new test. After writing a few files in the
-various compression formats, send/receive them with and without
---force-decompress to test both the encoded_write path and the
-fallback to decode+write.
+Haha that rings in my head like the "Smoking kills!" warnings...
 
-Signed-off-by: Boris Burkov <boris@bur.io>
----
- .../040-receive-write-encoded/test.sh         | 114 ++++++++++++++++++
- 1 file changed, 114 insertions(+)
- create mode 100755 tests/misc-tests/040-receive-write-encoded/test.sh
+I find it a bit odd that you mix page cache at all when reading
+unencoded extents.
+Feels like a file with FMODE_ENCODED_IO should stick to direct IO in all cases.
+I don't know how btrfs deals with mixing direct IO and page cache IO normally,
+but surely the rules could be made even stricter for an inode accessed with this
+new API?
 
-diff --git a/tests/misc-tests/040-receive-write-encoded/test.sh b/tests/misc-tests/040-receive-write-encoded/test.sh
-new file mode 100755
-index 00000000..4df6ccd6
---- /dev/null
-+++ b/tests/misc-tests/040-receive-write-encoded/test.sh
-@@ -0,0 +1,114 @@
-+#!/bin/bash
-+#
-+# test that we can send and receive encoded writes for three modes of
-+# transparent compression: zlib, lzo, and zstd.
-+
-+source "$TEST_TOP/common"
-+
-+check_prereq mkfs.btrfs
-+check_prereq btrfs
-+
-+setup_root_helper
-+prepare_test_dev
-+
-+here=`pwd`
-+
-+# assumes the filesystem exists, and does mount, write, snapshot, send, unmount
-+# for the specified encoding option
-+send_one() {
-+	local str
-+	local subv
-+	local snap
-+
-+	algorithm="$1"
-+	shift
-+	str="$1"
-+	shift
-+
-+	subv="subv-$algorithm"
-+	snap="snap-$algorithm"
-+
-+	run_check_mount_test_dev "-o" "compress-force=$algorithm"
-+	cd "$TEST_MNT" || _fail "cannot chdir to TEST_MNT"
-+
-+	run_check $SUDO_HELPER "$TOP/btrfs" subvolume create "$subv"
-+	run_check $SUDO_HELPER dd if=/dev/zero of="$subv/file1" bs=1M count=1
-+	run_check $SUDO_HELPER dd if=/dev/zero of="$subv/file2" bs=500K count=1
-+	run_check $SUDO_HELPER "$TOP/btrfs" subvolume snapshot -r "$subv" "$snap"
-+	run_check $SUDO_HELPER "$TOP/btrfs" send -f "$str" "$snap" "$@"
-+
-+	cd "$here" || _fail "cannot chdir back to test directory"
-+	run_check_umount_test_dev
-+}
-+
-+receive_one() {
-+	local str
-+	str="$1"
-+	shift
-+
-+	run_check_mkfs_test_dev
-+	run_check_mount_test_dev
-+	run_check $SUDO_HELPER "$TOP/btrfs" receive "$@" -v -f "$str" "$TEST_MNT"
-+	run_check_umount_test_dev
-+	run_check rm -f -- "$str"
-+}
-+
-+test_one_write_encoded() {
-+	local str
-+	local algorithm
-+	algorithm="$1"
-+	shift
-+	str="$here/stream-$algorithm.stream"
-+
-+	run_check_mkfs_test_dev
-+	send_one "$algorithm" "$str" --compressed
-+	receive_one "$str" "$@"
-+}
-+
-+test_one_stream_v1() {
-+	local str
-+	local algorithm
-+	algorithm="$1"
-+	shift
-+	str="$here/stream-$algorithm.stream"
-+
-+	run_check_mkfs_test_dev
-+	send_one "$algorithm" "$str" --stream-version 1
-+	receive_one "$str" "$@"
-+}
-+
-+test_mix_write_encoded() {
-+	local strzlib
-+	local strlzo
-+	local strzstd
-+	strzlib="$here/stream-zlib.stream"
-+	strlzo="$here/stream-lzo.stream"
-+	strzstd="$here/stream-zstd.stream"
-+
-+	run_check_mkfs_test_dev
-+
-+	send_one "zlib" "$strzlib" --compressed
-+	send_one "lzo" "$strlzo" --compressed
-+	send_one "zstd" "$strzstd" --compressed
-+
-+	receive_one "$strzlib"
-+	receive_one "$strlzo"
-+	receive_one "$strzstd"
-+}
-+
-+test_one_write_encoded "zlib"
-+test_one_write_encoded "lzo"
-+test_one_write_encoded "zstd"
-+
-+# with decompression forced
-+test_one_write_encoded "zlib" "--force-decompress"
-+test_one_write_encoded "lzo" "--force-decompress"
-+test_one_write_encoded "zstd" "--force-decompress"
-+
-+# send stream v1
-+test_one_stream_v1 "zlib"
-+test_one_stream_v1 "lzo"
-+test_one_stream_v1 "zstd"
-+
-+# files use a mix of compression algorithms
-+test_mix_write_encoded
--- 
-2.28.0
+Is there something I am misunderstanding?
 
+Thanks,
+Amir.
