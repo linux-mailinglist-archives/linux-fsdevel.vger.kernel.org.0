@@ -2,156 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6000D24CCDE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 06:43:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CE0C24CCF5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 06:46:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbgHUEnT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 00:43:19 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:55030 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbgHUEnR (ORCPT
+        id S1726725AbgHUEpu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 00:45:50 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:29468 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725908AbgHUEpt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 00:43:17 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1k8ytK-008psA-Jl; Thu, 20 Aug 2020 22:43:02 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1k8ytJ-00009U-Oh; Thu, 20 Aug 2020 22:43:02 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tim Murray <timmurray@google.com>, mingo@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
-        christian@kellner.me, areber@redhat.com,
-        Shakeel Butt <shakeelb@google.com>, cyphar@cyphar.com,
-        Oleg Nesterov <oleg@redhat.com>, adobriyan@gmail.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        gladkov.alexey@gmail.com, Michel Lespinasse <walken@google.com>,
-        daniel.m.jordan@oracle.com, avagin@gmail.com,
-        bernd.edlinger@hotmail.de,
-        John Johansen <john.johansen@canonical.com>,
-        laoar.shao@gmail.com, Minchan Kim <minchan@kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
-References: <20200820124241.GJ5033@dhcp22.suse.cz>
-        <87lfi9xz7y.fsf@x220.int.ebiederm.org>
-        <87d03lxysr.fsf@x220.int.ebiederm.org>
-        <20200820132631.GK5033@dhcp22.suse.cz>
-        <20200820133454.ch24kewh42ax4ebl@wittgenstein>
-        <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
-        <20200820140054.fdkbotd4tgfrqpe6@wittgenstein>
-        <637ab0e7-e686-0c94-753b-b97d24bb8232@i-love.sakura.ne.jp>
-        <87k0xtv0d4.fsf@x220.int.ebiederm.org>
-        <CAJuCfpHsjisBnNiDNQbm8Yi92cznaptiXYPdc-aVa+_zkuaPhA@mail.gmail.com>
-        <20200820162645.GP5033@dhcp22.suse.cz>
-Date:   Thu, 20 Aug 2020 23:39:25 -0500
-In-Reply-To: <20200820162645.GP5033@dhcp22.suse.cz> (Michal Hocko's message of
-        "Thu, 20 Aug 2020 18:26:45 +0200")
-Message-ID: <87r1s0txxe.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Fri, 21 Aug 2020 00:45:49 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07L4YIj8171262;
+        Fri, 21 Aug 2020 00:45:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : date : mime-version : in-reply-to : content-type :
+ content-transfer-encoding : message-id; s=pp1;
+ bh=0ZFBYPwt7oIVi0zmqeJRyIDzSpcn6H+lTuSgoG9Orfs=;
+ b=Tm4paieNOb5oiMkvHPHyiSTyuTM949sfziNbtoqEj5RCydHx+d+nQ1EMl8iqi7FTKfSd
+ 3n4QHe/w9GgiLkgfO0WLh1QUoKgwfSLV+jgdXAGBedEMs+XAv3v2RgKE06+mtGFFwLKI
+ i8N0twuDUzMeOQu7eTkoOR1Z1jm3DdvgC/qRBWSzR7b+5XiUxhYYBVhVzKTKQJmNmhpk
+ cwWChONIcvbiZ6c25PNiMHb2hdRSr0o3916V08dHrl6FIZoWSutgw2RonaeIMAdiKVCN
+ DrR7hN0gDd9ih5fuohQAmOr36AGyYISH6HRU50wCJJyDV9xpeYOvTrdG15OMTsZFqIqe Vw== 
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3326d7sgxc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Aug 2020 00:45:40 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07L4iVsM014671;
+        Fri, 21 Aug 2020 04:45:37 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma03fra.de.ibm.com with ESMTP id 3304c92dmp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Aug 2020 04:45:37 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07L4jZWN32243982
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Aug 2020 04:45:35 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1ADA9A405B;
+        Fri, 21 Aug 2020 04:45:35 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BBFD1A405F;
+        Fri, 21 Aug 2020 04:45:33 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.33.217])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 21 Aug 2020 04:45:33 +0000 (GMT)
+Subject: Re: [PATCH] iomap: Fix the write_count in iomap_add_to_ioend().
+To:     Dave Chinner <david@fromorbit.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>
+Cc:     hch@infradead.org, darrick.wong@oracle.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org
+References: <20200819102841.481461-1-anju@linux.vnet.ibm.com>
+ <20200820231140.GE7941@dread.disaster.area>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Fri, 21 Aug 2020 10:15:33 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1k8ytJ-00009U-Oh;;;mid=<87r1s0txxe.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18uBSxl8pJIjuyaXaco3WG9+jz0MdU4UDc=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa04.xmission.com
-X-Spam-Level: **
-X-Spam-Status: No, score=2.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,
-        T_TooManySym_02,T_TooManySym_03,XMNoVowels,XMSubLong,XM_B_SpammyWords
-        autolearn=disabled version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4925]
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa04 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.2 XM_B_SpammyWords One or more commonly used spammy words
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-X-Spam-DCC: ; sa04 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Michal Hocko <mhocko@suse.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 437 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 13 (2.9%), b_tie_ro: 11 (2.5%), parse: 1.52
-        (0.3%), extract_message_metadata: 18 (4.2%), get_uri_detail_list: 2.6
-        (0.6%), tests_pri_-1000: 21 (4.8%), tests_pri_-950: 1.65 (0.4%),
-        tests_pri_-900: 6 (1.4%), tests_pri_-90: 103 (23.5%), check_bayes: 95
-        (21.6%), b_tokenize: 16 (3.7%), b_tok_get_all: 10 (2.4%), b_comp_prob:
-        3.6 (0.8%), b_tok_touch_all: 59 (13.5%), b_finish: 1.59 (0.4%),
-        tests_pri_0: 252 (57.6%), check_dkim_signature: 0.93 (0.2%),
-        check_dkim_adsp: 2.8 (0.6%), poll_dns_idle: 0.83 (0.2%), tests_pri_10:
-        2.2 (0.5%), tests_pri_500: 14 (3.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in __set_oom_adj when not necessary
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <20200820231140.GE7941@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Message-Id: <20200821044533.BBFD1A405F@d06av23.portsmouth.uk.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-21_03:2020-08-19,2020-08-21 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ spamscore=0 malwarescore=0 lowpriorityscore=0 impostorscore=0 bulkscore=0
+ mlxscore=0 clxscore=1015 adultscore=0 mlxlogscore=999 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2008210037
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Michal Hocko <mhocko@suse.com> writes:
+Hello Dave,
 
-> On Thu 20-08-20 08:56:53, Suren Baghdasaryan wrote:
-> [...]
->> Catching up on the discussion which was going on while I was asleep...
->> So it sounds like there is a consensus that oom_adj should be moved to
->> mm_struct rather than trying to synchronize it among tasks sharing mm.
->> That sounds reasonable to me too. Michal answered all the earlier
->> questions about this patch, so I won't be reiterating them, thanks
->> Michal. If any questions are still lingering about the original patch
->> I'll be glad to answer them.
->
-> I think it still makes some sense to go with a simpler (aka less tricky)
-> solution which would be your original patch with an incremental fix for
-> vfork and the proper ordering (http://lkml.kernel.org/r/20200820124109.GI5033@dhcp22.suse.cz)
-> and then make a more complex shift to mm struct on top of that. The
-> former will be less tricky to backport to stable IMHO.
+Thanks for reviewing this.
 
-So I am confused.
+On 8/21/20 4:41 AM, Dave Chinner wrote:
+> On Wed, Aug 19, 2020 at 03:58:41PM +0530, Anju T Sudhakar wrote:
+>> From: Ritesh Harjani <riteshh@linux.ibm.com>
+>>
+>> __bio_try_merge_page() may return same_page = 1 and merged = 0.
+>> This could happen when bio->bi_iter.bi_size + len > UINT_MAX.
+> 
+> Ummm, silly question, but exactly how are we getting a bio that
+> large in ->writepages getting built? Even with 64kB pages, that's a
+> bio with 2^16 pages attached to it. We shouldn't be building single
+> bios in writeback that large - what storage hardware is allowing
+> such huge bios to be built? (i.e. can you dump all the values in
+> /sys/block/<dev>/queue/* for that device for us?)
 
-I don't know how a subtle dependency on something in clone
-is better than something flat footed in exec.
+Please correct me here, but as I see, bio has only these two limits
+which it checks for adding page to bio. It doesn't check for limits
+of /sys/block/<dev>/queue/* no? I guess then it could be checked
+by block layer below b4 submitting the bio?
+
+113 static inline bool bio_full(struct bio *bio, unsigned len)
+114 {
+115         if (bio->bi_vcnt >= bio->bi_max_vecs)
+116                 return true;
+117
+118         if (bio->bi_iter.bi_size > UINT_MAX - len)
+119                 return true;
+120
+121         return false;
+122 }
 
 
-That said if we are going for a small change why not:
+This issue was first observed while running a fio run on a system with
+huge memory. But then here is an easy way we figured out to trigger the
+issue almost everytime with loop device on my VM setup. I have provided
+all the details on this below.
 
-	/*
-	 * Make sure we will check other processes sharing the mm if this is
-	 * not vfrok which wants its own oom_score_adj.
-	 * pin the mm so it doesn't go away and get reused after task_unlock
-	 */
-	if (!task->vfork_done) {
-		struct task_struct *p = find_lock_task_mm(task);
+<cmds to trigger it fairly quickly>
+===================================
+echo 99999999 > /proc/sys/vm/dirtytime_expire_seconds
+echo 99999999 > /proc/sys/vm/dirty_expire_centisecs
+echo 90  > /proc/sys/vm/dirty_rati0
+echo 90  > /proc/sys/vm/dirty_background_ratio
+echo 0  > /proc/sys/vm/dirty_writeback_centisecs
 
-		if (p) {
--			if (atomic_read(&p->mm->mm_users) > 1) {
-+			if (atomic_read(&p->mm->mm_users) > p->signal->nr_threads) {
-				mm = p->mm;
-				mmgrab(mm);
-			}
-			task_unlock(p);
-		}
-	}
+sudo perf probe -s ~/host_shared/src/linux/ -a '__bio_try_merge_page:10 
+bio page page->index bio->bi_iter.bi_size len same_page[0]'
 
-That would seem to be the minimal change to make this happen.  That has
-the advantage that if a processes does vfork it won't always have to
-take the slow path.
+sudo perf record -e probe:__bio_try_merge_page_L10 -a --filter 'bi_size 
+ > 0xff000000' sudo fio --rw=write --bs=1M --numjobs=1 
+--name=/mnt/testfile --size=24G --ioengine=libaio
 
-Moving to the mm_struct is much less racy but this is simple.
 
-Eric
+# on running this 2nd time it gets hit everytime on my setup
+
+sudo perf record -e probe:__bio_try_merge_page_L10 -a --filter 'bi_size 
+ > 0xff000000' sudo fio --rw=write --bs=1M --numjobs=1 
+--name=/mnt/testfile --size=24G --ioengine=libaio
+
+
+Perf o/p from above filter causing overflow
+===========================================
+<...>
+              fio 25194 [029] 70471.559084: 
+probe:__bio_try_merge_page_L10: (c000000000aa054c) 
+bio=0xc0000013d49a4b80 page=0xc00c000004029d80 index=0x10a9d 
+bi_size=0xffff8000 len=0x1000 same_page=0x1
+              fio 25194 [029] 70471.559087: 
+probe:__bio_try_merge_page_L10: (c000000000aa054c) 
+bio=0xc0000013d49a4b80 page=0xc00c000004029d80 index=0x10a9d 
+bi_size=0xffff9000 len=0x1000 same_page=0x1
+              fio 25194 [029] 70471.559090: 
+probe:__bio_try_merge_page_L10: (c000000000aa054c) 
+bio=0xc0000013d49a4b80 page=0xc00c000004029d80 index=0x10a9d 
+bi_size=0xffffa000 len=0x1000 same_page=0x1
+              fio 25194 [029] 70471.559093: 
+probe:__bio_try_merge_page_L10: (c000000000aa054c) 
+bio=0xc0000013d49a4b80 page=0xc00c000004029d80 index=0x10a9d 
+bi_size=0xffffb000 len=0x1000 same_page=0x1
+              fio 25194 [029] 70471.559095: 
+probe:__bio_try_merge_page_L10: (c000000000aa054c) 
+bio=0xc0000013d49a4b80 page=0xc00c000004029d80 index=0x10a9d 
+bi_size=0xffffc000 len=0x1000 same_page=0x1
+              fio 25194 [029] 70471.559098: 
+probe:__bio_try_merge_page_L10: (c000000000aa054c) 
+bio=0xc0000013d49a4b80 page=0xc00c000004029d80 index=0x10a9d 
+bi_size=0xffffd000 len=0x1000 same_page=0x1
+              fio 25194 [029] 70471.559101: 
+probe:__bio_try_merge_page_L10: (c000000000aa054c) 
+bio=0xc0000013d49a4b80 page=0xc00c000004029d80 index=0x10a9d 
+bi_size=0xffffe000 len=0x1000 same_page=0x1
+              fio 25194 [029] 70471.559104: 
+probe:__bio_try_merge_page_L10: (c000000000aa054c) 
+bio=0xc0000013d49a4b80 page=0xc00c000004029d80 index=0x10a9d 
+bi_size=0xfffff000 len=0x1000 same_page=0x1
+
+^^^^^^ (this could cause an overflow)
+
+loop dev
+=========
+NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE    DIO LOG-SEC
+/dev/loop1         0      0         0  0 /mnt1/filefs   0     512
+
+
+mount o/p
+=========
+/dev/loop1 on /mnt type xfs 
+(rw,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+
+
+/sys/block/<dev>/queue/*
+========================
+
+setup:/run/perf$ cat /sys/block/loop1/queue/max_segments
+128
+setup:/run/perf$ cat /sys/block/loop1/queue/max_segment_size
+65536
+setup:/run/perf$ cat /sys/block/loop1/queue/max_hw_sectors_kb
+1280
+setup:/run/perf$ cat /sys/block/loop1/queue/logical_block_size
+512
+setup:/run/perf$ cat /sys/block/loop1/queue/max_sectors_kb
+1280
+setup:/run/perf$ cat /sys/block/loop1/queue/hw_sector_size
+512
+setup:/run/perf$ cat /sys/block/loop1/queue/discard_max_bytes
+4294966784
+setup:/run/perf$ cat /sys/block/loop1/queue/discard_max_hw_bytes
+4294966784
+setup:/run/perf$ cat /sys/block/loop1/queue/discard_zeroes_data
+0
+setup:/run/perf$ cat /sys/block/loop1/queue/discard_granularity
+4096
+setup:/run/perf$ cat /sys/block/loop1/queue/chunk_sectors
+0
+setup:/run/perf$ cat /sys/block/loop1/queue/max_discard_segments
+1
+setup:/run/perf$ cat /sys/block/loop1/queue/read_ahead_kb
+128
+setup:/run/perf$ cat /sys/block/loop1/queue/rotational
+1
+setup:/run/perf$ cat /sys/block/loop1/queue/physical_block_size
+512
+setup:/run/perf$ cat /sys/block/loop1/queue/write_same_max_bytes
+0
+setup:/run/perf$ cat /sys/block/loop1/queue/write_zeroes_max_bytes
+4294966784
