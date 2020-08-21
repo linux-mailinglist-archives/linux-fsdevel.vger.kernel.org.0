@@ -2,157 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 95AB124DFFD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 20:53:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92D4824E022
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 20:57:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbgHUSxQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 14:53:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57010 "EHLO
+        id S1726706AbgHUS5G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 14:57:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbgHUSxN (ORCPT
+        with ESMTP id S1725935AbgHUS5C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 14:53:13 -0400
-Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B39CFC061574
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 11:53:12 -0700 (PDT)
-Received: by mail-ua1-x942.google.com with SMTP id u15so822777uau.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 11:53:12 -0700 (PDT)
+        Fri, 21 Aug 2020 14:57:02 -0400
+Received: from mail-pf1-x44a.google.com (mail-pf1-x44a.google.com [IPv6:2607:f8b0:4864:20::44a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D982C061573
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 11:57:01 -0700 (PDT)
+Received: by mail-pf1-x44a.google.com with SMTP id y11so1886888pfq.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 11:57:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3ykL1MaQAjReQJ2aQ56GZWudKyZ/kETzd1mJIShvlqg=;
-        b=lOO5KcjensU81n90JpwVdSdGl5pnw5AlKyiczE4LcmppuBoUTaiEO8XtuFPn4c4PaQ
-         qddvy17JKDmJleSHaIO/Ogew7cBYeFm0pULTnsX65QMgLAMSSyAoynE5HSP5hFg9UVvt
-         fxCxcmgFeMk1I/1MRqOX80fFINtH8/xQu3EChS11kj/UfRKA3Np5FtlLQ8ARBPO1T2Lx
-         Zjzodc2A6qbv2G4od4J2JjvFlfj4FNrM2jL7fEbsJ3kZTUj3qtKjZNIVYJn61lbTGFmW
-         C8cpfqZSURM8+r8V7HOyTGK2UyRXJVTntF7jXg3HKsBdF2j/xvTvOAWXA7k1st3Q/JBC
-         FHDg==
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=oWFdh/PRo3gGpAV+9k5dRsjIEptJbJCkCMmQ8ucgmPk=;
+        b=eIM0ewALXtMVmYnzBh1gd4g4cgWboGe0k6p4lIbSnc4fQ9pdVfb/Lou19RPdZZRuvW
+         LQ1XfkVQ7fNa7xZdIxLlxZVnD85d40wlITdn0IogFA8+wRa6Km6GAMS6AR77/FyVikhn
+         k7I2TtjHFF28aa4JRfiYHZpYN13mSNw6UmnKj2E0VdZiuoz0P9iY12JQ0q2WtMJbiLKP
+         ABwU3IpnqkAQwDr6il5lNzibh2vxu4CCl2w0fflGUVCCj5sOS2BZeOejFV49RTluCkBQ
+         kINmFvUY++dvTYPkUrPciNOdDObE1Gk0zpF8P5GtYe2+xl0tMOJlJJ+70ilrXz9Bdt5/
+         h0YQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3ykL1MaQAjReQJ2aQ56GZWudKyZ/kETzd1mJIShvlqg=;
-        b=L+cCbI4it7lR5L6a3rh21NkFpm6p7RMvs2g3T5lgNWFnlnkRyIW9gc3F2mEVsj1zhd
-         xsvm7akTCx9ClSbxDAXPmoY3tkaFxqASRs8VxzHPl0kzcV5V1IajpQrbkXdM6kaPAgPr
-         gQBvMPIHV/jp1S/Ly+jfXc9Q6aLymXL8GfvKRahEa2QgDFni3I/TmtaLHvAmXSEo/wnm
-         j8A16TNpGAlkjOk6p67jhNYZybdFfQuqI1vJOyePOJHQjVi2u7ta9vLizUfqZDWkcfPm
-         PsMtIHdSZtoRKeDIg+vvhSCdvFa9bBuCkh+SLdKDRt2MTOPg4bjlYjbyqebDrNcm+r5F
-         NMiQ==
-X-Gm-Message-State: AOAM5319QkUtX635o4FyUdpWWl9tccPFDOOMf8K6+e9FFA1XWj86rG2u
-        2xY4xf+IE+8hT/FiSucr4KNXpj/AW6HKViOALBl9fg==
-X-Google-Smtp-Source: ABdhPJwLGWowOiHwq4OtK9k4dIWPuKAtxD38z1jFWXA2gU6Jz5vFAR5L9E8i2RsRzeGBQZ0cRDBXAVroDaZuRzdsANs=
-X-Received: by 2002:a9f:2265:: with SMTP id 92mr2464321uad.86.1598035991532;
- Fri, 21 Aug 2020 11:53:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
- <20200820140054.fdkbotd4tgfrqpe6@wittgenstein> <637ab0e7-e686-0c94-753b-b97d24bb8232@i-love.sakura.ne.jp>
- <87k0xtv0d4.fsf@x220.int.ebiederm.org> <CAJuCfpHsjisBnNiDNQbm8Yi92cznaptiXYPdc-aVa+_zkuaPhA@mail.gmail.com>
- <20200820162645.GP5033@dhcp22.suse.cz> <87r1s0txxe.fsf@x220.int.ebiederm.org>
- <20200821111558.GG4546@redhat.com> <CAJuCfpF_GhTy5SCjxqyqTFUrJNaw3UGJzCi=WSCXfqPAcbThYg@mail.gmail.com>
- <20200821163300.GB19445@redhat.com> <20200821175943.GD19445@redhat.com>
-In-Reply-To: <20200821175943.GD19445@redhat.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Fri, 21 Aug 2020 11:53:00 -0700
-Message-ID: <CAJuCfpGn+7gtpUVv_T3ZvT7WEwP8z-c1z1Qu2qe1jq8RSxbHMA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
- __set_oom_adj when not necessary
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=oWFdh/PRo3gGpAV+9k5dRsjIEptJbJCkCMmQ8ucgmPk=;
+        b=PBIJNl6J7T1RUWlXSYvFtZTBRL3d/DVCVW5MbQIdEVFFvHQ9bKy72i1pMc488wkVI9
+         CSvQnySoU4mOOv3xQ9zq7KKVlqHHbchOblu/pfnGYbm9WIsEHVrVbkyv4RUPvhu2oJVI
+         fL2zmEkVBJ++/UW4nQNtb4JQ57NBVdKJ+YQ1FduuShMsOt51DiogAnwx43RttNS7+D87
+         Bfy7I8HHz1ScOjJWcOJMLySIOaN9vsxIfxWZ7tTK47nj/KNoCzHsvyFOJGnl0TCzWZ7/
+         hqs95c/TZc4iVnjQGSz+kCqo3E9BKBkIm+wsaANDkfgKcjzJ+sbEvwH/U1fDDN4RceJi
+         eMuw==
+X-Gm-Message-State: AOAM533ydj07YCeKMpZJCSvrQiUoJ6w02Udt8L4ktDrAsravBrdfeP6o
+        3MQpkayLmBiaKN/9u0FdZQXAIKFA+jXn4/l2bg==
+X-Google-Smtp-Source: ABdhPJyD3Yh3CAqaICxx5JQmoTQsRkSWlUNlrc+z2K5FgB5OskDZ16gE5AERUF9KvVPCjDJ27Vch2q4YlRDdaNWY1Q==
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
+ (user=lokeshgidra job=sendgmr) by 2002:a17:90a:9405:: with SMTP id
+ r5mr3668948pjo.74.1598036220902; Fri, 21 Aug 2020 11:57:00 -0700 (PDT)
+Date:   Fri, 21 Aug 2020 11:56:42 -0700
+Message-Id: <20200821185645.801971-1-lokeshgidra@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
+Subject: [PATCH v7 0/3] SELinux support for anonymous inodes and UFFD
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
-        Tim Murray <timmurray@google.com>, mingo@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
-        christian@kellner.me, areber@redhat.com,
-        Shakeel Butt <shakeelb@google.com>, cyphar@cyphar.com,
-        adobriyan@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        gladkov.alexey@gmail.com, Michel Lespinasse <walken@google.com>,
-        daniel.m.jordan@oracle.com, avagin@gmail.com,
-        bernd.edlinger@hotmail.de,
-        John Johansen <john.johansen@canonical.com>,
-        laoar.shao@gmail.com, Minchan Kim <minchan@kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        nnk@google.com, jeffv@google.com, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 21, 2020 at 11:00 AM Oleg Nesterov <oleg@redhat.com> wrote:
->
-> On 08/21, Oleg Nesterov wrote:
-> >
-> > On 08/21, Suren Baghdasaryan wrote:
-> > >
-> > > On Fri, Aug 21, 2020 at 4:16 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> > > >
-> > > >         bool probably_has_other_mm_users(tsk)
-> > > >         {
-> > > >                 return  atomic_read_acquire(&tsk->mm->mm_users) >
-> > > >                         atomic_read(&tsk->signal->live);
-> > > >         }
-> > > >
-> > > > The barrier implied by _acquire ensures that if we race with the exiting
-> > > > task and see the result of exit_mm()->mmput(mm), then we must also see
-> > > > the result of atomic_dec_and_test(signal->live).
-> > > >
-> > > > Either way, if we want to fix the race with clone(CLONE_VM) we need other
-> > > > changes.
-> > >
-> > > The way I understand this condition in __set_oom_adj() sync logic is
-> > > that we would be ok with false positives (when we loop unnecessarily)
-> > > but we can't tolerate false negatives (when oom_score_adj gets out of
-> > > sync).
-> >
-> > Yes,
-> >
-> > > With the clone(CLONE_VM) race not addressed we are allowing
-> > > false negatives and IMHO that's not acceptable because it creates a
-> > > possibility for userspace to get an inconsistent picture. When
-> > > developing the patch I did think about using (p->mm->mm_users >
-> > > p->signal->nr_threads) condition and had to reject it due to that
-> > > reason.
-> >
-> > Not sure I understand... I mean, the test_bit(MMF_PROC_SHARED) you propose
-> > is equally racy and we need copy_oom_score() at the end of copy_process()
-> > either way?
->
-> On a second thought I agree that probably_has_other_mm_users() above can't
-> work ;) Compared to the test_bit(MMF_PROC_SHARED) check it is not _equally_
-> racy, it adds _another_ race with clone(CLONE_VM).
->
-> Suppose a single-threaded process P does
->
->         clone(CLONE_VM); // creates the child C
->
->         // mm_users == 2; P->signal->live == 1;
->
->         clone(CLONE_THREAD | CLONE_VM);
->
->         // mm_users == 3; P->signal->live == 2;
->
-> the problem is that in theory clone(CLONE_THREAD | CLONE_VM) can increment
-> _both_ counters between atomic_read_acquire(mm_users) and atomic_read(live)
-> in probably_has_other_mm_users() so it can observe mm_users == live == 2.
+Userfaultfd in unprivileged contexts could be potentially very
+useful. We'd like to harden userfaultfd to make such unprivileged use
+less risky. This patch series allows SELinux to manage userfaultfd
+file descriptors and in the future, other kinds of
+anonymous-inode-based file descriptor.  SELinux policy authors can
+apply policy types to anonymous inodes by providing name-based
+transition rules keyed off the anonymous inode internal name (
+"[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
+applying policy to the new SIDs thus produced.
 
-I see. So even though live is incremented after mm_users, the observer
-from __set_oom_adj still can see them becoming equal because it reads
-mm_users first.
+With SELinux managed userfaultfd, an admin can control creation and
+movement of the file descriptors. In particular, handling of
+a userfaultfd descriptor by a different process is essentially a
+ptrace access into the process, without any of the corresponding
+security_ptrace_access_check() checks. For privacy, the admin may
+want to deny such accesses, which is possible with SELinux support.
 
-Do you see any such races if I incorporate the changes proposed by
-Michal in http://lkml.kernel.org/r/20200820124109.GI5033@dhcp22.suse.cz
-? I have the new patch and I'm testing it right now. So far it behaves
-well but maybe I'm missing some rare race here that won't show up in
-my testing?
+Inside the kernel, a new anon_inode interface, anon_inode_getfd_secure,
+allows callers to opt into this SELinux management. In this new "secure"
+mode, anon_inodes create new ephemeral inodes for anonymous file objects
+instead of reusing the normal anon_inodes singleton dummy inode. A new
+LSM hook gives security modules an opportunity to configure and veto
+these ephemeral inodes.
 
+This patch series is one of two fork of [1] and is an
+alternative to [2].
 
->
-> Oleg.
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
->
+The primary difference between the two patch series is that this
+partch series creates a unique inode for each "secure" anonymous
+inode, while the other patch series ([2]) continues using the
+singleton dummy anonymous inode and adds a way to attach SELinux
+security information directly to file objects.
+
+I prefer the approach in this patch series because 1) it's a smaller
+patch than [2], and 2) it produces a more regular security
+architecture: in this patch series, secure anonymous inodes aren't
+S_PRIVATE and they maintain the SELinux property that the label for a
+file is in its inode. We do need an additional inode per anonymous
+file, but per-struct-file inode creation doesn't seem to be a problem
+for pipes and sockets.
+
+The previous version of this feature ([1]) created a new SELinux
+security class for userfaultfd file descriptors. This version adopts
+the generic transition-based approach of [2].
+
+This patch series also differs from [2] in that it doesn't affect all
+anonymous inodes right away --- instead requiring anon_inodes callers
+to opt in --- but this difference isn't one of basic approach. The
+important question to resolve is whether we should be creating new
+inodes or enhancing per-file data.
+
+Changes from the first version of the patch:
+
+  - Removed some error checks
+  - Defined a new anon_inode SELinux class to resolve the
+    ambiguity in [3]
+  - Inherit sclass as well as descriptor from context inode
+
+Changes from the second version of the patch:
+
+  - Fixed example policy in the commit message to reflect the use of
+    the new anon_inode class.
+
+Changes from the third version of the patch:
+
+  - Dropped the fops parameter to the LSM hook
+  - Documented hook parameters
+  - Fixed incorrect class used for SELinux transition
+  - Removed stray UFFD changed early in the series
+  - Removed a redundant ERR_PTR(PTR_ERR())
+
+Changes from the fourth version of the patch:
+
+  - Removed an unused parameter from an internal function
+  - Fixed function documentation
+
+Changes from the fifth version of the patch:
+
+  - Fixed function documentation in fs/anon_inodes.c and
+    include/linux/lsm_hooks.h
+  - Used anon_inode_getfd_secure() in userfaultfd() syscall and removed
+    owner from userfaultfd_ctx.
+
+Changed from the sixth version of the patch:
+
+  - Removed definition of anon_inode_getfile_secure() as there are no
+    callers.
+  - Simplified function description of anon_inode_getfd_secure().
+  - Elaborated more on the purpose of 'context_inode' in commit message.
+
+[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+[2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
+[3] https://lore.kernel.org/lkml/23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov/
+
+Daniel Colascione (3):
+  Add a new LSM-supporting anonymous inode interface
+  Teach SELinux about anonymous inodes
+  Wire UFFD up to SELinux
+
+ fs/anon_inodes.c                    | 148 ++++++++++++++++++++--------
+ fs/userfaultfd.c                    |  23 +++--
+ include/linux/anon_inodes.h         |  13 +++
+ include/linux/lsm_hook_defs.h       |   2 +
+ include/linux/lsm_hooks.h           |   7 ++
+ include/linux/security.h            |   3 +
+ security/security.c                 |   9 ++
+ security/selinux/hooks.c            |  53 ++++++++++
+ security/selinux/include/classmap.h |   2 +
+ 9 files changed, 210 insertions(+), 50 deletions(-)
+
+-- 
+2.28.0.297.g1956fa8f8d-goog
+
