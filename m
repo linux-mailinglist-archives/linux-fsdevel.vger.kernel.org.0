@@ -2,128 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 120BB24DF22
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 20:11:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 821FD24DFBD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 20:35:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbgHUSLj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 14:11:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49422 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726057AbgHUSLj (ORCPT
+        id S1726711AbgHUSfV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 14:35:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54196 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbgHUSfM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 14:11:39 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07LI1dKk193635;
-        Fri, 21 Aug 2020 14:11:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=8yvEI0g2E8xG0SJMCtpKCuoNmNMpLdEw9u+yzYkMfTk=;
- b=VIJtt3CGuTG5sUiykNJVYhLxmszHb9Wdm6J2EYpLcqgQckwJbpZSCOXpbpZTT7qfDYek
- khVO23HbKGkVeXfY7yvjblSsk5ons8MFYnUE+xfiKmPxrpQy2O1Uzm3t5KljAQGAS3Bi
- JVDBAhSLcbgn8Q/8zPHOpshUdkZ+z1NKbejUMvQAwJmfqD5Cb+GA0p96cn0q/15zvROB
- kz1jz3TOeBsOPq4XU9WgyJQDHOHnllQQ5W6D/cbf6KeGIc+tarqDXE2nurzt4C1Xegzr
- zNxTx2jCdFLnGYmixgTjm89ER17TSvq+cH5qFnlKiQjfTRrfDAjs6hfREYhPvOx3uYJk 1Q== 
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3327xucbrh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Aug 2020 14:11:31 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07LIB7c5003354;
-        Fri, 21 Aug 2020 18:11:28 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma05fra.de.ibm.com with ESMTP id 3304bujubn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 Aug 2020 18:11:28 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07LI9ucF56230152
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Aug 2020 18:09:56 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 767124C044;
-        Fri, 21 Aug 2020 18:11:25 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C639E4C04A;
-        Fri, 21 Aug 2020 18:11:23 +0000 (GMT)
-Received: from localhost.localdomain.com (unknown [9.199.33.217])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 21 Aug 2020 18:11:23 +0000 (GMT)
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-To:     linux-block@vger.kernel.org
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, axboe@kernel.dk,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Shivaprasad G Bhat <sbhat@linux.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Subject: [PATCH 1/1] block: Set same_page to false in __bio_try_merge_page if ret is false
-Date:   Fri, 21 Aug 2020 23:41:17 +0530
-Message-Id: <e50582833c897c1a51a676d7726d1380a3e5a678.1598032711.git.riteshh@linux.ibm.com>
-X-Mailer: git-send-email 2.25.4
+        Fri, 21 Aug 2020 14:35:12 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41BCCC061755
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 11:35:10 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id u21so2774561ejz.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 11:35:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q4frqIW9I+72sr79+gm0FlxLWfHVNqfXNa3Q85/YG38=;
+        b=FFvdCi9F5IYZnNSXXIYkdNN6KgOiWn2gpkkna/pVmWNnIBtYPB/REc3lR/fIaVeCW9
+         xcSIWYk5iEt0s3PqyD4BZtBeNRnNdMU5hgRft3ZaAVYAasCNtgX2d6rzDzZJkEmWns8Q
+         DMouWMb6Wi3acrbp58tg1muQxWsOySA71Li1F/+ycwrhf8v2Y0nl3puJD3YvwQfnHUGb
+         nrBMScR8wjFGLnAUtO3JiGu8kd20y0FCbHOw69GnkVA4KDSkAF+r8hp2olMacxwqoxVg
+         jl1pnhCY2uVZkYVQNb9N1obAwGLTlc2+T6DsKYp19SXlykAO66qL+BjzJ7BOFir1WKli
+         sEEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q4frqIW9I+72sr79+gm0FlxLWfHVNqfXNa3Q85/YG38=;
+        b=SjY3XxadW4G9jrbLHbLlBgEjKSijh3BYbJsIbJWrZ7CGMKnkteZX2znntVJVR7pwMB
+         nWBLkg1MwgUKNBG5smsrE7klSJYAiMFh1SwjkytMRwy2ptFMqCrpR/3BAUMbT0OpZptK
+         9r88NZgc7NBvpcMcKRhD9DgOdpqIf83K7Q1hqZUEbA4xoIvMNHiRvNcCocLN0MSQPupm
+         OG0yU71yjjMXpLE37lvHWlnUIczZHGdFdfev89XikzNA3BAz0JYeyHHyEUKgy0xtTscp
+         30dQmB9P44TQ8Y/st2nmgi67Fncs9uf/XuPKT+k62mq1uT5bp4Q4sRjr2izoPEde3ARO
+         dVNQ==
+X-Gm-Message-State: AOAM530PcxBsSmPHjPuSphO6VxsRGneMmg6HWhRB0VureEZpJYsriu/N
+        6pjVcQ/cLM/UVJtAsJHPGyVyjKz35k/9+a+WAZKLK/djK4SQ
+X-Google-Smtp-Source: ABdhPJxfrGP14Je3zh0ICJTpECzCcS4IA89+zoHjdAPERXK51mLX3W5gqb4xv4Taij+96NOlohguUZetQbWOQvF7dOs=
+X-Received: by 2002:a17:906:43c9:: with SMTP id j9mr4143785ejn.542.1598034909369;
+ Fri, 21 Aug 2020 11:35:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-21_08:2020-08-21,2020-08-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 mlxscore=0 phishscore=0 adultscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 mlxlogscore=981 lowpriorityscore=0
- bulkscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008210166
+References: <cover.1593198710.git.rgb@redhat.com> <4a5019ed3cfab416aeb6549b791ac6d8cc9fb8b7.1593198710.git.rgb@redhat.com>
+ <CAHC9VhSwMEZrq0dnaXmPi=bu0NgUtWPuw-2UGDrQa6TwxWkZtw@mail.gmail.com> <20200718004341.ruyre5xhlu3ps2tr@madcap2.tricolour.ca>
+In-Reply-To: <20200718004341.ruyre5xhlu3ps2tr@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 21 Aug 2020 14:34:57 -0400
+Message-ID: <CAHC9VhSDLF3W4LNqdgz-56m8wXLZLpDhMd8S-DxFcrKvsgCreg@mail.gmail.com>
+Subject: Re: [PATCH ghak90 V9 08/13] audit: add containerid support for user records
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     nhorman@tuxdriver.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>, dhowells@redhat.com,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        simo@redhat.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        mpatel@redhat.com, Serge Hallyn <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If we hit the UINT_MAX limit of bio->bi_iter.bi_size and so we are anyway
-not merging this page in this bio, then it make sense to make same_page
-also as false before returning.
+On Fri, Jul 17, 2020 at 8:44 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2020-07-05 11:11, Paul Moore wrote:
+> > On Sat, Jun 27, 2020 at 9:23 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > >
+> > > Add audit container identifier auxiliary record to user event standalone
+> > > records.
+> > >
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > Acked-by: Neil Horman <nhorman@tuxdriver.com>
+> > > Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > > ---
+> > >  kernel/audit.c | 19 ++++++++++++-------
+> > >  1 file changed, 12 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/kernel/audit.c b/kernel/audit.c
+> > > index 54dd2cb69402..997c34178ee8 100644
+> > > --- a/kernel/audit.c
+> > > +++ b/kernel/audit.c
+> > > @@ -1507,6 +1504,14 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
+> > >                                 audit_log_n_untrustedstring(ab, str, data_len);
+> > >                         }
+> > >                         audit_log_end(ab);
+> > > +                       rcu_read_lock();
+> > > +                       cont = _audit_contobj_get(current);
+> > > +                       rcu_read_unlock();
+> > > +                       audit_log_container_id(context, cont);
+> > > +                       rcu_read_lock();
+> > > +                       _audit_contobj_put(cont);
+> > > +                       rcu_read_unlock();
+> > > +                       audit_free_context(context);
+> >
+> > I haven't searched the entire patchset, but it seems like the pattern
+> > above happens a couple of times in this patchset, yes?  If so would it
+> > make sense to wrap the above get/log/put in a helper function?
+>
+> I've redone the locking with an rcu lock around the get and a spinlock
+> around the put.  It occurs to me that putting an rcu lock around the
+> whole thing and doing a get without the refcount increment would save
+> us the spinlock and put and be fine since we'd be fine with stale but
+> consistent information traversing the contobj list from this point to
+> report it.  Problem with that is needing to use GFP_ATOMIC due to the
+> rcu lock.  If I stick with the spinlock around the put then I can use
+> GFP_KERNEL and just grab the spinlock while traversing the contobj list.
+>
+> > Not a big deal either way, I'm pretty neutral on it at this point in
+> > the patchset but thought it might be worth mentioning in case you
+> > noticed the same and were on the fence.
+>
+> There is only one other place this is used, in audit_log_exit in
+> auditsc.c.  I had noted the pattern but wasn't sure it was worth it.
+> Inline or not?  Should we just let the compiler decide?
 
-Without this patch, we hit below WARNING in iomap.
-This mostly happens with very large memory system and / or after tweaking
-vm dirty threshold params to delay writeback of dirty data.
+I'm generally not a fan of explicit inlines unless it has been shown
+to be a real problem.
 
-WARNING: CPU: 18 PID: 5130 at fs/iomap/buffered-io.c:74 iomap_page_release+0x120/0x150
- CPU: 18 PID: 5130 Comm: fio Kdump: loaded Tainted: G        W         5.8.0-rc3 #6
- Call Trace:
-  __remove_mapping+0x154/0x320 (unreliable)
-  iomap_releasepage+0x80/0x180
-  try_to_release_page+0x94/0xe0
-  invalidate_inode_page+0xc8/0x110
-  invalidate_mapping_pages+0x1dc/0x540
-  generic_fadvise+0x3c8/0x450
-  xfs_file_fadvise+0x2c/0xe0 [xfs]
-  vfs_fadvise+0x3c/0x60
-  ksys_fadvise64_64+0x68/0xe0
-  sys_fadvise64+0x28/0x40
-  system_call_exception+0xf8/0x1c0
-  system_call_common+0xf0/0x278
-
-Suggested-by: Christoph Hellwig <hch@infradead.org>
-Reported-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
-Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
----
-[prev discussion]:- https://patchwork.kernel.org/patch/11723453/
-
- block/bio.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/block/bio.c b/block/bio.c
-index a7366c02c9b5..675ecd81047b 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -877,8 +877,10 @@ bool __bio_try_merge_page(struct bio *bio, struct page *page,
- 		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
- 
- 		if (page_is_mergeable(bv, page, len, off, same_page)) {
--			if (bio->bi_iter.bi_size > UINT_MAX - len)
-+			if (bio->bi_iter.bi_size > UINT_MAX - len) {
-+				*same_page = false;
- 				return false;
-+			}
- 			bv->bv_len += len;
- 			bio->bi_iter.bi_size += len;
- 			return true;
 -- 
-2.25.4
-
+paul moore
+www.paul-moore.com
