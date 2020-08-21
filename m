@@ -2,198 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA2B424DFF0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 20:48:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95AB124DFFD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 20:53:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725938AbgHUSsY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 14:48:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56234 "EHLO
+        id S1726578AbgHUSxQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 14:53:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbgHUSsP (ORCPT
+        with ESMTP id S1725935AbgHUSxN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 14:48:15 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BA75C0613ED
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 11:48:14 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id w17so2277668edt.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 11:48:14 -0700 (PDT)
+        Fri, 21 Aug 2020 14:53:13 -0400
+Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B39CFC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 11:53:12 -0700 (PDT)
+Received: by mail-ua1-x942.google.com with SMTP id u15so822777uau.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 11:53:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zFS0hAClZdBqg1ygZpYSD8oadp4rG9FtsqCxJLGMqfA=;
-        b=sR7x2B3WYmbJC0y0bskKUkgCZEZ0j6lJfaOE9m/aD1tPrwC+sndJCJ4t2wQ4hKQfbQ
-         7FoezsNiRLAR4hKbKjrEMl76ogeQUCZGtDMDP7LxzfEgFbINSDDNYgMAGx1xoEXq3VpN
-         v0MSaBpjMz+kGMMSpn3MoG9Z87EHCAuqGjzax6a4NbGzpiktpJ1dlZ1SY+H8NzLr9EeP
-         RaXaiuPjTpMpdTeUflreO3Gt+Uk4fksOchPjyUfHNBmJ931yTLIpXUOk8bUq2a67QQCy
-         o+VkBqZZx2uUaYQDUr/mQYz9VD5rnYJzHOfyeLpwvLQYSpQ3DMVul1NsBzC3nzxmWEMr
-         GElQ==
+        bh=3ykL1MaQAjReQJ2aQ56GZWudKyZ/kETzd1mJIShvlqg=;
+        b=lOO5KcjensU81n90JpwVdSdGl5pnw5AlKyiczE4LcmppuBoUTaiEO8XtuFPn4c4PaQ
+         qddvy17JKDmJleSHaIO/Ogew7cBYeFm0pULTnsX65QMgLAMSSyAoynE5HSP5hFg9UVvt
+         fxCxcmgFeMk1I/1MRqOX80fFINtH8/xQu3EChS11kj/UfRKA3Np5FtlLQ8ARBPO1T2Lx
+         Zjzodc2A6qbv2G4od4J2JjvFlfj4FNrM2jL7fEbsJ3kZTUj3qtKjZNIVYJn61lbTGFmW
+         C8cpfqZSURM8+r8V7HOyTGK2UyRXJVTntF7jXg3HKsBdF2j/xvTvOAWXA7k1st3Q/JBC
+         FHDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zFS0hAClZdBqg1ygZpYSD8oadp4rG9FtsqCxJLGMqfA=;
-        b=jFRsN6HmySaK86OS4IkHWlLc9hU2YbFyUcVuSRFYXv/IEJfHfA09OomI68Lj0vQUfq
-         1sfAwWjR40iWvgI3AhZVswfbgqLsMfqpbhACSuwjVMlWZzfEdZFacIQKM2ahL7WhTTL6
-         bpDzn4Y+ztuNTs4ul6G4DI/wsWQFqoMwMKnvjeTdDu0EXllK/X5UMszsfaTcvFI96wlk
-         H/J07d2qwbiHXl+VBQXHfV8qClIiSPBg7Eptvl+wm4EOuBdjYNyBMWYtyiX0l0zdzEVL
-         ZgB/4jxYqLxCg/zvXR6BrupqUfRn5X9ckKo9q3IJzdaox5/W6NKaPf67PEgOTiOQL90g
-         UMaQ==
-X-Gm-Message-State: AOAM532S1Husd7+z78d0lSNtMLiXJtoNC0feuPWtxxDchHxi9msM6YAX
-        1xgM+1gMXl/bzew44qhdsoIS+W9IlmZ3/LZ3/9HiPrCRDiLS
-X-Google-Smtp-Source: ABdhPJxY+3WwF8gu1nXbDCAOZ7CXNs3ESEQrI/MAHP08AsZCOrBpTjUWaGk4a55AOk3EOVvdlEJTtMfdxww8QDWXNp8=
-X-Received: by 2002:a50:ee93:: with SMTP id f19mr4182974edr.31.1598035692549;
- Fri, 21 Aug 2020 11:48:12 -0700 (PDT)
+        bh=3ykL1MaQAjReQJ2aQ56GZWudKyZ/kETzd1mJIShvlqg=;
+        b=L+cCbI4it7lR5L6a3rh21NkFpm6p7RMvs2g3T5lgNWFnlnkRyIW9gc3F2mEVsj1zhd
+         xsvm7akTCx9ClSbxDAXPmoY3tkaFxqASRs8VxzHPl0kzcV5V1IajpQrbkXdM6kaPAgPr
+         gQBvMPIHV/jp1S/Ly+jfXc9Q6aLymXL8GfvKRahEa2QgDFni3I/TmtaLHvAmXSEo/wnm
+         j8A16TNpGAlkjOk6p67jhNYZybdFfQuqI1vJOyePOJHQjVi2u7ta9vLizUfqZDWkcfPm
+         PsMtIHdSZtoRKeDIg+vvhSCdvFa9bBuCkh+SLdKDRt2MTOPg4bjlYjbyqebDrNcm+r5F
+         NMiQ==
+X-Gm-Message-State: AOAM5319QkUtX635o4FyUdpWWl9tccPFDOOMf8K6+e9FFA1XWj86rG2u
+        2xY4xf+IE+8hT/FiSucr4KNXpj/AW6HKViOALBl9fg==
+X-Google-Smtp-Source: ABdhPJwLGWowOiHwq4OtK9k4dIWPuKAtxD38z1jFWXA2gU6Jz5vFAR5L9E8i2RsRzeGBQZ0cRDBXAVroDaZuRzdsANs=
+X-Received: by 2002:a9f:2265:: with SMTP id 92mr2464321uad.86.1598035991532;
+ Fri, 21 Aug 2020 11:53:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1593198710.git.rgb@redhat.com> <f01f38dbb3190191e5914874322342700aecb9e1.1593198710.git.rgb@redhat.com>
- <CAHC9VhRPm4=_dVkZCu9iD5u5ixJOUnGNZ2wM9CL4kWwqv3GRnA@mail.gmail.com> <20200729190025.mueangq3os3r7ew6@madcap2.tricolour.ca>
-In-Reply-To: <20200729190025.mueangq3os3r7ew6@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 21 Aug 2020 14:48:01 -0400
-Message-ID: <CAHC9VhQoSH7Lza517WNr+6LaS7i890JPQfvisV6thLmnu01QOw@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V9 06/13] audit: add contid support for signalling
- the audit daemon
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, Ondrej Mosnacek <omosnace@redhat.com>,
-        dhowells@redhat.com, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
+References: <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
+ <20200820140054.fdkbotd4tgfrqpe6@wittgenstein> <637ab0e7-e686-0c94-753b-b97d24bb8232@i-love.sakura.ne.jp>
+ <87k0xtv0d4.fsf@x220.int.ebiederm.org> <CAJuCfpHsjisBnNiDNQbm8Yi92cznaptiXYPdc-aVa+_zkuaPhA@mail.gmail.com>
+ <20200820162645.GP5033@dhcp22.suse.cz> <87r1s0txxe.fsf@x220.int.ebiederm.org>
+ <20200821111558.GG4546@redhat.com> <CAJuCfpF_GhTy5SCjxqyqTFUrJNaw3UGJzCi=WSCXfqPAcbThYg@mail.gmail.com>
+ <20200821163300.GB19445@redhat.com> <20200821175943.GD19445@redhat.com>
+In-Reply-To: <20200821175943.GD19445@redhat.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Fri, 21 Aug 2020 11:53:00 -0700
+Message-ID: <CAJuCfpGn+7gtpUVv_T3ZvT7WEwP8z-c1z1Qu2qe1jq8RSxbHMA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
+ __set_oom_adj when not necessary
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tim Murray <timmurray@google.com>, mingo@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
+        christian@kellner.me, areber@redhat.com,
+        Shakeel Butt <shakeelb@google.com>, cyphar@cyphar.com,
+        adobriyan@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        gladkov.alexey@gmail.com, Michel Lespinasse <walken@google.com>,
+        daniel.m.jordan@oracle.com, avagin@gmail.com,
+        bernd.edlinger@hotmail.de,
+        John Johansen <john.johansen@canonical.com>,
+        laoar.shao@gmail.com, Minchan Kim <minchan@kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 29, 2020 at 3:00 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-07-05 11:10, Paul Moore wrote:
-> > On Sat, Jun 27, 2020 at 9:22 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > >
-> > > Add audit container identifier support to the action of signalling the
-> > > audit daemon.
-> > >
-> > > Since this would need to add an element to the audit_sig_info struct,
-> > > a new record type AUDIT_SIGNAL_INFO2 was created with a new
-> > > audit_sig_info2 struct.  Corresponding support is required in the
-> > > userspace code to reflect the new record request and reply type.
-> > > An older userspace won't break since it won't know to request this
-> > > record type.
-> > >
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > ---
-> > >  include/linux/audit.h       |  8 ++++
-> > >  include/uapi/linux/audit.h  |  1 +
-> > >  kernel/audit.c              | 95 ++++++++++++++++++++++++++++++++++++++++++++-
-> > >  security/selinux/nlmsgtab.c |  1 +
-> > >  4 files changed, 104 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > > index 5eeba0efffc2..89cf7c66abe6 100644
-> > > --- a/include/linux/audit.h
-> > > +++ b/include/linux/audit.h
-> > > @@ -22,6 +22,13 @@ struct audit_sig_info {
-> > >         char            ctx[];
-> > >  };
-> > >
-> > > +struct audit_sig_info2 {
-> > > +       uid_t           uid;
-> > > +       pid_t           pid;
-> > > +       u32             cid_len;
-> > > +       char            data[];
-> > > +};
-> > > +
-> > >  struct audit_buffer;
-> > >  struct audit_context;
-> > >  struct inode;
-> > > @@ -105,6 +112,7 @@ struct audit_contobj {
-> > >         u64                     id;
-> > >         struct task_struct      *owner;
-> > >         refcount_t              refcount;
-> > > +       refcount_t              sigflag;
-> > >         struct rcu_head         rcu;
-> > >  };
-> >
-> > It seems like we need some protection in audit_set_contid() so that we
-> > don't allow reuse of an audit container ID when "refcount == 0 &&
-> > sigflag != 0", yes?
+On Fri, Aug 21, 2020 at 11:00 AM Oleg Nesterov <oleg@redhat.com> wrote:
 >
-> We have it, see -ESHUTDOWN below.
-
-That check in audit_set_contid() is checking ->refcount and not
-->sigflag; ->sigflag is more important in this context, yes?
-
-> > > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-> > > index fd98460c983f..a56ad77069b9 100644
-> > > --- a/include/uapi/linux/audit.h
-> > > +++ b/include/uapi/linux/audit.h
-> > > @@ -72,6 +72,7 @@
-> > >  #define AUDIT_SET_FEATURE      1018    /* Turn an audit feature on or off */
-> > >  #define AUDIT_GET_FEATURE      1019    /* Get which features are enabled */
-> > >  #define AUDIT_CONTAINER_OP     1020    /* Define the container id and info */
-> > > +#define AUDIT_SIGNAL_INFO2     1021    /* Get info auditd signal sender */
+> On 08/21, Oleg Nesterov wrote:
+> >
+> > On 08/21, Suren Baghdasaryan wrote:
 > > >
-> > >  #define AUDIT_FIRST_USER_MSG   1100    /* Userspace messages mostly uninteresting to kernel */
-> > >  #define AUDIT_USER_AVC         1107    /* We filter this differently */
-> > > diff --git a/kernel/audit.c b/kernel/audit.c
-> > > index a09f8f661234..54dd2cb69402 100644
-> > > --- a/kernel/audit.c
-> > > +++ b/kernel/audit.c
-> > > @@ -126,6 +126,8 @@ struct auditd_connection {
-> > >  kuid_t         audit_sig_uid = INVALID_UID;
-> > >  pid_t          audit_sig_pid = -1;
-> > >  u32            audit_sig_sid = 0;
-> > > +static struct audit_contobj *audit_sig_cid;
-> > > +static struct task_struct *audit_sig_atsk;
+> > > On Fri, Aug 21, 2020 at 4:16 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> > > >
+> > > >         bool probably_has_other_mm_users(tsk)
+> > > >         {
+> > > >                 return  atomic_read_acquire(&tsk->mm->mm_users) >
+> > > >                         atomic_read(&tsk->signal->live);
+> > > >         }
+> > > >
+> > > > The barrier implied by _acquire ensures that if we race with the exiting
+> > > > task and see the result of exit_mm()->mmput(mm), then we must also see
+> > > > the result of atomic_dec_and_test(signal->live).
+> > > >
+> > > > Either way, if we want to fix the race with clone(CLONE_VM) we need other
+> > > > changes.
+> > >
+> > > The way I understand this condition in __set_oom_adj() sync logic is
+> > > that we would be ok with false positives (when we loop unnecessarily)
+> > > but we can't tolerate false negatives (when oom_score_adj gets out of
+> > > sync).
 > >
-> > This looks like a typo, or did you mean "atsk" for some reason?
->
-> No, I meant atsk to refer specifically to the audit daemon task and not
-> any other random one that is doing the signalling.  I can change it is
-> there is a strong objection.
-
-Esh, yeah, "atsk" looks too much like a typo ;)  At the very leask add
-a 'd' in there, e.g. "adtsk", but something better than that would be
-welcome.
-
-> > > @@ -2532,6 +2620,11 @@ int audit_set_contid(struct task_struct *task, u64 contid)
-> > >                         if (cont->id == contid) {
-> > >                                 /* task injection to existing container */
-> > >                                 if (current == cont->owner) {
-> > > +                                       if (!refcount_read(&cont->refcount)) {
-> > > +                                               rc = -ESHUTDOWN;
+> > Yes,
 > >
-> > Reuse -ENOTUNIQ; I'm not overly excited about providing a lot of
-> > detail here as these are global system objects.  If you must have a
-> > different errno (and I would prefer you didn't), use something like
-> > -EBUSY.
+> > > With the clone(CLONE_VM) race not addressed we are allowing
+> > > false negatives and IMHO that's not acceptable because it creates a
+> > > possibility for userspace to get an inconsistent picture. When
+> > > developing the patch I did think about using (p->mm->mm_users >
+> > > p->signal->nr_threads) condition and had to reject it due to that
+> > > reason.
+> >
+> > Not sure I understand... I mean, the test_bit(MMF_PROC_SHARED) you propose
+> > is equally racy and we need copy_oom_score() at the end of copy_process()
+> > either way?
 >
-> I don't understand the issue of "global system objects" since the only
-> time this error would be issued is if its own contid were being reused
-> but it hadn't cleaned up its own references yet by either issuing an
-> AUDIT_SIGNAL_INFO* request or the targetted audit daemon hadn't cleaned
-> up yet.  EBUSY could be confused with already having spawned threads or
-> children, and ENOTUNIQ could indicate that another orchestrator/engine
-> had stolen its desired contid after we released it and wanted to reuse
-> it.
+> On a second thought I agree that probably_has_other_mm_users() above can't
+> work ;) Compared to the test_bit(MMF_PROC_SHARED) check it is not _equally_
+> racy, it adds _another_ race with clone(CLONE_VM).
+>
+> Suppose a single-threaded process P does
+>
+>         clone(CLONE_VM); // creates the child C
+>
+>         // mm_users == 2; P->signal->live == 1;
+>
+>         clone(CLONE_THREAD | CLONE_VM);
+>
+>         // mm_users == 3; P->signal->live == 2;
+>
+> the problem is that in theory clone(CLONE_THREAD | CLONE_VM) can increment
+> _both_ counters between atomic_read_acquire(mm_users) and atomic_read(live)
+> in probably_has_other_mm_users() so it can observe mm_users == live == 2.
 
-All the more reason for ENOTUNIQ.  The point is that the audit
-container ID is not available for use, and since the IDs are shared
-across the entire system I think we are better off having some
-ambiquity here with errnos.
+I see. So even though live is incremented after mm_users, the observer
+from __set_oom_adj still can see them becoming equal because it reads
+mm_users first.
 
-> This gets me thinking about making reservations for preferred
-> contids that are otherwise unavailable and making callbacks to indicate
-> when they become available, but that seems undesirably complex right
-> now.
+Do you see any such races if I incorporate the changes proposed by
+Michal in http://lkml.kernel.org/r/20200820124109.GI5033@dhcp22.suse.cz
+? I have the new patch and I'm testing it right now. So far it behaves
+well but maybe I'm missing some rare race here that won't show up in
+my testing?
 
-That is definitely beyond the scope of this work, or rather *should*
-be beyond the scope of this work.
 
--- 
-paul moore
-www.paul-moore.com
+>
+> Oleg.
+>
+> --
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+>
