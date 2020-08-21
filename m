@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F2C9524CF7A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 09:39:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09E8D24CF7E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 09:39:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbgHUHjR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 03:39:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36952 "EHLO
+        id S1726806AbgHUHj0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 03:39:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728131AbgHUHi7 (ORCPT
+        with ESMTP id S1726002AbgHUHjD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 03:38:59 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F1A7C06138B
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 00:38:59 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id h2so524570plr.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 00:38:59 -0700 (PDT)
+        Fri, 21 Aug 2020 03:39:03 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 166BBC061346
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 00:39:02 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id h2so524620plr.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 00:39:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=x7nmOKKnzuw08JzbWz9S0vd+MFbiT4hw/Chd9PX4ZOw=;
-        b=wz1QmbUYJKU+Q7LFSB1tYfwiECD8FKoD5F6G3knrVhNPhSt3w+2lkmzQVEp3NflNuK
-         xKqcWtwJpod9vm/nDGTClJ/KR8QgElBtCOT4YTPlnDSdW3dMFO/02QGVM3sS0ESn/lNk
-         x0gZG9lmVXf3tIZmg8KRwZUSHY9cyqFXX+qAtodabQNN/LDeABOQVLSVBAdCTcLTUFYB
-         CBP3TTZHKDvHJRA1wK+u000/JzbU3wsHsKxqTbH5SazNMUQ7o/cn9zfP70OoadAehs64
-         96rv+0aTyAnAH67NQ/QwqNux7x9B0Hb9FTSBq/RXWoRkxTdYod70auTvl2GwAYX8dW5t
-         38Ow==
+        bh=qXisnxwmeoeObWMPR3mFNC4S4siYwhBR12pikg1nHJw=;
+        b=t3PlAiOQmshc7a03MNXk5DSrA1ePUHGJUbsggq/VtCTRy/j3KzDbvw7ii815XMnr2N
+         VDeWLsqV9U/6DqyRnjb10yzmerpezZXJ1TGrDM3Q+EcRikM+YvyatBl1iGf+5qeIsStJ
+         nwi9LxsmC95pZIkURiNSuOX0900wBa0M1Dx/eyydKrI0pCZBz24nd2BUQ9fApR77YrQ1
+         ZAHk82UXIsJ7tWZKE2eTPnf5oIDc+UbcgKIWdMCznpj7gNuEKidNvGbQDP2s3FWz2a8E
+         ruLO6gFOMHbY9hfNqHhAfWtjAYi2y2IkMhHCCsG61/RWCMNeHT/qlnrON+qxpeV4UNwo
+         EvOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=x7nmOKKnzuw08JzbWz9S0vd+MFbiT4hw/Chd9PX4ZOw=;
-        b=Iz7D6XbRp+tt70Nhvtd8hOoFpb2jp6wqcY/UYp0yMRVGSGcwxerEVnvlVow8stVzWX
-         WyYwyGcKrKEsp5td0WuMc8Rhp2EP6rrgmFTYNOh7zb9Hs3CGWbF6rezzPXojY8j20JvZ
-         Qh9I1z8Pocq75x2Xa9EqlHEO5BGMwTChlirw9doXdkkE89kyWFrGdmDgOlF7x0zaVjuT
-         4AGd/KNbwMBS9Wej4qoev2cFWrnfyv0TxI4/JJnJdraxSneyfqEhwFnvTDtPhrjmCG8F
-         u+42/JPnaB93vS2aKDOAY28BsoZ2+aYKpWV9SADTymOZYi+roLu7h60Lp8KKVdFzMrUO
-         WXLg==
-X-Gm-Message-State: AOAM530kH8PRYXtBEw3PQTPYAPOUImsAfzThKmGusjglk3GwSAa3Sxd3
-        svLfl1JHofi6T57vXgX86yQNugZgtsdvwA==
-X-Google-Smtp-Source: ABdhPJzNq5b0oCyp5wN5loyDfbwwJJc2y7r3fFrA/34tycWTESDg8chxCrwnWO1bAGqsKLSyvM4Png==
-X-Received: by 2002:a17:90a:4dca:: with SMTP id r10mr1430612pjl.200.1597995537889;
-        Fri, 21 Aug 2020 00:38:57 -0700 (PDT)
+        bh=qXisnxwmeoeObWMPR3mFNC4S4siYwhBR12pikg1nHJw=;
+        b=MAdYjivThgmJNlQEvkclivyM1wUo1bOFwe8tLI6V1TXshTknBvDJEzT5r/Gc/r7gOu
+         YOSFvdTlUfXOFjQovqRxO/+yvspYvWE2/JH9gtGMHiDIGgTWevYtJy7u1jpMHiyruXL4
+         n4Kzp380heqFB86Y8M06Df4/pST1CUFxPeYXlp+JPPp5/9wdzZba2VmARdfpEg3xDlxV
+         yO9fa+JDnJvVyJ4sgouso+Mr7nAd6W/VQcrXzYUvJB3Cxxc+BPD6aoGJ1+fCsZ+T65hS
+         dvuy4Xms/0HE/OANMjRXzP7MFLUX6KCtdyv2e4gMVxbbqAQDIN1PiqpKUlxNRlsiVM8r
+         5Zzg==
+X-Gm-Message-State: AOAM5317Kd85EVOthfR+Fh5eM89ctW6OpH+BnQQ4+WUJJMFYif3mdVps
+        BHDeg48XUxf+qTFj0mCi3evLcVd5Q0fAAQ==
+X-Google-Smtp-Source: ABdhPJwVILao6rR4zT7AnI9ql7lDhQJxxNwBKPtlI4d4Gkr7/iewsNfEM/3e8ijIEx+iPSeLFIw5kg==
+X-Received: by 2002:a17:902:123:: with SMTP id 32mr1309399plb.143.1597995540347;
+        Fri, 21 Aug 2020 00:39:00 -0700 (PDT)
 Received: from exodia.tfbnw.net ([2620:10d:c090:400::5:f2a4])
-        by smtp.gmail.com with ESMTPSA id t10sm1220867pgp.15.2020.08.21.00.38.55
+        by smtp.gmail.com with ESMTPSA id t10sm1220867pgp.15.2020.08.21.00.38.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Aug 2020 00:38:56 -0700 (PDT)
+        Fri, 21 Aug 2020 00:38:59 -0700 (PDT)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -56,9 +56,9 @@ Cc:     Dave Chinner <david@fromorbit.com>, Jann Horn <jannh@google.com>,
         Amir Goldstein <amir73il@gmail.com>,
         Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
         kernel-team@fb.com
-Subject: [PATCH v5 3/9] fs: add RWF_ENCODED for reading/writing compressed data
-Date:   Fri, 21 Aug 2020 00:38:34 -0700
-Message-Id: <9020a583581b644ae86b7c05de6a39fd5204f06d.1597993855.git.osandov@osandov.com>
+Subject: [PATCH v5 4/9] btrfs: don't advance offset for compressed bios in btrfs_csum_one_bio()
+Date:   Fri, 21 Aug 2020 00:38:35 -0700
+Message-Id: <27758a7a731919591194696ddc651623481b9691.1597993855.git.osandov@osandov.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <cover.1597993855.git.osandov@osandov.com>
 References: <cover.1597993855.git.osandov@osandov.com>
@@ -71,427 +71,197 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
-Btrfs supports transparent compression: data written by the user can be
-compressed when written to disk and decompressed when read back.
-However, we'd like to add an interface to write pre-compressed data
-directly to the filesystem, and the matching interface to read
-compressed data without decompressing it. This adds support for
-so-called "encoded I/O" via preadv2() and pwritev2().
+btrfs_csum_one_bio() loops over each filesystem block in the bio while
+keeping a cursor of its current logical position in the file in order to
+look up the ordered extent to add the checksums to. However, this
+doesn't make much sense for compressed extents, as a sector on disk does
+not correspond to a sector of decompressed file data. It happens to work
+because 1) the compressed bio always covers one ordered extent and 2)
+the size of the bio is always less than the size of the ordered extent.
+However, the second point will not always be true for encoded writes.
 
-A new RWF_ENCODED flags indicates that a read or write is "encoded". If
-this flag is set, iov[0].iov_base points to a struct encoded_iov which
-is used for metadata: namely, the compression algorithm, unencoded
-(i.e., decompressed) length, and what subrange of the unencoded data
-should be used (needed for truncated or hole-punched extents and when
-reading in the middle of an extent). For reads, the filesystem returns
-this information; for writes, the caller provides it to the filesystem.
-iov[0].iov_len must be set to sizeof(struct encoded_iov), which can be
-used to extend the interface in the future a la copy_struct_from_user().
-The remaining iovecs contain the encoded extent.
-
-This adds the VFS helpers for supporting encoded I/O and documentation
-for filesystem support.
+Let's add a boolean parameter to btrfs_csum_one_bio() to indicate that
+it can assume that the bio only covers one ordered extent. Since we're
+already changing the signature, let's get rid of the contig parameter
+and make it implied by the offset parameter, similar to the change we
+recently made to btrfs_lookup_bio_sums(). Additionally, let's rename
+nr_sectors to blockcount to make it clear that it's the number of
+filesystem blocks, not the number of 512-byte sectors.
 
 Signed-off-by: Omar Sandoval <osandov@fb.com>
 ---
- Documentation/filesystems/encoded_io.rst |  74 ++++++++++
- Documentation/filesystems/index.rst      |   1 +
- include/linux/fs.h                       |  16 +++
- include/uapi/linux/fs.h                  |  33 ++++-
- mm/filemap.c                             | 166 +++++++++++++++++++++--
- 5 files changed, 276 insertions(+), 14 deletions(-)
- create mode 100644 Documentation/filesystems/encoded_io.rst
+ fs/btrfs/compression.c |  5 +++--
+ fs/btrfs/ctree.h       |  2 +-
+ fs/btrfs/file-item.c   | 35 ++++++++++++++++-------------------
+ fs/btrfs/inode.c       |  8 ++++----
+ 4 files changed, 24 insertions(+), 26 deletions(-)
 
-diff --git a/Documentation/filesystems/encoded_io.rst b/Documentation/filesystems/encoded_io.rst
-new file mode 100644
-index 000000000000..50405276d866
---- /dev/null
-+++ b/Documentation/filesystems/encoded_io.rst
-@@ -0,0 +1,74 @@
-+===========
-+Encoded I/O
-+===========
-+
-+Encoded I/O is a mechanism for reading and writing encoded (e.g., compressed
-+and/or encrypted) data directly from/to the filesystem. The userspace interface
-+is thoroughly described in the :manpage:`encoded_io(7)` man page; this document
-+describes the requirements for filesystem support.
-+
-+First of all, a filesystem supporting encoded I/O must indicate this by setting
-+the ``FMODE_ENCODED_IO`` flag in its ``file_open`` file operation::
-+
-+    static int foo_file_open(struct inode *inode, struct file *filp)
-+    {
-+            ...
-+            filep->f_mode |= FMODE_ENCODED_IO;
-+            ...
-+    }
-+
-+Encoded I/O goes through ``read_iter`` and ``write_iter``, designated by the
-+``IOCB_ENCODED`` flag in ``kiocb->ki_flags``.
-+
-+Reads
-+=====
-+
-+Encoded ``read_iter`` should:
-+
-+1. Call ``generic_encoded_read_checks()`` to validate the file and buffers
-+   provided by userspace.
-+2. Initialize the ``encoded_iov`` appropriately.
-+3. Copy it to the user with ``copy_encoded_iov_to_iter()``.
-+4. Copy the encoded data to the user.
-+5. Advance ``kiocb->ki_pos`` by ``encoded_iov->len``.
-+6. Return the size of the encoded data read, not including the ``encoded_iov``.
-+
-+There are a few details to be aware of:
-+
-+* Encoded ``read_iter`` should support reading unencoded data if the extent is
-+  not encoded.
-+* If the buffers provided by the user are not large enough to contain an entire
-+  encoded extent, then ``read_iter`` should return ``-ENOBUFS``. This is to
-+  avoid confusing userspace with truncated data that cannot be properly
-+  decoded.
-+* Reads in the middle of an encoded extent can be returned by setting
-+  ``encoded_iov->unencoded_offset`` to non-zero.
-+* Truncated unencoded data (e.g., because the file does not end on a block
-+  boundary) may be returned by setting ``encoded_iov->len`` to a value smaller
-+  value than ``encoded_iov->unencoded_len - encoded_iov->unencoded_offset``.
-+
-+Writes
-+======
-+
-+Encoded ``write_iter`` should (in addition to the usual accounting/checks done
-+by ``write_iter``):
-+
-+1. Call ``copy_encoded_iov_from_iter()`` to get and validate the
-+   ``encoded_iov``.
-+2. Call ``generic_encoded_write_checks()`` instead of
-+   ``generic_write_checks()``.
-+3. Check that the provided encoding in ``encoded_iov`` is supported.
-+4. Advance ``kiocb->ki_pos`` by ``encoded_iov->len``.
-+5. Return the size of the encoded data written.
-+
-+Again, there are a few details:
-+
-+* Encoded ``write_iter`` doesn't need to support writing unencoded data.
-+* ``write_iter`` should either write all of the encoded data or none of it; it
-+  must not do partial writes.
-+* ``write_iter`` doesn't need to validate the encoded data; a subsequent read
-+  may return, e.g., ``-EIO`` if the data is not valid.
-+* The user may lie about the unencoded size of the data; a subsequent read
-+  should truncate or zero-extend the unencoded data rather than returning an
-+  error.
-+* Be careful of page cache coherency.
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index 4c536e66dc4c..9adbbc3c7441 100644
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -55,6 +55,7 @@ filesystem implementations.
-    journalling
-    fscrypt
-    fsverity
-+   encoded_io
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index eeface30facd..aa292d285550 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -438,7 +438,8 @@ blk_status_t btrfs_submit_compressed_write(struct btrfs_inode *inode, u64 start,
+ 			BUG_ON(ret); /* -ENOMEM */
  
- Filesystems
- ===========
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e019ea2f1347..a3fe6fa9687c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -178,6 +178,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- /* File supports async buffered reads */
- #define FMODE_BUF_RASYNC	((__force fmode_t)0x40000000)
+ 			if (!skip_sum) {
+-				ret = btrfs_csum_one_bio(inode, bio, start, 1);
++				ret = btrfs_csum_one_bio(inode, bio, start,
++							 true);
+ 				BUG_ON(ret); /* -ENOMEM */
+ 			}
  
-+/* File supports encoded IO */
-+#define FMODE_ENCODED_IO	((__force fmode_t)0x80000000)
-+
- /*
-  * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
-  * that indicates that they should check the contents of the iovec are
-@@ -321,6 +324,7 @@ enum rw_hint {
- /* iocb->ki_waitq is valid */
- #define IOCB_WAITQ		(1 << 8)
- #define IOCB_NOIO		(1 << 9)
-+#define IOCB_ENCODED		(1 << 10)
+@@ -470,7 +471,7 @@ blk_status_t btrfs_submit_compressed_write(struct btrfs_inode *inode, u64 start,
+ 	BUG_ON(ret); /* -ENOMEM */
  
- struct kiocb {
- 	struct file		*ki_filp;
-@@ -3006,6 +3010,13 @@ extern int sb_min_blocksize(struct super_block *, int);
- extern int generic_file_mmap(struct file *, struct vm_area_struct *);
- extern int generic_file_readonly_mmap(struct file *, struct vm_area_struct *);
- extern ssize_t generic_write_checks(struct kiocb *, struct iov_iter *);
-+struct encoded_iov;
-+extern int generic_encoded_write_checks(struct kiocb *,
-+					const struct encoded_iov *);
-+extern int copy_encoded_iov_from_iter(struct encoded_iov *, struct iov_iter *);
-+extern ssize_t generic_encoded_read_checks(struct kiocb *, struct iov_iter *);
-+extern int copy_encoded_iov_to_iter(const struct encoded_iov *,
-+				    struct iov_iter *);
- extern int generic_remap_checks(struct file *file_in, loff_t pos_in,
- 				struct file *file_out, loff_t pos_out,
- 				loff_t *count, unsigned int remap_flags);
-@@ -3324,6 +3335,11 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
- 			return -EOPNOTSUPP;
- 		kiocb_flags |= IOCB_NOWAIT | IOCB_NOIO;
+ 	if (!skip_sum) {
+-		ret = btrfs_csum_one_bio(inode, bio, start, 1);
++		ret = btrfs_csum_one_bio(inode, bio, start, true);
+ 		BUG_ON(ret); /* -ENOMEM */
  	}
-+	if (flags & RWF_ENCODED) {
-+		if (!(ki->ki_filp->f_mode & FMODE_ENCODED_IO))
-+			return -EOPNOTSUPP;
-+		kiocb_flags |= IOCB_ENCODED;
-+	}
- 	if (flags & RWF_HIPRI)
- 		kiocb_flags |= IOCB_HIPRI;
- 	if (flags & RWF_DSYNC)
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index f44eb0a04afd..972390d3089d 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -279,6 +279,34 @@ struct fsxattr {
- 					 SYNC_FILE_RANGE_WAIT_BEFORE | \
- 					 SYNC_FILE_RANGE_WAIT_AFTER)
  
-+enum {
-+	ENCODED_IOV_COMPRESSION_NONE,
-+#define ENCODED_IOV_COMPRESSION_NONE ENCODED_IOV_COMPRESSION_NONE
-+	ENCODED_IOV_COMPRESSION_ZLIB,
-+#define ENCODED_IOV_COMPRESSION_ZLIB ENCODED_IOV_COMPRESSION_ZLIB
-+	ENCODED_IOV_COMPRESSION_LZO,
-+#define ENCODED_IOV_COMPRESSION_LZO ENCODED_IOV_COMPRESSION_LZO
-+	ENCODED_IOV_COMPRESSION_ZSTD,
-+#define ENCODED_IOV_COMPRESSION_ZSTD ENCODED_IOV_COMPRESSION_ZSTD
-+	ENCODED_IOV_COMPRESSION_TYPES = ENCODED_IOV_COMPRESSION_ZSTD,
-+};
-+
-+enum {
-+	ENCODED_IOV_ENCRYPTION_NONE,
-+#define ENCODED_IOV_ENCRYPTION_NONE ENCODED_IOV_ENCRYPTION_NONE
-+	ENCODED_IOV_ENCRYPTION_TYPES = ENCODED_IOV_ENCRYPTION_NONE,
-+};
-+
-+struct encoded_iov {
-+	__aligned_u64 len;
-+	__aligned_u64 unencoded_len;
-+	__aligned_u64 unencoded_offset;
-+	__u32 compression;
-+	__u32 encryption;
-+};
-+
-+#define ENCODED_IOV_SIZE_VER0 32
-+
- /*
-  * Flags for preadv2/pwritev2:
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index a3b110ffbc93..cbbfaedd6e3c 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -2917,7 +2917,7 @@ int btrfs_csum_file_blocks(struct btrfs_trans_handle *trans,
+ 			   struct btrfs_root *root,
+ 			   struct btrfs_ordered_sum *sums);
+ blk_status_t btrfs_csum_one_bio(struct btrfs_inode *inode, struct bio *bio,
+-				u64 file_start, int contig);
++				u64 offset, bool one_ordered);
+ int btrfs_lookup_csums_range(struct btrfs_root *root, u64 start, u64 end,
+ 			     struct list_head *list, int search_commit);
+ void btrfs_extent_item_to_extent_map(struct btrfs_inode *inode,
+diff --git a/fs/btrfs/file-item.c b/fs/btrfs/file-item.c
+index 7d5ec71615b8..96026ba5c58d 100644
+--- a/fs/btrfs/file-item.c
++++ b/fs/btrfs/file-item.c
+@@ -516,28 +516,28 @@ int btrfs_lookup_csums_range(struct btrfs_root *root, u64 start, u64 end,
+  * btrfs_csum_one_bio - Calculates checksums of the data contained inside a bio
+  * @inode:	 Owner of the data inside the bio
+  * @bio:	 Contains the data to be checksummed
+- * @file_start:  offset in file this bio begins to describe
+- * @contig:	 Boolean. If true/1 means all bio vecs in this bio are
+- *		 contiguous and they begin at @file_start in the file. False/0
+- *		 means this bio can contains potentially discontigous bio vecs
+- *		 so the logical offset of each should be calculated separately.
++ * @offset:      If (u64)-1, @bio may contain discontiguous bio vecs, so the
++ *               file offsets are determined from the page offsets in the bio.
++ *               Otherwise, this is the starting file offset of the bio vecs in
++ *               @bio, which must be contiguous.
++ * @one_ordered: If true, @bio only refers to one ordered extent.
   */
-@@ -300,8 +328,11 @@ typedef int __bitwise __kernel_rwf_t;
- /* per-IO O_APPEND */
- #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
- 
-+/* encoded (e.g., compressed and/or encrypted) IO */
-+#define RWF_ENCODED	((__force __kernel_rwf_t)0x00000020)
-+
- /* mask of flags supported by the kernel */
- #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
--			 RWF_APPEND)
-+			 RWF_APPEND | RWF_ENCODED)
- 
- #endif /* _UAPI_LINUX_FS_H */
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 1aaea26556cc..f28b42888144 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3022,24 +3022,15 @@ static int generic_write_check_limits(struct file *file, loff_t pos,
- 	return 0;
- }
- 
--/*
-- * Performs necessary checks before doing a write
-- *
-- * Can adjust writing position or amount of bytes to write.
-- * Returns appropriate error code that caller should return or
-- * zero in case that write should be allowed.
-- */
--inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
-+static int generic_write_checks_common(struct kiocb *iocb, loff_t *count)
+ blk_status_t btrfs_csum_one_bio(struct btrfs_inode *inode, struct bio *bio,
+-		       u64 file_start, int contig)
++				u64 offset, bool one_ordered)
  {
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file->f_mapping->host;
--	loff_t count;
--	int ret;
+ 	struct btrfs_fs_info *fs_info = inode->root->fs_info;
+ 	SHASH_DESC_ON_STACK(shash, fs_info->csum_shash);
+ 	struct btrfs_ordered_sum *sums;
+ 	struct btrfs_ordered_extent *ordered = NULL;
++	const bool page_offsets = (offset == (u64)-1);
+ 	char *data;
+ 	struct bvec_iter iter;
+ 	struct bio_vec bvec;
+ 	int index;
+-	int nr_sectors;
++	int blockcount;
+ 	unsigned long total_bytes = 0;
+ 	unsigned long this_sum_bytes = 0;
+ 	int i;
+-	u64 offset;
+ 	unsigned nofs_flag;
+ 	const u16 csum_size = btrfs_super_csum_size(fs_info->super_copy);
  
- 	if (IS_SWAPFILE(inode))
- 		return -ETXTBSY;
+@@ -552,18 +552,13 @@ blk_status_t btrfs_csum_one_bio(struct btrfs_inode *inode, struct bio *bio,
+ 	sums->len = bio->bi_iter.bi_size;
+ 	INIT_LIST_HEAD(&sums->list);
  
--	if (!iov_iter_count(from))
-+	if (!*count)
- 		return 0;
+-	if (contig)
+-		offset = file_start;
+-	else
+-		offset = 0; /* shut up gcc */
+-
+ 	sums->bytenr = (u64)bio->bi_iter.bi_sector << 9;
+ 	index = 0;
  
- 	/* FIXME: this is for backwards compatibility with 2.4 */
-@@ -3049,8 +3040,21 @@ inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
- 	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
- 		return -EINVAL;
+ 	shash->tfm = fs_info->csum_shash;
  
--	count = iov_iter_count(from);
--	ret = generic_write_check_limits(file, iocb->ki_pos, &count);
-+	return generic_write_check_limits(iocb->ki_filp, iocb->ki_pos, count);
-+}
-+
-+/*
-+ * Performs necessary checks before doing a write
-+ *
-+ * Can adjust writing position or amount of bytes to write.
-+ * Returns a negative errno or the new number of bytes to write.
-+ */
-+inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	loff_t count = iov_iter_count(from);
-+	int ret;
-+
-+	ret = generic_write_checks_common(iocb, &count);
- 	if (ret)
- 		return ret;
+ 	bio_for_each_segment(bvec, bio, iter) {
+-		if (!contig)
++		if (page_offsets)
+ 			offset = page_offset(bvec.bv_page) + bvec.bv_offset;
  
-@@ -3059,6 +3063,142 @@ inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ 		if (!ordered) {
+@@ -571,13 +566,14 @@ blk_status_t btrfs_csum_one_bio(struct btrfs_inode *inode, struct bio *bio,
+ 			BUG_ON(!ordered); /* Logic error */
+ 		}
+ 
+-		nr_sectors = BTRFS_BYTES_TO_BLKS(fs_info,
++		blockcount = BTRFS_BYTES_TO_BLKS(fs_info,
+ 						 bvec.bv_len + fs_info->sectorsize
+ 						 - 1);
+ 
+-		for (i = 0; i < nr_sectors; i++) {
+-			if (offset >= ordered->file_offset + ordered->num_bytes ||
+-			    offset < ordered->file_offset) {
++		for (i = 0; i < blockcount; i++) {
++			if (!one_ordered &&
++			    (offset >= ordered->file_offset + ordered->num_bytes ||
++			     offset < ordered->file_offset)) {
+ 				unsigned long bytes_left;
+ 
+ 				sums->len = this_sum_bytes;
+@@ -608,7 +604,8 @@ blk_status_t btrfs_csum_one_bio(struct btrfs_inode *inode, struct bio *bio,
+ 					    sums->sums + index);
+ 			kunmap_atomic(data);
+ 			index += csum_size;
+-			offset += fs_info->sectorsize;
++			if (!one_ordered)
++				offset += fs_info->sectorsize;
+ 			this_sum_bytes += fs_info->sectorsize;
+ 			total_bytes += fs_info->sectorsize;
+ 		}
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 144b9bd79cfb..847b92c93a7f 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -2162,7 +2162,7 @@ static blk_status_t btrfs_submit_bio_start(void *private_data, struct bio *bio,
+ {
+ 	struct inode *inode = private_data;
+ 
+-	return btrfs_csum_one_bio(BTRFS_I(inode), bio, 0, 0);
++	return btrfs_csum_one_bio(BTRFS_I(inode), bio, (u64)-1, false);
  }
- EXPORT_SYMBOL(generic_write_checks);
  
-+/**
-+ * generic_encoded_write_checks() - check an encoded write
-+ * @iocb: I/O context.
-+ * @encoded: Encoding metadata.
-+ *
-+ * This should be called by RWF_ENCODED write implementations rather than
-+ * generic_write_checks(). Unlike generic_write_checks(), it returns -EFBIG
-+ * instead of adjusting the size of the write.
-+ *
-+ * Return: 0 on success, -errno on error.
-+ */
-+int generic_encoded_write_checks(struct kiocb *iocb,
-+				 const struct encoded_iov *encoded)
-+{
-+	loff_t count = encoded->len;
-+	int ret;
-+
-+	if (!(iocb->ki_filp->f_flags & O_ALLOW_ENCODED))
-+		return -EPERM;
-+
-+	ret = generic_write_checks_common(iocb, &count);
-+	if (ret)
-+		return ret;
-+
-+	if (count != encoded->len) {
-+		/*
-+		 * The write got truncated by generic_write_checks_common(). We
-+		 * can't do a partial encoded write.
-+		 */
-+		return -EFBIG;
-+	}
-+	return 0;
-+}
-+EXPORT_SYMBOL(generic_encoded_write_checks);
-+
-+/**
-+ * copy_encoded_iov_from_iter() - copy a &struct encoded_iov from userspace
-+ * @encoded: Returned encoding metadata.
-+ * @from: Source iterator.
-+ *
-+ * This copies in the &struct encoded_iov and does some basic sanity checks.
-+ * This should always be used rather than a plain copy_from_iter(), as it does
-+ * the proper handling for backward- and forward-compatibility.
-+ *
-+ * Return: 0 on success, -EFAULT if access to userspace failed, -E2BIG if the
-+ *         copied structure contained non-zero fields that this kernel doesn't
-+ *         support, -EINVAL if the copied structure was invalid.
-+ */
-+int copy_encoded_iov_from_iter(struct encoded_iov *encoded,
-+			       struct iov_iter *from)
-+{
-+	size_t usize;
-+	int ret;
-+
-+	usize = iov_iter_single_seg_count(from);
-+	if (usize > PAGE_SIZE)
-+		return -E2BIG;
-+	if (usize < ENCODED_IOV_SIZE_VER0)
-+		return -EINVAL;
-+	ret = copy_struct_from_iter(encoded, sizeof(*encoded), from, usize);
-+	if (ret)
-+		return ret;
-+
-+	if (encoded->compression == ENCODED_IOV_COMPRESSION_NONE &&
-+	    encoded->encryption == ENCODED_IOV_ENCRYPTION_NONE)
-+		return -EINVAL;
-+	if (encoded->compression > ENCODED_IOV_COMPRESSION_TYPES ||
-+	    encoded->encryption > ENCODED_IOV_ENCRYPTION_TYPES)
-+		return -EINVAL;
-+	if (encoded->unencoded_offset > encoded->unencoded_len)
-+		return -EINVAL;
-+	if (encoded->len > encoded->unencoded_len - encoded->unencoded_offset)
-+		return -EINVAL;
-+	return 0;
-+}
-+EXPORT_SYMBOL(copy_encoded_iov_from_iter);
-+
-+/**
-+ * generic_encoded_read_checks() - sanity check an RWF_ENCODED read
-+ * @iocb: I/O context.
-+ * @iter: Destination iterator for read.
-+ *
-+ * This should always be called by RWF_ENCODED read implementations before
-+ * returning any data.
-+ *
-+ * Return: Number of bytes available to return encoded data in @iter on success,
-+ *         -EPERM if the file was not opened with O_ALLOW_ENCODED, -EINVAL if
-+ *         the size of the &struct encoded_iov iovec is invalid.
-+ */
-+ssize_t generic_encoded_read_checks(struct kiocb *iocb, struct iov_iter *iter)
-+{
-+	size_t usize;
-+
-+	if (!(iocb->ki_filp->f_flags & O_ALLOW_ENCODED))
-+		return -EPERM;
-+	usize = iov_iter_single_seg_count(iter);
-+	if (usize > PAGE_SIZE || usize < ENCODED_IOV_SIZE_VER0)
-+		return -EINVAL;
-+	return iov_iter_count(iter) - usize;
-+}
-+EXPORT_SYMBOL(generic_encoded_read_checks);
-+
-+/**
-+ * copy_encoded_iov_to_iter() - copy a &struct encoded_iov to userspace
-+ * @encoded: Encoding metadata to return.
-+ * @to: Destination iterator.
-+ *
-+ * This should always be used by RWF_ENCODED read implementations rather than a
-+ * plain copy_to_iter(), as it does the proper handling for backward- and
-+ * forward-compatibility. The iterator must be sanity-checked with
-+ * generic_encoded_read_checks() before this is called.
-+ *
-+ * Return: 0 on success, -EFAULT if access to userspace failed, -E2BIG if there
-+ *         were non-zero fields in @encoded that the user buffer could not
-+ *         accommodate.
-+ */
-+int copy_encoded_iov_to_iter(const struct encoded_iov *encoded,
-+			     struct iov_iter *to)
-+{
-+	size_t ksize = sizeof(*encoded);
-+	size_t usize = iov_iter_single_seg_count(to);
-+	size_t size = min(ksize, usize);
-+
-+	/* We already sanity-checked usize in generic_encoded_read_checks(). */
-+
-+	if (usize < ksize &&
-+	    memchr_inv((char *)encoded + usize, 0, ksize - usize))
-+		return -E2BIG;
-+	if (copy_to_iter(encoded, size, to) != size ||
-+	    (usize > ksize &&
-+	     iov_iter_zero(usize - ksize, to) != usize - ksize))
-+		return -EFAULT;
-+	return 0;
-+}
-+EXPORT_SYMBOL(copy_encoded_iov_to_iter);
-+
  /*
-  * Performs necessary checks before doing a clone.
-  *
+@@ -2225,7 +2225,7 @@ static blk_status_t btrfs_submit_bio_hook(struct inode *inode, struct bio *bio,
+ 					  0, inode, btrfs_submit_bio_start);
+ 		goto out;
+ 	} else if (!skip_sum) {
+-		ret = btrfs_csum_one_bio(BTRFS_I(inode), bio, 0, 0);
++		ret = btrfs_csum_one_bio(BTRFS_I(inode), bio, (u64)-1, false);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -7609,7 +7609,7 @@ static blk_status_t btrfs_submit_bio_start_direct_io(void *private_data,
+ {
+ 	struct inode *inode = private_data;
+ 
+-	return btrfs_csum_one_bio(BTRFS_I(inode), bio, offset, 1);
++	return btrfs_csum_one_bio(BTRFS_I(inode), bio, offset, false);
+ }
+ 
+ static void btrfs_end_dio_bio(struct bio *bio)
+@@ -7668,7 +7668,7 @@ static inline blk_status_t btrfs_submit_dio_bio(struct bio *bio,
+ 		 * If we aren't doing async submit, calculate the csum of the
+ 		 * bio now.
+ 		 */
+-		ret = btrfs_csum_one_bio(BTRFS_I(inode), bio, file_offset, 1);
++		ret = btrfs_csum_one_bio(BTRFS_I(inode), bio, file_offset, false);
+ 		if (ret)
+ 			goto err;
+ 	} else {
 -- 
 2.28.0
 
