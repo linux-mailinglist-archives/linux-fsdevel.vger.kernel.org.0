@@ -2,110 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DA2A24C98E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 03:33:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80F4E24C991
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 03:37:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbgHUBdS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Aug 2020 21:33:18 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:55902 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbgHUBdP (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Aug 2020 21:33:15 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07L1VYl9196084;
-        Fri, 21 Aug 2020 01:33:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- references : message-id : date : mime-version : in-reply-to : content-type
- : content-transfer-encoding; s=corp-2020-01-29;
- bh=4f39ilxG/P91jdcgJcf8p0b7eqgnXUdee/GH7LdbOJ4=;
- b=Rk/dJVKLbYXZEspKU6vvM70WOMG41jCBUQBPMXQupOgEXAw1kgy/TOVGWSOWsnqfG5A+
- nvnJtOq8OPRflwsgAjFeNALc+VQ8rUEFFJqSbkiiHAQn/jrNAsO8jB49euv+Thf1dNPy
- McaCVXYIiqkSqMaKzb1Ng+qrOklU6/aqJMdVabOnHZzVi134G0X5ODCIxn8ZwQvF6X6H
- tgbVSiw++AFNfBHGId5gHHGE/ut6WMm6cfGbJlb5mDMtkBSEWbNhWmBRBtnuZYHDDnA9
- NjnFRBn4rPuPHe6hruBRVWhq7wLOd79HsYc/qqjDelN2lic4WcU/g5f+nQ83WvghRkQ9 hQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 3322bjgb2j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 21 Aug 2020 01:33:14 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07L1RsXi129929;
-        Fri, 21 Aug 2020 01:33:14 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 330pvqj671-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 Aug 2020 01:33:14 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 07L1XChW021130;
-        Fri, 21 Aug 2020 01:33:13 GMT
-Received: from [10.191.7.165] (/10.191.7.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 20 Aug 2020 18:33:12 -0700
-Subject: Re: [PATCH 2/2] writeback: use DEFINE_WAIT_BIT instead of DEFINE_WAIT
- for bit wait queue
-From:   Jacob Wen <jian.w.wen@oracle.com>
-To:     linux-fsdevel@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-block@vger.kernel.org
-References: <20200813050552.26856-1-jian.w.wen@oracle.com>
- <20200813050552.26856-2-jian.w.wen@oracle.com>
-Message-ID: <0137e0a8-e5c4-2ea0-12e7-2d5a19f827c1@oracle.com>
-Date:   Fri, 21 Aug 2020 09:33:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726819AbgHUBh3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Aug 2020 21:37:29 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:10246 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726803AbgHUBh1 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 20 Aug 2020 21:37:27 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1D640FABB2D3D12F11C1;
+        Fri, 21 Aug 2020 09:37:25 +0800 (CST)
+Received: from [10.136.114.67] (10.136.114.67) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.487.0; Fri, 21 Aug
+ 2020 09:37:20 +0800
+Subject: Re: [PATCH 2/2] f2fs: Return EOF on unaligned end of file DIO read
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>,
+        <viro@zeniv.linux.org.uk>, <jaegeuk@kernel.org>, <chao@kernel.org>
+CC:     <linux-fsdevel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>, <kernel@collabora.com>
+References: <20200819200731.2972195-1-krisman@collabora.com>
+ <20200819200731.2972195-3-krisman@collabora.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <1c036ee5-a864-f50d-d439-e2d520e18b32@huawei.com>
+Date:   Fri, 21 Aug 2020 09:37:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20200813050552.26856-2-jian.w.wen@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200819200731.2972195-3-krisman@collabora.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9719 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
- malwarescore=0 adultscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008210011
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9719 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- adultscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
- lowpriorityscore=0 spamscore=0 impostorscore=0 clxscore=1015 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008210012
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.136.114.67]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Can I have a review?
+On 2020/8/20 4:07, Gabriel Krisman Bertazi wrote:
+> Reading past end of file returns EOF for aligned reads but -EINVAL for
+> unaligned reads on f2fs.  While documentation is not strict about this
+> corner case, most filesystem returns EOF on this case, like iomap
+> filesystems.  This patch consolidates the behavior for f2fs, by making
+> it return EOF(0).
+> 
+> it can be verified by a read loop on a file that does a partial read
+> before EOF (A file that doesn't end at an aligned address).  The
+> following code fails on an unaligned file on f2fs, but not on
+> btrfs, ext4, and xfs.
+> 
+>    while (done < total) {
+>      ssize_t delta = pread(fd, buf + done, total - done, off + done);
+>      if (!delta)
+>        break;
+>      ...
+>    }
+> 
+> It is arguable whether filesystems should actually return EOF or
+> -EINVAL, but since iomap filesystems support it, and so does the
+> original DIO code, it seems reasonable to consolidate on that.
+> 
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-On 8/13/20 1:05 PM, Jacob Wen wrote:
-> DEFINE_WAIT_BIT uses wake_bit_function() which is able to avoid
-> false-wakeups due to possible hash collisions in the bit wait table.
->
-> Signed-off-by: Jacob Wen <jian.w.wen@oracle.com>
-> ---
->   fs/fs-writeback.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index a605c3dddabc..3bf751b33b48 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -1354,16 +1354,16 @@ void inode_wait_for_writeback(struct inode *inode)
->   static void inode_sleep_on_writeback(struct inode *inode)
->   	__releases(inode->i_lock)
->   {
-> -	DEFINE_WAIT(wait);
-> +	DEFINE_WAIT_BIT(wait, &inode->i_state, __I_SYNC);
->   	wait_queue_head_t *wqh = bit_waitqueue(&inode->i_state, __I_SYNC);
->   	int sleep;
->   
-> -	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
-> +	prepare_to_wait(wqh, &wait.wq_entry, TASK_UNINTERRUPTIBLE);
->   	sleep = inode->i_state & I_SYNC;
->   	spin_unlock(&inode->i_lock);
->   	if (sleep)
->   		schedule();
-> -	finish_wait(wqh, &wait);
-> +	finish_wait(wqh, &wait.wq_entry);
->   }
->   
->   /*
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks,
