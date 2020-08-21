@@ -2,158 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C564524E08B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 21:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2942B24E0A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 21:28:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbgHUTPn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 15:15:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60498 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbgHUTPc (ORCPT
+        id S1726391AbgHUT17 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 15:27:59 -0400
+Received: from smtprelay0055.hostedemail.com ([216.40.44.55]:53570 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725801AbgHUT15 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 15:15:32 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AB19C0613ED
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 12:15:30 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id si26so3578111ejb.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 12:15:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=stghTlyBapHk994fTHtMltbLyT6mOlKKkTF189OusPI=;
-        b=VjNgrUm1v0IeHxdlDQ0CId/MrrRIGLSykTfWUhOMXaa+5c5Ox+rc6HV8mzndpk8qoI
-         SlGp4gLF/RYuF3jYmM6JzdEZr9lKuv/dRZJpQ49hCQera3Cqt6s7k4BMzuKfiw6av94V
-         c3lTpfClSIitbjMiPV26ArwYhM+shudRipL4ICzbvO653DXL74k0SxSHx/feRfR4Pl8O
-         j0jOObYxDCZRdzWKMUAk6qiiJ3Hlqywc3HU4FWqit5X2R+q8/4y+0sM3IXTDe4dgCF//
-         P+cTeJjQHezWI7/lkyQHpUTmarsZIlpTt2DKdHsGv005oUUel7Wa6PZa4ECzjTvkcrpb
-         dBkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=stghTlyBapHk994fTHtMltbLyT6mOlKKkTF189OusPI=;
-        b=hS31hkvKEGhlw5ELJJQs1NqR6qI2lKGpUTvGSse3aLsIZKITE+WpbMiFggVO4yN8H8
-         ZQBHWo7dnq1zR5U4Y8aZ/a5tUzaJxUKwHWhzwZoAN1BeQ35T9Xvd/zb96/olMc3pHtEI
-         6jSsChOd778sps3hwuJZhYtHv1P19n/GKAUkoPAr0XbhKjRmittMglC/24uRvwNN5r7c
-         P8tC88Uj8vaq6+ltFqWQHDZ+ZJhjNlkeieYSqwpr+y8b6754IHJXC/QZHkBD9QGHhWhg
-         v4FSP2W0woHaOmecE0Hl0hkaCj5tGcL0+GbqbnXJXxq0dORNh41iO/dkLPRZ+iX1zxm9
-         8rzg==
-X-Gm-Message-State: AOAM532eTdPpmFSSMG/mN+jekcnuANcw9B3AX1tNG3fP6iKIhAyduXF3
-        nUGMrYYbOIN0eLt5GB5+QG0sP55vtzdu1ydBBUFf0s6fqE8UsSQ=
-X-Google-Smtp-Source: ABdhPJyjrpQ5CVzgJ6gkhEM2fio8YtcBd5YLkjExur1qaET+X/RSJIK7uZHEgYYREA2rYWWgZrtfuZgNL32OaMUA+Aw=
-X-Received: by 2002:a17:906:1911:: with SMTP id a17mr3986360eje.431.1598037328746;
- Fri, 21 Aug 2020 12:15:28 -0700 (PDT)
+        Fri, 21 Aug 2020 15:27:57 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Fri, 21 Aug 2020 15:27:57 EDT
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave01.hostedemail.com (Postfix) with ESMTP id 150751803EB5B;
+        Fri, 21 Aug 2020 19:21:17 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 59C72181D2063;
+        Fri, 21 Aug 2020 19:21:15 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2693:2828:2919:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:4362:5007:6117:6120:6248:7901:7903:10004:10400:10848:11232:11658:11914:12048:12297:12679:12740:12760:12895:13069:13095:13181:13229:13255:13311:13357:13439:14659:14721:14777:21067:21080:21433:21627:21819:21939:30012:30054:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
+X-HE-Tag: hate40_0c00a172703b
+X-Filterd-Recvd-Size: 1695
+Received: from XPS-9350.home (unknown [47.151.133.149])
+        (Authenticated sender: joe@perches.com)
+        by omf12.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 21 Aug 2020 19:21:14 +0000 (UTC)
+Message-ID: <ed518871bf6182bb7d9a2b95074985cf8af1d5c4.camel@perches.com>
+Subject: Re: [PATCH v2 00/10] fs: NTFS read-write driver GPL implementation
+ by Paragon Software.
+From:   Joe Perches <joe@perches.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Cc:     Pali =?ISO-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Date:   Fri, 21 Aug 2020 12:21:12 -0700
+In-Reply-To: <904d985365a34f0787a4511435417ab3@paragon-software.com>
+References: <904d985365a34f0787a4511435417ab3@paragon-software.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.36.4-0ubuntu1 
 MIME-Version: 1.0
-References: <cover.1593198710.git.rgb@redhat.com> <6e2e10432e1400f747918eeb93bf45029de2aa6c.1593198710.git.rgb@redhat.com>
- <CAHC9VhSCm5eeBcyY8bBsnxr-hK4rkso9_NJHJec2OXLu4m5QTA@mail.gmail.com> <20200729194058.kcbsqjhzunjpipgm@madcap2.tricolour.ca>
-In-Reply-To: <20200729194058.kcbsqjhzunjpipgm@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 21 Aug 2020 15:15:17 -0400
-Message-ID: <CAHC9VhRUwCKBjffA_XNSjUwvUn8e6zfmy8WD203dK7R2KD0__g@mail.gmail.com>
-Subject: Re: [PATCH ghak90 V9 05/13] audit: log container info of syscalls
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
-        sgrubb@redhat.com, Ondrej Mosnacek <omosnace@redhat.com>,
-        dhowells@redhat.com, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, ebiederm@xmission.com,
-        nhorman@tuxdriver.com, Dan Walsh <dwalsh@redhat.com>,
-        mpatel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jul 29, 2020 at 3:41 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2020-07-05 11:10, Paul Moore wrote:
-> > On Sat, Jun 27, 2020 at 9:22 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+On Fri, 2020-08-21 at 16:24 +0000, Konstantin Komarov wrote:
+> This patch adds NTFS Read-Write driver to fs/ntfs3.
 
-...
+Thanks.
+Proper ntfs read/write support will be great addition.
 
-> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > > index f03d3eb0752c..9e79645e5c0e 100644
-> > > --- a/kernel/auditsc.c
-> > > +++ b/kernel/auditsc.c
-> > > @@ -1458,6 +1466,7 @@ static void audit_log_exit(void)
-> > >         struct audit_buffer *ab;
-> > >         struct audit_aux_data *aux;
-> > >         struct audit_names *n;
-> > > +       struct audit_contobj *cont;
-> > >
-> > >         context->personality = current->personality;
-> > >
-> > > @@ -1541,7 +1550,7 @@ static void audit_log_exit(void)
-> > >         for (aux = context->aux_pids; aux; aux = aux->next) {
-> > >                 struct audit_aux_data_pids *axs = (void *)aux;
-> > >
-> > > -               for (i = 0; i < axs->pid_count; i++)
-> > > +               for (i = 0; i < axs->pid_count; i++) {
-> > >                         if (audit_log_pid_context(context, axs->target_pid[i],
-> > >                                                   axs->target_auid[i],
-> > >                                                   axs->target_uid[i],
-> > > @@ -1549,14 +1558,20 @@ static void audit_log_exit(void)
-> > >                                                   axs->target_sid[i],
-> > >                                                   axs->target_comm[i]))
-> > >                                 call_panic = 1;
-> > > +                       audit_log_container_id(context, axs->target_cid[i]);
-> > > +               }
-> >
-> > It might be nice to see an audit event example including the
-> > ptrace/signal information.  I'm concerned there may be some confusion
-> > about associating the different audit container IDs with the correct
-> > information in the event.
->
-> This is the subject of ghat81, which is a test for ptrace and signal
-> records.
->
-> This was the reason I had advocated for an op= field since there is a
-> possibility of multiple contid records per event.
+Trivia:
 
-I think an "op=" field is the wrong way to link audit container ID to
-a particular record.  It may be convenient, but I fear that it would
-be overloading the field too much.
+If this patchset is submitted again with a new version,
+please use something like "git format-patch --cover-letter"
+and "git send-email" so all parts of the patches and replies
+have the a single message thread to follow.
 
-Like I said above, I think it would be good to see an audit event
-example including the ptrace/signal information.  This way we can talk
-about it on-list and hash out the various solutions if it proves to be
-a problem.
+That will add an "in-reply-to" header of the 0/m patch
+message-id to all n/m parts.
 
-> > > @@ -1575,6 +1590,14 @@ static void audit_log_exit(void)
-> > >
-> > >         audit_log_proctitle();
-> > >
-> > > +       rcu_read_lock();
-> > > +       cont = _audit_contobj_get(current);
-> > > +       rcu_read_unlock();
-> > > +       audit_log_container_id(context, cont);
-> > > +       rcu_read_lock();
-> > > +       _audit_contobj_put(cont);
-> > > +       rcu_read_unlock();
-> >
-> > Do we need to grab an additional reference for the audit container
-> > object here?  We don't create any additional references here that
-> > persist beyond the lifetime of this function, right?
->
-> Why do we need another reference?  There's one for each pointer pointing
-> to it and so far we have just one from this task.  Or are you thinking
-> of the contid hash list, which is only added to when a task points to it
-> and gets removed from that list when the last task stops pointing to it.
-> Later that gets more complicated with network namespaces and nested
-> container objects.  For now we just needed it while generating the
-> record, then it gets freed.
+One style oddity I noticed is the use of goto labels in
+favor of if block indentation.  It's not terrible style,
+just unusual for kernel code.
 
-I don't think we need to grab an additional reference here, that is
-why I asked the question.  The code above grabs a reference for the
-audit container ID object associated with the current task and then
-drops it before returning; if the current task, and it's associated
-audit container ID object, disappears in the middle of the function
-we've got much bigger worries :)
 
--- 
-paul moore
-www.paul-moore.com
