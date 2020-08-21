@@ -2,124 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E668724DCD0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 19:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E97C24DDCD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 19:23:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbgHURIf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 13:08:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32890 "EHLO
+        id S1728740AbgHURXB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 13:23:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbgHUQRo (ORCPT
+        with ESMTP id S1728431AbgHURWr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 12:17:44 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 090C0C061573;
-        Fri, 21 Aug 2020 09:17:44 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id i19so1183100lfj.8;
-        Fri, 21 Aug 2020 09:17:43 -0700 (PDT)
+        Fri, 21 Aug 2020 13:22:47 -0400
+Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29BADC061574
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 10:22:47 -0700 (PDT)
+Received: by mail-vs1-xe42.google.com with SMTP id o184so1209354vsc.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 10:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ciQpCZNqlUAY76HFlpjGJHUNDAs9xwtRbJI1yNtcuhM=;
-        b=V3/MFuyaaic5NHAkMdBvSSzRXUx1HZnX7/7tVB5SKdqFl4sCYkXTJLsJGDC8JzAEBz
-         QQHAWx1G5tLg68B/f+jO/GTnmuGXHhqqsBY99hXSUagyg+/ese3ijTQFcPm59tc/Om0j
-         93zEOpjIPKN+nJsVkX97YNxBsJZ8beku0FZSKz1vyd0ww1TeaPiS8O9rAmi4VkXJ0jVM
-         YJVQVXWk6cpCcjykvdwRko4eFY+lYyAh9hfbpflaqRK7YwSgbZddXWy4G4blNIg5Dmc4
-         RU7t62cdxvy05TJm67EQ7n0CS3ldhL2OQ1YZfsFLOzNquURORpOUln5VqamVCzY6TsIZ
-         zDuw==
+        bh=rDqVNDY5Q+RZDqESGD0TGY14TPQ/cJSVcY4W2ZTOurU=;
+        b=fsv4g5/tYJjOZyeNAid6KP6IC/d+32IDs1B84c2++eXQf89w47tOGpLE8FXrjFv3/Y
+         jnlLa9noNsJIa4Elln1YeI9aod0vrZLaR52LTJzo0JMk3SyylMuj93Kk0KjI7YAs+pnz
+         RL/cnKuZ9cc9suLnmxGsHHPb9lBpp80bJcJI1TshbZV3bZKHYiyib1+xgGH3sIF6p027
+         kcTzZXQWPS+rYqmCxqRyzoKXiqJJfRcBxzq5Lx96V6fIR2YgRaFbyP9e0hkDx4GijMAG
+         qitSwMCHtXfcd4M4frAsJPIHOR6nLv2y9mJFaw4VrOy3QbWhfod2LsF52cyBWN1Flbtf
+         vnDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ciQpCZNqlUAY76HFlpjGJHUNDAs9xwtRbJI1yNtcuhM=;
-        b=tTOBuY/c8XDoyb9OQOZjTkvb+LM+j2P3XHryuaV8pLuY8mwy3uf1dfWt7yL40xs/MY
-         NOFVabsq4HRMUWHy+eFu/QYZnsHGbL3HNeBW00h4Lc2LARFk/E+6P0uvDwSUphPK9SKl
-         ROJAYgGE+aq2H0MHB7rZE4ERfpftWbUm9zBRP5mayKqXvmUgth3AAJc4hOZF/37lauun
-         /v9nH3KK9T+HcbMIjkLEoIa6ROJD4FIo4tNDSNsk9lEQDgBto/EVMqjZuWyGjiwI1Mwg
-         EJnh0L9mdgU5XN5X9SHEZdRKMHk7gn1yP851v8h6iKYSTnKes8JlNu5cXEomw00S7HkW
-         UrXg==
-X-Gm-Message-State: AOAM5320FRkl99HPk8tjWY4w//0hstpZPuZJgW5dZYb8oJErJxwaDUi+
-        zjiVAdBor+RY5ojxpJdP3r3vCfu/yDlUpg6jqL8=
-X-Google-Smtp-Source: ABdhPJwm4JQ0bHBpLTQfTKEIlpZDWvTsAm23urM4zWdMRprV3Ar817MgJFfm1txpjI+CAqlIEnxa8dYFBlvOP4wMeaM=
-X-Received: by 2002:ac2:59c5:: with SMTP id x5mr1766672lfn.174.1598026662334;
- Fri, 21 Aug 2020 09:17:42 -0700 (PDT)
+        bh=rDqVNDY5Q+RZDqESGD0TGY14TPQ/cJSVcY4W2ZTOurU=;
+        b=U8vUHJd9R8W0SiG405TUM2XuWGPC4UG2GrdQ6d+wZqnOncdGMJkLtfOvc+yBcgAvZ8
+         th6JBJ2LBSB/ZpC5C0pLjX5M/CxnIvKq9/PRa1SxZ5adxcpiRtKQ3D+d++KJPmsaAxrR
+         wDQcF3pcMCc4IPJv4kT8mJCdXwDVD0v1FVCAJQ+5TGc/l4h+BFhAbO89LOKSOG9wbUe9
+         l4zVWNP/Jm9x7tWnOAMdMIXN7rsbySCF5/ho12ODULNeigWPjY9WLYpcLiTQHBppfdvu
+         ZrXcqsBvtmlks3UFJrVvCrZuNlqf0ZaiJo/BW4bNO3PzSHNVnMEQn67H1AxwylJ7R7/H
+         JnSQ==
+X-Gm-Message-State: AOAM532bAGPa5djXjNMn8oIU2dWW8FHAZm6Y36uPWQn3BKp77FSeB1Dr
+        fv+6U4oFkD6AFazaT1qUN9zGvq/qylOXzaXSs+Mk4Q==
+X-Google-Smtp-Source: ABdhPJzA6appk8Xhd4tm4AjN6izo2oLrkOILpz+oGjpaon/Hiqu27vcPQ3jAQ/sCmSWKBd2jYGp5pyBMjq8/f5OPO+c=
+X-Received: by 2002:a05:6102:189:: with SMTP id r9mr2590828vsq.239.1598030565992;
+ Fri, 21 Aug 2020 10:22:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <87ft8l6ic3.fsf@x220.int.ebiederm.org> <20200817220425.9389-9-ebiederm@xmission.com>
- <CAHk-=whCU_psWXHod0-WqXXKB4gKzgW9q=d_ZEFPNATr3kG=QQ@mail.gmail.com>
- <875z9g7oln.fsf@x220.int.ebiederm.org> <CAHk-=wjk_CnGHt4LBi2WsOeYOxE5j79R8xHzZytCy8t-_9orQw@mail.gmail.com>
- <20200818110556.q5i5quflrcljv4wa@wittgenstein> <87pn7m22kn.fsf@x220.int.ebiederm.org>
- <CAADnVQKpDaaogmbZPD0bv3SrTXo9i5eSBMz1dd=3wOn9pxDOWA@mail.gmail.com> <871rk0t45v.fsf@x220.int.ebiederm.org>
-In-Reply-To: <871rk0t45v.fsf@x220.int.ebiederm.org>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Fri, 21 Aug 2020 09:17:30 -0700
-Message-ID: <CAADnVQL2ugp+t39kXnd_iQMM8RGM=O2nD7OBL7XvB1GBHcyoxA@mail.gmail.com>
-Subject: Re: [PATCH 09/17] file: Implement fnext_task
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
-        criu@openvz.org, bpf <bpf@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
-        =?UTF-8?Q?Daniel_P=2E_Berrang=C3=A9?= <berrange@redhat.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Matthew Wilcox <willy@debian.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Matthew Wilcox <matthew@wil.cx>,
-        Trond Myklebust <trond.myklebust@fys.uio.no>,
-        Chris Wright <chrisw@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>
+References: <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
+ <20200820140054.fdkbotd4tgfrqpe6@wittgenstein> <637ab0e7-e686-0c94-753b-b97d24bb8232@i-love.sakura.ne.jp>
+ <87k0xtv0d4.fsf@x220.int.ebiederm.org> <CAJuCfpHsjisBnNiDNQbm8Yi92cznaptiXYPdc-aVa+_zkuaPhA@mail.gmail.com>
+ <20200820162645.GP5033@dhcp22.suse.cz> <87r1s0txxe.fsf@x220.int.ebiederm.org>
+ <20200821111558.GG4546@redhat.com> <CAJuCfpF_GhTy5SCjxqyqTFUrJNaw3UGJzCi=WSCXfqPAcbThYg@mail.gmail.com>
+ <CAJuCfpG06_KLhQyg9N84bRQOdvG27uAZ2oBDEQPR-OnZeNJd1w@mail.gmail.com> <20200821163724.GC19445@redhat.com>
+In-Reply-To: <20200821163724.GC19445@redhat.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Fri, 21 Aug 2020 10:22:34 -0700
+Message-ID: <CAJuCfpGcmSmMc2zEBR-0FgbeZVre+Tbqmu04y8deEwySasvD3Q@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
+ __set_oom_adj when not necessary
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tim Murray <timmurray@google.com>, mingo@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
+        christian@kellner.me, areber@redhat.com,
+        Shakeel Butt <shakeelb@google.com>, cyphar@cyphar.com,
+        adobriyan@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
+        gladkov.alexey@gmail.com, Michel Lespinasse <walken@google.com>,
+        daniel.m.jordan@oracle.com, avagin@gmail.com,
+        bernd.edlinger@hotmail.de,
+        John Johansen <john.johansen@canonical.com>,
+        laoar.shao@gmail.com, Minchan Kim <minchan@kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 21, 2020 at 8:26 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+On Fri, Aug 21, 2020 at 9:37 AM Oleg Nesterov <oleg@redhat.com> wrote:
 >
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+> again, don't really understand...
 >
-> > On Wed, Aug 19, 2020 at 6:25 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >>
-> >> The bug in the existing code is that bpf_iter does get_file instead
-> >> of get_file_rcu.  Does anyone have any sense of how to add debugging
-> >> to get_file to notice when it is being called in the wrong context?
+> On 08/21, Suren Baghdasaryan wrote:
 > >
-> > That bug is already fixed in bpf tree.
-> > See commit cf28f3bbfca0 ("bpf: Use get_file_rcu() instead of
-> > get_file() for task_file iterator")
+> > Actually, reviewing again and considering where list_add_tail_rcu is
+> > happening, maybe the race with clone(CLONE_VM) does not introduce
+> > false negatives.
 >
-> I wished you had based that change on -rc1 instead of some random
-> looking place in David's Millers net tree.
+> I think it does... Whatever we check, mm_users or MMF_PROC_SHARED,
+> the task can do clone(CLONE_VM) right after the check.
 
-random?
-It's a well documented process. Please see:
-Documentation/bpf/bpf_devel_QA.rst
+Ah, yes of course. I missed this same just like in the original patch.
 
-> I am glad to see that our existing debug checks can catch that
-> kind of problem when the code is exercised enough.
+>
+> > However a false negative I think will happen when a
+> > task shares mm with another task and also has an additional thread.
+> > Shared mm will increment mm_users without adding to signal->live
+>
+> Yes,
+>
+> > and
+> > the additional thread will advance signal->live without adding to
+> > mm_users.
+>
+> No, please note that CLONE_THREAD requires CLONE_VM.
 
-They did not. Please see the commit log of the fix.
-It was a NULL pointer dereference.
+My fault. Forgot that CLONE_VM means "share VM" and not "dup VM". Need
+some coffee.
+Thanks Oleg!
 
-> I am going to pull this change into my tree on top of -rc1 so we won't
-> have unnecessary conflicts.  Hopefully this will show up in -rc2 so the
-> final version of this patchset can use an easily describable base.
-
-Please do not cherry pick fixes from other trees. You need to wait
-until the bpf tree gets merged into net tree and net into Linus's tree.
-It's only a couple days away. Hopefully it's there by -rc2,
-but I cannot speak for Dave's schedule.
-We'll send bpf tree pull-req to Dave today.
+>
+> Oleg.
+>
