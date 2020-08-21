@@ -2,93 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AC5FB24DC61
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 19:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E668724DCD0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 19:08:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728675AbgHURAT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 13:00:19 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:57077 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728453AbgHUQ6V (ORCPT
+        id S1728567AbgHURIf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 13:08:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32890 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbgHUQRo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 12:58:21 -0400
-Received: by mail-io1-f71.google.com with SMTP id q62so1559243iof.23
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 09:58:20 -0700 (PDT)
+        Fri, 21 Aug 2020 12:17:44 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 090C0C061573;
+        Fri, 21 Aug 2020 09:17:44 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id i19so1183100lfj.8;
+        Fri, 21 Aug 2020 09:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ciQpCZNqlUAY76HFlpjGJHUNDAs9xwtRbJI1yNtcuhM=;
+        b=V3/MFuyaaic5NHAkMdBvSSzRXUx1HZnX7/7tVB5SKdqFl4sCYkXTJLsJGDC8JzAEBz
+         QQHAWx1G5tLg68B/f+jO/GTnmuGXHhqqsBY99hXSUagyg+/ese3ijTQFcPm59tc/Om0j
+         93zEOpjIPKN+nJsVkX97YNxBsJZ8beku0FZSKz1vyd0ww1TeaPiS8O9rAmi4VkXJ0jVM
+         YJVQVXWk6cpCcjykvdwRko4eFY+lYyAh9hfbpflaqRK7YwSgbZddXWy4G4blNIg5Dmc4
+         RU7t62cdxvy05TJm67EQ7n0CS3ldhL2OQ1YZfsFLOzNquURORpOUln5VqamVCzY6TsIZ
+         zDuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=hG/nq+uFUOyOWSUsfQoPd7kqlRu0su+Bl0f81PDzkPE=;
-        b=aNUKHfOrplDWsog8CIJg7y6MsmOxcWCWQAkjPuweMYgfizI63HzVq+0bTx4HHMOgIF
-         eqbYnYdlnh0BqNr/FUTPPkLvIn38lRmZIU4G2iVikO+QY/afEUmyK6LCXT5CgXYlInZe
-         V3zFsFukj6379noKhp/JUMd+rV1o3Bh8XmXUn91oQscFnYWNjpxeXfQjb2zoZkz3Bveh
-         kZ2PLi0W1BYicQqyKNHsVid93PdxZ7XhVcb3ifmd7ReySOlaTPfrAdjwT9XeCXqU0mID
-         Jkna15E1SKehxIoHCASd32A0UNvCKmWfG4btVPvFzv62SrOmOC4W191XrfhlNdqyuTAF
-         wC3w==
-X-Gm-Message-State: AOAM5334ypAACgqZ04QlSlfi+NNoeR40vNOFV/IxAk1/HtFQjKYEnjeY
-        FD0MxqYm1p3lkupVEcKS4flZPFy+FWFRvWcvZl6OgiMhuzAu
-X-Google-Smtp-Source: ABdhPJyspOeR+rdEbQqOM2h9ujCTKUfuJ9GR//ug0GwCGDoFQ3/5ZqSXHgPbM662iCvmlRsBQsd2eWhW3hvrlrk8WSBzyPOkFqoV
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ciQpCZNqlUAY76HFlpjGJHUNDAs9xwtRbJI1yNtcuhM=;
+        b=tTOBuY/c8XDoyb9OQOZjTkvb+LM+j2P3XHryuaV8pLuY8mwy3uf1dfWt7yL40xs/MY
+         NOFVabsq4HRMUWHy+eFu/QYZnsHGbL3HNeBW00h4Lc2LARFk/E+6P0uvDwSUphPK9SKl
+         ROJAYgGE+aq2H0MHB7rZE4ERfpftWbUm9zBRP5mayKqXvmUgth3AAJc4hOZF/37lauun
+         /v9nH3KK9T+HcbMIjkLEoIa6ROJD4FIo4tNDSNsk9lEQDgBto/EVMqjZuWyGjiwI1Mwg
+         EJnh0L9mdgU5XN5X9SHEZdRKMHk7gn1yP851v8h6iKYSTnKes8JlNu5cXEomw00S7HkW
+         UrXg==
+X-Gm-Message-State: AOAM5320FRkl99HPk8tjWY4w//0hstpZPuZJgW5dZYb8oJErJxwaDUi+
+        zjiVAdBor+RY5ojxpJdP3r3vCfu/yDlUpg6jqL8=
+X-Google-Smtp-Source: ABdhPJwm4JQ0bHBpLTQfTKEIlpZDWvTsAm23urM4zWdMRprV3Ar817MgJFfm1txpjI+CAqlIEnxa8dYFBlvOP4wMeaM=
+X-Received: by 2002:ac2:59c5:: with SMTP id x5mr1766672lfn.174.1598026662334;
+ Fri, 21 Aug 2020 09:17:42 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:7a41:: with SMTP id k1mr2909959iop.92.1598029100580;
- Fri, 21 Aug 2020 09:58:20 -0700 (PDT)
-Date:   Fri, 21 Aug 2020 09:58:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e1877405ad662415@google.com>
-Subject: memory leak in rw_copy_check_uvector
-From:   syzbot <syzbot+6e14de8b553308b5507c@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <87ft8l6ic3.fsf@x220.int.ebiederm.org> <20200817220425.9389-9-ebiederm@xmission.com>
+ <CAHk-=whCU_psWXHod0-WqXXKB4gKzgW9q=d_ZEFPNATr3kG=QQ@mail.gmail.com>
+ <875z9g7oln.fsf@x220.int.ebiederm.org> <CAHk-=wjk_CnGHt4LBi2WsOeYOxE5j79R8xHzZytCy8t-_9orQw@mail.gmail.com>
+ <20200818110556.q5i5quflrcljv4wa@wittgenstein> <87pn7m22kn.fsf@x220.int.ebiederm.org>
+ <CAADnVQKpDaaogmbZPD0bv3SrTXo9i5eSBMz1dd=3wOn9pxDOWA@mail.gmail.com> <871rk0t45v.fsf@x220.int.ebiederm.org>
+In-Reply-To: <871rk0t45v.fsf@x220.int.ebiederm.org>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Fri, 21 Aug 2020 09:17:30 -0700
+Message-ID: <CAADnVQL2ugp+t39kXnd_iQMM8RGM=O2nD7OBL7XvB1GBHcyoxA@mail.gmail.com>
+Subject: Re: [PATCH 09/17] file: Implement fnext_task
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "<linux-fsdevel@vger.kernel.org>" <linux-fsdevel@vger.kernel.org>,
+        criu@openvz.org, bpf <bpf@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Jann Horn <jann@thejh.net>, Kees Cook <keescook@chromium.org>,
+        =?UTF-8?Q?Daniel_P=2E_Berrang=C3=A9?= <berrange@redhat.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Matthew Wilcox <willy@debian.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Matthew Wilcox <matthew@wil.cx>,
+        Trond Myklebust <trond.myklebust@fys.uio.no>,
+        Chris Wright <chrisw@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Aug 21, 2020 at 8:26 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+>
+> > On Wed, Aug 19, 2020 at 6:25 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >>
+> >> The bug in the existing code is that bpf_iter does get_file instead
+> >> of get_file_rcu.  Does anyone have any sense of how to add debugging
+> >> to get_file to notice when it is being called in the wrong context?
+> >
+> > That bug is already fixed in bpf tree.
+> > See commit cf28f3bbfca0 ("bpf: Use get_file_rcu() instead of
+> > get_file() for task_file iterator")
+>
+> I wished you had based that change on -rc1 instead of some random
+> looking place in David's Millers net tree.
 
-syzbot found the following issue on:
+random?
+It's a well documented process. Please see:
+Documentation/bpf/bpf_devel_QA.rst
 
-HEAD commit:    da2968ff Merge tag 'pci-v5.9-fixes-1' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=124577f9900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=948134d9ff96e950
-dashboard link: https://syzkaller.appspot.com/bug?extid=6e14de8b553308b5507c
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12a9ab36900000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17049fa1900000
+> I am glad to see that our existing debug checks can catch that
+> kind of problem when the code is exercised enough.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6e14de8b553308b5507c@syzkaller.appspotmail.com
+They did not. Please see the commit log of the fix.
+It was a NULL pointer dereference.
 
-BUG: memory leak
-unreferenced object 0xffff88811c405400 (size 1024):
-  comm "syz-executor386", pid 6503, jiffies 4294942347 (age 13.130s)
-  hex dump (first 32 bytes):
-    00 01 00 20 00 00 00 00 14 00 00 00 00 00 00 00  ... ............
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<000000001a62dd57>] kmalloc_array include/linux/slab.h:594 [inline]
-    [<000000001a62dd57>] rw_copy_check_uvector+0x171/0x1a0 fs/read_write.c:812
-    [<0000000016ad020b>] import_iovec+0x4a/0x140 lib/iov_iter.c:1681
-    [<00000000fb58399a>] io_import_iovec+0x271/0x640 fs/io_uring.c:2879
-    [<0000000002d03b50>] io_rw_prep_async fs/io_uring.c:3006 [inline]
-    [<0000000002d03b50>] io_read_prep+0x94/0xf0 fs/io_uring.c:3031
-    [<000000008ab01d5d>] io_req_defer_prep fs/io_uring.c:5462 [inline]
-    [<000000008ab01d5d>] io_req_defer_prep+0x1c6/0x720 fs/io_uring.c:5442
-    [<0000000075ed8a70>] io_submit_sqe fs/io_uring.c:6262 [inline]
-    [<0000000075ed8a70>] io_submit_sqes+0x306/0xc00 fs/io_uring.c:6488
-    [<00000000d1d617da>] __do_sys_io_uring_enter+0x582/0x830 fs/io_uring.c:8265
-    [<00000000334cee0e>] do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-    [<0000000053cdb89f>] entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> I am going to pull this change into my tree on top of -rc1 so we won't
+> have unnecessary conflicts.  Hopefully this will show up in -rc2 so the
+> final version of this patchset can use an easily describable base.
 
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Please do not cherry pick fixes from other trees. You need to wait
+until the bpf tree gets merged into net tree and net into Linus's tree.
+It's only a couple days away. Hopefully it's there by -rc2,
+but I cannot speak for Dave's schedule.
+We'll send bpf tree pull-req to Dave today.
