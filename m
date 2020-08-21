@@ -2,45 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B5E0A24DAB5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 18:25:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0BA824DAC0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 18:26:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728461AbgHUQZC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 12:25:02 -0400
-Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:59027 "EHLO
+        id S1728125AbgHUQ0B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 12:26:01 -0400
+Received: from relaydlg-01.paragon-software.com ([81.5.88.159]:59064 "EHLO
         relaydlg-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728641AbgHUQYz (ORCPT
+        by vger.kernel.org with ESMTP id S1727913AbgHUQZk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 12:24:55 -0400
+        Fri, 21 Aug 2020 12:25:40 -0400
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id B9CDF8216F;
-        Fri, 21 Aug 2020 19:24:50 +0300 (MSK)
+        by relaydlg-01.paragon-software.com (Postfix) with ESMTPS id A5EBE821D1;
+        Fri, 21 Aug 2020 19:25:27 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1598027090;
-        bh=p7ELpXoegmwt3Cl7QwsvoavPZupsh5YjZJkRGTBnE28=;
+        d=paragon-software.com; s=mail; t=1598027127;
+        bh=q3Ici6spO7j6AC6ovvmNlqYqXDOsp1CFMrkmDulHLhM=;
         h=From:To:CC:Subject:Date;
-        b=bUBWCZf8wGwB58DJLnHxMO/nt9i0/N6NIsDrVvDio19ef7Y2igBB/E5Oq0QhbTyq+
-         rU/Bzbw24LEOkKTfXD9Gkj5xljb0bQIOjMcwXj6rP9wdBT19qAA2sVp+GfAkJ5ywIh
-         yXVZguVkd5+NyNt88f2jjpNdHpbVYKtMWukUKnVI=
+        b=DeNmvMBo85k04lw9LCEzSKyyEpDkQMYVqzY2BLMw4hrz2NaLtoOZYFQ+tujHRAh8o
+         CZdRCLShvebHDJefct5HZ4u39MRpDpNl+cDiARV/OoadSTLdDjmmuouBuaCQu/uDcb
+         8CAkrpCtsfWj8jU8Nt+O7NBIMrGjJK6+lq5Jbvwc=
 Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 21 Aug 2020 19:24:50 +0300
+ 15.1.1847.3; Fri, 21 Aug 2020 19:25:27 +0300
 Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
  by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
- id 15.01.1847.003; Fri, 21 Aug 2020 19:24:50 +0300
+ id 15.01.1847.003; Fri, 21 Aug 2020 19:25:27 +0300
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 CC:     =?iso-8859-1?Q?Pali_Roh=E1r?= <pali@kernel.org>
-Subject: [PATCH v2 00/10] fs: NTFS read-write driver GPL implementation by
- Paragon Software.
-Thread-Topic: [PATCH v2 00/10] fs: NTFS read-write driver GPL implementation
- by Paragon Software.
-Thread-Index: AdZ30n3KUTPgxpZ7Q/+ZtR0YneODPw==
-Date:   Fri, 21 Aug 2020 16:24:50 +0000
-Message-ID: <904d985365a34f0787a4511435417ab3@paragon-software.com>
+Subject: [PATCH v2 06/10] fs/ntfs3: Add compression
+Thread-Topic: [PATCH v2 06/10] fs/ntfs3: Add compression
+Thread-Index: AdZ30z3rsB9DvpW3SXSScNijIm+BLQ==
+Date:   Fri, 21 Aug 2020 16:25:27 +0000
+Message-ID: <ecaa5cd692294178a38a9a2310d9856f@paragon-software.com>
 Accept-Language: ru-RU, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -54,94 +52,475 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch adds NTFS Read-Write driver to fs/ntfs3.
+This adds compression
 
-Having decades of expertise in commercial file systems development and huge
-test coverage, we at Paragon Software GmbH want to make our contribution to
-the Open Source Community by providing implementation of NTFS Read-Write
-driver for the Linux Kernel.
-
-This is fully functional NTFS Read-Write driver. Current version works with
-NTFS(including v3.1) and normal/compressed/sparse files and supports journa=
-l replaying.
-
-We plan to support this version after the codebase once merged, and add new
-features and fix bugs. For example, full journaling support over JBD will b=
-e
-added in later updates.
-
-v2:
- - patch splitted to chunks (file-wise)
- - build issues fixed
- - sparse and checkpatch.pl errors fixed
- - NULL pointer dereference on mkfs.ntfs-formatted volume mount fixed=20
- - cosmetics + code cleanup
-
-Konstantin Komarov (10):
-  fs/ntfs3: Add headers and misc files
-  fs/ntfs3: Add initialization of super block
-  fs/ntfs3: Add bitmap
-  fs/ntfs3: Add file operations and implementation
-  fs/ntfs3: Add attrib operations
-  fs/ntfs3: Add compression
-  fs/ntfs3: Add NTFS journal
-  fs/ntfs3: Add Kconfig, Makefile and doc
-  fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
-  fs/ntfs3: Add MAINTAINERS
-
- Documentation/filesystems/ntfs3.rst |   93 +
- MAINTAINERS                         |    7 +
- fs/Kconfig                          |    1 +
- fs/Makefile                         |    1 +
- fs/ntfs3/Kconfig                    |   23 +
- fs/ntfs3/Makefile                   |   11 +
- fs/ntfs3/attrib.c                   | 1285 +++++++
- fs/ntfs3/attrlist.c                 |  455 +++
- fs/ntfs3/bitfunc.c                  |  144 +
- fs/ntfs3/bitmap.c                   | 1545 ++++++++
- fs/ntfs3/debug.h                    |   77 +
- fs/ntfs3/dir.c                      |  529 +++
- fs/ntfs3/file.c                     | 1179 ++++++
- fs/ntfs3/frecord.c                  | 2179 +++++++++++
- fs/ntfs3/fslog.c                    | 5217 +++++++++++++++++++++++++++
- fs/ntfs3/fsntfs.c                   | 2196 +++++++++++
- fs/ntfs3/index.c                    | 2640 ++++++++++++++
- fs/ntfs3/inode.c                    | 2068 +++++++++++
- fs/ntfs3/lznt.c                     |  449 +++
- fs/ntfs3/namei.c                    |  566 +++
- fs/ntfs3/ntfs.h                     | 1253 +++++++
- fs/ntfs3/ntfs_fs.h                  |  965 +++++
- fs/ntfs3/record.c                   |  612 ++++
- fs/ntfs3/run.c                      | 1188 ++++++
- fs/ntfs3/super.c                    | 1409 ++++++++
- fs/ntfs3/upcase.c                   |   78 +
- fs/ntfs3/xattr.c                    |  968 +++++
- 27 files changed, 27138 insertions(+)
- create mode 100644 Documentation/filesystems/ntfs3.rst
- create mode 100644 fs/ntfs3/Kconfig
- create mode 100644 fs/ntfs3/Makefile
- create mode 100644 fs/ntfs3/attrib.c
- create mode 100644 fs/ntfs3/attrlist.c
- create mode 100644 fs/ntfs3/bitfunc.c
- create mode 100644 fs/ntfs3/bitmap.c
- create mode 100644 fs/ntfs3/debug.h
- create mode 100644 fs/ntfs3/dir.c
- create mode 100644 fs/ntfs3/file.c
- create mode 100644 fs/ntfs3/frecord.c
- create mode 100644 fs/ntfs3/fslog.c
- create mode 100644 fs/ntfs3/fsntfs.c
- create mode 100644 fs/ntfs3/index.c
- create mode 100644 fs/ntfs3/inode.c
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com=
+>
+---
+ fs/ntfs3/lznt.c | 449 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 449 insertions(+)
  create mode 100644 fs/ntfs3/lznt.c
- create mode 100644 fs/ntfs3/namei.c
- create mode 100644 fs/ntfs3/ntfs.h
- create mode 100644 fs/ntfs3/ntfs_fs.h
- create mode 100644 fs/ntfs3/record.c
- create mode 100644 fs/ntfs3/run.c
- create mode 100644 fs/ntfs3/super.c
- create mode 100644 fs/ntfs3/upcase.c
- create mode 100644 fs/ntfs3/xattr.c
 
+diff --git a/fs/ntfs3/lznt.c b/fs/ntfs3/lznt.c
+new file mode 100644
+index 000000000000..db3256c08387
+--- /dev/null
++++ b/fs/ntfs3/lznt.c
+@@ -0,0 +1,449 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ *  linux/fs/ntfs3/lznt.c
++ *
++ * Copyright (C) 2019-2020 Paragon Software GmbH, All rights reserved.
++ *
++ */
++#include <linux/blkdev.h>
++#include <linux/buffer_head.h>
++#include <linux/fs.h>
++#include <linux/nls.h>
++#include <linux/sched/signal.h>
++
++#include "debug.h"
++#include "ntfs.h"
++#include "ntfs_fs.h"
++
++/* Dst buffer is too small */
++#define LZNT_ERROR_TOOSMALL -2
++/* src buffer is zero */
++#define LZNT_ERROR_ALL_ZEROS 1
++#define LZNT_CHUNK_SIZE 0x1000
++
++struct lznt_hash {
++	const u8 *p1;
++	const u8 *p2;
++};
++
++struct lznt {
++	const u8 *unc;
++	const u8 *unc_end;
++	const u8 *best_match;
++	size_t max_len;
++	bool std;
++
++	struct lznt_hash hash[LZNT_CHUNK_SIZE];
++};
++
++static inline size_t get_match_len(const u8 *ptr, const u8 *end, const u8 =
+*prev,
++				   size_t max_len)
++{
++	size_t len =3D 0;
++
++	while (ptr + len < end && ptr[len] =3D=3D prev[len] && ++len < max_len)
++		;
++	return len;
++}
++
++static size_t longest_match_std(const u8 *src, struct lznt *ctx)
++{
++	size_t hash_index;
++	size_t len1 =3D 0, len2 =3D 0;
++	const u8 **hash;
++
++	hash_index =3D
++		((40543U * ((((src[0] << 4) ^ src[1]) << 4) ^ src[2])) >> 4) &
++		(LZNT_CHUNK_SIZE - 1);
++
++	hash =3D &(ctx->hash[hash_index].p1);
++
++	if (hash[0] >=3D ctx->unc && hash[0] < src && hash[0][0] =3D=3D src[0] &&
++	    hash[0][1] =3D=3D src[1] && hash[0][2] =3D=3D src[2]) {
++		len1 =3D 3;
++		if (ctx->max_len > 3)
++			len1 +=3D get_match_len(src + 3, ctx->unc_end,
++					      hash[0] + 3, ctx->max_len - 3);
++	}
++
++	if (hash[1] >=3D ctx->unc && hash[1] < src && hash[1][0] =3D=3D src[0] &&
++	    hash[1][1] =3D=3D src[1] && hash[1][2] =3D=3D src[2]) {
++		len2 =3D 3;
++		if (ctx->max_len > 3)
++			len2 +=3D get_match_len(src + 3, ctx->unc_end,
++					      hash[1] + 3, ctx->max_len - 3);
++	}
++
++	/* Compare two matches and select the best one */
++	if (len1 < len2) {
++		ctx->best_match =3D hash[1];
++		len1 =3D len2;
++	} else
++		ctx->best_match =3D hash[0];
++
++	hash[1] =3D hash[0];
++	hash[0] =3D src;
++	return len1;
++}
++
++static size_t longest_match_best(const u8 *src, struct lznt *ctx)
++{
++	size_t max_len;
++	const u8 *ptr;
++
++	if (ctx->unc >=3D src || !ctx->max_len)
++		return 0;
++
++	max_len =3D 0;
++	for (ptr =3D ctx->unc; ptr < src; ++ptr) {
++		size_t len =3D
++			get_match_len(src, ctx->unc_end, ptr, ctx->max_len);
++		if (len >=3D max_len) {
++			max_len =3D len;
++			ctx->best_match =3D ptr;
++		}
++	}
++
++	return max_len >=3D 3 ? max_len : 0;
++}
++
++static const size_t s_max_len[] =3D {
++	0x1002, 0x802, 0x402, 0x202, 0x102, 0x82, 0x42, 0x22, 0x12,
++};
++
++static const size_t s_max_off[] =3D {
++	0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800, 0x1000,
++};
++
++static inline u16 make_pair(size_t offset, size_t len, size_t index)
++{
++	return ((offset - 1) << (12 - index)) |
++	       ((len - 3) & (((1 << (12 - index)) - 1)));
++}
++
++static inline size_t parse_pair(u16 pair, size_t *offset, size_t index)
++{
++	*offset =3D 1 + (pair >> (12 - index));
++	return 3 + (pair & ((1 << (12 - index)) - 1));
++}
++
++// 0x3FFF
++#define HeaderOfNonCompressedChunk ((LZNT_CHUNK_SIZE + 2 - 3) | 0x3000)
++
++/*
++ * compess_chunk
++ *
++ * returns one of the tree values:
++ * 0 - ok, 'cmpr' contains 'cmpr_chunk_size' bytes of compressed data
++ * 1 =3D=3D LZNT_ERROR_ALL_ZEROS - input buffer is full zero
++ * -2 =3D=3D LZNT_ERROR_TOOSMALL
++ */
++static inline int compess_chunk(size_t (*match)(const u8 *, struct lznt *)=
+,
++				const u8 *unc, const u8 *unc_end, u8 *cmpr,
++				u8 *cmpr_end, size_t *cmpr_chunk_size,
++				struct lznt *ctx)
++{
++	size_t cnt =3D 0;
++	size_t idx =3D 0;
++	const u8 *up =3D unc;
++	u8 *cp =3D cmpr + 3;
++	u8 *cp2 =3D cmpr + 2;
++	u8 not_zero =3D 0;
++	/* Control byte of 8-bit values: ( 0 - means byte as is, 1 - short pair )=
+ */
++	u8 ohdr =3D 0;
++	u8 *last;
++	u16 t16;
++
++	if (unc + LZNT_CHUNK_SIZE < unc_end)
++		unc_end =3D unc + LZNT_CHUNK_SIZE;
++
++	last =3D min(cmpr + LZNT_CHUNK_SIZE + sizeof(short), cmpr_end);
++
++	ctx->unc =3D unc;
++	ctx->unc_end =3D unc_end;
++	ctx->max_len =3D s_max_len[0];
++
++	while (up < unc_end) {
++		size_t max_len;
++
++		while (unc + s_max_off[idx] < up)
++			ctx->max_len =3D s_max_len[++idx];
++
++		// Find match
++		max_len =3D up + 3 <=3D unc_end ? (*match)(up, ctx) : 0;
++
++		if (!max_len) {
++			if (cp >=3D last)
++				goto NotCompressed;
++			not_zero |=3D *cp++ =3D *up++;
++		} else if (cp + 1 >=3D last) {
++			goto NotCompressed;
++		} else {
++			t16 =3D make_pair(up - ctx->best_match, max_len, idx);
++			*cp++ =3D t16;
++			*cp++ =3D t16 >> 8;
++
++			ohdr |=3D 1 << cnt;
++			up +=3D max_len;
++		}
++
++		cnt =3D (cnt + 1) & 7;
++		if (!cnt) {
++			*cp2 =3D ohdr;
++			ohdr =3D 0;
++			cp2 =3D cp;
++			cp +=3D 1;
++		}
++	}
++
++	if (cp2 < last)
++		*cp2 =3D ohdr;
++	else
++		cp -=3D 1;
++
++	*cmpr_chunk_size =3D cp - cmpr;
++
++	t16 =3D (*cmpr_chunk_size - 3) | 0xB000;
++	cmpr[0] =3D t16;
++	cmpr[1] =3D t16 >> 8;
++
++	return not_zero ? 0 : LZNT_ERROR_ALL_ZEROS;
++
++NotCompressed:
++
++	if ((cmpr + LZNT_CHUNK_SIZE + sizeof(short)) > last)
++		return LZNT_ERROR_TOOSMALL;
++
++	/* Copy non cmpr data */
++	cmpr[0] =3D 0xff;
++	cmpr[1] =3D 0x3f;
++
++	memcpy(cmpr + sizeof(short), unc, LZNT_CHUNK_SIZE);
++	*cmpr_chunk_size =3D LZNT_CHUNK_SIZE + sizeof(short);
++
++	return 0;
++}
++
++static inline ssize_t decompress_chunk(u8 *unc, u8 *unc_end, const u8 *cmp=
+r,
++				       const u8 *cmpr_end)
++{
++	u8 *up =3D unc;
++	u8 ch =3D *cmpr++;
++	size_t bit =3D 0;
++	size_t index =3D 0;
++	u16 pair;
++	size_t offset, length;
++
++	/* Do decompression until pointers are inside range */
++	while (up < unc_end && cmpr < cmpr_end) {
++		/* Correct index */
++		while (unc + s_max_off[index] < up)
++			index +=3D 1;
++
++		/* Check the current flag for zero */
++		if (!(ch & (1 << bit))) {
++			/* Just copy byte */
++			*up++ =3D *cmpr++;
++			goto next;
++		}
++
++		/* Check for boundary */
++		if (cmpr + 1 >=3D cmpr_end)
++			return -EINVAL;
++
++		/* Read a short from little endian stream */
++		pair =3D cmpr[1];
++		pair <<=3D 8;
++		pair |=3D cmpr[0];
++
++		cmpr +=3D 2;
++
++		/* Translate packed information into offset and length */
++		length =3D parse_pair(pair, &offset, index);
++
++		/* Check offset for boundary */
++		if (unc + offset > up)
++			return -EINVAL;
++
++		/* Truncate the length if necessary */
++		if (up + length >=3D unc_end)
++			length =3D unc_end - up;
++
++		/* Now we copy bytes. This is the heart of LZ algorithm. */
++		for (; length > 0; length--, up++)
++			*up =3D *(up - offset);
++
++next:
++		/* Advance flag bit value */
++		bit =3D (bit + 1) & 7;
++
++		if (!bit) {
++			if (cmpr >=3D cmpr_end)
++				break;
++
++			ch =3D *cmpr++;
++		}
++	}
++
++	/* return the size of uncompressed data */
++	return up - unc;
++}
++
++struct lznt *get_compression_ctx(bool std)
++{
++	struct lznt *r =3D ntfs_alloc(
++		std ? sizeof(struct lznt) : offsetof(struct lznt, hash), 1);
++
++	if (r)
++		r->std =3D std;
++	return r;
++}
++
++/*
++ * compress_lznt
++ *
++ * Compresses "unc" into "cmpr"
++ * +x - ok, 'cmpr' contains 'final_compressed_size' bytes of compressed da=
+ta
++ * 0 - input buffer is full zero
++ */
++size_t compress_lznt(const void *unc, size_t unc_size, void *cmpr,
++		     size_t cmpr_size, struct lznt *ctx)
++{
++	int err;
++	size_t (*match)(const u8 *src, struct lznt *ctx);
++	u8 *p =3D cmpr;
++	u8 *end =3D p + cmpr_size;
++	const u8 *unc_chunk =3D unc;
++	const u8 *unc_end =3D unc_chunk + unc_size;
++	bool is_zero =3D true;
++
++	if (ctx->std) {
++		match =3D &longest_match_std;
++		memset(ctx->hash, 0, sizeof(ctx->hash));
++	} else {
++		match =3D &longest_match_best;
++	}
++
++	/* compression cycle */
++	for (; unc_chunk < unc_end; unc_chunk +=3D LZNT_CHUNK_SIZE) {
++		cmpr_size =3D 0;
++		err =3D compess_chunk(match, unc_chunk, unc_end, p, end,
++				    &cmpr_size, ctx);
++		if (err < 0)
++			return unc_size;
++
++		if (is_zero && err !=3D LZNT_ERROR_ALL_ZEROS)
++			is_zero =3D false;
++
++		p +=3D cmpr_size;
++	}
++
++	if (p <=3D end - 2)
++		p[0] =3D p[1] =3D 0;
++
++	return is_zero ? 0 : PtrOffset(cmpr, p);
++}
++
++/*
++ * decompress_lznt
++ *
++ * decompresses "cmpr" into "unc"
++ */
++ssize_t decompress_lznt(const void *cmpr, size_t cmpr_size, void *unc,
++			size_t unc_size)
++{
++	const u8 *cmpr_chunk =3D cmpr;
++	const u8 *cmpr_end =3D cmpr_chunk + cmpr_size;
++	u8 *unc_chunk =3D unc;
++	u8 *unc_end =3D unc_chunk + unc_size;
++	u16 chunk_hdr;
++
++	if (cmpr_size < sizeof(short))
++		return -EINVAL;
++
++	/* read chunk header */
++	chunk_hdr =3D cmpr_chunk[1];
++	chunk_hdr <<=3D 8;
++	chunk_hdr |=3D cmpr_chunk[0];
++
++	/* loop through decompressing chunks */
++	for (;;) {
++		size_t chunk_size_saved;
++		size_t unc_use;
++		size_t cmpr_use =3D 3 + (chunk_hdr & (LZNT_CHUNK_SIZE - 1));
++
++		/* Check that the chunk actually fits the supplied buffer */
++		if (cmpr_chunk + cmpr_use > cmpr_end)
++			return -EINVAL;
++
++		/* First make sure the chunk contains compressed data */
++		if (chunk_hdr & 0x8000) {
++			/* Decompress a chunk and return if we get an error */
++			ssize_t err =3D
++				decompress_chunk(unc_chunk, unc_end,
++						 cmpr_chunk + sizeof(chunk_hdr),
++						 cmpr_chunk + cmpr_use);
++			if (err < 0)
++				return err;
++			unc_use =3D err;
++		} else {
++			/* This chunk does not contain compressed data */
++			unc_use =3D unc_chunk + LZNT_CHUNK_SIZE > unc_end ?
++					  unc_end - unc_chunk :
++					  LZNT_CHUNK_SIZE;
++
++			if (cmpr_chunk + sizeof(chunk_hdr) + unc_use >
++			    cmpr_end) {
++				return -EINVAL;
++			}
++
++			memcpy(unc_chunk, cmpr_chunk + sizeof(chunk_hdr),
++			       unc_use);
++		}
++
++		/* Advance pointers */
++		cmpr_chunk +=3D cmpr_use;
++		unc_chunk +=3D unc_use;
++
++		/* Check for the end of unc buffer */
++		if (unc_chunk >=3D unc_end)
++			break;
++
++		/* Proceed the next chunk */
++		if (cmpr_chunk > cmpr_end - 2)
++			break;
++
++		chunk_size_saved =3D LZNT_CHUNK_SIZE;
++
++		/* read chunk header */
++		chunk_hdr =3D cmpr_chunk[1];
++		chunk_hdr <<=3D 8;
++		chunk_hdr |=3D cmpr_chunk[0];
++
++		if (!chunk_hdr)
++			break;
++
++		/* Check the size of unc buffer */
++		if (unc_use < chunk_size_saved) {
++			size_t t1 =3D chunk_size_saved - unc_use;
++			u8 *t2 =3D unc_chunk + t1;
++
++			/* 'Zero' memory */
++			if (t2 >=3D unc_end)
++				break;
++
++			memset(unc_chunk, 0, t1);
++			unc_chunk =3D t2;
++		}
++	}
++
++	/* Check compression boundary */
++	if (cmpr_chunk > cmpr_end)
++		return -EINVAL;
++
++	/*
++	 * The unc size is just a difference between current
++	 * pointer and original one
++	 */
++	return PtrOffset(unc, unc_chunk);
++}
 --=20
 2.25.2
 
