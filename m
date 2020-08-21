@@ -2,88 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6919D24DE9B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 19:36:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B49224DEB3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 19:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727914AbgHURgC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 13:36:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45042 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727013AbgHURgB (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 13:36:01 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89FBAC061573;
-        Fri, 21 Aug 2020 10:36:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=e63rRxO9kfazS7TPx03ZgoZJYy1y5jMIfjZp9EP1Dsc=; b=AYjYxCoZWk7C4vEnleT5ktRrsX
-        GzHvPFZRRJ1DuErfBPOV2dbieu8MXOGuqnqwwCHJcB+OKbkhcDdLlUJe99eiePMbwDuqLIK7oPuFj
-        xDbPHRoim3d1VNCmxOtYRNmh7tyogRIAEltEvjj4tGC/d6yO2YTvoKpr5vLonMJmcx2J089HY0Tel
-        NOsd9AafZ+xz+wE6IEJ3MBa2or4i+OlQoIg2C+Bkp1P1n+1zQr6hVHRAgSboqXYkkIRfZ9dTspyLt
-        ujb1wsI2I8TQmmTUn/VtLy1nJ4TPQmoUy34NwtOLFKpkvJA9f/vRBVQqe0OdpVu08b5q6LSC4BENJ
-        eJ3JNVGQ==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k9AxL-0005nm-Cv; Fri, 21 Aug 2020 17:36:00 +0000
-Subject: Re: [PATCH v2 02/10] fs/ntfs3: Add initialization of super block
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Cc:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>
-References: <caddbe41eaef4622aab8bac24934eed1@paragon-software.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <5dfec6f4-0688-217d-587b-ec26f0bb9727@infradead.org>
-Date:   Fri, 21 Aug 2020 10:35:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727062AbgHURkp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 13:40:45 -0400
+Received: from mga03.intel.com ([134.134.136.65]:59643 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726864AbgHURko (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 21 Aug 2020 13:40:44 -0400
+IronPort-SDR: vKsYkXIRI/Msm3XfA1lpSSFhJpf+SvU2HF95vsK1G57tK80c1gcMkMhUHI+rdS3OqeGkGrN7Jn
+ P5tvpLB4nCrQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9720"; a="155578918"
+X-IronPort-AV: E=Sophos;i="5.76,338,1592895600"; 
+   d="scan'208";a="155578918"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2020 10:40:41 -0700
+IronPort-SDR: BfK+1av7mzeYf3wx3u4NXslDuTo1SpMAF+P1dA7jFE9gU5U9v79MCdvXhyl7In84C1bc3R1SyV
+ m5esAyFO0A5g==
+X-IronPort-AV: E=Sophos;i="5.76,338,1592895600"; 
+   d="scan'208";a="321333466"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2020 10:40:41 -0700
+Date:   Fri, 21 Aug 2020 10:40:41 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Hao Li <lihao2018.fnst@cn.fujitsu.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, y-goto@fujitsu.com
+Subject: Re: [PATCH] fs: Kill DCACHE_DONTCACHE dentry even if
+ DCACHE_REFERENCED is set
+Message-ID: <20200821174040.GG3142014@iweiny-DESK2.sc.intel.com>
+References: <20200821015953.22956-1-lihao2018.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-In-Reply-To: <caddbe41eaef4622aab8bac24934eed1@paragon-software.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200821015953.22956-1-lihao2018.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/21/20 9:25 AM, Konstantin Komarov wrote:
+On Fri, Aug 21, 2020 at 09:59:53AM +0800, Hao Li wrote:
+> Currently, DCACHE_REFERENCED prevents the dentry with DCACHE_DONTCACHE
+> set from being killed, so the corresponding inode can't be evicted. If
+> the DAX policy of an inode is changed, we can't make policy changing
+> take effects unless dropping caches manually.
+> 
+> This patch fixes this problem and flushes the inode to disk to prepare
+> for evicting it.
 
+This looks intriguing and I really hope this helps but I don't think this will
+guarantee that the state changes immediately will it?
 
-> +/* O:BAG:BAD:(A;OICI;FA;;;WD) */
+Do you have a test case which fails before and passes after?  Perhaps one of
+the new xfstests submitted by Xiao?
 
-What is that notation, please?
+Ira
 
-> +const u8 s_dir_security[] __aligned(8) = {
-> +	0x01, 0x00, 0x04, 0x80, 0x30, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 0x00,
-> +	0x00, 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00, 0x02, 0x00, 0x1C, 0x00,
-> +	0x01, 0x00, 0x00, 0x00, 0x00, 0x03, 0x14, 0x00, 0xFF, 0x01, 0x1F, 0x00,
-> +	0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
-> +	0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05, 0x20, 0x00, 0x00, 0x00,
-> +	0x20, 0x02, 0x00, 0x00, 0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05,
-> +	0x20, 0x00, 0x00, 0x00, 0x20, 0x02, 0x00, 0x00,
-> +};
-
-
-
-> +
-> +	if (0x10000 * sizeof(short) != inode->i_size) {
-> +		err = -EINVAL;
-> +		goto out;
-> +	}
-
-Please put constants on the right side of compares.
-
-
-> +MODULE_AUTHOR("Konstantin   Komarov");
-
-Drop one space in the name.
-
-
-thanks.
--- 
-~Randy
-
+> 
+> Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
+> ---
+>  fs/dcache.c | 3 ++-
+>  fs/inode.c  | 2 +-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index ea0485861d93..486c7409dc82 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -796,7 +796,8 @@ static inline bool fast_dput(struct dentry *dentry)
+>  	 */
+>  	smp_rmb();
+>  	d_flags = READ_ONCE(dentry->d_flags);
+> -	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED;
+> +	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED
+> +			| DCACHE_DONTCACHE;
+>  
+>  	/* Nothing to do? Dropping the reference was all we needed? */
+>  	if (d_flags == (DCACHE_REFERENCED | DCACHE_LRU_LIST) && !d_unhashed(dentry))
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 72c4c347afb7..5218a8aebd7f 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1632,7 +1632,7 @@ static void iput_final(struct inode *inode)
+>  	}
+>  
+>  	state = inode->i_state;
+> -	if (!drop) {
+> +	if (!drop || (drop && (inode->i_state & I_DONTCACHE))) {
+>  		WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
+>  		spin_unlock(&inode->i_lock);
+>  
+> -- 
+> 2.28.0
+> 
+> 
+> 
