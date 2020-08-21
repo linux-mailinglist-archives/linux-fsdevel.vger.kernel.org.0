@@ -2,58 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87D6F24D546
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 14:44:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B8A624D54E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 14:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728516AbgHUMoc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 08:44:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56156 "EHLO
+        id S1728656AbgHUMqU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 08:46:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725935AbgHUMoa (ORCPT
+        with ESMTP id S1727837AbgHUMqT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 08:44:30 -0400
+        Fri, 21 Aug 2020 08:46:19 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7DCCC061385;
-        Fri, 21 Aug 2020 05:44:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC5E5C061386;
+        Fri, 21 Aug 2020 05:46:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XCvj4UvtI8iBMYfCEtiYykY+vZaMey49dX7k5fdz2Jg=; b=KC6s2PS1ionfOA78d78PGDMnaB
-        FDAIx5puFcJZXfcSERkREBH32q+nIbrgXoHUzQQEgU1mBAbPrkfGAJlvSAlsHMLfsGLxHKbXbFmEP
-        gQXHWs+AmSm4PDeKFmIKpshtm6F/h43HCmxteQyPaOBa5/+HCYjwoyOrQM+mIuNN//3M0F/OUqakg
-        D5ehuGs8JM6e9288weor4jAwKwv6dpmTsN8ydizOAXMOTD99eJ4lrt8PUN7Nfzhbcx0Nsietjmgrm
-        YC8qNAgchLRkivAdnJFy3zUaMJg3/HTdoRrTkJEj6SdTlU0D5n8ZNl9qAW6mEDPoh5077C8BmCfk1
-        48nuulxg==;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=Vi3dyhpPSVNnBr48T2kaEEh7Qye4Ig7BISvbjHctEw0=; b=QGRpdUwhth/vk2kfzS4El5ylUD
+        BkM9qk50FGJKptB4nhswOJaFrLDBMi9mG0s5ej6AgGVhkfhvVO0Fvkav9WvB1c0xezl7xAZmdWvXd
+        c8R88e5DcqFIkvzSHbRCCZWxXjmLqT07FU5slIVOcC341Bx292RRrXd6XL7mWYu7sauFZi/WzIDNh
+        YaTbsADUP9MuAKWNuU8N1jckWml7VqzWECPW4c2qskYhgiqPZ7yFpVAvrohjQ3kMkUs0DfcnedVr2
+        dBXGC9CVs46HsbPXb4kFggl9ycKDGEWTqbo8AMmgxA+tRJuaUt+//27YAYIxOh5IkognmSvm/Ekcd
+        630iIJ1A==;
 Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k96PA-0002Yc-2R; Fri, 21 Aug 2020 12:44:24 +0000
-Date:   Fri, 21 Aug 2020 13:44:24 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Yu Kuai <yukuai3@huawei.com>
-Cc:     hch@infradead.org, darrick.wong@oracle.com, david@fromorbit.com,
+        id 1k96Qt-0002hM-TT; Fri, 21 Aug 2020 12:46:12 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Yu Kuai <yukuai3@huawei.com>, hch@infradead.org,
+        darrick.wong@oracle.com, david@fromorbit.com,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, yi.zhang@huawei.com
-Subject: Re: [RFC PATCH V4] iomap: add support to track dirty state of sub
- pages
-Message-ID: <20200821124424.GQ17456@casper.infradead.org>
-References: <20200821123306.1658495-1-yukuai3@huawei.com>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH 1/3] iomap: Use kzalloc to allocate iomap_page
+Date:   Fri, 21 Aug 2020 13:46:04 +0100
+Message-Id: <20200821124606.10165-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.3
+In-Reply-To: <20200821124424.GQ17456@casper.infradead.org>
+References: <20200821124424.GQ17456@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200821123306.1658495-1-yukuai3@huawei.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 21, 2020 at 08:33:06PM +0800, Yu Kuai wrote:
-> changes from v3:
->  - add IOMAP_STATE_ARRAY_SIZE
->  - replace set_bit / clear_bit with bitmap_set / bitmap_clear
->  - move iomap_set_page_dirty() out of 'iop->state_lock'
->  - merge iomap_set/clear_range_dirty() and iomap_iop_clear/clear_range_dirty()
+We can skip most of the initialisation, although spinlocks still
+need explicit initialisation as architectures may use a non-zero
+value to indicate unlocked.  The comment is no longer useful as
+attach_page_private() handles the refcount now.
 
-I'm still working on the iomap parts of the THP series (fixing up
-invalidatepage right now), but here are some of the relevant bits (patch
-series to follow)
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/iomap/buffered-io.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 13d5cdab8dcd..639d54a4177e 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -49,16 +49,8 @@ iomap_page_create(struct inode *inode, struct page *page)
+ 	if (iop || i_blocks_per_page(inode, page) <= 1)
+ 		return iop;
+ 
+-	iop = kmalloc(sizeof(*iop), GFP_NOFS | __GFP_NOFAIL);
+-	atomic_set(&iop->read_count, 0);
+-	atomic_set(&iop->write_count, 0);
++	iop = kzalloc(sizeof(*iop), GFP_NOFS | __GFP_NOFAIL);
+ 	spin_lock_init(&iop->uptodate_lock);
+-	bitmap_zero(iop->uptodate, PAGE_SIZE / SECTOR_SIZE);
+-
+-	/*
+-	 * migrate_page_move_mapping() assumes that pages with private data have
+-	 * their count elevated by 1.
+-	 */
+ 	attach_page_private(page, iop);
+ 	return iop;
+ }
+-- 
+2.28.0
 
