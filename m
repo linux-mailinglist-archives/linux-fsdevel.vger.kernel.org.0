@@ -2,111 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E83D124D7AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 16:49:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CFE124D7B9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 16:54:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbgHUOty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 10:49:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47540 "EHLO
+        id S1727084AbgHUOyN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 10:54:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726542AbgHUOtu (ORCPT
+        with ESMTP id S1727006AbgHUOyL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 10:49:50 -0400
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF17AC061575
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 07:49:50 -0700 (PDT)
-Received: by mail-il1-x144.google.com with SMTP id t13so1594546ile.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 07:49:50 -0700 (PDT)
+        Fri, 21 Aug 2020 10:54:11 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CBCEC061573
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 07:54:11 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id b2so1661602edw.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Aug 2020 07:54:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cxwNFKr8C4GxHwwirPDVBn5gDOlxq9kCMJ9FIhV/7GY=;
-        b=Tnzci+Hswj7hMTc7vA1mGeQReoVIr0yEMvnV9YEI5ZNO8EHi/EbODtgB9IZ8O9e0r4
-         5331vH21P4cphP7O8x7DdidRe968kxztCR0wbRdQ90uXkHhFT2ZRndHIEd3zEwpOlUxf
-         QZQ9oFO/A1IF8zu3FRLvxEqDaK6oW4Et07rabfta86yhpF5RHI90s1nuNQn1o6aGpgZV
-         6dfBuucnLTzNOK1OgSpfAA8AdxMGWMlPlaxsE5B9zKCqy6CSOjIU10aRS80g9IFdlWOM
-         o76/Fvv/zvyzxhhP5bsQ97og1Fcl2CciSIwyYBzZvEg5saoRAbQ8DXZ/L4UxgVmzZQTm
-         SvfQ==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P8JqJ7RITgIzurlji1LRRQPoo/Vlt5Iw5NORag7G42Q=;
+        b=PF5nQ0yhXqC6cdiS0QHJ/VuBLy6pv4wFad2TzgpHPe0m9/AbF0MrCgH7ZOwn839T+y
+         ppa1BeyMv/4m6dQWPy5WScRu3mg4ShtrpD90yzFBkHvYXjWaDXOr3+0X49jXWBs4g6zL
+         D2vhDiA+A+4B1xcKULWc9V5Jv3RkCK4fDM8aA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cxwNFKr8C4GxHwwirPDVBn5gDOlxq9kCMJ9FIhV/7GY=;
-        b=mjdkv2ozrcHBaKN1lzL4Xh16aWU7LOQwp05aiY2jAquRQvt+hW/MYiu+KRgOqN44L+
-         rZrjJIw/+rNtd4IIcyuKnZEyk2QcQz3vpbh5rkBUODhcMT8z1r+a3qhwr+FR5XUKZep9
-         aLuQdCZ2kF3y3F7OfOGmflIAjdiQ3VVa1Vh06PmoKpY1MgU/8DIBSQJWsO/7MjTW1w1L
-         IFEqJadrb9OFcBSuOzoTopJldbEhzYmqyte1ccoI8J+OuNfWHSOf9qymNSpTvGNsetXl
-         tJJCu5uoHnBbciu4XBif62uGSTzKY2eEWfLrwFvyrjifJ0Z/6ZpgXOU02tkl1AmZEKUa
-         QBQw==
-X-Gm-Message-State: AOAM532awEEzUIRQSShayNnVQy4+hZykbO9cxmyCEqGNVZDHLUje3QcT
-        7Iiy7nah2iR4EIJ3RzFVz2qELg==
-X-Google-Smtp-Source: ABdhPJxsuZGimz71cVC5o58/Sc9i/i1CQIN3kGd8VVPNvdqeDBYWjghwtjziXi83vGSc+UxIgacbpA==
-X-Received: by 2002:a92:660e:: with SMTP id a14mr2868783ilc.290.1598021389768;
-        Fri, 21 Aug 2020 07:49:49 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id p20sm1331088iod.27.2020.08.21.07.49.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Aug 2020 07:49:49 -0700 (PDT)
-Subject: Re: [PATCH] iomap: Fix the write_count in iomap_add_to_ioend().
-To:     Christoph Hellwig <hch@infradead.org>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>
-Cc:     darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org, riteshh@linux.ibm.com,
-        linux-block@vger.kernel.org
-References: <20200819102841.481461-1-anju@linux.vnet.ibm.com>
- <20200821060710.GC31091@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9bf274cb-15ec-f389-42b3-b8469402af3d@kernel.dk>
-Date:   Fri, 21 Aug 2020 08:49:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P8JqJ7RITgIzurlji1LRRQPoo/Vlt5Iw5NORag7G42Q=;
+        b=OvY3ZF/1DKTYFVtFKArl84kp7WXdYyGWzp2BLsUqLh75upxOCvwg5XT8FLfqWh8i1I
+         DRHXqP7AGYD/4EQzG8Y4bAuDUsfE+9Lfrut0Dck3Yg8oJXrSs0IanX9I4U0G+hN5TEBl
+         pQ/GfvvT5a7JlxkUnBloGKFforU9ITJlwyt5daOXns/lMrbYZZFtTau/SlEMGuN50BD9
+         olxLfOAElrwG0AefSTPPzDVJkKBKDu5ShxESIBplfKjQ0cLzzdtbh9Bgv4trlmqr0FgV
+         7aSj1jtgEPwJ329Y0z/SNioBLd1PU+0AL0BbImKqcKz16K4mb2G9YsaAe9QJIB6N1vzJ
+         1xaA==
+X-Gm-Message-State: AOAM531i8jUhkvYoWjQERxCvBE0uL6Ze8hpmVKlOwl1Tf52ju/orNoSj
+        4KKoCqX03uwXUDW+j+lY1LCr0unJCNRltWqeMoDjMg==
+X-Google-Smtp-Source: ABdhPJzomExR6LM2W4ELJOVvg6ukzO5x+V45QeLrj3TBnzmA85z0YuQMA4zUCx2tCu3Da0aCaHiEmk+COKW3nbZ/omE=
+X-Received: by 2002:aa7:d5d0:: with SMTP id d16mr3099450eds.212.1598021649997;
+ Fri, 21 Aug 2020 07:54:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200821060710.GC31091@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200724183812.19573-1-vgoyal@redhat.com> <20200724183812.19573-4-vgoyal@redhat.com>
+In-Reply-To: <20200724183812.19573-4-vgoyal@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 21 Aug 2020 16:53:59 +0200
+Message-ID: <CAJfpeguvMvc9rXChGrSuQsO9__Ln7exozmMWVY_1B8DrsV4rpQ@mail.gmail.com>
+Subject: Re: [PATCH 3/5] fuse: Add a flag FUSE_SETATTR_KILL_PRIV
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtio-fs-list <virtio-fs@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/21/20 12:07 AM, Christoph Hellwig wrote:
-> On Wed, Aug 19, 2020 at 03:58:41PM +0530, Anju T Sudhakar wrote:
->> From: Ritesh Harjani <riteshh@linux.ibm.com>
->>
->> __bio_try_merge_page() may return same_page = 1 and merged = 0. 
->> This could happen when bio->bi_iter.bi_size + len > UINT_MAX. 
->> Handle this case in iomap_add_to_ioend() by incrementing write_count.
->> This scenario mostly happens where we have too much dirty data accumulated. 
->>
->> w/o the patch we hit below kernel warning,
-> 
-> I think this is better fixed in the block layer rather than working
-> around the problem in the callers.  Something like this:
-> 
-> diff --git a/block/bio.c b/block/bio.c
-> index c63ba04bd62967..ef321cd1072e4e 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -879,8 +879,10 @@ bool __bio_try_merge_page(struct bio *bio, struct page *page,
->  		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
->  
->  		if (page_is_mergeable(bv, page, len, off, same_page)) {
-> -			if (bio->bi_iter.bi_size > UINT_MAX - len)
-> +			if (bio->bi_iter.bi_size > UINT_MAX - len) {
-> +				*same_page = false;
->  				return false;
-> +			}
->  			bv->bv_len += len;
->  			bio->bi_iter.bi_size += len;
->  			return true;
-> 
+On Fri, Jul 24, 2020 at 8:38 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> With handle_killpriv_v2, server needs to kill suid/sgid on truncate (setattr)
+> but it does not know if caller has CAP_FSETID or not. So like write, send
+> killpriv information in fuse_setattr_in and add a flag FUSE_SETATTR_KILL_PRIV.
+>
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
 
-This looks good to me.
+[...]
 
--- 
-Jens Axboe
+> +/**
+> + * Setattr flags
+> + * FUSE_SETATTR_KILL_PRIV: kill suid and sgid bits. sgid should be killed
+> + * only if group execute bit (S_IXGRP) is set. Meant to be used together
+> + * with FUSE_HANDLE_KILLPRIV_V2.
+> + */
+> +#define FUSE_SETATTR_KILL_PRIV (1 << 0)
 
+Why not a FATTR_KILL_PRIV set in fuse_setattr_in.valid?
+
+Thanks,
+Miklos
