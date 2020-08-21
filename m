@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C469E24DB25
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 18:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A66324DB50
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 18:38:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbgHUQey (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 12:34:54 -0400
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:40009 "EHLO
+        id S1728325AbgHUQiC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 12:38:02 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:58546 "EHLO
         us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727798AbgHUQd3 (ORCPT
+        by vger.kernel.org with ESMTP id S1728615AbgHUQhq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 12:33:29 -0400
+        Fri, 21 Aug 2020 12:37:46 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1598027601;
+        s=mimecast20190719; t=1598027865;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=71SIGIW8765UhVrcPeIzz5zqD/0d0YwU7JAOQ+5WuGI=;
-        b=SDgorumrUkaPFP5Brf8UPMG2f4cpJNYAGl32rYaJlsz/RzDTPVy2I2NPUPVVIsi/wzudRU
-        7y8U3x8Y/R8wQz2cz+OxnXNlO8K53YYunNcOQTbZlCZkhyq7+lcl8yYVLAoayLETfzjDeo
-        5H7On6d+DCeH4Bl+hfJfohgKeD/uYvQ=
+        bh=0lJhV0AuRAshzZDQ8A0+XwDhVR+Tf/PekK/bov5/xP8=;
+        b=CcEqUJhOI9VtfHgu5KpB1E2K5LXENw7tPB67QpYPih6WNGDc36bgk6JAcahySQ+gj2W7P7
+        SRmXjdG3H+jfXIVEP7lpgs55Wj3V7YHQYzqTZJ8NEcC/fGH7uBQQ0cQ9yHSDRDDOH/D0y6
+        z5xxiIHu9+nAJjv7+a1ySb9KOKdX1bE=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-323-w4fSooo0OPSM6XZNNgiiDQ-1; Fri, 21 Aug 2020 12:33:17 -0400
-X-MC-Unique: w4fSooo0OPSM6XZNNgiiDQ-1
+ us-mta-515-I75JHwW-NbqN86TNKQBV8Q-1; Fri, 21 Aug 2020 12:37:41 -0400
+X-MC-Unique: I75JHwW-NbqN86TNKQBV8Q-1
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A75128799EF;
-        Fri, 21 Aug 2020 16:33:13 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 837A780733B;
+        Fri, 21 Aug 2020 16:37:36 +0000 (UTC)
 Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.15])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 7E8FF10013C4;
-        Fri, 21 Aug 2020 16:33:02 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with SMTP id 5BE651014186;
+        Fri, 21 Aug 2020 16:37:26 +0000 (UTC)
 Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 21 Aug 2020 18:33:13 +0200 (CEST)
-Date:   Fri, 21 Aug 2020 18:33:01 +0200
+        oleg@redhat.com; Fri, 21 Aug 2020 18:37:36 +0200 (CEST)
+Date:   Fri, 21 Aug 2020 18:37:25 +0200
 From:   Oleg Nesterov <oleg@redhat.com>
 To:     Suren Baghdasaryan <surenb@google.com>
 Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
@@ -58,9 +58,8 @@ Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
 Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
  __set_oom_adj when not necessary
-Message-ID: <20200821163300.GB19445@redhat.com>
-References: <20200820133454.ch24kewh42ax4ebl@wittgenstein>
- <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
+Message-ID: <20200821163724.GC19445@redhat.com>
+References: <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
  <20200820140054.fdkbotd4tgfrqpe6@wittgenstein>
  <637ab0e7-e686-0c94-753b-b97d24bb8232@i-love.sakura.ne.jp>
  <87k0xtv0d4.fsf@x220.int.ebiederm.org>
@@ -69,10 +68,11 @@ References: <20200820133454.ch24kewh42ax4ebl@wittgenstein>
  <87r1s0txxe.fsf@x220.int.ebiederm.org>
  <20200821111558.GG4546@redhat.com>
  <CAJuCfpF_GhTy5SCjxqyqTFUrJNaw3UGJzCi=WSCXfqPAcbThYg@mail.gmail.com>
+ <CAJuCfpG06_KLhQyg9N84bRQOdvG27uAZ2oBDEQPR-OnZeNJd1w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJuCfpF_GhTy5SCjxqyqTFUrJNaw3UGJzCi=WSCXfqPAcbThYg@mail.gmail.com>
+In-Reply-To: <CAJuCfpG06_KLhQyg9N84bRQOdvG27uAZ2oBDEQPR-OnZeNJd1w@mail.gmail.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -80,40 +80,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+again, don't really understand...
+
 On 08/21, Suren Baghdasaryan wrote:
 >
-> On Fri, Aug 21, 2020 at 4:16 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> >         bool probably_has_other_mm_users(tsk)
-> >         {
-> >                 return  atomic_read_acquire(&tsk->mm->mm_users) >
-> >                         atomic_read(&tsk->signal->live);
-> >         }
-> >
-> > The barrier implied by _acquire ensures that if we race with the exiting
-> > task and see the result of exit_mm()->mmput(mm), then we must also see
-> > the result of atomic_dec_and_test(signal->live).
-> >
-> > Either way, if we want to fix the race with clone(CLONE_VM) we need other
-> > changes.
->
-> The way I understand this condition in __set_oom_adj() sync logic is
-> that we would be ok with false positives (when we loop unnecessarily)
-> but we can't tolerate false negatives (when oom_score_adj gets out of
-> sync).
+> Actually, reviewing again and considering where list_add_tail_rcu is
+> happening, maybe the race with clone(CLONE_VM) does not introduce
+> false negatives.
+
+I think it does... Whatever we check, mm_users or MMF_PROC_SHARED,
+the task can do clone(CLONE_VM) right after the check.
+
+> However a false negative I think will happen when a
+> task shares mm with another task and also has an additional thread.
+> Shared mm will increment mm_users without adding to signal->live
 
 Yes,
 
-> With the clone(CLONE_VM) race not addressed we are allowing
-> false negatives and IMHO that's not acceptable because it creates a
-> possibility for userspace to get an inconsistent picture. When
-> developing the patch I did think about using (p->mm->mm_users >
-> p->signal->nr_threads) condition and had to reject it due to that
-> reason.
+> and
+> the additional thread will advance signal->live without adding to
+> mm_users.
 
-Not sure I understand... I mean, the test_bit(MMF_PROC_SHARED) you propose
-is equally racy and we need copy_oom_score() at the end of copy_process()
-either way?
+No, please note that CLONE_THREAD requires CLONE_VM.
 
 Oleg.
 
