@@ -2,138 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B342F24DF05
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 20:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 120BB24DF22
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Aug 2020 20:11:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbgHUSAG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Aug 2020 14:00:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:44756 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726716AbgHUSAE (ORCPT
+        id S1727106AbgHUSLj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Aug 2020 14:11:39 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49422 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726057AbgHUSLj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Aug 2020 14:00:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1598032803;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hfd87vPX7imdizr5awfMVB6fuuvJvnhJKohnbOuYDr0=;
-        b=I/ansN58pe3Vt1diNIWBtbOZmFy3SrMyGNagcONimsBQiz0BvXic0eWJO6bMI45qeak8gM
-        XkoBZZ6U0ZcXpJrV7q+43WD/vaiRJpBrP/RF/LEDuYwVwc+PNnj4jX0PfQpSA/yqrsHRF6
-        7pgdFWzlumwgO9jT0bTILd7dYmJjVQs=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-272-tl_K1AAsMAWrM8DCAs5e7Q-1; Fri, 21 Aug 2020 13:59:58 -0400
-X-MC-Unique: tl_K1AAsMAWrM8DCAs5e7Q-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 77D781006706;
-        Fri, 21 Aug 2020 17:59:54 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.40.192.15])
-        by smtp.corp.redhat.com (Postfix) with SMTP id D451F7E318;
-        Fri, 21 Aug 2020 17:59:44 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 21 Aug 2020 19:59:54 +0200 (CEST)
-Date:   Fri, 21 Aug 2020 19:59:43 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tim Murray <timmurray@google.com>, mingo@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
-        christian@kellner.me, areber@redhat.com,
-        Shakeel Butt <shakeelb@google.com>, cyphar@cyphar.com,
-        adobriyan@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        gladkov.alexey@gmail.com, Michel Lespinasse <walken@google.com>,
-        daniel.m.jordan@oracle.com, avagin@gmail.com,
-        bernd.edlinger@hotmail.de,
-        John Johansen <john.johansen@canonical.com>,
-        laoar.shao@gmail.com, Minchan Kim <minchan@kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>
-Subject: Re: [PATCH 1/1] mm, oom_adj: don't loop through tasks in
- __set_oom_adj when not necessary
-Message-ID: <20200821175943.GD19445@redhat.com>
-References: <dcb62b67-5ad6-f63a-a909-e2fa70b240fc@i-love.sakura.ne.jp>
- <20200820140054.fdkbotd4tgfrqpe6@wittgenstein>
- <637ab0e7-e686-0c94-753b-b97d24bb8232@i-love.sakura.ne.jp>
- <87k0xtv0d4.fsf@x220.int.ebiederm.org>
- <CAJuCfpHsjisBnNiDNQbm8Yi92cznaptiXYPdc-aVa+_zkuaPhA@mail.gmail.com>
- <20200820162645.GP5033@dhcp22.suse.cz>
- <87r1s0txxe.fsf@x220.int.ebiederm.org>
- <20200821111558.GG4546@redhat.com>
- <CAJuCfpF_GhTy5SCjxqyqTFUrJNaw3UGJzCi=WSCXfqPAcbThYg@mail.gmail.com>
- <20200821163300.GB19445@redhat.com>
+        Fri, 21 Aug 2020 14:11:39 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07LI1dKk193635;
+        Fri, 21 Aug 2020 14:11:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=8yvEI0g2E8xG0SJMCtpKCuoNmNMpLdEw9u+yzYkMfTk=;
+ b=VIJtt3CGuTG5sUiykNJVYhLxmszHb9Wdm6J2EYpLcqgQckwJbpZSCOXpbpZTT7qfDYek
+ khVO23HbKGkVeXfY7yvjblSsk5ons8MFYnUE+xfiKmPxrpQy2O1Uzm3t5KljAQGAS3Bi
+ JVDBAhSLcbgn8Q/8zPHOpshUdkZ+z1NKbejUMvQAwJmfqD5Cb+GA0p96cn0q/15zvROB
+ kz1jz3TOeBsOPq4XU9WgyJQDHOHnllQQ5W6D/cbf6KeGIc+tarqDXE2nurzt4C1Xegzr
+ zNxTx2jCdFLnGYmixgTjm89ER17TSvq+cH5qFnlKiQjfTRrfDAjs6hfREYhPvOx3uYJk 1Q== 
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3327xucbrh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Aug 2020 14:11:31 -0400
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07LIB7c5003354;
+        Fri, 21 Aug 2020 18:11:28 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma05fra.de.ibm.com with ESMTP id 3304bujubn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 Aug 2020 18:11:28 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07LI9ucF56230152
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 Aug 2020 18:09:56 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 767124C044;
+        Fri, 21 Aug 2020 18:11:25 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C639E4C04A;
+        Fri, 21 Aug 2020 18:11:23 +0000 (GMT)
+Received: from localhost.localdomain.com (unknown [9.199.33.217])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 21 Aug 2020 18:11:23 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-block@vger.kernel.org
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, axboe@kernel.dk,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Shivaprasad G Bhat <sbhat@linux.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>
+Subject: [PATCH 1/1] block: Set same_page to false in __bio_try_merge_page if ret is false
+Date:   Fri, 21 Aug 2020 23:41:17 +0530
+Message-Id: <e50582833c897c1a51a676d7726d1380a3e5a678.1598032711.git.riteshh@linux.ibm.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200821163300.GB19445@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-21_08:2020-08-21,2020-08-21 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 mlxscore=0 phishscore=0 adultscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 mlxlogscore=981 lowpriorityscore=0
+ bulkscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008210166
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08/21, Oleg Nesterov wrote:
->
-> On 08/21, Suren Baghdasaryan wrote:
-> >
-> > On Fri, Aug 21, 2020 at 4:16 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> > >
-> > >         bool probably_has_other_mm_users(tsk)
-> > >         {
-> > >                 return  atomic_read_acquire(&tsk->mm->mm_users) >
-> > >                         atomic_read(&tsk->signal->live);
-> > >         }
-> > >
-> > > The barrier implied by _acquire ensures that if we race with the exiting
-> > > task and see the result of exit_mm()->mmput(mm), then we must also see
-> > > the result of atomic_dec_and_test(signal->live).
-> > >
-> > > Either way, if we want to fix the race with clone(CLONE_VM) we need other
-> > > changes.
-> >
-> > The way I understand this condition in __set_oom_adj() sync logic is
-> > that we would be ok with false positives (when we loop unnecessarily)
-> > but we can't tolerate false negatives (when oom_score_adj gets out of
-> > sync).
->
-> Yes,
->
-> > With the clone(CLONE_VM) race not addressed we are allowing
-> > false negatives and IMHO that's not acceptable because it creates a
-> > possibility for userspace to get an inconsistent picture. When
-> > developing the patch I did think about using (p->mm->mm_users >
-> > p->signal->nr_threads) condition and had to reject it due to that
-> > reason.
->
-> Not sure I understand... I mean, the test_bit(MMF_PROC_SHARED) you propose
-> is equally racy and we need copy_oom_score() at the end of copy_process()
-> either way?
+If we hit the UINT_MAX limit of bio->bi_iter.bi_size and so we are anyway
+not merging this page in this bio, then it make sense to make same_page
+also as false before returning.
 
-On a second thought I agree that probably_has_other_mm_users() above can't
-work ;) Compared to the test_bit(MMF_PROC_SHARED) check it is not _equally_
-racy, it adds _another_ race with clone(CLONE_VM).
+Without this patch, we hit below WARNING in iomap.
+This mostly happens with very large memory system and / or after tweaking
+vm dirty threshold params to delay writeback of dirty data.
 
-Suppose a single-threaded process P does
+WARNING: CPU: 18 PID: 5130 at fs/iomap/buffered-io.c:74 iomap_page_release+0x120/0x150
+ CPU: 18 PID: 5130 Comm: fio Kdump: loaded Tainted: G        W         5.8.0-rc3 #6
+ Call Trace:
+  __remove_mapping+0x154/0x320 (unreliable)
+  iomap_releasepage+0x80/0x180
+  try_to_release_page+0x94/0xe0
+  invalidate_inode_page+0xc8/0x110
+  invalidate_mapping_pages+0x1dc/0x540
+  generic_fadvise+0x3c8/0x450
+  xfs_file_fadvise+0x2c/0xe0 [xfs]
+  vfs_fadvise+0x3c/0x60
+  ksys_fadvise64_64+0x68/0xe0
+  sys_fadvise64+0x28/0x40
+  system_call_exception+0xf8/0x1c0
+  system_call_common+0xf0/0x278
 
-	clone(CLONE_VM); // creates the child C
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Reported-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+---
+[prev discussion]:- https://patchwork.kernel.org/patch/11723453/
 
-	// mm_users == 2; P->signal->live == 1;
+ block/bio.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-	clone(CLONE_THREAD | CLONE_VM);
-
-	// mm_users == 3; P->signal->live == 2;
-
-the problem is that in theory clone(CLONE_THREAD | CLONE_VM) can increment
-_both_ counters between atomic_read_acquire(mm_users) and atomic_read(live)
-in probably_has_other_mm_users() so it can observe mm_users == live == 2.
-
-Oleg.
+diff --git a/block/bio.c b/block/bio.c
+index a7366c02c9b5..675ecd81047b 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -877,8 +877,10 @@ bool __bio_try_merge_page(struct bio *bio, struct page *page,
+ 		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
+ 
+ 		if (page_is_mergeable(bv, page, len, off, same_page)) {
+-			if (bio->bi_iter.bi_size > UINT_MAX - len)
++			if (bio->bi_iter.bi_size > UINT_MAX - len) {
++				*same_page = false;
+ 				return false;
++			}
+ 			bv->bv_len += len;
+ 			bio->bi_iter.bi_size += len;
+ 			return true;
+-- 
+2.25.4
 
