@@ -2,90 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 548E424E7DA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Aug 2020 16:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ACA124E86E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Aug 2020 17:50:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbgHVOYb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Aug 2020 10:24:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39674 "EHLO
+        id S1728329AbgHVPuR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Aug 2020 11:50:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728083AbgHVOYa (ORCPT
+        with ESMTP id S1728312AbgHVPuQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Aug 2020 10:24:30 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D399C061573;
-        Sat, 22 Aug 2020 07:24:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ziVrtHuskBWF9ypal/1WBcVweEFCA3J4y+bn9Uri5QU=; b=dxPZCYC3vPECjpySRlVCFu9lj9
-        6KpchwFE5B+EPezXNGoPG+DjRa/cqSS1VIeiz+lPML/ow41KUDczTOTKL1ZJCXna2bqGSpLWD5qx1
-        fDRorEOrmoFY5XuqDObl9m7puFKnkzFgnieTCVAzHtoqVXXo8zZ1hAn4QJRxmP0JwDltahGcQUfho
-        Pquo0gCPdRm4qkascWIH7i9YSrXNgj8KC9SNftxZJpW7ZSoxfZqp+sB86OaMcLgkofQV/kV5CCMgz
-        0X81sf2z82HQQu8zV4z38yjdWKgadChBZz277Vav+mPlRSYkmNVdMpfDeaP7cPsRQqbMjJSoKi+So
-        3RHBs8Jg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1k9URK-0000V1-Kl; Sat, 22 Aug 2020 14:24:14 +0000
-Date:   Sat, 22 Aug 2020 15:24:14 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "yukuai (C)" <yukuai3@huawei.com>,
-        Gao Xiang <hsiangkao@redhat.com>, darrick.wong@oracle.com,
-        david@fromorbit.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com
-Subject: Re: [RFC PATCH V3] iomap: add support to track dirty state of sub
- pages
-Message-ID: <20200822142414.GY17456@casper.infradead.org>
-References: <20200819120542.3780727-1-yukuai3@huawei.com>
- <20200819125608.GA24051@xiangao.remote.csb>
- <43dc04bf-17bb-9f15-4f1c-dfd6c47c3fb1@huawei.com>
- <20200821061234.GE31091@infradead.org>
- <20200821133657.GU17456@casper.infradead.org>
- <20200822060345.GD17129@infradead.org>
+        Sat, 22 Aug 2020 11:50:16 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F6CC061573
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Aug 2020 08:50:15 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id x6so2422294pgx.12
+        for <linux-fsdevel@vger.kernel.org>; Sat, 22 Aug 2020 08:50:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=EjCIEmLCX91rHBKFhHTSELbJPRLp2dtv03xRAG6lAeQ=;
+        b=lv9/ziNpM7ORowPn+ba9k0adJ3frF4EWjwRB538hIndtahbTe+pUs7oJRX4XrAnZom
+         vE2odMkxNEB3phUbK2xNnEr0bWqTK53iJA2seut+fsJKs3rGcynFnIfepWzeFW3pcg5v
+         rR8hoB2ReOZ8jUZ+iK4rzkW6+mmx9kUATEBDVa6rrIv03VOt2ikrv1ZcNxTngR6swvYn
+         YYy9ZNDM0kC3LHKbeN09QDPo96aNhpA6DF0ghnlXCkDgwaAmWo0v9TgSzExv9oF2cWu+
+         nMvI8vzGMiqzrYIRlIPxKwxz/3mhHBqtfP+NmANCvEIfR3p+x4yCBSN+A+bEedeSu4Lb
+         ywTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EjCIEmLCX91rHBKFhHTSELbJPRLp2dtv03xRAG6lAeQ=;
+        b=tbKq73ADsJJcOd3FCddq55hATUhThGpCMU+skWqAp+0/HQOFei5N90Ww+FTxNEg0Z0
+         nrH0L4IVlmwNBeuWwVvcJrT420RzfszWxBqdT1uqvVxyjQnEEYc1YtzJ5b8A0ev2OijK
+         D28yghLNkpSOVkvo3sz2MElHsbldWLV64c/I9X/yTbzlKGHwUzT8Fn60t+Fl14Tkgboi
+         blVG6Y3/eGouZs2cmL1XexX2gzE2Vhxs8riehIBvHSKkUkxpfveUKcIpeMXnowH5HiZa
+         goMMGDgdFzhi9U2c0QttBYUkfk2vllZ7nIZCu9ui7SBgjvMfkxUQwts536Dy4P5zzgy2
+         l1Sg==
+X-Gm-Message-State: AOAM531r8Z8dZrQFpt5cHsFdZtYIMKYXxioec0ntF+e55aI25gIg41OD
+        7rkRR5HsjFHPStbTSCTk5H2HaA==
+X-Google-Smtp-Source: ABdhPJy3SePscUzm5798uIKgCmDiTJJkqfg3ATunPeCePcvUUFaO5CtEAhXB81W6ezZOBhFr5y640w==
+X-Received: by 2002:a63:9853:: with SMTP id l19mr5609746pgo.98.1598111414901;
+        Sat, 22 Aug 2020 08:50:14 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id g33sm4731110pgg.46.2020.08.22.08.50.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Aug 2020 08:50:14 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: Convert to use the fallthrough macro
+To:     linmiaohe <linmiaohe@huawei.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Cc:     "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <078dc0918bf34ddb8259e6dabb5394ac@huawei.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9e196408-0f39-3eb5-2cb9-d43f5d884fca@kernel.dk>
+Date:   Sat, 22 Aug 2020 09:50:12 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200822060345.GD17129@infradead.org>
+In-Reply-To: <078dc0918bf34ddb8259e6dabb5394ac@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 22, 2020 at 07:03:45AM +0100, Christoph Hellwig wrote:
-> On Fri, Aug 21, 2020 at 02:36:57PM +0100, Matthew Wilcox wrote:
-> > On Fri, Aug 21, 2020 at 07:12:34AM +0100, Christoph Hellwig wrote:
-> > > iomap sets PagePrivate if a iomap_page structure is allocated.  Right
-> > > now that means for all pages on a file system with a block size smaller
-> > > than the page size, although I hope we reduce that scope a little.
-> > 
-> > I was thinking about that.  Is there a problem where we initially allocate
-> > the page with a contiguous extent larger than the page, then later need
-> > to write the page to a pair of extents?
-> > 
-> > If we're doing an unshare operation, then we know our src and dest iomaps
-> > and can allocate the iop then.  But if we readahead, we don't necessarily
-> > know our eventual dest.  So the conditions for skipping allocating an
-> > iop are tricky to be sure we'll never need it.
-> 
-> So with the current codebase (that is without your THP work that I need
-> to re-review) the decision should be pretty easy:
-> 
->  - check if block size >= PAGE, and if yes don't allocate
->  - check if the extent fully covers the page, and if yes don't allocate
-> 
-> Now with THP we'd just need to check the thp size instead of the page
-> above and be fine, or do I miss something?
+On 8/22/20 2:11 AM, linmiaohe wrote:
+> Friendly ping :)
 
-The case I was worrying about:
+Huh, I thought I had applied this. I'll queue it up for 5.10, thanks.
 
-fill a filesystem so that free space is very fragmented
-readahead into a hole
-hole is large, don't allocate an iop
-writeback the page
-don't have an iop, can't track the write count
+-- 
+Jens Axboe
 
-I'd be fine with choosing to allocate an iop later (and indeed I do that
-as part of the THP work).  But does this scenario make you think of any
-other corner cases?
