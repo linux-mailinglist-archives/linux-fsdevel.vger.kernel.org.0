@@ -2,63 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A57624E991
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Aug 2020 22:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 731CE24E997
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Aug 2020 22:05:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726704AbgHVUCF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Aug 2020 16:02:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36030 "EHLO
+        id S1726391AbgHVUEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Aug 2020 16:04:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbgHVUCE (ORCPT
+        with ESMTP id S1725932AbgHVUEN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Aug 2020 16:02:04 -0400
-Received: from mail-oi1-x243.google.com (mail-oi1-x243.google.com [IPv6:2607:f8b0:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE95DC061573;
-        Sat, 22 Aug 2020 13:02:03 -0700 (PDT)
-Received: by mail-oi1-x243.google.com with SMTP id z22so4668213oid.1;
-        Sat, 22 Aug 2020 13:02:03 -0700 (PDT)
+        Sat, 22 Aug 2020 16:04:13 -0400
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DBAAC061573;
+        Sat, 22 Aug 2020 13:04:13 -0700 (PDT)
+Received: by mail-ot1-x344.google.com with SMTP id q9so4231017oth.5;
+        Sat, 22 Aug 2020 13:04:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:reply-to:from:date:message-id
          :subject:to:cc;
-        bh=8IiD3vUE6EEJl1AA2/turgrRFDws92XHOWsRzC5fMok=;
-        b=qTEUgJSUXzJN5AOuP9ResZi+yF29K13u1JR/YZS/osrDWTI8NfuisUZhpuUGQ+GaFL
-         TdM5Egt1DeMhmNvCDnZ8H4AbVKiO2MnAJRCeMfAdrFUChbSKF8+blPb9ev+Q7UXG1Jom
-         nQvYm45NDfJZbvmEwLF9FPn4REju4imkst4xVTo0LeDXPLQqgIhvny+8uwWwbDQ6KepL
-         i1UdmehHkeMvSxJkEBquZEYQFpY81KTuI53TJ7C6ekyMvIS7a8OpOalEZCKnYlsGDU6u
-         g308eTGQrAE/suGt+MLyCD7xfzPCQAwGXhilvmpSlTlx5tWowZWWErS/zbFCpqptSY5M
-         WMxA==
+        bh=MmBUbsV40+0aUblDPNmZSek7KpIhqCuoyTrbZcoCKns=;
+        b=Jp7brEmKSRvUqf18BGroFxaeRvLp9ugF80QHHWpEHM6GXCyA7giXzXo9UzgEZrPnqf
+         XqiH6AZoes35UcrMUY2bgG6SKbVVH2BNddYSNbxePZ0WSaN7Naf+gu3wewAOWqxvuadN
+         VrvoJUEH7DGFNfHNWur7BMeHQ7dzVHvtE9Y0jNr1LoZfMsFZ3fbqCUOYHjujD7Vx4jMy
+         N5TWThgw1EpE0hYWhD3C3XaKmQ4slpgus4/4kpGINZP1NY1JULfbns7eOf6n1968Zm+F
+         HYrQ666LRI9u457UTZOljkHFOlxIl/xdc2cIQ7kf+xL3hFHddl0ZgUtbMMRZQQJXoyXJ
+         PESA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
          :from:date:message-id:subject:to:cc;
-        bh=8IiD3vUE6EEJl1AA2/turgrRFDws92XHOWsRzC5fMok=;
-        b=lT11C1V4nafazr0UlHJy51F9oO2TvZDv1JEkZmvtgfnmSK/aANO0PEOk/w/Eog+Gm5
-         ozXKB6vjZR9pQo/J82Yi5WzIwr1HIsISd0oHCUj9d/oBWxGcyNpGiZxpH/zetes5o8gA
-         PcGs62ygsN4PzUshGVgsdhw27RAs8wtu3f3u9Ya2t1Z6OPDuw3PWTOOK8a6QCVf4jmY8
-         XiccJ59cRuvAoXoWAS+kJnMUAikqRqeHYKRCfo/8JoVZDR/4oohbY41p9URuAyAYHJp4
-         syk1THUl8woV0aSP+SS1/wvXcDu/Rs9yiJFFPSr5nuPsM1TNPif10jtB38n+OSMiWUfT
-         20Hw==
-X-Gm-Message-State: AOAM5309unT+6W4TmHV6Tliv595vVJHD1djzUvNNCwCusfbPkiZhBVJ9
-        z2Fc42gxg9tJ1mVmdtbNUoAQZ0AvThTY2MSMuspy5CDCcMd6ww==
-X-Google-Smtp-Source: ABdhPJwSYBSkAmUi4ScvQ8LQh+85txZ70bPMwFvGDP2ojBWmyBEoEuWS8WCN9YbjA7dbm9TYWjVPssOOjwxjz/UMIdo=
-X-Received: by 2002:aca:cd56:: with SMTP id d83mr5747684oig.177.1598126523142;
- Sat, 22 Aug 2020 13:02:03 -0700 (PDT)
+        bh=MmBUbsV40+0aUblDPNmZSek7KpIhqCuoyTrbZcoCKns=;
+        b=RaiLWepYGa4v+SQbQ67SPZ1yh3YIjfoS925CXEmmm/hX7dKOdmskTZDXSQsfPk3mxI
+         l3rfy0cu4OIdNK3ENoFqdnKIk8aP4sO/1tkL9qb+Ou55rN/kBL6Pauoese+jyqOuK7Ei
+         kp5BCIY/nJu+L/cd/Re67QUpsN5zr0F20Y8KbPupv3dL1zWp35GSa28e2QzpX8PlVM98
+         4SqHBdZCb3NXnVR+qrBsmWFKP2246fU67rddY26n1GYKtKm7M6Kk9iar2ViHV5pzy+3+
+         4obTS5SNuyTkAYNFQ36oLKk0Eqv3yRTcY/v+gfDnPHyo/da3WJ2gkFCFValJms3vYklY
+         3yBw==
+X-Gm-Message-State: AOAM530+wSdlj/GdbOvzkT1winae9R5706qxxuqp35VW1CDsggLTAA3H
+        Zls8tib5j87zefEU/9eDFEdshhFZAfNVwkOpcmE=
+X-Google-Smtp-Source: ABdhPJyQAQcxoRATY5x7sJAiXwg4qyYT4pt2sUCd/k5d3A5CK4uBxevymlNMEgT9w1s+W5SYLzZ/bBVVUwTXbYTacMk=
+X-Received: by 2002:a05:6830:148f:: with SMTP id s15mr6185648otq.323.1598126652663;
+ Sat, 22 Aug 2020 13:04:12 -0700 (PDT)
 MIME-Version: 1.0
 References: <159680892602.29015.6551860260436544999.stgit@warthog.procyon.org.uk>
-In-Reply-To: <159680892602.29015.6551860260436544999.stgit@warthog.procyon.org.uk>
+ <159680894741.29015.5588747939240667925.stgit@warthog.procyon.org.uk>
+In-Reply-To: <159680894741.29015.5588747939240667925.stgit@warthog.procyon.org.uk>
 Reply-To: mtk.manpages@gmail.com
 From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Date:   Sat, 22 Aug 2020 22:01:50 +0200
-Message-ID: <CAKgNAkiQ7bhvKw3jVT46AZcGDwN-PLPAdYX731a8Dcw+ZDQeaQ@mail.gmail.com>
-Subject: Re: [PATCH 1/5] Add manpage for open_tree(2)
+Date:   Sat, 22 Aug 2020 22:04:01 +0200
+Message-ID: <CAKgNAkjHcxYpzVohhJnxcHXO4s-4Ti_pNsmTZrD-CMu-EUCOoA@mail.gmail.com>
+Subject: Re: [PATCH 2/5] Add manpages for move_mount(2) and open_tree(2)
 To:     David Howells <dhowells@redhat.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         Christian Brauner <christian.brauner@ubuntu.com>,
         linux-man <linux-man@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
+        lkml <linux-kernel@vger.kernel.org>, Karel Zak <kzak@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
@@ -67,25 +68,27 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hello David,
 
-Thanks for sending these pages!
-
 On Fri, 7 Aug 2020 at 16:02, David Howells <dhowells@redhat.com> wrote:
 >
-> Add a manual page to document the open_tree() system call.
->
+> Add manual pages to document the move_mount and open_tree() system calls.
+
+Notwithstanding the title and the commit message, this patch documents
+just move_mount(). Could you revise the title and commit message for
+the next iteration please.
+
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > ---
 >
->  man2/open_tree.2 |  260 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 260 insertions(+)
->  create mode 100644 man2/open_tree.2
+>  man2/move_mount.2 |  275 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 275 insertions(+)
+>  create mode 100644 man2/move_mount.2
 >
-> diff --git a/man2/open_tree.2 b/man2/open_tree.2
+> diff --git a/man2/move_mount.2 b/man2/move_mount.2
 > new file mode 100644
-> index 000000000..a360b11a5
+> index 000000000..aae9013fa
 > --- /dev/null
-> +++ b/man2/open_tree.2
-> @@ -0,0 +1,260 @@
+> +++ b/man2/move_mount.2
+> @@ -0,0 +1,275 @@
 > +'\" t
 > +.\" Copyright (c) 2020 David Howells <dhowells@redhat.com>
 > +.\"
@@ -111,208 +114,225 @@ On Fri, 7 Aug 2020 at 16:02, David Howells <dhowells@redhat.com> wrote:
 > +.\" the source, must acknowledge the copyright and authors of this work.
 > +.\" %%%LICENSE_END
 > +.\"
-> +.TH OPEN_TREE 2 2020-08-07 "Linux" "Linux Programmer's Manual"
+> +.TH MOVE_MOUNT 2 2020-08-07 "Linux" "Linux Programmer's Manual"
 > +.SH NAME
-> +open_tree \- Pick or clone mount object and attach to fd
+> +move_mount \- Move mount objects around the filesystem topology
 > +.SH SYNOPSIS
 > +.nf
 > +.B #include <sys/types.h>
 > +.br
 
-Remove all instances of ".br" here in the SYNOPSIS. They aren't needed
-(because of the .nf above).
+Delete the previous line (".br), and the same below (twice).
 
 > +.B #include <sys/mount.h>
 > +.br
+
 > +.B #include <unistd.h>
 > +.br
 > +.BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
 > +.PP
-> +.BI "int open_tree(int " dirfd ", const char *" pathname ", unsigned int " flags );
+> +.BI "int move_mount(int " from_dirfd ", const char *" from_pathname ","
+> +.BI "               int " to_dirfd ", const char *" to_pathname ","
+> +.BI "               unsigned int " flags );
 > +.fi
 > +.PP
 > +.IR Note :
-> +There are no glibc wrappers for these system calls.
+> +There is no glibc wrapper for this system call.
 > +.SH DESCRIPTION
-> +.BR open_tree ()
-> +picks the mount object specified by the pathname and attaches it to a new file
-> +descriptor or clones it and attaches the clone to the file descriptor.  The
-> +resultant file descriptor is indistinguishable from one produced by
-> +.BR open "(2) with " O_PATH .
-> +.PP
-> +In the case that the mount object is cloned, the clone will be "unmounted" and
-> +destroyed when the file descriptor is closed if it is not otherwise mounted
-> +somewhere by calling
-> +.BR move_mount (2).
-> +.PP
-> +To select a mount object, no permissions are required on the object referred
-> +to by the path, but execute (search) permission is required on all of the
-> +directories in
-> +.I pathname
-> +that lead to the object.
-> +.PP
-> +To clone an object, however, the caller must have mount capabilities and
-> +permissions.
+> +The
+> +.BR move_mount ()
+> +call moves a mount from one place to another; it can also be used to attach an
+> +unattached mount created by
 
-Can you reword the last sentence in more detail please, explaining
-"mount capabilities and permissions".
+s/created/previously created/ ?
+
+> +.BR fsmount "() or " open_tree "() with " OPEN_TREE_CLONE .
+> +.PP
+> +If
+> +.BR move_mount ()
+> +is called repeatedly with a file descriptor that refers to a mount object,
+> +then the object will be attached/moved the first time and then moved again and
+> +again and again, detaching it from the previous mountpoint each time.
+
+s/again and again and again/repeatedly/
+
+s/mountpoint/mount point/
 
 > +.PP
-> +.BR open_tree ()
+> +To access the source mount object or the destination mountpoint, no
+> +permissions are required on the object itself, but if either pathname is
+> +supplied, execute (search) permission is required on all of the directories
+> +specified in
+> +.IR from_pathname " or " to_pathname .
+> +.PP
+> +The caller does, however, require the appropriate capabilities or permission
+> +to effect a mount.
+
+Maybe better: s/effect/create/
+
+> +.PP
+> +.BR move_mount ()
 > +uses
-> +.IR pathname ", " dirfd " and " flags
-> +to locate the target object in one of a variety of ways:
+> +.IR from_pathname ", " from_dirfd " and part of " flags
+> +to locate the mount object to be moved and
+> +.IR to_pathname ", " to_dirfd " and another part of " flags
+> +to locate the destination mountpoint.  Each lookup can be done in one of a
+> +variety of ways:
 > +.TP
 > +[*] By absolute path.
-> +.I pathname
-> +points to an absolute path and
-> +.I dirfd
-> +is ignored.  The object is looked up by name, starting from the root of the
-> +filesystem as seen by the calling process.
+> +The pathname points to an absolute path and the dirfd is ignored.  The file is
+> +looked up by name, starting from the root of the filesystem as seen by the
+> +calling process.
 > +.TP
 > +[*] By cwd-relative path.
-> +.I pathname
-> +points to a relative path and
-> +.IR dirfd " is " AT_FDCWD .
-> +The object is looked up by name, starting from the current working directory.
+> +The pathname points to a relative path and the dirfd is
+> +.IR AT_FDCWD .
+> +The file is looked up by name, starting from the current working directory.
 > +.TP
 > +[*] By dir-relative path.
-> +.I pathname
-> +points to relative path and
-> +.I dirfd
-> +indicates a file descriptor pointing to a directory.  The object is looked up
-> +by name, starting from the directory specified by
+> +The pathname points to relative path and the dirfd indicates a file descriptor
+> +pointing to a directory.  The file is looked up by name, starting from the
+> +directory specified by
 > +.IR dirfd .
 > +.TP
 > +[*] By file descriptor.
-> +.I pathname
-> +is "",
-> +.I dirfd
-> +indicates a file descriptor and
-> +.B AT_EMPTY_PATH
-> +is set in
-> +.IR flags .
-> +The mount attached to the file descriptor is queried directly.  The file
-> +descriptor may point to any type of file, not just a directory.
-> +
+> +The pathname points to "", the dirfd points directly to the mount object to
 
-Manual page source should in general never contain blank lines; these
-can cause odd renderings in various formats (e.g., PDF). Could you
-please fix this in all pages.
+Better: The pathname is an empty string ("")
 
-> +.\"______________________________________________________________
-
-Please delete the above line.
-
+> +move or the destination mount point and the appropriate
+> +.B *_EMPTY_PATH
+> +flag is set.
 > +.PP
 > +.I flags
-> +can be used to control the operation of the function and to influence a
-> +path-based lookup.  A value for
+> +can be used to influence a path-based lookup.  A value for
+
+s/A value/The value/
+
 > +.I flags
 > +is constructed by OR'ing together zero or more of the following constants:
 > +.TP
-> +.BR AT_EMPTY_PATH
+> +.BR MOVE_MOUNT_F_EMPTY_PATH
 > +.\" commit 65cfc6722361570bfe255698d9cd4dccaf47570d
 > +If
-> +.I pathname
+> +.I from_pathname
 > +is an empty string, operate on the file referred to by
-> +.IR dirfd
-> +(which may have been obtained from
-> +.BR open "(2) with"
-> +.BR O_PATH ", from " fsmount (2)
-> +or from another
-> +.BR open_tree ()).
+> +.IR from_dirfd
+> +(which may have been obtained using the
+> +.BR open (2)
+> +.B O_PATH
+> +flag or
+> +.BR open_tree ())
 > +If
-> +.I dirfd
+> +.I from_dirfd
 > +is
 > +.BR AT_FDCWD ,
 > +the call operates on the current working directory.
 > +In this case,
-> +.I dirfd
+> +.I from_dirfd
 > +can refer to any type of file, not just a directory.
 > +This flag is Linux-specific; define
 > +.B _GNU_SOURCE
 > +.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
 > +to obtain its definition.
 > +.TP
-> +.BR AT_NO_AUTOMOUNT
+> +.B MOVE_MOUNT_T_EMPTY_PATH
+> +As above, but operating on
+> +.IR to_pathname " and " to_dirfd .
+> +.TP
+> +.B MOVE_MOUNT_F_NO_AUTOMOUNT
+
+As noted by Karel in
+https://lore.kernel.org/lkml/20191202115540.gx2dcimzns7osbra@10.255.255.10/
+there is no MOVE_MOUNT_F_NO_AUTOMOUNT, but rather
+MOVE_MOUNT_F_AUTOMOUNTS. Could you revise accordingly please.
+
 > +Don't automount the terminal ("basename") component of
-
-Better: s/terminal/final/
-
-> +.I pathname
-> +if it is a directory that is an automount point.  This flag allows the
-> +automount point itself to be picked up or a mount cloned that is rooted on the
-> +automount point.  The
-> +.B AT_NO_AUTOMOUNT
-> +flag has no effect if the mount point has already been mounted over.
-> +This flag is Linux-specific; define
+> +.I from_pathname
+> +if it is a directory that is an automount point.  This allows a mount object
+> +that has an automount point at its root to be moved and prevents unintended
+> +triggering of an automount point.
+> +The
+> +.B MOVE_MOUNT_F_NO_AUTOMOUNT
+> +flag has no effect if the automount point has already been mounted over.  This
+> +flag is Linux-specific; define
 > +.B _GNU_SOURCE
 > +.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
 > +to obtain its definition.
 > +.TP
-> +.B AT_SYMLINK_NOFOLLOW
+> +.B MOVE_MOUNT_T_NO_AUTOMOUNT
+
+As noted by Karel in
+https://lore.kernel.org/lkml/20191202115540.gx2dcimzns7osbra@10.255.255.10/
+there is no MOVE_MOUNT_T_NO_AUTOMOUNT, but rather
+MOVE_MOUNT_T_AUTOMOUNTS. Could you revise accordingly please.
+
+> +As above, but operating on
+> +.IR to_pathname " and " to_dirfd .
+> +This allows an automount point to be manually mounted over.
+> +.TP
+> +.B MOVE_MOUNT_F_SYMLINKS
 > +If
-> +.I pathname
-> +is a symbolic link, do not dereference it: instead pick up or clone a mount
-> +rooted on the link itself.
+> +.I from_pathname
+> +is a symbolic link, then dereference it.  The default for
+> +.BR move_mount ()
+> +is to not follow symlinks.
 > +.TP
-> +.B OPEN_TREE_CLOEXEC
-> +Set the close-on-exec flag for the new file descriptor.  This will cause the
-> +file descriptor to be closed automatically when a process exec's.
-> +.TP
-> +.B OPEN_TREE_CLONE
-> +Rather than directly attaching the selected object to the file descriptor,
-> +clone the object, set the root of the new mount object to that point and
-> +attach the clone to the file descriptor.
-> +.TP
-> +.B AT_RECURSIVE
-> +This is only permitted in conjunction with OPEN_TREE_CLONE.  It causes the
-> +entire mount subtree rooted at the selected spot to be cloned rather than just
-> +that one mount object.
+> +.B MOVE_MOUNT_T_SYMLINKS
+> +As above, but operating on
+> +.IR to_pathname " and " to_dirfd .
 > +
-> +
-
-Remove the blank lines above please.
-
-> +.SH EXAMPLE
-
-The standard section order for manual pages (see man-pages(7)) is:
-           NAME
-           SYNOPSIS
-           DESCRIPTION
-           RETURN VALUE
-           ERRORS
-           VERSIONS
-           CONFORMING TO
-           NOTES
-           BUGS
-           EXAMPLES
-           SEE ALSO
-
-Could you move this section to just above SEE ALSO please (and retitle
-as EXAMPLES). Presumably this may need fixing in other pages too.
-
+> +.SH EXAMPLES
 > +The
-> +.BR open_tree ()
+> +.BR move_mount ()
 > +function can be used like the following:
 > +.PP
 > +.RS
 > +.nf
-> +fd1 = open_tree(AT_FDCWD, "/mnt", 0);
-> +fd2 = open_tree(fd1, "",
-> +                AT_EMPTY_PATH | OPEN_TREE_CLONE | AT_RECURSIVE);
-> +move_mount(fd2, "", AT_FDCWD, "/mnt2", MOVE_MOUNT_F_EMPTY_PATH);
+> +move_mount(AT_FDCWD, "/a", AT_FDCWD, "/b", 0);
 > +.fi
 > +.RE
 > +.PP
-> +This would attach the path point for "/mnt" to fd1, then it would copy the
-> +entire subtree at the point referred to by fd1 and attach that to fd2; lastly,
-> +it would attach the clone to "/mnt2".
+> +This would move the object mounted on "/a" to "/b".  It can also be used in
+> +conjunction with
+> +.BR open_tree "(2) or " open "(2) with " O_PATH :
+> +.PP
+> +.RS
+> +.nf
+> +fd = open_tree(AT_FDCWD, "/mnt", 0);
+> +move_mount(fd, "", AT_FDCWD, "/mnt2", MOVE_MOUNT_F_EMPTY_PATH);
+> +move_mount(fd, "", AT_FDCWD, "/mnt3", MOVE_MOUNT_F_EMPTY_PATH);
+> +move_mount(fd, "", AT_FDCWD, "/mnt4", MOVE_MOUNT_F_EMPTY_PATH);
+> +.fi
+> +.RE
+> +.PP
+> +This would attach the path point for "/mnt" to fd, then it would move the
+> +mount to "/mnt2", then move it to "/mnt3" and finally to "/mnt4".
+> +.PP
+> +It can also be used to attach new mounts:
+> +.PP
+> +.RS
+> +.nf
+> +sfd = fsopen("ext4", FSOPEN_CLOEXEC);
+> +fsconfig(sfd, FSCONFIG_SET_STRING, "source", "/dev/sda1", 0);
+> +fsconfig(sfd, FSCONFIG_SET_FLAG, "user_xattr", NULL, 0);
+> +fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> +mfd = fsmount(sfd, FSMOUNT_CLOEXEC, MOUNT_ATTR_NODEV);
+> +move_mount(mfd, "", AT_FDCWD, "/home", MOVE_MOUNT_F_EMPTY_PATH);
+> +.fi
+> +.RE
+> +.PP
+> +Which would open the Ext4 filesystem mounted on "/dev/sda1", turn on user
+> +extended attribute support and create a mount object for it.  Finally, the new
+> +mount object would be attached with
+> +.BR move_mount ()
+> +to "/home".
 > +
 > +
 
-Please remove blank lines.
+Manual page source should in general never contain blank lines; these
+can cause odd renderings in various formats (e.g., PDF). Could you
+please fix this in all pages.
 
 > +.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 > +.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -322,8 +342,7 @@ Lines like the above are rather clutter in the page source. I prefer
 not to have them. Could you remove in all pages please.
 
 > +.SH RETURN VALUE
-> +On success, the new file descriptor is returned.  On error, \-1 is returned,
-> +and
+> +On success, 0 is returned.  On error, \-1 is returned, and
 > +.I errno
 > +is set appropriately.
 > +.SH ERRORS
@@ -336,14 +355,13 @@ not to have them. Could you remove in all pages please.
 > +.BR path_resolution (7).)
 > +.TP
 > +.B EBADF
-> +.I dirfd
+> +.IR from_dirfd " or " to_dirfd
 > +is not a valid open file descriptor.
 > +.TP
 > +.B EFAULT
-> +.I pathname
-> +is NULL or
-> +.IR pathname
-> +point to a location outside the process's accessible address space.
+> +.IR from_pathname " or " to_pathname
+> +is NULL or either one point to a location outside the process's accessible
+> +address space.
 > +.TP
 > +.B EINVAL
 > +Reserved flag specified in
@@ -353,16 +371,14 @@ not to have them. Could you remove in all pages please.
 > +Too many symbolic links encountered while traversing the pathname.
 > +.TP
 > +.B ENAMETOOLONG
-> +.I pathname
+> +.IR from_pathname " or " to_pathname
 > +is too long.
 > +.TP
 > +.B ENOENT
 > +A component of
-> +.I pathname
-> +does not exist, or
-> +.I pathname
-> +is an empty string and
-> +.B AT_EMPTY_PATH
+> +.IR from_pathname " or " to_pathname
+> +does not exist, or one is an empty string and the appropriate
+> +.B *_EMPTY_PATH
 > +was not specified in
 > +.IR flags .
 > +.TP
@@ -371,35 +387,38 @@ not to have them. Could you remove in all pages please.
 > +.TP
 > +.B ENOTDIR
 > +A component of the path prefix of
-> +.I pathname
-> +is not a directory or
-> +.I pathname
-> +is relative and
-> +.I dirfd
+> +.IR from_pathname " or " to_pathname
+> +is not a directory or one or the other is relative and the appropriate
+> +.I *_dirfd
 > +is a file descriptor referring to a file other than a directory.
 > +.SH VERSIONS
-> +.BR open_tree ()
+> +.BR move_mount ()
 > +was added to Linux in kernel 4.18.
 
 The version number here is wrong. It's 5.2. I presume this needs to be
 fixed in all of the other pages.
 
 > +.SH CONFORMING TO
-> +.BR open_tree ()
+> +.BR move_mount ()
 > +is Linux-specific.
 > +.SH NOTES
 > +Glibc does not (yet) provide a wrapper for the
-> +.BR open_tree ()
+> +.BR move_mount ()
 > +system call; call it using
 > +.BR syscall (2).
+
+By the way, do you know if anything is happening for the system calls
+on the glibc side?
+
 > +.SH SEE ALSO
 > +.BR fsmount (2),
-> +.BR move_mount (2),
-> +.BR open (2)
+> +.BR fsopen (2),
+> +.BR open_tree (2)
 
 Thanks,
 
 Michael
+
 
 --
 Michael Kerrisk
