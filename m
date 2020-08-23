@@ -2,98 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18EA124ED4A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Aug 2020 15:04:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE5CF24F086
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 01:40:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726337AbgHWNEw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Aug 2020 09:04:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51764 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726257AbgHWNEv (ORCPT
+        id S1726852AbgHWXkX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Aug 2020 19:40:23 -0400
+Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:43433 "EHLO
+        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726754AbgHWXkW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Aug 2020 09:04:51 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 332A1C061573
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Aug 2020 06:04:51 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id m23so5413536iol.8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Aug 2020 06:04:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hGMvms2xVf+agxOId6Q5JQfaDwLsbkP+HKlV2az1+t4=;
-        b=lBEq/UkJ+i6FitqQl6cKqdRkGPj7VTPKPkqhYgQbGiFHSaupgfEdqdy5xDtFmfwn9S
-         P/pbVZcp4P6ds1PTdxmCrsRukBEZ3ZTZUcdADEjlxgWbWFm7IxveNTQ2t9Y4+6fK87P2
-         ucjRLw+KbyKtYLPWTmp2DTMEnNrhsd5SSg1Sh/t5B86W6a61SYvH5rFN+3YIm/u3Z3mE
-         M0gt+YQ4G8b1l5qsS8UxmQCEv++GDVR+1my7d/ihiJDB78OPb4USkZffvPPXSctMJiqI
-         T7ZlHC8Up9eP2+eK8PsN35hVhaUJIBII6OgENPt2rAuOTanycwtBtL9UR9z73b2tns0g
-         fMdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hGMvms2xVf+agxOId6Q5JQfaDwLsbkP+HKlV2az1+t4=;
-        b=qfH7wswTotVOY0DaylTKS0BIjgoXuAJuzWM03KoYU+ypaBZ9NUvWVuh97o1QVcQ4yJ
-         MMhtg/SPOHfNpd6+l+olRIxQj9Ngp1DfGNiyzdazAjkJzNn5SSVaX5MiN5Q4dY84WnQz
-         0fSO8vT+SzHCZw+NGrzWtihAPJbSFM4c+xeOivh7ciylZdIskt+SoFttcBEcOn3WoWr7
-         /cTxT3Mcv8cqBLNyvRTpscb2pxZX26o3p0FXD+pPXvndI/rvSl0J58GQtA1AniQsfqz+
-         CGo7l1EfYQKMMH0i3pRRvrp2axl6PK3hRLnnn0c/JPJV3xVSVJVPmHKkvG/9wf819lhN
-         FxRA==
-X-Gm-Message-State: AOAM530+A5zdonyiEGTUZG7lUEF/SihwUY9Pw5/rvCCWGOfWPzr0mffp
-        0KqEUqx+6gUKozKy1l05dVTHNer7sY9hmBA9uW+PsfczfcM=
-X-Google-Smtp-Source: ABdhPJznZt5/wxaFaPuiyq+abI9h7kKEGRc7AIZtG3beSeOcNLlCC9YPO0+XjGZ4m2RCat+/4cSroLGwiclF6skkETk=
-X-Received: by 2002:a05:6602:1d6:: with SMTP id w22mr1066977iot.64.1598187890506;
- Sun, 23 Aug 2020 06:04:50 -0700 (PDT)
+        Sun, 23 Aug 2020 19:40:22 -0400
+Received: from dread.disaster.area (pa49-181-146-199.pa.nsw.optusnet.com.au [49.181.146.199])
+        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id EA2D0107E4D;
+        Mon, 24 Aug 2020 09:40:07 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1k9zao-0000j3-HL; Mon, 24 Aug 2020 09:40:06 +1000
+Date:   Mon, 24 Aug 2020 09:40:06 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christian Schoenebeck <qemu_oss@crudebyte.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
+        stefanha@redhat.com, mszeredi@redhat.com, vgoyal@redhat.com,
+        gscrivan@redhat.com, dwalsh@redhat.com, chirantan@chromium.org
+Subject: Re: file forks vs. xattr (was: xattr names for unprivileged
+ stacking?)
+Message-ID: <20200823234006.GD7728@dread.disaster.area>
+References: <20200728105503.GE2699@work-vm>
+ <20200816230908.GI17456@casper.infradead.org>
+ <20200817002930.GB28218@dread.disaster.area>
+ <2859814.QYyEAd97eH@silver>
 MIME-Version: 1.0
-References: <dde082eb-b3eb-859e-b442-a65846cff6fa@mail.de> <CAOQ4uxjEm=vj5Be5VoUyB9Q+YVq=+aO_4PfXp-iEYZA7qzO1Gw@mail.gmail.com>
- <9def9581-cc09-7a79-ea27-e9b8b75bbd6a@mail.de>
-In-Reply-To: <9def9581-cc09-7a79-ea27-e9b8b75bbd6a@mail.de>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 23 Aug 2020 16:04:39 +0300
-Message-ID: <CAOQ4uxiTCKrVBCjYrBsNWjRad+Tt_cONfD-nQCBr8x=TyLb_ww@mail.gmail.com>
-Subject: Re: fanotify feature request FAN_MARK_PID
-To:     Tycho Kirchner <tychokirchner@mail.de>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2859814.QYyEAd97eH@silver>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0 cx=a_idp_d
+        a=GorAHYkI+xOargNMzM6qxQ==:117 a=GorAHYkI+xOargNMzM6qxQ==:17
+        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=7-415B0cAAAA:8
+        a=sN8XJPRm1X3ZCSLF_skA:9 a=7VcMNz9s8RdlawYE:21 a=_CcSTsZO4Aje-SqZ:21
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Any further help is appreciated.
->
+On Mon, Aug 17, 2020 at 12:37:17PM +0200, Christian Schoenebeck wrote:
+> On Montag, 17. August 2020 00:56:20 CEST Dave Chinner wrote:
+> > > That's yet another question: should xattrs and forks share the same data-
+> > > and namespace, or rather be orthogonal to each other.
+> > 
+> > Completely orthogonal. Alternate data streams are not xattrs, and
+> > xattrs are not ADS....
+> 
+> Agreed. Their key features (atomic small data vs. non-atomic large data) and 
+> their typical uses cases are probably too different for trying to stitch them 
+> somehow in an erroneous way into a shared space. Plus it would actually be 
+> beneficial if forks had their own xattrs.
+> 
+> On Montag, 17. August 2020 02:29:30 CEST Dave Chinner wrote:
+> > I'd stop calling these "forks" already, too. The user wants
+> > "alternate data streams", while a "resource fork" is an internal
+> > filesystem implementation detail used to provide ADS
+> > functionality...
+> 
+> The common terminology can certainly still be argued. I understand that from 
+> fs implementation perspective "fork" is probably ambiguous. But from public 
+> API (i.e. user space side) perspective the term "fork" does make sense, and so 
+> far I have not seen a better general term for this. Plus the ambiguous aspects 
+> on fs side are not exposed to the public side.
+> 
+> The term "alternate data stream" suggests that this is just about the raw data 
+> stream, but that's probably not what this feature will end up being limited 
+> to. E.g. I think they will have their own permissions on the long term (see 
+> below). Plus the term ADS is ATM somewhat sticky to the Microsoft universe.
 
-A patch along those line (fill in the missing pieces) looks useful to me.
-It could serve a use case where applications are using fanotify filesystem
-mark, but developer would like to limit those application's scope inside
-"system containers".
+ADS is the windows term, which is where the majority of people who
+use or want to ADS come from. Novell called the "multiple data
+streams", and solaris 9 implemented "extended attributes" (ADS)
+using inode forks. Apple allows a "data fork" (user data), "resource
+forks" (ADS) and now "named forks" which they then used to implement
+extended attributes.  Not the solaris ones, the linux style fixed
+length key-value xattrs.
 
-Perhaps an even more useful API would be FAN_FILTER_MOUNT_NS.
-FAN_FILTER_PID_NS effectively means that kernel will drop events
-that are expected to report pid 0.
-FAN_FILTER_MOUNT_NS would mean that kernel will drop events that
-are expected to report an fd, whose /proc/<pid>/fd/<fd> symlink cannot
-be resolved (it shows "/") because the file's mount is outside the scope
-of the listener's mount namespace.
+Quite frankly, the naming in this area is a complete and utter mess,
+and the only clear, unabiguous name for this feature is "alternate
+data streams". I don't care that it's something that comes from an
+MS background - if your only argument against it is "Microsoft!"
+then you're on pretty shakey ground...
 
-The burden of proof that this will be useful is still on you ;-)
+> > IOWs, with a filesystem inode fork implementation like this for ADS,
+> > all we really need is for the VFS to pass a magic command to
+> > ->lookup() to tell us to use the ADS namespace attached to the inode
+> > rather than use the primary inode type/state to perform the
+> > operation.
+> 
+> IMO starting with a minimalistic approach, in a way Solaris developers 
+> originally introduced forks, would IMO make sense for Linux as well:
 
-Thanks,
-Amir.
+<snip>
 
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -685,6 +685,11 @@ static int fanotify_handle_event(struct
-fsnotify_group *group, u32 mask,
+That's pretty much what the proposed O_ALT did, except it used a
+fully qualified path name to define the ADS to open.
 
-        pr_debug("%s: group=%p mask=%x\n", __func__, group, mask);
+> - No subforks as starting point, and hence path separator '/' inside fork 
+>   names would be prohibited initially to avoid future clashes.
 
-+       /* Interested only in events from group's pid ns */
-+       if (FAN_GROUP_FLAG(group, FAN_FILTER_PID_NS) &&
-+           !pid_nr_ns(task_pid(current), group->fanotify_data.pid_ns))
-+               return 0;
-+
-        if (fanotify_is_perm_event(mask)) {
-                /*
-                 * fsnotify_prepare_user_wait() fails if we race with mark
+Can't do that - changing the behaviour of the ADS name handling is
+effectively an on-disk filesystem format change. i.e. if we allow it
+in future kernels, then we have to mark the filesystem as "/" being
+valid so that older kernels and repair utilities won't consider this
+as invalid/corrupt and trash the ADS associated with the name.
+
+IOWs, we either support it from the start, or we never support it.
+
+> > Hence all the ADS support infrastructure is essentially dentry cache
+> > infrastructure allowing a dentry to be both a file and directory,
+> > and providing the pathname resolution that recognises an ADS
+> > redirection. Name that however you want - we've got to do an on-disk
+> > format change to support ADS, so we can tell the VFS we support ADS
+> > or not. And we have no cares about existing names in the filesystem
+> > conflicting with the ADS pathname identifier because it's a mkfs
+> > time decision. Given that special flags are needed for the openat()
+> > call to resolve an ADS (e.g. O_ALT), we know if we should parse the
+> > ADS identifier as an ADS the moment it is seen...
+> 
+> So you think there should be a built-in full qualified path name resolution to 
+> forks right from the start? E.g. like on Windows "C:\some\where\sheet.pdf:foo" 
+> -> fork "foo" of file "sheet.pdf"?
+
+No. I really don't care how the user interface works. That's for
+people who write the syscalls to argue about.
+
+What I was describing is how the internal kernel implementation -
+the interaction between the VFS and the filesystem - needs to work.
+ADS needs to be supported in some way by the VFS; if ADS are going
+to be seekable user data files, then they have to be implemented as
+path/dentry/inode tuples that a struct file can point to. IOWs,
+internally they need to be seen as first class VFS citizens, and the
+VFS needs mechanisms to tell the filesystem to look up the ADS
+namespace rather than the inode itself....
+
+> > > I don't understand why a fork would be permitted to have its own
+> > > permissions.  That makes no sense.  Silly Solaris.
+> > 
+> > I can't think of a reason why, either, but the above implementation
+> > for XFS would support it if the presentation layer allows it... :)
+> 
+> I would definitely not add this right from the start of course, but on the 
+> long term it actually does make senses for them having their own permissions, 
+> simply because there are already applications for that:
+> 
+> E.g. on some systems forks are used to tag files for security relevant issues, 
+> for instance where the file originated from (a trusted vs. untrusted source). 
+
+Key-value data like is what the security xattr namespace is for, not
+ADS....
+
+> If it was a untrusted source, the user is made aware about this circumstance 
+> by the system when attempting to open the file. In this use case the fork 
+> would probably have more restrictive permissions than the actual file.
+
+That requires opening the user data fork to walk the ADS to find
+key-value pairs that tell it it must not open the file.  We already
+have infrastructure for this sort of thing via LSMs that store their
+own private key-value data in the security xattrs namespace that
+users can't modify. If you have security permission data that is
+larger than can be stored in an xattr, then you've got bigger
+problems than a lack of ADS.
+
+OTOH, storing the merkle tree data for fsverity would be a perfect
+use for a hidden ADS stream that the user cannot see or modify. The
+current fsverity implementation is a nasty hack that stores the
+merkle tree data in the same file but hides it beyond EOF so that
+only the kernel can access it directly. That only works for a single
+non-user data stream, though, so if we wanted more file-offset based
+integrity or security data, we've got nowhere to put it.
+
+IOWs, now that I think about it, we should be allowing non-user
+per-ADS permissions to be set right from the start because I can
+think of several filesystem/kernel internal features that could make
+use of such functionality that we would want to remain hidden from
+users.
+
+> OTOH forks are used to extend existing files in non-obtrusive way. Say you 
+> have some sort of (e.g. huge) master file, and a team works on that file. Then 
+> the individual people would attach their changes solely as forks to the master 
+> file with their ownership, probably even with complex ACLs, to prevent certain 
+> users from touching (or even reading) other ones changes. In this use case the 
+> master file might be readonly for most people, while the individual forks 
+> being anywhere between more permissive or more restrictive.
+
+You're demonstrating the exact reasons why ADS have traditionally
+been considered harmful by Linux developers.  You can do all that
+with normal directories and files - you do not need ADS to implement
+a fully functional multi-user content management system.
+
+ADS does not make constructs like this simpler or easier for
+applications to implement or manage. e.g. If you use traditional
+directories and files, you don't need to modify backup applications
+and file manipulation tools to correctly copy such constructs....
+
+Keep in mind that you are not going to get universal support for ADS
+any time soon as most filesystems will require on-disk format
+changes to support them. Further, you are goign to have to wait for
+the entire OS ecosystem to grow support for ADS (e.g. cp, tar,
+rsync, file, etc) before you can actually use it sanely in
+production systems. Even if we implement kernel support right now,
+it will be years before it will be widely available and supported at
+an OS/distro level...
+
+IOWs, applications that want to do "ADS-like" stuff are going to
+have to be written for the lowest common denominator (i.e. no ADS
+support at all) for a long time yet.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
