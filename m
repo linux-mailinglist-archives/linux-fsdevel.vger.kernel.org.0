@@ -2,54 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7701F2508AE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 21:02:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43CDF2508C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 21:07:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbgHXTCa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 15:02:30 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:19347 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbgHXTCa (ORCPT
+        id S1725976AbgHXTHT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 15:07:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49118 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726529AbgHXTHR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 15:02:30 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f440e880000>; Mon, 24 Aug 2020 12:01:28 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 24 Aug 2020 12:02:30 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 24 Aug 2020 12:02:30 -0700
-Received: from [10.2.58.8] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 24 Aug
- 2020 19:02:29 +0000
-Subject: Re: [PATCH 5/5] fs/ceph: use pipe_get_pages_alloc() for pipe
-To:     Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, <linux-xfs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <ceph-devel@vger.kernel.org>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20200822042059.1805541-1-jhubbard@nvidia.com>
- <20200822042059.1805541-6-jhubbard@nvidia.com>
- <048e78f2b440820d936eb67358495cc45ba579c3.camel@kernel.org>
- <c943337b-1c1e-9c85-4ded-39931986c6a3@nvidia.com>
- <af70d334271913a6b09bfd818bc3d81eef5a19b2.camel@kernel.org>
- <20200824185400.GE17456@casper.infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <16ccf2d8-824f-8c8b-201c-95da8790c524@nvidia.com>
-Date:   Mon, 24 Aug 2020 12:02:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Mon, 24 Aug 2020 15:07:17 -0400
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4418DC061575
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 12:07:16 -0700 (PDT)
+Received: by mail-qk1-x743.google.com with SMTP id u3so8512842qkd.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 12:07:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=R75/wZTikTt0dNTcj+8KTcBIGTQfY/v0lLDNE3h5aPk=;
+        b=MBJv4eE1xnKeRqSFDQCwWlzSev2kiL+ncGq5jQOgy3izjJIYTm2Y6MEcjp0oJW0q1o
+         e/w6HCnc391P7dWRcoDJ3jDK/SxXpVvTrOdLFW5MJaECgAAQRFhck8CFlVQY901DGBKB
+         tuZqoa8mDWC1Noqpepr6FsegTPR9bZGPkNWW1lydKzDlOAJjakcwx9dgaqB5aQRhC5L4
+         OKiYG0UYQVFCAl6m0LHNp4uHq7hJ6LRiQcURlzjNBPVEpdS5FVAA0OdwK3TQnhGjopXr
+         eHtuZXhOZ3Ton4WCP1M5XmcOZDmeHoypdDZpE6uUVEecl7QA/xeLBftAwhzryUDmHWaV
+         fWPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=R75/wZTikTt0dNTcj+8KTcBIGTQfY/v0lLDNE3h5aPk=;
+        b=MvOsTvt3cTxKAn7eyYAQ5Rq0UF7pK/NYu0fIduQIN2Zz4mODg1mgcnFHBHlshS+g/3
+         y0A0P4S0uI4VkE//3hqN94pOPw8DN123U94S4pI7ZQYnrNq/Ndgw5BJ0suc0fq2ix8EQ
+         P/eGThUObAokGdsWsl6pK3rZUv0jXqmRendvNmx43MZ2GvGr0hLi2JsW9mNEg/cpZMRp
+         FtyJsfiysHrQ1NSbofeSO8nPwsqBROxlbP3zJ3ty02r8vbrHhvYv6uFEBIJZow1b7rrz
+         F/8oGWbN7eYWkmC/A2/HTh1HyD/KsUxj3b9ZZ6CUs/UGiopMWRa/iCOgRtja5B4fE766
+         G/iA==
+X-Gm-Message-State: AOAM532lz6Z9yxyl025OM179Xd7yNi8nuocgmEI1T22MWorpCZJwGGk2
+        CZyyHr/2ET9EaQ6sqQmjedhIKw==
+X-Google-Smtp-Source: ABdhPJy4J3uTjy2b5+ekxQKyEmxAWH4Mr/4vOy6XlkoSPF63/8phyu7dlNnBE88VTtGX08/XzP/j2g==
+X-Received: by 2002:a05:620a:404f:: with SMTP id i15mr6018093qko.322.1598296035271;
+        Mon, 24 Aug 2020 12:07:15 -0700 (PDT)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id d20sm10031235qkk.84.2020.08.24.12.07.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Aug 2020 12:07:14 -0700 (PDT)
+Subject: Re: [PATCH v5 3/9] fs: add RWF_ENCODED for reading/writing compressed
+ data
+To:     Omar Sandoval <osandov@osandov.com>, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+References: <cover.1597993855.git.osandov@osandov.com>
+ <9020a583581b644ae86b7c05de6a39fd5204f06d.1597993855.git.osandov@osandov.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <1ec3bd15-65b3-a258-df4c-bef4f8401b75@toxicpanda.com>
+Date:   Mon, 24 Aug 2020 15:07:13 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <20200824185400.GE17456@casper.infradead.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <9020a583581b644ae86b7c05de6a39fd5204f06d.1597993855.git.osandov@osandov.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
@@ -57,30 +75,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/24/20 11:54 AM, Matthew Wilcox wrote:
-> On Mon, Aug 24, 2020 at 02:47:53PM -0400, Jeff Layton wrote:
->> Ok, I'll plan to pick it up providing no one has issues with exporting that symbol.
+On 8/21/20 3:38 AM, Omar Sandoval wrote:
+> From: Omar Sandoval <osandov@fb.com>
 > 
-> _GPL, perhaps?
+> Btrfs supports transparent compression: data written by the user can be
+> compressed when written to disk and decompressed when read back.
+> However, we'd like to add an interface to write pre-compressed data
+> directly to the filesystem, and the matching interface to read
+> compressed data without decompressing it. This adds support for
+> so-called "encoded I/O" via preadv2() and pwritev2().
 > 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-	t=1598295688; bh=TGtHrKY9YE9vgbD3P6YUTHn7yhP+gCmFr3Z8XIdh17s=;
-	h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-	 User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-	 X-ClientProxiedBy:Content-Type:Content-Language:
-	 Content-Transfer-Encoding;
-	b=KWZ+bMZ8RXIxd4CMBL8Dn6hn0ggsojx1vJaaueo+/+Xwe0yKBa+bMZfnn1XUDWvJs
-	 KMZJ22FgEdc+HO/8Mx0JKVQsLfKj74dwj3kGjs1z0KA5Vcnx93pzd/iMXDFhClf3uz
-	 KmyGEdar0p6poBaBOlsapOb59acP6ot16rhi7ZbTch+7ErO/Rupx6VinU1A2Ydc3OP
-	 mBYXZqz35DZ/H5eqhoE84MuOFj8Ti/Wpen637pLLa5dmtXjSMRmYTQXMRygUmQXdaw
-	 g9XLuqaxKRxp2lnuoVdFK0T90Hfu/71T+S8asZZYhH9zHY2Wzhgp1VkR07ZtXmMNqI
-	 W/lB00RAVtj3Q==
+> A new RWF_ENCODED flags indicates that a read or write is "encoded". If
+> this flag is set, iov[0].iov_base points to a struct encoded_iov which
+> is used for metadata: namely, the compression algorithm, unencoded
+> (i.e., decompressed) length, and what subrange of the unencoded data
+> should be used (needed for truncated or hole-punched extents and when
+> reading in the middle of an extent). For reads, the filesystem returns
+> this information; for writes, the caller provides it to the filesystem.
+> iov[0].iov_len must be set to sizeof(struct encoded_iov), which can be
+> used to extend the interface in the future a la copy_struct_from_user().
+> The remaining iovecs contain the encoded extent.
+> 
+> This adds the VFS helpers for supporting encoded I/O and documentation
+> for filesystem support.
+> 
+> Signed-off-by: Omar Sandoval <osandov@fb.com>
 
-I looked at that, and the equivalent iov_iter_get_pages* and related stuff was
-just EXPORT_SYMBOL, so I tried to match that. But if it needs to be _GPL then
-that's fine too...
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+Thanks,
+
+Josef
