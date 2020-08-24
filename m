@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17C1B250388
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 18:46:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BAEF25035E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 18:43:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbgHXQpx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 12:45:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47078 "EHLO mail.kernel.org"
+        id S1728497AbgHXQnn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 12:43:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728581AbgHXQjV (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 12:39:21 -0400
+        id S1728078AbgHXQjk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Aug 2020 12:39:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8E0822C9F;
-        Mon, 24 Aug 2020 16:39:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07B5A22D2C;
+        Mon, 24 Aug 2020 16:39:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598287160;
-        bh=kln/52Ec7fs2A7jHa5N0CHcMCW4dKWnZEG/iLv3hCmU=;
+        s=default; t=1598287175;
+        bh=kSpiOZ09JvwacZqRMlsSvbwRzcocdmuKNSL3PB6DnFM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zgLYDsvjgwe3Jnw3zIkUlaYnkFdQacjdc4m/EPAxK9yqA1aDBR06gJlhnTEuw374H
-         A/5txNJrYL/LAG9vae78xV5O0jSUXsxw2kfqr6SvxdZycd7s/ULvC2qZZkH1jQv6Br
-         BkKnMC32t76/ZYpuG+4hc00/9wZQO1SqHc+kVzf8=
+        b=uu3hePFdJC2oJbX1XURM5MRAAdyT6RAUevCO6Bn34fOHqjffrODdIrA5KXuj6aISV
+         mJRjexCdQnOSWJLNZrQeaCaSXlsJfaOpgKE2zmWTwF1+3JDMs8uGDPSqnDvurlnWEJ
+         WL6+qPDNZhFUTLH98n6+Uw55gy/kzrEwMVpxltAM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Xianting Tian <xianting_tian@126.com>,
         Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 04/11] fs: prevent BUG_ON in submit_bh_wbc()
-Date:   Mon, 24 Aug 2020 12:39:07 -0400
-Message-Id: <20200824163914.607152-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 3/8] fs: prevent BUG_ON in submit_bh_wbc()
+Date:   Mon, 24 Aug 2020 12:39:26 -0400
+Message-Id: <20200824163931.607291-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200824163914.607152-1-sashal@kernel.org>
-References: <20200824163914.607152-1-sashal@kernel.org>
+In-Reply-To: <20200824163931.607291-1-sashal@kernel.org>
+References: <20200824163931.607291-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -129,10 +129,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/fs/buffer.c b/fs/buffer.c
-index cae7f24a0410e..9fbeddb6834a4 100644
+index a89be9741d125..52f1a60417d1d 100644
 --- a/fs/buffer.c
 +++ b/fs/buffer.c
-@@ -3250,6 +3250,15 @@ int __sync_dirty_buffer(struct buffer_head *bh, int op_flags)
+@@ -3203,6 +3203,15 @@ int __sync_dirty_buffer(struct buffer_head *bh, int op_flags)
  	WARN_ON(atomic_read(&bh->b_count) < 1);
  	lock_buffer(bh);
  	if (test_clear_buffer_dirty(bh)) {
@@ -149,10 +149,10 @@ index cae7f24a0410e..9fbeddb6834a4 100644
  		bh->b_end_io = end_buffer_write_sync;
  		ret = submit_bh(REQ_OP_WRITE, op_flags, bh);
 diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index da0cb9a7d6fdc..634c822d1dc98 100644
+index 370e4273042c5..472fa29c6f604 100644
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -4861,13 +4861,6 @@ static int ext4_commit_super(struct super_block *sb, int sync)
+@@ -4680,13 +4680,6 @@ static int ext4_commit_super(struct super_block *sb, int sync)
  	if (!sbh || block_device_ejected(sb))
  		return error;
  
