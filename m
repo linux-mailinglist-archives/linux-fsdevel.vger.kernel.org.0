@@ -2,77 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9035D24FDBB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 14:26:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F3D324FDB5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 14:25:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbgHXMZ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 08:25:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:49216 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726795AbgHXMZJ (ORCPT
+        id S1727021AbgHXMZp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 08:25:45 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:47285 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726972AbgHXMZO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 08:25:09 -0400
+        Mon, 24 Aug 2020 08:25:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1598271905;
+        s=mimecast20190719; t=1598271912;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PlDXYkMf8XCvclTdTig9DMVLeOaWXFPXZoOvIMWb/Bg=;
-        b=QOX7hFSxcv55FHfc8PL/MIQE6s8QqcASeg3+D9LkCgkUsXc//COHbBX4OLZjRNT08fMSuj
-        S1/2DTP5X6Kxn9TPvg40oS8oh45gmO1UCCc4SZLKcPRegzRslRE6HBnAkjwxpmTLXs2FKk
-        c+xsrdlrMEsBYsaopY4LQTKYiLbPVIc=
+        bh=hi1whHHeAhV121Ie5VqRINib5kFTKjdPsVRsKEDgwWg=;
+        b=MTCtZ0PWzyZOeboJMRNqAdGOv0y4TD6u4WpRE6twAR5/bkjeLcbA35UJM6Y9rqe5n0Md9O
+        DLAnHxPEo+79toRGXN8Kc5WlnfP6wiNVeeILx7aE02pydfpX2PE8vsOGIDm6IZu16zTMYB
+        Ow3fFTZ3kItECkeVzHPtv9VfvQktOng=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-54-rTfguJBhNXu0qjvWlWWvWQ-1; Mon, 24 Aug 2020 08:25:01 -0400
-X-MC-Unique: rTfguJBhNXu0qjvWlWWvWQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+ us-mta-397-ORbl5fBGN_y1HB3YkgKZhQ-1; Mon, 24 Aug 2020 08:25:08 -0400
+X-MC-Unique: ORbl5fBGN_y1HB3YkgKZhQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D3D6681F008;
-        Mon, 24 Aug 2020 12:24:59 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3C1F318A2245;
+        Mon, 24 Aug 2020 12:25:07 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 73B2F7C869;
-        Mon, 24 Aug 2020 12:24:58 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CAA9C5D9E4;
+        Mon, 24 Aug 2020 12:25:05 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 3/5] Add manpage for fspick(2)
+Subject: [PATCH 4/5] Add manpage for fsopen(2) and fsmount(2)
 From:   David Howells <dhowells@redhat.com>
 To:     mtk.manpages@gmail.com, viro@zeniv.linux.org.uk
 Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
         linux-man@vger.kernel.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Mon, 24 Aug 2020 13:24:57 +0100
-Message-ID: <159827189767.306468.1803062787718957199.stgit@warthog.procyon.org.uk>
+Date:   Mon, 24 Aug 2020 13:25:05 +0100
+Message-ID: <159827190508.306468.12755090833140558156.stgit@warthog.procyon.org.uk>
 In-Reply-To: <159827188271.306468.16962617119460123110.stgit@warthog.procyon.org.uk>
 References: <159827188271.306468.16962617119460123110.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a manual page to document the fspick() system call.
+Add a manual page to document the fsopen() and fsmount() system calls.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
- man2/fspick.2 |  180 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 180 insertions(+)
- create mode 100644 man2/fspick.2
+ man2/fsmount.2 |    1 
+ man2/fsopen.2  |  245 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 246 insertions(+)
+ create mode 100644 man2/fsmount.2
+ create mode 100644 man2/fsopen.2
 
-diff --git a/man2/fspick.2 b/man2/fspick.2
+diff --git a/man2/fsmount.2 b/man2/fsmount.2
 new file mode 100644
-index 000000000..72bf645dd
+index 000000000..2bf59fc3e
 --- /dev/null
-+++ b/man2/fspick.2
-@@ -0,0 +1,180 @@
++++ b/man2/fsmount.2
+@@ -0,0 +1 @@
++.so man2/fsopen.2
+diff --git a/man2/fsopen.2 b/man2/fsopen.2
+new file mode 100644
+index 000000000..1d1bba238
+--- /dev/null
++++ b/man2/fsopen.2
+@@ -0,0 +1,245 @@
 +'\" t
 +.\" Copyright (c) 2020 David Howells <dhowells@redhat.com>
 +.\"
@@ -98,9 +107,9 @@ index 000000000..72bf645dd
 +.\" the source, must acknowledge the copyright and authors of this work.
 +.\" %%%LICENSE_END
 +.\"
-+.TH FSPICK 2 2020-08-24 "Linux" "Linux Programmer's Manual"
++.TH FSOPEN 2 2020-08-07 "Linux" "Linux Programmer's Manual"
 +.SH NAME
-+fspick \- Select filesystem for reconfiguration
++fsopen, fsmount \- Filesystem parameterisation and mount creation
 +.SH SYNOPSIS
 +.nf
 +.B #include <sys/types.h>
@@ -108,59 +117,86 @@ index 000000000..72bf645dd
 +.B #include <unistd.h>
 +.BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
 +.PP
-+.BI "int fspick(int " dirfd ", const char *" pathname ", unsigned int " flags );
++.BI "int fsopen(const char *" fsname ", unsigned int " flags );
++.PP
++.BI "int fsmount(int " fd ", unsigned int " flags ", unsigned int " mount_attrs );
 +.fi
 +.PP
 +.IR Note :
-+There is no glibc wrapper for this system call.
++There are no glibc wrappers for these system calls.
 +.SH DESCRIPTION
 +.PP
-+.BR fspick ()
-+creates a new filesystem configuration context within the kernel and attaches a
-+pre-existing superblock to it so that it can be reconfigured (similar to
-+.BR mount (8)
-+with the "-o remount" option).  The configuration context is marked as being in
-+reconfiguration mode and attached to a file descriptor, which is returned to
-+the caller.  The file descriptor can be marked close-on-exec by setting
-+.B FSPICK_CLOEXEC
++.BR fsopen ()
++creates a blank filesystem configuration context within the kernel for the
++filesystem named in the
++.I fsname
++parameter, puts it into creation mode and attaches it to a file descriptor,
++which it then returns.  The file descriptor can be marked close-on-exec by
++setting
++.B FSOPEN_CLOEXEC
 +in
 +.IR flags .
 +.PP
-+The target is whichever superblock backs the object determined by
-+.IR dfd ", " pathname " and " flags .
-+The following can be set in
-+.I flags
-+to control the pathwalk to that object:
-+.TP
-+.B FSPICK_SYMLINK_NOFOLLOW
-+Don't follow symbolic links in the final component of the path.
-+.TP
-+.B FSPICK_NO_AUTOMOUNT
-+Don't follow automounts in the final component of the path.
-+.TP
-+.B FSPICK_EMPTY_PATH
-+Allow an empty string to be specified as the pathname.  This allows
-+.I dirfd
-+to specify the target mount exactly.
-+.PP
-+After calling fspick(), the file descriptor should be passed to the
++After calling fsopen(), the file descriptor should be passed to the
 +.BR fsconfig (2)
-+system call, using that to specify the desired changes to filesystem and
-+security parameters.
++system call, using that to specify the desired filesystem and security
++parameters.
 +.PP
 +When the parameters are all set, the
 +.BR fsconfig ()
 +system call should then be called again with
-+.B FSCONFIG_CMD_RECONFIGURE
-+as the command argument to effect the reconfiguration.
++.B FSCONFIG_CMD_CREATE
++as the command argument to effect the creation.
++.RS
 +.PP
-+After the reconfiguration has taken place, the context is wiped clean (apart
-+from the superblock attachment, which remains) and can be reused to make
-+another reconfiguration.
++.BR "[!]\ NOTE" :
++Depending on the filesystem type and parameters, this may rather share an
++existing in-kernel filesystem representation instead of creating a new one.
++In such a case, the parameters specified may be discarded or may overwrite the
++parameters set by a previous mount - at the filesystem's discretion.
++.RE
 +.PP
 +The file descriptor also serves as a channel by which more comprehensive error,
 +warning and information messages may be retrieved from the kernel using
 +.BR read (2).
++.PP
++Once the creation command has been successfully run on a context, the context
++will not accept further configuration.  At
++this point,
++.BR fsmount ()
++should be called to create a mount object.
++.PP
++.BR fsmount ()
++takes the file descriptor returned by
++.BR fsopen ()
++and creates a mount object for the filesystem root specified there.  The
++attributes of the mount object are set from the
++.I mount_attrs
++parameter.  The attributes specify the propagation and mount restrictions to
++be applied to accesses through this mount.
++.PP
++The mount object is then attached to a new file descriptor that looks like one
++created by
++.BR open "(2) with " O_PATH " or " open_tree (2).
++This can be passed to
++.BR move_mount (2)
++to attach the mount object to a mountpoint, thereby completing the process.
++.PP
++The file descriptor returned by fsmount() is marked close-on-exec if
++FSMOUNT_CLOEXEC is specified in
++.IR flags .
++.PP
++After fsmount() has completed, the context created by fsopen() is reset and
++moved to reconfiguration state, allowing the new superblock to be
++reconfigured.  See
++.BR fspick (2)
++for details.
++.PP
++To use either of these calls, the caller requires the appropriate privilege
++(Linux: the
++.B CAP_SYS_ADMIN
++capability).
++.PP
 +.SS Message Retrieval Interface
 +The context file descriptor may be queried for message strings at any time by
 +calling
@@ -177,33 +213,37 @@ index 000000000..72bf645dd
 +\fB"w <message>"\fP
 +An warning message string was logged.
 +.PP
-+Messages are removed from the queue as they're read and the queue has a limited
-+depth of 8 messages, so it's possible for some to get lost.
++Messages are removed from the queue as they're read.
 +.SH RETURN VALUE
-+On success, the function returns a file descriptor.  On error, \-1 is returned,
-+and
++On success, both functions return a file descriptor.  On error, \-1 is
++returned, and
 +.I errno
 +is set appropriately.
 +.SH ERRORS
-+The error values given below result from filesystem type independent errors.
-+Additionally, each filesystem type may have its own special errors and its own
-+special behavior.  See the Linux kernel source code for details.
++The error values given below result from filesystem type independent
++errors.
++Each filesystem type may have its own special errors and its
++own special behavior.
++See the Linux kernel source code for details.
 +.TP
-+.B EACCES
-+A component of a path was not searchable.
-+(See also
-+.BR path_resolution (7).)
++.B EBUSY
++The context referred to by
++.I fd
++is not in the right state to be used by
++.BR fsmount ().
 +.TP
 +.B EFAULT
-+.I pathname
-+points outside the user address space.
++One of the pointer arguments points outside the user address space.
 +.TP
 +.B EINVAL
 +.I flags
-+includes an undefined value.
++had an invalid flag set.
 +.TP
-+.B ELOOP
-+Too many links encountered during pathname resolution.
++.B EINVAL
++.I mount_attrs,
++includes invalid
++.BR MOUNT_ATTR_*
++flags.
 +.TP
 +.B EMFILE
 +The system has too many open files to create more.
@@ -211,12 +251,10 @@ index 000000000..72bf645dd
 +.B ENFILE
 +The process has too many open files to create more.
 +.TP
-+.B ENAMETOOLONG
-+A pathname was longer than
-+.BR MAXPATHLEN .
-+.TP
-+.B ENOENT
-+A pathname was empty or had a nonexistent component.
++.B ENODEV
++The filesystem
++.I fsname
++is not available in the kernel.
 +.TP
 +.B ENOMEM
 +The kernel could not allocate sufficient memory to complete the call.
@@ -227,31 +265,67 @@ index 000000000..72bf645dd
 +These functions are Linux-specific and should not be used in programs intended
 +to be portable.
 +.SH VERSIONS
-+.BR fsopen "(), " fsmount "() and " fspick ()
++.BR fsopen "(), and " fsmount ()
 +were added to Linux in kernel 5.2.
++.SH NOTES
++Glibc does not (yet) provide a wrapper for the
++.BR fsopen "() or " fsmount "()"
++system calls; call them using
++.BR syscall (2).
 +.SH EXAMPLES
-+To illustrate the process, here's an example whereby this can be used to
-+reconfigure a filesystem:
++To illustrate the process, here's an example whereby this can be used to mount
++an ext4 filesystem on /dev/sdb1 onto /mnt.
 +.PP
 +.in +4n
 +.nf
-+sfd = fspick(AT_FDCWD, "/mnt", FSPICK_NO_AUTOMOUNT | FSPICK_CLOEXEC);
++sfd = fsopen("ext4", FSOPEN_CLOEXEC);
 +fsconfig(sfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
-+fsconfig(sfd, FSCONFIG_SET_STRING, "user_xattr", "false", 0);
-+fsconfig(sfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
++fsconfig(sfd, FSCONFIG_SET_STRING, "source", "/dev/sdb1", 0);
++fsconfig(sfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
++fsconfig(sfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
++fsconfig(sfd, FSCONFIG_SET_FLAG, "user_attr", NULL, 0);
++fsconfig(sfd, FSCONFIG_SET_FLAG, "iversion", NULL, 0);
++fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
++mfd = fsmount(sfd, FSMOUNT_CLOEXEC, MS_RELATIME);
++move_mount(mfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
 +.fi
 +.in
 +.PP
-+.SH NOTES
-+Glibc does not (yet) provide a wrapper for the
-+.BR fspick "()"
-+system call; call it using
-+.BR syscall (2).
++Here, an ext4 context is created first and attached to sfd.  The context is
++then told where its source will be, given a bunch of options and a superblock
++record object is then created.  Then fsmount() is called to create a mount
++object and
++.BR move_mount (2)
++is called to attach it to its intended mountpoint.
++.PP
++And here's an example of mounting from an NFS server and setting a Smack
++security module label on it too:
++.PP
++.in +4n
++.nf
++sfd = fsopen("nfs", 0);
++fsconfig(sfd, FSCONFIG_SET_STRING, "source", "example.com:/pub", 0);
++fsconfig(sfd, FSCONFIG_SET_STRING, "nfsvers", "3", 0);
++fsconfig(sfd, FSCONFIG_SET_STRING, "rsize", "65536", 0);
++fsconfig(sfd, FSCONFIG_SET_STRING, "wsize", "65536", 0);
++fsconfig(sfd, FSCONFIG_SET_STRING, "smackfsdef", "foolabel", 0);
++fsconfig(sfd, FSCONFIG_SET_FLAG, "rdma", NULL, 0);
++fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
++mfd = fsmount(sfd, 0, MS_NODEV);
++move_mount(mfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
++.fi
++.in
++.PP
 +.SH SEE ALSO
 +.BR mountpoint (1),
 +.BR fsconfig (2),
-+.BR fsopen (2),
++.BR fspick (2),
++.BR move_mount (2),
++.BR open_tree (2),
++.BR umount (2),
++.BR mount_namespaces (7),
 +.BR path_resolution (7),
-+.BR mount (8)
++.BR mount (8),
++.BR umount (8)
 
 
