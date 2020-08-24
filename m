@@ -2,85 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5D1F2506EE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 19:53:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E19E2506F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 19:54:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbgHXRxA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 13:53:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37406 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbgHXRw7 (ORCPT
+        id S1726610AbgHXRyJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 13:54:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:40567 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726303AbgHXRyI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 13:52:59 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85A45C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 10:52:57 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id w186so2806764pgb.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 10:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ExK6h875XRkPE90KxNaGMmtXIM7ebA5ZK9qq6tdNI7E=;
-        b=W43gIjy2iVlSFE6s/rsvlXc+XkxM1ufu/lrnaTka+pmKF/VDGR18Q8r5pgolvAqzgu
-         x+x6SOfoKwGphXpxAJxzcv19qXP0smiLO3ccT74HMxduC33/P6lKHdBupUeO43RDoPip
-         7kTwv6SL9rffuOVvgbcv9PIW93tfyBnUrjQOPChDekONI8f8DHeQLTGIXK/23FWgksay
-         UTY3fqulv+PcEhniR/VyB1UYVNr+0igiFDW2fHoq+2Z1U42pyB1+fgwH2WAw5eNNCLKy
-         u6uUJo3NjUpEj6vcMEy1qzhJp/RM+8p0xxHQA4jTKMFwDHiExHlTVeuH+La3mjFypAdn
-         x4TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ExK6h875XRkPE90KxNaGMmtXIM7ebA5ZK9qq6tdNI7E=;
-        b=OPMo512497tOSN8JSmqMc5AFIme+wRD7zev1qqldFySJMXZ+BEO5iVgIYw8IvvyHs/
-         sXpduhtlZLA89gZ38aWMwdSIWwKK84exNBq6+wFWYB0OBs1+3Q3+EYJUUsTDA3sA5xuk
-         PhDLW3Grg+ZKilhVT5qU4vfY0eOM9qdEyfwaEKQDoowQOFf+YJ9jclfHrdMi5DpHFZgt
-         O+jKpwoayhiUrRMBVHgBGzaRcLOtATXmHZmejq1yTiC1g1PWoeTl7EzwsGfXv0Bt1kdj
-         f2glnipK0bQIcCM+A1rpJ65REaaotdgaHgjDjEyfTo2xaq40465vEEBwXa9oQ/0pgTpT
-         B6Hg==
-X-Gm-Message-State: AOAM532P4gy77CjiDIKUDUG9p9y+wS6UnqxHyO9Yq62kxryetS9c4SjB
-        ZyiHDdITP85EmbvYlLt5jbw1p9OQBeK5Wg==
-X-Google-Smtp-Source: ABdhPJwEbYlmxku/QCzk4/iWMYilwIp2WWbTZoLYX6nMUnKNWofS8oumMhTEsNGRcLUDwbzKjn/E6Q==
-X-Received: by 2002:a62:7d0b:: with SMTP id y11mr4638199pfc.262.1598291575550;
-        Mon, 24 Aug 2020 10:52:55 -0700 (PDT)
-Received: from exodia.localdomain ([2601:602:8b80:8e0::c6ee])
-        by smtp.gmail.com with ESMTPSA id y4sm12485207pff.44.2020.08.24.10.52.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2020 10:52:54 -0700 (PDT)
-Date:   Mon, 24 Aug 2020 10:52:53 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 8/9] btrfs: send: send compressed extents with encoded
- writes
-Message-ID: <20200824175253.GA193404@exodia.localdomain>
-References: <cover.1597994106.git.osandov@osandov.com>
- <8eeed3db43c3c31f4596051897578e481d6cda17.1597994106.git.osandov@osandov.com>
- <6585ccb9-3528-e451-bb31-ffdd186b13ec@toxicpanda.com>
+        Mon, 24 Aug 2020 13:54:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598291647;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ef4R5O5Cq7LZWsF/vmaYxvTJ7WpiMWWuCBWCNUUsdH0=;
+        b=exZhBBQuH9czr5ZykM5TicEW1la/JGCjJMdSCqwioNW1GANGdIudoNWGM8jMWxnVx5SqAf
+        U/Y5Sh+XN+gsFvPcVEeaxQofNPBKoZnmChihu8pfhPsjcq84GJcIxmAKRVc9TsZEA/S4RT
+        YSJHA/JVNU/xbfl60M3zMNPIP8E6Lqw=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-415-VqlurWbUNcmfBK7sxFhF-Q-1; Mon, 24 Aug 2020 13:54:05 -0400
+X-MC-Unique: VqlurWbUNcmfBK7sxFhF-Q-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D02EA101963C;
+        Mon, 24 Aug 2020 17:54:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2BD2360BF1;
+        Mon, 24 Aug 2020 17:54:02 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200824165802.GB408760@erythro.dev.benboeckel.internal>
+References: <20200824165802.GB408760@erythro.dev.benboeckel.internal> <20200807160531.GA1345000@erythro.dev.benboeckel.internal> <159681277616.35436.11229310534842613599.stgit@warthog.procyon.org.uk> <329586.1598282852@warthog.procyon.org.uk>
+To:     me@benboeckel.net
+Cc:     dhowells@redhat.com, mtk.manpages@gmail.com,
+        torvalds@linux-foundation.org, keyrings@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] Add a manpage for watch_queue(7)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6585ccb9-3528-e451-bb31-ffdd186b13ec@toxicpanda.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <348447.1598291641.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 24 Aug 2020 18:54:01 +0100
+Message-ID: <348448.1598291641@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 01:32:47PM -0400, Josef Bacik wrote:
-> On 8/21/20 3:39 AM, Omar Sandoval wrote:
-> > From: Omar Sandoval <osandov@fb.com>
-> > 
-> > Now that all of the pieces are in place, we can use the ENCODED_WRITE
-> > command to send compressed extents when appropriate.
-> > 
-> > Signed-off-by: Omar Sandoval <osandov@fb.com>
-> 
-> This one doesn't apply cleanly to misc-next, the ctree.h and inode.c chunks
-> all fail, and the last hunk of the send stuff doesn't apply.  Thanks,
-> 
-> Josef
+Ben Boeckel <me@benboeckel.net> wrote:
 
-Looks like a few patches just went in that conflict with this. I'll
-rebase for the next version, but I also have this in a git branch in the
-meantime: https://github.com/osandov/linux/tree/btrfs-send-encoded-v1
+> > One loss message.  I set a flag on the last slot in the pipe ring to s=
+ay that
+> > message loss occurred, but there's insufficient space to store a count=
+er
+> > without making the slot larger (and I really don't want to do that).
+> > =
+
+> > Note that every slot in the pipe ring has such a flag, so you could,
+> > theoretically, get a loss message after every normal message that you =
+read
+> > out.
+> =
+
+> Ah, so a "you lost something" is just a flag on the next event that does
+> make it into the queue? I read it as a whole message existed indicating
+> that data was lost. Not sure of the best wording here.
+
+No.  That flag is internal.  It causes read() to fabricate a message and
+insert it into the user buffer after the flagged message has been copied o=
+ver.
+
+> > bit 0 is 2^0 in this case.  I'm not sure how better to describe it.
+> =
+
+> OK, so the bits are in native-endian order in the enclosing bytes. But C
+> just doesn't have a set ABI for bitfields (AFAIK), so I guess it's
+> "whatever GCC does" in practice?
+
+Hard to say - powerpc and s390 have bit 0 as the MSB:-/
+
+But "& (1 << 0)" gets you 2^0, whatever the CPU book says.
+
+David
+
