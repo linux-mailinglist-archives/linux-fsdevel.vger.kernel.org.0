@@ -2,74 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8661C24FE42
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 14:57:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A877C24FFB7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 16:20:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbgHXM5E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 08:57:04 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:47083 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726799AbgHXM5A (ORCPT
+        id S1726051AbgHXOUx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 10:20:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60664 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbgHXOUx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 08:57:00 -0400
-Received: by mail-lf1-f66.google.com with SMTP id v12so4209177lfo.13;
-        Mon, 24 Aug 2020 05:56:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rmefo9JeNKbiRxEroXLrRSeRCr+DW21/6Xw4UwzMQoc=;
-        b=XcKMfPCEpXGeYjpqTmoaXolEKE/Ivw/H1eykj8pfM7ZYKbv2kf93GuTy0GlPL5r7tf
-         mhNYlITtlA2qU1TzVpRoN/STVT6I4Bix+G6hbbQ524s2bINamWMzscCB11E5wRojTv41
-         xacrMeFKBgS7cpfwZgaekoo2V4UYjxNVpdiZAJc4D7xfMIylJ4nmgX3pK7kfMYRlUYFU
-         5HWMdarsdfFS27PSN0p3fe2V4hI8za2O586oUwFmEnyu8SZ5S4wXGikHyA6KWLEHtTVa
-         nkwPX6VDGtEw6VAfa3Sa3G6UGAyqgWSPWpfZImhodl/xMiJ0UtU+j+kNibsTYNB8VucV
-         2hsw==
-X-Gm-Message-State: AOAM530qxg7LlFbAjSUznbp4I7dlfCBUxJ6WftbS8YsakrLVrGXC5tOv
-        3wMAJJTGlmkc1+ezw2rLgeI=
-X-Google-Smtp-Source: ABdhPJxtnD6qvH6S/v6pUQKAXjJ3kPM7Was6MUf+d493WDabRGlk5LdXUSSZL6wSpamAK3++ZnAtrA==
-X-Received: by 2002:ac2:46d4:: with SMTP id p20mr2560894lfo.109.1598273817247;
-        Mon, 24 Aug 2020 05:56:57 -0700 (PDT)
-Received: from localhost.localdomain ([213.87.147.111])
-        by smtp.googlemail.com with ESMTPSA id z18sm2171906lji.107.2020.08.24.05.56.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2020 05:56:56 -0700 (PDT)
-From:   Denis Efremov <efremov@linux.com>
-Cc:     Denis Efremov <efremov@linux.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] namei: use current_fsuid() in may_follow_link()
-Date:   Mon, 24 Aug 2020 15:56:32 +0300
-Message-Id: <20200824125632.487331-1-efremov@linux.com>
-X-Mailer: git-send-email 2.26.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        Mon, 24 Aug 2020 10:20:53 -0400
+Received: from sym2.noone.org (sym2.noone.org [IPv6:2a01:4f8:120:4161::3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19D20C061573;
+        Mon, 24 Aug 2020 07:20:51 -0700 (PDT)
+Received: by sym2.noone.org (Postfix, from userid 1002)
+        id 4BZvRg5Lbbzvjc1; Mon, 24 Aug 2020 16:20:47 +0200 (CEST)
+From:   Tobias Klauser <tklauser@distanz.ch>
+To:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH bpf] bpf, sysctl: let bpf_stats_handler take a kernel pointer buffer
+Date:   Mon, 24 Aug 2020 16:20:47 +0200
+Message-Id: <20200824142047.22043-1-tklauser@distanz.ch>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Modify may_follow_link() to use current_fsuid()
+Commit 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
+changed ctl_table.proc_handler to take a kernel pointer. Adjust the
+signature of bpf_stats_handler to match ctl_table.proc_handler which
+fixes the following sparse warning:
 
-Signed-off-by: Denis Efremov <efremov@linux.com>
+kernel/sysctl.c:226:49: warning: incorrect type in argument 3 (different address spaces)
+kernel/sysctl.c:226:49:    expected void *
+kernel/sysctl.c:226:49:    got void [noderef] __user *buffer
+kernel/sysctl.c:2640:35: warning: incorrect type in initializer (incompatible argument 3 (different address spaces))
+kernel/sysctl.c:2640:35:    expected int ( [usertype] *proc_handler )( ... )
+kernel/sysctl.c:2640:35:    got int ( * )( ... )
+
+Fixes: 32927393dc1c ("sysctl: pass kernel pointers to ->proc_handler")
+Cc: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Tobias Klauser <tklauser@distanz.ch>
 ---
- fs/namei.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sysctl.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index e99e2a9da0f7..1a47c9d8ce13 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -958,7 +958,7 @@ static inline int may_follow_link(struct nameidata *nd, const struct inode *inod
- 		return 0;
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 287862f91717..09e70ee2332e 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -204,8 +204,7 @@ static int max_extfrag_threshold = 1000;
  
- 	/* Allowed if owner and follower match. */
--	if (uid_eq(current_cred()->fsuid, inode->i_uid))
-+	if (uid_eq(current_fsuid(), inode->i_uid))
- 		return 0;
- 
- 	/* Allowed if parent directory not sticky and world-writable. */
+ #if defined(CONFIG_BPF_SYSCALL) && defined(CONFIG_SYSCTL)
+ static int bpf_stats_handler(struct ctl_table *table, int write,
+-			     void __user *buffer, size_t *lenp,
+-			     loff_t *ppos)
++			     void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	struct static_key *key = (struct static_key *)table->data;
+ 	static int saved_val;
 -- 
-2.26.2
+2.27.0
 
