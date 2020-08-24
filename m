@@ -2,191 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4316C25007B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 17:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7B22250059
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 17:04:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbgHXPKI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 11:10:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39688 "EHLO
+        id S1726354AbgHXPEd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 11:04:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727029AbgHXPIh (ORCPT
+        with ESMTP id S1726026AbgHXPE0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 11:08:37 -0400
+        Mon, 24 Aug 2020 11:04:26 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5993AC061798;
-        Mon, 24 Aug 2020 07:55:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C3D0C0617A9;
+        Mon, 24 Aug 2020 08:04:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=wD3WKtFt1cnznRgdSUY1WyUqGEQPEbuG+Sb3tBG4EoM=; b=l/Qk/h0H2fjqi6K2zYdHPAKr12
-        d6PzknXLBGxZ/gT7/Eu1anApPwE6pY3qW4VqmbGLIBj6NQ6X931vhSuTyFR+idWNrg98/skHqAlQm
-        GDLGfyFw0//Eka3eMNkkdR0yVgNhf0MZqMekWfiAwzg2WUnPKM/VYKHOQ2V7e5tMwXlqrWQ5vynvl
-        Yl01RbK/AIX5fm8VwjQn3QWFdM9hiW72ZMzaAv4HhyBuYt0S86OiRYNRlTNXws7j/RWoQAXCA8Tsj
-        anISLBlS6GUBVN1zFkZmQsh9fl1jv3WLZRz6piJFC3e/mxW3Ig5F9vbXRMj/187Cgw8j8z8+quAWD
-        +neMTvag==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kADsR-0002mn-NG; Mon, 24 Aug 2020 14:55:15 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] iomap: Change calling convention for zeroing
-Date:   Mon, 24 Aug 2020 15:55:10 +0100
-Message-Id: <20200824145511.10500-10-willy@infradead.org>
-X-Mailer: git-send-email 2.21.3
-In-Reply-To: <20200824145511.10500-1-willy@infradead.org>
-References: <20200824145511.10500-1-willy@infradead.org>
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=8CP6fVQFmATmTA1mY6X4BjyYws+1260yHBdv8vP3vaA=; b=abBFOKCuZv5f3di1oL2KpM+NYX
+        3jL/ZHpavzavy6HHSEvGScySN4B2OLgWxbltw14zWrUpj7tQFvq2IlvmFiLgtzkhTcycrFXioZVCj
+        jVUGq4nLATCW0S1bNtYkidrzspSdwR8K60jIsr0RPBF2cxijXTBLeOJ1WeOMZSp/vBHi+UpQV85/0
+        5fSNqFHc+ZTkoHT8XmdxHNDlmHH8fdzjWJF/uE49Z8OYVBbH348GA0dQ8c7yT06WZcSIL7cdyySc8
+        SAu7lKtuxV8m9AJo5nGSa8Hw5lYXnAqpy8p0CTJuO4czS5S6jQgEEHkR8bD5CEjMjb9QrJeMOK2Wd
+        iZalW7Yg==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kAE1B-0003Nv-An; Mon, 24 Aug 2020 15:04:17 +0000
+Date:   Mon, 24 Aug 2020 16:04:17 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org
+Subject: Re: [PATCH] iomap: Fix the write_count in iomap_add_to_ioend().
+Message-ID: <20200824150417.GA12258@infradead.org>
+References: <20200819102841.481461-1-anju@linux.vnet.ibm.com>
+ <20200820231140.GE7941@dread.disaster.area>
+ <20200821044533.BBFD1A405F@d06av23.portsmouth.uk.ibm.com>
+ <20200821215358.GG7941@dread.disaster.area>
+ <20200822131312.GA17997@infradead.org>
+ <20200824142823.GA295033@bfoster>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200824142823.GA295033@bfoster>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pass the full length to iomap_zero() and dax_iomap_zero(), and have
-them return how many bytes they actually handled.  This is preparatory
-work for handling THP, although it looks like DAX could actually take
-advantage of it if there's a larger contiguous area.
+On Mon, Aug 24, 2020 at 10:28:23AM -0400, Brian Foster wrote:
+> Do I understand the current code (__bio_try_merge_page() ->
+> page_is_mergeable()) correctly in that we're checking for physical page
+> contiguity and not necessarily requiring a new bio_vec per physical
+> page?
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/dax.c               | 13 ++++++-------
- fs/iomap/buffered-io.c | 33 +++++++++++++++------------------
- include/linux/dax.h    |  3 +--
- 3 files changed, 22 insertions(+), 27 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 95341af1a966..f2b912cb034e 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1037,18 +1037,18 @@ static vm_fault_t dax_load_hole(struct xa_state *xas,
- 	return ret;
- }
- 
--int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
--		   struct iomap *iomap)
-+loff_t dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
- {
- 	sector_t sector = iomap_sector(iomap, pos & PAGE_MASK);
- 	pgoff_t pgoff;
- 	long rc, id;
- 	void *kaddr;
- 	bool page_aligned = false;
--
-+	unsigned offset = offset_in_page(pos);
-+	unsigned size = min_t(u64, PAGE_SIZE - offset, length);
- 
- 	if (IS_ALIGNED(sector << SECTOR_SHIFT, PAGE_SIZE) &&
--	    IS_ALIGNED(size, PAGE_SIZE))
-+	    (size == PAGE_SIZE))
- 		page_aligned = true;
- 
- 	rc = bdev_dax_pgoff(iomap->bdev, sector, PAGE_SIZE, &pgoff);
-@@ -1058,8 +1058,7 @@ int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
- 	id = dax_read_lock();
- 
- 	if (page_aligned)
--		rc = dax_zero_page_range(iomap->dax_dev, pgoff,
--					 size >> PAGE_SHIFT);
-+		rc = dax_zero_page_range(iomap->dax_dev, pgoff, 1);
- 	else
- 		rc = dax_direct_access(iomap->dax_dev, pgoff, 1, &kaddr, NULL);
- 	if (rc < 0) {
-@@ -1072,7 +1071,7 @@ int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
- 		dax_flush(iomap->dax_dev, kaddr + offset, size);
- 	}
- 	dax_read_unlock(id);
--	return 0;
-+	return size;
- }
- 
- static loff_t
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 7f618ab4b11e..2dba054095e8 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -901,11 +901,13 @@ iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
- }
- EXPORT_SYMBOL_GPL(iomap_file_unshare);
- 
--static int iomap_zero(struct inode *inode, loff_t pos, unsigned offset,
--		unsigned bytes, struct iomap *iomap, struct iomap *srcmap)
-+static loff_t iomap_zero(struct inode *inode, loff_t pos, u64 length,
-+		struct iomap *iomap, struct iomap *srcmap)
- {
- 	struct page *page;
- 	int status;
-+	unsigned offset = offset_in_page(pos);
-+	unsigned bytes = min_t(u64, PAGE_SIZE - offset, length);
- 
- 	status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap, srcmap);
- 	if (status)
-@@ -917,38 +919,33 @@ static int iomap_zero(struct inode *inode, loff_t pos, unsigned offset,
- 	return iomap_write_end(inode, pos, bytes, bytes, page, iomap, srcmap);
- }
- 
--static loff_t
--iomap_zero_range_actor(struct inode *inode, loff_t pos, loff_t count,
--		void *data, struct iomap *iomap, struct iomap *srcmap)
-+static loff_t iomap_zero_range_actor(struct inode *inode, loff_t pos,
-+		loff_t length, void *data, struct iomap *iomap,
-+		struct iomap *srcmap)
- {
- 	bool *did_zero = data;
- 	loff_t written = 0;
--	int status;
- 
- 	/* already zeroed?  we're done. */
- 	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
--		return count;
-+		return length;
- 
- 	do {
--		unsigned offset, bytes;
--
--		offset = offset_in_page(pos);
--		bytes = min_t(loff_t, PAGE_SIZE - offset, count);
-+		loff_t bytes;
- 
- 		if (IS_DAX(inode))
--			status = dax_iomap_zero(pos, offset, bytes, iomap);
-+			bytes = dax_iomap_zero(pos, length, iomap);
- 		else
--			status = iomap_zero(inode, pos, offset, bytes, iomap,
--					srcmap);
--		if (status < 0)
--			return status;
-+			bytes = iomap_zero(inode, pos, length, iomap, srcmap);
-+		if (bytes < 0)
-+			return bytes;
- 
- 		pos += bytes;
--		count -= bytes;
-+		length -= bytes;
- 		written += bytes;
- 		if (did_zero)
- 			*did_zero = true;
--	} while (count > 0);
-+	} while (length > 0);
- 
- 	return written;
- }
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 6904d4e0b2e0..80f17946f940 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -214,8 +214,7 @@ vm_fault_t dax_finish_sync_fault(struct vm_fault *vmf,
- int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
- int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
- 				      pgoff_t index);
--int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
--			struct iomap *iomap);
-+loff_t dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap);
- static inline bool dax_mapping(struct address_space *mapping)
- {
- 	return mapping->host && IS_DAX(mapping->host);
--- 
-2.28.0
+Yes.
 
+> With regard to Dave's earlier point around seeing excessively sized bio
+> chains.. If I set up a large memory box with high dirty mem ratios and
+> do contiguous buffered overwrites over a 32GB range followed by fsync, I
+> can see upwards of 1GB per bio and thus chains on the order of 32+ bios
+> for the entire write. If I play games with how the buffered overwrite is
+> submitted (i.e., in reverse) however, then I can occasionally reproduce
+> a ~32GB chain of ~32k bios, which I think is what leads to problems in
+> I/O completion on some systems. Granted, I don't reproduce soft lockup
+> issues on my system with that behavior, so perhaps there's more to that
+> particular issue.
+> 
+> Regardless, it seems reasonable to me to at least have a conservative
+> limit on the length of an ioend bio chain. Would anybody object to
+> iomap_ioend growing a chain counter and perhaps forcing into a new ioend
+> if we chain something like more than 1k bios at once?
+
+So what exactly is the problem of processing a long chain in the
+workqueue vs multiple small chains?  Maybe we need a cond_resched()
+here and there, but I don't see how we'd substantially change behavior.
