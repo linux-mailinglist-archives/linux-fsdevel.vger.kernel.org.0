@@ -2,191 +2,170 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CA3C2501F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 18:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 987FC250421
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 18:57:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbgHXQ0l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 12:26:41 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:6844 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725780AbgHXQ0i (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 12:26:38 -0400
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07OGE46L025482;
-        Mon, 24 Aug 2020 09:19:08 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=facebook; bh=lfSEnEBzAhVRh0b+ljkilNtl2SEkfLzNaJXp0eeDhQY=;
- b=btW4dmxdf2hk3CnnQ7PggPA+MsAl+emZ1YA9zdupSYUxXS9lX7gOLaZdDktrIFoxpRLb
- OHz69uTdcOYDCVjlTnEldVXMVPC0/cHEJUiZ3DGN/wDFNbzpeRuQyyhE9UcntSGo+hgn
- mPpKd0ggeJK5LA7lGdsy/V8GKo5uJvtVoN8= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com with ESMTP id 333k6jwjew-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 24 Aug 2020 09:19:08 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (100.104.98.9) by
- o365-in.thefacebook.com (100.104.94.229) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 24 Aug 2020 09:19:07 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=A8+bfP1vVYt2eEF3vc+XjKIQFxwEklmmMdyp0dKmo36YKuf75LDkEbTQOvZFtVLuUeKXUV6jwV6p2Azw66ljlJaoMuPIYZvitQK2Oxc7EL09bTjg/uE72qGgNfUidZiT0MEHAFq1rkwMue3r/9hQHhafRhpkhjqaUao7NAe4cV268oCWhkOX1bqD1cVPJbgGFZlQ+0TCJDAQsbxplmO7RI/wzZYK7+dRIQo3bBN1O/sAtsBA5LPqpZMZh6ZXgeSDGrF4sxndVeCtMakqjAsf9aV7Um/Z4YxsRQwHqOsvwbiLH7rrq42Z56fv3x5pS+5eb5+3kRs4ItjTTEcwgGaC5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lfSEnEBzAhVRh0b+ljkilNtl2SEkfLzNaJXp0eeDhQY=;
- b=VoGYZFUc3cDztaA9MQMVc7+Op6XdwShdxpzKWYTdMZultB5JP8dEGU30p63J/R26hOjz5BxbcAEe+9Sbuixid7A2wd3eUFZawB8uOYxMvEdezjdpn1FK9I05aJ3nr2L6NB5tRMyVs2Bz3J+yl9HxmJLCW9RXYyJ+HFx1mGzLxmy0lzvKZgqlMdCgvcXMSSluRzyMCqbXtk8MLeyWG/HP5mJGhC1lXWzDWR5YUYlwjTVrWY/2TIqCRfcXcofGXb/+DIknJJH1m20wFG747M2cAoBvx4dKlchu6LVTU8kspVeRDjFfB5pJoGxHsf9H+XzV1xJ3Um88vY/xneqlBJlhbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lfSEnEBzAhVRh0b+ljkilNtl2SEkfLzNaJXp0eeDhQY=;
- b=DPZUx1ZbHEK1lC9/BCyy8evBKt38xXP2olFDdJ4TieDF5vrQAcSvweSugvQBGnQX3rHcTS4jGm35mxxZ4aczLr6DT6+s+B1VHGgQZmHln58tO9T7KEo1DBp5od4RMDbLmEvvvyf0wWJXGfZgUVXrhyTrK1r9Bm2tYTGvi3wYWRY=
-Authentication-Results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=fb.com;
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com (2603:10b6:a03:96::24)
- by BYAPR15MB2390.namprd15.prod.outlook.com (2603:10b6:a02:8f::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.26; Mon, 24 Aug
- 2020 16:19:05 +0000
-Received: from BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::354d:5296:6a28:f55e]) by BYAPR15MB4136.namprd15.prod.outlook.com
- ([fe80::354d:5296:6a28:f55e%6]) with mapi id 15.20.3305.026; Mon, 24 Aug 2020
- 16:19:05 +0000
-Date:   Mon, 24 Aug 2020 09:19:01 -0700
-From:   Roman Gushchin <guro@fb.com>
-To:     Dan Schatzberg <schatzberg.dan@gmail.com>
-CC:     Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Chris Down <chris@chrisdown.name>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Michel Lespinasse <walken@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
-        <linux-mm@kvack.org>
-Subject: Re: [PATCH 2/4] mm: support nesting memalloc_use_memcg()
-Message-ID: <20200824161901.GA2401952@carbon.lan>
-References: <20200824153607.6595-1-schatzberg.dan@gmail.com>
- <20200824153607.6595-3-schatzberg.dan@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200824153607.6595-3-schatzberg.dan@gmail.com>
-X-ClientProxiedBy: BYAPR08CA0021.namprd08.prod.outlook.com
- (2603:10b6:a03:100::34) To BYAPR15MB4136.namprd15.prod.outlook.com
- (2603:10b6:a03:96::24)
+        id S1726661AbgHXQ54 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 12:57:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728528AbgHXQi5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 24 Aug 2020 12:38:57 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C004E22D6D;
+        Mon, 24 Aug 2020 16:38:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598287136;
+        bh=d/rZp+2wgotBX7BUEmfznwl7RmdfEyiP4zmz61J10S8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HglDehjuDHsrKbXjf1sYnXWIGl9qyT3ZnvsYAUwQwkW0F2F5I3UPZ7Q89DkVTS5FZ
+         G3AuaSlMzL3JiESCTh4lR8c4Q9rH1YC48pk6957w7FO/N0cCxSP9Ks/EmslPHbK4Cv
+         NkEIebvPYGO3y+9mSm/OhFscZxxlIRm4+SN0dpFY=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Xianting Tian <xianting_tian@126.com>,
+        Theodore Ts'o <tytso@mit.edu>, Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 08/21] fs: prevent BUG_ON in submit_bh_wbc()
+Date:   Mon, 24 Aug 2020 12:38:32 -0400
+Message-Id: <20200824163845.606933-8-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200824163845.606933-1-sashal@kernel.org>
+References: <20200824163845.606933-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from 255.255.255.255 (255.255.255.255) by BYAPR08CA0021.namprd08.prod.outlook.com (2603:10b6:a03:100::34) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3305.25 via Frontend Transport; Mon, 24 Aug 2020 16:19:04 +0000
-X-Originating-IP: [2620:10d:c090:400::5:ca10]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3d671afe-4dd5-4eb6-8ee4-08d848496c02
-X-MS-TrafficTypeDiagnostic: BYAPR15MB2390:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB23907A691D0B770D0A693E64BE560@BYAPR15MB2390.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: gCc5hEd1I+t8E4njYekx6RYbXk1e9zc0IB4upti2YCdFo2dXUaqUCeuSWaF9rYXYVwKMKYJ3Q0eedMyeksGmM1Cv6WltNAZhNr/k1xS+pnhiRJkrPGqd3Hm9AxL6k2SWhTpCsX+6YxfmjjJBmSHgyLL4ccLQeL9WcwQMo8p2tmL4nu9W/xYciEpW1bb35I/+BXTQegfWq9uwkYWHttVP0FiJF7MYKjUNQyKxLMjM8kjwM+MwNx4/cb5pR36bvrBqopgGQrHWZ7wjvWHoin1X6vLo9lq6SKmH3bwhwC+iwG9a9z/FH1+9UcD5zgdNqcjCwh19LYPpSPGMZkRXl0mXkRsS2bg2I9eqYamulFS2f1iRTO25hWD2UiglqBu/UenFc5I1ujs9B7St86w5vOnfTg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4136.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(366004)(346002)(136003)(39860400002)(376002)(66556008)(9686003)(956004)(1076003)(5660300002)(66946007)(66476007)(7416002)(316002)(2906002)(186003)(6486002)(6666004)(16576012)(478600001)(36756003)(83380400001)(8676002)(54906003)(33656002)(4326008)(8936002)(52116002)(86362001)(6916009)(966005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: utIh8Ve99WZjjnf/lKFRp1GwpxL+jMSKyMaN6lcDKomwoVxA7FwDOnW0FDReVLcIpIhGvwJcFwIO12XY+N8pM2LFvyDZ1SEt/Spyn8AVKbyORTFcn4TobKr6Nc/xOa1jjMNeVCI/grfA6Rpi5hd86DweBqR8NaSxKPcffMZdR8iMeOJ8qF4pEWRh+JG0OGzUVY9a6bOthAJZFWuDq3ylsUuE1qm9mdWFytBi6YXOVJJmj2WivtskIDMviEXIwYNyFQHjv87g+IgrLJBiCR6J0CamdXa+d/cILvQNwkbUcGmY7glcnxS06omOY7sllGc51ZycpoVK8QZVQQ6n+/GoWPiZzhd5dJBzZr3v4B6MFXGkn4PmPYqP637xM1fX01tKIFsh3nWfj439ko5Sq3kODXtlLeOE9eVb8sk7pXgk3dRODoZ0k0IqIM0Ka13bJywZIX4tP1RFRZtJ9AaqxfH5gCvdsVvsKC17RysQRoCsEMpJT62ZnBVfwBWoUbVenEQHXKr1x00VqqbVLH6foIeA8vuJ0WJV22MJcgdPRnTyZTYIHa7UAWZKLn17PDZLXV2kQDvbaM0wRTQWXT9brAhu6eReqO2+9nRrhhbebBnpyQsZGcCcaxj6bWEpKc3uya0rjxRqpTb+YPtLdSxkSghUiMpU/SP9Sks/6LwwItou1d4=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d671afe-4dd5-4eb6-8ee4-08d848496c02
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4136.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2020 16:19:05.6523
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +vPIoOFqwhBItsrVPdUZfVSmcVwLaqhG35g1kwwjEYafduko1MkjbYMMVTK/8H3y
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2390
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-24_12:2020-08-24,2020-08-24 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 lowpriorityscore=0 clxscore=1011 bulkscore=0 spamscore=0
- mlxlogscore=999 phishscore=0 adultscore=0 mlxscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008240131
-X-FB-Internal: deliver
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 11:36:00AM -0400, Dan Schatzberg wrote:
-> From: Johannes Weiner <hannes@cmpxchg.org>
-> 
-> The memalloc_use_memcg() function to override the default memcg
-> accounting context currently doesn't nest. But the patches to make the
-> loop driver cgroup-aware will end up nesting:
-> 
-> [   98.137605]  alloc_page_buffers+0x210/0x288
-> [   98.141799]  __getblk_gfp+0x1d4/0x400
-> [   98.145475]  ext4_read_block_bitmap_nowait+0x148/0xbc8
-> [   98.150628]  ext4_mb_init_cache+0x25c/0x9b0
-> [   98.154821]  ext4_mb_init_group+0x270/0x390
-> [   98.159014]  ext4_mb_good_group+0x264/0x270
-> [   98.163208]  ext4_mb_regular_allocator+0x480/0x798
-> [   98.168011]  ext4_mb_new_blocks+0x958/0x10f8
-> [   98.172294]  ext4_ext_map_blocks+0xec8/0x1618
-> [   98.176660]  ext4_map_blocks+0x1b8/0x8a0
-> [   98.180592]  ext4_writepages+0x830/0xf10
-> [   98.184523]  do_writepages+0xb4/0x198
-> [   98.188195]  __filemap_fdatawrite_range+0x170/0x1c8
-> [   98.193086]  filemap_write_and_wait_range+0x40/0xb0
-> [   98.197974]  ext4_punch_hole+0x4a4/0x660
-> [   98.201907]  ext4_fallocate+0x294/0x1190
-> [   98.205839]  loop_process_work+0x690/0x1100
-> [   98.210032]  loop_workfn+0x2c/0x110
-> [   98.213529]  process_one_work+0x3e0/0x648
-> [   98.217546]  worker_thread+0x70/0x670
-> [   98.221217]  kthread+0x1b8/0x1c0
-> [   98.224452]  ret_from_fork+0x10/0x18
-> 
-> where loop_process_work() sets the memcg override to the memcg that
-> submitted the IO request, and alloc_page_buffers() sets the override
-> to the memcg that instantiated the cache page, which may differ.
-> 
-> Make memalloc_use_memcg() return the old memcg and convert existing
-> users to a stacking model. Delete the unused memalloc_unuse_memcg().
-> 
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> Reviewed-by: Shakeel Butt <shakeelb@google.com>
-> Acked-by: Roman Gushchin <guro@fb.com>
-> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+From: Xianting Tian <xianting_tian@126.com>
 
-Hi Dan,
+[ Upstream commit 377254b2cd2252c7c3151b113cbdf93a7736c2e9 ]
 
-JFYI: I need a similar patch for the bpf memory accounting rework,
-so I ended up sending it separately (with some modifications including
-different naming): https://lkml.org/lkml/2020/8/21/1464 .
+If a device is hot-removed --- for example, when a physical device is
+unplugged from pcie slot or a nbd device's network is shutdown ---
+this can result in a BUG_ON() crash in submit_bh_wbc().  This is
+because the when the block device dies, the buffer heads will have
+their Buffer_Mapped flag get cleared, leading to the crash in
+submit_bh_wbc.
 
-Can you please, rebase your patchset using this patch?
+We had attempted to work around this problem in commit a17712c8
+("ext4: check superblock mapped prior to committing").  Unfortunately,
+it's still possible to hit the BUG_ON(!buffer_mapped(bh)) if the
+device dies between when the work-around check in ext4_commit_super()
+and when submit_bh_wbh() is finally called:
 
-I hope Andrew can pull this standalone patch into 5.9-rc*,
-as Shakeel suggested. It will help us to avoid merge conflicts
-during the 5.10 merge window.
+Code path:
+ext4_commit_super
+    judge if 'buffer_mapped(sbh)' is false, return <== commit a17712c8
+          lock_buffer(sbh)
+          ...
+          unlock_buffer(sbh)
+               __sync_dirty_buffer(sbh,...
+                    lock_buffer(sbh)
+                        judge if 'buffer_mapped(sbh))' is false, return <== added by this patch
+                            submit_bh(...,sbh)
+                                submit_bh_wbc(...,sbh,...)
 
-Thanks!
+[100722.966497] kernel BUG at fs/buffer.c:3095! <== BUG_ON(!buffer_mapped(bh))' in submit_bh_wbc()
+[100722.966503] invalid opcode: 0000 [#1] SMP
+[100722.966566] task: ffff8817e15a9e40 task.stack: ffffc90024744000
+[100722.966574] RIP: 0010:submit_bh_wbc+0x180/0x190
+[100722.966575] RSP: 0018:ffffc90024747a90 EFLAGS: 00010246
+[100722.966576] RAX: 0000000000620005 RBX: ffff8818a80603a8 RCX: 0000000000000000
+[100722.966576] RDX: ffff8818a80603a8 RSI: 0000000000020800 RDI: 0000000000000001
+[100722.966577] RBP: ffffc90024747ac0 R08: 0000000000000000 R09: ffff88207f94170d
+[100722.966578] R10: 00000000000437c8 R11: 0000000000000001 R12: 0000000000020800
+[100722.966578] R13: 0000000000000001 R14: 000000000bf9a438 R15: ffff88195f333000
+[100722.966580] FS:  00007fa2eee27700(0000) GS:ffff88203d840000(0000) knlGS:0000000000000000
+[100722.966580] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[100722.966581] CR2: 0000000000f0b008 CR3: 000000201a622003 CR4: 00000000007606e0
+[100722.966582] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[100722.966583] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[100722.966583] PKRU: 55555554
+[100722.966583] Call Trace:
+[100722.966588]  __sync_dirty_buffer+0x6e/0xd0
+[100722.966614]  ext4_commit_super+0x1d8/0x290 [ext4]
+[100722.966626]  __ext4_std_error+0x78/0x100 [ext4]
+[100722.966635]  ? __ext4_journal_get_write_access+0xca/0x120 [ext4]
+[100722.966646]  ext4_reserve_inode_write+0x58/0xb0 [ext4]
+[100722.966655]  ? ext4_dirty_inode+0x48/0x70 [ext4]
+[100722.966663]  ext4_mark_inode_dirty+0x53/0x1e0 [ext4]
+[100722.966671]  ? __ext4_journal_start_sb+0x6d/0xf0 [ext4]
+[100722.966679]  ext4_dirty_inode+0x48/0x70 [ext4]
+[100722.966682]  __mark_inode_dirty+0x17f/0x350
+[100722.966686]  generic_update_time+0x87/0xd0
+[100722.966687]  touch_atime+0xa9/0xd0
+[100722.966690]  generic_file_read_iter+0xa09/0xcd0
+[100722.966694]  ? page_cache_tree_insert+0xb0/0xb0
+[100722.966704]  ext4_file_read_iter+0x4a/0x100 [ext4]
+[100722.966707]  ? __inode_security_revalidate+0x4f/0x60
+[100722.966709]  __vfs_read+0xec/0x160
+[100722.966711]  vfs_read+0x8c/0x130
+[100722.966712]  SyS_pread64+0x87/0xb0
+[100722.966716]  do_syscall_64+0x67/0x1b0
+[100722.966719]  entry_SYSCALL64_slow_path+0x25/0x25
+
+To address this, add the check of 'buffer_mapped(bh)' to
+__sync_dirty_buffer().  This also has the benefit of fixing this for
+other file systems.
+
+With this addition, we can drop the workaround in ext4_commit_supper().
+
+[ Commit description rewritten by tytso. ]
+
+Signed-off-by: Xianting Tian <xianting_tian@126.com>
+Link: https://lore.kernel.org/r/1596211825-8750-1-git-send-email-xianting_tian@126.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/buffer.c     | 9 +++++++++
+ fs/ext4/super.c | 7 -------
+ 2 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index c49fdab5cb36e..362a868764599 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -3193,6 +3193,15 @@ int __sync_dirty_buffer(struct buffer_head *bh, int op_flags)
+ 	WARN_ON(atomic_read(&bh->b_count) < 1);
+ 	lock_buffer(bh);
+ 	if (test_clear_buffer_dirty(bh)) {
++		/*
++		 * The bh should be mapped, but it might not be if the
++		 * device was hot-removed. Not much we can do but fail the I/O.
++		 */
++		if (!buffer_mapped(bh)) {
++			unlock_buffer(bh);
++			return -EIO;
++		}
++
+ 		get_bh(bh);
+ 		bh->b_end_io = end_buffer_write_sync;
+ 		ret = submit_bh(REQ_OP_WRITE, op_flags, bh);
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 9ac34b6ae0731..0c15ff19acbd4 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4966,13 +4966,6 @@ static int ext4_commit_super(struct super_block *sb, int sync)
+ 	if (!sbh || block_device_ejected(sb))
+ 		return error;
+ 
+-	/*
+-	 * The superblock bh should be mapped, but it might not be if the
+-	 * device was hot-removed. Not much we can do but fail the I/O.
+-	 */
+-	if (!buffer_mapped(sbh))
+-		return error;
+-
+ 	/*
+ 	 * If the file system is mounted read-only, don't update the
+ 	 * superblock write time.  This avoids updating the superblock
+-- 
+2.25.1
+
