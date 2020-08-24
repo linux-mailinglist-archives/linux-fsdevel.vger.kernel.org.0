@@ -2,112 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8763F250548
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 19:14:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23C3425066B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 19:33:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbgHXRNY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 13:13:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59472 "EHLO
+        id S1728095AbgHXRc4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 13:32:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727927AbgHXRNT (ORCPT
+        with ESMTP id S1728421AbgHXRcv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 13:13:19 -0400
+        Mon, 24 Aug 2020 13:32:51 -0400
 Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4A77C061573;
-        Mon, 24 Aug 2020 10:13:18 -0700 (PDT)
-Received: by mail-qk1-x742.google.com with SMTP id o12so3433971qki.13;
-        Mon, 24 Aug 2020 10:13:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B2AEC061574
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 10:32:50 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id d139so3122701qke.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 10:32:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=GaHc2bZckrs8e79oDtFVB7aLWMuGUzPJWwj4xMv5ZQ0=;
-        b=sACWAqxr/VwqSbPYqQIyY1frS1wWBS77a9KLyRsBUtLvjhHrsnouo257CI/pZAU3NE
-         HUToM7TEMwjOrJ5fQ8PE7xoK3iL68yjtoax+Fn1Bz/MIMoK1Pmdg1aWH2M5Zx5gbc5Nj
-         vHMMGR6V44/vv023nXAYwemwySEZ1tzxw8Iu9QY/xZQ03pWZPdrL1LZGRv6aMAHv8dY8
-         cWv9WjHc10HWc9Rjgfnt8zBZcMgIUFhQRNTFt/LqcqxFq3Anq8QSqkS+FSrTGsYc6/1J
-         n438QmKE/gclk0V8c6ow5eP7xWRsU4Ldw1v/6UpgJvn//xaVZG2cTGULug7GOI42Ee+l
-         bBTg==
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=A1u3TlJZ4UImA2cbWChJFyoRX3eOstanuvwLWeQsX/s=;
+        b=fahMqvsB7D/zB/rr2lhzbRbl+kuO7Qbhi11ZyYMkZwB+VjCuoQyFP0uYaPF2F55H3X
+         xBzaFdpQ0Px2POwbB23Xb6GcRCy9Kg568oM/BlveRLm2hzR84FS4E7z3oNIh5vIwLMqt
+         b5ZXBFqau5dg7tYhfKEcaxtM5kTT0pYTyhGmcVlpL9XlyuRlcq8ZzKW4lQIEwCvt4y6O
+         fkcpg408qxCoGwX3xBdGvU84rEq9C617r4zrzKPYrUcYOjhbP91zL9Hqw3pNzY34QzuK
+         OrxoHaYqeHjnyksHoiYMIh68JFxwaYRMEVZqBezDfu5IbkIMGQRb3cPlyXt5RGx3F4HO
+         +PaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=GaHc2bZckrs8e79oDtFVB7aLWMuGUzPJWwj4xMv5ZQ0=;
-        b=nssSjNSsugSR5DIcYKKGA49UO2GzPm8rqFM7qjPdz090Zc3qry6CvZkj0IONAZ3PHn
-         YLpDZEuQeQK2Ri1BfyaceDcTghTlah6Cg0waxJ5S6V+d/d8GUBMZjLl3zMrVIlFeulij
-         IBqC34ow7ck+FheEqdhvWuT4P90Ch241JIwf3/qM7cVFQFHidTZtzy1jg8TPZDbQeoyO
-         pvKsu2CPg+kOoyiCxT3kuyOtYqGdReyn4S3Mm1JsTRr9ccQcK1kArRXEgKs0psByEB/3
-         GOTcFArpsl9Q/h8i5LO4j44ad3qMu5sSCW8WvSyjHPYIqH34ithfQz56LEbyUqaFvhs9
-         0IFg==
-X-Gm-Message-State: AOAM532FReTpB97lsv2LWi9wVhIK+eOt4YvPfeow/gMvX7vHv0vbb12g
-        4XA3lxcoyPVUiMbHPQxLE5M=
-X-Google-Smtp-Source: ABdhPJxc+U0rwjsBE0g1+LJf3/921SQAlSClVRIUiNYJqVYKUNV6pzhfvMBdGRGx2YYHZo6QUvCcrQ==
-X-Received: by 2002:a37:8301:: with SMTP id f1mr5473168qkd.86.1598289197871;
-        Mon, 24 Aug 2020 10:13:17 -0700 (PDT)
-Received: from dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com ([2620:10d:c091:480::1:dd21])
-        by smtp.gmail.com with ESMTPSA id f189sm9839624qke.15.2020.08.24.10.13.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2020 10:13:17 -0700 (PDT)
-Date:   Mon, 24 Aug 2020 13:13:14 -0400
-From:   Dan Schatzberg <schatzberg.dan@gmail.com>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Chris Down <chris@chrisdown.name>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Michel Lespinasse <walken@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>,
-        "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
-        "open list:CONTROL GROUP - MEMORY RESOURCE CONTROLLER (MEMCG)" 
-        <linux-mm@kvack.org>
-Subject: Re: [PATCH 2/4] mm: support nesting memalloc_use_memcg()
-Message-ID: <20200824171314.GA17113@dschatzberg-fedora-PC0Y6AEN.dhcp.thefacebook.com>
-References: <20200824153607.6595-1-schatzberg.dan@gmail.com>
- <20200824153607.6595-3-schatzberg.dan@gmail.com>
- <20200824161901.GA2401952@carbon.lan>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=A1u3TlJZ4UImA2cbWChJFyoRX3eOstanuvwLWeQsX/s=;
+        b=uepe57Q68ock2sWOX15KxcJiH+bmhom0fUMFMzQvPUfCrUH+NQKJ9LRkUaqHSyLvj3
+         9WXgGzjlUBrFLrGTLsqTH9e/fZeH6be+0PV8lXrqcdCsjvu76mYavdkeuAdNKMHT1GHK
+         95EC8qXFJ+S8zhsgJL8xXu2jpIl4K1pn4gtvpy2MoJh8TdpvCIMyH/KcCu3EobYh/KwR
+         hS5nRclrumIK7CUlLW6iOZ9WO+bNoLqJ6wAChONmR1vtGaOQ5Ub4oCWI0rDiL5z3HzWS
+         +M067NPzeX8J70IfEC+vU7gOo9IYUj4YI15M/EaD7qQmj8Lb8r0jzMovyj3X68Yjb8dc
+         0lyA==
+X-Gm-Message-State: AOAM530Q3rCPdIBrkSm0ex18R26CrkAPLQo4cB5Uiy7ikMFChu7s5h6Z
+        ph7A9dArKEGLHK76vAo2zNKS50Q/fnYuu7qW
+X-Google-Smtp-Source: ABdhPJyhO/VMjHie2qc4p5z0bfFndnmbAd1IyhDwk/tsq2ic8krgNo9KUDRfRpMAarwK97y9vmoGmA==
+X-Received: by 2002:a05:620a:15c9:: with SMTP id o9mr5783104qkm.8.1598290369306;
+        Mon, 24 Aug 2020 10:32:49 -0700 (PDT)
+Received: from [192.168.1.45] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
+        by smtp.gmail.com with ESMTPSA id w20sm9941219qki.108.2020.08.24.10.32.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Aug 2020 10:32:48 -0700 (PDT)
+Subject: Re: [PATCH 8/9] btrfs: send: send compressed extents with encoded
+ writes
+To:     Omar Sandoval <osandov@osandov.com>, linux-btrfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+References: <cover.1597994106.git.osandov@osandov.com>
+ <8eeed3db43c3c31f4596051897578e481d6cda17.1597994106.git.osandov@osandov.com>
+From:   Josef Bacik <josef@toxicpanda.com>
+Message-ID: <6585ccb9-3528-e451-bb31-ffdd186b13ec@toxicpanda.com>
+Date:   Mon, 24 Aug 2020 13:32:47 -0400
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200824161901.GA2401952@carbon.lan>
+In-Reply-To: <8eeed3db43c3c31f4596051897578e481d6cda17.1597994106.git.osandov@osandov.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 09:19:01AM -0700, Roman Gushchin wrote:
-> Hi Dan,
+On 8/21/20 3:39 AM, Omar Sandoval wrote:
+> From: Omar Sandoval <osandov@fb.com>
 > 
-> JFYI: I need a similar patch for the bpf memory accounting rework,
-> so I ended up sending it separately (with some modifications including
-> different naming): https://lkml.org/lkml/2020/8/21/1464 .
+> Now that all of the pieces are in place, we can use the ENCODED_WRITE
+> command to send compressed extents when appropriate.
 > 
-> Can you please, rebase your patchset using this patch?
-> 
-> I hope Andrew can pull this standalone patch into 5.9-rc*,
-> as Shakeel suggested. It will help us to avoid merge conflicts
-> during the 5.10 merge window.
-> 
-> Thanks!
+> Signed-off-by: Omar Sandoval <osandov@fb.com>
 
-Yeah I mentioned it in the cover letter and linked to your patch. I
-had not realized the naming change, so I can rebase on top of that -
-I'll wait to see if there's other feedback first.
+This one doesn't apply cleanly to misc-next, the ctree.h and inode.c chunks all 
+fail, and the last hunk of the send stuff doesn't apply.  Thanks,
+
+Josef
