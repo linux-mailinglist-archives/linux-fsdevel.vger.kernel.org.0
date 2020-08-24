@@ -2,305 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C2324F0F2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 03:43:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C16524F252
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 08:17:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727872AbgHXBn0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Aug 2020 21:43:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55230 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726600AbgHXBnY (ORCPT
+        id S1725924AbgHXGRt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 02:17:49 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:35258 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725817AbgHXGRt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Aug 2020 21:43:24 -0400
-Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4181EC061573;
-        Sun, 23 Aug 2020 18:43:24 -0700 (PDT)
-Received: by mail-qt1-x844.google.com with SMTP id f19so5186276qtp.2;
-        Sun, 23 Aug 2020 18:43:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=p/Aa+4/PAdW4UzIOLAlILdbf31440xpvhPKoHCUn5Lg=;
-        b=GJfleXBWQMZRAOCc58l26UD/2OnznQ2xXFpx5YS7Fs7cjuIeKUo3/hmL3O1/AQ54Gw
-         YO9FZttNqQAeqMIqCjXe5pZFkNRiNsJFkcqjZRxre0JWraYrAI95JtpjQlc5zz/BDmgL
-         vGgJrb6B+cYTsu7c1SXcNV418I5nnFTjRxiE3kaSNsY9uMhczkmsv04tcSvWa/F+gjfS
-         PmMNi8utmjew4Lgte2XbsxM5DDqRs5XjLaNcr+EvQro5mJKf9IDSIRTL8Qlz9uPZwr3W
-         gtxsiOFu10pRLbY2uvQIqfDExU55gkIN5X9auBAIgIj2wa8SsSH4+XfnWdHAjfLWh4FJ
-         VQKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=p/Aa+4/PAdW4UzIOLAlILdbf31440xpvhPKoHCUn5Lg=;
-        b=nlipwGCgHDDAaDDWV4MayuuQy4vDOVSvsYhHNV+1kPoBXgBHvawx8dYW3FToJT17Md
-         J2Al/UPKYp2K/vyfC11jyR/zdiCd3VDTzr502lxgfl+wAT3QjJvfPtpOQWihI7L2Fdsb
-         mHkucKOIc8G3fW+9VdnSN20owEfDeNyuqWQNUEYKEjZLY77mVZ5uuyxN+zuHCXd7lyhS
-         LCf1IhlNQ7mIvZ/T4PFjp1x0KOgcxQ0Pz5X9Rt+ShdPicn4sEtWawSo/ZHNfmHdBqpFJ
-         9YWtqdDhFAFwis5BCgXxoocjysDv6t9XimpsDje7bWmkjN86WQhYYH9PurGHgAJmmZHZ
-         eYAA==
-X-Gm-Message-State: AOAM533Ow6EtCzcopglcp13NF9XbN1Ca3wQgMPzcjM+bB4sf7yYxE2V3
-        D+jH3tVSWgZjoxUZc9kLXp4=
-X-Google-Smtp-Source: ABdhPJxhQgveld9b97WUsuzJNGeORAh9h3i0bi1kXDqhtpmrqPFEOAB2upif5n9TfDCs11oA+PTOpA==
-X-Received: by 2002:ac8:3a84:: with SMTP id x4mr3004272qte.361.1598233401764;
-        Sun, 23 Aug 2020 18:43:21 -0700 (PDT)
-Received: from localhost.localdomain ([50.236.19.102])
-        by smtp.gmail.com with ESMTPSA id t8sm10205236qtc.50.2020.08.23.18.43.16
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 23 Aug 2020 18:43:21 -0700 (PDT)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     david@fromorbit.com, hch@infradead.org, darrick.wong@oracle.com,
-        willy@infradead.org, mhocko@kernel.org, akpm@linux-foundation.org
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v6 2/2] xfs: avoid transaction reservation recursion
-Date:   Mon, 24 Aug 2020 09:42:34 +0800
-Message-Id: <20200824014234.7109-3-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
-In-Reply-To: <20200824014234.7109-1-laoar.shao@gmail.com>
-References: <20200824014234.7109-1-laoar.shao@gmail.com>
+        Mon, 24 Aug 2020 02:17:49 -0400
+X-IronPort-AV: E=Sophos;i="5.76,347,1592841600"; 
+   d="scan'208";a="98447864"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 24 Aug 2020 14:17:43 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id 2F58148990D2;
+        Mon, 24 Aug 2020 14:17:42 +0800 (CST)
+Received: from [10.167.225.206] (10.167.225.206) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Mon, 24 Aug 2020 14:17:44 +0800
+Subject: Re: [PATCH] fs: Kill DCACHE_DONTCACHE dentry even if
+ DCACHE_REFERENCED is set
+To:     Ira Weiny <ira.weiny@intel.com>
+CC:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <y-goto@fujitsu.com>
+References: <20200821015953.22956-1-lihao2018.fnst@cn.fujitsu.com>
+ <20200821174040.GG3142014@iweiny-DESK2.sc.intel.com>
+ <20200823065413.GA535011@iweiny-DESK2.sc.intel.com>
+From:   "Li, Hao" <lihao2018.fnst@cn.fujitsu.com>
+Message-ID: <66cbc944-064f-01e9-e282-fd4a4ec99ad0@cn.fujitsu.com>
+Date:   Mon, 24 Aug 2020 14:17:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.1.1
+MIME-Version: 1.0
+In-Reply-To: <20200823065413.GA535011@iweiny-DESK2.sc.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.167.225.206]
+X-ClientProxiedBy: G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) To
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201)
+X-yoursite-MailScanner-ID: 2F58148990D2.AADA1
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: lihao2018.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PF_FSTRANS which is used to avoid transaction reservation recursion, is
-dropped since commit 9070733b4efa ("xfs: abstract PF_FSTRANS to
-PF_MEMALLOC_NOFS") and commit 7dea19f9ee63 ("mm: introduce
-memalloc_nofs_{save,restore} API") and replaced by PF_MEMALLOC_NOFS which
-means to avoid filesystem reclaim recursion. That change is subtle.
-Let's take the exmple of the check of WARN_ON_ONCE(current->flags &
-PF_MEMALLOC_NOFS)) to explain why this abstraction from PF_FSTRANS to
-PF_MEMALLOC_NOFS is not proper.
-Below comment is quoted from Dave,
-> It wasn't for memory allocation recursion protection in XFS - it was for
-> transaction reservation recursion protection by something trying to flush
-> data pages while holding a transaction reservation. Doing
-> this could deadlock the journal because the existing reservation
-> could prevent the nested reservation for being able to reserve space
-> in the journal and that is a self-deadlock vector.
-> IOWs, this check is not protecting against memory reclaim recursion
-> bugs at all (that's the previous check [1]). This check is
-> protecting against the filesystem calling writepages directly from a
-> context where it can self-deadlock.
-> So what we are seeing here is that the PF_FSTRANS ->
-> PF_MEMALLOC_NOFS abstraction lost all the actual useful information
-> about what type of error this check was protecting against.
+On 2020/8/23 14:54, Ira Weiny wrote:
+> On Fri, Aug 21, 2020 at 10:40:41AM -0700, 'Ira Weiny' wrote:
+>> On Fri, Aug 21, 2020 at 09:59:53AM +0800, Hao Li wrote:
+>>> Currently, DCACHE_REFERENCED prevents the dentry with DCACHE_DONTCACHE
+>>> set from being killed, so the corresponding inode can't be evicted. If
+>>> the DAX policy of an inode is changed, we can't make policy changing
+>>> take effects unless dropping caches manually.
+>>>
+>>> This patch fixes this problem and flushes the inode to disk to prepare
+>>> for evicting it.
+>> This looks intriguing and I really hope this helps but I don't think this will
+>> guarantee that the state changes immediately will it?
+>>
+>> Do you have a test case which fails before and passes after?  Perhaps one of
+>> the new xfstests submitted by Xiao?
+> Ok I just went back and read your comment before.[1]  Sorry for being a bit
+> slow on the correlation between this patch and that email.  (BTW, I think it
+> would have been good to put those examples in the commit message and or
+> reference that example.)
 
-As a result, we should reintroduce PF_FSTRANS. As current->journal_info
-isn't used in XFS, we can reuse it to indicate whehter the task is in
-fstrans or not, Per Willy. To achieve that, four new helpers are introduce in
-this patch, per Dave:
-- xfs_trans_context_set()
-  Used in xfs_trans_alloc()
-- xfs_trans_context_clear()
-  Used in xfs_trans_commit() and xfs_trans_cancel()
-- xfs_trans_context_update()
-  Used in xfs_trans_roll()
-- fstrans_context_active()
-  To check whehter current is in fs transcation or not
+Thanks for your advice. I will add those examples in v2 after further
+discussion of this patch.
 
-[1]. Below check is to avoid memory reclaim recursion.
-if (WARN_ON_ONCE((current->flags & (PF_MEMALLOC|PF_KSWAPD)) ==
-        PF_MEMALLOC))
-        goto redirty;
+> I'm assuming that with this patch example 2 from [1]
+> works without a drop_cache _if_ no other task has the file open?
 
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Darrick J. Wong <darrick.wong@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- fs/iomap/buffered-io.c |  4 ++--
- fs/xfs/xfs_aops.c      |  5 +++--
- fs/xfs/xfs_linux.h     |  4 ----
- fs/xfs/xfs_trans.c     | 19 +++++++++----------
- fs/xfs/xfs_trans.h     | 23 +++++++++++++++++++++++
- include/linux/iomap.h  |  7 +++++++
- 6 files changed, 44 insertions(+), 18 deletions(-)
+Yes. If no other task is opening the file, the inode and page cache of this
+file will be dropped during xfs_io exiting process. There is no need to run
+echo 2 > drop_caches.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index bcfc288dba3f..8043224ec079 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1500,9 +1500,9 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
- 
- 	/*
- 	 * Given that we do not allow direct reclaim to call us, we should
--	 * never be called in a recursive filesystem reclaim context.
-+	 * never be called while in a filesystem transaction.
- 	 */
--	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
-+	if (WARN_ON_ONCE(fstrans_context_active()))
- 		goto redirty;
- 
- 	/*
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index b35611882ff9..83e0a1840221 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -62,7 +62,8 @@ xfs_setfilesize_trans_alloc(
- 	 * We hand off the transaction to the completion thread now, so
- 	 * clear the flag here.
- 	 */
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	xfs_trans_context_clear(tp);
-+
- 	return 0;
- }
- 
-@@ -125,7 +126,7 @@ xfs_setfilesize_ioend(
- 	 * thus we need to mark ourselves as being in a transaction manually.
- 	 * Similarly for freeze protection.
- 	 */
--	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	xfs_trans_context_set(tp);
- 	__sb_writers_acquired(VFS_I(ip)->i_sb, SB_FREEZE_FS);
- 
- 	/* we abort the update if there was an IO error */
-diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
-index ab737fed7b12..8a4f6db77e33 100644
---- a/fs/xfs/xfs_linux.h
-+++ b/fs/xfs/xfs_linux.h
-@@ -102,10 +102,6 @@ typedef __u32			xfs_nlink_t;
- #define xfs_cowb_secs		xfs_params.cowb_timer.val
- 
- #define current_cpu()		(raw_smp_processor_id())
--#define current_set_flags_nested(sp, f)		\
--		(*(sp) = current->flags, current->flags |= (f))
--#define current_restore_flags_nested(sp, f)	\
--		(current->flags = ((current->flags & ~(f)) | (*(sp) & (f))))
- 
- #define NBBY		8		/* number of bits per byte */
- 
-diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
-index ed72867b1a19..5f3a4ff51b3c 100644
---- a/fs/xfs/xfs_trans.c
-+++ b/fs/xfs/xfs_trans.c
-@@ -153,8 +153,6 @@ xfs_trans_reserve(
- 	int			error = 0;
- 	bool			rsvd = (tp->t_flags & XFS_TRANS_RESERVE) != 0;
- 
--	/* Mark this thread as being in a transaction */
--	current_set_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
- 
- 	/*
- 	 * Attempt to reserve the needed disk blocks by decrementing
-@@ -163,10 +161,8 @@ xfs_trans_reserve(
- 	 */
- 	if (blocks > 0) {
- 		error = xfs_mod_fdblocks(mp, -((int64_t)blocks), rsvd);
--		if (error != 0) {
--			current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+		if (error != 0)
- 			return -ENOSPC;
--		}
- 		tp->t_blk_res += blocks;
- 	}
- 
-@@ -241,8 +237,6 @@ xfs_trans_reserve(
- 		tp->t_blk_res = 0;
- 	}
- 
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
--
- 	return error;
- }
- 
-@@ -284,6 +278,8 @@ xfs_trans_alloc(
- 	INIT_LIST_HEAD(&tp->t_dfops);
- 	tp->t_firstblock = NULLFSBLOCK;
- 
-+	/* Mark this thread as being in a transaction */
-+	xfs_trans_context_set(tp);
- 	error = xfs_trans_reserve(tp, resp, blocks, rtextents);
- 	if (error) {
- 		xfs_trans_cancel(tp);
-@@ -878,7 +874,8 @@ __xfs_trans_commit(
- 
- 	xfs_log_commit_cil(mp, tp, &commit_lsn, regrant);
- 
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	if (!regrant)
-+		xfs_trans_context_clear(tp);
- 	xfs_trans_free(tp);
- 
- 	/*
-@@ -910,7 +907,8 @@ __xfs_trans_commit(
- 			xfs_log_ticket_ungrant(mp->m_log, tp->t_ticket);
- 		tp->t_ticket = NULL;
- 	}
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+
-+	xfs_trans_context_clear(tp);
- 	xfs_trans_free_items(tp, !!error);
- 	xfs_trans_free(tp);
- 
-@@ -971,7 +969,7 @@ xfs_trans_cancel(
- 	}
- 
- 	/* mark this thread as no longer being in a transaction */
--	current_restore_flags_nested(&tp->t_pflags, PF_MEMALLOC_NOFS);
-+	xfs_trans_context_clear(tp);
- 
- 	xfs_trans_free_items(tp, dirty);
- 	xfs_trans_free(tp);
-@@ -1013,6 +1011,7 @@ xfs_trans_roll(
- 	if (error)
- 		return error;
- 
-+	xfs_trans_context_update(trans, *tpp);
- 	/*
- 	 * Reserve space in the log for the next transaction.
- 	 * This also pushes items in the "AIL", the list of logged items,
-diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
-index b752501818d2..895f560229d6 100644
---- a/fs/xfs/xfs_trans.h
-+++ b/fs/xfs/xfs_trans.h
-@@ -243,4 +243,27 @@ void		xfs_trans_buf_copy_type(struct xfs_buf *dst_bp,
- 
- extern kmem_zone_t	*xfs_trans_zone;
- 
-+static inline void
-+xfs_trans_context_set(struct xfs_trans *tp)
-+{
-+	ASSERT(!current->journal_info);
-+	current->journal_info = tp;
-+	tp->t_pflags = memalloc_nofs_save();
-+}
-+
-+static inline void
-+xfs_trans_context_update(struct xfs_trans *old, struct xfs_trans *new)
-+{
-+	ASSERT(current->journal_info == old);
-+	current->journal_info = new;
-+}
-+
-+static inline void
-+xfs_trans_context_clear(struct xfs_trans *tp)
-+{
-+	ASSERT(current->journal_info == tp);
-+	current->journal_info = NULL;
-+	memalloc_nofs_restore(tp->t_pflags);
-+}
-+
- #endif	/* __XFS_TRANS_H__ */
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 4d1d3c3469e9..54194dd6009d 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -271,4 +271,11 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
- # define iomap_swapfile_activate(sis, swapfile, pagespan, ops)	(-EIO)
- #endif /* CONFIG_SWAP */
- 
-+/* Use the journal_info to indicate current is in a transaction */
-+static inline bool
-+fstrans_context_active(void)
-+{
-+	return current->journal_info != NULL;
-+}
-+
- #endif /* LINUX_IOMAP_H */
--- 
-2.18.1
+> Anyway, with that explanation I think you are correct that this improves the
+> situation _if_ the only references on the file is controlled by the user and
+> they have indeed closed all of them.
+>
+> The code for DCACHE_DONTCACHE as I attempted to write it was that it should
+> have prevented further caching of the inode such that the inode would evict
+> sooner.  But it seems you have found a bug/optimization?
+
+Yes. This patch is an optimization and can also be treated as a bugfix.
+On the other side, even though this patch can make DCACHE_DONTCACHE more
+reasonable, I am not quite sure if my approach is safe and doesn't impact
+the fs performance. I hope the community can give me more advice.
+
+> In the end, however, if another user (such as a backup running by the admin)
+> has a reference the DAX change may still be delayed.
+
+Yes. In this situation, neither drop_caches approach nor this patch can make
+the DAX change take effects soon.
+Moreover, things are different if the backup task exits, this patch
+will make sure the inode and page cache of the file can be dropped
+_automatically_ without manual intervention. By contrast, the original
+approach needs a manual cache dropping.
+
+> So I'm thinking the
+> documentation should remain largely as is?  But perhaps I am wrong.  Does this
+> completely remove the need for a drop_caches or only in the example you gave?
+
+I think the contents related to drop_caches in documentation can be removed
+if this patch's approach is acceptable.
+
+> Since I'm not a FS expert I'm still not sure.
+
+Frankly, I'm not an expert either, so I hope this patch can be discussed
+further in case it has side effects.
+
+Thanks,
+Hao Li
+
+>
+> Regardless, thanks for the fixup!  :-D
+> Ira
+>
+> [1] https://lore.kernel.org/linux-xfs/ba98b77e-a806-048a-a0dc-ca585677daf3@cn.fujitsu.com/
+>
+>> Ira
+>>
+>>> Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
+>>> ---
+>>>  fs/dcache.c | 3 ++-
+>>>  fs/inode.c  | 2 +-
+>>>  2 files changed, 3 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fs/dcache.c b/fs/dcache.c
+>>> index ea0485861d93..486c7409dc82 100644
+>>> --- a/fs/dcache.c
+>>> +++ b/fs/dcache.c
+>>> @@ -796,7 +796,8 @@ static inline bool fast_dput(struct dentry *dentry)
+>>>  	 */
+>>>  	smp_rmb();
+>>>  	d_flags = READ_ONCE(dentry->d_flags);
+>>> -	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED;
+>>> +	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED
+>>> +			| DCACHE_DONTCACHE;
+>>>  
+>>>  	/* Nothing to do? Dropping the reference was all we needed? */
+>>>  	if (d_flags == (DCACHE_REFERENCED | DCACHE_LRU_LIST) && !d_unhashed(dentry))
+>>> diff --git a/fs/inode.c b/fs/inode.c
+>>> index 72c4c347afb7..5218a8aebd7f 100644
+>>> --- a/fs/inode.c
+>>> +++ b/fs/inode.c
+>>> @@ -1632,7 +1632,7 @@ static void iput_final(struct inode *inode)
+>>>  	}
+>>>  
+>>>  	state = inode->i_state;
+>>> -	if (!drop) {
+>>> +	if (!drop || (drop && (inode->i_state & I_DONTCACHE))) {
+>>>  		WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
+>>>  		spin_unlock(&inode->i_lock);
+>>>  
+>>> -- 
+>>> 2.28.0
+>>>
+>>>
+>>>
+>
+
+
 
