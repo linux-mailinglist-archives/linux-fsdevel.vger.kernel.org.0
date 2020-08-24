@@ -2,65 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 09D3925000C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 16:42:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 955262500B4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 17:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbgHXOmR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 10:42:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35790 "EHLO
+        id S1727079AbgHXPQF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 11:16:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbgHXOmQ (ORCPT
+        with ESMTP id S1726697AbgHXPG5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 10:42:16 -0400
+        Mon, 24 Aug 2020 11:06:57 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDCCBC061573;
-        Mon, 24 Aug 2020 07:42:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D83E8C06179A;
+        Mon, 24 Aug 2020 07:55:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Sm/ikGBMT7yXr66/WCvwl+PKMe6pOWKqSkgLkHzx4Lc=; b=fMe0QfTQ4FBKF7HgdD2AKcKJDy
-        jpK1GN1HR/22cjzUb0XYK5lfB6YRhA9AfdqZKo0uLpe7Blh31bdMq37c40i/jLxm2YkB3oSX4/OJj
-        TYv0GzPrdpMG7xkBSyFews/4uSp3ImPuE96kVv3zjIy/ZJFPZYnz7VWg6HULLbJltSIvqekw/b8b9
-        RKFdsxEV8Q7OHuVh4OwAwpT0NBPSZaAQrlwvPHCYOXl7XNO9BQI5IlfSGfYJnUzs81goecyjvlHWy
-        9Qkayszt+5jdBZtaXYqsqcOD0WGuP7wjZvlXkdmYMgkDqfXsDlz962mCjUAE50IjJRRlxUchCKDhL
-        4u3jkxrw==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kADff-00027L-AM; Mon, 24 Aug 2020 14:42:03 +0000
-Date:   Mon, 24 Aug 2020 15:42:03 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] bio: introduce BIO_FOLL_PIN flag
-Message-ID: <20200824144203.GA8070@infradead.org>
-References: <20200822042059.1805541-1-jhubbard@nvidia.com>
- <20200822042059.1805541-5-jhubbard@nvidia.com>
- <20200823062559.GA32480@infradead.org>
- <d75ce230-6c8d-8623-49a2-500835f6cdfc@kernel.dk>
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=rtPWePEP2e2MrA1B6+d56D/W6SCtPdzXjGVhB68Hm9E=; b=mYU+Wo1zHLWgAf8PtstxsMTzeM
+        l89zOmYzJ4RAebFtunciW1qLOccTUYbRyCdTC0HFhRUaFysVsGgifHdVuV+nAICugexygDYupVHqV
+        Pgx88p5wQgJt3gvzhQmSRhuRsWVxpyeb3EOAahpwBmkUxMJssYiXiFutGNnBlHme91mw0lrufX/dt
+        bx5Jm4KquFZu8cyiMXr7xv+0CHqsS7c/CnzDPyx3OGlyMbSVg+plp6m2GJXAthNPGuz3oVbU9HsFS
+        C9b1dq1AShibohWaSk/lWESu2oP6BM+zNJFGDBsrG1QOBj4Tc/Kwcp9qKnijfzIHWXVdM+9wKdOXa
+        ZIB2/1BA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kADsO-0002lr-Li; Mon, 24 Aug 2020 14:55:12 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/9] THP iomap patches for 5.10
+Date:   Mon, 24 Aug 2020 15:55:01 +0100
+Message-Id: <20200824145511.10500-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d75ce230-6c8d-8623-49a2-500835f6cdfc@kernel.dk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 03:20:26AM -0600, Jens Axboe wrote:
-> (not relevant to this series as this patch has thankfully already been
-> dropped, just in general - but yes, definitely need a *strong* justification
-> to bump the bio size).
-> 
-> Would actually be nice to kill off a few flags, if possible, so the
-> flags space isn't totally full.
+These patches are carefully plucked from the THP series.  I would like
+them to hit 5.10 to make the THP patchset merge easier.  Some of these
+are just generic improvements that make sense on their own terms, but
+the overall intent is to support THPs in iomap.
 
-I have a series to kill two flags that I need to resurrect and post.
+I'll send another patch series later today which are the changes to
+iomap which don't pay their own way until we actually have THPs in the
+page cache.  I would like those to be reviewed with an eye to merging
+them into 5.11.
+
+Matthew Wilcox (Oracle) (9):
+  iomap: Fix misplaced page flushing
+  fs: Introduce i_blocks_per_page
+  iomap: Use kzalloc to allocate iomap_page
+  iomap: Use bitmap ops to set uptodate bits
+  iomap: Support arbitrarily many blocks per page
+  iomap: Convert read_count to byte count
+  iomap: Convert write_count to byte count
+  iomap: Convert iomap_write_end types
+  iomap: Change calling convention for zeroing
+
+ fs/dax.c                |  13 ++--
+ fs/iomap/buffered-io.c  | 145 ++++++++++++++++------------------------
+ fs/jfs/jfs_metapage.c   |   2 +-
+ fs/xfs/xfs_aops.c       |   2 +-
+ include/linux/dax.h     |   3 +-
+ include/linux/pagemap.h |  16 +++++
+ 6 files changed, 83 insertions(+), 98 deletions(-)
+
+-- 
+2.28.0
+
