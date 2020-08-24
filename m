@@ -2,345 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0234E250AD5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 23:27:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FF56250AE5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 23:30:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbgHXV1H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 17:27:07 -0400
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:28918 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbgHXV1H (ORCPT
+        id S1726752AbgHXVaR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 17:30:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43146 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbgHXVaO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 17:27:07 -0400
+        Mon, 24 Aug 2020 17:30:14 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B848C061755
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 14:30:13 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id i13so119755pjv.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 14:30:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1598304423; x=1629840423;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mkhPb6XdkUgfGbo/u+LVTG/2wiO7UBvP4I2IYT4Flys=;
-  b=Z6SZD1kGWu/4STx8zOYDDTY9dQbbslgEnapkH69GALrWq0K9PV97gAFD
-   L5XLZtmyishQRrUOgnicuVgPJM6cK/5t4I38mgeol9B0Y/lnrCWlLDDvk
-   VN03CMvxMmcL895XsZFbzN2+ZKECkIxhw0n17j+EdGLuw45k4u0bgJof8
-   A=;
-X-IronPort-AV: E=Sophos;i="5.76,349,1592870400"; 
-   d="scan'208";a="49819898"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-7d76a15f.us-east-1.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 24 Aug 2020 21:27:02 +0000
-Received: from EX13MTAUWA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1a-7d76a15f.us-east-1.amazon.com (Postfix) with ESMTPS id DC441A27AF;
-        Mon, 24 Aug 2020 21:26:57 +0000 (UTC)
-Received: from EX13D21UWA002.ant.amazon.com (10.43.160.246) by
- EX13MTAUWA001.ant.amazon.com (10.43.160.58) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Mon, 24 Aug 2020 21:26:56 +0000
-Received: from EX13MTAUWA001.ant.amazon.com (10.43.160.58) by
- EX13D21UWA002.ant.amazon.com (10.43.160.246) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Mon, 24 Aug 2020 21:26:56 +0000
-Received: from dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com
- (172.23.141.97) by mail-relay.amazon.com (10.43.160.118) with Microsoft SMTP
- Server id 15.0.1497.2 via Frontend Transport; Mon, 24 Aug 2020 21:26:56 +0000
-Received: by dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com (Postfix, from userid 6262777)
-        id F2EE9C1424; Mon, 24 Aug 2020 21:26:56 +0000 (UTC)
-Date:   Mon, 24 Aug 2020 21:26:56 +0000
-From:   Frank van der Linden <fllinden@amazon.com>
-To:     Christian Schoenebeck <qemu_oss@crudebyte.com>
-CC:     Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Greg Kurz <groug@kaod.org>, <linux-fsdevel@vger.kernel.org>,
-        <stefanha@redhat.com>, <mszeredi@redhat.com>, <vgoyal@redhat.com>,
-        <gscrivan@redhat.com>, <dwalsh@redhat.com>,
-        <chirantan@chromium.org>, Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: file forks vs. xattr (was: xattr names for unprivileged
- stacking?)
-Message-ID: <20200824212656.GA17817@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
-References: <20200728105503.GE2699@work-vm> <2859814.QYyEAd97eH@silver>
- <20200823234006.GD7728@dread.disaster.area> <3081309.dU5VghuM72@silver>
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Gs/g6tI7n6jveMUW/ARDtq6zG28DxJdOSIVeqCko6II=;
+        b=MNVTc6y95JMkz4r9Mb7sIuk5fAy+ivHNAKpuMYgc/WXDvdJfYuBpcFqWJPhg2OxuZ5
+         7KeA/dxyz3Ur+YIZvtXrGay3nIKcKaFoTnEMoc6NuCDu8nJQDzzesFra4USnCvcFv584
+         nWyO611mw7Zj0w7pwbUyufEizSS8jjoBohbRUakVsTGXvCiEPoJkG4Q2nYNuaNBQQ5OL
+         HmyCS+faIeFb/VKgwTvZE5tRNiyuG/tPRmsibybZeB94FVUbK3gck2LM4Al23hzisSyM
+         CxnmQfsb/atcIUb3bAktdquYu0IkVQCqgnf2c93HlRY5K9o0sXUgNu6HwI5OC504PAik
+         Lnlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Gs/g6tI7n6jveMUW/ARDtq6zG28DxJdOSIVeqCko6II=;
+        b=GItCDXhD1Lr8K+MzJoqstsbKn8PV+s2BLVUiL7b4xU41u1B56pSJUVKn/V2ZgroF/W
+         +8A9Epza0z+h1qCbRoGjVoZW1h3sSKeOj60xKLdiYopRQNayxGvG+ARrzteGnt3NFmVu
+         7gCA4K/vbFj2C9u9AkWWv07nbjVIySGQgPQq6tCrSnDFZJJYlRQ4XrLT7yyC5jWM+PXM
+         eAQf1Yun58RXn/0i2llDyvzFY6cVlFzV5uN2TXKgj7ozL6UbWJ3nKfDD03WTcFyJMJ7v
+         iiXSkgpNV+ADARhl9nQ65P5MAKsgbO5TInDsUjFKtMqKT/W2Y5lR/zu8jNC8j7PJhBYs
+         WY7w==
+X-Gm-Message-State: AOAM530T5ICZ3AqZ3MvndI04k2xaxWw9E+izxiaQzUC8dMwUfuEz/caq
+        kkpwa5ZGPUpo7QBIdmvnDk7cYg==
+X-Google-Smtp-Source: ABdhPJxPUkgg6LPO+7HYML7jTDyeaEsCV6pQN9aPlzRet61yflYau5fC/ARBI+Xdn1VJHPQNx+waOw==
+X-Received: by 2002:a17:90a:ce94:: with SMTP id g20mr934631pju.61.1598304612930;
+        Mon, 24 Aug 2020 14:30:12 -0700 (PDT)
+Received: from exodia.localdomain ([2620:10d:c090:400::5:8d5d])
+        by smtp.gmail.com with ESMTPSA id z126sm12516513pfc.94.2020.08.24.14.30.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Aug 2020 14:30:11 -0700 (PDT)
+Date:   Mon, 24 Aug 2020 14:30:10 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Aleksa Sarai <cyphar@cyphar.com>, linux-api@vger.kernel.org,
+        kernel-team@fb.com
+Subject: Re: [PATCH v5 9/9] btrfs: implement RWF_ENCODED writes
+Message-ID: <20200824213010.GD197795@exodia.localdomain>
+References: <cover.1597993855.git.osandov@osandov.com>
+ <07a61c2f9a07497c165c05106dd0f9ced5bbc4fc.1597993855.git.osandov@osandov.com>
+ <83d564d8-234c-a2b5-e261-80ea3b96f6d1@toxicpanda.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3081309.dU5VghuM72@silver>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <83d564d8-234c-a2b5-e261-80ea3b96f6d1@toxicpanda.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 05:30:18PM +0200, Christian Schoenebeck wrote:
-> On Montag, 24. August 2020 01:40:06 CEST Dave Chinner wrote:
-> > On Mon, Aug 17, 2020 at 12:37:17PM +0200, Christian Schoenebeck wrote:
-> > > On Montag, 17. August 2020 00:56:20 CEST Dave Chinner wrote:
-> > > > IOWs, with a filesystem inode fork implementation like this for ADS,
-> > > > all we really need is for the VFS to pass a magic command to
-> > > > ->lookup() to tell us to use the ADS namespace attached to the inode
-> > > > rather than use the primary inode type/state to perform the
-> > > > operation.
-> > >
-> > > IMO starting with a minimalistic approach, in a way Solaris developers
-> >
-> > > originally introduced forks, would IMO make sense for Linux as well:
-> > <snip>
-> >
-> > That's pretty much what the proposed O_ALT did, except it used a
-> > fully qualified path name to define the ADS to open.
+On Mon, Aug 24, 2020 at 04:30:52PM -0400, Josef Bacik wrote:
+> On 8/21/20 3:38 AM, Omar Sandoval wrote:
+> > From: Omar Sandoval <osandov@fb.com>
+> > 
+> > The implementation resembles direct I/O: we have to flush any ordered
+> > extents, invalidate the page cache, and do the io tree/delalloc/extent
+> > map/ordered extent dance. From there, we can reuse the compression code
+> > with a minor modification to distinguish the write from writeback. This
+> > also creates inline extents when possible.
+> > 
+> > Now that read and write are implemented, this also sets the
+> > FMODE_ENCODED_IO flag in btrfs_file_open().
+> > 
+> > Signed-off-by: Omar Sandoval <osandov@fb.com>
+> > ---
+> >   fs/btrfs/compression.c  |   7 +-
+> >   fs/btrfs/compression.h  |   6 +-
+> >   fs/btrfs/ctree.h        |   2 +
+> >   fs/btrfs/file.c         |  40 +++++--
+> >   fs/btrfs/inode.c        | 246 +++++++++++++++++++++++++++++++++++++++-
+> >   fs/btrfs/ordered-data.c |  12 +-
+> >   fs/btrfs/ordered-data.h |   2 +
+> >   7 files changed, 298 insertions(+), 17 deletions(-)
+> > 
 > 
-> Hu, you're right! There is indeed a somewhat congruent effort & discussion
-> going on in parallel. Pulling in Miklos into CC for that reason:
-> https://lore.kernel.org/lkml/CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com/
+> <snip>
 > 
-> However the motivation of that other thread's PR was rather a procfs-like
-> system as a unified way to retrieve implementation specific info from an
-> underlying fs, and the file fork aspect would just be a 'side product'.
+> > +
+> > +	ret = btrfs_alloc_data_chunk_ondemand(BTRFS_I(inode), disk_num_bytes);
+> > +	if (ret)
+> > +		goto out_unlock;
+> > +	ret = btrfs_qgroup_reserve_data(BTRFS_I(inode), &data_reserved, start,
+> > +					num_bytes);
+> > +	if (ret)
+> > +		goto out_free_data_space;
+> > +	ret = btrfs_delalloc_reserve_metadata(BTRFS_I(inode), num_bytes,
+> > +					      disk_num_bytes);
+> > +	if (ret)
+> > +		goto out_qgroup_free_data;
 > 
-> Core motivation of that other thread (scroll down a bit):
-> https://lore.kernel.org/lkml/52483.1597190733@warthog.procyon.org.uk/
+> This can just be btrfs_delalloc_reserve_space() and that way the error
+> handling is much cleaner.
 > 
-> > > On Montag, 17. August 2020 02:29:30 CEST Dave Chinner wrote:
-> > > > I'd stop calling these "forks" already, too. The user wants
-> > > > "alternate data streams", while a "resource fork" is an internal
-> > > > filesystem implementation detail used to provide ADS
-> > > > functionality...
-> > >
-> > > The common terminology can certainly still be argued. I understand that
-> > > from fs implementation perspective "fork" is probably ambiguous. But from
-> > > public API (i.e. user space side) perspective the term "fork" does make
-> > > sense, and so far I have not seen a better general term for this. Plus
-> > > the ambiguous aspects on fs side are not exposed to the public side.
-> > >
-> > > The term "alternate data stream" suggests that this is just about the raw
-> > > data stream, but that's probably not what this feature will end up being
-> > > limited to. E.g. I think they will have their own permissions on the long
-> > > term (see below). Plus the term ADS is ATM somewhat sticky to the
-> > > Microsoft universe.
-> > ADS is the windows term, which is where the majority of people who
-> > use or want to ADS come from. Novell called the "multiple data
-> > streams", and solaris 9 implemented "extended attributes" (ADS)
-> > using inode forks. Apple allows a "data fork" (user data), "resource
-> > forks" (ADS) and now "named forks" which they then used to implement
-> > extended attributes.  Not the solaris ones, the linux style fixed
-> > length key-value xattrs.
-> >
-> > Quite frankly, the naming in this area is a complete and utter mess,
+> <snip>
+> > +
+> > +out_free_reserved:
+> > +	btrfs_dec_block_group_reservations(fs_info, ins.objectid);
+> > +	btrfs_free_reserved_extent(fs_info, ins.objectid, ins.offset, 1);
+> > +out_delalloc_release:
+> > +	btrfs_delalloc_release_extents(BTRFS_I(inode), num_bytes);
+> > +	btrfs_delalloc_release_metadata(BTRFS_I(inode), disk_num_bytes,
+> > +					ret < 0);
 > 
-> Absolutely!
+> Likewise this can all just be btrfs_free_reserved_data_space().  Thanks,
 > 
-> > and the only clear, unabiguous name for this feature is "alternate
-> > data streams". I don't care that it's something that comes from an
-> > MS background - if your only argument against it is "Microsoft!"
-> > then you're on pretty shakey ground...
-> 
-> It wasn't. My main argument really was, quote: 'The term "alternate data
-> stream" suggests that this is just about the raw data stream, but that's
-> probably not what this feature will end up being limited to. E.g. I think they
-> will have their own permissions on the long term ...'
-> 
-> > > - No subforks as starting point, and hence path separator '/' inside fork
-> > >
-> > >   names would be prohibited initially to avoid future clashes.
-> >
-> > Can't do that - changing the behaviour of the ADS name handling is
-> > effectively an on-disk filesystem format change. i.e. if we allow it
-> > in future kernels, then we have to mark the filesystem as "/" being
-> > valid so that older kernels and repair utilities won't consider this
-> > as invalid/corrupt and trash the ADS associated with the name.
-> >
-> > IOWs, we either support it from the start, or we never support it.
-> 
-> You have a point there. OTOH I don't think this would be a show stopper. This
-> feature set will introduce backward incompatibility anyway.
-> 
-> If somebody really would need to run an ancient kernel on a fs that already
-> contains subforks, then this fs could also be accessed via pass-through fs
-> inside VM guest & host running a more recent kernel, ... or by accessing it
-> remotely via fileserver, etc. There are options.
-> 
-> > > > Hence all the ADS support infrastructure is essentially dentry cache
-> > > > infrastructure allowing a dentry to be both a file and directory,
-> > > > and providing the pathname resolution that recognises an ADS
-> > > > redirection. Name that however you want - we've got to do an on-disk
-> > > > format change to support ADS, so we can tell the VFS we support ADS
-> > > > or not. And we have no cares about existing names in the filesystem
-> > > > conflicting with the ADS pathname identifier because it's a mkfs
-> > > > time decision. Given that special flags are needed for the openat()
-> > > > call to resolve an ADS (e.g. O_ALT), we know if we should parse the
-> > > > ADS identifier as an ADS the moment it is seen...
-> > >
-> > > So you think there should be a built-in full qualified path name
-> > > resolution to forks right from the start? E.g. like on Windows
-> > > "C:\some\where\sheet.pdf:foo" -> fork "foo" of file "sheet.pdf"?
-> >
-> > No. I really don't care how the user interface works. That's for
-> > people who write the syscalls to argue about.
-> 
-> Actually I did not have user space in mind either, it was more about the
-> dentry cache which made me thinking that a built-in path resolution right from
-> the start would make sense. But OTOH the Linux dentry cache at its heart only
-> maintains a first-order relationship to calculate the lookup hashes, i.e.:
-> 
->         dentry_hash = hash(dentry_ptr, child_name);
-> 
-> So it would not really be required to have a full qualified path resolution.
-> 
-> But yet again, in that other thread about that fs meta info API, the argument
-> was if there was no built-in path resolution right from the start, then user
-> space apps and libs would start building their own path name resolution on
-> top of openat(), which might end up in a mess for the ecosystem. They have a
-> strong argument there.
-> 
-> But as they already pointed out, it would be a problem to actually agree about
-> a delimiter between the filename and the fork name portion. Miklos suggested a
-> a double/triple slash, but I agree with other ones that this would render
-> misbehaviours with all sorts of existing applications:
-> https://lore.kernel.org/lkml/c013f32e-3931-f832-5857-2537a0b3d634@schaufler-ca.com/
-> 
-> They also came up with some other questions that we have not discussed here:
-> https://lore.kernel.org/lkml/20200812143957.GQ1236603@ZenIV.linux.org.uk/
-> https://lore.kernel.org/lkml/20200812213041.GV1236603@ZenIV.linux.org.uk/
-> 
-> > What I was describing is how the internal kernel implementation -
-> > the interaction between the VFS and the filesystem - needs to work.
-> > ADS needs to be supported in some way by the VFS; if ADS are going
-> > to be seekable user data files, then they have to be implemented as
-> > path/dentry/inode tuples that a struct file can point to. IOWs,
-> > internally they need to be seen as first class VFS citizens, and the
-> > VFS needs mechanisms to tell the filesystem to look up the ADS
-> > namespace rather than the inode itself....
-> 
-> Yes, sure.
-> 
-> > > > > I don't understand why a fork would be permitted to have its own
-> > > > > permissions.  That makes no sense.  Silly Solaris.
-> > > >
-> > > > I can't think of a reason why, either, but the above implementation
-> > > > for XFS would support it if the presentation layer allows it... :)
-> > >
-> > > I would definitely not add this right from the start of course, but on the
-> > > long term it actually does make senses for them having their own
-> > > permissions, simply because there are already applications for that:
-> > >
-> > > E.g. on some systems forks are used to tag files for security relevant
-> > > issues, for instance where the file originated from (a trusted vs.
-> > > untrusted source).
-> > Key-value data like is what the security xattr namespace is for, not
-> > ADS....
-> 
-> If it was only about storing a boolean like security.trusted = YES,
-> then you were right. However that example actually stores info which could
-> easily exceed the 4k limit of Linux xattrs, e.g. it stores the original URI of
-> the source.
-> 
-> > IOWs, now that I think about it, we should be allowing non-user
-> > per-ADS permissions to be set right from the start because I can
-> > think of several filesystem/kernel internal features that could make
-> > use of such functionality that we would want to remain hidden from
-> > users.
-> 
-> Right, actually while reading through that other thread, I realized that my
-> initial attitude, that is kicking off with a very limited feature set, is
-> probably contra productive, as they pointed out you'd easily end up handling
-> such forks as something completely different than regular directories and
-> files, so you would probably deviate from a unified VFS code base, start
-> adding new structs, adding exceptions, etc.
-> 
-> > > OTOH forks are used to extend existing files in non-obtrusive way. Say you
-> > > have some sort of (e.g. huge) master file, and a team works on that file.
-> > > Then the individual people would attach their changes solely as forks to
-> > > the master file with their ownership, probably even with complex ACLs, to
-> > > prevent certain users from touching (or even reading) other ones changes.
-> > > In this use case the master file might be readonly for most people, while
-> > > the individual forks being anywhere between more permissive or more
-> > > restrictive.
-> >
-> > You're demonstrating the exact reasons why ADS have traditionally
-> > been considered harmful by Linux developers.  You can do all that
-> > with normal directories and files - you do not need ADS to implement
-> > a fully functional multi-user content management system.
-> 
-> You're talking from a system-level-dev POV. Just by realizing that this
-> example could also be mapped into a regular directory structure does not mean
-> it would be better, nor friendlier from user-POV. From user POV it is one
-> file, that you would present to the user as directory instead.
-> 
-> ---
-> 
-> Ok, maybe I should make this more clear with another example: one major use
-> case for forks/ADS is extending (e.g. proprietary) binary file formats with
-> new features. Say company B is developing an editor application that supports
-> working directly with a binary media file (format) of another company A. And
-> say that company B's application has some feature that don't exist in app of
-> company A.
-> 
-> What shall it do? B could try adding their own chunks to the binary file
-> somewhere, but what happens in practice is that when another user now opens
-> the file with app A, it would often end up either refusing to open the file at
-> all, or it would crash, or it would simply drop and lose the info stored
-> previously by app B once the user saves the file again with app A. With
-> certain versions of app A it might work, with other versions it doesn't.
-> That's a nightmare to maintain.
-> 
-> By storing those extended features as named fork, e.g. "com.Bcorp.featureX",
-> you can easily circumvent that problem. App A still only works on the main
-> stream. So it can still safely open the file, and it would neither modify nor
-> drop the file's feature extensions of company B.
-> 
-> > Keep in mind that you are not going to get universal support for ADS
-> > any time soon as most filesystems will require on-disk format
-> > changes to support them. Further, you are goign to have to wait for
-> > the entire OS ecosystem to grow support for ADS (e.g. cp, tar,
-> > rsync, file, etc) before you can actually use it sanely in
-> > production systems. Even if we implement kernel support right now,
-> > it will be years before it will be widely available and supported at
-> > an OS/distro level...
-> 
-> Sure, that's a chicken egg problem.
-> 
-> Being realistic, I don't expect that forks are something that would be landing
-> in Linux very soon. I think it is an effort that will take its time, probably
-> as a Linux-test-fork / PoC for quite a while, up to a point where a common
-> acceptance is reached.
-> 
-> But file forks already exist on other systems for multiple good reasons. So I
-> think it makes sense to thrive the effort on Linux as well.
-> 
-> Best regards,
-> Christian Schoenebeck
+> Josef
 
-Just wanted to echo some of the sentiments in this thread, especially posted
-by Christian, so I'm replying to his message.
+btrfs_delalloc_reserve_space() and btrfs_free_reserved_data_space()
+assume that num_bytes == disk_num_bytes, which isn't true for
+RWF_ENCODED.
 
-I agree with him and Linus that the Solaris interface of:
+I figured it'd be cleaner to open-code this special case in the one
+place that it's needed, but I could also add explicit num_bytes and
+disk_num_bytes arguments to btrfs_delalloc_reserve_space() and
+btrfs_free_reserved_data_space(). They'd just be equal everywhere except
+for here.
 
-ffd = open("foo", O_RDONLY);
-afd = openat(ffd, "attrpath", O_XATTR|O_RDWR);
-
-..is the best starting point. It's simple, it's clean, it doesn't overload
-path separators. And hey, if you like doing it with path separators, put
-a library function on top of it that uses them :-)
-
-When I implemented for NFS "user." xattrs, I noticed these things:
-
-* Extended attributes have no common caching, so each filesystem implements
-  its own, which is a waste.
-* There is quite a bit of k(v)alloc-ing and copying going on, and it's hard
-  to avoid.
-* Given that, the upper size limit is understandable, but still feels kind of
-  arbitrary.
-
-So, it would be great to have alternate data streams, and put xattrs on top
-of them. Essentially they'd be streams with reserved names that are always
-locked for the reader or writer and only allow reads/writes at offset 0,
-and always truncate on write.
-
-It would also mean that caching now naturally happens in the page cache,
-so no need for each filesystem to have separate caches anymore.
-
-Is it worth it given the code churn involved? Good question. I think, if
-done right, it could end up in the code looking at lot cleaner. But it's
-a long road to get there, and there are many issues that need to be solved.
-So who knows.
-
-Lastly, I think I saw someone say that it was a bit weird to have permissions
-per stream/attribute, like Solaris has. I don't know. In a way, the current
-"streams" already have different permissions - it's just hardcoded at the
-top level ("user", "trusted", etc).
-
-- Frank
+If you're fine with keeping it this way, I'll add a comment explaining
+why we can't use the higher-level helpers.
