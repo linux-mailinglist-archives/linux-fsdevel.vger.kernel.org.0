@@ -2,283 +2,378 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B387250129
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 17:31:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39538250133
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 17:33:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgHXPbF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 11:31:05 -0400
-Received: from lizzy.crudebyte.com ([91.194.90.13]:39849 "EHLO
-        lizzy.crudebyte.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726670AbgHXPag (ORCPT
+        id S1727894AbgHXPdF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 11:33:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:60506 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727809AbgHXPax (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 11:30:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=crudebyte.com; s=lizzy; h=Content-Type:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        Content-ID:Content-Description;
-        bh=suep5CnynQcYZCpmE5AMesXHjd9m4w0D6hQ2xKiEdOc=; b=L4BpCHgl5QpSkEKgxc2oruIVR6
-        DxgtpCDAsThBbL5HYqZLx427eqxrAj9hXdHFt4Kfr11pUSgPg931hu/IpN5X0YrEgwewON3BREaS+
-        WCi6loq4cmLqfTUe9XdARwqY8A0858AmqkukmRfyR3QmRJ+TY40pkqHSeVPviAwDSiuQ9dGB052Gt
-        js0EEV64AMmboHe3YW9phzqN1ogXxFNAboeKVuQo0mh09VlLptrpsaC5IebmZ9NI7Ec5PPAI7MqKG
-        ROE59tjfMM/hT/hyxFU1w6Pif0Rmv+QuC3vfbIebE9Vt8ZXTnGvfyXeqKx3//9jZ/+Qaf15fu7Vn/
-        dSqQHh/Q==;
-From:   Christian Schoenebeck <qemu_oss@crudebyte.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
-        stefanha@redhat.com, mszeredi@redhat.com, vgoyal@redhat.com,
-        gscrivan@redhat.com, dwalsh@redhat.com, chirantan@chromium.org,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: file forks vs. xattr (was: xattr names for unprivileged stacking?)
-Date:   Mon, 24 Aug 2020 17:30:18 +0200
-Message-ID: <3081309.dU5VghuM72@silver>
-In-Reply-To: <20200823234006.GD7728@dread.disaster.area>
-References: <20200728105503.GE2699@work-vm> <2859814.QYyEAd97eH@silver> <20200823234006.GD7728@dread.disaster.area>
+        Mon, 24 Aug 2020 11:30:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598283039;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=1YQ3gyXIJKMTUHtJJNp/oPK6RXcsK9K1cF1dewWatRk=;
+        b=UyeEcYXB/slFy1Kr60tp7aVdpP0zl+p12n/i1BJZy+EZN++Yis4y9DZC/i1v2uVT2Hac2Y
+        1G4MbdSai+IvI2f76THZanOeTAPpS/ZzRPs2D6npOKgZ89S0/y/QmYMrPg6Z3SdjmC2neL
+        A+OtUjIKAZXZaQ8Lav4NPv+xZUvELCg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-453-ld3EiieBMmq9cu9ub4Gd9A-1; Mon, 24 Aug 2020 11:30:35 -0400
+X-MC-Unique: ld3EiieBMmq9cu9ub4Gd9A-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B130181CAFD;
+        Mon, 24 Aug 2020 15:30:33 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1D87C7038A;
+        Mon, 24 Aug 2020 15:30:31 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 1/2] Add a manpage for watch_queue(7)
+From:   David Howells <dhowells@redhat.com>
+To:     mtk.manpages@gmail.com, me@benboeckel.net
+Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
+        keyrings@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 24 Aug 2020 16:30:31 +0100
+Message-ID: <159828303137.330133.10953708050467314086.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Montag, 24. August 2020 01:40:06 CEST Dave Chinner wrote:
-> On Mon, Aug 17, 2020 at 12:37:17PM +0200, Christian Schoenebeck wrote:
-> > On Montag, 17. August 2020 00:56:20 CEST Dave Chinner wrote:
-> > > IOWs, with a filesystem inode fork implementation like this for ADS,
-> > > all we really need is for the VFS to pass a magic command to
-> > > ->lookup() to tell us to use the ADS namespace attached to the inode
-> > > rather than use the primary inode type/state to perform the
-> > > operation.
-> > 
-> > IMO starting with a minimalistic approach, in a way Solaris developers
-> 
-> > originally introduced forks, would IMO make sense for Linux as well:
-> <snip>
-> 
-> That's pretty much what the proposed O_ALT did, except it used a
-> fully qualified path name to define the ADS to open.
+Add a manual page for the notifications/watch_queue facility.
 
-Hu, you're right! There is indeed a somewhat congruent effort & discussion
-going on in parallel. Pulling in Miklos into CC for that reason:
-https://lore.kernel.org/lkml/CAJfpegtNP8rQSS4Z14Ja4x-TOnejdhDRTsmmDD-Cccy2pkfVVw@mail.gmail.com/
-
-However the motivation of that other thread's PR was rather a procfs-like
-system as a unified way to retrieve implementation specific info from an
-underlying fs, and the file fork aspect would just be a 'side product'.
-
-Core motivation of that other thread (scroll down a bit):
-https://lore.kernel.org/lkml/52483.1597190733@warthog.procyon.org.uk/
-
-> > On Montag, 17. August 2020 02:29:30 CEST Dave Chinner wrote:
-> > > I'd stop calling these "forks" already, too. The user wants
-> > > "alternate data streams", while a "resource fork" is an internal
-> > > filesystem implementation detail used to provide ADS
-> > > functionality...
-> > 
-> > The common terminology can certainly still be argued. I understand that
-> > from fs implementation perspective "fork" is probably ambiguous. But from
-> > public API (i.e. user space side) perspective the term "fork" does make
-> > sense, and so far I have not seen a better general term for this. Plus
-> > the ambiguous aspects on fs side are not exposed to the public side.
-> > 
-> > The term "alternate data stream" suggests that this is just about the raw
-> > data stream, but that's probably not what this feature will end up being
-> > limited to. E.g. I think they will have their own permissions on the long
-> > term (see below). Plus the term ADS is ATM somewhat sticky to the
-> > Microsoft universe.
-> ADS is the windows term, which is where the majority of people who
-> use or want to ADS come from. Novell called the "multiple data
-> streams", and solaris 9 implemented "extended attributes" (ADS)
-> using inode forks. Apple allows a "data fork" (user data), "resource
-> forks" (ADS) and now "named forks" which they then used to implement
-> extended attributes.  Not the solaris ones, the linux style fixed
-> length key-value xattrs.
-> 
-> Quite frankly, the naming in this area is a complete and utter mess,
-
-Absolutely!
-
-> and the only clear, unabiguous name for this feature is "alternate
-> data streams". I don't care that it's something that comes from an
-> MS background - if your only argument against it is "Microsoft!"
-> then you're on pretty shakey ground...
-
-It wasn't. My main argument really was, quote: 'The term "alternate data
-stream" suggests that this is just about the raw data stream, but that's
-probably not what this feature will end up being limited to. E.g. I think they
-will have their own permissions on the long term ...'
-
-> > - No subforks as starting point, and hence path separator '/' inside fork
-> > 
-> >   names would be prohibited initially to avoid future clashes.
-> 
-> Can't do that - changing the behaviour of the ADS name handling is
-> effectively an on-disk filesystem format change. i.e. if we allow it
-> in future kernels, then we have to mark the filesystem as "/" being
-> valid so that older kernels and repair utilities won't consider this
-> as invalid/corrupt and trash the ADS associated with the name.
-> 
-> IOWs, we either support it from the start, or we never support it.
-
-You have a point there. OTOH I don't think this would be a show stopper. This
-feature set will introduce backward incompatibility anyway.
-
-If somebody really would need to run an ancient kernel on a fs that already
-contains subforks, then this fs could also be accessed via pass-through fs
-inside VM guest & host running a more recent kernel, ... or by accessing it
-remotely via fileserver, etc. There are options.
-
-> > > Hence all the ADS support infrastructure is essentially dentry cache
-> > > infrastructure allowing a dentry to be both a file and directory,
-> > > and providing the pathname resolution that recognises an ADS
-> > > redirection. Name that however you want - we've got to do an on-disk
-> > > format change to support ADS, so we can tell the VFS we support ADS
-> > > or not. And we have no cares about existing names in the filesystem
-> > > conflicting with the ADS pathname identifier because it's a mkfs
-> > > time decision. Given that special flags are needed for the openat()
-> > > call to resolve an ADS (e.g. O_ALT), we know if we should parse the
-> > > ADS identifier as an ADS the moment it is seen...
-> > 
-> > So you think there should be a built-in full qualified path name
-> > resolution to forks right from the start? E.g. like on Windows
-> > "C:\some\where\sheet.pdf:foo" -> fork "foo" of file "sheet.pdf"?
-> 
-> No. I really don't care how the user interface works. That's for
-> people who write the syscalls to argue about.
-
-Actually I did not have user space in mind either, it was more about the
-dentry cache which made me thinking that a built-in path resolution right from
-the start would make sense. But OTOH the Linux dentry cache at its heart only
-maintains a first-order relationship to calculate the lookup hashes, i.e.:
-
-	dentry_hash = hash(dentry_ptr, child_name);
-
-So it would not really be required to have a full qualified path resolution.
-
-But yet again, in that other thread about that fs meta info API, the argument
-was if there was no built-in path resolution right from the start, then user
-space apps and libs would start building their own path name resolution on
-top of openat(), which might end up in a mess for the ecosystem. They have a
-strong argument there.
-
-But as they already pointed out, it would be a problem to actually agree about
-a delimiter between the filename and the fork name portion. Miklos suggested a
-a double/triple slash, but I agree with other ones that this would render
-misbehaviours with all sorts of existing applications:
-https://lore.kernel.org/lkml/c013f32e-3931-f832-5857-2537a0b3d634@schaufler-ca.com/
-
-They also came up with some other questions that we have not discussed here:
-https://lore.kernel.org/lkml/20200812143957.GQ1236603@ZenIV.linux.org.uk/
-https://lore.kernel.org/lkml/20200812213041.GV1236603@ZenIV.linux.org.uk/
-
-> What I was describing is how the internal kernel implementation -
-> the interaction between the VFS and the filesystem - needs to work.
-> ADS needs to be supported in some way by the VFS; if ADS are going
-> to be seekable user data files, then they have to be implemented as
-> path/dentry/inode tuples that a struct file can point to. IOWs,
-> internally they need to be seen as first class VFS citizens, and the
-> VFS needs mechanisms to tell the filesystem to look up the ADS
-> namespace rather than the inode itself....
-
-Yes, sure.
-
-> > > > I don't understand why a fork would be permitted to have its own
-> > > > permissions.  That makes no sense.  Silly Solaris.
-> > > 
-> > > I can't think of a reason why, either, but the above implementation
-> > > for XFS would support it if the presentation layer allows it... :)
-> > 
-> > I would definitely not add this right from the start of course, but on the
-> > long term it actually does make senses for them having their own
-> > permissions, simply because there are already applications for that:
-> > 
-> > E.g. on some systems forks are used to tag files for security relevant
-> > issues, for instance where the file originated from (a trusted vs.
-> > untrusted source).
-> Key-value data like is what the security xattr namespace is for, not
-> ADS....
-
-If it was only about storing a boolean like security.trusted = YES,
-then you were right. However that example actually stores info which could
-easily exceed the 4k limit of Linux xattrs, e.g. it stores the original URI of
-the source.
-
-> IOWs, now that I think about it, we should be allowing non-user
-> per-ADS permissions to be set right from the start because I can
-> think of several filesystem/kernel internal features that could make
-> use of such functionality that we would want to remain hidden from
-> users.
-
-Right, actually while reading through that other thread, I realized that my
-initial attitude, that is kicking off with a very limited feature set, is
-probably contra productive, as they pointed out you'd easily end up handling
-such forks as something completely different than regular directories and
-files, so you would probably deviate from a unified VFS code base, start
-adding new structs, adding exceptions, etc.
-
-> > OTOH forks are used to extend existing files in non-obtrusive way. Say you
-> > have some sort of (e.g. huge) master file, and a team works on that file.
-> > Then the individual people would attach their changes solely as forks to
-> > the master file with their ownership, probably even with complex ACLs, to
-> > prevent certain users from touching (or even reading) other ones changes.
-> > In this use case the master file might be readonly for most people, while
-> > the individual forks being anywhere between more permissive or more
-> > restrictive.
-> 
-> You're demonstrating the exact reasons why ADS have traditionally
-> been considered harmful by Linux developers.  You can do all that
-> with normal directories and files - you do not need ADS to implement
-> a fully functional multi-user content management system.
-
-You're talking from a system-level-dev POV. Just by realizing that this
-example could also be mapped into a regular directory structure does not mean
-it would be better, nor friendlier from user-POV. From user POV it is one
-file, that you would present to the user as directory instead.
-
+Signed-off-by: David Howells <dhowells@redhat.com>
 ---
 
-Ok, maybe I should make this more clear with another example: one major use
-case for forks/ADS is extending (e.g. proprietary) binary file formats with
-new features. Say company B is developing an editor application that supports
-working directly with a binary media file (format) of another company A. And
-say that company B's application has some feature that don't exist in app of
-company A.
+ man7/watch_queue.7 |  304 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 304 insertions(+)
+ create mode 100644 man7/watch_queue.7
 
-What shall it do? B could try adding their own chunks to the binary file
-somewhere, but what happens in practice is that when another user now opens
-the file with app A, it would often end up either refusing to open the file at
-all, or it would crash, or it would simply drop and lose the info stored
-previously by app B once the user saves the file again with app A. With
-certain versions of app A it might work, with other versions it doesn't.
-That's a nightmare to maintain.
-
-By storing those extended features as named fork, e.g. "com.Bcorp.featureX",
-you can easily circumvent that problem. App A still only works on the main
-stream. So it can still safely open the file, and it would neither modify nor
-drop the file's feature extensions of company B.
-
-> Keep in mind that you are not going to get universal support for ADS
-> any time soon as most filesystems will require on-disk format
-> changes to support them. Further, you are goign to have to wait for
-> the entire OS ecosystem to grow support for ADS (e.g. cp, tar,
-> rsync, file, etc) before you can actually use it sanely in
-> production systems. Even if we implement kernel support right now,
-> it will be years before it will be widely available and supported at
-> an OS/distro level...
-
-Sure, that's a chicken egg problem.
-
-Being realistic, I don't expect that forks are something that would be landing
-in Linux very soon. I think it is an effort that will take its time, probably
-as a Linux-test-fork / PoC for quite a while, up to a point where a common
-acceptance is reached.
-
-But file forks already exist on other systems for multiple good reasons. So I
-think it makes sense to thrive the effort on Linux as well.
-
-Best regards,
-Christian Schoenebeck
+diff --git a/man7/watch_queue.7 b/man7/watch_queue.7
+new file mode 100644
+index 000000000..14c202cef
+--- /dev/null
++++ b/man7/watch_queue.7
+@@ -0,0 +1,304 @@
++.\"
++.\" Copyright (C) 2020 Red Hat, Inc. All Rights Reserved.
++.\" Written by David Howells (dhowells@redhat.com)
++.\"
++.\" This program is free software; you can redistribute it and/or
++.\" modify it under the terms of the GNU General Public Licence
++.\" as published by the Free Software Foundation; either version
++.\" 2 of the Licence, or (at your option) any later version.
++.\"
++.TH WATCH_QUEUE 7 "2020-08-07" Linux "General Kernel Notifications"
++.SH NAME
++General kernel notification queue
++.SH SYNOPSIS
++#include <linux/watch_queue.h>
++.EX
++
++pipe2(fds, O_NOTIFICATION_PIPE);
++ioctl(fds[0], IOC_WATCH_QUEUE_SET_SIZE, max_message_count);
++ioctl(fds[0], IOC_WATCH_QUEUE_SET_FILTER, &filter);
++keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, fds[0], message_tag);
++for (;;) {
++	buf_len = read(fds[0], buffer, sizeof(buffer));
++	...
++}
++.EE
++.SH OVERVIEW
++.PP
++The general kernel notification queue is a general purpose transport for kernel
++notification messages to userspace.  Notification messages are marked with type
++information so that events from multiple sources can be distinguished.
++Messages are also of variable length to accommodate different information for
++each type.
++.PP
++Queues are implemented on top of standard pipes and multiple independent queues
++can be created.  After a pipe has been created, its size and filtering can be
++configured and event sources attached.  The pipe can then be read or polled to
++wait for messages.
++.PP
++Multiple messages may be read out of the queue at a time if the buffer is large
++enough, but messages will not get split amongst multiple reads.  If the buffer
++isn't large enough for a message,
++.B ENOBUFS
++will be returned.
++.PP
++In the case of message loss,
++.BR read (2)
++will fabricate a loss message and pass that to userspace immediately after the
++point at which the loss occurred.  A single loss message is generated, even if
++multiple messages get lost at the same point.
++.PP
++A notification pipe allocates a certain amount of locked kernel memory (so that
++the kernel can write a notification into it from contexts where allocation is
++restricted), and so is subject to pipe resource limit restrictions - see
++.BR pipe (7),
++in the section on
++.BR "/proc files" .
++.PP
++Sources must be attached to a queue manually; there's no single global event
++source, but rather a variety of sources, each of which can be attached to by
++multiple queues.  Attachments can be set up by:
++.TP
++.BR keyctl_watch_key (3)
++Monitor a key or keyring for changes.
++.PP
++Because a source can produce a lot of different events, not all of which may
++be of interest to the watcher, a single set of filters can be set on a queue
++to determine whether a particular event will get inserted in a queue at the
++point of posting inside the kernel.
++.SH MESSAGE STRUCTURE
++.PP
++The output from reading the pipe is divided into variable length messages.
++.BR read (2)
++will never split a message across two separate read calls.  Each message
++begins with a header of the form:
++.PP
++.in +4n
++.EX
++struct watch_notification {
++	__u32	type:24;
++	__u32	subtype:8;
++	__u32	info;
++};
++.EE
++.in
++.PP
++Where
++.I type
++indicates the general class of notification,
++.I subtype
++indicates the specific type of notification within that class and
++.I info
++includes the message length (in bytes), the watcher's ID and some type-specific
++information.
++.PP
++A special message type,
++.BR WATCH_TYPE_META ,
++exists to convey information about the notification facility itself.  It has
++the following subtypes:
++.TP
++.B WATCH_META_LOSS_NOTIFICATION
++This indicates one or more messages were lost, probably due to a buffer
++overrun.
++.TP
++.B WATCH_META_REMOVAL_NOTIFICATION
++This indicates that a notification source went away whilst it is being watched.
++This comes in two lengths: a short variant that carries just the header and a
++long variant that includes a 64-bit identifier as well that identifies the
++source more precisely (which variant is used and how the identifier should be
++interpreted is source dependent).
++.PP
++.I info
++includes the following fields:
++.TP
++.B WATCH_INFO_LENGTH
++Bits 0-6 indicate the size of the message in bytes, and can be between 8 and
++127.
++.TP
++.B WATCH_INFO_ID
++Bits 8-15 indicate the tag given to the source binding call.  This is a number
++between 0 and 255 and is purely a source index for userspace's use and isn't
++interpreted by the kernel.
++.TP
++.B WATCH_INFO_TYPE_INFO
++Bits 16-31 indicate subtype-dependent information.
++.SH IOCTL COMMANDS
++Pipes opened with
++.B O_NOTIFICATION_PIPE
++have the following
++.BR ioctl (2)
++commands available:
++.TP
++.B IOC_WATCH_QUEUE_SET_SIZE
++The ioctl argument is indicates the maximum number of messages that can be
++inserted into the pipe.  This must be a power of two.  This command also
++pre-allocates memory to hold messages.
++.IP
++This may only be done once and the queue cannot be used until this command has
++been done.
++.TP
++.B IOC_WATCH_QUEUE_SET_FILTER
++This is used to set filters on the notifications that get written into the
++buffer.  See the section on filtering for details.
++.SH FILTERING
++.PP
++The
++.B IOC_WATH_QUEUE_SET_FILTER
++ioctl argument points to a structure of the following form:
++.PP
++.in +4n
++.EX
++struct watch_notification_filter {
++	__u32	nr_filters;
++	__u32	__reserved;
++	struct watch_notification_type_filter filters[];
++};
++.EE
++.in
++.PP
++Where
++.I nr_filters
++indicates the number of elements in the
++.IR filters []
++array, and
++.I __reserved
++should be 0.  Each element in the filters array specifies a filter and is of
++the following form:
++.PP
++.in +4n
++.EX
++struct watch_notification_type_filter {
++	__u32	type;
++	__u32	info_filter;
++	__u32	info_mask;
++	__u32	subtype_filter[8];
++};
++.EE
++.in
++.PP
++Where
++.I type
++refers to the type field in a notification record header;
++.IR info_filter " and " info_mask
++refer to the info field; and
++.I subtype_filter
++is a bit-mask of permitted subtypes.
++.PP
++A notification matches a filter if all of the following are true:
++.in +4n
++.PP
++(*) The type on the notification matches that on the filter.
++.PP
++(*) The bit in subtype_filter that matches the notification subtype is set.
++Each element in subtype_filter[] covers 32 subtypes, with, for example,
++element 0 matching subtypes 0-31.  This can be summarised as:
++.PP
++.in +4n
++.EX
++F->subtype_filter[N->subtype / 32] & (1U << (N->subtype % 32))
++.EE
++.in
++.PP
++(*) The notification info, masked off, matches the filter info, e.g.:
++.PP
++.in +4n
++.EX
++(N->info & F->info_mask) == F->info_filter
++.EE
++.in
++.PP
++If no filters are set, all notifications are allowed by default and if one or
++more filters are set, notifications are disallowed by default.
++WATCH_TYPE_META cannot, however, be filtered.
++.SH VERSIONS
++The notification queue driver first appeared in v5.8 of the Linux kernel.
++.SH EXAMPLE
++To use the notification mechanism, first of all the pipe has to be opened and
++the size must be set:
++.PP
++.in +4n
++.EX
++int fds[2];
++pipe2(fd[0], O_NOTIFICATION_QUEUE);
++int wfd = fd[0];
++
++ioctl(wfd, IOC_WATCH_QUEUE_SET_SIZE, 16);
++.EE
++.in
++.PP
++From this point, the queue is open for business.  Filters can be set to
++restrict the notifications that get inserted into the queue from the sources
++that are being watched.  For example:
++.PP
++.in +4n
++.EX
++static struct watch_notification_filter filter = {
++	.nr_filters	= 1,
++	.__reserved	= 0,
++	.filters = {
++		[0]	= {
++			.type			= WATCH_TYPE_KEY_NOTIFY,
++			.subtype_filter[0]	= 1 << NOTIFY_KEY_LINKED,
++			.info_filter		= 1 << WATCH_INFO_FLAG_2,
++			.info_mask		= 1 << WATCH_INFO_FLAG_2,
++		},
++	},
++};
++
++ioctl(wfd, IOC_WATCH_QUEUE_SET_FILTER, &filter);
++.EE
++.in
++.PP
++will only allow key-change notifications that indicate a key is linked into a
++keyring and then only if type-specific flag WATCH_INFO_FLAG_2 is set on the
++notification.
++.PP
++Sources can then be watched, for example:
++.PP
++.in +4n
++.EX
++keyctl_watch_key(KEY_SPEC_SESSION_KEYRING, wfd, 0x33);
++.EE
++.in
++.PP
++The first places a watch on the process's session keyring, directing the
++notifications to the buffer we just created and specifying that they should be
++tagged with 0x33 in the info ID field.
++.PP
++When it is determined that there is something in the buffer, messages can be
++read out of the ring with something like the following:
++.PP
++.in +4n
++.EX
++for (;;) {
++	unsigned char buf[WATCH_INFO_LENGTH];
++	read(fd, buf, sizeof(buf));
++	struct watch_notification *n = (struct watch_notification *)buf;
++	switch (n->type) {
++	case WATCH_TYPE_META:
++		switch (n->subtype) {
++		case WATCH_META_REMOVAL_NOTIFICATION:
++			saw_removal_notification(n);
++			break;
++		case WATCH_META_LOSS_NOTIFICATION:
++			printf("-- LOSS --\n");
++			break;
++		}
++		break;
++	case WATCH_TYPE_KEY_NOTIFY:
++		saw_key_change(n);
++		break;
++	}
++}
++.EE
++.in
++.PP
++
++.SH SEE ALSO
++.ad l
++.nh
++.BR keyctl (1),
++.BR ioctl (2),
++.BR pipe2 (2),
++.BR read (2),
++.BR keyctl_watch_key (3)
 
 
