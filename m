@@ -2,80 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A2DA6250A5D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 22:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4489D250A65
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 23:00:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbgHXU47 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 16:56:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38000 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726051AbgHXU45 (ORCPT
+        id S1726999AbgHXVAW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 17:00:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:50376 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725904AbgHXVAU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 16:56:57 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0865FC061574;
-        Mon, 24 Aug 2020 13:56:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=LN+DUOfKEizX8QNr7bOwZ5+JguobMK44E5m8RnNF9Bo=; b=YIumQ8y4HB+kfazl4vAjZnFq5I
-        ThgurHTGnN47Ze7FwjQqITnlhn2Ur3gbvUmcmDLFxwPgwqs0GjbJwF5CijWhrftuNbV8gciSlc6IA
-        2sVxlIzk3XAnFI3haLRU02ms/eYmP5hYD/+Ez7d45xYoHKe5Km/CYMH/w8I81YgdKlTIH8OC3L7Mk
-        VJyuRhAlgCt96qKP5ucvgaMMQN/F0zPKVot4QAraIb+i7suzQtegpxyJXL6K+312IcN6PSbO+2Fc2
-        1NAEV4+VcJm/odK74IlYsEUbCQdiKfpktGI4fBo01D4SJQcWXN4RfGs4dw8FAm6TfZKenoUmchtQ6
-        8bzl2kuQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kAJWJ-0001kY-OF; Mon, 24 Aug 2020 20:56:48 +0000
-Date:   Mon, 24 Aug 2020 21:56:47 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Yafang Shao <laoar.shao@gmail.com>, david@fromorbit.com,
-        hch@infradead.org, darrick.wong@oracle.com, mhocko@kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v6 2/2] xfs: avoid transaction reservation recursion
-Message-ID: <20200824205647.GG17456@casper.infradead.org>
-References: <20200824014234.7109-1-laoar.shao@gmail.com>
- <20200824014234.7109-3-laoar.shao@gmail.com>
- <20200824130925.a3d2d2b75ac3a6b4eba72fb9@linux-foundation.org>
+        Mon, 24 Aug 2020 17:00:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598302818;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=dArBMjBu6Yjd06FGK20jndZ6EdlklVUmvStH3WB7sTA=;
+        b=gtRDusuQ4C2zwietbitmWF4IjqawGkVQLLFVVVkPmHr6nZdna6KPCud675EChbf4G0T4xl
+        97j6t6xAdS+r7i8ECVwQKAwJsfpM3d4CCNXqG2GdUCsLIvArPag6/HD3EqeJriymdPwbEy
+        mCIY7o/5BliKe6JCIgW8taDdkQ7kGzM=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-291-eKqfH3RQOXa6xGmNmpP3GA-1; Mon, 24 Aug 2020 17:00:14 -0400
+X-MC-Unique: eKqfH3RQOXa6xGmNmpP3GA-1
+Received: by mail-lj1-f198.google.com with SMTP id w15so3165701lji.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 14:00:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dArBMjBu6Yjd06FGK20jndZ6EdlklVUmvStH3WB7sTA=;
+        b=SWimpzbHPxyYK6L8Qs/kuGTfgpGwgs8RawztqS1UDjSjfB7cPPsFhCGMVJivVGNVO9
+         VUHH1YoYge+iGlW4m6qNeoZ1OE2RCpEh4wWU8XezzgpRVn8xU1BT4a4C7RJ+8NR3JKHh
+         PM2G9T3t7EAAWH93gnz32Isj3aVTZVC/TBNUyRoVnwUEtkivdqMCnmhozR8DVX6fX2lJ
+         IYynAtydImchaRINN8k0hG4FjFULTY9CCFlw3V01jOEUbNUOBMPOBwMuy3pR+zc91Zyd
+         IcCuVai2vi8td/eWJWf7lZJEgsRzXlZjsyEtGaHIlk2EG7rLsQGe1oQPRMKkq++0nrps
+         OW/Q==
+X-Gm-Message-State: AOAM5323Yu0inHp5VwiHSSWbu4ODhd4RW1+tL0qOKOf/0CjzHnBUVyKg
+        GljOlHZuhPBuWpbMNZyPCupW5OHPit9HdNRvObUSP9Tq7chFm4MS+P7ToDZYEJMHNso2k91oSux
+        2kahpoEN8gzu0Z0odK3NU/KDZKR9hqRXEV/AUGFlROA==
+X-Received: by 2002:ac2:568b:: with SMTP id 11mr3362057lfr.87.1598302811927;
+        Mon, 24 Aug 2020 14:00:11 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyh510SXVhjTJ4fo6qnIoXsDmjw+4kFDJo+p6bMWy1uCQEAElrM7xxXDoIBq3WLL1m/FjtxmlH9uAoJXx9nXns=
+X-Received: by 2002:ac2:568b:: with SMTP id 11mr3362038lfr.87.1598302811601;
+ Mon, 24 Aug 2020 14:00:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200824130925.a3d2d2b75ac3a6b4eba72fb9@linux-foundation.org>
+References: <0000000000008caae305ab9a5318@google.com> <000000000000a726a405ada4b6cf@google.com>
+In-Reply-To: <000000000000a726a405ada4b6cf@google.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Mon, 24 Aug 2020 23:00:00 +0200
+Message-ID: <CAFqZXNvQcjp201ahjLBhYJJCuYqZrYLGDA-wE3hXiJpRNgbTKg@mail.gmail.com>
+Subject: Re: general protection fault in security_inode_getattr
+To:     syzbot <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com>
+Cc:     andriin@fb.com, Alexei Starovoitov <ast@kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        James Morris <jmorris@namei.org>, john.fastabend@gmail.com,
+        kafai@fb.com, KP Singh <kpsingh@chromium.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        network dev <netdev@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, songliubraving@fb.com,
+        syzkaller-bugs@googlegroups.com, yhs@fb.com,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 01:09:25PM -0700, Andrew Morton wrote:
-> On Mon, 24 Aug 2020 09:42:34 +0800 Yafang Shao <laoar.shao@gmail.com> wrote:
-> 
-> > --- a/include/linux/iomap.h
-> > +++ b/include/linux/iomap.h
-> > @@ -271,4 +271,11 @@ int iomap_swapfile_activate(struct swap_info_struct *sis,
-> >  # define iomap_swapfile_activate(sis, swapfile, pagespan, ops)	(-EIO)
-> >  #endif /* CONFIG_SWAP */
-> >  
-> > +/* Use the journal_info to indicate current is in a transaction */
-> > +static inline bool
-> > +fstrans_context_active(void)
-> > +{
-> > +	return current->journal_info != NULL;
-> > +}
-> 
-> Why choose iomap.h for this?
+On Mon, Aug 24, 2020 at 9:37 PM syzbot
+<syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com> wrote:
+> syzbot has found a reproducer for the following issue on:
 
-Because it gets used in iomap/buffered-io.c
+Looping in fsdevel and OverlayFS maintainers, as this seems to be
+FS/OverlayFS related...
 
-I don't think this is necessarily a useful abstraction, to be honest.
-I'd just open-code 'if (current->journal_info)' or !current->journal_info,
-whichever way round the code is:
+See also original report against 5.8-rc7:
+https://lore.kernel.org/linux-security-module/0000000000008caae305ab9a5318@google.com/T/
 
-fs/btrfs/delalloc-space.c:              if (current->journal_info)
-fs/ceph/xattr.c:                if (current->journal_info) {
-fs/gfs2/bmap.c:         if (current->journal_info) {
-fs/jbd2/transaction.c:  if (WARN_ON(current->journal_info)) {
-fs/reiserfs/super.c:    if (!current->journal_info) {
+>
+> HEAD commit:    d012a719 Linux 5.9-rc2
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14aa130e900000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=891ca5711a9f1650
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f07cc9be8d1d226947ed
+> compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=104a650e900000
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com
+>
+> general protection fault, probably for non-canonical address 0xdffffc000000000d: 0000 [#1] PREEMPT SMP KASAN
+> KASAN: null-ptr-deref in range [0x0000000000000068-0x000000000000006f]
+> CPU: 1 PID: 32288 Comm: syz-executor.3 Not tainted 5.9.0-rc2-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:d_backing_inode include/linux/dcache.h:549 [inline]
+> RIP: 0010:security_inode_getattr+0x42/0x140 security/security.c:1276
+> Code: 1b fe 49 8d 5e 08 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 bc b4 5b fe 48 8b 1b 48 83 c3 68 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 9f b4 5b fe 48 8b 1b 48 83 c3 0c
+> RSP: 0018:ffffc9000a017750 EFLAGS: 00010202
+> RAX: 000000000000000d RBX: 0000000000000068 RCX: ffff888093ec6180
+> RDX: 0000000000000000 RSI: ffffc9000a017860 RDI: ffffc9000a017850
+> RBP: ffffc9000a017850 R08: dffffc0000000000 R09: ffffc9000a017850
+> R10: fffff52001402f0c R11: 0000000000000000 R12: ffffc9000a017860
+> R13: 0000000000008401 R14: ffffc9000a017850 R15: dffffc0000000000
+> FS:  00007f292d4ef700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000001b30920074 CR3: 00000000937fd000 CR4: 00000000001506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  vfs_getattr+0x21/0x60 fs/stat.c:121
+>  ovl_copy_up_one fs/overlayfs/copy_up.c:850 [inline]
+>  ovl_copy_up_flags+0x2ef/0x2a00 fs/overlayfs/copy_up.c:931
+>  ovl_maybe_copy_up+0x154/0x180 fs/overlayfs/copy_up.c:963
+>  ovl_open+0xa2/0x200 fs/overlayfs/file.c:147
+>  do_dentry_open+0x7c8/0x1010 fs/open.c:817
+>  do_open fs/namei.c:3251 [inline]
+>  path_openat+0x2794/0x3840 fs/namei.c:3368
+>  do_filp_open+0x191/0x3a0 fs/namei.c:3395
+>  file_open_name+0x321/0x430 fs/open.c:1113
+>  acct_on kernel/acct.c:207 [inline]
+>  __do_sys_acct kernel/acct.c:286 [inline]
+>  __se_sys_acct+0x122/0x6f0 kernel/acct.c:273
+>  do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
+>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> RIP: 0033:0x45d579
+> Code: 5d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007f292d4eec78 EFLAGS: 00000246 ORIG_RAX: 00000000000000a3
+> RAX: ffffffffffffffda RBX: 0000000000000700 RCX: 000000000045d579
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000040
+> RBP: 000000000118cf70 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118cf4c
+> R13: 00007ffc8e04bc4f R14: 00007f292d4ef9c0 R15: 000000000118cf4c
+> Modules linked in:
+> ---[ end trace 7e4f1041b188e411 ]---
+> RIP: 0010:d_backing_inode include/linux/dcache.h:549 [inline]
+> RIP: 0010:security_inode_getattr+0x42/0x140 security/security.c:1276
+> Code: 1b fe 49 8d 5e 08 48 89 d8 48 c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 bc b4 5b fe 48 8b 1b 48 83 c3 68 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 9f b4 5b fe 48 8b 1b 48 83 c3 0c
+> RSP: 0018:ffffc9000a017750 EFLAGS: 00010202
+> RAX: 000000000000000d RBX: 0000000000000068 RCX: ffff888093ec6180
+> RDX: 0000000000000000 RSI: ffffc9000a017860 RDI: ffffc9000a017850
+> RBP: ffffc9000a017850 R08: dffffc0000000000 R09: ffffc9000a017850
+> R10: fffff52001402f0c R11: 0000000000000000 R12: ffffc9000a017860
+> R13: 0000000000008401 R14: ffffc9000a017850 R15: dffffc0000000000
+> FS:  00007f292d4ef700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fef820e7000 CR3: 00000000937fd000 CR4: 00000000001506e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>
 
-(to pluck a few examples from existing filesystems)
+-- 
+Ondrej Mosnacek
+Software Engineer, Platform Security - SELinux kernel
+Red Hat, Inc.
+
