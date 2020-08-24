@@ -2,84 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B7B22250059
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 17:04:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A5952500E8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Aug 2020 17:24:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbgHXPEd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 11:04:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39304 "EHLO
+        id S1727999AbgHXPXr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 11:23:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbgHXPE0 (ORCPT
+        with ESMTP id S1727836AbgHXPR4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 11:04:26 -0400
+        Mon, 24 Aug 2020 11:17:56 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C3D0C0617A9;
-        Mon, 24 Aug 2020 08:04:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1DFEC061799;
+        Mon, 24 Aug 2020 08:17:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=8CP6fVQFmATmTA1mY6X4BjyYws+1260yHBdv8vP3vaA=; b=abBFOKCuZv5f3di1oL2KpM+NYX
-        3jL/ZHpavzavy6HHSEvGScySN4B2OLgWxbltw14zWrUpj7tQFvq2IlvmFiLgtzkhTcycrFXioZVCj
-        jVUGq4nLATCW0S1bNtYkidrzspSdwR8K60jIsr0RPBF2cxijXTBLeOJ1WeOMZSp/vBHi+UpQV85/0
-        5fSNqFHc+ZTkoHT8XmdxHNDlmHH8fdzjWJF/uE49Z8OYVBbH348GA0dQ8c7yT06WZcSIL7cdyySc8
-        SAu7lKtuxV8m9AJo5nGSa8Hw5lYXnAqpy8p0CTJuO4czS5S6jQgEEHkR8bD5CEjMjb9QrJeMOK2Wd
-        iZalW7Yg==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kAE1B-0003Nv-An; Mon, 24 Aug 2020 15:04:17 +0000
-Date:   Mon, 24 Aug 2020 16:04:17 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
-        darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        willy@infradead.org
-Subject: Re: [PATCH] iomap: Fix the write_count in iomap_add_to_ioend().
-Message-ID: <20200824150417.GA12258@infradead.org>
-References: <20200819102841.481461-1-anju@linux.vnet.ibm.com>
- <20200820231140.GE7941@dread.disaster.area>
- <20200821044533.BBFD1A405F@d06av23.portsmouth.uk.ibm.com>
- <20200821215358.GG7941@dread.disaster.area>
- <20200822131312.GA17997@infradead.org>
- <20200824142823.GA295033@bfoster>
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=vg63jAHJfG2SzXwAA4F8u4EABDJK8kFbtsgiuvgE/iE=; b=O4ub1tEVsA9kU09ZzyqjnYqLiE
+        qd3Ogz447N5q6xe5QqJS6PetMeBFjPO8xP+KShjzwd1fzVYDV5AxzmXJ2pZNJbaMyNX8vto74+uEK
+        cf0Fy7D0KkJe38ALG6R99zIFxNQHnKdG1FCEXgGVfyoKHrHt/oBmeVmO5rmIFU1WDzmck7Qzjz7ZB
+        hLDNe1ccAKsDBIq3z5d08YmyqEnWEC7g+OhGVVrKgshg9aSK0pVTV+OrnwCM7ssLztd7swOuJ/3HT
+        Rgx+o/1FRjyEKjjwSGvGeEvWOt8uyfl3atffNAhwVuMon7a8+hOuLJBonyWCRmc/BdzF7+QOwogOm
+        Hg7OajcA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kAEDW-0004CN-5w; Mon, 24 Aug 2020 15:17:02 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-block@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 00/11] iomap/fs/block patches for 5.11
+Date:   Mon, 24 Aug 2020 16:16:49 +0100
+Message-Id: <20200824151700.16097-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200824142823.GA295033@bfoster>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 10:28:23AM -0400, Brian Foster wrote:
-> Do I understand the current code (__bio_try_merge_page() ->
-> page_is_mergeable()) correctly in that we're checking for physical page
-> contiguity and not necessarily requiring a new bio_vec per physical
-> page?
+As promised earlier [1], here are the patches which I would like to
+merge into 5.11 to support THPs.  They depend on that earlier series.
+If there's anything in here that you'd like to see pulled out and added
+to that earlier series, let me know.
 
+There are a couple of pieces in here which aren't exactly part of
+iomap, but I think make sense to take through the iomap tree.
 
-Yes.
+[1] https://lore.kernel.org/linux-fsdevel/20200824145511.10500-1-willy@infradead.org/
 
-> With regard to Dave's earlier point around seeing excessively sized bio
-> chains.. If I set up a large memory box with high dirty mem ratios and
-> do contiguous buffered overwrites over a 32GB range followed by fsync, I
-> can see upwards of 1GB per bio and thus chains on the order of 32+ bios
-> for the entire write. If I play games with how the buffered overwrite is
-> submitted (i.e., in reverse) however, then I can occasionally reproduce
-> a ~32GB chain of ~32k bios, which I think is what leads to problems in
-> I/O completion on some systems. Granted, I don't reproduce soft lockup
-> issues on my system with that behavior, so perhaps there's more to that
-> particular issue.
-> 
-> Regardless, it seems reasonable to me to at least have a conservative
-> limit on the length of an ioend bio chain. Would anybody object to
-> iomap_ioend growing a chain counter and perhaps forcing into a new ioend
-> if we chain something like more than 1k bios at once?
+Matthew Wilcox (Oracle) (11):
+  fs: Make page_mkwrite_check_truncate thp-aware
+  mm: Support THPs in zero_user_segments
+  mm: Zero the head page, not the tail page
+  block: Add bio_for_each_thp_segment_all
+  iomap: Support THPs in iomap_adjust_read_range
+  iomap: Support THPs in invalidatepage
+  iomap: Support THPs in read paths
+  iomap: Change iomap_write_begin calling convention
+  iomap: Support THPs in write paths
+  iomap: Inline data shouldn't see THPs
+  iomap: Handle tail pages in iomap_page_mkwrite
 
-So what exactly is the problem of processing a long chain in the
-workqueue vs multiple small chains?  Maybe we need a cond_resched()
-here and there, but I don't see how we'd substantially change behavior.
+ fs/iomap/buffered-io.c  | 178 ++++++++++++++++++++++++----------------
+ include/linux/bio.h     |  13 +++
+ include/linux/bvec.h    |  27 ++++++
+ include/linux/highmem.h |  15 +++-
+ include/linux/pagemap.h |  10 +--
+ mm/highmem.c            |  62 +++++++++++++-
+ mm/shmem.c              |   7 ++
+ mm/truncate.c           |   7 ++
+ 8 files changed, 236 insertions(+), 83 deletions(-)
+
+-- 
+2.28.0
+
