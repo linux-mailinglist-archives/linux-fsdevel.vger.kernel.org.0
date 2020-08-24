@@ -2,130 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8296A250B7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 00:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AE52250BAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 00:29:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727797AbgHXWQy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 18:16:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50416 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbgHXWQy (ORCPT
+        id S1726532AbgHXW35 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 18:29:57 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:60100 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726303AbgHXW35 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 18:16:54 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10100C061574
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 15:16:53 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id d19so5343796pgl.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 15:16:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=UcuFvZ0Lz8UDFsHCkGBrM5jwXzhDur86Ee/aJP8Lva4=;
-        b=cS+B437Ph86aIYmF7XbSd14xQha2uzLvVlcQk3IeammTOY2NfZTkwMv9v9IvAE2+m4
-         Ao4ItpoPFsT6ls1uSXt4Iwbl81QWxqdJcrs62vFZgZX6aj1xFkTUOqmP5VgKTpY9myen
-         CcaC2vrKTNs0KbIyGiDVhH7YvFqM6ThIq/rIPS7AuI1jnbYJJBU1CmF6lLf4hh7oL9Ge
-         tZut4ZSMLHnCRwWFWbBfeH2oc5R0BDQKWPC9hFMMKo8e5kdhOKvTxOTKNVNmVAhhuj8U
-         fSJcC5DDsjZQ5RZcLjXubDhRDZhombRCbLGVKZqYXb6ROQCdBz00G4pEbkN0AZqtZlhY
-         kF7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=UcuFvZ0Lz8UDFsHCkGBrM5jwXzhDur86Ee/aJP8Lva4=;
-        b=EVXkClT6BnJ5iKGEDTtrObLefZzRmouI7o2WfR9npA7zhGYEqZBzwjr9VEGg++iNz2
-         4P2YgzMu3rHrOcSzZdBIq7I7Ppwo5jWcJTSSoxul19qeKh0lEBuZm50VH5nkViRgnIAI
-         DMLS0A6OAI5cPF/65ws+QS7eQQL8+hRoWZo55yJoqJSjpBLAf662X5TkrrzabSvN4WZj
-         JCfggj/1dB347zNYbkp/pv99hrf2QOkjZZCupA47HSk1Cq+IIw8Q6qA91zt9e0EeW3SZ
-         cTJIdwNXNF+UAUIDBbEHm4LENd7E3wy5VrKgBf5X07ReCjptSsAjM+yxvLif/1DP3cMF
-         XCIw==
-X-Gm-Message-State: AOAM531xpxxpeBr1WT6K3k7vbga7LvuQVKLl6dDM63x6ewRaYXdJ3q5f
-        2tNMGme2p5LTWQmCUhg/t/VFZuZQDt3hoA==
-X-Google-Smtp-Source: ABdhPJx8lyy+LfK/2cr7uek+H12/kTNo1mzKjDV+D8SvUdwnoMs5fkNL5UTr2BwV0eHfXpCJwzNkgw==
-X-Received: by 2002:a63:c04c:: with SMTP id z12mr4907014pgi.220.1598307410438;
-        Mon, 24 Aug 2020 15:16:50 -0700 (PDT)
-Received: from exodia.localdomain ([2601:602:8b80:8e0::c6ee])
-        by smtp.gmail.com with ESMTPSA id t10sm965893pfq.52.2020.08.24.15.16.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2020 15:16:48 -0700 (PDT)
-Date:   Mon, 24 Aug 2020 15:16:39 -0700
-From:   Omar Sandoval <osandov@osandov.com>
-To:     dsterba@suse.cz, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/9] btrfs: implement send/receive of compressed extents
- without decompressing
-Message-ID: <20200824221639.GF197795@exodia.localdomain>
-References: <cover.1597994106.git.osandov@osandov.com>
- <20200824195754.GQ2026@twin.jikos.cz>
+        Mon, 24 Aug 2020 18:29:57 -0400
+Received: from callcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 07OMTP7L027765
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 24 Aug 2020 18:29:25 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id AD08A42010C; Mon, 24 Aug 2020 18:29:24 -0400 (EDT)
+Date:   Mon, 24 Aug 2020 18:29:24 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Christian Schoenebeck <qemu_oss@crudebyte.com>,
+        Frank van der Linden <fllinden@amazon.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
+        stefanha@redhat.com, mszeredi@redhat.com, vgoyal@redhat.com,
+        gscrivan@redhat.com, dwalsh@redhat.com, chirantan@chromium.org,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: file forks vs. xattr (was: xattr names for unprivileged
+ stacking?)
+Message-ID: <20200824222924.GF199705@mit.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200824195754.GQ2026@twin.jikos.cz>
+In-Reply-To: <20200824212656.GA17817@dev-dsk-fllinden-2c-c1893d73.us-west-2.amazon.com>
+ <3081309.dU5VghuM72@silver>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 09:57:55PM +0200, David Sterba wrote:
-> On Fri, Aug 21, 2020 at 12:39:50AM -0700, Omar Sandoval wrote:
-> > Protocol Updates
-> > ================
-> > 
-> > This series makes some changes to the send stream protocol beyond adding
-> > the encoded write command/attributes and bumping the version. Namely, v1
-> > has a 64k limit on the size of a write due to the 16-bit attribute
-> > length. This is not enough for encoded writes, as compressed extents may
-> > be up to 128k and cannot be split up. To address this, the
-> > BTRFS_SEND_A_DATA is treated specially in v2: its length is implicitly
-> > the remaining length of the command (which has a 32-bit length). This
-> > was the last bad of the options I considered.
-> > 
-> > There are other commands that we've been wanting to add to the protocol:
-> > fallocate and FS_IOC_SETFLAGS. This series reserves their command and
-> > attribute numbers but does not implement kernel support for emitting
-> > them. However, it does implement support in receive for them, so the
-> > kernel can start emitting those whenever we get around to implementing
-> > them.
+On Mon, Aug 24, 2020 at 05:30:18PM +0200, Christian Schoenebeck wrote:
+> Ok, maybe I should make this more clear with another example: one major use
+> case for forks/ADS is extending (e.g. proprietary) binary file formats with
+> new features. Say company B is developing an editor application that supports
+> working directly with a binary media file (format) of another company A. And
+> say that company B's application has some feature that don't exist in app of
+> company A.
+
+But that's going to happen today (company B's feature silently getting
+dropped) when using data forks/ADS if the file is sent via zip,
+http/https, compressed using gzip, xz, bzip2, etc.  I remember that
+world when I had to deal with with MacOS files decades ago, and it was
+a total mess.
+
+> > Keep in mind that you are not going to get universal support for ADS
+> > any time soon as most filesystems will require on-disk format
+> > changes to support them. Further, you are goign to have to wait for
+> > the entire OS ecosystem to grow support for ADS (e.g. cp, tar,
+> > rsync, file, etc) before you can actually use it sanely in
+> > production systems. Even if we implement kernel support right now,
+> > it will be years before it will be widely available and supported at
+> > an OS/distro level...
 > 
-> Can you please outline the protocol changes (as a bullet list) and
-> eventually cross-ref with items
-> https://btrfs.wiki.kernel.org/index.php/Design_notes_on_Send/Receive#Send_stream_v2_draft
+> Sure, that's a chicken egg problem.
 > 
-> I'd like to know which and why you did not implement. The decision here
-> is between get v2 out with most desired options and rev v3 later with
-> the rest, or do v2 as complete as possible.
+> Being realistic, I don't expect that forks are something that would be landing
+> in Linux very soon. I think it is an effort that will take its time, probably
+> as a Linux-test-fork / PoC for quite a while, up to a point where a common
+> acceptance is reached.
 
-The short version is that I didn't implement the kernel side of any of
-those :) the RWF_ENCODED series + this series is already big, and I
-didn't want to make it even bigger. I figured updating the
-protocol/receive now and doing the kernel side later was a good
-compromise (rather than doing a huge code dump or constantly bumping the
-protocol version). Is there some reason you don't like this approach?
-I'm of course happy to go about this in whatever way you think is best.
+We're talking *decades*.  It's not enough for new protocol specs for
+https, rsync, nfs, etc., to be modified, and then implemented.  It's
+not enough for file formats for zip, xz, gzip, etc., to be created;
+all of this new software has to be deployed throughout the entire
+ecosystem.  People don't upgrade server software quickly; look up long
+IPv6 has taken to be adopted!
 
-Here's a breakdown of the list from the wiki:
+In that amount of time, it's going to be easier to implement a more
+modular application container format which allows for new features to
+be added into a file --- for example, such as ISO/IEC 26300....
 
-* Send extent holes, send preallocated extents: both require fallocate.
-  Boris implemented the receive side. I have some old patches
-  implementing the send side [1], but they're a largish rework of extent
-  tracking in send.
-* Extent clones within one file: as far as I can tell, this is already
-  possible with v1, it just sends redundant file paths.
-* Send otime for inodes: the consensus when I posted patches to enable
-  this [2] was that we don't want this after all.
-* Send file flags (FS_IOC_GETFLAGS/FS_IOC_SETFLAGS): again, Boris
-  implemented the receive side. I previously took a stab at the send
-  side, but it's really annoying because of all of the interactions
-  between directory inheritance, writes vs. NOCOW/append-only/immutable,
-  etc. It's do-able, it would just take a lot of care.
-* Optionally send owner/group as strings: this one I wasn't aware of.
-* "block device is not sent over the stream": I don't know what this is
-  referring to. It looks like we send block device nodes with mknod.
+> But file forks already exist on other systems for multiple good reasons. So I
+> think it makes sense to thrive the effort on Linux as well.
 
-In my opinion, fallocate support is the most important, SETFLAGS would
-be good but is a lot of effort, and the rest are nice-to-have.
+They aren't actually used all that often with Windows/Windows Office.
+That's why you can upload/upload a docx file via https, or check it
+into git, etc. without it being broken.  (Trying doing that with an
+old-style MacOS file with resource forks; what a nightmare....)
 
-Let me know how you'd like me to go about this.
+The only place where you really see use of forks/ADS is in places
+where interoperability isn't a big deal, such as MacOS executables, or
+back when a certain company with monopolistic tendencies was trying to
+lock desktop users into their OS....
 
-1: https://github.com/osandov/linux/commits/btrfs-send-v2
-2: https://lore.kernel.org/linux-btrfs/cover.1550136164.git.osandov@fb.com/
+On Mon, Aug 24, 2020 at 09:26:56PM +0000, Frank van der Linden wrote:
+> I agree with him and Linus that the Solaris interface of:
+> 
+> ffd = open("foo", O_RDONLY);
+> afd = openat(ffd, "attrpath", O_XATTR|O_RDWR);
+> 
+> ..is the best starting point. It's simple, it's clean, it doesn't overload
+> path separators. And hey, if you like doing it with path separators, put
+> a library function on top of it that uses them :-)
+
+The Solaris interface is pretty clean, but there if we really want to
+do this (and from above, I'm not a fan), there is one thing that I
+would drop from the Solaris API, and that's the ability to use chdirat
+to cd into a directory which is inside a file's ADS.  There were
+malware authors who were using this to go to town, since most shells
+didn't know about ADS, and so it was a *great* way to hide setuid root
+binaries, files that were being prepared for exfiltration from the
+corporation's intranet, etc.
+
+So let's learn from Solaris's mistake, and let's not.  Solaris may
+have that feature, for Windows compatibility, but I'm not aware of any
+enterprise Unix software that has used it, for all of the reasons
+discussed above.
+
+					- Ted
+
