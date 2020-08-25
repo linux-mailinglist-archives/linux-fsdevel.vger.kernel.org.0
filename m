@@ -2,74 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E6A73250D60
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 02:32:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F5AF250DC0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 02:42:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728668AbgHYAcI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 20:32:08 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:45415 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728281AbgHYAcG (ORCPT
+        id S1727031AbgHYAmL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 20:42:11 -0400
+Received: from mail106.syd.optusnet.com.au ([211.29.132.42]:59878 "EHLO
+        mail106.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726090AbgHYAmL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 20:32:06 -0400
-Received: by mail-io1-f69.google.com with SMTP id q5so7395325ion.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 17:32:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=c5Kv1Rn0yV+exH6v0x9JjcLClh6/0bR8a+fScfVRIVU=;
-        b=oOfMnSpAQmh5Lf7sVSmjJ8J42g5HY4aKuQiSYWuxUnIcpsrpRrcQ6F36PLhMHAGm5s
-         j6BnAwRHq8FOxv8Y2oJ17DIocwXckVznnJXgm4QCwZqtDzUoMfBoH05SL/wCOTtfTey0
-         yl15behaHNHInckOL0Uqg7YfATEY/pJDxHC8S2Nofiq7+LPlmA7tmoW3ELF1pPnNjt4C
-         H80ZBnh7lBWyFlYIaNmYexNye7FD4M5KqIPV3Col3kJd+RzUtNuL0rvWL2dJyId/egK5
-         g1geLToCsKB5+39qeoMQb/7W+PEloFGu8KI4loeiLwgQUVZvGHNF88jiEKYxYQ3UQGFK
-         vx0A==
-X-Gm-Message-State: AOAM531t8nGGraduEqXopEqJuOAWtqTotUmca+JOl+V6YrrOyEDoBv6h
-        9gpAENCwP267xvucuVLQhIMM3xZLvNoekJmZSBrlZg7aM6Tk
-X-Google-Smtp-Source: ABdhPJx5MOMoD70oFHm4ifkadWV41DDpC3TBkUtcU2ajYZ2Tp6W0+CZhNsxmqkl6PMO/AuyVZqFpYAiqtEXzphpRRafjmRKmf4LA
+        Mon, 24 Aug 2020 20:42:11 -0400
+Received: from dread.disaster.area (pa49-181-146-199.pa.nsw.optusnet.com.au [49.181.146.199])
+        by mail106.syd.optusnet.com.au (Postfix) with ESMTPS id 3BD726AFD27;
+        Tue, 25 Aug 2020 10:42:04 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kAN2J-0005pG-Kx; Tue, 25 Aug 2020 10:42:03 +1000
+Date:   Tue, 25 Aug 2020 10:42:03 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org
+Subject: Re: [PATCH] iomap: Fix the write_count in iomap_add_to_ioend().
+Message-ID: <20200825004203.GJ12131@dread.disaster.area>
+References: <20200819102841.481461-1-anju@linux.vnet.ibm.com>
+ <20200820231140.GE7941@dread.disaster.area>
+ <20200821044533.BBFD1A405F@d06av23.portsmouth.uk.ibm.com>
+ <20200821215358.GG7941@dread.disaster.area>
+ <20200822131312.GA17997@infradead.org>
+ <20200824142823.GA295033@bfoster>
+ <20200824150417.GA12258@infradead.org>
+ <20200824154841.GB295033@bfoster>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13ca:: with SMTP id v10mr7365206ilj.105.1598315525364;
- Mon, 24 Aug 2020 17:32:05 -0700 (PDT)
-Date:   Mon, 24 Aug 2020 17:32:05 -0700
-In-Reply-To: <0000000000008caae305ab9a5318@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000020e49105ada8d598@google.com>
-Subject: Re: general protection fault in security_inode_getattr
-From:   syzbot <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com>
-To:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
-        daniel@iogearbox.net, jmorris@namei.org, john.fastabend@gmail.com,
-        kafai@fb.com, kpsingh@chromium.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        netdev@vger.kernel.org, omosnace@redhat.com, serge@hallyn.com,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200824154841.GB295033@bfoster>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=LPwYv6e9 c=1 sm=1 tr=0 cx=a_idp_d
+        a=GorAHYkI+xOargNMzM6qxQ==:117 a=GorAHYkI+xOargNMzM6qxQ==:17
+        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=7-415B0cAAAA:8
+        a=6_Yu4yksRqBpIYSk360A:9 a=Cckdbgs5SKQHxyt1:21 a=uiPvv5w2ab8WhoyN:21
+        a=CjuIK1q_8ugA:10 a=igBNqPyMv6gA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has bisected this issue to:
+On Mon, Aug 24, 2020 at 11:48:41AM -0400, Brian Foster wrote:
+> On Mon, Aug 24, 2020 at 04:04:17PM +0100, Christoph Hellwig wrote:
+> > On Mon, Aug 24, 2020 at 10:28:23AM -0400, Brian Foster wrote:
+> > > Do I understand the current code (__bio_try_merge_page() ->
+> > > page_is_mergeable()) correctly in that we're checking for physical page
+> > > contiguity and not necessarily requiring a new bio_vec per physical
+> > > page?
+> > 
+> > 
+> > Yes.
+> > 
+> 
+> Ok. I also realize now that this occurs on a kernel without commit
+> 07173c3ec276 ("block: enable multipage bvecs"). That is probably a
+> contributing factor, but it's not clear to me whether it's feasible to
+> backport whatever supporting infrastructure is required for that
+> mechanism to work (I suspect not).
+> 
+> > > With regard to Dave's earlier point around seeing excessively sized bio
+> > > chains.. If I set up a large memory box with high dirty mem ratios and
+> > > do contiguous buffered overwrites over a 32GB range followed by fsync, I
+> > > can see upwards of 1GB per bio and thus chains on the order of 32+ bios
+> > > for the entire write. If I play games with how the buffered overwrite is
+> > > submitted (i.e., in reverse) however, then I can occasionally reproduce
+> > > a ~32GB chain of ~32k bios, which I think is what leads to problems in
+> > > I/O completion on some systems. Granted, I don't reproduce soft lockup
+> > > issues on my system with that behavior, so perhaps there's more to that
+> > > particular issue.
+> > > 
+> > > Regardless, it seems reasonable to me to at least have a conservative
+> > > limit on the length of an ioend bio chain. Would anybody object to
+> > > iomap_ioend growing a chain counter and perhaps forcing into a new ioend
+> > > if we chain something like more than 1k bios at once?
+> > 
+> > So what exactly is the problem of processing a long chain in the
+> > workqueue vs multiple small chains?  Maybe we need a cond_resched()
+> > here and there, but I don't see how we'd substantially change behavior.
+> > 
+> 
+> The immediate problem is a watchdog lockup detection in bio completion:
+> 
+>   NMI watchdog: Watchdog detected hard LOCKUP on cpu 25
+> 
+> This effectively lands at the following segment of iomap_finish_ioend():
+> 
+> 		...
+>                /* walk each page on bio, ending page IO on them */
+>                 bio_for_each_segment_all(bv, bio, iter_all)
+>                         iomap_finish_page_writeback(inode, bv->bv_page, error);
+> 
+> I suppose we could add a cond_resched(), but is that safe directly
+> inside of a ->bi_end_io() handler? Another option could be to dump large
+> chains into the completion workqueue, but we may still need to track the
+> length to do that. Thoughts?
 
-commit 35697c12d7ffd31a56d3c9604066a166b75d0169
-Author: Yonghong Song <yhs@fb.com>
-Date:   Thu Jan 16 17:40:04 2020 +0000
+We have ioend completion merging that will run the compeltion once
+for all the pending ioend completions on that inode. IOWs, we do not
+need to build huge chains at submission time to batch up completions
+efficiently. However, huge bio chains at submission time do cause
+issues with writeback fairness, pinning GBs of ram as unreclaimable
+for seconds because they are queued for completion while we are
+still submitting the bio chain and submission is being throttled by
+the block layer writeback throttle, etc. Not to mention the latency
+of stable pages in a situation like this - a mmap() write fault
+could stall for many seconds waiting for a huge bio chain to finish
+submission and run completion processing even when the IO for the
+given page we faulted on was completed before the page fault
+occurred...
 
-    selftests/bpf: Fix test_progs send_signal flakiness with nmi mode
+Hence I think we really do need to cap the length of the bio
+chains here so that we start completing and ending page writeback on
+large writeback ranges long before the writeback code finishes
+submitting the range it was asked to write back.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13032139900000
-start commit:   d012a719 Linux 5.9-rc2
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=10832139900000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17032139900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=891ca5711a9f1650
-dashboard link: https://syzkaller.appspot.com/bug?extid=f07cc9be8d1d226947ed
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=104a650e900000
+Cheers,
 
-Reported-by: syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com
-Fixes: 35697c12d7ff ("selftests/bpf: Fix test_progs send_signal flakiness with nmi mode")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
