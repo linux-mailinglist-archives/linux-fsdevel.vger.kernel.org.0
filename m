@@ -2,116 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 84789250EFF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 04:27:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F2B2250FF4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 05:26:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbgHYC1r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 22:27:47 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:2593 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbgHYC1r (ORCPT
+        id S1728145AbgHYD0H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 23:26:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42108 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbgHYD0G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 22:27:47 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f4476e40000>; Mon, 24 Aug 2020 19:26:44 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 24 Aug 2020 19:27:46 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 24 Aug 2020 19:27:46 -0700
-Received: from [10.2.53.36] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 25 Aug
- 2020 02:27:46 +0000
-Subject: Re: [PATCH 0/5] bio: Direct IO: convert to pin_user_pages_fast()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <ceph-devel@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20200822042059.1805541-1-jhubbard@nvidia.com>
- <20200825015428.GU1236603@ZenIV.linux.org.uk>
- <3072d5a0-43c7-3396-c57f-6af83621b71c@nvidia.com>
- <20200825022219.GW1236603@ZenIV.linux.org.uk>
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <69d09a5f-27f2-dd50-d25e-926302b10443@nvidia.com>
-Date:   Mon, 24 Aug 2020 19:27:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Mon, 24 Aug 2020 23:26:06 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17774C061574;
+        Mon, 24 Aug 2020 20:26:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=J3dfycSxBtZRRvSDChUUWzn3te0iYIcwnr26lQHaR+E=; b=ULMpSqB6Oij/9EGSyEkn6+4Du2
+        PPoYEiX0RKE/qIcll9dylpz6U2JZh7oCGw2IKVWGhCyvTG0ApKN121pQO07g11Fg3/YLn6hYjcaHJ
+        KrG0seHxTLitIu8XbVtDfSEw6z78nWtqTYh487X73b4gHnMVZa4oKNZz9DYobYWzhqyveob4NxMcR
+        tzoPnZWv35smU13HYzt2hkrQJjrLEMpINThn9wP/9ZSE2eMZPQVtlB/eQozpbs6b/U1oRC2NgIFkg
+        ftqUlPiS59N4CrekqrBmC9NAVI19cAGyJgZXFMHHtg9Kp6A2RKSOwcAZDeG7U4PwVuciLI4Q7r5ns
+        WkBBCmTw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kAPb1-0007Fw-Qk; Tue, 25 Aug 2020 03:26:03 +0000
+Date:   Tue, 25 Aug 2020 04:26:03 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 9/9] iomap: Change calling convention for zeroing
+Message-ID: <20200825032603.GL17456@casper.infradead.org>
+References: <20200824145511.10500-1-willy@infradead.org>
+ <20200824145511.10500-10-willy@infradead.org>
+ <20200825002735.GI12131@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <20200825022219.GW1236603@ZenIV.linux.org.uk>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598322404; bh=pXMapS4KmKmBUkx1+DJBiB0+8TtxpALADIKIHQCPLGo=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=VQyjqIlA9sgJzaRLlsQtP5G3AjYtNzNUJXvj8TyYk3QW4xnkdhInsxCNj8+gWYE1F
-         +RBCIm/1AD1/fv1clhKhZK8OIpQo1BRrFp4+EtIXh4DHTJznQAPWAXu48vtPoWEyhQ
-         tT5LufttrAQqIiuGRpADDRDQF0ukmJF+HNOj/dCaHFTzWNSqGreGOSuJy9clE/7SFf
-         AETqPKFmRRH8ZZz8sxDb3OwSsLb8POODZc9QipjnotHccNQpKJGWRNeSsbhGvfmoQ7
-         VtxGWvrTbNWWYDuJeOgnpxEbCOLnuidat3tmFOx03t4JjcLO3DCxeSL9JegWsDs4Qm
-         HuUEoMSI4rRjg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200825002735.GI12131@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/24/20 7:22 PM, Al Viro wrote:
-> On Mon, Aug 24, 2020 at 07:07:02PM -0700, John Hubbard wrote:
->> On 8/24/20 6:54 PM, Al Viro wrote:
->>> On Fri, Aug 21, 2020 at 09:20:54PM -0700, John Hubbard wrote:
->>>
->>>> Direct IO behavior:
->>>>
->>>>       ITER_IOVEC:
->>>>           pin_user_pages_fast();
->>>>           break;
->>>>
->>>>       ITER_KVEC:    // already elevated page refcount, leave alone
->>>>       ITER_BVEC:    // already elevated page refcount, leave alone
->>>>       ITER_PIPE:    // just, no :)
->>>
->>> Why?  What's wrong with splice to O_DIRECT file?
->>>
->>
->> Oh! I'll take a look. Is this the fs/splice.c stuff?  I ruled this out e=
-arly
->> mainly based on Christoph's comment in [1] ("ITER_PIPE is rejected =D1=
-=96n the
->> direct I/O path"), but if it's supportable then I'll hook it up.
->=20
-> ; cat >a.c <<'EOF'
-> #define _GNU_SOURCE
-> #include <fcntl.h>
-> #include <unistd.h>
-> #include <stdlib.h>
->=20
-> int main()
-> {
->          int fd =3D open("./a.out", O_DIRECT);
->          splice(fd, NULL, 1, NULL, 4096, 0);
-> 	return 0;
-> }
-> EOF
-> ; cc a.c
-> ; ./a.out | wc -c
-> 4096
->=20
-> and you just had ->read_iter() called with ITER_PIPE destination.
->=20
+On Tue, Aug 25, 2020 at 10:27:35AM +1000, Dave Chinner wrote:
+> >  	do {
+> > -		unsigned offset, bytes;
+> > -
+> > -		offset = offset_in_page(pos);
+> > -		bytes = min_t(loff_t, PAGE_SIZE - offset, count);
+> > +		loff_t bytes;
+> >  
+> >  		if (IS_DAX(inode))
+> > -			status = dax_iomap_zero(pos, offset, bytes, iomap);
+> > +			bytes = dax_iomap_zero(pos, length, iomap);
+> 
+> Hmmm. everything is loff_t here, but the callers are defining length
+> as u64, not loff_t. Is there a potential sign conversion problem
+> here? (sure 64 bit is way beyond anything we'll pass here, but...)
 
-That example saves me a lot of time!  Much appreciated.
+I've gone back and forth on the correct type for 'length' a few times.
+size_t is too small (not for zeroing, but for seek()).  An unsigned type
+seems right -- a length can't be negative, and we don't want to give
+the impression that it can.  But the return value from these functions
+definitely needs to be signed so we can represent an error.  So a u64
+length with an loff_t return type feels like the best solution.  And
+the upper layers have to promise not to pass in a length that's more
+than 2^63-1.
 
-thanks,
---=20
-John Hubbard
-NVIDIA
+I have a patch set which starts the conversion process for all the actors
+over to using u64 for the length.  Obviously, that's not mixed in with
+the THP patchset.
+
