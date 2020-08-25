@@ -2,178 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 930B4250CF5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 02:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6A73250D60
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 02:32:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbgHYA1m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Aug 2020 20:27:42 -0400
-Received: from mail110.syd.optusnet.com.au ([211.29.132.97]:47262 "EHLO
-        mail110.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726041AbgHYA1k (ORCPT
+        id S1728668AbgHYAcI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Aug 2020 20:32:08 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:45415 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728281AbgHYAcG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Aug 2020 20:27:40 -0400
-Received: from dread.disaster.area (pa49-181-146-199.pa.nsw.optusnet.com.au [49.181.146.199])
-        by mail110.syd.optusnet.com.au (Postfix) with ESMTPS id A92681092F9;
-        Tue, 25 Aug 2020 10:27:37 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kAMoJ-0005mv-WC; Tue, 25 Aug 2020 10:27:36 +1000
-Date:   Tue, 25 Aug 2020 10:27:35 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 9/9] iomap: Change calling convention for zeroing
-Message-ID: <20200825002735.GI12131@dread.disaster.area>
-References: <20200824145511.10500-1-willy@infradead.org>
- <20200824145511.10500-10-willy@infradead.org>
+        Mon, 24 Aug 2020 20:32:06 -0400
+Received: by mail-io1-f69.google.com with SMTP id q5so7395325ion.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Aug 2020 17:32:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=c5Kv1Rn0yV+exH6v0x9JjcLClh6/0bR8a+fScfVRIVU=;
+        b=oOfMnSpAQmh5Lf7sVSmjJ8J42g5HY4aKuQiSYWuxUnIcpsrpRrcQ6F36PLhMHAGm5s
+         j6BnAwRHq8FOxv8Y2oJ17DIocwXckVznnJXgm4QCwZqtDzUoMfBoH05SL/wCOTtfTey0
+         yl15behaHNHInckOL0Uqg7YfATEY/pJDxHC8S2Nofiq7+LPlmA7tmoW3ELF1pPnNjt4C
+         H80ZBnh7lBWyFlYIaNmYexNye7FD4M5KqIPV3Col3kJd+RzUtNuL0rvWL2dJyId/egK5
+         g1geLToCsKB5+39qeoMQb/7W+PEloFGu8KI4loeiLwgQUVZvGHNF88jiEKYxYQ3UQGFK
+         vx0A==
+X-Gm-Message-State: AOAM531t8nGGraduEqXopEqJuOAWtqTotUmca+JOl+V6YrrOyEDoBv6h
+        9gpAENCwP267xvucuVLQhIMM3xZLvNoekJmZSBrlZg7aM6Tk
+X-Google-Smtp-Source: ABdhPJx5MOMoD70oFHm4ifkadWV41DDpC3TBkUtcU2ajYZ2Tp6W0+CZhNsxmqkl6PMO/AuyVZqFpYAiqtEXzphpRRafjmRKmf4LA
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200824145511.10500-10-willy@infradead.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=QIgWuTDL c=1 sm=1 tr=0 cx=a_idp_d
-        a=GorAHYkI+xOargNMzM6qxQ==:117 a=GorAHYkI+xOargNMzM6qxQ==:17
-        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8
-        a=Yagp9b6qcfzQHBwh10oA:9 a=afcYxvJ0ROV6oatP:21 a=wHxIqCD_xUrfLMnn:21
-        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Received: by 2002:a05:6e02:13ca:: with SMTP id v10mr7365206ilj.105.1598315525364;
+ Mon, 24 Aug 2020 17:32:05 -0700 (PDT)
+Date:   Mon, 24 Aug 2020 17:32:05 -0700
+In-Reply-To: <0000000000008caae305ab9a5318@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000020e49105ada8d598@google.com>
+Subject: Re: general protection fault in security_inode_getattr
+From:   syzbot <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com>
+To:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, jmorris@namei.org, john.fastabend@gmail.com,
+        kafai@fb.com, kpsingh@chromium.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        netdev@vger.kernel.org, omosnace@redhat.com, serge@hallyn.com,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 03:55:10PM +0100, Matthew Wilcox (Oracle) wrote:
-> Pass the full length to iomap_zero() and dax_iomap_zero(), and have
-> them return how many bytes they actually handled.  This is preparatory
-> work for handling THP, although it looks like DAX could actually take
-> advantage of it if there's a larger contiguous area.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/dax.c               | 13 ++++++-------
->  fs/iomap/buffered-io.c | 33 +++++++++++++++------------------
->  include/linux/dax.h    |  3 +--
->  3 files changed, 22 insertions(+), 27 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 95341af1a966..f2b912cb034e 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1037,18 +1037,18 @@ static vm_fault_t dax_load_hole(struct xa_state *xas,
->  	return ret;
->  }
->  
-> -int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
-> -		   struct iomap *iomap)
-> +loff_t dax_iomap_zero(loff_t pos, u64 length, struct iomap *iomap)
->  {
->  	sector_t sector = iomap_sector(iomap, pos & PAGE_MASK);
->  	pgoff_t pgoff;
->  	long rc, id;
->  	void *kaddr;
->  	bool page_aligned = false;
-> -
-> +	unsigned offset = offset_in_page(pos);
-> +	unsigned size = min_t(u64, PAGE_SIZE - offset, length);
->  
->  	if (IS_ALIGNED(sector << SECTOR_SHIFT, PAGE_SIZE) &&
-> -	    IS_ALIGNED(size, PAGE_SIZE))
-> +	    (size == PAGE_SIZE))
->  		page_aligned = true;
->  
->  	rc = bdev_dax_pgoff(iomap->bdev, sector, PAGE_SIZE, &pgoff);
-> @@ -1058,8 +1058,7 @@ int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
->  	id = dax_read_lock();
->  
->  	if (page_aligned)
-> -		rc = dax_zero_page_range(iomap->dax_dev, pgoff,
-> -					 size >> PAGE_SHIFT);
-> +		rc = dax_zero_page_range(iomap->dax_dev, pgoff, 1);
->  	else
->  		rc = dax_direct_access(iomap->dax_dev, pgoff, 1, &kaddr, NULL);
->  	if (rc < 0) {
-> @@ -1072,7 +1071,7 @@ int dax_iomap_zero(loff_t pos, unsigned offset, unsigned size,
->  		dax_flush(iomap->dax_dev, kaddr + offset, size);
->  	}
->  	dax_read_unlock(id);
-> -	return 0;
-> +	return size;
->  }
->  
->  static loff_t
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 7f618ab4b11e..2dba054095e8 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -901,11 +901,13 @@ iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
->  }
->  EXPORT_SYMBOL_GPL(iomap_file_unshare);
->  
-> -static int iomap_zero(struct inode *inode, loff_t pos, unsigned offset,
-> -		unsigned bytes, struct iomap *iomap, struct iomap *srcmap)
-> +static loff_t iomap_zero(struct inode *inode, loff_t pos, u64 length,
-> +		struct iomap *iomap, struct iomap *srcmap)
+syzbot has bisected this issue to:
 
-While you are touching this, please convert it back to:
+commit 35697c12d7ffd31a56d3c9604066a166b75d0169
+Author: Yonghong Song <yhs@fb.com>
+Date:   Thu Jan 16 17:40:04 2020 +0000
 
-static loff_t
-iomap_zero(struct inode *inode, loff_t pos, u64 length,
-		struct iomap *iomap, struct iomap *srcmap)
+    selftests/bpf: Fix test_progs send_signal flakiness with nmi mode
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13032139900000
+start commit:   d012a719 Linux 5.9-rc2
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10832139900000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17032139900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=891ca5711a9f1650
+dashboard link: https://syzkaller.appspot.com/bug?extid=f07cc9be8d1d226947ed
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=104a650e900000
 
->  {
->  	struct page *page;
->  	int status;
-> +	unsigned offset = offset_in_page(pos);
-> +	unsigned bytes = min_t(u64, PAGE_SIZE - offset, length);
->  
->  	status = iomap_write_begin(inode, pos, bytes, 0, &page, iomap, srcmap);
->  	if (status)
-> @@ -917,38 +919,33 @@ static int iomap_zero(struct inode *inode, loff_t pos, unsigned offset,
->  	return iomap_write_end(inode, pos, bytes, bytes, page, iomap, srcmap);
->  }
->  
-> -static loff_t
-> -iomap_zero_range_actor(struct inode *inode, loff_t pos, loff_t count,
-> -		void *data, struct iomap *iomap, struct iomap *srcmap)
-> +static loff_t iomap_zero_range_actor(struct inode *inode, loff_t pos,
-> +		loff_t length, void *data, struct iomap *iomap,
-> +		struct iomap *srcmap)
+Reported-by: syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com
+Fixes: 35697c12d7ff ("selftests/bpf: Fix test_progs send_signal flakiness with nmi mode")
 
-And leave this as it was formatted.
-
-/me missed this when iomap_readahead() was introduced, too.
-
-
->  {
->  	bool *did_zero = data;
->  	loff_t written = 0;
-> -	int status;
->  
->  	/* already zeroed?  we're done. */
->  	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
-> -		return count;
-> +		return length;
->  
->  	do {
-> -		unsigned offset, bytes;
-> -
-> -		offset = offset_in_page(pos);
-> -		bytes = min_t(loff_t, PAGE_SIZE - offset, count);
-> +		loff_t bytes;
->  
->  		if (IS_DAX(inode))
-> -			status = dax_iomap_zero(pos, offset, bytes, iomap);
-> +			bytes = dax_iomap_zero(pos, length, iomap);
-
-Hmmm. everything is loff_t here, but the callers are defining length
-as u64, not loff_t. Is there a potential sign conversion problem
-here? (sure 64 bit is way beyond anything we'll pass here, but...)
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
