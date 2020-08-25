@@ -2,207 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 16FE5251B0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 16:41:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 186D1251B35
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 16:49:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbgHYOlV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Aug 2020 10:41:21 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:40432 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbgHYOlU (ORCPT
+        id S1726598AbgHYOt0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Aug 2020 10:49:26 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:52912 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726351AbgHYOtZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Aug 2020 10:41:20 -0400
-Received: from ip5f5af70b.dynamic.kabel-deutschland.de ([95.90.247.11] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kAa88-0003Fw-2k; Tue, 25 Aug 2020 14:40:56 +0000
-Date:   Tue, 25 Aug 2020 16:40:54 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Michal Hocko <mhocko@suse.com>, mingo@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
-        christian@kellner.me, areber@redhat.com,
-        Shakeel Butt <shakeelb@google.com>, cyphar@cyphar.com,
-        Oleg Nesterov <oleg@redhat.com>, adobriyan@gmail.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        gladkov.alexey@gmail.com, Michel Lespinasse <walken@google.com>,
-        daniel.m.jordan@oracle.com, avagin@gmail.com,
-        bernd.edlinger@hotmail.de,
-        John Johansen <john.johansen@canonical.com>,
-        laoar.shao@gmail.com, Tim Murray <timmurray@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, stable <stable@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v2 1/1] mm, oom_adj: don't loop through tasks in
- __set_oom_adj when not necessary
-Message-ID: <20200825144054.obvhipwce7g7sgdm@wittgenstein>
-References: <20200824153036.3201505-1-surenb@google.com>
- <20200825111524.v2bnoya35spde3zt@wittgenstein>
- <CAJuCfpE7YQjBJDKBcc-20qEDsu9koirFuGSO306NDuKz6_9Tsg@mail.gmail.com>
+        Tue, 25 Aug 2020 10:49:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598366964;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+pzIP34Ki0Z+vBgdypgtKGWPh1iYERn+u9xsNVS6G0E=;
+        b=isJktnqSLCZ5FmxyZ4za6MkPif8q1/hZc9nyB7gnFwKKr1aWaMiVpJURgPZOJAToeFhZ/9
+        uZgiwts4Y7P1BG75FcmEB/tEjj3UL3om//Ev3qfncPsbdNOKocMMgf5UEdzZrLKYsSLQnn
+        /cvgKMvZ9YKBuKwsifsd/iQOUlC0beo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-509-ZSlACoEiMjO5jaEochGcdg-1; Tue, 25 Aug 2020 10:49:21 -0400
+X-MC-Unique: ZSlACoEiMjO5jaEochGcdg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1AA2310ABDB4;
+        Tue, 25 Aug 2020 14:49:20 +0000 (UTC)
+Received: from bfoster (ovpn-112-11.rdu2.redhat.com [10.10.112.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0BFFE60D34;
+        Tue, 25 Aug 2020 14:49:18 +0000 (UTC)
+Date:   Tue, 25 Aug 2020 10:49:17 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        willy@infradead.org, minlei@redhat.com
+Subject: Re: [PATCH] iomap: Fix the write_count in iomap_add_to_ioend().
+Message-ID: <20200825144917.GA321765@bfoster>
+References: <20200819102841.481461-1-anju@linux.vnet.ibm.com>
+ <20200820231140.GE7941@dread.disaster.area>
+ <20200821044533.BBFD1A405F@d06av23.portsmouth.uk.ibm.com>
+ <20200821215358.GG7941@dread.disaster.area>
+ <20200822131312.GA17997@infradead.org>
+ <20200824142823.GA295033@bfoster>
+ <20200824150417.GA12258@infradead.org>
+ <20200824154841.GB295033@bfoster>
+ <20200825004203.GJ12131@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJuCfpE7YQjBJDKBcc-20qEDsu9koirFuGSO306NDuKz6_9Tsg@mail.gmail.com>
+In-Reply-To: <20200825004203.GJ12131@dread.disaster.area>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 25, 2020 at 07:24:34AM -0700, Suren Baghdasaryan wrote:
-> On Tue, Aug 25, 2020 at 4:15 AM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> >
-> > On Mon, Aug 24, 2020 at 08:30:36AM -0700, Suren Baghdasaryan wrote:
-> > > Currently __set_oom_adj loops through all processes in the system to
-> > > keep oom_score_adj and oom_score_adj_min in sync between processes
-> > > sharing their mm. This is done for any task with more that one mm_users,
-> > > which includes processes with multiple threads (sharing mm and signals).
-> > > However for such processes the loop is unnecessary because their signal
-> > > structure is shared as well.
-> > > Android updates oom_score_adj whenever a tasks changes its role
-> > > (background/foreground/...) or binds to/unbinds from a service, making
-> > > it more/less important. Such operation can happen frequently.
-> > > We noticed that updates to oom_score_adj became more expensive and after
-> > > further investigation found out that the patch mentioned in "Fixes"
-> > > introduced a regression. Using Pixel 4 with a typical Android workload,
-> > > write time to oom_score_adj increased from ~3.57us to ~362us. Moreover
-> > > this regression linearly depends on the number of multi-threaded
-> > > processes running on the system.
-> > > Mark the mm with a new MMF_PROC_SHARED flag bit when task is created with
-> > > (CLONE_VM && !CLONE_THREAD && !CLONE_VFORK). Change __set_oom_adj to use
-> > > MMF_PROC_SHARED instead of mm_users to decide whether oom_score_adj
-> > > update should be synchronized between multiple processes. To prevent
-> > > races between clone() and __set_oom_adj(), when oom_score_adj of the
-> > > process being cloned might be modified from userspace, we use
-> > > oom_adj_mutex. Its scope is changed to global and it is renamed into
-> > > oom_adj_lock for naming consistency with oom_lock. The combination of
-> > > (CLONE_VM && !CLONE_THREAD) is rarely used except for the case of vfork().
-> > > To prevent performance regressions of vfork(), we skip taking oom_adj_lock
-> > > and setting MMF_PROC_SHARED when CLONE_VFORK is specified. Clearing the
-> > > MMF_PROC_SHARED flag (when the last process sharing the mm exits) is left
-> > > out of this patch to keep it simple and because it is believed that this
-> > > threading model is rare. Should there ever be a need for optimizing that
-> > > case as well, it can be done by hooking into the exit path, likely
-> > > following the mm_update_next_owner pattern.
-> > > With the combination of (CLONE_VM && !CLONE_THREAD && !CLONE_VFORK) being
-> > > quite rare, the regression is gone after the change is applied.
-> > >
-> > > Fixes: 44a70adec910 ("mm, oom_adj: make sure processes sharing mm have same view of oom_score_adj")
-> > > Reported-by: Tim Murray <timmurray@google.com>
-> > > Debugged-by: Minchan Kim <minchan@kernel.org>
-> > > Suggested-by: Michal Hocko <mhocko@kernel.org>
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > ---
-> > >
-> > > v2:
-> > > - Implemented proposal from Michal Hocko in:
-> > > https://lore.kernel.org/linux-fsdevel/20200820124109.GI5033@dhcp22.suse.cz/
-> > > - Updated description to reflect the change
-> > >
-> > > v1:
-> > > - https://lore.kernel.org/linux-mm/20200820002053.1424000-1-surenb@google.com/
-> > >
-> > >  fs/proc/base.c                 |  7 +++----
-> > >  include/linux/oom.h            |  1 +
-> > >  include/linux/sched/coredump.h |  1 +
-> > >  kernel/fork.c                  | 21 +++++++++++++++++++++
-> > >  mm/oom_kill.c                  |  2 ++
-> > >  5 files changed, 28 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > > index 617db4e0faa0..cff1a58a236c 100644
-> > > --- a/fs/proc/base.c
-> > > +++ b/fs/proc/base.c
-> > > @@ -1055,7 +1055,6 @@ static ssize_t oom_adj_read(struct file *file, char __user *buf, size_t count,
-> > >
-> > >  static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
-> > >  {
-> > > -     static DEFINE_MUTEX(oom_adj_mutex);
-> > >       struct mm_struct *mm = NULL;
-> > >       struct task_struct *task;
-> > >       int err = 0;
-> > > @@ -1064,7 +1063,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
-> > >       if (!task)
-> > >               return -ESRCH;
-> > >
-> > > -     mutex_lock(&oom_adj_mutex);
-> > > +     mutex_lock(&oom_adj_lock);
-> > >       if (legacy) {
-> > >               if (oom_adj < task->signal->oom_score_adj &&
-> > >                               !capable(CAP_SYS_RESOURCE)) {
-> > > @@ -1095,7 +1094,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
-> > >               struct task_struct *p = find_lock_task_mm(task);
-> > >
-> > >               if (p) {
-> > > -                     if (atomic_read(&p->mm->mm_users) > 1) {
-> > > +                     if (test_bit(MMF_PROC_SHARED, &p->mm->flags)) {
-> > >                               mm = p->mm;
-> > >                               mmgrab(mm);
-> > >                       }
-> > > @@ -1132,7 +1131,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
-> > >               mmdrop(mm);
-> > >       }
-> > >  err_unlock:
-> > > -     mutex_unlock(&oom_adj_mutex);
-> > > +     mutex_unlock(&oom_adj_lock);
-> > >       put_task_struct(task);
-> > >       return err;
-> > >  }
-> > > diff --git a/include/linux/oom.h b/include/linux/oom.h
-> > > index f022f581ac29..861f22bd4706 100644
-> > > --- a/include/linux/oom.h
-> > > +++ b/include/linux/oom.h
-> > > @@ -55,6 +55,7 @@ struct oom_control {
-> > >  };
-> > >
-> > >  extern struct mutex oom_lock;
-> > > +extern struct mutex oom_adj_lock;
-> > >
-> > >  static inline void set_current_oom_origin(void)
-> > >  {
-> > > diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
-> > > index ecdc6542070f..070629b722df 100644
-> > > --- a/include/linux/sched/coredump.h
-> > > +++ b/include/linux/sched/coredump.h
-> > > @@ -72,6 +72,7 @@ static inline int get_dumpable(struct mm_struct *mm)
-> > >  #define MMF_DISABLE_THP              24      /* disable THP for all VMAs */
-> > >  #define MMF_OOM_VICTIM               25      /* mm is the oom victim */
-> > >  #define MMF_OOM_REAP_QUEUED  26      /* mm was queued for oom_reaper */
-> > > +#define MMF_PROC_SHARED      27      /* mm is shared while sighand is not */
-> > >  #define MMF_DISABLE_THP_MASK (1 << MMF_DISABLE_THP)
-> > >
-> > >  #define MMF_INIT_MASK                (MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
-> > > diff --git a/kernel/fork.c b/kernel/fork.c
-> > > index 4d32190861bd..6fce8ffa9b8b 100644
-> > > --- a/kernel/fork.c
-> > > +++ b/kernel/fork.c
-> > > @@ -1809,6 +1809,25 @@ static __always_inline void delayed_free_task(struct task_struct *tsk)
-> > >               free_task(tsk);
-> > >  }
-> > >
-> > > +static void copy_oom_score_adj(u64 clone_flags, struct task_struct *tsk)
-> > > +{
-> > > +     /* Skip if kernel thread */
-> > > +     if (!tsk->mm)
-> > > +             return;
-> >
-> > Hm, wouldn't
-> >
-> >         if (tsk->flags & PF_KTHREAD)
-> >                 return;
-> >
-> > be clearer and more future proof?
+cc Ming
+
+On Tue, Aug 25, 2020 at 10:42:03AM +1000, Dave Chinner wrote:
+> On Mon, Aug 24, 2020 at 11:48:41AM -0400, Brian Foster wrote:
+> > On Mon, Aug 24, 2020 at 04:04:17PM +0100, Christoph Hellwig wrote:
+> > > On Mon, Aug 24, 2020 at 10:28:23AM -0400, Brian Foster wrote:
+> > > > Do I understand the current code (__bio_try_merge_page() ->
+> > > > page_is_mergeable()) correctly in that we're checking for physical page
+> > > > contiguity and not necessarily requiring a new bio_vec per physical
+> > > > page?
+> > > 
+> > > 
+> > > Yes.
+> > > 
+> > 
+> > Ok. I also realize now that this occurs on a kernel without commit
+> > 07173c3ec276 ("block: enable multipage bvecs"). That is probably a
+> > contributing factor, but it's not clear to me whether it's feasible to
+> > backport whatever supporting infrastructure is required for that
+> > mechanism to work (I suspect not).
+> > 
+> > > > With regard to Dave's earlier point around seeing excessively sized bio
+> > > > chains.. If I set up a large memory box with high dirty mem ratios and
+> > > > do contiguous buffered overwrites over a 32GB range followed by fsync, I
+> > > > can see upwards of 1GB per bio and thus chains on the order of 32+ bios
+> > > > for the entire write. If I play games with how the buffered overwrite is
+> > > > submitted (i.e., in reverse) however, then I can occasionally reproduce
+> > > > a ~32GB chain of ~32k bios, which I think is what leads to problems in
+> > > > I/O completion on some systems. Granted, I don't reproduce soft lockup
+> > > > issues on my system with that behavior, so perhaps there's more to that
+> > > > particular issue.
+> > > > 
+> > > > Regardless, it seems reasonable to me to at least have a conservative
+> > > > limit on the length of an ioend bio chain. Would anybody object to
+> > > > iomap_ioend growing a chain counter and perhaps forcing into a new ioend
+> > > > if we chain something like more than 1k bios at once?
+> > > 
+> > > So what exactly is the problem of processing a long chain in the
+> > > workqueue vs multiple small chains?  Maybe we need a cond_resched()
+> > > here and there, but I don't see how we'd substantially change behavior.
+> > > 
+> > 
+> > The immediate problem is a watchdog lockup detection in bio completion:
+> > 
+> >   NMI watchdog: Watchdog detected hard LOCKUP on cpu 25
+> > 
+> > This effectively lands at the following segment of iomap_finish_ioend():
+> > 
+> > 		...
+> >                /* walk each page on bio, ending page IO on them */
+> >                 bio_for_each_segment_all(bv, bio, iter_all)
+> >                         iomap_finish_page_writeback(inode, bv->bv_page, error);
+> > 
+> > I suppose we could add a cond_resched(), but is that safe directly
+> > inside of a ->bi_end_io() handler? Another option could be to dump large
+> > chains into the completion workqueue, but we may still need to track the
+> > length to do that. Thoughts?
 > 
-> The check follows a similar pattern from copy_mm to detect when we are
+> We have ioend completion merging that will run the compeltion once
+> for all the pending ioend completions on that inode. IOWs, we do not
+> need to build huge chains at submission time to batch up completions
+> efficiently. However, huge bio chains at submission time do cause
+> issues with writeback fairness, pinning GBs of ram as unreclaimable
+> for seconds because they are queued for completion while we are
+> still submitting the bio chain and submission is being throttled by
+> the block layer writeback throttle, etc. Not to mention the latency
+> of stable pages in a situation like this - a mmap() write fault
+> could stall for many seconds waiting for a huge bio chain to finish
+> submission and run completion processing even when the IO for the
+> given page we faulted on was completed before the page fault
+> occurred...
+> 
+> Hence I think we really do need to cap the length of the bio
+> chains here so that we start completing and ending page writeback on
+> large writeback ranges long before the writeback code finishes
+> submitting the range it was asked to write back.
+> 
 
-Ah cool. Was mostly interest not me asking for a change. :)
-This looks like a simple enough fix now. Fwiw:
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+Ming pointed out separately that limiting the bio chain itself might not
+be enough because with multipage bvecs, we can effectively capture the
+same number of pages in much fewer bios. Given that, what do you think
+about something like the patch below to limit ioend size? This
+effectively limits the number of pages per ioend regardless of whether
+in-core state results in a small chain of dense bios or a large chain of
+smaller bios, without requiring any new explicit page count tracking.
 
-Thanks!
-Christian
+Brian
+
+--- 8< ---
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 6ae98d3cb157..4aa96705ffd7 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1301,7 +1301,7 @@ iomap_chain_bio(struct bio *prev)
+ 
+ static bool
+ iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
+-		sector_t sector)
++		unsigned len, sector_t sector)
+ {
+ 	if ((wpc->iomap.flags & IOMAP_F_SHARED) !=
+ 	    (wpc->ioend->io_flags & IOMAP_F_SHARED))
+@@ -1312,6 +1312,8 @@ iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
+ 		return false;
+ 	if (sector != bio_end_sector(wpc->ioend->io_bio))
+ 		return false;
++	if (wpc->ioend->io_size + len > IOEND_MAX_IOSIZE)
++		return false;
+ 	return true;
+ }
+ 
+@@ -1329,7 +1331,7 @@ iomap_add_to_ioend(struct inode *inode, loff_t offset, struct page *page,
+ 	unsigned poff = offset & (PAGE_SIZE - 1);
+ 	bool merged, same_page = false;
+ 
+-	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, offset, sector)) {
++	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, offset, len, sector)) {
+ 		if (wpc->ioend)
+ 			list_add(&wpc->ioend->io_list, iolist);
+ 		wpc->ioend = iomap_alloc_ioend(inode, wpc, offset, sector, wbc);
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 4d1d3c3469e9..5d1b1a08ec96 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -200,6 +200,8 @@ struct iomap_ioend {
+ 	struct bio		io_inline_bio;	/* MUST BE LAST! */
+ };
+ 
++#define IOEND_MAX_IOSIZE	(262144 << PAGE_SHIFT)
++
+ struct iomap_writeback_ops {
+ 	/*
+ 	 * Required, maps the blocks so that writeback can be performed on
+
