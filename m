@@ -2,309 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E3A59251E7B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 19:37:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8F45251EBD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 20:01:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbgHYRhJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Aug 2020 13:37:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34550 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726905AbgHYRg7 (ORCPT
+        id S1726471AbgHYSBH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Aug 2020 14:01:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12622 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726158AbgHYSBB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Aug 2020 13:36:59 -0400
-Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47474C061756
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Aug 2020 10:36:59 -0700 (PDT)
-Received: by mail-vs1-xe43.google.com with SMTP id v138so6777772vsv.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Aug 2020 10:36:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+855CmegM+DswyOpl/Szdp5ActwZ8DYUP58NTFD9vJU=;
-        b=Pe23f4ExVOzYgrqtYwx2WgAVRZ5swZyB+ojamfXaxfvx7dyPw9+zF+/1R3tWrh62zs
-         kk/fUQh8DCinymfeBmEXtLfdHVd5v2fRzrPZ8IugiMGSjLJp3h2BNP9Qe2L76dbqiOHm
-         5Ky/VUmLumzpUYJVOMU51VfVov+Sh69DvbbNnjQuuYJNnxzB+I1bLlD1oB1w32LQT9Eh
-         KeNd2+06XCSUP5/6tud+ZNSArngcoRgy8L/wrGlA8vDo8CAL3WDaKQWc8i0x2NTyB3qy
-         lyopTTrN/t0iGQKqiVjwHqZ/amk9K4lNIXy0BOvWryD1mYTjQcH3FzLvMSLidUOWUaJt
-         KU4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+855CmegM+DswyOpl/Szdp5ActwZ8DYUP58NTFD9vJU=;
-        b=FpjpsjY6Nprb+z3AIXcVDDE1va+3teqpsmMtEcIth3smLN9IzUTVUptQ7gwHmznzJl
-         /XpBjKefT5wtwlCpe2OsFKkEzT5ZAUm+3IUPTirMdxCm2woVEgHPJppXpJpecKF2wg/d
-         W1pm5dn6a+Olqhzya7C60lXjKLpOefulYDIoDhOmTm+kadDpiE7KhOPtsIV1zY/Xr8ta
-         ybT7x684UJSAr4nR2VH7ItwHcTc9mn0RpqVUk4OzmBSCSO/CbyF81YP7qYyIoCRPd7n0
-         //MKF5WgM4Wshg34079VGdI9eeT1rBzIEQcCrtvInjH8quwtylSs+DfmokGSAKs7b/Z+
-         9D8w==
-X-Gm-Message-State: AOAM530HDnSVgC2me28N7Rr8STrZUB0cV7uUeXf9C5ck0EYlrvAzW8Wp
-        ooi2KPkk3z9l7w/MiH3enJeku+bTAoYa56x/Ht7o9Q==
-X-Google-Smtp-Source: ABdhPJxbywIoBPQZF125TFQpPJDrXpJj7CqAFrBMQcd2a5TQ1EuOhPPVFDMNkJC6B4coJKwZbj/Fn/5bvu2Aprsrsuk=
-X-Received: by 2002:a67:efd4:: with SMTP id s20mr2401698vsp.221.1598377017637;
- Tue, 25 Aug 2020 10:36:57 -0700 (PDT)
+        Tue, 25 Aug 2020 14:01:01 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07PHvvVm041766;
+        Tue, 25 Aug 2020 14:00:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : date : mime-version : in-reply-to : content-type :
+ content-transfer-encoding : message-id; s=pp1;
+ bh=QF834FreGkDHcIWyxN1Ql2/p3YIsVDE1LAH3TxBVi6g=;
+ b=qAwe2DLl8i8LAakhP4OAXdxPFTzWNmXS80O4R1bbHAzqPa0TBupwJpwhkwvH+1576zUa
+ R9b9GaBbquf24iUdhREx9fmN23JdkhvXrN/4jAfXJ2MzpcWQk/2P/7EEBVS/xAH/zZxb
+ mMwKVBnsvLCR14UyrxNGBdQRLK7MmUv0F05JAX4++AY8dT/iNMBpXW7nDdzMtjVTeVjv
+ eZizf6Od53ZeIFkSVsXKf97oJuBc5TWpQkV/gkvjHR/T+9EfGU5Eg3HKyGASn537mPip
+ WfPM39HdzUT6ebNa42itrw6JQb8+RzEi3Ww0MF3RoH7oHS0VGqDjXRMpU0bQ70l+SDkY Zg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3357grr1d9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Aug 2020 14:00:53 -0400
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 07PHwf7E042987;
+        Tue, 25 Aug 2020 14:00:53 -0400
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3357grr1ck-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Aug 2020 14:00:53 -0400
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07PHvNGp004746;
+        Tue, 25 Aug 2020 18:00:51 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma05fra.de.ibm.com with ESMTP id 332uk8j8n0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 25 Aug 2020 18:00:51 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07PI0nJC21627144
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Aug 2020 18:00:49 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0F73C11C052;
+        Tue, 25 Aug 2020 18:00:49 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A3F6011C050;
+        Tue, 25 Aug 2020 18:00:47 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.199.43.157])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 25 Aug 2020 18:00:47 +0000 (GMT)
+Subject: Re: [PATCH] iomap: iomap_bmap should accept unwritten maps
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Yuxuan Shui <yshuiv7@gmail.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>
+References: <20200505183608.10280-1-yshuiv7@gmail.com>
+ <20200505193049.GC5694@magnolia>
+ <20200825123650.3AA34AE045@d06av26.portsmouth.uk.ibm.com>
+ <20200825154933.GF6090@magnolia>
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+Date:   Tue, 25 Aug 2020 23:30:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-References: <20200824153036.3201505-1-surenb@google.com> <87imd6n0qk.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87imd6n0qk.fsf@x220.int.ebiederm.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 25 Aug 2020 10:36:45 -0700
-Message-ID: <CAJuCfpG4emt9vT8qdakc8Myoc65XyxSgg30Am0Z67z+hc-Psbg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] mm, oom_adj: don't loop through tasks in
- __set_oom_adj when not necessary
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        mingo@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, esyr@redhat.com,
-        christian@kellner.me, areber@redhat.com,
-        Shakeel Butt <shakeelb@google.com>, cyphar@cyphar.com,
-        Oleg Nesterov <oleg@redhat.com>, adobriyan@gmail.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        gladkov.alexey@gmail.com, Michel Lespinasse <walken@google.com>,
-        daniel.m.jordan@oracle.com, avagin@gmail.com,
-        bernd.edlinger@hotmail.de,
-        John Johansen <john.johansen@canonical.com>,
-        laoar.shao@gmail.com, Tim Murray <timmurray@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, stable <stable@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200825154933.GF6090@magnolia>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Message-Id: <20200825180047.A3F6011C050@d06av25.portsmouth.uk.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-25_08:2020-08-25,2020-08-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 adultscore=0 priorityscore=1501 clxscore=1015 phishscore=0
+ impostorscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008250129
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 25, 2020 at 9:38 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
-> Suren Baghdasaryan <surenb@google.com> writes:
->
-> > Currently __set_oom_adj loops through all processes in the system to
-> > keep oom_score_adj and oom_score_adj_min in sync between processes
-> > sharing their mm. This is done for any task with more that one mm_users,
-> > which includes processes with multiple threads (sharing mm and signals).
-> > However for such processes the loop is unnecessary because their signal
-> > structure is shared as well.
-> > Android updates oom_score_adj whenever a tasks changes its role
-> > (background/foreground/...) or binds to/unbinds from a service, making
-> > it more/less important. Such operation can happen frequently.
-> > We noticed that updates to oom_score_adj became more expensive and after
-> > further investigation found out that the patch mentioned in "Fixes"
-> > introduced a regression. Using Pixel 4 with a typical Android workload,
-> > write time to oom_score_adj increased from ~3.57us to ~362us. Moreover
-> > this regression linearly depends on the number of multi-threaded
-> > processes running on the system.
-> > Mark the mm with a new MMF_PROC_SHARED flag bit when task is created with
-> > (CLONE_VM && !CLONE_THREAD && !CLONE_VFORK). Change __set_oom_adj to use
-> > MMF_PROC_SHARED instead of mm_users to decide whether oom_score_adj
-> > update should be synchronized between multiple processes. To prevent
-> > races between clone() and __set_oom_adj(), when oom_score_adj of the
-> > process being cloned might be modified from userspace, we use
-> > oom_adj_mutex. Its scope is changed to global and it is renamed into
-> > oom_adj_lock for naming consistency with oom_lock. The combination of
-> > (CLONE_VM && !CLONE_THREAD) is rarely used except for the case of vfork().
-> > To prevent performance regressions of vfork(), we skip taking oom_adj_lock
-> > and setting MMF_PROC_SHARED when CLONE_VFORK is specified. Clearing the
-> > MMF_PROC_SHARED flag (when the last process sharing the mm exits) is left
-> > out of this patch to keep it simple and because it is believed that this
-> > threading model is rare. Should there ever be a need for optimizing that
-> > case as well, it can be done by hooking into the exit path, likely
-> > following the mm_update_next_owner pattern.
-> > With the combination of (CLONE_VM && !CLONE_THREAD && !CLONE_VFORK) being
-> > quite rare, the regression is gone after the change is applied.
->
-> This patch still makes my head hurt.
 
-Sorry about that. It was not my intention and I wish there was a
-simpler way to do this.
 
->
-> The obvious wrong things I have mentioned below.
->
->
-> > Fixes: 44a70adec910 ("mm, oom_adj: make sure processes sharing mm have same view of oom_score_adj")
-> > Reported-by: Tim Murray <timmurray@google.com>
-> > Debugged-by: Minchan Kim <minchan@kernel.org>
-> > Suggested-by: Michal Hocko <mhocko@kernel.org>
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >
-> > v2:
-> > - Implemented proposal from Michal Hocko in:
-> > https://lore.kernel.org/linux-fsdevel/20200820124109.GI5033@dhcp22.suse.cz/
-> > - Updated description to reflect the change
-> >
-> > v1:
-> > - https://lore.kernel.org/linux-mm/20200820002053.1424000-1-surenb@google.com/
-> >
-> >  fs/proc/base.c                 |  7 +++----
-> >  include/linux/oom.h            |  1 +
-> >  include/linux/sched/coredump.h |  1 +
-> >  kernel/fork.c                  | 21 +++++++++++++++++++++
-> >  mm/oom_kill.c                  |  2 ++
-> >  5 files changed, 28 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/proc/base.c b/fs/proc/base.c
-> > index 617db4e0faa0..cff1a58a236c 100644
-> > --- a/fs/proc/base.c
-> > +++ b/fs/proc/base.c
-> > @@ -1055,7 +1055,6 @@ static ssize_t oom_adj_read(struct file *file, char __user *buf, size_t count,
-> >
-> >  static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
-> >  {
-> > -     static DEFINE_MUTEX(oom_adj_mutex);
-> >       struct mm_struct *mm = NULL;
-> >       struct task_struct *task;
-> >       int err = 0;
-> > @@ -1064,7 +1063,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
-> >       if (!task)
-> >               return -ESRCH;
-> >
-> > -     mutex_lock(&oom_adj_mutex);
-> > +     mutex_lock(&oom_adj_lock);
-> >       if (legacy) {
-> >               if (oom_adj < task->signal->oom_score_adj &&
-> >                               !capable(CAP_SYS_RESOURCE)) {
-> > @@ -1095,7 +1094,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
-> >               struct task_struct *p = find_lock_task_mm(task);
-> >
-> >               if (p) {
-> > -                     if (atomic_read(&p->mm->mm_users) > 1) {
-> > +                     if (test_bit(MMF_PROC_SHARED, &p->mm->flags)) {
-> >                               mm = p->mm;
-> >                               mmgrab(mm);
-> >                       }
-> > @@ -1132,7 +1131,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
-> >               mmdrop(mm);
-> >       }
-> >  err_unlock:
-> > -     mutex_unlock(&oom_adj_mutex);
-> > +     mutex_unlock(&oom_adj_lock);
-> >       put_task_struct(task);
-> >       return err;
-> >  }
-> > diff --git a/include/linux/oom.h b/include/linux/oom.h
-> > index f022f581ac29..861f22bd4706 100644
-> > --- a/include/linux/oom.h
-> > +++ b/include/linux/oom.h
-> > @@ -55,6 +55,7 @@ struct oom_control {
-> >  };
-> >
-> >  extern struct mutex oom_lock;
-> > +extern struct mutex oom_adj_lock;
->                        ^^^^^^^^^^^^^^
->
-> I understand moving this lock by why renaming it?
+On 8/25/20 9:19 PM, Darrick J. Wong wrote:
+> On Tue, Aug 25, 2020 at 06:06:49PM +0530, Ritesh Harjani wrote:
+>>
+>>
+>> On 5/6/20 1:00 AM, Darrick J. Wong wrote:
+>>> On Tue, May 05, 2020 at 07:36:08PM +0100, Yuxuan Shui wrote:
+>>>> commit ac58e4fb03f9d111d733a4ad379d06eef3a24705 moved ext4_bmap from
+>>>> generic_block_bmap to iomap_bmap, this introduced a regression which
+>>>> prevents some user from using previously working swapfiles. The kernel
+>>>> will complain about holes while there is none.
+>>>>
+>>>> What is happening here is that the swapfile has unwritten mappings,
+>>>> which is rejected by iomap_bmap, but was accepted by ext4_get_block.
+>>>
+>>> ...which is why ext4 ought to use iomap_swapfile_activate.
+>>
+>> I tested this patch (diff below), which seems to be working fine for me
+>> for straight forward use case of swapon/swapoff on ext4.
+>> Could you give it a try?
+>>
+>> <log showing ext4_iomap_swap_activate path kicking in>
+>> swapon  1283 [000]   438.651028:     250000 cpu-clock:pppH:
+>> 	ffffffff817f7f56 percpu_counter_add_batch+0x26 (/boot/vmlinux)
+>> 	ffffffff813a61d0 ext4_es_lookup_extent+0x1d0 (/boot/vmlinux)
+>> 	ffffffff813b8095 ext4_map_blocks+0x65 (/boot/vmlinux)
+>> 	ffffffff813b8d4b ext4_iomap_begin_report+0x10b (/boot/vmlinux)
+>> 	ffffffff81367f58 iomap_apply+0xa8 (/boot/vmlinux)
+>> 	ffffffff8136d1c3 iomap_swapfile_activate+0xb3 (/boot/vmlinux)
+>> 	ffffffff813b51a5 ext4_iomap_swap_activate+0x15 (/boot/vmlinux)
+>> 	ffffffff812a3a27 __do_sys_swapon+0xb37 (/boot/vmlinux)
+>> 	ffffffff812a40f6 __x64_sys_swapon+0x16 (/boot/vmlinux)
+>> 	ffffffff820b760a do_syscall_64+0x5a (/boot/vmlinux)
+>> 	ffffffff8220007c entry_SYSCALL_64+0x7c (/boot/vmlinux)
+>> 	    7ffff7de68bb swapon+0xb (/usr/lib/x86_64-linux-gnu/libc-2.30.so)
+>> 	66706177732f756d [unknown] ([unknown])
+>>
+>> <shows that swapfile(which I setup using fallocate) has some used bytes>
+>> $ swapon -s
+>> Filename                                Type            Size    Used
+>> Priority
+>> /home/qemu/swapfile-test                file            2097148 42312   -2
+>>
+>>
+>> @Jan/Ted/Darrick,
+>>
+>> I am not that familiar with how swap subsystem works.
+>> So, is there anything else you feel is required apart from below changes
+>> for supporting swap_activate via iomap? I did test both swapon/swapoff
+>> and see that swap is getting used up on ext4 with delalloc mount opt.
+>>
+>> As I see from code, iomap_swapfile_activate is mainly looking for
+>> extent mapping information of that file to pass to swap subsystem.
+>> And IIUC, "ext4_iomap_report_ops" is meant exactly for that.
+>> Same as how we use it in ext4_fiemap().
+> 
+> <nod> The swap code doesn't even care about the file offsets, it just
+> wants the physical mappings, and it only wants to find real and
+> unwritten mappings (i.e. no holes, delalloc, or shared extents).
+> 
+> So ... I think it's ok to use the same iomap ops as fiemap.
+> 
+> FWIW the xfs version uses xfs_read_iomap_ops for reads, readahead,
+> fiemap, and swapfiles, so this is ... probably fine, especially if it
+> passes the swap group fstests. :)
+> 
 
-To be consistent with the mutex name right above it. I'm ok keeping it
-as before if this is too much additional churn. I guess Michal deals
-with this code more than anyone else, so I'll wait for him to comment
-on this one.
+Ohh yes, thanks. :)
+I tested "-g swap" fstests and those were fine.
+For completion sake, I will go through generic_swapfile_activate()
+just to confirm that nothing is missed.
+Will try and spin a formal patch early next week -(in LPC this week)
 
->
-> >  static inline void set_current_oom_origin(void)
-> >  {
-> > diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
-> > index ecdc6542070f..070629b722df 100644
-> > --- a/include/linux/sched/coredump.h
-> > +++ b/include/linux/sched/coredump.h
-> > @@ -72,6 +72,7 @@ static inline int get_dumpable(struct mm_struct *mm)
-> >  #define MMF_DISABLE_THP              24      /* disable THP for all VMAs */
-> >  #define MMF_OOM_VICTIM               25      /* mm is the oom victim */
-> >  #define MMF_OOM_REAP_QUEUED  26      /* mm was queued for oom_reaper */
-> > +#define MMF_PROC_SHARED      27      /* mm is shared while sighand is not */
->            ^^^^^^^^^^^^^^^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->
-> Arguably this is misnamed MMF_MULTIPROCESS is probably better.
-
-SGTM. Thanks for the suggestion.
-
-> The comment is definitely wrong.
-
-Agree. Will change to "mm is shared while signal_struct is not"
-
->
-> >  #define MMF_DISABLE_THP_MASK (1 << MMF_DISABLE_THP)
-> >
-> >  #define MMF_INIT_MASK                (MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
-> > diff --git a/kernel/fork.c b/kernel/fork.c
-> > index 4d32190861bd..6fce8ffa9b8b 100644
-> > --- a/kernel/fork.c
-> > +++ b/kernel/fork.c
-> > @@ -1809,6 +1809,25 @@ static __always_inline void delayed_free_task(struct task_struct *tsk)
-> >               free_task(tsk);
-> >  }
-> >
-> > +static void copy_oom_score_adj(u64 clone_flags, struct task_struct *tsk)
-> > +{
-> > +     /* Skip if kernel thread */
-> > +     if (!tsk->mm)
-> > +             return;
-> > +
-> > +     /* Skip if spawning a thread or using vfork */
-> > +     if ((clone_flags & (CLONE_VM | CLONE_THREAD | CLONE_VFORK)) != CLONE_VM)
-> > +             return;
-> > +
-> > +     /* We need to synchronize with __set_oom_adj */
-> > +     mutex_lock(&oom_adj_lock);
-> > +     set_bit(MMF_PROC_SHARED, &tsk->mm->flags);
-> > +     /* Update the values in case they were changed after copy_signal */
-> > +     tsk->signal->oom_score_adj = current->signal->oom_score_adj;
-> > +     tsk->signal->oom_score_adj_min = current->signal->oom_score_adj_min;
-> > +     mutex_unlock(&oom_adj_lock);
->
-> The copying and the setting of a bit on a mm should be logically
-> separate things.
->
-> This really makes my head hurt because the functionality is not
-> separated out.  I don't have a clue how we could maintain this
-> copy_oom_score_adj function.
->
-
-Copying oom_score_adj here is necessary to prevent a possible race
-from creating inconsistent oom_score_adj for the cloned process. The
-race this protects from is when __set_oom_adj happens after
-copy_signal but before copy_oom_score_adj. In that case __set_oom_adj
-will not see MMF_PROC_SHARED and therefore will not update
-oom_score_adj of the cloned process. Copying oom_score_adj again
-inside copy_oom_score_adj will fix such inconsistency. This is the
-simplest way I see to keep things in sync until mm->oom_score_adj is
-implemented (which I agree should happen but it's also a much bigger
-change).
-
->
-> > +}
-> > +
-> >  /*
-> >   * This creates a new process as a copy of the old one,
-> >   * but does not actually start it yet.
-> > @@ -2281,6 +2300,8 @@ static __latent_entropy struct task_struct *copy_process(
-> >       trace_task_newtask(p, clone_flags);
-> >       uprobe_copy_process(p, clone_flags);
-> >
-> > +     copy_oom_score_adj(clone_flags, p);
-> > +
-> >       return p;
-> >
-> >  bad_fork_cancel_cgroup:
-> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> > index e90f25d6385d..c22f07c986cb 100644
-> > --- a/mm/oom_kill.c
-> > +++ b/mm/oom_kill.c
-> > @@ -64,6 +64,8 @@ int sysctl_oom_dump_tasks = 1;
-> >   * and mark_oom_victim
-> >   */
-> >  DEFINE_MUTEX(oom_lock);
-> > +/* Serializes oom_score_adj and oom_score_adj_min updates */
-> > +DEFINE_MUTEX(oom_adj_lock);
-> >
-> >  static inline bool is_memcg_oom(struct oom_control *oc)
-> >  {
->
-> Eric
-
-Thanks everyone for the reviews and feedback! I'll wait for a couple
-days to see if any other comments come in and will send a version with
-fixes addressing Eric's concerns.
+-ritesh
