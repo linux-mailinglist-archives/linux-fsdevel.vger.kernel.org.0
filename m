@@ -2,287 +2,237 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B174251D51
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 18:38:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10550251E24
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 19:20:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725805AbgHYQiI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Aug 2020 12:38:08 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:54802 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbgHYQiI (ORCPT
+        id S1726757AbgHYRUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Aug 2020 13:20:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60202 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbgHYRUa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Aug 2020 12:38:08 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kAbxL-00H0Y9-3q; Tue, 25 Aug 2020 10:37:55 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kAbxJ-0006FB-SK; Tue, 25 Aug 2020 10:37:54 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     mhocko@suse.com, christian.brauner@ubuntu.com, mingo@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
-        christian@kellner.me, areber@redhat.com, shakeelb@google.com,
-        cyphar@cyphar.com, oleg@redhat.com, adobriyan@gmail.com,
-        akpm@linux-foundation.org, gladkov.alexey@gmail.com,
-        walken@google.com, daniel.m.jordan@oracle.com, avagin@gmail.com,
-        bernd.edlinger@hotmail.de, john.johansen@canonical.com,
-        laoar.shao@gmail.com, timmurray@google.com, minchan@kernel.org,
-        kernel-team@android.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        linux-mm@kvack.org, Michal Hocko <mhocko@kernel.org>
-References: <20200824153036.3201505-1-surenb@google.com>
-Date:   Tue, 25 Aug 2020 11:34:11 -0500
-In-Reply-To: <20200824153036.3201505-1-surenb@google.com> (Suren
-        Baghdasaryan's message of "Mon, 24 Aug 2020 08:30:36 -0700")
-Message-ID: <87imd6n0qk.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 25 Aug 2020 13:20:30 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52CCFC061755
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Aug 2020 10:20:29 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id ds1so1601462pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Aug 2020 10:20:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=nyT729ODf8DWQ/R5OBbqDSpXmbF4wBuQSe70PLQ1lcg=;
+        b=DIj0h1lFBw4g5ROo/bDFXCWWLq2HT4qbOTLAYVwkgWPktZledE3e4lc9TQcSg/GTdy
+         xSsE/NVATf0/shqZd6UvHqpzbjo3XzclszlXvkQYvtpUhnXNdJ2n+URcSyJp+N6cYQ53
+         +qqp8higNSJCEc5zi+fY2fCj6sOcXFBpRCv/WOCqlVVbWEC9IL/o+hv6zXC4MS43RryJ
+         f3b3eZ67KO33/p3GSxAQvsfwPrO8YtIYXPK8zlKFytx+KW4A8SiyOLhCenim6OgLYM8L
+         aGwoQNqXLJO1bG5BvSOBuerqkv/85cP6m7LkvIx4kot1Vf14vD/a0yZpmXpEoB/hUZDj
+         HZGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=nyT729ODf8DWQ/R5OBbqDSpXmbF4wBuQSe70PLQ1lcg=;
+        b=hdqLWHpR2pv1pSm6QnSd579Zpy3HqOH07Btex5Ctfk4487ngiS0ocgWqEkqXFDBxn5
+         /Q2idPQ0vU6RtQI5cFn2g8plI78Xdy/bi0Acbxbx2Ic8ALq7VeOo47ElqHCfRbOX4Mgr
+         ttPe+hCXmn50YgXazhm/gHgSzWvVo2TNSZOj/lrTUiPF+WzRnnN3Is5L7ZMY1ZDG3zd0
+         Egioo2xjabdilWAhI069GvixP4n4+e2pCoJmO0FCnSu0IpeqEMuDh5FyUySQ8HGMKc36
+         WvtK6xvAICEK9VuT5yolkgy/4+zR6SSc8Ky/LgTrQP2dMiMQUfFAUKiIxHeK8lJeQiqv
+         8U3g==
+X-Gm-Message-State: AOAM530jPDjyBcB90294T/ksTztlh7bEcRCvdHfvwFnS49Nvrw9oefoM
+        7QLaY8N5LC1Kg494V6xWk4hzmg==
+X-Google-Smtp-Source: ABdhPJxwwyHTLoVmyfZsoo0csISs9vINZZ6y0OFmmRRIshStMQz51XXdpaAF8IsarjtDzqqhQYFX6Q==
+X-Received: by 2002:a17:90b:3509:: with SMTP id ls9mr2409035pjb.230.1598376028599;
+        Tue, 25 Aug 2020 10:20:28 -0700 (PDT)
+Received: from exodia.localdomain ([2601:602:8b80:8e0::edd])
+        by smtp.gmail.com with ESMTPSA id i1sm15906928pfo.212.2020.08.25.10.20.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Aug 2020 10:20:27 -0700 (PDT)
+Date:   Tue, 25 Aug 2020 10:20:26 -0700
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>, Aleksa Sarai <cyphar@cyphar.com>,
+        Linux API <linux-api@vger.kernel.org>, kernel-team@fb.com
+Subject: Re: [PATCH v5 3/9] fs: add RWF_ENCODED for reading/writing
+ compressed data
+Message-ID: <20200825172026.GA253200@exodia.localdomain>
+References: <cover.1597993855.git.osandov@osandov.com>
+ <9020a583581b644ae86b7c05de6a39fd5204f06d.1597993855.git.osandov@osandov.com>
+ <CAOQ4uxi=QcV-Rg=bSpYGid24Qp4zOgjKuOH2E5QA+OMrA-EsLQ@mail.gmail.com>
+ <20200824234903.GA202819@exodia.localdomain>
+ <CAOQ4uxgXUvDSV_4V8R6ivbbSOdh8J4GhvrHqys77E_PgHtAoWg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1kAbxJ-0006FB-SK;;;mid=<87imd6n0qk.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19ivDnjXPoNOaQ5Sbo9GtQ7QzaAzyR6xy4=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa02.xmission.com
-X-Spam-Level: ***
-X-Spam-Status: No, score=3.8 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,LotsOfNums_01,TR_XM_PhishingBody,
-        T_TM2_M_HEADER_IN_MSG,T_TooManySym_01,T_TooManySym_02,T_TooManySym_03,
-        XMSubLong,XM_B_Phish66 autolearn=disabled version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
-        *  2.0 XM_B_Phish66 BODY: Obfuscated XMission
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa02 0; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-        *  0.0 T_TooManySym_03 6+ unique symbols in subject
-        *  0.0 T_TooManySym_02 5+ unique symbols in subject
-        *  0.0 TR_XM_PhishingBody Phishing flag in body of message
-X-Spam-DCC: ; sa02 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ***;Suren Baghdasaryan <surenb@google.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 789 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 3.8 (0.5%), b_tie_ro: 2.6 (0.3%), parse: 0.84
-        (0.1%), extract_message_metadata: 5 (0.7%), get_uri_detail_list: 3.6
-        (0.5%), tests_pri_-1000: 3.1 (0.4%), tests_pri_-950: 0.99 (0.1%),
-        tests_pri_-900: 0.87 (0.1%), tests_pri_-90: 288 (36.6%), check_bayes:
-        287 (36.4%), b_tokenize: 13 (1.6%), b_tok_get_all: 14 (1.7%),
-        b_comp_prob: 2.8 (0.4%), b_tok_touch_all: 254 (32.2%), b_finish: 0.71
-        (0.1%), tests_pri_0: 471 (59.8%), check_dkim_signature: 0.46 (0.1%),
-        check_dkim_adsp: 2.3 (0.3%), poll_dns_idle: 0.84 (0.1%), tests_pri_10:
-        1.76 (0.2%), tests_pri_500: 6 (0.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v2 1/1] mm, oom_adj: don't loop through tasks in __set_oom_adj when not necessary
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgXUvDSV_4V8R6ivbbSOdh8J4GhvrHqys77E_PgHtAoWg@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Suren Baghdasaryan <surenb@google.com> writes:
+On Tue, Aug 25, 2020 at 11:25:05AM +0300, Amir Goldstein wrote:
+> On Tue, Aug 25, 2020 at 2:49 AM Omar Sandoval <osandov@osandov.com> wrote:
+> >
+> > On Fri, Aug 21, 2020 at 11:47:54AM +0300, Amir Goldstein wrote:
+> > > On Fri, Aug 21, 2020 at 10:38 AM Omar Sandoval <osandov@osandov.com> wrote:
+> > > >
+> > > > From: Omar Sandoval <osandov@fb.com>
+> > > >
+> > > > Btrfs supports transparent compression: data written by the user can be
+> > > > compressed when written to disk and decompressed when read back.
+> > > > However, we'd like to add an interface to write pre-compressed data
+> > > > directly to the filesystem, and the matching interface to read
+> > > > compressed data without decompressing it. This adds support for
+> > > > so-called "encoded I/O" via preadv2() and pwritev2().
+> > > >
+> > > > A new RWF_ENCODED flags indicates that a read or write is "encoded". If
+> > > > this flag is set, iov[0].iov_base points to a struct encoded_iov which
+> > > > is used for metadata: namely, the compression algorithm, unencoded
+> > > > (i.e., decompressed) length, and what subrange of the unencoded data
+> > > > should be used (needed for truncated or hole-punched extents and when
+> > > > reading in the middle of an extent). For reads, the filesystem returns
+> > > > this information; for writes, the caller provides it to the filesystem.
+> > > > iov[0].iov_len must be set to sizeof(struct encoded_iov), which can be
+> > > > used to extend the interface in the future a la copy_struct_from_user().
+> > > > The remaining iovecs contain the encoded extent.
+> > > >
+> > > > This adds the VFS helpers for supporting encoded I/O and documentation
+> > > > for filesystem support.
+> > > >
+> > > > Signed-off-by: Omar Sandoval <osandov@fb.com>
+> > > > ---
+> > > >  Documentation/filesystems/encoded_io.rst |  74 ++++++++++
+> > > >  Documentation/filesystems/index.rst      |   1 +
+> > > >  include/linux/fs.h                       |  16 +++
+> > > >  include/uapi/linux/fs.h                  |  33 ++++-
+> > > >  mm/filemap.c                             | 166 +++++++++++++++++++++--
+> > > >  5 files changed, 276 insertions(+), 14 deletions(-)
+> > > >  create mode 100644 Documentation/filesystems/encoded_io.rst
+> > > >
+> > > > diff --git a/Documentation/filesystems/encoded_io.rst b/Documentation/filesystems/encoded_io.rst
+> > > > new file mode 100644
+> > > > index 000000000000..50405276d866
+> > > > --- /dev/null
+> > > > +++ b/Documentation/filesystems/encoded_io.rst
+> > > > @@ -0,0 +1,74 @@
+> > > > +===========
+> > > > +Encoded I/O
+> > > > +===========
+> > > > +
+> > > > +Encoded I/O is a mechanism for reading and writing encoded (e.g., compressed
+> > > > +and/or encrypted) data directly from/to the filesystem. The userspace interface
+> > > > +is thoroughly described in the :manpage:`encoded_io(7)` man page; this document
+> > > > +describes the requirements for filesystem support.
+> > > > +
+> > > > +First of all, a filesystem supporting encoded I/O must indicate this by setting
+> > > > +the ``FMODE_ENCODED_IO`` flag in its ``file_open`` file operation::
+> > > > +
+> > > > +    static int foo_file_open(struct inode *inode, struct file *filp)
+> > > > +    {
+> > > > +            ...
+> > > > +            filep->f_mode |= FMODE_ENCODED_IO;
+> > > > +            ...
+> > > > +    }
+> > > > +
+> > > > +Encoded I/O goes through ``read_iter`` and ``write_iter``, designated by the
+> > > > +``IOCB_ENCODED`` flag in ``kiocb->ki_flags``.
+> > > > +
+> > > > +Reads
+> > > > +=====
+> > > > +
+> > > > +Encoded ``read_iter`` should:
+> > > > +
+> > > > +1. Call ``generic_encoded_read_checks()`` to validate the file and buffers
+> > > > +   provided by userspace.
+> > > > +2. Initialize the ``encoded_iov`` appropriately.
+> > > > +3. Copy it to the user with ``copy_encoded_iov_to_iter()``.
+> > > > +4. Copy the encoded data to the user.
+> > > > +5. Advance ``kiocb->ki_pos`` by ``encoded_iov->len``.
+> > > > +6. Return the size of the encoded data read, not including the ``encoded_iov``.
+> > > > +
+> > > > +There are a few details to be aware of:
+> > > > +
+> > > > +* Encoded ``read_iter`` should support reading unencoded data if the extent is
+> > > > +  not encoded.
+> > > > +* If the buffers provided by the user are not large enough to contain an entire
+> > > > +  encoded extent, then ``read_iter`` should return ``-ENOBUFS``. This is to
+> > > > +  avoid confusing userspace with truncated data that cannot be properly
+> > > > +  decoded.
+> > > > +* Reads in the middle of an encoded extent can be returned by setting
+> > > > +  ``encoded_iov->unencoded_offset`` to non-zero.
+> > > > +* Truncated unencoded data (e.g., because the file does not end on a block
+> > > > +  boundary) may be returned by setting ``encoded_iov->len`` to a value smaller
+> > > > +  value than ``encoded_iov->unencoded_len - encoded_iov->unencoded_offset``.
+> > > > +
+> > > > +Writes
+> > > > +======
+> > > > +
+> > > > +Encoded ``write_iter`` should (in addition to the usual accounting/checks done
+> > > > +by ``write_iter``):
+> > > > +
+> > > > +1. Call ``copy_encoded_iov_from_iter()`` to get and validate the
+> > > > +   ``encoded_iov``.
+> > > > +2. Call ``generic_encoded_write_checks()`` instead of
+> > > > +   ``generic_write_checks()``.
+> > > > +3. Check that the provided encoding in ``encoded_iov`` is supported.
+> > > > +4. Advance ``kiocb->ki_pos`` by ``encoded_iov->len``.
+> > > > +5. Return the size of the encoded data written.
+> > > > +
+> > > > +Again, there are a few details:
+> > > > +
+> > > > +* Encoded ``write_iter`` doesn't need to support writing unencoded data.
+> > > > +* ``write_iter`` should either write all of the encoded data or none of it; it
+> > > > +  must not do partial writes.
+> > > > +* ``write_iter`` doesn't need to validate the encoded data; a subsequent read
+> > > > +  may return, e.g., ``-EIO`` if the data is not valid.
+> > > > +* The user may lie about the unencoded size of the data; a subsequent read
+> > > > +  should truncate or zero-extend the unencoded data rather than returning an
+> > > > +  error.
+> > > > +* Be careful of page cache coherency.
+> > >
+> > > Haha that rings in my head like the "Smoking kills!" warnings...
+> > >
+> > > I find it a bit odd that you mix page cache at all when reading
+> > > unencoded extents.
+> > > Feels like a file with FMODE_ENCODED_IO should stick to direct IO in all cases.
+> > > I don't know how btrfs deals with mixing direct IO and page cache IO normally,
+> > > but surely the rules could be made even stricter for an inode accessed with this
+> > > new API?
+> > >
+> > > Is there something I am misunderstanding?
+> > >
+> > > Thanks,
+> > > Amir.
+> >
+> > I'm not completely following here, are you suggesting that if a file is
+> > open with O_ALLOW_ENCODED, buffered I/O to that file should return an
+> > error?
+> 
+> No. I don't.
+> 
+> > Btrfs at least does the necessary range locking and page cache
+> > invalidation to ensure that direct I/O gets along with buffered I/O (and
+> > now encoded I/O).
+> 
+> That's a good start :-)
+> 
+> I saw btrfs_encoded_read_regular_fill_pages() and concluded that even
+> in FMODE_ENCODED_IO, when reading an unencoded extent, you fill
+> page cache with the unencoded data.
+> 
+> Is that correct? or did I miss read the code?
+> If correct, does it serve any purpose?
+> Seems more sensible to me to read/write FMODE_ENCODED_IO only in direct io
+> regardless if the extent is encoded or not (for simpler code if nothing else).
+> 
+> Thanks,
+> Amir.
 
-> Currently __set_oom_adj loops through all processes in the system to
-> keep oom_score_adj and oom_score_adj_min in sync between processes
-> sharing their mm. This is done for any task with more that one mm_users,
-> which includes processes with multiple threads (sharing mm and signals).
-> However for such processes the loop is unnecessary because their signal
-> structure is shared as well.
-> Android updates oom_score_adj whenever a tasks changes its role
-> (background/foreground/...) or binds to/unbinds from a service, making
-> it more/less important. Such operation can happen frequently.
-> We noticed that updates to oom_score_adj became more expensive and after
-> further investigation found out that the patch mentioned in "Fixes"
-> introduced a regression. Using Pixel 4 with a typical Android workload,
-> write time to oom_score_adj increased from ~3.57us to ~362us. Moreover
-> this regression linearly depends on the number of multi-threaded
-> processes running on the system.
-> Mark the mm with a new MMF_PROC_SHARED flag bit when task is created with
-> (CLONE_VM && !CLONE_THREAD && !CLONE_VFORK). Change __set_oom_adj to use
-> MMF_PROC_SHARED instead of mm_users to decide whether oom_score_adj
-> update should be synchronized between multiple processes. To prevent
-> races between clone() and __set_oom_adj(), when oom_score_adj of the
-> process being cloned might be modified from userspace, we use
-> oom_adj_mutex. Its scope is changed to global and it is renamed into
-> oom_adj_lock for naming consistency with oom_lock. The combination of
-> (CLONE_VM && !CLONE_THREAD) is rarely used except for the case of vfork().
-> To prevent performance regressions of vfork(), we skip taking oom_adj_lock
-> and setting MMF_PROC_SHARED when CLONE_VFORK is specified. Clearing the
-> MMF_PROC_SHARED flag (when the last process sharing the mm exits) is left
-> out of this patch to keep it simple and because it is believed that this
-> threading model is rare. Should there ever be a need for optimizing that
-> case as well, it can be done by hooking into the exit path, likely
-> following the mm_update_next_owner pattern.
-> With the combination of (CLONE_VM && !CLONE_THREAD && !CLONE_VFORK) being
-> quite rare, the regression is gone after the change is applied.
-
-This patch still makes my head hurt.
-
-The obvious wrong things I have mentioned below.
-
-
-> Fixes: 44a70adec910 ("mm, oom_adj: make sure processes sharing mm have same view of oom_score_adj")
-> Reported-by: Tim Murray <timmurray@google.com>
-> Debugged-by: Minchan Kim <minchan@kernel.org>
-> Suggested-by: Michal Hocko <mhocko@kernel.org>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->
-> v2:
-> - Implemented proposal from Michal Hocko in:
-> https://lore.kernel.org/linux-fsdevel/20200820124109.GI5033@dhcp22.suse.cz/
-> - Updated description to reflect the change
->
-> v1:
-> - https://lore.kernel.org/linux-mm/20200820002053.1424000-1-surenb@google.com/
->
->  fs/proc/base.c                 |  7 +++----
->  include/linux/oom.h            |  1 +
->  include/linux/sched/coredump.h |  1 +
->  kernel/fork.c                  | 21 +++++++++++++++++++++
->  mm/oom_kill.c                  |  2 ++
->  5 files changed, 28 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 617db4e0faa0..cff1a58a236c 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -1055,7 +1055,6 @@ static ssize_t oom_adj_read(struct file *file, char __user *buf, size_t count,
->  
->  static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
->  {
-> -	static DEFINE_MUTEX(oom_adj_mutex);
->  	struct mm_struct *mm = NULL;
->  	struct task_struct *task;
->  	int err = 0;
-> @@ -1064,7 +1063,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
->  	if (!task)
->  		return -ESRCH;
->  
-> -	mutex_lock(&oom_adj_mutex);
-> +	mutex_lock(&oom_adj_lock);
->  	if (legacy) {
->  		if (oom_adj < task->signal->oom_score_adj &&
->  				!capable(CAP_SYS_RESOURCE)) {
-> @@ -1095,7 +1094,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
->  		struct task_struct *p = find_lock_task_mm(task);
->  
->  		if (p) {
-> -			if (atomic_read(&p->mm->mm_users) > 1) {
-> +			if (test_bit(MMF_PROC_SHARED, &p->mm->flags)) {
->  				mm = p->mm;
->  				mmgrab(mm);
->  			}
-> @@ -1132,7 +1131,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
->  		mmdrop(mm);
->  	}
->  err_unlock:
-> -	mutex_unlock(&oom_adj_mutex);
-> +	mutex_unlock(&oom_adj_lock);
->  	put_task_struct(task);
->  	return err;
->  }
-> diff --git a/include/linux/oom.h b/include/linux/oom.h
-> index f022f581ac29..861f22bd4706 100644
-> --- a/include/linux/oom.h
-> +++ b/include/linux/oom.h
-> @@ -55,6 +55,7 @@ struct oom_control {
->  };
->  
->  extern struct mutex oom_lock;
-> +extern struct mutex oom_adj_lock;
-                       ^^^^^^^^^^^^^^
-
-I understand moving this lock by why renaming it?
-
->  static inline void set_current_oom_origin(void)
->  {
-> diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
-> index ecdc6542070f..070629b722df 100644
-> --- a/include/linux/sched/coredump.h
-> +++ b/include/linux/sched/coredump.h
-> @@ -72,6 +72,7 @@ static inline int get_dumpable(struct mm_struct *mm)
->  #define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
->  #define MMF_OOM_VICTIM		25	/* mm is the oom victim */
->  #define MMF_OOM_REAP_QUEUED	26	/* mm was queued for oom_reaper */
-> +#define MMF_PROC_SHARED	27	/* mm is shared while sighand is not */
-           ^^^^^^^^^^^^^^^              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Arguably this is misnamed MMF_MULTIPROCESS is probably better.
-The comment is definitely wrong.
-
->  #define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
->  
->  #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 4d32190861bd..6fce8ffa9b8b 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1809,6 +1809,25 @@ static __always_inline void delayed_free_task(struct task_struct *tsk)
->  		free_task(tsk);
->  }
->  
-> +static void copy_oom_score_adj(u64 clone_flags, struct task_struct *tsk)
-> +{
-> +	/* Skip if kernel thread */
-> +	if (!tsk->mm)
-> +		return;
-> +
-> +	/* Skip if spawning a thread or using vfork */
-> +	if ((clone_flags & (CLONE_VM | CLONE_THREAD | CLONE_VFORK)) != CLONE_VM)
-> +		return;
-> +
-> +	/* We need to synchronize with __set_oom_adj */
-> +	mutex_lock(&oom_adj_lock);
-> +	set_bit(MMF_PROC_SHARED, &tsk->mm->flags);
-> +	/* Update the values in case they were changed after copy_signal */
-> +	tsk->signal->oom_score_adj = current->signal->oom_score_adj;
-> +	tsk->signal->oom_score_adj_min = current->signal->oom_score_adj_min;
-> +	mutex_unlock(&oom_adj_lock);
-
-The copying and the setting of a bit on a mm should be logically
-separate things.
-
-This really makes my head hurt because the functionality is not
-separated out.  I don't have a clue how we could maintain this
-copy_oom_score_adj function.
-
-
-> +}
-> +
->  /*
->   * This creates a new process as a copy of the old one,
->   * but does not actually start it yet.
-> @@ -2281,6 +2300,8 @@ static __latent_entropy struct task_struct *copy_process(
->  	trace_task_newtask(p, clone_flags);
->  	uprobe_copy_process(p, clone_flags);
->  
-> +	copy_oom_score_adj(clone_flags, p);
-> +
->  	return p;
->  
->  bad_fork_cancel_cgroup:
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index e90f25d6385d..c22f07c986cb 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -64,6 +64,8 @@ int sysctl_oom_dump_tasks = 1;
->   * and mark_oom_victim
->   */
->  DEFINE_MUTEX(oom_lock);
-> +/* Serializes oom_score_adj and oom_score_adj_min updates */
-> +DEFINE_MUTEX(oom_adj_lock);
->  
->  static inline bool is_memcg_oom(struct oom_control *oc)
->  {
-
-Eric
+Oh, I see. btrfs_encoded_read_regular_fill_pages() fills temporary pages
+allocated for the read, not page cache pages. RWF_ENCODED always
+bypasses the page cache, which I agree is the most sensible option.
