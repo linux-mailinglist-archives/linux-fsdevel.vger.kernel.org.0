@@ -2,61 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DDB3A251689
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 12:20:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6D652516A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 12:29:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729784AbgHYKUt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Aug 2020 06:20:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50266 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729653AbgHYKUt (ORCPT
+        id S1729848AbgHYK3b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Aug 2020 06:29:31 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:36924 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729698AbgHYK3a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Aug 2020 06:20:49 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8736FC061574
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Aug 2020 03:20:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=sZPoy1XX/XaYTKoz7+gdFK0juoS+usgfYV78xsYMYKY=; b=HAzAaIgMNYT3pYLTegNZ9DVIMu
-        krgwHWLCmArSWOr7S1gikLmqg/ZOaQyBOhs7ipOHeR+jkvIcunogu4jR49Vu4Iribs7mp4d5aFjPc
-        dNEWBKah9SQTVj5mKKkStNz0SQ8OvknsriTxBnBfgMg0mMBpalmCqqBi8+wxwdHv23LO/0dJYNtB9
-        5QMyPFnJssE49VjEkeq4dKbzhbp3iEP1/d5Zz030mG1z3R5a8DoCGbYuhtPvTRIc6hudNa8ihsn9s
-        5KMElgrKM1vI6ZQJNDN3sFW90KeAPDXbFZkGmD7uNbn+tRlWBHi/oqqANiLjGhCkrES+LAKlgL8Q4
-        /I1DgIQA==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kAW4G-00047d-65; Tue, 25 Aug 2020 10:20:40 +0000
-Date:   Tue, 25 Aug 2020 11:20:40 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Yuxuan Shui <yshuiv7@gmail.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] iomap: iomap_bmap should accept unwritten maps
-Message-ID: <20200825102040.GA15394@infradead.org>
-References: <20200505183608.10280-1-yshuiv7@gmail.com>
- <20200505193049.GC5694@magnolia>
- <CAGqt0zzA5NRx+vrcwyekW=Z18BL5CGTuZEBvpRO3vK5rHCBs=A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGqt0zzA5NRx+vrcwyekW=Z18BL5CGTuZEBvpRO3vK5rHCBs=A@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+        Tue, 25 Aug 2020 06:29:30 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07PAPOJx078060;
+        Tue, 25 Aug 2020 10:29:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2020-01-29; bh=eYOBrGq+oIN0aCgQgUHudJMPRgvhB81SD1iHx4MSQQ4=;
+ b=J/arBTGQW/QHlSBjkq9YtT0uCotUCrSo7RyLr1Q5UjfA9XzjxXOZb8ukdTTio6bcVass
+ F3/3JySMpw5/8eMSsiFWLI1x3hRZVPXe0YEgfU/d6ktOONu3xGvUFLBhRVX9Mg3ENs3U
+ vN4iUEiI6CJGYMlOhD8BZAtPNXgmWIqVt8W0eHK43l1IY/yAo9vSC0i8XiLVVl+JmgKL
+ VpiFpuLOApElDLdSp9WpO5MX46CorU6Ch2bqgGrZNtNOTMV9aapa7v//m47uNJlkmq3S
+ 1A9BQpju++mbT5eoSXgVb8tdhfbgzf55KzEhDwVFzdkvJwJhJnmnKNMvWvq7ZH40FTGJ EA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 333csj1qf5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 25 Aug 2020 10:29:18 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07PAPHQB176374;
+        Tue, 25 Aug 2020 10:29:18 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 333r9jcmjm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 25 Aug 2020 10:29:18 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 07PATHMO005180;
+        Tue, 25 Aug 2020 10:29:17 GMT
+Received: from localhost.localdomain (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 25 Aug 2020 03:29:17 -0700
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.0.3\))
+Subject: Re: [PATCH 00/11] iomap/fs/block patches for 5.11
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20200824151700.16097-1-willy@infradead.org>
+Date:   Tue, 25 Aug 2020 04:29:16 -0600
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-block@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1E04AE83-85F0-4C90-924C-9A6792D453DE@oracle.com>
+References: <20200824151700.16097-1-willy@infradead.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+X-Mailer: Apple Mail (2.3654.0.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9723 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ suspectscore=0 malwarescore=0 spamscore=0 mlxlogscore=999 mlxscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008250078
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9723 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 clxscore=1011
+ spamscore=0 priorityscore=1501 impostorscore=0 adultscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008250078
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Aug 25, 2020 at 10:26:14AM +0100, Yuxuan Shui wrote:
-> Hi,
-> 
-> Do we actually want to fix this bug or not? There are a number of
-> people actually seeing this bug.
+Really nice improvements here.
 
-bmap should not succeed for unwritten extents.
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 
-> If you think this is not the right fix, what do you think we should
-> do? If the correct fix is to make ext4 use iomap_swapfile_activate,
-> maybe we should CC the ext4 people too?
+> On Aug 24, 2020, at 9:16 AM, Matthew Wilcox (Oracle) =
+<willy@infradead.org> wrote:
+>=20
+> As promised earlier [1], here are the patches which I would like to
+> merge into 5.11 to support THPs.  They depend on that earlier series.
+> If there's anything in here that you'd like to see pulled out and =
+added
+> to that earlier series, let me know.
+>=20
+> There are a couple of pieces in here which aren't exactly part of
+> iomap, but I think make sense to take through the iomap tree.
+>=20
+> [1] =
+https://lore.kernel.org/linux-fsdevel/20200824145511.10500-1-willy@infrade=
+ad.org/
+>=20
+> Matthew Wilcox (Oracle) (11):
+>  fs: Make page_mkwrite_check_truncate thp-aware
+>  mm: Support THPs in zero_user_segments
+>  mm: Zero the head page, not the tail page
+>  block: Add bio_for_each_thp_segment_all
+>  iomap: Support THPs in iomap_adjust_read_range
+>  iomap: Support THPs in invalidatepage
+>  iomap: Support THPs in read paths
+>  iomap: Change iomap_write_begin calling convention
+>  iomap: Support THPs in write paths
+>  iomap: Inline data shouldn't see THPs
+>  iomap: Handle tail pages in iomap_page_mkwrite
+>=20
+> fs/iomap/buffered-io.c  | 178 ++++++++++++++++++++++++----------------
+> include/linux/bio.h     |  13 +++
+> include/linux/bvec.h    |  27 ++++++
+> include/linux/highmem.h |  15 +++-
+> include/linux/pagemap.h |  10 +--
+> mm/highmem.c            |  62 +++++++++++++-
+> mm/shmem.c              |   7 ++
+> mm/truncate.c           |   7 ++
+> 8 files changed, 236 insertions(+), 83 deletions(-)
+>=20
+> --=20
+> 2.28.0
+>=20
+>=20
 
-Yes, ext4 should use iomap_swapfile_activate.
