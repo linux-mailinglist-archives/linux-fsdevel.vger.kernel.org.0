@@ -2,145 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1130F251C2E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 17:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AD2B251C52
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Aug 2020 17:32:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727793AbgHYPVH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Aug 2020 11:21:07 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:20901 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727124AbgHYPVB (ORCPT
+        id S1726646AbgHYPc2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Aug 2020 11:32:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43396 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726611AbgHYPc2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Aug 2020 11:21:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1598368860;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=/ww29tGGGCJNK0uYcOWj2E3kj6GiHCX868VNsZmxKCg=;
-        b=YWbOhH2TLBml9I+0MkojK2f7bF2lKf0NNeuu4iHaBIh1R22McZ2chMaJXm8bReNWY8lxfr
-        Tjnx+6maUTdQH0O8tuOcdcnHpulIxkINuUYlN8n2LJHofBwVwGGKwhWa49fzJBfU28mVyV
-        5CqIpNrRbOAiD+Ffy6p3A8yHqPjBQSk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-466-37dpDfn1Pa6ebnO-UJQsrg-1; Tue, 25 Aug 2020 11:20:52 -0400
-X-MC-Unique: 37dpDfn1Pa6ebnO-UJQsrg-1
-Received: by mail-wm1-f70.google.com with SMTP id x6so687792wmb.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Aug 2020 08:20:52 -0700 (PDT)
+        Tue, 25 Aug 2020 11:32:28 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB67BC061755
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Aug 2020 08:32:27 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id c10so11613065edk.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Aug 2020 08:32:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hWUqkPjaP+eN5TBL4RC6KUdRAVxyQQc3cp7C2UlodlM=;
+        b=g44fvTKtmJyTxm7JWmjW5kskx4wvpUqqr6cZOqfp22In3UghI2Riib/zCztP+ikm6j
+         DgJWgD7gdgdd5X3xXnnXqpPRURPV/VcV4VNZKlZkUl7t860PfxO4p048n+/jzgoJ1IYA
+         a+AJggGuQDyc8ohh9K7B5zLhPv3AvhFMHIPuU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=/ww29tGGGCJNK0uYcOWj2E3kj6GiHCX868VNsZmxKCg=;
-        b=aBGSa9zdTbFSE/wvU5UzR5ATVXyKbONmnJ+5tBKtka9hwLH446zjzkKyH/2jkFo6Za
-         A6qg2Ce1jq9SGuuRT9a6Py8l+sTFs6ExPD0H2OvX04d472JCjXYEuQ/1/ZI2i/HCgQO5
-         ZzNgu9cCuTuL/YsymhwkHXyMLZsqsFEk84nCYeqEe2AdQ7Gk2zcJAFoz2NGsoW9UvyfR
-         wbMASUngfKi5MRgocqh7tuZACoXMnVZt9aJ5xZ9y1CBJ8fc/jzC2gjYfQBuLprKl65u5
-         U1fSEKuGvog2ypFma9Cxsm/+0dwagCEPGp/7UhA7TD5DsouieJDWvV+srCgsQSlMKQTb
-         yP1A==
-X-Gm-Message-State: AOAM532ezdx6foaCHKCM8C1BVY51Ebnli9h2uT72lXTw8uXW+7RYANDU
-        xHnhOM0FhZry19o/uoo9PndmAHuT1PGwbwXmd/q/r0uGa6snIX+Kzigq4Iht+JTs8I3u38jB1dY
-        Bl3L6ycdaegPqIsNQAWVjK8ofLg==
-X-Received: by 2002:adf:f149:: with SMTP id y9mr10788357wro.93.1598368848124;
-        Tue, 25 Aug 2020 08:20:48 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxFcOj3KLiVhLrb5kKPj9J8yKhtonxgeHvdnpuzUycgw3vzeJpSYbKYVTAeVF3IvMjryZZqFg==
-X-Received: by 2002:adf:f149:: with SMTP id y9mr10788321wro.93.1598368847815;
-        Tue, 25 Aug 2020 08:20:47 -0700 (PDT)
-Received: from steredhat (host-79-51-197-141.retail.telecomitalia.it. [79.51.197.141])
-        by smtp.gmail.com with ESMTPSA id v20sm3575043wra.72.2020.08.25.08.20.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2020 08:20:47 -0700 (PDT)
-Date:   Tue, 25 Aug 2020 17:20:44 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        io-uring <io-uring@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] io_uring: add restrictions to support untrusted
- applications and guests
-Message-ID: <CAGxU2F55zzMzc043P88TWJNr2poUTVwrRmu86qyh0uM-8gimng@mail.gmail.com>
-References: <20200813153254.93731-1-sgarzare@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hWUqkPjaP+eN5TBL4RC6KUdRAVxyQQc3cp7C2UlodlM=;
+        b=uAZq3rjifDCrAzJkD5t7DUtg1qs1dqtJx53627DK1YP0fHUWLoUEFsdN0GAbx3byQ3
+         +Hz9r1VPbvpaoZS813FGLV4zbkKvauXCrd+RDKFu5N0qnArAQIS4VOhr0CCXpKWqg8Ue
+         QR05YrU0Y+ByHvMZcoyTj6V+AN1lK2tnKLQ0jWCrVbNKhTMvzh/Ye0Ta3GMkul238gp0
+         1J86DpdCcAUUa1uUQIiqLPCrnwdTlPHK+7d+ghWJZRkxOCXpHPKaJZZmBIXgxytwtAfg
+         vLDBvv6Unx9gPlrHucI5BnABNSPAYjGCHtTQcRyH1nKLA2bwJy8LcPbdeiZo11MPlEA+
+         NTBg==
+X-Gm-Message-State: AOAM531GVWhiAA4z80p2TA//uumonkXEHhBMvQIgvu/4WOLINROVcR8G
+        mRoCsiExQW3zqYzWht/G2UDFg1FENrwl0y+u/wTnEg==
+X-Google-Smtp-Source: ABdhPJxNmeZCFOIsdvj/Z3YQ9kd3aEBLLZs3ey5QNrFgmOesMW5wcTTYtKsRM8FtMrvaBbBLS8+Z5sRxxZifxLMZ4Rc=
+X-Received: by 2002:a50:b022:: with SMTP id i31mr314437edd.17.1598369546344;
+ Tue, 25 Aug 2020 08:32:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200813153254.93731-1-sgarzare@redhat.com>
+References: <20200824222924.GF199705@mit.edu> <3918915.AdkhnqkaGN@silver>
+In-Reply-To: <3918915.AdkhnqkaGN@silver>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 25 Aug 2020 17:32:15 +0200
+Message-ID: <CAJfpegt9Pmj9k-qAaKxcBOjTNtV5XsTYa+C0s9Ui9W13R-dv8g@mail.gmail.com>
+Subject: Re: file forks vs. xattr (was: xattr names for unprivileged stacking?)
+To:     Christian Schoenebeck <qemu_oss@crudebyte.com>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Frank van der Linden <fllinden@amazon.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        Chirantan Ekbote <chirantan@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jens,
-this is a gentle ping.
+On Tue, Aug 25, 2020 at 5:12 PM Christian Schoenebeck
+<qemu_oss@crudebyte.com> wrote:
 
-I'll respin, using memdup_user() for restriction registration.
-I'd like to get some feedback to see if I should change anything else.
+> I can give you another argument which might be more convincing to you: say you
+> maintain a middleware lib that takes a path as argument somewhere, and that
+> lib now gets path="/foo//bar". How could that lib judge whether it should a)
+> eliminate the double slash, or rather b) it was really meant to be fork "bar"
+> of file "foo" and hence shall pass the string as-is to underlying
+> framework(s)? Simply: It can't, as it requires knowledge from either upper or
+> lower end that the lib in the middle might not have.
 
-Do you think it's in good shape?
+Nobody needs to care, only the level that actually wants to handle the
+alternative namespace.  And then that level absolutely *must* call
+into a level that it knows does handle the alternative namespace.
+
+Yeah, it's not going to suddenly start to  work by putting "foo//bar"
+into an open file dialogue or whatever.   That's not the point, adding
+that  new interface is to enable *new* functionality not to change
+existing functionality.  That's the point that people don't seem to
+get.
+
+> > The most important thing, I think, is to not fragment the interface
+> > further.  So O_ALT should allow not just one application (like ADS)
+> > but should have a top level directory for selecting between the
+> > various data sources.
+>
+> Well, that's what name spaces are for IMO. So you would probably reserve some
+> prefixes for system purposes, like it is already done for Linux xattrs. Or do
+> you see any advantage for adding a dedicated directory layer in between
+> instead?
+
+You mean some reserved prefixes for ADS?  Bleh.
+
+No, xattr is not the model we should be following.
 
 Thanks,
-Stefano
-
-On Thu, Aug 13, 2020 at 5:34 PM Stefano Garzarella <sgarzare@redhat.com> wrote:
->
-> v4:
->  - rebased on top of io_uring-5.9
->  - fixed io_uring_enter() exit path when ring is disabled
->
-> v3: https://lore.kernel.org/io-uring/20200728160101.48554-1-sgarzare@redhat.c=
-> om/
-> RFC v2: https://lore.kernel.org/io-uring/20200716124833.93667-1-sgarzare@redh=
-> at.com
-> RFC v1: https://lore.kernel.org/io-uring/20200710141945.129329-1-sgarzare@red=
-> hat.com
->
-> Following the proposal that I send about restrictions [1], I wrote this series
-> to add restrictions in io_uring.
->
-> I also wrote helpers in liburing and a test case (test/register-restrictions.=
-> c)
-> available in this repository:
-> https://github.com/stefano-garzarella/liburing (branch: io_uring_restrictions)
->
-> Just to recap the proposal, the idea is to add some restrictions to the
-> operations (sqe opcode and flags, register opcode) to safely allow untrusted
-> applications or guests to use io_uring queues.
->
-> The first patch changes io_uring_register(2) opcodes into an enumeration to
-> keep track of the last opcode available.
->
-> The second patch adds IOURING_REGISTER_RESTRICTIONS opcode and the code to
-> handle restrictions.
->
-> The third patch adds IORING_SETUP_R_DISABLED flag to start the rings disabled,
-> allowing the user to register restrictions, buffers, files, before to start
-> processing SQEs.
->
-> Comments and suggestions are very welcome.
->
-> Thank you in advance,
-> Stefano
->
-> [1] https://lore.kernel.org/io-uring/20200609142406.upuwpfmgqjeji4lc@steredha=
-> t/
->
-> Stefano Garzarella (3):
->   io_uring: use an enumeration for io_uring_register(2) opcodes
->   io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
->   io_uring: allow disabling rings during the creation
->
->  fs/io_uring.c                 | 160 ++++++++++++++++++++++++++++++++--
->  include/uapi/linux/io_uring.h |  60 ++++++++++---
->  2 files changed, 203 insertions(+), 17 deletions(-)
->
-> --=20
-> 2.26.2
->
-
+Miklos
