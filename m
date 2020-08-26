@@ -2,170 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77D0D25388F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 21:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A7ED253898
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 21:53:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726938AbgHZTwo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Aug 2020 15:52:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53068 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726783AbgHZTwn (ORCPT
+        id S1727104AbgHZTx1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Aug 2020 15:53:27 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:22179 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726798AbgHZTxZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Aug 2020 15:52:43 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9615DC061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 12:52:42 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id u128so1578014pfb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 12:52:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=VbJ9M0x7/6kdVUf5kyNPDEStbpnR2XDArodticGgnuw=;
-        b=rRl+Udx0c/tGT5sCZv6zDX1U97/r6hjWIJ1etf9yfwwvdhzwi+WnMpG8Qgm/MUoHJn
-         Ee4rGok0Wx4355BscUdPeV2RoMj6B5E9CiOF1MWXin/kkuRtjLAxhVt7FzOKKIYCnDBn
-         wy38Xp0nqiwlcVZ3HoDTBTTB6GOwKFLhD1XGxB8Ud1p55FRo9REe8djvCD/9myaSshs3
-         pjoSDjYgzeOQpVP3xPaYQ9LXXofKLVXT40825djtQaGq8HL3SUKL6UlGHfyYMFZ+v4zC
-         bEhMqDfO7oUnl3LMOLhPUPzJnm4Zr4xu6TxhiveZ1ND+AULjsg25FkSiel1XDB2cxyNn
-         l84A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=VbJ9M0x7/6kdVUf5kyNPDEStbpnR2XDArodticGgnuw=;
-        b=Z0hf4nEgYBM2sQ4hfE74wwgJV68Tb3swdVMJhIrK6WV2KhcnYPCgjYwIrfzLstXw4x
-         2P1zmWPdW0P9fN/Hf/wLizJNGS+/oMndT/ABQVlyumRQYVLwSBu2bk9e1UDmpsYsyZkM
-         MU6423hoic/QZ3uHlJnraf2XuCG6SYHmcTZ9j+P2L2IuuiPuFuRGgEwlE0zqwyAPw6Va
-         ZUCTPadxZL5xZSFFhcNkaZZ8MrswiGYGKCfvFVsISiuKaHHeoA0uF/uY1db5cMGfGpaS
-         xwv24qV3+D8BObAU4a3fEOQ8yQ/mS3svL50O245Jsd6d6o0cI6xKvmm5Ndk20DySuuwc
-         At9A==
-X-Gm-Message-State: AOAM532vhbInvue1VNteM8jt7vLx2EHC/JpfIx/7No0WKeWfxUzv92ce
-        5zxJv4YMxbVENsWE2NLiCGMOAw==
-X-Google-Smtp-Source: ABdhPJz2tJUnfEf0SqTON1++961s4mS80Ys4vUdtGo5FqM5ZbNWVgz7JG4vIUMYBfxdhxOnPXyMo2A==
-X-Received: by 2002:a62:f843:: with SMTP id c3mr13624152pfm.247.1598471562130;
-        Wed, 26 Aug 2020 12:52:42 -0700 (PDT)
-Received: from [192.168.10.160] (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
-        by smtp.gmail.com with ESMTPSA id b16sm3740431pfo.187.2020.08.26.12.52.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Aug 2020 12:52:41 -0700 (PDT)
-From:   Andreas Dilger <adilger@dilger.ca>
-Message-Id: <C1F49852-C886-4522-ACD6-DDBF7DE3B838@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_97ED6957-F79E-438A-BEE2-A42EA0D99B36";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v4 1/3] io_uring: use an enumeration for
- io_uring_register(2) opcodes
-Date:   Wed, 26 Aug 2020 13:52:38 -0600
-In-Reply-To: <202008261241.074D8765@keescook>
-Cc:     Stefano Garzarella <sgarzare@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Wed, 26 Aug 2020 15:53:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598471603;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GTZBfQJrZmGoOihET1Kwf2wGDuCL4pavAJzlhd2obj8=;
+        b=K415wm9yuEeDF/wWaixP7b00KfzBhhaPSJr0Jj2iVtFcgn+1dfTbSyg8l9n4+jfJTnDpEu
+        lMR0qqdB9LVfPpm99OKzmWcfBYb2Lg3g+CzxIkZUt4VKmSj5VQwCtPcy9tY6PzRQUHCqxA
+        RKmk8WZ5FHxX66A+GApELlVV0RrplfE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-577-F0p-GF9QNC20GO3wYDSSDA-1; Wed, 26 Aug 2020 15:53:19 -0400
+X-MC-Unique: F0p-GF9QNC20GO3wYDSSDA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2139E1074646;
+        Wed, 26 Aug 2020 19:53:18 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-115-36.rdu2.redhat.com [10.10.115.36])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 53B8719C58;
+        Wed, 26 Aug 2020 19:53:12 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id A14A6223C69; Wed, 26 Aug 2020 15:53:11 -0400 (EDT)
+Date:   Wed, 26 Aug 2020 15:53:11 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
         Stefan Hajnoczi <stefanha@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <asarai@suse.de>, io-uring@vger.kernel.org
-To:     Kees Cook <keescook@chromium.org>
-References: <20200813153254.93731-1-sgarzare@redhat.com>
- <20200813153254.93731-2-sgarzare@redhat.com> <202008261241.074D8765@keescook>
-X-Mailer: Apple Mail (2.3273)
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v3 11/18] fuse: implement FUSE_INIT map_alignment field
+Message-ID: <20200826195311.GB1043442@redhat.com>
+References: <20200819221956.845195-1-vgoyal@redhat.com>
+ <20200819221956.845195-12-vgoyal@redhat.com>
+ <CAJfpegsgHE0MkZLFgE4yrZXO5ThDxCj85-PjizrXPRC2CceT1g@mail.gmail.com>
+ <20200826155142.GA1043442@redhat.com>
+ <20200826173408.GA11480@stefanha-x1.localdomain>
+ <20200826191711.GF3932@work-vm>
+ <CAJfpegvqZUXsvbWg8K-xosNR+RVwRm2KH+S9mKs6n6Sv65s+Qg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegvqZUXsvbWg8K-xosNR+RVwRm2KH+S9mKs6n6Sv65s+Qg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---Apple-Mail=_97ED6957-F79E-438A-BEE2-A42EA0D99B36
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
-
-On Aug 26, 2020, at 1:43 PM, Kees Cook <keescook@chromium.org> wrote:
+On Wed, Aug 26, 2020 at 09:26:29PM +0200, Miklos Szeredi wrote:
+> On Wed, Aug 26, 2020 at 9:17 PM Dr. David Alan Gilbert
+> <dgilbert@redhat.com> wrote:
 > 
-> On Thu, Aug 13, 2020 at 05:32:52PM +0200, Stefano Garzarella wrote:
->> The enumeration allows us to keep track of the last
->> io_uring_register(2) opcode available.
->> 
->> Behaviour and opcodes names don't change.
->> 
->> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
->> ---
->> include/uapi/linux/io_uring.h | 27 ++++++++++++++++-----------
->> 1 file changed, 16 insertions(+), 11 deletions(-)
->> 
->> diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
->> index d65fde732518..cdc98afbacc3 100644
->> --- a/include/uapi/linux/io_uring.h
->> +++ b/include/uapi/linux/io_uring.h
->> @@ -255,17 +255,22 @@ struct io_uring_params {
->> /*
->>  * io_uring_register(2) opcodes and arguments
->>  */
->> -#define IORING_REGISTER_BUFFERS		0
->> -#define IORING_UNREGISTER_BUFFERS	1
->> -#define IORING_REGISTER_FILES		2
->> -#define IORING_UNREGISTER_FILES		3
->> -#define IORING_REGISTER_EVENTFD		4
->> -#define IORING_UNREGISTER_EVENTFD	5
->> -#define IORING_REGISTER_FILES_UPDATE	6
->> -#define IORING_REGISTER_EVENTFD_ASYNC	7
->> -#define IORING_REGISTER_PROBE		8
->> -#define IORING_REGISTER_PERSONALITY	9
->> -#define IORING_UNREGISTER_PERSONALITY	10
->> +enum {
->> +	IORING_REGISTER_BUFFERS,
+> > Agreed, because there's not much that the server can do about it if the
+> > client would like a smaller granularity - the servers granularity might
+> > be dictated by it's mmap/pagesize/filesystem.  If the client wants a
+> > larger granularity that's it's choice when it sends the setupmapping
+> > calls.
 > 
-> Actually, one *tiny* thought. Since this is UAPI, do we want to be extra
-> careful here and explicitly assign values? We can't change the meaning
-> of a number (UAPI) but we can add new ones, etc? This would help if an
-> OP were removed (to stop from triggering a cascade of changed values)...
+> What bothers me is that the server now comes with the built in 2MiB
+> granularity (obviously much larger than actually needed).
 > 
-> for example:
-> 
-> enum {
-> 	IORING_REGISTER_BUFFERS = 0,
-> 	IORING_UNREGISTER_BUFFERS = 1,
-> 	...
+> What if at some point we'd want to reduce that somewhat in the client?
+>   Yeah, we can't.   Maybe this is not a kernel problem after all, the
+> proper thing would be to fix the server to actually send something
+> meaningful.
 
-Definitely that is preferred, IMHO, for enums used as part of UAPI,
-as it avoids accidental changes to the values, and it also makes it
-easier to see what the actual values are.
+Hi Miklos,
 
-Cheers, Andreas
+Current implementation of virtiofsd reports this map alignment as
+PAGE_SIZE.
 
+        /* This constraint comes from mmap(2) and munmap(2) */
+        outarg.map_alignment = ffsl(sysconf(_SC_PAGE_SIZE)) - 1;
 
+Which should be 4K on x86. 
 
+And that means if client wants it can drop to dax mapping size as
+small as 4K and still meeting alignment constratints. Just that by
+default we have chosen 2MB as of now fearing there might be too
+many small mmap() calls on host and we will hit various limits.
 
+Thanks
+Vivek
 
-
---Apple-Mail=_97ED6957-F79E-438A-BEE2-A42EA0D99B36
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAl9GvYYACgkQcqXauRfM
-H+CDqw/+M9+szTISRR0mIIv0L6q5oHSmmJFu6N4WmXH9ZZfUYkGvC7f4CTNhd2k5
-mF1lXbrMAF4i2/0Aui4WjWC5UoW77PBFwOpPYrTw/dbF16AbXEw1HoFamlgZ1Ote
-APczb6wzuFTYYdN9rgX+jdSDUBnvjmdomJz++4ZmScTqTOzUHBkgIS7O4Lw+O6o/
-Hu9oXp/VS3WvHQyDFYFAuaUR+UPAUeOec4AXfRNbC0RdadsFKtNZKI5p3VV16I3v
-v5M9vGUxH/bweRVwBe7w2J0X0mQvtOKwXYVEFxpUrIHIMMzxBKx1FY8KbMpudyPB
-lgECtvuCo+fDQrEMZ7xaE8xclFQa0ts/YnHFi9qrPHH0AvtNY+zA//OQjBNm06tc
-t8uKkMnPuxWDv5krYrFZhtM9DM/YKJrdSf4Bq08u9aiRKYkE0HgoS3J7pZ9Vq2Kz
-+d2RFoEm0cpZMW5ut7jbcXO1tW1RnXadKCkvoVcYZ2yK+WytE5Y+S5vXg7jtLpML
-PKKWgX6hxJPQ3Nz+DOQGvnNQ/Xr0eT7BF2d9BSu2q5B4+s+NPKLunjnFZaWiAq5g
-Y2okqZKRc2hdkb+fAG0Qn3dTLJ/PooXW2V0zaTGI7Nx7KgqaAI+w/mb8TX48BhAk
-ZCjtvI/znZFgtzZjuDIfSa1pN2K2VJPBYla1Bdrx7r+CEhA7mEY=
-=gPQ0
------END PGP SIGNATURE-----
-
---Apple-Mail=_97ED6957-F79E-438A-BEE2-A42EA0D99B36--
