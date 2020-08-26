@@ -2,62 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 963862535D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 19:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4F682535DF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 19:16:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbgHZRPS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Aug 2020 13:15:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56368 "EHLO
+        id S1727124AbgHZRQG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Aug 2020 13:16:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbgHZRPO (ORCPT
+        with ESMTP id S1727105AbgHZRQC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Aug 2020 13:15:14 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 791A4C061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 10:15:13 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id c15so1404436lfi.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 10:15:13 -0700 (PDT)
+        Wed, 26 Aug 2020 13:16:02 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33E08C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 10:16:02 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id 185so3243949ljj.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 10:16:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zP9JT9RZ6cg16XibPhu1WP9qLmnAItWF0Fa2z1UMDZI=;
-        b=gnE/PuzwUiR5nbYEU0P+4LWH2qyES1j1Z881X6oEA+lavFprJsQaKzOFd9+1tsnfM+
-         e9OfyrazJJTWB/GksaUDWytv75fKgS0GnX+tCaBCitTlh8Ksllt4L6s2t89+ILGxAL4S
-         TMmZy2nzqRMYH+qmpOU92kllkom8B8DMMf7fY=
+        bh=OYDNjsWuANyuBcj1SPsmNo6ddbFkMTYQnNwN8I83N48=;
+        b=JGeqnKz66cr/PGvxK95byYWGqp6m3jFBDNw2exQc8Tiv2/3rV7oeitqRF49c0TPmWt
+         PfYOAUYDCFroSYr73H96pWaoUr7kushnS2cp61vwd6oqVPJ6ijM/SJNcl+K99LhgYPeW
+         UrUvVlTKWW3lYTcZZ3AV3q2bwaalwx4rI+U2k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zP9JT9RZ6cg16XibPhu1WP9qLmnAItWF0Fa2z1UMDZI=;
-        b=cCxLZHgDRf4L+6McXZSTtXXSNtYWV3vIylKyn2G08fmCS4RyIE8j5jT9lYVj+qZksq
-         VUhNbtW4YMuzE5USBbSdIQaNlDqEfH90abS/Oza0wr3tF5Mfq797acRF/CZIwMxbsG1F
-         /Oo6F7IW8tUKlRHLsjCQkFVK6PmaXcVTceaABpyph86LrO7CodRVmLvR+b+0dLzQUzM6
-         5EE/NL1ni1nYrfIZxfxVfU6l9ahZAxqFttgx0S868lQXzGdjHXeTxOAn66ZrklagQLqD
-         uYItj1QDqWjkaUdk8KkTiwU60pdGHB5PuurxTD+TJi3kTXGWA/jyPesa3MAEp8dU2lNY
-         B6QA==
-X-Gm-Message-State: AOAM531rdglts/av19k9AH6r2OhfiNpJ0DBrLrNE+5WTG/R+iMgXGlT0
-        M1KOR6MsvbrIhwNfNnW5vBC/MWjSmGJoTw==
-X-Google-Smtp-Source: ABdhPJy4/cckOCCsaqJr3fPGahB4q2s5W+jaawlVe1/VkfgU2hG+s5AxoiTykMlKWFWzSnheBFks+Q==
-X-Received: by 2002:a19:8856:: with SMTP id k83mr7826470lfd.131.1598462108973;
-        Wed, 26 Aug 2020 10:15:08 -0700 (PDT)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id g1sm625009ljj.56.2020.08.26.10.15.07
+        bh=OYDNjsWuANyuBcj1SPsmNo6ddbFkMTYQnNwN8I83N48=;
+        b=eaAxORLANTsl2bVBJWU/5zqXrmM5w4vpfCJm1rt4+gc5CNbVhMHfChqr8E6nHxyT76
+         c+E7lV7LPHgiGkyuVoW2aVlk44553TCa1WSWctx1rRjowuFREPWqNt+InvU6AGpSRpiX
+         1282hq0uholdr4xQ0juDhBjDIMsbV26RxMe2m/DXAQyJTn6mJDmgZge3cCOs/7Ahki4j
+         gqEgQ+VTCZosxccBlXjwWh5Iy8eUelpc56FmcQmiPlIw+I08+JPC4CJjOBTwko4n2EqK
+         B7/hSJ6ENoaOxogA4h3QSCuYMzbJOhypkl47FxV83HJVkQnVjAAtE3GGl1bHfWf7LYV3
+         Ogiw==
+X-Gm-Message-State: AOAM532O9ZbC8VRzElhPzZAFbqBy4U5wtfrXukCrnO68piqmEtSrgW2U
+        LgQnMP8dP/MCiGm7NmnUv7TDQpC0Fv1KTw==
+X-Google-Smtp-Source: ABdhPJxU+6Ltw+e0Pp6M5QQWO9Qi22g3gRCT39X0c3frN8QNN8y3JI994B9MTijROWevOT/u7nTaag==
+X-Received: by 2002:a2e:3615:: with SMTP id d21mr7907359lja.333.1598462160182;
+        Wed, 26 Aug 2020 10:16:00 -0700 (PDT)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id k12sm701063lfe.68.2020.08.26.10.15.59
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Aug 2020 10:15:07 -0700 (PDT)
-Received: by mail-lj1-f170.google.com with SMTP id m22so3243517ljj.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 10:15:07 -0700 (PDT)
-X-Received: by 2002:a2e:92d0:: with SMTP id k16mr7171003ljh.70.1598462107068;
- Wed, 26 Aug 2020 10:15:07 -0700 (PDT)
+        Wed, 26 Aug 2020 10:15:59 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id j15so1401802lfg.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 10:15:59 -0700 (PDT)
+X-Received: by 2002:ac2:522b:: with SMTP id i11mr7933692lfl.30.1598462158792;
+ Wed, 26 Aug 2020 10:15:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200826151448.3404695-1-jannh@google.com> <20200826151448.3404695-5-jannh@google.com>
-In-Reply-To: <20200826151448.3404695-5-jannh@google.com>
+References: <20200826151448.3404695-1-jannh@google.com>
+In-Reply-To: <20200826151448.3404695-1-jannh@google.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 26 Aug 2020 10:14:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whYkiyOKvBG96EaP5BgXeppXVC2rPv56bhBR27C9sbDLA@mail.gmail.com>
-Message-ID: <CAHk-=whYkiyOKvBG96EaP5BgXeppXVC2rPv56bhBR27C9sbDLA@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] binfmt_elf, binfmt_elf_fdpic: Use a VMA list snapshot
+Date:   Wed, 26 Aug 2020 10:15:42 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgedMxgfNPccK9Fgm0JQ=UX91HCndOnO1qAiUOoCOJi5w@mail.gmail.com>
+Message-ID: <CAHk-=wgedMxgfNPccK9Fgm0JQ=UX91HCndOnO1qAiUOoCOJi5w@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] Fix ELF / FDPIC ELF core dumping, and use
+ mmap_lock properly in there
 To:     Jann Horn <jannh@google.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Christoph Hellwig <hch@lst.de>,
@@ -75,25 +76,16 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Wed, Aug 26, 2020 at 8:15 AM Jann Horn <jannh@google.com> wrote:
 >
-> A downside of this approach is that we now need a bigger amount of kernel
-> memory per userspace VMA in the normal ELF case, and that we need O(n)
-> kernel memory in the FDPIC ELF case at all; but 40 bytes per VMA shouldn't
-> be terribly bad.
+> After this series has landed, we should be able to rip out
+> mmget_still_valid().
 
-So this looks much simpler now.
+I think you should just add that to the series, since it's kind of the
+point of it all.
 
-But it also makes it more obvious how that dump-size callback is kind
-of pointless. Why does elf_fdpic have different heuristics than
-regular elf? And not in meaningful ways - the heuristics look
-basically identical, just with different logging and probably random
-other differences that  have mostly just grown over time.
+But ack on this, it now looks saner than what we used to have regardless.
 
-So rather than the callback function pointer, I think you should just
-copy the ELF version of the dump_size() logic, and get rid of a very
-odd and strange callback.
+I do wonder if we should possibly just limit the number of vma's we
+dump based on core size ulimit too, but that, I think, might be a
+"further improvement" rather than base cleanup.
 
-But even in this form, at least this patch doesn't make the code look
-_worse_ than it used to, so while I would like to see a further
-cleanup I no longer dislike it.
-
-              Linus
+                 Linus
