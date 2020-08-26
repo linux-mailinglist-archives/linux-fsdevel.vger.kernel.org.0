@@ -2,84 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42568253846
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 21:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E881825384E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 21:31:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbgHZT0p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Aug 2020 15:26:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49010 "EHLO
+        id S1726802AbgHZTbX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Aug 2020 15:31:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbgHZT0n (ORCPT
+        with ESMTP id S1726790AbgHZTbV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Aug 2020 15:26:43 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 144CAC061756
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 12:26:42 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id oz20so4452170ejb.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 12:26:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TYKPTufiMBAMoTNCgDN7PLKKjOS7TYvnr9DjmBNmXfM=;
-        b=FaUxUnjKb0N9Xw2K3ckURq7XBP2BC7VSd74QmXqnGlHpmfsTcG0/cbq0wjQ72NwmtM
-         /XRHgHj1rfJMGI+1Wj3VNHM4uo0IrKuS9FTep4/wvrAttKznUFlA2UZIfJWJPZoJ06Ei
-         s2yVxWhOI+28JDFT+R83RAGBwXVvIqe78CshI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TYKPTufiMBAMoTNCgDN7PLKKjOS7TYvnr9DjmBNmXfM=;
-        b=GPSYO1sgyG9WZSp/B6dY4mqW3s3gUxGvWM/RpjmQqNxrn0oEzsFLWSs2b1Zm92C/44
-         9NIivJUhGy7DA1FHq91awfBVbM4CKaNtA5cBGlPwoOHXX4+CW/yW7BgdoARLSMjcWf5m
-         kw7ZUPuNj8NaazfQjC0MPJJ8xClYFHGaj4O+Pmr9D+QKuBDjP3gZOFjHzLdMpMwq4s3O
-         oLMN4ehRA0311DlQTzMTGBqPwjSHLQyyj4GDFsLoPqkJKnSDokZOEPMo5mAqb6ndo+ao
-         Q6Jiq/pADy6rEAQIqhUvGEhNN3oTYCmb6VgdCoWehj5Jed3eTBNmITOtcHd5818lIZ+h
-         jD3Q==
-X-Gm-Message-State: AOAM5301hlqHjLk65NqgjWPqBzKLqvgh4xCB/CLmPM47n2QMnilskav6
-        /k18EtMS4QqWK+5yWDQdHzM2Y1C2s4cy/8ETG+gQqQ==
-X-Google-Smtp-Source: ABdhPJySXvtS1wt72dlTMaNXkc4ygI3g/9G+dTkz6T/HxF6o7ikX7c/MufNQgXY1U/W7PJiGBF7gwXubMG5akFPdVoI=
-X-Received: by 2002:a17:906:b2d7:: with SMTP id cf23mr17037501ejb.113.1598470000611;
- Wed, 26 Aug 2020 12:26:40 -0700 (PDT)
+        Wed, 26 Aug 2020 15:31:21 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37711C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 12:31:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=/KVBDiY8YHzsLv2yVa4q4qMt+zYerqkGrqgCBXLrdFI=; b=qrwYyCUnsnL+iJV0cRMo81tsBQ
+        TJ+ZVjCJPJdNoQBNXEdjqUv2wNVOEXDAvcJ0qnBk/QCbHpxTFRkJZeXZ33OoUQM/3fT/SYH4MnxQv
+        NRmSv1RWswei66XdWm8z0fj2Ct+BY47mddSYxmCM+11E7CHDlecOQEn5w9YXz9U3oz+0J6My0rGUh
+        VS2LT6ogoViUn3csm6aP/3TxG8R6zxehUT7Gywi12pvPkmWENQn7MS96UjXzKd1x4JKgKZdSt6KoH
+        OVuSsSgLVk+Qywa3cchGOcf+V9NVVTfNGxUJXC8+85B0ZTFfvKz5K5nl08bGoJMyJkVm/gUZZAXwE
+        vvG91aPw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kB18e-0002sJ-HE; Wed, 26 Aug 2020 19:31:16 +0000
+Date:   Wed, 26 Aug 2020 20:31:16 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Mike Marshall <hubcap@omnibond.com>
+Subject: The future of readahead
+Message-ID: <20200826193116.GU17456@casper.infradead.org>
 MIME-Version: 1.0
-References: <20200819221956.845195-1-vgoyal@redhat.com> <20200819221956.845195-12-vgoyal@redhat.com>
- <CAJfpegsgHE0MkZLFgE4yrZXO5ThDxCj85-PjizrXPRC2CceT1g@mail.gmail.com>
- <20200826155142.GA1043442@redhat.com> <20200826173408.GA11480@stefanha-x1.localdomain>
- <20200826191711.GF3932@work-vm>
-In-Reply-To: <20200826191711.GF3932@work-vm>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 26 Aug 2020 21:26:29 +0200
-Message-ID: <CAJfpegvqZUXsvbWg8K-xosNR+RVwRm2KH+S9mKs6n6Sv65s+Qg@mail.gmail.com>
-Subject: Re: [PATCH v3 11/18] fuse: implement FUSE_INIT map_alignment field
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc:     Stefan Hajnoczi <stefanha@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 26, 2020 at 9:17 PM Dr. David Alan Gilbert
-<dgilbert@redhat.com> wrote:
+Both Kent and David have had conversations with me about improving the
+readahead filesystem interface this last week, and as I don't have time
+to write the code, here's the design.
 
-> Agreed, because there's not much that the server can do about it if the
-> client would like a smaller granularity - the servers granularity might
-> be dictated by it's mmap/pagesize/filesystem.  If the client wants a
-> larger granularity that's it's choice when it sends the setupmapping
-> calls.
+1. Kent doesn't like it that we do an XArray lookup for each page.
+The proposed solution adds a (small) array of page pointers (or a
+pagevec) to the struct readahead_control.  It may make sense to move
+__readahead_batch() and readahead_page() out of line at that point.
+This should be backed up with performance numbers.
 
-What bothers me is that the server now comes with the built in 2MiB
-granularity (obviously much larger than actually needed).
+2. David wants to be sure that readahead is aligned to a granule
+size (eg 256kB) to support fscache.  When we last talked about it,
+I suggested encoding the granule size in the struct address_space.
+I no longer think this approach should be pursued, since ...
 
-What if at some point we'd want to reduce that somewhat in the client?
-  Yeah, we can't.   Maybe this is not a kernel problem after all, the
-proper thing would be to fix the server to actually send something
-meaningful.
+3. Kent wants to be able to expand readahead to encompass an entire fs
+extent (if, eg, that extent is compressed or encrypted).  We don't know
+that at the right point; the filesystem can't pass that information
+through the generic_file_buffered_read() or filemap_fault() interface
+to the readahead code.  So the right approach here is for the filesystem
+to ask the readahead code to expand the readahead batch.
 
-Thanks,
-Miklos
+So solving #2 and #3 looks like a new interface for filesystems to call:
+
+void readahead_expand(struct readahead_control *rac, loff_t start, u64 len);
+or possibly
+void readahead_expand(struct readahead_control *rac, pgoff_t start,
+		unsigned int count);
+
+It might not actually expand the readahead attempt at all -- for example,
+if there's already a page in the page cache, or if it can't allocate
+memory.  But this puts the responsibility for allocating pages in the VFS,
+where it belongs.
+
+4. Mike wants to be able to do 4MB I/Os [1].  That should be covered by
+the solution above.  Mike, just to clarify.  Do you need 4MB pages, or can
+you work with some mixture of page sizes going as far as 1024 x 4kB pages?
+
+5. I'm allocating larger pages in the readahead code (part of the THP
+patch set [2])
+
+[1] https://lore.kernel.org/linux-fsdevel/CAOg9mSSrJp2dqQTNDgucLoeQcE_E_aYPxnRe5xphhdSPYw7QtQ@mail.gmail.com/
+[2] http://git.infradead.org/users/willy/pagecache.git/commitdiff/c00bd4082c7bc32a17b0baa29af6974286978e1f
