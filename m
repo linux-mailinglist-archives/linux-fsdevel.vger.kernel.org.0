@@ -2,185 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 12C622530E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 16:07:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90815253142
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 16:27:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730457AbgHZOG7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Aug 2020 10:06:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54932 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730520AbgHZOGs (ORCPT
+        id S1727050AbgHZO1l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Aug 2020 10:27:41 -0400
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:46561 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727993AbgHZO1d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Aug 2020 10:06:48 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C42AC061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 07:06:47 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id u1so1855729edi.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 07:06:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bbCLf44tPL1VrlVQnBs/m6YE6IztZziG+eT5Zyluack=;
-        b=polHhTbcNjoCuNN1KrxuhlDQ0QcWTRAikyJHtiLpMSWO5H17yll+2WDhRmV4fHo2Vt
-         m0iiDSDziYMrorpT5PtWXPQtBp6b1kv5ADoY7vwK50KBCe3DMkTW+bzqZOkanWk+eZ1n
-         xJjzF4uRaJp9o2Lz930ice6NsswOkB/Xs3HGQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bbCLf44tPL1VrlVQnBs/m6YE6IztZziG+eT5Zyluack=;
-        b=YDQP5VoIk28u93NWQVq0Zk6cZNsOEykbNiwvTPv/HGJjlVLWnrt/58+esDAy5DFmag
-         PCsbuBl/rVuX6LAXz78Pe/W+NybriXW4LZbpOPGgaQaoITM462aTD/V3ZdgazVQKZUDU
-         TOYAS9kB32oAesI/sLL2F7mZ22nCkCV8TG6p5sF5sWV4fsIufqm9yY/mbmbFF3QLOiLq
-         z5DgCUGxsTKehQr+nA3l2DVQOixyLYbfkwoJd4EUnJ35/bths1AA7k0HwAdTHS6upxfG
-         rlONvqO7B/Le5PnI2RqsUfxchJAKjSy2s1UkSl4tXpjVsZBCpvot1gCnWhcprkAZMQ5P
-         98gw==
-X-Gm-Message-State: AOAM532XK9KoSR9mcbNtV9KLY735fBvz4TXp1UnEin+qPfRVR6ApKEsI
-        MXM6BqSknN+k8UwzQG+4u7+hOj5Yk6tl480fDq4Ox7vrCY2ZJQ==
-X-Google-Smtp-Source: ABdhPJw6epfkcpeJl9n7M3qW9BBciR5eiiqlaFhec2flVUht2YGYESwiDUbkjooxqvde4jWdkbN4D2QRt1VCOWkx4xw=
-X-Received: by 2002:a50:fe17:: with SMTP id f23mr13515936edt.364.1598450806237;
- Wed, 26 Aug 2020 07:06:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200819221956.845195-1-vgoyal@redhat.com> <20200819221956.845195-12-vgoyal@redhat.com>
-In-Reply-To: <20200819221956.845195-12-vgoyal@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 26 Aug 2020 16:06:35 +0200
-Message-ID: <CAJfpegsgHE0MkZLFgE4yrZXO5ThDxCj85-PjizrXPRC2CceT1g@mail.gmail.com>
-Subject: Re: [PATCH v3 11/18] fuse: implement FUSE_INIT map_alignment field
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 26 Aug 2020 10:27:33 -0400
+Received: from ironmsg07-lv.qualcomm.com (HELO ironmsg07-lv.qulacomm.com) ([10.47.202.151])
+  by alexa-out.qualcomm.com with ESMTP; 26 Aug 2020 07:27:30 -0700
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by ironmsg07-lv.qulacomm.com with ESMTP/TLS/AES256-SHA; 26 Aug 2020 07:27:29 -0700
+Received: from c-ppvk-linux.qualcomm.com ([10.206.24.34])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 26 Aug 2020 19:57:18 +0530
+Received: by c-ppvk-linux.qualcomm.com (Postfix, from userid 2304101)
+        id 43EDE5303; Wed, 26 Aug 2020 19:57:17 +0530 (IST)
+From:   Pradeep P V K <ppvk@codeaurora.org>
+To:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org
+Cc:     stummala@codeaurora.org, sayalil@codeaurora.org,
+        Pradeep P V K <ppvk@codeaurora.org>
+Subject: [PATCH V2] fuse: Fix VM_BUG_ON_PAGE issue while accessing zero ref count page
+Date:   Wed, 26 Aug 2020 19:57:15 +0530
+Message-Id: <1598452035-3472-1-git-send-email-ppvk@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 20, 2020 at 12:21 AM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> The device communicates FUSE_SETUPMAPPING/FUSE_REMOVMAPPING alignment
-> constraints via the FUST_INIT map_alignment field.  Parse this field and
-> ensure our DAX mappings meet the alignment constraints.
->
-> We don't actually align anything differently since our mappings are
-> already 2MB aligned.  Just check the value when the connection is
-> established.  If it becomes necessary to honor arbitrary alignments in
-> the future we'll have to adjust how mappings are sized.
->
-> The upshot of this commit is that we can be confident that mappings will
-> work even when emulating x86 on Power and similar combinations where the
-> host page sizes are different.
->
-> Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
-> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> ---
->  fs/fuse/fuse_i.h          |  5 ++++-
->  fs/fuse/inode.c           | 18 ++++++++++++++++--
->  include/uapi/linux/fuse.h |  4 +++-
->  3 files changed, 23 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 478c940b05b4..4a46e35222c7 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -47,7 +47,10 @@
->  /** Number of dentries for each connection in the control filesystem */
->  #define FUSE_CTL_NUM_DENTRIES 5
->
-> -/* Default memory range size, 2MB */
-> +/*
-> + * Default memory range size.  A power of 2 so it agrees with common FUSE_INIT
-> + * map_alignment values 4KB and 64KB.
-> + */
->  #define FUSE_DAX_SZ    (2*1024*1024)
->  #define FUSE_DAX_SHIFT (21)
->  #define FUSE_DAX_PAGES (FUSE_DAX_SZ/PAGE_SIZE)
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index b82eb61d63cc..947abdd776ca 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -980,9 +980,10 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_args *args,
->  {
->         struct fuse_init_args *ia = container_of(args, typeof(*ia), args);
->         struct fuse_init_out *arg = &ia->out;
-> +       bool ok = true;
->
->         if (error || arg->major != FUSE_KERNEL_VERSION)
-> -               fc->conn_error = 1;
-> +               ok = false;
->         else {
->                 unsigned long ra_pages;
->
-> @@ -1045,6 +1046,13 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_args *args,
->                                         min_t(unsigned int, FUSE_MAX_MAX_PAGES,
->                                         max_t(unsigned int, arg->max_pages, 1));
->                         }
-> +                       if ((arg->flags & FUSE_MAP_ALIGNMENT) &&
-> +                           (FUSE_DAX_SZ % (1ul << arg->map_alignment))) {
+There is a potential race between fuse_abort_conn() and
+fuse_copy_page() as shown below, due to which VM_BUG_ON_PAGE
+crash is observed.
 
-This just obfuscates "arg->map_alignment != FUSE_DAX_SHIFT".
+context#1:                      context#2:
+fuse_dev_do_read()              fuse_abort_conn()
+->fuse_copy_args()               ->end_requests()
+ ->fuse_copy_pages()              ->request_end()
+   ->fuse_copy_page()               ->fuse_writepage_end)
+     ->fuse_ref_page()                ->fuse_writepage_free()
+                                        ->__free_page()
+					   ->put_page_testzero()
 
-So the intention was that userspace can ask the kernel for a
-particular alignment, right?
+     ->get_page()
+     ->VM_BUG_ON_PAGE()
 
-In that case kernel can definitely succeed if the requested alignment
-is smaller than the kernel provided one, no?    It would also make
-sense to make this a two way negotiation.  I.e. send the largest
-alignment (FUSE_DAX_SHIFT in this implementation) that the kernel can
-provide in fuse_init_in.   In that case the only error would be if
-userspace ignored the given constraints.
+This results in below crash as when ->put_page_testzero() in context#2
+decrease the page reference and get_page() in context#1 accessed it
+with zero page reference count.
 
-Am I getting not getting something?
+[  174.391095]  (1)[10406:Thread-6]page dumped because:
+VM_BUG_ON_PAGE(((unsigned int) page_ref_count(page) + 127u <= 127u))
+[  174.391113]  (1)[10406:Thread-6]page allocated via order 0,
+migratetype Unmovable, gfp_mask
+0x620042(GFP_NOFS|__GFP_HIGHMEM|__GFP_HARDWALL), pid 261, ts
+174390946312 ns
 
-> +                               pr_err("FUSE: map_alignment %u incompatible"
-> +                                      " with dax mem range size %u\n",
-> +                                      arg->map_alignment, FUSE_DAX_SZ);
-> +                               ok = false;
-> +                       }
->                 } else {
->                         ra_pages = fc->max_read / PAGE_SIZE;
->                         fc->no_lock = 1;
-> @@ -1060,6 +1068,11 @@ static void process_init_reply(struct fuse_conn *fc, struct fuse_args *args,
->         }
->         kfree(ia);
->
-> +       if (!ok) {
-> +               fc->conn_init = 0;
-> +               fc->conn_error = 1;
-> +       }
-> +
->         fuse_set_initialized(fc);
->         wake_up_all(&fc->blocked_waitq);
->  }
-> @@ -1082,7 +1095,8 @@ void fuse_send_init(struct fuse_conn *fc)
->                 FUSE_WRITEBACK_CACHE | FUSE_NO_OPEN_SUPPORT |
->                 FUSE_PARALLEL_DIROPS | FUSE_HANDLE_KILLPRIV | FUSE_POSIX_ACL |
->                 FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
-> -               FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA;
-> +               FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
-> +               FUSE_MAP_ALIGNMENT;
->         ia->args.opcode = FUSE_INIT;
->         ia->args.in_numargs = 1;
->         ia->args.in_args[0].size = sizeof(ia->in);
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 373cada89815..5b85819e045f 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -313,7 +313,9 @@ struct fuse_file_lock {
->   * FUSE_CACHE_SYMLINKS: cache READLINK responses
->   * FUSE_NO_OPENDIR_SUPPORT: kernel supports zero-message opendir
->   * FUSE_EXPLICIT_INVAL_DATA: only invalidate cached pages on explicit request
-> - * FUSE_MAP_ALIGNMENT: map_alignment field is valid
-> + * FUSE_MAP_ALIGNMENT: init_out.map_alignment contains log2(byte alignment) for
-> + *                    foffset and moffset fields in struct
-> + *                    fuse_setupmapping_out and fuse_removemapping_one.
+[  174.391135]  (1)[10406:Thread-6] prep_new_page+0x13c/0x210
+[  174.391148]  (1)[10406:Thread-6] get_page_from_freelist+0x21ac/0x2370
+[  174.391161]  (1)[10406:Thread-6] __alloc_pages_nodemask+0x244/0x14a8
+[  174.391176]  (1)[10406:Thread-6] fuse_writepages_fill+0x150/0x708
+[  174.391190]  (1)[10406:Thread-6] write_cache_pages+0x3d8/0x550
+[  174.391202]  (1)[10406:Thread-6] fuse_writepages+0x94/0x130
+[  174.391214]  (1)[10406:Thread-6] do_writepages+0x74/0x140
+[  174.391228]  (1)[10406:Thread-6] __writeback_single_inode+0x168/0x788
+[  174.391239]  (1)[10406:Thread-6] writeback_sb_inodes+0x56c/0xab8
+[  174.391251]  (1)[10406:Thread-6] __writeback_inodes_wb+0x94/0x180
+[  174.391262]  (1)[10406:Thread-6] wb_writeback+0x318/0x618
+[  174.391274]  (1)[10406:Thread-6] wb_workfn+0x468/0x828
+[  174.391290]  (1)[10406:Thread-6] process_one_work+0x3d0/0x720
+[  174.391302]  (1)[10406:Thread-6] worker_thread+0x234/0x4c0
+[  174.391314]  (1)[10406:Thread-6] kthread+0x144/0x158
+[  174.391327]  (1)[10406:Thread-6] ret_from_fork+0x10/0x1c
+[  174.391363]  (1)[10406:Thread-6]------------[ cut here ]------------
+[  174.391371]  (1)[10406:Thread-6]kernel BUG at include/linux/mm.h:980!
+[  174.391381]  (1)[10406:Thread-6]Internal error: Oops - BUG: 0 [#1]
+...
+[  174.486928]  (1)[10406:Thread-6]pc : fuse_copy_page+0x750/0x790
+[  174.493029]  (1)[10406:Thread-6]lr : fuse_copy_page+0x750/0x790
+[  174.718831]  (1)[10406:Thread-6] fuse_copy_page+0x750/0x790
+[  174.718838]  (1)[10406:Thread-6] fuse_copy_args+0xb4/0x1e8
+[  174.718843]  (1)[10406:Thread-6] fuse_dev_do_read+0x424/0x888
+[  174.718848]  (1)[10406:Thread-6] fuse_dev_splice_read+0x94/0x200
+[  174.718856]  (1)[10406:Thread-6] __arm64_sys_splice+0x874/0xb20
+[  174.718864]  (1)[10406:Thread-6] el0_svc_common+0xc8/0x240
+[  174.718869]  (1)[10406:Thread-6] el0_svc_handler+0x6c/0x88
+[  174.718875]  (1)[10406:Thread-6] el0_svc+0x8/0xc
+[  174.778853]  (1)[10406:Thread-6]Kernel panic - not syncing: Fatal
 
-fuse_setupmapping_in
+Fix this by protecting fuse_copy_pages() with fc->lock.
 
-Thanks,
-Miklos
+Changes since V1:
+- Modified the logic as per kernel v5.9-rc1.
+- Added Reported by tag.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
+---
+ fs/fuse/dev.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 02b3c36..ff9f88e 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1258,9 +1258,11 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+ 	spin_unlock(&fpq->lock);
+ 	cs->req = req;
+ 	err = fuse_copy_one(cs, &req->in.h, sizeof(req->in.h));
++	spin_lock(&fc->lock);
+ 	if (!err)
+ 		err = fuse_copy_args(cs, args->in_numargs, args->in_pages,
+ 				     (struct fuse_arg *) args->in_args, 0);
++	spin_unlock(&fc->lock);
+ 	fuse_copy_finish(cs);
+ 	spin_lock(&fpq->lock);
+ 	clear_bit(FR_LOCKED, &req->flags);
+@@ -1893,8 +1895,11 @@ static ssize_t fuse_dev_do_write(struct fuse_dev *fud,
+ 
+ 	if (oh.error)
+ 		err = nbytes != sizeof(oh) ? -EINVAL : 0;
+-	else
++	else {
++		spin_lock(&fc->lock);
+ 		err = copy_out_args(cs, req->args, nbytes);
++		spin_unlock(&fc->lock);
++	}
+ 	fuse_copy_finish(cs);
+ 
+ 	spin_lock(&fpq->lock);
+-- 
+1.9.1
+
