@@ -2,171 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCEA7252865
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 09:24:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2283D252877
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 09:31:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbgHZHYz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Aug 2020 03:24:55 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54362 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726233AbgHZHYz (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Aug 2020 03:24:55 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 02F4CECA6B47EDD70B14;
-        Wed, 26 Aug 2020 15:24:50 +0800 (CST)
-Received: from [127.0.0.1] (10.67.76.251) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.487.0; Wed, 26 Aug 2020
- 15:24:43 +0800
-Subject: Re: [PATCH RESEND] fs: Move @f_count to different cacheline with
- @f_mode
-To:     Will Deacon <will@kernel.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Yuqi Jin <jinyuqi@huawei.com>
-References: <1592987548-8653-1-git-send-email-zhangshaokun@hisilicon.com>
- <20200821160252.GC21517@willie-the-truck>
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-Message-ID: <a75e514c-7e2d-54ed-45d4-327b2a514e67@hisilicon.com>
-Date:   Wed, 26 Aug 2020 15:24:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1726716AbgHZHba (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Aug 2020 03:31:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50252 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbgHZHb3 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 26 Aug 2020 03:31:29 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D0AFC061574;
+        Wed, 26 Aug 2020 00:31:29 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id k20so714472wmi.5;
+        Wed, 26 Aug 2020 00:31:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iugUDxAIQnsl/7ZTyF/vSE3EIH4/fyRR8BQQUZWp5EQ=;
+        b=Z2eetczZorq1PwBzNArWIukQAkQr+paPOisqwgvveDDD3GU3KOHoDs/79J2caxqSz1
+         iO1GLncjUMrj7RwcK1kbLNigUHVYYnWwVF39f+w41H2Gr86d6pu0j4f4j5sVlJwkXlq6
+         SwaV6AE3U4Nn31pMY3y96WnIM7ZXc+amAEGdWaIlzIAQDTfd6Hd29krGLP1RJoNaunW5
+         qD7saoAmwowVM9j+mV3naqQYj5d8wTTLpBtAMevaOQ6ggdOzMLCdUkmU3BGAbZzuuAX7
+         Bcj451PyKs6PK7CZlx+woOjvfOIWkTNTQUo8zrHw9cqGCnYtD3b+XGwsAMc/hDMC+3xH
+         DLBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iugUDxAIQnsl/7ZTyF/vSE3EIH4/fyRR8BQQUZWp5EQ=;
+        b=UH4TroUE770PKmbH68Ob3UExd6LU3WTsKiZFnWl++wwj9dXX3LkrTe42V1Dg996+3T
+         nMxZXH3nVPCTHVw9xCMhOO1xEh8CZ+0BrD03CINHwEt7BCXGW9+9A7GQz+rtWwZmsv3w
+         2BeKXLmCp4TwOv1mvpXXmikej3mJR+gdrXfywvxNK7YU3/G5L6CpL4mmwHeu8e7lcjTm
+         VOugwbEarfrHnwuOOG4GhEQgsAIBGuFi1JrE2KQDq4rtpW72TUIQhPguFEhD/Q8QY4Cw
+         EyImptqkwnpPZIJzTF68pOFZZi6zvLSeLw9gDYd/ZqwL+/P0sBvmBWj79XqUPZxbXdCJ
+         58bw==
+X-Gm-Message-State: AOAM5325U9xD55NoSTSEjqq9SZxY/2LG+V+dlGJVccAEQEusLhRnSYuu
+        5aTWXx3C7Id3Pj8vVP1gZ38=
+X-Google-Smtp-Source: ABdhPJy68Qvq8AcZg5rqsHqIO4qYh0hH2z1tsgQ09aHUGpv1lVQhmf9NzotCzkFjNfZwGbmAnPUEAA==
+X-Received: by 2002:a1c:de55:: with SMTP id v82mr5057597wmg.181.1598427087731;
+        Wed, 26 Aug 2020 00:31:27 -0700 (PDT)
+Received: from ?IPv6:2001:a61:253c:4c01:2cf1:7133:9da2:66a9? ([2001:a61:253c:4c01:2cf1:7133:9da2:66a9])
+        by smtp.gmail.com with ESMTPSA id f6sm4390016wme.32.2020.08.26.00.31.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Aug 2020 00:31:26 -0700 (PDT)
+Cc:     mtk.manpages@gmail.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, Karel Zak <kzak@redhat.com>
+Subject: Re: [PATCH 2/5] Add manpages for move_mount(2) and open_tree(2)
+To:     David Howells <dhowells@redhat.com>
+References: <CAKgNAkjHcxYpzVohhJnxcHXO4s-4Ti_pNsmTZrD-CMu-EUCOoA@mail.gmail.com>
+ <159680892602.29015.6551860260436544999.stgit@warthog.procyon.org.uk>
+ <159680894741.29015.5588747939240667925.stgit@warthog.procyon.org.uk>
+ <287644.1598263702@warthog.procyon.org.uk>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <91c4ada9-5b5d-e93e-0bf6-b0a36b240880@gmail.com>
+Date:   Wed, 26 Aug 2020 09:31:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200821160252.GC21517@willie-the-truck>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.76.251]
-X-CFilter-Loop: Reflected
+In-Reply-To: <287644.1598263702@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Will£¬
-
-ÔÚ 2020/8/22 0:02, Will Deacon Ð´µÀ:
-> On Wed, Jun 24, 2020 at 04:32:28PM +0800, Shaokun Zhang wrote:
->> get_file_rcu_many, which is called by __fget_files, has used
->> atomic_try_cmpxchg now and it can reduce the access number of the global
->> variable to improve the performance of atomic instruction compared with
->> atomic_cmpxchg. 
->>
->> __fget_files does check the @f_mode with mask variable and will do some
->> atomic operations on @f_count, but both are on the same cacheline.
->> Many CPU cores do file access and it will cause much conflicts on @f_count. 
->> If we could make the two members into different cachelines, it shall relax
->> the siutations.
->>
->> We have tested this on ARM64 and X86, the result is as follows:
->> Syscall of unixbench has been run on Huawei Kunpeng920 with this patch:
->> 24 x System Call Overhead  1
->>
->> System Call Overhead                    3160841.4 lps   (10.0 s, 1 samples)
->>
->> System Benchmarks Partial Index              BASELINE       RESULT    INDEX
->> System Call Overhead                          15000.0    3160841.4   2107.2
->>                                                                    ========
->> System Benchmarks Index Score (Partial Only)                         2107.2
->>
->> Without this patch:
->> 24 x System Call Overhead  1
->>
->> System Call Overhead                    2222456.0 lps   (10.0 s, 1 samples)
->>
->> System Benchmarks Partial Index              BASELINE       RESULT    INDEX
->> System Call Overhead                          15000.0    2222456.0   1481.6
->>                                                                    ========
->> System Benchmarks Index Score (Partial Only)                         1481.6
->>
->> And on Intel 6248 platform with this patch:
->> 40 CPUs in system; running 24 parallel copies of tests
->>
->> System Call Overhead                        4288509.1 lps   (10.0 s, 1 samples)
->>
->> System Benchmarks Partial Index              BASELINE       RESULT    INDEX
->> System Call Overhead                          15000.0    4288509.1   2859.0
->>                                                                    ========
->> System Benchmarks Index Score (Partial Only)                         2859.0
->>
->> Without this patch:
->> 40 CPUs in system; running 24 parallel copies of tests
->>
->> System Call Overhead                        3666313.0 lps   (10.0 s, 1 samples)
->>
->> System Benchmarks Partial Index              BASELINE       RESULT    INDEX
->> System Call Overhead                          15000.0    3666313.0   2444.2
->>                                                                    ========
->> System Benchmarks Index Score (Partial Only)                         2444.2
->>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
->> Cc: Boqun Feng <boqun.feng@gmail.com>
->> Signed-off-by: Yuqi Jin <jinyuqi@huawei.com>
->> Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
->> ---
->>  include/linux/fs.h | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index 3f881a892ea7..0faeab5622fb 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -955,7 +955,6 @@ struct file {
->>  	 */
->>  	spinlock_t		f_lock;
->>  	enum rw_hint		f_write_hint;
->> -	atomic_long_t		f_count;
->>  	unsigned int 		f_flags;
->>  	fmode_t			f_mode;
->>  	struct mutex		f_pos_lock;
->> @@ -979,6 +978,7 @@ struct file {
->>  	struct address_space	*f_mapping;
->>  	errseq_t		f_wb_err;
->>  	errseq_t		f_sb_err; /* for syncfs */
->> +	atomic_long_t		f_count;
->>  } __randomize_layout
->>    __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
+On 8/24/20 12:08 PM, David Howells wrote:
+> Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
 > 
-> Hmm. So the microbenchmark numbers look lovely, but:
+>>> +To access the source mount object or the destination mountpoint, no
+>>> +permissions are required on the object itself, but if either pathname is
+>>> +supplied, execute (search) permission is required on all of the directories
+>>> +specified in
+>>> +.IR from_pathname " or " to_pathname .
+>>> +.PP
+>>> +The caller does, however, require the appropriate capabilities or permission
+>>> +to effect a mount.
+>>
+>> Maybe better: s/effect/create/
+> 
+> The mount has already been created.  We're moving/attaching it.  
+
+Ahh -- then the verb was wrong.
+
+to effect == to cause, bring about
+to affect == to change, have an impact on
+
+> Maybe:
+> 
+> 	The caller does, however, require the appropriate privilege (Linux:
+> 	the CAP_SYS_ADMIN capability) to move or attach mounts.
+
+Yes, better.
 
 Thanks,
 
-> 
->   - What impact does it actually have for real workloads?
+Michael
 
-It is exposed by we do the unixbench test. About the real workloads, if it has many
-threads and open the same file, it shall be useful like unixbench.
-If not the scenes, it should not be regression with the patch because we only change
-the poistion of @f_count with @f_mode.
-
->   - How do we avoid regressing performance by innocently changing the struct
->     again later on?
-
-It shall be commented this change on the @f_count, I'm not sure it is enough.
-
->   - This thing is tagged with __randomize_layout, so it doesn't help anybody
->     using that crazy plugin
-
-This patch isolated the @f_count with @f_mode absolutely and we don't care the
-base address of the structure, or I may miss something what you said.
-
->   - What about all the other atomics and locks that share cachelines?
-
-An interesting question, to be honest, about this issue, we did performance
-profile using unixbench and found it, then we want to relax the conflicts.
-For other scenes, this method may be useful if it is debugged by the same
-conflicts, but it can't be detected automatically.
-
-Thanks,
-Shaokun
-
-> 
-> Will
-> 
-> .
-> 
-
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
