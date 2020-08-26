@@ -2,119 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC87F252500
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 03:18:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99A1125250E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 03:40:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbgHZBSj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Aug 2020 21:18:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49418 "EHLO
+        id S1726599AbgHZBkH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Aug 2020 21:40:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbgHZBSi (ORCPT
+        with ESMTP id S1726711AbgHZBkF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Aug 2020 21:18:38 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 066F3C061574;
-        Tue, 25 Aug 2020 18:18:37 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id 31so192986pgy.13;
-        Tue, 25 Aug 2020 18:18:37 -0700 (PDT)
+        Tue, 25 Aug 2020 21:40:05 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DADCC061756
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Aug 2020 18:40:04 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id x6so742451ybp.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Aug 2020 18:40:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0Rspx/dCRtgy23dvgpsPYPBe6qdr1VVjOb1peeTgm9w=;
-        b=YGdQ0TMT9MrHliaGMxXmSaeSv3VzvmjWh0k0cZ6s21Sa6AR0NebM9s/tq5SrY2Ss76
-         Kiv4kQNUvlGt5x/sE+tAqha0xw1lhSJRHon/OBINVE/C4EVT0GzAzNg2nP6mbSpDl1xN
-         W3oPrv8pnLQ5h7f3F7Ayg6Ji9fEtfXR70bhtiQF3qbBckfagdGoyrsI4LqcwgLCv5CiD
-         p5Pf7tBdzOC/55K/ywigtzVsWDYf4Vepp8ouH6938TsfynafQ5etH+pXfzV+WDfx9JHI
-         p0O8VUP0gzqj+8OC0c/dBM7sHEhwZOM0oFPfpdHWCznafdrAkV/RFJjOlQdGHSCz64KZ
-         uRHw==
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=5gbbSEIbK4yWfAq5tI3QZ5QR0T3vBYa40yqv00FjnKE=;
+        b=EONDCuS+3d189+D8AI/ERnlF2MPUIT7CBrakxJTU20KFNPZczvwfsf1FS7U8Zf4ab7
+         RLTnMSpLwpGgvo9sEQb4SABuuS8pidp1RWTGa6ZtAZp9jBilnvom2oWEtMAtK8g9iQ/4
+         TwhmyRdfMWBu8+9tQlT2FA6xDjRZ1Uv1DM1L4vIQz0LhLMj72Swg6ag5Oj4MkhE90jsI
+         LQrA7K4nJV480H+LBMNtxrYT8HvxiZCHIfLE73B6gTp7oPCvXkoTXz5lSwmJ+T2UY4vW
+         +afTo7Jj4t7u/TZGLO+qfjQBwfh19BzspsByBUfGZNEiUg7JUgj9917P0P1DFTJ6MqFQ
+         p80A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0Rspx/dCRtgy23dvgpsPYPBe6qdr1VVjOb1peeTgm9w=;
-        b=C7+ywMhgvNoagSmum+cvJ9xj7QU+d7Zko/LEnG9ZWIfur+sNG0KBk0bOIWvOwF1Iiu
-         BRSBC2Kr6dxhEl5wCVG/10kISOlXJAc+hWjtQ+q3sz5UtmEe5YFCno0aaxl/XROFXv5F
-         6X4Cqf1B9Wh2QALcLrXiEVWm9fs9CduTa60DWZt3rwWnuU4kZRZLRoZjnjpcPNc0vffd
-         YUv3IOdEoumrXyuvLRAxZ5aJMGAfvUurIFn3tsHqDzm71VX9SKwHJhV//hkLew486b3e
-         wJfelnlPgl+QkYilwuURMHdQAmwlLxZwNPxfYEm8hoXCjU4ZoCsm9WBnos5t2ZdU8Wc+
-         gEcg==
-X-Gm-Message-State: AOAM531PojZz7hkK8AmlaS2exN1ggPUs/R7Yd/rGU3VgEKsVRgG/lYAJ
-        FCZKiR8wiP/xqqDQ2XFhSA8=
-X-Google-Smtp-Source: ABdhPJx05cG0JDxZAI643LmdBVS8V6W9lCvJTakSA3Dlr0Y30WzuY+N5jxDEEfYKMTmO0h7DATDgyg==
-X-Received: by 2002:a63:f44b:: with SMTP id p11mr8442011pgk.324.1598404716798;
-        Tue, 25 Aug 2020 18:18:36 -0700 (PDT)
-Received: from dc803.localdomain (FL1-111-169-205-196.hyg.mesh.ad.jp. [111.169.205.196])
-        by smtp.gmail.com with ESMTPSA id a66sm502945pfa.176.2020.08.25.18.18.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Aug 2020 18:18:36 -0700 (PDT)
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-To:     kohada.t2@gmail.com
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] exfat: fix pointer error checking
-Date:   Wed, 26 Aug 2020 10:18:29 +0900
-Message-Id: <20200826011830.14646-1-kohada.t2@gmail.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=5gbbSEIbK4yWfAq5tI3QZ5QR0T3vBYa40yqv00FjnKE=;
+        b=U4PChdBmIiAuGnaPYPbzXzhgSfxmNlsEEk/d0/PW85qdsBTb5Rnj/jbmLKV6QavnXC
+         zOALtzuE57bFilmRGjz02zKnjwphuXlAHgvGZyzWftrxjxohsI7HJz9wN+nQG59TFAmR
+         dVhtfGzdL3WgC2nn/JlMUVnkaFxA+kJ8u/EMj4QEXq/kTMtIUw2a9BHdWct1pFy2biOB
+         ctxufh8E2H1Clv/ignPZSX87Gr6/ZDy/iwiwqfrg+DEExhxmpQ9x/tad5AxgGEfC2RoP
+         OuMyrUmddjGTwUHr8TFoqtJfsvDChJSY41x54MLsJKs09QFbb8yXb/sqVyedf+148fx2
+         7tjQ==
+X-Gm-Message-State: AOAM5322d+miePU55LhgRqZgNXcokrPu+wxK1bfhzyr+Kfp4ut/iJPSY
+        nrhtMYsfj7B/T3Nri9ntypHgwU91O1esPDcXzg==
+X-Google-Smtp-Source: ABdhPJxGz/85hOODz7qBm7E2cIdEfrCvaBHLShAkLac9WkQj0OvIYzr7pzQHum6uPD4aip5+AhIe/HXpy8UENxoUeg==
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
+ (user=lokeshgidra job=sendgmr) by 2002:a25:7643:: with SMTP id
+ r64mr20062213ybc.109.1598406003331; Tue, 25 Aug 2020 18:40:03 -0700 (PDT)
+Date:   Tue, 25 Aug 2020 18:39:57 -0700
+Message-Id: <20200826013959.1981270-1-lokeshgidra@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
+Subject: [PATCH v3 0/2] Control over userfaultfd kernel-fault handling
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>, Peter Xu <peterx@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Daniel Colascione <dancol@dancol.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kaleshsingh@google.com,
+        calin@google.com, surenb@google.com, nnk@google.com,
+        jeffv@google.com, kernel-team@android.com,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Shaohua Li <shli@fb.com>, Jerome Glisse <jglisse@redhat.com>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Nitin Gupta <nigupta@nvidia.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix missing result check of exfat_build_inode().
-And use PTR_ERR_OR_ZERO instead of PTR_ERR.
+This patch series is split from [1]. The other series enables SELinux
+support for userfaultfd file descriptors so that its creation and
+movement can be controlled.
 
-Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
----
- fs/exfat/namei.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+It has been demonstrated on various occasions that suspending kernel
+code execution for an arbitrary amount of time at any access to
+userspace memory (copy_from_user()/copy_to_user()/...) can be exploited
+to change the intended behavior of the kernel. For instance, handling
+page faults in kernel-mode using userfaultfd has been exploited in [2, 3].
+Likewise, FUSE, which is similar to userfaultfd in this respect, has been
+exploited in [4, 5] for similar outcome.
 
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index 2aff6605fecc..0b12033e1577 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -578,7 +578,8 @@ static int exfat_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 
- 	i_pos = exfat_make_i_pos(&info);
- 	inode = exfat_build_inode(sb, &info, i_pos);
--	if (IS_ERR(inode))
-+	err = PTR_ERR_OR_ZERO(inode);
-+	if (err)
- 		goto unlock;
- 
- 	inode_inc_iversion(inode);
-@@ -745,10 +746,9 @@ static struct dentry *exfat_lookup(struct inode *dir, struct dentry *dentry,
- 
- 	i_pos = exfat_make_i_pos(&info);
- 	inode = exfat_build_inode(sb, &info, i_pos);
--	if (IS_ERR(inode)) {
--		err = PTR_ERR(inode);
-+	err = PTR_ERR_OR_ZERO(inode);
-+	if (err)
- 		goto unlock;
--	}
- 
- 	i_mode = inode->i_mode;
- 	alias = d_find_alias(inode);
-@@ -890,10 +890,9 @@ static int exfat_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
- 
- 	i_pos = exfat_make_i_pos(&info);
- 	inode = exfat_build_inode(sb, &info, i_pos);
--	if (IS_ERR(inode)) {
--		err = PTR_ERR(inode);
-+	err = PTR_ERR_OR_ZERO(inode);
-+	if (err)
- 		goto unlock;
--	}
- 
- 	inode_inc_iversion(inode);
- 	inode->i_mtime = inode->i_atime = inode->i_ctime =
+This small patch series adds a new flag to userfaultfd(2) that allows
+callers to give up the ability to handle kernel-mode faults with the
+resulting UFFD file object. It then adds a 'user-mode only' option to
+the unprivileged_userfaultfd sysctl knob to require unprivileged
+callers to use this new flag.
+
+The purpose of this new interface is to decrease the chance of an
+unprivileged userfaultfd user taking advantage of userfaultfd to
+enhance security vulnerabilities by lengthening the race window in
+kernel code.
+
+[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+[2] https://duasynt.com/blog/linux-kernel-heap-spray
+[3] https://duasynt.com/blog/cve-2016-6187-heap-off-by-one-exploit
+[4] https://googleprojectzero.blogspot.com/2016/06/exploiting-recursion-in-linux-kernel_20.html
+[5] https://bugs.chromium.org/p/project-zero/issues/detail?id=808
+
+Changes since v2:
+
+  - Removed 'uffd_flags' and directly used 'UFFD_USER_MODE_ONLY' in
+    userfaultfd().
+
+Changes since v1:
+
+  - Added external references to the threats from allowing unprivileged
+    users to handle page faults from kernel-mode.
+  - Removed the new sysctl knob restricting handling of page
+    faults from kernel-mode, and added an option for the same
+    in the existing 'unprivileged_userfaultfd' knob.
+
+Lokesh Gidra (2):
+  Add UFFD_USER_MODE_ONLY
+  Add user-mode only option to unprivileged_userfaultfd sysctl knob
+
+ Documentation/admin-guide/sysctl/vm.rst | 10 +++++++---
+ fs/userfaultfd.c                        | 16 +++++++++++++---
+ include/uapi/linux/userfaultfd.h        |  9 +++++++++
+ kernel/sysctl.c                         |  2 +-
+ 4 files changed, 30 insertions(+), 7 deletions(-)
+
 -- 
-2.25.1
+2.28.0.297.g1956fa8f8d-goog
 
