@@ -2,96 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D00525354C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 18:48:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 963862535D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 19:15:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728223AbgHZQrv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Aug 2020 12:47:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52058 "EHLO
+        id S1726910AbgHZRPS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Aug 2020 13:15:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728134AbgHZQrj (ORCPT
+        with ESMTP id S1726802AbgHZRPO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Aug 2020 12:47:39 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACAA9C061756
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 09:47:39 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id z17so2814559ioi.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 09:47:39 -0700 (PDT)
+        Wed, 26 Aug 2020 13:15:14 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 791A4C061574
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 10:15:13 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id c15so1404436lfi.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 10:15:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=knubijAt0jlcEgyfGnp3DjNef2Zkl9PnsPdwfFoIfEE=;
-        b=zSSLNQs+V1I4LENOdushsj3nmnFYyqaQdhtY5oY/Xt286k3qGUQkI26czvfppN49LX
-         o3Tp4yTmeV5j/D62zFr+TZuZSAvYv005z7/th9LrEbutQHP1CwTihB/xVI7k6JoZyaHp
-         lWDxEUGFmqx3gxPUDHBKylXtpbMwlh+un+m7DU0q3tJFNZofLUWtXKiZ9GZET0F5tVTY
-         fYDAShfuEIZPjMnRUBcpC8JYIDOljcBdpY5bi4kGbq9JOcHt1TSgVWnjjmPKuQXIJMXe
-         PSBxzsnrt7YBgW5E6P92+1x5UVOk2AELav7ofZ3IFlYkZ/pTRhRCbbBFCZOLrK7oMuDQ
-         TdMw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zP9JT9RZ6cg16XibPhu1WP9qLmnAItWF0Fa2z1UMDZI=;
+        b=gnE/PuzwUiR5nbYEU0P+4LWH2qyES1j1Z881X6oEA+lavFprJsQaKzOFd9+1tsnfM+
+         e9OfyrazJJTWB/GksaUDWytv75fKgS0GnX+tCaBCitTlh8Ksllt4L6s2t89+ILGxAL4S
+         TMmZy2nzqRMYH+qmpOU92kllkom8B8DMMf7fY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=knubijAt0jlcEgyfGnp3DjNef2Zkl9PnsPdwfFoIfEE=;
-        b=HOAkCChlWOM23xKGGrVdD296IpUTqM1rmleJQ31Bj3VCvoL4oClIByRElyuWcljhta
-         bQqwL6M9J5P70kw2GkukhLujQn7sy9BIFe0KPRAeucylTPlTMsBp2Mv6pGWtnFSNNHnG
-         lv3LIxKrUSHgYrDFvREIIUfMwKQgvVmGDTNDP4uCq7gI0rSiGw1uVsybDmrU+G0HzGXf
-         zWHzYVW4LS/cwWHB9lWTisLMjwCPY7VnT01UUe8vio7PEyzZsykm377IJqisOuRgUzB0
-         IEgFB600lMAmFNwb0xtpfjmuwUVPn9dFqwsAuxwKc0co9IF7b8kOJ/ciqEO2BjibA6Ma
-         9Kxw==
-X-Gm-Message-State: AOAM533KWvZO4o9ew6ySayGHdFR74mmi+XgeaSMm0wfqPaLSO+JEuvPS
-        YwvBto5FSLLLA7lWeqAEykGRPQ==
-X-Google-Smtp-Source: ABdhPJw6tqipY5aYgIN5ObL9GNtF7hYUHQ1OYqLEU+5VRRsLKuPz0AHe/fnvaAJIPrska52FeW4ZcQ==
-X-Received: by 2002:a05:6638:248e:: with SMTP id x14mr15661824jat.135.1598460458830;
-        Wed, 26 Aug 2020 09:47:38 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id o2sm1688208ili.83.2020.08.26.09.47.37
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zP9JT9RZ6cg16XibPhu1WP9qLmnAItWF0Fa2z1UMDZI=;
+        b=cCxLZHgDRf4L+6McXZSTtXXSNtYWV3vIylKyn2G08fmCS4RyIE8j5jT9lYVj+qZksq
+         VUhNbtW4YMuzE5USBbSdIQaNlDqEfH90abS/Oza0wr3tF5Mfq797acRF/CZIwMxbsG1F
+         /Oo6F7IW8tUKlRHLsjCQkFVK6PmaXcVTceaABpyph86LrO7CodRVmLvR+b+0dLzQUzM6
+         5EE/NL1ni1nYrfIZxfxVfU6l9ahZAxqFttgx0S868lQXzGdjHXeTxOAn66ZrklagQLqD
+         uYItj1QDqWjkaUdk8KkTiwU60pdGHB5PuurxTD+TJi3kTXGWA/jyPesa3MAEp8dU2lNY
+         B6QA==
+X-Gm-Message-State: AOAM531rdglts/av19k9AH6r2OhfiNpJ0DBrLrNE+5WTG/R+iMgXGlT0
+        M1KOR6MsvbrIhwNfNnW5vBC/MWjSmGJoTw==
+X-Google-Smtp-Source: ABdhPJy4/cckOCCsaqJr3fPGahB4q2s5W+jaawlVe1/VkfgU2hG+s5AxoiTykMlKWFWzSnheBFks+Q==
+X-Received: by 2002:a19:8856:: with SMTP id k83mr7826470lfd.131.1598462108973;
+        Wed, 26 Aug 2020 10:15:08 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id g1sm625009ljj.56.2020.08.26.10.15.07
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Aug 2020 09:47:38 -0700 (PDT)
-Subject: Re: [PATCH v4 0/3] io_uring: add restrictions to support untrusted
- applications and guests
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        io-uring <io-uring@vger.kernel.org>
-References: <20200813153254.93731-1-sgarzare@redhat.com>
- <CAGxU2F55zzMzc043P88TWJNr2poUTVwrRmu86qyh0uM-8gimng@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <82061082-42c8-1e1c-1f36-6f42e7dd10cb@kernel.dk>
-Date:   Wed, 26 Aug 2020 10:47:36 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 26 Aug 2020 10:15:07 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id m22so3243517ljj.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 10:15:07 -0700 (PDT)
+X-Received: by 2002:a2e:92d0:: with SMTP id k16mr7171003ljh.70.1598462107068;
+ Wed, 26 Aug 2020 10:15:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAGxU2F55zzMzc043P88TWJNr2poUTVwrRmu86qyh0uM-8gimng@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200826151448.3404695-1-jannh@google.com> <20200826151448.3404695-5-jannh@google.com>
+In-Reply-To: <20200826151448.3404695-5-jannh@google.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 26 Aug 2020 10:14:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whYkiyOKvBG96EaP5BgXeppXVC2rPv56bhBR27C9sbDLA@mail.gmail.com>
+Message-ID: <CAHk-=whYkiyOKvBG96EaP5BgXeppXVC2rPv56bhBR27C9sbDLA@mail.gmail.com>
+Subject: Re: [PATCH v4 4/5] binfmt_elf, binfmt_elf_fdpic: Use a VMA list snapshot
+To:     Jann Horn <jannh@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/25/20 9:20 AM, Stefano Garzarella wrote:
-> Hi Jens,
-> this is a gentle ping.
-> 
-> I'll respin, using memdup_user() for restriction registration.
-> I'd like to get some feedback to see if I should change anything else.
-> 
-> Do you think it's in good shape?
+On Wed, Aug 26, 2020 at 8:15 AM Jann Horn <jannh@google.com> wrote:
+>
+> A downside of this approach is that we now need a bigger amount of kernel
+> memory per userspace VMA in the normal ELF case, and that we need O(n)
+> kernel memory in the FDPIC ELF case at all; but 40 bytes per VMA shouldn't
+> be terribly bad.
 
-As far as I'm concerned, this is fine. But I want to make sure that Kees
-is happy with it, as he's the one that's been making noise on this front.
+So this looks much simpler now.
 
--- 
-Jens Axboe
+But it also makes it more obvious how that dump-size callback is kind
+of pointless. Why does elf_fdpic have different heuristics than
+regular elf? And not in meaningful ways - the heuristics look
+basically identical, just with different logging and probably random
+other differences that  have mostly just grown over time.
 
+So rather than the callback function pointer, I think you should just
+copy the ELF version of the dump_size() logic, and get rid of a very
+odd and strange callback.
+
+But even in this form, at least this patch doesn't make the code look
+_worse_ than it used to, so while I would like to see a further
+cleanup I no longer dislike it.
+
+              Linus
