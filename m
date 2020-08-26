@@ -2,116 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E00AF25334F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 17:16:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE3C0253390
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 17:25:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbgHZPQb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Aug 2020 11:16:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37688 "EHLO
+        id S1727833AbgHZPZM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Aug 2020 11:25:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39108 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728134AbgHZPPz (ORCPT
+        with ESMTP id S1727779AbgHZPZE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Aug 2020 11:15:55 -0400
-Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50D59C061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 08:15:53 -0700 (PDT)
-Received: by mail-qk1-x74a.google.com with SMTP id v16so1893894qka.18
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 08:15:53 -0700 (PDT)
+        Wed, 26 Aug 2020 11:25:04 -0400
+Received: from mail-qv1-xf41.google.com (mail-qv1-xf41.google.com [IPv6:2607:f8b0:4864:20::f41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F356C0613ED
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 08:25:02 -0700 (PDT)
+Received: by mail-qv1-xf41.google.com with SMTP id l13so859347qvt.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 08:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=7aZgefibZrTCs6XQP3SSXIsvAQ9RHGTwgc0UHLaNuJc=;
-        b=PZRtl3oEvcUqv3W5Kf6A433P7e2W3tl/mCCy3xK3DV/7P/aXv0u06wYmjDvvZEQWOT
-         ec/yeyDjZzlkcqBgnSCJVm01y8rwgXg0XhozXR3K/Qt+NSPOvhHC8OdoYrSdOhv7TZjP
-         mXNFSgjT8pyGVkBj5APT7WYyRtNTxMfIeHp+vXwRYaP0z6eee2VPXSr30DB6lbnor3YM
-         18ZIzWMCS3dqI9hPlOsgn5kk4s2gN+rMvTtl9/3sT+zhcVisuexKfn5RTr/4IVWvn76D
-         eiwl+5wyVMCTrHqG84CNQSdNJYTgnxdCwBdzLqSxPpQEE31nmdOkhMePpT4krSphqKqP
-         xYhQ==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=3jCdtk/ZURSNuEFDfKhXe1ymBpf3lit0hQaqnak8Pck=;
+        b=PPKe2c9w7o8mKfxppP3ImoOQWtbEiAyVzoSGux9dLmTh0TtWAU7mAYN/eqGA8il0eR
+         IRb7JnwpNPiDNFsDrr+7EEKK3VJVCRM3gNXGLp+/ZfSy9bFA0SjOWwy3ITc5/ZpotjXS
+         +ONIyx9EQf80B7pWXlNfQE+YSPNGFiRd3DmKfdbebnTq9InXXX63O60Yjb8ilkgnbS5m
+         SpaKx4vj3dweaM8D3DT3M9BFS4gZHeCWDCEeZYg7PFSlIzjkUFqXzr9L1pnGArRoWcEc
+         wIPbtRVYvENkLXpQp33xNU8fvZ0AY2P7CaA4UUgmnJbgfF++p1TVHSRBX9a/sCwIN2jj
+         OIAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=7aZgefibZrTCs6XQP3SSXIsvAQ9RHGTwgc0UHLaNuJc=;
-        b=qkg4En1L2KTRtMOoVo/bOQqjKcrIYHi7C59MqZBMDwYDzPSuQo01UNi3SgRLrSQK99
-         F8n/uHkTk1APGQtBr1R+JagT2OjmgZeIYFwE23AoVrmMTpVr0diFWD0V/MSlZniL8uUR
-         EHKCDM3ESTlGm07DPqo8pv1y30YnYbO5z7SVxSywxaQ0kg4aDCz/t1pk4sGyHXwgk+ko
-         PPT3nzJRXoUN0rE2cYJo4jmVOQmcIIwY+mEp6EssWcigI1yaxOOPMzzzwyqrSU9Wzayx
-         dYjrbbkW9DZXLfNH1Ybf8XzFm56RhkSiFTsD6DMwy7yHDVVr52cpZ5UW4TAduIPdEQfs
-         jkVA==
-X-Gm-Message-State: AOAM533f9ql2uIVJcbMoHik5P/+1+Z2zlX8AUTqM1C58MDwzlwSLpCcq
-        1UJPIJIUopZpiwEApGY3s2tVfeqMFg==
-X-Google-Smtp-Source: ABdhPJzslNHRMbDlTLSVH+ySRuZDYmPvdWgqFZD9I7LbDYlgShjS4rqt60Xa4GlkiwlcHLvW6gI3Hs+U2A==
-X-Received: from jannh2.zrh.corp.google.com ([2a00:79e0:1b:201:1a60:24ff:fea6:bf44])
- (user=jannh job=sendgmr) by 2002:a0c:f4d0:: with SMTP id o16mr14300775qvm.225.1598454952452;
- Wed, 26 Aug 2020 08:15:52 -0700 (PDT)
-Date:   Wed, 26 Aug 2020 17:14:48 +0200
-In-Reply-To: <20200826151448.3404695-1-jannh@google.com>
-Message-Id: <20200826151448.3404695-6-jannh@google.com>
-Mime-Version: 1.0
-References: <20200826151448.3404695-1-jannh@google.com>
-X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
-Subject: [PATCH v4 5/5] mm/gup: Take mmap_lock in get_dump_page()
-From:   Jann Horn <jannh@google.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=3jCdtk/ZURSNuEFDfKhXe1ymBpf3lit0hQaqnak8Pck=;
+        b=Zkd4q5+jOGu/FoVSHM3ApVPsJQdqpc+LRIfRFzvDpaClXNKH8DqPcQT+b+pGyObGjB
+         9+NSEBAXELmDNUj9GRBblxHlmUshZi31NQQhpWidbIUCtBUfnN9JXdYwDkpBwTCOULKi
+         2KRE58GyhQeSy01ioX8VKi6hr0DDyCVZ61fQwVQbSQcff7e4YCCCfZMXoms+kvr9vetV
+         bPWSgSZ6AyWCKet5yYzQRTiqJJLsAgmrld5q4dLBirF0Z7H3uYwWAJ4BurjE4gfDCkyG
+         Fwi4obFXHVhkyTJzRzaXG5Kgknb3eMFIk3aEVmOQyfDGPR2eGu8cu2alxoGoruFK5gKl
+         aYuw==
+X-Gm-Message-State: AOAM531tFWKcZvxXtZvtMqsusDyP2kOKNfND9mnWxmmulx4iYBvUL+nP
+        o/u9B8TsSN1TBp7mN6v4fqh7ig==
+X-Google-Smtp-Source: ABdhPJybSAIDosW5z0AAAsSDqg7kgtB/dyNQZnTsV+MunsOMYGeYiMt4qloptISx1U+AUpUU4zFMfw==
+X-Received: by 2002:ad4:4aa5:: with SMTP id i5mr14499134qvx.179.1598455501966;
+        Wed, 26 Aug 2020 08:25:01 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::1:412a])
+        by smtp.gmail.com with ESMTPSA id f193sm1842958qke.101.2020.08.26.08.25.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Aug 2020 08:25:00 -0700 (PDT)
+Date:   Wed, 26 Aug 2020 11:23:46 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Oscar Salvador <osalvador@suse.de>, broonie@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject: Re: mmotm 2020-08-24-16-06 uploaded
+Message-ID: <20200826152346.GF988805@cmpxchg.org>
+References: <20200824230725.8gXQoJFD-%akpm@linux-foundation.org>
+ <20200825084543.GA16605@linux>
+ <20200825173021.fcf20a4f3043ed5d5b4ac3b5@linux-foundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200825173021.fcf20a4f3043ed5d5b4ac3b5@linux-foundation.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Properly take the mmap_lock before calling into the GUP code from
-get_dump_page(); and play nice, allowing the GUP code to drop the mmap_lock
-if it has to sleep.
+On Tue, Aug 25, 2020 at 05:30:21PM -0700, Andrew Morton wrote:
+> On Tue, 25 Aug 2020 10:45:48 +0200 Oscar Salvador <osalvador@suse.de> wrote:
+> 
+> > On Mon, Aug 24, 2020 at 04:07:25PM -0700, akpm@linux-foundation.org wrote:
+> > > A full copy of the full kernel tree with the linux-next and mmotm patches
+> > > already applied is available through git within an hour of the mmotm
+> > > release.  Individual mmotm releases are tagged.  The master branch always
+> > > points to the latest release, so it's constantly rebasing.
+> > > 
+> > > 	https://github.com/hnaz/linux-mm
+> > 
+> > Is it me or this is out of sync?
+> > 
+> 
+> Seems that way.  Maybe Johannes's script needs a new battery?
 
-As Linus pointed out, we don't actually need the VMA because
-__get_user_pages() will flush the dcache for us if necessary.
+It looks like github had the hiccups yesterday:
 
-Signed-off-by: Jann Horn <jannh@google.com>
----
- mm/gup.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+Connection to github.com closed by remote host.
+fatal: the remote end hung up unexpectedly
+fatal: the remote end hung up unexpectedly
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 92519e5a44b3..bd0f7311c5c6 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1552,19 +1552,23 @@ static long __get_user_pages_locked(struct mm_struct *mm, unsigned long start,
-  * NULL wherever the ZERO_PAGE, or an anonymous pte_none, has been found -
-  * allowing a hole to be left in the corefile to save diskspace.
-  *
-- * Called without mmap_lock, but after all other threads have been killed.
-+ * Called without mmap_lock (takes and releases the mmap_lock by itself).
-  */
- #ifdef CONFIG_ELF_CORE
- struct page *get_dump_page(unsigned long addr)
- {
--	struct vm_area_struct *vma;
-+	struct mm_struct *mm = current->mm;
- 	struct page *page;
-+	int locked = 1;
-+	int ret;
- 
--	if (__get_user_pages_locked(current->mm, addr, 1, &page, &vma, NULL,
--				    FOLL_FORCE | FOLL_DUMP | FOLL_GET) < 1)
-+	if (mmap_read_lock_killable(mm))
- 		return NULL;
--	flush_cache_page(vma, addr, page_to_pfn(page));
--	return page;
-+	ret = __get_user_pages_locked(mm, addr, 1, &page, NULL, &locked,
-+				      FOLL_FORCE | FOLL_DUMP | FOLL_GET);
-+	if (locked)
-+		mmap_read_unlock(mm);
-+	return (ret == 1) ? page : NULL;
- }
- #endif /* CONFIG_ELF_CORE */
- 
--- 
-2.28.0.297.g1956fa8f8d-goog
-
+But it's uptodate now.
