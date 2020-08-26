@@ -2,87 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E881825384E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 21:31:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0903253867
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Aug 2020 21:40:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbgHZTbX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Aug 2020 15:31:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49714 "EHLO
+        id S1727020AbgHZTka (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Aug 2020 15:40:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbgHZTbV (ORCPT
+        with ESMTP id S1727049AbgHZTk2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Aug 2020 15:31:21 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37711C061574
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 12:31:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=/KVBDiY8YHzsLv2yVa4q4qMt+zYerqkGrqgCBXLrdFI=; b=qrwYyCUnsnL+iJV0cRMo81tsBQ
-        TJ+ZVjCJPJdNoQBNXEdjqUv2wNVOEXDAvcJ0qnBk/QCbHpxTFRkJZeXZ33OoUQM/3fT/SYH4MnxQv
-        NRmSv1RWswei66XdWm8z0fj2Ct+BY47mddSYxmCM+11E7CHDlecOQEn5w9YXz9U3oz+0J6My0rGUh
-        VS2LT6ogoViUn3csm6aP/3TxG8R6zxehUT7Gywi12pvPkmWENQn7MS96UjXzKd1x4JKgKZdSt6KoH
-        OVuSsSgLVk+Qywa3cchGOcf+V9NVVTfNGxUJXC8+85B0ZTFfvKz5K5nl08bGoJMyJkVm/gUZZAXwE
-        vvG91aPw==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kB18e-0002sJ-HE; Wed, 26 Aug 2020 19:31:16 +0000
-Date:   Wed, 26 Aug 2020 20:31:16 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Mike Marshall <hubcap@omnibond.com>
-Subject: The future of readahead
-Message-ID: <20200826193116.GU17456@casper.infradead.org>
+        Wed, 26 Aug 2020 15:40:28 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1A0CC061756
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 12:40:27 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id i10so1629631pgk.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 12:40:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=OG8uhnCA9kG3csdFryFQgnoVrLmqM/Aisjk2iXjlTO4=;
+        b=CCtjUjayr/qntPIykQMCTBeZZeCK50TmOXnltMMVDBp3CR9A65E334WHfJcIaB+qj5
+         lM0Ab5TQ23N8QqsdlltlQODO+OGXq6MmQcJBd+tA7A5w2hgKBd/HXsYX/JCZnPLsvU76
+         Fc4t/yR7DlFMji9jHEtdubrTqLh5q1Ob78A9U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=OG8uhnCA9kG3csdFryFQgnoVrLmqM/Aisjk2iXjlTO4=;
+        b=M0jCyRzIqwmrUWbACFIrKokhDvA6X16dZuOkexG2Srz0wYfic06ntn9U+tcTEKnJZv
+         7jB2fM/zYxogJ4ipzCxzif4reqfTx8ZSXXPYmLnbFz0qCfEGllrwXKAkQk447v4F+E0U
+         YZRrmSX1/pzZqmkLIrvuJA3XLyCSnOe55A/Mn9/vCipF9fLgB+dfbzdUXU6rDdCImfz4
+         GGPapHFzml4+GMxakkq4/mnU6IXQLmiB8GKp0CgLyoteG13WI58IQEKIAyJ+l8vPQ7rX
+         I/LVbuzEkDd9uZ71RFQqZ/IDQV5oLtLyEMz4Tu4F42a3R0sLWvWMfG9/E2oBukFWRmvS
+         OtkA==
+X-Gm-Message-State: AOAM530m9L/UPMvbgvVaJhP340AZ1KknHEZiG9TEoRGVEpb6TVwKTm01
+        PKc71Omhnpev9ejTCQ9DcAhsRQ==
+X-Google-Smtp-Source: ABdhPJwoFPtYUC9LMuzuxI/JkcSQzWHlHT55l/323/HECz8Y1hZ6XBGrFMmE05TvFRpD7eDwLUE2Aw==
+X-Received: by 2002:a63:516:: with SMTP id 22mr12143709pgf.316.1598470827209;
+        Wed, 26 Aug 2020 12:40:27 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id e16sm3774598pfd.17.2020.08.26.12.40.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Aug 2020 12:40:26 -0700 (PDT)
+Date:   Wed, 26 Aug 2020 12:40:24 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Stefano Garzarella <sgarzare@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Aleksa Sarai <asarai@suse.de>,
+        io-uring <io-uring@vger.kernel.org>
+Subject: Re: [PATCH v4 0/3] io_uring: add restrictions to support untrusted
+ applications and guests
+Message-ID: <202008261237.904C1E6@keescook>
+References: <20200813153254.93731-1-sgarzare@redhat.com>
+ <CAGxU2F55zzMzc043P88TWJNr2poUTVwrRmu86qyh0uM-8gimng@mail.gmail.com>
+ <82061082-42c8-1e1c-1f36-6f42e7dd10cb@kernel.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <82061082-42c8-1e1c-1f36-6f42e7dd10cb@kernel.dk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Both Kent and David have had conversations with me about improving the
-readahead filesystem interface this last week, and as I don't have time
-to write the code, here's the design.
+On Wed, Aug 26, 2020 at 10:47:36AM -0600, Jens Axboe wrote:
+> On 8/25/20 9:20 AM, Stefano Garzarella wrote:
+> > Hi Jens,
+> > this is a gentle ping.
+> > 
+> > I'll respin, using memdup_user() for restriction registration.
+> > I'd like to get some feedback to see if I should change anything else.
+> > 
+> > Do you think it's in good shape?
+> 
+> As far as I'm concerned, this is fine. But I want to make sure that Kees
+> is happy with it, as he's the one that's been making noise on this front.
 
-1. Kent doesn't like it that we do an XArray lookup for each page.
-The proposed solution adds a (small) array of page pointers (or a
-pagevec) to the struct readahead_control.  It may make sense to move
-__readahead_batch() and readahead_page() out of line at that point.
-This should be backed up with performance numbers.
+Oop! Sorry, I didn't realize this was blocked on me. Once I saw how
+orthogonal io_uring was to "regular" process trees, I figured this
+series didn't need seccomp input. (I mean, I am still concerned about
+attack surface reduction, but that seems like a hard problem given
+io_uring's design -- it is, however, totally covered by the LSMs, so I'm
+satisfied from that perspective.)
 
-2. David wants to be sure that readahead is aligned to a granule
-size (eg 256kB) to support fscache.  When we last talked about it,
-I suggested encoding the granule size in the struct address_space.
-I no longer think this approach should be pursued, since ...
+I'll go review... thanks for the poke. :)
 
-3. Kent wants to be able to expand readahead to encompass an entire fs
-extent (if, eg, that extent is compressed or encrypted).  We don't know
-that at the right point; the filesystem can't pass that information
-through the generic_file_buffered_read() or filemap_fault() interface
-to the readahead code.  So the right approach here is for the filesystem
-to ask the readahead code to expand the readahead batch.
-
-So solving #2 and #3 looks like a new interface for filesystems to call:
-
-void readahead_expand(struct readahead_control *rac, loff_t start, u64 len);
-or possibly
-void readahead_expand(struct readahead_control *rac, pgoff_t start,
-		unsigned int count);
-
-It might not actually expand the readahead attempt at all -- for example,
-if there's already a page in the page cache, or if it can't allocate
-memory.  But this puts the responsibility for allocating pages in the VFS,
-where it belongs.
-
-4. Mike wants to be able to do 4MB I/Os [1].  That should be covered by
-the solution above.  Mike, just to clarify.  Do you need 4MB pages, or can
-you work with some mixture of page sizes going as far as 1024 x 4kB pages?
-
-5. I'm allocating larger pages in the readahead code (part of the THP
-patch set [2])
-
-[1] https://lore.kernel.org/linux-fsdevel/CAOg9mSSrJp2dqQTNDgucLoeQcE_E_aYPxnRe5xphhdSPYw7QtQ@mail.gmail.com/
-[2] http://git.infradead.org/users/willy/pagecache.git/commitdiff/c00bd4082c7bc32a17b0baa29af6974286978e1f
+-- 
+Kees Cook
