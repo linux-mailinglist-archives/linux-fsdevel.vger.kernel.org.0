@@ -2,326 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A4C825463C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 15:46:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86042254684
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 16:11:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbgH0Npz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 09:45:55 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:51253 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728139AbgH0NlV (ORCPT
+        id S1728030AbgH0OLM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 10:11:12 -0400
+Received: from lizzy.crudebyte.com ([91.194.90.13]:48385 "EHLO
+        lizzy.crudebyte.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728185AbgH0OKh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 09:41:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1598535670;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uTXnsdemHz3ZA+LfBhP216oi6zi4kNbTgvLzZMmEtOU=;
-        b=L6hT8o6QTaNp/b0mFqv0KwztNmVt5yJOSb1f14KDW5XL/gYhUI7DPLE0RI9WPAYSV4xBAx
-        h2/t7qAb/AaMBUUIcmaJI0P4ZmetzPBQcAD4UoVmRCUPgPiF0ULDJ1thR0ZhvHJEFeY3cY
-        H8zQLONdh9rvzXSC1S8oQwJz9bULjgM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-127-L-ARk0AYM9O88EcUTUu40Q-1; Thu, 27 Aug 2020 09:41:06 -0400
-X-MC-Unique: L-ARk0AYM9O88EcUTUu40Q-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 430B610ABDA1;
-        Thu, 27 Aug 2020 13:41:03 +0000 (UTC)
-Received: from steredhat.redhat.com (ovpn-113-96.ams2.redhat.com [10.36.113.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5EAEB7C55A;
-        Thu, 27 Aug 2020 13:40:59 +0000 (UTC)
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Aleksa Sarai <asarai@suse.de>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Jann Horn <jannh@google.com>, io-uring@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thu, 27 Aug 2020 10:10:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=crudebyte.com; s=lizzy; h=Content-Type:Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        Content-ID:Content-Description;
+        bh=CCa4kfn3vpnBF8Rj2S30fsBuR4gERAiFmIY3NeXQZyA=; b=n/0pxv4AYQ3fUBkOv1U407afU1
+        xVahq5gPEya24BZaVxYESvsMhpCGgSbY69twelpBQUcb0JLMzyZZ04eHHT7H4J9AEHHWUuy/qavEJ
+        HpJH+Tfgm/JE7uWXBo59pN1QxV91XpgHaSmmqXDW5gDXalttiyncmoG0OtBgn80gE0z5ZxqQWyenr
+        RBU7s0gwQtubRR6nAMx7/y7zFh0P73mtAiCBKc3wRuUfjaJ+hu+DtozriMDReuyQcRNwl41kEytGk
+        DQ5Bkr5NZxpr/q6vfTy60vYn2KNDJYhLeHTzkKn4Spc51etGWfLy4TmvhJXkYOSet4eSOF64alGI6
+        hVk84xug==;
+From:   Christian Schoenebeck <qemu_oss@crudebyte.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Frank van der Linden <fllinden@amazon.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
         Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-kernel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
-        Kees Cook <keescook@chromium.org>,
-        Jeff Moyer <jmoyer@redhat.com>
-Subject: [PATCH v5 2/3] io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
-Date:   Thu, 27 Aug 2020 15:40:43 +0200
-Message-Id: <20200827134044.82821-3-sgarzare@redhat.com>
-In-Reply-To: <20200827134044.82821-1-sgarzare@redhat.com>
-References: <20200827134044.82821-1-sgarzare@redhat.com>
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        Chirantan Ekbote <chirantan@chromium.org>
+Subject: Re: file forks vs. xattr (was: xattr names for unprivileged stacking?)
+Date:   Thu, 27 Aug 2020 15:48:57 +0200
+Message-ID: <3331978.UQhOATu6MC@silver>
+In-Reply-To: <20200827122555.GD14765@casper.infradead.org>
+References: <20200824222924.GF199705@mit.edu> <1803870.bTIpkxUbEX@silver> <20200827122555.GD14765@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The new io_uring_register(2) IOURING_REGISTER_RESTRICTIONS opcode
-permanently installs a feature allowlist on an io_ring_ctx.
-The io_ring_ctx can then be passed to untrusted code with the
-knowledge that only operations present in the allowlist can be
-executed.
+On Donnerstag, 27. August 2020 14:25:55 CEST Matthew Wilcox wrote:
+> On Thu, Aug 27, 2020 at 02:02:42PM +0200, Christian Schoenebeck wrote:
+> > What I could imagine as delimiter instead; slash-caret:
+> >     /var/foo.pdf/^/forkname
+>=20
+> Any ascii character is going to be used in some actual customer workload.
 
-The allowlist approach ensures that new features added to io_uring
-do not accidentally become available when an existing application
-is launched on a newer kernel version.
+Not exactly. "/foo/^/bar" is already a valid path today. So every Linux sys=
+tem=20
+(incl. all libs/apps) must be capable to deal with that path already, so it=
+=20
+would not introduce a tokenization problem.
 
-Currently is it possible to restrict sqe opcodes, sqe flags, and
-register opcodes.
+The caret character is not reserved by any filesystem either:
+https://en.wikipedia.org/wiki/Filename
 
-IOURING_REGISTER_RESTRICTIONS can only be made once. Afterwards
-it is not possible to change restrictions anymore.
-This prevents untrusted code from removing restrictions.
+The only change a caret delimiter would bring, is a very minor change in=20
+semantic: apps would no longer be allowed to create dirs/files named exactl=
+y=20
+"^". But I find that a very small restriction compared to the negative impa=
+ct=20
+of other delimiter options, i.e.:
 
-Suggested-by: Stefan Hajnoczi <stefanha@redhat.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
----
-v5:
- - explicitly assign enum values [Kees]
- - replace kmalloc/copy_from_user with memdup_user [kernel test robot]
+	touch /some/where/^          # error if forks enabled, OK otherwise
+	touch /some/where/^whatever  # always OK
 
-v3:
- - added IORING_RESTRICTION_SQE_FLAGS_ALLOWED and
-   IORING_RESTRICTION_SQE_FLAGS_REQUIRED
- - removed IORING_RESTRICTION_FIXED_FILES_ONLY
+So if you have apps that need to access dirs/files called *exactly* "^", th=
+at=20
+would be easy to fix. And if you don't want to, you just keep kernel's supp=
+ort=20
+for forks disabled and preserve old semantic of "^".
 
-RFC v2:
- - added 'restricted' flag in the ctx [Jens]
- - added IORING_MAX_RESTRICTIONS define
- - returned EBUSY instead of EINVAL when restrictions are already
-   registered
- - reset restrictions if an error happened during the registration
----
- fs/io_uring.c                 | 107 +++++++++++++++++++++++++++++++++-
- include/uapi/linux/io_uring.h |  31 ++++++++++
- 2 files changed, 137 insertions(+), 1 deletion(-)
+> I suggest we use a unicode character instead.
+>=20
+> /var/foo.pdf/=F0=9F=92=A9/badidea
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 6df08287c59e..93b023930b0b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -98,6 +98,8 @@
- #define IORING_MAX_FILES_TABLE	(1U << IORING_FILE_TABLE_SHIFT)
- #define IORING_FILE_TABLE_MASK	(IORING_MAX_FILES_TABLE - 1)
- #define IORING_MAX_FIXED_FILES	(64 * IORING_MAX_FILES_TABLE)
-+#define IORING_MAX_RESTRICTIONS	(IORING_RESTRICTION_LAST + \
-+				 IORING_REGISTER_LAST + IORING_OP_LAST)
- 
- struct io_uring {
- 	u32 head ____cacheline_aligned_in_smp;
-@@ -219,6 +221,13 @@ struct io_buffer {
- 	__u16 bid;
- };
- 
-+struct io_restriction {
-+	DECLARE_BITMAP(register_op, IORING_REGISTER_LAST);
-+	DECLARE_BITMAP(sqe_op, IORING_OP_LAST);
-+	u8 sqe_flags_allowed;
-+	u8 sqe_flags_required;
-+};
-+
- struct io_ring_ctx {
- 	struct {
- 		struct percpu_ref	refs;
-@@ -231,6 +240,7 @@ struct io_ring_ctx {
- 		unsigned int		cq_overflow_flushed: 1;
- 		unsigned int		drain_next: 1;
- 		unsigned int		eventfd_async: 1;
-+		unsigned int		restricted: 1;
- 
- 		/*
- 		 * Ring buffer of indices into array of io_uring_sqe, which is
-@@ -338,6 +348,7 @@ struct io_ring_ctx {
- 	struct llist_head		file_put_llist;
- 
- 	struct work_struct		exit_work;
-+	struct io_restriction		restrictions;
- };
- 
- /*
-@@ -6414,6 +6425,19 @@ static int io_init_req(struct io_ring_ctx *ctx, struct io_kiocb *req,
- 	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS))
- 		return -EINVAL;
- 
-+	if (unlikely(ctx->restricted)) {
-+		if (!test_bit(req->opcode, ctx->restrictions.sqe_op))
-+			return -EACCES;
-+
-+		if ((sqe_flags & ctx->restrictions.sqe_flags_required) !=
-+		    ctx->restrictions.sqe_flags_required)
-+			return -EACCES;
-+
-+		if (sqe_flags & ~(ctx->restrictions.sqe_flags_allowed |
-+				  ctx->restrictions.sqe_flags_required))
-+			return -EACCES;
-+	}
-+
- 	if ((sqe_flags & IOSQE_BUFFER_SELECT) &&
- 	    !io_op_defs[req->opcode].buffer_select)
- 		return -EOPNOTSUPP;
-@@ -8714,6 +8738,71 @@ static int io_unregister_personality(struct io_ring_ctx *ctx, unsigned id)
- 	return -EINVAL;
- }
- 
-+static int io_register_restrictions(struct io_ring_ctx *ctx, void __user *arg,
-+				    unsigned int nr_args)
-+{
-+	struct io_uring_restriction *res;
-+	size_t size;
-+	int i, ret;
-+
-+	/* We allow only a single restrictions registration */
-+	if (ctx->restricted)
-+		return -EBUSY;
-+
-+	if (!arg || nr_args > IORING_MAX_RESTRICTIONS)
-+		return -EINVAL;
-+
-+	size = array_size(nr_args, sizeof(*res));
-+	if (size == SIZE_MAX)
-+		return -EOVERFLOW;
-+
-+	res = memdup_user(arg, size);
-+	if (IS_ERR(res))
-+		return PTR_ERR(res);
-+
-+	for (i = 0; i < nr_args; i++) {
-+		switch (res[i].opcode) {
-+		case IORING_RESTRICTION_REGISTER_OP:
-+			if (res[i].register_op >= IORING_REGISTER_LAST) {
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+
-+			__set_bit(res[i].register_op,
-+				  ctx->restrictions.register_op);
-+			break;
-+		case IORING_RESTRICTION_SQE_OP:
-+			if (res[i].sqe_op >= IORING_OP_LAST) {
-+				ret = -EINVAL;
-+				goto out;
-+			}
-+
-+			__set_bit(res[i].sqe_op, ctx->restrictions.sqe_op);
-+			break;
-+		case IORING_RESTRICTION_SQE_FLAGS_ALLOWED:
-+			ctx->restrictions.sqe_flags_allowed = res[i].sqe_flags;
-+			break;
-+		case IORING_RESTRICTION_SQE_FLAGS_REQUIRED:
-+			ctx->restrictions.sqe_flags_required = res[i].sqe_flags;
-+			break;
-+		default:
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+	}
-+
-+	ctx->restricted = 1;
-+
-+	ret = 0;
-+out:
-+	/* Reset all restrictions if an error happened */
-+	if (ret != 0)
-+		memset(&ctx->restrictions, 0, sizeof(ctx->restrictions));
-+
-+	kfree(res);
-+	return ret;
-+}
-+
- static bool io_register_op_must_quiesce(int op)
- {
- 	switch (op) {
-@@ -8760,6 +8849,18 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 		if (ret) {
- 			percpu_ref_resurrect(&ctx->refs);
- 			ret = -EINTR;
-+			goto out_quiesce;
-+		}
-+	}
-+
-+	if (ctx->restricted) {
-+		if (opcode >= IORING_REGISTER_LAST) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+
-+		if (!test_bit(opcode, ctx->restrictions.register_op)) {
-+			ret = -EACCES;
- 			goto out;
- 		}
- 	}
-@@ -8823,15 +8924,19 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 			break;
- 		ret = io_unregister_personality(ctx, nr_args);
- 		break;
-+	case IORING_REGISTER_RESTRICTIONS:
-+		ret = io_register_restrictions(ctx, arg, nr_args);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
- 	}
- 
-+out:
- 	if (io_register_op_must_quiesce(opcode)) {
- 		/* bring the ctx back to life */
- 		percpu_ref_reinit(&ctx->refs);
--out:
-+out_quiesce:
- 		reinit_completion(&ctx->ref_comp);
- 	}
- 	return ret;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index 5f12ae6a415c..6e7f2e5e917b 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -267,6 +267,7 @@ enum {
- 	IORING_REGISTER_PROBE			= 8,
- 	IORING_REGISTER_PERSONALITY		= 9,
- 	IORING_UNREGISTER_PERSONALITY		= 10,
-+	IORING_REGISTER_RESTRICTIONS		= 11,
- 
- 	/* this goes last */
- 	IORING_REGISTER_LAST
-@@ -295,4 +296,34 @@ struct io_uring_probe {
- 	struct io_uring_probe_op ops[0];
- };
- 
-+struct io_uring_restriction {
-+	__u16 opcode;
-+	union {
-+		__u8 register_op; /* IORING_RESTRICTION_REGISTER_OP */
-+		__u8 sqe_op;      /* IORING_RESTRICTION_SQE_OP */
-+		__u8 sqe_flags;   /* IORING_RESTRICTION_SQE_FLAGS_* */
-+	};
-+	__u8 resv;
-+	__u32 resv2[3];
-+};
-+
-+/*
-+ * io_uring_restriction->opcode values
-+ */
-+enum {
-+	/* Allow an io_uring_register(2) opcode */
-+	IORING_RESTRICTION_REGISTER_OP		= 0,
-+
-+	/* Allow an sqe opcode */
-+	IORING_RESTRICTION_SQE_OP		= 1,
-+
-+	/* Allow sqe flags */
-+	IORING_RESTRICTION_SQE_FLAGS_ALLOWED	= 2,
-+
-+	/* Require sqe flags (these flags must be set on each submission) */
-+	IORING_RESTRICTION_SQE_FLAGS_REQUIRED	= 3,
-+
-+	IORING_RESTRICTION_LAST
-+};
-+
- #endif
--- 
-2.26.2
+Like I mentioned before, if you'd pick a unicode character (or binary), the=
+n=20
+each shell will map their own ASCII-sequence on top of that. Because shell=
+=20
+users want ASCII. Which would defeat the primary purpose: a unified path=20
+resolution.
+
+Then even if you'd pick unicode, that would raise new questions and problem=
+s;=20
+e.g. utf-8, utf-16, utf-32? Character normalization required? How do you=20
+ensure each layer will use the same encoding?
+
+Best regards,
+Christian Schoenebeck
+
 
