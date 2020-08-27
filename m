@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0779A254896
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 17:09:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A9E0254888
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 17:09:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728209AbgH0PJg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 11:09:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34704 "EHLO
+        id S1728101AbgH0PA6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 11:00:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbgH0PAk (ORCPT
+        with ESMTP id S1726825AbgH0PAm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 11:00:40 -0400
+        Thu, 27 Aug 2020 11:00:42 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B489AC061232;
-        Thu, 27 Aug 2020 08:00:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4F82C061233;
+        Thu, 27 Aug 2020 08:00:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=qdxrwOFViywP/5XuzkfTTZlvXDJmaru1paUb7ZwS2hs=; b=HOnxeUy17i24/revnqoDslYl3g
-        RyseqUhtzK3Wt4ScXjBi9wxyZvRY21MDDTqIsCWpBW/wp7J9m+yeJ06gCbEJCygv1dzjXlgeSxaa/
-        XSTGEfCb0wfE6cw1431A/DnhLyjw/YUo9fHUX1BEzweg3m7VpzihX4Lw9S32zBTAPBnjhDQ2vCPRZ
-        QPV39sDGsS2u1uVhlQmC9+Tbh+2K2KisNetDIN/NCdgmprR5Bgfkn/yPLIGOBXUasNoAoZZHCNY76
-        o5Bvig8Xe47I5VvYDjf97aTbioX1ywX84meC8pqhE/uSpvEP1uM13OmRX5GxLkSEn6Z2ZieAChs8B
-        /Q/9kDWA==;
+        bh=7if9E61XQvlnPGxoMAdXh1MewP0CjVynKNhJLQ0VWys=; b=q2kozop0L9WLkJGtDc+jqOJ4dn
+        8xDsrn4NnaCEESTVa3f8r9cCTQU+kvwJLgUKUTal6/IgKq/KUizXh9zRArN4UBxvew4NRF3DEsI5t
+        KERKqmsOJdnOEv6ZF/wKfDQiRPqATsD5ADKKtgYIh73NOnjnQjz0tJsSB5d2izjwoi8SfRPopx4q9
+        hd1Bx9qHXHVWrfJxNpjBOroRWBvgVZPzoPStvjrkvXTW0sHMtQdeydq6mZxGVQ5RP4OMVuFAWGczY
+        k07aOopvaLkGZxyYSz0N7Kq4nd/hHd6LwF8NGuDWrXC54lx2LrXqx4rOCzSQmonL8vbauibTr6Cjk
+        aycPag3g==;
 Received: from [2001:4bb8:18c:45ba:9892:9e86:5202:32f0] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kBJOE-00044X-Ki; Thu, 27 Aug 2020 15:00:34 +0000
+        id 1kBJOF-00044h-PG; Thu, 27 Aug 2020 15:00:35 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -35,9 +35,9 @@ To:     Linus Torvalds <torvalds@linux-foundation.org>,
 Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 02/10] fs: don't allow splice read/write without explicit ops
-Date:   Thu, 27 Aug 2020 17:00:22 +0200
-Message-Id: <20200827150030.282762-3-hch@lst.de>
+Subject: [PATCH 03/10] uaccess: add infrastructure for kernel builds with set_fs()
+Date:   Thu, 27 Aug 2020 17:00:23 +0200
+Message-Id: <20200827150030.282762-4-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200827150030.282762-1-hch@lst.de>
 References: <20200827150030.282762-1-hch@lst.de>
@@ -49,217 +49,380 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-default_file_splice_write is the last piece of generic code that uses
-set_fs to make the uaccess routines operate on kernel pointers.  It
-implements a "fallback loop" for splicing from files that do not actually
-provide a proper splice_read method.  The usual file systems and other
-high bandwith instances all provide a ->splice_read, so this just removes
-support for various device drivers and procfs/debugfs files.  If splice
-support for any of those turns out to be important it can be added back
-by switching them to the iter ops and using generic_file_splice_read.
+Add a CONFIG_SET_FS option that is selected by architecturess that
+implement set_fs, which is all of them initially.  If the option is not
+set stubs for routines related to overriding the address space are
+provided so that architectures can start to opt out of providing set_fs.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- fs/read_write.c    |   2 +-
- fs/splice.c        | 130 +++++----------------------------------------
- include/linux/fs.h |   2 -
- 3 files changed, 15 insertions(+), 119 deletions(-)
+ arch/Kconfig            |  3 +++
+ arch/alpha/Kconfig      |  1 +
+ arch/arc/Kconfig        |  1 +
+ arch/arm/Kconfig        |  1 +
+ arch/arm64/Kconfig      |  1 +
+ arch/c6x/Kconfig        |  1 +
+ arch/csky/Kconfig       |  1 +
+ arch/h8300/Kconfig      |  1 +
+ arch/hexagon/Kconfig    |  1 +
+ arch/ia64/Kconfig       |  1 +
+ arch/m68k/Kconfig       |  1 +
+ arch/microblaze/Kconfig |  1 +
+ arch/mips/Kconfig       |  1 +
+ arch/nds32/Kconfig      |  1 +
+ arch/nios2/Kconfig      |  1 +
+ arch/openrisc/Kconfig   |  1 +
+ arch/parisc/Kconfig     |  1 +
+ arch/powerpc/Kconfig    |  1 +
+ arch/riscv/Kconfig      |  1 +
+ arch/s390/Kconfig       |  1 +
+ arch/sh/Kconfig         |  1 +
+ arch/sparc/Kconfig      |  1 +
+ arch/um/Kconfig         |  1 +
+ arch/x86/Kconfig        |  1 +
+ arch/xtensa/Kconfig     |  1 +
+ include/linux/uaccess.h | 18 ++++++++++++++++++
+ 26 files changed, 45 insertions(+)
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 702c4301d9eb6b..8c61f67453e3d3 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1077,7 +1077,7 @@ ssize_t vfs_iter_write(struct file *file, struct iov_iter *iter, loff_t *ppos,
- }
- EXPORT_SYMBOL(vfs_iter_write);
+diff --git a/arch/Kconfig b/arch/Kconfig
+index af14a567b493fc..3fab619a6aa51a 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -24,6 +24,9 @@ config KEXEC_ELF
+ config HAVE_IMA_KEXEC
+ 	bool
  
--ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
-+static ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
- 		  unsigned long vlen, loff_t *pos, rwf_t flags)
- {
- 	struct iovec iovstack[UIO_FASTIOV];
-diff --git a/fs/splice.c b/fs/splice.c
-index d7c8a7c4db07ff..412df7b48f9eb7 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -342,89 +342,6 @@ const struct pipe_buf_operations nosteal_pipe_buf_ops = {
- };
- EXPORT_SYMBOL(nosteal_pipe_buf_ops);
++config SET_FS
++	bool
++
+ config HOTPLUG_SMT
+ 	bool
  
--static ssize_t kernel_readv(struct file *file, const struct kvec *vec,
--			    unsigned long vlen, loff_t offset)
--{
--	mm_segment_t old_fs;
--	loff_t pos = offset;
--	ssize_t res;
--
--	old_fs = get_fs();
--	set_fs(KERNEL_DS);
--	/* The cast to a user pointer is valid due to the set_fs() */
--	res = vfs_readv(file, (const struct iovec __user *)vec, vlen, &pos, 0);
--	set_fs(old_fs);
--
--	return res;
--}
--
--static ssize_t default_file_splice_read(struct file *in, loff_t *ppos,
--				 struct pipe_inode_info *pipe, size_t len,
--				 unsigned int flags)
--{
--	struct kvec *vec, __vec[PIPE_DEF_BUFFERS];
--	struct iov_iter to;
--	struct page **pages;
--	unsigned int nr_pages;
--	unsigned int mask;
--	size_t offset, base, copied = 0;
--	ssize_t res;
--	int i;
--
--	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
--		return -EAGAIN;
--
--	/*
--	 * Try to keep page boundaries matching to source pagecache ones -
--	 * it probably won't be much help, but...
--	 */
--	offset = *ppos & ~PAGE_MASK;
--
--	iov_iter_pipe(&to, READ, pipe, len + offset);
--
--	res = iov_iter_get_pages_alloc(&to, &pages, len + offset, &base);
--	if (res <= 0)
--		return -ENOMEM;
--
--	nr_pages = DIV_ROUND_UP(res + base, PAGE_SIZE);
--
--	vec = __vec;
--	if (nr_pages > PIPE_DEF_BUFFERS) {
--		vec = kmalloc_array(nr_pages, sizeof(struct kvec), GFP_KERNEL);
--		if (unlikely(!vec)) {
--			res = -ENOMEM;
--			goto out;
--		}
--	}
--
--	mask = pipe->ring_size - 1;
--	pipe->bufs[to.head & mask].offset = offset;
--	pipe->bufs[to.head & mask].len -= offset;
--
--	for (i = 0; i < nr_pages; i++) {
--		size_t this_len = min_t(size_t, len, PAGE_SIZE - offset);
--		vec[i].iov_base = page_address(pages[i]) + offset;
--		vec[i].iov_len = this_len;
--		len -= this_len;
--		offset = 0;
--	}
--
--	res = kernel_readv(in, vec, nr_pages, *ppos);
--	if (res > 0) {
--		copied = res;
--		*ppos += res;
--	}
--
--	if (vec != __vec)
--		kfree(vec);
--out:
--	for (i = 0; i < nr_pages; i++)
--		put_page(pages[i]);
--	kvfree(pages);
--	iov_iter_advance(&to, copied);	/* truncates and discards */
--	return res;
--}
--
+diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
+index 9c5f06e8eb9bc0..d6e9fc7a7b19e2 100644
+--- a/arch/alpha/Kconfig
++++ b/arch/alpha/Kconfig
+@@ -39,6 +39,7 @@ config ALPHA
+ 	select OLD_SIGSUSPEND
+ 	select CPU_NO_EFFICIENT_FFS if !ALPHA_EV67
+ 	select MMU_GATHER_NO_RANGE
++	select SET_FS
+ 	help
+ 	  The Alpha is a 64-bit general-purpose processor designed and
+ 	  marketed by the Digital Equipment Corporation of blessed memory,
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index ba00c4e1e1c271..c49f5754a11e40 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -48,6 +48,7 @@ config ARC
+ 	select PCI_SYSCALL if PCI
+ 	select PERF_USE_VMALLOC if ARC_CACHE_VIPT_ALIASING
+ 	select HAVE_ARCH_JUMP_LABEL if ISA_ARCV2 && !CPU_ENDIAN_BE32
++	select SET_FS
+ 
+ config ARCH_HAS_CACHE_LINE_SIZE
+ 	def_bool y
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index e00d94b1665876..87e1478a42dc4f 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -118,6 +118,7 @@ config ARM
+ 	select PCI_SYSCALL if PCI
+ 	select PERF_USE_VMALLOC
+ 	select RTC_LIB
++	select SET_FS
+ 	select SYS_SUPPORTS_APM_EMULATION
+ 	# Above selects are sorted alphabetically; please add new ones
+ 	# according to that.  Thanks.
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 6d232837cbeee8..fbd9e35bef096f 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -192,6 +192,7 @@ config ARM64
+ 	select PCI_SYSCALL if PCI
+ 	select POWER_RESET
+ 	select POWER_SUPPLY
++	select SET_FS
+ 	select SPARSE_IRQ
+ 	select SWIOTLB
+ 	select SYSCTL_EXCEPTION_TRACE
+diff --git a/arch/c6x/Kconfig b/arch/c6x/Kconfig
+index 6444ebfd06a665..48d66bf0465d68 100644
+--- a/arch/c6x/Kconfig
++++ b/arch/c6x/Kconfig
+@@ -22,6 +22,7 @@ config C6X
+ 	select GENERIC_CLOCKEVENTS
+ 	select MODULES_USE_ELF_RELA
+ 	select MMU_GATHER_NO_RANGE if MMU
++	select SET_FS
+ 
+ config MMU
+ 	def_bool n
+diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
+index 3d5afb5f568543..2836f6e76fdb2d 100644
+--- a/arch/csky/Kconfig
++++ b/arch/csky/Kconfig
+@@ -78,6 +78,7 @@ config CSKY
+ 	select PCI_DOMAINS_GENERIC if PCI
+ 	select PCI_SYSCALL if PCI
+ 	select PCI_MSI if PCI
++	select SET_FS
+ 
+ config LOCKDEP_SUPPORT
+ 	def_bool y
+diff --git a/arch/h8300/Kconfig b/arch/h8300/Kconfig
+index d11666d538fea8..7945de067e9fcc 100644
+--- a/arch/h8300/Kconfig
++++ b/arch/h8300/Kconfig
+@@ -25,6 +25,7 @@ config H8300
+ 	select HAVE_ARCH_KGDB
+ 	select HAVE_ARCH_HASH
+ 	select CPU_NO_EFFICIENT_FFS
++	select SET_FS
+ 	select UACCESS_MEMCPY
+ 
+ config CPU_BIG_ENDIAN
+diff --git a/arch/hexagon/Kconfig b/arch/hexagon/Kconfig
+index 667cfc511cf999..f2afabbadd430e 100644
+--- a/arch/hexagon/Kconfig
++++ b/arch/hexagon/Kconfig
+@@ -31,6 +31,7 @@ config HEXAGON
+ 	select GENERIC_CLOCKEVENTS_BROADCAST
+ 	select MODULES_USE_ELF_RELA
+ 	select GENERIC_CPU_DEVICES
++	select SET_FS
+ 	help
+ 	  Qualcomm Hexagon is a processor architecture designed for high
+ 	  performance and low power across a wide variety of applications.
+diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
+index 5b4ec80bf5863a..22a6853840e235 100644
+--- a/arch/ia64/Kconfig
++++ b/arch/ia64/Kconfig
+@@ -56,6 +56,7 @@ config IA64
+ 	select NEED_DMA_MAP_STATE
+ 	select NEED_SG_DMA_LENGTH
+ 	select NUMA if !FLATMEM
++	select SET_FS
+ 	default y
+ 	help
+ 	  The Itanium Processor Family is Intel's 64-bit successor to
+diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
+index 6f2f38d05772ab..dcf4ae8c9b215f 100644
+--- a/arch/m68k/Kconfig
++++ b/arch/m68k/Kconfig
+@@ -32,6 +32,7 @@ config M68K
+ 	select OLD_SIGSUSPEND3
+ 	select OLD_SIGACTION
+ 	select MMU_GATHER_NO_RANGE if MMU
++	select SET_FS
+ 
+ config CPU_BIG_ENDIAN
+ 	def_bool y
+diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
+index d262ac0c8714bd..7e3d4583abf3e6 100644
+--- a/arch/microblaze/Kconfig
++++ b/arch/microblaze/Kconfig
+@@ -46,6 +46,7 @@ config MICROBLAZE
+ 	select CPU_NO_EFFICIENT_FFS
+ 	select MMU_GATHER_NO_RANGE if MMU
+ 	select SPARSE_IRQ
++	select SET_FS
+ 
+ # Endianness selection
+ choice
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index c95fa3a2484cf0..fbc26391b588f8 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -87,6 +87,7 @@ config MIPS
+ 	select MODULES_USE_ELF_RELA if MODULES && 64BIT
+ 	select PERF_USE_VMALLOC
+ 	select RTC_LIB
++	select SET_FS
+ 	select SYSCTL_EXCEPTION_TRACE
+ 	select VIRT_TO_BUS
+ 
+diff --git a/arch/nds32/Kconfig b/arch/nds32/Kconfig
+index e30298e99e1bdf..e8e541fd2267d0 100644
+--- a/arch/nds32/Kconfig
++++ b/arch/nds32/Kconfig
+@@ -48,6 +48,7 @@ config NDS32
+ 	select HAVE_FUNCTION_GRAPH_TRACER
+ 	select HAVE_FTRACE_MCOUNT_RECORD
+ 	select HAVE_DYNAMIC_FTRACE
++	select SET_FS
+ 	help
+ 	  Andes(nds32) Linux support.
+ 
+diff --git a/arch/nios2/Kconfig b/arch/nios2/Kconfig
+index c6645141bb2a88..c7c6ba6bec9dfc 100644
+--- a/arch/nios2/Kconfig
++++ b/arch/nios2/Kconfig
+@@ -27,6 +27,7 @@ config NIOS2
+ 	select USB_ARCH_HAS_HCD if USB_SUPPORT
+ 	select CPU_NO_EFFICIENT_FFS
+ 	select MMU_GATHER_NO_RANGE if MMU
++	select SET_FS
+ 
+ config GENERIC_CSUM
+ 	def_bool y
+diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
+index 7e94fe37cb2fdf..6233c62931803f 100644
+--- a/arch/openrisc/Kconfig
++++ b/arch/openrisc/Kconfig
+@@ -39,6 +39,7 @@ config OPENRISC
+ 	select ARCH_WANT_FRAME_POINTERS
+ 	select GENERIC_IRQ_MULTI_HANDLER
+ 	select MMU_GATHER_NO_RANGE if MMU
++	select SET_FS
+ 
+ config CPU_BIG_ENDIAN
+ 	def_bool y
+diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
+index 3b0f53dd70bc9b..be70af482b5a9a 100644
+--- a/arch/parisc/Kconfig
++++ b/arch/parisc/Kconfig
+@@ -63,6 +63,7 @@ config PARISC
+ 	select HAVE_FTRACE_MCOUNT_RECORD if HAVE_DYNAMIC_FTRACE
+ 	select HAVE_KPROBES_ON_FTRACE
+ 	select HAVE_DYNAMIC_FTRACE_WITH_REGS
++	select SET_FS
+ 
+ 	help
+ 	  The PA-RISC microprocessor is designed by Hewlett-Packard and used
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 1f48bbfb3ce99d..3f09d6fdf89405 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -249,6 +249,7 @@ config PPC
+ 	select PCI_SYSCALL			if PCI
+ 	select PPC_DAWR				if PPC64
+ 	select RTC_LIB
++	select SET_FS
+ 	select SPARSE_IRQ
+ 	select SYSCTL_EXCEPTION_TRACE
+ 	select THREAD_INFO_IN_TASK
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index df18372861d8d2..ea0c1ad456d838 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -82,6 +82,7 @@ config RISCV
+ 	select PCI_MSI if PCI
+ 	select RISCV_INTC
+ 	select RISCV_TIMER if RISCV_SBI
++	select SET_FS
+ 	select SPARSEMEM_STATIC if 32BIT
+ 	select SPARSE_IRQ
+ 	select SYSCTL_EXCEPTION_TRACE
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index 3d86e12e8e3c21..fd81385a7787cb 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -185,6 +185,7 @@ config S390
+ 	select OLD_SIGSUSPEND3
+ 	select PCI_DOMAINS		if PCI
+ 	select PCI_MSI			if PCI
++	select SET_FS
+ 	select SPARSE_IRQ
+ 	select SYSCTL_EXCEPTION_TRACE
+ 	select THREAD_INFO_IN_TASK
+diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+index d20927128fce05..2bd1653f3b3fea 100644
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -71,6 +71,7 @@ config SUPERH
+ 	select PERF_EVENTS
+ 	select PERF_USE_VMALLOC
+ 	select RTC_LIB
++	select SET_FS
+ 	select SPARSE_IRQ
+ 	help
+ 	  The SuperH is a RISC processor targeted for use in embedded systems
+diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
+index efeff2c896a544..3e0cf0319a278a 100644
+--- a/arch/sparc/Kconfig
++++ b/arch/sparc/Kconfig
+@@ -49,6 +49,7 @@ config SPARC
+ 	select LOCKDEP_SMALL if LOCKDEP
+ 	select NEED_DMA_MAP_STATE
+ 	select NEED_SG_DMA_LENGTH
++	select SET_FS
+ 
+ config SPARC32
+ 	def_bool !64BIT
+diff --git a/arch/um/Kconfig b/arch/um/Kconfig
+index eb51fec759484a..3aefcd81566809 100644
+--- a/arch/um/Kconfig
++++ b/arch/um/Kconfig
+@@ -19,6 +19,7 @@ config UML
+ 	select GENERIC_CPU_DEVICES
+ 	select GENERIC_CLOCKEVENTS
+ 	select HAVE_GCC_PLUGINS
++	select SET_FS
+ 	select TTY # Needed for line.c
+ 
+ config MMU
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 7101ac64bb209d..f85c13355732fe 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -237,6 +237,7 @@ config X86
+ 	select HAVE_ARCH_KCSAN			if X86_64
+ 	select X86_FEATURE_NAMES		if PROC_FS
+ 	select PROC_PID_ARCH_STATUS		if PROC_FS
++	select SET_FS
+ 	imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
+ 
+ config INSTRUCTION_DECODER
+diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
+index e997e0119c0251..94bad4d66b4bde 100644
+--- a/arch/xtensa/Kconfig
++++ b/arch/xtensa/Kconfig
+@@ -41,6 +41,7 @@ config XTENSA
+ 	select IRQ_DOMAIN
+ 	select MODULES_USE_ELF_RELA
+ 	select PERF_USE_VMALLOC
++	select SET_FS
+ 	select VIRT_TO_BUS
+ 	help
+ 	  Xtensa processors are 32-bit RISC machines designed by Tensilica
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index 94b28541165929..70073c802b48ed 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -8,6 +8,7 @@
+ 
+ #include <asm/uaccess.h>
+ 
++#ifdef CONFIG_SET_FS
  /*
-  * Send 'sd->len' bytes to socket from 'sd->file' at position 'sd->pos'
-  * using sendpage(). Return the number of bytes sent.
-@@ -788,33 +705,6 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 
- EXPORT_SYMBOL(iter_file_splice_write);
- 
--static int write_pipe_buf(struct pipe_inode_info *pipe, struct pipe_buffer *buf,
--			  struct splice_desc *sd)
--{
--	int ret;
--	void *data;
--	loff_t tmp = sd->pos;
--
--	data = kmap(buf->page);
--	ret = __kernel_write(sd->u.file, data + buf->offset, sd->len, &tmp);
--	kunmap(buf->page);
--
--	return ret;
--}
--
--static ssize_t default_file_splice_write(struct pipe_inode_info *pipe,
--					 struct file *out, loff_t *ppos,
--					 size_t len, unsigned int flags)
--{
--	ssize_t ret;
--
--	ret = splice_from_pipe(pipe, out, ppos, len, flags, write_pipe_buf);
--	if (ret > 0)
--		*ppos += ret;
--
--	return ret;
--}
--
- /**
-  * generic_splice_sendpage - splice data from a pipe to a socket
-  * @pipe:	pipe to splice from
-@@ -836,15 +726,23 @@ ssize_t generic_splice_sendpage(struct pipe_inode_info *pipe, struct file *out,
- 
- EXPORT_SYMBOL(generic_splice_sendpage);
- 
-+static int warn_unsupported(struct file *file, const char *op)
+  * Force the uaccess routines to be wired up for actual userspace access,
+  * overriding any possible set_fs(KERNEL_DS) still lingering around.  Undone
+@@ -25,6 +26,23 @@ static inline void force_uaccess_end(mm_segment_t oldfs)
+ {
+ 	set_fs(oldfs);
+ }
++#else /* CONFIG_SET_FS */
++typedef struct {
++	/* empty dummy */
++} mm_segment_t;
++
++#define uaccess_kernel()		(false)
++#define user_addr_max()			(TASK_SIZE_MAX)
++
++static inline mm_segment_t force_uaccess_begin(void)
 +{
-+	pr_debug_ratelimited(
-+		"splice %s not supported for file %pD4 (pid: %d comm: %.20s)\n",
-+		op, file, current->pid, current->comm);
-+	return -EINVAL;
++	return (mm_segment_t) { };
 +}
 +
- /*
-  * Attempt to initiate a splice from pipe to file.
-  */
- static long do_splice_from(struct pipe_inode_info *pipe, struct file *out,
- 			   loff_t *ppos, size_t len, unsigned int flags)
- {
--	if (out->f_op->splice_write)
--		return out->f_op->splice_write(pipe, out, ppos, len, flags);
--	return default_file_splice_write(pipe, out, ppos, len, flags);
-+	if (unlikely(!out->f_op->splice_write))
-+		return warn_unsupported(out, "write");
-+	return out->f_op->splice_write(pipe, out, ppos, len, flags);
- }
++static inline void force_uaccess_end(mm_segment_t oldfs)
++{
++}
++#endif /* CONFIG_SET_FS */
  
  /*
-@@ -866,9 +764,9 @@ static long do_splice_to(struct file *in, loff_t *ppos,
- 	if (unlikely(len > MAX_RW_COUNT))
- 		len = MAX_RW_COUNT;
- 
--	if (in->f_op->splice_read)
--		return in->f_op->splice_read(in, ppos, pipe, len, flags);
--	return default_file_splice_read(in, ppos, pipe, len, flags);
-+	if (unlikely(!in->f_op->splice_read))
-+		return warn_unsupported(in, "read");
-+	return in->f_op->splice_read(in, ppos, pipe, len, flags);
- }
- 
- /**
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e019ea2f1347e6..d33cc3e8ed410b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1894,8 +1894,6 @@ ssize_t rw_copy_check_uvector(int type, const struct iovec __user * uvector,
- 
- extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
- extern ssize_t vfs_write(struct file *, const char __user *, size_t, loff_t *);
--extern ssize_t vfs_readv(struct file *, const struct iovec __user *,
--		unsigned long, loff_t *, rwf_t);
- extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
- 				   loff_t, size_t, unsigned int);
- extern ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
+  * Architectures should provide two primitives (raw_copy_{to,from}_user())
 -- 
 2.28.0
 
