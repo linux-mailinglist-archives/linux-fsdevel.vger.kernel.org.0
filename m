@@ -2,108 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 99990254882
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 17:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F146254931
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 17:22:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbgH0PG5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 11:06:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35322 "EHLO
+        id S1728525AbgH0PWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 11:22:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726828AbgH0PEa (ORCPT
+        with ESMTP id S1728498AbgH0PWQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 11:04:30 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47B4EC061264
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 08:04:18 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id w186so3563959pgb.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 08:04:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=KtUav8kJRw7NW9MJAIseBMSxLDruLjM6HXWwKu/0M74=;
-        b=GQ0jmdkWMjQEAalY++3/Ht0h8crzz739ENSMCZK40b0dOvb1c0kZUmimmf9K8t4Zgx
-         Fao+oOBxd4WqUDkaMoDp6QkT7HgLYirHRqq+Fk9tpRQi8On7xp9MwFMWUauS7YXIVztA
-         W9VmcStAzDZlNyQOegil/seXWpDF/Iz/wobtU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=KtUav8kJRw7NW9MJAIseBMSxLDruLjM6HXWwKu/0M74=;
-        b=VpB4WbMBznsobFpEDOzNpJmpV4D9+shSLgnqfqkIPyBHkQ/SS7MYNIR/LM2zunveKo
-         yu15GeCPCcjQZcigXu5aD/C9eyEudfQkMzTo2pNufIsWFkH1ueUaV2tspV8+tAIqAEzG
-         U2lBS/nGPCsM/bmVdvGYHR1KIwaKUvJdp4z2tc5xCP559SYTi3kX2BzFC2rtd52JkPDa
-         o77awHD65rws4e9CMnnw7uO7/zaBdic+gmPgc5SupCrZGlCu30KRtx/kBQMZDteAGc3W
-         Td5VIzh+p2nCXNM426Ob1xtgIlKvXBAcVx1MG6ISyTBZZexj12BvdWuCyesVV+5FtQP1
-         S1yg==
-X-Gm-Message-State: AOAM533Fi/R/vVso8Onj2FVu4mDrcNsDEwWA5Ddh9I7IGJa7KSpFpmVl
-        5fpC8HFxcrQnGlcs/Jx39RaPBw==
-X-Google-Smtp-Source: ABdhPJwXBmp6C1isCRM1EzGs2j/sEIzbekMjfQYDts14g/FnXYPAwZwvsuLxGAshJVtz3JQiRyN6iw==
-X-Received: by 2002:a63:1822:: with SMTP id y34mr15725223pgl.364.1598540657751;
-        Thu, 27 Aug 2020 08:04:17 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o15sm298606pgr.62.2020.08.27.08.04.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Aug 2020 08:04:16 -0700 (PDT)
-Date:   Thu, 27 Aug 2020 08:04:15 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <asarai@suse.de>,
-        io-uring@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] io_uring: allow disabling rings during the
- creation
-Message-ID: <202008270803.6FD7F63@keescook>
-References: <20200813153254.93731-1-sgarzare@redhat.com>
- <20200813153254.93731-4-sgarzare@redhat.com>
- <202008261248.BB37204250@keescook>
- <20200827071802.6tzntmixnxc67y33@steredhat.lan>
+        Thu, 27 Aug 2020 11:22:16 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 812A7C061264
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 08:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=hr+K8xZvT4MYX8Ij8MMIA1OqQ5725XNfBq+GwMpLg/w=; b=pSc90PLmkNnb/PNagAY0B00Q1G
+        hZ9fZL8CO0zyt6rHKjwcq6WTTKowrsFXp5F4++H/E7jqPhtCjGEoQwPGQbKeNHybojOGHouQMOmCS
+        bEhHL8yhXsfIUGKuhtghTc7TF6gxwiBYjIOc6RNUsLcz413J2SX57K0kUS3IkOJNdVG0Q4DYnzcwk
+        G9K9na7ksvua+1XTt1gJQo4chld2GIfZGRgmTb6RAutx9rfbun5TAm5GJiqpDVJeP6+Y0PaEXFLjf
+        rnkWaxl7Yr8tjirdrZx6/IzckEnannYFcFvfVGP7807ZOdtxgy5EzgzIne4Z4rRs74Vi/+eby5Ahz
+        WJHVmzMg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kBJj5-0005wT-GD; Thu, 27 Aug 2020 15:22:07 +0000
+Date:   Thu, 27 Aug 2020 16:22:07 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christian Schoenebeck <qemu_oss@crudebyte.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
+        stefanha@redhat.com, mszeredi@redhat.com, vgoyal@redhat.com,
+        gscrivan@redhat.com, dwalsh@redhat.com, chirantan@chromium.org
+Subject: Re: xattr names for unprivileged stacking?
+Message-ID: <20200827152207.GJ14765@casper.infradead.org>
+References: <20200728105503.GE2699@work-vm>
+ <12480108.dgM6XvcGr8@silver>
+ <20200812143323.GF2810@work-vm>
+ <27541158.PQPtYaGs59@silver>
+ <20200816225620.GA28218@dread.disaster.area>
+ <20200816230908.GI17456@casper.infradead.org>
+ <20200817002930.GB28218@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200827071802.6tzntmixnxc67y33@steredhat.lan>
+In-Reply-To: <20200817002930.GB28218@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 27, 2020 at 09:18:02AM +0200, Stefano Garzarella wrote:
-> On Wed, Aug 26, 2020 at 12:50:31PM -0700, Kees Cook wrote:
-> > On Thu, Aug 13, 2020 at 05:32:54PM +0200, Stefano Garzarella wrote:
-> > > This patch adds a new IORING_SETUP_R_DISABLED flag to start the
-> > > rings disabled, allowing the user to register restrictions,
-> > > buffers, files, before to start processing SQEs.
-> > > 
-> > > When IORING_SETUP_R_DISABLED is set, SQE are not processed and
-> > > SQPOLL kthread is not started.
-> > > 
-> > > The restrictions registration are allowed only when the rings
-> > > are disable to prevent concurrency issue while processing SQEs.
-> > > 
-> > > The rings can be enabled using IORING_REGISTER_ENABLE_RINGS
-> > > opcode with io_uring_register(2).
-> > > 
-> > > Suggested-by: Jens Axboe <axboe@kernel.dk>
-> > > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> > 
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > 
-> > Where can I find the io_uring selftests? I'd expect an additional set of
-> > patches to implement the selftests for this new feature.
+On Mon, Aug 17, 2020 at 10:29:30AM +1000, Dave Chinner wrote:
+> To implement ADS, we'd likely consider adding a new physical inode
+> "ADS fork" which, internally, maps to a separate directory
+> structure. This provides us with the ADS namespace for each inode
+> and a mechanism that instantiates a physical inode per ADS. IOWs,
+> each ADS can be referenced by the VFS natively and independently as
+> an inode (native "file as a directory" semantics). Hence existing
+> create/unlink APIs work for managing ADS, readdir() can list all
+> your ADS, you can keep per ADS xattrs, etc....
 > 
-> Since the io_uring selftests are stored in the liburing repository, I created
-> a new test case (test/register-restrictions.c) in my fork and I'll send it
-> when this series is accepted. It's available in this repository:
+> IOWs, with a filesystem inode fork implementation like this for ADS,
+> all we really need is for the VFS to pass a magic command to
+> ->lookup() to tell us to use the ADS namespace attached to the inode
+> rather than use the primary inode type/state to perform the
+> operation.
 > 
-> https://github.com/stefano-garzarella/liburing (branch: io_uring_restrictions)
+> Hence all the ADS support infrastructure is essentially dentry cache
+> infrastructure allowing a dentry to be both a file and directory,
+> and providing the pathname resolution that recognises an ADS
+> redirection. Name that however you want - we've got to do an on-disk
+> format change to support ADS, so we can tell the VFS we support ADS
+> or not. And we have no cares about existing names in the filesystem
+> conflicting with the ADS pathname identifier because it's a mkfs
+> time decision. Given that special flags are needed for the openat()
+> call to resolve an ADS (e.g. O_ALT), we know if we should parse the
+> ADS identifier as an ADS the moment it is seen...
 
-Ah-ha; thank you! Looks good. :)
+I think this is equivalent to saying "Linux will never support ADS".
+Al has some choice words on having the dentry cache support objects which
+are both files and directories.  You run into some "fun" locking issues.
+And there's lots of things you just don't want to permit, like mounting
+a new filesystem on top of some ADS, or chrooting a process into an ADS,
+or renaming an ADS into a different file.
 
--- 
-Kees Cook
+I think what would satisfy people is allowing actual "alternate data
+streams" to exist in files.  You always start out by opening a file,
+then the presentation layer is a syscall that lets you enumerate the
+data streams available for this file, and another syscall that returns
+an fd for one of those streams.
+
+As long as nobody gets the bright idea to be able to link that fd into
+the directory structure somewhere, this should avoid any problems with
+unwanted things being done to an ADS.  Chunks of your implementation
+described above should be fine for this.
+
+I thought through some of this a while back, and came up with this list:
+
+> Work as expected:
+> mmap(), read(), write(), close(), splice(), sendfile(), fallocate(),
+> ftruncate(), dup(), dup2(), dup3(), utimensat(), futimens(), select(),
+> poll(), lseek(), fcntl(): F_DUPFD, F_GETFD, F_GETFL, F_SETFL, F_SETLK,
+> F_SETLKW, F_GETLK, F_GETOWN, F_SETOWN, F_GETSIG, F_SETSIG, F_SETLEASE,
+> F_GETLEASE)
+>
+> Return error if fd refers to the non-default stream:
+> linkat(), symlinkat(), mknodat(), mkdirat()
+>
+> Remove a stream from a file:
+> unlinkat()
+>
+> Open an existing stream in a file or create a new stream in a file:
+> openat()
+>
+> fstat()
+> st_ino may be different for different names.  st_dev may be different.
+> st_mode will match the object for files, even if it is changed after
+> creation.  For directories, it will match except that execute permission
+> will be removed and S_IFMT will be S_ISREG (do we want to define a
+> new S_ISSTRM?).  st_nlink will be 1.  st_uid and st_gid will match.
+> It will have its own st_atime/st_mtime/st_ctime.  Accessing a stream
+> will not update its parent's atime/mtime/ctime.
+>
+> renameat()
+> If olddirfd + oldpath refers to a stream then newdirfd + newpath must
+> refer to a stream within the same parent object.  If that stream exists,
+> it is removed.  If olddirfd + oldpath does not refer to a stream,
+> then newdirfd + newpath must not refer to a stream.
+>
+> The two file specifications must resolve to the same parent object.
+> It is possible to use renameat() to rename a stream within an object,
+> but not to move a stream from one object to another.  If newpath refers
+> to an existing named stream, it is removed.
+
+I don't seem to have come up with an actual syscall for enumerating the
+stream names.  I kind of think a fresh syscall might be the right way to
+go.
+
+For the benefit of shell scripts, I think an argument to 'cat' to open
+an ADS and an lsads command should be enough.
+
+Oh, and I would think we might want i_blocks of the 'host' inode to
+reflect the blocks allocated to all the data streams attached to the
+inode.  That should address at least parts of the data exfiltration
+concern.
