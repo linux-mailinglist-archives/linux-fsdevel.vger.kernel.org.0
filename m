@@ -2,85 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C67A254981
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 17:32:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D4372549B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 17:42:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbgH0PcA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 11:32:00 -0400
-Received: from verein.lst.de ([213.95.11.211]:38724 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726157AbgH0Pb7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 11:31:59 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 9011468BEB; Thu, 27 Aug 2020 17:31:55 +0200 (CEST)
-Date:   Thu, 27 Aug 2020 17:31:55 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: remove the last set_fs() in common code, and remove it for x86
- and powerpc v2
-Message-ID: <20200827153155.GA8661@lst.de>
-References: <20200827150030.282762-1-hch@lst.de>
+        id S1726995AbgH0PmG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 11:42:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41206 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbgH0PmG (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Aug 2020 11:42:06 -0400
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050::465:202])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7AD3C061264;
+        Thu, 27 Aug 2020 08:41:59 -0700 (PDT)
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Bcn5t3dKJzQl8P;
+        Thu, 27 Aug 2020 17:41:54 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id OOd35QMJSPWg; Thu, 27 Aug 2020 17:41:50 +0200 (CEST)
+Date:   Fri, 28 Aug 2020 01:41:39 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Ross Zwisler <zwisler@google.com>, linux-kernel@vger.kernel.org,
+        Mattias Nissler <mnissler@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Gordon <bmgordon@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Jesse Barnes <jsbarnes@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Micah Morton <mortonm@google.com>,
+        Raul Rangel <rrangel@google.com>, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH v8 1/2] Add a "nosymfollow" mount option.
+Message-ID: <20200827154139.vwuflrlvj257krnw@yavin.dot.cyphar.com>
+References: <20200819164317.637421-1-zwisler@google.com>
+ <20200826204819.GA4414@google.com>
+ <20200827015940.GY1236603@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ylgwp663kchqyfqy"
 Content-Disposition: inline
-In-Reply-To: <20200827150030.282762-1-hch@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200827015940.GY1236603@ZenIV.linux.org.uk>
+X-MBO-SPAM-Probability: 
+X-Rspamd-Score: -7.65 / 15.00 / 15.00
+X-Rspamd-Queue-Id: EB1AD179E
+X-Rspamd-UID: d7ba09
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Diffstat:
 
-Actually no diffstat here as David Howells pointed out.  Here we go:
+--ylgwp663kchqyfqy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- arch/Kconfig                           |    3 
- arch/alpha/Kconfig                     |    1 
- arch/arc/Kconfig                       |    1 
- arch/arm/Kconfig                       |    1 
- arch/arm64/Kconfig                     |    1 
- arch/c6x/Kconfig                       |    1 
- arch/csky/Kconfig                      |    1 
- arch/h8300/Kconfig                     |    1 
- arch/hexagon/Kconfig                   |    1 
- arch/ia64/Kconfig                      |    1 
- arch/m68k/Kconfig                      |    1 
- arch/microblaze/Kconfig                |    1 
- arch/mips/Kconfig                      |    1 
- arch/nds32/Kconfig                     |    1 
- arch/nios2/Kconfig                     |    1 
- arch/openrisc/Kconfig                  |    1 
- arch/parisc/Kconfig                    |    1 
- arch/powerpc/include/asm/processor.h   |    7 -
- arch/powerpc/include/asm/thread_info.h |    5 -
- arch/powerpc/include/asm/uaccess.h     |   78 ++++++++-----------
- arch/powerpc/kernel/signal.c           |    3 
- arch/powerpc/lib/sstep.c               |    6 -
- arch/riscv/Kconfig                     |    1 
- arch/s390/Kconfig                      |    1 
- arch/sh/Kconfig                        |    1 
- arch/sparc/Kconfig                     |    1 
- arch/um/Kconfig                        |    1 
- arch/x86/ia32/ia32_aout.c              |    1 
- arch/x86/include/asm/page_32_types.h   |   11 ++
- arch/x86/include/asm/page_64_types.h   |   38 +++++++++
- arch/x86/include/asm/processor.h       |   60 ---------------
- arch/x86/include/asm/thread_info.h     |    2 
- arch/x86/include/asm/uaccess.h         |   26 ------
- arch/x86/kernel/asm-offsets.c          |    3 
- arch/x86/lib/getuser.S                 |   28 ++++---
- arch/x86/lib/putuser.S                 |   21 +++--
- arch/xtensa/Kconfig                    |    1 
- drivers/misc/lkdtm/bugs.c              |    4 +
- drivers/misc/lkdtm/usercopy.c          |    4 +
- fs/read_write.c                        |   69 ++++++++++-------
- fs/splice.c                            |  130 +++------------------------------
- include/linux/fs.h                     |    2 
- include/linux/uaccess.h                |   18 ++++
- lib/test_bitmap.c                      |   10 ++
- 44 files changed, 235 insertions(+), 316 deletions(-)
+On 2020-08-27, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Wed, Aug 26, 2020 at 02:48:19PM -0600, Ross Zwisler wrote:
+>=20
+> > Al, now that the changes to fs/namei.c have landed and we're past the m=
+erge
+> > window for v5.9, what are your thoughts on this patch and the associate=
+d test?
+>=20
+> Humm...  should that be nd->path.mnt->mnt_flags or link->mnt->mnt_flags?
+> Usually it's the same thing, but they might differ.  IOW, is that about t=
+he
+> directory we'd found it in, or is it about the link itself?
+
+Now that you mention it, I think link->mnt->mnt_flags makes more sense.
+The restriction should apply in the context of whatever filesystem
+contains the symlink, and that would matches FreeBSD's semantics (at
+least as far as I can tell from a quick look at sys/kern/vfs_lookup.c).
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--ylgwp663kchqyfqy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCX0fULwAKCRCdlLljIbnQ
+EnZCAP4+fXAsTWkSGZi6M5GB5CszbuzshNh586bsaZW11vQU7QEArCC+2bjdBmuT
+jArxG3CPumBoXcAHgAJquKQGdsh50wM=
+=NnGT
+-----END PGP SIGNATURE-----
+
+--ylgwp663kchqyfqy--
