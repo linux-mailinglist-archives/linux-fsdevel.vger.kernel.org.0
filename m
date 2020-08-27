@@ -2,95 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DACDE254AC5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 18:36:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09F35254B18
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 18:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbgH0QgA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 12:36:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49744 "EHLO
+        id S1727001AbgH0QtG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 12:49:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbgH0QgA (ORCPT
+        with ESMTP id S1726853AbgH0QtC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 12:36:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D7F5C061264
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 09:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=POz5KlPWoab8xpm5ZTfkzmvuB0rA075XsfUD5LnpLLo=; b=FYrSMosgDevmZFyCi3r9m2B4uK
-        hGA3iJjNl1ZeH8l4XKM0Qzrlx1Ik3Pu0iex7E4LWHGYUblom9uerLX4+4cAsKYf88Zap+VVYL6j8+
-        /poqUQABAXSAIr+KoayB0inzRaWWTbM0VvwOArTc575EzBo1O/lapqOW24QomJ6vOXKmxHGJCHQ0r
-        9N8icesr+hxh9EWGWO2/wYAOSgOZ4jSvfZYEPmeEt+w+MhzUwue4tqAvejdfiHwDttHzD9xSy6ZFs
-        tE0mZxYR8tGfJpBjOKw0y2Sfd2IhIiBttNJ6ym87OyedWYFpLWWzp1W30wliSNksV3idnwsCkWOPL
-        u9SL1TAg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kBKsC-0002hC-CN; Thu, 27 Aug 2020 16:35:36 +0000
-Date:   Thu, 27 Aug 2020 17:35:36 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Frank van der Linden <fllinden@amazon.com>,
-        Dave Chinner <david@fromorbit.com>, Greg Kurz <groug@kaod.org>,
-        linux-fsdevel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Subject: Re: file forks vs. xattr (was: xattr names for unprivileged
- stacking?)
-Message-ID: <20200827163536.GK14765@casper.infradead.org>
-References: <20200824222924.GF199705@mit.edu>
- <3331978.UQhOATu6MC@silver>
- <20200827140107.GH14765@casper.infradead.org>
- <159855515.fZZa9nWDzX@silver>
- <20200827144452.GA1236603@ZenIV.linux.org.uk>
- <20200827162935.GC2837@work-vm>
+        Thu, 27 Aug 2020 12:49:02 -0400
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00F39C061264
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 09:49:01 -0700 (PDT)
+Received: by mail-io1-xd42.google.com with SMTP id d18so6483738iop.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 09:49:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=/xGpOY5v3rYoFqTd5QFQEPCm9lS0N53r2cL3cEdKtPw=;
+        b=mx+FJh+qUi0eylsu7L5BZKzqa0QvffqcQd1piV8hJ6N9eT9+EcGAtY/vTkjhlPEDuW
+         i4bJW+Hw5vkXE3QOjP00yzvGOx8NdmAa5xDpJxtAH1b5y/tb+6lcmCXNX04NRc+y3ZGO
+         Tz4AfmmZltBKDUOJrlkUu4MwuW1406+6ICT01nQWL7eOtK1K7beaV3+fgjuvh9xLhMGb
+         1rdiHTd4Wm9XHDp5nDwcQsgX1umcQciurhny3pj2qPHE/IeYwdyvZVs437s79yJd4Pd1
+         qQ4F0jgXjb7kjVvvsCi6v5HMTX/eP5Xw6c88+9OJjIQmO9nUDfZHpZ+yJF9iMaD1WVC5
+         Sovw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/xGpOY5v3rYoFqTd5QFQEPCm9lS0N53r2cL3cEdKtPw=;
+        b=Inq4BcAQpzZUSzAux3rnF73YhnJyYe4yTQP2imI/vPuwX3fs8E5kFTHRodcKsJniQy
+         OkintdtpythBwsz6+z0LEPkW0CcsR/X9gEKbma/E3EEGWsSmOCF5ehQkh+NdZVP5JiP/
+         bPQu8VRdPZKo8mrb/+Zs0a5pH1S4nDLcql/pjyFNoIzFam878n6lpt00UiwwVt+1+07i
+         HHW4SoiZgnUXdJwuw2a/MVciTx/NcOFHJEp0YP2BdwdfNTEgnI/73NimJXXBa1tg2omw
+         vWcEHqWNkmzDyffDTYMLQTHgwRgklsSCJIr1c2TfPmKmtCpivTgyOYmAv4b0LNb06w9U
+         ANkA==
+X-Gm-Message-State: AOAM533H9oMLUaqzfA6rSk7alXZ0JTzEVDYbdQ/1beUI+NJw0DP68oxt
+        x39ISnjFjokzXE4/Njvd1y//IQ==
+X-Google-Smtp-Source: ABdhPJx+UxHqjKJ/wh4vVsrsKz1c7ecfzQJTGkjRy2EK647UYYIw8L0JJ2F4rqhbalqI+shH+xs5XQ==
+X-Received: by 2002:a5d:924c:: with SMTP id e12mr17853974iol.28.1598546940951;
+        Thu, 27 Aug 2020 09:49:00 -0700 (PDT)
+Received: from google.com ([2601:285:8380:9270::f2a2])
+        by smtp.gmail.com with ESMTPSA id 187sm1430125iow.34.2020.08.27.09.48.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Aug 2020 09:49:00 -0700 (PDT)
+Date:   Thu, 27 Aug 2020 10:48:57 -0600
+From:   Ross Zwisler <zwisler@google.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
+        Mattias Nissler <mnissler@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Gordon <bmgordon@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Jesse Barnes <jsbarnes@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Micah Morton <mortonm@google.com>,
+        Raul Rangel <rrangel@google.com>, Shuah Khan <shuah@kernel.org>
+Subject: Re: [PATCH v8 1/2] Add a "nosymfollow" mount option.
+Message-ID: <20200827164857.GA414369@google.com>
+References: <20200819164317.637421-1-zwisler@google.com>
+ <20200826204819.GA4414@google.com>
+ <20200827015940.GY1236603@ZenIV.linux.org.uk>
+ <20200827154139.vwuflrlvj257krnw@yavin.dot.cyphar.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200827162935.GC2837@work-vm>
+In-Reply-To: <20200827154139.vwuflrlvj257krnw@yavin.dot.cyphar.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 27, 2020 at 05:29:35PM +0100, Dr. David Alan Gilbert wrote:
-> * Al Viro (viro@zeniv.linux.org.uk) wrote:
-> > On Thu, Aug 27, 2020 at 04:23:24PM +0200, Christian Schoenebeck wrote:
+On Fri, Aug 28, 2020 at 01:41:39AM +1000, Aleksa Sarai wrote:
+> On 2020-08-27, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > On Wed, Aug 26, 2020 at 02:48:19PM -0600, Ross Zwisler wrote:
 > > 
-> > > Be invited for making better suggestions. But one thing please: don't start 
-> > > getting offending.
-> > > 
-> > > No matter which delimiter you'd choose, something will break. It is just about 
-> > > how much will it break und how likely it'll be in practice, not if.
+> > > Al, now that the changes to fs/namei.c have landed and we're past the merge
+> > > window for v5.9, what are your thoughts on this patch and the associated test?
 > > 
-> > ... which means NAK.  We don't break userland without very good reasons and
-> > support for anyone's pet feature is not one of those.  It's as simple as
-> > that.
+> > Humm...  should that be nd->path.mnt->mnt_flags or link->mnt->mnt_flags?
+> > Usually it's the same thing, but they might differ.  IOW, is that about the
+> > directory we'd found it in, or is it about the link itself?
 > 
-> I'm curious how much people expect to use these forks from existing
-> programs - do people expect to be able to do something and edit a fork
-> using their favorite editor or cat/grep/etc them?
-> 
-> I say that because if they do, then having a special syscall to open
-> the fork wont fly; and while I agree that any form of suffix is a lost
-> cause, I wonder what else is possible (although if it wasn't for the
-> internal difficulties, I do have a soft spot for things that look like
-> both files and directories showing the forks; but I realise I'm weird
-> there).
+> Now that you mention it, I think link->mnt->mnt_flags makes more sense.
+> The restriction should apply in the context of whatever filesystem
+> contains the symlink, and that would matches FreeBSD's semantics (at
+> least as far as I can tell from a quick look at sys/kern/vfs_lookup.c).
 
-I also have fond memories of !SquashFS but the problem is that some
-people want named streams on _directories_, which means that these
-directories need to be both directories-of-files and directories-of-streams.
-That's harder to disambiguate.
-
-I think providing two new tools (or variants on existing tools) --
-streamcat and streamls should be enough to enable operating on named
-streams from the command line.  If other tools want to provide the ability
-to operate on named streams directly, that would be up to that tool.
+Yep, changing this to link->mnt->mnt_flags makes sense to me, as you're right
+that we care about the link itself and not the link's parent directory.  Thank
+you for the review, and I'll send out v9 momentarily.
