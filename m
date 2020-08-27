@@ -2,66 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA467254459
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 13:33:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46C9525447E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 13:47:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbgH0LdK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 07:33:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58346 "EHLO
+        id S1728901AbgH0LrE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 07:47:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728700AbgH0LcR (ORCPT
+        with ESMTP id S1728833AbgH0Lqg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 07:32:17 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2729AC061232;
-        Thu, 27 Aug 2020 04:01:18 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id m22so7018697eje.10;
-        Thu, 27 Aug 2020 04:01:18 -0700 (PDT)
+        Thu, 27 Aug 2020 07:46:36 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50863C06123B;
+        Thu, 27 Aug 2020 04:07:38 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id e23so6314675ejb.4;
+        Thu, 27 Aug 2020 04:07:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=cc:subject:to:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=edStvBe16F0DYe/Tb0S52V60X6Qfj/1Yjsd3cDbffB0=;
-        b=Mo7bwIXOuWz4IVnwnNBFImsBmAtzEfPNf9csfDXHRs3BannEZyzHNkl40GYOcpjZuN
-         kWougdSqVmjN0MMoVvwGXxoGZ2zpFAkjMq7qyGjyBDvVwjF6f/Rp3JNdr1Hm2l0Fecs/
-         Hu8GnrIsG16Z5YQbSGOJSxnMNGO7RX0teGbiQtV7SxXhEZU8PidP8+6YfEgeRQaBx0SX
-         DXRkeTllDgvBP5tBNpoH/AAqueJ/KDSMz2rHIxSrOKnDrztt3mPYADkcm5Ji2D7f4FfU
-         45wRQewIk5tb9Ply6xfBWnqFh17xs23VU/Rj2Qmg9RQOSQ6FTJfH3d7iO/HM6AC6n/zL
-         98pw==
+        bh=zU4FrI+Vt0q4ZIfI3neU7juoeszoQlRoZHrRORmmAiY=;
+        b=bcFGAOIY0PA9yEz5optZo1DSd/8VixxnGGte+kgKoaQ7M5kTYw1we/PXCzUSTfhNzD
+         GLT7ALEjw0uyiHXWOaYkBBJU49xaCtWvzYkpC+XXFmSoS+7VPka3z5YHfGQjTvPe9bf8
+         kkBxfCtqngr7N3SZnbT62fG5e1/4T2Xe2z4ceEwKc86EgAxw65+vVSjseEaxEFnYPbLZ
+         VMm894viweqrPSZPrCGqCdDHWpqa8A0wBbvmQomiTI4hdwBX5WdL7zOlD0WkLgyGqrKu
+         e53EnhA+83GyV8QV9nRKZWtG+LEEBUA/M8WhigMv43kG+w9LjT/tn9cSIpY2ATKJLwv0
+         A34Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:cc:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=edStvBe16F0DYe/Tb0S52V60X6Qfj/1Yjsd3cDbffB0=;
-        b=Z2Mzw46ctyCwYvUTI9IifXIKzacAZQzYAAcvh0tuniLQVWM7C9SKyBaf4AmssfruEe
-         ykJZfSrhLdLXJ08SqU7IaAn8/QVqMzSZUMwsEZo73vmjw1v36lbP5yarXSdu8ONNCKJb
-         yeb/JWFjEO76eHuNRWfR4jc53L82+5G96pTgorGTam6ChXwdlFnTdH6bwA86MNf6Madv
-         SgzryH9y4zAWhPeOEjC4vyihqATcGrpWITVhgCm5wwdj5URm1h2upjw28jPJrhN8seZs
-         AVWzrK270fjjJLhklpK8iSgMgcQtkKrgwAW6GEN7iWd40WEJj8Ha5fhAOWI/4DTt+qo6
-         SciQ==
-X-Gm-Message-State: AOAM531AaG+upNfRfvv3XtkItmQAQkGnKni+Kob4fEKrWa2fjBEe7R/p
-        1jBKvRwrygtrcAH2g2VjVIWTSF0tGdg=
-X-Google-Smtp-Source: ABdhPJzvLj8h3de0+iIa7UgFE76P78v3iCDf3ADkSIcXBdpvWS6EsYsqBs2M9GhNlo8KQ+NeWy5xKw==
-X-Received: by 2002:a17:906:d050:: with SMTP id bo16mr21613988ejb.367.1598526076845;
-        Thu, 27 Aug 2020 04:01:16 -0700 (PDT)
+        bh=zU4FrI+Vt0q4ZIfI3neU7juoeszoQlRoZHrRORmmAiY=;
+        b=DLeudYSvY9fBMw9Q4nF6/FW21tBPTPnOJUb2BH1UffLcWIXJdEmtk0e5qSpIq54Ls4
+         jC/3cy6+P8RQbBl+XfH1xwRz2rGxZKawv07AdT+ghjRrUqGNLzcGrU23ff6qASVf1301
+         2hf2FCAw0yHM9CREXWZ2lg2md26vhG37IWWULtcSusOYwoBUfnPfKvgyDbOPbzG8sNMu
+         DhrrTCT6s7YNjCMIPSK2ZQh2PwjL0OA3FLevg8xvqEKprg6XUnEcduGjLqFZsxwnzGfN
+         HSPqCXQt8WuW6sVdEUiajzv8/MV2eEzAT/NAdWTgzYpFP52iela0wyGDZt04L9P+hgNb
+         KS0w==
+X-Gm-Message-State: AOAM531gUso2ZOoNie6pIpvHxYkxPY9UpWqhyDo1AnR/EKxCbCt6Timb
+        CstF8KRCrewuWGbAOqv7fT1naDceOkU=
+X-Google-Smtp-Source: ABdhPJwT6p4KhAQ5MJW8SB7wFk8kzQQcWNVaGdSoGx1XHA1zFrepRsElrQsCU9H28chCMDFhHNxrwg==
+X-Received: by 2002:a17:906:6415:: with SMTP id d21mr7967668ejm.550.1598526455654;
+        Thu, 27 Aug 2020 04:07:35 -0700 (PDT)
 Received: from ?IPv6:2001:a61:253c:4c01:2cf1:7133:9da2:66a9? ([2001:a61:253c:4c01:2cf1:7133:9da2:66a9])
-        by smtp.gmail.com with ESMTPSA id j92sm1250562edc.82.2020.08.27.04.01.15
+        by smtp.gmail.com with ESMTPSA id x21sm1596064ejy.97.2020.08.27.04.07.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Aug 2020 04:01:15 -0700 (PDT)
+        Thu, 27 Aug 2020 04:07:35 -0700 (PDT)
 Cc:     mtk.manpages@gmail.com, linux-fsdevel@vger.kernel.org,
         linux-man@vger.kernel.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/5] Add manpage for open_tree(2)
+Subject: Re: [PATCH 4/5] Add manpage for fsopen(2) and fsmount(2)
 To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
 References: <159827188271.306468.16962617119460123110.stgit@warthog.procyon.org.uk>
+ <159827190508.306468.12755090833140558156.stgit@warthog.procyon.org.uk>
 From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <402ceb27-0f63-e7f0-c58d-de0fe4c86f56@gmail.com>
-Date:   Thu, 27 Aug 2020 13:01:12 +0200
+Message-ID: <335e623c-9676-4af9-4a0a-082bb7fc750f@gmail.com>
+Date:   Thu, 27 Aug 2020 13:07:33 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <159827188271.306468.16962617119460123110.stgit@warthog.procyon.org.uk>
+In-Reply-To: <159827190508.306468.12755090833140558156.stgit@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -72,36 +73,31 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hello David,
 
-Can I ask that you please reply to each of my mails, rather than 
-just sending out a new patch series (which of course I would also
-like  you to do). Some things that I mentioned in the last mails
-got lost, and I end up having to repeat them.
-
-So, even where I say "please change this", could you please reply with
-"done", or a reason why you declined the suggested change, is useful.
-But in any case, a few words in reply to explain the other changes
-that you make would be helpful.
-
-Also, some of my questions now will get a little more complex, and as
-well as you updating the pages, I think a little discussion may be
-required in some cases.
-
-On 8/24/20 2:24 PM, David Howells wrote:
-> Add a manual page to document the open_tree() system call.
+On 8/24/20 2:25 PM, David Howells wrote:
+> Add a manual page to document the fsopen() and fsmount() system calls.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > ---
 > 
->  man2/open_tree.2 |  249 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 249 insertions(+)
->  create mode 100644 man2/open_tree.2
+>  man2/fsmount.2 |    1 
+>  man2/fsopen.2  |  245 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 246 insertions(+)
+>  create mode 100644 man2/fsmount.2
+>  create mode 100644 man2/fsopen.2
 > 
-> diff --git a/man2/open_tree.2 b/man2/open_tree.2
+> diff --git a/man2/fsmount.2 b/man2/fsmount.2
 > new file mode 100644
-> index 000000000..d480bd82f
+> index 000000000..2bf59fc3e
 > --- /dev/null
-> +++ b/man2/open_tree.2
-> @@ -0,0 +1,249 @@
+> +++ b/man2/fsmount.2
+> @@ -0,0 +1 @@
+> +.so man2/fsopen.2
+> diff --git a/man2/fsopen.2 b/man2/fsopen.2
+> new file mode 100644
+> index 000000000..1d1bba238
+> --- /dev/null
+> +++ b/man2/fsopen.2
+> @@ -0,0 +1,245 @@
 > +'\" t
 > +.\" Copyright (c) 2020 David Howells <dhowells@redhat.com>
 > +.\"
@@ -127,9 +123,9 @@ On 8/24/20 2:24 PM, David Howells wrote:
 > +.\" the source, must acknowledge the copyright and authors of this work.
 > +.\" %%%LICENSE_END
 > +.\"
-> +.TH OPEN_TREE 2 2020-08-24 "Linux" "Linux Programmer's Manual"
+> +.TH FSOPEN 2 2020-08-07 "Linux" "Linux Programmer's Manual"
 > +.SH NAME
-> +open_tree \- Pick or clone mount object and attach to fd
+> +fsopen, fsmount \- Filesystem parameterisation and mount creation
 > +.SH SYNOPSIS
 > +.nf
 > +.B #include <sys/types.h>
@@ -137,283 +133,284 @@ On 8/24/20 2:24 PM, David Howells wrote:
 > +.B #include <unistd.h>
 > +.BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
 > +.PP
-> +.BI "int open_tree(int " dirfd ", const char *" pathname ", unsigned int " flags );
+> +.BI "int fsopen(const char *" fsname ", unsigned int " flags );
+> +.PP
+> +.BI "int fsmount(int " fd ", unsigned int " flags ", unsigned int " mount_attrs );
 > +.fi
 > +.PP
 > +.IR Note :
 > +There are no glibc wrappers for these system calls.
 > +.SH DESCRIPTION
-> +.BR open_tree ()
-> +picks the mount object specified by the pathname and attaches it to a new file
-
-The terminology "pick" is unusual, and you never really explain what
-it means.  Is there better terminology? In any case, can you add a few
-words to explain what the term (('pick" or whatever alternative you
-come up with) means.
-
-> +descriptor or clones it and attaches the clone to the file descriptor.  The
-
-Please replace "it" by a noun (phrase) -- maybe: "the mount object"?
-
-> +resultant file descriptor is indistinguishable from one produced by
-> +.BR open "(2) with " O_PATH .
-
-What is the significance of that last piece? Can you add some words
-about why the fact that the resulting FD is indistinguishable from one
-produced by open() O_PATH matters or is useful?
-
 > +.PP
-> +In the case that the mount object is cloned, the clone will be "unmounted" and
+> +.BR fsopen ()
+> +creates a blank filesystem configuration context within the kernel for the
+> +filesystem named in the
+> +.I fsname
+> +parameter, puts it into creation mode and attaches it to a file descriptor,
+> +which it then returns.  
 
-You place "unmounted" in quotes. Why? Is this to signify that the the 
-unmount is somehow different from other unmounts? If so, please
-explain how it is different.  If not, then I think we can lose the double
-quotes.
+In the preceding sentence, "it" is used three times, with two *different* 
+referents. That's quite hard on the reader.
 
-> +destroyed when the file descriptor is closed if it is not otherwise mounted
-> +somewhere by calling
-> +.BR move_mount (2).
-> +.PP
-> +To select a mount object, no permissions are required on the object referred
+How about:
 
-Here you use the word "select". Is this the same as "pick"? If yes, please
-use the same term.
+[[
+.BR fsopen ()
+creates a blank filesystem configuration context within the kernel for the
+filesystem named in the
+.I fsname
+parameter, puts the context into creation mode and 
+attaches it to a file descriptor;
+.BR fsopen ()
+returns the file descriptor as the function result.  
+]]
 
-> +to by the path, but execute (search) permission is required on all of the
-
-s/the path/.I pathname/ ?
-
-(Where pathname == "the pathname argument)
-
-> +directories in
-> +.I pathname
-> +that lead to the object.
-> +.PP
-> +Appropriate privilege (Linux: the
-
-s/Linux: //
-(This is a Linux specific system call...)
-
-> +.B CAP_SYS_ADMIN
-> +capability) is required to clone mount objects.
-> +.PP
-> +.BR open_tree ()
-> +uses
-> +.IR pathname ", " dirfd " and " flags
-> +to locate the target object in one of a variety of ways:
-> +.TP
-> +[*] By absolute path.
-> +.I pathname
-> +points to an absolute path and
-> +.I dirfd
-> +is ignored.  The object is looked up by name, starting from the root of the
-> +filesystem as seen by the calling process.
-> +.TP
-> +[*] By cwd-relative path.
-> +.I pathname
-> +points to a relative path and
-> +.IR dirfd " is " AT_FDCWD .
-> +The object is looked up by name, starting from the current working directory.
-> +.TP
-> +[*] By dir-relative path.
-> +.I pathname
-> +points to relative path and
-> +.I dirfd
-> +indicates a file descriptor pointing to a directory.  The object is looked up
-> +by name, starting from the directory specified by
-> +.IR dirfd .
-> +.TP
-> +[*] By file descriptor.
-> +.I pathname
-> +is "",
-> +.I dirfd
-> +indicates a file descriptor and
-> +.B AT_EMPTY_PATH
-> +is set in
+> The file descriptor can be marked close-on-exec by
+> +setting
+> +.B FSOPEN_CLOEXEC
+> +in
 > +.IR flags .
-> +The mount attached to the file descriptor is queried directly.  The file
-> +descriptor may point to any type of file, not just a directory.
-
-I want to check here. Is it really *any* type of file? Can it be a UNIX 
-domain socket or a char/block device or a FIFO?
-
 > +.PP
-> +.I flags
-> +can be used to control the operation of the function and to influence a
-> +path-based lookup.  A value for
-> +.I flags
-> +is constructed by OR'ing together zero or more of the following constants:
-> +.TP
-> +.BR AT_EMPTY_PATH
-> +.\" commit 65cfc6722361570bfe255698d9cd4dccaf47570d
-> +If
-> +.I pathname
-> +is an empty string, operate on the file referred to by
-> +.IR dirfd
-> +(which may have been obtained from
-> +.BR open "(2) with"
-> +.BR O_PATH ", from " fsmount (2)
-> +or from another
-
-s/another/a previous call to/
-
-> +.BR open_tree ()).
-> +If
-> +.I dirfd
-> +is
-> +.BR AT_FDCWD ,
-> +the call operates on the current working directory.
-> +In this case,
-> +.I dirfd
-> +can refer to any type of file, not just a directory.
-> +This flag is Linux-specific; define
-> +.B _GNU_SOURCE
-> +.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
-> +to obtain its definition.
-> +.TP
-> +.BR AT_NO_AUTOMOUNT
-> +Don't automount the final ("basename") component of
-> +.I pathname
-> +if it is a directory that is an automount point.  This flag allows the
-> +automount point itself to be picked up or a mount cloned that is rooted on the
-> +automount point.  The
-> +.B AT_NO_AUTOMOUNT
-> +flag has no effect if the mount point has already been mounted over.
-> +This flag is Linux-specific; define
-> +.B _GNU_SOURCE
-> +.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
-> +to obtain its definition.
-> +.TP
-> +.B AT_SYMLINK_NOFOLLOW
-> +If
-> +.I pathname
-> +is a symbolic link, do not dereference it: instead pick up or clone a mount
-> +rooted on the link itself.
-> +.TP
-> +.B OPEN_TREE_CLOEXEC
-> +Set the close-on-exec flag for the new file descriptor.  This will cause the
-> +file descriptor to be closed automatically when a process exec's.
-> +.TP
-> +.B OPEN_TREE_CLONE
-> +Rather than directly attaching the selected object to the file descriptor,
-> +clone the object, set the root of the new mount object to that point and
-
-Could you expand on "that point" a little. It's not quite clear to me what
-you mean there.
-
-> +attach the clone to the file descriptor.
-> +.TP
-> +.B AT_RECURSIVE
-> +This is only permitted in conjunction with OPEN_TREE_CLONE.  It causes the
-> +entire mount subtree rooted at the selected spot to be cloned rather than just
-
-Is there a better word than "spot"?
-
-> +that one mount object.
-> +.SH RETURN VALUE
-> +On success, the new file descriptor is returned.  On error, \-1 is returned,
-> +and
-> +.I errno
-> +is set appropriately.
-> +.SH ERRORS
-> +.TP
-> +.B EACCES
-> +Search permission is denied for one of the directories
-> +in the path prefix of
-> +.IR pathname .
-> +(See also
-> +.BR path_resolution (7).)
-> +.TP
-> +.B EBADF
-> +.I dirfd
-> +is not a valid open file descriptor.
-> +.TP
-> +.B EFAULT
-> +.I pathname
-> +is NULL or
-> +.IR pathname
-> +point to a location outside the process's accessible address space.
-> +.TP
-> +.B EINVAL
-> +Reserved flag specified in
-> +.IR flags .
-> +.TP
-> +.B ELOOP
-> +Too many symbolic links encountered while traversing the pathname.
-> +.TP
-> +.B ENAMETOOLONG
-> +.I pathname
-> +is too long.
-> +.TP
-> +.B ENOENT
-> +A component of
-> +.I pathname
-> +does not exist, or
-> +.I pathname
-> +is an empty string and
-> +.B AT_EMPTY_PATH
-> +was not specified in
-> +.IR flags .
-> +.TP
-> +.B ENOMEM
-> +Out of memory (i.e., kernel memory).
-> +.TP
-> +.B ENOTDIR
-> +A component of the path prefix of
-> +.I pathname
-> +is not a directory or
-> +.I pathname
-> +is relative and
-> +.I dirfd
-> +is a file descriptor referring to a file other than a directory.
-> +.SH VERSIONS
-> +.BR open_tree ()
-> +was added to Linux in kernel 5.2.
-> +.SH CONFORMING TO
-> +.BR open_tree ()
-> +is Linux-specific.
-> +.SH NOTES
-> +Glibc does not (yet) provide a wrapper for the
-> +.BR open_tree ()
-> +system call; call it using
-> +.BR syscall (2).
-
-What's the current status with respect to glibc support? Is it coming/is
-someone working on this?
-
-> +.SH EXAMPLE
-
-s/EXAMPLE/EXAMPLES/
-(That's the standard section header name these days.)
-
-> +The
-> +.BR open_tree ()
-> +function can be used like the following:
-
-The following example does a recursive bind mount, right?
-Can you please add some words to say that explicitly.
-
+> +After calling fsopen(), the file descriptor should be passed to the
+> +.BR fsconfig (2)
+> +system call, using that to specify the desired filesystem and security
+> +parameters.
 > +.PP
+> +When the parameters are all set, the
+> +.BR fsconfig ()
+> +system call should then be called again with
+> +.B FSCONFIG_CMD_CREATE
+> +as the command argument to effect the creation.
 > +.RS
-> +.nf
-> +fd1 = open_tree(AT_FDCWD, "/mnt", 0);
-> +fd2 = open_tree(fd1, "",
-> +                AT_EMPTY_PATH | OPEN_TREE_CLONE | AT_RECURSIVE);
-> +move_mount(fd2, "", AT_FDCWD, "/mnt2", MOVE_MOUNT_F_EMPTY_PATH);
-> +.fi
+> +.PP
+> +.BR "[!]\ NOTE" :
+> +Depending on the filesystem type and parameters, this may rather share an
+
+Please replace "this" with a noun (phrase), since it is a little
+unclear what "this" refers to.
+
+> +existing in-kernel filesystem representation instead of creating a new one.
+> +In such a case, the parameters specified may be discarded or may overwrite the
+> +parameters set by a previous mount - at the filesystem's discretion.
 > +.RE
 > +.PP
-> +This would attach the path point for "/mnt" to fd1, then it would copy the
+> +The file descriptor also serves as a channel by which more comprehensive error,
+> +warning and information messages may be retrieved from the kernel using
+> +.BR read (2).
+> +.PP
+> +Once the creation command has been successfully run on a context, the context
+> +will not accept further configuration.  At
+> +this point,
+> +.BR fsmount ()
+> +should be called to create a mount object.
+> +.PP
+> +.BR fsmount ()
+> +takes the file descriptor returned by
+> +.BR fsopen ()
+> +and creates a mount object for the filesystem root specified there.  The
+> +attributes of the mount object are set from the
+> +.I mount_attrs
+> +parameter.  The attributes specify the propagation and mount restrictions to
+> +be applied to accesses through this mount.
 
-What is a "path point"? This is not standard terminology. Can you
-replace this with something better?
+Can we please have a list of the available attributes here, with a 
+description of each attribute.
 
-> +entire subtree at the point referred to by fd1 and attach that to fd2; lastly,
-> +it would attach the clone to "/mnt2".
+> +.PP
+> +The mount object is then attached to a new file descriptor that looks like one
+> +created by
+> +.BR open "(2) with " O_PATH " or " open_tree (2).
+> +This can be passed to
+> +.BR move_mount (2)
+> +to attach the mount object to a mountpoint, thereby completing the process.
+
+s/mountpoint/mount point/
+
+In the preceding paragraph, the description is a bit unclear. (Again, 
+overuse of pronouns ("this) does not help. I think it
+would be better to say something like:
+
+[[
+.BR fsmount()
+attaches the mount object to a new file descriptor that looks like one
+created by
+.BR open "(2) with " O_PATH " or " open_tree (2).
+This file descriptor can be passed to
+.BR move_mount (2)
+to attach the mount object to a mount point, thereby completing the process.
+]]
+
+But, please also replace "the process" with a more meaningful phrase.
+
+> +.PP
+> +The file descriptor returned by fsmount() is marked close-on-exec if
+> +FSMOUNT_CLOEXEC is specified in
+> +.IR flags .
+> +.PP
+> +After fsmount() has completed, the context created by fsopen() is reset and
+> +moved to reconfiguration state, allowing the new superblock to be
+> +reconfigured.  See
+> +.BR fspick (2)
+> +for details.
+> +.PP
+> +To use either of these calls, the caller requires the appropriate privilege
+> +(Linux: the
+
+s/Linux: //
+(this is after all a Linux-specific system call)
+
+> +.B CAP_SYS_ADMIN
+> +capability).
+> +.PP
+> +.SS Message Retrieval Interface
+> +The context file descriptor may be queried for message strings at any time by
+
+s/The context file descriptor/
+  The context file descriptor returned by fsopen()/
+
+> +calling
+> +.BR read (2)
+> +on the file descriptor.  This will return formatted messages that are prefixed
+> +to indicate their class:
+> +.TP
+> +\fB"e <message>"\fP
+> +An error message string was logged.
+> +.TP
+> +\fB"i <message>"\fP
+> +An informational message string was logged.
+> +.TP
+> +\fB"w <message>"\fP
+> +An warning message string was logged.
+> +.PP
+> +Messages are removed from the queue as they're read.
+
+What if there are no pending error messages to retrieve? What does
+read() do in that case? Please add an explanation here.
+
+> +.SH RETURN VALUE
+> +On success, both functions return a file descriptor.  On error, \-1 is
+> +returned, and
+> +.I errno
+> +is set appropriately> +.SH ERRORS
+> +The error values given below result from filesystem type independent
+> +errors.
+> +Each filesystem type may have its own special errors and its
+> +own special behavior.
+> +See the Linux kernel source code for details.
+> +.TP
+> +.B EBUSY
+> +The context referred to by
+> +.I fd
+> +is not in the right state to be used by
+> +.BR fsmount ().
+> +.TP
+> +.B EFAULT
+> +One of the pointer arguments points outside the user address space.
+> +.TP
+> +.B EINVAL
+> +.I flags
+> +had an invalid flag set.
+> +.TP
+> +.B EINVAL
+> +.I mount_attrs,
+> +includes invalid
+> +.BR MOUNT_ATTR_*
+> +flags.
+> +.TP
+> +.B EMFILE
+> +The system has too many open files to create more.
+> +.TP
+> +.B ENFILE
+> +The process has too many open files to create more.
+> +.TP
+> +.B ENODEV
+> +The filesystem
+> +.I fsname
+> +is not available in the kernel.
+> +.TP
+> +.B ENOMEM
+> +The kernel could not allocate sufficient memory to complete the call.
+> +.TP
+> +.B EPERM
+> +The caller does not have the required privileges.
+
+Please name the required capability.
+
+> +.SH CONFORMING TO
+> +These functions are Linux-specific and should not be used in programs intended
+> +to be portable.
+> +.SH VERSIONS
+> +.BR fsopen "(), and " fsmount ()
+> +were added to Linux in kernel 5.2.
+> +.SH NOTES
+> +Glibc does not (yet) provide a wrapper for the
+> +.BR fsopen "() or " fsmount "()"
+> +system calls; call them using
+> +.BR syscall (2).
+> +.SH EXAMPLES
+> +To illustrate the process, here's an example whereby this can be used to mount
+
+Please replace "this" by a noun (phrase).
+
+> +an ext4 filesystem on /dev/sdb1 onto /mnt.
+> +.PP
+> +.in +4n
+> +.nf
+> +sfd = fsopen("ext4", FSOPEN_CLOEXEC);
+> +fsconfig(sfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
+> +fsconfig(sfd, FSCONFIG_SET_STRING, "source", "/dev/sdb1", 0);
+> +fsconfig(sfd, FSCONFIG_SET_FLAG, "noatime", NULL, 0);
+> +fsconfig(sfd, FSCONFIG_SET_FLAG, "acl", NULL, 0);
+> +fsconfig(sfd, FSCONFIG_SET_FLAG, "user_attr", NULL, 0);
+> +fsconfig(sfd, FSCONFIG_SET_FLAG, "iversion", NULL, 0);
+> +fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> +mfd = fsmount(sfd, FSMOUNT_CLOEXEC, MS_RELATIME);
+> +move_mount(mfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+> +.fi
+> +.in
+> +.PP
+> +Here, an ext4 context is created first and attached to sfd.  The context is
+> +then told where its source will be, given a bunch of options and a superblock
+> +record object is then created.  Then fsmount() is called to create a mount
+> +object and
+> +.BR move_mount (2)
+> +is called to attach it to its intended mountpoint.
+
+s/mountpoint/mount point/
+
+> +.PP
+> +And here's an example of mounting from an NFS server and setting a Smack
+> +security module label on it too:
+
+Please replace "it" with a noun (phrase).
+
+> +.PP
+> +.in +4n
+> +.nf
+> +sfd = fsopen("nfs", 0);
+> +fsconfig(sfd, FSCONFIG_SET_STRING, "source", "example.com:/pub", 0);
+> +fsconfig(sfd, FSCONFIG_SET_STRING, "nfsvers", "3", 0);
+> +fsconfig(sfd, FSCONFIG_SET_STRING, "rsize", "65536", 0);
+> +fsconfig(sfd, FSCONFIG_SET_STRING, "wsize", "65536", 0);
+> +fsconfig(sfd, FSCONFIG_SET_STRING, "smackfsdef", "foolabel", 0);
+> +fsconfig(sfd, FSCONFIG_SET_FLAG, "rdma", NULL, 0);
+> +fsconfig(sfd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+> +mfd = fsmount(sfd, 0, MS_NODEV);
+> +move_mount(mfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+> +.fi
+> +.in
+> +.PP
 > +.SH SEE ALSO
-> +.BR fsmount (2),
+> +.BR mountpoint (1),
+> +.BR fsconfig (2),
+> +.BR fspick (2),
 > +.BR move_mount (2),
-> +.BR open (2)
+> +.BR open_tree (2),
+> +.BR umount (2),
+> +.BR mount_namespaces (7),
+> +.BR path_resolution (7),
+> +.BR mount (8),
+> +.BR umount (8)
 
 Thanks,
 
