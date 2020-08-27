@@ -2,100 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D4372549B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 17:42:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EA2C254A0C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 17:58:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbgH0PmG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 11:42:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41206 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbgH0PmG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 11:42:06 -0400
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [IPv6:2001:67c:2050::465:202])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7AD3C061264;
-        Thu, 27 Aug 2020 08:41:59 -0700 (PDT)
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Bcn5t3dKJzQl8P;
-        Thu, 27 Aug 2020 17:41:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
-        with ESMTP id OOd35QMJSPWg; Thu, 27 Aug 2020 17:41:50 +0200 (CEST)
-Date:   Fri, 28 Aug 2020 01:41:39 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Ross Zwisler <zwisler@google.com>, linux-kernel@vger.kernel.org,
-        Mattias Nissler <mnissler@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Gordon <bmgordon@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Jesse Barnes <jsbarnes@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Micah Morton <mortonm@google.com>,
-        Raul Rangel <rrangel@google.com>, Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH v8 1/2] Add a "nosymfollow" mount option.
-Message-ID: <20200827154139.vwuflrlvj257krnw@yavin.dot.cyphar.com>
-References: <20200819164317.637421-1-zwisler@google.com>
- <20200826204819.GA4414@google.com>
- <20200827015940.GY1236603@ZenIV.linux.org.uk>
+        id S1727077AbgH0P5x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 11:57:53 -0400
+Received: from enpas.org ([46.38.239.100]:38182 "EHLO mail.enpas.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726321AbgH0P5w (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Aug 2020 11:57:52 -0400
+X-Greylist: delayed 486 seconds by postgrey-1.27 at vger.kernel.org; Thu, 27 Aug 2020 11:57:50 EDT
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        by mail.enpas.org (Postfix) with ESMTPSA id CA564FF9F3;
+        Thu, 27 Aug 2020 15:49:41 +0000 (UTC)
+From:   Max Staudt <max@enpas.org>
+To:     David Sterba <dsterba@suse.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, glaubitz@physik.fu-berlin.de,
+        linux-kernel@vger.kernel.org, Max Staudt <max@enpas.org>,
+        stable@vger.kernel.org
+Subject: [PATCH] fs/affs: Fix basic permission bits to actually work
+Date:   Thu, 27 Aug 2020 17:49:00 +0200
+Message-Id: <20200827154900.28233-1-max@enpas.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ylgwp663kchqyfqy"
-Content-Disposition: inline
-In-Reply-To: <20200827015940.GY1236603@ZenIV.linux.org.uk>
-X-MBO-SPAM-Probability: 
-X-Rspamd-Score: -7.65 / 15.00 / 15.00
-X-Rspamd-Queue-Id: EB1AD179E
-X-Rspamd-UID: d7ba09
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The basic permission bits (protection bits in AmigaOS) have been broken
+in Linux' affs - it would only set bits, but never delete them.
+Also, contrary to the documentation, the Archived bit was not handled.
 
---ylgwp663kchqyfqy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Let's fix this for good, and set the bits such that Linux and classic
+AmigaOS can coexist in the most peaceful manner.
 
-On 2020-08-27, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Wed, Aug 26, 2020 at 02:48:19PM -0600, Ross Zwisler wrote:
->=20
-> > Al, now that the changes to fs/namei.c have landed and we're past the m=
-erge
-> > window for v5.9, what are your thoughts on this patch and the associate=
-d test?
->=20
-> Humm...  should that be nd->path.mnt->mnt_flags or link->mnt->mnt_flags?
-> Usually it's the same thing, but they might differ.  IOW, is that about t=
-he
-> directory we'd found it in, or is it about the link itself?
+Also, update the documentation to represent the current state of things.
 
-Now that you mention it, I think link->mnt->mnt_flags makes more sense.
-The restriction should apply in the context of whatever filesystem
-contains the symlink, and that would matches FreeBSD's semantics (at
-least as far as I can tell from a quick look at sys/kern/vfs_lookup.c).
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Staudt <max@enpas.org>
+---
+ Documentation/filesystems/affs.rst | 16 ++++++++++------
+ fs/affs/amigaffs.c                 | 27 +++++++++++++++++++++++++++
+ fs/affs/file.c                     | 27 ++++++++++++++++++++++++++-
+ 3 files changed, 63 insertions(+), 7 deletions(-)
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+diff --git a/Documentation/filesystems/affs.rst b/Documentation/filesystems/affs.rst
+index 7f1a40dce6d3..5776cbd5fa53 100644
+--- a/Documentation/filesystems/affs.rst
++++ b/Documentation/filesystems/affs.rst
+@@ -110,13 +110,15 @@ The Amiga protection flags RWEDRWEDHSPARWED are handled as follows:
+ 
+   - R maps to r for user, group and others. On directories, R implies x.
+ 
+-  - If both W and D are allowed, w will be set.
++  - W maps to w.
+ 
+   - E maps to x.
+ 
+-  - H and P are always retained and ignored under Linux.
++  - D is ignored.
+ 
+-  - A is always reset when a file is written to.
++  - H, S and P are always retained and ignored under Linux.
++
++  - A is cleared when a file is written to.
+ 
+ User id and group id will be used unless set[gu]id are given as mount
+ options. Since most of the Amiga file systems are single user systems
+@@ -128,11 +130,13 @@ Linux -> Amiga:
+ 
+ The Linux rwxrwxrwx file mode is handled as follows:
+ 
+-  - r permission will set R for user, group and others.
++  - r permission will allow R for user, group and others.
++
++  - w permission will allow W for user, group and others.
+ 
+-  - w permission will set W and D for user, group and others.
++  - x permission of the user will allow E for plain files.
+ 
+-  - x permission of the user will set E for plain files.
++  - D will be allowed for user, group and others.
+ 
+   - All other flags (suid, sgid, ...) are ignored and will
+     not be retained.
+diff --git a/fs/affs/amigaffs.c b/fs/affs/amigaffs.c
+index f708c45d5f66..7952f885e6c6 100644
+--- a/fs/affs/amigaffs.c
++++ b/fs/affs/amigaffs.c
+@@ -420,24 +420,51 @@ affs_mode_to_prot(struct inode *inode)
+ 	u32 prot = AFFS_I(inode)->i_protect;
+ 	umode_t mode = inode->i_mode;
+ 
++	/*
++	 * First, clear all RWED bits for owner, group, other.
++	 * Then, recalculate them afresh.
++	 *
++	 * We'll always clear the delete-inhibit bit for the owner,
++	 * as that is the classic single-user mode AmigaOS protection
++	 * bit and we need to stay compatible with all scenarios.
++	 *
++	 * Since multi-user AmigaOS is an extension, we'll only set
++	 * the delete-allow bit if any of the other bits in the same
++	 * user class (group/other) are used.
++	 */
++	prot &= ~(FIBF_NOEXECUTE | FIBF_NOREAD
++		  | FIBF_NOWRITE | FIBF_NODELETE
++		  | FIBF_GRP_EXECUTE | FIBF_GRP_READ
++		  | FIBF_GRP_WRITE   | FIBF_GRP_DELETE
++		  | FIBF_OTR_EXECUTE | FIBF_OTR_READ
++		  | FIBF_OTR_WRITE   | FIBF_OTR_DELETE);
++
++	/* Classic single-user AmigaOS flags. These are inverted. */
+ 	if (!(mode & 0100))
+ 		prot |= FIBF_NOEXECUTE;
+ 	if (!(mode & 0400))
+ 		prot |= FIBF_NOREAD;
+ 	if (!(mode & 0200))
+ 		prot |= FIBF_NOWRITE;
++
++	/* Multi-user extended flags. Not inverted. */
+ 	if (mode & 0010)
+ 		prot |= FIBF_GRP_EXECUTE;
+ 	if (mode & 0040)
+ 		prot |= FIBF_GRP_READ;
+ 	if (mode & 0020)
+ 		prot |= FIBF_GRP_WRITE;
++	if (mode & 0070)
++		prot |= FIBF_GRP_DELETE;
++
+ 	if (mode & 0001)
+ 		prot |= FIBF_OTR_EXECUTE;
+ 	if (mode & 0004)
+ 		prot |= FIBF_OTR_READ;
+ 	if (mode & 0002)
+ 		prot |= FIBF_OTR_WRITE;
++	if (mode & 0007)
++		prot |= FIBF_OTR_DELETE;
+ 
+ 	AFFS_I(inode)->i_protect = prot;
+ }
+diff --git a/fs/affs/file.c b/fs/affs/file.c
+index a26a0f96c119..9a137e2f1782 100644
+--- a/fs/affs/file.c
++++ b/fs/affs/file.c
+@@ -429,6 +429,25 @@ static int affs_write_begin(struct file *file, struct address_space *mapping,
+ 	return ret;
+ }
+ 
++static int affs_write_end(struct file *file, struct address_space *mapping,
++			  loff_t pos, unsigned int len, unsigned int copied,
++			  struct page *page, void *fsdata)
++{
++	struct inode *inode = mapping->host;
++	int ret;
++
++	ret = generic_write_end(file, mapping, pos, len, copied,
++				page, fsdata);
++
++	/* Clear Archived bit on file writes, as AmigaOS would do */
++	if (AFFS_I(inode)->i_protect & FIBF_ARCHIVED) {
++		AFFS_I(inode)->i_protect &= ~FIBF_ARCHIVED;
++		mark_inode_dirty(inode);
++	}
++
++	return ret;
++}
++
+ static sector_t _affs_bmap(struct address_space *mapping, sector_t block)
+ {
+ 	return generic_block_bmap(mapping,block,affs_get_block);
+@@ -438,7 +457,7 @@ const struct address_space_operations affs_aops = {
+ 	.readpage = affs_readpage,
+ 	.writepage = affs_writepage,
+ 	.write_begin = affs_write_begin,
+-	.write_end = generic_write_end,
++	.write_end = affs_write_end,
+ 	.direct_IO = affs_direct_IO,
+ 	.bmap = _affs_bmap
+ };
+@@ -795,6 +814,12 @@ static int affs_write_end_ofs(struct file *file, struct address_space *mapping,
+ 	if (tmp > inode->i_size)
+ 		inode->i_size = AFFS_I(inode)->mmu_private = tmp;
+ 
++	/* Clear Archived bit on file writes, as AmigaOS would do */
++	if (AFFS_I(inode)->i_protect & FIBF_ARCHIVED) {
++		AFFS_I(inode)->i_protect &= ~FIBF_ARCHIVED;
++		mark_inode_dirty(inode);
++	}
++
+ err_first_bh:
+ 	unlock_page(page);
+ 	put_page(page);
+-- 
+2.20.1
 
---ylgwp663kchqyfqy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCX0fULwAKCRCdlLljIbnQ
-EnZCAP4+fXAsTWkSGZi6M5GB5CszbuzshNh586bsaZW11vQU7QEArCC+2bjdBmuT
-jArxG3CPumBoXcAHgAJquKQGdsh50wM=
-=NnGT
------END PGP SIGNATURE-----
-
---ylgwp663kchqyfqy--
