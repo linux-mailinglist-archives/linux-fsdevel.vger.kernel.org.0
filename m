@@ -2,126 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FEC4253C02
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 04:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3802253C11
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 05:16:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbgH0C7z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Aug 2020 22:59:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34818 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbgH0C7z (ORCPT
+        id S1726834AbgH0DPz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Aug 2020 23:15:55 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:26435 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbgH0DPx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Aug 2020 22:59:55 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC3E9C0612A3;
-        Wed, 26 Aug 2020 19:59:54 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id b16so4366805ioj.4;
-        Wed, 26 Aug 2020 19:59:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=so9l8A4YqPXHm/BfsVqJ0qT+vESqYPxgUIFms4VihHY=;
-        b=miLJ3TxdWtBzFcFP6l4h1cdrKFUYTg1bKrTjkBbUV4l8UFlzJ2Kc5ColaD4rWIwOuY
-         hynwV/u/tZwKYxgA9p3Bg6kBznewcJBrlLjE5NSdkCCXDQkbiPeARRkCJZAFuq/gmvKo
-         hTOs3/qaNJurMR0PrEiJRL1VPdvXDKOwC0F+bAzsadbhI8xYcF4psb5w//+8jIsxrAWt
-         gW4G42HFqixREoJu1KJWi+5G8X6lNYb1os4azkyskdjHwFcBBb2IbbNtzbL/PWirorAy
-         36aqr4GQYg7NNoyXrFNJK5mm5wN8wa4mC7iASxQzXkp3rh89H16JsiHZK5fVHVlNE5Bf
-         oS9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=so9l8A4YqPXHm/BfsVqJ0qT+vESqYPxgUIFms4VihHY=;
-        b=oRxboUWvxHqpSS9Zkky3PvMTWaHtMfb/7qvP9uGzO1ggcWVU9XL12jrfrUjqzMTqSZ
-         6AfUQzWB5ghlDKD65fwup9jMyoa9U0aUfgAgGBPnYDcoEIkYVYh13JOpOOtQPO2r+XGd
-         El20YUphIPzoByZE2xX/Y0FYU+VMgaOort4/qPcQ2gguVrMtKUnL6LGsoki5yAxGmHUd
-         QPBHqeNL0VL5grri7ok9I3fdvZv64OkHjYN07giPwyqHNqracg80g17mvMO2KgpA8v89
-         +YhBajUI1g6xZaKm558K6xuMBREWHexLKVXEyqAmRQzl41RHaIn3s0UBaB945k3s4uJe
-         e8HQ==
-X-Gm-Message-State: AOAM533/9bPQ8wPWVpjWJUd6BO/b3NVWc3YaSHbGrvivu4371a1AKwxW
-        BP3166diCmw4scyVXZ2RdBrc7JCTwjSNoU8K1R0=
-X-Google-Smtp-Source: ABdhPJxdYDdW3vnfKYKnLIYpTXu6fth4mk6UmXCLurNLOw74xNiESboAi1oO51pwWDYByCnacffl88ypXCRb+NJCaoE=
-X-Received: by 2002:a05:6602:26c1:: with SMTP id g1mr15642398ioo.10.1598497193630;
- Wed, 26 Aug 2020 19:59:53 -0700 (PDT)
+        Wed, 26 Aug 2020 23:15:53 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200827031550epoutp03cbd6ba7f35885619c4f613c661318342~vAZlJ2iUF1449214492epoutp03a
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 03:15:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200827031550epoutp03cbd6ba7f35885619c4f613c661318342~vAZlJ2iUF1449214492epoutp03a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1598498150;
+        bh=GZ8Ba8ECy4RfPgNcJZjrCr0xOmy66RiGHAKlrAMPnb8=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=N/FelhPIwo/fqn9z4g6SHJqtoJ3GZ+gLad6NiXZtiWxUJgaJd++dqReqOwGaiyaS7
+         zXh3xIyJbFapjFDtqQnbcTPnaW8rSOV3zx5k9dTR2Ukb6/6LRae0979rV1uXJRsO0g
+         fufMUoAEQW+Owe+w9NEKyf1No+039xAJF+Kr5vw8=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200827031550epcas1p1c393aeadc3593b3e87b95f89eb133ec0~vAZkuqdHs1209312093epcas1p1w;
+        Thu, 27 Aug 2020 03:15:50 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.165]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4BcSY144qRzMqYkY; Thu, 27 Aug
+        2020 03:15:49 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B9.95.28578.565274F5; Thu, 27 Aug 2020 12:15:49 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200827031549epcas1p30dce17a8b2e3db1fd99b1260863bc5a4~vAZj0-NTn2179521795epcas1p3a;
+        Thu, 27 Aug 2020 03:15:49 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200827031549epsmtrp1546877ac1f5af5f2d66d5a3e9b6c8c8f~vAZj0YD7c1840018400epsmtrp1D;
+        Thu, 27 Aug 2020 03:15:49 +0000 (GMT)
+X-AuditID: b6c32a39-8c9ff70000006fa2-c8-5f472565652a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        32.D7.08382.565274F5; Thu, 27 Aug 2020 12:15:49 +0900 (KST)
+Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200827031549epsmtip208b72bcba134430ad1dea8e483790678~vAZjqOk5_1371913719epsmtip2n;
+        Thu, 27 Aug 2020 03:15:49 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
+Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
+        <mori.takahiro@ab.mitsubishielectric.co.jp>,
+        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
+        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200826011830.14646-1-kohada.t2@gmail.com>
+Subject: RE: [PATCH] exfat: fix pointer error checking
+Date:   Thu, 27 Aug 2020 12:15:49 +0900
+Message-ID: <011001d67c20$5cdc56b0$16950410$@samsung.com>
 MIME-Version: 1.0
-References: <20200827013444.24270-1-laoar.shao@gmail.com> <20200827013444.24270-3-laoar.shao@gmail.com>
- <20200827015853.GA14765@casper.infradead.org> <CALOAHbA3Twne1ebM+tMZQPCJkL9ghpeeMJXPRjPX=iz8X9=LJA@mail.gmail.com>
- <20200827024248.GA12131@dread.disaster.area>
-In-Reply-To: <20200827024248.GA12131@dread.disaster.area>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Thu, 27 Aug 2020 10:59:17 +0800
-Message-ID: <CALOAHbA+hhiPeBh6LQcZ46Rni3TTWZu4Y8+vdTYcW5bBP5JHEA@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] xfs: avoid transaction reservation recursion
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linux MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHVVZ9sPe6nCxYyQFpEVfRu64wY6ALX1/06qTavbqA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmvm6qqnu8wcIz8hY/5t5msXhzciqL
+        xZ69J1ksLu+aw2Zx+f8nFotlXyazWGz5d4TVgd3jy5zj7B5tk/+xezQfW8nmsXPWXXaPvi2r
+        GD0+b5ILYIvKsclITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1
+        y8wBukVJoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BoUKBXnJhbXJqXrpecn2tl
+        aGBgZApUmZCTcWO1Z8EVxoqFr8+xNjCuY+xi5OSQEDCRaGt7wtzFyMUhJLCDUeJ60192COcT
+        o8TX0/PZIJxvjBJzf7ezw7Q86utghEjsZZS4N287VP9LRomll7+zgFSxCehK/Puznw3EFhHQ
+        kzh58jrYKGaBRiaJ5Se+MIMkOAUsJa6cuww2VljATGLn3vWsIDaLgKrEidZjQCs4OHiBatbM
+        ygMJ8woISpyc+QRsPrOAvMT2t3OYIS5SkPj5dBkrxC4riQtPJ7FB1IhIzO5sAztOQmAuh0TP
+        zVYWiAYXiUk/3kPZwhKvjm+Bek1K4mV/GzvIXgmBaomP+6HmdzBKvPhuC2EbS9xcv4EVpIRZ
+        QFNi/S59iLCixM7fcxkh1vJJvPvawwoxhVeio00IokRVou/SYSYIW1qiq/0D+wRGpVlIHpuF
+        5LFZSB6YhbBsASPLKkax1ILi3PTUYsMCU+S43sQITqZaljsYp7/9oHeIkYmD8RCjBAezkgiv
+        4EXneCHelMTKqtSi/Pii0pzU4kOMpsCQnsgsJZqcD0zneSXxhqZGxsbGFiZm5mamxkrivA9v
+        KcQLCaQnlqRmp6YWpBbB9DFxcEo1MNUfPCshtbK2WrB9T/lD998bjsz9/vClpLafemjFi5u5
+        ex+w3OEX/LI3VVKt7fKRSe+/5HyS/512WOuGTVCvGM/MaZXr4uY1BZ5+/qfr/8Mv24pXeS7i
+        nbOLcavOmmMm7c+O/V58bh7HrkeRR3PkU/3/Lnplk63nuzmUacaGHA3dGeXK7e1n9Dmt7Z2u
+        LtMttj+7lL2Hc/4qwyB/5jR+L9GH193tnRPaF/9gO9SY3H7scOGH3OqPz4T+zPir9WQmI9fu
+        8tC97dHKUZfPdtst5zfKCXzlH6jz4rWl0cGJgi3sursKX/+O3bJQLPWYuVvikYmJynK+cWdf
+        3dqz4d1FplJ1z5C1FR8fmmsnSq/5n6PEUpyRaKjFXFScCABl4GCsLwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmphkeLIzCtJLcpLzFFi42LZdlhJXjdV1T3e4OVtTosfc2+zWLw5OZXF
+        Ys/ekywWl3fNYbO4/P8Ti8WyL5NZLLb8O8LqwO7xZc5xdo+2yf/YPZqPrWTz2DnrLrtH35ZV
+        jB6fN8kFsEVx2aSk5mSWpRbp2yVwZdxY7VlwhbFi4etzrA2M6xi7GDk5JARMJB71dYDZQgK7
+        GSUaLilAxKUljp04w9zFyAFkC0scPlzcxcgFVPKcUWL/kznsIDVsAroS//7sZwOxRQT0JE6e
+        vM4GUsQs0Mwk8e3ZEmaIji5GiU+f5oJ1cApYSlw5dxnMFhYwk9i5dz0riM0ioCpxovUYI8g2
+        XqCaNbPyQMK8AoISJ2c+YQEJMwMtaNsIdiezgLzE9rdzmCHuVJD4+XQZK8QNVhIXnk5ig6gR
+        kZjd2cY8gVF4FpJJsxAmzUIyaRaSjgWMLKsYJVMLinPTc4sNCwzzUsv1ihNzi0vz0vWS83M3
+        MYIjSktzB+P2VR/0DjEycTAeYpTgYFYS4RW86BwvxJuSWFmVWpQfX1Sak1p8iFGag0VJnPdG
+        4cI4IYH0xJLU7NTUgtQimCwTB6dUAxNP1btrH4R0hOKdstgltV6py03tXl560alZbsOdtIrs
+        q93xKY1PXxmzrIzWalsjdNB9frizo9rj9Vv3GbxTjmFZpuww+cupPnlDbZX+2N1x3+f/dWXc
+        dt/J4Fttza4XnHn+zyb+iaoTl037WzK98/S3oiYF6+fqIuK3ouZNK8qtnH+40X1dSEHwpru5
+        Kdsjn0U4WAobZ/sJZXd8C2DJaDB6M2fFmtaNHkqb+l2ZWFRyyzRDL7iEvA5LPhbeYrV16RXm
+        z2si3yjYCwWp171eVWARed1ywuOed7uEY7mPbFT+wxq+Ze9Cw8VmofdXJVru0vnR4MDgtG5u
+        e7f62WO8Sh55VxYUluRn8zE/eSKrxFKckWioxVxUnAgANUJ+RhcDAAA=
+X-CMS-MailID: 20200827031549epcas1p30dce17a8b2e3db1fd99b1260863bc5a4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200826011839epcas1p497990de9fdc044d0cad134c8f7bfd0f5
+References: <CGME20200826011839epcas1p497990de9fdc044d0cad134c8f7bfd0f5@epcas1p4.samsung.com>
+        <20200826011830.14646-1-kohada.t2@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 27, 2020 at 10:42 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Thu, Aug 27, 2020 at 10:13:15AM +0800, Yafang Shao wrote:
-> > On Thu, Aug 27, 2020 at 9:58 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > On Thu, Aug 27, 2020 at 09:34:44AM +0800, Yafang Shao wrote:
-> > > > @@ -1500,9 +1500,9 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
-> > > >
-> > > >       /*
-> > > >        * Given that we do not allow direct reclaim to call us, we should
-> > > > -      * never be called in a recursive filesystem reclaim context.
-> > > > +      * never be called while in a filesystem transaction.
-> > > >        */
-> > > > -     if (WARN_ON_ONCE(current->flags & PF_MEMALLOC_NOFS))
-> > > > +     if (WARN_ON_ONCE(wbc->fstrans_recursion))
-> > > >               goto redirty;
-> > >
-> > > Erm, Dave said:
-> > >
-> > > > I think we should just remove
-> > > > the check completely from iomap_writepage() and move it up into
-> > > > xfs_vm_writepage() and xfs_vm_writepages().
-> > >
-> > > ie everywhere you set this new bit, just check current->journal_info.
-> >
-> >
-> > I can't get you. Would you pls. be more specific ?
-> >
-> > I move the check of current->journal into xfs_vm_writepage() and
-> > xfs_vm_writepages(), and I think that is the easiest way to implement
-> > it.
-> >
-> >        /* we abort the update if there was an IO error */
-> > @@ -564,6 +565,9 @@ xfs_vm_writepage(
-> >  {
-> >         struct xfs_writepage_ctx wpc = { };
-> >
-> > +       if (xfs_trans_context_active())
-> > +               wbc->fstrans_recursion = 1;    <<< set for XFS only.
-> > +
-> >         return iomap_writepage(page, wbc, &wpc.ctx, &xfs_writeback_ops);
->
-> Get rid of wbc->fstrans_recursion. Just do
->
->         if (WARN_ON_ONCE(current->journal_info))
->                 .....
->
-> right here in the XFS code.
->
+> Fix missing result check of exfat_build_inode().
+> And use PTR_ERR_OR_ZERO instead of PTR_ERR.
+> 
+> Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
+Pushed it to exfat #dev.
+Thanks for your patch!
 
-Understood.
-But we have to implement the 'redirty' as well in the XFS code, that
-may make the implementation more complicated.
-
-
--- 
-Thanks
-Yafang
