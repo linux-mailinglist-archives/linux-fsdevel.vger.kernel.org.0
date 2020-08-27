@@ -2,110 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5FD0254CB7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 20:15:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A7DD254FBF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 22:08:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbgH0SPd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 14:15:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37076 "EHLO
+        id S1726839AbgH0UIJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 16:08:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726093AbgH0SPc (ORCPT
+        with ESMTP id S1726266AbgH0UIJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 14:15:32 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B20AC061264
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 11:15:32 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id g6so7469764ljn.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 11:15:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5Ln4YDv+McQTrVSBLkYMyzgo5ffLr7W4nh7mUMFYOZo=;
-        b=GjsK/u6ib7N+ctD2EUfS3Yg2gOjkfLasSaGCU/YbFFT4pm7wC/mAUjkvSP+UBZidUg
-         P75Y7Q+9vqNQMjHTBy6Jwr30jghzFLvVdhlC7Nn9Ui5WCs2KOmFbugeMsgtI/Xw61N8K
-         QeupHGovYgcCrHWAn29zkzD17dqNMKZTBIjAg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5Ln4YDv+McQTrVSBLkYMyzgo5ffLr7W4nh7mUMFYOZo=;
-        b=QzilrRIlA9aT7pY3vi/bMh+8NuJXXdnUcYn0bKJvVWc2t6DUXM+T6/DoDnatjO8tZt
-         isH8vmm2AgNyLdoaayKXh9VVvrvj2Dl7nPMV1V+/qSwCPGhOhU7H9GgOAz4CusM0Uu6Z
-         A8J/rda7awC8m13EDy4i9tFvWaA0JULrIR1GSXhSqkqnPdaUpTsk6Y7ZxNLO8ml4fDjh
-         8x3TW+Z83BpsywnapUNRPV/c1CjAaFhrzoO0tclyah49rljx0bd9/c1Hf8VwCh+7TkCB
-         ehP96BYYdly/d9qSALXN+vXM278g2Gr0/3bN2bigjOAyRR1mKb7aZMA7E5OzEURVJlph
-         eGmg==
-X-Gm-Message-State: AOAM5311np0lXkuMiqVQlYV0dPtz5KsJbyqPrSoB0cMQebPcVCKv3kf7
-        9GiCgqMvvysjS1FxCtvipJDaLNQ8fiVgng==
-X-Google-Smtp-Source: ABdhPJzWYU3j9gpT4NmJ8MHSa291FypzK+Pi8+2seoUEMsTdNV5SqzuX4Vnl8n47V54pqwrKknUL9A==
-X-Received: by 2002:a2e:9854:: with SMTP id e20mr9629165ljj.318.1598552130643;
-        Thu, 27 Aug 2020 11:15:30 -0700 (PDT)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id n24sm682874lfe.38.2020.08.27.11.15.28
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Aug 2020 11:15:28 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id 185so7482449ljj.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 11:15:28 -0700 (PDT)
-X-Received: by 2002:a2e:92d0:: with SMTP id k16mr9604351ljh.70.1598552128279;
- Thu, 27 Aug 2020 11:15:28 -0700 (PDT)
+        Thu, 27 Aug 2020 16:08:09 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35C7EC061264;
+        Thu, 27 Aug 2020 13:08:09 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kBOBl-005k79-Px; Thu, 27 Aug 2020 20:08:01 +0000
+Date:   Thu, 27 Aug 2020 21:08:01 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Ross Zwisler <zwisler@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Mattias Nissler <mnissler@chromium.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Gordon <bmgordon@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Jesse Barnes <jsbarnes@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Micah Morton <mortonm@google.com>,
+        Raul Rangel <rrangel@google.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Ross Zwisler <zwisler@google.com>
+Subject: Re: [PATCH v9 1/2] Add a "nosymfollow" mount option.
+Message-ID: <20200827200801.GB1236603@ZenIV.linux.org.uk>
+References: <20200827170947.429611-1-zwisler@google.com>
 MIME-Version: 1.0
-References: <20200827150030.282762-1-hch@lst.de> <20200827150030.282762-9-hch@lst.de>
-In-Reply-To: <20200827150030.282762-9-hch@lst.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 27 Aug 2020 11:15:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjxeN+KrCB2TyC5s2RWhz-dWWO8vbBwWcCiKb0+8ipayw@mail.gmail.com>
-Message-ID: <CAHk-=wjxeN+KrCB2TyC5s2RWhz-dWWO8vbBwWcCiKb0+8ipayw@mail.gmail.com>
-Subject: Re: [PATCH 08/10] x86: remove address space overrides using set_fs()
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200827170947.429611-1-zwisler@google.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 27, 2020 at 8:00 AM Christoph Hellwig <hch@lst.de> wrote:
->
->  SYM_FUNC_START(__get_user_2)
->         add $1,%_ASM_AX
->         jc bad_get_user
+On Thu, Aug 27, 2020 at 11:09:46AM -0600, Ross Zwisler wrote:
+> From: Mattias Nissler <mnissler@chromium.org>
+> 
+> For mounts that have the new "nosymfollow" option, don't follow symlinks
+> when resolving paths. The new option is similar in spirit to the
+> existing "nodev", "noexec", and "nosuid" options, as well as to the
+> LOOKUP_NO_SYMLINKS resolve flag in the openat2(2) syscall. Various BSD
+> variants have been supporting the "nosymfollow" mount option for a long
+> time with equivalent implementations.
+> 
+> Note that symlinks may still be created on file systems mounted with
+> the "nosymfollow" option present. readlink() remains functional, so
+> user space code that is aware of symlinks can still choose to follow
+> them explicitly.
+> 
+> Setting the "nosymfollow" mount option helps prevent privileged
+> writers from modifying files unintentionally in case there is an
+> unexpected link along the accessed path. The "nosymfollow" option is
+> thus useful as a defensive measure for systems that need to deal with
+> untrusted file systems in privileged contexts.
+> 
+> More information on the history and motivation for this patch can be
+> found here:
+> 
+> https://sites.google.com/a/chromium.org/dev/chromium-os/chromiumos-design-docs/hardening-against-malicious-stateful-data#TOC-Restricting-symlink-traversal
+> 
+> Signed-off-by: Mattias Nissler <mnissler@chromium.org>
+> Signed-off-by: Ross Zwisler <zwisler@google.com>
+> Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+> Changes since v8 [1]:
+>  * Look for MNT_NOSYMFOLLOW in link->mnt->mnt_flags so we are testing
+>    the link itself rather than the directory holding the link. (Al Viro)
+>  * Rebased onto v5.9-rc2.
 
-This no longer makes sense, and
-
-> -       mov PER_CPU_VAR(current_task), %_ASM_DX
-> -       cmp TASK_addr_limit(%_ASM_DX),%_ASM_AX
-> +       LOAD_TASK_SIZE_MAX
-> +       cmp %_ASM_DX,%_ASM_AX
-
-This should be
-
-        LOAD_TASK_SIZE_MAX_MINUS_N(1)
-        cmp %_ASM_DX,%_ASM_AX
-
-instead (and then because we no longer modify _ASM_AX, we'd also
-remove the offset on the access).
-
->  SYM_FUNC_START(__put_user_2)
-> -       ENTER
-> -       mov TASK_addr_limit(%_ASM_BX),%_ASM_BX
-> +       LOAD_TASK_SIZE_MAX
->         sub $1,%_ASM_BX
-
-It's even more obvious here. We load a constant and then immediately
-do a "sub $1" on that value.
-
-It's not a huge deal, you don't have to respin the series for this, I
-just wanted to point it out so that people are aware of it and if I
-forget somebody else will hopefully remember that "we should fix that
-too".
-
-                   Linus
+AFAICS, it applies clean to -rc1; what was the rebase about?
