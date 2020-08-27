@@ -2,91 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D68254488
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 13:50:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F2BD25448D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 13:52:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbgH0LtR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 07:49:17 -0400
-Received: from spam.zju.edu.cn ([61.164.42.155]:41528 "EHLO zju.edu.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728886AbgH0LrH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 07:47:07 -0400
-Received: from localhost.localdomain (unknown [210.32.144.184])
-        by mail-app2 (Coremail) with SMTP id by_KCgBnN7wgnUdfn0o9Ag--.10943S4;
-        Thu, 27 Aug 2020 19:46:43 +0800 (CST)
-From:   Dinghao Liu <dinghao.liu@zju.edu.cn>
-To:     dinghao.liu@zju.edu.cn, kjlu@umn.edu
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/binfmt_elf: Fix memleak in load_elf_binary
-Date:   Thu, 27 Aug 2020 19:46:39 +0800
-Message-Id: <20200827114639.31298-1-dinghao.liu@zju.edu.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: by_KCgBnN7wgnUdfn0o9Ag--.10943S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xr1ftF1rZr18Zr47GFWktFb_yoWktrX_Ca
-        4xXrnYvFyDJF1jgr1qkw43Ary8WFs5Xw4fAr1IkFy7C342qan0k3ykXas7Z34rJa12qr15
-        Wrs3trySgryakjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbIxFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AK
-        wVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20x
-        vE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E
-        87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c
-        8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_
-        Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
-        xGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r4kMxAIw28IcxkI7VAKI48J
-        MxAIw28IcVCjz48v1sIEY20_GFWkJr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_
-        Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
-        wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-        7VUbeT5PUUUUU==
-X-CM-SenderInfo: qrrzjiaqtzq6lmxovvfxof0/1tbiAg0EBlZdtPrBDAAesb
+        id S1728918AbgH0LvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 07:51:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33028 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728880AbgH0LuL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Aug 2020 07:50:11 -0400
+Received: from mail-ej1-x649.google.com (mail-ej1-x649.google.com [IPv6:2a00:1450:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD593C06123A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 04:49:48 -0700 (PDT)
+Received: by mail-ej1-x649.google.com with SMTP id l7so2481268ejr.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 04:49:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:in-reply-to:message-id:mime-version:references:subject
+         :from:to:cc;
+        bh=nVHuYaY9UtfQ5ceDG+IOgNARKDklUVVN28+71pW1fmk=;
+        b=EKUYAShSuw6vIw45vevo+Sy7e72QAp73T544NA5kbUcsd1iV/LN/8R2GxzPOpqGvdX
+         pdndWsVd6Lr3QZFGe4mTnAYNnlEb32APpoNqKM8a2Y00vZHJs04X7m3Rg2VxyGHiu8WB
+         8/ObYeSz7+0b4daA5rCvUagkfihi0oU2h2O/4pWpaAnFNKDROaYdPONQnUqQY9kfrvGP
+         uKFQPWrcbMbQHbVYb3WZx3sPPDGERlRi8cAKR52YtrWMhsNQhVHjm12Y5jeYEQeQQlti
+         ugA2ZkmaIpOOKUnnVGqvAI0YlxcaE3BBSdIcXjisRZIOt2eBY+4cKnwSl5+8CX5Ld5vK
+         EnZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=nVHuYaY9UtfQ5ceDG+IOgNARKDklUVVN28+71pW1fmk=;
+        b=E2a28DvwseWCCKTCmU4D91rZtQtYaPkcTKsK+RrfHVI8Yv5zHmlBdBn7O/Dsa+Is4H
+         hOxoxR8LZ8xnFEcF7RJ8F5vgvra+KtMNlxjAMO8N9n5lWpOLddGy0rPK6Xb/sWKlu+Ou
+         eaWS36R4y5qSajG4hp01g62V2PXFnwhZfJ6gWt5NwhGmdVfmWB2WbhdL+x049Nn14Hn9
+         Ik4d1RsvHFOfow8Xj52i1wuot0z+vFRRqd4QRQ34cSA+GUtCX7IDq4IZNTf+M0Knpl6F
+         fQXAaxdSIgyNvCGQ+x84swW649KFE6oUfRGqnSmgxDTtPnMF+Lbj/GKmRXyGBCudCftJ
+         5U2A==
+X-Gm-Message-State: AOAM530o6H1c+cHk6A4ERGsT8dEiOvMUutpKR5mB52asD/DO8oJIowui
+        ggKbrydYgEzbI/MgZEFC/0CuL1LOLg==
+X-Google-Smtp-Source: ABdhPJy2EioBHl5DQHnC+VEIiLoSJ394iMXy3ZaLk8kxlGOGKXykgo5D+wC/Tp3lDGd7qD4rKXOJxasNpA==
+X-Received: from jannh2.zrh.corp.google.com ([2a00:79e0:1b:201:1a60:24ff:fea6:bf44])
+ (user=jannh job=sendgmr) by 2002:a17:906:dc03:: with SMTP id
+ yy3mr21385084ejb.380.1598528987410; Thu, 27 Aug 2020 04:49:47 -0700 (PDT)
+Date:   Thu, 27 Aug 2020 13:49:27 +0200
+In-Reply-To: <20200827114932.3572699-1-jannh@google.com>
+Message-Id: <20200827114932.3572699-3-jannh@google.com>
+Mime-Version: 1.0
+References: <20200827114932.3572699-1-jannh@google.com>
+X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
+Subject: [PATCH v5 2/7] coredump: Let dump_emit() bail out on short writes
+From:   Jann Horn <jannh@google.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When arch_setup_additional_pages() fails, interp_elf_ex may
-not have been freed, which leads to memleak.  It's the same
-when create_elf_tables() fails.
+dump_emit() has a retry loop, but there seems to be no way for that retry
+logic to actually be used; and it was also buggy, writing the same data
+repeatedly after a short write.
 
-Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+Let's just bail out on a short write.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Jann Horn <jannh@google.com>
 ---
- fs/binfmt_elf.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ fs/coredump.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 13d053982dd7..984c30684e49 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1204,6 +1204,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 		fput(interpreter);
- 
- 		kfree(interp_elf_ex);
-+		interp_elf_ex = NULL;
- 		kfree(interp_elf_phdata);
- 	} else {
- 		elf_entry = e_entry;
-@@ -1219,14 +1220,18 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 
- #ifdef ARCH_HAS_SETUP_ADDITIONAL_PAGES
- 	retval = arch_setup_additional_pages(bprm, !!interpreter);
--	if (retval < 0)
-+	if (retval < 0) {
-+		kfree(interp_elf_ex);
- 		goto out;
-+	}
- #endif /* ARCH_HAS_SETUP_ADDITIONAL_PAGES */
- 
- 	retval = create_elf_tables(bprm, elf_ex,
- 			  load_addr, interp_load_addr, e_entry);
--	if (retval < 0)
-+	if (retval < 0) {
-+		kfree(interp_elf_ex);
- 		goto out;
-+	}
- 
- 	mm = current->mm;
- 	mm->end_code = end_code;
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 76e7c10edfc0..5e24c06092c9 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -840,17 +840,17 @@ int dump_emit(struct coredump_params *cprm, const void *addr, int nr)
+ 	ssize_t n;
+ 	if (cprm->written + nr > cprm->limit)
+ 		return 0;
+-	while (nr) {
+-		if (dump_interrupted())
+-			return 0;
+-		n = __kernel_write(file, addr, nr, &pos);
+-		if (n <= 0)
+-			return 0;
+-		file->f_pos = pos;
+-		cprm->written += n;
+-		cprm->pos += n;
+-		nr -= n;
+-	}
++
++
++	if (dump_interrupted())
++		return 0;
++	n = __kernel_write(file, addr, nr, &pos);
++	if (n != nr)
++		return 0;
++	file->f_pos = pos;
++	cprm->written += n;
++	cprm->pos += n;
++
+ 	return 1;
+ }
+ EXPORT_SYMBOL(dump_emit);
 -- 
-2.17.1
+2.28.0.297.g1956fa8f8d-goog
 
