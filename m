@@ -2,109 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 502A2253F00
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 09:24:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 583B2253FBF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 09:56:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728044AbgH0HYQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 03:24:16 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:60176 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726882AbgH0HYM (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 03:24:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1598513050;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ri7f4MnEHGg+Eh3Xov6f6gkwDfi0Dd6vvMS8AIDLQKU=;
-        b=YCB/pEU9HC71u0HFEKaE7mDZ3JDRBj/nk3+0p/EJchISNgeqQkzTtAoaeSKHvfRtaJCQSj
-        lVby6HvILsJ3qNQWeiTfJfDyQ0RfW2/TK1FljMIcMevWzWEzpyOc9DPUNo35gqzShfGSJP
-        G37O/F1rh5eHEl50SpcwagGgm6vSw6w=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-51-4R_86dC-PbSXi5FsfNLvlw-1; Thu, 27 Aug 2020 03:24:08 -0400
-X-MC-Unique: 4R_86dC-PbSXi5FsfNLvlw-1
-Received: by mail-wr1-f71.google.com with SMTP id y6so1165111wrs.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 00:24:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ri7f4MnEHGg+Eh3Xov6f6gkwDfi0Dd6vvMS8AIDLQKU=;
-        b=ShQbOWq9Xm/W03sA/skFtc2LXfgW4M6wglpQjDOtKQXmcrjJXXnjin3HRABBayy57c
-         LEvimch/8l2IMOHZTCDOU+JBxMKQvFjBcjVhULezmaxmebpVtdsT/sY9PdQIdvPamahW
-         3z8WtpsXTARlMV/OVC3nfyJlk9E4T07Tz3G8+E314vraQu1gb4aQglLms5M1n05nz6Yq
-         +oraXXO3V0TgTEpK2L459H7oPZ1hWixc2haRCm4KRpo/Cc3FMNWZsvJ+67SQuAxAFMGA
-         T0YOEpQsWOZ/TZhgw6TA/Pr4NYlhSHs4W+MFyQPJAQ7vSraLeWx2iP54a7vn9jMd36fL
-         EG+Q==
-X-Gm-Message-State: AOAM530FbrgmcL/QCkiUud9iHqAydH0G0GyDCeqrKBpppys8J6wuwE67
-        60vP+X18D95qhMWCJbWhiB4VVsoPiTxSOrvGKnalzrgXw32YGmjtNmS+YtPUZmN/bhM8yLxTz++
-        dN5fIK/lNb/5ZppK3lGvmSg2hXg==
-X-Received: by 2002:a5d:4ecf:: with SMTP id s15mr19040991wrv.202.1598513047593;
-        Thu, 27 Aug 2020 00:24:07 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJy9Qp8WqcCYQavb33blI2gxdMXFRgjEWEltO/ZyM+YWomBld9pX31Pz59UjLz4iXha0wYfDuw==
-X-Received: by 2002:a5d:4ecf:: with SMTP id s15mr19040959wrv.202.1598513047320;
-        Thu, 27 Aug 2020 00:24:07 -0700 (PDT)
-Received: from steredhat.lan ([5.180.207.22])
-        by smtp.gmail.com with ESMTPSA id t25sm3145541wmj.18.2020.08.27.00.24.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Aug 2020 00:24:06 -0700 (PDT)
-Date:   Thu, 27 Aug 2020 09:24:01 +0200
-From:   Stefano Garzarella <sgarzare@redhat.com>
-To:     Kees Cook <keescook@chromium.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <asarai@suse.de>,
-        io-uring <io-uring@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] io_uring: add restrictions to support untrusted
- applications and guests
-Message-ID: <20200827072401.6o5bqg6r5iozpcgc@steredhat.lan>
-References: <20200813153254.93731-1-sgarzare@redhat.com>
- <CAGxU2F55zzMzc043P88TWJNr2poUTVwrRmu86qyh0uM-8gimng@mail.gmail.com>
- <82061082-42c8-1e1c-1f36-6f42e7dd10cb@kernel.dk>
- <202008261237.904C1E6@keescook>
+        id S1728555AbgH0Hzq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 03:55:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55712 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728570AbgH0Hzj (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Aug 2020 03:55:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id BBBF2AD2E;
+        Thu, 27 Aug 2020 07:56:09 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4F1A71E12C0; Thu, 27 Aug 2020 09:55:37 +0200 (CEST)
+Date:   Thu, 27 Aug 2020 09:55:37 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     =?utf-8?B?55Sw?= <xianting_tian@126.com>
+Cc:     Jan Kara <jack@suse.cz>, "bcrl@kvack.org" <bcrl@kvack.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] aio: use wait_for_completion_io() when waiting for
+ completion of io
+Message-ID: <20200827075537.GA15885@quack2.suse.cz>
+References: <1596634551-27526-1-git-send-email-xianting_tian@126.com>
+ <20200826132330.GD15126@quack2.suse.cz>
+ <26ae9330.63f4.1742b70dd88.Coremail.xianting_tian@126.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <202008261237.904C1E6@keescook>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <26ae9330.63f4.1742b70dd88.Coremail.xianting_tian@126.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 26, 2020 at 12:40:24PM -0700, Kees Cook wrote:
-> On Wed, Aug 26, 2020 at 10:47:36AM -0600, Jens Axboe wrote:
-> > On 8/25/20 9:20 AM, Stefano Garzarella wrote:
-> > > Hi Jens,
-> > > this is a gentle ping.
-> > > 
-> > > I'll respin, using memdup_user() for restriction registration.
-> > > I'd like to get some feedback to see if I should change anything else.
-> > > 
-> > > Do you think it's in good shape?
-> > 
-> > As far as I'm concerned, this is fine. But I want to make sure that Kees
-> > is happy with it, as he's the one that's been making noise on this front.
-> 
-> Oop! Sorry, I didn't realize this was blocked on me. Once I saw how
-> orthogonal io_uring was to "regular" process trees, I figured this
-> series didn't need seccomp input. (I mean, I am still concerned about
-> attack surface reduction, but that seems like a hard problem given
-> io_uring's design -- it is, however, totally covered by the LSMs, so I'm
-> satisfied from that perspective.)
-> 
-> I'll go review... thanks for the poke. :)
-> 
+Hello!
 
-Jens, Kees, thanks for your feedbacks!
-I'll send v5 adding the values to the enumerations.
+On Wed 26-08-20 23:44:11, 田 wrote:
+> thanks for your kindly reply,
+> the normal wait path read_events()->wait_event_interruptible_hrtimeout(),
+> which will call schedule(), it does not account IO wait time.
 
-Stefano
+Not sure if there isn't some misunderstanding so I'll repeat what I've
+said: Yes, above path will not account as IO wait time and IMO that is much
+more common path which should be accounted as IO wait time. So I think that
+without fixing that path, fixing cornercases like you did in your patch is
+rather pointless.
 
+								Honza
+
+> On 08/26/2020 21:23, Jan Kara wrote:
+> On Wed 05-08-20 09:35:51, Xianting Tian wrote:
+> > When waiting for the completion of io, we need account iowait time. As
+> > wait_for_completion() calls schedule_timeout(), which doesn't account
+> > iowait time. While wait_for_completion_io() calls io_schedule_timeout(),
+> > which will account iowait time.
+> >
+> > So using wait_for_completion_io() instead of wait_for_completion()
+> > when waiting for completion of io before exit_aio and io_destroy.
+> >
+> > Signed-off-by: Xianting Tian <xianting_tian@126.com>
+> 
+> Thanks for the patch! It looks good to me but IMO this is just scratching
+> the surface.  E.g. for AIO we are mostly going to wait in read_events() by
+> wait_event_interruptible_hrtimeout() and *that* doesn't account as IO wait
+> either? Which is IMO far bigger misaccounting... The two case you fix seem
+> to be just rare cornercases so what they do isn't a big deal either way.
+> 
+> So I agree it may be worth it to properly account waiting for AIO but if
+> you want to do that, then please handle mainly the common cases in AIO
+> code.
+> 
+>                                         Honza
+> 
+> > ---
+> >  fs/aio.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/aio.c b/fs/aio.c
+> > index 91e7cc4..498b8a0 100644
+> > --- a/fs/aio.c
+> > +++ b/fs/aio.c
+> > @@ -892,7 +892,7 @@ void exit_aio(struct mm_struct *mm)
+> >  
+> >       if (!atomic_sub_and_test(skipped, &wait.count)) {
+> >            /* Wait until all IO for the context are done. */
+> > -          wait_for_completion(&wait.comp);
+> > +          wait_for_completion_io(&wait.comp);
+> >       }
+> >  
+> >       RCU_INIT_POINTER(mm->ioctx_table, NULL);
+> > @@ -1400,7 +1400,7 @@ static long read_events(struct kioctx *ctx, long min_nr, long nr,
+> >             * is destroyed.
+> >             */
+> >            if (!ret)
+> > -               wait_for_completion(&wait.comp);
+> > +               wait_for_completion_io(&wait.comp);
+> >  
+> >            return ret;
+> >       }
+> > --
+> > 1.8.3.1
+> >
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
