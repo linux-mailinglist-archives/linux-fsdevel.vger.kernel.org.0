@@ -2,85 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6603B254BD4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 19:15:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75CE3254C05
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 19:21:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbgH0RPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 13:15:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55964 "EHLO
+        id S1727954AbgH0RVe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 13:21:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbgH0RPU (ORCPT
+        with ESMTP id S1727116AbgH0RVc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 13:15:20 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87086C061264
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 10:15:20 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id h19so7278714ljg.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 10:15:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w12LsIONkHiHf1X1dg76GDH+j4flCrQShoTv3VRea1g=;
-        b=FdZoS6ucloJ1uweiQFAH2mrrb+1/WJBlhrsgmvjk19P/b7Ljnx16lLT1HpN5JdRdK/
-         VrIposFwDAzSuhpYHAVCY+a36L22FJOs6M80hsOnr+RV/TTWtSX6z4ynWZHSRLazKMjY
-         vgE93opHLT4CMsYZMN/zJ22KJnlkKof0ZS/+0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w12LsIONkHiHf1X1dg76GDH+j4flCrQShoTv3VRea1g=;
-        b=L18MuHhoHKIi+zGYVift0lNnDnURzvRHGXjU4rcDgjGwd3FRJsvE7nOb+exXlUpTS8
-         QIjojRW32TtAfAzVBkTUuajJif8kdeNpAdIMajoLo1UE2DogcPggilWS9IRO/LtfeAMI
-         N9SMjNXveIBaukR2YV1TIUgtpt/jkuf+W+E8Z39zlqZN1FCoPQHmMREq6aHCGZfRyJCs
-         5cGwlemueXw+vg14FcJjSbw3KQ8LfzdYoyMShIUxcRzuvdyJiZP/Jtnh3jIu1us3uMM4
-         HUUa80lgo6G56aVdpd0fmknJjQjv7f7cTw/M/fl81zLTSPIR/xYhaqSm7JHX2XBhWCIo
-         EJ8w==
-X-Gm-Message-State: AOAM533KzfzyhlzwoKt7eHwfVmyzairo1Inkcp/Sk/zvHwDWNDABzJdE
-        VtbfbEApa1+kb0zYqhTkEr51/8oSZJZ9hA==
-X-Google-Smtp-Source: ABdhPJxmF4oKjcufRXg9h087SxLorkmpWJwvU68lG7r3N2hQsWcl8FuFzXUz9qHYLBcfUvC7+Ux0dg==
-X-Received: by 2002:a05:651c:505:: with SMTP id o5mr10147034ljp.306.1598548518476;
-        Thu, 27 Aug 2020 10:15:18 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id o24sm593679ljg.69.2020.08.27.10.15.17
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Aug 2020 10:15:18 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id c8so3317592lfh.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 10:15:17 -0700 (PDT)
-X-Received: by 2002:ac2:58d5:: with SMTP id u21mr10296558lfo.31.1598548516405;
- Thu, 27 Aug 2020 10:15:16 -0700 (PDT)
+        Thu, 27 Aug 2020 13:21:32 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B7B7C061264
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 10:21:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=yAcdCaR4JtnyMSP1+omTdGadAFV5/wzbhwaSvHx/b1o=; b=iV1v9Sms+Ds4vHaT8uyJXGgmIZ
+        778Mnnrk87Tf0C1VumhOAhAtlnj4VVRvrdbB0DsWGQ7/r8HiDiAOczy8oWZ/3vOmoQWfH+ItAqS9l
+        0bsRhAKIyh6fGJ+YWdpfPtGmwZsYQnP1PZVZFc8m6MHfYayBRLrWsnT0k65aDCmFFpk2XnmNBJWPQ
+        OuRdSuwR2aOJBC94AWLVBSDCILRxFPokAhWRFs3ASsOMtCg3bbCtPJGSE7LVqqLSSAQVkHFjbqeRT
+        ffxZ5SxJMv4ZnuRipeSPU/wpE0RUigIR4gBt1msdiUS++ZhTMO2/bn8gGELHNgwPymXyOD7574Q90
+        RcNZ/gDg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kBLab-0005qs-T1; Thu, 27 Aug 2020 17:21:29 +0000
+Date:   Thu, 27 Aug 2020 18:21:29 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Marshall <hubcap@omnibond.com>
+Subject: Re: The future of readahead
+Message-ID: <20200827172129.GL14765@casper.infradead.org>
+References: <20200826193116.GU17456@casper.infradead.org>
+ <1441311.1598547738@warthog.procyon.org.uk>
 MIME-Version: 1.0
-References: <20200827114932.3572699-1-jannh@google.com>
-In-Reply-To: <20200827114932.3572699-1-jannh@google.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 27 Aug 2020 10:15:00 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj2p84Md0dP53NxgBAZcy+x9+fxnQQg9kD4LzZDkYCfXA@mail.gmail.com>
-Message-ID: <CAHk-=wj2p84Md0dP53NxgBAZcy+x9+fxnQQg9kD4LzZDkYCfXA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] Fix ELF / FDPIC ELF core dumping, and use
- mmap_lock properly in there
-To:     Jann Horn <jannh@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1441311.1598547738@warthog.procyon.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 27, 2020 at 4:49 AM Jann Horn <jannh@google.com> wrote:
->
->  13 files changed, 346 insertions(+), 498 deletions(-)
+On Thu, Aug 27, 2020 at 06:02:18PM +0100, David Howells wrote:
+> Matthew Wilcox <willy@infradead.org> wrote:
+> > void readahead_expand(struct readahead_control *rac, loff_t start, u64 len);
+> > or possibly
+> > void readahead_expand(struct readahead_control *rac, pgoff_t start,
+> > 		unsigned int count);
+> > 
+> > It might not actually expand the readahead attempt at all -- for example,
+> > if there's already a page in the page cache, or if it can't allocate
+> > memory.  But this puts the responsibility for allocating pages in the VFS,
+> > where it belongs.
+> 
+> This is exactly what the fscache read helper in my fscache rewrite is doing,
+> except that I'm doing it in fs/fscache/read_helper.c.
+> 
+> Have a look here:
+> 
+> 	https://lore.kernel.org/linux-fsdevel/159465810864.1376674.10267227421160756746.stgit@warthog.procyon.org.uk/
+> 
+> and look for the fscache_read_helper() function.
+> 
+> Note that it's slighly complicated because it handles ->readpage(),
+> ->readpages() and ->write_begin()[*].
+> 
+> [*] I want to be able to bring the granule into the cache for modification.
+>     Ideally I'd be able to see that the entire granule is going to get written
+>     over and skip - kind of like write_begin for a whole granule rather than a
+>     page.
 
-Me likey. I had one comment, but I don't think it really matters for
-this series. So ack to all of these as far as I'm concerned.
+I'm going to want something like that for THP too.  I may end up
+changing the write_begin API.
 
-Does anybody else see any problems?
+> Shaping the readahead request has the following issues:
+> 
+>  (1) The request may span multiple granules.
+> 
+>  (2) Those granules may be a mixture of cached and uncached.
+> 
+>  (3) The granule size may vary.
+> 
+>  (4) Granules fall on power-of-2 boundaries (for example 256K boundaries)
+>      within the file, but the request may not start on a boundary and may not
+>      end on one.
+> 
+> To deal with this, fscache_read_helper() calls out to the cache backend
+> (fscache_shape_request()) and the netfs (req->ops->reshape()) to adjust the
+> read it's going to make.  Shaping the request may mean moving the start
+> earlier as well as expanding or contracting the size.  The only thing that's
+> guaranteed is that the first page of the request will be retained.
 
-           Linus
+Thank you for illustrating why this shouldn't be handled in the
+filesystem ;-)
+
+mmap readaround starts n/2 pages below the the faulting page and ends n/2
+pages above the faulting page.  So if your adjustment fails to actually
+bring in the page in the middel, it has failed mmap.
+
+> What I was originally envisioning for the new ->readahead() interface is add a
+> second aop that allows the shaping to be accessed by the VM, before it's
+> started pinning any pages.
+> 
+> The shaping parameters I think we need are:
+> 
+> 	- The inode, for i_size and fscache cookie
+> 	- The proposed page range
+> 
+> and what you would get back could be:
+> 
+> 	- Shaped page range
+> 	- Minimum I/O granularity[1]
+> 	- Minimum preferred granularity[2]
+> 	- Flag indicating if the pages can just be zero-filled[3]
+> 
+> [1] The filesystem doesn't want to read in smaller chunks than this.
+> 
+> [2] The cache doesn't want to read in smaller chunks than this, though in the
+>     cache's case, a partially read block is just abandoned for the moment.
+>     This number would allow the readahead algorithm to shorten the request if
+>     it can't allocate a page.
+> 
+> [3] If I know that the local i_size is much bigger than the i_size on the
+>     server, there's no need to download/read those pages and readahead can
+>     just clear them.  This is more applicable to write_begin() normally.
+> 
+> Now a chunk of this is in struct readahead_control, so it might be reasonable
+> to add the other bits there too.
+> 
+> Note that one thing I really would like to avoid having to do is to expand a
+> request forward, particularly if the main page of interest is precreated and
+> locked by the VM before calling the filesystem.  I would much rather the VM
+> created the pages, starting from the lowest-numbered.
+
+A call to ->readahead is always a contiguous set of pages.  A call to
+readahead_expand() which tried to expand both up and down would start
+by allocating, locking and adding the pages to the page cache heading
+downwards from the current start (it's usually not allowed to lock
+pages out of order, but because they're locked before being added,
+this is an exception).  Then we'd try to expand upwards.  We'll fail
+to expand if we can't allocate a page or if there's already a page in
+the cache that blocks our expansion in that direction.
+
+As far as the zeroing beyond i_size, that's the responsibility of the
+filesystem.
