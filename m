@@ -2,175 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 754F12542FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 12:00:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B52425439F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 12:22:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728668AbgH0J75 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 05:59:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44028 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728511AbgH0J7z (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 05:59:55 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D125C061264;
-        Thu, 27 Aug 2020 02:59:53 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id i10so3009427pgk.1;
-        Thu, 27 Aug 2020 02:59:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zSO7t8JLbei6Mkj+1bgztLVBIuuXAqF2TwGRgopH69k=;
-        b=ITjVYTcbuXoM1yEcbIndSTLWrMyJSy40Raf796g4G7i8oOTnmT6K8mShjxcA5+xIFH
-         /reBbClG/4iP8GJwAx538h5OzMEo5mhSeHbmmJxaA6mGOAguwYUUFfIWapqmGxxOotiX
-         K3fBuYX+xZkDNN6cxuotmtAyhya4n+az1GoomW9xJHzi7eepiB6SOFm4nkajoJA0oJ4u
-         XbRTtguZAHtBz6dDtLQjk/88qqviS4Ilkc0+CSjOmK/luPTtawUwUPttsoWROtOwFNv3
-         lkU3u/jLljKU1HWkEV6lVM0dHvdiSKwfiiGE54dQv1mqtAESrs6bLCE2ZeR/RVlHeYQx
-         h8Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zSO7t8JLbei6Mkj+1bgztLVBIuuXAqF2TwGRgopH69k=;
-        b=U6ZjAIZs82FkbmdUhbjrTUJG+fM2pdXIANtw35lq1C7FaD/6UZVgK/Q1L+qcWL1s4/
-         VSUg/HFMi6dSx4Lz/RHNoUfQjaDLYBQ8vqvtWiriM8VCX+rucVwrGdtnRD95v3y5kXhd
-         Xz62ik1iNUjNgH/Uvxi8NdxudlAOkkOnwoHr0xjOF5bD+R6AouH8yf+TXnCg3vFiDZbY
-         OBBPGpvB0SqMSqcYP44GVxOA9hcUlbkrdugDqKSuC7R0IOIkJAE74xQRPU9nEGzb+oCB
-         tyuB8OIv3BKxYxRSLFlzF9CIyREZnMST4l6JVNfBbbnT9VemR+Pj0FgnonqUzF9tzy12
-         0NmQ==
-X-Gm-Message-State: AOAM5307osZFfkn3AlAnU0wNrVZ2P+AbMuHdoFETh82CD5/w0OfZrBfh
-        d8LDoL/uaQjiJvyw3VjsoN7G0Hsvy60=
-X-Google-Smtp-Source: ABdhPJwYwoim+2Ik0snH5X0ro7wAGbQHuVCNT8qXinkkzVCtz5WpWZc1+oqe9KBekX7nkrXfz7DMPw==
-X-Received: by 2002:a65:58c4:: with SMTP id e4mr13752654pgu.108.1598522392452;
-        Thu, 27 Aug 2020 02:59:52 -0700 (PDT)
-Received: from [192.168.1.200] (FL1-111-169-205-196.hyg.mesh.ad.jp. [111.169.205.196])
-        by smtp.gmail.com with ESMTPSA id g17sm1696014pjl.37.2020.08.27.02.59.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Aug 2020 02:59:51 -0700 (PDT)
-Subject: Re: [PATCH v3] exfat: integrates dir-entry getting and validation
-To:     Namjae Jeon <namjae.jeon@samsung.com>
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        'Sungjong Seo' <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20200806010250epcas1p482847d6d906fbf0ccd618c7d1cacd12e@epcas1p4.samsung.com>
- <20200806010229.24690-1-kohada.t2@gmail.com>
- <003c01d66edc$edbb1690$c93143b0$@samsung.com>
- <ca3b2b52-1abc-939c-aa11-8c7d12e4eb2e@gmail.com>
- <000001d67787$d3abcbb0$7b036310$@samsung.com>
- <fdaff3a3-99ba-8b9e-bdaf-9bcf9d7208e0@gmail.com>
- <000101d67b44$ac458c80$04d0a580$@samsung.com>
- <d1df9cca-3020-9e1e-0f3d-9db6752a22b6@gmail.com>
- <002e01d67b60$0b7d82a0$227887e0$@samsung.com>
- <7d7ec460-b5ab-68da-658b-2104f393b4e8@gmail.com>
- <004301d67b7a$ff0dcf50$fd296df0$@samsung.com>
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-Message-ID: <2b4c4409-7cb8-1651-3966-569636bcc429@gmail.com>
-Date:   Thu, 27 Aug 2020 18:59:48 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        id S1728623AbgH0KW2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 06:22:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:40438 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728466AbgH0KWX (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 27 Aug 2020 06:22:23 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 9002C4E592AF5C867A64;
+        Thu, 27 Aug 2020 18:22:19 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.56) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.487.0; Thu, 27 Aug 2020 18:22:13 +0800
+From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
+To:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Yuqi Jin <jinyuqi@huawei.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>
+Subject: [PATCH] fs: Optimized fget to improve performance
+Date:   Thu, 27 Aug 2020 18:19:44 +0800
+Message-ID: <1598523584-25601-1-git-send-email-zhangshaokun@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <004301d67b7a$ff0dcf50$fd296df0$@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.56]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+From: Yuqi Jin <jinyuqi@huawei.com>
 
->>>>>>> -	/* validiate cached dentries */
->>>>>>> -	for (i = 1; i < num_entries; i++) {
->>>>>>> -		ep = exfat_get_dentry_cached(es, i);
->>>>>>> -		if (!exfat_validate_entry(exfat_get_entry_type(ep), &mode))
->>>>>>> +	ep = exfat_get_dentry_cached(es, ENTRY_STREAM);
->>>>>>> +	if (!ep || ep->type != EXFAT_STREAM)
->>>>>>> +		goto free_es;
->>>>>>> +	es->de[ENTRY_STREAM] = ep;
->>>>>>
->>>>>> The value contained in stream-ext dir-entry should not be used
->>>>>> before validating the EntrySet
->>>> checksum.
->>>>>> So I would insert EntrySet checksum validation here.
->>>>>> In that case, the checksum verification loop would be followed by
->>>>>> the TYPE_NAME verification loop, can you acceptable?
->>>>> Yes. That would be great.
->>>>
->>>> OK.
->>>> I'll add TYPE_NAME verification after checksum verification, in next patch.
->>>> However, I think it is enough to validate TYPE_NAME when extracting name.
->>>> Could you please tell me why you think you need TYPE_NAME validation here?
->>> I've told you on previous mail. This function should return validated
->>> dentry set after checking
->>> file->stream->name in sequence.
->>
->> Yes. I understand that the current implementation checks in that order.
->> Sorry, my question was unclear.
->> Why do you think you should leave the TYPE_NAME validation in this function?
->> What kind of problem are you worried about if this function does not validate TYPE_NAME?
->> (for preserve the current behavior?)
-> We have not checked the problem when it is removed because it was implemented
-> according to the specification from the beginning.
+It is well known that the performance of atomic_add is better than that of
+atomic_cmpxchg.
+The initial value of @f_count is 1. While @f_count is increased by 1 in
+__fget_files, it will go through three phases: > 0, < 0, and = 0. When the
+fixed value 0 is used as the condition for terminating the increase of 1,
+only atomic_cmpxchg can be used. When we use < 0 as the condition for
+stopping plus 1, we can use atomic_add to obtain better performance.
 
-I understand that the main reason to validate TYPE_NAME here is "according to the specification".
-(No one knows the actual problem)
+we test syscall in unixbench on Huawei Kunpeng920(arm64). We've got a 132%
+performance boost. 
 
-First, we should validate as 'dir-entry set' by SecondaryCount and SetChecksum described
-in "6.3 Generic Primary DirectoryEntry Template".
+with this patch and the patch [1]
+System Call Overhead                        9516926.2 lps   (10.0 s, 1 samples)
 
-Next, description about validity of 'File dir-entry set' is ...
-7.4 File Directory Entry:
-... For a File directory entry to be valid, exactly one Stream Extension directory entry and at least
-one File Name directory entry must immediately follow the File directory entry.
-7.7 File Name Directory Entry:
-... File Name directory entries are valid only if they immediately follow the Stream Extension
-directory entry as a consecutive series.
+System Benchmarks Partial Index              BASELINE       RESULT    INDEX
+System Call Overhead                          15000.0    9516926.2   6344.6
+                                                                   ========
+System Benchmarks Index Score (Partial Only)                         6344.6
 
-It is possible to validate the above correctly, with either exfat_get_dentry_set() or
-exfat_get_uniname_from_name_entries().
-Is this wrong?
+with this patch and without the patch [1]
+System Call Overhead                        5290449.3 lps   (10.0 s, 1 samples)
 
-> And your v3 patch are
-> already checking the name entries as TYPE_SECONDARY. And it check them with
-> TYPE_NAME again in exfat_get_uniname_from_ext_entry(). 
+System Benchmarks Partial Index              BASELINE       RESULT    INDEX
+System Call Overhead                          15000.0    5290449.3   3527.0
+                                                                   ========
+System Benchmarks Index Score (Partial Only)                         3527.0
 
-This is according to "6.3 Generic Primary DirectoryEntry Template".
-"6.3 Generic Primary DirectoryEntry Template" only required TYPE_SECONDARY.
-In v3, there is no checksum validation yet.
+without any patch
+System Call Overhead                        4102310.5 lps   (10.0 s, 1 samples)
 
-> If you check TYPE_NAME
-> with stream->name_len, We don't need to perform the loop for extracting
-> filename from the name entries if stream->name_len or name entry is invalid.
+System Benchmarks Partial Index              BASELINE       RESULT    INDEX
+System Call Overhead                          15000.0    4102310.5   2734.9
+                                                                   ========
+System Benchmarks Index Score (Partial Only)                         2734.9
 
-Don't worry, it's a rare case.
-(Do you care about the run-time costs?)
+[1] https://lkml.org/lkml/2020/6/24/283
 
-> And I request to prove why we do not need to validate name entries in this
-> function calling from somewhere. 
-
-If you need, it's okey to validate in both.
-However, name-length and type validation and name-extraction should not be separated.
-These are closely related, so these should be placed physically and temporally close.
-
-Well, why it's unnecessary.
-Both can be validate correctly, as I wrote before.
-And, I don't really trust the verification with TYPE_NAME.
-(reliability of validation as 'file dir-entry set' by checksum is much higher)
-
-> So as I suggested earlier, You can make it
-> with an argument flags so that we skip the validation.
-
-No need skip the validation, I think.
-The run-time costs for validation are pretty low.
-The reason I want to remove the validation is because I want to keep the code simple.
-(KISS principle)
-
-
-BR
+Cc: kernel test robot <rong.a.chen@intel.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Yuqi Jin <jinyuqi@huawei.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 ---
-Tetsuhiro Kohada <kohada.t2@gmail.com>
+Hi Rong,
+
+Can you help to test this patch individually and with [1] together on
+your platform please? [1] has been tested on your platform[2].
+
+[2] https://lkml.org/lkml/2020/7/8/227
+
+ include/linux/fs.h | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e019ea2f1347..2a9c2a30dc58 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -972,8 +972,19 @@ static inline struct file *get_file(struct file *f)
+ 	atomic_long_inc(&f->f_count);
+ 	return f;
+ }
++
++static inline bool get_file_unless_negative(atomic_long_t *v, long a)
++{
++	long c = atomic_long_read(v);
++
++	if (c <= 0)
++		return 0;
++
++	return atomic_long_add_return(a, v) - 1;
++}
++
+ #define get_file_rcu_many(x, cnt)	\
+-	atomic_long_add_unless(&(x)->f_count, (cnt), 0)
++	get_file_unless_negative(&(x)->f_count, (cnt))
+ #define get_file_rcu(x) get_file_rcu_many((x), 1)
+ #define file_count(x)	atomic_long_read(&(x)->f_count)
+ 
+-- 
+2.7.4
 
