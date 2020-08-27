@@ -2,148 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F146254931
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 17:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB109254969
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 17:29:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728525AbgH0PWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 11:22:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38088 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728498AbgH0PWQ (ORCPT
+        id S1728306AbgH0P3M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 11:29:12 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:36436 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728209AbgH0P3J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 11:22:16 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 812A7C061264
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 08:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=hr+K8xZvT4MYX8Ij8MMIA1OqQ5725XNfBq+GwMpLg/w=; b=pSc90PLmkNnb/PNagAY0B00Q1G
-        hZ9fZL8CO0zyt6rHKjwcq6WTTKowrsFXp5F4++H/E7jqPhtCjGEoQwPGQbKeNHybojOGHouQMOmCS
-        bEhHL8yhXsfIUGKuhtghTc7TF6gxwiBYjIOc6RNUsLcz413J2SX57K0kUS3IkOJNdVG0Q4DYnzcwk
-        G9K9na7ksvua+1XTt1gJQo4chld2GIfZGRgmTb6RAutx9rfbun5TAm5GJiqpDVJeP6+Y0PaEXFLjf
-        rnkWaxl7Yr8tjirdrZx6/IzckEnannYFcFvfVGP7807ZOdtxgy5EzgzIne4Z4rRs74Vi/+eby5Ahz
-        WJHVmzMg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kBJj5-0005wT-GD; Thu, 27 Aug 2020 15:22:07 +0000
-Date:   Thu, 27 Aug 2020 16:22:07 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christian Schoenebeck <qemu_oss@crudebyte.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
-        stefanha@redhat.com, mszeredi@redhat.com, vgoyal@redhat.com,
-        gscrivan@redhat.com, dwalsh@redhat.com, chirantan@chromium.org
-Subject: Re: xattr names for unprivileged stacking?
-Message-ID: <20200827152207.GJ14765@casper.infradead.org>
-References: <20200728105503.GE2699@work-vm>
- <12480108.dgM6XvcGr8@silver>
- <20200812143323.GF2810@work-vm>
- <27541158.PQPtYaGs59@silver>
- <20200816225620.GA28218@dread.disaster.area>
- <20200816230908.GI17456@casper.infradead.org>
- <20200817002930.GB28218@dread.disaster.area>
+        Thu, 27 Aug 2020 11:29:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598542148;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+kaDLLF1f55NCIko0/llJRLFGMqoBN4rwHWmAV1FCCk=;
+        b=Rg8dPWnvEeLX1llNiml570V9KpythOZmDUSRLvdYNxGdVBtyN/tA2dR3buY75cREjoyE9M
+        BHCxE5WxPIL1jnCwkjL/9CfvPfJhy9dx/naVGj1EMKTfBIAnjzMGVML40PUUErtV/qZ/2W
+        2XIuiktfq7iEFjhr0g0SNEKy/lfa+9A=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-425-9dtdZprBOgSEsWY5L1TUOg-1; Thu, 27 Aug 2020 11:29:05 -0400
+X-MC-Unique: 9dtdZprBOgSEsWY5L1TUOg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 56CE310ABDC2;
+        Thu, 27 Aug 2020 15:29:02 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-127.rdu2.redhat.com [10.10.120.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 14FE85C1C2;
+        Thu, 27 Aug 2020 15:28:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200810164044.GA31753@lst.de>
+References: <20200810164044.GA31753@lst.de> <1851200.1596472222@warthog.procyon.org.uk> <447452.1596109876@warthog.procyon.org.uk> <667820.1597072619@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] fscache rewrite -- please drop for now
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200817002930.GB28218@dread.disaster.area>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1428310.1598542135.1@warthog.procyon.org.uk>
+Date:   Thu, 27 Aug 2020 16:28:55 +0100
+Message-ID: <1428311.1598542135@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 17, 2020 at 10:29:30AM +1000, Dave Chinner wrote:
-> To implement ADS, we'd likely consider adding a new physical inode
-> "ADS fork" which, internally, maps to a separate directory
-> structure. This provides us with the ADS namespace for each inode
-> and a mechanism that instantiates a physical inode per ADS. IOWs,
-> each ADS can be referenced by the VFS natively and independently as
-> an inode (native "file as a directory" semantics). Hence existing
-> create/unlink APIs work for managing ADS, readdir() can list all
-> your ADS, you can keep per ADS xattrs, etc....
-> 
-> IOWs, with a filesystem inode fork implementation like this for ADS,
-> all we really need is for the VFS to pass a magic command to
-> ->lookup() to tell us to use the ADS namespace attached to the inode
-> rather than use the primary inode type/state to perform the
-> operation.
-> 
-> Hence all the ADS support infrastructure is essentially dentry cache
-> infrastructure allowing a dentry to be both a file and directory,
-> and providing the pathname resolution that recognises an ADS
-> redirection. Name that however you want - we've got to do an on-disk
-> format change to support ADS, so we can tell the VFS we support ADS
-> or not. And we have no cares about existing names in the filesystem
-> conflicting with the ADS pathname identifier because it's a mkfs
-> time decision. Given that special flags are needed for the openat()
-> call to resolve an ADS (e.g. O_ALT), we know if we should parse the
-> ADS identifier as an ADS the moment it is seen...
+Christoph Hellwig <hch@lst.de> wrote:
 
-I think this is equivalent to saying "Linux will never support ADS".
-Al has some choice words on having the dentry cache support objects which
-are both files and directories.  You run into some "fun" locking issues.
-And there's lots of things you just don't want to permit, like mounting
-a new filesystem on top of some ADS, or chrooting a process into an ADS,
-or renaming an ADS into a different file.
+> FYI, a giant rewrite dropping support for existing consumer is always
+> rather awkward.  Is there any way you could pre-stage some infrastructure
+> changes, and then do a temporary fscache2, which could then be renamed
+> back to fscache once everyone switched over?
 
-I think what would satisfy people is allowing actual "alternate data
-streams" to exist in files.  You always start out by opening a file,
-then the presentation layer is a syscall that lets you enumerate the
-data streams available for this file, and another syscall that returns
-an fd for one of those streams.
+That's a bit tricky.  There are three points that would have to be shared: the
+userspace miscdev interface, the backing filesystem and the single index tree.
 
-As long as nobody gets the bright idea to be able to link that fd into
-the directory structure somewhere, this should avoid any problems with
-unwanted things being done to an ADS.  Chunks of your implementation
-described above should be fine for this.
+It's probably easier to just have a go at converting 9P and cifs.  Making the
+old and new APIs share would be a fairly hefty undertaking in its own right.
 
-I thought through some of this a while back, and came up with this list:
+David
 
-> Work as expected:
-> mmap(), read(), write(), close(), splice(), sendfile(), fallocate(),
-> ftruncate(), dup(), dup2(), dup3(), utimensat(), futimens(), select(),
-> poll(), lseek(), fcntl(): F_DUPFD, F_GETFD, F_GETFL, F_SETFL, F_SETLK,
-> F_SETLKW, F_GETLK, F_GETOWN, F_SETOWN, F_GETSIG, F_SETSIG, F_SETLEASE,
-> F_GETLEASE)
->
-> Return error if fd refers to the non-default stream:
-> linkat(), symlinkat(), mknodat(), mkdirat()
->
-> Remove a stream from a file:
-> unlinkat()
->
-> Open an existing stream in a file or create a new stream in a file:
-> openat()
->
-> fstat()
-> st_ino may be different for different names.  st_dev may be different.
-> st_mode will match the object for files, even if it is changed after
-> creation.  For directories, it will match except that execute permission
-> will be removed and S_IFMT will be S_ISREG (do we want to define a
-> new S_ISSTRM?).  st_nlink will be 1.  st_uid and st_gid will match.
-> It will have its own st_atime/st_mtime/st_ctime.  Accessing a stream
-> will not update its parent's atime/mtime/ctime.
->
-> renameat()
-> If olddirfd + oldpath refers to a stream then newdirfd + newpath must
-> refer to a stream within the same parent object.  If that stream exists,
-> it is removed.  If olddirfd + oldpath does not refer to a stream,
-> then newdirfd + newpath must not refer to a stream.
->
-> The two file specifications must resolve to the same parent object.
-> It is possible to use renameat() to rename a stream within an object,
-> but not to move a stream from one object to another.  If newpath refers
-> to an existing named stream, it is removed.
-
-I don't seem to have come up with an actual syscall for enumerating the
-stream names.  I kind of think a fresh syscall might be the right way to
-go.
-
-For the benefit of shell scripts, I think an argument to 'cat' to open
-an ADS and an lsads command should be enough.
-
-Oh, and I would think we might want i_blocks of the 'host' inode to
-reflect the blocks allocated to all the data streams attached to the
-inode.  That should address at least parts of the data exfiltration
-concern.
