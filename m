@@ -2,181 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BB007253DDF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 08:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1B64253DF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 08:37:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbgH0Gfm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 02:35:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40156 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726826AbgH0Gfh (ORCPT
+        id S1727050AbgH0Ghy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 02:37:54 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:56106 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726395AbgH0Ghy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 02:35:37 -0400
-Received: from mail-pj1-x104a.google.com (mail-pj1-x104a.google.com [IPv6:2607:f8b0:4864:20::104a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3F9AC061236
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 23:35:36 -0700 (PDT)
-Received: by mail-pj1-x104a.google.com with SMTP id gf6so3226226pjb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 23:35:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=lkHCdyUCoYESq4ydKmSA3luAljvjaC05ZtWKhPqbttA=;
-        b=lH5QjRA529S75RW4bSniVCizDiNNSpKEz0PmVdWlxTn84QYaF1hEMSjEIWN1cH47DD
-         7l/tY7AMLYoFIj11e0U3U1ld0Zw2WhdDw3WdHPeYDwOIVEz2BxJFOFhrzvEP8DYmpGYV
-         5/xAaIfRWJ+Ouq3LcIujpv+1vXIDqbL7EUD8ooqeIs3is7N/MH0CgbKIoqM4Mdch2wJk
-         Cf6cpACb3bdOBpn/HSpPuxDceC4j35ICSOG6g2GbnPw+6F5rDoaH6GHoMXGo0HjKmFx7
-         YBTbj2mZh/AIIUW0cg9TQ6WPc0k9FCtyWw2pexEhyJPMNBw9X7cmM3ZXVmOekOdLFEWl
-         vqqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=lkHCdyUCoYESq4ydKmSA3luAljvjaC05ZtWKhPqbttA=;
-        b=TDa/DxozHY4CKIHJc19FzoiUkMxTuRs0q1otPRqzIBp9s4uYXM++zuxc1xtv1KRxlJ
-         Do7yeS/G1AnfftrIez/zRMVmaoPfTyyHDpYeayCN+T6iQWMuhxpa3pGTuQxyzSH+Lh4q
-         ro7U/zjpE8lDwSlvC/Ytx0yyHiwhcZcrgutFCsS9LYgddAs7N13XS0E9ZsdvC/ABJ7VN
-         j8uhFqqmMdZBqDIVXdSDXYBxhqCvQfyQTv+FpAW+0GX2aMJ/Kq1gTI96mGBnx4acj/L9
-         ct9XvJ7r/sV3AbobMkGuckHJQZ9hRHHvywTO39MJL0LdRWAbZjma4pu9rnZ7t4szfaFn
-         2sdA==
-X-Gm-Message-State: AOAM530zpKhGb3VA64ezwENKc8w/jo74o4Z6h72JX6lFBAfSI3M6ocC0
-        +tGmxcYEI6kloIFVVPDcAf8IZFqK1KY7WNiCTA==
-X-Google-Smtp-Source: ABdhPJxakHWg/OtPk5j44JS+o/b4GsQIJGuJXcOZoEJmcltSxBtpQP1TagnimX/oqC8Rh6bkvvzNLkNwZKTVaxm5VQ==
-X-Received: from lg.mtv.corp.google.com ([100.89.4.209]) (user=lokeshgidra
- job=sendgmr) by 2002:a17:902:a58c:: with SMTP id az12mr1482711plb.109.1598510135698;
- Wed, 26 Aug 2020 23:35:35 -0700 (PDT)
-Date:   Wed, 26 Aug 2020 23:35:22 -0700
-In-Reply-To: <20200827063522.2563293-1-lokeshgidra@google.com>
-Message-Id: <20200827063522.2563293-4-lokeshgidra@google.com>
-Mime-Version: 1.0
-References: <20200827063522.2563293-1-lokeshgidra@google.com>
-X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
-Subject: [PATCH v8 3/3] Wire UFFD up to SELinux
-From:   Lokesh Gidra <lokeshgidra@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        kaleshsingh@google.com, calin@google.com, surenb@google.com,
-        nnk@google.com, jeffv@google.com, kernel-team@android.com,
-        Daniel Colascione <dancol@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 27 Aug 2020 02:37:54 -0400
+Received: from dread.disaster.area (pa49-181-146-199.pa.nsw.optusnet.com.au [49.181.146.199])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id A365D823E11;
+        Thu, 27 Aug 2020 16:37:49 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kBBXg-00054k-Du; Thu, 27 Aug 2020 16:37:48 +1000
+Date:   Thu, 27 Aug 2020 16:37:48 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Hao Li <lihao2018.fnst@cn.fujitsu.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, y-goto@fujitsu.com
+Subject: Re: [PATCH] fs: Kill DCACHE_DONTCACHE dentry even if
+ DCACHE_REFERENCED is set
+Message-ID: <20200827063748.GA12096@dread.disaster.area>
+References: <20200821015953.22956-1-lihao2018.fnst@cn.fujitsu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200821015953.22956-1-lihao2018.fnst@cn.fujitsu.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=KcmsTjQD c=1 sm=1 tr=0 cx=a_idp_d
+        a=GorAHYkI+xOargNMzM6qxQ==:117 a=GorAHYkI+xOargNMzM6qxQ==:17
+        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=omOdbC7AAAAA:8 a=7-415B0cAAAA:8
+        a=by_5GhPrgXZcAFhFJM8A:9 a=CjuIK1q_8ugA:10 a=baC4JDFNLZpnPwus_NF9:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Daniel Colascione <dancol@google.com>
+On Fri, Aug 21, 2020 at 09:59:53AM +0800, Hao Li wrote:
+> Currently, DCACHE_REFERENCED prevents the dentry with DCACHE_DONTCACHE
+> set from being killed, so the corresponding inode can't be evicted. If
+> the DAX policy of an inode is changed, we can't make policy changing
+> take effects unless dropping caches manually.
+> 
+> This patch fixes this problem and flushes the inode to disk to prepare
+> for evicting it.
+> 
+> Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
+> ---
+>  fs/dcache.c | 3 ++-
+>  fs/inode.c  | 2 +-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index ea0485861d93..486c7409dc82 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -796,7 +796,8 @@ static inline bool fast_dput(struct dentry *dentry)
+>  	 */
+>  	smp_rmb();
+>  	d_flags = READ_ONCE(dentry->d_flags);
+> -	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED;
+> +	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED
+> +			| DCACHE_DONTCACHE;
 
-This change gives userfaultfd file descriptors a real security
-context, allowing policy to act on them.
+Seems reasonable, but you need to update the comment above as to
+how this flag fits into this code....
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
+>  	/* Nothing to do? Dropping the reference was all we needed? */
+>  	if (d_flags == (DCACHE_REFERENCED | DCACHE_LRU_LIST) && !d_unhashed(dentry))
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 72c4c347afb7..5218a8aebd7f 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1632,7 +1632,7 @@ static void iput_final(struct inode *inode)
+>  	}
+>  
+>  	state = inode->i_state;
+> -	if (!drop) {
+> +	if (!drop || (drop && (inode->i_state & I_DONTCACHE))) {
+>  		WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
+>  		spin_unlock(&inode->i_lock);
 
-[Remove owner inode from userfaultfd_ctx]
-[Use anon_inode_getfd_secure() instead of anon_inode_getfile_secure()
- in userfaultfd syscall]
-[Use inode of file in userfaultfd_read() in resolve_userfault_fork()]
+What's this supposed to do? We'll only get here with drop set if the
+filesystem is mounting or unmounting. In either case, why does
+having I_DONTCACHE set require the inode to be written back here
+before it is evicted from the cache?
 
-Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
----
- fs/userfaultfd.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+Cheers,
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 0e4a3837da52..918535b49475 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -978,14 +978,14 @@ static __poll_t userfaultfd_poll(struct file *file, poll_table *wait)
- 
- static const struct file_operations userfaultfd_fops;
- 
--static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
--				  struct userfaultfd_ctx *new,
-+static int resolve_userfault_fork(struct userfaultfd_ctx *new,
-+				  struct inode *inode,
- 				  struct uffd_msg *msg)
- {
- 	int fd;
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, new,
--			      O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
-+			O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
- 	if (fd < 0)
- 		return fd;
- 
-@@ -995,7 +995,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
- }
- 
- static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
--				    struct uffd_msg *msg)
-+				    struct uffd_msg *msg, struct inode *inode)
- {
- 	ssize_t ret;
- 	DECLARE_WAITQUEUE(wait, current);
-@@ -1106,7 +1106,7 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
- 	spin_unlock_irq(&ctx->fd_wqh.lock);
- 
- 	if (!ret && msg->event == UFFD_EVENT_FORK) {
--		ret = resolve_userfault_fork(ctx, fork_nctx, msg);
-+		ret = resolve_userfault_fork(fork_nctx, inode, msg);
- 		spin_lock_irq(&ctx->event_wqh.lock);
- 		if (!list_empty(&fork_event)) {
- 			/*
-@@ -1166,6 +1166,7 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
- 	ssize_t _ret, ret = 0;
- 	struct uffd_msg msg;
- 	int no_wait = file->f_flags & O_NONBLOCK;
-+	struct inode *inode = file_inode(file);
- 
- 	if (ctx->state == UFFD_STATE_WAIT_API)
- 		return -EINVAL;
-@@ -1173,7 +1174,7 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
- 	for (;;) {
- 		if (count < sizeof(msg))
- 			return ret ? ret : -EINVAL;
--		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg);
-+		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg, inode);
- 		if (_ret < 0)
- 			return ret ? ret : _ret;
- 		if (copy_to_user((__u64 __user *) buf, &msg, sizeof(msg)))
-@@ -1995,8 +1996,8 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	/* prevent the mm struct to be freed */
- 	mmgrab(ctx->mm);
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, ctx,
--			      O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
-+			O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
- 	if (fd < 0) {
- 		mmdrop(ctx->mm);
- 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
+Dave.
 -- 
-2.28.0.297.g1956fa8f8d-goog
-
+Dave Chinner
+david@fromorbit.com
