@@ -2,56 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D588B254490
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 13:52:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E26925449B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 13:54:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728857AbgH0Lw1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 07:52:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33028 "EHLO
+        id S1728979AbgH0Lyd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 07:54:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728905AbgH0Lu6 (ORCPT
+        with ESMTP id S1728932AbgH0Lu6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 27 Aug 2020 07:50:58 -0400
-Received: from mail-ed1-x549.google.com (mail-ed1-x549.google.com [IPv6:2a00:1450:4864:20::549])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE350C06123F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 04:49:52 -0700 (PDT)
-Received: by mail-ed1-x549.google.com with SMTP id p21so1818601edy.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 04:49:52 -0700 (PDT)
+Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6D41C0611E0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 04:49:55 -0700 (PDT)
+Received: by mail-qk1-x74a.google.com with SMTP id n128so4553920qke.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 04:49:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=sender:date:in-reply-to:message-id:mime-version:references:subject
          :from:to:cc;
-        bh=37TD1tOgbExZK4EAyJ2auNMattkG66IuBeoEm2InRhU=;
-        b=mwLQkW2eu135cvu7FtBkDyZdvLbrR4ESlq2qN0k/6PXfOdym4GlJSHKkQgZRQIApvg
-         TNU2TA7NTgAq8W1RjGrPU5cfU2v13XgwY1Y286YXZR1RIgU1rBATGkuwy3UnVnEfzVzS
-         h9gBAOJscFv841RTN5OFqgz0ZDFn2mr100yymtqXnZ90QYDN1zdwYNj0w3mZsZbXRoJm
-         ApvuTLxP25AdJ3uWDj7M1DUDci1qtgVkkFgUVcI2lcMwK3aGaOSzeLI4NpF3Su/JRTmH
-         cP3DWhLkdT8DKJZ11vVYL16N1ngL13i5DCLHElAc6DNRzZ2vCnjXQVgEWJqe8SDAXd7p
-         Xrpg==
+        bh=E0DOGeEY62qLZ7uSRf9UfIpHkq96+GdwwPXcN18hEJ0=;
+        b=pIw2KrxmoMV7baKQC5k3kTG9I/MArgQOkxCEyQg7puGJNupue/a7c2lTegkZWYpXVj
+         MRoJDyBaISNiyxzjuMP2fAquo3bkxD+e3+sH+Yd1wAM03gSei7kjZIP/QrKrNYOCYXQK
+         IBbYHcuB8qgRiist7/ix7HynPAXoB1j25Lww9igyKbfY12dDMb4gNWRmIxvFqnkL3c0b
+         NBPxrFxAYADJVPolcWPSkobKgiUocNZEkcAIYX0Sk5a1Z1OPIe2DlKk/Rrw1qC/l3tML
+         lkmyTkfxZ/Vd/6xkglPtQkPmQw3NhD0MMoGzP2oJC97CBNez/q+Q6jyD9yjvqJj41FFx
+         nN9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=37TD1tOgbExZK4EAyJ2auNMattkG66IuBeoEm2InRhU=;
-        b=GwxCn500XKSakJ9tpSQacG1SjI5+Rne2fW95I1bvbkKJvt3/EoSZcLkRuDCnsMnc6c
-         1qNiOD27vnj/Fqk0txqcs/OAQ21wqxUojpwDsNmYN7TFLOvcr+h0hwRb/tw228iuyVj8
-         sfobIAD3K3HlTDP+qDwq1sJxEgZtSQ8VPQieFJaoek/PUg+0L8kj/mMh8JJgqrbR89uj
-         ZGEvxZI1NCIqMc8wOYTt3X4MbkWU5O3QXahlIiPq4B0K2cBknRVXFmumPspuGmbE74yV
-         OPybZ2+KE9R/v6lQq8axZin4w/7bwZbcblj+fekbtx00u1FCIVjiyeWvVWfmyVA57Dwi
-         Qpeg==
-X-Gm-Message-State: AOAM533nY4M6IfAS4q/4AdgV/P4Z5cWuQkDgvaU9Dq/j8w2WXEkhWKoL
-        CPc5vTjJ1eEGTMqe9c0Tu/NDO/EcuQ==
-X-Google-Smtp-Source: ABdhPJwLTnajnvbze0tWFXuS4/QQ3qxi89bpi+PbXi3ya8YRbpq6nxuMIwJcqnNQknEdlR+GAxHngz9mBw==
+        bh=E0DOGeEY62qLZ7uSRf9UfIpHkq96+GdwwPXcN18hEJ0=;
+        b=uLB8TOZLdBHkZzBccG59FW1oK71zWeeNSH4QGWriN0OkfFLv9MkjAHT9SH+PbDsfZL
+         PKMAxfKqAaVYTCzf0y9LAoEp2f/Vto5GUXidhu4TUor+p1YihJIJh5sh/t6Vhf6tU6cc
+         z6ZfQTxGRi36pmpvA8E1pC0CA5LP+GZxaIfaNlATPJ55IDJWAstmK3in0++wY09xOaNz
+         vRRVb9E8YriabvttDjePEcRmC6c9tnVP8CiDMI9w1TfWVwXmGUzuoers1moFDkip3mt5
+         7du0hBklKhO01mulP0HWPztMF9HrajxqoEMqERSFxN76eLKYHQbhKzc5C9XUAsTwCQdo
+         5Sbw==
+X-Gm-Message-State: AOAM531rQP0Phnu22NhEttDZAvYuPgXVV31sCKmatyNSC1/dGIi7v3Ga
+        sOFUeZH77Cp9husDicsXtd/yukx8xA==
+X-Google-Smtp-Source: ABdhPJx4bULUmnyYEEBJ3ZbFaInsMrqKtXp7IHbERfvfk/Yok8RrNFYczmlckohS0u+OxxH3yv4/+3jxKA==
 X-Received: from jannh2.zrh.corp.google.com ([2a00:79e0:1b:201:1a60:24ff:fea6:bf44])
- (user=jannh job=sendgmr) by 2002:a17:906:c7cd:: with SMTP id
- dc13mr20150907ejb.446.1598528991398; Thu, 27 Aug 2020 04:49:51 -0700 (PDT)
-Date:   Thu, 27 Aug 2020 13:49:28 +0200
+ (user=jannh job=sendgmr) by 2002:a0c:f4cb:: with SMTP id o11mr18241148qvm.3.1598528994972;
+ Thu, 27 Aug 2020 04:49:54 -0700 (PDT)
+Date:   Thu, 27 Aug 2020 13:49:29 +0200
 In-Reply-To: <20200827114932.3572699-1-jannh@google.com>
-Message-Id: <20200827114932.3572699-4-jannh@google.com>
+Message-Id: <20200827114932.3572699-5-jannh@google.com>
 Mime-Version: 1.0
 References: <20200827114932.3572699-1-jannh@google.com>
 X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
-Subject: [PATCH v5 3/7] coredump: Refactor page range dumping into common helper
+Subject: [PATCH v5 4/7] coredump: Rework elf/elf_fdpic vma_dump_size() into
+ common helper
 From:   Jann Horn <jannh@google.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -66,137 +67,401 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Both fs/binfmt_elf.c and fs/binfmt_elf_fdpic.c need to dump ranges of pages
-into the coredump file. Extract that logic into a common helper.
+At the moment, the binfmt_elf and binfmt_elf_fdpic code have slightly
+different code to figure out which VMAs should be dumped, and if so,
+whether the dump should contain the entire VMA or just its first page.
 
+Eliminate duplicate code by reworking the binfmt_elf version into a generic
+core dumping helper in coredump.c.
+
+As part of that, change the heuristic for detecting executable/library
+header pages to check whether the inode is executable instead of looking at
+the file mode.
+This is less problematic in terms of locking because it lets us avoid
+get_user() under the mmap_sem. (And arguably it looks nicer and makes more
+sense in generic code.)
+
+Adjust a little bit based on the binfmt_elf_fdpic version:
+->anon_vma is only meaningful under CONFIG_MMU, otherwise we have to assume
+that the VMA has been written to.
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Jann Horn <jannh@google.com>
 ---
- fs/binfmt_elf.c          | 22 ++--------------------
- fs/binfmt_elf_fdpic.c    | 18 +++---------------
- fs/coredump.c            | 34 ++++++++++++++++++++++++++++++++++
- include/linux/coredump.h |  2 ++
- 4 files changed, 41 insertions(+), 35 deletions(-)
+ fs/binfmt_elf.c          | 120 ---------------------------------------
+ fs/binfmt_elf_fdpic.c    |  83 ++-------------------------
+ fs/coredump.c            | 101 ++++++++++++++++++++++++++++++++
+ include/linux/coredump.h |   1 +
+ 4 files changed, 106 insertions(+), 199 deletions(-)
 
 diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 13d053982dd7..5fd11a25d320 100644
+index 5fd11a25d320..03478005a128 100644
 --- a/fs/binfmt_elf.c
 +++ b/fs/binfmt_elf.c
-@@ -2419,26 +2419,8 @@ static int elf_core_dump(struct coredump_params *cprm)
+@@ -1389,126 +1389,6 @@ static int load_elf_library(struct file *file)
+  * Jeremy Fitzhardinge <jeremy@sw.oz.au>
+  */
  
- 	for (i = 0, vma = first_vma(current, gate_vma); vma != NULL;
- 			vma = next_vma(vma, gate_vma)) {
--		unsigned long addr;
--		unsigned long end;
+-/*
+- * The purpose of always_dump_vma() is to make sure that special kernel mappings
+- * that are useful for post-mortem analysis are included in every core dump.
+- * In that way we ensure that the core dump is fully interpretable later
+- * without matching up the same kernel and hardware config to see what PC values
+- * meant. These special mappings include - vDSO, vsyscall, and other
+- * architecture specific mappings
+- */
+-static bool always_dump_vma(struct vm_area_struct *vma)
+-{
+-	/* Any vsyscall mappings? */
+-	if (vma == get_gate_vma(vma->vm_mm))
+-		return true;
 -
--		end = vma->vm_start + vma_filesz[i++];
+-	/*
+-	 * Assume that all vmas with a .name op should always be dumped.
+-	 * If this changes, a new vm_ops field can easily be added.
+-	 */
+-	if (vma->vm_ops && vma->vm_ops->name && vma->vm_ops->name(vma))
+-		return true;
 -
--		for (addr = vma->vm_start; addr < end; addr += PAGE_SIZE) {
--			struct page *page;
--			int stop;
+-	/*
+-	 * arch_vma_name() returns non-NULL for special architecture mappings,
+-	 * such as vDSO sections.
+-	 */
+-	if (arch_vma_name(vma))
+-		return true;
 -
--			page = get_dump_page(addr);
--			if (page) {
--				void *kaddr = kmap(page);
--				stop = !dump_emit(cprm, kaddr, PAGE_SIZE);
--				kunmap(page);
--				put_page(page);
--			} else
--				stop = !dump_skip(cprm, PAGE_SIZE);
--			if (stop)
--				goto end_coredump;
--		}
-+		if (!dump_user_range(cprm, vma->vm_start, vma_filesz[i++]))
-+			goto end_coredump;
- 	}
- 	dump_truncate(cprm);
- 
+-	return false;
+-}
+-
+-/*
+- * Decide what to dump of a segment, part, all or none.
+- */
+-static unsigned long vma_dump_size(struct vm_area_struct *vma,
+-				   unsigned long mm_flags)
+-{
+-#define FILTER(type)	(mm_flags & (1UL << MMF_DUMP_##type))
+-
+-	/* always dump the vdso and vsyscall sections */
+-	if (always_dump_vma(vma))
+-		goto whole;
+-
+-	if (vma->vm_flags & VM_DONTDUMP)
+-		return 0;
+-
+-	/* support for DAX */
+-	if (vma_is_dax(vma)) {
+-		if ((vma->vm_flags & VM_SHARED) && FILTER(DAX_SHARED))
+-			goto whole;
+-		if (!(vma->vm_flags & VM_SHARED) && FILTER(DAX_PRIVATE))
+-			goto whole;
+-		return 0;
+-	}
+-
+-	/* Hugetlb memory check */
+-	if (is_vm_hugetlb_page(vma)) {
+-		if ((vma->vm_flags & VM_SHARED) && FILTER(HUGETLB_SHARED))
+-			goto whole;
+-		if (!(vma->vm_flags & VM_SHARED) && FILTER(HUGETLB_PRIVATE))
+-			goto whole;
+-		return 0;
+-	}
+-
+-	/* Do not dump I/O mapped devices or special mappings */
+-	if (vma->vm_flags & VM_IO)
+-		return 0;
+-
+-	/* By default, dump shared memory if mapped from an anonymous file. */
+-	if (vma->vm_flags & VM_SHARED) {
+-		if (file_inode(vma->vm_file)->i_nlink == 0 ?
+-		    FILTER(ANON_SHARED) : FILTER(MAPPED_SHARED))
+-			goto whole;
+-		return 0;
+-	}
+-
+-	/* Dump segments that have been written to.  */
+-	if (vma->anon_vma && FILTER(ANON_PRIVATE))
+-		goto whole;
+-	if (vma->vm_file == NULL)
+-		return 0;
+-
+-	if (FILTER(MAPPED_PRIVATE))
+-		goto whole;
+-
+-	/*
+-	 * If this looks like the beginning of a DSO or executable mapping,
+-	 * check for an ELF header.  If we find one, dump the first page to
+-	 * aid in determining what was mapped here.
+-	 */
+-	if (FILTER(ELF_HEADERS) &&
+-	    vma->vm_pgoff == 0 && (vma->vm_flags & VM_READ)) {
+-		u32 __user *header = (u32 __user *) vma->vm_start;
+-		u32 word;
+-		/*
+-		 * Doing it this way gets the constant folded by GCC.
+-		 */
+-		union {
+-			u32 cmp;
+-			char elfmag[SELFMAG];
+-		} magic;
+-		BUILD_BUG_ON(SELFMAG != sizeof word);
+-		magic.elfmag[EI_MAG0] = ELFMAG0;
+-		magic.elfmag[EI_MAG1] = ELFMAG1;
+-		magic.elfmag[EI_MAG2] = ELFMAG2;
+-		magic.elfmag[EI_MAG3] = ELFMAG3;
+-		if (unlikely(get_user(word, header)))
+-			word = 0;
+-		if (word == magic.cmp)
+-			return PAGE_SIZE;
+-	}
+-
+-#undef	FILTER
+-
+-	return 0;
+-
+-whole:
+-	return vma->vm_end - vma->vm_start;
+-}
+-
+ /* An ELF note in memory */
+ struct memelfnote
+ {
 diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-index a53f83830986..76e8c0defdc8 100644
+index 76e8c0defdc8..f531c6198864 100644
 --- a/fs/binfmt_elf_fdpic.c
 +++ b/fs/binfmt_elf_fdpic.c
-@@ -1534,21 +1534,9 @@ static bool elf_fdpic_dump_segments(struct coredump_params *cprm)
- 		if (!maydump(vma, cprm->mm_flags))
- 			continue;
+@@ -1215,76 +1215,6 @@ struct elf_prstatus_fdpic
+ 	int pr_fpvalid;		/* True if math co-processor being used.  */
+ };
  
--		for (addr = vma->vm_start; addr < vma->vm_end;
--							addr += PAGE_SIZE) {
--			bool res;
--			struct page *page = get_dump_page(addr);
--			if (page) {
--				void *kaddr = kmap(page);
--				res = dump_emit(cprm, kaddr, PAGE_SIZE);
--				kunmap(page);
--				put_page(page);
--			} else {
--				res = dump_skip(cprm, PAGE_SIZE);
--			}
--			if (!res)
--				return false;
+-/*
+- * Decide whether a segment is worth dumping; default is yes to be
+- * sure (missing info is worse than too much; etc).
+- * Personally I'd include everything, and use the coredump limit...
+- *
+- * I think we should skip something. But I am not sure how. H.J.
+- */
+-static int maydump(struct vm_area_struct *vma, unsigned long mm_flags)
+-{
+-	int dump_ok;
+-
+-	/* Do not dump I/O mapped devices or special mappings */
+-	if (vma->vm_flags & VM_IO) {
+-		kdcore("%08lx: %08lx: no (IO)", vma->vm_start, vma->vm_flags);
+-		return 0;
+-	}
+-
+-	/* If we may not read the contents, don't allow us to dump
+-	 * them either. "dump_write()" can't handle it anyway.
+-	 */
+-	if (!(vma->vm_flags & VM_READ)) {
+-		kdcore("%08lx: %08lx: no (!read)", vma->vm_start, vma->vm_flags);
+-		return 0;
+-	}
+-
+-	/* support for DAX */
+-	if (vma_is_dax(vma)) {
+-		if (vma->vm_flags & VM_SHARED) {
+-			dump_ok = test_bit(MMF_DUMP_DAX_SHARED, &mm_flags);
+-			kdcore("%08lx: %08lx: %s (DAX shared)", vma->vm_start,
+-			       vma->vm_flags, dump_ok ? "yes" : "no");
+-		} else {
+-			dump_ok = test_bit(MMF_DUMP_DAX_PRIVATE, &mm_flags);
+-			kdcore("%08lx: %08lx: %s (DAX private)", vma->vm_start,
+-			       vma->vm_flags, dump_ok ? "yes" : "no");
 -		}
-+		if (!dump_user_range(cprm, vma->vm_start,
-+				     vma->vma_end - vma->vm_start))
-+			return false;
+-		return dump_ok;
+-	}
+-
+-	/* By default, dump shared memory if mapped from an anonymous file. */
+-	if (vma->vm_flags & VM_SHARED) {
+-		if (file_inode(vma->vm_file)->i_nlink == 0) {
+-			dump_ok = test_bit(MMF_DUMP_ANON_SHARED, &mm_flags);
+-			kdcore("%08lx: %08lx: %s (share)", vma->vm_start,
+-			       vma->vm_flags, dump_ok ? "yes" : "no");
+-			return dump_ok;
+-		}
+-
+-		dump_ok = test_bit(MMF_DUMP_MAPPED_SHARED, &mm_flags);
+-		kdcore("%08lx: %08lx: %s (share)", vma->vm_start,
+-		       vma->vm_flags, dump_ok ? "yes" : "no");
+-		return dump_ok;
+-	}
+-
+-#ifdef CONFIG_MMU
+-	/* By default, if it hasn't been written to, don't write it out */
+-	if (!vma->anon_vma) {
+-		dump_ok = test_bit(MMF_DUMP_MAPPED_PRIVATE, &mm_flags);
+-		kdcore("%08lx: %08lx: %s (!anon)", vma->vm_start,
+-		       vma->vm_flags, dump_ok ? "yes" : "no");
+-		return dump_ok;
+-	}
+-#endif
+-
+-	dump_ok = test_bit(MMF_DUMP_ANON_PRIVATE, &mm_flags);
+-	kdcore("%08lx: %08lx: %s", vma->vm_start, vma->vm_flags,
+-	       dump_ok ? "yes" : "no");
+-	return dump_ok;
+-}
+-
+ /* An ELF note in memory */
+ struct memelfnote
+ {
+@@ -1529,13 +1459,9 @@ static bool elf_fdpic_dump_segments(struct coredump_params *cprm)
+ 	struct vm_area_struct *vma;
+ 
+ 	for (vma = current->mm->mmap; vma; vma = vma->vm_next) {
+-		unsigned long addr;
+-
+-		if (!maydump(vma, cprm->mm_flags))
+-			continue;
++		unsigned long size = vma_dump_size(vma, cprm->mm_flags);
+ 
+-		if (!dump_user_range(cprm, vma->vm_start,
+-				     vma->vma_end - vma->vm_start))
++		if (!dump_user_range(cprm, vma->vm_start, size))
+ 			return false;
  	}
  	return true;
+@@ -1547,8 +1473,7 @@ static size_t elf_core_vma_data_size(unsigned long mm_flags)
+ 	size_t size = 0;
+ 
+ 	for (vma = current->mm->mmap; vma; vma = vma->vm_next)
+-		if (maydump(vma, mm_flags))
+-			size += vma->vm_end - vma->vm_start;
++		size += vma_dump_size(vma, mm_flags);
+ 	return size;
  }
+ 
+@@ -1694,7 +1619,7 @@ static int elf_fdpic_core_dump(struct coredump_params *cprm)
+ 		phdr.p_offset = offset;
+ 		phdr.p_vaddr = vma->vm_start;
+ 		phdr.p_paddr = 0;
+-		phdr.p_filesz = maydump(vma, cprm->mm_flags) ? sz : 0;
++		phdr.p_filesz = vma_dump_size(vma, cprm->mm_flags);
+ 		phdr.p_memsz = sz;
+ 		offset += phdr.p_filesz;
+ 		phdr.p_flags = vma->vm_flags & VM_READ ? PF_R : 0;
 diff --git a/fs/coredump.c b/fs/coredump.c
-index 5e24c06092c9..6042d15acd51 100644
+index 6042d15acd51..4ef4c49a65b7 100644
 --- a/fs/coredump.c
 +++ b/fs/coredump.c
-@@ -876,6 +876,40 @@ int dump_skip(struct coredump_params *cprm, size_t nr)
+@@ -936,3 +936,104 @@ void dump_truncate(struct coredump_params *cprm)
+ 	}
  }
- EXPORT_SYMBOL(dump_skip);
- 
-+#ifdef CONFIG_ELF_CORE
-+int dump_user_range(struct coredump_params *cprm, unsigned long start,
-+		    unsigned long len)
+ EXPORT_SYMBOL(dump_truncate);
++
++/*
++ * The purpose of always_dump_vma() is to make sure that special kernel mappings
++ * that are useful for post-mortem analysis are included in every core dump.
++ * In that way we ensure that the core dump is fully interpretable later
++ * without matching up the same kernel and hardware config to see what PC values
++ * meant. These special mappings include - vDSO, vsyscall, and other
++ * architecture specific mappings
++ */
++static bool always_dump_vma(struct vm_area_struct *vma)
 +{
-+	unsigned long addr;
++	/* Any vsyscall mappings? */
++	if (vma == get_gate_vma(vma->vm_mm))
++		return true;
 +
-+	for (addr = start; addr < start + len; addr += PAGE_SIZE) {
-+		struct page *page;
-+		int stop;
++	/*
++	 * Assume that all vmas with a .name op should always be dumped.
++	 * If this changes, a new vm_ops field can easily be added.
++	 */
++	if (vma->vm_ops && vma->vm_ops->name && vma->vm_ops->name(vma))
++		return true;
 +
-+		/*
-+		 * To avoid having to allocate page tables for virtual address
-+		 * ranges that have never been used yet, and also to make it
-+		 * easy to generate sparse core files, use a helper that returns
-+		 * NULL when encountering an empty page table entry that would
-+		 * otherwise have been filled with the zero page.
-+		 */
-+		page = get_dump_page(addr);
-+		if (page) {
-+			void *kaddr = kmap(page);
++	/*
++	 * arch_vma_name() returns non-NULL for special architecture mappings,
++	 * such as vDSO sections.
++	 */
++	if (arch_vma_name(vma))
++		return true;
 +
-+			stop = !dump_emit(cprm, kaddr, PAGE_SIZE);
-+			kunmap(page);
-+			put_page(page);
-+		} else {
-+			stop = !dump_skip(cprm, PAGE_SIZE);
-+		}
-+		if (stop)
-+			return 0;
-+	}
-+	return 1;
++	return false;
 +}
-+#endif
 +
- int dump_align(struct coredump_params *cprm, int align)
- {
- 	unsigned mod = cprm->pos & (align - 1);
++/*
++ * Decide how much of @vma's contents should be included in a core dump.
++ */
++unsigned long vma_dump_size(struct vm_area_struct *vma, unsigned long mm_flags)
++{
++#define FILTER(type)	(mm_flags & (1UL << MMF_DUMP_##type))
++
++	/* always dump the vdso and vsyscall sections */
++	if (always_dump_vma(vma))
++		goto whole;
++
++	if (vma->vm_flags & VM_DONTDUMP)
++		return 0;
++
++	/* support for DAX */
++	if (vma_is_dax(vma)) {
++		if ((vma->vm_flags & VM_SHARED) && FILTER(DAX_SHARED))
++			goto whole;
++		if (!(vma->vm_flags & VM_SHARED) && FILTER(DAX_PRIVATE))
++			goto whole;
++		return 0;
++	}
++
++	/* Hugetlb memory check */
++	if (is_vm_hugetlb_page(vma)) {
++		if ((vma->vm_flags & VM_SHARED) && FILTER(HUGETLB_SHARED))
++			goto whole;
++		if (!(vma->vm_flags & VM_SHARED) && FILTER(HUGETLB_PRIVATE))
++			goto whole;
++		return 0;
++	}
++
++	/* Do not dump I/O mapped devices or special mappings */
++	if (vma->vm_flags & VM_IO)
++		return 0;
++
++	/* By default, dump shared memory if mapped from an anonymous file. */
++	if (vma->vm_flags & VM_SHARED) {
++		if (file_inode(vma->vm_file)->i_nlink == 0 ?
++		    FILTER(ANON_SHARED) : FILTER(MAPPED_SHARED))
++			goto whole;
++		return 0;
++	}
++
++	/* Dump segments that have been written to.  */
++	if ((!IS_ENABLED(CONFIG_MMU) || vma->anon_vma) && FILTER(ANON_PRIVATE))
++		goto whole;
++	if (vma->vm_file == NULL)
++		return 0;
++
++	if (FILTER(MAPPED_PRIVATE))
++		goto whole;
++
++	/*
++	 * If this is the beginning of an executable file mapping,
++	 * dump the first page to aid in determining what was mapped here.
++	 */
++	if (FILTER(ELF_HEADERS) &&
++	    vma->vm_pgoff == 0 && (vma->vm_flags & VM_READ) &&
++	    (READ_ONCE(file_inode(vma->vm_file)->i_mode) & 0111) != 0)
++		return PAGE_SIZE;
++
++#undef	FILTER
++
++	return 0;
++
++whole:
++	return vma->vm_end - vma->vm_start;
++}
 diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-index 7a899e83835d..f0b71a74d0bc 100644
+index f0b71a74d0bc..bfecb8d79a7f 100644
 --- a/include/linux/coredump.h
 +++ b/include/linux/coredump.h
-@@ -16,6 +16,8 @@ extern int dump_skip(struct coredump_params *cprm, size_t nr);
+@@ -16,6 +16,7 @@ extern int dump_skip(struct coredump_params *cprm, size_t nr);
  extern int dump_emit(struct coredump_params *cprm, const void *addr, int nr);
  extern int dump_align(struct coredump_params *cprm, int align);
  extern void dump_truncate(struct coredump_params *cprm);
-+int dump_user_range(struct coredump_params *cprm, unsigned long start,
-+		    unsigned long len);
++unsigned long vma_dump_size(struct vm_area_struct *vma, unsigned long mm_flags);
+ int dump_user_range(struct coredump_params *cprm, unsigned long start,
+ 		    unsigned long len);
  #ifdef CONFIG_COREDUMP
- extern void do_coredump(const kernel_siginfo_t *siginfo);
- #else
 -- 
 2.28.0.297.g1956fa8f8d-goog
 
