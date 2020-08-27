@@ -2,159 +2,265 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B1E72544B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 14:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5CFC25451B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 14:39:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbgH0MEK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 08:04:10 -0400
-Received: from lizzy.crudebyte.com ([91.194.90.13]:32919 "EHLO
-        lizzy.crudebyte.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728802AbgH0MDP (ORCPT
+        id S1729102AbgH0Miw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 08:38:52 -0400
+Received: from esa2.mentor.iphmx.com ([68.232.141.98]:55151 "EHLO
+        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728836AbgH0M0v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 08:03:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=crudebyte.com; s=lizzy; h=Content-Type:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        Content-ID:Content-Description;
-        bh=ogtPstPb1ulPuI+MYe+qZECIvcAeCa391mfvHOfGfkA=; b=ZwFo6cbsDqEAfz2cw82t5t4izF
-        XgWb0vjQDE9ltxFK8Wdsxf45Rb9uaHekr9v3yJY0TxkcYFfv4EQlJ4QckL2pUt6AvcxNqiSS7UaK7
-        xDsjqADgO3MrC6X7RRlUTcknIZnZaWV3hp+eHm2GnTJXwXcJahzGHQj8SqZ4QE27+IsqjKNgMsdL8
-        jbM5D+RZCNtbgXgGeu5YKfrXj2r4V1yRSe4jKjPsFkd/qZdeWNdWCY/aZOIFi5RYS9y+O/wNWeGS7
-        X/aAUMJicsrFDNAF5w27RbHIXxuvM75WwRoU9ikDWVF1ijpYc+YvpNUGJuP35odD/imaeqzK6sTvz
-        BTf3nXmA==;
-From:   Christian Schoenebeck <qemu_oss@crudebyte.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Frank van der Linden <fllinden@amazon.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Subject: Re: file forks vs. xattr (was: xattr names for unprivileged stacking?)
-Date:   Thu, 27 Aug 2020 14:02:42 +0200
-Message-ID: <1803870.bTIpkxUbEX@silver>
-In-Reply-To: <CAJfpegt9Pmj9k-qAaKxcBOjTNtV5XsTYa+C0s9Ui9W13R-dv8g@mail.gmail.com>
-References: <20200824222924.GF199705@mit.edu> <3918915.AdkhnqkaGN@silver> <CAJfpegt9Pmj9k-qAaKxcBOjTNtV5XsTYa+C0s9Ui9W13R-dv8g@mail.gmail.com>
+        Thu, 27 Aug 2020 08:26:51 -0400
+IronPort-SDR: lZrENF98HkO7lgSHgxOU5bs67FNWYT7XnUvz3YZceUd4qL2JR/nzW4uNCwFGXhkJucsie98nas
+ MIsnFROOBQkpZhkE2zF7OGixRrhAbLJYSY/QivAy7nDjFfGp5GJzxvOobhNccESst9i4/oV+wf
+ +AKaDupO8kyjPqZBm6aTt3DKu0o/pbbqiYjuz4A52LufKMX/5KgYxtcbcc/fgO8vgvlernCTzu
+ 4R1fpodiBl9GUJDYGp7uMBvgd0+f/DLNWXYhgked/oht7xWR6HW1L/ZzTOzo6UthfG9ZK9SHav
+ 0dw=
+X-IronPort-AV: E=Sophos;i="5.76,359,1592899200"; 
+   d="scan'208";a="52331554"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa2.mentor.iphmx.com with ESMTP; 27 Aug 2020 04:06:45 -0800
+IronPort-SDR: 8VB2H+hJ/+U8lqR67sLBmUJ/+z+Qwbylgkedv2al+v2XOSu4h0w3bSdbrI+bmPeAij+7jQD9wS
+ t5TMIn4sN+UQeIV3QTfw/Em+JiccVrtY03SP4XN0FyIe492zKnsl7okA7FoiD25gwQOiBekLQ0
+ Xrgbfu9hu4OXhQRVWZlPAhwOFTvX+HFd0s4SzU8fHFF076Dy5pkpU/diaQENp2de/p/PfvFkPe
+ wxhgLwyZvAzEGDHmM070yIQo1HZ5H9SlFkXNwTHsmUSjwVs4IBBScgqmZ8z695HKTlf3+zdFkb
+ 72o=
+Subject: Re: PROBLEM: Long Workqueue delays V2
+From:   Jim Baxter <jim_baxter@mentor.com>
+To:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-block@vger.kernel.org>
+References: <625615f2-3a6b-3136-35f9-2f2fb3c110cf@mentor.com>
+ <066753ec-eddc-d7f6-5cc8-fe282baba6ec@mentor.com>
+CC:     <linux-usb@vger.kernel.org>,
+        "Frkuska, Joshua" <Joshua_Frkuska@mentor.com>,
+        "Resch Carsten (CM/ESO6)" <Carsten.Resch@de.bosch.com>,
+        "Rosca, Eugeniu (ADITG/ESB)" <erosca@de.adit-jv.com>,
+        "Craske, Mark" <Mark_Craske@mentor.com>,
+        "Brown, Michael" <michael_brown@mentor.com>
+Message-ID: <bf3d7f89-e652-a26b-bb27-c6dbef08e28c@mentor.com>
+Date:   Thu, 27 Aug 2020 13:06:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <066753ec-eddc-d7f6-5cc8-fe282baba6ec@mentor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-08.mgc.mentorg.com (139.181.222.8) To
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Dienstag, 25. August 2020 17:32:15 CEST Miklos Szeredi wrote:
-> On Tue, Aug 25, 2020 at 5:12 PM Christian Schoenebeck
-> 
-> <qemu_oss@crudebyte.com> wrote:
-> > I can give you another argument which might be more convincing to you: say
-> > you maintain a middleware lib that takes a path as argument somewhere,
-> > and that lib now gets path="/foo//bar". How could that lib judge whether
-> > it should a) eliminate the double slash, or rather b) it was really meant
-> > to be fork "bar" of file "foo" and hence shall pass the string as-is to
-> > underlying
-> > framework(s)? Simply: It can't, as it requires knowledge from either upper
-> > or lower end that the lib in the middle might not have.
-> 
-> Nobody needs to care, only the level that actually wants to handle the
-> alternative namespace.  And then that level absolutely *must* call
-> into a level that it knows does handle the alternative namespace.
-> 
-> Yeah, it's not going to suddenly start to  work by putting "foo//bar"
-> into an open file dialogue or whatever.   That's not the point, adding
-> that  new interface is to enable *new* functionality not to change
-> existing functionality.  That's the point that people don't seem to
-> get.
+Has anyone any ideas of how to investigate this delay further?
 
-I think you are underestimating the negative impact an n-times-slash delimiter 
-would introduce. Middleware functionalities rely on unumbiguous path name 
-resolution for being able to transform pathes without asking another level how 
-it shall a) parse and b) interpret individual components of a path.
+Comparing the perf output for unplugging the USB stick and using umount
+which does not cause these delays in other workqueues the main difference
+is that the problem case is executing the code in invalidate_mapping_pages()
+and a large part of that arch_local_irq_restore() which is part of
+releasing a lock, I would usually expect that requesting a lock would be
+where delays may occur.
 
-It would not be as simple as saying, they are now broken, let's fix them. 
-Because path transformations happen so often on all levels on any system, that 
-if you'd introduce a dependency for that (i.e. a simple path transformation 
-would need to ask e.g. a storage backend for help), then it would slow down 
-overall performance tremendously, especially as such requests are typically 
-non-deterministic.
-
-E.g. it is very common for a middleware function to transform a path into a 
-list, and "/a/b//c/d" would now be ambiguous:
-
-    "/a/b//c/d" -> [ "a", "b", "c", "d" ]
-
-    or
-
-    "/a/b//c/d" -> [ "a", "b", [ "c", "d" ] ]
-
-You can't simply pass either one option to the next level, because it would 
-break behaviour:
-
-    foreach (dir_entry in [ "a", "b", "c", "d" ]) {
-        dirAction(dir_entry)
-    }
-
-is different than:
-
-    foreach (dir_entry in [ "a", "b" ]) {
-        dirAction(dir_entry)
-        foreach (fork_entry in [ "c", "d" ]) {
-            forkAction(fork_entry)
-        }
-    }
-
-Hence that simple path transformation would need to ask for help to resolve 
-the ambiguity, which might take anything between few microseconds up to 
-several seconds, then multiply that duration with the common amount of 
-individual path transformations involved in just a very simple task.
-
----
-
-What I could imagine as delimiter instead; slash-caret:
-
-    /var/foo.pdf/^/forkname
-
-I also like Microsoft's colon pick, as it would make shell interactions more 
-slick:
-
-	/var/foo.pdf:forkname
-
-However I am aware that the colon would probably be too drastic, as colons are 
-often used to separate individual pathes in a list for instance.
-
-> > > The most important thing, I think, is to not fragment the interface
-> > > further.  So O_ALT should allow not just one application (like ADS)
-> > > but should have a top level directory for selecting between the
-> > > various data sources.
-> > 
-> > Well, that's what name spaces are for IMO. So you would probably reserve
-> > some prefixes for system purposes, like it is already done for Linux
-> > xattrs. Or do you see any advantage for adding a dedicated directory
-> > layer in between instead?
-> 
-> You mean some reserved prefixes for ADS?  Bleh.
-> 
-> No, xattr is not the model we should be following.
-
-Maybe. I am actually unresolved about that. As that fs meta info PR recently 
-showed, there might be other future use cases for this interface that one 
-probably cannot foresee today; and a dedicated toplevel directory to choose 
-between them would also make the kernel internal bindings more clean. So you 
-might have for instance:
-
-	/var/foo.pdf/^/alt/forkname   # for common ADS (incl. macOS data forks)
-
-	/var/foo.pdf/^/res/forkname   # for mapping macOS resource forks
-
-	/var/foo.pdf/^/meta/forkname  # for accessing fs implementation info
+	--94.90%--invalidate_partition
+	   __invalidate_device
+	   |          
+	   |--64.55%--invalidate_bdev
+	   |  |          
+	   |   --64.13%--invalidate_mapping_pages
+	   |     |          
+	   |     |--24.09%--invalidate_inode_page
+	   |     |   |          
+	   |     |   --23.44%--remove_mapping
+	   |     |     |          
+	   |     |      --23.20%--__remove_mapping
+	   |     |        |          
+	   |     |         --21.90%--arch_local_irq_restore
+	   |     |          
+	   |     |--22.44%--arch_local_irq_enable
 
 Best regards,
-Christian Schoenebeck
+Jim
 
+-------- Original Message --------
+Subject: Re: PROBLEM: Long Workqueue delays V2
+From: Jim Baxter <jim_baxter@mentor.com>
+To: 
+Date: Wed Aug 19 2020 14:12:24 GMT+0100 (British Summer Time)
 
+> Added linux-block List which may also be relevant to this issue.
+> 
+> -------- Original Message --------
+> Subject: PROBLEM: Long Workqueue delays V2
+> From: Jim Baxter <jim_baxter@mentor.com>
+> To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+> CC: "Resch Carsten (CM/ESO6)" <Carsten.Resch@de.bosch.com>, "Rosca, Eugeniu (ADITG/ESB)" <erosca@de.adit-jv.com>
+> Date: Tue, 18 Aug 2020 12:58:13 +0100
+> 
+>> I am asking this question again to include the fs-devel list.
+>>
+>>
+>> We have issues with the workqueue of the kernel overloading the CPU 0 
+>> when we we disconnect a USB stick.
+>>
+>> This results in other items on the shared workqueue being delayed by
+>> around 6.5 seconds with a default kernel configuration and 2.3 seconds
+>> on a config tailored for our RCar embedded platform.
+>>
+>>
+>>
+>> We first noticed this issue on custom hardware and we have recreated it
+>> on an RCar Starter Kit using a test module [1] to replicate the
+>> behaviour, the test module outputs any delays of greater then 9ms.
+>>
+>> To run the test we have a 4GB random file on a USB stick and perform
+>> the following test.
+>> The stick is mounted as R/O and we are copying data from the stick:
+>>
+>> - Mount the stick.
+>> mount -o ro,remount /dev/sda1
+>>
+>> - Load the Module:
+>> # taskset -c 0 modprobe latency-mon
+>>
+>> - Copy large amount of data from the stick:
+>> # dd if=/run/media/sda1/sample.txt of=/dev/zero
+>> [ 1437.517603] DELAY: 10
+>> 8388607+1 records in
+>> 8388607+1 records out
+>>
+>>
+>> - Disconnect the USB stick:
+>> [ 1551.796792] usb 2-1: USB disconnect, device number 2
+>> [ 1558.625517] DELAY: 6782
+>>
+>>
+>> The Delay output 6782 is in milliseconds.
+>>
+>>
+>>
+>> Using umount stops the issue occurring but is unfortunately not guaranteed
+>> in our particular system.
+>>
+>>
+>> From my analysis the hub_event workqueue kworker/0:1+usb thread uses around
+>> 98% of the CPU.
+>>
+>> I have traced the workqueue:workqueue_queue_work function while unplugging the USB
+>> and there is no particular workqueue function being executed a lot more then the 
+>> others for the kworker/0:1+usb thread.
+>>
+>>
+>> Using perf I identified the hub_events workqueue was spending a lot of time in
+>> invalidate_partition(), I have included a cut down the captured data from perf in
+>> [2] which shows the additional functions where the kworker spends most of its time.
+>>
+>>
+>> I am aware there will be delays on the shared workqueue, are the delays
+>> we are seeing considered normal?
+>>
+>>
+>> Is there any way to mitigate or identify where the delay is?
+>> I am unsure if this is a memory or filesystem subsystem issue.
+>>
+>>
+>> Thank you for you help.
+>>
+>> Thanks,
+>> Jim Baxter
+>>
+>> [1] Test Module:
+>> // SPDX-License-Identifier: GPL-2.0
+>> /*
+>>  * Simple WQ latency monitoring
+>>  *
+>>  * Copyright (C) 2020 Advanced Driver Information Technology.
+>>  */
+>>
+>> #include <linux/init.h>
+>> #include <linux/ktime.h>
+>> #include <linux/module.h>
+>>
+>> #define PERIOD_MS 100
+>>
+>> static struct delayed_work wq;
+>> static u64 us_save;
+>>
+>> static void wq_cb(struct work_struct *work)
+>> {
+>> 	u64 us = ktime_to_us(ktime_get());
+>> 	u64 us_diff = us - us_save;
+>> 	u64 us_print = 0;
+>>
+>> 	if (!us_save)
+>> 		goto skip_print;
+>>
+>>
+>> 	us_print = us_diff / 1000 - PERIOD_MS;
+>> 	if (us_print > 9)
+>> 		pr_crit("DELAY: %lld\n", us_print);
+>>
+>> skip_print:
+>> 	us_save = us;
+>> 	schedule_delayed_work(&wq, msecs_to_jiffies(PERIOD_MS));
+>> }
+>>
+>> static int latency_mon_init(void)
+>> {
+>> 	us_save = 0;
+>> 	INIT_DELAYED_WORK(&wq, wq_cb);
+>> 	schedule_delayed_work(&wq, msecs_to_jiffies(PERIOD_MS));
+>>
+>> 	return 0;
+>> }
+>>
+>> static void latency_mon_exit(void)
+>> {
+>> 	cancel_delayed_work_sync(&wq);
+>> 	pr_info("%s\n", __func__);
+>> }
+>>
+>> module_init(latency_mon_init);
+>> module_exit(latency_mon_exit);
+>> MODULE_AUTHOR("Eugeniu Rosca <erosca@de.adit-jv.com>");
+>> MODULE_LICENSE("GPL");
+>>
+>>
+>> [2] perf trace:
+>>     95.22%     0.00%  kworker/0:2-eve  [kernel.kallsyms]
+>>     |
+>>     ---ret_from_fork
+>>        kthread
+>>        worker_thread
+>>        |          
+>>         --95.15%--process_one_work
+>> 		  |          
+>> 		   --94.99%--hub_event
+>> 			 |          
+>> 			  --94.99%--usb_disconnect
+>> 			  <snip>
+>> 				|  
+>> 				--94.90%--invalidate_partition
+>> 				   __invalidate_device
+>> 				   |          
+>> 				   |--64.55%--invalidate_bdev
+>> 				   |  |          
+>> 				   |   --64.13%--invalidate_mapping_pages
+>> 				   |     |          
+>> 				   |     |--24.09%--invalidate_inode_page
+>> 				   |     |   |          
+>> 				   |     |   --23.44%--remove_mapping
+>> 				   |     |     |          
+>> 				   |     |      --23.20%--__remove_mapping
+>> 				   |     |        |          
+>> 				   |     |         --21.90%--arch_local_irq_restore
+>> 				   |     |          
+>> 				   |     |--22.44%--arch_local_irq_enable
+>> 				   |          
+>> 					--30.35%--shrink_dcache_sb 
+>> 					<snip>
+>> 					  |      
+>> 					  --30.17%--truncate_inode_pages_range
+>>
