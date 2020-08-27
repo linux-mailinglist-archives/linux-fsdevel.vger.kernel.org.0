@@ -2,67 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F86D254439
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 13:21:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA467254459
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 13:33:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbgH0LUA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 07:20:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55976 "EHLO
+        id S1728719AbgH0LdK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 07:33:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726938AbgH0LQi (ORCPT
+        with ESMTP id S1728700AbgH0LcR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 07:16:38 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA429C061238;
-        Thu, 27 Aug 2020 04:05:05 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id n26so80873edv.13;
-        Thu, 27 Aug 2020 04:05:05 -0700 (PDT)
+        Thu, 27 Aug 2020 07:32:17 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2729AC061232;
+        Thu, 27 Aug 2020 04:01:18 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id m22so7018697eje.10;
+        Thu, 27 Aug 2020 04:01:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=cc:subject:to:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=naFt+Blfmi1/PTm3cjJaXUe+Z1yMpY7OBP3DllMN5U4=;
-        b=EL2B7xRo+FDvtMZrlXtQlPYPM4iOOoiSSWJ5UF7uGQoCFQ4j//Knd5kD8i7oMau2fj
-         KBauANVs051oyggZx5VXNuixtb9y4k+zQQCvCEIqCDQuWlsQvUBlblwIFh29Z+ianBVL
-         SF0WRfsRCE3Ptcr6d7QstgUX/UCsiAlZd3fEs5jEyAGnLkFD8c+kN1zlstODJSsoABiO
-         oRAuA8uDZ8cfaXj2tFh5e4CFt+q9MZg8XW/JhjO80zTU2rqzMtnPdY/1nfhDkPhwYB7/
-         ZmMdS+fYbaAxqZJVHk8v4/xP6ZWMs6dRwCIfO2P4NCmX1FWU7eRY5ENE4AlNuGJzRUcF
-         lm1g==
+        bh=edStvBe16F0DYe/Tb0S52V60X6Qfj/1Yjsd3cDbffB0=;
+        b=Mo7bwIXOuWz4IVnwnNBFImsBmAtzEfPNf9csfDXHRs3BannEZyzHNkl40GYOcpjZuN
+         kWougdSqVmjN0MMoVvwGXxoGZ2zpFAkjMq7qyGjyBDvVwjF6f/Rp3JNdr1Hm2l0Fecs/
+         Hu8GnrIsG16Z5YQbSGOJSxnMNGO7RX0teGbiQtV7SxXhEZU8PidP8+6YfEgeRQaBx0SX
+         DXRkeTllDgvBP5tBNpoH/AAqueJ/KDSMz2rHIxSrOKnDrztt3mPYADkcm5Ji2D7f4FfU
+         45wRQewIk5tb9Ply6xfBWnqFh17xs23VU/Rj2Qmg9RQOSQ6FTJfH3d7iO/HM6AC6n/zL
+         98pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:cc:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=naFt+Blfmi1/PTm3cjJaXUe+Z1yMpY7OBP3DllMN5U4=;
-        b=L3AE958VMnK67SlsoBz8zV+qduvQ7oIuc4+23cEcPeKe57zFtae9BVwzPS+yqbAagt
-         IBoVXNuwEIyaT0jmhKyS9grHhkbvjotDkP1jR747zst4m20WVc+lgbNOAprU9xFIl8u/
-         xS0tDPxFBK5LLsEB0m56V0iG9vGnOOwBUMc66/W8p0jhYQ9a8MQjrraU09PcrUeU1RH9
-         yPUwMcKEqz9xvYf+EhhIHNaLDLJhUkreqX58GG3nDmB/mkXPX3VB/M2M57M/6eGRjxVW
-         KgNyZ+KonwbBSzYZQ4LVhIR3mVXucECOhCrE7l85ATpsSOIE7dReO36HWi1k/yRyrB+V
-         ydVw==
-X-Gm-Message-State: AOAM530SIHY1OGHGOk0Q4U5taNyTrVnntNvLBEsJUL51qv8cLgF6wFNR
-        QYbMOGbh84UdDtSvGO2IS3GbXBNZy5Q=
-X-Google-Smtp-Source: ABdhPJyxNe338xjkH6Ig7p7JD0cl3SrMBMuSi5cISyTOlAePekrpvLg50LX8BTRRwUZOAHRb37tfaA==
-X-Received: by 2002:a50:de04:: with SMTP id z4mr19630405edk.10.1598526304073;
-        Thu, 27 Aug 2020 04:05:04 -0700 (PDT)
+        bh=edStvBe16F0DYe/Tb0S52V60X6Qfj/1Yjsd3cDbffB0=;
+        b=Z2Mzw46ctyCwYvUTI9IifXIKzacAZQzYAAcvh0tuniLQVWM7C9SKyBaf4AmssfruEe
+         ykJZfSrhLdLXJ08SqU7IaAn8/QVqMzSZUMwsEZo73vmjw1v36lbP5yarXSdu8ONNCKJb
+         yeb/JWFjEO76eHuNRWfR4jc53L82+5G96pTgorGTam6ChXwdlFnTdH6bwA86MNf6Madv
+         SgzryH9y4zAWhPeOEjC4vyihqATcGrpWITVhgCm5wwdj5URm1h2upjw28jPJrhN8seZs
+         AVWzrK270fjjJLhklpK8iSgMgcQtkKrgwAW6GEN7iWd40WEJj8Ha5fhAOWI/4DTt+qo6
+         SciQ==
+X-Gm-Message-State: AOAM531AaG+upNfRfvv3XtkItmQAQkGnKni+Kob4fEKrWa2fjBEe7R/p
+        1jBKvRwrygtrcAH2g2VjVIWTSF0tGdg=
+X-Google-Smtp-Source: ABdhPJzvLj8h3de0+iIa7UgFE76P78v3iCDf3ADkSIcXBdpvWS6EsYsqBs2M9GhNlo8KQ+NeWy5xKw==
+X-Received: by 2002:a17:906:d050:: with SMTP id bo16mr21613988ejb.367.1598526076845;
+        Thu, 27 Aug 2020 04:01:16 -0700 (PDT)
 Received: from ?IPv6:2001:a61:253c:4c01:2cf1:7133:9da2:66a9? ([2001:a61:253c:4c01:2cf1:7133:9da2:66a9])
-        by smtp.gmail.com with ESMTPSA id eb5sm1633894ejc.94.2020.08.27.04.05.02
+        by smtp.gmail.com with ESMTPSA id j92sm1250562edc.82.2020.08.27.04.01.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Aug 2020 04:05:03 -0700 (PDT)
+        Thu, 27 Aug 2020 04:01:15 -0700 (PDT)
 Cc:     mtk.manpages@gmail.com, linux-fsdevel@vger.kernel.org,
         linux-man@vger.kernel.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] Add manpage for fspick(2)
+Subject: Re: [PATCH 1/5] Add manpage for open_tree(2)
 To:     David Howells <dhowells@redhat.com>, viro@zeniv.linux.org.uk
 References: <159827188271.306468.16962617119460123110.stgit@warthog.procyon.org.uk>
- <159827189767.306468.1803062787718957199.stgit@warthog.procyon.org.uk>
 From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <b968aced-c375-4c85-b086-9874d12e07f4@gmail.com>
-Date:   Thu, 27 Aug 2020 13:05:02 +0200
+Message-ID: <402ceb27-0f63-e7f0-c58d-de0fe4c86f56@gmail.com>
+Date:   Thu, 27 Aug 2020 13:01:12 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <159827189767.306468.1803062787718957199.stgit@warthog.procyon.org.uk>
+In-Reply-To: <159827188271.306468.16962617119460123110.stgit@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -73,22 +72,36 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hello David,
 
+Can I ask that you please reply to each of my mails, rather than 
+just sending out a new patch series (which of course I would also
+like  you to do). Some things that I mentioned in the last mails
+got lost, and I end up having to repeat them.
+
+So, even where I say "please change this", could you please reply with
+"done", or a reason why you declined the suggested change, is useful.
+But in any case, a few words in reply to explain the other changes
+that you make would be helpful.
+
+Also, some of my questions now will get a little more complex, and as
+well as you updating the pages, I think a little discussion may be
+required in some cases.
+
 On 8/24/20 2:24 PM, David Howells wrote:
-> Add a manual page to document the fspick() system call.
+> Add a manual page to document the open_tree() system call.
 > 
 > Signed-off-by: David Howells <dhowells@redhat.com>
 > ---
 > 
->  man2/fspick.2 |  180 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 180 insertions(+)
->  create mode 100644 man2/fspick.2
+>  man2/open_tree.2 |  249 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 249 insertions(+)
+>  create mode 100644 man2/open_tree.2
 > 
-> diff --git a/man2/fspick.2 b/man2/fspick.2
+> diff --git a/man2/open_tree.2 b/man2/open_tree.2
 > new file mode 100644
-> index 000000000..72bf645dd
+> index 000000000..d480bd82f
 > --- /dev/null
-> +++ b/man2/fspick.2
-> @@ -0,0 +1,180 @@
+> +++ b/man2/open_tree.2
+> @@ -0,0 +1,249 @@
 > +'\" t
 > +.\" Copyright (c) 2020 David Howells <dhowells@redhat.com>
 > +.\"
@@ -114,9 +127,9 @@ On 8/24/20 2:24 PM, David Howells wrote:
 > +.\" the source, must acknowledge the copyright and authors of this work.
 > +.\" %%%LICENSE_END
 > +.\"
-> +.TH FSPICK 2 2020-08-24 "Linux" "Linux Programmer's Manual"
+> +.TH OPEN_TREE 2 2020-08-24 "Linux" "Linux Programmer's Manual"
 > +.SH NAME
-> +fspick \- Select filesystem for reconfiguration
+> +open_tree \- Pick or clone mount object and attach to fd
 > +.SH SYNOPSIS
 > +.nf
 > +.B #include <sys/types.h>
@@ -124,169 +137,283 @@ On 8/24/20 2:24 PM, David Howells wrote:
 > +.B #include <unistd.h>
 > +.BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
 > +.PP
-> +.BI "int fspick(int " dirfd ", const char *" pathname ", unsigned int " flags );
+> +.BI "int open_tree(int " dirfd ", const char *" pathname ", unsigned int " flags );
 > +.fi
 > +.PP
 > +.IR Note :
-> +There is no glibc wrapper for this system call.
+> +There are no glibc wrappers for these system calls.
 > +.SH DESCRIPTION
+> +.BR open_tree ()
+> +picks the mount object specified by the pathname and attaches it to a new file
+
+The terminology "pick" is unusual, and you never really explain what
+it means.  Is there better terminology? In any case, can you add a few
+words to explain what the term (('pick" or whatever alternative you
+come up with) means.
+
+> +descriptor or clones it and attaches the clone to the file descriptor.  The
+
+Please replace "it" by a noun (phrase) -- maybe: "the mount object"?
+
+> +resultant file descriptor is indistinguishable from one produced by
+> +.BR open "(2) with " O_PATH .
+
+What is the significance of that last piece? Can you add some words
+about why the fact that the resulting FD is indistinguishable from one
+produced by open() O_PATH matters or is useful?
+
 > +.PP
-> +.BR fspick ()
-> +creates a new filesystem configuration context within the kernel and attaches a
-> +pre-existing superblock to it so that it can be reconfigured (similar to
-> +.BR mount (8)
-> +with the "-o remount" option).  The configuration context is marked as being in
-> +reconfiguration mode and attached to a file descriptor, which is returned to
-> +the caller.  The file descriptor can be marked close-on-exec by setting
-> +.B FSPICK_CLOEXEC
-> +in
-> +.IR flags .
+> +In the case that the mount object is cloned, the clone will be "unmounted" and
+
+You place "unmounted" in quotes. Why? Is this to signify that the the 
+unmount is somehow different from other unmounts? If so, please
+explain how it is different.  If not, then I think we can lose the double
+quotes.
+
+> +destroyed when the file descriptor is closed if it is not otherwise mounted
+> +somewhere by calling
+> +.BR move_mount (2).
 > +.PP
-> +The target is whichever superblock backs the object determined by
-> +.IR dfd ", " pathname " and " flags .
-> +The following can be set in
-> +.I flags
-> +to control the pathwalk to that object:
+> +To select a mount object, no permissions are required on the object referred
+
+Here you use the word "select". Is this the same as "pick"? If yes, please
+use the same term.
+
+> +to by the path, but execute (search) permission is required on all of the
+
+s/the path/.I pathname/ ?
+
+(Where pathname == "the pathname argument)
+
+> +directories in
+> +.I pathname
+> +that lead to the object.
+> +.PP
+> +Appropriate privilege (Linux: the
+
+s/Linux: //
+(This is a Linux specific system call...)
+
+> +.B CAP_SYS_ADMIN
+> +capability) is required to clone mount objects.
+> +.PP
+> +.BR open_tree ()
+> +uses
+> +.IR pathname ", " dirfd " and " flags
+> +to locate the target object in one of a variety of ways:
 > +.TP
-> +.B FSPICK_SYMLINK_NOFOLLOW
-> +Don't follow symbolic links in the final component of the path.
-> +.TP
-> +.B FSPICK_NO_AUTOMOUNT
-> +Don't follow automounts in the final component of the path.
-> +.TP
-> +.B FSPICK_EMPTY_PATH
-> +Allow an empty string to be specified as the pathname.  This allows
+> +[*] By absolute path.
+> +.I pathname
+> +points to an absolute path and
 > +.I dirfd
-> +to specify the target mount exactly.
-> +.PP
-> +After calling fspick(), the file descriptor should be passed to the
-> +.BR fsconfig (2)
-> +system call, using that to specify the desired changes to filesystem and
-
-Better: s/using that/in order/
-
-> +security parameters.
-> +.PP
-> +When the parameters are all set, the
-> +.BR fsconfig ()
-> +system call should then be called again with
-> +.B FSCONFIG_CMD_RECONFIGURE
-> +as the command argument to effect the reconfiguration.
-> +.PP
-> +After the reconfiguration has taken place, the context is wiped clean (apart
-> +from the superblock attachment, which remains) and can be reused to make
-> +another reconfiguration.
-> +.PP
-> +The file descriptor also serves as a channel by which more comprehensive error,
-> +warning and information messages may be retrieved from the kernel using
-> +.BR read (2).
-> +.SS Message Retrieval Interface
-> +The context file descriptor may be queried for message strings at any time by
-
-s/descriptor/descriptor returned by fspick()/
-
-> +calling
-> +.BR read (2)
-> +on the file descriptor.  This will return formatted messages that are prefixed
-> +to indicate their class:
+> +is ignored.  The object is looked up by name, starting from the root of the
+> +filesystem as seen by the calling process.
 > +.TP
-> +\fB"e <message>"\fP
-> +An error message string was logged.
+> +[*] By cwd-relative path.
+> +.I pathname
+> +points to a relative path and
+> +.IR dirfd " is " AT_FDCWD .
+> +The object is looked up by name, starting from the current working directory.
 > +.TP
-> +\fB"i <message>"\fP
-> +An informational message string was logged.
+> +[*] By dir-relative path.
+> +.I pathname
+> +points to relative path and
+> +.I dirfd
+> +indicates a file descriptor pointing to a directory.  The object is looked up
+> +by name, starting from the directory specified by
+> +.IR dirfd .
 > +.TP
-> +\fB"w <message>"\fP
-> +An warning message string was logged.
+> +[*] By file descriptor.
+> +.I pathname
+> +is "",
+> +.I dirfd
+> +indicates a file descriptor and
+> +.B AT_EMPTY_PATH
+> +is set in
+> +.IR flags .
+> +The mount attached to the file descriptor is queried directly.  The file
+> +descriptor may point to any type of file, not just a directory.
+
+I want to check here. Is it really *any* type of file? Can it be a UNIX 
+domain socket or a char/block device or a FIFO?
+
 > +.PP
-> +Messages are removed from the queue as they're read and the queue has a limited
-> +depth of 8 messages, so it's possible for some to get lost.
+> +.I flags
+> +can be used to control the operation of the function and to influence a
+> +path-based lookup.  A value for
+> +.I flags
+> +is constructed by OR'ing together zero or more of the following constants:
+> +.TP
+> +.BR AT_EMPTY_PATH
+> +.\" commit 65cfc6722361570bfe255698d9cd4dccaf47570d
+> +If
+> +.I pathname
+> +is an empty string, operate on the file referred to by
+> +.IR dirfd
+> +(which may have been obtained from
+> +.BR open "(2) with"
+> +.BR O_PATH ", from " fsmount (2)
+> +or from another
 
-What if there are no pending error messages to retrieve? What does
-read() do in that case? Please add an explanation here.
+s/another/a previous call to/
 
+> +.BR open_tree ()).
+> +If
+> +.I dirfd
+> +is
+> +.BR AT_FDCWD ,
+> +the call operates on the current working directory.
+> +In this case,
+> +.I dirfd
+> +can refer to any type of file, not just a directory.
+> +This flag is Linux-specific; define
+> +.B _GNU_SOURCE
+> +.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
+> +to obtain its definition.
+> +.TP
+> +.BR AT_NO_AUTOMOUNT
+> +Don't automount the final ("basename") component of
+> +.I pathname
+> +if it is a directory that is an automount point.  This flag allows the
+> +automount point itself to be picked up or a mount cloned that is rooted on the
+> +automount point.  The
+> +.B AT_NO_AUTOMOUNT
+> +flag has no effect if the mount point has already been mounted over.
+> +This flag is Linux-specific; define
+> +.B _GNU_SOURCE
+> +.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
+> +to obtain its definition.
+> +.TP
+> +.B AT_SYMLINK_NOFOLLOW
+> +If
+> +.I pathname
+> +is a symbolic link, do not dereference it: instead pick up or clone a mount
+> +rooted on the link itself.
+> +.TP
+> +.B OPEN_TREE_CLOEXEC
+> +Set the close-on-exec flag for the new file descriptor.  This will cause the
+> +file descriptor to be closed automatically when a process exec's.
+> +.TP
+> +.B OPEN_TREE_CLONE
+> +Rather than directly attaching the selected object to the file descriptor,
+> +clone the object, set the root of the new mount object to that point and
+
+Could you expand on "that point" a little. It's not quite clear to me what
+you mean there.
+
+> +attach the clone to the file descriptor.
+> +.TP
+> +.B AT_RECURSIVE
+> +This is only permitted in conjunction with OPEN_TREE_CLONE.  It causes the
+> +entire mount subtree rooted at the selected spot to be cloned rather than just
+
+Is there a better word than "spot"?
+
+> +that one mount object.
 > +.SH RETURN VALUE
-> +On success, the function returns a file descriptor.  On error, \-1 is returned,
+> +On success, the new file descriptor is returned.  On error, \-1 is returned,
 > +and
 > +.I errno
 > +is set appropriately.
 > +.SH ERRORS
-> +The error values given below result from filesystem type independent errors.
-> +Additionally, each filesystem type may have its own special errors and its own
-> +special behavior.  See the Linux kernel source code for details.
 > +.TP
 > +.B EACCES
-> +A component of a path was not searchable.
+> +Search permission is denied for one of the directories
+> +in the path prefix of
+> +.IR pathname .
 > +(See also
 > +.BR path_resolution (7).)
 > +.TP
+> +.B EBADF
+> +.I dirfd
+> +is not a valid open file descriptor.
+> +.TP
 > +.B EFAULT
 > +.I pathname
-> +points outside the user address space.
+> +is NULL or
+> +.IR pathname
+> +point to a location outside the process's accessible address space.
 > +.TP
 > +.B EINVAL
-> +.I flags
-> +includes an undefined value.
+> +Reserved flag specified in
+> +.IR flags .
 > +.TP
 > +.B ELOOP
-> +Too many links encountered during pathname resolution.
-> +.TP
-> +.B EMFILE
-> +The system has too many open files to create more.
-> +.TP
-> +.B ENFILE
-> +The process has too many open files to create more.
+> +Too many symbolic links encountered while traversing the pathname.
 > +.TP
 > +.B ENAMETOOLONG
-> +A pathname was longer than
-> +.BR MAXPATHLEN .
-
-MAXPATHLEN is not, I think, a constant known in user space. What is this?
-Should it be PATH_MAX?
-
+> +.I pathname
+> +is too long.
 > +.TP
 > +.B ENOENT
-> +A pathname was empty or had a nonexistent component.
+> +A component of
+> +.I pathname
+> +does not exist, or
+> +.I pathname
+> +is an empty string and
+> +.B AT_EMPTY_PATH
+> +was not specified in
+> +.IR flags .
 > +.TP
 > +.B ENOMEM
-> +The kernel could not allocate sufficient memory to complete the call.
+> +Out of memory (i.e., kernel memory).
 > +.TP
-> +.B EPERM
-> +The caller does not have the required privileges.
-
-Please note the necessary capability here. Also, there was no mention of 
-capabilities/privileges in DESCRIPTION. Should there have been?
-
-> +.SH CONFORMING TO
-> +These functions are Linux-specific and should not be used in programs intended
-> +to be portable.
+> +.B ENOTDIR
+> +A component of the path prefix of
+> +.I pathname
+> +is not a directory or
+> +.I pathname
+> +is relative and
+> +.I dirfd
+> +is a file descriptor referring to a file other than a directory.
 > +.SH VERSIONS
-> +.BR fsopen "(), " fsmount "() and " fspick ()
-> +were added to Linux in kernel 5.2.
-> +.SH EXAMPLES
-> +To illustrate the process, here's an example whereby this can be used to
-> +reconfigure a filesystem:
-> +.PP
-> +.in +4n
-> +.nf
-> +sfd = fspick(AT_FDCWD, "/mnt", FSPICK_NO_AUTOMOUNT | FSPICK_CLOEXEC);
-> +fsconfig(sfd, FSCONFIG_SET_FLAG, "ro", NULL, 0);
-> +fsconfig(sfd, FSCONFIG_SET_STRING, "user_xattr", "false", 0);
-> +fsconfig(sfd, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
-> +.fi
-> +.in
-> +.PP
+> +.BR open_tree ()
+> +was added to Linux in kernel 5.2.
+> +.SH CONFORMING TO
+> +.BR open_tree ()
+> +is Linux-specific.
 > +.SH NOTES
 > +Glibc does not (yet) provide a wrapper for the
-> +.BR fspick "()"
+> +.BR open_tree ()
 > +system call; call it using
 > +.BR syscall (2).
+
+What's the current status with respect to glibc support? Is it coming/is
+someone working on this?
+
+> +.SH EXAMPLE
+
+s/EXAMPLE/EXAMPLES/
+(That's the standard section header name these days.)
+
+> +The
+> +.BR open_tree ()
+> +function can be used like the following:
+
+The following example does a recursive bind mount, right?
+Can you please add some words to say that explicitly.
+
+> +.PP
+> +.RS
+> +.nf
+> +fd1 = open_tree(AT_FDCWD, "/mnt", 0);
+> +fd2 = open_tree(fd1, "",
+> +                AT_EMPTY_PATH | OPEN_TREE_CLONE | AT_RECURSIVE);
+> +move_mount(fd2, "", AT_FDCWD, "/mnt2", MOVE_MOUNT_F_EMPTY_PATH);
+> +.fi
+> +.RE
+> +.PP
+> +This would attach the path point for "/mnt" to fd1, then it would copy the
+
+What is a "path point"? This is not standard terminology. Can you
+replace this with something better?
+
+> +entire subtree at the point referred to by fd1 and attach that to fd2; lastly,
+> +it would attach the clone to "/mnt2".
 > +.SH SEE ALSO
-> +.BR mountpoint (1),
-> +.BR fsconfig (2),
-> +.BR fsopen (2),
-> +.BR path_resolution (7),
-> +.BR mount (8)
+> +.BR fsmount (2),
+> +.BR move_mount (2),
+> +.BR open (2)
 
 Thanks,
 
