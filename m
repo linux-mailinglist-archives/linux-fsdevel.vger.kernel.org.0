@@ -2,73 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E5CE025473F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 16:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE4CC254820
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 16:59:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbgH0Opw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 10:45:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60522 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727864AbgH0OpQ (ORCPT
+        id S1728039AbgH0O7B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 10:59:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:50989 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728089AbgH0O6s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 10:45:16 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D50FBC061264
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 07:45:15 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kBJ92-005aaR-1E; Thu, 27 Aug 2020 14:44:52 +0000
-Date:   Thu, 27 Aug 2020 15:44:52 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christian Schoenebeck <qemu_oss@crudebyte.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Frank van der Linden <fllinden@amazon.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
+        Thu, 27 Aug 2020 10:58:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598540323;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=hzfczoY08KCAOXrJ4QPUBcOl3kLlAqwyM9dLVlxgAlg=;
+        b=XUB4mNqpQVGX1lJOTw7ArMwptRJKdM8lobpXI/acVB9WOQX4mUptM1HhIKECvN5IoS89nq
+        DstFmxawp/RVa/5fEgiICJWEsvkK2pRX+xRBQNF/gRoZ0T0Aj0h6rze2JZlFLVGIdCkZyN
+        8nXnCITRriEBwucli6TqjO6JeO3NQEE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-462-OgZhy-oMOZaq0ggeHWE2Pg-1; Thu, 27 Aug 2020 10:58:41 -0400
+X-MC-Unique: OgZhy-oMOZaq0ggeHWE2Pg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 85FA08018A4;
+        Thu, 27 Aug 2020 14:58:39 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-113-96.ams2.redhat.com [10.36.113.96])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1D6495C1C2;
+        Thu, 27 Aug 2020 14:58:32 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Subject: Re: file forks vs. xattr (was: xattr names for unprivileged
- stacking?)
-Message-ID: <20200827144452.GA1236603@ZenIV.linux.org.uk>
-References: <20200824222924.GF199705@mit.edu>
- <3331978.UQhOATu6MC@silver>
- <20200827140107.GH14765@casper.infradead.org>
- <159855515.fZZa9nWDzX@silver>
+        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
+        Aleksa Sarai <asarai@suse.de>,
+        Sargun Dhillon <sargun@sargun.me>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: [PATCH v6 0/3] io_uring: add restrictions to support untrusted
+ applications and guests
+Date:   Thu, 27 Aug 2020 16:58:28 +0200
+Message-Id: <20200827145831.95189-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <159855515.fZZa9nWDzX@silver>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Aug 27, 2020 at 04:23:24PM +0200, Christian Schoenebeck wrote:
+v6:
+ - moved restriction checks in a function [Jens]
+ - changed ret value handling in io_register_restrictions() [Jens]
 
-> Be invited for making better suggestions. But one thing please: don't start 
-> getting offending.
-> 
-> No matter which delimiter you'd choose, something will break. It is just about 
-> how much will it break und how likely it'll be in practice, not if.
+v5: https://lore.kernel.org/io-uring/20200827134044.82821-1-sgarzare@redhat.com/
+v4: https://lore.kernel.org/io-uring/20200813153254.93731-1-sgarzare@redhat.com/
+v3: https://lore.kernel.org/io-uring/20200728160101.48554-1-sgarzare@redhat.com/
+RFC v2: https://lore.kernel.org/io-uring/20200716124833.93667-1-sgarzare@redhat.com
+RFC v1: https://lore.kernel.org/io-uring/20200710141945.129329-1-sgarzare@redhat.com
 
-... which means NAK.  We don't break userland without very good reasons and
-support for anyone's pet feature is not one of those.  It's as simple as
-that.
+Following the proposal that I send about restrictions [1], I wrote this series
+to add restrictions in io_uring.
 
-> If you are concerned about not breaking anything: keep forks disabled.
+I also wrote helpers in liburing and a test case (test/register-restrictions.c)
+available in this repository:
+https://github.com/stefano-garzarella/liburing (branch: io_uring_restrictions)
 
-s/disabled/out of tree/
+Just to recap the proposal, the idea is to add some restrictions to the
+operations (sqe opcode and flags, register opcode) to safely allow untrusted
+applications or guests to use io_uring queues.
 
-One general note: the arguments along the lines of "don't enable that,
-then" are either ignorant or actively dishonest; it really doesn't work
-that way, as we'd learnt quite a few times by now.  There's no such
-thing as "optional feature" - *any* feature, no matter how useless,
-might end up a dependency (no matter how needless) of something that
-would force distros to enable it.  We'd been down that road too many
-times to keep pretending that it doesn't happen.
+The first patch changes io_uring_register(2) opcodes into an enumeration to
+keep track of the last opcode available.
+
+The second patch adds IOURING_REGISTER_RESTRICTIONS opcode and the code to
+handle restrictions.
+
+The third patch adds IORING_SETUP_R_DISABLED flag to start the rings disabled,
+allowing the user to register restrictions, buffers, files, before to start
+processing SQEs.
+
+Comments and suggestions are very welcome.
+
+Thank you in advance,
+Stefano
+
+[1] https://lore.kernel.org/io-uring/20200609142406.upuwpfmgqjeji4lc@steredhat/
+
+Stefano Garzarella (3):
+  io_uring: use an enumeration for io_uring_register(2) opcodes
+  io_uring: add IOURING_REGISTER_RESTRICTIONS opcode
+  io_uring: allow disabling rings during the creation
+
+ fs/io_uring.c                 | 172 ++++++++++++++++++++++++++++++++--
+ include/uapi/linux/io_uring.h |  60 +++++++++---
+ 2 files changed, 215 insertions(+), 17 deletions(-)
+
+-- 
+2.26.2
+
