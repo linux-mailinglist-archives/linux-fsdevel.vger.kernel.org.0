@@ -2,119 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76F01253D8D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 08:14:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1E99253DE4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 08:35:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbgH0GOU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Aug 2020 02:14:20 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47618 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725909AbgH0GOU (ORCPT
+        id S1727769AbgH0Gfd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Aug 2020 02:35:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40114 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727851AbgH0Gf1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Aug 2020 02:14:20 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07R6323f126362;
-        Thu, 27 Aug 2020 02:14:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : date : mime-version : in-reply-to : content-type :
- content-transfer-encoding : message-id; s=pp1;
- bh=pJanTcRrSobhV+CnpT6ahbjTwZg7JOS2dPDEmkoPgs8=;
- b=iKY1zfvQvtdfg4G1ZW7aU56VzxN6tQ9h3s+Pph3h8NmGMRpRXydotp4CXHgA9hdCoE2c
- cRtzBrOQYDcW/u/gHuzyeXy3ihE3ewGrvNdhnPgG29JpbxHRiqiov5ljcOmudVFyRKrK
- aEB0cRls1o/qF/R/CDg9OyeOw6RbuHXFZX/FBr9XTldb25RGip3Q8R2WLg5eI77ZaDRw
- ZYm0e2jhJShjia9hXOUzg6xcfPjs35TpqG8G9RxYUQFPLlwxIQuz9GC0z9b1nAVHIeu7
- hjrZkTQXpdWs0P5Yeak3LTfuwN4sD0Be/q6v8Qs/Foii5fsopLluZScYrbNmWFBn+Z59 rw== 
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 33669ahu7n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Aug 2020 02:14:13 -0400
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 07R6EBDU011234;
-        Thu, 27 Aug 2020 06:14:11 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma04fra.de.ibm.com with ESMTP id 332ujju97r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 27 Aug 2020 06:14:11 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 07R6E9eC31523126
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 27 Aug 2020 06:14:09 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1FD8952050;
-        Thu, 27 Aug 2020 06:14:09 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.43.157])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 8D34D5204F;
-        Thu, 27 Aug 2020 06:14:07 +0000 (GMT)
-Subject: Re: [PATCH 1/1] block: Set same_page to false in __bio_try_merge_page
- if ret is false
-To:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, axboe@kernel.dk,
-        Christoph Hellwig <hch@infradead.org>,
-        Shivaprasad G Bhat <sbhat@linux.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>
-References: <e50582833c897c1a51a676d7726d1380a3e5a678.1598032711.git.riteshh@linux.ibm.com>
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-Date:   Thu, 27 Aug 2020 11:44:06 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <e50582833c897c1a51a676d7726d1380a3e5a678.1598032711.git.riteshh@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-Message-Id: <20200827061407.8D34D5204F@d06av21.portsmouth.uk.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-08-27_01:2020-08-26,2020-08-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- spamscore=0 phishscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0
- mlxlogscore=850 malwarescore=0 adultscore=0 bulkscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2008270044
+        Thu, 27 Aug 2020 02:35:27 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F27D3C06121A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 23:35:26 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id w11so6051135ybi.23
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Aug 2020 23:35:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=/zYgjye0baxZg/tSxyGziW2kTEyGPlr25yTvNVRsJ5g=;
+        b=vUlvkX5HhL8LprLMIHVH8QGizNNjSM2NJ6p5hnk33lKNqAmYruPvU/+mNaXTGr/XAN
+         ihUeKP4XWUtjM4EKkP3Tlwce+z15mLidCXtuYQr5oj0qeW0ScT4gAnxfl4xQRSIufHdr
+         p/DNZC4MfF0ifiMwos0ztA0Rfh9yFTfloXzrCLqPK1LA2ZxPs5PMnVOfWLabnHP+Dz3X
+         kR+0Jg64p90TLSujyC695hkr1hc7pUpwF/h2VKZqE3I7/JoQun9Ci3P/o+dPdEnxpjVt
+         OypiCdd2swW84NWOaVSKcJ9xbH+DcY/Ur0j9AzapMRCH6Fw42e0a/xJTzsKYTp5fB7OM
+         PbZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=/zYgjye0baxZg/tSxyGziW2kTEyGPlr25yTvNVRsJ5g=;
+        b=XCnSObFUgt7aW4Yn8SSl75cptRIWKSyaHA6KrltlO4I09+OY8X/sdALa63xYJqaxmp
+         VB9TPGObC2vKu95msDkElAWKxan1dPuT1Db34GP4bwzgl0sOQBM+c/9VfNm9IGh6awn+
+         K21LAnz5jGboqhuDRDyCbhaXcqmjRHXjuUGHUsLkg465aFAViazgLCpM46UI12zOapxN
+         EkS3emJyL5IG9IDFXltVlFwBW8GM8b0d4cYTRTCqAdyZ3GGe06pjSj6whTJWPbzKeaeM
+         GzXsIJL94LURCOIqwNMxTHFaM+yqSRJYV0Lo+ujyKXY+3qSpwYIMQqG4u4uG3CaXW6Fn
+         KsfQ==
+X-Gm-Message-State: AOAM532nNBf6Cox6N6FrYchHrnEZsEZV0e4VJkoAHsytorAtLkDMPKOp
+        crvWWxeWvk7YJf3sBDbI69dU8nqv1/KZKEhggg==
+X-Google-Smtp-Source: ABdhPJy2aWcUvIAO9BcZxJjrHYq+0aqek9xrqHcnTNBmTfvvf6anuxmAapc9Xo7sdYhj1+0P0gQ/3ew3tzQzDJSSkQ==
+X-Received: from lg.mtv.corp.google.com ([100.89.4.209]) (user=lokeshgidra
+ job=sendgmr) by 2002:a25:7a42:: with SMTP id v63mr25561564ybc.4.1598510125967;
+ Wed, 26 Aug 2020 23:35:25 -0700 (PDT)
+Date:   Wed, 26 Aug 2020 23:35:19 -0700
+Message-Id: <20200827063522.2563293-1-lokeshgidra@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.28.0.297.g1956fa8f8d-goog
+Subject: [PATCH v8 0/3] SELinux support for anonymous inodes and UFFD
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        nnk@google.com, jeffv@google.com, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Jens,
+Userfaultfd in unprivileged contexts could be potentially very
+useful. We'd like to harden userfaultfd to make such unprivileged use
+less risky. This patch series allows SELinux to manage userfaultfd
+file descriptors and in the future, other kinds of
+anonymous-inode-based file descriptor.  SELinux policy authors can
+apply policy types to anonymous inodes by providing name-based
+transition rules keyed off the anonymous inode internal name (
+"[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
+applying policy to the new SIDs thus produced.
 
-On 8/21/20 11:41 PM, Ritesh Harjani wrote:
-> If we hit the UINT_MAX limit of bio->bi_iter.bi_size and so we are anyway
-> not merging this page in this bio, then it make sense to make same_page
-> also as false before returning.
-> 
-> Without this patch, we hit below WARNING in iomap.
-> This mostly happens with very large memory system and / or after tweaking
-> vm dirty threshold params to delay writeback of dirty data.
-> 
-> WARNING: CPU: 18 PID: 5130 at fs/iomap/buffered-io.c:74 iomap_page_release+0x120/0x150
->   CPU: 18 PID: 5130 Comm: fio Kdump: loaded Tainted: G        W         5.8.0-rc3 #6
->   Call Trace:
->    __remove_mapping+0x154/0x320 (unreliable)
->    iomap_releasepage+0x80/0x180
->    try_to_release_page+0x94/0xe0
->    invalidate_inode_page+0xc8/0x110
->    invalidate_mapping_pages+0x1dc/0x540
->    generic_fadvise+0x3c8/0x450
->    xfs_file_fadvise+0x2c/0xe0 [xfs]
->    vfs_fadvise+0x3c/0x60
->    ksys_fadvise64_64+0x68/0xe0
->    sys_fadvise64+0x28/0x40
->    system_call_exception+0xf8/0x1c0
->    system_call_common+0xf0/0x278
-> 
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Reported-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
-> Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+With SELinux managed userfaultfd, an admin can control creation and
+movement of the file descriptors. In particular, handling of
+a userfaultfd descriptor by a different process is essentially a
+ptrace access into the process, without any of the corresponding
+security_ptrace_access_check() checks. For privacy, the admin may
+want to deny such accesses, which is possible with SELinux support.
 
-Sorry, I forgot to add the fixes tag. I think below commit
-have introduced this. Let me know if you want me to
-re-send this patch with below fixes tag.
+Inside the kernel, a new anon_inode interface, anon_inode_getfd_secure,
+allows callers to opt into this SELinux management. In this new "secure"
+mode, anon_inodes create new ephemeral inodes for anonymous file objects
+instead of reusing the normal anon_inodes singleton dummy inode. A new
+LSM hook gives security modules an opportunity to configure and veto
+these ephemeral inodes.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=cc90bc68422318eb8e75b15cd74bc8d538a7df29
+This patch series is one of two fork of [1] and is an
+alternative to [2].
 
+The primary difference between the two patch series is that this
+partch series creates a unique inode for each "secure" anonymous
+inode, while the other patch series ([2]) continues using the
+singleton dummy anonymous inode and adds a way to attach SELinux
+security information directly to file objects.
 
--ritesh
+I prefer the approach in this patch series because 1) it's a smaller
+patch than [2], and 2) it produces a more regular security
+architecture: in this patch series, secure anonymous inodes aren't
+S_PRIVATE and they maintain the SELinux property that the label for a
+file is in its inode. We do need an additional inode per anonymous
+file, but per-struct-file inode creation doesn't seem to be a problem
+for pipes and sockets.
+
+The previous version of this feature ([1]) created a new SELinux
+security class for userfaultfd file descriptors. This version adopts
+the generic transition-based approach of [2].
+
+This patch series also differs from [2] in that it doesn't affect all
+anonymous inodes right away --- instead requiring anon_inodes callers
+to opt in --- but this difference isn't one of basic approach. The
+important question to resolve is whether we should be creating new
+inodes or enhancing per-file data.
+
+Changes from the first version of the patch:
+
+  - Removed some error checks
+  - Defined a new anon_inode SELinux class to resolve the
+    ambiguity in [3]
+  - Inherit sclass as well as descriptor from context inode
+
+Changes from the second version of the patch:
+
+  - Fixed example policy in the commit message to reflect the use of
+    the new anon_inode class.
+
+Changes from the third version of the patch:
+
+  - Dropped the fops parameter to the LSM hook
+  - Documented hook parameters
+  - Fixed incorrect class used for SELinux transition
+  - Removed stray UFFD changed early in the series
+  - Removed a redundant ERR_PTR(PTR_ERR())
+
+Changes from the fourth version of the patch:
+
+  - Removed an unused parameter from an internal function
+  - Fixed function documentation
+
+Changes from the fifth version of the patch:
+
+  - Fixed function documentation in fs/anon_inodes.c and
+    include/linux/lsm_hooks.h
+  - Used anon_inode_getfd_secure() in userfaultfd() syscall and removed
+    owner from userfaultfd_ctx.
+
+Changed from the sixth version of the patch:
+
+  - Removed definition of anon_inode_getfile_secure() as there are no
+    callers.
+  - Simplified function description of anon_inode_getfd_secure().
+  - Elaborated more on the purpose of 'context_inode' in commit message.
+
+Changed from the seventh version of the patch:
+
+  - Fixed error handling in _anon_inode_getfile().
+  - Fixed minor comment and indentation related issues.
+
+[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+[2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
+[3] https://lore.kernel.org/lkml/23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov/
+
+Daniel Colascione (3):
+  Add a new LSM-supporting anonymous inode interface
+  Teach SELinux about anonymous inodes
+  Wire UFFD up to SELinux
+
+ fs/anon_inodes.c                    | 147 ++++++++++++++++++++--------
+ fs/userfaultfd.c                    |  19 ++--
+ include/linux/anon_inodes.h         |   8 ++
+ include/linux/lsm_hook_defs.h       |   2 +
+ include/linux/lsm_hooks.h           |   9 ++
+ include/linux/security.h            |  10 ++
+ security/security.c                 |   8 ++
+ security/selinux/hooks.c            |  53 ++++++++++
+ security/selinux/include/classmap.h |   2 +
+ 9 files changed, 209 insertions(+), 49 deletions(-)
+
+-- 
+2.28.0.297.g1956fa8f8d-goog
 
