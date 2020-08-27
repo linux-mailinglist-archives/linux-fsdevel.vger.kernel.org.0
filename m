@@ -2,290 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EB70253C15
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 05:19:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F4CF253C68
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Aug 2020 05:59:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbgH0DTm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Aug 2020 23:19:42 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:43604 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbgH0DTk (ORCPT
+        id S1726930AbgH0D7s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Aug 2020 23:59:48 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:4830 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726794AbgH0D7r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Aug 2020 23:19:40 -0400
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200827031937epoutp01a47fb0dee20bbfce30fb78500e48ae57~vAc4l1dmI1652716527epoutp01J
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 03:19:37 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200827031937epoutp01a47fb0dee20bbfce30fb78500e48ae57~vAc4l1dmI1652716527epoutp01J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1598498377;
-        bh=8XxM/zDxpeAap4gpZJRtmL5C1mmneA17PMn5eASABiQ=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=nG/X6uzjStWdi8XsCvLyxXBP7yNwcvrn9/585OxBy9eQYBbKQHyXNAIvEGd+mtGqJ
-         bnuYxeB4UtyaF2YnvIMwWBWulppmhhZRhaz+xtQWNTyXnN8r8FiZfRAAQ1zKEdJ2l7
-         xPXNAENGVrl1bFaN5gc2V/GvcXARqEPy3t+zRp9U=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20200827031937epcas1p453ee2eb17c36d8f22bbf3d812914aef7~vAc4UYhZ72470024700epcas1p4J;
-        Thu, 27 Aug 2020 03:19:37 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4BcSdN2VcpzMqYkZ; Thu, 27 Aug
-        2020 03:19:36 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DF.88.28581.846274F5; Thu, 27 Aug 2020 12:19:36 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20200827031935epcas1p38d23c935c9b4bdb260f16ecbd233b8ee~vAc2wEAfe1147811478epcas1p36;
-        Thu, 27 Aug 2020 03:19:35 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200827031935epsmtrp11747c1a7c5d13c57efc83b1046ad39d2~vAc2sar7B2034920349epsmtrp1K;
-        Thu, 27 Aug 2020 03:19:35 +0000 (GMT)
-X-AuditID: b6c32a38-2cdff70000006fa5-2e-5f472648cc2a
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        8F.F5.08303.746274F5; Thu, 27 Aug 2020 12:19:35 +0900 (KST)
-Received: from namjaejeon01 (unknown [10.88.104.63]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200827031935epsmtip18caf2079897509ba8d769cfb19ba8212~vAc2j76ij0609106091epsmtip1v;
-        Thu, 27 Aug 2020 03:19:35 +0000 (GMT)
-From:   "Namjae Jeon" <namjae.jeon@samsung.com>
-To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
-Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
-        <mori.takahiro@ab.mitsubishielectric.co.jp>,
-        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
-        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200826115742.21207-1-kohada.t2@gmail.com>
-Subject: RE: [PATCH v4 1/5] exfat: integrates dir-entry getting and
- validation
-Date:   Thu, 27 Aug 2020 12:19:35 +0900
-Message-ID: <011101d67c20$e3d604e0$ab820ea0$@samsung.com>
+        Wed, 26 Aug 2020 23:59:47 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f472f390001>; Wed, 26 Aug 2020 20:57:45 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 26 Aug 2020 20:59:47 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 26 Aug 2020 20:59:47 -0700
+Received: from [10.2.53.36] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 27 Aug
+ 2020 03:59:42 +0000
+Subject: Re: [bio] 37abbdc72e: WARNING:at_block/bio.c:#bio_release_pages
+To:     kernel test robot <lkp@intel.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Ilya Dryomov" <idryomov@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Jeff Layton <jlayton@kernel.org>, <linux-xfs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <ceph-devel@vger.kernel.org>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, <lkp@lists.01.org>,
+        <ltp@lists.linux.it>
+References: <20200827032518.GO4299@shao2-debian>
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <2d7d45b8-e271-87b2-f772-d1b2232fe351@nvidia.com>
+Date:   Wed, 26 Aug 2020 20:59:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
+In-Reply-To: <20200827032518.GO4299@shao2-debian>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGQvXwC1x7VdWWIHEXRa8VfNNWTPQHPSuiOqcgQDTA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7bCmrq6Hmnu8wckpQhY/5t5msXhzciqL
-        xZ69J1ksLu+aw2Zx+f8nFotlXyazWGz5d4TVgd3jy5zj7B5tk/+xezQfW8nmsXPWXXaPvi2r
-        GD0+b5ILYIvKsclITUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1
-        y8wBukVJoSwxpxQoFJBYXKykb2dTlF9akqqQkV9cYquUWpCSU2BoUKBXnJhbXJqXrpecn2tl
-        aGBgZApUmZCT8an9JXPBXeOK/49OszYwLtDsYuTkkBAwkbj4qJWli5GLQ0hgB6PEwo5zjBDO
-        J0aJ1Z8mMUM4nxklVs3bzwzTsu7OBzaIxC5GidvvzzKCJIQEXjJK9O2oArHZBHQl/v3ZzwZi
-        iwjoSZw8eR2sgVmgkUli+YkvYJM4BSwlejYvZwWxhQUCJNYfvskCYrMIqEqcnj8HqIGDgxeo
-        ZsOSdJAwr4CgxMmZT8BKmAXkJba/nQN1kILEz6fLWCF2WUncPX6WHaJGRGJ2ZxvYBxICCzkk
-        7v9/xQjR4CIx+eQrdghbWOLV8S1QtpTEy/42dpC9EgLVEh9hHu5glHjx3RbCNpa4uX4DK0gJ
-        s4CmxPpd+hBhRYmdv+cyQqzlk3j3tYcVYgqvREebEESJqkTfpcNMELa0RFf7B/YJjEqzkDw2
-        C8ljs5A8MAth2QJGllWMYqkFxbnpqcWGBSbIcb2JEZxMtSx2MM59+0HvECMTB+MhRgkOZiUR
-        XsGLzvFCvCmJlVWpRfnxRaU5qcWHGE2BIT2RWUo0OR+YzvNK4g1NjYyNjS1MzMzNTI2VxHkf
-        3lKIFxJITyxJzU5NLUgtgulj4uCUamDSNlkW6/+lUObEPn+hBnGfxS2Pnl/tSjljZ5lVEHkv
-        cRNv0uIAheK/xZ/4wnQ/ek7gOJC+/O/UWS1h89k806O+ZfozrJ/4vPiJxsKNvvc8Qr/Pj5cz
-        VAvzl1F3jXRvb+7f5rLsyrsXB1d/NvFONuiYssRsw8bVeaw1L5/NsHC9F7eztiine6Nw3Afl
-        I70BE45+kDA1n/1i5/OJujaTHXLDWIOnrX3l39W/dkGwb9lf8anupqKf257Vc3UyZX2w7Fkb
-        fyL6ltcsdqmFmjuSat69vX+1RN6jq/TJ+Qv9S4Mjd/fMUtrn9eVSnJKbahSXxyxH45Tr4r3Z
-        Ydec+ep8QprkEnz3SNwq3mD+8BOfsxJLcUaioRZzUXEiAH1+5KovBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjkeLIzCtJLcpLzFFi42LZdlhJTtddzT3e4OBDJYsfc2+zWLw5OZXF
-        Ys/ekywWl3fNYbO4/P8Ti8WyL5NZLLb8O8LqwO7xZc5xdo+2yf/YPZqPrWTz2DnrLrtH35ZV
-        jB6fN8kFsEVx2aSk5mSWpRbp2yVwZXxqf8lccNe44v+j06wNjAs0uxg5OSQETCTW3fnA1sXI
-        xSEksINRYsXXn8wQCWmJYyfOANkcQLawxOHDxRA1zxklvmx+ygZSwyagK/Hvz34wW0RAT+Lk
-        yetgg5gFmpkkvj1bwgzR0cUo0XN+KQtIFaeApUTP5uWsILawgJ/EuonbwGwWAVWJ0/PnsIFs
-        4wWq2bAkHSTMKyAocXLmExaQMDPQgraNjCBhZgF5ie1v50DdqSDx8+kyVogbrCTuHj/LDlEj
-        IjG7s415AqPwLCSTZiFMmoVk0iwkHQsYWVYxSqYWFOem5xYbFhjlpZbrFSfmFpfmpesl5+du
-        YgRHlZbWDsY9qz7oHWJk4mA8xCjBwawkwit40TleiDclsbIqtSg/vqg0J7X4EKM0B4uSOO/X
-        WQvjhATSE0tSs1NTC1KLYLJMHJxSDUwLW9uUZW2vlMSu3nFXMf//7DtVLmtzNHnWcjXPXZrj
-        sLswMVI4zEuFacpP0cOL3MTucGcahc2sXH+h8g3jx2d5QtcXdzxfkiCgUR82TWFf2fFWvQ/M
-        l/uiP7ufUV7m9Oet5LXL7X4qU648a0n7ejqjXrvynrb2+gqnQ9Oee07jO+3sqB+y/MKm9S5z
-        trWu8tik3Xey6H6tVod6O5t8X+LlijivvSnLpJjlTSPjGUPLFsjVem9qncQYaG8gem09z8xZ
-        fy+Ipnuk6gfvS89xzfs4Nc3uK6vY73qGj3eXvt1m8nPVVUH+h8t/7j7/l5fv/rVT17T/LvN8
-        /+/f5IDr1/ZpGJRufqhVUT1zYxv3uZ9KLMUZiYZazEXFiQDhZKKkGQMAAA==
-X-CMS-MailID: 20200827031935epcas1p38d23c935c9b4bdb260f16ecbd233b8ee
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200826115753epcas1p3321f1021e92cfba8279d8976e835d436
-References: <CGME20200826115753epcas1p3321f1021e92cfba8279d8976e835d436@epcas1p3.samsung.com>
-        <20200826115742.21207-1-kohada.t2@gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598500665; bh=+FWH5O9plAx2YA/7/CTPyaQvsDP1bN7Fd3QNB/vKkOA=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=m7IuApWAH6QorQ1B/A53t+ZQioXeC51OPleIyKiBBSIQeqx6r6btSGqLe5OYT/xRa
+         q0aiVhKco2L+zUHOuik21sCCi9lpLaD7th0UqbvYqV7Yxk5CuHxHdrZyYDPGmY2w99
+         QcAVSChYiytbHpKYLlwH41eNLU7pnnR77Zf/fNs5Mhb6KekZZr9/h0A69FMAkiLwxm
+         i8rM0eYVXte4X48P8iMmVlv5EhLeJvFYA5xAujWqeqAEbQBjrzFRIgXGZ0DU5sQHZU
+         KSa8FD6EEqbctof9fPVIgJsFoTkWU0C6lBEFHf1WLRwqRkHphxDoiUOniVb8LAE6/B
+         QO/WHC+GNJAZQ==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> +	i = ES_INDEX_NAME;
-> +	while ((ep = exfat_get_validated_dentry(es, i++, TYPE_NAME))) {
-Please find the way to access name entries like ep_file, ep_stream
-without calling exfat_get_validated_dentry().
->  		exfat_extract_uni_name(ep, uniname);
->  		uniname += EXFAT_FILE_NAME_LEN;
->  	}
-> @@ -372,7 +369,7 @@ unsigned int exfat_get_entry_type(struct exfat_dentry *ep)
->  		if (ep->type == EXFAT_STREAM)
->  			return TYPE_STREAM;
->  		if (ep->type == EXFAT_NAME)
-> -			return TYPE_EXTEND;
-> +			return TYPE_NAME;
->  		if (ep->type == EXFAT_ACL)
->  			return TYPE_ACL;
->  		return TYPE_CRITICAL_SEC;
-> @@ -388,7 +385,7 @@ static void exfat_set_entry_type(struct exfat_dentry *ep, unsigned int type)
->  		ep->type &= EXFAT_DELETE;
->  	} else if (type == TYPE_STREAM) {
->  		ep->type = EXFAT_STREAM;
-> -	} else if (type == TYPE_EXTEND) {
-> +	} else if (type == TYPE_NAME) {
->  		ep->type = EXFAT_NAME;
->  	} else if (type == TYPE_BITMAP) {
->  		ep->type = EXFAT_BITMAP;
-> @@ -421,7 +418,7 @@ static void exfat_init_name_entry(struct exfat_dentry *ep,  {
->  	int i;
-> 
-> -	exfat_set_entry_type(ep, TYPE_EXTEND);
-> +	exfat_set_entry_type(ep, TYPE_NAME);
->  	ep->dentry.name.flags = 0x0;
-> 
->  	for (i = 0; i < EXFAT_FILE_NAME_LEN; i++) { @@ -550,7 +547,7 @@ int exfat_init_ext_entry(struct
-> inode *inode, struct exfat_chain *p_dir,
->  	exfat_update_bh(bh, sync);
->  	brelse(bh);
-> 
-> -	for (i = EXFAT_FIRST_CLUSTER; i < num_entries; i++) {
-> +	for (i = ES_INDEX_NAME; i < num_entries; i++) {
->  		ep = exfat_get_dentry(sb, p_dir, entry + i, &bh, &sector);
->  		if (!ep)
->  			return -EIO;
-> @@ -590,17 +587,16 @@ int exfat_remove_entries(struct inode *inode, struct exfat_chain *p_dir,  void
-> exfat_update_dir_chksum_with_entry_set(struct exfat_entry_set_cache *es)  {
->  	int chksum_type = CS_DIR_ENTRY, i;
-> -	unsigned short chksum = 0;
-> +	u16 chksum = 0;
->  	struct exfat_dentry *ep;
-> 
->  	for (i = 0; i < es->num_entries; i++) {
-> -		ep = exfat_get_dentry_cached(es, i);
-> +		ep = exfat_get_validated_dentry(es, i, TYPE_ALL);
-Ditto, You do not need to repeatedly call exfat_get_validated_dentry() for the entries
-which got from exfat_get_dentry_set().
->  		chksum = exfat_calc_chksum16(ep, DENTRY_SIZE, chksum,
->  					     chksum_type);
->  		chksum_type = CS_DEFAULT;
->  	}
-> -	ep = exfat_get_dentry_cached(es, 0);
-> -	ep->dentry.file.checksum = cpu_to_le16(chksum);
-> +	ES_FILE(es).checksum = cpu_to_le16(chksum);
->  	es->modified = true;
->  }
-> 
->  struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
-> -		struct exfat_chain *p_dir, int entry, unsigned int type)
-> +		struct exfat_chain *p_dir, int entry, int max_entries)
->  {
->  	int ret, i, num_bh;
-> -	unsigned int off, byte_offset, clu = 0;
-> +	unsigned int byte_offset, clu = 0;
->  	sector_t sec;
->  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
->  	struct exfat_entry_set_cache *es;
-> -	struct exfat_dentry *ep;
-> -	int num_entries;
-> -	enum exfat_validate_dentry_mode mode = ES_MODE_STARTED;
->  	struct buffer_head *bh;
-> 
->  	if (p_dir->dir == DIR_DELETED) {
-> @@ -844,13 +811,13 @@ struct exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
->  		return NULL;
->  	es->sb = sb;
->  	es->modified = false;
-> +	es->num_entries = 1;
-> 
->  	/* byte offset in cluster */
->  	byte_offset = EXFAT_CLU_OFFSET(byte_offset, sbi);
-> 
->  	/* byte offset in sector */
-> -	off = EXFAT_BLK_OFFSET(byte_offset, sb);
-> -	es->start_off = off;
-> +	es->start_off = EXFAT_BLK_OFFSET(byte_offset, sb);
-> 
->  	/* sector offset in cluster */
->  	sec = EXFAT_B_TO_BLK(byte_offset, sb); @@ -861,15 +828,12 @@ struct exfat_entry_set_cache
-> *exfat_get_dentry_set(struct super_block *sb,
->  		goto free_es;
->  	es->bh[es->num_bh++] = bh;
-> 
-> -	ep = exfat_get_dentry_cached(es, 0);
-> -	if (!exfat_validate_entry(exfat_get_entry_type(ep), &mode))
-> +	es->ep_file = exfat_get_validated_dentry(es, ES_INDEX_FILE, TYPE_FILE);
-> +	if (!es->ep_file)
->  		goto free_es;
-> +	es->num_entries = min(ES_FILE(es).num_ext + 1, max_entries);
-> 
-> -	num_entries = type == ES_ALL_ENTRIES ?
-> -		ep->dentry.file.num_ext + 1 : type;
-> -	es->num_entries = num_entries;
-> -
-> -	num_bh = EXFAT_B_TO_BLK_ROUND_UP(off + num_entries * DENTRY_SIZE, sb);
-> +	num_bh = EXFAT_B_TO_BLK_ROUND_UP(es->start_off  + es->num_entries *
-> +DENTRY_SIZE, sb);
->  	for (i = 1; i < num_bh; i++) {
->  		/* get the next sector */
->  		if (exfat_is_last_sector_in_cluster(sbi, sec)) { @@ -889,10 +853,17 @@ struct
-> exfat_entry_set_cache *exfat_get_dentry_set(struct super_block *sb,
->  	}
-> 
->  	/* validiate cached dentries */
-> -	for (i = 1; i < num_entries; i++) {
-> -		ep = exfat_get_dentry_cached(es, i);
-> -		if (!exfat_validate_entry(exfat_get_entry_type(ep), &mode))
-> -			goto free_es;
-> +	es->ep_stream = exfat_get_validated_dentry(es, ES_INDEX_STREAM, TYPE_STREAM);
-> +	if (!es->ep_stream)
-> +		goto free_es;
-> +
-> +	if (max_entries == ES_ALL_ENTRIES) {
-> +		for (i = 0; i < ES_FILE(es).num_ext; i++)
-> +			if (!exfat_get_validated_dentry(es, ES_INDEX_STREAM + i, TYPE_SECONDARY))
-> +				goto free_es;
-> +		for (i = 0; i * EXFAT_FILE_NAME_LEN < ES_STREAM(es).name_len; i++)
-> +			if (!exfat_get_validated_dentry(es, ES_INDEX_NAME + i, TYPE_NAME))
-> +				goto free_es;
-Why do you unnecessarily check entries with two loops?
-Please refer to the patch I sent.
+On 8/26/20 8:25 PM, kernel test robot wrote:
+...
+> kern  :warn  : [   59.757746] ------------[ cut here ]------------
+> kern  :warn  : [   59.758325] WARNING: CPU: 3 PID: 2581 at block/bio.c:955 bio_release_pages+0xd7/0xe0
+> kern  :warn  : [   59.758952] Modules linked in: dm_mod netconsole btrfs blake2b_generic xor zstd_compress raid6_pq libcrc32c intel_rapl_msr sd_mod intel_rapl_common t10_pi x86_pkg_temp_thermal sg intel_powerclamp coretemp i915 intel_gtt drm_kms_helper kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel syscopyarea rapl intel_cstate sysfillrect intel_uncore sysimgblt fb_sys_fops drm mei_me ipmi_devintf ahci libahci ipmi_msghandler libata mei joydev ie31200_edac video ip_tables
+> kern  :warn  : [   59.761834] CPU: 3 PID: 2581 Comm: aiodio_sparse Not tainted 5.8.0-10182-g37abbdc72ec00 #1
+> kern  :warn  : [   59.762559] Hardware name: Hewlett-Packard p6-1451cx/2ADA, BIOS 8.15 02/05/2013
+> kern  :warn  : [   59.763295] RIP: 0010:bio_release_pages+0xd7/0xe0
+> kern  :warn  : [   59.763983] Code: e1 89 d5 81 e2 ff 0f 00 00 c1 ed 0c 29 d1 48 c1 e5 06 48 03 28 eb 9c 48 8b 45 08 a8 01 75 c0 48 89 ef e8 8c f0 d2 ff eb b6 c3 <0f> 0b c3 66 0f 1f 44 00 00 0f 1f 44 00 00 41 54 31 c0 55 bd 00 10
+> kern  :warn  : [   59.765596] RSP: 0000:ffffc90000124e68 EFLAGS: 00010246
+> kern  :warn  : [   59.766339] RAX: 0000000000000a00 RBX: ffff888212c3f2a0 RCX: 0000000000000000
+> kern  :warn  : [   59.767124] RDX: fffffffffff41387 RSI: 0000000000000000 RDI: ffff88821fae3000
+> kern  :warn  : [   59.767950] RBP: ffff88821fae3000 R08: ffff88821f1d1c00 R09: 0000000000000000
+> kern  :warn  : [   59.768726] R10: ffff88821f1d1a10 R11: ffff88821faab3b0 R12: 0000000040000001
+> kern  :warn  : [   59.769513] R13: 0000000000000400 R14: 0000000000002c00 R15: 0000000000000000
+> kern  :warn  : [   59.770294] FS:  00007fb0401ef740(0000) GS:ffff88821fb80000(0000) knlGS:0000000000000000
+> kern  :warn  : [   59.771112] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> kern  :warn  : [   59.771908] CR2: 00007ffc3fc11000 CR3: 000000012477e006 CR4: 00000000001706e0
+> kern  :warn  : [   59.772720] Call Trace:
+> kern  :warn  : [   59.773466]  <IRQ>
+> kern  :warn  : [   59.774200]  iomap_dio_bio_end_io+0x5f/0x100
 
->  	}
->  	return es;
+ah, this is self-inflicted, because my new pin_user_page() (which is called
+from iomap_dio_bio_end_io) doesn't set BIO_FOLL_PIN.
 
-> 
-> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h index 44dc04520175..e46f3e0c16b7 100644
-> --- a/fs/exfat/exfat_fs.h
-> +++ b/fs/exfat/exfat_fs.h
-> @@ -40,7 +40,7 @@ enum {
->   * Type Definitions
->   */
->  #define ES_2_ENTRIES		2
-> -#define ES_ALL_ENTRIES		0
-> +#define ES_ALL_ENTRIES		256
-> 
->  #define DIR_DELETED		0xFFFF0321
-> 
-> @@ -56,7 +56,7 @@ enum {
->  #define TYPE_FILE		0x011F
->  #define TYPE_CRITICAL_SEC	0x0200
->  #define TYPE_STREAM		0x0201
-> -#define TYPE_EXTEND		0x0202
-> +#define TYPE_NAME		0x0202
->  #define TYPE_ACL		0x0203
->  #define TYPE_BENIGN_PRI		0x0400
->  #define TYPE_GUID		0x0401
-> @@ -65,6 +65,9 @@ enum {
->  #define TYPE_BENIGN_SEC		0x0800
->  #define TYPE_ALL		0x0FFF
-> 
-> +#define TYPE_PRIMARY		(TYPE_CRITICAL_PRI | TYPE_BENIGN_PRI)
-Where is this in use? If it is not used, Do not need to add it.
-> +#define TYPE_SECONDARY		(TYPE_CRITICAL_SEC | TYPE_BENIGN_SEC)
-> +
->  #define MAX_CHARSET_SIZE	6 /* max size of multi-byte character */
->  #define MAX_NAME_LENGTH		255 /* max len of file name excluding NULL */
->  #define MAX_VFSNAME_BUF_SIZE	((MAX_NAME_LENGTH + 1) * MAX_CHARSET_SIZE)
+Obsolete, now that BIO_FOLL_PIN is not going to happen, but it's good to see
+that the system isn't doing anything unexpected here.
 
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
+> kern  :warn  : [   59.774973]  blk_update_request+0x219/0x3c0
+> kern  :warn  : [   59.775767]  scsi_end_request+0x29/0x140
+> kern  :warn  : [   59.776538]  scsi_io_completion+0x7a/0x520
+> kern  :warn  : [   59.777324]  blk_done_softirq+0x95/0xc0
+> kern  :warn  : [   59.778098]  __do_softirq+0xe8/0x313
+> kern  :warn  : [   59.778887]  asm_call_on_stack+0x12/0x20
+> kern  :warn  : [   59.779662]  </IRQ>
+> kern  :warn  : [   59.780435]  do_softirq_own_stack+0x39/0x60
+> kern  :warn  : [   59.781217]  irq_exit_rcu+0xd2/0xe0
+> kern  :warn  : [   59.782020]  common_interrupt+0x74/0x140
+> kern  :warn  : [   59.782797]  ? asm_common_interrupt+0x8/0x40
+> kern  :warn  : [   59.783594]  asm_common_interrupt+0x1e/0x40
+> kern  :warn  : [   59.784359] RIP: 0033:0x5572c6b47f20
+> kern  :warn  : [   59.785119] Code: 10 00 00 49 01 c4 44 39 fd 0f 8c a2 00 00 00 ba 00 10 00 00 4c 89 ee 44 89 f7 e8 ab f5 ff ff 85 c0 7e d7 89 c2 4c 89 eb eb 09 <48> 83 c3 01 83 ea 01 74 c7 44 0f be 03 45 84 c0 74 ee 83 fa 03 7e
+> kern  :warn  : [   59.786952] RSP: 002b:00007ffc3fc0fed0 EFLAGS: 00000246
+> kern  :warn  : [   59.787836] RAX: 0000000000001000 RBX: 00007ffc3fc11de1 RCX: 00007fb0403c950e
+> kern  :warn  : [   59.788750] RDX: 00000000000000bf RSI: 00007ffc3fc10ea0 RDI: 0000000000000007
+> kern  :warn  : [   59.789647] RBP: 00000000001b5c00 R08: 0000000000000000 R09: 00007ffc3fc0d6b7
+> kern  :warn  : [   59.790550] R10: 0000000000000000 R11: 0000000000000246 R12: 000000000003e000
+> kern  :warn  : [   59.791447] R13: 00007ffc3fc10ea0 R14: 0000000000000007 R15: 000000000003e000
+> kern  :warn  : [   59.792356] ---[ end trace 1c52c540ed6c08e4 ]---
+> 
+> ...
