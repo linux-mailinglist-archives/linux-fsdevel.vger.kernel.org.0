@@ -2,223 +2,262 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC1412553EA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Aug 2020 06:57:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5885E255464
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Aug 2020 08:16:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbgH1E50 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Aug 2020 00:57:26 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:50699 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbgH1E5Y (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Aug 2020 00:57:24 -0400
-Received: by mail-io1-f71.google.com with SMTP id k5so43301ion.17
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Aug 2020 21:57:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=LgE6lJVanO3aGKaU5BWBpevjqiZZr3WyVWUmT2Inr0A=;
-        b=qrMmgJJwQJHn7CagvV22Am+Gari0R0Uu5oV8fCLLcmn2FfJiOH/GZoV+x8nA6wle9n
-         YTNpETTp/QyGEUZGUU3Fdbs2rVuzTRX7Qi10AWFYiBDnyVkZf7EDsmj/sL6cFlCSVaBl
-         qAaFjYMcLQ7s4hLFT/1jmSabWnDCcF6vseN5/gx0ATgTYLEsY+vHwbc+6NkEIzazBjqR
-         e1k41S7gE2j+HOyChbh1D0k+HllxRl5gGrqRnlQj3prn1f3VWgieEFkO4LUDiJDsIdpD
-         lDOUk7GATxFsQR4IhN/zWKkbjQXtwGWOrZysGDcOqdkYzI6ODdS+SZ/rgRgcEsSXd+3Y
-         U7jw==
-X-Gm-Message-State: AOAM531uSzatlr1UXw+4E/0hulNfBTP8pK5YYYJZnyzQnhwbfXdaNSC2
-        QXbiacpPEyWspbcXzaEDx6BrvoxoLPDV5V5Tak0dYwdZENcl
-X-Google-Smtp-Source: ABdhPJwKGzJ7FC5EKbQvsE+s6PZQaLMlOkbNO8nAsujnHSQAjsejY52S4LjLBvgweGEUdjRBw22KfUgimGzK/DJ+P2Mk7VFhXuCJ
+        id S1727059AbgH1GQP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Aug 2020 02:16:15 -0400
+Received: from smtp.h3c.com ([60.191.123.50]:14938 "EHLO h3cspam02-ex.h3c.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725849AbgH1GQO (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 Aug 2020 02:16:14 -0400
+Received: from DAG2EX03-BASE.srv.huawei-3com.com ([10.8.0.66])
+        by h3cspam02-ex.h3c.com with ESMTPS id 07S6DuIm017322
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 28 Aug 2020 14:13:56 +0800 (GMT-8)
+        (envelope-from tian.xianting@h3c.com)
+Received: from localhost.localdomain (10.99.212.201) by
+ DAG2EX03-BASE.srv.huawei-3com.com (10.8.0.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 28 Aug 2020 14:13:58 +0800
+From:   Xianting Tian <tian.xianting@h3c.com>
+To:     <viro@zeniv.linux.org.uk>, <bcrl@kvack.org>, <mingo@redhat.com>,
+        <peterz@infradead.org>, <juri.lelli@redhat.com>,
+        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <jack@suse.cz>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-aio@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        Xianting Tian <tian.xianting@h3c.com>
+Subject: [PATCH] aio: make aio wait path to account iowait time
+Date:   Fri, 28 Aug 2020 14:07:12 +0800
+Message-ID: <20200828060712.34983-1-tian.xianting@h3c.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-Received: by 2002:a5e:a512:: with SMTP id 18mr10756972iog.128.1598590642511;
- Thu, 27 Aug 2020 21:57:22 -0700 (PDT)
-Date:   Thu, 27 Aug 2020 21:57:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000063640c05ade8e3de@google.com>
-Subject: possible deadlock in proc_pid_syscall (2)
-From:   syzbot <syzbot+db9cdf3dd1f64252c6ef@syzkaller.appspotmail.com>
-To:     adobriyan@gmail.com, akpm@linux-foundation.org, avagin@gmail.com,
-        christian@brauner.io, ebiederm@xmission.com,
-        gladkov.alexey@gmail.com, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, walken@google.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.99.212.201]
+X-ClientProxiedBy: BJSMTP02-EX.srv.huawei-3com.com (10.63.20.133) To
+ DAG2EX03-BASE.srv.huawei-3com.com (10.8.0.66)
+X-DNSRBL: 
+X-MAIL: h3cspam02-ex.h3c.com 07S6DuIm017322
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+As the normal aio wait path(read_events() ->
+wait_event_interruptible_hrtimeout()) doesn't account iowait time, so use
+this patch to make it to account iowait time, which can truely reflect
+the system io situation when using a tool like 'top'.
 
-syzbot found the following issue on:
+The test result as below.
 
-HEAD commit:    15bc20c6 Merge tag 'tty-5.9-rc3' of git://git.kernel.org/p..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15349f96900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=978db74cb30aa994
-dashboard link: https://syzkaller.appspot.com/bug?extid=db9cdf3dd1f64252c6ef
-compiler:       gcc (GCC) 10.1.0-syz 20200507
+Test environment：
+	Architecture:          x86_64
+	CPU op-mode(s):        32-bit, 64-bit
+	Byte Order:            Little Endian
+	CPU(s):                32
+	On-line CPU(s) list:   0-31
+	Thread(s) per core:    2
+	Core(s) per socket:    8
+	Socket(s):             2
+	NUMA node(s):          2
+	Vendor ID:             GenuineIntel
+	CPU family:            6
+	Model:                 85
+	Model name:            Intel(R) Xeon(R) Silver 4108 CPU @ 1.80GHz
+	Stepping:              4
+	CPU MHz:               801.660
 
-Unfortunately, I don't have any reproducer for this issue yet.
+AIO test command:
+	fio -ioengine=libaio -bs=8k -direct=1 -numjobs 32 -rw=read -size=10G
+          -filename=/dev/sda3 -name="Max throughput" -iodepth=128 -runtime=60
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+db9cdf3dd1f64252c6ef@syzkaller.appspotmail.com
+Before test, set nr_requests to 512(default is 256), aim to to make the backend
+device busy to handle io request, and make io_getevents() have more chances to
+wait for io completion:
+	echo 512 >  /sys/block/sda/queue/nr_requests
 
-======================================================
-WARNING: possible circular locking dependency detected
-5.9.0-rc2-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor.0/18445 is trying to acquire lock:
-ffff88809f2e0dc8 (&sig->exec_update_mutex){+.+.}-{3:3}, at: lock_trace fs/proc/base.c:408 [inline]
-ffff88809f2e0dc8 (&sig->exec_update_mutex){+.+.}-{3:3}, at: proc_pid_syscall+0xaa/0x2b0 fs/proc/base.c:646
+Fio test result with the AIO iowait time accounting patch showed as below,
+almost all fio threads are in 'D' state to waiting for io completion, and the
+iowait time is accounted as 48.0%:
+	top - 19:19:23 up 29 min,  2 users,  load average: 14.60, 9.45, 9.45
+	Tasks: 456 total,   4 running, 247 sleeping,   0 stopped,   0 zombie
+	%Cpu(s):  0.4 us,  1.0 sy,  0.0 ni, 50.6 id, 48.0 wa,  0.0 hi,  0.0 si,  0.0 st
+	KiB Mem : 19668915+total, 19515264+free,   866476 used,   670028 buff/cache
+	KiB Swap:  4194300 total,  4194300 free,        0 used. 19449948+avail Mem
 
-but task is already holding lock:
-ffff88808e9a3c30 (&p->lock){+.+.}-{3:3}, at: seq_read+0x61/0x1070 fs/seq_file.c:155
+	  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+	16135 root      20   0  294092  63724  63060 S   1.7  0.0   0:03.31 fio
+	16173 root      20   0  272352   3540   1792 D   1.7  0.0   0:03.85 fio
+	16175 root      20   0  272360   3544   1796 D   1.7  0.0   0:03.85 fio
+	16185 root      20   0  272400   3556   1808 D   1.7  0.0   0:03.84 fio
+	16187 root      20   0  272408   3552   1804 D   1.7  0.0   0:03.82 fio
+	16190 root      20   0  272420   3500   1804 R   1.7  0.0   0:03.88 fio
+	16169 root      20   0  272336   3444   1740 D   1.3  0.0   0:03.75 fio
+	16170 root      20   0  272340   3504   1804 R   1.3  0.0   0:03.80 fio
+	16172 root      20   0  272348   3500   1800 D   1.3  0.0   0:03.86 fio
+	16174 root      20   0  272356   3544   1796 D   1.3  0.0   0:03.77 fio
+	16179 root      20   0  272376   3528   1780 D   1.3  0.0   0:03.79 fio
+	16180 root      20   0  272380   3500   1800 D   1.3  0.0   0:03.85 fio
+	16181 root      20   0  272384   3552   1804 D   1.3  0.0   0:03.87 fio
+	16182 root      20   0  272388   3520   1772 D   1.3  0.0   0:03.80 fio
+	16183 root      20   0  272392   3552   1804 D   1.3  0.0   0:03.77 fio
+	16186 root      20   0  272404   3500   1804 D   1.3  0.0   0:03.88 fio
+	16188 root      20   0  272412   3500   1800 D   1.3  0.0   0:03.89 fio
+	16191 root      20   0  272424   3500   1800 D   1.3  0.0   0:03.92 fio
+	16192 root      20   0  272428   3500   1800 D   1.3  0.0   0:03.87 fio
+	16194 root      20   0  272436   3500   1804 D   1.3  0.0   0:03.82 fio
+	16195 root      20   0  272440   3500   1800 R   1.3  0.0   0:03.82 fio
+	16196 root      20   0  272444   3552   1804 D   1.3  0.0   0:03.84 fio
+	16198 root      20   0  272452   3500   1804 D   1.3  0.0   0:03.89 fio
+	16199 root      20   0  272456   3504   1800 D   1.3  0.0   0:03.84 fio
+	16200 root      20   0  272460   3552   1804 D   1.3  0.0   0:03.85 fio
+	16171 root      20   0  272344   3504   1800 D   1.0  0.0   0:03.84 fio
+	16176 root      20   0  272364   3520   1772 D   1.0  0.0   0:03.76 fio
+	16177 root      20   0  272368   3556   1808 D   1.0  0.0   0:03.74 fio
+	16178 root      20   0  272372   3500   1804 D   1.0  0.0   0:03.90 fio
+	16184 root      20   0  272396   3500   1800 D   1.0  0.0   0:03.83 fio
+	16189 root      20   0  272416   3500   1804 D   1.0  0.0   0:03.86 fio
+	16193 root      20   0  272432   3500   1804 D   1.0  0.0   0:03.85 fio
+	16197 root      20   0  272448   3556   1808 D   1.0  0.0   0:03.75 fio
 
-which lock already depends on the new lock.
+Fio test result without the AIO iowait time accounting patch showed as below,
+almost all fio threads are in 'S' state to waiting for io completion, and the
+iowait time is not accounted, iowait is 0.0%.
+	top - 19:20:44 up 31 min,  2 users,  load average: 12.50, 10.15, 9.72
+	Tasks: 458 total,   2 running, 249 sleeping,   0 stopped,   0 zombie
+	%Cpu(s):  0.4 us,  0.9 sy,  0.0 ni, 98.6 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+	KiB Mem : 19668915+total, 19513945+free,   879652 used,   670040 buff/cache
+	KiB Swap:  4194300 total,  4194300 free,        0 used. 19448636+avail Mem
 
+	  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+	16243 root      20   0  294092  63736  63068 S   1.7  0.0   0:03.06 fio
+	16277 root      20   0  272336   3568   1868 S   1.7  0.0   0:03.59 fio
+	16287 root      20   0  272376   3564   1864 S   1.7  0.0   0:03.64 fio
+	16291 root      20   0  272392   3620   1868 S   1.7  0.0   0:03.63 fio
+	16298 root      20   0  272420   3564   1868 S   1.7  0.0   0:03.61 fio
+	16302 root      20   0  272436   3560   1868 S   1.7  0.0   0:03.61 fio
+	16303 root      20   0  272440   3552   1800 S   1.7  0.0   0:03.62 fio
+	16308 root      20   0  272460   3568   1864 S   1.7  0.0   0:03.60 fio
+	16278 root      20   0  272340   3568   1868 S   1.3  0.0   0:03.59 fio
+	16279 root      20   0  272344   3508   1800 S   1.3  0.0   0:03.60 fio
+	16280 root      20   0  272348   3564   1864 S   1.3  0.0   0:03.60 fio
+	16281 root      20   0  272352   3624   1872 S   1.3  0.0   0:03.57 fio
+	16283 root      20   0  272360   3612   1860 S   1.3  0.0   0:03.60 fio
+	16285 root      20   0  272368   3592   1840 S   1.3  0.0   0:03.62 fio
+	16286 root      20   0  272372   3580   1828 S   1.3  0.0   0:03.61 fio
+	16288 root      20   0  272380   3620   1868 S   1.3  0.0   0:03.55 fio
+	16289 root      20   0  272384   3564   1868 S   1.3  0.0   0:03.59 fio
+	16292 root      20   0  272396   3536   1836 S   1.3  0.0   0:03.62 fio
+	16293 root      20   0  272400   3624   1872 S   1.3  0.0   0:03.63 fio
+	16295 root      20   0  272408   3620   1868 S   1.3  0.0   0:03.61 fio
+	16297 root      20   0  272416   3568   1868 S   1.3  0.0   0:03.62 fio
+	16300 root      20   0  272428   3564   1864 R   1.3  0.0   0:03.61 fio
+	16304 root      20   0  272444   3564   1864 S   1.3  0.0   0:03.59 fio
+	16305 root      20   0  272448   3456   1760 S   1.3  0.0   0:03.65 fio
+	16307 root      20   0  272456   3568   1864 S   1.3  0.0   0:03.64 fio
+	16282 root      20   0  272356   3556   1860 S   1.0  0.0   0:03.55 fio
+	16284 root      20   0  272364   3612   1860 S   1.0  0.0   0:03.57 fio
+	16290 root      20   0  272388   3616   1864 S   1.0  0.0   0:03.54 fio
+	16294 root      20   0  272404   3624   1872 S   1.0  0.0   0:03.60 fio
+	16296 root      20   0  272412   3564   1864 S   1.0  0.0   0:03.60 fio
+	16299 root      20   0  272424   3540   1840 S   1.0  0.0   0:03.62 fio
+	16301 root      20   0  272432   3568   1868 S   1.0  0.0   0:03.63 fio
+	16306 root      20   0  272452   3624   1872 S   1.0  0.0   0:03.60 fio
 
-the existing dependency chain (in reverse order) is:
-
--> #3 (&p->lock){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:956 [inline]
-       __mutex_lock+0x134/0x10e0 kernel/locking/mutex.c:1103
-       seq_read+0x61/0x1070 fs/seq_file.c:155
-       pde_read fs/proc/inode.c:306 [inline]
-       proc_reg_read+0x221/0x300 fs/proc/inode.c:318
-       do_loop_readv_writev fs/read_write.c:734 [inline]
-       do_loop_readv_writev fs/read_write.c:721 [inline]
-       do_iter_read+0x48e/0x6e0 fs/read_write.c:955
-       vfs_readv+0xe5/0x150 fs/read_write.c:1073
-       kernel_readv fs/splice.c:355 [inline]
-       default_file_splice_read.constprop.0+0x4e6/0x9e0 fs/splice.c:412
-       do_splice_to+0x137/0x170 fs/splice.c:871
-       splice_direct_to_actor+0x307/0x980 fs/splice.c:950
-       do_splice_direct+0x1b3/0x280 fs/splice.c:1059
-       do_sendfile+0x55f/0xd40 fs/read_write.c:1540
-       __do_sys_sendfile64 fs/read_write.c:1601 [inline]
-       __se_sys_sendfile64 fs/read_write.c:1587 [inline]
-       __x64_sys_sendfile64+0x1cc/0x210 fs/read_write.c:1587
-       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-       entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
--> #2 (sb_writers#4){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write+0x234/0x470 fs/super.c:1672
-       sb_start_write include/linux/fs.h:1643 [inline]
-       mnt_want_write+0x3a/0xb0 fs/namespace.c:354
-       ovl_setattr+0x5c/0x850 fs/overlayfs/inode.c:28
-       notify_change+0xb60/0x10a0 fs/attr.c:336
-       chown_common+0x4a9/0x550 fs/open.c:674
-       do_fchownat+0x126/0x1e0 fs/open.c:704
-       __do_sys_lchown fs/open.c:729 [inline]
-       __se_sys_lchown fs/open.c:727 [inline]
-       __x64_sys_lchown+0x7a/0xc0 fs/open.c:727
-       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-       entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
--> #1 (&ovl_i_mutex_dir_key[depth]){++++}-{3:3}:
-       down_read+0x96/0x420 kernel/locking/rwsem.c:1492
-       inode_lock_shared include/linux/fs.h:789 [inline]
-       lookup_slow fs/namei.c:1560 [inline]
-       walk_component+0x409/0x6a0 fs/namei.c:1860
-       lookup_last fs/namei.c:2309 [inline]
-       path_lookupat+0x1ba/0x830 fs/namei.c:2333
-       filename_lookup+0x19f/0x560 fs/namei.c:2366
-       create_local_trace_uprobe+0x87/0x4e0 kernel/trace/trace_uprobe.c:1574
-       perf_uprobe_init+0x132/0x210 kernel/trace/trace_event_perf.c:323
-       perf_uprobe_event_init+0xff/0x1c0 kernel/events/core.c:9580
-       perf_try_init_event+0x12a/0x560 kernel/events/core.c:10899
-       perf_init_event kernel/events/core.c:10951 [inline]
-       perf_event_alloc.part.0+0xdee/0x3770 kernel/events/core.c:11229
-       perf_event_alloc kernel/events/core.c:11608 [inline]
-       __do_sys_perf_event_open+0x72c/0x2cb0 kernel/events/core.c:11724
-       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-       entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
--> #0 (&sig->exec_update_mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:2496 [inline]
-       check_prevs_add kernel/locking/lockdep.c:2601 [inline]
-       validate_chain kernel/locking/lockdep.c:3218 [inline]
-       __lock_acquire+0x2a6b/0x5640 kernel/locking/lockdep.c:4426
-       lock_acquire+0x1f1/0xad0 kernel/locking/lockdep.c:5005
-       __mutex_lock_common kernel/locking/mutex.c:956 [inline]
-       __mutex_lock+0x134/0x10e0 kernel/locking/mutex.c:1103
-       lock_trace fs/proc/base.c:408 [inline]
-       proc_pid_syscall+0xaa/0x2b0 fs/proc/base.c:646
-       proc_single_show+0x116/0x1e0 fs/proc/base.c:775
-       seq_read+0x432/0x1070 fs/seq_file.c:208
-       do_loop_readv_writev fs/read_write.c:734 [inline]
-       do_loop_readv_writev fs/read_write.c:721 [inline]
-       do_iter_read+0x48e/0x6e0 fs/read_write.c:955
-       vfs_readv+0xe5/0x150 fs/read_write.c:1073
-       do_preadv fs/read_write.c:1165 [inline]
-       __do_sys_preadv fs/read_write.c:1215 [inline]
-       __se_sys_preadv fs/read_write.c:1210 [inline]
-       __x64_sys_preadv+0x231/0x310 fs/read_write.c:1210
-       do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-       entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-other info that might help us debug this:
-
-Chain exists of:
-  &sig->exec_update_mutex --> sb_writers#4 --> &p->lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&p->lock);
-                               lock(sb_writers#4);
-                               lock(&p->lock);
-  lock(&sig->exec_update_mutex);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.0/18445:
- #0: ffff88808e9a3c30 (&p->lock){+.+.}-{3:3}, at: seq_read+0x61/0x1070 fs/seq_file.c:155
-
-stack backtrace:
-CPU: 0 PID: 18445 Comm: syz-executor.0 Not tainted 5.9.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x18f/0x20d lib/dump_stack.c:118
- check_noncircular+0x324/0x3e0 kernel/locking/lockdep.c:1827
- check_prev_add kernel/locking/lockdep.c:2496 [inline]
- check_prevs_add kernel/locking/lockdep.c:2601 [inline]
- validate_chain kernel/locking/lockdep.c:3218 [inline]
- __lock_acquire+0x2a6b/0x5640 kernel/locking/lockdep.c:4426
- lock_acquire+0x1f1/0xad0 kernel/locking/lockdep.c:5005
- __mutex_lock_common kernel/locking/mutex.c:956 [inline]
- __mutex_lock+0x134/0x10e0 kernel/locking/mutex.c:1103
- lock_trace fs/proc/base.c:408 [inline]
- proc_pid_syscall+0xaa/0x2b0 fs/proc/base.c:646
- proc_single_show+0x116/0x1e0 fs/proc/base.c:775
- seq_read+0x432/0x1070 fs/seq_file.c:208
- do_loop_readv_writev fs/read_write.c:734 [inline]
- do_loop_readv_writev fs/read_write.c:721 [inline]
- do_iter_read+0x48e/0x6e0 fs/read_write.c:955
- vfs_readv+0xe5/0x150 fs/read_write.c:1073
- do_preadv fs/read_write.c:1165 [inline]
- __do_sys_preadv fs/read_write.c:1215 [inline]
- __se_sys_preadv fs/read_write.c:1210 [inline]
- __x64_sys_preadv+0x231/0x310 fs/read_write.c:1210
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45d5b9
-Code: 5d b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 2b b4 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fb613f9ec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
-RAX: ffffffffffffffda RBX: 0000000000025740 RCX: 000000000045d5b9
-RDX: 0000000000000333 RSI: 00000000200017c0 RDI: 0000000000000006
-RBP: 000000000118cf90 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000118cf4c
-R13: 00007ffe2a82bbbf R14: 00007fb613f9f9c0 R15: 000000000118cf4c
-
-
+Signed-off-by: Xianting Tian <tian.xianting@h3c.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/aio.c             |  2 +-
+ include/linux/wait.h | 26 ++++++++++++++++++++++----
+ 2 files changed, 23 insertions(+), 5 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/aio.c b/fs/aio.c
+index 5736bff48..8d00548e0 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1290,7 +1290,7 @@ static long read_events(struct kioctx *ctx, long min_nr, long nr,
+ 	if (until == 0)
+ 		aio_read_events(ctx, min_nr, nr, event, &ret);
+ 	else
+-		wait_event_interruptible_hrtimeout(ctx->wait,
++		io_wait_event_hrtimeout(ctx->wait,
+ 				aio_read_events(ctx, min_nr, nr, event, &ret),
+ 				until);
+ 	return ret;
+diff --git a/include/linux/wait.h b/include/linux/wait.h
+index 898c890fc..fb5902a25 100644
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -312,6 +312,13 @@ do {										\
+ 	(void)___wait_event(wq_head, condition, TASK_UNINTERRUPTIBLE, 0, 0,	\
+ 			    io_schedule())
+ 
++#define __io_wait_event_hrtimeout(wq_head, condition, timeout)			\
++({										\
++	int __ret = 0;								\
++	__ret = __wait_event_hrtimeout(wq_head, condition, timeout,		\
++			    TASK_UNINTERRUPTIBLE, io_schedule());		\
++})
++
+ /*
+  * io_wait_event() -- like wait_event() but with io_schedule()
+  */
+@@ -323,6 +330,15 @@ do {										\
+ 	__io_wait_event(wq_head, condition);					\
+ } while (0)
+ 
++
++#define io_wait_event_hrtimeout(wq_head, condition, timeout)			\
++do {										\
++	might_sleep();								\
++	if (condition)								\
++		break;								\
++	__io_wait_event_hrtimeout(wq_head, condition, timeout);			\
++} while (0)
++
+ #define __wait_event_freezable(wq_head, condition)				\
+ 	___wait_event(wq_head, condition, TASK_INTERRUPTIBLE, 0, 0,		\
+ 			    freezable_schedule())
+@@ -500,7 +516,7 @@ do {										\
+ 	__ret;									\
+ })
+ 
+-#define __wait_event_hrtimeout(wq_head, condition, timeout, state)		\
++#define __wait_event_hrtimeout(wq_head, condition, timeout, state, cmd) 	\
+ ({										\
+ 	int __ret = 0;								\
+ 	struct hrtimer_sleeper __t;						\
+@@ -517,7 +533,7 @@ do {										\
+ 			__ret = -ETIME;						\
+ 			break;							\
+ 		}								\
+-		schedule());							\
++		cmd);								\
+ 										\
+ 	hrtimer_cancel(&__t.timer);						\
+ 	destroy_hrtimer_on_stack(&__t.timer);					\
+@@ -546,7 +562,8 @@ do {										\
+ 	might_sleep();								\
+ 	if (!(condition))							\
+ 		__ret = __wait_event_hrtimeout(wq_head, condition, timeout,	\
+-					       TASK_UNINTERRUPTIBLE);		\
++					       TASK_UNINTERRUPTIBLE,		\
++					       schedule());			\
+ 	__ret;									\
+ })
+ 
+@@ -572,7 +589,8 @@ do {										\
+ 	might_sleep();								\
+ 	if (!(condition))							\
+ 		__ret = __wait_event_hrtimeout(wq, condition, timeout,		\
+-					       TASK_INTERRUPTIBLE);		\
++					       TASK_INTERRUPTIBLE,		\
++						schedule());			\
+ 	__ret;									\
+ })
+ 
+-- 
+2.17.1
+
