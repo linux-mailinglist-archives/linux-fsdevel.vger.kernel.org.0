@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F18F255CBF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Aug 2020 16:40:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1EE5255CC1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Aug 2020 16:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbgH1Okg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Aug 2020 10:40:36 -0400
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:57852 "EHLO
+        id S1728022AbgH1Okp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Aug 2020 10:40:45 -0400
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:57876 "EHLO
         relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727969AbgH1OkX (ORCPT
+        by vger.kernel.org with ESMTP id S1727993AbgH1OkZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Aug 2020 10:40:23 -0400
+        Fri, 28 Aug 2020 10:40:25 -0400
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id E41AE27E;
-        Fri, 28 Aug 2020 17:40:16 +0300 (MSK)
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id A4B9E1B9;
+        Fri, 28 Aug 2020 17:40:18 +0300 (MSK)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1598625616;
-        bh=LsZqvcfqN4iaP1FLhZSeqe+wbystI5ElcXOOBfYj0Oc=;
+        d=paragon-software.com; s=mail; t=1598625618;
+        bh=/t4sPA01hNgMGmZJD3a0RryK9fmW0BVXNjbt4u70WEg=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=fV1Cy53xMHdmL3rzZUXlxPB9zFXie2jc3HCIzqqoHUhO/xXgxBxctVn1gMC4Diu/G
-         LCpO7cDcZr48yRpHLxFPWmyxlmXnOgTWXXVjjlz+ilX0poMYL9W53VsO/Y55VRMcK3
-         sNeh+grHPjC3DtUP5ZFIazW4IbydgO+NJpTlC2n0=
+        b=DaqZcY/gDsbSEa9DWz0WjHJZjwKWYC8hjj/HIzIc2RGurSh7pf7W97zTV27wWuT1H
+         qlaIYKluIY4LC8MBdUUVg+NDuIXV3agFFE1GRSvdNK8w8gI39qd2zZbNZom8C5TloA
+         IwPzOrXnDIYCciOW833VB9C02rhmWDS33el1gyE0=
 Received: from localhost.localdomain (172.30.8.44) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 28 Aug 2020 17:40:15 +0300
+ 15.1.1847.3; Fri, 28 Aug 2020 17:40:17 +0300
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <linux-fsdevel@vger.kernel.org>
 CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
@@ -33,9 +33,9 @@ CC:     <viro@zeniv.linux.org.uk>, <linux-kernel@vger.kernel.org>,
         <willy@infradead.org>, <rdunlap@infradead.org>, <joe@perches.com>,
         <mark@harmstone.com>,
         Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Subject: [PATCH v3 03/10] fs/ntfs3: Add bitmap
-Date:   Fri, 28 Aug 2020 07:39:31 -0700
-Message-ID: <20200828143938.102889-4-almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH v3 05/10] fs/ntfs3: Add attrib operations
+Date:   Fri, 28 Aug 2020 07:39:33 -0700
+Message-ID: <20200828143938.102889-6-almaz.alexandrovich@paragon-software.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200828143938.102889-1-almaz.alexandrovich@paragon-software.com>
 References: <20200828143938.102889-1-almaz.alexandrovich@paragon-software.com>
@@ -49,1710 +49,2790 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds bitmap
+This adds attrib operations
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
- fs/ntfs3/bitfunc.c |  137 ++++
- fs/ntfs3/bitmap.c  | 1545 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 1682 insertions(+)
- create mode 100644 fs/ntfs3/bitfunc.c
- create mode 100644 fs/ntfs3/bitmap.c
+ fs/ntfs3/attrib.c   | 1285 +++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/attrlist.c |  462 ++++++++++++++++
+ fs/ntfs3/xattr.c    | 1007 +++++++++++++++++++++++++++++++++
+ 3 files changed, 2754 insertions(+)
+ create mode 100644 fs/ntfs3/attrib.c
+ create mode 100644 fs/ntfs3/attrlist.c
+ create mode 100644 fs/ntfs3/xattr.c
 
-diff --git a/fs/ntfs3/bitfunc.c b/fs/ntfs3/bitfunc.c
+diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
 new file mode 100644
-index 000000000000..b19972177535
+index 000000000000..3a61dbbe2b5f
 --- /dev/null
-+++ b/fs/ntfs3/bitfunc.c
-@@ -0,0 +1,137 @@
++++ b/fs/ntfs3/attrib.c
+@@ -0,0 +1,1285 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ *  linux/fs/ntfs3/bitfunc.c
++ *  linux/fs/ntfs3/attrib.c
 + *
 + * Copyright (C) 2019-2020 Paragon Software GmbH, All rights reserved.
 + *
-+ */
-+#include <linux/blkdev.h>
-+#include <linux/buffer_head.h>
-+#include <linux/fs.h>
-+#include <linux/nls.h>
-+#include <linux/sched/signal.h>
-+
-+#include "debug.h"
-+#include "ntfs.h"
-+#include "ntfs_fs.h"
-+
-+#define BITS_IN_SIZE_T (sizeof(size_t) * 8)
-+
-+/*
-+ * fill_mask[i] - first i bits are '1' , i = 0,1,2,3,4,5,6,7,8
-+ * fill_mask[i] = 0xFF >> (8-i)
-+ */
-+static const u8 fill_mask[] = { 0x00, 0x01, 0x03, 0x07, 0x0F,
-+				0x1F, 0x3F, 0x7F, 0xFF };
-+
-+/*
-+ * zero_mask[i] - first i bits are '0' , i = 0,1,2,3,4,5,6,7,8
-+ * zero_mask[i] = 0xFF << i
-+ */
-+static const u8 zero_mask[] = { 0xFF, 0xFE, 0xFC, 0xF8, 0xF0,
-+				0xE0, 0xC0, 0x80, 0x00 };
-+
-+/*
-+ * are_bits_clear
-+ *
-+ * Returns true if all bits [bit, bit+nbits) are zeros "0"
-+ */
-+bool are_bits_clear(const ulong *lmap, size_t bit, size_t nbits)
-+{
-+	size_t pos = bit & 7;
-+	const u8 *map = (u8 *)lmap + (bit >> 3);
-+
-+	if (pos) {
-+		if (8 - pos >= nbits)
-+			return !nbits || !(*map & fill_mask[pos + nbits] &
-+					   zero_mask[pos]);
-+
-+		if (*map++ & zero_mask[pos])
-+			return false;
-+		nbits -= 8 - pos;
-+	}
-+
-+	pos = ((size_t)map) & (sizeof(size_t) - 1);
-+	if (pos) {
-+		pos = sizeof(size_t) - pos;
-+		if (nbits >= pos * 8) {
-+			for (nbits -= pos * 8; pos; pos--, map++) {
-+				if (*map)
-+					return false;
-+			}
-+		}
-+	}
-+
-+	for (pos = nbits / BITS_IN_SIZE_T; pos; pos--, map += sizeof(size_t)) {
-+		if (*((size_t *)map))
-+			return false;
-+	}
-+
-+	for (pos = (nbits % BITS_IN_SIZE_T) >> 3; pos; pos--, map++) {
-+		if (*map)
-+			return false;
-+	}
-+
-+	pos = nbits & 7;
-+	if (pos && (*map & fill_mask[pos]))
-+		return false;
-+
-+	// All bits are zero
-+	return true;
-+}
-+
-+/*
-+ * are_bits_set
-+ *
-+ * Returns true if all bits [bit, bit+nbits) are ones "1"
-+ */
-+bool are_bits_set(const ulong *lmap, size_t bit, size_t nbits)
-+{
-+	u8 mask;
-+	size_t pos = bit & 7;
-+	const u8 *map = (u8 *)lmap + (bit >> 3);
-+
-+	if (pos) {
-+		if (8 - pos >= nbits) {
-+			mask = fill_mask[pos + nbits] & zero_mask[pos];
-+			return !nbits || (*map & mask) == mask;
-+		}
-+
-+		mask = zero_mask[pos];
-+		if ((*map++ & mask) != mask)
-+			return false;
-+		nbits -= 8 - pos;
-+	}
-+
-+	pos = ((size_t)map) & (sizeof(size_t) - 1);
-+	if (pos) {
-+		pos = sizeof(size_t) - pos;
-+		if (nbits >= pos * 8) {
-+			for (nbits -= pos * 8; pos; pos--, map++) {
-+				if (*map != 0xFF)
-+					return false;
-+			}
-+		}
-+	}
-+
-+	for (pos = nbits / BITS_IN_SIZE_T; pos; pos--, map += sizeof(size_t)) {
-+		if (*((size_t *)map) != MINUS_ONE_T)
-+			return false;
-+	}
-+
-+	for (pos = (nbits % BITS_IN_SIZE_T) >> 3; pos; pos--, map++) {
-+		if (*map != 0xFF)
-+			return false;
-+	}
-+
-+	pos = nbits & 7;
-+	if (pos) {
-+		u8 mask = fill_mask[pos];
-+
-+		if ((*map & mask) != mask)
-+			return false;
-+	}
-+
-+	// All bits are ones
-+	return true;
-+}
-diff --git a/fs/ntfs3/bitmap.c b/fs/ntfs3/bitmap.c
-new file mode 100644
-index 000000000000..fe41e010b2eb
---- /dev/null
-+++ b/fs/ntfs3/bitmap.c
-@@ -0,0 +1,1545 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  linux/fs/ntfs3/bitmap.c
-+ *
-+ * Copyright (C) 2019-2020 Paragon Software GmbH, All rights reserved.
-+ *
++ * TODO: merge attr_set_size/attr_data_get_block/attr_allocate_frame?
 + */
 +
 +#include <linux/blkdev.h>
 +#include <linux/buffer_head.h>
 +#include <linux/fs.h>
++#include <linux/hash.h>
 +#include <linux/nls.h>
++#include <linux/ratelimit.h>
 +#include <linux/sched/signal.h>
++#include <linux/slab.h>
 +
 +#include "debug.h"
 +#include "ntfs.h"
 +#include "ntfs_fs.h"
 +
-+struct rb_node_key {
-+	struct rb_node node;
-+	size_t key;
-+};
-+
 +/*
-+ * Tree is sorted by start (key)
++ * You can set external NTFS_MIN_LOG2_OF_CLUMP/NTFS_MAX_LOG2_OF_CLUMP to manage
++ * preallocate algorithm
 + */
-+struct e_node {
-+	struct rb_node_key start; /* Tree sorted by start */
-+	struct rb_node_key count; /* Tree sorted by len*/
-+};
++#ifndef NTFS_MIN_LOG2_OF_CLUMP
++#define NTFS_MIN_LOG2_OF_CLUMP 16
++#endif
 +
-+static int wnd_rescan(struct wnd_bitmap *wnd);
-+static struct buffer_head *wnd_map(struct wnd_bitmap *wnd, size_t iw);
-+static bool wnd_is_free_hlp(struct wnd_bitmap *wnd, size_t bit, size_t bits);
++#ifndef NTFS_MAX_LOG2_OF_CLUMP
++#define NTFS_MAX_LOG2_OF_CLUMP 26
++#endif
 +
-+static inline u32 wnd_bits(const struct wnd_bitmap *wnd, size_t i)
-+{
-+	return i + 1 == wnd->nwnd ? wnd->bits_last : wnd->sb->s_blocksize * 8;
-+}
-+
-+/*
-+ * b_pos + b_len - biggest fragment
-+ * Scan range [wpos wbits) window 'buf'
-+ * Returns -1 if not found
-+ */
-+static size_t wnd_scan(const ulong *buf, size_t wbit, u32 wpos, u32 wend,
-+		       size_t to_alloc, size_t *prev_tail, size_t *b_pos,
-+		       size_t *b_len)
-+{
-+	while (wpos < wend) {
-+		size_t free_len;
-+		u32 free_bits, end;
-+		u32 used = find_next_zero_bit(buf, wend, wpos);
-+
-+		if (used >= wend) {
-+			if (*b_len < *prev_tail) {
-+				*b_pos = wbit - *prev_tail;
-+				*b_len = *prev_tail;
-+			}
-+
-+			*prev_tail = 0;
-+			return -1;
-+		}
-+
-+		if (used > wpos) {
-+			wpos = used;
-+			if (*b_len < *prev_tail) {
-+				*b_pos = wbit - *prev_tail;
-+				*b_len = *prev_tail;
-+			}
-+
-+			*prev_tail = 0;
-+		}
-+
-+		/*
-+		 * Now we have a fragment [wpos, wend) staring with 0
-+		 */
-+		end = wpos + to_alloc - *prev_tail;
-+		free_bits = find_next_bit(buf, min(end, wend), wpos);
-+
-+		free_len = *prev_tail + free_bits - wpos;
-+
-+		if (*b_len < free_len) {
-+			*b_pos = wbit + wpos - *prev_tail;
-+			*b_len = free_len;
-+		}
-+
-+		if (free_len >= to_alloc)
-+			return wbit + wpos - *prev_tail;
-+
-+		if (free_bits >= wend) {
-+			*prev_tail += free_bits - wpos;
-+			return -1;
-+		}
-+
-+		wpos = free_bits + 1;
-+
-+		*prev_tail = 0;
-+	}
-+
-+	return -1;
-+}
++// 16M
++#define NTFS_CLUMP_MIN (1 << (NTFS_MIN_LOG2_OF_CLUMP + 8))
++// 16G
++#define NTFS_CLUMP_MAX (1ull << (NTFS_MAX_LOG2_OF_CLUMP + 8))
 +
 +/*
-+ * wnd_close
-+ *
++ * get_pre_allocated
 + *
 + */
-+void wnd_close(struct wnd_bitmap *wnd)
++static inline u64 get_pre_allocated(u64 size)
 +{
-+	struct rb_node *node, *next;
-+
-+	if (wnd->free_bits != wnd->free_holder)
-+		ntfs_free(wnd->free_bits);
-+	run_close(&wnd->run);
-+
-+	node = rb_first(&wnd->start_tree);
-+
-+	while (node) {
-+		next = rb_next(node);
-+		rb_erase(node, &wnd->start_tree);
-+		ntfs_free(rb_entry(node, struct e_node, start.node));
-+		node = next;
-+	}
-+}
-+
-+static struct rb_node *rb_lookup(struct rb_root *root, size_t v)
-+{
-+	struct rb_node **p = &root->rb_node;
-+	struct rb_node *r = NULL;
-+
-+	while (*p) {
-+		struct rb_node_key *k;
-+
-+		k = rb_entry(*p, struct rb_node_key, node);
-+		if (v < k->key)
-+			p = &(*p)->rb_left;
-+		else if (v > k->key) {
-+			r = &k->node;
-+			p = &(*p)->rb_right;
-+		} else
-+			return &k->node;
-+	}
-+
-+	return r;
-+}
-+
-+/*
-+ * rb_insert_count
-+ *
-+ * Helper function to insert special kind of 'count' tree
-+ */
-+static inline bool rb_insert_count(struct rb_root *root, struct e_node *e)
-+{
-+	struct rb_node **p = &root->rb_node;
-+	struct rb_node *parent = NULL;
-+	size_t e_ckey = e->count.key;
-+	size_t e_skey = e->start.key;
-+
-+	while (*p) {
-+		struct e_node *k =
-+			rb_entry(parent = *p, struct e_node, count.node);
-+
-+		if (e_ckey > k->count.key)
-+			p = &(*p)->rb_left;
-+		else if (e_ckey < k->count.key)
-+			p = &(*p)->rb_right;
-+		else if (e_skey < k->start.key)
-+			p = &(*p)->rb_left;
-+		else if (e_skey > k->start.key)
-+			p = &(*p)->rb_right;
-+		else {
-+			WARN_ON(1);
-+			return false;
-+		}
-+	}
-+
-+	rb_link_node(&e->count.node, parent, p);
-+	rb_insert_color(&e->count.node, root);
-+	return true;
-+}
-+
-+/*
-+ * inline bool rb_insert_start
-+ *
-+ * Helper function to insert special kind of 'count' tree
-+ */
-+static inline bool rb_insert_start(struct rb_root *root, struct e_node *e)
-+{
-+	struct rb_node **p = &root->rb_node;
-+	struct rb_node *parent = NULL;
-+	size_t e_skey = e->start.key;
-+
-+	while (*p) {
-+		struct e_node *k;
-+
-+		parent = *p;
-+
-+		k = rb_entry(parent, struct e_node, start.node);
-+		if (e_skey < k->start.key)
-+			p = &(*p)->rb_left;
-+		else if (e_skey > k->start.key)
-+			p = &(*p)->rb_right;
-+		else {
-+			WARN_ON(1);
-+			return false;
-+		}
-+	}
-+
-+	rb_link_node(&e->start.node, parent, p);
-+	rb_insert_color(&e->start.node, root);
-+	return true;
-+}
-+
-+#define NTFS_MAX_WND_EXTENTS (32u * 1024u)
-+
-+/*
-+ * wnd_add_free_ext
-+ *
-+ * adds a new extent of free space
-+ * build = 1 when building tree
-+ */
-+static void wnd_add_free_ext(struct wnd_bitmap *wnd, size_t bit, size_t len,
-+			     bool build)
-+{
-+	struct e_node *e, *e0 = NULL;
-+	size_t ib, end_in = bit + len;
-+	struct rb_node *n;
-+
-+	if (!build)
-+		goto lookup;
-+
-+	if (wnd->count >= NTFS_MAX_WND_EXTENTS && len <= wnd->extent_min) {
-+		wnd->uptodated = -1;
-+		return;
-+	}
-+
-+	goto insert_new;
-+
-+lookup:
-+	/* Try to find extent before 'bit' */
-+	n = rb_lookup(&wnd->start_tree, bit);
-+
-+	if (!n)
-+		n = rb_first(&wnd->start_tree);
-+	else {
-+		e = rb_entry(n, struct e_node, start.node);
-+
-+		n = rb_next(n);
-+		if (e->start.key + e->count.key == bit) {
-+			/* Remove left */
-+			bit = e->start.key;
-+			len += e->count.key;
-+
-+			rb_erase(&e->start.node, &wnd->start_tree);
-+			rb_erase(&e->count.node, &wnd->count_tree);
-+			wnd->count -= 1;
-+			e0 = e;
-+		}
-+	}
-+
-+	while (n) {
-+		size_t next_end;
-+
-+		e = rb_entry(n, struct e_node, start.node);
-+
-+		next_end = e->start.key + e->count.key;
-+		if (e->start.key > end_in)
-+			break;
-+
-+		/* Remove right */
-+		n = rb_next(n);
-+		len += next_end - end_in;
-+		end_in = next_end;
-+		rb_erase(&e->start.node, &wnd->start_tree);
-+		rb_erase(&e->count.node, &wnd->count_tree);
-+		wnd->count -= 1;
-+
-+		if (!e0)
-+			e0 = e;
-+		else
-+			ntfs_free(e);
-+	}
-+
-+	if (wnd->uptodated == 1)
-+		goto insert_new;
-+
-+	/* Check bits before 'bit' */
-+	ib = wnd->zone_bit == wnd->zone_end || bit < wnd->zone_end ?
-+		     0 :
-+		     wnd->zone_end;
-+
-+	while (bit > ib && wnd_is_free_hlp(wnd, bit - 1, 1)) {
-+		bit -= 1;
-+		len += 1;
-+	}
-+
-+	/* Check bits after 'end_in' */
-+	ib = wnd->zone_bit == wnd->zone_end || end_in > wnd->zone_bit ?
-+		     wnd->nbits :
-+		     wnd->zone_bit;
-+
-+	while (end_in < ib && wnd_is_free_hlp(wnd, end_in, 1)) {
-+		end_in += 1;
-+		len += 1;
-+	}
-+
-+insert_new:
-+	/* Insert new fragment */
-+	if (wnd->count < NTFS_MAX_WND_EXTENTS)
-+		goto allocate_new;
-+
-+	if (e0)
-+		ntfs_free(e0);
-+
-+	wnd->uptodated = -1;
-+
-+	/* Compare with smallest fragment */
-+	n = rb_last(&wnd->count_tree);
-+	e = rb_entry(n, struct e_node, count.node);
-+	if (len <= e->count.key)
-+		goto out; /* Do not insert small fragments */
-+
-+	if (build) {
-+		struct e_node *e2;
-+
-+		n = rb_prev(n);
-+		e2 = rb_entry(n, struct e_node, count.node);
-+		/* smallest fragment will be 'e2->count.key' */
-+		wnd->extent_min = e2->count.key;
-+	}
-+
-+	/* Replace smallest fragment by new one */
-+	rb_erase(&e->start.node, &wnd->start_tree);
-+	rb_erase(&e->count.node, &wnd->count_tree);
-+	wnd->count -= 1;
-+	goto insert;
-+
-+allocate_new:
-+	e = e0 ? e0 : ntfs_alloc(sizeof(struct e_node), 0);
-+	if (!e) {
-+		wnd->uptodated = -1;
-+		goto out;
-+	}
-+
-+	if (build && len <= wnd->extent_min)
-+		wnd->extent_min = len;
-+insert:
-+	e->start.key = bit;
-+	e->count.key = len;
-+	if (len > wnd->extent_max)
-+		wnd->extent_max = len;
-+
-+	rb_insert_start(&wnd->start_tree, e);
-+	rb_insert_count(&wnd->count_tree, e);
-+	wnd->count += 1;
-+
-+out:;
-+}
-+
-+/*
-+ * wnd_remove_free_ext
-+ *
-+ * removes a run from the cached free space
-+ */
-+static void wnd_remove_free_ext(struct wnd_bitmap *wnd, size_t bit, size_t len)
-+{
-+	struct rb_node *n, *n3;
-+	struct e_node *e, *e3;
-+	size_t end_in = bit + len;
-+	size_t end3, end, new_key, new_len, max_new_len;
-+	bool bmax;
-+
-+	/* Try to find extent before 'bit' */
-+	n = rb_lookup(&wnd->start_tree, bit);
-+
-+	if (!n)
-+		return;
-+
-+	e = rb_entry(n, struct e_node, start.node);
-+	end = e->start.key + e->count.key;
-+
-+	new_key = new_len = 0;
-+	len = e->count.key;
-+
-+	/* Range [bit,end_in) must be inside 'e' or outside 'e' and 'n' */
-+	if (e->start.key > bit)
-+		goto check_biggest;
-+
-+	if (end_in <= end) {
-+		/* Range [bit,end_in) inside 'e' */
-+		new_key = end_in;
-+		new_len = end - end_in;
-+		len = bit - e->start.key;
-+		goto check_biggest;
-+	}
-+
-+	if (bit <= end)
-+		goto check_biggest;
-+
-+	bmax = false;
-+
-+	n3 = rb_next(n);
-+
-+	while (n3) {
-+		e3 = rb_entry(n3, struct e_node, start.node);
-+		if (e3->start.key >= end_in)
-+			break;
-+
-+		if (e3->count.key == wnd->extent_max)
-+			bmax = true;
-+
-+		end3 = e3->start.key + e3->count.key;
-+		if (end3 > end_in) {
-+			e3->start.key = end_in;
-+			rb_erase(&e3->count.node, &wnd->count_tree);
-+			e3->count.key = end3 - end_in;
-+			rb_insert_count(&wnd->count_tree, e3);
-+			break;
-+		}
-+
-+		n3 = rb_next(n3);
-+		rb_erase(&e3->start.node, &wnd->start_tree);
-+		rb_erase(&e3->count.node, &wnd->count_tree);
-+		wnd->count -= 1;
-+		ntfs_free(e3);
-+	}
-+	if (!bmax)
-+		return;
-+	n3 = rb_first(&wnd->count_tree);
-+	wnd->extent_max =
-+		n3 ? rb_entry(n3, struct e_node, count.node)->count.key : 0;
-+	return;
-+
-+check_biggest:
-+	if (e->count.key != wnd->extent_max)
-+		goto check_len;
-+
-+	/* We have to change the biggest extent */
-+	n3 = rb_prev(&e->count.node);
-+	if (n3)
-+		goto check_len;
-+
-+	n3 = rb_next(&e->count.node);
-+	max_new_len = len > new_len ? len : new_len;
-+	if (!n3) {
-+		wnd->extent_max = max_new_len;
-+		goto check_len;
-+	}
-+	e3 = rb_entry(n3, struct e_node, count.node);
-+	wnd->extent_max = max(e3->count.key, max_new_len);
-+
-+check_len:
-+	if (!len) {
-+		if (new_len) {
-+			e->start.key = new_key;
-+			rb_erase(&e->count.node, &wnd->count_tree);
-+			e->count.key = new_len;
-+			rb_insert_count(&wnd->count_tree, e);
-+		} else {
-+			rb_erase(&e->start.node, &wnd->start_tree);
-+			rb_erase(&e->count.node, &wnd->count_tree);
-+			wnd->count -= 1;
-+			ntfs_free(e);
-+		}
-+		goto out;
-+	}
-+	rb_erase(&e->count.node, &wnd->count_tree);
-+	e->count.key = len;
-+	rb_insert_count(&wnd->count_tree, e);
-+
-+	if (!new_len)
-+		goto out;
-+
-+	if (wnd->count >= NTFS_MAX_WND_EXTENTS) {
-+		wnd->uptodated = -1;
-+
-+		/* Get minimal extent */
-+		e = rb_entry(rb_last(&wnd->count_tree), struct e_node,
-+			     count.node);
-+		if (e->count.key > new_len)
-+			goto out;
-+
-+		/* Replace minimum */
-+		rb_erase(&e->start.node, &wnd->start_tree);
-+		rb_erase(&e->count.node, &wnd->count_tree);
-+		wnd->count -= 1;
++	u32 clump;
++	u8 align_shift;
++	u64 ret;
++
++	if (size <= NTFS_CLUMP_MIN) {
++		clump = 1 << NTFS_MIN_LOG2_OF_CLUMP;
++		align_shift = NTFS_MIN_LOG2_OF_CLUMP;
++	} else if (size >= NTFS_CLUMP_MAX) {
++		clump = 1 << NTFS_MAX_LOG2_OF_CLUMP;
++		align_shift = NTFS_MAX_LOG2_OF_CLUMP;
 +	} else {
-+		e = ntfs_alloc(sizeof(struct e_node), 0);
-+		if (!e)
-+			wnd->uptodated = -1;
++		align_shift = NTFS_MIN_LOG2_OF_CLUMP - 1 +
++			      __ffs(size >> (8 + NTFS_MIN_LOG2_OF_CLUMP));
++		clump = 1u << align_shift;
 +	}
 +
-+	if (e) {
-+		e->start.key = new_key;
-+		e->count.key = new_len;
-+		rb_insert_start(&wnd->start_tree, e);
-+		rb_insert_count(&wnd->count_tree, e);
-+		wnd->count += 1;
++	ret = (((size + clump - 1) >> align_shift)) << align_shift;
++
++	return ret;
++}
++
++/*
++ * attr_must_be_resident
++ *
++ * returns true if attribute must be resident
++ */
++static inline bool attr_must_be_resident(struct ntfs_sb_info *sbi,
++					 enum ATTR_TYPE type)
++{
++	const struct ATTR_DEF_ENTRY *de;
++
++	switch (type) {
++	case ATTR_STD:
++	case ATTR_NAME:
++	case ATTR_ID:
++	case ATTR_LABEL:
++	case ATTR_VOL_INFO:
++	case ATTR_ROOT:
++	case ATTR_EA_INFO:
++		return true;
++	default:
++		de = ntfs_query_def(sbi, type);
++		if (de && (de->flags & NTFS_ATTR_MUST_BE_RESIDENT))
++			return true;
++		return false;
++	}
++}
++
++/*
++ * attr_load_runs
++ *
++ * load all runs stored in 'attr'
++ */
++int attr_load_runs(struct ATTRIB *attr, struct ntfs_inode *ni,
++		   struct runs_tree *run)
++{
++	int err;
++	CLST svcn = le64_to_cpu(attr->nres.svcn);
++	CLST evcn = le64_to_cpu(attr->nres.evcn);
++	u32 asize;
++	u16 run_off;
++
++	if (svcn >= evcn + 1 || run_is_mapped_full(run, svcn, evcn))
++		return 0;
++
++	asize = le32_to_cpu(attr->size);
++	run_off = le16_to_cpu(attr->nres.run_off);
++	err = run_unpack_ex(run, ni->mi.sbi, ni->mi.rno, svcn, evcn,
++			    Add2Ptr(attr, run_off), asize - run_off);
++	if (err < 0)
++		return err;
++
++	return 0;
++}
++
++/*
++ * int run_deallocate_ex
++ *
++ * Deallocate clusters
++ */
++static int run_deallocate_ex(struct ntfs_sb_info *sbi, struct runs_tree *run,
++			     CLST vcn, CLST len, CLST *done, bool trim)
++{
++	int err = 0;
++	CLST vcn0 = vcn, lcn, clen, dn = 0;
++	size_t idx;
++
++	if (!len)
++		goto out;
++
++	if (!run_lookup_entry(run, vcn, &lcn, &clen, &idx)) {
++failed:
++		run_truncate(run, vcn0);
++		err = -EINVAL;
++		goto out;
++	}
++
++	for (;;) {
++		if (clen > len)
++			clen = len;
++
++		if (!clen) {
++			err = -EINVAL;
++			goto out;
++		}
++
++		if (lcn != SPARSE_LCN) {
++			mark_as_free_ex(sbi, lcn, clen, trim);
++			dn += clen;
++		}
++
++		len -= clen;
++		if (!len)
++			break;
++
++		if (!run_get_entry(run, ++idx, &vcn, &lcn, &clen)) {
++			// save memory - don't load entire run
++			goto failed;
++		}
 +	}
 +
 +out:
-+	if (!wnd->count && 1 != wnd->uptodated)
-+		wnd_rescan(wnd);
++	if (done)
++		*done = dn;
++
++	return err;
 +}
 +
 +/*
-+ * wnd_rescan
++ * attr_allocate_clusters
 + *
-+ * Scan all bitmap. used while initialization.
++ * find free space, mark it as used and store in 'run'
 + */
-+static int wnd_rescan(struct wnd_bitmap *wnd)
++int attr_allocate_clusters(struct ntfs_sb_info *sbi, struct runs_tree *run,
++			   CLST vcn, CLST lcn, CLST len, CLST *pre_alloc,
++			   enum ALLOCATE_OPT opt, CLST *alen, const size_t fr,
++			   CLST *new_lcn)
 +{
-+	int err = 0;
-+	size_t prev_tail = 0;
-+	struct super_block *sb = wnd->sb;
-+	struct ntfs_sb_info *sbi = sb->s_fs_info;
-+	u64 lbo, len = 0;
-+	u32 blocksize = sb->s_blocksize;
-+	u8 cluster_bits = sbi->cluster_bits;
-+	const u32 ra_bytes = 512 * 1024;
-+	const u32 ra_pages = ra_bytes >> PAGE_SHIFT;
-+	u32 wbits = 8 * sb->s_blocksize;
-+	u32 ra_mask = (ra_bytes >> sb->s_blocksize_bits) - 1;
-+	struct address_space *mapping = sb->s_bdev->bd_inode->i_mapping;
-+	u32 used, frb;
-+	const ulong *buf;
-+	size_t wpos, wbit, iw, vbo;
-+	struct buffer_head *bh = NULL;
-+	CLST lcn, clen;
++	int err;
++	CLST flen, vcn0 = vcn, pre = pre_alloc ? *pre_alloc : 0;
++	struct wnd_bitmap *wnd = &sbi->used.bitmap;
++	size_t cnt = run->count;
 +
-+	wnd->uptodated = 0;
-+	wnd->extent_max = 0;
-+	wnd->extent_min = MINUS_ONE_T;
-+	wnd->total_zeroes = 0;
++	for (;;) {
++		err = ntfs_look_for_free_space(sbi, lcn, len + pre, &lcn, &flen,
++					       opt);
 +
-+	vbo = 0;
-+	iw = 0;
-+
-+start_wnd:
-+
-+	if (iw + 1 == wnd->nwnd)
-+		wbits = wnd->bits_last;
-+
-+	if (wnd->inited) {
-+		if (!wnd->free_bits[iw]) {
-+			/* all ones */
-+			if (!prev_tail)
-+				goto next_wnd;
-+
-+			wnd_add_free_ext(wnd, vbo * 8 - prev_tail, prev_tail,
-+					 true);
-+			prev_tail = 0;
-+			goto next_wnd;
++		if (err == -ENOSPC && pre) {
++			pre = 0;
++			if (*pre_alloc)
++				*pre_alloc = 0;
++			continue;
 +		}
-+		if (wbits == wnd->free_bits[iw]) {
-+			/* all zeroes */
-+			prev_tail += wbits;
-+			wnd->total_zeroes += wbits;
-+			goto next_wnd;
++
++		if (err)
++			goto out;
++
++		if (new_lcn && vcn == vcn0)
++			*new_lcn = lcn;
++
++		/* Add new fragment into run storage */
++		if (!run_add_entry(run, vcn, lcn, flen)) {
++			down_write_nested(&wnd->rw_lock, BITMAP_MUTEX_CLUSTERS);
++			wnd_set_free(wnd, lcn, flen);
++			up_write(&wnd->rw_lock);
++			err = -ENOMEM;
++			goto out;
 +		}
++
++		vcn += flen;
++
++		if (flen >= len || opt == ALLOCATE_MFT ||
++		    (fr && run->count - cnt >= fr)) {
++			*alen = vcn - vcn0;
++			return 0;
++		}
++
++		len -= flen;
 +	}
 +
-+	if (len)
-+		goto read_wnd;
++out:
++	/* undo */
++	run_deallocate_ex(sbi, run, vcn0, vcn - vcn0, NULL, false);
++	run_truncate(run, vcn0);
 +
-+	if (!run_lookup_entry(&wnd->run, vbo >> cluster_bits, &lcn, &clen,
-+			      NULL)) {
++	return err;
++}
++
++/*
++ * attr_set_size_res
++ *
++ * helper for attr_set_size
++ */
++static int attr_set_size_res(struct ntfs_inode *ni, struct ATTRIB *attr,
++			     struct ATTR_LIST_ENTRY *le, struct mft_inode *mi,
++			     u64 new_size, struct runs_tree *run,
++			     struct ATTRIB **ins_attr)
++{
++	int err = 0;
++	struct ntfs_sb_info *sbi = mi->sbi;
++	struct MFT_REC *rec = mi->mrec;
++	u32 used = le32_to_cpu(rec->used);
++	u32 asize = le32_to_cpu(attr->size);
++	u32 aoff = PtrOffset(rec, attr);
++	u32 rsize = le32_to_cpu(attr->res.data_size);
++	u32 tail = used - aoff - asize;
++	char *next = Add2Ptr(attr, asize);
++	int dsize = QuadAlign(new_size) - QuadAlign(rsize);
++	CLST len, alen;
++	struct ATTRIB *attr_s = NULL;
++	bool is_ext;
++
++	if (dsize < 0) {
++		memmove(next + dsize, next, tail);
++	} else if (dsize > 0) {
++		if (used + dsize > sbi->max_bytes_per_attr)
++			goto resident2nonresident;
++
++		memmove(next + dsize, next, tail);
++		memset(next, 0, dsize);
++	}
++
++	rec->used = cpu_to_le32(used + dsize);
++	attr->size = cpu_to_le32(asize + dsize);
++	attr->res.data_size = cpu_to_le32(new_size);
++	mi->dirty = true;
++	*ins_attr = attr;
++
++	return 0;
++
++resident2nonresident:
++	len = bytes_to_cluster(sbi, rsize);
++
++	run_init(run);
++
++	is_ext = is_attr_ext(attr);
++
++	if (!len) {
++		alen = 0;
++	} else if (is_ext) {
++		if (!run_add_entry(run, 0, SPARSE_LCN, len)) {
++			err = -ENOMEM;
++			goto out;
++		}
++		alen = len;
++	} else {
++		err = attr_allocate_clusters(sbi, run, 0, 0, len, NULL,
++					     ALLOCATE_DEF, &alen, 0, NULL);
++		if (err)
++			goto out;
++
++		err = ntfs_sb_write_run(sbi, run, 0, resident_data(attr),
++					rsize);
++		if (err)
++			goto out;
++	}
++
++	attr_s = ntfs_memdup(attr, asize);
++	if (!attr_s) {
++		err = -ENOMEM;
++		goto out;
++	}
++
++	/*verify(mi_remove_attr(mi, attr));*/
++	used -= asize;
++	memmove(attr, Add2Ptr(attr, asize), used - aoff);
++	rec->used = cpu_to_le32(used);
++	mi->dirty = true;
++	if (le)
++		al_remove_le(ni, le);
++
++	err = ni_insert_nonresident(ni, attr_s->type, attr_name(attr_s),
++				    attr_s->name_len, run, 0, alen,
++				    attr_s->flags, &attr, NULL);
++	if (err)
++		goto out;
++
++	ntfs_free(attr_s);
++	attr->nres.data_size = cpu_to_le64(rsize);
++	attr->nres.valid_size = attr->nres.data_size;
++
++	*ins_attr = attr;
++
++	if (attr_s->type == ATTR_DATA && !attr_s->name_len &&
++	    run == &ni->file.run) {
++		ni->ni_flags &= ~NI_FLAG_RESIDENT;
++	}
++
++	/* Resident attribute becomes non resident */
++	return 0;
++
++out:
++	/* undo: do not trim new allocated clusters */
++	run_deallocate(sbi, run, false);
++	run_close(run);
++
++	if (attr_s) {
++		memmove(next, Add2Ptr(rec, aoff), used - aoff);
++		memcpy(Add2Ptr(rec, aoff), attr_s, asize);
++		rec->used = cpu_to_le32(used + asize);
++		mi->dirty = true;
++		ntfs_free(attr_s);
++		/*reinsert le*/
++	}
++
++	return err;
++}
++
++/*
++ * attr_set_size
++ *
++ * change the size of attribute
++ * Extend:
++ *   - sparse/compressed: no allocated clusters
++ *   - normal: append allocated and preallocated new clusters
++ * Shrink:
++ *   - no deallocate if keep_prealloc is set
++ */
++int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
++		  const __le16 *name, u8 name_len, struct runs_tree *run,
++		  u64 new_size, const u64 *new_valid, bool keep_prealloc,
++		  struct ATTRIB **ret)
++{
++	int err = 0;
++	struct ntfs_sb_info *sbi = ni->mi.sbi;
++	u8 cluster_bits = sbi->cluster_bits;
++	bool is_mft =
++		ni->mi.rno == MFT_REC_MFT && type == ATTR_DATA && !name_len;
++	u64 old_valid, old_size, old_alloc, new_alloc, new_alloc_tmp;
++	struct ATTRIB *attr, *attr_b;
++	struct ATTR_LIST_ENTRY *le, *le_b;
++	struct mft_inode *mi, *mi_b;
++	CLST alen, vcn, lcn, new_alen, old_alen, svcn, evcn;
++	CLST next_svcn, pre_alloc = -1, done = 0;
++	bool is_ext;
++	u32 align;
++	struct MFT_REC *rec;
++
++again:
++	le_b = NULL;
++	attr_b = ni_find_attr(ni, NULL, &le_b, type, name, name_len, NULL,
++			      &mi_b);
++	if (!attr_b) {
 +		err = -ENOENT;
 +		goto out;
 +	}
 +
-+	lbo = (u64)lcn << cluster_bits;
-+	len = (u64)clen << cluster_bits;
++	if (!attr_b->non_res) {
++		err = attr_set_size_res(ni, attr_b, le_b, mi_b, new_size, run,
++					&attr_b);
++		if (err)
++			goto out;
 +
-+read_wnd:
-+	if (!(iw & ra_mask))
-+		page_cache_readahead_unbounded(mapping, NULL, lbo >> PAGE_SHIFT,
-+					       ra_pages, 0);
++		if (!attr_b->non_res)
++			goto out;
 +
-+	bh = ntfs_bread(sb, lbo >> sb->s_blocksize_bits);
-+	if (!bh) {
-+		err = -EIO;
++		/* Resident attribute becomes non resident */
++		goto again;
++	}
++
++	is_ext = is_attr_ext(attr_b);
++
++again_1:
++
++	if (is_ext) {
++		align = 1u << (attr_b->nres.c_unit + cluster_bits);
++		if (is_attr_sparsed(attr_b))
++			keep_prealloc = false;
++	} else {
++		align = sbi->cluster_size;
++	}
++
++	old_valid = le64_to_cpu(attr_b->nres.valid_size);
++	old_size = le64_to_cpu(attr_b->nres.data_size);
++	old_alloc = le64_to_cpu(attr_b->nres.alloc_size);
++	old_alen = old_alloc >> cluster_bits;
++
++	new_alloc = (new_size + align - 1) & ~(u64)(align - 1);
++	new_alen = new_alloc >> cluster_bits;
++
++	if (keep_prealloc && is_ext)
++		keep_prealloc = false;
++
++	if (keep_prealloc && new_size < old_size) {
++		attr_b->nres.data_size = cpu_to_le64(new_size);
++		mi_b->dirty = true;
++		goto ok;
++	}
++
++	vcn = old_alen - 1;
++
++	svcn = le64_to_cpu(attr_b->nres.svcn);
++	evcn = le64_to_cpu(attr_b->nres.evcn);
++
++	if (svcn <= vcn && vcn <= evcn) {
++		attr = attr_b;
++		le = le_b;
++		mi = mi_b;
++	} else if (!le_b) {
++		err = -EINVAL;
 +		goto out;
++	} else {
++		le = le_b;
++		attr = ni_find_attr(ni, attr_b, &le, type, name, name_len, &vcn,
++				    &mi);
++		if (!attr) {
++			err = -EINVAL;
++			goto out;
++		}
++
++next_le_1:
++		svcn = le64_to_cpu(attr->nres.svcn);
++		evcn = le64_to_cpu(attr->nres.evcn);
 +	}
 +
-+	buf = (ulong *)bh->b_data;
++next_le:
++	rec = mi->mrec;
 +
-+	used = __bitmap_weight(buf, wbits);
-+	if (used < wbits) {
-+		frb = wbits - used;
-+		wnd->free_bits[iw] = frb;
-+		wnd->total_zeroes += frb;
++	err = attr_load_runs(attr, ni, run);
++	if (err)
++		goto out;
++
++	if (new_size > old_size) {
++		CLST to_allocate;
++		size_t free;
++
++		if (new_alloc <= old_alloc) {
++			attr_b->nres.data_size = cpu_to_le64(new_size);
++			mi_b->dirty = true;
++			goto ok;
++		}
++
++		to_allocate = new_alen - old_alen;
++add_alloc_in_same_attr_seg:
++		lcn = 0;
++		if (is_mft) {
++			/* mft allocates clusters from mftzone */
++			pre_alloc = 0;
++		} else if (is_ext) {
++			/* no preallocate for sparse/compress */
++			pre_alloc = 0;
++		} else if (pre_alloc == -1) {
++			pre_alloc = 0;
++			if (type == ATTR_DATA && !name_len &&
++			    sbi->options.prealloc) {
++				CLST new_alen2 = bytes_to_cluster(
++					sbi, get_pre_allocated(new_size));
++				pre_alloc = new_alen2 - new_alen;
++			}
++
++			/* Get the last lcn to allocate from */
++			if (old_alen &&
++			    !run_lookup_entry(run, vcn, &lcn, NULL, NULL)) {
++				lcn = SPARSE_LCN;
++			}
++
++			if (lcn == SPARSE_LCN)
++				lcn = 0;
++			else if (lcn)
++				lcn += 1;
++
++			free = wnd_zeroes(&sbi->used.bitmap);
++			if (to_allocate > free) {
++				err = -ENOSPC;
++				goto out;
++			}
++
++			if (pre_alloc && to_allocate + pre_alloc > free)
++				pre_alloc = 0;
++		}
++
++		vcn = old_alen;
++
++		if (is_ext) {
++			if (!run_add_entry(run, vcn, SPARSE_LCN, to_allocate)) {
++				err = -ENOMEM;
++				goto out;
++			}
++			alen = to_allocate;
++		} else {
++			/* ~3 bytes per fragment */
++			err = attr_allocate_clusters(
++				sbi, run, vcn, lcn, to_allocate, &pre_alloc,
++				is_mft ? ALLOCATE_MFT : 0, &alen,
++				is_mft ? 0 :
++					 (sbi->record_size -
++					  le32_to_cpu(rec->used) + 8) /
++							 3 +
++						 1,
++				NULL);
++			if (err)
++				goto out;
++		}
++
++		done += alen;
++		vcn += alen;
++		if (to_allocate > alen)
++			to_allocate -= alen;
++		else
++			to_allocate = 0;
++
++pack_runs:
++		err = mi_pack_runs(mi, attr, run, vcn - svcn);
++		if (err)
++			goto out;
++
++		next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
++		new_alloc_tmp = (u64)next_svcn << cluster_bits;
++		attr_b->nres.alloc_size = cpu_to_le64(new_alloc_tmp);
++		mi_b->dirty = true;
++
++		if (next_svcn >= vcn && !to_allocate) {
++			/* Normal way. update attribute and exit */
++			attr_b->nres.data_size = cpu_to_le64(new_size);
++			goto ok;
++		}
++
++		/* at least two mft to avoid recursive loop*/
++		if (is_mft && next_svcn == vcn &&
++		    (done << sbi->cluster_bits) >= 2 * sbi->record_size) {
++			new_size = new_alloc_tmp;
++			attr_b->nres.data_size = attr_b->nres.alloc_size;
++			goto ok;
++		}
++
++		if (le32_to_cpu(rec->used) < sbi->record_size) {
++			old_alen = next_svcn;
++			evcn = old_alen - 1;
++			goto add_alloc_in_same_attr_seg;
++		}
++
++		if (type == ATTR_LIST) {
++			err = ni_expand_list(ni);
++			if (err)
++				goto out;
++			if (next_svcn < vcn)
++				goto pack_runs;
++
++			/* layout of records is changed */
++			goto again;
++		}
++
++		if (!ni->attr_list.size) {
++			err = ni_create_attr_list(ni);
++			if (err)
++				goto out;
++			/* layout of records is changed */
++		}
++
++		if (next_svcn >= vcn) {
++			/* this is mft data, repeat */
++			goto again;
++		}
++
++		/* insert new attribute segment */
++		err = ni_insert_nonresident(ni, type, name, name_len, run,
++					    next_svcn, vcn - next_svcn,
++					    attr_b->flags, &attr, &mi);
++		if (err)
++			goto out;
++
++		if (!is_mft)
++			run_truncate_head(run, evcn + 1);
++
++		svcn = le64_to_cpu(attr->nres.svcn);
++		evcn = le64_to_cpu(attr->nres.evcn);
++
++		le_b = NULL;
++		/* layout of records maybe changed */
++		/* find base attribute to update*/
++		attr_b = ni_find_attr(ni, NULL, &le_b, type, name, name_len,
++				      NULL, &mi_b);
++		if (!attr_b) {
++			err = -ENOENT;
++			goto out;
++		}
++
++		attr_b->nres.alloc_size = cpu_to_le64(vcn << cluster_bits);
++		attr_b->nres.data_size = attr_b->nres.alloc_size;
++		attr_b->nres.valid_size = attr_b->nres.alloc_size;
++		mi_b->dirty = true;
++		goto again_1;
 +	}
 +
-+	wpos = 0;
-+	wbit = vbo * 8;
++	if (new_size != old_size ||
++	    (new_alloc != old_alloc && !keep_prealloc)) {
++		vcn = max(svcn, new_alen);
++		new_alloc_tmp = (u64)vcn << cluster_bits;
 +
-+	if (wbit + wbits > wnd->nbits)
-+		wbits = wnd->nbits - wbit;
++		err = run_deallocate_ex(sbi, run, vcn, evcn - vcn + 1, &alen,
++					true);
++		if (err)
++			goto out;
 +
-+next_range:
-+	used = find_next_zero_bit(buf, wbits, wpos);
++		run_truncate(run, vcn);
 +
-+	if (used > wpos && prev_tail) {
-+		wnd_add_free_ext(wnd, wbit + wpos - prev_tail, prev_tail, true);
-+		prev_tail = 0;
++		if (vcn > svcn) {
++			err = mi_pack_runs(mi, attr, run, vcn - svcn);
++			if (err < 0)
++				goto out;
++		} else if (le && le->vcn) {
++			u16 le_sz = le16_to_cpu(le->size);
++
++			/*
++			 * NOTE: list entries for one attribute are always
++			 * the same size. We deal with last entry (vcn==0)
++			 * and it is not first in entries array
++			 * (list entry for std attribute always first)
++			 * So it is safe to step back
++			 */
++			mi_remove_attr(mi, attr);
++
++			if (!al_remove_le(ni, le)) {
++				err = -EINVAL;
++				goto out;
++			}
++
++			le = (struct ATTR_LIST_ENTRY *)((u8 *)le - le_sz);
++		} else {
++			attr->nres.evcn = cpu_to_le64((u64)vcn - 1);
++			mi->dirty = true;
++		}
++
++		attr_b->nres.alloc_size = cpu_to_le64(new_alloc_tmp);
++
++		if (vcn == new_alen) {
++			attr_b->nres.data_size = cpu_to_le64(new_size);
++			if (new_size < old_valid)
++				attr_b->nres.valid_size =
++					attr_b->nres.data_size;
++		} else {
++			if (new_alloc_tmp <=
++			    le64_to_cpu(attr_b->nres.data_size))
++				attr_b->nres.data_size =
++					attr_b->nres.alloc_size;
++			if (new_alloc_tmp <
++			    le64_to_cpu(attr_b->nres.valid_size))
++				attr_b->nres.valid_size =
++					attr_b->nres.alloc_size;
++		}
++
++		if (is_ext)
++			le64_sub_cpu(&attr_b->nres.total_size,
++				     ((u64)alen << cluster_bits));
++
++		mi_b->dirty = true;
++
++		if (new_alloc_tmp <= new_alloc)
++			goto ok;
++
++		old_size = new_alloc_tmp;
++		vcn = svcn - 1;
++
++		if (le == le_b) {
++			attr = attr_b;
++			mi = mi_b;
++			evcn = svcn - 1;
++			svcn = 0;
++			goto next_le;
++		}
++
++		if (le->type != type || le->name_len != name_len ||
++		    memcmp(le_name(le), name, name_len * sizeof(short))) {
++			err = -EINVAL;
++			goto out;
++		}
++
++		err = ni_load_mi(ni, le, &mi);
++		if (err)
++			goto out;
++
++		attr = mi_find_attr(mi, NULL, type, name, name_len, &le->id);
++		if (!attr) {
++			err = -EINVAL;
++			goto out;
++		}
++		goto next_le_1;
 +	}
 +
-+	wpos = used;
++ok:
++	if (new_valid) {
++		__le64 valid = cpu_to_le64(min(*new_valid, new_size));
 +
-+	if (wpos >= wbits) {
-+		/* No free blocks */
-+		prev_tail = 0;
-+		goto next_wnd;
-+	}
-+
-+	frb = find_next_bit(buf, wbits, wpos);
-+	if (frb >= wbits) {
-+		/* keep last free block */
-+		prev_tail += frb - wpos;
-+		goto next_wnd;
-+	}
-+
-+	wnd_add_free_ext(wnd, wbit + wpos - prev_tail, frb + prev_tail - wpos,
-+			 true);
-+
-+	/* Skip free block and first '1' */
-+	wpos = frb + 1;
-+	/* Reset previous tail */
-+	prev_tail = 0;
-+	if (wpos < wbits)
-+		goto next_range;
-+next_wnd:
-+
-+	if (bh)
-+		put_bh(bh);
-+	bh = NULL;
-+
-+	vbo += blocksize;
-+	if (len) {
-+		len -= blocksize;
-+		lbo += blocksize;
-+	}
-+
-+	if (++iw < wnd->nwnd)
-+		goto start_wnd;
-+
-+	/* Add last block */
-+	if (prev_tail)
-+		wnd_add_free_ext(wnd, wnd->nbits - prev_tail, prev_tail, true);
-+
-+	/*
-+	 * Before init cycle wnd->uptodated was 0
-+	 * If any errors or limits occurs while initialization then
-+	 * wnd->uptodated will be -1
-+	 * If 'uptodated' is still 0 then Tree is really updated
-+	 */
-+	if (!wnd->uptodated)
-+		wnd->uptodated = 1;
-+
-+	if (wnd->zone_bit != wnd->zone_end) {
-+		size_t zlen = wnd->zone_end - wnd->zone_bit;
-+
-+		wnd->zone_end = wnd->zone_bit;
-+		wnd_zone_set(wnd, wnd->zone_bit, zlen);
++		if (attr_b->nres.valid_size != valid) {
++			attr_b->nres.valid_size = valid;
++			mi_b->dirty = true;
++		}
 +	}
 +
 +out:
++	if (!err && attr_b && ret)
++		*ret = attr_b;
++
++	/* update inode_set_bytes*/
++	if (!err && attr_b && attr_b->non_res &&
++	    ((type == ATTR_DATA && !name_len) ||
++	     (type == ATTR_ALLOC && name == I30_NAME))) {
++		ni->vfs_inode.i_size = new_size;
++		inode_set_bytes(&ni->vfs_inode,
++				le64_to_cpu(attr_b->nres.alloc_size));
++		ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
++		mark_inode_dirty(&ni->vfs_inode);
++	}
++
++	return err;
++}
++
++int attr_data_get_block(struct ntfs_inode *ni, CLST vcn, CLST *lcn, CLST *len,
++			bool *new)
++{
++	int err = 0;
++	struct runs_tree *run = &ni->file.run;
++	struct ntfs_sb_info *sbi;
++	u8 cluster_bits;
++	struct ATTRIB *attr, *attr_b;
++	struct ATTR_LIST_ENTRY *le, *le_b;
++	struct mft_inode *mi, *mi_b;
++	CLST hint, svcn, evcn1, new_evcn1, next_svcn;
++	u64 new_size, total_size;
++	u32 clst_per_frame, frame_size;
++	bool ok;
++
++	if (new)
++		*new = false;
++
++	down_read(&ni->file.run_lock);
++	ok = run_lookup_entry(run, vcn, lcn, len, NULL);
++	up_read(&ni->file.run_lock);
++
++	if (ok && (*lcn != SPARSE_LCN || !new)) {
++		/* normal way */
++		return 0;
++	}
++
++	sbi = ni->mi.sbi;
++	cluster_bits = sbi->cluster_bits;
++	new_size = ((u64)vcn + 1) << cluster_bits;
++
++	ni_lock(ni);
++	down_write(&ni->file.run_lock);
++
++again:
++	le_b = NULL;
++	attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL, &mi_b);
++	if (!attr_b) {
++		err = -ENOENT;
++		goto out;
++	}
++
++	if (!attr_b->non_res) {
++		if (!new) {
++			*lcn = RESIDENT_LCN;
++			goto out;
++		}
++
++		err = attr_set_size_res(ni, attr_b, le_b, mi_b, new_size, run,
++					&attr_b);
++		if (err)
++			goto out;
++
++		if (!attr_b->non_res) {
++			/* Resident attribute still resident */
++			*lcn = RESIDENT_LCN;
++			goto out;
++		}
++
++		/* Resident attribute becomes non resident */
++		goto again;
++	}
++
++	clst_per_frame = 1u << attr_b->nres.c_unit;
++	frame_size = clst_per_frame << cluster_bits;
++
++	svcn = le64_to_cpu(attr_b->nres.svcn);
++	evcn1 = le64_to_cpu(attr_b->nres.evcn) + 1;
++
++	attr = attr_b;
++	le = le_b;
++	mi = mi_b;
++
++	if (le_b && (vcn < svcn || evcn1 <= vcn)) {
++		attr = ni_find_attr(ni, attr_b, &le, ATTR_DATA, NULL, 0, &vcn,
++				    &mi);
++		if (!attr) {
++			err = -EINVAL;
++			goto out;
++		}
++		svcn = le64_to_cpu(attr->nres.svcn);
++		evcn1 = le64_to_cpu(attr->nres.evcn) + 1;
++	}
++
++	err = attr_load_runs(attr, ni, run);
++	if (err)
++		goto out;
++
++	if (!ok) {
++		ok = run_lookup_entry(run, vcn, lcn, len, NULL);
++		if (ok && (*lcn != SPARSE_LCN || !new)) {
++			/* normal way */
++			err = 0;
++			goto out;
++		}
++
++		if (!ok && !new) {
++			*len = 0;
++			err = 0;
++			goto out;
++		}
++	}
++
++	if (!is_attr_ext(attr_b)) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	/* Get the last lcn to allocate from */
++	hint = 0;
++
++	if (vcn > evcn1) {
++		if (!run_add_entry(run, evcn1, SPARSE_LCN, vcn - evcn1)) {
++			err = -ENOMEM;
++			goto out;
++		}
++	} else if (vcn && !run_lookup_entry(run, vcn - 1, &hint, NULL, NULL)) {
++		hint = -1;
++	}
++
++	err = attr_allocate_clusters(sbi, run, vcn, hint + 1, clst_per_frame,
++				     NULL, 0, len, 0, lcn);
++	if (err)
++		goto out;
++	*new = true;
++
++	new_evcn1 = vcn + clst_per_frame;
++	if (new_evcn1 < evcn1)
++		new_evcn1 = evcn1;
++
++	total_size = le64_to_cpu(attr_b->nres.total_size) + frame_size;
++
++repack:
++
++	err = mi_pack_runs(mi, attr, run, new_evcn1 - svcn);
++	if (err < 0)
++		goto out;
++
++	attr_b->nres.total_size = cpu_to_le64(total_size);
++	inode_set_bytes(&ni->vfs_inode, total_size);
++
++	mi_b->dirty = true;
++	mark_inode_dirty(&ni->vfs_inode);
++
++	next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
++
++	if (next_svcn >= evcn1) {
++		/* Normal way. update attribute and exit */
++		goto out;
++	}
++
++	if (!ni->attr_list.le) {
++		err = ni_create_attr_list(ni);
++		if (err)
++			goto out;
++		/* layout of records is changed */
++		le_b = NULL;
++		attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL,
++				      &mi_b);
++		if (!attr_b) {
++			err = -ENOENT;
++			goto out;
++		}
++
++		attr = attr_b;
++		le = le_b;
++		mi = mi_b;
++		goto repack;
++	}
++
++	/* Estimate next attribute */
++	attr = ni_find_attr(ni, attr, &le, ATTR_DATA, NULL, 0, &evcn1, &mi);
++
++	if (attr && le32_to_cpu(mi->mrec->used) + 8 <= sbi->record_size) {
++		svcn = next_svcn;
++		evcn1 = le64_to_cpu(attr->nres.evcn) + 1;
++
++		err = attr_load_runs(attr, ni, run);
++		if (err)
++			goto out;
++
++		attr->nres.svcn = cpu_to_le64(svcn);
++		err = mi_pack_runs(mi, attr, run, evcn1 - svcn);
++		if (err < 0)
++			goto out;
++
++		le->vcn = cpu_to_le64(svcn);
++
++		mi->dirty = true;
++
++		next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
++
++		if (next_svcn >= evcn1) {
++			/* Normal way. update attribute and exit */
++			goto out;
++		}
++	}
++
++	err = ni_insert_nonresident(ni, ATTR_DATA, NULL, 0, run, next_svcn,
++				    evcn1 - next_svcn, attr_b->flags, &attr,
++				    &mi);
++	if (err)
++		goto out;
++
++	run_truncate_head(run, vcn);
++
++out:
++	up_write(&ni->file.run_lock);
++	ni_unlock(ni);
++
 +	return err;
 +}
 +
 +/*
-+ * wnd_init
++ * attr_load_runs_vcn
++ *
++ * load runs with vcn
 + */
-+int wnd_init(struct wnd_bitmap *wnd, struct super_block *sb, size_t nbits)
++int attr_load_runs_vcn(struct ntfs_inode *ni, enum ATTR_TYPE type,
++		       const __le16 *name, u8 name_len, struct runs_tree *run,
++		       CLST vcn)
++{
++	struct ATTRIB *attr;
++	int err;
++	CLST svcn, evcn;
++	u16 ro;
++
++	attr = ni_find_attr(ni, NULL, NULL, type, name, name_len, &vcn, NULL);
++	if (!attr)
++		return -ENOENT;
++
++	svcn = le64_to_cpu(attr->nres.svcn);
++	evcn = le64_to_cpu(attr->nres.evcn);
++
++	if (evcn < vcn || vcn < svcn)
++		return -EINVAL;
++
++	ro = le16_to_cpu(attr->nres.run_off);
++	err = run_unpack_ex(run, ni->mi.sbi, ni->mi.rno, svcn, evcn,
++			    Add2Ptr(attr, ro), le32_to_cpu(attr->size) - ro);
++	if (err < 0)
++		return err;
++	return 0;
++}
++
++/*
++ * attr_is_frame_compressed
++ *
++ * This function is used to detect compressed frame
++ */
++int attr_is_frame_compressed(struct ntfs_inode *ni, struct ATTRIB *attr,
++			     CLST frame, CLST *clst_data, bool *is_compr)
 +{
 +	int err;
-+	u32 blocksize = sb->s_blocksize;
-+	u32 wbits = blocksize * 8;
++	u32 clst_frame;
++	CLST len, lcn, vcn, alen, slen, vcn1;
++	size_t idx;
++	struct runs_tree *run;
 +
-+	init_rwsem(&wnd->rw_lock);
++	*clst_data = 0;
++	*is_compr = false;
 +
-+	wnd->sb = sb;
-+	wnd->nbits = nbits;
-+	wnd->total_zeroes = nbits;
-+	wnd->extent_max = MINUS_ONE_T;
-+	wnd->zone_bit = wnd->zone_end = 0;
-+	wnd->nwnd = bytes_to_block(sb, bitmap_size(nbits));
-+	wnd->bits_last = nbits & (wbits - 1);
-+	if (!wnd->bits_last)
-+		wnd->bits_last = wbits;
++	if (!is_attr_compressed(attr))
++		return 0;
 +
-+	if (wnd->nwnd <= ARRAY_SIZE(wnd->free_holder)) {
-+		wnd->free_bits = wnd->free_holder;
-+	} else {
-+		wnd->free_bits = ntfs_alloc(wnd->nwnd * sizeof(u16), 1);
-+		if (!wnd->free_bits)
-+			return -ENOMEM;
++	if (!attr->non_res)
++		return 0;
++
++	clst_frame = 1u << attr->nres.c_unit;
++	vcn = frame * clst_frame;
++	run = &ni->file.run;
++
++	if (!run_lookup_entry(run, vcn, &lcn, &len, &idx)) {
++		err = attr_load_runs_vcn(ni, attr->type, attr_name(attr),
++					 attr->name_len, run, vcn);
++		if (err)
++			return err;
++
++		if (!run_lookup_entry(run, vcn, &lcn, &len, &idx))
++			return -ENOENT;
 +	}
 +
-+	err = wnd_rescan(wnd);
-+	if (err)
-+		return err;
++	if (lcn == SPARSE_LCN) {
++		/* The frame is sparsed if "clst_frame" clusters are sparsed */
++		*is_compr = true;
++		return 0;
++	}
 +
-+	wnd->inited = true;
++	if (len >= clst_frame) {
++		/*
++		 * The frame is not compressed 'cause
++		 * it does not contain any sparse clusters
++		 */
++		*clst_data = clst_frame;
++		return 0;
++	}
++
++	alen = bytes_to_cluster(ni->mi.sbi, le64_to_cpu(attr->nres.alloc_size));
++	slen = 0;
++	*clst_data = len;
++
++	/*
++	 * The frame is compressed if *clst_data + slen >= clst_frame
++	 * Check next fragments
++	 */
++	while ((vcn += len) < alen) {
++		vcn1 = vcn;
++
++		if (!run_get_entry(run, ++idx, &vcn, &lcn, &len) ||
++		    vcn1 != vcn) {
++			err = attr_load_runs_vcn(ni, attr->type,
++						 attr_name(attr),
++						 attr->name_len, run, vcn1);
++			if (err)
++				return err;
++			vcn = vcn1;
++
++			if (!run_lookup_entry(run, vcn, &lcn, &len, &idx))
++				return -ENOENT;
++		}
++
++		if (lcn == SPARSE_LCN)
++			slen += len;
++		else {
++			if (slen) {
++				/*
++				 * data_clusters + sparse_clusters =
++				 * not enough for frame
++				 */
++				return -EINVAL;
++			}
++			*clst_data += len;
++		}
++
++		if (*clst_data + slen >= clst_frame) {
++			if (!slen) {
++				/*
++				 * There is no sparsed clusters in this frame
++				 * So it is not compressed
++				 */
++				*clst_data = clst_frame;
++			} else
++				*is_compr = *clst_data < clst_frame;
++			break;
++		}
++	}
 +
 +	return 0;
 +}
 +
 +/*
-+ * wnd_map
++ * attr_allocate_frame
 + *
-+ * call sb_bread for requested window
++ * allocate/free clusters for 'frame'
 + */
-+static struct buffer_head *wnd_map(struct wnd_bitmap *wnd, size_t iw)
++int attr_allocate_frame(struct ntfs_inode *ni, CLST frame, size_t compr_size,
++			u64 new_valid)
 +{
-+	size_t vbo;
-+	CLST lcn, clen;
-+	struct super_block *sb = wnd->sb;
-+	struct ntfs_sb_info *sbi;
-+	struct buffer_head *bh;
-+	u64 lbo;
++	int err = 0;
++	struct runs_tree *run = &ni->file.run;
++	struct ntfs_sb_info *sbi = ni->mi.sbi;
++	struct ATTRIB *attr, *attr_b;
++	struct ATTR_LIST_ENTRY *le, *le_b;
++	struct mft_inode *mi, *mi_b;
++	CLST svcn, evcn1, next_svcn, lcn, len;
++	CLST vcn, clst_data;
++	u64 total_size, valid_size, data_size;
++	bool is_compr;
 +
-+	sbi = sb->s_fs_info;
-+	vbo = (u64)iw << sb->s_blocksize_bits;
++	le_b = NULL;
++	attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL, &mi_b);
++	if (!attr_b)
++		return -ENOENT;
 +
-+	if (!run_lookup_entry(&wnd->run, vbo >> sbi->cluster_bits, &lcn, &clen,
-+			      NULL)) {
-+		return ERR_PTR(-ENOENT);
++	if (!is_attr_ext(attr_b))
++		return -EINVAL;
++
++	vcn = frame << NTFS_LZNT_CUNIT;
++	total_size = le64_to_cpu(attr_b->nres.total_size);
++
++	svcn = le64_to_cpu(attr_b->nres.svcn);
++	evcn1 = le64_to_cpu(attr_b->nres.evcn) + 1;
++	data_size = le64_to_cpu(attr_b->nres.data_size);
++
++	if (svcn <= vcn && vcn < evcn1) {
++		attr = attr_b;
++		le = le_b;
++		mi = mi_b;
++	} else if (!le_b) {
++		err = -EINVAL;
++		goto out;
++	} else {
++		le = le_b;
++		attr = ni_find_attr(ni, attr_b, &le, ATTR_DATA, NULL, 0, &vcn,
++				    &mi);
++		if (!attr) {
++			err = -EINVAL;
++			goto out;
++		}
++		svcn = le64_to_cpu(attr->nres.svcn);
++		evcn1 = le64_to_cpu(attr->nres.evcn) + 1;
 +	}
 +
-+	lbo = ((u64)lcn << sbi->cluster_bits) + (vbo & sbi->cluster_mask);
++	err = attr_load_runs(attr, ni, run);
++	if (err)
++		goto out;
 +
-+	bh = ntfs_bread(wnd->sb, lbo >> sb->s_blocksize_bits);
++	err = attr_is_frame_compressed(ni, attr_b, frame, &clst_data,
++				       &is_compr);
++	if (err)
++		goto out;
 +
-+	if (!bh)
-+		return ERR_PTR(-EIO);
++	total_size -= clst_data << sbi->cluster_bits;
 +
-+	return bh;
++	len = bytes_to_cluster(sbi, compr_size);
++
++	if (len == clst_data)
++		goto out;
++
++	if (len < clst_data) {
++		err = run_deallocate_ex(sbi, run, vcn + len, clst_data - len,
++					NULL, true);
++		if (err)
++			goto out;
++
++		if (!run_add_entry(run, vcn + len, SPARSE_LCN,
++				   clst_data - len)) {
++			err = -ENOMEM;
++			goto out;
++		}
++	} else {
++		CLST alen, hint;
++		/* Get the last lcn to allocate from */
++		if (vcn + clst_data &&
++		    !run_lookup_entry(run, vcn + clst_data - 1, &hint, NULL,
++				      NULL)) {
++			hint = -1;
++		}
++
++		err = attr_allocate_clusters(sbi, run, vcn + clst_data,
++					     hint + 1, len - clst_data, NULL, 0,
++					     &alen, 0, &lcn);
++		if (err)
++			goto out;
++	}
++
++	total_size += len << sbi->cluster_bits;
++
++repack:
++	err = mi_pack_runs(mi, attr, run, evcn1 - svcn);
++	if (err < 0)
++		goto out;
++
++	attr_b->nres.total_size = cpu_to_le64(total_size);
++	inode_set_bytes(&ni->vfs_inode, total_size);
++
++	mi_b->dirty = true;
++	mark_inode_dirty(&ni->vfs_inode);
++
++	next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
++
++	if (next_svcn >= evcn1) {
++		/* Normal way. update attribute and exit */
++		goto out;
++	}
++
++	if (!ni->attr_list.size) {
++		err = ni_create_attr_list(ni);
++		if (err)
++			goto out;
++		/* layout of records is changed */
++		le_b = NULL;
++		attr_b = ni_find_attr(ni, NULL, &le_b, ATTR_DATA, NULL, 0, NULL,
++				      &mi_b);
++		if (!attr_b) {
++			err = -ENOENT;
++			goto out;
++		}
++
++		attr = attr_b;
++		le = le_b;
++		mi = mi_b;
++		goto repack;
++	}
++
++	/* Estimate next attribute */
++	attr = ni_find_attr(ni, attr, &le, ATTR_DATA, NULL, 0, &evcn1, &mi);
++
++	if (attr && le32_to_cpu(mi->mrec->used) + 8 <= sbi->record_size) {
++		svcn = next_svcn;
++		evcn1 = le64_to_cpu(attr->nres.evcn) + 1;
++
++		err = attr_load_runs(attr, ni, run);
++		if (err)
++			goto out;
++
++		attr->nres.svcn = cpu_to_le64(svcn);
++		err = mi_pack_runs(mi, attr, run, evcn1 - svcn);
++		if (err < 0)
++			goto out;
++
++		le->vcn = cpu_to_le64(svcn);
++
++		mi->dirty = true;
++
++		next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
++
++		if (next_svcn >= evcn1) {
++			/* Normal way. update attribute and exit */
++			goto out;
++		}
++	}
++
++	err = ni_insert_nonresident(ni, ATTR_DATA, NULL, 0, run, next_svcn,
++				    evcn1 - next_svcn, attr_b->flags, &attr,
++				    &mi);
++	if (err)
++		goto out;
++
++	run_truncate_head(run, vcn);
++
++out:
++	if (new_valid > data_size)
++		new_valid = data_size;
++
++	valid_size = le64_to_cpu(attr_b->nres.valid_size);
++	if (new_valid != valid_size) {
++		attr_b->nres.valid_size = cpu_to_le64(valid_size);
++		mi_b->dirty = true;
++	}
++
++	return err;
++}
+diff --git a/fs/ntfs3/attrlist.c b/fs/ntfs3/attrlist.c
+new file mode 100644
+index 000000000000..3739572a4eca
+--- /dev/null
++++ b/fs/ntfs3/attrlist.c
+@@ -0,0 +1,462 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ *  linux/fs/ntfs3/attrib.c
++ *
++ * Copyright (C) 2019-2020 Paragon Software GmbH, All rights reserved.
++ *
++ */
++
++#include <linux/blkdev.h>
++#include <linux/buffer_head.h>
++#include <linux/fs.h>
++#include <linux/nls.h>
++#include <linux/sched/signal.h>
++
++#include "debug.h"
++#include "ntfs.h"
++#include "ntfs_fs.h"
++
++/* Returns true if le is valid */
++static inline bool al_is_valid_le(const struct ntfs_inode *ni,
++				  struct ATTR_LIST_ENTRY *le)
++{
++	if (!le || !ni->attr_list.le || !ni->attr_list.size)
++		return false;
++
++	return PtrOffset(ni->attr_list.le, le) + le16_to_cpu(le->size) <=
++	       ni->attr_list.size;
++}
++
++void al_destroy(struct ntfs_inode *ni)
++{
++	run_close(&ni->attr_list.run);
++	ntfs_free(ni->attr_list.le);
++	ni->attr_list.le = NULL;
++	ni->attr_list.size = 0;
++	ni->attr_list.dirty = false;
 +}
 +
 +/*
-+ * wnd_set_free
++ * ntfs_load_attr_list
 + *
-+ * Marks the bits range from bit to bit + bits as free
++ * This method makes sure that the ATTRIB list, if present,
++ * has been properly set up.
 + */
-+int wnd_set_free(struct wnd_bitmap *wnd, size_t bit, size_t bits)
++int ntfs_load_attr_list(struct ntfs_inode *ni, struct ATTRIB *attr)
 +{
-+	int err = 0;
-+	struct super_block *sb = wnd->sb;
-+	size_t bits0 = bits;
-+	u32 wbits = 8 * sb->s_blocksize;
-+	size_t iw = bit >> (sb->s_blocksize_bits + 3);
-+	u32 wbit = bit & (wbits - 1);
-+	struct buffer_head *bh;
++	int err;
++	size_t lsize;
++	void *le = NULL;
 +
-+	while (iw < wnd->nwnd && bits) {
-+		u32 tail, op;
-+		ulong *buf;
++	if (ni->attr_list.size)
++		return 0;
 +
-+		if (iw + 1 == wnd->nwnd)
-+			wbits = wnd->bits_last;
++	if (!attr->non_res) {
++		lsize = le32_to_cpu(attr->res.data_size);
++		le = ntfs_alloc(al_aligned(lsize), 0);
++		if (!le) {
++			err = -ENOMEM;
++			goto out;
++		}
++		memcpy(le, resident_data(attr), lsize);
++	} else if (attr->nres.svcn) {
++		err = -EINVAL;
++		goto out;
++	} else {
++		u16 run_off = le16_to_cpu(attr->nres.run_off);
 +
-+		tail = wbits - wbit;
-+		op = tail < bits ? tail : bits;
++		lsize = le64_to_cpu(attr->nres.data_size);
 +
-+		bh = wnd_map(wnd, iw);
-+		if (IS_ERR(bh)) {
-+			err = PTR_ERR(bh);
-+			break;
++		run_init(&ni->attr_list.run);
++
++		err = run_unpack_ex(&ni->attr_list.run, ni->mi.sbi, ni->mi.rno,
++				    0, le64_to_cpu(attr->nres.evcn),
++				    Add2Ptr(attr, run_off),
++				    le32_to_cpu(attr->size) - run_off);
++		if (err < 0)
++			goto out;
++
++		le = ntfs_alloc(al_aligned(lsize), 0);
++		if (!le) {
++			err = -ENOMEM;
++			goto out;
 +		}
 +
-+		buf = (ulong *)bh->b_data;
-+
-+		lock_buffer(bh);
-+
-+		__bitmap_clear(buf, wbit, op);
-+
-+		wnd->free_bits[iw] += op;
-+
-+		set_buffer_uptodate(bh);
-+		mark_buffer_dirty(bh);
-+		unlock_buffer(bh);
-+		put_bh(bh);
-+
-+		wnd->total_zeroes += op;
-+		bits -= op;
-+		wbit = 0;
-+		iw += 1;
++		err = ntfs_read_run_nb(ni->mi.sbi, &ni->attr_list.run, 0, le,
++				       lsize, NULL);
++		if (err)
++			goto out;
 +	}
 +
-+	wnd_add_free_ext(wnd, bit, bits0, false);
++	ni->attr_list.size = lsize;
++	ni->attr_list.le = le;
++
++	return 0;
++
++out:
++	ni->attr_list.le = le;
++	al_destroy(ni);
 +
 +	return err;
 +}
 +
 +/*
-+ * wnd_set_used
++ * al_enumerate
 + *
-+ * Marks the bits range from bit to bit + bits as used
++ * Returns the next list le
++ * if le is NULL then returns the first le
 + */
-+int wnd_set_used(struct wnd_bitmap *wnd, size_t bit, size_t bits)
++struct ATTR_LIST_ENTRY *al_enumerate(struct ntfs_inode *ni,
++				     struct ATTR_LIST_ENTRY *le)
 +{
-+	int err = 0;
-+	struct super_block *sb = wnd->sb;
-+	size_t bits0 = bits;
-+	size_t iw = bit >> (sb->s_blocksize_bits + 3);
-+	u32 wbits = 8 * sb->s_blocksize;
-+	u32 wbit = bit & (wbits - 1);
-+	struct buffer_head *bh;
++	size_t off;
++	u16 sz;
 +
-+	while (iw < wnd->nwnd && bits) {
-+		u32 tail, op;
-+		ulong *buf;
-+
-+		if (unlikely(iw + 1 == wnd->nwnd))
-+			wbits = wnd->bits_last;
-+
-+		tail = wbits - wbit;
-+		op = tail < bits ? tail : bits;
-+
-+		bh = wnd_map(wnd, iw);
-+		if (IS_ERR(bh)) {
-+			err = PTR_ERR(bh);
-+			break;
++	if (!le) {
++		le = ni->attr_list.le;
++	} else {
++		sz = le16_to_cpu(le->size);
++		if (sz < sizeof(struct ATTR_LIST_ENTRY)) {
++			/* Impossible 'cause we should not return such le */
++			return NULL;
 +		}
-+		buf = (ulong *)bh->b_data;
-+
-+		lock_buffer(bh);
-+
-+		__bitmap_set(buf, wbit, op);
-+		wnd->free_bits[iw] -= op;
-+
-+		set_buffer_uptodate(bh);
-+		mark_buffer_dirty(bh);
-+		unlock_buffer(bh);
-+		put_bh(bh);
-+
-+		wnd->total_zeroes -= op;
-+		bits -= op;
-+		wbit = 0;
-+		iw += 1;
++		le = Add2Ptr(le, sz);
 +	}
 +
-+	if (!RB_EMPTY_ROOT(&wnd->start_tree))
-+		wnd_remove_free_ext(wnd, bit, bits0);
++	/* Check boundary */
++	off = PtrOffset(ni->attr_list.le, le);
++	if (off + sizeof(struct ATTR_LIST_ENTRY) > ni->attr_list.size) {
++		// The regular end of list
++		return NULL;
++	}
 +
-+	return err;
++	sz = le16_to_cpu(le->size);
++
++	/* Check le for errors */
++	if (sz < sizeof(struct ATTR_LIST_ENTRY) ||
++	    off + sz > ni->attr_list.size ||
++	    sz < le->name_off + le->name_len * sizeof(short)) {
++		return NULL;
++	}
++
++	return le;
 +}
 +
 +/*
-+ * wnd_is_free_hlp
++ * al_find_le
 + *
-+ * Returns true if all clusters [bit, bit+bits) are free (bitmap only)
++ * finds the first le in the list which matches type, name and vcn
++ * Returns NULL if not found
 + */
-+static bool wnd_is_free_hlp(struct wnd_bitmap *wnd, size_t bit, size_t bits)
++struct ATTR_LIST_ENTRY *al_find_le(struct ntfs_inode *ni,
++				   struct ATTR_LIST_ENTRY *le,
++				   const struct ATTRIB *attr)
 +{
-+	struct super_block *sb = wnd->sb;
-+	size_t iw = bit >> (sb->s_blocksize_bits + 3);
-+	u32 wbits = 8 * sb->s_blocksize;
-+	u32 wbit = bit & (wbits - 1);
++	CLST svcn = attr_svcn(attr);
 +
-+	while (iw < wnd->nwnd && bits) {
-+		u32 tail, op;
++	return al_find_ex(ni, le, attr->type, attr_name(attr), attr->name_len,
++			  &svcn);
++}
 +
-+		if (unlikely(iw + 1 == wnd->nwnd))
-+			wbits = wnd->bits_last;
++/*
++ * al_find_ex
++ *
++ * finds the first le in the list which matches type, name and vcn
++ * Returns NULL if not found
++ */
++struct ATTR_LIST_ENTRY *al_find_ex(struct ntfs_inode *ni,
++				   struct ATTR_LIST_ENTRY *le,
++				   enum ATTR_TYPE type, const __le16 *name,
++				   u8 name_len, const CLST *vcn)
++{
++	struct ATTR_LIST_ENTRY *ret = NULL;
++	u32 type_in = le32_to_cpu(type);
 +
-+		tail = wbits - wbit;
-+		op = tail < bits ? tail : bits;
++	while ((le = al_enumerate(ni, le))) {
++		u64 le_vcn;
++		int diff;
 +
-+		if (wbits != wnd->free_bits[iw]) {
-+			bool ret;
-+			struct buffer_head *bh = wnd_map(wnd, iw);
++		/* List entries are sorted by type, name and vcn */
++		diff = le32_to_cpu(le->type) - type_in;
++		if (diff < 0)
++			continue;
 +
-+			if (IS_ERR(bh))
-+				return false;
++		if (diff > 0)
++			return ret;
 +
-+			ret = are_bits_clear((ulong *)bh->b_data, wbit, op);
++		if (le->name_len != name_len)
++			continue;
 +
-+			put_bh(bh);
-+			if (!ret)
-+				return false;
-+		}
++		if (name_len &&
++		    memcmp(le_name(le), name, name_len * sizeof(short)))
++			continue;
 +
-+		bits -= op;
-+		wbit = 0;
-+		iw += 1;
++		if (!vcn)
++			return le;
++
++		le_vcn = le64_to_cpu(le->vcn);
++		if (*vcn == le_vcn)
++			return le;
++
++		if (*vcn < le_vcn)
++			return ret;
++
++		ret = le;
 +	}
++
++	return ret;
++}
++
++/*
++ * al_find_le_to_insert
++ *
++ * finds the first list entry which matches type, name and vcn
++ * Returns NULL if not found
++ */
++static struct ATTR_LIST_ENTRY *
++al_find_le_to_insert(struct ntfs_inode *ni, enum ATTR_TYPE type,
++		     const __le16 *name, u8 name_len, const CLST *vcn)
++{
++	struct ATTR_LIST_ENTRY *le = NULL, *prev;
++	u32 type_in = le32_to_cpu(type);
++	int diff;
++
++	/* List entries are sorted by type, name, vcn */
++next:
++	le = al_enumerate(ni, prev = le);
++	if (!le)
++		goto out;
++	diff = le32_to_cpu(le->type) - type_in;
++	if (diff < 0)
++		goto next;
++	if (diff > 0)
++		goto out;
++
++	if (ntfs_cmp_names(name, name_len, le_name(le), le->name_len, NULL) > 0)
++		goto next;
++
++	if (!vcn || *vcn > le64_to_cpu(le->vcn))
++		goto next;
++
++out:
++	if (!le)
++		le = prev ? Add2Ptr(prev, le16_to_cpu(prev->size)) :
++			    ni->attr_list.le;
++
++	return le;
++}
++
++/*
++ * al_add_le
++ *
++ * adds an "attribute list entry" to the list.
++ */
++int al_add_le(struct ntfs_inode *ni, enum ATTR_TYPE type, const __le16 *name,
++	      u8 name_len, CLST svcn, __le16 id, const struct MFT_REF *ref,
++	      struct ATTR_LIST_ENTRY **new_le)
++{
++	int err;
++	struct ATTRIB *attr;
++	struct ATTR_LIST_ENTRY *le;
++	size_t off;
++	u16 sz;
++	size_t asize, new_asize;
++	u64 new_size;
++	typeof(ni->attr_list) *al = &ni->attr_list;
++
++	/*
++	 * Compute the size of the new le and the new length of the
++	 * list with al le added.
++	 */
++	sz = le_size(name_len);
++	new_size = al->size + sz;
++	asize = al_aligned(al->size);
++	new_asize = al_aligned(new_size);
++
++	/* Scan forward to the point at which the new le should be inserted. */
++	le = al_find_le_to_insert(ni, type, name, name_len, &svcn);
++	off = PtrOffset(al->le, le);
++
++	if (new_size > asize) {
++		void *ptr = ntfs_alloc(new_asize, 0);
++
++		if (!ptr)
++			return -ENOMEM;
++
++		memcpy(ptr, al->le, off);
++		memcpy(Add2Ptr(ptr, off + sz), le, al->size - off);
++		le = Add2Ptr(ptr, off);
++		ntfs_free(al->le);
++		al->le = ptr;
++	} else {
++		memmove(Add2Ptr(le, sz), le, al->size - off);
++	}
++
++	al->size = new_size;
++
++	le->type = type;
++	le->size = cpu_to_le16(sz);
++	le->name_len = name_len;
++	le->name_off = offsetof(struct ATTR_LIST_ENTRY, name);
++	le->vcn = cpu_to_le64(svcn);
++	le->ref = *ref;
++	le->id = id;
++	memcpy(le->name, name, sizeof(short) * name_len);
++
++	al->dirty = true;
++
++	err = attr_set_size(ni, ATTR_LIST, NULL, 0, &al->run, new_size,
++			    &new_size, true, &attr);
++	if (err)
++		return err;
++
++	if (attr && attr->non_res) {
++		err = ntfs_sb_write_run(ni->mi.sbi, &al->run, 0, al->le,
++					al->size);
++		if (err)
++			return err;
++	}
++
++	al->dirty = false;
++	*new_le = le;
++
++	return 0;
++}
++
++/*
++ * al_remove_le
++ *
++ * removes 'le' from attribute list
++ */
++bool al_remove_le(struct ntfs_inode *ni, struct ATTR_LIST_ENTRY *le)
++{
++	u16 size;
++	size_t off;
++	typeof(ni->attr_list) *al = &ni->attr_list;
++
++	if (!al_is_valid_le(ni, le))
++		return false;
++
++	/* Save on stack the size of le */
++	size = le16_to_cpu(le->size);
++	off = PtrOffset(al->le, le);
++
++	memmove(le, Add2Ptr(le, size), al->size - (off + size));
++
++	al->size -= size;
++	al->dirty = true;
 +
 +	return true;
 +}
 +
 +/*
-+ * wnd_is_free
++ * al_delete_le
 + *
-+ * Returns true if all clusters [bit, bit+bits) are free
++ * deletes from the list the first le which matches its parameters.
 + */
-+bool wnd_is_free(struct wnd_bitmap *wnd, size_t bit, size_t bits)
++bool al_delete_le(struct ntfs_inode *ni, enum ATTR_TYPE type, CLST vcn,
++		  const __le16 *name, size_t name_len,
++		  const struct MFT_REF *ref)
 +{
-+	bool ret;
-+	struct rb_node *n;
-+	size_t end;
-+	struct e_node *e;
++	u16 size;
++	struct ATTR_LIST_ENTRY *le;
++	size_t off;
++	typeof(ni->attr_list) *al = &ni->attr_list;
 +
-+	if (RB_EMPTY_ROOT(&wnd->start_tree))
-+		goto use_wnd;
-+
-+	n = rb_lookup(&wnd->start_tree, bit);
-+	if (!n)
-+		goto use_wnd;
-+
-+	e = rb_entry(n, struct e_node, start.node);
-+
-+	end = e->start.key + e->count.key;
-+
-+	if (bit < end && bit + bits <= end)
-+		return true;
-+
-+use_wnd:
-+	ret = wnd_is_free_hlp(wnd, bit, bits);
-+
-+	return ret;
-+}
-+
-+/*
-+ * wnd_is_used
-+ *
-+ * Returns true if all clusters [bit, bit+bits) are used
-+ */
-+bool wnd_is_used(struct wnd_bitmap *wnd, size_t bit, size_t bits)
-+{
-+	bool ret = false;
-+	struct super_block *sb = wnd->sb;
-+	size_t iw = bit >> (sb->s_blocksize_bits + 3);
-+	u32 wbits = 8 * sb->s_blocksize;
-+	u32 wbit = bit & (wbits - 1);
-+	size_t end;
-+	struct rb_node *n;
-+	struct e_node *e;
-+
-+	if (RB_EMPTY_ROOT(&wnd->start_tree))
-+		goto use_wnd;
-+
-+	end = bit + bits;
-+	n = rb_lookup(&wnd->start_tree, end - 1);
-+	if (!n)
-+		goto use_wnd;
-+
-+	e = rb_entry(n, struct e_node, start.node);
-+	if (e->start.key + e->count.key > bit)
++	/* Scan forward to the first le that matches the input */
++	le = al_find_ex(ni, NULL, type, name, name_len, &vcn);
++	if (!le)
 +		return false;
 +
-+use_wnd:
-+	while (iw < wnd->nwnd && bits) {
-+		u32 tail, op;
++	off = PtrOffset(al->le, le);
 +
-+		if (unlikely(iw + 1 == wnd->nwnd))
-+			wbits = wnd->bits_last;
++	if (!ref)
++		goto del;
 +
-+		tail = wbits - wbit;
-+		op = tail < bits ? tail : bits;
++	/*
++	 * The caller specified a segment reference, so we have to
++	 * scan through the matching entries until we find that segment
++	 * reference or we run of matching entries.
++	 */
++next:
++	if (off + sizeof(struct ATTR_LIST_ENTRY) > al->size)
++		goto del;
++	if (le->type != type)
++		goto del;
++	if (le->name_len != name_len)
++		goto del;
++	if (name_len &&
++	    memcmp(name, Add2Ptr(le, le->name_off), name_len * sizeof(short)))
++		goto del;
++	if (le64_to_cpu(le->vcn) != vcn)
++		goto del;
++	if (!memcmp(ref, &le->ref, sizeof(*ref)))
++		goto del;
 +
-+		if (wnd->free_bits[iw]) {
-+			bool ret;
-+			struct buffer_head *bh = wnd_map(wnd, iw);
++	off += le16_to_cpu(le->size);
++	le = Add2Ptr(al->le, off);
++	goto next;
 +
-+			if (IS_ERR(bh))
-+				goto out;
++del:
++	/*
++	 * If we've gone off the end of the list, or if the type, name,
++	 * and vcn don't match, then we don't have any matching records.
++	 */
++	if (off >= al->size)
++		return false;
++	if (le->type != type)
++		return false;
++	if (le->name_len != name_len)
++		return false;
++	if (name_len &&
++	    memcmp(name, Add2Ptr(le, le->name_off), name_len * sizeof(short)))
++		return false;
++	if (le64_to_cpu(le->vcn) != vcn)
++		return false;
 +
-+			ret = are_bits_set((ulong *)bh->b_data, wbit, op);
-+			put_bh(bh);
-+			if (!ret)
-+				goto out;
-+		}
++	/* Save on stack the size of le */
++	size = le16_to_cpu(le->size);
++	/* Delete the le. */
++	memmove(le, Add2Ptr(le, size), al->size - (off + size));
 +
-+		bits -= op;
-+		wbit = 0;
-+		iw += 1;
-+	}
-+	ret = true;
-+
-+out:
-+	return ret;
++	al->size -= size;
++	al->dirty = true;
++	return true;
 +}
 +
 +/*
-+ * wnd_find
-+ * - flags - BITMAP_FIND_XXX flags
++ * al_update
 + *
-+ * looks for free space
-+ * Returns 0 if not found
-+ */
-+size_t wnd_find(struct wnd_bitmap *wnd, size_t to_alloc, size_t hint,
-+		size_t flags, size_t *allocated)
-+{
-+	struct super_block *sb;
-+	u32 wbits, wpos, wzbit, wzend;
-+	size_t fnd, max_alloc, b_len, b_pos;
-+	size_t iw, prev_tail, nwnd, wbit, ebit, zbit, zend;
-+	size_t to_alloc0 = to_alloc;
-+	const ulong *buf;
-+	const struct e_node *e;
-+	const struct rb_node *pr, *cr;
-+	u8 log2_bits;
-+	bool fbits_valid;
-+	struct buffer_head *bh;
-+
-+	/* fast checking for available free space */
-+	if (flags & BITMAP_FIND_FULL) {
-+		size_t zeroes = wnd_zeroes(wnd);
-+
-+		zeroes -= wnd->zone_end - wnd->zone_bit;
-+		if (zeroes < to_alloc0)
-+			goto no_space;
-+
-+		if (to_alloc0 > wnd->extent_max)
-+			goto no_space;
-+	} else {
-+		if (to_alloc > wnd->extent_max)
-+			to_alloc = wnd->extent_max;
-+	}
-+
-+	if (wnd->zone_bit <= hint && hint < wnd->zone_end)
-+		hint = wnd->zone_end;
-+
-+	max_alloc = wnd->nbits;
-+	b_len = b_pos = 0;
-+
-+	if (hint >= max_alloc)
-+		hint = 0;
-+
-+	if (RB_EMPTY_ROOT(&wnd->start_tree)) {
-+		if (wnd->uptodated == 1) {
-+			/* extents tree is updated -> no free space */
-+			goto no_space;
-+		}
-+		goto scan_bitmap;
-+	}
-+
-+	e = NULL;
-+	if (!hint)
-+		goto allocate_biggest;
-+
-+	/* Use hint: enumerate extents by start >= hint */
-+	pr = NULL;
-+	cr = wnd->start_tree.rb_node;
-+
-+	for (;;) {
-+		e = rb_entry(cr, struct e_node, start.node);
-+
-+		if (e->start.key == hint)
-+			break;
-+
-+		if (e->start.key < hint) {
-+			pr = cr;
-+			cr = cr->rb_right;
-+			if (!cr)
-+				break;
-+			continue;
-+		}
-+
-+		cr = cr->rb_left;
-+		if (!cr) {
-+			e = pr ? rb_entry(pr, struct e_node, start.node) : NULL;
-+			break;
-+		}
-+	}
-+
-+	if (!e)
-+		goto allocate_biggest;
-+
-+	if (e->start.key + e->count.key > hint) {
-+		/* We have found extension with 'hint' inside */
-+		size_t len = e->start.key + e->count.key - hint;
-+
-+		if (len >= to_alloc && hint + to_alloc <= max_alloc) {
-+			fnd = hint;
-+			goto found;
-+		}
-+
-+		if (!(flags & BITMAP_FIND_FULL)) {
-+			if (len > to_alloc)
-+				len = to_alloc;
-+
-+			if (hint + len <= max_alloc) {
-+				fnd = hint;
-+				to_alloc = len;
-+				goto found;
-+			}
-+		}
-+	}
-+
-+allocate_biggest:
-+
-+	/* Allocate from biggest free extent */
-+	e = rb_entry(rb_first(&wnd->count_tree), struct e_node, count.node);
-+	if (e->count.key != wnd->extent_max)
-+		wnd->extent_max = e->count.key;
-+
-+	if (e->count.key < max_alloc) {
-+		if (e->count.key >= to_alloc)
-+			;
-+		else if (flags & BITMAP_FIND_FULL) {
-+			if (e->count.key < to_alloc0) {
-+				/* Biggest free block is less then requested */
-+				goto no_space;
-+			}
-+			to_alloc = e->count.key;
-+		} else if (-1 != wnd->uptodated)
-+			to_alloc = e->count.key;
-+		else {
-+			/* Check if we can use more bits */
-+			size_t op, max_check;
-+			struct rb_root start_tree;
-+
-+			memcpy(&start_tree, &wnd->start_tree,
-+			       sizeof(struct rb_root));
-+			memset(&wnd->start_tree, 0, sizeof(struct rb_root));
-+
-+			max_check = e->start.key + to_alloc;
-+			if (max_check > max_alloc)
-+				max_check = max_alloc;
-+			for (op = e->start.key + e->count.key; op < max_check;
-+			     op++) {
-+				if (!wnd_is_free(wnd, op, 1))
-+					break;
-+			}
-+			memcpy(&wnd->start_tree, &start_tree,
-+			       sizeof(struct rb_root));
-+			to_alloc = op - e->start.key;
-+		}
-+
-+		/* Prepare to return */
-+		fnd = e->start.key;
-+		if (e->start.key + to_alloc > max_alloc)
-+			to_alloc = max_alloc - e->start.key;
-+		goto found;
-+	}
-+
-+	if (wnd->uptodated == 1) {
-+		/* extents tree is updated -> no free space */
-+		goto no_space;
-+	}
-+
-+	b_len = e->count.key;
-+	b_pos = e->start.key;
-+
-+scan_bitmap:
-+	sb = wnd->sb;
-+	log2_bits = sb->s_blocksize_bits + 3;
-+
-+	/* At most two ranges [hint, max_alloc) + [0, hint) */
-+Again:
-+
-+	/* TODO: optimize request for case nbits > wbits */
-+	iw = hint >> log2_bits;
-+	wbits = sb->s_blocksize * 8;
-+	wpos = hint & (wbits - 1);
-+	prev_tail = 0;
-+	fbits_valid = true;
-+
-+	if (max_alloc == wnd->nbits) {
-+		nwnd = wnd->nwnd;
-+	} else {
-+		size_t t = max_alloc + wbits - 1;
-+
-+		nwnd = likely(t > max_alloc) ? (t >> log2_bits) : wnd->nwnd;
-+	}
-+
-+	/* Enumerate all windows */
-+	iw -= 1;
-+next_wnd:
-+	iw += 1;
-+	if (iw >= nwnd)
-+		goto estimate;
-+
-+	wbit = iw << log2_bits;
-+
-+	if (!wnd->free_bits[iw]) {
-+		if (prev_tail > b_len) {
-+			b_pos = wbit - prev_tail;
-+			b_len = prev_tail;
-+		}
-+
-+		/* Skip full used window */
-+		prev_tail = 0;
-+		wpos = 0;
-+		goto next_wnd;
-+	}
-+
-+	if (unlikely(iw + 1 == nwnd)) {
-+		if (max_alloc == wnd->nbits)
-+			wbits = wnd->bits_last;
-+		else {
-+			size_t t = max_alloc & (wbits - 1);
-+
-+			if (t) {
-+				wbits = t;
-+				fbits_valid = false;
-+			}
-+		}
-+	}
-+
-+	if (wnd->zone_end <= wnd->zone_bit)
-+		goto skip_zone;
-+
-+	ebit = wbit + wbits;
-+	zbit = max(wnd->zone_bit, wbit);
-+	zend = min(wnd->zone_end, ebit);
-+
-+	/* Here we have a window [wbit, ebit) and zone [zbit, zend) */
-+	if (zend <= zbit) {
-+		/* Zone does not overlap window */
-+		goto skip_zone;
-+	}
-+
-+	wzbit = zbit - wbit;
-+	wzend = zend - wbit;
-+
-+	/* Zone overlaps window */
-+	if (wnd->free_bits[iw] == wzend - wzbit) {
-+		prev_tail = 0;
-+		wpos = 0;
-+		goto next_wnd;
-+	}
-+
-+	/* Scan two ranges window: [wbit, zbit) and [zend, ebit) */
-+	bh = wnd_map(wnd, iw);
-+
-+	if (IS_ERR(bh)) {
-+		/* TODO: error */
-+		prev_tail = 0;
-+		wpos = 0;
-+		goto next_wnd;
-+	}
-+
-+	buf = (ulong *)bh->b_data;
-+
-+	/* Scan range [wbit, zbit) */
-+	if (wpos < wzbit) {
-+		/* Scan range [wpos, zbit) */
-+		fnd = wnd_scan(buf, wbit, wpos, wzbit, to_alloc, &prev_tail,
-+			       &b_pos, &b_len);
-+		if (fnd != MINUS_ONE_T) {
-+			put_bh(bh);
-+			goto found;
-+		}
-+	}
-+
-+	prev_tail = 0;
-+
-+	/* Scan range [zend, ebit) */
-+	if (wzend < wbits) {
-+		fnd = wnd_scan(buf, wbit, max(wzend, wpos), wbits, to_alloc,
-+			       &prev_tail, &b_pos, &b_len);
-+		if (fnd != MINUS_ONE_T) {
-+			put_bh(bh);
-+			goto found;
-+		}
-+	}
-+
-+	wpos = 0;
-+	put_bh(bh);
-+	goto next_wnd;
-+
-+skip_zone:
-+	/* Current window does not overlap zone */
-+	if (!wpos && fbits_valid && wnd->free_bits[iw] == wbits) {
-+		/* window is empty */
-+		if (prev_tail + wbits >= to_alloc) {
-+			fnd = wbit + wpos - prev_tail;
-+			goto found;
-+		}
-+
-+		/* Increase 'prev_tail' and process next window */
-+		prev_tail += wbits;
-+		wpos = 0;
-+		goto next_wnd;
-+	}
-+
-+	/* read window */
-+	bh = wnd_map(wnd, iw);
-+	if (IS_ERR(bh)) {
-+		// TODO: error
-+		prev_tail = 0;
-+		wpos = 0;
-+		goto next_wnd;
-+	}
-+
-+	buf = (ulong *)bh->b_data;
-+
-+	/* Scan range [wpos, eBits) */
-+	fnd = wnd_scan(buf, wbit, wpos, wbits, to_alloc, &prev_tail, &b_pos,
-+		       &b_len);
-+	put_bh(bh);
-+	if (fnd != MINUS_ONE_T)
-+		goto found;
-+	goto next_wnd;
-+
-+estimate:
-+	if (b_len < prev_tail) {
-+		/* The last fragment */
-+		b_len = prev_tail;
-+		b_pos = max_alloc - prev_tail;
-+	}
-+
-+	if (hint) {
-+		/*
-+		 * We have scanned range [hint max_alloc)
-+		 * Prepare to scan range [0 hint + to_alloc)
-+		 */
-+		size_t nextmax = hint + to_alloc;
-+
-+		if (likely(nextmax >= hint) && nextmax < max_alloc)
-+			max_alloc = nextmax;
-+		hint = 0;
-+		goto Again;
-+	}
-+
-+	if (!b_len)
-+		goto no_space;
-+
-+	wnd->extent_max = b_len;
-+
-+	if (flags & BITMAP_FIND_FULL)
-+		goto no_space;
-+
-+	fnd = b_pos;
-+	to_alloc = b_len;
-+
-+found:
-+	if (flags & BITMAP_FIND_MARK_AS_USED) {
-+		/* TODO optimize remove extent (pass 'e'?) */
-+		if (wnd_set_used(wnd, fnd, to_alloc))
-+			goto no_space;
-+	} else if (wnd->extent_max != MINUS_ONE_T &&
-+		   to_alloc > wnd->extent_max) {
-+		wnd->extent_max = to_alloc;
-+	}
-+
-+	*allocated = fnd;
-+	return to_alloc;
-+
-+no_space:
-+	return 0;
-+}
-+
-+/*
-+ * wnd_extend
 + *
-+ * Extend bitmap ($MFT bitmap)
 + */
-+int wnd_extend(struct wnd_bitmap *wnd, size_t new_bits)
++int al_update(struct ntfs_inode *ni)
 +{
 +	int err;
-+	struct super_block *sb = wnd->sb;
-+	struct ntfs_sb_info *sbi = sb->s_fs_info;
-+	u32 blocksize = sb->s_blocksize;
-+	u32 wbits = blocksize * 8;
-+	u32 b0, new_last;
-+	size_t bits, iw, new_wnd;
-+	size_t old_bits = wnd->nbits;
-+	u16 *new_free;
++	struct ntfs_sb_info *sbi = ni->mi.sbi;
++	struct ATTRIB *attr;
++	typeof(ni->attr_list) *al = &ni->attr_list;
 +
-+	if (new_bits <= old_bits)
-+		return -EINVAL;
++	if (!al->dirty)
++		return 0;
 +
-+	/* align to 8 byte boundary */
-+	new_wnd = bytes_to_block(sb, bitmap_size(new_bits));
-+	new_last = new_bits & (wbits - 1);
-+	if (!new_last)
-+		new_last = wbits;
++	err = attr_set_size(ni, ATTR_LIST, NULL, 0, &al->run, al->size, NULL,
++			    false, &attr);
++	if (err)
++		goto out;
 +
-+	if (new_wnd == wnd->nwnd)
-+		goto skip_reallocate;
-+
-+	if (new_wnd <= ARRAY_SIZE(wnd->free_holder))
-+		new_free = wnd->free_holder;
++	if (!attr->non_res)
++		memcpy(resident_data(attr), al->le, al->size);
 +	else {
-+		new_free = ntfs_alloc(new_wnd * sizeof(u16), 0);
-+		if (!new_free)
-+			return -ENOMEM;
-+	}
-+
-+	if (new_free != wnd->free_bits)
-+		memcpy(new_free, wnd->free_bits, wnd->nwnd * sizeof(short));
-+	memset(new_free + wnd->nwnd, 0, (new_wnd - wnd->nwnd) * sizeof(short));
-+	if (wnd->free_bits != wnd->free_holder)
-+		ntfs_free(wnd->free_bits);
-+
-+	wnd->free_bits = new_free;
-+
-+skip_reallocate:
-+	/* Zero bits [old_bits,new_bits) */
-+	bits = new_bits - old_bits;
-+	b0 = old_bits & (wbits - 1);
-+
-+	for (iw = old_bits >> (sb->s_blocksize_bits + 3); bits; iw += 1) {
-+		u32 op;
-+		size_t frb;
-+		u64 vbo, lbo, bytes;
-+		struct buffer_head *bh;
-+		ulong *buf;
-+
-+		if (iw + 1 == new_wnd)
-+			wbits = new_last;
-+
-+		op = b0 + bits > wbits ? wbits - b0 : bits;
-+		vbo = (u64)iw * blocksize;
-+
-+		err = ntfs_vbo_to_lbo(sbi, &wnd->run, vbo, &lbo, &bytes);
++		err = ntfs_sb_write_run(sbi, &al->run, 0, al->le, al->size);
 +		if (err)
-+			break;
++			goto out;
 +
-+		bh = ntfs_bread(sb, lbo >> sb->s_blocksize_bits);
-+		if (!bh)
-+			return -EIO;
-+
-+		lock_buffer(bh);
-+		buf = (ulong *)bh->b_data;
-+
-+		__bitmap_clear(buf, b0, blocksize * 8 - b0);
-+		frb = wbits - __bitmap_weight(buf, wbits);
-+		wnd->total_zeroes += frb - wnd->free_bits[iw];
-+		wnd->free_bits[iw] = frb;
-+
-+		set_buffer_uptodate(bh);
-+		mark_buffer_dirty(bh);
-+		unlock_buffer(bh);
-+		/*err = sync_dirty_buffer(bh);*/
-+
-+		b0 = 0;
-+		bits -= op;
++		attr->nres.valid_size = attr->nres.data_size;
 +	}
 +
-+	wnd->nbits = new_bits;
-+	wnd->nwnd = new_wnd;
-+	wnd->bits_last = new_last;
++	ni->mi.dirty = true;
++	al->dirty = false;
 +
-+	wnd_add_free_ext(wnd, old_bits, new_bits - old_bits, false);
++out:
++	return err;
++}
+diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+new file mode 100644
+index 000000000000..04e1c74b0e3d
+--- /dev/null
++++ b/fs/ntfs3/xattr.c
+@@ -0,0 +1,1007 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ *  linux/fs/ntfs3/xattr.c
++ *
++ * Copyright (C) 2019-2020 Paragon Software GmbH, All rights reserved.
++ *
++ */
 +
-+	return 0;
++#include <linux/blkdev.h>
++#include <linux/buffer_head.h>
++#include <linux/fs.h>
++#include <linux/nls.h>
++#include <linux/posix_acl.h>
++#include <linux/posix_acl_xattr.h>
++#include <linux/xattr.h>
++
++#include "debug.h"
++#include "ntfs.h"
++#include "ntfs_fs.h"
++
++#define SYSTEM_DOS_ATTRIB "system.dos_attrib"
++#define SYSTEM_NTFS_ATTRIB "system.ntfs_attrib"
++#define SYSTEM_NTFS_ATTRIB_BE "system.ntfs_attrib_be"
++#define SAMBA_PROCESS_NAME "smbd"
++#define USER_DOSATTRIB "user.DOSATTRIB"
++
++static inline size_t unpacked_ea_size(const struct EA_FULL *ea)
++{
++	return !ea->size ? DwordAlign(offsetof(struct EA_FULL, name) + 1 +
++				      ea->name_len + le16_to_cpu(ea->elength)) :
++			   le32_to_cpu(ea->size);
++}
++
++static inline size_t packed_ea_size(const struct EA_FULL *ea)
++{
++	return offsetof(struct EA_FULL, name) + 1 -
++	       offsetof(struct EA_FULL, flags) + ea->name_len +
++	       le16_to_cpu(ea->elength);
 +}
 +
 +/*
-+ * wnd_zone_set
++ * find_ea
++ *
++ * assume there is at least one xattr in the list
 + */
-+void wnd_zone_set(struct wnd_bitmap *wnd, size_t lcn, size_t len)
++static inline bool find_ea(const struct EA_FULL *ea_all, u32 bytes,
++			   const char *name, u8 name_len, u32 *off)
 +{
-+	size_t zlen;
++	*off = 0;
 +
-+	zlen = wnd->zone_end - wnd->zone_bit;
-+	if (zlen)
-+		wnd_add_free_ext(wnd, wnd->zone_bit, zlen, false);
++	if (!ea_all || !bytes)
++		return false;
 +
-+	if (!RB_EMPTY_ROOT(&wnd->start_tree) && len)
-+		wnd_remove_free_ext(wnd, lcn, len);
++	for (;;) {
++		const struct EA_FULL *ea = Add2Ptr(ea_all, *off);
++		u32 next_off = *off + unpacked_ea_size(ea);
 +
-+	wnd->zone_bit = lcn;
-+	wnd->zone_end = lcn + len;
++		if (next_off > bytes)
++			return false;
++
++		if (ea->name_len == name_len &&
++		    !memcmp(ea->name, name, name_len))
++			return true;
++
++		*off = next_off;
++		if (next_off >= bytes)
++			return false;
++	}
 +}
 +
-+int ntfs_trim_fs(struct ntfs_sb_info *sbi, struct fstrim_range *range)
++/*
++ * ntfs_read_ea
++ *
++ * reads all extended attributes
++ * ea - new allocated memory
++ * info - pointer into resident data
++ */
++static int ntfs_read_ea(struct ntfs_inode *ni, struct EA_FULL **ea,
++			size_t add_bytes, const struct EA_INFO **info)
 +{
-+	int err = 0;
-+	struct super_block *sb = sbi->sb;
-+	struct wnd_bitmap *wnd = &sbi->used.bitmap;
-+	u32 wbits = 8 * sb->s_blocksize;
-+	CLST len = 0, lcn = 0, done = 0;
-+	CLST minlen = bytes_to_cluster(sbi, range->minlen);
-+	CLST lcn_from = bytes_to_cluster(sbi, range->start);
-+	size_t iw = lcn_from >> (sb->s_blocksize_bits + 3);
-+	u32 wbit = lcn_from & (wbits - 1);
-+	const ulong *buf;
-+	CLST lcn_to;
++	int err;
++	struct ATTR_LIST_ENTRY *le = NULL;
++	struct ATTRIB *attr_info, *attr_ea;
++	void *ea_p;
++	u32 size;
 +
-+	if (!minlen)
-+		minlen = 1;
++	static_assert(le32_to_cpu(ATTR_EA_INFO) < le32_to_cpu(ATTR_EA));
 +
-+	if (range->len == (u64)-1)
-+		lcn_to = wnd->nbits;
-+	else
-+		lcn_to = bytes_to_cluster(sbi, range->start + range->len);
++	*ea = NULL;
++	*info = NULL;
 +
-+	down_read_nested(&wnd->rw_lock, BITMAP_MUTEX_CLUSTERS);
++	attr_info =
++		ni_find_attr(ni, NULL, &le, ATTR_EA_INFO, NULL, 0, NULL, NULL);
++	attr_ea =
++		ni_find_attr(ni, attr_info, &le, ATTR_EA, NULL, 0, NULL, NULL);
 +
-+	for (; iw < wnd->nbits; iw++, wbit = 0) {
-+		CLST lcn_wnd = iw * wbits;
-+		struct buffer_head *bh;
++	if (!attr_ea || !attr_info)
++		return 0;
 +
-+		if (lcn_wnd > lcn_to)
-+			break;
++	*info = resident_data_ex(attr_info, sizeof(struct EA_INFO));
++	if (!*info)
++		return -EINVAL;
 +
-+		if (!wnd->free_bits[iw])
-+			continue;
++	/* Check Ea limit */
++	size = le32_to_cpu((*info)->size);
++	if (size > MAX_EA_DATA_SIZE || size + add_bytes > MAX_EA_DATA_SIZE)
++		return -EINVAL;
 +
-+		if (iw + 1 == wnd->nwnd)
-+			wbits = wnd->bits_last;
++	/* Allocate memory for packed Ea */
++	ea_p = ntfs_alloc(size + add_bytes, 0);
++	if (!ea_p)
++		return -ENOMEM;
 +
-+		if (lcn_wnd + wbits > lcn_to)
-+			wbits = lcn_to - lcn_wnd;
++	if (attr_ea->non_res) {
++		struct runs_tree run;
 +
-+		bh = wnd_map(wnd, iw);
-+		if (IS_ERR(bh)) {
-+			err = PTR_ERR(bh);
-+			break;
-+		}
++		run_init(&run);
 +
-+		buf = (ulong *)bh->b_data;
++		err = attr_load_runs(attr_ea, ni, &run);
++		if (!err)
++			err = ntfs_read_run_nb(ni->mi.sbi, &run, 0, ea_p, size,
++					       NULL);
++		run_close(&run);
 +
-+		for (; wbit < wbits; wbit++) {
-+			if (!test_bit(wbit, buf)) {
-+				if (!len)
-+					lcn = lcn_wnd + wbit;
-+				len += 1;
-+				continue;
-+			}
-+			if (len >= minlen) {
-+				err = ntfs_discard(sbi, lcn, len);
-+				if (err)
-+					goto out;
-+				done += len;
-+			}
-+			len = 0;
-+		}
-+		put_bh(bh);
-+	}
-+
-+	/* Process the last fragment */
-+	if (len >= minlen) {
-+		err = ntfs_discard(sbi, lcn, len);
 +		if (err)
 +			goto out;
-+		done += len;
++	} else {
++		void *p = resident_data_ex(attr_ea, size);
++
++		if (!p) {
++			err = -EINVAL;
++			goto out;
++		}
++		memcpy(ea_p, p, size);
 +	}
 +
-+out:
-+	range->len = done << sbi->cluster_bits;
++	memset(Add2Ptr(ea_p, size), 0, add_bytes);
++	*ea = ea_p;
++	return 0;
 +
-+	up_read(&wnd->rw_lock);
++out:
++	ntfs_free(ea_p);
++	*ea = NULL;
++	return err;
++}
++
++/*
++ * ntfs_listxattr_hlp
++ *
++ * copy a list of xattrs names into the buffer
++ * provided, or compute the buffer size required
++ */
++static int ntfs_listxattr_hlp(struct ntfs_inode *ni, char *buffer,
++			      size_t bytes_per_buffer, size_t *bytes)
++{
++	const struct EA_INFO *info;
++	struct EA_FULL *ea_all = NULL;
++	const struct EA_FULL *ea;
++	u32 off, size;
++	int err;
++
++	*bytes = 0;
++
++	err = ntfs_read_ea(ni, &ea_all, 0, &info);
++	if (err)
++		return err;
++
++	if (!info)
++		return 0;
++
++	size = le32_to_cpu(info->size);
++
++	if (!ea_all)
++		return 0;
++
++	/* Enumerate all xattrs */
++	off = 0;
++next_ea:
++	if (off >= size)
++		goto out;
++
++	ea = Add2Ptr(ea_all, off);
++
++	if (!buffer)
++		goto skip_ea;
++
++	if (*bytes + ea->name_len + 1 > bytes_per_buffer) {
++		err = -ERANGE;
++		goto out;
++	}
++
++	memcpy(buffer + *bytes, ea->name, ea->name_len);
++	buffer[*bytes + ea->name_len] = 0;
++
++skip_ea:
++	*bytes += ea->name_len + 1;
++	off += unpacked_ea_size(ea);
++	goto next_ea;
++
++out:
++	ntfs_free(ea_all);
++	return err;
++}
++
++/*
++ * ntfs_get_ea
++ *
++ * reads xattr
++ */
++static int ntfs_get_ea(struct ntfs_inode *ni, const char *name, size_t name_len,
++		       void *buffer, size_t bytes_per_buffer, u32 *len)
++{
++	const struct EA_INFO *info;
++	struct EA_FULL *ea_all = NULL;
++	const struct EA_FULL *ea;
++	u32 off;
++	int err;
++
++	*len = 0;
++
++	if (name_len > 255) {
++		err = -ENAMETOOLONG;
++		goto out;
++	}
++
++	err = ntfs_read_ea(ni, &ea_all, 0, &info);
++	if (err)
++		goto out;
++
++	if (!info)
++		goto out;
++
++	/* Enumerate all xattrs */
++	if (!find_ea(ea_all, le32_to_cpu(info->size), name, name_len, &off)) {
++		err = -ENODATA;
++		goto out;
++	}
++	ea = Add2Ptr(ea_all, off);
++
++	*len = le16_to_cpu(ea->elength);
++	if (!buffer) {
++		err = 0;
++		goto out;
++	}
++
++	if (*len > bytes_per_buffer) {
++		err = -ERANGE;
++		goto out;
++	}
++	memcpy(buffer, ea->name + ea->name_len + 1, *len);
++	err = 0;
++
++out:
++	ntfs_free(ea_all);
 +
 +	return err;
 +}
++
++static noinline int ntfs_getxattr_hlp(struct inode *inode, const char *name,
++				      void *value, size_t size,
++				      size_t *required)
++{
++	struct ntfs_inode *ni = ntfs_i(inode);
++	int err;
++	u32 len;
++
++	if (!(ni->ni_flags & NI_FLAG_EA))
++		return -ENODATA;
++
++	if (!required)
++		ni_lock(ni);
++
++	err = ntfs_get_ea(ni, name, strlen(name), value, size, &len);
++	if (!err)
++		err = len;
++	else if (-ERANGE == err && required)
++		*required = len;
++
++	if (!required)
++		ni_unlock(ni);
++
++	return err;
++}
++
++static noinline int ntfs_set_ea(struct inode *inode, const char *name,
++				const void *value, size_t val_size, int flags,
++				int locked)
++{
++	struct ntfs_inode *ni = ntfs_i(inode);
++	struct ntfs_sb_info *sbi = ni->mi.sbi;
++	int err;
++	struct EA_INFO ea_info;
++	const struct EA_INFO *info;
++	struct EA_FULL *new_ea;
++	struct EA_FULL *ea_all = NULL;
++	size_t name_len, add;
++	u32 off, size;
++	struct ATTRIB *attr;
++	struct ATTR_LIST_ENTRY *le;
++	struct mft_inode *mi;
++	struct runs_tree ea_run;
++	u64 new_sz;
++	void *p;
++
++	if (!locked)
++		ni_lock(ni);
++
++	run_init(&ea_run);
++	name_len = strlen(name);
++
++	if (name_len > 255) {
++		err = -ENAMETOOLONG;
++		goto out;
++	}
++
++	add = DwordAlign(offsetof(struct EA_FULL, name) + 1 + name_len +
++			 val_size);
++
++	err = ntfs_read_ea(ni, &ea_all, add, &info);
++	if (err)
++		goto out;
++
++	if (!info) {
++		memset(&ea_info, 0, sizeof(ea_info));
++		size = 0;
++	} else {
++		memcpy(&ea_info, info, sizeof(ea_info));
++		size = le32_to_cpu(ea_info.size);
++	}
++
++	if (info && find_ea(ea_all, size, name, name_len, &off)) {
++		struct EA_FULL *ea;
++		size_t ea_sz;
++
++		if (flags & XATTR_CREATE) {
++			err = -EEXIST;
++			goto out;
++		}
++
++		/* Remove current xattr */
++		ea = Add2Ptr(ea_all, off);
++		if (ea->flags & FILE_NEED_EA)
++			le16_add_cpu(&ea_info.count, -1);
++
++		ea_sz = unpacked_ea_size(ea);
++
++		le16_add_cpu(&ea_info.size_pack, 0 - packed_ea_size(ea));
++
++		memmove(ea, Add2Ptr(ea, ea_sz), size - off - ea_sz);
++
++		size -= ea_sz;
++		memset(Add2Ptr(ea_all, size), 0, ea_sz);
++
++		ea_info.size = cpu_to_le32(size);
++
++		if ((flags & XATTR_REPLACE) && !val_size)
++			goto update_ea;
++	} else {
++		if (flags & XATTR_REPLACE) {
++			err = -ENODATA;
++			goto out;
++		}
++
++		if (!ea_all) {
++			ea_all = ntfs_alloc(add, 1);
++			if (!ea_all) {
++				err = -ENOMEM;
++				goto out;
++			}
++		}
++	}
++
++	/* append new xattr */
++	new_ea = Add2Ptr(ea_all, size);
++	new_ea->size = cpu_to_le32(add);
++	new_ea->flags = 0;
++	new_ea->name_len = name_len;
++	new_ea->elength = cpu_to_le16(val_size);
++	memcpy(new_ea->name, name, name_len);
++	new_ea->name[name_len] = 0;
++	memcpy(new_ea->name + name_len + 1, value, val_size);
++
++	le16_add_cpu(&ea_info.size_pack, packed_ea_size(new_ea));
++	size += add;
++	ea_info.size = cpu_to_le32(size);
++
++update_ea:
++
++	if (!info) {
++		/* Create xattr */
++		if (!size) {
++			err = 0;
++			goto out;
++		}
++
++		err = ni_insert_resident(ni, sizeof(struct EA_INFO),
++					 ATTR_EA_INFO, NULL, 0, NULL, NULL);
++		if (err)
++			goto out;
++
++		err = ni_insert_resident(ni, 0, ATTR_EA, NULL, 0, NULL, NULL);
++		if (err)
++			goto out;
++	}
++
++	new_sz = size;
++	err = attr_set_size(ni, ATTR_EA, NULL, 0, &ea_run, new_sz, &new_sz,
++			    false, NULL);
++	if (err)
++		goto out;
++
++	le = NULL;
++	attr = ni_find_attr(ni, NULL, &le, ATTR_EA_INFO, NULL, 0, NULL, &mi);
++	if (!attr) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	if (!size) {
++		/* delete xattr, ATTR_EA_INFO */
++		err = ni_remove_attr_le(ni, attr, le);
++		if (err)
++			goto out;
++	} else {
++		p = resident_data_ex(attr, sizeof(struct EA_INFO));
++		if (!p) {
++			err = -EINVAL;
++			goto out;
++		}
++		memcpy(p, &ea_info, sizeof(struct EA_INFO));
++		mi->dirty = true;
++	}
++
++	le = NULL;
++	attr = ni_find_attr(ni, NULL, &le, ATTR_EA, NULL, 0, NULL, &mi);
++	if (!attr) {
++		err = -EINVAL;
++		goto out;
++	}
++
++	if (!size) {
++		/* delete xattr, ATTR_EA */
++		err = ni_remove_attr_le(ni, attr, le);
++		if (err)
++			goto out;
++	} else if (attr->non_res) {
++		err = ntfs_sb_write_run(sbi, &ea_run, 0, ea_all, size);
++		if (err)
++			goto out;
++	} else {
++		p = resident_data_ex(attr, size);
++		if (!p) {
++			err = -EINVAL;
++			goto out;
++		}
++		memcpy(p, ea_all, size);
++		mi->dirty = true;
++	}
++
++	ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
++	mark_inode_dirty(&ni->vfs_inode);
++
++	/* Check if we delete the last xattr */
++	if (val_size || flags != XATTR_REPLACE ||
++	    ntfs_listxattr_hlp(ni, NULL, 0, &val_size) || val_size) {
++		ni->ni_flags |= NI_FLAG_EA;
++	} else {
++		ni->ni_flags &= ~NI_FLAG_EA;
++	}
++
++out:
++	if (!locked)
++		ni_unlock(ni);
++
++	run_close(&ea_run);
++	ntfs_free(ea_all);
++
++	return err;
++}
++
++static inline void ntfs_posix_acl_release(struct posix_acl *acl)
++{
++	if (acl && refcount_dec_and_test(&acl->a_refcount))
++		kfree(acl);
++}
++
++static struct posix_acl *ntfs_get_acl_ex(struct inode *inode, int type,
++					 int locked)
++{
++	struct ntfs_inode *ni = ntfs_i(inode);
++	const char *name;
++	struct posix_acl *acl;
++	size_t req;
++	int err;
++	void *buf;
++
++	buf = __getname();
++	if (!buf)
++		return ERR_PTR(-ENOMEM);
++
++	/* Possible values of 'type' was already checked above */
++	name = type == ACL_TYPE_ACCESS ? XATTR_NAME_POSIX_ACL_ACCESS :
++					 XATTR_NAME_POSIX_ACL_DEFAULT;
++
++	if (!locked)
++		ni_lock(ni);
++
++	err = ntfs_getxattr_hlp(inode, name, buf, PATH_MAX, &req);
++
++	if (!locked)
++		ni_unlock(ni);
++
++	/* Translate extended attribute to acl */
++	if (err > 0) {
++		acl = posix_acl_from_xattr(&init_user_ns, buf, err);
++		if (!IS_ERR(acl))
++			set_cached_acl(inode, type, acl);
++	} else {
++		acl = err == -ENODATA ? NULL : ERR_PTR(err);
++	}
++
++	__putname(buf);
++
++	return acl;
++}
++
++/*
++ * ntfs_get_acl
++ *
++ * inode_operations::get_acl
++ */
++struct posix_acl *ntfs_get_acl(struct inode *inode, int type)
++{
++	return ntfs_get_acl_ex(inode, type, 0);
++}
++
++static noinline int ntfs_set_acl_ex(struct inode *inode, struct posix_acl *acl,
++				    int type, int locked)
++{
++	const char *name;
++	size_t size;
++	void *value = NULL;
++	int err = 0;
++
++	if (S_ISLNK(inode->i_mode))
++		return -EOPNOTSUPP;
++
++	switch (type) {
++	case ACL_TYPE_ACCESS:
++		if (acl) {
++			umode_t mode = inode->i_mode;
++
++			err = posix_acl_equiv_mode(acl, &mode);
++			if (err < 0)
++				return err;
++
++			if (inode->i_mode != mode) {
++				inode->i_mode = mode;
++				mark_inode_dirty(inode);
++			}
++
++			if (!err) {
++				/*
++				 * acl can be exactly represented in the
++				 * traditional file mode permission bits
++				 */
++				acl = NULL;
++				goto out;
++			}
++		}
++		name = XATTR_NAME_POSIX_ACL_ACCESS;
++		break;
++
++	case ACL_TYPE_DEFAULT:
++		if (!S_ISDIR(inode->i_mode))
++			return acl ? -EACCES : 0;
++		name = XATTR_NAME_POSIX_ACL_DEFAULT;
++		break;
++
++	default:
++		return -EINVAL;
++	}
++
++	if (!acl)
++		goto out;
++
++	size = posix_acl_xattr_size(acl->a_count);
++	value = ntfs_alloc(size, 0);
++	if (!value)
++		return -ENOMEM;
++
++	err = posix_acl_to_xattr(&init_user_ns, acl, value, size);
++	if (err)
++		goto out;
++
++	err = ntfs_set_ea(inode, name, value, size, 0, locked);
++	if (err)
++		goto out;
++
++out:
++	if (!err)
++		set_cached_acl(inode, type, acl);
++
++	kfree(value);
++
++	return err;
++}
++
++/*
++ * ntfs_set_acl
++ *
++ * inode_operations::set_acl
++ */
++int ntfs_set_acl(struct inode *inode, struct posix_acl *acl, int type)
++{
++	return ntfs_set_acl_ex(inode, acl, type, 0);
++}
++
++static int ntfs_xattr_get_acl(struct inode *inode, int type, void *buffer,
++			      size_t size)
++{
++	struct super_block *sb = inode->i_sb;
++	struct posix_acl *acl;
++	int err;
++
++	if (!(sb->s_flags & SB_POSIXACL))
++		return -EOPNOTSUPP;
++
++	acl = ntfs_get_acl(inode, type);
++	if (IS_ERR(acl))
++		return PTR_ERR(acl);
++
++	if (!acl)
++		return -ENODATA;
++
++	err = posix_acl_to_xattr(&init_user_ns, acl, buffer, size);
++	ntfs_posix_acl_release(acl);
++
++	return err;
++}
++
++static int ntfs_xattr_set_acl(struct inode *inode, int type, const void *value,
++			      size_t size)
++{
++	struct super_block *sb = inode->i_sb;
++	struct posix_acl *acl;
++	int err;
++
++	if (!(sb->s_flags & SB_POSIXACL))
++		return -EOPNOTSUPP;
++
++	if (!inode_owner_or_capable(inode))
++		return -EPERM;
++
++	if (!value)
++		return 0;
++
++	acl = posix_acl_from_xattr(&init_user_ns, value, size);
++	if (IS_ERR(acl))
++		return PTR_ERR(acl);
++
++	if (acl) {
++		err = posix_acl_valid(sb->s_user_ns, acl);
++		if (err)
++			goto release_and_out;
++	}
++
++	err = ntfs_set_acl(inode, acl, type);
++
++release_and_out:
++	ntfs_posix_acl_release(acl);
++	return err;
++}
++
++/*
++ * ntfs_acl_chmod
++ *
++ * helper for 'ntfs_setattr'
++ */
++int ntfs_acl_chmod(struct inode *inode)
++{
++	struct super_block *sb = inode->i_sb;
++	int err;
++
++	if (!(sb->s_flags & SB_POSIXACL))
++		return 0;
++
++	if (S_ISLNK(inode->i_mode))
++		return -EOPNOTSUPP;
++
++	err = posix_acl_chmod(inode, inode->i_mode);
++
++	return err;
++}
++
++/*
++ * ntfs_permission
++ *
++ * inode_operations::permission
++ */
++int ntfs_permission(struct inode *inode, int mask)
++{
++	struct super_block *sb = inode->i_sb;
++	struct ntfs_sb_info *sbi = sb->s_fs_info;
++	int err;
++
++	if (sbi->options.no_acs_rules) {
++		/* "no access rules" mode - allow all changes */
++		return 0;
++	}
++
++	err = generic_permission(inode, mask);
++
++	return err;
++}
++
++/*
++ * ntfs_listxattr
++ *
++ * inode_operations::listxattr
++ */
++ssize_t ntfs_listxattr(struct dentry *dentry, char *buffer, size_t size)
++{
++	struct inode *inode = d_inode(dentry);
++	struct ntfs_inode *ni = ntfs_i(inode);
++	ssize_t ret = -1;
++	int err;
++
++	if (!(ni->ni_flags & NI_FLAG_EA)) {
++		ret = 0;
++		goto out;
++	}
++
++	ni_lock(ni);
++
++	err = ntfs_listxattr_hlp(ni, buffer, size, (size_t *)&ret);
++
++	ni_unlock(ni);
++
++	if (err)
++		ret = err;
++out:
++
++	return ret;
++}
++
++static int ntfs_getxattr(const struct xattr_handler *handler, struct dentry *de,
++			 struct inode *inode, const char *name, void *buffer,
++			 size_t size)
++{
++	int err;
++	struct ntfs_inode *ni = ntfs_i(inode);
++	size_t name_len = strlen(name);
++
++	/* Dispatch request */
++	if (name_len == sizeof(SYSTEM_DOS_ATTRIB) - 1 &&
++	    !memcmp(name, SYSTEM_DOS_ATTRIB, sizeof(SYSTEM_DOS_ATTRIB))) {
++		/* system.dos_attrib */
++		if (!buffer)
++			err = sizeof(u8);
++		else if (size < sizeof(u8))
++			err = -ENODATA;
++		else {
++			err = sizeof(u8);
++			*(u8 *)buffer = le32_to_cpu(ni->std_fa);
++		}
++		goto out;
++	}
++
++	if (name_len == sizeof(SYSTEM_NTFS_ATTRIB) - 1 &&
++	    !memcmp(name, SYSTEM_NTFS_ATTRIB, sizeof(SYSTEM_NTFS_ATTRIB))) {
++		/* system.ntfs_attrib */
++		if (!buffer)
++			err = sizeof(u32);
++		else if (size < sizeof(u32))
++			err = -ENODATA;
++		else {
++			err = sizeof(u32);
++			*(u32 *)buffer = le32_to_cpu(ni->std_fa);
++		}
++		goto out;
++	}
++
++	if (name_len == sizeof(SYSTEM_NTFS_ATTRIB_BE) - 1 &&
++	    !memcmp(name, SYSTEM_NTFS_ATTRIB_BE,
++		    sizeof(SYSTEM_NTFS_ATTRIB_BE))) {
++		/* system.ntfs_attrib_be */
++		if (!buffer)
++			err = sizeof(u32);
++		else if (size < sizeof(u32))
++			err = -ENODATA;
++		else {
++			err = sizeof(u32);
++			*(__be32 *)buffer =
++				cpu_to_be32(le32_to_cpu(ni->std_fa));
++		}
++		goto out;
++	}
++
++	if (name_len == sizeof(USER_DOSATTRIB) - 1 &&
++	    !memcmp(current->comm, SAMBA_PROCESS_NAME,
++		    sizeof(SAMBA_PROCESS_NAME)) &&
++	    !memcmp(name, USER_DOSATTRIB, sizeof(USER_DOSATTRIB))) {
++		/* user.DOSATTRIB */
++		if (!buffer)
++			err = 5;
++		else if (size < 5)
++			err = -ENODATA;
++		else {
++			err = sprintf((char *)buffer, "0x%x",
++				      le32_to_cpu(ni->std_fa) & 0xff) +
++			      1;
++		}
++		goto out;
++	}
++
++	if ((name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 &&
++	     !memcmp(name, XATTR_NAME_POSIX_ACL_ACCESS,
++		     sizeof(XATTR_NAME_POSIX_ACL_ACCESS))) ||
++	    (name_len == sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1 &&
++	     !memcmp(name, XATTR_NAME_POSIX_ACL_DEFAULT,
++		     sizeof(XATTR_NAME_POSIX_ACL_DEFAULT)))) {
++		err = ntfs_xattr_get_acl(
++			inode,
++			name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 ?
++				ACL_TYPE_ACCESS :
++				ACL_TYPE_DEFAULT,
++			buffer, size);
++	} else {
++		err = ntfs_getxattr_hlp(inode, name, buffer, size, NULL);
++	}
++
++out:
++	return err;
++}
++
++/*
++ * ntfs_setxattr
++ *
++ * inode_operations::setxattr
++ */
++static noinline int ntfs_setxattr(const struct xattr_handler *handler,
++				  struct dentry *de, struct inode *inode,
++				  const char *name, const void *value,
++				  size_t size, int flags)
++{
++	int err = -EINVAL;
++	struct ntfs_inode *ni = ntfs_i(inode);
++	size_t name_len = strlen(name);
++	u32 attrib = 0; /* not necessary just to suppress warnings */
++	__le32 new_fa;
++
++	/* Dispatch request */
++	if (name_len == sizeof(SYSTEM_DOS_ATTRIB) - 1 &&
++	    !memcmp(name, SYSTEM_DOS_ATTRIB, sizeof(SYSTEM_DOS_ATTRIB))) {
++		if (sizeof(u8) != size)
++			goto out;
++		attrib = *(u8 *)value;
++		goto set_dos_attr;
++	}
++
++	if (name_len == sizeof(SYSTEM_NTFS_ATTRIB) - 1 &&
++	    !memcmp(name, SYSTEM_NTFS_ATTRIB, sizeof(SYSTEM_NTFS_ATTRIB))) {
++		if (sizeof(u32) != size)
++			goto out;
++		attrib = *(u32 *)value;
++		goto set_dos_attr;
++	}
++
++	if (name_len == sizeof(SYSTEM_NTFS_ATTRIB_BE) - 1 &&
++	    !memcmp(name, SYSTEM_NTFS_ATTRIB_BE,
++		    sizeof(SYSTEM_NTFS_ATTRIB_BE))) {
++		if (sizeof(u32) != size)
++			goto out;
++		attrib = be32_to_cpu(*(__be32 *)value);
++		goto set_dos_attr;
++	}
++
++	if (name_len == sizeof(USER_DOSATTRIB) - 1 &&
++	    !memcmp(current->comm, SAMBA_PROCESS_NAME,
++		    sizeof(SAMBA_PROCESS_NAME)) &&
++	    !memcmp(name, USER_DOSATTRIB, sizeof(USER_DOSATTRIB))) {
++		if (size < 4 || ((char *)value)[size - 1])
++			goto out;
++
++		/*
++		 * The input value must be string in form 0x%x with last zero
++		 * This means that the 'size' must be 4, 5, ...
++		 *  E.g: 0x1 - 4 bytes, 0x20 - 5 bytes
++		 */
++		if (sscanf((char *)value, "0x%x", &attrib) != 1)
++			goto out;
++
++set_dos_attr:
++		if (!value)
++			goto out;
++
++		/*
++		 * Thanks Mark Harmstone:
++		 * keep directory bit consistency
++		 */
++		new_fa = cpu_to_le32(attrib);
++		if (S_ISDIR(inode->i_mode))
++			new_fa |= FILE_ATTRIBUTE_DIRECTORY;
++		else
++			new_fa &= ~FILE_ATTRIBUTE_DIRECTORY;
++
++		if (ni->std_fa != new_fa) {
++			ni->std_fa = new_fa;
++			mark_inode_dirty(inode);
++		}
++		err = 0;
++
++		goto out;
++	}
++
++	if ((name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 &&
++	     !memcmp(name, XATTR_NAME_POSIX_ACL_ACCESS,
++		     sizeof(XATTR_NAME_POSIX_ACL_ACCESS))) ||
++	    (name_len == sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1 &&
++	     !memcmp(name, XATTR_NAME_POSIX_ACL_DEFAULT,
++		     sizeof(XATTR_NAME_POSIX_ACL_DEFAULT)))) {
++		err = ntfs_xattr_set_acl(
++			inode,
++			name_len == sizeof(XATTR_NAME_POSIX_ACL_ACCESS) - 1 ?
++				ACL_TYPE_ACCESS :
++				ACL_TYPE_DEFAULT,
++			value, size);
++	} else {
++		err = ntfs_set_ea(inode, name, value, size, flags, 0);
++	}
++
++out:
++	return err;
++}
++
++/*
++ * Initialize the ACLs of a new inode. Called from ntfs_create_inode.
++ */
++int ntfs_init_acl(struct inode *inode, struct inode *dir)
++{
++	struct posix_acl *default_acl, *acl;
++	int err;
++
++	/*
++	 * TODO refactoring lock
++	 * ni_lock(dir) ... -> posix_acl_create(dir,...) -> ntfs_get_acl -> ni_lock(dir)
++	 */
++	inode->i_default_acl = NULL;
++
++	default_acl = ntfs_get_acl_ex(dir, ACL_TYPE_DEFAULT, 1);
++
++	if (!default_acl || default_acl == ERR_PTR(-EOPNOTSUPP)) {
++		inode->i_mode &= ~current_umask();
++		err = 0;
++		goto out;
++	}
++
++	if (IS_ERR(default_acl)) {
++		err = PTR_ERR(default_acl);
++		goto out;
++	}
++
++	acl = default_acl;
++	err = __posix_acl_create(&acl, GFP_NOFS, &inode->i_mode);
++	if (err < 0)
++		goto out1;
++	if (!err) {
++		posix_acl_release(acl);
++		acl = NULL;
++	}
++
++	if (!S_ISDIR(inode->i_mode)) {
++		posix_acl_release(default_acl);
++		default_acl = NULL;
++	}
++
++	if (default_acl)
++		err = ntfs_set_acl_ex(inode, default_acl, ACL_TYPE_DEFAULT, 1);
++
++	if (!acl)
++		inode->i_acl = NULL;
++	else if (!err)
++		err = ntfs_set_acl_ex(inode, acl, ACL_TYPE_ACCESS, 1);
++
++	posix_acl_release(acl);
++out1:
++	posix_acl_release(default_acl);
++
++out:
++	return err;
++}
++
++static bool ntfs_xattr_user_list(struct dentry *dentry)
++{
++	return 1;
++}
++
++static const struct xattr_handler ntfs_xattr_handler = {
++	.prefix = "",
++	.get = ntfs_getxattr,
++	.set = ntfs_setxattr,
++	.list = ntfs_xattr_user_list,
++};
++
++const struct xattr_handler *ntfs_xattr_handlers[] = { &ntfs_xattr_handler,
++						      NULL };
 -- 
 2.25.2
 
