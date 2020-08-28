@@ -2,112 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B9C1255732
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Aug 2020 11:11:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C60F52557E5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Aug 2020 11:41:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbgH1JLd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Aug 2020 05:11:33 -0400
-Received: from lizzy.crudebyte.com ([91.194.90.13]:52113 "EHLO
-        lizzy.crudebyte.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728760AbgH1JL3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Aug 2020 05:11:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=crudebyte.com; s=lizzy; h=Content-Type:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        Content-ID:Content-Description;
-        bh=TDjLhUMi2f57nIRf5nnT9ajtcLeHRqoCM4ISNW9naMs=; b=TFGghUCwnn9J3fRNyyGbFtuXQt
-        +yCRqhHZjz67Kzda68uYpMXnNrlJrh03uHFri0le6SMRisECT/pmMEkXhVqSAOLCv9w6+C+otcWN2
-        4N/3i0XtP6dCEEbToaHmJncub1YYgU2s4+4UXERijbsPcxGDApPZyurs2rqMzVfTgSqEdSut5JHXm
-        mng98ToRK7OniYY+XMS1ChoiY5VnGONOeBvWV3Me1+aXNtAxnmqM8lm24hmjyCKtHH1UkdNzdwZZN
-        lG8HhcvtlpK46P5RQ3EgG592uzhwapKKC2ux5xngg/+cqNfuyFxLkLJ6BAN/ptN4/kt/i9LbwilyM
-        gLwubpig==;
-From:   Christian Schoenebeck <qemu_oss@crudebyte.com>
-To:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Frank van der Linden <fllinden@amazon.com>,
-        Dave Chinner <david@fromorbit.com>, Greg Kurz <groug@kaod.org>,
-        linux-fsdevel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Subject: Re: file forks vs. xattr (was: xattr names for unprivileged stacking?)
-Date:   Fri, 28 Aug 2020 11:11:15 +0200
-Message-ID: <11755866.l6z0jNX47O@silver>
-In-Reply-To: <20200827162935.GC2837@work-vm>
-References: <20200824222924.GF199705@mit.edu> <20200827144452.GA1236603@ZenIV.linux.org.uk> <20200827162935.GC2837@work-vm>
+        id S1728794AbgH1Jle (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Aug 2020 05:41:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56192 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728269AbgH1Jlb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 Aug 2020 05:41:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id A7A89AC6F;
+        Fri, 28 Aug 2020 09:42:02 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 8E94A1E12C0; Fri, 28 Aug 2020 11:41:29 +0200 (CEST)
+Date:   Fri, 28 Aug 2020 11:41:29 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     peterz@infradead.org
+Cc:     Xianting Tian <tian.xianting@h3c.com>, viro@zeniv.linux.org.uk,
+        bcrl@kvack.org, mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH] aio: make aio wait path to account iowait time
+Message-ID: <20200828094129.GF7072@quack2.suse.cz>
+References: <20200828060712.34983-1-tian.xianting@h3c.com>
+ <20200828090729.GT1362448@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200828090729.GT1362448@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Donnerstag, 27. August 2020 16:44:52 CEST Al Viro wrote:
-> > No matter which delimiter you'd choose, something will break. It is just
-> > about how much will it break und how likely it'll be in practice, not if.
-> ... which means NAK.  We don't break userland without very good reasons and
-> support for anyone's pet feature is not one of those.  It's as simple as
-> that.
+On Fri 28-08-20 11:07:29, peterz@infradead.org wrote:
+> On Fri, Aug 28, 2020 at 02:07:12PM +0800, Xianting Tian wrote:
+> > As the normal aio wait path(read_events() ->
+> > wait_event_interruptible_hrtimeout()) doesn't account iowait time, so use
+> > this patch to make it to account iowait time, which can truely reflect
+> > the system io situation when using a tool like 'top'.
 > 
-> > If you are concerned about not breaking anything: keep forks disabled.
+> Do be aware though that io_schedule() is potentially far more expensive
+> than regular schedule() and io-wait accounting as a whole is a
+> trainwreck.
+
+Hum, I didn't know that io_schedule() is that much more expensive. Thanks
+for info.
+
+> When in_iowait is set schedule() and ttwu() will have to do additional
+> atomic ops, and (much) worse, PSI will take additional locks.
 > 
-> s/disabled/out of tree/
-> 
-> One general note: the arguments along the lines of "don't enable that,
-> then" are either ignorant or actively dishonest; it really doesn't work
-> that way, as we'd learnt quite a few times by now.  There's no such
-> thing as "optional feature" - *any* feature, no matter how useless,
-> might end up a dependency (no matter how needless) of something that
-> would force distros to enable it.  We'd been down that road too many
-> times to keep pretending that it doesn't happen.
+> And all that for a number that, IMO, is mostly useless, see the comment
+> with nr_iowait().
 
-Well, it could be an option per mounted fs, but I know -> NAK.
+Well, I understand the limited usefulness of the system or even per CPU
+percentage spent in IO wait. However whether a particular task is sleeping
+waiting for IO or not is IMO a useful diagnostic information and there are
+several places in the kernel that take that into account (PSI, hangcheck
+timer, cpufreq, ...). So I don't see that properly accounting that a task
+is waiting for IO is just "expensive random number generator" as you
+mention below :). But I'm open to being educated...
 
-On Donnerstag, 27. August 2020 18:29:35 CEST Dr. David Alan Gilbert wrote:
-> * Al Viro (viro@zeniv.linux.org.uk) wrote:
-> > On Thu, Aug 27, 2020 at 04:23:24PM +0200, Christian Schoenebeck wrote:
-> > > Be invited for making better suggestions. But one thing please: don't
-> > > start
-> > > getting offending.
-> > > 
-> > > No matter which delimiter you'd choose, something will break. It is just
-> > > about how much will it break und how likely it'll be in practice, not
-> > > if.> 
-> > ... which means NAK.  We don't break userland without very good reasons
-> > and
-> > support for anyone's pet feature is not one of those.  It's as simple as
-> > that.
-> 
-> I'm curious how much people expect to use these forks from existing
-> programs - do people expect to be able to do something and edit a fork
-> using their favorite editor or cat/grep/etc them?
+> But, if you don't care about performance, and want to see a shiny random
+> number generator, by all means, use io_schedule().
 
-Built-in path resolution would be nice, but it won't be a show stopper for 
-such common utils if not. For instance on Solaris there is:
-
-runat <filename> <cmd> ...
-
-which works something like fchdir(); execv(); you loose some flexibility, but 
-in practice still OK.
-
-> I say that because if they do, then having a special syscall to open
-> the fork wont fly; and while I agree that any form of suffix is a lost
-> cause, I wonder what else is possible (although if it wasn't for the
-> internal difficulties, I do have a soft spot for things that look like
-> both files and directories showing the forks; but I realise I'm weird
-> there).
-
-It seems to be both a file & dir feature on all systems that have that 
-concept. So people would expect it for dirs on Linux as well.
-
-Best regards,
-Christian Schoenebeck
-
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
