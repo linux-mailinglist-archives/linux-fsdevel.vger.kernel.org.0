@@ -2,70 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 123CD255CF6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Aug 2020 16:47:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9963255D48
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Aug 2020 17:03:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbgH1OrT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Aug 2020 10:47:19 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:47198 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726322AbgH1OrS (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Aug 2020 10:47:18 -0400
-Received: from callcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 07SEkuEP017122
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 28 Aug 2020 10:46:57 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 861A4420128; Fri, 28 Aug 2020 10:46:56 -0400 (EDT)
-Date:   Fri, 28 Aug 2020 10:46:56 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Christian Schoenebeck <qemu_oss@crudebyte.com>
-Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Frank van der Linden <fllinden@amazon.com>,
-        Dave Chinner <david@fromorbit.com>, Greg Kurz <groug@kaod.org>,
-        linux-fsdevel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Subject: Re: file forks vs. xattr (was: xattr names for unprivileged
- stacking?)
-Message-ID: <20200828144656.GF7180@mit.edu>
-References: <20200824222924.GF199705@mit.edu>
- <20200827144452.GA1236603@ZenIV.linux.org.uk>
- <20200827162935.GC2837@work-vm>
- <11755866.l6z0jNX47O@silver>
+        id S1726584AbgH1PD6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Aug 2020 11:03:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37720 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726197AbgH1PD4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 28 Aug 2020 11:03:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id B11D4AF1F;
+        Fri, 28 Aug 2020 15:04:28 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 9CDDB1E12C0; Fri, 28 Aug 2020 17:03:55 +0200 (CEST)
+Date:   Fri, 28 Aug 2020 17:03:55 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] Writeback fixes for 5.9-rc3
+Message-ID: <20200828150355.GA4614@quack2.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <11755866.l6z0jNX47O@silver>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 28, 2020 at 11:11:15AM +0200, Christian Schoenebeck wrote:
-> 
-> Built-in path resolution would be nice, but it won't be a show stopper for 
-> such common utils if not. For instance on Solaris there is:
-> 
-> runat <filename> <cmd> ...
-> 
-> which works something like fchdir(); execv(); you loose some flexibility, but 
-> in practice still OK.
+  Hello Linus,
 
-And we know from the Solaris experience that it was used *much* more
-by malware authors (since most Unix security scanners didn't know
-about forks) than any legitmate users.
+  could you please pull from
 
-Which is another way of saying, it's a bad idea --- unless you are a
-malware author.
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git writeback_for_v5.9-rc3
 
-      	 	     		       - Ted
+to get fixes for writeback code occasionally skipping writeback of some
+inodes or livelocking sync(2).
+
+Top of the tree is 5fcd57505c00. The full shortlog is:
+
+Jan Kara (4):
+      writeback: Protect inode->i_io_list with inode->i_lock
+      writeback: Avoid skipping inode writeback
+      writeback: Fix sync livelock due to b_dirty_time processing
+      writeback: Drop I_DIRTY_TIME_EXPIRE
+
+The diffstat is
+
+ fs/ext4/inode.c                  |   2 +-
+ fs/fs-writeback.c                | 103 ++++++++++++++++++++-------------------
+ fs/xfs/libxfs/xfs_trans_inode.c  |   4 +-
+ include/linux/fs.h               |   7 ++-
+ include/trace/events/writeback.h |  14 +++---
+ 5 files changed, 67 insertions(+), 63 deletions(-)
+
+							Thanks
+
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
