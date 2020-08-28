@@ -2,120 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 11022255E3D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Aug 2020 17:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14DEF255E9D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Aug 2020 18:14:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbgH1Pzj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Aug 2020 11:55:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41096 "EHLO
+        id S1726804AbgH1QOf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Aug 2020 12:14:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725979AbgH1Pzi (ORCPT
+        with ESMTP id S1725814AbgH1QOc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Aug 2020 11:55:38 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40C67C06121B;
-        Fri, 28 Aug 2020 08:55:38 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kBgix-006DmM-Ca; Fri, 28 Aug 2020 15:55:31 +0000
-Date:   Fri, 28 Aug 2020 16:55:31 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fri, 28 Aug 2020 12:14:32 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A56BC061264;
+        Fri, 28 Aug 2020 09:14:32 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id t2so1457826wma.0;
+        Fri, 28 Aug 2020 09:14:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=lrXQANK+zYqwsIpoSsHCHd83bY7efq3u1QlPM+JIlfU=;
+        b=jeJzeyXa8eS1gxii0yiKuW2Kx0g+wPcOvlT862H1eKpFp2MuwNczeChsXfGDJSTrDu
+         6PMfkwrBY0/kTFj4DG9vjH8KxxUWiuZg7jt59Ldbq9AWPIuoGVRCZRMWka2i/NncjYAe
+         b9Br8LklsFMucO3B0rvUvZcyBwCgKnMugX8hpUiNKNtoeFsFD0R3krmbPhXs9317Tglz
+         74thF5+77C6kMwfmFHOK+yurezeNgdmvSevpE1KHrJfi311fN2JxlXjYXCcwh6/k8pTL
+         l1I93wPcDI/bB1JpBugsnKO1C2w7AtsxJ6vjWkgWEewu0aV891GaX/j/k9JLibpaezDQ
+         7hPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=lrXQANK+zYqwsIpoSsHCHd83bY7efq3u1QlPM+JIlfU=;
+        b=Iy55CLG18EKM2ZEOYuYtFschUm2beNudoVIicYc//hABWLwAAIXsdreE9QA0a7oPTo
+         5ojl6AnbFeNTf4DnjsTsjHStugcWNEGQ4WQmyYpWOO73pnY3BVj8xWSFFkGZhOug5B/m
+         igEVLWdXwsdmwzH661ql7vGToDfwE8E4G1tUdGSdprzkMmwW24fGdjb1G6qjkguzrc1J
+         qEgtLBIR7hrusscFTaNuHIufRwKpeJmauaZNOh07IqkX/AhhDN+ahQrANLiXf+YBuZ1B
+         bnz/gpetmNNMleqHq0Hxxut/GrT8sfcvyp3a4lz+f8DNh90h2GJ89WcTYkZwRgaJfV7T
+         ckTw==
+X-Gm-Message-State: AOAM533//kVI/6jO7SV8n4nzXMX39A8Oz9aOOizwLXzJEwyMDAnLBDbV
+        ufsQuIcB6gN8zps3uwozrQ8=
+X-Google-Smtp-Source: ABdhPJzOyA+yp5DMf1h4iKylI6F8wK5gT5J6Ro+26hGPYHsz02sCK05cd/lj5WFLXW7NTyISbJWalg==
+X-Received: by 2002:a7b:c40a:: with SMTP id k10mr2215917wmi.127.1598631270574;
+        Fri, 28 Aug 2020 09:14:30 -0700 (PDT)
+Received: from ?IPv6:2a02:8010:64ea:0:fad1:11ff:fead:57db? ([2a02:8010:64ea:0:fad1:11ff:fead:57db])
+        by smtp.googlemail.com with ESMTPSA id d66sm3332820wmc.16.2020.08.28.09.14.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Aug 2020 09:14:29 -0700 (PDT)
+Subject: Re: [PATCH v3 05/10] fs/ntfs3: Add attrib operations
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
         pali@kernel.org, dsterba@suse.cz, aaptel@suse.com,
-        willy@infradead.org, rdunlap@infradead.org, joe@perches.com,
-        mark@harmstone.com
-Subject: Re: [PATCH v3 04/10] fs/ntfs3: Add file operations and implementation
-Message-ID: <20200828155531.GK1236603@ZenIV.linux.org.uk>
+        willy@infradead.org, rdunlap@infradead.org, joe@perches.com
 References: <20200828143938.102889-1-almaz.alexandrovich@paragon-software.com>
- <20200828143938.102889-5-almaz.alexandrovich@paragon-software.com>
+ <20200828143938.102889-6-almaz.alexandrovich@paragon-software.com>
+From:   Mark Harmstone <mark@harmstone.com>
+Autocrypt: addr=mark@harmstone.com; keydata=
+ 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
+ /dLFIhf2zxRylN1xq27M9P2t1xfQFocuYToPsVk=
+Message-ID: <94d99977-d0ef-6580-7944-1b826da4564c@harmstone.com>
+Date:   Fri, 28 Aug 2020 17:14:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200828143938.102889-5-almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <20200828143938.102889-6-almaz.alexandrovich@paragon-software.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 28, 2020 at 07:39:32AM -0700, Konstantin Komarov wrote:
+Konstantin, can you please reply to my comments from the last time you
+submitted this patch? I'm concerned that if your patches are accepted, it=
 
-> +static int ntfs_atomic_open(struct inode *dir, struct dentry *dentry,
-> +			    struct file *file, u32 flags, umode_t mode)
-> +{
-> +	int err;
-> +	bool excl = !!(flags & O_EXCL);
-> +	struct inode *inode;
-> +	struct ntfs_fnd *fnd = NULL;
-> +	struct ntfs_inode *ni = ntfs_i(dir);
-> +
-> +	ni_lock(ni);
-> +
-> +	if (d_in_lookup(dentry)) {
-> +		struct dentry *d;
-> +
-> +		fnd = fnd_get(&ntfs_i(dir)->dir);
-> +		if (!fnd) {
-> +			err = -ENOMEM;
-> +			goto out;
-> +		}
-> +
-> +		d = __ntfs_lookup(dir, dentry, fnd);
-> +		if (IS_ERR(d)) {
-> +			err = PTR_ERR(d);
-> +			d = NULL;
-> +			goto out1;
-> +		}
-> +
-> +		if (d)
-> +			dentry = d;
-> +
-> +		if (d_really_is_positive(dentry)) {
-> +			if (file->f_mode & FMODE_OPENED) {
+becomes an awful lot more difficult to correct design flaws like these.
 
-	How do we get FMODE_OPENED here?
-
-> +				dput(d);
-> +				err = 0;
-> +			} else
-> +				err = finish_no_open(file, d);
-> +			goto out1;
-> +		}
-> +		WARN_ON(d);
-> +	}
-> +
-> +	if (!(flags & O_CREAT)) {
-> +		err = -ENOENT;
-> +		goto out1;
-> +	}
-
-	Just return finish_no_open() in that case.  And let the caller handle
-that.
-
-> +	err = ntfs_create_inode(dir, dentry, file, mode, 0, NULL, 0, excl, fnd,
-> +				&inode);
-> +
-> +out1:
-> +	fnd_put(fnd);
-> +out:
-> +	ni_unlock(ni);
-> +
-> +	return err;
-> +}
-
-BTW, what's the point of that ni_lock() here?  d_in_lookup() is stable
-regardless of that and any attempts to create something in the parent
-are serialized by ->i_rwsem.  If you want it around the actual file
-creation, why not take it just there, and replace the open-coded
-ntfs_lookup() with the call of the real thing?  As in
-	if (d_in_lookup(dentry)) {
-		d = ntfs_lookup(....);
-		if (IS_ERR(d))
-			return d;
-		if (d)
-			dentry = d;
-	}
-        if (!(flags & O_CREAT) || d_really_is_positive(dentry))
-		return finish_no_open(file, d);
-	/* deal with creation of file */
-	ni_lock(...);
-	....
