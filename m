@@ -2,91 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D11F525640F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Aug 2020 04:00:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 014E5256519
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Aug 2020 08:40:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726748AbgH2CAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Aug 2020 22:00:05 -0400
-Received: from brightrain.aerifal.cx ([216.12.86.13]:47890 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726418AbgH2CAD (ORCPT
+        id S1726001AbgH2Gkt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Aug 2020 02:40:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36872 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbgH2Gkt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Aug 2020 22:00:03 -0400
-Date:   Fri, 28 Aug 2020 22:00:02 -0400
-From:   Rich Felker <dalias@libc.org>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [RESEND PATCH] vfs: add RWF_NOAPPEND flag for pwritev2
-Message-ID: <20200829020002.GC3265@brightrain.aerifal.cx>
+        Sat, 29 Aug 2020 02:40:49 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE917C061236;
+        Fri, 28 Aug 2020 23:40:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=7l+Em9gvBvWd82kjcq938GwighvalU0zZ6jp3z8HlSI=; b=hr+xuOKarpl9EfqKCjkFM5KlYc
+        527XyEupWB/z+YMisYTw5goBiZWS0iGPO/sgBY+bXs1DjcGnz3T7OOlGdsI7LoNswS0GSccwNNI2G
+        T0I5vOvoTFT/i6J3Vu1E/DnFcU47xy2gEHv4ciK1Z2m33LwjaMgahdsR3qLf2mKndFJxZYowODfPx
+        N58VYJzgJsUfm8dIjwu5ydyrTvxqWlgCvzoAhJiYy195VsEtYuxLODFwGqvyrhT6K5LHhpSb1U+MX
+        MA15xXjMyHhNg2neyDtZCz3p6Q6xFaBhdzmoDZu3x9mE/x0dHHkzxMBs/sYQmyuzVet4QGdezQpBf
+        5auA6M4g==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kBuXZ-0007Vf-Rk; Sat, 29 Aug 2020 06:40:41 +0000
+Date:   Sat, 29 Aug 2020 07:40:41 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        yebin <yebin10@huawei.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH RFC 2/2] block: Do not discard buffers under a mounted
+ filesystem
+Message-ID: <20200829064041.GA23205@infradead.org>
+References: <20200825120554.13070-1-jack@suse.cz>
+ <20200825120554.13070-3-jack@suse.cz>
+ <20200825121616.GA10294@infradead.org>
+ <F9505A56-F07B-4308-BE42-F75ED76B4E3C@dilger.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <F9505A56-F07B-4308-BE42-F75ED76B4E3C@dilger.ca>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pwrite function, originally defined by POSIX (thus the "p"), is
-defined to ignore O_APPEND and write at the offset passed as its
-argument. However, historically Linux honored O_APPEND if set and
-ignored the offset. This cannot be changed due to stability policy,
-but is documented in the man page as a bug.
+On Fri, Aug 28, 2020 at 02:21:29AM -0600, Andreas Dilger wrote:
+> On Aug 25, 2020, at 6:16 AM, Christoph Hellwig <hch@infradead.org> wrote:
+> > 
+> > On Tue, Aug 25, 2020 at 02:05:54PM +0200, Jan Kara wrote:
+> >> Discarding blocks and buffers under a mounted filesystem is hardly
+> >> anything admin wants to do. Usually it will confuse the filesystem and
+> >> sometimes the loss of buffer_head state (including b_private field) can
+> >> even cause crashes like:
+> > 
+> > Doesn't work if the file system uses multiple devices.
+> 
+> It's not _worse_ than the current situation of allowing the complete
+> destruction of the mounted filesystem.  It doesn't fix the problem
+> for XFS with realtime devices, or ext4 with a separate journal device,
+> but it fixes the problem for a majority of users with a single device
+> filesystem.
+> 
+> While BLKFLSBUF causing a crash is annoying, BLKDISCARD/BLKSECDISCARD
+> under a mounted filesystem is definitely dangerous and wrong.
+> 
+> What about checking for O_EXCL on the device, indicating that it is
+> currently in use by some higher level?
 
-Now that there's a pwritev2 syscall providing a superset of the pwrite
-functionality that has a flags argument, the conforming behavior can
-be offered to userspace via a new flag. Since pwritev2 checks flag
-validity (in kiocb_set_rw_flags) and reports unknown ones with
-EOPNOTSUPP, callers will not get wrong behavior on old kernels that
-don't support the new flag; the error is reported and the caller can
-decide how to handle it.
-
-Signed-off-by: Rich Felker <dalias@libc.org>
----
- include/linux/fs.h      | 4 ++++
- include/uapi/linux/fs.h | 5 ++++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e0d909d35763..3a769a972f79 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3397,6 +3397,8 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
- {
- 	if (unlikely(flags & ~RWF_SUPPORTED))
- 		return -EOPNOTSUPP;
-+	if (unlikely((flags & RWF_APPEND) && (flags & RWF_NOAPPEND)))
-+		return -EINVAL;
- 
- 	if (flags & RWF_NOWAIT) {
- 		if (!(ki->ki_filp->f_mode & FMODE_NOWAIT))
-@@ -3411,6 +3413,8 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
- 		ki->ki_flags |= (IOCB_DSYNC | IOCB_SYNC);
- 	if (flags & RWF_APPEND)
- 		ki->ki_flags |= IOCB_APPEND;
-+	if (flags & RWF_NOAPPEND)
-+		ki->ki_flags &= ~IOCB_APPEND;
- 	return 0;
- }
- 
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 379a612f8f1d..591357d9b3c9 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -299,8 +299,11 @@ typedef int __bitwise __kernel_rwf_t;
- /* per-IO O_APPEND */
- #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
- 
-+/* per-IO negation of O_APPEND */
-+#define RWF_NOAPPEND	((__force __kernel_rwf_t)0x00000020)
-+
- /* mask of flags supported by the kernel */
- #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
--			 RWF_APPEND)
-+			 RWF_APPEND | RWF_NOAPPEND)
- 
- #endif /* _UAPI_LINUX_FS_H */
--- 
-2.21.0
-
+That actually seems like a much better idea.
