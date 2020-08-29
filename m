@@ -2,116 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 768FC256A57
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Aug 2020 23:23:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE3C8256A7E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Aug 2020 23:57:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbgH2VXl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Aug 2020 17:23:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60030 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbgH2VXj (ORCPT
+        id S1728068AbgH2V50 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Aug 2020 17:57:26 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:19505 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726944AbgH2V5Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Aug 2020 17:23:39 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F7EC061573
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Aug 2020 14:23:39 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id i7so2339429wre.13
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Aug 2020 14:23:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=platform.sh; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=ppGohWWgfwqUfo5zDayq1wyLsm/5ZkmhZaLeovyZyM8=;
-        b=D96vbXFu8elXnCds9Cw8rs4lqNaEM9sdVJUKMoaFHfTZnXh2SfjIzntCkXMucqrxk1
-         PkuBKek485pYQiVhMKkcdCYPBoYex+kaSBojdCBmirKn9dS032a/93JihqNtbRYHmUdw
-         XkxzPw1wi7Ggcnl1X/B5UbogjWLiEc5T8ldfGbtyjaTnofzE/si6oSFt1BX/fIvJAvMu
-         Yy17jw0E6IEzCPRkVXfiVvpTszcMsHvm98PNQvOe1bmTrrdP7UPKu6KSJ2kCLuojZNLT
-         62UsiZQOsweF/TerFFQ+wYZEKxtqHFH2Ur/BJ4TS3Do1sHd/wfp+DSWQYRNc2BSq72sh
-         s4FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=ppGohWWgfwqUfo5zDayq1wyLsm/5ZkmhZaLeovyZyM8=;
-        b=lPhla9uwgKbQPmgHhyD0alxq353yCrQkGE+rr9jRnEs07MCZxZbCRjSHCUbmdJGInV
-         EYw4w8yXADHzQ+Ey9Hwso1WFTnJ6imKA6VBS2pBmxo0FUajkiMPxt3kXt/+CZAtbjem+
-         pFwBvUDJMlGtqOHrucYxvLJZEyLKXCoQwMW2HnS8yduhm45gZUa93LnqMX5v6efUWC0P
-         McTfBgAdVsqMfenn/Li+Hwua29q529+pWqNEz16M5H6nVowtkAfT5ouRVMGxPFcnyolP
-         rd17Kj9FXwdKHOqR8OoNcizM4Ye9n8Ozcl4HDMTVxwlNP2l2zLMZk270YL5lVmEzHIuc
-         MXJw==
-X-Gm-Message-State: AOAM530SfDrPhlV9qnTVjqX0wPkRObVVYJ8jklgix1zxKBqz2eXOZMB2
-        HhUHrndW1qdKtf8RLySXVKmtAVqmqVXPTdw2
-X-Google-Smtp-Source: ABdhPJzk6ac/aUBzIVdCprN5ZOi+VNXlWzF0vSsb1fxKHpmLZT6lTmBU/1UOE2f2aRNnJMWXBMe60g==
-X-Received: by 2002:a5d:4ccb:: with SMTP id c11mr4831289wrt.159.1598736217915;
-        Sat, 29 Aug 2020 14:23:37 -0700 (PDT)
-Received: from localhost ([2a01:cb1c:111:4a00:dec6:dcf6:5621:172d])
-        by smtp.gmail.com with ESMTPSA id z6sm4692095wml.41.2020.08.29.14.23.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Aug 2020 14:23:36 -0700 (PDT)
-From:   Florian Margaine <florian@platform.sh>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: allow do_renameat2() over bind mounts of the same filesystem.
-In-Reply-To: <20200828213445.GM1236603@ZenIV.linux.org.uk>
-References: <871rjqh5bw.fsf@platform.sh> <20200828213445.GM1236603@ZenIV.linux.org.uk>
-Date:   Sat, 29 Aug 2020 23:23:34 +0200
-Message-ID: <87wo1hf8o9.fsf@platform.sh>
+        Sat, 29 Aug 2020 17:57:25 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f4acf180000>; Sat, 29 Aug 2020 14:56:41 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sat, 29 Aug 2020 14:57:25 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Sat, 29 Aug 2020 14:57:25 -0700
+Received: from [10.2.61.161] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 29 Aug
+ 2020 21:57:24 +0000
+Subject: Re: [PATCH v2 1/3] mm/gup: introduce pin_user_page()
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, <linux-xfs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20200829080853.20337-1-jhubbard@nvidia.com>
+ <20200829080853.20337-2-jhubbard@nvidia.com>
+ <20200829145421.GA12470@infradead.org>
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <2940f38d-be50-cc9d-efac-b472b90c86ad@nvidia.com>
+Date:   Sat, 29 Aug 2020 14:57:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <20200829145421.GA12470@infradead.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598738201; bh=7Q1/OAnms/oRZyYL7465ix/aRv+f5NiBpJz0hCn9ZYE=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=gypQg0n7SzMSd5HEKKPYBT9ldWQ7/EDP++LfytWaJ2yd9NnfX4CfA+7OPw8mB7VFm
+         dXur8PsxCX5urTWyvtSIJEp6/Tg7ecETtVLJUBEpF8iCoxihRBtHqi969qvETp2JBA
+         43k3Rsr4d64DpvH38i+4Q19DCDxBHRzHnzF2uOZYAukuH3NtKGPYYrptOw8h6Td/9q
+         MMiqpKL5wSXvPX1kFy9Stiy49k8wc5C0giqrjkSkGJprYEQMoPPHlpsHNopZQoFTZE
+         +FwGSgCVpjEE4Q0k7jSriGrl3yhZbR8DjgRY98IDp14/V76iIe6dm4vZQdQXhYlEc0
+         OTj7Phdw14kmw==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+On 8/29/20 7:54 AM, Christoph Hellwig wrote:
+> On Sat, Aug 29, 2020 at 01:08:51AM -0700, John Hubbard wrote:
+>> pin_user_page() is the FOLL_PIN equivalent of get_page().
+>>
+>> This was always a missing piece of the pin/unpin API calls (early
+>> reviewers of pin_user_pages() asked about it, in fact), but until now,
+>> it just wasn't needed. Finally though, now that the Direct IO pieces in
+>> block/bio are about to be converted to use FOLL_PIN, it turns out that
+>> there are some cases in which get_page() and get_user_pages_fast() were
+>> both used. Converting those sites requires a drop-in replacement for
+>> get_page(), which this patch supplies.
+> 
+> I find the name really confusing vs pin_user_pages*, as it suggests as
+> single version of the same.  It also seems partially wrong, at least
+> in the direct I/O case as the only thing pinned here is the zero page.
+> 
+> So maybe pin_kernel_page is a better name together with an explanation?
+> Or just pin_page?
+> 
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+Yes. Both its behavior and use are closer to get_page() than it is to
+get_user_pages(). So pin_page() is just right.
 
-> On Fri, Aug 28, 2020 at 10:40:35PM +0200, Florian Margaine wrote:
->> There's currently this seemingly unnecessary limitation that rename()
->> cannot work over bind mounts of the same filesystem,
->
-> ... is absolutely deliberate - that's how you set a boundary in the
-> tree, preventing both links and renames across it.
 
-Sorry, I'm not not sure I understand what you're saying.
-
-As I understand it, the tree is the superblock there, not the mount. As
-in, the dentries are relative to the superblock, and the mountpoint is
-no more than a pointer to a superblock's dentry.
-
-In addition, I noticed this snippet in fs/read_write.c:
-
-    /*
-     * FICLONE/FICLONERANGE ioctls enforce that src and dest files are on
-     * the same mount. Practically, they only need to be on the same file
-     * system.
-     */
-    if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
-        return -EXDEV;
-
-Which seems to confirm my understanding.
-
-What am I getting wrong there?
-
->
-> Incidentally, doing that would have fun effects for anyone with current
-> directory inside the subtree you'd moved - try and see.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEWcDV2nrrM20UJL9WhD9tdT2UlyoFAl9Kx1YACgkQhD9tdT2U
-lyr2Nwf8CQNwOqiIZx8OAU9rZqBJYxEEzzlQQerLkXwN52m7knmN1M6UibLeODFf
-qmJiVA+pYOQ3JgwfzQYZJ1Asja1HnczqrHCWF6wztFYhLK1c3yEG4wARCqWIKanw
-OiAt6hqlpeJNGHOBU9RlxtVerCyfzoPBCYq8lhhKM4b7DPrciVPT6kON562z5Dqm
-YbvLX2aEis17VmMg1/o7U/R8hDOlll6+nhLkOBTH+6lCccYLQ/tK02Ar7DH+Ct94
-YmyyaWC40DcRXTUzjnoDdEKwt2mPHsdtNWTTKxB3T6csGotzNnAsUFlLAvHOwBAV
-FsYmbATtmMCzXi662PvrmzkMT6Y9dg==
-=MLmB
------END PGP SIGNATURE-----
---=-=-=--
+thanks,
+-- 
+John Hubbard
+NVIDIA
