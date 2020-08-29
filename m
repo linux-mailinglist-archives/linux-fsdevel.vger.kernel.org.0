@@ -2,141 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A4BE72569FA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Aug 2020 22:12:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 768FC256A57
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Aug 2020 23:23:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728521AbgH2UMy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Aug 2020 16:12:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49156 "EHLO
+        id S1727885AbgH2VXl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Aug 2020 17:23:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728410AbgH2UMx (ORCPT
+        with ESMTP id S1726748AbgH2VXj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Aug 2020 16:12:53 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92694C061236
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Aug 2020 13:12:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=wLrMyC5/AURJV9xyUA23EQ9NUGlsmprA8lE/ocOeLg0=; b=b05CU/DIG9K1rNrFFXlopVysJf
-        64TqFQcxtN/MaaJOsB57ue0HCve6RvfKjGBAu8f4+NmiAgGG5O5/acNfA1yUN2x7WtE4pgbT6M1L4
-        18Q5wI1tvdUeI7cr17Nwxy/9pFvL0j1U2enaPAA1vECHWtY5tHOsou+wGVDrZxLgTvjWkckgoagBH
-        xbtxwZD3mUXjVBTI7pxlkrwXcauup4ERJhyxZyYeV4PMC0/Ou8/Ttyum+DpT0ElP1AHKwpzZmHmAR
-        bJlLCB5FZLBiTBqjzgvlda3zaglUieXKF8ngxZD/vGLxltSpAmg6geZIrAUjYwZZgXxzlHABoIjxW
-        qDq8ptzQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kC7DS-0004S2-0O; Sat, 29 Aug 2020 20:12:46 +0000
-Date:   Sat, 29 Aug 2020 21:12:45 +0100
-From:   Matthew Wilcox <willy@infradead.org>
+        Sat, 29 Aug 2020 17:23:39 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F7EC061573
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Aug 2020 14:23:39 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id i7so2339429wre.13
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Aug 2020 14:23:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=platform.sh; s=google;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=ppGohWWgfwqUfo5zDayq1wyLsm/5ZkmhZaLeovyZyM8=;
+        b=D96vbXFu8elXnCds9Cw8rs4lqNaEM9sdVJUKMoaFHfTZnXh2SfjIzntCkXMucqrxk1
+         PkuBKek485pYQiVhMKkcdCYPBoYex+kaSBojdCBmirKn9dS032a/93JihqNtbRYHmUdw
+         XkxzPw1wi7Ggcnl1X/B5UbogjWLiEc5T8ldfGbtyjaTnofzE/si6oSFt1BX/fIvJAvMu
+         Yy17jw0E6IEzCPRkVXfiVvpTszcMsHvm98PNQvOe1bmTrrdP7UPKu6KSJ2kCLuojZNLT
+         62UsiZQOsweF/TerFFQ+wYZEKxtqHFH2Ur/BJ4TS3Do1sHd/wfp+DSWQYRNc2BSq72sh
+         s4FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=ppGohWWgfwqUfo5zDayq1wyLsm/5ZkmhZaLeovyZyM8=;
+        b=lPhla9uwgKbQPmgHhyD0alxq353yCrQkGE+rr9jRnEs07MCZxZbCRjSHCUbmdJGInV
+         EYw4w8yXADHzQ+Ey9Hwso1WFTnJ6imKA6VBS2pBmxo0FUajkiMPxt3kXt/+CZAtbjem+
+         pFwBvUDJMlGtqOHrucYxvLJZEyLKXCoQwMW2HnS8yduhm45gZUa93LnqMX5v6efUWC0P
+         McTfBgAdVsqMfenn/Li+Hwua29q529+pWqNEz16M5H6nVowtkAfT5ouRVMGxPFcnyolP
+         rd17Kj9FXwdKHOqR8OoNcizM4Ye9n8Ozcl4HDMTVxwlNP2l2zLMZk270YL5lVmEzHIuc
+         MXJw==
+X-Gm-Message-State: AOAM530SfDrPhlV9qnTVjqX0wPkRObVVYJ8jklgix1zxKBqz2eXOZMB2
+        HhUHrndW1qdKtf8RLySXVKmtAVqmqVXPTdw2
+X-Google-Smtp-Source: ABdhPJzk6ac/aUBzIVdCprN5ZOi+VNXlWzF0vSsb1fxKHpmLZT6lTmBU/1UOE2f2aRNnJMWXBMe60g==
+X-Received: by 2002:a5d:4ccb:: with SMTP id c11mr4831289wrt.159.1598736217915;
+        Sat, 29 Aug 2020 14:23:37 -0700 (PDT)
+Received: from localhost ([2a01:cb1c:111:4a00:dec6:dcf6:5621:172d])
+        by smtp.gmail.com with ESMTPSA id z6sm4692095wml.41.2020.08.29.14.23.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 29 Aug 2020 14:23:36 -0700 (PDT)
+From:   Florian Margaine <florian@platform.sh>
 To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Christian Schoenebeck <qemu_oss@crudebyte.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
-        stefanha@redhat.com, mszeredi@redhat.com, vgoyal@redhat.com,
-        gscrivan@redhat.com, dwalsh@redhat.com, chirantan@chromium.org
-Subject: Re: xattr names for unprivileged stacking?
-Message-ID: <20200829201245.GU14765@casper.infradead.org>
-References: <27541158.PQPtYaGs59@silver>
- <20200816225620.GA28218@dread.disaster.area>
- <20200816230908.GI17456@casper.infradead.org>
- <20200817002930.GB28218@dread.disaster.area>
- <20200827152207.GJ14765@casper.infradead.org>
- <20200827222457.GB12096@dread.disaster.area>
- <20200829160717.GS14765@casper.infradead.org>
- <20200829161358.GP1236603@ZenIV.linux.org.uk>
- <20200829191751.GT14765@casper.infradead.org>
- <20200829194042.GT1236603@ZenIV.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: allow do_renameat2() over bind mounts of the same filesystem.
+In-Reply-To: <20200828213445.GM1236603@ZenIV.linux.org.uk>
+References: <871rjqh5bw.fsf@platform.sh> <20200828213445.GM1236603@ZenIV.linux.org.uk>
+Date:   Sat, 29 Aug 2020 23:23:34 +0200
+Message-ID: <87wo1hf8o9.fsf@platform.sh>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200829194042.GT1236603@ZenIV.linux.org.uk>
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 29, 2020 at 08:40:42PM +0100, Al Viro wrote:
-> On Sat, Aug 29, 2020 at 08:17:51PM +0100, Matthew Wilcox wrote:
-> 
-> > I probably have the wrong nomenclature for what I'm proposing.
-> > 
-> > So here's a concrete API.  What questions need to be answered?
-> > 
-> > fd = open("real", O_RDWR);
-> > 
-> > // fetch stream names
-> > sfd = open_stream(fd, NULL);
-> > read(sfd, names, length);
-> 
-> 	1) what does fstat() on sfd return?
+--=-=-=
+Content-Type: text/plain
 
-My strawman answers:
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
- - st_dev, st_ino, st_uid, st_gid, st_rdev, st_blksize are those of the
-   containing file
- - st_mode: S_IFREG | parent & 0777
- - st_nlink: 1
- - st_size, st_blocks st_atime, st_mtime, st_ctime: as appropriate
+> On Fri, Aug 28, 2020 at 10:40:35PM +0200, Florian Margaine wrote:
+>> There's currently this seemingly unnecessary limitation that rename()
+>> cannot work over bind mounts of the same filesystem,
+>
+> ... is absolutely deliberate - that's how you set a boundary in the
+> tree, preventing both links and renames across it.
 
-> 	2) what does keeping it open do to underlying file?
+Sorry, I'm not not sure I understand what you're saying.
 
-I don't have a solid answer here.  Maybe it keeps a reference count on
-the underlying inode?  Obviously we need to prevent the superblock from
-disappearing from under it.  Maybe it needs to keep a refcount on the
-struct file it was spawned from.  I haven't thought this through yet.
+As I understand it, the tree is the superblock there, not the mount. As
+in, the dentries are relative to the superblock, and the mountpoint is
+no more than a pointer to a superblock's dentry.
 
-> 	3) what happens to it if that underlying file is unlinked?
+In addition, I noticed this snippet in fs/read_write.c:
 
-Unlinking a file necessarily unlinks all the streams.  So the file
-remains in existance until all fds on it are closed, including all
-the streams.
+    /*
+     * FICLONE/FICLONERANGE ioctls enforce that src and dest files are on
+     * the same mount. Practically, they only need to be on the same file
+     * system.
+     */
+    if (file_inode(file_in)->i_sb != file_inode(file_out)->i_sb)
+        return -EXDEV;
 
-> 	4) what does it do to underlying filesystem?  Can it be unmounted?
+Which seems to confirm my understanding.
 
-I think I covered that in the earlier answers.
+What am I getting wrong there?
 
-> > // create a new anonymous stream
-> > sfd = open_stream(fd, "");
-> > write(sfd, buffer, buflen);
-> > // name it
-> > linkat(sfd, NULL, fd, "newstream", AT_EMPTY_PATH);
-> 
-> Oh, lovely - so linkat() *CAN* get that for dirfd and must somehow tell
-> it from the normal case.  With the semantics entirely unrelated to the normal
-> one.
+>
+> Incidentally, doing that would have fun effects for anyone with current
+> directory inside the subtree you'd moved - try and see.
 
-I'm open to just using a different syscall.  link_stream(sfd, "newstream");
-And, as you point out below, we need unlink_stream(fd, "stream");
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> And on top of everything else, we have
-> 	5) what are the permissions involved?  When are they determined, BTW?
+-----BEGIN PGP SIGNATURE-----
 
-If you can open a file, you can open its streams.  So an O_PATH file
-descriptor can't be used to open streams.
-
-> > close(sfd);
-> > 
-> >  - Stream names are NUL terminated and may contain any other character.
-> >    If you want to put a '/' in a stream name, that's fine, but there's
-> >    no hierarchy.  Ditto "//../././../../..//./."  It's just a really
-> >    oddly named stream.
-> 
-> Er...  Whatever for?
-
-Interoperability.  If some other system creates a stream with a '/' in
-it, I don't want the filesystem to have to convert.  Although, at least
-Windows doesn't permit '/' in stream names [1] [2].  Of course, individual
-filesystems could reject characters in names that they don't like.
-
-[1] https://docs.microsoft.com/en-us/windows/win32/fileio/file-streams
-[2] https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
-
-> >  - linkat() will fail if 'fd' does not match where 'sfd' was created.
-> 
-> 	6) "match" in the above being what, exactly?
-
-Referring to a different inode than the one it was created in.  Although
-if we just go with the link_stream() proposal above, then this point is
-moot.
+iQEzBAEBCAAdFiEEWcDV2nrrM20UJL9WhD9tdT2UlyoFAl9Kx1YACgkQhD9tdT2U
+lyr2Nwf8CQNwOqiIZx8OAU9rZqBJYxEEzzlQQerLkXwN52m7knmN1M6UibLeODFf
+qmJiVA+pYOQ3JgwfzQYZJ1Asja1HnczqrHCWF6wztFYhLK1c3yEG4wARCqWIKanw
+OiAt6hqlpeJNGHOBU9RlxtVerCyfzoPBCYq8lhhKM4b7DPrciVPT6kON562z5Dqm
+YbvLX2aEis17VmMg1/o7U/R8hDOlll6+nhLkOBTH+6lCccYLQ/tK02Ar7DH+Ct94
+YmyyaWC40DcRXTUzjnoDdEKwt2mPHsdtNWTTKxB3T6csGotzNnAsUFlLAvHOwBAV
+FsYmbATtmMCzXi662PvrmzkMT6Y9dg==
+=MLmB
+-----END PGP SIGNATURE-----
+--=-=-=--
