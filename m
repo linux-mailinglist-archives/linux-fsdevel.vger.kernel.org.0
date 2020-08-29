@@ -2,185 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5887325674D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Aug 2020 13:53:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 991E02567A3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Aug 2020 14:53:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727930AbgH2Lxu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Aug 2020 07:53:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56180 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726981AbgH2Lxm (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Aug 2020 07:53:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 86719AEDA;
-        Sat, 29 Aug 2020 11:32:16 +0000 (UTC)
-Subject: Re: [PATCH v3 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
+        id S1727932AbgH2Mxn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Aug 2020 08:53:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37864 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727772AbgH2Mxl (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 29 Aug 2020 08:53:41 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C6D8C061236;
+        Sat, 29 Aug 2020 05:53:40 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id w13so1645904wrk.5;
+        Sat, 29 Aug 2020 05:53:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=6yGdyFT3n0KnKlJYrQFKElmgg31XlIgfsR8x4R8Vpz0=;
+        b=NbUlFu4uRhCVVnOoUCgEpoK00f26ZNajuTH+VdZl8GE/72fnEUNbfZ+VwRJTOfjk+y
+         OfdP9k5dYaZZ4UKXX4KihvzB2tZtFdWre6AGj+2hQbWhd2F3lUyPDzI7zhQvzcG5mFbr
+         aKevqYW4fK9ShakWvbnRFWYQ0TAKYBa5YYexiB2gp6acwomFptX+GKr4tBRB10RLfAxS
+         l0FKXbXZTr9EVqLGLMGGh0TVFMLOEQz8kKT4K++ePJKTcpl2Y72BK8Kj+AVJaxnVBnQk
+         duUtyZGDhRIftQT41tmXYF0iYq+5UVgn4cWT8jl/RXQEsoxN+gt/Y3xovXHJMKpcct/S
+         QqUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=6yGdyFT3n0KnKlJYrQFKElmgg31XlIgfsR8x4R8Vpz0=;
+        b=Kvwn3ia9B6nC/Lajv/ZiBBo4aeexGIrcTVGqms7PLbLJvVmWm717H85jnBWgTBrLpX
+         yfGyVvSQye7PvSVIYjXCcLZgGBu6trNXbPCb2zyJEKplKM9jFVIxUqFTHoyvIAEyna1Y
+         +BDdS3vEFC9cX59XNXerqELK596AR732NCgnuCQkG080ZrAalR9xvcbrKzXWhB9HLDWX
+         9w/rxLwTOGLz8KrSfuTmfFYtAJxNYgBUQgor2JRyNYzOOOO0t5LBibnPyvcYOz+At21F
+         eTO8WEhr25513cTL7HUZKQChWMkuycLpyLpOVImceS/iC+PEX7SRXfIpV8Vgtxx+t1/M
+         i/iA==
+X-Gm-Message-State: AOAM530RFknYo9hrHLiBBY0IErN5fIqIjX24y9KCQQ2G+kcZBaLLKgFO
+        9rY3yheCafRhrDKfGJeQW48=
+X-Google-Smtp-Source: ABdhPJxPhih1jhFdoyfrpKH2NsVBqJDFhiwRnMq08LZY4j1iEGa6eowLDsiBzGWEAveVWMhRMUmgyA==
+X-Received: by 2002:a5d:4bc6:: with SMTP id l6mr3708597wrt.132.1598705615775;
+        Sat, 29 Aug 2020 05:53:35 -0700 (PDT)
+Received: from ?IPv6:2a02:8010:64ea:0:fad1:11ff:fead:57db? ([2a02:8010:64ea:0:fad1:11ff:fead:57db])
+        by smtp.googlemail.com with ESMTPSA id s12sm3185424wmj.26.2020.08.29.05.53.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 29 Aug 2020 05:53:35 -0700 (PDT)
+Subject: Re: [PATCH v2 05/10] fs/ntfs3: Add attrib operations
 To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        pali@kernel.org, dsterba@suse.cz, aaptel@suse.com,
-        willy@infradead.org, rdunlap@infradead.org, joe@perches.com,
-        mark@harmstone.com
-References: <20200828143938.102889-1-almaz.alexandrovich@paragon-software.com>
-From:   Nikolay Borisov <nborisov@suse.com>
-Autocrypt: addr=nborisov@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <dcea3bfc-a082-8dfe-cbd0-c99333fe1b22@suse.com>
-Date:   Sat, 29 Aug 2020 14:31:41 +0300
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Cc:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>
+References: <e2decd9632cd4d218fb83e96c0c37174@paragon-software.com>
+From:   Mark Harmstone <mark@harmstone.com>
+Autocrypt: addr=mark@harmstone.com; keydata=
+ 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
+ /dLFIhf2zxRylN1xq27M9P2t1xfQFocuYToPsVk=
+Message-ID: <3c1e5918-347a-d1e6-44ce-338c7d0dc7e4@harmstone.com>
+Date:   Sat, 29 Aug 2020 13:53:34 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <20200828143938.102889-1-almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <e2decd9632cd4d218fb83e96c0c37174@paragon-software.com>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 28/8/20 5:52 pm, Konstantin Komarov wrote:
+> Hi Mark! Thanks for the feedback. It's reasonable concern, but the open
+> question is how to access those NTFS attributes which extend the DOS
+> attributes. user.DOSATTRIB may be good for FAT32 as DOS attributes are stored in 8bit.
+> However, this does not apply to NTFS (32bit attributes).
 
+I'm not sure why this would be an issue - the obvious way of reading
+user.DOSATTRIB is to use sscanf into an int, and then check for the bits you're
+interested in. The NT FILE_ATTRIBUTE_* values replicate and extend the FAT
+constants used by DOS, so it shouldn't cause any confusion only exposing the
+full 32-bit value.
 
-On 28.08.20 г. 17:39 ч., Konstantin Komarov wrote:
-> This patch adds NTFS Read-Write driver to fs/ntfs3.
-> 
-> Having decades of expertise in commercial file systems development and huge
-> test coverage, we at Paragon Software GmbH want to make our contribution to
-> the Open Source Community by providing implementation of NTFS Read-Write
-> driver for the Linux Kernel.
-> 
-> This is fully functional NTFS Read-Write driver. Current version works with
-> NTFS(including v3.1) and normal/compressed/sparse files and supports journal replaying.
-> 
-> We plan to support this version after the codebase once merged, and add new
-> features and fix bugs. For example, full journaling support over JBD will be
-> added in later updates.
-> 
-> v2:
->  - patch splitted to chunks (file-wise)
->  - build issues fixed
->  - sparse and checkpatch.pl errors fixed
->  - NULL pointer dereference on mkfs.ntfs-formatted volume mount fixed
->  - cosmetics + code cleanup
-> 
-> v3:
->  - added acl, noatime, no_acs_rules, prealloc mount options
->  - added fiemap support
->  - fixed encodings support
->  - removed typedefs
->  - adapted Kernel-way logging mechanisms
->  - fixed typos and corner-case issues
-> 
-> Konstantin Komarov (10):
->   fs/ntfs3: Add headers and misc files
->   fs/ntfs3: Add initialization of super block
-
-This patch is missing
-
->   fs/ntfs3: Add bitmap
->   fs/ntfs3: Add file operations and implementationThis patch is missing
-
->   fs/ntfs3: Add attrib operations
->   fs/ntfs3: Add compression
->   fs/ntfs3: Add NTFS journal
-This patch is missing
-
->   fs/ntfs3: Add Kconfig, Makefile and doc
->   fs/ntfs3: Add NTFS3 in fs/Kconfig and fs/Makefile
->   fs/ntfs3: Add MAINTAINERS
-> 
->  Documentation/filesystems/ntfs3.rst |  103 +
->  MAINTAINERS                         |    7 +
->  fs/Kconfig                          |    1 +
->  fs/Makefile                         |    1 +
->  fs/ntfs3/Kconfig                    |   23 +
->  fs/ntfs3/Makefile                   |   11 +
->  fs/ntfs3/attrib.c                   | 1285 +++++++
->  fs/ntfs3/attrlist.c                 |  462 +++
->  fs/ntfs3/bitfunc.c                  |  137 +
->  fs/ntfs3/bitmap.c                   | 1545 ++++++++
->  fs/ntfs3/debug.h                    |   45 +
->  fs/ntfs3/dir.c                      |  642 ++++
->  fs/ntfs3/file.c                     | 1214 +++++++
->  fs/ntfs3/frecord.c                  | 2378 ++++++++++++
->  fs/ntfs3/fslog.c                    | 5222 +++++++++++++++++++++++++++
->  fs/ntfs3/fsntfs.c                   | 2218 ++++++++++++
->  fs/ntfs3/index.c                    | 2661 ++++++++++++++
->  fs/ntfs3/inode.c                    | 2068 +++++++++++
->  fs/ntfs3/lznt.c                     |  451 +++
->  fs/ntfs3/namei.c                    |  580 +++
->  fs/ntfs3/ntfs.h                     | 1249 +++++++
->  fs/ntfs3/ntfs_fs.h                  | 1001 +++++
->  fs/ntfs3/record.c                   |  615 ++++
->  fs/ntfs3/run.c                      | 1188 ++++++
->  fs/ntfs3/super.c                    | 1406 ++++++++
->  fs/ntfs3/upcase.c                   |   78 +
->  fs/ntfs3/xattr.c                    | 1007 ++++++
->  27 files changed, 27598 insertions(+)
->  create mode 100644 Documentation/filesystems/ntfs3.rst
->  create mode 100644 fs/ntfs3/Kconfig
->  create mode 100644 fs/ntfs3/Makefile
->  create mode 100644 fs/ntfs3/attrib.c
->  create mode 100644 fs/ntfs3/attrlist.c
->  create mode 100644 fs/ntfs3/bitfunc.c
->  create mode 100644 fs/ntfs3/bitmap.c
->  create mode 100644 fs/ntfs3/debug.h
->  create mode 100644 fs/ntfs3/dir.c
->  create mode 100644 fs/ntfs3/file.c
->  create mode 100644 fs/ntfs3/frecord.c
->  create mode 100644 fs/ntfs3/fslog.c
->  create mode 100644 fs/ntfs3/fsntfs.c
->  create mode 100644 fs/ntfs3/index.c
->  create mode 100644 fs/ntfs3/inode.c
->  create mode 100644 fs/ntfs3/lznt.c
->  create mode 100644 fs/ntfs3/namei.c
->  create mode 100644 fs/ntfs3/ntfs.h
->  create mode 100644 fs/ntfs3/ntfs_fs.h
->  create mode 100644 fs/ntfs3/record.c
->  create mode 100644 fs/ntfs3/run.c
->  create mode 100644 fs/ntfs3/super.c
->  create mode 100644 fs/ntfs3/upcase.c
->  create mode 100644 fs/ntfs3/xattr.c
-> 
