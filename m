@@ -2,115 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id ED0792569D4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Aug 2020 21:13:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FEC72569D7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Aug 2020 21:18:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbgH2TNk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Aug 2020 15:13:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40046 "EHLO
+        id S1728406AbgH2TSA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Aug 2020 15:18:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728265AbgH2TNk (ORCPT
+        with ESMTP id S1728380AbgH2TR7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Aug 2020 15:13:40 -0400
-Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05906C061236
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Aug 2020 12:13:39 -0700 (PDT)
-Received: by mail-ua1-x942.google.com with SMTP id g11so812045ual.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Aug 2020 12:13:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lTD0JSzaISIs2GS9auiXCcabYGD0Ro6Ps7s8yDZE/kI=;
-        b=ZDk/DUsLGyJbV5BAIC6K2SlG1pb36lppuE7hQ1gXMrUH2CZFKJqEX5apLXam66P37F
-         HHUAKBiwG68EDQ8UnjpjfREo+p5vUnjDzHrJre2tb9wmF8d+mRJ0drNuGIClGgOzcQyX
-         6ncU6H/l1eFYthV45BCORJlzbV1naxbFS8lj0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lTD0JSzaISIs2GS9auiXCcabYGD0Ro6Ps7s8yDZE/kI=;
-        b=uH5iGr8/EQ9bLBXwhsst7WSaiLLLl2DIuyRxvrZ/g8JYtPA4iHQ7qWyyzZup49Idut
-         4wksuJfmvO2P+SeVJx6xmiwwnM5MnDTJAP3ULNGOgmbxfu78BrjRq/DyT11c5z9tNuOf
-         jeyJib4K+SEY0p6sjjjA7NVuGO9k1ZHGo7oaXmcCFcCjm7XNpKdxAQU9KJ1bVbGkTpCv
-         hQ2ON97yiA2SgrKMHYDSkHv/VU8yoGYfXjSdyjvLtjtjgN0x0Q6Fe2ggNnLlDv4e73xh
-         Ez/GYiBrFmrMEWCtNjY08JloiLAH+91NV2VLVSlBMtSB5BrI++k2N9Im8yu2kNyhm4CK
-         acJA==
-X-Gm-Message-State: AOAM530yrGR5RSVq/c0KQmKuNKm3llVk+XLrQl7r8KM3H7E56O2hkaR/
-        aQKRuMXPdL/uDnh+gYif0DGDptDnZfooLz+hZWCmsQ==
-X-Google-Smtp-Source: ABdhPJzpzE5S+E9Bxv2KAWsrdevEoq8RZJQzJ4/Lyh82pvUHPtkJyJReOvFl0Ucj+IdwkSmdVF6nHn204S9xbbYjuxo=
-X-Received: by 2002:ab0:32d:: with SMTP id 42mr1160976uat.107.1598728415705;
- Sat, 29 Aug 2020 12:13:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200812143323.GF2810@work-vm> <27541158.PQPtYaGs59@silver>
- <20200816225620.GA28218@dread.disaster.area> <20200816230908.GI17456@casper.infradead.org>
- <20200817002930.GB28218@dread.disaster.area> <20200827152207.GJ14765@casper.infradead.org>
- <20200827222457.GB12096@dread.disaster.area> <20200829160717.GS14765@casper.infradead.org>
- <20200829161358.GP1236603@ZenIV.linux.org.uk> <CAJfpegu2R21CF9PEoj2Cw6x01xmJ+qsff5QTcOcY4G5KEY3R0w@mail.gmail.com>
- <20200829180448.GQ1236603@ZenIV.linux.org.uk>
-In-Reply-To: <20200829180448.GQ1236603@ZenIV.linux.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Sat, 29 Aug 2020 21:13:24 +0200
-Message-ID: <CAJfpegsn-BKVkMv4pQHG7tER31m5RSXrJyhDZ-Uzst1CMBEbEw@mail.gmail.com>
-Subject: Re: xattr names for unprivileged stacking?
+        Sat, 29 Aug 2020 15:17:59 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 555D5C061236
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Aug 2020 12:17:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=zzMteWS2vCKWYeDlaBKzqPMbcjWrLZZFWIm5SUXnQRQ=; b=QFW9qxRHKeny5cG7Y+/XaxbDo1
+        DIkfxO3IIWlt8IozZ5MSYXd6o8oOJG++VBwXmfxH9gnwKNfU4zzEF8aBt3Du5ePW/oUEtj/T7Y0yn
+        gPDCL1cKPnrei8e2SGMLUu+hxPsa7j2eOrjSKzyQZ0S3p18llPiN1e9luZfyYoOtlMmZgSHemiN45
+        ex07PyZtnNcfBMvxbuZYUa4AuCpMcu6FjE2BDkkrkprIMtG2akWZV+AjUG6nXfV3maWRJDf0ZgbCN
+        Tn1Zp7K9H6Nsl1iKrxMK9suQvviBSazrlJMcRHEn1O+WpTxArwEJkRZmgkYZkB7cSYT4zj9VVivAd
+        3TzayUBg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kC6MJ-00011v-CJ; Sat, 29 Aug 2020 19:17:51 +0000
+Date:   Sat, 29 Aug 2020 20:17:51 +0100
+From:   Matthew Wilcox <willy@infradead.org>
 To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
+Cc:     Dave Chinner <david@fromorbit.com>,
         Christian Schoenebeck <qemu_oss@crudebyte.com>,
         "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
         Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        stefanha@redhat.com, mszeredi@redhat.com, vgoyal@redhat.com,
+        gscrivan@redhat.com, dwalsh@redhat.com, chirantan@chromium.org
+Subject: Re: xattr names for unprivileged stacking?
+Message-ID: <20200829191751.GT14765@casper.infradead.org>
+References: <12480108.dgM6XvcGr8@silver>
+ <20200812143323.GF2810@work-vm>
+ <27541158.PQPtYaGs59@silver>
+ <20200816225620.GA28218@dread.disaster.area>
+ <20200816230908.GI17456@casper.infradead.org>
+ <20200817002930.GB28218@dread.disaster.area>
+ <20200827152207.GJ14765@casper.infradead.org>
+ <20200827222457.GB12096@dread.disaster.area>
+ <20200829160717.GS14765@casper.infradead.org>
+ <20200829161358.GP1236603@ZenIV.linux.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200829161358.GP1236603@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 29, 2020 at 8:04 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Sat, Aug 29, 2020 at 07:51:47PM +0200, Miklos Szeredi wrote:
-> > On Sat, Aug 29, 2020 at 6:14 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > On Sat, Aug 29, 2020 at 05:07:17PM +0100, Matthew Wilcox wrote:
-> > >
-> >
-> > > > > The fact that ADS inodes would not be in the dentry cache and hence
-> > > > > not visible to pathwalks at all then means that all of the issues
-> > > > > such as mounting over them, chroot, etc don't exist in the first
-> > > > > place...
-> > > >
-> > > > Wait, you've now switched from "this is dentry cache infrastructure"
-> > > > to "it should not be in the dentry cache".  So I don't understand what
-> > > > you're arguing for.
-> > >
-> > > Bloody wonderful, that.  So now we have struct file instances with no dentry
-> > > associated with them?  Which would have to be taken into account all over
-> > > the place...
-> >
-> > It could have a temporary dentry allocated for the lifetime of the
-> > file and dropped on last dput.  I.e. there's a dentry, but no cache.
-> > Yeah, yeah, d_path() issues, however that one will have to be special
-> > cased anyway.
->
-> d_path() is the least of the problems, actually.  Directory tree structure on
-> those, OTOH, is a serious problem.  If you want to have getdents(2) on that
-> shite, you want an opened descriptor that looks like a directory.  And _that_
-> opens a large can of worms.  Because now you have fchdir(2) to cope with,
-> lookups going through /proc/self/fd/<n>/..., etc., etc.
+On Sat, Aug 29, 2020 at 05:13:58PM +0100, Al Viro wrote:
+> On Sat, Aug 29, 2020 at 05:07:17PM +0100, Matthew Wilcox wrote:
+> 
+> > I agree with you that supporting named streams within a file requires
+> > an independent inode for each stream.  I disagree with you that this is
+> > dentry cache infrastructure.  I do not believe in giving each stream
+> > its own dentry.  Either they share the default stream's dentry, or they
+> > have no dentry (mild preference for no dentry).
+> 
+> *blink*
+> 
+> Just how would they have different inodes while sharing a dentry?
+> 
+> > > The fact that ADS inodes would not be in the dentry cache and hence
+> > > not visible to pathwalks at all then means that all of the issues
+> > > such as mounting over them, chroot, etc don't exist in the first
+> > > place...
+> > 
+> > Wait, you've now switched from "this is dentry cache infrastructure"
+> > to "it should not be in the dentry cache".  So I don't understand what
+> > you're arguing for.
+> 
+> Bloody wonderful, that.  So now we have struct file instances with no dentry
+> associated with them?  Which would have to be taken into account all over
+> the place...
 
-Seriously, nobody wants fchdir().  And getdents() does not imply fchdir().
+I probably have the wrong nomenclature for what I'm proposing.
 
-As for whether we'd need foobarat() on such a beast or let
-/proc/self/fd/<n> be dereferenced, I think no.  So comes the argument:
- but then we'll break all those libraries and whatnot relying on these
-constructs.  Well, sorry, so would we if we didn't introduce this in
-the first place.  That's not really breaking anything, it's just
-setting expectations.
+So here's a concrete API.  What questions need to be answered?
 
-Thanks,
-Miklos
+fd = open("real", O_RDWR);
+
+// fetch stream names
+sfd = open_stream(fd, NULL);
+read(sfd, names, length);
+close(sfd);
+
+// open the first one
+sfd = open_stream(fd, names);
+read(sfd, buffer, buflen);
+close(sfd);
+
+// create a new anonymous stream
+sfd = open_stream(fd, "");
+write(sfd, buffer, buflen);
+// name it
+linkat(sfd, NULL, fd, "newstream", AT_EMPTY_PATH);
+close(sfd);
+
+ - Stream names are NUL terminated and may contain any other character.
+   If you want to put a '/' in a stream name, that's fine, but there's
+   no hierarchy.  Ditto "//../././../../..//./."  It's just a really
+   oddly named stream.
+ - linkat() will fail if 'fd' does not match where 'sfd' was created.
+ - open_stream() always creates a new stream when a zero-length string is
+   specified.
+ - open_stream() returns ENOENT if there is no stream by that name (ie the
+   only way to create a stream is to specify no name, and then name
+   it later).
+ - sfd inherits the appropriate O_ flags from fd (O_RDWR, O_CLOEXEC, ...)
+ - open_stream(sfd) is ENOTTY.
+
