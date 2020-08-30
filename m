@@ -2,117 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CBF2E256AA8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Aug 2020 00:43:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6355E256ADD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Aug 2020 02:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728564AbgH2Wmx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Aug 2020 18:42:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44086 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728555AbgH2Wmv (ORCPT
+        id S1728384AbgH3AI2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Aug 2020 20:08:28 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:35763 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728095AbgH3AIQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Aug 2020 18:42:51 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2209FC061573
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Aug 2020 15:42:50 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id w13so2464194wrk.5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Aug 2020 15:42:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=platform.sh; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=o6LGzjsM2Kx7EWIT/ZnmgyA5z9nNQFr8nuwU2PjtX78=;
-        b=NFLRMtpzctxQqrra1tQNwHIifdCAICA/VWcvhaaLuwuR5Es4wnTFDdDimGg+aMqn2m
-         +EXi+kkK02lSw1HHwuV8AP073H7A6gTwUzGPf02GGYRaEzzumi0nO9wTiaJqAUcOwFus
-         bVE9hVfCh1vVDBFK1xdtWqLOeSdnnyGMgcsqab2gmLN2d27xidriS5Zfc0SJERVfSqsC
-         7VmdlfHdGSLg21add6TCDVLMuyYhqwqjyUzvpF0y+OpnhFZoOkUa2wvjUEDx9fRiQCu9
-         7wzBGb6IX8G1PerezYzvDH8JrIQAd9lyvX6eRbBqkuh8eQjVwM2+DyzjWazDZkMQBpM5
-         2GAw==
+        Sat, 29 Aug 2020 20:08:16 -0400
+Received: by mail-il1-f198.google.com with SMTP id g6so2246055iln.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 29 Aug 2020 17:08:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=o6LGzjsM2Kx7EWIT/ZnmgyA5z9nNQFr8nuwU2PjtX78=;
-        b=hd9EnyYABDx1kxGBacuCEAfXWgqj7kn0VYwt+OWMi2mp3dECHjVjpq4LA+l86lJ+x3
-         djI8DVFeF4BDw5QfeXjlvsFTOSyoNSvjEoLW+QBpO+Ka5mv4bA4f3ye8ytDYQFcTSCE/
-         cvLxCZZ0MOoX8UJFYOwKc29S+5IgZKdyizv5IHkbDTLDokm5ibyQnU+mVHtyAvTi7ion
-         tB8N2BZGaTFgBkFcWxJ+29YIHriKGOiFsobdR4qaoi6pXRaUjMfwQ3KDOaN+qPuRl1ji
-         Thg8YEFRqZA1cjc20XjKDxWGLdtWYzqjINcnKfg8UrQ0DKK4/Ow0L9aaLkBihNXZelbs
-         HiSA==
-X-Gm-Message-State: AOAM531w/MY1AMceARcfuV1+blARTByXKZYealGR6eVMLNU4hMHtH/NV
-        BmolQr9NvORryjy6/9kIMe3DLw==
-X-Google-Smtp-Source: ABdhPJxWlzRiCVA2bN1NrXJ1DA/pd10YLUnRJY6KzCx9g0vdz0TPPJhIVEyI1TPqeZ7lXMXxLcmlyg==
-X-Received: by 2002:adf:8405:: with SMTP id 5mr5038094wrf.393.1598740969429;
-        Sat, 29 Aug 2020 15:42:49 -0700 (PDT)
-Received: from localhost ([2a01:cb1c:111:4a00:dec6:dcf6:5621:172d])
-        by smtp.gmail.com with ESMTPSA id b204sm5056016wmd.34.2020.08.29.15.42.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Aug 2020 15:42:48 -0700 (PDT)
-From:   Florian Margaine <florian@platform.sh>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: allow do_renameat2() over bind mounts of the same filesystem.
-In-Reply-To: <20200829221204.GV14765@casper.infradead.org>
-References: <871rjqh5bw.fsf@platform.sh> <20200828213445.GM1236603@ZenIV.linux.org.uk> <87wo1hf8o9.fsf@platform.sh> <20200829221204.GV14765@casper.infradead.org>
-Date:   Sun, 30 Aug 2020 00:42:46 +0200
-Message-ID: <87tuwlf509.fsf@platform.sh>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=WP/oTxD4ikGNevYxi/Gik02i9253kfcXZ0yBayVCSiw=;
+        b=DOfO1k/WhFEJ/QChAPAJ+9lG9SPN7voOQd6S4Dguul8DEiAIMTRoFj1OIfavs5CsB3
+         T1yMPQbKiWdm9Ukw8MxpOoJcvB1BPGdQEVm9iSRk3MyNqf1nOQyRgd6f3Y+qnTUKorLX
+         /m7HEiUsbTaX3Xq6Gbws1oMoEgEz5pa7VPBVw17TDPDOqxP7RZjdI9SDeuGdpJ+Hpirw
+         H5K1PT+MlOS1lx08V6ZJ2BpYCoiq50tm+v56wjBH8oyBlPwQrTGJu/UFkUjuNHBCVcm3
+         +iK8uST3wKIFsUIYKJFiNz9TYUPZ+dK1U6RIVyKXZZe1RrGl6u4P0aovO8k6ES8XGG7J
+         sfMw==
+X-Gm-Message-State: AOAM530MbFV1WOqdO6LgK/b2/+JyJRwS2pd3i0vjah52asTmn38OrAxh
+        7SKelaWD9GOZS4mlv8LYudCa1E7AsjiECC/eBOBfqXB1BB8Q
+X-Google-Smtp-Source: ABdhPJw0JMQM6lalm7PDDjvr3fjL+p7YaO8HuhgTbLhVq72JaBaadXE+3ga9zfRLPZamFWJ2sINujFnqlzWJO93bryjdalEo7G+0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+X-Received: by 2002:a92:5e5b:: with SMTP id s88mr3893010ilb.65.1598746095507;
+ Sat, 29 Aug 2020 17:08:15 -0700 (PDT)
+Date:   Sat, 29 Aug 2020 17:08:15 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001bdf9705ae0d151b@google.com>
+Subject: possible deadlock in __lock_task_sighand
+From:   syzbot <syzbot+6e8f5b555cce8fac0423@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, christian@brauner.io, ebiederm@xmission.com,
+        io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liuzhiqiang26@huawei.com,
+        oleg@redhat.com, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Matthew Wilcox <willy@infradead.org> writes:
+syzbot found the following issue on:
 
-> On Sat, Aug 29, 2020 at 11:23:34PM +0200, Florian Margaine wrote:
->> Al Viro <viro@zeniv.linux.org.uk> writes:
->>=20
->> > On Fri, Aug 28, 2020 at 10:40:35PM +0200, Florian Margaine wrote:
->> >> There's currently this seemingly unnecessary limitation that rename()
->> >> cannot work over bind mounts of the same filesystem,
->> >
->> > ... is absolutely deliberate - that's how you set a boundary in the
->> > tree, preventing both links and renames across it.
->>=20
->> Sorry, I'm not not sure I understand what you're saying.
->
-> Al's saying this is the way an administrator can intentionally prevent
-> renames.
+HEAD commit:    abb3438d Merge tag 'm68knommu-for-v5.9-rc3' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10bb5105900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=978db74cb30aa994
+dashboard link: https://syzkaller.appspot.com/bug?extid=6e8f5b555cce8fac0423
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=123a3996900000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=158b8eb6900000
 
-Ah, ok. Thanks!
+The issue was bisected to:
 
->
->>     /*
->>      * FICLONE/FICLONERANGE ioctls enforce that src and dest files are on
->>      * the same mount. Practically, they only need to be on the same file
->>      * system.
->>      */
->>     if (file_inode(file_in)->i_sb !=3D file_inode(file_out)->i_sb)
->>         return -EXDEV;
->
-> clone doesn't change the contents of a file, merely how they're laid out
-> on storage.  There's no particular reason for an administrator to
-> prohibit clone across mount points.
+commit 0ba9c9edcd152158a0e321a4c13ac1dfc571ff3d
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Fri Aug 7 01:41:50 2020 +0000
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+    io_uring: use TWA_SIGNAL for task_work uncondtionally
 
------BEGIN PGP SIGNATURE-----
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1672c549900000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1572c549900000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1172c549900000
 
-iQEzBAEBCAAdFiEEWcDV2nrrM20UJL9WhD9tdT2UlyoFAl9K2eYACgkQhD9tdT2U
-lypGfgf/VElsI3XDE1+tOfSPlOivtjeal1u7UDE1z0r2z2wdlsfiFvI7cymiXmZw
-dRgcJPHcg8yQaid0MPJA33av5SwOPQCZHNa5lw+lwvEILimwQWmSwz8cwVj5z3Bh
-kn3231nTBMwmMlD4Cru/Mzf1tPPj6Qevdn3WJZAZMi9Kl7HzYpChiOYGJsRIuqKa
-WiYdiDOMmM+sQ2h7uZuXRxdqfmJrsgQXDOPaguzQH3S6TktG3IP1T714xRLDslsk
-StOzENw5FO8+v8zrjXEl/R2dcQPGSZxRZnpU9E2IpTJKXnWFUJmr5YWf7JzydRkS
-W0IxTH1xoAaQKJ/2W8ojOi6AGSFTig==
-=zWV3
------END PGP SIGNATURE-----
---=-=-=--
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6e8f5b555cce8fac0423@syzkaller.appspotmail.com
+Fixes: 0ba9c9edcd15 ("io_uring: use TWA_SIGNAL for task_work uncondtionally")
+
+============================================
+WARNING: possible recursive locking detected
+5.9.0-rc2-syzkaller #0 Not tainted
+--------------------------------------------
+syz-executor339/7010 is trying to acquire lock:
+ffff888094030058 (&sighand->siglock){....}-{2:2}, at: __lock_task_sighand+0x106/0x2d0 kernel/signal.c:1390
+
+but task is already holding lock:
+ffff888094030058 (&sighand->siglock){....}-{2:2}, at: force_sig_info_to_task+0x6c/0x3a0 kernel/signal.c:1316
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&sighand->siglock);
+  lock(&sighand->siglock);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+3 locks held by syz-executor339/7010:
+ #0: ffff888094030058 (&sighand->siglock){....}-{2:2}, at: force_sig_info_to_task+0x6c/0x3a0 kernel/signal.c:1316
+ #1: ffff8880940300a0 (&sighand->signalfd_wqh){....}-{2:2}, at: __wake_up_common_lock+0xb4/0x130 kernel/sched/wait.c:122
+ #2: ffffffff89bd6900 (rcu_read_lock){....}-{1:2}, at: __lock_task_sighand+0x0/0x2d0 kernel/signal.c:1352
+
+stack backtrace:
+CPU: 1 PID: 7010 Comm: syz-executor339 Not tainted 5.9.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x18f/0x20d lib/dump_stack.c:118
+ print_deadlock_bug kernel/locking/lockdep.c:2391 [inline]
+ check_deadlock kernel/locking/lockdep.c:2432 [inline]
+ validate_chain kernel/locking/lockdep.c:3202 [inline]
+ __lock_acquire.cold+0x115/0x396 kernel/locking/lockdep.c:4426
+ lock_acquire+0x1f1/0xad0 kernel/locking/lockdep.c:5005
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0x8c/0xc0 kernel/locking/spinlock.c:159
+ __lock_task_sighand+0x106/0x2d0 kernel/signal.c:1390
+ lock_task_sighand include/linux/sched/signal.h:687 [inline]
+ task_work_add+0x1d7/0x290 kernel/task_work.c:51
+ io_req_task_work_add fs/io_uring.c:1765 [inline]
+ __io_async_wake+0x415/0x980 fs/io_uring.c:4589
+ __wake_up_common+0x147/0x650 kernel/sched/wait.c:93
+ __wake_up_common_lock+0xd0/0x130 kernel/sched/wait.c:123
+ signalfd_notify include/linux/signalfd.h:22 [inline]
+ __send_signal+0x75b/0xf90 kernel/signal.c:1163
+ force_sig_info_to_task+0x2a0/0x3a0 kernel/signal.c:1333
+ force_sig_fault_to_task kernel/signal.c:1672 [inline]
+ force_sig_fault+0xb0/0xf0 kernel/signal.c:1679
+ __bad_area_nosemaphore+0x32a/0x480 arch/x86/mm/fault.c:778
+ do_user_addr_fault+0x852/0xbf0 arch/x86/mm/fault.c:1257
+ handle_page_fault arch/x86/mm/fault.c:1351 [inline]
+ exc_page_fault+0xa8/0x160 arch/x86/mm/fault.c:1404
+ asm_exc_page_fault+0x1e/0x30 arch/x86/include/asm/idtentry.h:538
+RIP: 0033:0x4013f9
+Code: 00 20 00 c6 04 25 3d 02 00 20 00 c6 04 25 3e 02 00 20 00 c6 04 25 3f 02 00 20 00 48 8b 15 a7 ac 2d 00 48 8b 34 25 00 02 00 20 <8b> 8a 0c 01 00 00 48 89 30 48 8b 34 25 08 02 00 20 c1 e1 04 48 89
+RSP: 002b:00007f8507d67d10 EFLAGS: 00010246
+RAX: ffffffffffffffff RBX: 00000000006f0038 RCX: 0000000000000000
+RDX: ffffffffffffffff RSI: 0000000600000002 RDI: 0000000000000000
+RBP: 00000000006f0030 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006f003c
+R13: 00007f8507d67d10 R14: 00007f8507d67d10 R15: 0000000000000001
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
