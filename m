@@ -2,100 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AA58B25810E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 20:24:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACE19258193
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 21:09:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729782AbgHaSYw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 14:24:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54436 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729385AbgHaSYv (ORCPT
+        id S1729395AbgHaTJS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 15:09:18 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:10110 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727993AbgHaTJS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 14:24:51 -0400
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55447C061755
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 11:24:51 -0700 (PDT)
-Received: by mail-qk1-x742.google.com with SMTP id n129so7060805qkd.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 11:24:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Hv640m4QkJdkTl9Q76dQvaUvN3yaHlXk40EdjG2dAxU=;
-        b=kYW61x2zxq/v2MAjtM1SNuP5dO2xGEionNS42MAxP4Ma8vuz/TuCLOA2zrC1SLEsU8
-         mqr0GxH5Mz5wcxZYWwXCNE9hs3XryDoF/Xm2gxhzowNNk0bjU1fO0gVSyh4jTJA7tCoY
-         NiFP+T+sZg5gVrG/kUsNAkBGWDGtSm+H4E1hejCX2Q350AyDjtCuJyVA5zXpIkCxFUeR
-         yWS/J7YoYyvAL9ARO3Ld57mG2/F7X7oW+pOUjWf+LNIWJJyGU3PX/bJy77Oft7Q+RWIp
-         xTwf+3cwAiJ3rBz0Jaevclu5sJRuKNyDM4SL1SU5Q2PthC2gHXYk0e0PdczyTHY70UIC
-         NTHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Hv640m4QkJdkTl9Q76dQvaUvN3yaHlXk40EdjG2dAxU=;
-        b=KKt62tF4od17O/OT8w9HSXKKXj+fiGv9DEwnvOSS0bLLLYtvcOz8k/TFOFGwdFmbFJ
-         gQxLWA3k62B7hOEhZ0bIFWtSR9F3a8g9uQRPqbRI03foUb8wO7XWfhlmx0/a5IM/eczr
-         3x9vmj1QUUk0OugniviKkdV9m5ZqSB1VSqzL//Esy+qP/bM31PDoR5gF/VR0E4pO5uv+
-         K7taCVSkDKiRsjzYUBsl2MzSd/uf+tRCdSbzqtUfq4MqMGsCqbnIUT9pVwC6EtHv3uBt
-         wlXgDigncnhaSw3MoOh8f5Xa/KyqTtxSRzDRkcRG9r/6LGmb/csyUqaBqTIZRzjCM2Mq
-         8Hkg==
-X-Gm-Message-State: AOAM532nArQhAFFoQJvDUnTyY1LRRRHzTNtHYjtVmSiH1HTlkmiZLvMO
-        q+Zi7+NAK8YUCb1zbGm1Sl/ttg==
-X-Google-Smtp-Source: ABdhPJyV6ew6dwpr4lrBr5AcKDSn1rykBLekoGp72e7NKLLUDp5XJXZwZCR1f2xKU5oO/2sXd3E2Yw==
-X-Received: by 2002:a05:620a:1257:: with SMTP id a23mr2322807qkl.207.1598898290431;
-        Mon, 31 Aug 2020 11:24:50 -0700 (PDT)
-Received: from localhost.localdomain.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id e9sm3352144qkb.8.2020.08.31.11.24.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Aug 2020 11:24:49 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     darrick.wong@oracle.com
-Cc:     hch@infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH v4] iomap: fix WARN_ON_ONCE() from unprivileged users
-Date:   Mon, 31 Aug 2020 14:23:53 -0400
-Message-Id: <20200831182353.14593-1-cai@lca.pw>
-X-Mailer: git-send-email 2.18.4
+        Mon, 31 Aug 2020 15:09:18 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f4d4acf0000>; Mon, 31 Aug 2020 12:09:03 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 31 Aug 2020 12:09:17 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 31 Aug 2020 12:09:17 -0700
+Received: from [10.2.61.194] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 31 Aug
+ 2020 19:09:13 +0000
+Subject: Re: [PATCH v3 3/3] bio: convert get_user_pages_fast() -->
+ pin_user_pages_fast()
+To:     Ira Weiny <ira.weiny@intel.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Ilya Dryomov" <idryomov@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20200831071439.1014766-1-jhubbard@nvidia.com>
+ <20200831071439.1014766-4-jhubbard@nvidia.com>
+ <20200831165222.GD1422350@iweiny-DESK2.sc.intel.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <35f751d4-bae4-e91e-d5f1-ddc38e2091ba@nvidia.com>
+Date:   Mon, 31 Aug 2020 12:09:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
+MIME-Version: 1.0
+In-Reply-To: <20200831165222.GD1422350@iweiny-DESK2.sc.intel.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598900943; bh=hmlm7qZUmqe8ZIX2tGp4tRD8QX+HOSHwmnTYYOtpD7o=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=ksPuWCmcI3fUby20QQ0e06U1xsnQvObWtkl1QqqrjT6r9MT4nLTq2sY7Hx53H/xPd
+         K3REe7NKoue3je9odo7fYIpnsM1yCMJJf3rC9HFhWsAmclzlYtdLwFD79uiVTEvuhX
+         XuL6fbEr5SFGg1oF85YrW6EnLPMuyfcS2RqoXZk4QG2OZisogf6GaqjWrJ0FuSLKaN
+         cUcfChhysPRi9lDrSsGadFMV82UWrm7C7lBbarJGsVQ7k2/O1iqW7ME46kNkgtrGYw
+         nM0FWNhyHT/Vorx+AlvG7SLjqoagaQ9FLNF9Wemd+xSYuP/9SlVBkZWa3zVhgtXWZW
+         ef492fMyHwtrA==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It is trivial to trigger a WARN_ON_ONCE(1) in iomap_dio_actor() by
-unprivileged users which would taint the kernel, or worse - panic if
-panic_on_warn or panic_on_taint is set. Hence, just convert it to
-pr_warn_ratelimited() to let users know their workloads are racing.
-Thank Dave Chinner for the initial analysis of the racing reproducers.
+On 8/31/20 9:52 AM, Ira Weiny wrote:
+> On Mon, Aug 31, 2020 at 12:14:39AM -0700, John Hubbard wrote:
+>> @@ -1113,8 +1113,8 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+>>   		} else {
+>>   			if (is_bvec)
+>>   				ret = __bio_iov_bvec_add_pages(bio, iter);
+>> -			else
+>> -				ret = __bio_iov_iter_get_pages(bio, iter);
+>> +		else
+>> +			ret = __bio_iov_iter_get_pages(bio, iter);
+> 
+> Why the white space change?
+> 
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
-v4: use %pD4.
-v3: Keep the default case and update the message.
-v2: Record the path, pid and command as well.
+Yikes, that's an oversight, and...yes, it goes all the way back to v1.
+Thanks for spotting it!
 
- fs/iomap/direct-io.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+There is not supposed to be any diff at all, in that region of code.
+I'll restore the hunk to its rightful, undisturbed state, in v4.
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index c1aafb2ab990..9519113ebc35 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -388,6 +388,16 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
- 		return iomap_dio_bio_actor(inode, pos, length, dio, iomap);
- 	case IOMAP_INLINE:
- 		return iomap_dio_inline_actor(inode, pos, length, dio, iomap);
-+	case IOMAP_DELALLOC:
-+		/*
-+		 * DIO is not serialised against mmap() access at all, and so
-+		 * if the page_mkwrite occurs between the writeback and the
-+		 * iomap_apply() call in the DIO path, then it will see the
-+		 * DELALLOC block that the page-mkwrite allocated.
-+		 */
-+		pr_warn_ratelimited("Direct I/O collision with buffered writes! File: %pD4 Comm: %.20s\n",
-+				    dio->iocb->ki_filp, current->comm);
-+		return -EIO;
- 	default:
- 		WARN_ON_ONCE(1);
- 		return -EIO;
+
+thanks,
 -- 
-2.18.4
-
+John Hubbard
+NVIDIA
