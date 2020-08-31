@@ -2,95 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CC7E257A63
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 15:28:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61BCB257AE5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 15:52:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727061AbgHaN1x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 09:27:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36022 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726928AbgHaN0x (ORCPT
+        id S1727956AbgHaNwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 09:52:45 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:41302 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727946AbgHaNw0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 09:26:53 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0D97C0619CE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 06:26:28 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id k25so3664928ljg.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 06:26:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
-        bh=o69Nac3LLMj5CDhyPqLcnP7WGq46U4gQb9HzFdG/MvE=;
-        b=GvS5ONqONS+SkRITeLOYK+nEKqeftr2e4zlw8iOljUdVaT4ei8mXK/eMe5gdebbxul
-         qejaiESAwrQo/TwRSbsV2RgWo1cR2hwlUx3zHZP6xDZHfKXln6WrMjydy1j5UDKStApO
-         83k6OMYB/O4HA/D4ksOUSzU9ZpUpEqmaButNQtqR6C29H3+mAHSKCbPlI067sUdB20EE
-         ixBTW9S1A2kyuIbzfdQN/JSL5cc/RZ+/MNHv7Yis6pX8HuuJNUwic97zwHx5MU4x4PUn
-         9VwFvJUStfi4hRDyGGDy0ijlpU3bNrs4tLAIT0WFfsT49jK8zJO72eI6R18XAB60K+Uk
-         aflg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to;
-        bh=o69Nac3LLMj5CDhyPqLcnP7WGq46U4gQb9HzFdG/MvE=;
-        b=QtjxjdfgfgvxhJAR/NTJS1sxtGHYJaTQtgxA7GdMzryK0d+ZUks+bZr5OlN5HdFoiB
-         OTGjVQbfRZoPU/Pu/EXPIekenvDz8p7EGwc1Pb2a/R9dqyPk3YhhgAHMfwtF5CrejW9E
-         tW8toD7TPHJhvHohyGfmVbdB1Z3mxEGAFW/u1/DOWxpoghq4Oo7m7h2GNOkr+vzkZ/pf
-         H3II2lO9uAH+wTuOLHsiCXT2Fw8mAtv9Ap5+XFGZ73B5qlhBtBtiS5RdqU7fCz3vu1PE
-         4Y2SjEiQc1F5S0JUz1FLfeYQsTYZ/f9fTexB6/nTFWCFxdk91d4+uR+nIfb32VFi7TZ0
-         p0EQ==
-X-Gm-Message-State: AOAM5305bsc4nQoJKkUqRxpk06bNkcbDR71jR4OBOap7Afuku7QioSev
-        qJrQTa4j6+EWEBOLZOZGyZSjAvn5NOb9FAPl1LE=
-X-Google-Smtp-Source: ABdhPJx5h73UdWdmqN0ZXklbmHxhGiANR3jS4fz3EetfufGWkyufJh3oSK0WTBZL+72KPBBqNF1EE+YcTj5isQyt2i4=
-X-Received: by 2002:a2e:5316:: with SMTP id h22mr714236ljb.167.1598880387154;
- Mon, 31 Aug 2020 06:26:27 -0700 (PDT)
+        Mon, 31 Aug 2020 09:52:26 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kCkEP-00DtQu-Dt; Mon, 31 Aug 2020 07:52:21 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kCkEO-0002TR-Ej; Mon, 31 Aug 2020 07:52:21 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     peterz@infradead.org
+Cc:     syzbot <syzbot+db9cdf3dd1f64252c6ef@syzkaller.appspotmail.com>,
+        adobriyan@gmail.com, akpm@linux-foundation.org, avagin@gmail.com,
+        christian@brauner.io, gladkov.alexey@gmail.com,
+        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        walken@google.com, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>, jannh@google.com
+References: <00000000000063640c05ade8e3de@google.com>
+        <87mu2fj7xu.fsf@x220.int.ebiederm.org>
+        <20200828123720.GZ1362448@hirez.programming.kicks-ass.net>
+        <87v9h0gvro.fsf@x220.int.ebiederm.org>
+        <20200831074328.GN1362448@hirez.programming.kicks-ass.net>
+Date:   Mon, 31 Aug 2020 08:52:16 -0500
+In-Reply-To: <20200831074328.GN1362448@hirez.programming.kicks-ass.net>
+        (peterz's message of "Mon, 31 Aug 2020 09:43:28 +0200")
+Message-ID: <87eenmgbxr.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Reply-To: marie_avis12@yahoo.com
-Received: by 2002:a2e:9817:0:0:0:0:0 with HTTP; Mon, 31 Aug 2020 06:26:26
- -0700 (PDT)
-From:   Miss Maris Avis <marie.avis11@gmail.com>
-Date:   Mon, 31 Aug 2020 13:26:26 +0000
-X-Google-Sender-Auth: aulnVZG-1gSOcZsrnz7-vOB6QCo
-Message-ID: <CADTVshPC=1cJsw0xvUiUZDDBg3VVdBcHJ+pk-zuvR4tycntngg@mail.gmail.com>
-Subject: Hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1kCkEO-0002TR-Ej;;;mid=<87eenmgbxr.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/pDE+t//a5yiKVsLhDBsA/S8IDZWtzoPo=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
+        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
+        version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4160]
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;peterz@infradead.org
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 579 ms - load_scoreonly_sql: 0.05 (0.0%),
+        signal_user_changed: 10 (1.8%), b_tie_ro: 9 (1.5%), parse: 0.90 (0.2%),
+         extract_message_metadata: 11 (1.9%), get_uri_detail_list: 1.33 (0.2%),
+         tests_pri_-1000: 18 (3.1%), tests_pri_-950: 1.37 (0.2%),
+        tests_pri_-900: 1.15 (0.2%), tests_pri_-90: 218 (37.7%), check_bayes:
+        216 (37.4%), b_tokenize: 8 (1.4%), b_tok_get_all: 63 (11.0%),
+        b_comp_prob: 4.5 (0.8%), b_tok_touch_all: 136 (23.4%), b_finish: 1.18
+        (0.2%), tests_pri_0: 306 (52.9%), check_dkim_signature: 0.53 (0.1%),
+        check_dkim_adsp: 2.8 (0.5%), poll_dns_idle: 0.77 (0.1%), tests_pri_10:
+        2.1 (0.4%), tests_pri_500: 6 (1.1%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: possible deadlock in proc_pid_syscall (2)
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-My Dear,
+peterz@infradead.org writes:
 
-My name is Miss Marie Avis the only daughter of Mr. Gabriel Avis, my
-Father was dealing in Cocoa and Timber in this country before his
-death,  It is my pleasure to contact you for a business venture which
-I intend to establish in your country. Though I have not met with you
-before but I believe one has to risk confiding before you can succeed
-sometimes in life.
+> On Sun, Aug 30, 2020 at 07:31:39AM -0500, Eric W. Biederman wrote:
+>
+>> I am thinking that for cases where we want to do significant work it
+>> might be better to ask the process to pause at someplace safe (probably
+>> get_signal) and then do all of the work when we know nothing is changing
+>> in the process.
+>> 
+>> I don't really like the idea of checking and then checking again.  We
+>> might have to do it but it feels like the model is wrong somewhere.
+>> 
+>> Given that this is tricky to hit in practice, and given that I am
+>> already working the general problem of how to sort out the locking I am
+>> going to work this with the rest of the thorny issues of in exec.  This
+>> feels like a case where the proper solution is that we simply need
+>> something better than a mutex.
+>
+> One possible alternative would be something RCU-like, surround the thing
+> with get_task_cred() / put_cred() and then have commit_creds() wait for
+> the usage of the old creds to drop to 0 before continuing.
+>
+> (Also, get_cred_rcu() is disgusting for casting away const)
+>
+> But this could be complete garbage, I'm not much familiar with any of
+> thise code.
 
-I can confide in you for my brighter future since you are a human
-being like me. There is this huge amount of Ten Million five hundred
-thousand United States dollars. ($10.500.000.00) which my late Father
-kept for me in a suspense account with one of the bank here in Abidjan
-Cote d'Ivoire before he was assassinated by unknown persons, Now I
-have decided to invest these money in your country or anywhere safe
-enough for me.
+This looks like an area of code that will take a couple of passes to get
+100% right.
 
-I want you to help me claim this fund from the bank and have it
-transfer into your personal account in your country for investment
-purposes in your country in these areas:
+Usually changing creds happens atomically, and separately from
+everything else so we simply don't care if there a race,  Either the old
+creds or the new creds are valid.
 
-1). Telecommunication
-2). The transport Industry
-3). Five Star Hotel
-4). Tourism
-5). Real Estate
+With exec the situation is trickier as several things in addition to the
+cred are changing at the same time.  So a lock is needed.
 
-If you can be of assistance to me I will be pleased to offer you 20%
-of the total fund.
+Now that it is separated from the cred_guard_mutex, probably the easiest
+solution is to make exec_update_mutex a sleeping reader writer lock.
+There are fewer cases that matter as such a lock would only block on
+exec (the writer).
 
-I await your soonest response.
+I don't understand perf well enough to do much without carefully
+studying the code.
 
-Respectfully yours,
-Miss Marie Evis
-Tel: +225597438528
+Eric
+
+
+
+
+
+
+
