@@ -2,113 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 07444257380
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 08:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83A8D25742C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 09:15:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbgHaGHJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 02:07:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52064 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbgHaGHG (ORCPT
+        id S1726574AbgHaHPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 03:15:21 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:1358 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727881AbgHaHOt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 02:07:06 -0400
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 115D0C061575
-        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Aug 2020 23:07:05 -0700 (PDT)
-Received: by mail-oi1-x241.google.com with SMTP id j7so63014oij.9
-        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Aug 2020 23:07:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=ztuJ7lCE7kvEopSezi/ervbTmQwS2BBYgYbiSUHWDXw=;
-        b=cmF2xLSOc0U8iPN/z0M/2KlwqgwRrp6zq9MwpiRV27UnbWuS7mGffAS2K5qX6wGZDA
-         vKV3JN+iiDvuhHUrUpKdss5ebLyYtzRN8/X6y16byabkAS2Nyq0e/ZjqlVt+h7dHjzAS
-         2+/a8PNuK2ZUVeGks4uD5ObjruiD14v/ThBq/Mb2pru7WMFg0ZkunMkPWRsdWw+d9xwh
-         RLNt+mr1jdeBPF6KYi/e1cYn/Gbn+24t9EoWZgX7LTiPH8ccaSYYeTkNq0kAVW5A7TSN
-         pz91sXm5kCQ8WCklfAXzQHteSKQsJjFIR3w7sUTaXaVWPcqay+RgSPuaiDr1sa+X689+
-         uXCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=ztuJ7lCE7kvEopSezi/ervbTmQwS2BBYgYbiSUHWDXw=;
-        b=Q6pj8ajKOoBt0bIq5j0/Lt6ornaybMw1CynA935N+o2zFK3DU9odFiyezFChTD97WE
-         mFArjcfJFUceBvLJegrwQwYoKwCxfAbykHFVG5kz33JZCW5sqJgZFfSjyu5Dicik7T+i
-         lAqRfMV2fef2eMYWcUu8v6d/x7e0nZHK1K4R7KIAhwg5CDCvR66Cvfw5yKG6lGkJ3r/8
-         4K66tAWKQLGqQpMNm4+uAkOGd7VczUqDmQdSgCn81jSt0jpiR/3Z+AQHU2owldYAINYT
-         HNv7bwuE+mp1YdBe56AMMrpdFl38i8frCCN74O1zmr/PFe+XcsYSU7yZblGeJcESyGLw
-         Yosw==
-X-Gm-Message-State: AOAM5309Wcj7hYmVkh79eGgRVHJfec5Arr8lGvnzodjmoCs7Y2xSev+r
-        Zly8o+BTIwobTRFgikcRKgj9vw==
-X-Google-Smtp-Source: ABdhPJz/zU/QKQdg3JGY2l0l+MAtlTVJhSk3I1VuspUkRP/wEWRSujcUG5/U0enSatTYPzam6ne/kQ==
-X-Received: by 2002:aca:cd93:: with SMTP id d141mr14485oig.33.1598854024866;
-        Sun, 30 Aug 2020 23:07:04 -0700 (PDT)
-Received: from eggly.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 126sm597160oof.28.2020.08.30.23.07.02
-        (version=TLS1 cipher=ECDHE-ECDSA-AES128-SHA bits=128/128);
-        Sun, 30 Aug 2020 23:07:03 -0700 (PDT)
-Date:   Sun, 30 Aug 2020 23:06:47 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Jann Horn <jannh@google.com>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v5 7/7] mm: Remove the now-unnecessary mmget_still_valid()
- hack
-In-Reply-To: <20200827114932.3572699-8-jannh@google.com>
-Message-ID: <alpine.LSU.2.11.2008302225510.1934@eggly.anvils>
-References: <20200827114932.3572699-1-jannh@google.com> <20200827114932.3572699-8-jannh@google.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Mon, 31 Aug 2020 03:14:49 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f4ca3380001>; Mon, 31 Aug 2020 00:14:01 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 31 Aug 2020 00:14:46 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 31 Aug 2020 00:14:46 -0700
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 31 Aug
+ 2020 07:14:45 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 31 Aug 2020 07:14:45 +0000
+Received: from sandstorm.nvidia.com (Not Verified[10.2.61.194]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5f4ca3640001>; Mon, 31 Aug 2020 00:14:45 -0700
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, <linux-xfs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v3 0/3] bio: Direct IO: convert to pin_user_pages_fast()
+Date:   Mon, 31 Aug 2020 00:14:36 -0700
+Message-ID: <20200831071439.1014766-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-NVConfidentiality: public
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1598858041; bh=lyrZ2gUylyRDxgfVzrsrWPEjnlS8I/rM0/dBNY/ekqg=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         MIME-Version:X-NVConfidentiality:Content-Transfer-Encoding:
+         Content-Type;
+        b=AgIKKxMPpvPxMJX1X6WknDKq7jsksqwEJe5FEcBiW0igy4qyYjQ84yGeMTbtq+TWF
+         zTn6BBJbfbTKPXo+7YWdA+YA2fCiYofpXzPA9gyg3abtY4Py9wyzm65QkQvH5d0MgM
+         J35idY/iyfHlBPCGXm/0LYqqmhTzoehWr/2E9D9cnf4LcDr0rP9ocdqym538+ZwzhN
+         OA/mVZs5qZg+OwrNX+rebHjMGMVXa0lrHflwoEV3kbh6gRVMa0DEb7fuowvO2JeBJR
+         hxflPqdMFfa4mjGIpQMOdgm2ZwdC6ypG/z9nDW+l1P6WsXJaoNzBUNJGM8kf/6Uh3m
+         g7wtUVLD5D+6g==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 27 Aug 2020, Jann Horn wrote:
+bio: convert get_user_pages_fast() --> pin_user_pages_fast()
 
-> The preceding patches have ensured that core dumping properly takes the
-> mmap_lock. Thanks to that, we can now remove mmget_still_valid() and all
-> its users.
+Change generic block/bio Direct IO routines, to acquire FOLL_PIN user
+pages via the recently added routines:
 
-Hi Jann, while the only tears to be shed over losing mmget_still_valid()
-will be tears of joy, I think you need to explain why you believe it's
-safe to remove the instance in mm/khugepaged.c: which you'll have found
-I moved just recently, to cover an extra case (sorry for not Cc'ing you).
+    iov_iter_pin_pages()
+    iov_iter_pin_pages_alloc()
+    pin_page()
 
-> --- a/mm/khugepaged.c
-> +++ b/mm/khugepaged.c
-> @@ -431,7 +431,7 @@ static void insert_to_mm_slots_hash(struct mm_struct *mm,
->  
->  static inline int khugepaged_test_exit(struct mm_struct *mm)
->  {
-> -	return atomic_read(&mm->mm_users) == 0 || !mmget_still_valid(mm);
-> +	return atomic_read(&mm->mm_users) == 0;
->  }
->  
->  static bool hugepage_vma_check(struct vm_area_struct *vma,
+This effectively converts several file systems (ext4, for example) that
+use the common Direct IO routines.
 
-The movement (which you have correctly followed) was in
-bbe98f9cadff ("khugepaged: khugepaged_test_exit() check mmget_still_valid()")
-but the "pmd .. physical page 0" issue is explained better in its parent
-18e77600f7a1 ("khugepaged: retract_page_tables() remember to test exit")
+Change the corresponding page release calls from put_page() to
+unpin_user_page().
 
-I think your core dumping is still reading the page tables without
-holding mmap_lock, so still vulnerable to that extra issue.  It won't
-be as satisfying as removing all traces of mmget_still_valid(), but
-right now I think you should add an mm->core_state check there instead.
+Change bio_release_pages() to handle FOLL_PIN pages. In fact, after this
+patch, that is the *only* type of pages that bio_release_pages()
+handles.
 
-(I do have a better solution in use, but it's a much larger patch, that
-will take a lot more effort to get in: checks in pte_offset_map_lock(),
-perhaps returning NULL when pmd is transitioning, requiring retry.)
+Design notes
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-Or maybe it's me who has missed what you're doing instead.
+Quite a few approaches have been considered over the years. This one is
+inspired by Christoph Hellwig's July, 2019 observation that there are
+only 5 ITER_ types, and we can simplify handling of them for Direct IO
+[1]. Accordingly, this patch implements the following pseudocode:
 
-Hugh
+Direct IO behavior:
+
+    ITER_IOVEC:
+        pin_user_pages_fast();
+        break;
+
+    ITER_PIPE:
+        for each page:
+             pin_page();
+        break;
+
+    ITER_KVEC:    // already elevated page refcount, leave alone
+    ITER_BVEC:    // already elevated page refcount, leave alone
+    ITER_DISCARD: // discard
+        return -EFAULT or -ENVALID;
+
+...which works for callers that already have sorted out which case they
+are in. Such as, Direct IO in the block/bio layers.
+
+Note that this does leave ITER_KVEC and ITER_BVEC unconverted, for now.
+
+Page acquisition: The iov_iter_get_pages*() routines above are at just
+the right level in the call stack: the callers already know which system
+to use, and so it's a small change to just drop in the replacement
+routines. And it's a fan-in/fan-out point: block/bio call sites for
+Direct IO funnel their page acquisitions through the
+iov_iter_get_pages*() routines, and there are many other callers of
+those. And we can't convert all of the callers at once--too many
+subsystems are involved, and it would be a too large and too risky
+patch.
+
+Page release: there are already separate release routines: put_page()
+vs. unpin_user_page(), so it's already done there.
+
+[1] https://lore.kernel.org/kvm/20190724061750.GA19397@infradead.org/
+
+[2] "Explicit pinning of user-space pages":
+    https://lwn.net/Articles/807108/
+
+
+
+John Hubbard (3):
+  mm/gup: introduce pin_page()
+  iov_iter: introduce iov_iter_pin_pages*() routines
+  bio: convert get_user_pages_fast() --> pin_user_pages_fast()
+
+ block/bio.c          |  24 ++++-----
+ block/blk-map.c      |   6 +--
+ fs/direct-io.c       |  28 +++++------
+ fs/iomap/direct-io.c |   2 +-
+ include/linux/mm.h   |   2 +
+ include/linux/uio.h  |   5 ++
+ lib/iov_iter.c       | 113 ++++++++++++++++++++++++++++++++++++++++---
+ mm/gup.c             |  33 +++++++++++++
+ 8 files changed, 175 insertions(+), 38 deletions(-)
+
+--=20
+2.28.0
+
