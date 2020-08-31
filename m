@@ -2,128 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 34D66257705
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 11:59:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9410257728
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 12:13:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726144AbgHaJ7S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 05:59:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59770 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbgHaJ7Q (ORCPT
+        id S1726167AbgHaKNU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 06:13:20 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:6214 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726081AbgHaKNU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 05:59:16 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E756EC061575
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 02:59:15 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id u27so1742680lfm.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 02:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PZDyp3YFdZVXnA9zj6mRLZpFoGXWq1/L5Ulr34SDMq8=;
-        b=MiCg8nGNu+VfRhhFOU9X80Cr5JC543609Dm9tZTKSV9EPB7lbHdjYy+mZmTeKEK1Y0
-         IAJC3QAvNhIsPISdtlGUw354JQEqtc2twkuBAayVXouk+89vdhxLS1SsWVB1enKdFSlR
-         7XfL96NmruikjoIXZqzB8yUgnrypzUjwl4TCAzmZa2f87dtQR2Et2IyDuQrkVfcKEInv
-         hEpf5Kl4prHCKP+4kj+JlGSlpkG1ncz3GziIvcyAuhs4YWkLXScfhylVDFyxa9hOPGj5
-         4G0ydKIWryQ82+G02rYSXDaq7FhjTDISKfG1MMa1ILYwNXMDxEqwP610qxcRboNv9Bc/
-         s+ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PZDyp3YFdZVXnA9zj6mRLZpFoGXWq1/L5Ulr34SDMq8=;
-        b=HlCVqVUQPb8SXpLrGJRJfKeiWvEk3XUTkv8eqaviLiIpndP1ruT8v5EVImkQNqvtR9
-         TXTOlfHPHrwrBlvwc7mRtU1fNOE99Ry8v5CoQjTAzcW5f0beT48HQsen7Z9kNnAT9J+z
-         kKmMBoMtqfBwzvTFGnvmC3drYp6PI/aAHRd6tHbzi8cw/xu67/AmbLfvCHI6+7pBJb3w
-         PBzASDw0CHn0avt78POZDtMtsxHg+8j+h2c2oywdn+vC1DrQYSBiiFQH9TgttqLFwDxi
-         LA+omQAl5b3ORmmBP0yApvBnA7wNTeCEObCoSpxI4X8wY8IXfA57+u5ioPp8EY9jPfgc
-         2gpg==
-X-Gm-Message-State: AOAM533jIe5YNhXvWrFpr6hvkQiQP8sX/rWp09EArsLBtZp3/E+k8vXc
-        CJtTcoNgL69fB8/EnqasLeMoa1KYKpak6cQl19pfbw==
-X-Google-Smtp-Source: ABdhPJym3Z3hy4cI8cw/qwa/lo6GDiRMgx9UkTYrxhh31+i4hUGC0KkoOCXy0vNAWH1pJhx9kxIon0J+y619jkiozbY=
-X-Received: by 2002:ac2:5298:: with SMTP id q24mr334931lfm.164.1598867953047;
- Mon, 31 Aug 2020 02:59:13 -0700 (PDT)
+        Mon, 31 Aug 2020 06:13:20 -0400
+X-IronPort-AV: E=Sophos;i="5.76,375,1592841600"; 
+   d="scan'208";a="98733246"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 31 Aug 2020 18:13:15 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id 3772C48990D9;
+        Mon, 31 Aug 2020 18:13:14 +0800 (CST)
+Received: from G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Mon, 31 Aug 2020 18:13:18 +0800
+Received: from localhost.localdomain (10.167.225.206) by
+ G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.2 via Frontend Transport; Mon, 31 Aug 2020 18:13:17 +0800
+From:   Hao Li <lihao2018.fnst@cn.fujitsu.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <david@fromorbit.com>, <ira.weiny@intel.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-xfs@vger.kernel.org>, <lihao2018.fnst@cn.fujitsu.com>,
+        <y-goto@fujitsu.com>
+Subject: [PATCH] fs: Handle I_DONTCACHE in iput_final() instead of generic_drop_inode()
+Date:   Mon, 31 Aug 2020 18:13:13 +0800
+Message-ID: <20200831101313.168889-1-lihao2018.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-References: <20200827114932.3572699-1-jannh@google.com> <20200827114932.3572699-8-jannh@google.com>
- <alpine.LSU.2.11.2008302225510.1934@eggly.anvils>
-In-Reply-To: <alpine.LSU.2.11.2008302225510.1934@eggly.anvils>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 31 Aug 2020 11:58:47 +0200
-Message-ID: <CAG48ez15Zxbkjv0WRChZZZ6F78pFVXPTu_Bn1Pqaxx=7Gk1gUg@mail.gmail.com>
-Subject: Re: [PATCH v5 7/7] mm: Remove the now-unnecessary mmget_still_valid() hack
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: 3772C48990D9.AE7C8
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: lihao2018.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 31, 2020 at 8:07 AM Hugh Dickins <hughd@google.com> wrote:
-> On Thu, 27 Aug 2020, Jann Horn wrote:
->
-> > The preceding patches have ensured that core dumping properly takes the
-> > mmap_lock. Thanks to that, we can now remove mmget_still_valid() and all
-> > its users.
->
-> Hi Jann, while the only tears to be shed over losing mmget_still_valid()
-> will be tears of joy, I think you need to explain why you believe it's
-> safe to remove the instance in mm/khugepaged.c: which you'll have found
-> I moved just recently, to cover an extra case (sorry for not Cc'ing you).
->
-> > --- a/mm/khugepaged.c
-> > +++ b/mm/khugepaged.c
-> > @@ -431,7 +431,7 @@ static void insert_to_mm_slots_hash(struct mm_struct *mm,
-> >
-> >  static inline int khugepaged_test_exit(struct mm_struct *mm)
-> >  {
-> > -     return atomic_read(&mm->mm_users) == 0 || !mmget_still_valid(mm);
-> > +     return atomic_read(&mm->mm_users) == 0;
-> >  }
-> >
-> >  static bool hugepage_vma_check(struct vm_area_struct *vma,
->
-> The movement (which you have correctly followed) was in
-> bbe98f9cadff ("khugepaged: khugepaged_test_exit() check mmget_still_valid()")
-> but the "pmd .. physical page 0" issue is explained better in its parent
-> 18e77600f7a1 ("khugepaged: retract_page_tables() remember to test exit")
->
-> I think your core dumping is still reading the page tables without
-> holding mmap_lock
+If generic_drop_inode() returns true, it means iput_final() can evict
+this inode regardless of whether it is dirty or not. If we check
+I_DONTCACHE in generic_drop_inode(), any inode with this bit set will be
+evicted unconditionally. This is not the desired behavior because
+I_DONTCACHE only means the inode shouldn't be cached on the LRU list.
+As for whether we need to evict this inode, this is what
+generic_drop_inode() should do. This patch corrects the usage of
+I_DONTCACHE.
 
-Where? get_dump_page() takes mmap_lock now:
-<https://lore.kernel.org/lkml/20200827114932.3572699-7-jannh@google.com/>
+This patch was proposed in [1].
 
-I don't think there should be any paths into __get_user_pages() left
-that don't hold the mmap_lock. Actually, we should probably try
-sticking mmap_assert_locked() in there now as a follow-up?
+[1]: https://lore.kernel.org/linux-fsdevel/20200831003407.GE12096@dread.disaster.area/
 
-> so still vulnerable to that extra issue.  It won't
-> be as satisfying as removing all traces of mmget_still_valid(), but
-> right now I think you should add an mm->core_state check there instead.
->
-> (I do have a better solution in use, but it's a much larger patch, that
-> will take a lot more effort to get in: checks in pte_offset_map_lock(),
-> perhaps returning NULL when pmd is transitioning, requiring retry.)
+Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
+---
+ fs/inode.c         | 3 ++-
+ include/linux/fs.h | 3 +--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Just to clarify: This is an issue only between GUP's software page
-table walks when running without mmap_lock and concurrent page table
-modifications from hugepage code, correct? Hardware page table walks
-and get_user_pages_fast() are fine because they properly load PTEs
-atomically and are written to assume that the page tables can change
-arbitrarily under them, and the only guarantee is that disabling
-interrupts ensures that pages referenced by PTEs can't be freed,
-right?
+diff --git a/fs/inode.c b/fs/inode.c
+index 72c4c347afb7..4e45d5ea3d0f 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -1625,7 +1625,8 @@ static void iput_final(struct inode *inode)
+ 	else
+ 		drop = generic_drop_inode(inode);
+ 
+-	if (!drop && (sb->s_flags & SB_ACTIVE)) {
++	if (!drop && !(inode->i_state & I_DONTCACHE) &&
++			(sb->s_flags & SB_ACTIVE)) {
+ 		inode_add_lru(inode);
+ 		spin_unlock(&inode->i_lock);
+ 		return;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e019ea2f1347..93caee80ce47 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2922,8 +2922,7 @@ extern int inode_needs_sync(struct inode *inode);
+ extern int generic_delete_inode(struct inode *inode);
+ static inline int generic_drop_inode(struct inode *inode)
+ {
+-	return !inode->i_nlink || inode_unhashed(inode) ||
+-		(inode->i_state & I_DONTCACHE);
++	return !inode->i_nlink || inode_unhashed(inode);
+ }
+ extern void d_mark_dontcache(struct inode *inode);
+ 
+-- 
+2.28.0
 
-> Or maybe it's me who has missed what you're doing instead.
->
-> Hugh
+
+
