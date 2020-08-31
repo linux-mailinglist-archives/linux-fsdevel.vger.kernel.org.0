@@ -2,85 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 795B725720F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 05:17:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB728257214
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 05:21:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbgHaDRH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Aug 2020 23:17:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54002 "EHLO
+        id S1727813AbgHaDVe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Aug 2020 23:21:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbgHaDRG (ORCPT
+        with ESMTP id S1726838AbgHaDVd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Aug 2020 23:17:06 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE493C061573
-        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Aug 2020 20:17:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=cV8UCsmbIvdSRKOXashjkAqyBAv+yNGcbG4WjUBcpCU=; b=kIRj6bcofLeTbiOuBbjdnQ/yd0
-        sCGiFrWoa7sybC74QefgKV7g9XoQuJSd2r5A8XPy8ynj81qXfR2mN9zmPNpY8qd+YUWNkVmXIXfRQ
-        Nak9qVh6FWOk6AMiqSDr8gX3tQiXkGuCCLZkFeyjXIm1QA+OhvJBxHfFGsigdZWFURQty8csQguFT
-        DPYdpEscOCrN1kAcv6jcuGU5Y0FuSvx7o+2r6+PLlu4dpJCFS7orM/L5jjx6gqmmQrOKzO0uTUyeX
-        2C52yMnN/LUYkOzjz+ck6lPBAtm8+cNOsvgF5Bl3ZhSIjHyX9pfcgPdgG1s2ui1ou8lq9AGPtGy6V
-        VqvS3VJQ==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kCaJX-000897-Cc; Mon, 31 Aug 2020 03:16:59 +0000
-Subject: Re: [PATCH] fs/xattr.c: fix kernel-doc warnings for setxattr &
- removexattr
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Frank van der Linden <fllinden@amazon.com>,
-        Chuck Lever <chuck.lever@oracle.com>
-References: <7a3dd5a2-5787-adf3-d525-c203f9910ec4@infradead.org>
- <20200830183230.35f8904e05a8f0f1a3ab025e@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <dcfda64e-8676-663b-4ad9-e75c9d7a4dcd@infradead.org>
-Date:   Sun, 30 Aug 2020 20:16:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Sun, 30 Aug 2020 23:21:33 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16326C061573;
+        Sun, 30 Aug 2020 20:21:32 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kCaNr-007qZv-1n; Mon, 31 Aug 2020 03:21:27 +0000
+Date:   Mon, 31 Aug 2020 04:21:27 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Shaokun Zhang <zhangshaokun@hisilicon.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yuqi Jin <jinyuqi@huawei.com>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Will Deacon <will@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: [NAK] Re: [PATCH] fs: Optimized fget to improve performance
+Message-ID: <20200831032127.GW1236603@ZenIV.linux.org.uk>
+References: <1598523584-25601-1-git-send-email-zhangshaokun@hisilicon.com>
+ <20200827142848.GZ1236603@ZenIV.linux.org.uk>
+ <dfa0ec1a-87fc-b17b-4d4a-c2d5c44e6dde@hisilicon.com>
 MIME-Version: 1.0
-In-Reply-To: <20200830183230.35f8904e05a8f0f1a3ab025e@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dfa0ec1a-87fc-b17b-4d4a-c2d5c44e6dde@hisilicon.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/30/20 6:32 PM, Andrew Morton wrote:
-> On Sun, 30 Aug 2020 17:30:08 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->> From: Randy Dunlap <rdunlap@infradead.org>
->>
->> Fix kernel-doc warnings in fs/xattr.c:
->>
->> ../fs/xattr.c:251: warning: Function parameter or member 'dentry' not described in '__vfs_setxattr_locked'
->> ../fs/xattr.c:251: warning: Function parameter or member 'name' not described in '__vfs_setxattr_locked'
->> ../fs/xattr.c:251: warning: Function parameter or member 'value' not described in '__vfs_setxattr_locked'
->> ../fs/xattr.c:251: warning: Function parameter or member 'size' not described in '__vfs_setxattr_locked'
->> ../fs/xattr.c:251: warning: Function parameter or member 'flags' not described in '__vfs_setxattr_locked'
->> ../fs/xattr.c:251: warning: Function parameter or member 'delegated_inode' not described in '__vfs_setxattr_locked'
->> ../fs/xattr.c:458: warning: Function parameter or member 'dentry' not described in '__vfs_removexattr_locked'
->> ../fs/xattr.c:458: warning: Function parameter or member 'name' not described in '__vfs_removexattr_locked'
->> ../fs/xattr.c:458: warning: Function parameter or member 'delegated_inode' not described in '__vfs_removexattr_locked'
->>
->> Fixes: 08b5d5014a27 ("xattr: break delegations in {set,remove}xattr")
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Cc: stable@vger.kernel.org # v4.9+
-> 
-> hm, are kerneldoc warning fixes -stable material?
-> 
+On Mon, Aug 31, 2020 at 09:43:31AM +0800, Shaokun Zhang wrote:
 
-I don't know.
-I only added that because the commit that it fixes had that Cc: line also.
+> How about this? We try to replace atomic_cmpxchg with atomic_add to improve
+> performance. The atomic_add does not check the current f_count value.
+> Therefore, the number of online CPUs is reserved to prevent multi-core
+> competition.
 
-From my (just now) reading of stable-kernel-rules.rst, the answer is No.
+No.  Really, really - no.  Not unless you can guarantee that process on another
+CPU won't lose its timeslice, ending up with more than one increment happening on
+the same CPU - done by different processes scheduled there, one after another.
 
--- 
-~Randy
+If you have some change of atomic_long_add_unless(), do it there.  And get it
+past the arm64 folks.  get_file_rcu() is nothing special in that respect *AND*
+it has to cope with any architecture out there.
 
+BTW, keep in mind that there's such thing as a KVM - race windows are much
+wider there, since a thread representing a guest CPU might lose its timeslice
+whenever the host feels like that.  At which point you get a single instruction
+on a guest CPU taking longer than many thousands of instructions on another
+CPU of the same guest.
+
+AFAIK, arm64 does support KVM with SMP guests.
