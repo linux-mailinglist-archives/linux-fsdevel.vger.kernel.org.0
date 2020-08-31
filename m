@@ -2,100 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D9410257728
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 12:13:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E9E325788A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 13:37:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbgHaKNU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 06:13:20 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:6214 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726081AbgHaKNU (ORCPT
+        id S1726167AbgHaLhP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 07:37:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47126 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726042AbgHaLhP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 06:13:20 -0400
-X-IronPort-AV: E=Sophos;i="5.76,375,1592841600"; 
-   d="scan'208";a="98733246"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 31 Aug 2020 18:13:15 +0800
-Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id 3772C48990D9;
-        Mon, 31 Aug 2020 18:13:14 +0800 (CST)
-Received: from G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) by
- G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Mon, 31 Aug 2020 18:13:18 +0800
-Received: from localhost.localdomain (10.167.225.206) by
- G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.2 via Frontend Transport; Mon, 31 Aug 2020 18:13:17 +0800
-From:   Hao Li <lihao2018.fnst@cn.fujitsu.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <david@fromorbit.com>, <ira.weiny@intel.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-xfs@vger.kernel.org>, <lihao2018.fnst@cn.fujitsu.com>,
-        <y-goto@fujitsu.com>
-Subject: [PATCH] fs: Handle I_DONTCACHE in iput_final() instead of generic_drop_inode()
-Date:   Mon, 31 Aug 2020 18:13:13 +0800
-Message-ID: <20200831101313.168889-1-lihao2018.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.28.0
+        Mon, 31 Aug 2020 07:37:15 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2FC6C061573
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 04:37:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=kjuN3gLdNihgCEy8rhP06D5tqIj478uvJxaVYMG3EL0=; b=krPl0fsIszusDuXvtX/eALx9LR
+        SzJOID/eYRzCyy4GZziByj+afvsPGnv2/kCrsZpri/yRy9rTfrxGgBzddeS3Yhnnhvj5J9DyqoHfJ
+        SFEAnryxN1nXYfMz1vU+Nkr09F47tKS6zr4yOFMDZdKfRt+sVpWX06ZDdtU4TelOuZHTjylpR/441
+        CHAYmkTfK0Y4hu/y4MtpbZLcviMoECrvtwDJyTSSxOKQAK42PTRsA95DaDLZW5Y3sHPs3yM9+fpGU
+        Sx3Lokp0I7EAhi9tWQFaFY1izmdKO1LwtQy8GVaa7BAxNVV9PMovPhLYvdlxIRXeQJ/bBxCDfq0+A
+        WvB6KREA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kCi7V-0001Yk-B7; Mon, 31 Aug 2020 11:37:05 +0000
+Date:   Mon, 31 Aug 2020 12:37:05 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        Chirantan Ekbote <chirantan@chromium.org>
+Subject: Re: xattr names for unprivileged stacking?
+Message-ID: <20200831113705.GA14765@casper.infradead.org>
+References: <20200827222457.GB12096@dread.disaster.area>
+ <20200829160717.GS14765@casper.infradead.org>
+ <20200829161358.GP1236603@ZenIV.linux.org.uk>
+ <CAJfpegu2R21CF9PEoj2Cw6x01xmJ+qsff5QTcOcY4G5KEY3R0w@mail.gmail.com>
+ <20200829180448.GQ1236603@ZenIV.linux.org.uk>
+ <CAJfpegsn-BKVkMv4pQHG7tER31m5RSXrJyhDZ-Uzst1CMBEbEw@mail.gmail.com>
+ <20200829192522.GS1236603@ZenIV.linux.org.uk>
+ <CAJfpegt7a_YHd0iBjb=8hST973dQQ9czHUSNvnh-9LR_fqktTA@mail.gmail.com>
+ <20200830191016.GZ14765@casper.infradead.org>
+ <CAJfpegv9+o8QjQmg8EpMCm09tPy4WX1gbJiT=s15Lz8r3HQXJQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 3772C48990D9.AE7C8
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: lihao2018.fnst@cn.fujitsu.com
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegv9+o8QjQmg8EpMCm09tPy4WX1gbJiT=s15Lz8r3HQXJQ@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If generic_drop_inode() returns true, it means iput_final() can evict
-this inode regardless of whether it is dirty or not. If we check
-I_DONTCACHE in generic_drop_inode(), any inode with this bit set will be
-evicted unconditionally. This is not the desired behavior because
-I_DONTCACHE only means the inode shouldn't be cached on the LRU list.
-As for whether we need to evict this inode, this is what
-generic_drop_inode() should do. This patch corrects the usage of
-I_DONTCACHE.
+On Mon, Aug 31, 2020 at 09:34:20AM +0200, Miklos Szeredi wrote:
+> On Sun, Aug 30, 2020 at 9:10 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Sun, Aug 30, 2020 at 09:05:40PM +0200, Miklos Szeredi wrote:
+> > > Yes, open(..., O_ALT) would be special.  Let's call it open_alt(2) to
+> > > avoid confusion with normal open on a normal filesystem.   No special
+> > > casing anywhere at all.   It's a completely new interface that returns
+> > > a file which either has ->read/write() or ->iterate() and which points
+> > > to an inode with empty i_ops.
+> >
+> > I think fiemap() should be allowed on a stream.  After all, these extents
+> > do exist.  But I'm opposed to allowing getdents(); it'll only encourage
+> > people to think they can have non-files as streams.
+> 
+> Call it whatever you want.  I think getdents (without lseek!!!)  is a
+> fine interface for enumeration.
+> 
+> Also let me stress again, that this ALT thing is not just about
+> streams, but a generic interface for getting OOB/meta/whatever data
+> for a given inode/path.  Hence it must have a depth of at least 2, but
+> limiting it to 2 would again be shortsighted.
 
-This patch was proposed in [1].
-
-[1]: https://lore.kernel.org/linux-fsdevel/20200831003407.GE12096@dread.disaster.area/
-
-Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
----
- fs/inode.c         | 3 ++-
- include/linux/fs.h | 3 +--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 72c4c347afb7..4e45d5ea3d0f 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1625,7 +1625,8 @@ static void iput_final(struct inode *inode)
- 	else
- 		drop = generic_drop_inode(inode);
- 
--	if (!drop && (sb->s_flags & SB_ACTIVE)) {
-+	if (!drop && !(inode->i_state & I_DONTCACHE) &&
-+			(sb->s_flags & SB_ACTIVE)) {
- 		inode_add_lru(inode);
- 		spin_unlock(&inode->i_lock);
- 		return;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e019ea2f1347..93caee80ce47 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2922,8 +2922,7 @@ extern int inode_needs_sync(struct inode *inode);
- extern int generic_delete_inode(struct inode *inode);
- static inline int generic_drop_inode(struct inode *inode)
- {
--	return !inode->i_nlink || inode_unhashed(inode) ||
--		(inode->i_state & I_DONTCACHE);
-+	return !inode->i_nlink || inode_unhashed(inode);
- }
- extern void d_mark_dontcache(struct inode *inode);
- 
--- 
-2.28.0
-
-
-
+As I said to Dave, you and I have a strong difference of opinion here.
+I think that what you are proposing is madness.  You're making it too
+flexible which comes with too much opportunity for abuse.  I just want
+to see alternate data streams for the same filename in order to support
+existing use cases.  You seem to be able to want to create an entire
+new world inside a file, and that's just too confusing.
