@@ -2,95 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B4D5925745E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 09:34:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 569F6257473
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 09:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbgHaHeg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 03:34:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37338 "EHLO
+        id S1727806AbgHaHny (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 03:43:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727092AbgHaHed (ORCPT
+        with ESMTP id S1725794AbgHaHno (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 03:34:33 -0400
-Received: from mail-ua1-x944.google.com (mail-ua1-x944.google.com [IPv6:2607:f8b0:4864:20::944])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16760C061573
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 00:34:33 -0700 (PDT)
-Received: by mail-ua1-x944.google.com with SMTP id g11so1711061ual.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 00:34:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aQtCZV6OcGw1uD1dzGqgWCbvYywzacdDufrrrKQpbMc=;
-        b=SN+/PgW4HCg5Bepl+5Q/FJF8EugFG/wvFJigTotEyZWulsoHaj4W6E+41pCgVq/bf0
-         hYAec+0/FHePRZfa0D24u1U4UddCRBqAvDevnL6pujM7m5THWX2TsIQpbb5VckIfu8E0
-         HnUQblEnFThSLB8H1nCtSAh8tDMplqc7jB2z0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aQtCZV6OcGw1uD1dzGqgWCbvYywzacdDufrrrKQpbMc=;
-        b=njcD1GB8P6x3cswuCnorgjVCi0HyN7k5tnirrNimM3hCvoXAwUb4E+9JF9a9NtfXuN
-         rJuF8wcrg3cLbY5oZLY5g4/jikjgHC/QiOY1CYe7EaWEIooHDOC/VL+m6k/yXEWsPa/F
-         pcVqL0xSndHMrrioW5g+cUwGC9TFgOGoIWnERfaGX/nqDWd2rqb3EeIT9vtwgUfSGsQc
-         kU2gD0VVReMe3Dp0D4NtB7vV3u3U9CR4dMG/9843EYtT6hdagqJ70/SMnKfiyojt47iM
-         viw93W+VbpJWQSrhrTggfQpltsTc37ZRCZ9n9zhm4y+rf4mR2SZpUAN/Xs13sA8u+sLx
-         IVUA==
-X-Gm-Message-State: AOAM530EEz6BrosUF7a4DMYdB/adOfBH9mbj2j6FLYlReRtIE7oYuy6t
-        fJEW87OQZUQ0YcLTwDcIOM3EUr+WaUzYU4ril8xrpQ==
-X-Google-Smtp-Source: ABdhPJyW1ztwNEzOg6Z0sH0/cohRECp1L2Q+qXcUuH5/RZHAzIE+IYH3II/FmsQJWvhDTXDLJzyLjnyLjBSYDj+Dah4=
-X-Received: by 2002:ab0:5611:: with SMTP id y17mr4898688uaa.137.1598859272050;
- Mon, 31 Aug 2020 00:34:32 -0700 (PDT)
+        Mon, 31 Aug 2020 03:43:44 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12398C061573;
+        Mon, 31 Aug 2020 00:43:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=bfowcr23SYGjmFeTw4H76pW95oh2o32vfH0LetHgQjc=; b=xLz/MI7zWVACfq30X1AW+abMBo
+        HeCMQDoRVE1SlW/H4dbBPUuhXK+uepKoxfrpNEYosAevt2YY6IdEHuNPjZeLgUA+mrzGaDCLbjRZk
+        LzcfoH7V0pTifpM9/SM+fW9zPoSBjnzD8npqlgh6L2TjrUMHe55X8Pdzrdgna/V5ee7K+Etp5lRQ2
+        YuZxEL4vVRmAIhQcCsK18rgc8wq1/ICKA4Ny8OV84pU8+jf5qP5okxyX1fbPuJdWYa2oIARKKhp/0
+        TVzWTBIa+pyKpF1FQfb/M9HMF3jjLLoC4zwf1gm93SyasbdrwMgeYV0PqlDtv26/WZIddhBKRGKha
+        JDCtQ6Vw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kCeTS-0001Ar-IH; Mon, 31 Aug 2020 07:43:30 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7B9323003E5;
+        Mon, 31 Aug 2020 09:43:28 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 60BD7202A3F54; Mon, 31 Aug 2020 09:43:28 +0200 (CEST)
+Date:   Mon, 31 Aug 2020 09:43:28 +0200
+From:   peterz@infradead.org
+To:     ebiederm@xmission.com (Eric W. Biederman)
+Cc:     syzbot <syzbot+db9cdf3dd1f64252c6ef@syzkaller.appspotmail.com>,
+        adobriyan@gmail.com, akpm@linux-foundation.org, avagin@gmail.com,
+        christian@brauner.io, gladkov.alexey@gmail.com,
+        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        walken@google.com, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>, jannh@google.com
+Subject: Re: possible deadlock in proc_pid_syscall (2)
+Message-ID: <20200831074328.GN1362448@hirez.programming.kicks-ass.net>
+References: <00000000000063640c05ade8e3de@google.com>
+ <87mu2fj7xu.fsf@x220.int.ebiederm.org>
+ <20200828123720.GZ1362448@hirez.programming.kicks-ass.net>
+ <87v9h0gvro.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-References: <20200817002930.GB28218@dread.disaster.area> <20200827152207.GJ14765@casper.infradead.org>
- <20200827222457.GB12096@dread.disaster.area> <20200829160717.GS14765@casper.infradead.org>
- <20200829161358.GP1236603@ZenIV.linux.org.uk> <CAJfpegu2R21CF9PEoj2Cw6x01xmJ+qsff5QTcOcY4G5KEY3R0w@mail.gmail.com>
- <20200829180448.GQ1236603@ZenIV.linux.org.uk> <CAJfpegsn-BKVkMv4pQHG7tER31m5RSXrJyhDZ-Uzst1CMBEbEw@mail.gmail.com>
- <20200829192522.GS1236603@ZenIV.linux.org.uk> <CAJfpegt7a_YHd0iBjb=8hST973dQQ9czHUSNvnh-9LR_fqktTA@mail.gmail.com>
- <20200830191016.GZ14765@casper.infradead.org>
-In-Reply-To: <20200830191016.GZ14765@casper.infradead.org>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 31 Aug 2020 09:34:20 +0200
-Message-ID: <CAJfpegv9+o8QjQmg8EpMCm09tPy4WX1gbJiT=s15Lz8r3HQXJQ@mail.gmail.com>
-Subject: Re: xattr names for unprivileged stacking?
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        Christian Schoenebeck <qemu_oss@crudebyte.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87v9h0gvro.fsf@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 30, 2020 at 9:10 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Sun, Aug 30, 2020 at 09:05:40PM +0200, Miklos Szeredi wrote:
-> > Yes, open(..., O_ALT) would be special.  Let's call it open_alt(2) to
-> > avoid confusion with normal open on a normal filesystem.   No special
-> > casing anywhere at all.   It's a completely new interface that returns
-> > a file which either has ->read/write() or ->iterate() and which points
-> > to an inode with empty i_ops.
->
-> I think fiemap() should be allowed on a stream.  After all, these extents
-> do exist.  But I'm opposed to allowing getdents(); it'll only encourage
-> people to think they can have non-files as streams.
+On Sun, Aug 30, 2020 at 07:31:39AM -0500, Eric W. Biederman wrote:
 
-Call it whatever you want.  I think getdents (without lseek!!!)  is a
-fine interface for enumeration.
+> I am thinking that for cases where we want to do significant work it
+> might be better to ask the process to pause at someplace safe (probably
+> get_signal) and then do all of the work when we know nothing is changing
+> in the process.
+> 
+> I don't really like the idea of checking and then checking again.  We
+> might have to do it but it feels like the model is wrong somewhere.
+> 
+> Given that this is tricky to hit in practice, and given that I am
+> already working the general problem of how to sort out the locking I am
+> going to work this with the rest of the thorny issues of in exec.  This
+> feels like a case where the proper solution is that we simply need
+> something better than a mutex.
 
-Also let me stress again, that this ALT thing is not just about
-streams, but a generic interface for getting OOB/meta/whatever data
-for a given inode/path.  Hence it must have a depth of at least 2, but
-limiting it to 2 would again be shortsighted.
+One possible alternative would be something RCU-like, surround the thing
+with get_task_cred() / put_cred() and then have commit_creds() wait for
+the usage of the old creds to drop to 0 before continuing.
 
-Thanks,
-Miklos
+(Also, get_cred_rcu() is disgusting for casting away const)
+
+But this could be complete garbage, I'm not much familiar with any of
+thise code.
