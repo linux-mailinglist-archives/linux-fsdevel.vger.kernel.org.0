@@ -2,120 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6195625719C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 03:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C22352571A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 03:45:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbgHaBnk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Aug 2020 21:43:40 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:59108 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726454AbgHaBnk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Aug 2020 21:43:40 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 3608E90A6B87991AE549;
-        Mon, 31 Aug 2020 09:43:37 +0800 (CST)
-Received: from [127.0.0.1] (10.67.76.251) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.487.0; Mon, 31 Aug 2020
- 09:43:31 +0800
-Subject: Re: [NAK] Re: [PATCH] fs: Optimized fget to improve performance
-To:     Al Viro <viro@zeniv.linux.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Yuqi Jin <jinyuqi@huawei.com>,
-        kernel test robot <rong.a.chen@intel.com>,
-        Will Deacon <will@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>
-References: <1598523584-25601-1-git-send-email-zhangshaokun@hisilicon.com>
- <20200827142848.GZ1236603@ZenIV.linux.org.uk>
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-Message-ID: <dfa0ec1a-87fc-b17b-4d4a-c2d5c44e6dde@hisilicon.com>
-Date:   Mon, 31 Aug 2020 09:43:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
-MIME-Version: 1.0
-In-Reply-To: <20200827142848.GZ1236603@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.76.251]
-X-CFilter-Loop: Reflected
+        id S1727040AbgHaBpe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Aug 2020 21:45:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39864 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbgHaBp2 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 30 Aug 2020 21:45:28 -0400
+Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CE0DC061575
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Aug 2020 18:45:28 -0700 (PDT)
+Received: by mail-qk1-x744.google.com with SMTP id g72so4316253qke.8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Aug 2020 18:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=QrYH2o5+zk1SiKRZEFr0mMh9hRmJ4dl12s+7gy3RUAg=;
+        b=Gb0KnAM+8MBliwaxnEo8iwH9SMoPmVjIfwHxC37VhFYBan0v5M/7DWD4DBNrTj+HwK
+         yeJVvgxnYChpyi0XANWADOOT+W2XUBoPON5Jl7XTlDk2gK8kzg5PDa03u+P2dgiZfhkP
+         Bgh4mXNU7XW7TXRhD17l7pkyliv1alW5NzI1YZtWutwPMESZkMJzCGVO8CEhxg3IgjPX
+         APVmDl9a6yVsdANx7Zh8/kBlMNjiVVLlTaOasGJyggpx3GWalCab0MA+gyZIjbx78Njk
+         kHtEXLYeBq27KRU7YBUEcf3Tp8x91a6rbYa4fS+lZvm6Ep0kUUEtCcpHlDmsqIVE+7J0
+         Ec/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=QrYH2o5+zk1SiKRZEFr0mMh9hRmJ4dl12s+7gy3RUAg=;
+        b=mPGEmnkXKBdFDGe2O7/gAu831iCqdyjfMHvxeuvU9OG8S9JQ8pQ5/TCmeF18SM1eAM
+         vdQulsM/4L+KbpioxXPRK6fiOKTO4AoqipgfTgl7Ul3025jqFlS+JfJ9BN3jP5tO9YKF
+         9qQXk91sVXrNGNNj1gA3HVPlnJwhd8xn/+hJWB6yGYM8KaDW30erndiM2Tfkv7ds3le8
+         JCMK1n4yzQpHBwLrqPIhthajVQPwPacV+dP+iYVcEPV7wAYGvyJGysbERmKd/19vKd64
+         ldTscdkB5oY4YUCEq+QoLGz2CAp3pDrUVVlLYfz7g2zsIZZarCCPiwaZcJKgOuJQeB8y
+         DoHw==
+X-Gm-Message-State: AOAM533lKPJtXj9PGyHxD71q84UhTJrPndQ5Y+tY2inXa/dVbXW0rtny
+        sy2u/wwLIN3K8L/rDCAEiTFgQg==
+X-Google-Smtp-Source: ABdhPJyglYhJj24S8A7qK0NRCN5Xu+fvhONpZgpIDu1pcxI/eYXkv9ub6eIp7mcebiX3zfPyaA0m4A==
+X-Received: by 2002:a37:8601:: with SMTP id i1mr9250267qkd.307.1598838327422;
+        Sun, 30 Aug 2020 18:45:27 -0700 (PDT)
+Received: from localhost.localdomain.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id e63sm7656466qkf.29.2020.08.30.18.45.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Aug 2020 18:45:26 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     darrick.wong@oracle.com
+Cc:     hch@infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH v2] iomap: Fix WARN_ON_ONCE() from unprivileged users
+Date:   Sun, 30 Aug 2020 21:45:11 -0400
+Message-Id: <20200831014511.17174-1-cai@lca.pw>
+X-Mailer: git-send-email 2.18.4
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al,
+It is trivial to trigger a WARN_ON_ONCE(1) in iomap_dio_actor() by
+unprivileged users which would taint the kernel, or worse - panic if
+panic_on_warn or panic_on_taint is set. Hence, just convert it to
+pr_warn_ratelimited() to let users know their workloads are racing.
+Thanks Dave Chinner for the initial analysis of the racing reproducers.
 
-ÔÚ 2020/8/27 22:28, Al Viro Ð´µÀ:
-> On Thu, Aug 27, 2020 at 06:19:44PM +0800, Shaokun Zhang wrote:
->> From: Yuqi Jin <jinyuqi@huawei.com>
->>
->> It is well known that the performance of atomic_add is better than that of
->> atomic_cmpxchg.
->> The initial value of @f_count is 1. While @f_count is increased by 1 in
->> __fget_files, it will go through three phases: > 0, < 0, and = 0. When the
->> fixed value 0 is used as the condition for terminating the increase of 1,
->> only atomic_cmpxchg can be used. When we use < 0 as the condition for
->> stopping plus 1, we can use atomic_add to obtain better performance.
-> 
-> Suppose another thread has just removed it from the descriptor table.
-> 
->> +static inline bool get_file_unless_negative(atomic_long_t *v, long a)
->> +{
->> +	long c = atomic_long_read(v);
->> +
->> +	if (c <= 0)
->> +		return 0;
-> 
-> Still 1.  Now the other thread has gotten to dropping the last reference,
-> decremented counter to zero and committed to freeing the struct file.
-> 
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
 
-Apologies that I missed it.
+v2: Record the path, pid and command as well.
 
->> +
->> +	return atomic_long_add_return(a, v) - 1;
-> 
-> ... and you increment that sucker back to 1.  Sure, you return 0, so the
-> caller does nothing to that struct file.  Which includes undoing the
-> changes to its refecount.
-> 
-> In the meanwhile, the third thread does fget on the same descriptor,
-> and there we end up bumping the refcount to 2 and succeeding.  Which
-> leaves the caller with reference to already doomed struct file...
-> 
-> 	IOW, NAK - this is completely broken.  The whole point of
-> atomic_long_add_unless() is that the check and conditional increment
-> are atomic.  Together.  That's what your optimization takes out.
-> 
+ fs/iomap/direct-io.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-How about this? We try to replace atomic_cmpxchg with atomic_add to improve
-performance. The atomic_add does not check the current f_count value.
-Therefore, the number of online CPUs is reserved to prevent multi-core
-competition.
-
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index c1aafb2ab990..66a4502ef675 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -374,6 +374,7 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		void *data, struct iomap *iomap, struct iomap *srcmap)
+ {
+ 	struct iomap_dio *dio = data;
++	char pathname[128], *path;
+ 
+ 	switch (iomap->type) {
+ 	case IOMAP_HOLE:
+@@ -389,7 +390,21 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 	case IOMAP_INLINE:
+ 		return iomap_dio_inline_actor(inode, pos, length, dio, iomap);
+ 	default:
+-		WARN_ON_ONCE(1);
++		/*
++		 * DIO is not serialised against mmap() access at all, and so
++		 * if the page_mkwrite occurs between the writeback and the
++		 * iomap_apply() call in the DIO path, then it will see the
++		 * DELALLOC block that the page-mkwrite allocated.
++		 */
++		path = file_path(dio->iocb->ki_filp, pathname,
++				 sizeof(pathname));
++		if (IS_ERR(path))
++			path = "(unknown)";
 +
-+static inline bool get_file_unless(atomic_long_t *v, long a)
-+{
-+       long cpus = num_online_cpus();
-+       long c = atomic_long_read(v);
-+       long ret;
-+
-+       if (c > cpus || c < -cpus)
-+               ret = atomic_long_add_return(a, v) - a;
-+       else
-+               ret = atomic_long_add_unless(v, a, 0);
-+
-+       return ret;
-+}
-+
- #define get_file_rcu_many(x, cnt)      \
--       atomic_long_add_unless(&(x)->f_count, (cnt), 0)
-+       get_file_unless(&(x)->f_count, (cnt))
-
-Thanks,
-Shaokun
-
-> .
-> 
++		pr_warn_ratelimited("page_mkwrite() is racing with DIO read (iomap->type = %u).\n"
++				    "File: %s PID: %d Comm: %.20s\n",
++				    iomap->type, path, current->pid,
++				    current->comm);
+ 		return -EIO;
+ 	}
+ }
+-- 
+2.18.4
 
