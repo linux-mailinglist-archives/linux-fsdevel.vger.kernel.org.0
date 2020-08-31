@@ -2,109 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0683F2571A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 03:46:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 855BD2571B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 03:52:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbgHaBqh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Aug 2020 21:46:37 -0400
-Received: from brightrain.aerifal.cx ([216.12.86.13]:48328 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726630AbgHaBqf (ORCPT
+        id S1726940AbgHaBwt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Aug 2020 21:52:49 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:38415 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726454AbgHaBws (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Aug 2020 21:46:35 -0400
-Date:   Sun, 30 Aug 2020 21:46:33 -0400
-From:   Rich Felker <dalias@libc.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RESEND PATCH] vfs: add RWF_NOAPPEND flag for pwritev2
-Message-ID: <20200831014633.GJ3265@brightrain.aerifal.cx>
-References: <20200829020002.GC3265@brightrain.aerifal.cx>
- <CAG48ez1BExw7DdCEeRD1hG5ZpRObpGDodnizW2xD5tC0saTDqg@mail.gmail.com>
- <20200830163657.GD3265@brightrain.aerifal.cx>
- <CAG48ez00caDqMomv+PF4dntJkWx7rNYf3E+8gufswis6UFSszw@mail.gmail.com>
- <20200830184334.GE3265@brightrain.aerifal.cx>
- <CAG48ez3LvbWLBsJ+Edc9qCjXDYV0TRjVRrANhiR2im1aRUQ6gQ@mail.gmail.com>
- <20200830200029.GF3265@brightrain.aerifal.cx>
- <CAG48ez2tOBAKLaX-siRZPCLiiy-s65w2mFGDGr4q2S7WFxpK1A@mail.gmail.com>
+        Sun, 30 Aug 2020 21:52:48 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01353;MF=richard.weiyang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0U7IVksK_1598838766;
+Received: from localhost(mailfrom:richard.weiyang@linux.alibaba.com fp:SMTPD_---0U7IVksK_1598838766)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 31 Aug 2020 09:52:46 +0800
+From:   Wei Yang <richard.weiyang@linux.alibaba.com>
+To:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wei Yang <richard.weiyang@linux.alibaba.com>
+Subject: [PATCH] [RFC] exec: the vma passed to shift_arg_pages() must not have next
+Date:   Mon, 31 Aug 2020 09:51:21 +0800
+Message-Id: <20200831015121.20036-1-richard.weiyang@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez2tOBAKLaX-siRZPCLiiy-s65w2mFGDGr4q2S7WFxpK1A@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 31, 2020 at 03:15:04AM +0200, Jann Horn wrote:
-> On Sun, Aug 30, 2020 at 10:00 PM Rich Felker <dalias@libc.org> wrote:
-> > On Sun, Aug 30, 2020 at 09:02:31PM +0200, Jann Horn wrote:
-> > > On Sun, Aug 30, 2020 at 8:43 PM Rich Felker <dalias@libc.org> wrote:
-> > > > On Sun, Aug 30, 2020 at 08:31:36PM +0200, Jann Horn wrote:
-> > > > > On Sun, Aug 30, 2020 at 6:36 PM Rich Felker <dalias@libc.org> wrote:
-> > > > > > So just checking IS_APPEND in the code paths used by
-> > > > > > pwritev2 (and erroring out rather than silently writing output at the
-> > > > > > wrong place) should suffice to preserve all existing security
-> > > > > > invariants.
-> > > > >
-> > > > > Makes sense.
-> > > >
-> > > > There are 3 places where kiocb_set_rw_flags is called with flags that
-> > > > seem to be controlled by userspace: aio.c, io_uring.c, and
-> > > > read_write.c. Presumably each needs to EPERM out on RWF_NOAPPEND if
-> > > > the underlying inode is S_APPEND. To avoid repeating the same logic in
-> > > > an error-prone way, should kiocb_set_rw_flags's signature be updated
-> > > > to take the filp so that it can obtain the inode and check IS_APPEND
-> > > > before accepting RWF_NOAPPEND? It's inline so this should avoid
-> > > > actually loading anything except in the codepath where
-> > > > flags&RWF_NOAPPEND is nonzero.
-> > >
-> > > You can get the file pointer from ki->ki_filp. See the RWF_NOWAIT
-> > > branch of kiocb_set_rw_flags().
-> >
-> > Thanks. I should have looked for that. OK, so a fixup like this on top
-> > of the existing patch?
-> >
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 473289bff4c6..674131e8d139 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -3457,8 +3457,11 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
-> >                 ki->ki_flags |= (IOCB_DSYNC | IOCB_SYNC);
-> >         if (flags & RWF_APPEND)
-> >                 ki->ki_flags |= IOCB_APPEND;
-> > -       if (flags & RWF_NOAPPEND)
-> > +       if (flags & RWF_NOAPPEND) {
-> > +               if (IS_APPEND(file_inode(ki->ki_filp)))
-> > +                       return -EPERM;
-> >                 ki->ki_flags &= ~IOCB_APPEND;
-> > +       }
-> >         return 0;
-> >  }
-> >
-> > If this is good I'll submit a v2 as the above squashed with the
-> > original patch.
-> 
-> Looks good to me.
+We can divide vma_adjust() into two categories based on whether the
+*insert* is NULL or not. And when *insert* is NULL, it has two users:
+mremap() and shift_arg_pages().
 
-Actually it's not quite. I think it should be:
+For the second vma_adjust() in shift_arg_pages(), the vma must not have
+next. Otherwise vma_adjust() would expand next->vm_start instead of just
+shift the vma.
 
-	if ((flags & RWF_NOAPPEND) & (ki->ki_flags & IOCB_APPEND)) {
-		if (IS_APPEND(file_inode(ki->ki_filp)))
-			return -EPERM;
-		ki->ki_flags &= ~IOCB_APPEND;
-	}
+Fortunately, shift_arg_pages() is only used in setup_arg_pages() to move
+stack, which is placed on the top of the address range. This means the
+vma is not expected to have a next.
 
-i.e. don't refuse RWF_NOAPPEND on a file that was already successfully
-opened without O_APPEND that only subsequently got chattr +a. The
-permission check should only be done if it's overriding the default
-action for how the file is open.
+Since mremap() calls vma_adjust() to expand itself, shift_arg_pages() is
+the only case it may fall into mprotect case 4 by accident. Let's add a
+BUG_ON() and comment to inform the following audience.
 
-This is actually related to the fcntl corner case mentioned before.
+Signed-off-by: Wei Yang <richard.weiyang@linux.alibaba.com>
+---
+ fs/exec.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Are you ok with this change? If so I'll go ahead and prepare a v2.
+diff --git a/fs/exec.c b/fs/exec.c
+index a91003e28eaa..3ff44ab0d112 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -682,6 +682,7 @@ static int shift_arg_pages(struct vm_area_struct *vma, unsigned long shift)
+ 	struct mmu_gather tlb;
+ 
+ 	BUG_ON(new_start > new_end);
++	BUG_ON(vma->vm_next);
+ 
+ 	/*
+ 	 * ensure there are no vmas between where we want to go
+@@ -726,6 +727,8 @@ static int shift_arg_pages(struct vm_area_struct *vma, unsigned long shift)
+ 
+ 	/*
+ 	 * Shrink the vma to just the new range.  Always succeeds.
++	 * Since !vma->vm_next, __vma_adjust() would not go to mprotect case
++	 * 4 to expand next.
+ 	 */
+ 	vma_adjust(vma, new_start, new_end, vma->vm_pgoff, NULL);
+ 
+-- 
+2.20.1 (Apple Git-117)
 
-Rich
