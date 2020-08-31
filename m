@@ -2,176 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24C39257139
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 02:34:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68C99257145
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 02:47:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbgHaAeO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Aug 2020 20:34:14 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:34185 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726179AbgHaAeN (ORCPT
+        id S1726540AbgHaAq4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Aug 2020 20:46:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbgHaAqw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Aug 2020 20:34:13 -0400
-Received: from dread.disaster.area (pa49-181-146-199.pa.nsw.optusnet.com.au [49.181.146.199])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 2B359824857;
-        Mon, 31 Aug 2020 10:34:08 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kCXlv-0000ei-2W; Mon, 31 Aug 2020 10:34:07 +1000
-Date:   Mon, 31 Aug 2020 10:34:07 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Li, Hao" <lihao2018.fnst@cn.fujitsu.com>
-Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, y-goto@fujitsu.com
-Subject: Re: [PATCH] fs: Kill DCACHE_DONTCACHE dentry even if
- DCACHE_REFERENCED is set
-Message-ID: <20200831003407.GE12096@dread.disaster.area>
-References: <20200821015953.22956-1-lihao2018.fnst@cn.fujitsu.com>
- <20200827063748.GA12096@dread.disaster.area>
- <6b3b3439-2199-8f00-ceca-d65769e94fe0@cn.fujitsu.com>
- <20200828003541.GD12096@dread.disaster.area>
- <d7852ad6-d304-895d-424d-3053bf07f0f5@cn.fujitsu.com>
+        Sun, 30 Aug 2020 20:46:52 -0400
+Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58CB7C061573
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Aug 2020 17:46:52 -0700 (PDT)
+Received: by mail-qk1-x743.google.com with SMTP id v69so3584847qkb.7
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Aug 2020 17:46:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GAtlAOpFNvkVEnaD4rG6Py3jBZNpY6f39We+YB2KFgU=;
+        b=YkGK8jWKINAUr+tIoIiSSQ4BIjEfNrjAhThq7A5ONV03xEieAI+Knqoy/5bLZnyulJ
+         zO01lynK1T4y3a0lL7tb6xM0FWnwD/ru+gnLeMGpcBUgBm1M7ozUhSbsZZ6Oi/5S3MdJ
+         Vr1smocPZXnvRW6uXaq1tdjVw6ZF89o95yKrEg3myJq1uU67oorYAvDkIIfHnQHbAD+6
+         cHy3X1l2mbOigMnl2btNaytzC/8Px76kSBBgkgreigYdvJ9jHRj+QmdZRueYBQb1es29
+         d0FyMtudcL7MbtlgoVrivy452SFB+rkbvcrF1NZ0RHxte+yyqebtlBV0OY6kF70jlqy3
+         yocQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GAtlAOpFNvkVEnaD4rG6Py3jBZNpY6f39We+YB2KFgU=;
+        b=m/YOTAGiz+j/Slfvm6ldddT6qt9TKa53wlPSFAnMewXt3FX93FiiJ2toHlJX0CQf+c
+         Jj5BB9cAuwroqMLSY53+C2cUDP17DXLvrtEreQ2FhpVLOC+Ua08JJObxUNQvEH7ldFVX
+         q+X879m8dVLp6r6oL5Hw0Ml8XbMA01GTp+mHn6+cHTHG5fvu5kWJYLZO52RlV2a833Bh
+         /BITZq+DGBRfw++x3au6oV6n/5MM9M6jt2TsO8pjfcJazLytl3oud57XKIK2ZW6HcadC
+         qLr6is3tWarDV7C16+mj48TIGTTTJmjWtUEWIOdwEmIP3lBxbq2L81gfWLesdM1o9bFz
+         vjWQ==
+X-Gm-Message-State: AOAM533iVNIOby+jVU3nWFxm1fdF2hgraTI1sIw4fN+NqoMVUBebUv5v
+        GWMxvbybcPQaRPYXDjwlDQ7FxQ==
+X-Google-Smtp-Source: ABdhPJwqxOtfupp7u+KVWB7WMnFW4s2YHKph8MqJXsUD1woVGS/maUvQOIBkCESVttSeNfAzf3+fNg==
+X-Received: by 2002:a05:620a:805:: with SMTP id s5mr8540672qks.214.1598834809026;
+        Sun, 30 Aug 2020 17:46:49 -0700 (PDT)
+Received: from lca.pw (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id m196sm399505qke.87.2020.08.30.17.46.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 30 Aug 2020 17:46:48 -0700 (PDT)
+Date:   Sun, 30 Aug 2020 20:46:46 -0400
+From:   Qian Cai <cai@lca.pw>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     hch@infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iomap: fix WARN_ON_ONCE() from unprivileged users
+Message-ID: <20200831004645.GB4039@lca.pw>
+References: <20200830013057.14664-1-cai@lca.pw>
+ <20200831003033.GZ6096@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d7852ad6-d304-895d-424d-3053bf07f0f5@cn.fujitsu.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=IuRgj43g c=1 sm=1 tr=0 cx=a_idp_d
-        a=GorAHYkI+xOargNMzM6qxQ==:117 a=GorAHYkI+xOargNMzM6qxQ==:17
-        a=kj9zAlcOel0A:10 a=y4yBn9ojGxQA:10 a=omOdbC7AAAAA:8 a=7-415B0cAAAA:8
-        a=Q-SpeKd3jp49hb1f-zoA:9 a=CjuIK1q_8ugA:10 a=baC4JDFNLZpnPwus_NF9:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20200831003033.GZ6096@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Aug 28, 2020 at 05:04:14PM +0800, Li, Hao wrote:
-> On 2020/8/28 8:35, Dave Chinner wrote:
-> > On Thu, Aug 27, 2020 at 05:58:07PM +0800, Li, Hao wrote:
-> >> On 2020/8/27 14:37, Dave Chinner wrote:
-> >>> On Fri, Aug 21, 2020 at 09:59:53AM +0800, Hao Li wrote:
-> >>>> Currently, DCACHE_REFERENCED prevents the dentry with DCACHE_DONTCACHE
-> >>>> set from being killed, so the corresponding inode can't be evicted. If
-> >>>> the DAX policy of an inode is changed, we can't make policy changing
-> >>>> take effects unless dropping caches manually.
-> >>>>
-> >>>> This patch fixes this problem and flushes the inode to disk to prepare
-> >>>> for evicting it.
-> >>>>
-> >>>> Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
-> >>>> ---
-> >>>>  fs/dcache.c | 3 ++-
-> >>>>  fs/inode.c  | 2 +-
-> >>>>  2 files changed, 3 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/fs/dcache.c b/fs/dcache.c
-> >>>> index ea0485861d93..486c7409dc82 100644
-> >>>> --- a/fs/dcache.c
-> >>>> +++ b/fs/dcache.c
-> >>>> @@ -796,7 +796,8 @@ static inline bool fast_dput(struct dentry *dentry)
-> >>>>  	 */
-> >>>>  	smp_rmb();
-> >>>>  	d_flags = READ_ONCE(dentry->d_flags);
-> >>>> -	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED;
-> >>>> +	d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED
-> >>>> +			| DCACHE_DONTCACHE;
-> >>> Seems reasonable, but you need to update the comment above as to
-> >>> how this flag fits into this code....
-> >> Yes. I will change it. Thanks.
-> >>
-> >>>>  	/* Nothing to do? Dropping the reference was all we needed? */
-> >>>>  	if (d_flags == (DCACHE_REFERENCED | DCACHE_LRU_LIST) && !d_unhashed(dentry))
-> >>>> diff --git a/fs/inode.c b/fs/inode.c
-> >>>> index 72c4c347afb7..5218a8aebd7f 100644
-> >>>> --- a/fs/inode.c
-> >>>> +++ b/fs/inode.c
-> >>>> @@ -1632,7 +1632,7 @@ static void iput_final(struct inode *inode)
-> >>>>  	}
-> >>>>  
-> >>>>  	state = inode->i_state;
-> >>>> -	if (!drop) {
-> >>>> +	if (!drop || (drop && (inode->i_state & I_DONTCACHE))) {
-> >>>>  		WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
-> >>>>  		spin_unlock(&inode->i_lock);
-> >>> What's this supposed to do? We'll only get here with drop set if the
-> >>> filesystem is mounting or unmounting.
-> >> The variable drop will also be set to True if I_DONTCACHE is set on
-> >> inode->i_state.
-> >> Although mounting/unmounting will set the drop variable, it won't set
-> >> I_DONTCACHE if I understand correctly. As a result,
-> >> drop && (inode->i_state & I_DONTCACHE) will filter out mounting/unmounting.
-> > So what does this have to do with changing the way the dcache
-> > treats DCACHE_DONTCACHE?
-> After changing the way the dcache treats DCACHE_DONTCACHE, the dentry with
-> DCACHE_DONTCACHE set will be killed unconditionally even if
-> DCACHE_REFERENCED is set, and its inode will be processed by iput_final().
-> This inode has I_DONTCACHE flag, so op->drop_inode() will return true,
-> and the inode will be evicted _directly_ even though it has dirty pages.
+On Sun, Aug 30, 2020 at 05:30:33PM -0700, Darrick J. Wong wrote:
+> On Sat, Aug 29, 2020 at 09:30:57PM -0400, Qian Cai wrote:
+> > It is trivial to trigger a WARN_ON_ONCE(1) in iomap_dio_actor() by
+> > unprivileged users which would taint the kernel, or worse - panic if
+> > panic_on_warn or panic_on_taint is set. Hence, just convert it to
+> > pr_warn_ratelimited() to let users know their workloads are racing.
+> > Thanks Dave Chinner for the initial analysis of the racing reproducers.
+> > 
+> > Signed-off-by: Qian Cai <cai@lca.pw>
+> > ---
+> >  fs/iomap/direct-io.c | 9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> > index c1aafb2ab990..6a6b4bc13269 100644
+> > --- a/fs/iomap/direct-io.c
+> > +++ b/fs/iomap/direct-io.c
+> > @@ -389,7 +389,14 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+> >  	case IOMAP_INLINE:
+> >  		return iomap_dio_inline_actor(inode, pos, length, dio, iomap);
+> >  	default:
+> > -		WARN_ON_ONCE(1);
+> > +		/*
+> > +		 * DIO is not serialised against mmap() access at all, and so
+> > +		 * if the page_mkwrite occurs between the writeback and the
+> > +		 * iomap_apply() call in the DIO path, then it will see the
+> > +		 * DELALLOC block that the page-mkwrite allocated.
+> > +		 */
+> > +		pr_warn_ratelimited("page_mkwrite() is racing with DIO read (iomap->type = %u).\n",
+> > +				    iomap->type);
+> 
+> Shouldn't we log the name of triggering process and the file path?  Sort
+> of like what dio_warn_stale_pagecache does?
 
-Yes. But this doesn't rely on DCACHE_DONTCACHE behaviour. Inodes
-that are looked up and cached by the filesystem without going
-through dentry cache pathwalks can have I_DONTCACHE set and then get
-evicted...
-
-i.e. we can get I_DONTCACHE set on inodes that do not have dentries
-attached to them. That's the original functionality that got pulled
-up from XFS - internal iteration of inodes, either via quotacheck or
-bulkstat....
-
-> I think the kernel will run into error state because it doesn't writeback
-> dirty pages of this inode before evicting. This is why I write back this
-> inode here.
-> 
-> According to my test, if I revert the second hunk of this patch, kernel
-> will hang after running the following command:
-> echo 123 > test.txt && xfs_io -c "chattr +x" test.txt
-> 
-> The backtrace is:
-> 
-> xfs_fs_destroy_inode+0x204/0x24d
-> destroy_inode+0x3b/0x65
-> evict+0x150/0x1aa
-> iput+0x117/0x19a
-> dentry_unlink_inode+0x12b/0x12f
-> __dentry_kill+0xee/0x211
-> dentry_kill+0x112/0x22f
-> dput+0x79/0x86
-> __fput+0x200/0x23f
-> ____fput+0x25/0x28
-> task_work_run+0x144/0x177
-> do_exit+0x4fb/0xb94
-> 
-> This backtrace is printed with an ASSERT(0) statement in xfs_fs_destroy_inode().
-
-Sure, that's your messenger. That doesn't mean the bug can't be
-triggered by other means.
-
-> > Also, if I_DONTCACHE is set, but the inode has also been unlinked or
-> > is unhashed, should we be writing it back? i.e. it might have been
-> > dropped for a different reason to I_DONTCACHE....
-> This is a problem I didn't realize. You are right. If the inode has been
-> unlinked/unhashed and the I_DONTCACHE is also set, the appended condition
-> will lead to unnecessary writeback.
-> 
-> I think I need to handle the inode writeback more carefully. Maybe I can
-> revert the second hunk and remove I_DONTCACHE from generic_drop_inode()
-> and then change
-> 
-> if (!drop && (sb->s_flags & SB_ACTIVE))
-> 
-> to
-> 
-> if (!drop && !(inode->i_state & I_DONTCACHE) && (sb->s_flags & SB_ACTIVE))
-> 
-> This approach would be more suitable.
-
-Yup, that's pretty much what I was thinking, but as a standalone
-patch and preceding the DCACHE_DONTCACHE behaviour change. Thanks! :)
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Good idea. I'll add them.
