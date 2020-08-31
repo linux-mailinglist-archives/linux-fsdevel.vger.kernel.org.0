@@ -2,59 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 69FE2257F97
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 19:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20CEF257FB7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 19:39:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729053AbgHaR0q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 13:26:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45118 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbgHaR0p (ORCPT
+        id S1727094AbgHaRjY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 13:39:24 -0400
+Received: from mail.parknet.co.jp ([210.171.160.6]:33976 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726117AbgHaRjW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 13:26:45 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C06CDC061573;
-        Mon, 31 Aug 2020 10:26:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ju0PVpNY3/ckdFWEkNKtSiQqosF3ht57RIZrGyS4lo8=; b=qqQ7TXZeKin0LumxSCewynACa9
-        L5lqeKhlui5AoMn4oHoZiCon7WwhQwVCbB9tceI4745HaM/ZNJDFM9kguVqZFbtO8Zen+mCiHSiUe
-        m+EpUVyHI35nH+mPkZpkhZmq1DPKoBbgfkNXICHjm/PWCjlAuEAf71i1em3FNqAE7C0uzejBrgmvq
-        NIGKcqTKWp6E7HDTfuc4/HwQ4vgHR8kU6o8DAHu6miO2lELnBz97yhZG0+dREiDugZCVdyYWzyfll
-        DNGUqe6mv+xFLJsfA0wEjHFjuxL0WwM0F+YPsDy12idhs6QndTZUtU/aYSGhCVu83OdVpHB6kTJk5
-        3a600W4Q==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kCnZp-0007pK-19; Mon, 31 Aug 2020 17:26:41 +0000
-Date:   Mon, 31 Aug 2020 18:26:40 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     darrick.wong@oracle.com, hch@infradead.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iomap: Fix WARN_ON_ONCE() from unprivileged users
-Message-ID: <20200831172640.GA30014@infradead.org>
-References: <20200831172534.12464-1-cai@lca.pw>
+        Mon, 31 Aug 2020 13:39:22 -0400
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id 1A9151B44DF;
+        Tue,  1 Sep 2020 02:39:21 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-20) with ESMTPS id 07VHdJa6366555
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Tue, 1 Sep 2020 02:39:20 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-20) with ESMTPS id 07VHdJ753466384
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Tue, 1 Sep 2020 02:39:19 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id 07VHdIdG3466383;
+        Tue, 1 Sep 2020 02:39:18 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] fat: Avoid oops when bdi->io_pages==0
+References: <87ft85osn6.fsf@mail.parknet.co.jp>
+        <b4e1f741-989c-6c9d-b559-4c1ada88c499@kernel.dk>
+        <87o8mq6aao.fsf@mail.parknet.co.jp>
+        <4010690f-20ad-f7ba-b595-2e07b0fa2d94@kernel.dk>
+        <20200831165659.GH14765@casper.infradead.org>
+        <33eb2820-894e-a42f-61a5-c25bc52345d5@kernel.dk>
+Date:   Tue, 01 Sep 2020 02:39:18 +0900
+In-Reply-To: <33eb2820-894e-a42f-61a5-c25bc52345d5@kernel.dk> (Jens Axboe's
+        message of "Mon, 31 Aug 2020 11:00:14 -0600")
+Message-ID: <87d03667g9.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.0.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200831172534.12464-1-cai@lca.pw>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 31, 2020 at 01:25:34PM -0400, Qian Cai wrote:
-> It is trivial to trigger a WARN_ON_ONCE(1) in iomap_dio_actor() by
-> unprivileged users which would taint the kernel, or worse - panic if
-> panic_on_warn or panic_on_taint is set. Hence, just convert it to
-> pr_warn_ratelimited() to let users know their workloads are racing.
-> Thank Dave Chinner for the initial analysis of the racing reproducers.
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
+Jens Axboe <axboe@kernel.dk> writes:
 
-Looks good,
+> On 8/31/20 10:56 AM, Matthew Wilcox wrote:
+>> On Mon, Aug 31, 2020 at 10:39:26AM -0600, Jens Axboe wrote:
+>>> We really should ensure that ->io_pages is always set, imho, instead of
+>>> having to work-around it in other spots.
+>> 
+>> Interestingly, there are only three places in the entire kernel which
+>> _use_ bdi->io_pages.  FAT, Verity and the pagecache readahead code.
+>> 
+>> Verity:
+>>                         unsigned long num_ra_pages =
+>>                                 min_t(unsigned long, num_blocks_to_hash - i,
+>>                                       inode->i_sb->s_bdi->io_pages);
+>> 
+>> FAT:
+>>         if (ra_pages > sb->s_bdi->io_pages)
+>>                 ra_pages = rounddown(ra_pages, sb->s_bdi->io_pages);
+>> 
+>> Pagecache:
+>>         max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
+>> and
+>>         if (req_size > max_pages && bdi->io_pages > max_pages)
+>>                 max_pages = min(req_size, bdi->io_pages);
+>> 
+>> The funny thing is that all three are using it differently.  Verity is
+>> taking io_pages to be the maximum amount to readahead.  FAT is using
+>> it as the unit of readahead (round down to the previous multiple) and
+>> the pagecache uses it to limit reads that exceed the current per-file
+>> readahead limit (but allows per-file readahead to exceed io_pages,
+>> in which case it has no effect).
+>> 
+>> So how should it be used?  My inclination is to say that the pagecache
+>> is right, by virtue of being the most-used.
+>
+> When I added ->io_pages, it was for the page cache use case. The others
+> grew after that...
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+FAT and pagecache usage would be similar or same purpose. The both is
+using io_pages as optimal IO size.
+
+In pagecache case, it uses io_pages if one request size is exceeding
+io_pages. In FAT case, there is perfect knowledge about future/total
+request size. So FAT divides request by io_pages, and adjust ra_pages
+with knowledge.
+
+I don't know about verity.
+
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
