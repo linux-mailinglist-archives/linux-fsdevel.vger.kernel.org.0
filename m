@@ -2,139 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 61BCB257AE5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 15:52:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A631257B32
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 16:22:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbgHaNwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 09:52:45 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:41302 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727946AbgHaNw0 (ORCPT
+        id S1726292AbgHaOWA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 10:22:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44656 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726503AbgHaOVu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 09:52:26 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kCkEP-00DtQu-Dt; Mon, 31 Aug 2020 07:52:21 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kCkEO-0002TR-Ej; Mon, 31 Aug 2020 07:52:21 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     peterz@infradead.org
-Cc:     syzbot <syzbot+db9cdf3dd1f64252c6ef@syzkaller.appspotmail.com>,
-        adobriyan@gmail.com, akpm@linux-foundation.org, avagin@gmail.com,
-        christian@brauner.io, gladkov.alexey@gmail.com,
-        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        walken@google.com, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>, jannh@google.com
-References: <00000000000063640c05ade8e3de@google.com>
-        <87mu2fj7xu.fsf@x220.int.ebiederm.org>
-        <20200828123720.GZ1362448@hirez.programming.kicks-ass.net>
-        <87v9h0gvro.fsf@x220.int.ebiederm.org>
-        <20200831074328.GN1362448@hirez.programming.kicks-ass.net>
-Date:   Mon, 31 Aug 2020 08:52:16 -0500
-In-Reply-To: <20200831074328.GN1362448@hirez.programming.kicks-ass.net>
-        (peterz's message of "Mon, 31 Aug 2020 09:43:28 +0200")
-Message-ID: <87eenmgbxr.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 31 Aug 2020 10:21:50 -0400
+Received: from mail-ua1-x941.google.com (mail-ua1-x941.google.com [IPv6:2607:f8b0:4864:20::941])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ECEDC061573
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 07:21:49 -0700 (PDT)
+Received: by mail-ua1-x941.google.com with SMTP id r13so2041165uah.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 07:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SzR2oNRwYCvP+9DL3XtTBjoyzVtXN0GMk3EfT65aEnI=;
+        b=f49bgNjOYZvpA90D7L71n2Q6rN73V2PtfexNudAJ3b3FWO6zCGl4WXf3dTcpMS+6WF
+         vHrKeKikIhJwexY+d0zDIidLtM8tgw0XseM06Qlh55FESWULrMFL5vysxuID+xO9T4CB
+         Q1nq9HNnTnbqnKr1lzCt/bOM95WcmfK9ZJ0tY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SzR2oNRwYCvP+9DL3XtTBjoyzVtXN0GMk3EfT65aEnI=;
+        b=FmUCek5wYB8CA+6lMzFYQA24EiNDXj7GIL2QHtVCScW+o4aB0N5G1S5QuoQV5Lh58E
+         dtWPfWRlSSlCTPZfeoccb0I/gE3A1gUgES0h+iqunCqCQh7myU/Jd/q2NbxEac+KTM0e
+         6beTJe6BLacYuPT9bF4PiAdrJmHWSrVJVJCkOvFUUSuIPT8aGOX7uBqULO1HhEuUVHGo
+         b7ZhgcNPz/6zo4+u/D9yUbaUujGLSNoePgUJNALVl/UsHzpTReRBmzOVMDulJX4dVsbm
+         /GV0Pq2bASRo49b6TsL/Et7Ak/l2mj69QityxV98AyuML6Z3ZR3XZRypRbxKkxKITqHk
+         crNA==
+X-Gm-Message-State: AOAM530f2w70sAk24aLt4/M6jQetTvbDld/b2K7C6+Nc7sDqwjtwfaMj
+        8BSmhKFl/OyvORoNaLzrCaPoKGpJOWFmTOqDWVvK3g==
+X-Google-Smtp-Source: ABdhPJzbfswt4jWwD7XMPxikVbKVeurhrDKX9Aihke9vQFVNS1+uaIXUeEGPLrMbqnkNDgqLUIDwqx6HNrh6iaYlEVY=
+X-Received: by 2002:ab0:32d:: with SMTP id 42mr1044446uat.107.1598883708242;
+ Mon, 31 Aug 2020 07:21:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1kCkEO-0002TR-Ej;;;mid=<87eenmgbxr.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/pDE+t//a5yiKVsLhDBsA/S8IDZWtzoPo=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa07.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.2 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG autolearn=disabled
-        version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4160]
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa07 0; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: ; sa07 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;peterz@infradead.org
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 579 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 10 (1.8%), b_tie_ro: 9 (1.5%), parse: 0.90 (0.2%),
-         extract_message_metadata: 11 (1.9%), get_uri_detail_list: 1.33 (0.2%),
-         tests_pri_-1000: 18 (3.1%), tests_pri_-950: 1.37 (0.2%),
-        tests_pri_-900: 1.15 (0.2%), tests_pri_-90: 218 (37.7%), check_bayes:
-        216 (37.4%), b_tokenize: 8 (1.4%), b_tok_get_all: 63 (11.0%),
-        b_comp_prob: 4.5 (0.8%), b_tok_touch_all: 136 (23.4%), b_finish: 1.18
-        (0.2%), tests_pri_0: 306 (52.9%), check_dkim_signature: 0.53 (0.1%),
-        check_dkim_adsp: 2.8 (0.5%), poll_dns_idle: 0.77 (0.1%), tests_pri_10:
-        2.1 (0.4%), tests_pri_500: 6 (1.1%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: possible deadlock in proc_pid_syscall (2)
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <20200829161358.GP1236603@ZenIV.linux.org.uk> <CAJfpegu2R21CF9PEoj2Cw6x01xmJ+qsff5QTcOcY4G5KEY3R0w@mail.gmail.com>
+ <20200829180448.GQ1236603@ZenIV.linux.org.uk> <CAJfpegsn-BKVkMv4pQHG7tER31m5RSXrJyhDZ-Uzst1CMBEbEw@mail.gmail.com>
+ <20200829192522.GS1236603@ZenIV.linux.org.uk> <CAJfpegt7a_YHd0iBjb=8hST973dQQ9czHUSNvnh-9LR_fqktTA@mail.gmail.com>
+ <20200830191016.GZ14765@casper.infradead.org> <CAJfpegv9+o8QjQmg8EpMCm09tPy4WX1gbJiT=s15Lz8r3HQXJQ@mail.gmail.com>
+ <20200831113705.GA14765@casper.infradead.org> <CAJfpegvqvns+PULwyaN2oaZAJZKA_SgKxqgpP=nvab2tuyX4NA@mail.gmail.com>
+ <20200831132339.GD14765@casper.infradead.org>
+In-Reply-To: <20200831132339.GD14765@casper.infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 31 Aug 2020 16:21:36 +0200
+Message-ID: <CAJfpegvRgvU-RYf0i6ChC_v7aHonimLKe-5MuUa+JXqUHiPEpg@mail.gmail.com>
+Subject: Re: xattr names for unprivileged stacking?
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        Chirantan Ekbote <chirantan@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-peterz@infradead.org writes:
-
-> On Sun, Aug 30, 2020 at 07:31:39AM -0500, Eric W. Biederman wrote:
+On Mon, Aug 31, 2020 at 3:23 PM Matthew Wilcox <willy@infradead.org> wrote:
 >
->> I am thinking that for cases where we want to do significant work it
->> might be better to ask the process to pause at someplace safe (probably
->> get_signal) and then do all of the work when we know nothing is changing
->> in the process.
->> 
->> I don't really like the idea of checking and then checking again.  We
->> might have to do it but it feels like the model is wrong somewhere.
->> 
->> Given that this is tricky to hit in practice, and given that I am
->> already working the general problem of how to sort out the locking I am
->> going to work this with the rest of the thorny issues of in exec.  This
->> feels like a case where the proper solution is that we simply need
->> something better than a mutex.
+> On Mon, Aug 31, 2020 at 01:51:20PM +0200, Miklos Szeredi wrote:
+> > On Mon, Aug 31, 2020 at 1:37 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > > As I said to Dave, you and I have a strong difference of opinion here.
+> > > I think that what you are proposing is madness.  You're making it too
+> > > flexible which comes with too much opportunity for abuse.
+> >
+> > Such as?
 >
-> One possible alternative would be something RCU-like, surround the thing
-> with get_task_cred() / put_cred() and then have commit_creds() wait for
-> the usage of the old creds to drop to 0 before continuing.
+> One proposal I saw earlier in this thread was to do something like
+> $ runalt /path/to/file ls
+> which would open_alt() /path/to/file, fchdir to it and run ls inside it.
+> That's just crazy.
+
+Indeed, I have said numerous times that fchdir() on those objects must
+not happen.  But there's no law (that I know of) that says all
+hierarchies of files must allow fchdir().
+
+> > >  I just want
+> > > to see alternate data streams for the same filename in order to support
+> > > existing use cases.  You seem to be able to want to create an entire
+> > > new world inside a file, and that's just too confusing.
+> >
+> > To whom?  I'm sure users of ancient systems with a flat directory
+> > found directory trees very confusing.  Yet it turned out that the
+> > hierarchical system beat the heck out of the flat one.
 >
-> (Also, get_cred_rcu() is disgusting for casting away const)
->
-> But this could be complete garbage, I'm not much familiar with any of
-> thise code.
+> Which doesn't mean that multiple semi-hidden hierarchies are going to
+> be better than one visible hierarchy.
 
-This looks like an area of code that will take a couple of passes to get
-100% right.
+Look how metadata interfaces for inodes are already fragmented:
 
-Usually changing creds happens atomically, and separately from
-everything else so we simply don't care if there a race,  Either the old
-creds or the new creds are valid.
+ - stat (zillions of versions due to field sizes)
+ - statx (hopefully good for some time)
+ - getxattr
+ - FS_IOC_GETFLAGS
+ - FS_IOC_FSGETXATTR (nothing to do with the "other" xattr)
+ - FS_IOC_FIEMAP
+ - all the filesystem specific stuff (encryption, compression, whatever)
 
-With exec the situation is trickier as several things in addition to the
-cred are changing at the same time.  So a lock is needed.
+And now you are proposing to add yet another interface specific to ADS.
 
-Now that it is separated from the cred_guard_mutex, probably the easiest
-solution is to make exec_update_mutex a sleeping reader writer lock.
-There are fewer cases that matter as such a lock would only block on
-exec (the writer).
+What about a generic interface instead for most future use cases as
+well as possibly duplicating some of the existing ones?  This would
+simplify userspace tooling and allow for a single generic internal
+interface as well.
 
-I don't understand perf well enough to do much without carefully
-studying the code.
-
-Eric
-
-
-
-
-
-
-
+Thanks,
+Miklos
