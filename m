@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EC5C7257427
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 09:15:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB24C25741E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 09:15:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbgHaHOw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 03:14:52 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:16659 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbgHaHOs (ORCPT
+        id S1727984AbgHaHOx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 03:14:53 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9940 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727918AbgHaHOs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 31 Aug 2020 03:14:48 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f4ca2e80000>; Mon, 31 Aug 2020 00:12:40 -0700
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5f4ca3580001>; Mon, 31 Aug 2020 00:14:32 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
   Mon, 31 Aug 2020 00:14:46 -0700
 X-PGP-Universal: processed;
         by hqpgpgate101.nvidia.com on Mon, 31 Aug 2020 00:14:46 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 31 Aug
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 31 Aug
  2020 07:14:46 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 31 Aug 2020 07:14:45 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Mon, 31 Aug 2020 07:14:46 +0000
 Received: from sandstorm.nvidia.com (Not Verified[10.2.61.194]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f4ca3650000>; Mon, 31 Aug 2020 00:14:45 -0700
+        id <B5f4ca3650001>; Mon, 31 Aug 2020 00:14:45 -0700
 From:   John Hubbard <jhubbard@nvidia.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -36,9 +36,9 @@ CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
         <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
         <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
         John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v3 1/3] mm/gup: introduce pin_page()
-Date:   Mon, 31 Aug 2020 00:14:37 -0700
-Message-ID: <20200831071439.1014766-2-jhubbard@nvidia.com>
+Subject: [PATCH v3 2/3] iov_iter: introduce iov_iter_pin_pages*() routines
+Date:   Mon, 31 Aug 2020 00:14:38 -0700
+Message-ID: <20200831071439.1014766-3-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200831071439.1014766-1-jhubbard@nvidia.com>
 References: <20200831071439.1014766-1-jhubbard@nvidia.com>
@@ -47,106 +47,258 @@ X-NVConfidentiality: public
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598857960; bh=g/hUeZFRhmcyiBdywMfjY5hsszErlS3vn8kKwBqUBqw=;
+        t=1598858072; bh=jwmL5keCSRb4i6VwRyMsY8w6+RTlVx/GVzSIN4vBl1c=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:MIME-Version:X-NVConfidentiality:
          Content-Transfer-Encoding:Content-Type;
-        b=kjUinpiMx6nsErCxVCskj43Z3DmEoRKcD9i9ivUNEYiZZUvdAQHLzGVFbnxLz5nhr
-         gU9ZVgqVz0+ENK96+ymx5ri0Qu3f+reKGD4pt8qDZjXFXqVIl2GN2MtTQIV46VD7l0
-         vRRZcwo3jXjvLR6MZCdGCc/SD7/QCWrvHe3XFUal/qZtcgTs7Auk+30WD6C3NRO8so
-         J9oszswXn1+MED+pJTlgHtKokzefEkarkTGqOpWg6hOtomvqMdvyLTH8W5VoHDFKQu
-         zMwxsVRna0Ka+n9/VhYUUDZeT8gnPNL2ZwT/7z2QMTYjoIHFeLcUfmvIMNZpQdS46R
-         VQuBC2Om1nakw==
+        b=gZ5aXiKzWb1rph5HyaTU2oQ4pZjqhZjGAyR3CpFbituOa9DwbPmr3czx7HpCKchSz
+         iaEHyv4dFg0qcZy50p+FgJwZ2vQ78uJb3zCYhnBwgKru6V+fT+2zbx21Thg+2Rhgjy
+         EC0Su/BJzkNVBQnPVT2D3wtWUoo+k99FY1I3M0k22ul//4mahapV7lsQLnj1iJY9iA
+         BcjIJN9ukogJhsnggVHSijdmBNbkOcAzZ1meU5vf1LRpbm7uL1MmiYRSnoaz5isLlj
+         XIoKT9nri8bmhnGqCMdZzRJIyCF7nklluAVAqEyA+DhqkM6HhTnOEkfY9Ts/SXlckk
+         7oMHomzU3RZ2A==
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-pin_page() is the FOLL_PIN equivalent of get_page().
+The new routines are:
+    iov_iter_pin_pages()
+    iov_iter_pin_pages_alloc()
 
-This was always a missing piece of the pin/unpin API calls (early
-reviewers of pin_user_pages() asked about it, in fact), but until now,
-it just wasn't needed. Finally though, now that the Direct IO pieces in
-block/bio are about to be converted to use FOLL_PIN, it turns out that
-there are some cases in which get_page() and get_user_pages_fast() were
-both used. Converting those sites requires a drop-in replacement for
-get_page(), which this patch supplies.
+and those correspond to these pre-existing routines:
+    iov_iter_get_pages()
+    iov_iter_get_pages_alloc()
 
-[1] and [2] provide some background about the overall effort to convert
-things to pin_user_page*() and unpin_user_page*().
+Also, pipe_get_pages() and related are changed so as to pass
+down a "use_pup" (use pin_page() instead of get_page()) bool
+argument.
 
-[1] "Explicit pinning of user-space pages":
-    https://lwn.net/Articles/807108/
+Unlike the iov_iter_get_pages*() routines, the iov_iter_pin_pages*()
+routines assert that only ITER_IOVEC or ITER_PIPE items are passed in.
+They then call pin_user_pages_fast() or pin_page(), instead of
+get_user_pages_fast() or get_page().
 
-[2] Documentation/core-api/pin_user_pages.rst
+Why: In order to incrementally change Direct IO callers from calling
+get_user_pages_fast() and put_page(), over to calling
+pin_user_pages_fast() and unpin_user_page(), there need to be mid-level
+routines that specifically call one or the other systems, for both page
+acquisition and page release.
 
 Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- include/linux/mm.h |  2 ++
- mm/gup.c           | 33 +++++++++++++++++++++++++++++++++
- 2 files changed, 35 insertions(+)
+ include/linux/uio.h |   5 ++
+ lib/iov_iter.c      | 113 ++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 110 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ca6e6a81576b..24240cf66c44 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1154,6 +1154,8 @@ static inline void get_page(struct page *page)
- 	page_ref_inc(page);
- }
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 3835a8a8e9ea..e44eed12afdf 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -229,6 +229,11 @@ int iov_iter_npages(const struct iov_iter *i, int maxp=
+ages);
 =20
-+void pin_page(struct page *page);
+ const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t fla=
+gs);
+=20
++ssize_t iov_iter_pin_pages(struct iov_iter *i, struct page **pages,
++			size_t maxsize, unsigned int maxpages, size_t *start);
++ssize_t iov_iter_pin_pages_alloc(struct iov_iter *i, struct page ***pages,
++			size_t maxsize, size_t *start);
 +
- bool __must_check try_grab_page(struct page *page, unsigned int flags);
+ static inline size_t iov_iter_count(const struct iov_iter *i)
+ {
+ 	return i->count;
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 5e40786c8f12..2dc1f4812fa9 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1269,7 +1269,8 @@ static inline ssize_t __pipe_get_pages(struct iov_ite=
+r *i,
+ 				size_t maxsize,
+ 				struct page **pages,
+ 				int iter_head,
+-				size_t *start)
++				size_t *start,
++				bool use_pup)
+ {
+ 	struct pipe_inode_info *pipe =3D i->pipe;
+ 	unsigned int p_mask =3D pipe->ring_size - 1;
+@@ -1280,7 +1281,14 @@ static inline ssize_t __pipe_get_pages(struct iov_it=
+er *i,
+ 	maxsize =3D n;
+ 	n +=3D *start;
+ 	while (n > 0) {
+-		get_page(*pages++ =3D pipe->bufs[iter_head & p_mask].page);
++		struct page *page =3D pipe->bufs[iter_head & p_mask].page;
++
++		if (use_pup)
++			pin_page(page);
++		else
++			get_page(page);
++
++		*pages++ =3D page;
+ 		iter_head++;
+ 		n -=3D PAGE_SIZE;
+ 	}
+@@ -1290,7 +1298,7 @@ static inline ssize_t __pipe_get_pages(struct iov_ite=
+r *i,
 =20
- static inline __must_check bool try_get_page(struct page *page)
-diff --git a/mm/gup.c b/mm/gup.c
-index ae096ea7583f..a3a4bfae224a 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -123,6 +123,39 @@ static __maybe_unused struct page *try_grab_compound_h=
-ead(struct page *page,
- 	return NULL;
+ static ssize_t pipe_get_pages(struct iov_iter *i,
+ 		   struct page **pages, size_t maxsize, unsigned maxpages,
+-		   size_t *start)
++		   size_t *start, bool use_pup)
+ {
+ 	unsigned int iter_head, npages;
+ 	size_t capacity;
+@@ -1306,9 +1314,52 @@ static ssize_t pipe_get_pages(struct iov_iter *i,
+ 	npages =3D pipe_space_for_user(iter_head, i->pipe->tail, i->pipe);
+ 	capacity =3D min(npages, maxpages) * PAGE_SIZE - *start;
+=20
+-	return __pipe_get_pages(i, min(maxsize, capacity), pages, iter_head, star=
+t);
++	return __pipe_get_pages(i, min(maxsize, capacity), pages, iter_head,
++				start, use_pup);
  }
 =20
-+/*
-+ * pin_page() - elevate the page refcount, and mark as FOLL_PIN
-+ *
-+ * This the FOLL_PIN equivalent of get_page(). It is intended for use when=
- the
-+ * page will be released via unpin_user_page().
-+ *
-+ * Unlike pin_user_page*(), pin_page() may be used on nearly any page, not=
- just
-+ * userspace-allocated pages.
-+ */
-+void pin_page(struct page *page)
++ssize_t iov_iter_pin_pages(struct iov_iter *i,
++		   struct page **pages, size_t maxsize, unsigned int maxpages,
++		   size_t *start)
 +{
-+	int refs =3D 1;
++	size_t skip =3D i->iov_offset;
++	const struct iovec *iov;
++	struct iovec v;
 +
-+	page =3D compound_head(page);
++	if (unlikely(iov_iter_is_pipe(i)))
++		return pipe_get_pages(i, pages, maxsize, maxpages, start, true);
++	if (unlikely(iov_iter_is_discard(i)))
++		return -EFAULT;
++	if (WARN_ON_ONCE(!iter_is_iovec(i)))
++		return -EFAULT;
 +
-+	VM_BUG_ON_PAGE(page_ref_count(page) <=3D 0, page);
++	if (unlikely(!maxsize))
++		return 0;
++	maxsize =3D min(maxsize, i->count);
 +
-+	if (hpage_pincount_available(page))
-+		hpage_pincount_add(page, 1);
-+	else
-+		refs =3D GUP_PIN_COUNTING_BIAS;
++	iterate_iovec(i, maxsize, v, iov, skip, ({
++		unsigned long addr =3D (unsigned long)v.iov_base;
++		size_t len =3D v.iov_len + (*start =3D addr & (PAGE_SIZE - 1));
++		int n;
++		int res;
 +
-+	/*
-+	 * Similar to try_grab_compound_head(): even if using the
-+	 * hpage_pincount_add/_sub() routines, be sure to
-+	 * *also* increment the normal page refcount field at least
-+	 * once, so that the page really is pinned.
-+	 */
-+	page_ref_add(page, refs);
++		if (len > maxpages * PAGE_SIZE)
++			len =3D maxpages * PAGE_SIZE;
++		addr &=3D ~(PAGE_SIZE - 1);
++		n =3D DIV_ROUND_UP(len, PAGE_SIZE);
 +
-+	mod_node_page_state(page_pgdat(page), NR_FOLL_PIN_ACQUIRED, 1);
++		res =3D pin_user_pages_fast(addr, n,
++				iov_iter_rw(i) !=3D WRITE ?  FOLL_WRITE : 0,
++				pages);
++		if (unlikely(res < 0))
++			return res;
++		return (res =3D=3D n ? len : res * PAGE_SIZE) - *start;
++		0;
++	}))
++	return 0;
 +}
++EXPORT_SYMBOL(iov_iter_pin_pages);
 +
- /**
-  * try_grab_page() - elevate a page's refcount by a flag-dependent amount
-  *
+ ssize_t iov_iter_get_pages(struct iov_iter *i,
+ 		   struct page **pages, size_t maxsize, unsigned maxpages,
+ 		   size_t *start)
+@@ -1317,7 +1368,7 @@ ssize_t iov_iter_get_pages(struct iov_iter *i,
+ 		maxsize =3D i->count;
+=20
+ 	if (unlikely(iov_iter_is_pipe(i)))
+-		return pipe_get_pages(i, pages, maxsize, maxpages, start);
++		return pipe_get_pages(i, pages, maxsize, maxpages, start, false);
+ 	if (unlikely(iov_iter_is_discard(i)))
+ 		return -EFAULT;
+=20
+@@ -1357,7 +1408,7 @@ static struct page **get_pages_array(size_t n)
+=20
+ static ssize_t pipe_get_pages_alloc(struct iov_iter *i,
+ 		   struct page ***pages, size_t maxsize,
+-		   size_t *start)
++		   size_t *start, bool use_pup)
+ {
+ 	struct page **p;
+ 	unsigned int iter_head, npages;
+@@ -1380,7 +1431,7 @@ static ssize_t pipe_get_pages_alloc(struct iov_iter *=
+i,
+ 	p =3D get_pages_array(npages);
+ 	if (!p)
+ 		return -ENOMEM;
+-	n =3D __pipe_get_pages(i, maxsize, p, iter_head, start);
++	n =3D __pipe_get_pages(i, maxsize, p, iter_head, start, use_pup);
+ 	if (n > 0)
+ 		*pages =3D p;
+ 	else
+@@ -1388,6 +1439,52 @@ static ssize_t pipe_get_pages_alloc(struct iov_iter =
+*i,
+ 	return n;
+ }
+=20
++ssize_t iov_iter_pin_pages_alloc(struct iov_iter *i,
++		   struct page ***pages, size_t maxsize,
++		   size_t *start)
++{
++	struct page **p;
++	size_t skip =3D i->iov_offset;
++	const struct iovec *iov;
++	struct iovec v;
++
++	if (unlikely(iov_iter_is_pipe(i)))
++		return pipe_get_pages_alloc(i, pages, maxsize, start, true);
++	if (unlikely(iov_iter_is_discard(i)))
++		return -EFAULT;
++	if (WARN_ON_ONCE(!iter_is_iovec(i)))
++		return -EFAULT;
++
++	if (unlikely(!maxsize))
++		return 0;
++	maxsize =3D min(maxsize, i->count);
++
++	iterate_iovec(i, maxsize, v, iov, skip, ({
++		unsigned long addr =3D (unsigned long)v.iov_base;
++		size_t len =3D v.iov_len + (*start =3D addr & (PAGE_SIZE - 1));
++		int n;
++		int res;
++
++		addr &=3D ~(PAGE_SIZE - 1);
++		n =3D DIV_ROUND_UP(len, PAGE_SIZE);
++		p =3D get_pages_array(n);
++		if (!p)
++			return -ENOMEM;
++
++		res =3D pin_user_pages_fast(addr, n,
++				iov_iter_rw(i) !=3D WRITE ?  FOLL_WRITE : 0, p);
++		if (unlikely(res < 0)) {
++			kvfree(p);
++			return res;
++		}
++		*pages =3D p;
++		return (res =3D=3D n ? len : res * PAGE_SIZE) - *start;
++		0;
++	}))
++	return 0;
++}
++EXPORT_SYMBOL(iov_iter_pin_pages_alloc);
++
+ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+ 		   struct page ***pages, size_t maxsize,
+ 		   size_t *start)
+@@ -1398,7 +1495,7 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+ 		maxsize =3D i->count;
+=20
+ 	if (unlikely(iov_iter_is_pipe(i)))
+-		return pipe_get_pages_alloc(i, pages, maxsize, start);
++		return pipe_get_pages_alloc(i, pages, maxsize, start, false);
+ 	if (unlikely(iov_iter_is_discard(i)))
+ 		return -EFAULT;
+=20
 --=20
 2.28.0
 
