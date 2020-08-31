@@ -2,118 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C08C257133
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 02:30:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5DEC257136
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 02:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbgHaAaY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Aug 2020 20:30:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56566 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbgHaAaU (ORCPT
+        id S1726454AbgHaAan (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 30 Aug 2020 20:30:43 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:38614 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbgHaAam (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Aug 2020 20:30:20 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D9A8C061573
-        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Aug 2020 17:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Date:Message-ID:Subject:From:To:Sender:Reply-To:Cc:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=4NCWIAAdSci+WDFhQ0Fe1JcYuaN92F05Pk62g7D93B8=; b=sk6r3v9My6ocGJIkkyaa4eH7VC
-        7feL5cy8CZ+RZfLNa04+4OEKvg6XtEmS3JdrFvPbYoUYKeLv6wt/5xC4r1+IZCZ1ioz5S63GqMOhO
-        POwPZ0dgI/8UGi0vw49SCC0/6Y6FkvACG9Ot11ykm5726PNk7vLq7An+LB2zfrfjLfIWEPlVq4/98
-        DWcmOKljvwsVwY2jlPPQU9hgYQtZGKajmpcbYeXc/bcePjJbLw2f2G7lD9czFC05pHjqutugVD9BC
-        74yw5EL4KpjejOeSOhARJ1QsYVUiP3KC/eRYliOTauadlhs9pOIZ9DqwRs9ZyZwvgD6bntp6Yrswn
-        tetaaifw==;
-Received: from [2601:1c0:6280:3f0:897c:6038:c71d:ecac]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kCXi7-0007nl-Gn; Mon, 31 Aug 2020 00:30:12 +0000
-To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Frank van der Linden <fllinden@amazon.com>,
-        Chuck Lever <chuck.lever@oracle.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] fs/xattr.c: fix kernel-doc warnings for setxattr &
- removexattr
-Message-ID: <7a3dd5a2-5787-adf3-d525-c203f9910ec4@infradead.org>
-Date:   Sun, 30 Aug 2020 17:30:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Sun, 30 Aug 2020 20:30:42 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07V0P2TH047948;
+        Mon, 31 Aug 2020 00:30:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=5tC/wlNp0puD7zLA31pTRgiOEnDcLFU5sUbJV8KxuXM=;
+ b=uKscBZWhSvshBAPv2PtL4Yu6Jd1xQS0miJM5DBl2CS1NoZjFK1cuIzIOqpK3KzU5sEma
+ NdXkgjbIvsao7PmWWAM7yrHwKRCS8M5K7rilMvwkhUsg/hR20xZnv0PiMreBkATk4cpC
+ X/tg8FlbJNnBskybbXh+i5CC/eWMPEAJ1bDiWmoFdoZ1LDuBweB1Y5r0Lc71E8sP5Ktm
+ 6phRhBpYHzI7JSKuxuayY9glVHh7R9adxBNtam0Q7egYKX1pvzeHmhrkMcLl+08IxJ+v
+ dO6N3Ahu3RcymviBhoWg+3clSP0CwA4z7z/e/0wFEogiejlC+KK4O6PoPWDiS5zmTnhj RQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 337eeqknmp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 31 Aug 2020 00:30:33 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07V0QVv0016374;
+        Mon, 31 Aug 2020 00:30:33 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 3380wxrrs2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 31 Aug 2020 00:30:32 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 07V0UUSV028133;
+        Mon, 31 Aug 2020 00:30:30 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 30 Aug 2020 17:30:30 -0700
+Date:   Sun, 30 Aug 2020 17:30:33 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     hch@infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iomap: fix WARN_ON_ONCE() from unprivileged users
+Message-ID: <20200831003033.GZ6096@magnolia>
+References: <20200830013057.14664-1-cai@lca.pw>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200830013057.14664-1-cai@lca.pw>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9729 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 phishscore=0
+ mlxlogscore=999 adultscore=0 suspectscore=56 bulkscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2008310001
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9729 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 adultscore=0 spamscore=0 mlxscore=0
+ phishscore=0 impostorscore=0 mlxlogscore=999 bulkscore=0 suspectscore=56
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
+ definitions=main-2008310001
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Sat, Aug 29, 2020 at 09:30:57PM -0400, Qian Cai wrote:
+> It is trivial to trigger a WARN_ON_ONCE(1) in iomap_dio_actor() by
+> unprivileged users which would taint the kernel, or worse - panic if
+> panic_on_warn or panic_on_taint is set. Hence, just convert it to
+> pr_warn_ratelimited() to let users know their workloads are racing.
+> Thanks Dave Chinner for the initial analysis of the racing reproducers.
+> 
+> Signed-off-by: Qian Cai <cai@lca.pw>
+> ---
+>  fs/iomap/direct-io.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index c1aafb2ab990..6a6b4bc13269 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -389,7 +389,14 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+>  	case IOMAP_INLINE:
+>  		return iomap_dio_inline_actor(inode, pos, length, dio, iomap);
+>  	default:
+> -		WARN_ON_ONCE(1);
+> +		/*
+> +		 * DIO is not serialised against mmap() access at all, and so
+> +		 * if the page_mkwrite occurs between the writeback and the
+> +		 * iomap_apply() call in the DIO path, then it will see the
+> +		 * DELALLOC block that the page-mkwrite allocated.
+> +		 */
+> +		pr_warn_ratelimited("page_mkwrite() is racing with DIO read (iomap->type = %u).\n",
+> +				    iomap->type);
 
-Fix kernel-doc warnings in fs/xattr.c:
+Shouldn't we log the name of triggering process and the file path?  Sort
+of like what dio_warn_stale_pagecache does?
 
-../fs/xattr.c:251: warning: Function parameter or member 'dentry' not described in '__vfs_setxattr_locked'
-../fs/xattr.c:251: warning: Function parameter or member 'name' not described in '__vfs_setxattr_locked'
-../fs/xattr.c:251: warning: Function parameter or member 'value' not described in '__vfs_setxattr_locked'
-../fs/xattr.c:251: warning: Function parameter or member 'size' not described in '__vfs_setxattr_locked'
-../fs/xattr.c:251: warning: Function parameter or member 'flags' not described in '__vfs_setxattr_locked'
-../fs/xattr.c:251: warning: Function parameter or member 'delegated_inode' not described in '__vfs_setxattr_locked'
-../fs/xattr.c:458: warning: Function parameter or member 'dentry' not described in '__vfs_removexattr_locked'
-../fs/xattr.c:458: warning: Function parameter or member 'name' not described in '__vfs_removexattr_locked'
-../fs/xattr.c:458: warning: Function parameter or member 'delegated_inode' not described in '__vfs_removexattr_locked'
+--D
 
-Fixes: 08b5d5014a27 ("xattr: break delegations in {set,remove}xattr")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: stable@vger.kernel.org # v4.9+
-Cc: linux-fsdevel@vger.kernel.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Frank van der Linden <fllinden@amazon.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>
----
- fs/xattr.c |   22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
-
---- lnx-59-rc3.orig/fs/xattr.c
-+++ lnx-59-rc3/fs/xattr.c
-@@ -232,15 +232,15 @@ int __vfs_setxattr_noperm(struct dentry
- }
- 
- /**
-- * __vfs_setxattr_locked: set an extended attribute while holding the inode
-+ * __vfs_setxattr_locked - set an extended attribute while holding the inode
-  * lock
-  *
-- *  @dentry - object to perform setxattr on
-- *  @name - xattr name to set
-- *  @value - value to set @name to
-- *  @size - size of @value
-- *  @flags - flags to pass into filesystem operations
-- *  @delegated_inode - on return, will contain an inode pointer that
-+ *  @dentry: object to perform setxattr on
-+ *  @name: xattr name to set
-+ *  @value: value to set @name to
-+ *  @size: size of @value
-+ *  @flags: flags to pass into filesystem operations
-+ *  @delegated_inode: on return, will contain an inode pointer that
-  *  a delegation was broken on, NULL if none.
-  */
- int
-@@ -443,12 +443,12 @@ __vfs_removexattr(struct dentry *dentry,
- EXPORT_SYMBOL(__vfs_removexattr);
- 
- /**
-- * __vfs_removexattr_locked: set an extended attribute while holding the inode
-+ * __vfs_removexattr_locked - set an extended attribute while holding the inode
-  * lock
-  *
-- *  @dentry - object to perform setxattr on
-- *  @name - name of xattr to remove
-- *  @delegated_inode - on return, will contain an inode pointer that
-+ *  @dentry: object to perform setxattr on
-+ *  @name: name of xattr to remove
-+ *  @delegated_inode: on return, will contain an inode pointer that
-  *  a delegation was broken on, NULL if none.
-  */
- int
-
+>  		return -EIO;
+>  	}
+>  }
+> -- 
+> 2.18.4
+> 
