@@ -2,87 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DB4A3257A4A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 15:23:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CC7E257A63
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 15:28:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbgHaNXr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 09:23:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35488 "EHLO
+        id S1727061AbgHaN1x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 09:27:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbgHaNXq (ORCPT
+        with ESMTP id S1726928AbgHaN0x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 09:23:46 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FFB8C061573
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 06:23:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=UGABF2KCeW63W+ASYVLYgPWW4c67C4h7YV6l1pW7a2g=; b=cozp/v0FXDt6rAAhVaUA4TUTS4
-        qT25Y6042rFq+ZuGQ39Wa5UbvC2dkLgz1dSEfvH3ufa3lLaLww1fYC9ZDIiY1gIm5yYwfbGnBBRs8
-        5NP4/bkCxeuocOulnR2TqQCVTGY58uL3ahwv0aP4gYE1z0xsH485s8/EY3JkgIZP3283QpX5ELhDM
-        TFIWNvtDspFz+qJiIpSsAVqjFRY936xvvpCIig8tyfoY86ZE7TEsrRIj4MGhQFchM2S/asWbGDSa2
-        vEtkxNUUgor4P6opLF7q6nOZF48ilZsieK7hoNHOby67NJV58rMPWLahZaP9RH2nrtTg623Uc8rNa
-        mXdY7iVg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kCjmd-0000Y8-Mf; Mon, 31 Aug 2020 13:23:39 +0000
-Date:   Mon, 31 Aug 2020 14:23:39 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Daniel J Walsh <dwalsh@redhat.com>,
-        Chirantan Ekbote <chirantan@chromium.org>
-Subject: Re: xattr names for unprivileged stacking?
-Message-ID: <20200831132339.GD14765@casper.infradead.org>
-References: <20200829161358.GP1236603@ZenIV.linux.org.uk>
- <CAJfpegu2R21CF9PEoj2Cw6x01xmJ+qsff5QTcOcY4G5KEY3R0w@mail.gmail.com>
- <20200829180448.GQ1236603@ZenIV.linux.org.uk>
- <CAJfpegsn-BKVkMv4pQHG7tER31m5RSXrJyhDZ-Uzst1CMBEbEw@mail.gmail.com>
- <20200829192522.GS1236603@ZenIV.linux.org.uk>
- <CAJfpegt7a_YHd0iBjb=8hST973dQQ9czHUSNvnh-9LR_fqktTA@mail.gmail.com>
- <20200830191016.GZ14765@casper.infradead.org>
- <CAJfpegv9+o8QjQmg8EpMCm09tPy4WX1gbJiT=s15Lz8r3HQXJQ@mail.gmail.com>
- <20200831113705.GA14765@casper.infradead.org>
- <CAJfpegvqvns+PULwyaN2oaZAJZKA_SgKxqgpP=nvab2tuyX4NA@mail.gmail.com>
+        Mon, 31 Aug 2020 09:26:53 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0D97C0619CE
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 06:26:28 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id k25so3664928ljg.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 06:26:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=o69Nac3LLMj5CDhyPqLcnP7WGq46U4gQb9HzFdG/MvE=;
+        b=GvS5ONqONS+SkRITeLOYK+nEKqeftr2e4zlw8iOljUdVaT4ei8mXK/eMe5gdebbxul
+         qejaiESAwrQo/TwRSbsV2RgWo1cR2hwlUx3zHZP6xDZHfKXln6WrMjydy1j5UDKStApO
+         83k6OMYB/O4HA/D4ksOUSzU9ZpUpEqmaButNQtqR6C29H3+mAHSKCbPlI067sUdB20EE
+         ixBTW9S1A2kyuIbzfdQN/JSL5cc/RZ+/MNHv7Yis6pX8HuuJNUwic97zwHx5MU4x4PUn
+         9VwFvJUStfi4hRDyGGDy0ijlpU3bNrs4tLAIT0WFfsT49jK8zJO72eI6R18XAB60K+Uk
+         aflg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=o69Nac3LLMj5CDhyPqLcnP7WGq46U4gQb9HzFdG/MvE=;
+        b=QtjxjdfgfgvxhJAR/NTJS1sxtGHYJaTQtgxA7GdMzryK0d+ZUks+bZr5OlN5HdFoiB
+         OTGjVQbfRZoPU/Pu/EXPIekenvDz8p7EGwc1Pb2a/R9dqyPk3YhhgAHMfwtF5CrejW9E
+         tW8toD7TPHJhvHohyGfmVbdB1Z3mxEGAFW/u1/DOWxpoghq4Oo7m7h2GNOkr+vzkZ/pf
+         H3II2lO9uAH+wTuOLHsiCXT2Fw8mAtv9Ap5+XFGZ73B5qlhBtBtiS5RdqU7fCz3vu1PE
+         4Y2SjEiQc1F5S0JUz1FLfeYQsTYZ/f9fTexB6/nTFWCFxdk91d4+uR+nIfb32VFi7TZ0
+         p0EQ==
+X-Gm-Message-State: AOAM5305bsc4nQoJKkUqRxpk06bNkcbDR71jR4OBOap7Afuku7QioSev
+        qJrQTa4j6+EWEBOLZOZGyZSjAvn5NOb9FAPl1LE=
+X-Google-Smtp-Source: ABdhPJx5h73UdWdmqN0ZXklbmHxhGiANR3jS4fz3EetfufGWkyufJh3oSK0WTBZL+72KPBBqNF1EE+YcTj5isQyt2i4=
+X-Received: by 2002:a2e:5316:: with SMTP id h22mr714236ljb.167.1598880387154;
+ Mon, 31 Aug 2020 06:26:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegvqvns+PULwyaN2oaZAJZKA_SgKxqgpP=nvab2tuyX4NA@mail.gmail.com>
+Reply-To: marie_avis12@yahoo.com
+Received: by 2002:a2e:9817:0:0:0:0:0 with HTTP; Mon, 31 Aug 2020 06:26:26
+ -0700 (PDT)
+From:   Miss Maris Avis <marie.avis11@gmail.com>
+Date:   Mon, 31 Aug 2020 13:26:26 +0000
+X-Google-Sender-Auth: aulnVZG-1gSOcZsrnz7-vOB6QCo
+Message-ID: <CADTVshPC=1cJsw0xvUiUZDDBg3VVdBcHJ+pk-zuvR4tycntngg@mail.gmail.com>
+Subject: Hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 31, 2020 at 01:51:20PM +0200, Miklos Szeredi wrote:
-> On Mon, Aug 31, 2020 at 1:37 PM Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > As I said to Dave, you and I have a strong difference of opinion here.
-> > I think that what you are proposing is madness.  You're making it too
-> > flexible which comes with too much opportunity for abuse.
-> 
-> Such as?
+My Dear,
 
-One proposal I saw earlier in this thread was to do something like
-$ runalt /path/to/file ls
-which would open_alt() /path/to/file, fchdir to it and run ls inside it.
-That's just crazy.
+My name is Miss Marie Avis the only daughter of Mr. Gabriel Avis, my
+Father was dealing in Cocoa and Timber in this country before his
+death,  It is my pleasure to contact you for a business venture which
+I intend to establish in your country. Though I have not met with you
+before but I believe one has to risk confiding before you can succeed
+sometimes in life.
 
-> >  I just want
-> > to see alternate data streams for the same filename in order to support
-> > existing use cases.  You seem to be able to want to create an entire
-> > new world inside a file, and that's just too confusing.
-> 
-> To whom?  I'm sure users of ancient systems with a flat directory
-> found directory trees very confusing.  Yet it turned out that the
-> hierarchical system beat the heck out of the flat one.
+I can confide in you for my brighter future since you are a human
+being like me. There is this huge amount of Ten Million five hundred
+thousand United States dollars. ($10.500.000.00) which my late Father
+kept for me in a suspense account with one of the bank here in Abidjan
+Cote d'Ivoire before he was assassinated by unknown persons, Now I
+have decided to invest these money in your country or anywhere safe
+enough for me.
 
-Which doesn't mean that multiple semi-hidden hierarchies are going to
-be better than one visible hierarchy.
+I want you to help me claim this fund from the bank and have it
+transfer into your personal account in your country for investment
+purposes in your country in these areas:
+
+1). Telecommunication
+2). The transport Industry
+3). Five Star Hotel
+4). Tourism
+5). Real Estate
+
+If you can be of assistance to me I will be pleased to offer you 20%
+of the total fund.
+
+I await your soonest response.
+
+Respectfully yours,
+Miss Marie Evis
+Tel: +225597438528
