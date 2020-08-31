@@ -2,90 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 569F6257473
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 09:44:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B558925747E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 09:48:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbgHaHny (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 03:43:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38774 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbgHaHno (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 03:43:44 -0400
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12398C061573;
-        Mon, 31 Aug 2020 00:43:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=bfowcr23SYGjmFeTw4H76pW95oh2o32vfH0LetHgQjc=; b=xLz/MI7zWVACfq30X1AW+abMBo
-        HeCMQDoRVE1SlW/H4dbBPUuhXK+uepKoxfrpNEYosAevt2YY6IdEHuNPjZeLgUA+mrzGaDCLbjRZk
-        LzcfoH7V0pTifpM9/SM+fW9zPoSBjnzD8npqlgh6L2TjrUMHe55X8Pdzrdgna/V5ee7K+Etp5lRQ2
-        YuZxEL4vVRmAIhQcCsK18rgc8wq1/ICKA4Ny8OV84pU8+jf5qP5okxyX1fbPuJdWYa2oIARKKhp/0
-        TVzWTBIa+pyKpF1FQfb/M9HMF3jjLLoC4zwf1gm93SyasbdrwMgeYV0PqlDtv26/WZIddhBKRGKha
-        JDCtQ6Vw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kCeTS-0001Ar-IH; Mon, 31 Aug 2020 07:43:30 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7B9323003E5;
-        Mon, 31 Aug 2020 09:43:28 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 60BD7202A3F54; Mon, 31 Aug 2020 09:43:28 +0200 (CEST)
-Date:   Mon, 31 Aug 2020 09:43:28 +0200
-From:   peterz@infradead.org
-To:     ebiederm@xmission.com (Eric W. Biederman)
-Cc:     syzbot <syzbot+db9cdf3dd1f64252c6ef@syzkaller.appspotmail.com>,
-        adobriyan@gmail.com, akpm@linux-foundation.org, avagin@gmail.com,
-        christian@brauner.io, gladkov.alexey@gmail.com,
-        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        walken@google.com, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>, jannh@google.com
-Subject: Re: possible deadlock in proc_pid_syscall (2)
-Message-ID: <20200831074328.GN1362448@hirez.programming.kicks-ass.net>
-References: <00000000000063640c05ade8e3de@google.com>
- <87mu2fj7xu.fsf@x220.int.ebiederm.org>
- <20200828123720.GZ1362448@hirez.programming.kicks-ass.net>
- <87v9h0gvro.fsf@x220.int.ebiederm.org>
+        id S1727810AbgHaHsr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 03:48:47 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35688 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725829AbgHaHsr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 31 Aug 2020 03:48:47 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 4F1C0AD6B;
+        Mon, 31 Aug 2020 07:49:20 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 5C1F71E12CF; Mon, 31 Aug 2020 09:48:45 +0200 (CEST)
+Date:   Mon, 31 Aug 2020 09:48:45 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Andreas Dilger <adilger@dilger.ca>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        yebin <yebin10@huawei.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH RFC 2/2] block: Do not discard buffers under a mounted
+ filesystem
+Message-ID: <20200831074845.GA23389@quack2.suse.cz>
+References: <20200825120554.13070-1-jack@suse.cz>
+ <20200825120554.13070-3-jack@suse.cz>
+ <20200825121616.GA10294@infradead.org>
+ <F9505A56-F07B-4308-BE42-F75ED76B4E3C@dilger.ca>
+ <20200829064041.GA23205@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87v9h0gvro.fsf@x220.int.ebiederm.org>
+In-Reply-To: <20200829064041.GA23205@infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Aug 30, 2020 at 07:31:39AM -0500, Eric W. Biederman wrote:
+On Sat 29-08-20 07:40:41, Christoph Hellwig wrote:
+> On Fri, Aug 28, 2020 at 02:21:29AM -0600, Andreas Dilger wrote:
+> > On Aug 25, 2020, at 6:16 AM, Christoph Hellwig <hch@infradead.org> wrote:
+> > > 
+> > > On Tue, Aug 25, 2020 at 02:05:54PM +0200, Jan Kara wrote:
+> > >> Discarding blocks and buffers under a mounted filesystem is hardly
+> > >> anything admin wants to do. Usually it will confuse the filesystem and
+> > >> sometimes the loss of buffer_head state (including b_private field) can
+> > >> even cause crashes like:
+> > > 
+> > > Doesn't work if the file system uses multiple devices.
+> > 
+> > It's not _worse_ than the current situation of allowing the complete
+> > destruction of the mounted filesystem.  It doesn't fix the problem
+> > for XFS with realtime devices, or ext4 with a separate journal device,
+> > but it fixes the problem for a majority of users with a single device
+> > filesystem.
+> > 
+> > While BLKFLSBUF causing a crash is annoying, BLKDISCARD/BLKSECDISCARD
+> > under a mounted filesystem is definitely dangerous and wrong.
 
-> I am thinking that for cases where we want to do significant work it
-> might be better to ask the process to pause at someplace safe (probably
-> get_signal) and then do all of the work when we know nothing is changing
-> in the process.
+Actually BLKFLSBUF won't cause a crash. That's using invalidate_bdev() -
+i.e., page-reclaim style of eviction and that's fine with the filesystems.
+
+> > What about checking for O_EXCL on the device, indicating that it is
+> > currently in use by some higher level?
 > 
-> I don't really like the idea of checking and then checking again.  We
-> might have to do it but it feels like the model is wrong somewhere.
-> 
-> Given that this is tricky to hit in practice, and given that I am
-> already working the general problem of how to sort out the locking I am
-> going to work this with the rest of the thorny issues of in exec.  This
-> feels like a case where the proper solution is that we simply need
-> something better than a mutex.
+> That actually seems like a much better idea.
 
-One possible alternative would be something RCU-like, surround the thing
-with get_task_cred() / put_cred() and then have commit_creds() wait for
-the usage of the old creds to drop to 0 before continuing.
+OK, I'll rework the patch.
 
-(Also, get_cred_rcu() is disgusting for casting away const)
+								Honza
 
-But this could be complete garbage, I'm not much familiar with any of
-thise code.
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
