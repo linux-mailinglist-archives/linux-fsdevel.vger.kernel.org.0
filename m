@@ -2,195 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CA5E2576C8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 11:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34D66257705
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 11:59:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbgHaJp1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 05:45:27 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:11829 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726312AbgHaJp1 (ORCPT
+        id S1726144AbgHaJ7S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 05:59:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59770 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726048AbgHaJ7Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 05:45:27 -0400
-X-IronPort-AV: E=Sophos;i="5.76,375,1592841600"; 
-   d="scan'208";a="98732429"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 31 Aug 2020 17:45:12 +0800
-Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id 0D1B148990D9;
-        Mon, 31 Aug 2020 17:45:11 +0800 (CST)
-Received: from [10.167.225.206] (10.167.225.206) by
- G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Mon, 31 Aug 2020 17:45:15 +0800
-Subject: Re: [PATCH] fs: Kill DCACHE_DONTCACHE dentry even if
- DCACHE_REFERENCED is set
-To:     Dave Chinner <david@fromorbit.com>
-CC:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <y-goto@fujitsu.com>
-References: <20200821015953.22956-1-lihao2018.fnst@cn.fujitsu.com>
- <20200827063748.GA12096@dread.disaster.area>
- <6b3b3439-2199-8f00-ceca-d65769e94fe0@cn.fujitsu.com>
- <20200828003541.GD12096@dread.disaster.area>
- <d7852ad6-d304-895d-424d-3053bf07f0f5@cn.fujitsu.com>
- <20200831003407.GE12096@dread.disaster.area>
-From:   "Li, Hao" <lihao2018.fnst@cn.fujitsu.com>
-Message-ID: <9bb0144b-dcb7-293c-0b44-a4c2f0fbf05e@cn.fujitsu.com>
-Date:   Mon, 31 Aug 2020 17:45:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.1.1
+        Mon, 31 Aug 2020 05:59:16 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E756EC061575
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 02:59:15 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id u27so1742680lfm.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 02:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PZDyp3YFdZVXnA9zj6mRLZpFoGXWq1/L5Ulr34SDMq8=;
+        b=MiCg8nGNu+VfRhhFOU9X80Cr5JC543609Dm9tZTKSV9EPB7lbHdjYy+mZmTeKEK1Y0
+         IAJC3QAvNhIsPISdtlGUw354JQEqtc2twkuBAayVXouk+89vdhxLS1SsWVB1enKdFSlR
+         7XfL96NmruikjoIXZqzB8yUgnrypzUjwl4TCAzmZa2f87dtQR2Et2IyDuQrkVfcKEInv
+         hEpf5Kl4prHCKP+4kj+JlGSlpkG1ncz3GziIvcyAuhs4YWkLXScfhylVDFyxa9hOPGj5
+         4G0ydKIWryQ82+G02rYSXDaq7FhjTDISKfG1MMa1ILYwNXMDxEqwP610qxcRboNv9Bc/
+         s+ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PZDyp3YFdZVXnA9zj6mRLZpFoGXWq1/L5Ulr34SDMq8=;
+        b=HlCVqVUQPb8SXpLrGJRJfKeiWvEk3XUTkv8eqaviLiIpndP1ruT8v5EVImkQNqvtR9
+         TXTOlfHPHrwrBlvwc7mRtU1fNOE99Ry8v5CoQjTAzcW5f0beT48HQsen7Z9kNnAT9J+z
+         kKmMBoMtqfBwzvTFGnvmC3drYp6PI/aAHRd6tHbzi8cw/xu67/AmbLfvCHI6+7pBJb3w
+         PBzASDw0CHn0avt78POZDtMtsxHg+8j+h2c2oywdn+vC1DrQYSBiiFQH9TgttqLFwDxi
+         LA+omQAl5b3ORmmBP0yApvBnA7wNTeCEObCoSpxI4X8wY8IXfA57+u5ioPp8EY9jPfgc
+         2gpg==
+X-Gm-Message-State: AOAM533jIe5YNhXvWrFpr6hvkQiQP8sX/rWp09EArsLBtZp3/E+k8vXc
+        CJtTcoNgL69fB8/EnqasLeMoa1KYKpak6cQl19pfbw==
+X-Google-Smtp-Source: ABdhPJym3Z3hy4cI8cw/qwa/lo6GDiRMgx9UkTYrxhh31+i4hUGC0KkoOCXy0vNAWH1pJhx9kxIon0J+y619jkiozbY=
+X-Received: by 2002:ac2:5298:: with SMTP id q24mr334931lfm.164.1598867953047;
+ Mon, 31 Aug 2020 02:59:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200831003407.GE12096@dread.disaster.area>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.167.225.206]
-X-ClientProxiedBy: G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) To
- G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201)
-X-yoursite-MailScanner-ID: 0D1B148990D9.ADF54
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: lihao2018.fnst@cn.fujitsu.com
-X-Spam-Status: No
+References: <20200827114932.3572699-1-jannh@google.com> <20200827114932.3572699-8-jannh@google.com>
+ <alpine.LSU.2.11.2008302225510.1934@eggly.anvils>
+In-Reply-To: <alpine.LSU.2.11.2008302225510.1934@eggly.anvils>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 31 Aug 2020 11:58:47 +0200
+Message-ID: <CAG48ez15Zxbkjv0WRChZZZ6F78pFVXPTu_Bn1Pqaxx=7Gk1gUg@mail.gmail.com>
+Subject: Re: [PATCH v5 7/7] mm: Remove the now-unnecessary mmget_still_valid() hack
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/8/31 8:34, Dave Chinner wrote:
-> On Fri, Aug 28, 2020 at 05:04:14PM +0800, Li, Hao wrote:
-> > On 2020/8/28 8:35, Dave Chinner wrote:
-> > > On Thu, Aug 27, 2020 at 05:58:07PM +0800, Li, Hao wrote:
-> > > > On 2020/8/27 14:37, Dave Chinner wrote:
-> > > > > On Fri, Aug 21, 2020 at 09:59:53AM +0800, Hao Li wrote:
-> > > > > > Currently, DCACHE_REFERENCED prevents the dentry with DCACHE_DONTCACHE
-> > > > > > set from being killed, so the corresponding inode can't be evicted. If
-> > > > > > the DAX policy of an inode is changed, we can't make policy changing
-> > > > > > take effects unless dropping caches manually.
-> > > > > >
-> > > > > > This patch fixes this problem and flushes the inode to disk to prepare
-> > > > > > for evicting it.
-> > > > > >
-> > > > > > Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
-> > > > > > ---
-> > > > > >  fs/dcache.c | 3 ++-
-> > > > > >  fs/inode.c  | 2 +-
-> > > > > >  2 files changed, 3 insertions(+), 2 deletions(-)
-> > > > > >
-> > > > > > diff --git a/fs/dcache.c b/fs/dcache.c
-> > > > > > index ea0485861d93..486c7409dc82 100644
-> > > > > > --- a/fs/dcache.c
-> > > > > > +++ b/fs/dcache.c
-> > > > > > @@ -796,7 +796,8 @@ static inline bool fast_dput(struct dentry *dentry)
-> > > > > >       */
-> > > > > >      smp_rmb();
-> > > > > >      d_flags = READ_ONCE(dentry->d_flags);
-> > > > > > -    d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED;
-> > > > > > +    d_flags &= DCACHE_REFERENCED | DCACHE_LRU_LIST | DCACHE_DISCONNECTED
-> > > > > > +            | DCACHE_DONTCACHE;
-> > > > > Seems reasonable, but you need to update the comment above as to
-> > > > > how this flag fits into this code....
-> > > > Yes. I will change it. Thanks.
-> > > >
-> > > > > >      /* Nothing to do? Dropping the reference was all we needed? */
-> > > > > >      if (d_flags == (DCACHE_REFERENCED | DCACHE_LRU_LIST) && !d_unhashed(dentry))
-> > > > > > diff --git a/fs/inode.c b/fs/inode.c
-> > > > > > index 72c4c347afb7..5218a8aebd7f 100644
-> > > > > > --- a/fs/inode.c
-> > > > > > +++ b/fs/inode.c
-> > > > > > @@ -1632,7 +1632,7 @@ static void iput_final(struct inode *inode)
-> > > > > >      }
-> > > > > >  
-> > > > > >      state = inode->i_state;
-> > > > > > -    if (!drop) {
-> > > > > > +    if (!drop || (drop && (inode->i_state & I_DONTCACHE))) {
-> > > > > >          WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
-> > > > > >          spin_unlock(&inode->i_lock);
-> > > > > What's this supposed to do? We'll only get here with drop set if the
-> > > > > filesystem is mounting or unmounting.
-> > > > The variable drop will also be set to True if I_DONTCACHE is set on
-> > > > inode->i_state.
-> > > > Although mounting/unmounting will set the drop variable, it won't set
-> > > > I_DONTCACHE if I understand correctly. As a result,
-> > > > drop && (inode->i_state & I_DONTCACHE) will filter out mounting/unmounting.
-> > > So what does this have to do with changing the way the dcache
-> > > treats DCACHE_DONTCACHE?
-> > After changing the way the dcache treats DCACHE_DONTCACHE, the dentry with
-> > DCACHE_DONTCACHE set will be killed unconditionally even if
-> > DCACHE_REFERENCED is set, and its inode will be processed by iput_final().
-> > This inode has I_DONTCACHE flag, so op->drop_inode() will return true,
-> > and the inode will be evicted _directly_ even though it has dirty pages.
+On Mon, Aug 31, 2020 at 8:07 AM Hugh Dickins <hughd@google.com> wrote:
+> On Thu, 27 Aug 2020, Jann Horn wrote:
 >
-> Yes. But this doesn't rely on DCACHE_DONTCACHE behaviour. Inodes
-> that are looked up and cached by the filesystem without going
-> through dentry cache pathwalks can have I_DONTCACHE set and then get
-> evicted...
+> > The preceding patches have ensured that core dumping properly takes the
+> > mmap_lock. Thanks to that, we can now remove mmget_still_valid() and all
+> > its users.
 >
-> i.e. we can get I_DONTCACHE set on inodes that do not have dentries
-> attached to them. That's the original functionality that got pulled
-> up from XFS - internal iteration of inodes, either via quotacheck or
-> bulkstat....
-
-Oh, I see!
-
+> Hi Jann, while the only tears to be shed over losing mmget_still_valid()
+> will be tears of joy, I think you need to explain why you believe it's
+> safe to remove the instance in mm/khugepaged.c: which you'll have found
+> I moved just recently, to cover an extra case (sorry for not Cc'ing you).
 >
-> > I think the kernel will run into error state because it doesn't writeback
-> > dirty pages of this inode before evicting. This is why I write back this
-> > inode here.
+> > --- a/mm/khugepaged.c
+> > +++ b/mm/khugepaged.c
+> > @@ -431,7 +431,7 @@ static void insert_to_mm_slots_hash(struct mm_struct *mm,
 > >
-> > According to my test, if I revert the second hunk of this patch, kernel
-> > will hang after running the following command:
-> > echo 123 > test.txt && xfs_io -c "chattr +x" test.txt
+> >  static inline int khugepaged_test_exit(struct mm_struct *mm)
+> >  {
+> > -     return atomic_read(&mm->mm_users) == 0 || !mmget_still_valid(mm);
+> > +     return atomic_read(&mm->mm_users) == 0;
+> >  }
 > >
-> > The backtrace is:
-> >
-> > xfs_fs_destroy_inode+0x204/0x24d
-> > destroy_inode+0x3b/0x65
-> > evict+0x150/0x1aa
-> > iput+0x117/0x19a
-> > dentry_unlink_inode+0x12b/0x12f
-> > __dentry_kill+0xee/0x211
-> > dentry_kill+0x112/0x22f
-> > dput+0x79/0x86
-> > __fput+0x200/0x23f
-> > ____fput+0x25/0x28
-> > task_work_run+0x144/0x177
-> > do_exit+0x4fb/0xb94
-> >
-> > This backtrace is printed with an ASSERT(0) statement in xfs_fs_destroy_inode().
+> >  static bool hugepage_vma_check(struct vm_area_struct *vma,
 >
-> Sure, that's your messenger. That doesn't mean the bug can't be
-> triggered by other means.
+> The movement (which you have correctly followed) was in
+> bbe98f9cadff ("khugepaged: khugepaged_test_exit() check mmget_still_valid()")
+> but the "pmd .. physical page 0" issue is explained better in its parent
+> 18e77600f7a1 ("khugepaged: retract_page_tables() remember to test exit")
 >
-> > > Also, if I_DONTCACHE is set, but the inode has also been unlinked or
-> > > is unhashed, should we be writing it back? i.e. it might have been
-> > > dropped for a different reason to I_DONTCACHE....
-> > This is a problem I didn't realize. You are right. If the inode has been
-> > unlinked/unhashed and the I_DONTCACHE is also set, the appended condition
-> > will lead to unnecessary writeback.
-> >
-> > I think I need to handle the inode writeback more carefully. Maybe I can
-> > revert the second hunk and remove I_DONTCACHE from generic_drop_inode()
-> > and then change
-> >
-> > if (!drop && (sb->s_flags & SB_ACTIVE))
-> >
-> > to
-> >
-> > if (!drop && !(inode->i_state & I_DONTCACHE) && (sb->s_flags & SB_ACTIVE))
-> >
-> > This approach would be more suitable.
+> I think your core dumping is still reading the page tables without
+> holding mmap_lock
+
+Where? get_dump_page() takes mmap_lock now:
+<https://lore.kernel.org/lkml/20200827114932.3572699-7-jannh@google.com/>
+
+I don't think there should be any paths into __get_user_pages() left
+that don't hold the mmap_lock. Actually, we should probably try
+sticking mmap_assert_locked() in there now as a follow-up?
+
+> so still vulnerable to that extra issue.  It won't
+> be as satisfying as removing all traces of mmget_still_valid(), but
+> right now I think you should add an mm->core_state check there instead.
 >
-> Yup, that's pretty much what I was thinking, but as a standalone
-> patch and preceding the DCACHE_DONTCACHE behaviour change. Thanks! :)
+> (I do have a better solution in use, but it's a much larger patch, that
+> will take a lot more effort to get in: checks in pte_offset_map_lock(),
+> perhaps returning NULL when pmd is transitioning, requiring retry.)
 
-I see. I will send a new patch to fix I_DONTCACHE first.
+Just to clarify: This is an issue only between GUP's software page
+table walks when running without mmap_lock and concurrent page table
+modifications from hugepage code, correct? Hardware page table walks
+and get_user_pages_fast() are fine because they properly load PTEs
+atomically and are written to assume that the page tables can change
+arbitrarily under them, and the only guarantee is that disabling
+interrupts ensures that pages referenced by PTEs can't be freed,
+right?
 
-Thanks,
-Hao Li
-
+> Or maybe it's me who has missed what you're doing instead.
 >
-> Cheers,
->
-> Dave.
-
-
-
+> Hugh
