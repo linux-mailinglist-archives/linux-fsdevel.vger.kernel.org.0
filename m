@@ -2,70 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AB7F257E10
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 17:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02F49257E1E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 18:02:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbgHaP5C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 11:57:02 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41358 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbgHaP5B (ORCPT
+        id S1728210AbgHaQCH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 12:02:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60212 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726946AbgHaQCE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 11:57:01 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07VFsTIx169794;
-        Mon, 31 Aug 2020 15:56:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=w0ybiQv8WIpsYvaV51tcFUcekNOZ33RmqzGhKVFiRIg=;
- b=OlmjLQukA67uA8TxKMXk/ALXtcWV/qxeCFp3WMz1p1kCjQKu11Cqp1BosWduRFzW2sdq
- Jed67BxgowpEV12ckY+hL2KlyKSE/+H/Gw97RCowzV/wymZLnCOL8+t/eYqZHNVnb8hy
- vRYT+K5Lytjsiaun+K3FObRAqHB1BJmvkpBA5WOdrc+zCbnme7gA7P6kOy40JwS6oPuU
- 88/S+u56oLwhELWkpnKp4Rjz6EMnReciVaD8rCJ5GgzhGEluVAcTYRrbwDynjjsJJtyJ
- M/x12KS5Ll5AZ8UjMA63Oc8rx4A50KINHsg6HODhXApLuXkiX0GsZurczA4cHY+Mrjd8 Kw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 337eyky1jd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 31 Aug 2020 15:56:54 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 07VFsu5q182897;
-        Mon, 31 Aug 2020 15:56:53 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 3380sq6m0a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 31 Aug 2020 15:56:53 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 07VFunaa023523;
-        Mon, 31 Aug 2020 15:56:49 GMT
-Received: from localhost (/10.159.252.155)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 31 Aug 2020 08:56:49 -0700
-Date:   Mon, 31 Aug 2020 08:56:52 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+        Mon, 31 Aug 2020 12:02:04 -0400
+Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0007EC061573
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 09:02:03 -0700 (PDT)
+Received: by mail-qt1-x842.google.com with SMTP id n18so5122776qtw.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 09:02:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=szyBZmXmGTfhNbvEwHNrOEoyR6ZVqLq4aSXH4RxuP/w=;
+        b=NuUGQOHxyfqfMJUN82zrksWb8lPBil57bkrhwOwi9HrnrM305tAW7ZTvinRCmW8ntx
+         GDwP698CZW7qroPU3cIlSkjc0xqDq/mYioEzHXYWx1q68VaVBgpKJ4T+1CnZXhGa9Kqe
+         jSq2fj5vtbnRlsp1bKweEpUH3we26uOqQm4JhXtxt3HVM9bhoUcLdfKYlQPrYJWQe2DO
+         3puXqUK9qh1zQNZDKGIvz9Q6FBu2ypq5LCNxHhn/NZQjW5Bq8i30dP1uKSQtEqub3gcr
+         7qw/ly98IFJafxtRe3kU1V4dS2ww1hCzbFJtsNqOrHO8AarB1BA7BYm3VYBuZU9COGH6
+         ZuYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=szyBZmXmGTfhNbvEwHNrOEoyR6ZVqLq4aSXH4RxuP/w=;
+        b=qsUr38nEWzoxhaMjV1S10fXfYLP8KeuDnceko/ROHRyC7djYzxAGDDcoH91LM9T0yg
+         RxzrUbho0AHeKexgp+6d/hAy22HkCX3KXkF6xciihuRvcOo8aIz8tB2Xg2APgiUR8GQ3
+         y/1zyPQBG+d4hK85DqWii3CngYwcxFoyXt3OUzJvqGVierSIJUHfBaLPDFyYWK6DBH5a
+         ykvZkGtkYYBE0sWIhLjh9KJoJfZYYItc0XvsbmFETHXQoRl9TRsdAMoWjegsv1pOhg7C
+         D5tv5NY1gC7vfDju0P0ks+/CE3E2Xd4Kg1QouSm01St+0R5RrbVTX34FOXIcVUrbLGKJ
+         cHDA==
+X-Gm-Message-State: AOAM533m2BJRWK4ztuGKLWgCVd4mTWq1vQoJe+6P0+MfSz1iQUrTAygo
+        1uspDTbx+K2nj1kPmZyS4uRbRA==
+X-Google-Smtp-Source: ABdhPJwgW/w1RFlFAb2nTVP6gOrwqGGnH7eA7HzonF2C/qJlWUVmcq0S9YcX8jXnTG3mrmSkcfE+Zw==
+X-Received: by 2002:ac8:142:: with SMTP id f2mr1918414qtg.191.1598889723060;
+        Mon, 31 Aug 2020 09:02:03 -0700 (PDT)
+Received: from lca.pw (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id g64sm7050652qkf.71.2020.08.31.09.02.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Aug 2020 09:02:01 -0700 (PDT)
+Date:   Mon, 31 Aug 2020 12:01:55 -0400
+From:   Qian Cai <cai@lca.pw>
 To:     Eric Sandeen <sandeen@sandeen.net>
-Cc:     Qian Cai <cai@lca.pw>, hch@infradead.org,
+Cc:     darrick.wong@oracle.com, hch@infradead.org,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2] iomap: Fix WARN_ON_ONCE() from unprivileged users
-Message-ID: <20200831155652.GE6096@magnolia>
+Message-ID: <20200831160154.GA4080@lca.pw>
 References: <20200831014511.17174-1-cai@lca.pw>
  <d34753a2-57bf-8013-015a-adeb3fe9447c@sandeen.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <d34753a2-57bf-8013-015a-adeb3fe9447c@sandeen.net>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9730 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- phishscore=0 malwarescore=0 mlxscore=0 spamscore=0 bulkscore=0
- suspectscore=56 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008310094
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9730 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=56 adultscore=0
- priorityscore=1501 phishscore=0 mlxlogscore=999 mlxscore=0
- lowpriorityscore=0 clxscore=1015 spamscore=0 bulkscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2008310094
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -135,6 +132,9 @@ On Mon, Aug 31, 2020 at 10:48:59AM -0500, Eric Sandeen wrote:
 > 
 > Do we know that mmap/page_mkwrite is (and will always be) the only way to reach this
 > point?
+
+I don't know, so this could indeed be a bit misleading.
+
 > 
 > It seems to me that this message won't be very useful for the admin; "pg_mkwrite" may
 > mean something to us, but doubtful for the general public.  And "type = 1" won't mean
@@ -149,20 +149,4 @@ On Mon, Aug 31, 2020 at 10:48:59AM -0500, Eric Sandeen wrote:
 > 
 > (though TBH "delayed allocation" probably doesn't mean much to the admin, either)
 
-/me suggests
-
-"Direct I/O collision with buffered write!  File: %s..."?
-
-I concede that we ought to leave the nastier WARN for the default
-case since there are no other IOMAP_ types and so any other code is
-a sign of a serious screwup.
-
---D
-
-> 
-> -Eric
-> 
-> >  		return -EIO;
-> >  	}
-> >  }
-> > 
+I agree with your suggestions. I'll submit a new version.
