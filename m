@@ -2,417 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 45D18257421
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 09:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4D5925745E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 09:34:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbgHaHOy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 03:14:54 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9943 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbgHaHOs (ORCPT
+        id S1727918AbgHaHeg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 03:34:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37338 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727092AbgHaHed (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 03:14:48 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5f4ca3590000>; Mon, 31 Aug 2020 00:14:33 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 31 Aug 2020 00:14:47 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 31 Aug 2020 00:14:47 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 31 Aug
- 2020 07:14:46 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 31 Aug 2020 07:14:46 +0000
-Received: from sandstorm.nvidia.com (Not Verified[10.2.61.194]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5f4ca3650002>; Mon, 31 Aug 2020 00:14:46 -0700
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, <linux-xfs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v3 3/3] bio: convert get_user_pages_fast() --> pin_user_pages_fast()
-Date:   Mon, 31 Aug 2020 00:14:39 -0700
-Message-ID: <20200831071439.1014766-4-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200831071439.1014766-1-jhubbard@nvidia.com>
-References: <20200831071439.1014766-1-jhubbard@nvidia.com>
+        Mon, 31 Aug 2020 03:34:33 -0400
+Received: from mail-ua1-x944.google.com (mail-ua1-x944.google.com [IPv6:2607:f8b0:4864:20::944])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16760C061573
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 00:34:33 -0700 (PDT)
+Received: by mail-ua1-x944.google.com with SMTP id g11so1711061ual.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 00:34:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aQtCZV6OcGw1uD1dzGqgWCbvYywzacdDufrrrKQpbMc=;
+        b=SN+/PgW4HCg5Bepl+5Q/FJF8EugFG/wvFJigTotEyZWulsoHaj4W6E+41pCgVq/bf0
+         hYAec+0/FHePRZfa0D24u1U4UddCRBqAvDevnL6pujM7m5THWX2TsIQpbb5VckIfu8E0
+         HnUQblEnFThSLB8H1nCtSAh8tDMplqc7jB2z0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aQtCZV6OcGw1uD1dzGqgWCbvYywzacdDufrrrKQpbMc=;
+        b=njcD1GB8P6x3cswuCnorgjVCi0HyN7k5tnirrNimM3hCvoXAwUb4E+9JF9a9NtfXuN
+         rJuF8wcrg3cLbY5oZLY5g4/jikjgHC/QiOY1CYe7EaWEIooHDOC/VL+m6k/yXEWsPa/F
+         pcVqL0xSndHMrrioW5g+cUwGC9TFgOGoIWnERfaGX/nqDWd2rqb3EeIT9vtwgUfSGsQc
+         kU2gD0VVReMe3Dp0D4NtB7vV3u3U9CR4dMG/9843EYtT6hdagqJ70/SMnKfiyojt47iM
+         viw93W+VbpJWQSrhrTggfQpltsTc37ZRCZ9n9zhm4y+rf4mR2SZpUAN/Xs13sA8u+sLx
+         IVUA==
+X-Gm-Message-State: AOAM530EEz6BrosUF7a4DMYdB/adOfBH9mbj2j6FLYlReRtIE7oYuy6t
+        fJEW87OQZUQ0YcLTwDcIOM3EUr+WaUzYU4ril8xrpQ==
+X-Google-Smtp-Source: ABdhPJyW1ztwNEzOg6Z0sH0/cohRECp1L2Q+qXcUuH5/RZHAzIE+IYH3II/FmsQJWvhDTXDLJzyLjnyLjBSYDj+Dah4=
+X-Received: by 2002:ab0:5611:: with SMTP id y17mr4898688uaa.137.1598859272050;
+ Mon, 31 Aug 2020 00:34:32 -0700 (PDT)
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1598858073; bh=Mgmhx7MxlormERSy5m5hA+CT8AL2TlMSJ/1FsF2TodE=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=biJEmAt8Fu1372bMrTva0n0kV/jdU2U+h6V3BFWjbxkkXC3u0EhOS9Cs7IqImnOyp
-         RyiXOdB2mjs8+MKyD70Q7RTjgysLpH0T6ePrXVhb+ijWxcJG9drwtSD7rIbQ5A4FLP
-         ivcLNunNfh10/Oez+AU8BEVv1kIBOv8FKZwv3/4Pv9IvkQvZKuC3HwiD/TTg2KxTyp
-         64PGWqnU/PG4L3niPjVPNzmR1pw+6k6/z9ay8M+qZG+sV2+SJOYpwjjuDH6VjbKbRE
-         08/AJHB/QfakVELyqZJrnC5vfw75HR2jEgY8uR7HdZ2DabIMTnpuoQ5w6Qb7Q97Zvg
-         /J5Z/YHhe05Pw==
+References: <20200817002930.GB28218@dread.disaster.area> <20200827152207.GJ14765@casper.infradead.org>
+ <20200827222457.GB12096@dread.disaster.area> <20200829160717.GS14765@casper.infradead.org>
+ <20200829161358.GP1236603@ZenIV.linux.org.uk> <CAJfpegu2R21CF9PEoj2Cw6x01xmJ+qsff5QTcOcY4G5KEY3R0w@mail.gmail.com>
+ <20200829180448.GQ1236603@ZenIV.linux.org.uk> <CAJfpegsn-BKVkMv4pQHG7tER31m5RSXrJyhDZ-Uzst1CMBEbEw@mail.gmail.com>
+ <20200829192522.GS1236603@ZenIV.linux.org.uk> <CAJfpegt7a_YHd0iBjb=8hST973dQQ9czHUSNvnh-9LR_fqktTA@mail.gmail.com>
+ <20200830191016.GZ14765@casper.infradead.org>
+In-Reply-To: <20200830191016.GZ14765@casper.infradead.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 31 Aug 2020 09:34:20 +0200
+Message-ID: <CAJfpegv9+o8QjQmg8EpMCm09tPy4WX1gbJiT=s15Lz8r3HQXJQ@mail.gmail.com>
+Subject: Re: xattr names for unprivileged stacking?
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        Christian Schoenebeck <qemu_oss@crudebyte.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        Chirantan Ekbote <chirantan@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Change generic block/bio Direct IO routines, to acquire FOLL_PIN user
-pages via the recently added routines:
+On Sun, Aug 30, 2020 at 9:10 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Sun, Aug 30, 2020 at 09:05:40PM +0200, Miklos Szeredi wrote:
+> > Yes, open(..., O_ALT) would be special.  Let's call it open_alt(2) to
+> > avoid confusion with normal open on a normal filesystem.   No special
+> > casing anywhere at all.   It's a completely new interface that returns
+> > a file which either has ->read/write() or ->iterate() and which points
+> > to an inode with empty i_ops.
+>
+> I think fiemap() should be allowed on a stream.  After all, these extents
+> do exist.  But I'm opposed to allowing getdents(); it'll only encourage
+> people to think they can have non-files as streams.
 
-    iov_iter_pin_pages()
-    iov_iter_pin_pages_alloc()
-    pin_page()
+Call it whatever you want.  I think getdents (without lseek!!!)  is a
+fine interface for enumeration.
 
-This effectively converts several file systems (ext4, for example) that
-use the common Direct IO routines.
+Also let me stress again, that this ALT thing is not just about
+streams, but a generic interface for getting OOB/meta/whatever data
+for a given inode/path.  Hence it must have a depth of at least 2, but
+limiting it to 2 would again be shortsighted.
 
-Change the corresponding page release calls from put_page() to
-unpin_user_page().
-
-Change bio_release_pages() to handle FOLL_PIN pages. In fact, after this
-patch, that is the *only* type of pages that bio_release_pages()
-handles.
-
-Design notes
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Quite a few approaches have been considered over the years. This one is
-inspired by Christoph Hellwig's July, 2019 observation that there are
-only 5 ITER_ types, and we can simplify handling of them for Direct IO
-[1]. Accordingly, this patch implements the following pseudocode:
-
-Direct IO behavior:
-
-    ITER_IOVEC:
-        pin_user_pages_fast();
-        break;
-
-    ITER_PIPE:
-        for each page:
-             pin_page();
-        break;
-
-    ITER_KVEC:    // already elevated page refcount, leave alone
-    ITER_BVEC:    // already elevated page refcount, leave alone
-    ITER_DISCARD: // discard
-        return -EFAULT or -ENVALID;
-
-...which works for callers that already have sorted out which case they
-are in. Such as, Direct IO in the block/bio layers.
-
-Note that this does leave ITER_KVEC and ITER_BVEC unconverted, for now.
-
-Page acquisition: The iov_iter_get_pages*() routines above are at just
-the right level in the call stack: the callers already know which system
-to use, and so it's a small change to just drop in the replacement
-routines. And it's a fan-in/fan-out point: block/bio call sites for
-Direct IO funnel their page acquisitions through the
-iov_iter_get_pages*() routines, and there are many other callers of
-those. And we can't convert all of the callers at once--too many
-subsystems are involved, and it would be a too large and too risky
-patch.
-
-Page release: there are already separate release routines: put_page()
-vs. unpin_user_page(), so it's already done there.
-
-[1] https://lore.kernel.org/kvm/20190724061750.GA19397@infradead.org/
-
-[2] "Explicit pinning of user-space pages":
-    https://lwn.net/Articles/807108/
-
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- block/bio.c          | 24 ++++++++++++------------
- block/blk-map.c      |  6 +++---
- fs/direct-io.c       | 28 ++++++++++++++--------------
- fs/iomap/direct-io.c |  2 +-
- 4 files changed, 30 insertions(+), 30 deletions(-)
-
-diff --git a/block/bio.c b/block/bio.c
-index a9931f23d933..76c5843f6050 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -955,7 +955,7 @@ void bio_release_pages(struct bio *bio, bool mark_dirty=
-)
- 	bio_for_each_segment_all(bvec, bio, iter_all) {
- 		if (mark_dirty && !PageCompound(bvec->bv_page))
- 			set_page_dirty_lock(bvec->bv_page);
--		put_page(bvec->bv_page);
-+		unpin_user_page(bvec->bv_page);
- 	}
- }
- EXPORT_SYMBOL_GPL(bio_release_pages);
-@@ -986,9 +986,9 @@ static int __bio_iov_bvec_add_pages(struct bio *bio, st=
-ruct iov_iter *iter)
-  * @iter: iov iterator describing the region to be mapped
-  *
-  * Pins pages from *iter and appends them to @bio's bvec array. The
-- * pages will have to be released using put_page() when done.
-- * For multi-segment *iter, this function only adds pages from the
-- * next non-empty segment of the iov iterator.
-+ * pages will have to be released using put_page() or unpin_user_page() wh=
-en
-+ * done. For multi-segment *iter, this function only adds pages from the n=
-ext
-+ * non-empty segment of the iov iterator.
-  */
- static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter=
-)
- {
-@@ -1009,7 +1009,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, =
-struct iov_iter *iter)
- 	BUILD_BUG_ON(PAGE_PTRS_PER_BVEC < 2);
- 	pages +=3D entries_left * (PAGE_PTRS_PER_BVEC - 1);
-=20
--	size =3D iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
-+	size =3D iov_iter_pin_pages(iter, pages, LONG_MAX, nr_pages, &offset);
- 	if (unlikely(size <=3D 0))
- 		return size ? size : -EFAULT;
-=20
-@@ -1020,7 +1020,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, =
-struct iov_iter *iter)
-=20
- 		if (__bio_try_merge_page(bio, page, len, offset, &same_page)) {
- 			if (same_page)
--				put_page(page);
-+				unpin_user_page(page);
- 		} else {
- 			if (WARN_ON_ONCE(bio_full(bio, len)))
-                                 return -EINVAL;
-@@ -1056,7 +1056,7 @@ static int __bio_iov_append_get_pages(struct bio *bio=
-, struct iov_iter *iter)
- 	BUILD_BUG_ON(PAGE_PTRS_PER_BVEC < 2);
- 	pages +=3D entries_left * (PAGE_PTRS_PER_BVEC - 1);
-=20
--	size =3D iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
-+	size =3D iov_iter_pin_pages(iter, pages, LONG_MAX, nr_pages, &offset);
- 	if (unlikely(size <=3D 0))
- 		return size ? size : -EFAULT;
-=20
-@@ -1069,7 +1069,7 @@ static int __bio_iov_append_get_pages(struct bio *bio=
-, struct iov_iter *iter)
- 				max_append_sectors, &same_page) !=3D len)
- 			return -EINVAL;
- 		if (same_page)
--			put_page(page);
-+			unpin_user_page(page);
- 		offset =3D 0;
- 	}
-=20
-@@ -1113,8 +1113,8 @@ int bio_iov_iter_get_pages(struct bio *bio, struct io=
-v_iter *iter)
- 		} else {
- 			if (is_bvec)
- 				ret =3D __bio_iov_bvec_add_pages(bio, iter);
--			else
--				ret =3D __bio_iov_iter_get_pages(bio, iter);
-+		else
-+			ret =3D __bio_iov_iter_get_pages(bio, iter);
- 		}
- 	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
-=20
-@@ -1326,8 +1326,8 @@ void bio_set_pages_dirty(struct bio *bio)
-  * the BIO and re-dirty the pages in process context.
-  *
-  * It is expected that bio_check_pages_dirty() will wholly own the BIO fro=
-m
-- * here on.  It will run one put_page() against each page and will run one
-- * bio_put() against the BIO.
-+ * here on. It will run one unpin_user_page() against each page, and will =
-run
-+ * one bio_put() against the BIO.
-  */
-=20
- static void bio_dirty_fn(struct work_struct *work);
-diff --git a/block/blk-map.c b/block/blk-map.c
-index 6e804892d5ec..2057a8e5b4bc 100644
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -275,7 +275,7 @@ static struct bio *bio_map_user_iov(struct request_queu=
-e *q,
- 		size_t offs, added =3D 0;
- 		int npages;
-=20
--		bytes =3D iov_iter_get_pages_alloc(iter, &pages, LONG_MAX, &offs);
-+		bytes =3D iov_iter_pin_pages_alloc(iter, &pages, LONG_MAX, &offs);
- 		if (unlikely(bytes <=3D 0)) {
- 			ret =3D bytes ? bytes : -EFAULT;
- 			goto out_unmap;
-@@ -298,7 +298,7 @@ static struct bio *bio_map_user_iov(struct request_queu=
-e *q,
- 				if (!bio_add_hw_page(q, bio, page, n, offs,
- 						     max_sectors, &same_page)) {
- 					if (same_page)
--						put_page(page);
-+						unpin_user_page(page);
- 					break;
- 				}
-=20
-@@ -312,7 +312,7 @@ static struct bio *bio_map_user_iov(struct request_queu=
-e *q,
- 		 * release the pages we didn't map into the bio, if any
- 		 */
- 		while (j < npages)
--			put_page(pages[j++]);
-+			unpin_user_page(pages[j++]);
- 		kvfree(pages);
- 		/* couldn't stuff something into bio? */
- 		if (bytes)
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 183299892465..5130ba32ae91 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -170,7 +170,7 @@ static inline int dio_refill_pages(struct dio *dio, str=
-uct dio_submit *sdio)
- {
- 	ssize_t ret;
-=20
--	ret =3D iov_iter_get_pages(sdio->iter, dio->pages, LONG_MAX, DIO_PAGES,
-+	ret =3D iov_iter_pin_pages(sdio->iter, dio->pages, LONG_MAX, DIO_PAGES,
- 				&sdio->from);
-=20
- 	if (ret < 0 && sdio->blocks_available && (dio->op =3D=3D REQ_OP_WRITE)) {
-@@ -182,7 +182,7 @@ static inline int dio_refill_pages(struct dio *dio, str=
-uct dio_submit *sdio)
- 		 */
- 		if (dio->page_errors =3D=3D 0)
- 			dio->page_errors =3D ret;
--		get_page(page);
-+		pin_page(page);
- 		dio->pages[0] =3D page;
- 		sdio->head =3D 0;
- 		sdio->tail =3D 1;
-@@ -472,7 +472,7 @@ static inline void dio_bio_submit(struct dio *dio, stru=
-ct dio_submit *sdio)
- static inline void dio_cleanup(struct dio *dio, struct dio_submit *sdio)
- {
- 	while (sdio->head < sdio->tail)
--		put_page(dio->pages[sdio->head++]);
-+		unpin_user_page(dio->pages[sdio->head++]);
- }
-=20
- /*
-@@ -739,7 +739,7 @@ static inline int dio_bio_add_page(struct dio_submit *s=
-dio)
- 		 */
- 		if ((sdio->cur_page_len + sdio->cur_page_offset) =3D=3D PAGE_SIZE)
- 			sdio->pages_in_io--;
--		get_page(sdio->cur_page);
-+		pin_page(sdio->cur_page);
- 		sdio->final_block_in_bio =3D sdio->cur_page_block +
- 			(sdio->cur_page_len >> sdio->blkbits);
- 		ret =3D 0;
-@@ -853,13 +853,13 @@ submit_page_section(struct dio *dio, struct dio_submi=
-t *sdio, struct page *page,
- 	 */
- 	if (sdio->cur_page) {
- 		ret =3D dio_send_cur_page(dio, sdio, map_bh);
--		put_page(sdio->cur_page);
-+		unpin_user_page(sdio->cur_page);
- 		sdio->cur_page =3D NULL;
- 		if (ret)
- 			return ret;
- 	}
-=20
--	get_page(page);		/* It is in dio */
-+	pin_page(page);		/* It is in dio */
- 	sdio->cur_page =3D page;
- 	sdio->cur_page_offset =3D offset;
- 	sdio->cur_page_len =3D len;
-@@ -874,7 +874,7 @@ submit_page_section(struct dio *dio, struct dio_submit =
-*sdio, struct page *page,
- 		ret =3D dio_send_cur_page(dio, sdio, map_bh);
- 		if (sdio->bio)
- 			dio_bio_submit(dio, sdio);
--		put_page(sdio->cur_page);
-+		unpin_user_page(sdio->cur_page);
- 		sdio->cur_page =3D NULL;
- 	}
- 	return ret;
-@@ -974,7 +974,7 @@ static int do_direct_IO(struct dio *dio, struct dio_sub=
-mit *sdio,
-=20
- 				ret =3D get_more_blocks(dio, sdio, map_bh);
- 				if (ret) {
--					put_page(page);
-+					unpin_user_page(page);
- 					goto out;
- 				}
- 				if (!buffer_mapped(map_bh))
-@@ -1019,7 +1019,7 @@ static int do_direct_IO(struct dio *dio, struct dio_s=
-ubmit *sdio,
-=20
- 				/* AKPM: eargh, -ENOTBLK is a hack */
- 				if (dio->op =3D=3D REQ_OP_WRITE) {
--					put_page(page);
-+					unpin_user_page(page);
- 					return -ENOTBLK;
- 				}
-=20
-@@ -1032,7 +1032,7 @@ static int do_direct_IO(struct dio *dio, struct dio_s=
-ubmit *sdio,
- 				if (sdio->block_in_file >=3D
- 						i_size_aligned >> blkbits) {
- 					/* We hit eof */
--					put_page(page);
-+					unpin_user_page(page);
- 					goto out;
- 				}
- 				zero_user(page, from, 1 << blkbits);
-@@ -1072,7 +1072,7 @@ static int do_direct_IO(struct dio *dio, struct dio_s=
-ubmit *sdio,
- 						  sdio->next_block_for_io,
- 						  map_bh);
- 			if (ret) {
--				put_page(page);
-+				unpin_user_page(page);
- 				goto out;
- 			}
- 			sdio->next_block_for_io +=3D this_chunk_blocks;
-@@ -1087,8 +1087,8 @@ static int do_direct_IO(struct dio *dio, struct dio_s=
-ubmit *sdio,
- 				break;
- 		}
-=20
--		/* Drop the ref which was taken in get_user_pages() */
--		put_page(page);
-+		/* Drop the ref which was taken in pin_user_pages() */
-+		unpin_user_page(page);
- 	}
- out:
- 	return ret;
-@@ -1327,7 +1327,7 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inod=
-e *inode,
- 		ret2 =3D dio_send_cur_page(dio, &sdio, &map_bh);
- 		if (retval =3D=3D 0)
- 			retval =3D ret2;
--		put_page(sdio.cur_page);
-+		unpin_user_page(sdio.cur_page);
- 		sdio.cur_page =3D NULL;
- 	}
- 	if (sdio.bio)
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index c1aafb2ab990..ea29f0892a8c 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -194,7 +194,7 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iom=
-ap, loff_t pos,
- 	bio->bi_private =3D dio;
- 	bio->bi_end_io =3D iomap_dio_bio_end_io;
-=20
--	get_page(page);
-+	pin_page(page);
- 	__bio_add_page(bio, page, len, 0);
- 	bio_set_op_attrs(bio, REQ_OP_WRITE, flags);
- 	iomap_dio_submit_bio(dio, iomap, bio, pos);
---=20
-2.28.0
-
+Thanks,
+Miklos
