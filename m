@@ -2,116 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 23381257C37
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 17:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E52D6257CF7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Aug 2020 17:35:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbgHaPWT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 11:22:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54042 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728064AbgHaPWS (ORCPT
+        id S1729040AbgHaPcS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 11:32:18 -0400
+Received: from brightrain.aerifal.cx ([216.12.86.13]:48522 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729086AbgHaPcM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 11:22:18 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6D9BC061575
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 08:22:17 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id z25so3608450iol.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 08:22:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=v6aATz1DrVzTsNm6cohCGLPYmM1JDr9u4o7wfl1KrmQ=;
-        b=kpvTUnxia+Vb6v+2T62Y1tzsvRiUWtVSiYS8bxwIgN+SjgF7L1liSKiLaaoKbbqJso
-         9SPZVUN5K3oaoyI7rEAOsAgh9o7gV/yXCgF+5srCxYXCHpF4WuTl/ElWZtu6YLhSCg60
-         Pzu62ZNUGtY4niWkO/jRXwatOwWCKX6zAeW6q7+SjjomqfpYfr+1ETFayYIJAqfNZ4G+
-         qHNe8QjTj+pZjvHt/z/KzTqZx6L/2K7SgrBekZjb57pJ6xB0LYFrRW4EUeDWbf4lMZJ6
-         93/xr1CVxvjJmyZhwEkSAAdiSeAcr6lfw+RsmoWqkZhas3cbbgY8xkYxcf3SD7ofLm/F
-         kFog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=v6aATz1DrVzTsNm6cohCGLPYmM1JDr9u4o7wfl1KrmQ=;
-        b=A3urvaydn/e/vNfnRv4spgYDFrczYfKM2bc9AtCUnxhEq9nllNKO8m0p6RjE+t46qn
-         NCqIi4EJdvoyOAxvOIxgn53BQ1Z7Sk/nFcSo7Lyv0l5pcvZmeRVP4YqsxDArlYqnUZp5
-         /VVCxaTXwCiOaTup/3+Fn271L/aSzJRWfol/d2t/xS721j1h5v6H/v9E5p9UUJgmvFKp
-         L+o303BcGmGy/eqC3bW88VN7dNJn2mIAiJXxI8LyzIfCUVGvw52dCa/6j6GuNnhLrTIx
-         DTs4FjEtYi2sSramq88pflWSR8DK92CfchGQMt9lLCylpKZL5bxnQSoir3Q0jj2RMTOH
-         C/EA==
-X-Gm-Message-State: AOAM531mZkW6f1p7flnD4325HtyDK0/jem/2sBb2rqVVQeWFbOLPCMbT
-        AdyD7V36dRMz3GPLt+VcSqudEdLTxka1Fqg0
-X-Google-Smtp-Source: ABdhPJyAgM2GlRZVCWCkUnBO1XNUnkD9OMa7NSlRGQqHiZ2S//nbyzT3RwaPgka2CDaZG5IjCJjVhw==
-X-Received: by 2002:a02:c8c8:: with SMTP id q8mr1642061jao.46.1598887336702;
-        Mon, 31 Aug 2020 08:22:16 -0700 (PDT)
-Received: from [192.168.1.58] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id m3sm4704997ill.57.2020.08.31.08.22.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Aug 2020 08:22:16 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] fat: Avoid oops when bdi->io_pages==0
-To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        fsdevel <linux-fsdevel@vger.kernel.org>
-References: <87ft85osn6.fsf@mail.parknet.co.jp>
-Message-ID: <b4e1f741-989c-6c9d-b559-4c1ada88c499@kernel.dk>
-Date:   Mon, 31 Aug 2020 09:22:15 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 31 Aug 2020 11:32:12 -0400
+Date:   Mon, 31 Aug 2020 11:32:08 -0400
+From:   Rich Felker <dalias@libc.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: [PATCH v2] vfs: add RWF_NOAPPEND flag for pwritev2
+Message-ID: <20200831153207.GO3265@brightrain.aerifal.cx>
 MIME-Version: 1.0
-In-Reply-To: <87ft85osn6.fsf@mail.parknet.co.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Aug 29, 2020 at 7:08 PM OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> wrote:
->
-> On one system, there was bdi->io_pages==0. This seems to be the bug of
-> a driver somewhere, and should fix it though. Anyway, it is better to
-> avoid the divide-by-zero Oops.
->
-> So this check it.
->
-> Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-> Cc: <stable@vger.kernel.org>
-> ---
->  fs/fat/fatent.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/fat/fatent.c b/fs/fat/fatent.c
-> index f7e3304..98a1c4f 100644
-> --- a/fs/fat/fatent.c   2020-08-30 06:52:47.251564566 +0900
-> +++ b/fs/fat/fatent.c   2020-08-30 06:54:05.838319213 +0900
-> @@ -660,7 +660,7 @@ static void fat_ra_init(struct super_blo
->         if (fatent->entry >= ent_limit)
->                 return;
->
-> -       if (ra_pages > sb->s_bdi->io_pages)
-> +       if (sb->s_bdi->io_pages && ra_pages > sb->s_bdi->io_pages)
->                 ra_pages = rounddown(ra_pages, sb->s_bdi->io_pages);
->         reada_blocks = ra_pages << (PAGE_SHIFT - sb->s_blocksize_bits + 1);
+The pwrite function, originally defined by POSIX (thus the "p"), is
+defined to ignore O_APPEND and write at the offset passed as its
+argument. However, historically Linux honored O_APPEND if set and
+ignored the offset. This cannot be changed due to stability policy,
+but is documented in the man page as a bug.
 
-I don't think we should work-around this here. What device is this on?
-Something like the below may help.
+Now that there's a pwritev2 syscall providing a superset of the pwrite
+functionality that has a flags argument, the conforming behavior can
+be offered to userspace via a new flag. Since pwritev2 checks flag
+validity (in kiocb_set_rw_flags) and reports unknown ones with
+EOPNOTSUPP, callers will not get wrong behavior on old kernels that
+don't support the new flag; the error is reported and the caller can
+decide how to handle it.
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index d9d632639bd1..10c08ac50697 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -539,6 +539,7 @@ struct request_queue *blk_alloc_queue(int node_id)
- 		goto fail_stats;
+Signed-off-by: Rich Felker <dalias@libc.org>
+---
+
+Changes in v2: I've added a check to ensure that RWF_NOAPPEND does not
+override O_APPEND for S_APPEND (chattr +a) inodes, and fixed conflicts
+with 1752f0adea98ef85, which optimized kiocb_set_rw_flags to work with
+a local copy of flags. Unfortunately the same optimization does not
+work for RWF_NOAPPEND since it needs to remove flags from the original
+set at function entry.
+
+If desired, I could further change this so that kiocb_flags is
+initialized to ki->ki_flags, with assignment-back in place of |= at
+the end of the function. This would allow the same local variable
+pattern in the RWF_NOAPPEND code path, which might be more elegant,
+but I'm not sure if the emitted code would improve or get worse.
+
+
+ include/linux/fs.h      | 7 +++++++
+ include/uapi/linux/fs.h | 5 ++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7519ae003a08..924e17ac8e7e 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3321,6 +3321,8 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+ 		return 0;
+ 	if (unlikely(flags & ~RWF_SUPPORTED))
+ 		return -EOPNOTSUPP;
++	if (unlikely((flags & RWF_APPEND) && (flags & RWF_NOAPPEND)))
++		return -EINVAL;
  
- 	q->backing_dev_info->ra_pages = VM_READAHEAD_PAGES;
-+	q->backing_dev_info->io_pages = VM_READAHEAD_PAGES;
- 	q->backing_dev_info->capabilities = BDI_CAP_CGROUP_WRITEBACK;
- 	q->node = node_id;
-
+ 	if (flags & RWF_NOWAIT) {
+ 		if (!(ki->ki_filp->f_mode & FMODE_NOWAIT))
+@@ -3335,6 +3337,11 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
+ 		kiocb_flags |= (IOCB_DSYNC | IOCB_SYNC);
+ 	if (flags & RWF_APPEND)
+ 		kiocb_flags |= IOCB_APPEND;
++	if ((flags & RWF_NOAPPEND) && (ki->ki_flags & IOCB_APPEND)) {
++		if (IS_APPEND(file_inode(ki->ki_filp)))
++			return -EPERM;
++		ki->ki_flags &= ~IOCB_APPEND;
++	}
+ 
+ 	ki->ki_flags |= kiocb_flags;
+ 	return 0;
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index f44eb0a04afd..d5e54e0742cf 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -300,8 +300,11 @@ typedef int __bitwise __kernel_rwf_t;
+ /* per-IO O_APPEND */
+ #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
+ 
++/* per-IO negation of O_APPEND */
++#define RWF_NOAPPEND	((__force __kernel_rwf_t)0x00000020)
++
+ /* mask of flags supported by the kernel */
+ #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+-			 RWF_APPEND)
++			 RWF_APPEND | RWF_NOAPPEND)
+ 
+ #endif /* _UAPI_LINUX_FS_H */
 -- 
-Jens Axboe
+2.21.0
 
