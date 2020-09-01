@@ -2,127 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 06922259FAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Sep 2020 22:12:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 720F025A020
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Sep 2020 22:41:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbgIAUMo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Sep 2020 16:12:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41470 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728899AbgIAUMk (ORCPT
+        id S1726971AbgIAUlO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Sep 2020 16:41:14 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39726 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726091AbgIAUlN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Sep 2020 16:12:40 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ABB8C061246
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Sep 2020 13:12:40 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id s10so650874plp.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Sep 2020 13:12:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=e6GgX70OdjL1tqwJUYS3XbI1WRfgqCK//kboQuDHSjM=;
-        b=aE+t+KoG0Wd8K0fWdODEaafawp7uWrxOKVIP5pOq+CaZh5a5QZaU1TKqHqo0IicpIE
-         OKXyjv6Z6jfmVgDwyWYcrdz6KSAEuQG1uEUF2indrcNRycvSHu0RqUeM7aM6dZ0z4MuE
-         L32x8HTrjAkMjBrG0Nqm3QVhk/L67aEZhzwZD9Gm5toLeu3ofg0idQFwnTzXeXb7q2hi
-         0iTswCUa5Og2+6jqmTy11a7IQyDgaHWJXw6s/4Biz0yHTxj3kjvEmU2P5EKA0S3ydPJb
-         3+3dM56syhZBvZ4aEqHMQebqkn59RAW3c9DFTEODXKBjKC55ZMsQOvCkNvxcHx34w/KK
-         HkKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=e6GgX70OdjL1tqwJUYS3XbI1WRfgqCK//kboQuDHSjM=;
-        b=ce7SI/DvrYa7XCUG4yzzNm+xBOwEKLiQl7RPidgQmipV9bMjP37YaQ4Nd7+Yq98dW4
-         qMqug4FbE107GvgGW2oK6US81tSyX1M7IblQTfC4z8uYXSomEj0NK9BrVfW9DNrGD6s0
-         3nsmYkZwTzgvlAG5t9gSSsRsK70jf2obHo2Ugum4xckS9ZZ4a6UZEO3AZXciRleFSrcV
-         gk2bWkgtZ0X/KjUxAXtXkMwLkhrYgh3w3cJgjRgK25Pi0BqiGdCKrv/FcsRY6cyoIid+
-         HbyA+YnhkSNpHrife+D4+4J2nwWUm4YCY48FJSir8RsdhYPLq7w8SU7ciDG2FuC4/w4f
-         15Xg==
-X-Gm-Message-State: AOAM533QZjEb0zKK0EgjyEvxWfTLk9FSOwLO/sEiOJBopZZnAwTJYuJB
-        WIu7KbHKfeE+nKVV0LzO4sJuTA==
-X-Google-Smtp-Source: ABdhPJw5TN1eVTK6zQzkrcnavu2RYPsBE9ZH8OtwjjON+M9+5Ru8nVKNqAhIPbU2RY0Qj3bJJgMMTg==
-X-Received: by 2002:a17:90a:e80f:: with SMTP id i15mr1891990pjy.62.1598991157066;
-        Tue, 01 Sep 2020 13:12:37 -0700 (PDT)
-Received: from [192.168.1.187] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id ih11sm2302448pjb.51.2020.09.01.13.12.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Sep 2020 13:12:36 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: Fix NULL pointer dereference in
- io_sq_wq_submit_work()
-From:   Jens Axboe <axboe@kernel.dk>
-To:     yinxin_1989 <yinxin_1989@aliyun.com>,
-        viro <viro@zeniv.linux.org.uk>
-Cc:     linux-block <linux-block@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20200901015442.44831-1-yinxin_1989@aliyun.com>
- <ae9f3887-5205-8aa8-afa7-4e01d03921bc@kernel.dk>
- <67f27d17-81fa-43a8-baa9-429b1ccd65d0.yinxin_1989@aliyun.com>
- <4eeefb43-488c-dc90-f47c-10defe6f9278@kernel.dk>
- <98f2cbbf-4f6f-501b-2f4e-1b8b803ce6a6@kernel.dk>
-Message-ID: <1925de10-3c07-0a0b-4434-1049b7ee52c3@kernel.dk>
-Date:   Tue, 1 Sep 2020 14:12:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 1 Sep 2020 16:41:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598992872;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=cxF9BttqqXPreWfRjYQJSPoLifnHtkhSs2UK+cqtlWI=;
+        b=UXYwXKUPPZTkr5VLveqe4Oq3/QDD8s9qaXKl8d5b2mtpz8FEIALuAf7f5MKLoZtA//snAP
+        y7Sf7Ni+UaZ0cPE2AvIynMCKh36j7YY4nmJgNtQceWCmQSr2ZugDY7KIy4S9aTSXGJg4nl
+        wS5xsBQFN1UA20mvt+2k0cl2Q0z7b4w=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-43-4ZAMqRlsOWy4y73t-SUq9A-1; Tue, 01 Sep 2020 16:41:07 -0400
+X-MC-Unique: 4ZAMqRlsOWy4y73t-SUq9A-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BAD661007471;
+        Tue,  1 Sep 2020 20:41:04 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-208.rdu2.redhat.com [10.10.116.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B45819C66;
+        Tue,  1 Sep 2020 20:40:55 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 3DBFC22053E; Tue,  1 Sep 2020 16:40:55 -0400 (EDT)
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, virtio-fs@redhat.com,
+        miklos@szeredi.hu
+Cc:     vgoyal@redhat.com, stefanha@redhat.com, dgilbert@redhat.com
+Subject: [RFC PATCH 0/2] fuse: Enable SB_NOSEC if filesystem is not shared
+Date:   Tue,  1 Sep 2020 16:40:43 -0400
+Message-Id: <20200901204045.1250822-1-vgoyal@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <98f2cbbf-4f6f-501b-2f4e-1b8b803ce6a6@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/1/20 2:01 PM, Jens Axboe wrote:
-> On 9/1/20 8:52 AM, Jens Axboe wrote:
->> On 8/31/20 10:59 PM, yinxin_1989 wrote:
->>>
->>>> On 8/31/20 7:54 PM, Xin Yin wrote:
->>>>> the commit <1c4404efcf2c0> ("<io_uring: make sure async workqueue
->>>>> is canceled on exit>") caused a crash in io_sq_wq_submit_work().
->>>>> when io_ring-wq get a req form async_list, which may not have been
->>>>> added to task_list. Then try to delete the req from task_list will caused
->>>>> a "NULL pointer dereference".
->>>>
->>>> Hmm, do you have a reproducer for this?
->>>
->>> I update code to linux5.4.y , and I can reproduce this issue on an arm
->>> board and my x86 pc by fio tools.
->>
->> Right, I figured this was 5.4 stable, as that's the only version that
->> has this patch.
-> 
-> I took a closer look, and I think your patch can basically be boiled down
-> to this single hunk. If you agree, can you resend your patch with the
-> description based on that, then I'll get it queued up for 5.4-stable.
-> Thanks!
+Hi,
 
-Actually, we don't even need the irqsave, this should be enough:
+I want to enable SB_NOSEC in fuse in some form so that performance of
+small random writes can be improved. As of now, we call file_remove_privs(),
+which results in fuse always sending getxattr(security.capability) to
+server to figure out if security.capability has been set on file or not.
+If it has been set, it needs to be cleared. This slows down small
+random writes tremendously.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index fada14ee1cdc..2a539b794f3b 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -2378,6 +2378,15 @@ static bool io_add_to_prev_work(struct async_list *list, struct io_kiocb *req)
- 		list_del_init(&req->list);
- 		ret = false;
- 	}
-+
-+	if (ret) {
-+		struct io_ring_ctx *ctx = req->ctx;
-+
-+		spin_lock_irq(&ctx->task_lock);
-+		list_add(&req->task_list, &ctx->task_list);
-+		req->work_task = NULL;
-+		spin_unlock_irq(&ctx->task_lock);
-+	}
- 	spin_unlock(&list->lock);
- 	return ret;
- }
+I posted couple of proposals in the past here.
+
+Proposal 1:
+
+https://lore.kernel.org/linux-fsdevel/20200716144032.GC422759@redhat.com/
+
+Proposal 2:
+
+https://lore.kernel.org/linux-fsdevel/20200724183812.19573-1-vgoyal@redhat.com/
+
+This is 3rd proposal now. One of the roadblocks in enabling SB_NOSEC
+is shared filesystem. It is possible that another client modified the
+file data and this client does not know about it. So we might regress
+if we don't fetch security.capability always.
+
+So looks like this needs to be handled different for shared filesystems
+and non-shared filesystems. non-shared filesystems will be more like
+local filesystems where fuse does not expect file data/metadata to
+change outside the fuse. And we should be able to enable SB_NOSEC
+optimization. This is what this proposal does.
+
+It does not handle the case of shared filesystems. I believe solution
+to that will depend on filesystem based on what's the cache coherency
+guarantees filesystem provides and what's the cache invalidation 
+mechanism it uses.
+
+For now, all filesystems which are not shared can benefit from this
+optimization. I am interested in virtiofs which is not shared in
+many of the cases. In fact we don't even support shared mode yet. 
+
+Any comments or feedback is welcome.
+
+Thanks
+Vivek
+
+Vivek Goyal (2):
+  fuse: Add a flag FUSE_NONSHARED_FS
+  fuse: Enable SB_NOSEC if filesystem is not shared
+
+ fs/fuse/fuse_i.h          |  3 +++
+ fs/fuse/inode.c           | 12 +++++++++++-
+ include/uapi/linux/fuse.h |  4 ++++
+ 3 files changed, 18 insertions(+), 1 deletion(-)
 
 -- 
-Jens Axboe
+2.25.4
 
