@@ -2,65 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 431262594B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Sep 2020 17:42:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DC3525963F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Sep 2020 18:00:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731478AbgIAPmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Sep 2020 11:42:23 -0400
-Received: from foss.arm.com ([217.140.110.172]:44150 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730108AbgIAPmW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Sep 2020 11:42:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F1521045;
-        Tue,  1 Sep 2020 08:42:21 -0700 (PDT)
-Received: from C02TD0UTHF1T.local (unknown [10.57.10.252])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E9E23F71F;
-        Tue,  1 Sep 2020 08:42:19 -0700 (PDT)
-Date:   Tue, 1 Sep 2020 16:42:17 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org
-Subject: Re: [PATCH v1 0/4] [RFC] Implement Trampoline File Descriptor
-Message-ID: <20200901154217.GD95447@C02TD0UTHF1T.local>
-References: <aefc85852ea518982e74b233e11e16d2e707bc32>
- <20200728131050.24443-1-madvenka@linux.microsoft.com>
- <20200731180955.GC67415@C02TD0UTHF1T.local>
- <6236adf7-4bed-534e-0956-fddab4fd96b6@linux.microsoft.com>
- <20200804143018.GB7440@C02TD0UTHF1T.local>
- <b3368692-afe6-89b5-d634-12f4f0a601f8@linux.microsoft.com>
- <20200812100650.GB28154@C02TD0UTHF1T.local>
- <41c4de64-68d0-6fcb-e5c3-63ebd459262e@digikod.net>
+        id S1732209AbgIAP76 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Sep 2020 11:59:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58538 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731796AbgIAP6G (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 1 Sep 2020 11:58:06 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDC2AC061247;
+        Tue,  1 Sep 2020 08:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=JssZ/9cfFlKY9nXiXN1eWHNYfq2IqPkVO48PJ0G1HVM=; b=TsLN4Ki5H6wDqMT7EkDDmICR5s
+        2ikY9tR6e67GKJEqjuS9L66bSUIo+pu5PYEAc9ljO3uyf6oMcNiepE5rzwUxhjE+/vnTmCPgENmda
+        C0OeAfERJgyA7K8KeFysVlBHyF0BPeIG7el80V9O61CNCYuSKhfujxSQgjXJOjMOSEy03HwmPQuPh
+        RJCdiSoEUrRAJIJ7z0BaLS8JSw/BmFlWFm/qiMtciExAsNyJHCr7Vvb8RIEQV1UW0Wnk6ZMFBndz3
+        +EuD/g9pjFt/AGKn2OUIwLAq2rE5vGf6lWordEqx3jg+9VI6y7EPXjBeepMY6Nus8DQ6cZOSE4OGn
+        R3KU2Xqg==;
+Received: from [2001:4bb8:18c:45ba:2f95:e5:ca6b:9b4a] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kD8fR-0004Op-3n; Tue, 01 Sep 2020 15:57:53 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        Dan Williams <dan.j.williams@intel.com>, dm-devel@redhat.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        nbd@other.debian.org, ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-raid@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 2/9] block: don't clear bd_invalidated in check_disk_size_change
+Date:   Tue,  1 Sep 2020 17:57:41 +0200
+Message-Id: <20200901155748.2884-3-hch@lst.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200901155748.2884-1-hch@lst.de>
+References: <20200901155748.2884-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <41c4de64-68d0-6fcb-e5c3-63ebd459262e@digikod.net>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 19, 2020 at 08:53:42PM +0200, Mickaël Salaün wrote:
-> On 12/08/2020 12:06, Mark Rutland wrote:
-> > Contemporary W^X means that a given virtual alias cannot be writeable
-> > and executeable simultaneously, permitting (a) and (b). If you read the
-> > references on the Wikipedia page for W^X you'll see the OpenBSD 3.3
-> > release notes and related presentation make this clear, and further they
-> > expect (b) to occur with JITS flipping W/X with mprotect().
-> 
-> W^X (with "permanent" mprotect restrictions [1]) goes back to 2000 with
-> PaX [2] (which predates partial OpenBSD implementation from 2003).
-> 
-> [1] https://pax.grsecurity.net/docs/mprotect.txt
-> [2] https://undeadly.org/cgi?action=article;sid=20030417082752
+bd_invalidated is set by check_disk_change or in add_disk to initiate a
+partition scan.  Move it from check_disk_size_change which is called
+from both revalidate_disk() and bdev_disk_changed() to only the latter,
+as that is what is called from the block device open code (and nbd) to
+deal with the bd_invalidated event.  revalidate_disk() on the other hand
+is mostly used to propagate a size update from the gendisk to the block
+device, which is entirely unrelated.
 
-Thanks for the pointers!
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/block_dev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Mark.
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 08158bb2e76c85..2760292045c082 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -1302,7 +1302,6 @@ static void check_disk_size_change(struct gendisk *disk,
+ 		}
+ 		i_size_write(bdev->bd_inode, disk_size);
+ 	}
+-	bdev->bd_invalidated = 0;
+ 	spin_unlock(&bdev->bd_size_lock);
+ 
+ 	if (bdev_size > disk_size) {
+@@ -1391,6 +1390,8 @@ int bdev_disk_changed(struct block_device *bdev, bool invalidate)
+ 
+ 	lockdep_assert_held(&bdev->bd_mutex);
+ 
++	bdev->bd_invalidated = 0;
++
+ rescan:
+ 	ret = blk_drop_partitions(bdev);
+ 	if (ret)
+-- 
+2.28.0
+
