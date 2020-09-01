@@ -2,94 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B25259167
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Sep 2020 16:50:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53E10259189
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Sep 2020 16:52:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728692AbgIAOue (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Sep 2020 10:50:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48030 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728681AbgIAOu2 (ORCPT
+        id S1728229AbgIAOwj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Sep 2020 10:52:39 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:33999 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728790AbgIAOwd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Sep 2020 10:50:28 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7277CC061244;
-        Tue,  1 Sep 2020 07:50:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=3Rt/RZHQFZtQJpY49CCYUhZi6SfUgNAgVHQnBlTr1a8=; b=p0kE1kiXY5lbGjtOOeelZHKPdk
-        7iMPjVGysg30dWVyHTYa/7qTF85jbeQApGpvwh9vLRAeSov9Kkw9pyOYtg6MLHPei5ysnPcg/D0wP
-        OVFO7sIcqeFGxFQF+OWY+FNImcPS1QlADW1bKTujj68AEqLLCmI22G2oHbx/iSdPe6dZJqZ0ndze2
-        wdSk3Lg3vBJLzB0pSQXyzKM7zWDzdte/mlFQmSFd1sb7kZifW1JTL+PcnrV+c878uuvpb5Zz2eth7
-        EZ58fYYp9C0RNZ+YM3mPSztxfw3WkMAdW64l27FlJElaZ++LGU7SJUCyKFQ5EOgkvEaxpEY4s7y+c
-        juZfy6Iw==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kD7c9-0006mc-FV; Tue, 01 Sep 2020 14:50:25 +0000
-Date:   Tue, 1 Sep 2020 15:50:25 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-block@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/11] block: Add bio_for_each_thp_segment_all
-Message-ID: <20200901145025.GA23220@infradead.org>
-References: <20200824151700.16097-1-willy@infradead.org>
- <20200824151700.16097-5-willy@infradead.org>
- <20200827084431.GA15909@infradead.org>
- <20200831194837.GJ14765@casper.infradead.org>
- <20200901053426.GB24560@infradead.org>
- <20200901130525.GK14765@casper.infradead.org>
+        Tue, 1 Sep 2020 10:52:33 -0400
+Received: from callcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 081Eq6lf009928
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 1 Sep 2020 10:52:06 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id DDBEC420128; Tue,  1 Sep 2020 10:52:05 -0400 (EDT)
+Date:   Tue, 1 Sep 2020 10:52:05 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        Chirantan Ekbote <chirantan@chromium.org>
+Subject: Re: xattr names for unprivileged stacking?
+Message-ID: <20200901145205.GA558530@mit.edu>
+References: <CAJfpegsn-BKVkMv4pQHG7tER31m5RSXrJyhDZ-Uzst1CMBEbEw@mail.gmail.com>
+ <20200829192522.GS1236603@ZenIV.linux.org.uk>
+ <CAJfpegt7a_YHd0iBjb=8hST973dQQ9czHUSNvnh-9LR_fqktTA@mail.gmail.com>
+ <20200830191016.GZ14765@casper.infradead.org>
+ <CAJfpegv9+o8QjQmg8EpMCm09tPy4WX1gbJiT=s15Lz8r3HQXJQ@mail.gmail.com>
+ <20200831113705.GA14765@casper.infradead.org>
+ <CAJfpegvqvns+PULwyaN2oaZAJZKA_SgKxqgpP=nvab2tuyX4NA@mail.gmail.com>
+ <20200831132339.GD14765@casper.infradead.org>
+ <20200831142532.GC4267@mit.edu>
+ <20200901033405.GF12096@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200901130525.GK14765@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20200901033405.GF12096@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 01, 2020 at 02:05:25PM +0100, Matthew Wilcox wrote:
-> > >                 struct page *page = bvec->bv_page;
-> > > 
-> > >                 while (length > 0) { 
-> > >                         size_t count = thp_size(page) - offset;
-> > >                         
-> > >                         if (count > length)
-> > >                                 count = length;
-> > >                         iomap_read_page_end_io(page, offset, count, error);
-> > >                         page += (offset + count) / PAGE_SIZE;
-> > 
-> > Shouldn't the page_size here be thp_size?
+On Tue, Sep 01, 2020 at 01:34:05PM +1000, Dave Chinner wrote:
 > 
-> No.  Let's suppose we have a 20kB I/O which starts on a page boundary and
-> the first page is order-2.  To get from the first head page to the second
-> page, we need to add 4, which is 16kB / 4kB, not 16kB / 16kB.
+> But, unlike your implication that this is -really complex and hard
+> to do-, it's actually relatively trivial to do with the XFS
+> implementation I mentioned as each ADS stream is a fully fledged
+> inode that can point to shared data extents. If you can do data
+> manipulation on a regular inode, you'll be able to do it on an ADS,
+> and that includes copying ADS streams via reflink.
 
-True.
+Is the reflink system call on a file with ADS's atomic, or not?  What
+if there are a million files is ADS hierarchy which is 100
+subdirectories deep in some places, comprising several TB's worth of
+data?  Is that all going to fit in a single XFS transaction?  What if
+you crash in the middle of it?  Is a partially reflinked copy of an
+ADS file OK?  Or a reflinked ADS file missing some portion of the
+alternate data streams?
 
-> I'm not entirely sure the bvec would shrink.  On 64-bit systems, it's
-> currently 8 bytes for the struct page, 4 bytes for the len and 4 bytes
-> for the offset.  Sure, we can get rid of the offset, but the compiler
-> will just pad the struct from 12 bytes back to 16.  On 32-bit systems
-> with 32-bit phys_addr_t, we go from 12 bytes down to 8, but most 32-bit
-> systems have a 64-bit phys_addr_t these days, don't they?
-
-Actually on those system that still are 32-bit because they are so
-tiny I'd very much still expect a 32-bit phys_addr_t.  E.g. arm
-without LPAE or 32-bit RISC-V.
-
-But yeah, point taken on the alignment for the 64-bit ones.
-
-> That's a bit more boilerplate than I'd like, but if bio_vec is going to
-> lose its bv_page then I don't see a better way.  Unless we come up with
-> a different page/offset/length struct that bio_vecs are decomposed into.
-
-I'm not sure it is going to lose bv_page any time soon.  I'd sure like
-to, but least time something like that came up Linus wasn't entirely
-in favor.  Things might have changed now, though and I think it is about
-time to give it another try.
+	      	   	   		- Ted
