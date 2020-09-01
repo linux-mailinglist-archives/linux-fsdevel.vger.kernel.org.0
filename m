@@ -2,201 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A058259785
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Sep 2020 18:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C66F259893
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Sep 2020 18:28:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbgIAQPq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Sep 2020 12:15:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33008 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731946AbgIAQPj (ORCPT
+        id S1730899AbgIAQ20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Sep 2020 12:28:26 -0400
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:54124 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728469AbgIAQ2X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Sep 2020 12:15:39 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 355B1C061245
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Sep 2020 09:15:39 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id w7so1068002pfi.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Sep 2020 09:15:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=U1h0WFxrmlZti/5PdriJmCxO8e4BuJ9nFjihIY3qycs=;
-        b=DMJZzRBurdYUN4x8gReiESvjIjB6WMHksdeGaRDN41WunAsqZ5Yvt1bO5dntkRFy3t
-         8wwhIkp4rgfa2J7aKnYStujtMWjfHwnF6BkSHyc7XPqxl15S8Wx58seJIlrKeXoJmuGj
-         MQaukCMelikiVQ/1Wm711W7exb+6DNt43lv72RbxdW6K74pL+q9Y56zYnklCSiMeeL35
-         pRebHGva3Zi2MmJ3dxDLMqa5QnCLLLYiGadJKrLiaLGeasmp+w0PpyFwxsv0zQw8Or3z
-         1eho9mmEcHG7AK6OcGSov1ce9KH+R9Js6Mtep8s4aW9yT+PGaaaWQiXvT8tY8YznovIj
-         7SWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=U1h0WFxrmlZti/5PdriJmCxO8e4BuJ9nFjihIY3qycs=;
-        b=du+3v1FwR9Xeis39wptOBf0iDaUcOdEIbTlpLaRNPoyReEDEpxqmn88mmf5XwnJIqc
-         qBGxjrldauC7ZJU6Co66RizI6XwfEl2QSjXkkVCf+9BDi/S0pQheiVnqLDnYmi0hFX87
-         U+x/HZ82uiybcTypzfIZXlJpizAywOvrO3VPo5drlqEvDbi5i+uT5DY0iamRcWIEKrf7
-         O5rdCM1BaeqsVrSuoDTnJGDu9wsysyybc2T/YQfe7oEuEQw6LQoSy1wo7CgICkueqrKX
-         n07h2S8mYLQtYQKm8zeUUibgmn2/yX9oZ3JdnYm0JRZOCtGJb0w9BNKvWxwIJ5XhQD+c
-         cUQg==
-X-Gm-Message-State: AOAM5312NhCwKKW/peVPCR/kCen5YtY1mBhqJhl2GJ9AwTrtquaYPgPp
-        RO9RsOswyW7cVSs0Dao/pBygew==
-X-Google-Smtp-Source: ABdhPJzWV89RR/QWyu3dI160WKOjSKjBNJugNB1VuwvaljQHlhcb659AvPrOk3k8yapRkjnyxkRAeg==
-X-Received: by 2002:a63:1b42:: with SMTP id b2mr1968103pgm.397.1598976938667;
-        Tue, 01 Sep 2020 09:15:38 -0700 (PDT)
-Received: from nagraj.lan ([175.100.146.50])
-        by smtp.gmail.com with ESMTPSA id d77sm2553169pfd.121.2020.09.01.09.15.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Sep 2020 09:15:37 -0700 (PDT)
-From:   Sumit Semwal <sumit.semwal@linaro.org>
-To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Colin Cross <ccross@google.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michel Lespinasse <walken@google.com>,
-        =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-        Song Liu <songliubraving@fb.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        chenqiwu <chenqiwu@xiaomi.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mike Christie <mchristi@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Adrian Reber <areber@redhat.com>,
-        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        John Stultz <john.stultz@linaro.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>
-Subject: [PATCH v7 2/3] mm: memory: Add access_remote_vm_locked variant
-Date:   Tue,  1 Sep 2020 21:44:58 +0530
-Message-Id: <20200901161459.11772-3-sumit.semwal@linaro.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200901161459.11772-1-sumit.semwal@linaro.org>
-References: <20200901161459.11772-1-sumit.semwal@linaro.org>
+        Tue, 1 Sep 2020 12:28:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1598977702;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Q/jxouQHscjmTrAHRVozJy9AEeAW/LaC4zIz56UQCmk=;
+        b=FNu+AcIVdcFBRxObdDg0Ld/r5kSsemANWThnZyHaAK7FYTc7rpZJMiValec2LUZ/jHlmDR
+        AT2u6qXg5LxUBnR/gYIUaP1xZ7Wm+r06gz6HuBQvsTqj/GgArBhkQCDJIVcRngXx9j5DAV
+        tTXlFGPr0I+Vpdjx2CsLoBQvMDUm/7c=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-179-t6RQvitsPEClxJ8wnJRupw-1; Tue, 01 Sep 2020 12:28:18 -0400
+X-MC-Unique: t6RQvitsPEClxJ8wnJRupw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 35931807333;
+        Tue,  1 Sep 2020 16:28:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-113-231.rdu2.redhat.com [10.10.113.231])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F9F77C564;
+        Tue,  1 Sep 2020 16:28:16 +0000 (UTC)
+Subject: [RFC PATCH 0/7] mm: Make more use of readahead_control
+From:   David Howells <dhowells@redhat.com>
+To:     willy@infradead.org
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Date:   Tue, 01 Sep 2020 17:28:15 +0100
+Message-ID: <159897769535.405783.17587409235571100774.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This allows accessing a remote vm while the mmap_lock is already
-held by the caller.
 
-While adding support for anonymous vma naming, show_map_vma()
-needs to access the remote vm to get the name of the anonymous vma.
-Since show_map_vma() already holds the mmap_lock, so this _locked
-variant was required.
+Hi Willy,
 
-Signed-off-by: Sumit Semwal <sumit.semwal@linaro.org>
+Here's a set of patches to expand the use of the readahead_control struct,
+essentially from do_sync_mmap_readahead() down.  Note that I've been
+passing the number of pages to read in rac->_nr_pages, and then saving it
+and changing it certain points, e.g. page_cache_readahead_unbounded().
+
+Also pass file_ra_state into force_page_cache_readahead().
+
+Also there's an apparent minor bug in khugepaged.c that I've included a
+patch for: page_cache_sync_readahead() looks to be given the wrong size in
+collapse_file().
+
+David
 ---
- include/linux/mm.h |  2 ++
- mm/memory.c        | 49 ++++++++++++++++++++++++++++++++++++++++------
- 2 files changed, 45 insertions(+), 6 deletions(-)
+David Howells (7):
+      Fix khugepaged's request size in collapse_file()
+      mm: Make ondemand_readahead() take a readahead_control struct
+      mm: Push readahead_control down into force_page_cache_readahead()
+      mm: Pass readahead_control into page_cache_{sync,async}_readahead()
+      mm: Make __do_page_cache_readahead() use rac->_nr_pages
+      mm: Fold ra_submit() into do_sync_mmap_readahead()
+      mm: Pass a file_ra_state struct into force_page_cache_readahead()
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index ca6e6a81576b..e9212c0bb5ac 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1708,6 +1708,8 @@ extern int access_remote_vm(struct mm_struct *mm, unsigned long addr,
- 		void *buf, int len, unsigned int gup_flags);
- extern int __access_remote_vm(struct task_struct *tsk, struct mm_struct *mm,
- 		unsigned long addr, void *buf, int len, unsigned int gup_flags);
-+extern int access_remote_vm_locked(struct mm_struct *mm, unsigned long addr,
-+				   void *buf, int len, unsigned int gup_flags);
- 
- long get_user_pages_remote(struct mm_struct *mm,
- 			    unsigned long start, unsigned long nr_pages,
-diff --git a/mm/memory.c b/mm/memory.c
-index 602f4283122f..207be99390e9 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4726,17 +4726,17 @@ EXPORT_SYMBOL_GPL(generic_access_phys);
- /*
-  * Access another process' address space as given in mm.  If non-NULL, use the
-  * given task for page fault accounting.
-+ * This variant assumes that the mmap_lock is already held by the caller, so
-+ * doesn't take the mmap_lock.
-  */
--int __access_remote_vm(struct task_struct *tsk, struct mm_struct *mm,
--		unsigned long addr, void *buf, int len, unsigned int gup_flags)
-+int __access_remote_vm_locked(struct task_struct *tsk, struct mm_struct *mm,
-+			      unsigned long addr, void *buf, int len,
-+			      unsigned int gup_flags)
- {
- 	struct vm_area_struct *vma;
- 	void *old_buf = buf;
- 	int write = gup_flags & FOLL_WRITE;
- 
--	if (mmap_read_lock_killable(mm))
--		return 0;
--
- 	/* ignore errors, just check how much was successfully transferred */
- 	while (len) {
- 		int bytes, ret, offset;
-@@ -4785,9 +4785,46 @@ int __access_remote_vm(struct task_struct *tsk, struct mm_struct *mm,
- 		buf += bytes;
- 		addr += bytes;
- 	}
-+	return buf - old_buf;
-+}
-+
-+/*
-+ * Access another process' address space as given in mm.  If non-NULL, use the
-+ * given task for page fault accounting.
-+ */
-+int __access_remote_vm(struct task_struct *tsk, struct mm_struct *mm,
-+		       unsigned long addr, void *buf, int len, unsigned int gup_flags)
-+{
-+	int ret;
-+
-+	if (mmap_read_lock_killable(mm))
-+		return 0;
-+
-+	ret = __access_remote_vm_locked(tsk, mm, addr, buf, len, gup_flags);
- 	mmap_read_unlock(mm);
- 
--	return buf - old_buf;
-+	return ret;
-+}
-+
-+/**
-+ * access_remote_vm_locked - access another process' address space, without
-+ * taking the mmap_lock. This allows nested calls from callers that already have
-+ * taken the lock.
-+ *
-+ * @mm:		the mm_struct of the target address space
-+ * @addr:	start address to access
-+ * @buf:	source or destination buffer
-+ * @len:	number of bytes to transfer
-+ * @gup_flags:	flags modifying lookup behaviour
-+ *
-+ * The caller must hold a reference on @mm, as well as hold the mmap_lock
-+ *
-+ * Return: number of bytes copied from source to destination.
-+ */
-+int access_remote_vm_locked(struct mm_struct *mm, unsigned long addr, void *buf,
-+			    int len, unsigned int gup_flags)
-+{
-+	return __access_remote_vm_locked(NULL, mm, addr, buf, len, gup_flags);
- }
- 
- /**
--- 
-2.28.0
+
+ fs/btrfs/free-space-cache.c |  7 +--
+ fs/btrfs/ioctl.c            | 10 +++--
+ fs/btrfs/relocation.c       | 14 +++---
+ fs/btrfs/send.c             | 15 ++++---
+ fs/ext4/dir.c               | 12 ++---
+ fs/ext4/verity.c            |  8 ++--
+ fs/f2fs/dir.c               | 10 +++--
+ fs/f2fs/verity.c            |  8 ++--
+ include/linux/pagemap.h     | 11 ++---
+ mm/fadvise.c                |  6 ++-
+ mm/filemap.c                | 33 +++++++-------
+ mm/internal.h               | 16 +------
+ mm/khugepaged.c             |  6 +--
+ mm/readahead.c              | 89 ++++++++++++++++++-------------------
+ 14 files changed, 127 insertions(+), 118 deletions(-)
+
 
