@@ -2,123 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18D4C258643
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Sep 2020 05:39:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DB4825867A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Sep 2020 05:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726102AbgIADjD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 23:39:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57386 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbgIADjD (ORCPT
+        id S1726117AbgIADsa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 23:48:30 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:15047 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725987AbgIADs3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 23:39:03 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE8EDC0612FF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 20:39:02 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id e33so1925885pgm.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Aug 2020 20:39:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CmWImjbfkai8w8IYrzWttSFE/ShThoXbvLekJzQkDNE=;
-        b=2Hpp2pGPGoM76EKftl74jbI1jE6i7BkynyJ4YEmKkncEDpi7syFP4I6+fZ40aXoMWP
-         4jHntOowSoOmVOmt3/HKPrWZeu0hPu4w4Xw5l/nPcBhXe8mpT+ekpd6/nvfhlPBvka35
-         bVdb4MsJL2T012kuCrdQLPBK9FQWt2jc38W+VKcfMdwe4fcc1ydnRfEXtPvTTdqB0uz1
-         Roak8DeVTXNH9SdCwuhtN4cW48ZXgHlA4qR1GtjrQO9Zv5qm1FSCvQvlqfL50Xsdkfpp
-         aL6oEfHl4LCfAP/k+ddBM2K88gUh0fwJoqJpZLv8o8PMGJlB2cvgsmslGDup+j6jdPxL
-         mlKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CmWImjbfkai8w8IYrzWttSFE/ShThoXbvLekJzQkDNE=;
-        b=AJvag0N9Llez0yqG4UkR/zJ7i1B8z1IX1J1XF0wadaZbp/F7BxMoHyHqfJ4GYb4XPs
-         fENJ+V9N34kb+fyHrtP2LgQNFWtunEDXS6nFiltR8efXjpUC+EIgXQIfzuyqbTQHlXfx
-         DcCbyhLztnHjxqODdxSCemvSr81vXcsBc/4EDrU9e9cGk/VnLDvImcQUM9/+3SB6jWDl
-         uHhqB/IGkO7IMvrDfbCkLveRlIEySnAnVm9LxKQ4vzV/lEtaLhcJxBSD7lcPDJDVREaz
-         Hhhzz4qM+sPNjehMKtqZuzfyCr6qoGTZOogwPMFSm9TpTDzSBd9ct9vr2UwyO0meDCkJ
-         17+A==
-X-Gm-Message-State: AOAM530h2Yc8OVPg2bckq3oKXmXkmn8kKtL+8l15JEhd9kmfbbojBQ9Q
-        3Wyd2mJdT4qG3dk4ifjgw0djfA==
-X-Google-Smtp-Source: ABdhPJxwc59YPWeeBw2UNybtTAbxjkWeEOLQHBC6jojvyuHuUAYP7kos/LMRkBGs5mEgIM5IdCOWkw==
-X-Received: by 2002:aa7:8657:: with SMTP id a23mr3953845pfo.169.1598931542218;
-        Mon, 31 Aug 2020 20:39:02 -0700 (PDT)
-Received: from [192.168.1.187] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id o192sm9966704pfg.81.2020.08.31.20.39.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Aug 2020 20:39:01 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: Fix NULL pointer dereference in
- io_sq_wq_submit_work()
-To:     Xin Yin <yinxin_1989@aliyun.com>, viro@zeniv.linux.org.uk
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200901015442.44831-1-yinxin_1989@aliyun.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ae9f3887-5205-8aa8-afa7-4e01d03921bc@kernel.dk>
-Date:   Mon, 31 Aug 2020 21:38:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 31 Aug 2020 23:48:29 -0400
+X-IronPort-AV: E=Sophos;i="5.76,377,1592841600"; 
+   d="scan'208";a="98758136"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 01 Sep 2020 11:48:26 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id A5F2F48990DB;
+        Tue,  1 Sep 2020 11:48:23 +0800 (CST)
+Received: from [10.167.225.206] (10.167.225.206) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.2; Tue, 1 Sep 2020 11:48:22 +0800
+Subject: Re: [PATCH] fs: Handle I_DONTCACHE in iput_final() instead of
+ generic_drop_inode()
+To:     Ira Weiny <ira.weiny@intel.com>
+CC:     <viro@zeniv.linux.org.uk>, <david@fromorbit.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-xfs@vger.kernel.org>, <y-goto@fujitsu.com>
+References: <20200831101313.168889-1-lihao2018.fnst@cn.fujitsu.com>
+ <20200831171257.GF1422350@iweiny-DESK2.sc.intel.com>
+From:   "Li, Hao" <lihao2018.fnst@cn.fujitsu.com>
+Message-ID: <db5d145a-3b63-48db-6bd2-eb1d91323697@cn.fujitsu.com>
+Date:   Tue, 1 Sep 2020 11:48:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.1.1
 MIME-Version: 1.0
-In-Reply-To: <20200901015442.44831-1-yinxin_1989@aliyun.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200831171257.GF1422350@iweiny-DESK2.sc.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.167.225.206]
+X-ClientProxiedBy: G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) To
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201)
+X-yoursite-MailScanner-ID: A5F2F48990DB.ADBB7
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: lihao2018.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8/31/20 7:54 PM, Xin Yin wrote:
-> the commit <1c4404efcf2c0> ("<io_uring: make sure async workqueue
-> is canceled on exit>") caused a crash in io_sq_wq_submit_work().
-> when io_ring-wq get a req form async_list, which may not have been
-> added to task_list. Then try to delete the req from task_list will caused
-> a "NULL pointer dereference".
+On 2020/9/1 1:12, Ira Weiny wrote:
+> On Mon, Aug 31, 2020 at 06:13:13PM +0800, Hao Li wrote:
+>> If generic_drop_inode() returns true, it means iput_final() can evict
+>> this inode regardless of whether it is dirty or not. If we check
+>> I_DONTCACHE in generic_drop_inode(), any inode with this bit set will be
+>> evicted unconditionally. This is not the desired behavior because
+>> I_DONTCACHE only means the inode shouldn't be cached on the LRU list.
+>> As for whether we need to evict this inode, this is what
+>> generic_drop_inode() should do. This patch corrects the usage of
+>> I_DONTCACHE.
+>>
+>> This patch was proposed in [1].
+>>
+>> [1]: https://lore.kernel.org/linux-fsdevel/20200831003407.GE12096@dread.disaster.area/
+>>
+>> Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
+>
+> Thanks!  I think this looks good, but shouldn't we add?  It seems like this is
+> a bug right?
+>
+> Fixes: dae2f8ed7992 ("fs: Lift XFS_IDONTCACHE to the VFS layer")
 
-Hmm, do you have a reproducer for this?
+Yeah, this is more meaningful.
 
-> @@ -2356,9 +2358,11 @@ static void io_sq_wq_submit_work(struct work_struct *work)
->   * running. We currently only allow this if the new request is sequential
->   * to the previous one we punted.
->   */
-> -static bool io_add_to_prev_work(struct async_list *list, struct io_kiocb *req)
-> +static bool io_add_to_prev_work(struct async_list *list, struct io_kiocb *req,
-> +							struct io_ring_ctx *ctx)
->  {
->  	bool ret;
-> +	unsigned long flags;
->  
->  	if (!list)
->  		return false;
-> @@ -2378,6 +2382,13 @@ static bool io_add_to_prev_work(struct async_list *list, struct io_kiocb *req)
->  		list_del_init(&req->list);
->  		ret = false;
->  	}
-> +
-> +	if (ret) {
-> +		spin_lock_irqsave(&ctx->task_lock, flags);
-> +		list_add(&req->task_list, &ctx->task_list);
-> +		req->work_task = NULL;
-> +		spin_unlock_irqrestore(&ctx->task_lock, flags);
-> +	}
->  	spin_unlock(&list->lock);
->  	return ret;
->  }
-> @@ -2454,7 +2465,7 @@ static int __io_queue_sqe(struct io_ring_ctx *ctx, struct io_kiocb *req,
->  			s->sqe = sqe_copy;
->  			memcpy(&req->submit, s, sizeof(*s));
->  			list = io_async_list_from_req(ctx, req);
-> -			if (!io_add_to_prev_work(list, req)) {
-> +			if (!io_add_to_prev_work(list, req, ctx)) {
->  				if (list)
->  					atomic_inc(&list->cnt);
->  				INIT_WORK(&req->work, io_sq_wq_submit_work);
-> 
+I'm not sure if I need to submit a v2 patch, or this tag will be added
+by the maintainer when applying this patch. I have no experience with
+this before. Thanks!
 
-ctx == req->ctx, so you should not need that change.
+Regards,
+Hao Li
 
--- 
-Jens Axboe
+>
+>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+>
+>> ---
+>>  fs/inode.c         | 3 ++-
+>>  include/linux/fs.h | 3 +--
+>>  2 files changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/inode.c b/fs/inode.c
+>> index 72c4c347afb7..4e45d5ea3d0f 100644
+>> --- a/fs/inode.c
+>> +++ b/fs/inode.c
+>> @@ -1625,7 +1625,8 @@ static void iput_final(struct inode *inode)
+>>      else
+>>          drop = generic_drop_inode(inode);
+>>  
+>> -    if (!drop && (sb->s_flags & SB_ACTIVE)) {
+>> +    if (!drop && !(inode->i_state & I_DONTCACHE) &&
+>> +            (sb->s_flags & SB_ACTIVE)) {
+>>          inode_add_lru(inode);
+>>          spin_unlock(&inode->i_lock);
+>>          return;
+>> diff --git a/include/linux/fs.h b/include/linux/fs.h
+>> index e019ea2f1347..93caee80ce47 100644
+>> --- a/include/linux/fs.h
+>> +++ b/include/linux/fs.h
+>> @@ -2922,8 +2922,7 @@ extern int inode_needs_sync(struct inode *inode);
+>>  extern int generic_delete_inode(struct inode *inode);
+>>  static inline int generic_drop_inode(struct inode *inode)
+>>  {
+>> -    return !inode->i_nlink || inode_unhashed(inode) ||
+>> -        (inode->i_state & I_DONTCACHE);
+>> +    return !inode->i_nlink || inode_unhashed(inode);
+>>  }
+>>  extern void d_mark_dontcache(struct inode *inode);
+>>  
+>> --
+>> 2.28.0
+>>
+>>
+>>
+>
+>
+
+
 
