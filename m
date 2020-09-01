@@ -2,131 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DB4825867A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Sep 2020 05:48:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41E2B25867B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Sep 2020 05:48:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726117AbgIADsa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Aug 2020 23:48:30 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:15047 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725987AbgIADs3 (ORCPT
+        id S1726386AbgIADsm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Aug 2020 23:48:42 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:49203 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725987AbgIADsm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Aug 2020 23:48:29 -0400
-X-IronPort-AV: E=Sophos;i="5.76,377,1592841600"; 
-   d="scan'208";a="98758136"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 01 Sep 2020 11:48:26 +0800
-Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id A5F2F48990DB;
-        Tue,  1 Sep 2020 11:48:23 +0800 (CST)
-Received: from [10.167.225.206] (10.167.225.206) by
- G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
- (TLS) id 15.0.1497.2; Tue, 1 Sep 2020 11:48:22 +0800
-Subject: Re: [PATCH] fs: Handle I_DONTCACHE in iput_final() instead of
- generic_drop_inode()
-To:     Ira Weiny <ira.weiny@intel.com>
-CC:     <viro@zeniv.linux.org.uk>, <david@fromorbit.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-xfs@vger.kernel.org>, <y-goto@fujitsu.com>
-References: <20200831101313.168889-1-lihao2018.fnst@cn.fujitsu.com>
- <20200831171257.GF1422350@iweiny-DESK2.sc.intel.com>
-From:   "Li, Hao" <lihao2018.fnst@cn.fujitsu.com>
-Message-ID: <db5d145a-3b63-48db-6bd2-eb1d91323697@cn.fujitsu.com>
-Date:   Tue, 1 Sep 2020 11:48:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.1.1
+        Mon, 31 Aug 2020 23:48:42 -0400
+Received: from dread.disaster.area (pa49-181-146-199.pa.nsw.optusnet.com.au [49.181.146.199])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 8FA5B3A7746;
+        Tue,  1 Sep 2020 13:48:37 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kCxHg-0004Wo-4a; Tue, 01 Sep 2020 13:48:36 +1000
+Date:   Tue, 1 Sep 2020 13:48:36 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Andreas Dilger <adilger@dilger.ca>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Greg Kurz <groug@kaod.org>, linux-fsdevel@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Daniel J Walsh <dwalsh@redhat.com>,
+        Chirantan Ekbote <chirantan@chromium.org>
+Subject: Re: xattr names for unprivileged stacking?
+Message-ID: <20200901034836.GG12096@dread.disaster.area>
+References: <20200829180448.GQ1236603@ZenIV.linux.org.uk>
+ <CAJfpegsn-BKVkMv4pQHG7tER31m5RSXrJyhDZ-Uzst1CMBEbEw@mail.gmail.com>
+ <20200829192522.GS1236603@ZenIV.linux.org.uk>
+ <CAJfpegt7a_YHd0iBjb=8hST973dQQ9czHUSNvnh-9LR_fqktTA@mail.gmail.com>
+ <20200830191016.GZ14765@casper.infradead.org>
+ <CAJfpegv9+o8QjQmg8EpMCm09tPy4WX1gbJiT=s15Lz8r3HQXJQ@mail.gmail.com>
+ <20200831113705.GA14765@casper.infradead.org>
+ <CAJfpegvqvns+PULwyaN2oaZAJZKA_SgKxqgpP=nvab2tuyX4NA@mail.gmail.com>
+ <20200831132339.GD14765@casper.infradead.org>
+ <E7419E0D-6FF8-4E7E-B04A-835B0FE695B2@dilger.ca>
 MIME-Version: 1.0
-In-Reply-To: <20200831171257.GF1422350@iweiny-DESK2.sc.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.167.225.206]
-X-ClientProxiedBy: G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) To
- G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201)
-X-yoursite-MailScanner-ID: A5F2F48990DB.ADBB7
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: lihao2018.fnst@cn.fujitsu.com
-X-Spam-Status: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <E7419E0D-6FF8-4E7E-B04A-835B0FE695B2@dilger.ca>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=IuRgj43g c=1 sm=1 tr=0 cx=a_idp_d
+        a=GorAHYkI+xOargNMzM6qxQ==:117 a=GorAHYkI+xOargNMzM6qxQ==:17
+        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8
+        a=eBHbTIyNLBQfYuXCXi8A:9 a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/9/1 1:12, Ira Weiny wrote:
-> On Mon, Aug 31, 2020 at 06:13:13PM +0800, Hao Li wrote:
->> If generic_drop_inode() returns true, it means iput_final() can evict
->> this inode regardless of whether it is dirty or not. If we check
->> I_DONTCACHE in generic_drop_inode(), any inode with this bit set will be
->> evicted unconditionally. This is not the desired behavior because
->> I_DONTCACHE only means the inode shouldn't be cached on the LRU list.
->> As for whether we need to evict this inode, this is what
->> generic_drop_inode() should do. This patch corrects the usage of
->> I_DONTCACHE.
->>
->> This patch was proposed in [1].
->>
->> [1]: https://lore.kernel.org/linux-fsdevel/20200831003407.GE12096@dread.disaster.area/
->>
->> Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
->
-> Thanks!  I think this looks good, but shouldn't we add?  It seems like this is
-> a bug right?
->
-> Fixes: dae2f8ed7992 ("fs: Lift XFS_IDONTCACHE to the VFS layer")
+On Mon, Aug 31, 2020 at 12:02:56PM -0600, Andreas Dilger wrote:
+> On Aug 31, 2020, at 7:23 AM, Matthew Wilcox <willy@infradead.org> wrote:
+> > 
+> > On Mon, Aug 31, 2020 at 01:51:20PM +0200, Miklos Szeredi wrote:
+> >> On Mon, Aug 31, 2020 at 1:37 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >> 
+> >>> As I said to Dave, you and I have a strong difference of opinion here.
+> >>> I think that what you are proposing is madness.  You're making it too
+> >>> flexible which comes with too much opportunity for abuse.
+> >> 
+> >> Such as?
+> > 
+> > One proposal I saw earlier in this thread was to do something like
+> > $ runalt /path/to/file ls
+> > which would open_alt() /path/to/file, fchdir to it and run ls inside it.
+> > That's just crazy.
+> > 
+> >>> I just want
+> >>> to see alternate data streams for the same filename in order to support
+> >>> existing use cases.  You seem to be able to want to create an entire
+> >>> new world inside a file, and that's just too confusing.
+> >> 
+> >> To whom?  I'm sure users of ancient systems with a flat directory
+> >> found directory trees very confusing.  Yet it turned out that the
+> >> hierarchical system beat the heck out of the flat one.
+> > 
+> > Which doesn't mean that multiple semi-hidden hierarchies are going to
+> > be better than one visible hierarchy.
+> 
+> I can see the use of ADS for "additional information" about a single file
+> (e.g. verity Merkle tree with checksums of the file data) that are too big
+> to put into an xattr and/or need random updates.  However, I don't see the
+> benefits of attaching a whole arbitrary set of files to a single filename.
+> 
+> If people want a whole hierarchy of directories contained within a single
+> file, why not use a container (e.g. ext4 filesystem image) to hold all of
+> that?  That allows an arbitrary group of files/directories/permissions to
+> be applied to a tree of files, but the container can be copied or removed
+> atomically as needed?
+> 
+> Using a filesystem image as the container is (IMHO) preferable to using a
+> tarball or similar, because it can be randomly updated after creation, and
+> already has all of the semantics needed.
 
-Yeah, this is more meaningful.
+Yup, that's pretty much the premise behind the XFS subvolume stuff I
+was exploring a while back. The file user data fork contains a
+filesystem image, and the filesystem can mount them where-ever it
+wants and manipulates the internal state as if it's just another
+filesytem. It's essentially the equivalent of virtual LBA address
+space mapping layer above the block layer.
 
-I'm not sure if I need to submit a v2 patch, or this tag will be added
-by the maintainer when applying this patch. I have no experience with
-this before. Thanks!
+And if your user data fork is capable of reflink and COW, then you
+have atomically snapshottable virtually mapped filesystem containers
+a.k.a. subvolumes.....
 
-Regards,
-Hao Li
+> The main thing that is needed is some mechanism that users can access that
+> decides whether access to the image is as a file, or if processed should
+> automount the image and descend into the contained namespace.
 
->
->
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
->
->> ---
->>  fs/inode.c         | 3 ++-
->>  include/linux/fs.h | 3 +--
->>  2 files changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/inode.c b/fs/inode.c
->> index 72c4c347afb7..4e45d5ea3d0f 100644
->> --- a/fs/inode.c
->> +++ b/fs/inode.c
->> @@ -1625,7 +1625,8 @@ static void iput_final(struct inode *inode)
->>      else
->>          drop = generic_drop_inode(inode);
->>  
->> -    if (!drop && (sb->s_flags & SB_ACTIVE)) {
->> +    if (!drop && !(inode->i_state & I_DONTCACHE) &&
->> +            (sb->s_flags & SB_ACTIVE)) {
->>          inode_add_lru(inode);
->>          spin_unlock(&inode->i_lock);
->>          return;
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index e019ea2f1347..93caee80ce47 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -2922,8 +2922,7 @@ extern int inode_needs_sync(struct inode *inode);
->>  extern int generic_delete_inode(struct inode *inode);
->>  static inline int generic_drop_inode(struct inode *inode)
->>  {
->> -    return !inode->i_nlink || inode_unhashed(inode) ||
->> -        (inode->i_state & I_DONTCACHE);
->> +    return !inode->i_nlink || inode_unhashed(inode);
->>  }
->>  extern void d_mark_dontcache(struct inode *inode);
->>  
->> --
->> 2.28.0
->>
->>
->>
->
->
+XFS used to have a IF_UUID inode type that was intended on Irix to
+be a filesystem referral indicator. Kinda like a symlink, but it
+just contained a UUID rather than a path. Traversing a IF_UUID inode
+in the path would result in calling out to userspace to find the
+filesystem with that UUID and automounting it in place, then it
+would restart the path resolution and walk directly into the
+filesystem that got mounted...
 
+CHeers,
 
+Dave.
 
+-- 
+Dave Chinner
+david@fromorbit.com
