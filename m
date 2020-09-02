@@ -2,478 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DF54625AFBD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Sep 2020 17:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6141925AFD3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Sep 2020 17:47:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbgIBPpA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Sep 2020 11:45:00 -0400
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:27177 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728110AbgIBPow (ORCPT
+        id S1728491AbgIBPph (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Sep 2020 11:45:37 -0400
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:26414 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728470AbgIBPpD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Sep 2020 11:44:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599061490;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CuGXxadKsVJrnI33TmIgfuMt1tBEdqBVzVHBekaxae8=;
-        b=LzfEj/JNdA1Vy1T+EUBoxbcSA5m81fi1sEuXY7qXyKrlxqSXeBeno3CXZTC/VZB8Dg8bDn
-        w6llmVsZABIVcjcs7N/8WJPFOcWmyicMsiZ1ZBoE59QekbqtrNUuC5UKrlbHUMWunN0wE5
-        O3HlsIS0o4Wo05YPVPu0ztdnKlQo2z4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-308-RsjFokBQMwqjHeFshtGa5A-1; Wed, 02 Sep 2020 11:44:49 -0400
-X-MC-Unique: RsjFokBQMwqjHeFshtGa5A-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 08E58801AE2;
-        Wed,  2 Sep 2020 15:44:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-113-6.rdu2.redhat.com [10.10.113.6])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 11A5A1002D6C;
-        Wed,  2 Sep 2020 15:44:45 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 4/6] mm: Pass readahead_control into
- page_cache_{sync,async}_readahead() [ver #2]
-From:   David Howells <dhowells@redhat.com>
-To:     willy@infradead.org
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Date:   Wed, 02 Sep 2020 16:44:45 +0100
-Message-ID: <159906148519.663183.14012026331551396649.stgit@warthog.procyon.org.uk>
-In-Reply-To: <159906145700.663183.3678164182141075453.stgit@warthog.procyon.org.uk>
-References: <159906145700.663183.3678164182141075453.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Wed, 2 Sep 2020 11:45:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1599061502; x=1630597502;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+  b=dqFgKByicwuZK2yvvgaV4HLUnZEArMrEQTPKHAG7U16334qp6J3tgf7y
+   M9/6dqx1NWeB+CQzaLIKQ2kjhnmhxpPMAOjLPgr7772xOwaL3MGOw6rtf
+   6xwc4ZdJGmYkO8qWHLlZrlgiHOacGaDootJ0mvSe72QN5KhVipLZ6PsbO
+   aYytZARIxk3zhA2nFdZuLZHbe5NCNh5htXjV8EwKSGZT8xRucocq949bu
+   L0zr87DxOYgbrWqCh0XKo5I7HoHi+zVYMs0UaVvzOh4S/vryfJhK0jvNw
+   9EMA8Z0K//zJ4zfVapDCCh/MKnlU85MK9ktWO0UVjlfz908c0+grYC73C
+   g==;
+IronPort-SDR: aKQDqp6LwlYd9VVgToyuntSjaDpu/xjt9jl3zGGBwsQfFc8vGqwYrZl055JuX7/PDrkgjV/ppB
+ HgApYEQAAj2Qn+p8ZWWTDg4GyEaOIKmmvi231ROE5nqDL88qS1FbfDgbX4ZYZsCL6gAN6FZgDm
+ w3Znj6dPfnhgpQAuDY7ESwOfSqNfjUtKgyndYq+twdQEnqgX4M/Xi5PSHraIG7+qJyTGSNBR57
+ sUPIcktoB//OoFRm8Jd0uQXT615qxZR9xX5a773f5UUsR2byjnqXeggP0z5paJ6V540R/ox9Sy
+ qm8=
+X-IronPort-AV: E=Sophos;i="5.76,383,1592841600"; 
+   d="scan'208";a="255953363"
+Received: from mail-dm6nam10lp2103.outbound.protection.outlook.com (HELO NAM10-DM6-obe.outbound.protection.outlook.com) ([104.47.58.103])
+  by ob1.hgst.iphmx.com with ESMTP; 02 Sep 2020 23:44:47 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TsxswkAxtW2jicR5iNvz7tuvLVeGQ6NGCIEZEPqHq5QmZcQW4yZfkYSFs2mVVfuSZIet+yWG7ZHbbZ+pXoOT7Erf1H9cLOY4ahuSjiffSOLWWeJ1cxIVL1Qt/RAoVQ2akVLaz70S0Vqw6+ccaFiyD6VUe3U2Aal9v5haTOSnWI9LklpEXbyDKA3pCyQJdM16PdQM2wdBI/WnTBcdYcxTLIrwbnKDOK36q2y8zNf59tcoZzcwFp7rBw19Ydd9v6grMRfJdtdipGWJLEbluLcrK0nIZa4W6eEJNZ4D/OXgN1iSvQIPAfJ0ww+8gTs57J7iW7ZUjyIhAp/R+ebdh+Kang==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=CO/h+hrvyZBQ4Neh1Tp35STSPGmAohsO+ALoizmcMGKFiZUpVCv9x5bXTBk2QEJwvD2Tjgj88hqc8SAj5rimS/sE7qOgmgHXPfLRD9eOd6jT8edmD6nVJ1ibRZEdTBOrLzR/C0QBZaV2VgYywlo5QJ5rBflEjOLRFvT9n3d8XfPPomY1r7YOpW5cXmB/npJbxRGjgSAHAUyxBUu7dajKLsinc1MBUuEuBtisCh+gktl11sRviK/mdFF0fY1nMhzr5DJ5LdvCiAzFxcp6YVGG8onDRhi7aI3v3t9FTww0Zxp0NLWTRgnUFDsPgjAnC1JHg3QaRZF5UdCi7yn4DS0xZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=IQ9YvJAL1QKJWloGorSfgPJCLOCoOBv/At8AAHqxO1gfvrDo21ZZJeMMVnF98XqMVeTsHrTojVZasjHCPSTbzDa5mxlwOqPuTFa7QvRF9xOwqbkEQv7rzydEXqb4gFbFr3/tdJEcH1m8+YFVvzJXR/t47SuCRnsFHNd2AVLkNUk=
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ (2603:10b6:803:47::21) by SN4PR0401MB3680.namprd04.prod.outlook.com
+ (2603:10b6:803:4e::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3326.25; Wed, 2 Sep
+ 2020 15:44:46 +0000
+Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::457e:5fe9:2ae3:e738]) by SN4PR0401MB3598.namprd04.prod.outlook.com
+ ([fe80::457e:5fe9:2ae3:e738%7]) with mapi id 15.20.3326.023; Wed, 2 Sep 2020
+ 15:44:46 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+CC:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Song Liu <song@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 11/19] gdrom: use bdev_check_media_change
+Thread-Topic: [PATCH 11/19] gdrom: use bdev_check_media_change
+Thread-Index: AQHWgTNOeedM/+DMc0eDlPBuSQgWrg==
+Date:   Wed, 2 Sep 2020 15:44:46 +0000
+Message-ID: <SN4PR0401MB3598FE94BA85C20DFB48A8229B2F0@SN4PR0401MB3598.namprd04.prod.outlook.com>
+References: <20200902141218.212614-1-hch@lst.de>
+ <20200902141218.212614-12-hch@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: lst.de; dkim=none (message not signed)
+ header.d=none;lst.de; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [2001:a62:1590:f101:1584:4722:fd5f:b30e]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: b7567157-626e-4959-701d-08d84f571ebd
+x-ms-traffictypediagnostic: SN4PR0401MB3680:
+x-microsoft-antispam-prvs: <SN4PR0401MB36802A2DA32AA2990255DE369B2F0@SN4PR0401MB3680.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:1728;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: bheRkqXyhGzyrmje6s96OnUUWDeU5bvuYBAZeXohergZwIguk0K+QtZ/hGnu1wmRLmvgcls6QXr7H0bXW1ayvKApc0dbio8HnBkrnK5n3gaFGvyg2JG7RJlYuq+XNnaBgFh7Ozx16GWr0tMvSF7KmrLIkfz0PN1oNFIBzLtI4IEq0J4ecHzi97hzSTOupn+N88LHmAkgd8anYiRrq9U9baxmeI+h+O+rUtqrVWLHt7q6ajXykVzlD9rsoBMTPN/hkqn+0+A8GeFNpJ6495w52A+yOiRAMD2iTOef0vHnWpJQ42KY11wUiBYDHLnYyDroPuBH6eiaqHMrWpeYozzfBg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(376002)(346002)(366004)(396003)(39850400004)(86362001)(558084003)(55016002)(8676002)(19618925003)(9686003)(4270600006)(5660300002)(478600001)(2906002)(8936002)(33656002)(7416002)(186003)(54906003)(316002)(66556008)(66446008)(71200400001)(7696005)(52536014)(4326008)(64756008)(76116006)(66946007)(91956017)(66476007)(6506007)(110136005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: KqYjTWP78wmmXeGu/XX+4rBnUgMb9XeJRpXz+eqRK7xYZESIG6ZHICCn7niBfOjf9BdIucRVJFL4CvXw2TPebvcwHgRlBd3ESTEqhfnO/uFwhUE6oR/SKOEc7RTOp3bv+8fzPfYFKxb0CvLMnB9EEW1RMT5O2MJYlGY5uMiz6QSAmhjLJcpiGbplPOzMVIbbo49/CL3U733ql2MeV+ZrNaMf8msEZXuXi295TNpMBxf6N8n6TW7IdFYxEJaMW7yExc170TdSzlogFuDeUf/lg/yoOQArkzpsc6LhPHzha7m9ItpMObtDjYkSCnPdsmSMOK1AuEKfjPQFcRfeY6YcjBdp8kxliFolCi2ogVardAoiszFtYDZDeLiVhd8fGYF1DdBoFkYFHudlBdOaEg5wWDtsJ7FsCIPz7dlPDzn/Gm3VfnEWMzRD3ebQsfES3/jDVJABq0BL39rWPRhvydWC/2NMBsZ/19v8TfheguszzTPR9JuQ1FFBvc1Yx8pwoxfCfwmzbHc7n3Hgid48P47jpGEsdrUOyJjg9okPh5QIyTOReE/07BQ4OmUcp2W61fp6Bw5S01GvbF+TFrY2SO9ZFqYt95ii1idyoB4HE9S+8pktSZvegXwMVwJdNO9jse854Q5rARamS9QSxXVuz28DTzkTUchPfCdHofaltWoVyB/sfR1samyDJ9e2E36fy6AHhAlDEUoaid/5kXHkTefRvw==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7567157-626e-4959-701d-08d84f571ebd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2020 15:44:46.8226
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: l3UqEjxv7u7ytOYL9RpJXasnuOhmWCBGIJYSbrJvytcMHH8pKPXa0Nt3HgHnsbk79KVMeHAnaQr0RM3PMeQck32SKjSxCh2jv1kWZNmdVm0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0401MB3680
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pass struct readahead_control into the page_cache_{sync,async}_readahead()
-functions in preparation for making do_sync_mmap_readahead() pass down an
-RAC struct.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- fs/btrfs/free-space-cache.c |    4 +++-
- fs/btrfs/ioctl.c            |    9 ++++++---
- fs/btrfs/relocation.c       |   10 ++++++----
- fs/btrfs/send.c             |   16 ++++++++++------
- fs/ext4/dir.c               |   11 ++++++-----
- fs/f2fs/dir.c               |    8 ++++++--
- include/linux/pagemap.h     |    7 +++----
- mm/filemap.c                |   26 ++++++++++++++------------
- mm/khugepaged.c             |    4 ++--
- mm/readahead.c              |   34 +++++++++++++---------------------
- 10 files changed, 69 insertions(+), 60 deletions(-)
-
-diff --git a/fs/btrfs/free-space-cache.c b/fs/btrfs/free-space-cache.c
-index dc82fd0c80cb..c64af32453b6 100644
---- a/fs/btrfs/free-space-cache.c
-+++ b/fs/btrfs/free-space-cache.c
-@@ -288,6 +288,8 @@ static void readahead_cache(struct inode *inode)
- 	struct file_ra_state *ra;
- 	unsigned long last_index;
- 
-+	DEFINE_READAHEAD(rac, NULL, inode->i_mapping, 0);
-+
- 	ra = kzalloc(sizeof(*ra), GFP_NOFS);
- 	if (!ra)
- 		return;
-@@ -295,7 +297,7 @@ static void readahead_cache(struct inode *inode)
- 	file_ra_state_init(ra, inode->i_mapping);
- 	last_index = (i_size_read(inode) - 1) >> PAGE_SHIFT;
- 
--	page_cache_sync_readahead(inode->i_mapping, ra, NULL, 0, last_index);
-+	page_cache_sync_readahead(&rac, ra, last_index);
- 
- 	kfree(ra);
- }
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index bd3511c5ca81..9f9321f20615 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -1428,6 +1428,8 @@ int btrfs_defrag_file(struct inode *inode, struct file *file,
- 	struct page **pages = NULL;
- 	bool do_compress = range->flags & BTRFS_DEFRAG_RANGE_COMPRESS;
- 
-+	DEFINE_READAHEAD(rac, file, inode->i_mapping, 0);
-+
- 	if (isize == 0)
- 		return 0;
- 
-@@ -1534,9 +1536,10 @@ int btrfs_defrag_file(struct inode *inode, struct file *file,
- 
- 		if (i + cluster > ra_index) {
- 			ra_index = max(i, ra_index);
--			if (ra)
--				page_cache_sync_readahead(inode->i_mapping, ra,
--						file, ra_index, cluster);
-+			if (ra) {
-+				rac._index = ra_index;
-+				page_cache_sync_readahead(&rac, ra, cluster);
-+			}
- 			ra_index += cluster;
- 		}
- 
-diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
-index 4ba1ab9cc76d..3d21aeaaa762 100644
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -2684,6 +2684,8 @@ static int relocate_file_extent_cluster(struct inode *inode,
- 	int nr = 0;
- 	int ret = 0;
- 
-+	DEFINE_READAHEAD(rac, NULL, inode->i_mapping, 0);
-+
- 	if (!cluster->nr)
- 		return 0;
- 
-@@ -2712,8 +2714,8 @@ static int relocate_file_extent_cluster(struct inode *inode,
- 
- 		page = find_lock_page(inode->i_mapping, index);
- 		if (!page) {
--			page_cache_sync_readahead(inode->i_mapping,
--						  ra, NULL, index,
-+			rac._index = index;
-+			page_cache_sync_readahead(&rac, ra,
- 						  last_index + 1 - index);
- 			page = find_or_create_page(inode->i_mapping, index,
- 						   mask);
-@@ -2728,8 +2730,8 @@ static int relocate_file_extent_cluster(struct inode *inode,
- 		}
- 
- 		if (PageReadahead(page)) {
--			page_cache_async_readahead(inode->i_mapping,
--						   ra, NULL, page, index,
-+			rac._index = index;
-+			page_cache_async_readahead(&rac, ra, page,
- 						   last_index + 1 - index);
- 		}
- 
-diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-index d9813a5b075a..f41391fc4230 100644
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -4811,6 +4811,8 @@ static ssize_t fill_read_buf(struct send_ctx *sctx, u64 offset, u32 len)
- 	unsigned pg_offset = offset_in_page(offset);
- 	ssize_t ret = 0;
- 
-+	DEFINE_READAHEAD(rac, NULL, NULL, 0);
-+
- 	inode = btrfs_iget(fs_info->sb, sctx->cur_ino, root);
- 	if (IS_ERR(inode))
- 		return PTR_ERR(inode);
-@@ -4829,15 +4831,18 @@ static ssize_t fill_read_buf(struct send_ctx *sctx, u64 offset, u32 len)
- 	/* initial readahead */
- 	memset(&sctx->ra, 0, sizeof(struct file_ra_state));
- 	file_ra_state_init(&sctx->ra, inode->i_mapping);
-+	rac.mapping = inode->i_mapping;
- 
- 	while (index <= last_index) {
- 		unsigned cur_len = min_t(unsigned, len,
- 					 PAGE_SIZE - pg_offset);
- 
-+		rac._index = index;
-+
- 		page = find_lock_page(inode->i_mapping, index);
- 		if (!page) {
--			page_cache_sync_readahead(inode->i_mapping, &sctx->ra,
--				NULL, index, last_index + 1 - index);
-+			page_cache_sync_readahead(&rac, &sctx->ra,
-+				last_index + 1 - index);
- 
- 			page = find_or_create_page(inode->i_mapping, index,
- 					GFP_KERNEL);
-@@ -4847,10 +4852,9 @@ static ssize_t fill_read_buf(struct send_ctx *sctx, u64 offset, u32 len)
- 			}
- 		}
- 
--		if (PageReadahead(page)) {
--			page_cache_async_readahead(inode->i_mapping, &sctx->ra,
--				NULL, page, index, last_index + 1 - index);
--		}
-+		if (PageReadahead(page))
-+			page_cache_async_readahead(&rac, &sctx->ra, page,
-+				last_index + 1 - index);
- 
- 		if (!PageUptodate(page)) {
- 			btrfs_readpage(NULL, page);
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index 1d82336b1cd4..9fca0de50e0f 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -118,6 +118,8 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
- 	struct buffer_head *bh = NULL;
- 	struct fscrypt_str fstr = FSTR_INIT(NULL, 0);
- 
-+	DEFINE_READAHEAD(rac, file, sb->s_bdev->bd_inode->i_mapping, 0);
-+
- 	if (IS_ENCRYPTED(inode)) {
- 		err = fscrypt_get_encryption_info(inode);
- 		if (err)
-@@ -176,11 +178,10 @@ static int ext4_readdir(struct file *file, struct dir_context *ctx)
- 		if (err > 0) {
- 			pgoff_t index = map.m_pblk >>
- 					(PAGE_SHIFT - inode->i_blkbits);
--			if (!ra_has_index(&file->f_ra, index))
--				page_cache_sync_readahead(
--					sb->s_bdev->bd_inode->i_mapping,
--					&file->f_ra, file,
--					index, 1);
-+			if (!ra_has_index(&file->f_ra, index)) {
-+				rac._index = index;
-+				page_cache_sync_readahead(&rac, &file->f_ra, 1);
-+			}
- 			file->f_ra.prev_pos = (loff_t)index << PAGE_SHIFT;
- 			bh = ext4_bread(NULL, inode, map.m_lblk, 0);
- 			if (IS_ERR(bh)) {
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 069f498af1e3..69a316e7808d 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -1027,6 +1027,8 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 	struct fscrypt_str fstr = FSTR_INIT(NULL, 0);
- 	int err = 0;
- 
-+	DEFINE_READAHEAD(rac, file, inode->i_mapping, 0);
-+
- 	if (IS_ENCRYPTED(inode)) {
- 		err = fscrypt_get_encryption_info(inode);
- 		if (err)
-@@ -1052,9 +1054,11 @@ static int f2fs_readdir(struct file *file, struct dir_context *ctx)
- 		cond_resched();
- 
- 		/* readahead for multi pages of dir */
--		if (npages - n > 1 && !ra_has_index(ra, n))
--			page_cache_sync_readahead(inode->i_mapping, ra, file, n,
-+		if (npages - n > 1 && !ra_has_index(ra, n)) {
-+			rac._index = n;
-+			page_cache_sync_readahead(&rac, ra,
- 				min(npages - n, (pgoff_t)MAX_DIR_RA_PAGES));
-+		}
- 
- 		dentry_page = f2fs_find_data_page(inode, n);
- 		if (IS_ERR(dentry_page)) {
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 8bf048a76c43..3c362ddfeb4d 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -769,11 +769,10 @@ void delete_from_page_cache_batch(struct address_space *mapping,
- 
- #define VM_READAHEAD_PAGES	(SZ_128K / PAGE_SIZE)
- 
--void page_cache_sync_readahead(struct address_space *, struct file_ra_state *,
--		struct file *, pgoff_t index, unsigned long req_count);
--void page_cache_async_readahead(struct address_space *, struct file_ra_state *,
--		struct file *, struct page *, pgoff_t index,
-+void page_cache_sync_readahead(struct readahead_control *, struct file_ra_state *,
- 		unsigned long req_count);
-+void page_cache_async_readahead(struct readahead_control *, struct file_ra_state *,
-+		struct page *, unsigned long req_count);
- void page_cache_readahead_unbounded(struct readahead_control *,
- 		unsigned long nr_to_read, unsigned long lookahead_count);
- 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 82b97cf4306c..fdfeedd1eb71 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2070,6 +2070,8 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 	unsigned int prev_offset;
- 	int error = 0;
- 
-+	DEFINE_READAHEAD(rac, filp, mapping, 0);
-+
- 	if (unlikely(*ppos >= inode->i_sb->s_maxbytes))
- 		return 0;
- 	iov_iter_truncate(iter, inode->i_sb->s_maxbytes);
-@@ -2097,9 +2099,8 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 		if (!page) {
- 			if (iocb->ki_flags & IOCB_NOIO)
- 				goto would_block;
--			page_cache_sync_readahead(mapping,
--					ra, filp,
--					index, last_index - index);
-+			rac._index = index;
-+			page_cache_sync_readahead(&rac, ra, last_index - index);
- 			page = find_get_page(mapping, index);
- 			if (unlikely(page == NULL))
- 				goto no_cached_page;
-@@ -2109,9 +2110,9 @@ ssize_t generic_file_buffered_read(struct kiocb *iocb,
- 				put_page(page);
- 				goto out;
- 			}
--			page_cache_async_readahead(mapping,
--					ra, filp, thp_head(page),
--					index, last_index - index);
-+			rac._index = index;
-+			page_cache_async_readahead(&rac, ra, thp_head(page),
-+					last_index - index);
- 		}
- 		if (!PageUptodate(page)) {
- 			/*
-@@ -2469,6 +2470,8 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
- 	pgoff_t offset = vmf->pgoff;
- 	unsigned int mmap_miss;
- 
-+	DEFINE_READAHEAD(rac, file, mapping, offset);
-+
- 	/* If we don't want any read-ahead, don't bother */
- 	if (vmf->vma->vm_flags & VM_RAND_READ)
- 		return fpin;
-@@ -2477,8 +2480,7 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
- 
- 	if (vmf->vma->vm_flags & VM_SEQ_READ) {
- 		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
--		page_cache_sync_readahead(mapping, ra, file, offset,
--					  ra->ra_pages);
-+		page_cache_sync_readahead(&rac, ra, ra->ra_pages);
- 		return fpin;
- 	}
- 
-@@ -2515,10 +2517,10 @@ static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
- {
- 	struct file *file = vmf->vma->vm_file;
- 	struct file_ra_state *ra = &file->f_ra;
--	struct address_space *mapping = file->f_mapping;
- 	struct file *fpin = NULL;
- 	unsigned int mmap_miss;
--	pgoff_t offset = vmf->pgoff;
-+
-+	DEFINE_READAHEAD(rac, file, file->f_mapping, vmf->pgoff);
- 
- 	/* If we don't want any read-ahead, don't bother */
- 	if (vmf->vma->vm_flags & VM_RAND_READ || !ra->ra_pages)
-@@ -2528,8 +2530,8 @@ static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
- 		WRITE_ONCE(ra->mmap_miss, --mmap_miss);
- 	if (PageReadahead(thp_head(page))) {
- 		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
--		page_cache_async_readahead(mapping, ra, file,
--				thp_head(page), offset, ra->ra_pages);
-+		page_cache_async_readahead(&rac, ra, thp_head(page),
-+				ra->ra_pages);
- 	}
- 	return fpin;
- }
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index f2d243077b74..84305574b36d 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1703,9 +1703,9 @@ static void collapse_file(struct mm_struct *mm,
- 			}
- 		} else {	/* !is_shmem */
- 			if (!page || xa_is_value(page)) {
-+				DEFINE_READAHEAD(rac, file, mapping, index);
- 				xas_unlock_irq(&xas);
--				page_cache_sync_readahead(mapping, &file->f_ra,
--							  file, index,
-+				page_cache_sync_readahead(&rac, &file->f_ra,
- 							  end - index);
- 				/* drain pagevecs to help isolate_lru_page() */
- 				lru_add_drain();
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 366357e6e845..d8e3e59e4c46 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -633,10 +633,8 @@ static void ondemand_readahead(struct readahead_control *rac,
- 
- /**
-  * page_cache_sync_readahead - generic file readahead
-- * @mapping: address_space which holds the pagecache and I/O vectors
-+ * @rac: Readahead control.
-  * @ra: file_ra_state which holds the readahead state
-- * @filp: passed on to ->readpage() and ->readpages()
-- * @index: Index of first page to be read.
-  * @req_count: Total number of pages being read by the caller.
-  *
-  * page_cache_sync_readahead() should be called when a cache miss happened:
-@@ -644,12 +642,10 @@ static void ondemand_readahead(struct readahead_control *rac,
-  * pages onto the read request if access patterns suggest it will improve
-  * performance.
-  */
--void page_cache_sync_readahead(struct address_space *mapping,
--			       struct file_ra_state *ra, struct file *filp,
--			       pgoff_t index, unsigned long req_count)
-+void page_cache_sync_readahead(struct readahead_control *rac,
-+			       struct file_ra_state *ra,
-+			       unsigned long req_count)
- {
--	DEFINE_READAHEAD(rac, filp, mapping, index);
--
- 	/* no read-ahead */
- 	if (!ra->ra_pages)
- 		return;
-@@ -658,23 +654,21 @@ void page_cache_sync_readahead(struct address_space *mapping,
- 		return;
- 
- 	/* be dumb */
--	if (filp && (filp->f_mode & FMODE_RANDOM)) {
--		force_page_cache_readahead(&rac, req_count);
-+	if (rac->file && (rac->file->f_mode & FMODE_RANDOM)) {
-+		force_page_cache_readahead(rac, req_count);
- 		return;
- 	}
- 
- 	/* do read-ahead */
--	ondemand_readahead(&rac, ra, NULL, req_count);
-+	ondemand_readahead(rac, ra, NULL, req_count);
- }
- EXPORT_SYMBOL_GPL(page_cache_sync_readahead);
- 
- /**
-  * page_cache_async_readahead - file readahead for marked pages
-- * @mapping: address_space which holds the pagecache and I/O vectors
-+ * @rac: Readahead control.
-  * @ra: file_ra_state which holds the readahead state
-- * @filp: passed on to ->readpage() and ->readpages()
-  * @page: The page at @index which triggered the readahead call.
-- * @index: Index of first page to be read.
-  * @req_count: Total number of pages being read by the caller.
-  *
-  * page_cache_async_readahead() should be called when a page is used which
-@@ -683,13 +677,11 @@ EXPORT_SYMBOL_GPL(page_cache_sync_readahead);
-  * more pages.
-  */
- void
--page_cache_async_readahead(struct address_space *mapping,
--			   struct file_ra_state *ra, struct file *filp,
--			   struct page *page, pgoff_t index,
-+page_cache_async_readahead(struct readahead_control *rac,
-+			   struct file_ra_state *ra,
-+			   struct page *page,
- 			   unsigned long req_count)
- {
--	DEFINE_READAHEAD(rac, filp, mapping, index);
--
- 	/* No Read-ahead */
- 	if (!ra->ra_pages)
- 		return;
-@@ -705,14 +697,14 @@ page_cache_async_readahead(struct address_space *mapping,
- 	/*
- 	 * Defer asynchronous read-ahead on IO congestion.
- 	 */
--	if (inode_read_congested(mapping->host))
-+	if (inode_read_congested(rac->mapping->host))
- 		return;
- 
- 	if (blk_cgroup_congested())
- 		return;
- 
- 	/* do read-ahead */
--	ondemand_readahead(&rac, ra, page, req_count);
-+	ondemand_readahead(rac, ra, page, req_count);
- }
- EXPORT_SYMBOL_GPL(page_cache_async_readahead);
- 
-
-
+Looks good,=0A=
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
