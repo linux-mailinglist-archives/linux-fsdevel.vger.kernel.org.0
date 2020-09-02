@@ -2,281 +2,235 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E42F25A23B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Sep 2020 02:22:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3D0425A29F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Sep 2020 03:26:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726310AbgIBAWQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Sep 2020 20:22:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51614 "EHLO
+        id S1726380AbgIBB0H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Sep 2020 21:26:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbgIBAWO (ORCPT
+        with ESMTP id S1726192AbgIBB0E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Sep 2020 20:22:14 -0400
-Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A62C061245
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Sep 2020 17:22:13 -0700 (PDT)
-Received: by mail-qt1-x843.google.com with SMTP id n10so2402927qtv.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Sep 2020 17:22:13 -0700 (PDT)
+        Tue, 1 Sep 2020 21:26:04 -0400
+Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55408C061246
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Sep 2020 18:26:04 -0700 (PDT)
+Received: by mail-qk1-x74a.google.com with SMTP id r4so2266331qkb.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Sep 2020 18:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tjHatJ2t+8EOHnqaelvJhyQI7vgBQp/WwFXKm3c2+Bs=;
-        b=O3nWA22IhmjYx4KXBkeQs/SCBoGRkUha7/Eb6Yj1hSu/AeRfVk1ylZO6kmGV4YrJl4
-         JxcXW5Nuw1zbyuPFQwFz56MT+OVLdW8K+42Tc7d9vwsU4HOiwtS42TZWRxxHasn79otu
-         C8kLDf0nRk568VO6XVcAOGczXp9IxzIAujulpHqXZxMTlP1hNhQL5uAmlyO0touq4Jgh
-         c1YaTNSHd/lEfa/47Zf9PHyUbFSX85Y9Vkz5YcvpDipVhK62UsDgbfAFbQGtZt5/Nu3Y
-         kTRXAQh6FHM/dIbNPid3g7soqdG4D8Vx5/GZnvHfS13ZUg3o+P94RFWKMbEqV/EhBr5A
-         Mrig==
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=RLfqZvE8pBUN1hIKB0BVnJlGhsKyMWNU1UKytWcZLUM=;
+        b=dXw7B+2PvKo8CcOZn9XS2LOZ2blgCKjwW3Um30oC4s5uZ9ae94Gr4A+8BphAzSOPI/
+         RpVY7nU4c4WJIDVUjcXmLU91IngTEQleW1DdyVcTtbBjGdKXDwWChoC5oAMnAKT6bmQM
+         8l4TDUmSzHu8/2QGEDN9OTeQUai2duwHW5j1cJj3D1CBc3Q8PNUNL2UJzgVWytSUqc4c
+         RYKLsGbSPytwDeZsCNqrwO7Z2n1FZJqFcab/sFJ+grNnedMrIOmt04oF2KkN/Vo8Ykzk
+         n8/GB1z8AelGbbgpyiLvW8/IpbKlNcbnZzUpXjoJ1c4+neHqQnPo2lQ5W9dyY1BptBdL
+         /eUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tjHatJ2t+8EOHnqaelvJhyQI7vgBQp/WwFXKm3c2+Bs=;
-        b=gHOQAyZ1Um3sA3nR/1Gd0OsGqrAMupsYknffLJ5KOeJ+l5KwUrZuuVP5qVy/ZlNLD3
-         BJxHWPYFH22cqjS7ng5v0eKsGyuPrk7mYhEtD+SEriWtZmG4gQbVTkkF5OX7hTiOF1Kh
-         dstLqP2DaKy/qkLRygKzjnc0UzuwhRGvze/G+cMj5VwebcZLwR4MKCcsDgqAy++K54hI
-         a9WyUc3fYxs7F9O8mzgO+L5H2MmBKI8XAE+cj9Dh24o8XWohTVpwvmAdo8ZUjGDsDJpp
-         wKBRsfkPPVDRUBsVhGtEbaEtjomEN4N0YdOKDEdPNKx+KYGX55G72XN65d++2Ca+d7b7
-         cpGw==
-X-Gm-Message-State: AOAM533bARGW+uy1j2uXCZ4f6WCp5eD4JURdiOJ2GFvHOXZTu9alkIxt
-        dntQ9TsU8JdfkF12LOzGnbqG1afHlOKoa9ioKys=
-X-Google-Smtp-Source: ABdhPJxJFodklFhG/WMpQfOATSTfxl49l9vQqmyBeKdBToqyZRWELdEGXaT/ZbpBLiKFNHWdnLBI/w==
-X-Received: by 2002:ac8:8eb:: with SMTP id y40mr382691qth.1.1599006132202;
-        Tue, 01 Sep 2020 17:22:12 -0700 (PDT)
-Received: from [192.168.1.210] (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id g15sm3257979qtx.57.2020.09.01.17.22.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Sep 2020 17:22:11 -0700 (PDT)
-Subject: Re: [RFC PATCH] btrfs: don't call btrfs_sync_file from iomap context
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        David Sterba <dsterba@suse.com>,
-        "linux-btrfs @ vger . kernel . org" <linux-btrfs@vger.kernel.org>,
-        Filipe Manana <fdmanana@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-References: <20200901130644.12655-1-johannes.thumshirn@wdc.com>
- <42efa646-73cd-d884-1c9c-dd889294bde2@toxicpanda.com>
- <20200901214613.GH12096@dread.disaster.area>
- <551b2801-d626-9bd7-7cb2-9d20674c06bf@toxicpanda.com>
- <20200901235830.GI12096@dread.disaster.area>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <d2ba3cc5-5648-2e4b-6ae4-2515b1365ce2@toxicpanda.com>
-Date:   Tue, 1 Sep 2020 20:22:10 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200901235830.GI12096@dread.disaster.area>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=RLfqZvE8pBUN1hIKB0BVnJlGhsKyMWNU1UKytWcZLUM=;
+        b=befwMX7LNx54Sf0vMlYkgnPIe9o84V55KVYDUni+26BB/3gHvwMW9nq6cDWRNKRTRf
+         KtEmzNQdW961RcHiif94UWDl6KaBrNTl3MF9fL7lR1v0hUppVaYUxciT+Y6+GL+epVMI
+         iRDtP79qeDJenoFGZWXaJ9waTXH0j3NoGvJhNZYNyQWaY25DiCskrQsCoi1H6+Josdrr
+         Mh0TqATtDQE5op5rvGj1inqER81xgbRb0Zl0/syKeucsNYpWn7DEsDMjIpBvNnTBtusz
+         6ZRRmM/lU2QFuOQsgErkFmOW8Vu7i5rrynXdtQ+xibAqEuA/BsvcWoIEOVamgmWs13Qv
+         b+ZA==
+X-Gm-Message-State: AOAM533qvgQdwPH2miv2BBU57I5STEPPFPsQi44j7mSDPdCubAH1Fjyq
+        ifLWSyqwuZlTVpSZeRg4ZLw5TGNINvE=
+X-Google-Smtp-Source: ABdhPJzfnzS7XFT2K3jQLTxN2cjQbQ0gu+G/2Ska9DLh59I+r+w1xXd+TQEC72s/KA60EEHPQBIQik6vI28=
+X-Received: from surenb1.mtv.corp.google.com ([2620:15c:211:0:f693:9fff:fef4:2055])
+ (user=surenb job=sendgmr) by 2002:ad4:4527:: with SMTP id l7mr1710656qvu.2.1599009962317;
+ Tue, 01 Sep 2020 18:26:02 -0700 (PDT)
+Date:   Tue,  1 Sep 2020 18:25:58 -0700
+Message-Id: <20200902012558.2335613-1-surenb@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.28.0.526.ge36021eeef-goog
+Subject: [PATCH v3 1/1] mm, oom_adj: don't loop through tasks in __set_oom_adj
+ when not necessary
+From:   Suren Baghdasaryan <surenb@google.com>
+To:     surenb@google.com
+Cc:     mhocko@suse.com, christian.brauner@ubuntu.com, mingo@kernel.org,
+        peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
+        christian@kellner.me, areber@redhat.com, shakeelb@google.com,
+        cyphar@cyphar.com, oleg@redhat.com, adobriyan@gmail.com,
+        akpm@linux-foundation.org, ebiederm@xmission.com,
+        gladkov.alexey@gmail.com, walken@google.com,
+        daniel.m.jordan@oracle.com, avagin@gmail.com,
+        bernd.edlinger@hotmail.de, john.johansen@canonical.com,
+        laoar.shao@gmail.com, timmurray@google.com, minchan@kernel.org,
+        kernel-team@android.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        linux-mm@kvack.org, Michal Hocko <mhocko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/1/20 7:58 PM, Dave Chinner wrote:
-> On Tue, Sep 01, 2020 at 06:19:17PM -0400, Josef Bacik wrote:
->> On 9/1/20 5:46 PM, Dave Chinner wrote:
->>> On Tue, Sep 01, 2020 at 11:11:58AM -0400, Josef Bacik wrote:
->>>> On 9/1/20 9:06 AM, Johannes Thumshirn wrote:
->>>>> This happens because iomap_dio_complete() calls into generic_write_sync()
->>>>> if we have the data-sync flag set. But as we're still under the
->>>>> inode_lock() from btrfs_file_write_iter() we will deadlock once
->>>>> btrfs_sync_file() tries to acquire the inode_lock().
->>>>>
->>>>> Calling into generic_write_sync() is not needed as __btrfs_direct_write()
->>>>> already takes care of persisting the data on disk. We can temporarily drop
->>>>> the IOCB_DSYNC flag before calling into __btrfs_direct_write() so the
->>>>> iomap code won't try to call into the sync routines as well.
->>>>>
->>>>> References: https://github.com/btrfs/fstests/issues/12
->>>>> Fixes: da4d7c1b4c45 ("btrfs: switch to iomap for direct IO")
->>>>> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->>>>> ---
->>>>>     fs/btrfs/file.c | 5 ++++-
->>>>>     1 file changed, 4 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
->>>>> index b62679382799..c75c0f2a5f72 100644
->>>>> --- a/fs/btrfs/file.c
->>>>> +++ b/fs/btrfs/file.c
->>>>> @@ -2023,6 +2023,7 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
->>>>>     		atomic_inc(&BTRFS_I(inode)->sync_writers);
->>>>>     	if (iocb->ki_flags & IOCB_DIRECT) {
->>>>> +		iocb->ki_flags &= ~IOCB_DSYNC;
->>>>>     		num_written = __btrfs_direct_write(iocb, from);
->>>>>     	} else {
->>>>>     		num_written = btrfs_buffered_write(iocb, from);
->>>>> @@ -2046,8 +2047,10 @@ static ssize_t btrfs_file_write_iter(struct kiocb *iocb,
->>>>>     	if (num_written > 0)
->>>>>     		num_written = generic_write_sync(iocb, num_written);
->>>>> -	if (sync)
->>>>> +	if (sync) {
->>>>> +		iocb->ki_flags |= IOCB_DSYNC;
->>>>>     		atomic_dec(&BTRFS_I(inode)->sync_writers);
->>>>> +	}
->>>>>     out:
->>>>>     	current->backing_dev_info = NULL;
->>>>>     	return num_written ? num_written : err;
->>>>>
->>>>
->>>> Christoph, I feel like this is broken.
->>>
->>> No, it isn't broken, it's just a -different design- to the old
->>> direct IO path. It was done this way done by design because the old
->>> way of requiring separate paths for calling generic_write_sync() for
->>> sync and AIO is ....  nasty, and doesn't allow for optimisation of
->>> IO completion functionality that may be wholly dependent on
->>> submission time inode state.
->>>
->>> e.g. moving the O_DSYNC completion out of the context of the
->>> IOMAP_F_DIRTY submission context means we can't reliably do FUA
->>> writes to avoid calls to generic_write_sync() completely.
->>> Compromising that functionality is going to cause major performance
->>> regressions for high performance enterprise databases using O_DSYNC
->>> AIO+DIO...
->>>
->>>> Xfs and ext4 get away with this for
->>>> different reasons,
->>>
->>> No, they "don't get away with it", this is how it was designed to
->>> work.
->>>
->>
->> Didn't mean this as a slight, just saying this is why it works fine for you
->> guys and doesn't work for us.  Because when we first were looking at this we
->> couldn't understand how it didn't blow up for you and it did blow up for us.
->> I'm providing context, not saying you guys are broken or doing it wrong.
->>
->>>> ext4 doesn't take the inode_lock() at all in fsync, and
->>>> xfs takes the ILOCK instead of the IOLOCK, so it's fine.  However btrfs uses
->>>> inode_lock() in ->fsync (not for the IO, just for the logging part).  A long
->>>> time ago I specifically pushed the inode locking down into ->fsync()
->>>> handlers to give us this sort of control.
->>>>
->>>> I'm not 100% on the iomap stuff, but the fix seems like we need to move the
->>>> generic_write_sync() out of iomap_dio_complete() completely, and the callers
->>>> do their own thing, much like the normal generic_file_write_iter() does.
->>>
->>> That effectively breaks O_DSYNC AIO and requires us to reintroduce
->>> all the nasty code that the old direct IO path required both the
->>> infrastructure and the filesystems to handle it. That's really not
->>> acceptible solution to an internal btrfs locking issue...
->>>
->>>> And then I'd like to add a WARN_ON(lockdep_is_held()) in vfs_fsync_range()
->>>> so we can avoid this sort of thing in the future.  What do you think?
->>>
->>> That's not going to work, either. There are filesystems that call
->>> vfs_fsync_range() directly from under the inode_lock(). For example,
->>> the fallocate() path in gfs2. And it's called under the ext4 and XFS
->>> MMAPLOCK from the dax page fault path, which is the page fault
->>> equivalent of the inode_lock(). IOWs, if you know that you aren't
->>> going to take inode locks in your ->fsync() method, there's nothing
->>> that says you cannot call vfs_fsync_range() while holding those
->>> inode locks.
->>
->> I converted ->fsync to not have the i_mutex taken before calling _years_ ago
->>
->> 02c24a82187d5a628c68edfe71ae60dc135cd178
->>
->> and part of what I did was update the locking document around it.  So in my
->> head, the locking rules were "No VFS locks held on entry".  Obviously that's
->> not true today, but if we're going to change the assumptions around these
->> things then we really ought to
->>
->> 1) Make sure they're true for _all_ file systems.
->> 2) Document it when it's changed.
->>
->> Ok so iomap was designed assuming it was safe to take the inode_lock()
->> before calling ->fsync.
-> 
-> No, I did not say that. Stop trying to put your words in my mouth,
-> Josef.
-> 
+Currently __set_oom_adj loops through all processes in the system to
+keep oom_score_adj and oom_score_adj_min in sync between processes
+sharing their mm. This is done for any task with more that one mm_users,
+which includes processes with multiple threads (sharing mm and signals).
+However for such processes the loop is unnecessary because their signal
+structure is shared as well.
+Android updates oom_score_adj whenever a tasks changes its role
+(background/foreground/...) or binds to/unbinds from a service, making
+it more/less important. Such operation can happen frequently.
+We noticed that updates to oom_score_adj became more expensive and after
+further investigation found out that the patch mentioned in "Fixes"
+introduced a regression. Using Pixel 4 with a typical Android workload,
+write time to oom_score_adj increased from ~3.57us to ~362us. Moreover
+this regression linearly depends on the number of multi-threaded
+processes running on the system.
+Mark the mm with a new MMF_MULTIPROCESS flag bit when task is created with
+(CLONE_VM && !CLONE_THREAD && !CLONE_VFORK). Change __set_oom_adj to use
+MMF_MULTIPROCESS instead of mm_users to decide whether oom_score_adj
+update should be synchronized between multiple processes. To prevent
+races between clone() and __set_oom_adj(), when oom_score_adj of the
+process being cloned might be modified from userspace, we use
+oom_adj_mutex. Its scope is changed to global. The combination of
+(CLONE_VM && !CLONE_THREAD) is rarely used except for the case of vfork().
+To prevent performance regressions of vfork(), we skip taking oom_adj_mutex
+and setting MMF_MULTIPROCESS when CLONE_VFORK is specified. Clearing the
+MMF_MULTIPROCESS flag (when the last process sharing the mm exits) is left
+out of this patch to keep it simple and because it is believed that this
+threading model is rare. Should there ever be a need for optimizing that
+case as well, it can be done by hooking into the exit path, likely
+following the mm_update_next_owner pattern.
+With the combination of (CLONE_VM && !CLONE_THREAD && !CLONE_VFORK) being
+quite rare, the regression is gone after the change is applied.
 
-Why are you being combative?  I'm simply trying to work towards a 
-reasonable solution and figure out how we keep this class of problems 
-from happening again.  I literally do not care at all about the design 
-decisions for iomap, you are an intelligent person and I assume good 
-intent, I assume you did it for good reasons.  I'm simply trying to work 
-out holes in my understanding, and work towards a solution we're all 
-happy with.  I'm not trying to argue with you or throw mud, I'm simply 
-trying to understand.
+Fixes: 44a70adec910 ("mm, oom_adj: make sure processes sharing mm have same view of oom_score_adj")
+Reported-by: Tim Murray <timmurray@google.com>
+Debugged-by: Minchan Kim <minchan@kernel.org>
+Suggested-by: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+---
 
-> The iomap design simply assumes that ->fsync can run without needing
-> to hold the same locks as IO submission requires. iomap
-> requires a ->fsync implementation that doesn't take the inode_lock()
-> if the inode_lock() is used to serialise IO submission. i.e. iomap
-> separates IO exclusion from -internal inode state serialisation-.
-> 
+v3:
+- Addressed Eric Biederman's comments from:
+https://lore.kernel.org/linux-mm/87imd6n0qk.fsf@x220.int.ebiederm.org/
+-- renabled oom_adj_lock back to oom_adj_mutex
+-- renamed MMF_PROC_SHARED into MMF_MULTIPROCESS and fixed its comment
+- Updated description to reflect the change
 
-This is only slightly different from what I was saying, and in reality 
-is the same thing because we all currently use the inode_lock() for the 
-submission side.  So while the assumption may be slightly different, the 
-outcome is the same.
 
-> This design assumption means DIO submission can safely -flush dirty
-> data-, invalidate the page cache, sync the inode/journal to stable
-> storage, etc all while holding the IO exclusion lock to ensure
-> submission won't race with other metadata modification operations
-> like truncate, holepunch, etc.
-> 
-> IOWs, iomap expects the inode_lock() to work as an -IO submission
-> exclusion lock-, not as an inode _state protection_ lock. Yes, this
-> means iomap has a different IO locking model to the original direct
-> and bufferhead based buffered IO paths. However, these architectural
-> changes are required to replace bufferhead based locking, implement
-> the physical storage exclusion DAX requires, close mmap vs hole
-> punch races, etc.
-> 
-> In practice, this means all the inode state in XFS (and ext4) are
-> protected by internal inode locks rather than the inode_lock(). As
-> such, they they do not require the inode_lock() to be able to write
-> back dirty data or modify inode state or flush inode state to stable
-> storage.
-> 
-> Put simply: converting a filesystem to use iomap is not a "change
-> the filesystem interfacing code and it will work" modification.  We
-> ask that filesystems are modified to conform to the iomap IO
-> exclusion model; adding special cases for every potential
-> locking and mapping quirk every different filesystem has is part of
-> what turned the old direct IO code into an unmaintainable nightmare.
-> 
->> That's fine, but this is kind of a bad way to find
->> out.  We really shouldn't have generic helper's that have different generic
->> locking rules based on which file system uses them.
-> 
-> We certainly can change the rules for new infrastructure. Indeed, we
-> had to change the rules to support DAX.  The whole point of the
-> iomap infrastructure was that it enabled us to use code that already
-> worked for DAX (the XFS code) in multiple filesystems. And as people
-> have realised that the DIO via iomap is much faster than the old DIO
-> code and is a much more efficient way of doing large buffered IO,
-> other filesystems have started to use it.
-> 
-> However....
-> 
->> Because then we end up
->> with situations like this, where suddenly we're having to come up with some
->> weird solution because the generic thing only works for a subset of file
->> systems.  Thanks,
-> 
-> .... we've always said "you need to change the filesystem code to
-> use iomap". This is simply a reflection on the fact that iomap has
-> different rules and constraints to the old code and so it's not a
-> direct plug in replacement. There are no short cuts here...
-> 
+v2:
+- https://lore.kernel.org/linux-mm/20200824153036.3201505-1-surenb@google.com/
+- Implemented proposal from Michal Hocko in:
+https://lore.kernel.org/linux-fsdevel/20200820124109.GI5033@dhcp22.suse.cz/
+- Updated description to reflect the change
 
-That's fine, again I'm not saying you did anything wrong with the 
-implementation.  I'm saying these requirements were not clear, and with 
-no warning or annotations or documentation we simply find out by random 
-chance while Johannes is running with a non-standard xfstests setup. 
-Perhaps that's what the system working looks like, but honestly I would 
-have rather found out at the point that I applied, built, and reviewed 
-the code so we could have addressed it then.  Instead now we have to rip 
-it out until we figure out what to do about it.  Thanks,
+v1:
+- https://lore.kernel.org/linux-mm/20200820002053.1424000-1-surenb@google.com/
 
-Josef
+ fs/proc/base.c                 |  3 +--
+ include/linux/oom.h            |  1 +
+ include/linux/sched/coredump.h |  1 +
+ kernel/fork.c                  | 21 +++++++++++++++++++++
+ mm/oom_kill.c                  |  2 ++
+ 5 files changed, 26 insertions(+), 2 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 617db4e0faa0..aa69c35d904c 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1055,7 +1055,6 @@ static ssize_t oom_adj_read(struct file *file, char __user *buf, size_t count,
+ 
+ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+ {
+-	static DEFINE_MUTEX(oom_adj_mutex);
+ 	struct mm_struct *mm = NULL;
+ 	struct task_struct *task;
+ 	int err = 0;
+@@ -1095,7 +1094,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
+ 		struct task_struct *p = find_lock_task_mm(task);
+ 
+ 		if (p) {
+-			if (atomic_read(&p->mm->mm_users) > 1) {
++			if (test_bit(MMF_MULTIPROCESS, &p->mm->flags)) {
+ 				mm = p->mm;
+ 				mmgrab(mm);
+ 			}
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index f022f581ac29..2db9a1432511 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -55,6 +55,7 @@ struct oom_control {
+ };
+ 
+ extern struct mutex oom_lock;
++extern struct mutex oom_adj_mutex;
+ 
+ static inline void set_current_oom_origin(void)
+ {
+diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
+index ecdc6542070f..dfd82eab2902 100644
+--- a/include/linux/sched/coredump.h
++++ b/include/linux/sched/coredump.h
+@@ -72,6 +72,7 @@ static inline int get_dumpable(struct mm_struct *mm)
+ #define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
+ #define MMF_OOM_VICTIM		25	/* mm is the oom victim */
+ #define MMF_OOM_REAP_QUEUED	26	/* mm was queued for oom_reaper */
++#define MMF_MULTIPROCESS	27	/* mm is shared between processes */
+ #define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
+ 
+ #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 4d32190861bd..6129a88c19ad 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1809,6 +1809,25 @@ static __always_inline void delayed_free_task(struct task_struct *tsk)
+ 		free_task(tsk);
+ }
+ 
++static void copy_oom_score_adj(u64 clone_flags, struct task_struct *tsk)
++{
++	/* Skip if kernel thread */
++	if (!tsk->mm)
++		return;
++
++	/* Skip if spawning a thread or using vfork */
++	if ((clone_flags & (CLONE_VM | CLONE_THREAD | CLONE_VFORK)) != CLONE_VM)
++		return;
++
++	/* We need to synchronize with __set_oom_adj */
++	mutex_lock(&oom_adj_mutex);
++	set_bit(MMF_MULTIPROCESS, &tsk->mm->flags);
++	/* Update the values in case they were changed after copy_signal */
++	tsk->signal->oom_score_adj = current->signal->oom_score_adj;
++	tsk->signal->oom_score_adj_min = current->signal->oom_score_adj_min;
++	mutex_unlock(&oom_adj_mutex);
++}
++
+ /*
+  * This creates a new process as a copy of the old one,
+  * but does not actually start it yet.
+@@ -2281,6 +2300,8 @@ static __latent_entropy struct task_struct *copy_process(
+ 	trace_task_newtask(p, clone_flags);
+ 	uprobe_copy_process(p, clone_flags);
+ 
++	copy_oom_score_adj(clone_flags, p);
++
+ 	return p;
+ 
+ bad_fork_cancel_cgroup:
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index e90f25d6385d..8b84661a6410 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -64,6 +64,8 @@ int sysctl_oom_dump_tasks = 1;
+  * and mark_oom_victim
+  */
+ DEFINE_MUTEX(oom_lock);
++/* Serializes oom_score_adj and oom_score_adj_min updates */
++DEFINE_MUTEX(oom_adj_mutex);
+ 
+ static inline bool is_memcg_oom(struct oom_control *oc)
+ {
+-- 
+2.28.0.526.ge36021eeef-goog
+
