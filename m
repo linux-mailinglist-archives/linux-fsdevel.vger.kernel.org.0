@@ -2,69 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C889225B112
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Sep 2020 18:15:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 406CB25B12A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Sep 2020 18:16:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728791AbgIBQOo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Sep 2020 12:14:44 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:42994 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728418AbgIBQOh (ORCPT
+        id S1728646AbgIBQPj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Sep 2020 12:15:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57058 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728525AbgIBQP3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Sep 2020 12:14:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599063276;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=gq3PYF0gH8Upn/AlKMBtYe87jdOYmG1nzMekq+7sJyM=;
-        b=ELRNvMxw6Bnu79OyRIBHL/2MZLagWtTxlQGJSc8Su3XRcIK/Y3fT9k7HXNqRWLgmBtWR3n
-        06ErOD/x0BfTpa5YgdQocbM9fw3n1zUzxx8mM8/Dwn6vCQhLrs223Um6wjVnjU4igHiRNH
-        wFr1exaALsjYNM6imcBjOhmDADFVPSU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-157-fljllp1xPEa5OhAcrU6DUg-1; Wed, 02 Sep 2020 12:14:34 -0400
-X-MC-Unique: fljllp1xPEa5OhAcrU6DUg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D7ED71005504;
-        Wed,  2 Sep 2020 16:14:32 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-113-6.rdu2.redhat.com [10.10.113.6])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 880967E306;
-        Wed,  2 Sep 2020 16:14:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAKgNAkho1WSOsxvCYQOs7vDxpfyeJ9JGdTL-Y0UEZtO3jVfmKw@mail.gmail.com>
-References: <CAKgNAkho1WSOsxvCYQOs7vDxpfyeJ9JGdTL-Y0UEZtO3jVfmKw@mail.gmail.com> <159827188271.306468.16962617119460123110.stgit@warthog.procyon.org.uk> <159827190508.306468.12755090833140558156.stgit@warthog.procyon.org.uk>
-To:     mtk.manpages@gmail.com
-Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] Add manpage for fsopen(2) and fsmount(2)
+        Wed, 2 Sep 2020 12:15:29 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC547C061245;
+        Wed,  2 Sep 2020 09:15:25 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id v12so6618391ljc.10;
+        Wed, 02 Sep 2020 09:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oSoo64G5hqYEcive3ArcdyG7UB+PlyeDXjvjpnqBKaM=;
+        b=ILZaHQFY0vCR6OfnekcdU650PGVAhhQKOY3NZeb4hb959Nnl7c4NCS70UaFQglHtg0
+         tmw8YQf7MSCpoNWKWXYyVbxXx9HEbddIZHaKYUV9Pzx4wU1LrUWxGrd51edl2xYBvMT/
+         jV86uJPe75MGE/bhTy838ASYBEy5+j5Wg8P4CflJrvO3zRqw4jTLUJG1wfuqZPtdqnZt
+         NfNvkNB0iKgTx14KotvME+b5EMO7YOPW0D31V87qwpP72GntFnRqcSSHyQXGMm+olhLS
+         zomK00J95pH7SXJEszpp2JCMRXLHU/8LeQ03Z317zOc43yNJHfFczmNAEWiEkbvO964m
+         zbTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oSoo64G5hqYEcive3ArcdyG7UB+PlyeDXjvjpnqBKaM=;
+        b=rrDGu+CDLTa8aqTE5yLzThYrkxM+iqw7Pgo1yLZjVxH1H4DfOOti+iQ71E2m0DuXaC
+         p2hI3mEHwTsi8SSjhJsQWU+WvnOenDR+lKLtzrAYFx6A0Ika/QdbibJC00loKLlnGWLJ
+         r+bMpnjCA0yCNflN/Q09ZK32UZALCysOj0+8AW4sU1iJsR/d+jqInCLdumwNEdwt4OQL
+         w/WX9pPaGZ5cSFry/1S1//tHzyESUXs0Lbzm82lQdO5LHIbK9gw36eizqxezqns+GE5E
+         YyF7U9uiB+N+TAdHTye7gT6s1/wg1JFKrmnE0iUumzBT3GAc8Rm28d8Fr9rybp2yplxo
+         RFWg==
+X-Gm-Message-State: AOAM533oN3yMA7NlxdNxTUjvsYibMASJpHwVClyOHI97GZ9mPIiKvv4o
+        PMedSQpnCZHQJ/VT+z2Lqz/XODj0tHnYKA==
+X-Google-Smtp-Source: ABdhPJxX1B1/iONuwBe8+9sI0WLVxdf/t3sGvls9Y/bh7JuyIHkc7shlyvSDR+KPPKhzMu2+2jeY+Q==
+X-Received: by 2002:a2e:4942:: with SMTP id b2mr3604841ljd.382.1599063322504;
+        Wed, 02 Sep 2020 09:15:22 -0700 (PDT)
+Received: from wasted.omprussia.ru ([2a00:1fa0:44ba:bd37:6990:9f35:8864:71b0])
+        by smtp.gmail.com with ESMTPSA id u14sm15245ljg.55.2020.09.02.09.15.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Sep 2020 09:15:21 -0700 (PDT)
+Subject: Re: [PATCH 15/19] md: use bdev_check_media_change
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Song Liu <song@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        linux-m68k@lists.linux-m68k.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200902141218.212614-1-hch@lst.de>
+ <20200902141218.212614-16-hch@lst.de>
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Message-ID: <566f5ca3-ec7b-b659-daff-f68699346010@gmail.com>
+Date:   Wed, 2 Sep 2020 19:15:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <667615.1599063270.1@warthog.procyon.org.uk>
-Date:   Wed, 02 Sep 2020 17:14:30 +0100
-Message-ID: <667616.1599063270@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <20200902141218.212614-16-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Michael Kerrisk (man-pages) <mtk.manpages@gmail.com> wrote:
+Hello!
 
-> The term "filesystem configuration context" is introduced, but never
-> really explained. I think it would be very helpful to have a sentence
-> or three that explains this concept at the start of the page.
+On 9/2/20 5:12 PM, Christoph Hellwig wrote:
 
-Does that need a .7 manpage?
+> The pcd driver does not have a ->revalidate_disk method, so it can just
 
-David
+   s/pcd/md/?
 
+> use bdev_check_media_change without any additional changes.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/md/md.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+[...]
+
+MBR, Sergei
