@@ -2,137 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 095BA25AAD6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Sep 2020 14:06:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD9C925AB06
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Sep 2020 14:20:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbgIBMGK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Sep 2020 08:06:10 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51951 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbgIBMGJ (ORCPT
+        id S1726895AbgIBMUS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Sep 2020 08:20:18 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:58222 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726210AbgIBMUO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Sep 2020 08:06:09 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1kDRFp-0003Ca-70; Wed, 02 Sep 2020 11:48:41 +0000
-Subject: Re: [PATCH] ACPI: sysfs: copy ACPI data using io memory copying
-To:     David Laight <David.Laight@ACULAB.COM>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Len Brown <lenb@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <20200312111345.1057569-1-colin.king@canonical.com>
- <2440284.4js2fAD822@kreacher>
- <65817d75-7272-2ef3-33a5-f390b5b0ec30@canonical.com>
- <e94b289c3dfb4ac0b05a7134f9ae8bb3@AcuMS.aculab.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <6c8386dd-d1a9-fde1-2416-7c4560680d30@canonical.com>
-Date:   Wed, 2 Sep 2020 12:48:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 2 Sep 2020 08:20:14 -0400
+Received: from dread.disaster.area (pa49-195-191-192.pa.nsw.optusnet.com.au [49.195.191.192])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 8B55B823241;
+        Wed,  2 Sep 2020 22:20:10 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kDRkG-0000eL-Db; Wed, 02 Sep 2020 22:20:08 +1000
+Date:   Wed, 2 Sep 2020 22:20:08 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        David Sterba <dsterba@suse.com>,
+        "linux-btrfs @ vger . kernel . org" <linux-btrfs@vger.kernel.org>,
+        Filipe Manana <fdmanana@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH] btrfs: don't call btrfs_sync_file from iomap context
+Message-ID: <20200902122008.GK12096@dread.disaster.area>
+References: <20200901130644.12655-1-johannes.thumshirn@wdc.com>
+ <42efa646-73cd-d884-1c9c-dd889294bde2@toxicpanda.com>
+ <20200901214613.GH12096@dread.disaster.area>
+ <551b2801-d626-9bd7-7cb2-9d20674c06bf@toxicpanda.com>
+ <20200901235830.GI12096@dread.disaster.area>
+ <20200902114414.GX14765@casper.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <e94b289c3dfb4ac0b05a7134f9ae8bb3@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200902114414.GX14765@casper.infradead.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=IuRgj43g c=1 sm=1 tr=0 cx=a_idp_d
+        a=vvDRHhr1aDYKXl+H6jx2TA==:117 a=vvDRHhr1aDYKXl+H6jx2TA==:17
+        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=iox4zFpeAAAA:8 a=yPCof4ZbAAAA:8
+        a=7-415B0cAAAA:8 a=LkxeRzu4S8V8-VZuuRUA:9 a=CjuIK1q_8ugA:10
+        a=WzC6qhA0u3u7Ye7llzcV:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 02/09/2020 12:13, David Laight wrote:
-> From: Colin Ian King
->> Sent: 02 September 2020 11:27
->>
->> On 14/03/2020 10:23, Rafael J. Wysocki wrote:
->>> On Thursday, March 12, 2020 12:13:45 PM CET Colin King wrote:
->>>> From: Colin Ian King <colin.king@canonical.com>
->>>>
->>>> Reading ACPI data on ARM64 at a non-aligned offset from
->>>> /sys/firmware/acpi/tables/data/BERT will cause a splat because
->>>> the data is I/O memory mapped and being read with just a memcpy.
->>>> Fix this by introducing an I/O variant of memory_read_from_buffer
->>>> and using I/O memory mapped copies instead.
-> ..
->>>> +/**
->>>> + * memory_read_from_io_buffer - copy data from a io memory mapped buffer
->>>> + * @to: the kernel space buffer to read to
->>>> + * @count: the maximum number of bytes to read
->>>> + * @ppos: the current position in the buffer
->>>> + * @from: the buffer to read from
->>>> + * @available: the size of the buffer
->>>> + *
->>>> + * The memory_read_from_buffer() function reads up to @count bytes from the
->>>> + * io memory mappy buffer @from at offset @ppos into the kernel space address
->>>> + * starting at @to.
->>>> + *
->>>> + * On success, the number of bytes read is returned and the offset @ppos is
->>>> + * advanced by this number, or negative value is returned on error.
->>>> + **/
+On Wed, Sep 02, 2020 at 12:44:14PM +0100, Matthew Wilcox wrote:
+> On Wed, Sep 02, 2020 at 09:58:30AM +1000, Dave Chinner wrote:
+> > Put simply: converting a filesystem to use iomap is not a "change
+> > the filesystem interfacing code and it will work" modification.  We
+> > ask that filesystems are modified to conform to the iomap IO
+> > exclusion model; adding special cases for every potential
+> > locking and mapping quirk every different filesystem has is part of
+> > what turned the old direct IO code into an unmaintainable nightmare.
+> > 
+> > > That's fine, but this is kind of a bad way to find
+> > > out.  We really shouldn't have generic helper's that have different generic
+> > > locking rules based on which file system uses them.
+> > 
+> > We certainly can change the rules for new infrastructure. Indeed, we
+> > had to change the rules to support DAX.  The whole point of the
+> > iomap infrastructure was that it enabled us to use code that already
+> > worked for DAX (the XFS code) in multiple filesystems. And as people
+> > have realised that the DIO via iomap is much faster than the old DIO
+> > code and is a much more efficient way of doing large buffered IO,
+> > other filesystems have started to use it.
+> > 
+> > However....
+> > 
+> > > Because then we end up
+> > > with situations like this, where suddenly we're having to come up with some
+> > > weird solution because the generic thing only works for a subset of file
+> > > systems.  Thanks,
+> > 
+> > .... we've always said "you need to change the filesystem code to
+> > use iomap". This is simply a reflection on the fact that iomap has
+> > different rules and constraints to the old code and so it's not a
+> > direct plug in replacement. There are no short cuts here...
 > 
-> Apart from the return value how is this different from the generic
-> memcpy_from_io() ?
-> 
-> 	David
+> Can you point me (and I suspect Josef!) towards the documentation of the
+> locking model?  I was hoping to find Documentation/filesystems/iomap.rst
+> but all the 'iomap' strings in Documentation/ refer to pci_iomap and
+> similar, except for this in the DAX documentation:
 
+There's no locking model documentation because there is no locking
+in the iomap direct IO code. The filesystem defines and does all the
+locking, so there's pretty much nothing to document for iomap.
 
-The intention is to be semantically the same as
-memory_read_from_buffer(), so in that respect quite a bit different from
-memcpy_fromio()
+IOWs, the only thing iomap_dio_rw requires is that the IO completion
+paths do not take same locks that the IO submission path
+requires. And that's because:
 
-Colin
+/*
+ * iomap_dio_rw() always completes O_[D]SYNC writes regardless of whether the IO
+ * is being issued as AIO or not. [...]
 
-> 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
-> 
+So you obviously can't sit waiting for dio completion in
+iomap_dio_rw() while holding the submission lock if completion
+requires the submission lock to make progress.
 
+FWIW, iomap_dio_rw() originally required the inode_lock() to be held
+and contained a lockdep assert to verify this, but....
+
+commit 3ad99bec6e82e32fa9faf2f84e74b134586b46f7
+Author: Goldwyn Rodrigues <rgoldwyn@suse.com>
+Date:   Sat Nov 30 09:59:25 2019 -0600
+
+    iomap: remove lockdep_assert_held()
+    
+    Filesystems such as btrfs can perform direct I/O without holding the
+    inode->i_rwsem in some of the cases like writing within i_size.  So,
+    remove the check for lockdep_assert_held() in iomap_dio_rw().
+    
+    Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+    Signed-off-by: Goldwyn Rodrigues <rgoldwyn@suse.com>
+    Signed-off-by: David Sterba <dsterba@suse.com>
+
+... btrfs has special corner cases for direct IO locking and hence
+we removed the lockdep assert....
+
+IOWs, iomap_dio_rw() really does not care what strategy filesystems
+use to serialise DIO against other operations.  Filesystems can use
+whatever IO serialisation mechanism they want (mutex, rwsem, range
+locks, etc) as long as they obey the one simple requirement: do not
+take the DIO submission lock in the DIO completion path.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
