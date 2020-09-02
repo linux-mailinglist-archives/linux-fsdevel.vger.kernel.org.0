@@ -2,235 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B3D0425A29F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Sep 2020 03:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8FD025A2EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Sep 2020 04:12:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbgIBB0H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Sep 2020 21:26:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33546 "EHLO
+        id S1726406AbgIBCMk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Sep 2020 22:12:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726192AbgIBB0E (ORCPT
+        with ESMTP id S1726426AbgIBCMe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Sep 2020 21:26:04 -0400
-Received: from mail-qk1-x74a.google.com (mail-qk1-x74a.google.com [IPv6:2607:f8b0:4864:20::74a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55408C061246
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Sep 2020 18:26:04 -0700 (PDT)
-Received: by mail-qk1-x74a.google.com with SMTP id r4so2266331qkb.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Sep 2020 18:26:04 -0700 (PDT)
+        Tue, 1 Sep 2020 22:12:34 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3C87C061244
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Sep 2020 19:12:33 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id l191so1737407pgd.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Sep 2020 19:12:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:message-id:mime-version:subject:from:to:cc;
-        bh=RLfqZvE8pBUN1hIKB0BVnJlGhsKyMWNU1UKytWcZLUM=;
-        b=dXw7B+2PvKo8CcOZn9XS2LOZ2blgCKjwW3Um30oC4s5uZ9ae94Gr4A+8BphAzSOPI/
-         RpVY7nU4c4WJIDVUjcXmLU91IngTEQleW1DdyVcTtbBjGdKXDwWChoC5oAMnAKT6bmQM
-         8l4TDUmSzHu8/2QGEDN9OTeQUai2duwHW5j1cJj3D1CBc3Q8PNUNL2UJzgVWytSUqc4c
-         RYKLsGbSPytwDeZsCNqrwO7Z2n1FZJqFcab/sFJ+grNnedMrIOmt04oF2KkN/Vo8Ykzk
-         n8/GB1z8AelGbbgpyiLvW8/IpbKlNcbnZzUpXjoJ1c4+neHqQnPo2lQ5W9dyY1BptBdL
-         /eUQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eDn4H8C3rvbkfT2QTNfX9/NNgOmpWWzhsOOAvMq08G0=;
+        b=nm2odj8d9USAWrDN0g+bHXzNG/RcPcWRX7VnJYkhvFC3aw2I0bzjfDViTVS8ODRYUA
+         fLd8SEAnfNgAT4J7OV5fy1vq1dFtpwcEcZrSmM8swQO2qdRMxBrqTZpsuhSmyxWgo8Ch
+         pjzsQ7BIFq5DOVeNcrGoPoJqUyAYu3xeaMhaJNH/V05Pe9gh9FN1P5LXGjNTHYVJCx3a
+         aNMpWu1BTNTCKTfDvKmVSpVs54K+LWOnSZWhFxLzS9bJMlzy5T8/QXtR1chxEDBpqjZE
+         4sU0BicGDTKLHrJCseGnWW2FJCv9YJjkLdPgzJGfTBrLrVDnQkEx8HE4iGYoCdsdjpxr
+         ++Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
-         :to:cc;
-        bh=RLfqZvE8pBUN1hIKB0BVnJlGhsKyMWNU1UKytWcZLUM=;
-        b=befwMX7LNx54Sf0vMlYkgnPIe9o84V55KVYDUni+26BB/3gHvwMW9nq6cDWRNKRTRf
-         KtEmzNQdW961RcHiif94UWDl6KaBrNTl3MF9fL7lR1v0hUppVaYUxciT+Y6+GL+epVMI
-         iRDtP79qeDJenoFGZWXaJ9waTXH0j3NoGvJhNZYNyQWaY25DiCskrQsCoi1H6+Josdrr
-         Mh0TqATtDQE5op5rvGj1inqER81xgbRb0Zl0/syKeucsNYpWn7DEsDMjIpBvNnTBtusz
-         6ZRRmM/lU2QFuOQsgErkFmOW8Vu7i5rrynXdtQ+xibAqEuA/BsvcWoIEOVamgmWs13Qv
-         b+ZA==
-X-Gm-Message-State: AOAM533qvgQdwPH2miv2BBU57I5STEPPFPsQi44j7mSDPdCubAH1Fjyq
-        ifLWSyqwuZlTVpSZeRg4ZLw5TGNINvE=
-X-Google-Smtp-Source: ABdhPJzfnzS7XFT2K3jQLTxN2cjQbQ0gu+G/2Ska9DLh59I+r+w1xXd+TQEC72s/KA60EEHPQBIQik6vI28=
-X-Received: from surenb1.mtv.corp.google.com ([2620:15c:211:0:f693:9fff:fef4:2055])
- (user=surenb job=sendgmr) by 2002:ad4:4527:: with SMTP id l7mr1710656qvu.2.1599009962317;
- Tue, 01 Sep 2020 18:26:02 -0700 (PDT)
-Date:   Tue,  1 Sep 2020 18:25:58 -0700
-Message-Id: <20200902012558.2335613-1-surenb@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.28.0.526.ge36021eeef-goog
-Subject: [PATCH v3 1/1] mm, oom_adj: don't loop through tasks in __set_oom_adj
- when not necessary
-From:   Suren Baghdasaryan <surenb@google.com>
-To:     surenb@google.com
-Cc:     mhocko@suse.com, christian.brauner@ubuntu.com, mingo@kernel.org,
-        peterz@infradead.org, tglx@linutronix.de, esyr@redhat.com,
-        christian@kellner.me, areber@redhat.com, shakeelb@google.com,
-        cyphar@cyphar.com, oleg@redhat.com, adobriyan@gmail.com,
-        akpm@linux-foundation.org, ebiederm@xmission.com,
-        gladkov.alexey@gmail.com, walken@google.com,
-        daniel.m.jordan@oracle.com, avagin@gmail.com,
-        bernd.edlinger@hotmail.de, john.johansen@canonical.com,
-        laoar.shao@gmail.com, timmurray@google.com, minchan@kernel.org,
-        kernel-team@android.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        linux-mm@kvack.org, Michal Hocko <mhocko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eDn4H8C3rvbkfT2QTNfX9/NNgOmpWWzhsOOAvMq08G0=;
+        b=TLse646tNPsF4M3K9Yd0srsP/xqzSoL2ah3c7uD2fdPSvpxZafXZrdqrZYoqew5yFR
+         IS6CVSJdP3Hl066Twsihw8lltEbOWJNvMswSVtK5fOZWGdP1bjOzJvAfd07zczTGno9H
+         q4eNygTbf4MRfeBd3K+karMJCmxGiaAEcaDX8kMcTMEp6pAjhirDR6mhYcm7TlcJ7VH6
+         DsGkCxqY3YjrNdb9PPASmfeCKYUZ8VpAdGn/HDMFDbaXOr5+rGYY25JOoGoPCeZixCCK
+         O16is2A9JVzUbCpUluGxTWFcgXa1EaS9BKyyIHj1kYs8O8KbX/bGEpgbsOHORl39N2by
+         qLZw==
+X-Gm-Message-State: AOAM531gcFlNy29GDLfSTIWJR4Xrntho4/yNJNLuJ1lFBBsi9yvLNTgy
+        G2tR/TliaX6Y86BmAffhPEIYTA==
+X-Google-Smtp-Source: ABdhPJxRN5Q1ePyU37A3TlwCXtmce0zhsFRZjYXGpiehBCiXkA2V5nB0n9WaHKiS5nHgJ2MzwAb31w==
+X-Received: by 2002:aa7:9584:: with SMTP id z4mr1063657pfj.271.1599012753395;
+        Tue, 01 Sep 2020 19:12:33 -0700 (PDT)
+Received: from [192.168.1.187] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id q2sm3552880pgs.90.2020.09.01.19.12.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Sep 2020 19:12:32 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: Fix NULL pointer dereference in
+ io_sq_wq_submit_work()
+To:     Xin Yin <yinxin_1989@aliyun.com>, viro@zeniv.linux.org.uk
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200902015948.109580-1-yinxin_1989@aliyun.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <1c1ae234-0084-bddd-990f-5fd92c4e6430@kernel.dk>
+Date:   Tue, 1 Sep 2020 20:12:31 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200902015948.109580-1-yinxin_1989@aliyun.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently __set_oom_adj loops through all processes in the system to
-keep oom_score_adj and oom_score_adj_min in sync between processes
-sharing their mm. This is done for any task with more that one mm_users,
-which includes processes with multiple threads (sharing mm and signals).
-However for such processes the loop is unnecessary because their signal
-structure is shared as well.
-Android updates oom_score_adj whenever a tasks changes its role
-(background/foreground/...) or binds to/unbinds from a service, making
-it more/less important. Such operation can happen frequently.
-We noticed that updates to oom_score_adj became more expensive and after
-further investigation found out that the patch mentioned in "Fixes"
-introduced a regression. Using Pixel 4 with a typical Android workload,
-write time to oom_score_adj increased from ~3.57us to ~362us. Moreover
-this regression linearly depends on the number of multi-threaded
-processes running on the system.
-Mark the mm with a new MMF_MULTIPROCESS flag bit when task is created with
-(CLONE_VM && !CLONE_THREAD && !CLONE_VFORK). Change __set_oom_adj to use
-MMF_MULTIPROCESS instead of mm_users to decide whether oom_score_adj
-update should be synchronized between multiple processes. To prevent
-races between clone() and __set_oom_adj(), when oom_score_adj of the
-process being cloned might be modified from userspace, we use
-oom_adj_mutex. Its scope is changed to global. The combination of
-(CLONE_VM && !CLONE_THREAD) is rarely used except for the case of vfork().
-To prevent performance regressions of vfork(), we skip taking oom_adj_mutex
-and setting MMF_MULTIPROCESS when CLONE_VFORK is specified. Clearing the
-MMF_MULTIPROCESS flag (when the last process sharing the mm exits) is left
-out of this patch to keep it simple and because it is believed that this
-threading model is rare. Should there ever be a need for optimizing that
-case as well, it can be done by hooking into the exit path, likely
-following the mm_update_next_owner pattern.
-With the combination of (CLONE_VM && !CLONE_THREAD && !CLONE_VFORK) being
-quite rare, the regression is gone after the change is applied.
+On 9/1/20 7:59 PM, Xin Yin wrote:
+> the commit <1c4404efcf2c0> ("<io_uring: make sure async workqueue
+> is canceled on exit>") caused a crash in io_sq_wq_submit_work().
+> when io_ring-wq get a req form async_list, which not have been
+> added to task_list. Then try to delete the req from task_list will caused
+> a "NULL pointer dereference".
+> 
+> Ensure add req to async_list and task_list at the sametime.
+> 
+> The crash log looks like this:
+> [95995.973638] Unable to handle kernel NULL pointer dereference at virtual address 00000000
+> [95995.979123] pgd = c20c8964
+> [95995.981803] [00000000] *pgd=1c72d831, *pte=00000000, *ppte=00000000
+> [95995.988043] Internal error: Oops: 817 [#1] SMP ARM
+> [95995.992814] Modules linked in: bpfilter(-)
+> [95995.996898] CPU: 1 PID: 15661 Comm: kworker/u8:5 Not tainted 5.4.56 #2
+> [95996.003406] Hardware name: Amlogic Meson platform
+> [95996.008108] Workqueue: io_ring-wq io_sq_wq_submit_work
+> [95996.013224] PC is at io_sq_wq_submit_work+0x1f4/0x5c4
+> [95996.018261] LR is at walk_stackframe+0x24/0x40
+> [95996.022685] pc : [<c059b898>]    lr : [<c030da7c>]    psr: 600f0093
+> [95996.028936] sp : dc6f7e88  ip : dc6f7df0  fp : dc6f7ef4
+> [95996.034148] r10: deff9800  r9 : dc1d1694  r8 : dda58b80
+> [95996.039358] r7 : dc6f6000  r6 : dc6f7ebc  r5 : dc1d1600  r4 : deff99c0
+> [95996.045871] r3 : 0000cb5d  r2 : 00000000  r1 : ef6b9b80  r0 : c059b88c
+> [95996.052385] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment user
+> [95996.059593] Control: 10c5387d  Table: 22be804a  DAC: 00000055
+> [95996.065325] Process kworker/u8:5 (pid: 15661, stack limit = 0x78013c69)
+> [95996.071923] Stack: (0xdc6f7e88 to 0xdc6f8000)
+> [95996.076268] 7e80:                   dc6f7ecc dc6f7e98 00000000 c1f06c08 de9dc800 deff9a04
+> [95996.084431] 7ea0: 00000000 dc6f7f7c 00000000 c1f65808 0000080c dc677a00 c1ee9bd0 dc6f7ebc
+> [95996.092594] 7ec0: dc6f7ebc d085c8f6 c0445a90 dc1d1e00 e008f300 c0288400 e4ef7100 00000000
+> [95996.100757] 7ee0: c20d45b0 e4ef7115 dc6f7f34 dc6f7ef8 c03725f0 c059b6b0 c0288400 c0288400
+> [95996.108921] 7f00: c0288400 00000001 c0288418 e008f300 c0288400 e008f314 00000088 c0288418
+> [95996.117083] 7f20: c1f03d00 dc6f6038 dc6f7f7c dc6f7f38 c0372df8 c037246c dc6f7f5c 00000000
+> [95996.125245] 7f40: c1f03d00 c1f03d00 c20d3cbe c0288400 dc6f7f7c e1c43880 e4fa7980 00000000
+> [95996.133409] 7f60: e008f300 c0372d9c e48bbe74 e1c4389c dc6f7fac dc6f7f80 c0379244 c0372da8
+> [95996.141570] 7f80: 600f0093 e4fa7980 c0379108 00000000 00000000 00000000 00000000 00000000
+> [95996.149734] 7fa0: 00000000 dc6f7fb0 c03010ac c0379114 00000000 00000000 00000000 00000000
+> [95996.157897] 7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> [95996.166060] 7fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+> [95996.174217] Backtrace:
+> [95996.176662] [<c059b6a4>] (io_sq_wq_submit_work) from [<c03725f0>] (process_one_work+0x190/0x4c0)
+> [95996.185425]  r10:e4ef7115 r9:c20d45b0 r8:00000000 r7:e4ef7100 r6:c0288400 r5:e008f300
+> [95996.193237]  r4:dc1d1e00
+> [95996.195760] [<c0372460>] (process_one_work) from [<c0372df8>] (worker_thread+0x5c/0x5bc)
+> [95996.203836]  r10:dc6f6038 r9:c1f03d00 r8:c0288418 r7:00000088 r6:e008f314 r5:c0288400
+> [95996.211647]  r4:e008f300
+> [95996.214173] [<c0372d9c>] (worker_thread) from [<c0379244>] (kthread+0x13c/0x168)
+> [95996.221554]  r10:e1c4389c r9:e48bbe74 r8:c0372d9c r7:e008f300 r6:00000000 r5:e4fa7980
+> [95996.229363]  r4:e1c43880
+> [95996.231888] [<c0379108>] (kthread) from [<c03010ac>] (ret_from_fork+0x14/0x28)
+> [95996.239088] Exception stack(0xdc6f7fb0 to 0xdc6f7ff8)
+> [95996.244127] 7fa0:                                     00000000 00000000 00000000 00000000
+> [95996.252291] 7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+> [95996.260453] 7fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+> [95996.267054]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:c0379108
+> [95996.274866]  r4:e4fa7980 r3:600f0093
+> [95996.278430] Code: eb3a59e1 e5952098 e5951094 e5812004 (e5821000)
 
-Fixes: 44a70adec910 ("mm, oom_adj: make sure processes sharing mm have same view of oom_score_adj")
-Reported-by: Tim Murray <timmurray@google.com>
-Debugged-by: Minchan Kim <minchan@kernel.org>
-Suggested-by: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
+Thanks for catching this, I'll get it queued for stable.
 
-v3:
-- Addressed Eric Biederman's comments from:
-https://lore.kernel.org/linux-mm/87imd6n0qk.fsf@x220.int.ebiederm.org/
--- renabled oom_adj_lock back to oom_adj_mutex
--- renamed MMF_PROC_SHARED into MMF_MULTIPROCESS and fixed its comment
-- Updated description to reflect the change
-
-
-v2:
-- https://lore.kernel.org/linux-mm/20200824153036.3201505-1-surenb@google.com/
-- Implemented proposal from Michal Hocko in:
-https://lore.kernel.org/linux-fsdevel/20200820124109.GI5033@dhcp22.suse.cz/
-- Updated description to reflect the change
-
-v1:
-- https://lore.kernel.org/linux-mm/20200820002053.1424000-1-surenb@google.com/
-
- fs/proc/base.c                 |  3 +--
- include/linux/oom.h            |  1 +
- include/linux/sched/coredump.h |  1 +
- kernel/fork.c                  | 21 +++++++++++++++++++++
- mm/oom_kill.c                  |  2 ++
- 5 files changed, 26 insertions(+), 2 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 617db4e0faa0..aa69c35d904c 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1055,7 +1055,6 @@ static ssize_t oom_adj_read(struct file *file, char __user *buf, size_t count,
- 
- static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
- {
--	static DEFINE_MUTEX(oom_adj_mutex);
- 	struct mm_struct *mm = NULL;
- 	struct task_struct *task;
- 	int err = 0;
-@@ -1095,7 +1094,7 @@ static int __set_oom_adj(struct file *file, int oom_adj, bool legacy)
- 		struct task_struct *p = find_lock_task_mm(task);
- 
- 		if (p) {
--			if (atomic_read(&p->mm->mm_users) > 1) {
-+			if (test_bit(MMF_MULTIPROCESS, &p->mm->flags)) {
- 				mm = p->mm;
- 				mmgrab(mm);
- 			}
-diff --git a/include/linux/oom.h b/include/linux/oom.h
-index f022f581ac29..2db9a1432511 100644
---- a/include/linux/oom.h
-+++ b/include/linux/oom.h
-@@ -55,6 +55,7 @@ struct oom_control {
- };
- 
- extern struct mutex oom_lock;
-+extern struct mutex oom_adj_mutex;
- 
- static inline void set_current_oom_origin(void)
- {
-diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
-index ecdc6542070f..dfd82eab2902 100644
---- a/include/linux/sched/coredump.h
-+++ b/include/linux/sched/coredump.h
-@@ -72,6 +72,7 @@ static inline int get_dumpable(struct mm_struct *mm)
- #define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
- #define MMF_OOM_VICTIM		25	/* mm is the oom victim */
- #define MMF_OOM_REAP_QUEUED	26	/* mm was queued for oom_reaper */
-+#define MMF_MULTIPROCESS	27	/* mm is shared between processes */
- #define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
- 
- #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 4d32190861bd..6129a88c19ad 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1809,6 +1809,25 @@ static __always_inline void delayed_free_task(struct task_struct *tsk)
- 		free_task(tsk);
- }
- 
-+static void copy_oom_score_adj(u64 clone_flags, struct task_struct *tsk)
-+{
-+	/* Skip if kernel thread */
-+	if (!tsk->mm)
-+		return;
-+
-+	/* Skip if spawning a thread or using vfork */
-+	if ((clone_flags & (CLONE_VM | CLONE_THREAD | CLONE_VFORK)) != CLONE_VM)
-+		return;
-+
-+	/* We need to synchronize with __set_oom_adj */
-+	mutex_lock(&oom_adj_mutex);
-+	set_bit(MMF_MULTIPROCESS, &tsk->mm->flags);
-+	/* Update the values in case they were changed after copy_signal */
-+	tsk->signal->oom_score_adj = current->signal->oom_score_adj;
-+	tsk->signal->oom_score_adj_min = current->signal->oom_score_adj_min;
-+	mutex_unlock(&oom_adj_mutex);
-+}
-+
- /*
-  * This creates a new process as a copy of the old one,
-  * but does not actually start it yet.
-@@ -2281,6 +2300,8 @@ static __latent_entropy struct task_struct *copy_process(
- 	trace_task_newtask(p, clone_flags);
- 	uprobe_copy_process(p, clone_flags);
- 
-+	copy_oom_score_adj(clone_flags, p);
-+
- 	return p;
- 
- bad_fork_cancel_cgroup:
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index e90f25d6385d..8b84661a6410 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -64,6 +64,8 @@ int sysctl_oom_dump_tasks = 1;
-  * and mark_oom_victim
-  */
- DEFINE_MUTEX(oom_lock);
-+/* Serializes oom_score_adj and oom_score_adj_min updates */
-+DEFINE_MUTEX(oom_adj_mutex);
- 
- static inline bool is_memcg_oom(struct oom_control *oc)
- {
 -- 
-2.28.0.526.ge36021eeef-goog
+Jens Axboe
 
