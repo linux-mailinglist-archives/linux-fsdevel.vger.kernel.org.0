@@ -2,88 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0897025AA15
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Sep 2020 13:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DEFF25AA76
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Sep 2020 13:44:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbgIBLOp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Sep 2020 07:14:45 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:57093 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726510AbgIBLNn (ORCPT
+        id S1726586AbgIBLog (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Sep 2020 07:44:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43356 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbgIBLoY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Sep 2020 07:13:43 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-264-vYAVe1aDPQ2U4EAg7n6GQg-1; Wed, 02 Sep 2020 12:13:39 +0100
-X-MC-Unique: vYAVe1aDPQ2U4EAg7n6GQg-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 2 Sep 2020 12:13:38 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 2 Sep 2020 12:13:38 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Colin Ian King' <colin.king@canonical.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-CC:     Len Brown <lenb@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH] ACPI: sysfs: copy ACPI data using io memory copying
-Thread-Topic: [PATCH] ACPI: sysfs: copy ACPI data using io memory copying
-Thread-Index: AQHWgROr7agM3y/cj06L4ZPs9JoiwalVMaYA
-Date:   Wed, 2 Sep 2020 11:13:38 +0000
-Message-ID: <e94b289c3dfb4ac0b05a7134f9ae8bb3@AcuMS.aculab.com>
-References: <20200312111345.1057569-1-colin.king@canonical.com>
- <2440284.4js2fAD822@kreacher>
- <65817d75-7272-2ef3-33a5-f390b5b0ec30@canonical.com>
-In-Reply-To: <65817d75-7272-2ef3-33a5-f390b5b0ec30@canonical.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 2 Sep 2020 07:44:24 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0A37C061244;
+        Wed,  2 Sep 2020 04:44:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=qfUausPRVQ29BP7WmCGntZ/IR0ySDov7mnmZz+JD9z8=; b=csGgh/Ld7k3AsF1N4a3NFa5Cj1
+        cBRLQuwvEP195o/73w6+mibiYmUSXV5EjvYpQ6SJZf69cGZRrqKoOtAoCib1GHNAemzY8WD12elBe
+        0ql+n6jhRUU9hQsklQctWJCb+BFvDgoHGTyvFPxG7Q9da6axtT8eIsUnPiw2WiWjMlyAfCTknA7rh
+        LJEONt4QfkkoESYiJelNpm0WCm/aSI+l2MiFGzbTOa7+O/AfuOE9NZ6uJNus+RsKitdeGx396V6do
+        bowRAWA6lIQ8jDcZzLr2zozu5Xxu0wmrVG3W89PrWl2W1QW1ToDHc7AnoUtAJXFXBIzBqhXiZXozi
+        xC4oN8pQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kDRBW-0005cP-LV; Wed, 02 Sep 2020 11:44:14 +0000
+Date:   Wed, 2 Sep 2020 12:44:14 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        David Sterba <dsterba@suse.com>,
+        "linux-btrfs @ vger . kernel . org" <linux-btrfs@vger.kernel.org>,
+        Filipe Manana <fdmanana@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH] btrfs: don't call btrfs_sync_file from iomap context
+Message-ID: <20200902114414.GX14765@casper.infradead.org>
+References: <20200901130644.12655-1-johannes.thumshirn@wdc.com>
+ <42efa646-73cd-d884-1c9c-dd889294bde2@toxicpanda.com>
+ <20200901214613.GH12096@dread.disaster.area>
+ <551b2801-d626-9bd7-7cb2-9d20674c06bf@toxicpanda.com>
+ <20200901235830.GI12096@dread.disaster.area>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0.002
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200901235830.GI12096@dread.disaster.area>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogQ29saW4gSWFuIEtpbmcNCj4gU2VudDogMDIgU2VwdGVtYmVyIDIwMjAgMTE6MjcNCj4g
-DQo+IE9uIDE0LzAzLzIwMjAgMTA6MjMsIFJhZmFlbCBKLiBXeXNvY2tpIHdyb3RlOg0KPiA+IE9u
-IFRodXJzZGF5LCBNYXJjaCAxMiwgMjAyMCAxMjoxMzo0NSBQTSBDRVQgQ29saW4gS2luZyB3cm90
-ZToNCj4gPj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4N
-Cj4gPj4NCj4gPj4gUmVhZGluZyBBQ1BJIGRhdGEgb24gQVJNNjQgYXQgYSBub24tYWxpZ25lZCBv
-ZmZzZXQgZnJvbQ0KPiA+PiAvc3lzL2Zpcm13YXJlL2FjcGkvdGFibGVzL2RhdGEvQkVSVCB3aWxs
-IGNhdXNlIGEgc3BsYXQgYmVjYXVzZQ0KPiA+PiB0aGUgZGF0YSBpcyBJL08gbWVtb3J5IG1hcHBl
-ZCBhbmQgYmVpbmcgcmVhZCB3aXRoIGp1c3QgYSBtZW1jcHkuDQo+ID4+IEZpeCB0aGlzIGJ5IGlu
-dHJvZHVjaW5nIGFuIEkvTyB2YXJpYW50IG9mIG1lbW9yeV9yZWFkX2Zyb21fYnVmZmVyDQo+ID4+
-IGFuZCB1c2luZyBJL08gbWVtb3J5IG1hcHBlZCBjb3BpZXMgaW5zdGVhZC4NCi4uDQo+ID4+ICsv
-KioNCj4gPj4gKyAqIG1lbW9yeV9yZWFkX2Zyb21faW9fYnVmZmVyIC0gY29weSBkYXRhIGZyb20g
-YSBpbyBtZW1vcnkgbWFwcGVkIGJ1ZmZlcg0KPiA+PiArICogQHRvOiB0aGUga2VybmVsIHNwYWNl
-IGJ1ZmZlciB0byByZWFkIHRvDQo+ID4+ICsgKiBAY291bnQ6IHRoZSBtYXhpbXVtIG51bWJlciBv
-ZiBieXRlcyB0byByZWFkDQo+ID4+ICsgKiBAcHBvczogdGhlIGN1cnJlbnQgcG9zaXRpb24gaW4g
-dGhlIGJ1ZmZlcg0KPiA+PiArICogQGZyb206IHRoZSBidWZmZXIgdG8gcmVhZCBmcm9tDQo+ID4+
-ICsgKiBAYXZhaWxhYmxlOiB0aGUgc2l6ZSBvZiB0aGUgYnVmZmVyDQo+ID4+ICsgKg0KPiA+PiAr
-ICogVGhlIG1lbW9yeV9yZWFkX2Zyb21fYnVmZmVyKCkgZnVuY3Rpb24gcmVhZHMgdXAgdG8gQGNv
-dW50IGJ5dGVzIGZyb20gdGhlDQo+ID4+ICsgKiBpbyBtZW1vcnkgbWFwcHkgYnVmZmVyIEBmcm9t
-IGF0IG9mZnNldCBAcHBvcyBpbnRvIHRoZSBrZXJuZWwgc3BhY2UgYWRkcmVzcw0KPiA+PiArICog
-c3RhcnRpbmcgYXQgQHRvLg0KPiA+PiArICoNCj4gPj4gKyAqIE9uIHN1Y2Nlc3MsIHRoZSBudW1i
-ZXIgb2YgYnl0ZXMgcmVhZCBpcyByZXR1cm5lZCBhbmQgdGhlIG9mZnNldCBAcHBvcyBpcw0KPiA+
-PiArICogYWR2YW5jZWQgYnkgdGhpcyBudW1iZXIsIG9yIG5lZ2F0aXZlIHZhbHVlIGlzIHJldHVy
-bmVkIG9uIGVycm9yLg0KPiA+PiArICoqLw0KDQpBcGFydCBmcm9tIHRoZSByZXR1cm4gdmFsdWUg
-aG93IGlzIHRoaXMgZGlmZmVyZW50IGZyb20gdGhlIGdlbmVyaWMNCm1lbWNweV9mcm9tX2lvKCkg
-Pw0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJv
-YWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24g
-Tm86IDEzOTczODYgKFdhbGVzKQ0K
+On Wed, Sep 02, 2020 at 09:58:30AM +1000, Dave Chinner wrote:
+> Put simply: converting a filesystem to use iomap is not a "change
+> the filesystem interfacing code and it will work" modification.  We
+> ask that filesystems are modified to conform to the iomap IO
+> exclusion model; adding special cases for every potential
+> locking and mapping quirk every different filesystem has is part of
+> what turned the old direct IO code into an unmaintainable nightmare.
+> 
+> > That's fine, but this is kind of a bad way to find
+> > out.  We really shouldn't have generic helper's that have different generic
+> > locking rules based on which file system uses them.
+> 
+> We certainly can change the rules for new infrastructure. Indeed, we
+> had to change the rules to support DAX.  The whole point of the
+> iomap infrastructure was that it enabled us to use code that already
+> worked for DAX (the XFS code) in multiple filesystems. And as people
+> have realised that the DIO via iomap is much faster than the old DIO
+> code and is a much more efficient way of doing large buffered IO,
+> other filesystems have started to use it.
+> 
+> However....
+> 
+> > Because then we end up
+> > with situations like this, where suddenly we're having to come up with some
+> > weird solution because the generic thing only works for a subset of file
+> > systems.  Thanks,
+> 
+> .... we've always said "you need to change the filesystem code to
+> use iomap". This is simply a reflection on the fact that iomap has
+> different rules and constraints to the old code and so it's not a
+> direct plug in replacement. There are no short cuts here...
 
+Can you point me (and I suspect Josef!) towards the documentation of the
+locking model?  I was hoping to find Documentation/filesystems/iomap.rst
+but all the 'iomap' strings in Documentation/ refer to pci_iomap and
+similar, except for this in the DAX documentation:
+
+: - implementing ->read_iter and ->write_iter operations which use dax_iomap_rw()
+:   when inode has S_DAX flag set
+: - implementing an mmap file operation for DAX files which sets the
+:   VM_MIXEDMAP and VM_HUGEPAGE flags on the VMA, and setting the vm_ops to
+:   include handlers for fault, pmd_fault, page_mkwrite, pfn_mkwrite. These
+:   handlers should probably call dax_iomap_fault() passing the appropriate
+:   fault size and iomap operations.
+: - calling iomap_zero_range() passing appropriate iomap operations instead of
+:   block_truncate_page() for DAX files
+: - ensuring that there is sufficient locking between reads, writes,
+:   truncates and page faults
+: 
+: The iomap handlers for allocating blocks must make sure that allocated blocks
+: are zeroed out and converted to written extents before being returned to avoid
+: exposure of uninitialized data through mmap.
+
+which doesn't bear on this situation.
