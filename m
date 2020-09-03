@@ -2,91 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 559D325CBE7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 23:12:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D77325CBEB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 23:13:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbgICVMf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 17:12:35 -0400
-Received: from sandeen.net ([63.231.237.45]:41628 "EHLO sandeen.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726323AbgICVMf (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 17:12:35 -0400
-Received: from liberator.sandeen.net (liberator.sandeen.net [10.0.0.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by sandeen.net (Postfix) with ESMTPSA id D94902ACC;
-        Thu,  3 Sep 2020 16:12:09 -0500 (CDT)
-To:     Andreas Gruenbacher <agruenba@redhat.com>,
+        id S1728525AbgICVNM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 17:13:12 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:38507 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726323AbgICVNM (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Sep 2020 17:13:12 -0400
+Received: from dread.disaster.area (pa49-195-191-192.pa.nsw.optusnet.com.au [49.195.191.192])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id DE6678233B3;
+        Fri,  4 Sep 2020 07:13:07 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kDwXa-0005LV-HQ; Fri, 04 Sep 2020 07:13:06 +1000
+Date:   Fri, 4 Sep 2020 07:13:06 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        ocfs2 list <ocfs2-devel@oss.oracle.com>,
         Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cluster-devel@redhat.com,
-        linux-ext4@vger.kernel.org
-References: <20200903165632.1338996-1-agruenba@redhat.com>
-From:   Eric Sandeen <sandeen@sandeen.net>
-Subject: Re: [PATCH] iomap: Fix direct I/O write consistency check
-Message-ID: <695a418c-ba6d-d3e9-f521-7dfa059764db@sandeen.net>
-Date:   Thu, 3 Sep 2020 16:12:33 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.2.1
+        Eric Sandeen <sandeen@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>
+Subject: Re: Broken O_{D,}SYNC behavior with FICLONE*?
+Message-ID: <20200903211306.GE12131@dread.disaster.area>
+References: <20200903035225.GJ6090@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20200903165632.1338996-1-agruenba@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200903035225.GJ6090@magnolia>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=XJ9OtjpE c=1 sm=1 tr=0 cx=a_idp_d
+        a=vvDRHhr1aDYKXl+H6jx2TA==:117 a=vvDRHhr1aDYKXl+H6jx2TA==:17
+        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=7-415B0cAAAA:8
+        a=FD1UHmYh5NI2xiT9T8wA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/3/20 11:56 AM, Andreas Gruenbacher wrote:
-> When a direct I/O write falls back to buffered I/O entirely, dio->size
-> will be 0 in iomap_dio_complete.  Function invalidate_inode_pages2_range
-> will try to invalidate the rest of the address space.
-
-(Because if ->size == 0 and offset == 0, then invalidating up to (0+0-1) will
-invalidate the entire range.)
-
-
-                err = invalidate_inode_pages2_range(inode->i_mapping,
-                                offset >> PAGE_SHIFT,
-                                (offset + dio->size - 1) >> PAGE_SHIFT);
-
-so I guess this behavior is unique to writing to a hole at offset 0?
-
-FWIW, this same test yields the same results on ext3 when it falls back to
-buffered.
-
--Eric
-
-> If there are any
-> dirty pages in that range, the write will fail and a "Page cache
-> invalidation failure on direct I/O" error will be logged.
+On Wed, Sep 02, 2020 at 08:52:25PM -0700, Darrick J. Wong wrote:
+> Hi,
 > 
-> On gfs2, this can be reproduced as follows:
-> 
->   xfs_io \
->     -c "open -ft foo" -c "pwrite 4k 4k" -c "close" \
->     -c "open -d foo" -c "pwrite 0 4k"
-> 
-> Fix this by recognizing 0-length writes.
-> 
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> ---
->  fs/iomap/direct-io.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index c1aafb2ab990..c9d6b4eecdb7 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -108,7 +108,7 @@ static ssize_t iomap_dio_complete(struct iomap_dio *dio)
->  	 * ->end_io() when necessary, otherwise a racing buffer read would cache
->  	 * zeros from unwritten extents.
->  	 */
-> -	if (!dio->error &&
-> +	if (!dio->error && dio->size &&
->  	    (dio->flags & IOMAP_DIO_WRITE) && inode->i_mapping->nrpages) {
->  		int err;
->  		err = invalidate_inode_pages2_range(inode->i_mapping,
-> 
+> I have a question for everyone-- do FICLONE and FICLONERANGE count as a
+> "write operation" for the purposes of reasoning about O_SYNC and
+> O_DSYNC?
+
+I'd say yes, because we are changing metadata that is used to
+directly reference the data in the file. O_DSYNC implies all the
+metadata needed to access the data is on stable storage when the
+operation returns....
+
+> So, that's inconsistent behavior and I want to know if remap_file_range
+> is broken or if we all just don't care about O_SYNC for these fancy
+> IO accelerators?
+
+Perhaps we should pay attention to the NFSD implementation of CloneFR -
+if the operation is sync then it will run fsync on the destination
+and commit_metadata on the source inode. See
+nfsd4_clone_file_range().
+
+So, yeah, I think clone operations need to pay attention to
+O_DSYNC/O_SYNC/IS_SYNC()....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
