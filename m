@@ -2,132 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CEA4725CCA4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 23:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FC1025CCF2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 23:58:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729415AbgICVsL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 17:48:11 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33642 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728705AbgICVsF (ORCPT
+        id S1729311AbgICV6j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 17:58:39 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39033 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729088AbgICV6h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 17:48:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599169681;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=oBrynNccaVwKMAHtYaWvrpJ0iV4f205Vo+3SkjyLb1M=;
-        b=Ap0hSm4ZRbCZPPb8HnHArfmsdOXCL9IO6L6wTkTdN9yQzhPEEkuOD+W047pnvsUjSn/lcb
-        Jl3/EMs9Jxrx9NqsR+GSl0m2McY2bEoAkM3PGhmnReKfoKp2Npdl35N/whFX2c3PqAcpWt
-        0gTHA7TLG/MC9UYysdLtHNhAgtcdaeY=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-563-Hi1bGjoKM4WAW-nqWJHYbw-1; Thu, 03 Sep 2020 17:47:57 -0400
-X-MC-Unique: Hi1bGjoKM4WAW-nqWJHYbw-1
-Received: by mail-wr1-f70.google.com with SMTP id 3so1564672wrm.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Sep 2020 14:47:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oBrynNccaVwKMAHtYaWvrpJ0iV4f205Vo+3SkjyLb1M=;
-        b=kw/NDRPVIjLaJwBxJ+uA9KRc/OmCG2KAh5BT/7JLbLOt5PyQZRkyDw4VEuc3GD3rtu
-         LzLrrGfQyC7GZZ4s1CzgVIyG/juTE9N0KWx3JMs045MskrI/x98eR4JYYsTcYBT4rd6C
-         N3QoQTwSxxIEYXLnL+amHDKPzfMxmQJJs+ahgy4GRuEIKodGgxSwH9+5XDVqHsPDuBjM
-         ym+c4asELkDLOb4/WS7379xLWgT+/LLYg929m5m6qnfMJigNGzuXDuiYixqve3CVP9l1
-         +J3Im9tX1zYe/Q2IROuz45Eicv0I0Vp68FyCgp43QUGtnEgbcm3SH8Ja1jutBSfxmjUz
-         T2zw==
-X-Gm-Message-State: AOAM531hobmhoDUwQppQr50fYqpWjYqt6zUUxX7MQZGU1js45qJlTb60
-        u0kjwe3DrGTGBWVvWIBRwGwGUDizT2zyk1k5R1HSUoCoqYoXvEy2l49h8X5rHzzuzHfqc08/Vq2
-        x8ZG+D3wl9o6dAEYj3neUjDi+kystoyvm4EKi9KAOOQ==
-X-Received: by 2002:a7b:c0c5:: with SMTP id s5mr4395613wmh.152.1599169676209;
-        Thu, 03 Sep 2020 14:47:56 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzfurQNCgokDtRoLPRuHgAybZLnKZ8B+2PgntmWzIP1k1DncX3kyUDbDZW6vrGvGz+eL5DynJVwhOUzgUE9+X8=
-X-Received: by 2002:a7b:c0c5:: with SMTP id s5mr4395604wmh.152.1599169676019;
- Thu, 03 Sep 2020 14:47:56 -0700 (PDT)
+        Thu, 3 Sep 2020 17:58:37 -0400
+Received: from dread.disaster.area (pa49-195-191-192.pa.nsw.optusnet.com.au [49.195.191.192])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id EE70D823972;
+        Fri,  4 Sep 2020 07:58:33 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kDxFY-0005SA-Sa; Fri, 04 Sep 2020 07:58:32 +1000
+Date:   Fri, 4 Sep 2020 07:58:32 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Hao Li <lihao2018.fnst@cn.fujitsu.com>
+Cc:     viro@zeniv.linux.org.uk, ira.weiny@intel.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, y-goto@fujitsu.com
+Subject: Re: [PATCH] fs: Handle I_DONTCACHE in iput_final() instead of
+ generic_drop_inode()
+Message-ID: <20200903215832.GF12131@dread.disaster.area>
+References: <20200831101313.168889-1-lihao2018.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-References: <20200903165632.1338996-1-agruenba@redhat.com> <695a418c-ba6d-d3e9-f521-7dfa059764db@sandeen.net>
-In-Reply-To: <695a418c-ba6d-d3e9-f521-7dfa059764db@sandeen.net>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Thu, 3 Sep 2020 23:47:44 +0200
-Message-ID: <CAHc6FU5zwQTBaGVban6tCH7kNwr+NiW-_oKC1j0vmqbWAWx50g@mail.gmail.com>
-Subject: Re: [PATCH] iomap: Fix direct I/O write consistency check
-To:     Eric Sandeen <sandeen@sandeen.net>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        linux-ext4 <linux-ext4@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200831101313.168889-1-lihao2018.fnst@cn.fujitsu.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=XJ9OtjpE c=1 sm=1 tr=0 cx=a_idp_d
+        a=vvDRHhr1aDYKXl+H6jx2TA==:117 a=vvDRHhr1aDYKXl+H6jx2TA==:17
+        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=VwQbUJbxAAAA:8 a=omOdbC7AAAAA:8
+        a=7-415B0cAAAA:8 a=Tsq6mdsxXYZ7ypGp8CAA:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=baC4JDFNLZpnPwus_NF9:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 3, 2020 at 11:12 PM Eric Sandeen <sandeen@sandeen.net> wrote:
-> On 9/3/20 11:56 AM, Andreas Gruenbacher wrote:
-> > When a direct I/O write falls back to buffered I/O entirely, dio->size
-> > will be 0 in iomap_dio_complete.  Function invalidate_inode_pages2_range
-> > will try to invalidate the rest of the address space.
->
-> (Because if ->size == 0 and offset == 0, then invalidating up to (0+0-1) will
-> invalidate the entire range.)
->
->
->                 err = invalidate_inode_pages2_range(inode->i_mapping,
->                                 offset >> PAGE_SHIFT,
->                                 (offset + dio->size - 1) >> PAGE_SHIFT);
->
-> so I guess this behavior is unique to writing to a hole at offset 0?
->
-> FWIW, this same test yields the same results on ext3 when it falls back to
-> buffered.
+On Mon, Aug 31, 2020 at 06:13:13PM +0800, Hao Li wrote:
+> If generic_drop_inode() returns true, it means iput_final() can evict
+> this inode regardless of whether it is dirty or not. If we check
+> I_DONTCACHE in generic_drop_inode(), any inode with this bit set will be
+> evicted unconditionally. This is not the desired behavior because
+> I_DONTCACHE only means the inode shouldn't be cached on the LRU list.
+> As for whether we need to evict this inode, this is what
+> generic_drop_inode() should do. This patch corrects the usage of
+> I_DONTCACHE.
+> 
+> This patch was proposed in [1].
+> 
+> [1]: https://lore.kernel.org/linux-fsdevel/20200831003407.GE12096@dread.disaster.area/
+> 
+> Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
+> ---
+>  fs/inode.c         | 3 ++-
+>  include/linux/fs.h | 3 +--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 72c4c347afb7..4e45d5ea3d0f 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1625,7 +1625,8 @@ static void iput_final(struct inode *inode)
+>  	else
+>  		drop = generic_drop_inode(inode);
+>  
+> -	if (!drop && (sb->s_flags & SB_ACTIVE)) {
+> +	if (!drop && !(inode->i_state & I_DONTCACHE) &&
+> +			(sb->s_flags & SB_ACTIVE)) {
 
-That's interesting. An ext3 formatted filesystem will invoke
-dio_warn_stale_pagecache and thus log the error message, but the error
-isn't immediately reported by the "pwrite 0 4k". It takes adding '-c
-"fsync"' to the xfs_io command or similar to make it fail.
+FWIW, the format used in fs/inode.c is to align the logic
+statements, not tab indent the additional lines in the statement.
+i.e.
 
-An ext4 formatted filesystem doesn't show any of these problems.
+	if (!drop &&
+	    !(inode->i_state & I_DONTCACHE) &&
+	    (sb->s_flags & SB_ACTIVE)) {
 
-Thanks,
-Andreas
+Which gives a clear indication that there are all at the same
+precedence and separate logic statements...
 
-> -Eric
->
-> > If there are any
-> > dirty pages in that range, the write will fail and a "Page cache
-> > invalidation failure on direct I/O" error will be logged.
-> >
-> > On gfs2, this can be reproduced as follows:
-> >
-> >   xfs_io \
-> >     -c "open -ft foo" -c "pwrite 4k 4k" -c "close" \
-> >     -c "open -d foo" -c "pwrite 0 4k"
-> >
-> > Fix this by recognizing 0-length writes.
-> >
-> > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> > ---
-> >  fs/iomap/direct-io.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > index c1aafb2ab990..c9d6b4eecdb7 100644
-> > --- a/fs/iomap/direct-io.c
-> > +++ b/fs/iomap/direct-io.c
-> > @@ -108,7 +108,7 @@ static ssize_t iomap_dio_complete(struct iomap_dio *dio)
-> >        * ->end_io() when necessary, otherwise a racing buffer read would cache
-> >        * zeros from unwritten extents.
-> >        */
-> > -     if (!dio->error &&
-> > +     if (!dio->error && dio->size &&
-> >           (dio->flags & IOMAP_DIO_WRITE) && inode->i_mapping->nrpages) {
-> >               int err;
-> >               err = invalidate_inode_pages2_range(inode->i_mapping,
-> >
->
+Otherwise the change looks good.
 
+Probably best to resend with the fixes tag :)
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
