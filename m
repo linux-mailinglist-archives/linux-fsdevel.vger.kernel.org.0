@@ -2,205 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id F30A725C6C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 18:28:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EC9C25C6DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 18:32:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbgICQ2U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 12:28:20 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:52352 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728358AbgICQ2R (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 12:28:17 -0400
-Received: by mail-il1-f199.google.com with SMTP id m1so2712952iln.19
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Sep 2020 09:28:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=qnNATF4LHgG/gf1TCC38jnAlfww7rCmyIxY6DH8mpkA=;
-        b=RBt2rIHzx1taYUCeMFcCqdbETir9N7oh/74/cdNRhzu8N7ak0thon9g/gS0g7OPSUX
-         rVBhaltj+KmiXy7bgsaJ14Jj63Pii7ujV/8GEJDCt4dRfYMVvxOiX0Ybc4/FkndmD5Pa
-         v+hCR23w5Lsoyx8n0TEwyEvRS76FFykSD12emigEnkxKUpFkkkRuOnboNSCe4MBD9Lh6
-         Md/Z3UFbVwWqoLY7x1d/OQn3cIas1KayMF+YOsVUieuJsW25JF576oKkDcMP1d36uYLG
-         m9cqfx8PYr+O8sh/QbHjlwBBMJUmoUi2aSPVCuKcjZEJVdmmlTHxJZsGGPbh4YdhtIsv
-         BrIg==
-X-Gm-Message-State: AOAM533DnnRTpL2+kD2ok+A62Sh8pk6cip0EfO0ePK+oL3xZT53wWoS8
-        zaPNvTY+meH1ylJqBZo7fpl72jv5qzpIvvrBoV+tcq1OtWkN
-X-Google-Smtp-Source: ABdhPJzJWH9lXzw+GWptLRJ2zGNcjK0jXbnbp9dcP4Bbf55r6Zb9hcz3V4o6hXY/BPRVN/quKlnSoVAOgXfl1tyLQgxYEPdHRcDK
+        id S1728806AbgICQcm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 12:32:42 -0400
+Received: from verein.lst.de ([213.95.11.211]:38685 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726327AbgICQcl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Sep 2020 12:32:41 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 45AD867357; Thu,  3 Sep 2020 18:32:37 +0200 (CEST)
+Date:   Thu, 3 Sep 2020 18:32:36 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        David Sterba <dsterba@suse.com>,
+        "linux-btrfs @ vger . kernel . org" <linux-btrfs@vger.kernel.org>,
+        Filipe Manana <fdmanana@gmail.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH] btrfs: don't call btrfs_sync_file from iomap
+ context
+Message-ID: <20200903163236.GA26043@lst.de>
+References: <20200901130644.12655-1-johannes.thumshirn@wdc.com> <42efa646-73cd-d884-1c9c-dd889294bde2@toxicpanda.com>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:9916:: with SMTP id t22mr3682861ioj.163.1599150495729;
- Thu, 03 Sep 2020 09:28:15 -0700 (PDT)
-Date:   Thu, 03 Sep 2020 09:28:15 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003d90ba05ae6b3d5f@google.com>
-Subject: INFO: task can't die in io_uring_setup
-From:   syzbot <syzbot+3227d097b95b4207b570@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sgarzare@redhat.com, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42efa646-73cd-d884-1c9c-dd889294bde2@toxicpanda.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+We could trivially do something like this to allow the file system
+to call iomap_dio_complete without i_rwsem:
 
-syzbot found the following issue on:
-
-HEAD commit:    4442749a Add linux-next specific files for 20200902
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=138e7285900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=39134fcec6c78e33
-dashboard link: https://syzkaller.appspot.com/bug?extid=3227d097b95b4207b570
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15306279900000
-
-The issue was bisected to:
-
-commit dfe127799f8e663c7e3e48b5275ca538b278177b
-Author: Stefano Garzarella <sgarzare@redhat.com>
-Date:   Thu Aug 27 14:58:31 2020 +0000
-
-    io_uring: allow disabling rings during the creation
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15b09115900000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=17b09115900000
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b09115900000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3227d097b95b4207b570@syzkaller.appspotmail.com
-Fixes: dfe127799f8e ("io_uring: allow disabling rings during the creation")
-
-INFO: task syz-executor.0:28543 can't die for more than 143 seconds.
-task:syz-executor.0  state:D stack:28824 pid:28543 ppid:  6864 flags:0x00004004
-Call Trace:
- context_switch kernel/sched/core.c:3777 [inline]
- __schedule+0xea9/0x2230 kernel/sched/core.c:4526
- schedule+0xd0/0x2a0 kernel/sched/core.c:4601
- schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1855
- do_wait_for_common kernel/sched/completion.c:85 [inline]
- __wait_for_common kernel/sched/completion.c:106 [inline]
- wait_for_common kernel/sched/completion.c:117 [inline]
- wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
- io_sq_thread_stop fs/io_uring.c:6906 [inline]
- io_finish_async fs/io_uring.c:6920 [inline]
- io_sq_offload_create fs/io_uring.c:7595 [inline]
- io_uring_create fs/io_uring.c:8671 [inline]
- io_uring_setup+0x1495/0x29a0 fs/io_uring.c:8744
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45d5b9
-Code: Bad RIP value.
-RSP: 002b:00007fde24a51bf8 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000020000240 RCX: 000000000045d5b9
-RDX: 00000000206d5000 RSI: 0000000020000240 RDI: 0000000000007e71
-RBP: 000000000118cf98 R08: 0000000020000100 R09: 0000000020000100
-R10: 0000000000000000 R11: 0000000000000206 R12: 00000000206d5000
-R13: 00000000206d4000 R14: 0000000020000100 R15: 0000000000000000
-INFO: task syz-executor.0:28543 blocked for more than 143 seconds.
-      Not tainted 5.9.0-rc3-next-20200902-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.0  state:D stack:28824 pid:28543 ppid:  6864 flags:0x00004004
-Call Trace:
- context_switch kernel/sched/core.c:3777 [inline]
- __schedule+0xea9/0x2230 kernel/sched/core.c:4526
- schedule+0xd0/0x2a0 kernel/sched/core.c:4601
- schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1855
- do_wait_for_common kernel/sched/completion.c:85 [inline]
- __wait_for_common kernel/sched/completion.c:106 [inline]
- wait_for_common kernel/sched/completion.c:117 [inline]
- wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
- io_sq_thread_stop fs/io_uring.c:6906 [inline]
- io_finish_async fs/io_uring.c:6920 [inline]
- io_sq_offload_create fs/io_uring.c:7595 [inline]
- io_uring_create fs/io_uring.c:8671 [inline]
- io_uring_setup+0x1495/0x29a0 fs/io_uring.c:8744
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x45d5b9
-Code: Bad RIP value.
-RSP: 002b:00007fde24a51bf8 EFLAGS: 00000206 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000020000240 RCX: 000000000045d5b9
-RDX: 00000000206d5000 RSI: 0000000020000240 RDI: 0000000000007e71
-RBP: 000000000118cf98 R08: 0000000020000100 R09: 0000000020000100
-R10: 0000000000000000 R11: 0000000000000206 R12: 00000000206d5000
-R13: 00000000206d4000 R14: 0000000020000100 R15: 0000000000000000
-INFO: task io_uring-sq:28548 blocked for more than 143 seconds.
-      Not tainted 5.9.0-rc3-next-20200902-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:io_uring-sq     state:D stack:31120 pid:28548 ppid:     2 flags:0x00004000
-Call Trace:
- context_switch kernel/sched/core.c:3777 [inline]
- __schedule+0xea9/0x2230 kernel/sched/core.c:4526
- schedule+0xd0/0x2a0 kernel/sched/core.c:4601
- schedule_preempt_disabled+0xf/0x20 kernel/sched/core.c:4660
- kthread+0x2ac/0x4a0 kernel/kthread.c:285
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/1174:
- #0: ffffffff89c67980 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:5829
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 1174 Comm: khungtaskd Not tainted 5.9.0-rc3-next-20200902-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x198/0x1fd lib/dump_stack.c:118
- nmi_cpu_backtrace.cold+0x44/0xd7 lib/nmi_backtrace.c:105
- nmi_trigger_cpumask_backtrace+0x1b3/0x223 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:147 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:253 [inline]
- watchdog+0xd89/0xf30 kernel/hung_task.c:339
- kthread+0x3b5/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 3906 Comm: systemd-journal Not tainted 5.9.0-rc3-next-20200902-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:arch_static_branch arch/x86/include/asm/jump_label.h:25 [inline]
-RIP: 0010:static_key_false include/linux/jump_label.h:200 [inline]
-RIP: 0010:trace_irq_disable_rcuidle include/trace/events/preemptirq.h:36 [inline]
-RIP: 0010:trace_hardirqs_off kernel/trace/trace_preemptirq.c:82 [inline]
-RIP: 0010:trace_hardirqs_off+0x6c/0x210 kernel/trace/trace_preemptirq.c:74
-Code: 81 e3 00 00 f0 00 31 ff 89 de e8 9f 37 fa ff 85 db 74 0d 5b 5d 41 5c 41 5d 41 5e e9 0e 3b fa ff e8 09 3b fa ff 4c 8b 6c 24 28 <0f> 1f 44 00 00 e8 fa 3a fa ff eb dd e8 f3 3a fa ff 65 8b 1d bc fe
-RSP: 0018:ffffc90005357f00 EFLAGS: 00000093
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff817a9471
-RDX: ffff888092cbe500 RSI: ffffffff817a9487 RDI: 0000000000000005
-RBP: ffffc90005357f58 R08: 0000000000000001 R09: ffff888092cbee08
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffffffff87f9c83e R14: 0000000000000000 R15: 0000000000000000
-FS:  00007f7fd426b8c0(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7fd161d000 CR3: 00000000933ac000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- local_irq_disable_exit_to_user include/linux/entry-common.h:166 [inline]
- syscall_exit_to_user_mode+0xae/0x2e0 kernel/entry/common.c:241
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x7f7fd3504f17
-Code: ff ff ff 48 8b 4d a0 0f b7 51 fe 48 8b 4d a8 66 89 54 08 fe e9 1a ff ff ff 66 2e 0f 1f 84 00 00 00 00 00 b8 27 00 00 00 0f 05 <c3> 0f 1f 84 00 00 00 00 00 b8 6e 00 00 00 0f 05 c3 0f 1f 84 00 00
-RSP: 002b:00007ffc0a1045c8 EFLAGS: 00000206 ORIG_RAX: 0000000000000027
-RAX: 0000000000000f42 RBX: 000055ca0d4b51e0 RCX: 00007f7fd3504f17
-RDX: 00007ffc0a104688 RSI: 0000000000000001 RDI: 000055ca0d4b51e0
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000069 R11: 0000000000000206 R12: 00007ffc0a104688
-R13: 0000000000000f42 R14: 00007ffc0a107470 R15: 00007ffc0a104a80
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index c1aafb2ab99072..d970c6bbbe115d 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -76,7 +76,7 @@ static void iomap_dio_submit_bio(struct iomap_dio *dio, struct iomap *iomap,
+ 		dio->submit.cookie = submit_bio(bio);
+ }
+ 
+-static ssize_t iomap_dio_complete(struct iomap_dio *dio)
++ssize_t iomap_dio_complete(struct iomap_dio *dio)
+ {
+ 	const struct iomap_dio_ops *dops = dio->dops;
+ 	struct kiocb *iocb = dio->iocb;
+@@ -130,6 +130,7 @@ static ssize_t iomap_dio_complete(struct iomap_dio *dio)
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(iomap_dio_complete);
+ 
+ static void iomap_dio_complete_work(struct work_struct *work)
+ {
+@@ -406,8 +407,8 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+  * Returns -ENOTBLK In case of a page invalidation invalidation failure for
+  * writes.  The callers needs to fall back to buffered I/O in this case.
+  */
+-ssize_t
+-iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
++struct iomap_dio *
++__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+ 		bool wait_for_completion)
+ {
+@@ -421,14 +422,14 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 	struct iomap_dio *dio;
+ 
+ 	if (!count)
+-		return 0;
++		return NULL;
+ 
+ 	if (WARN_ON(is_sync_kiocb(iocb) && !wait_for_completion))
+-		return -EIO;
++		return ERR_PTR(-EIO);
+ 
+ 	dio = kmalloc(sizeof(*dio), GFP_KERNEL);
+ 	if (!dio)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	dio->iocb = iocb;
+ 	atomic_set(&dio->ref, 1);
+@@ -558,7 +559,7 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 	dio->wait_for_completion = wait_for_completion;
+ 	if (!atomic_dec_and_test(&dio->ref)) {
+ 		if (!wait_for_completion)
+-			return -EIOCBQUEUED;
++			return ERR_PTR(-EIOCBQUEUED);
+ 
+ 		for (;;) {
+ 			set_current_state(TASK_UNINTERRUPTIBLE);
+@@ -574,10 +575,25 @@ iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		__set_current_state(TASK_RUNNING);
+ 	}
+ 
+-	return iomap_dio_complete(dio);
++	return dio;
+ 
+ out_free_dio:
+ 	kfree(dio);
+-	return ret;
++	return ERR_PTR(ret);
++}
++EXPORT_SYMBOL_GPL(__iomap_dio_rw);
++
++ssize_t
++iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
++		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
++		bool wait_for_completion)
++{
++	struct iomap_dio *dio;
++
++	dio = __iomap_dio_rw(iocb, iter, ops, dops, wait_for_completion);
++	if (IS_ERR_OR_NULL(dio))
++		return PTR_ERR_OR_ZERO(dio);
++	return iomap_dio_complete(dio);
+ }
+ EXPORT_SYMBOL_GPL(iomap_dio_rw);
++
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 4d1d3c3469e9a4..172b3397a1a371 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -13,6 +13,7 @@
+ struct address_space;
+ struct fiemap_extent_info;
+ struct inode;
++struct iomap_dio;
+ struct iomap_writepage_ctx;
+ struct iov_iter;
+ struct kiocb;
+@@ -258,6 +259,10 @@ struct iomap_dio_ops {
+ ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+ 		bool wait_for_completion);
++struct iomap_dio *__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
++		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
++		bool wait_for_completion);
++ssize_t iomap_dio_complete(struct iomap_dio *dio);
+ int iomap_dio_iopoll(struct kiocb *kiocb, bool spin);
+ 
+ #ifdef CONFIG_SWAP
