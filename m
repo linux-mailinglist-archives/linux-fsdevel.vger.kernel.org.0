@@ -2,195 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A602225BED5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 12:10:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20B0725C042
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 13:25:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbgICKKO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 06:10:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46510 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726467AbgICKKH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 06:10:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id EB406B692;
-        Thu,  3 Sep 2020 10:10:05 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3998D1E12D1; Thu,  3 Sep 2020 12:10:04 +0200 (CEST)
-Date:   Thu, 3 Sep 2020 12:10:04 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Martijn Coenen <maco@android.com>,
-        xfs <linux-xfs@vger.kernel.org>,
-        Eric Sandeen <sandeen@redhat.com>
-Subject: Re: [PATCH 4/4] writeback: Drop I_DIRTY_TIME_EXPIRE
-Message-ID: <20200903101004.GA17269@quack2.suse.cz>
-References: <20200611075033.1248-1-jack@suse.cz>
- <20200611081203.18161-4-jack@suse.cz>
- <20200902172048.GI6090@magnolia>
+        id S1726268AbgICLZI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 07:25:08 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:43231 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728436AbgICLXw (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Sep 2020 07:23:52 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20200903111301epoutp0201d8ac0d818f5c6b243283192d114006~xQbNU8Pfz3039330393epoutp02J
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Sep 2020 11:13:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20200903111301epoutp0201d8ac0d818f5c6b243283192d114006~xQbNU8Pfz3039330393epoutp02J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1599131581;
+        bh=ciQYrD3Tn+9WjZa6amZbj5BAhCek31MGMXV8HcEB6Dk=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=QVRg6ZG3UDKjyF1t4nYZv3TRRgzXPulY5OfgzfNU+XC/u2AUxA2pB4mT+eCw4AdXn
+         p7aN1zvIrBdamKS4Nq8/2hV4B+NdJ4ZlW8TEJOBce/J9jFrqj3QGYu1efV1CqIGwZI
+         FyL5FevFLznUP4DJy8Xm9pUYtws6gh2dGlvwKUEU=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20200903111300epcas1p4d2a6b5e162679cb00ee0d5a282243d02~xQbM1EBXR0956509565epcas1p4H;
+        Thu,  3 Sep 2020 11:13:00 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.159]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4BhypM4tcGzMqYkf; Thu,  3 Sep
+        2020 11:12:59 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        99.C7.19033.BBFC05F5; Thu,  3 Sep 2020 20:12:59 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200903111259epcas1p2564a6a8f400eea1390d1cf2e344dd4a5~xQbLV-X8f1369513695epcas1p2T;
+        Thu,  3 Sep 2020 11:12:59 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200903111259epsmtrp2f93c85e5e351761e763754501f9e1ade~xQbLVS9Bq2006820068epsmtrp2q;
+        Thu,  3 Sep 2020 11:12:59 +0000 (GMT)
+X-AuditID: b6c32a36-16fff70000004a59-7d-5f50cfbbf41d
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DB.6E.08382.ABFC05F5; Thu,  3 Sep 2020 20:12:58 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200903111258epsmtip112ea102f652e62b79d1a8f01c5c7fed4~xQbLH37AA1455414554epsmtip1J;
+        Thu,  3 Sep 2020 11:12:58 +0000 (GMT)
+From:   "Sungjong Seo" <sj1557.seo@samsung.com>
+To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
+Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
+        <mori.takahiro@ab.mitsubishielectric.co.jp>,
+        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
+        "'Namjae Jeon'" <namjae.jeon@samsung.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200902075306.8439-1-kohada.t2@gmail.com>
+Subject: RE: [PATCH] exfat: eliminate dead code in exfat_find()
+Date:   Thu, 3 Sep 2020 20:12:57 +0900
+Message-ID: <000001d681e3$2da33bc0$88e9b340$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200902172048.GI6090@magnolia>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQHi/AdGy7WFjhE0CTAe/r6eZnJXbwGnddttqTCKrAA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmru7u8wHxBr8/Kln8mHubxeLNyaks
+        Fnv2nmSxuLxrDpvF5f+fWCyWfZnMYvFjer0Du8eXOcfZPdom/2P3aD62ks1j56y77B59W1Yx
+        enzeJBfAFpVjk5GamJJapJCal5yfkpmXbqvkHRzvHG9qZmCoa2hpYa6kkJeYm2qr5OIToOuW
+        mQN0ipJCWWJOKVAoILG4WEnfzqYov7QkVSEjv7jEVim1ICWnwNCgQK84Mbe4NC9dLzk/18rQ
+        wMDIFKgyISdjzruzbAUrmSs6Z65mbWB8xNTFyMkhIWAi0fB7C5DNxSEksINRYkNfHwuE84lR
+        4vruLmaQKiGBb4wSM9dmw3RsOPaYDaJoL6PEjQO3WCCKXjJKPLwnDmKzCehKPLnxE6xZREBP
+        4uTJ62wgNrNAI5PEiZdggzgFLCQmLz4F1issYC8xo3kXWA2LgIrE3TPvWUFsXgFLiW3/l7FD
+        2IISJ2c+YYGYIy+x/e0cZoiDFCR2fzrKCrHLSuL6jnXMEDUiErM725hBDpUQWMghMWH/IlaI
+        BheJ9y/nMULYwhKvjm9hh7ClJD6/28sGYddL/J+/lh2iuQXosU/bgIHEAeTYS7y/ZAFiMgto
+        SqzfpQ9Rriix8/dcRoi9fBLvvvawQlTzSnS0CUGUqEh8/7CTBWbTlR9XmSYwKs1C8tksJJ/N
+        QvLBLIRlCxhZVjGKpRYU56anFhsWGCHH9SZGcCrVMtvBOOntB71DjEwcjIcYJTiYlUR4Z97w
+        jRfiTUmsrEotyo8vKs1JLT7EaAoM64nMUqLJ+cBknlcSb2hqZGxsbGFiZm5maqwkzvvwlkK8
+        kEB6YklqdmpqQWoRTB8TB6dUA5OV0s5pgd/K1b7NPjbFSac+QLNe4UrTXFa/b4FcH6Ksm6QX
+        hOg/rP5fv2+144W8tqXG/kHVN7L3NM45H3zywqpXuVdWXJWJWLY2R+Y4i/93QW1z8VbPNq/f
+        uzpT85ZJv9mfdsVQ4vKXNe7pjO9drAVdF4ZHBDxcbPJxo+xR9oW35OQP7jTeaHnjetGnh8om
+        xseUOpRvR9x7dOgSS7ZGY3pgzKz0Td9i001s+LZUbn/556Ry3PTl0nIH2t49ijrVs4n506EX
+        HvKTT05w/5i9NLqtu6Q7lGPdEoGeBxy/1x78WbDtyzlz9ZZONu81pvL/jy3p/rgla/K3+9kp
+        gX1XpR3+PnIWDVx9cNoU5eVNvxWUWIozEg21mIuKEwHgvIgwLgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplkeLIzCtJLcpLzFFi42LZdlhJTnfX+YB4gx9vLC1+zL3NYvHm5FQW
+        iz17T7JYXN41h83i8v9PLBbLvkxmsfgxvd6B3ePLnOPsHm2T/7F7NB9byeaxc9Zddo++LasY
+        PT5vkgtgi+KySUnNySxLLdK3S+DKmPPuLFvBSuaKzpmrWRsYHzF1MXJySAiYSGw49piti5GL
+        Q0hgN6PEkpsbmLsYOYASUhIH92lCmMIShw8XQ5Q8Z5R4NmUSG0gvm4CuxJMbP5lBbBEBPYmT
+        J6+DzWEWaGaSaP3SzATR0cko8WbOeRaQKk4BC4nJi0+B2cIC9hIzmneBTWIRUJG4e+Y9K4jN
+        K2Apse3/MnYIW1Di5MwnLCBXMANtaNvICBJmFpCX2P52DjPEAwoSuz8dZYU4wkri+o51zBA1
+        IhKzO9uYJzAKz0IyaRbCpFlIJs1C0rGAkWUVo2RqQXFuem6xYYFhXmq5XnFibnFpXrpecn7u
+        JkZwTGlp7mDcvuqD3iFGJg7GQ4wSHMxKIrwzb/jGC/GmJFZWpRblxxeV5qQWH2KU5mBREue9
+        UbgwTkggPbEkNTs1tSC1CCbLxMEp1cDke+L4FT3NK7x3gzf3LkpYtuOR2NbIv6GiLxsf6Cbt
+        rNwmbWIRty814K4C927j11XfIxM+vFMJ4hRmVY9XnTvx4uelkdfa7J/etuG8WLSqZI9JdNxb
+        Yw9nhb9Jfl8V6jWONGqrJrSFhUQaiSze2dB5VWnv6wThD3whL1WVhD6rFoZteLV3Ef+8uh99
+        c4OO+M97H1Moeel7U9ivogqjs+pGS3iWxc2dvD7llU/CnfQJZgrKLzeedJ3dZ8aQ0CZ7cEO1
+        22rBllfR2znqEzfsPMw7e1fok0X/1l5/y2bbYHtO6vnuuCg9zc0nzy9MF7V13n6rNGq/u8iu
+        rxPf73W8/VZ5b+WCLpXfS2RXXUpW1chSYinOSDTUYi4qTgQA2AccExgDAAA=
+X-CMS-MailID: 20200903111259epcas1p2564a6a8f400eea1390d1cf2e344dd4a5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200902075318epcas1p3c35299366ec32bb4947362f73b50b56f
+References: <CGME20200902075318epcas1p3c35299366ec32bb4947362f73b50b56f@epcas1p3.samsung.com>
+        <20200902075306.8439-1-kohada.t2@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 02-09-20 10:20:48, Darrick J. Wong wrote:
-> [add linux-xfs and xfsprogs maintainer to cc]
+> The exfat_find_dir_entry() called by exfat_find() doesn't return -EEXIST.
+> Therefore, the root-dir information setting is never executed.
 > 
-> On Thu, Jun 11, 2020 at 10:11:55AM +0200, Jan Kara wrote:
-> > The only use of I_DIRTY_TIME_EXPIRE is to detect in
-> > __writeback_single_inode() that inode got there because flush worker
-> > decided it's time to writeback the dirty inode time stamps (either
-> > because we are syncing or because of age). However we can detect this
-> > directly in __writeback_single_inode() and there's no need for the
-> > strange propagation with I_DIRTY_TIME_EXPIRE flag.
-> > 
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> > ---
-> >  fs/ext4/inode.c                  |  2 +-
-> >  fs/fs-writeback.c                | 28 +++++++++++-----------------
-> >  fs/xfs/libxfs/xfs_trans_inode.c  |  4 ++--
-> 
-> Urrk, so I only just noticed this when I rebased my development tree
-> onto 5.9-rc3.  If you're going to change things in fs/xfs/, please cc
-> the xfs list to keep us in the loop.  Changes to fs/xfs/libxfs/ have to
-> be ported to userspace.
+> Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
 
-OK, will do next time. I was just dropping a generic flag XFS didn't use in
-any particular way so it didn't occur to me XFS people would be interested...
+Acked-by: Sungjong Seo <sj1557.seo@samsung.com>
 
-								Honza
+> ---
+>  fs/exfat/dir.c   |   1 -
+>  fs/exfat/namei.c | 120 +++++++++++++++++++----------------------------
+>  2 files changed, 47 insertions(+), 74 deletions(-)
 
-> >  include/linux/fs.h               |  1 -
-> >  include/trace/events/writeback.h |  1 -
-> >  5 files changed, 14 insertions(+), 22 deletions(-)
-> > 
-> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> > index 40ec5c7ef0d3..4db497f02ffb 100644
-> > --- a/fs/ext4/inode.c
-> > +++ b/fs/ext4/inode.c
-> > @@ -4887,7 +4887,7 @@ static void __ext4_update_other_inode_time(struct super_block *sb,
-> >  	    (inode->i_state & I_DIRTY_TIME)) {
-> >  		struct ext4_inode_info	*ei = EXT4_I(inode);
-> >  
-> > -		inode->i_state &= ~(I_DIRTY_TIME | I_DIRTY_TIME_EXPIRED);
-> > +		inode->i_state &= ~I_DIRTY_TIME;
-> >  		spin_unlock(&inode->i_lock);
-> >  
-> >  		spin_lock(&ei->i_raw_lock);
-> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > index ae17d64a3e18..149227160ff0 100644
-> > --- a/fs/fs-writeback.c
-> > +++ b/fs/fs-writeback.c
-> > @@ -1238,7 +1238,7 @@ static bool inode_dirtied_after(struct inode *inode, unsigned long t)
-> >   */
-> >  static int move_expired_inodes(struct list_head *delaying_queue,
-> >  			       struct list_head *dispatch_queue,
-> > -			       int flags, unsigned long dirtied_before)
-> > +			       unsigned long dirtied_before)
-> >  {
-> >  	LIST_HEAD(tmp);
-> >  	struct list_head *pos, *node;
-> > @@ -1254,8 +1254,6 @@ static int move_expired_inodes(struct list_head *delaying_queue,
-> >  		list_move(&inode->i_io_list, &tmp);
-> >  		moved++;
-> >  		spin_lock(&inode->i_lock);
-> > -		if (flags & EXPIRE_DIRTY_ATIME)
-> > -			inode->i_state |= I_DIRTY_TIME_EXPIRED;
-> >  		inode->i_state |= I_SYNC_QUEUED;
-> >  		spin_unlock(&inode->i_lock);
-> >  		if (sb_is_blkdev_sb(inode->i_sb))
-> > @@ -1303,11 +1301,11 @@ static void queue_io(struct bdi_writeback *wb, struct wb_writeback_work *work,
-> >  
-> >  	assert_spin_locked(&wb->list_lock);
-> >  	list_splice_init(&wb->b_more_io, &wb->b_io);
-> > -	moved = move_expired_inodes(&wb->b_dirty, &wb->b_io, 0, dirtied_before);
-> > +	moved = move_expired_inodes(&wb->b_dirty, &wb->b_io, dirtied_before);
-> >  	if (!work->for_sync)
-> >  		time_expire_jif = jiffies - dirtytime_expire_interval * HZ;
-> >  	moved += move_expired_inodes(&wb->b_dirty_time, &wb->b_io,
-> > -				     EXPIRE_DIRTY_ATIME, time_expire_jif);
-> > +				     time_expire_jif);
-> >  	if (moved)
-> >  		wb_io_lists_populated(wb);
-> >  	trace_writeback_queue_io(wb, work, dirtied_before, moved);
-> > @@ -1483,18 +1481,14 @@ __writeback_single_inode(struct inode *inode, struct writeback_control *wbc)
-> >  	spin_lock(&inode->i_lock);
-> >  
-> >  	dirty = inode->i_state & I_DIRTY;
-> > -	if (inode->i_state & I_DIRTY_TIME) {
-> > -		if ((dirty & I_DIRTY_INODE) ||
-> > -		    wbc->sync_mode == WB_SYNC_ALL ||
-> > -		    unlikely(inode->i_state & I_DIRTY_TIME_EXPIRED) ||
-> > -		    unlikely(time_after(jiffies,
-> > -					(inode->dirtied_time_when +
-> > -					 dirtytime_expire_interval * HZ)))) {
-> > -			dirty |= I_DIRTY_TIME | I_DIRTY_TIME_EXPIRED;
-> > -			trace_writeback_lazytime(inode);
-> > -		}
-> > -	} else
-> > -		inode->i_state &= ~I_DIRTY_TIME_EXPIRED;
-> > +	if ((inode->i_state & I_DIRTY_TIME) &&
-> > +	    ((dirty & I_DIRTY_INODE) ||
-> > +	     wbc->sync_mode == WB_SYNC_ALL || wbc->for_sync ||
-> > +	     time_after(jiffies, inode->dirtied_time_when +
-> > +			dirtytime_expire_interval * HZ))) {
-> > +		dirty |= I_DIRTY_TIME;
-> > +		trace_writeback_lazytime(inode);
-> > +	}
-> >  	inode->i_state &= ~dirty;
-> >  
-> >  	/*
-> > diff --git a/fs/xfs/libxfs/xfs_trans_inode.c b/fs/xfs/libxfs/xfs_trans_inode.c
-> > index b5dfb6654842..1b4df6636944 100644
-> > --- a/fs/xfs/libxfs/xfs_trans_inode.c
-> > +++ b/fs/xfs/libxfs/xfs_trans_inode.c
-> > @@ -96,9 +96,9 @@ xfs_trans_log_inode(
-> >  	 * to log the timestamps, or will clear already cleared fields in the
-> >  	 * worst case.
-> >  	 */
-> > -	if (inode->i_state & (I_DIRTY_TIME | I_DIRTY_TIME_EXPIRED)) {
-> > +	if (inode->i_state & I_DIRTY_TIME) {
-> >  		spin_lock(&inode->i_lock);
-> > -		inode->i_state &= ~(I_DIRTY_TIME | I_DIRTY_TIME_EXPIRED);
-> > +		inode->i_state &= ~I_DIRTY_TIME;
-> >  		spin_unlock(&inode->i_lock);
-> >  	}
-> >  
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 48556efcdcf0..45eadf5bea5d 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -2178,7 +2178,6 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
-> >  #define I_DIO_WAKEUP		(1 << __I_DIO_WAKEUP)
-> >  #define I_LINKABLE		(1 << 10)
-> >  #define I_DIRTY_TIME		(1 << 11)
-> > -#define I_DIRTY_TIME_EXPIRED	(1 << 12)
-> >  #define I_WB_SWITCH		(1 << 13)
-> >  #define I_OVL_INUSE		(1 << 14)
-> >  #define I_CREATING		(1 << 15)
-> > diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-> > index 7565dcd59697..e7cbccc7c14c 100644
-> > --- a/include/trace/events/writeback.h
-> > +++ b/include/trace/events/writeback.h
-> > @@ -20,7 +20,6 @@
-> >  		{I_CLEAR,		"I_CLEAR"},		\
-> >  		{I_SYNC,		"I_SYNC"},		\
-> >  		{I_DIRTY_TIME,		"I_DIRTY_TIME"},	\
-> > -		{I_DIRTY_TIME_EXPIRED,	"I_DIRTY_TIME_EXPIRED"}, \
-> >  		{I_REFERENCED,		"I_REFERENCED"}		\
-> >  	)
-> >  
-> > -- 
-> > 2.16.4
-> > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
