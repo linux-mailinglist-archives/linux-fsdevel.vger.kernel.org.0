@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AAD725C336
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 16:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8981C25C338
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 16:47:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728596AbgICOrV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 10:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35298 "EHLO
+        id S1729408AbgICOrb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 10:47:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728896AbgICOYh (ORCPT
+        with ESMTP id S1729162AbgICOYg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 10:24:37 -0400
+        Thu, 3 Sep 2020 10:24:36 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48D4AC06123B;
-        Thu,  3 Sep 2020 07:22:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5FF5C06123C;
+        Thu,  3 Sep 2020 07:22:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=DsUb6hfLeJUvA4GCxVVSz23IH1puKspKytCSglE7c2s=; b=LdRJc175F5A1pOcbnm1cLKFZlU
-        ZWU8Ms6njxu8IGdDsuP6Xtf6gGdB1TXoO8O+jnMnwBOYHipnKu3MNZF9yCeopFU5o/EM+3MKdnvTN
-        rupIWrHI6Ls/BCx4j3hhdamcbq8phYVNK5ud8/ptEEHdTR4iXZ1wNf8vFGgvvU0UEeuso2FSGiZuj
-        AynpHzCxr7W78ExmgJvcBrkBdEyg+UodTDeIECsS7lDH9dIjMypmt8ilvWKv8hLTmI+ag7zWapcr8
-        8prZMxYcoHUeZOkvoj/M4W9Xnt0H0kpSyMSyGCsfvZp3iEMfeWTGg/4D8rkCU6pza8Y0gTXauR8Sc
-        1tjzf3NA==;
+        bh=WnUT44U564BtTxR+CgxY1D0BXTu5a2MR+R2q2mWaxn8=; b=npobupm2FJ/ShjeQU9TdFnBhkM
+        nPVNuPixcBkXw7gWQKCAmSY+n3xIY3Jrg7bEy2hQADLEiwj4hgfgufJEEOyrwvHXFGRF3nG9HKKYw
+        Ecs708Q625fTF0Sp0UaDzkrCiGwe1LzKGi2UO3jMIFrmaPOD5ArD63EPQYApmj68a63R6WcB7SsJQ
+        5cXErqx6Mijk7YBgwUeqEZsxUv428r0sFr9s+XqIapqDQrum3Hoj+5Z/mD2V60gLriQpLz//TW+iJ
+        pLhxJafohAeOwbHCpmOeyfDf5esfLuvbGfSASzk/uuFoWQdAbsswQsEWZltKYegGfyKF3/+RxJ7Aq
+        yBS/n+Pw==;
 Received: from [2001:4bb8:184:af1:c70:4a89:bc61:2] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kDq8W-0004aY-QY; Thu, 03 Sep 2020 14:22:49 +0000
+        id 1kDq8X-0004aj-UW; Thu, 03 Sep 2020 14:22:50 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -36,11 +36,10 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 04/14] sysctl: Convert to iter interfaces
-Date:   Thu,  3 Sep 2020 16:22:32 +0200
-Message-Id: <20200903142242.925828-5-hch@lst.de>
+        linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 05/14] fs: don't allow kernel reads and writes without iter ops
+Date:   Thu,  3 Sep 2020 16:22:33 +0200
+Message-Id: <20200903142242.925828-6-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200903142242.925828-1-hch@lst.de>
 References: <20200903142242.925828-1-hch@lst.de>
@@ -52,152 +51,123 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Don't allow calling ->read or ->write with set_fs as a preparation for
+killing off set_fs.  All the instances that we use kernel_read/write on
+are using the iter ops already.
 
-Using the read_iter/write_iter interfaces allows for in-kernel users
-to set sysctls without using set_fs().  Also, the buffer is a string,
-so give it the real type of 'char *', not void *.
+If a file has both the regular ->read/->write methods and the iter
+variants those could have different semantics for messed up enough
+drivers.  Also fails the kernel access to them in that case.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- fs/proc/proc_sysctl.c      | 46 ++++++++++++++++++--------------------
- include/linux/bpf-cgroup.h |  2 +-
- kernel/bpf/cgroup.c        |  2 +-
- 3 files changed, 24 insertions(+), 26 deletions(-)
+ fs/read_write.c | 67 +++++++++++++++++++++++++++++++------------------
+ 1 file changed, 42 insertions(+), 25 deletions(-)
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 6c1166ccdaea57..a4a3122f8a584a 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -12,6 +12,7 @@
- #include <linux/cred.h>
- #include <linux/namei.h>
- #include <linux/mm.h>
-+#include <linux/uio.h>
- #include <linux/module.h>
- #include <linux/bpf-cgroup.h>
- #include <linux/mount.h>
-@@ -540,13 +541,14 @@ static struct dentry *proc_sys_lookup(struct inode *dir, struct dentry *dentry,
- 	return err;
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 5db58b8c78d0dd..702c4301d9eb6b 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -419,27 +419,41 @@ static ssize_t new_sync_read(struct file *filp, char __user *buf, size_t len, lo
+ 	return ret;
  }
  
--static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
--		size_t count, loff_t *ppos, int write)
-+static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
-+		int write)
++static int warn_unsupported(struct file *file, const char *op)
++{
++	pr_warn_ratelimited(
++		"kernel %s not supported for file %pD4 (pid: %d comm: %.20s)\n",
++		op, file, current->pid, current->comm);
++	return -EINVAL;
++}
++
+ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
  {
--	struct inode *inode = file_inode(filp);
-+	struct inode *inode = file_inode(iocb->ki_filp);
- 	struct ctl_table_header *head = grab_header(inode);
- 	struct ctl_table *table = PROC_I(inode)->sysctl_entry;
--	void *kbuf;
-+	size_t count = iov_iter_count(iter);
-+	char *kbuf;
- 	ssize_t error;
+-	mm_segment_t old_fs = get_fs();
++	struct kvec iov = {
++		.iov_base	= buf,
++		.iov_len	= min_t(size_t, count, MAX_RW_COUNT),
++	};
++	struct kiocb kiocb;
++	struct iov_iter iter;
+ 	ssize_t ret;
  
- 	if (IS_ERR(head))
-@@ -569,32 +571,30 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
- 	error = -ENOMEM;
- 	if (count >= KMALLOC_MAX_SIZE)
- 		goto out;
-+	kbuf = kzalloc(count + 1, GFP_KERNEL);
-+	if (!kbuf)
-+		goto out;
+ 	if (WARN_ON_ONCE(!(file->f_mode & FMODE_READ)))
+ 		return -EINVAL;
+ 	if (!(file->f_mode & FMODE_CAN_READ))
+ 		return -EINVAL;
++	/*
++	 * Also fail if ->read_iter and ->read are both wired up as that
++	 * implies very convoluted semantics.
++	 */
++	if (unlikely(!file->f_op->read_iter || file->f_op->read))
++		return warn_unsupported(file, "read");
  
- 	if (write) {
--		kbuf = memdup_user_nul(ubuf, count);
--		if (IS_ERR(kbuf)) {
--			error = PTR_ERR(kbuf);
--			goto out;
--		}
--	} else {
--		kbuf = kzalloc(count, GFP_KERNEL);
--		if (!kbuf)
--			goto out;
-+		error = -EFAULT;
-+		if (!copy_from_iter_full(kbuf, count, iter))
-+			goto out_free_buf;
-+		kbuf[count] = '\0';
+-	if (count > MAX_RW_COUNT)
+-		count =  MAX_RW_COUNT;
+-	set_fs(KERNEL_DS);
+-	if (file->f_op->read)
+-		ret = file->f_op->read(file, (void __user *)buf, count, pos);
+-	else if (file->f_op->read_iter)
+-		ret = new_sync_read(file, (void __user *)buf, count, pos);
+-	else
+-		ret = -EINVAL;
+-	set_fs(old_fs);
++	init_sync_kiocb(&kiocb, file);
++	kiocb.ki_pos = *pos;
++	iov_iter_kvec(&iter, READ, &iov, 1, iov.iov_len);
++	ret = file->f_op->read_iter(&kiocb, &iter);
+ 	if (ret > 0) {
++		*pos = kiocb.ki_pos;
+ 		fsnotify_access(file);
+ 		add_rchar(current, ret);
  	}
+@@ -510,28 +524,31 @@ static ssize_t new_sync_write(struct file *filp, const char __user *buf, size_t
+ /* caller is responsible for file_start_write/file_end_write */
+ ssize_t __kernel_write(struct file *file, const void *buf, size_t count, loff_t *pos)
+ {
+-	mm_segment_t old_fs;
+-	const char __user *p;
++	struct kvec iov = {
++		.iov_base	= (void *)buf,
++		.iov_len	= min_t(size_t, count, MAX_RW_COUNT),
++	};
++	struct kiocb kiocb;
++	struct iov_iter iter;
+ 	ssize_t ret;
  
- 	error = BPF_CGROUP_RUN_PROG_SYSCTL(head, table, write, &kbuf, &count,
--					   ppos);
-+					   &iocb->ki_pos);
- 	if (error)
- 		goto out_free_buf;
+ 	if (WARN_ON_ONCE(!(file->f_mode & FMODE_WRITE)))
+ 		return -EBADF;
+ 	if (!(file->f_mode & FMODE_CAN_WRITE))
+ 		return -EINVAL;
++	/*
++	 * Also fail if ->write_iter and ->write are both wired up as that
++	 * implies very convoluted semantics.
++	 */
++	if (unlikely(!file->f_op->write_iter || file->f_op->write))
++		return warn_unsupported(file, "write");
  
- 	/* careful: calling conventions are nasty here */
--	error = table->proc_handler(table, write, kbuf, &count, ppos);
-+	error = table->proc_handler(table, write, kbuf, &count, &iocb->ki_pos);
- 	if (error)
- 		goto out_free_buf;
- 
- 	if (!write) {
- 		error = -EFAULT;
--		if (copy_to_user(ubuf, kbuf, count))
-+		if (copy_to_iter(kbuf, count, iter) < count)
- 			goto out_free_buf;
+-	old_fs = get_fs();
+-	set_fs(KERNEL_DS);
+-	p = (__force const char __user *)buf;
+-	if (count > MAX_RW_COUNT)
+-		count =  MAX_RW_COUNT;
+-	if (file->f_op->write)
+-		ret = file->f_op->write(file, p, count, pos);
+-	else if (file->f_op->write_iter)
+-		ret = new_sync_write(file, p, count, pos);
+-	else
+-		ret = -EINVAL;
+-	set_fs(old_fs);
++	init_sync_kiocb(&kiocb, file);
++	kiocb.ki_pos = *pos;
++	iov_iter_kvec(&iter, WRITE, &iov, 1, iov.iov_len);
++	ret = file->f_op->write_iter(&kiocb, &iter);
+ 	if (ret > 0) {
++		*pos = kiocb.ki_pos;
+ 		fsnotify_modify(file);
+ 		add_wchar(current, ret);
  	}
- 
-@@ -607,16 +607,14 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *ubuf,
- 	return error;
- }
- 
--static ssize_t proc_sys_read(struct file *filp, char __user *buf,
--				size_t count, loff_t *ppos)
-+static ssize_t proc_sys_read(struct kiocb *iocb, struct iov_iter *iter)
- {
--	return proc_sys_call_handler(filp, (void __user *)buf, count, ppos, 0);
-+	return proc_sys_call_handler(iocb, iter, 0);
- }
- 
--static ssize_t proc_sys_write(struct file *filp, const char __user *buf,
--				size_t count, loff_t *ppos)
-+static ssize_t proc_sys_write(struct kiocb *iocb, struct iov_iter *iter)
- {
--	return proc_sys_call_handler(filp, (void __user *)buf, count, ppos, 1);
-+	return proc_sys_call_handler(iocb, iter, 1);
- }
- 
- static int proc_sys_open(struct inode *inode, struct file *filp)
-@@ -853,8 +851,8 @@ static int proc_sys_getattr(const struct path *path, struct kstat *stat,
- static const struct file_operations proc_sys_file_operations = {
- 	.open		= proc_sys_open,
- 	.poll		= proc_sys_poll,
--	.read		= proc_sys_read,
--	.write		= proc_sys_write,
-+	.read_iter	= proc_sys_read,
-+	.write_iter	= proc_sys_write,
- 	.llseek		= default_llseek,
- };
- 
-diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
-index 64f367044e25f4..82b26a1386d85e 100644
---- a/include/linux/bpf-cgroup.h
-+++ b/include/linux/bpf-cgroup.h
-@@ -136,7 +136,7 @@ int __cgroup_bpf_check_dev_permission(short dev_type, u32 major, u32 minor,
- 
- int __cgroup_bpf_run_filter_sysctl(struct ctl_table_header *head,
- 				   struct ctl_table *table, int write,
--				   void **buf, size_t *pcount, loff_t *ppos,
-+				   char **buf, size_t *pcount, loff_t *ppos,
- 				   enum bpf_attach_type type);
- 
- int __cgroup_bpf_run_filter_setsockopt(struct sock *sock, int *level,
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index e21de4f1754c2c..6ec088a96302f9 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -1226,7 +1226,7 @@ const struct bpf_verifier_ops cg_dev_verifier_ops = {
-  */
- int __cgroup_bpf_run_filter_sysctl(struct ctl_table_header *head,
- 				   struct ctl_table *table, int write,
--				   void **buf, size_t *pcount, loff_t *ppos,
-+				   char **buf, size_t *pcount, loff_t *ppos,
- 				   enum bpf_attach_type type)
- {
- 	struct bpf_sysctl_kern ctx = {
 -- 
 2.28.0
 
