@@ -2,119 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6222F25BB9D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 09:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F4BE25BBEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 09:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbgICH1c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 03:27:32 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:50426 "EHLO pegase1.c-s.fr"
+        id S1728037AbgICHqm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 03:46:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726022AbgICH1a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 03:27:30 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 4Bhsp66rdGzB09ZZ;
-        Thu,  3 Sep 2020 09:27:26 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id rH9lzYdCHhM9; Thu,  3 Sep 2020 09:27:26 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4Bhsp64yDPzB09ZW;
-        Thu,  3 Sep 2020 09:27:26 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B05F68B7B1;
-        Thu,  3 Sep 2020 09:27:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id EOoz4qHnxzKL; Thu,  3 Sep 2020 09:27:27 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0575E8B790;
-        Thu,  3 Sep 2020 09:27:26 +0200 (CEST)
-Subject: Re: [PATCH 10/10] powerpc: remove address space overrides using
- set_fs()
-To:     Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200827150030.282762-1-hch@lst.de>
- <20200827150030.282762-11-hch@lst.de>
- <8974838a-a0b1-1806-4a3a-e983deda67ca@csgroup.eu>
- <20200902123646.GA31184@lst.de>
- <d78cb4be-48a9-a7c5-d9d1-d04d2a02b4c6@csgroup.eu>
- <CAHk-=wiDCcxuHgENo3UtdFi2QW9B7yXvNpG5CtF=A6bc6PTTgA@mail.gmail.com>
- <20200903071144.GA19247@lst.de>
-From:   Christophe Leroy <christophe.leroy@csgroup.eu>
-Message-ID: <e6afe576-c3b2-81af-b042-e5930a8fd4c8@csgroup.eu>
-Date:   Thu, 3 Sep 2020 09:27:04 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1726814AbgICHqk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Sep 2020 03:46:40 -0400
+Received: from kernel.org (unknown [77.127.89.201])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 769A5206C0;
+        Thu,  3 Sep 2020 07:46:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599119199;
+        bh=TM+Crt61G+Ba31blWDvtRLfW2Z9YrFGY3wqQAum69FQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MF0yChXGd/fYnmNaBfXMyB3f9aoO7AYFy3Yxm15OKist2YnWvIrJDv6yYYWnoUPN7
+         3KGMOlzVwUUPwq8SItaWyQl5JTjaF1oF0P/NR62dyeRpeElV7VBo1Fs+nbHyCXZR3C
+         GKujz+cNu0eyfNMXe39zrI6L+NlvvpdLt0ibHzLw=
+Date:   Thu, 3 Sep 2020 10:46:27 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-riscv@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v4 0/6] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+Message-ID: <20200903074627.GA1213823@kernel.org>
+References: <20200818141554.13945-1-rppt@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200903071144.GA19247@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200818141554.13945-1-rppt@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Any updates on this?
 
+On Tue, Aug 18, 2020 at 05:15:48PM +0300, Mike Rapoport wrote:
+> From: Mike Rapoport <rppt@linux.ibm.com>
+> 
+> Hi,
+> 
+> This is an implementation of "secret" mappings backed by a file descriptor. 
+> 
+> v4 changes:
+> * rebase on v5.9-rc1
+> * Do not redefine PMD_PAGE_ORDER in fs/dax.c, thanks Kirill
+> * Make secret mappings exclusive by default and only require flags to
+>   memfd_secret() system call for uncached mappings, thanks again Kirill :)
+> 
+> v3 changes:
+> * Squash kernel-parameters.txt update into the commit that added the
+>   command line option.
+> * Make uncached mode explicitly selectable by architectures. For now enable
+>   it only on x86.
+> 
+> v2 changes:
+> * Follow Michael's suggestion and name the new system call 'memfd_secret'
+> * Add kernel-parameters documentation about the boot option
+> * Fix i386-tinyconfig regression reported by the kbuild bot.
+>   CONFIG_SECRETMEM now depends on !EMBEDDED to disable it on small systems
+>   from one side and still make it available unconditionally on
+>   architectures that support SET_DIRECT_MAP.
+> 
+> 
+> The file descriptor backing secret memory mappings is created using a
+> dedicated memfd_secret system call The desired protection mode for the
+> memory is configured using flags parameter of the system call. The mmap()
+> of the file descriptor created with memfd_secret() will create a "secret"
+> memory mapping. The pages in that mapping will be marked as not present in
+> the direct map and will have desired protection bits set in the user page
+> table. For instance, current implementation allows uncached mappings.
+> 
+> Although normally Linux userspace mappings are protected from other users, 
+> such secret mappings are useful for environments where a hostile tenant is
+> trying to trick the kernel into giving them access to other tenants
+> mappings.
+> 
+> Additionally, the secret mappings may be used as a mean to protect guest
+> memory in a virtual machine host.
+> 
+> For demonstration of secret memory usage we've created a userspace library
+> [1] that does two things: the first is act as a preloader for openssl to
+> redirect all the OPENSSL_malloc calls to secret memory meaning any secret
+> keys get automatically protected this way and the other thing it does is
+> expose the API to the user who needs it. We anticipate that a lot of the
+> use cases would be like the openssl one: many toolkits that deal with
+> secret keys already have special handling for the memory to try to give
+> them greater protection, so this would simply be pluggable into the
+> toolkits without any need for user application modification.
+> 
+> I've hesitated whether to continue to use new flags to memfd_create() or to
+> add a new system call and I've decided to use a new system call after I've
+> started to look into man pages update. There would have been two completely
+> independent descriptions and I think it would have been very confusing.
+> 
+> Hiding secret memory mappings behind an anonymous file allows (ab)use of
+> the page cache for tracking pages allocated for the "secret" mappings as
+> well as using address_space_operations for e.g. page migration callbacks.
+> 
+> The anonymous file may be also used implicitly, like hugetlb files, to
+> implement mmap(MAP_SECRET) and use the secret memory areas with "native" mm
+> ABIs in the future.
+> 
+> As the fragmentation of the direct map was one of the major concerns raised
+> during the previous postings, I've added an amortizing cache of PMD-size
+> pages to each file descriptor and an ability to reserve large chunks of the
+> physical memory at boot time and then use this memory as an allocation pool
+> for the secret memory areas.
+> 
+> v3: https://lore.kernel.org/lkml/20200804095035.18778-1-rppt@kernel.org
+> v2: https://lore.kernel.org/lkml/20200727162935.31714-1-rppt@kernel.org
+> v1: https://lore.kernel.org/lkml/20200720092435.17469-1-rppt@kernel.org/
+> rfc-v2: https://lore.kernel.org/lkml/20200706172051.19465-1-rppt@kernel.org/
+> rfc-v1: https://lore.kernel.org/lkml/20200130162340.GA14232@rapoport-lnx/
+> 
+> Mike Rapoport (6):
+>   mm: add definition of PMD_PAGE_ORDER
+>   mmap: make mlock_future_check() global
+>   mm: introduce memfd_secret system call to create "secret" memory areas
+>   arch, mm: wire up memfd_secret system call were relevant
+>   mm: secretmem: use PMD-size pages to amortize direct map fragmentation
+>   mm: secretmem: add ability to reserve memory at boot
+> 
+>  arch/Kconfig                           |   7 +
+>  arch/arm64/include/asm/unistd.h        |   2 +-
+>  arch/arm64/include/asm/unistd32.h      |   2 +
+>  arch/arm64/include/uapi/asm/unistd.h   |   1 +
+>  arch/riscv/include/asm/unistd.h        |   1 +
+>  arch/x86/Kconfig                       |   1 +
+>  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
+>  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+>  fs/dax.c                               |  11 +-
+>  include/linux/pgtable.h                |   3 +
+>  include/linux/syscalls.h               |   1 +
+>  include/uapi/asm-generic/unistd.h      |   7 +-
+>  include/uapi/linux/magic.h             |   1 +
+>  include/uapi/linux/secretmem.h         |   8 +
+>  kernel/sys_ni.c                        |   2 +
+>  mm/Kconfig                             |   4 +
+>  mm/Makefile                            |   1 +
+>  mm/internal.h                          |   3 +
+>  mm/mmap.c                              |   5 +-
+>  mm/secretmem.c                         | 451 +++++++++++++++++++++++++
+>  20 files changed, 501 insertions(+), 12 deletions(-)
+>  create mode 100644 include/uapi/linux/secretmem.h
+>  create mode 100644 mm/secretmem.c
+> 
+> -- 
+> 2.26.2
+> 
 
-Le 03/09/2020 à 09:11, Christoph Hellwig a écrit :
-> On Wed, Sep 02, 2020 at 11:02:22AM -0700, Linus Torvalds wrote:
->> I don't see why this change would make any difference.
-> 
-> Me neither, but while looking at a different project I did spot places
-> that actually do an access_ok with len 0, that's why I wanted him to
-> try.
-> 
-> That being said: Christophe are these number stables?  Do you get
-> similar numbers with multiple runs?
-
-Yes the numbers are similar with multiple runs and multiple reboots.
-
-> 
->> And btw, why do the 32-bit and 64-bit checks even differ? It's not
->> like the extra (single) instruction should even matter. I think the
->> main reason is that the simpler 64-bit case could stay as a macro
->> (because it only uses "addr" and "size" once), but honestly, that
->> "simplification" doesn't help when you then need to have that #ifdef
->> for the 32-bit case and an inline function anyway.
-> 
-> I'll have to leave that to the powerpc folks.  The intent was to not
-> change the behavior (and I even fucked that up for the the size == 0
-> case).
-> 
->> However, I suspect a bigger reason for the actual performance
->> degradation would be the patch that makes things use "write_iter()"
->> for writing, even when a simpler "write()" exists.
-> 
-> Except that we do not actually have such a patch.  For normal user
-> writes we only use ->write_iter if ->write is not present.  But what
-> shows up in the profile is that /dev/zero only has a read_iter op and
-> not a normal read.  I've added a patch below that implements a normal
-> read which might help a tad with this workload, but should not be part
-> of a regression.
-> 
-> Also Christophe:  can you bisect which patch starts this?  Is it really
-> this last patch in the series?
-
-5.9-rc2: 91.5MB/s
-Patch 1: 74.9MB/s
-Patch 2: 97.9MB/s
-Patch 3: 97.7MB/s
-Patch 4 to 9: 97.9MB/s
-Patch 10: 85.3MB/s
-Patch 11: 75.4MB/s
-
-See my other mail, when removing CONFIG_STACKPROTECTOR, I get a stable 
-99.8MB/s throughput.
-
-Christophe
+-- 
+Sincerely yours,
+Mike.
