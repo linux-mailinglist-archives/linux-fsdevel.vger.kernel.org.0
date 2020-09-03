@@ -2,98 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC1025CCF2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 23:58:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C256D25CE50
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 01:26:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729311AbgICV6j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 17:58:39 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39033 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729088AbgICV6h (ORCPT
+        id S1729579AbgICX0R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 19:26:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34392 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729577AbgICX0Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 17:58:37 -0400
-Received: from dread.disaster.area (pa49-195-191-192.pa.nsw.optusnet.com.au [49.195.191.192])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id EE70D823972;
-        Fri,  4 Sep 2020 07:58:33 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kDxFY-0005SA-Sa; Fri, 04 Sep 2020 07:58:32 +1000
-Date:   Fri, 4 Sep 2020 07:58:32 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Hao Li <lihao2018.fnst@cn.fujitsu.com>
-Cc:     viro@zeniv.linux.org.uk, ira.weiny@intel.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, y-goto@fujitsu.com
-Subject: Re: [PATCH] fs: Handle I_DONTCACHE in iput_final() instead of
- generic_drop_inode()
-Message-ID: <20200903215832.GF12131@dread.disaster.area>
-References: <20200831101313.168889-1-lihao2018.fnst@cn.fujitsu.com>
+        Thu, 3 Sep 2020 19:26:16 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D20C061245
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Sep 2020 16:26:15 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id u4so4883872ljd.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Sep 2020 16:26:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eoc+5mie1+ZuNTuaPcGzSI2qJ6owz7A4Ofr10ghZJJ4=;
+        b=gWGJKo5xiJNWPTtwqGkQlOlOwg3GjNMHWAbbLf6G2umLeN+ziH7HLU4o7mqfu6xrQX
+         0nqy/1qDWFPlTHlbUl4hIrosGA73uytx27UrMGezo0ol7EOlqSXT8KqCo6mWmcDs1cwA
+         at576v5S6IW6A1SwuGUswjPYeT1mwL3S6Pfko=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eoc+5mie1+ZuNTuaPcGzSI2qJ6owz7A4Ofr10ghZJJ4=;
+        b=nMQ2jNcgH9hRnbprYIz9yHrlhS3LEmYj/qbVmzVL6LLBf3FpsgBwamdxftMkASlhYF
+         zEza+1qptwT70+KcOjJqB9jxfgJbWdFWedrfZYYks1UgFuo8l/zjA9PZ/FHSobGv+nxA
+         Arjzk67K+BESngGnduwOPe/sNf9OdeYIY+PEIU+uWtdEt+IBwn9YcH2G7hXsW38lGE9F
+         kdrKMeJv9BntTV0Y2QfAZaYA1BfxqcnKBtK27vdmXnjIkd6VJRy/WRz00qhA4l85bGgB
+         0FjVN2bO641yE2z9WGcmT+G2jkHHtSR5ESpguvKYFsnXMpySnGobA7hgcXcKiNt7AH4O
+         vTiA==
+X-Gm-Message-State: AOAM530AxH1lTvGPyGTqrpzYDmqDpGb4vQio7iZEnAoLYXZSbG2EPzp2
+        LiTYS3WCO0asj+/AeaDgYoXBe5k1DXF7IA==
+X-Google-Smtp-Source: ABdhPJyTbDUu/5D6WeuZpmrxq4QrRo+oanjmqVXkSJ5XEVckTorlxN/wSMNXF/f5Xp0lbXIz2EfjEA==
+X-Received: by 2002:a2e:7c14:: with SMTP id x20mr2637693ljc.220.1599175573026;
+        Thu, 03 Sep 2020 16:26:13 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id s127sm881646lja.119.2020.09.03.16.26.11
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Sep 2020 16:26:11 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id y2so2835708lfy.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Sep 2020 16:26:11 -0700 (PDT)
+X-Received: by 2002:a19:4a88:: with SMTP id x130mr2429205lfa.31.1599175570612;
+ Thu, 03 Sep 2020 16:26:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200831101313.168889-1-lihao2018.fnst@cn.fujitsu.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=XJ9OtjpE c=1 sm=1 tr=0 cx=a_idp_d
-        a=vvDRHhr1aDYKXl+H6jx2TA==:117 a=vvDRHhr1aDYKXl+H6jx2TA==:17
-        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=VwQbUJbxAAAA:8 a=omOdbC7AAAAA:8
-        a=7-415B0cAAAA:8 a=Tsq6mdsxXYZ7ypGp8CAA:9 a=CjuIK1q_8ugA:10
-        a=AjGcO6oz07-iQ99wixmX:22 a=baC4JDFNLZpnPwus_NF9:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+References: <20200903142242.925828-1-hch@lst.de> <20200903142242.925828-13-hch@lst.de>
+ <9ab40244a2164f7db2ff0c1d23ab59a0@AcuMS.aculab.com>
+In-Reply-To: <9ab40244a2164f7db2ff0c1d23ab59a0@AcuMS.aculab.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 3 Sep 2020 16:25:54 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whDtnudkbZ8-hR8HiDE7zog0dv+Gu9Sx5i6SPakrDtajQ@mail.gmail.com>
+Message-ID: <CAHk-=whDtnudkbZ8-hR8HiDE7zog0dv+Gu9Sx5i6SPakrDtajQ@mail.gmail.com>
+Subject: Re: [PATCH 12/14] x86: remove address space overrides using set_fs()
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Aug 31, 2020 at 06:13:13PM +0800, Hao Li wrote:
-> If generic_drop_inode() returns true, it means iput_final() can evict
-> this inode regardless of whether it is dirty or not. If we check
-> I_DONTCACHE in generic_drop_inode(), any inode with this bit set will be
-> evicted unconditionally. This is not the desired behavior because
-> I_DONTCACHE only means the inode shouldn't be cached on the LRU list.
-> As for whether we need to evict this inode, this is what
-> generic_drop_inode() should do. This patch corrects the usage of
-> I_DONTCACHE.
-> 
-> This patch was proposed in [1].
-> 
-> [1]: https://lore.kernel.org/linux-fsdevel/20200831003407.GE12096@dread.disaster.area/
-> 
-> Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
-> ---
->  fs/inode.c         | 3 ++-
->  include/linux/fs.h | 3 +--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 72c4c347afb7..4e45d5ea3d0f 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1625,7 +1625,8 @@ static void iput_final(struct inode *inode)
->  	else
->  		drop = generic_drop_inode(inode);
->  
-> -	if (!drop && (sb->s_flags & SB_ACTIVE)) {
-> +	if (!drop && !(inode->i_state & I_DONTCACHE) &&
-> +			(sb->s_flags & SB_ACTIVE)) {
+On Thu, Sep 3, 2020 at 2:30 PM David Laight <David.Laight@aculab.com> wrote:
+>
+> A non-canonical (is that the right term) address between the highest
+> valid user address and the lowest valid kernel address (7ffe to fffe?)
+> will fault anyway.
 
-FWIW, the format used in fs/inode.c is to align the logic
-statements, not tab indent the additional lines in the statement.
-i.e.
+Yes.
 
-	if (!drop &&
-	    !(inode->i_state & I_DONTCACHE) &&
-	    (sb->s_flags & SB_ACTIVE)) {
+But we actually warn against that fault, because it's been a good way
+to catch places that didn't use the proper "access_ok()" pattern.
 
-Which gives a clear indication that there are all at the same
-precedence and separate logic statements...
+See ex_handler_uaccess() and the
 
-Otherwise the change looks good.
+        WARN_ONCE(trapnr == X86_TRAP_GP, "General protection fault in
+user access. Non-canonical address?");
 
-Probably best to resend with the fixes tag :)
+warning. It's been good for randomized testing - a missing range check
+on a user address will often hit this.
 
-Cheers,
+Of course, you should never see it in real life (and hopefully not in
+testing either any more). But belt-and-suspenders..
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+              Linus
