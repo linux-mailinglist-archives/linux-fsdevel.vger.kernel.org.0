@@ -2,39 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB7025BB84
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 09:22:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6222F25BB9D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 09:27:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbgICHU6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 03:20:58 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:53672 "EHLO pegase1.c-s.fr"
+        id S1728032AbgICH1c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 03:27:32 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:50426 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726022AbgICHU6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 03:20:58 -0400
+        id S1726022AbgICH1a (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Sep 2020 03:27:30 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 4BhsfY3bm4zB09Zf;
-        Thu,  3 Sep 2020 09:20:53 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 4Bhsp66rdGzB09ZZ;
+        Thu,  3 Sep 2020 09:27:26 +0200 (CEST)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id z990iF4fMPYf; Thu,  3 Sep 2020 09:20:53 +0200 (CEST)
+        with ESMTP id rH9lzYdCHhM9; Thu,  3 Sep 2020 09:27:26 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 4BhsfY2h7WzB09ZZ;
-        Thu,  3 Sep 2020 09:20:53 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4Bhsp64yDPzB09ZW;
+        Thu,  3 Sep 2020 09:27:26 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5F8A78B7B1;
-        Thu,  3 Sep 2020 09:20:54 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B05F68B7B1;
+        Thu,  3 Sep 2020 09:27:27 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id GoY3tY2xK-tx; Thu,  3 Sep 2020 09:20:54 +0200 (CEST)
+        with ESMTP id EOoz4qHnxzKL; Thu,  3 Sep 2020 09:27:27 +0200 (CEST)
 Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A1A698B790;
-        Thu,  3 Sep 2020 09:20:53 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0575E8B790;
+        Thu,  3 Sep 2020 09:27:26 +0200 (CEST)
 Subject: Re: [PATCH 10/10] powerpc: remove address space overrides using
  set_fs()
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
+To:     Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Michael Ellerman <mpe@ellerman.id.au>,
         the arch/x86 maintainers <x86@kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -48,13 +49,14 @@ References: <20200827150030.282762-1-hch@lst.de>
  <20200902123646.GA31184@lst.de>
  <d78cb4be-48a9-a7c5-d9d1-d04d2a02b4c6@csgroup.eu>
  <CAHk-=wiDCcxuHgENo3UtdFi2QW9B7yXvNpG5CtF=A6bc6PTTgA@mail.gmail.com>
+ <20200903071144.GA19247@lst.de>
 From:   Christophe Leroy <christophe.leroy@csgroup.eu>
-Message-ID: <6a6ea160-a661-4a15-777c-e26a487829d4@csgroup.eu>
-Date:   Thu, 3 Sep 2020 09:20:35 +0200
+Message-ID: <e6afe576-c3b2-81af-b042-e5930a8fd4c8@csgroup.eu>
+Date:   Thu, 3 Sep 2020 09:27:04 +0200
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wiDCcxuHgENo3UtdFi2QW9B7yXvNpG5CtF=A6bc6PTTgA@mail.gmail.com>
+In-Reply-To: <20200903071144.GA19247@lst.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: fr
 Content-Transfer-Encoding: 8bit
@@ -65,58 +67,54 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-Le 02/09/2020 à 20:02, Linus Torvalds a écrit :
-> On Wed, Sep 2, 2020 at 8:17 AM Christophe Leroy
-> <christophe.leroy@csgroup.eu> wrote:
->>
->>
->> With this fix, I get
->>
->> root@vgoippro:~# time dd if=/dev/zero of=/dev/null count=1M
->> 536870912 bytes (512.0MB) copied, 6.776327 seconds, 75.6MB/s
->>
->> That's still far from the 91.7MB/s I get with 5.9-rc2, but better than
->> the 65.8MB/s I got yesterday with your series. Still some way to go thought.
+Le 03/09/2020 à 09:11, Christoph Hellwig a écrit :
+> On Wed, Sep 02, 2020 at 11:02:22AM -0700, Linus Torvalds wrote:
+>> I don't see why this change would make any difference.
 > 
-> I don't see why this change would make any difference.
+> Me neither, but while looking at a different project I did spot places
+> that actually do an access_ok with len 0, that's why I wanted him to
+> try.
 > 
+> That being said: Christophe are these number stables?  Do you get
+> similar numbers with multiple runs?
 
-Neither do I.
+Yes the numbers are similar with multiple runs and multiple reboots.
 
-Looks like nowadays, CONFIG_STACKPROTECTOR has become a default.
-I rebuilt the kernel without it, I now get a throughput of 99.8MB/s both 
-without and with this series.
+> 
+>> And btw, why do the 32-bit and 64-bit checks even differ? It's not
+>> like the extra (single) instruction should even matter. I think the
+>> main reason is that the simpler 64-bit case could stay as a macro
+>> (because it only uses "addr" and "size" once), but honestly, that
+>> "simplification" doesn't help when you then need to have that #ifdef
+>> for the 32-bit case and an inline function anyway.
+> 
+> I'll have to leave that to the powerpc folks.  The intent was to not
+> change the behavior (and I even fucked that up for the the size == 0
+> case).
+> 
+>> However, I suspect a bigger reason for the actual performance
+>> degradation would be the patch that makes things use "write_iter()"
+>> for writing, even when a simpler "write()" exists.
+> 
+> Except that we do not actually have such a patch.  For normal user
+> writes we only use ->write_iter if ->write is not present.  But what
+> shows up in the profile is that /dev/zero only has a read_iter op and
+> not a normal read.  I've added a patch below that implements a normal
+> read which might help a tad with this workload, but should not be part
+> of a regression.
+> 
+> Also Christophe:  can you bisect which patch starts this?  Is it really
+> this last patch in the series?
 
-Looking at the generated code (GCC 10.1), a small change in a function 
-seems to make large changes in the generated code when 
-CONFIG_STACKPROTECTOR is set.
+5.9-rc2: 91.5MB/s
+Patch 1: 74.9MB/s
+Patch 2: 97.9MB/s
+Patch 3: 97.7MB/s
+Patch 4 to 9: 97.9MB/s
+Patch 10: 85.3MB/s
+Patch 11: 75.4MB/s
 
-In addition to that, trivial functions which don't use the stack at all 
-get a stack frame anyway when CONFIG_STACKPROTECTOR is set, allthough 
-that's only -fstack-protector-strong. And there is no canary check.
-
-Without CONFIG_STACKPROTECTOR:
-
-c01572a0 <no_llseek>:
-c01572a0:	38 60 ff ff 	li      r3,-1
-c01572a4:	38 80 ff e3 	li      r4,-29
-c01572a8:	4e 80 00 20 	blr
-
-With CONFIG_STACKPROTECTOR (regardless of CONFIG_STACKPROTECTOR_STRONG 
-or not):
-
-c0164e08 <no_llseek>:
-c0164e08:	94 21 ff f0 	stwu    r1,-16(r1)
-c0164e0c:	38 60 ff ff 	li      r3,-1
-c0164e10:	38 80 ff e3 	li      r4,-29
-c0164e14:	38 21 00 10 	addi    r1,r1,16
-c0164e18:	4e 80 00 20 	blr
-
-Wondering why CONFIG_STACKPROTECTOR has become the default. It seems to 
-imply a 10% performance loss even in the best case (91.7MB/s versus 
-99.8MB/s)
-
-Note that without CONFIG_STACKPROTECTOR_STRONG, I'm at 99.3MB/s, so 
-that's really the _STRONG alternative that hurts.
+See my other mail, when removing CONFIG_STACKPROTECTOR, I get a stable 
+99.8MB/s throughput.
 
 Christophe
