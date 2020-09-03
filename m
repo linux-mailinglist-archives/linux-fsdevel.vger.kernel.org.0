@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A21525C277
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 16:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB95825C281
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 16:26:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728788AbgICO0B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 10:26:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35166 "EHLO
+        id S1729329AbgICO0s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 10:26:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729166AbgICOX1 (ORCPT
+        with ESMTP id S1729248AbgICOYg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 10:23:27 -0400
+        Thu, 3 Sep 2020 10:24:36 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0DB0C06123A;
-        Thu,  3 Sep 2020 07:22:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF134C06123D;
+        Thu,  3 Sep 2020 07:22:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=GwBdpIiwC2/H13uoaD81joKeq/bh8CR8vbkN01NmQb8=; b=SbA4ErmbdCRIGV1PaNDyOgDFPM
-        WOOiPDFGt5XBXfY5jP3ztB9vrJDDiTR3S831moFSwBWUyfChZFA1BRQyvkGlC4vN6lIlYL31/eVpQ
-        4AZ/cMaZgHPOscMzV+WC/lo7EDhbN6cT4yHXmo8UUQdHbIdKsugCkPPCeHoLQmyy2ajyyl1HCObXN
-        dj+uFNX/JF/U5HPn9nHMlQ9Pywqvz2sdtEcNQUADBxGUgwOgUPSXjjzUvlPRHTvAFfIzHtMEXNFst
-        f548siR/l2sI0jQVLbHQdGVTZCCgvbgDJNNoQ5+zgVnaQl8a2szvK8Yw6jk21Qfeo4BxY81HFnhg5
-        HmT3L4Cw==;
+        bh=SQdHM2VLoZetKqW2OYcNprtrCZT26+7Z4k+2D4WNncE=; b=popZrL8PCblOIFRTKHvMUBBNSp
+        ZCEAoKC4hHQXQ8WsMz/WgnelztBwRBbSWbZHevz3hxSFXqeTedGT4SDDD1YgTbTaAEr6V5lGWQg8a
+        HVtyugUOZKnSjmEExUTr7SXbzDmaJEAJf56QWd/JMBsJ8BQ/4x79ZFtIBKRs+Jc/iPJZE5sgtOPlP
+        7+72C+iGX0glUPQjpqNvi3+m4hRvm+yv1MfMaehTQ2M5ez45nq/6BBdv7UKe7SNOW4M0TgHFEHDPC
+        QvGRf6aLWoPga1Wv6BiYziRkJ/4mN9dwOlkDH0xH2f6RiGRbERDwBog/M7Goi1Bz2hSsBPejUnB3G
+        sE+Tog0Q==;
 Received: from [2001:4bb8:184:af1:c70:4a89:bc61:2] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kDq8V-0004aL-IH; Thu, 03 Sep 2020 14:22:47 +0000
+        id 1kDq8Z-0004az-6M; Thu, 03 Sep 2020 14:22:51 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -37,9 +37,9 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 03/14] proc: add a read_iter method to proc proc_ops
-Date:   Thu,  3 Sep 2020 16:22:31 +0200
-Message-Id: <20200903142242.925828-4-hch@lst.de>
+Subject: [PATCH 06/14] fs: don't allow splice read/write without explicit ops
+Date:   Thu,  3 Sep 2020 16:22:34 +0200
+Message-Id: <20200903142242.925828-7-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200903142242.925828-1-hch@lst.de>
 References: <20200903142242.925828-1-hch@lst.de>
@@ -51,112 +51,217 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This will allow proc files to implement iter read semantics.
+default_file_splice_write is the last piece of generic code that uses
+set_fs to make the uaccess routines operate on kernel pointers.  It
+implements a "fallback loop" for splicing from files that do not actually
+provide a proper splice_read method.  The usual file systems and other
+high bandwidth instances all provide a ->splice_read, so this just removes
+support for various device drivers and procfs/debugfs files.  If splice
+support for any of those turns out to be important it can be added back
+by switching them to the iter ops and using generic_file_splice_read.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- fs/proc/inode.c         | 53 ++++++++++++++++++++++++++++++++++++++---
- include/linux/proc_fs.h |  1 +
- 2 files changed, 51 insertions(+), 3 deletions(-)
+ fs/read_write.c    |   2 +-
+ fs/splice.c        | 130 +++++----------------------------------------
+ include/linux/fs.h |   2 -
+ 3 files changed, 15 insertions(+), 119 deletions(-)
 
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index 93dd2045737504..58c075e2a452d6 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -297,6 +297,21 @@ static loff_t proc_reg_llseek(struct file *file, loff_t offset, int whence)
- 	return rv;
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 702c4301d9eb6b..8c61f67453e3d3 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1077,7 +1077,7 @@ ssize_t vfs_iter_write(struct file *file, struct iov_iter *iter, loff_t *ppos,
  }
+ EXPORT_SYMBOL(vfs_iter_write);
  
-+static ssize_t proc_reg_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+-ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
++static ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
+ 		  unsigned long vlen, loff_t *pos, rwf_t flags)
+ {
+ 	struct iovec iovstack[UIO_FASTIOV];
+diff --git a/fs/splice.c b/fs/splice.c
+index d7c8a7c4db07ff..412df7b48f9eb7 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -342,89 +342,6 @@ const struct pipe_buf_operations nosteal_pipe_buf_ops = {
+ };
+ EXPORT_SYMBOL(nosteal_pipe_buf_ops);
+ 
+-static ssize_t kernel_readv(struct file *file, const struct kvec *vec,
+-			    unsigned long vlen, loff_t offset)
+-{
+-	mm_segment_t old_fs;
+-	loff_t pos = offset;
+-	ssize_t res;
+-
+-	old_fs = get_fs();
+-	set_fs(KERNEL_DS);
+-	/* The cast to a user pointer is valid due to the set_fs() */
+-	res = vfs_readv(file, (const struct iovec __user *)vec, vlen, &pos, 0);
+-	set_fs(old_fs);
+-
+-	return res;
+-}
+-
+-static ssize_t default_file_splice_read(struct file *in, loff_t *ppos,
+-				 struct pipe_inode_info *pipe, size_t len,
+-				 unsigned int flags)
+-{
+-	struct kvec *vec, __vec[PIPE_DEF_BUFFERS];
+-	struct iov_iter to;
+-	struct page **pages;
+-	unsigned int nr_pages;
+-	unsigned int mask;
+-	size_t offset, base, copied = 0;
+-	ssize_t res;
+-	int i;
+-
+-	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
+-		return -EAGAIN;
+-
+-	/*
+-	 * Try to keep page boundaries matching to source pagecache ones -
+-	 * it probably won't be much help, but...
+-	 */
+-	offset = *ppos & ~PAGE_MASK;
+-
+-	iov_iter_pipe(&to, READ, pipe, len + offset);
+-
+-	res = iov_iter_get_pages_alloc(&to, &pages, len + offset, &base);
+-	if (res <= 0)
+-		return -ENOMEM;
+-
+-	nr_pages = DIV_ROUND_UP(res + base, PAGE_SIZE);
+-
+-	vec = __vec;
+-	if (nr_pages > PIPE_DEF_BUFFERS) {
+-		vec = kmalloc_array(nr_pages, sizeof(struct kvec), GFP_KERNEL);
+-		if (unlikely(!vec)) {
+-			res = -ENOMEM;
+-			goto out;
+-		}
+-	}
+-
+-	mask = pipe->ring_size - 1;
+-	pipe->bufs[to.head & mask].offset = offset;
+-	pipe->bufs[to.head & mask].len -= offset;
+-
+-	for (i = 0; i < nr_pages; i++) {
+-		size_t this_len = min_t(size_t, len, PAGE_SIZE - offset);
+-		vec[i].iov_base = page_address(pages[i]) + offset;
+-		vec[i].iov_len = this_len;
+-		len -= this_len;
+-		offset = 0;
+-	}
+-
+-	res = kernel_readv(in, vec, nr_pages, *ppos);
+-	if (res > 0) {
+-		copied = res;
+-		*ppos += res;
+-	}
+-
+-	if (vec != __vec)
+-		kfree(vec);
+-out:
+-	for (i = 0; i < nr_pages; i++)
+-		put_page(pages[i]);
+-	kvfree(pages);
+-	iov_iter_advance(&to, copied);	/* truncates and discards */
+-	return res;
+-}
+-
+ /*
+  * Send 'sd->len' bytes to socket from 'sd->file' at position 'sd->pos'
+  * using sendpage(). Return the number of bytes sent.
+@@ -788,33 +705,6 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
+ 
+ EXPORT_SYMBOL(iter_file_splice_write);
+ 
+-static int write_pipe_buf(struct pipe_inode_info *pipe, struct pipe_buffer *buf,
+-			  struct splice_desc *sd)
+-{
+-	int ret;
+-	void *data;
+-	loff_t tmp = sd->pos;
+-
+-	data = kmap(buf->page);
+-	ret = __kernel_write(sd->u.file, data + buf->offset, sd->len, &tmp);
+-	kunmap(buf->page);
+-
+-	return ret;
+-}
+-
+-static ssize_t default_file_splice_write(struct pipe_inode_info *pipe,
+-					 struct file *out, loff_t *ppos,
+-					 size_t len, unsigned int flags)
+-{
+-	ssize_t ret;
+-
+-	ret = splice_from_pipe(pipe, out, ppos, len, flags, write_pipe_buf);
+-	if (ret > 0)
+-		*ppos += ret;
+-
+-	return ret;
+-}
+-
+ /**
+  * generic_splice_sendpage - splice data from a pipe to a socket
+  * @pipe:	pipe to splice from
+@@ -836,15 +726,23 @@ ssize_t generic_splice_sendpage(struct pipe_inode_info *pipe, struct file *out,
+ 
+ EXPORT_SYMBOL(generic_splice_sendpage);
+ 
++static int warn_unsupported(struct file *file, const char *op)
 +{
-+	struct proc_dir_entry *pde = PDE(file_inode(iocb->ki_filp));
-+	ssize_t ret;
-+
-+	if (pde_is_permanent(pde))
-+		return pde->proc_ops->proc_read_iter(iocb, iter);
-+
-+	if (!use_pde(pde))
-+		return -EIO;
-+	ret = pde->proc_ops->proc_read_iter(iocb, iter);
-+	unuse_pde(pde);
-+	return ret;
++	pr_debug_ratelimited(
++		"splice %s not supported for file %pD4 (pid: %d comm: %.20s)\n",
++		op, file, current->pid, current->comm);
++	return -EINVAL;
 +}
 +
- static ssize_t pde_read(struct proc_dir_entry *pde, struct file *file, char __user *buf, size_t count, loff_t *ppos)
+ /*
+  * Attempt to initiate a splice from pipe to file.
+  */
+ static long do_splice_from(struct pipe_inode_info *pipe, struct file *out,
+ 			   loff_t *ppos, size_t len, unsigned int flags)
  {
- 	typeof_member(struct proc_ops, proc_read) read;
-@@ -578,6 +593,18 @@ static const struct file_operations proc_reg_file_ops = {
- 	.release	= proc_reg_release,
- };
+-	if (out->f_op->splice_write)
+-		return out->f_op->splice_write(pipe, out, ppos, len, flags);
+-	return default_file_splice_write(pipe, out, ppos, len, flags);
++	if (unlikely(!out->f_op->splice_write))
++		return warn_unsupported(out, "write");
++	return out->f_op->splice_write(pipe, out, ppos, len, flags);
+ }
  
-+static const struct file_operations proc_iter_file_ops = {
-+	.llseek		= proc_reg_llseek,
-+	.read_iter	= proc_reg_read_iter,
-+	.write		= proc_reg_write,
-+	.poll		= proc_reg_poll,
-+	.unlocked_ioctl	= proc_reg_unlocked_ioctl,
-+	.mmap		= proc_reg_mmap,
-+	.get_unmapped_area = proc_reg_get_unmapped_area,
-+	.open		= proc_reg_open,
-+	.release	= proc_reg_release,
-+};
-+
- #ifdef CONFIG_COMPAT
- static const struct file_operations proc_reg_file_ops_compat = {
- 	.llseek		= proc_reg_llseek,
-@@ -591,6 +618,19 @@ static const struct file_operations proc_reg_file_ops_compat = {
- 	.open		= proc_reg_open,
- 	.release	= proc_reg_release,
- };
-+
-+static const struct file_operations proc_iter_file_ops_compat = {
-+	.llseek		= proc_reg_llseek,
-+	.read_iter	= proc_reg_read_iter,
-+	.write		= proc_reg_write,
-+	.poll		= proc_reg_poll,
-+	.unlocked_ioctl	= proc_reg_unlocked_ioctl,
-+	.compat_ioctl	= proc_reg_compat_ioctl,
-+	.mmap		= proc_reg_mmap,
-+	.get_unmapped_area = proc_reg_get_unmapped_area,
-+	.open		= proc_reg_open,
-+	.release	= proc_reg_release,
-+};
- #endif
+ /*
+@@ -866,9 +764,9 @@ static long do_splice_to(struct file *in, loff_t *ppos,
+ 	if (unlikely(len > MAX_RW_COUNT))
+ 		len = MAX_RW_COUNT;
  
- static void proc_put_link(void *p)
-@@ -642,10 +682,17 @@ struct inode *proc_get_inode(struct super_block *sb, struct proc_dir_entry *de)
+-	if (in->f_op->splice_read)
+-		return in->f_op->splice_read(in, ppos, pipe, len, flags);
+-	return default_file_splice_read(in, ppos, pipe, len, flags);
++	if (unlikely(!in->f_op->splice_read))
++		return warn_unsupported(in, "read");
++	return in->f_op->splice_read(in, ppos, pipe, len, flags);
+ }
  
- 	if (S_ISREG(inode->i_mode)) {
- 		inode->i_op = de->proc_iops;
--		inode->i_fop = &proc_reg_file_ops;
-+		if (de->proc_ops->proc_read_iter)
-+			inode->i_fop = &proc_iter_file_ops;
-+		else
-+			inode->i_fop = &proc_reg_file_ops;
- #ifdef CONFIG_COMPAT
--		if (de->proc_ops->proc_compat_ioctl)
--			inode->i_fop = &proc_reg_file_ops_compat;
-+		if (de->proc_ops->proc_compat_ioctl) {
-+			if (de->proc_ops->proc_read_iter)
-+				inode->i_fop = &proc_iter_file_ops_compat;
-+			else
-+				inode->i_fop = &proc_reg_file_ops_compat;
-+		}
- #endif
- 	} else if (S_ISDIR(inode->i_mode)) {
- 		inode->i_op = de->proc_iops;
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index 2df965cd09742d..270cab43ca3dad 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -30,6 +30,7 @@ struct proc_ops {
- 	unsigned int proc_flags;
- 	int	(*proc_open)(struct inode *, struct file *);
- 	ssize_t	(*proc_read)(struct file *, char __user *, size_t, loff_t *);
-+	ssize_t (*proc_read_iter)(struct kiocb *, struct iov_iter *);
- 	ssize_t	(*proc_write)(struct file *, const char __user *, size_t, loff_t *);
- 	loff_t	(*proc_lseek)(struct file *, loff_t, int);
- 	int	(*proc_release)(struct inode *, struct file *);
+ /**
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7519ae003a082c..839eeccf10174b 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1894,8 +1894,6 @@ ssize_t rw_copy_check_uvector(int type, const struct iovec __user * uvector,
+ 
+ extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
+ extern ssize_t vfs_write(struct file *, const char __user *, size_t, loff_t *);
+-extern ssize_t vfs_readv(struct file *, const struct iovec __user *,
+-		unsigned long, loff_t *, rwf_t);
+ extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
+ 				   loff_t, size_t, unsigned int);
+ extern ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
 -- 
 2.28.0
 
