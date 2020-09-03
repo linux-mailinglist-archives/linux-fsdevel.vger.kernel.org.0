@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB95825C281
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 16:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F346425C27B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 16:26:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729329AbgICO0s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 10:26:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35312 "EHLO
+        id S1729319AbgICO0V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 10:26:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729248AbgICOYg (ORCPT
+        with ESMTP id S1729271AbgICOYg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 3 Sep 2020 10:24:36 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF134C06123D;
-        Thu,  3 Sep 2020 07:22:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0466C06123F;
+        Thu,  3 Sep 2020 07:22:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=SQdHM2VLoZetKqW2OYcNprtrCZT26+7Z4k+2D4WNncE=; b=popZrL8PCblOIFRTKHvMUBBNSp
-        ZCEAoKC4hHQXQ8WsMz/WgnelztBwRBbSWbZHevz3hxSFXqeTedGT4SDDD1YgTbTaAEr6V5lGWQg8a
-        HVtyugUOZKnSjmEExUTr7SXbzDmaJEAJf56QWd/JMBsJ8BQ/4x79ZFtIBKRs+Jc/iPJZE5sgtOPlP
-        7+72C+iGX0glUPQjpqNvi3+m4hRvm+yv1MfMaehTQ2M5ez45nq/6BBdv7UKe7SNOW4M0TgHFEHDPC
-        QvGRf6aLWoPga1Wv6BiYziRkJ/4mN9dwOlkDH0xH2f6RiGRbERDwBog/M7Goi1Bz2hSsBPejUnB3G
-        sE+Tog0Q==;
+        bh=glRx1e+2K28c137CnQcnREE32Krzi32mzQeiUOb4p8k=; b=aXm8ada5czGlZeEedfKGmsycdu
+        XFy77fTL6a7UVpeZ5XjCNDyNL1ym6/11MKlvDcgii10R7629AQHAVCkS1pGwSTGRKAJaWkw9LRvVF
+        3JSzd4hQb6IDMc6kLI8zVGFbH+Lmkx9TwN07Xr/fV64EzjAO4ABTibJ83Uw29e0dbrGs2LbZedqvb
+        E8L6It2nFiIxyBiDcKt9cU59Qp6Q8YAEQmxWAQW02CvAeC7oFJnRoWJDoze120xNiGkiCqg84AoPh
+        qpjFDVcO28oUIXPgpopWgoQ9ldSmsPzP3JAuBajxqnl6TjEfHRBKOYSm8K16fkeoOmXevyEP4yp7W
+        IG/giTfg==;
 Received: from [2001:4bb8:184:af1:c70:4a89:bc61:2] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kDq8Z-0004az-6M; Thu, 03 Sep 2020 14:22:51 +0000
+        id 1kDq8c-0004bL-6R; Thu, 03 Sep 2020 14:22:54 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -37,9 +37,9 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 06/14] fs: don't allow splice read/write without explicit ops
-Date:   Thu,  3 Sep 2020 16:22:34 +0200
-Message-Id: <20200903142242.925828-7-hch@lst.de>
+Subject: [PATCH 08/14] test_bitmap: remove user bitmap tests
+Date:   Thu,  3 Sep 2020 16:22:36 +0200
+Message-Id: <20200903142242.925828-9-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200903142242.925828-1-hch@lst.de>
 References: <20200903142242.925828-1-hch@lst.de>
@@ -51,217 +51,177 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-default_file_splice_write is the last piece of generic code that uses
-set_fs to make the uaccess routines operate on kernel pointers.  It
-implements a "fallback loop" for splicing from files that do not actually
-provide a proper splice_read method.  The usual file systems and other
-high bandwidth instances all provide a ->splice_read, so this just removes
-support for various device drivers and procfs/debugfs files.  If splice
-support for any of those turns out to be important it can be added back
-by switching them to the iter ops and using generic_file_splice_read.
+We can't run the tests for userspace bitmap parsing if set_fs() doesn't
+exist, and it is about to go away for x86, powerpc with other major
+architectures to follow.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- fs/read_write.c    |   2 +-
- fs/splice.c        | 130 +++++----------------------------------------
- include/linux/fs.h |   2 -
- 3 files changed, 15 insertions(+), 119 deletions(-)
+ lib/test_bitmap.c | 91 +++++++++++------------------------------------
+ 1 file changed, 21 insertions(+), 70 deletions(-)
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 702c4301d9eb6b..8c61f67453e3d3 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -1077,7 +1077,7 @@ ssize_t vfs_iter_write(struct file *file, struct iov_iter *iter, loff_t *ppos,
- }
- EXPORT_SYMBOL(vfs_iter_write);
+diff --git a/lib/test_bitmap.c b/lib/test_bitmap.c
+index df903c53952bb9..4425a1dd4ef1c7 100644
+--- a/lib/test_bitmap.c
++++ b/lib/test_bitmap.c
+@@ -354,50 +354,37 @@ static const struct test_bitmap_parselist parselist_tests[] __initconst = {
  
--ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
-+static ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
- 		  unsigned long vlen, loff_t *pos, rwf_t flags)
- {
- 	struct iovec iovstack[UIO_FASTIOV];
-diff --git a/fs/splice.c b/fs/splice.c
-index d7c8a7c4db07ff..412df7b48f9eb7 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -342,89 +342,6 @@ const struct pipe_buf_operations nosteal_pipe_buf_ops = {
  };
- EXPORT_SYMBOL(nosteal_pipe_buf_ops);
  
--static ssize_t kernel_readv(struct file *file, const struct kvec *vec,
--			    unsigned long vlen, loff_t offset)
--{
--	mm_segment_t old_fs;
--	loff_t pos = offset;
--	ssize_t res;
--
--	old_fs = get_fs();
--	set_fs(KERNEL_DS);
--	/* The cast to a user pointer is valid due to the set_fs() */
--	res = vfs_readv(file, (const struct iovec __user *)vec, vlen, &pos, 0);
--	set_fs(old_fs);
--
--	return res;
--}
--
--static ssize_t default_file_splice_read(struct file *in, loff_t *ppos,
--				 struct pipe_inode_info *pipe, size_t len,
--				 unsigned int flags)
--{
--	struct kvec *vec, __vec[PIPE_DEF_BUFFERS];
--	struct iov_iter to;
--	struct page **pages;
--	unsigned int nr_pages;
--	unsigned int mask;
--	size_t offset, base, copied = 0;
--	ssize_t res;
--	int i;
--
--	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
--		return -EAGAIN;
--
--	/*
--	 * Try to keep page boundaries matching to source pagecache ones -
--	 * it probably won't be much help, but...
--	 */
--	offset = *ppos & ~PAGE_MASK;
--
--	iov_iter_pipe(&to, READ, pipe, len + offset);
--
--	res = iov_iter_get_pages_alloc(&to, &pages, len + offset, &base);
--	if (res <= 0)
--		return -ENOMEM;
--
--	nr_pages = DIV_ROUND_UP(res + base, PAGE_SIZE);
--
--	vec = __vec;
--	if (nr_pages > PIPE_DEF_BUFFERS) {
--		vec = kmalloc_array(nr_pages, sizeof(struct kvec), GFP_KERNEL);
--		if (unlikely(!vec)) {
--			res = -ENOMEM;
--			goto out;
--		}
--	}
--
--	mask = pipe->ring_size - 1;
--	pipe->bufs[to.head & mask].offset = offset;
--	pipe->bufs[to.head & mask].len -= offset;
--
--	for (i = 0; i < nr_pages; i++) {
--		size_t this_len = min_t(size_t, len, PAGE_SIZE - offset);
--		vec[i].iov_base = page_address(pages[i]) + offset;
--		vec[i].iov_len = this_len;
--		len -= this_len;
--		offset = 0;
--	}
--
--	res = kernel_readv(in, vec, nr_pages, *ppos);
--	if (res > 0) {
--		copied = res;
--		*ppos += res;
--	}
--
--	if (vec != __vec)
--		kfree(vec);
--out:
--	for (i = 0; i < nr_pages; i++)
--		put_page(pages[i]);
--	kvfree(pages);
--	iov_iter_advance(&to, copied);	/* truncates and discards */
--	return res;
--}
--
- /*
-  * Send 'sd->len' bytes to socket from 'sd->file' at position 'sd->pos'
-  * using sendpage(). Return the number of bytes sent.
-@@ -788,33 +705,6 @@ iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
- 
- EXPORT_SYMBOL(iter_file_splice_write);
- 
--static int write_pipe_buf(struct pipe_inode_info *pipe, struct pipe_buffer *buf,
--			  struct splice_desc *sd)
--{
--	int ret;
--	void *data;
--	loff_t tmp = sd->pos;
--
--	data = kmap(buf->page);
--	ret = __kernel_write(sd->u.file, data + buf->offset, sd->len, &tmp);
--	kunmap(buf->page);
--
--	return ret;
--}
--
--static ssize_t default_file_splice_write(struct pipe_inode_info *pipe,
--					 struct file *out, loff_t *ppos,
--					 size_t len, unsigned int flags)
--{
--	ssize_t ret;
--
--	ret = splice_from_pipe(pipe, out, ppos, len, flags, write_pipe_buf);
--	if (ret > 0)
--		*ppos += ret;
--
--	return ret;
--}
--
- /**
-  * generic_splice_sendpage - splice data from a pipe to a socket
-  * @pipe:	pipe to splice from
-@@ -836,15 +726,23 @@ ssize_t generic_splice_sendpage(struct pipe_inode_info *pipe, struct file *out,
- 
- EXPORT_SYMBOL(generic_splice_sendpage);
- 
-+static int warn_unsupported(struct file *file, const char *op)
-+{
-+	pr_debug_ratelimited(
-+		"splice %s not supported for file %pD4 (pid: %d comm: %.20s)\n",
-+		op, file, current->pid, current->comm);
-+	return -EINVAL;
-+}
-+
- /*
-  * Attempt to initiate a splice from pipe to file.
-  */
- static long do_splice_from(struct pipe_inode_info *pipe, struct file *out,
- 			   loff_t *ppos, size_t len, unsigned int flags)
+-static void __init __test_bitmap_parselist(int is_user)
++static void __init test_bitmap_parselist(void)
  {
--	if (out->f_op->splice_write)
--		return out->f_op->splice_write(pipe, out, ppos, len, flags);
--	return default_file_splice_write(pipe, out, ppos, len, flags);
-+	if (unlikely(!out->f_op->splice_write))
-+		return warn_unsupported(out, "write");
-+	return out->f_op->splice_write(pipe, out, ppos, len, flags);
+ 	int i;
+ 	int err;
+ 	ktime_t time;
+ 	DECLARE_BITMAP(bmap, 2048);
+-	char *mode = is_user ? "_user"  : "";
+ 
+ 	for (i = 0; i < ARRAY_SIZE(parselist_tests); i++) {
+ #define ptest parselist_tests[i]
+ 
+-		if (is_user) {
+-			mm_segment_t orig_fs = get_fs();
+-			size_t len = strlen(ptest.in);
+-
+-			set_fs(KERNEL_DS);
+-			time = ktime_get();
+-			err = bitmap_parselist_user((__force const char __user *)ptest.in, len,
+-						    bmap, ptest.nbits);
+-			time = ktime_get() - time;
+-			set_fs(orig_fs);
+-		} else {
+-			time = ktime_get();
+-			err = bitmap_parselist(ptest.in, bmap, ptest.nbits);
+-			time = ktime_get() - time;
+-		}
++		time = ktime_get();
++		err = bitmap_parselist(ptest.in, bmap, ptest.nbits);
++		time = ktime_get() - time;
+ 
+ 		if (err != ptest.errno) {
+-			pr_err("parselist%s: %d: input is %s, errno is %d, expected %d\n",
+-					mode, i, ptest.in, err, ptest.errno);
++			pr_err("parselist: %d: input is %s, errno is %d, expected %d\n",
++					i, ptest.in, err, ptest.errno);
+ 			continue;
+ 		}
+ 
+ 		if (!err && ptest.expected
+ 			 && !__bitmap_equal(bmap, ptest.expected, ptest.nbits)) {
+-			pr_err("parselist%s: %d: input is %s, result is 0x%lx, expected 0x%lx\n",
+-					mode, i, ptest.in, bmap[0],
++			pr_err("parselist: %d: input is %s, result is 0x%lx, expected 0x%lx\n",
++					i, ptest.in, bmap[0],
+ 					*ptest.expected);
+ 			continue;
+ 		}
+ 
+ 		if (ptest.flags & PARSE_TIME)
+-			pr_err("parselist%s: %d: input is '%s' OK, Time: %llu\n",
+-					mode, i, ptest.in, time);
++			pr_err("parselist: %d: input is '%s' OK, Time: %llu\n",
++					i, ptest.in, time);
+ 
+ #undef ptest
+ 	}
+@@ -443,75 +430,41 @@ static const struct test_bitmap_parselist parse_tests[] __initconst = {
+ #undef step
+ };
+ 
+-static void __init __test_bitmap_parse(int is_user)
++static void __init test_bitmap_parse(void)
+ {
+ 	int i;
+ 	int err;
+ 	ktime_t time;
+ 	DECLARE_BITMAP(bmap, 2048);
+-	char *mode = is_user ? "_user"  : "";
+ 
+ 	for (i = 0; i < ARRAY_SIZE(parse_tests); i++) {
+ 		struct test_bitmap_parselist test = parse_tests[i];
++		size_t len = test.flags & NO_LEN ? UINT_MAX : strlen(test.in);
+ 
+-		if (is_user) {
+-			size_t len = strlen(test.in);
+-			mm_segment_t orig_fs = get_fs();
+-
+-			set_fs(KERNEL_DS);
+-			time = ktime_get();
+-			err = bitmap_parse_user((__force const char __user *)test.in, len,
+-						bmap, test.nbits);
+-			time = ktime_get() - time;
+-			set_fs(orig_fs);
+-		} else {
+-			size_t len = test.flags & NO_LEN ?
+-				UINT_MAX : strlen(test.in);
+-			time = ktime_get();
+-			err = bitmap_parse(test.in, len, bmap, test.nbits);
+-			time = ktime_get() - time;
+-		}
++		time = ktime_get();
++		err = bitmap_parse(test.in, len, bmap, test.nbits);
++		time = ktime_get() - time;
+ 
+ 		if (err != test.errno) {
+-			pr_err("parse%s: %d: input is %s, errno is %d, expected %d\n",
+-					mode, i, test.in, err, test.errno);
++			pr_err("parse: %d: input is %s, errno is %d, expected %d\n",
++					i, test.in, err, test.errno);
+ 			continue;
+ 		}
+ 
+ 		if (!err && test.expected
+ 			 && !__bitmap_equal(bmap, test.expected, test.nbits)) {
+-			pr_err("parse%s: %d: input is %s, result is 0x%lx, expected 0x%lx\n",
+-					mode, i, test.in, bmap[0],
++			pr_err("parse: %d: input is %s, result is 0x%lx, expected 0x%lx\n",
++					i, test.in, bmap[0],
+ 					*test.expected);
+ 			continue;
+ 		}
+ 
+ 		if (test.flags & PARSE_TIME)
+-			pr_err("parse%s: %d: input is '%s' OK, Time: %llu\n",
+-					mode, i, test.in, time);
++			pr_err("parse: %d: input is '%s' OK, Time: %llu\n",
++					i, test.in, time);
+ 	}
  }
  
- /*
-@@ -866,9 +764,9 @@ static long do_splice_to(struct file *in, loff_t *ppos,
- 	if (unlikely(len > MAX_RW_COUNT))
- 		len = MAX_RW_COUNT;
+-static void __init test_bitmap_parselist(void)
+-{
+-	__test_bitmap_parselist(0);
+-}
+-
+-static void __init test_bitmap_parselist_user(void)
+-{
+-	__test_bitmap_parselist(1);
+-}
+-
+-static void __init test_bitmap_parse(void)
+-{
+-	__test_bitmap_parse(0);
+-}
+-
+-static void __init test_bitmap_parse_user(void)
+-{
+-	__test_bitmap_parse(1);
+-}
+-
+ #define EXP1_IN_BITS	(sizeof(exp1) * 8)
  
--	if (in->f_op->splice_read)
--		return in->f_op->splice_read(in, ppos, pipe, len, flags);
--	return default_file_splice_read(in, ppos, pipe, len, flags);
-+	if (unlikely(!in->f_op->splice_read))
-+		return warn_unsupported(in, "read");
-+	return in->f_op->splice_read(in, ppos, pipe, len, flags);
- }
- 
- /**
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7519ae003a082c..839eeccf10174b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1894,8 +1894,6 @@ ssize_t rw_copy_check_uvector(int type, const struct iovec __user * uvector,
- 
- extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
- extern ssize_t vfs_write(struct file *, const char __user *, size_t, loff_t *);
--extern ssize_t vfs_readv(struct file *, const struct iovec __user *,
--		unsigned long, loff_t *, rwf_t);
- extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
- 				   loff_t, size_t, unsigned int);
- extern ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
+ static void __init test_bitmap_arr32(void)
+@@ -675,9 +628,7 @@ static void __init selftest(void)
+ 	test_replace();
+ 	test_bitmap_arr32();
+ 	test_bitmap_parse();
+-	test_bitmap_parse_user();
+ 	test_bitmap_parselist();
+-	test_bitmap_parselist_user();
+ 	test_mem_optimisations();
+ 	test_for_each_set_clump8();
+ 	test_bitmap_cut();
 -- 
 2.28.0
 
