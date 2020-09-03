@@ -2,113 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D312325B96B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 05:52:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AB6E25BB69
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 09:12:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbgICDwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Sep 2020 23:52:45 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:47026 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbgICDwn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Sep 2020 23:52:43 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0833obwd191914;
-        Thu, 3 Sep 2020 03:52:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
- bh=plrQbRO5We9myfM1D8OZxb2JZVOMVYHNu9vACenTQ7o=;
- b=umACb64vTspKV52Xcc2OvTOzfLlTJiWJuHOTs9jzlD6zO3V9a3Xcr/kMBdzVreM+DChF
- 9BKCQK5bYPHT6YHyz/U9aeuNLi4YES3Dq3NuGX/yHXn3+fq96EYCkjeN5JvHkmYjiqtc
- /x8QihfAhutP8U3M7Yki2WOt2sYSelCosgzJtVhoe41p47nEgTb5BB5tOuNCoaR9o5gd
- WSPsXdUbv154rNs8yrdoYmmELgCi50Pl/Z7/cOLWSd/QC4GOBJV4GH1ZzCEeGxgndvfJ
- KudpvhKniH9/J+3E+VWUdcKfafv74WBM/DGcJtFHcY/wTd5FXRUs8/NUpLDNWbbqFW3o Gg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 337eyme83a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 03 Sep 2020 03:52:35 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0833nlUh078075;
-        Thu, 3 Sep 2020 03:52:35 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3030.oracle.com with ESMTP id 3380y12x5u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 03 Sep 2020 03:52:35 +0000
-Received: from userp3030.oracle.com (userp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0833qYAW084111;
-        Thu, 3 Sep 2020 03:52:34 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 3380y12x5j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 03 Sep 2020 03:52:34 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0833qQ8V030386;
-        Thu, 3 Sep 2020 03:52:26 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 02 Sep 2020 20:52:26 -0700
-Date:   Wed, 2 Sep 2020 20:52:25 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        ocfs2 list <ocfs2-devel@oss.oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        "Theodore Ts'o" <tytso@mit.edu>
-Subject: Broken O_{D,}SYNC behavior with FICLONE*?
-Message-ID: <20200903035225.GJ6090@magnolia>
+        id S1727847AbgICHLt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 03:11:49 -0400
+Received: from verein.lst.de ([213.95.11.211]:36619 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725919AbgICHLt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Sep 2020 03:11:49 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 0164568BEB; Thu,  3 Sep 2020 09:11:44 +0200 (CEST)
+Date:   Thu, 3 Sep 2020 09:11:44 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 10/10] powerpc: remove address space overrides using
+ set_fs()
+Message-ID: <20200903071144.GA19247@lst.de>
+References: <20200827150030.282762-1-hch@lst.de> <20200827150030.282762-11-hch@lst.de> <8974838a-a0b1-1806-4a3a-e983deda67ca@csgroup.eu> <20200902123646.GA31184@lst.de> <d78cb4be-48a9-a7c5-d9d1-d04d2a02b4c6@csgroup.eu> <CAHk-=wiDCcxuHgENo3UtdFi2QW9B7yXvNpG5CtF=A6bc6PTTgA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9732 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 adultscore=0
- priorityscore=1501 phishscore=0 mlxlogscore=999 mlxscore=0
- lowpriorityscore=0 clxscore=1015 spamscore=0 bulkscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009030035
+In-Reply-To: <CAHk-=wiDCcxuHgENo3UtdFi2QW9B7yXvNpG5CtF=A6bc6PTTgA@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Wed, Sep 02, 2020 at 11:02:22AM -0700, Linus Torvalds wrote:
+> I don't see why this change would make any difference.
 
-I have a question for everyone-- do FICLONE and FICLONERANGE count as a
-"write operation" for the purposes of reasoning about O_SYNC and
-O_DSYNC?  In other words, is it supposed to be the case that
-(paraphrasing the open(2) manpage) "By the time ioctl(FICLONE) returns,
-the output data and associated file metadata have been transferred to
-the underlying hardware (i.e., as though each ioctl(FICLONE) was
-followed by a call to fsync(2))."?
+Me neither, but while looking at a different project I did spot places
+that actually do an access_ok with len 0, that's why I wanted him to
+try.
 
-If I open a file with O_SYNC, call FICLONE to reflink some data blocks
-into that file, and hit the reset button as soon as the ioctl call
-returns, should I expect that I will always see the new file contents in
-that file after the system comes back up?  Or am I required to fsync()
-the file despite O_SYNC being set?
+That being said: Christophe are these number stables?  Do you get
+similar numbers with multiple runs?
 
-The reason I ask is that (a) reflinking can definitely change the file
-contents which seems like a write operation; and (b) we wrote a test to
-examine the copy_file_range() semantics wrt O_SYNC and discovered that
-an unaligned c_f_r through the splice code does indeed honor the
-documented O_SYNC semantics, but a block-aligned c_f_r that uses reflink
-does *not* honor this.
+> And btw, why do the 32-bit and 64-bit checks even differ? It's not
+> like the extra (single) instruction should even matter. I think the
+> main reason is that the simpler 64-bit case could stay as a macro
+> (because it only uses "addr" and "size" once), but honestly, that
+> "simplification" doesn't help when you then need to have that #ifdef
+> for the 32-bit case and an inline function anyway.
 
-So, that's inconsistent behavior and I want to know if remap_file_range
-is broken or if we all just don't care about O_SYNC for these fancy
-IO accelerators?
+I'll have to leave that to the powerpc folks.  The intent was to not
+change the behavior (and I even fucked that up for the the size == 0
+case).
 
-I tend to think reflink is broken on XFS, but I converted that O_SYNC
-test into a fstest and discovered that none of XFS, btrfs, or ocfs2
-actually force the fs to persist metadata changes after reflinking into
-an O_SYNC file.  The manpages for the clone ioctls and copy_file_range
-don't explicitly declare those calls to be "write operations".
+> However, I suspect a bigger reason for the actual performance
+> degradation would be the patch that makes things use "write_iter()"
+> for writing, even when a simpler "write()" exists.
 
-FWIW I repeated the analysis with a file that had FS_XFLAG_SYNC or
-FS_SYNC_FL set on the inode but O_SYNC was not set on the fd, and
-observed the same results.
+Except that we do not actually have such a patch.  For normal user
+writes we only use ->write_iter if ->write is not present.  But what
+shows up in the profile is that /dev/zero only has a read_iter op and
+not a normal read.  I've added a patch below that implements a normal
+read which might help a tad with this workload, but should not be part
+of a regression.
 
---D
+Also Christophe:  can you bisect which patch starts this?  Is it really
+this last patch in the series?
+
+---
+diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+index abd4ffdc8cdebc..1dc99ab158457a 100644
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -726,6 +726,27 @@ static ssize_t read_iter_zero(struct kiocb *iocb, struct iov_iter *iter)
+ 	return written;
+ }
+ 
++static ssize_t read_zero(struct file *file, char __user *buf,
++			 size_t count, loff_t *ppos)
++{
++	size_t cleared = 0;
++
++	while (count) {
++		size_t chunk = min_t(size_t, count, PAGE_SIZE);
++
++		if (clear_user(buf + cleared, chunk))
++			return cleared ? cleared : -EFAULT;
++		cleared += chunk;
++		count -= chunk;
++
++		if (signal_pending(current))
++			return cleared ? cleared : -ERESTARTSYS;
++		cond_resched();
++	}
++
++	return cleared;
++}
++
+ static int mmap_zero(struct file *file, struct vm_area_struct *vma)
+ {
+ #ifndef CONFIG_MMU
+@@ -921,6 +942,7 @@ static const struct file_operations zero_fops = {
+ 	.llseek		= zero_lseek,
+ 	.write		= write_zero,
+ 	.read_iter	= read_iter_zero,
++	.read		= read_zero,
+ 	.write_iter	= write_iter_zero,
+ 	.mmap		= mmap_zero,
+ 	.get_unmapped_area = get_unmapped_area_zero,
