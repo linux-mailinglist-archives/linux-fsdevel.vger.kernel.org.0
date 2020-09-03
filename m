@@ -2,91 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA15425C5C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 17:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3226A25C5EF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 17:57:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbgICPuV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 11:50:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48612 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728500AbgICPuQ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 11:50:16 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B49F1C061245
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Sep 2020 08:50:15 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id u27so2149000lfm.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Sep 2020 08:50:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6uN+gKvfGO60O5JMjCBhAHk4zCyy59uX9CdJNtZFrNw=;
-        b=hYB6yqqQVYLw5W4wbNtwYxGosDDACrqFPkFRzSxq5GUdwnRcqWSZf+3pDJZG3l4qpj
-         XIsM8mhEThCQIKY5Q71Pb3tabJeQfFtxozky3wgH9Fge0iOyyl06stPcVEls4DGKyFgJ
-         F0YpC38xMkAjv0zbD8B0d2Ya5VsmSKKtjzeEY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6uN+gKvfGO60O5JMjCBhAHk4zCyy59uX9CdJNtZFrNw=;
-        b=Lp6cd6EFWwE4KIVCzr9z2kgpTaYzHiXeVOlEHxbi7wSCLCgECzTrYLlZA3Sj8cqiWJ
-         AZkSArRm1VLoHcNZuLJFd3yj4gztRork8MGazuBVFTA7iYmUdM4tlQZaTBTxvvFLd9j/
-         GsEB6mw7J+LyVR4MmJgfMgwR/X5I2FlSv4XeaLMs5N9rz0T3EHdQETfhhqlhdJg7phx4
-         CgnzESKZ5RfgD4KHvqv4tzFaL28iCiA/zfsoLAOesrt6vSNE1966mWkRkEGrAcb0BRPt
-         TaWzYxpwG9Dn5Y9aCHLnyxcouSv2WmGHRIan/ZpnWMW+dSZSh0HkeER5lDFbMmR5hswW
-         DfjQ==
-X-Gm-Message-State: AOAM530GBOyl1iRSSN7b7X+IDh5nzM82RL8LFaC/I8mP8FPUcC7dXJcA
-        l4k7/AvaULmpY82yTYbk/lalaGkJL+BIRw==
-X-Google-Smtp-Source: ABdhPJz1fvREtbdhLSg3cjiHpIEvVe5phMOvPJ6r5U+uhZs3bh+g96G5eWO2Ltf6DcCUPqzGvrCcmw==
-X-Received: by 2002:a19:457:: with SMTP id 84mr1588217lfe.191.1599148213190;
-        Thu, 03 Sep 2020 08:50:13 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id 206sm679303lfd.72.2020.09.03.08.50.07
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Sep 2020 08:50:07 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id y2so2153418lfy.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Sep 2020 08:50:07 -0700 (PDT)
-X-Received: by 2002:a05:6512:403:: with SMTP id u3mr1627887lfk.10.1599148206752;
- Thu, 03 Sep 2020 08:50:06 -0700 (PDT)
+        id S1728344AbgICP5C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 11:57:02 -0400
+Received: from verein.lst.de ([213.95.11.211]:38410 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728354AbgICP4s (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Sep 2020 11:56:48 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 953B667357; Thu,  3 Sep 2020 17:56:44 +0200 (CEST)
+Date:   Thu, 3 Sep 2020 17:56:44 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
+        linux-arch@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Subject: Re: [PATCH 14/14] powerpc: remove address space overrides using
+ set_fs()
+Message-ID: <20200903155644.GA23521@lst.de>
+References: <20200903142242.925828-1-hch@lst.de> <20200903142242.925828-15-hch@lst.de> <e7d2d231-5658-a4d3-0495-2af62f34aa34@csgroup.eu> <20200903154909.GA23023@lst.de>
 MIME-Version: 1.0
-References: <20200903142242.925828-1-hch@lst.de>
-In-Reply-To: <20200903142242.925828-1-hch@lst.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 3 Sep 2020 08:49:50 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh=jtTcwSox8RY-skN83c40WXZOfwid-91FDgRdk0xwrw@mail.gmail.com>
-Message-ID: <CAHk-=wh=jtTcwSox8RY-skN83c40WXZOfwid-91FDgRdk0xwrw@mail.gmail.com>
-Subject: Re: remove the last set_fs() in common code, and remove it for x86
- and powerpc v3
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200903154909.GA23023@lst.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 3, 2020 at 7:22 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> [Note to Linus: I'd like to get this into linux-next rather earlier
-> than later.  Do you think it is ok to add this tree to linux-next?]
+On Thu, Sep 03, 2020 at 05:49:09PM +0200, Christoph Hellwig wrote:
+> On Thu, Sep 03, 2020 at 05:43:25PM +0200, Christophe Leroy wrote:
+> >
+> >
+> > Le 03/09/2020 à 16:22, Christoph Hellwig a écrit :
+> >> Stop providing the possibility to override the address space using
+> >> set_fs() now that there is no need for that any more.
+> >>
+> >> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> >> ---
+> >
+> >
+> >>   -static inline int __access_ok(unsigned long addr, unsigned long size,
+> >> -			mm_segment_t seg)
+> >> +static inline bool __access_ok(unsigned long addr, unsigned long size)
+> >>   {
+> >> -	if (addr > seg.seg)
+> >> -		return 0;
+> >> -	return (size == 0 || size - 1 <= seg.seg - addr);
+> >> +	if (addr >= TASK_SIZE_MAX)
+> >> +		return false;
+> >> +	return size == 0 || size <= TASK_SIZE_MAX - addr;
+> >>   }
+> >
+> > You don't need to test size == 0 anymore. It used to be necessary because 
+> > of the 'size - 1', as size is unsigned.
+> >
+> > Now you can directly do
+> >
+> > 	return size <= TASK_SIZE_MAX - addr;
+> >
+> > If size is 0, this will always be true (because you already know that addr 
+> > is not >= TASK_SIZE_MAX
+> 
+> True.  What do you think of Linus' comment about always using the
+> ppc32 version on ppc64 as well with this?
 
-This whole series looks really good to me now, with each patch looking
-like a clear cleanup on its own.
+i.e. something like this folded in:
 
-So ack on the whole series, and yes, please get this into linux-next
-and ready for 5.10. Whether through Al or something else.
-
-Thanks,
-
-               Linus
+diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
+index 5363f7fc6dd06c..be070254e50943 100644
+--- a/arch/powerpc/include/asm/uaccess.h
++++ b/arch/powerpc/include/asm/uaccess.h
+@@ -11,26 +11,14 @@
+ #ifdef __powerpc64__
+ /* We use TASK_SIZE_USER64 as TASK_SIZE is not constant */
+ #define TASK_SIZE_MAX		TASK_SIZE_USER64
+-
+-/*
+- * This check is sufficient because there is a large enough gap between user
+- * addresses and the kernel addresses.
+- */
+-static inline bool __access_ok(unsigned long addr, unsigned long size)
+-{
+-	return addr < TASK_SIZE_MAX && size < TASK_SIZE_MAX;
+-}
+-
+ #else
+ #define TASK_SIZE_MAX		TASK_SIZE
++#endif
+ 
+ static inline bool __access_ok(unsigned long addr, unsigned long size)
+ {
+-	if (addr >= TASK_SIZE_MAX)
+-		return false;
+-	return size == 0 || size <= TASK_SIZE_MAX - addr;
++	return addr < TASK_SIZE_MAX && size <= TASK_SIZE_MAX - addr;
+ }
+-#endif /* __powerpc64__ */
+ 
+ #define access_ok(addr, size)		\
+ 	(__chk_user_ptr(addr),		\
