@@ -2,86 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 603AE25C78D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 18:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95F7D25C95B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 21:22:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728949AbgICQ4q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 12:56:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:50490 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728514AbgICQ4p (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 12:56:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599152204;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=YAdtu4wMk+fDL1zMc9RkOIclCF2kveRlgVkmIcPTrJ4=;
-        b=WQsVmzMK3Pd1gLlPYZyd5cltku52I7Iq2rtf9LfQojt9ya51yqC4HPUHsPuspZl2qO9y8w
-        TNAJU7k9vBXkmA2ENsvHPg/LFeGQpWfhrKmkwIZlp6PdjnSxit3cF0DX0AcsLDcVQG6u2F
-        x/lv+pLrjdDHoM6SDNb1HpRxcFVMSi0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-464-zLPjFgCmMNWB_1VJEgJueg-1; Thu, 03 Sep 2020 12:56:40 -0400
-X-MC-Unique: zLPjFgCmMNWB_1VJEgJueg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729279AbgICTWW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 15:22:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38990 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729223AbgICTWU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 Sep 2020 15:22:20 -0400
+Received: from X1 (nat-ab2241.sltdut.senawave.net [162.218.216.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 17D821DE09;
-        Thu,  3 Sep 2020 16:56:39 +0000 (UTC)
-Received: from max.home.com (unknown [10.40.194.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 93C1410027A6;
-        Thu,  3 Sep 2020 16:56:34 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cluster-devel@redhat.com,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH] iomap: Fix direct I/O write consistency check
-Date:   Thu,  3 Sep 2020 18:56:32 +0200
-Message-Id: <20200903165632.1338996-1-agruenba@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        by mail.kernel.org (Postfix) with ESMTPSA id 15FE4208FE;
+        Thu,  3 Sep 2020 19:22:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599160940;
+        bh=qrU9WP85gio2U/xOxsjI6OQmaemPSNLwvExZVcQaiJI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=IrPwGOqTv/KWNBrt1u4S7EwYUUGRjlpElggScKVY+7W4Ixse0AjqAOzDwaanViz3l
+         h0Wh9hdgoPIDK9ZlLTdqUMzrwfafpurypMlMfvJrYkdIfuynzS1Klva+0zkKp12SRc
+         FuObmMfsMgQHesWMfhIyVMomBTTbEaa4bKwUWGpw=
+Date:   Thu, 3 Sep 2020 12:22:18 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH 3/9] mm/readahead: Make page_cache_ra_unbounded take a
+ readahead_control
+Message-Id: <20200903122218.42bd70d930cba998e3faf32c@linux-foundation.org>
+In-Reply-To: <20200903140844.14194-4-willy@infradead.org>
+References: <20200903140844.14194-1-willy@infradead.org>
+        <20200903140844.14194-4-willy@infradead.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When a direct I/O write falls back to buffered I/O entirely, dio->size
-will be 0 in iomap_dio_complete.  Function invalidate_inode_pages2_range
-will try to invalidate the rest of the address space.  If there are any
-dirty pages in that range, the write will fail and a "Page cache
-invalidation failure on direct I/O" error will be logged.
+On Thu,  3 Sep 2020 15:08:38 +0100 "Matthew Wilcox (Oracle)" <willy@infradead.org> wrote:
 
-On gfs2, this can be reproduced as follows:
+> Define it in the callers instead of in page_cache_ra_unbounded().
+> 
 
-  xfs_io \
-    -c "open -ft foo" -c "pwrite 4k 4k" -c "close" \
-    -c "open -d foo" -c "pwrite 0 4k"
-
-Fix this by recognizing 0-length writes.
-
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/iomap/direct-io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index c1aafb2ab990..c9d6b4eecdb7 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -108,7 +108,7 @@ static ssize_t iomap_dio_complete(struct iomap_dio *dio)
- 	 * ->end_io() when necessary, otherwise a racing buffer read would cache
- 	 * zeros from unwritten extents.
- 	 */
--	if (!dio->error &&
-+	if (!dio->error && dio->size &&
- 	    (dio->flags & IOMAP_DIO_WRITE) && inode->i_mapping->nrpages) {
- 		int err;
- 		err = invalidate_inode_pages2_range(inode->i_mapping,
--- 
-2.26.2
-
+The changelogs for patches 2-9 are explaining what the patches do, but
+not why they do it, Presumably there's some grand scheme in mind, but
+it isn't being revealed to the reader!
