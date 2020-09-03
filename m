@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E7AA25C33C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 16:47:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E54FF25C329
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Sep 2020 16:46:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729370AbgICOr1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 10:47:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35318 "EHLO
+        id S1729259AbgICOfQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 10:35:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729275AbgICOYg (ORCPT
+        with ESMTP id S1729309AbgICOZl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 10:24:36 -0400
+        Thu, 3 Sep 2020 10:25:41 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B20EC0611E0;
-        Thu,  3 Sep 2020 07:23:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8435C0611E2;
+        Thu,  3 Sep 2020 07:23:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=/cLLiDTD8xZJBHOJYcLmc5ERwKhT+Ciq5XK7jpceMuE=; b=pbq83prJA+fXxcThqWYFnT6Obn
-        cUYsu8Ni43+cor2RGu4rMBXxx7jfdsvpSVOSbX4n16DOzdUbgX9qa7z4CI2mQONm2tUUq3iwxvpaT
-        PM+GsYXPjLEPSTSXLJ9emDurcHWPxYrAywVj6rnTZwCt3n4JkkPiYnbaL7Q6NVb2FaOUCpKaXDHe0
-        PsFbVpRoGFu5Vk5sxFJBrEGV1wary0gsgg3l+jttzBGpShbLPyv4yKusnpMoZymJMX6jCQtUIP/zF
-        V1lPH4wsMKGNI9oxjFTB2lfnEuD0MMrqEDlJ9FDYQUUbT7Qp6DeutsJWfrQu8SdGCw+rdyRpuJPR6
-        8A94iuFw==;
+        bh=B6771Z78+EjFEl66FRYSdFSUZAia5cb3z6J6dPED0dc=; b=ano1KxC9m3ViDX/61fzt8/FHMf
+        RYHXWlYGDttZ0+lgsMWL4w8BpYaRnZtOMa9rrOQLMX33RlH5va3GXXHqre/VPKXxVaQjLpLs9+JLS
+        pNYAQk67L8tsuNGSuVJn4Zfkc6wZ1Rz8Un47lKNDI2PPFupe6j4PP8Ajy2diXmkk1/786NG4JqG1s
+        HpADYcsco56ugQCOTW4Vik4gMhVdYF6aiqtpfbHrCuaICF4S3OglJLXESWBI/ffhk7zEpieJ++kMW
+        bo5eC+DQfcCyEPZrKwWurPrb4oLT3TgydSQ96TbdxijgdvIaJ3aoI9bHG61jifWO6nKrLXYgRZvB8
+        dFeOgvBA==;
 Received: from [2001:4bb8:184:af1:c70:4a89:bc61:2] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kDq8d-0004bX-CJ; Thu, 03 Sep 2020 14:22:55 +0000
+        id 1kDq8e-0004bg-GP; Thu, 03 Sep 2020 14:22:56 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -37,9 +37,9 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 09/14] lkdtm: remove set_fs-based tests
-Date:   Thu,  3 Sep 2020 16:22:37 +0200
-Message-Id: <20200903142242.925828-10-hch@lst.de>
+Subject: [PATCH 10/14] x86: move PAGE_OFFSET, TASK_SIZE & friends to page_{32,64}_types.h
+Date:   Thu,  3 Sep 2020 16:22:38 +0200
+Message-Id: <20200903142242.925828-11-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200903142242.925828-1-hch@lst.de>
 References: <20200903142242.925828-1-hch@lst.de>
@@ -51,124 +51,156 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Once we can't manipulate the address limit, we also can't test what
-happens when the manipulation is abused.
+At least for 64-bit this moves them closer to some of the defines
+they are based on, and it prepares for using the TASK_SIZE_MAX
+definition from assembly.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/misc/lkdtm/bugs.c               | 10 ----------
- drivers/misc/lkdtm/core.c               |  2 --
- drivers/misc/lkdtm/lkdtm.h              |  2 --
- drivers/misc/lkdtm/usercopy.c           | 15 ---------------
- tools/testing/selftests/lkdtm/tests.txt |  2 --
- 5 files changed, 31 deletions(-)
+ arch/x86/include/asm/page_32_types.h | 11 +++++++
+ arch/x86/include/asm/page_64_types.h | 38 +++++++++++++++++++++
+ arch/x86/include/asm/processor.h     | 49 ----------------------------
+ 3 files changed, 49 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
-index 4dfbfd51bdf774..a0675d4154d2fd 100644
---- a/drivers/misc/lkdtm/bugs.c
-+++ b/drivers/misc/lkdtm/bugs.c
-@@ -312,16 +312,6 @@ void lkdtm_CORRUPT_LIST_DEL(void)
- 		pr_err("list_del() corruption not detected!\n");
- }
+diff --git a/arch/x86/include/asm/page_32_types.h b/arch/x86/include/asm/page_32_types.h
+index 565ad755c785e2..26236925fb2c36 100644
+--- a/arch/x86/include/asm/page_32_types.h
++++ b/arch/x86/include/asm/page_32_types.h
+@@ -41,6 +41,17 @@
+ #define __VIRTUAL_MASK_SHIFT	32
+ #endif	/* CONFIG_X86_PAE */
  
--/* Test if unbalanced set_fs(KERNEL_DS)/set_fs(USER_DS) check exists. */
--void lkdtm_CORRUPT_USER_DS(void)
--{
--	pr_info("setting bad task size limit\n");
--	set_fs(KERNEL_DS);
--
--	/* Make sure we do not keep running with a KERNEL_DS! */
--	force_sig(SIGKILL);
--}
--
- /* Test that VMAP_STACK is actually allocating with a leading guard page */
- void lkdtm_STACK_GUARD_PAGE_LEADING(void)
- {
-diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
-index a5e344df916632..97803f213d9d45 100644
---- a/drivers/misc/lkdtm/core.c
-+++ b/drivers/misc/lkdtm/core.c
-@@ -112,7 +112,6 @@ static const struct crashtype crashtypes[] = {
- 	CRASHTYPE(CORRUPT_STACK_STRONG),
- 	CRASHTYPE(CORRUPT_LIST_ADD),
- 	CRASHTYPE(CORRUPT_LIST_DEL),
--	CRASHTYPE(CORRUPT_USER_DS),
- 	CRASHTYPE(STACK_GUARD_PAGE_LEADING),
- 	CRASHTYPE(STACK_GUARD_PAGE_TRAILING),
- 	CRASHTYPE(UNSET_SMEP),
-@@ -172,7 +171,6 @@ static const struct crashtype crashtypes[] = {
- 	CRASHTYPE(USERCOPY_STACK_FRAME_FROM),
- 	CRASHTYPE(USERCOPY_STACK_BEYOND),
- 	CRASHTYPE(USERCOPY_KERNEL),
--	CRASHTYPE(USERCOPY_KERNEL_DS),
- 	CRASHTYPE(STACKLEAK_ERASING),
- 	CRASHTYPE(CFI_FORWARD_PROTO),
++/*
++ * User space process size: 3GB (default).
++ */
++#define IA32_PAGE_OFFSET	PAGE_OFFSET
++#define TASK_SIZE		PAGE_OFFSET
++#define TASK_SIZE_LOW		TASK_SIZE
++#define TASK_SIZE_MAX		TASK_SIZE
++#define DEFAULT_MAP_WINDOW	TASK_SIZE
++#define STACK_TOP		TASK_SIZE
++#define STACK_TOP_MAX		STACK_TOP
++
+ /*
+  * Kernel image size is limited to 512 MB (see in arch/x86/kernel/head_32.S)
+  */
+diff --git a/arch/x86/include/asm/page_64_types.h b/arch/x86/include/asm/page_64_types.h
+index 288b065955b729..996595c9897e0a 100644
+--- a/arch/x86/include/asm/page_64_types.h
++++ b/arch/x86/include/asm/page_64_types.h
+@@ -58,6 +58,44 @@
+ #define __VIRTUAL_MASK_SHIFT	47
+ #endif
+ 
++/*
++ * User space process size.  This is the first address outside the user range.
++ * There are a few constraints that determine this:
++ *
++ * On Intel CPUs, if a SYSCALL instruction is at the highest canonical
++ * address, then that syscall will enter the kernel with a
++ * non-canonical return address, and SYSRET will explode dangerously.
++ * We avoid this particular problem by preventing anything executable
++ * from being mapped at the maximum canonical address.
++ *
++ * On AMD CPUs in the Ryzen family, there's a nasty bug in which the
++ * CPUs malfunction if they execute code from the highest canonical page.
++ * They'll speculate right off the end of the canonical space, and
++ * bad things happen.  This is worked around in the same way as the
++ * Intel problem.
++ *
++ * With page table isolation enabled, we map the LDT in ... [stay tuned]
++ */
++#define TASK_SIZE_MAX	((1UL << __VIRTUAL_MASK_SHIFT) - PAGE_SIZE)
++
++#define DEFAULT_MAP_WINDOW	((1UL << 47) - PAGE_SIZE)
++
++/* This decides where the kernel will search for a free chunk of vm
++ * space during mmap's.
++ */
++#define IA32_PAGE_OFFSET	((current->personality & ADDR_LIMIT_3GB) ? \
++					0xc0000000 : 0xFFFFe000)
++
++#define TASK_SIZE_LOW		(test_thread_flag(TIF_ADDR32) ? \
++					IA32_PAGE_OFFSET : DEFAULT_MAP_WINDOW)
++#define TASK_SIZE		(test_thread_flag(TIF_ADDR32) ? \
++					IA32_PAGE_OFFSET : TASK_SIZE_MAX)
++#define TASK_SIZE_OF(child)	((test_tsk_thread_flag(child, TIF_ADDR32)) ? \
++					IA32_PAGE_OFFSET : TASK_SIZE_MAX)
++
++#define STACK_TOP		TASK_SIZE_LOW
++#define STACK_TOP_MAX		TASK_SIZE_MAX
++
+ /*
+  * Maximum kernel image size is limited to 1 GiB, due to the fixmap living
+  * in the next 1 GiB (see level2_kernel_pgt in arch/x86/kernel/head_64.S).
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index 97143d87994c24..1618eeb08361a9 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -782,17 +782,6 @@ static inline void spin_lock_prefetch(const void *x)
+ })
+ 
  #ifdef CONFIG_X86_32
-diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
-index 8878538b2c1322..6dec4c9b442ff3 100644
---- a/drivers/misc/lkdtm/lkdtm.h
-+++ b/drivers/misc/lkdtm/lkdtm.h
-@@ -27,7 +27,6 @@ void lkdtm_OVERFLOW_UNSIGNED(void);
- void lkdtm_ARRAY_BOUNDS(void);
- void lkdtm_CORRUPT_LIST_ADD(void);
- void lkdtm_CORRUPT_LIST_DEL(void);
--void lkdtm_CORRUPT_USER_DS(void);
- void lkdtm_STACK_GUARD_PAGE_LEADING(void);
- void lkdtm_STACK_GUARD_PAGE_TRAILING(void);
- void lkdtm_UNSET_SMEP(void);
-@@ -96,7 +95,6 @@ void lkdtm_USERCOPY_STACK_FRAME_TO(void);
- void lkdtm_USERCOPY_STACK_FRAME_FROM(void);
- void lkdtm_USERCOPY_STACK_BEYOND(void);
- void lkdtm_USERCOPY_KERNEL(void);
--void lkdtm_USERCOPY_KERNEL_DS(void);
+-/*
+- * User space process size: 3GB (default).
+- */
+-#define IA32_PAGE_OFFSET	PAGE_OFFSET
+-#define TASK_SIZE		PAGE_OFFSET
+-#define TASK_SIZE_LOW		TASK_SIZE
+-#define TASK_SIZE_MAX		TASK_SIZE
+-#define DEFAULT_MAP_WINDOW	TASK_SIZE
+-#define STACK_TOP		TASK_SIZE
+-#define STACK_TOP_MAX		STACK_TOP
+-
+ #define INIT_THREAD  {							  \
+ 	.sp0			= TOP_OF_INIT_STACK,			  \
+ 	.sysenter_cs		= __KERNEL_CS,				  \
+@@ -802,44 +791,6 @@ static inline void spin_lock_prefetch(const void *x)
+ #define KSTK_ESP(task)		(task_pt_regs(task)->sp)
  
- /* lkdtm_stackleak.c */
- void lkdtm_STACKLEAK_ERASING(void);
-diff --git a/drivers/misc/lkdtm/usercopy.c b/drivers/misc/lkdtm/usercopy.c
-index b833367a45d053..109e8d4302c113 100644
---- a/drivers/misc/lkdtm/usercopy.c
-+++ b/drivers/misc/lkdtm/usercopy.c
-@@ -325,21 +325,6 @@ void lkdtm_USERCOPY_KERNEL(void)
- 	vm_munmap(user_addr, PAGE_SIZE);
+ #else
+-/*
+- * User space process size.  This is the first address outside the user range.
+- * There are a few constraints that determine this:
+- *
+- * On Intel CPUs, if a SYSCALL instruction is at the highest canonical
+- * address, then that syscall will enter the kernel with a
+- * non-canonical return address, and SYSRET will explode dangerously.
+- * We avoid this particular problem by preventing anything executable
+- * from being mapped at the maximum canonical address.
+- *
+- * On AMD CPUs in the Ryzen family, there's a nasty bug in which the
+- * CPUs malfunction if they execute code from the highest canonical page.
+- * They'll speculate right off the end of the canonical space, and
+- * bad things happen.  This is worked around in the same way as the
+- * Intel problem.
+- *
+- * With page table isolation enabled, we map the LDT in ... [stay tuned]
+- */
+-#define TASK_SIZE_MAX	((1UL << __VIRTUAL_MASK_SHIFT) - PAGE_SIZE)
+-
+-#define DEFAULT_MAP_WINDOW	((1UL << 47) - PAGE_SIZE)
+-
+-/* This decides where the kernel will search for a free chunk of vm
+- * space during mmap's.
+- */
+-#define IA32_PAGE_OFFSET	((current->personality & ADDR_LIMIT_3GB) ? \
+-					0xc0000000 : 0xFFFFe000)
+-
+-#define TASK_SIZE_LOW		(test_thread_flag(TIF_ADDR32) ? \
+-					IA32_PAGE_OFFSET : DEFAULT_MAP_WINDOW)
+-#define TASK_SIZE		(test_thread_flag(TIF_ADDR32) ? \
+-					IA32_PAGE_OFFSET : TASK_SIZE_MAX)
+-#define TASK_SIZE_OF(child)	((test_tsk_thread_flag(child, TIF_ADDR32)) ? \
+-					IA32_PAGE_OFFSET : TASK_SIZE_MAX)
+-
+-#define STACK_TOP		TASK_SIZE_LOW
+-#define STACK_TOP_MAX		TASK_SIZE_MAX
+-
+ #define INIT_THREAD  {						\
+ 	.addr_limit		= KERNEL_DS,			\
  }
- 
--void lkdtm_USERCOPY_KERNEL_DS(void)
--{
--	char __user *user_ptr =
--		(char __user *)(0xFUL << (sizeof(unsigned long) * 8 - 4));
--	mm_segment_t old_fs = get_fs();
--	char buf[10] = {0};
--
--	pr_info("attempting copy_to_user() to noncanonical address: %px\n",
--		user_ptr);
--	set_fs(KERNEL_DS);
--	if (copy_to_user(user_ptr, buf, sizeof(buf)) == 0)
--		pr_err("copy_to_user() to noncanonical address succeeded!?\n");
--	set_fs(old_fs);
--}
--
- void __init lkdtm_usercopy_init(void)
- {
- 	/* Prepare cache that lacks SLAB_USERCOPY flag. */
-diff --git a/tools/testing/selftests/lkdtm/tests.txt b/tools/testing/selftests/lkdtm/tests.txt
-index 9d266e79c6a270..74a8d329a72c80 100644
---- a/tools/testing/selftests/lkdtm/tests.txt
-+++ b/tools/testing/selftests/lkdtm/tests.txt
-@@ -9,7 +9,6 @@ EXCEPTION
- #CORRUPT_STACK_STRONG Crashes entire system on success
- CORRUPT_LIST_ADD list_add corruption
- CORRUPT_LIST_DEL list_del corruption
--CORRUPT_USER_DS Invalid address limit on user-mode return
- STACK_GUARD_PAGE_LEADING
- STACK_GUARD_PAGE_TRAILING
- UNSET_SMEP CR4 bits went missing
-@@ -67,6 +66,5 @@ USERCOPY_STACK_FRAME_TO
- USERCOPY_STACK_FRAME_FROM
- USERCOPY_STACK_BEYOND
- USERCOPY_KERNEL
--USERCOPY_KERNEL_DS
- STACKLEAK_ERASING OK: the rest of the thread stack is properly erased
- CFI_FORWARD_PROTO
 -- 
 2.28.0
 
