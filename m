@@ -2,89 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 70A4725D4AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 11:23:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1030D25D55F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 11:46:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730011AbgIDJXK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Sep 2020 05:23:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39698 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728588AbgIDJXK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Sep 2020 05:23:10 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 899CAB165;
-        Fri,  4 Sep 2020 09:23:08 +0000 (UTC)
-Subject: Re: rework check_disk_change()
-To:     dgilbert@interlog.com, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Song Liu <song@kernel.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        linux-m68k@lists.linux-m68k.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20200902141218.212614-1-hch@lst.de>
- <730eced4-c804-a78f-3d52-2a448dbd1b84@interlog.com>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <29ec4708-3a8d-a4f2-5eea-a08908a8d093@suse.de>
-Date:   Fri, 4 Sep 2020 11:23:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        id S1729731AbgIDJqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Sep 2020 05:46:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44700 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbgIDJqH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 4 Sep 2020 05:46:07 -0400
+Received: from mail-vk1-xa42.google.com (mail-vk1-xa42.google.com [IPv6:2607:f8b0:4864:20::a42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F188DC061244
+        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Sep 2020 02:46:06 -0700 (PDT)
+Received: by mail-vk1-xa42.google.com with SMTP id e5so1504264vkm.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Sep 2020 02:46:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MXzRjhwn8e2J5zYTCR4K+ZTW1our2Q6VsUPgVktuBLs=;
+        b=LdTO8+I8XHmU+YCHchiFOBlCOwF2mhR5dAZx74JAbUsVoRU33CWaY86v/bbMDVm7wP
+         oYKi0OpxacAUC3LC5vNhWGHA87ywut6e9wR3KE1bYg6VrM/LVLbCgXWuQc77HjQQITD7
+         g2yIZPsT16veeMHQ81rSKzD82ttwqwbK+LSB4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MXzRjhwn8e2J5zYTCR4K+ZTW1our2Q6VsUPgVktuBLs=;
+        b=gqYz82HB0xnfAnn4XncBu9VtJ8E0xqTHr/4lWHgfgpbpwmXsbP5ebBlrmo+pTcPoVW
+         fftr0UUrYljTEMtssWTwL+8Dsn4DFeOcMw+6vx46BMLpD1QAdBPSEzrS8A6kzntj57Yk
+         QOE+KAJQwUr6/mUZt9ULuFwC60Gs3pTD4BT54TOgUGJAWFmhjGsCAYGSulhy8pdR6y+1
+         BsuMiZz7Wh5IH+MC1qVMFOBxpYOGCpT2U7jFO08IsfVlp5ShK1gAXo23AV2COpUedmBk
+         K+KRnJQPeB/u3A4AQ9vPguEVzNt984GmOyDb6TkOd+03leANFT8qXbRwnGilEVXyuzvE
+         lCXw==
+X-Gm-Message-State: AOAM533phdcg0kyLhkqzBADzPJFgXk+A6B7hKJWVYFzKHEu52BTcGrFy
+        LPtm2T2GPVISeAW9pO8QWY3onTYsR0Mz2uRJFR7KvQ==
+X-Google-Smtp-Source: ABdhPJzKB0NthI1LuTW6BHdNzilpfWpk2QEHQQe0FwPk9KShrU/6mTQNOyDLitbHJZ+h9jU58BKRQz7JNrryVXRgnbw=
+X-Received: by 2002:a1f:a0c3:: with SMTP id j186mr4756203vke.76.1599212765024;
+ Fri, 04 Sep 2020 02:46:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <730eced4-c804-a78f-3d52-2a448dbd1b84@interlog.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200901142634.1227109-1-vgoyal@redhat.com>
+In-Reply-To: <20200901142634.1227109-1-vgoyal@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 4 Sep 2020 11:45:53 +0200
+Message-ID: <CAJfpegtBA6XSbb+futZGt=NY-VjnN_GWFmnNfGjLfgnZ1ynM0w@mail.gmail.com>
+Subject: Re: [PATCH 0/2] fuse, dax: Couple of fixes for fuse dax support
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/2/20 5:38 PM, Douglas Gilbert wrote:
-> On 2020-09-02 10:11 a.m., Christoph Hellwig wrote:
->> Hi Jens,
->>
->> this series replaced the not very nice check_disk_change() function with
->> a new bdev_media_changed that avoids having the ->revalidate_disk call
->> at its end.  As a result ->revalidate_disk can be removed from a lot of
->> drivers.
->>
-> 
-> For over 20 years the sg driver has been carrying this snippet that hangs
-> off the completion callback:
-> 
->         if (driver_stat & DRIVER_SENSE) {
->                  struct scsi_sense_hdr ssh;
-> 
->                  if (scsi_normalize_sense(sbp, sense_len, &ssh)) {
->                          if (!scsi_sense_is_deferred(&ssh)) {
->                                  if (ssh.sense_key == UNIT_ATTENTION) {
->                                          if (sdp->device->removable)
->                                                  sdp->device->changed = 1;
->                                  }
->                          }
->                  }
->          }
-> 
-> Is it needed? The unit attention (UA) may not be associated with the
-> device changing. Shouldn't the SCSI mid-level monitor UAs if they
-> impact the state of a scsi_device object?
-> 
-We do; check scsi_io_completion_action() in drivers/scsi/scsi_lib.c
-So I don't think you'd need to keep it in sg.c.
+On Tue, Sep 1, 2020 at 4:26 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> Hi Miklos,
+>
+> I am testing fuse dax branch now. To begin with here are couple of
+> simple fixes to make sure I/O is going through dax path.
+>
+> Either you can roll these fixes into existing patches or apply on
+> top.
+>
+> I ran blogbench workload and some fio mmap jobs and these seem to be
+> running fine after these fixes.
 
-Cheers,
+Thanks for testing and fixing.
 
-Hannes
--- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
+Pushed a rerolled series to #for-next.   Would be good if you cour retest.
+
+There's one checkpatch warning I'm unsure about:
+
+| WARNING: Using vsprintf specifier '%px' potentially exposes the
+kernel memory layout, if you don't really need the address please
+consider using '%p'.
+| #173: FILE: fs/fuse/virtio_fs.c:812:
+| +    dev_dbg(&vdev->dev, "%s: window kaddr 0x%px phys_addr 0x%llx
+len 0x%llx\n",
+| +        __func__, fs->window_kaddr, cache_reg.addr, cache_reg.len);
+|
+| total: 0 errors, 1 warnings, 175 lines checked
+|
+| NOTE: For some of the reported defects, checkpatch may be able to
+|       mechanically convert to the typical style using --fix or --fix-inplace.
+|
+| patches/virtio_fs-dax-set-up-virtio_fs-dax_device.patch has style
+problems, please review.
+
+Do you think that the kernel address in the debug output is necessary?
+
+Thanks,
+Miklos
