@@ -2,209 +2,246 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1553925CFD1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 05:35:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78DE925CFDA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 05:37:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729572AbgIDDe4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Sep 2020 23:34:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:52962 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729554AbgIDDex (ORCPT
+        id S1729665AbgIDDhn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Sep 2020 23:37:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44602 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729580AbgIDDhg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Sep 2020 23:34:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599190492;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0Sivd+X8sSjHVFUEdDJB8sFaPEg6xaM+EZovO2ogqnQ=;
-        b=dZ2s5akagYVMMSuu4Zgn4mOhSnkUm2D3IEnV8kfVQkHcxE0YUlbqUlbDLpaYFTB3Hv6Uby
-        UjzOAgeuMKdG8KoXXqSTqGnAVbSkFQktbPQzQ57eolmwjcWDJId9TW3UjpFiwg/AYriTST
-        3TIkAu+kIHNZrivvps3KYEJ2Q2V9GSc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-243-h8uTNWP-NaKEZHA0lwJCVQ-1; Thu, 03 Sep 2020 23:34:48 -0400
-X-MC-Unique: h8uTNWP-NaKEZHA0lwJCVQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 193DF107465A;
-        Fri,  4 Sep 2020 03:34:45 +0000 (UTC)
-Received: from mail (ovpn-113-36.rdu2.redhat.com [10.10.113.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 02E12100239F;
-        Fri,  4 Sep 2020 03:34:39 +0000 (UTC)
-Date:   Thu, 3 Sep 2020 23:34:38 -0400
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Lokesh Gidra <lokeshgidra@google.com>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Nick Kralevich <nnk@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Xu <peterx@redhat.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Jerome Glisse <jglisse@redhat.com>, Shaohua Li <shli@fb.com>,
-        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Minchan Kim <minchan@google.com>,
-        Sandeep Patil <sspatil@google.com>, kernel@android.com,
-        Daniel Colascione <dancol@dancol.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH 2/2] Add a new sysctl knob:
- unprivileged_userfaultfd_user_mode_only
-Message-ID: <20200904033438.GI9411@redhat.com>
-References: <20200520195134.GK26186@redhat.com>
- <CA+EESO4wEQz3CMxNLh8mQmTpUHdO+zZbV10zUfYGKEwfRPK2nQ@mail.gmail.com>
- <20200520211634.GL26186@redhat.com>
- <CABXk95A-E4NYqA5qVrPgDF18YW-z4_udzLwa0cdo2OfqVsy=SQ@mail.gmail.com>
- <CA+EESO4kLaje0yTOyMSxHfSLC0n86zAF+M1DWB_XrwFDLOCawQ@mail.gmail.com>
- <CAFJ0LnGfrzvVgtyZQ+UqRM6F3M7iXOhTkUBTc+9sV+=RrFntyQ@mail.gmail.com>
- <20200724093852-mutt-send-email-mst@kernel.org>
- <CAFJ0LnEZghYj=d3w8Fmko4GZAWw6Qc5rgAMmXj-8qgXtyU3bZQ@mail.gmail.com>
- <20200806004351-mutt-send-email-mst@kernel.org>
- <CA+EESO6bxhKf5123feNX1LZyyN2QL4Ti5ApPAu=xb3pHXd7cwQ@mail.gmail.com>
+        Thu, 3 Sep 2020 23:37:36 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77375C061244;
+        Thu,  3 Sep 2020 20:37:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=MlDL+jj1BjkOBZ5IVs63oT6JunXcTHCVT3fwzED6qgE=; b=Xm7dX6HOdM1ZcF6vj8L3Zs+L13
+        0qweHQUoX5UXahkix1MNiHbfgTTQdI016/smaFmFmOcHjYEOHGry4h09fYA4oTqxcAk7iParpcCHR
+        a6FsDjbquO0y9lcvtjy5IXoFqtRgidppIQsq38e3ew55Uc/6HiUTFMkEOKsjQbbcS0T5rTY9BnCZb
+        UKV01wz2/iQjXFYRZ3TIVyMAENUtRUb5RrxqwBQWSr9MHtpofxbjmmxddSrs+Q32o5fc4WFxMJ+X8
+        cyvIqaygpC+H+xivFnGIOKmLbbXvqgzwtDlPGj18pQDiXXUUXFAVpmkJijIksO0jYGcRcDRCCZHAv
+        jPO4Xx5A==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kE2XU-0001Jc-Ut; Fri, 04 Sep 2020 03:37:24 +0000
+Date:   Fri, 4 Sep 2020 04:37:24 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     darrick.wong@oracle.com, david@fromorbit.com, yukuai3@huawei.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, "Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: Splitting an iomap_page
+Message-ID: <20200904033724.GH14765@casper.infradead.org>
+References: <20200821144021.GV17456@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+EESO6bxhKf5123feNX1LZyyN2QL4Ti5ApPAu=xb3pHXd7cwQ@mail.gmail.com>
-User-Agent: Mutt/1.14.5 (2020-06-23)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+In-Reply-To: <20200821144021.GV17456@casper.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Aug 21, 2020 at 03:40:21PM +0100, Matthew Wilcox wrote:
+> Operations like holepunch or truncate call into
+> truncate_inode_pages_range() which just remove THPs which are
+> entirely within the punched range, but pages which contain one or both
+> ends of the range need to be split.
+> 
+> What I have right now, and works, calls do_invalidatepage() from
+> truncate_inode_pages_range().  The iomap implementation just calls
+> iomap_page_release().  We have the page locked, and we've waited for
+> writeback to finish, so there is no I/O outstanding against the page.
+> We may then get into one of the writepage methods without an iomap being
+> allocated, so we have to allocate it.  Patches here:
+> 
+> http://git.infradead.org/users/willy/pagecache.git/commitdiff/167f81e880ef00d83ab7db50d56ed85bfbae2601
+> http://git.infradead.org/users/willy/pagecache.git/commitdiff/82fe90cde95420c3cf155b54ed66c74d5fb6ffc5
+> 
+> If the page is Uptodate, this works great.  But if it's not, then we're
+> going to unnecessarily re-read data from storage -- indeed, we may as
+> well just dump the entire page if it's !Uptodate.  Of course, right now
+> the only way to get THPs is through readahead and that's going to always
+> read the entire page, so we're never going to see a !Uptodate THP.  But
+> in the future, maybe we shall?  I wouldn't like to rely on that without
+> pasting some big warnings for anyone who tries to change it.
+[first three bad solutions snipped]
+> Alternative 4: Don't support partially-uptodate THPs.  We declare (and
+> enforce with strategic assertions) that all THPs must always be Uptodate
+> (or Error) once unlocked.  If your workload benefits from using THPs,
+> you want to do big I/Os anyway, so these "write 512 bytes at a time
+> using O_SYNC" workloads aren't going to use THPs.
 
-On Mon, Aug 17, 2020 at 03:11:16PM -0700, Lokesh Gidra wrote:
-> There has been an emphasis that Android is probably the only user for
-> the restriction of userfaults from kernel-space and that it wouldn’t
-> be useful anywhere else. I humbly disagree! There are various areas
-> where the PROT_NONE+SIGSEGV trick is (and can be) used in a purely
-> user-space setting. Basically, any lazy, on-demand,
+This was the most popular alternative amongst those who cast a ballot.
+Here's my response.  I'd really like to be able to callback from
+split_huge_page() to the filesystem through ->is_partially_uptodate
+in order to set each of the pages to uptodate (if indeed they are).
+Unfortunately, we just disposed of the per-page data right before we
+called split_huge_page(), so that doesn't work.
 
-For the record what I said is quoted below
-https://lkml.kernel.org/r/20200520194804.GJ26186@redhat.com :
+This solution allows PageError pages to stay in the cache (because
+I/O completions run in contexts where we don't want to call
+split_huge_page()).  The only way (I believe) to get a !Uptodate page
+dirty is to perform a write to the page.  The patch below will split
+the page in this case.  It also splits the page in the case where we
+call ->readpage to attempt to bring the page uptodate (from, eg, the
+filemap read path, or the pagefault path).
 
-"""It all boils down of how peculiar it is to be able to leverage only
-the acceleration [..] Right now there's a single user that can cope
-with that limitation [..] If there will be more users [..]  it'd be
-fine to add a value "2" later."""
+We lose the uptodate bits when we split the page, so there may be an
+extra read.  That's not great.  But we do look up whether the current
+subpage we're looking at is entirely uptodate, and if it is, we set the
+page uptodate after it's split.
 
-Specifically I never said "that it wouldn’t be useful anywhere else.".
+Kirill, do I have the handling of split_huge_page() failure correct?
+It seems reasonable to me -- unlock the page and drop the reference,
+hoping that somebody else will not have a reference to the page by the
+next time we try to split it.  Or they will split it for us.  There's a
+livelock opportunity here, but I'm not sure it's worse than the one in
+a holepunch scenario.
 
-Also I'm only arguing about the sysctl visible kABI change in patch
-2/2: the flag passed as parameter to the syscall in patch 1/2 is all
-great, because seccomp needs it in the scalar parameter of the syscall
-to implement a filter equivalent to your sysctl "2" policy with only
-patch 1/2 applied.
+This is against my current head of the THP patchset, so you'll see some
+earlier bad ideas being deleted (like using thp_size() in iomap_readpage()
+and the VM_WARN_ON_ONCE(!PageUptodate) in iomap_invalidate())
 
-I've two more questions now:
+This is all basically untested.  I have the xfstests suite running now,
+but it never hit the VM_WARN_ON_ONCE in iomap_invalidate() so it's
+probably not hitting any of this code.  Anybody want to write an
+xfstest for me with unreliable storage for data, reliable storage
+for metadata and runs fsx like generic/127 does?
 
-1) why don't you enforce the block of kernel initiated faults with
-   seccomp-bpf instead of adding a sysctl value 2? Is the sysctl just
-   an optimization to remove a few instructions per syscall in the bpf
-   execution of Android unprivileged apps? You should block a lot of
-   other syscalls by default to all unprivileged processes, including
-   vmsplice.
-
-   In other words if it's just for Android, why can't Android solve it
-   with only patch 1/2 by tweaking the seccomp filter?
-
-2) given that Android is secure enough with the sysctl at value 2, why
-   should we even retain the current sysctl 0 semantics? Why can't
-   more secure systems just use seccomp and block userfaultfd, as it
-   is already happens by default in the podman default seccomp
-   whitelist (for those containers that don't define a new json
-   whitelist in the OCI schema)? Shouldn't we focus our energy in
-   making containers more secure by preventing the OCI schema of a
-   random container to re-enable userfaultfd in the container seccomp
-   filter instead of trying to solve this with a global sysctl?
-
-   What's missing in my view is a kubernetes hard allowlist/denylist
-   that cannot be overridden with the OCI schema in case people has
-   the bad idea of running containers downloaded from a not fully
-   trusted source, without adding virt isolation and that's an
-   userland problem to be solved in the container runtime, not a
-   kernel issue. Then you'd just add userfaultfd to the json of the
-   k8s hard seccomp denylist instead of going around tweaking sysctl.
-
-What's your take in changing your 2/2 patch to just replace value "0"
-and avoid introducing a new value "2"?
-
-The value "0" was motivated by the concern that uffd can enlarge the
-race window for use after free by providing one more additional way to
-block kernel faults, but value "2" is already enough to solve that
-concern completely and it'll be the default on all Android.
-
-In other words by adding "2" you're effectively doing a more
-finegrined and more optimal implementation of "0" that remains useful
-and available to unprivileged apps and it already resolves all
-"robustness against side effects other kernel bugs" concerns. Clearly
-"0" is even more secure statistically but that would apply to every
-other syscall including vmsplice, and there's no
-/proc/sys/vm/unprivileged_vmsplice sysctl out there.
-
-The next issue we have now is with the pipe mutex (which is not a
-major concern but we need to solve it somehow for correctness). So I
-wonder if should make the default value to be "0" (or "2" if think we
-should not replace "0") and to allow only user initiated faults by
-default.
-
-Changing the sysctl default to be 0, will make live migration fail to
-switch to postcopy which will be (unnoticeable to the guest), instead
-of risking the VM to be killed because of network latency
-outlier. Then we wouldn't need to change the pipe code at all.
-
-Alternatively we could still fix the pipe code so it runs better (but
-it'll be more complex) or to disable uffd faults only in the pipe
-code.
-
-One thing to keep in mind is that if we change the default, then
-hypervisor hosts running QEMU would need to set:
-
-vm.userfaultfd = 1
-
-in /etc/sysctl.conf if postcopy live migration is required, that's not
-particularly concerning constraint for qemu (there are likely other
-tweaks required and it looks less risky than an arbitrary timeout
-which could kill the VM: if the above is forgotten the postcopy live
-migration won't even start and it'll be unnoticeable to the guest).
-
-The main concern really are future apps that may want to use uffd for
-kernel initiated faults won't be allowed to do so by default anymore,
-those apps will be heavily incentivated to use bounce buffers before
-passing data to syscalls, similarly to the current use case of patch 2/2.
-
-Comments welcome,
-Andrea
-
-PS. Another usage of uffd that remains possible without privilege with
-the 2/2 patch sysctl "2" behavior (besides the strict SIGSEGV
-acceleration) is the UFFD_FEATURE_SIGBUS. That's good so a malloc lib
-will remain possible without requiring extra privileges, by adding a
-UFFDIO_POPULATE to use in combination with UFFD_FEATURE_SIGBUS
-(UFFDIO_POPULATE just needs to zero out a page and map it, it'll be
-indistinguishable to UFFDIO_ZEROPAGE but it will solve the last
-performance bottleneck by avoiding a wrprotect fault after the
-allocation and it will be THP capable too). Memory will be freed with
-MADV_DONTNEED, without ever having to call mmap/mumap. It could move
-memory around with UFFDIO_COPY+MADV_DONTNEED or by adding UFFDIO_REMAP
-which already exists.
-
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 156cbed1cd2c..03f477f785fe 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -336,6 +336,39 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	return pos - orig_pos + plen;
+ }
+ 
++static bool iomap_range_uptodate(struct inode *inode, struct page *page,
++		size_t start, size_t len)
++{
++	struct iomap_page *iop = to_iomap_page(page);
++	size_t i, first, last;
++
++	/* First and last blocks in range within page */
++	first = start >> inode->i_blkbits;
++	last = (start + len - 1) >> inode->i_blkbits;
++
++	if (!iop)
++		return false;
++
++	for (i = first; i <= last; i++)
++		if (!test_bit(i, iop->uptodate))
++			return false;
++	return true;
++}
++
++static bool iomap_split_page(struct inode *inode, struct page *page)
++{
++	struct page *head = thp_head(page);
++	bool uptodate = iomap_range_uptodate(inode, head,
++				(page - head) * PAGE_SIZE, PAGE_SIZE);
++
++	iomap_page_release(head);
++	if (split_huge_page(page) < 0)
++		return false;
++	if (uptodate)
++		SetPageUptodate(page);
++	return true;
++}
++
+ int
+ iomap_readpage(struct page *page, const struct iomap_ops *ops)
+ {
+@@ -344,11 +377,21 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
+ 	unsigned poff;
+ 	loff_t ret;
+ 
+-	trace_iomap_readpage(page->mapping->host, 1);
++	if (PageTransCompound(page)) {
++		/*
++		 * The page wasn't exactly truncated, but we want to drop
++		 * our refcount so somebody else might be able to split it.
++		 */
++		if (!iomap_split_page(inode, page))
++			return AOP_TRUNCATED_PAGE;
++		if (PageUptodate(page))
++			return 0;
++	}
++	trace_iomap_readpage(inode, 1);
+ 
+-	for (poff = 0; poff < thp_size(page); poff += ret) {
++	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
+ 		ret = iomap_apply(inode, page_offset(page) + poff,
+-				thp_size(page) - poff, 0, ops, &ctx,
++				PAGE_SIZE - poff, 0, ops, &ctx,
+ 				iomap_readpage_actor);
+ 		if (ret <= 0) {
+ 			WARN_ON_ONCE(ret == 0);
+@@ -458,26 +501,15 @@ int
+ iomap_is_partially_uptodate(struct page *page, unsigned long from,
+ 		unsigned long count)
+ {
+-	struct iomap_page *iop = to_iomap_page(page);
+-	struct inode *inode = page->mapping->host;
+-	unsigned len, first, last;
+-	unsigned i;
+-
+-	/* Limit range to one page */
+-	len = min_t(unsigned, thp_size(page) - from, count);
++	struct page *head = thp_head(page);
++	size_t len;
+ 
+-	/* First and last blocks in range within page */
+-	first = from >> inode->i_blkbits;
+-	last = (from + len - 1) >> inode->i_blkbits;
++	/* 'from' is relative to page, but the bitmap is relative to head */
++	from += (page - head) * PAGE_SIZE;
++	/* Limit range to this page */
++	len = min(thp_size(head) - from, count);
+ 
+-	if (iop) {
+-		for (i = first; i <= last; i++)
+-			if (!test_bit(i, iop->uptodate))
+-				return 0;
+-		return 1;
+-	}
+-
+-	return 0;
++	return iomap_range_uptodate(head->mapping->host, head, from, len);
+ }
+ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
+ 
+@@ -517,7 +549,7 @@ iomap_invalidatepage(struct page *page, unsigned int offset, unsigned int len)
+ 
+ 	/* Punching a hole in a THP requires releasing the iop */
+ 	if (PageTransHuge(page)) {
+-		VM_WARN_ON_ONCE(!PageUptodate(page));
++		VM_BUG_ON_PAGE(PageDirty(page), page);
+ 		iomap_page_release(page);
+ 	}
+ }
+@@ -645,12 +677,20 @@ static ssize_t iomap_write_begin(struct inode *inode, loff_t pos, loff_t len,
+ 			return status;
+ 	}
+ 
++retry:
+ 	page = grab_cache_page_write_begin(inode->i_mapping, pos >> PAGE_SHIFT,
+ 			AOP_FLAG_NOFS);
+ 	if (!page) {
+ 		status = -ENOMEM;
+ 		goto out_no_page;
+ 	}
++	if (PageTransCompound(page) && !PageUptodate(page)) {
++		if (!iomap_split_page(inode, page)) {
++			unlock_page(page);
++			put_page(page);
++			goto retry;
++		}
++	}
+ 	page = thp_head(page);
+ 	offset = offset_in_thp(page, pos);
+ 	if (len > thp_size(page) - offset)
