@@ -2,209 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id AD10C25D415
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 10:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC11225D475
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 11:17:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729959AbgIDI7C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Sep 2020 04:59:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37372 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729883AbgIDI67 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Sep 2020 04:58:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 79CF2AFC6;
-        Fri,  4 Sep 2020 08:58:58 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C0C6B1E12D9; Fri,  4 Sep 2020 10:58:56 +0200 (CEST)
-From:   Jan Kara <jack@suse.cz>
-To:     <linux-fsdevel@vger.kernel.org>
-Cc:     <linux-ext4@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        yebin <yebin10@huawei.com>, Andreas Dilger <adilger@dilger.ca>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>
-Subject: [PATCH 2/2] block: Do not discard buffers under a mounted filesystem
-Date:   Fri,  4 Sep 2020 10:58:52 +0200
-Message-Id: <20200904085852.5639-3-jack@suse.cz>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20200904085852.5639-1-jack@suse.cz>
-References: <20200904085852.5639-1-jack@suse.cz>
+        id S1730053AbgIDJRU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Sep 2020 05:17:20 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:62866 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730040AbgIDJRL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 4 Sep 2020 05:17:11 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08491kUh185817;
+        Fri, 4 Sep 2020 05:17:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=kxEI8iXlDViTnVFGVh2NgyuwZv9fa58lOuPk5xL7oKs=;
+ b=aBOcptUb2fP0ZUDz6YYB6El0QZgEUagC3WK2eYKw6+piOXOSUTZkhGixBDJSQD9Ifr0l
+ aAx/GgtwpWGIROpJaKVvmSCVwaW9ZjsSjYbpFF2HqMnxvGd8STXDb+vsZYXXWtwxCX07
+ bd4HfaWAcCFCE6GdJLSCIx3twVLiAbrylmL5GHzkfZggbcAIOE92B6I4x4cGpz2g1GLp
+ jRHiObE8q2q5qHecYlRRESJKVSJ5mM0Ac4FI2Yp/6hqFgfBGa8qLFziKihzQ+UJ1b16s
+ 2Hn03tjnZcvy31KiSOFGGMRO1TQHaRo9SVIeLyvjDZNMuU3he2fWwcum8dThnoI3H6Co 3A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33bjgs8h9k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Sep 2020 05:17:04 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08492EUl187359;
+        Fri, 4 Sep 2020 05:17:04 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33bjgs8h8y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Sep 2020 05:17:04 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0849EKLv018247;
+        Fri, 4 Sep 2020 09:17:01 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma03ams.nl.ibm.com with ESMTP id 337en8epnx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 04 Sep 2020 09:17:01 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0849Gxnb34996666
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 4 Sep 2020 09:16:59 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 886584C04E;
+        Fri,  4 Sep 2020 09:16:59 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1E0814C040;
+        Fri,  4 Sep 2020 09:16:58 +0000 (GMT)
+Received: from localhost.localdomain.com (unknown [9.199.40.27])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  4 Sep 2020 09:16:57 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     jack@suse.cz, tytso@mit.edu, linux-fsdevel@vger.kernel.org,
+        darrick.wong@oracle.com, linux-kernel@vger.kernel.org,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Yuxuan Shui <yshuiv7@gmail.com>
+Subject: [PATCH] ext4: Implement swap_activate aops using iomap
+Date:   Fri,  4 Sep 2020 14:46:53 +0530
+Message-Id: <20200904091653.1014334-1-riteshh@linux.ibm.com>
+X-Mailer: git-send-email 2.25.4
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-04_05:2020-09-04,2020-09-04 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 suspectscore=1 phishscore=0 mlxscore=0 adultscore=0
+ malwarescore=0 mlxlogscore=999 spamscore=0 impostorscore=0 bulkscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009040079
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Discarding blocks and buffers under a mounted filesystem is hardly
-anything admin wants to do. Usually it will confuse the filesystem and
-sometimes the loss of buffer_head state (including b_private field) can
-even cause crashes like:
+After moving ext4's bmap to iomap interface, swapon functionality
+on files created using fallocate (which creates unwritten extents) are
+failing. This is since iomap_bmap interface returns 0 for unwritten
+extents and thus generic_swapfile_activate considers this as holes
+and hence bail out with below kernel msg :-
 
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-PGD 0 P4D 0
-Oops: 0002 [#1] SMP PTI
-CPU: 4 PID: 203778 Comm: jbd2/dm-3-8 Kdump: loaded Tainted: G O     --------- -  - 4.18.0-147.5.0.5.h126.eulerosv2r9.x86_64 #1
-Hardware name: Huawei RH2288H V3/BC11HGSA0, BIOS 1.57 08/11/2015
-RIP: 0010:jbd2_journal_grab_journal_head+0x1b/0x40 [jbd2]
-...
-Call Trace:
- __jbd2_journal_insert_checkpoint+0x23/0x70 [jbd2]
- jbd2_journal_commit_transaction+0x155f/0x1b60 [jbd2]
- kjournald2+0xbd/0x270 [jbd2]
+[340.915835] swapon: swapfile has holes
 
-So if we don't have block device open with O_EXCL already, claim the
-block device while we truncate buffer cache. This makes sure any
-exclusive block device user (such as filesystem) cannot operate on the
-device while we are discarding buffer cache.
+To fix this we need to implement ->swap_activate aops in ext4
+which will use ext4_iomap_report_ops. Since we only need to return
+the list of extents so ext4_iomap_report_ops should be enough.
 
-Reported-by: Ye Bin <yebin10@huawei.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Reported-by: Yuxuan Shui <yshuiv7@gmail.com>
+Fixes: ac58e4fb03f ("ext4: move ext4 bmap to use iomap infrastructure")
+Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
 ---
- block/ioctl.c          | 16 ++++++++++------
- fs/block_dev.c         | 37 +++++++++++++++++++++++++++++++++----
- include/linux/blkdev.h |  7 +++++++
- 3 files changed, 50 insertions(+), 10 deletions(-)
+[Tested xfstests with -g swap; Tested stress-ng with --thrash option]
 
-diff --git a/block/ioctl.c b/block/ioctl.c
-index bdb3bbb253d9..ae74d0409afa 100644
---- a/block/ioctl.c
-+++ b/block/ioctl.c
-@@ -112,8 +112,7 @@ static int blk_ioctl_discard(struct block_device *bdev, fmode_t mode,
- 	uint64_t range[2];
- 	uint64_t start, len;
- 	struct request_queue *q = bdev_get_queue(bdev);
--	struct address_space *mapping = bdev->bd_inode->i_mapping;
--
-+	int err;
- 
- 	if (!(mode & FMODE_WRITE))
- 		return -EBADF;
-@@ -134,7 +133,11 @@ static int blk_ioctl_discard(struct block_device *bdev, fmode_t mode,
- 
- 	if (start + len > i_size_read(bdev->bd_inode))
- 		return -EINVAL;
--	truncate_inode_pages_range(mapping, start, start + len - 1);
-+
-+	err = truncate_bdev_range(bdev, mode, start, start + len - 1);
-+	if (err)
-+		return err;
-+
- 	return blkdev_issue_discard(bdev, start >> 9, len >> 9,
- 				    GFP_KERNEL, flags);
+ fs/ext4/inode.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 1556cabd3a7d..9ac0f83e6fbe 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3605,6 +3605,13 @@ static int ext4_set_page_dirty(struct page *page)
+ 	return __set_page_dirty_buffers(page);
  }
-@@ -143,8 +146,8 @@ static int blk_ioctl_zeroout(struct block_device *bdev, fmode_t mode,
- 		unsigned long arg)
- {
- 	uint64_t range[2];
--	struct address_space *mapping;
- 	uint64_t start, end, len;
-+	int err;
  
- 	if (!(mode & FMODE_WRITE))
- 		return -EBADF;
-@@ -166,8 +169,9 @@ static int blk_ioctl_zeroout(struct block_device *bdev, fmode_t mode,
- 		return -EINVAL;
- 
- 	/* Invalidate the page cache, including dirty pages */
--	mapping = bdev->bd_inode->i_mapping;
--	truncate_inode_pages_range(mapping, start, end);
-+	err = truncate_bdev_range(bdev, mode, start, end);
-+	if (err)
-+		return err;
- 
- 	return blkdev_issue_zeroout(bdev, start >> 9, len >> 9, GFP_KERNEL,
- 			BLKDEV_ZERO_NOUNMAP);
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 8ae833e00443..02a749370717 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -103,6 +103,35 @@ void invalidate_bdev(struct block_device *bdev)
- }
- EXPORT_SYMBOL(invalidate_bdev);
- 
-+/*
-+ * Drop all buffers & page cache for given bdev range. This function bails
-+ * with error if bdev has other exclusive owner (such as filesystem).
-+ */
-+int truncate_bdev_range(struct block_device *bdev, fmode_t mode,
-+			loff_t lstart, loff_t lend)
++static int ext4_iomap_swap_activate(struct swap_info_struct *sis,
++				    struct file *file, sector_t *span)
 +{
-+	struct block_device *claimed_bdev = NULL;
-+	int err;
-+
-+	/*
-+	 * If we don't hold exclusive handle for the device, upgrade to it
-+	 * while we discard the buffer cache to avoid discarding buffers
-+	 * under live filesystem.
-+	 */
-+	if (!(mode & FMODE_EXCL)) {
-+		claimed_bdev = bdev->bd_contains;
-+		err = bd_prepare_to_claim(bdev, claimed_bdev,
-+					  truncate_bdev_range);
-+		if (err)
-+			return err;
-+	}
-+	truncate_inode_pages_range(bdev->bd_inode->i_mapping, lstart, lend);
-+	if (claimed_bdev)
-+		bd_abort_claiming(bdev, claimed_bdev, truncate_bdev_range);
-+	return 0;
++	return iomap_swapfile_activate(sis, file, span,
++				       &ext4_iomap_report_ops);
 +}
-+EXPORT_SYMBOL(truncate_bdev_range);
 +
- static void set_init_blocksize(struct block_device *bdev)
- {
- 	bdev->bd_inode->i_blkbits = blksize_bits(bdev_logical_block_size(bdev));
-@@ -1969,7 +1998,6 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 			     loff_t len)
- {
- 	struct block_device *bdev = I_BDEV(bdev_file_inode(file));
--	struct address_space *mapping;
- 	loff_t end = start + len - 1;
- 	loff_t isize;
- 	int error;
-@@ -1997,8 +2025,9 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 		return -EINVAL;
+ static const struct address_space_operations ext4_aops = {
+ 	.readpage		= ext4_readpage,
+ 	.readpages		= ext4_readpages,
+@@ -3620,6 +3627,7 @@ static const struct address_space_operations ext4_aops = {
+ 	.migratepage		= buffer_migrate_page,
+ 	.is_partially_uptodate  = block_is_partially_uptodate,
+ 	.error_remove_page	= generic_error_remove_page,
++	.swap_activate		= ext4_iomap_swap_activate,
+ };
  
- 	/* Invalidate the page cache, including dirty pages. */
--	mapping = bdev->bd_inode->i_mapping;
--	truncate_inode_pages_range(mapping, start, end);
-+	error = truncate_bdev_range(bdev, file->f_mode, start, end);
-+	if (error)
-+		return error;
+ static const struct address_space_operations ext4_journalled_aops = {
+@@ -3636,6 +3644,7 @@ static const struct address_space_operations ext4_journalled_aops = {
+ 	.direct_IO		= noop_direct_IO,
+ 	.is_partially_uptodate  = block_is_partially_uptodate,
+ 	.error_remove_page	= generic_error_remove_page,
++	.swap_activate		= ext4_iomap_swap_activate,
+ };
  
- 	switch (mode) {
- 	case FALLOC_FL_ZERO_RANGE:
-@@ -2025,7 +2054,7 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 	 * the caller will be given -EBUSY.  The third argument is
- 	 * inclusive, so the rounding here is safe.
- 	 */
--	return invalidate_inode_pages2_range(mapping,
-+	return invalidate_inode_pages2_range(bdev->bd_inode->i_mapping,
- 					     start >> PAGE_SHIFT,
- 					     end >> PAGE_SHIFT);
- }
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index bb5636cc17b9..91c62bfb2042 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1984,11 +1984,18 @@ void bdput(struct block_device *);
+ static const struct address_space_operations ext4_da_aops = {
+@@ -3653,6 +3662,7 @@ static const struct address_space_operations ext4_da_aops = {
+ 	.migratepage		= buffer_migrate_page,
+ 	.is_partially_uptodate  = block_is_partially_uptodate,
+ 	.error_remove_page	= generic_error_remove_page,
++	.swap_activate		= ext4_iomap_swap_activate,
+ };
  
- #ifdef CONFIG_BLOCK
- void invalidate_bdev(struct block_device *bdev);
-+int truncate_bdev_range(struct block_device *bdev, fmode_t mode, loff_t lstart,
-+			loff_t lend);
- int sync_blockdev(struct block_device *bdev);
- #else
- static inline void invalidate_bdev(struct block_device *bdev)
- {
- }
-+int truncate_bdev_range(struct block_device *bdev, fmode_t mode, loff_t lstart,
-+			loff_t lend)
-+{
-+	return 0;
-+}
- static inline int sync_blockdev(struct block_device *bdev)
- {
- 	return 0;
+ static const struct address_space_operations ext4_dax_aops = {
+@@ -3661,6 +3671,7 @@ static const struct address_space_operations ext4_dax_aops = {
+ 	.set_page_dirty		= noop_set_page_dirty,
+ 	.bmap			= ext4_bmap,
+ 	.invalidatepage		= noop_invalidatepage,
++	.swap_activate		= ext4_iomap_swap_activate,
+ };
+ 
+ void ext4_set_aops(struct inode *inode)
 -- 
-2.16.4
+2.25.1
 
