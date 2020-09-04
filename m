@@ -2,87 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D2CF325D863
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 14:06:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69B2F25D8D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 14:42:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730055AbgIDMGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Sep 2020 08:06:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729932AbgIDMG2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Sep 2020 08:06:28 -0400
-Received: from pali.im (pali.im [31.31.79.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEA3020791;
-        Fri,  4 Sep 2020 12:06:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599221188;
-        bh=Ja+eTE9Voa6mNQZ2aKq7v/synKxts6frBKXWiy9f44Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VSPVPUy5zCvrS6qvCmuMQnli4ic7XTsB3CYSbjiWwqcQv6yVv3qettzvkp2j9jz0U
-         fGJepF7WUQM5O/rQgE+bg7n+9vdRt6HYOxVbDbE7i4vbpim0er5aLO9Qu7tVaQxDYK
-         g2ASRBj4mvJorPCaLeSAwlWaFRnhS7/9mxPYgyno=
-Received: by pali.im (Postfix)
-        id 035FD6EC; Fri,  4 Sep 2020 14:06:25 +0200 (CEST)
-Date:   Fri, 4 Sep 2020 14:06:25 +0200
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, dsterba@suse.cz, aaptel@suse.com,
-        willy@infradead.org, rdunlap@infradead.org, joe@perches.com,
-        mark@harmstone.com
-Subject: Re: [PATCH v3 02/10] fs/ntfs3: Add initialization of super block
-Message-ID: <20200904120625.2af76ebfnacbzwug@pali>
+        id S1730137AbgIDMmV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Sep 2020 08:42:21 -0400
+Received: from relayfre-01.paragon-software.com ([176.12.100.13]:49272 "EHLO
+        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729297AbgIDMmR (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 4 Sep 2020 08:42:17 -0400
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id C8382187;
+        Fri,  4 Sep 2020 15:41:24 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1599223284;
+        bh=4xVR0meJIvh1rEibqmfyPtAJgTOGQBkBefyqLtNjf1I=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To;
+        b=BGzSa721zbnxxY03ztTSlOE5OcXrCC8OiYOjYvqGqOMPC9JYVgbZU96tL5lslDc1u
+         AMOVX1VXIETE1IIaYkYwcbfRxyc4TkQJtUH+UVynYJLf5qvO01aO1fg5Df/5ZPLzMe
+         CV0p0vm3Vh2uSezYcJUoHJlvfdsiEq6AeTcKbtyE=
+Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1847.3; Fri, 4 Sep 2020 15:41:24 +0300
+Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
+ by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
+ id 15.01.1847.003; Fri, 4 Sep 2020 15:41:24 +0300
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pali@kernel.org" <pali@kernel.org>,
+        "dsterba@suse.cz" <dsterba@suse.cz>,
+        "aaptel@suse.com" <aaptel@suse.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "joe@perches.com" <joe@perches.com>,
+        "mark@harmstone.com" <mark@harmstone.com>
+Subject: RE: [PATCH v3 04/10] fs/ntfs3: Add file operations and implementation
+Thread-Topic: [PATCH v3 04/10] fs/ntfs3: Add file operations and
+ implementation
+Thread-Index: AQHWfUkmGGliHMdep0qOFBeV9s6Y96lNd7cAgAr+VLA=
+Date:   Fri, 4 Sep 2020 12:41:24 +0000
+Message-ID: <d82dae3c12d94db7a2a212a8b8b79e8b@paragon-software.com>
 References: <20200828143938.102889-1-almaz.alexandrovich@paragon-software.com>
- <20200828143938.102889-3-almaz.alexandrovich@paragon-software.com>
+ <20200828143938.102889-5-almaz.alexandrovich@paragon-software.com>
+ <20200828154544.GJ1236603@ZenIV.linux.org.uk>
+In-Reply-To: <20200828154544.GJ1236603@ZenIV.linux.org.uk>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.30.8.36]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200828143938.102889-3-almaz.alexandrovich@paragon-software.com>
-User-Agent: NeoMutt/20180716
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Konstantin!
+From: Al Viro <viro@ftp.linux.org.uk>
+Sent: Friday, August 28, 2020 6:46 PM
+> On Fri, Aug 28, 2020 at 07:39:32AM -0700, Konstantin Komarov wrote:
+>=20
+> > +static struct dentry *__ntfs_lookup(struct inode *dir, struct dentry *=
+dentry,
+> > +				    struct ntfs_fnd *fnd)
+> > +{
+> > +	struct dentry *d;
+> > +	struct inode *inode;
+> > +
+> > +	inode =3D dir_search(dir, &dentry->d_name, fnd);
+> > +
+> > +	if (!inode) {
+> > +		d_add(dentry, NULL);
+> > +		d =3D NULL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	if (IS_ERR(inode)) {
+> > +		d =3D ERR_CAST(inode);
+> > +		goto out;
+> > +	}
+> > +
+> > +	d =3D d_splice_alias(inode, dentry);
+> > +	if (IS_ERR(d)) {
+> > +		iput(inode);
+> > +		goto out;
+> > +	}
+> > +
+> > +out:
+> > +	return d;
+> > +}
+>=20
+> This is bollocks.  First and foremost, d_splice_alias() *does* iput() on
+> failure, so you've got double-put there.  What's more
+> 	* d_splice_alias(ERR_PTR(err), dentry) return err
+> 	* d_splice_alias(NULL, dentry) is equivalent to d_add(dentry, NULL) and =
+returns NULL
+>=20
+> IOW, all that boilerplate could be replaced with one line:
+>=20
+> 	return d_splice_alias(dir_search(dir, &dentry->d_name, fnd), dentry);
 
-On Friday 28 August 2020 07:39:30 Konstantin Komarov wrote:
-> +	if (nls_name[0]) {
-> +		sbi->nls = load_nls(nls_name);
-> +		if (!sbi->nls) {
-> +			ntfs_printk(sb, KERN_ERR "failed to load \"%s\"",
-> +				    nls_name);
-> +			return -EINVAL;
-> +		}
-> +	} else {
-> +		sbi->nls = load_nls_default();
-> +		if (!sbi->nls) {
-> +			ntfs_printk(sb, KERN_ERR "failed to load default nls");
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	if (!strcmp(sbi->nls->charset, "utf8")) {
-> +		/*use utf16s_to_utf8s/utf8s_to_utf16s instead of nls*/
-> +		unload_nls(sbi->nls);
-> +		sbi->nls = NULL;
-> +	}
-
-You can slightly simplify this code to omit calling load_nls() for UTF-8. E.g.:
-
-    if (strcmp(nls_name[0] ? nls_name : CONFIG_NLS_DEFAULT, "utf8") == 0) {
-        /* For UTF-8 use utf16s_to_utf8s/utf8s_to_utf16s instead of nls */
-        sbi->nls = NULL;
-    } else if (nls_name) {
-        sbi->nls = load_nls(nls_name);
-        if (!sbi->nls) {
-            /* handle error */
-        }
-    } else {
-        sbi->nls = load_nls_default();
-        if (!sbi->nls) {
-            /* handle error */
-        }
-    }
+Hi Al! Agreed. Will be fixed in v4.
+Thanks.
