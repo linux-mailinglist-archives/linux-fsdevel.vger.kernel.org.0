@@ -2,53 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 93B6C25D2A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 09:48:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7CA925D2A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 09:47:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729582AbgIDHr6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Sep 2020 03:47:58 -0400
-Received: from verein.lst.de ([213.95.11.211]:40731 "EHLO verein.lst.de"
+        id S1728293AbgIDHr4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Sep 2020 03:47:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45876 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbgIDHr5 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Sep 2020 03:47:57 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id EBAAE68AFE; Fri,  4 Sep 2020 09:47:53 +0200 (CEST)
-Date:   Fri, 4 Sep 2020 09:47:53 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, x86@kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 12/14] x86: remove address space overrides using
- set_fs()
-Message-ID: <20200904074753.GA14932@lst.de>
-References: <20200903142242.925828-1-hch@lst.de> <20200903142242.925828-13-hch@lst.de> <20200904025510.GO1236603@ZenIV.linux.org.uk> <20200904063813.GA12204@lst.de>
+        id S1726151AbgIDHr4 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 4 Sep 2020 03:47:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 45AA9ACC8;
+        Fri,  4 Sep 2020 07:47:56 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id EE1D41E12D1; Fri,  4 Sep 2020 09:47:54 +0200 (CEST)
+Date:   Fri, 4 Sep 2020 09:47:54 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        jack@suse.cz, khazhy@google.com, kernel@collabora.com
+Subject: Re: [PATCH v2 1/3] direct-io: clean up error paths of
+ do_blockdev_direct_IO
+Message-ID: <20200904074754.GA2867@quack2.suse.cz>
+References: <20200903200414.673105-1-krisman@collabora.com>
+ <20200903200414.673105-2-krisman@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200904063813.GA12204@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20200903200414.673105-2-krisman@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 04, 2020 at 08:38:13AM +0200, Christoph Hellwig wrote:
-> > Wait a sec... how is that supposed to build with X86_5LEVEL?  Do you mean
-> > 
-> > #define LOAD_TASK_SIZE_MINUS_N(n) \
-> > 	ALTERNATIVE __stringify(mov $((1 << 47) - 4096 - (n)),%rdx), \
-> > 		    __stringify(mov $((1 << 56) - 4096 - (n)),%rdx), X86_FEATURE_LA57
-> > 
-> > there?
+On Thu 03-09-20 16:04:12, Gabriel Krisman Bertazi wrote:
+> In preparation to resort DIO checks, reduce code duplication of error
+> handling in do_blockdev_direct_IO.
 > 
-> Don't ask me about the how, but it builds and works with X86_5LEVEL,
-> and the style is copied from elsewhere..
+> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 
-Actually, it doesn't any more.  Looks like the change to pass the n
-parameter as suggested by Linus broke the previously working version.
+Two comments below:
+
+> @@ -1368,7 +1360,15 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+>  	} else
+>  		BUG_ON(retval != -EIOCBQUEUED);
+>  
+> -out:
+> +	return retval;
+> +
+> +fail_dio:
+> +	if (dio->flags & DIO_LOCKING) {
+> +		inode_unlock(inode);
+> +	}
+
+No need for braces here. Also please add '&& iov_iter_rw(iter) == READ' to
+the condition for unlocking to make fail_dio safe also for writes.
+Currently you jump to fail_dio only for reads but in 3/3 you can jump to it
+also for writes and that is a bug.
+
+								Honza
+
+> +fail_dio_unlocked:
+> +	kmem_cache_free(dio_cache, dio);
+> +
+>  	return retval;
+>  }
+>  
+> -- 
+> 2.28.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
