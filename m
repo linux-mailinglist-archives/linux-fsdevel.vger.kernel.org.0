@@ -2,100 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D95C25D909
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 14:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 421F125D93E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 15:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730300AbgIDMzj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Sep 2020 08:55:39 -0400
-Received: from relayfre-01.paragon-software.com ([176.12.100.13]:49574 "EHLO
-        relayfre-01.paragon-software.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729297AbgIDMzh (ORCPT
+        id S1730367AbgIDNFP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Sep 2020 09:05:15 -0400
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36773 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729297AbgIDNFP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Sep 2020 08:55:37 -0400
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 49A341B7;
-        Fri,  4 Sep 2020 15:55:34 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1599224134;
-        bh=H8xMnD7JCVbbHVS0+itUPohVVc2Te/ty31v7I7Ungxw=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=ZKczgM7oGTMVABveYNTHb+dVYtKzBpCdsTC71HZflxFdx9R5oMdXp1gHXxxzsw/+b
-         HljdXqtogRhUiwq7lu8PEVZYHpKZwzr5KTKZGWktrXX1WGuQ8H6qXmzsBQ/aiGIH6z
-         EwPqKFGrpkSexTa4Hz52KwW7PHs9GPYwR604wEjE=
-Received: from vdlg-exch-02.paragon-software.com (172.30.1.105) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Fri, 4 Sep 2020 15:55:33 +0300
-Received: from vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b])
- by vdlg-exch-02.paragon-software.com ([fe80::586:6d72:3fe5:bd9b%6]) with mapi
- id 15.01.1847.003; Fri, 4 Sep 2020 15:55:33 +0300
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     Nikolay Borisov <nborisov@suse.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pali@kernel.org" <pali@kernel.org>,
-        "dsterba@suse.cz" <dsterba@suse.cz>,
-        "aaptel@suse.com" <aaptel@suse.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "joe@perches.com" <joe@perches.com>,
-        "mark@harmstone.com" <mark@harmstone.com>
-Subject: RE: [PATCH v3 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
-Thread-Topic: [PATCH v3 00/10] NTFS read-write driver GPL implementation by
- Paragon Software
-Thread-Index: AQHWfUkhnfa+JjUWaECKShg2PWgYh6lOwxGAgAm3bNA=
-Date:   Fri, 4 Sep 2020 12:55:33 +0000
-Message-ID: <0576878cc589449ebce9785322370c15@paragon-software.com>
-References: <20200828143938.102889-1-almaz.alexandrovich@paragon-software.com>
- <dcea3bfc-a082-8dfe-cbd0-c99333fe1b22@suse.com>
-In-Reply-To: <dcea3bfc-a082-8dfe-cbd0-c99333fe1b22@suse.com>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.30.8.36]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 4 Sep 2020 09:05:15 -0400
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-428-V0DZXFnYOJGrCpMc9yvhpg-1; Fri, 04 Sep 2020 09:05:11 -0400
+X-MC-Unique: V0DZXFnYOJGrCpMc9yvhpg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1C29D107B271;
+        Fri,  4 Sep 2020 13:05:10 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-115-41.rdu2.redhat.com [10.10.115.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 31F7A7E41C;
+        Fri,  4 Sep 2020 13:05:03 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id A9D322256EC; Fri,  4 Sep 2020 09:05:02 -0400 (EDT)
+Date:   Fri, 4 Sep 2020 09:05:02 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        virtio-fs-list <virtio-fs@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH 0/2] fuse, dax: Couple of fixes for fuse dax support
+Message-ID: <20200904130502.GA55989@redhat.com>
+References: <20200901142634.1227109-1-vgoyal@redhat.com>
+ <CAJfpegtBA6XSbb+futZGt=NY-VjnN_GWFmnNfGjLfgnZ1ynM0w@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtBA6XSbb+futZGt=NY-VjnN_GWFmnNfGjLfgnZ1ynM0w@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogTmlrb2xheSBCb3Jpc292IDxuYm9yaXNvdkBzdXNlLmNvbT4NClNlbnQ6IFNhdHVyZGF5
-LCBBdWd1c3QgMjksIDIwMjAgMjozMiBQTQ0KPiBPbiAyOC4wOC4yMCDQsy4gMTc6Mzkg0YcuLCBL
-b25zdGFudGluIEtvbWFyb3Ygd3JvdGU6DQo+ID4gVGhpcyBwYXRjaCBhZGRzIE5URlMgUmVhZC1X
-cml0ZSBkcml2ZXIgdG8gZnMvbnRmczMuDQo+ID4NCj4gPiBIYXZpbmcgZGVjYWRlcyBvZiBleHBl
-cnRpc2UgaW4gY29tbWVyY2lhbCBmaWxlIHN5c3RlbXMgZGV2ZWxvcG1lbnQgYW5kIGh1Z2UNCj4g
-PiB0ZXN0IGNvdmVyYWdlLCB3ZSBhdCBQYXJhZ29uIFNvZnR3YXJlIEdtYkggd2FudCB0byBtYWtl
-IG91ciBjb250cmlidXRpb24gdG8NCj4gPiB0aGUgT3BlbiBTb3VyY2UgQ29tbXVuaXR5IGJ5IHBy
-b3ZpZGluZyBpbXBsZW1lbnRhdGlvbiBvZiBOVEZTIFJlYWQtV3JpdGUNCj4gPiBkcml2ZXIgZm9y
-IHRoZSBMaW51eCBLZXJuZWwuDQo+ID4NCj4gPiBUaGlzIGlzIGZ1bGx5IGZ1bmN0aW9uYWwgTlRG
-UyBSZWFkLVdyaXRlIGRyaXZlci4gQ3VycmVudCB2ZXJzaW9uIHdvcmtzIHdpdGgNCj4gPiBOVEZT
-KGluY2x1ZGluZyB2My4xKSBhbmQgbm9ybWFsL2NvbXByZXNzZWQvc3BhcnNlIGZpbGVzIGFuZCBz
-dXBwb3J0cyBqb3VybmFsIHJlcGxheWluZy4NCj4gPg0KPiA+IFdlIHBsYW4gdG8gc3VwcG9ydCB0
-aGlzIHZlcnNpb24gYWZ0ZXIgdGhlIGNvZGViYXNlIG9uY2UgbWVyZ2VkLCBhbmQgYWRkIG5ldw0K
-PiA+IGZlYXR1cmVzIGFuZCBmaXggYnVncy4gRm9yIGV4YW1wbGUsIGZ1bGwgam91cm5hbGluZyBz
-dXBwb3J0IG92ZXIgSkJEIHdpbGwgYmUNCj4gPiBhZGRlZCBpbiBsYXRlciB1cGRhdGVzLg0KPiA+
-DQo+ID4gdjI6DQo+ID4gIC0gcGF0Y2ggc3BsaXR0ZWQgdG8gY2h1bmtzIChmaWxlLXdpc2UpDQo+
-ID4gIC0gYnVpbGQgaXNzdWVzIGZpeGVkDQo+ID4gIC0gc3BhcnNlIGFuZCBjaGVja3BhdGNoLnBs
-IGVycm9ycyBmaXhlZA0KPiA+ICAtIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBvbiBta2ZzLm50
-ZnMtZm9ybWF0dGVkIHZvbHVtZSBtb3VudCBmaXhlZA0KPiA+ICAtIGNvc21ldGljcyArIGNvZGUg
-Y2xlYW51cA0KPiA+DQo+ID4gdjM6DQo+ID4gIC0gYWRkZWQgYWNsLCBub2F0aW1lLCBub19hY3Nf
-cnVsZXMsIHByZWFsbG9jIG1vdW50IG9wdGlvbnMNCj4gPiAgLSBhZGRlZCBmaWVtYXAgc3VwcG9y
-dA0KPiA+ICAtIGZpeGVkIGVuY29kaW5ncyBzdXBwb3J0DQo+ID4gIC0gcmVtb3ZlZCB0eXBlZGVm
-cw0KPiA+ICAtIGFkYXB0ZWQgS2VybmVsLXdheSBsb2dnaW5nIG1lY2hhbmlzbXMNCj4gPiAgLSBm
-aXhlZCB0eXBvcyBhbmQgY29ybmVyLWNhc2UgaXNzdWVzDQo+ID4NCj4gPiBLb25zdGFudGluIEtv
-bWFyb3YgKDEwKToNCj4gPiAgIGZzL250ZnMzOiBBZGQgaGVhZGVycyBhbmQgbWlzYyBmaWxlcw0K
-PiA+ICAgZnMvbnRmczM6IEFkZCBpbml0aWFsaXphdGlvbiBvZiBzdXBlciBibG9jaw0KPiANCj4g
-VGhpcyBwYXRjaCBpcyBtaXNzaW5nDQo+IA0KPiA+ICAgZnMvbnRmczM6IEFkZCBiaXRtYXANCj4g
-PiAgIGZzL250ZnMzOiBBZGQgZmlsZSBvcGVyYXRpb25zIGFuZCBpbXBsZW1lbnRhdGlvblRoaXMg
-cGF0Y2ggaXMgbWlzc2luZw0KPiANCj4gPiAgIGZzL250ZnMzOiBBZGQgYXR0cmliIG9wZXJhdGlv
-bnMNCj4gPiAgIGZzL250ZnMzOiBBZGQgY29tcHJlc3Npb24NCj4gPiAgIGZzL250ZnMzOiBBZGQg
-TlRGUyBqb3VybmFsDQo+IFRoaXMgcGF0Y2ggaXMgbWlzc2luZw0KPiANCj4gPiAgIGZzL250ZnMz
-OiBBZGQgS2NvbmZpZywgTWFrZWZpbGUgYW5kIGRvYw0KW10NCj4gPg0KSGkgTmlrb2xheSEgQXMg
-ZmFyIGFzIEkgY2FuIHNlZSwgYWxsIHRoZSBtZXNzYWdlcyBhcmUgaW4NCnRoZSBsaW51eC1mc2Rl
-dmVsIGxpc3QgYW5kIGhhdmUgY29ycmVjdCAiaW4tcmVwbHktdG8iIElEcy4NCkFyZSB0aG9zZSBw
-YXRjaGVzIHN0aWxsIG1pc3Npbmcgb24geW91ciBzaWRlPw0K
+On Fri, Sep 04, 2020 at 11:45:53AM +0200, Miklos Szeredi wrote:
+> On Tue, Sep 1, 2020 at 4:26 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > Hi Miklos,
+> >
+> > I am testing fuse dax branch now. To begin with here are couple of
+> > simple fixes to make sure I/O is going through dax path.
+> >
+> > Either you can roll these fixes into existing patches or apply on
+> > top.
+> >
+> > I ran blogbench workload and some fio mmap jobs and these seem to be
+> > running fine after these fixes.
+> 
+> Thanks for testing and fixing.
+> 
+> Pushed a rerolled series to #for-next.   Would be good if you cour retest.
+
+Thanks. Will test again next week.
+
+> 
+> There's one checkpatch warning I'm unsure about:
+> 
+> | WARNING: Using vsprintf specifier '%px' potentially exposes the
+> kernel memory layout, if you don't really need the address please
+> consider using '%p'.
+> | #173: FILE: fs/fuse/virtio_fs.c:812:
+> | +    dev_dbg(&vdev->dev, "%s: window kaddr 0x%px phys_addr 0x%llx
+> len 0x%llx\n",
+> | +        __func__, fs->window_kaddr, cache_reg.addr, cache_reg.len);
+> |
+> | total: 0 errors, 1 warnings, 175 lines checked
+> |
+> | NOTE: For some of the reported defects, checkpatch may be able to
+> |       mechanically convert to the typical style using --fix or --fix-inplace.
+> |
+> | patches/virtio_fs-dax-set-up-virtio_fs-dax_device.patch has style
+> problems, please review.
+> 
+> Do you think that the kernel address in the debug output is necessary?
+
+It is more of a nice to have thing. Was more useful in initial
+development. Now things have stablized, so I don't use it that much
+anymore.
+
+So I am fine converting %px to %p. I am not sure though how people
+practically make use of %p output for debugging. IIUC, that's a
+hash of actual value.
+
+This debug output atleast tells us that a certain virtio device
+provided a cache window and driver mapped it.
+
+Thanks
+Vivek
+
