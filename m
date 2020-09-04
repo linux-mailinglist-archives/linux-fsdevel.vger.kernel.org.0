@@ -2,99 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1030D25D55F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 11:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D022625D738
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Sep 2020 13:28:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729731AbgIDJqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Sep 2020 05:46:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44700 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbgIDJqH (ORCPT
+        id S1730114AbgIDL2M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Sep 2020 07:28:12 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:15789 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730194AbgIDL0C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Sep 2020 05:46:07 -0400
-Received: from mail-vk1-xa42.google.com (mail-vk1-xa42.google.com [IPv6:2607:f8b0:4864:20::a42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F188DC061244
-        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Sep 2020 02:46:06 -0700 (PDT)
-Received: by mail-vk1-xa42.google.com with SMTP id e5so1504264vkm.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Sep 2020 02:46:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MXzRjhwn8e2J5zYTCR4K+ZTW1our2Q6VsUPgVktuBLs=;
-        b=LdTO8+I8XHmU+YCHchiFOBlCOwF2mhR5dAZx74JAbUsVoRU33CWaY86v/bbMDVm7wP
-         oYKi0OpxacAUC3LC5vNhWGHA87ywut6e9wR3KE1bYg6VrM/LVLbCgXWuQc77HjQQITD7
-         g2yIZPsT16veeMHQ81rSKzD82ttwqwbK+LSB4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MXzRjhwn8e2J5zYTCR4K+ZTW1our2Q6VsUPgVktuBLs=;
-        b=gqYz82HB0xnfAnn4XncBu9VtJ8E0xqTHr/4lWHgfgpbpwmXsbP5ebBlrmo+pTcPoVW
-         fftr0UUrYljTEMtssWTwL+8Dsn4DFeOcMw+6vx46BMLpD1QAdBPSEzrS8A6kzntj57Yk
-         QOE+KAJQwUr6/mUZt9ULuFwC60Gs3pTD4BT54TOgUGJAWFmhjGsCAYGSulhy8pdR6y+1
-         BsuMiZz7Wh5IH+MC1qVMFOBxpYOGCpT2U7jFO08IsfVlp5ShK1gAXo23AV2COpUedmBk
-         K+KRnJQPeB/u3A4AQ9vPguEVzNt984GmOyDb6TkOd+03leANFT8qXbRwnGilEVXyuzvE
-         lCXw==
-X-Gm-Message-State: AOAM533phdcg0kyLhkqzBADzPJFgXk+A6B7hKJWVYFzKHEu52BTcGrFy
-        LPtm2T2GPVISeAW9pO8QWY3onTYsR0Mz2uRJFR7KvQ==
-X-Google-Smtp-Source: ABdhPJzKB0NthI1LuTW6BHdNzilpfWpk2QEHQQe0FwPk9KShrU/6mTQNOyDLitbHJZ+h9jU58BKRQz7JNrryVXRgnbw=
-X-Received: by 2002:a1f:a0c3:: with SMTP id j186mr4756203vke.76.1599212765024;
- Fri, 04 Sep 2020 02:46:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200901142634.1227109-1-vgoyal@redhat.com>
-In-Reply-To: <20200901142634.1227109-1-vgoyal@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Fri, 4 Sep 2020 11:45:53 +0200
-Message-ID: <CAJfpegtBA6XSbb+futZGt=NY-VjnN_GWFmnNfGjLfgnZ1ynM0w@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fuse, dax: Couple of fixes for fuse dax support
-To:     Vivek Goyal <vgoyal@redhat.com>
+        Fri, 4 Sep 2020 07:26:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1599218783; x=1630754783;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=3uVXhrmM9lVseoqCCNkXi5hMoQew9zMqh4unsQMP2UU=;
+  b=X2qtsnVpOV1tIAV38+Eh4YMzVBcj+SlnYx+mAB7x4Tqc5rcSdthntAoz
+   EngaOemOnURDIUJZ44vhFnj4Xwi4JHJVsPZQY0ROEq1xAXQ7sFTu2N2aI
+   D2vYrziQK+PpMhaBIXxAI5MrSA7Yr8hCGD1XwPr49zGIFRzmQd/G3eiwF
+   x8NaPpJJerFyhdJG6/HXw8eQ6n6JIS5Ps+kO+ofXeFGSo3xOH9jt34pnw
+   2hWLVJ8kjYLrL/sB0t1s1g4naga3zcgNrFhS8Ti2mZ+uQ3AV9O8ARo79t
+   uq5J+yhiYSCsiJVqbCY+h5U++vPls2Bvye/wiIFOzLYlJCU2lMBlQ5h8D
+   Q==;
+IronPort-SDR: ecaYSj3/ZFG/Qv7DwoIc7Tm26L0/EalRv2lYElOfdWZZfCVSEP0f7bw4/5Zppba7LcGlhlzVVp
+ ghZthH23N2GGNq6YQ8567GBjgC/C2Wt8m+1iXZ9ArWc2FtG+vK3Jbk0yKjPALdUzKmSrW1Mobx
+ hWCOw6j7PM3XrB1Q9Mb/yQqRYbcFoWZfKSmc0Jm6zVfKGco2rKGpuL6fFxh0ClnJzki1htH28F
+ DFEoIgbGSwJjlkH3yEo1RMzwFYaDdaldV86GW90bcKKjAHgT+gElAfcXPJVtLeYx91guu5BrSf
+ 3Sw=
+X-IronPort-AV: E=Sophos;i="5.76,389,1592841600"; 
+   d="scan'208";a="249852279"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 04 Sep 2020 19:24:16 +0800
+IronPort-SDR: OiMigiTAjdCgkEyfgvhkvxhdC9ni+UcA+0W8mANhBy1zQQaeWix5dIOkPUK5TaxDuGlpSYNcVM
+ PzfAXy0WAmTA==
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Sep 2020 04:10:10 -0700
+IronPort-SDR: sd2rpEhQyAECxTs77BhZBu8WhdzjFZv50BMHoaZhKNVTpzJpfENJnFoxT5LXare4dge2Y98Zi8
+ Wdm983zziPww==
+WDCIronportException: Internal
+Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
+  by uls-op-cesaip01.wdc.com with ESMTP; 04 Sep 2020 04:23:36 -0700
+From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
 Cc:     linux-fsdevel@vger.kernel.org,
-        virtio-fs-list <virtio-fs@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH 3/3] zonefs: document the explicit-open mount option
+Date:   Fri,  4 Sep 2020 20:23:28 +0900
+Message-Id: <20200904112328.28887-4-johannes.thumshirn@wdc.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200904112328.28887-1-johannes.thumshirn@wdc.com>
+References: <20200904112328.28887-1-johannes.thumshirn@wdc.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 1, 2020 at 4:26 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> Hi Miklos,
->
-> I am testing fuse dax branch now. To begin with here are couple of
-> simple fixes to make sure I/O is going through dax path.
->
-> Either you can roll these fixes into existing patches or apply on
-> top.
->
-> I ran blogbench workload and some fio mmap jobs and these seem to be
-> running fine after these fixes.
+Document the newly introduced explicit-open mount option.
 
-Thanks for testing and fixing.
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+ Documentation/filesystems/zonefs.rst | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Pushed a rerolled series to #for-next.   Would be good if you cour retest.
+diff --git a/Documentation/filesystems/zonefs.rst b/Documentation/filesystems/zonefs.rst
+index 6c18bc8ce332..ff8bc3634bad 100644
+--- a/Documentation/filesystems/zonefs.rst
++++ b/Documentation/filesystems/zonefs.rst
+@@ -326,6 +326,21 @@ discover the amount of data that has been written to the zone. In the case of a
+ read-only zone discovered at run-time, as indicated in the previous section.
+ The size of the zone file is left unchanged from its last updated value.
+ 
++A zoned block device (e.g. a NVMe Zoned Namespace device) may have
++limits on the number of zones that can be active, that is, zones that
++are in the the implicit open, explicit open or closed conditions.
++This potential limitation translate into a risk for applications to see
++write IO errors due to this limit being exceeded if the zone of a file
++is not already active when a write request is issued by the user.
++
++To avoid these potential errors, the "explicit-open" mount option
++forces zones to be made active using an open zone command when a file
++is open for writing for the first time. If the zone open command
++succeeds, the application is then guaranteed that write requests can be
++processed. Conversely, the "explicit-open" mount option will result in
++a zone close command being issued to the device on the last close() of
++a zone file if the zone is not full nor empty.
++
+ Zonefs User Space Tools
+ =======================
+ 
+-- 
+2.26.2
 
-There's one checkpatch warning I'm unsure about:
-
-| WARNING: Using vsprintf specifier '%px' potentially exposes the
-kernel memory layout, if you don't really need the address please
-consider using '%p'.
-| #173: FILE: fs/fuse/virtio_fs.c:812:
-| +    dev_dbg(&vdev->dev, "%s: window kaddr 0x%px phys_addr 0x%llx
-len 0x%llx\n",
-| +        __func__, fs->window_kaddr, cache_reg.addr, cache_reg.len);
-|
-| total: 0 errors, 1 warnings, 175 lines checked
-|
-| NOTE: For some of the reported defects, checkpatch may be able to
-|       mechanically convert to the typical style using --fix or --fix-inplace.
-|
-| patches/virtio_fs-dax-set-up-virtio_fs-dax_device.patch has style
-problems, please review.
-
-Do you think that the kernel address in the debug output is necessary?
-
-Thanks,
-Miklos
