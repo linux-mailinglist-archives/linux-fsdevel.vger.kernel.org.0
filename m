@@ -2,111 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 77AF725E598
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Sep 2020 07:20:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C3025E5F0
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Sep 2020 09:16:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726421AbgIEFUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Sep 2020 01:20:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55978 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbgIEFUj (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Sep 2020 01:20:39 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DF5DC061245
-        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Sep 2020 22:20:39 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id C388D29B18C
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, jack@suse.cz, khazhy@google.com,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com, Jamie Liu <jamieliu@google.com>
-Subject: [PATCH v3 3/3] direct-io: defer alignment check until after the EOF check
-Date:   Sat,  5 Sep 2020 01:20:23 -0400
-Message-Id: <20200905052023.3719585-4-krisman@collabora.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200905052023.3719585-1-krisman@collabora.com>
-References: <20200905052023.3719585-1-krisman@collabora.com>
+        id S1726652AbgIEHQS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Sep 2020 03:16:18 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:51449 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725818AbgIEHQS (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 5 Sep 2020 03:16:18 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4Bk5SF0YcXz9v21X;
+        Sat,  5 Sep 2020 09:16:13 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id I2kWpVRgLGRj; Sat,  5 Sep 2020 09:16:13 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4Bk5SD6rtHz9v21V;
+        Sat,  5 Sep 2020 09:16:12 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id F36098B76E;
+        Sat,  5 Sep 2020 09:16:13 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id LbgFIZMjw9IA; Sat,  5 Sep 2020 09:16:13 +0200 (CEST)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C9E268B75B;
+        Sat,  5 Sep 2020 09:16:12 +0200 (CEST)
+Subject: Re: remove the last set_fs() in common code, and remove it for x86
+ and powerpc v3
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Alexey Dobriyan' <adobriyan@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+Cc:     "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Kees Cook <keescook@chromium.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>
+References: <20200903142242.925828-1-hch@lst.de>
+ <20200904060024.GA2779810@gmail.com>
+ <20200904175823.GA500051@localhost.localdomain>
+ <63f3c9342a784a0890b3b641a71a8aa1@AcuMS.aculab.com>
+From:   Christophe Leroy <christophe.leroy@csgroup.eu>
+Message-ID: <4500d8d9-7318-4505-6086-2d2dc41f3866@csgroup.eu>
+Date:   Sat, 5 Sep 2020 09:16:06 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
+In-Reply-To: <63f3c9342a784a0890b3b641a71a8aa1@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Prior to commit 9fe55eea7e4b ("Fix race when checking i_size on direct
-i/o read"), an unaligned direct read past end of file would trigger EOF,
-since generic_file_aio_read detected this read-at-EOF condition and
-skipped the direct IO read entirely, returning 0. After that change, the
-read now reaches dio_generic, which detects the misalignment and returns
-EINVAL.
 
-This consolidates the generic direct-io to follow the same behavior of
-filesystems.  Apparently, this fix will only affect ocfs2 since other
-filesystems do this verification before calling do_blockdev_direct_IO,
-with the exception of f2fs, which has the same bug, but is fixed in the
-next patch.
 
-it can be verified by a read loop on a file that does a partial read
-before EOF (On file that doesn't end at an aligned address).  The
-following code fails on an unaligned file on filesystems without
-prior validation without this patch, but not on btrfs, ext4, and xfs.
+Le 04/09/2020 à 23:01, David Laight a écrit :
+> From: Alexey Dobriyan
+>> Sent: 04 September 2020 18:58
+>>
+>> On Fri, Sep 04, 2020 at 08:00:24AM +0200, Ingo Molnar wrote:
+>>> * Christoph Hellwig <hch@lst.de> wrote:
+>>>> this series removes the last set_fs() used to force a kernel address
+>>>> space for the uaccess code in the kernel read/write/splice code, and then
+>>>> stops implementing the address space overrides entirely for x86 and
+>>>> powerpc.
+>>>
+>>> Cool! For the x86 bits:
+>>>
+>>>    Acked-by: Ingo Molnar <mingo@kernel.org>
+>>
+>> set_fs() is older than some kernel hackers!
+>>
+>> 	$ cd linux-0.11/
+>> 	$ find . -type f -name '*.h' | xargs grep -e set_fs -w -n -A3
+>> 	./include/asm/segment.h:61:extern inline void set_fs(unsigned long val)
+>> 	./include/asm/segment.h-62-{
+>> 	./include/asm/segment.h-63-     __asm__("mov %0,%%fs"::"a" ((unsigned short) val));
+>> 	./include/asm/segment.h-64-}
+> 
+> What is this strange %fs register you are talking about.
+> Figure 2-4 only has CS, DS, SS and ES.
+> 
 
-  while (done < total) {
-    ssize_t delta = pread(fd, buf + done, total - done, off + done);
-    if (!delta)
-      break;
-    ...
-  }
+Intel added registers FS and GS in the i386
 
-Fix this regression by moving the misalignment check to after the EOF
-check added by commit 74cedf9b6c60 ("direct-io: Fix negative return from
-dio read beyond eof").
-
-Based on a patch by Jamie Liu.
-
-Reported-by: Jamie Liu <jamieliu@google.com>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
----
- fs/direct-io.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index c17efe58f1c9..82838cca934b 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1165,14 +1165,6 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	 * the early prefetch in the caller enough time.
- 	 */
- 
--	if (align & blocksize_mask) {
--		if (bdev)
--			blkbits = blksize_bits(bdev_logical_block_size(bdev));
--		blocksize_mask = (1 << blkbits) - 1;
--		if (align & blocksize_mask)
--			return -EINVAL;
--	}
--
- 	/* watch out for a 0 len io from a tricksy fs */
- 	if (iov_iter_rw(iter) == READ && !count)
- 		return 0;
-@@ -1200,6 +1192,14 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 		goto fail_dio;
- 	}
- 
-+	if (align & blocksize_mask) {
-+		if (bdev)
-+			blkbits = blksize_bits(bdev_logical_block_size(bdev));
-+		blocksize_mask = (1 << blkbits) - 1;
-+		if (align & blocksize_mask)
-+			goto fail_dio;
-+	}
-+
- 	if (dio->flags & DIO_LOCKING && iov_iter_rw(iter) == READ) {
- 		struct address_space *mapping = iocb->ki_filp->f_mapping;
- 
--- 
-2.28.0
-
+Christophe
