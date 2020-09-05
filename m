@@ -2,70 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0844525E68C
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Sep 2020 10:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9612F25E6E7
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Sep 2020 12:14:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbgIEIfj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 5 Sep 2020 04:35:39 -0400
-Received: from smtp.h3c.com ([60.191.123.50]:59841 "EHLO h3cspam02-ex.h3c.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725818AbgIEIfi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 Sep 2020 04:35:38 -0400
-Received: from h3cspam02-ex.h3c.com (localhost [127.0.0.2] (may be forged))
-        by h3cspam02-ex.h3c.com with ESMTP id 0857MrRw079323;
-        Sat, 5 Sep 2020 15:22:53 +0800 (GMT-8)
-        (envelope-from tian.xianting@h3c.com)
-Received: from DAG2EX03-BASE.srv.huawei-3com.com ([10.8.0.66])
-        by h3cspam02-ex.h3c.com with ESMTPS id 0857MkCp079300
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 5 Sep 2020 15:22:46 +0800 (GMT-8)
-        (envelope-from tian.xianting@h3c.com)
-Received: from localhost.localdomain (10.99.212.201) by
- DAG2EX03-BASE.srv.huawei-3com.com (10.8.0.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Sat, 5 Sep 2020 15:22:48 +0800
-From:   Xianting Tian <tian.xianting@h3c.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Xianting Tian <tian.xianting@h3c.com>
-Subject: [PATCH] fs: use correct parameter in notes of generic_file_llseek_size()
-Date:   Sat, 5 Sep 2020 15:15:25 +0800
-Message-ID: <20200905071525.12259-1-tian.xianting@h3c.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728206AbgIEKOH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 5 Sep 2020 06:14:07 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:41947 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726302AbgIEKOH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 5 Sep 2020 06:14:07 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-188-1wY7cX1qPuWY8qP59j56kw-1; Sat, 05 Sep 2020 11:13:52 +0100
+X-MC-Unique: 1wY7cX1qPuWY8qP59j56kw-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Sat, 5 Sep 2020 11:13:52 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Sat, 5 Sep 2020 11:13:52 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christophe Leroy' <christophe.leroy@csgroup.eu>,
+        'Alexey Dobriyan' <adobriyan@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>
+CC:     "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Kees Cook <keescook@chromium.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Luis Chamberlain" <mcgrof@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: RE: remove the last set_fs() in common code, and remove it for x86
+ and powerpc v3
+Thread-Topic: remove the last set_fs() in common code, and remove it for x86
+ and powerpc v3
+Thread-Index: AQHWguUCiBf1LDvZDEmt0ea9xeMo3alY9jkQgACcEACAAEEf8A==
+Date:   Sat, 5 Sep 2020 10:13:51 +0000
+Message-ID: <b9c82e868b7b4dbb97d2bb11de825887@AcuMS.aculab.com>
+References: <20200903142242.925828-1-hch@lst.de>
+ <20200904060024.GA2779810@gmail.com>
+ <20200904175823.GA500051@localhost.localdomain>
+ <63f3c9342a784a0890b3b641a71a8aa1@AcuMS.aculab.com>
+ <4500d8d9-7318-4505-6086-2d2dc41f3866@csgroup.eu>
+In-Reply-To: <4500d8d9-7318-4505-6086-2d2dc41f3866@csgroup.eu>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.99.212.201]
-X-ClientProxiedBy: BJSMTP01-EX.srv.huawei-3com.com (10.63.20.132) To
- DAG2EX03-BASE.srv.huawei-3com.com (10.8.0.66)
-X-DNSRBL: 
-X-MAIL: h3cspam02-ex.h3c.com 0857MkCp079300
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0.001
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix warning when compiling with W=1:
-fs/read_write.c:88: warning: Function parameter or member 'maxsize' not described in 'generic_file_llseek_size'
-fs/read_write.c:88: warning: Excess function parameter 'size' description in 'generic_file_llseek_size'
-
-Signed-off-by: Xianting Tian <tian.xianting@h3c.com>
----
- fs/read_write.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 5db58b8c7..058563ee2 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -71,7 +71,7 @@ EXPORT_SYMBOL(vfs_setpos);
-  * @file:	file structure to seek on
-  * @offset:	file offset to seek to
-  * @whence:	type of seek
-- * @size:	max size of this file in file system
-+ * @maxsize:	max size of this file in file system
-  * @eof:	offset used for SEEK_END position
-  *
-  * This is a variant of generic_file_llseek that allows passing in a custom
--- 
-2.17.1
+RnJvbTogQ2hyaXN0b3BoZSBMZXJveQ0KPiBTZW50OiAwNSBTZXB0ZW1iZXIgMjAyMCAwODoxNg0K
+PiANCj4gTGUgMDQvMDkvMjAyMCDDoCAyMzowMSwgRGF2aWQgTGFpZ2h0IGEgw6ljcml0wqA6DQo+
+ID4gRnJvbTogQWxleGV5IERvYnJpeWFuDQo+ID4+IFNlbnQ6IDA0IFNlcHRlbWJlciAyMDIwIDE4
+OjU4DQouLi4NCj4gPiBXaGF0IGlzIHRoaXMgc3RyYW5nZSAlZnMgcmVnaXN0ZXIgeW91IGFyZSB0
+YWxraW5nIGFib3V0Lg0KPiA+IEZpZ3VyZSAyLTQgb25seSBoYXMgQ1MsIERTLCBTUyBhbmQgRVMu
+DQo+ID4NCj4gDQo+IEludGVsIGFkZGVkIHJlZ2lzdGVycyBGUyBhbmQgR1MgaW4gdGhlIGkzODYN
+Cg0KSSBrbm93LCBJJ3ZlIGdvdCBib3RoIHRoZSAnaUFQWCAyODYgUHJvZ3JhbW1lcidzIFJlZmVy
+ZW5jZSBNYW51YWwnDQphbmQgdGhlICc4MDM4NiBQcm9ncmFtbWVyJ3MgUmVmZXJlbmNlIE1hbnVh
+bCcgb24gbXkgc2hlbGYuDQoNCkkgZG9uJ3QgaGF2ZSB0aGUgODA4OCBib29rIHRob3VnaCAtIHdo
+aWNoIEkgdXNlZCBpbiAxOTgyLg0KDQpUaGUgb2xkIGJvb2tzIGFyZSBhIGxvdCBlYXNpZXIgdG8g
+cmVhZCBpZiwgZm9yIGluc3RhbmNlLA0KeW91IGFyZSB0cnlpbmcgdG8gd29yayBvdXQgaG93IHRv
+IGJhY2sgYW5kIGZvcnRoIHRvIHJlYWwgbW9kZQ0KdG8gZG8gYmlvcyBjYWxscy4NCg0KCURhdmlk
+DQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBG
+YXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2
+IChXYWxlcykNCg==
 
