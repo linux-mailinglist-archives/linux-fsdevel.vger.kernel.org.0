@@ -2,96 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 023D725EF40
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Sep 2020 19:12:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D8D25EF42
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Sep 2020 19:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729006AbgIFRMU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Sep 2020 13:12:20 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41792 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbgIFRMR (ORCPT
+        id S1729041AbgIFRMp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Sep 2020 13:12:45 -0400
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:28799 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725816AbgIFRMn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Sep 2020 13:12:17 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 086H4Lkl109607;
-        Sun, 6 Sep 2020 17:12:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=Lx7/I1jqph1rKTWu9/vOsiiFtqyYPTpUVfvYUZowWew=;
- b=emkmwcbtLUaSmIcqLZscltx1g1X0SI31NdLIz5pvoERj5kv9k/mnZcagJrcI2JnSlJbg
- n8SDhLBLskikK7v9klcCdzjC+Kljpo6oiwVC7TOmsT89Ilrv6V3eRaUAdcF8bFxVCpPy
- uZGAOWU14flBKkcdrOXdp8J8pZ7G4oFKTBIcf6BQ+W+txIckIoK8g29fpqJ0BAJ4wgac
- 9LvWsy/ZvodTkkbiDGTpiroLK5QsgwgYuljgmlqpukE7Kl2yNasefqEPdIj6HVD12oKh
- g7BoEUOGaajt0PM233WzqJm1vaUz2GLxFhvhRmzTt8tivWz1gp2M7GVzacgksFKltaf6 xw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 33c2mkkf83-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sun, 06 Sep 2020 17:12:06 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 086H52Hr020827;
-        Sun, 6 Sep 2020 17:10:06 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 33cmjxaq0u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 06 Sep 2020 17:10:06 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 086H9wE9020496;
-        Sun, 6 Sep 2020 17:09:59 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 06 Sep 2020 10:09:58 -0700
-Date:   Sun, 6 Sep 2020 10:09:57 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH v2] quota: widen timestamps for the fs_disk_quota
- structure
-Message-ID: <20200906170957.GE7955@magnolia>
-References: <20200905164703.GC7955@magnolia>
- <20200905220231.GB16750@casper.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200905220231.GB16750@casper.infradead.org>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9736 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 phishscore=0
- mlxlogscore=999 bulkscore=0 adultscore=0 mlxscore=0 suspectscore=1
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009060174
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9736 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 priorityscore=1501
- phishscore=0 adultscore=0 bulkscore=0 clxscore=1015 mlxlogscore=999
- malwarescore=0 suspectscore=1 lowpriorityscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009060174
+        Sun, 6 Sep 2020 13:12:43 -0400
+Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
+  by alexa-out.qualcomm.com with ESMTP; 06 Sep 2020 10:12:42 -0700
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 06 Sep 2020 10:12:40 -0700
+Received: from c-ppvk-linux.qualcomm.com ([10.206.24.34])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 06 Sep 2020 22:42:28 +0530
+Received: by c-ppvk-linux.qualcomm.com (Postfix, from userid 2304101)
+        id B8BF45383; Sun,  6 Sep 2020 22:42:26 +0530 (IST)
+From:   Pradeep P V K <ppvk@codeaurora.org>
+To:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        willy@infradead.org
+Cc:     stummala@codeaurora.org, sayalil@codeaurora.org,
+        Pradeep P V K <ppvk@codeaurora.org>
+Subject: [PATCH V3] fuse: Fix VM_BUG_ON_PAGE issue while accessing zero ref count page
+Date:   Sun,  6 Sep 2020 22:42:24 +0530
+Message-Id: <1599412344-495-1-git-send-email-ppvk@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 05, 2020 at 11:02:31PM +0100, Matthew Wilcox wrote:
-> On Sat, Sep 05, 2020 at 09:47:03AM -0700, Darrick J. Wong wrote:
-> > +static inline void copy_to_xfs_dqblk_ts(const struct fs_disk_quota *d,
-> > +		__s32 *timer_lo, __s8 *timer_hi, s64 timer)
-> > +{
-> > +	*timer_lo = timer;
-> > +	if (d->d_fieldmask & FS_DQ_BIGTIME)
-> > +		*timer_hi = timer >> 32;
-> > +	else
-> > +		*timer_hi = 0;
-> > +}
-> 
-> Is that actually the right thing to do?  If FS_DQ_BIGTIME is not set,
-> I would expect us to avoid writing to timer_hi at all.  Alternatively, if
-> we do want to write to timer_hi, why not write to it unconditionally?
+There is a potential race between fuse_abort_conn() and
+fuse_copy_page() as shown below, due to which VM_BUG_ON_PAGE
+crash is observed for accessing a free page.
 
-If the flag isn't set, then the space used by timer_hi is a zero-filled
-padding field.  Therefore, I made this function zero timer_hi if the
-bigtime flag isn't set.  It's redundant with the memset five lines up
-from the call site, but I don't like leaving logic bombs in case this
-function ever gets exported elsewhere.
+context#1:                      context#2:
+fuse_dev_do_read()              fuse_abort_conn()
+->fuse_copy_args()               ->end_requests()
+ ->fuse_copy_pages()              ->request_end()
+    ->fuse_copy_page()               ->fuse_writepage_end)
+      ->fuse_ref_page()                ->fuse_writepage_free()
+                                          ->__free_page()
+					    ->put_page_testzero()
 
---D
+      ->get_page()
+      ->VM_BUG_ON_PAGE()
+
+This results in below crash as when ->put_page_testzero() in context#2
+decrease the page reference and get_page() in context#1 accessed it
+with zero page reference count.
+
+[  174.391095]  (1)[10406:Thread-6]page dumped because:
+VM_BUG_ON_PAGE(((unsigned int) page_ref_count(page) + 127u <= 127u))
+[  174.391113]  (1)[10406:Thread-6]page allocated via order 0,
+migratetype Unmovable, gfp_mask
+0x620042(GFP_NOFS|__GFP_HIGHMEM|__GFP_HARDWALL), pid 261, ts
+174390946312 ns
+
+[  174.391135]  (1)[10406:Thread-6] prep_new_page+0x13c/0x210
+[  174.391148]  (1)[10406:Thread-6] get_page_from_freelist+0x21ac/0x2370
+[  174.391161]  (1)[10406:Thread-6] __alloc_pages_nodemask+0x244/0x14a8
+[  174.391176]  (1)[10406:Thread-6] fuse_writepages_fill+0x150/0x708
+[  174.391190]  (1)[10406:Thread-6] write_cache_pages+0x3d8/0x550
+[  174.391202]  (1)[10406:Thread-6] fuse_writepages+0x94/0x130
+[  174.391214]  (1)[10406:Thread-6] do_writepages+0x74/0x140
+[  174.391228]  (1)[10406:Thread-6] __writeback_single_inode+0x168/0x788
+[  174.391239]  (1)[10406:Thread-6] writeback_sb_inodes+0x56c/0xab8
+[  174.391251]  (1)[10406:Thread-6] __writeback_inodes_wb+0x94/0x180
+[  174.391262]  (1)[10406:Thread-6] wb_writeback+0x318/0x618
+[  174.391274]  (1)[10406:Thread-6] wb_workfn+0x468/0x828
+[  174.391290]  (1)[10406:Thread-6] process_one_work+0x3d0/0x720
+[  174.391302]  (1)[10406:Thread-6] worker_thread+0x234/0x4c0
+[  174.391314]  (1)[10406:Thread-6] kthread+0x144/0x158
+[  174.391327]  (1)[10406:Thread-6] ret_from_fork+0x10/0x1c
+[  174.391363]  (1)[10406:Thread-6]------------[ cut here ]------------
+[  174.391371]  (1)[10406:Thread-6]kernel BUG at include/linux/mm.h:980!
+[  174.391381]  (1)[10406:Thread-6]Internal error: Oops - BUG: 0 [#1]
+...
+[  174.486928]  (1)[10406:Thread-6]pc : fuse_copy_page+0x750/0x790
+[  174.493029]  (1)[10406:Thread-6]lr : fuse_copy_page+0x750/0x790
+[  174.718831]  (1)[10406:Thread-6] fuse_copy_page+0x750/0x790
+[  174.718838]  (1)[10406:Thread-6] fuse_copy_args+0xb4/0x1e8
+[  174.718843]  (1)[10406:Thread-6] fuse_dev_do_read+0x424/0x888
+[  174.718848]  (1)[10406:Thread-6] fuse_dev_splice_read+0x94/0x200
+[  174.718856]  (1)[10406:Thread-6] __arm64_sys_splice+0x874/0xb20
+[  174.718864]  (1)[10406:Thread-6] el0_svc_common+0xc8/0x240
+[  174.718869]  (1)[10406:Thread-6] el0_svc_handler+0x6c/0x88
+[  174.718875]  (1)[10406:Thread-6] el0_svc+0x8/0xc
+[  174.778853]  (1)[10406:Thread-6]Kernel panic - not syncing: Fatal
+
+Fix this by protecting fuse_ref_page() with the same fc->lock as in
+fuse_abort_conn().
+
+Changes since V2:
+- Moved the spin lock from fuse_copy_pages() to fuse_ref_page()
+
+Changes since V1:
+- Modified the logic as per kernel v5.9-rc1.
+- Added Reported by tag.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
+---
+ fs/fuse/dev.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
+
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 02b3c36..58c7512 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -875,7 +875,7 @@ static int fuse_try_move_page(struct fuse_copy_state *cs, struct page **pagep)
+ }
+ 
+ static int fuse_ref_page(struct fuse_copy_state *cs, struct page *page,
+-			 unsigned offset, unsigned count)
++			 unsigned offset, unsigned count, struct fuse_conn *fc)
+ {
+ 	struct pipe_buffer *buf;
+ 	int err;
+@@ -883,6 +883,7 @@ static int fuse_ref_page(struct fuse_copy_state *cs, struct page *page,
+ 	if (cs->nr_segs >= cs->pipe->max_usage)
+ 		return -EIO;
+ 
++	spin_lock(&fc->lock);
+ 	err = unlock_request(cs->req);
+ 	if (err)
+ 		return err;
+@@ -892,6 +893,7 @@ static int fuse_ref_page(struct fuse_copy_state *cs, struct page *page,
+ 	buf = cs->pipebufs;
+ 	get_page(page);
+ 	buf->page = page;
++	spin_unlock(&fc->lock);
+ 	buf->offset = offset;
+ 	buf->len = count;
+ 
+@@ -907,7 +909,7 @@ static int fuse_ref_page(struct fuse_copy_state *cs, struct page *page,
+  * done atomically
+  */
+ static int fuse_copy_page(struct fuse_copy_state *cs, struct page **pagep,
+-			  unsigned offset, unsigned count, int zeroing)
++			  unsigned offset, unsigned count, int zeroing, struct fuse_conn *fc)
+ {
+ 	int err;
+ 	struct page *page = *pagep;
+@@ -917,7 +919,7 @@ static int fuse_copy_page(struct fuse_copy_state *cs, struct page **pagep,
+ 
+ 	while (count) {
+ 		if (cs->write && cs->pipebufs && page) {
+-			return fuse_ref_page(cs, page, offset, count);
++			return fuse_ref_page(cs, page, offset, count, fc);
+ 		} else if (!cs->len) {
+ 			if (cs->move_pages && page &&
+ 			    offset == 0 && count == PAGE_SIZE) {
+@@ -945,7 +947,7 @@ static int fuse_copy_page(struct fuse_copy_state *cs, struct page **pagep,
+ 
+ /* Copy pages in the request to/from userspace buffer */
+ static int fuse_copy_pages(struct fuse_copy_state *cs, unsigned nbytes,
+-			   int zeroing)
++			   int zeroing, struct fuse_conn *fc)
+ {
+ 	unsigned i;
+ 	struct fuse_req *req = cs->req;
+@@ -957,7 +959,7 @@ static int fuse_copy_pages(struct fuse_copy_state *cs, unsigned nbytes,
+ 		unsigned int offset = ap->descs[i].offset;
+ 		unsigned int count = min(nbytes, ap->descs[i].length);
+ 
+-		err = fuse_copy_page(cs, &ap->pages[i], offset, count, zeroing);
++		err = fuse_copy_page(cs, &ap->pages[i], offset, count, zeroing, fc);
+ 		if (err)
+ 			return err;
+ 
+@@ -983,7 +985,7 @@ static int fuse_copy_one(struct fuse_copy_state *cs, void *val, unsigned size)
+ /* Copy request arguments to/from userspace buffer */
+ static int fuse_copy_args(struct fuse_copy_state *cs, unsigned numargs,
+ 			  unsigned argpages, struct fuse_arg *args,
+-			  int zeroing)
++			  int zeroing, struct fuse_conn *fc)
+ {
+ 	int err = 0;
+ 	unsigned i;
+@@ -991,7 +993,7 @@ static int fuse_copy_args(struct fuse_copy_state *cs, unsigned numargs,
+ 	for (i = 0; !err && i < numargs; i++)  {
+ 		struct fuse_arg *arg = &args[i];
+ 		if (i == numargs - 1 && argpages)
+-			err = fuse_copy_pages(cs, arg->size, zeroing);
++			err = fuse_copy_pages(cs, arg->size, zeroing, fc);
+ 		else
+ 			err = fuse_copy_one(cs, arg->value, arg->size);
+ 	}
+@@ -1260,7 +1262,7 @@ static ssize_t fuse_dev_do_read(struct fuse_dev *fud, struct file *file,
+ 	err = fuse_copy_one(cs, &req->in.h, sizeof(req->in.h));
+ 	if (!err)
+ 		err = fuse_copy_args(cs, args->in_numargs, args->in_pages,
+-				     (struct fuse_arg *) args->in_args, 0);
++				     (struct fuse_arg *) args->in_args, 0, fc);
+ 	fuse_copy_finish(cs);
+ 	spin_lock(&fpq->lock);
+ 	clear_bit(FR_LOCKED, &req->flags);
+@@ -1590,7 +1592,7 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
+ 			goto out_iput;
+ 
+ 		this_num = min_t(unsigned, num, PAGE_SIZE - offset);
+-		err = fuse_copy_page(cs, &page, offset, this_num, 0);
++		err = fuse_copy_page(cs, &page, offset, this_num, 0, fc);
+ 		if (!err && offset == 0 &&
+ 		    (this_num == PAGE_SIZE || file_size == end))
+ 			SetPageUptodate(page);
+@@ -1792,7 +1794,7 @@ static struct fuse_req *request_find(struct fuse_pqueue *fpq, u64 unique)
+ }
+ 
+ static int copy_out_args(struct fuse_copy_state *cs, struct fuse_args *args,
+-			 unsigned nbytes)
++			 unsigned nbytes, struct fuse_conn *fc)
+ {
+ 	unsigned reqsize = sizeof(struct fuse_out_header);
+ 
+@@ -1809,7 +1811,7 @@ static int copy_out_args(struct fuse_copy_state *cs, struct fuse_args *args,
+ 		lastarg->size -= diffsize;
+ 	}
+ 	return fuse_copy_args(cs, args->out_numargs, args->out_pages,
+-			      args->out_args, args->page_zeroing);
++			      args->out_args, args->page_zeroing, fc);
+ }
+ 
+ /*
+@@ -1894,7 +1896,7 @@ static ssize_t fuse_dev_do_write(struct fuse_dev *fud,
+ 	if (oh.error)
+ 		err = nbytes != sizeof(oh) ? -EINVAL : 0;
+ 	else
+-		err = copy_out_args(cs, req->args, nbytes);
++		err = copy_out_args(cs, req->args, nbytes, fc);
+ 	fuse_copy_finish(cs);
+ 
+ 	spin_lock(&fpq->lock);
+-- 
+1.9.1
+
