@@ -2,76 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 518EF25F0CA
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Sep 2020 23:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F7EE25F0F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 00:39:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbgIFVkK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Sep 2020 17:40:10 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:33116 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726292AbgIFVkJ (ORCPT
+        id S1726476AbgIFWjx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Sep 2020 18:39:53 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44951 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbgIFWjx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Sep 2020 17:40:09 -0400
-Received: from dread.disaster.area (pa49-195-191-192.pa.nsw.optusnet.com.au [49.195.191.192])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id DC6FE824631;
-        Mon,  7 Sep 2020 07:40:03 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1kF2OI-0006n6-R9; Mon, 07 Sep 2020 07:40:02 +1000
-Date:   Mon, 7 Sep 2020 07:40:02 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Hao Li <lihao2018.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        ira.weiny@intel.com, linux-xfs@vger.kernel.org, y-goto@fujitsu.com
-Subject: Re: [PATCH v2] fs: Handle I_DONTCACHE in iput_final() instead of
- generic_drop_inode()
-Message-ID: <20200906214002.GI12131@dread.disaster.area>
-References: <20200904075939.176366-1-lihao2018.fnst@cn.fujitsu.com>
+        Sun, 6 Sep 2020 18:39:53 -0400
+Received: by mail-lj1-f196.google.com with SMTP id b19so13860570lji.11
+        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Sep 2020 15:39:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ikx3uAdKFSJIzTgmz4fEDgTM2my2iVbAUKN6jp52/rw=;
+        b=o7aBQDDYMFT42oYQF5Nh6vZnAD6QkWyCXnIpdqcmgX0aC4orP7tmHg+ar6rOupsCoB
+         OJXGFqim/iQ7Sgiug/SkfVs2udDk3IaXqHImJOwtM7ZdhAulmLG5WcOLr/RhPLWysVXZ
+         VJXA2ovzanSR63rr8lkf8LJuA0IQlOrkqadD38iBgBD0vHnj9wRTefVngHGTpmMy4OwW
+         aLjJ54OeJriY63Sl4rqaB2b5VMRcZIG6UN9XxlSaFNHxM1S9wSrNKtCqy25CPtGadEPc
+         nznAYSptFg8UIEXm3QMIlbPYyWwp6QOgFCRlSaUdcav3bzg6+53WbLhUPcKA2AskgE72
+         amPQ==
+X-Gm-Message-State: AOAM5302LwfazIyKDp2gkDyM7KxiaNCArT7+tAcqzm9f71uplpIC/nSY
+        0NFaHfy/3r2D8bSugziaQpE=
+X-Google-Smtp-Source: ABdhPJxoYf7E+GBHb5sBzQ+hlbyD87VNjF0h9jGa3Q1pViydBlaSOlqgnjtzZA7+XGGSm8T7sWm1LQ==
+X-Received: by 2002:a2e:87c7:: with SMTP id v7mr6671842ljj.13.1599431991423;
+        Sun, 06 Sep 2020 15:39:51 -0700 (PDT)
+Received: from workstation.lan ([95.155.85.46])
+        by smtp.gmail.com with ESMTPSA id v196sm4555898lfa.96.2020.09.06.15.39.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 06 Sep 2020 15:39:50 -0700 (PDT)
+From:   =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH v3] fs: Remove duplicated flag O_NDELAY occurring twice in VALID_OPEN_FLAGS
+Date:   Sun,  6 Sep 2020 22:39:49 +0000
+Message-Id: <20200906223949.62771-1-kw@linux.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200904075939.176366-1-lihao2018.fnst@cn.fujitsu.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=IuRgj43g c=1 sm=1 tr=0 cx=a_idp_d
-        a=vvDRHhr1aDYKXl+H6jx2TA==:117 a=vvDRHhr1aDYKXl+H6jx2TA==:17
-        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=VwQbUJbxAAAA:8 a=omOdbC7AAAAA:8
-        a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=CYq8bQpZl3HkxBxCX-sA:9
-        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=baC4JDFNLZpnPwus_NF9:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 04, 2020 at 03:59:39PM +0800, Hao Li wrote:
-> If generic_drop_inode() returns true, it means iput_final() can evict
-> this inode regardless of whether it is dirty or not. If we check
-> I_DONTCACHE in generic_drop_inode(), any inode with this bit set will be
-> evicted unconditionally. This is not the desired behavior because
-> I_DONTCACHE only means the inode shouldn't be cached on the LRU list.
-> As for whether we need to evict this inode, this is what
-> generic_drop_inode() should do. This patch corrects the usage of
-> I_DONTCACHE.
-> 
-> This patch was proposed in [1].
-> 
-> [1]: https://lore.kernel.org/linux-fsdevel/20200831003407.GE12096@dread.disaster.area/
-> 
-> Fixes: dae2f8ed7992 ("fs: Lift XFS_IDONTCACHE to the VFS layer")
-> Signed-off-by: Hao Li <lihao2018.fnst@cn.fujitsu.com>
-> ---
-> Changes in v2:
->  - Adjust code format
->  - Add Fixes tag in commit message
-> 
->  fs/inode.c         | 4 +++-
->  include/linux/fs.h | 3 +--
->  2 files changed, 4 insertions(+), 3 deletions(-)
+The O_NDELAY flag occurs twice in the VALID_OPEN_FLAGS definition, this
+change removes the duplicate.  There is no change to the functionality.
 
-Looks good.
+Note, that the flags O_NONBLOCK and O_NDELAY are not duplicates, as
+values of these flags are platform dependent, and on platforms like
+Sparc O_NONBLOCK and O_NDELAY are not the same.
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+This has been done that way to maintain the ABI compatibility with
+Solaris since the Sparc port was first introduced.
 
+This change resolves the following Coccinelle warning:
+
+  include/linux/fcntl.h:11:13-21: duplicated argument to & or |
+
+Signed-off-by: Krzysztof Wilczyński <kw@linux.com>
+---
+Changes in v3:
+  Drop whitespace changes.  Thank you Jens!
+
+Changes in v2:
+  Update commit message and subject line wording as per review feedback.
+
+include/linux/fcntl.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
+index 7bcdcf4f6ab2..921e750843e6 100644
+--- a/include/linux/fcntl.h
++++ b/include/linux/fcntl.h
+@@ -8,7 +8,7 @@
+ /* List of all valid flags for the open/openat flags argument: */
+ #define VALID_OPEN_FLAGS \
+ 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
+-	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
++	 O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
+ 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
+ 	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
+ 
 -- 
-Dave Chinner
-david@fromorbit.com
+2.28.0
+
