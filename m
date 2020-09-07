@@ -2,94 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BA7826003B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 18:46:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E972F260466
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 20:18:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730692AbgIGQqK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Sep 2020 12:46:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36054 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731120AbgIGQqE (ORCPT
+        id S1729654AbgIGSRz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Sep 2020 14:17:55 -0400
+Received: from vmicros1.altlinux.org ([194.107.17.57]:48282 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726458AbgIGSRy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Sep 2020 12:46:04 -0400
-Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1808C061573
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Sep 2020 09:46:03 -0700 (PDT)
-Received: by mail-pg1-x543.google.com with SMTP id 5so8264226pgl.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Sep 2020 09:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=g+ZwBs/eKS475TohZrpwjq9jwyfp0fqCgZEKHc2jZv4=;
-        b=LxhFUJmQp0wPK9979sXpXqJO2RL9oLGBBZ/SbCfnOQVK7O9ePZ/9GthPaBNWsbU33M
-         YT7hFWA1AyXr0FkYOEYntkrEJQUgpZT/84sQ0pgfW9IugaUz+b39ZKjbAD+mJwaVWKpS
-         eyDXuD8TtjTMNAiRs7dZ7C7Fk280Ikn8V4MRcmg89IIF5FGwfsmbmVc4q/GMj0rMCfsB
-         h07/V2Zw2ol9S5hrAKiBFwdkvhK2My8p4xh1xjzulhZJC8ptuFFSZ6F3YnerTskkAJRb
-         YnF1LI0ZUs3QFohQOa+q2zAFR9kUUxTC3dPvpDPy0MVItCC7uKUsFuurQuRzZDWoQmYV
-         DPIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=g+ZwBs/eKS475TohZrpwjq9jwyfp0fqCgZEKHc2jZv4=;
-        b=O4t1pUKf1lwvU+vdOw/twjuEh1SyvC2fz+al7TXUrHQDCtxSzUfR+T0HkL74eFB+J7
-         ALLnuEqBnkj85rFV0dAPQaFsjjpy6cR7E9zAQh0gVuOCBjWLZaGPgHnRiDp+V0N0JpsD
-         K/DAYmcoptd1J+6fmrAleTWr9BHTCW0ILRvzwxVAbNITnFnvoILtljb6pSakeojYYlHl
-         SecCJVRqWU8xVp4K82RHYWHfMKCtREdAyvXdHWU3RzhBTTdSlnMbrSu1BY7d6J0afE+5
-         jGJylH2aOmaJxcuvWFNmDTt7fhHV28h1yOWNLliWDn7lGF1LNZ3DWKUtIlQ3FdmRknJC
-         ifGw==
-X-Gm-Message-State: AOAM5335Rm4ZCyUSV0jV6C64BTxVjohnOt7OKHJDcbcGB+8j+uMWmleF
-        RRNoAvkKpuxYwQKIGmPOpW0W5+gNh5I1AI/Y
-X-Google-Smtp-Source: ABdhPJzBN/q1TR9Fhihv0JY545Kt6j4m6xqSO0AlECqpYQ11Ul+NxTf7dGAL3bkjEpHGgC+S9uIaaA==
-X-Received: by 2002:a63:fc41:: with SMTP id r1mr17031068pgk.179.1599497163138;
-        Mon, 07 Sep 2020 09:46:03 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id b20sm16718430pfb.198.2020.09.07.09.46.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Sep 2020 09:46:02 -0700 (PDT)
-Subject: Re: [PATCH v3] fs: Remove duplicated flag O_NDELAY occurring twice in
- VALID_OPEN_FLAGS
-To:     =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-References: <20200906223949.62771-1-kw@linux.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <01eef19a-a5f0-dbad-3091-dba05abb16c8@kernel.dk>
-Date:   Mon, 7 Sep 2020 10:46:01 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 7 Sep 2020 14:17:54 -0400
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 3A8DF72CCE9;
+        Mon,  7 Sep 2020 21:17:50 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 2F0237CFD1F; Mon,  7 Sep 2020 21:17:50 +0300 (MSK)
+Date:   Mon, 7 Sep 2020 21:17:50 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Serge Hallyn <serge@hallyn.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        =?utf-8?B?w4Frb3M=?= Uzonyi <uzonyi.akos@gmail.com>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        linux-man@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/nsfs.c: fix ioctl support of compat processes
+Message-ID: <20200907181749.GA16472@altlinux.org>
+References: <20200724001248.GC25522@altlinux.org>
+ <CAK8P3a0JM8dytW6C8P9HoPcGksg0d5JCut1yT7JzBcUCAm-WcQ@mail.gmail.com>
+ <20200724102848.GA1654@altlinux.org>
+ <878sf8ogl4.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-In-Reply-To: <20200906223949.62771-1-kw@linux.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <878sf8ogl4.fsf@x220.int.ebiederm.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/6/20 4:39 PM, Krzysztof Wilczyński wrote:
-> The O_NDELAY flag occurs twice in the VALID_OPEN_FLAGS definition, this
-> change removes the duplicate.  There is no change to the functionality.
-> 
-> Note, that the flags O_NONBLOCK and O_NDELAY are not duplicates, as
-> values of these flags are platform dependent, and on platforms like
-> Sparc O_NONBLOCK and O_NDELAY are not the same.
-> 
-> This has been done that way to maintain the ABI compatibility with
-> Solaris since the Sparc port was first introduced.
-> 
-> This change resolves the following Coccinelle warning:
-> 
->   include/linux/fcntl.h:11:13-21: duplicated argument to & or |
+Hi,
 
-Reviewed-by: Jens Axboe <axboe@kernel.dk>
+On Fri, Jul 24, 2020 at 02:31:19PM -0500, Eric W. Biederman wrote:
+> Michael,
+> 
+> As the original author of NS_GET_OWNER_UID can you take a look at this?
+
+This is a gentle reminder that my patch hasn't been applied,
+the problem reported by Ákos Uzonyi hasn't been fixed,
+and the example in ioctl_ns(2) manual page doesn't work
+when e.g. it's compiled with -m32 on a 64-bit kernel.
+
+> "Dmitry V. Levin" <ldv@altlinux.org> writes:
+> > On Fri, Jul 24, 2020 at 11:20:26AM +0200, Arnd Bergmann wrote:
+> >> On Fri, Jul 24, 2020 at 2:12 AM Dmitry V. Levin wrote:
+> >> >
+> >> > According to Documentation/driver-api/ioctl.rst, in order to support
+> >> > 32-bit user space running on a 64-bit kernel, each subsystem or driver
+> >> > that implements an ioctl callback handler must also implement the
+> >> > corresponding compat_ioctl handler.  The compat_ptr_ioctl() helper can
+> >> > be used in place of a custom compat_ioctl file operation for drivers
+> >> > that only take arguments that are pointers to compatible data
+> >> > structures.
+> >> >
+> >> > In case of NS_* ioctls only NS_GET_OWNER_UID accepts an argument, and
+> >> > this argument is a pointer to uid_t type, which is universally defined
+> >> > to __kernel_uid32_t.
+> >> 
+> >> This is potentially dangerous to rely on, as there are two parts that
+> >> are mismatched:
+> >> 
+> >> - user space does not see the kernel's uid_t definition, but has its own,
+> >>   which may be either the 16-bit or the 32-bit type. 32-bit uid_t was
+> >>   introduced with linux-2.3.39 in back in 2000. glibc was already
+> >>   using 32-bit uid_t at the time in user space, but uclibc only changed
+> >>   in 2003, and others may have been even later.
+> >> 
+> >> - the ioctl command number is defined (incorrectly) as if there was no
+> >>   argument, so if there is any user space that happens to be built with
+> >>   a 16-bit uid_t, this does not get caught.
+> >
+> > Note that NS_GET_OWNER_UID is provided on 32-bit architectures, too, so
+> > this 16-bit vs 32-bit uid_t issue was exposed to userspace long time ago
+> > when NS_GET_OWNER_UID was introduced, and making NS_GET_OWNER_UID
+> > available for compat processes won't make any difference, as the mismatch
+> > is not between native and compat types, but rather between 16-bit and
+> > 32-bit uid_t types.
+> >
+> > I agree it would be correct to define NS_GET_OWNER_UID as
+> > _IOR(NSIO, 0x4, uid_t) instead of _IO(NSIO, 0x4), but nobody Cc'ed me
+> > on this topic when NS_GET_OWNER_UID was discussed, and that ship has long
+> > sailed.
+> >
+> >> > This change fixes compat strace --pidns-translation.
+> >> > 
+> >> > Note: when backporting this patch to stable kernels, commit
+> >> > "compat_ioctl: add compat_ptr_ioctl()" is needed as well.
+> >> > 
+> >> > Reported-by: Ákos Uzonyi <uzonyi.akos@gmail.com>
+> >> > Fixes: 6786741dbf99 ("nsfs: add ioctl to get an owning user namespace for ns file descriptor")
+> >> > Cc: stable@vger.kernel.org # v4.9+
+> >> > Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> >> > ---
+> >> >  fs/nsfs.c | 1 +
+> >> >  1 file changed, 1 insertion(+)
+> >> >
+> >> > diff --git a/fs/nsfs.c b/fs/nsfs.c
+> >> > index 800c1d0eb0d0..a00236bffa2c 100644
+> >> > --- a/fs/nsfs.c
+> >> > +++ b/fs/nsfs.c
+> >> > @@ -21,6 +21,7 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+> >> >  static const struct file_operations ns_file_operations = {
+> >> >         .llseek         = no_llseek,
+> >> >         .unlocked_ioctl = ns_ioctl,
+> >> > +       .compat_ioctl   = compat_ptr_ioctl,
+> >> >  };
+> >> >
+> >> >  static char *ns_dname(struct dentry *dentry, char *buffer, int buflen)
+> 
+> Thank you,
+> Eric
 
 -- 
-Jens Axboe
-
+ldv
