@@ -2,121 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A95A025F5A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 10:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B010225F5B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 10:53:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728309AbgIGItq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Sep 2020 04:49:46 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:48667 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728272AbgIGItp (ORCPT
+        id S1728141AbgIGIxS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Sep 2020 04:53:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47592 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727122AbgIGIxR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Sep 2020 04:49:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1599468609; x=1631004609;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=M0i372mkEiyUbczugpwH8iGlTI46/ILGGcUAS6rgj3w=;
-  b=IXmaN4uRxI0QAY4HM6lur3+Gz8KMYBHzM3huuk294oF8DZfKmQPqT88P
-   WpGmE62VOfoHNx52fzuA8NODK7i8Vihx8f9ptRcZXUiTEv438TPkwU8EM
-   JQAsG6pSY22iHVcB32DuUfP5JqMADWxinbWbffJ53jylIol4dsghgneVX
-   NzLkNVuywxxSA+4cbsBAitaTWsunUTsap7Rk2PWrUxSxuOS/IJDaiMI4r
-   MM5/po4blMBU8yfrptFzQtVlPFUQDgGG7mi1c7upbznVg1Jol+NtLleyw
-   txUzvwe+UU7lOlMOCoCXCKkm7DiGu46+nKGlm9RfafI0Di05q89Al6Zrn
-   g==;
-IronPort-SDR: FGjMck0NYJlX9u+AA9jl1INiM9jbBIJwAP7trJBfQw52oahVXyyNkA+3fAoFQ+spv2u8uKcD5e
- m9Ab0Weqeu8pdjgS3XMcIcSFszIdGmkHcheBU5KWQj1zt0navlOTrTs4c//3ga5EXPB2rXhiFn
- hbhF1syU2hN+e1kECnRYU2zsZm2GFNaynmz30q1IGSF9f8XDsDhM2ypxH29Dq9xStvR2d7Om2V
- fOL4uWtx5+c+DzC/EGxKiXJmz3muhhMuGIH5gyg4Lis6xJkqniWBKW+ORjgSW9g/qhTbJZa2A/
- 0Z8=
-X-IronPort-AV: E=Sophos;i="5.76,401,1592841600"; 
-   d="scan'208";a="250015932"
-Received: from mail-bn7nam10lp2109.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.109])
-  by ob1.hgst.iphmx.com with ESMTP; 07 Sep 2020 16:49:59 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EInxf8nxDYfszk3ZhLEoK+siFFVsZYYYUu4wy1GPalvdkwH6tvRkUUdh2Gnx2PXd2dAUvNVgJjz25++dVpdYa1SLT+ltD5hvlsuyO2MLN3BbdyXqdgV52bz++ILlG7G1+QL4SOyq9bthrd+3KhZp54TeqUg88xd+IF5rTRrSgMgWmbJPVYnPJ58sOm9B01Fl5QxPGCAQOQE4TREyaLADrVUzPh5jz8pomfnDCSIN82Pu7UOKZSb3VBQlJaJg1SHmdyJzraaQRWTgPGCxFQRxVGt1uR9ZeTPuZVBRmOBcn7wTZDFVjYxFkz4FSJpZImmUYWGq50XJbeKiqGMIrNn7KQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M0i372mkEiyUbczugpwH8iGlTI46/ILGGcUAS6rgj3w=;
- b=h5ug7bVSNi1XgQr7RE7UNlHr1bH3Mp4dO6nzWVMMiha/oYb+7jPPN9ZjAbqbgkV7MhGelCDmisR+hDvfH72IRt30dSMP6/WwD8mnVRo87w6XYG3+hOivHVxQSOm3+HATVf2xZ2vl94LUmYs69twfnz4BNjGdPmRxNSTHGZoQu15L2QyrPs0gaEqxTn7FNJExG+5YNOEolLonSg1JQOLJBVS4XMk0y7V7rbB+LNf2GXwJEwQvOHmJabmAN+HBz7DqdboLEmcloBvPNcK/FuAbQo3RZjArQUgKrzvRx7WcI3r3mH7/+ORKMZfXco0r3dt/Vtw5PgBhcRd4PbYFIMB20g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Mon, 7 Sep 2020 04:53:17 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BFDDC061573;
+        Mon,  7 Sep 2020 01:53:15 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id j2so14907713wrx.7;
+        Mon, 07 Sep 2020 01:53:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=M0i372mkEiyUbczugpwH8iGlTI46/ILGGcUAS6rgj3w=;
- b=rD/xLNCB7O3tRo68UuaW4CVIYK8TreBrzRK2o9zwDmQVQrV+8ixlQkiaWkJfkMxluy4yxsh1wGf1LOvI+GeCfSgKsOdwIGZDX+oBVctoo872B9G+mWOKr4KYcfDLRmhWBpUjoC9bzUxewjbFeBJsuoxXQlMFZ58Fuarzy7Nsvi4=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN6PR04MB4238.namprd04.prod.outlook.com
- (2603:10b6:805:2c::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3348.19; Mon, 7 Sep
- 2020 08:49:35 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::457e:5fe9:2ae3:e738]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::457e:5fe9:2ae3:e738%7]) with mapi id 15.20.3348.019; Mon, 7 Sep 2020
- 08:49:35 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] zonefs: open/close zone on file open/close
-Thread-Topic: [PATCH 2/3] zonefs: open/close zone on file open/close
-Thread-Index: AQHWgq3YPlp6RQIWlkex6nUu1mudEg==
-Date:   Mon, 7 Sep 2020 08:49:35 +0000
-Message-ID: <SN4PR0401MB3598E132449AAF0432C909E19B280@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20200904112328.28887-1-johannes.thumshirn@wdc.com>
- <20200904112328.28887-3-johannes.thumshirn@wdc.com>
- <CY4PR04MB375199CF79949920633AE2F1E7280@CY4PR04MB3751.namprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: wdc.com; dkim=none (message not signed)
- header.d=none;wdc.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [2001:a62:1590:f101:5817:1b3:3c71:ea81]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 611c13ae-8b88-4770-e413-08d8530af2ab
-x-ms-traffictypediagnostic: SN6PR04MB4238:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN6PR04MB42386F5004317AA4520DF3A19B280@SN6PR04MB4238.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: X4QijJ7dZRPcEBVdX6JQq/EEVexZMai6qesxBd14ocF5eYhgAtwVDFL+V+fFvY4Tc64UQaHrmRoJLQNgZBt1Ej+17sR7j0O0R8jCuQba4DSMK6epkcT9Gt48cZitmQKHa9IsVAN8kA8s0yw20R6KNn2ZwJZqtTnbaXGBDen74ZQqrYy4B9d28mqSZaROd93JYuo74kTQEFq5gfb4AaFqvdmY1uBDogJ5qLAUr85TnmW0uF9+fs71VR+wHj1Iolkvrp/9kZ/h1ASoETKgjvXrvDrvFRnpYQnJNzTw4d6NGZasl9iz7rrqLKkrF9dL7sGKoifdxBDk0AEM0t7xEJ3PhA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(136003)(376002)(346002)(396003)(39860400002)(8936002)(8676002)(478600001)(2906002)(316002)(76116006)(71200400001)(66556008)(86362001)(55016002)(66946007)(64756008)(66446008)(91956017)(6636002)(186003)(66476007)(9686003)(33656002)(4744005)(53546011)(5660300002)(4326008)(6506007)(52536014)(7696005)(6862004);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: 4IOE5QXs2cv4Ik+GMLHYW/dWc67g1BTs9tFQQP//T3G/Jx+fN/uhelv18TdohynzCH/1qF+eVwto9mY+A7zNBHgEUw4XS524sO81cwn/t+X07khhGjus/VyfVJRvx+C3BiQlyjrKfn4yed6M+HkH99Fx05t4puSgeK1Md6tMAC7/WxKqJS8CWFnhBaBHSND66O4Lm7g/XeOdermVkcbCYUrU79CM6RioaiYAamUtpBd8kGR5mHkZpEU4weEgScdjPUpDD9QTUDYjX0GMwgrZC/DvPZpE3kzZ0jGdnvBT/GjKAiT/b1p62YXUgO7VQzABm9nG7ctTcvUhdQZo0V53hqT719WiOVIATwttRwHBO2a8DJJkvWMVveWgYhgsR0hf780q/l/uBY+KanNkJmO/6HvO1xDDSF2MeL/jOHUX3V1apVA8ePUWIfysgUrgrZe978wGtG2ksjluv+BvIZKcX2a999GWIprH1m2CIiga7rQ+34ENz3IWHsbiFQjk3eZ8qHOfYoStmz1OprF1CCzWT1QTSlS8av0llB+WbmYs307JRlnOV4XA3nZX/sZyMk0l5PWaz3ixqJLTOzOFZn9g3W4uqemtP333zLrqA5TJMkrqQVFytEmY7y2Zqz6q407BwUYdX1W86HhNYs7WbZ8YxnevMV2y0sDtSKrw+gGVZ1nKkzIiHkeFGFjxLOzjR7SpFJm1oNvYqJtxOv7vvzkcXw==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=A7Ob64uVCgQyADTz7K9otXCMPdV+q+h2KonSWJg/dPI=;
+        b=uy6UIlJNIh28BNN2taXnkM+toeAasVWdnK9mRy7byXZuqptwG1fsA2L+o850ffbvdO
+         2UEq0I5MVdwC6jdAL2XJGP4vJc6dEwDr4AuQjGrYpHEXfZOSkHPOISDqJVvXE4GPuC0s
+         hCmmsbakV0DfbXdlnedXJ9NhCT6ZHvquFYWltQjtx7vUOy+zd4Q57zocg+2j6SXIMDvb
+         sm3KgsWRZ5Eu4gjm+n9DY9Z1jG2j9bsi1Hy8GFvP9BkTXvVolM5G0dADZXuWz/MXkiP/
+         qC6K8cpkLtC3Om+9y8WOA2XLwhpCHf/xKCr2NohzK/D+sMlj6RPwH68XVc20ZNypBECU
+         GXkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=A7Ob64uVCgQyADTz7K9otXCMPdV+q+h2KonSWJg/dPI=;
+        b=prIvkhClPK0MEOmEbILmpp268g/DaXMCCKr/UuqH3zYYg48DXcHpwjcC4VEMPNsZ3f
+         HwMzdNwBwVuH+yJ6NOjp+9YoE+hRurKkQoGBsyRgYw/oXAGlENePpm12bW8ue/38flcG
+         wx/PXpCFWIz50a72F13uP0VjzRaVe+z61FDk1R6VOFT1h7uZAHVnvWLmccy8DM2+xcQS
+         7B3rkNjdFPsCgMEleytEsPXywxlb1xmvuPzKmFaTIqOEYqinpp1VP/4LIsE2ZPe5jn1o
+         OBNbMXr7pD5OQnxRhghLqYTSc1omkYWTD+9YTcloHBgkQtzXC/IDTbVXCnaXqlzeVCkh
+         T7xw==
+X-Gm-Message-State: AOAM532t0pmXNjJxnWs5DCbR/kHqv+XcAaWPMy/29vacGiGzXojl7F9M
+        h5i1o4tBvFhWXrZnVriw/wCA+5r0pa9XVA==
+X-Google-Smtp-Source: ABdhPJzsehv6jbJ8lt2kbSXmHNnBpQQh2rLMyffPbBF17Yag9pcsdk7Srj4wgBWeISN7k76h43/gew==
+X-Received: by 2002:a5d:4448:: with SMTP id x8mr21753846wrr.207.1599468794056;
+        Mon, 07 Sep 2020 01:53:14 -0700 (PDT)
+Received: from [192.168.43.239] ([5.100.193.184])
+        by smtp.gmail.com with ESMTPSA id 189sm26411087wmb.3.2020.09.07.01.53.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Sep 2020 01:53:13 -0700 (PDT)
+Subject: Re: [PATCH next] io_uring: fix task hung in io_uring_setup
+To:     Jens Axboe <axboe@kernel.dk>, Hillf Danton <hdanton@sina.com>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk,
+        syzbot+107dd59d1efcaf3ffca4@syzkaller.appspotmail.com,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Kees Cook <keescook@chromium.org>
+References: <20200903132119.14564-1-hdanton@sina.com>
+ <9bef23b1-6791-6601-4368-93de53212b22@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ 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 bA==
+Message-ID: <8031fbe7-9e69-4a79-3b42-55b2a1a690e3@gmail.com>
+Date:   Mon, 7 Sep 2020 11:50:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 611c13ae-8b88-4770-e413-08d8530af2ab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Sep 2020 08:49:35.7765
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aBiG5azMEE8dORXV9PUl6NZjfWkshj4mIS1OdI6Dh35QtDkiVG1lfZbNnZwdI7Olb6BzX8ZCSSEzyhPMEVMwGs+O9rH5GIF5QyAwR4OyrSY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4238
+In-Reply-To: <9bef23b1-6791-6601-4368-93de53212b22@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 07/09/2020 05:06, Damien Le Moal wrote:=0A=
-> May be you meant something like "leave a zone not active after a truncate=
- when=0A=
-> the zone file is open for writing" ?=0A=
-=0A=
-No I meant, we shouldn't decrement the 's_open_zones' count on truncate to =
-0=0A=
-or full, when a zone is still opened for write. Because if we do, another t=
-hread=0A=
-could open the last available open zone and the application won't be able t=
-o write=0A=
-to a previously opened zone, if that makes sense.=0A=
+On 03/09/2020 17:04, Jens Axboe wrote:
+> On 9/3/20 7:21 AM, Hillf Danton wrote:
+>>
+>> The smart syzbot found the following issue:
+>>
+>> INFO: task syz-executor047:6853 blocked for more than 143 seconds.
+>>       Not tainted 5.9.0-rc3-next-20200902-syzkaller #0
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>> task:syz-executor047 state:D stack:28104 pid: 6853 ppid:  6847 flags:0x00004000
+>> Call Trace:
+>>  context_switch kernel/sched/core.c:3777 [inline]
+>>  __schedule+0xea9/0x2230 kernel/sched/core.c:4526
+>>  schedule+0xd0/0x2a0 kernel/sched/core.c:4601
+>>  schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1855
+>>  do_wait_for_common kernel/sched/completion.c:85 [inline]
+>>  __wait_for_common kernel/sched/completion.c:106 [inline]
+>>  wait_for_common kernel/sched/completion.c:117 [inline]
+>>  wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
+>>  io_sq_thread_stop fs/io_uring.c:6906 [inline]
+>>  io_finish_async fs/io_uring.c:6920 [inline]
+>>  io_sq_offload_create fs/io_uring.c:7595 [inline]
+>>  io_uring_create fs/io_uring.c:8671 [inline]
+>>  io_uring_setup+0x1495/0x29a0 fs/io_uring.c:8744
+>>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+>>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>
+>> because the sqo_thread kthread is created in io_sq_offload_create() without
+>> being waked up. Then in the error branch of that function we will wait for
+>> the sqo kthread that never runs. It's fixed by waking it up before waiting.
+> 
+> Looks good - applied, thanks.
+
+BTW, I don't see the patch itself, and it's neither in io_uring, block
+nor fs mailing lists. Hillf, could you please CC proper lists next time?
+
+-- 
+Pavel Begunkov
