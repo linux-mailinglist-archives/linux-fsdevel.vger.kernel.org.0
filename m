@@ -2,67 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0006625F103
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 01:07:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE8D425F11F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 02:04:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726349AbgIFXHQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Sep 2020 19:07:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42882 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbgIFXHP (ORCPT
+        id S1726780AbgIGAEj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Sep 2020 20:04:39 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:52046 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726721AbgIGAEj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Sep 2020 19:07:15 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA816C061573
-        for <linux-fsdevel@vger.kernel.org>; Sun,  6 Sep 2020 16:07:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=U7K+1vhGgZ1+z6ubWjit5Ez1RXRmKgqQ0rZSsK2XVpI=; b=tvZnwH9kaaXlPFpv2FoLV7zPzG
-        fq8nbId3szzmfSPQSoMSMeLV+4MQqwE8U0kxNksWk7vWrHhZFs6el1NPsoapLwlGnVD+6jVFCPXkL
-        02tcUvtoGXbn2N5eef18R75/mdktPupdmbv8sg7siZIj5lYOC0lEQkbnYBDQgOclgMIjVscU8Hp7G
-        8TRkMWtQ83Rj67eAYvp8UFMREFGt3963uC3PtaQHfhOfBPC5VBWhhQ0AQVfQrH8T+cgf3W7t//S3j
-        9rdAX1FmuWpiVZOwoDuBtKliLajffXGlXQTmJfVuexAcEYVvgJFqba6OgJvxK4thVyCEYkJwct8Ti
-        m7ZoKJ4w==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kF3kX-0000WM-GZ; Sun, 06 Sep 2020 23:07:05 +0000
-Date:   Mon, 7 Sep 2020 00:07:05 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v3] fs: Remove duplicated flag O_NDELAY occurring twice
- in VALID_OPEN_FLAGS
-Message-ID: <20200906230705.GA27537@casper.infradead.org>
-References: <20200906223949.62771-1-kw@linux.com>
+        Sun, 6 Sep 2020 20:04:39 -0400
+Received: from dread.disaster.area (pa49-195-191-192.pa.nsw.optusnet.com.au [49.195.191.192])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id ADCF18238CF;
+        Mon,  7 Sep 2020 10:04:33 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kF4e8-00077a-Ni; Mon, 07 Sep 2020 10:04:32 +1000
+Date:   Mon, 7 Sep 2020 10:04:32 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        David Sterba <dsterba@suse.com>,
+        "linux-btrfs @ vger . kernel . org" <linux-btrfs@vger.kernel.org>,
+        Filipe Manana <fdmanana@gmail.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC PATCH] btrfs: don't call btrfs_sync_file from iomap context
+Message-ID: <20200907000432.GM12096@dread.disaster.area>
+References: <20200901130644.12655-1-johannes.thumshirn@wdc.com>
+ <42efa646-73cd-d884-1c9c-dd889294bde2@toxicpanda.com>
+ <20200903163236.GA26043@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200906223949.62771-1-kw@linux.com>
+In-Reply-To: <20200903163236.GA26043@lst.de>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=IuRgj43g c=1 sm=1 tr=0 cx=a_idp_d
+        a=vvDRHhr1aDYKXl+H6jx2TA==:117 a=vvDRHhr1aDYKXl+H6jx2TA==:17
+        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=7-415B0cAAAA:8
+        a=YVNzv9zeh_ecUhYyJ8IA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 06, 2020 at 10:39:49PM +0000, Krzysztof Wilczyński wrote:
-> The O_NDELAY flag occurs twice in the VALID_OPEN_FLAGS definition, this
-> change removes the duplicate.  There is no change to the functionality.
-> 
-> Note, that the flags O_NONBLOCK and O_NDELAY are not duplicates, as
-> values of these flags are platform dependent, and on platforms like
-> Sparc O_NONBLOCK and O_NDELAY are not the same.
-> 
-> This has been done that way to maintain the ABI compatibility with
-> Solaris since the Sparc port was first introduced.
-> 
-> This change resolves the following Coccinelle warning:
-> 
->   include/linux/fcntl.h:11:13-21: duplicated argument to & or |
-> 
-> Signed-off-by: Krzysztof Wilczyński <kw@linux.com>
+On Thu, Sep 03, 2020 at 06:32:36PM +0200, Christoph Hellwig wrote:
+> We could trivially do something like this to allow the file system
+> to call iomap_dio_complete without i_rwsem:
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+That just exposes another deadlock vector:
+
+P0			P1
+inode_lock()		fallocate(FALLOC_FL_ZERO_RANGE)
+__iomap_dio_rw()	inode_lock()
+			<block>
+<submits IO>
+<completes IO>
+inode_unlock()
+			<gets inode_lock()>
+			inode_dio_wait()
+iomap_dio_complete()
+  generic_write_sync()
+    btrfs_file_fsync()
+      inode_lock()
+      <deadlock>
+
+Basically, the only safe thing to do is implement ->fsync without
+holding the DIO IO submission lock....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
