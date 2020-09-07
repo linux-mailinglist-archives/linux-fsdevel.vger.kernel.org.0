@@ -2,95 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D64592605B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 22:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5027F260634
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 23:19:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbgIGUhQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Sep 2020 16:37:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43890 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729184AbgIGUhO (ORCPT
+        id S1726980AbgIGVTt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Sep 2020 17:19:49 -0400
+Received: from mail-il1-f207.google.com ([209.85.166.207]:34357 "EHLO
+        mail-il1-f207.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727852AbgIGVTQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Sep 2020 16:37:14 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5F53C061573;
-        Mon,  7 Sep 2020 13:37:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=rgfnIrHnaAEI6RXa4m3uPfmsWUpeORTndps4hZE1Wow=; b=BP+h+jIeaZhfpoJYvQtJPTIn1g
-        rP9UigoetxvDNdDyxvc0RcEkLodhk+1xHLgHQhX1UkgMAu+xiuMye/3xSUCKzL2F1qLGPHfdOaM7G
-        7X32qBBWaysEGewE797mvwFa5It54OilLN3WRBs+MYmzVbDMzVB4eND8tPb6KlIgE3YxesEVce6VT
-        +BUsSaBH4+fLVM9CA45kWOB5YeOWJjdQsUtT924BDvBhnMBNNT0G9j3r7r/KJIieoQffKeTgp3/Lm
-        zEVbJkuq9UXNdImvpKXUZRMIBPwT0CmUV2dwo7t4BGhuYgPOqd/Am/2ndMe0EXyr0jEbKGc51Mf0Q
-        d2qkUBsQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kFNsz-00013I-0f; Mon, 07 Sep 2020 20:37:09 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] iomap: Mark read blocks uptodate in write_begin
-Date:   Mon,  7 Sep 2020 21:37:07 +0100
-Message-Id: <20200907203707.3964-3-willy@infradead.org>
-X-Mailer: git-send-email 2.21.3
-In-Reply-To: <20200907203707.3964-1-willy@infradead.org>
-References: <20200907203707.3964-1-willy@infradead.org>
+        Mon, 7 Sep 2020 17:19:16 -0400
+Received: by mail-il1-f207.google.com with SMTP id m1so10620504ilg.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Sep 2020 14:19:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=EwRjuQ9atzJc/71khL9ziMZwpDz6RNRGvAyJm8uh71s=;
+        b=gJSvj3l8VNtAWrh597hZtx+gy4RxZxQUxHunCsEhtlD3cJ8jGDNmFS/Wm65qSmyRyn
+         agDFa+K1H5Pjj8jEahQMhM0bGcvDylr7IOJTZ4pPO6ApgjyGSwundU9zWmVkWpSjTeCH
+         i4LCwB2l0yr6BXfldU+xGbw6+4HUiwBA6WHgUbcuSu21eUAwNcdXSguY8rzuhf4eiTQ5
+         zscAUGUZoZmiSjagLfj1K1I7iTsKTjL0kfOAi45wFDJEGNM7paJBc1nrdvSKFQgvMucx
+         PxhMCcn9bct2MUGfltMlp+DY4kQx/V/MsCdwvT3dn1ArWCzGmRR5P4oa1XFVqcpTBk0V
+         5/qw==
+X-Gm-Message-State: AOAM531BaJfYtCXr2bn1vjAuQOvKAFVjZpD5E711myAiHdU6rzyyTeD4
+        HPCCF7SEeOX6gOvdXadO2jVBvdB2Z5QHd7eGridvy503JKZD
+X-Google-Smtp-Source: ABdhPJy3NU8sEs7fFpd4pmftyPSS7r9qTsau1MWj3URpOD9bGFaw2zbLzfh7RBlUXCy1NDUr2aO7ZAJ06IOJclihoRRz3T7P8IsF
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a5d:9ed3:: with SMTP id a19mr18703897ioe.28.1599513555606;
+ Mon, 07 Sep 2020 14:19:15 -0700 (PDT)
+Date:   Mon, 07 Sep 2020 14:19:15 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004ba2fe05aebfc526@google.com>
+Subject: WARNING: refcount bug in io_wqe_worker
+From:   syzbot <syzbot+956ef5eac18eadd0fb7f@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When bringing (portions of) a page uptodate, we were marking blocks that
-were zeroed as being uptodate, but not blocks that were read from storage.
+Hello,
 
-Like the previous commit, this problem was found with generic/127 and
-a kernel which failed readahead I/Os.  This bug causes writes to be
-silently lost when working with flaky storage.
+syzbot found the following issue on:
 
-Fixes: 9dc55f1389f9 ("iomap: add support for sub-pagesize buffered I/O without buffer heads")
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+HEAD commit:    7a695657 Add linux-next specific files for 20200903
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=152eff5d900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=39134fcec6c78e33
+dashboard link: https://syzkaller.appspot.com/bug?extid=956ef5eac18eadd0fb7f
+compiler:       gcc (GCC) 10.1.0-syz 20200507
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1086a1a5900000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+956ef5eac18eadd0fb7f@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 1 PID: 12241 at lib/refcount.c:28 refcount_warn_saturate+0x1d1/0x1e0 lib/refcount.c:28
+Modules linked in:
+CPU: 1 PID: 12241 Comm: io_wqe_worker-1 Not tainted 5.9.0-rc3-next-20200903-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:refcount_warn_saturate+0x1d1/0x1e0 lib/refcount.c:28
+Code: e9 db fe ff ff 48 89 df e8 dc 7e 17 fe e9 8a fe ff ff e8 02 0a d7 fd 48 c7 c7 00 2a 94 88 c6 05 b5 e2 19 07 01 e8 aa 7c a7 fd <0f> 0b e9 af fe ff ff 0f 1f 84 00 00 00 00 00 41 56 41 55 41 54 55
+RSP: 0018:ffffc90009117e08 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff88809d63a340 RSI: ffffffff815dbe97 RDI: fffff52001222fb3
+RBP: 0000000000000003 R08: 0000000000000001 R09: ffff8880ae720f8b
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880934e10b8
+R13: ffff8880a8a63530 R14: ffff8880a8a63500 R15: ffff8880a7ebfa00
+FS:  0000000000000000(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004e47b0 CR3: 0000000097f7c000 CR4: 00000000001506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ refcount_sub_and_test include/linux/refcount.h:274 [inline]
+ refcount_dec_and_test include/linux/refcount.h:294 [inline]
+ io_worker_exit fs/io-wq.c:236 [inline]
+ io_wqe_worker+0xcdb/0x10e0 fs/io-wq.c:596
+ kthread+0x3b5/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 1 PID: 12241 Comm: io_wqe_worker-1 Tainted: G    B             5.9.0-rc3-next-20200903-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x198/0x1fd lib/dump_stack.c:118
+ panic+0x347/0x7c0 kernel/panic.c:231
+ __warn.cold+0x38/0xbd kernel/panic.c:605
+ report_bug+0x1bd/0x210 lib/bug.c:198
+ handle_bug+0x38/0x90 arch/x86/kernel/traps.c:234
+ exc_invalid_op+0x14/0x40 arch/x86/kernel/traps.c:254
+ asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:536
+RIP: 0010:refcount_warn_saturate+0x1d1/0x1e0 lib/refcount.c:28
+Code: e9 db fe ff ff 48 89 df e8 dc 7e 17 fe e9 8a fe ff ff e8 02 0a d7 fd 48 c7 c7 00 2a 94 88 c6 05 b5 e2 19 07 01 e8 aa 7c a7 fd <0f> 0b e9 af fe ff ff 0f 1f 84 00 00 00 00 00 41 56 41 55 41 54 55
+RSP: 0018:ffffc90009117e08 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: ffff88809d63a340 RSI: ffffffff815dbe97 RDI: fffff52001222fb3
+RBP: 0000000000000003 R08: 0000000000000001 R09: ffff8880ae720f8b
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880934e10b8
+R13: ffff8880a8a63530 R14: ffff8880a8a63500 R15: ffff8880a7ebfa00
+ refcount_sub_and_test include/linux/refcount.h:274 [inline]
+ refcount_dec_and_test include/linux/refcount.h:294 [inline]
+ io_worker_exit fs/io-wq.c:236 [inline]
+ io_wqe_worker+0xcdb/0x10e0 fs/io-wq.c:596
+ kthread+0x3b5/0x4a0 kernel/kthread.c:292
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
 ---
- fs/iomap/buffered-io.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index c95454784df4..897ab9a26a74 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -574,7 +574,6 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
- 	loff_t block_start = pos & ~(block_size - 1);
- 	loff_t block_end = (pos + len + block_size - 1) & ~(block_size - 1);
- 	unsigned from = offset_in_page(pos), to = from + len, poff, plen;
--	int status;
- 
- 	if (PageUptodate(page))
- 		return 0;
-@@ -595,14 +594,13 @@ __iomap_write_begin(struct inode *inode, loff_t pos, unsigned len, int flags,
- 			if (WARN_ON_ONCE(flags & IOMAP_WRITE_F_UNSHARE))
- 				return -EIO;
- 			zero_user_segments(page, poff, from, to, poff + plen);
--			iomap_set_range_uptodate(page, poff, plen);
--			continue;
-+		} else {
-+			int status = iomap_read_page_sync(block_start, page,
-+					poff, plen, srcmap);
-+			if (status)
-+				return status;
- 		}
--
--		status = iomap_read_page_sync(block_start, page, poff, plen,
--				srcmap);
--		if (status)
--			return status;
-+		iomap_set_range_uptodate(page, poff, plen);
- 	} while ((block_start += plen) < block_end);
- 
- 	return 0;
--- 
-2.28.0
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
