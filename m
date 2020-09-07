@@ -2,88 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 274E225F99A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 13:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFE1E25F9DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 13:50:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbgIGLf4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Sep 2020 07:35:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44244 "EHLO
+        id S1729085AbgIGLty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Sep 2020 07:49:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729075AbgIGLdX (ORCPT
+        with ESMTP id S1729137AbgIGLrs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Sep 2020 07:33:23 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B399EC061573
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Sep 2020 04:33:22 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id k25so15692838ljg.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Sep 2020 04:33:22 -0700 (PDT)
+        Mon, 7 Sep 2020 07:47:48 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D3C2C061575
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Sep 2020 04:47:48 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id b12so12465281edz.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Sep 2020 04:47:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        d=chrisdown.name; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=mGeUqCmbhz8+N0Ziop9W7/cr7Tt1+iU1uadkks0K72Y=;
-        b=mO1cN1q2yJxoaXOdd0DtcHUop5S4k60brHvcorYieV0cP6Kj7m3NS9lza+a027+Q3w
-         Zry2an5mQQxfa1/neu3WcVzxRnXSGXPUFDaN10Ztqq88RMDenSN/eBSrmG4uibqQ+18/
-         VySEFTqt9cP3PmmfZKfCRNWGq0LvlnP3+5oTu20LmJcAH39DHYD/w4MmyFxKF+KFpsbL
-         SBJXnjnsXlCKkgHkSk6op53pySfaNrvXrj9iX3vTH8u32kBkkBnH28uKLgTGqcMWkeuF
-         ze526OIVQx6qtEH49VHlpXOPMI02l9fYL3YNoYBfUfHKyjEme4tX807Fi4hRszp+x8T7
-         lI1A==
+         :content-disposition:in-reply-to:user-agent;
+        bh=395Y0lUxtoxk+N6Xwo36+dBOIhVjSE/2+oZvPClU7KM=;
+        b=cuAJnS9cKwag10JrR5XWKLTSDpsVij2RIxygdpxgcJAAdzqC0pGMP0broEdFrjuV2u
+         YK1YpzjfS7JWBVBZPRmTUcfnAukLTXmsLJ2XSzMOmdbEBvGaIW/6SMoesJ2yxCpA/WG2
+         m8QnLvvHNNu3zgtJUbsMfzQakaNE4sxXw5yG0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=mGeUqCmbhz8+N0Ziop9W7/cr7Tt1+iU1uadkks0K72Y=;
-        b=RFraigrMvfKUWaYuCK3kcgtkM8fQOsVrzMRgFpo7dTBWRLr9i58YwxmJ3QKvhdagzh
-         8gbC8NNm2bprDPdh4V5quAMdiKXfoxd/kwQE2yXClsHGz3P2ghxQRd8PBpdt7RnRNm85
-         9wEnNhEkVIAnSngJOAeE0EeGIWgKtq/Mw+WHf0v/Oo+taJ5k9J4fHMBtDMYgR8GYQt2y
-         E04nOoAlRWTzvIClvf2z0Iujy8dRQOzWKuIi/G+ZBdNGLNdaGrhVR/kLRGBl4/0vSQBN
-         yr97Lm6ycr7PVOnIvhUIwEUjs1a+nRUTWdMUCBKXDYTsi3SBsXGWjanUYo61Ic7f/E3h
-         7lAQ==
-X-Gm-Message-State: AOAM532JPC3GSLvxapr7Z/4SJgenlBLAEIkyL3g8BRWDQ+ej8V+anRpP
-        I4NjaB5Gw/7BFQUc3MAB0Apqw/kG1b5SDA==
-X-Google-Smtp-Source: ABdhPJze8x2PoNOG3NM1iD+Qty/W6bZfyVCXzo+9ShsKGqDLMcJmIKhuHS9SkrU3fYqor4vIpsdudw==
-X-Received: by 2002:a2e:9212:: with SMTP id k18mr5106728ljg.241.1599478401181;
-        Mon, 07 Sep 2020 04:33:21 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id a192sm7280981lfd.51.2020.09.07.04.33.20
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=395Y0lUxtoxk+N6Xwo36+dBOIhVjSE/2+oZvPClU7KM=;
+        b=LXar6Ih+h6TKH+xGoi/F+dEGLO1XKLIHHYM9D+/NdwF9jrxEvG5cFnYCiKC/Rx6LyP
+         OMrpRwmVlRKRQyGtOksAZ7AHvEeCAdX8B93UKzKgFHserGginm8W8i4RJ8mqUhXQgnSq
+         nsMRNnjv4MCChFWqOIccwk5M8aYnMjEJou94lsZNOpadIm+f4vrUscd46qST16WcC3hj
+         w94p/x12alyxA4IZltgt7QwkZixvodsXhFJDVQJ12MszYKGLtrfKYeSIxre57rV7bnHf
+         iSzU2rZ4J48OIV7cOzKCVvLfZcSh6R25yp0T4DaNlEgA/7WYOLJfie3E6l8HecTb7kqm
+         Qzuw==
+X-Gm-Message-State: AOAM531Cf2ttt+Hqt24wrHzJ+xDZPODUtBsnH5X82GX0+9liP0z6rJHB
+        25JOJ+P9wUGpYumCDQiyrOGXwg==
+X-Google-Smtp-Source: ABdhPJyILtFsw8r3H1RpyzxLgjhS4fpPrmJqOehWQUoj7NYN8ViFHh3BGjy7PTSONASUxNPG0HBqNg==
+X-Received: by 2002:a05:6402:1151:: with SMTP id g17mr21705446edw.227.1599479266759;
+        Mon, 07 Sep 2020 04:47:46 -0700 (PDT)
+Received: from localhost ([2620:10d:c093:400::5:80b])
+        by smtp.gmail.com with ESMTPSA id q14sm14733379edv.54.2020.09.07.04.47.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Sep 2020 04:33:20 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 50E221034AA; Mon,  7 Sep 2020 14:33:24 +0300 (+03)
-Date:   Mon, 7 Sep 2020 14:33:24 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>, darrick.wong@oracle.com,
-        david@fromorbit.com, yukuai3@huawei.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: Splitting an iomap_page
-Message-ID: <20200907113324.2uixo4u5elveoysf@box>
-References: <20200821144021.GV17456@casper.infradead.org>
- <20200904033724.GH14765@casper.infradead.org>
+        Mon, 07 Sep 2020 04:47:45 -0700 (PDT)
+Date:   Mon, 7 Sep 2020 12:47:45 +0100
+From:   Chris Down <chris@chrisdown.name>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [RFC PATCH 0/8] memcg: Enable fine-grained per process memory
+ control
+Message-ID: <20200907114745.GA1076657@chrisdown.name>
+References: <20200817140831.30260-1-longman@redhat.com>
+ <20200818091453.GL2674@hirez.programming.kicks-ass.net>
+ <20200818092617.GN28270@dhcp22.suse.cz>
+ <20200818095910.GM2674@hirez.programming.kicks-ass.net>
+ <20200818100516.GO28270@dhcp22.suse.cz>
+ <20200818101844.GO2674@hirez.programming.kicks-ass.net>
+ <20200818134900.GA829964@cmpxchg.org>
+ <20200821193716.GU3982@worktop.programming.kicks-ass.net>
+ <20200824165850.GA932571@cmpxchg.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20200904033724.GH14765@casper.infradead.org>
+In-Reply-To: <20200824165850.GA932571@cmpxchg.org>
+User-Agent: Mutt/1.14.6 (2020-07-11)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 04, 2020 at 04:37:24AM +0100, Matthew Wilcox wrote:
-> Kirill, do I have the handling of split_huge_page() failure correct?
-> It seems reasonable to me -- unlock the page and drop the reference,
-> hoping that somebody else will not have a reference to the page by the
-> next time we try to split it.  Or they will split it for us.  There's a
-> livelock opportunity here, but I'm not sure it's worse than the one in
-> a holepunch scenario.
+Johannes Weiner writes:
+>That all being said, the semantics of the new 'high' limit in cgroup2
+>have allowed us to move reclaim/limit enforcement out of the
+>allocation context and into the userspace return path.
+>
+>See the call to mem_cgroup_handle_over_high() from
+>tracehook_notify_resume(), and the comments in try_charge() around
+>set_notify_resume().
+>
+>This already solves the free->alloc ordering problem by allowing the
+>allocation to exceed the limit temporarily until at least all locks
+>are dropped, we know we can sleep etc., before performing enforcement.
+>
+>That means we may not need the timed sleeps anymore for that purpose,
+>and could bring back directed waits for freeing-events again.
+>
+>What do you think? Any hazards around indefinite sleeps in that resume
+>path? It's called before __rseq_handle_notify_resume and the
+>arch-specific resume callback (which appears to be a no-op currently).
+>
+>Chris, Michal, what are your thoughts? It would certainly be simpler
+>conceptually on the memcg side.
 
-The worst case scenario is when the page is referenced (directly or
-indirectly) by the caller. It this case we would end up with endless loop.
-I'm not sure how we can guarantee that this will never happen.
-
-Maybe it's safer to return -EINTR if the split is failed and let the
-syscall (or whatever codepath brings us here) to be restarted from the
-scratch? Yes, it's abuse of -EINTR, but should be fine.
-
--- 
- Kirill A. Shutemov
+I'm not against that, although I personally don't feel very strongly about it 
+either way, since the current behaviour clearly works in practice.
