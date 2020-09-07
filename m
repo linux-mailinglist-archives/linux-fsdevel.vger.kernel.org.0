@@ -2,119 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 67B0B25FAC5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 14:55:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B5B325FCAE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 17:10:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729338AbgIGMzR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Sep 2020 08:55:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56786 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729290AbgIGMzJ (ORCPT
+        id S1730079AbgIGPKq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Sep 2020 11:10:46 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:38034 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729948AbgIGPDT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Sep 2020 08:55:09 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A6D2C061573
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Sep 2020 05:55:08 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id s2so6474406pjr.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Sep 2020 05:55:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LtZPyi/AukZy15ogdyhyhhfmtD6VdGQ8V+ah+uZ5ZRE=;
-        b=h9KtAmbLvtAS6iQDVPynlTja6eFvARzIIqyZGjsQ20GC/J+Yg5jFY7D2QRZMKrFLiz
-         dkdtie2ACqm1XDPCxL6BuFnkf1P0yhhdZ+z6efRlhKEBnn2tRUzsOrLKAKteYS3VgSbA
-         0IXGpUnL3OAaVlIoFtWisIbQ8UxaacynRRsYiMtJ4VlnpwrfdgrbjBkryuLm+QGNESZq
-         e46wSb/XIxBk5v4sHHKdlvTMkWktAxgO4Oy6ypC1/YgB30YLpnfn0pM1juOdO2m6jJ9B
-         c9oMbJxuGXEz5NKHKA+r923gYTdTjS7/ZFvAEAgeqJ2vdW6GiHkJ+M13nDsh4aa0Ocoz
-         Z6rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LtZPyi/AukZy15ogdyhyhhfmtD6VdGQ8V+ah+uZ5ZRE=;
-        b=kTLx/x3tTCKQXxnQPoUCCMm6/dePxg+8L63vloXmK2Pdar9GuoOfKCg3nPK26Rc/d7
-         WRlNyBfALLb8kRunBiy8jbL2OAQTaDTL3Ip2bmlCYN1LWIyUBTiuf6xj2eeAbu+v9aNw
-         7nFVBEFby1GIgDvZfu3hKJcENjOyjlEDn5BzKF2GtoIkUr1ZvXG18sIzvCsFEO3n2QxC
-         GhK5cXj2vXRmbGueXUl9dqlxu48bNr8iyLOvSRF1XDbBtF/NGcpP1nSr6Tx6BSawMbLj
-         k+oHoEQpki5CmqsheOJ4iJro2BC2vgyOYsu6HI/c9+IN3tXWY+cVdWxeZUF+7MKzYEWB
-         uNEA==
-X-Gm-Message-State: AOAM530tyRt0mCqSittfKzf/FrfJndj64ZBsa8aHXvYLEPMI/UQwdHg0
-        Qd5Byx6LHMNR11yps6mG8ZeiMA==
-X-Google-Smtp-Source: ABdhPJwSJhwbdTK3aiOECk1N01cYyEhVPN+DwxgBITkWSDuyKHu9bvElYyztoBA6ts42wvdnXIfuaw==
-X-Received: by 2002:a17:902:c692:b029:d0:90a3:24f4 with SMTP id r18-20020a170902c692b02900d090a324f4mr13703671plx.12.1599483307097;
-        Mon, 07 Sep 2020 05:55:07 -0700 (PDT)
-Received: from [192.168.1.182] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id z7sm5473517pfj.75.2020.09.07.05.55.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Sep 2020 05:55:06 -0700 (PDT)
-Subject: Re: [PATCH next] io_uring: fix task hung in io_uring_setup
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Hillf Danton <hdanton@sina.com>
-Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk,
-        syzbot+107dd59d1efcaf3ffca4@syzkaller.appspotmail.com,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Kees Cook <keescook@chromium.org>
-References: <20200903132119.14564-1-hdanton@sina.com>
- <9bef23b1-6791-6601-4368-93de53212b22@kernel.dk>
- <8031fbe7-9e69-4a79-3b42-55b2a1a690e3@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <192220ac-fd43-c553-e694-a3e51bcbfa4a@kernel.dk>
-Date:   Mon, 7 Sep 2020 06:55:04 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 7 Sep 2020 11:03:19 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 087F0h2i029616;
+        Mon, 7 Sep 2020 15:03:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=dSlqqtgC66uF5bIMzNT6zvaga1HiU1qWA6WLZ4nGzHE=;
+ b=ZfqJWxdcUEXuIYeEMQzU7VB0xi0ba2a4U3WfrEm41N+oPLNsdnYCuPHajVfG+WPGuOf2
+ TJLy6e7Dk8SIypr5OZbN8PfoG9DcENqn103e2qcPa/ORxdDyvSTWHfu+hKKD95xGLIk8
+ N+mdHGxaBryxy8d6lBqFNC9HcwUrApO8Fa0nWhemDlhIupLw8qHSQX87LDsnooEy4WNJ
+ 3BbEJuUYNE6mfD+c9xjKRTHxf2iw0Pmw7k5AhEP5jTEMFdcc5Qkf0aPv9sJ2YD4CshAr
+ LgZLf5C7V7GSTxZ82agupcAEOCHiphfxBgaHgPF6x+ZUYU6F5P4r6q9oMj78/B5duZLD nA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 33c2mkq2u0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 07 Sep 2020 15:03:05 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 087ExTfr123300;
+        Mon, 7 Sep 2020 15:01:05 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 33dacgrm3k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 07 Sep 2020 15:01:05 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 087F14oc006505;
+        Mon, 7 Sep 2020 15:01:04 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 07 Sep 2020 08:01:04 -0700
+Date:   Mon, 7 Sep 2020 08:01:04 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>
+Subject: Re: [PATCH v2] quota: widen timestamps for the fs_disk_quota
+ structure
+Message-ID: <20200907150104.GF7955@magnolia>
+References: <20200905164703.GC7955@magnolia>
+ <20200907100218.GA18556@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <8031fbe7-9e69-4a79-3b42-55b2a1a690e3@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200907100218.GA18556@quack2.suse.cz>
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9736 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ bulkscore=0 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009070149
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9737 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 priorityscore=1501
+ phishscore=0 adultscore=0 bulkscore=0 clxscore=1015 mlxlogscore=999
+ malwarescore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009070149
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/7/20 2:50 AM, Pavel Begunkov wrote:
-> On 03/09/2020 17:04, Jens Axboe wrote:
->> On 9/3/20 7:21 AM, Hillf Danton wrote:
->>>
->>> The smart syzbot found the following issue:
->>>
->>> INFO: task syz-executor047:6853 blocked for more than 143 seconds.
->>>       Not tainted 5.9.0-rc3-next-20200902-syzkaller #0
->>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->>> task:syz-executor047 state:D stack:28104 pid: 6853 ppid:  6847 flags:0x00004000
->>> Call Trace:
->>>  context_switch kernel/sched/core.c:3777 [inline]
->>>  __schedule+0xea9/0x2230 kernel/sched/core.c:4526
->>>  schedule+0xd0/0x2a0 kernel/sched/core.c:4601
->>>  schedule_timeout+0x1d8/0x250 kernel/time/timer.c:1855
->>>  do_wait_for_common kernel/sched/completion.c:85 [inline]
->>>  __wait_for_common kernel/sched/completion.c:106 [inline]
->>>  wait_for_common kernel/sched/completion.c:117 [inline]
->>>  wait_for_completion+0x163/0x260 kernel/sched/completion.c:138
->>>  io_sq_thread_stop fs/io_uring.c:6906 [inline]
->>>  io_finish_async fs/io_uring.c:6920 [inline]
->>>  io_sq_offload_create fs/io_uring.c:7595 [inline]
->>>  io_uring_create fs/io_uring.c:8671 [inline]
->>>  io_uring_setup+0x1495/0x29a0 fs/io_uring.c:8744
->>>  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->>>  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>>
->>> because the sqo_thread kthread is created in io_sq_offload_create() without
->>> being waked up. Then in the error branch of that function we will wait for
->>> the sqo kthread that never runs. It's fixed by waking it up before waiting.
->>
->> Looks good - applied, thanks.
+On Mon, Sep 07, 2020 at 12:02:18PM +0200, Jan Kara wrote:
+> On Sat 05-09-20 09:47:03, Darrick J. Wong wrote:
+> > From: Darrick J. Wong <darrick.wong@oracle.com>
+> > 
+> > Soon, XFS will support quota grace period expiration timestamps beyond
+> > the year 2038, widen the timestamp fields to handle the extra time bits.
+> > Internally, XFS now stores unsigned 34-bit quantities, so the extra 8
+> > bits here should work fine.  (Note that XFS is the only user of this
+> > structure.)
+> > 
+> > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 > 
-> BTW, I don't see the patch itself, and it's neither in io_uring, block
-> nor fs mailing lists. Hillf, could you please CC proper lists next time?
+> Looks good to me. Just one question below:
+> 
+> > diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+> > index 5444d3c4d93f..eefac57c52fd 100644
+> > --- a/fs/quota/quota.c
+> > +++ b/fs/quota/quota.c
+> > @@ -481,6 +481,14 @@ static inline u64 quota_btobb(u64 bytes)
+> >  	return (bytes + (1 << XFS_BB_SHIFT) - 1) >> XFS_BB_SHIFT;
+> >  }
+> >  
+> > +static inline s64 copy_from_xfs_dqblk_ts(const struct fs_disk_quota *d,
+> > +		__s32 timer, __s8 timer_hi)
+> > +{
+> > +	if (d->d_fieldmask & FS_DQ_BIGTIME)
+> > +		return (u32)timer | (s64)timer_hi << 32;
+> > +	return timer;
+> > +}
+> > +
+> 
+> So this doesn't do any checks that the resulting time fits into 34-bits you
+> speak about in the changelog. So how will XFS react if malicious / buggy
+> userspace will pass too big timestamp? I suppose xfs_fs_set_dqblk() should
+> return EFBIG or EINVAL or something like that which I'm not sure it does...
+> 
+> For record I've checked VFS quota implementation and it doesn't need any
+> checks because VFS in memory structures and on-disk format use 64-bit
+> timestamps. The ancient quota format uses 32-bit timestamps for 32-bit
+> archs so these would get silently truncated when stored on disk but
+> honestly I don't think I care (that format was deprecated some 20 years
+> ago).
 
-He did, but I'm guessing that vger didn't like the email for whatever
-reason. Hillf, did you get an error back from vger when sending the patch?
+XFS will clamp any out-of-bounds value to the nearest representable
+number.  For example, if you tried to extend a quota's grace expiration
+to the year 2600, it set the expiration to 2486, similar to what the vfs
+does for timestamps now.  If you try to set the default grace period to,
+say, 100 years, it will clamp that to 68 years (2^31-1).
 
--- 
-Jens Axboe
+(I doubt anyone cares to set a 60+ year grace period, but as some
+apparently immortal person claims to be playing a 600-year musical
+score[1] perhaps we will need to revisit that...)
 
+--D
+
+[1] https://en.wikipedia.org/wiki/As_Slow_as_Possible
+
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
