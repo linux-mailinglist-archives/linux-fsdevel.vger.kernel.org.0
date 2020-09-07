@@ -2,134 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B5B325FCAE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 17:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29D9B25FD06
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Sep 2020 17:26:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730079AbgIGPKq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Sep 2020 11:10:46 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:38034 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729948AbgIGPDT (ORCPT
+        id S1730075AbgIGP01 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Sep 2020 11:26:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51142 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729982AbgIGPVT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Sep 2020 11:03:19 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 087F0h2i029616;
-        Mon, 7 Sep 2020 15:03:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=dSlqqtgC66uF5bIMzNT6zvaga1HiU1qWA6WLZ4nGzHE=;
- b=ZfqJWxdcUEXuIYeEMQzU7VB0xi0ba2a4U3WfrEm41N+oPLNsdnYCuPHajVfG+WPGuOf2
- TJLy6e7Dk8SIypr5OZbN8PfoG9DcENqn103e2qcPa/ORxdDyvSTWHfu+hKKD95xGLIk8
- N+mdHGxaBryxy8d6lBqFNC9HcwUrApO8Fa0nWhemDlhIupLw8qHSQX87LDsnooEy4WNJ
- 3BbEJuUYNE6mfD+c9xjKRTHxf2iw0Pmw7k5AhEP5jTEMFdcc5Qkf0aPv9sJ2YD4CshAr
- LgZLf5C7V7GSTxZ82agupcAEOCHiphfxBgaHgPF6x+ZUYU6F5P4r6q9oMj78/B5duZLD nA== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 33c2mkq2u0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 07 Sep 2020 15:03:05 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 087ExTfr123300;
-        Mon, 7 Sep 2020 15:01:05 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 33dacgrm3k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 07 Sep 2020 15:01:05 +0000
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 087F14oc006505;
-        Mon, 7 Sep 2020 15:01:04 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 07 Sep 2020 08:01:04 -0700
-Date:   Mon, 7 Sep 2020 08:01:04 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Jan Kara <jack@suse.cz>
+        Mon, 7 Sep 2020 11:21:19 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96953C061573
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Sep 2020 08:21:06 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id bd2so235727plb.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Sep 2020 08:21:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=dDm50BpVZuQLGYSLkY4kWAnKOu+NYX3j/JL82/yvZsw=;
+        b=RJ5s9MaqhEHO5V2IfABHfKScBVvIYJl1uOESsM7TA208JtB/i5pnrUk2euFVdZxGtL
+         SCLkhk/eIrtAkx1cLJKi22+NOfrmPt8QkuNR46/J1HRaTDtu9vJfUADlOkWbjk++iTYE
+         bSkFWGf+ueXnY2ceeXi2ZlMTUPg4CCwa+AoxfIqrtJv7WGlvtpdjBdUxsiVe4N94hREX
+         Jf+nv+PpTodpJOgDl6Y593FKFbDcoNzI15eNc2927OzNd0UzoaHGxt1n44c6sbh4zpg9
+         6BSJ5eKGkCwCFAbSPTM4gECqlw7yqcIm53BmXklX/vWRaWdjxmxLGv1jRvE213dVfdOn
+         BVKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=dDm50BpVZuQLGYSLkY4kWAnKOu+NYX3j/JL82/yvZsw=;
+        b=OLYwYEAV4kEdOpvcpq3gJbMc54twBkMeONz9cHW6PulNK+WSBwskU3AQq2DBcO5Bw+
+         jxZCfjt+31+EvGfGnA4pYnUEsOYMrwfl50oQtN63NsKY9hJHoYMv26Nk6vAN4GGTlpQ5
+         wx/+8Cn5pxq1AlzB7Htas/HEBnj7vdHuznZd877Xvspm+UNtZ6p13Wv2UhjGeXooZtpS
+         boHUvJ8idzjtq2DcbtMeAflL4K7OKBEgvpxA3RxkBJfSTVn0QmMk8BkwadB+8S3KTUQo
+         UtbCo8HjKDGFCqFRN6/SbvQC1lYhj8Zr5W4PgdL6voY5EWmJM5LYkb3hqILWVbSzybUI
+         YoRA==
+X-Gm-Message-State: AOAM530e2OOLhAPuOU35NTN/dEBUbLHGFPTsOKC84IBB3yuZv4lMKDXJ
+        tPdqxS2fZEqzv8tbxlsTHroobw==
+X-Google-Smtp-Source: ABdhPJzGXrFSoWODyKXpSqClx55jfJGJNH5FkVEzm0uYE4X+iByW1zd19ffrfKEOs/9XX5s+bReuUQ==
+X-Received: by 2002:a17:90a:de17:: with SMTP id m23mr21430575pjv.51.1599492065082;
+        Mon, 07 Sep 2020 08:21:05 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id f9sm2399964pjq.26.2020.09.07.08.21.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Sep 2020 08:21:04 -0700 (PDT)
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH v2] quota: widen timestamps for the fs_disk_quota
- structure
-Message-ID: <20200907150104.GF7955@magnolia>
-References: <20200905164703.GC7955@magnolia>
- <20200907100218.GA18556@quack2.suse.cz>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH] pipe: honor IOCB_NOWAIT
+Message-ID: <cedfa436-47a3-7cbc-1948-75d0e28cfdc5@kernel.dk>
+Date:   Mon, 7 Sep 2020 09:21:02 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200907100218.GA18556@quack2.suse.cz>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9736 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- bulkscore=0 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009070149
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9737 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 priorityscore=1501
- phishscore=0 adultscore=0 bulkscore=0 clxscore=1015 mlxlogscore=999
- malwarescore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009070149
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 07, 2020 at 12:02:18PM +0200, Jan Kara wrote:
-> On Sat 05-09-20 09:47:03, Darrick J. Wong wrote:
-> > From: Darrick J. Wong <darrick.wong@oracle.com>
-> > 
-> > Soon, XFS will support quota grace period expiration timestamps beyond
-> > the year 2038, widen the timestamp fields to handle the extra time bits.
-> > Internally, XFS now stores unsigned 34-bit quantities, so the extra 8
-> > bits here should work fine.  (Note that XFS is the only user of this
-> > structure.)
-> > 
-> > Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
-> 
-> Looks good to me. Just one question below:
-> 
-> > diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-> > index 5444d3c4d93f..eefac57c52fd 100644
-> > --- a/fs/quota/quota.c
-> > +++ b/fs/quota/quota.c
-> > @@ -481,6 +481,14 @@ static inline u64 quota_btobb(u64 bytes)
-> >  	return (bytes + (1 << XFS_BB_SHIFT) - 1) >> XFS_BB_SHIFT;
-> >  }
-> >  
-> > +static inline s64 copy_from_xfs_dqblk_ts(const struct fs_disk_quota *d,
-> > +		__s32 timer, __s8 timer_hi)
-> > +{
-> > +	if (d->d_fieldmask & FS_DQ_BIGTIME)
-> > +		return (u32)timer | (s64)timer_hi << 32;
-> > +	return timer;
-> > +}
-> > +
-> 
-> So this doesn't do any checks that the resulting time fits into 34-bits you
-> speak about in the changelog. So how will XFS react if malicious / buggy
-> userspace will pass too big timestamp? I suppose xfs_fs_set_dqblk() should
-> return EFBIG or EINVAL or something like that which I'm not sure it does...
-> 
-> For record I've checked VFS quota implementation and it doesn't need any
-> checks because VFS in memory structures and on-disk format use 64-bit
-> timestamps. The ancient quota format uses 32-bit timestamps for 32-bit
-> archs so these would get silently truncated when stored on disk but
-> honestly I don't think I care (that format was deprecated some 20 years
-> ago).
+Pipe only looks at O_NONBLOCK for non-blocking operation, which means that
+io_uring can't easily poll for it or attempt non-blocking issues. Check for
+IOCB_NOWAIT in locking the pipe for reads and writes, and ditto when we
+decide on whether or not to block or return -EAGAIN.
 
-XFS will clamp any out-of-bounds value to the nearest representable
-number.  For example, if you tried to extend a quota's grace expiration
-to the year 2600, it set the expiration to 2486, similar to what the vfs
-does for timestamps now.  If you try to set the default grace period to,
-say, 100 years, it will clamp that to 68 years (2^31-1).
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-(I doubt anyone cares to set a 60+ year grace period, but as some
-apparently immortal person claims to be playing a 600-year musical
-score[1] perhaps we will need to revisit that...)
+---
 
---D
+If this is acceptable, then I can add S_ISFIFO to the whitelist on file
+descriptors we can IOCB_NOWAIT try for, then poll if we get -EAGAIN
+instead of using thread offload.
 
-[1] https://en.wikipedia.org/wiki/As_Slow_as_Possible
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 60dbee457143..3cee28e35985 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -82,6 +82,13 @@ void pipe_unlock(struct pipe_inode_info *pipe)
+ }
+ EXPORT_SYMBOL(pipe_unlock);
+ 
++static inline bool __pipe_lock_nonblock(struct pipe_inode_info *pipe)
++{
++	if (mutex_trylock(&pipe->mutex))
++		return true;
++	return false;
++}
++
+ static inline void __pipe_lock(struct pipe_inode_info *pipe)
+ {
+ 	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
+@@ -244,7 +251,12 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 		return 0;
+ 
+ 	ret = 0;
+-	__pipe_lock(pipe);
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (!__pipe_lock_nonblock(pipe))
++			return -EAGAIN;
++	} else {
++		__pipe_lock(pipe);
++	}
+ 
+ 	/*
+ 	 * We only wake up writers if the pipe was full when we started
+@@ -344,7 +356,8 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 			break;
+ 		if (ret)
+ 			break;
+-		if (filp->f_flags & O_NONBLOCK) {
++		if ((filp->f_flags & O_NONBLOCK) ||
++		    (iocb->ki_flags & IOCB_NOWAIT)) {
+ 			ret = -EAGAIN;
+ 			break;
+ 		}
+@@ -432,7 +445,12 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 	if (unlikely(total_len == 0))
+ 		return 0;
+ 
+-	__pipe_lock(pipe);
++	if (iocb->ki_flags & IOCB_NOWAIT) {
++		if (!__pipe_lock_nonblock(pipe))
++			return -EAGAIN;
++	} else {
++		__pipe_lock(pipe);
++	}
+ 
+ 	if (!pipe->readers) {
+ 		send_sig(SIGPIPE, current, 0);
+@@ -554,7 +572,8 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 			continue;
+ 
+ 		/* Wait for buffer space to become available. */
+-		if (filp->f_flags & O_NONBLOCK) {
++		if ((filp->f_flags & O_NONBLOCK) ||
++		    (iocb->ki_flags & IOCB_NOWAIT)) {
+ 			if (!ret)
+ 				ret = -EAGAIN;
+ 			break;
 
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+-- 
+Jens Axboe
+
