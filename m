@@ -2,73 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 093372610DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 13:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FDE42610AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 13:31:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbgIHLiU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 07:38:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40494 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729615AbgIHL17 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 07:27:59 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5708C061573
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Sep 2020 04:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=7WZu8yEPToxwOxOhhBePKSmAHVZZ0k0hi3wlwa3S1c8=; b=TUnKGV3AHfrtbyC2uFQIrltWeY
-        W5sw26FTblwDAB0xh/RXDkA0G7fQcuC2kFM/qiEKDdX5/arBNFFtiWhb194x1MgwJsj0gtoipXZhk
-        X76nfSTZ+u6CYn/lJUwobmlEkqShS90Uu542t5wsScgKgvE9EPgLgEFlpCj8r+QVRkyROwSJ4O6VP
-        j9fULbzUctK7pMPy/nIyi/vu5jtw2WrHTSWRVecE5Wgflca1asRRNnL62wtdIWCjjVqJX13uJYYO/
-        vH5RfWLa3Xwq5cgFnsMER51iYz6tIBUNyUjrbs2KDO80iiMNmvt3P4KTDVoIvjLD7y+706+rnvrXX
-        MIsV++Yg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kFbmz-0000Yg-VF; Tue, 08 Sep 2020 11:27:54 +0000
-Date:   Tue, 8 Sep 2020 12:27:53 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Pradeep P V K <pragalla@qti.qualcomm.com>
-Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
-        stummala@codeaurora.org, sayalil@codeaurora.org,
-        Pradeep P V K <ppvk@codeaurora.org>
-Subject: Re: [PATCH V4] fuse: Fix VM_BUG_ON_PAGE issue while accessing zero
- ref count page
-Message-ID: <20200908112753.GD27537@casper.infradead.org>
-References: <1599553026-11745-1-git-send-email-pragalla@qti.qualcomm.com>
+        id S1730064AbgIHLar (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 07:30:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54622 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729753AbgIHLa2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Sep 2020 07:30:28 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1CF42087D;
+        Tue,  8 Sep 2020 11:29:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599564600;
+        bh=BSmMzOYGbAvjcnEx6v7x/E3VmkpQh3OSrDsVXUqKSPE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=joPcZ1YBLxL8Qn6Rj++9+fibGNeSJhpg816JMNiHnvtNazWU8qUL2lJJW72FRjNwK
+         nmJXJzjfkexgeDHL02JpH4SuIKk3MAukDuLdE38suPOtG6iNrU8fA9xDXDTa8vOp2p
+         MLiYJlXLiAxvJP1YDwcZ7XUBKvwGsFXeFQlJSiZE=
+Message-ID: <b6cc0c6d17ebbc7fed675030b4769319e3861aa0.camel@kernel.org>
+Subject: Re: [RFC PATCH v2 04/18] fscrypt: add fscrypt_new_context_from_inode
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org
+Date:   Tue, 08 Sep 2020 07:29:58 -0400
+In-Reply-To: <20200908034830.GE68127@sol.localdomain>
+References: <20200904160537.76663-1-jlayton@kernel.org>
+         <20200904160537.76663-5-jlayton@kernel.org>
+         <20200908034830.GE68127@sol.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1599553026-11745-1-git-send-email-pragalla@qti.qualcomm.com>
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 08, 2020 at 01:47:06PM +0530, Pradeep P V K wrote:
-> Changes since V3:
-> - Fix smatch warnings.
+On Mon, 2020-09-07 at 20:48 -0700, Eric Biggers wrote:
+> On Fri, Sep 04, 2020 at 12:05:23PM -0400, Jeff Layton wrote:
+> > CephFS will need to be able to generate a context for a new "prepared"
+> > inode. Add a new routine for getting the context out of an in-core
+> > inode.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/crypto/policy.c      | 20 ++++++++++++++++++++
+> >  include/linux/fscrypt.h |  1 +
+> >  2 files changed, 21 insertions(+)
+> > 
+> > diff --git a/fs/crypto/policy.c b/fs/crypto/policy.c
+> > index c56ad886f7d7..10eddd113a21 100644
+> > --- a/fs/crypto/policy.c
+> > +++ b/fs/crypto/policy.c
+> > @@ -670,6 +670,26 @@ int fscrypt_set_context(struct inode *inode, void *fs_data)
+> >  }
+> >  EXPORT_SYMBOL_GPL(fscrypt_set_context);
+> >  
+> > +/**
+> > + * fscrypt_context_from_inode() - fetch the encryption context out of in-core inode
 > 
-> Changes since V2:
-> - Moved the spin lock from fuse_copy_pages() to fuse_ref_page().
+> Comment doesn't match the function name.
 > 
-> Changes since V1:
-> - Modified the logic as per kernel v5.9-rc1.
-> - Added Reported by tag.
+> Also, the name isn't very clear.  How about calling this
+> fscrypt_context_for_new_inode()?
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> BTW, I might rename fscrypt_new_context_from_policy() to
+> fscrypt_context_from_policy() in my patchset.  Since it now makes the caller
+> provide the nonce, technically it's no longer limited to "new" contexts.
+> 
 
-Umm, the way this is written, it looks like Dan reported the original
-bug rather than a bug in v3.  The usual way is to credit Dan in the
-'Changes since' rather than putting in a 'Reported-by'.
+Ahh yes. I didn't properly update the commit message here. Your
+suggested names sound fine. I'll plan to fix that up.
 
->  static int fuse_ref_page(struct fuse_copy_state *cs, struct page *page,
-> -			 unsigned offset, unsigned count)
-> +			 unsigned offset, unsigned count, struct fuse_conn *fc)
+> > + * @ctx: where context should be written
+> > + * @inode: inode from which to fetch context
+> > + *
+> > + * Given an in-core prepared, but not-necessarily fully-instantiated inode,
+> > + * generate an encryption context from its policy and write it to ctx.
+> 
+> Clarify what is meant by "prepared" (fscrypt_prepare_new_inode() was called)
+> vs. "instantiated".
+> 
 
-I'm no expert on fuse, but it looks to me like you should put a pointer
-to the fuse_conn in struct fuse_copy_state rather than passing it down
-through all these callers.
+Ack.
+
+> > + *
+> > + * Returns size of the context.
+> > + */
+> > +int fscrypt_new_context_from_inode(union fscrypt_context *ctx, struct inode *inode)
+> > +{
+> > +	struct fscrypt_info *ci = inode->i_crypt_info;
+> > +
+> > +	BUILD_BUG_ON(sizeof(*ctx) != FSCRYPT_SET_CONTEXT_MAX_SIZE);
+> > +
+> > +	return fscrypt_new_context_from_policy(ctx, &ci->ci_policy, ci->ci_nonce);
+> > +}
+> > +EXPORT_SYMBOL_GPL(fscrypt_new_context_from_inode);
+> 
+> fscrypt_set_context() should be changed to call this, instead of duplicating the
+> same logic.  As part of that, the WARN_ON_ONCE(!ci) that's currently in
+> fscrypt_set_context() should go in here instead.
+
+Ok.
+-- 
+Jeff Layton <jlayton@kernel.org>
 
