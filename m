@@ -2,62 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B2C260A67
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 07:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E56D4260ACB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 08:20:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbgIHFyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 01:54:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47306 "EHLO mail.kernel.org"
+        id S1728911AbgIHGUI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 02:20:08 -0400
+Received: from verein.lst.de ([213.95.11.211]:51486 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728531AbgIHFys (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 01:54:48 -0400
-Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40B482137B;
-        Tue,  8 Sep 2020 05:54:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599544488;
-        bh=VvQRUqCEumUrjB1eL6fGK/9AS3T4qWtdbK1Y+v5BDek=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y48O9cyOyoz3Qp3v+QBDf8anbyuYYQUtBXPfl5qboMnFu/9pTDu0XOr1Pu6vr7JGT
-         G4vXb/UQVcCAN8JHgyNZU+Isxl6uLMPJIbYfNpnna/+cTk/jb/Bvj7dcMRvS0xfOpm
-         fFN8ex7NYa0CEeZTJgucmPv7RAnGxNgcDwbt/gZ0=
-Date:   Mon, 7 Sep 2020 22:54:46 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org
-Subject: Re: [RFC PATCH v2 00/18] ceph+fscrypt: context, filename and symlink
- support
-Message-ID: <20200908055446.GP68127@sol.localdomain>
-References: <20200904160537.76663-1-jlayton@kernel.org>
+        id S1726787AbgIHGUH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Sep 2020 02:20:07 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 15E9468AFE; Tue,  8 Sep 2020 08:20:03 +0200 (CEST)
+Date:   Tue, 8 Sep 2020 08:20:02 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Russell King <rmk@arm.linux.org.uk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
+        Russell King <linux@armlinux.org.uk>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 5/9] ARM: oabi-compat: rework epoll_wait/epoll_pwait
+ emulation
+Message-ID: <20200908062002.GD13930@lst.de>
+References: <20200907153701.2981205-1-arnd@arndb.de> <20200907153701.2981205-6-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200904160537.76663-1-jlayton@kernel.org>
+In-Reply-To: <20200907153701.2981205-6-arnd@arndb.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 04, 2020 at 12:05:19PM -0400, Jeff Layton wrote:
-> This is a second posting of the ceph+fscrypt integration work that I've
-> been experimenting with. The main change with this patch is that I've
-> based this on top of Eric's fscrypt-pending set. That necessitated a
-> change to allocate inodes much earlier than we have traditionally, prior
-> to sending an RPC instead of waiting on the reply.
+On Mon, Sep 07, 2020 at 05:36:46PM +0200, Arnd Bergmann wrote:
+> The epoll_wait() system call wrapper is one of the remaining users of
+> the set_fs() infrasturcture for Arm. Changing it to not require set_fs()
+> is rather complex unfortunately.
+> 
+> The approach I'm taking here is to allow architectures to override
+> the code that copies the output to user space, and let the oabi-compat
+> implementation check whether it is getting called from an EABI or OABI
+> system call based on the thread_info->syscall value.
+> 
+> The in_oabi_syscall() check here mirrors the in_compat_syscall() and
+> in_x32_syscall() helpers for 32-bit compat implementations on other
+> architectures.
+> 
+> Overall, the amount of code goes down, at least with the newly added
+> sys_oabi_epoll_pwait() helper getting removed again. The downside
+> is added complexity in the source code for the native implementation.
+> There should be no difference in runtime performance except for Arm
+> kernels with CONFIG_OABI_COMPAT enabled that now have to go through
+> an external function call to check which of the two variants to use.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm/include/asm/syscall.h    | 11 +++++
+>  arch/arm/kernel/sys_oabi-compat.c | 72 +++++++------------------------
+>  arch/arm/tools/syscall.tbl        |  4 +-
+>  fs/eventpoll.c                    |  5 +--
+>  include/linux/eventpoll.h         | 16 +++++++
+>  5 files changed, 46 insertions(+), 62 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/syscall.h b/arch/arm/include/asm/syscall.h
+> index ff6cc365eaf7..0d8afceeefd9 100644
+> --- a/arch/arm/include/asm/syscall.h
+> +++ b/arch/arm/include/asm/syscall.h
+> @@ -28,6 +28,17 @@ static inline int syscall_get_nr(struct task_struct *task,
+>  	return task_thread_info(task)->syscall;
+>  }
+>  
+> +static inline bool __in_oabi_syscall(struct task_struct *task)
+> +{
+> +	return IS_ENABLED(CONFIG_OABI_COMPAT) &&
+> +		(task_thread_info(task)->syscall & __NR_OABI_SYSCALL_BASE);
+> +}
+> +
+> +static inline bool in_oabi_syscall(void)
+> +{
+> +	return __in_oabi_syscall(current);
+> +}
+> +
+>  static inline void syscall_rollback(struct task_struct *task,
+>  				    struct pt_regs *regs)
+>  {
+> diff --git a/arch/arm/kernel/sys_oabi-compat.c b/arch/arm/kernel/sys_oabi-compat.c
+> index 2ce3e8c6ca91..abf1153c5315 100644
+> --- a/arch/arm/kernel/sys_oabi-compat.c
+> +++ b/arch/arm/kernel/sys_oabi-compat.c
+> @@ -83,6 +83,8 @@
+>  #include <linux/uaccess.h>
+>  #include <linux/slab.h>
+>  
+> +#include <asm/syscall.h>
+> +
+>  struct oldabi_stat64 {
+>  	unsigned long long st_dev;
+>  	unsigned int	__pad1;
+> @@ -264,68 +266,24 @@ asmlinkage long sys_oabi_epoll_ctl(int epfd, int op, int fd,
+>  	return do_epoll_ctl(epfd, op, fd, &kernel, false);
+>  }
+>  
+> -static long do_oabi_epoll_wait(int epfd, struct oabi_epoll_event __user *events,
+> -			       int maxevents, int timeout)
+> +struct epoll_event __user *
+> +epoll_put_uevent(__poll_t revents, __u64 data, struct epoll_event __user *uevent)
+>  {
+> +	if (in_oabi_syscall()) {
+> +		struct oabi_epoll_event *oevent = (void __user *)uevent;
+>  
+> +		if (__put_user(revents, &oevent->events) ||
+> +		    __put_user(data, &oevent->data))
+> +			return NULL;
+>  
+> +		return (void __user *)uevent+1;
+> +	}
 
-FWIW, if possible you should create a git tag or branch for your patchset.
-While just the mailed patches work fine for *me* for this particular patchset,
-other people may not be able to figure out what the patchset applies to.
-(In particular, it depends on another patchset:
-https://lkml.kernel.org/r/20200824061712.195654-1-ebiggers@kernel.org)
+I wonder if we'd be better off doing the in_oabi_syscall() branch in
+the common code.  E.g. rename in_oabi_syscall to in_legacy_syscall and
+stub it out for all other architectures.  Then just do
 
-> Note that this just covers the crypto contexts and filenames. I've also
-> added a patch to encrypt symlink contents as well, but it doesn't seem to
-> be working correctly.
+	if (in_oabi_syscall()
+		legacy_syscall_foo_bit();
+	else
+		normal_syscall_foo_bit();
 
-What about symlink encryption isn't working correctly?
+in common code, where so far only arm provides
+legacy_syscall_foo_bit().
 
-- Eric
+Tons of long lines again in this patch..
