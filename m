@@ -2,137 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E56D4260ACB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 08:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96D07260C08
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 09:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728911AbgIHGUI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 02:20:08 -0400
-Received: from verein.lst.de ([213.95.11.211]:51486 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726787AbgIHGUH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 02:20:07 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 15E9468AFE; Tue,  8 Sep 2020 08:20:03 +0200 (CEST)
-Date:   Tue, 8 Sep 2020 08:20:02 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Russell King <rmk@arm.linux.org.uk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
-        Russell King <linux@armlinux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/9] ARM: oabi-compat: rework epoll_wait/epoll_pwait
- emulation
-Message-ID: <20200908062002.GD13930@lst.de>
-References: <20200907153701.2981205-1-arnd@arndb.de> <20200907153701.2981205-6-arnd@arndb.de>
+        id S1729359AbgIHHca (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 03:32:30 -0400
+Received: from mail-io1-f80.google.com ([209.85.166.80]:44083 "EHLO
+        mail-io1-f80.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729252AbgIHHcX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Sep 2020 03:32:23 -0400
+Received: by mail-io1-f80.google.com with SMTP id l8so9186399ioa.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Sep 2020 00:32:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=AC6BgcroEDp548ZIhS1TATAuRZtuMVj32nIWDlxaHZ8=;
+        b=CqAbkVJsrEFZRHp/ix41AxdSjZMOmpBq7wzC4dG1GnNa8Ur8AasRBj+RI2vqW9q23l
+         joMk8YN4XegS0iKotAHQIGcjeb4vdl9go8XMZUOwNkSQi9FZ1nBbFPoarkeUNfW/1pyx
+         knumztLbe1t8CgWOWxTe4ocFovMCxdBlNON8sdFiAq9wFFRu5xMXSc/1oktyDht43EFj
+         PjjgzwqFHEjNb5I/Wxssar0GkLa6499ZvkvRr6mtA5bayqfO3YegR079dCxpD6AAEcap
+         q4IIGfV/FxKR5MOlSgalj8HnxXWN9efKgKsGtuLmP9CxlhVGdIM8IBylHxLGxgFYox9h
+         zIpA==
+X-Gm-Message-State: AOAM532eHS0gRqAHi3XSZmcTQkfZJ4JuoutKZm+N3MyKTiaVBpq8VJOX
+        cmr2YJowv8gLHredaVnfBwXkCaRsY94lyTGzG9CMaUUQNEUn
+X-Google-Smtp-Source: ABdhPJwrK+MvNyMKFdr3Ad+r7ZbCdqmn2+JSuXk34GuP1IPGf2/SSjWtf2ip02QSKxIWJuXUc3QRF5dcLJKpcbsbBRXv6M0iorxt
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200907153701.2981205-6-arnd@arndb.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Received: by 2002:a92:4b0f:: with SMTP id m15mr10598300ilg.140.1599550342469;
+ Tue, 08 Sep 2020 00:32:22 -0700 (PDT)
+Date:   Tue, 08 Sep 2020 00:32:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f69d8405aec8552b@google.com>
+Subject: BUG: spinlock bad magic in try_to_wake_up
+From:   syzbot <syzbot+1b5d053eb77554ea5d77@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 07, 2020 at 05:36:46PM +0200, Arnd Bergmann wrote:
-> The epoll_wait() system call wrapper is one of the remaining users of
-> the set_fs() infrasturcture for Arm. Changing it to not require set_fs()
-> is rather complex unfortunately.
-> 
-> The approach I'm taking here is to allow architectures to override
-> the code that copies the output to user space, and let the oabi-compat
-> implementation check whether it is getting called from an EABI or OABI
-> system call based on the thread_info->syscall value.
-> 
-> The in_oabi_syscall() check here mirrors the in_compat_syscall() and
-> in_x32_syscall() helpers for 32-bit compat implementations on other
-> architectures.
-> 
-> Overall, the amount of code goes down, at least with the newly added
-> sys_oabi_epoll_pwait() helper getting removed again. The downside
-> is added complexity in the source code for the native implementation.
-> There should be no difference in runtime performance except for Arm
-> kernels with CONFIG_OABI_COMPAT enabled that now have to go through
-> an external function call to check which of the two variants to use.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm/include/asm/syscall.h    | 11 +++++
->  arch/arm/kernel/sys_oabi-compat.c | 72 +++++++------------------------
->  arch/arm/tools/syscall.tbl        |  4 +-
->  fs/eventpoll.c                    |  5 +--
->  include/linux/eventpoll.h         | 16 +++++++
->  5 files changed, 46 insertions(+), 62 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/syscall.h b/arch/arm/include/asm/syscall.h
-> index ff6cc365eaf7..0d8afceeefd9 100644
-> --- a/arch/arm/include/asm/syscall.h
-> +++ b/arch/arm/include/asm/syscall.h
-> @@ -28,6 +28,17 @@ static inline int syscall_get_nr(struct task_struct *task,
->  	return task_thread_info(task)->syscall;
->  }
->  
-> +static inline bool __in_oabi_syscall(struct task_struct *task)
-> +{
-> +	return IS_ENABLED(CONFIG_OABI_COMPAT) &&
-> +		(task_thread_info(task)->syscall & __NR_OABI_SYSCALL_BASE);
-> +}
-> +
-> +static inline bool in_oabi_syscall(void)
-> +{
-> +	return __in_oabi_syscall(current);
-> +}
-> +
->  static inline void syscall_rollback(struct task_struct *task,
->  				    struct pt_regs *regs)
->  {
-> diff --git a/arch/arm/kernel/sys_oabi-compat.c b/arch/arm/kernel/sys_oabi-compat.c
-> index 2ce3e8c6ca91..abf1153c5315 100644
-> --- a/arch/arm/kernel/sys_oabi-compat.c
-> +++ b/arch/arm/kernel/sys_oabi-compat.c
-> @@ -83,6 +83,8 @@
->  #include <linux/uaccess.h>
->  #include <linux/slab.h>
->  
-> +#include <asm/syscall.h>
-> +
->  struct oldabi_stat64 {
->  	unsigned long long st_dev;
->  	unsigned int	__pad1;
-> @@ -264,68 +266,24 @@ asmlinkage long sys_oabi_epoll_ctl(int epfd, int op, int fd,
->  	return do_epoll_ctl(epfd, op, fd, &kernel, false);
->  }
->  
-> -static long do_oabi_epoll_wait(int epfd, struct oabi_epoll_event __user *events,
-> -			       int maxevents, int timeout)
-> +struct epoll_event __user *
-> +epoll_put_uevent(__poll_t revents, __u64 data, struct epoll_event __user *uevent)
->  {
-> +	if (in_oabi_syscall()) {
-> +		struct oabi_epoll_event *oevent = (void __user *)uevent;
->  
-> +		if (__put_user(revents, &oevent->events) ||
-> +		    __put_user(data, &oevent->data))
-> +			return NULL;
->  
-> +		return (void __user *)uevent+1;
-> +	}
+Hello,
 
-I wonder if we'd be better off doing the in_oabi_syscall() branch in
-the common code.  E.g. rename in_oabi_syscall to in_legacy_syscall and
-stub it out for all other architectures.  Then just do
+syzbot found the following issue on:
 
-	if (in_oabi_syscall()
-		legacy_syscall_foo_bit();
-	else
-		normal_syscall_foo_bit();
+HEAD commit:    b765a32a Merge tag 'scsi-fixes' of git://git.kernel.org/pu..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13188279900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e1c560d0f4e121c9
+dashboard link: https://syzkaller.appspot.com/bug?extid=1b5d053eb77554ea5d77
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
 
-in common code, where so far only arm provides
-legacy_syscall_foo_bit().
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Tons of long lines again in this patch..
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1b5d053eb77554ea5d77@syzkaller.appspotmail.com
+
+BUG: spinlock bad magic on CPU#0, systemd-udevd/3905
+ lock: 0xffff888000146cc8, .magic: 000f0f00, .owner: <none>/-1, .owner_cpu: -1
+CPU: 0 PID: 3905 Comm: systemd-udevd Not tainted 5.9.0-rc3-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1d6/0x29e lib/dump_stack.c:118
+ spin_dump kernel/locking/spinlock_debug.c:67 [inline]
+ spin_bug kernel/locking/spinlock_debug.c:75 [inline]
+ debug_spin_lock_before kernel/locking/spinlock_debug.c:83 [inline]
+ do_raw_spin_lock+0x2cc/0x800 kernel/locking/spinlock_debug.c:112
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:117 [inline]
+ _raw_spin_lock_irqsave+0xb6/0xd0 kernel/locking/spinlock.c:159
+ try_to_wake_up+0x5f/0xbb0 kernel/sched/core.c:2859
+ autoremove_wake_function+0x12/0x110 kernel/sched/wait.c:389
+ __wake_up_common+0x30a/0x4e0 kernel/sched/wait.c:93
+ __wake_up_common_lock kernel/sched/wait.c:123 [inline]
+ __wake_up+0xd4/0x150 kernel/sched/wait.c:142
+ ep_poll_callback+0x50e/0x910 fs/eventpoll.c:1273
+ __wake_up_common+0x30a/0x4e0 kernel/sched/wait.c:93
+ __wake_up_common_lock kernel/sched/wait.c:123 [inline]
+ __wake_up_sync_key+0xd3/0x150 kernel/sched/wait.c:190
+ sock_def_readable+0x10f/0x210 net/core/sock.c:2908
+ __netlink_sendskb net/netlink/af_netlink.c:1251 [inline]
+ netlink_sendskb+0x8d/0x130 net/netlink/af_netlink.c:1257
+ netlink_unicast+0x5b2/0x940 net/netlink/af_netlink.c:1345
+ netlink_sendmsg+0xa57/0xd70 net/netlink/af_netlink.c:1919
+ sock_sendmsg_nosec net/socket.c:651 [inline]
+ sock_sendmsg net/socket.c:671 [inline]
+ ____sys_sendmsg+0x519/0x800 net/socket.c:2353
+ ___sys_sendmsg net/socket.c:2407 [inline]
+ __sys_sendmsg+0x2b1/0x360 net/socket.c:2440
+ do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x7fb6a57a8e67
+Code: 89 02 48 c7 c0 ff ff ff ff eb d0 0f 1f 84 00 00 00 00 00 8b 05 6a b5 20 00 85 c0 75 2e 48 63 ff 48 63 d2 b8 2e 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 8b 15 11 71 20 00 f7 d8 64 89 02 48
+RSP: 002b:00007ffcc6917278 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 000056206161bcb0 RCX: 00007fb6a57a8e67
+RDX: 0000000000000000 RSI: 00007ffcc6917290 RDI: 0000000000000004
+RBP: 00007ffcc6917290 R08: 000056206161bdf4 R09: 0000000000000000
+R10: 0000000000000018 R11: 0000000000000246 R12: 000056206162d8c0
+R13: 000000000000009b R14: 0000562061620970 R15: 0000000000000000
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
