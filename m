@@ -2,80 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id EB7CA260F47
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 12:07:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCC4C2610DF
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 13:39:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbgIHKHH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 06:07:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56230 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726801AbgIHKHG (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 06:07:06 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B064C061573;
-        Tue,  8 Sep 2020 03:07:05 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id y13so2266143iow.4;
-        Tue, 08 Sep 2020 03:07:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AjlLwILBDcNJWOs0FbChR/8zA/O+ckKUiqpt3EAQvbA=;
-        b=pno9bO8EjHE9wvTWQzmOfM/ydiHJkkKH6QcfjZoIXzwYA5C2DMaPe624kpnCPCyaVv
-         3ZNPkV/xFTIawvWpRfzuwMpZwfWfHWFkWPF1Fz8c4ZWHnDRuPfpRn2VzA9I4Ujykbr3P
-         lAeRSpoU/5roXAWa5xTE2KpbGzaGcZGQQ7RlwDDAn4NKBNEBp8j1KOPc5HLYiiG2Bs87
-         b8CV1iN8a7WpmqVbNeYEru4hl1OLXCTv9pEbcBZpYvFUrxoGCJbNijpPs1TzfXU4dZvU
-         312JL/UU2MPwYscfZTW4pMtaX/M7E7M5X/baGFSIjk0pbR053tZpMAhI63ZX7kaYnOvD
-         +P2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AjlLwILBDcNJWOs0FbChR/8zA/O+ckKUiqpt3EAQvbA=;
-        b=XKlYNPUl+GSWD8ABeQgSJv03RUFkc/blCASMLqXE/FN/kB30A9WtntRUFtPlM7TGyk
-         EM8Pi6ln9ojGkOPTjJ99I2+qcRZlbsnc+BCx+2gcQdD40MtE4M+kQzy3vXXmRkj46ISt
-         LawmDHWSxJCuf8L7ojfGcFtho90FcWx9CAdMNcrsxA7n/+pEjNtVrEul1PSpe9SAMxzT
-         yswFTEBG5g+6QvkC9hs/EGhV0woHSyaudxWRg610sbTgvzjWiCvCn/+HMyyiZKdF1xto
-         IerdQTi7Q9bOS5SfYzz71ByGldQOqYPCe8LesAvmB7HRmwzuP9Bw57kV3pHKXtpwrRNW
-         PhLg==
-X-Gm-Message-State: AOAM530zpdZ1J3IuqxcXKmsStjWk/gWgGi3exxKlyL0Vy7jCo/QxrEr9
-        2+9anQYsNHUmcRoNfPC/JixnVXO0A6Lt10zlogm2p+953r4=
-X-Google-Smtp-Source: ABdhPJxJpbndKEUQcNd10oBluKbWCERCXJc5iqqCStpsMOxI6dB8+nTncm2ZX6/TOZJXfhNYow32bmlrHie0vkT+9gE=
-X-Received: by 2002:a02:ca12:: with SMTP id i18mr12211474jak.30.1599559624945;
- Tue, 08 Sep 2020 03:07:04 -0700 (PDT)
+        id S1730077AbgIHLic (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 07:38:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53366 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729922AbgIHL1p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Sep 2020 07:27:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id ED701AD7A;
+        Tue,  8 Sep 2020 11:27:43 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id E8CDF1E1325; Tue,  8 Sep 2020 13:27:42 +0200 (CEST)
+Date:   Tue, 8 Sep 2020 13:27:42 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     milan.opensource@gmail.com, lkml <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH] fsync.2: ERRORS: add EIO and ENOSPC
+Message-ID: <20200908112742.GA2956@quack2.suse.cz>
+References: <1598685186-27499-1-git-send-email-milan.opensource@gmail.com>
+ <CAKgNAkiTjtdaQxbCYS67+SdqSPaGzJnfLEEMFgcoXjHLDxgemw@mail.gmail.com>
 MIME-Version: 1.0
-References: <25817189-49a7-c64f-26ee-78d4a27496b6@huawei.com>
-In-Reply-To: <25817189-49a7-c64f-26ee-78d4a27496b6@huawei.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 8 Sep 2020 13:06:53 +0300
-Message-ID: <CAOQ4uxhejJzjKLZCt=b87KAX0sC3RAZ2FHEZbu4188Ar-bkmOg@mail.gmail.com>
-Subject: Re: Question: Why is there no notification when a file is opened
- using filp_open()?
-To:     Xiaoming Ni <nixiaoming@huawei.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        wangle6@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKgNAkiTjtdaQxbCYS67+SdqSPaGzJnfLEEMFgcoXjHLDxgemw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 8, 2020 at 11:02 AM Xiaoming Ni <nixiaoming@huawei.com> wrote:
->
-> The file opening action on the system may be from user-mode sys_open()
-> or kernel-mode filp_open().
-> Currently, fsnotify_open() is invoked in do_sys_openat2().
-> But filp_open() is not notified. Why? Is this an omission?
->
-> Do we need to call fsnotify_open() in filp_open() or  do_filp_open() to
-> ensure that both user-mode and kernel-mode file opening operations can
-> be notified?
->
+Added Jeff to CC since he has written the code...
 
-Do you have a specific use case of kernel filp_open() in mind?
+On Mon 07-09-20 09:11:06, Michael Kerrisk (man-pages) wrote:
+> [Widening the CC to include Andrew and linux-fsdevel@]
+> [Milan: thanks for the patch, but it's unclear to me from your commit
+> message how/if you verified the details.]
+> 
+> Andrew, maybe you (or someone else) can comment, since long ago your
+> 
+>     commit f79e2abb9bd452d97295f34376dedbec9686b986
+>     Author: Andrew Morton <akpm@osdl.org>
+>     Date:   Fri Mar 31 02:30:42 2006 -0800
+> 
+> included a comment that is referred to in  stackoverflow discussion
+> about this topic (that SO discussion is in turn referred to by
+> https://bugzilla.kernel.org/show_bug.cgi?id=194757).
+> 
+> The essence as I understand it, is this:
+> (1) fsync() (and similar) may fail EIO or ENOSPC, at which point data
+> has not been synced.
+> (2) In this case, the EIO/ENOSPC setting is cleared so that...
+> (3) A subsequent fsync() might return success, but...
+> (4) That doesn't mean that the data in (1) landed on the disk.
 
-Thanks,
-Amir.
+Correct.
+
+> The proposed manual page patch below wants to document this, but I'd
+> be happy to have an FS-knowledgeable person comment before I apply.
+
+Just a small comment below:
+
+> On Sat, 29 Aug 2020 at 09:13, <milan.opensource@gmail.com> wrote:
+> >
+> > From: Milan Shah <milan.opensource@gmail.com>
+> >
+> > This Fix addresses Bug 194757.
+> > Ref: https://bugzilla.kernel.org/show_bug.cgi?id=194757
+> > ---
+> >  man2/fsync.2 | 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> >
+> > diff --git a/man2/fsync.2 b/man2/fsync.2
+> > index 96401cd..f38b3e4 100644
+> > --- a/man2/fsync.2
+> > +++ b/man2/fsync.2
+> > @@ -186,6 +186,19 @@ In these cases disk caches need to be disabled using
+> >  or
+> >  .BR sdparm (8)
+> >  to guarantee safe operation.
+> > +
+> > +When
+> > +.BR fsync ()
+> > +or
+> > +.BR fdatasync ()
+> > +returns
+> > +.B EIO
+> > +or
+> > +.B ENOSPC
+> > +any error flags on pages in the file mapping are cleared, so subsequent synchronisation attempts
+> > +will return without error. It is
+> > +.I not
+> > +safe to retry synchronisation and assume that a non-error return means prior writes are now on disk.
+> >  .SH SEE ALSO
+> >  .BR sync (1),
+> >  .BR bdflush (2),
+
+So the error state isn't really stored "on pages in the file mapping".
+Current implementation (since 4.14) is that error state is stored in struct
+file (I think this tends to be called "file description" in manpages) and
+so EIO / ENOSPC is reported once for each file description of the file that
+was open before the error happened. Not sure if we want to be so precise in
+the manpages or if it just confuses people. Anyway your takeway that no
+error on subsequent fsync() does not mean data was written is correct.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
