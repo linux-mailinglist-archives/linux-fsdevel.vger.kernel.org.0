@@ -2,151 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 329B1260705
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 00:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 234AC26084F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 04:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbgIGWpX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Sep 2020 18:45:23 -0400
-Received: from mail-il1-f205.google.com ([209.85.166.205]:44989 "EHLO
-        mail-il1-f205.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728089AbgIGWpW (ORCPT
+        id S1728535AbgIHCNn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Sep 2020 22:13:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40044 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728348AbgIHCMo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Sep 2020 18:45:22 -0400
-Received: by mail-il1-f205.google.com with SMTP id j11so10665477ilr.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Sep 2020 15:45:21 -0700 (PDT)
+        Mon, 7 Sep 2020 22:12:44 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00169C0617B1
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Sep 2020 19:12:09 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id gf14so7211185pjb.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Sep 2020 19:12:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VT+c1JX9b+efMdSYA4R6Y766uhFYT3cDPfGCzggz0J8=;
+        b=g6YsK0WuK+oZ171JtlQZqlwFQAhZoJC0HW48UE510AZdST5F4peoTOGXed0o+Burl3
+         9STQLZVO3BedcZJUzISApfSSEVyBP/0eQIW5wP/ij9T/3bVl3LbucjP2XUoWVCGq35YY
+         80iPsyEuKLycdv9lWudeizI+mMAATqdTXnkSKH3SICwcCKr7tAdKRohJrGwzAVCbClP6
+         BiC7ysJ1qJn02fTYqy9A/QTt7RdcwrOyzba3Kc6rNLr5YcWoBY7AEzUucecKmv+c767n
+         2Vx6K3LK9eWnblqe+6zHLR6jeCSMDw0Z4rIZgLPLvwtJWrRn3X4tICcmVky/yImpWIeZ
+         kKXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=9/Msx1lu/ps9Pxv5T2MGazTKEDnLytlEFHMtrHc6FM4=;
-        b=IVJMNy3gZI9huvryOnlrdbiEETPElEjW0cIkYwBk6DyIlC0unFZVt1kPOeX6eeR14C
-         BLeAbPw8hjuGe4usila//9PiK4Bmhg8SF5sFWcwpkMsQm7ELwWVdOUVmQYTOO/Kn6XUE
-         hqKLikj2BtwzG7STJi2jtIunnBYLuaw10aiGNhuj1QVNVlluWe7SWZlKPWYc8yCg3dWU
-         YOFU2vwUBnjwv81OuV9MTuo42WUWReGTP11mc5At2ZdLoUXMI/52L7LUJ2FvmdKjqcgq
-         8uLv6ZqFjCS4bV0w9CkrmF6p+hXfTspePtq7rQL+hk9hjiT+WXZk0BkMDo445LwBvVDe
-         rDcQ==
-X-Gm-Message-State: AOAM530Kbsi0djojluUr0axH5bYEupZ1iY7dEKmmFvS1p4lE6QJvLVnr
-        t3K2hHaLcBXnaD0qwAp5QAfolyv1OVR3lv2R3j0q1LcXJ3DW
-X-Google-Smtp-Source: ABdhPJyiuinB4wyaiShTTyihly6OUsctSCZFeyepxrgMG/hoVffSUbfQSkrVVb+IxmJCzZB6b64e0ZyxU5h/sEzCAVBx5DS/D5+6
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VT+c1JX9b+efMdSYA4R6Y766uhFYT3cDPfGCzggz0J8=;
+        b=SQeLWbDLZnLB5rQeMlpJkuHmW7qq0zNwYF96hugklq1c8DbDP60gWqT/llXXEQGvWN
+         gnHvnEOvixrhuXGCFL9omeLxICNfhYRJ2qqLTdDRjXSTO17u1Et2wRrpJegWZvm44rBW
+         P5bK/whBDeCqc85gXhu0cGgwCKjWjHP2Ls+GwkH6T3nLx8OsN28vAKmuKbG/YQf8CXAO
+         1bQKUuR8pfD2ab4pfb7guLEz++r0nLBzIiG8KIT6SA6LtVREzHTyMAjf5WvzZCMvuevJ
+         6RB6sw+nPRm+SUTYOqn7v5rlYhtNTjSPv63/otlgJ+/ItDqy8aS+X3T4kLS9qlpKcFfw
+         99wg==
+X-Gm-Message-State: AOAM533hxU5fOcDd0fY3Cmf1WQ4Ch1WcmWtJ2WazjskHz3uhowE/fOp7
+        Qf6kNybawOpzyZB4T9WpoiQTkg==
+X-Google-Smtp-Source: ABdhPJxftDEYLTH/L4dCqlWpSz4vVGfCxRtfkMsrTeiQkJC5wwxXMBVd1dpWj7/e6UWZZG+13+k8Yg==
+X-Received: by 2002:a17:90a:19dc:: with SMTP id 28mr1806828pjj.103.1599531129539;
+        Mon, 07 Sep 2020 19:12:09 -0700 (PDT)
+Received: from [192.168.1.182] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id y16sm13527221pjr.40.2020.09.07.19.12.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Sep 2020 19:12:08 -0700 (PDT)
+Subject: Re: [PATCH] fs: align IOCB_* flags with RWF_* flags
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>
+References: <95de7ce4-9254-39f1-304f-4455f66bf0f4@kernel.dk>
+ <20200907201516.GC27537@casper.infradead.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <33762071-da92-9e63-639d-8afc0e65dcc7@kernel.dk>
+Date:   Mon, 7 Sep 2020 20:12:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:d188:: with SMTP id z8mr12890802ilz.292.1599518720879;
- Mon, 07 Sep 2020 15:45:20 -0700 (PDT)
-Date:   Mon, 07 Sep 2020 15:45:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002b721a05aec0f937@google.com>
-Subject: KASAN: use-after-free Write in io_wq_worker_running
-From:   syzbot <syzbot+45fa0a195b941764e0f0@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200907201516.GC27537@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 9/7/20 2:15 PM, Matthew Wilcox wrote:
+> On Mon, Aug 31, 2020 at 12:08:10PM -0600, Jens Axboe wrote:
+>> We have a set of flags that are shared between the two and inherired
+>> in kiocb_set_rw_flags(), but we check and set these individually.
+>> Reorder the IOCB flags so that the bottom part of the space is synced
+>> with the RWF flag space, and then we can do them all in one mask and
+>> set operation.
+>>
+>> The only exception is RWF_SYNC, which needs to mark IOCB_SYNC and
+>> IOCB_DSYNC. Do that one separately.
+>>
+>> This shaves 15 bytes of text from kiocb_set_rw_flags() for me.
+>>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> Suggested-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-syzbot found the following issue on:
+Added
 
-HEAD commit:    f4d51dff Linux 5.9-rc4
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13686dcd900000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f5c353182ed6199
-dashboard link: https://syzkaller.appspot.com/bug?extid=45fa0a195b941764e0f0
-compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1378ceed900000
+-- 
+Jens Axboe
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+45fa0a195b941764e0f0@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in instrument_atomic_write include/linux/instrumented.h:71 [inline]
-BUG: KASAN: use-after-free in atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
-BUG: KASAN: use-after-free in io_wqe_inc_running fs/io-wq.c:301 [inline]
-BUG: KASAN: use-after-free in io_wq_worker_running+0xb4/0x100 fs/io-wq.c:613
-Write of size 4 at addr ffff88821aaa388c by task io_wqe_worker-0/8276
-
-CPU: 0 PID: 8276 Comm: io_wqe_worker-0 Not tainted 5.9.0-rc4-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x1d6/0x29e lib/dump_stack.c:118
- print_address_description+0x66/0x620 mm/kasan/report.c:383
- __kasan_report mm/kasan/report.c:513 [inline]
- kasan_report+0x132/0x1d0 mm/kasan/report.c:530
- check_memory_region_inline mm/kasan/generic.c:183 [inline]
- check_memory_region+0x2b5/0x2f0 mm/kasan/generic.c:192
- instrument_atomic_write include/linux/instrumented.h:71 [inline]
- atomic_inc include/asm-generic/atomic-instrumented.h:240 [inline]
- io_wqe_inc_running fs/io-wq.c:301 [inline]
- io_wq_worker_running+0xb4/0x100 fs/io-wq.c:613
- schedule_timeout+0x15c/0x250 kernel/time/timer.c:1879
- io_wqe_worker+0x60b/0x810 fs/io-wq.c:580
- kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-
-Allocated by task 8273:
- kasan_save_stack mm/kasan/common.c:48 [inline]
- kasan_set_track mm/kasan/common.c:56 [inline]
- __kasan_kmalloc+0x100/0x130 mm/kasan/common.c:461
- kmem_cache_alloc_node_trace+0x1f7/0x2a0 mm/slab.c:3594
- kmalloc_node include/linux/slab.h:572 [inline]
- kzalloc_node include/linux/slab.h:677 [inline]
- io_wq_create+0x295/0x880 fs/io-wq.c:1064
- io_init_wq_offload fs/io_uring.c:7432 [inline]
- io_sq_offload_start fs/io_uring.c:7504 [inline]
- io_uring_create fs/io_uring.c:8625 [inline]
- io_uring_setup fs/io_uring.c:8694 [inline]
- __do_sys_io_uring_setup fs/io_uring.c:8700 [inline]
- __se_sys_io_uring_setup+0x18ed/0x2a00 fs/io_uring.c:8697
- do_syscall_64+0x31/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Freed by task 8175:
- kasan_save_stack mm/kasan/common.c:48 [inline]
- kasan_set_track+0x3d/0x70 mm/kasan/common.c:56
- kasan_set_free_info+0x17/0x30 mm/kasan/generic.c:355
- __kasan_slab_free+0xdd/0x110 mm/kasan/common.c:422
- __cache_free mm/slab.c:3418 [inline]
- kfree+0x113/0x200 mm/slab.c:3756
- __io_wq_destroy fs/io-wq.c:1138 [inline]
- io_wq_destroy+0x470/0x510 fs/io-wq.c:1146
- io_finish_async fs/io_uring.c:6836 [inline]
- io_ring_ctx_free fs/io_uring.c:7870 [inline]
- io_ring_exit_work+0x195/0x520 fs/io_uring.c:7954
- process_one_work+0x789/0xfc0 kernel/workqueue.c:2269
- worker_thread+0xaa4/0x1460 kernel/workqueue.c:2415
- kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-
-The buggy address belongs to the object at ffff88821aaa3800
- which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 140 bytes inside of
- 1024-byte region [ffff88821aaa3800, ffff88821aaa3c00)
-The buggy address belongs to the page:
-page:00000000be451134 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x21aaa3
-flags: 0x57ffe0000000200(slab)
-raw: 057ffe0000000200 ffffea00086a2148 ffffea0008536b08 ffff8880aa440700
-raw: 0000000000000000 ffff88821aaa3000 0000000100000002 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff88821aaa3780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88821aaa3800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff88821aaa3880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                      ^
- ffff88821aaa3900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88821aaa3980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
