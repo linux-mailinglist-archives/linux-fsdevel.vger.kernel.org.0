@@ -2,177 +2,263 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D250261DD8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 21:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E342261D7D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 21:38:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732141AbgIHTmx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 15:42:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53014 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730895AbgIHPwr (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 11:52:47 -0400
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [IPv6:2001:1600:3:17::190f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21F52C0619C6
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Sep 2020 08:44:30 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Bm8bC0hq3zlhP6d;
-        Tue,  8 Sep 2020 17:44:23 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Bm8b8365Jzlh8TD;
-        Tue,  8 Sep 2020 17:44:20 +0200 (CEST)
-Subject: Re: [RFC PATCH v8 1/3] fs: Introduce AT_INTERPRETED flag for
- faccessat2(2)
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        John Johansen <john.johansen@canonical.com>
-References: <20200908075956.1069018-1-mic@digikod.net>
- <20200908075956.1069018-2-mic@digikod.net>
- <d216615b48c093ebe9349a9dab3830b646575391.camel@linux.ibm.com>
- <75451684-58f3-b946-dca4-4760fa0d7440@digikod.net>
- <01c23b2607a7dbf734722399931473c053d9b362.camel@linux.ibm.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <ed832b7f-dc47-fe54-468b-41de3b64fd83@digikod.net>
-Date:   Tue, 8 Sep 2020 17:44:19 +0200
-User-Agent: 
+        id S1731832AbgIHThu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 15:37:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48792 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730849AbgIHPzp (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Sep 2020 11:55:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id E7EC8B603;
+        Tue,  8 Sep 2020 15:54:18 +0000 (UTC)
+Subject: Re: PROBLEM: Long Workqueue delays V2
+To:     Jim Baxter <jim_baxter@mentor.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org
+Cc:     linux-usb@vger.kernel.org,
+        "Frkuska, Joshua" <Joshua_Frkuska@mentor.com>,
+        "Resch Carsten (CM/ESO6)" <Carsten.Resch@de.bosch.com>,
+        "Rosca, Eugeniu (ADITG/ESB)" <erosca@de.adit-jv.com>,
+        "Craske, Mark" <Mark_Craske@mentor.com>,
+        "Brown, Michael" <michael_brown@mentor.com>
+References: <625615f2-3a6b-3136-35f9-2f2fb3c110cf@mentor.com>
+ <066753ec-eddc-d7f6-5cc8-fe282baba6ec@mentor.com>
+ <bf3d7f89-e652-a26b-bb27-c6dbef08e28c@mentor.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <335b22f6-e579-5ff1-5353-7ab14ca43662@suse.cz>
+Date:   Tue, 8 Sep 2020 17:54:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <01c23b2607a7dbf734722399931473c053d9b362.camel@linux.ibm.com>
-Content-Type: text/plain; charset=iso-8859-15
+In-Reply-To: <bf3d7f89-e652-a26b-bb27-c6dbef08e28c@mentor.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 8/27/20 2:06 PM, Jim Baxter wrote:
+> Has anyone any ideas of how to investigate this delay further?
+> 
+> Comparing the perf output for unplugging the USB stick and using umount
+> which does not cause these delays in other workqueues the main difference
 
-On 08/09/2020 17:24, Mimi Zohar wrote:
-> On Tue, 2020-09-08 at 14:43 +0200, Mickaël Salaün wrote:
->> On 08/09/2020 14:28, Mimi Zohar wrote:
->>> Hi Mickael,
+I don't have that much insight in this, but isn't it that in case of umount, the
+exactly same work is done in the umount process context and not workqueues? So
+it might take the same time and cpu, stress the same paths, but as it's
+attributed to the process, there are no workqueue delays reported? Or does your
+measurements suggest otherwise?
+
+> is that the problem case is executing the code in invalidate_mapping_pages()
+> and a large part of that arch_local_irq_restore() which is part of
+> releasing a lock, I would usually expect that requesting a lock would be
+> where delays may occur.
+> 
+> 	--94.90%--invalidate_partition
+> 	   __invalidate_device
+> 	   |          
+> 	   |--64.55%--invalidate_bdev
+> 	   |  |          
+> 	   |   --64.13%--invalidate_mapping_pages
+> 	   |     |          
+> 	   |     |--24.09%--invalidate_inode_page
+> 	   |     |   |          
+> 	   |     |   --23.44%--remove_mapping
+> 	   |     |     |          
+> 	   |     |      --23.20%--__remove_mapping
+> 	   |     |        |          
+> 	   |     |         --21.90%--arch_local_irq_restore
+> 	   |     |          
+> 	   |     |--22.44%--arch_local_irq_enable
+> 
+> Best regards,
+> Jim
+> 
+> -------- Original Message --------
+> Subject: Re: PROBLEM: Long Workqueue delays V2
+> From: Jim Baxter <jim_baxter@mentor.com>
+> To: 
+> Date: Wed Aug 19 2020 14:12:24 GMT+0100 (British Summer Time)
+> 
+>> Added linux-block List which may also be relevant to this issue.
+>> 
+>> -------- Original Message --------
+>> Subject: PROBLEM: Long Workqueue delays V2
+>> From: Jim Baxter <jim_baxter@mentor.com>
+>> To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+>> CC: "Resch Carsten (CM/ESO6)" <Carsten.Resch@de.bosch.com>, "Rosca, Eugeniu (ADITG/ESB)" <erosca@de.adit-jv.com>
+>> Date: Tue, 18 Aug 2020 12:58:13 +0100
+>> 
+>>> I am asking this question again to include the fs-devel list.
 >>>
->>> On Tue, 2020-09-08 at 09:59 +0200, Mickaël Salaün wrote:
->>>> diff --git a/fs/open.c b/fs/open.c
->>>> index 9af548fb841b..879bdfbdc6fa 100644
->>>> --- a/fs/open.c
->>>> +++ b/fs/open.c
->>>> @@ -405,9 +405,13 @@ static long do_faccessat(int dfd, const char __user *filename, int mode, int fla
->>>>  	if (mode & ~S_IRWXO)	/* where's F_OK, X_OK, W_OK, R_OK? */
->>>>  		return -EINVAL;
->>>>  
->>>> -	if (flags & ~(AT_EACCESS | AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH))
->>>> +	if (flags & ~(AT_EACCESS | AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH |
->>>> +				AT_INTERPRETED))
->>>>  		return -EINVAL;
->>>>  
->>>> +	/* Only allows X_OK with AT_INTERPRETED for now. */
->>>> +	if ((flags & AT_INTERPRETED) && !(mode & S_IXOTH))
->>>> +		return -EINVAL;
->>>>  	if (flags & AT_SYMLINK_NOFOLLOW)
->>>>  		lookup_flags &= ~LOOKUP_FOLLOW;
->>>>  	if (flags & AT_EMPTY_PATH)
->>>> @@ -426,7 +430,30 @@ static long do_faccessat(int dfd, const char __user *filename, int mode, int fla
->>>>  
->>>>  	inode = d_backing_inode(path.dentry);
->>>>  
->>>> -	if ((mode & MAY_EXEC) && S_ISREG(inode->i_mode)) {
->>>> +	if ((flags & AT_INTERPRETED)) {
->>>> +		/*
->>>> +		 * For compatibility reasons, without a defined security policy
->>>> +		 * (via sysctl or LSM), using AT_INTERPRETED must map the
->>>> +		 * execute permission to the read permission.  Indeed, from
->>>> +		 * user space point of view, being able to execute data (e.g.
->>>> +		 * scripts) implies to be able to read this data.
->>>> +		 *
->>>> +		 * The MAY_INTERPRETED_EXEC bit is set to enable LSMs to add
->>>> +		 * custom checks, while being compatible with current policies.
->>>> +		 */
->>>> +		if ((mode & MAY_EXEC)) {
 >>>
->>> Why is the ISREG() test being dropped?   Without dropping it, there
->>> would be no reason for making the existing test an "else" clause.
->>
->> The ISREG() is not dropped, it is just moved below with the rest of the
->> original code. The corresponding code (with the path_noexec call) for
->> AT_INTERPRETED is added with the next commit, and it relies on the
->> sysctl configuration for compatibility reasons.
-> 
-> Dropping the S_ISREG() check here without an explanation is wrong and
-> probably unsafe, as it is only re-added in the subsequent patch and
-> only for the "sysctl_interpreted_access" case.  Adding this new test
-> after the existing test is probably safer.  If the original test fails,
-> it returns the same value as this test -EACCES.
-
-The original S_ISREG() is ANDed with a MAY_EXEC check and with
-path_noexec(). The goal of this patch is indeed to have a different
-behavior than the original faccessat2(2) thanks to the AT_INTERPRETED
-flag. This can't work if we add the sysctl check after the current
-path_noexec() check. Moreover, in this patch an exec check is translated
-to a read check. This new behavior is harmless because using
-AT_INTERPRETED with the current faccessat2(2) would return -EINVAL. The
-current vanilla behavior is then unchanged.
-
-The whole point of this patch series is to have a policy which do not
-break current systems and is easy to configure by the sysadmin through
-sysctl. This patch series also enable LSMs to take advantage of it
-without the current faccess* limitations. For instance, it is then
-possible for an LSM to implement more complex policies which may allow
-execution of data from pipes or sockets, while verifying the source of
-this data. Enforcing S_ISREG() in this patch would forbid such policies
-to be implemented. In the case of IMA, you may want to add the same
-S_ISREG() check.
-
-> 
-> Mimi
-> 
->>
+>>> We have issues with the workqueue of the kernel overloading the CPU 0 
+>>> when we we disconnect a USB stick.
 >>>
->>>> +			mode |= MAY_INTERPRETED_EXEC;
->>>> +			/*
->>>> +			 * For compatibility reasons, if the system-wide policy
->>>> +			 * doesn't enforce file permission checks, then
->>>> +			 * replaces the execute permission request with a read
->>>> +			 * permission request.
->>>> +			 */
->>>> +			mode &= ~MAY_EXEC;
->>>> +			/* To be executed *by* user space, files must be readable. */
->>>> +			mode |= MAY_READ;
+>>> This results in other items on the shared workqueue being delayed by
+>>> around 6.5 seconds with a default kernel configuration and 2.3 seconds
+>>> on a config tailored for our RCar embedded platform.
+>>>
+>>>
+>>>
+>>> We first noticed this issue on custom hardware and we have recreated it
+>>> on an RCar Starter Kit using a test module [1] to replicate the
+>>> behaviour, the test module outputs any delays of greater then 9ms.
+>>>
+>>> To run the test we have a 4GB random file on a USB stick and perform
+>>> the following test.
+>>> The stick is mounted as R/O and we are copying data from the stick:
+>>>
+>>> - Mount the stick.
+>>> mount -o ro,remount /dev/sda1
+>>>
+>>> - Load the Module:
+>>> # taskset -c 0 modprobe latency-mon
+>>>
+>>> - Copy large amount of data from the stick:
+>>> # dd if=/run/media/sda1/sample.txt of=/dev/zero
+>>> [ 1437.517603] DELAY: 10
+>>> 8388607+1 records in
+>>> 8388607+1 records out
+>>>
+>>>
+>>> - Disconnect the USB stick:
+>>> [ 1551.796792] usb 2-1: USB disconnect, device number 2
+>>> [ 1558.625517] DELAY: 6782
+>>>
+>>>
+>>> The Delay output 6782 is in milliseconds.
+>>>
+>>>
+>>>
+>>> Using umount stops the issue occurring but is unfortunately not guaranteed
+>>> in our particular system.
+>>>
+>>>
+>>> From my analysis the hub_event workqueue kworker/0:1+usb thread uses around
+>>> 98% of the CPU.
+>>>
+>>> I have traced the workqueue:workqueue_queue_work function while unplugging the USB
+>>> and there is no particular workqueue function being executed a lot more then the 
+>>> others for the kworker/0:1+usb thread.
+>>>
+>>>
+>>> Using perf I identified the hub_events workqueue was spending a lot of time in
+>>> invalidate_partition(), I have included a cut down the captured data from perf in
+>>> [2] which shows the additional functions where the kworker spends most of its time.
+>>>
+>>>
+>>> I am aware there will be delays on the shared workqueue, are the delays
+>>> we are seeing considered normal?
+>>>
+>>>
+>>> Is there any way to mitigate or identify where the delay is?
+>>> I am unsure if this is a memory or filesystem subsystem issue.
+>>>
+>>>
+>>> Thank you for you help.
+>>>
+>>> Thanks,
+>>> Jim Baxter
+>>>
+>>> [1] Test Module:
+>>> // SPDX-License-Identifier: GPL-2.0
+>>> /*
+>>>  * Simple WQ latency monitoring
+>>>  *
+>>>  * Copyright (C) 2020 Advanced Driver Information Technology.
+>>>  */
+>>>
+>>> #include <linux/init.h>
+>>> #include <linux/ktime.h>
+>>> #include <linux/module.h>
+>>>
+>>> #define PERIOD_MS 100
+>>>
+>>> static struct delayed_work wq;
+>>> static u64 us_save;
+>>>
+>>> static void wq_cb(struct work_struct *work)
+>>> {
+>>> 	u64 us = ktime_to_us(ktime_get());
+>>> 	u64 us_diff = us - us_save;
+>>> 	u64 us_print = 0;
+>>>
+>>> 	if (!us_save)
+>>> 		goto skip_print;
+>>>
+>>>
+>>> 	us_print = us_diff / 1000 - PERIOD_MS;
+>>> 	if (us_print > 9)
+>>> 		pr_crit("DELAY: %lld\n", us_print);
+>>>
+>>> skip_print:
+>>> 	us_save = us;
+>>> 	schedule_delayed_work(&wq, msecs_to_jiffies(PERIOD_MS));
+>>> }
+>>>
+>>> static int latency_mon_init(void)
+>>> {
+>>> 	us_save = 0;
+>>> 	INIT_DELAYED_WORK(&wq, wq_cb);
+>>> 	schedule_delayed_work(&wq, msecs_to_jiffies(PERIOD_MS));
+>>>
+>>> 	return 0;
+>>> }
+>>>
+>>> static void latency_mon_exit(void)
+>>> {
+>>> 	cancel_delayed_work_sync(&wq);
+>>> 	pr_info("%s\n", __func__);
+>>> }
+>>>
+>>> module_init(latency_mon_init);
+>>> module_exit(latency_mon_exit);
+>>> MODULE_AUTHOR("Eugeniu Rosca <erosca@de.adit-jv.com>");
+>>> MODULE_LICENSE("GPL");
+>>>
+>>>
+>>> [2] perf trace:
+>>>     95.22%     0.00%  kworker/0:2-eve  [kernel.kallsyms]
+>>>     |
+>>>     ---ret_from_fork
+>>>        kthread
+>>>        worker_thread
+>>>        |          
+>>>         --95.15%--process_one_work
+>>> 		  |          
+>>> 		   --94.99%--hub_event
+>>> 			 |          
+>>> 			  --94.99%--usb_disconnect
+>>> 			  <snip>
+>>> 				|  
+>>> 				--94.90%--invalidate_partition
+>>> 				   __invalidate_device
+>>> 				   |          
+>>> 				   |--64.55%--invalidate_bdev
+>>> 				   |  |          
+>>> 				   |   --64.13%--invalidate_mapping_pages
+>>> 				   |     |          
+>>> 				   |     |--24.09%--invalidate_inode_page
+>>> 				   |     |   |          
+>>> 				   |     |   --23.44%--remove_mapping
+>>> 				   |     |     |          
+>>> 				   |     |      --23.20%--__remove_mapping
+>>> 				   |     |        |          
+>>> 				   |     |         --21.90%--arch_local_irq_restore
+>>> 				   |     |          
+>>> 				   |     |--22.44%--arch_local_irq_enable
+>>> 				   |          
+>>> 					--30.35%--shrink_dcache_sb 
+>>> 					<snip>
+>>> 					  |      
+>>> 					  --30.17%--truncate_inode_pages_range
+>>>
 > 
-> 
+
