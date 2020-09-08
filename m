@@ -2,132 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 17F7A261469
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 18:20:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 947202615DD
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 18:57:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731876AbgIHQUU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 12:20:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59170 "EHLO mail.kernel.org"
+        id S1731868AbgIHQ5g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 12:57:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731843AbgIHQUH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 12:20:07 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        id S1731847AbgIHQUW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Sep 2020 12:20:22 -0400
+Received: from kernel.org (unknown [87.71.73.56])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F28EC205CB;
-        Tue,  8 Sep 2020 16:10:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9CE821D93;
+        Tue,  8 Sep 2020 12:31:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599581448;
-        bh=v2zsVbidV/dpXBuxnNOOWyBxJCinNIceKjsE+Knsapc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=qcRMUHSfIbb1We5HAkPbiDyxoStGFeeDjZQINQRCiB02sz2KJR+wSF9e8rh2hFWX/
-         pRdR7L5L4Ji67IrqudFk9FYmW37g7LVLBI5MLHW7kGBwH6bYgz6ktZzXzMdso0klAC
-         fZP1Nr1+cyUG5NNMwSPOjPXC4hfYj4cgJjooh2u8=
-Message-ID: <f4d38a20cb0f25b137fe07a7f43358ab3a459038.camel@kernel.org>
-Subject: Re: [PATCH] fsync.2: ERRORS: add EIO and ENOSPC
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Jan Kara <jack@suse.cz>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     milan.opensource@gmail.com, lkml <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Date:   Tue, 08 Sep 2020 12:10:46 -0400
-In-Reply-To: <20200908112742.GA2956@quack2.suse.cz>
-References: <1598685186-27499-1-git-send-email-milan.opensource@gmail.com>
-         <CAKgNAkiTjtdaQxbCYS67+SdqSPaGzJnfLEEMFgcoXjHLDxgemw@mail.gmail.com>
-         <20200908112742.GA2956@quack2.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        s=default; t=1599568323;
+        bh=E4o1TDNMgXR3ltqTwm9aXT1R3QWQWrh1SreqKE+iRdk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SyEwTcWeWaj5fnJOWcZkA4g1K/6G3dZ9eGWpWoOs8wFLveiNeFY/HN9Ys3hddw4Ix
+         Hda12jT7gq0vHLbLYRlYfMUWaeSI3gTzRMim2LXupXZs1Vve7Fui8jwLq6j5cAimFf
+         5f9ZDd5aFctsg+vQXtTjJfOj10UunsKMmHI5oNQc=
+Date:   Tue, 8 Sep 2020 15:31:50 +0300
+From:   Mike Rapoport <rppt@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-riscv@lists.infradead.org, x86@kernel.org
+Subject: Re: [PATCH v4 6/6] mm: secretmem: add ability to reserve memory at
+ boot
+Message-ID: <20200908123150.GF1976319@kernel.org>
+References: <20200818141554.13945-1-rppt@kernel.org>
+ <20200818141554.13945-7-rppt@kernel.org>
+ <03ec586d-c00c-c57e-3118-7186acb7b823@redhat.com>
+ <20200819115335.GU752365@kernel.org>
+ <10bf57a9-c3c2-e13c-ca50-e872b7a2db0c@redhat.com>
+ <20200819173347.GW752365@kernel.org>
+ <6c8b30fb-1b6c-d446-0b09-255b79468f7c@redhat.com>
+ <20200820155228.GZ752365@kernel.org>
+ <fdda6ba7-9418-2b52-eee8-ce5e9bfdb6ad@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fdda6ba7-9418-2b52-eee8-ce5e9bfdb6ad@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-09-08 at 13:27 +0200, Jan Kara wrote:
-> Added Jeff to CC since he has written the code...
-> 
-> On Mon 07-09-20 09:11:06, Michael Kerrisk (man-pages) wrote:
-> > [Widening the CC to include Andrew and linux-fsdevel@]
-> > [Milan: thanks for the patch, but it's unclear to me from your commit
-> > message how/if you verified the details.]
+Hi David,
+
+On Tue, Sep 08, 2020 at 11:09:19AM +0200, David Hildenbrand wrote:
+> On 20.08.20 17:52, Mike Rapoport wrote:
+> > On Wed, Aug 19, 2020 at 07:45:29PM +0200, David Hildenbrand wrote:
+> >> On 19.08.20 19:33, Mike Rapoport wrote:
+> >>> On Wed, Aug 19, 2020 at 02:10:43PM +0200, David Hildenbrand wrote:
+> >>>> On 19.08.20 13:53, Mike Rapoport wrote:
+> >>>>> On Wed, Aug 19, 2020 at 12:49:05PM +0200, David Hildenbrand wrote:
+> >>>>>> On 18.08.20 16:15, Mike Rapoport wrote:
+> >>>>>>> From: Mike Rapoport <rppt@linux.ibm.com>
+> >>>>>>>
+> >>>>>>> Taking pages out from the direct map and bringing them back may create
+> >>>>>>> undesired fragmentation and usage of the smaller pages in the direct
+> >>>>>>> mapping of the physical memory.
+> >>>>>>>
+> >>>>>>> This can be avoided if a significantly large area of the physical memory
+> >>>>>>> would be reserved for secretmem purposes at boot time.
+> >>>>>>>
+> >>>>>>> Add ability to reserve physical memory for secretmem at boot time using
+> >>>>>>> "secretmem" kernel parameter and then use that reserved memory as a global
+> >>>>>>> pool for secret memory needs.
+> >>>>>>
+> >>>>>> Wouldn't something like CMA be the better fit? Just wondering. Then, the
+> >>>>>> memory can actually be reused for something else while not needed.
+> >>>>>
+> >>>>> The memory allocated as secret is removed from the direct map and the
+> >>>>> boot time reservation is intended to reduce direct map fragmentatioan
+> >>>>> and to avoid splitting 1G pages there. So with CMA I'd still need to
+> >>>>> allocate 1G chunks for this and once 1G page is dropped from the direct
+> >>>>> map it still cannot be reused for anything else until it is freed.
+> >>>>>
+> >>>>> I could use CMA to do the boot time reservation, but doing the
+> >>>>> reservesion directly seemed simpler and more explicit to me.
+> >>>>
+> >>>> Well, using CMA would give you the possibility to let the memory be used
+> >>>> for other purposes until you decide it's the right time to take it +
+> >>>> remove the direct mapping etc.
+> >>>
+> >>> I still can't say I follow you here. If I reseve a CMA area as a pool
+> >>> for secret memory 1G pages, it is still reserved and it still cannot be
+> >>> used for other purposes, right?
+> >>
+> >> So, AFAIK, if you create a CMA pool it can be used for any MOVABLE
+> >> allocations (similar to ZONE_MOVABLE) until you actually allocate CMA
+> >> memory from that region. Other allocations on that are will then be
+> >> migrated away (using alloc_contig_range()).
+> >>
+> >> For example, if you have a 1~GiB CMA area, you could allocate 4~MB pages
+> >> from that CMA area on demand (removing the direct mapping, etc ..), and
+> >> free when no longer needed (instantiating the direct mapping). The free
+> >> memory in that area could used for MOVABLE allocations.
 > > 
-> > Andrew, maybe you (or someone else) can comment, since long ago your
+> > The boot time resrvation is intended to avoid splitting 1G pages in the
+> > direct map. Without the boot time reservation, we maintain a pool of 2M
+> > pages so the 1G pages are split and 2M pages remain unsplit.
 > > 
-> >     commit f79e2abb9bd452d97295f34376dedbec9686b986
-> >     Author: Andrew Morton <akpm@osdl.org>
-> >     Date:   Fri Mar 31 02:30:42 2006 -0800
+> > If I scale your example to match the requirement to avoid splitting 1G
+> > pages in the direct map, that would mean creating a CMA area of several
+> > tens of gigabytes and then doing cma_alloc() of 1G each time we need to
+> > refill the secretmem pool. 
 > > 
-> > included a comment that is referred to in  stackoverflow discussion
-> > about this topic (that SO discussion is in turn referred to by
-> > https://bugzilla.kernel.org/show_bug.cgi?id=194757).
+> > It is quite probable that we won't be able to get 1G from CMA after the
+> > system worked for some time.
+> 
+> Why? It should only contain movable pages, and if that is not the case,
+> it's a bug we have to fix. It should behave just as ZONE_MOVABLE.
+> (although I agree that in corner cases, alloc_contig_pages() might
+> temporarily fail on some chunks - e.g., with long/short-term page
+> pinnings - in contrast to memory offlining, it won't retry forever)
+ 
+The use-case I had in mind for the boot time reservation in secretmem is
+a machine that runs VMs and there is a desire to have the VM memory
+protected from the host. In a way this should be similar to booting a
+host with mem=X where most of the machine memory never gets to be used
+by the host kernel.
+
+For such use case, boot time reservation controlled by the command
+line parameter seems to me simpler than using CMA. I agree that there is
+no way to use the reserved memory for other purpose, but then we won't
+need to create physically contiguous chunk of several gigs every time a
+VM is created.
+
+> > With boot time reservation we won't need physcally contiguous 1G to
+> > satisfy smaller allocation requests for secretmem because we don't need
+> > to maintain 1G mappings in the secretmem pool.
+> 
+> You can allocate within your CMA area however you want - doesn't need to
+> be whole gigabytes in case there is no need for it.
+
+The whole point of boot time reservation is to prevent splitting 1G
+pages in the direct map. Allocating smaller chunks will still cause
+fragmentation of the direct map.
+
+> Again, the big benefit of CMA is that the reserved memory can be reused
+> for other purpose while nobody is actually making use of it.
+
+Right, but I think if a user explicitly asked to use X gigabytes for the
+secretmem we can allow that.
+
 > > 
-> > The essence as I understand it, is this:
-> > (1) fsync() (and similar) may fail EIO or ENOSPC, at which point data
-> > has not been synced.
-> > (2) In this case, the EIO/ENOSPC setting is cleared so that...
-> > (3) A subsequent fsync() might return success, but...
-> > (4) That doesn't mean that the data in (1) landed on the disk.
+> > That said, I believe the addition of the boot time reservation, either
+> > direct or with CMA, can be added as an incrememntal patch after the
+> > "core" functionality is merged.
 > 
-> Correct.
+> I am not convinced that we want to let random processes to do
+> alloc_pages() in the range of tens of gigabytes. It's not just mlocked
+> memory. I prefer either using CMA or relying on the boot time
+> reservations. But let's see if there are other opinions and people just
+> don't care.
 > 
-> > The proposed manual page patch below wants to document this, but I'd
-> > be happy to have an FS-knowledgeable person comment before I apply.
+> Having that said, I have no further comments.
 > 
-> Just a small comment below:
+> -- 
+> Thanks,
 > 
-> > On Sat, 29 Aug 2020 at 09:13, <milan.opensource@gmail.com> wrote:
-> > > From: Milan Shah <milan.opensource@gmail.com>
-> > > 
-> > > This Fix addresses Bug 194757.
-> > > Ref: https://bugzilla.kernel.org/show_bug.cgi?id=194757
-> > > ---
-> > >  man2/fsync.2 | 13 +++++++++++++
-> > >  1 file changed, 13 insertions(+)
-> > > 
-> > > diff --git a/man2/fsync.2 b/man2/fsync.2
-> > > index 96401cd..f38b3e4 100644
-> > > --- a/man2/fsync.2
-> > > +++ b/man2/fsync.2
-> > > @@ -186,6 +186,19 @@ In these cases disk caches need to be disabled using
-> > >  or
-> > >  .BR sdparm (8)
-> > >  to guarantee safe operation.
-> > > +
-> > > +When
-> > > +.BR fsync ()
-> > > +or
-> > > +.BR fdatasync ()
-> > > +returns
-> > > +.B EIO
-> > > +or
-> > > +.B ENOSPC
-> > > +any error flags on pages in the file mapping are cleared, so subsequent synchronisation attempts
-> > > +will return without error. It is
-> > > +.I not
-> > > +safe to retry synchronisation and assume that a non-error return means prior writes are now on disk.
-> > >  .SH SEE ALSO
-> > >  .BR sync (1),
-> > >  .BR bdflush (2),
-> 
-> So the error state isn't really stored "on pages in the file mapping".
-> Current implementation (since 4.14) is that error state is stored in struct
-> file (I think this tends to be called "file description" in manpages) and
-> so EIO / ENOSPC is reported once for each file description of the file that
-> was open before the error happened. Not sure if we want to be so precise in
-> the manpages or if it just confuses people. Anyway your takeway that no
-> error on subsequent fsync() does not mean data was written is correct.
-> 
-> 								Honza
+> David / dhildenb
 > 
 
-Yep.
-
-My only comment is that there is nothing special about EIO and ENOSPC.
-All errors are the same in this regard. Basically, issuing a new fsync
-after a failed one doesn't do any good. You need to redirty the pages
-first.
 -- 
-Jeff Layton <jlayton@kernel.org>
-
+Sincerely yours,
+Mike.
