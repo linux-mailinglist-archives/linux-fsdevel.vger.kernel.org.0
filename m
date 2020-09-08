@@ -2,185 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D02AC261854
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 19:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC625261768
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 19:33:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731631AbgIHRwi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 13:52:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56828 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731606AbgIHQNo (ORCPT
+        id S1727051AbgIHRdB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 13:33:01 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44412 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731496AbgIHQPU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 12:13:44 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EDE9C0619EA
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Sep 2020 06:57:11 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id j2so17118468ioj.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Sep 2020 06:57:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lLPV/2TbMLCWwjxZmMjGQAv9RQQ5QdmKtS2Q2m060x4=;
-        b=uJazPLWezWgC/PxcgavzXTzULVjK+HH/0rnfAycuhBQCpgkDFk/fvQpqKS7RzEpiXG
-         ERAROiLm7VLunZJpzttkIeY7b1VyZ7vdAdTmly29bZuLWeEEHdxvjUkOpVL/XgnAQLYP
-         U563XLl1LCPU1Vs+xCapjB1tF5YvK5Li0o6rXx6tkcIIdFWG/q5TU59d1Vbfyhey0Iqk
-         FjDr8t0q6o0KqVSUzgviXQkWRhNR4U26NzOXYB0n6lNBNEhD4nJZeQCKGy7YfpsuHGrd
-         n/zLgKw2/0PIclu34Gpdgs81l5h979bDDAONUe9gK227ECpK+s8PjAKkmwpLLY/KXPFR
-         17Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lLPV/2TbMLCWwjxZmMjGQAv9RQQ5QdmKtS2Q2m060x4=;
-        b=CdQdnGfPB+ToY2y7fN1oXnwHzi6O6rEoqcLlXn3+ms1AK+jyNfvD0bcO4VQrSZ5RwH
-         bHx/TXpK7tJBhIdOy1US2gdq/VH8S1JnBMDVxnja1uFBQMc5R/Jjb+F9UR3xoA4dWJkV
-         00qapa5xbBPEcUsjgBOYSfgbefkaU6ea4iEQ1SWXxK9kHYDiY4oDCZwL5x1GepZTHhYV
-         SEN4/yjKBFDr4ynhM98otcwByFicPpqOaQ4peMwfD3/bb/H5wVRPQA3R1lXmW3Z10i3+
-         g9cAYZSSP1DiY1JmKH9KHVDRgCszdZYl/DUaiv4v6V+hLotbYzPeB/55e98FnyMlglK/
-         GnAw==
-X-Gm-Message-State: AOAM533WhVqjceahlLfDY7g0Q0YLenID1tbhAzss2/4VgtWVwYRchMk4
-        wXvmFY3wgZ77Ub5XTPUrLVcCUw==
-X-Google-Smtp-Source: ABdhPJxhox+LWrxM6t17Fh8h96lJUzdn1I3RGOvUMfkfWJnmtrv7CdbTJs/zo6NSzHwk+R3I3Syr5A==
-X-Received: by 2002:a6b:c8d6:: with SMTP id y205mr527426iof.177.1599573430313;
-        Tue, 08 Sep 2020 06:57:10 -0700 (PDT)
-Received: from [192.168.1.10] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id e28sm10512528ill.79.2020.09.08.06.57.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Sep 2020 06:57:09 -0700 (PDT)
-Subject: Re: [PATCH v6 3/3] io_uring: allow disabling rings during the
- creation
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Tue, 8 Sep 2020 12:15:20 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 088FEIPO064333;
+        Tue, 8 Sep 2020 11:24:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=7IkzNkZoIUlzOFHw4iTv2RvvdzGg7LZHb0YG+GU5VtQ=;
+ b=Iq2UPoVJJ6oPpgMLMZ6A6VwVNUCH6DP8XdwhNnkdWSC41s+l1O1Ixh6fujSHT63KIfmE
+ 8q5OYZDVSCxPgEo/AyNaMFYJrysqmwHzsyQ9UdKhMFB+F87i+P97/5MWIEFcUhXzz5X0
+ LVgXeHP9OABM4SY32A4pOUp+EwE6u2Z6qScXkOo9NNk0AbUG9zw49Db4lJtXVGhsrXU9
+ OiHGTexSLOrJPKEplVVrvCCZUDwmE0IzN/TrGzeIJdFWDUAu39uICBne4u+dTw2QaRZR
+ etNrZxYgd+03HXpNiVvJ5buymzV7nyJ5tbEzJQ/el0Di9ooawDBbM4gsLc84Fl2wJiDT 2w== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 33e949rn8d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Sep 2020 11:24:39 -0400
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 088FEl3b066233;
+        Tue, 8 Sep 2020 11:24:38 -0400
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 33e949rn6w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Sep 2020 11:24:38 -0400
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 088FNRZ2013119;
+        Tue, 8 Sep 2020 15:24:36 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma05fra.de.ibm.com with ESMTP id 33c2a8a6b3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Sep 2020 15:24:35 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 088FOXh431850958
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 8 Sep 2020 15:24:33 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8F2065204F;
+        Tue,  8 Sep 2020 15:24:33 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.24.202])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 295D75204E;
+        Tue,  8 Sep 2020 15:24:25 +0000 (GMT)
+Message-ID: <01c23b2607a7dbf734722399931473c053d9b362.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v8 1/3] fs: Introduce AT_INTERPRETED flag for
+ faccessat2(2)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
         Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
-        Aleksa Sarai <asarai@suse.de>,
-        Sargun Dhillon <sargun@sargun.me>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-References: <20200827145831.95189-1-sgarzare@redhat.com>
- <20200827145831.95189-4-sgarzare@redhat.com>
- <20200908134448.sg7evdrfn6xa67sn@steredhat>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <045e0907-4771-0b7f-d52a-4af8197e6954@kernel.dk>
-Date:   Tue, 8 Sep 2020 07:57:08 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200908134448.sg7evdrfn6xa67sn@steredhat>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        John Johansen <john.johansen@canonical.com>
+Date:   Tue, 08 Sep 2020 11:24:25 -0400
+In-Reply-To: <75451684-58f3-b946-dca4-4760fa0d7440@digikod.net>
+References: <20200908075956.1069018-1-mic@digikod.net>
+         <20200908075956.1069018-2-mic@digikod.net>
+         <d216615b48c093ebe9349a9dab3830b646575391.camel@linux.ibm.com>
+         <75451684-58f3-b946-dca4-4760fa0d7440@digikod.net>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-08_07:2020-09-08,2020-09-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ adultscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
+ impostorscore=0 malwarescore=0 phishscore=0 mlxlogscore=525
+ lowpriorityscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2006250000 definitions=main-2009080138
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/8/20 7:44 AM, Stefano Garzarella wrote:
-> Hi Jens,
+On Tue, 2020-09-08 at 14:43 +0200, Mickaël Salaün wrote:
+> On 08/09/2020 14:28, Mimi Zohar wrote:
+> > Hi Mickael,
+> > 
+> > On Tue, 2020-09-08 at 09:59 +0200, Mickaël Salaün wrote:
+> >> diff --git a/fs/open.c b/fs/open.c
+> >> index 9af548fb841b..879bdfbdc6fa 100644
+> >> --- a/fs/open.c
+> >> +++ b/fs/open.c
+> >> @@ -405,9 +405,13 @@ static long do_faccessat(int dfd, const char __user *filename, int mode, int fla
+> >>  	if (mode & ~S_IRWXO)	/* where's F_OK, X_OK, W_OK, R_OK? */
+> >>  		return -EINVAL;
+> >>  
+> >> -	if (flags & ~(AT_EACCESS | AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH))
+> >> +	if (flags & ~(AT_EACCESS | AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH |
+> >> +				AT_INTERPRETED))
+> >>  		return -EINVAL;
+> >>  
+> >> +	/* Only allows X_OK with AT_INTERPRETED for now. */
+> >> +	if ((flags & AT_INTERPRETED) && !(mode & S_IXOTH))
+> >> +		return -EINVAL;
+> >>  	if (flags & AT_SYMLINK_NOFOLLOW)
+> >>  		lookup_flags &= ~LOOKUP_FOLLOW;
+> >>  	if (flags & AT_EMPTY_PATH)
+> >> @@ -426,7 +430,30 @@ static long do_faccessat(int dfd, const char __user *filename, int mode, int fla
+> >>  
+> >>  	inode = d_backing_inode(path.dentry);
+> >>  
+> >> -	if ((mode & MAY_EXEC) && S_ISREG(inode->i_mode)) {
+> >> +	if ((flags & AT_INTERPRETED)) {
+> >> +		/*
+> >> +		 * For compatibility reasons, without a defined security policy
+> >> +		 * (via sysctl or LSM), using AT_INTERPRETED must map the
+> >> +		 * execute permission to the read permission.  Indeed, from
+> >> +		 * user space point of view, being able to execute data (e.g.
+> >> +		 * scripts) implies to be able to read this data.
+> >> +		 *
+> >> +		 * The MAY_INTERPRETED_EXEC bit is set to enable LSMs to add
+> >> +		 * custom checks, while being compatible with current policies.
+> >> +		 */
+> >> +		if ((mode & MAY_EXEC)) {
+> > 
+> > Why is the ISREG() test being dropped?   Without dropping it, there
+> > would be no reason for making the existing test an "else" clause.
 > 
-> On Thu, Aug 27, 2020 at 04:58:31PM +0200, Stefano Garzarella wrote:
->> This patch adds a new IORING_SETUP_R_DISABLED flag to start the
->> rings disabled, allowing the user to register restrictions,
->> buffers, files, before to start processing SQEs.
->>
->> When IORING_SETUP_R_DISABLED is set, SQE are not processed and
->> SQPOLL kthread is not started.
->>
->> The restrictions registration are allowed only when the rings
->> are disable to prevent concurrency issue while processing SQEs.
->>
->> The rings can be enabled using IORING_REGISTER_ENABLE_RINGS
->> opcode with io_uring_register(2).
->>
->> Suggested-by: Jens Axboe <axboe@kernel.dk>
->> Reviewed-by: Kees Cook <keescook@chromium.org>
->> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
->> ---
->> v4:
->>  - fixed io_uring_enter() exit path when ring is disabled
->>
->> v3:
->>  - enabled restrictions only when the rings start
->>
->> RFC v2:
->>  - removed return value of io_sq_offload_start()
->> ---
->>  fs/io_uring.c                 | 52 ++++++++++++++++++++++++++++++-----
->>  include/uapi/linux/io_uring.h |  2 ++
->>  2 files changed, 47 insertions(+), 7 deletions(-)
->>
->> diff --git a/fs/io_uring.c b/fs/io_uring.c
->> index 5f62997c147b..b036f3373fbe 100644
->> --- a/fs/io_uring.c
->> +++ b/fs/io_uring.c
->> @@ -226,6 +226,7 @@ struct io_restriction {
->>  	DECLARE_BITMAP(sqe_op, IORING_OP_LAST);
->>  	u8 sqe_flags_allowed;
->>  	u8 sqe_flags_required;
->> +	bool registered;
->>  };
->>  
->>  struct io_ring_ctx {
->> @@ -7497,8 +7498,8 @@ static int io_init_wq_offload(struct io_ring_ctx *ctx,
->>  	return ret;
->>  }
->>  
->> -static int io_sq_offload_start(struct io_ring_ctx *ctx,
->> -			       struct io_uring_params *p)
->> +static int io_sq_offload_create(struct io_ring_ctx *ctx,
->> +				struct io_uring_params *p)
->>  {
->>  	int ret;
->>  
->> @@ -7532,7 +7533,6 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
->>  			ctx->sqo_thread = NULL;
->>  			goto err;
->>  		}
->> -		wake_up_process(ctx->sqo_thread);
->>  	} else if (p->flags & IORING_SETUP_SQ_AFF) {
->>  		/* Can't have SQ_AFF without SQPOLL */
->>  		ret = -EINVAL;
->> @@ -7549,6 +7549,12 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
->>  	return ret;
->>  }
->>  
->> +static void io_sq_offload_start(struct io_ring_ctx *ctx)
->> +{
->> +	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sqo_thread)
->> +		wake_up_process(ctx->sqo_thread);
->> +}
->> +
->>  static inline void __io_unaccount_mem(struct user_struct *user,
->>  				      unsigned long nr_pages)
->>  {
->> @@ -8295,6 +8301,9 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
->>  	if (!percpu_ref_tryget(&ctx->refs))
->>  		goto out_fput;
->>  
->> +	if (ctx->flags & IORING_SETUP_R_DISABLED)
->> +		goto out_fput;
->> +
+> The ISREG() is not dropped, it is just moved below with the rest of the
+> original code. The corresponding code (with the path_noexec call) for
+> AT_INTERPRETED is added with the next commit, and it relies on the
+> sysctl configuration for compatibility reasons.
+
+Dropping the S_ISREG() check here without an explanation is wrong and
+probably unsafe, as it is only re-added in the subsequent patch and
+only for the "sysctl_interpreted_access" case.  Adding this new test
+after the existing test is probably safer.  If the original test fails,
+it returns the same value as this test -EACCES.
+
+Mimi
+
 > 
-> While writing the man page paragraph, I discovered that if the rings are
-> disabled I returned ENXIO error in io_uring_enter(), coming from the previous
-> check.
-> 
-> I'm not sure it is the best one, maybe I can return EBADFD or another
-> error.
-> 
-> What do you suggest?
+> > 
+> >> +			mode |= MAY_INTERPRETED_EXEC;
+> >> +			/*
+> >> +			 * For compatibility reasons, if the system-wide policy
+> >> +			 * doesn't enforce file permission checks, then
+> >> +			 * replaces the execute permission request with a read
+> >> +			 * permission request.
+> >> +			 */
+> >> +			mode &= ~MAY_EXEC;
+> >> +			/* To be executed *by* user space, files must be readable. */
+> >> +			mode |= MAY_READ;
 
-EBADFD seems indeed the most appropriate - the fd is valid, but not in the
-right state to do this.
-
-> I'll add a test for this case.
-
-Thanks!
-
--- 
-Jens Axboe
 
