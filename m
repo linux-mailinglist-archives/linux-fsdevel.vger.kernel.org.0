@@ -2,25 +2,22 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A4A7260CE7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 10:02:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68D43260CE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 10:01:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729710AbgIHICN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 04:02:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36766 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730057AbgIHIAg (ORCPT
+        id S1729865AbgIHIBR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 04:01:17 -0400
+Received: from smtp-bc08.mail.infomaniak.ch ([45.157.188.8]:41745 "EHLO
+        smtp-bc08.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729566AbgIHIAq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 04:00:36 -0400
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [IPv6:2001:1600:3:17::8faf])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E79FC061786
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Sep 2020 01:00:15 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BlyHV5v0DzlhYvB;
-        Tue,  8 Sep 2020 10:00:06 +0200 (CEST)
+        Tue, 8 Sep 2020 04:00:46 -0400
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BlyHc0zrszlh9lB;
+        Tue,  8 Sep 2020 10:00:12 +0200 (CEST)
 Received: from localhost (unknown [94.23.54.103])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4BlyHT6BDPzlh8TV;
-        Tue,  8 Sep 2020 10:00:05 +0200 (CEST)
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4BlyHX2cVXzlh8Tc;
+        Tue,  8 Sep 2020 10:00:08 +0200 (CEST)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -62,9 +59,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-fsdevel@vger.kernel.org,
         =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
         Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Subject: [RFC PATCH v8 2/3] fs,doc: Enable to configure exec checks for AT_INTERPRETED
-Date:   Tue,  8 Sep 2020 09:59:55 +0200
-Message-Id: <20200908075956.1069018-3-mic@digikod.net>
+Subject: [RFC PATCH v8 3/3] selftest/interpreter: Add tests for AT_INTERPRETED enforcing
+Date:   Tue,  8 Sep 2020 09:59:56 +0200
+Message-Id: <20200908075956.1069018-4-mic@digikod.net>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200908075956.1069018-1-mic@digikod.net>
 References: <20200908075956.1069018-1-mic@digikod.net>
@@ -78,317 +75,503 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Mickaël Salaün <mic@linux.microsoft.com>
 
-This enables to configure a policy for executable scripts which can be
-queried with faccessat2(2) and the AT_INTERPRETED flag.  This may allow
-script interpreters to check execution permission before reading
-commands from a file, or dynamic linkers to allow shared object loading.
-This may be seen as a way for a trusted task (e.g. interpreter) to check
-the trustworthiness of files (e.g. scripts) before extending its control
-flow graph with new ones originating from these files.
-
-Add a new sysctl fs.interpreted_access to enable system administrators
-to enforce two complementary security policies according to the
-installed system: enforce the noexec mount option, and enforce
-executable file permission.  Indeed, because of compatibility with
-installed systems, only system administrators are able to check that
-this new enforcement is in line with the system mount points and file
-permissions.
-
-Being able to restrict execution also enables to protect the kernel by
-restricting arbitrary syscalls that an attacker could perform with a
-crafted binary or certain script languages.  It also improves multilevel
-isolation by reducing the ability of an attacker to use side channels
-with specific code.  These restrictions can natively be enforced for ELF
-binaries (with the noexec mount option) but require this kernel
-extension to properly handle scripts (e.g. Python, Perl).  To get a
-consistent execution policy, additional memory restrictions should also
-be enforced (e.g. thanks to SELinux).
-
-Because the AT_INTERPRETED flag combined with X_OK mode is a mean to
-enforce a system-wide security policy (but not application-centric
-policies), it does not make sense for user space to check the sysctl
-value.  Indeed, this new flag only enables to extend the system ability
-to enforce a policy thanks to (some trusted) user space collaboration.
-Moreover, additional security policies could be managed by LSMs.  This
-is a best-effort approach from the application developer point of view:
-https://lore.kernel.org/lkml/1477d3d7-4b36-afad-7077-a38f42322238@digikod.net/
+Test that checks performed by faccessat2(2) with AT_INTERPRETED on file
+path and file descriptors are consistent with noexec mount points and
+file execute permissions, according to the policy configured with the
+fs.interpreted_access sysctl.
 
 Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
 Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Jann Horn <jannh@google.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Miklos Szeredi <mszeredi@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
 ---
 
 Changes since v7:
-* Handle special file descriptors.
-* Add a compatibility mode for execute/read check.
-* Move the sysctl policy from fs/namei.c to fs/open.c for the new
-  faccessat2/AT_INTERPRETED.
-* Rename the sysctl from fs.open_mayexec_enforce to
-  fs.interpreted_access .
-* Update documentation accordingly.
+* Update tests with faccessat2/AT_INTERPRETED, including new ones to
+  check that setting R_OK or W_OK returns EINVAL.
+* Add tests for memfd, pipefs and nsfs.
+* Rename and move back tests to a standalone directory.
 
 Changes since v6:
-* Allow opening pipes, block devices and character devices with
-  O_MAYEXEC when there is no enforced policy, but forbid any non-regular
-  file opened with O_MAYEXEC otherwise (i.e. for any enforced policy).
-* Add a paragraph about the non-regular files policy.
-* Move path_noexec() calls out of the fast-path (suggested by Kees
-  Cook).
+* Add full combination tests for all file types, including block
+  devices, character devices, fifos, sockets and symlinks.
+* Properly save and restore initial sysctl value for all tests.
 
 Changes since v5:
-* Remove the static enforcement configuration through Kconfig because it
-  makes the code more simple like this, and because the current sysctl
-  configuration can only be set with CAP_SYS_ADMIN, the same way mount
-  options (i.e. noexec) can be set.  If an harden distro wants to
-  enforce a configuration, it should restrict capabilities or sysctl
-  configuration.  Furthermore, an LSM can easily leverage O_MAYEXEC to
-  fit its need.
-* Move checks from inode_permission() to may_open() and make the error
-  codes more consistent according to file types (in line with a previous
-  commit): opening a directory with O_MAYEXEC returns EISDIR and other
-  non-regular file types may return EACCES.
-* In may_open(), when OMAYEXEC_ENFORCE_FILE is set, replace explicit
-  call to generic_permission() with an artificial MAY_EXEC to avoid
-  double calls.  This makes sense especially when an LSM policy forbids
-  execution of a file.
-* Replace the custom proc_omayexec() with
-  proc_dointvec_minmax_sysadmin(), and then replace the CAP_MAC_ADMIN
-  check with a CAP_SYS_ADMIN one (suggested by Kees Cook and Stephen
-  Smalley).
-* Use BIT() (suggested by Kees Cook).
-* Rename variables (suggested by Kees Cook).
-* Reword the kconfig help.
-* Import the documentation patch (suggested by Kees Cook):
-  https://lore.kernel.org/lkml/20200505153156.925111-6-mic@digikod.net/
-* Update documentation and add LWN.net article.
-
-Changes since v4:
-* Add kernel configuration options to enforce O_MAYEXEC at build time,
-  and disable the sysctl in such case (requested by James Morris).
-* Reword commit message.
+* Refactor with FIXTURE_VARIANT, which make the tests much more easy to
+  read and maintain.
+* Save and restore initial sysctl value (suggested by Kees Cook).
+* Test with a sysctl value of 0.
+* Check errno in sysctl_access_write test.
+* Update tests for the CAP_SYS_ADMIN switch.
+* Update tests to check -EISDIR (replacing -EACCES).
+* Replace FIXTURE_DATA() with FIXTURE() (spotted by Kees Cook).
+* Use global const strings.
 
 Changes since v3:
-* Update comment with O_MAYEXEC.
+* Replace RESOLVE_MAYEXEC with O_MAYEXEC.
+* Add tests to check that O_MAYEXEC is ignored by open(2) and openat(2).
 
 Changes since v2:
-* Cosmetic changes.
+* Move tests from exec/ to openat2/ .
+* Replace O_MAYEXEC with RESOLVE_MAYEXEC from openat2(2).
+* Cleanup tests.
 
 Changes since v1:
-* Move code from Yama to the FS subsystem (suggested by Kees Cook).
-* Make omayexec_inode_permission() static (suggested by Jann Horn).
-* Use mode 0600 for the sysctl.
-* Only match regular files (not directories nor other types), which
-  follows the same semantic as commit 73601ea5b7b1 ("fs/open.c: allow
-  opening only regular files during execve()").
+* Move tests from yama/ to exec/ .
+* Fix _GNU_SOURCE in kselftest_harness.h .
+* Add a new test sysctl_access_write to check if CAP_MAC_ADMIN is taken
+  into account.
+* Test directory execution which is always forbidden since commit
+  73601ea5b7b1 ("fs/open.c: allow opening only regular files during
+  execve()"), and also check that even the root user can not bypass file
+  execution checks.
+* Make sure delete_workspace() always as enough right to succeed.
+* Cosmetic cleanup.
 ---
- Documentation/admin-guide/sysctl/fs.rst | 54 +++++++++++++++++++++++++
- fs/open.c                               | 38 ++++++++++++++++-
- include/linux/fs.h                      |  1 +
- kernel/sysctl.c                         | 12 +++++-
- 4 files changed, 102 insertions(+), 3 deletions(-)
+ .../testing/selftests/interpreter/.gitignore  |   2 +
+ tools/testing/selftests/interpreter/Makefile  |  18 +
+ tools/testing/selftests/interpreter/config    |   1 +
+ .../interpreter/interpreted_access_test.c     | 384 ++++++++++++++++++
+ 4 files changed, 405 insertions(+)
+ create mode 100644 tools/testing/selftests/interpreter/.gitignore
+ create mode 100644 tools/testing/selftests/interpreter/Makefile
+ create mode 100644 tools/testing/selftests/interpreter/config
+ create mode 100644 tools/testing/selftests/interpreter/interpreted_access_test.c
 
-diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
-index f48277a0a850..66d1c1bd67a5 100644
---- a/Documentation/admin-guide/sysctl/fs.rst
-+++ b/Documentation/admin-guide/sysctl/fs.rst
-@@ -36,6 +36,7 @@ Currently, these files are in /proc/sys/fs:
- - inode-max
- - inode-nr
- - inode-state
-+- interpreted_access
- - nr_open
- - overflowuid
- - overflowgid
-@@ -165,6 +166,59 @@ system needs to prune the inode list instead of allocating
- more.
- 
- 
-+interpreted_access
-+------------------
+diff --git a/tools/testing/selftests/interpreter/.gitignore b/tools/testing/selftests/interpreter/.gitignore
+new file mode 100644
+index 000000000000..82a4846cbc4b
+--- /dev/null
++++ b/tools/testing/selftests/interpreter/.gitignore
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++/*_test
+diff --git a/tools/testing/selftests/interpreter/Makefile b/tools/testing/selftests/interpreter/Makefile
+new file mode 100644
+index 000000000000..6b3e8c3e533b
+--- /dev/null
++++ b/tools/testing/selftests/interpreter/Makefile
+@@ -0,0 +1,18 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
 +
-+The ``AT_INTERPRETED`` flag with an ``X_OK`` mode can be passed to
-+:manpage:`faccessat2(2)` by an interpreter to check that regular files are
-+expected to be executable.  If the file is not identified as executable, then
-+the syscall returns -EACCES.  This may allow a script interpreter to check
-+executable permission before reading commands from a file, or a dynamic linker
-+to only load executable shared objects.  One interesting use case is to enforce
-+a "write xor execute" policy through interpreters.
++CFLAGS += -Wall -O2
++LDLIBS += -lcap
 +
-+To avoid race-conditions, it is highly recommended to first open the file and
-+then do the check on the new file descriptor thanks to the ``AT_EMPTY_PATH``
-+flag.
++src_test := $(wildcard *_test.c)
++TEST_GEN_PROGS := $(src_test:.c=)
 +
-+The ability to restrict code execution must be thought as a system-wide policy,
-+which first starts by restricting mount points with the ``noexec`` option.
-+This option is also automatically applied to special filesystems such as /proc .
-+This prevents files on such mount points to be directly executed by the kernel
-+or mapped as executable memory (e.g. libraries).  With script interpreters
-+using :manpage:`faccessat2(2)` and ``AT_INTERPRETED``, the executable
-+permission can then be checked before reading commands from files.  This makes
-+it possible to enforce the ``noexec`` at the interpreter level, and thus
-+propagates this security policy to scripts.  To be fully effective, these
-+interpreters also need to handle the other ways to execute code: command line
-+parameters (e.g., option ``-e`` for Perl), module loading (e.g., option ``-m``
-+for Python), stdin, file sourcing, environment variables, configuration files,
-+etc.  According to the threat model, it may be acceptable to allow some script
-+interpreters (e.g. Bash) to interpret commands from stdin, may it be a TTY or a
-+pipe, because it may not be enough to (directly) perform syscalls.
++KSFT_KHDR_INSTALL := 1
++include ../lib.mk
 +
-+There are two complementary security policies: enforce the ``noexec`` mount
-+option, and enforce executable file permission.  These policies are handled by
-+the ``fs.interpreted_access`` sysctl (writable only with ``CAP_SYS_ADMIN``)
-+as a bitmask:
++khdr_dir = $(top_srcdir)/usr/include
 +
-+1 - Mount restriction: checks that the mount options for the underlying VFS
-+    mount do not prevent execution.
++$(khdr_dir)/asm-generic/unistd.h: khdr
++	@:
 +
-+2 - File permission restriction: checks that the file is marked as
-+    executable for the current process (e.g., POSIX permissions, ACLs).
++$(OUTPUT)/%_test: %_test.c $(khdr_dir)/asm-generic/unistd.h ../kselftest_harness.h
++	$(LINK.c) $< $(LDLIBS) -o $@ -I$(khdr_dir)
+diff --git a/tools/testing/selftests/interpreter/config b/tools/testing/selftests/interpreter/config
+new file mode 100644
+index 000000000000..dd53c266bf52
+--- /dev/null
++++ b/tools/testing/selftests/interpreter/config
+@@ -0,0 +1 @@
++CONFIG_SYSCTL=y
+diff --git a/tools/testing/selftests/interpreter/interpreted_access_test.c b/tools/testing/selftests/interpreter/interpreted_access_test.c
+new file mode 100644
+index 000000000000..6458dccabe51
+--- /dev/null
++++ b/tools/testing/selftests/interpreter/interpreted_access_test.c
+@@ -0,0 +1,384 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Test AT_INTERPRETED
++ *
++ * Copyright © 2018-2020 ANSSI
++ *
++ * Author: Mickaël Salaün <mic@digikod.net>
++ */
 +
-+Note that as long as a policy is enforced, checking any non-regular file with
-+``AT_INTERPRETED`` returns -EINVAL (e.g. TTYs, pipe), even when such a file is
-+marked as executable or is on an executable mount point.
++#define _GNU_SOURCE
++#include <asm-generic/unistd.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/capability.h>
++#include <sys/mman.h>
++#include <sys/mount.h>
++#include <sys/stat.h>
++#include <sys/syscall.h>
++#include <sys/sysmacros.h>
++#include <unistd.h>
 +
-+Code samples can be found in
-+tools/testing/selftests/interpreter/interpreted_access_test.c and interpreter
-+patches (for the original O_MAYEXEC) are available at
-+https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC .
-+See also an overview article: https://lwn.net/Articles/820000/ .
++#include "../kselftest_harness.h"
 +
++#ifndef AT_INTERPRETED
++#define AT_INTERPRETED		0x400
++#endif
 +
- overflowgid & overflowuid
- -------------------------
- 
-diff --git a/fs/open.c b/fs/open.c
-index 879bdfbdc6fa..ef01ab35449d 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -32,6 +32,7 @@
- #include <linux/ima.h>
- #include <linux/dnotify.h>
- #include <linux/compat.h>
-+#include <linux/sysctl.h>
- 
- #include "internal.h"
- 
-@@ -394,6 +395,11 @@ static const struct cred *access_override_creds(void)
- 	return old_cred;
- }
- 
-+#define INTERPRETED_EXEC_MOUNT		BIT(0)
-+#define INTERPRETED_EXEC_FILE		BIT(1)
++#ifndef faccessat2
++static int faccessat2(int dirfd, const char *pathname, int mode, int flags)
++{
++	errno = 0;
++	return syscall(__NR_faccessat2, dirfd, pathname, mode, flags);
++}
++#endif
 +
-+int sysctl_interpreted_access __read_mostly;
++static const char sysctl_path[] = "/proc/sys/fs/interpreted_access";
 +
- static long do_faccessat(int dfd, const char __user *filename, int mode, int flags)
- {
- 	struct path path;
-@@ -443,13 +449,43 @@ static long do_faccessat(int dfd, const char __user *filename, int mode, int fla
- 		 */
- 		if ((mode & MAY_EXEC)) {
- 			mode |= MAY_INTERPRETED_EXEC;
-+			res = -EACCES;
-+			/*
-+			 * If there is a system-wide execute policy enforced,
-+			 * then forbids access to non-regular files and special
-+			 * superblocks.
-+			 */
-+			if ((sysctl_interpreted_access & (INTERPRETED_EXEC_MOUNT |
-+							INTERPRETED_EXEC_FILE))) {
-+				if (!S_ISREG(inode->i_mode))
-+					goto out_path_release;
-+				/*
-+				 * Denies access to pseudo filesystems that
-+				 * will never be mountable (e.g. sockfs,
-+				 * pipefs) but can still be reachable through
-+				 * /proc/self/fd, or memfd-like file
-+				 * descriptors, or nsfs-like files.
-+				 *
-+				 * According to the tests, SB_NOEXEC seems to
-+				 * be only used by proc and nsfs filesystems.
-+				 * Is it correct?
-+				 */
-+				if ((path.dentry->d_sb->s_flags &
-+							(SB_NOUSER | SB_KERNMOUNT | SB_NOEXEC)))
-+					goto out_path_release;
++static const char workdir_path[] = "./test-mount";
++static const char reg_file_path[] = "./test-mount/regular_file";
++static const char dir_path[] = "./test-mount/directory";
++static const char symlink_path[] = "./test-mount/symlink";
++static const char block_dev_path[] = "./test-mount/block_device";
++static const char char_dev_path[] = "./test-mount/character_device";
++static const char fifo_path[] = "./test-mount/fifo";
++static const char sock_path[] = "./test-mount/socket";
++
++static void ignore_dac(struct __test_metadata *_metadata, int override)
++{
++	cap_t caps;
++	const cap_value_t cap_val[2] = {
++		CAP_DAC_OVERRIDE,
++		CAP_DAC_READ_SEARCH,
++	};
++
++	caps = cap_get_proc();
++	ASSERT_NE(NULL, caps);
++	ASSERT_EQ(0, cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_val,
++				override ? CAP_SET : CAP_CLEAR));
++	ASSERT_EQ(0, cap_set_proc(caps));
++	EXPECT_EQ(0, cap_free(caps));
++}
++
++static void ignore_sys_admin(struct __test_metadata *_metadata, int override)
++{
++	cap_t caps;
++	const cap_value_t cap_val[1] = {
++		CAP_SYS_ADMIN,
++	};
++
++	caps = cap_get_proc();
++	ASSERT_NE(NULL, caps);
++	ASSERT_EQ(0, cap_set_flag(caps, CAP_EFFECTIVE, 1, cap_val,
++				override ? CAP_SET : CAP_CLEAR));
++	ASSERT_EQ(0, cap_set_proc(caps));
++	EXPECT_EQ(0, cap_free(caps));
++}
++
++static void test_omx(struct __test_metadata *_metadata,
++		const char *const path, const int err_open,
++		const int err_access)
++{
++	int flags = O_RDONLY | O_NOFOLLOW | O_CLOEXEC;
++	int fd, access_ret, access_errno;
++
++	/* Do not block on pipes. */
++	if (path == fifo_path)
++		flags |= O_NONBLOCK;
++
++	fd = open(path, flags);
++	if (err_open) {
++		ASSERT_EQ(err_open, errno) {
++			TH_LOG("Wrong error for open %s: %s", path, strerror(errno));
++		}
++		ASSERT_EQ(-1, fd);
++	} else {
++		ASSERT_LE(0, fd) {
++			TH_LOG("Failed to open %s: %s", path, strerror(errno));
++		}
++		access_ret = faccessat2(fd, "", X_OK, AT_EMPTY_PATH | AT_INTERPRETED);
++		access_errno = errno;
++		EXPECT_EQ(0, close(fd));
++		if (err_access) {
++			ASSERT_EQ(err_access, access_errno) {
++				TH_LOG("Wrong error for faccessat2 w/o path %s: %s",
++						path, strerror(access_errno));
 +			}
++			ASSERT_EQ(-1, access_ret);
++		} else {
++			ASSERT_EQ(0, access_ret) {
++				TH_LOG("Access denied for %s: %s", path, strerror(access_errno));
++			}
++		}
++	}
 +
-+			if ((sysctl_interpreted_access & INTERPRETED_EXEC_MOUNT) &&
-+					path_noexec(&path))
-+				goto out_path_release;
- 			/*
- 			 * For compatibility reasons, if the system-wide policy
- 			 * doesn't enforce file permission checks, then
- 			 * replaces the execute permission request with a read
- 			 * permission request.
- 			 */
--			mode &= ~MAY_EXEC;
-+			if (!(sysctl_interpreted_access & INTERPRETED_EXEC_FILE))
-+				mode &= ~MAY_EXEC;
- 			/* To be executed *by* user space, files must be readable. */
- 			mode |= MAY_READ;
- 		}
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 03f1b2da6a87..ef39550f2464 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -83,6 +83,7 @@ extern int sysctl_protected_symlinks;
- extern int sysctl_protected_hardlinks;
- extern int sysctl_protected_fifos;
- extern int sysctl_protected_regular;
-+extern int sysctl_interpreted_access;
- 
- typedef __kernel_rwf_t rwf_t;
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 09e70ee2332e..899fa52b4ee8 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -113,6 +113,7 @@ static int sixty = 60;
- 
- static int __maybe_unused neg_one = -1;
- static int __maybe_unused two = 2;
-+static int __maybe_unused three = 3;
- static int __maybe_unused four = 4;
- static unsigned long zero_ul;
- static unsigned long one_ul = 1;
-@@ -887,7 +888,6 @@ static int proc_taint(struct ctl_table *table, int write,
- 	return err;
- }
- 
--#ifdef CONFIG_PRINTK
- static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
- 				void *buffer, size_t *lenp, loff_t *ppos)
- {
-@@ -896,7 +896,6 @@ static int proc_dointvec_minmax_sysadmin(struct ctl_table *table, int write,
- 
- 	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
- }
--#endif
- 
- /**
-  * struct do_proc_dointvec_minmax_conv_param - proc_dointvec_minmax() range checking structure
-@@ -3293,6 +3292,15 @@ static struct ctl_table fs_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= &two,
- 	},
-+	{
-+		.procname       = "interpreted_access",
-+		.data           = &sysctl_interpreted_access,
-+		.maxlen         = sizeof(int),
-+		.mode           = 0600,
-+		.proc_handler	= proc_dointvec_minmax_sysadmin,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= &three,
-+	},
- #if defined(CONFIG_BINFMT_MISC) || defined(CONFIG_BINFMT_MISC_MODULE)
- 	{
- 		.procname	= "binfmt_misc",
++	access_ret = faccessat2(AT_FDCWD, path, X_OK, AT_SYMLINK_NOFOLLOW | AT_INTERPRETED);
++	if (err_access) {
++		ASSERT_EQ(err_access, errno) {
++			TH_LOG("Wrong error for faccessat2 w/ path %s: %s", path, strerror(errno));
++		}
++		ASSERT_EQ(-1, access_ret);
++	} else {
++		ASSERT_EQ(0, access_ret) {
++			TH_LOG("Access denied for %s: %s", path, strerror(errno));
++		}
++	}
++
++	/* Tests read access. */
++	access_ret = faccessat2(AT_FDCWD, path, R_OK, AT_SYMLINK_NOFOLLOW | AT_INTERPRETED);
++	ASSERT_EQ(-1, access_ret);
++	ASSERT_EQ(EINVAL, errno);
++
++	/* Tests write access. */
++	access_ret = faccessat2(AT_FDCWD, path, W_OK, AT_SYMLINK_NOFOLLOW | AT_INTERPRETED);
++	ASSERT_EQ(-1, access_ret);
++	ASSERT_EQ(EINVAL, errno);
++}
++
++static void test_policy_fd(struct __test_metadata *_metadata, const int fd,
++		const bool has_policy)
++{
++	const int ret = faccessat2(fd, "", X_OK, AT_EMPTY_PATH | AT_INTERPRETED);
++
++	if (has_policy) {
++		ASSERT_EQ(-1, ret);
++		ASSERT_EQ(EACCES, errno) {
++			TH_LOG("Wrong error for faccessat2 with an FD: %s", strerror(errno));
++		}
++	} else {
++		ASSERT_EQ(0, ret) {
++			TH_LOG("Access denied for an FD: %s", strerror(errno));
++		}
++	}
++}
++
++FIXTURE(access) {
++	char initial_sysctl_value;
++	int memfd, pipefd;
++	int pipe_fds[2];
++};
++
++static void test_file_types(struct __test_metadata *_metadata, FIXTURE_DATA(access) *self,
++		const int err_code, const bool has_policy)
++{
++	/* Tests are performed on a tmpfs mount point. */
++	test_omx(_metadata, reg_file_path, 0, err_code);
++	test_omx(_metadata, dir_path, 0, has_policy ? EACCES : 0);
++	test_omx(_metadata, symlink_path, ELOOP, has_policy ? EACCES : 0);
++	test_omx(_metadata, block_dev_path, 0, has_policy ? EACCES : 0);
++	test_omx(_metadata, char_dev_path, 0, has_policy ? EACCES : 0);
++	test_omx(_metadata, fifo_path, 0, has_policy ? EACCES : 0);
++	test_omx(_metadata, sock_path, ENXIO, has_policy ? EACCES : 0);
++
++	test_omx(_metadata, "/proc/self/ns/mnt", ELOOP, has_policy ? EACCES : 0);
++
++	/* Checks that exec is denied for any memfd. */
++	test_policy_fd(_metadata, self->memfd, has_policy);
++
++	/* Checks that exec is denied for any pipefs fd. */
++	test_policy_fd(_metadata, self->pipefd, has_policy);
++}
++
++static void test_files(struct __test_metadata *_metadata, FIXTURE_DATA(access) *self,
++		const int err_code, const bool has_policy)
++{
++	/* Tests as root. */
++	ignore_dac(_metadata, 1);
++	test_file_types(_metadata, self, err_code, has_policy);
++
++	/* Tests without bypass. */
++	ignore_dac(_metadata, 0);
++	test_file_types(_metadata, self, err_code, has_policy);
++}
++
++static void sysctl_write_char(struct __test_metadata *_metadata, const char value)
++{
++	int fd;
++
++	fd = open(sysctl_path, O_WRONLY | O_CLOEXEC);
++	ASSERT_LE(0, fd);
++	ASSERT_EQ(1, write(fd, &value, 1));
++	EXPECT_EQ(0, close(fd));
++}
++
++static char sysctl_read_char(struct __test_metadata *_metadata)
++{
++	int fd;
++	char sysctl_value;
++
++	fd = open(sysctl_path, O_RDONLY | O_CLOEXEC);
++	ASSERT_LE(0, fd);
++	ASSERT_EQ(1, read(fd, &sysctl_value, 1));
++	EXPECT_EQ(0, close(fd));
++	return sysctl_value;
++}
++
++FIXTURE_VARIANT(access) {
++	const bool mount_exec;
++	const bool file_exec;
++	const int sysctl_err_code[3];
++};
++
++FIXTURE_VARIANT_ADD(access, mount_exec_file_exec) {
++	.mount_exec = true,
++	.file_exec = true,
++	.sysctl_err_code = {0, 0, 0},
++};
++
++FIXTURE_VARIANT_ADD(access, mount_exec_file_noexec)
++{
++	.mount_exec = true,
++	.file_exec = false,
++	.sysctl_err_code = {0, EACCES, EACCES},
++};
++
++FIXTURE_VARIANT_ADD(access, mount_noexec_file_exec)
++{
++	.mount_exec = false,
++	.file_exec = true,
++	.sysctl_err_code = {EACCES, 0, EACCES},
++};
++
++FIXTURE_VARIANT_ADD(access, mount_noexec_file_noexec)
++{
++	.mount_exec = false,
++	.file_exec = false,
++	.sysctl_err_code = {EACCES, EACCES, EACCES},
++};
++
++FIXTURE_SETUP(access)
++{
++	int procfd_path_size;
++	static const char path_template[] = "/proc/self/fd/%d";
++	char procfd_path[sizeof(path_template) + 10];
++
++	/*
++	 * Cleans previous workspace if any error previously happened (don't
++	 * check errors).
++	 */
++	umount(workdir_path);
++	rmdir(workdir_path);
++
++	/* Creates a clean mount point. */
++	ASSERT_EQ(0, mkdir(workdir_path, 00700));
++	ASSERT_EQ(0, mount("test", workdir_path, "tmpfs", MS_MGC_VAL |
++				(variant->mount_exec ? 0 : MS_NOEXEC),
++				"mode=0700,size=4k"));
++
++	/* Creates a regular file. */
++	ASSERT_EQ(0, mknod(reg_file_path, S_IFREG | (variant->file_exec ? 0500 : 0400), 0));
++	/* Creates a directory. */
++	ASSERT_EQ(0, mkdir(dir_path, variant->file_exec ? 0500 : 0400));
++	/* Creates a symlink pointing to the regular file. */
++	ASSERT_EQ(0, symlink("regular_file", symlink_path));
++	/* Creates a character device: /dev/null. */
++	ASSERT_EQ(0, mknod(char_dev_path, S_IFCHR | 0400, makedev(1, 3)));
++	/* Creates a block device: /dev/loop0 */
++	ASSERT_EQ(0, mknod(block_dev_path, S_IFBLK | 0400, makedev(7, 0)));
++	/* Creates a fifo. */
++	ASSERT_EQ(0, mknod(fifo_path, S_IFIFO | 0400, 0));
++	/* Creates a socket. */
++	ASSERT_EQ(0, mknod(sock_path, S_IFSOCK | 0400, 0));
++
++	/* Creates a regular file without user mount point. */
++	self->memfd = memfd_create("test-interpreted", MFD_CLOEXEC);
++	ASSERT_LE(0, self->memfd);
++	/* Sets mode, which must be ignored by the exec check. */
++	ASSERT_EQ(0, fchmod(self->memfd, variant->file_exec ? 0500 : 0400));
++
++	/* Creates a pipefs file descriptor. */
++	ASSERT_EQ(0, pipe(self->pipe_fds));
++	procfd_path_size = snprintf(procfd_path, sizeof(procfd_path),
++			path_template, self->pipe_fds[0]);
++	ASSERT_LT(procfd_path_size, sizeof(procfd_path));
++	self->pipefd = open(procfd_path, O_RDONLY | O_CLOEXEC);
++	ASSERT_LE(0, self->pipefd);
++	ASSERT_EQ(0, fchmod(self->pipefd, variant->file_exec ? 0500 : 0400));
++
++	/* Saves initial sysctl value. */
++	self->initial_sysctl_value = sysctl_read_char(_metadata);
++
++	/* Prepares for sysctl writes. */
++	ignore_sys_admin(_metadata, 1);
++}
++
++FIXTURE_TEARDOWN(access)
++{
++	EXPECT_EQ(0, close(self->memfd));
++	EXPECT_EQ(0, close(self->pipefd));
++	EXPECT_EQ(0, close(self->pipe_fds[0]));
++	EXPECT_EQ(0, close(self->pipe_fds[1]));
++
++	/* Restores initial sysctl value. */
++	sysctl_write_char(_metadata, self->initial_sysctl_value);
++
++	/* There is no need to unlink the test files. */
++	ASSERT_EQ(0, umount(workdir_path));
++	ASSERT_EQ(0, rmdir(workdir_path));
++}
++
++TEST_F(access, sysctl_0)
++{
++	/* Do not enforce anything. */
++	sysctl_write_char(_metadata, '0');
++	test_files(_metadata, self, 0, false);
++}
++
++TEST_F(access, sysctl_1)
++{
++	/* Enforces mount exec check. */
++	sysctl_write_char(_metadata, '1');
++	test_files(_metadata, self, variant->sysctl_err_code[0], true);
++}
++
++TEST_F(access, sysctl_2)
++{
++	/* Enforces file exec check. */
++	sysctl_write_char(_metadata, '2');
++	test_files(_metadata, self, variant->sysctl_err_code[1], true);
++}
++
++TEST_F(access, sysctl_3)
++{
++	/* Enforces mount and file exec check. */
++	sysctl_write_char(_metadata, '3');
++	test_files(_metadata, self, variant->sysctl_err_code[2], true);
++}
++
++FIXTURE(cleanup) {
++	char initial_sysctl_value;
++};
++
++FIXTURE_SETUP(cleanup)
++{
++	/* Saves initial sysctl value. */
++	self->initial_sysctl_value = sysctl_read_char(_metadata);
++}
++
++FIXTURE_TEARDOWN(cleanup)
++{
++	/* Restores initial sysctl value. */
++	ignore_sys_admin(_metadata, 1);
++	sysctl_write_char(_metadata, self->initial_sysctl_value);
++}
++
++TEST_F(cleanup, sysctl_access_write)
++{
++	int fd;
++	ssize_t ret;
++
++	ignore_sys_admin(_metadata, 1);
++	sysctl_write_char(_metadata, '0');
++
++	ignore_sys_admin(_metadata, 0);
++	fd = open(sysctl_path, O_WRONLY | O_CLOEXEC);
++	ASSERT_LE(0, fd);
++	ret = write(fd, "0", 1);
++	ASSERT_EQ(-1, ret);
++	ASSERT_EQ(EPERM, errno);
++	EXPECT_EQ(0, close(fd));
++}
++
++TEST_HARNESS_MAIN
 -- 
 2.28.0
 
