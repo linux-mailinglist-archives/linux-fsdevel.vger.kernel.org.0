@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 758862611D3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 15:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA98B26128B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 16:21:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729789AbgIHLh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 07:37:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54322 "EHLO mail.kernel.org"
+        id S1728936AbgIHOVR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 10:21:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729961AbgIHL2A (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 07:28:00 -0400
+        id S1729969AbgIHOPu (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Sep 2020 10:15:50 -0400
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B73D32087D;
-        Tue,  8 Sep 2020 11:27:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2522821532;
+        Tue,  8 Sep 2020 12:09:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599564480;
-        bh=6h7BCk1jsce3dtm2DNaKn8AWSjrHEgYvuEIO0UHuooQ=;
+        s=default; t=1599566955;
+        bh=zqEJfVUqeIO7gcyXpU/RQrWv768uPLWmdl436rYkjNc=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=zqDp7ZKMLFrneISccIyxs+xdsE0U2Ijia8uv5is1hK/suKwTPODxLdkTaQCR23Hfy
-         04psnv0RGGU709CXHAMT+P9JmUB2EbJLwTYTzNfMBsUO/CaO+p+bPnLctZs+OsQKl+
-         /sP7LxmH4efNt8KcFjZ1f8Zh93wYB0VpLPdY5xqI=
-Message-ID: <42e2de297552a8642bfe21ab082e490678b5be38.camel@kernel.org>
-Subject: Re: [RFC PATCH v2 01/18] vfs: export new_inode_pseudo
+        b=r9MkgzRhGCgNzfrsZE+kpQFUDyFuFOrz2OR0FWyHBwTO4LxMOkcSNzC3d7+5tPFiJ
+         1dy/zgm27I9gPVSxdDLb5x7mtq0x55XpOtkZQkWfXLkyILImR/J06QW8FDa4VegxBc
+         G9G5UKPR47OUmugugGbU3Y9WaSyowIwN9Wb6Dh+4=
+Message-ID: <b71271c9573032c74eca352fdf4a9db2d2fbec3e.camel@kernel.org>
+Subject: Re: [RFC PATCH v2 00/18] ceph+fscrypt: context, filename and
+ symlink support
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Eric Biggers <ebiggers@kernel.org>
 Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-fscrypt@vger.kernel.org
-Date:   Tue, 08 Sep 2020 07:27:58 -0400
-In-Reply-To: <20200908033819.GD68127@sol.localdomain>
+Date:   Tue, 08 Sep 2020 08:09:14 -0400
+In-Reply-To: <20200908055446.GP68127@sol.localdomain>
 References: <20200904160537.76663-1-jlayton@kernel.org>
-         <20200904160537.76663-2-jlayton@kernel.org>
-         <20200908033819.GD68127@sol.localdomain>
+         <20200908055446.GP68127@sol.localdomain>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
@@ -43,47 +43,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-09-07 at 20:38 -0700, Eric Biggers wrote:
-> On Fri, Sep 04, 2020 at 12:05:20PM -0400, Jeff Layton wrote:
-> > Ceph needs to be able to allocate inodes ahead of a create that might
-> > involve a fscrypt-encrypted inode. new_inode() almost fits the bill,
-> > but it puts the inode on the sb->s_inodes list, and we don't want to
-> > do that until we're ready to insert it into the hash.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/inode.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index 72c4c347afb7..61554c2477ab 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -935,6 +935,7 @@ struct inode *new_inode_pseudo(struct super_block *sb)
-> >  	}
-> >  	return inode;
-> >  }
-> > +EXPORT_SYMBOL(new_inode_pseudo);
-> >  
+On Mon, 2020-09-07 at 22:54 -0700, Eric Biggers wrote:
+> On Fri, Sep 04, 2020 at 12:05:19PM -0400, Jeff Layton wrote:
+> > This is a second posting of the ceph+fscrypt integration work that I've
+> > been experimenting with. The main change with this patch is that I've
+> > based this on top of Eric's fscrypt-pending set. That necessitated a
+> > change to allocate inodes much earlier than we have traditionally, prior
+> > to sending an RPC instead of waiting on the reply.
 > 
-> What's the problem with putting the new inode on sb->s_inodes already?
-> That's what all the other filesystems do.
+> FWIW, if possible you should create a git tag or branch for your patchset.
+> While just the mailed patches work fine for *me* for this particular patchset,
+> other people may not be able to figure out what the patchset applies to.
+> (In particular, it depends on another patchset:
+> https://lkml.kernel.org/r/20200824061712.195654-1-ebiggers@kernel.org)
 > 
 
-The existing ones are all local filesystems that use
-insert_inode_locked() and similar paths. Ceph needs to use the '5'
-variants of those functions (inode_insert5(), iget5_locked(), etc.).
+I've tagged this out as 'ceph-fscrypt-rfc.2' in my kernel.org tree (the
+first posting is ceph-fscrypt-rfc.1).
 
-When we go to insert it into the hash in inode_insert5(), we'd need to
-set I_CREATING if allocated from new_inode(). But, if you do _that_,
-then you'll get back ESTALE from find_inode() if (eg.) someone calls
-iget5_locked() before you can clear I_CREATING.
+Note that this also is layered on top of David Howell's fscache rework,
+and the work I've done to adapt cephfs to that.
 
-Hitting that race is easy with an asynchronous create. The simplest
-scheme to avoid that is to just export new_inode_pseudo and keep it off
-of s_inodes until we're ready to do the insert. The only real issue here
-is that this inode won't be findable by evict_inodes during umount, but
-that shouldn't be happening during an active syscall anyway.
+> > Note that this just covers the crypto contexts and filenames. I've also
+> > added a patch to encrypt symlink contents as well, but it doesn't seem to
+> > be working correctly.
+> 
+> What about symlink encryption isn't working correctly?
+
+What I was seeing is that after unmounting and mounting, the symlink
+contents would be gibberish when read by readlink(). I confirmed that
+the same crypttext that came out of fscrypt_encrypt_symlink() was being
+fed into fscrypt_get_symlink(), but the result from that came back as
+gibberish.
+
+I need to do a bit more troubleshooting, but I now wonder if it's due to
+the context handling being wrong when dummy encryption is enabled. I'll
+have a look at that soon.
+
+Thanks for the review so far!
 -- 
 Jeff Layton <jlayton@kernel.org>
 
