@@ -2,40 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 87BC4261DFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 21:44:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8527261F35
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 22:01:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731437AbgIHToo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 15:44:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45600 "EHLO mail.kernel.org"
+        id S1732514AbgIHUAh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 16:00:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731791AbgIHTof (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 15:44:35 -0400
+        id S1730483AbgIHPf0 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Sep 2020 11:35:26 -0400
 Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D1E720578;
-        Tue,  8 Sep 2020 19:44:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7C60221F1;
+        Tue,  8 Sep 2020 12:51:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599594273;
-        bh=TwSgaQVWEpyncboF4JaD9IhTXHoxnoQIBmEUk68HUJI=;
+        s=default; t=1599569485;
+        bh=Lq/m2LPdqnwOctTs+nOjofy+rsfGEQCpMl8dlnIOh4c=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=CvcYBcII98mNXdOt3ahcND/odmUUtF1qJ7jdSiGu5rWQigwBgkEIGnxpVHeYd2rj2
-         BSuXy9Eu/sB6mfBPSMnCgiune1xkJVc0Frzvajn6liJxdAa5Xy6U2YFaQd5sWObBlO
-         ey0gPuJXFnLabJ79cydkxypftdh00fQbSdgW+K9o=
-Message-ID: <e4f5ccb298170357ba16ae2870fde6a90ca2aa81.camel@kernel.org>
-Subject: Re: [PATCH] fsync.2: ERRORS: add EIO and ENOSPC
+        b=yZdpr/ddGJxxizY9JVsTKHxaWDmuANe0cl9Rjj+BRzUSiRf0fO8mtvGikccKpJX4q
+         36QLsG5rZXH+BdXQq1sElgt6bxjxwtjq/WFETHMOb4ng3fwzK4LZy1havGANOEINQe
+         yvxaYF0RFa9gIV5+ZIUFAjI5ZQ9g6lW3JJvOfs9w=
+Message-ID: <e176e6263a0da72bfbef5f373bff18e46be173ae.camel@kernel.org>
+Subject: Re: [RFC PATCH v2 07/18] lib: lift fscrypt base64 conversion into
+ lib/
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Jan Kara <jack@suse.cz>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     milan.opensource@gmail.com, lkml <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Date:   Tue, 08 Sep 2020 15:44:32 -0400
-In-Reply-To: <20200908112742.GA2956@quack2.suse.cz>
-References: <1598685186-27499-1-git-send-email-milan.opensource@gmail.com>
-         <CAKgNAkiTjtdaQxbCYS67+SdqSPaGzJnfLEEMFgcoXjHLDxgemw@mail.gmail.com>
-         <20200908112742.GA2956@quack2.suse.cz>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org
+Date:   Tue, 08 Sep 2020 08:51:23 -0400
+In-Reply-To: <20200908035956.GH68127@sol.localdomain>
+References: <20200904160537.76663-1-jlayton@kernel.org>
+         <20200904160537.76663-8-jlayton@kernel.org>
+         <20200908035956.GH68127@sol.localdomain>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
@@ -45,106 +44,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2020-09-08 at 13:27 +0200, Jan Kara wrote:
-> Added Jeff to CC since he has written the code...
-> 
-> On Mon 07-09-20 09:11:06, Michael Kerrisk (man-pages) wrote:
-> > [Widening the CC to include Andrew and linux-fsdevel@]
-> > [Milan: thanks for the patch, but it's unclear to me from your commit
-> > message how/if you verified the details.]
+On Mon, 2020-09-07 at 20:59 -0700, Eric Biggers wrote:
+> On Fri, Sep 04, 2020 at 12:05:26PM -0400, Jeff Layton wrote:
+> > Once we allow encrypted filenames on ceph we'll end up with names that
+> > may have illegal characters in them (embedded '\0' or '/'), or
+> > characters that aren't printable.
 > > 
-> > Andrew, maybe you (or someone else) can comment, since long ago your
+> > It will be safer to use strings that are printable. It turns out that the
+> > MDS doesn't really care about the length of filenames, so we can just
+> > base64 encode and decode filenames before writing and reading them.
 > > 
-> >     commit f79e2abb9bd452d97295f34376dedbec9686b986
-> >     Author: Andrew Morton <akpm@osdl.org>
-> >     Date:   Fri Mar 31 02:30:42 2006 -0800
+> > Lift the base64 implementation that's in fscrypt into lib/. Make fscrypt
+> > select it when it's enabled.
 > > 
-> > included a comment that is referred to in  stackoverflow discussion
-> > about this topic (that SO discussion is in turn referred to by
-> > https://bugzilla.kernel.org/show_bug.cgi?id=194757).
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/crypto/Kconfig            |  1 +
+> >  fs/crypto/fname.c            | 64 ++------------------------------
+> >  include/linux/base64_fname.h | 11 ++++++
+> >  lib/Kconfig                  |  3 ++
+> >  lib/Makefile                 |  1 +
+> >  lib/base64_fname.c           | 71 ++++++++++++++++++++++++++++++++++++
+> >  6 files changed, 90 insertions(+), 61 deletions(-)
+> >  create mode 100644 include/linux/base64_fname.h
+> >  create mode 100644 lib/base64_fname.c
 > > 
-> > The essence as I understand it, is this:
-> > (1) fsync() (and similar) may fail EIO or ENOSPC, at which point data
-> > has not been synced.
-> > (2) In this case, the EIO/ENOSPC setting is cleared so that...
-> > (3) A subsequent fsync() might return success, but...
-> > (4) That doesn't mean that the data in (1) landed on the disk.
 > 
-> Correct.
-> 
-> > The proposed manual page patch below wants to document this, but I'd
-> > be happy to have an FS-knowledgeable person comment before I apply.
-> 
-> Just a small comment below:
-> 
-> > On Sat, 29 Aug 2020 at 09:13, <milan.opensource@gmail.com> wrote:
-> > > From: Milan Shah <milan.opensource@gmail.com>
-> > > 
-> > > This Fix addresses Bug 194757.
-> > > Ref: https://bugzilla.kernel.org/show_bug.cgi?id=194757
-> > > ---
-> > >  man2/fsync.2 | 13 +++++++++++++
-> > >  1 file changed, 13 insertions(+)
-> > > 
-> > > diff --git a/man2/fsync.2 b/man2/fsync.2
-> > > index 96401cd..f38b3e4 100644
-> > > --- a/man2/fsync.2
-> > > +++ b/man2/fsync.2
-> > > @@ -186,6 +186,19 @@ In these cases disk caches need to be disabled using
-> > >  or
-> > >  .BR sdparm (8)
-> > >  to guarantee safe operation.
-> > > +
-> > > +When
-> > > +.BR fsync ()
-> > > +or
-> > > +.BR fdatasync ()
-> > > +returns
-> > > +.B EIO
-> > > +or
-> > > +.B ENOSPC
-> > > +any error flags on pages in the file mapping are cleared, so subsequent synchronisation attempts
-> > > +will return without error. It is
-> > > +.I not
-> > > +safe to retry synchronisation and assume that a non-error return means prior writes are now on disk.
-> > >  .SH SEE ALSO
-> > >  .BR sync (1),
-> > >  .BR bdflush (2),
-> 
-> So the error state isn't really stored "on pages in the file mapping".
-> Current implementation (since 4.14) is that error state is stored in struct
-> file (I think this tends to be called "file description" in manpages) and
-> so EIO / ENOSPC is reported once for each file description of the file that
-> was open before the error happened. Not sure if we want to be so precise in
-> the manpages or if it just confuses people. Anyway your takeway that no
-> error on subsequent fsync() does not mean data was written is correct.
-> 
+> I'm still concerned that this functionality is too specific to belong in lib/ at
+> the moment, given that it's not the most commonly used variant of base64.  How
+> about keeping these functions in fs/crypto/ for now?  You can call them
+> fscrypt_base64_encode() and fscrypt_base64_decode() and export them for ceph to
+> use.
 > 
 
-Thinking about it more, I think we ought to spell this out explicitly as
-we can in the manpage. This is a point of confusion for a lot of people
-and not understanding this can lead to data integrity bugs. Maybe
-something like this in the NOTES section?
+Ok, will do.
 
-'''
-When fsync returns an error, the file is considered to be "clean". A
-subsequent call to fsync will not result in a reattempt to write out the
-data, unless that data has been rewritten. Applications that want to
-reattempt writing to the file after a transient error must re-write
-their data.
-'''
-
-To be clear:
-
-In practice, you'd only have to write enough to redirty each page in
-most cases.
-
-Also, it is hard to claim that the above behavior is universally true. A
-filesystem could opt to keep the pages dirty for some errors, but the
-vast majority just toss out the data whenever there is a writeback
-problem.
-
-
+> > diff --git a/lib/base64_fname.c b/lib/base64_fname.c
+> > new file mode 100644
+> > index 000000000000..7638c45e4035
+> > --- /dev/null
+> > +++ b/lib/base64_fname.c
+> > @@ -0,0 +1,71 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Modified base64 encode/decode functions, suitable for use as filename components.
+> > + *
+> > + * Originally lifted from fs/crypto/fname.c
+> > + *
+> > + * Copyright (C) 2015, Jaegeuk Kim
+> > + * Copyright (C) 2015, Eric Biggers
+> > + */
+> 
+> Please don't change the copyright statements.  The original file had:
+> 
+>  * Copyright (C) 2015, Google, Inc.
+>  * Copyright (C) 2015, Motorola Mobility
 -- 
 Jeff Layton <jlayton@kernel.org>
 
