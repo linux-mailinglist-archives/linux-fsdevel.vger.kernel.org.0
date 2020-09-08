@@ -2,85 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AD3F2616C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 19:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEF6A26161D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 19:03:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbgIHRSi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 13:18:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57298 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731746AbgIHQSD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 12:18:03 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D6A322286;
-        Tue,  8 Sep 2020 12:54:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599569676;
-        bh=qHsmub80VG9U4Q5DCqgTf92EnAVS6x/iPsVvMSuowDc=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=kLcTHSTJsgVnkEU6SCWDTpda+yCxf298ICsxvcnq5N1l2jBiJ8CwsQm3LPZ+jzTKk
-         2rS8i0qQ46sLpqNCdIGPYlZb7m0sHDnqhyI+kvRmxJ/f8GWkT6f6+qul5BSvjXiMg2
-         YUo8ZfQZBQ4y2G7NrMiuSXuBVwEsE1WPWkjY5vIU=
-Message-ID: <448f739e1a23a3a275f36b36043a79930727e3c0.camel@kernel.org>
-Subject: Re: [RFC PATCH v2 05/18] fscrypt: don't balk when inode is already
- marked encrypted
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org
-Date:   Tue, 08 Sep 2020 08:54:35 -0400
-In-Reply-To: <20200908035233.GF68127@sol.localdomain>
-References: <20200904160537.76663-1-jlayton@kernel.org>
-         <20200904160537.76663-6-jlayton@kernel.org>
-         <20200908035233.GF68127@sol.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        id S1732089AbgIHRD4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 13:03:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36424 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732034AbgIHRCv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Sep 2020 13:02:51 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EDD8C061573
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Sep 2020 10:02:50 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id h4so89707ioe.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Sep 2020 10:02:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6r8oY7P5aaaNjTS2Z3JuHAo/BodSW0G0Qz3+9SCpdcA=;
+        b=Fc5KlT/QgmDUw9wewiSXZGEfR0knpYXatiwTcFvCBfuTglDqwe97Xqfk0+3x8rqwqz
+         +7tuFM8H7/+AmHKFAaAgiLJ6SRjQRhYk33odBKaz/HYiH3Ner4l978qk7J5fVRCppZat
+         NzbCVkM8xF0xtOByqvqkwhwdQxGZyDDDgP822eVuJM4gG0Hcg8eiv1RslZap/Bek1+wl
+         Zo6pLSrd6Y9goqQPOoDIZfkmRDiwu8LSP2FkQezPzvHh4k3BUYgvl+MCayPCGDN/ggRH
+         EbcMddlY2Qg8dVmq7IG0F2iCUIwDUoScipcAw4Y7Ul6q0kcLqRY/IS7Ixd4PLxrKKOK1
+         TsFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6r8oY7P5aaaNjTS2Z3JuHAo/BodSW0G0Qz3+9SCpdcA=;
+        b=tiZSzxpHy6mCqvWuWXtm20mHPV3gouNkdUB0FcEALDf6i6rBNSFiFi0G7wphMm7f2A
+         LeE2Kn3C5mFg5rfTvmqtO8JgzLykVei3FceWf4QgxYXHWqVO1gl69vYi+wILl6e+OswH
+         MwaMq16mvnkHJ/mGakl2Oqi3YzDU5hnUpG3i0hYeMMCrIcf3+vr5VJDryN/tCWgU0fd0
+         40pxjJk0E1z+T8InYLWBVaeCRQi/uQkGdOvAidMKeEspjEpFOCaBE/lWBQAQKKSlZrUr
+         T5rZhC6YJDlLGrxwLTWsCYVL5CzbFAZHvlK6jsB6pXV8CK5AG4ki3+esHxAolbczpJ9/
+         bDVw==
+X-Gm-Message-State: AOAM531S6+Pk6MUUmMFYIycnwQsacvijtZ3i1lzh223HeLhclTKVFVoN
+        SU/QH+eQ/2ojlmg03DO7Y9ypkQ==
+X-Google-Smtp-Source: ABdhPJwKYohUKj3l/8T5Uy0NjpVMb531t2l/rRzat+mZoQM4CjOho16dsxnLDc/YijlCusjH4qO8bQ==
+X-Received: by 2002:a02:9986:: with SMTP id a6mr23301374jal.28.1599584569815;
+        Tue, 08 Sep 2020 10:02:49 -0700 (PDT)
+Received: from [192.168.1.10] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id i14sm10669430ilb.28.2020.09.08.10.02.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Sep 2020 10:02:49 -0700 (PDT)
+Subject: Re: [PATCH for-next] io_uring: return EBADFD when ring isn't in the
+ right state
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200908165242.124957-1-sgarzare@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6e119be3-d9a3-06ea-1c76-4201816dde46@kernel.dk>
+Date:   Tue, 8 Sep 2020 11:02:48 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <20200908165242.124957-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-09-07 at 20:52 -0700, Eric Biggers wrote:
-> On Fri, Sep 04, 2020 at 12:05:24PM -0400, Jeff Layton wrote:
-> > Cephfs (currently) sets this flag early and only fetches the context
-> > later. Eventually we may not need this, but for now it prevents this
-> > warning from popping.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/crypto/keysetup.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-> > index ad64525ec680..3b4ec16fc528 100644
-> > --- a/fs/crypto/keysetup.c
-> > +++ b/fs/crypto/keysetup.c
-> > @@ -567,7 +567,7 @@ int fscrypt_get_encryption_info(struct inode *inode)
-> >  		const union fscrypt_context *dummy_ctx =
-> >  			fscrypt_get_dummy_context(inode->i_sb);
-> >  
-> > -		if (IS_ENCRYPTED(inode) || !dummy_ctx) {
-> > +		if (!dummy_ctx) {
-> >  			fscrypt_warn(inode,
-> >  				     "Error %d getting encryption context",
-> >  				     res);
+On 9/8/20 10:52 AM, Stefano Garzarella wrote:
+> This patch uniforms the returned error (EBADFD) when the ring state
+> (enabled/disabled) is not the expected one.
 > 
-> This makes errors reading the encryption xattr of an encrypted inode be ignored
-> when the filesystem is mounted with test_dummy_encryption.  That's undesirable.
-> 
-> Isn't this change actually no longer needed, now that new inodes will use
-> fscrypt_prepare_new_inode() instead of fscrypt_get_encryption_info()?
+> The changes affect io_uring_enter() and io_uring_register() syscalls.
 
-No. This is really for when we're reading in a new inode from the MDS.
-We can tell that there is a context present in some of those cases, but
-may not be able to read it yet. That said, it may be possible to pull in
-the context at the point where we set S_ENCRYPTED. I'll take a look.
+I added a Fixes line:
 
-Thanks,
+Fixes: 7ec3d1dd9378 ("io_uring: allow disabling rings during the creation")
+
+and applied it, thanks!
+
+> https://github.com/stefano-garzarella/liburing (branch: fix-disabled-ring-error)
+
+I'll check and pull that one too.
+
 -- 
-Jeff Layton <jlayton@kernel.org>
+Jens Axboe
 
