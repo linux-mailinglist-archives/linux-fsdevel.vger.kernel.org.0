@@ -2,118 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DCC4C2610DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 13:39:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 093372610DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 13:38:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730077AbgIHLic (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 07:38:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53366 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729922AbgIHL1p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 07:27:45 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id ED701AD7A;
-        Tue,  8 Sep 2020 11:27:43 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id E8CDF1E1325; Tue,  8 Sep 2020 13:27:42 +0200 (CEST)
-Date:   Tue, 8 Sep 2020 13:27:42 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     milan.opensource@gmail.com, lkml <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH] fsync.2: ERRORS: add EIO and ENOSPC
-Message-ID: <20200908112742.GA2956@quack2.suse.cz>
-References: <1598685186-27499-1-git-send-email-milan.opensource@gmail.com>
- <CAKgNAkiTjtdaQxbCYS67+SdqSPaGzJnfLEEMFgcoXjHLDxgemw@mail.gmail.com>
+        id S1729422AbgIHLiU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 07:38:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40494 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729615AbgIHL17 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Sep 2020 07:27:59 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5708C061573
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Sep 2020 04:27:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=7WZu8yEPToxwOxOhhBePKSmAHVZZ0k0hi3wlwa3S1c8=; b=TUnKGV3AHfrtbyC2uFQIrltWeY
+        W5sw26FTblwDAB0xh/RXDkA0G7fQcuC2kFM/qiEKDdX5/arBNFFtiWhb194x1MgwJsj0gtoipXZhk
+        X76nfSTZ+u6CYn/lJUwobmlEkqShS90Uu542t5wsScgKgvE9EPgLgEFlpCj8r+QVRkyROwSJ4O6VP
+        j9fULbzUctK7pMPy/nIyi/vu5jtw2WrHTSWRVecE5Wgflca1asRRNnL62wtdIWCjjVqJX13uJYYO/
+        vH5RfWLa3Xwq5cgFnsMER51iYz6tIBUNyUjrbs2KDO80iiMNmvt3P4KTDVoIvjLD7y+706+rnvrXX
+        MIsV++Yg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kFbmz-0000Yg-VF; Tue, 08 Sep 2020 11:27:54 +0000
+Date:   Tue, 8 Sep 2020 12:27:53 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Pradeep P V K <pragalla@qti.qualcomm.com>
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        stummala@codeaurora.org, sayalil@codeaurora.org,
+        Pradeep P V K <ppvk@codeaurora.org>
+Subject: Re: [PATCH V4] fuse: Fix VM_BUG_ON_PAGE issue while accessing zero
+ ref count page
+Message-ID: <20200908112753.GD27537@casper.infradead.org>
+References: <1599553026-11745-1-git-send-email-pragalla@qti.qualcomm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKgNAkiTjtdaQxbCYS67+SdqSPaGzJnfLEEMFgcoXjHLDxgemw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1599553026-11745-1-git-send-email-pragalla@qti.qualcomm.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Added Jeff to CC since he has written the code...
-
-On Mon 07-09-20 09:11:06, Michael Kerrisk (man-pages) wrote:
-> [Widening the CC to include Andrew and linux-fsdevel@]
-> [Milan: thanks for the patch, but it's unclear to me from your commit
-> message how/if you verified the details.]
+On Tue, Sep 08, 2020 at 01:47:06PM +0530, Pradeep P V K wrote:
+> Changes since V3:
+> - Fix smatch warnings.
 > 
-> Andrew, maybe you (or someone else) can comment, since long ago your
+> Changes since V2:
+> - Moved the spin lock from fuse_copy_pages() to fuse_ref_page().
 > 
->     commit f79e2abb9bd452d97295f34376dedbec9686b986
->     Author: Andrew Morton <akpm@osdl.org>
->     Date:   Fri Mar 31 02:30:42 2006 -0800
+> Changes since V1:
+> - Modified the logic as per kernel v5.9-rc1.
+> - Added Reported by tag.
 > 
-> included a comment that is referred to in  stackoverflow discussion
-> about this topic (that SO discussion is in turn referred to by
-> https://bugzilla.kernel.org/show_bug.cgi?id=194757).
-> 
-> The essence as I understand it, is this:
-> (1) fsync() (and similar) may fail EIO or ENOSPC, at which point data
-> has not been synced.
-> (2) In this case, the EIO/ENOSPC setting is cleared so that...
-> (3) A subsequent fsync() might return success, but...
-> (4) That doesn't mean that the data in (1) landed on the disk.
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Correct.
+Umm, the way this is written, it looks like Dan reported the original
+bug rather than a bug in v3.  The usual way is to credit Dan in the
+'Changes since' rather than putting in a 'Reported-by'.
 
-> The proposed manual page patch below wants to document this, but I'd
-> be happy to have an FS-knowledgeable person comment before I apply.
+>  static int fuse_ref_page(struct fuse_copy_state *cs, struct page *page,
+> -			 unsigned offset, unsigned count)
+> +			 unsigned offset, unsigned count, struct fuse_conn *fc)
 
-Just a small comment below:
+I'm no expert on fuse, but it looks to me like you should put a pointer
+to the fuse_conn in struct fuse_copy_state rather than passing it down
+through all these callers.
 
-> On Sat, 29 Aug 2020 at 09:13, <milan.opensource@gmail.com> wrote:
-> >
-> > From: Milan Shah <milan.opensource@gmail.com>
-> >
-> > This Fix addresses Bug 194757.
-> > Ref: https://bugzilla.kernel.org/show_bug.cgi?id=194757
-> > ---
-> >  man2/fsync.2 | 13 +++++++++++++
-> >  1 file changed, 13 insertions(+)
-> >
-> > diff --git a/man2/fsync.2 b/man2/fsync.2
-> > index 96401cd..f38b3e4 100644
-> > --- a/man2/fsync.2
-> > +++ b/man2/fsync.2
-> > @@ -186,6 +186,19 @@ In these cases disk caches need to be disabled using
-> >  or
-> >  .BR sdparm (8)
-> >  to guarantee safe operation.
-> > +
-> > +When
-> > +.BR fsync ()
-> > +or
-> > +.BR fdatasync ()
-> > +returns
-> > +.B EIO
-> > +or
-> > +.B ENOSPC
-> > +any error flags on pages in the file mapping are cleared, so subsequent synchronisation attempts
-> > +will return without error. It is
-> > +.I not
-> > +safe to retry synchronisation and assume that a non-error return means prior writes are now on disk.
-> >  .SH SEE ALSO
-> >  .BR sync (1),
-> >  .BR bdflush (2),
-
-So the error state isn't really stored "on pages in the file mapping".
-Current implementation (since 4.14) is that error state is stored in struct
-file (I think this tends to be called "file description" in manpages) and
-so EIO / ENOSPC is reported once for each file description of the file that
-was open before the error happened. Not sure if we want to be so precise in
-the manpages or if it just confuses people. Anyway your takeway that no
-error on subsequent fsync() does not mean data was written is correct.
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
