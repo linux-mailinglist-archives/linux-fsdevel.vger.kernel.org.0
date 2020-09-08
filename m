@@ -2,123 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A1AB0262193
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 22:56:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6B402621A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 23:01:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730175AbgIHU4m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 16:56:42 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:48199 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730067AbgIHU4i (ORCPT
+        id S1730104AbgIHVBK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 17:01:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45938 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728390AbgIHVBJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 16:56:38 -0400
-Received: from mail-qt1-f182.google.com ([209.85.160.182]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MNbtD-1jv3QV27kh-00P7vm; Tue, 08 Sep 2020 22:56:36 +0200
-Received: by mail-qt1-f182.google.com with SMTP id y11so310649qtn.9;
-        Tue, 08 Sep 2020 13:56:36 -0700 (PDT)
-X-Gm-Message-State: AOAM531ldlojCKnKAwLQ24gQISKK4G7TWR3/GMzc7tHxusKf4pKC95Vk
-        ftZeSB4wfPlosy0ynS5vYU3ScinZlkfb5XT/qgc=
-X-Google-Smtp-Source: ABdhPJw01K4SmzGcD/b5sCr5TVIohl7CD4hX2My20XCnkE0ssRILx71GeRB7UxQ0ChxMfJ5jNEb1Xhh9GXXfgpFYgXA=
-X-Received: by 2002:aed:2414:: with SMTP id r20mr314758qtc.304.1599598594985;
- Tue, 08 Sep 2020 13:56:34 -0700 (PDT)
+        Tue, 8 Sep 2020 17:01:09 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B92AFC061573;
+        Tue,  8 Sep 2020 14:01:08 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id gr14so429862ejb.1;
+        Tue, 08 Sep 2020 14:01:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=yuZq5gRtjnAOy/yKCa2afgQGQUjqZmPhiIecQIYO4eA=;
+        b=qZsEpHsLLfxCed5410SrA8rAmZ525i2i7c4wbc8OXp8N6SlmVDp7h0875MI+d+P1AS
+         yxU3wkXW4yiC+OW0P3j5dz9gOgAbwa1iNrlGZoAtC7msxKu+2dvktj66eIX2ytjX1E/9
+         tlhUG1EWTLUt2uNd2eqM3WIyc/KT3lRvmJawNkK1qRtTlpUbJx333MGi2U++GtNkJzUy
+         sGoKssErH5fzsyim9s8uSE9ZKabk2XzzJd8SS7nR+YI01aoe2wNNm2CZdHxQ0uf/2J8q
+         p2iYtl/pXLibEbGb1vYO+scourbh+gHjRlX1qwaizNbyoVtz1VHcqi9rEv24HjIgIIwE
+         yciw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=yuZq5gRtjnAOy/yKCa2afgQGQUjqZmPhiIecQIYO4eA=;
+        b=Cb6vozJOaeXOdLgj6vwxPZeXjPElhw0QIsjCWog3519ITh13njLSUkgdB/qI0z7rL1
+         A/Jbu1H4Ev+5nOR2R4fzjkQYuhN28ZlXdFJuHXX9mj0yc/6Kus2CK917QKf26ydC2ZKG
+         8zWX9a1/EgiChRAsY7Ob9caX03FNcfwVeH8HVuBLPKXEhDHGgMTU/UFYoiS+yp88+nsy
+         /WuW0hLwvcRsGRxx6SHopYIaExkbsZMbhCjGxlxshObkfh+ulLxbw2L13q8Ko+e0a4S/
+         3IsLABTo9VI1k7234VlewlRSp+gd2rOvR+KLy/AA6hnKis/MoOKE7Fua2CeBVRHBaCl8
+         zDeg==
+X-Gm-Message-State: AOAM530LwXPg6u43RY6wi0YjZZPoKWrwk+tIT5/f1wEKg3DQydm6fT4N
+        5+r71flYmFbov45gyt9vf7s=
+X-Google-Smtp-Source: ABdhPJxd/YVT4oASVxc+tdLEjp4ZtwajtJ+9bkMQrQ6WgK3fNzWkGQeJPkcAanshpa+NFiZECBmYgg==
+X-Received: by 2002:a17:906:fcc7:: with SMTP id qx7mr377519ejb.254.1599598864615;
+        Tue, 08 Sep 2020 14:01:04 -0700 (PDT)
+Received: from [192.168.43.239] ([5.100.193.184])
+        by smtp.gmail.com with ESMTPSA id bx24sm257157ejb.51.2020.09.08.14.01.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Sep 2020 14:01:03 -0700 (PDT)
+Subject: Re: [PATCH next] io_uring: fix task hung in io_uring_setup
+To:     Hillf Danton <hdanton@sina.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk,
+        syzbot+107dd59d1efcaf3ffca4@syzkaller.appspotmail.com,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Kees Cook <keescook@chromium.org>
+References: <20200903132119.14564-1-hdanton@sina.com>
+ <9bef23b1-6791-6601-4368-93de53212b22@kernel.dk>
+ <8031fbe7-9e69-4a79-3b42-55b2a1a690e3@gmail.com>
+ <20200908000339.2260-1-hdanton@sina.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <778a8166-e031-e691-a44b-1199c68d6a29@gmail.com>
+Date:   Tue, 8 Sep 2020 23:58:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-References: <20200907153701.2981205-1-arnd@arndb.de> <20200907153701.2981205-6-arnd@arndb.de>
- <20200908062002.GD13930@lst.de>
-In-Reply-To: <20200908062002.GD13930@lst.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 8 Sep 2020 22:56:19 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a30Ezn9MhN6YG+c_eCedo=HGp2-uUN6fC218f96TBFK=Q@mail.gmail.com>
-Message-ID: <CAK8P3a30Ezn9MhN6YG+c_eCedo=HGp2-uUN6fC218f96TBFK=Q@mail.gmail.com>
-Subject: Re: [PATCH 5/9] ARM: oabi-compat: rework epoll_wait/epoll_pwait emulation
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Russell King <rmk@arm.linux.org.uk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux- <kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:ONFItD4L9ZUfs9c7cyDdLEcuWb4tDmr1dxAFxBmlvQBgCY+AyBQ
- 5yGSNs4HcpwVXao6W8rKb/wo5lHk9sJbaBaAfKu5QOfmlkdNU9s6H/Fxvyf6/zlZlgm+6x4
- 7sWLlUIXP+Y+4lL7FIOvAUEa9CSUbtRv8UQHr+Aq3qrcpgslls4Zz7TuaRttakGwoVBeobp
- SzdOKPKVLMh57itI2U2sg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Amv1wSt9wms=:C2yWf5pqS1J9wAPWLAOJ7j
- HhNwC4qRElRzIhaA+gd5scasCJXkPld8HiJ2TSEzEO+4Dp/GHK1Eypfu9Vy6BybgIzyd7bG7N
- cegJjIW4JPs5rf5rCE0QGgvDaxcXJIisxn5T/3IXCediq6LRceDzetvkx/5bEnpFR9M3GkMnK
- wTPaJSOJqlfed1H2/oVVjwVY0lOZxGeIqOBlCXZh+sbbi4V0AUm0sgBUcoQMon+Jce1wKeJiK
- tRGtvRy4dzY/ERLhqYbSZ/NTkONkqymgra/Qxn/3JeewSw0ysFhCUcX5LIZ8SleK4HhdziLOI
- O5PvGeVmO1s8MGJMUONT/LdTqEdNB50R8NQy/ayko39jvAsQ/PWnkaRarutKCpm9u8WNC9EgH
- Tz7WBdIA5JTOAk+e4jyhxzC0PMa+iL9BSR96ej0joNhju1DDIWEp7HR/EVitVBsWyrRRc6oVC
- iZXzSmGR2tMYqohqopENFWD5m4HLI6OdLf4ijbdjo6Y6P/PU2Dm4NZ3PInxD2UC3JxjVs/KMV
- v+L+TpevMIRFiLPJpbe5MwusY5KpfZ6rI1XEAmfGVyGBqVJ4T22Dx9KDwxVeAYFIKVSLrGUxz
- ANVdU87H21c/aaEBJnBbvmYOVQPKwh2O89Xnp1frGYti+Ack2YiFxpXdpwPs4wYrs7tAjqY7g
- yBt7G+0ibJyVmymcDIAuk0caY2Y2l6XxJ9FuLW8y+2nKUlD5i/V2ri/Aj7E9sbWmT5IjUu+oM
- FJzrxU2kTN27lh8KVxZIQfpbg/rLRFtQ0XKVdyC+libWL+LcIgPmIP+rk2SJGi/LMEiNT3vP2
- St6zRYGlHJ94IXl1rq5pHefT0zoBNZVL/rffsL/xVBujOv+7T0d8iIDfnK0WFA27SvDbLQn
+In-Reply-To: <20200908000339.2260-1-hdanton@sina.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 8, 2020 at 8:20 AM Christoph Hellwig <hch@lst.de> wrote:
-> > @@ -264,68 +266,24 @@ asmlinkage long sys_oabi_epoll_ctl(int epfd, int op, int fd,
-> >       return do_epoll_ctl(epfd, op, fd, &kernel, false);
-> >  }
-> >
-> > -static long do_oabi_epoll_wait(int epfd, struct oabi_epoll_event __user *events,
-> > -                            int maxevents, int timeout)
-> > +struct epoll_event __user *
-> > +epoll_put_uevent(__poll_t revents, __u64 data, struct epoll_event __user *uevent)
-> >  {
-> > +     if (in_oabi_syscall()) {
-> > +             struct oabi_epoll_event *oevent = (void __user *)uevent;
-> >
-> > +             if (__put_user(revents, &oevent->events) ||
-> > +                 __put_user(data, &oevent->data))
-> > +                     return NULL;
-> >
-> > +             return (void __user *)uevent+1;
+On 08/09/2020 03:03, Hillf Danton wrote:
+> 
+> On Mon, 7 Sep 2020 06:55:04 Jens Axboe wrote:
+>> On 9/7/20 2:50 AM, Pavel Begunkov wrote:
+>>>
+>>> BTW, I don't see the patch itself, and it's neither in io_uring, block
+>>> nor fs mailing lists. Hillf, could you please CC proper lists next time?
+> 
+> Yes, I can. So will I send io_uring patches with Pavel Cced.
 
-FWIW, this line needs to be
+Thanks
 
-         return (void __user *)(oevent+1);
+>>
+>> He did, but I'm guessing that vger didn't like the email for whatever
+>> reason. Hillf, did you get an error back from vger when sending the pat	
+> 
+> My inbox, a simple free mail, is perhaps blocked as spam at the vger end.
 
-It turns out that while I thought I had tested this already, my earlier
-tests were on the EABI Debian 5 instead of the OABI version of the
-same distro. I reproduced it both ways now and LTP successfully
-found that bug ;-)
-
-> I wonder if we'd be better off doing the in_oabi_syscall() branch in
-> the common code.  E.g. rename in_oabi_syscall to in_legacy_syscall and
-> stub it out for all other architectures.  Then just do
->
->         if (in_oabi_syscall()
->                 legacy_syscall_foo_bit();
->         else
->                 normal_syscall_foo_bit();
->
-> in common code, where so far only arm provides
-> legacy_syscall_foo_bit().
-
-I tried out different ways, the first one I had was with an #ifdef in the
-C code that I did not like much.
-
-Moving the different code path into common code would avoid that
-#ifdef but also put the rather obscure oabi-compat code into a
-much more prominent location. I'd prefer to keep it out of there
-as much as possible and hope we don't need to do this anywhere
-else. x86-32 has some similar issues with struct layout, but that
-already goes through the normal compat layer on 64-bit kernels.
-
-> Tons of long lines again in this patch..
-
-Fixed now.
-
-       Arnd
+-- 
+Pavel Begunkov
