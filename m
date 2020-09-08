@@ -2,51 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 94679261AF4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 20:49:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1491261B05
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 20:52:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731211AbgIHSta (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 14:49:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52890 "EHLO
+        id S1731455AbgIHSvn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 14:51:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbgIHStG (ORCPT
+        with ESMTP id S1731211AbgIHSvK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 14:49:06 -0400
+        Tue, 8 Sep 2020 14:51:10 -0400
 Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7024FC061573;
-        Tue,  8 Sep 2020 11:49:05 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D900C061573;
+        Tue,  8 Sep 2020 11:51:10 -0700 (PDT)
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kFifp-00CnK8-Ad; Tue, 08 Sep 2020 18:48:57 +0000
-Date:   Tue, 8 Sep 2020 19:48:57 +0100
+        id 1kFihG-00CnM8-KF; Tue, 08 Sep 2020 18:50:26 +0000
+Date:   Tue, 8 Sep 2020 19:50:26 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Hao Lee <haolee.swjtu@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: Eliminate a local variable to make the code more
- clear
-Message-ID: <20200908184857.GT1236603@ZenIV.linux.org.uk>
-References: <20200729151740.GA3430@haolee.github.io>
- <20200908130656.GC22780@haolee.github.io>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v8 0/3] Add support for AT_INTERPRETED (was O_MAYEXEC)
+Message-ID: <20200908185026.GU1236603@ZenIV.linux.org.uk>
+References: <20200908075956.1069018-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200908130656.GC22780@haolee.github.io>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200908075956.1069018-1-mic@digikod.net>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 08, 2020 at 01:06:56PM +0000, Hao Lee wrote:
-> ping
+On Tue, Sep 08, 2020 at 09:59:53AM +0200, Mickaël Salaün wrote:
+> Hi,
 > 
-> On Wed, Jul 29, 2020 at 03:21:28PM +0000, Hao Lee wrote:
-> > The dentry local variable is introduced in 'commit 84d17192d2afd ("get
-> > rid of full-hash scan on detaching vfsmounts")' to reduce the length of
-> > some long statements for example
-> > mutex_lock(&path->dentry->d_inode->i_mutex). We have already used
-> > inode_lock(dentry->d_inode) to do the same thing now, and its length is
-> > acceptable. Furthermore, it seems not concise that assign path->dentry
-> > to local variable dentry in the statement before goto. So, this function
-> > would be more clear if we eliminate the local variable dentry.
+> This height patch series rework the previous O_MAYEXEC series by not
+> adding a new flag to openat2(2) but to faccessat2(2) instead.  As
+> suggested, this enables to perform the access check on a file descriptor
+> instead of on a file path (while opening it).  This may require two
+> checks (one on open and then with faccessat2) but it is a more generic
+> approach [8].
 
-How does it make the function more clear?  More specifically, what
-analysis of behaviour is simplified by that?
+Again, why is that folded into lookup/open/whatnot, rather than being
+an operation applied to a file (e.g. O_PATH one)?
