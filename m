@@ -2,80 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CC44726138E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 17:33:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17F7A261469
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 18:20:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730506AbgIHPdD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 11:33:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48784 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730283AbgIHPYH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 11:24:07 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83CC5C08C5ED;
-        Tue,  8 Sep 2020 08:18:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=hyoD9QmcI5oiNUeN3ikrG7yLEGezAUx3TNWi/z6zbWI=; b=pgKsLb/aVboApOOdFqn5zDVWgG
-        Snx9karx64Rd7CkJliDojwf8qA6Vh8rEzXBdRiZ8IQONB/Feeejk7hc6VphgfXzIdXRcmZqmEQSAj
-        5+cj7IfmEd2fNt84yK5+jgEZ9BGWTAAdzs+64KItaB1DXE5Kc0WjadecA0kyx3wIm0Py7BPINIWFK
-        K6h868Fkl8wsC8soHGKMlfCMsIA1vDWjYdnTq579hK/y7Muua+Oimtkv6XxgFIkUy04p3qROWpPGg
-        BhIPKafV1qYxUpaG3uBP5qGUxTfc4x7kGtPFdj3u0f6h5QbDHQSj5enIFCSO0WKCv3+p/khC8QmVr
-        ujFJjjAA==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kFfNh-0004N6-CU; Tue, 08 Sep 2020 15:18:01 +0000
-Date:   Tue, 8 Sep 2020 16:18:01 +0100
-From:   "hch@infradead.org" <hch@infradead.org>
-To:     Kanchan Joshi <joshiiitr@gmail.com>
-Cc:     "hch@infradead.org" <hch@infradead.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        SelvaKumar S <selvakuma.s1@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Javier Gonzalez <javier.gonz@samsung.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>
-Subject: Re: [PATCH v4 6/6] io_uring: add support for zone-append
-Message-ID: <20200908151801.GA16742@infradead.org>
-References: <CA+1E3rLM4G4SwzD6RWsK6Ssp7NmhiPedZDjrqN3kORQr9fxCtw@mail.gmail.com>
- <MWHPR04MB375863C20C1EF2CB27E62703E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <20200731091416.GA29634@infradead.org>
- <MWHPR04MB37586D39CA389296CE0252A4E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <20200731094135.GA4104@infradead.org>
- <MWHPR04MB3758A4B2967DB1FABAAD9265E74E0@MWHPR04MB3758.namprd04.prod.outlook.com>
- <20200731125110.GA11500@infradead.org>
- <CY4PR04MB37517D633920E4D31AC6EA0DE74B0@CY4PR04MB3751.namprd04.prod.outlook.com>
- <20200814081411.GA16943@infradead.org>
- <CA+1E3r+WXC_MK5Zf2OZEv17ddJDjtXbhpRFoeDns4F341xMhow@mail.gmail.com>
+        id S1731876AbgIHQUU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 12:20:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59170 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731843AbgIHQUH (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Sep 2020 12:20:07 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F28EC205CB;
+        Tue,  8 Sep 2020 16:10:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599581448;
+        bh=v2zsVbidV/dpXBuxnNOOWyBxJCinNIceKjsE+Knsapc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=qcRMUHSfIbb1We5HAkPbiDyxoStGFeeDjZQINQRCiB02sz2KJR+wSF9e8rh2hFWX/
+         pRdR7L5L4Ji67IrqudFk9FYmW37g7LVLBI5MLHW7kGBwH6bYgz6ktZzXzMdso0klAC
+         fZP1Nr1+cyUG5NNMwSPOjPXC4hfYj4cgJjooh2u8=
+Message-ID: <f4d38a20cb0f25b137fe07a7f43358ab3a459038.camel@kernel.org>
+Subject: Re: [PATCH] fsync.2: ERRORS: add EIO and ENOSPC
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Jan Kara <jack@suse.cz>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     milan.opensource@gmail.com, lkml <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Date:   Tue, 08 Sep 2020 12:10:46 -0400
+In-Reply-To: <20200908112742.GA2956@quack2.suse.cz>
+References: <1598685186-27499-1-git-send-email-milan.opensource@gmail.com>
+         <CAKgNAkiTjtdaQxbCYS67+SdqSPaGzJnfLEEMFgcoXjHLDxgemw@mail.gmail.com>
+         <20200908112742.GA2956@quack2.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+1E3r+WXC_MK5Zf2OZEv17ddJDjtXbhpRFoeDns4F341xMhow@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 07, 2020 at 12:31:42PM +0530, Kanchan Joshi wrote:
-> But there are use-cases which benefit from supporting zone-append on
-> raw block-dev path.
-> Certain user-space log-structured/cow FS/DB will use the device that
-> way. Aerospike is one example.
-> Pass-through is synchronous, and we lose the ability to use io-uring.
+On Tue, 2020-09-08 at 13:27 +0200, Jan Kara wrote:
+> Added Jeff to CC since he has written the code...
+> 
+> On Mon 07-09-20 09:11:06, Michael Kerrisk (man-pages) wrote:
+> > [Widening the CC to include Andrew and linux-fsdevel@]
+> > [Milan: thanks for the patch, but it's unclear to me from your commit
+> > message how/if you verified the details.]
+> > 
+> > Andrew, maybe you (or someone else) can comment, since long ago your
+> > 
+> >     commit f79e2abb9bd452d97295f34376dedbec9686b986
+> >     Author: Andrew Morton <akpm@osdl.org>
+> >     Date:   Fri Mar 31 02:30:42 2006 -0800
+> > 
+> > included a comment that is referred to in  stackoverflow discussion
+> > about this topic (that SO discussion is in turn referred to by
+> > https://bugzilla.kernel.org/show_bug.cgi?id=194757).
+> > 
+> > The essence as I understand it, is this:
+> > (1) fsync() (and similar) may fail EIO or ENOSPC, at which point data
+> > has not been synced.
+> > (2) In this case, the EIO/ENOSPC setting is cleared so that...
+> > (3) A subsequent fsync() might return success, but...
+> > (4) That doesn't mean that the data in (1) landed on the disk.
+> 
+> Correct.
+> 
+> > The proposed manual page patch below wants to document this, but I'd
+> > be happy to have an FS-knowledgeable person comment before I apply.
+> 
+> Just a small comment below:
+> 
+> > On Sat, 29 Aug 2020 at 09:13, <milan.opensource@gmail.com> wrote:
+> > > From: Milan Shah <milan.opensource@gmail.com>
+> > > 
+> > > This Fix addresses Bug 194757.
+> > > Ref: https://bugzilla.kernel.org/show_bug.cgi?id=194757
+> > > ---
+> > >  man2/fsync.2 | 13 +++++++++++++
+> > >  1 file changed, 13 insertions(+)
+> > > 
+> > > diff --git a/man2/fsync.2 b/man2/fsync.2
+> > > index 96401cd..f38b3e4 100644
+> > > --- a/man2/fsync.2
+> > > +++ b/man2/fsync.2
+> > > @@ -186,6 +186,19 @@ In these cases disk caches need to be disabled using
+> > >  or
+> > >  .BR sdparm (8)
+> > >  to guarantee safe operation.
+> > > +
+> > > +When
+> > > +.BR fsync ()
+> > > +or
+> > > +.BR fdatasync ()
+> > > +returns
+> > > +.B EIO
+> > > +or
+> > > +.B ENOSPC
+> > > +any error flags on pages in the file mapping are cleared, so subsequent synchronisation attempts
+> > > +will return without error. It is
+> > > +.I not
+> > > +safe to retry synchronisation and assume that a non-error return means prior writes are now on disk.
+> > >  .SH SEE ALSO
+> > >  .BR sync (1),
+> > >  .BR bdflush (2),
+> 
+> So the error state isn't really stored "on pages in the file mapping".
+> Current implementation (since 4.14) is that error state is stored in struct
+> file (I think this tends to be called "file description" in manpages) and
+> so EIO / ENOSPC is reported once for each file description of the file that
+> was open before the error happened. Not sure if we want to be so precise in
+> the manpages or if it just confuses people. Anyway your takeway that no
+> error on subsequent fsync() does not mean data was written is correct.
+> 
+> 								Honza
+> 
 
-So use zonefs, which is designed exactly for that use case.
+Yep.
+
+My only comment is that there is nothing special about EIO and ENOSPC.
+All errors are the same in this regard. Basically, issuing a new fsync
+after a failed one doesn't do any good. You need to redirty the pages
+first.
+-- 
+Jeff Layton <jlayton@kernel.org>
+
