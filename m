@@ -2,137 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 509D42617BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 19:41:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D02AC261854
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 19:52:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732004AbgIHRlV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 13:41:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56834 "EHLO
+        id S1731631AbgIHRwi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 13:52:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731623AbgIHQOE (ORCPT
+        with ESMTP id S1731606AbgIHQNo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 12:14:04 -0400
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBB96C061379;
-        Tue,  8 Sep 2020 05:50:25 -0700 (PDT)
-Received: by mail-ot1-x344.google.com with SMTP id e23so14723553otk.7;
-        Tue, 08 Sep 2020 05:50:25 -0700 (PDT)
+        Tue, 8 Sep 2020 12:13:44 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EDE9C0619EA
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Sep 2020 06:57:11 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id j2so17118468ioj.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Sep 2020 06:57:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=xtdyDDmFLb1n/bPdUXOwa5UJMDQzkeNGV49EUd3+LOA=;
-        b=KqsK1NT52K0nEsZYDrIpWu/nttM49kNDxDkaTEQ41DlAcJMqFgy9wed9oAOhBOhmp9
-         JjWIha7WgNUYARkHfU31ZSSrWF9UpyHjc97HwVebb5O26IgiHCFN+l4d/KFWvBWtcZTv
-         Vth5VaeiQvFW3eko41wx4jAtxw2/mg/opj2NomPN7bIdTGl/eFfj34xI+YtfoyBJLhO4
-         ZYaKesEZJWG9ZzXmK/OlmuV73f6uZZIja67+5/qKm7MUEk2RinVcTzcSZzgUo4ISxXyG
-         s1WPksUe7qCIKILuYyO3eGU9gozVTrOuUEkYGUdPmjxsNt2nTuZ5m4OdpixNMvbgJDBA
-         7mvQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lLPV/2TbMLCWwjxZmMjGQAv9RQQ5QdmKtS2Q2m060x4=;
+        b=uJazPLWezWgC/PxcgavzXTzULVjK+HH/0rnfAycuhBQCpgkDFk/fvQpqKS7RzEpiXG
+         ERAROiLm7VLunZJpzttkIeY7b1VyZ7vdAdTmly29bZuLWeEEHdxvjUkOpVL/XgnAQLYP
+         U563XLl1LCPU1Vs+xCapjB1tF5YvK5Li0o6rXx6tkcIIdFWG/q5TU59d1Vbfyhey0Iqk
+         FjDr8t0q6o0KqVSUzgviXQkWRhNR4U26NzOXYB0n6lNBNEhD4nJZeQCKGy7YfpsuHGrd
+         n/zLgKw2/0PIclu34Gpdgs81l5h979bDDAONUe9gK227ECpK+s8PjAKkmwpLLY/KXPFR
+         17Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=xtdyDDmFLb1n/bPdUXOwa5UJMDQzkeNGV49EUd3+LOA=;
-        b=lF7EuLUvOI0d50EyfDmByouOzxgf4sq1SjCTHmYfkzISCy6YEWEyBB+KtUlbkR4Pc/
-         wYmUwgjQncLYMo273nheXGPfs9qqOnaoE5KZST1BfrIrhybuNJIt52LeBJl7dnzyzejq
-         paAlzDICfBebFXs9lEmrNp6u7FrJ4sBvIkZjgnIeyx4DpLPJqciutF60GD54Ar+trhrB
-         0VGWGDUV+aPym7jLVv1IYzWQIurGSHAaeG56/wRP0PiVHWyOSUlT9wEHbe3npzTreKgW
-         ClJVbz7OXY/6IjDTNm02eyAZ/TKhWeUF53dit4aOKYCNX0fc7iGViR/5JYEZbYJ2ASZh
-         qQ5g==
-X-Gm-Message-State: AOAM5329Lt9WlVWVERfGbmmuLfj1q4FARf2K45Mj6q59YtmQ9HYW0888
-        Z8T/9cZoKGQUMiG8ZR7Nc98Z5AIi+QVFKkij8eY=
-X-Google-Smtp-Source: ABdhPJwtfceBKr4ySVSekpTEJOWofhFAdR/HN5Djc/qSNrXRqYaxksUN/th6Slnv/3Rr9epMjUvjruy4l7jgMS6+JTI=
-X-Received: by 2002:a05:6830:1be7:: with SMTP id k7mr17851789otb.162.1599569425234;
- Tue, 08 Sep 2020 05:50:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200908075956.1069018-1-mic@digikod.net> <20200908075956.1069018-2-mic@digikod.net>
- <d216615b48c093ebe9349a9dab3830b646575391.camel@linux.ibm.com> <75451684-58f3-b946-dca4-4760fa0d7440@digikod.net>
-In-Reply-To: <75451684-58f3-b946-dca4-4760fa0d7440@digikod.net>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Tue, 8 Sep 2020 08:50:14 -0400
-Message-ID: <CAEjxPJ49_BgGX50ZAhHh79Qy3OMN6sssnUHT_2yXqdmgyt==9w@mail.gmail.com>
-Subject: Re: [RFC PATCH v8 1/3] fs: Introduce AT_INTERPRETED flag for faccessat2(2)
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lLPV/2TbMLCWwjxZmMjGQAv9RQQ5QdmKtS2Q2m060x4=;
+        b=CdQdnGfPB+ToY2y7fN1oXnwHzi6O6rEoqcLlXn3+ms1AK+jyNfvD0bcO4VQrSZ5RwH
+         bHx/TXpK7tJBhIdOy1US2gdq/VH8S1JnBMDVxnja1uFBQMc5R/Jjb+F9UR3xoA4dWJkV
+         00qapa5xbBPEcUsjgBOYSfgbefkaU6ea4iEQ1SWXxK9kHYDiY4oDCZwL5x1GepZTHhYV
+         SEN4/yjKBFDr4ynhM98otcwByFicPpqOaQ4peMwfD3/bb/H5wVRPQA3R1lXmW3Z10i3+
+         g9cAYZSSP1DiY1JmKH9KHVDRgCszdZYl/DUaiv4v6V+hLotbYzPeB/55e98FnyMlglK/
+         GnAw==
+X-Gm-Message-State: AOAM533WhVqjceahlLfDY7g0Q0YLenID1tbhAzss2/4VgtWVwYRchMk4
+        wXvmFY3wgZ77Ub5XTPUrLVcCUw==
+X-Google-Smtp-Source: ABdhPJxhox+LWrxM6t17Fh8h96lJUzdn1I3RGOvUMfkfWJnmtrv7CdbTJs/zo6NSzHwk+R3I3Syr5A==
+X-Received: by 2002:a6b:c8d6:: with SMTP id y205mr527426iof.177.1599573430313;
+        Tue, 08 Sep 2020 06:57:10 -0700 (PDT)
+Received: from [192.168.1.10] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id e28sm10512528ill.79.2020.09.08.06.57.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Sep 2020 06:57:09 -0700 (PDT)
+Subject: Re: [PATCH v6 3/3] io_uring: allow disabling rings during the
+ creation
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>,
-        John Johansen <john.johansen@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Moyer <jmoyer@redhat.com>,
+        Aleksa Sarai <asarai@suse.de>,
+        Sargun Dhillon <sargun@sargun.me>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+References: <20200827145831.95189-1-sgarzare@redhat.com>
+ <20200827145831.95189-4-sgarzare@redhat.com>
+ <20200908134448.sg7evdrfn6xa67sn@steredhat>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <045e0907-4771-0b7f-d52a-4af8197e6954@kernel.dk>
+Date:   Tue, 8 Sep 2020 07:57:08 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200908134448.sg7evdrfn6xa67sn@steredhat>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 8, 2020 at 8:43 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
-rote:
->
->
-> On 08/09/2020 14:28, Mimi Zohar wrote:
-> > Hi Mickael,
-> >
-> > On Tue, 2020-09-08 at 09:59 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> >> +                    mode |=3D MAY_INTERPRETED_EXEC;
-> >> +                    /*
-> >> +                     * For compatibility reasons, if the system-wide =
-policy
-> >> +                     * doesn't enforce file permission checks, then
-> >> +                     * replaces the execute permission request with a=
- read
-> >> +                     * permission request.
-> >> +                     */
-> >> +                    mode &=3D ~MAY_EXEC;
-> >> +                    /* To be executed *by* user space, files must be =
-readable. */
-> >> +                    mode |=3D MAY_READ;
-> >
-> > After this change, I'm wondering if it makes sense to add a call to
-> > security_file_permission().  IMA doesn't currently define it, but
-> > could.
->
-> Yes, that's the idea. We could replace the following inode_permission()
-> with file_permission(). I'm not sure how this will impact other LSMs thou=
-gh.
+On 9/8/20 7:44 AM, Stefano Garzarella wrote:
+> Hi Jens,
+> 
+> On Thu, Aug 27, 2020 at 04:58:31PM +0200, Stefano Garzarella wrote:
+>> This patch adds a new IORING_SETUP_R_DISABLED flag to start the
+>> rings disabled, allowing the user to register restrictions,
+>> buffers, files, before to start processing SQEs.
+>>
+>> When IORING_SETUP_R_DISABLED is set, SQE are not processed and
+>> SQPOLL kthread is not started.
+>>
+>> The restrictions registration are allowed only when the rings
+>> are disable to prevent concurrency issue while processing SQEs.
+>>
+>> The rings can be enabled using IORING_REGISTER_ENABLE_RINGS
+>> opcode with io_uring_register(2).
+>>
+>> Suggested-by: Jens Axboe <axboe@kernel.dk>
+>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>> Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
+>> ---
+>> v4:
+>>  - fixed io_uring_enter() exit path when ring is disabled
+>>
+>> v3:
+>>  - enabled restrictions only when the rings start
+>>
+>> RFC v2:
+>>  - removed return value of io_sq_offload_start()
+>> ---
+>>  fs/io_uring.c                 | 52 ++++++++++++++++++++++++++++++-----
+>>  include/uapi/linux/io_uring.h |  2 ++
+>>  2 files changed, 47 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>> index 5f62997c147b..b036f3373fbe 100644
+>> --- a/fs/io_uring.c
+>> +++ b/fs/io_uring.c
+>> @@ -226,6 +226,7 @@ struct io_restriction {
+>>  	DECLARE_BITMAP(sqe_op, IORING_OP_LAST);
+>>  	u8 sqe_flags_allowed;
+>>  	u8 sqe_flags_required;
+>> +	bool registered;
+>>  };
+>>  
+>>  struct io_ring_ctx {
+>> @@ -7497,8 +7498,8 @@ static int io_init_wq_offload(struct io_ring_ctx *ctx,
+>>  	return ret;
+>>  }
+>>  
+>> -static int io_sq_offload_start(struct io_ring_ctx *ctx,
+>> -			       struct io_uring_params *p)
+>> +static int io_sq_offload_create(struct io_ring_ctx *ctx,
+>> +				struct io_uring_params *p)
+>>  {
+>>  	int ret;
+>>  
+>> @@ -7532,7 +7533,6 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+>>  			ctx->sqo_thread = NULL;
+>>  			goto err;
+>>  		}
+>> -		wake_up_process(ctx->sqo_thread);
+>>  	} else if (p->flags & IORING_SETUP_SQ_AFF) {
+>>  		/* Can't have SQ_AFF without SQPOLL */
+>>  		ret = -EINVAL;
+>> @@ -7549,6 +7549,12 @@ static int io_sq_offload_start(struct io_ring_ctx *ctx,
+>>  	return ret;
+>>  }
+>>  
+>> +static void io_sq_offload_start(struct io_ring_ctx *ctx)
+>> +{
+>> +	if ((ctx->flags & IORING_SETUP_SQPOLL) && ctx->sqo_thread)
+>> +		wake_up_process(ctx->sqo_thread);
+>> +}
+>> +
+>>  static inline void __io_unaccount_mem(struct user_struct *user,
+>>  				      unsigned long nr_pages)
+>>  {
+>> @@ -8295,6 +8301,9 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+>>  	if (!percpu_ref_tryget(&ctx->refs))
+>>  		goto out_fput;
+>>  
+>> +	if (ctx->flags & IORING_SETUP_R_DISABLED)
+>> +		goto out_fput;
+>> +
+> 
+> While writing the man page paragraph, I discovered that if the rings are
+> disabled I returned ENXIO error in io_uring_enter(), coming from the previous
+> check.
+> 
+> I'm not sure it is the best one, maybe I can return EBADFD or another
+> error.
+> 
+> What do you suggest?
 
-They are not equivalent at least as far as SELinux is concerned.
-security_file_permission() was only to be used to revalidate
-read/write permissions previously checked at file open to support
-policy changes and file or process label changes.  We'd have to modify
-the SELinux hook if we wanted to have it check execute access even if
-nothing has changed since open time.
+EBADFD seems indeed the most appropriate - the fd is valid, but not in the
+right state to do this.
+
+> I'll add a test for this case.
+
+Thanks!
+
+-- 
+Jens Axboe
+
