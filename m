@@ -2,66 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 895BA261609
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 19:01:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AD3F2616C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Sep 2020 19:18:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731865AbgIHRBk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 13:01:40 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:11271 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731896AbgIHRBP (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 13:01:15 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D35657BBF3198A617E25;
-        Tue,  8 Sep 2020 20:53:13 +0800 (CST)
-Received: from [10.67.102.197] (10.67.102.197) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.487.0; Tue, 8 Sep 2020 20:53:07 +0800
-Subject: Re: Question: Why is there no notification when a file is opened
- using filp_open()?
-To:     Amir Goldstein <amir73il@gmail.com>
-CC:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <wangle6@huawei.com>
-References: <25817189-49a7-c64f-26ee-78d4a27496b6@huawei.com>
- <CAOQ4uxhejJzjKLZCt=b87KAX0sC3RAZ2FHEZbu4188Ar-bkmOg@mail.gmail.com>
-From:   Xiaoming Ni <nixiaoming@huawei.com>
-Message-ID: <e399cd17-e95e-def4-e03b-5cc2ae1f9708@huawei.com>
-Date:   Tue, 8 Sep 2020 20:53:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.0.1
+        id S1726560AbgIHRSi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 13:18:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57298 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731746AbgIHQSD (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 8 Sep 2020 12:18:03 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D6A322286;
+        Tue,  8 Sep 2020 12:54:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599569676;
+        bh=qHsmub80VG9U4Q5DCqgTf92EnAVS6x/iPsVvMSuowDc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=kLcTHSTJsgVnkEU6SCWDTpda+yCxf298ICsxvcnq5N1l2jBiJ8CwsQm3LPZ+jzTKk
+         2rS8i0qQ46sLpqNCdIGPYlZb7m0sHDnqhyI+kvRmxJ/f8GWkT6f6+qul5BSvjXiMg2
+         YUo8ZfQZBQ4y2G7NrMiuSXuBVwEsE1WPWkjY5vIU=
+Message-ID: <448f739e1a23a3a275f36b36043a79930727e3c0.camel@kernel.org>
+Subject: Re: [RFC PATCH v2 05/18] fscrypt: don't balk when inode is already
+ marked encrypted
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org
+Date:   Tue, 08 Sep 2020 08:54:35 -0400
+In-Reply-To: <20200908035233.GF68127@sol.localdomain>
+References: <20200904160537.76663-1-jlayton@kernel.org>
+         <20200904160537.76663-6-jlayton@kernel.org>
+         <20200908035233.GF68127@sol.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxhejJzjKLZCt=b87KAX0sC3RAZ2FHEZbu4188Ar-bkmOg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.102.197]
-X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020/9/8 18:06, Amir Goldstein wrote:
-> On Tue, Sep 8, 2020 at 11:02 AM Xiaoming Ni <nixiaoming@huawei.com> wrote:
->>
->> The file opening action on the system may be from user-mode sys_open()
->> or kernel-mode filp_open().
->> Currently, fsnotify_open() is invoked in do_sys_openat2().
->> But filp_open() is not notified. Why? Is this an omission?
->>
->> Do we need to call fsnotify_open() in filp_open() or  do_filp_open() to
->> ensure that both user-mode and kernel-mode file opening operations can
->> be notified?
->>
+On Mon, 2020-09-07 at 20:52 -0700, Eric Biggers wrote:
+> On Fri, Sep 04, 2020 at 12:05:24PM -0400, Jeff Layton wrote:
+> > Cephfs (currently) sets this flag early and only fetches the context
+> > later. Eventually we may not need this, but for now it prevents this
+> > warning from popping.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/crypto/keysetup.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
+> > index ad64525ec680..3b4ec16fc528 100644
+> > --- a/fs/crypto/keysetup.c
+> > +++ b/fs/crypto/keysetup.c
+> > @@ -567,7 +567,7 @@ int fscrypt_get_encryption_info(struct inode *inode)
+> >  		const union fscrypt_context *dummy_ctx =
+> >  			fscrypt_get_dummy_context(inode->i_sb);
+> >  
+> > -		if (IS_ENCRYPTED(inode) || !dummy_ctx) {
+> > +		if (!dummy_ctx) {
+> >  			fscrypt_warn(inode,
+> >  				     "Error %d getting encryption context",
+> >  				     res);
 > 
-> Do you have a specific use case of kernel filp_open() in mind?
+> This makes errors reading the encryption xattr of an encrypted inode be ignored
+> when the filesystem is mounted with test_dummy_encryption.  That's undesirable.
 > 
+> Isn't this change actually no longer needed, now that new inodes will use
+> fscrypt_prepare_new_inode() instead of fscrypt_get_encryption_info()?
 
-For example, in fs/coredump.c, do_coredump() calls filp_open() to 
-generate core files.
-In this scenario, the fsnotify_open() notification is missing.
+No. This is really for when we're reading in a new inode from the MDS.
+We can tell that there is a context present in some of those cases, but
+may not be able to read it yet. That said, it may be possible to pull in
+the context at the point where we set S_ENCRYPTED. I'll take a look.
 
-Thanks
-Xiaoming Ni
+Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
