@@ -2,124 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2702A262534
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 04:31:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DFBC2625BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 05:15:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbgIICbX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 22:31:23 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:54616 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbgIICbX (ORCPT
+        id S1728442AbgIIDO5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 23:14:57 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33028 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726369AbgIIDO4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 22:31:23 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0892SmHd134273;
-        Wed, 9 Sep 2020 02:31:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=9BVSnmJab7cVTmNBPJK3oqzxG6hfrV/pZ+5OttTkAn8=;
- b=AE5A94daEENG4B+m0yoJuz7pkpl/x16iXcZ24hruc2FL7lSIb1j+FxLYGlSxwL71qZcz
- zLryyAYD+1EY2+evqyH9ArQAair1mHlgeL02aieUMKBJ6Tz6vkdwRKHvS9g6aC7KggV0
- n5mCD8onCpS+mnUweo44Zr50DoRcstQSDVyZqyLBZswfmbTms/dQZyZ7inTchJinCLYZ
- iE797rLv6rOemZDd8jf+CghDPX7+d24IGBpbTSyx/BKhXB5xXKAOdM9fWv23HEFU+xmd
- wTc+EU8HbRNUCnl8hqoPmQ+nWPkB+FceEjBIczt722eBsxbluUItyAc1qPlyVQkdhnyi tA== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 33c2mkxxa6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 09 Sep 2020 02:31:13 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0892QKFv053465;
-        Wed, 9 Sep 2020 02:29:12 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3030.oracle.com with ESMTP id 33cmkwx38a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 09 Sep 2020 02:29:12 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0892TAKx013629;
-        Wed, 9 Sep 2020 02:29:11 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Sep 2020 19:29:10 -0700
-Date:   Tue, 8 Sep 2020 19:29:09 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>, hch@lst.de
-Subject: Re: [PATCH v3] quota: widen timestamps for the fs_disk_quota
- structure
-Message-ID: <20200909022909.GI7955@magnolia>
-References: <20200909013251.GG7955@magnolia>
- <20200909014933.GC6583@casper.infradead.org>
+        Tue, 8 Sep 2020 23:14:56 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08933O7V004243;
+        Tue, 8 Sep 2020 23:14:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=fPQ2hLtSSqn4qp3cZqEnFdUV2+VkBJNtU2UrwwB3KOY=;
+ b=F8bvDBFSkNwtkMvAPa/Qae2yYGT4hMNgVpsgM8zb9pK6ap/XJEZH0ab9oKZ7cou2o2W2
+ P2ubeX19DUoCdYwgCpfe0FihxDYIE6RBKqahVdSD6RUFjluhpMRrX08RkIdO0oS8Xka+
+ qiFrnkiWMRo7icjjrOt295sVb5kaY/cyHhe3bXSwJM2b6auXFIaQbHcu+A5XeTt+qQLY
+ cWmZWf7wGJJoy56weVEL0hkib15gPvO21qd90CUOdzJwd9E4NdUkHSR5yf7Y2HcrQAMD
+ gmF07jIWrI4RTiU8GMjVsbidn/JxC6cXQHNEpOM3B3XVcN0+wYueo7p969fzN8O6vupm 9A== 
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33eph2rrse-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Sep 2020 23:14:48 -0400
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08939NiI019409;
+        Wed, 9 Sep 2020 03:14:46 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma01fra.de.ibm.com with ESMTP id 33c2a80cb2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 09 Sep 2020 03:14:46 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0893Ehgn32834012
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 9 Sep 2020 03:14:43 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 37ED4A4051;
+        Wed,  9 Sep 2020 03:14:43 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9612BA4040;
+        Wed,  9 Sep 2020 03:14:41 +0000 (GMT)
+Received: from localhost.localdomain.com (unknown [9.199.46.123])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Sep 2020 03:14:41 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-block@vger.kernel.org, axboe@kernel.dk
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hch@infradead.org,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Shivaprasad G Bhat <sbhat@linux.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>
+Subject: [RESEND PATCH 1/1] block: Set same_page to false in __bio_try_merge_page if ret is false
+Date:   Wed,  9 Sep 2020 08:44:25 +0530
+Message-Id: <bfee107c7d1075cab6ec297afbd3ace68955b836.1599620898.git.riteshh@linux.ibm.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200909014933.GC6583@casper.infradead.org>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9738 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 suspectscore=1
- spamscore=0 mlxlogscore=893 adultscore=0 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009090021
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9738 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 priorityscore=1501
- phishscore=0 adultscore=0 bulkscore=0 clxscore=1015 mlxlogscore=912
- malwarescore=0 suspectscore=1 lowpriorityscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009090022
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-09_02:2020-09-08,2020-09-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ malwarescore=0 suspectscore=0 impostorscore=0 phishscore=0 bulkscore=0
+ adultscore=0 mlxlogscore=925 spamscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009090026
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 09, 2020 at 02:49:33AM +0100, Matthew Wilcox wrote:
-> On Tue, Sep 08, 2020 at 06:32:51PM -0700, Darrick J. Wong wrote:
-> > +static inline void copy_to_xfs_dqblk_ts(const struct fs_disk_quota *d,
-> > +		__s32 *timer_lo, __s8 *timer_hi, s64 timer)
-> > +{
-> > +	*timer_lo = timer;
-> > +	if (d->d_fieldmask & FS_DQ_BIGTIME)
-> > +		*timer_hi = timer >> 32;
-> > +	else
-> > +		*timer_hi = 0;
-> > +}
-> 
-> I'm still confused by this.  What breaks if you just do:
-> 
-> 	*timer_lo = timer;
-> 	*timer_hi = timer >> 32;
+If we hit the UINT_MAX limit of bio->bi_iter.bi_size and so we are anyway
+not merging this page in this bio, then it make sense to make same_page
+also as false before returning.
 
-"I don't know."
+Without this patch, we hit below WARNING in iomap.
+This mostly happens with very large memory system and / or after tweaking
+vm dirty threshold params to delay writeback of dirty data.
 
-The manpage for quotactl doesn't actually specify the behavior of the
-padding fields.  The /implementation/ is careful enough to zero
-everything, but the interface specification doesn't explicitly require
-software to do so.
+WARNING: CPU: 18 PID: 5130 at fs/iomap/buffered-io.c:74 iomap_page_release+0x120/0x150
+ CPU: 18 PID: 5130 Comm: fio Kdump: loaded Tainted: G        W         5.8.0-rc3 #6
+ Call Trace:
+  __remove_mapping+0x154/0x320 (unreliable)
+  iomap_releasepage+0x80/0x180
+  try_to_release_page+0x94/0xe0
+  invalidate_inode_page+0xc8/0x110
+  invalidate_mapping_pages+0x1dc/0x540
+  generic_fadvise+0x3c8/0x450
+  xfs_file_fadvise+0x2c/0xe0 [xfs]
+  vfs_fadvise+0x3c/0x60
+  ksys_fadvise64_64+0x68/0xe0
+  sys_fadvise64+0x28/0x40
+  system_call_exception+0xf8/0x1c0
+  system_call_common+0xf0/0x278
 
-Because the contents of the padding fields aren't defined by the
-documentation, the kernel cannot simply start using the d_padding2 field
-because there could be an old kernel that doesn't zero the padding,
-which would lead to confusion if the new userspace were mated to such a
-kernel.
+Fixes: cc90bc68422 ("block: fix "check bi_size overflow before merge"")
+Suggested-by: Christoph Hellwig <hch@infradead.org>
+Reported-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
+Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+---
+RESEND: added "fixes" tag
 
-Therefore, we have to add a flag that states explicitly that we are
-using the timer_hi fields.  This is also the only way that an old
-program can detect that it's being fed a structure that it might not
-recognise.
+ block/bio.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Keep in mind that if @timer is negative (i.e. before the unix epoch)
-then technically timer_hi has to be all ones if FS_DQ_BIGTIME is set.
-The only user doesn't support that, but that's no excuse for sloppiness.
-
-> >  	memset(dst, 0, sizeof(*dst));
-> > +	if (want_bigtime(src->d_ino_timer) || want_bigtime(src->d_spc_timer) ||
-> > +	    want_bigtime(src->d_rt_spc_timer))
-> > +		dst->d_fieldmask |= FS_DQ_BIGTIME;
-> 
-> You still need this (I guess?  In case somebody's written to the
-> d_padding2 field?)
-
-Yes.
-
---D
+diff --git a/block/bio.c b/block/bio.c
+index a7366c02c9b5..675ecd81047b 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -877,8 +877,10 @@ bool __bio_try_merge_page(struct bio *bio, struct page *page,
+ 		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
+ 
+ 		if (page_is_mergeable(bv, page, len, off, same_page)) {
+-			if (bio->bi_iter.bi_size > UINT_MAX - len)
++			if (bio->bi_iter.bi_size > UINT_MAX - len) {
++				*same_page = false;
+ 				return false;
++			}
+ 			bv->bv_len += len;
+ 			bio->bi_iter.bi_size += len;
+ 			return true;
+-- 
+2.25.4
 
