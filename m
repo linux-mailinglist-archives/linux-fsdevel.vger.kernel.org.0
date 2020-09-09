@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A08E72628C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 09:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79D352628EA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 09:36:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbgIIHc7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 03:32:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50644 "EHLO mx2.suse.de"
+        id S1728911AbgIIHgE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 03:36:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51528 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725864AbgIIHc6 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 03:32:58 -0400
+        id S1729717AbgIIHfZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Sep 2020 03:35:25 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id A772EB588;
-        Wed,  9 Sep 2020 07:32:56 +0000 (UTC)
-Subject: Re: [PATCH 14/19] ide-gd: stop using the disk events mechanism
+        by mx2.suse.de (Postfix) with ESMTP id 365B6AC85;
+        Wed,  9 Sep 2020 07:35:23 +0000 (UTC)
+Subject: Re: [PATCH 15/19] md: use bdev_check_media_change
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
         Michal Simek <michal.simek@xilinx.com>,
@@ -28,9 +28,10 @@ Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
         linux-m68k@lists.linux-m68k.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
+        linux-fsdevel@vger.kernel.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
 References: <20200908145347.2992670-1-hch@lst.de>
- <20200908145347.2992670-15-hch@lst.de>
+ <20200908145347.2992670-16-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
@@ -76,12 +77,12 @@ Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
  ZtWlhGRERnDH17PUXDglsOA08HCls0PHx8itYsjYCAyETlxlLApXWdVl9YVwbQpQ+i693t/Y
  PGu8jotn0++P19d3JwXW8t6TVvBIQ1dRZHx1IxGLMn+CkDJMOmHAUMWTAXX2rf5tUjas8/v2
  azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <151a6f1f-1657-52ef-d1a9-e5601eb30b1f@suse.de>
-Date:   Wed, 9 Sep 2020 09:32:53 +0200
+Message-ID: <f346a6b9-7a98-5f5b-ca77-bd15223cb6ac@suse.de>
+Date:   Wed, 9 Sep 2020 09:34:54 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20200908145347.2992670-15-hch@lst.de>
+In-Reply-To: <20200908145347.2992670-16-hch@lst.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -91,17 +92,28 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 9/8/20 4:53 PM, Christoph Hellwig wrote:
-> ide-gd is only using the disk events mechanism to be able to force an
-> invalidation and partition scan on opening removable media.  Just open
-> code the logic without invoving the block layer.
+> The md driver does not have a ->revalidate_disk method, so it can just
+> use bdev_check_media_change without any additional changes.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > ---
->  drivers/ide/ide-disk.c   |  5 +----
->  drivers/ide/ide-floppy.c |  2 --
->  drivers/ide/ide-gd.c     | 48 +++++-----------------------------------
->  include/linux/ide.h      |  2 --
->  4 files changed, 7 insertions(+), 50 deletions(-)
+>  drivers/md/md.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 9562ef598ae1f4..27ed61197014ef 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -7848,7 +7848,7 @@ static int md_open(struct block_device *bdev, fmode_t mode)
+>  	atomic_inc(&mddev->openers);
+>  	mutex_unlock(&mddev->open_mutex);
+>  
+> -	check_disk_change(bdev);
+> +	bdev_check_media_change(bdev);
+>   out:
+>  	if (err)
+>  		mddev_put(mddev);
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
