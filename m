@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 76C752627ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 09:05:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D767E2627CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 09:04:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbgIIG7t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 02:59:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54826 "EHLO mx2.suse.de"
+        id S1728643AbgIIG77 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 02:59:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55080 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbgIIG7j (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 02:59:39 -0400
+        id S1728398AbgIIG7v (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Sep 2020 02:59:51 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B1372AD77;
-        Wed,  9 Sep 2020 06:59:34 +0000 (UTC)
-Subject: Re: [PATCH 01/19] block: add a bdev_check_media_change helper
+        by mx2.suse.de (Postfix) with ESMTP id DEB77B11F;
+        Wed,  9 Sep 2020 06:59:49 +0000 (UTC)
+Subject: Re: [PATCH 02/19] amiflop: use bdev_check_media_change
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
         Michal Simek <michal.simek@xilinx.com>,
@@ -31,7 +31,7 @@ Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
         linux-fsdevel@vger.kernel.org,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>
 References: <20200908145347.2992670-1-hch@lst.de>
- <20200908145347.2992670-2-hch@lst.de>
+ <20200908145347.2992670-3-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
@@ -77,12 +77,12 @@ Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
  ZtWlhGRERnDH17PUXDglsOA08HCls0PHx8itYsjYCAyETlxlLApXWdVl9YVwbQpQ+i693t/Y
  PGu8jotn0++P19d3JwXW8t6TVvBIQ1dRZHx1IxGLMn+CkDJMOmHAUMWTAXX2rf5tUjas8/v2
  azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <55971456-47ca-221a-51c6-a9665c6c0f8f@suse.de>
-Date:   Wed, 9 Sep 2020 08:59:32 +0200
+Message-ID: <dc872e95-c3b5-fae1-4398-e2af8a884ae4@suse.de>
+Date:   Wed, 9 Sep 2020 08:59:48 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20200908145347.2992670-2-hch@lst.de>
+In-Reply-To: <20200908145347.2992670-3-hch@lst.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -92,16 +92,28 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 9/8/20 4:53 PM, Christoph Hellwig wrote:
-> Like check_disk_changed, except that it does not call ->revalidate_disk
-> but leaves that to the caller.
+> The Amiga floppy driver does not have a ->revalidate_disk method, so it
+> can just use bdev_check_media_change without any additional changes.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > ---
->  block/genhd.c         | 29 ++++++++++++++++++++++++++++-
->  fs/block_dev.c        | 17 +++--------------
->  include/linux/genhd.h |  2 +-
->  3 files changed, 32 insertions(+), 16 deletions(-)
+>  drivers/block/amiflop.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/block/amiflop.c b/drivers/block/amiflop.c
+> index 226219da3da6a7..71c2b156455860 100644
+> --- a/drivers/block/amiflop.c
+> +++ b/drivers/block/amiflop.c
+> @@ -1670,7 +1670,7 @@ static int floppy_open(struct block_device *bdev, fmode_t mode)
+>  	}
+>  
+>  	if (mode & (FMODE_READ|FMODE_WRITE)) {
+> -		check_disk_change(bdev);
+> +		bdev_check_media_change(bdev);
+>  		if (mode & FMODE_WRITE) {
+>  			int wrprot;
+>  
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
