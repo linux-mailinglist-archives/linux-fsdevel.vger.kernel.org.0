@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 25C66262809
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 09:09:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F3ED262824
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 09:11:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbgIIHJn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 03:09:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60270 "EHLO mx2.suse.de"
+        id S1728458AbgIIHKJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 03:10:09 -0400
+Received: from mx2.suse.de ([195.135.220.15]:32828 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725877AbgIIHJi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 03:09:38 -0400
+        id S1728214AbgIIHKF (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Sep 2020 03:10:05 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id B6C46AC68;
-        Wed,  9 Sep 2020 07:09:36 +0000 (UTC)
-Subject: Re: [PATCH 06/19] swim: simplify media change handling
+        by mx2.suse.de (Postfix) with ESMTP id 28B46B61E;
+        Wed,  9 Sep 2020 07:10:03 +0000 (UTC)
+Subject: Re: [PATCH 07/19] swim3: use bdev_check_media_changed
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
         Michal Simek <michal.simek@xilinx.com>,
@@ -31,7 +31,7 @@ Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
         linux-fsdevel@vger.kernel.org,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>
 References: <20200908145347.2992670-1-hch@lst.de>
- <20200908145347.2992670-7-hch@lst.de>
+ <20200908145347.2992670-8-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
@@ -77,12 +77,12 @@ Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
  ZtWlhGRERnDH17PUXDglsOA08HCls0PHx8itYsjYCAyETlxlLApXWdVl9YVwbQpQ+i693t/Y
  PGu8jotn0++P19d3JwXW8t6TVvBIQ1dRZHx1IxGLMn+CkDJMOmHAUMWTAXX2rf5tUjas8/v2
  azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <ba0fb6cb-5703-6b42-2669-4aaf3554d4df@suse.de>
-Date:   Wed, 9 Sep 2020 09:09:34 +0200
+Message-ID: <174779e9-149d-a10e-23aa-c5d280fd4feb@suse.de>
+Date:   Wed, 9 Sep 2020 09:10:01 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20200908145347.2992670-7-hch@lst.de>
+In-Reply-To: <20200908145347.2992670-8-hch@lst.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -92,18 +92,18 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 9/8/20 4:53 PM, Christoph Hellwig wrote:
-> floppy_revalidate mostly duplicates work already done in floppy_open
-> despite only beeing called from floppy_open.  Remove the function and
-> just clear the ->ejected flag directly under the right condition.
+> Switch to use bdev_check_media_changed instead of check_disk_change and
+> call floppy_revalidate manually.  Given that floppy_revalidate only
+> deals with media change events, the extra call into ->revalidate_disk
+> from bdev_disk_changed is not required either, so stop wiring up the
+> method.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > ---
->  drivers/block/swim.c | 24 ++----------------------
->  1 file changed, 2 insertions(+), 22 deletions(-)
+>  drivers/block/swim3.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-What a convoluted driver.
-
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
 Cheers,
