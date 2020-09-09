@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D4A402628FC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 09:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E7C262911
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 09:39:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730269AbgIIHhh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 03:37:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52920 "EHLO mx2.suse.de"
+        id S1730214AbgIIHjB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 03:39:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54176 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730239AbgIIHha (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 03:37:30 -0400
+        id S1730177AbgIIHi7 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Sep 2020 03:38:59 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 3072CB653;
-        Wed,  9 Sep 2020 07:37:28 +0000 (UTC)
-Subject: Re: [PATCH 17/19] sr: use bdev_check_media_change
+        by mx2.suse.de (Postfix) with ESMTP id 5B63FB666;
+        Wed,  9 Sep 2020 07:38:55 +0000 (UTC)
+Subject: Re: [PATCH 18/19] sr: simplify sr_block_revalidate_disk
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
         Michal Simek <michal.simek@xilinx.com>,
@@ -31,7 +31,7 @@ Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
         linux-fsdevel@vger.kernel.org,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>
 References: <20200908145347.2992670-1-hch@lst.de>
- <20200908145347.2992670-18-hch@lst.de>
+ <20200908145347.2992670-19-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
@@ -77,12 +77,12 @@ Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
  ZtWlhGRERnDH17PUXDglsOA08HCls0PHx8itYsjYCAyETlxlLApXWdVl9YVwbQpQ+i693t/Y
  PGu8jotn0++P19d3JwXW8t6TVvBIQ1dRZHx1IxGLMn+CkDJMOmHAUMWTAXX2rf5tUjas8/v2
  azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <0fe1073d-4591-a455-6a12-b40a0452b84b@suse.de>
-Date:   Wed, 9 Sep 2020 09:37:19 +0200
+Message-ID: <08e6de4e-4c7d-209c-a15d-2a8f85bbeeca@suse.de>
+Date:   Wed, 9 Sep 2020 09:38:10 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20200908145347.2992670-18-hch@lst.de>
+In-Reply-To: <20200908145347.2992670-19-hch@lst.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -92,19 +92,17 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 9/8/20 4:53 PM, Christoph Hellwig wrote:
-> Switch to use bdev_check_media_change instead of check_disk_change and
-> call sr_block_revalidate_disk manually.  Also add an explicit call to
-> sr_block_revalidate_disk just before disk_add() to ensure we always
-> read check for a ready unit and read the TOC and then stop wiring up
-> ->revalidate_disk.
+> Both callers have a valid CD struture available, so rely on that instead
+> of getting another reference.  Also move the function to avoid a forward
+> declaration.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > ---
->  drivers/scsi/sr.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/scsi/sr.c | 36 +++++++++++++-----------------------
+>  1 file changed, 13 insertions(+), 23 deletions(-)
 > 
-Reviewed-by: Hannes Reinecke <hare@suse.de
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
 Cheers,
 
