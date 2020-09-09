@@ -2,126 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CB0812625EC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 05:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10F902625F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 05:45:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbgIIDgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Sep 2020 23:36:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50112 "EHLO
+        id S1726605AbgIIDpG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Sep 2020 23:45:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbgIIDg2 (ORCPT
+        with ESMTP id S1725984AbgIIDpD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Sep 2020 23:36:28 -0400
-Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 930B1C061573;
-        Tue,  8 Sep 2020 20:36:27 -0700 (PDT)
-Received: by mail-yb1-xb43.google.com with SMTP id v78so861532ybv.5;
-        Tue, 08 Sep 2020 20:36:27 -0700 (PDT)
+        Tue, 8 Sep 2020 23:45:03 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 555F8C061573;
+        Tue,  8 Sep 2020 20:45:01 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id h4so1703323ioe.5;
+        Tue, 08 Sep 2020 20:45:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=X3uD9iTsb4n/SxPFUpHhLW1PU5XlJVEQOctSvYt+PUA=;
-        b=MjWTMZKw7wFRWnAHnZLw9pw3hUnD6nflWH5N7AKEWVq9C/MgLJ0rvEzpbhbYifJ7g2
-         j1+dkY9hA3e2LLShzfJhbubVGDER46F/ejHT2ENYXwLzDJ9CBgZHQeq1DFWCVh7iNdEe
-         KYmFXQMX6vtePP/OSPIhE5XbICyrNK9RWK8Td4SstRF2XhHK3xaKT1nVfGcEp9VkWjm/
-         /5BVke9GwcGV+hn6CBe7Zlpudrw1apWviBjsqlc8vNU2ZwC4dYQzZ699BKK9yHmJf5Z5
-         n+K2nO7DyZDGTUxlHv+Lejkwn1m0Ghb0JgDN+uo4hLaDf3b4xc+z46fQQo6wLoefo9Zp
-         7/Dg==
+        bh=eKVyM7ut9ZZjQs7h3wiCaFahe4SYFhTWRIRyTVbYRzw=;
+        b=KKc+Xzhwi01RS4qb73Ah5QZ8WwZyUORdSb6CWV7MquaLStuyGYfxTw+2zsY5+xC/Fv
+         Bqf4uPpoXzilurb5FcC9PKSLqV6SWUuIlRE6BduZRxex3xrzM4QtVrD8MG5UXPNyFbnq
+         iwmM8yKMOjZRB5VGpzeNVnt6RCCExkPWMpP05lUDCe5n7+z0g971MerxbUHoRrmikVD0
+         W41R21celyvs5AGqixt8bUXIZ9Cs+zyyF4LufR6DLeUfgYFoW+GG4NpSt408PHqLsnhh
+         /x9q7wT9oH5aorFZa/rbmSCNJOGxzuVsIc2ueYhbWhvUv26w5FqFg3FZ1xmdDmhZG8hL
+         xC/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=X3uD9iTsb4n/SxPFUpHhLW1PU5XlJVEQOctSvYt+PUA=;
-        b=eAeMuWQkLrRz7dz/BjbyU2+dcePWTR05mTNafHGMMtMmgh6IhpbK6zSYzVCya6qn2O
-         95PEP58Ew2NzreiaIvs3EGDn+WjxqihNnEGZ0jjBZi4hKtM9P2/yUHJM6qlhQMjQSgkP
-         AnoRXBUFCpNwAjm6xxmkiryGzGS5sxcKfxxsw4NnMq2yRFdp/HAIcVIScwXM3bnGqKiK
-         WGEJMk7B2/r7M+0OO/c022BdVIi4+xORKVim5Gwll4y8xg1TmPwJWNXQRS3Nm1UElnJM
-         Y9USaXYGQADZWIkiJKimZfUPCAAa3iRipV1fh0D/NgeGhhB31CTR5F3J85OyPKHQCjhj
-         /1Dw==
-X-Gm-Message-State: AOAM533ELtv5SqKm+ZhZ4NhHDXde31ha9UeMi6Q1ni9rc2dkod90u2BU
-        qjdTR8gtFmA7CYObYDxMyZzXGfZ/UnMavuGHHeCojevk4C0+Lg==
-X-Google-Smtp-Source: ABdhPJypGQNApEm4nqJsRSyze+6XsGrF0vUUGz2wpF9K26/NWnd98fxE1Z41CF1Fi1l/r3qfzH0GNJHz/3g3R8b21AI=
-X-Received: by 2002:a25:aba5:: with SMTP id v34mr2952978ybi.337.1599622586652;
- Tue, 08 Sep 2020 20:36:26 -0700 (PDT)
+        bh=eKVyM7ut9ZZjQs7h3wiCaFahe4SYFhTWRIRyTVbYRzw=;
+        b=JNUD+7enZtmcrwi7Z+batnBJDZXxDbnvWdq+9ynSnRVYsGHspDUJoN8sbFC3VYmTqx
+         fHDXsZviIZ2ib24/ceLZraM+NlfVjkGVIBnP5fgurObosRPm21BnhqeVY/UN1zJFc7Jp
+         tI+o0vPk7RMkytWpmH1SuFAwj/cVs9WZtskFdxtVnr9F8yRvjDWXjyyUgK2WuUEItCXp
+         jrCvTWSXVKAY4G6J+O+SBAkOVKOe+C0eo4YZJjMnIecP16pg+JPE84WsB4/soKF+1EQ5
+         LfcHfGs35fl5ZClSIRVkKXXf0Bu/58UrnGzMpH3FxrJTJ4HYZPMUAjmDcW+kJZr9DZzZ
+         3ltw==
+X-Gm-Message-State: AOAM533PF1FVmsdJD4COVzzltSAu8GxGiTGgXMnxI+sh10ZW+oVzXxpA
+        KZZ3c4AOw6F1HrUwsrCjZdUELNG/9W6KD+vaM3U=
+X-Google-Smtp-Source: ABdhPJwgPstjLD3CyT6yPsr+bwYObuvj6GM+FLH76/hQ1inYWHlvW1S14g/UIRSrt8FUl0QaBxNk23q68jb7R+4Dymo=
+X-Received: by 2002:a02:734f:: with SMTP id a15mr2280833jae.120.1599623100911;
+ Tue, 08 Sep 2020 20:45:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <bfee107c7d1075cab6ec297afbd3ace68955b836.1599620898.git.riteshh@linux.ibm.com>
-In-Reply-To: <bfee107c7d1075cab6ec297afbd3ace68955b836.1599620898.git.riteshh@linux.ibm.com>
-From:   Ming Lei <tom.leiming@gmail.com>
-Date:   Wed, 9 Sep 2020 11:36:15 +0800
-Message-ID: <CACVXFVMPHhA9_Pk-KGROimwxJBM_5SHmjH+CKkkNLJWGk2gmFw@mail.gmail.com>
-Subject: Re: [RESEND PATCH 1/1] block: Set same_page to false in
- __bio_try_merge_page if ret is false
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-block <linux-block@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        "open list:XFS FILESYSTEM" <linux-xfs@vger.kernel.org>,
+References: <25817189-49a7-c64f-26ee-78d4a27496b6@huawei.com>
+ <CAOQ4uxhejJzjKLZCt=b87KAX0sC3RAZ2FHEZbu4188Ar-bkmOg@mail.gmail.com>
+ <e399cd17-e95e-def4-e03b-5cc2ae1f9708@huawei.com> <CAOQ4uxgvodepq2ZhmGEpkZYj017tH_pk2AgV=pUhWiONnxOQjw@mail.gmail.com>
+ <20200908171859.GA29953@casper.infradead.org>
+In-Reply-To: <20200908171859.GA29953@casper.infradead.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 9 Sep 2020 06:44:49 +0300
+Message-ID: <CAOQ4uxjX2GAJhD70=6SmwdXPH6TuOzGugtdYupDjLLywC2H5Ag@mail.gmail.com>
+Subject: Re: Question: Why is there no notification when a file is opened
+ using filp_open()?
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Xiaoming Ni <nixiaoming@huawei.com>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Shivaprasad G Bhat <sbhat@linux.ibm.com>,
-        Anju T Sudhakar <anju@linux.vnet.ibm.com>
+        wangle6@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 9, 2020 at 11:16 AM Ritesh Harjani <riteshh@linux.ibm.com> wrote:
+On Tue, Sep 8, 2020 at 8:19 PM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> If we hit the UINT_MAX limit of bio->bi_iter.bi_size and so we are anyway
-> not merging this page in this bio, then it make sense to make same_page
-> also as false before returning.
+> On Tue, Sep 08, 2020 at 04:18:29PM +0300, Amir Goldstein wrote:
+> > On Tue, Sep 8, 2020 at 3:53 PM Xiaoming Ni <nixiaoming@huawei.com> wrote:
+> > > For example, in fs/coredump.c, do_coredump() calls filp_open() to
+> > > generate core files.
+> > > In this scenario, the fsnotify_open() notification is missing.
+> >
+> > I am not convinced that we should generate an event.
+> > You will have to explain in what is the real world use case that requires this
+> > event to be generated.
 >
-> Without this patch, we hit below WARNING in iomap.
-> This mostly happens with very large memory system and / or after tweaking
-> vm dirty threshold params to delay writeback of dirty data.
->
-> WARNING: CPU: 18 PID: 5130 at fs/iomap/buffered-io.c:74 iomap_page_release+0x120/0x150
->  CPU: 18 PID: 5130 Comm: fio Kdump: loaded Tainted: G        W         5.8.0-rc3 #6
->  Call Trace:
->   __remove_mapping+0x154/0x320 (unreliable)
->   iomap_releasepage+0x80/0x180
->   try_to_release_page+0x94/0xe0
->   invalidate_inode_page+0xc8/0x110
->   invalidate_mapping_pages+0x1dc/0x540
->   generic_fadvise+0x3c8/0x450
->   xfs_file_fadvise+0x2c/0xe0 [xfs]
->   vfs_fadvise+0x3c/0x60
->   ksys_fadvise64_64+0x68/0xe0
->   sys_fadvise64+0x28/0x40
->   system_call_exception+0xf8/0x1c0
->   system_call_common+0xf0/0x278
->
-> Fixes: cc90bc68422 ("block: fix "check bi_size overflow before merge"")
-> Suggested-by: Christoph Hellwig <hch@infradead.org>
-> Reported-by: Shivaprasad G Bhat <sbhat@linux.ibm.com>
-> Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> ---
-> RESEND: added "fixes" tag
->
->  block/bio.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/block/bio.c b/block/bio.c
-> index a7366c02c9b5..675ecd81047b 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -877,8 +877,10 @@ bool __bio_try_merge_page(struct bio *bio, struct page *page,
->                 struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
->
->                 if (page_is_mergeable(bv, page, len, off, same_page)) {
-> -                       if (bio->bi_iter.bi_size > UINT_MAX - len)
-> +                       if (bio->bi_iter.bi_size > UINT_MAX - len) {
-> +                               *same_page = false;
->                                 return false;
-> +                       }
->                         bv->bv_len += len;
->                         bio->bi_iter.bi_size += len;
->                         return true;
+> Take the typical usage for fsnotify of a graphical file manager.
+> It would be nice if the file manager showed a corefile as soon as it
+> appeared in a directory rather than waiting until some other operation
+> in that directory caused those directory contents to be refreshed.
 
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
+fsnotify_open() is not the correct notification for file managers IMO.
+fsnotify_create() is and it will be called in this case.
 
--- 
-Ming Lei
+If the reason you are interested in open events is because you want
+to monitor the entire filesystem then welcome to the future -
+FAN_CREATE is supported since kernel v5.1.
+
+Is there another real life case you have in mind where you think users
+should be able to get an open fd for a file that the kernel has opened?
+Because that is what FAN_OPEN will do.
+
+Thanks,
+Amir.
