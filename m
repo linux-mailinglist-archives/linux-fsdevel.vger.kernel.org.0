@@ -2,36 +2,25 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8281E2633B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 19:09:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF4A1263408
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 19:13:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730997AbgIIRJT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 13:09:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34714 "EHLO
+        id S1730061AbgIIRNk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 13:13:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730478AbgIIRJA (ORCPT
+        with ESMTP id S1730293AbgIIRNh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 13:09:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D83C1C061573;
-        Wed,  9 Sep 2020 10:08:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=MRdA/hKdv0ZcdKd+zTHc7r+qLakKPSZ3f21yjj7iix8=; b=W0z7GgqihZ/V4Z7UeVxZGpUsGi
-        fNtN2kOEVeoJg5PsX4hYNOL9UiKCDC1aL6S8iu96XC/lfTSWIcTebCpqJ42vX/9r6SALHImHwdpEA
-        w7x5dNWyxDOj35NtO6bfUn0jhcKHgNnDIik72Xdto/v3qNPbg2L8s335x9JHltpJEUoFNxzi0jMZM
-        56LECQWH4AagiWAmkERe4aycbsVrjyL+mF0zcaH9PgyWiPunyhED6QEeXT32E2RCY2sPDVmsdl36+
-        X1Kl0YB/gsqBOMjd8Swoai7DBdYFxORo1iIW5YcAOH8/JyAJQk3ipHD1bhuZmBnXCqF23m8pepW8E
-        GSsMNYIg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kG3aV-0008Hj-Iu; Wed, 09 Sep 2020 17:08:51 +0000
-Date:   Wed, 9 Sep 2020 18:08:51 +0100
-From:   Matthew Wilcox <willy@infradead.org>
+        Wed, 9 Sep 2020 13:13:37 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BB65C061573;
+        Wed,  9 Sep 2020 10:13:37 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kG3em-00DIaQ-My; Wed, 09 Sep 2020 17:13:16 +0000
+Date:   Wed, 9 Sep 2020 18:13:16 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>,
+Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Lutomirski <luto@kernel.org>,
@@ -48,6 +37,7 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
         Kees Cook <keescook@chromium.org>,
         Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
         Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
         Miklos Szeredi <mszeredi@redhat.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
@@ -66,7 +56,7 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 Subject: Re: [RFC PATCH v8 0/3] Add support for AT_INTERPRETED (was O_MAYEXEC)
-Message-ID: <20200909170851.GL6583@casper.infradead.org>
+Message-ID: <20200909171316.GW1236603@ZenIV.linux.org.uk>
 References: <20200908075956.1069018-1-mic@digikod.net>
  <20200908185026.GU1236603@ZenIV.linux.org.uk>
  <e3223b50-0d00-3b64-1e09-cfb1b9648b02@digikod.net>
@@ -95,12 +85,11 @@ On Wed, Sep 09, 2020 at 09:19:11AM +0200, Mickaël Salaün wrote:
 > > 
 > > Again, why is that folded into lookup/open/whatnot, rather than being
 > > an operation applied to a file (e.g. O_PATH one)?
+> > 
 > 
 > I don't understand your question. AT_INTERPRETED can and should be used
 > with AT_EMPTY_PATH. The two checks I wrote about was for IMA.
 
-Al is saying you should add a new syscall, not try to fold it into
-some existing syscall.
-
-I agree with him.  Add a new syscall, just like you were told to do it
-last time.
+Once more, with feeling: don't hide that behind existing syscalls.
+If you want to tell LSM have a look at given fs object in a special
+way, *add* *a* *new* *system* *call* *for* *doing* *just* *that*.
