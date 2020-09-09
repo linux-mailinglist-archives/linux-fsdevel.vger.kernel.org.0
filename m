@@ -2,164 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C636262FE7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 16:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DB71262FD6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 16:34:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730494AbgIIOmq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 10:42:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37104 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730140AbgIIMfl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 08:35:41 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EE8021941;
-        Wed,  9 Sep 2020 12:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599654280;
-        bh=2DbSBwKd5N1exdPp99yIXH8KFc5YWL59o2CAnXhlsOk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=lGg22N3K6QxJIa+Cw6Xlj8g5/DnX3ir2eD1HyExWVWmzH8flSuAtHSPV/nzthIWU4
-         dErrQgfz35IrL0XJG1wcpksxd8fUNj9ySukQt2ARAekI2OVNgfn79YeVmkQ3LFHLU3
-         XINSI67UsKYac7Wp/QFqP8kZY54CnNFJdNwaH98A=
-Message-ID: <fbf3c8cea47f021200937273fc810b1244e186a1.camel@kernel.org>
-Subject: Re: [RFC PATCH v2 14/18] ceph: add encrypted fname handling to
- ceph_mdsc_build_path
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Date:   Wed, 09 Sep 2020 08:24:39 -0400
-In-Reply-To: <20200908050643.GL68127@sol.localdomain>
-References: <20200904160537.76663-1-jlayton@kernel.org>
-         <20200904160537.76663-15-jlayton@kernel.org>
-         <20200908050643.GL68127@sol.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        id S1730248AbgIIOdF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 10:33:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51052 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730161AbgIIMw7 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Sep 2020 08:52:59 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9760AC061573;
+        Wed,  9 Sep 2020 05:42:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=58sG1vYlJHBFQDIUCtJjWtgRiAocEReWIPrRe4T7EjY=; b=GplkHj3Pyv32sC6XZQP+CbuD71
+        +XFTuyNH3iTpSSRnPFsJ3LlOBz4IiKxff5aiBnq4ksixeRMQZomEqhCbX+bsH9AK+YkgAnry+9hYf
+        f3OW1pf4L5B9ddAE4ciXiHsiLeRGFYazHwac+I6m6H6F2JU2RMV31wJP+zdNoBuXGQWjjMmcwPEkq
+        aEIyazl5FR6+DqBkN5Bza9YnHBbEXU9YFzpXpZpALRUBlMvRko7V8gkcGXo5gJmE3/QWIdGPFWJGJ
+        Pz+L4EfmpuBRDSEntIxFajSMUP3FSmUYsSiz1+NrVF+NDKSbcYw436TXyL8xhxRS6UJcvSBUyvYPK
+        ZQG0nsHw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kFzR6-0000zj-AE; Wed, 09 Sep 2020 12:42:52 +0000
+Date:   Wed, 9 Sep 2020 13:42:52 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>, hch@lst.de
+Subject: Re: [PATCH v3] quota: widen timestamps for the fs_disk_quota
+ structure
+Message-ID: <20200909124252.GE6583@casper.infradead.org>
+References: <20200909013251.GG7955@magnolia>
+ <20200909014933.GC6583@casper.infradead.org>
+ <20200909022909.GI7955@magnolia>
+ <20200909105133.GC24207@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200909105133.GC24207@quack2.suse.cz>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-09-07 at 22:06 -0700, Eric Biggers wrote:
-> On Fri, Sep 04, 2020 at 12:05:33PM -0400, Jeff Layton wrote:
-> > Allow ceph_mdsc_build_path to encrypt and base64 encode the filename
-> > when the parent is encrypted and we're sending the path to the MDS.
+On Wed, Sep 09, 2020 at 12:51:33PM +0200, Jan Kara wrote:
+> On Tue 08-09-20 19:29:09, Darrick J. Wong wrote:
+> > On Wed, Sep 09, 2020 at 02:49:33AM +0100, Matthew Wilcox wrote:
+> > > On Tue, Sep 08, 2020 at 06:32:51PM -0700, Darrick J. Wong wrote:
+> > > > +static inline void copy_to_xfs_dqblk_ts(const struct fs_disk_quota *d,
+> > > > +		__s32 *timer_lo, __s8 *timer_hi, s64 timer)
+> > > > +{
+> > > > +	*timer_lo = timer;
+> > > > +	if (d->d_fieldmask & FS_DQ_BIGTIME)
+> > > > +		*timer_hi = timer >> 32;
+> > > > +	else
+> > > > +		*timer_hi = 0;
+> > > > +}
+> > > 
+> > > I'm still confused by this.  What breaks if you just do:
+> > > 
+> > > 	*timer_lo = timer;
+> > > 	*timer_hi = timer >> 32;
 > > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/mds_client.c | 51 ++++++++++++++++++++++++++++++++++----------
-> >  1 file changed, 40 insertions(+), 11 deletions(-)
+> > "I don't know."
 > > 
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index e3dc061252d4..26b43ae09823 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -11,6 +11,7 @@
-> >  #include <linux/ratelimit.h>
-> >  #include <linux/bits.h>
-> >  #include <linux/ktime.h>
-> > +#include <linux/base64_fname.h>
-> >  
-> >  #include "super.h"
-> >  #include "mds_client.h"
-> > @@ -2324,8 +2325,7 @@ static inline  u64 __get_oldest_tid(struct ceph_mds_client *mdsc)
-> >   * Encode hidden .snap dirs as a double /, i.e.
-> >   *   foo/.snap/bar -> foo//bar
-> >   */
-> > -char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
-> > -			   int stop_on_nosnap)
-> > +char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase, int for_wire)
-> >  {
-> >  	struct dentry *cur;
-> >  	struct inode *inode;
-> > @@ -2347,30 +2347,59 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
-> >  	seq = read_seqbegin(&rename_lock);
-> >  	cur = dget(dentry);
-> >  	for (;;) {
-> > -		struct dentry *temp;
-> > +		struct dentry *parent;
-> >  
-> >  		spin_lock(&cur->d_lock);
-> >  		inode = d_inode(cur);
-> > +		parent = cur->d_parent;
-> >  		if (inode && ceph_snap(inode) == CEPH_SNAPDIR) {
-> >  			dout("build_path path+%d: %p SNAPDIR\n",
-> >  			     pos, cur);
-> > -		} else if (stop_on_nosnap && inode && dentry != cur &&
-> > -			   ceph_snap(inode) == CEPH_NOSNAP) {
-> > +			dget(parent);
-> > +			spin_unlock(&cur->d_lock);
-> > +		} else if (for_wire && inode && dentry != cur && ceph_snap(inode) == CEPH_NOSNAP) {
-> >  			spin_unlock(&cur->d_lock);
-> >  			pos++; /* get rid of any prepended '/' */
-> >  			break;
-> > -		} else {
-> > +		} else if (!for_wire || !IS_ENCRYPTED(d_inode(parent))) {
-> >  			pos -= cur->d_name.len;
-> >  			if (pos < 0) {
-> >  				spin_unlock(&cur->d_lock);
-> >  				break;
-> >  			}
-> >  			memcpy(path + pos, cur->d_name.name, cur->d_name.len);
-> > +			dget(parent);
-> > +			spin_unlock(&cur->d_lock);
-> > +		} else {
-> > +			int err;
-> > +			struct fscrypt_name fname = { };
-> > +			int len;
-> > +			char buf[BASE64_CHARS(NAME_MAX)];
-> > +
-> > +			dget(parent);
-> > +			spin_unlock(&cur->d_lock);
-> > +
-> > +			err = fscrypt_setup_filename(d_inode(parent), &cur->d_name, 1, &fname);
+> > The manpage for quotactl doesn't actually specify the behavior of the
+> > padding fields.  The /implementation/ is careful enough to zero
+> > everything, but the interface specification doesn't explicitly require
+> > software to do so.
+> > 
+> > Because the contents of the padding fields aren't defined by the
+> > documentation, the kernel cannot simply start using the d_padding2 field
+> > because there could be an old kernel that doesn't zero the padding,
+> > which would lead to confusion if the new userspace were mated to such a
+> > kernel.
+> > 
+> > Therefore, we have to add a flag that states explicitly that we are
+> > using the timer_hi fields.  This is also the only way that an old
+> > program can detect that it's being fed a structure that it might not
+> > recognise.
 > 
-> How are no-key filenames handled with ceph?  You're calling
-> fscrypt_setup_filename() with lookup=1, so it will give you back a no-key
-> filename if the directory's encryption key is unavailable.
-> 
+> Well, this is in the direction from kernel to userspace and what Matthew
+> suggests would just make kernel posssibly store non-zero value in *timer_hi
+> without setting FS_DQ_BIGTIME flag (for negative values of timer). I don't
+> think it would break anything but I agree the complication isn't big so
+> let's be careful and only set *timer_hi to non-zero if FS_DQ_BIGTIME is
+> set.
 
-Still TBD.
+OK, thanks.  I must admit, I'd completely forgotten about the negative
+values ... and the manpage (quotactl(2)) could be clearer:
 
-For now, I'm just ignoring long filenames. Eventually we'll need to
-extend the MDS and protocol to handle the nokey names properly and this
-code will need to be reworked.
+                      int32_t  d_itimer;    /* Zero if within inode limits */
+                                            /* If not, we refuse service */
+                      int32_t  d_btimer;    /* Similar to above; for
+                                               disk blocks */
 
-I have this bug opened for tracking that work:
-
-    https://tracker.ceph.com/issues/47162
-
- 
-> > +			if (err) {
-> > +				dput(parent);
-> > +				dput(cur);
-> > +				return ERR_PTR(err);
-> > +			}
-> > +
-> > +			/* base64 encode the encrypted name */
-> > +			len = base64_encode_fname(fname.disk_name.name, fname.disk_name.len, buf);
-> > +			pos -= len;
-> > +			if (pos < 0) {
-> > +				dput(parent);
-> > +				fscrypt_free_filename(&fname);
-> > +				break;
-> > +			}
-> > +			memcpy(path + pos, buf, len);
-> > +			dout("non-ciphertext name = %.*s\n", len, buf);
-> > +			fscrypt_free_filename(&fname);
-> 
-> This would be easier to understand if the encryption and encoding logic was
-> moved into its own function.
-> 
-
-
-Agreed, though it's a little hard given the way this function is
-structured. I'll see what I can do to clean it up though.
-
--- 
-Jeff Layton <jlayton@kernel.org>
-
+I can't tell if this is a relative time or seconds since 1970 since we
+exceeded the quota.
