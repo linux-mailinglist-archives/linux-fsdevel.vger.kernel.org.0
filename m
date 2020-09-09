@@ -2,81 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 37509263625
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 20:37:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 182B5263608
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 20:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728297AbgIISh2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 14:37:28 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:33374 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726226AbgIISh2 (ORCPT
+        id S1728442AbgIISat (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 14:30:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47440 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727113AbgIISas (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 14:37:28 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 089Ee08v072586;
-        Wed, 9 Sep 2020 14:41:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : mime-version : content-transfer-encoding;
- s=corp-2020-01-29; bh=ya+QMUymLQUNC5iL3dsPaQ1FPjA+xSOY9snK3tbq+SE=;
- b=E8z5TGHtsMn0+9RDsXZg3uoJKM8luetu3D1+64GWHDAxIFc27pb+CS+9A2ABl7sF0dDd
- DVrpshAl3ymsXLxw4oIUKYai6cW7k+85wRZbevS3DURpmU6P5XhyQ52nVKqMIXKIKBUp
- MlfytnjQr45ijN5uWdNwrRhDYJjgjgO95reLj0b8JkIzognwuc+GHUwZStLLkT4tZaFU
- FoMypWAjp83rRVvob3Up0nslE7QLEemreUBdqOA1GlJG/3JeLlwokJXs5xxKu5S9mlgV
- IoOmOT4O0P6e2tT98CaPqXujQlHndpwV21khUHrlplfwah6ZceAQMuf7pGxIzCypGJhc Gw== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 33c3an24mn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 09 Sep 2020 14:41:32 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 089Ef4Ll033004;
-        Wed, 9 Sep 2020 14:41:31 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 33cmk6prv4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 09 Sep 2020 14:41:31 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 089EfUC4034192;
-        Wed, 9 Sep 2020 14:41:30 GMT
-Received: from localhost.localdomain (dhcp-10-65-175-55.vpn.oracle.com [10.65.175.55])
-        by aserp3020.oracle.com with ESMTP id 33cmk6pru6-1;
-        Wed, 09 Sep 2020 14:41:30 +0000
-From:   Tom Hromatka <tom.hromatka@oracle.com>
-To:     tom.hromatka@oracle.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, fweisbec@gmail.com,
-        tglx@linutronix.de, mingo@kernel.org, adobriyan@gmail.com
-Subject: [RESEND PATCH 0/2] iowait and idle fixes in /proc/stat
-Date:   Wed,  9 Sep 2020 08:41:20 -0600
-Message-Id: <20200909144122.77210-1-tom.hromatka@oracle.com>
-X-Mailer: git-send-email 2.25.4
+        Wed, 9 Sep 2020 14:30:48 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE623C061756
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Sep 2020 11:30:47 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id h4so4259918ioe.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Sep 2020 11:30:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=98xyvtYgbwa5J67c7RkI6GnQwliGFXe74W0JhOQBOmc=;
+        b=Aai15vFl3dYqGw9K5b3xK4POAF5zorYpaKKRyIxIZqV4MkjapQJdc5WoBCxIdDvoQe
+         7FdlRAedwzY1qpqwlJ5d+oVkEoZFtbyilOo5PeMvP4vfl//XjFD28AIWbmbRXihnb49x
+         JbVoj7qo0eWkzJVqnZ3EfR9rqCRwG9dCMJoxkLi4ToOLHhfZC3SzjOM+82YB9SjmG1R5
+         a33hxHQK4Io4do/ldHL0Nwp+Us6ESgUxv94eNJDwEE8kOAIZj98CWh42I5BQfrPOtm/D
+         GfnSrPywZHKaSWgiqluDNEtHluhP8WGr1YnzmI21OdCOYBTano9T1NdzUMKvE3YznXEE
+         +6HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=98xyvtYgbwa5J67c7RkI6GnQwliGFXe74W0JhOQBOmc=;
+        b=E5+881qmMdVwx03hLGQ7bjbLke44pLiELjl9D0pZAlxJTMObtQ/OQ8zruy0sMXv/8y
+         i8fOyxLR3DXx1OddM62F+WDedTGF6D/l6+QxuYKrxb4OHJRBbRauBTj3l3uM+PE+Cjyx
+         y61q6Rgs/sM8pw0xq4gxeEo8QF9oIGJmcMzOvoNegmq6m45AIJK1FqKqfSZuswM1jOly
+         Xvvi2sUKVbnXUVn3X+pJMm4JuxDJPyxzAtamC/7asj6wOzHtYwyBs9YtePwg/X2/teXt
+         oVeBil8ajNqZEZv/h9417xOYkL/KXcYsBo3ajOLNxFuLcNxca+6/UpYjvj2QPISal6gl
+         06EQ==
+X-Gm-Message-State: AOAM530oDPBOihPqBabz6/YqJtyALThLjliv10RTQnH3pTIdO3Vxk471
+        RsfSuPrvH4Hld9Wy0RulxZf8ijbH4o5YXaEd
+X-Google-Smtp-Source: ABdhPJzDQCDM7qsjK2rY35N17lqTgsC2hAs5QECTlf9biMd54YdHkaHJRtjNBTH3FQACUVf86OCMNw==
+X-Received: by 2002:a05:6602:2f88:: with SMTP id u8mr4410307iow.175.1599676246841;
+        Wed, 09 Sep 2020 11:30:46 -0700 (PDT)
+Received: from [192.168.1.10] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id u9sm1501725iow.26.2020.09.09.11.30.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Sep 2020 11:30:46 -0700 (PDT)
+Subject: Re: [PATCH for-next] io_uring: fix ctx refcounting in
+ io_uring_enter()
+To:     Stefano Garzarella <sgarzare@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, io-uring@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20200909151900.60321-1-sgarzare@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9080c3fa-a726-b664-f634-0ea7dfda80e0@kernel.dk>
+Date:   Wed, 9 Sep 2020 12:30:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9738 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 priorityscore=1501
- clxscore=1011 bulkscore=0 malwarescore=0 lowpriorityscore=0
- mlxlogscore=999 suspectscore=0 adultscore=0 mlxscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009090132
+In-Reply-To: <20200909151900.60321-1-sgarzare@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A customer is using /proc/stat to track cpu usage in a VM and noted
-that the iowait and idle times behave strangely when a cpu goes
-offline and comes back online.
+On 9/9/20 9:19 AM, Stefano Garzarella wrote:
+> If the ring is disabled we don't decrease the 'ctx' refcount since
+> we wrongly jump to 'out_fput' label.
+> 
+> Instead let's jump to 'out' label where we decrease the 'ctx' refcount.
 
-This patchset addresses two issues that can cause iowait and idle
-to fluctuate up and down.  With these changes, cpu iowait and idle
-now only monotonically increase.
-
-Tom Hromatka (2):
-  tick-sched: Do not clear the iowait and idle times
-  /proc/stat: Simplify iowait and idle calculations when cpu is offline
-
- fs/proc/stat.c           | 24 ++++++------------------
- kernel/time/tick-sched.c |  9 +++++++++
- 2 files changed, 15 insertions(+), 18 deletions(-)
+Applied, thanks.
 
 -- 
-2.25.4
+Jens Axboe
 
