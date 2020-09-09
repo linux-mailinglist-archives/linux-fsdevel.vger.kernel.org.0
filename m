@@ -2,130 +2,201 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D530262ECE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 14:58:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2DC0262EE3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 15:05:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730193AbgIIM5d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 08:57:33 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:35698 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730168AbgIIM4c (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 08:56:32 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kFzcp-0005yj-AB; Wed, 09 Sep 2020 06:54:59 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kFzco-0004SP-M1; Wed, 09 Sep 2020 06:54:59 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Hao Lee <haolee.swjtu@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200729151740.GA3430@haolee.github.io>
-        <20200908130656.GC22780@haolee.github.io>
-        <20200908184857.GT1236603@ZenIV.linux.org.uk>
-        <20200908231156.GA23779@haolee.github.io>
-Date:   Wed, 09 Sep 2020 07:54:44 -0500
-In-Reply-To: <20200908231156.GA23779@haolee.github.io> (Hao Lee's message of
-        "Tue, 8 Sep 2020 23:11:56 +0000")
-Message-ID: <87k0x39kkr.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1730225AbgIINF0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 09:05:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48208 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730260AbgIINEk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Sep 2020 09:04:40 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CB4B21D7E;
+        Wed,  9 Sep 2020 13:02:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599656551;
+        bh=6zMjrl/YbojE1hnzKJtcDrSBETP1uBHaRuxNOAI3DU4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=VP/ls1VgCa8hNX83ZCVsmrGRv3Rd+vX/ALPcucnJV++T0WJrK7EQUUFlSUxUJxdUC
+         5QaK12iXC7jyvKhOw0M0hU/KWi+L+vnKToKQ0BpGsjkvM/ZB4rkF7ghRSN8/4MVb1Q
+         D0kKy8v2JfAERRxGTGr6dEeHQUGgL2di7xpbuvng=
+Message-ID: <0e6b21ceae302f691fe9a66bc918c4c2b28d3049.camel@kernel.org>
+Subject: Re: [RFC PATCH v2 16/18] ceph: add support to readdir for encrypted
+ filenames
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org
+Date:   Wed, 09 Sep 2020 09:02:30 -0400
+In-Reply-To: <20200908053459.GN68127@sol.localdomain>
+References: <20200904160537.76663-1-jlayton@kernel.org>
+         <20200904160537.76663-17-jlayton@kernel.org>
+         <20200908053459.GN68127@sol.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1kFzco-0004SP-M1;;;mid=<87k0x39kkr.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/cGAlwG5SJvXhASPH3BzmknXhShGQlYMk=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on sa03.xmission.com
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=8.0 tests=ALL_TRUSTED,BAYES_50,
-        DCC_CHECK_NEGATIVE,T_TM2_M_HEADER_IN_MSG,XMSubLong autolearn=disabled
-        version=3.4.2
-X-Spam-Virus: No
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4996]
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa03 0; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: ; sa03 0; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Hao Lee <haolee.swjtu@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 286 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 3.8 (1.3%), b_tie_ro: 2.6 (0.9%), parse: 0.64
-        (0.2%), extract_message_metadata: 2.5 (0.9%), get_uri_detail_list:
-        1.07 (0.4%), tests_pri_-1000: 2.7 (0.9%), tests_pri_-950: 0.98 (0.3%),
-        tests_pri_-900: 0.79 (0.3%), tests_pri_-90: 57 (20.1%), check_bayes:
-        56 (19.7%), b_tokenize: 4.9 (1.7%), b_tok_get_all: 6 (2.0%),
-        b_comp_prob: 1.54 (0.5%), b_tok_touch_all: 42 (14.6%), b_finish: 0.61
-        (0.2%), tests_pri_0: 202 (70.9%), check_dkim_signature: 0.38 (0.1%),
-        check_dkim_adsp: 2.3 (0.8%), poll_dns_idle: 0.84 (0.3%), tests_pri_10:
-        2.7 (0.9%), tests_pri_500: 6 (2.0%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] fs: Eliminate a local variable to make the code more clear
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hao Lee <haolee.swjtu@gmail.com> writes:
-
-> On Tue, Sep 08, 2020 at 07:48:57PM +0100, Al Viro wrote:
->> On Tue, Sep 08, 2020 at 01:06:56PM +0000, Hao Lee wrote:
->> > ping
->> > 
->> > On Wed, Jul 29, 2020 at 03:21:28PM +0000, Hao Lee wrote:
->> > > The dentry local variable is introduced in 'commit 84d17192d2afd ("get
->> > > rid of full-hash scan on detaching vfsmounts")' to reduce the length of
->> > > some long statements for example
->> > > mutex_lock(&path->dentry->d_inode->i_mutex). We have already used
->> > > inode_lock(dentry->d_inode) to do the same thing now, and its length is
->> > > acceptable. Furthermore, it seems not concise that assign path->dentry
->> > > to local variable dentry in the statement before goto. So, this function
->> > > would be more clear if we eliminate the local variable dentry.
->> 
->> How does it make the function more clear?  More specifically, what
->> analysis of behaviour is simplified by that?
+On Mon, 2020-09-07 at 22:34 -0700, Eric Biggers wrote:
+> On Fri, Sep 04, 2020 at 12:05:35PM -0400, Jeff Layton wrote:
+> > diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
+> > index 1b11e9af165e..88c672ccdcf8 100644
+> > --- a/fs/ceph/crypto.h
+> > +++ b/fs/ceph/crypto.h
+> > @@ -6,6 +6,8 @@
+> >  #ifndef _CEPH_CRYPTO_H
+> >  #define _CEPH_CRYPTO_H
+> >  
+> > +#include <linux/fscrypt.h>
+> > +
+> >  #ifdef CONFIG_FS_ENCRYPTION
+> >  
+> >  #define	CEPH_XATTR_NAME_ENCRYPTION_CONTEXT	"encryption.ctx"
+> > @@ -16,6 +18,29 @@ int ceph_fscrypt_set_ops(struct super_block *sb);
+> >  int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+> >  				 struct ceph_acl_sec_ctx *as);
+> >  
+> > +static inline int ceph_fname_alloc_buffer(struct inode *parent, struct fscrypt_str *fname)
+> > +{
+> > +	if (!IS_ENCRYPTED(parent))
+> > +		return 0;
+> > +	return fscrypt_fname_alloc_buffer(NAME_MAX, fname);
+> > +}
+> > +
+> > +static inline void ceph_fname_free_buffer(struct inode *parent, struct fscrypt_str *fname)
+> > +{
+> > +	if (IS_ENCRYPTED(parent))
+> > +		fscrypt_fname_free_buffer(fname);
+> > +}
+> > +
+> > +static inline int ceph_get_encryption_info(struct inode *inode)
+> > +{
+> > +	if (!IS_ENCRYPTED(inode))
+> > +		return 0;
+> > +	return fscrypt_get_encryption_info(inode);
+> > +}
+> > +
+> > +int ceph_fname_to_usr(struct inode *parent, char *name, u32 len,
+> > +			struct fscrypt_str *tname, struct fscrypt_str *oname);
+> > +
+> >  #else /* CONFIG_FS_ENCRYPTION */
+> >  
+> >  #define DUMMY_ENCRYPTION_ENABLED(fsc) (0)
+> > @@ -31,6 +56,28 @@ static inline int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *
+> >  	return 0;
+> >  }
+> >  
+> > +static inline int ceph_fname_alloc_buffer(struct inode *parent, struct fscrypt_str *fname)
+> > +{
+> > +	return 0;
+> > +}
+> > +
+> > +static inline void ceph_fname_free_buffer(struct inode *parent, struct fscrypt_str *fname)
+> > +{
+> > +}
+> > +
+> > +static inline int ceph_get_encryption_info(struct inode *inode)
+> > +{
+> > +	return 0;
+> > +}
+> 
+> This makes it so that readdir will succeed on encrypted directories when
+> !CONFIG_FS_ENCRYPTION.  The other filesystems instead return an error code,
+> which seems much better.  Can you check what the other filesystems handle
+> readdir?
 >
-> When I first read this function, it takes me a few seconds to think
-> about if the local variable dentry is always equal to path->dentry and
-> want to know if it has special purpose. This local variable may confuse
-> other people too, so I think it would be better to eliminate it.
 
-I tend to have the opposite reaction.  I read your patch and wonder
-why path->dentry needs to be reread what is changing path that I can not see.
-my back.
+Maybe. I'm not sure it's better.
 
-Now for clarity it would probably help to do something like:
+It would be nice to be able to allow such clients to be able to clean
+out an encrypted tree (given appropriate permissions, of course).
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index bae0e95b3713..430f3b4785e3 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2206,7 +2206,7 @@ static struct mountpoint *lock_mount(struct path *path)
-                return mp;
-        }
-        namespace_unlock();
--       inode_unlock(path->dentry->d_inode);
-+       inode_unlock(dentry->d_inode);
-        path_put(path);
-        path->mnt = mnt;
-        dentry = path->dentry = dget(mnt->mnt_root);
+A network filesystem like this is a much different case than a local
+one. We may have a swath of varying client kernel versions and
+configurations that are operating on the same filesystem.
 
+Where we draw that line is still being determined though.
 
-So at least the inode_lock and inode_unlock are properly paired.
+> > +static bool fscrypt_key_status_change(struct dentry *dentry)
+> > +{
+> > +	struct inode *dir;
+> > +	bool encrypted_name, have_key;
+> > +
+> > +	lockdep_assert_held(&dentry->d_lock);
+> > +
+> > +	dir = d_inode(dentry->d_parent);
+> > +	if (!IS_ENCRYPTED(dir))
+> > +		return false;
+> > +
+> > +	encrypted_name = dentry->d_flags & DCACHE_ENCRYPTED_NAME;
+> > +	have_key = fscrypt_has_encryption_key(dir);
+> > +
+> > +	if (encrypted_name == have_key)
+> > +		ceph_dir_clear_complete(dir);
+> > +
+> > +	dout("%s encrypted_name=%d have_key=%d\n", __func__, encrypted_name, have_key);
+> > +	return encrypted_name == have_key;
+> > +}
+> > +
+> 
+> Only the no-key => key case needs to be handled, not key => no-key.
+> Also, the caller already has 'dir', so there's no need to use ->d_parent.
+> 
+> What's wrong with just:
+> 
+>                 di = ceph_dentry(dentry);
+>                 if (d_unhashed(dentry) ||
+>                     d_really_is_negative(dentry) ||
+>                     di->lease_shared_gen != shared_gen ||
+> +                   ((dentry->d_flags & DCACHE_ENCRYPTED_NAME) &&
+> +                    fscrypt_has_encryption_key(dir)))  {
+>                         spin_unlock(&dentry->d_lock);
+>                         dput(dentry);
+>                         err = -EAGAIN;
+>                         goto out;
+>                 }
 
-At first glance inode_unlock using path->dentry instead of dentry
-appears to be an oversight in 84d17192d2af ("get rid of full-hash scan
-on detaching vfsmounts").  
+Ok, I didn't realize that I didn't need to worry about key removal. Your
+proposed scheme is simpler.
 
+> >  /*
+> >   * When possible, we try to satisfy a readdir by peeking at the
+> >   * dcache.  We make this work by carefully ordering dentries on
+> > @@ -238,11 +261,11 @@ static int __dcache_readdir(struct file *file,  struct dir_context *ctx,
+> >  			goto out;
+> >  		}
+> >  
+> > -		spin_lock(&dentry->d_lock);
+> 
+> Why delete this spin_lock()?
+> 
 
-Eric
+Yikes -- good catch! Fixed.
+
+> > +			if (IS_ENCRYPTED(inode) && !fscrypt_has_encryption_key(inode)) {
+> > +				spin_lock(&dn->d_lock);
+> > +				dn->d_flags |= DCACHE_ENCRYPTED_NAME;
+> > +				spin_unlock(&dn->d_lock);
+> > +			}
+> 
+> This is racy because fscrypt_has_encryption_key() could have been false when the
+> dentry was created, then true here.
+> 
+> Take a look at how __fscrypt_prepare_lookup() solves this problem.
+
+Blech.
+
+I guess I need to have ceph_fname_to_usr tell whether the name is a
+nokey name, but that info is not currently returned
+by fscrypt_fname_disk_to_usr. I guess it will need to be...
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
