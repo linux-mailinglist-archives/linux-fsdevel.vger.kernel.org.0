@@ -2,81 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 176D32631FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 18:33:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A0F3263345
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 19:00:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730960AbgIIQdV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 12:33:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57258 "EHLO
+        id S1731206AbgIIRAc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 13:00:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731021AbgIIQcj (ORCPT
+        with ESMTP id S1730643AbgIIPvM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 12:32:39 -0400
-Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EC10C061362
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Sep 2020 07:06:23 -0700 (PDT)
-Received: by mail-io1-xd29.google.com with SMTP id g128so3218218iof.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Sep 2020 07:06:23 -0700 (PDT)
+        Wed, 9 Sep 2020 11:51:12 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 855DCC0613ED
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Sep 2020 08:51:09 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id o8so4251331ejb.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Sep 2020 08:51:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eHcdzC1Vjr+eEnGNce0StnaH8r/3dCNL4SRhcQUMlRk=;
-        b=SRwj4zfFnrfJCYIIa0d/pBN8bUN1FeFiAh96+74cn1CriZXzI62ZHkuLvFCm6P31lL
-         AAOxNZRtYsFtarUskfSyDHgH5fLM4ZtWeKnXcmmKHIaiBKiZNP67+5fR0W0PYjWJIIEF
-         K/PWJr/LqEGo9WHPdegONBrkQLVHa0/EC+BlUxnGBk4/LmqeOO2PXhuT7v9pv2KWydkH
-         U8kkt+8qIX+hlCCV3yYb1+qmBEuPB5wRlccXD0ilVAlYXH8t6Ktl2UoYqQ4p2VJqrOAD
-         voO4N5MntQYmhAR4e36C1c+DcZIgl1QkLbYtrW1phmIzBa8UfN6iN2O5LDMLoySEEKMf
-         7/xg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ebI2CZT5sFSOyIJmsHXUvAoUxP/mIFBJnxrOROHyq1w=;
+        b=j+YHjrcPZ12jt2TR6VZ0SQLasTjXLm4QzCvH5I2QEq+TUS19U2aDKWvL4m3OSGEwX1
+         27sy149nq1tT/ngLrFPEjv3Qwi7oeD6dbVzHxonhKo90/tZwF9WN8vcMJDyd50A8sMrL
+         DzAzS4WAx8T4ldCFNWw2BLm0vsDAwPZU3f0wo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eHcdzC1Vjr+eEnGNce0StnaH8r/3dCNL4SRhcQUMlRk=;
-        b=j549mx5rSMZwXKPEezG2CmygMraFMTpgI7fe/QLHRz+tmFlG+ppPVWYNwRLfo9QZg1
-         cRdv99yVbbFrO+iRZwyCd85G5/CHTM7n2mwtOsb4RdzvEF5TlZT1ZBnoUrUUt0nFdckS
-         LWO24O6hBRKJT9D25m4ACDg6O6BRK7UM9Z8slSCOiKgVD5ktJTFyj+UKAOF8oNhMXgwj
-         R2C4tEPVMlzSNLSonghxM652N6NhChJ1FMDHo5aLLmPlvM37HgBc3jMHz+z1tLrUPW3d
-         uH6QkaP+myEuqNkr4bfpJW7FbsZLeOwDMlUvPfjPmWkbwKRwATpKFCpeB1BWlMzQzOT5
-         9cSQ==
-X-Gm-Message-State: AOAM532ld0PUC7mpLD5NiblZ/pR5J4dgg6yX+80g0lLMngCy8LO/eKgC
-        P4KbqDY/iPVppxXYXY95FVrhhA==
-X-Google-Smtp-Source: ABdhPJwtzLv8bwenmUUA+lfQ5tOU/l3y2j8uN59etgpB1Dhk5UazCcenXSIw2/PDFTejToUeurv5fg==
-X-Received: by 2002:a05:6602:584:: with SMTP id v4mr3535381iox.195.1599660378888;
-        Wed, 09 Sep 2020 07:06:18 -0700 (PDT)
-Received: from [192.168.1.10] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id y19sm1373254ili.47.2020.09.09.07.06.17
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ebI2CZT5sFSOyIJmsHXUvAoUxP/mIFBJnxrOROHyq1w=;
+        b=TvwALXTVmX2fyqEJSEeqUSyKbY1Bg84bUjsqHEZiqqlEJ984RReQTLjCJEvZYaEWUk
+         zp3s9+y0CGR2MJO/ZZu2lJLeoCsFKo46dRB1oO90VTYse0ZTEdOjzpxO4blUFKGKyFhJ
+         WUCgIOsRxQfFVJCmXY/zqQxlicefM3o14aTaPdZzctr898oCIleLWdUbGWH/22kjBhx5
+         zXVQr0uxTjCKFfThui0jVBbIukSGrAi50ytGZsDPYfrewd/XE0HD6AZNpUWjNUVjd1zu
+         kThbTdfkSfuS58UCWUq9PxJU304k2AN2gVDEQIRrhT7RcwJ4AOBUW5iqrkFqFb+9hnwY
+         bVxg==
+X-Gm-Message-State: AOAM530tMWn5KhgM3TICl+eyPYjDW/udNzL6BAImFi1/zkMMk4Kwy5Wx
+        /RUagYN7ZehSyU5CCGRHJIwLatE5qlLluA==
+X-Google-Smtp-Source: ABdhPJzOdaLrm6Hjo2oZT0VyovJiSnyoaQyVGKeMoAlKYjBnk16uHrvaRP6pJP2TZV8SyH5piZ7dpw==
+X-Received: by 2002:a17:907:377:: with SMTP id rs23mr4523618ejb.415.1599666667202;
+        Wed, 09 Sep 2020 08:51:07 -0700 (PDT)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id k25sm2893053ejk.3.2020.09.09.08.51.03
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Sep 2020 07:06:18 -0700 (PDT)
-Subject: Re: [PATCH -next] io_uring: Remove unneeded semicolon
-To:     Zheng Bin <zhengbin13@huawei.com>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     yi.zhang@huawei.com
-References: <20200909121237.39914-1-zhengbin13@huawei.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <cef491f9-0df7-ec9f-ebb2-0f62adcdc39d@kernel.dk>
-Date:   Wed, 9 Sep 2020 08:06:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 09 Sep 2020 08:51:05 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id j11so4320257ejk.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Sep 2020 08:51:03 -0700 (PDT)
+X-Received: by 2002:a17:906:cec9:: with SMTP id si9mr4172770ejb.351.1599666663650;
+ Wed, 09 Sep 2020 08:51:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200909121237.39914-1-zhengbin13@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200827170947.429611-1-zwisler@google.com> <20200827200801.GB1236603@ZenIV.linux.org.uk>
+ <20200827201015.GC1236603@ZenIV.linux.org.uk> <20200827202517.GA484488@google.com>
+In-Reply-To: <20200827202517.GA484488@google.com>
+From:   Ross Zwisler <zwisler@chromium.org>
+Date:   Wed, 9 Sep 2020 09:50:52 -0600
+X-Gmail-Original-Message-ID: <CAGRrVHxj6sJfToQm3-fhDfDbQVuvU+aOnRdnfo4L6CYYnurSew@mail.gmail.com>
+Message-ID: <CAGRrVHxj6sJfToQm3-fhDfDbQVuvU+aOnRdnfo4L6CYYnurSew@mail.gmail.com>
+Subject: Re: [PATCH v9 1/2] Add a "nosymfollow" mount option.
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Mattias Nissler <mnissler@chromium.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Gordon <bmgordon@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Jesse Barnes <jsbarnes@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Micah Morton <mortonm@google.com>,
+        Raul Rangel <rrangel@google.com>, Shuah Khan <shuah@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/9/20 6:12 AM, Zheng Bin wrote:
-> Fixes coccicheck warning:
-> 
-> fs/io_uring.c:4242:13-14: Unneeded semicolon
+On Thu, Aug 27, 2020 at 2:25 PM Ross Zwisler <zwisler@google.com> wrote:
+> On Thu, Aug 27, 2020 at 09:10:15PM +0100, Al Viro wrote:
+> > On Thu, Aug 27, 2020 at 09:08:01PM +0100, Al Viro wrote:
+> > Applied (to -rc1) and pushed
+>
+> Many thanks!
 
-Thanks, applied.
+(apologies for the resend, the previous one had HTML and was rejected
+by the lists)
 
--- 
-Jens Axboe
+Just FYI, here is the related commit in upstream util-linux:
 
+https://github.com/karelzak/util-linux/commit/50a531f667c31d54fbb920d394e6008df89ae636
+
+and the thread to linux-man, which I will ping when the v5.10 merge
+window closes:
+
+https://lore.kernel.org/linux-man/CAKgNAkiAkyUjd=cUvASaT2tyhaCdiMF48KA3Ov_1mQf0=J2PXw@mail.gmail.com/
