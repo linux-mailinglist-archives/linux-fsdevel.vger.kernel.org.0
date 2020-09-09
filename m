@@ -2,20 +2,20 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 4280726288E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 09:27:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1868D262895
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 09:27:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728954AbgIIH1K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 03:27:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48466 "EHLO mx2.suse.de"
+        id S1729296AbgIIH1q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 03:27:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48752 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728584AbgIIH1I (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 03:27:08 -0400
+        id S1725863AbgIIH1p (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Sep 2020 03:27:45 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 259ABAD3C;
-        Wed,  9 Sep 2020 07:27:07 +0000 (UTC)
-Subject: Re: [PATCH 11/19] gdrom: use bdev_check_media_change
+        by mx2.suse.de (Postfix) with ESMTP id 298FBAE51;
+        Wed,  9 Sep 2020 07:27:43 +0000 (UTC)
+Subject: Re: [PATCH 12/19] ide-cd: use bdev_check_media_changed
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
         Michal Simek <michal.simek@xilinx.com>,
@@ -31,7 +31,7 @@ Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
         linux-fsdevel@vger.kernel.org,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>
 References: <20200908145347.2992670-1-hch@lst.de>
- <20200908145347.2992670-12-hch@lst.de>
+ <20200908145347.2992670-13-hch@lst.de>
 From:   Hannes Reinecke <hare@suse.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
@@ -77,12 +77,12 @@ Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
  ZtWlhGRERnDH17PUXDglsOA08HCls0PHx8itYsjYCAyETlxlLApXWdVl9YVwbQpQ+i693t/Y
  PGu8jotn0++P19d3JwXW8t6TVvBIQ1dRZHx1IxGLMn+CkDJMOmHAUMWTAXX2rf5tUjas8/v2
  azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <ffe0c457-cc86-c664-ac0f-52b341c97464@suse.de>
-Date:   Wed, 9 Sep 2020 09:27:02 +0200
+Message-ID: <2bfce1f9-fa1a-a628-2311-971e4384d9bc@suse.de>
+Date:   Wed, 9 Sep 2020 09:27:37 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20200908145347.2992670-12-hch@lst.de>
+In-Reply-To: <20200908145347.2992670-13-hch@lst.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -92,28 +92,17 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 9/8/20 4:53 PM, Christoph Hellwig wrote:
-> The Sega GD-ROM driver does not have a ->revalidate_disk method, so it
-> can just use bdev_check_media_change without any additional changes.
+> Switch to use bdev_check_media_changed instead of check_disk_change and
+> call idecd_revalidate_disk manually.  Given that idecd_revalidate_disk
+> only re-reads the TOC, and we already do the same at probe time, the
+> extra call into ->revalidate_disk from bdev_disk_changed is not required
+> either, so stop wiring up the method.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > ---
->  drivers/cdrom/gdrom.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
-> index 09b0cd292720fa..9874fc1c815b53 100644
-> --- a/drivers/cdrom/gdrom.c
-> +++ b/drivers/cdrom/gdrom.c
-> @@ -479,7 +479,7 @@ static int gdrom_bdops_open(struct block_device *bdev, fmode_t mode)
->  {
->  	int ret;
->  
-> -	check_disk_change(bdev);
-> +	bdev_check_media_change(bdev);
->  
->  	mutex_lock(&gdrom_mutex);
->  	ret = cdrom_open(gd.cd_info, bdev, mode);
+>  drivers/ide/ide-cd.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
