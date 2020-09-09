@@ -2,136 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 626FC262E17
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 13:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12F73262DE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 13:34:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729507AbgIILpv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 07:45:51 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37836 "EHLO mx2.suse.de"
+        id S1729663AbgIILeS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 07:34:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33016 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729860AbgIILnt (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 07:43:49 -0400
+        id S1726426AbgIILdr (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Sep 2020 07:33:47 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 74FF6AE8C;
-        Wed,  9 Sep 2020 11:11:32 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id B6A26AEE9;
+        Wed,  9 Sep 2020 11:21:11 +0000 (UTC)
 Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 3B62E1E12E1; Wed,  9 Sep 2020 13:11:30 +0200 (CEST)
-Date:   Wed, 9 Sep 2020 13:11:30 +0200
+        id AD94B1E12E5; Wed,  9 Sep 2020 13:21:10 +0200 (CEST)
+Date:   Wed, 9 Sep 2020 13:21:10 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Xiaoming Ni <nixiaoming@huawei.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        wangle6@huawei.com
-Subject: Re: Question: Why is there no notification when a file is opened
- using filp_open()?
-Message-ID: <20200909111130.GD24207@quack2.suse.cz>
-References: <25817189-49a7-c64f-26ee-78d4a27496b6@huawei.com>
- <CAOQ4uxhejJzjKLZCt=b87KAX0sC3RAZ2FHEZbu4188Ar-bkmOg@mail.gmail.com>
- <e399cd17-e95e-def4-e03b-5cc2ae1f9708@huawei.com>
- <CAOQ4uxgvodepq2ZhmGEpkZYj017tH_pk2AgV=pUhWiONnxOQjw@mail.gmail.com>
- <20200908171859.GA29953@casper.infradead.org>
- <CAOQ4uxjX2GAJhD70=6SmwdXPH6TuOzGugtdYupDjLLywC2H5Ag@mail.gmail.com>
- <96abf6e3-2442-8871-c9f3-be981c0a1965@huawei.com>
- <CAOQ4uxjNcjFtQuc9AeWgEO7G3CeGm3vL_wK6UhbHkxOZuRYOeQ@mail.gmail.com>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, milan.opensource@gmail.com,
+        lkml <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH] fsync.2: ERRORS: add EIO and ENOSPC
+Message-ID: <20200909112110.GA29150@quack2.suse.cz>
+References: <1598685186-27499-1-git-send-email-milan.opensource@gmail.com>
+ <CAKgNAkiTjtdaQxbCYS67+SdqSPaGzJnfLEEMFgcoXjHLDxgemw@mail.gmail.com>
+ <20200908112742.GA2956@quack2.suse.cz>
+ <7be61144-0e77-3c31-d720-f2cbe56bc81e@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjNcjFtQuc9AeWgEO7G3CeGm3vL_wK6UhbHkxOZuRYOeQ@mail.gmail.com>
+In-Reply-To: <7be61144-0e77-3c31-d720-f2cbe56bc81e@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 09-09-20 10:36:57, Amir Goldstein wrote:
-> On Wed, Sep 9, 2020 at 10:00 AM Xiaoming Ni <nixiaoming@huawei.com> wrote:
-> >
-> > On 2020/9/9 11:44, Amir Goldstein wrote:
-> > > On Tue, Sep 8, 2020 at 8:19 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > >>
-> > >> On Tue, Sep 08, 2020 at 04:18:29PM +0300, Amir Goldstein wrote:
-> > >>> On Tue, Sep 8, 2020 at 3:53 PM Xiaoming Ni <nixiaoming@huawei.com> wrote:
-> > >>>> For example, in fs/coredump.c, do_coredump() calls filp_open() to
-> > >>>> generate core files.
-> > >>>> In this scenario, the fsnotify_open() notification is missing.
-> > >>>
-> > >>> I am not convinced that we should generate an event.
-> > >>> You will have to explain in what is the real world use case that requires this
-> > >>> event to be generated.
-> > >>
-> > >> Take the typical usage for fsnotify of a graphical file manager.
-> > >> It would be nice if the file manager showed a corefile as soon as it
-> > >> appeared in a directory rather than waiting until some other operation
-> > >> in that directory caused those directory contents to be refreshed.
-> > >
-> > > fsnotify_open() is not the correct notification for file managers IMO.
-> > > fsnotify_create() is and it will be called in this case.
-> > >
-> > > If the reason you are interested in open events is because you want
-> > > to monitor the entire filesystem then welcome to the future -
-> > > FAN_CREATE is supported since kernel v5.1.
-> > >
-> > > Is there another real life case you have in mind where you think users
-> > > should be able to get an open fd for a file that the kernel has opened?
-> > > Because that is what FAN_OPEN will do.
-> > >
-> >
-> > There are also cases where file is opened in read-only mode using
-> > filp_open().
-> >
-> > case1: nfsd4_init_recdir() call filp_open()
-> > filp_open()
-> > nfsd4_init_recdir() fs/nfsd/nfs4recover.c#L543
-> >
-> > L70: static char user_recovery_dirname[PATH_MAX] =
-> > "/var/lib/nfs/v4recovery";
-> > L543: nn->rec_file = filp_open(user_recovery_dirname, O_RDONLY |
-> > O_DIRECTORY, 0);
-> >
-> >
-> > case2: ima_read_policy()
-> > filp_open()
-> > kernel_read_file_from_path()  fs/exec.c#L1004
-> > ima_read_policy()  security/integrity/ima/ima_fs.c#L286
-> > ima_write_policy() security/integrity/ima/ima_fs.c#L335
-> > ima_measure_policy_ops   security/integrity/ima/ima_fs.c#L443
-> > sys_write()
-> >
-> > case3: use do_file_open_root() to open file
-> > do_file_open_root()
-> > file_open_root()   fs/open.c#L1159
-> > kernel_read_file_from_path_initns()  fs/exec.c#L1029
-> > fw_get_filesystem_firmware()  drivers/base/firmware_loader/main.c#L498
-> >
-> > Do we need to add fsnotify_open() in these scenarios?
+On Wed 09-09-20 12:52:48, Michael Kerrisk (man-pages) wrote:
+> > So the error state isn't really stored "on pages in the file mapping".
+> > Current implementation (since 4.14) is that error state is stored in struct
+> > file (I think this tends to be called "file description" in manpages) and
 > 
-> We do not *need* to add fsnotify_open() if there is no concrete use case
-> from real life that needs it.
+> (Yes, "open file description" is the POSIX terminology for the thing that
+> sits between the FD and the inode--struct file in kernel parlance--and I
+> try to follow POSIX terminology in the manual pages where possible.
 > 
-> Matthew gave an example of a real life use case and I explained why IMO
-> we don't need to add fsnotify_open() for the use case that he described.
+> > so EIO / ENOSPC is reported once for each file description of the file that
+> > was open before the error happened. Not sure if we want to be so precise in
+> > the manpages or if it just confuses people. 
 > 
-> If you want to add fsnotify_open() to any call site, please come up with
-> a real life use case - not a made up one, one that really exists and where
-> the open event is really needed.
+> Well, people are confused now, so I think more detail would be good.
 > 
-> grepping the code for callers of filp_open() is not enough.
+> > Anyway your takeway that no
+> > error on subsequent fsync() does not mean data was written is correct.
+> 
+> Thanks. (See also my rply to Jeff.)
+> 
+> By the way, a question related to your comments above. In the 
+> errors section, there is this:
+> 
+>        EIO    An  error  occurred during synchronization.  This error may
+>               relate to data written to some other file descriptor on the
+> *             same  file.   Since Linux 4.13, errors from write-back will
+>               be reported to all file descriptors that might have written
+>               the  data  which  triggered  the  error.   Some filesystems
+>               (e.g., NFS) keep close track of  which  data  came  through
+>               which  file  descriptor,  and  give more precise reporting.
+>               Other  filesystems  (e.g.,  most  local  filesystems)  will
+>               report errors to all file descriptors that were open on the
+> *             file when the error was recorded.
+> 
+> In the marked (*) lines, we have the word "file". Is this accurate? I mean, I
+> would normally take "file" in this context to mean the inode ('struct inode').
+> But I wonder if really what is meant here is "open file description"
+> ('struct file'). In other words, is the EIO being generated for all FDs 
+> connected to the same open file description, or for all FDs for all of the
+> open file descriptions connected to the inode? Your thoughts?
 
-Yeah. So in kernel, things are both ways. There are filp_open() users that
-do take care to manually generate fsnotify_open() event (most notably
-io_uring, exec, or do_handle_open) and there are others as Xiaoming found
-which just don't bother.  I'm not sure filp_open() should unconditionally
-generate fsnotify_open() event as IMO some of those notifications would be
-more confusing than useful.
-
-OTOH it is true that e.g. for core dumping we will generate other fsnotify
-events such as FSNOTIFY_CLOSE (which is generated in __fput()) so missing
-FSNOTIFY_OPEN is somewhat confusing. So having some consistency in this
-(either by generating FSNOTIFY_OPEN or by not generating FSNOTIFY_CLOSE)
-would be IMO desirable.
+The error gets reported once for each "open file description" of the file
+(inode) where the error happened. If there are multiple file descriptors
+pointing to the same open file description, then only one of those file
+descriptors will see the error. This is inevitable consequence of kernel
+storing the error state in struct file and clearing it once it is
+reported...
 
 								Honza
 -- 
