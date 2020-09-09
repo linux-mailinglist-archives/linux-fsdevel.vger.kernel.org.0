@@ -2,20 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B8C7E262919
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 09:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 163AA262936
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 09:50:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730190AbgIIHji (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 03:39:38 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55644 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726226AbgIIHjh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 03:39:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 9788DB666;
-        Wed,  9 Sep 2020 07:39:35 +0000 (UTC)
-Subject: Re: [PATCH 19/19] block: remove check_disk_change
+        id S1729779AbgIIHuN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 03:50:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729455AbgIIHuL (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Sep 2020 03:50:11 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABB7AC061573;
+        Wed,  9 Sep 2020 00:50:09 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id r24so2285150ljm.3;
+        Wed, 09 Sep 2020 00:50:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+eoBy/bwt6qKy1ZU0hQLUIIb2eFiZ29uRJfoY0zAIck=;
+        b=M9Ywp41A+KsRDVsFPG6mUL2IKvRoQoehb0HspBt50pCHhLzboHNdhVGwGVEipw9wfJ
+         7hZZSg+T3fmGnUNuwAkfEqUaTbXRuOm31dKLaSiLK026mhUTT/MrgXoeTzmOHzbYsFqm
+         +A8i4gcA/t91nbljx6J9SSGkTYI6ynwT265Z3mOGFjpWNL9gaZ4VqBN67iae0YWqY2Qp
+         uVEDfPiK0Fw4oHjuJLVVPz0sykxlu2UC+lgqHqRKtuH3CMZ8CJdzDYkUlzjTONJogZ9Q
+         IHwXpYNPCNRByf2ynwQbgD+zOradLAKQbshX5mZ6mVJ8YryvtbQKQDlilS86zU1+4NWs
+         iquQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=+eoBy/bwt6qKy1ZU0hQLUIIb2eFiZ29uRJfoY0zAIck=;
+        b=QqERKsJI96CeBEoxw6Bk5ciGi6jStwSUemb4cjggUDMxM+zXfAdF51TzgIJcUgABwf
+         5nwLRT3Lm5oBQwpBKrZxpz3qpRaGNI7s+BgErUAh9T0YeSn6lVktvAnc46/MYmFdo6ia
+         feQplupQLNlO7YAfMDK5prVO8cmSmBX2/KKHg2WNMec9eBjC3Qtnqv34fwtXIXF7RjrJ
+         X4zZ/lI8hHWzOmsOQsgLpegkL4/WqMBtbEV08IxGKRGbmuLSC2YDidUyeTWDlXovdFrp
+         XvU7yj8c1noGKPVz3kW6TBTMsRKF8iwj+3iKvIkJsiRyZJPyp90ZZAJhxlAt72/Q59CT
+         XsKg==
+X-Gm-Message-State: AOAM530C5YlJZessBxek19VBWbX/xPbEg8sobBZeNMCaJtZKzCgzi4ng
+        yOFLuT+j1keFsYeKtvvIIqWjx8duhcq3pA==
+X-Google-Smtp-Source: ABdhPJwEA3XTx1gh59N0mVW4YGXuKKn+jsdBgABsdtOTBUZ1LgQuaosBlCBjZQ2p2fQTw9bkjzWHyA==
+X-Received: by 2002:a2e:3215:: with SMTP id y21mr1180072ljy.52.1599637807929;
+        Wed, 09 Sep 2020 00:50:07 -0700 (PDT)
+Received: from ?IPv6:2a00:1fa0:290:64e3:f5dd:84ac:70b0:5629? ([2a00:1fa0:290:64e3:f5dd:84ac:70b0:5629])
+        by smtp.gmail.com with ESMTPSA id z24sm403079lfe.54.2020.09.09.00.50.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Sep 2020 00:50:07 -0700 (PDT)
+Subject: Re: [PATCH 07/19] swim3: use bdev_check_media_changed
 To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
         Michal Simek <michal.simek@xilinx.com>,
@@ -31,83 +66,38 @@ Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
         linux-fsdevel@vger.kernel.org,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>
 References: <20200908145347.2992670-1-hch@lst.de>
- <20200908145347.2992670-20-hch@lst.de>
-From:   Hannes Reinecke <hare@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
- 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
- azzYF4VRJsdl+d0MCaSy8mUh
-Message-ID: <bb2b4f3c-dc54-c5f5-e270-f72efff58f80@suse.de>
-Date:   Wed, 9 Sep 2020 09:39:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ <20200908145347.2992670-8-hch@lst.de>
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Organization: Brain-dead Software
+Message-ID: <81bd0c24-81ec-c43f-5771-22fbe7b3dce4@gmail.com>
+Date:   Wed, 9 Sep 2020 10:50:00 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <20200908145347.2992670-20-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20200908145347.2992670-8-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/8/20 4:53 PM, Christoph Hellwig wrote:
-> Remove the now unused check_disk_change helper.
+Hello!
+
+On 08.09.2020 17:53, Christoph Hellwig wrote:
+
+> Switch to use bdev_check_media_changed instead of check_disk_change and
+             ^^^
+    Using?
+
+> call floppy_revalidate manually.  Given that floppy_revalidate only
+> deals with media change events, the extra call into ->revalidate_disk
+> from bdev_disk_changed is not required either, so stop wiring up the
+> method.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
->  fs/block_dev.c        | 20 --------------------
->  include/linux/genhd.h |  1 -
->  2 files changed, 21 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+[...]
 
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke		           Kernel Storage Architect
-hare@suse.de			                  +49 911 74053 688
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), GF: Felix Imendörffer
+MBR, Sergei
