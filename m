@@ -2,131 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 00EA72635CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 20:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37509263625
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 20:37:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729942AbgIISUv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 14:20:51 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:37134 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725772AbgIISUp (ORCPT
+        id S1728297AbgIISh2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 14:37:28 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:33374 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726226AbgIISh2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 14:20:45 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 089EdGeS055361;
+        Wed, 9 Sep 2020 14:37:28 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 089Ee08v072586;
         Wed, 9 Sep 2020 14:41:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2020-01-29;
- bh=h6y6WG3zhGQaU+uqolHKa4rZq0wEiHiUEuGCpqBnCxU=;
- b=qXgkdU5hP/usLZQAIcf8Iy8dOMot2CleWzLeMSLZsHLWujbogAtw8nQ+j711GUARiayq
- wm/NGaUciipGKRjuqZXyRQwTlWae9zJ25IhwKOS7y/yo3Ohceg2rFtJ04YHMoe/00KF+
- y2nKY7qwlYooHb7lLP4Y7Si0BkE7qq+Dverptuy7epWWCG36t19+l1v7I4tEJnoyXZ2Q
- MNz+fg/XXuhLZRYU2T/7ZjfESETnCm0pz4b+h9beXyduqBsyZ9aGS2hthV/SCsRO8ky3
- bd+AGP3xkR0045C00NmkSYf7EvM+opd0ZmoHNISsRbLs6Vujj+sLl69MkekGb/gt306a DA== 
+ date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2020-01-29; bh=ya+QMUymLQUNC5iL3dsPaQ1FPjA+xSOY9snK3tbq+SE=;
+ b=E8z5TGHtsMn0+9RDsXZg3uoJKM8luetu3D1+64GWHDAxIFc27pb+CS+9A2ABl7sF0dDd
+ DVrpshAl3ymsXLxw4oIUKYai6cW7k+85wRZbevS3DURpmU6P5XhyQ52nVKqMIXKIKBUp
+ MlfytnjQr45ijN5uWdNwrRhDYJjgjgO95reLj0b8JkIzognwuc+GHUwZStLLkT4tZaFU
+ FoMypWAjp83rRVvob3Up0nslE7QLEemreUBdqOA1GlJG/3JeLlwokJXs5xxKu5S9mlgV
+ IoOmOT4O0P6e2tT98CaPqXujQlHndpwV21khUHrlplfwah6ZceAQMuf7pGxIzCypGJhc Gw== 
 Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 33c23r29ws-1
+        by userp2120.oracle.com with ESMTP id 33c3an24mn-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Wed, 09 Sep 2020 14:41:32 +0000
 Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 089Ef4EG032991;
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 089Ef4Ll033004;
         Wed, 9 Sep 2020 14:41:31 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 33cmk6prw1-1
+        by aserp3020.oracle.com with ESMTP id 33cmk6prv4-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
         Wed, 09 Sep 2020 14:41:31 +0000
 Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 089EfUC6034192;
-        Wed, 9 Sep 2020 14:41:31 GMT
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 089EfUC4034192;
+        Wed, 9 Sep 2020 14:41:30 GMT
 Received: from localhost.localdomain (dhcp-10-65-175-55.vpn.oracle.com [10.65.175.55])
-        by aserp3020.oracle.com with ESMTP id 33cmk6pru6-2;
-        Wed, 09 Sep 2020 14:41:31 +0000
+        by aserp3020.oracle.com with ESMTP id 33cmk6pru6-1;
+        Wed, 09 Sep 2020 14:41:30 +0000
 From:   Tom Hromatka <tom.hromatka@oracle.com>
 To:     tom.hromatka@oracle.com, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, fweisbec@gmail.com,
         tglx@linutronix.de, mingo@kernel.org, adobriyan@gmail.com
-Subject: [RESEND PATCH 1/2] tick-sched: Do not clear the iowait and idle times
-Date:   Wed,  9 Sep 2020 08:41:21 -0600
-Message-Id: <20200909144122.77210-2-tom.hromatka@oracle.com>
+Subject: [RESEND PATCH 0/2] iowait and idle fixes in /proc/stat
+Date:   Wed,  9 Sep 2020 08:41:20 -0600
+Message-Id: <20200909144122.77210-1-tom.hromatka@oracle.com>
 X-Mailer: git-send-email 2.25.4
-In-Reply-To: <20200909144122.77210-1-tom.hromatka@oracle.com>
-References: <20200909144122.77210-1-tom.hromatka@oracle.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9738 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 priorityscore=1501
- mlxlogscore=999 mlxscore=0 bulkscore=0 suspectscore=0 spamscore=0
- malwarescore=0 phishscore=0 lowpriorityscore=0 clxscore=1015
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 priorityscore=1501
+ clxscore=1011 bulkscore=0 malwarescore=0 lowpriorityscore=0
+ mlxlogscore=999 suspectscore=0 adultscore=0 mlxscore=0 impostorscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2006250000 definitions=main-2009090132
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A customer reported that when a cpu goes offline and then comes back
-online, the overall cpu idle and iowait data in /proc/stat decreases.
-This is wreaking havoc with their cpu usage calculations.
+A customer is using /proc/stat to track cpu usage in a VM and noted
+that the iowait and idle times behave strangely when a cpu goes
+offline and comes back online.
 
-Prior to this patch:
+This patchset addresses two issues that can cause iowait and idle
+to fluctuate up and down.  With these changes, cpu iowait and idle
+now only monotonically increase.
 
-	        user nice system    idle iowait
-	cpu  1390748  636 209444 9802206  19598
-	cpu1  178384   75  24545 1392450   3025
+Tom Hromatka (2):
+  tick-sched: Do not clear the iowait and idle times
+  /proc/stat: Simplify iowait and idle calculations when cpu is offline
 
-take cpu1 offline and bring it back online
+ fs/proc/stat.c           | 24 ++++++------------------
+ kernel/time/tick-sched.c |  9 +++++++++
+ 2 files changed, 15 insertions(+), 18 deletions(-)
 
-	        user nice system    idle iowait
-	cpu  1391209  636 209682 8453440  16595
-	cpu1  178440   75  24572     627      0
-
-To prevent this, do not clear the idle and iowait times for the
-cpu that has come back online.
-
-With this patch:
-
-	        user nice system    idle iowait
-	cpu   129913   17  17590  166512    704
-	cpu1   15916    3   2395   20989     47
-
-take cpu1 offline and bring it back online
-
-	        user nice system    idle iowait
-	cpu   130089   17  17686  184625    711
-        cpu1   15942    3   2401   23088     47
-
-Signed-off-by: Tom Hromatka <tom.hromatka@oracle.com>
----
- kernel/time/tick-sched.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 3e2dc9b8858c..8103bad7bbd6 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -1375,13 +1375,22 @@ void tick_setup_sched_timer(void)
- void tick_cancel_sched_timer(int cpu)
- {
- 	struct tick_sched *ts = &per_cpu(tick_cpu_sched, cpu);
-+	ktime_t idle_sleeptime, iowait_sleeptime;
- 
- # ifdef CONFIG_HIGH_RES_TIMERS
- 	if (ts->sched_timer.base)
- 		hrtimer_cancel(&ts->sched_timer);
- # endif
- 
-+	/* save off and restore the idle_sleeptime and the iowait_sleeptime
-+	 * to avoid discontinuities and ensure that they are monotonically
-+	 * increasing
-+	 */
-+	idle_sleeptime = ts->idle_sleeptime;
-+	iowait_sleeptime = ts->iowait_sleeptime;
- 	memset(ts, 0, sizeof(*ts));
-+	ts->idle_sleeptime = idle_sleeptime;
-+	ts->iowait_sleeptime = iowait_sleeptime;
- }
- #endif
- 
 -- 
 2.25.4
 
