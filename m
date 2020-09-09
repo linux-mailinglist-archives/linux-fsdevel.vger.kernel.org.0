@@ -2,126 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B7D7263105
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 17:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01A0A263101
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Sep 2020 17:53:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730368AbgIIPyL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Sep 2020 11:54:11 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58714 "EHLO mx2.suse.de"
+        id S1730604AbgIIPxo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Sep 2020 11:53:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730588AbgIIPxq (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Sep 2020 11:53:46 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 71E76B291;
-        Wed,  9 Sep 2020 14:15:09 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 530AC1E12E5; Wed,  9 Sep 2020 16:14:53 +0200 (CEST)
-Date:   Wed, 9 Sep 2020 16:14:53 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, milan.opensource@gmail.com,
-        lkml <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Jeff Layton <jlayton@kernel.org>, NeilBrown <neilb@suse.com>
-Subject: Re: [PATCH] fsync.2: ERRORS: add EIO and ENOSPC
-Message-ID: <20200909141453.GC29150@quack2.suse.cz>
-References: <1598685186-27499-1-git-send-email-milan.opensource@gmail.com>
- <CAKgNAkiTjtdaQxbCYS67+SdqSPaGzJnfLEEMFgcoXjHLDxgemw@mail.gmail.com>
- <20200908112742.GA2956@quack2.suse.cz>
- <7be61144-0e77-3c31-d720-f2cbe56bc81e@gmail.com>
- <20200909112110.GA29150@quack2.suse.cz>
- <0f473a75-fd5a-82f7-1d0e-e9c168414498@gmail.com>
+        id S1730187AbgIIPxh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 9 Sep 2020 11:53:37 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 598C22064B;
+        Wed,  9 Sep 2020 15:53:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599666816;
+        bh=NejtTJTgmOPiYWyXqDjSjrA5fG/Yl1LvR7QrRHtW+/Y=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=JYVLJ7UoB3HCHINUdWeL2qi2itwdZ9+/TscgnLHNUMc8FqNSr8TrnkmiVAENPk8fq
+         jY5jjx8scqDpAOtgIQCdR+NXXqeHl525lj5b06t9QL2Ws+3prdQpsfbL65LqLALFMi
+         pbBtjccBFNdr5iz+GrLRwDvi4L5HQFZ06IJEwYdA=
+Message-ID: <c4fd5093a5996840e6fe23dc4507760a5ad70624.camel@kernel.org>
+Subject: Re: [RFC PATCH v2 12/18] ceph: set S_ENCRYPTED bit if new inode has
+ encryption.ctx xattr
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org
+Date:   Wed, 09 Sep 2020 11:53:35 -0400
+In-Reply-To: <20200908045737.GK68127@sol.localdomain>
+References: <20200904160537.76663-1-jlayton@kernel.org>
+         <20200904160537.76663-13-jlayton@kernel.org>
+         <20200908045737.GK68127@sol.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0f473a75-fd5a-82f7-1d0e-e9c168414498@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 09-09-20 13:58:50, Michael Kerrisk (man-pages) wrote:
-> [CC += Neil, since he wrote the text we're talking about]
+On Mon, 2020-09-07 at 21:57 -0700, Eric Biggers wrote:
+> On Fri, Sep 04, 2020 at 12:05:31PM -0400, Jeff Layton wrote:
+> > This hack fixes a chicken-and-egg problem when fetching inodes from the
+> > server. Once we move to a dedicated field in the inode, then this should
+> > be able to go away.
 > 
-> Hello Jan,
+> To clarify: while this *could* be the permanent solution, you're planning to
+> make ceph support storing an "is inode encrypted?" flag on the server, similar
+> to what the local filesystems do with i_flags (since searching the xattrs for
+> every inode is much more expensive than a simple flag check)?
 > 
-> On 9/9/20 1:21 PM, Jan Kara wrote:
-> > On Wed 09-09-20 12:52:48, Michael Kerrisk (man-pages) wrote:
-> >>> So the error state isn't really stored "on pages in the file mapping".
-> >>> Current implementation (since 4.14) is that error state is stored in struct
-> >>> file (I think this tends to be called "file description" in manpages) and
-> >>
-> >> (Yes, "open file description" is the POSIX terminology for the thing that
-> >> sits between the FD and the inode--struct file in kernel parlance--and I
-> >> try to follow POSIX terminology in the manual pages where possible.
-> >>
-> >>> so EIO / ENOSPC is reported once for each file description of the file that
-> >>> was open before the error happened. Not sure if we want to be so precise in
-> >>> the manpages or if it just confuses people. 
-> >>
-> >> Well, people are confused now, so I think more detail would be good.
-> >>
-> >>> Anyway your takeway that no
-> >>> error on subsequent fsync() does not mean data was written is correct.
-> >>
-> >> Thanks. (See also my rply to Jeff.)
-> >>
-> >> By the way, a question related to your comments above. In the 
-> >> errors section, there is this:
-> >>
-> >>        EIO    An  error  occurred during synchronization.  This error may
-> >>               relate to data written to some other file descriptor on the
-> >> *             same  file.   Since Linux 4.13, errors from write-back will
-> >>               be reported to all file descriptors that might have written
-> >>               the  data  which  triggered  the  error.   Some filesystems
-> >>               (e.g., NFS) keep close track of  which  data  came  through
-> >>               which  file  descriptor,  and  give more precise reporting.
-> >>               Other  filesystems  (e.g.,  most  local  filesystems)  will
-> >>               report errors to all file descriptors that were open on the
-> >> *             file when the error was recorded.
-> >>
-> >> In the marked (*) lines, we have the word "file". Is this accurate? I mean, I
-> >> would normally take "file" in this context to mean the inode ('struct inode').
-> >> But I wonder if really what is meant here is "open file description"
-> >> ('struct file'). In other words, is the EIO being generated for all FDs 
-> >> connected to the same open file description, or for all FDs for all of the
-> >> open file descriptions connected to the inode? Your thoughts?
-> > 
-> > The error gets reported once for each "open file description" of the file
-> > (inode) where the error happened. If there are multiple file descriptors
-> > pointing to the same open file description, then only one of those file
-> > descriptors will see the error. This is inevitable consequence of kernel
-> > storing the error state in struct file and clearing it once it is
-> > reported...
+> > +#define DUMMY_ENCRYPTION_ENABLED(fsc) ((fsc)->dummy_enc_ctx.ctx != NULL)
+> > +
 > 
-> So, the text in wrong two respects, I believe:
+> As I mentioned on an earlier patch, please put the support for the
+> "test_dummy_encryption" mount option in a separate patch.  It's best thought of
+> separately from the basic fscrypt support.
 > 
-> * It should be phrased in terms of "open file description", not "file",
-> in the lines that I marked.
+> >  int ceph_fscrypt_set_ops(struct super_block *sb);
+> >  int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+> >  				 struct ceph_acl_sec_ctx *as);
+> >  
+> >  #else /* CONFIG_FS_ENCRYPTION */
+> >  
+> > +#define DUMMY_ENCRYPTION_ENABLED(fsc) (0)
+> > +
+> >  static inline int ceph_fscrypt_set_ops(struct super_block *sb)
+> >  {
+> >  	return 0;
+> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > index 651148194316..c1c1fe2547f9 100644
+> > --- a/fs/ceph/inode.c
+> > +++ b/fs/ceph/inode.c
+> > @@ -964,6 +964,10 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+> >  		ceph_forget_all_cached_acls(inode);
+> >  		ceph_security_invalidate_secctx(inode);
+> >  		xattr_blob = NULL;
+> > +		if ((inode->i_state & I_NEW) &&
+> > +		    (DUMMY_ENCRYPTION_ENABLED(mdsc->fsc) ||
+> > +		     ceph_inode_has_xattr(ci, CEPH_XATTR_NAME_ENCRYPTION_CONTEXT)))
+> > +			inode_set_flags(inode, S_ENCRYPTED, S_ENCRYPTED);
+> 
+> The check for DUMMY_ENCRYPTION_ENABLED() here is wrong and should be removed.
+> When the filesystem is mounted with test_dummy_encryption, there may be
+> unencrypted inodes already on-disk.  Those shouldn't get S_ENCRYPTED set.
+> test_dummy_encryption does add some special handling for unencrypted
+> directories, but that doesn't require S_ENCRYPTED to be set on them.
+> 
 
-No, I believe 'file' is correct on these two lines. I guess I wasn't
-precise enough in my explanation of the mechanism :) We actually have two
-places where we store error state. There's "error counter" in the inode and
-then "last seen error" counter in struct file. Whenever "last seen error"
-is less than "inode error counter" we report error from the syscall and set
-"last seen error" in the used struct file to the current "inode error
-counter". So whenever writeback error happens for the inode, all 'struct
-file's will end up reporting the error exactly once.
+I've been working through your comments. Symlinks work now, as long as I
+use the fscrypt utility instead of test_dummy_encryption.
 
-> * Where it says "to all file descriptors" (twice), it should rather say
-> "to any of the file descriptors [that refer to the open file description]"
+When I remove that condition above, then test_dummy_encryption no longer
+works.  I think I must be missing some context in how
+test_dummy_encryption is supposed to be used.
 
-This is correct but I'm not sure it captures well the fact that each open
-file description is guaranteed to get a notification. So maybe I'd rephrase
-it like "reported to all file descriptors" -> "reported to all open file
-descriptions (if there are multiple file descriptors pointing to the same
-open file description, the error is reported only to the first call
-regardless of which of the descriptors it uses)"
+Suppose I mount a ceph filesystem with -o test_dummy_encryption. The
+root inode of the fs is instantiated by going through here, but it's not
+marked with S_ENCRYPTED because the root has no context.
 
-								Honza
+How will descendant dentries end up encrypted if this one is not marked
+as such?
+
+Thanks,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jeff Layton <jlayton@kernel.org>
+
