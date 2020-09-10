@@ -2,24 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 62BF5265020
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 22:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D590265036
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 22:08:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbgIJUEl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 16:04:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51618 "EHLO
+        id S1725820AbgIJUIC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 16:08:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726639AbgIJUAy (ORCPT
+        with ESMTP id S1726901AbgIJUF6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 16:00:54 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6317C061757;
-        Thu, 10 Sep 2020 13:00:47 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kGSjq-00DvEU-NI; Thu, 10 Sep 2020 20:00:10 +0000
-Date:   Thu, 10 Sep 2020 21:00:10 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
+        Thu, 10 Sep 2020 16:05:58 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BBD9C061573;
+        Thu, 10 Sep 2020 13:05:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=c2OmDmw3CBNdMhbSUreC74RlMC1GtRl7G6wTRWdIDhg=; b=oalS+EShumiM+wP4ntMj+va6+Q
+        Nh1j9337AoOX5aS6ehlDvYBnbeH5wAQR/9ls36am10xynQpwjAzNspdirI5ohbUmCjgytsp6ExJhu
+        61TqiAGlfQvDFqi1JocYtyt1E3SBqZt+RHR5ElNE0185BXyGVupHaZe0djMdV/ttf1KoyzZ8hdeFJ
+        z0CoXaDzfHr5fh5hlf6Gt1AywT/4OZMjRpww4aVwjYJG+OoB5dzIFkkHg42E79TUXRRyuDmQBueyp
+        KAqaQ+Hi5YPbc5abQpTeFLdmAJTJqOQETXvwfl9CDwTes6XA46M10L1IXyJSp5ODcSg+CifPThbbA
+        V4gIP2hA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kGSpD-0003dj-CF; Thu, 10 Sep 2020 20:05:43 +0000
+Date:   Thu, 10 Sep 2020 21:05:43 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
         Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
         Aleksa Sarai <cyphar@cyphar.com>,
@@ -58,36 +68,44 @@ Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
         linux-security-module@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 Subject: Re: [RFC PATCH v9 0/3] Add introspect_access(2) (was O_MAYEXEC)
-Message-ID: <20200910200010.GF1236603@ZenIV.linux.org.uk>
+Message-ID: <20200910200543.GY6583@casper.infradead.org>
 References: <20200910164612.114215-1-mic@digikod.net>
  <20200910170424.GU6583@casper.infradead.org>
  <f6e2358c-8e5e-e688-3e66-2cdd943e360e@digikod.net>
  <a48145770780d36e90f28f1526805a7292eb74f6.camel@linux.ibm.com>
  <880bb4ee-89a2-b9b0-747b-0f779ceda995@digikod.net>
  <20200910184033.GX6583@casper.infradead.org>
+ <20200910200010.GF1236603@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200910184033.GX6583@casper.infradead.org>
+In-Reply-To: <20200910200010.GF1236603@ZenIV.linux.org.uk>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 10, 2020 at 07:40:33PM +0100, Matthew Wilcox wrote:
-> On Thu, Sep 10, 2020 at 08:38:21PM +0200, Mickaël Salaün wrote:
-> > There is also the use case of noexec mounts and file permissions. From
-> > user space point of view, it doesn't matter which kernel component is in
-> > charge of defining the policy. The syscall should then not be tied with
-> > a verification/integrity/signature/appraisal vocabulary, but simply an
-> > access control one.
+On Thu, Sep 10, 2020 at 09:00:10PM +0100, Al Viro wrote:
+> On Thu, Sep 10, 2020 at 07:40:33PM +0100, Matthew Wilcox wrote:
+> > On Thu, Sep 10, 2020 at 08:38:21PM +0200, Mickaël Salaün wrote:
+> > > There is also the use case of noexec mounts and file permissions. From
+> > > user space point of view, it doesn't matter which kernel component is in
+> > > charge of defining the policy. The syscall should then not be tied with
+> > > a verification/integrity/signature/appraisal vocabulary, but simply an
+> > > access control one.
+> > 
+> > permission()?
 > 
-> permission()?
+> int lsm(int fd, const char *how, char *error, int size);
+> 
+> Seriously, this is "ask LSM to apply special policy to file"; let's
+> _not_ mess with flags, etc. for that; give it decent bandwidth
+> and since it's completely opaque for the rest of the kernel,
+> just a pass a string to be parsed by LSM as it sees fit.
 
-int lsm(int fd, const char *how, char *error, int size);
+Hang on, it does have some things which aren't BD^W^WLSM.  It lets
+the interpreter honour the mount -o noexec option.  I presume it's
+not easily defeated by
+	cat /home/salaun/bin/bad.pl | perl -
 
-Seriously, this is "ask LSM to apply special policy to file"; let's
-_not_ mess with flags, etc. for that; give it decent bandwidth
-and since it's completely opaque for the rest of the kernel,
-just a pass a string to be parsed by LSM as it sees fit.
