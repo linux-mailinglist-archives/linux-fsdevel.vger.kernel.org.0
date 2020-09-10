@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 608E7264853
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 16:50:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2EA7264875
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 16:54:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729865AbgIJOuK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 10:50:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58916 "EHLO
+        id S1730408AbgIJOxD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 10:53:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731177AbgIJOsp (ORCPT
+        with ESMTP id S1731153AbgIJOus (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 10:48:45 -0400
+        Thu, 10 Sep 2020 10:50:48 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11357C06179B;
-        Thu, 10 Sep 2020 07:48:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 098E1C0617B9;
+        Thu, 10 Sep 2020 07:49:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=Y4tkWtiLArM5ZtpwjGyv2ND3RgxFSGIzR5QDPUf60TY=; b=ZswcqTFOr1k+k8bIZc2FH2eUg0
-        wsLUdWC34/7nfCE+rLqwkfxZ0kbFaEA2XbrSR8UiGJjmuF6VjbDNNZNF6vyV4nRWR280lBh+jYHe7
-        J1uMIOIPhJ+YImvVr6HOCCH/lsQNrC7eWq18bDK9w2t1c1iEAyIM/QHVjf6kP7CuD48LHncPaXu/8
-        LivZ8Nv8ZJCqdiwTCnOLLg33yHJKtLFbfB+30oXoOG7tp+xgT6e2A8XcWpMXqC+nQsqvpDNHp1eB4
-        DisYt7MHXMGmX/n1dYG8k6SjAGljP3k8PmOqUUOFMU+35SybDId1sACVrMjI5odLDALvjBfo1Bzd1
-        bFfcjDXg==;
+        bh=30TjXOdnpDp07+Y2EmVpqqUY8VLMnUGZI+E0/QlSfTE=; b=aZBbWgDMcicAcxmQ3IzlsLiveP
+        0HqUahF787FHkeoLnaRUtYKLhuS6LMrG9OzJvsKfjJZ37Vl1lmAvKlCTxGX4+U2C8inJyWLlmpPQL
+        8xCspOOThTnnH3YWggYMYmPThY6aCQloB04kN3OD4LF8lwG6fqlWw09+aGrKZ02pK6i3/bQscUXaO
+        TNrrSIIL1uaEp/X3FEmhollxlCwyaVd/IM0ejkJeZ2o2zDFWemKwjaLRRZv/FmgTtPYGh9q1Mt4Xz
+        lfVhoHKI8KzlURBwvCh37TjBd+mraLInbe3dmNhzmHI0r8alXmLU1twQUzaEAMQY3CY225HhCflOs
+        6u1SGnKQ==;
 Received: from [2001:4bb8:184:af1:3ecc:ac5b:136f:434a] (helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kGNsN-0006w7-Mx; Thu, 10 Sep 2020 14:48:40 +0000
+        id 1kGNsa-0006yh-98; Thu, 10 Sep 2020 14:48:52 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
@@ -37,11 +37,10 @@ Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         drbd-dev@lists.linbit.com, linux-raid@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        cgroups@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 03/12] drbd: remove RB_CONGESTED_REMOTE
-Date:   Thu, 10 Sep 2020 16:48:23 +0200
-Message-Id: <20200910144833.742260-4-hch@lst.de>
+        cgroups@vger.kernel.org
+Subject: [PATCH 11/12] bdi: invert BDI_CAP_NO_ACCT_WB
+Date:   Thu, 10 Sep 2020 16:48:31 +0200
+Message-Id: <20200910144833.742260-12-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200910144833.742260-1-hch@lst.de>
 References: <20200910144833.742260-1-hch@lst.de>
@@ -53,45 +52,105 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This case isn't ever used.
+Replace BDI_CAP_NO_ACCT_WB with a positive BDI_CAP_WRITEBACK_ACCT to
+make the checks more obvious.  Also remove the pointless
+bdi_cap_account_writeback wrapper that just obsfucates the check.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- drivers/block/drbd/drbd_req.c | 4 ----
- include/linux/drbd.h          | 1 -
- 2 files changed, 5 deletions(-)
+ fs/fuse/inode.c             |  3 ++-
+ include/linux/backing-dev.h | 13 +++----------
+ mm/backing-dev.c            |  1 +
+ mm/page-writeback.c         |  4 ++--
+ 4 files changed, 8 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_req.c b/drivers/block/drbd/drbd_req.c
-index 5c975af9c15fb8..481bc34fcf386a 100644
---- a/drivers/block/drbd/drbd_req.c
-+++ b/drivers/block/drbd/drbd_req.c
-@@ -901,13 +901,9 @@ static bool drbd_may_do_local_read(struct drbd_device *device, sector_t sector,
- static bool remote_due_to_read_balancing(struct drbd_device *device, sector_t sector,
- 		enum drbd_read_balancing rbm)
- {
--	struct backing_dev_info *bdi;
- 	int stripe_shift;
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 17b00670fb539e..581329203d6860 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1050,7 +1050,8 @@ static int fuse_bdi_init(struct fuse_conn *fc, struct super_block *sb)
+ 		return err;
  
- 	switch (rbm) {
--	case RB_CONGESTED_REMOTE:
--		bdi = device->ldev->backing_bdev->bd_disk->queue->backing_dev_info;
--		return bdi_read_congested(bdi);
- 	case RB_LEAST_PENDING:
- 		return atomic_read(&device->local_cnt) >
- 			atomic_read(&device->ap_pending_cnt) + atomic_read(&device->rs_pending_cnt);
-diff --git a/include/linux/drbd.h b/include/linux/drbd.h
-index 5755537b51b114..6a8286132751df 100644
---- a/include/linux/drbd.h
-+++ b/include/linux/drbd.h
-@@ -94,7 +94,6 @@ enum drbd_read_balancing {
- 	RB_PREFER_REMOTE,
- 	RB_ROUND_ROBIN,
- 	RB_LEAST_PENDING,
--	RB_CONGESTED_REMOTE,
- 	RB_32K_STRIPING,
- 	RB_64K_STRIPING,
- 	RB_128K_STRIPING,
+ 	/* fuse does it's own writeback accounting */
+-	sb->s_bdi->capabilities = BDI_CAP_NO_ACCT_WB | BDI_CAP_STRICTLIMIT;
++	sb->s_bdi->capabilities &= ~BDI_CAP_WRITEBACK_ACCT;
++	sb->s_bdi->capabilities |= BDI_CAP_STRICTLIMIT;
+ 
+ 	/*
+ 	 * For a single fuse filesystem use max 1% of dirty +
+diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+index 5da4ea3dd0cc5c..b217344a2c63be 100644
+--- a/include/linux/backing-dev.h
++++ b/include/linux/backing-dev.h
+@@ -120,17 +120,17 @@ int bdi_set_max_ratio(struct backing_dev_info *bdi, unsigned int max_ratio);
+  *
+  * BDI_CAP_NO_ACCT_DIRTY:  Dirty pages shouldn't contribute to accounting
+  * BDI_CAP_NO_WRITEBACK:   Don't write pages back
+- * BDI_CAP_NO_ACCT_WB:     Don't automatically account writeback pages
++ * BDI_CAP_WRITEBACK_ACCT: Automatically account writeback pages
+  * BDI_CAP_STRICTLIMIT:    Keep number of dirty pages below bdi threshold.
+  */
+ #define BDI_CAP_NO_ACCT_DIRTY	0x00000001
+ #define BDI_CAP_NO_WRITEBACK	0x00000002
+-#define BDI_CAP_NO_ACCT_WB	0x00000004
++#define BDI_CAP_WRITEBACK_ACCT	0x00000004
+ #define BDI_CAP_STRICTLIMIT	0x00000010
+ #define BDI_CAP_CGROUP_WRITEBACK 0x00000020
+ 
+ #define BDI_CAP_NO_ACCT_AND_WRITEBACK \
+-	(BDI_CAP_NO_WRITEBACK | BDI_CAP_NO_ACCT_DIRTY | BDI_CAP_NO_ACCT_WB)
++	(BDI_CAP_NO_WRITEBACK | BDI_CAP_NO_ACCT_DIRTY)
+ 
+ extern struct backing_dev_info noop_backing_dev_info;
+ 
+@@ -179,13 +179,6 @@ static inline bool bdi_cap_account_dirty(struct backing_dev_info *bdi)
+ 	return !(bdi->capabilities & BDI_CAP_NO_ACCT_DIRTY);
+ }
+ 
+-static inline bool bdi_cap_account_writeback(struct backing_dev_info *bdi)
+-{
+-	/* Paranoia: BDI_CAP_NO_WRITEBACK implies BDI_CAP_NO_ACCT_WB */
+-	return !(bdi->capabilities & (BDI_CAP_NO_ACCT_WB |
+-				      BDI_CAP_NO_WRITEBACK));
+-}
+-
+ static inline bool mapping_cap_writeback_dirty(struct address_space *mapping)
+ {
+ 	return bdi_cap_writeback_dirty(inode_to_bdi(mapping->host));
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index f9a2842bd81c3d..ab0415dde5c66c 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -744,6 +744,7 @@ struct backing_dev_info *bdi_alloc(int node_id)
+ 		kfree(bdi);
+ 		return NULL;
+ 	}
++	bdi->capabilities = BDI_CAP_WRITEBACK_ACCT;
+ 	bdi->ra_pages = VM_READAHEAD_PAGES;
+ 	bdi->io_pages = VM_READAHEAD_PAGES;
+ 	return bdi;
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index e9c36521461aaa..0139f9622a92da 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2738,7 +2738,7 @@ int test_clear_page_writeback(struct page *page)
+ 		if (ret) {
+ 			__xa_clear_mark(&mapping->i_pages, page_index(page),
+ 						PAGECACHE_TAG_WRITEBACK);
+-			if (bdi_cap_account_writeback(bdi)) {
++			if (bdi->capabilities & BDI_CAP_WRITEBACK_ACCT) {
+ 				struct bdi_writeback *wb = inode_to_wb(inode);
+ 
+ 				dec_wb_stat(wb, WB_WRITEBACK);
+@@ -2791,7 +2791,7 @@ int __test_set_page_writeback(struct page *page, bool keep_write)
+ 						   PAGECACHE_TAG_WRITEBACK);
+ 
+ 			xas_set_mark(&xas, PAGECACHE_TAG_WRITEBACK);
+-			if (bdi_cap_account_writeback(bdi))
++			if (bdi->capabilities & BDI_CAP_WRITEBACK_ACCT)
+ 				inc_wb_stat(inode_to_wb(inode), WB_WRITEBACK);
+ 
+ 			/*
 -- 
 2.28.0
 
