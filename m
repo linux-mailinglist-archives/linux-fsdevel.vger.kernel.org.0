@@ -2,91 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5455E264F3F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 21:39:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62BF5265020
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 22:04:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbgIJTjB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 15:39:01 -0400
-Received: from a27-18.smtp-out.us-west-2.amazonses.com ([54.240.27.18]:57578
-        "EHLO a27-18.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731309AbgIJPmr (ORCPT
+        id S1726789AbgIJUEl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 16:04:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51618 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726639AbgIJUAy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 11:42:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1599752566;
-        h=MIME-Version:Content-Type:Content-Transfer-Encoding:Date:From:To:Cc:Subject:In-Reply-To:References:Message-ID;
-        bh=a2jST7xM+zr6UtgLcOeuZulnXcNBubpycXzssEyan9s=;
-        b=RwJpSGATCUDNLGrQA3JsY2oQ90P8tid1YcynaXT6jc4ji6LmejAArXDcYyHv2GeU
-        0/XCyVuH1qeKvapbp4Ln/ZreOlZCnxwadlljI0nqyo7C18vH00RTBMime+IT46R9yhX
-        n157RqNxN/ycvOBh1mzPfIuNsrB4iKHT8LRYRHGo=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=hsbnp7p3ensaochzwyq5wwmceodymuwv; d=amazonses.com; t=1599752566;
-        h=MIME-Version:Content-Type:Content-Transfer-Encoding:Date:From:To:Cc:Subject:In-Reply-To:References:Message-ID:Feedback-ID;
-        bh=a2jST7xM+zr6UtgLcOeuZulnXcNBubpycXzssEyan9s=;
-        b=fhZJTG8U7rVCt+OK8aemWLoDBuuyktddDjsy/MoOkJCJ2OKhfxmPIVFvMS4F+X1d
-        THI/qJNzXk1tsX2QCkzwQsbbPMHWLkIB3cpakPcJDzrwNVMa66vmWcFX7XlZKVaVXBg
-        wWlFxD6XburZr67kzvQnCJ9F6H3h14DH/8EVxiKI=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+        Thu, 10 Sep 2020 16:00:54 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6317C061757;
+        Thu, 10 Sep 2020 13:00:47 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kGSjq-00DvEU-NI; Thu, 10 Sep 2020 20:00:10 +0000
+Date:   Thu, 10 Sep 2020 21:00:10 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v9 0/3] Add introspect_access(2) (was O_MAYEXEC)
+Message-ID: <20200910200010.GF1236603@ZenIV.linux.org.uk>
+References: <20200910164612.114215-1-mic@digikod.net>
+ <20200910170424.GU6583@casper.infradead.org>
+ <f6e2358c-8e5e-e688-3e66-2cdd943e360e@digikod.net>
+ <a48145770780d36e90f28f1526805a7292eb74f6.camel@linux.ibm.com>
+ <880bb4ee-89a2-b9b0-747b-0f779ceda995@digikod.net>
+ <20200910184033.GX6583@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 10 Sep 2020 15:42:46 +0000
-From:   ppvk@codeaurora.org
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Pradeep P V K <pragalla@qti.qualcomm.com>,
-        linux-fsdevel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        sayalil@codeaurora.org
-Subject: Re: [PATCH V4] fuse: Fix VM_BUG_ON_PAGE issue while accessing zero
- ref count page
-In-Reply-To: <CAJfpegunet-5BOG74seeL3Gr=xCSStFznphDnuYPWEisbenPog@mail.gmail.com>
-References: <1599553026-11745-1-git-send-email-pragalla@qti.qualcomm.com>
- <CAJfpegunet-5BOG74seeL3Gr=xCSStFznphDnuYPWEisbenPog@mail.gmail.com>
-Message-ID: <0101017478aef613-5b81c2f0-b17a-425d-bf79-e4ec49b47857-000000@us-west-2.amazonses.com>
-X-Sender: ppvk@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
-X-SES-Outgoing: 2020.09.10-54.240.27.18
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200910184033.GX6583@casper.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2020-09-08 16:55, Miklos Szeredi wrote:
-> On Tue, Sep 8, 2020 at 10:17 AM Pradeep P V K 
-> <pragalla@qti.qualcomm.com> wrote:
->> 
->> From: Pradeep P V K <ppvk@codeaurora.org>
->> 
->> There is a potential race between fuse_abort_conn() and
->> fuse_copy_page() as shown below, due to which VM_BUG_ON_PAGE
->> crash is observed for accessing a free page.
->> 
->> context#1:                      context#2:
->> fuse_dev_do_read()              fuse_abort_conn()
->> ->fuse_copy_args()               ->end_requests()
+On Thu, Sep 10, 2020 at 07:40:33PM +0100, Matthew Wilcox wrote:
+> On Thu, Sep 10, 2020 at 08:38:21PM +0200, Mickaël Salaün wrote:
+> > There is also the use case of noexec mounts and file permissions. From
+> > user space point of view, it doesn't matter which kernel component is in
+> > charge of defining the policy. The syscall should then not be tied with
+> > a verification/integrity/signature/appraisal vocabulary, but simply an
+> > access control one.
 > 
-> This shouldn't happen due to FR_LOCKED logic.   Are you seeing this on
-> an upstream kernel?  Which version?
-> 
-> Thanks,
-> Miklos
+> permission()?
 
-This is happen just after unlock_request() in fuse_ref_page(). In 
-unlock_request(), it will clear the FR_LOCKED bit.
-As there is no protection between context#1 & context#2 during 
-unlock_request(), there are chances that it could happen.
+int lsm(int fd, const char *how, char *error, int size);
 
-The value of request flags under "fuse_req" DS is "1561" and this tells 
-FR_PRIVATE bit is set and there by, it adds the request to end_io list 
-and free.
-This was seen on upstream kernel - v4.19 stable.
-
-Thanks and Regards,
-Pradeep
+Seriously, this is "ask LSM to apply special policy to file"; let's
+_not_ mess with flags, etc. for that; give it decent bandwidth
+and since it's completely opaque for the rest of the kernel,
+just a pass a string to be parsed by LSM as it sees fit.
