@@ -2,58 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C33AF265249
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 23:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7B452652B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 23:23:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbgIJVNn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 17:13:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34262 "EHLO
+        id S1728255AbgIJVW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 17:22:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727980AbgIJVLG (ORCPT
+        with ESMTP id S1728137AbgIJVW1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 17:11:06 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54919C061757
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 14:11:06 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id u21so10824112eja.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 14:11:06 -0700 (PDT)
+        Thu, 10 Sep 2020 17:22:27 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA7B9C061757
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 14:22:26 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id r7so10805182ejs.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 14:22:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=d2Fjne8H+Cg3bJEd1GSB4j314ZebR7pleObLwl830fs=;
-        b=ScYVsVHCZlVh7Ci/3ehi1uakHdj9qnQ9FYyz9hPXQc/e9uvw9Ybg77wJD3gWPHx/lN
-         oJjcajaLilUV00ZbqRFWOpGIIQ/pjS4ge040nFK/Xnk29BGf0AppVDAfW35o0selWBxs
-         tv7s7bV3wkeNz2hD8ble8Y8voryZA384+K8+25DS+W99uS2fsFg8XFJrUo3mpG+GfVnt
-         aVzMV9vnMTnLydG4qmxB0KE8A3WS2zYUGC2Vot/PZ5zf7tU3uF2exEpFDr/G3k8aVvGt
-         XOuqUkU/7QvKAeWJhVePl/f3EZFBRyvcTs/HTzLQ9NYVNxAYa6ERfH86Hw3qAF0dRy2W
-         Uphg==
+        bh=N10c9+tEMvd+V1v5/kjFg7uIplbi+YryLR/t+QNnqsU=;
+        b=Pmbtzx/w5PJRKpuyzWZgUthB5SqsFujhymQl5gJo8f6W3hvApNoms7SWH1Ie3t+Xhv
+         G4BzucZpRgNaCDRkBPiUSWCjEuLpi8agAsdGI/QBUu92rYGZ8Pp3MkAt2a24+m/S5x3B
+         6epqPgVItTvZ5dHCiaBsFReRRMDht3h8fKCaRGh1IkHnw2lateEx0y9mDjHKtpX8Y8Nz
+         pj8E/O7vvbiRPAFHA3pzg1fCXA5Q5JExBVpXPTHZUF0gtsfus/hcwcxmf9RfgHDwtSxq
+         1bx0ofN7Nm21fcXiPRlbKh/d5ruR2ePp3ji5Py5uWlztcfvuDu+7GtC29bjR7vEOzNWS
+         NI6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=d2Fjne8H+Cg3bJEd1GSB4j314ZebR7pleObLwl830fs=;
-        b=LvJfi+k0qplMTFsGRxDZSzRgFwyUpSKDpTRvtQrmuFN0e32JmyWXb9qPpPfY4xOCNI
-         cIMmrqozKuWLi3LREsM0gRnlnclBr7sDPPxlQNxUdv43K4E7T8Hf7GA1siXItNzWbzZ+
-         6zECURC0j6Ozcc89a1MfTYTIOtIA3DPK2YAMJvmGv4UCo21istLcUpyEH59jKMIEVwQh
-         2+344cmFkNARMA6gv6QVDj9kVUc+y2tuJxVeDJndC0ctRq3gicTWMZ2oYNTwtumM0A9v
-         Vy2eoZh6GR6IClVfRgcoTxDarUI4AK9Oj/fxKIpdslOHEFdM5hBRCWrJpMR5a7wiOngR
-         zPrA==
-X-Gm-Message-State: AOAM532gQwn7+CURWgzcHNJdc+T9OLFPL4lrgfj2/8UBhD1FtvHx6low
-        Vc1LEIoYsU7goOBTYfLtyy7fLJu9YERLG2EGYXFL3Q==
-X-Google-Smtp-Source: ABdhPJyNcf3ROxrc5CjvX9eqcm/Jags1MQ2ChzI30b0vpomzdYZOF0LTDDEZynORXIJAbG2ZaBuePa4L+nucdti2Xdg=
-X-Received: by 2002:a17:907:94cf:: with SMTP id dn15mr11296236ejc.114.1599772264641;
- Thu, 10 Sep 2020 14:11:04 -0700 (PDT)
+        bh=N10c9+tEMvd+V1v5/kjFg7uIplbi+YryLR/t+QNnqsU=;
+        b=FWnfbHdvG6UW1ScxTJvIuC/uDbgrY+QT4/j/ldWfYTBBK6T2koZa5FOvSlcBx7jG4W
+         FmHJ6m75OALFlGe5i2OlZnelZSFXGKCUqZJGXO/CzoLUEkPl/dZYoqauledikNu1TnD9
+         0dOHW2Bevkcnu5RF1eee2TPaxUu6HK/mVFpGxhk/YskPyOy7drLghS3H66vge3L4BFuO
+         2eWglqtr3bYBa7hb67h560GX20kR9fG4iVyHmpNIjhBfuBUrHZy5EJ9du/04RkGznBmh
+         YoxQCRw3WkVK/pnEJUVAyKQ66LB54gt2ofGg+XomwdKoHVSh/6YzF7DAu6FYdeRp2lxc
+         zdEQ==
+X-Gm-Message-State: AOAM530jU5iffkq3/pSMQuuNQ9SQxjGQEJTlTvf1n/gNdbDsnk38cQ9N
+        pRpIqhaD3BDotriaYZl1CeTytgDSNuxAIdTVHt7mQw==
+X-Google-Smtp-Source: ABdhPJz1ZXFqvRU0UEmWsJMjbaIMk2L+dkrdUn+tEviQSYc6CnuQg/EudEOu/jzT2CS0AbLrfEZiZReKFnSsXFJuWYE=
+X-Received: by 2002:a17:906:4088:: with SMTP id u8mr11408126ejj.184.1599772945031;
+ Thu, 10 Sep 2020 14:22:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200910202107.3799376-1-keescook@chromium.org> <20200910202107.3799376-6-keescook@chromium.org>
-In-Reply-To: <20200910202107.3799376-6-keescook@chromium.org>
+References: <20200910202107.3799376-1-keescook@chromium.org> <20200910202107.3799376-2-keescook@chromium.org>
+In-Reply-To: <20200910202107.3799376-2-keescook@chromium.org>
 From:   Jann Horn <jannh@google.com>
-Date:   Thu, 10 Sep 2020 23:10:38 +0200
-Message-ID: <CAG48ez1gbu+eBA_PthLemcVVR+AU7Xa1zzbJ8tLMLBDCe_a+fQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 5/6] security/fbfam: Detect a fork brute force attack
-To:     Kees Cook <keescook@chromium.org>
+Date:   Thu, 10 Sep 2020 23:21:58 +0200
+Message-ID: <CAG48ez1V=oVczCCSuRaWX=bbN2cOi0Y9q48=e-Fuhg7mwMOi0A@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/6] security/fbfam: Add a Kconfig to enable the fbfam feature
+To:     Kees Cook <keescook@chromium.org>, John Wood <john.wood@gmx.com>
 Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        John Wood <john.wood@gmx.com>,
         Matthew Wilcox <willy@infradead.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -77,77 +76,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 10, 2020 at 10:22 PM Kees Cook <keescook@chromium.org> wrote:
-> To detect a fork brute force attack it is necessary to compute the
-> crashing rate of the application. This calculation is performed in each
-> fatal fail of a task, or in other words, when a core dump is triggered.
-> If this rate shows that the application is crashing quickly, there is a
-> clear signal that an attack is happening.
+On Thu, Sep 10, 2020 at 10:21 PM Kees Cook <keescook@chromium.org> wrote:
+> From: John Wood <john.wood@gmx.com>
 >
-> Since the crashing rate is computed in milliseconds per fault, if this
-> rate goes under a certain threshold a warning is triggered.
+> Add a menu entry under "Security options" to enable the "Fork brute
+> force attack mitigation" feature.
 [...]
-> +/**
-> + * fbfam_handle_attack() - Fork brute force attack detection.
-> + * @signal: Signal number that causes the core dump.
-> + *
-> + * The crashing rate of an application is computed in milliseconds per fault in
-> + * each crash. So, if this rate goes under a certain threshold there is a clear
-> + * signal that the application is crashing quickly. At this moment, a fork brute
-> + * force attack is happening.
-> + *
-> + * Return: -EFAULT if the current task doesn't have statistical data. Zero
-> + *         otherwise.
-> + */
-> +int fbfam_handle_attack(int signal)
-> +{
-> +       struct fbfam_stats *stats = current->fbfam_stats;
-> +       u64 delta_jiffies, delta_time;
-> +       u64 crashing_rate;
-> +
-> +       if (!stats)
-> +               return -EFAULT;
-> +
-> +       if (!(signal == SIGILL || signal == SIGBUS || signal == SIGKILL ||
-> +             signal == SIGSEGV || signal == SIGSYS))
-> +               return 0;
+> +config FBFAM
 
-As far as I can tell, you can never get here with SIGKILL, since
-SIGKILL doesn't trigger core dumping and also isn't used by seccomp?
+Please give this a more descriptive name than FBFAM. Some name where,
+if a random kernel developer sees an "#ifdef" with that name in some
+random piece of kernel code, they immediately have a rough idea for
+what kind of feature this is.
 
-> +
-> +       stats->faults += 1;
+Perhaps something like THROTTLE_FORK_CRASHES. Or something else that
+is equally descriptive.
 
-This is a data race. If you want to be able to increment a variable
-that may be concurrently incremented by other tasks, use either
-locking or the atomic_t helpers.
+> +       bool "Fork brute force attack mitigation"
+> +       default n
 
-> +       delta_jiffies = get_jiffies_64() - stats->jiffies;
-> +       delta_time = jiffies64_to_msecs(delta_jiffies);
-> +       crashing_rate = delta_time / (u64)stats->faults;
+"default n" is superfluous and should AFAIK be omitted.
 
-Do I see this correctly, is this computing the total runtime of this
-process hierarchy divided by the total number of faults seen in this
-process hierarchy? If so, you may want to reconsider whether that's
-really the behavior you want. For example, if I configure the minimum
-period between crashes to be 30s (as is the default in the sysctl
-patch), and I try to attack a server that has been running without any
-crashes for a month, I'd instantly be able to crash around
-30*24*60*60/30 = 86400 times before the detection kicks in. That seems
-suboptimal.
+> +       help
+> +         This is a user defense that detects any fork brute force attack
+> +         based on the application's crashing rate. When this measure is
+> +         triggered the fork system call is blocked.
 
-(By the way, it kind of annoys me that you call it the "rate" when
-it's actually the inverse of the rate. "Period" might be more
-appropriate?)
-
-
-
-> +       if (crashing_rate < (u64)sysctl_crashing_rate_threshold)
-> +               pr_warn("fbfam: Fork brute force attack detected\n");
-> +
-> +       return 0;
-> +}
-> +
-> --
-> 2.25.1
->
+This help text claims that the mitigation will block fork(), but patch
+6/6 actually kills the process hierarchy.
