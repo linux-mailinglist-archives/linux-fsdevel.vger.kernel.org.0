@@ -2,102 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 88576263F3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 10:00:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D06D263F44
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 10:04:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbgIJIA2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 04:00:28 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:52840 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726893AbgIJIAN (ORCPT
+        id S1730239AbgIJIEn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 04:04:43 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:49188 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730077AbgIJIEk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 04:00:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1599724814; x=1631260814;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sMgkTYfIVhjzdVujgdBcvqxrVYyGCgcXIKPhIxj2SRw=;
-  b=lTm9Em/zkakI0ZPbY2QxL+ZFUkSV0v0tGa3mgtM+yemT/nL0bGMpbiZP
-   ropu61bnBfcW23fVpzLqI7vCoxO1mhYLQA/OJgz5MJ9+nO1n2J/2H59rD
-   InlUu2sGSOBQhkToT0faKEtQxgJC9QX3w+K2S6xAOPyr2VHOz6tOLq0SY
-   y4Vn88BAG1bvLC5/uGy5A6slHaFxbReMP8hF3n1WtNQdipwr8FDEl6fiU
-   W2gddBZU9k+ojMi7aNswQjTNgqu6k1/7iVUlNAai9TXkqeN+FWE6mkk44
-   vSodwQasa/jYnB53LFIqRuKfDffJuQmw+CvHN1kiptXj6VwC9v6LxTA01
-   Q==;
-IronPort-SDR: HyEEx0XnKXgPPL2PHjVT/FnUPnXWRQV5bpTkvRAPGlKHn5Gi9JFCo6ptGQc72XPVPOU0PcnAnl
- CMJd+NUEaQwqVneFV8KgITGog3IiqsfSOemy4giQu5lz1yIzMSbv7pjANtzAHPwfPVJ5eoZucT
- PfPwklLYMUPV0ATZQDZnLc1esGzMCg4jTDlsR0xS7dOo8P3mxAuhcXtkImBKw2NxFtTCWS9R3T
- fSi6AOBQXH06lWzKsHYzkGNtr4Lhg3t4X4G9iBAMUvLT3WYL5x5aac1O0IzTE80lK5JSA/SvxQ
- WEA=
-X-IronPort-AV: E=Sophos;i="5.76,412,1592841600"; 
-   d="scan'208";a="148233444"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Sep 2020 16:00:13 +0800
-IronPort-SDR: tnsv+kokqnAjehCZJ+hRj8uirtA+qfScgMQqpB/AEfzvKDhtbNJf/jklzWloB5S3eO+xZBQwkC
- wvZmUUoibQpg==
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2020 00:47:30 -0700
-IronPort-SDR: Y0E5G24OEbuPKOjdh+sYszIrDE8g5TENzkXeypXy24HqT+1u+CmVfBomWvU5aerLRs6ktob6Kn
- DWDBPGMb3B+A==
-WDCIronportException: Internal
-Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip01.wdc.com with ESMTP; 10 Sep 2020 01:00:13 -0700
-From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH v3 3/3] zonefs: document the explicit-open mount option
-Date:   Thu, 10 Sep 2020 16:59:57 +0900
-Message-Id: <20200910075957.7307-4-johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200910075957.7307-1-johannes.thumshirn@wdc.com>
-References: <20200910075957.7307-1-johannes.thumshirn@wdc.com>
+        Thu, 10 Sep 2020 04:04:40 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-237-7fX8YZt7N6qAR3EaMh4m2w-1; Thu, 10 Sep 2020 09:04:19 +0100
+X-MC-Unique: 7fX8YZt7N6qAR3EaMh4m2w-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Thu, 10 Sep 2020 09:04:19 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 10 Sep 2020 09:04:19 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: RE: remove the last set_fs() in common code, and remove it for x86
+ and powerpc v3
+Thread-Topic: remove the last set_fs() in common code, and remove it for x86
+ and powerpc v3
+Thread-Index: AQHWhvDyD2c/lZfV3kC0Ftay5UVebqlhgjnw
+Date:   Thu, 10 Sep 2020 08:04:19 +0000
+Message-ID: <3beb8b019e4a4f7b81fdb1bc68bd1e2d@AcuMS.aculab.com>
+References: <20200903142242.925828-1-hch@lst.de>
+ <20200903142803.GM1236603@ZenIV.linux.org.uk>
+ <CAHk-=wgQNyeHxXfckd1WtiYnoDZP1Y_kD-tJKqWSksRoDZT=Aw@mail.gmail.com>
+ <20200909184001.GB28786@gate.crashing.org>
+ <CAHk-=whu19Du_rZ-zBtGsXAB-Qo7NtoJjQjd-Sa9OB5u1Cq_Zw@mail.gmail.com>
+In-Reply-To: <CAHk-=whu19Du_rZ-zBtGsXAB-Qo7NtoJjQjd-Sa9OB5u1Cq_Zw@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0.001
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Document the newly introduced explicit-open mount option.
-
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
----
-Changes to v1:
-- Address Randy's comments
----
- Documentation/filesystems/zonefs.rst | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/Documentation/filesystems/zonefs.rst b/Documentation/filesystems/zonefs.rst
-index 6c18bc8ce332..6b213fe9a33e 100644
---- a/Documentation/filesystems/zonefs.rst
-+++ b/Documentation/filesystems/zonefs.rst
-@@ -326,6 +326,21 @@ discover the amount of data that has been written to the zone. In the case of a
- read-only zone discovered at run-time, as indicated in the previous section.
- The size of the zone file is left unchanged from its last updated value.
- 
-+A zoned block device (e.g. an NVMe Zoned Namespace device) may have limits on
-+the number of zones that can be active, that is, zones that are in the
-+implicit open, explicit open or closed conditions.  This potential limitation
-+translates into a risk for applications to see write IO errors due to this
-+limit being exceeded if the zone of a file is not already active when a write
-+request is issued by the user.
-+
-+To avoid these potential errors, the "explicit-open" mount option forces zones
-+to be made active using an open zone command when a file is opened for writing
-+for the first time. If the zone open command succeeds, the application is then
-+guaranteed that write requests can be processed. Conversely, the
-+"explicit-open" mount option will result in a zone close command being issued
-+to the device on the last close() of a zone file if the zone is not full nor
-+empty.
-+
- Zonefs User Space Tools
- =======================
- 
--- 
-2.26.2
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDkgU2VwdGVtYmVyIDIwMjAgMjI6MzQNCj4g
+T24gV2VkLCBTZXAgOSwgMjAyMCBhdCAxMTo0MiBBTSBTZWdoZXIgQm9lc3Nlbmtvb2wNCj4gPHNl
+Z2hlckBrZXJuZWwuY3Jhc2hpbmcub3JnPiB3cm90ZToNCj4gPg0KPiA+IEl0IHdpbGwgbm90IHdv
+cmsgbGlrZSB0aGlzIGluIEdDQywgbm8uICBUaGUgTExWTSBwZW9wbGUga25vdyBhYm91dCB0aGF0
+Lg0KPiA+IEkgZG8gbm90IGtub3cgd2h5IHRoZXkgaW5zaXN0IG9uIHB1c2hpbmcgdGhpcywgYmVp
+bmcgaW5jb21wYXRpYmxlIGFuZA0KPiA+IGV2ZXJ5dGhpbmcuDQo+IA0KPiBVbW0uIFNpbmNlIHRo
+ZXknZCBiZSB0aGUgb25lcyBzdXBwb3J0aW5nIHRoaXMsICpnY2MqIHdvdWxkIGJlIHRoZQ0KPiBp
+bmNvbXBhdGlibGUgb25lLCBub3QgY2xhbmcuDQoNCkkgaGFkIGFuICdpbnRlcmVzdGluZycgaWRl
+YS4NCg0KQ2FuIHlvdSB1c2UgYSBsb2NhbCBhc20gcmVnaXN0ZXIgdmFyaWFibGUgYXMgYW4gaW5w
+dXQgYW5kIG91dHB1dCB0bw0KYW4gJ2FzbSB2b2xhdGlsZSBnb3RvJyBzdGF0ZW1lbnQ/DQoNCldl
+bGwgeW91IGNhbiAtIGJ1dCBpcyBpdCBndWFyYW50ZWVkIHRvIHdvcmsgOi0pDQoNCglEYXZpZA0K
+DQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFy
+bSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAo
+V2FsZXMpDQo=
 
