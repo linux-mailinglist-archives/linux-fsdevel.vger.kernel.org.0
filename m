@@ -2,106 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 9573B2641B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 11:27:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA2232641CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 11:29:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730140AbgIJJ1m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 05:27:42 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:39571 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730400AbgIJJ1e (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 05:27:34 -0400
-Received: from gandi.net (laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr [90.63.246.187])
-        (Authenticated sender: thibaut.sautereau@clip-os.org)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 14A87100013;
-        Thu, 10 Sep 2020 09:26:54 +0000 (UTC)
-Date:   Thu, 10 Sep 2020 11:26:56 +0200
-From:   Thibaut Sautereau <thibaut.sautereau@clip-os.org>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC PATCH v8 0/3] Add support for AT_INTERPRETED (was O_MAYEXEC)
-Message-ID: <20200910092656.GA800@gandi.net>
-References: <20200908075956.1069018-1-mic@digikod.net>
- <20200908185026.GU1236603@ZenIV.linux.org.uk>
- <e3223b50-0d00-3b64-1e09-cfb1b9648b02@digikod.net>
- <20200909170851.GL6583@casper.infradead.org>
+        id S1730460AbgIJJ2Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 05:28:24 -0400
+Received: from verein.lst.de ([213.95.11.211]:60174 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728936AbgIJJ2R (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 10 Sep 2020 05:28:17 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id C27726736F; Thu, 10 Sep 2020 11:28:13 +0200 (CEST)
+Date:   Thu, 10 Sep 2020 11:28:13 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Mike Snitzer <snitzer@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, martin.petersen@oracle.com,
+        Hans de Goede <hdegoede@redhat.com>,
+        Song Liu <song@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, Minchan Kim <minchan@kernel.org>,
+        dm-devel@redhat.com, linux-mtd@lists.infradead.org,
+        linux-mm@kvack.org, drbd-dev@tron.linbit.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH 06/14] block: lift setting the readahead size into the
+ block layer
+Message-ID: <20200910092813.GA27229@lst.de>
+References: <20200726150333.305527-1-hch@lst.de> <20200726150333.305527-7-hch@lst.de> <20200826220737.GA25613@redhat.com> <20200902151144.GA1738@lst.de> <20200902162007.GB5513@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200909170851.GL6583@casper.infradead.org>
+In-Reply-To: <20200902162007.GB5513@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 09, 2020 at 06:08:51PM +0100, Matthew Wilcox wrote:
-> On Wed, Sep 09, 2020 at 09:19:11AM +0200, Mickaël Salaün wrote:
-> > 
-> > On 08/09/2020 20:50, Al Viro wrote:
-> > > On Tue, Sep 08, 2020 at 09:59:53AM +0200, Mickaël Salaün wrote:
-> > >> Hi,
-> > >>
-> > >> This height patch series rework the previous O_MAYEXEC series by not
-> > >> adding a new flag to openat2(2) but to faccessat2(2) instead.  As
-> > >> suggested, this enables to perform the access check on a file descriptor
-> > >> instead of on a file path (while opening it).  This may require two
-> > >> checks (one on open and then with faccessat2) but it is a more generic
-> > >> approach [8].
+On Wed, Sep 02, 2020 at 12:20:07PM -0400, Mike Snitzer wrote:
+> On Wed, Sep 02 2020 at 11:11am -0400,
+> Christoph Hellwig <hch@lst.de> wrote:
+> 
+> > On Wed, Aug 26, 2020 at 06:07:38PM -0400, Mike Snitzer wrote:
+> > > On Sun, Jul 26 2020 at 11:03am -0400,
+> > > Christoph Hellwig <hch@lst.de> wrote:
 > > > 
-> > > Again, why is that folded into lookup/open/whatnot, rather than being
-> > > an operation applied to a file (e.g. O_PATH one)?
+> > > > Drivers shouldn't really mess with the readahead size, as that is a VM
+> > > > concept.  Instead set it based on the optimal I/O size by lifting the
+> > > > algorithm from the md driver when registering the disk.  Also set
+> > > > bdi->io_pages there as well by applying the same scheme based on
+> > > > max_sectors.
+> > > > 
+> > > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > > > ---
+> > > >  block/blk-settings.c         |  5 ++---
+> > > >  block/blk-sysfs.c            |  1 -
+> > > >  block/genhd.c                | 13 +++++++++++--
+> > > >  drivers/block/aoe/aoeblk.c   |  2 --
+> > > >  drivers/block/drbd/drbd_nl.c | 12 +-----------
+> > > >  drivers/md/bcache/super.c    |  4 ----
+> > > >  drivers/md/dm-table.c        |  3 ---
+> > > >  drivers/md/raid0.c           | 16 ----------------
+> > > >  drivers/md/raid10.c          | 24 +-----------------------
+> > > >  drivers/md/raid5.c           | 13 +------------
+> > > >  10 files changed, 16 insertions(+), 77 deletions(-)
+> > > 
+> > > 
+> > > In general these changes need a solid audit relative to stacking
+> > > drivers.  That is, the limits stacking methods (blk_stack_limits)
+> > > vs lower level allocation methods (__device_add_disk).
+> > > 
+> > > You optimized for lowlevel __device_add_disk establishing the bdi's
+> > > ra_pages and io_pages.  That is at the beginning of disk allocation,
+> > > well before any build up of stacking driver's queue_io_opt() -- which
+> > > was previously done in disk_stack_limits or driver specific methods
+> > > (e.g. dm_table_set_restrictions) that are called _after_ all the limits
+> > > stacking occurs.
+> > > 
+> > > By inverting the setting of the bdi's ra_pages and io_pages to be done
+> > > so early in __device_add_disk it'll break properly setting these values
+> > > for at least DM afaict.
 > > 
-> > I don't understand your question. AT_INTERPRETED can and should be used
-> > with AT_EMPTY_PATH. The two checks I wrote about was for IMA.
+> > ra_pages never got inherited by stacking drivers, check it by modifying
+> > it on an underlying device and then creating a trivial dm or md one.
 > 
-> Al is saying you should add a new syscall, not try to fold it into
-> some existing syscall.
+> Sure, not saying that it did.  But if the goal is to set ra_pages based
+> on io_opt then to do that correctly on stacking drivers it must be done
+> in terms of limits stacking right?  Or at least done at a location that
+> is after the limits stacking has occurred?  So should DM just open-code
+> setting ra_pages like it did for io_pages?
 > 
-> I agree with him.  Add a new syscall, just like you were told to do it
-> last time.
+> Because setting ra_pages in __device_add_disk() is way too early for DM
+> -- given it uses device_add_disk_no_queue_reg via add_disk_no_queue_reg
+> at DM device creation (before stacking all underlying devices' limits).
 
-Sure, we'll do it. In the meantime, could we at least get an explanation
-about why using faccessat2() instead of a new syscall is wrong? I could
-see the reasons for separating the exec checks from the file opening,
-but this time I don't understand. Is it because it brings too much
-complexity to do_faccessat()?
-
--- 
-Thibaut Sautereau
-CLIP OS developer
+I'll move it to blk_register_queue, which should work just fine.
