@@ -2,102 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F0BA2641BC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 11:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9573B2641B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 11:27:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730381AbgIJJ2X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 05:28:23 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:23387 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728264AbgIJJ1P (ORCPT
+        id S1730140AbgIJJ1m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 05:27:42 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:39571 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730400AbgIJJ1e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 05:27:15 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-88-Vv-OybvCMQSx-L2wyG8B1A-1; Thu, 10 Sep 2020 10:26:29 +0100
-X-MC-Unique: Vv-OybvCMQSx-L2wyG8B1A-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 10 Sep 2020 10:26:28 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 10 Sep 2020 10:26:28 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christophe Leroy' <christophe.leroy@csgroup.eu>,
-        'Linus Torvalds' <torvalds@linux-foundation.org>,
-        Segher Boessenkool <segher@kernel.crashing.org>
-CC:     linux-arch <linux-arch@vger.kernel.org>,
+        Thu, 10 Sep 2020 05:27:34 -0400
+Received: from gandi.net (laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr [90.63.246.187])
+        (Authenticated sender: thibaut.sautereau@clip-os.org)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 14A87100013;
+        Thu, 10 Sep 2020 09:26:54 +0000 (UTC)
+Date:   Thu, 10 Sep 2020 11:26:56 +0200
+From:   Thibaut Sautereau <thibaut.sautereau@clip-os.org>
+To:     Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "Nick Desaulniers" <ndesaulniers@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Luis Chamberlain" <mcgrof@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Subject: RE: remove the last set_fs() in common code, and remove it for x86
- and powerpc v3
-Thread-Topic: remove the last set_fs() in common code, and remove it for x86
- and powerpc v3
-Thread-Index: AQHWhvDyD2c/lZfV3kC0Ftay5UVebqlhgjnw///zuACAABnIEA==
-Date:   Thu, 10 Sep 2020 09:26:28 +0000
-Message-ID: <59a64e9a210847b59f70f9bd2d02b5c3@AcuMS.aculab.com>
-References: <20200903142242.925828-1-hch@lst.de>
- <20200903142803.GM1236603@ZenIV.linux.org.uk>
- <CAHk-=wgQNyeHxXfckd1WtiYnoDZP1Y_kD-tJKqWSksRoDZT=Aw@mail.gmail.com>
- <20200909184001.GB28786@gate.crashing.org>
- <CAHk-=whu19Du_rZ-zBtGsXAB-Qo7NtoJjQjd-Sa9OB5u1Cq_Zw@mail.gmail.com>
- <3beb8b019e4a4f7b81fdb1bc68bd1e2d@AcuMS.aculab.com>
- <186a62fc-042c-d6ab-e7dc-e61b18945498@csgroup.eu>
-In-Reply-To: <186a62fc-042c-d6ab-e7dc-e61b18945498@csgroup.eu>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC PATCH v8 0/3] Add support for AT_INTERPRETED (was O_MAYEXEC)
+Message-ID: <20200910092656.GA800@gandi.net>
+References: <20200908075956.1069018-1-mic@digikod.net>
+ <20200908185026.GU1236603@ZenIV.linux.org.uk>
+ <e3223b50-0d00-3b64-1e09-cfb1b9648b02@digikod.net>
+ <20200909170851.GL6583@casper.infradead.org>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0.001
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200909170851.GL6583@casper.infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogQ2hyaXN0b3BoZSBMZXJveQ0KPiBTZW50OiAxMCBTZXB0ZW1iZXIgMjAyMCAwOToxNA0K
-PiANCj4gTGUgMTAvMDkvMjAyMCDDoCAxMDowNCwgRGF2aWQgTGFpZ2h0IGEgw6ljcml0wqA6DQo+
-ID4gRnJvbTogTGludXMgVG9ydmFsZHMNCj4gPj4gU2VudDogMDkgU2VwdGVtYmVyIDIwMjAgMjI6
-MzQNCj4gPj4gT24gV2VkLCBTZXAgOSwgMjAyMCBhdCAxMTo0MiBBTSBTZWdoZXIgQm9lc3Nlbmtv
-b2wNCj4gPj4gPHNlZ2hlckBrZXJuZWwuY3Jhc2hpbmcub3JnPiB3cm90ZToNCj4gPj4+DQo+ID4+
-PiBJdCB3aWxsIG5vdCB3b3JrIGxpa2UgdGhpcyBpbiBHQ0MsIG5vLiAgVGhlIExMVk0gcGVvcGxl
-IGtub3cgYWJvdXQgdGhhdC4NCj4gPj4+IEkgZG8gbm90IGtub3cgd2h5IHRoZXkgaW5zaXN0IG9u
-IHB1c2hpbmcgdGhpcywgYmVpbmcgaW5jb21wYXRpYmxlIGFuZA0KPiA+Pj4gZXZlcnl0aGluZy4N
-Cj4gPj4NCj4gPj4gVW1tLiBTaW5jZSB0aGV5J2QgYmUgdGhlIG9uZXMgc3VwcG9ydGluZyB0aGlz
-LCAqZ2NjKiB3b3VsZCBiZSB0aGUNCj4gPj4gaW5jb21wYXRpYmxlIG9uZSwgbm90IGNsYW5nLg0K
-PiA+DQo+ID4gSSBoYWQgYW4gJ2ludGVyZXN0aW5nJyBpZGVhLg0KPiA+DQo+ID4gQ2FuIHlvdSB1
-c2UgYSBsb2NhbCBhc20gcmVnaXN0ZXIgdmFyaWFibGUgYXMgYW4gaW5wdXQgYW5kIG91dHB1dCB0
-bw0KPiA+IGFuICdhc20gdm9sYXRpbGUgZ290bycgc3RhdGVtZW50Pw0KPiA+DQo+ID4gV2VsbCB5
-b3UgY2FuIC0gYnV0IGlzIGl0IGd1YXJhbnRlZWQgdG8gd29yayA6LSkNCj4gPg0KPiANCj4gV2l0
-aCBnY2MgYXQgbGVhc3QgaXQgc2hvdWxkIHdvcmsgYWNjb3JkaW5nIHRvDQo+IGh0dHBzOi8vZ2Nj
-LmdudS5vcmcvb25saW5lZG9jcy9nY2MvTG9jYWwtUmVnaXN0ZXItVmFyaWFibGVzLmh0bWwNCj4g
-DQo+IFRoZXkgZXZlbiBleHBsaWNpdGVseSB0ZWxsOiAiVGhlIG9ubHkgc3VwcG9ydGVkIHVzZSBm
-b3IgdGhpcyBmZWF0dXJlIGlzDQo+IHRvIHNwZWNpZnkgcmVnaXN0ZXJzIGZvciBpbnB1dCBhbmQg
-b3V0cHV0IG9wZXJhbmRzIHdoZW4gY2FsbGluZyBFeHRlbmRlZA0KPiBhc20gIg0KDQpBIHF1aWNr
-IHRlc3QgaXNuJ3QgZ29vZC4uLi4NCg0KaW50IGJhcihjaGFyICp6KQ0Kew0KICAgICAgICBfX2xh
-YmVsX18gbGFiZWw7DQogICAgICAgIHJlZ2lzdGVyIGludCBlYXggYXNtICgiZWF4IikgPSA2Ow0K
-ICAgICAgICBhc20gdm9sYXRpbGUgZ290byAoIiBtb3YgJDEsICUlZWF4IiA6OjogImVheCIgOiBs
-YWJlbCk7DQoNCmxhYmVsOg0KICAgICAgICByZXR1cm4gZWF4Ow0KfQ0KDQowMDAwMDAwMDAwMDAw
-MDQwIDxiYXI+Og0KICA0MDogICBiOCAwMSAwMCAwMCAwMCAgICAgICAgICBtb3YgICAgJDB4MSwl
-ZWF4DQogIDQ1OiAgIGI4IDA2IDAwIDAwIDAwICAgICAgICAgIG1vdiAgICAkMHg2LCVlYXgNCiAg
-NGE6ICAgYzMgICAgICAgICAgICAgICAgICAgICAgcmV0cQ0KDQphbHRob3VnaCBhZGRpbmc6DQog
-ICAgICAgIGFzbSB2b2xhdGlsZSAoIiIgOiAiK3IiIChlYXgpKTsNCmVpdGhlciBzaWRlIG9mIHRo
-ZSAnYXNtIHZvbGF0aWxlIGdvdG8nIGRvZXMgZml4IGl0Lg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0
-ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBL
-ZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+On Wed, Sep 09, 2020 at 06:08:51PM +0100, Matthew Wilcox wrote:
+> On Wed, Sep 09, 2020 at 09:19:11AM +0200, Mickaël Salaün wrote:
+> > 
+> > On 08/09/2020 20:50, Al Viro wrote:
+> > > On Tue, Sep 08, 2020 at 09:59:53AM +0200, Mickaël Salaün wrote:
+> > >> Hi,
+> > >>
+> > >> This height patch series rework the previous O_MAYEXEC series by not
+> > >> adding a new flag to openat2(2) but to faccessat2(2) instead.  As
+> > >> suggested, this enables to perform the access check on a file descriptor
+> > >> instead of on a file path (while opening it).  This may require two
+> > >> checks (one on open and then with faccessat2) but it is a more generic
+> > >> approach [8].
+> > > 
+> > > Again, why is that folded into lookup/open/whatnot, rather than being
+> > > an operation applied to a file (e.g. O_PATH one)?
+> > 
+> > I don't understand your question. AT_INTERPRETED can and should be used
+> > with AT_EMPTY_PATH. The two checks I wrote about was for IMA.
+> 
+> Al is saying you should add a new syscall, not try to fold it into
+> some existing syscall.
+> 
+> I agree with him.  Add a new syscall, just like you were told to do it
+> last time.
 
+Sure, we'll do it. In the meantime, could we at least get an explanation
+about why using faccessat2() instead of a new syscall is wrong? I could
+see the reasons for separating the exec checks from the file opening,
+but this time I don't understand. Is it because it brings too much
+complexity to do_faccessat()?
+
+-- 
+Thibaut Sautereau
+CLIP OS developer
