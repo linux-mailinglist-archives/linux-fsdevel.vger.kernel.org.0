@@ -2,168 +2,346 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D3CC2651A8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 22:59:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74FAA2651D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 23:02:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbgIJU7M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 16:59:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60104 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727794AbgIJUzj (ORCPT
+        id S1727953AbgIJVCm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 17:02:42 -0400
+Received: from brightrain.aerifal.cx ([216.12.86.13]:52354 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731203AbgIJOja (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 16:55:39 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FB7BC061756
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 13:55:38 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id p9so10763448ejf.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 13:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6WIiEBg2V+e3hARqFde0aiNR5ScO14X3JJL78bMDSrs=;
-        b=L1fFI0y0Pe7czKsJuyVbxrmCDK0BnWq+6Kvh94sOd+r3i7msl/xLwLjzzzL9c28sAK
-         rR/+QnQaVicDMJJygLh0QwtQZRBvwqQJ5B/ajnk1a5e6wni2BRpk21gKHUzsEjqhdZlC
-         iNnidHCMLR8KiKmhBg9yFZO8/CrMLJAzGj7kfuVVeFwgzG8EdxWJtB4hNNKdRY4VNRNi
-         4fsNcbKzW3Vus8t+CEXPUuK+1etDhZqfaf5eNc0V+gczmE2YOW+pKG3W/Ot9ScdzAV9L
-         5xA17qxbjuoEpJU1m/PvmZL3DAYqeFNX1Tief9l5wRZX2ahMJBmPCcBHUhzF2E/mTgnd
-         rd8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6WIiEBg2V+e3hARqFde0aiNR5ScO14X3JJL78bMDSrs=;
-        b=kzi2G5sz2hO38/YFl1Jqx0MR0cjr6K5r33XxW8MNyNh623qtk09CVXhfBEmWnTf8FE
-         f4mdy1A7l/M1TDdOyUhUfJGDrRWK2iFMOSzbgPXhrsfHObFe4W0ieZLVRf6KDg1t6Sry
-         SJRlf2Kuc3IJhU6LaRDRNBgJ0FDz2jL/lfkUBUG8o0dP4XrmBkJ/by7JVgnMtx4+02Y8
-         ngTOumsmZ5jcxYEs+AP4F4lSOzFfPYFIQTM+8l3XM7rfqxnzn4i2pZr1uSolTW0aedS3
-         NHgP06ZaP28Rqgf02YEOL2DpwHJ4K5irQFS4wR9aLpB4GbEcSCfprAti4numBhhspafG
-         UWAQ==
-X-Gm-Message-State: AOAM530d4eeCU1LQZwUzdk1yiL3vDPdVcdDGGAsd1KEppCUgfWgvADyR
-        /kjwZKOQ1RWuk3QFU4tXzF4/uvEpJTFmrJ2rcWA7mA==
-X-Google-Smtp-Source: ABdhPJz2fcbh8Swae5gqu3WCfXH+VoeuT8fBYorB0A9IvemCCzCy2a8aXjwcmpKuCfugC/8/pRR1MEGeVzo0AYRbaxo=
-X-Received: by 2002:a17:906:1513:: with SMTP id b19mr11068344ejd.537.1599771337075;
- Thu, 10 Sep 2020 13:55:37 -0700 (PDT)
+        Thu, 10 Sep 2020 10:39:30 -0400
+Date:   Thu, 10 Sep 2020 10:23:37 -0400
+From:   Rich Felker <dalias@libc.org>
+To:     linux-api@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] vfs: add fchmodat2 syscall
+Message-ID: <20200910142335.GG3265@brightrain.aerifal.cx>
 MIME-Version: 1.0
-References: <20200910202107.3799376-1-keescook@chromium.org> <20200910202107.3799376-7-keescook@chromium.org>
-In-Reply-To: <20200910202107.3799376-7-keescook@chromium.org>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 10 Sep 2020 22:55:11 +0200
-Message-ID: <CAG48ez0boPBDm=Uh5xHXAxTj0BTRGyGp4uCgPgw7PkOCo47Hdg@mail.gmail.com>
-Subject: Re: [RFC PATCH 6/6] security/fbfam: Mitigate a fork brute force attack
-To:     Kees Cook <keescook@chromium.org>, John Wood <john.wood@gmx.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 10, 2020 at 10:22 PM Kees Cook <keescook@chromium.org> wrote:
-> In order to mitigate a fork brute force attack it is necessary to kill
-> all the offending tasks. This tasks are all the ones that share the
-> statistical data with the current task (the task that has crashed).
->
-> Since the attack detection is done in the function fbfam_handle_attack()
-> that is called every time a core dump is triggered, only is needed to
-> kill the others tasks that share the same statistical data, not the
-> current one as this is in the path to be killed.
->
-> When the SIGKILL signal is sent to the offending tasks from the function
-> fbfam_kill_tasks(), this one will be called again during the core dump
-> due to the shared statistical data shows a quickly crashing rate. So, to
-> avoid kill again the same tasks due to a recursive call of this
-> function, it is necessary to disable the attack detection.
->
-> To disable this attack detection, add a condition in the function
-> fbfam_handle_attack() to not compute the crashing rate when the jiffies
-> stored in the statistical data are set to zero.
-[...]
->  /**
-> - * fbfam_handle_attack() - Fork brute force attack detection.
-> + * fbfam_kill_tasks() - Kill the offending tasks
-> + *
-> + * When a fork brute force attack is detected it is necessary to kill all the
-> + * offending tasks. Since this function is called from fbfam_handle_attack(),
-> + * and so, every time a core dump is triggered, only is needed to kill the
-> + * others tasks that share the same statistical data, not the current one as
-> + * this is in the path to be killed.
-> + *
-> + * When the SIGKILL signal is sent to the offending tasks, this function will be
-> + * called again during the core dump due to the shared statistical data shows a
-> + * quickly crashing rate. So, to avoid kill again the same tasks due to a
-> + * recursive call of this function, it is necessary to disable the attack
-> + * detection setting the jiffies to zero.
-> + *
-> + * To improve the for_each_process loop it is possible to end it when all the
-> + * tasks that shared the same statistics are found.
+POSIX defines fchmodat as having a 4th argument, flags, that can be
+AT_SYMLINK_NOFOLLOW. Support for changing the access mode of symbolic
+links is optional (EOPNOTSUPP allowed if not supported), but this flag
+is important even on systems where symlinks do not have access modes,
+since it's the only way to safely change the mode of a file which
+might be asynchronously replaced with a symbolic link, without a race
+condition whereby the link target is changed.
 
-This is not a fastpath, there's no need to be clever and optimize
-things here, please get rid of that optimization. Especially since
-that fastpath looks racy against concurrent execve().
+It's possible to emulate AT_SYMLINK_NOFOLLOW in userspace, and both
+musl libc and glibc do this, by opening an O_PATH file descriptor and
+performing chmod on the corresponding magic symlink in /proc/self/fd.
+However, this requires procfs to be mounted and accessible.
 
-> + * Return: -EFAULT if the current task doesn't have statistical data. Zero
-> + *         otherwise.
-> + */
-> +static int fbfam_kill_tasks(void)
-> +{
-> +       struct fbfam_stats *stats = current->fbfam_stats;
-> +       struct task_struct *p;
-> +       unsigned int to_kill, killed = 0;
-> +
-> +       if (!stats)
-> +               return -EFAULT;
-> +
-> +       to_kill = refcount_read(&stats->refc) - 1;
-> +       if (!to_kill)
-> +               return 0;
-> +
-> +       /* Disable the attack detection */
-> +       stats->jiffies = 0;
-> +       rcu_read_lock();
-> +
-> +       for_each_process(p) {
-> +               if (p == current || p->fbfam_stats != stats)
+It was determined (see glibc issue #14578 and commit a492b1e5ef) that,
+on some filesystems, performing chmod on the link itself produces a
+change in the inode's access mode, but returns an EOPNOTSUPP error.
+This is non-conforming and wrong. Rather than try to fix all the
+broken filesystem backends, block attempts to change the symlink
+access mode via fchmodat2 at the frontend layer. This matches the
+userspace emulation done in libc implementations. No change is made to
+the underlying chmod_common(), so it's still possible to attempt
+changes via procfs, if desired. If at some point all filesystems have
+been fixed, this could be relaxed to allow filesystems to make their
+own decision whether changing access mode of links is supported.
 
-p->fbfam_stats could change concurrently, you should at least use
-READ_ONCE() here.
+Signed-off-by: Rich Felker <dalias@libc.org>
+---
+ arch/alpha/kernel/syscalls/syscall.tbl      |  1 +
+ arch/arm/tools/syscall.tbl                  |  1 +
+ arch/arm64/include/asm/unistd.h             |  2 +-
+ arch/arm64/include/asm/unistd32.h           |  2 ++
+ arch/ia64/kernel/syscalls/syscall.tbl       |  1 +
+ arch/m68k/kernel/syscalls/syscall.tbl       |  1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl |  1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |  1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |  1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |  1 +
+ arch/parisc/kernel/syscalls/syscall.tbl     |  1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |  1 +
+ arch/s390/kernel/syscalls/syscall.tbl       |  1 +
+ arch/sh/kernel/syscalls/syscall.tbl         |  1 +
+ arch/sparc/kernel/syscalls/syscall.tbl      |  1 +
+ arch/x86/entry/syscalls/syscall_32.tbl      |  1 +
+ arch/x86/entry/syscalls/syscall_64.tbl      |  1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     |  1 +
+ fs/open.c                                   | 29 ++++++++++++++++++---
+ include/linux/syscalls.h                    |  2 ++
+ include/uapi/asm-generic/unistd.h           |  4 ++-
+ 21 files changed, 49 insertions(+), 6 deletions(-)
 
-Also, if this codepath is hit by a non-leader thread, "p == current"
-will always be false, and you'll end up killing the caller, too. You
-may want to compare with current->group_leader instead.
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index ec8bed9e7b75..5648fa8be7a1 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -479,3 +479,4 @@
+ 547	common	openat2				sys_openat2
+ 548	common	pidfd_getfd			sys_pidfd_getfd
+ 549	common	faccessat2			sys_faccessat2
++550	common	fchmodat2			sys_fchmodat2
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index 171077cbf419..b6b715bb3315 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -453,3 +453,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++440	common	fchmodat2			sys_fchmodat2
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 3b859596840d..b3b2019f8d16 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -38,7 +38,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+ 
+-#define __NR_compat_syscalls		440
++#define __NR_compat_syscalls		441
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index 734860ac7cf9..cd0845f3c19f 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -887,6 +887,8 @@ __SYSCALL(__NR_openat2, sys_openat2)
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+ #define __NR_faccessat2 439
+ __SYSCALL(__NR_faccessat2, sys_faccessat2)
++#define __NR_fchmodat2 440
++__SYSCALL(__NR_fchmodat2, sys_fchmodat2)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index f52a41f4c340..7c3f8564d0f3 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -360,3 +360,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++440	common	fchmodat2			sys_fchmodat2
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index 81fc799d8392..063d875377bf 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -439,3 +439,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++440	common	fchmodat2			sys_fchmodat2
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index b4e263916f41..6aea8a435fd0 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -445,3 +445,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++440	common	fchmodat2			sys_fchmodat2
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index f9df9edb67a4..a9205843251d 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -378,3 +378,4 @@
+ 437	n32	openat2				sys_openat2
+ 438	n32	pidfd_getfd			sys_pidfd_getfd
+ 439	n32	faccessat2			sys_faccessat2
++440	n32	fchmodat2			sys_fchmodat2
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index 557f9954a2b9..31da28e2d6f3 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -354,3 +354,4 @@
+ 437	n64	openat2				sys_openat2
+ 438	n64	pidfd_getfd			sys_pidfd_getfd
+ 439	n64	faccessat2			sys_faccessat2
++440	n64	fchmodat2			sys_fchmodat2
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index 195b43cf27c8..af0e38302ed8 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -427,3 +427,4 @@
+ 437	o32	openat2				sys_openat2
+ 438	o32	pidfd_getfd			sys_pidfd_getfd
+ 439	o32	faccessat2			sys_faccessat2
++440	o32	fchmodat2			sys_fchmodat2
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index def64d221cd4..379cdb44ca0b 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -437,3 +437,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++440	common	fchmodat2			sys_fchmodat2
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index c2d737ff2e7b..ada11db506e6 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -529,3 +529,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++440	common	fchmodat2			sys_fchmodat2
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index 10456bc936fb..a4dae0abb353 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -442,3 +442,4 @@
+ 437  common	openat2			sys_openat2			sys_openat2
+ 438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
+ 439  common	faccessat2		sys_faccessat2			sys_faccessat2
++440  common	fchmodat2		sys_fchmodat2			sys_fchmodat2
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index ae0a00beea5f..b59b4408b85f 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -442,3 +442,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++440	common	fchmodat2			sys_fchmodat2
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index 4af114e84f20..e817416f81df 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -485,3 +485,4 @@
+ 437	common	openat2			sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++440	common	fchmodat2			sys_fchmodat2
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 9d1102873666..208b06650cef 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -444,3 +444,4 @@
+ 437	i386	openat2			sys_openat2
+ 438	i386	pidfd_getfd		sys_pidfd_getfd
+ 439	i386	faccessat2		sys_faccessat2
++440	i386	fchmodat2		sys_fchmodat2
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index f30d6ae9a688..d9a591db72fb 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -361,6 +361,7 @@
+ 437	common	openat2			sys_openat2
+ 438	common	pidfd_getfd		sys_pidfd_getfd
+ 439	common	faccessat2		sys_faccessat2
++440	common	fchmodat2		sys_fchmodat2
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index 6276e3c2d3fc..ff756cb2f5d7 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -410,3 +410,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++440	common	fchmodat2			sys_fchmodat2
+diff --git a/fs/open.c b/fs/open.c
+index 9af548fb841b..570a21f4d81e 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -610,15 +610,30 @@ SYSCALL_DEFINE2(fchmod, unsigned int, fd, umode_t, mode)
+ 	return err;
+ }
+ 
+-static int do_fchmodat(int dfd, const char __user *filename, umode_t mode)
++static int do_fchmodat(int dfd, const char __user *filename, umode_t mode, int flags)
+ {
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW;
++
++	if (flags & AT_SYMLINK_NOFOLLOW)
++		lookup_flags &= ~LOOKUP_FOLLOW;
++	if (flags & ~AT_SYMLINK_NOFOLLOW)
++		return -EINVAL;
+ retry:
+ 	error = user_path_at(dfd, filename, lookup_flags, &path);
+ 	if (!error) {
+-		error = chmod_common(&path, mode);
++		/* Block chmod from getting to fs layer. Ideally the
++		 * fs would either allow it or fail with EOPNOTSUPP,
++		 * but some are buggy and return an error but change
++		 * the mode, which is non-conforming and wrong.
++		 * Userspace emulation of AT_SYMLINK_NOFOLLOW in
++		 * glibc and musl blocked it too, for same reason. */
++		if (S_ISLNK(path.dentry->d_inode->i_mode)
++		    && (flags & AT_SYMLINK_NOFOLLOW))
++			error = -EOPNOTSUPP;
++		else
++			error = chmod_common(&path, mode);
+ 		path_put(&path);
+ 		if (retry_estale(error, lookup_flags)) {
+ 			lookup_flags |= LOOKUP_REVAL;
+@@ -628,15 +643,21 @@ static int do_fchmodat(int dfd, const char __user *filename, umode_t mode)
+ 	return error;
+ }
+ 
++SYSCALL_DEFINE4(fchmodat2, int, dfd, const char __user *, filename,
++		umode_t, mode, int, flags)
++{
++	return do_fchmodat(dfd, filename, mode, flags);
++}
++
+ SYSCALL_DEFINE3(fchmodat, int, dfd, const char __user *, filename,
+ 		umode_t, mode)
+ {
+-	return do_fchmodat(dfd, filename, mode);
++	return do_fchmodat(dfd, filename, mode, 0);
+ }
+ 
+ SYSCALL_DEFINE2(chmod, const char __user *, filename, umode_t, mode)
+ {
+-	return do_fchmodat(AT_FDCWD, filename, mode);
++	return do_fchmodat(AT_FDCWD, filename, mode, 0);
+ }
+ 
+ int chown_common(const struct path *path, uid_t user, gid_t group)
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 75ac7f8ae93c..ced00c56eba7 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -435,6 +435,8 @@ asmlinkage long sys_chroot(const char __user *filename);
+ asmlinkage long sys_fchmod(unsigned int fd, umode_t mode);
+ asmlinkage long sys_fchmodat(int dfd, const char __user * filename,
+ 			     umode_t mode);
++asmlinkage long sys_fchmodat2(int dfd, const char __user * filename,
++			      umode_t mode, int flags);
+ asmlinkage long sys_fchownat(int dfd, const char __user *filename, uid_t user,
+ 			     gid_t group, int flag);
+ asmlinkage long sys_fchown(unsigned int fd, uid_t user, gid_t group);
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 995b36c2ea7d..ebf5cdb3f444 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -859,9 +859,11 @@ __SYSCALL(__NR_openat2, sys_openat2)
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+ #define __NR_faccessat2 439
+ __SYSCALL(__NR_faccessat2, sys_faccessat2)
++#define __NR_fchmodat2 440
++__SYSCALL(__NR_fchmodat2, sys_fchmodat2)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 440
++#define __NR_syscalls 441
+ 
+ /*
+  * 32 bit systems traditionally used different
+-- 
+2.21.0
 
-
-> +                       continue;
-> +
-> +               do_send_sig_info(SIGKILL, SEND_SIG_PRIV, p, PIDTYPE_PID);
-> +               pr_warn("fbfam: Offending process with PID %d killed\n",
-> +                       p->pid);
-
-Normally pr_*() messages about tasks mention not just the pid, but
-also the ->comm name of the task.
-
-> +               killed += 1;
-> +               if (killed >= to_kill)
-> +                       break;
-> +       }
-> +
-> +       rcu_read_unlock();
-> +       return 0;
-> +}
