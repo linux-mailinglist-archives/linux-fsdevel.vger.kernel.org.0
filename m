@@ -2,97 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A955264A99
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 19:05:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E2D3264AEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 19:18:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbgIJRFI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 13:05:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52306 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727843AbgIJREh (ORCPT
+        id S1726961AbgIJRQe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 13:16:34 -0400
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:43671 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726109AbgIJRP7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 13:04:37 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99F84C061573;
-        Thu, 10 Sep 2020 10:04:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=OyXzjCB63mYRe0BvSmc1T78HrhzEXzQ566vkrNeunqA=; b=PNzhRz1iWp6AsZIRd/72enP4n6
-        0cGLlHpItHhRrb4V65JwvV3zyrBFvKYVo7bXAjFWgtvpAGHhyayXpGt/uOkz4CdqT81VeYf3/wKF0
-        dXdbNkOXmfBwjUe/8WbUJI+7Vk5iQf0emhN7GpuPd3c1HZw1T/xWQ/usVNovNbEbO3dRSZMv8JA9H
-        OKXxTeHazmHVvtSSMEOViFLnER1ZFjPDzrdQwYHy6uhKo7rXrBo2NV67Q4zlWAafMgPlX0XLrLhKw
-        SbjsUxcCvBG1XQYoYuuVkZSevrSXz3Hxd8Tl2n4dv5NKRrECTXUzBKQ5zFpZ27FcC/z0JgqFihe9Z
-        QR+thY4g==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kGPzk-000804-44; Thu, 10 Sep 2020 17:04:24 +0000
-Date:   Thu, 10 Sep 2020 18:04:24 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     linux-kernel@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v9 0/3] Add introspect_access(2) (was O_MAYEXEC)
-Message-ID: <20200910170424.GU6583@casper.infradead.org>
-References: <20200910164612.114215-1-mic@digikod.net>
+        Thu, 10 Sep 2020 13:15:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1599758152;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=V5RVkZoHNNgO8iRkts2uQucFzF0PqLciDsVyoi9bgfc=;
+        b=Vqh1YREuDnGDHlUQI8FhTpJBgjFTUerDdqwuKT1SuiG0skGf/NIcWSsNHz/GGineP6h9JZ
+        cYFtj4W+OkQUSJwbk9gUdpHz7YPzikC8puh+hmMlxBa+69LnSIIHOKu5teGf/hc3lZG568
+        18Gu9RDSAG38TVjI0UuMb1HP7sV4uqk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-250-HnAUMfNAM0OMvyN4RsRhjA-1; Thu, 10 Sep 2020 13:15:48 -0400
+X-MC-Unique: HnAUMfNAM0OMvyN4RsRhjA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D7CFB802B72;
+        Thu, 10 Sep 2020 17:15:45 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 061BB60BFA;
+        Thu, 10 Sep 2020 17:15:42 +0000 (UTC)
+Date:   Thu, 10 Sep 2020 13:15:41 -0400
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        martin.petersen@oracle.com, Hans de Goede <hdegoede@redhat.com>,
+        Song Liu <song@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, Minchan Kim <minchan@kernel.org>,
+        dm-devel@redhat.com, linux-mtd@lists.infradead.org,
+        linux-mm@kvack.org, drbd-dev@tron.linbit.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH 06/14] block: lift setting the readahead size into the
+ block layer
+Message-ID: <20200910171541.GB21919@redhat.com>
+References: <20200726150333.305527-1-hch@lst.de>
+ <20200726150333.305527-7-hch@lst.de>
+ <20200826220737.GA25613@redhat.com>
+ <20200902151144.GA1738@lst.de>
+ <20200902162007.GB5513@redhat.com>
+ <20200910092813.GA27229@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200910164612.114215-1-mic@digikod.net>
+In-Reply-To: <20200910092813.GA27229@lst.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 10, 2020 at 06:46:09PM +0200, Mickaël Salaün wrote:
-> This ninth patch series rework the previous AT_INTERPRETED and O_MAYEXEC
-> series with a new syscall: introspect_access(2) .  Access check are now
-> only possible on a file descriptor, which enable to avoid possible race
-> conditions in user space.
+On Thu, Sep 10 2020 at  5:28am -0400,
+Christoph Hellwig <hch@lst.de> wrote:
 
-But introspection is about examining _yourself_.  This isn't about
-doing that.  It's about doing ... something ... to a script that you're
-going to execute.  If the script were going to call the syscall, then
-it might be introspection.  Or if the interpreter were measuring itself,
-that would be introspection.  But neither of those would be useful things
-to do, because an attacker could simply avoid doing them.
+> On Wed, Sep 02, 2020 at 12:20:07PM -0400, Mike Snitzer wrote:
+> > On Wed, Sep 02 2020 at 11:11am -0400,
+> > Christoph Hellwig <hch@lst.de> wrote:
+> > 
+> > > On Wed, Aug 26, 2020 at 06:07:38PM -0400, Mike Snitzer wrote:
+> > > > On Sun, Jul 26 2020 at 11:03am -0400,
+> > > > Christoph Hellwig <hch@lst.de> wrote:
+> > > > 
+> > > > > Drivers shouldn't really mess with the readahead size, as that is a VM
+> > > > > concept.  Instead set it based on the optimal I/O size by lifting the
+> > > > > algorithm from the md driver when registering the disk.  Also set
+> > > > > bdi->io_pages there as well by applying the same scheme based on
+> > > > > max_sectors.
+> > > > > 
+> > > > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > > > > ---
+> > > > >  block/blk-settings.c         |  5 ++---
+> > > > >  block/blk-sysfs.c            |  1 -
+> > > > >  block/genhd.c                | 13 +++++++++++--
+> > > > >  drivers/block/aoe/aoeblk.c   |  2 --
+> > > > >  drivers/block/drbd/drbd_nl.c | 12 +-----------
+> > > > >  drivers/md/bcache/super.c    |  4 ----
+> > > > >  drivers/md/dm-table.c        |  3 ---
+> > > > >  drivers/md/raid0.c           | 16 ----------------
+> > > > >  drivers/md/raid10.c          | 24 +-----------------------
+> > > > >  drivers/md/raid5.c           | 13 +------------
+> > > > >  10 files changed, 16 insertions(+), 77 deletions(-)
+> > > > 
+> > > > 
+> > > > In general these changes need a solid audit relative to stacking
+> > > > drivers.  That is, the limits stacking methods (blk_stack_limits)
+> > > > vs lower level allocation methods (__device_add_disk).
+> > > > 
+> > > > You optimized for lowlevel __device_add_disk establishing the bdi's
+> > > > ra_pages and io_pages.  That is at the beginning of disk allocation,
+> > > > well before any build up of stacking driver's queue_io_opt() -- which
+> > > > was previously done in disk_stack_limits or driver specific methods
+> > > > (e.g. dm_table_set_restrictions) that are called _after_ all the limits
+> > > > stacking occurs.
+> > > > 
+> > > > By inverting the setting of the bdi's ra_pages and io_pages to be done
+> > > > so early in __device_add_disk it'll break properly setting these values
+> > > > for at least DM afaict.
+> > > 
+> > > ra_pages never got inherited by stacking drivers, check it by modifying
+> > > it on an underlying device and then creating a trivial dm or md one.
+> > 
+> > Sure, not saying that it did.  But if the goal is to set ra_pages based
+> > on io_opt then to do that correctly on stacking drivers it must be done
+> > in terms of limits stacking right?  Or at least done at a location that
+> > is after the limits stacking has occurred?  So should DM just open-code
+> > setting ra_pages like it did for io_pages?
+> > 
+> > Because setting ra_pages in __device_add_disk() is way too early for DM
+> > -- given it uses device_add_disk_no_queue_reg via add_disk_no_queue_reg
+> > at DM device creation (before stacking all underlying devices' limits).
+> 
+> I'll move it to blk_register_queue, which should work just fine.
 
-So, bad name.  What might be better?  sys_security_check()?
-sys_measure()?  sys_verify_fd()?  I don't know.
+That'll work for initial DM table load as part of DM device creation
+(dm_setup_md_queue).  But it won't account for DM table reloads that
+might change underlying devices on a live DM device (done using
+__bind).
+
+Both dm_setup_md_queue() and __bind() call dm_table_set_restrictions()
+to set/update queue_limits.  It feels like __bind() will need to call a
+new block helper to set/update parts of queue_limits (e.g. ra_pages and
+io_pages).
+
+Any chance you're open to factoring out that block function as an
+exported symbol for use by blk_register_queue() and code like DM's
+__bind()?
+
+Thanks,
+Mike
 
