@@ -2,132 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 24F142648CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 17:33:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13E95264926
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 17:55:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731009AbgIJPdD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 11:33:03 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:39154 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727887AbgIJPcQ (ORCPT
+        id S1731521AbgIJPzy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 11:55:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41190 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731515AbgIJPzV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 11:32:16 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-276-Rr3yeOHPPMud0l-oIQnsyA-1; Thu, 10 Sep 2020 16:31:54 +0100
-X-MC-Unique: Rr3yeOHPPMud0l-oIQnsyA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 10 Sep 2020 16:31:53 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 10 Sep 2020 16:31:53 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Segher Boessenkool' <segher@kernel.crashing.org>
-CC:     'Christophe Leroy' <christophe.leroy@csgroup.eu>,
-        'Linus Torvalds' <torvalds@linux-foundation.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Luis Chamberlain" <mcgrof@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: RE: remove the last set_fs() in common code, and remove it for x86
- and powerpc v3
-Thread-Topic: remove the last set_fs() in common code, and remove it for x86
- and powerpc v3
-Thread-Index: AQHWhvDyD2c/lZfV3kC0Ftay5UVebqlhgjnw///zuACAABnIEIAAOoMggAAi9ACAABJI8A==
-Date:   Thu, 10 Sep 2020 15:31:53 +0000
-Message-ID: <18fdbaeacba349a0a8bf7568f709e991@AcuMS.aculab.com>
-References: <20200903142242.925828-1-hch@lst.de>
- <20200903142803.GM1236603@ZenIV.linux.org.uk>
- <CAHk-=wgQNyeHxXfckd1WtiYnoDZP1Y_kD-tJKqWSksRoDZT=Aw@mail.gmail.com>
- <20200909184001.GB28786@gate.crashing.org>
- <CAHk-=whu19Du_rZ-zBtGsXAB-Qo7NtoJjQjd-Sa9OB5u1Cq_Zw@mail.gmail.com>
- <3beb8b019e4a4f7b81fdb1bc68bd1e2d@AcuMS.aculab.com>
- <186a62fc-042c-d6ab-e7dc-e61b18945498@csgroup.eu>
- <59a64e9a210847b59f70f9bd2d02b5c3@AcuMS.aculab.com>
- <5050b43687c84515a49b345174a98822@AcuMS.aculab.com>
- <20200910152030.GJ28786@gate.crashing.org>
-In-Reply-To: <20200910152030.GJ28786@gate.crashing.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 10 Sep 2020 11:55:21 -0400
+Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15552C0617A2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 08:54:36 -0700 (PDT)
+Received: by mail-il1-x12a.google.com with SMTP id y2so6126191ilp.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 08:54:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OZHxSy9GxPtwL4FPXTEL4wHPxBFDa6n0iEKloHdc+dY=;
+        b=dJRG8Qmps859QERXNYLJxi55QI15qf+NmhuQCnsZM3tzSEE4XDm6akhiZPmfFP2D5L
+         noKfGQmOG//ogqGq6MHNPrBzfyTsSRYDDvmU4HpGKt2M3+VX34Rn11vzjMP7dWCeXtL7
+         peTBqP2XxuoNfSrqxocG1z0zzHqFPkd4E6mCLjflVUpkyfeWBoxTosdtHT8O3weuXwoU
+         tQ9lPzZrLFElRA5AiEu/B7dHsjPFnIljwQ7uqXHEHqGd8+4jBMrrg/VTkfD3IGCBJS5B
+         tsG5z+xzaGHBSxD5B1GWK+wIELg2uX73o8AHY/LKWaXB7jjiscV+sTvRU/rMsZateAut
+         mn4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OZHxSy9GxPtwL4FPXTEL4wHPxBFDa6n0iEKloHdc+dY=;
+        b=ZQLc/5CYhKpZ5lSYPmlLTeuwPOmFSV19IbaI+2O95ymv6QcQRFf1aJARV4uHNhbDzu
+         D/3Mn8c0KxnujAqeBVpDFVr3hhuTGLsjQbfxBZmaLeBGR2scq361J+gMKzCrfqqaavag
+         AohJO0mdT15oRjM4VnVCQeRnN4JbSkRsvJPc0KtkgLvnxHdrwa5bbC8+RHd3sp0xkZS9
+         4engmn9jjoJyxDv8YsF8TNC6A0aNEOnLlRVGrZ+JaJ0gf4zepc8ldNXwbwgwfT+A62sw
+         SgwenT9i+zVt9rMQZ0vhusoe/RHcvt3SSwyqM/N36eOcKOHwMCx8gwr9hcKyLuhtzV5D
+         zNug==
+X-Gm-Message-State: AOAM532wm9ZscuE3Idr3VeAUo3F5s3+tkztYTE2aB4ZL2cWSFQjmUiK9
+        1vYWIXPsPrfAvuqmRgp8TfujIuEexZcgro3m
+X-Google-Smtp-Source: ABdhPJxHvxNIiZ7YNxR9PEQ5wMasrzeeVlpwNZVmQsRSVIQZmYnp6kGKrBV3BTGdMbs3dPcZtBZnXQ==
+X-Received: by 2002:a92:b309:: with SMTP id p9mr6758105ilh.125.1599753274952;
+        Thu, 10 Sep 2020 08:54:34 -0700 (PDT)
+Received: from [192.168.1.10] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id z15sm3315413ilb.73.2020.09.10.08.54.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Sep 2020 08:54:34 -0700 (PDT)
+Subject: Re: rework check_disk_change() v2
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Denis Efremov <efremov@linux.com>, Tim Waugh <tim@cyberelk.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Song Liu <song@kernel.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        linux-m68k@lists.linux-m68k.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20200908145347.2992670-1-hch@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b5e51c24-b9a6-979f-8fe0-f762f113bba3@kernel.dk>
+Date:   Thu, 10 Sep 2020 09:54:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0.001
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20200908145347.2992670-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: Segher Boessenkool <segher@kernel.crashing.org>
-> Sent: 10 September 2020 16:21
-> To: David Laight <David.Laight@ACULAB.COM>
-> Cc: 'Christophe Leroy' <christophe.leroy@csgroup.eu>; 'Linus Torvalds' <torvalds@linux-
-> foundation.org>; linux-arch <linux-arch@vger.kernel.org>; Kees Cook <keescook@chromium.org>; the
-> arch/x86 maintainers <x86@kernel.org>; Nick Desaulniers <ndesaulniers@google.com>; Linux Kernel
-> Mailing List <linux-kernel@vger.kernel.org>; Alexey Dobriyan <adobriyan@gmail.com>; Luis Chamberlain
-> <mcgrof@kernel.org>; Al Viro <viro@zeniv.linux.org.uk>; linux-fsdevel <linux-fsdevel@vger.kernel.org>;
-> linuxppc-dev <linuxppc-dev@lists.ozlabs.org>; Christoph Hellwig <hch@lst.de>
-> Subject: Re: remove the last set_fs() in common code, and remove it for x86 and powerpc v3
+On 9/8/20 8:53 AM, Christoph Hellwig wrote:
+> Hi Jens,
 > 
-> On Thu, Sep 10, 2020 at 12:26:53PM +0000, David Laight wrote:
-> > Actually this is pretty sound:
-> > 	__label__ label;
-> > 	register int eax asm ("eax");
-> > 	// Ensure eax can't be reloaded from anywhere
-> > 	// In particular it can't be reloaded after the asm goto line
-> > 	asm volatile ("" : "=r" (eax));
-> 
-> This asm is fine.  It says it writes the "eax" variable, which lives in
-> the eax register *in that asm* (so *not* guaranteed after it!).
-> 
-> > 	// Provided gcc doesn't save eax here...
-> > 	asm volatile goto ("xxxxx" ::: "eax" : label);
-> 
-> So this is incorrect.
+> this series replaced the not very nice check_disk_change() function with
+> a new bdev_media_changed that avoids having the ->revalidate_disk call
+> at its end.  As a result ->revalidate_disk can be removed from a lot of
+> drivers.
 
-From the other email:
+Applied, thanks.
 
-> It is neither input nor output operand here!  Only *then* is a local
-> register asm guaranteed to be in the given reg: as input or output to an
-> inline asm.
-
-Ok, so adding '"r" (eax)' to the input section helps a bit.
-
-> > 	// ... and reload the saved value here.
-> > 	// The input value here will be that modified by the 'asm goto'.
-> > 	// Since this modifies eax it can't be moved before the 'asm goto'.
-> > 	asm volatile ("" : "+r" (eax));
-> > 	// So here eax must contain the value set by the "xxxxx" instructions.
-> 
-> No, the register eax will contain the value of the eax variable.  In the
-> asm; it might well be there before or after the asm as well, but none of
-> that is guaranteed.
-
-Perhaps not 'guaranteed', but very unlikely to be wrong.
-It doesn't give gcc much scope for not generating the desired code.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+-- 
+Jens Axboe
 
