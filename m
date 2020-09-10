@@ -2,168 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C35A263F87
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 10:18:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 350FC263F94
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 10:22:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730136AbgIJIRS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 04:17:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55776 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730067AbgIJIOh (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 04:14:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id AA6C5AF85;
-        Thu, 10 Sep 2020 08:14:32 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id BD47C1E12EB; Thu, 10 Sep 2020 10:14:16 +0200 (CEST)
-Date:   Thu, 10 Sep 2020 10:14:16 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Xiaoming Ni <nixiaoming@huawei.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        wangle6@huawei.com
-Subject: Re: Question: Why is there no notification when a file is opened
- using filp_open()?
-Message-ID: <20200910081416.GF17540@quack2.suse.cz>
-References: <25817189-49a7-c64f-26ee-78d4a27496b6@huawei.com>
- <CAOQ4uxhejJzjKLZCt=b87KAX0sC3RAZ2FHEZbu4188Ar-bkmOg@mail.gmail.com>
- <e399cd17-e95e-def4-e03b-5cc2ae1f9708@huawei.com>
- <CAOQ4uxgvodepq2ZhmGEpkZYj017tH_pk2AgV=pUhWiONnxOQjw@mail.gmail.com>
- <20200908171859.GA29953@casper.infradead.org>
- <CAOQ4uxjX2GAJhD70=6SmwdXPH6TuOzGugtdYupDjLLywC2H5Ag@mail.gmail.com>
- <96abf6e3-2442-8871-c9f3-be981c0a1965@huawei.com>
- <CAOQ4uxjNcjFtQuc9AeWgEO7G3CeGm3vL_wK6UhbHkxOZuRYOeQ@mail.gmail.com>
- <20200909111130.GD24207@quack2.suse.cz>
- <CAOQ4uxj91QxZHSYc46ZTNV59Qr-bEEUKS3n4FvU_UU4VUVkbBg@mail.gmail.com>
+        id S1730268AbgIJIV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 04:21:57 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:56745 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730204AbgIJIVT (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 10 Sep 2020 04:21:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1599726079; x=1631262079;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=/ozYQBdLcvRDPM3SKtYMSQ9qW8nfSYqAHtgxMvNmdjU=;
+  b=OdzHp8mY3tZJ4j2tKc9ei85yhiqErfgQp9+p1sO5LacMUDAOIkXhPKka
+   XHeztibahuanxfjTPWzT5aOykIW1qak1CvIIQcKjXh9q39K+wsApnNkaN
+   l9zv31o3klbCTxrc2HqwENi+HVLQ3FLvICkkVkmKs6BRnyaRmuWNsf2FA
+   D7BjhT/hWqMRPPQFWc8fyhptFc9I44vzJmT2Wnge1CFPda24J2bnwXI7f
+   dHF0gd9BxFbSJ8bp0Mz9fYE74C9hf2I+UXkAwCSmK+Cw13IfxJ1One5mR
+   pqx8kmkUdDY8Joi0lE6H+i7g7dgxbsv1cQU13HMpBbPSWDdcnAbDzAtDN
+   g==;
+IronPort-SDR: /xpRqoJm93mdRLSH8o8xdzV11SfwsM5CNO9daBSG+tm3kx5q1q1Hd45RI0Q9JdTtz7CWUVxjwB
+ uh9xBop4k05fxeiyJHkBpX29+AagOY0XDZddDVa8TcYjChpm6e/nyZVf4cr7PmbsgufykWbQOX
+ /FD+dseviyxuLUhkemM4NhJQ2YxcFHQ3glGe9r4Nnz+6gyQUjXh9Sovel04IjAi01K6JopjzBf
+ 8g/5OebUS0NA2c4NKDrT2+RudveafdkUI80+JSbYkuYkVjayVItVhjRoqBc3UFT3AY9AY40Sjy
+ D9o=
+X-IronPort-AV: E=Sophos;i="5.76,412,1592841600"; 
+   d="scan'208";a="151366278"
+Received: from mail-bn8nam11lp2177.outbound.protection.outlook.com (HELO NAM11-BN8-obe.outbound.protection.outlook.com) ([104.47.58.177])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Sep 2020 16:21:10 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GZr5O/a8/Z1KUaW7v7+W3kRPOSZEv6yXvQ3sfCy6JjUiUd1WWSHDLer4RmuZGW414iV9v0+rHaUyrpgt7yE71ONpT/EH1v3rvo7PSh5CpzUaaZLKgLUQMfZGwzQchElmVeZ5em+M16gZxrYgm0w0XmUBnsQ+PXbgX5mx2XcUcSA++gWfM8kCUnMr5VkhbXAjqPVJuZI5jWfZ5MyiUsVy/HxkfGPYvqg+WCSk8+0UgicvvS4mVVJj3O7LK/pdT6ivl4gOpladuc1o+P2oPTx4fUP6fZH7GSDTI4GOx/0ymnJbPhnQJbsIcd8qaM9+RDC9ZVVjYm/NUySN+4r23lzLnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=THmiTJXGQDO/O4wdtww/t37WruqHWZcrf5PbfLyUM8o=;
+ b=NM54b/z3Wl7o5OaJXkJgTsHeDWNm82L+qSgt5p+obv5An8B8ieYbn4DelhTaTj6qU9Q7PX0yMETjZ8xUJ2yFOxcsgWrMND0qLdYWfTdB+l/vFDk4Z5Z0QyT1ThfMN3hCgJyCNgAajhH1roFlbPP6quhsRb/+KTvf0mkFy8pSzOhBmmiLhBXRXt1osXTJbuhKPGJs32h520AqGDWWMoocCssGtAmwTegkcLfAfg0JIWVESZ927kCmaSShf8j+gH32u4syb3OngdpepkWV3dzAQD+1PglNwIGdHzzQxDHsZCvju4amotu+T9p0l//duDnOMQ+msccM2O3ATeze333u5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=THmiTJXGQDO/O4wdtww/t37WruqHWZcrf5PbfLyUM8o=;
+ b=AQApzhFVgasYdedOCr72HhLo7hlB+vKDLWRc+SEo0xdhor1owu2ox/ucwg9ODmlt+Oxx6CaiT1WK3GF1mY1bqpNUBWKqe5yURDcNKrWYtu5igFdXwT2VlxjY6T/Wju1XprLga3oWLdR6r+xburm+1/DxNx6K1dnB1d8/0Son/5E=
+Received: from CY4PR04MB3751.namprd04.prod.outlook.com (2603:10b6:903:ec::14)
+ by CY4PR04MB0760.namprd04.prod.outlook.com (2603:10b6:903:ea::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3370.16; Thu, 10 Sep
+ 2020 08:21:08 +0000
+Received: from CY4PR04MB3751.namprd04.prod.outlook.com
+ ([fe80::9124:2453:fe9c:9a7]) by CY4PR04MB3751.namprd04.prod.outlook.com
+ ([fe80::9124:2453:fe9c:9a7%12]) with mapi id 15.20.3348.019; Thu, 10 Sep 2020
+ 08:21:08 +0000
+From:   Damien Le Moal <Damien.LeMoal@wdc.com>
+To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/3] zonefs: introduce helper for zone management
+Thread-Topic: [PATCH v3 1/3] zonefs: introduce helper for zone management
+Thread-Index: AQHWh0htghzcnPDzeEWbDXMuT5e+iw==
+Date:   Thu, 10 Sep 2020 08:21:08 +0000
+Message-ID: <CY4PR04MB3751170ACE8A6E3973442D22E7270@CY4PR04MB3751.namprd04.prod.outlook.com>
+References: <20200910075957.7307-1-johannes.thumshirn@wdc.com>
+ <20200910075957.7307-2-johannes.thumshirn@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: wdc.com; dkim=none (message not signed)
+ header.d=none;wdc.com; dmarc=none action=none header.from=wdc.com;
+x-originating-ip: [2400:2411:43c0:6000:dc48:bbfc:f5cc:32c6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 7d7b60a1-e46c-4845-8e10-08d85562787c
+x-ms-traffictypediagnostic: CY4PR04MB0760:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CY4PR04MB0760E9E27E45892C5BDF6D34E7270@CY4PR04MB0760.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:813;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: DDW/iX2X2DCD2PbiDB5NQsazl5jT2QBkvRmnvnkZnbhYeU1b7Jx+F8gN5P5dPxYIMCt6UTPTADOMc/ONLRHhDOfQoMnPPuXgHoWpbQfbqdTHkUcMnQbzQJIBSELSL21FDBCdzt9iVBxXBdI0NEvawOh/MWZ1xjKgmIxukqAHW+9Ex3bCOte8ZGX61WsHrU1PiEzgV7Erixt7zmbH2VCn5ysUwxekaoT5YtZVniPuGvGWnaPHHCoBcA8TslDy6AXMEeRzMPC7zngp0hAyHr7vpu4TxM1BirsdOmeQDQGIExwsbDpYiAIcd9N6AB7jehsHlE6RmuDaKZ3MG+m5RN3qKg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY4PR04MB3751.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(39860400002)(396003)(136003)(346002)(66946007)(6636002)(71200400001)(91956017)(83380400001)(76116006)(55016002)(316002)(53546011)(86362001)(6506007)(33656002)(9686003)(7696005)(66556008)(66476007)(64756008)(66446008)(5660300002)(8676002)(4326008)(2906002)(8936002)(52536014)(478600001)(186003)(6862004);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: yEFBHhBJXZ7XI9fH5t0AowQjOwgQuj8TiRrML0rDgs1R6WG35uMuIFRHqz7PtpMZZx6rz82toeNI901rcPXMtPyS5oAOpZONPGG6u336XiMxLuph8I9Szblf6ALOcIJarRoO/p2P6JJoxDWwkE0aCWkDG3dAKvZQE4CfXIvzlZhEcdl/j5xUBzhvmCFzyxC420cCu79NKxeHqDJz5X0LhZYBRaI5X2N4ArLzs2GxO6+BzNn0XgtbT9wl+B0KjwxoxCv4CesSniCJQizrozcV45KW4ifmuBM6aD5YJyOV0X/wZbXOYU5KfkcBFlIFsSN6jv5CujrctU1LCZYHXn1uxBG8VSlCP1nPVZgVu9U8Jfi36bqgzn1ReRkD63PqXaZqOTwQ8GxRo+EhCKSmjuDtqo6x0k6jTDr/i9qTTQOfLfzzlsGaVCxwx2rCpL2VokrrHNoPnF15bThzs29VKr/Nh1l0iohXEZ304N/xXHt00JiSemckWai83B1sqJN8/BrRY5lNPBHU08B8WSyXXTmZGnXH4eTZLBGUiC4V/uoVI/jPhl0Wk76tiFxrpSGT+pN2Aj89RDvV1m2L/1AacZItjwBw3clpR9YLFTeBb2s4MNciV27xIY5QZox26h1cV3bEHlrKi+S9w657hoqS6oEXVDKftr7XbuSIVrBZEZ9zUs4+uotK6nOtWLshY24wMb/GPMcO30ro6RACe/Flc8LhlQ==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxj91QxZHSYc46ZTNV59Qr-bEEUKS3n4FvU_UU4VUVkbBg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY4PR04MB3751.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d7b60a1-e46c-4845-8e10-08d85562787c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2020 08:21:08.8125
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OFhOS7FCmGlxUZrqnQYzN6llA+mMGm4HfRJQMweFu5FPYFnK0bywOBBSwCCceIJ4rmvSY680obGhtdXKRwN4tw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR04MB0760
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 09-09-20 19:03:07, Amir Goldstein wrote:
-> On Wed, Sep 9, 2020 at 2:11 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Wed 09-09-20 10:36:57, Amir Goldstein wrote:
-> > > On Wed, Sep 9, 2020 at 10:00 AM Xiaoming Ni <nixiaoming@huawei.com> wrote:
-> > > >
-> > > > On 2020/9/9 11:44, Amir Goldstein wrote:
-> > > > > On Tue, Sep 8, 2020 at 8:19 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > > > >>
-> > > > >> On Tue, Sep 08, 2020 at 04:18:29PM +0300, Amir Goldstein wrote:
-> > > > >>> On Tue, Sep 8, 2020 at 3:53 PM Xiaoming Ni <nixiaoming@huawei.com> wrote:
-> > > > >>>> For example, in fs/coredump.c, do_coredump() calls filp_open() to
-> > > > >>>> generate core files.
-> > > > >>>> In this scenario, the fsnotify_open() notification is missing.
-> > > > >>>
-> > > > >>> I am not convinced that we should generate an event.
-> > > > >>> You will have to explain in what is the real world use case that requires this
-> > > > >>> event to be generated.
-> > > > >>
-> > > > >> Take the typical usage for fsnotify of a graphical file manager.
-> > > > >> It would be nice if the file manager showed a corefile as soon as it
-> > > > >> appeared in a directory rather than waiting until some other operation
-> > > > >> in that directory caused those directory contents to be refreshed.
-> > > > >
-> > > > > fsnotify_open() is not the correct notification for file managers IMO.
-> > > > > fsnotify_create() is and it will be called in this case.
-> > > > >
-> > > > > If the reason you are interested in open events is because you want
-> > > > > to monitor the entire filesystem then welcome to the future -
-> > > > > FAN_CREATE is supported since kernel v5.1.
-> > > > >
-> > > > > Is there another real life case you have in mind where you think users
-> > > > > should be able to get an open fd for a file that the kernel has opened?
-> > > > > Because that is what FAN_OPEN will do.
-> > > > >
-> > > >
-> > > > There are also cases where file is opened in read-only mode using
-> > > > filp_open().
-> > > >
-> > > > case1: nfsd4_init_recdir() call filp_open()
-> > > > filp_open()
-> > > > nfsd4_init_recdir() fs/nfsd/nfs4recover.c#L543
-> > > >
-> > > > L70: static char user_recovery_dirname[PATH_MAX] =
-> > > > "/var/lib/nfs/v4recovery";
-> > > > L543: nn->rec_file = filp_open(user_recovery_dirname, O_RDONLY |
-> > > > O_DIRECTORY, 0);
-> > > >
-> > > >
-> > > > case2: ima_read_policy()
-> > > > filp_open()
-> > > > kernel_read_file_from_path()  fs/exec.c#L1004
-> > > > ima_read_policy()  security/integrity/ima/ima_fs.c#L286
-> > > > ima_write_policy() security/integrity/ima/ima_fs.c#L335
-> > > > ima_measure_policy_ops   security/integrity/ima/ima_fs.c#L443
-> > > > sys_write()
-> > > >
-> > > > case3: use do_file_open_root() to open file
-> > > > do_file_open_root()
-> > > > file_open_root()   fs/open.c#L1159
-> > > > kernel_read_file_from_path_initns()  fs/exec.c#L1029
-> > > > fw_get_filesystem_firmware()  drivers/base/firmware_loader/main.c#L498
-> > > >
-> > > > Do we need to add fsnotify_open() in these scenarios?
-> > >
-> > > We do not *need* to add fsnotify_open() if there is no concrete use case
-> > > from real life that needs it.
-> > >
-> > > Matthew gave an example of a real life use case and I explained why IMO
-> > > we don't need to add fsnotify_open() for the use case that he described.
-> > >
-> > > If you want to add fsnotify_open() to any call site, please come up with
-> > > a real life use case - not a made up one, one that really exists and where
-> > > the open event is really needed.
-> > >
-> > > grepping the code for callers of filp_open() is not enough.
-> >
-> > Yeah. So in kernel, things are both ways. There are filp_open() users that
-> > do take care to manually generate fsnotify_open() event (most notably
-> > io_uring, exec, or do_handle_open) and there are others as Xiaoming found
-> > which just don't bother.  I'm not sure filp_open() should unconditionally
-> > generate fsnotify_open() event as IMO some of those notifications would be
-> > more confusing than useful.
-> >
-> > OTOH it is true that e.g. for core dumping we will generate other fsnotify
-> > events such as FSNOTIFY_CLOSE (which is generated in __fput()) so missing
-> 
-> And to be fair, those kernel callers will probably also end up generating
-> FS_ACCESS/FS_MODIFY too.
-
-Yes.
-
-> > FSNOTIFY_OPEN is somewhat confusing. So having some consistency in this
-> > (either by generating FSNOTIFY_OPEN or by not generating FSNOTIFY_CLOSE)
-> > would be IMO desirable.
-> 
-> Well, dropping events (FS_CLOSE in particular) didn't go down well the
-> last time we tried it:
-> https://lore.kernel.org/linux-fsdevel/CAOQ4uxg8E-im=B6L0PQNaTTKdtxVAO=MSJki7kxq875ME4hOLw@mail.gmail.com/
-
-Right, I remember that one :)
-
-> I am just wondering who is using FS_OPEN these days and whether
-> they would care about this change and if not, why are we doing it?
-
-I'd be interested who is using FS_OPEN these days as well. And you're right
-that without users the discussion is kind of moot.
-
-> The argument that it is confusing to see FS_ACCESS/FS_MODIFY/FS_CLOSE
-> and not seeing FS_OPEN is only half true - it is common to see that
-> pattern when the file is already open when starting to watch, so application
-> should not break because of that pattern.
-
-Good point.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On 2020/09/10 17:00, Johannes Thumshirn wrote:=0A=
+> Introduce a helper function for sending zone management commands to the=
+=0A=
+> block device.=0A=
+> =0A=
+> As zone management commands can change a zone write pointer position=0A=
+> reflected in the size of the zone file, this function expects the truncat=
+e=0A=
+> mutex to be held.=0A=
+> =0A=
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
+> =0A=
+> ---=0A=
+> Changes to v2:=0A=
+> - add missing '\n'=0A=
+> =0A=
+> Changes to v1:=0A=
+> - centralize failure logging=0A=
+> ---=0A=
+>  fs/zonefs/super.c | 29 ++++++++++++++++++++++-------=0A=
+>  1 file changed, 22 insertions(+), 7 deletions(-)=0A=
+> =0A=
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c=0A=
+> index 8ec7c8f109d7..6e13a5127b01 100644=0A=
+> --- a/fs/zonefs/super.c=0A=
+> +++ b/fs/zonefs/super.c=0A=
+> @@ -24,6 +24,26 @@=0A=
+>  =0A=
+>  #include "zonefs.h"=0A=
+>  =0A=
+> +static inline int zonefs_zone_mgmt(struct inode *inode,=0A=
+> +				   enum req_opf op)=0A=
+> +{=0A=
+> +	struct zonefs_inode_info *zi =3D ZONEFS_I(inode);=0A=
+> +	int ret;=0A=
+> +=0A=
+> +	lockdep_assert_held(&zi->i_truncate_mutex);=0A=
+> +=0A=
+> +	ret =3D blkdev_zone_mgmt(inode->i_sb->s_bdev, op, zi->i_zsector,=0A=
+> +			       zi->i_zone_size >> SECTOR_SHIFT, GFP_NOFS);=0A=
+> +	if (ret) {=0A=
+> +		zonefs_err(inode->i_sb,=0A=
+> +			   "Zone management operation %s at %llu failed %d\n",=0A=
+> +			   blk_op_str(op), zi->i_zsector, ret);=0A=
+> +		return ret;=0A=
+> +	}=0A=
+> +=0A=
+> +	return 0;=0A=
+> +}=0A=
+> +=0A=
+>  static int zonefs_iomap_begin(struct inode *inode, loff_t offset, loff_t=
+ length,=0A=
+>  			      unsigned int flags, struct iomap *iomap,=0A=
+>  			      struct iomap *srcmap)=0A=
+> @@ -397,14 +417,9 @@ static int zonefs_file_truncate(struct inode *inode,=
+ loff_t isize)=0A=
+>  	if (isize =3D=3D old_isize)=0A=
+>  		goto unlock;=0A=
+>  =0A=
+> -	ret =3D blkdev_zone_mgmt(inode->i_sb->s_bdev, op, zi->i_zsector,=0A=
+> -			       zi->i_zone_size >> SECTOR_SHIFT, GFP_NOFS);=0A=
+> -	if (ret) {=0A=
+> -		zonefs_err(inode->i_sb,=0A=
+> -			   "Zone management operation at %llu failed %d",=0A=
+> -			   zi->i_zsector, ret);=0A=
+> +	ret =3D zonefs_zone_mgmt(inode, op);=0A=
+> +	if (ret)=0A=
+>  		goto unlock;=0A=
+> -	}=0A=
+>  =0A=
+>  	zonefs_update_stats(inode, isize);=0A=
+>  	truncate_setsize(inode, isize);=0A=
+> =0A=
+=0A=
+Looks good.=0A=
+=0A=
+Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>=0A=
+=0A=
+-- =0A=
+Damien Le Moal=0A=
+Western Digital Research=0A=
