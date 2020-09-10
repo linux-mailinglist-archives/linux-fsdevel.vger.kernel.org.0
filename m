@@ -2,102 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC602651CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 23:02:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C33AF265249
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 23:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727902AbgIJVCW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 17:02:22 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:23587 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730849AbgIJOj5 (ORCPT
+        id S1727857AbgIJVNn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 17:13:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34262 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727980AbgIJVLG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 10:39:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1599748798; x=1631284798;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sMgkTYfIVhjzdVujgdBcvqxrVYyGCgcXIKPhIxj2SRw=;
-  b=nscvXckDDzYdHhuXAetRhHzVwf0vE0I4NxlucXUpQ0ISY6DVry+f8JX7
-   XeJDjJQpR36gZzLfY9uZ9nlVGXhtGVJcM6f1gzwMvjB4Fsl2qj1sOs0iw
-   gyrOUl/ijA+uK61F5oyVl8K6lstVPkdJN7i4GEvhZtJLEFL24CVHG5hR8
-   X0Ez8d7i8kZThy3E5ohDyUQvC+Ck0gOmt+uWNvMwuewN7Onre/pCJ3mxS
-   aeLNUJDvknwoRmnCJdc2zRLf+j89lWNVIaPZLsY8iLt3hbsdE8ZtEAlAx
-   x2SCt9/Zwqorm5KEA01bTxXjTTR+K30SaqaEmtMaFstqxemRS0AtmZMrA
-   A==;
-IronPort-SDR: 3xKIxmwk5hxoyO662i6ntNCJ1GYvXvGXFqOUSYB7Bajgr/9WRZ50aXr0AYFQukeIjlsdyQ/cxJ
- e5p1OTaaGAecx1ojOwmK8VLzC91EmT/nkmiYQkj+nt2r2wn6UTUvr+QkiPayMJr+q2tVA7nBaR
- oWM8eW3ufJ4OFH4QzK1va6S0M7fkvcjRJZmn9f8dhMefVny8cskQpgKBhLP9Lg5QAuUrz7ltxX
- vVdGJNicfSyiLiyOpbLTk+QDNPS0pNX1p0ZKs9NX6KU2NaxyHAa+KcqNq/CLeTXe2huobaAF5C
- qnI=
-X-IronPort-AV: E=Sophos;i="5.76,413,1592841600"; 
-   d="scan'208";a="148261191"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 10 Sep 2020 22:37:54 +0800
-IronPort-SDR: 3tfMdBMf/VKQJjgt8ZKIBYUQidn8U9rH5VNaWoW8cw1edbeQrY2SU8wYb4JpTEnId2UXm5Osyi
- 04e4x2ZvLHIA==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2020 07:24:17 -0700
-IronPort-SDR: XTi0IzPlit9jotM42rAwAveKy9ryYzRXccOILl9wVFXlCwjI40ozkYcAlw5hY1FIftBkIg2liU
- vWyd8150/pHg==
-WDCIronportException: Internal
-Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
-  by uls-op-cesaip02.wdc.com with ESMTP; 10 Sep 2020 07:37:53 -0700
-From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>
-Subject: [PATCH v4 4/4] zonefs: document the explicit-open mount option
-Date:   Thu, 10 Sep 2020 23:37:44 +0900
-Message-Id: <20200910143744.17295-5-johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200910143744.17295-1-johannes.thumshirn@wdc.com>
-References: <20200910143744.17295-1-johannes.thumshirn@wdc.com>
+        Thu, 10 Sep 2020 17:11:06 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54919C061757
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 14:11:06 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id u21so10824112eja.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 14:11:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d2Fjne8H+Cg3bJEd1GSB4j314ZebR7pleObLwl830fs=;
+        b=ScYVsVHCZlVh7Ci/3ehi1uakHdj9qnQ9FYyz9hPXQc/e9uvw9Ybg77wJD3gWPHx/lN
+         oJjcajaLilUV00ZbqRFWOpGIIQ/pjS4ge040nFK/Xnk29BGf0AppVDAfW35o0selWBxs
+         tv7s7bV3wkeNz2hD8ble8Y8voryZA384+K8+25DS+W99uS2fsFg8XFJrUo3mpG+GfVnt
+         aVzMV9vnMTnLydG4qmxB0KE8A3WS2zYUGC2Vot/PZ5zf7tU3uF2exEpFDr/G3k8aVvGt
+         XOuqUkU/7QvKAeWJhVePl/f3EZFBRyvcTs/HTzLQ9NYVNxAYa6ERfH86Hw3qAF0dRy2W
+         Uphg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d2Fjne8H+Cg3bJEd1GSB4j314ZebR7pleObLwl830fs=;
+        b=LvJfi+k0qplMTFsGRxDZSzRgFwyUpSKDpTRvtQrmuFN0e32JmyWXb9qPpPfY4xOCNI
+         cIMmrqozKuWLi3LREsM0gRnlnclBr7sDPPxlQNxUdv43K4E7T8Hf7GA1siXItNzWbzZ+
+         6zECURC0j6Ozcc89a1MfTYTIOtIA3DPK2YAMJvmGv4UCo21istLcUpyEH59jKMIEVwQh
+         2+344cmFkNARMA6gv6QVDj9kVUc+y2tuJxVeDJndC0ctRq3gicTWMZ2oYNTwtumM0A9v
+         Vy2eoZh6GR6IClVfRgcoTxDarUI4AK9Oj/fxKIpdslOHEFdM5hBRCWrJpMR5a7wiOngR
+         zPrA==
+X-Gm-Message-State: AOAM532gQwn7+CURWgzcHNJdc+T9OLFPL4lrgfj2/8UBhD1FtvHx6low
+        Vc1LEIoYsU7goOBTYfLtyy7fLJu9YERLG2EGYXFL3Q==
+X-Google-Smtp-Source: ABdhPJyNcf3ROxrc5CjvX9eqcm/Jags1MQ2ChzI30b0vpomzdYZOF0LTDDEZynORXIJAbG2ZaBuePa4L+nucdti2Xdg=
+X-Received: by 2002:a17:907:94cf:: with SMTP id dn15mr11296236ejc.114.1599772264641;
+ Thu, 10 Sep 2020 14:11:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200910202107.3799376-1-keescook@chromium.org> <20200910202107.3799376-6-keescook@chromium.org>
+In-Reply-To: <20200910202107.3799376-6-keescook@chromium.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 10 Sep 2020 23:10:38 +0200
+Message-ID: <CAG48ez1gbu+eBA_PthLemcVVR+AU7Xa1zzbJ8tLMLBDCe_a+fQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 5/6] security/fbfam: Detect a fork brute force attack
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        John Wood <john.wood@gmx.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Document the newly introduced explicit-open mount option.
+On Thu, Sep 10, 2020 at 10:22 PM Kees Cook <keescook@chromium.org> wrote:
+> To detect a fork brute force attack it is necessary to compute the
+> crashing rate of the application. This calculation is performed in each
+> fatal fail of a task, or in other words, when a core dump is triggered.
+> If this rate shows that the application is crashing quickly, there is a
+> clear signal that an attack is happening.
+>
+> Since the crashing rate is computed in milliseconds per fault, if this
+> rate goes under a certain threshold a warning is triggered.
+[...]
+> +/**
+> + * fbfam_handle_attack() - Fork brute force attack detection.
+> + * @signal: Signal number that causes the core dump.
+> + *
+> + * The crashing rate of an application is computed in milliseconds per fault in
+> + * each crash. So, if this rate goes under a certain threshold there is a clear
+> + * signal that the application is crashing quickly. At this moment, a fork brute
+> + * force attack is happening.
+> + *
+> + * Return: -EFAULT if the current task doesn't have statistical data. Zero
+> + *         otherwise.
+> + */
+> +int fbfam_handle_attack(int signal)
+> +{
+> +       struct fbfam_stats *stats = current->fbfam_stats;
+> +       u64 delta_jiffies, delta_time;
+> +       u64 crashing_rate;
+> +
+> +       if (!stats)
+> +               return -EFAULT;
+> +
+> +       if (!(signal == SIGILL || signal == SIGBUS || signal == SIGKILL ||
+> +             signal == SIGSEGV || signal == SIGSYS))
+> +               return 0;
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
----
-Changes to v1:
-- Address Randy's comments
----
- Documentation/filesystems/zonefs.rst | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+As far as I can tell, you can never get here with SIGKILL, since
+SIGKILL doesn't trigger core dumping and also isn't used by seccomp?
 
-diff --git a/Documentation/filesystems/zonefs.rst b/Documentation/filesystems/zonefs.rst
-index 6c18bc8ce332..6b213fe9a33e 100644
---- a/Documentation/filesystems/zonefs.rst
-+++ b/Documentation/filesystems/zonefs.rst
-@@ -326,6 +326,21 @@ discover the amount of data that has been written to the zone. In the case of a
- read-only zone discovered at run-time, as indicated in the previous section.
- The size of the zone file is left unchanged from its last updated value.
- 
-+A zoned block device (e.g. an NVMe Zoned Namespace device) may have limits on
-+the number of zones that can be active, that is, zones that are in the
-+implicit open, explicit open or closed conditions.  This potential limitation
-+translates into a risk for applications to see write IO errors due to this
-+limit being exceeded if the zone of a file is not already active when a write
-+request is issued by the user.
-+
-+To avoid these potential errors, the "explicit-open" mount option forces zones
-+to be made active using an open zone command when a file is opened for writing
-+for the first time. If the zone open command succeeds, the application is then
-+guaranteed that write requests can be processed. Conversely, the
-+"explicit-open" mount option will result in a zone close command being issued
-+to the device on the last close() of a zone file if the zone is not full nor
-+empty.
-+
- Zonefs User Space Tools
- =======================
- 
--- 
-2.26.2
+> +
+> +       stats->faults += 1;
 
+This is a data race. If you want to be able to increment a variable
+that may be concurrently incremented by other tasks, use either
+locking or the atomic_t helpers.
+
+> +       delta_jiffies = get_jiffies_64() - stats->jiffies;
+> +       delta_time = jiffies64_to_msecs(delta_jiffies);
+> +       crashing_rate = delta_time / (u64)stats->faults;
+
+Do I see this correctly, is this computing the total runtime of this
+process hierarchy divided by the total number of faults seen in this
+process hierarchy? If so, you may want to reconsider whether that's
+really the behavior you want. For example, if I configure the minimum
+period between crashes to be 30s (as is the default in the sysctl
+patch), and I try to attack a server that has been running without any
+crashes for a month, I'd instantly be able to crash around
+30*24*60*60/30 = 86400 times before the detection kicks in. That seems
+suboptimal.
+
+(By the way, it kind of annoys me that you call it the "rate" when
+it's actually the inverse of the rate. "Period" might be more
+appropriate?)
+
+
+
+> +       if (crashing_rate < (u64)sysctl_crashing_rate_threshold)
+> +               pr_warn("fbfam: Fork brute force attack detected\n");
+> +
+> +       return 0;
+> +}
+> +
+> --
+> 2.25.1
+>
