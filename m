@@ -2,56 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 078232649E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 18:34:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AE85264A0D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 18:42:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbgIJQe3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 12:34:29 -0400
-Received: from brightrain.aerifal.cx ([216.12.86.13]:52454 "EHLO
+        id S1727025AbgIJQmg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 12:42:36 -0400
+Received: from brightrain.aerifal.cx ([216.12.86.13]:52466 "EHLO
         brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbgIJQdg (ORCPT
+        with ESMTP id S1727067AbgIJQjx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 12:33:36 -0400
-Date:   Thu, 10 Sep 2020 11:45:17 -0400
+        Thu, 10 Sep 2020 12:39:53 -0400
+Date:   Thu, 10 Sep 2020 12:39:50 -0400
 From:   Rich Felker <dalias@libc.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-api@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] vfs: add fchmodat2 syscall
-Message-ID: <20200910154516.GH3265@brightrain.aerifal.cx>
+Message-ID: <20200910163949.GJ3265@brightrain.aerifal.cx>
 References: <20200910142335.GG3265@brightrain.aerifal.cx>
- <20200910151828.GD1236603@ZenIV.linux.org.uk>
+ <20200910162059.GA18228@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200910151828.GD1236603@ZenIV.linux.org.uk>
+In-Reply-To: <20200910162059.GA18228@infradead.org>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 10, 2020 at 04:18:28PM +0100, Al Viro wrote:
+On Thu, Sep 10, 2020 at 05:20:59PM +0100, Christoph Hellwig wrote:
 > On Thu, Sep 10, 2020 at 10:23:37AM -0400, Rich Felker wrote:
+> > userspace emulation done in libc implementations. No change is made to
+> > the underlying chmod_common(), so it's still possible to attempt
+> > changes via procfs, if desired.
 > 
-> > It was determined (see glibc issue #14578 and commit a492b1e5ef) that,
-> > on some filesystems, performing chmod on the link itself produces a
-> > change in the inode's access mode, but returns an EOPNOTSUPP error.
-> 
-> Which filesystem types are those?
+> And that is the goddamn problem.  We need to fix that _first_.
 
-It's been a long time and I don't know if the details were recorded.
-It was reported for xfs but I believe we later found it happening for
-others. See:
+Can you clarify exactly what that is? Do you mean fixing the
+underlying fs backends, or just ensuring that the chmod for symlinks
+doesn't reach them by putting the check in chmod_common? I'm ok with
+any of these.
 
-https://sourceware.org/bugzilla/show_bug.cgi?id=14578#c17
-https://sourceware.org/legacy-ml/libc-alpha/2020-02/msg00467.html
+> After that we can add sugarcoating using new syscalls if needed.
 
-and especially:
-
-https://sourceware.org/legacy-ml/libc-alpha/2020-02/msg00518.html
-
-where Christoph seems to have endorsed the approach in my patch. I'm
-fine with doing it differently if you'd prefer, though.
+The new syscall is _not_ about this problem. It's about the missing
+flags argument and inability to implement fchmodat() without access to
+procfs. The above problem is just something you encounter and have to
+make a decision about in order to fix the missing flags problem and
+make a working AT_SYMLINK_NOFOLLOW.
 
 Rich
