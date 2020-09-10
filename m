@@ -2,112 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0AB1263D9E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 08:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B29DE263E17
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Sep 2020 09:09:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729741AbgIJGwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 02:52:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41132 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726433AbgIJGwd (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 02:52:33 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CC25C061795
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Sep 2020 23:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=7DYbE5rSDH2SbBsr0roKEy5D4WXojJ2FblFU2zyIEL0=; b=G/K1dJRPaaTHB+bd13OzsuEiwh
-        JWRJAchKVZx0et3rtRJTL4NOdpTe2r8hQGZ0YUaC+Q/kKI5PKaTFTBYAki57/rZch2Qu9zVBu2fZy
-        /nZV3q6BXI4aaot6LXE/OrdDlAd3thDAseR1HjOn3Vph1T6omfTRBsZUsoA34lq0H19qlVqd3gcha
-        no6UEVly6aeXL190wdkrGIRNiap5K3eGcZFXemwM+Hm9H+mu7efGxOCaNIgpcI2bcFiO7B5XdpRff
-        hWDmbGyWFuOIZTPiUh8W9N0yTmgy1JNge/ePOlnWJzIGUWj/nkgSLGyKdjP/fRPSfJRBEAS7a+dKn
-        N46yB1ow==;
-Received: from [2001:4bb8:184:af1:d8d0:3027:a666:4c4e] (helo=localhost)
-        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kGGIG-0000CT-Ge; Thu, 10 Sep 2020 06:42:52 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 5/5] fs: remove KSTAT_QUERY_FLAGS
-Date:   Thu, 10 Sep 2020 08:42:43 +0200
-Message-Id: <20200910064244.346913-6-hch@lst.de>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200910064244.346913-1-hch@lst.de>
-References: <20200910064244.346913-1-hch@lst.de>
+        id S1730335AbgIJHJi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 03:09:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45186 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730393AbgIJHHM (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 10 Sep 2020 03:07:12 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 41023AF9C;
+        Thu, 10 Sep 2020 07:07:25 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 4DB811E12EB; Thu, 10 Sep 2020 09:07:09 +0200 (CEST)
+Date:   Thu, 10 Sep 2020 09:07:09 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>, hch@lst.de
+Subject: Re: [PATCH v3] quota: widen timestamps for the fs_disk_quota
+ structure
+Message-ID: <20200910070709.GA17540@quack2.suse.cz>
+References: <20200909013251.GG7955@magnolia>
+ <20200909014933.GC6583@casper.infradead.org>
+ <20200909022909.GI7955@magnolia>
+ <20200909105133.GC24207@quack2.suse.cz>
+ <20200909124252.GE6583@casper.infradead.org>
+ <20200909135645.GB29150@quack2.suse.cz>
+ <20200909172701.GK7955@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200909172701.GK7955@magnolia>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-KSTAT_QUERY_FLAGS expands to AT_STATX_SYNC_TYPE, which itself already
-is a mask.  Remove the double name, especially given that the prefix
-is a little confusing vs the normal AT_* flags.
+On Wed 09-09-20 10:27:01, Darrick J. Wong wrote:
+> On Wed, Sep 09, 2020 at 03:56:45PM +0200, Jan Kara wrote:
+> > On Wed 09-09-20 13:42:52, Matthew Wilcox wrote:
+> > > On Wed, Sep 09, 2020 at 12:51:33PM +0200, Jan Kara wrote:
+> > > > On Tue 08-09-20 19:29:09, Darrick J. Wong wrote:
+> > > > > On Wed, Sep 09, 2020 at 02:49:33AM +0100, Matthew Wilcox wrote:
+> > > > > > On Tue, Sep 08, 2020 at 06:32:51PM -0700, Darrick J. Wong wrote:
+> > > > > > > +static inline void copy_to_xfs_dqblk_ts(const struct fs_disk_quota *d,
+> > > > > > > +		__s32 *timer_lo, __s8 *timer_hi, s64 timer)
+> > > > > > > +{
+> > > > > > > +	*timer_lo = timer;
+> > > > > > > +	if (d->d_fieldmask & FS_DQ_BIGTIME)
+> > > > > > > +		*timer_hi = timer >> 32;
+> > > > > > > +	else
+> > > > > > > +		*timer_hi = 0;
+> > > > > > > +}
+> > > > > > 
+> > > > > > I'm still confused by this.  What breaks if you just do:
+> > > > > > 
+> > > > > > 	*timer_lo = timer;
+> > > > > > 	*timer_hi = timer >> 32;
+> > > > > 
+> > > > > "I don't know."
+> > > > > 
+> > > > > The manpage for quotactl doesn't actually specify the behavior of the
+> > > > > padding fields.  The /implementation/ is careful enough to zero
+> > > > > everything, but the interface specification doesn't explicitly require
+> > > > > software to do so.
+> > > > > 
+> > > > > Because the contents of the padding fields aren't defined by the
+> > > > > documentation, the kernel cannot simply start using the d_padding2 field
+> > > > > because there could be an old kernel that doesn't zero the padding,
+> > > > > which would lead to confusion if the new userspace were mated to such a
+> > > > > kernel.
+> > > > > 
+> > > > > Therefore, we have to add a flag that states explicitly that we are
+> > > > > using the timer_hi fields.  This is also the only way that an old
+> > > > > program can detect that it's being fed a structure that it might not
+> > > > > recognise.
+> > > > 
+> > > > Well, this is in the direction from kernel to userspace and what Matthew
+> > > > suggests would just make kernel posssibly store non-zero value in *timer_hi
+> > > > without setting FS_DQ_BIGTIME flag (for negative values of timer). I don't
+> > > > think it would break anything but I agree the complication isn't big so
+> > > > let's be careful and only set *timer_hi to non-zero if FS_DQ_BIGTIME is
+> > > > set.
+> > > 
+> > > OK, thanks.  I must admit, I'd completely forgotten about the negative
+> > > values ... and the manpage (quotactl(2)) could be clearer:
+> > > 
+> > >                       int32_t  d_itimer;    /* Zero if within inode limits */
+> > >                                             /* If not, we refuse service */
+> > >                       int32_t  d_btimer;    /* Similar to above; for
+> > >                                                disk blocks */
+> > > 
+> > > I can't tell if this is a relative time or seconds since 1970 since we
+> > > exceeded the quota.
+> > 
+> > In fact, it is time (in seconds since epoch) when softlimit becomes
+> > enforced (i.e. when you cannot write any more blocks/inodes if you are
+> > still over softlimit). I agree the comment incomplete at best. Something
+> > like attached patch?
+> > 
+> > 								Honza
+> > -- 
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
+> 
+> > From 3e3260a337ff444e3a1396834b20da63d7b87ccb Mon Sep 17 00:00:00 2001
+> > From: Jan Kara <jack@suse.cz>
+> > Date: Wed, 9 Sep 2020 15:54:46 +0200
+> > Subject: [PATCH] quota: Expand comment describing d_itimer
+> > 
+> > Expand comment describing d_itimer in struct fs_disk_quota.
+> > 
+> > Reported-by: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Jan Kara <jack@suse.cz>
+> > ---
+> >  include/uapi/linux/dqblk_xfs.h | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/include/uapi/linux/dqblk_xfs.h b/include/uapi/linux/dqblk_xfs.h
+> > index 16d73f54376d..e4b3fd7f0a50 100644
+> > --- a/include/uapi/linux/dqblk_xfs.h
+> > +++ b/include/uapi/linux/dqblk_xfs.h
+> > @@ -62,7 +62,8 @@ typedef struct fs_disk_quota {
+> >  	__u64		d_bcount;	/* # disk blocks owned by the user */
+> >  	__u64		d_icount;	/* # inodes owned by the user */
+> >  	__s32		d_itimer;	/* zero if within inode limits */
+> > -					/* if not, we refuse service */
+> > +					/* if not, we refuse service at this
+> > +					 * time (in seconds since epoch) */
+> 
+> "since Unix epoch"?
+> 
+> Otherwise looks fine to me...
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/stat.c            | 8 ++++----
- include/linux/stat.h | 2 --
- 2 files changed, 4 insertions(+), 6 deletions(-)
+Thanks for having a look. Patch updated and added to my tree.
 
-diff --git a/fs/stat.c b/fs/stat.c
-index 8acc4b14ac24c9..dacecdda2e7967 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -56,7 +56,7 @@ EXPORT_SYMBOL(generic_fillattr);
-  * @path: file to get attributes from
-  * @stat: structure to return attributes in
-  * @request_mask: STATX_xxx flags indicating what the caller wants
-- * @query_flags: Query mode (KSTAT_QUERY_FLAGS)
-+ * @query_flags: Query mode (AT_STATX_SYNC_TYPE)
-  *
-  * Get attributes without calling security_inode_getattr.
-  *
-@@ -71,7 +71,7 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
- 
- 	memset(stat, 0, sizeof(*stat));
- 	stat->result_mask |= STATX_BASIC_STATS;
--	query_flags &= KSTAT_QUERY_FLAGS;
-+	query_flags &= AT_STATX_SYNC_TYPE;
- 
- 	/* allow the fs to override these if it really wants to */
- 	/* SB_NOATIME means filesystem supplies dummy atime value */
-@@ -97,7 +97,7 @@ EXPORT_SYMBOL(vfs_getattr_nosec);
-  * @path: The file of interest
-  * @stat: Where to return the statistics
-  * @request_mask: STATX_xxx flags indicating what the caller wants
-- * @query_flags: Query mode (KSTAT_QUERY_FLAGS)
-+ * @query_flags: Query mode (AT_STATX_SYNC_TYPE)
-  *
-  * Ask the filesystem for a file's attributes.  The caller must indicate in
-  * request_mask and query_flags to indicate what they want.
-@@ -171,7 +171,7 @@ static int vfs_statx(int dfd, const char __user *filename, int flags,
- 	int error;
- 
- 	if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT | AT_EMPTY_PATH |
--		      KSTAT_QUERY_FLAGS))
-+		      AT_STATX_SYNC_TYPE))
- 		return -EINVAL;
- 
- 	if (!(flags & AT_SYMLINK_NOFOLLOW))
-diff --git a/include/linux/stat.h b/include/linux/stat.h
-index 56614af83d4af5..fff27e60381412 100644
---- a/include/linux/stat.h
-+++ b/include/linux/stat.h
-@@ -19,8 +19,6 @@
- #include <linux/time.h>
- #include <linux/uidgid.h>
- 
--#define KSTAT_QUERY_FLAGS (AT_STATX_SYNC_TYPE)
--
- struct kstat {
- 	u32		result_mask;	/* What fields the user got */
- 	umode_t		mode;
+								Honza
 -- 
-2.28.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
