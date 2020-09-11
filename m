@@ -2,67 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D1F526566F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Sep 2020 03:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 877782656DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Sep 2020 04:06:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725468AbgIKBMK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 21:12:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43340 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725300AbgIKBMJ (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 21:12:09 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E5EAC061573;
-        Thu, 10 Sep 2020 18:12:08 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kGXbh-00E2kB-Ba; Fri, 11 Sep 2020 01:12:05 +0000
-Date:   Fri, 11 Sep 2020 02:12:05 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        id S1725550AbgIKCGi convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 22:06:38 -0400
+Received: from smtp.h3c.com ([60.191.123.50]:12561 "EHLO h3cspam02-ex.h3c.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725298AbgIKCGi (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 10 Sep 2020 22:06:38 -0400
+Received: from DAG2EX07-IDC.srv.huawei-3com.com ([10.8.0.70])
+        by h3cspam02-ex.h3c.com with ESMTPS id 08B26Hbl001293
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 11 Sep 2020 10:06:17 +0800 (GMT-8)
+        (envelope-from tian.xianting@h3c.com)
+Received: from DAG2EX03-BASE.srv.huawei-3com.com (10.8.0.66) by
+ DAG2EX07-IDC.srv.huawei-3com.com (10.8.0.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 11 Sep 2020 10:06:18 +0800
+Received: from DAG2EX03-BASE.srv.huawei-3com.com ([fe80::5d18:e01c:bbbd:c074])
+ by DAG2EX03-BASE.srv.huawei-3com.com ([fe80::5d18:e01c:bbbd:c074%7]) with
+ mapi id 15.01.1713.004; Fri, 11 Sep 2020 10:06:18 +0800
+From:   Tianxianting <tian.xianting@h3c.com>
+To:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pipe: honor IOCB_NOWAIT
-Message-ID: <20200911011205.GG1236603@ZenIV.linux.org.uk>
-References: <cedfa436-47a3-7cbc-1948-75d0e28cfdc5@kernel.dk>
+Subject: RE: [PATCH] fs: use correct parameter in notes of
+ generic_file_llseek_size()
+Thread-Topic: [PATCH] fs: use correct parameter in notes of
+ generic_file_llseek_size()
+Thread-Index: AQHWg1VbepwpzeymnU+ybaV+ROAJcqliuT9Q
+Date:   Fri, 11 Sep 2020 02:06:18 +0000
+Message-ID: <3808373d663146c882c22397a1d6587f@h3c.com>
+References: <20200905071525.12259-1-tian.xianting@h3c.com>
+In-Reply-To: <20200905071525.12259-1-tian.xianting@h3c.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.99.141.128]
+x-sender-location: DAG2
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cedfa436-47a3-7cbc-1948-75d0e28cfdc5@kernel.dk>
+X-DNSRBL: 
+X-MAIL: h3cspam02-ex.h3c.com 08B26Hbl001293
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 07, 2020 at 09:21:02AM -0600, Jens Axboe wrote:
-> Pipe only looks at O_NONBLOCK for non-blocking operation, which means that
-> io_uring can't easily poll for it or attempt non-blocking issues. Check for
-> IOCB_NOWAIT in locking the pipe for reads and writes, and ditto when we
-> decide on whether or not to block or return -EAGAIN.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> 
-> ---
-> 
-> If this is acceptable, then I can add S_ISFIFO to the whitelist on file
-> descriptors we can IOCB_NOWAIT try for, then poll if we get -EAGAIN
-> instead of using thread offload.
+Hi viro,
+Could I get your feedback?
+This patch fixed the build warning, I think it can be applied, thanks :) 
 
-Will check.  In the meanwhile, blacklist eventpoll again.  Because your
-attempts at "nonblocking" there had been both ugly as hell *AND* fail
-to prevent blocking.  And frankly, I'm very tempted to rip that crap
-out entirely.  Seriously, *look* at the code you've modified in
-do_epoll_ctl().  And tell me why the hell is grabbing ->mtx in that
-function needs to be infested with trylocks, while exact same mutex
-taken in loop_check_proc() called under those is fine with mutex_lock().
-Ditto for calls of vfs_poll() inside ep_insert(), GFP_KERNEL allocations
-in ep_ptable_queue_proc(), synchronize_rcu() callable from ep_modify()
-(from the same function), et sodding cetera.
+-----Original Message-----
+From: tianxianting (RD) 
+Sent: Saturday, September 05, 2020 3:15 PM
+To: viro@zeniv.linux.org.uk
+Cc: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org; tianxianting (RD) <tian.xianting@h3c.com>
+Subject: [PATCH] fs: use correct parameter in notes of generic_file_llseek_size()
 
-No, this is _not_ an invitation to spread the same crap over even more
-places in there; I just want to understand where had that kind of voodoo
-approach comes from.  And that's directly relevant for this patch,
-because it looks like the same kind of thing.
+Fix warning when compiling with W=1:
+fs/read_write.c:88: warning: Function parameter or member 'maxsize' not described in 'generic_file_llseek_size'
+fs/read_write.c:88: warning: Excess function parameter 'size' description in 'generic_file_llseek_size'
 
-What is your semantics for IOCB_NOWAIT?  What should and what should _not_
-be waited for?
+Signed-off-by: Xianting Tian <tian.xianting@h3c.com>
+---
+ fs/read_write.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 5db58b8c7..058563ee2 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -71,7 +71,7 @@ EXPORT_SYMBOL(vfs_setpos);
+  * @file:	file structure to seek on
+  * @offset:	file offset to seek to
+  * @whence:	type of seek
+- * @size:	max size of this file in file system
++ * @maxsize:	max size of this file in file system
+  * @eof:	offset used for SEEK_END position
+  *
+  * This is a variant of generic_file_llseek that allows passing in a custom
+-- 
+2.17.1
+
