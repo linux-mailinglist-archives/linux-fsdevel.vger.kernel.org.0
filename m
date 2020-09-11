@@ -2,118 +2,308 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B30A265ADA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Sep 2020 09:52:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21BA4265B93
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Sep 2020 10:27:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725787AbgIKHwX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Sep 2020 03:52:23 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:59056 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbgIKHwW (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Sep 2020 03:52:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1599810742; x=1631346742;
-  h=from:to:cc:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=QDOverA0mBpGPGXSqlGu3ZSDQMUWfquk+MG5oRXNAkU=;
-  b=OjLFgsLAcD8J4IJNyvgoJQkb0VbTd4UwY8kzQeq2Lx8vBkOtvy5jw3na
-   AYb6A6eCL3oY9DlXLwUCgHMvPoVIafLqwuFRKjsydcBnOO74bHE2z5v4j
-   FJbYxrP9AWSqACpuhiRmvE6aBxaHXdx+tCJ0vtZpR8l7hadbeTNSpyIC4
-   TfZqMIyOqx6y1t1cPW2yBmC4M9ByLtPbYYyFGObID9MvsmEGtSQmRj7uB
-   u+8jzoliDfGpbIfsDT3TLEcz81yiPHSYtg2GCmW3/7To/BZYXQImX05mA
-   gWi28tzcjhBWLsBElUkD4cgJ4TzWfGYaKZgc4g6FKj1AWMTjxM23IaDGj
-   g==;
-IronPort-SDR: 61kWTAZ+Cfo3GrbjyGLB5Pu3ShaILWKaQJqCvZD9iIYMDu5kKWuzVuNLjOH7l3T6Bahq4tBd7O
- /NifRL1C0ll73AMIlV3icOSq2OxS5T1gJ9djyMy18ncV6mp0t9saACosRdi1a2LLdykyKqctY6
- tPOVBiNb3VxthSl/ShEuKyIJEk7m3gn5x9yML3/EmE1fD+noeVFbKQWrlP2KhdoHMayWUAfMmU
- kBmVoqStrA2rvzLtYn6Isa6OmOml6WGzy7Ma3JDOQsdUGGtXFV6v0ou1WRmcdhKveWELN3/QpY
- qzw=
-X-IronPort-AV: E=Sophos;i="5.76,414,1592841600"; 
-   d="scan'208";a="147109538"
-Received: from mail-mw2nam10lp2105.outbound.protection.outlook.com (HELO NAM10-MW2-obe.outbound.protection.outlook.com) ([104.47.55.105])
-  by ob1.hgst.iphmx.com with ESMTP; 11 Sep 2020 15:52:20 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iNADpNSGRxstg+69RUwqvfYvGlYFdm5vYNrSOo8hhs1N5tV/nUeTFuMCpZG+831+fzDfTL631YXxGTcpQ6c53zcFq8Z136aZ5I6yOefnSPpe/F/XB+hLK5DSu9ksES6mmxZWLbm02CTRSmMXBDOfYX09yuQWjYPbm6Ux93MRw7waaa2eG922QayIdhkrun2MEgZE4Cd3EHqZHNPiLXUlbWZLyE968/4Us72tsSekaReK6HJZzGZeaQdWOwiuLEwSEJZJdBy9S26q91HJp+aDVhkmTT00j5qQyuylknx1180Z7YL8wT1ih/RIcIdgehQaBK2w8xHV4LYmNupzZ669Fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QDOverA0mBpGPGXSqlGu3ZSDQMUWfquk+MG5oRXNAkU=;
- b=N39w1U+auyT7VETXcVLHDOihuqx6vsHJ+2j8I1pT4wa4tSAFLRAV0+HScHIe4x/J80NjxUNTgeeqRYz0jsJd4c7XuPvRD1JkMD4XhMjAf+Uiio6ATKi8CBBnXHxORcnBcFrAdWOlk3ku1Qzu7kekxm74fk/i4AnnVarkjMg23nfvvOI/eWTENA7i9CJFHKVEqbs6Uqq+DJJOgD7FV8afvnQEK/Qk2EElmTs8k5DLfzu0A7HR3AKrhz8V70nlO5YPrKhM2MUNjnWbFvG+Dz2vRtejBGntIxULz4DomYkHlIR18s8T+H6eF5UCeqYYxQPj+jvC3VvO931xgrL52mmX/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QDOverA0mBpGPGXSqlGu3ZSDQMUWfquk+MG5oRXNAkU=;
- b=pqkRg+Ifgi/Tw8lnkT500yuCUy5XdRfSpBvxJMpxJYm5tiWBsUAmL7y2+ALT/qn0tjG38yUIrm367MnKdv5b6zsPevCI1m7+dMXlvCBcBgmTzw43jdUTD4H/4PsDiavBWENTwAk8EUTk8dBfL6mJeH62Us5iK85Y3AXhGCCXSdQ=
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- (2603:10b6:803:47::21) by SN6PR04MB5005.namprd04.prod.outlook.com
- (2603:10b6:805:92::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3370.16; Fri, 11 Sep
- 2020 07:52:18 +0000
-Received: from SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::457e:5fe9:2ae3:e738]) by SN4PR0401MB3598.namprd04.prod.outlook.com
- ([fe80::457e:5fe9:2ae3:e738%7]) with mapi id 15.20.3348.019; Fri, 11 Sep 2020
- 07:52:18 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Damien Le Moal <Damien.LeMoal@wdc.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/4] zonefs: provide zonefs_io_error variant that can
- be called with i_truncate_mutex held
-Thread-Topic: [PATCH v4 2/4] zonefs: provide zonefs_io_error variant that can
- be called with i_truncate_mutex held
-Thread-Index: AQHWh3/38ZzB/2VsEEixqDZEgRurew==
-Date:   Fri, 11 Sep 2020 07:52:18 +0000
-Message-ID: <SN4PR0401MB3598ECA82EECD65922C9DB599B240@SN4PR0401MB3598.namprd04.prod.outlook.com>
-References: <20200910143744.17295-1-johannes.thumshirn@wdc.com>
- <20200910143744.17295-3-johannes.thumshirn@wdc.com>
- <CY4PR04MB375191672451DED79B0D7775E7240@CY4PR04MB3751.namprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: wdc.com; dkim=none (message not signed)
- header.d=none;wdc.com; dmarc=none action=none header.from=wdc.com;
-x-originating-ip: [2001:a62:142d:5701:f81a:38dd:93b0:f1b]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 08b5babe-7582-4288-15e1-08d856279b91
-x-ms-traffictypediagnostic: SN6PR04MB5005:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN6PR04MB5005541E50F6677F1EE545CE9B240@SN6PR04MB5005.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:6108;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: jJwgUv/+sf1PfVHgFeFbjIPThMp698RMn1FGNStHOO9FttZQP1DRpIu0qGywjFu2yUjvs6/jsd/BRiKVqHpw/CspQcYtCc/Owocc+j5mCqbT8+pX7kzG5LbTIGbtGQM8j4a6U1x3Kh1LFTI+V2lfR3bQ5WQqUbqxrRZlzxsE76Fe/MN27b7GB3HPysaHqrUd4PmnbA721iJnRy3LU+irxzYtSavu4PLKRMCCiO8PTfjpMcHMKGnhLVyd4tY4qLoAG+2z6/COftmWOKQ5dj/S0Ikps7MhtHjRRPhU0fpEzrEo33C5O9+b4lwHH1huRg88
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN4PR0401MB3598.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(376002)(366004)(396003)(39860400002)(346002)(33656002)(91956017)(66946007)(66446008)(64756008)(66476007)(66556008)(76116006)(5660300002)(7696005)(316002)(558084003)(186003)(52536014)(6506007)(53546011)(4326008)(9686003)(6636002)(2906002)(6862004)(478600001)(8936002)(71200400001)(8676002)(86362001)(55016002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: A2OcTB7ZElXo0V4SX/D6Ch/2bmbhQNfZkSrQ8jYr38JnDS1g/oRAuTdvM3DriJ8UVLC4hRT7Xg5Al43mCg+H37e/ifDooNf3R/4ao4ykAcqjO1+k2Td4+/Sj0JCEiFQ4ChoCI0MUunHstHmiQRi7QxH4Vjmhi0WEt4tb0q1+Fvz4lVKoeMVIypU2+IICS45sajwNMwL2m4UqrkIIHzwceC/qx/gki5RShm9nVidZ7uyx1ql95vIULxRpcSiBecBjL1VadJj+Hcoirv8zq9P9694ReZ7/H0BGh5mp6gCw6O1Kr0PFu8odA39kB/M93iVprF2E7xW9Z3N2xJwmmCnMWXlf0y2/KEjGaOceTtPlwK742za59NYoiXj5t6zu7jlJdvxyCoyMvk5FMc5cBT0lOKiltDwq7hdKcaaW7mdTupDffrUufYoyG1Z3e++uJJ8gJKC3+Mku3seLnNZsI6EAhHND4zsbdX93EyniHjSfkigMddbxxl7uxLkecWaGW6hUwx90zMoH7y9kOswZhAlMCugrJQqDjGZwmFIwTkK2N5qOlmwrdExhzxe10QKLuOF989XQqANinXDIFmKmNC4mDQ4YHw0VMB7nz4lZ7eUKhT/XxrYqftxkQc6OqFT5dTlnN9OOvyDwA4KlLwPGLqC18uAD8Af//keKApnMg/rSfIdYT4wbqoy1dLYUNsGghhgPsj74C8JeSls97CgNsGSWKw==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1725864AbgIKI13 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Sep 2020 04:27:29 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:12233 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725768AbgIKI1U (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Sep 2020 04:27:20 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5448876F5274B33334EF;
+        Fri, 11 Sep 2020 16:27:16 +0800 (CST)
+Received: from [127.0.0.1] (10.174.179.103) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.487.0; Fri, 11 Sep 2020
+ 16:27:09 +0800
+Subject: Re: [RFC PATCH V4] iomap: add support to track dirty state of sub
+ pages
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     <hch@infradead.org>, <darrick.wong@oracle.com>,
+        <david@fromorbit.com>, <linux-xfs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yi.zhang@huawei.com>
+References: <20200821123306.1658495-1-yukuai3@huawei.com>
+ <20200821124424.GQ17456@casper.infradead.org>
+From:   "yukuai (C)" <yukuai3@huawei.com>
+Message-ID: <7fb4bb5a-adc7-5914-3aae-179dd8f3adb1@huawei.com>
+Date:   Fri, 11 Sep 2020 16:27:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN4PR0401MB3598.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08b5babe-7582-4288-15e1-08d856279b91
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2020 07:52:18.5246
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bMWOo+UxaZJkKDP/DbhTGVfOPHY5007c0N8iJyx6ifU2NBxgd02/3KZaT/twhYoDWUOOC2V6wCQg8hZ/CAP4hR49zLR7rqYhO5dPK025nqQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5005
+In-Reply-To: <20200821124424.GQ17456@casper.infradead.org>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.179.103]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/09/2020 07:05, Damien Le Moal wrote:=0A=
-> I would prefer to leave this comment attached to the function body, so=0A=
-> __zonefs_io_error() now.=0A=
-=0A=
-Also fixed.=0A=
-=0A=
-Last test run is running and then I'm sending out the new version.=0A=
+On 2020/08/21 20:44, Matthew Wilcox wrote:
+> On Fri, Aug 21, 2020 at 08:33:06PM +0800, Yu Kuai wrote:
+>> changes from v3: - add IOMAP_STATE_ARRAY_SIZE - replace set_bit / 
+>> clear_bit with bitmap_set / bitmap_clear - move 
+>> iomap_set_page_dirty() out of 'iop->state_lock' - merge 
+>> iomap_set/clear_range_dirty() and 
+>> iomap_iop_clear/clear_range_dirty()
+> 
+> I'm still working on the iomap parts of the THP series (fixing up 
+> invalidatepage right now), but here are some of the relevant bits 
+> (patch series to follow)
+> 
+
+Hi, Matthew
+
+Since your THP iomap patches were reviewed, I made some modifications
+based on these patches.
+
+Best regards,
+Yu Kuai
+
+---
+  fs/iomap/buffered-io.c | 92 +++++++++++++++++++++++++++++++++---------
+  1 file changed, 74 insertions(+), 18 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index edf5eea56cf5..bc7f57748be8 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -23,13 +23,17 @@
+
+  /*
+   * Structure allocated for each page or THP when block size < page size
+- * to track sub-page uptodate status and I/O completions.
++ * to track sub-page status and I/O completions.
+   */
+  struct iomap_page {
+  	atomic_t		read_bytes_pending;
+  	atomic_t		write_bytes_pending;
+-	spinlock_t		uptodate_lock;
+-	unsigned long		uptodate[];
++	spinlock_t		state_lock;
++	/*
++	 * The first half bits are used to track sub-page uptodate status,
++	 * the second half bits are for dirty status.
++	 */
++	unsigned long		state[];
+  };
+
+  static inline struct iomap_page *to_iomap_page(struct page *page)
+@@ -57,9 +61,9 @@ iomap_page_create(struct inode *inode, struct page *page)
+  	if (iop || nr_blocks <= 1)
+  		return iop;
+
+-	iop = kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)),
++	iop = kzalloc(struct_size(iop, state, BITS_TO_LONGS(2 * nr_blocks)),
+  			GFP_NOFS | __GFP_NOFAIL);
+-	spin_lock_init(&iop->uptodate_lock);
++	spin_lock_init(&iop->state_lock);
+  	attach_page_private(page, iop);
+  	return iop;
+  }
+@@ -74,7 +78,7 @@ iomap_page_release(struct page *page)
+  		return;
+  	WARN_ON_ONCE(atomic_read(&iop->read_bytes_pending));
+  	WARN_ON_ONCE(atomic_read(&iop->write_bytes_pending));
+-	WARN_ON_ONCE(bitmap_full(iop->uptodate, nr_blocks) !=
++	WARN_ON_ONCE(bitmap_full(iop->state, nr_blocks) !=
+  			PageUptodate(page));
+  	kfree(iop);
+  }
+@@ -105,7 +109,7 @@ iomap_adjust_read_range(struct inode *inode, struct 
+iomap_page *iop,
+
+  		/* move forward for each leading block marked uptodate */
+  		for (i = first; i <= last; i++) {
+-			if (!test_bit(i, iop->uptodate))
++			if (!test_bit(i, iop->state))
+  				break;
+  			*pos += block_size;
+  			poff += block_size;
+@@ -115,7 +119,7 @@ iomap_adjust_read_range(struct inode *inode, struct 
+iomap_page *iop,
+
+  		/* truncate len if we find any trailing uptodate block(s) */
+  		for ( ; i <= last; i++) {
+-			if (test_bit(i, iop->uptodate)) {
++			if (test_bit(i, iop->state)) {
+  				plen -= (last - i + 1) * block_size;
+  				last = i - 1;
+  				break;
+@@ -139,6 +143,55 @@ iomap_adjust_read_range(struct inode *inode, struct 
+iomap_page *iop,
+  	*lenp = plen;
+  }
+
++static void
++iomap_set_range_dirty(struct page *page, unsigned int off,
++		unsigned int len)
++{
++	struct inode *inode = page->mapping->host;
++	unsigned int blocks_per_page = i_blocks_per_page(inode, page);
++	unsigned int first = (off >> inode->i_blkbits) + blocks_per_page;
++	unsigned int last = ((off + len - 1) >> inode->i_blkbits) + 
+blocks_per_page;
++	unsigned long flags;
++	struct iomap_page *iop;
++
++	if (PageError(page))
++		return;
++
++	if (len)
++		iomap_set_page_dirty(page);
++
++	if (!page_has_private(page))
++		return;
++
++	iop = to_iomap_page(page);
++	spin_lock_irqsave(&iop->state_lock, flags);
++	bitmap_set(iop->state, first, last - first + 1);
++	spin_unlock_irqrestore(&iop->state_lock, flags);
++}
++
++static void
++iomap_clear_range_dirty(struct page *page, unsigned int off,
++		unsigned int len)
++{
++	struct inode *inode = page->mapping->host;
++	unsigned int blocks_per_page = i_blocks_per_page(inode, page);
++	unsigned int first = (off >> inode->i_blkbits) + blocks_per_page;
++	unsigned int last = ((off + len - 1) >> inode->i_blkbits) + 
+blocks_per_page;
++	unsigned long flags;
++	struct iomap_page *iop;
++
++	if (PageError(page))
++		return;
++
++	if (!page_has_private(page))
++		return;
++
++	iop = to_iomap_page(page);
++	spin_lock_irqsave(&iop->state_lock, flags);
++	bitmap_clear(iop->state, first, last - first + 1);
++	spin_unlock_irqrestore(&iop->state_lock, flags);
++}
++
+  static void
+  iomap_iop_set_range_uptodate(struct page *page, unsigned off, unsigned 
+len)
+  {
+@@ -148,11 +201,11 @@ iomap_iop_set_range_uptodate(struct page *page, 
+unsigned off, unsigned len)
+  	unsigned last = (off + len - 1) >> inode->i_blkbits;
+  	unsigned long flags;
+
+-	spin_lock_irqsave(&iop->uptodate_lock, flags);
+-	bitmap_set(iop->uptodate, first, last - first + 1);
+-	if (bitmap_full(iop->uptodate, i_blocks_per_page(inode, page)))
++	spin_lock_irqsave(&iop->state_lock, flags);
++	bitmap_set(iop->state, first, last - first + 1);
++	if (bitmap_full(iop->state, i_blocks_per_page(inode, page)))
+  		SetPageUptodate(page);
+-	spin_unlock_irqrestore(&iop->uptodate_lock, flags);
++	spin_unlock_irqrestore(&iop->state_lock, flags);
+  }
+
+  static void
+@@ -445,7 +498,7 @@ iomap_is_partially_uptodate(struct page *page, 
+unsigned long from,
+
+  	if (iop) {
+  		for (i = first; i <= last; i++)
+-			if (!test_bit(i, iop->uptodate))
++			if (!test_bit(i, iop->state))
+  				return 0;
+  		return 1;
+  	}
+@@ -683,7 +736,7 @@ static size_t __iomap_write_end(struct inode *inode, 
+loff_t pos, size_t len,
+  	if (unlikely(copied < len && !PageUptodate(page)))
+  		return 0;
+  	iomap_set_range_uptodate(page, offset_in_page(pos), len);
+-	iomap_set_page_dirty(page);
++	iomap_set_range_dirty(page, offset_in_page(pos), len);
+  	return copied;
+  }
+
+@@ -997,7 +1050,6 @@ iomap_page_mkwrite_actor(struct inode *inode, 
+loff_t pos, loff_t length,
+  	} else {
+  		WARN_ON_ONCE(!PageUptodate(page));
+  		iomap_page_create(inode, page);
+-		set_page_dirty(page);
+  	}
+
+  	return length;
+@@ -1007,7 +1059,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault 
+*vmf, const struct iomap_ops *ops)
+  {
+  	struct page *page = vmf->page;
+  	struct inode *inode = file_inode(vmf->vma->vm_file);
+-	unsigned long length;
++	unsigned int length, dirty_bits;
+  	loff_t offset;
+  	ssize_t ret;
+
+@@ -1016,6 +1068,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault 
+*vmf, const struct iomap_ops *ops)
+  	if (ret < 0)
+  		goto out_unlock;
+  	length = ret;
++	dirty_bits = ret;
+
+  	offset = page_offset(page);
+  	while (length > 0) {
+@@ -1028,6 +1081,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault 
+*vmf, const struct iomap_ops *ops)
+  		length -= ret;
+  	}
+
++	iomap_set_range_dirty(page, 0, dirty_bits);
+  	wait_for_stable_page(page);
+  	return VM_FAULT_LOCKED;
+  out_unlock:
+@@ -1340,11 +1394,12 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+  	struct iomap_page *iop = to_iomap_page(page);
+  	struct iomap_ioend *ioend, *next;
+  	unsigned len = i_blocksize(inode);
++	unsigned int blocks_per_page = i_blocks_per_page(inode, page);
+  	u64 file_offset; /* file offset of page */
+  	int error = 0, count = 0, i;
+  	LIST_HEAD(submit_list);
+
+-	WARN_ON_ONCE(i_blocks_per_page(inode, page) > 1 && !iop);
++	WARN_ON_ONCE(blocks_per_page > 1 && !iop);
+  	WARN_ON_ONCE(iop && atomic_read(&iop->write_bytes_pending) != 0);
+
+  	/*
+@@ -1355,7 +1410,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+  	for (i = 0, file_offset = page_offset(page);
+  	     i < (PAGE_SIZE >> inode->i_blkbits) && file_offset < end_offset;
+  	     i++, file_offset += len) {
+-		if (iop && !test_bit(i, iop->uptodate))
++		if (iop && !test_bit(i, iop->state + blocks_per_page))
+  			continue;
+
+  		error = wpc->ops->map_blocks(wpc, inode, file_offset);
+@@ -1404,6 +1459,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+  		 */
+  		set_page_writeback_keepwrite(page);
+  	} else {
++		iomap_clear_range_dirty(page, 0, PAGE_SIZE);
+  		clear_page_dirty_for_io(page);
+  		set_page_writeback(page);
+  	}
+-- 
+2.25.4
+
+
+.
+
+
+
+
