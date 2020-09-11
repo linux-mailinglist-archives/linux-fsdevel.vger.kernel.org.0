@@ -2,14 +2,14 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id CA52A266747
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Sep 2020 19:41:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 189EA266745
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Sep 2020 19:41:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726375AbgIKRl0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Sep 2020 13:41:26 -0400
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:38372 "EHLO
+        id S1726343AbgIKRlJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Sep 2020 13:41:09 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:38428 "EHLO
         esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbgIKMmE (ORCPT
+        with ESMTP id S1725991AbgIKMmE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 11 Sep 2020 08:42:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
@@ -17,40 +17,40 @@ DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   t=1599828124; x=1631364124;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=EGkEEOwBzpfHNcgr098kjLm/afTRruKnzHCAAKn/Kjc=;
-  b=TaNh3v6Z1YZjy+BJeMPVcUlSz7QDKebs72PBqYzK69esGC9oRbzsSxys
-   HlgnLXlxTATrudalh2rTE++6sk58xwCR/GmJ8CyIdjd//WqsXHb6lovcB
-   kgxnYlCTIdZBDQZcELeiGS8MQ/eDzvSI8ovNkkOj70tss7sAxIDTO7yMt
-   kKJmlUD2zjVB16UVZwGx27BDHomYGnP/Kf7fhdnC2R9r/0sCLsMBqqIyX
-   +SRFVo9ASAUFdR5otU9viDexi+nYzVEL/sg6u+3nwNfYXwJaCugE/0Tzl
-   AMGc/r/9/uuNFvoGEi0j8kWvFRlotaHaxRxyszy+ySioKaBIra+id2BEX
-   A==;
-IronPort-SDR: G3BrYcoPNJmXT3t5u3ZxqJykRqivJxJPh4uB+0e4vVK6de4J/wNUc0re21qVclgoPKe0d3DpKT
- DDfgZGyJJFKd+5g3ZVnwktTA+LXd+9CPDh6RQHf6aTev+0mjoJGEZUDpySdXfe7iEE0nAnZt+9
- KLCDwvo24Ar6ROW0jwonHoJYIor2F9A6rcn09wMwqElLU9Mls++MjG8xFO+ZuI6xtzg9bPBoCI
- Xz9hNcOq/6fRE/iciSBdpE3mVymhfC9RJICLtP1ifW4l6VrzIe+PvNn4gY6Rj0ZI89Xpr1nmr8
- b4M=
+  bh=4XBBV9Fp6sjoRwi/igxARQSGbC6vCYxHPBzketHaDMg=;
+  b=MadKBhmI5V7x7zSTg51w56ZD2ENHDWg7G5d/SvNU+ed/RDRKvMkJVhRd
+   KHHXC+lYBfl6ypWv11RaNr3hDNaqSJQOoGO4hfMd8vGJB7A4AZcU03ZzW
+   0GodF5ZMsDG5qKB40VLubC7XkGRQ6I/0c7sLP7uBDQoi0CvXobp+jZNL5
+   8FaL2DjSVNBob9CebRRWBvS3edC+aC/bNEl7tn9pTPjaZN13MdWdu22y3
+   gT1egDCfwnojJcqusyLcF7xZAH2VTUjXITHH0M3V9QETcvdF/toqk2Xha
+   wQmrTt4qXTwJ8LS7qUWBvthkdrloqTP33HGWYKAgk56+fupRsU20t+SBq
+   g==;
+IronPort-SDR: 9YLGQ8SftZ3l0mSPqWZsRHT41JnGu0ER83yjDDJuTmlQ8d0aO0xWbQ8amPCT4ZuP0VRykdmFQT
+ RXKI98zISp6XfNZ9gOn2LERxHT81EDG+rEPplz1bPhkUWpO32bUBBfktDs/D6GqjVZQ4opqyJe
+ aEI+UOj+QpVm7pGEfJSUSNZs7T5y+oLca98MGkvd2nLjRpW8Oeo17/AWqqIIfen7DIpQb09cC6
+ y/NFOcB5E4l+n0Zgnhrb/noOc4+T0KwTlcoq4kNLwq0sL31CjadSMEeX0WXf5w8asPmrIlbO61
+ rAU=
 X-IronPort-AV: E=Sophos;i="5.76,415,1592841600"; 
-   d="scan'208";a="147126052"
+   d="scan'208";a="147126054"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 11 Sep 2020 20:34:02 +0800
-IronPort-SDR: Oir1RkoCVpzvzhvVMw0GdS73uzQUi8vJpC8AQENdgrr3cyIhmh2MR9iyq0zIzf0wSxOl+u7zEJ
- qk2q9EsV8YGQ==
+  by ob1.hgst.iphmx.com with ESMTP; 11 Sep 2020 20:34:04 +0800
+IronPort-SDR: TdKD4AgQtykkG9gvQrxgnwoHqbIkpl65PCvPHxwfdVIoT5asf1Ymeno2X40lRyB3IRfUjXYHIk
+ /nZYp7Qe/plA==
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 05:20:23 -0700
-IronPort-SDR: 6pZrGdnHobUZD0ickYutQmhnFYw5uEk7PU1cQDdfd17Ups4Q+HR7LYg+ymtvBJBkKohhTJZH3C
- dJ145VECIeFA==
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 05:20:24 -0700
+IronPort-SDR: N0//q2KoYG7BBS+QU9ezO0q2sv2T3tkxv2q+/TzSU5jevXUpPY0eeZDRbgFz1bWUwSlUGjKD88
+ 0z+xrTiCLzOA==
 WDCIronportException: Internal
 Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
-  by uls-op-cesaip02.wdc.com with ESMTP; 11 Sep 2020 05:34:00 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP; 11 Sep 2020 05:34:01 -0700
 From:   Naohiro Aota <naohiro.aota@wdc.com>
 To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
 Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         Hannes Reinecke <hare@suse.com>, linux-fsdevel@vger.kernel.org,
         Naohiro Aota <naohiro.aota@wdc.com>
-Subject: [PATCH v7 38/39] btrfs: reorder log node allocation
-Date:   Fri, 11 Sep 2020 21:32:58 +0900
-Message-Id: <20200911123259.3782926-39-naohiro.aota@wdc.com>
+Subject: [PATCH v7 39/39] btrfs: enable to mount ZONED incompat flag
+Date:   Fri, 11 Sep 2020 21:32:59 +0900
+Message-Id: <20200911123259.3782926-40-naohiro.aota@wdc.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200911123259.3782926-1-naohiro.aota@wdc.com>
 References: <20200911123259.3782926-1-naohiro.aota@wdc.com>
@@ -61,80 +61,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is the 3/3 patch to enable tree-log on ZONED mode.
+This final patch adds the ZONED incompat flag to
+BTRFS_FEATURE_INCOMPAT_SUPP and enables btrfs to mount ZONED flagged file
+system.
 
-The allocation order of nodes of "fs_info->log_root_tree" and nodes of
-"root->log_root" is not the same as the writing order of them. So, the
-writing causes unaligned write errors.
-
-This patch reorders the allocation of them by delaying allocation of the
-root node of "fs_info->log_root_tree," so that the node buffers can go out
-sequentially to devices.
-
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
 ---
- fs/btrfs/disk-io.c  |  6 ------
- fs/btrfs/tree-log.c | 19 +++++++++++++------
- 2 files changed, 13 insertions(+), 12 deletions(-)
+ fs/btrfs/ctree.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 4d1851e72031..0884412977a0 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -1315,16 +1315,10 @@ int btrfs_init_log_root_tree(struct btrfs_trans_handle *trans,
- 			     struct btrfs_fs_info *fs_info)
- {
- 	struct btrfs_root *log_root;
--	int ret;
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index 6e05eb180a77..e8639f6f7dec 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -303,7 +303,8 @@ struct btrfs_super_block {
+ 	 BTRFS_FEATURE_INCOMPAT_SKINNY_METADATA |	\
+ 	 BTRFS_FEATURE_INCOMPAT_NO_HOLES	|	\
+ 	 BTRFS_FEATURE_INCOMPAT_METADATA_UUID	|	\
+-	 BTRFS_FEATURE_INCOMPAT_RAID1C34)
++	 BTRFS_FEATURE_INCOMPAT_RAID1C34	|	\
++	 BTRFS_FEATURE_INCOMPAT_ZONED)
  
- 	log_root = alloc_log_tree(trans, fs_info);
- 	if (IS_ERR(log_root))
- 		return PTR_ERR(log_root);
--	ret = btrfs_alloc_log_tree_node(trans, log_root);
--	if (ret) {
--		kfree(log_root);
--		return ret;
--	}
- 	WARN_ON(fs_info->log_root_tree);
- 	fs_info->log_root_tree = log_root;
- 	return 0;
-diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-index 1ffb9a0341e2..087c1d0c7307 100644
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -3147,6 +3147,11 @@ int btrfs_sync_log(struct btrfs_trans_handle *trans,
- 	list_add_tail(&root_log_ctx.list, &log_root_tree->log_ctxs[index2]);
- 	root_log_ctx.log_transid = log_root_tree->log_transid;
- 
-+	mutex_lock(&fs_info->tree_log_mutex);
-+	if (!log_root_tree->node)
-+		btrfs_alloc_log_tree_node(trans, log_root_tree);
-+	mutex_unlock(&fs_info->tree_log_mutex);
-+
- 	/*
- 	 * Now we are safe to update the log_root_tree because we're under the
- 	 * log_mutex, and we're a current writer so we're holding the commit
-@@ -3296,12 +3301,14 @@ static void free_log_tree(struct btrfs_trans_handle *trans,
- 		.process_func = process_one_buffer
- 	};
- 
--	ret = walk_log_tree(trans, log, &wc);
--	if (ret) {
--		if (trans)
--			btrfs_abort_transaction(trans, ret);
--		else
--			btrfs_handle_fs_error(log->fs_info, ret, NULL);
-+	if (log->node) {
-+		ret = walk_log_tree(trans, log, &wc);
-+		if (ret) {
-+			if (trans)
-+				btrfs_abort_transaction(trans, ret);
-+			else
-+				btrfs_handle_fs_error(log->fs_info, ret, NULL);
-+		}
- 	}
- 
- 	clear_extent_bits(&log->dirty_log_pages, 0, (u64)-1,
+ #define BTRFS_FEATURE_INCOMPAT_SAFE_SET			\
+ 	(BTRFS_FEATURE_INCOMPAT_EXTENDED_IREF)
 -- 
 2.27.0
 
