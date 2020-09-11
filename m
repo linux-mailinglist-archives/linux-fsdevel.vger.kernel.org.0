@@ -2,118 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id A60BB265F64
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Sep 2020 14:18:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2C79265F9B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Sep 2020 14:35:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725880AbgIKMRR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Sep 2020 08:17:17 -0400
-Received: from smtp-42a9.mail.infomaniak.ch ([84.16.66.169]:46285 "EHLO
-        smtp-42a9.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725774AbgIKMQk (ORCPT
+        id S1725928AbgIKMeg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Sep 2020 08:34:36 -0400
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:38372 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbgIKMds (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Sep 2020 08:16:40 -0400
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Bnvqv0ZqWzlhfqK;
-        Fri, 11 Sep 2020 14:16:27 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Bnvqq5mSFzlh8T4;
-        Fri, 11 Sep 2020 14:16:23 +0200 (CEST)
-Subject: Re: [RFC PATCH v9 0/3] Add introspect_access(2) (was O_MAYEXEC)
-To:     Matthew Wilcox <willy@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20200910164612.114215-1-mic@digikod.net>
- <20200910170424.GU6583@casper.infradead.org>
- <f6e2358c-8e5e-e688-3e66-2cdd943e360e@digikod.net>
- <a48145770780d36e90f28f1526805a7292eb74f6.camel@linux.ibm.com>
- <880bb4ee-89a2-b9b0-747b-0f779ceda995@digikod.net>
- <20200910184033.GX6583@casper.infradead.org>
- <20200910200010.GF1236603@ZenIV.linux.org.uk>
- <20200910200543.GY6583@casper.infradead.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <3dd9b2b3-6304-03df-bfba-13864169453e@digikod.net>
-Date:   Fri, 11 Sep 2020 14:16:23 +0200
-User-Agent: 
+        Fri, 11 Sep 2020 08:33:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1599827629; x=1631363629;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=+3nWbUVlFor4kVfiP3oNqaSLc+/2lCklw0996h4GMGc=;
+  b=RTIL2YdkYd6abNTlDVoM2sKdCTgsJz4E64h1XxYQwIjU5tFIxaGoKeAE
+   bFX8OMI2Tr4hIK/Gzdxvs24bTfl9FBsPn2p7+nOGPTZpfck4O7zP6PHvm
+   40yZDdqYLTzXFjYQbo1lyjJc5gMtDeOt1kQZDvIQobzWrlkD7cdgtlmSv
+   SCk/N7HQJZiwGkGKE51uIBoBa3NXiDZSiq+RtdgVA7p3KorQwTX8OsfmP
+   v8Y0ezkh/sKWJksY9TL7sLCydG+Z6p4Y17/3Y7HsZgjMi6sG1K3GfY8FE
+   5lBP28s5KO0IIgXOmCmrNdafhtBKCW6f0EwOIgVeepgyEio0iCxiOhYcw
+   g==;
+IronPort-SDR: +V1XvkrfvT5YgH2MDqz6htCoST9XvpxXZgLpuzJV+U6lCnZqGSwhTusA3sabrBIbXeVzJxATLJ
+ PGxY4y7fDQyC1xK6UIpCufxiygNWXLehIVFQ/2kLsLT4wCjJHY8rGc5A0LFtwLPxqQB2BKuJSS
+ h/1pQPLPULDrqZ44qIK+fGMAvhE5trRGJEfWmkFV1LXQERVK68Q2r2Ww/Lp4fEl2JDpzGX4T+G
+ WEIta9y6qNYmTloSH5w8xibbvTIOmGBBIZSj7gMPRnELNqEP2/OLtEzxeHI1RRBjBjlSj9igPm
+ SNw=
+X-IronPort-AV: E=Sophos;i="5.76,415,1592841600"; 
+   d="scan'208";a="147125946"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 11 Sep 2020 20:33:09 +0800
+IronPort-SDR: 011ghEOVGHYPojpSxF4EPOfwNszaQptZsWgeUH9kTZ0hIrEqRLFU2t0OYxCKqzpZ/vuiF1o6B9
+ fCnPoRMEhtXA==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 05:19:30 -0700
+IronPort-SDR: bNW0znLN4m7r2EHLLcUqFuMFuhRF0017toi2Z5FoO1Jj9BMWXCtGVxwvHtMexOCQGSvYgbK4It
+ 0Yb29VfSP7+Q==
+WDCIronportException: Internal
+Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
+  by uls-op-cesaip02.wdc.com with ESMTP; 11 Sep 2020 05:33:07 -0700
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>
+Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Hannes Reinecke <hare@suse.com>, linux-fsdevel@vger.kernel.org,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Anand Jain <anand.jain@oracle.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Damien Le Moal <damien.lemoal@wdc.com>
+Subject: [PATCH v7 01/39] btrfs: introduce ZONED feature flag
+Date:   Fri, 11 Sep 2020 21:32:21 +0900
+Message-Id: <20200911123259.3782926-2-naohiro.aota@wdc.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200911123259.3782926-1-naohiro.aota@wdc.com>
+References: <20200911123259.3782926-1-naohiro.aota@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <20200910200543.GY6583@casper.infradead.org>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This patch introduces the ZONED incompat flag. The flag indicates that the
+volume management will satisfy the constraints imposed by host-managed
+zoned block devices.
 
-On 10/09/2020 22:05, Matthew Wilcox wrote:
-> On Thu, Sep 10, 2020 at 09:00:10PM +0100, Al Viro wrote:
->> On Thu, Sep 10, 2020 at 07:40:33PM +0100, Matthew Wilcox wrote:
->>> On Thu, Sep 10, 2020 at 08:38:21PM +0200, Mickaël Salaün wrote:
->>>> There is also the use case of noexec mounts and file permissions. From
->>>> user space point of view, it doesn't matter which kernel component is in
->>>> charge of defining the policy. The syscall should then not be tied with
->>>> a verification/integrity/signature/appraisal vocabulary, but simply an
->>>> access control one.
->>>
->>> permission()?
->>
->> int lsm(int fd, const char *how, char *error, int size);
->>
->> Seriously, this is "ask LSM to apply special policy to file"; let's
->> _not_ mess with flags, etc. for that; give it decent bandwidth
->> and since it's completely opaque for the rest of the kernel,
->> just a pass a string to be parsed by LSM as it sees fit.
+Reviewed-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+---
+ fs/btrfs/sysfs.c           | 2 ++
+ include/uapi/linux/btrfs.h | 1 +
+ 2 files changed, 3 insertions(+)
 
-Well, I don't know why you're so angry against LSM, but as noticed by
-Matthew, the main focus of this patch series is not about LSM (no hook,
-no security/* code, only file permission and mount option checks,
-nothing fancy). Moreover, the syscall you're proposing doesn't make
-sense, but I guess it's yet another sarcastic reply. Please, cool down.
-We asked for constructive comments and already followed your previous
-requests (even if we didn't get answers for some questions), but
-seriously, this one is nonsense.
+diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
+index c8df2edafd85..38c7a57789d8 100644
+--- a/fs/btrfs/sysfs.c
++++ b/fs/btrfs/sysfs.c
+@@ -262,6 +262,7 @@ BTRFS_FEAT_ATTR_INCOMPAT(no_holes, NO_HOLES);
+ BTRFS_FEAT_ATTR_INCOMPAT(metadata_uuid, METADATA_UUID);
+ BTRFS_FEAT_ATTR_COMPAT_RO(free_space_tree, FREE_SPACE_TREE);
+ BTRFS_FEAT_ATTR_INCOMPAT(raid1c34, RAID1C34);
++BTRFS_FEAT_ATTR_INCOMPAT(zoned, ZONED);
+ 
+ static struct attribute *btrfs_supported_feature_attrs[] = {
+ 	BTRFS_FEAT_ATTR_PTR(mixed_backref),
+@@ -277,6 +278,7 @@ static struct attribute *btrfs_supported_feature_attrs[] = {
+ 	BTRFS_FEAT_ATTR_PTR(metadata_uuid),
+ 	BTRFS_FEAT_ATTR_PTR(free_space_tree),
+ 	BTRFS_FEAT_ATTR_PTR(raid1c34),
++	BTRFS_FEAT_ATTR_PTR(zoned),
+ 	NULL
+ };
+ 
+diff --git a/include/uapi/linux/btrfs.h b/include/uapi/linux/btrfs.h
+index 2c39d15a2beb..5df73001aad4 100644
+--- a/include/uapi/linux/btrfs.h
++++ b/include/uapi/linux/btrfs.h
+@@ -307,6 +307,7 @@ struct btrfs_ioctl_fs_info_args {
+ #define BTRFS_FEATURE_INCOMPAT_NO_HOLES		(1ULL << 9)
+ #define BTRFS_FEATURE_INCOMPAT_METADATA_UUID	(1ULL << 10)
+ #define BTRFS_FEATURE_INCOMPAT_RAID1C34		(1ULL << 11)
++#define BTRFS_FEATURE_INCOMPAT_ZONED		(1ULL << 12)
+ 
+ struct btrfs_ioctl_feature_flags {
+ 	__u64 compat_flags;
+-- 
+2.27.0
 
-> 
-> Hang on, it does have some things which aren't BD^W^WLSM.  It lets
-> the interpreter honour the mount -o noexec option.  I presume it's
-> not easily defeated by
-> 	cat /home/salaun/bin/bad.pl | perl -
-> 
-
-Funny. I know there is a lot of text and links but please read the
-commit messages before further comments.
