@@ -2,310 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 66A7B265BB9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Sep 2020 10:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A867D265C0C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Sep 2020 10:57:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725820AbgIKIfc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Sep 2020 04:35:32 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:11815 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725710AbgIKIfa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Sep 2020 04:35:30 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0BD3BA509FB866CF4467;
-        Fri, 11 Sep 2020 16:35:26 +0800 (CST)
-Received: from [127.0.0.1] (10.174.179.103) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.487.0; Fri, 11 Sep 2020
- 16:35:20 +0800
-Subject: Re: [RFC PATCH V4] iomap: add support to track dirty state of sub
- pages
-From:   "yukuai (C)" <yukuai3@huawei.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <hch@infradead.org>, <darrick.wong@oracle.com>,
-        <david@fromorbit.com>, <linux-xfs@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yi.zhang@huawei.com>
-References: <20200821123306.1658495-1-yukuai3@huawei.com>
- <20200821124424.GQ17456@casper.infradead.org>
- <7fb4bb5a-adc7-5914-3aae-179dd8f3adb1@huawei.com>
-Message-ID: <a87e93cc-6faf-64fb-add8-39bfcd7febba@huawei.com>
-Date:   Fri, 11 Sep 2020 16:35:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1725730AbgIKI47 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Sep 2020 04:56:59 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:58876 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725550AbgIKI46 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Fri, 11 Sep 2020 04:56:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1599814618; x=1631350618;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=e7W7Ym1ERz96mzYJdYmNXtXtwbLre6nKVbK/TDUoB7U=;
+  b=ZiS48BX1HKfaEsKkl8iE6yT4YEHGDxSIVriS6bCoa/0zPdOzWChdCEvE
+   2JeV0D26ORIsEUu/knTGUEPpSocXhQ3EbssiiWzR2ulOvCeqPMY9X/pEq
+   BnOvvqWuvKIt+De4gQpYl0hc6cSrVQPBjbHwLBSeskIhfss9djzPRonJH
+   6srmLlxos3OXg7dfldijfbgmX5Z7KYV8WOBkqPDCtgQb0xnNyyBLcgstn
+   qCv6U1brrSqvgtm8YSuk5cuC5uVWexp+rg4C9vZzd9czI03YLLC9xSJhy
+   lSbZn4+/jiSNzyMp5DE5aetaeXjPSdkGcYbRqZ2F+8FUdvCsV2xP9Pd12
+   w==;
+IronPort-SDR: vCY9exTIm9wQc0u6cfvHEAuKjNQzKfOscUiA2zF4XKBMCdhj0AZObfQ2ABI4Z7znzkbgBnqYzM
+ riv0E2qrtFxtAe98Hul3a+ecY2k+RdPIbNFhT/F87lHp4L3wSsHgXnkuH4hqBm7eFF2ny1ay70
+ Js0ZiANFdyOQ+8MuzWc72MA4fXcSN/MzFov5oZJO/qh1W7lMbCY1USyfoZo9ZP2OtBfYnDTls6
+ 0cv4gCYMO4Ta2Z1l272/m3xDvPkVivnoMjYCQ6OSubJ9np4/JP+b1/bLwImaEkyV9kO+mQi0P2
+ 4x8=
+X-IronPort-AV: E=Sophos;i="5.76,414,1592841600"; 
+   d="scan'208";a="147041237"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 11 Sep 2020 16:56:57 +0800
+IronPort-SDR: aFsoVbFxxHXWYbGzbyQzAOhVLe8uUeHOzhXUaj6/KxfgoX+kicCUGjemvD2CoqKL1Jrz75Q4yK
+ OFoQ7/6K+Dog==
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 01:44:14 -0700
+IronPort-SDR: 0H2LJFbuza9n/CE1QeSZQLMFp9xdF0T3m7JvezDPIwyK34Zqyhac/7DD/1WH0ZucT8WLhfQQor
+ s9Nkb9uIg2wA==
+WDCIronportException: Internal
+Received: from unknown (HELO redsun60.ssa.fujisawa.hgst.com) ([10.149.66.36])
+  by uls-op-cesaip01.wdc.com with ESMTP; 11 Sep 2020 01:56:56 -0700
+From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
+To:     Damien Le Moal <Damien.LeMoal@wdc.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH v5 0/4] zonefs: introduce helper for zone management
+Date:   Fri, 11 Sep 2020 17:56:47 +0900
+Message-Id: <20200911085651.23526-1-johannes.thumshirn@wdc.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <7fb4bb5a-adc7-5914-3aae-179dd8f3adb1@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.179.103]
-X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Introduce a mount option for explicitly opening a device's zones when opening
+the seq zone file for writing. This way we prevent resource exhaustion on
+devices that export a maximum open zones limit. 
 
-Sorry that after copy and paste, the content of the patch somehow 
-changed and looks strange.
+Changes to v4:
+- Clarify comments
 
-Best regards,
-Yu Kuai
+Changes to v3:
+- Introduce unlocked zonefs_io_error
+- Rework failure of zone close on file close
 
-On 2020/09/11 16:27, yukuai (C) wrote:
-> On 2020/08/21 20:44, Matthew Wilcox wrote:
->> On Fri, Aug 21, 2020 at 08:33:06PM +0800, Yu Kuai wrote:
->>> changes from v3: - add IOMAP_STATE_ARRAY_SIZE - replace set_bit / 
->>> clear_bit with bitmap_set / bitmap_clear - move 
->>> iomap_set_page_dirty() out of 'iop->state_lock' - merge 
->>> iomap_set/clear_range_dirty() and iomap_iop_clear/clear_range_dirty()
->>
->> I'm still working on the iomap parts of the THP series (fixing up 
->> invalidatepage right now), but here are some of the relevant bits 
->> (patch series to follow)
->>
-> 
-> Hi, Matthew
-> 
-> Since your THP iomap patches were reviewed, I made some modifications
-> based on these patches.
-> 
-> Best regards,
-> Yu Kuai
-> 
-> ---
->   fs/iomap/buffered-io.c | 92 +++++++++++++++++++++++++++++++++---------
->   1 file changed, 74 insertions(+), 18 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index edf5eea56cf5..bc7f57748be8 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -23,13 +23,17 @@
-> 
->   /*
->    * Structure allocated for each page or THP when block size < page size
-> - * to track sub-page uptodate status and I/O completions.
-> + * to track sub-page status and I/O completions.
->    */
->   struct iomap_page {
->       atomic_t        read_bytes_pending;
->       atomic_t        write_bytes_pending;
-> -    spinlock_t        uptodate_lock;
-> -    unsigned long        uptodate[];
-> +    spinlock_t        state_lock;
-> +    /*
-> +     * The first half bits are used to track sub-page uptodate status,
-> +     * the second half bits are for dirty status.
-> +     */
-> +    unsigned long        state[];
->   };
-> 
->   static inline struct iomap_page *to_iomap_page(struct page *page)
-> @@ -57,9 +61,9 @@ iomap_page_create(struct inode *inode, struct page *page)
->       if (iop || nr_blocks <= 1)
->           return iop;
-> 
-> -    iop = kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)),
-> +    iop = kzalloc(struct_size(iop, state, BITS_TO_LONGS(2 * nr_blocks)),
->               GFP_NOFS | __GFP_NOFAIL);
-> -    spin_lock_init(&iop->uptodate_lock);
-> +    spin_lock_init(&iop->state_lock);
->       attach_page_private(page, iop);
->       return iop;
->   }
-> @@ -74,7 +78,7 @@ iomap_page_release(struct page *page)
->           return;
->       WARN_ON_ONCE(atomic_read(&iop->read_bytes_pending));
->       WARN_ON_ONCE(atomic_read(&iop->write_bytes_pending));
-> -    WARN_ON_ONCE(bitmap_full(iop->uptodate, nr_blocks) !=
-> +    WARN_ON_ONCE(bitmap_full(iop->state, nr_blocks) !=
->               PageUptodate(page));
->       kfree(iop);
->   }
-> @@ -105,7 +109,7 @@ iomap_adjust_read_range(struct inode *inode, struct 
-> iomap_page *iop,
-> 
->           /* move forward for each leading block marked uptodate */
->           for (i = first; i <= last; i++) {
-> -            if (!test_bit(i, iop->uptodate))
-> +            if (!test_bit(i, iop->state))
->                   break;
->               *pos += block_size;
->               poff += block_size;
-> @@ -115,7 +119,7 @@ iomap_adjust_read_range(struct inode *inode, struct 
-> iomap_page *iop,
-> 
->           /* truncate len if we find any trailing uptodate block(s) */
->           for ( ; i <= last; i++) {
-> -            if (test_bit(i, iop->uptodate)) {
-> +            if (test_bit(i, iop->state)) {
->                   plen -= (last - i + 1) * block_size;
->                   last = i - 1;
->                   break;
-> @@ -139,6 +143,55 @@ iomap_adjust_read_range(struct inode *inode, struct 
-> iomap_page *iop,
->       *lenp = plen;
->   }
-> 
-> +static void
-> +iomap_set_range_dirty(struct page *page, unsigned int off,
-> +        unsigned int len)
-> +{
-> +    struct inode *inode = page->mapping->host;
-> +    unsigned int blocks_per_page = i_blocks_per_page(inode, page);
-> +    unsigned int first = (off >> inode->i_blkbits) + blocks_per_page;
-> +    unsigned int last = ((off + len - 1) >> inode->i_blkbits) + 
-> blocks_per_page;
-> +    unsigned long flags;
-> +    struct iomap_page *iop;
-> +
-> +    if (PageError(page))
-> +        return;
-> +
-> +    if (len)
-> +        iomap_set_page_dirty(page);
-> +
-> +    if (!page_has_private(page))
-> +        return;
-> +
-> +    iop = to_iomap_page(page);
-> +    spin_lock_irqsave(&iop->state_lock, flags);
-> +    bitmap_set(iop->state, first, last - first + 1);
-> +    spin_unlock_irqrestore(&iop->state_lock, flags);
-> +}
-> +
-> +static void
-> +iomap_clear_range_dirty(struct page *page, unsigned int off,
-> +        unsigned int len)
-> +{
-> +    struct inode *inode = page->mapping->host;
-> +    unsigned int blocks_per_page = i_blocks_per_page(inode, page);
-> +    unsigned int first = (off >> inode->i_blkbits) + blocks_per_page;
-> +    unsigned int last = ((off + len - 1) >> inode->i_blkbits) + 
-> blocks_per_page;
-> +    unsigned long flags;
-> +    struct iomap_page *iop;
-> +
-> +    if (PageError(page))
-> +        return;
-> +
-> +    if (!page_has_private(page))
-> +        return;
-> +
-> +    iop = to_iomap_page(page);
-> +    spin_lock_irqsave(&iop->state_lock, flags);
-> +    bitmap_clear(iop->state, first, last - first + 1);
-> +    spin_unlock_irqrestore(&iop->state_lock, flags);
-> +}
-> +
->   static void
->   iomap_iop_set_range_uptodate(struct page *page, unsigned off, unsigned 
-> len)
->   {
-> @@ -148,11 +201,11 @@ iomap_iop_set_range_uptodate(struct page *page, 
-> unsigned off, unsigned len)
->       unsigned last = (off + len - 1) >> inode->i_blkbits;
->       unsigned long flags;
-> 
-> -    spin_lock_irqsave(&iop->uptodate_lock, flags);
-> -    bitmap_set(iop->uptodate, first, last - first + 1);
-> -    if (bitmap_full(iop->uptodate, i_blocks_per_page(inode, page)))
-> +    spin_lock_irqsave(&iop->state_lock, flags);
-> +    bitmap_set(iop->state, first, last - first + 1);
-> +    if (bitmap_full(iop->state, i_blocks_per_page(inode, page)))
->           SetPageUptodate(page);
-> -    spin_unlock_irqrestore(&iop->uptodate_lock, flags);
-> +    spin_unlock_irqrestore(&iop->state_lock, flags);
->   }
-> 
->   static void
-> @@ -445,7 +498,7 @@ iomap_is_partially_uptodate(struct page *page, 
-> unsigned long from,
-> 
->       if (iop) {
->           for (i = first; i <= last; i++)
-> -            if (!test_bit(i, iop->uptodate))
-> +            if (!test_bit(i, iop->state))
->                   return 0;
->           return 1;
->       }
-> @@ -683,7 +736,7 @@ static size_t __iomap_write_end(struct inode *inode, 
-> loff_t pos, size_t len,
->       if (unlikely(copied < len && !PageUptodate(page)))
->           return 0;
->       iomap_set_range_uptodate(page, offset_in_page(pos), len);
-> -    iomap_set_page_dirty(page);
-> +    iomap_set_range_dirty(page, offset_in_page(pos), len);
->       return copied;
->   }
-> 
-> @@ -997,7 +1050,6 @@ iomap_page_mkwrite_actor(struct inode *inode, 
-> loff_t pos, loff_t length,
->       } else {
->           WARN_ON_ONCE(!PageUptodate(page));
->           iomap_page_create(inode, page);
-> -        set_page_dirty(page);
->       }
-> 
->       return length;
-> @@ -1007,7 +1059,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault 
-> *vmf, const struct iomap_ops *ops)
->   {
->       struct page *page = vmf->page;
->       struct inode *inode = file_inode(vmf->vma->vm_file);
-> -    unsigned long length;
-> +    unsigned int length, dirty_bits;
->       loff_t offset;
->       ssize_t ret;
-> 
-> @@ -1016,6 +1068,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault 
-> *vmf, const struct iomap_ops *ops)
->       if (ret < 0)
->           goto out_unlock;
->       length = ret;
-> +    dirty_bits = ret;
-> 
->       offset = page_offset(page);
->       while (length > 0) {
-> @@ -1028,6 +1081,7 @@ vm_fault_t iomap_page_mkwrite(struct vm_fault 
-> *vmf, const struct iomap_ops *ops)
->           length -= ret;
->       }
-> 
-> +    iomap_set_range_dirty(page, 0, dirty_bits);
->       wait_for_stable_page(page);
->       return VM_FAULT_LOCKED;
->   out_unlock:
-> @@ -1340,11 +1394,12 @@ iomap_writepage_map(struct iomap_writepage_ctx 
-> *wpc,
->       struct iomap_page *iop = to_iomap_page(page);
->       struct iomap_ioend *ioend, *next;
->       unsigned len = i_blocksize(inode);
-> +    unsigned int blocks_per_page = i_blocks_per_page(inode, page);
->       u64 file_offset; /* file offset of page */
->       int error = 0, count = 0, i;
->       LIST_HEAD(submit_list);
-> 
-> -    WARN_ON_ONCE(i_blocks_per_page(inode, page) > 1 && !iop);
-> +    WARN_ON_ONCE(blocks_per_page > 1 && !iop);
->       WARN_ON_ONCE(iop && atomic_read(&iop->write_bytes_pending) != 0);
-> 
->       /*
-> @@ -1355,7 +1410,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->       for (i = 0, file_offset = page_offset(page);
->            i < (PAGE_SIZE >> inode->i_blkbits) && file_offset < end_offset;
->            i++, file_offset += len) {
-> -        if (iop && !test_bit(i, iop->uptodate))
-> +        if (iop && !test_bit(i, iop->state + blocks_per_page))
->               continue;
-> 
->           error = wpc->ops->map_blocks(wpc, inode, file_offset);
-> @@ -1404,6 +1459,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->            */
->           set_page_writeback_keepwrite(page);
->       } else {
-> +        iomap_clear_range_dirty(page, 0, PAGE_SIZE);
->           clear_page_dirty_for_io(page);
->           set_page_writeback(page);
->       }
+Changes to v2:
+- Clear ZONEFS_ZONE_OPEN flag on error
+- Fix missing newline
+
+Johannes Thumshirn (4):
+  zonefs: introduce helper for zone management
+  zonefs: provide zonefs_io_error variant that can be called with
+    i_truncate_mutex held
+  zonefs: open/close zone on file open/close
+  zonefs: document the explicit-open mount option
+
+ Documentation/filesystems/zonefs.rst |  15 ++
+ fs/zonefs/super.c                    | 221 +++++++++++++++++++++++++--
+ fs/zonefs/zonefs.h                   |  10 ++
+ 3 files changed, 233 insertions(+), 13 deletions(-)
+
+-- 
+2.26.2
 
