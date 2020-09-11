@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 162322655E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Sep 2020 02:02:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 240BB2655FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Sep 2020 02:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725550AbgIKACc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Sep 2020 20:02:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60902 "EHLO
+        id S1725554AbgIKAVA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Sep 2020 20:21:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725290AbgIKACZ (ORCPT
+        with ESMTP id S1725283AbgIKAU4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Sep 2020 20:02:25 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71430C0613ED
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 17:02:24 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id gr14so11353187ejb.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 17:02:24 -0700 (PDT)
+        Thu, 10 Sep 2020 20:20:56 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DD3DC061756
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 17:20:55 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id z22so11347979ejl.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Sep 2020 17:20:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=JhzWeBi98uxge5Nl6JBsweyqdcSVY7AXtn8+FM0wSrE=;
-        b=rnRu5BQ39GIwkamlytlKQmPZIKMfKBaWA1lS6u7txSlp88YIhkgh4Ikh/BkD2VooC0
-         Aqx2tV227t/q0hU7LxaBwj94TDuh22rSbw4vLxkEbDFXzYBT7LefF2I/axBOnrs01F42
-         X/swFpSTGtknqcSv/1DR81oljlbK606giguTiYPcnfiSe5mxUg9id6uwA1iFWJ02pbfo
-         kkwSgpD5Zir6FPSfU4ffjsb5kVWDJ2siaXrOY3Zx4u8daVswlC6DFIAft9zLt98Y8r5e
-         XlfvSX71WcoF1DP0i71dEov2Rm7pZ3uhwGvDhxfneGMGVF22rb6/TE0FT31kA4mLg0Y9
-         7FFA==
+        bh=IyAAsSx7nFV/dq/SzL35IFpVJ+Yn15D4pJKs31u9n78=;
+        b=SijTA2JBh2igQyUFhnGY43n8X9KiE/1xBjEYzMfT6RvTVPBWKIf2S98WFdxu9pntLY
+         3FWTWsLcOBbZZP+uQKQQFz4ztqRQDTHyvvYDTLpZ/Yx9mHMQtmxixW2u+2Iv/F2pmzx0
+         9Shwb8Rd2BYkk5HW11A7nj4k+Z9OU+m6AuaF06ISqWp+Wo0Dxl3Ftte6cYPtPbWW1yZR
+         JLLqu2Dvol/xqraTUN3AMxutXgpUnMwIbPWTFot3PWxuMyymTw8Kv6tYWx+E0bQ1fw0S
+         kVuDX8lq+sS+iKyOplLtlkXB4ZB4Y983W8fe/h7lUU2TIMbQmGvwGw79xY/i1sapn5fC
+         JATA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=JhzWeBi98uxge5Nl6JBsweyqdcSVY7AXtn8+FM0wSrE=;
-        b=m7GWlznKHffSYVZeMbXKMySu5AzDwdypytcS+SHnXdKgkRMtMNDOWkbLkcB/p2aU0d
-         BQGhHVJjrLP5hJnkL3y38UwSB1iPu5k/Ajxtc5He0oKH2NrZoBLY464YXrQKXBtBDnRW
-         DAHRaK1FgfPx+uV87kI5TlL29gS/k8ua9PToIt/H4vlrjUPwphddPrJStMHBNEDL5G+n
-         hQlAo5SYG09F/G9TEKieB5VOZNDkCi1SA+VWSDbxjKHD97sBYgqcCiDmQdnxhtQUh/Ze
-         6iGYkc8Qdyfia8k7HHbvrPSAkwJzE1Htjw2WbVwYXw0dRx+SUBnDs7wOMNgNnBjBcSl1
-         O6TQ==
-X-Gm-Message-State: AOAM530rNkovg/vP6cHW+cM20zqmIcO4217Hp6Kq3NVImonwRt7aF0Dv
-        2Nuajw7e13GAbeY79ECb4LGHRfWXYU2pfJDTgu1AYA==
-X-Google-Smtp-Source: ABdhPJzqjd13RuBCERWCNKaIjZBQ1L7nXsBk6lxn6abKKBWrWwwFaxOFeoAHNmmQyEOac8m4z/LctrardqgtakRoM9k=
-X-Received: by 2002:a17:906:a0c2:: with SMTP id bh2mr11828231ejb.493.1599782542769;
- Thu, 10 Sep 2020 17:02:22 -0700 (PDT)
+        bh=IyAAsSx7nFV/dq/SzL35IFpVJ+Yn15D4pJKs31u9n78=;
+        b=E4dtKWDn2cGcG5JuX9N8GbP++cl10W3Z8xCK7Zf3GtGNjlGendTBqfCOpRVjJU9CAH
+         aVeuFdwCcj4IVMFjqvcpWqD+a2QVpw41oe48DKw+sCVQ0mYpDzouHnQi2C23CVywveL/
+         +ACah4QGWGMWxvqcrHotgGDTRSTKhRt820yu6t9t6uhChQplUIzJWandr436kdlmdfR4
+         ZC6VYMSGHFVjCEadUgXtTFRuNsIBBKJWUrK4mbe2ACTwgwXJ3DJAs2nCng8a/3naACb3
+         FujSW+rCQX4cAxTIyCeKMzdwXkRn9//P6V/N0FSiqrq0hnJVESrQkANg2VjUm74mbyB3
+         3UJw==
+X-Gm-Message-State: AOAM531ay8YPHIQ56gWAbRfFSE+y7SNwnohTNENJxsKGj/El18rspmSN
+        9wly4A1ZiFFk2F6HPjs9nSXI2bwiPDEX3S06Vcuggg==
+X-Google-Smtp-Source: ABdhPJwL5k8zeWDPprG5Mrub7BhXpdPNFjl1twNR0wyPykMPOKHhl8JhWG8zU9BNykiHZwGZd8sG1UHbIbv8RO4puvk=
+X-Received: by 2002:a17:906:a0c2:: with SMTP id bh2mr11898964ejb.493.1599783653707;
+ Thu, 10 Sep 2020 17:20:53 -0700 (PDT)
 MIME-Version: 1.0
 References: <20200910202107.3799376-1-keescook@chromium.org>
- <20200910202107.3799376-6-keescook@chromium.org> <202009101634.52ED6751AD@keescook>
-In-Reply-To: <202009101634.52ED6751AD@keescook>
+ <20200910202107.3799376-7-keescook@chromium.org> <202009101649.2A0BF95@keescook>
+In-Reply-To: <202009101649.2A0BF95@keescook>
 From:   Jann Horn <jannh@google.com>
-Date:   Fri, 11 Sep 2020 02:01:56 +0200
-Message-ID: <CAG48ez2fP7yupg6Th+Hg0tL3o06p2PR1HtQcvy4Ro+Q5T2Nfkw@mail.gmail.com>
-Subject: Re: [RFC PATCH 5/6] security/fbfam: Detect a fork brute force attack
+Date:   Fri, 11 Sep 2020 02:20:27 +0200
+Message-ID: <CAG48ez2=8y7jC9vWSPyYNhwASxGrQaewSBczbr02Ri2YnBJwVA@mail.gmail.com>
+Subject: Re: [RFC PATCH 6/6] security/fbfam: Mitigate a fork brute force attack
 To:     Kees Cook <keescook@chromium.org>
 Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
         John Wood <john.wood@gmx.com>,
@@ -78,65 +78,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 11, 2020 at 1:49 AM Kees Cook <keescook@chromium.org> wrote:
-> On Thu, Sep 10, 2020 at 01:21:06PM -0700, Kees Cook wrote:
+On Fri, Sep 11, 2020 at 1:56 AM Kees Cook <keescook@chromium.org> wrote:
+> On Thu, Sep 10, 2020 at 01:21:07PM -0700, Kees Cook wrote:
 > > From: John Wood <john.wood@gmx.com>
 > >
-> > To detect a fork brute force attack it is necessary to compute the
-> > crashing rate of the application. This calculation is performed in each
-> > fatal fail of a task, or in other words, when a core dump is triggered.
-> > If this rate shows that the application is crashing quickly, there is a
-> > clear signal that an attack is happening.
+> > In order to mitigate a fork brute force attack it is necessary to kill
+> > all the offending tasks. This tasks are all the ones that share the
+> > statistical data with the current task (the task that has crashed).
 > >
-> > Since the crashing rate is computed in milliseconds per fault, if this
-> > rate goes under a certain threshold a warning is triggered.
-> >
-> > Signed-off-by: John Wood <john.wood@gmx.com>
-> > ---
-> >  fs/coredump.c          |  2 ++
-> >  include/fbfam/fbfam.h  |  2 ++
-> >  security/fbfam/fbfam.c | 39 +++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 43 insertions(+)
-> >
-> > diff --git a/fs/coredump.c b/fs/coredump.c
-> > index 76e7c10edfc0..d4ba4e1828d5 100644
-> > --- a/fs/coredump.c
-> > +++ b/fs/coredump.c
-> > @@ -51,6 +51,7 @@
-> >  #include "internal.h"
-> >
-> >  #include <trace/events/sched.h>
-> > +#include <fbfam/fbfam.h>
-> >
-> >  int core_uses_pid;
-> >  unsigned int core_pipe_limit;
-> > @@ -825,6 +826,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
-> >  fail_creds:
-> >       put_cred(cred);
-> >  fail:
-> > +     fbfam_handle_attack(siginfo->si_signo);
+> > Since the attack detection is done in the function fbfam_handle_attack()
+> > that is called every time a core dump is triggered, only is needed to
+> > kill the others tasks that share the same statistical data, not the
+> > current one as this is in the path to be killed.
+[...]
+> > +     for_each_process(p) {
+> > +             if (p == current || p->fbfam_stats != stats)
+> > +                     continue;
+> > +
+> > +             do_send_sig_info(SIGKILL, SEND_SIG_PRIV, p, PIDTYPE_PID);
+> > +             pr_warn("fbfam: Offending process with PID %d killed\n",
+> > +                     p->pid);
+[...]
+> > +
+> > +             killed += 1;
+> > +             if (killed >= to_kill)
+> > +                     break;
+> > +     }
+> > +
+> > +     rcu_read_unlock();
 >
-> I don't think this is the right place for detecting a crash -- isn't
-> this only for the "dumping core" condition? In other words, don't you
-> want to do this in get_signal()'s "fatal" block? (i.e. very close to the
-> do_coredump, but without the "should I dump?" check?)
->
-> Hmm, but maybe I'm wrong? It looks like you're looking at noticing the
-> process taking a signal from SIG_KERNEL_COREDUMP_MASK ?
->
-> (Better yet: what are fatal conditions that do NOT match
-> SIG_KERNEL_COREDUMP_MASK, and should those be covered?)
->
-> Regardless, *this* looks like the only place without an LSM hook. And it
-> doesn't seem unreasonable to add one here. I assume it would probably
-> just take the siginfo pointer, which is also what you're checking.
+> Can't newly created processes escape this RCU read lock? I think this
+> need alternate locking, or something in the task_alloc hook that will
+> block any new process from being created within the stats group.
 
-Good point, making this an LSM might be a good idea.
-
-> e.g. for include/linux/lsm_hook_defs.h:
->
-> LSM_HOOK(int, 0, task_coredump, const kernel_siginfo_t *siginfo);
-
-I guess it should probably be an LSM_RET_VOID hook? And since, as you
-said, it's not really semantically about core dumping, maybe it should
-be named task_fatal_signal or something like that.
+Good point; the proper way to deal with this would probably be to take
+the tasklist_lock in read mode around this loop (with
+read_lock(&tasklist_lock) / read_unlock(&tasklist_lock)), which pairs
+with the write_lock_irq(&tasklist_lock) in copy_process(). Thanks to
+the fatal_signal_pending() check while holding the lock in
+copy_process(), that would be race-free - any fork() that has not yet
+inserted the new task into the global task list would wait for us to
+drop the tasklist_lock, then bail out at the fatal_signal_pending()
+check.
