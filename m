@@ -2,110 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FC65267743
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Sep 2020 04:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F6CC2677A1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Sep 2020 06:14:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725795AbgILC2c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Sep 2020 22:28:32 -0400
-Received: from smtprelay0241.hostedemail.com ([216.40.44.241]:35008 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725562AbgILC2c (ORCPT
+        id S1725825AbgILEO2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Sep 2020 00:14:28 -0400
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:48634 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbgILEO1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Sep 2020 22:28:32 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 87C84182CED2A;
-        Sat, 12 Sep 2020 02:28:30 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:1963:2198:2199:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3868:3871:3874:4321:5007:7903:8603:8957:10004:10400:10848:11232:11473:11658:11914:12296:12297:12740:12760:12895:13019:13161:13229:13439:14096:14097:14659:14721:21080:21451:21627:30012:30054:30070:30090:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:1,LUA_SUMMARY:none
-X-HE-Tag: waste77_160c1bc270f3
-X-Filterd-Recvd-Size: 3171
-Received: from XPS-9350.home (unknown [47.151.133.149])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 12 Sep 2020 02:28:28 +0000 (UTC)
-Message-ID: <f32cdd694fcf647bbe17b54b983324bc24f1360c.camel@perches.com>
-Subject: Re: [PATCH v5 01/10] fs/ntfs3: Add headers and misc files
-From:   Joe Perches <joe@perches.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        pali@kernel.org, dsterba@suse.cz, aaptel@suse.com,
-        willy@infradead.org, rdunlap@infradead.org, mark@harmstone.com,
-        nborisov@suse.com
-Date:   Fri, 11 Sep 2020 19:28:27 -0700
-In-Reply-To: <20200911141018.2457639-2-almaz.alexandrovich@paragon-software.com>
-References: <20200911141018.2457639-1-almaz.alexandrovich@paragon-software.com>
-         <20200911141018.2457639-2-almaz.alexandrovich@paragon-software.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.36.4-0ubuntu1 
+        Sat, 12 Sep 2020 00:14:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1599884066; x=1631420066;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BNl6BClW/JQVTxBSvDrATPpOKqPo281pEiBmX2rOtCw=;
+  b=moL4+NmvJ7keivzoM+kGoj3QL8gbnqPnkuJqdm1S5wol5ByPeJ6wZrQ7
+   aBZFpYtF1wAICIVGnLXqQE7aZsRueu65L2xwSjBLnfiSrvamJMgmr8nr1
+   KAqS4ORf5bbnW3FPmvjV2/6sOwMht8DqKY7skg9UT1b10Af4yBfx149CF
+   GuxBr/a/V5UbmwTamh0LPmLCMuLinUX5H2KGmKGjGlt2Jh9DpRJRUrTAO
+   eMFL2dCZqDG8XpKjpSep4/euMvlmjiWdrorcWORDxnzFZ9Kd+21TaWZlX
+   Gz5G1j7XEhWfSu0AA6GmwIzSKRd434Qy1vty8R6xc6yYDpKpjoUbnvvbA
+   g==;
+IronPort-SDR: ywx3k3r4H444IZAhL9cB6kP7PoWxHPM9yvQW8Q6KGaZdoLe5P/D2E7+ShbdeGIqJQy8jrMe9kB
+ 60314IjjwQNgMoxHmvfab+oDBHyxrYtmWx8jblB0qy4Ot4NApwXmX3wxk5zbe8GXXgqh0Mvyyw
+ NSjfyuVu4bz5W6dvB9R/uauakZ3S+jauGpEsR63V3xgSccpyt5Gcun8cNsq92jqHK/sxHw0Zdk
+ Yn7U7vXL32VF82Oc46erwY0HPOMYEbAanYDHyXS0QdLOyzxfzhmxdl7GGlwUk4LjWtiv9p8wf/
+ veg=
+X-IronPort-AV: E=Sophos;i="5.76,418,1592841600"; 
+   d="scan'208";a="148417368"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 12 Sep 2020 12:14:26 +0800
+IronPort-SDR: HxH5zfP67TmxoK5F02JdX6GCA2v3/1M9itpoJpigrhOENoGf+x44e9n5sOa+zwGsHr5JrbLsyz
+ yh35YSGAlpnw==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 21:00:46 -0700
+IronPort-SDR: pxzRTxqFPjjEPHA7DQ8Z24sjPaGlgJe3x/sdKJggiw2aRX2Qgu0x0a0gWWP1DDHwpew1rgmfoi
+ +1NCCUWDZKRA==
+WDCIronportException: Internal
+Received: from naota.dhcp.fujisawa.hgst.com ([10.149.52.155])
+  by uls-op-cesaip02.wdc.com with SMTP; 11 Sep 2020 21:14:26 -0700
+Received: (nullmailer pid 3884290 invoked by uid 1000);
+        Sat, 12 Sep 2020 04:14:24 -0000
+Date:   Sat, 12 Sep 2020 13:14:24 +0900
+From:   Naohiro Aota <naohiro.aota@wdc.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-btrfs@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        Hannes Reinecke <hare@suse.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v7 19/39] btrfs: limit bio size under max_zone_append_size
+Message-ID: <20200912041424.w4jhmsvrgtrcie2n@naota.dhcp.fujisawa.hgst.com>
+References: <20200911123259.3782926-1-naohiro.aota@wdc.com>
+ <20200911123259.3782926-20-naohiro.aota@wdc.com>
+ <20200911141719.GA15317@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20200911141719.GA15317@infradead.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2020-09-11 at 17:10 +0300, Konstantin Komarov wrote:
-> This adds headers and misc files
+On Fri, Sep 11, 2020 at 03:17:19PM +0100, Christoph Hellwig wrote:
+>On Fri, Sep 11, 2020 at 09:32:39PM +0900, Naohiro Aota wrote:
+>> +		if (fs_info->max_zone_append_size &&
+>> +		    bio_op(bio) == REQ_OP_WRITE &&
+>> +		    bio->bi_iter.bi_size + size > fs_info->max_zone_append_size)
+>> +			can_merge = false;
+>> +
+>>  		if (prev_bio_flags != bio_flags || !contig || !can_merge ||
+>>  		    force_bio_submit ||
+>>  		    bio_add_page(bio, page, page_size, pg_offset) < page_size) {
+>
+>For zoned devices you need to use bio_add_hw_page instead of so that all
+>the hardware restrictions are applied.  bio_add_hw_page asso gets the
+>lenght limited passed as the last parameter so we won't need a separate
+>check.
 
-The code may be ok, but its cosmetics are poor.
+I think we can't use it here. This bio is built for btrfs's logical space,
+so the corresponding request queue is not available here.
 
-> diff --git a/fs/ntfs3/debug.h b/fs/ntfs3/debug.h
-[]
-> +#define QuadAlign(n) (((n) + 7u) & (~7u))
-> +#define IsQuadAligned(n) (!((size_t)(n)&7u))
-> +#define Quad2Align(n) (((n) + 15(&u) & (~15u))
-> +#define IsQuad2Aligned(n) (!((size_t)(n)&15u))
-> +#define Quad4Align(n) (((n) + 31u) & (~31u))
-> +#define IsSizeTAligned(n) (!((size_t)(n) & (sizeof(size_t) - 1)))
-> +#define DwordAlign(n) (((n) + 3u) & (~3u))
-> +#define IsDwordAligned(n) (!((size_t)(n)&3u))
-> +#define WordAlign(n) (((n) + 1u) & (~1u))
-> +#define IsWordAligned(n) (!((size_t)(n)&1u))
-
-All of these could use column alignment.
-IsSizeTAligned could is the kernel's IS_ALIGNED
-
-#define IsQuadAligned(n)	(!((size_t)(n) & 7u))
-#define QuadAlign(n)		(((n) + 7u) & (~7u))
-#define IsQuadAligned(n)	(!((size_t)(n) & 7u))
-#define Quad2Align(n)		(((n) + 15u) & (~15u))
-#define IsQuad2Aligned(n)	(!((size_t)(n) & 15u))
-
-Though all of these could also use two macros with
-the same form.  Something like:
-
-#define NTFS3_ALIGN(n, at)	(((n) + ((at) - 1)) & (~((at) - 1)))
-#define NTFS3_IS_ALIGNED(n, at)	(!((size_t)(n) & ((at) - 1)))
-
-So all of these could be ordered by size and use actual size
-
-#define WordAlign(n)		NTFS3_ALIGN(n, 2)
-#define IsWordAligned(n)	NTFS3_IS_ALIGNED(n, 2)
-#define DwordAlign(n)		NTFS3_ALIGN(n, 4)
-#define IsDwordAligned(n)	
-NTFS3_IS_ALIGNED(n, 4)
-#define QuadAlign(n)		NTFS3_ALIGN(n, 8)
-#define IsQuadAligned(n)	NTFS3_IS_ALIGNED(n, 8)
-#define
-Quad2Align(n)		NTFS3_ALIGN(n, 16)
-#define IsQuad2Aligned(n)	NTFS3_IS_ALIGNED(n, 16)
-
-#define IsSizeTAligned(n)	NTFS3_IS_ALIGNED(n, sizeof(size_t))
-
-
-> +#ifdef CONFIG_PRINTK
-> +__printf(2, 3) void ntfs_printk(const struct super_block *sb, const char *fmt,
-> +				...);
-
-Better would be
-
-__printf(2, 3)
-void ntfs_printk(const struct super_block *sb, const char *fmt, ...);
-
-etc...
-
-There's a lot of code that could be made more readable for a human.
-
-
-
+Technically, we can use fs_devices->lateste_bdev. But considering this bio
+can map to multiple bios to multiple devices, limiting the size of this bio
+under the minimum queue_max_zone_appends_sectors() among devices is
+feasible.
