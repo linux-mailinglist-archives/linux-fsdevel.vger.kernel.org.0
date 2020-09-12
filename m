@@ -2,139 +2,173 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 58DDE267C49
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Sep 2020 22:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C399F267C66
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Sep 2020 22:58:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725932AbgILUtR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Sep 2020 16:49:17 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:52784 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725905AbgILUtA (ORCPT
+        id S1725891AbgILU6O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Sep 2020 16:58:14 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:23761 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725880AbgILU6L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Sep 2020 16:49:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1599943737;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=cJuHYlMJJGIC0qBjlrqnGCpyE1IZMKKDiH+/8N+tl5c=;
-        b=dr0Ce72Zjyh5SeDxwKvFw4/m19xObHSL43mDbzO+s7revoyWKKXwlq0IY0uNdFBtynqS7+
-        +8klonsDyYpwtdJshU07+r1pbtmiutmK7sGN9COiJxZdxJ1wrsu8qZUgFCtDVTNVUNJSSX
-        NWJmUnANjHfzUCxNxI/5uGqTukRwVWY=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-346-wddxBGIfMdOjCsYpLafMBg-1; Sat, 12 Sep 2020 16:48:54 -0400
-X-MC-Unique: wddxBGIfMdOjCsYpLafMBg-1
-Received: by mail-lj1-f198.google.com with SMTP id d23so4087931ljg.21
-        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Sep 2020 13:48:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cJuHYlMJJGIC0qBjlrqnGCpyE1IZMKKDiH+/8N+tl5c=;
-        b=LTTD4LMfTjLf5oUFkUmGER319Ja/PamdA92NkAf0p29POas9JL+uhQxuXJePPZpNmR
-         50aOErgSC9zo1gL0+KJlHdcit0+OKf8P3rlquyRRglX//WE89aG0W4Sa4TBdaGMpspxi
-         hrSzQ7Rfq226myruy4dlD+lzT8VBr93ITy2OV5iFsCpFDCKkRfVwXUDBwZZ/OHJlH/5r
-         vG92IgRQp+J/qqNKe0foSQNGEkD+FPyk86YduUvggHIX6fPr1g4M1v3WRmMrt31HZIvx
-         i6lelGQThZ7jRL0drMAnx+KGVFKHbVqIuqxJuEuGdN6eC3snoBoe0Fhxa+wbPGWCXyeR
-         ZJig==
-X-Gm-Message-State: AOAM533t1iLIL4FjUJyl83KYJMKKJ1o97mrbp7sZgHa48FhJYT1Vc/mL
-        +iPmsVW70rpG5UG6HefDzNVW5TtUiRcvxek3m86EVIhNbTRlMCRfRbu1E54reKDtEyX7oxy96na
-        +1uKIfDHwv8vckplp1Eo4t1mFQr4z/mPM/4Kgy4hv1g==
-X-Received: by 2002:a2e:8046:: with SMTP id p6mr2567814ljg.372.1599943732616;
-        Sat, 12 Sep 2020 13:48:52 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyDE6x8wpSTW0zchyo7JE5ZtuT3H92rSVgfacoMie83rLd05GidX9QR1xfHp5MvqzE7vmFLBF7QNJ6Y0VNPIQs=
-X-Received: by 2002:a2e:8046:: with SMTP id p6mr2567810ljg.372.1599943732385;
- Sat, 12 Sep 2020 13:48:52 -0700 (PDT)
+        Sat, 12 Sep 2020 16:58:11 -0400
+X-Originating-IP: 50.39.163.217
+Received: from localhost (50-39-163-217.bvtn.or.frontiernet.net [50.39.163.217])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 7DDAD240003;
+        Sat, 12 Sep 2020 20:58:04 +0000 (UTC)
+Date:   Sat, 12 Sep 2020 13:58:01 -0700
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Hugh Dickins <hughd@google.com>,
+        Michael Larabel <Michael@michaellarabel.com>,
+        Ted Ts'o <tytso@google.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Kernel Benchmarking
+Message-ID: <20200912205801.GA613714@localhost>
+References: <CAHk-=wiz=J=8mJ=zRG93nuJ9GtQAm5bSRAbWJbWZuN4Br38+EQ@mail.gmail.com>
+ <CAHk-=wimM2kckaYj7spUJwehZkSYxK9RQqu3G392BE=73dyKtg@mail.gmail.com>
+ <8bb582d2-2841-94eb-8862-91d1225d5ebc@MichaelLarabel.com>
+ <CAHk-=wjqE_a6bpZyDQ4DCrvj_Dv2RwQoY7wN91kj8y-tZFRvEA@mail.gmail.com>
+ <0cbc959e-1b8d-8d7e-1dc6-672cf5b3899a@MichaelLarabel.com>
+ <CAHk-=whP-7Uw9WgWgjRgF1mCg+NnkOPpWjVw+a9M3F9C52DrVg@mail.gmail.com>
+ <CAHk-=wjfw3U5eTGWLaisPHg1+jXsCX=xLZgqPx4KJeHhEqRnEQ@mail.gmail.com>
+ <a2369108-7103-278c-9f10-6309a0a9dc3b@MichaelLarabel.com>
+ <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
+ <CAHk-=whjhYa3ig0U_mtpoU5Zok_2Y5zTCw8f-THkf1vHRBDNuA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20200910202107.3799376-1-keescook@chromium.org>
- <alpine.LRH.2.21.2009121002100.17638@namei.org> <202009120055.F6BF704620@keescook>
- <20200912093652.GA3041@ubuntu> <20200912144722.GE3117@suse.de>
-In-Reply-To: <20200912144722.GE3117@suse.de>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Sat, 12 Sep 2020 22:48:39 +0200
-Message-ID: <CAFqZXNtwDpX+O69Jj3AmxMoiW7o6SE07SqDDFnGMObu8hLDQDg@mail.gmail.com>
-Subject: Re: [RESEND][RFC PATCH 0/6] Fork brute force attack mitigation (fbfam)
-To:     Mel Gorman <mgorman@suse.de>
-Cc:     John Wood <john.wood@gmx.com>, James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whjhYa3ig0U_mtpoU5Zok_2Y5zTCw8f-THkf1vHRBDNuA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 12, 2020 at 4:51 PM Mel Gorman <mgorman@suse.de> wrote:
-> On Sat, Sep 12, 2020 at 11:36:52AM +0200, John Wood wrote:
-> > On Sat, Sep 12, 2020 at 12:56:18AM -0700, Kees Cook wrote:
-> > > On Sat, Sep 12, 2020 at 10:03:23AM +1000, James Morris wrote:
-> > > > On Thu, 10 Sep 2020, Kees Cook wrote:
-> > > >
-> > > > > [kees: re-sending this series on behalf of John Wood <john.wood@gmx.com>
-> > > > >  also visible at https://github.com/johwood/linux fbfam]
-> > > > >
-> > > > > From: John Wood <john.wood@gmx.com>
-> > > >
-> > > > Why are you resending this? The author of the code needs to be able to
-> > > > send and receive emails directly as part of development and maintenance.
-> >
-> > I tried to send the full patch serie by myself but my email got blocked. After
-> > get support from my email provider it told to me that my account is young,
-> > and due to its spam policie I am not allow, for now, to send a big amount
-> > of mails in a short period. They also informed me that soon I will be able
-> > to send more mails. The quantity increase with the age of the account.
-> >
->
-> If you're using "git send-email" then specify --confirm=always and
-> either manually send a mail every few seconds or use an expect script
-> like
->
-> #!/bin/bash
-> EXPECT_SCRIPT=
-> function cleanup() {
->         if [ "$EXPECT_SCRIPT" != "" ]; then
->                 rm $EXPECT_SCRIPT
->         fi
-> }
-> trap cleanup EXIT
->
-> EXPECT_SCRIPT=`mktemp`
-> cat > $EXPECT_SCRIPT <<EOF
-> spawn sh ./SEND
-> expect {
->         "Send this email"   { sleep 10; exp_send y\\r; exp_continue }
-> }
-> EOF
->
-> expect -f $EXPECT_SCRIPT
-> exit $?
->
-> This will work if your provider limits the rate mails are sent rather
-> than the total amount.
+On Sat, Sep 12, 2020 at 10:59:40AM -0700, Linus Torvalds wrote:
+> So I think the VM people (but perhaps not necessarily all filesystem
+> people) have been aware of a long-time problem with certain loads
+> causing huge latencies, up to and including watchdogs firing because
+> processes wouldn't make progress for over half a minute (or whatever
+> the default blocking watchdog timeout is - I would like to say that
+> it's some odd number like 22 seconds, but maybe that was RCU).
+> 
+> We've known it's related to long queues for the page lock, and about
+> three years ago now we added a "bookmark" entry to the page wakeup
+> queues, because those queues got so long that even just traversing the
+> wakeup queue was a big latency hit. But it's generally been some heavy
+> private load on a customer machine, and nobody ever really had a good
+> test-case for it.
 
-...or you could keep it simple and just pass "--batch-size 1
---relogin-delay 10" to git send-email ;)
+I don't *know* if this is the same bottleneck, but I have an easily
+reproducible workload that rather reliably triggers softlockup
+watchdogs, massive performance bottlenecks, and processes that hang for
+a while without making forward progress, and it seemed worth mentioning
+in case it might serve as a reproducer for those private workloads.
+(Haven't tested it on a kernel with this fairness fix added; most recent
+tests were on 5.7-rc6.)
 
--- 
-Ondrej Mosnacek
-Software Engineer, Platform Security - SELinux kernel
-Red Hat, Inc.
+On a GCP n1-highcpu-96 instance, with nested virtualization enabled,
+create a QEMU/KVM VM with the same number of CPUs backed by a disk image
+using either NVME or virtio, and in that VM, build a defconfig kernel
+with `make -j$(nproc)`. Lots of softlockup warnings, processes that
+should be very quick hanging for a long time, and the build on the guest
+is up to 5x slower than the host system, with 12-15x the system time.
 
+I've seen similar softlockups with huge VMs running on physical
+hardware, not just on cloud systems that allow nested virtualization.
+This is *probably* reproducible for anyone who has local hardware with
+lots of CPUs, but doing it on GCP should be accessible to anyone.
+
+(I'm not using GCP anymore, and the systems I'm using don't support
+nested virtualization, so I don't have this workload readily available
+anymore. It was a completely standard Debian image with the cloud kernel
+installed, and zero unusual configuration.)
+
+> Fairness is good, but fairness is usually bad for performance even if
+> it does get rid of the worst-case issues. In this case, it's _really_
+> bad for performance, because that page lock has always been unfair,
+> and we have a lot of patterns that have basically come to
+> (unintentionally) depend on that unfairness.
+> 
+> In particular, the page locking is often used for just verifying
+> simple things, with the most common example being "lock page, check
+> that the mapping is still valid, insert page into page tables, unlock
+> page".
+[...]
+> This is not a new issue. We've had exactly the same thing happen when
+> we made spinlocks, semaphores, and rwlocks be fair.
+> 
+> And like those other times, we had to make them fair because *not*
+> making them fair caused those unacceptable outliers under contention,
+> to the point of starvation and watchdogs firing.
+> 
+> Anyway, I don't have a great solution. I have a few options (roughly
+> ordered by "simplest to most complex"):
+> 
+>  (a) just revert
+>  (b) add some busy-spinning
+>  (c) reader-writer page lock
+>  (d) try to de-emphasize the page lock
+> 
+> but I'd love to hear comments.
+
+[...]
+
+> Honestly, (a) is trivial to do. We've had the problem for years, the
+> really *bad* cases are fairly rare, and the workarounds mostly work.
+> Yeah, you get watchdogs firing, but it's not exactly _common_.
+
+I feel like every time I run a non-trivial load inside a huge VM, I end
+up hitting those watchdogs; they don't *feel* rare.
+
+> Option (c) is, I feel, the best one. Reader-writer locks aren't
+> wonderful, but the page lock really tends to have two very distinct
+> uses: exclusive for the initial IO and for the (very very unlikely)
+> truncate and hole punching issues, and then the above kind of "lock to
+> check that it's still valid" use, which is very very common and
+> happens on every page fault and then some. And it would be very
+> natural to make the latter be a read-lock (or even just a sequence
+> counting one with retry rather than a real lock).
+> 
+> Option (d) is "we already have a locking in many filesystems that give
+> us exclusion between faulting in a page, and the truncate/hole punch,
+> so we shouldn't use the page lock at all".
+> 
+> I do think that the locking that filesystems do is in many ways
+> inferior - it's done on a per-inode basis rather than on a per-page
+> basis. But if the filesystems end up doing that *anyway*, what's the
+> advantage of the finer granularity one? And *because* the common case
+> is all about the reading case, the bigger granularity tends to work
+> very well in practice, and basically never sees contention.
+> 
+> So I think option (c) is potentially technically better because it has
+> smaller locking granularity, but in practice (d) might be easier and
+> we already effectively do it for several filesystems.
+
+If filesystems are going to have to have that lock *anyway*, and it
+makes the page lock entirely redundant for that use case, then it
+doesn't seem like there's any point to making the page lock cheaper if
+we can avoid it entirely. On the other hand, that seems like it might
+make locking a *lot* more complicated, if the synchronization on a
+struct page is "usually the page lock, but if it's a filesystem page,
+then a filesystem-specific lock instead".
+
+So, it seems like there'd be two deciding factors between (c) and (d):
+- Whether filesystems might ever be able to use the locks in (c) to
+  reduce or avoid having to do their own locking for this case. (Seems
+  like there might be a brlock-style approach that could work for
+  truncate/hole-punch.)
+- Whether (d) would make the locking story excessively complicated
+  compared to (c).
+
+> This turned out to be a very long email, and probably most people
+> didn't get this far. But if you did, comments, opinions, suggestions?
+> 
+> Any other suggestions than those (a)-(d) ones above?
+> 
+>                Linus
