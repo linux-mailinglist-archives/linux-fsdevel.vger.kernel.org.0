@@ -2,156 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E1367267AFF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Sep 2020 16:46:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCB62267B0E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Sep 2020 16:51:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725940AbgILOo6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Sep 2020 10:44:58 -0400
-Received: from rome.phoronix.com ([192.211.48.82]:46194 "EHLO
-        rome.phoronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbgILOor (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Sep 2020 10:44:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=michaellarabel.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=HpUgfezC5vq+F3nSz6Js/Saf1q77gDnfOnt1JHT++Sg=; b=V8ze1GjLYvQbhK7eXKCSaEtGtK
-        ISwP+4vKGCqNvamyNRolhRKsrjFh29aLVrhCwBClAAquzyOjTRJWvXmNkIJZ78OvuBnZkLcqj8m5y
-        S5eVNHaaPnxQjTaP8vd1CkhljBEmQeuUCC7xYTH1uD9yBOMxDQJ25ve8R9uK8W5Cj1pMlmVHtFBg0
-        VykDDbgLrk3G5cFwosUvCXlXYUV/cPss+npKEjbxhSo3aeUOnxaj/XcCeFzWSn7RoC3WG9cUcWe/b
-        /f2HhX1KOx5oC52rU/9lewyCk2MaOdASRWPcxIIiOK5GN1/O0nnEw6gerfl2aZ5gUE90jN6Ms1+ry
-        AqC5r9GQ==;
-Received: from c-73-176-63-28.hsd1.il.comcast.net ([73.176.63.28]:33490 helo=[192.168.86.21])
-        by rome.phoronix.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <Michael@MichaelLarabel.com>)
-        id 1kH6lE-0002c5-V4; Sat, 12 Sep 2020 10:44:17 -0400
-Subject: Re: Kernel Benchmarking
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ted Ts'o <tytso@google.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <CAHk-=wiz=J=8mJ=zRG93nuJ9GtQAm5bSRAbWJbWZuN4Br38+EQ@mail.gmail.com>
- <CAHk-=wimM2kckaYj7spUJwehZkSYxK9RQqu3G392BE=73dyKtg@mail.gmail.com>
- <8bb582d2-2841-94eb-8862-91d1225d5ebc@MichaelLarabel.com>
- <CAHk-=wjqE_a6bpZyDQ4DCrvj_Dv2RwQoY7wN91kj8y-tZFRvEA@mail.gmail.com>
- <0cbc959e-1b8d-8d7e-1dc6-672cf5b3899a@MichaelLarabel.com>
- <CAHk-=whP-7Uw9WgWgjRgF1mCg+NnkOPpWjVw+a9M3F9C52DrVg@mail.gmail.com>
- <CAHk-=wjfw3U5eTGWLaisPHg1+jXsCX=xLZgqPx4KJeHhEqRnEQ@mail.gmail.com>
- <a2369108-7103-278c-9f10-6309a0a9dc3b@MichaelLarabel.com>
- <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
- <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com>
- <20200912143704.GB6583@casper.infradead.org>
-From:   Michael Larabel <Michael@MichaelLarabel.com>
-Message-ID: <803672c0-7c57-9d25-ffb4-cde891eac4d3@MichaelLarabel.com>
-Date:   Sat, 12 Sep 2020 09:44:15 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1725934AbgILOvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Sep 2020 10:51:32 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40796 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725966AbgILOrb (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 12 Sep 2020 10:47:31 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 7EB33AB91;
+        Sat, 12 Sep 2020 14:47:41 +0000 (UTC)
+Date:   Sat, 12 Sep 2020 15:47:22 +0100
+From:   Mel Gorman <mgorman@suse.de>
+To:     John Wood <john.wood@gmx.com>
+Cc:     James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        kernel-hardening@lists.openwall.com,
+        Matthew Wilcox <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [RESEND][RFC PATCH 0/6] Fork brute force attack mitigation
+ (fbfam)
+Message-ID: <20200912144722.GE3117@suse.de>
+References: <20200910202107.3799376-1-keescook@chromium.org>
+ <alpine.LRH.2.21.2009121002100.17638@namei.org>
+ <202009120055.F6BF704620@keescook>
+ <20200912093652.GA3041@ubuntu>
 MIME-Version: 1.0
-In-Reply-To: <20200912143704.GB6583@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - rome.phoronix.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - MichaelLarabel.com
-X-Get-Message-Sender-Via: rome.phoronix.com: authenticated_id: michael@michaellarabel.com
-X-Authenticated-Sender: rome.phoronix.com: michael@michaellarabel.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20200912093652.GA3041@ubuntu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sat, Sep 12, 2020 at 11:36:52AM +0200, John Wood wrote:
+> On Sat, Sep 12, 2020 at 12:56:18AM -0700, Kees Cook wrote:
+> > On Sat, Sep 12, 2020 at 10:03:23AM +1000, James Morris wrote:
+> > > On Thu, 10 Sep 2020, Kees Cook wrote:
+> > >
+> > > > [kees: re-sending this series on behalf of John Wood <john.wood@gmx.com>
+> > > >  also visible at https://github.com/johwood/linux fbfam]
+> > > >
+> > > > From: John Wood <john.wood@gmx.com>
+> > >
+> > > Why are you resending this? The author of the code needs to be able to
+> > > send and receive emails directly as part of development and maintenance.
+> 
+> I tried to send the full patch serie by myself but my email got blocked. After
+> get support from my email provider it told to me that my account is young,
+> and due to its spam policie I am not allow, for now, to send a big amount
+> of mails in a short period. They also informed me that soon I will be able
+> to send more mails. The quantity increase with the age of the account.
+> 
 
-On 9/12/20 9:37 AM, Matthew Wilcox wrote:
-> On Sat, Sep 12, 2020 at 05:32:11AM -0500, Michael Larabel wrote:
->> On 9/12/20 2:28 AM, Amir Goldstein wrote:
->>> On Sat, Sep 12, 2020 at 1:40 AM Michael Larabel
->>> <Michael@michaellarabel.com> wrote:
->>>> On 9/11/20 5:07 PM, Linus Torvalds wrote:
->>>>> On Fri, Sep 11, 2020 at 9:19 AM Linus Torvalds
->>>>> <torvalds@linux-foundation.org> wrote:
->>>>>> Ok, it's probably simply that fairness is really bad for performance
->>>>>> here in general, and that special case is just that - a special case,
->>>>>> not the main issue.
->>>>> Ahh. It turns out that I should have looked more at the fault path
->>>>> after all. It was higher up in the profile, but I ignored it because I
->>>>> found that lock-unlock-lock pattern lower down.
->>>>>
->>>>> The main contention point is actually filemap_fault(). Your apache
->>>>> test accesses the 'test.html' file that is mmap'ed into memory, and
->>>>> all the threads hammer on that one single file concurrently and that
->>>>> seems to be the main page lock contention.
->>>>>
->>>>> Which is really sad - the page lock there isn't really all that
->>>>> interesting, and the normal "read()" path doesn't even take it. But
->>>>> faulting the page in does so because the page will have a long-term
->>>>> existence in the page tables, and so there's a worry about racing with
->>>>> truncate.
->>>>>
->>>>> Interesting, but also very annoying.
->>>>>
->>>>> Anyway, I don't have a solution for it, but thought I'd let you know
->>>>> that I'm still looking at this.
->>>>>
->>>>>                    Linus
->>>> I've been running your EXT4 patch on more systems and with some
->>>> additional workloads today. While not the original problem, the patch
->>>> does seem to help a fair amount for the MariaDB database sever. This
->>>> wasn't one of the workloads regressing on 5.9 but at least with the
->>>> systems tried so far the patch does make a meaningful improvement to the
->>>> performance. I haven't run into any apparent issues with that patch so
->>>> continuing to try it out on more systems and other database/server
->>>> workloads.
->>>>
->>> Michael,
->>>
->>> Can you please add a reference to the original problem report and
->>> to the offending commit? This conversation appeared on the list without
->>> this information.
->>>
->>> Are filesystems other than ext4 also affected by this performance
->>> regression?
->>>
->>> Thanks,
->>> Amir.
->> On Linux 5.9 Git, Apache HTTPD, Redis, Nginx, and Hackbench appear to be the
->> main workloads that are running measurably slower than on Linux 5.8 and
->> prior on multiple systems.
->>
->> The issue was bisected to 2a9127fcf2296674d58024f83981f40b128fffea. The
->> Kernel Test Robot also previously was triggered by the commit in question
->> with mixed Hackbench results. In looking at the problem Linus had a hunch
->> when looking at the perf data that it may have had an adverse reaction with
->> the EXT4 locking behavior to which he sent out that patch. That EXT4 patch
->> didn't end up addressing the performance issue with the original workloads
->> in question (though in testing other workloads it seems to have benefit for
->> MariaDB at least depending upon the system there can be slightly better
->> performance).
-> Based on this limited amount of information, I would suspect there would
-> also be a problem with XFS, and that would be even _more_ sad because
-> XFS already excludes a truncate-vs-mmap race with the MMAPLOCK_SHARED in
-> __xfs_filemap_fault vs MMAPLOCK_EXCL ... somewhere in the truncate path,
-> I'm sure.  It's definitely there for the holepunch.
->
-> So maybe XFS should have its own implementation of filemap_fault,
-> or we should have a filemap_fault_locked() for filesystems which have
-> their own locking that excludes truncate.
+If you're using "git send-email" then specify --confirm=always and
+either manually send a mail every few seconds or use an expect script
+like
 
-Interesting, I'll fire up some cross-filesystem benchmarks with those 
-tests today and report back shortly with the difference.
+#!/bin/bash
+EXPECT_SCRIPT=
+function cleanup() {
+	if [ "$EXPECT_SCRIPT" != "" ]; then
+		rm $EXPECT_SCRIPT
+	fi
+}
+trap cleanup EXIT
 
-Michael
+EXPECT_SCRIPT=`mktemp`
+cat > $EXPECT_SCRIPT <<EOF
+spawn sh ./SEND
+expect {
+	"Send this email"   { sleep 10; exp_send y\\r; exp_continue }
+}
+EOF
 
+expect -f $EXPECT_SCRIPT
+exit $?
+
+This will work if your provider limits the rate mails are sent rather
+than the total amount.
+
+-- 
+Mel Gorman
+SUSE Labs
