@@ -2,68 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26D832677FE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Sep 2020 07:31:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CD23267825
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Sep 2020 08:17:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725808AbgILFbE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Sep 2020 01:31:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51452 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725801AbgILFbD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Sep 2020 01:31:03 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69286C061573;
-        Fri, 11 Sep 2020 22:31:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=0x/t0oX5H4dK+bk/bCWfoS6UtexU6TQHHM8GfgvOht0=; b=d8pFiNp1WzQ40/xFXvBgeTi0ZX
-        vaf1GWLLPeagUSZkHgR6eIzz9keki3nMdCDdhwRfuLybtW06MZvfYRBGWnbrJMkG10Stq0GDAJ+hW
-        kL8LDXC+AIUPRqneVdpf4Q4r3rQCbK9+1HFzR7zM3nFgj24b1FpugJwYsBZTo8kW5ap7Ecyu0+g8/
-        njsAjePLqTckEUfY8WgGJ+S7RAxPabejhJ8IEucxdgXd9tUAIziu4+Yi9MT5Mtgxl0rCsgyGqmQa5
-        BXzTyL8y3W+KqIaF+R6U5q/STbp8fobS9yA7qAtocYLTI9O2J8DXafbyUyt8WyLDoCMY6g/4HEZqP
-        cSBZcB+A==;
-Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kGy7k-0004CY-PY; Sat, 12 Sep 2020 05:30:56 +0000
-Date:   Sat, 12 Sep 2020 06:30:56 +0100
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-btrfs@vger.kernel.org,
-        David Sterba <dsterba@suse.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Hannes Reinecke <hare@suse.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 19/39] btrfs: limit bio size under max_zone_append_size
-Message-ID: <20200912053056.GA15640@infradead.org>
-References: <20200911123259.3782926-1-naohiro.aota@wdc.com>
- <20200911123259.3782926-20-naohiro.aota@wdc.com>
- <20200911141719.GA15317@infradead.org>
- <20200912041424.w4jhmsvrgtrcie2n@naota.dhcp.fujisawa.hgst.com>
+        id S1725838AbgILGRm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Sep 2020 02:17:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46712 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725799AbgILGRl (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 12 Sep 2020 02:17:41 -0400
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BE2521D40;
+        Sat, 12 Sep 2020 06:17:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599891461;
+        bh=uuS+Z49skG3lx+esbagnWe105drLTNKLOy8Ma2dzjMo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=dZyDz7oUXmzrS2wbdCR1OjKcH7321NGa7jyxMDH4h/o9UFLTl0K1PPE+nTnMPNcaO
+         pFhcF7zZNdVWBScpmda30k1PDw7hv27W+vep/NtOAu79ccmU1uTlmfOyQ7QIgiL3rv
+         v+vZsGweGVfhdRtBDeOgxgmo0SHmfbkdHi6VqF9g=
+Received: by mail-lf1-f47.google.com with SMTP id y17so8017325lfa.8;
+        Fri, 11 Sep 2020 23:17:41 -0700 (PDT)
+X-Gm-Message-State: AOAM533Ql6v51uDU3YdHitioOgdo8CtgbcSf653MiA+qLElLSOWVB32L
+        Qfcwc/T12dP8aRHwLW/uPqUyTWRNSccGFwPSsj8=
+X-Google-Smtp-Source: ABdhPJxOiiANvrJ6fr7d6kLKZBhdGAMugfK2BYTTNlwkd2Y5yYk1Y7sPwQKbOfKHnZSoz9jAWmxnXjr56qyYcRtmpeU=
+X-Received: by 2002:a19:cc09:: with SMTP id c9mr1179259lfg.482.1599891459438;
+ Fri, 11 Sep 2020 23:17:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200912041424.w4jhmsvrgtrcie2n@naota.dhcp.fujisawa.hgst.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+References: <20200910144833.742260-1-hch@lst.de> <20200910144833.742260-6-hch@lst.de>
+In-Reply-To: <20200910144833.742260-6-hch@lst.de>
+From:   Song Liu <song@kernel.org>
+Date:   Fri, 11 Sep 2020 23:17:28 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW56nRgq_hAs4zdg+qabVsbyYkmZk2+4+4ykzbg0Aa=W2g@mail.gmail.com>
+Message-ID: <CAPhsuW56nRgq_hAs4zdg+qabVsbyYkmZk2+4+4ykzbg0Aa=W2g@mail.gmail.com>
+Subject: Re: [PATCH 05/12] md: update the optimal I/O size on reshape
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, Hans de Goede <hdegoede@redhat.com>,
+        Richard Weinberger <richard@nod.at>,
+        Minchan Kim <minchan@kernel.org>,
+        linux-mtd@lists.infradead.org, dm-devel@redhat.com,
+        linux-block@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        drbd-dev@lists.linbit.com, linux-raid <linux-raid@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>, cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Sep 12, 2020 at 01:14:24PM +0900, Naohiro Aota wrote:
-> > For zoned devices you need to use bio_add_hw_page instead of so that all
-> > the hardware restrictions are applied.  bio_add_hw_page asso gets the
-> > lenght limited passed as the last parameter so we won't need a separate
-> > check.
-> 
-> I think we can't use it here. This bio is built for btrfs's logical space,
-> so the corresponding request queue is not available here.
-> 
-> Technically, we can use fs_devices->lateste_bdev. But considering this bio
-> can map to multiple bios to multiple devices, limiting the size of this bio
-> under the minimum queue_max_zone_appends_sectors() among devices is
-> feasible.
+On Thu, Sep 10, 2020 at 7:48 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> The raid5 and raid10 drivers currently update the read-ahead size,
+> but not the optimal I/O size on reshape.  To prepare for deriving the
+> read-ahead size from the optimal I/O size make sure it is updated
+> as well.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Well, how do you then ensure the bio actually fits all the other
-device limits as well?  e.g. max segment size, no SG gaps policy,
-etc?
+Acked-by: Song Liu <song@kernel.org>
