@@ -2,30 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DA3AB268060
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Sep 2020 18:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27C9F2680A7
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Sep 2020 19:56:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725966AbgIMQ5x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Sep 2020 12:57:53 -0400
-Received: from mout.gmx.net ([212.227.15.15]:43001 "EHLO mout.gmx.net"
+        id S1725963AbgIMR4Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Sep 2020 13:56:24 -0400
+Received: from mout.gmx.net ([212.227.15.19]:43163 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbgIMQ5v (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Sep 2020 12:57:51 -0400
+        id S1725959AbgIMR4X (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 13 Sep 2020 13:56:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1600016191;
-        bh=2UfjObndGtW0Xq6W1Y2m5K5jmrf7PALFEYSIFTj3SRk=;
+        s=badeba3b8450; t=1600019709;
+        bh=37/K9jmay+vWoED09geZGDHT0GBiGgqzABktSn8pAO8=;
         h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=Zc6U28KaEBYWrmUQ6T5i0/2G23L9udYWFnuge/OPiC8b9IfDTCU017y3rmUXYVxq0
-         kajCBw4nHacTh623DsBzar7JounEuziC0XpshmEWy8tQ1iRCEChC2G7oJueREwAIff
-         T9MBF+wDx6bYCnRsHxYmSSIbhLAoWxAjlFSktvPQ=
+        b=ODcKTz4Afh6HJdZgzJuUnf3INw5pPrKK+VS9kZo3PB2I4vIQ8wUz3c7YZbmEkqMvM
+         3qzE7f6yYI7BYfrfvm6xxFe/YnqNEJX7+OPsU3jU/ubzHqEmBbN61Pok8bGUcHdoUp
+         H5MGoDvs0+gUKAqdnwXy2VWvTzo1nzkPdcScx78Q=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from ubuntu ([79.150.73.70]) by mail.gmx.com (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MG9kM-1kIdsZ0fZU-00Gaaf; Sun, 13
- Sep 2020 18:56:31 +0200
-Date:   Sun, 13 Sep 2020 18:56:12 +0200
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MPGRz-1jsOgK0oVJ-00PdAm; Sun, 13
+ Sep 2020 19:55:09 +0200
+Date:   Sun, 13 Sep 2020 19:54:51 +0200
 From:   John Wood <john.wood@gmx.com>
-To:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+To:     Jann Horn <jannh@google.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
         John Wood <john.wood@gmx.com>,
         Matthew Wilcox <willy@infradead.org>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -45,39 +46,38 @@ Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         linux-security-module <linux-security-module@vger.kernel.org>
 Subject: Re: [RFC PATCH 5/6] security/fbfam: Detect a fork brute force attack
-Message-ID: <20200913152724.GB2873@ubuntu>
+Message-ID: <20200913172415.GA2880@ubuntu>
 References: <20200910202107.3799376-1-keescook@chromium.org>
  <20200910202107.3799376-6-keescook@chromium.org>
- <202009101634.52ED6751AD@keescook>
- <CAG48ez2fP7yupg6Th+Hg0tL3o06p2PR1HtQcvy4Ro+Q5T2Nfkw@mail.gmail.com>
+ <CAG48ez1gbu+eBA_PthLemcVVR+AU7Xa1zzbJ8tLMLBDCe_a+fQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAG48ez2fP7yupg6Th+Hg0tL3o06p2PR1HtQcvy4Ro+Q5T2Nfkw@mail.gmail.com>
-X-Provags-ID: V03:K1:fFhuJz0gvsAKhyXIL51o/azcshQRL7L+66gcb+DURq+rQrGIfh5
- yGkKJ/8c9JYhC2pJjV5T/ERRgDmRmiBJ63C8lyiY2/w7LiCL/JkSkacipHQhE85+cpPDTRO
- eOmkxxwjRIo00I747W9FNP+lUDa+J7oVW4wVTRoysdyrtRTZaVEE9FcLtrcEYR3PHTyXTF2
- Z8jrzms0p4mPTKb94KV3A==
+In-Reply-To: <CAG48ez1gbu+eBA_PthLemcVVR+AU7Xa1zzbJ8tLMLBDCe_a+fQ@mail.gmail.com>
+X-Provags-ID: V03:K1:rqCReVk5SG3AVcU2RIp3vqC5UKPhITO5SKjMkNjMy5pBF/LfL1Z
+ MUWrU+w9/m5uuZXKCY4TSUD7M+aDK7+73N2qYlkGfzrEgFHEDW21lRrbX9BW0O9dVXbpnIj
+ 0UghsETC4sfdX+e2dYJXlrVX4wNYhKRX08XcuyaN2mwNB7PoKqUBRKRtCGWGB76A8Hp1eIO
+ sRdupJBh1R/eAqBaSMbRQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:9JDcq2+UbDI=:GRnECanaZF7QfeOPwoBV1a
- nO6OdYi+PZexCJ2o7AARPY2a6ebH5Ihvx642+JprXJAnuYC/BRiMMxIqEWoscM2svFEfjNmov
- +VXn1ahL3Z5KOa5+fnVBALBFGjftZPL4E5AG2s1vp6sLd9yuypx0hR6eyhMCwAh+xUACGpvpw
- BS8akPEcoTSIAUi01eHLWIcRClbXUssPu8bjkcFxGrrfbA6NX5JOgYDAZGWuTTBT8i36dLPqa
- a4wTP0EOwFSO8BkipUGkEg1OoyvbTpDUh4ScF/Z1+z738ELqAhWAuZdtT89frCqiB7hYwJH9z
- kRxGZuLz8ZhqS6bqpR+HgXFAPoR71DS+soH8btkwcbanjrDB5YA+OI/WWnzD5aXEOn08b2qY7
- BTd7mZyPuhgSmoFQbIQJj3J61nIk7NIgjbRJQBUnuhHSlC6h46hf1KHeZPBedm3XMT77LWXVs
- i+sZpr1g60OLNAe/6qUmcd4Ck9fryu6kKAR3RjULSmG9OH6ODtRURThaYGsDP0AdDl1NI2Hlk
- clXGmkEWOjYOJyU9vQsBJNK7XjHwAX/Y2ZFoOueKnk4BknlrNg95gvW3n1/dfHwEMMAVbIBoC
- s4oERFDoi+yza5XwP4obNOPuXVpkVW5ESDL91QMDAes59k4e6jSsdN8vQbg/KOl42IrVlKxPz
- PNSBO0dW/HGzHjTpX/uVrNFjinwANOA6TEVMV/jAqoKuK6/KuQjFX/NYHHbXkEjigeIYuKCoQ
- 7OXQBV8tIwgRuZYhaKcqTMTc7JkWZK8d3SLxv3UO/JsXz2mW6HO/3aZAfQPitSsl7fSo/+X0+
- bKP8nJsqEZnUcHF3CXy1KK6brIYYTkYX9fLLkFYjP/RWuUg+hvynGlrQnrwMsXY7YhT006b27
- 3MB3GzxedAdO2eNPyCis8xiOYWP57FbZVChO5YFzv92ShUC95pDdK/Ek0cH+N4TepcIkv/sRR
- 2kxCqmBpKNUrzmrHiZEAt2hy7yJ6XudokJmOOyBnllDWZE8cw0uVi9V3eHnVR6w5Y2HzLFMLv
- KeAJFLHhfdAS0HyhaXO2Jh7mP/0ZG2VuvV2AdlYRwsO2u6vfImM1GEmFcTag/snw5vWAZC4ws
- nu5NXkY07Urkr6RSY4YXryNnkV1Yb12jo4s0qx9LwNeBKqg/gbIdWYDJMinutQSRSLBbAscSb
- PM2hDJn62xykg+85Qt91p2TXsgTTACadg8BgzUVBPx4XbPiAHtEFSngCyuwIHDf+EZffSbzZ2
- Ox4mBFjRtTEQhJN8P7RoFK4ho+VRVaYeEHPQYAw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:LHzyUdNgCa8=:h+NeD4HnUlM+L9S1sUoGQn
+ TIbDmNwwVnptY6RreiUctJEjebk/Iy26DJB4jPCzXjdOac+XK5dE4k7z56ZnRyNTkY7ZwTBUs
+ lQkLgz4bajSnG5e+PRUXbaLG+ilivuzR+cJMMswrVHK6jbOzLKOBzEyt2Vdpm66VgKmzqNWxp
+ EfKKO70GidjNbMdHPdi6QIeCqGhGj7Hmm3Vqsm1yVWR0VCJ++VcPT440934UnWIjfNa4rKatS
+ rNC34S0h0SK3iw+GhHwTxHSfucO5xncfYI0DrVeceJjW+1Tw54En+FtZRDj9EjO4TwsuKCxeD
+ I86lzOuF8m7dJOUvRn0yK6E2uximOyhSPMmXYYlAaWVuMvPbmruvOWinbNA0rjbl49RfbmJ6B
+ KeNm6Q0JdjH1i/EOg5CCcYABrdouD2FtLVmmivbdQXAJe1PL7t3KUSES6O+rKkB6CMnTMNQWd
+ TX6xYdqlT7ngZYbZ3g1bk0yExPOF8qnxSJReemmwUzz3xSK4/gWvcXFvKEcOWSd/xjiE4cIQJ
+ kmpPtIRoIO7v1mEpu63xKT5En29hZCEfi00pzLkzkpSfRw6biUEklCwLgmDy3CMf5S1oqMOq5
+ wf7fjEB0/0vDqejk3wGQKcMpJfmGof8b+V345pQkUlujdCzkirZ8eBeJC4EYRer72kHT6b8j2
+ pey5HTbwJsR4Bcjjdz7Otr4/jvtKWeV0m9yl11LB9RBq0jKymT702jtg3WrpZA+62NaT8JX+M
+ NeBeHBI36cL5j+ZiNUnEWy+mROrvBCoVhCrXGuu4rrXC/ptN1yf2+cm0L8dEIOEyvkuOiepXq
+ 0R0rFizOPtLBxGQ3Vko1ldVFGgBh4K4OjoVDEn55gjCINxBivhNuNM+Xpu7waJJ/XZaT0k2Nn
+ Btbxa2JjGx5yYRoOQsph78xg0YFs8tHh6lz/uU3U88rht0DNiizXk7VN9/DfZI0Wx6imwqxZm
+ Y/X4eo6PvtT7G0skba+UvJBhQV1zHOgAn0Vj7hCKF49cD/ngqsKJO8zcywbDW7QZQ24XJ1AE+
+ 8nsZEDdRsQ51uSOE/mKE03TmYO9pmTrwxaDf/ZDRRau2vWkoVwx7bMF//hGLKZw/j7IGEtbO+
+ z8oNpE4+3RPWwORbh+Oj+2boXskF7KE3/77WHDAsE29xNhtF7zqEo0O50EORQYPHBm10EKRst
+ EO8e4FVJUWvwUS36NH4F3y+wcQzsd1OiJkld3xfNyGeC0+kf6V/O2TnFHnr2uuXVjCYvHyHWH
+ 3PmCdiTigVJG38v+lBAEFzBfuk2yAAaicF/en7A==
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
@@ -86,72 +86,111 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi,
 
-On Fri, Sep 11, 2020 at 02:01:56AM +0200, Jann Horn wrote:
-> On Fri, Sep 11, 2020 at 1:49 AM Kees Cook <keescook@chromium.org> wrote:
-> > On Thu, Sep 10, 2020 at 01:21:06PM -0700, Kees Cook wrote:
-> > > diff --git a/fs/coredump.c b/fs/coredump.c
-> > > index 76e7c10edfc0..d4ba4e1828d5 100644
-> > > --- a/fs/coredump.c
-> > > +++ b/fs/coredump.c
-> > > @@ -51,6 +51,7 @@
-> > >  #include "internal.h"
-> > >
-> > >  #include <trace/events/sched.h>
-> > > +#include <fbfam/fbfam.h>
-> > >
-> > >  int core_uses_pid;
-> > >  unsigned int core_pipe_limit;
-> > > @@ -825,6 +826,7 @@ void do_coredump(const kernel_siginfo_t *siginfo=
-)
-> > >  fail_creds:
-> > >       put_cred(cred);
-> > >  fail:
-> > > +     fbfam_handle_attack(siginfo->si_signo);
+On Thu, Sep 10, 2020 at 11:10:38PM +0200, Jann Horn wrote:
+> On Thu, Sep 10, 2020 at 10:22 PM Kees Cook <keescook@chromium.org> wrote=
+:
+> > To detect a fork brute force attack it is necessary to compute the
+> > crashing rate of the application. This calculation is performed in eac=
+h
+> > fatal fail of a task, or in other words, when a core dump is triggered=
+.
+> > If this rate shows that the application is crashing quickly, there is =
+a
+> > clear signal that an attack is happening.
 > >
-> > I don't think this is the right place for detecting a crash -- isn't
-> > this only for the "dumping core" condition? In other words, don't you
-> > want to do this in get_signal()'s "fatal" block? (i.e. very close to t=
-he
-> > do_coredump, but without the "should I dump?" check?)
-> >
-> > Hmm, but maybe I'm wrong? It looks like you're looking at noticing the
-> > process taking a signal from SIG_KERNEL_COREDUMP_MASK ?
-> >
-> > (Better yet: what are fatal conditions that do NOT match
-> > SIG_KERNEL_COREDUMP_MASK, and should those be covered?)
-> >
-> > Regardless, *this* looks like the only place without an LSM hook. And =
-it
-> > doesn't seem unreasonable to add one here. I assume it would probably
-> > just take the siginfo pointer, which is also what you're checking.
+> > Since the crashing rate is computed in milliseconds per fault, if this
+> > rate goes under a certain threshold a warning is triggered.
+> [...]
+> > +/**
+> > + * fbfam_handle_attack() - Fork brute force attack detection.
+> > + * @signal: Signal number that causes the core dump.
+> > + *
+> > + * The crashing rate of an application is computed in milliseconds pe=
+r fault in
+> > + * each crash. So, if this rate goes under a certain threshold there =
+is a clear
+> > + * signal that the application is crashing quickly. At this moment, a=
+ fork brute
+> > + * force attack is happening.
+> > + *
+> > + * Return: -EFAULT if the current task doesn't have statistical data.=
+ Zero
+> > + *         otherwise.
+> > + */
+> > +int fbfam_handle_attack(int signal)
+> > +{
+> > +       struct fbfam_stats *stats =3D current->fbfam_stats;
+> > +       u64 delta_jiffies, delta_time;
+> > +       u64 crashing_rate;
+> > +
+> > +       if (!stats)
+> > +               return -EFAULT;
+> > +
+> > +       if (!(signal =3D=3D SIGILL || signal =3D=3D SIGBUS || signal =
+=3D=3D SIGKILL ||
+> > +             signal =3D=3D SIGSEGV || signal =3D=3D SIGSYS))
+> > +               return 0;
 >
-> Good point, making this an LSM might be a good idea.
+> As far as I can tell, you can never get here with SIGKILL, since
+> SIGKILL doesn't trigger core dumping and also isn't used by seccomp?
+
+Understood.
+
+> > +
+> > +       stats->faults +=3D 1;
 >
-> > e.g. for include/linux/lsm_hook_defs.h:
+> This is a data race. If you want to be able to increment a variable
+> that may be concurrently incremented by other tasks, use either
+> locking or the atomic_t helpers.
+
+Ok, I will correct this for the next version. Thanks.
+
+> > +       delta_jiffies =3D get_jiffies_64() - stats->jiffies;
+> > +       delta_time =3D jiffies64_to_msecs(delta_jiffies);
+> > +       crashing_rate =3D delta_time / (u64)stats->faults;
+>
+> Do I see this correctly, is this computing the total runtime of this
+> process hierarchy divided by the total number of faults seen in this
+> process hierarchy? If so, you may want to reconsider whether that's
+> really the behavior you want. For example, if I configure the minimum
+> period between crashes to be 30s (as is the default in the sysctl
+> patch), and I try to attack a server that has been running without any
+> crashes for a month, I'd instantly be able to crash around
+> 30*24*60*60/30 =3D 86400 times before the detection kicks in. That seems
+> suboptimal.
+
+You are right. This is not the behaviour we want. So, for the next
+version it would be better to compute the crashing period as the time
+between two faults, or the time between the execve call and the first
+fault (first fault case).
+
+However, I am afraid of a premature detection if a child process fails
+twice in a short period.
+
+So, I think it would be a good idea add a new sysctl to setup a
+minimum number of faults before the time between faults starts to be
+computed. And so, the attack detection only will be triggered if the
+application crashes quickly but after a number of crashes.
+
+What do you think?
+
+>
+> (By the way, it kind of annoys me that you call it the "rate" when
+> it's actually the inverse of the rate. "Period" might be more
+> appropriate?)
+
+Yes, "period" it's more appropiate. Thanks for the clarification.
+
+> > +       if (crashing_rate < (u64)sysctl_crashing_rate_threshold)
+> > +               pr_warn("fbfam: Fork brute force attack detected\n");
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > --
+> > 2.25.1
 > >
-> > LSM_HOOK(int, 0, task_coredump, const kernel_siginfo_t *siginfo);
->
-> I guess it should probably be an LSM_RET_VOID hook? And since, as you
-> said, it's not really semantically about core dumping, maybe it should
-> be named task_fatal_signal or something like that.
 
-If I understand correctly you propose to add a new LSM hook without return
-value and place it here:
-
-diff --git a/kernel/signal.c b/kernel/signal.c
-index a38b3edc6851..074492d23e98 100644
-=2D-- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2751,6 +2751,8 @@ bool get_signal(struct ksignal *ksig)
-                        do_coredump(&ksig->info);
-                }
-
-+               // Add the new LSM hook here
-+
-                /*
-                 * Death signals, no core dump.
-                 */
-
-Thanks,
+Regards,
 John Wood
 
