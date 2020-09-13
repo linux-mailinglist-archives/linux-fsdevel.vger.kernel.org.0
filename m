@@ -2,33 +2,24 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id DC131267CA8
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Sep 2020 00:32:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2598267CFE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Sep 2020 02:41:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725903AbgILWcR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Sep 2020 18:32:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38226 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbgILWcP (ORCPT
+        id S1725871AbgIMAlG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Sep 2020 20:41:06 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:39566 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725868AbgIMAlF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Sep 2020 18:32:15 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A87BAC061573;
-        Sat, 12 Sep 2020 15:32:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=HUKRNYzCs7ABQrgTXMnIasKGkOwF/bPPs+kH60q++fY=; b=h4Kf3rw72fkGxNGGyUKXCa7NKJ
-        nEq65GQhblELmcqbIp6Wp5Hf4PtWGXr77RHOCcTqriW7rldta0wDVYJFspJuTZgO2u1kgZrzc78VR
-        yGX5GxLOryCfhS3w/qey+z2ky9mBeuZ0v8mrMFWuXLjyi4WokM/5Re/OEFTG5yqw4OIsS/UnzD8La
-        6SkBM4iwD7P5XxtMHj4xEwS0N0mIuh1H4nkZC57VdqbkcS8PRT3RgbHGaq7qpyvCozOD9GczzV4Ez
-        GrxjZKkOdkG4J/99CnBXomWLsMeJWf3wDZ9iWqbzlpPS/K+Mr2HGNDEzwT7htfNrzeraSxgsU1SvP
-        WAfkS0Rg==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kHE40-00081s-08; Sat, 12 Sep 2020 22:32:08 +0000
-Date:   Sat, 12 Sep 2020 23:32:07 +0100
-From:   Matthew Wilcox <willy@infradead.org>
+        Sat, 12 Sep 2020 20:41:05 -0400
+Received: from dread.disaster.area (pa49-195-191-192.pa.nsw.optusnet.com.au [49.195.191.192])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id D4C2B82494D;
+        Sun, 13 Sep 2020 10:40:58 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1kHG4f-00043e-2w; Sun, 13 Sep 2020 10:40:57 +1000
+Date:   Sun, 13 Sep 2020 10:40:57 +1000
+From:   Dave Chinner <david@fromorbit.com>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Amir Goldstein <amir73il@gmail.com>,
         Hugh Dickins <hughd@google.com>,
@@ -39,7 +30,7 @@ Cc:     Amir Goldstein <amir73il@gmail.com>,
         Jan Kara <jack@suse.cz>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Subject: Re: Kernel Benchmarking
-Message-ID: <20200912223207.GD6583@casper.infradead.org>
+Message-ID: <20200913004057.GR12096@dread.disaster.area>
 References: <CAHk-=wiz=J=8mJ=zRG93nuJ9GtQAm5bSRAbWJbWZuN4Br38+EQ@mail.gmail.com>
  <CAHk-=wimM2kckaYj7spUJwehZkSYxK9RQqu3G392BE=73dyKtg@mail.gmail.com>
  <8bb582d2-2841-94eb-8862-91d1225d5ebc@MichaelLarabel.com>
@@ -54,12 +45,53 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <CAHk-=whjhYa3ig0U_mtpoU5Zok_2Y5zTCw8f-THkf1vHRBDNuA@mail.gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=IuRgj43g c=1 sm=1 tr=0 cx=a_idp_d
+        a=vvDRHhr1aDYKXl+H6jx2TA==:117 a=vvDRHhr1aDYKXl+H6jx2TA==:17
+        a=kj9zAlcOel0A:10 a=reM5J-MqmosA:10 a=7-415B0cAAAA:8
+        a=FjA90CxpgfuD18wm4a4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Sat, Sep 12, 2020 at 10:59:40AM -0700, Linus Torvalds wrote:
+
+[...]
+
+> In particular, the page locking is often used for just verifying
+> simple things, with the most common example being "lock page, check
+> that the mapping is still valid, insert page into page tables, unlock
+> page".
+> 
+> The reason the apache benchmark regresses is that it basically does a
+> web server test with a single file ("test.html") that gets served by
+> just mmap'ing it, and sending it out that way. Using lots of threads,
+> and using lots of different mappings. So they *all* fault on the read
+> of that page, and they *all* do that "lock page, check that the
+> mapping is valid, insert page" dance.
+
+Hmmmm. So this is a typically a truncate race check, but this isn't
+sufficient to protect the fault against all page invalidation races
+as the page can be re-inserted into the same mapping at a different
+page->index now within EOF.
+
+Hence filesystems that support hole punching have to serialise the
+->fault path against the page invalidations done in ->fallocate
+operations because they otherwise we get data corruption from the
+mm/ truncate checks failing to detect invalidated pages within EOF
+correctly.
+
+i.e. truncate/hole punch is a multi-object modification operation,
+with the typical atomicity boundary of the operation defined by the
+inode_lock() and/or the filesystem transaction that makes the
+modification. IOWs, page_lock() based truncation/invalidation checks
+aren't atomic w.r.t. the other objects being modified in the same
+operation. Truncate avoids this by the ordering the file size update
+vs the page cache invalidation, but no such ordering protection can
+be provided for ->fallocate() operations that directly manipulate
+the metadata of user data in the file.
+
 > Anyway, I don't have a great solution. I have a few options (roughly
 > ordered by "simplest to most complex"):
 > 
@@ -67,11 +99,13 @@ On Sat, Sep 12, 2020 at 10:59:40AM -0700, Linus Torvalds wrote:
 >  (b) add some busy-spinning
 >  (c) reader-writer page lock
 >  (d) try to de-emphasize the page lock
-> 
+
+....
+
 > Option (d) is "we already have a locking in many filesystems that give
 > us exclusion between faulting in a page, and the truncate/hole punch,
 > so we shouldn't use the page lock at all".
-> 
+>
 > I do think that the locking that filesystems do is in many ways
 > inferior - it's done on a per-inode basis rather than on a per-page
 > basis. But if the filesystems end up doing that *anyway*, what's the
@@ -79,173 +113,68 @@ On Sat, Sep 12, 2020 at 10:59:40AM -0700, Linus Torvalds wrote:
 > is all about the reading case, the bigger granularity tends to work
 > very well in practice, and basically never sees contention.
 
-I guess this is option (e).  Completely untested; not even compiled,
-but it might be a design that means filesystems don't need to take
-per-inode locks.  I probably screwed up the drop-mmap-lock-for-io
-parts of filemap_fault.  I definitely didn't update DAX for the
-new parameter for finish_fault(), and now I think about it, I didn't
-update the header file either, so it definitely won't compile.
+*nod*
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 1aaea26556cc..3909613f1c9c 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2602,8 +2602,22 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 		}
- 	}
- 
-+	if (fpin)
-+		goto out_retry;
-+	if (likely(PageUptodate(page)))
-+		goto uptodate;
-+
- 	if (!lock_page_maybe_drop_mmap(vmf, page, &fpin))
- 		goto out_retry;
-+	VM_BUG_ON_PAGE(page_to_pgoff(page) != offset, page);
-+
-+	/* Did somebody else update it for us? */
-+	if (PageUptodate(page)) {
-+		unlock_page(page);
-+		if (fpin)
-+			goto out_retry;
-+		goto uptodate;
-+	}
- 
- 	/* Did it get truncated? */
- 	if (unlikely(compound_head(page)->mapping != mapping)) {
-@@ -2611,14 +2625,6 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 		put_page(page);
- 		goto retry_find;
- 	}
--	VM_BUG_ON_PAGE(page_to_pgoff(page) != offset, page);
--
--	/*
--	 * We have a locked page in the page cache, now we need to check
--	 * that it's up-to-date. If not, it is going to be due to an error.
--	 */
--	if (unlikely(!PageUptodate(page)))
--		goto page_not_uptodate;
- 
- 	/*
- 	 * We've made it this far and we had to drop our mmap_lock, now is the
-@@ -2641,10 +2647,6 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 		return VM_FAULT_SIGBUS;
- 	}
- 
--	vmf->page = page;
--	return ret | VM_FAULT_LOCKED;
--
--page_not_uptodate:
- 	/*
- 	 * Umm, take care of errors if the page isn't up-to-date.
- 	 * Try to re-read it _once_. We do this synchronously,
-@@ -2680,6 +2682,10 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
- 	if (fpin)
- 		fput(fpin);
- 	return ret | VM_FAULT_RETRY;
-+
-+uptodate:
-+	vmf->page = page;
-+	return ret | VM_FAULT_UPTODATE;
- }
- EXPORT_SYMBOL(filemap_fault);
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index 469af373ae76..48fb04e75a3a 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3460,6 +3460,8 @@ static vm_fault_t __do_fault(struct vm_fault *vmf)
- 		return VM_FAULT_HWPOISON;
- 	}
- 
-+	if (ret & VM_FAULT_UPTODATE)
-+		return ret;
- 	if (unlikely(!(ret & VM_FAULT_LOCKED)))
- 		lock_page(vmf->page);
- 	else
-@@ -3684,7 +3686,7 @@ vm_fault_t alloc_set_pte(struct vm_fault *vmf, struct page *page)
-  *
-  * Return: %0 on success, %VM_FAULT_ code in case of error.
-  */
--vm_fault_t finish_fault(struct vm_fault *vmf)
-+vm_fault_t finish_fault(struct vm_fault *vmf, vm_fault_t ret2)
- {
- 	struct page *page;
- 	vm_fault_t ret = 0;
-@@ -3704,9 +3706,17 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
- 		ret = check_stable_address_space(vmf->vma->vm_mm);
- 	if (!ret)
- 		ret = alloc_set_pte(vmf, page);
-+	if (ret2 & VM_FAULT_UPTODATE) {
-+		if (!PageUptodate(page)) {
-+			/* probably other things to do here */
-+			page_remove_rmap(page);
-+			pte_clear(vmf->vma->vm_mm, vmf->address, vmf->pte);
-+			put_page(page);
-+		}
-+	}
- 	if (vmf->pte)
- 		pte_unmap_unlock(vmf->pte, vmf->ptl);
--	return ret;
-+	return ret | ret2;
- }
- 
- static unsigned long fault_around_bytes __read_mostly =
-@@ -3844,8 +3854,9 @@ static vm_fault_t do_read_fault(struct vm_fault *vmf)
- 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY)))
- 		return ret;
- 
--	ret |= finish_fault(vmf);
--	unlock_page(vmf->page);
-+	ret = finish_fault(vmf, ret);
-+	if (!(ret & VM_FAULT_UPTODATE))
-+		unlock_page(vmf->page);
- 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY)))
- 		put_page(vmf->page);
- 	return ret;
-@@ -3878,8 +3889,9 @@ static vm_fault_t do_cow_fault(struct vm_fault *vmf)
- 	copy_user_highpage(vmf->cow_page, vmf->page, vmf->address, vma);
- 	__SetPageUptodate(vmf->cow_page);
- 
--	ret |= finish_fault(vmf);
--	unlock_page(vmf->page);
-+	ret = finish_fault(vmf, ret);
-+	if (!(ret & VM_FAULT_UPTODATE))
-+		unlock_page(vmf->page);
- 	put_page(vmf->page);
- 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY)))
- 		goto uncharge_out;
-@@ -3912,10 +3924,11 @@ static vm_fault_t do_shared_fault(struct vm_fault *vmf)
- 		}
- 	}
- 
--	ret |= finish_fault(vmf);
-+	ret = finish_fault(vmf, ret);
- 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE |
- 					VM_FAULT_RETRY))) {
--		unlock_page(vmf->page);
-+		if (!(ret & VM_FAULT_UPTODATE))
-+			unlock_page(vmf->page);
- 		put_page(vmf->page);
- 		return ret;
- 	}
-diff --git a/mm/truncate.c b/mm/truncate.c
-index dd9ebc1da356..649381703f31 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -176,6 +176,7 @@ void do_invalidatepage(struct page *page, unsigned int offset,
- static void
- truncate_cleanup_page(struct address_space *mapping, struct page *page)
- {
-+	ClearPageUptodate(page);
- 	if (page_mapped(page)) {
- 		pgoff_t nr = PageTransHuge(page) ? HPAGE_PMD_NR : 1;
- 		unmap_mapping_pages(mapping, page->index, nr, false);
-@@ -738,7 +739,6 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 								1, false);
- 				}
- 			}
--			BUG_ON(page_mapped(page));
- 			ret2 = do_launder_page(mapping, page);
- 			if (ret2 == 0) {
- 				if (!invalidate_complete_page2(mapping, page))
+Given that:
+
+1) we have been doing (d) for 5 years (see commit 653c60b633a ("xfs:
+introduce mmap/truncate lock")),
+
+2) ext4 also has this same functionality,
+
+3) DAX requires the ability for filesystems to exclude page faults
+
+4) it is a widely deployed and tested solution
+
+5) filesystems will still need to be able to exclude page faults
+over a file range while they directly manipulate file metadata to
+change the user data in the file
+
+> So I think option (c) is potentially technically better because it has
+> smaller locking granularity, but in practice (d) might be easier and
+> we already effectively do it for several filesystems.
+
+Right.  Even if we go for (c), AFAICT we still need (d) because we
+still (d) largely because of reason (5) above.  There are a whole
+class of "page fault vs direct storage manipulation offload"
+serialisation issues that filesystems have to consider (especially
+if they want to support DAX), so if we can use that same mechanism
+to knock a whole bunch of page locking out of the fault paths then
+that seems like a win to me....
+
+> Any other suggestions than those (a)-(d) ones above?
+
+Not really - I've been advocating for (d) as the general mechanism
+for truncate/holepunch exclusion for quite a few years now because
+it largely seems to work with no obvious/apparent issues.
+
+Just as a FWIW: I agree that the per-inode rwsem could be an issue
+here, jsut as it is for the IO path.  As a side project I'm working
+on shared/exclusive range locks for the XFS inode to replace the
+rwsems for the XFS_IOLOCK_{SHARED,EXCL} and the
+XFS_MMAPLOCK_{SHARED,EXCL}.
+
+That will largely alleviate any problems that "per-inode rwsem"
+serialisation migh cause us here - I've got the DIO fastpath down to
+2 atomic operations per lock/unlock - it's with 10% of rwsems up to
+approx. half a million concurrent DIO read/writes to the same inode.
+Concurrent buffered read/write are not far behind direct IO until I
+run out of CPU to copy data. None of this requires changes to
+anything outside fs/xfs because everythign is already correctly serialised
+to "atomic" filesystem operations and range locking preserves the
+atomicity of those operations including all the page cache
+operations done within them.
+
+Hence I'd much prefer to be moving the page cache in a direction
+that results in the page cache not having to care at all about
+serialising against racing truncates, hole punches or anythign else
+that runs page invalidation. That will make the page cache code
+simpler, require less locking, and likely have less invalidation
+related issues over time...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
