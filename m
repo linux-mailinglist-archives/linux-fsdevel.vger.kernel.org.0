@@ -2,117 +2,251 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FE7C2693C5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Sep 2020 19:42:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BBE12693E7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Sep 2020 19:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726167AbgINRmt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Sep 2020 13:42:49 -0400
-Received: from mx1.didichuxing.com ([111.202.154.82]:5854 "HELO
-        bsf01.didichuxing.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with SMTP id S1725999AbgINRmo (ORCPT
+        id S1726243AbgINRow (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Sep 2020 13:44:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40004 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726195AbgINRo1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Sep 2020 13:42:44 -0400
-X-Greylist: delayed 875 seconds by postgrey-1.27 at vger.kernel.org; Mon, 14 Sep 2020 13:42:33 EDT
-X-ASG-Debug-ID: 1600104471-0e4088502909400001-kl68QG
-Received: from mail.didiglobal.com (bogon [172.20.36.175]) by bsf01.didichuxing.com with ESMTP id pPwWhX9XrVOuYHVL; Tue, 15 Sep 2020 01:27:51 +0800 (CST)
-X-Barracuda-Envelope-From: zhangweiping@didiglobal.com
-Received: from 192.168.3.9 (172.22.50.20) by BJSGEXMBX03.didichuxing.com
- (172.20.15.133) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 15 Sep
- 2020 01:27:50 +0800
-Date:   Tue, 15 Sep 2020 01:27:43 +0800
-From:   Weiping Zhang <zhangweiping@didiglobal.com>
-To:     <jack@suse.cz>, <amir73il@gmail.com>
-CC:     <linux-fsdevel@vger.kernel.org>
-Subject: [RFC PATCH] inotify: add support watch open exec event
-Message-ID: <20200914172737.GA5011@192.168.3.9>
-X-ASG-Orig-Subj: [RFC PATCH] inotify: add support watch open exec event
+        Mon, 14 Sep 2020 13:44:27 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C587C06174A;
+        Mon, 14 Sep 2020 10:44:25 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id z4so568208wrr.4;
+        Mon, 14 Sep 2020 10:44:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EuPkGgGoA4uFnzzhRpbE+z2Ng4wCuaRwpxF2iWsUijA=;
+        b=bJdBk1O6nlV7gbE3XhrGCiwUt4mGVV5llaPYRKZP0fDDbNjVqj6u07NCjLGZu76NRO
+         WJmCFupxPiZCwu5VFHvU54wNBHYE+V7N0mIYupq0WxIHRu0lRkRGIf6gVjLoii3lPFoy
+         sCQFfaSqVpEM9EDwoklE8jTljfTMiUh0w4q7gy6hxlV2eBLwLOKCNQPHlgTVEQ6QerNh
+         gvho3itP/hIjy0yNQhlmPS5cJDCTl+Bzq7PkVwE7Ym2YcEnht/NpCpYDjHa1bI2V+OHo
+         jaSQwikq5ZN638mZB1C9QxAWVGq5jI01uqdtujZGQsxFwONTUkplOt5RpSRE2izbhMdP
+         PGhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EuPkGgGoA4uFnzzhRpbE+z2Ng4wCuaRwpxF2iWsUijA=;
+        b=bbkSo66mXipL5VRxKNzucQFY7eTZcESlvxwIwY3CjMCrYFQ1BHHeF7FZ6EB2PKWW3x
+         2eBL1lwJoPCNIcsPK1qHgE24iU6dFpIhppSdAP7GUKZb1n6oXX5zKugHRtLKQmX0QFM6
+         h8cxLGUw6FrHSR/x/nZgIelz7dcmUkCkbMqDlZiHtP3TVU8jDpSak0MZL/zz/AmBrl7f
+         WyqU8WoIjvmawMvknub1LzDKhtPLBDnZRFZZZXYOfXXQgnsoxFoGteC51lZBYxWpbBOm
+         M8+3nyhpNRYXkBm6lxBSXMY9dWlPdlBCRvIKSzfOskkn5HxTUq0sdLUASwl0EJUaR7kN
+         eNVQ==
+X-Gm-Message-State: AOAM532KoXRFMMyeHblerAjEbuIB3nqdpRzTkBSRQ7buuxOah7TZHeYk
+        +EpfkV2Dfo71J4hPysNhmvuupbK4w/fEvA==
+X-Google-Smtp-Source: ABdhPJyAchnSnolYBWmZv09ugRhHS7C6rEn3A/iT1BpFHdOiKazIDWAW7iSHQLuTy3FG9SdAtk664Q==
+X-Received: by 2002:adf:ec47:: with SMTP id w7mr18264154wrn.175.1600105463301;
+        Mon, 14 Sep 2020 10:44:23 -0700 (PDT)
+Received: from localhost.localdomain (188.147.112.12.nat.umts.dynamic.t-mobile.pl. [188.147.112.12])
+        by smtp.gmail.com with ESMTPSA id d5sm22863202wrb.28.2020.09.14.10.44.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Sep 2020 10:44:22 -0700 (PDT)
+From:   mateusznosek0@gmail.com
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Mateusz Nosek <mateusznosek0@gmail.com>, viro@zeniv.linux.org.uk
+Subject: [RFC PATCH] fs: micro-optimization remove branches by adjusting flag values
+Date:   Mon, 14 Sep 2020 19:43:38 +0200
+Message-Id: <20200914174338.9808-1-mateusznosek0@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [172.22.50.20]
-X-ClientProxiedBy: BJEXCAS05.didichuxing.com (172.20.36.127) To
- BJSGEXMBX03.didichuxing.com (172.20.15.133)
-X-Barracuda-Connect: bogon[172.20.36.175]
-X-Barracuda-Start-Time: 1600104471
-X-Barracuda-URL: https://bsf01.didichuxing.com:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at didichuxing.com
-X-Barracuda-Scan-Msg-Size: 2931
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -2.02
-X-Barracuda-Spam-Status: No, SCORE=-2.02 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=1000.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.84623
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now the IN_OPEN event can report all open events for a file, but it can
-not distinguish if the file was opened for execute or read/write.
-This patch add a new event IN_OPEN_EXEC to support that. If user only
-want to monitor a file was opened for execute, they can pass a more
-precise event IN_OPEN_EXEC to inotify_add_watch.
+From: Mateusz Nosek <mateusznosek0@gmail.com>
 
-Signed-off-by: Weiping Zhang <zhangweiping@didiglobal.com>
+When flags A and B have equal values than the following code
+
+if(flags1 & A)
+	flags2 |= B;
+
+is equivalent to
+
+flags2 |= (flags1 & A);
+
+The latter code should generate less instructions and be faster as one
+branch is omitted in it.
+
+Introduced patch changes the value of 'LOOKUP_EMPTY' and makes it equal
+to the value of 'AT_EMPTY_PATH'. Thanks to that, few branches can be
+changed in a way showed above which improves both performance and the
+size of the code.
+
+Signed-off-by: Mateusz Nosek <mateusznosek0@gmail.com>
 ---
- fs/notify/inotify/inotify_user.c | 3 ++-
- include/linux/inotify.h          | 2 +-
- include/uapi/linux/inotify.h     | 3 ++-
- 3 files changed, 5 insertions(+), 3 deletions(-)
+ fs/exec.c             | 14 ++++++++++----
+ fs/fhandle.c          |  4 ++--
+ fs/namespace.c        |  4 ++--
+ fs/open.c             |  8 ++++----
+ fs/stat.c             |  4 ++--
+ fs/utimes.c           |  6 +++---
+ include/linux/namei.h |  4 ++--
+ 7 files changed, 25 insertions(+), 19 deletions(-)
 
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 186722ba3894..eb42d11a9988 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -819,8 +819,9 @@ static int __init inotify_user_setup(void)
- 	BUILD_BUG_ON(IN_EXCL_UNLINK != FS_EXCL_UNLINK);
- 	BUILD_BUG_ON(IN_ISDIR != FS_ISDIR);
- 	BUILD_BUG_ON(IN_ONESHOT != FS_IN_ONESHOT);
-+	BUILD_BUG_ON(IN_OPEN_EXEC != FS_OPEN_EXEC);
+diff --git a/fs/exec.c b/fs/exec.c
+index a91003e28eaa..39e1ada1ee6c 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -904,8 +904,8 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+ 		return ERR_PTR(-EINVAL);
+ 	if (flags & AT_SYMLINK_NOFOLLOW)
+ 		open_exec_flags.lookup_flags &= ~LOOKUP_FOLLOW;
+-	if (flags & AT_EMPTY_PATH)
+-		open_exec_flags.lookup_flags |= LOOKUP_EMPTY;
++	BUILD_BUG_ON(AT_EMPTY_PATH != LOOKUP_EMPTY);
++	open_exec_flags.lookup_flags |= (flags & AT_EMPTY_PATH);
  
--	BUILD_BUG_ON(HWEIGHT32(ALL_INOTIFY_BITS) != 22);
-+	BUILD_BUG_ON(HWEIGHT32(ALL_INOTIFY_BITS) != 23);
+ 	file = do_filp_open(fd, name, &open_exec_flags);
+ 	if (IS_ERR(file))
+@@ -2176,7 +2176,10 @@ SYSCALL_DEFINE5(execveat,
+ 		const char __user *const __user *, envp,
+ 		int, flags)
+ {
+-	int lookup_flags = (flags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
++	int lookup_flags;
++
++	BUILD_BUG_ON(AT_EMPTY_PATH != LOOKUP_EMPTY);
++	lookup_flags = (flags & AT_EMPTY_PATH);
  
- 	inotify_inode_mark_cachep = KMEM_CACHE(inotify_inode_mark,
- 					       SLAB_PANIC|SLAB_ACCOUNT);
-diff --git a/include/linux/inotify.h b/include/linux/inotify.h
-index 6a24905f6e1e..88fc82c8cf2a 100644
---- a/include/linux/inotify.h
-+++ b/include/linux/inotify.h
-@@ -15,7 +15,7 @@ extern struct ctl_table inotify_table[]; /* for sysctl */
- #define ALL_INOTIFY_BITS (IN_ACCESS | IN_MODIFY | IN_ATTRIB | IN_CLOSE_WRITE | \
- 			  IN_CLOSE_NOWRITE | IN_OPEN | IN_MOVED_FROM | \
- 			  IN_MOVED_TO | IN_CREATE | IN_DELETE | \
--			  IN_DELETE_SELF | IN_MOVE_SELF | IN_UNMOUNT | \
-+			  IN_DELETE_SELF | IN_MOVE_SELF | IN_OPEN_EXEC | IN_UNMOUNT | \
- 			  IN_Q_OVERFLOW | IN_IGNORED | IN_ONLYDIR | \
- 			  IN_DONT_FOLLOW | IN_EXCL_UNLINK | IN_MASK_ADD | \
- 			  IN_MASK_CREATE | IN_ISDIR | IN_ONESHOT)
-diff --git a/include/uapi/linux/inotify.h b/include/uapi/linux/inotify.h
-index 884b4846b630..f19ea046cc87 100644
---- a/include/uapi/linux/inotify.h
-+++ b/include/uapi/linux/inotify.h
-@@ -39,6 +39,7 @@ struct inotify_event {
- #define IN_DELETE		0x00000200	/* Subfile was deleted */
- #define IN_DELETE_SELF		0x00000400	/* Self was deleted */
- #define IN_MOVE_SELF		0x00000800	/* Self was moved */
-+#define IN_OPEN_EXEC		0x00001000	/* File was opened */
+ 	return do_execveat(fd,
+ 			   getname_flags(filename, lookup_flags, NULL),
+@@ -2197,7 +2200,10 @@ COMPAT_SYSCALL_DEFINE5(execveat, int, fd,
+ 		       const compat_uptr_t __user *, envp,
+ 		       int,  flags)
+ {
+-	int lookup_flags = (flags & AT_EMPTY_PATH) ? LOOKUP_EMPTY : 0;
++	int lookup_flags;
++
++	BUILD_BUG_ON(AT_EMPTY_PATH != LOOKUP_EMPTY);
++	lookup_flags = (flags & AT_EMPTY_PATH);
  
- /* the following are legal events.  they are sent as needed to any watch */
- #define IN_UNMOUNT		0x00002000	/* Backing fs was unmounted */
-@@ -66,7 +67,7 @@ struct inotify_event {
- #define IN_ALL_EVENTS	(IN_ACCESS | IN_MODIFY | IN_ATTRIB | IN_CLOSE_WRITE | \
- 			 IN_CLOSE_NOWRITE | IN_OPEN | IN_MOVED_FROM | \
- 			 IN_MOVED_TO | IN_DELETE | IN_CREATE | IN_DELETE_SELF | \
--			 IN_MOVE_SELF)
-+			 IN_MOVE_SELF | IN_OPEN_EXEC)
+ 	return compat_do_execveat(fd,
+ 				  getname_flags(filename, lookup_flags, NULL),
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 01263ffbc4c0..579bf462bf89 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -102,8 +102,8 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, name,
+ 		return -EINVAL;
  
- /* Flags for sys_inotify_init1.  */
- #define IN_CLOEXEC O_CLOEXEC
+ 	lookup_flags = (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
+-	if (flag & AT_EMPTY_PATH)
+-		lookup_flags |= LOOKUP_EMPTY;
++	BUILD_BUG_ON(AT_EMPTY_PATH != LOOKUP_EMPTY);
++	lookup_flags |= (flag & AT_EMPTY_PATH);
+ 	err = user_path_at(dfd, name, lookup_flags, &path);
+ 	if (!err) {
+ 		err = do_sys_name_to_handle(&path, handle, mnt_id);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 098f981dce54..319f42d11236 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2456,8 +2456,8 @@ SYSCALL_DEFINE3(open_tree, int, dfd, const char __user *, filename, unsigned, fl
+ 		lookup_flags &= ~LOOKUP_AUTOMOUNT;
+ 	if (flags & AT_SYMLINK_NOFOLLOW)
+ 		lookup_flags &= ~LOOKUP_FOLLOW;
+-	if (flags & AT_EMPTY_PATH)
+-		lookup_flags |= LOOKUP_EMPTY;
++	BUILD_BUG_ON(AT_EMPTY_PATH != LOOKUP_EMPTY);
++	lookup_flags |= (flags & AT_EMPTY_PATH);
+ 
+ 	if (detached && !may_mount())
+ 		return -EPERM;
+diff --git a/fs/open.c b/fs/open.c
+index 9af548fb841b..8b6fe1e89811 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -410,8 +410,8 @@ static long do_faccessat(int dfd, const char __user *filename, int mode, int fla
+ 
+ 	if (flags & AT_SYMLINK_NOFOLLOW)
+ 		lookup_flags &= ~LOOKUP_FOLLOW;
+-	if (flags & AT_EMPTY_PATH)
+-		lookup_flags |= LOOKUP_EMPTY;
++	BUILD_BUG_ON(AT_EMPTY_PATH != LOOKUP_EMPTY);
++	lookup_flags |= (flags & AT_EMPTY_PATH);
+ 
+ 	if (!(flags & AT_EACCESS)) {
+ 		old_cred = access_override_creds();
+@@ -692,8 +692,8 @@ int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
+ 		goto out;
+ 
+ 	lookup_flags = (flag & AT_SYMLINK_NOFOLLOW) ? 0 : LOOKUP_FOLLOW;
+-	if (flag & AT_EMPTY_PATH)
+-		lookup_flags |= LOOKUP_EMPTY;
++	BUILD_BUG_ON(AT_EMPTY_PATH != LOOKUP_EMPTY);
++	lookup_flags |= (flag & AT_EMPTY_PATH);
+ retry:
+ 	error = user_path_at(dfd, filename, lookup_flags, &path);
+ 	if (error)
+diff --git a/fs/stat.c b/fs/stat.c
+index 44f8ad346db4..a9feb7a7e9ec 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -168,8 +168,8 @@ static inline unsigned vfs_stat_set_lookup_flags(unsigned *lookup_flags,
+ 		*lookup_flags &= ~LOOKUP_FOLLOW;
+ 	if (flags & AT_NO_AUTOMOUNT)
+ 		*lookup_flags &= ~LOOKUP_AUTOMOUNT;
+-	if (flags & AT_EMPTY_PATH)
+-		*lookup_flags |= LOOKUP_EMPTY;
++	BUILD_BUG_ON(AT_EMPTY_PATH != LOOKUP_EMPTY);
++	*lookup_flags |= (flags & AT_EMPTY_PATH);
+ 
+ 	return 0;
+ }
+diff --git a/fs/utimes.c b/fs/utimes.c
+index fd3cc4226224..95a48dbda7e1 100644
+--- a/fs/utimes.c
++++ b/fs/utimes.c
+@@ -79,15 +79,15 @@ static int do_utimes_path(int dfd, const char __user *filename,
+ 		struct timespec64 *times, int flags)
+ {
+ 	struct path path;
+-	int lookup_flags = 0, error;
++	int lookup_flags, error;
+ 
+ 	if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH))
+ 		return -EINVAL;
+ 
++	BUILD_BUG_ON(AT_EMPTY_PATH != LOOKUP_EMPTY);
++	lookup_flags = (flags & AT_EMPTY_PATH);
+ 	if (!(flags & AT_SYMLINK_NOFOLLOW))
+ 		lookup_flags |= LOOKUP_FOLLOW;
+-	if (flags & AT_EMPTY_PATH)
+-		lookup_flags |= LOOKUP_EMPTY;
+ 
+ retry:
+ 	error = user_path_at(dfd, filename, lookup_flags, &path);
+diff --git a/include/linux/namei.h b/include/linux/namei.h
+index a4bb992623c4..52f8015717c0 100644
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -21,7 +21,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
+ #define LOOKUP_FOLLOW		0x0001	/* follow links at the end */
+ #define LOOKUP_DIRECTORY	0x0002	/* require a directory */
+ #define LOOKUP_AUTOMOUNT	0x0004  /* force terminal automount */
+-#define LOOKUP_EMPTY		0x4000	/* accept empty path [user_... only] */
++#define LOOKUP_EMPTY		0x1000	/* accept empty path [user_... only], AT_EMPTY_PATH set */
+ #define LOOKUP_DOWN		0x8000	/* follow mounts in the starting point */
+ #define LOOKUP_MOUNTPOINT	0x0080	/* follow mounts in the end */
+ 
+@@ -36,7 +36,7 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT};
+ 
+ /* internal use only */
+ #define LOOKUP_PARENT		0x0010
+-#define LOOKUP_JUMPED		0x1000
++#define LOOKUP_JUMPED		0x4000
+ #define LOOKUP_ROOT		0x2000
+ #define LOOKUP_ROOT_GRABBED	0x0008
+ 
 -- 
-2.18.2
+2.20.1
 
