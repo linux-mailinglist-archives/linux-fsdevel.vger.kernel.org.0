@@ -2,92 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A70C26952B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Sep 2020 20:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5DC2269552
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Sep 2020 21:17:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725990AbgINSsI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Sep 2020 14:48:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49840 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbgINSsD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Sep 2020 14:48:03 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24980C06174A;
-        Mon, 14 Sep 2020 11:48:03 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id x123so332028pfc.7;
-        Mon, 14 Sep 2020 11:48:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=TktOLUiCsPv+mpZJL8cK/FeOYzPN9P96m1E+94gvEh4=;
-        b=MEswu/bUFTxGJFDPMxldk8hQ0jsmnkfS5qZJ/PBH0aTk64MLfaJYlL9OG+4I34brDK
-         hQl6RF7aa4miV3MwCE5eAUeCqRB/ehFWklavfjS9RNwbgeaIsM9srsRhK56lRD2pAwzz
-         vknoGJFp1oC0va3WMnpHW3tLlSMI0xJyIWKih6QwhZgrDTWqAi2ih0z4Oj0hg2yOHUAc
-         5conJYan1tShbiXA9oXc/fhP9LD/BkA78OwMv7IGt76Ityv01jj2K0xD/sz/qV4Bnu4j
-         iRqFEw6gCB9/d3Ss8UEKExF26qaKH+4zK+XLxDKYB9tGDVJIeYv+Db8Nbi3hl74pBsZ8
-         VOPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=TktOLUiCsPv+mpZJL8cK/FeOYzPN9P96m1E+94gvEh4=;
-        b=pLmiV1tCygVOfnGeEmLc/uAp5qk4YhtkhTHgtm99ncsMk8EVilQWZBk3qfn3dnsB9U
-         VOMc0iRvBH61t4vnE5L2AfOQv7s13fTtM0Sq9Z885b5oyAQjaxhSFhn0Z82VQcecvY9z
-         ion2Yc583L0oDLbUR2zKS+maOypu8u8W8ZXNllvvm0G6KctCsXQrB0uCrdBBucnncMHR
-         dvMcAJ4FJBnT3gD413+q9sDSW+QiCMbbxOXgmN70SAqSVjMsKAHvs2W4hNbs1B1K6IK1
-         t3El+XmpQ1ijx1wEa0h/K8xAMArFutgG51Gs1ED2dqKd5Q0LC2WxzHRttblR8aID8SvL
-         tlpw==
-X-Gm-Message-State: AOAM532zDi+1HPn3eicKfuXDTaBj5HTGbASU29Yj1CFzLEJ4vXdK6CNZ
-        y/GWQI9NlpQ70+kKp4WYlSo=
-X-Google-Smtp-Source: ABdhPJzDGgyED+yg+ViGJ8weGRDUe/EqhSNYnMw1HrhqNBhRaDr5S8e73DEl593zJ9Qtz7A6vPCckg==
-X-Received: by 2002:a62:7bc7:0:b029:138:9430:544e with SMTP id w190-20020a627bc70000b02901389430544emr14988012pfc.1.1600109282564;
-        Mon, 14 Sep 2020 11:48:02 -0700 (PDT)
-Received: from Thinkpad ([45.118.167.196])
-        by smtp.gmail.com with ESMTPSA id j4sm11674416pfd.101.2020.09.14.11.47.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2020 11:48:01 -0700 (PDT)
-Date:   Tue, 15 Sep 2020 00:17:55 +0530
-From:   Anmol Karn <anmol.karan123@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        syzbot+f7204dcf3df4bb4ce42c@syzkaller.appspotmail.com
-Subject: Re: [Linux-kernel-mentees] [PATCH] idr: remove WARN_ON_ONCE() when
- trying to check id
-Message-ID: <20200914184755.GB213347@Thinkpad>
-References: <20200914071724.202365-1-anmol.karan123@gmail.com>
- <20200914110803.GL6583@casper.infradead.org>
+        id S1726034AbgINTRX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Sep 2020 15:17:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38940 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725914AbgINTRL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Sep 2020 15:17:11 -0400
+Received: from tleilax.com (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A1B0208E4;
+        Mon, 14 Sep 2020 19:17:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600111030;
+        bh=ODgC0pauYDlLRX/uoPHe+zarHUVYZig+XStM01WP09Y=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Qr5iUWnGzP+8huPAjKpPrch8QGC+h/D0m01nbcyb4/bqEp/suObzzg24BY2Jurvj1
+         Ns/MVA3nfR2v/spSyNMyVloyO/Z0zepVTxhYUMWVfQXvINp6MXGIHhC/UZhWmsiFQ9
+         r/FiBK+mu9XITFq8W/KQ3SWqxJDnRemTmtmsSFLs=
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH v3 00/16] ceph+fscrypt: context, filename and symlink support
+Date:   Mon, 14 Sep 2020 15:16:51 -0400
+Message-Id: <20200914191707.380444-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200914110803.GL6583@casper.infradead.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 14, 2020 at 12:08:03PM +0100, Matthew Wilcox wrote:
-> On Mon, Sep 14, 2020 at 12:47:24PM +0530, Anmol Karn wrote:
-> > idr_get_next() gives WARN_ON_ONCE() when it gets (id > INT_MAX) true
-> > and this happens when syzbot does fuzzing, and that warning is
-> > expected, but WARN_ON_ONCE() is not required here and, cecking
-> > the condition and returning NULL value would be suffice.
-> > 
-> > Reference: commit b9959c7a347 ("filldir[64]: remove WARN_ON_ONCE() for bad directory entries")
-> > Reported-and-tested-by: syzbot+f7204dcf3df4bb4ce42c@syzkaller.appspotmail.com
-> > Link: https://syzkaller.appspot.com/bug?extid=f7204dcf3df4bb4ce42c 
-> > Signed-off-by: Anmol Karn <anmol.karan123@gmail.com>
-> 
-> https://lore.kernel.org/netdev/20200605120037.17427-1-willy@infradead.org/
+This is the third posting of the ceph+fscrypt integration work. This
+just covers context handling, filename and symlink support.
 
-Hello sir,
+The main changes since the last set are mainly to address Eric's review
+comments. Hopefully this will be much closer to mergeable. Some highlights:
 
-I have looked into the patch, and it seems the problem is fixed to the root cause
-in this patch, but not yet merged due to some backport issues, so, please ignore 
-this patch(sent by me), and please let me know if i can contribute to fixing this 
-bug's root cause.
+1/ rebase onto Eric's fscrypt-file-creation-v2 tag
 
-Thanks,
-Anmol 
+2/ fscrypt_context_for_new_inode now takes a void * to hold the context
+
+3/ make fscrypt_fname_disk_to_usr designate whether the returned name
+   is a nokey name. This is necessary to close a potential race in
+   readdir support
+
+4/ fscrypt_base64_encode/decode remain in fs/crypto (not moved into lib/)
+
+5/ test_dummy_encryption handling is moved into a separate patch, and
+   several bugs fixed that resulted in context not being set up
+   properly.
+
+6/ symlink handling now works
+
+Content encryption is the next step, but I want to get the fscache
+rework done first. It would be nice if we were able to store encrypted
+files in the cache, for instance.
+
+This set has been tagged as "ceph-fscrypt-rfc.3" in my tree here:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git
+
+Note that this is still quite preliminary, but my goal is to get a set
+merged for v5.11.
+
+Jeff Layton (16):
+  vfs: export new_inode_pseudo
+  fscrypt: export fscrypt_base64_encode and fscrypt_base64_decode
+  fscrypt: export fscrypt_d_revalidate
+  fscrypt: add fscrypt_context_for_new_inode
+  fscrypt: make fscrypt_fname_disk_to_usr return whether result is nokey
+    name
+  ceph: add fscrypt ioctls
+  ceph: crypto context handling for ceph
+  ceph: implement -o test_dummy_encryption mount option
+  ceph: preallocate inode for ops that may create one
+  ceph: add routine to create context prior to RPC
+  ceph: make ceph_msdc_build_path use ref-walk
+  ceph: add encrypted fname handling to ceph_mdsc_build_path
+  ceph: make d_revalidate call fscrypt revalidator for encrypted
+    dentries
+  ceph: add support to readdir for encrypted filenames
+  ceph: add fscrypt support to ceph_fill_trace
+  ceph: create symlinks with encrypted and base64-encoded targets
+
+ fs/ceph/Makefile        |   1 +
+ fs/ceph/crypto.c        | 156 ++++++++++++++++++++++++++++++
+ fs/ceph/crypto.h        |  67 +++++++++++++
+ fs/ceph/dir.c           | 141 ++++++++++++++++++++-------
+ fs/ceph/file.c          |  56 +++++++----
+ fs/ceph/inode.c         | 204 ++++++++++++++++++++++++++++++++++------
+ fs/ceph/ioctl.c         |  25 +++++
+ fs/ceph/mds_client.c    |  94 +++++++++++++-----
+ fs/ceph/mds_client.h    |   1 +
+ fs/ceph/super.c         |  73 +++++++++++++-
+ fs/ceph/super.h         |  18 +++-
+ fs/ceph/xattr.c         |  32 +++++++
+ fs/crypto/fname.c       |  67 ++++++++++---
+ fs/crypto/hooks.c       |   4 +-
+ fs/crypto/policy.c      |  35 +++++--
+ fs/ext4/dir.c           |   3 +-
+ fs/ext4/namei.c         |   6 +-
+ fs/f2fs/dir.c           |   3 +-
+ fs/inode.c              |   1 +
+ fs/ubifs/dir.c          |   4 +-
+ include/linux/fscrypt.h |  10 +-
+ 21 files changed, 860 insertions(+), 141 deletions(-)
+ create mode 100644 fs/ceph/crypto.c
+ create mode 100644 fs/ceph/crypto.h
+
+-- 
+2.26.2
+
