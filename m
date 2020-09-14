@@ -2,95 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AED9268CA4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Sep 2020 15:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18179268CA6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Sep 2020 15:58:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbgINN5m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Sep 2020 09:57:42 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:47608 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbgINN5G (ORCPT
+        id S1726806AbgINN5z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Sep 2020 09:57:55 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34258 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726726AbgINN5S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Sep 2020 09:57:06 -0400
-Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
-  by alexa-out.qualcomm.com with ESMTP; 14 Sep 2020 06:56:32 -0700
-Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 14 Sep 2020 06:56:31 -0700
-Received: from hydcbspbld03.qualcomm.com ([10.242.221.48])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 14 Sep 2020 19:26:20 +0530
-Received: by hydcbspbld03.qualcomm.com (Postfix, from userid 2304101)
-        id DE05F20E86; Mon, 14 Sep 2020 19:26:18 +0530 (IST)
-From:   Pradeep P V K <ppvk@codeaurora.org>
-To:     miklos@szeredi.hu
-Cc:     linux-fsdevel@vger.kernel.org, stummala@codeaurora.org,
-        sayalil@codeaurora.org, Pradeep P V K <ppvk@codeaurora.org>
-Subject: [PATCH V1] fuse: Remove __GFP_FS flag to avoid allocator recursing
-Date:   Mon, 14 Sep 2020 19:26:15 +0530
-Message-Id: <1600091775-10639-1-git-send-email-ppvk@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Mon, 14 Sep 2020 09:57:18 -0400
+Received: by mail-wm1-f66.google.com with SMTP id l15so5947826wmh.1;
+        Mon, 14 Sep 2020 06:56:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=ewMke04ovOwIXwkrPYBefYx2xq5/6LUhX8aaiAacjXc=;
+        b=r8R/6uveUhclcwaeSSDV5A34Z/hU2GY2yAc6eOWnWQ9cq4C1OTyEDXZAdMjRO5nVA2
+         tOZjGLbSsHpz2A+8ceh56cvGjxTN5nd5jPPrGivqGx4/wnP4i0xZoUDXRhhGdTNY47ky
+         yQ89LA6Oz+fnc+bIbF41ETYXvXTSvn5zB7PArmPcmzJkedaZDygDXcWtKsZHd+i1sn3J
+         DsbSPfEkVcDvWv0gk5R1/7YIDcxhXOv6GrRAiz9CUObdg0rgkO31r7mfJ59ykH7l+27c
+         PXjQIzme88UiEruKp3uSSwQc66ESM0gx5p3JHat6t/jm7GrBRZ408UMoXzVPbzIU4AqO
+         KJxA==
+X-Gm-Message-State: AOAM531uF/33VNCl82H1eaTuRZ1h0+MeWfsXVxxdYNgpKvk0nPknmmJQ
+        tufXGz4oXRNmwhuXuwO8bBk=
+X-Google-Smtp-Source: ABdhPJxojrToFoI1TIo/jL8a4A1SGl3rPerakrYuJepVD/BRsCytVWFV7XIkHBqdDqHIcAGqbWjfUQ==
+X-Received: by 2002:a7b:c925:: with SMTP id h5mr14679527wml.28.1600091785477;
+        Mon, 14 Sep 2020 06:56:25 -0700 (PDT)
+Received: from [10.9.0.22] ([185.248.161.177])
+        by smtp.gmail.com with ESMTPSA id b11sm21289595wrt.38.2020.09.14.06.56.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Sep 2020 06:56:24 -0700 (PDT)
+Reply-To: alex.popov@linux.com
+Subject: Re: [External] Re: [PATCH v2] stackleak: Fix a race between stack
+ erasing sysctl handlers
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        miguel.ojeda.sandonis@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel@vger.kernel.org, mike.kravetz@oracle.com
+References: <20200828031928.43584-1-songmuchun@bytedance.com>
+ <CAMZfGtWtAYNexRq1xf=5At1+YJ+_TtN=F6bVnm9EPuqRnMuroA@mail.gmail.com>
+ <8c288fd4-2ef7-ca47-1f3b-e4167944b235@linux.com>
+ <CAMZfGtXsXWtHh_G0TWm=DxG_5xT6kN_BbfqNgoQvTRu89FJihA@mail.gmail.com>
+From:   Alexander Popov <alex.popov@linux.com>
+Autocrypt: addr=alex.popov@linux.com; prefer-encrypt=mutual; keydata=
+ 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
+ j3lCqPk=
+Message-ID: <2f347fde-6f8d-270b-3886-0d106fcc5a46@linux.com>
+Date:   Mon, 14 Sep 2020 16:56:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.11.0
+MIME-Version: 1.0
+In-Reply-To: <CAMZfGtXsXWtHh_G0TWm=DxG_5xT6kN_BbfqNgoQvTRu89FJihA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Found a deadlock between kswapd, writeback thread and fuse process
-Here are the sequence of events with callstacks on the deadlock.
+On 07.09.2020 16:53, Muchun Song wrote:
+> On Mon, Sep 7, 2020 at 7:24 PM Alexander Popov <alex.popov@linux.com> wrote:
+>>
+>> On 07.09.2020 05:54, Muchun Song wrote:
+>>> Hi all,
+>>>
+>>> Any comments or suggestions? Thanks.
+>>>
+>>> On Fri, Aug 28, 2020 at 11:19 AM Muchun Song <songmuchun@bytedance.com> wrote:
+>>>>
+>>>> There is a race between the assignment of `table->data` and write value
+>>>> to the pointer of `table->data` in the __do_proc_doulongvec_minmax() on
+>>>> the other thread.
+>>>>
+>>>>     CPU0:                                 CPU1:
+>>>>                                           proc_sys_write
+>>>>     stack_erasing_sysctl                    proc_sys_call_handler
+>>>>       table->data = &state;                   stack_erasing_sysctl
+>>>>                                                 table->data = &state;
+>>>>       proc_doulongvec_minmax
+>>>>         do_proc_doulongvec_minmax             sysctl_head_finish
+>>>>           __do_proc_doulongvec_minmax           unuse_table
+>>>>             i = table->data;
+>>>>             *i = val;  // corrupt CPU1's stack
+>>
+>> Hello everyone!
+>>
+>> As I remember, I implemented stack_erasing_sysctl() very similar to other sysctl
+>> handlers. Is that issue relevant for other handlers as well?
+> 
+> Yeah, it's very similar. But the difference is that others use a
+> global variable as the
+> `table->data`, but here we use a local variable as the `table->data`.
+> The local variable
+> is allocated from the stack. So other thread could corrupt the stack
+> like the diagram
+> above.
 
-process#1		process#2		process#3
-__switch_to+0x150	__switch_to+0x150	try_to_free_pages
-__schedule+0x984	__schedule+0x984
-					memalloc_noreclaim_restore
-schedule+0x70		schedule+0x70		__perform_reclaim
-bit_wait+0x14		__fuse_request_send+0x154
-					__alloc_pages_direct_reclaim
-__wait_on_bit+0x70	fuse_simple_request+0x174
-inode_wait_for_writeback+0xa0
-						__alloc_pages_slowpath
-			fuse_flush_times+0x10c
-evict+0xa4		fuse_write_inode+0x5c	__alloc_pages_nodemask
-iput+0x248		__writeback_single_inode+0x3d4
-dentry_unlink_inode+0xd8			__alloc_pages_node
-			writeback_sb_inodes+0x4a0
-__dentry_kill+0x160	__writeback_inodes_wb+0xac
-shrink_dentry_list+0x170			alloc_pages_node
-			wb_writeback+0x26c	fuse_copy_fill
-prune_dcache_sb+0x54	wb_workfn+0x2c0		fuse_copy_one
-super_cache_scan+0x114	process_one_work+0x278	fuse_read_single_forget
-do_shrink_slab+0x24c	worker_thread+0x26c	fuse_read_forget
-shrink_slab+0xa8	kthread+0x118		fuse_dev_do_read
-shrink_node+0x118				fuse_dev_splice_read
-kswapd+0x92c					do_splice_to
-						do_splice
+Hi Muchun,
 
-Process#1(kswapd) held an inode lock and initaited a writeback to free
-the pages, as the inode superblock is fuse, process#2 forms a fuse
-request. Process#3 (Fuse daemon threads) while serving process#2 request,
-it requires memory(pages) and as the system is already running in low
-memory it ends up in calling try_to_ free_pages(), which might now call
-kswapd again, which is already stuck with an inode lock held. Thus forms
-a deadlock.
+I don't think that the proposed copying of struct ctl_table to local variable is
+a good fix of that issue. There might be other bugs caused by concurrent
+execution of stack_erasing_sysctl().
 
-So, remove __GFP_FS flag to avoid allocator recursing into the
-filesystem that might already held locks.
+I would recommend using some locking instead.
 
-Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
----
- fs/fuse/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+But you say there are other similar issues. Should it be fixed on higher level
+in kernel/sysctl.c?
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 02b3c36..2859024 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -708,7 +708,7 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
- 			if (cs->nr_segs >= cs->pipe->max_usage)
- 				return -EIO;
- 
--			page = alloc_page(GFP_HIGHUSER);
-+			page = alloc_page(GFP_NOFS | __GFP_HARDWALL | __GFP_HIGHMEM);
- 			if (!page)
- 				return -ENOMEM;
- 
--- 
-2.7.4
+[Adding more knowing people to CC]
 
+Thanks!
+
+>> Muchun, could you elaborate how CPU1's stack is corrupted and how you detected
+>> that? Thanks!
+> 
+> Why did I find this problem? Because I solve another problem which is
+> very similar to
+> this issue. You can reference the following fix patch. Thanks.
+> 
+>   https://lkml.org/lkml/2020/8/22/105
+>>
+>>>> Fix this by duplicating the `table`, and only update the duplicate of
+>>>> it.
+>>>>
+>>>> Fixes: 964c9dff0091 ("stackleak: Allow runtime disabling of kernel stack erasing")
+>>>> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+>>>> ---
+>>>> changelogs in v2:
+>>>>  1. Add more details about how the race happened to the commit message.
+>>>>
+>>>>  kernel/stackleak.c | 11 ++++++++---
+>>>>  1 file changed, 8 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/kernel/stackleak.c b/kernel/stackleak.c
+>>>> index a8fc9ae1d03d..fd95b87478ff 100644
+>>>> --- a/kernel/stackleak.c
+>>>> +++ b/kernel/stackleak.c
+>>>> @@ -25,10 +25,15 @@ int stack_erasing_sysctl(struct ctl_table *table, int write,
+>>>>         int ret = 0;
+>>>>         int state = !static_branch_unlikely(&stack_erasing_bypass);
+>>>>         int prev_state = state;
+>>>> +       struct ctl_table dup_table = *table;
+>>>>
+>>>> -       table->data = &state;
+>>>> -       table->maxlen = sizeof(int);
+>>>> -       ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+>>>> +       /*
+>>>> +        * In order to avoid races with __do_proc_doulongvec_minmax(), we
+>>>> +        * can duplicate the @table and alter the duplicate of it.
+>>>> +        */
+>>>> +       dup_table.data = &state;
+>>>> +       dup_table.maxlen = sizeof(int);
+>>>> +       ret = proc_dointvec_minmax(&dup_table, write, buffer, lenp, ppos);
+>>>>         state = !!state;
+>>>>         if (ret || !write || state == prev_state)
+>>>>                 return ret;
+>>>> --
+>>>> 2.11.0
