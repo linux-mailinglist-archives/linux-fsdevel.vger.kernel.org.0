@@ -2,76 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 41D03268878
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Sep 2020 11:33:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BAE626887D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Sep 2020 11:34:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726392AbgINJdh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Sep 2020 05:33:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38474 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726351AbgINJdJ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Sep 2020 05:33:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id AC4B1AE85;
-        Mon, 14 Sep 2020 09:33:19 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id BC1581E12EF; Mon, 14 Sep 2020 11:33:03 +0200 (CEST)
-Date:   Mon, 14 Sep 2020 11:33:03 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     =?iso-8859-1?Q?Rog=E9rio?= Brito <rbrito@ime.usp.br>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Hugh Dickins <hughd@google.com>,
-        Michael Larabel <Michael@michaellarabel.com>,
-        Ted Ts'o <tytso@google.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Kernel Benchmarking
-Message-ID: <20200914093303.GA7347@quack2.suse.cz>
-References: <CAHk-=wimM2kckaYj7spUJwehZkSYxK9RQqu3G392BE=73dyKtg@mail.gmail.com>
- <8bb582d2-2841-94eb-8862-91d1225d5ebc@MichaelLarabel.com>
- <CAHk-=wjqE_a6bpZyDQ4DCrvj_Dv2RwQoY7wN91kj8y-tZFRvEA@mail.gmail.com>
- <0cbc959e-1b8d-8d7e-1dc6-672cf5b3899a@MichaelLarabel.com>
- <CAHk-=whP-7Uw9WgWgjRgF1mCg+NnkOPpWjVw+a9M3F9C52DrVg@mail.gmail.com>
- <CAHk-=wjfw3U5eTGWLaisPHg1+jXsCX=xLZgqPx4KJeHhEqRnEQ@mail.gmail.com>
- <a2369108-7103-278c-9f10-6309a0a9dc3b@MichaelLarabel.com>
- <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
- <CAHk-=whjhYa3ig0U_mtpoU5Zok_2Y5zTCw8f-THkf1vHRBDNuA@mail.gmail.com>
- <c1970d94-52c7-5b8b-bf35-42f285ae6a3d@ime.usp.br>
+        id S1726353AbgINJea (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Sep 2020 05:34:30 -0400
+Received: from mail-io1-f78.google.com ([209.85.166.78]:47575 "EHLO
+        mail-io1-f78.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbgINJeV (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Sep 2020 05:34:21 -0400
+Received: by mail-io1-f78.google.com with SMTP id a15so10618639ioc.14
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Sep 2020 02:34:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=E/QTzBsB9NrbrnyD5JfbMzAIiLjuZEKI1ZQTWSSXoa4=;
+        b=lm/BSWx9F3lVNsXrzaFtWycjS+Hbqa2yWU6m3cmbdyhrc1AWaStnshrdcLQE9Y9pyv
+         X6AF/ePR/Q/gBi+hrZnQcLqDmCfEclVrldO0tp+lVyCiZYAKIF6yvqQN0Rht3rzMz+Zx
+         IPI6Dd2X3VnV+z4wkoYvG2FfUIiOxrFQTuSo4etnXova1gYz+bAapUeWiANlIOeJfJPe
+         HMZtRs5ajYA0JxV6YWrcLOIkWd6dqcgSAKyaITuDtte05rHa7PjSwXHj1A8k6FRjFDCA
+         2i1GKsvpWzMOCpYKRTcqBIEUYdvUP8PEAnrHaU/T+1jM+RM+q0KTQVhSp7TxPYELsYRR
+         FyOQ==
+X-Gm-Message-State: AOAM530Icbkk7E9ivmrTrTbIg5q0Hcc1MzVeUBAdLmyiENAXg2s5DCPH
+        B+rKUZf336/bq5u1y4SoBFNiw/swN+ebweujNMHh1hOHBUI8
+X-Google-Smtp-Source: ABdhPJz7iG02x/zNqSUBW/Ko76Ck8RPpcBpoX+83zp085P7Df7QS5p4V+Nb+NblkkR5CVY6nPVm0/N466WJViD3aaddPvibh3/fO
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c1970d94-52c7-5b8b-bf35-42f285ae6a3d@ime.usp.br>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a05:6638:134b:: with SMTP id u11mr12503383jad.18.1600076059963;
+ Mon, 14 Sep 2020 02:34:19 -0700 (PDT)
+Date:   Mon, 14 Sep 2020 02:34:19 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002af53f05af42bd63@google.com>
+Subject: WARNING: refcount bug in io_worker_exit
+From:   syzbot <syzbot+c4934d8fed67bdb3b763@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat 12-09-20 17:32:41, Rogério Brito wrote:
-> Now, to the subject: is this that you describe (RCU or VFS), in some sense,
-> related to, say, copying a "big" file (e.g., a movie) to a "slow" media (in
-> my case, a USB thumb drive, so that I can watch said movie on my TV)?
-> 
-> I've seen backtraces mentioning "task xxx hung for yyy seconds" and a
-> non-reponsive cp process at that... I say RCU or VFS because I see this
-> with the thumb drives with vfat filesystems (so, it wouldn't be quite
-> related to ext4, apart from the fact that all my Linux-specific
-> filesystems are ext4).
+Hello,
 
-This is very likely completely different problem. I'd need to see exact
-messages and kernel traces but usually errors like these happen when the IO
-is very slow and other things (such as grabbing some locks or doing memory
-allocation) get blocked waiting for that IO.
+syzbot found the following issue on:
 
-In the case Linus speaks about this is really more about CPU bound tasks
-that heavily hammer the same cached contents.
+HEAD commit:    e4c26faa Merge tag 'usb-5.9-rc5' of git://git.kernel.org/p..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1717bb21900000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8f5c353182ed6199
+dashboard link: https://syzkaller.appspot.com/bug?extid=c4934d8fed67bdb3b763
+compiler:       clang version 10.0.0 (https://github.com/llvm/llvm-project/ c2443155a0fb245c8f17f2c1c72b6ea391e86e81)
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c4934d8fed67bdb3b763@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+refcount_t: underflow; use-after-free.
+WARNING: CPU: 0 PID: 714 at lib/refcount.c:28 refcount_warn_saturate+0x15b/0x1a0 lib/refcount.c:28
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 714 Comm: io_wqe_worker-1 Not tainted 5.9.0-rc4-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x1d6/0x29e lib/dump_stack.c:118
+ panic+0x2c0/0x800 kernel/panic.c:231
+ __warn+0x227/0x250 kernel/panic.c:600
+ report_bug+0x1b1/0x2e0 lib/bug.c:198
+ handle_bug+0x42/0x80 arch/x86/kernel/traps.c:234
+ exc_invalid_op+0x16/0x40 arch/x86/kernel/traps.c:254
+ asm_exc_invalid_op+0x12/0x20 arch/x86/include/asm/idtentry.h:536
+RIP: 0010:refcount_warn_saturate+0x15b/0x1a0 lib/refcount.c:28
+Code: c7 3a 98 15 89 31 c0 e8 43 21 a6 fd 0f 0b eb 85 e8 aa 82 d4 fd c6 05 16 6b ea 05 01 48 c7 c7 66 98 15 89 31 c0 e8 25 21 a6 fd <0f> 0b e9 64 ff ff ff e8 89 82 d4 fd c6 05 f6 6a ea 05 01 48 c7 c7
+RSP: 0018:ffffc90008e7fdb8 EFLAGS: 00010246
+RAX: 4ee61c65d7036100 RBX: 0000000000000003 RCX: ffff8880934bc2c0
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 0000000000000003 R08: ffffffff815e3810 R09: ffffed1015d062c0
+R10: ffffed1015d062c0 R11: 0000000000000000 R12: ffff88809fbb50b8
+R13: dffffc0000000000 R14: ffff88809e8a2400 R15: ffff8880a6179330
+ refcount_sub_and_test include/linux/refcount.h:274 [inline]
+ refcount_dec_and_test include/linux/refcount.h:294 [inline]
+ io_worker_exit+0x63f/0x750 fs/io-wq.c:236
+ io_wqe_worker+0x799/0x810 fs/io-wq.c:596
+ kthread+0x37e/0x3a0 drivers/block/aoe/aoecmd.c:1234
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
