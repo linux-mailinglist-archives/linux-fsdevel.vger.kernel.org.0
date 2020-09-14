@@ -2,124 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FC3C2695CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Sep 2020 21:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7C51269658
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Sep 2020 22:24:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726024AbgINTnN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Sep 2020 15:43:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58264 "EHLO
+        id S1726169AbgINUXS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Sep 2020 16:23:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbgINTnF (ORCPT
+        with ESMTP id S1726222AbgINUVs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Sep 2020 15:43:05 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4502AC06174A
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Sep 2020 12:43:05 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id e22so758724edq.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Sep 2020 12:43:05 -0700 (PDT)
+        Mon, 14 Sep 2020 16:21:48 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27104C061788
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Sep 2020 13:21:47 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id c18so947659wrm.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Sep 2020 13:21:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B26ZPwSMQkEgl0FLKfBn1bcFzAEPMlr/0cRYgdbCJm4=;
-        b=MvgJXiZx2nV1v+RFwDa0Ew2gpF/YMUm1Qzl9uP0JoeTwPkWschjlATZudFOjyAIymN
-         jJB7CAfq+BpdKpEqeroG5Y7ueTlhTlgM+6LKj7M/TcVdvxK4rdi9pYpCVGasFgNnIweT
-         66+OK8SAHXNYBvklweFjzvmaa+Q7pxQDrOuyV4OSavfjbUh/GTOB0/dTGHcXB5og63fs
-         hvyUH+1dQT5+qQQyzqRC8vgQa2klF9z87EZ56xelz5zRMKd7xRTRJDyE/7GPPA7Gsper
-         vQGtuke/Cs2S3Z/KC4HPmMFtSHp3XPc5cMLPQw2vv+ytvQBW4AUOUbR1dxtFSHQYUW0E
-         xajw==
+        d=tessares-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=K7MtII+9UVBbc4MWSUMa9tMOVUjvppbzTQKND+2IRGY=;
+        b=QMWTsqoxxDOoK8xdKVyHbn5nYOZldwgSP/AMuFtHHBeeKuGwTEYYliJNqyFdLtf6nL
+         i/4KIpY+lIamkxU25m3O3rTroHQIuwQDdEnXpUwP8I91UsOy4Kc1ZnjH0/jkdKp//Uao
+         dkKdZVD7nN5Qnywd7o5oWmkaiXc7zuOhM7Lizfk34mV0HnZcBpsunsO75E9csAAFXg7j
+         TfP0CVINRdmOR/nyYYcs4lXvD/ljjqYXon3ASE47oi1te8xxF62vHq7kFPW5cAsA45Cq
+         Hd6GbAoQu1PtujKO+aiLI3v72/E7PwUBcw3FTju6W86VPFXMZTF0WgoqABrlKvT8EPAN
+         yklQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B26ZPwSMQkEgl0FLKfBn1bcFzAEPMlr/0cRYgdbCJm4=;
-        b=IHtiIy+ltHSXXcXENdKVnNdttoBDvjXNMZJmeg+au5i/NAPjk3vLy3a/uLuy1Z6L5q
-         bA01WWSBHK9SVbImPTK6K4bHKd6lAQTe9DUk22HEIKEWmrkawrvQWlNvLNhxxcxt/sgS
-         8kd0UHJFUsxUxhR/Opzq0b1Gt2vRX3BuGXZAXf+Qajz9e+Wz6H7jphRufHBkaTqDxD+/
-         szfExq/0IBx9d0PnZSjDlwgNLq0fyKkkIHGYHp3iqjv71fn8b1cGcKBq+8JT2VPYXbbL
-         DZkTsvZ/EQohmmRj7LHfD9+dzhnQf7yj8H3SnTAFXdGTJfIHMW2FBfalowybJkcJY+lh
-         a4SQ==
-X-Gm-Message-State: AOAM531ZZZvlcmFpYLIdlxbDJ8lPTbFm5xV3Gj5MhSb50LhU5XRMIqYe
-        ZPmi2kDaLG+Rqb6RFaksFRTH0x+eAkVoA3+MGKKejA==
-X-Google-Smtp-Source: ABdhPJwIyj+9kqnlMOpAnTl++v/tLI6DikXxNqu6vECzgkcVLWCncCazo3lOF4hNj+FGq7wU79q5bP4k/TU5T/il6ac=
-X-Received: by 2002:a05:6402:176c:: with SMTP id da12mr19288248edb.386.1600112583753;
- Mon, 14 Sep 2020 12:43:03 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=K7MtII+9UVBbc4MWSUMa9tMOVUjvppbzTQKND+2IRGY=;
+        b=ulAFoXtdUsN/kwIl2ilANDPPuCyp2TSKxyE0EZBcvboytH9zGxfEXT/Id/k9UW9G95
+         cNC6GrDnPrNEYZBp9SOti01A4TKX7N4go3Y8ARLOLBExNr2UcEfnfBiIgtQ5MMT8Dsg3
+         x1nCS2hIpLGzBuJInCEhttVZj0bI+lmMjEe7dTgI5LjTRWNYJ4Ju97rMFmmt3i0kG8o/
+         GqvRfW1FvAQ5/JmpDxF5nDzo97L8VFahmNi53uXoGmLRhKNj8l+Dosz4SjM7IGXhw2Kz
+         tHW2FR3xmytcUKIsMcIu2/6ClAFdqugXdJoXiWE0JK6uW/odYums2xTIOCtoMY8LIw0L
+         4ydA==
+X-Gm-Message-State: AOAM5319aSRY3Y3POuVzvaiHGf3F16SRX7gSeMY1zOtnabLGtJmmBfHy
+        KY5oXbLFTBJ0UoXDv6b9oRCU8Da0lPYPtSY9
+X-Google-Smtp-Source: ABdhPJxGvCx59w5r4saIP+xsUbPihNTuDXNr2z+i5guYCJ2VHqXTw/3ybrHUyRlqauctHgVLMRKJdQ==
+X-Received: by 2002:a5d:5306:: with SMTP id e6mr18276903wrv.156.1600114904387;
+        Mon, 14 Sep 2020 13:21:44 -0700 (PDT)
+Received: from tsr-lap-08.nix.tessares.net ([2a02:578:85b0:e00:21bd:4887:6b93:136b])
+        by smtp.gmail.com with ESMTPSA id m185sm21851166wmf.5.2020.09.14.13.21.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Sep 2020 13:21:43 -0700 (PDT)
+Subject: Re: Kernel Benchmarking
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Larabel <Michael@michaellarabel.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Ted Ts'o <tytso@google.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <CAHk-=wiz=J=8mJ=zRG93nuJ9GtQAm5bSRAbWJbWZuN4Br38+EQ@mail.gmail.com>
+ <CAHk-=wimM2kckaYj7spUJwehZkSYxK9RQqu3G392BE=73dyKtg@mail.gmail.com>
+ <8bb582d2-2841-94eb-8862-91d1225d5ebc@MichaelLarabel.com>
+ <CAHk-=wjqE_a6bpZyDQ4DCrvj_Dv2RwQoY7wN91kj8y-tZFRvEA@mail.gmail.com>
+ <0cbc959e-1b8d-8d7e-1dc6-672cf5b3899a@MichaelLarabel.com>
+ <CAHk-=whP-7Uw9WgWgjRgF1mCg+NnkOPpWjVw+a9M3F9C52DrVg@mail.gmail.com>
+ <CAHk-=wjfw3U5eTGWLaisPHg1+jXsCX=xLZgqPx4KJeHhEqRnEQ@mail.gmail.com>
+ <a2369108-7103-278c-9f10-6309a0a9dc3b@MichaelLarabel.com>
+ <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
+ <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com>
+ <20200912143704.GB6583@casper.infradead.org>
+ <658ae026-32d9-0a25-5a59-9c510d6898d5@MichaelLarabel.com>
+ <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
+From:   Matthieu Baerts <matthieu.baerts@tessares.net>
+Message-ID: <c560a38d-8313-51fb-b1ec-e904bd8836bc@tessares.net>
+Date:   Mon, 14 Sep 2020 22:21:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.2.1
 MIME-Version: 1.0
-References: <20200910202107.3799376-1-keescook@chromium.org>
- <20200910202107.3799376-6-keescook@chromium.org> <CAG48ez1gbu+eBA_PthLemcVVR+AU7Xa1zzbJ8tLMLBDCe_a+fQ@mail.gmail.com>
- <20200913172415.GA2880@ubuntu>
-In-Reply-To: <20200913172415.GA2880@ubuntu>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 14 Sep 2020 21:42:37 +0200
-Message-ID: <CAG48ez0BcSY0is2LzdkizcOQYkaOJwfa=5ZSwjKb+faRwG9QCA@mail.gmail.com>
-Subject: Re: [RFC PATCH 5/6] security/fbfam: Detect a fork brute force attack
-To:     John Wood <john.wood@gmx.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Sep 13, 2020 at 7:55 PM John Wood <john.wood@gmx.com> wrote:
-> On Thu, Sep 10, 2020 at 11:10:38PM +0200, Jann Horn wrote:
-> > On Thu, Sep 10, 2020 at 10:22 PM Kees Cook <keescook@chromium.org> wrote:
-> > > To detect a fork brute force attack it is necessary to compute the
-> > > crashing rate of the application. This calculation is performed in each
-> > > fatal fail of a task, or in other words, when a core dump is triggered.
-> > > If this rate shows that the application is crashing quickly, there is a
-> > > clear signal that an attack is happening.
-> > >
-> > > Since the crashing rate is computed in milliseconds per fault, if this
-> > > rate goes under a certain threshold a warning is triggered.
-[...]
-> > > +       delta_jiffies = get_jiffies_64() - stats->jiffies;
-> > > +       delta_time = jiffies64_to_msecs(delta_jiffies);
-> > > +       crashing_rate = delta_time / (u64)stats->faults;
-> >
-> > Do I see this correctly, is this computing the total runtime of this
-> > process hierarchy divided by the total number of faults seen in this
-> > process hierarchy? If so, you may want to reconsider whether that's
-> > really the behavior you want. For example, if I configure the minimum
-> > period between crashes to be 30s (as is the default in the sysctl
-> > patch), and I try to attack a server that has been running without any
-> > crashes for a month, I'd instantly be able to crash around
-> > 30*24*60*60/30 = 86400 times before the detection kicks in. That seems
-> > suboptimal.
->
-> You are right. This is not the behaviour we want. So, for the next
-> version it would be better to compute the crashing period as the time
-> between two faults, or the time between the execve call and the first
-> fault (first fault case).
->
-> However, I am afraid of a premature detection if a child process fails
-> twice in a short period.
->
-> So, I think it would be a good idea add a new sysctl to setup a
-> minimum number of faults before the time between faults starts to be
-> computed. And so, the attack detection only will be triggered if the
-> application crashes quickly but after a number of crashes.
->
-> What do you think?
+Hello everyone,
 
-You could keep a list of the timestamps of the last five crashes or
-so, and then take action if the last five crashes happened within
-(5-1)*crash_period_limit time.
+On 14/09/2020 19:47, Linus Torvalds wrote:
+> Michael et al,
+>   Ok, I redid my failed "hybrid mode" patch from scratch (original
+> patch never sent out, I never got it to a working point).
+> 
+> Having learnt from my mistake, this time instead of trying to mix the
+> old and the new code, instead I just extended the new code, and wrote
+> a _lot_ of comments about it.
+> 
+> I also made it configurable, using a "page_lock_unfairness" knob,
+> which this patch defaults to 1000 (which is basically infinite).
+> That's just a value that says how many times we'll try the old unfair
+> case, so "1000" means "we'll re-queue up to a thousand times before we
+> say enough is enough" and zero is the fair mode that shows the
+> performance problems.
+
+Thank you for the new patch and all the work around from everybody!
+
+Sorry to jump in this thread but I wanted to share my issue, also linked 
+to the same commit:
+
+     2a9127fcf229 ("mm: rewrite wait_on_page_bit_common() logic")
+
+I have a simple test environment[1] using Docker and virtme[2] almost 
+with the default kernel config and validating some tests for the MPTCP 
+Upstream project[3]. Some of these tests are using a modified version of 
+packetdrill[4].
+
+Recently, some of these packetdrill tests have been failing after 2 
+minutes (timeout) instead of being executed in a few seconds (~6 
+seconds). No packets are even exchanged during these two minutes.
+
+I did a git bisect and it also pointed me to 2a9127fcf229.
+
+I can run the same test 10 times without any issue with the parent 
+commit (v5.8 tag) but with 2a9127fcf229, I have a timeout most of the time.
+
+Of course, when I try to add some debug info on the userspace or 
+kernelspace side, I can no longer reproduce the timeout issue. But 
+without debug, it is easy for me to validate if the issue is there or 
+not. My issue doesn't seem to be linked to a small file that needs to be 
+read multiple of times on a FS. Only a few bytes should be transferred 
+with packetdrill but when there is a timeout, it is even before that 
+because I don't see any transferred packets in case of issue. I don't 
+think a lot of IO is used by Packetdrill before transferring a few 
+packets to a "tun" interface but I didn't analyse further.
+
+With your new patch and the default value, I no longer have the issue.
+
+> I've only (lightly) tested those two extremes, I think the interesting
+> range is likely in the 1-5 range.
+> 
+> So you can do
+> 
+>      echo 0 > /proc/sys/vm/page_lock_unfairness
+>      .. run test ..
+> 
+> and you should get the same numbers as without this patch (within
+> noise, of course).
+
+On my side, I have the issue with 0. So it seems good because expected!
+
+> Or do
+> 
+>      echo 5 > /proc/sys/vm/page_lock_unfairness
+>      .. run test ..
+> 
+> and get numbers for "we accept some unfairness, but if we have to
+> requeue more than five times, we force the fair mode".
+
+Already with 1, it is fine on my side: no more timeout! Same with 5. I 
+am not checking the performances but only the fact I can run packetdrill 
+without timeout. With 1 and 5, tests finish in a normal time, that's 
+really good. I didn't have any timeout in 10 runs, each of them started 
+from a fresh VM. Patch tested with success!
+
+I would be glad to help by validating new modifications or providing new 
+info. My setup is also easy to put in place: a Docker image is built 
+with all required tools to start the same VM just like the one I have. 
+All scripts are on a public repository[1].
+
+Please tell me if I can help!
+
+Cheers,
+Matt
+
+[1] 
+https://github.com/multipath-tcp/mptcp_net-next/blob/scripts/ci/virtme.sh and 
+https://github.com/multipath-tcp/mptcp_net-next/blob/scripts/ci/Dockerfile.virtme.sh
+[2] https://git.kernel.org/pub/scm/utils/kernel/virtme/virtme.git
+[3] https://github.com/multipath-tcp/mptcp_net-next/wiki
+[4] https://github.com/multipath-tcp/packetdrill
+-- 
+Tessares | Belgium | Hybrid Access Solutions
+www.tessares.net
