@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A56C26B873
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 02:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0876726B86A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 02:43:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbgIPAnz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 20:43:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48756 "EHLO
+        id S1726466AbgIPAnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 20:43:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbgIONBh (ORCPT
+        with ESMTP id S1726426AbgIONB4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 09:01:37 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1EACC0612F2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:01:36 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id x123so1887895pfc.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:01:36 -0700 (PDT)
+        Tue, 15 Sep 2020 09:01:56 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEA98C061788
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:01:55 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id bg9so1306418plb.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:01:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HzCS8EXafsw22jW584WXehOSckVkzDoTlfnh4khNpEo=;
-        b=CI847Zj/5nu95tSosrklznikRuaOObypKdPqj4HUZgUNRmt1XbVJmWuAzag/0OYlb6
-         MIGYKd7dTEHGbBXlsWNf/ZCrc78x/gqum2NxuSvIwKBO715W2IU/8DRtrBTNGrbWvdXd
-         QrygLlTpB14MP06uq2TL7JQ7Yrh01EPoneHp1zmT3h9j+d8WvGM+t3Cwm0rsX2GAdRab
-         eh+43UF1Kan1r/1cT840y1nng8NrB7JVRUvt2zXfY0s+zTg+P+91O7u7DhWIbn7Q43E7
-         i8jshMwDwUQp1gvaOWrDFLXCmupOF/M7AAEDAQPyKhFtBzsH6aD/dbzHSNep9XripEWb
-         LnoQ==
+        bh=1xA5Zo5Cz4t/QRWNMyKZ9/SLQQOd42+iCFRWcfd6Pao=;
+        b=oRGDCwZRQ6h95N0FMYtWzeohLlxHf+tvqEMCR9b+bfmN66PI1duhmvDTZ8TlGCuBHs
+         /MUW77EE7IDPPQ/0AJNYfbVfTyC4PmWmB4Iu5c//emNCMvApNE9v6mOvYVb67WYI6WbT
+         ahYPJ8GfNIz/CzaXlUSZMFy2zV0hKJWnc2HGmocO952ivhDn594Toa/vhUHzcLL62/1q
+         cWq59xzcwSZP1FjMei3f89Z8couHpG2Jb9pw6CjMiEmP55LSQ6Zj6vQzJWa6tvYRvoEs
+         jJIQ8TWzLaWDg/v2TkZGhmpJtexiIzjwW7tJI1av5VPI6OyjBO8dKZcUVr/G9FRgLlCk
+         wqBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HzCS8EXafsw22jW584WXehOSckVkzDoTlfnh4khNpEo=;
-        b=UeAPzRIwi0WVvz6wBYNshUghqnzmLPTi939CTgRfmrLGBXxAWwxJNgVggvuvYJ5bWe
-         qXO6Q6a23OpTNI/9cjpv8AyAu0L4gDhMfYhAE6qIoXuMvoFGkhmoBlo6nc+05K9adM7L
-         sOCGfmwIoJp+e7wImGu1EdxYuitjOdGJ7doyvDr0eiwJ2LKlh8g75RjTuGHIFbP+Biib
-         c46/wDtU1QiurZsy3XQ5aOMQwgJwx4zsB4fbD2ShpfsMHA+/8hmEX9UgfnxS8iE1aLZs
-         UL86adUV+EoEGT9zrjMEUaC1a9iAvO77ieU+9coebodbg6I00vKccEWuSik1Lb0PGkke
-         VT7w==
-X-Gm-Message-State: AOAM531EDvigBT9DVDChHBFdVkJIRt5oT37fdRjCTjo6rH5x71VLB7oD
-        LLxZygbc5M2rzMHqNUg6MUmSGA==
-X-Google-Smtp-Source: ABdhPJwWLmX2bwK4KzR5iePJzhj4/eXQJhfo6bmr7reawoCL346+hlc0xAAcCfx3B+T4ZfR4bCJVUg==
-X-Received: by 2002:a63:d14b:: with SMTP id c11mr14914316pgj.64.1600174896481;
-        Tue, 15 Sep 2020 06:01:36 -0700 (PDT)
+        bh=1xA5Zo5Cz4t/QRWNMyKZ9/SLQQOd42+iCFRWcfd6Pao=;
+        b=CIhmc/+Bzfw451Pmvhi+/lbDvutW4T8Vcl5vPtXPTcOWHwkLkTzIDoI+cK2tWeAEGH
+         bnLr+OhkayFa4mDCrDnD1TNai9tl4Nye14KhfkuyLuQBRFhgePp+LRISkmruXXg4iD1N
+         9hhkSrM6XqUUd2A6R2ZcqEtCpgQ6j4+iVbprLvxjpYxNx8dhMY8NTg7y9s1LnewOCVD8
+         6kLD+LQvSctFQoAtvGUUAksllWN67tHfAKw3hcCnuTHirmDMXyyH8Ej6Kg+IQhNnRgSa
+         MghYAhxBQsFrRBqs+Gh+tOq1vwZk5AT00A/chzBBUDV+1994AF+V6aYo11/AzGYBynoO
+         0f0Q==
+X-Gm-Message-State: AOAM533tozTP4cyDxQcsIvsl15NDtn7awzDSPQKx2NZAJI+Vufzl/Vpe
+        5ySBfscTIfke9Y0qGe6Y7jIwew==
+X-Google-Smtp-Source: ABdhPJylXgRgPVmLfSJ8EZxe2tlUYRohlc+NN9//Q+cjPIxAl32Wi0QDL88uhLkUFkuCqwNGmR/FBA==
+X-Received: by 2002:a17:902:ba83:b029:d1:e5e7:be12 with SMTP id k3-20020a170902ba83b02900d1e5e7be12mr1623727pls.69.1600174915323;
+        Tue, 15 Sep 2020 06:01:55 -0700 (PDT)
 Received: from localhost.bytedance.net ([103.136.220.66])
-        by smtp.gmail.com with ESMTPSA id w185sm14269855pfc.36.2020.09.15.06.01.27
+        by smtp.gmail.com with ESMTPSA id w185sm14269855pfc.36.2020.09.15.06.01.46
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Sep 2020 06:01:36 -0700 (PDT)
+        Tue, 15 Sep 2020 06:01:54 -0700 (PDT)
 From:   Muchun Song <songmuchun@bytedance.com>
 To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
         mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
@@ -60,9 +60,9 @@ To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Muchun Song <songmuchun@bytedance.com>
-Subject: [RFC PATCH 09/24] x86/mm: Introduce VMEMMAP_SIZE/VMEMMAP_END macro
-Date:   Tue, 15 Sep 2020 20:59:32 +0800
-Message-Id: <20200915125947.26204-10-songmuchun@bytedance.com>
+Subject: [RFC PATCH 11/24] mm/hugetlb: Add vmemmap_pmd_huge macro for x86
+Date:   Tue, 15 Sep 2020 20:59:34 +0800
+Message-Id: <20200915125947.26204-12-songmuchun@bytedance.com>
 X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 In-Reply-To: <20200915125947.26204-1-songmuchun@bytedance.com>
 References: <20200915125947.26204-1-songmuchun@bytedance.com>
@@ -73,35 +73,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In the later patch, we will walk the page table for vmemmap area.
-So we want to know the range of vmemmap area addresses in order to
-distinguish whether it comes from vememmap areas. If not, just we
-can do not walk the page table.
+Use pmd_large instead of pmd_huge on x86, so we implement the
+vmemmap_pmd_huge macro.
 
 Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 ---
- arch/x86/include/asm/pgtable_64_types.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/x86/include/asm/hugetlb.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 52e5f5f2240d..bedbd2e7d06c 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -139,6 +139,14 @@ extern unsigned int ptrs_per_p4d;
- # define VMEMMAP_START		__VMEMMAP_BASE_L4
- #endif /* CONFIG_DYNAMIC_MEMORY_LAYOUT */
+diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
+index f5e882f999cd..7c3eb60c2198 100644
+--- a/arch/x86/include/asm/hugetlb.h
++++ b/arch/x86/include/asm/hugetlb.h
+@@ -4,10 +4,17 @@
  
-+/*
-+ * VMEMMAP_SIZE - allows the whole linear region to be covered by
-+ *                a struct page array.
-+ */
-+#define VMEMMAP_SIZE		(1UL << (__VIRTUAL_MASK_SHIFT - PAGE_SHIFT - \
-+					 1 + ilog2(sizeof(struct page))))
-+#define VMEMMAP_END		(VMEMMAP_START + VMEMMAP_SIZE)
+ #include <asm/page.h>
+ #include <asm-generic/hugetlb.h>
++#include <asm/pgtable.h>
+ 
+ #ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+ #define VMEMMAP_HPAGE_SHIFT			PMD_SHIFT
+ #define arch_vmemmap_support_huge_mapping()	boot_cpu_has(X86_FEATURE_PSE)
 +
- #define VMALLOC_END		(VMALLOC_START + (VMALLOC_SIZE_TB << 40) - 1)
++#define vmemmap_pmd_huge vmemmap_pmd_huge
++static inline bool vmemmap_pmd_huge(pmd_t *pmd)
++{
++	return pmd_large(*pmd);
++}
+ #endif
  
- #define MODULES_VADDR		(__START_KERNEL_map + KERNEL_IMAGE_SIZE)
+ #define hugepages_supported() boot_cpu_has(X86_FEATURE_PSE)
 -- 
 2.20.1
 
