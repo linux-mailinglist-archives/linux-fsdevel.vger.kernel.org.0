@@ -2,117 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F32226A655
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 15:34:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE7C126A692
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 15:51:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726660AbgION2C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 09:28:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52528 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726620AbgIONZn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 09:25:43 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4996C061222
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:25:32 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id w16so3855141oia.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:25:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RyVHdR8jBIwQ3BNbRllUCCgf0qrcLoJK+x7C0viR1NE=;
-        b=wJ3w9dq4WGkHLAVxY7n5TllVUvXWKHAsTyiAO1zqRGvpG1/0nZAGylkQCAEkc30qw0
-         sdRrx5LKXaDqGtVMa+2D75ZbOI2t2+gIYrfrD+JFMDZXZk+wW33LRqi/N0X7ftX00gHR
-         zu70x//BFqUKOIYBIZcbdJ3p7YDhBXfQIwWM5NSmVOgKEVYm9OBLpso5+qMI2Vltexgx
-         t+qr5+7omoFBf619m7FZRQzPawASQ+AxYaBSngl6IQwlIR94WTkzqGO4YxLl+VoVkBZ4
-         wajpohE424xoFqEvGlfZ1HIQaCRMAqUoep6zE6jZCSXLbApL4P/Q0Bab4L65D/a6NOua
-         i9DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RyVHdR8jBIwQ3BNbRllUCCgf0qrcLoJK+x7C0viR1NE=;
-        b=uGjSN34dxxM0+yTGrf6Ld6Vjk9rk04S9jT8/Sb//RPbRlhEpYAygPi2htnyxGFiRKc
-         kvA2iq4sfrkkfQ/NYCsD0ZnMVIIUtSLGneKvGrX0O02K4DQAuZL+SCI/eXNM1lkTMUKI
-         y1gxRu7jFnMGK4q1wGCfulKCZ844C2s+NT58E2iqslhf4KUY0wX69dPgyA/yjfc8itfa
-         t09TOlCOTYQ+YlKWhGG9soLMC41rux2ClOx8bp/9Vwb/H16wXds5AMeEZsj7cEAg/Zs+
-         YNJdwDGFNcQz+fSB09j3RTxpAMb5iPvwcQxZ8CZZLqaxBfdP+PWPGFYM4bmnoQ9U9xmG
-         zwkg==
-X-Gm-Message-State: AOAM533ZdoMQ2O2v7XBqim/JMi7K88sPlXkxvdxyCL7VrfRSk3jK78Cp
-        Bnh9GYJmReH5uHx4GQUYpQBYaA==
-X-Google-Smtp-Source: ABdhPJyT4YjSfQSBOA7Rk1epa+cHZnD91VxCDph4qsIf8187cA0apiSIFtK2ee4KGS1Y+lHtVJRWIg==
-X-Received: by 2002:a05:6808:aa5:: with SMTP id r5mr3180890oij.90.1600176331905;
-        Tue, 15 Sep 2020 06:25:31 -0700 (PDT)
-Received: from [192.168.1.10] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id l136sm6362088oig.7.2020.09.15.06.25.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Sep 2020 06:25:31 -0700 (PDT)
-Subject: Re: [PATCH] io_uring: fix the bug of child process can't do io task
-To:     Yinyin Zhu <zhuyinyin@bytedance.com>, viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200915130245.89585-1-zhuyinyin@bytedance.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <e206f1b4-1f22-c3f5-21a6-cec498d9c830@kernel.dk>
-Date:   Tue, 15 Sep 2020 07:25:30 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726760AbgIONvG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 09:51:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51152 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726747AbgIONud (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Sep 2020 09:50:33 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0BF52226B;
+        Tue, 15 Sep 2020 13:27:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600176471;
+        bh=6Q+MhOQ7glSuksMrPnQjc8ZQNpw75aqn4R5Ei+SbD3I=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=klfozuaokmIqv4d7ZXuZqLVJ2QIc763AaKRei6S+8wtuxsjzys4htoj5BrTSoMWo4
+         K6S8KifJMkxOxUIZwbvWovDtH0J8atG5IMTquTE+1l4mx2uPWJvaYBslWsqXv7hPSW
+         NjMYahRUky0JWuJP6fT+am8Pe7tXXm06Pm/QJjps=
+Message-ID: <bf448095f9d675bad3adb0ddc2d7652625824bc6.camel@kernel.org>
+Subject: Re: [RFC PATCH v3 14/16] ceph: add support to readdir for encrypted
+ filenames
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Date:   Tue, 15 Sep 2020 09:27:49 -0400
+In-Reply-To: <20200915015719.GL899@sol.localdomain>
+References: <20200914191707.380444-1-jlayton@kernel.org>
+         <20200914191707.380444-15-jlayton@kernel.org>
+         <20200915015719.GL899@sol.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-In-Reply-To: <20200915130245.89585-1-zhuyinyin@bytedance.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/15/20 7:02 AM, Yinyin Zhu wrote:
-> when parent process setup a io_uring_instance, the ctx->sqo_mm was
-> assigned of parent process'mm. Then it fork a child
-> process. So the child process inherits the io_uring_instance fd from
-> parent process. Then the child process submit a io task to the io_uring
-> instance. The kworker will do the io task actually, and use
-> the ctx->sqo_mm as its mm, but this ctx->sqo_mm is parent process's mm,
-> not the child process's mm. so child do the io task unsuccessfully. To
-> fix this bug, when a process submit a io task to the kworker, assign the
-> ctx->sqo_mm with this process's mm.
+On Mon, 2020-09-14 at 18:57 -0700, Eric Biggers wrote:
+> On Mon, Sep 14, 2020 at 03:17:05PM -0400, Jeff Layton wrote:
+> > Add helper functions for buffer management and for decrypting filenames
+> > returned by the MDS. Wire those into the readdir codepaths.
+> > 
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/ceph/crypto.c | 47 +++++++++++++++++++++++++++++++++++++++
+> >  fs/ceph/crypto.h | 35 +++++++++++++++++++++++++++++
+> >  fs/ceph/dir.c    | 58 +++++++++++++++++++++++++++++++++++++++---------
+> >  fs/ceph/inode.c  | 31 +++++++++++++++++++++++---
+> >  4 files changed, 157 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+> > index f037a4939026..e3038c88c7a0 100644
+> > --- a/fs/ceph/crypto.c
+> > +++ b/fs/ceph/crypto.c
+> > @@ -107,3 +107,50 @@ int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+> >  		ceph_pagelist_release(pagelist);
+> >  	return ret;
+> >  }
+> > +
+> > +int ceph_fname_to_usr(struct inode *parent, char *name, u32 len,
+> > +			struct fscrypt_str *tname, struct fscrypt_str *oname,
+> > +			bool *is_nokey)
+> > +{
+> > +	int ret, declen;
+> > +	u32 save_len;
+> > +	struct fscrypt_str myname = FSTR_INIT(NULL, 0);
+> > +
+> > +	if (!IS_ENCRYPTED(parent)) {
+> > +		oname->name = name;
+> > +		oname->len = len;
+> > +		return 0;
+> > +	}
+> > +
+> > +	ret = fscrypt_get_encryption_info(parent);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (tname) {
+> > +		save_len = tname->len;
+> > +	} else {
+> > +		int err;
+> > +
+> > +		save_len = 0;
+> > +		err = fscrypt_fname_alloc_buffer(NAME_MAX, &myname);
+> > +		if (err)
+> > +			return err;
+> > +		tname = &myname;
+> 
+> The 'err' variable isn't needed, since 'ret' can be used instead.
+> 
+> > +	}
+> > +
+> > +	declen = fscrypt_base64_decode(name, len, tname->name);
+> > +	if (declen < 0 || declen > NAME_MAX) {
+> > +		ret = -EIO;
+> > +		goto out;
+> > +	}
+> 
+> declen <= 0, to cover the empty name case.
+> 
+> Also, is there a point in checking for > NAME_MAX?
+> 
 
-Hmm, what's the test case for this? There's a 5.9 regression where we
-don't always grab the right context for certain linked cases, below
-is the fix. Does that fix your case?
+IDK. We're getting these strings from the MDS and they could end up
+being corrupt if there are bugs there (or if the MDS is compromised). 
+Of course, if we get a name longer than NAME_MAX then we've overrun the
+buffer.
 
+Maybe we should add a maxlen parameter to fscrypt_base64_encode/decode ?
+Or maybe I should just have fscrypt_fname_alloc_buffer allocate a buffer
+the same size as "len"? It might be a little larger than necessary, but
+that would be safer.
 
-commit 202700e18acbed55970dbb9d4d518ac59b1172c8
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Sat Sep 12 13:18:10 2020 -0600
+> > +
+> > +	tname->len = declen;
+> > +
+> > +	ret = fscrypt_fname_disk_to_usr(parent, 0, 0, tname, oname, is_nokey);
+> > +
+> > +	if (save_len)
+> > +		tname->len = save_len;
+> 
+> This logic for temporarily overwriting the length is weird.
+> How about something like the following instead:
+> 
 
-    io_uring: grab any needed state during defer prep
-    
-    Always grab work environment for deferred links. The assumption that we
-    will be running it always from the task in question is false, as exiting
-    tasks may mean that we're deferring this one to a thread helper. And at
-    that point it's too late to grab the work environment.
-    
-    Fixes: debb85f496c9 ("io_uring: factor out grab_env() from defer_prep()")
-    Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Yeah, it is odd. I think I got spooked by the way that length in struct
+fscrypt_str is handled.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 175fb647d099..be9d628e7854 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5449,6 +5449,8 @@ static int io_req_defer_prep(struct io_kiocb *req,
- 	if (unlikely(ret))
- 		return ret;
- 
-+	io_prep_async_work(req);
-+
- 	switch (req->opcode) {
- 	case IORING_OP_NOP:
- 		break;
+Some functions treat it as representing the length of the allocated
+buffer (e.g. fscrypt_fname_alloc_buffer), but others treat it as
+representing the length of the string in ->name (e.g.
+fscrypt_encode_nokey_name).
+
+Your suggestion works around that though, so I'll probably adopt
+something like it. Thanks!
+
+> int ceph_fname_to_usr(struct inode *parent, char *name, u32 len,
+> 		      struct fscrypt_str *tname, struct fscrypt_str *oname,
+> 		      bool *is_nokey)
+> {
+> 	int err, declen;
+> 	struct fscrypt_str _tname = FSTR_INIT(NULL, 0);
+> 	struct fscrypt_str iname;
+> 
+> 	if (!IS_ENCRYPTED(parent)) {
+> 		oname->name = name;
+> 		oname->len = len;
+> 		return 0;
+> 	}
+> 
+> 	err = fscrypt_get_encryption_info(parent);
+> 	if (err)
+> 		return err;
+> 
+> 	if (!tname) {
+> 		err = fscrypt_fname_alloc_buffer(NAME_MAX, &_tname);
+> 		if (err)
+> 			return err;
+> 		tname = &_tname;
+> 	}
+> 
+> 	declen = fscrypt_base64_decode(name, len, tname->name);
+> 	if (declen <= 0) {
+> 		err = -EIO;
+> 		goto out;
+> 	}
+> 
+> 	iname.name = tname->name;
+> 	iname.len = declen;
+> 	err = fscrypt_fname_disk_to_usr(parent, 0, 0, &iname, oname, is_nokey);
+> out:
+> 	fscrypt_fname_free_buffer(&_tname);
+> 	return err;
+> }
 
 -- 
-Jens Axboe
+Jeff Layton <jlayton@kernel.org>
 
