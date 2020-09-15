@@ -2,156 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 05765269BAF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 03:57:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED070269BC2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 04:07:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726082AbgIOB5X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Sep 2020 21:57:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60396 "EHLO mail.kernel.org"
+        id S1726089AbgIOCHc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Sep 2020 22:07:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726019AbgIOB5V (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Sep 2020 21:57:21 -0400
+        id S1726061AbgIOCHa (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Sep 2020 22:07:30 -0400
 Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CA2420771;
-        Tue, 15 Sep 2020 01:57:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7236220684;
+        Tue, 15 Sep 2020 02:07:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600135040;
-        bh=m122QXVlOI6Vtyt8CgPxA/tzFHjzeaEucCPbdNM/NZE=;
+        s=default; t=1600135646;
+        bh=eURLMGfv2mXSIs9WMxHAVOdoVfQ3uDcDU67PICAP4f8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wMtVvf6mxW4Ln+TyxMyrb7sOe2wCFwh1O1D2EfFyQ0edIpb1B19bvg1MEjBr6GcnC
-         e5mbHZKYA9G0N3dKoWr44VFU1Na7wBXJLujb5tGXYGENcy8Af9hofgJujg06QdpN2L
-         gRTUAcbU14VLDclEU3YT5T3kFCgWXQUSk9BELNkc=
-Date:   Mon, 14 Sep 2020 18:57:19 -0700
+        b=vLiTxzeDcx53ASM8jA8rb+UObSljj3lZzKFaCMigyPRfzzzYeHBvJH1Yis7PMkfCw
+         UW7g1qx9ntE11c5C2qeqmB4gSx0v+UilEXy3gz4yNxcXHZuOv1FauIBknF2CgJqenD
+         ly0pzz5wIOb0137opr8UCreHwRpfe2Z0cqmHX2Oo=
+Date:   Mon, 14 Sep 2020 19:07:25 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v3 14/16] ceph: add support to readdir for encrypted
- filenames
-Message-ID: <20200915015719.GL899@sol.localdomain>
+Subject: Re: [RFC PATCH v3 16/16] ceph: create symlinks with encrypted and
+ base64-encoded targets
+Message-ID: <20200915020725.GM899@sol.localdomain>
 References: <20200914191707.380444-1-jlayton@kernel.org>
- <20200914191707.380444-15-jlayton@kernel.org>
+ <20200914191707.380444-17-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200914191707.380444-15-jlayton@kernel.org>
+In-Reply-To: <20200914191707.380444-17-jlayton@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 14, 2020 at 03:17:05PM -0400, Jeff Layton wrote:
-> Add helper functions for buffer management and for decrypting filenames
-> returned by the MDS. Wire those into the readdir codepaths.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/crypto.c | 47 +++++++++++++++++++++++++++++++++++++++
->  fs/ceph/crypto.h | 35 +++++++++++++++++++++++++++++
->  fs/ceph/dir.c    | 58 +++++++++++++++++++++++++++++++++++++++---------
->  fs/ceph/inode.c  | 31 +++++++++++++++++++++++---
->  4 files changed, 157 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-> index f037a4939026..e3038c88c7a0 100644
-> --- a/fs/ceph/crypto.c
-> +++ b/fs/ceph/crypto.c
-> @@ -107,3 +107,50 @@ int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
->  		ceph_pagelist_release(pagelist);
->  	return ret;
->  }
+On Mon, Sep 14, 2020 at 03:17:07PM -0400, Jeff Layton wrote:
+> +	if (IS_ENCRYPTED(req->r_new_inode)) {
+> +		int len = strlen(dest);
 > +
-> +int ceph_fname_to_usr(struct inode *parent, char *name, u32 len,
-> +			struct fscrypt_str *tname, struct fscrypt_str *oname,
-> +			bool *is_nokey)
-> +{
-> +	int ret, declen;
-> +	u32 save_len;
-> +	struct fscrypt_str myname = FSTR_INIT(NULL, 0);
-> +
-> +	if (!IS_ENCRYPTED(parent)) {
-> +		oname->name = name;
-> +		oname->len = len;
-> +		return 0;
-> +	}
-> +
-> +	ret = fscrypt_get_encryption_info(parent);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (tname) {
-> +		save_len = tname->len;
-> +	} else {
-> +		int err;
-> +
-> +		save_len = 0;
-> +		err = fscrypt_fname_alloc_buffer(NAME_MAX, &myname);
+> +		err = fscrypt_prepare_symlink(dir, dest, len, PATH_MAX, &osd_link);
 > +		if (err)
-> +			return err;
-> +		tname = &myname;
-
-The 'err' variable isn't needed, since 'ret' can be used instead.
-
-> +	}
+> +			goto out_req;
 > +
-> +	declen = fscrypt_base64_decode(name, len, tname->name);
-> +	if (declen < 0 || declen > NAME_MAX) {
-> +		ret = -EIO;
-> +		goto out;
-> +	}
-
-declen <= 0, to cover the empty name case.
-
-Also, is there a point in checking for > NAME_MAX?
-
+> +		err = fscrypt_encrypt_symlink(req->r_new_inode, dest, len, &osd_link);
+> +		if (err)
+> +			goto out_req;
 > +
-> +	tname->len = declen;
+> +		req->r_path2 = kmalloc(FSCRYPT_BASE64_CHARS(osd_link.len) + 1, GFP_KERNEL);
+
+osd_link.len includes a null terminator.  It seems that's not what's wanted
+here, and you should be subtracting 1 here.
+
+(fscrypt_prepare_symlink() maybe should exclude the null terminator from the
+length instead.  But for the other filesystems it was easier to include it...)
+
+> @@ -996,26 +995,39 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+>  		inode->i_fop = &ceph_file_fops;
+>  		break;
+>  	case S_IFLNK:
+> -		inode->i_op = &ceph_symlink_iops;
+>  		if (!ci->i_symlink) {
+>  			u32 symlen = iinfo->symlink_len;
+>  			char *sym;
+>  
+>  			spin_unlock(&ci->i_ceph_lock);
+>  
+> -			if (symlen != i_size_read(inode)) {
+> -				pr_err("%s %llx.%llx BAD symlink "
+> -					"size %lld\n", __func__,
+> -					ceph_vinop(inode),
+> -					i_size_read(inode));
+> +			if (IS_ENCRYPTED(inode)) {
+> +				/* Do base64 decode so that we get the right size (maybe?) */
+> +				err = -ENOMEM;
+> +				sym = kmalloc(symlen + 1, GFP_NOFS);
+> +				if (!sym)
+> +					goto out;
 > +
-> +	ret = fscrypt_fname_disk_to_usr(parent, 0, 0, tname, oname, is_nokey);
+> +				symlen = fscrypt_base64_decode(iinfo->symlink, symlen, sym);
+> +				/*
+> +				 * i_size as reported by the MDS may be wrong, due to base64
+> +				 * inflation and padding. Fix it up here.
+> +				 */
+>  				i_size_write(inode, symlen);
+
+Note that fscrypt_base64_decode() can fail (return -1) if the input is not valid
+base64.  That isn't being handled here.
+
+> +static const char *ceph_encrypted_get_link(struct dentry *dentry, struct inode *inode,
+> +					   struct delayed_call *done)
+> +{
+> +	struct ceph_inode_info *ci = ceph_inode(inode);
 > +
-> +	if (save_len)
-> +		tname->len = save_len;
+> +	if (!dentry)
+> +		return ERR_PTR(-ECHILD);
+> +
+> +	return fscrypt_get_symlink(inode, ci->i_symlink, ksize(ci->i_symlink), done);
 
-This logic for temporarily overwriting the length is weird.
-How about something like the following instead:
+Using ksize() seems wrong here, since that would allow fscrypt_get_symlink() to
+read beyond the part of the buffer that is actually initialized.
 
-int ceph_fname_to_usr(struct inode *parent, char *name, u32 len,
-		      struct fscrypt_str *tname, struct fscrypt_str *oname,
-		      bool *is_nokey)
-{
-	int err, declen;
-	struct fscrypt_str _tname = FSTR_INIT(NULL, 0);
-	struct fscrypt_str iname;
+> -static const struct inode_operations ceph_symlink_iops = {
+> +const struct inode_operations ceph_symlink_iops = {
+>  	.get_link = simple_get_link,
+>  	.setattr = ceph_setattr,
+>  	.getattr = ceph_getattr,
+>  	.listxattr = ceph_listxattr,
+>  };
+>  
+> +const struct inode_operations ceph_encrypted_symlink_iops = {
+> +	.get_link = ceph_encrypted_get_link,
+> +	.setattr = ceph_setattr,
+> +	.getattr = ceph_getattr,
+> +	.listxattr = ceph_listxattr,
+> +};
 
-	if (!IS_ENCRYPTED(parent)) {
-		oname->name = name;
-		oname->len = len;
-		return 0;
-	}
+These don't need to be made global, as they're only used in fs/ceph/inode.c.
 
-	err = fscrypt_get_encryption_info(parent);
-	if (err)
-		return err;
-
-	if (!tname) {
-		err = fscrypt_fname_alloc_buffer(NAME_MAX, &_tname);
-		if (err)
-			return err;
-		tname = &_tname;
-	}
-
-	declen = fscrypt_base64_decode(name, len, tname->name);
-	if (declen <= 0) {
-		err = -EIO;
-		goto out;
-	}
-
-	iname.name = tname->name;
-	iname.len = declen;
-	err = fscrypt_fname_disk_to_usr(parent, 0, 0, &iname, oname, is_nokey);
-out:
-	fscrypt_fname_free_buffer(&_tname);
-	return err;
-}
+- Eric
