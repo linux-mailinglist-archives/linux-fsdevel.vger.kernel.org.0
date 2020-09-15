@@ -2,322 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 39C9A26B771
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 02:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7870226B88D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 02:45:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbgIPAXm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 20:23:42 -0400
-Received: from brightrain.aerifal.cx ([216.12.86.13]:53994 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726749AbgIPAXj (ORCPT
+        id S1726601AbgIPApf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 20:45:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48482 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726502AbgIONAY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 20:23:39 -0400
-Date:   Tue, 15 Sep 2020 20:23:38 -0400
-From:   Rich Felker <dalias@libc.org>
-To:     linux-api@vger.kernel.org
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] vfs: add fchmodat2 syscall
-Message-ID: <20200916002335.GQ3265@brightrain.aerifal.cx>
-References: <20200916002157.GO3265@brightrain.aerifal.cx>
+        Tue, 15 Sep 2020 09:00:24 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72E29C061788
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:00:08 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id s14so2688335pju.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:00:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IFig9ACO4bSS32kx/lDqlgTRWm2lqua6M6hUcvyGFR8=;
+        b=B9ojoIjDFZ9eF0ICOMpjQvnzYZWgEFslXcMRchF5bHGTN+Gs/cQhddDbUEdXc6MeyB
+         R+TMnXJoPPxmQwJ56a9Gnc01PpUNBX1HIANP0gYofuAA3aAmgq+tvGo8U6HiqIm0C/J0
+         oEIAe6LSlOXWtpadXOgFatYpd6+V6hATPrGv2gLfOM/1cwTEe0n4atiy3M40UeuoTaXn
+         y/NstleAjNRdvriNCxTKAdt3OvF/KC2gGdvH5sjewgWAeb3PKRA02U+bdiLympzTrsPV
+         YoNhH97t7Dd7k9wcRYVVMVdkTmZ0WJZGpElS0kZUAzHxwu+yOIekQSpcGXzhznPTCLNt
+         Byrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IFig9ACO4bSS32kx/lDqlgTRWm2lqua6M6hUcvyGFR8=;
+        b=O18pdvtyjkw0yiSGIeMK0er4mm2LtxKIIAhgV34gejEu4/JOkHWsTLy2fVgIkEp9dc
+         qoSQQbi+TKnoYlyy9KA+Pe+oiGzkUzjYU00OpKfjG2jhhTNEVPyQ7YdI4oL5wB7XbpwA
+         hcatfzGUtLmDuvZF4iV5yLpnPA9kwZqRyO1ntM4vEpWYu8eVfELxxA1q3/4aLiasqYDO
+         46HVkf0vYOUfXjGX+bQiDVN6GvGjvSTdoulvp+tyj3tU7OwqBOELtuMBIFb2ZqKLCNuR
+         vsS0Kq+nMxMIQxEAq5WBx4z/LhS1q5Y5qzLsw5A+4HBj6LF4iuNREWnx2QbAAr/nVWIz
+         UtWw==
+X-Gm-Message-State: AOAM533alW5YV4PG0fFH45i2wiIOYkzff6hWAIY2w0jsOhuo7Al16e6v
+        VmlIxMGBCUES+HqmwHhDTjVe0w==
+X-Google-Smtp-Source: ABdhPJweCFGKb+8Bpk7lpOwwgL1O+W4g/G43QI96b0WrwCjZbzTFpN+tMKrXVGoqnvzds1F5KoKRqA==
+X-Received: by 2002:a17:90b:2347:: with SMTP id ms7mr3974046pjb.135.1600174807782;
+        Tue, 15 Sep 2020 06:00:07 -0700 (PDT)
+Received: from localhost.bytedance.net ([103.136.220.66])
+        by smtp.gmail.com with ESMTPSA id w185sm14269855pfc.36.2020.09.15.05.59.58
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 15 Sep 2020 06:00:07 -0700 (PDT)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        paulmck@kernel.org, mchehab+huawei@kernel.org,
+        pawan.kumar.gupta@linux.intel.com, rdunlap@infradead.org,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, rientjes@google.com
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [RFC PATCH 00/24] mm/hugetlb: Free some vmemmap pages of hugetlb page
+Date:   Tue, 15 Sep 2020 20:59:23 +0800
+Message-Id: <20200915125947.26204-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200916002157.GO3265@brightrain.aerifal.cx>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-POSIX defines fchmodat as having a 4th argument, flags, that can be
-AT_SYMLINK_NOFOLLOW. Support for changing the access mode of symbolic
-links is optional (EOPNOTSUPP allowed if not supported), but this flag
-is important even on systems where symlinks do not have access modes,
-since it's the only way to safely change the mode of a file which
-might be asynchronously replaced with a symbolic link, without a race
-condition whereby the link target is changed.
+Hi all,
 
-It's possible to emulate AT_SYMLINK_NOFOLLOW in userspace, and both
-musl libc and glibc do this, by opening an O_PATH file descriptor and
-performing chmod on the corresponding magic symlink in /proc/self/fd.
-However, this requires procfs to be mounted and accessible.
+This patch series will free some vmemmap pages(struct page structures)
+associated with each hugetlbpage when preallocated to save memory.
 
-Signed-off-by: Rich Felker <dalias@libc.org>
----
- arch/alpha/kernel/syscalls/syscall.tbl      |  1 +
- arch/arm/tools/syscall.tbl                  |  1 +
- arch/arm64/include/asm/unistd.h             |  2 +-
- arch/arm64/include/asm/unistd32.h           |  2 ++
- arch/ia64/kernel/syscalls/syscall.tbl       |  1 +
- arch/m68k/kernel/syscalls/syscall.tbl       |  1 +
- arch/microblaze/kernel/syscalls/syscall.tbl |  1 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   |  1 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   |  1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   |  1 +
- arch/parisc/kernel/syscalls/syscall.tbl     |  1 +
- arch/powerpc/kernel/syscalls/syscall.tbl    |  1 +
- arch/s390/kernel/syscalls/syscall.tbl       |  1 +
- arch/sh/kernel/syscalls/syscall.tbl         |  1 +
- arch/sparc/kernel/syscalls/syscall.tbl      |  1 +
- arch/x86/entry/syscalls/syscall_32.tbl      |  1 +
- arch/x86/entry/syscalls/syscall_64.tbl      |  1 +
- arch/xtensa/kernel/syscalls/syscall.tbl     |  1 +
- fs/open.c                                   | 17 ++++++++++++++---
- include/linux/syscalls.h                    |  2 ++
- include/uapi/asm-generic/unistd.h           |  4 +++-
- 21 files changed, 38 insertions(+), 5 deletions(-)
+Nowadays we track the status of physical page frames using `struct page`
+arranged in one or more arrays. And here exists one-to-one mapping between
+the physical page frame and the corresponding `struct page`.
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index ec8bed9e7b75..5648fa8be7a1 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -479,3 +479,4 @@
- 547	common	openat2				sys_openat2
- 548	common	pidfd_getfd			sys_pidfd_getfd
- 549	common	faccessat2			sys_faccessat2
-+550	common	fchmodat2			sys_fchmodat2
-diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
-index 171077cbf419..b6b715bb3315 100644
---- a/arch/arm/tools/syscall.tbl
-+++ b/arch/arm/tools/syscall.tbl
-@@ -453,3 +453,4 @@
- 437	common	openat2				sys_openat2
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
-+440	common	fchmodat2			sys_fchmodat2
-diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
-index 3b859596840d..b3b2019f8d16 100644
---- a/arch/arm64/include/asm/unistd.h
-+++ b/arch/arm64/include/asm/unistd.h
-@@ -38,7 +38,7 @@
- #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
- #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
- 
--#define __NR_compat_syscalls		440
-+#define __NR_compat_syscalls		441
- #endif
- 
- #define __ARCH_WANT_SYS_CLONE
-diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-index 734860ac7cf9..cd0845f3c19f 100644
---- a/arch/arm64/include/asm/unistd32.h
-+++ b/arch/arm64/include/asm/unistd32.h
-@@ -887,6 +887,8 @@ __SYSCALL(__NR_openat2, sys_openat2)
- __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
- #define __NR_faccessat2 439
- __SYSCALL(__NR_faccessat2, sys_faccessat2)
-+#define __NR_fchmodat2 440
-+__SYSCALL(__NR_fchmodat2, sys_fchmodat2)
- 
- /*
-  * Please add new compat syscalls above this comment and update
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index f52a41f4c340..7c3f8564d0f3 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -360,3 +360,4 @@
- 437	common	openat2				sys_openat2
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
-+440	common	fchmodat2			sys_fchmodat2
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 81fc799d8392..063d875377bf 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -439,3 +439,4 @@
- 437	common	openat2				sys_openat2
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
-+440	common	fchmodat2			sys_fchmodat2
-diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
-index b4e263916f41..6aea8a435fd0 100644
---- a/arch/microblaze/kernel/syscalls/syscall.tbl
-+++ b/arch/microblaze/kernel/syscalls/syscall.tbl
-@@ -445,3 +445,4 @@
- 437	common	openat2				sys_openat2
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
-+440	common	fchmodat2			sys_fchmodat2
-diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
-index f9df9edb67a4..a9205843251d 100644
---- a/arch/mips/kernel/syscalls/syscall_n32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
-@@ -378,3 +378,4 @@
- 437	n32	openat2				sys_openat2
- 438	n32	pidfd_getfd			sys_pidfd_getfd
- 439	n32	faccessat2			sys_faccessat2
-+440	n32	fchmodat2			sys_fchmodat2
-diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
-index 557f9954a2b9..31da28e2d6f3 100644
---- a/arch/mips/kernel/syscalls/syscall_n64.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
-@@ -354,3 +354,4 @@
- 437	n64	openat2				sys_openat2
- 438	n64	pidfd_getfd			sys_pidfd_getfd
- 439	n64	faccessat2			sys_faccessat2
-+440	n64	fchmodat2			sys_fchmodat2
-diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
-index 195b43cf27c8..af0e38302ed8 100644
---- a/arch/mips/kernel/syscalls/syscall_o32.tbl
-+++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
-@@ -427,3 +427,4 @@
- 437	o32	openat2				sys_openat2
- 438	o32	pidfd_getfd			sys_pidfd_getfd
- 439	o32	faccessat2			sys_faccessat2
-+440	o32	fchmodat2			sys_fchmodat2
-diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
-index def64d221cd4..379cdb44ca0b 100644
---- a/arch/parisc/kernel/syscalls/syscall.tbl
-+++ b/arch/parisc/kernel/syscalls/syscall.tbl
-@@ -437,3 +437,4 @@
- 437	common	openat2				sys_openat2
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
-+440	common	fchmodat2			sys_fchmodat2
-diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-index c2d737ff2e7b..ada11db506e6 100644
---- a/arch/powerpc/kernel/syscalls/syscall.tbl
-+++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-@@ -529,3 +529,4 @@
- 437	common	openat2				sys_openat2
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
-+440	common	fchmodat2			sys_fchmodat2
-diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
-index 10456bc936fb..a4dae0abb353 100644
---- a/arch/s390/kernel/syscalls/syscall.tbl
-+++ b/arch/s390/kernel/syscalls/syscall.tbl
-@@ -442,3 +442,4 @@
- 437  common	openat2			sys_openat2			sys_openat2
- 438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
- 439  common	faccessat2		sys_faccessat2			sys_faccessat2
-+440  common	fchmodat2		sys_fchmodat2			sys_fchmodat2
-diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
-index ae0a00beea5f..b59b4408b85f 100644
---- a/arch/sh/kernel/syscalls/syscall.tbl
-+++ b/arch/sh/kernel/syscalls/syscall.tbl
-@@ -442,3 +442,4 @@
- 437	common	openat2				sys_openat2
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
-+440	common	fchmodat2			sys_fchmodat2
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index 4af114e84f20..e817416f81df 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -485,3 +485,4 @@
- 437	common	openat2			sys_openat2
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
-+440	common	fchmodat2			sys_fchmodat2
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 9d1102873666..208b06650cef 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -444,3 +444,4 @@
- 437	i386	openat2			sys_openat2
- 438	i386	pidfd_getfd		sys_pidfd_getfd
- 439	i386	faccessat2		sys_faccessat2
-+440	i386	fchmodat2		sys_fchmodat2
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index f30d6ae9a688..d9a591db72fb 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -361,6 +361,7 @@
- 437	common	openat2			sys_openat2
- 438	common	pidfd_getfd		sys_pidfd_getfd
- 439	common	faccessat2		sys_faccessat2
-+440	common	fchmodat2		sys_fchmodat2
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
-index 6276e3c2d3fc..ff756cb2f5d7 100644
---- a/arch/xtensa/kernel/syscalls/syscall.tbl
-+++ b/arch/xtensa/kernel/syscalls/syscall.tbl
-@@ -410,3 +410,4 @@
- 437	common	openat2				sys_openat2
- 438	common	pidfd_getfd			sys_pidfd_getfd
- 439	common	faccessat2			sys_faccessat2
-+440	common	fchmodat2			sys_fchmodat2
-diff --git a/fs/open.c b/fs/open.c
-index cdb7964aaa6e..f492c782c0ed 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -616,11 +616,16 @@ SYSCALL_DEFINE2(fchmod, unsigned int, fd, umode_t, mode)
- 	return err;
- }
- 
--static int do_fchmodat(int dfd, const char __user *filename, umode_t mode)
-+static int do_fchmodat(int dfd, const char __user *filename, umode_t mode, int flags)
- {
- 	struct path path;
- 	int error;
- 	unsigned int lookup_flags = LOOKUP_FOLLOW;
-+
-+	if (flags & ~AT_SYMLINK_NOFOLLOW)
-+		return -EINVAL;
-+	if (flags & AT_SYMLINK_NOFOLLOW)
-+		lookup_flags &= ~LOOKUP_FOLLOW;
- retry:
- 	error = user_path_at(dfd, filename, lookup_flags, &path);
- 	if (!error) {
-@@ -634,15 +639,21 @@ static int do_fchmodat(int dfd, const char __user *filename, umode_t mode)
- 	return error;
- }
- 
-+SYSCALL_DEFINE4(fchmodat2, int, dfd, const char __user *, filename,
-+		umode_t, mode, int, flags)
-+{
-+	return do_fchmodat(dfd, filename, mode, flags);
-+}
-+
- SYSCALL_DEFINE3(fchmodat, int, dfd, const char __user *, filename,
- 		umode_t, mode)
- {
--	return do_fchmodat(dfd, filename, mode);
-+	return do_fchmodat(dfd, filename, mode, 0);
- }
- 
- SYSCALL_DEFINE2(chmod, const char __user *, filename, umode_t, mode)
- {
--	return do_fchmodat(AT_FDCWD, filename, mode);
-+	return do_fchmodat(AT_FDCWD, filename, mode, 0);
- }
- 
- int chown_common(const struct path *path, uid_t user, gid_t group)
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 75ac7f8ae93c..ced00c56eba7 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -435,6 +435,8 @@ asmlinkage long sys_chroot(const char __user *filename);
- asmlinkage long sys_fchmod(unsigned int fd, umode_t mode);
- asmlinkage long sys_fchmodat(int dfd, const char __user * filename,
- 			     umode_t mode);
-+asmlinkage long sys_fchmodat2(int dfd, const char __user * filename,
-+			      umode_t mode, int flags);
- asmlinkage long sys_fchownat(int dfd, const char __user *filename, uid_t user,
- 			     gid_t group, int flag);
- asmlinkage long sys_fchown(unsigned int fd, uid_t user, gid_t group);
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 995b36c2ea7d..ebf5cdb3f444 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -859,9 +859,11 @@ __SYSCALL(__NR_openat2, sys_openat2)
- __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
- #define __NR_faccessat2 439
- __SYSCALL(__NR_faccessat2, sys_faccessat2)
-+#define __NR_fchmodat2 440
-+__SYSCALL(__NR_fchmodat2, sys_fchmodat2)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 440
-+#define __NR_syscalls 441
- 
- /*
-  * 32 bit systems traditionally used different
+The hugetlbpage support is built on top of multiple page size support
+that is provided by most modern architectures. For example, x86 CPUs
+normally support 4K and 2M (1G if architecturally supported) page sizes.
+Every hugetlbpage has more than one `struct page`. The 2M hugetlbpage
+has 512 `struct page` and 1G hugetlbpage has 4096 `struct page`. But
+in the core of hugetlbpage only uses the first 4 `struct page` to store
+metadata associated with each hugetlbpage. The rest of the `struct page`
+are usually read the compound_head field which are all the same value.
+If we can free some struct page memory to buddy system so that We can
+save a lot of memory.
+
+When the system boot up, every 2M hugetlbpage has 512 `struct page` which
+is 8 pages(sizeof(struct page) * 512 / PAGE_SIZE).
+
+   hugetlbpage                   struct page(8 pages)          page frame(8 pages)
+  +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
+  |           |                     |     0     | -------------> |     0     |
+  |           |                     |     1     | -------------> |     1     |
+  |           |                     |     2     | -------------> |     2     |
+  |           |                     |     3     | -------------> |     3     |
+  |           |                     |     4     | -------------> |     4     |
+  |     2M    |                     |     5     | -------------> |     5     |
+  |           |                     |     6     | -------------> |     6     |
+  |           |                     |     7     | -------------> |     7     |
+  |           |                     +-----------+                +-----------+
+  |           |
+  |           |
+  +-----------+
+
+
+When a hugetlbpage is preallocated, we can change the mapping from above to
+bellow.
+
+   hugetlbpage                   struct page(8 pages)          page frame(8 pages)
+  +-----------+ ---virt_to_page---> +-----------+   mapping to   +-----------+
+  |           |                     |     0     | -------------> |     0     |
+  |           |                     |     1     | -------------> |     1     |
+  |           |                     |     2     | -------------> +-----------+
+  |           |                     |     3     | -----------------^ ^ ^ ^ ^
+  |           |                     |     4     | -------------------+ | | |
+  |     2M    |                     |     5     | ---------------------+ | |
+  |           |                     |     6     | -----------------------+ |
+  |           |                     |     7     | -------------------------+
+  |           |                     +-----------+
+  |           |
+  |           |
+  +-----------+
+
+The mapping of the first page(index 0) and the second page(index 1) is
+unchanged. The remaining 6 pages are all mapped to the same page(index
+1). So we only need 2 pages for vmemmap area and free 6 pages to the
+buddy system to save memory. Why we can do this? Because the content
+of the remaining 7 pages are usually same except the first page.
+
+When a hugetlbpage is freed to the buddy system, we should allocate 6
+pages for vmemmap pages and restore the previous mapping relationship.
+
+If we uses the 1G hugetlbpage, we can save 4095 pages. This is a very
+substantial gain. On our server, run some SPDK applications which will
+use 300GB hugetlbpage. With this feature enabled, we can save 4797MB
+memory.
+
+Muchun Song (24):
+  mm/memory_hotplug: Move bootmem info registration API to
+    bootmem_info.c
+  mm/memory_hotplug: Move {get,put}_page_bootmem() to bootmem_info.c
+  mm/hugetlb: Introduce a new config HUGETLB_PAGE_FREE_VMEMMAP
+  mm/hugetlb: Register bootmem info when
+    CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
+  mm/hugetlb: Introduce nr_free_vmemmap_pages in the struct hstate
+  mm/hugetlb: Introduce pgtable allocation/freeing helpers
+  mm/hugetlb: Add freeing unused vmemmap pages support for x86
+  mm/bootmem_info: Introduce {free,prepare}_vmemmap_page()
+  x86/mm: Introduce VMEMMAP_SIZE/VMEMMAP_END macro
+  mm/hugetlb: Free the vmemmap pages associated with each hugetlb page
+  mm/hugetlb: Add vmemmap_pmd_huge macro for x86
+  mm/hugetlb: Defer freeing of hugetlb pages
+  mm/hugetlb: Allocate the vmemmap pages associated with each hugetlb
+    page
+  mm/hugetlb: Introduce remap_huge_page_pmd_vmemmap helper
+  mm/hugetlb: Use PG_slab to indicate split pmd
+  mm/hugetlb: Support freeing vmemmap pages of gigantic page
+  mm/hugetlb: Add a BUILD_BUG_ON to check if struct page size is a power
+    of two
+  mm/hugetlb: Clear PageHWPoison on the non-error memory page
+  mm/hugetlb: Flush work when dissolving hugetlb page
+  mm/hugetlb: Add a kernel parameter hugetlb_free_vmemmap
+  mm/hugetlb: Merge pte to huge pmd only for gigantic page
+  mm/hugetlb: Implement vmemmap_pmd_mkhuge macro
+  mm/hugetlb: Gather discrete indexes of tail page
+  mm/hugetlb: Add BUILD_BUG_ON to catch invalid usage of tail struct
+    page
+
+ .../admin-guide/kernel-parameters.txt         |   9 +
+ Documentation/admin-guide/mm/hugetlbpage.rst  |   3 +
+ arch/x86/include/asm/hugetlb.h                |  20 +
+ arch/x86/include/asm/pgtable_64_types.h       |   8 +
+ arch/x86/mm/init_64.c                         |   5 +-
+ fs/Kconfig                                    |  15 +
+ include/linux/bootmem_info.h                  |  65 ++
+ include/linux/hugetlb.h                       |  64 ++
+ include/linux/hugetlb_cgroup.h                |  15 +-
+ include/linux/memory_hotplug.h                |  27 -
+ mm/Makefile                                   |   1 +
+ mm/bootmem_info.c                             | 125 +++
+ mm/hugetlb.c                                  | 834 +++++++++++++++++-
+ mm/memory_hotplug.c                           | 116 ---
+ mm/sparse.c                                   |   1 +
+ 15 files changed, 1143 insertions(+), 165 deletions(-)
+ create mode 100644 include/linux/bootmem_info.h
+ create mode 100644 mm/bootmem_info.c
+
 -- 
-2.21.0
+2.20.1
 
