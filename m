@@ -2,98 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 1197526B514
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 01:36:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9752526B7C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 02:29:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbgIOXge (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 19:36:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35102 "EHLO
+        id S1727192AbgIPA3C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 20:29:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727457AbgIOXgG (ORCPT
+        with ESMTP id S1726658AbgIONti (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 19:36:06 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A640C061788
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 16:36:05 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id y17so4928310lfa.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 16:36:05 -0700 (PDT)
+        Tue, 15 Sep 2020 09:49:38 -0400
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B8A4C061A10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:36:56 -0700 (PDT)
+Received: by mail-ot1-x344.google.com with SMTP id e23so3235140otk.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:36:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VY3FI+8ua5GfWFJfcYL9CJDi5GxfS9ipQFMk0egquPM=;
-        b=Ejf+nB2H8r1U6BUXghESSW2la6WPBsGO2KQMBfcOZ04frdMfiw6sT10vXttnHODQ6i
-         rvToxlK44vQDz8BHh8az9FEP/q3ZzjKoTGWJmy+a9q8ESyZu13UWfzvASKK25VnT1DDc
-         EgHYogXAOZ3tXTdP4JYasoGmltggzQdxf32e4=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5nixci3CSSlm0JVJHjLv8kSY8PhichT9C9IRwcdycYA=;
+        b=frM1guUPtYEMHzBHOmBXc1LJN0o/Mhxc876Up3RbNvLAopbQ51jsxn66hMudOWe+7D
+         qb0q6byNtnMAi7YZ/5QVMXXBGRO8H+YZre3Z0q+2wt1a/4W5UmqMAoPDfsHXvx/gaacZ
+         f9VKtNiD/2RmhiywtqC6DD11yNsMPRZHlVGu+H8XXcT7nMXl0TKxbHdXwp2msnugNfda
+         5FMcbZ5ppng5F+r02LNIJJvEOmSKmXygmLJuVT1IevEOJqkJpB2Z9xq0q0A5nRd25IjN
+         FsYcvSBU0Fre2hTvb7hD+Dc7Ro39e+TKVPUsoQrkRDiwf2ncucLBcd23rPxa1gqOO8pG
+         g65w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VY3FI+8ua5GfWFJfcYL9CJDi5GxfS9ipQFMk0egquPM=;
-        b=m6J0ZNUwtsPhrqTf1vPa+2/ltjL14IPOfaGQ4+/nIAa/HS3O0SFzMQgCEOHyRcpAgk
-         JeS5cvDILwjOBL87XE/mOwQ1HZ2APv16xu8s3sUILVR2pVWSOadnDYIjwus96DJYJ8VS
-         MN8SbX4/L/BSe5zCSfKxuuEvCitCvxlf0HdxFQDLh0M6JLe4pvomyyPzVJAc+m/+kUaB
-         At5DCDPSn1hYkLocidZAX7HO7xSibrMt2Q7mGiCYaky3L7abmx9MQDc/F5aai0mdVgX0
-         ylrdYeB422edOtD+3UHsXd4wmJHGWPYE+rL7vBrS1kPEPy07wrsfa+EA7c5VbVEwdINp
-         /rBw==
-X-Gm-Message-State: AOAM532XWngOJDt0TAtmct0cW18PRg3CKvxBNRivWiQsOAou/6eS7iyO
-        g9eKtc3vp0pNOLrZoF3pjYeGwGFSCoKBsA==
-X-Google-Smtp-Source: ABdhPJwJIcbHLhGnsr2UtWyPjqWC9ZaY7JobtTcBj6YaDzCBv9jnEg6XqzVlYu5U0HIWteqaUWySdw==
-X-Received: by 2002:a19:d11:: with SMTP id 17mr6769632lfn.0.1600212963126;
-        Tue, 15 Sep 2020 16:36:03 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id 63sm4237979lfl.130.2020.09.15.16.36.01
-        for <linux-fsdevel@vger.kernel.org>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5nixci3CSSlm0JVJHjLv8kSY8PhichT9C9IRwcdycYA=;
+        b=ui/EeYHBITWTIz3bvbXOUdoi3s2KH5S1nHYJxgenqrgR4elykw0aLPfEZYfpXH0Jy9
+         R7zQQr0Jwr2gdhoQV7f4L+aJA9kJ5d6FAT16qIuZSSWmggVq5Jwy1FyGLue/OJGMIFp/
+         hqiTZjo89oWfe0eLI1Z27ZVnVdf187zb/UaYzrSNvdKYiOfe/DjWRHv/XAnT+nRtN1+U
+         EqEyFod/LiNwpIDspI7BnUN/l/UfEhRUQFm6FyXSA8ShhqHzLneQXeXEI0ahN7MpxX0x
+         EbRlFRZ5qu8KxvQsv21GFIVevr8qVylmXx+mNkLENUr/Wu2Wmv0vXV7JO4SneZgDExfY
+         ohHA==
+X-Gm-Message-State: AOAM532egpncMdqDxuSXeOavtCCuX+4WteU5Pp/GWkF+mm6+KHBiGxqk
+        V3TKZY10NfXVHmIR8x1NIv498g==
+X-Google-Smtp-Source: ABdhPJx6pSgCgdr+Rct0Mxa3o9lj8STvJmmRBbJOVmXhNia2GSJl/blPThqV+VQFP2sH8jbgfvKpMw==
+X-Received: by 2002:a9d:315:: with SMTP id 21mr13659132otv.278.1600177016337;
+        Tue, 15 Sep 2020 06:36:56 -0700 (PDT)
+Received: from [192.168.1.10] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id o13sm5597673otj.2.2020.09.15.06.36.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Sep 2020 16:36:01 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id u8so4981135lff.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 16:36:01 -0700 (PDT)
-X-Received: by 2002:a19:4186:: with SMTP id o128mr6576901lfa.148.1600212961230;
- Tue, 15 Sep 2020 16:36:01 -0700 (PDT)
+        Tue, 15 Sep 2020 06:36:55 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: fix the bug of child process can't do io task
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Yinyin Zhu <zhuyinyin@bytedance.com>, viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200915130245.89585-1-zhuyinyin@bytedance.com>
+ <e206f1b4-1f22-c3f5-21a6-cec498d9c830@kernel.dk>
+Message-ID: <0d66eabc-3b8b-2f84-05b7-981c2b6fe5dd@kernel.dk>
+Date:   Tue, 15 Sep 2020 07:36:54 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <CAHk-=wiz=J=8mJ=zRG93nuJ9GtQAm5bSRAbWJbWZuN4Br38+EQ@mail.gmail.com>
- <CAHk-=wjfw3U5eTGWLaisPHg1+jXsCX=xLZgqPx4KJeHhEqRnEQ@mail.gmail.com>
- <a2369108-7103-278c-9f10-6309a0a9dc3b@MichaelLarabel.com> <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
- <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com> <20200912143704.GB6583@casper.infradead.org>
- <658ae026-32d9-0a25-5a59-9c510d6898d5@MichaelLarabel.com> <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
- <c560a38d-8313-51fb-b1ec-e904bd8836bc@tessares.net> <CAHk-=wgZEUoiGoKh92stUh3sBA-7D24i6XqQN2UMm3u4=XkQkg@mail.gmail.com>
- <9550725a-2d3f-fa35-1410-cae912e128b9@tessares.net> <CAHk-=wimdSWe+GVBKwB0_=ZKX2ZN5JEqK5yA99toab4MAoYAsg@mail.gmail.com>
- <CAHk-=wimjnAsoDUjkanC2BQTntwK4qtzmPdBbtmgM=MMhR6B2w@mail.gmail.com>
- <a9faedf1-c528-38e9-2ac4-e8847ecda0f2@tessares.net> <CAHk-=wiHPE3Q-qARO+vqbN0FSHwQXCYSmKcrjgxqVLJun5DjhA@mail.gmail.com>
- <37989469-f88c-199b-d779-ed41bc65fe56@tessares.net>
-In-Reply-To: <37989469-f88c-199b-d779-ed41bc65fe56@tessares.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 15 Sep 2020 16:35:45 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj8Bi5Kiufw8_1SEMmxc0GCO5Nh7TxEt+c1HdKaya=LaA@mail.gmail.com>
-Message-ID: <CAHk-=wj8Bi5Kiufw8_1SEMmxc0GCO5Nh7TxEt+c1HdKaya=LaA@mail.gmail.com>
-Subject: Re: Kernel Benchmarking
-To:     Matthieu Baerts <matthieu.baerts@tessares.net>
-Cc:     Michael Larabel <Michael@michaellarabel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Ted Ts'o" <tytso@google.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e206f1b4-1f22-c3f5-21a6-cec498d9c830@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 12:56 PM Matthieu Baerts
-<matthieu.baerts@tessares.net> wrote:
->
-> I am sorry, I am not sure how to verify this. I guess it was one
-> processor because I removed "-smp 2" option from qemu. So I guess it
-> switched to a uniprocessor mode.
+On 9/15/20 7:25 AM, Jens Axboe wrote:
+> On 9/15/20 7:02 AM, Yinyin Zhu wrote:
+>> when parent process setup a io_uring_instance, the ctx->sqo_mm was
+>> assigned of parent process'mm. Then it fork a child
+>> process. So the child process inherits the io_uring_instance fd from
+>> parent process. Then the child process submit a io task to the io_uring
+>> instance. The kworker will do the io task actually, and use
+>> the ctx->sqo_mm as its mm, but this ctx->sqo_mm is parent process's mm,
+>> not the child process's mm. so child do the io task unsuccessfully. To
+>> fix this bug, when a process submit a io task to the kworker, assign the
+>> ctx->sqo_mm with this process's mm.
+> 
+> Hmm, what's the test case for this? There's a 5.9 regression where we
+> don't always grab the right context for certain linked cases, below
+> is the fix. Does that fix your case?
 
-Ok, that all sounds fine. So yes, your problem happens even with just
-one CPU, and it's not any subtle SMP race.
+Ah hang on, you're on the 5.4 code base... I think this is a better
+approach. Any chance you can test it?
 
-Which is all good - apart from the bug existing in the first place, of
-course. It just reinforces the "it's probably a latent deadlock"
-thing.
+The problem with yours is that you can have multiple pending async
+ones, and you can't just re-assign ctx->sqo_mm. That one should only
+be used by the SQPOLL thread.
 
-              Linus
+
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 2a539b794f3b..e8a4b4ae7006 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -514,7 +514,7 @@ static inline void io_queue_async_work(struct io_ring_ctx *ctx,
+ 		}
+ 	}
+ 
+-	req->task = current;
++	req->task = get_task_struct(current);
+ 
+ 	spin_lock_irqsave(&ctx->task_lock, flags);
+ 	list_add(&req->task_list, &ctx->task_list);
+@@ -1832,6 +1832,7 @@ static void io_poll_complete_work(struct work_struct *work)
+ 	spin_unlock_irq(&ctx->completion_lock);
+ 
+ 	io_cqring_ev_posted(ctx);
++	put_task_struct(req->task);
+ 	io_put_req(req);
+ out:
+ 	revert_creds(old_cred);
+@@ -2234,11 +2235,11 @@ static void io_sq_wq_submit_work(struct work_struct *work)
+ 
+ 		ret = 0;
+ 		if (io_req_needs_user(req) && !cur_mm) {
+-			if (!mmget_not_zero(ctx->sqo_mm)) {
++			if (!mmget_not_zero(req->task->mm)) {
+ 				ret = -EFAULT;
+ 				goto end_req;
+ 			} else {
+-				cur_mm = ctx->sqo_mm;
++				cur_mm = req->task->mm;
+ 				use_mm(cur_mm);
+ 				old_fs = get_fs();
+ 				set_fs(USER_DS);
+@@ -2275,6 +2276,7 @@ static void io_sq_wq_submit_work(struct work_struct *work)
+ 		}
+ 
+ 		/* drop submission reference */
++		put_task_struct(req->task);
+ 		io_put_req(req);
+ 
+ 		if (ret) {
+
+-- 
+Jens Axboe
+
