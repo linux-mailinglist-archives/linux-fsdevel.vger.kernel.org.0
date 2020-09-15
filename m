@@ -2,125 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 49F6D26ADB5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 21:36:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A92026ADC1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 21:39:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbgIOTgs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 15:36:48 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:49272 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727822AbgIOTgm (ORCPT
+        id S1727935AbgIOTjj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 15:39:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54428 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728019AbgIOTin (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 15:36:42 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08FJUJ4P110760;
-        Tue, 15 Sep 2020 19:36:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2020-01-29;
- bh=M+FvkCbclb/hSWMg93jzDNHQCnEcVHjxVzIK1ptGD3s=;
- b=Ci+wtht9MKp2e7z7QUggQ1E+x6Z0KpNFG14yE/9WnmAHNLufpIN09RorsgDZBfvMk+dW
- PKARrA79t0dKbaamhw9IstcSlm6I6AXG34S1oiMEHIMOtzAzseKIHvcAZwkmffZNQ4oD
- uZxnjrdUujtP/owBMZO2pKfTuE3j2wsGxj+qtXQfeqaBaGkLHx+Db0swM+VXZwpmS3Ct
- G5hgllPmOwxz6Rginavqcn9YQ7iKqSKLD9MycJ2E+mRYQbRLtX0t22UZR+SIUWltqcue
- /LXpNIOsOl+yFQMcRABRIS/lcLZni9j6YtfkcWV197m/wjchNLjOy3BvY6hKjwqcIOFa YQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 33j91dgu51-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 15 Sep 2020 19:36:32 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08FJTvK5172786;
-        Tue, 15 Sep 2020 19:36:31 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3030.oracle.com with ESMTP id 33h7wpn3av-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 15 Sep 2020 19:36:31 +0000
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08FJZuSR187206;
-        Tue, 15 Sep 2020 19:36:31 GMT
-Received: from localhost.localdomain (dhcp-10-65-133-238.vpn.oracle.com [10.65.133.238])
-        by aserp3030.oracle.com with ESMTP id 33h7wpn39m-3;
-        Tue, 15 Sep 2020 19:36:30 +0000
-From:   Tom Hromatka <tom.hromatka@oracle.com>
-To:     tom.hromatka@oracle.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, fweisbec@gmail.com,
-        tglx@linutronix.de, mingo@kernel.org, adobriyan@gmail.com
-Subject: [PATCH v2 2/2] /proc/stat: Simplify iowait and idle calculations when cpu is offline
-Date:   Tue, 15 Sep 2020 13:36:27 -0600
-Message-Id: <20200915193627.85423-3-tom.hromatka@oracle.com>
-X-Mailer: git-send-email 2.25.4
-In-Reply-To: <20200915193627.85423-1-tom.hromatka@oracle.com>
-References: <20200915193627.85423-1-tom.hromatka@oracle.com>
+        Tue, 15 Sep 2020 15:38:43 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B090C061352
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 12:38:42 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id z23so6683280ejr.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 12:38:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tessares-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=s8T/xfdPgHNj8zUD8Dev4ytzaOaIL61Me0jC59/f6ng=;
+        b=egkRtBub72A0udarXLyx7kPiMFbZwxsdamaVoFNk6fnra45xH6+b1qu08DA4H5P14q
+         xetyyxN5sf5gqn/2H/HatglN6yEKyZ42U6+lhqC/pnGz5T70MrjHENkX2vz7X41W3+JW
+         alpjHNCximjdVxjju4pceLFUdI5o+mVhSE8ZH78vFtpdOQH4MPkuH6h1xDLvqb4zKOrv
+         bXDk2fgNXtneCIfn7EbycNR+/brHucmInUL/jFy/EpsPw6Q/niRK2ggnlDZZiT84cgrt
+         Oyg38QnQ7HMZ1Klg3HsGoWjySJ0wjMjVd7+Su+bnbpgFbS85diBrzIWBW3LcqMeyUDsb
+         aceA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=s8T/xfdPgHNj8zUD8Dev4ytzaOaIL61Me0jC59/f6ng=;
+        b=NDcYwd1g4uzeSOMytNThnUG/89ZcXRcy40Cu0UONbOL26DTvTfwYTb0btFvsQCSotk
+         MeVAf+cblJmWJLaGsxBeSiBhKXkjin/U7uSoDxHSR+IzRFvHwgAdz5p9QQ8JQsj6nP/q
+         CBOo7NGH5ZCjLA+1C7+PPAOR3+EQRbg+2Uq84nVR2yqu68fufD/TrI3r3BqZ29akv0kn
+         yPGRRJu9g7awldHZUqB3nsa4YJ5W28Bh71fI3pI516+wVLXH/IhlXn+gt6NgJdoC9Nww
+         S5g5E2m/mht6OJW6sbraeT/6DGDjSbcrs4PGAEI0tUa/bvYnakwKx9dwn/50/j/Zo3pS
+         DKJQ==
+X-Gm-Message-State: AOAM532o1dQoalV1PetAWo4fycVB8Lo3vMVaKjyor1oOnHweELTDTmvi
+        azmiXVYaq45gpf+MXZ5GfZqIGJ0p9GKU5Q8J
+X-Google-Smtp-Source: ABdhPJwf98cQYg59nWOxTJOT2LYyBb716h5ZTzsJtSJJboypj0hXqlJsypquvfCfPTpmlCY7mUhmDQ==
+X-Received: by 2002:a17:906:2752:: with SMTP id a18mr8819405ejd.350.1600198720550;
+        Tue, 15 Sep 2020 12:38:40 -0700 (PDT)
+Received: from tsr-lap-08.nix.tessares.net ([2a02:578:85b0:e00:ec32:668e:7a20:c1cd])
+        by smtp.gmail.com with ESMTPSA id z18sm11038113ejw.94.2020.09.15.12.38.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Sep 2020 12:38:39 -0700 (PDT)
+Subject: Re: Kernel Benchmarking
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Larabel <Michael@michaellarabel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Ted Ts'o <tytso@google.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <CAHk-=wiz=J=8mJ=zRG93nuJ9GtQAm5bSRAbWJbWZuN4Br38+EQ@mail.gmail.com>
+ <0cbc959e-1b8d-8d7e-1dc6-672cf5b3899a@MichaelLarabel.com>
+ <CAHk-=whP-7Uw9WgWgjRgF1mCg+NnkOPpWjVw+a9M3F9C52DrVg@mail.gmail.com>
+ <CAHk-=wjfw3U5eTGWLaisPHg1+jXsCX=xLZgqPx4KJeHhEqRnEQ@mail.gmail.com>
+ <a2369108-7103-278c-9f10-6309a0a9dc3b@MichaelLarabel.com>
+ <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
+ <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com>
+ <20200912143704.GB6583@casper.infradead.org>
+ <658ae026-32d9-0a25-5a59-9c510d6898d5@MichaelLarabel.com>
+ <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
+ <c560a38d-8313-51fb-b1ec-e904bd8836bc@tessares.net>
+ <CAHk-=wgZEUoiGoKh92stUh3sBA-7D24i6XqQN2UMm3u4=XkQkg@mail.gmail.com>
+ <9550725a-2d3f-fa35-1410-cae912e128b9@tessares.net>
+ <CAHk-=wimdSWe+GVBKwB0_=ZKX2ZN5JEqK5yA99toab4MAoYAsg@mail.gmail.com>
+ <9a92bf16-02c5-ba38-33c7-f350588ac874@tessares.net>
+ <CAHk-=wihcYiKwZQjwGd8eHLqMm=sL23a=fyzJ_u1YiFNsKN2AQ@mail.gmail.com>
+From:   Matthieu Baerts <matthieu.baerts@tessares.net>
+Message-ID: <b6f8df30-4fbe-a440-b205-dc90583097a7@tessares.net>
+Date:   Tue, 15 Sep 2020 21:38:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9745 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 suspectscore=0 mlxlogscore=999
- clxscore=1015 adultscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009150152
+In-Reply-To: <CAHk-=wihcYiKwZQjwGd8eHLqMm=sL23a=fyzJ_u1YiFNsKN2AQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Prior to this commit, the cpu idle and iowait data in /proc/stat used
-different data sources based upon whether the CPU was online or not.
-This would cause spikes in the cpu idle and iowait data.
+On 15/09/2020 21:24, Linus Torvalds wrote:
+> On Tue, Sep 15, 2020 at 12:01 PM Matthieu Baerts
+> <matthieu.baerts@tessares.net> wrote:
+ >
+>> I forgot one important thing, I was on top of David Miller's net-next
+>> branch by reflex. I can redo the traces on top of linux-next if needed.
+> 
+> Not likely an issue.
+> 
+> I'll go stare at the page lock code again to see if I've missed
+> anything. I still suspect it's a latent ABBA deadlock that is just
+> much *much* easier to trigger with the synchronous lock handoff, but I
+> don't see where it is.
+> 
+> I guess this is all fairly theoretical since we apparently need to do
+> that hybrid "limited fairness" patch anyway, and it fixes your issue,
+> but I hate not understanding the problem.
 
-This patch uses the same data source, get_cpu_{idle,iowait}_time_us(),
-whether the CPU is online or not.
+I understand :)
+Thank you again for looking at this issue!
 
-This patch and the preceding patch, "tick-sched: Do not clear the
-iowait and idle times", ensure that the cpu idle and iowait data
-are always increasing.
-
-Signed-off-by: Tom Hromatka <tom.hromatka@oracle.com>
----
- fs/proc/stat.c | 26 ++------------------------
- 1 file changed, 2 insertions(+), 24 deletions(-)
-
-diff --git a/fs/proc/stat.c b/fs/proc/stat.c
-index 46b3293015fe..198f3c50cb91 100644
---- a/fs/proc/stat.c
-+++ b/fs/proc/stat.c
-@@ -47,34 +47,12 @@ static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
- 
- static u64 get_idle_time(struct kernel_cpustat *kcs, int cpu)
- {
--	u64 idle, idle_usecs = -1ULL;
--
--	if (cpu_online(cpu))
--		idle_usecs = get_cpu_idle_time_us(cpu, NULL);
--
--	if (idle_usecs == -1ULL)
--		/* !NO_HZ or cpu offline so we can rely on cpustat.idle */
--		idle = kcs->cpustat[CPUTIME_IDLE];
--	else
--		idle = idle_usecs * NSEC_PER_USEC;
--
--	return idle;
-+	return get_cpu_idle_time_us(cpu, NULL) * NSEC_PER_USEC;
- }
- 
- static u64 get_iowait_time(struct kernel_cpustat *kcs, int cpu)
- {
--	u64 iowait, iowait_usecs = -1ULL;
--
--	if (cpu_online(cpu))
--		iowait_usecs = get_cpu_iowait_time_us(cpu, NULL);
--
--	if (iowait_usecs == -1ULL)
--		/* !NO_HZ or cpu offline so we can rely on cpustat.iowait */
--		iowait = kcs->cpustat[CPUTIME_IOWAIT];
--	else
--		iowait = iowait_usecs * NSEC_PER_USEC;
--
--	return iowait;
-+	return get_cpu_iowait_time_us(cpu, NULL) * NSEC_PER_USEC;
- }
- 
- #endif
+Cheers,
+Matt
 -- 
-2.25.4
-
+Tessares | Belgium | Hybrid Access Solutions
+www.tessares.net
