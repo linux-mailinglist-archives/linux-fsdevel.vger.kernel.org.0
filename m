@@ -2,102 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FA0926B2BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 00:52:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DC0026B396
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 01:05:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbgIOWwl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 18:52:41 -0400
-Received: from ozlabs.org ([203.11.71.1]:42063 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727672AbgIOWwZ (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 18:52:25 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4Brdln15Ryz9sSs;
-        Wed, 16 Sep 2020 08:52:21 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1600210343;
-        bh=EPzAMIcHsLtJmMMKyEMteGFNclnevagytfnflOTYbfw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GbYM1BL9fvc61W6wXdnQUb86KCCHjKfW4hg8Ln8O+7SiSzCSgYwcq144/xZq64DyR
-         znMao3PBbpaZ1eUAp2UeyhCy5XC5WHiUKEE6WtsMUKUWZ4D1n09rJSM2XlfnJ60Nkt
-         81223glfSux2yRfeFArzZILTBG7zIhlXQmPbgNJGEzQZrvkUM4vgHj+siCSS9J7eEo
-         OfTqlBBRTwC+q/y9crODmaSESwfMTtgYdOKHgVWsPy/LoZP7V5x9FcOa33ZLGXms/2
-         NcoZdQLsfytDz7WQbQDqHkPkLCPOS6VTrSWscpNLidHUAUrnftIBe32Nkvpa7/gnKv
-         HbzSJHg0Zoy9g==
-Date:   Wed, 16 Sep 2020 08:52:20 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        lkft-triage@lists.linaro.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Hugh Dickins <hughd@google.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        gandalf@winds.org, Qian Cai <cai@lca.pw>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@suse.com>, Yang Shi <shy828301@gmail.com>,
-        Shakeel Butt <shakeelb@google.com>
-Subject: Re: BUG: kernel NULL pointer dereference, address: RIP:
- 0010:shmem_getpage_gfp.isra.0+0x470/0x750
-Message-ID: <20200916085220.4906a985@canb.auug.org.au>
-In-Reply-To: <20200915131048.GF5449@casper.infradead.org>
-References: <CA+G9fYvmut-pJT-HsFRCxiEzOnkOjC8UcksX4v8jUvyLYeXTkQ@mail.gmail.com>
-        <20200914115559.GN6583@casper.infradead.org>
-        <20200915165243.58379eb7@canb.auug.org.au>
-        <20200915131048.GF5449@casper.infradead.org>
+        id S1727333AbgIOXEu convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 19:04:50 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:39815 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727080AbgIOOzX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Sep 2020 10:55:23 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-73-k-A8mJujN9e8Iji4iGTvBQ-1; Tue, 15 Sep 2020 15:55:09 +0100
+X-MC-Unique: k-A8mJujN9e8Iji4iGTvBQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 15 Sep 2020 15:55:09 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 15 Sep 2020 15:55:09 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH 1/9 next] mm:process_vm_access Call import_iovec() instead of
+ rw_copy_check_uvector()
+Thread-Topic: [PATCH 1/9 next] mm:process_vm_access Call import_iovec()
+ instead of rw_copy_check_uvector()
+Thread-Index: AdaLbkkTBW5in2pQRDCVHbW9ZQK6vQ==
+Date:   Tue, 15 Sep 2020 14:55:08 +0000
+Message-ID: <e47d19f9c946423db88de10b4753ecfb@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/oUjubHQkRs3rJ5X8Uo5nyMt";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0.002
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/oUjubHQkRs3rJ5X8Uo5nyMt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+This is the only direct call of rw_copy_check_uvector().
+Removing it lets rw_copy_check_uvector() be inlined into
+import_iovec() and the horrid calling conventions fixed.
 
-On Tue, 15 Sep 2020 14:10:48 +0100 Matthew Wilcox <willy@infradead.org> wro=
-te:
->
-> On Tue, Sep 15, 2020 at 04:52:43PM +1000, Stephen Rothwell wrote:
-> > I have applied that to linux-next today. =20
->=20
-> Thanks!  Can you also pick up these two:
->=20
-> https://lore.kernel.org/linux-mm/20200914112738.GM6583@casper.infradead.o=
-rg/
-> https://lore.kernel.org/linux-mm/20200914165032.GS6583@casper.infradead.o=
-rg/
+Signed-off-by: David Laight <david.laight@aculab.com>
+---
+ mm/process_vm_access.c | 31 ++++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
 
-I have added both those to linux-next today.
+diff --git a/mm/process_vm_access.c b/mm/process_vm_access.c
+index 29c052099aff..1cc3d6f66b31 100644
+--- a/mm/process_vm_access.c
++++ b/mm/process_vm_access.c
+@@ -264,7 +264,7 @@ static ssize_t process_vm_rw(pid_t pid,
+ 	struct iovec iovstack_r[UIO_FASTIOV];
+ 	struct iovec *iov_l = iovstack_l;
+ 	struct iovec *iov_r = iovstack_r;
+-	struct iov_iter iter;
++	struct iov_iter iter_l, iter_r;
+ 	ssize_t rc;
+ 	int dir = vm_write ? WRITE : READ;
+ 
+@@ -272,23 +272,24 @@ static ssize_t process_vm_rw(pid_t pid,
+ 		return -EINVAL;
+ 
+ 	/* Check iovecs */
+-	rc = import_iovec(dir, lvec, liovcnt, UIO_FASTIOV, &iov_l, &iter);
++	rc = import_iovec(dir, lvec, liovcnt, UIO_FASTIOV, &iov_l, &iter_l);
+ 	if (rc < 0)
+ 		return rc;
+-	if (!iov_iter_count(&iter))
++	if (!iov_iter_count(&iter_l))
+ 		goto free_iovecs;
+ 
+-	rc = rw_copy_check_uvector(CHECK_IOVEC_ONLY, rvec, riovcnt, UIO_FASTIOV,
+-				   iovstack_r, &iov_r);
++	rc = import_iovec(CHECK_IOVEC_ONLY, rvec, riovcnt, UIO_FASTIOV, &iov_r, &iter_r);
+ 	if (rc <= 0)
+ 		goto free_iovecs;
+ 
+-	rc = process_vm_rw_core(pid, &iter, iov_r, riovcnt, flags, vm_write);
++	rc = process_vm_rw_core(pid, &iter_l, iter_r.iov, iter_r.nr_segs,
++				flags, vm_write);
+ 
+ free_iovecs:
+ 	if (iov_r != iovstack_r)
+ 		kfree(iov_r);
+-	kfree(iov_l);
++	if (iov_l != iovstack_l)
++		kfree(iov_l);
+ 
+ 	return rc;
+ }
+@@ -322,30 +323,30 @@ compat_process_vm_rw(compat_pid_t pid,
+ 	struct iovec iovstack_r[UIO_FASTIOV];
+ 	struct iovec *iov_l = iovstack_l;
+ 	struct iovec *iov_r = iovstack_r;
+-	struct iov_iter iter;
++	struct iov_iter iter_l, iter_r;
+ 	ssize_t rc = -EFAULT;
+ 	int dir = vm_write ? WRITE : READ;
+ 
+ 	if (flags != 0)
+ 		return -EINVAL;
+ 
+-	rc = compat_import_iovec(dir, lvec, liovcnt, UIO_FASTIOV, &iov_l, &iter);
++	rc = compat_import_iovec(dir, lvec, liovcnt, UIO_FASTIOV, &iov_l, &iter_l);
+ 	if (rc < 0)
+ 		return rc;
+-	if (!iov_iter_count(&iter))
++	if (!iov_iter_count(&iter_l))
+ 		goto free_iovecs;
+-	rc = compat_rw_copy_check_uvector(CHECK_IOVEC_ONLY, rvec, riovcnt,
+-					  UIO_FASTIOV, iovstack_r,
+-					  &iov_r);
++	rc = compat_import_iovec(0, rvec, riovcnt, UIO_FASTIOV, &iov_r, &iter_r);
+ 	if (rc <= 0)
+ 		goto free_iovecs;
+ 
+-	rc = process_vm_rw_core(pid, &iter, iov_r, riovcnt, flags, vm_write);
++	rc = process_vm_rw_core(pid, &iter_l, iter_r.iov, iter_r.nr_segs,
++				flags, vm_write);
+ 
+ free_iovecs:
+ 	if (iov_r != iovstack_r)
+ 		kfree(iov_r);
+-	kfree(iov_l);
++	if (iov_l != iovstack_l)
++		kfree(iov_l);
+ 	return rc;
+ }
+ 
+-- 
+2.25.1
 
---=20
-Cheers,
-Stephen Rothwell
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
---Sig_/oUjubHQkRs3rJ5X8Uo5nyMt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl9hRaQACgkQAVBC80lX
-0GymTgf6AxNAk5p0NU6ylCs1AaisXUyjZOsIm92KIniATCh88zPrBEDwE+OSVifu
-ABAomXzcCaSWrkyzofL2UXZ8lusXm03nx95KaqCox7Eyc2RmGMgyCE81swVkfk9D
-oefLZWlksKLwDBnAJ/ClhUHIgM4yLkmIwPJAnN+JMjgJpFya9aEyaXkFjqjoab9e
-uHJW+i2GtT1ZmkhdpCCU8b4Iou0hs0QqHHA7hgMDrqgwk/SVQNUiKpXVscSUyYzM
-f4NWOoY9MNmzPyhDqZWdSSc8s0z1Y69FmHEsYi59VuCRJoPDbIAcmy9ZE4+j3/sn
-K+Lqu1Z0DyfS5YYRUQTfMyfaksmuuA==
-=nbxA
------END PGP SIGNATURE-----
-
---Sig_/oUjubHQkRs3rJ5X8Uo5nyMt--
