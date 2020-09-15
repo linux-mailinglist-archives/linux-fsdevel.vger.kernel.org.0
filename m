@@ -2,98 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id B0E7126AC31
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 20:39:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D26126ABFE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 20:33:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbgIOSjU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 14:39:20 -0400
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24301 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727939AbgIORin (ORCPT
+        id S1727865AbgIOSco (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 14:32:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43862 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727872AbgIOSbm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 13:38:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600191497;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RxByhYJNtAoO/ydyFRO1RXTNjxPYd9rIcotBMI+uGJE=;
-        b=FzVGkyTKzzmMbHR03oemCHSiyGD5h5Fk8NFhSzOyrSOBa7lFQ1RD7kh0VvPvW5H6ZWcgEy
-        sGhD7T2pCMNls0SnxXccqZGSMP7MyFrN3FkSlpy/+ceJF+KIUcKs8KeMUOyRJxTn+EfSz3
-        GW0oOoRoWnJfy4cw7mc3NPNOT0UD1iA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-203-IsF8JrMIPgSPuKStpjnk1A-1; Tue, 15 Sep 2020 13:38:13 -0400
-X-MC-Unique: IsF8JrMIPgSPuKStpjnk1A-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 06D56AF206;
-        Tue, 15 Sep 2020 17:38:11 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CAAA65C3E0;
-        Tue, 15 Sep 2020 17:38:10 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 08FHcAsU004160;
-        Tue, 15 Sep 2020 13:38:10 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 08FHcAxo004156;
-        Tue, 15 Sep 2020 13:38:10 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Tue, 15 Sep 2020 13:38:09 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Dan Williams <dan.j.williams@intel.com>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Kani, Toshi" <toshi.kani@hpe.com>,
-        "Norton, Scott J" <scott.norton@hpe.com>,
-        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
-        <rajesh.tadakamadla@hpe.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: Re: [RFC] nvfs: a filesystem for persistent memory
-In-Reply-To: <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com>
-Message-ID: <alpine.LRH.2.02.2009151332280.3851@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.2009140852030.22422@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com> <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Tue, 15 Sep 2020 14:31:42 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2F5BC061788
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 11:31:41 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id k25so3684276ljg.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 11:31:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dfn+wAryn8C6DCMRnpMqu5m74tYawQDjyF9URZVbit4=;
+        b=KytikPFX2ltfGBuVNpKqIMWZkBuq7chmhFwJK4wg3F9rWrqDBv7uB9WDavsBoHoyUE
+         wj2KWBLT+0RefUd1HoTSg6Ue4AUM1cNQKEd6Nhs7R6AeUsgwnk/hSGaz84Tr764/Q66H
+         b+egq4Eo3V9tr9aRJcHnwjPJozP0YCOTZxh3k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dfn+wAryn8C6DCMRnpMqu5m74tYawQDjyF9URZVbit4=;
+        b=Kq1HVpK9MLTJqLhMiUAnhTfAKL+6dE8i3mOEE0396nQ19/eGO3i97YxxbUnI0Y/C4a
+         2UeqxTD2xDkRIvUeu0Q3F9jmVhNBg+3ugKstsvX0rVVsR6xwT+gIEVOswTDQx5sx5S2s
+         kBaiwVb3ily/4NRxuxO+HDrwiksko9JSj3jWhTQnFO2a/xHmw+6CvFPMEiGK+OUdsOq1
+         Mf/GlxZKFmlNQAInsALGS7bLtI6ZHwzDhNU59ye5ioKDL6zX2aC2qnN3pDseYA5zvtZ7
+         2L/DlRz5a7x/MxmSaPWPKzPDZn9A2kbU7hVxZKSIxgJD43ho6I36jqWbQ5sPtJXvOmO/
+         aFAg==
+X-Gm-Message-State: AOAM531h5ZEiFkUiW6NjNF5Zs4j2vVGpr0zJanf8joaMOGQCxCK7uy53
+        LbwcziUewTTWELSCz6LJA94b0sl5WucdOQ==
+X-Google-Smtp-Source: ABdhPJzYLHs1AqJaJrg6jnorUo1yzm7ToGoHCxBwMIjwWHPEbsGXPPowLOE7PYulznj3P3uyMr4QAg==
+X-Received: by 2002:a2e:9755:: with SMTP id f21mr7710807ljj.50.1600194699651;
+        Tue, 15 Sep 2020 11:31:39 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id u17sm4478635lfi.2.2020.09.15.11.31.38
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Sep 2020 11:31:38 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id k25so3749586ljk.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 11:31:38 -0700 (PDT)
+X-Received: by 2002:a05:651c:104c:: with SMTP id x12mr7823371ljm.285.1600194698099;
+ Tue, 15 Sep 2020 11:31:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <CAHk-=wiz=J=8mJ=zRG93nuJ9GtQAm5bSRAbWJbWZuN4Br38+EQ@mail.gmail.com>
+ <CAHk-=wimM2kckaYj7spUJwehZkSYxK9RQqu3G392BE=73dyKtg@mail.gmail.com>
+ <8bb582d2-2841-94eb-8862-91d1225d5ebc@MichaelLarabel.com> <CAHk-=wjqE_a6bpZyDQ4DCrvj_Dv2RwQoY7wN91kj8y-tZFRvEA@mail.gmail.com>
+ <0cbc959e-1b8d-8d7e-1dc6-672cf5b3899a@MichaelLarabel.com> <CAHk-=whP-7Uw9WgWgjRgF1mCg+NnkOPpWjVw+a9M3F9C52DrVg@mail.gmail.com>
+ <CAHk-=wjfw3U5eTGWLaisPHg1+jXsCX=xLZgqPx4KJeHhEqRnEQ@mail.gmail.com>
+ <a2369108-7103-278c-9f10-6309a0a9dc3b@MichaelLarabel.com> <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
+ <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com> <20200912143704.GB6583@casper.infradead.org>
+ <658ae026-32d9-0a25-5a59-9c510d6898d5@MichaelLarabel.com> <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
+ <c560a38d-8313-51fb-b1ec-e904bd8836bc@tessares.net> <CAHk-=wgZEUoiGoKh92stUh3sBA-7D24i6XqQN2UMm3u4=XkQkg@mail.gmail.com>
+ <9550725a-2d3f-fa35-1410-cae912e128b9@tessares.net>
+In-Reply-To: <9550725a-2d3f-fa35-1410-cae912e128b9@tessares.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 15 Sep 2020 11:31:21 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiH37sXgMC+0UtLceOUJry2FBa_G3j726TP4n69jeB80w@mail.gmail.com>
+Message-ID: <CAHk-=wiH37sXgMC+0UtLceOUJry2FBa_G3j726TP4n69jeB80w@mail.gmail.com>
+Subject: Re: Kernel Benchmarking
+To:     Matthieu Baerts <matthieu.baerts@tessares.net>
+Cc:     Michael Larabel <Michael@michaellarabel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Ted Ts'o" <tytso@google.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Sep 15, 2020 at 8:34 AM Matthieu Baerts
+<matthieu.baerts@tessares.net> wrote:
+>
+> One more thing, only when I have the issue, I can also see this kernel
+> message that seems clearly linked:
+>
+>    [    7.198259] sched: RT throttling activated
 
+Hmm. It does seem like this might be related and a clue, but you'd
+have to ask the RT folks what the likely cause is and how to debug
+things.. Not my area.
 
-On Tue, 15 Sep 2020, Mikulas Patocka wrote:
-
-> > > - __copy_from_user_inatomic_nocache doesn't flush cache for leading and
-> > > trailing bytes.
-> > 
-> > You want copy_user_flushcache(). See how fs/dax.c arranges for
-> > dax_copy_from_iter() to route to pmem_copy_from_iter().
-> 
-> Is it something new for the kernel 5.10? I see only __copy_user_flushcache 
-> that is implemented just for x86 and arm64.
-> 
-> There is __copy_from_user_flushcache implemented for x86, arm64 and power. 
-> It is used in lib/iov_iter.c under
-> #ifdef CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE - so should I use this?
-> 
-> Mikulas
-
-... and __copy_user_flushcache is not exported for modules. So, I am stuck 
-with __copy_from_user_inatomic_nocache.
-
-Mikulas
-
+                 Linus
