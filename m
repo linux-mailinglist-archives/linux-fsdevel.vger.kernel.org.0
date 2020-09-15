@@ -2,124 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E01B526B092
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 00:14:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05E2326B309
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 00:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbgIOWOT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 18:14:19 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:38774 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbgIOQiy (ORCPT
+        id S1727447AbgIOW7E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 18:59:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41586 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbgIOPQ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 12:38:54 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08FGTvAK188883;
-        Tue, 15 Sep 2020 16:38:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=vPDhIQb1XulBqQb/KNdgDnWaj7MfxWzfytsyaT9JniE=;
- b=IOS/JtgNNOUIfm7RZrN71Wyyz7626OY0S5zTELNuiY12YM8BGU+UBasue+vPWUscMRNl
- aVieb2XXH/cQlQdXqFlwTxXue+lm3ECYjPOTHOEudN4JxmBFBal+qOA13HF3bq23MHlC
- 2+h+5ny5SxD1SptJJJJn22nlNuU9MQC4KMK8AxuIVTSoKQmGb03IpyRmWfo73eTAhUVr
- HvF9lXgiYFudGf6LGM3id8NTufU0wGOth/uocGf2FDp3Jr2Q3emG6wGSW1JVrd+zjWv5
- tNoTwVTojlWFmdOG23bkUVsETn5eVjLInLLMlCCJRDdzX18dARjI1uqo/ArZ/sBxjprD 1A== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 33gnrqx8wa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 15 Sep 2020 16:38:28 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 08FGVQI7179094;
-        Tue, 15 Sep 2020 16:38:27 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 33h885d1pd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 15 Sep 2020 16:38:27 +0000
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 08FGcPEp015277;
-        Tue, 15 Sep 2020 16:38:25 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 15 Sep 2020 16:38:25 +0000
-Date:   Tue, 15 Sep 2020 09:38:24 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        "Bill O'Donnell" <billodo@redhat.com>
-Subject: Re: [PATCH] fs: Support THPs in vfs_dedupe_file_range
-Message-ID: <20200915163824.GB7949@magnolia>
-References: <20200915144616.27288-1-willy@infradead.org>
+        Tue, 15 Sep 2020 11:16:27 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2631BC061788
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 08:16:27 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id l17so3388171edq.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 08:16:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5Y/E8RIZkFddtFHwulQR49x2idyk01ZxBjW2bmut0Hc=;
+        b=aYUToB6zrH24LY2xVmoAyJwITz8fGR6B9Qyvei4FahpHnuBBGJskZBN99qaAB3fUtt
+         eplyUOquGjz16GIfT0XPfVfK6rWzZUl6W++JUAYHXdSONpYAZ7oJQoQpSO9WoXxERlUM
+         BFE2EAtpbMqxL86TEUDW3nuKqnw5j+jNh6OhDaegsg2GfPGpcr4OuwCKUDkneHf+Y9xq
+         aF/WATLPPJGPZQAXRmmcXIEywdheUmmHpm935jG7Gi26yjgWfBSUee5TXycCcQbZI8Xe
+         L/4gjmmxDcj43zn6sB3SSphAW6uwaG7Mdenlq44BpIKgApFbwOJF1G6xT2ZkwdzYA6s7
+         qSXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5Y/E8RIZkFddtFHwulQR49x2idyk01ZxBjW2bmut0Hc=;
+        b=jl3ShW2ydi2JB3bvyWCM1IfhmRHM5oS04G6gqzp35qZ40bKKDLyCRhQ47gwHKf6M7I
+         eSx0rA9EhO7C3Wusjn4Tyg/vTRCCz1MgoUOMwJfOlZWyMKxUWTKouF5HfzM6C2kbFY6p
+         EXd3gOwA0ElyC69TNPO2Z64RAHGzRflXMEGN2qo6jEDUquZaOdJ0v7DfRU3Lu62L51wE
+         K0SQ+uTNexrrCA743YTC6WxifikkZmRKP5/yo4lDy7AmmsyNROhJ4jYlU6+PRtMrveYq
+         iWvosoFPWq4p2Xk+LC3jp8KMx+EidMtkPha5PyTDA9vRz67H+tJbu85u/FztNYu7Iugh
+         qkHg==
+X-Gm-Message-State: AOAM532nZ6iUUJZUOBIGNZ2jbeX7Jzvfq1ofFSH0ZGoUUD75peu5X4/5
+        yXG4ylZwH5RXbtIyxLJh22+SF6afG8QxUS4a55i60A==
+X-Google-Smtp-Source: ABdhPJythHZ3a+LmcR0W/cN6t2efwSdOy7mTxn9YsBnVaa3RGCOahJdxMaNVwwar29AYxB16Vjz9H4YOkhyHfRSam2I=
+X-Received: by 2002:aa7:d04d:: with SMTP id n13mr23655873edo.354.1600182982436;
+ Tue, 15 Sep 2020 08:16:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915144616.27288-1-willy@infradead.org>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9745 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 adultscore=0
- suspectscore=1 phishscore=0 malwarescore=0 bulkscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2009150134
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9745 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 mlxscore=0 bulkscore=0 suspectscore=1
- clxscore=1011 mlxlogscore=999 adultscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2006250000 definitions=main-2009150134
+References: <alpine.LRH.2.02.2009140852030.22422@file01.intranet.prod.int.rdu2.redhat.com>
+In-Reply-To: <alpine.LRH.2.02.2009140852030.22422@file01.intranet.prod.int.rdu2.redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 15 Sep 2020 08:16:11 -0700
+Message-ID: <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com>
+Subject: Re: [RFC] nvfs: a filesystem for persistent memory
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Eric Sandeen <esandeen@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Kani, Toshi" <toshi.kani@hpe.com>,
+        "Norton, Scott J" <scott.norton@hpe.com>,
+        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
+        <rajesh.tadakamadla@hpe.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Sep 15, 2020 at 03:46:16PM +0100, Matthew Wilcox (Oracle) wrote:
-> We may get tail pages returned from vfs_dedupe_get_page().  If we do,
-> we have to call page_mapping() instead of dereferencing page->mapping
-> directly.  We may also deadlock trying to lock the page twice if they're
-> subpages of the same THP, so compare the head pages instead.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+On Tue, Sep 15, 2020 at 5:35 AM Mikulas Patocka <mpatocka@redhat.com> wrote:
+>
+> Hi
+>
+> I am developing a new filesystem suitable for persistent memory - nvfs.
 
-Seems fine to me...
+Nice!
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+> The goal is to have a small and fast filesystem that can be used on
+> DAX-based devices. Nvfs maps the whole device into linear address space
+> and it completely bypasses the overhead of the block layer and buffer
+> cache.
 
---D
+So does device-dax, but device-dax lacks read(2)/write(2).
 
-> ---
->  fs/read_write.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 5db58b8c78d0..c4d5eb47a21e 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1906,6 +1906,8 @@ static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
->   */
->  static void vfs_lock_two_pages(struct page *page1, struct page *page2)
->  {
-> +	page1 = thp_head(page1);
-> +	page2 = thp_head(page2);
->  	/* Always lock in order of increasing index. */
->  	if (page1->index > page2->index)
->  		swap(page1, page2);
-> @@ -1918,6 +1920,8 @@ static void vfs_lock_two_pages(struct page *page1, struct page *page2)
->  /* Unlock two pages, being careful not to unlock the same page twice. */
->  static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
->  {
-> +	page1 = thp_head(page1);
-> +	page2 = thp_head(page2);
->  	unlock_page(page1);
->  	if (page1 != page2)
->  		unlock_page(page2);
-> @@ -1972,8 +1976,8 @@ static int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
->  		 * someone is invalidating pages on us and we lose.
->  		 */
->  		if (!PageUptodate(src_page) || !PageUptodate(dest_page) ||
-> -		    src_page->mapping != src->i_mapping ||
-> -		    dest_page->mapping != dest->i_mapping) {
-> +		    page_mapping(src_page) != src->i_mapping ||
-> +		    page_mapping(dest_page) != dest->i_mapping) {
->  			same = false;
->  			goto unlock;
->  		}
-> -- 
-> 2.28.0
-> 
+> In the past, there was nova filesystem for pmem, but it was abandoned a
+> year ago (the last version is for the kernel 5.1 -
+> https://github.com/NVSL/linux-nova ). Nvfs is smaller and performs better.
+>
+> The design of nvfs is similar to ext2/ext4, so that it fits into the VFS
+> layer naturally, without too much glue code.
+>
+> I'd like to ask you to review it.
+>
+>
+> tarballs:
+>         http://people.redhat.com/~mpatocka/nvfs/
+> git:
+>         git://leontynka.twibright.com/nvfs.git
+> the description of filesystem internals:
+>         http://people.redhat.com/~mpatocka/nvfs/INTERNALS
+> benchmarks:
+>         http://people.redhat.com/~mpatocka/nvfs/BENCHMARKS
+>
+>
+> TODO:
+>
+> - programs run approximately 4% slower when running from Optane-based
+> persistent memory. Therefore, programs and libraries should use page cache
+> and not DAX mapping.
+
+This needs to be based on platform firmware data f(ACPI HMAT) for the
+relative performance of a PMEM range vs DRAM. For example, this
+tradeoff should not exist with battery backed DRAM, or virtio-pmem.
+
+>
+> - when the fsck.nvfs tool mmaps the device /dev/pmem0, the kernel uses
+> buffer cache for the mapping. The buffer cache slows does fsck by a factor
+> of 5 to 10. Could it be possible to change the kernel so that it maps DAX
+> based block devices directly?
+
+We've been down this path before.
+
+5a023cdba50c block: enable dax for raw block devices
+9f4736fe7ca8 block: revert runtime dax control of the raw block device
+acc93d30d7d4 Revert "block: enable dax for raw block devices"
+
+EXT2/4 metadata buffer management depends on the page cache and we
+eliminated a class of bugs by removing that support. The problems are
+likely tractable, but there was not a straightforward fix visible at
+the time.
+
+> - __copy_from_user_inatomic_nocache doesn't flush cache for leading and
+> trailing bytes.
+
+You want copy_user_flushcache(). See how fs/dax.c arranges for
+dax_copy_from_iter() to route to pmem_copy_from_iter().
