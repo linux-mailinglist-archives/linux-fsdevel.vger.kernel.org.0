@@ -2,128 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F9A926AE2B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 21:53:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92A1326ADA9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 21:33:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbgIOTxn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 15:53:43 -0400
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:30273 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727808AbgIORHc (ORCPT
+        id S1727847AbgIOTd1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 15:33:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53546 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727430AbgIOTdG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 13:07:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600189625;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=walQ61YYGzyVqfuTJ3FRBx41wBNDB3XgqTy7en19sog=;
-        b=BOiKWkvgL0zaa6q+k4jFH1U2GBcTjMNKiNKLMXe2nkc6MT9L2Ys5ZzqAEsyiDRa3CYoX6N
-        h2iVM1escL6klA2+poxBVWoCTnPCkEVjayActZapzmJsNA6nv3CvjS5NPRlXf05uCVn75m
-        5B750syjYFfjmr/3vTrj3Cif5Bq17qc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-459-c5pfAVJMMm2Wno7Kl1o0YA-1; Tue, 15 Sep 2020 12:58:52 -0400
-X-MC-Unique: c5pfAVJMMm2Wno7Kl1o0YA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 77D1D18BFECB;
-        Tue, 15 Sep 2020 16:58:49 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 237865DC17;
-        Tue, 15 Sep 2020 16:58:49 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 08FGwmjQ031604;
-        Tue, 15 Sep 2020 12:58:48 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 08FGwkUQ031600;
-        Tue, 15 Sep 2020 12:58:47 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Tue, 15 Sep 2020 12:58:46 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Dan Williams <dan.j.williams@intel.com>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Kani, Toshi" <toshi.kani@hpe.com>,
-        "Norton, Scott J" <scott.norton@hpe.com>,
-        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
-        <rajesh.tadakamadla@hpe.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: Re: [RFC] nvfs: a filesystem for persistent memory
-In-Reply-To: <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.2009140852030.22422@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Tue, 15 Sep 2020 15:33:06 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1F8C061788
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 12:33:05 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id k25so3834945ljg.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 12:33:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R4adhV9rWK5fVJfVLfsA1RpAgGhE1SKba3wPMEBwlHQ=;
+        b=RMErlYgJlXkb0Vz5F+GbJlAflS7CDOBEDAnHgQ6XVorvnlASnwLA1/u0rSrYkXuFQM
+         mNgrBeUfGtILyZVOTcMIj+g0bkAfmvZpba3gU5I2q4S9ORj5JefAeBSRKnVWXI5NSMTF
+         vNpL7v5vEzpKJDwkYko3HD1FM2oHMq+fF9Jz0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R4adhV9rWK5fVJfVLfsA1RpAgGhE1SKba3wPMEBwlHQ=;
+        b=KKQhBCLiXR2UQm81xtukCsXcLEGTdiPJXqkO2iocC/9iwEgLZ/vkmJJUKwFLUjqCaY
+         SC3Mo6YYsAMPot2sUnmm1MdAlcMwz5syW1L4VdgHUXiJ2AQFhbjVyTZpcHA4l1KW3q02
+         aL1ywv9IX2f1NLExRexc81gK9vMAm1m1n3YWiQpdLWPW3zMrLwVMxJ1t4aj1nGNT/QCe
+         9MjZ91gympiG/6eMmbz+vaReO/srLBYr+CXXTup8kpw03bAWzxYsI9jY7A7rh/MOMDzu
+         Hno8/m2J8RpiR9XZcJjYDFTg3Jb56vBlpsjmxUoo/bAUeqIk2cVJs0OdJXGbYNasTcZ2
+         F7mw==
+X-Gm-Message-State: AOAM533pHgqK36HEtcHTPRb80BJWcuk7hwQeQQB/y/nmzeJCsbps02CJ
+        U3Amvz9/tdUSRDeo24q/+5Q0ZSHM18zSEw==
+X-Google-Smtp-Source: ABdhPJxKTFO8064GQlgQHvK+x55IfOTGrc82FQ795sRNqK9f2hkCjS1HfrAPX54py6MPV60FnZdEGQ==
+X-Received: by 2002:a2e:8541:: with SMTP id u1mr8052006ljj.101.1600198383014;
+        Tue, 15 Sep 2020 12:33:03 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id 16sm4265067ljr.3.2020.09.15.12.33.01
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Sep 2020 12:33:01 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id u21so3856674ljl.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 12:33:01 -0700 (PDT)
+X-Received: by 2002:a2e:7819:: with SMTP id t25mr6952577ljc.371.1600198380912;
+ Tue, 15 Sep 2020 12:33:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+References: <CAHk-=wiz=J=8mJ=zRG93nuJ9GtQAm5bSRAbWJbWZuN4Br38+EQ@mail.gmail.com>
+ <0cbc959e-1b8d-8d7e-1dc6-672cf5b3899a@MichaelLarabel.com> <CAHk-=whP-7Uw9WgWgjRgF1mCg+NnkOPpWjVw+a9M3F9C52DrVg@mail.gmail.com>
+ <CAHk-=wjfw3U5eTGWLaisPHg1+jXsCX=xLZgqPx4KJeHhEqRnEQ@mail.gmail.com>
+ <a2369108-7103-278c-9f10-6309a0a9dc3b@MichaelLarabel.com> <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
+ <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com> <20200912143704.GB6583@casper.infradead.org>
+ <658ae026-32d9-0a25-5a59-9c510d6898d5@MichaelLarabel.com> <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
+ <c560a38d-8313-51fb-b1ec-e904bd8836bc@tessares.net> <CAHk-=wgZEUoiGoKh92stUh3sBA-7D24i6XqQN2UMm3u4=XkQkg@mail.gmail.com>
+ <9550725a-2d3f-fa35-1410-cae912e128b9@tessares.net> <CAHk-=wimdSWe+GVBKwB0_=ZKX2ZN5JEqK5yA99toab4MAoYAsg@mail.gmail.com>
+ <CAHk-=wimjnAsoDUjkanC2BQTntwK4qtzmPdBbtmgM=MMhR6B2w@mail.gmail.com> <a9faedf1-c528-38e9-2ac4-e8847ecda0f2@tessares.net>
+In-Reply-To: <a9faedf1-c528-38e9-2ac4-e8847ecda0f2@tessares.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 15 Sep 2020 12:32:44 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiHPE3Q-qARO+vqbN0FSHwQXCYSmKcrjgxqVLJun5DjhA@mail.gmail.com>
+Message-ID: <CAHk-=wiHPE3Q-qARO+vqbN0FSHwQXCYSmKcrjgxqVLJun5DjhA@mail.gmail.com>
+Subject: Re: Kernel Benchmarking
+To:     Matthieu Baerts <matthieu.baerts@tessares.net>
+Cc:     Michael Larabel <Michael@michaellarabel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Ted Ts'o" <tytso@google.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, Sep 15, 2020 at 12:26 PM Matthieu Baerts
+<matthieu.baerts@tessares.net> wrote:
+>
+> I don't know if this info is useful but I just checked and I can
+> reproduce the issue with a single CPU.
 
+Good thinking.
 
-On Tue, 15 Sep 2020, Dan Williams wrote:
+> And the trace is very similar to the previous one:
 
-> > - when the fsck.nvfs tool mmaps the device /dev/pmem0, the kernel uses
-> > buffer cache for the mapping. The buffer cache slows does fsck by a factor
-> > of 5 to 10. Could it be possible to change the kernel so that it maps DAX
-> > based block devices directly?
-> 
-> We've been down this path before.
-> 
-> 5a023cdba50c block: enable dax for raw block devices
-> 9f4736fe7ca8 block: revert runtime dax control of the raw block device
-> acc93d30d7d4 Revert "block: enable dax for raw block devices"
+.. and yes, now there are no messy traces, they all have that
+__lock_page_killable() unambiguously in them (and the only '?' entries
+are just from stale stuff on the stack which is due to stack frames
+that aren't fully initialized and old stack frame data shining
+through).
 
-It says "The functionality is superseded by the new 'Device DAX' 
-facility". But the fsck tool can't change a fsdax device into a devdax 
-device just for checking. Or can it?
+So it does seem like the previous trace uncertainty was likely just a
+cross-CPU issue.
 
-> EXT2/4 metadata buffer management depends on the page cache and we
-> eliminated a class of bugs by removing that support. The problems are
-> likely tractable, but there was not a straightforward fix visible at
-> the time.
+Was that an actual UP kernel? It might be good to try that too, just
+to see if it could be an SMP race in the page locking code.
 
-Thinking about it - it isn't as easy as it looks...
+After all, one such theoretical race was one reason I started the rewrite.
 
-Suppose that the user mounts an ext2 filesystem and then uses the tune2fs 
-tool on the mounted block device. The tune2fs tool reads and writes the 
-mounted superblock directly.
-
-So, read/write must be coherent with the buffer cache (otherwise the 
-kernel would not see the changes written by tune2fs). And mmap must be 
-coherent with read/write.
-
-So, if we want to map the pmem device directly, we could add a new flag 
-MAP_DAX. Or we could test if the fd has O_DIRECT flag and map it directly 
-in this case. But the default must be to map it coherently in order to not 
-break existing programs.
-
-> > - __copy_from_user_inatomic_nocache doesn't flush cache for leading and
-> > trailing bytes.
-> 
-> You want copy_user_flushcache(). See how fs/dax.c arranges for
-> dax_copy_from_iter() to route to pmem_copy_from_iter().
-
-Is it something new for the kernel 5.10? I see only __copy_user_flushcache 
-that is implemented just for x86 and arm64.
-
-There is __copy_from_user_flushcache implemented for x86, arm64 and power. 
-It is used in lib/iov_iter.c under
-#ifdef CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE - so should I use this?
-
-Mikulas
-
+                       Linus
