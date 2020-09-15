@@ -2,109 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 891D8269E12
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 07:51:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04024269EE3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 08:53:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726091AbgIOFvV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 01:51:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38844 "EHLO
+        id S1726140AbgIOGwx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 02:52:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48276 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbgIOFvU (ORCPT
+        with ESMTP id S1726095AbgIOGwv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 01:51:20 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44A76C06174A;
-        Mon, 14 Sep 2020 22:51:20 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id f18so1274033pfa.10;
-        Mon, 14 Sep 2020 22:51:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=TMg87JRx8eEsPjAPTRFHhCmta+gxJvIx+r8SoSGKiIE=;
-        b=hhxHBDPq0a1er3XaVMT8g3XaDu7cF8LCJoHGBV5OERrgfgKPcLi7dV1BawwOCNfepa
-         kptrqst9Q20XL4kPjWsK0GNcZu7Bhjr47XhynxZQf5O4Wn93CapKQe37DI3xVKBaYs/5
-         Ngl/pAfBdLAPW1Euf7AUwHxUiA8nOVq3EDPbMeOH/VqCaOOWDbBgVrhP7VSLVIlZDUYS
-         XWh/YyoRJTmWBuF36A2j1lGKsoZ7EOh7o4bbNNHaUiavDy4NUHqBKkdz4rHwurSLQMtZ
-         Jm2BwG8pjiuNKyyqq7ZpkH9GtiJ5/kDSnlobvanoGFdndULtSEqpYRYdPviSjwLX567j
-         OLCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=TMg87JRx8eEsPjAPTRFHhCmta+gxJvIx+r8SoSGKiIE=;
-        b=f3ulXdvEYS9Y8gjqjGD3tvz+jBrTlAPxdyGwl+KCkDA7qau9PWE3B1vBWtMQn8Mw4m
-         lTXm9Ho65Vzhr0j+2TwYDFIawTa5HksO8Y6X8BV15z0lYOlisZ6r0W9rjnmjOiwhfEZX
-         D3UowAyNdQE+BcW5KJPeDhme9z4WTK0NPuyvhzjIZhL2gIeggEvYGJUUkcdITLIXfm7f
-         k/p9aBWI0yNuHy1jV/ySHSdawO79N9EvmqFjDMQ6EDaHSEP6zKkDhFprdZS//56PNIc0
-         wHatve9Rzy1TUpEcrfOGUWO+o7ZSS2QjK0ykY1zMlUmV7zYUriMNefTa8+3XRScXUPDo
-         6b9A==
-X-Gm-Message-State: AOAM531NPPYPFnPpPkjPbpvvOJgo8q+vIi1qHDksRCyS7MJmcHVbOwYp
-        G2PByTW02oKe1n5PwhOdz0U=
-X-Google-Smtp-Source: ABdhPJylSfFDoid3x9u/XfZidYVeaQfza7R0zyjgFVOKz9yfY7lZZutMsFMCZaPk2NlfC86Lt8zLqQ==
-X-Received: by 2002:aa7:81d5:0:b029:142:2501:39fa with SMTP id c21-20020aa781d50000b0290142250139famr418631pfn.73.1600149079587;
-        Mon, 14 Sep 2020 22:51:19 -0700 (PDT)
-Received: from Thinkpad ([45.118.167.197])
-        by smtp.gmail.com with ESMTPSA id ms16sm10847414pjb.55.2020.09.14.22.51.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2020 22:51:18 -0700 (PDT)
-Date:   Tue, 15 Sep 2020 11:21:10 +0530
-From:   Anmol Karn <anmol.karan123@gmail.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        syzbot+f7204dcf3df4bb4ce42c@syzkaller.appspotmail.com,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        Necip Fazil Yildiran <necip@google.com>
-Subject: Re: [PATCH] idr: remove WARN_ON_ONCE() when trying to check id
-Message-ID: <20200915055110.GB7980@Thinkpad>
-References: <20200914071724.202365-1-anmol.karan123@gmail.com>
- <20200914110803.GL6583@casper.infradead.org>
- <20200914184755.GB213347@Thinkpad>
- <20200914192655.GW6583@casper.infradead.org>
- <20200915051331.GA7980@Thinkpad>
- <20200915052642.GO899@sol.localdomain>
+        Tue, 15 Sep 2020 02:52:51 -0400
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6B84C06174A;
+        Mon, 14 Sep 2020 23:52:50 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4BrDSX3Y4hz9sTt;
+        Tue, 15 Sep 2020 16:52:44 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1600152767;
+        bh=oLv+gefylOKl1hPgdzpxeNDPXUSuR6jVuzzmhrFKEl8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=VZ6hXCC6fqJsSifUUlm1wdZm5D+TANsdS43Y4x0sOJc9pCp2UATae5y9/MK+Mb0sC
+         dLmx+kT8wZyLmDy4qgz1b6y0QI1QrpAewmxBPwRSKQ2bU2HISfFUE5FvDjN8nf8zeC
+         uIjxmtMBu//QkaJ1OIGACUA/tT8ZqS/4vaVuDiVFdz5oE/kNWSjYwmVNce1hJLqexp
+         acCpHqMs4bYtdNDdRZKM7W3/bCGJa3nCyqFBFQJ5MKp8ZBD5RmPXMMFdxAXznxum18
+         /BPCp/IHbhKE2/eGoDCjGhRP9vxi+Q9aI6n6O9vxyVApwdcm/UGG/fHkztre4qfpmq
+         QzIYSef1TkgnA==
+Date:   Tue, 15 Sep 2020 16:52:43 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        lkft-triage@lists.linaro.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        gandalf@winds.org, Qian Cai <cai@lca.pw>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@suse.com>, Yang Shi <shy828301@gmail.com>,
+        Shakeel Butt <shakeelb@google.com>
+Subject: Re: BUG: kernel NULL pointer dereference, address: RIP:
+ 0010:shmem_getpage_gfp.isra.0+0x470/0x750
+Message-ID: <20200915165243.58379eb7@canb.auug.org.au>
+In-Reply-To: <20200914115559.GN6583@casper.infradead.org>
+References: <CA+G9fYvmut-pJT-HsFRCxiEzOnkOjC8UcksX4v8jUvyLYeXTkQ@mail.gmail.com>
+        <20200914115559.GN6583@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200915052642.GO899@sol.localdomain>
+Content-Type: multipart/signed; boundary="Sig_/+f/cr_6nZV9WkBfA5oKpYEw";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello sir,
+--Sig_/+f/cr_6nZV9WkBfA5oKpYEw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> > I hope the patch will get merged soon.
-> 
-> No need to "hope"; you could split up Matthew's patch yourself, and test and
-> send the resulting patches.  From the above thread, it looks like the networking
-> developers want one patch to fix the improper use of GFP_ATOMIC (which is the
-> bug reported by syzbot), and a separate patch to convert qrtr to use the XArray.
+Hi all,
+
+On Mon, 14 Sep 2020 12:55:59 +0100 Matthew Wilcox <willy@infradead.org> wro=
+te:
 >
+> On Mon, Sep 14, 2020 at 03:49:43PM +0530, Naresh Kamboju wrote:
+> > While running LTP fs on qemu x86 and qemu_i386 these kernel BUGs notice=
+d. =20
+>=20
+> I actually sent the fix for this a couple of days ago [1], but I think An=
+drew
+> overlooked it while constructing the -mm tree.  Here's a fix you can
+> apply to the -mm tree:
+>=20
+> [1] https://lore.kernel.org/linux-mm/20200912032042.GA6583@casper.infrade=
+ad.org/
+>=20
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index d2a46ef7df43..58bc9e326d0d 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1793,7 +1793,7 @@ static int shmem_getpage_gfp(struct inode *inode, p=
+goff_t index,
+>  	struct mm_struct *charge_mm;
+>  	struct page *page;
+>  	enum sgp_type sgp_huge =3D sgp;
+> -	pgoff_t hindex;
+> +	pgoff_t hindex =3D index;
+>  	int error;
+>  	int once =3D 0;
+>  	int alloced =3D 0;
+> @@ -1822,6 +1822,8 @@ static int shmem_getpage_gfp(struct inode *inode, p=
+goff_t index,
+>  		return error;
+>  	}
+> =20
+> +	if (page)
+> +		hindex =3D page->index;
+>  	if (page && sgp =3D=3D SGP_WRITE)
+>  		mark_page_accessed(page);
+> =20
+> @@ -1832,6 +1834,7 @@ static int shmem_getpage_gfp(struct inode *inode, p=
+goff_t index,
+>  		unlock_page(page);
+>  		put_page(page);
+>  		page =3D NULL;
+> +		hindex =3D index;
+>  	}
+>  	if (page || sgp =3D=3D SGP_READ)
+>  		goto out;
+> @@ -1982,7 +1985,7 @@ static int shmem_getpage_gfp(struct inode *inode, p=
+goff_t index,
+>  		goto unlock;
+>  	}
+>  out:
+> -	*pagep =3D page + index - page->index;
+> +	*pagep =3D page + index - hindex;
+>  	return 0;
+> =20
+>  	/*
 
-Sure sir I will look into it.
+I have applied that to linux-next today.
 
-> 
-> > also, i have tried a patch for this bug
-> > 
-> > Link: https://syzkaller.appspot.com/bug?extid=3b14b2ed9b3d06dcaa07
-> > 
-> > can you please guide me little how should i proceede with it, and 
-> > also syzbot tested it.  
-> 
-> Looks like something timer-related.  You'll need to investigate more, write and
-> test a fix, and send it to the appropriate kernel mailing lists and developers
-> (which will probably be different from the ones receiving this current thread).
-> 
+--=20
+Cheers,
+Stephen Rothwell
 
-My bad sir, will send it to the appropriate list.
+--Sig_/+f/cr_6nZV9WkBfA5oKpYEw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Thanks  
-Anmol
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl9gZLsACgkQAVBC80lX
+0Gz77AgAoAY+prsaroOSKRIkjh3sWJTHc7MQPNpYmYiPMNGzLSHmD36a6PTYgLp2
+0NdVGWSG1fLLBeJ5AspWTpkWW3iNNK1i9lkrB0Pz+cQUOqDALueOZguP2hvqTsOY
+cZZO7NWdKg6Ro8+vhRB871x6hyf6+ZyX09XttP+xFjrCe6NMm5+L97qkdB0FroIU
+RhecVktBv7stSu9NVMm/Vp2HcG1o5ZfL92tJFRJOWeA5hIbccxNvmfCflOJP/MSV
+UBxlb+d4uuV/IlwgDJCGwFmL5vkCETlvt1P2f3SKjSxSslRLQFAyC4gSmJDASsNQ
+N4ArBRL4ZWZqTs8F/4j0ouw7I1SoPA==
+=bre5
+-----END PGP SIGNATURE-----
+
+--Sig_/+f/cr_6nZV9WkBfA5oKpYEw--
