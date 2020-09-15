@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6353A26A8AC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 17:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3170726A8BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 17:25:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbgIOPVp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 11:21:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42286 "EHLO
+        id S1727438AbgIOPXv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 11:23:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbgIOPU5 (ORCPT
+        with ESMTP id S1727430AbgIOPXB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 11:20:57 -0400
+        Tue, 15 Sep 2020 11:23:01 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FDE9C06178A;
-        Tue, 15 Sep 2020 08:20:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE67C061788;
+        Tue, 15 Sep 2020 08:23:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=WgQU+DROBiFXSU4XRLi15Ig7DnwkeQul1eu0RWtmaDw=; b=e+3jk+59mxpACTbbZjvM84YGj4
-        ceZbnJEyNbo2sMobiL9SoJ/Wml/TfR7ZxGNJ2SmU+0KOtNugocfDQjsanQudzdZwG8tMW2iGt2Dbh
-        5mQmfr9qjUufz+t8XYePond1pxsq56FWF3eh/QXzn34d7rxr8btIOElj7CGNBYepyUHlm89BAuMWW
-        FTRFUOsqtFqEL6dBsoD8pHkZEwTfg+xJKDiQK18DDhC6neKQnJnR54JJ1XBA0dPWp6V1bYeExdck6
-        hrhjpYhRMs5GVJSKvJV5yRYrE8qRMuWvyKp0uETm2uGjmbQ8U96hYfS5T23/uXLzXtXL5lfc40b7j
-        JVXhJ3JQ==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=bCMdefcbVNK1n/7kExQP4kHzaTJA1/jyiOiumdm05Vg=; b=JTvp10HXp5J69jy2CuzD9GhhpT
+        DDjNKmn/2H6kDp88475wME6gUvl9+f3wRoFLOTLRz3S4MzOpFpW99mnsebG7jG0lF/epV73VMWLqs
+        6rlHBaaETOo2D12OSMO42xSsZAtbPpnIpfQGgYc5CZNFbZc5g0o1DD23sYsplsEAglwIWPIKCSkDV
+        9qeGpB7rTwZY6t8/erSjBJX3LtFIVUKogeW/OSS8IvTrBg/ORZHDm1hot46XBw9bDYewalYVHh9GO
+        DVyg8qV8FRjz+bfG4e7Ggq7zdO8L3OQ3rEJ2SUfMaq/4+eetzjdH995hp/8iQYQ0gmf3EwHmRUTet
+        kYO6k9pQ==;
 Received: from 089144214092.atnat0023.highway.a1.net ([89.144.214.92] helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kICl8-0000xV-0W; Tue, 15 Sep 2020 15:20:42 +0000
+        id 1kICnE-0001A7-PD; Tue, 15 Sep 2020 15:22:53 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
@@ -38,11 +38,14 @@ Cc:     Song Liu <song@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         drbd-dev@lists.linbit.com, linux-raid@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        cgroups@vger.kernel.org
-Subject: bdi cleanups v5
-Date:   Tue, 15 Sep 2020 17:18:17 +0200
-Message-Id: <20200915151829.1767176-1-hch@lst.de>
+        cgroups@vger.kernel.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH 01/12] fs: remove the unused SB_I_MULTIROOT flag
+Date:   Tue, 15 Sep 2020 17:18:18 +0200
+Message-Id: <20200915151829.1767176-2-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200915151829.1767176-1-hch@lst.de>
+References: <20200915151829.1767176-1-hch@lst.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
@@ -51,81 +54,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jens,
+The last user of SB_I_MULTIROOT is disappeared with commit f2aedb713c28
+("NFS: Add fs_context support.")
 
-this series contains a bunch of different BDI cleanups.  The biggest item
-is to isolate block drivers from the BDI in preparation of changing the
-lifetime of the block device BDI in a follow up series.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+ fs/namei.c         | 4 ++--
+ include/linux/fs.h | 1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-Changes since v4:
- - add a back a prematurely removed assignment in dm-table.c
- - pick up a few reviews from Johannes that got lost
+diff --git a/fs/namei.c b/fs/namei.c
+index e99e2a9da0f7de..f1eb8ccd2be958 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -568,8 +568,8 @@ static bool path_connected(struct vfsmount *mnt, struct dentry *dentry)
+ {
+ 	struct super_block *sb = mnt->mnt_sb;
+ 
+-	/* Bind mounts and multi-root filesystems can have disconnected paths */
+-	if (!(sb->s_iflags & SB_I_MULTIROOT) && (mnt->mnt_root == sb->s_root))
++	/* Bind mounts can have disconnected paths */
++	if (mnt->mnt_root == sb->s_root)
+ 		return true;
+ 
+ 	return is_subdir(dentry, mnt->mnt_root);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7519ae003a082c..fbd74df5ce5f34 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1385,7 +1385,6 @@ extern int send_sigurg(struct fown_struct *fown);
+ #define SB_I_CGROUPWB	0x00000001	/* cgroup-aware writeback enabled */
+ #define SB_I_NOEXEC	0x00000002	/* Ignore executables on this fs */
+ #define SB_I_NODEV	0x00000004	/* Ignore devices on this fs */
+-#define SB_I_MULTIROOT	0x00000008	/* Multiple roots to the dentry tree */
+ 
+ /* sb->s_iflags to limit user namespace mounts */
+ #define SB_I_USERNS_VISIBLE		0x00000010 /* fstype already mounted */
+-- 
+2.28.0
 
-Changes since v3:
- - rebased on the lasted block tree, which has some of the prep
-   changes merged
- - extend the ->ra_pages changes to ->io_pages
- - move initializing ->ra_pages and ->io_pages for block devices to
-   blk_register_queue
-
-Changes since v2:
- - fix a rw_page return value check
- - fix up various changelogs
-
-Changes since v1:
- - rebased to the for-5.9/block-merge branch
- - explicitly set the readahead to 0 for ubifs, vboxsf and mtd
- - split the zram block_device operations
- - let rw_page users fall back to bios in swap_readpage
-
-
-Diffstat:
- block/blk-core.c              |    3 -
- block/blk-integrity.c         |    4 +-
- block/blk-mq-debugfs.c        |    1 
- block/blk-settings.c          |    5 +-
- block/blk-sysfs.c             |    4 +-
- block/genhd.c                 |   13 +++++--
- drivers/block/aoe/aoeblk.c    |    2 -
- drivers/block/brd.c           |    1 
- drivers/block/drbd/drbd_nl.c  |   18 ---------
- drivers/block/drbd/drbd_req.c |    4 --
- drivers/block/rbd.c           |    2 -
- drivers/block/zram/zram_drv.c |   19 +++++++---
- drivers/md/bcache/super.c     |    4 --
- drivers/md/dm-table.c         |    9 +---
- drivers/md/raid0.c            |   16 --------
- drivers/md/raid10.c           |   46 ++++++++----------------
- drivers/md/raid5.c            |   31 +++++++---------
- drivers/mmc/core/queue.c      |    3 -
- drivers/mtd/mtdcore.c         |    2 +
- drivers/nvdimm/btt.c          |    2 -
- drivers/nvdimm/pmem.c         |    1 
- drivers/nvme/host/core.c      |    3 -
- drivers/nvme/host/multipath.c |   10 +----
- drivers/scsi/iscsi_tcp.c      |    4 +-
- fs/9p/vfs_file.c              |    2 -
- fs/9p/vfs_super.c             |    6 ++-
- fs/afs/super.c                |    1 
- fs/btrfs/disk-io.c            |    2 -
- fs/fs-writeback.c             |    7 ++-
- fs/fuse/inode.c               |    4 +-
- fs/namei.c                    |    4 +-
- fs/nfs/super.c                |    9 ----
- fs/super.c                    |    2 +
- fs/ubifs/super.c              |    2 +
- fs/vboxsf/super.c             |    2 +
- include/linux/backing-dev.h   |   78 +++++++-----------------------------------
- include/linux/blkdev.h        |    3 +
- include/linux/drbd.h          |    1 
- include/linux/fs.h            |    2 -
- mm/backing-dev.c              |   13 +++----
- mm/filemap.c                  |    4 +-
- mm/memcontrol.c               |    2 -
- mm/memory-failure.c           |    2 -
- mm/migrate.c                  |    2 -
- mm/mmap.c                     |    2 -
- mm/page-writeback.c           |   18 ++++-----
- mm/page_io.c                  |   18 +++++----
- mm/swapfile.c                 |    4 +-
- 48 files changed, 144 insertions(+), 253 deletions(-)
