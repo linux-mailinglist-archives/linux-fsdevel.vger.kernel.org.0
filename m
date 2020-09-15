@@ -2,99 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CF9326B2C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 00:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4684A26B2B3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 00:51:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbgIOWxG convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 18:53:06 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:49059 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727423AbgIOPk5 (ORCPT
+        id S1727564AbgIOWvu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 18:51:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45644 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727438AbgIOPmg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 11:40:57 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-53-W38LQ2b8OBS5NKJlBcK7FA-1; Tue, 15 Sep 2020 16:40:53 +0100
-X-MC-Unique: W38LQ2b8OBS5NKJlBcK7FA-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 15 Sep 2020 16:40:52 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 15 Sep 2020 16:40:52 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "'Matthew Wilcox (Oracle)'" <willy@infradead.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-CC:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        "jfs-discussion@lists.sourceforge.net" 
-        <jfs-discussion@lists.sourceforge.net>,
-        Christoph Hellwig <hch@lst.de>,
-        "Dave Chinner" <dchinner@redhat.com>
-Subject: RE: [PATCH v2 2/9] fs: Introduce i_blocks_per_page
-Thread-Topic: [PATCH v2 2/9] fs: Introduce i_blocks_per_page
-Thread-Index: AQHWh8zSUX5EB+iAm0+PkXaO9U0VzKlp3UwQ
-Date:   Tue, 15 Sep 2020 15:40:52 +0000
-Message-ID: <0c874f14499c4d819f3e8e09f5086d77@AcuMS.aculab.com>
-References: <20200910234707.5504-1-willy@infradead.org>
- <20200910234707.5504-3-willy@infradead.org>
-In-Reply-To: <20200910234707.5504-3-willy@infradead.org>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 15 Sep 2020 11:42:36 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A512AC06174A;
+        Tue, 15 Sep 2020 08:42:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=WN7EmustK264smc9o/ZcxMc3lY45Oy2Z1WSCl7q0HYI=; b=VfYtjtx1jnJJKJuezTF8Wv7kTN
+        zlCLTChtVQU0w+WsT7rLfh1k2wodLScX6Ty6wgSNfOYM41VlJUAn5E0wT6w3EYNXslThrNba9rThI
+        ZZYlnb/ssedTdlgEOS4zIFENEYo3MPuTBEYzuitMiaUUNlQvI8PPP3i71Jr9swVeUInovnUY1A3+D
+        i9YvQoh3MHM1UQUAFk+8eqrpZNsibhZ1xrESnazNUrJOa5x5raC9ClX8jPIN5jBQoeOsGb2mozEQU
+        UGb6nFqz8/ImJNG8M0JlrYbwuPmWsDtAe9YSvx7PZ4qGn6+rOiJaBJQMTzlI57oPsbsnca2pQWGfN
+        gOlQ+fhg==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kID5x-0002Vn-NM; Tue, 15 Sep 2020 15:42:13 +0000
+Date:   Tue, 15 Sep 2020 16:42:13 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de, almasrymina@google.com,
+        David Rientjes <rientjes@google.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [External] Re: [RFC PATCH 00/24] mm/hugetlb: Free some vmemmap
+ pages of hugetlb page
+Message-ID: <20200915154213.GI5449@casper.infradead.org>
+References: <20200915125947.26204-1-songmuchun@bytedance.com>
+ <20200915143241.GH5449@casper.infradead.org>
+ <CAMZfGtW0PqU6SLihLABA8rU+FuBqm8NksDW=EkLXy1RZfYeDGA@mail.gmail.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0.002
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMZfGtW0PqU6SLihLABA8rU+FuBqm8NksDW=EkLXy1RZfYeDGA@mail.gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Matthew Wilcox (Oracle)
-> Sent: 11 September 2020 00:47
-> This helper is useful for both THPs and for supporting block size larger
-> than page size.  Convert all users that I could find (we have a few
-> different ways of writing this idiom, and I may have missed some).
+On Tue, Sep 15, 2020 at 11:28:01PM +0800, Muchun Song wrote:
+> On Tue, Sep 15, 2020 at 10:32 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Tue, Sep 15, 2020 at 08:59:23PM +0800, Muchun Song wrote:
+> > > This patch series will free some vmemmap pages(struct page structures)
+> > > associated with each hugetlbpage when preallocated to save memory.
+> >
+> > It would be lovely to be able to do this.  Unfortunately, it's completely
+> > impossible right now.  Consider, for example, get_user_pages() called
+> > on the fifth page of a hugetlb page.
 > 
-...
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index d81a9a86c5aa..330f86b825d7 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -46,7 +46,7 @@ iomap_page_create(struct inode *inode, struct page *page)
->  {
->  	struct iomap_page *iop = to_iomap_page(page);
-> 
-> -	if (iop || i_blocksize(inode) == PAGE_SIZE)
-> +	if (iop || i_blocks_per_page(inode, page) <= 1)
->  		return iop;
-> 
->  	iop = kmalloc(sizeof(*iop), GFP_NOFS | __GFP_NOFAIL);
-> @@ -147,7 +147,7 @@ iomap_iop_set_range_uptodate(struct page *page, unsigned off, unsigned len)
->  	unsigned int i;
-> 
->  	spin_lock_irqsave(&iop->uptodate_lock, flags);
-> -	for (i = 0; i < PAGE_SIZE / i_blocksize(inode); i++) {
-> +	for (i = 0; i < i_blocks_per_page(inode, page); i++) {
+> Can you elaborate on the problem? Thanks so much.
 
-You probably don't want to call the helper every time
-around the loop.
+OK, let's say you want to do a 2kB I/O to offset 0x5000 of a 2MB page
+on a 4kB base page system.  Today, that results in a bio_vec containing
+{head+5, 0, 0x800}.  Then we call page_to_phys() on that (head+5) struct
+page to get the physical address of the I/O, and we turn it into a struct
+scatterlist, which similarly has a reference to the page (head+5).
 
-	David
+If you're returning page (head+1) from get_user_pages(), all the
+calculations will be wrong and you'll do DMA to the wrong address.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+What needs to happen is a conversion to get_user_bvecs().  That way we
+can return a bvec which is {head, 0x5000, 0x800} and the calculations
+will work.  So that's going to involve touching a lot of device drivers.
+Christoph has a start on it here:
+http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/gup-bvec
 
+Overlapping with that is a desire to change the biovec so that it
+only stores {phys_addr, length} rather than {page, offset, length}.
+We're also going to have to rework the scatterlist so that it doesn't
+carry a struct page either.
