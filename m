@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id BC8EE26B84F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 02:41:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C416026B84A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 02:41:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbgIPAla (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 20:41:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48724 "EHLO
+        id S1726681AbgIPAlL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 20:41:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726606AbgIONDY (ORCPT
+        with ESMTP id S1726068AbgIOND1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 09:03:24 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D03FBC06121F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:03:16 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id g29so1975894pgl.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:03:16 -0700 (PDT)
+        Tue, 15 Sep 2020 09:03:27 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 007AFC061220
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:03:26 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id f2so1970873pgd.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:03:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=pILI1DDrFe/b2Xrn63/srspFkYH22+x7evVHRLCQbNs=;
-        b=aV3A/QCSeKx/M6lxiGM69I2x22wWXM5E8xYjTXWvW5FmYeJhqDzAMXLFwr+IlVywrd
-         OaHxAqWmnINT8f3NrR+Am89Tusaw27BZ5R8rsk7NnDBqP/+hoRH3B+4d3yGBclXVaBhW
-         DZMwNl7z/XjVPQaKBP9LXodEGaBFjxhm86jA3yT9TLez0jAJ57CLBdMXfobRNs0SUjar
-         ElqNnd+J7SUQWAhjfCR6wWTokDIUS335J42n1QMGV/wD92djIwR5OFoCZm1USSnA5p+p
-         yMoFm9hJhk+WQXlXykrLNJrO/kr0gNbyGT/fxDAbO/DLWVGbtcIqz9lUlWJSt1ikLvly
-         wZVw==
+        bh=mOJhqJtv+UWYoFjqXwWvBe8sB0f2lCBZ6nqED2fuMHQ=;
+        b=EOQN2yWHyRuPAk9Gq+vMMRCScrOmbSFwQ3n+S9wZYYojswi6k8MztS4cheCz/qacPa
+         JQH4e+xWH0J27Q2IH3NK20OWrmxC6SH8QTl8gW2KyP1R6iauFKSbXnW6RCyse/SaZqzu
+         H5/jC1r63VISpnzqCqjZbh1KoHJ8PUp5VnvAh87TKRUVm6FgYuM/2IBTVSCqs/moqLOl
+         vDTfbMz93M8Af8EBdTZK3i8xzTOrHp7cqmo+zrubXB95j0mPnK2Jy/6skjemTyoOrdlc
+         VOcBpmuITOubgjyoOWCxAvFXusRUf0Wsf7a9t97nrU1k/gEkmQpssTuulsmZPnh6+CTw
+         /bxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pILI1DDrFe/b2Xrn63/srspFkYH22+x7evVHRLCQbNs=;
-        b=Va15gTtH/4wkJzewhz/DjJeDPRXVN8sit/notpFRtrrFsYhR0vaT2EroP5vxcxiuQ5
-         2uLRZZqchydt77W05RRvac0+ABlJNrElOvBHh9re0FCgBC1EMTSdccR6DxJ7/4LCsi30
-         vbj9Zku4xfUv67urbl/v1hvD5c7BzeEg3+aBr27T9UgqGSygthMzqdOS9hWjIIPxM3a8
-         XplkHOMtpomMuhmfJ0d+nuz6yV7bYmE3dMu/EPZYO12z40AgpyibWGpwmun+yswJ+C9h
-         YpOD/4ueCSAVdObCLmMj726vYsjKmRjSFCpE1b2yN77n4zvEIBPEEu6FDS5A7jnLLoe0
-         q0WA==
-X-Gm-Message-State: AOAM532SkmkQoZ+HkA9clrC7aG7WBM1fb0W2HSEftWpwGnS2TZl9HGAz
-        bPC9KYLytJUOUkQKaSApqKddzA==
-X-Google-Smtp-Source: ABdhPJwdj/8EX6dbyD+Wrkpe396z326LshE9196SheOxP4atV9x9XuoP4OWtAZUey/v+ouqG80JBaQ==
-X-Received: by 2002:a63:f34b:: with SMTP id t11mr14668403pgj.111.1600174996425;
-        Tue, 15 Sep 2020 06:03:16 -0700 (PDT)
+        bh=mOJhqJtv+UWYoFjqXwWvBe8sB0f2lCBZ6nqED2fuMHQ=;
+        b=JngX/+5JN8HG8hQqq33P8P7EyGef3bNWNQTwB424UP6Zd6b7SMxiqAIb54YlIfaTUf
+         NaPM9kX5V2d436BQojoY78HS9EJBpBFhdYbni8u1ZOQ0c3T17bzpagz+Cqy8rOfv9U28
+         R1F5x6sfjfbJ/0BwaQs4Bdxacgljnc3OC4FhmPvwQiUYskc3oVozvJQjKfPTxH7gYObO
+         UnlO+JY04wM0b/FIny0HnlPfAD53muKqoUW0Iwh/Cd4ygz3HRUqqHsSOOwd05GCoddRQ
+         wQWG9hSi+X7g1d4i/wrKrJM4Tu0uYF6w16OJRZO0JRvpS+i2ykBNyOJbgqBxQZ0QM6Rm
+         sfZw==
+X-Gm-Message-State: AOAM533cr61AJNSbo7mqYldk/yXFvseUYW03jUlIQ+rgFZsOj87Qw0qw
+        SwtnZ5TXRHf1TBPIWhQOExOchg==
+X-Google-Smtp-Source: ABdhPJy+syIBhM8kx1V8ywime9iP9xvufd4f0gsLV6gbG6xM7YybTp78AmXxxeqXUOso9/bnBhpTyQ==
+X-Received: by 2002:a62:3044:0:b029:142:2501:398b with SMTP id w65-20020a6230440000b02901422501398bmr1767708pfw.80.1600175006499;
+        Tue, 15 Sep 2020 06:03:26 -0700 (PDT)
 Received: from localhost.bytedance.net ([103.136.220.66])
-        by smtp.gmail.com with ESMTPSA id w185sm14269855pfc.36.2020.09.15.06.03.06
+        by smtp.gmail.com with ESMTPSA id w185sm14269855pfc.36.2020.09.15.06.03.16
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Sep 2020 06:03:15 -0700 (PDT)
+        Tue, 15 Sep 2020 06:03:25 -0700 (PDT)
 From:   Muchun Song <songmuchun@bytedance.com>
 To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
         mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
@@ -60,9 +60,9 @@ To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Muchun Song <songmuchun@bytedance.com>
-Subject: [RFC PATCH 19/24] mm/hugetlb: Flush work when dissolving hugetlb page
-Date:   Tue, 15 Sep 2020 20:59:42 +0800
-Message-Id: <20200915125947.26204-20-songmuchun@bytedance.com>
+Subject: [RFC PATCH 20/24] mm/hugetlb: Add a kernel parameter hugetlb_free_vmemmap
+Date:   Tue, 15 Sep 2020 20:59:43 +0800
+Message-Id: <20200915125947.26204-21-songmuchun@bytedance.com>
 X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 In-Reply-To: <20200915125947.26204-1-songmuchun@bytedance.com>
 References: <20200915125947.26204-1-songmuchun@bytedance.com>
@@ -73,69 +73,98 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We should flush work when dissolving a hugetlb page to make sure that
-the hugetlb page is freed to the buddy.
+Add a kernel parameter hugetlb_free_vmemmap to disable the feature of
+freeing unused vmemmap pages associated with each hugetlb page on boot.
 
 Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 ---
- mm/hugetlb.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ .../admin-guide/kernel-parameters.txt         |  9 ++++++++
+ Documentation/admin-guide/mm/hugetlbpage.rst  |  3 +++
+ mm/hugetlb.c                                  | 23 +++++++++++++++++++
+ 3 files changed, 35 insertions(+)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 5debfe238027..69d18ef6f66b 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1551,6 +1551,15 @@
+ 			Documentation/admin-guide/mm/hugetlbpage.rst.
+ 			Format: size[KMG]
+ 
++	hugetlb_free_vmemmap=
++			[KNL] When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set,
++			this disables freeing unused vmemmap pages associated
++			each HugeTLB page.
++			Format: { on (default) | off }
++
++			on:  enable the feature
++			off: dosable the feature
++
+ 	hung_task_panic=
+ 			[KNL] Should the hung task detector generate panics.
+ 			Format: 0 | 1
+diff --git a/Documentation/admin-guide/mm/hugetlbpage.rst b/Documentation/admin-guide/mm/hugetlbpage.rst
+index f7b1c7462991..7d6129ee97dd 100644
+--- a/Documentation/admin-guide/mm/hugetlbpage.rst
++++ b/Documentation/admin-guide/mm/hugetlbpage.rst
+@@ -145,6 +145,9 @@ default_hugepagesz
+ 
+ 	will all result in 256 2M huge pages being allocated.  Valid default
+ 	huge page size is architecture dependent.
++hugetlb_free_vmemmap
++	When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set, this disables freeing
++	unused vmemmap pages associated each HugeTLB page.
+ 
+ When multiple huge page sizes are supported, ``/proc/sys/vm/nr_hugepages``
+ indicates the current number of pre-allocated huge pages of the default size.
 diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 8666cedf9a7b..56c0bf2370ed 100644
+index 56c0bf2370ed..28c154679838 100644
 --- a/mm/hugetlb.c
 +++ b/mm/hugetlb.c
-@@ -1848,6 +1848,11 @@ static inline void free_gigantic_page_comm(struct hstate *h, struct page *page)
- 	free_gigantic_page(page, huge_page_order(h));
- }
+@@ -1310,6 +1310,8 @@ static void __free_hugepage(struct hstate *h, struct page *page);
+ 	(__boundary - 1 < (end) - 1) ? __boundary : (end);		\
+ })
  
-+static inline void flush_free_huge_page_work(void)
++static bool hugetlb_free_vmemmap_disabled __initdata;
++
+ static inline unsigned int nr_free_vmemmap(struct hstate *h)
+ {
+ 	return h->nr_free_vmemmap_pages;
+@@ -1457,6 +1459,13 @@ static void __init hugetlb_vmemmap_init(struct hstate *h)
+ 	unsigned int order = huge_page_order(h);
+ 	unsigned int vmemmap_pages;
+ 
++	if (hugetlb_free_vmemmap_disabled) {
++		h->nr_free_vmemmap_pages = 0;
++		pr_info("HugeTLB: disable free vmemmap pages for %s\n",
++			h->name);
++		return;
++	}
++
+ 	vmemmap_pages = ((1 << order) * sizeof(struct page)) >> PAGE_SHIFT;
+ 	/*
+ 	 * The head page and the first tail page not free to buddy system,
+@@ -1867,6 +1876,20 @@ static inline void clear_subpage_hwpoison(struct page *head)
+ {
+ 	set_page_private(head + 4, 0);
+ }
++
++static int __init early_hugetlb_free_vmemmap_param(char *buf)
 +{
-+	flush_work(&hpage_update_work);
++	if (!buf)
++		return -EINVAL;
++
++	if (!strcmp(buf, "off"))
++		hugetlb_free_vmemmap_disabled = true;
++	else if (strcmp(buf, "on"))
++		return -EINVAL;
++
++	return 0;
 +}
-+
- static inline bool subpage_hwpoison(struct page *head, struct page *page)
++early_param("hugetlb_free_vmemmap", early_hugetlb_free_vmemmap_param);
+ #else
+ static inline void hugetlb_vmemmap_init(struct hstate *h)
  {
- 	return page_private(head + 4) == page - head;
-@@ -1910,6 +1915,10 @@ static inline void free_gigantic_page_comm(struct hstate *h, struct page *page)
- 	spin_lock(&hugetlb_lock);
- }
- 
-+static inline void flush_free_huge_page_work(void)
-+{
-+}
-+
- static inline bool subpage_hwpoison(struct page *head, struct page *page)
- {
- 	return true;
-@@ -2484,6 +2493,7 @@ static int free_pool_huge_page(struct hstate *h, nodemask_t *nodes_allowed,
- int dissolve_free_huge_page(struct page *page)
- {
- 	int rc = -EBUSY;
-+	bool need_flush = false;
- 
- 	/* Not to disrupt normal path by vainly holding hugetlb_lock */
- 	if (!PageHuge(page))
-@@ -2515,10 +2525,19 @@ int dissolve_free_huge_page(struct page *page)
- 		h->free_huge_pages_node[nid]--;
- 		h->max_huge_pages--;
- 		update_and_free_page(h, head);
-+		need_flush = true;
- 		rc = 0;
- 	}
- out:
- 	spin_unlock(&hugetlb_lock);
-+
-+	/*
-+	 * We should flush work before return to make sure that
-+	 * the hugetlb page is freed to the buddy.
-+	 */
-+	if (need_flush)
-+		flush_free_huge_page_work();
-+
- 	return rc;
- }
- 
 -- 
 2.20.1
 
