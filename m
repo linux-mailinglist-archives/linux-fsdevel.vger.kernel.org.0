@@ -2,113 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7926726A4B1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 14:08:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC52226A4BC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 14:11:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbgIOMIr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 08:08:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40252 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726183AbgIOMII (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 08:08:08 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB5A2206DB;
-        Tue, 15 Sep 2020 12:08:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600171688;
-        bh=ArlwLnttuYqX6MO3Ch7AD5E9hngbIDd9nG4WVR9YQQs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Ld2kpQafUM2SmFrcTM+wC2x4WdXjo8HUR8ASOz9GZSYNTSFITEQdoFBOD7C3vrqmB
-         4VQ5/4Z+bF4X79OXy6sR5/XbynHEPqevVzGOhRlg/lUsyLAd5C5iQdhVlEhnSxjot6
-         Ce3yOcPYCNVTPeH2NEH6OQd4IghDSV5rNSbYJVJ8=
-Message-ID: <1687d41eff214664c2c8e3aaec519aa480df2d1d.camel@kernel.org>
-Subject: Re: [RFC PATCH v3 06/16] ceph: add fscrypt ioctls
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Tue, 15 Sep 2020 08:08:06 -0400
-In-Reply-To: <20200915004522.GF899@sol.localdomain>
-References: <20200914191707.380444-1-jlayton@kernel.org>
-         <20200914191707.380444-7-jlayton@kernel.org>
-         <20200915004522.GF899@sol.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
+        id S1726455AbgIOMLF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 08:11:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40664 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbgIOMJt (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Tue, 15 Sep 2020 08:09:49 -0400
+Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 182B5C06174A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 05:09:32 -0700 (PDT)
+Received: by mail-qk1-x742.google.com with SMTP id w12so3896017qki.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 05:09:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CDE7GdgltkSOIkfO/rfMw6sCqaS9Bsq8TbcW6NBrlSA=;
+        b=kXoVDxvN7DndapcSu+l47L43PDGphATr8yW/tC0omD6Is0ijdVOouyYCJkTqfHq8hn
+         +lHITLomC+eM5L7L/Yb3nepocbQQJ1YY3whc2T5Xcb2KXO7axBjQ5J14dEeGX3kSLeJN
+         peijTOk4cdMAEmocw1oSr3/LyAjbPosFRAaa5tEhuOOoloaD8eVmwh0x2Donz0XViEVF
+         5CANdLoHY9IQJvuMGvwHdeqTV+gZJrN4DkYeRjcBTPlrcLOlsVDgWbNf9HXSN3RAnhee
+         +rJkw1sSjDzMvRVY2Wp6WVS9CioPTZyWSIISV5rvWT5hzGeBov0mdRImhGgFotjmfBVG
+         xXcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CDE7GdgltkSOIkfO/rfMw6sCqaS9Bsq8TbcW6NBrlSA=;
+        b=RI2FFTCWdZlkcLxUp3kuVQ+Fpeh55fuJNh+BNMw9BLluVF5LqWnP4Yko4DCL/PGcQ+
+         S12db41AkmQlhnGumHVQOsi2I2lgm1SgC+6/B/+LOW2no0vaMjRoP/fgbq5OlGjyoR4R
+         MWsIgNVQJgS628dpwfMAZNmmmLGqT4WbcC3yqrlQ187OyUmWq/eYoeTmD1pfVqWQZWzI
+         VACW27HboXVia2ElvG8bAPdfFmDqCXQIlB47xptA2YYw39Tigz7yOx39oGMB1kXiKLu4
+         QZu9D7PB6mVmAKXKUrdCCtDztKXe35B7xzwvTknEOZ143oAVvA11qwkGn9BRm9ujdHob
+         4qdQ==
+X-Gm-Message-State: AOAM531m5IylpZyG5/cyuSjDvYHm4bgmgW1t0LWK5nd2DDHng27/ufz+
+        IKmzzFfuHdMEBTEHJ7LXo2pdS+xmYIYJn4OKNho=
+X-Google-Smtp-Source: ABdhPJw3Srs65na85dJ0g29L8US0zN93DCQROxY0x27hHlAS+U5lNGZ8ddh11tAz3OlqD8Vs47r+W2UqXDszLfpAg5g=
+X-Received: by 2002:a37:c408:: with SMTP id d8mr16463899qki.71.1600171771222;
+ Tue, 15 Sep 2020 05:09:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20200914172737.GA5011@192.168.3.9> <20200915070841.GF4863@quack2.suse.cz>
+ <CAOQ4uxjxNmem7dwSMcqefGt5qaxwtHTYQ-k_kxuoMX_vJeTGOg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjxNmem7dwSMcqefGt5qaxwtHTYQ-k_kxuoMX_vJeTGOg@mail.gmail.com>
+From:   Weiping Zhang <zwp10758@gmail.com>
+Date:   Tue, 15 Sep 2020 20:09:20 +0800
+Message-ID: <CAA70yB6-GFpnLCRmNGzGVK7qf_MG++7+0wUz61cqzNNoBN_iyQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] inotify: add support watch open exec event
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Weiping Zhang <zhangweiping@didiglobal.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2020-09-14 at 17:45 -0700, Eric Biggers wrote:
-> On Mon, Sep 14, 2020 at 03:16:57PM -0400, Jeff Layton wrote:
-> > Boilerplate ioctls for controlling encryption.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/ioctl.c | 25 +++++++++++++++++++++++++
-> >  1 file changed, 25 insertions(+)
-> > 
-> > diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
-> > index 6e061bf62ad4..381e44b2d60a 100644
-> > --- a/fs/ceph/ioctl.c
-> > +++ b/fs/ceph/ioctl.c
-> > @@ -6,6 +6,7 @@
-> >  #include "mds_client.h"
-> >  #include "ioctl.h"
-> >  #include <linux/ceph/striper.h>
-> > +#include <linux/fscrypt.h>
-> >  
-> >  /*
-> >   * ioctls
-> > @@ -289,6 +290,30 @@ long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> >  
-> >  	case CEPH_IOC_SYNCIO:
-> >  		return ceph_ioctl_syncio(file);
-> > +
-> > +	case FS_IOC_SET_ENCRYPTION_POLICY:
-> > +		return fscrypt_ioctl_set_policy(file, (const void __user *)arg);
-> > +
-> > +	case FS_IOC_GET_ENCRYPTION_POLICY:
-> > +		return fscrypt_ioctl_get_policy(file, (void __user *)arg);
-> > +
-> > +	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
-> > +		return fscrypt_ioctl_get_policy_ex(file, (void __user *)arg);
-> > +
-> > +	case FS_IOC_ADD_ENCRYPTION_KEY:
-> > +		return fscrypt_ioctl_add_key(file, (void __user *)arg);
-> > +
-> > +	case FS_IOC_REMOVE_ENCRYPTION_KEY:
-> > +		return fscrypt_ioctl_remove_key(file, (void __user *)arg);
-> > +
-> > +	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
-> > +		return fscrypt_ioctl_remove_key_all_users(file, (void __user *)arg);
-> > +
-> > +	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
-> > +		return fscrypt_ioctl_get_key_status(file, (void __user *)arg);
-> > +
-> > +	case FS_IOC_GET_ENCRYPTION_NONCE:
-> > +		return fscrypt_ioctl_get_nonce(file, (void __user *)arg);
-> 
-> Will you be implementing an encryption feature flag for ceph, similar to what
-> ext4 and f2fs have?  E.g., ext4 doesn't allow these ioctls unless the filesystem
-> was formatted with '-O encrypt' (or 'tune2fs -O encrypt' was run later).  There
-> would be various problems if we didn't do that; for example, old versions of
-> e2fsck would consider encrypted directories to be corrupted.
-> 
+On Tue, Sep 15, 2020 at 4:34 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Tue, Sep 15, 2020 at 10:08 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Tue 15-09-20 01:27:43, Weiping Zhang wrote:
+> > > Now the IN_OPEN event can report all open events for a file, but it can
+> > > not distinguish if the file was opened for execute or read/write.
+> > > This patch add a new event IN_OPEN_EXEC to support that. If user only
+> > > want to monitor a file was opened for execute, they can pass a more
+> > > precise event IN_OPEN_EXEC to inotify_add_watch.
+> > >
+> > > Signed-off-by: Weiping Zhang <zhangweiping@didiglobal.com>
+> >
+> > Thanks for the patch but what I'm missing is a justification for it. Is
+> > there any application that cannot use fanotify that needs to distinguish
+> > IN_OPEN and IN_OPEN_EXEC? The OPEN_EXEC notification is for rather
+> > specialized purposes (e.g. audit) which are generally priviledged and need
+> > to use fanotify anyway so I don't see this as an interesting feature for
+> > inotify...
+>
+fanotify meets my requirement, thanks.
 
-Yes, we'll probably have something like that once the MDS support has
-settled. We'll want to disallow encryption when dealing with MDS's that
-don't support it, so I suspect we'll need to add a check for that in
-these ioctl calls.
-
-That feature bit hasn't been declared yet though, and this patchset is
-still _really_ rough. I'll add a comment to that effect for now though.
-
-Thanks!
--- 
-Jeff Layton <jlayton@kernel.org>
-
+> That would be my queue to re- bring up FAN_UNPRIVILEGED [1].
+> Last time this was discussed [2], FAN_UNPRIVILEGED did not have
+> feature parity with inotify, but now it mostly does, short of (AFAIK):
+> 1. Rename cookie (*)
+> 2. System tunables for limits
+>
+> The question is - should I pursue it?
+>
+> You asked about incentive to use feature parity fanotify and not intotify.
+> One answer is the ignored mask. It may be a useful feature to some.
+>
+> But mostly, using the same interface for both priv and unpriv is convenient
+> for developers and it is convenient for kernel maintainers.
+> I'd like to be able to make the statement that inotify code is maintained in
+> bug fixes only mode, which has mostly been the reality for a long time.
+> But in order to be able to say "no reason to add IN_OPEN_EXEC", we
+> do need to stand behind the feature parity with intotify.
+>
+> So I apologize to Weiping for hijacking his thread, but I think we should
+> get our plans declared before deciding on IN_OPEN_EXEC, because
+> whether there is a valid use case for non-priv user who needs IN_OPEN_EXEC
+> event is not the main issue IMO. Even if there isn't, we need an answer for
+> the next proposed inotify feature that does have a non-priv user use case.
+>
+> Thanks,
+> Amir.
+>
+> [1] https://github.com/amir73il/linux/commits/fanotify_unpriv
+> [2] https://lore.kernel.org/linux-fsdevel/20181114135744.GB20704@quack2.suse.cz/
+>
+> (*) I got an internal complaint about missing the rename cookie with
+> FAN_REPORT_NAME, so I had to carry a small patch internally.
+> The problem is not that the rename cookie is really needed, but that without
+> the rename cookie, events can be re-ordered across renames and that can
+> generate some non-deterministic event sequences.
+>
+> So I am thinking of keeping the rename cookie in the kernel event just for
+> no-merge indication and then userspace can use object fid to match
+> MOVED_FROM/MOVED_TO events.
