@@ -2,127 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id D3B7C269AFF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 03:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88388269B2D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 03:31:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbgIOBXL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Sep 2020 21:23:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50674 "EHLO mail.kernel.org"
+        id S1726159AbgIOBat (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Sep 2020 21:30:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725999AbgIOBXK (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Sep 2020 21:23:10 -0400
+        id S1726115AbgIOBan (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Sep 2020 21:30:43 -0400
 Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 760AD206BE;
-        Tue, 15 Sep 2020 01:23:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B60C20770;
+        Tue, 15 Sep 2020 01:30:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600132989;
-        bh=LUAPwqpjWpFFljgzVU0r6SItGNcshtNy2N3lKtU4fcs=;
+        s=default; t=1600133442;
+        bh=02lCOsnm4FenhdhQcBTHqzPLdKzBa6eWceyoE3rY+B4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pSah3gNPuPJfgQ4XnD4NjnWm+LNLjqvXHWDz3+zwvDgL1eFewNy2Nnv2dJ6afvZNc
-         aPQGp9VKNc4Hcb6rzus06WoFcK9GaxanEsVvFae8IfP+4Lxe45LXFPmJeFw6phjTnl
-         ncARpAw/pZlktWDPMsrAe1gXw5dFDQxaqtar6I7Y=
-Date:   Mon, 14 Sep 2020 18:23:07 -0700
+        b=PXHllC51wtAxu2C1EsB3Wlnta8GCA/W7Zrh5d6bkmGsf8D5Y58TeaKmtPwIFklLaT
+         Jri6Sgl5CnmHii9QgnuVJaLGy5HDexao7s4yhA4jLwxrFsTcEDfs2idGlNbl1C9EEX
+         XlBW9ddvos5/4dHRv6+Jp2UZaqta+7wxZ06vTjCI=
+Date:   Mon, 14 Sep 2020 18:30:41 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v3 08/16] ceph: implement -o test_dummy_encryption
- mount option
-Message-ID: <20200915012307.GH899@sol.localdomain>
+Subject: Re: [RFC PATCH v3 09/16] ceph: preallocate inode for ops that may
+ create one
+Message-ID: <20200915013041.GI899@sol.localdomain>
 References: <20200914191707.380444-1-jlayton@kernel.org>
- <20200914191707.380444-9-jlayton@kernel.org>
+ <20200914191707.380444-10-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200914191707.380444-9-jlayton@kernel.org>
+In-Reply-To: <20200914191707.380444-10-jlayton@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 14, 2020 at 03:16:59PM -0400, Jeff Layton wrote:
-> +	case Opt_test_dummy_encryption:
-> +		kfree(fsopt->test_dummy_encryption);
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +		fsopt->test_dummy_encryption = param->string;
-> +		param->string = NULL;
-> +		fsopt->flags |= CEPH_MOUNT_OPT_TEST_DUMMY_ENC;
-> +#else
-> +		warnfc(fc, "FS encryption not supported: test_dummy_encryption mount option ignored");
-> +#endif
-
-Seems that the kfree() should go in the CONFIG_FS_ENCRYPTION=y block.
-
-Also, is there much reason to have the CEPH_MOUNT_OPT_TEST_DUMMY_ENC flag
-instead of just checking fsopt->test_dummy_encryption != NULL?
-
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +static int ceph_set_test_dummy_encryption(struct super_block *sb, struct fs_context *fc,
-> +						struct ceph_mount_options *fsopt)
-> +{
-> +	struct ceph_fs_client *fsc = sb->s_fs_info;
+On Mon, Sep 14, 2020 at 03:17:00PM -0400, Jeff Layton wrote:
+> @@ -663,6 +658,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>  	struct ceph_fs_client *fsc = ceph_sb_to_client(dir->i_sb);
+>  	struct ceph_mds_client *mdsc = fsc->mdsc;
+>  	struct ceph_mds_request *req;
+> +	struct inode *new_inode = NULL;
+>  	struct dentry *dn;
+>  	struct ceph_acl_sec_ctx as_ctx = {};
+>  	bool try_async = ceph_test_mount_opt(fsc, ASYNC_DIROPS);
+> @@ -675,21 +671,21 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>  
+>  	if (dentry->d_name.len > NAME_MAX)
+>  		return -ENAMETOOLONG;
+> -
+> +retry:
+>  	if (flags & O_CREAT) {
+>  		if (ceph_quota_is_max_files_exceeded(dir))
+>  			return -EDQUOT;
+> -		err = ceph_pre_init_acls(dir, &mode, &as_ctx);
+> -		if (err < 0)
+> -			return err;
+> -		err = ceph_security_init_secctx(dentry, mode, &as_ctx);
+> -		if (err < 0)
 > +
-> +	if (fsopt->flags & CEPH_MOUNT_OPT_TEST_DUMMY_ENC) {
-> +		substring_t arg = { };
-> +
-> +		/*
-> +		 * No changing encryption context on remount. Note that
-> +		 * fscrypt_set_test_dummy_encryption will validate the version
-> +		 * string passed in (if any).
-> +		 */
-> +		if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE && !fsc->dummy_enc_policy.policy)
-> +			return -EEXIST;
-
-Maybe show an error message here, with errorfc()?
-See the message that ext4_set_test_dummy_encryption() shows.
-
-> +
-> +		/* Ewwwwwwww */
-> +		if (fsc->mount_options->test_dummy_encryption) {
-> +			arg.from = fsc->mount_options->test_dummy_encryption;
-> +			arg.to = arg.from + strlen(arg.from) - 1;
+> +		new_inode = ceph_new_inode(dir, dentry, &mode, &as_ctx);
+> +		if (IS_ERR(new_inode)) {
+> +			err = PTR_ERR(new_inode);
+>  			goto out_ctx;
 > +		}
 
-We should probably make fscrypt_set_test_dummy_encryption() take a
-'const char *' to avoid having to create a substring_t here.
+Is the 'goto out_ctx;' correct here?  It looks like it should be
+'return PTR_ERR(new_inode)'
 
-> +		return fscrypt_set_test_dummy_encryption(sb, &arg, &fsc->dummy_enc_policy);
+> +/**
+> + * ceph_new_inode - allocate a new inode in advance of an expected create
+> + * @dir: parent directory for new inode
+> + * @mode: mode of new inode
+> + */
+> +struct inode *ceph_new_inode(struct inode *dir, struct dentry *dentry,
+> +			     umode_t *mode, struct ceph_acl_sec_ctx *as_ctx)
 
-Likewise, maybe show an error message if this fails.
+Some parameters aren't documented.
 
-> +	} else {
-> +		if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE && fsc->dummy_enc_policy.policy)
-> +			return -EEXIST;
-
-If remount on ceph behaves as "don't change options that aren't specified",
-similar to ext4, then there's no need for this hunk here.
-
->  static int ceph_reconfigure_fc(struct fs_context *fc)
->  {
 > +	int err;
->  	struct ceph_parse_opts_ctx *pctx = fc->fs_private;
->  	struct ceph_mount_options *fsopt = pctx->opts;
-> -	struct ceph_fs_client *fsc = ceph_sb_to_client(fc->root->d_sb);
-> +	struct super_block *sb = fc->root->d_sb;
-> +	struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
+>  	struct inode *inode;
 >  
->  	if (fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS)
->  		ceph_set_mount_opt(fsc, ASYNC_DIROPS);
->  	else
->  		ceph_clear_mount_opt(fsc, ASYNC_DIROPS);
+> -	inode = iget5_locked(sb, (unsigned long)vino.ino, ceph_ino_compare,
+> -			     ceph_set_ino_cb, &vino);
+> +	inode = new_inode_pseudo(dir->i_sb);
+>  	if (!inode)
+>  		return ERR_PTR(-ENOMEM);
 >  
-> -	sync_filesystem(fc->root->d_sb);
-> +	err = ceph_set_test_dummy_encryption(sb, fc, fsopt);
-> +	if (err)
-> +		return err;
+> +	if (!S_ISLNK(*mode)) {
+> +		err = ceph_pre_init_acls(dir, mode, as_ctx);
+> +		if (err < 0)
+> +			goto out_err;
+> +	}
 > +
-> +	sync_filesystem(sb);
->  	return 0;
->  }
+> +	err = ceph_security_init_secctx(dentry, *mode, as_ctx);
+> +	if (err < 0)
+> +		goto out_err;
+> +
+> +	inode->i_state = 0;
+> +	inode->i_mode = *mode;
+> +	return inode;
+> +out_err:
+> +	iput(inode);
+> +	return ERR_PTR(err);
+> +}
 
-Seems that ceph_set_test_dummy_encryption() should go at the beginning, since
-otherwise it can fail after something was already changed.
+Should this be freeing anything from the ceph_acl_sec_ctx on error?
 
 - Eric
