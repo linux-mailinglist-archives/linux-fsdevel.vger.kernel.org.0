@@ -2,66 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 596A4269A11
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 02:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA615269A46
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 02:15:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726069AbgIOAEY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Sep 2020 20:04:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54060 "EHLO mail.kernel.org"
+        id S1726046AbgIOAP3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Sep 2020 20:15:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbgIOAEY (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Sep 2020 20:04:24 -0400
+        id S1725999AbgIOAP2 (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Mon, 14 Sep 2020 20:15:28 -0400
 Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09C1F208DB;
-        Tue, 15 Sep 2020 00:04:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADD13208DB;
+        Tue, 15 Sep 2020 00:15:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600128264;
-        bh=qfRUjs9naBSrfqPpZUZcgR5jyoydYcO/N4OmsE69C88=;
+        s=default; t=1600128927;
+        bh=JcWxn38ohkQ3HtrHwZ8STRWqx1OYN2z3yul87Nxi3dE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZLBjsJmnMPR6muLbc8iYaOwLknXPmoqjwxEK+UJG+IchUeA7SUhe5zcXbGUdu45f5
-         ZO7ty0DgrkgSQghzOEoP0bLp/52UospU4Ab5MVOmzxcaHY8A0VB4WD3OAWG7FL8nRb
-         CDKq297sjPN7K2AOUJCIilsViCXOTwW488w8PN78=
-Date:   Mon, 14 Sep 2020 17:04:22 -0700
+        b=POPszP+srYLBCONdOr6pW+IntY2HfuceSsNjVjR3E5pnoslQ9V4TtZFWi1qbpsXRm
+         lqpv3YOW0mjYh51n11rgVwYjhFKLVb4DM8akbRNi3sUO/ji1h9ibuzskjkXou5FZIt
+         LbHnJ/d3UJ7pD+YiC/P4hiIGVhgArRxC0wB0GOQA=
+Date:   Mon, 14 Sep 2020 17:15:26 -0700
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Daniel Rosenberg <drosen@google.com>
-Subject: Re: [RFC PATCH v3 03/16] fscrypt: export fscrypt_d_revalidate
-Message-ID: <20200915000422.GC899@sol.localdomain>
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v3 04/16] fscrypt: add fscrypt_context_for_new_inode
+Message-ID: <20200915001526.GD899@sol.localdomain>
 References: <20200914191707.380444-1-jlayton@kernel.org>
- <20200914191707.380444-4-jlayton@kernel.org>
+ <20200914191707.380444-5-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200914191707.380444-4-jlayton@kernel.org>
+In-Reply-To: <20200914191707.380444-5-jlayton@kernel.org>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 14, 2020 at 03:16:54PM -0400, Jeff Layton wrote:
-> ceph already has its own d_revalidate op so we can't rely on fscrypt
-> using that directly. Export this symbol so filesystems can call it
-> from their own d_revalidate op.
+On Mon, Sep 14, 2020 at 03:16:55PM -0400, Jeff Layton wrote:
+>  	/*
+>  	 * This may be the first time the inode number is available, so do any
+> @@ -689,7 +711,6 @@ int fscrypt_set_context(struct inode *inode, void *fs_data)
+>  
+>  		fscrypt_hash_inode_number(ci, mk);
+>  	}
+> -
+>  	return inode->i_sb->s_cop->set_context(inode, &ctx, ctxsize, fs_data);
 
-IMO, a slightly clearer explanation would be:
+Unnecessary whitespace change.
 
-	Since ceph already uses its own dentry_operations, it can't use
-	fscrypt_d_ops.  Instead, export fscrypt_d_revalidate() so that
-	ceph_d_revalidate() can call it.
+> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+> index b547e1aabb00..a57d2a9869eb 100644
+> --- a/include/linux/fscrypt.h
+> +++ b/include/linux/fscrypt.h
+> @@ -148,6 +148,7 @@ int fscrypt_ioctl_get_policy_ex(struct file *filp, void __user *arg);
+>  int fscrypt_ioctl_get_nonce(struct file *filp, void __user *arg);
+>  int fscrypt_has_permitted_context(struct inode *parent, struct inode *child);
+>  int fscrypt_set_context(struct inode *inode, void *fs_data);
+> +int fscrypt_context_for_new_inode(void *ctx, struct inode *inode);
 
-Also, it turns out that ext4 and f2fs will need this too.  You could add
-to the commit message:
-
-	This change is also needed by ext4 and f2fs to add support for
-	directories that are both encrypted and casefolded, since similarly the
-	current "fscrypt_d_ops" approach is too inflexible for that.  See
-	https://lore.kernel.org/r/20200307023611.204708-6-drosen@google.com and
-	https://lore.kernel.org/r/20200307023611.204708-8-drosen@google.com.
-
-FYI, I might take this patch for 5.10 to get it out of the way, since
-now two patchsets are depending on it.
+Please keep declarations in the same order as the definitions.
+So, fscrypt_context_for_new_inode() before fscrypt_set_context().
 
 - Eric
