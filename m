@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C753026A5CC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 15:01:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6E7726A5CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Sep 2020 15:02:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbgIONBu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 09:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48532 "EHLO
+        id S1726564AbgIONBg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 09:01:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbgIONAv (ORCPT
+        with ESMTP id S1726536AbgIONA6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 09:00:51 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0B06C06178B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:00:48 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id x18so1304951pll.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:00:48 -0700 (PDT)
+        Tue, 15 Sep 2020 09:00:58 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F527C06178C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:00:58 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id f18so1871146pfa.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 06:00:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Ph9Npx9Sc9T0289Sa+bHIQdTtsrfAT1jO6vE3p2NbQA=;
-        b=KJWEmRh74MpS+BiJEmcfSUmams10jgYpmHOWHONrwDWFrjooYDHDyiRYhnMnOh+VvH
-         Ty93H0BLab/qOFPkqwZAtkalYiEKAswo3uakzsrS4kepjFgxSQ7RsNb+5LEwpn8pOIlN
-         8WcE6SBqdZ+KTgt/ZnU7xAqtXD29FYuKipqzPasecDeZxF2J000H2LHOEUoixY8onUxu
-         xyW8ouRBL6mMCL9OCt2RVqaWSXtWesOFCJr0BX/OD1P83WlHpuvpzIBMSm3WVbYbesrO
-         2qFxvf8ijooHQImhd2dzz/2SA1y0avrE1ON/+PxTnAASjGYoGYzX2ETddAO+mnNasE+B
-         /zsQ==
+        bh=wKEqqYxLMCCV7YILHWcPfLsNzogWUGmkwXoJBs8HDY0=;
+        b=E0PsDVeSYmlyIy70MIh5m0hXMwHWvwLKrDYK5X1wkQ8FBA2P3oE8f7JK5FEAyzBh6V
+         pGJ5DHyLYlCaEV0d+66igOqnGYHN1U/vN2wDGiEd2OiAhPcrmeJczLyYK8s6RU6pOfaP
+         egYXUEevR3/zofar2Rn0FAgZ997gEWeaj4Se6MhyrbgWvpOHE1e2ONo/PJNOFDYz0BLa
+         XIHMFYPITNrSAktssfEoAIrl+y28Ig7vi14OUQ0pJ4PkaoKoh7DGEUhazgYrxJsyu1zg
+         EyB+Qo/EYrNJafh7GJRw6ckJ/KjXrDg6v7sMLOqSADxaAgNLJDW1T1qik6fjnjK0tPdx
+         xtFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Ph9Npx9Sc9T0289Sa+bHIQdTtsrfAT1jO6vE3p2NbQA=;
-        b=BvftJADikB1xp6gp1bzOm6gZb2rHJ/t0XERejVTeBREOglXaPTvM7Pz2tcdrR1JUjh
-         MK54QrX7D06TGYH3RKFpbHl0DtF9oxUdCEca4Zq/h+zEQPul0cDHWrzgnbahBg+IWgj0
-         Xn/gAjKu+G0W1dnv11n+AhdkLoIMkXWSabTwRm+ZuNrqpP3ASpFb1pfwinzGu3M1IMgj
-         MEILbmQevZB8jpjrPh+ko8Vc1fxcl568B3z6cHrJdhUb5S4oFxXH0RZm1QIDNVbCsWUS
-         SX9Fz9K3Y1SitGzM/mAja+fRXJ1YWZ4UtIqDnEAplyV+QDVENTQPJCuOmXFL5kJEaEx/
-         67dQ==
-X-Gm-Message-State: AOAM5321S8SK4sAfzSYHsBH2y35hJt7hQyV6rEeAjpLZrhKwmEXOhPOV
-        iwOl1euWjow0rpkWAssYTEUkdA==
-X-Google-Smtp-Source: ABdhPJwLaJ+aIVCorogq2CdD6Jk2kg3Rfgolvi723baFH8rkm/8wVxPlvYY+XFAEuzspsZb0g54KWg==
-X-Received: by 2002:a17:90a:1548:: with SMTP id y8mr3968874pja.113.1600174848501;
-        Tue, 15 Sep 2020 06:00:48 -0700 (PDT)
+        bh=wKEqqYxLMCCV7YILHWcPfLsNzogWUGmkwXoJBs8HDY0=;
+        b=JAnb75HQy8Eg7oMf+V5fcaMWN5A1Re8/M/lFjbXSJH49dRTVAIHFSG0ReA7tR3gm9J
+         1TZCRvbaRJaDrnWSqAib7YPN1GrqjJMTyh1bqeHN9mHcl8YLc48x0ESCwJP2KKJxJpmS
+         /tyKmvO84nE08Au1CA2UU+WtNTIWtgBwHgRYtqopeoQfVHvJeAPqaBzFao6u5cOfjAxS
+         ackX2X02Tb66mm4lKHf3ZCw4b1FICeut6GTeIeUC1vbTYJRGwnOvv+aDVaR28Ph/ZSCA
+         25PtRHDpgdzrxWGtDjRMD65oJp3sjagS8XWyIxYaHZob08m1D/BpAzSC++UKUxuhna86
+         qRFw==
+X-Gm-Message-State: AOAM532pm0rZn829+xWzbeWE5T41pcrGHjAgbKBgBLjn/1zM1jhbclKf
+        mAxvLR+prN8qy5P8MuQ1kJjlXQ==
+X-Google-Smtp-Source: ABdhPJxlSQz9UBnN/6SxzywlbRtzg8E1L0Sk6hjaz2n+M2tJkehWJQpoFBxhfBG7Rd9G4EYxwFksNA==
+X-Received: by 2002:a62:1c81:0:b029:13e:d13d:a0fa with SMTP id c123-20020a621c810000b029013ed13da0famr17739633pfc.22.1600174857496;
+        Tue, 15 Sep 2020 06:00:57 -0700 (PDT)
 Received: from localhost.bytedance.net ([103.136.220.66])
-        by smtp.gmail.com with ESMTPSA id w185sm14269855pfc.36.2020.09.15.06.00.38
+        by smtp.gmail.com with ESMTPSA id w185sm14269855pfc.36.2020.09.15.06.00.48
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Sep 2020 06:00:47 -0700 (PDT)
+        Tue, 15 Sep 2020 06:00:57 -0700 (PDT)
 From:   Muchun Song <songmuchun@bytedance.com>
 To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
         mingo@redhat.com, bp@alien8.de, x86@kernel.org, hpa@zytor.com,
@@ -60,9 +60,9 @@ To:     corbet@lwn.net, mike.kravetz@oracle.com, tglx@linutronix.de,
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         Muchun Song <songmuchun@bytedance.com>
-Subject: [RFC PATCH 04/24] mm/hugetlb: Register bootmem info when CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
-Date:   Tue, 15 Sep 2020 20:59:27 +0800
-Message-Id: <20200915125947.26204-5-songmuchun@bytedance.com>
+Subject: [RFC PATCH 05/24] mm/hugetlb: Introduce nr_free_vmemmap_pages in the struct hstate
+Date:   Tue, 15 Sep 2020 20:59:28 +0800
+Message-Id: <20200915125947.26204-6-songmuchun@bytedance.com>
 X-Mailer: git-send-email 2.21.0 (Apple Git-122)
 In-Reply-To: <20200915125947.26204-1-songmuchun@bytedance.com>
 References: <20200915125947.26204-1-songmuchun@bytedance.com>
@@ -73,28 +73,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We use put_page_bootmem() to free the unused vmemmap pages associated with
-each hugetlb page, so we need register bootmem info in advance, even if
-!CONFIG_NUMA.
+If the size of hugetlb page is 2MB, we need 512 struct page structures
+(8 pages) to be associated with it. As far as I know, we only use the
+first 3 struct page structures and only read the compound_dtor members
+of the remaining struct page structures. For tail page, the value of
+compound_dtor is the same. So we can reuse first tail page. We map the
+virtual addresses of the remaining 6 tail pages to the first tail page,
+and then free these 6 pages. Therefore, we need to reserve at least 2
+pages as vmemmap areas.
+
+So we introduce a new nr_free_vmemmap_pages field in the hstate to
+indicate how many vmemmap pages associated with a hugetlb page that we
+can free to buddy system.
 
 Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 ---
- arch/x86/mm/init_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/hugetlb.h |  3 +++
+ mm/hugetlb.c            | 35 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 0a45f062826e..0435bee2e172 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1225,7 +1225,7 @@ static struct kcore_list kcore_vsyscall;
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index d5cc5f802dd4..eed3dd3bd626 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -492,6 +492,9 @@ struct hstate {
+ 	unsigned int nr_huge_pages_node[MAX_NUMNODES];
+ 	unsigned int free_huge_pages_node[MAX_NUMNODES];
+ 	unsigned int surplus_huge_pages_node[MAX_NUMNODES];
++#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
++	unsigned int nr_free_vmemmap_pages;
++#endif
+ #ifdef CONFIG_CGROUP_HUGETLB
+ 	/* cgroup control files */
+ 	struct cftype cgroup_files_dfl[7];
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 81a41aa080a5..f1b2b733b49b 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -1292,6 +1292,39 @@ static inline void destroy_compound_gigantic_page(struct page *page,
+ 						unsigned int order) { }
+ #endif
  
- static void __init register_page_bootmem_info(void)
++#ifdef CONFIG_HUGETLB_PAGE_FREE_VMEMMAP
++#define RESERVE_VMEMMAP_NR	2U
++
++static inline unsigned int nr_free_vmemmap(struct hstate *h)
++{
++	return h->nr_free_vmemmap_pages;
++}
++
++static void __init hugetlb_vmemmap_init(struct hstate *h)
++{
++	unsigned int order = huge_page_order(h);
++	unsigned int vmemmap_pages;
++
++	vmemmap_pages = ((1 << order) * sizeof(struct page)) >> PAGE_SHIFT;
++	/*
++	 * The head page and the first tail page not free to buddy system,
++	 * the others page will map to the first tail page. So there are
++	 * (@vmemmap_pages - RESERVE_VMEMMAP_NR) pages can be freed.
++	 */
++	if (vmemmap_pages > RESERVE_VMEMMAP_NR)
++		h->nr_free_vmemmap_pages = vmemmap_pages - RESERVE_VMEMMAP_NR;
++	else
++		h->nr_free_vmemmap_pages = 0;
++
++	pr_info("HugeTLB: can free %d vmemmap pages for %s\n",
++		h->nr_free_vmemmap_pages, h->name);
++}
++#else
++static inline void hugetlb_vmemmap_init(struct hstate *h)
++{
++}
++#endif
++
+ static void update_and_free_page(struct hstate *h, struct page *page)
  {
--#ifdef CONFIG_NUMA
-+#if defined(CONFIG_NUMA) || defined(CONFIG_HUGETLB_PAGE_FREE_VMEMMAP)
  	int i;
+@@ -3285,6 +3318,8 @@ void __init hugetlb_add_hstate(unsigned int order)
+ 	snprintf(h->name, HSTATE_NAME_LEN, "hugepages-%lukB",
+ 					huge_page_size(h)/1024);
  
- 	for_each_online_node(i)
++	hugetlb_vmemmap_init(h);
++
+ 	parsed_hstate = h;
+ }
+ 
 -- 
 2.20.1
 
