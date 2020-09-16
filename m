@@ -2,74 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 91C2226CA56
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 21:56:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB9FC26C9E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 21:37:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbgIPTyE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 15:54:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727219AbgIPRgU (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:36:20 -0400
-Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABEF4206A5;
-        Wed, 16 Sep 2020 17:36:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600277764;
-        bh=yfe0B96TjNHpcAsawqjrrf7+IjHmy67vaiqa85BWIAA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=I+hC2nQ+ZOPA571P2RhI3RjRHIeqnS8CFYsB1rjy8HQTS+a2VSX+648dcZXFLEPOB
-         WDnTByDdKVTjchwSYR66xKed5nxfUPFjAZ0Qm1LU4C6e1Y7zgr/cuvQgnqM/OC4A1Y
-         AtnlSxj8RyhCEw2Sq5daEBAdbWDe4O2SLXgVpGFg=
-Date:   Wed, 16 Sep 2020 10:36:03 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
+        id S1727178AbgIPTfx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Sep 2020 15:35:53 -0400
+Received: from mail-lj1-f176.google.com ([209.85.208.176]:40420 "EHLO
+        mail-lj1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbgIPTfE (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Sep 2020 15:35:04 -0400
+Received: by mail-lj1-f176.google.com with SMTP id s205so6933792lja.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Sep 2020 12:35:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=LHmPIWNds/3Kw39caSIIHtjGVfbumgcK7+Q1wR+rbCI=;
+        b=kjU9HEJhgrn83ma+ridlhRkHHFv3HiVLuTdw2jBcr5JEpEq9UUk7sWT5uvWlWR6uHx
+         UiiaHHoNzbfk2bLChE2hb309zBV9tgBPEc7wR1VCXxOKwWCywtBHxWzTo4N1Xv+CfGS8
+         b7nY3DWOpSUFauPsWr/Fx7muQpkA8zV6HaslQ3FrPwgpG4oAld16iMqeDtAXocbMiJVl
+         mADEeEqJzYUjOWnfH8Cukt8tJ+CtQbRKjLYkT7mGLYHpARAIi0tTISLXMfS1rTvjT6QJ
+         NqEOnjmbHbME9HSf4hNs59w2LbdRzdQSWUcfHYXCVHqyF60+IAhQPSq8dud1/U8ZLCJx
+         wa6Q==
+X-Gm-Message-State: AOAM530CB571B1XtJVwTezQQAV9dzF1Uz9TAH65UndRCb5X4F7UgevQT
+        FG36lUb7OfXvxhiLKVg9AG8=
+X-Google-Smtp-Source: ABdhPJzOyfty7EP2QBlXB3Ti6H87rhhbXt7p3HsNlnPPtGBl3SHPM8I6y3zJgHUXIC2Quyx/n5FU3g==
+X-Received: by 2002:a2e:8257:: with SMTP id j23mr8965852ljh.49.1600284902202;
+        Wed, 16 Sep 2020 12:35:02 -0700 (PDT)
+Received: from rocinante ([95.155.85.46])
+        by smtp.gmail.com with ESMTPSA id i11sm4777086lfe.242.2020.09.16.12.35.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2020 12:35:01 -0700 (PDT)
+Date:   Wed, 16 Sep 2020 21:35:00 +0200
+From:   Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
 To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: Re: [RFC PATCH v3 12/16] ceph: add encrypted fname handling to
- ceph_mdsc_build_path
-Message-ID: <20200916173603.GA4373@sol.localdomain>
-References: <20200914191707.380444-1-jlayton@kernel.org>
- <20200914191707.380444-13-jlayton@kernel.org>
- <20200915014159.GK899@sol.localdomain>
- <bd9257732cfd98ee30ccc151125d21d6955d6f66.camel@kernel.org>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3] fs: Remove duplicated flag O_NDELAY occurring twice
+ in VALID_OPEN_FLAGS
+Message-ID: <20200916193500.GA25498@rocinante>
+References: <20200906223949.62771-1-kw@linux.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <bd9257732cfd98ee30ccc151125d21d6955d6f66.camel@kernel.org>
+In-Reply-To: <20200906223949.62771-1-kw@linux.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 16, 2020 at 08:30:01AM -0400, Jeff Layton wrote:
-> 
-> It sounds like we'll probably need to stabilize some version of the
-> nokey name so that we can allow the MDS to look them up. Would it be a
-> problem for us to use the current version of the nokey name format for
-> this, or would it be better to come up with some other distinct format
-> for this?
-> 
+[+CC Andrew]
 
-You could use the current version, with the dirhash field changed from u32 to
-__le32 so that it doesn't depend on CPU endianness.  But you should also
-consider using just base64(SHA256(filename)).  The SHA256(filename) approach
-wouldn't include a dirhash, and it would handle short filenames less
-efficiently.  However, it would be simpler.  Would it be any easier for you?
+Hello,
 
-I'm not sure which would be better from a fs/crypto/ perspective.  For *now*, it
-would be easier if you just used the current 'struct fscrypt_nokey_name'.
-However, anything you use would be set in stone, whereas as-is the format can be
-changed at any time.  In fact, we changed it recently; see commit edc440e3d27f.
+Thank you Matthew and Jens for review!
 
-If we happen to change the nokey name in the future for local filesystems (say,
-to use BLAKE2 instead of SHA256, or to support longer dirhashes), then it would
-be easier if the stable format were just SHA256(filename).
+Andrew, do you think this trivial patch is something that could be
+included?
 
-It's not a huge deal though.  So if e.g. you like that the current format avoids
-the cryptographic hash for the vast majority of filenames, and if you're fine
-with the slightly increased complexity, you can just use it.
+I run Coccinelle on a regular basis as part of my build and test process
+when working and this warning shows up there all the time.  I thought,
+it would be nice to put it to rest.
 
-- Eric
+Thank you in advance!
+
+Krzysztof
