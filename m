@@ -2,62 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C674626BA4F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 04:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64D2126BA5D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 04:51:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbgIPCpn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 22:45:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36174 "EHLO
+        id S1726444AbgIPCuz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 22:50:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbgIPCpl (ORCPT
+        with ESMTP id S1726372AbgIPCup (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 22:45:41 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76D33C061788
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 19:45:41 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id jw11so777291pjb.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 19:45:41 -0700 (PDT)
+        Tue, 15 Sep 2020 22:50:45 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F6ECC061788
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 19:50:45 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id l191so3062078pgd.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 19:50:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=MjF3+x9EzhdvpwkfgHNm6fCxJhsYfijrbsp5nTW4btk=;
-        b=TFqZS2R0m222F1PpstUQjgnssD8KBxBq2UnQoK3XNMEmgo0GqrqYy3UNc2QomqCL9Q
-         Rjq/gjGSG4To7GIWcl0a2bVvh9mfyPtGSbVCIhOhQtD7UcCj5bFs1QwTUi91XMCGn0ot
-         XzIM3CObSqg+igz1rE6hW7FGStNFpCaJ95bvJsBc0BVGPusEXNuPKZPE1HQcpsJ4W4kV
-         b1ZhDwshZNkc33IR9x+8x2ofAPlhCCpraHAybRO0zIULfY95TxBEeIMexHPn2sg8s8Kb
-         oGmo4RnB9ACv51S04r6v+rrx1nHJO2xn496ATeQGorVZKphQgOUu4i8FMsSmOvot/8dF
-         QoBQ==
+        bh=OYR6CHS6loRJIABEz9ABQj6kDf1KJv7YPUTb24cE/XM=;
+        b=YrwVuyB3J14Kg5MaZPFURBAiJ9SLI/oCjAErvxvEXtQvdFjO04L47g+34E2LsWWx8Q
+         nEeA4AU+ZgL6w2ohWBqDyb2aqil/Xlo+IHq4Db3M4A6VyPStuMfEWUN8xpQDFl9TLzx5
+         Q5ULWT4J677jlVOTA7M1LRJIjIH5HcYjy7cbNsS0k4B0s97gKqd6HTZoXlAQo+yBugdf
+         g5Hv3dqG5cDkra6hpNTYs7l+pkuVtfkIyuGGZAIkETOJCJn65JnUSZoRoG3VZhz2uqYZ
+         khhOVY4T5gI17rK0pcJbyfL3MeVAloctAXs6pfBR0W5Qme7J5A7UGs38WOVVLfdatWFK
+         /euQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MjF3+x9EzhdvpwkfgHNm6fCxJhsYfijrbsp5nTW4btk=;
-        b=WwZiFgNaB+lxDNdeu4xHcFGMJFzFfO5bz1v3olubqC59tMxxAZFw3V3/1+K1WGUnlx
-         5ISj/IG+y9REF13bdpun4mIx3UjUiJ9Z1Ew6dNv/q3q/npoDD+muLL7g6HTiAUEmpfUK
-         qwDqkwg9zAx55nARETge3Qm7TgJJVDMr0ITTpCUsUeJmV8NfbwHWQgmpXKtGxTtLmuCZ
-         PBKtrSqXgUyTp9UwXVvHwl4QeT8aiyXzvPQ3BFuRxtbOaWCNlCofz2GtxoUyU7ogv7Lc
-         KWP1JwWG93JvDAwllU5KAUwuLf8QnfIOv2RJZJK7jguIMklT5Z66aLL2rHOAeOGp8oY0
-         nesA==
-X-Gm-Message-State: AOAM532dK0LDmJ16vO0NE6bFdMalNrADzMx5Q95wJMFUtVldqKQ61seW
-        7zzWSLmlcJ7pzuVoIy8oXfunr3PFcapF4TNp2e/s5w==
-X-Google-Smtp-Source: ABdhPJwQUmoHrkkKHxHWVxGeTnBYi6Mtj+lxHnZr+5S36ywWnha+P6KyFwM7kKSQXksZzvU9GeSjckV2Af7XxXPxkl0=
-X-Received: by 2002:a17:902:aa4b:b029:d0:cbe1:e739 with SMTP id
- c11-20020a170902aa4bb02900d0cbe1e739mr22798393plr.20.1600224339980; Tue, 15
- Sep 2020 19:45:39 -0700 (PDT)
+        bh=OYR6CHS6loRJIABEz9ABQj6kDf1KJv7YPUTb24cE/XM=;
+        b=RyHKPqk6oygrzppc/0g3eojLoJf2exSc2w5XlmmjDBTbmqB5/4Y1MkJzV4Wcx7ETdw
+         +vRq482VhGYrK/02maNfyBZWwdI0D+GloaWGUVOt98nE30laOQ1I7J4cFKW3HVOUuNXX
+         7d2Lj6QkAu77JErPDNTl5fcu0VccLfJPMcDh/YpW2t29ZgCWjG39e5gIfUk51Yk+HJ+b
+         tAaz6PzefGLDISxNehdGOXYPG1clmAPypCUkOHMwuHalLqrh3nORdwCvSAdnQleDwgx1
+         +mPMKqBcriVuE7+sxcgKMHGXylLivwjq5lT9jtNL0MLrKmjs8A1qFYYf0zaHyEVAh+4c
+         dU4w==
+X-Gm-Message-State: AOAM530gr/4s8itK6d4M9P7IqigqKfjrOilcF6IAiJ/4+BMR1RMeG3OD
+        Q2LeZdeAZax5ctSy3vfONa5VaYZeF0IWNc0QYfHrUA==
+X-Google-Smtp-Source: ABdhPJygo3+e9hvtqwXsVCKyySEwLTSAnydXpah+5F2oEsgg2BEaQIApV2SHB5qDQ+ck1wJ3d7xM0nJevDNWIZPJjVk=
+X-Received: by 2002:aa7:8287:0:b029:142:2501:39ec with SMTP id
+ s7-20020aa782870000b0290142250139ecmr4441184pfm.59.1600224644849; Tue, 15 Sep
+ 2020 19:50:44 -0700 (PDT)
 MIME-Version: 1.0
 References: <20200915125947.26204-1-songmuchun@bytedance.com>
- <20200915143241.GH5449@casper.infradead.org> <CAMZfGtW0PqU6SLihLABA8rU+FuBqm8NksDW=EkLXy1RZfYeDGA@mail.gmail.com>
- <20200915154213.GI5449@casper.infradead.org> <CAMZfGtVTjopGgFv4xCDcF1+iGeRva_ypH4EQWcDUFBdsfqhQbA@mail.gmail.com>
- <20200915173948.GK5449@casper.infradead.org> <CAMZfGtW3S8kGJwff6oH14QWPXKTuQEAGdYwcLRUZxuJ7q8s7sA@mail.gmail.com>
- <20200915181530.GL5449@casper.infradead.org>
-In-Reply-To: <20200915181530.GL5449@casper.infradead.org>
+ <20200915125947.26204-21-songmuchun@bytedance.com> <defc8d4f-b143-d4ae-f609-fd22624aafc3@infradead.org>
+In-Reply-To: <defc8d4f-b143-d4ae-f609-fd22624aafc3@infradead.org>
 From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Wed, 16 Sep 2020 10:45:04 +0800
-Message-ID: <CAMZfGtX1T6K5d=z6vPXtwnsDE70uEVRi9a3rADiXrdHr8_ri9Q@mail.gmail.com>
-Subject: Re: [External] Re: [RFC PATCH 00/24] mm/hugetlb: Free some vmemmap
- pages of hugetlb page
-To:     Matthew Wilcox <willy@infradead.org>
+Date:   Wed, 16 Sep 2020 10:50:08 +0800
+Message-ID: <CAMZfGtVv_8GR7c4syah8PNH6FBS8H7FQesBYr_qQRQaUEgZbsQ@mail.gmail.com>
+Subject: Re: [External] Re: [RFC PATCH 20/24] mm/hugetlb: Add a kernel
+ parameter hugetlb_free_vmemmap
+To:     Randy Dunlap <rdunlap@infradead.org>
 Cc:     Jonathan Corbet <corbet@lwn.net>,
         Mike Kravetz <mike.kravetz@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
@@ -66,9 +63,8 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
         Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
         mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
-        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
-        anshuman.khandual@arm.com, jroedel@suse.de, almasrymina@google.com,
-        David Rientjes <rientjes@google.com>,
+        oneukum@suse.com, anshuman.khandual@arm.com, jroedel@suse.de,
+        almasrymina@google.com, David Rientjes <rientjes@google.com>,
         linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         Linux Memory Management List <linux-mm@kvack.org>,
         linux-fsdevel@vger.kernel.org
@@ -78,71 +74,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 16, 2020 at 2:15 AM Matthew Wilcox <willy@infradead.org> wrote:
+On Wed, Sep 16, 2020 at 10:11 AM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
-> On Wed, Sep 16, 2020 at 02:03:15AM +0800, Muchun Song wrote:
-> > On Wed, Sep 16, 2020 at 1:39 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > On Wed, Sep 16, 2020 at 01:32:46AM +0800, Muchun Song wrote:
-> > > > On Tue, Sep 15, 2020 at 11:42 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > > > >
-> > > > > On Tue, Sep 15, 2020 at 11:28:01PM +0800, Muchun Song wrote:
-> > > > > > On Tue, Sep 15, 2020 at 10:32 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > > > > > >
-> > > > > > > On Tue, Sep 15, 2020 at 08:59:23PM +0800, Muchun Song wrote:
-> > > > > > > > This patch series will free some vmemmap pages(struct page structures)
-> > > > > > > > associated with each hugetlbpage when preallocated to save memory.
-> > > > > > >
-> > > > > > > It would be lovely to be able to do this.  Unfortunately, it's completely
-> > > > > > > impossible right now.  Consider, for example, get_user_pages() called
-> > > > > > > on the fifth page of a hugetlb page.
-> > > > > >
-> > > > > > Can you elaborate on the problem? Thanks so much.
-> > > > >
-> > > > > OK, let's say you want to do a 2kB I/O to offset 0x5000 of a 2MB page
-> > > > > on a 4kB base page system.  Today, that results in a bio_vec containing
-> > > > > {head+5, 0, 0x800}.  Then we call page_to_phys() on that (head+5) struct
-> > > > > page to get the physical address of the I/O, and we turn it into a struct
-> > > > > scatterlist, which similarly has a reference to the page (head+5).
-> > > >
-> > > > As I know, in this case, the get_user_pages() will get a reference
-> > > > to the head page (head+0) before returning such that the hugetlb
-> > > > page can not be freed. Although get_user_pages() returns the
-> > > > page (head+5) and the scatterlist has a reference to the page
-> > > > (head+5), this patch series can handle this situation. I can not
-> > > > figure out where the problem is. What I missed? Thanks.
-> > >
-> > > You freed pages 4-511 from the vmemmap so they could be used for
-> > > something else.  Page 5 isn't there any more.  So if you return head+5,
-> > > then when we complete the I/O, we'll look for the compound_head() of
-> > > head+5 and we won't find head.
+> Hi,
+> Please see comments below.
+>
+> On 9/15/20 5:59 AM, Muchun Song wrote:
+> > Add a kernel parameter hugetlb_free_vmemmap to disable the feature of
+> > freeing unused vmemmap pages associated with each hugetlb page on boot.
 > >
-> > We do not free pages 4-511 from the vmemmap. Actually, we only
-> > free pages 128-511 from the vmemmap.
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > ---
+> >  .../admin-guide/kernel-parameters.txt         |  9 ++++++++
+> >  Documentation/admin-guide/mm/hugetlbpage.rst  |  3 +++
+> >  mm/hugetlb.c                                  | 23 +++++++++++++++++++
+> >  3 files changed, 35 insertions(+)
 > >
-> > The 512 struct pages occupy 8 pages of physical memory. We only
-> > free 6 physical page frames to the buddy. But we will create a new
-> > mapping just like below. The virtual address of the freed pages will
-> > remap to the second page frame. So the second page frame is
-> > reused.
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index 5debfe238027..69d18ef6f66b 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -1551,6 +1551,15 @@
+> >                       Documentation/admin-guide/mm/hugetlbpage.rst.
+> >                       Format: size[KMG]
+> >
+> > +     hugetlb_free_vmemmap=
+> > +                     [KNL] When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set,
+> > +                     this disables freeing unused vmemmap pages associated
 >
-> Oh!  I get what you're doing now.
+>                         this controls
 >
-> For the vmemmap case, you free the last N-2 physical pages but map the
-> second physical page multiple times.  So for the 512 pages case, we
-> see pages:
+> > +                     each HugeTLB page.
 >
-> abcdefgh | ijklmnop | ijklmnop | ijklmnop | ijklmnop | ijklmnop | ijklmnop ...
+>                         with each HugeTLB page.
+>
+> > +                     Format: { on (default) | off }
+> > +
+> > +                     on:  enable the feature
+> > +                     off: dosable the feature
+>
+>                              disable
+>
+> > +
+> >       hung_task_panic=
+> >                       [KNL] Should the hung task detector generate panics.
+> >                       Format: 0 | 1
+> > diff --git a/Documentation/admin-guide/mm/hugetlbpage.rst b/Documentation/admin-guide/mm/hugetlbpage.rst
+> > index f7b1c7462991..7d6129ee97dd 100644
+> > --- a/Documentation/admin-guide/mm/hugetlbpage.rst
+> > +++ b/Documentation/admin-guide/mm/hugetlbpage.rst
+> > @@ -145,6 +145,9 @@ default_hugepagesz
+> >
+> >       will all result in 256 2M huge pages being allocated.  Valid default
+> >       huge page size is architecture dependent.
+>
+> insert blank line here.
+>
+> > +hugetlb_free_vmemmap
+> > +     When CONFIG_HUGETLB_PAGE_FREE_VMEMMAP is set, this disables freeing
+> > +     unused vmemmap pages associated each HugeTLB page.
+> >
+> >  When multiple huge page sizes are supported, ``/proc/sys/vm/nr_hugepages``
+> >  indicates the current number of pre-allocated huge pages of the default size.
+>
 
-Yeah, great. You are right.
+Thanks for your comments.
 
 >
-> Huh.  I think that might work, except for PageHWPoison.  I'll go back
-> to your patch series and look at that some more.
+> --
+> ~Randy
 >
-
-The PageHWPoison also is considered in the patch series. Looking
-forward to your suggestions. Thanks.
 
 
 -- 
