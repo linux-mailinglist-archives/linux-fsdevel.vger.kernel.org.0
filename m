@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 85AB526C799
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 20:31:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8C6B26C7AD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 20:33:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbgIPSbR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 14:31:17 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:37870 "EHLO
+        id S1728122AbgIPSbS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Sep 2020 14:31:18 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:37874 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727897AbgIPSaE (ORCPT
+        with ESMTP id S1728096AbgIPSaF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:30:04 -0400
+        Wed, 16 Sep 2020 14:30:05 -0400
 Received: from localhost.localdomain (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id D23D420B7178;
-        Wed, 16 Sep 2020 08:08:33 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D23D420B7178
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7A40A20B36E7;
+        Wed, 16 Sep 2020 08:08:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7A40A20B36E7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1600268914;
-        bh=zrGiUhjxyMnxOLwrTFBUCA0dM8YhyXnysJ2s/i76Yw8=;
+        s=default; t=1600268916;
+        bh=3qfx1/3d8ADHXgnKcsbkjWTPFHnk11ORotWaBTL6O08=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=mHtg20tWOdhUjovDC//qwMHVDffeQ9x08ztk3KQh/+yD3VzSdkd5sJeZw8XUq81c9
-         9QM30YhlS9ZciUbAhnrLbutv7SBaLIKo2mIoT5LRMDF4VyWp2QfCXOsrcxalLkYNt0
-         1e/MPifEM2N6zAtgQ3HKgFwpRp9sOSK50jszYLd0=
+        b=jlXuHOKXyISz8deDWkQh2eBSekwkIt4UwS7NyYPJK36DGbmb6ffleqjN8b6FhCOr2
+         AnuvAVQJP23C5+aNy5gJ9189tTya06ZQwHQ20hmsp383uD+yDN8vEK2Ap0XPeWgJZI
+         zezzesbaBB6mxSMWqnE8qAQBKJSAel/tHzXIhZlI=
 From:   madvenka@linux.microsoft.com
 To:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
@@ -30,12 +30,13 @@ To:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, oleg@redhat.com,
         x86@kernel.org, madvenka@linux.microsoft.com
-Subject: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-Date:   Wed, 16 Sep 2020 10:08:22 -0500
-Message-Id: <20200916150826.5990-1-madvenka@linux.microsoft.com>
+Subject: [PATCH v2 2/4] [RFC] x86/trampfd: Provide support for the trampoline file descriptor
+Date:   Wed, 16 Sep 2020 10:08:24 -0500
+Message-Id: <20200916150826.5990-3-madvenka@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <210d7cd762d5307c2aa1676705b392bd445f1baa>
+In-Reply-To: <20200916150826.5990-1-madvenka@linux.microsoft.com>
 References: <210d7cd762d5307c2aa1676705b392bd445f1baa>
+ <20200916150826.5990-1-madvenka@linux.microsoft.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
@@ -43,352 +44,348 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
 
-Introduction
-============
-
-Dynamic code is used in many different user applications. Dynamic code is
-often generated at runtime. Dynamic code can also just be a pre-defined
-sequence of machine instructions in a data buffer. Examples of dynamic
-code are trampolines, JIT code, DBT code, etc.
-
-Dynamic code is placed either in a data page or in a stack page. In order
-to execute dynamic code, the page it resides in needs to be mapped with
-execute permissions. Writable pages with execute permissions provide an
-attack surface for hackers. Attackers can use this to inject malicious
-code, modify existing code or do other harm.
-
-To mitigate this, LSMs such as SELinux implement W^X. That is, they may not
-allow pages to have both write and execute permissions. This prevents
-dynamic code from executing and blocks applications that use it. To allow
-genuine applications to run, exceptions have to be made for them (by setting
-execmem, etc) which opens the door to security issues.
-
-The W^X implementation today is not complete. There exist many user level
-tricks that can be used to load and execute dynamic code. E.g.,
-
-- Load the code into a file and map the file with R-X.
-
-- Load the code in an RW- page. Change the permissions to R--. Then,
-  change the permissions to R-X.
-
-- Load the code in an RW- page. Remap the page with R-X to get a separate
-  mapping to the same underlying physical page.
-
-IMO, these are all security holes as an attacker can exploit them to inject
-his own code.
-
-In the future, these holes will definitely be closed. For instance, LSMs
-(such as the IPE proposal [1]) may only allow code in properly signed object
-files to be mapped with execute permissions. This will do two things:
-
-	- user level tricks using anonymous pages will fail as anonymous
-	  pages have no file identity
-
-	- loading the code in a temporary file and mapping it with R-X
-	  will fail as the temporary file would not have a signature
-
-We need a way to execute such code without making security exceptions.
-Trampolines are a good example of dynamic code. A couple of examples
-of trampolines are given below. My first use case for this RFC is
-libffi.
-
-Examples of trampolines
-=======================
-
-libffi (A Portable Foreign Function Interface Library):
-
-libffi allows a user to define functions with an arbitrary list of
-arguments and return value through a feature called "Closures".
-Closures use trampolines to jump to ABI handlers that handle calling
-conventions and call a target function. libffi is used by a lot
-of different applications. To name a few:
-
-	- Python
-	- Java
-	- Javascript
-	- Ruby FFI
-	- Lisp
-	- Objective C
-
-GCC nested functions:
-
-GCC has traditionally used trampolines for implementing nested
-functions. The trampoline is placed on the user stack. So, the stack
-needs to be executable.
-
-Currently available solution
-============================
-
-One solution that has been proposed to allow trampolines to be executed
-without making security exceptions is Trampoline Emulation. See:
-
-https://pax.grsecurity.net/docs/emutramp.txt
-
-In this solution, the kernel recognizes certain sequences of instructions
-as "well-known" trampolines. When such a trampoline is executed, a page
-fault happens because the trampoline page does not have execute permission.
-The kernel recognizes the trampoline and emulates it. Basically, the
-kernel does the work of the trampoline on behalf of the application.
-
-Currently, the emulated trampolines are the ones used in libffi and GCC
-nested functions. To my knowledge, only X86 is supported at this time.
-
-As noted in emutramp.txt, this is not a generic solution. For every new
-trampoline that needs to be supported, new instruction sequences need to
-be recognized by the kernel and emulated. And this has to be done for
-every architecture that needs to be supported.
-
-emutramp.txt notes the following:
-
-"... the real solution is not in emulation but by designing a kernel API
-for runtime code generation and modifying userland to make use of it."
-
-Solution proposed in this RFC
-=============================
-
-From this RFC's perspective, there are two scenarios for dynamic code:
-
-Scenario 1
-----------
-
-We know what code we need only at runtime. For instance, JIT code generated
-for frequently executed Java methods. Only at runtime do we know what
-methods need to be JIT compiled. Such code cannot be statically defined. It
-has to be generated at runtime.
-
-Scenario 2
-----------
-
-We know what code we need in advance. User trampolines are a good example of
-this. It is possible to define such code statically with some help from the
-kernel.
-
-This RFC addresses (2). (1) needs a general purpose trusted code generator
-and is out of scope for this RFC.
-
-For (2), the solution is to convert dynamic code to static code and place it
-in a source file. The binary generated from the source can be signed. The
-kernel can use signature verification to authenticate the binary and
-allow the code to be mapped and executed.
-
-The problem is that the static code has to be able to find the data that it
-needs when it executes. For functions, the ABI defines the way to pass
-parameters. But, for arbitrary dynamic code, there isn't a standard ABI
-compliant way to pass data to the code for most architectures. Each instance
-of dynamic code defines its own way. For instance, co-location of code and
-data and PC-relative data referencing are used in cases where the ISA
-supports it.
-
-We need one standard way that would work for all architectures and ABIs.
-
-The solution proposed here is:
-
-1. Write the static code assuming that the data needed by the code is already
-   pointed to by a designated register.
-
-2. Get the kernel to supply a small universal trampoline that does the
-   following:
-
-	- Load the address of the data in a designated register
-	- Load the address of the static code in a designated register
-	- Jump to the static code
-
-User code would use a kernel supplied API to create and map the trampoline.
-The address values would be baked into the code so that no special ISA
-features are needed.
-
-To conserve memory, the kernel will pack as many trampolines as possible in
-a page and provide a trampoline table to user code. The table itself is
-managed by the user.
-
-Trampoline File Descriptor (trampfd)
-==========================
-
-I am proposing a kernel API using anonymous file descriptors that can be
-used to create the trampolines. The API is described in patch 1/4 of this
-patchset. I provide a summary here:
-
-	- Create a trampoline file object
-
-	- Write a code descriptor into the trampoline file and specify:
-
-		- the number of trampolines desired
-		- the name of the code register
-		- user pointer to a table of code addresses, one address
-		  per trampoline
-
-	- Write a data descriptor into the trampoline file and specify:
-
-		- the name of the data register
-		- user pointer to a table of data addresses, one address
-		  per trampoline
-
-	- mmap() the trampoline file. The kernel generates a table of
-	  trampolines in a page and returns the trampoline table address
-
-	- munmap() a trampoline file mapping
-
-	- Close the trampoline file
-
-Each mmap() will only map a single base page. Large pages are not supported.
-
-A trampoline file can only be mapped once in an address space.
-
-Trampoline file mappings cannot be shared across address spaces. So,
-sending the trampoline file descriptor over a unix domain socket and
-mapping it in another process will not work.
-
-It is recommended that the code descriptor and the code table be placed
-in the .rodata section so an attacker cannot modify them.
-
-Trampoline use and reuse
-========================
-
-The code for trampoline X in the trampoline table is:
-
-	load	&code_table[X], code_reg
-	load	(code_reg), code_reg
-	load	&data_table[X], data_reg
-	load	(data_reg), data_reg
-	jump	code_reg
-
-The addresses &code_table[X] and &data_table[X] are baked into the
-trampoline code. So, PC-relative data references are not needed. The user
-can modify code_table[X] and data_table[X] dynamically.
-
-For instance, within libffi, the same trampoline X can be used for different
-closures at different times by setting:
-
-	data_table[X] = closure;
-	code_table[X] = ABI handling code;
-
-Advantages of the Trampoline File Descriptor approach
-=====================================================
-
-- Using this support from the kernel, dynamic code can be converted to
-  static code with a little effort so applications and libraries can move to
-  a more secure model. In the simplest cases such as libffi, dynamic code can
-  even be eliminated.
-
-- This initial work is targeted towards X86 and ARM. But it can be supported
-  easily on all architectures. We don't need any special ISA features such
-  as PC-relative data referencing.
-
-- The only code generation needed is for this small, universal trampoline.
-
-- The kernel does not have to deal with any ABI issues in the generation of
-  this trampoline.
-
-- The kernel provides a trampoline table to conserve memory.
-
-- An SELinux setting called "exectramp" can be implemented along the
-  lines of "execmem", "execstack" and "execheap" to selectively allow the
-  use of trampolines on a per application basis.
-
-- In version 1, a trip to the kernel was required to execute the trampoline.
-  In version 2, that is not required. So, there are no performance
-  concerns in this approach.
-
-libffi
-======
-
-I have implemented my solution for libffi and provided the changes for
-X86 and ARM, 32-bit and 64-bit. Here is the reference patch:
-
-http://linux.microsoft.com/~madvenka/libffi/libffi.v2.txt
-
-If the trampfd patchset gets accepted, I will send the libffi changes
-to the maintainers for a review. BTW, I have also successfully executed
-the libffi self tests.
-
-Work that is pending
-====================
-
-- I am working on implementing the SELinux setting - "exectramp".
-
-- I have a test program to test the kernel API. I am working on adding it
-  to selftests.
-
-References
-==========
-
-[1] https://microsoft.github.io/ipe/
+	- Define architecture specific register names
+	- Architecture specific functions for:
+		- system call init
+		- code descriptor check
+		- data descriptor check
+	- Fill a page with a trampoline table for:
+		- 32-bit user process
+		- 64-bit user process
+
+Signed-off-by: Madhavan T. Venkataraman <madvenka@linux.microsoft.com>
 ---
-
-Changelog:
-
-v1
-	Introduced the Trampfd feature.
-
-v2
-	- Changed the system call. Version 2 does not support different
-	  trampoline types and their associated type structures. It only
-	  supports a kernel generated trampoline.
-
-	  The system call now returns information to the user that is
-	  used to define trampoline descriptors. E.g., the maximum
-	  number of trampolines that can be packed in a single page.
-
-	- Removed all the trampoline contexts such as register contexts
-	  and stack contexts. This is based on the feedback that the kernel
-	  should not have to worry about ABI issues and H/W features that
-	  may deal with the context of a process.
-
-	- Removed the need to make a trip into the kernel on trampoline
-	  invocation. This is based on the feedback about performance.
-
-	- Removed the ability to share trampolines across address spaces.
-	  This would have made sense to different trampoline types based
-	  on their semantics. But since I support only one specific
-	  trampoline, sharing does not make sense.
-
-	- Added calls to specify trampoline descriptors that the kernel
-	  uses to generate trampolines.
-
-	- Added architecture-specific code to generate the small, universal
-	  trampoline for X86 32 and 64-bit, ARM 32 and 64-bit.
-
-	- Implemented the trampoline table in a page.
-Madhavan T. Venkataraman (4):
-  Implement the kernel API for the trampoline file descriptor.
-  Implement i386 and X86 support for the trampoline file descriptor.
-  Implement ARM64 support for the trampoline file descriptor.
-  Implement ARM support for the trampoline file descriptor.
-
- arch/arm/include/uapi/asm/ptrace.h     |  21 +++
- arch/arm/kernel/Makefile               |   1 +
- arch/arm/kernel/trampfd.c              | 124 +++++++++++++
- arch/arm/tools/syscall.tbl             |   1 +
- arch/arm64/include/asm/unistd.h        |   2 +-
- arch/arm64/include/asm/unistd32.h      |   2 +
- arch/arm64/include/uapi/asm/ptrace.h   |  59 ++++++
- arch/arm64/kernel/Makefile             |   2 +
- arch/arm64/kernel/trampfd.c            | 244 +++++++++++++++++++++++++
  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
  arch/x86/include/uapi/asm/ptrace.h     |  38 ++++
  arch/x86/kernel/Makefile               |   1 +
- arch/x86/kernel/trampfd.c              | 238 ++++++++++++++++++++++++
- fs/Makefile                            |   1 +
- fs/trampfd/Makefile                    |   5 +
- fs/trampfd/trampfd_fops.c              | 241 ++++++++++++++++++++++++
- fs/trampfd/trampfd_map.c               | 142 ++++++++++++++
- include/linux/syscalls.h               |   2 +
- include/linux/trampfd.h                |  49 +++++
- include/uapi/asm-generic/unistd.h      |   4 +-
- include/uapi/linux/trampfd.h           | 184 +++++++++++++++++++
- init/Kconfig                           |   7 +
- kernel/sys_ni.c                        |   3 +
- 24 files changed, 1371 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm/kernel/trampfd.c
- create mode 100644 arch/arm64/kernel/trampfd.c
+ arch/x86/kernel/trampfd.c              | 238 +++++++++++++++++++++++++
+ 5 files changed, 279 insertions(+)
  create mode 100644 arch/x86/kernel/trampfd.c
- create mode 100644 fs/trampfd/Makefile
- create mode 100644 fs/trampfd/trampfd_fops.c
- create mode 100644 fs/trampfd/trampfd_map.c
- create mode 100644 include/linux/trampfd.h
- create mode 100644 include/uapi/linux/trampfd.h
 
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index d8f8a1a69ed1..d4f17806c9ab 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -443,3 +443,4 @@
+ 437	i386	openat2			sys_openat2
+ 438	i386	pidfd_getfd		sys_pidfd_getfd
+ 439	i386	faccessat2		sys_faccessat2
++440	i386	trampfd			sys_trampfd
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 78847b32e137..91b37bc4b6f0 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -360,6 +360,7 @@
+ 437	common	openat2			sys_openat2
+ 438	common	pidfd_getfd		sys_pidfd_getfd
+ 439	common	faccessat2		sys_faccessat2
++440	common	trampfd			sys_trampfd
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/arch/x86/include/uapi/asm/ptrace.h b/arch/x86/include/uapi/asm/ptrace.h
+index 85165c0edafc..b4be362929b3 100644
+--- a/arch/x86/include/uapi/asm/ptrace.h
++++ b/arch/x86/include/uapi/asm/ptrace.h
+@@ -9,6 +9,44 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
++/*
++ * These register names are to be used by 32-bit applications.
++ */
++enum reg_32_name {
++	x32_min = 0,
++	x32_eax = x32_min,
++	x32_ebx,
++	x32_ecx,
++	x32_edx,
++	x32_esi,
++	x32_edi,
++	x32_ebp,
++	x32_max,
++};
++
++/*
++ * These register names are to be used by 64-bit applications.
++ */
++enum reg_64_name {
++	x64_min = x32_max,
++	x64_rax = x64_min,
++	x64_rbx,
++	x64_rcx,
++	x64_rdx,
++	x64_rsi,
++	x64_rdi,
++	x64_rbp,
++	x64_r8,
++	x64_r9,
++	x64_r10,
++	x64_r11,
++	x64_r12,
++	x64_r13,
++	x64_r14,
++	x64_r15,
++	x64_max,
++};
++
+ #ifdef __i386__
+ /* this struct defines the way the registers are stored on the
+    stack during a system call. */
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index e77261db2391..feb7f4f311fd 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -157,3 +157,4 @@ ifeq ($(CONFIG_X86_64),y)
+ endif
+ 
+ obj-$(CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT)	+= ima_arch.o
++obj-$(CONFIG_TRAMPFD)				+= trampfd.o
+diff --git a/arch/x86/kernel/trampfd.c b/arch/x86/kernel/trampfd.c
+new file mode 100644
+index 000000000000..7b812c200d01
+--- /dev/null
++++ b/arch/x86/kernel/trampfd.c
+@@ -0,0 +1,238 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Trampoline FD - X86 support.
++ *
++ * Author: Madhavan T. Venkataraman (madvenka@linux.microsoft.com)
++ *
++ * Copyright (c) 2020, Microsoft Corporation.
++ */
++
++#include <linux/thread_info.h>
++#include <linux/trampfd.h>
++
++#define TRAMPFD_CODE_32_SIZE		24
++#define TRAMPFD_CODE_64_SIZE		40
++
++static inline bool is_compat(void)
++{
++	return (IS_ENABLED(CONFIG_X86_32) ||
++		(IS_ENABLED(CONFIG_COMPAT) && test_thread_flag(TIF_ADDR32)));
++}
++
++/*
++ * trampfd syscall.
++ */
++void trampfd_arch(struct trampfd_info *info)
++{
++	if (is_compat())
++		info->code_size = TRAMPFD_CODE_32_SIZE;
++	else
++		info->code_size = TRAMPFD_CODE_64_SIZE;
++	info->ntrampolines = PAGE_SIZE / info->code_size;
++	info->code_offset = TRAMPFD_CODE_PGOFF << PAGE_SHIFT;
++	info->reserved = 0;
++}
++
++/*
++ * trampfd code descriptor check.
++ */
++int trampfd_code_arch(struct trampfd_code *code)
++{
++	int	ntrampolines;
++	int	min, max;
++
++	if (is_compat()) {
++		min = x32_min;
++		max = x32_max;
++		ntrampolines = PAGE_SIZE / TRAMPFD_CODE_32_SIZE;
++	} else {
++		min = x64_min;
++		max = x64_max;
++		ntrampolines = PAGE_SIZE / TRAMPFD_CODE_64_SIZE;
++	}
++
++	if (code->reg < min || code->reg >= max)
++		return -EINVAL;
++
++	if (!code->ntrampolines || code->ntrampolines > ntrampolines)
++		return -EINVAL;
++	return 0;
++}
++
++/*
++ * trampfd data descriptor check.
++ */
++int trampfd_data_arch(struct trampfd_data *data)
++{
++	int	min, max;
++
++	if (is_compat()) {
++		min = x32_min;
++		max = x32_max;
++	} else {
++		min = x64_min;
++		max = x64_max;
++	}
++
++	if (data->reg < min || data->reg >= max)
++		return -EINVAL;
++	return 0;
++}
++
++/*
++ * X32 register encodings.
++ */
++static unsigned char	reg_32[] = {
++	0,	/* x32_eax */
++	3,	/* x32_ebx */
++	1,	/* x32_ecx */
++	2,	/* x32_edx */
++	6,	/* x32_esi */
++	7,	/* x32_edi */
++	5,	/* x32_ebp */
++};
++
++static void trampfd_code_fill_32(struct trampfd *trampfd, char *addr)
++{
++	char		*eaddr = addr + PAGE_SIZE;
++	int		creg = trampfd->code_reg - x32_min;
++	int		dreg = trampfd->data_reg - x32_min;
++	u32		*code = trampfd->code;
++	u32		*data = trampfd->data;
++	int		i;
++
++	for (i = 0; i < trampfd->ntrampolines; i++, code++, data++) {
++		/* endbr32 */
++		addr[0] = 0xf3;
++		addr[1] = 0x0f;
++		addr[2] = 0x1e;
++		addr[3] = 0xfb;
++
++		/* mov code, %creg */
++		addr[4] = 0xB8 | reg_32[creg];			/* opcode+reg */
++		memcpy(&addr[5], &code, sizeof(u32));		/* imm32 */
++
++		/* mov (%creg), %creg */
++		addr[9] = 0x8B;				/* opcode */
++		addr[10] = 0x00 |				/* MODRM.mode */
++			   reg_32[creg] << 3 |			/* MODRM.reg */
++			   reg_32[creg];			/* MODRM.r/m */
++
++		/* mov data, %dreg */
++		addr[11] = 0xB8 | reg_32[dreg];			/* opcode+reg */
++		memcpy(&addr[12], &data, sizeof(u32));		/* imm32 */
++
++		/* mov (%dreg), %dreg */
++		addr[16] = 0x8B;				/* opcode */
++		addr[17] = 0x00 |				/* MODRM.mode */
++			   reg_32[dreg] << 3 |			/* MODRM.reg */
++			   reg_32[dreg];			/* MODRM.r/m */
++
++		/* jmp *%creg */
++		addr[18] = 0xff;				/* opcode */
++		addr[19] = 0xe0 | reg_32[creg];			/* MODRM.r/m */
++
++		/* nopl (%eax) */
++		addr[20] = 0x0f;
++		addr[21] = 0x1f;
++		addr[22] = 0x00;
++
++		/* pad to 4-byte boundary */
++		memset(&addr[23], 0, TRAMPFD_CODE_32_SIZE - 23);
++		addr += TRAMPFD_CODE_32_SIZE;
++	}
++	memset(addr, 0, eaddr - addr);
++}
++
++/*
++ * X64 register encodings.
++ */
++static unsigned char	reg_64[] = {
++	0,	/* x64_rax */
++	3,	/* x64_rbx */
++	1,	/* x64_rcx */
++	2,	/* x64_rdx */
++	6,	/* x64_rsi */
++	7,	/* x64_rdi */
++	5,	/* x64_rbp */
++	8,	/* x64_r8 */
++	9,	/* x64_r9 */
++	10,	/* x64_r10 */
++	11,	/* x64_r11 */
++	12,	/* x64_r12 */
++	13,	/* x64_r13 */
++	14,	/* x64_r14 */
++	15,	/* x64_r15 */
++};
++
++static void trampfd_code_fill_64(struct trampfd *trampfd, char *addr)
++{
++	char		*eaddr = addr + PAGE_SIZE;
++	int		creg = trampfd->code_reg - x64_min;
++	int		dreg = trampfd->data_reg - x64_min;
++	u64		*code = trampfd->code;
++	u64		*data = trampfd->data;
++	int		i;
++
++	for (i = 0; i < trampfd->ntrampolines; i++, code++, data++) {
++		/* endbr64 */
++		addr[0] = 0xf3;
++		addr[1] = 0x0f;
++		addr[2] = 0x1e;
++		addr[3] = 0xfa;
++
++		/* movabs code, %creg */
++		addr[4] = 0x48 |				/* REX.W */
++			  ((reg_64[creg] & 0x8) >> 3);		/* REX.B */
++		addr[5] = 0xB8 | (reg_64[creg] & 0x7);		/* opcode+reg */
++		memcpy(&addr[6], &code, sizeof(u64));		/* imm64 */
++
++		/* movq (%creg), %creg */
++		addr[14] = 0x48 |				/* REX.W */
++			   ((reg_64[creg] & 0x8) >> 1) |	/* REX.R */
++			   ((reg_64[creg] & 0x8) >> 3);		/* REX.B */
++		addr[15] = 0x8B;				/* opcode */
++		addr[16] = 0x00 |				/* MODRM.mode */
++			   ((reg_64[creg] & 0x7)) << 3 |	/* MODRM.reg */
++			   ((reg_64[creg] & 0x7));		/* MODRM.r/m */
++
++		/* movabs data, %dreg */
++		addr[17] = 0x48 |				/* REX.W */
++			  ((reg_64[dreg] & 0x8) >> 3);		/* REX.B */
++		addr[18] = 0xB8 | (reg_64[dreg] & 0x7);		/* opcode+reg */
++		memcpy(&addr[19], &data, sizeof(u64));		/* imm64 */
++
++		/* movq (%dreg), %dreg */
++		addr[27] = 0x48 |				/* REX.W */
++			   ((reg_64[dreg] & 0x8) >> 1) |	/* REX.R */
++			   ((reg_64[dreg] & 0x8) >> 3);		/* REX.B */
++		addr[28] = 0x8B;				/* opcode */
++		addr[29] = 0x00 |				/* MODRM.mode */
++			   ((reg_64[dreg] & 0x7)) << 3 |	/* MODRM.reg */
++			   ((reg_64[dreg] & 0x7));		/* MODRM.r/m */
++
++		/* jmpq *%creg */
++		addr[30] = 0x40 |				/* REX.W */
++			   ((reg_64[creg] & 0x8) >> 3);		/* REX.B */
++		addr[31] = 0xff;				/* opcode */
++		addr[32] = 0xe0 | (reg_64[creg] & 0x7);		/* MODRM.r/m */
++
++		/* nopl (%rax) */
++		addr[33] = 0x0f;
++		addr[34] = 0x1f;
++		addr[35] = 0x00;
++
++		/* pad to 8-byte boundary */
++		memset(&addr[36], 0, TRAMPFD_CODE_64_SIZE - 36);
++		addr += TRAMPFD_CODE_64_SIZE;
++	}
++	memset(addr, 0, eaddr - addr);
++}
++
++void trampfd_code_fill(struct trampfd *trampfd, char *addr)
++{
++	if (is_compat())
++		trampfd_code_fill_32(trampfd, addr);
++	else
++		trampfd_code_fill_64(trampfd, addr);
++}
 -- 
 2.17.1
 
