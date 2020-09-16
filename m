@@ -2,81 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7520126CB24
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 22:22:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 952B426CB6D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 22:27:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728293AbgIPUWh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 16:22:37 -0400
-Received: from brightrain.aerifal.cx ([216.12.86.13]:54224 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbgIPR3H (ORCPT
+        id S1727219AbgIPU1P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Sep 2020 16:27:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31239 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726891AbgIPRYn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:29:07 -0400
-Date:   Wed, 16 Sep 2020 11:36:19 -0400
-From:   Rich Felker <dalias@libc.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-api@vger.kernel.org,
+        Wed, 16 Sep 2020 13:24:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600277059;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=MIDNYXiU2iGbO/F9JK0prHUpFcyTmc8uGMG0d6uO9go=;
+        b=DJHrLAJTK9asrU8CWApV8apdtDzQf4dG6rB6I6D7ulUnZMkXGDkqNkGDkjCasYqFbdXX+E
+        RivWxB79wOOBECrSkoZdWHvO1JWZDkgnvbV7uMvoegsEMkJBlzkrXBIWLfTpb8oB70gWLD
+        ZI94Sbvs3BHfSaFxE0570maJ4pMHIxQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-361-vMiOjr13O8uH-OJWC3YD5w-1; Wed, 16 Sep 2020 13:24:17 -0400
+X-MC-Unique: vMiOjr13O8uH-OJWC3YD5w-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E405A107464B;
+        Wed, 16 Sep 2020 17:24:14 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9499E60BFA;
+        Wed, 16 Sep 2020 17:24:14 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 08GHOEOU016676;
+        Wed, 16 Sep 2020 13:24:14 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 08GHOCwu016672;
+        Wed, 16 Sep 2020 13:24:12 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 16 Sep 2020 13:24:12 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Dan Williams <dan.j.williams@intel.com>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] vfs: block chmod of symlinks
-Message-ID: <20200916153618.GT3265@brightrain.aerifal.cx>
-References: <20200916002157.GO3265@brightrain.aerifal.cx>
- <20200916002253.GP3265@brightrain.aerifal.cx>
- <20200916061815.GB142621@kroah.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Eric Sandeen <esandeen@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Kani, Toshi" <toshi.kani@hpe.com>,
+        "Norton, Scott J" <scott.norton@hpe.com>,
+        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
+        <rajesh.tadakamadla@hpe.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: [PATCH] pmem: export the symbols __copy_user_flushcache and
+ __copy_from_user_flushcache
+In-Reply-To: <CAPcyv4gW6AvR+RaShHdQzOaEPv9nrq5myXDmywuoCTYDZxk-hw@mail.gmail.com>
+Message-ID: <alpine.LRH.2.02.2009161254400.745@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.2009140852030.22422@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com> <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2009151332280.3851@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2009160649560.20720@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gW6AvR+RaShHdQzOaEPv9nrq5myXDmywuoCTYDZxk-hw@mail.gmail.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200916061815.GB142621@kroah.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 16, 2020 at 08:18:15AM +0200, Greg KH wrote:
-> On Tue, Sep 15, 2020 at 08:22:54PM -0400, Rich Felker wrote:
-> > It was discovered while implementing userspace emulation of fchmodat
-> > AT_SYMLINK_NOFOLLOW (using O_PATH and procfs magic symlinks; otherwise
-> > it's not possible to target symlinks with chmod operations) that some
-> > filesystems erroneously allow access mode of symlinks to be changed,
-> > but return failure with EOPNOTSUPP (see glibc issue #14578 and commit
-> > a492b1e5ef). This inconsistency is non-conforming and wrong, and the
-> > consensus seems to be that it was unintentional to allow link modes to
-> > be changed in the first place.
-> > 
-> > Signed-off-by: Rich Felker <dalias@libc.org>
-> > ---
-> >  fs/open.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/fs/open.c b/fs/open.c
-> > index 9af548fb841b..cdb7964aaa6e 100644
-> > --- a/fs/open.c
-> > +++ b/fs/open.c
-> > @@ -570,6 +570,12 @@ int chmod_common(const struct path *path, umode_t mode)
-> >  	struct iattr newattrs;
-> >  	int error;
-> >  
-> > +	/* Block chmod from getting to fs layer. Ideally the fs would either
-> > +	 * allow it or fail with EOPNOTSUPP, but some are buggy and return
-> > +	 * an error but change the mode, which is non-conforming and wrong. */
-> > +	if (S_ISLNK(inode->i_mode))
-> > +		return -EOPNOTSUPP;
+
+
+On Wed, 16 Sep 2020, Dan Williams wrote:
+
+> On Wed, Sep 16, 2020 at 3:57 AM Mikulas Patocka <mpatocka@redhat.com> wrote:
+> >
+> >
+> >
+> > I'm submitting this patch that adds the required exports (so that we could
+> > use __copy_from_user_flushcache on x86, arm64 and powerpc). Please, queue
+> > it for the next merge window.
 > 
-> I still fail to understand why these "buggy" filesystems can not be
-> fixed.  Why are you papering over a filesystem-specific-bug with this
+> Why? This should go with the first user, and it's not clear that it
+> needs to be relative to the current dax_operations export scheme.
 
-Because that's what Christoph wanted, and it seems exposure of the
-vector for applying chmod to symlinks was unintentional to begin with.
-I have no preference how this is fixed as long as breakage is not
-exposed to userspace via the new fchmodat2 syscall (since a broken
-syscall would be worse than not having it at all).
+Before nvfs gets included in the kernel, I need to distribute it as a 
+module. So, it would make my maintenance easier. But if you don't want to 
+export it now, no problem, I can just copy __copy_user_flushcache from the 
+kernel to the module.
 
-> core kernel change that we will forever have to keep?
+> My first question about nvfs is how it compares to a daxfs with
+> executables and other binaries configured to use page cache with the
+> new per-file dax facility?
 
-There's no fundamental reason it would have to be kept forever. The
-contract remains "either it works and reports success, or it makes no
-change and reports EOPNOTSUPP". It just can't do both.
+nvfs is faster than dax-based filesystems on metadata-heavy operations 
+because it doesn't have the overhead of the buffer cache and bios. See 
+this: http://people.redhat.com/~mpatocka/nvfs/BENCHMARKS
 
-Rich
+Mikulas
+
