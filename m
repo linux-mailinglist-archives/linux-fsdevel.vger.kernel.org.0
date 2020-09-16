@@ -2,119 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0268126C096
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 11:31:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 841A826C1D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 12:40:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbgIPJai (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 05:30:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42124 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726662AbgIPJa3 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 05:30:29 -0400
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBBC0C06174A;
-        Wed, 16 Sep 2020 02:30:28 -0700 (PDT)
-Received: by mail-pg1-x542.google.com with SMTP id l71so1068707pge.4;
-        Wed, 16 Sep 2020 02:30:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SCNEyiBlJTYXRBwb8N4Xh5OTPZHbrAxllnyvvCrU834=;
-        b=DpgP0VPFGiabQndlchr2GZuxIFhIbTpWJFgPCtwrGRnbEl8aSxp8gpEaPz0xJVtK6g
-         eubjr3mu/98KuJ48lZH7E67467IqPDzwQsFeG2gWDusrivJaCfbe2WpD5iNbpXLE5toW
-         hrh8zOdfzLPCVER+dqIpprDC8caB51rvB0/iQJwBeeSPdO1TW/Ay1HY9bRjGUQr/9K9i
-         YGJilZzwzW2VYfmLVhkh3imc+m9N8TOnON15NGIvl12ChXEcJy1Z9TgW8f++c/cjg+Hy
-         q6HOIbEgXdGPsLlVcQYhp5nEfvJSqf1v/7ZEx27ZQQmsKHv9IgEhpAdscR8mBBF9gHsk
-         LBtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SCNEyiBlJTYXRBwb8N4Xh5OTPZHbrAxllnyvvCrU834=;
-        b=mHOfzmOjiS39+DWNxFSg6KKpSFcyAulrXlvmSRQcz+PnYRHqxf2a/McxURojcmMx/O
-         1A+xOpQLWROc0b7K2R/l8dkyKXSvh5ud6mbJl72x+C/qZKLd2Q/QWm8XudpecxpiLD1Y
-         njjPW158MB/jKfYucMtmSI7dNSAGbHotiIi+rB16X1B0znHAptCIHEyzQLKivBda33In
-         Fz28ln8U0Caa2z12jPv1mcXXbZAyYUf6WN3KtZxDaZPpY1yZHZgp+wxE5O0pQSskv8tH
-         TXGA1m839ce01oWAwckJF2X+omZ0ZDzvLv/9fDAAexk1LxKOBhvGmHB84GBBxxJbqDI8
-         fErQ==
-X-Gm-Message-State: AOAM532HCB/al8+EQZzsBbXTJWa1xdNjbyKKoAK58+BKFGGryt+Kx1n6
-        0hfacp83mkFWoDt6z0GIg2sHekAAHrM=
-X-Google-Smtp-Source: ABdhPJy6RsWtsvBDRTjJH2DVVNgy/U4ByLFwTKrz49kE984yOxc5aum6LeJ82rmIUkTC2ujeQWPb1A==
-X-Received: by 2002:a63:781:: with SMTP id 123mr11064255pgh.295.1600248628085;
-        Wed, 16 Sep 2020 02:30:28 -0700 (PDT)
-Received: from [192.168.1.200] (FL1-111-169-191-163.hyg.mesh.ad.jp. [111.169.191.163])
-        by smtp.gmail.com with ESMTPSA id m24sm14309073pgn.44.2020.09.16.02.30.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Sep 2020 02:30:27 -0700 (PDT)
-Subject: Re: [PATCH 2/3] exfat: remove useless check in exfat_move_file()
-To:     Sungjong Seo <sj1557.seo@samsung.com>
-Cc:     kohada.tetsuhiro@dc.mitsubishielectric.co.jp,
-        mori.takahiro@ab.mitsubishielectric.co.jp,
-        motai.hirotaka@aj.mitsubishielectric.co.jp,
-        'Namjae Jeon' <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20200911044511epcas1p4d62863352e65c534cd6080dd38d54b26@epcas1p4.samsung.com>
- <20200911044506.13912-1-kohada.t2@gmail.com>
- <015f01d68bd1$95ace4d0$c106ae70$@samsung.com>
-From:   Tetsuhiro Kohada <kohada.t2@gmail.com>
-Message-ID: <8a430d18-39ac-135f-d522-90d44276faf8@gmail.com>
-Date:   Wed, 16 Sep 2020 18:30:25 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        id S1726675AbgIPKiy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Sep 2020 06:38:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50878 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726888AbgIPKfI (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Sep 2020 06:35:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id E2CF4ACE3;
+        Wed, 16 Sep 2020 10:35:01 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 119301E12E1; Wed, 16 Sep 2020 12:34:46 +0200 (CEST)
+Date:   Wed, 16 Sep 2020 12:34:46 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Michael Larabel <Michael@michaellarabel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Ted Ts'o <tytso@google.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Kernel Benchmarking
+Message-ID: <20200916103446.GB3607@quack2.suse.cz>
+References: <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
+ <c560a38d-8313-51fb-b1ec-e904bd8836bc@tessares.net>
+ <CAHk-=wgZEUoiGoKh92stUh3sBA-7D24i6XqQN2UMm3u4=XkQkg@mail.gmail.com>
+ <9550725a-2d3f-fa35-1410-cae912e128b9@tessares.net>
+ <CAHk-=wimdSWe+GVBKwB0_=ZKX2ZN5JEqK5yA99toab4MAoYAsg@mail.gmail.com>
+ <CAHk-=wimjnAsoDUjkanC2BQTntwK4qtzmPdBbtmgM=MMhR6B2w@mail.gmail.com>
+ <a9faedf1-c528-38e9-2ac4-e8847ecda0f2@tessares.net>
+ <CAHk-=wiHPE3Q-qARO+vqbN0FSHwQXCYSmKcrjgxqVLJun5DjhA@mail.gmail.com>
+ <37989469-f88c-199b-d779-ed41bc65fe56@tessares.net>
+ <CAHk-=wj8Bi5Kiufw8_1SEMmxc0GCO5Nh7TxEt+c1HdKaya=LaA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <015f01d68bd1$95ace4d0$c106ae70$@samsung.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj8Bi5Kiufw8_1SEMmxc0GCO5Nh7TxEt+c1HdKaya=LaA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->> --- a/fs/exfat/namei.c
->> +++ b/fs/exfat/namei.c
->> @@ -1095,11 +1095,6 @@ static int exfat_move_file(struct inode *inode,
->> struct exfat_chain *p_olddir,
->>   	if (!epmov)
->>   		return -EIO;
->>
->> -	/* check if the source and target directory is the same */
->> -	if (exfat_get_entry_type(epmov) == TYPE_DIR &&
->> -	    le32_to_cpu(epmov->dentry.stream.start_clu) == p_newdir->dir)
->> -		return -EINVAL;
->> -
+On Tue 15-09-20 16:35:45, Linus Torvalds wrote:
+> On Tue, Sep 15, 2020 at 12:56 PM Matthieu Baerts
+> <matthieu.baerts@tessares.net> wrote:
+> >
+> > I am sorry, I am not sure how to verify this. I guess it was one
+> > processor because I removed "-smp 2" option from qemu. So I guess it
+> > switched to a uniprocessor mode.
 > 
-> It might check if the cluster numbers are same between source entry and
-> target directory.
+> Ok, that all sounds fine. So yes, your problem happens even with just
+> one CPU, and it's not any subtle SMP race.
+> 
+> Which is all good - apart from the bug existing in the first place, of
+> course. It just reinforces the "it's probably a latent deadlock"
+> thing.
 
-This checks if newdir is the move target itself.
-Example:
-   mv /mnt/dir0 /mnt/dir0/foo
+So from the traces another theory that appeared to me is that it could be a
+"missed wakeup" problem. Looking at the code in wait_on_page_bit_common() I
+found one suspicious thing (which isn't a great match because the problem
+seems to happen on UP as well and I think it's mostly a theoretical issue but
+still I'll write it here):
 
-However, this check is not enough.
-We need to check newdir and all ancestors.
-Example:
-   mv /mnt/dir0 /mnt/dir0/dir1/foo
-   mv /mnt/dir0 /mnt/dir0/dir1/dir2/foo
-   ...
+wait_on_page_bit_common() has:
 
-This is probably a taboo for all layered filesystems.
+        spin_lock_irq(&q->lock);
+        SetPageWaiters(page);
+        if (!trylock_page_bit_common(page, bit_nr, wait))
+	  - which expands to:
+	  (
+	        if (wait->flags & WQ_FLAG_EXCLUSIVE) {
+        	        if (test_and_set_bit(bit_nr, &page->flags))
+                	        return false;
+	        } else if (test_bit(bit_nr, &page->flags))
+        	        return false;
+	  )
 
+                __add_wait_queue_entry_tail(q, wait);
+        spin_unlock_irq(&q->lock);
 
-> Could you let me know what code you mentioned?
-> Or do you mean the codes on vfs?
+Now the suspicious thing is the ordering here. What prevents the compiler
+(or the CPU for that matter) from reordering SetPageWaiters() call behind
+the __add_wait_queue_entry_tail() call? I know SetPageWaiters() and
+test_and_set_bit() operate on the same long but is it really guaranteed
+something doesn't reorder these?
 
-You can find in do_renameat2(). --- around 'fs/namei.c:4440'
-If the destination ancestors are itself, our driver will not be called.
+In unlock_page() we have:
 
+        if (clear_bit_unlock_is_negative_byte(PG_locked, &page->flags))
+                wake_up_page_bit(page, PG_locked);
 
-BTW
-Are you busy now?
-I am waiting for your reply about "integrates dir-entry getting and validation" patch.
+So if the reordering happens, clear_bit_unlock_is_negative_byte() could
+return false even though we have a waiter queued.
 
-BR
----
-Tetsuhiro Kohada <kohada.t2@gmail.com>
+And this seems to be a thing commit 2a9127fcf22 ("mm: rewrite
+wait_on_page_bit_common() logic") introduced because before we had
+set_current_state() between SetPageWaiters() and test_bit() which implies a
+memory barrier.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
