@@ -2,367 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 945F126C8DC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 20:58:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B24926C998
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 21:14:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbgIPS6x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 14:58:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46834 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727683AbgIPS6n (ORCPT
+        id S1727497AbgIPTOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Sep 2020 15:14:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23162 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727282AbgIPRk1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:58:43 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F26FC061788;
-        Wed, 16 Sep 2020 11:58:43 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id d9so4533108pfd.3;
-        Wed, 16 Sep 2020 11:58:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=1GS1CmojHoBv0FOA7wjuZ6JbQNF7dWa7IOU4RRajxCU=;
-        b=twVEt6yAH1J0hYMOAkUnGcn22t7f1gc8OJLPyJ1wgboYkQD66pKW4FQw1EZFFInGR/
-         jg1rwIZVaysLXIYLc4uUj0g7o7kFALf1Tsp8G61bskPXY6+a1BjUqEBLC1w/GUg9k3Eo
-         V0ySr7IdFH0532/PCKXTip69AbrjjXbWXtyRU5seINb0xZR5BkfnPlxphb/Smxg7by6i
-         9LKAtzO46HsEiSLpNe/QTMgRUvhstbHK0jPfXI+S7hG0CgKaiGO1HX6SQYS3jf6KLwx3
-         XhLlyQlSacL6cMZcDZgvCaTi2cn//2idNXncGpXi3vQevWA3dAfqP98zIJipclXZLZT4
-         XxBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1GS1CmojHoBv0FOA7wjuZ6JbQNF7dWa7IOU4RRajxCU=;
-        b=HuEZ7NSCvw9JyGjxOBFVeYpsNlS8f8oLl/wHfOZu5/23kFJNGB4npOZsmbrAuhnRir
-         Wjd2zXf/cLPhQs3bxSvvCoReNt1csnVs8N83UgSvkxEB1kxBZctIZWhZL5a5c5VJiELi
-         YIlerIsfj7g9l0zaB2I3wvd2vsv6UsxYFcXnOPMGp4vCxlxRikfMxTH3UXUd66vaRaA3
-         SZFy8L9OrI5MBEl23oX31lxM36/aFwLNol24qvPkH0cdjRZEnJvA9RWJmFkrrvlJjNaA
-         HwmWFtYWVh43qPVNn1NLo7FobGJwau7iSmCYB+ES+FuGSIWA/Kon73czcPBZcjy5y6RU
-         7arA==
-X-Gm-Message-State: AOAM5337I9DLlxGirAg3wgcgtDlGNHwnvmymgqDHduNNcFSEHMpQIMaQ
-        kyHTWIQ2QbRlspaefKDB6hY=
-X-Google-Smtp-Source: ABdhPJxG4mlRvALLbKL294G8Pg1sefaHQgZzLWug4UuvBIJJrfp1yzL8vB8ylD0VIS05yl65dNpabw==
-X-Received: by 2002:a63:1d5c:: with SMTP id d28mr18656349pgm.82.1600282722853;
-        Wed, 16 Sep 2020 11:58:42 -0700 (PDT)
-Received: from localhost.localdomain (c-107-3-138-210.hsd1.ca.comcast.net. [107.3.138.210])
-        by smtp.gmail.com with ESMTPSA id fz23sm3453747pjb.36.2020.09.16.11.58.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2020 11:58:41 -0700 (PDT)
-From:   Yang Shi <shy828301@gmail.com>
-To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Cc:     shy828301@gmail.com, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 2/2] mm: vmscan: remove shrinker's nr_deferred
-Date:   Wed, 16 Sep 2020 11:58:23 -0700
-Message-Id: <20200916185823.5347-3-shy828301@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200916185823.5347-1-shy828301@gmail.com>
-References: <20200916185823.5347-1-shy828301@gmail.com>
+        Wed, 16 Sep 2020 13:40:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600278025;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=4m/h+yY/PVAaaASlrExFZfjTuXa07+sxs0XLIUnFi6k=;
+        b=RgvaAjW4rid7mCypxBARQb2WX2vRi+LPz2VdcVb5lsY68A5gtO538VQ5s7N2pfgRxTe226
+        i6USsibtDPVfO0f1P/FlQJ26J+a9SP7qNJI+JkkihFJD9nXtp1uQ/OKcy/EopUGlLob4Js
+        1/2XhD3vmQANBid+Fydg9rr8B/uxTvU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-485-JHbHg4c9NlaKwI5bE_0bzQ-1; Wed, 16 Sep 2020 06:57:15 -0400
+X-MC-Unique: JHbHg4c9NlaKwI5bE_0bzQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2C02D1006712;
+        Wed, 16 Sep 2020 10:57:13 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9E3CC7880C;
+        Wed, 16 Sep 2020 10:57:12 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 08GAvCZm014220;
+        Wed, 16 Sep 2020 06:57:12 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 08GAvA4V014216;
+        Wed, 16 Sep 2020 06:57:10 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 16 Sep 2020 06:57:10 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Dan Williams <dan.j.williams@intel.com>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Eric Sandeen <esandeen@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        "Kani, Toshi" <toshi.kani@hpe.com>,
+        "Norton, Scott J" <scott.norton@hpe.com>,
+        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
+        <rajesh.tadakamadla@hpe.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: [PATCH] pmem: export the symbols __copy_user_flushcache and
+ __copy_from_user_flushcache
+In-Reply-To: <alpine.LRH.2.02.2009151332280.3851@file01.intranet.prod.int.rdu2.redhat.com>
+Message-ID: <alpine.LRH.2.02.2009160649560.20720@file01.intranet.prod.int.rdu2.redhat.com>
+References: <alpine.LRH.2.02.2009140852030.22422@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com> <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com>
+ <alpine.LRH.2.02.2009151332280.3851@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Recently huge amount one-off slab drop was seen on some vfs metadata heavy workloads,
-it turned out there were huge amount accumulated nr_deferred objects seen by the
-shrinker.
 
-I managed to reproduce this problem with kernel build workload plus negative dentry
-generator.
 
-First step, run the below kernel build test script:
+On Tue, 15 Sep 2020, Mikulas Patocka wrote:
 
-NR_CPUS=`cat /proc/cpuinfo | grep -e processor | wc -l`
+> 
+> 
+> On Tue, 15 Sep 2020, Mikulas Patocka wrote:
+> 
+> > > > - __copy_from_user_inatomic_nocache doesn't flush cache for leading and
+> > > > trailing bytes.
+> > > 
+> > > You want copy_user_flushcache(). See how fs/dax.c arranges for
+> > > dax_copy_from_iter() to route to pmem_copy_from_iter().
+> > 
+> > Is it something new for the kernel 5.10? I see only __copy_user_flushcache 
+> > that is implemented just for x86 and arm64.
+> > 
+> > There is __copy_from_user_flushcache implemented for x86, arm64 and power. 
+> > It is used in lib/iov_iter.c under
+> > #ifdef CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE - so should I use this?
+> > 
+> > Mikulas
+> 
+> ... and __copy_user_flushcache is not exported for modules. So, I am stuck 
+> with __copy_from_user_inatomic_nocache.
+> 
+> Mikulas
 
-cd /root/Buildarea/linux-stable
+I'm submitting this patch that adds the required exports (so that we could 
+use __copy_from_user_flushcache on x86, arm64 and powerpc). Please, queue 
+it for the next merge window.
 
-for i in `seq 1500`; do
-        cgcreate -g memory:kern_build
-        echo 4G > /sys/fs/cgroup/memory/kern_build/memory.limit_in_bytes
 
-        echo 3 > /proc/sys/vm/drop_caches
-        cgexec -g memory:kern_build make clean > /dev/null 2>&1
-        cgexec -g memory:kern_build make -j$NR_CPUS > /dev/null 2>&1
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-        cgdelete -g memory:kern_build
-done
+Export the symbols __copy_user_flushcache and __copy_from_user_flushcache,
+so that modules can use this functionality.
 
-That would generate huge amount deferred objects due to __GFP_NOFS allocations.
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 
-Then run the below negative dentry generator script:
-
-NR_CPUS=`cat /proc/cpuinfo | grep -e processor | wc -l`
-
-mkdir /sys/fs/cgroup/memory/test
-echo $$ > /sys/fs/cgroup/memory/test/tasks
-
-for i in `seq $NR_CPUS`; do
-        while true; do
-                FILE=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 64`
-                cat $FILE 2>/dev/null
-        done &
-done
-
-Then kswapd will shrink half of dentry cache in just one loop as the below tracing result
-showed:
-
-	kswapd0-475   [028] .... 305968.252561: mm_shrink_slab_start: super_cache_scan+0x0/0x190 0000000024acf00c: nid: 0
-objects to shrink 4994376020 gfp_flags GFP_KERNEL cache items 93689873 delta 45746 total_scan 46844936 priority 12
-	kswapd0-475   [021] .... 306013.099399: mm_shrink_slab_end: super_cache_scan+0x0/0x190 0000000024acf00c: nid: 0 unused
-scan count 4994376020 new scan count 4947576838 total_scan 8 last shrinker return val 46844928
-
-There were huge deferred objects before the shrinker was called, the behavior does match the code
-but it might be not desirable from the user's stand of point.
-
-IIUC the deferred objects were used to make balance between slab and page cache, but since commit
-9092c71bb724dba2ecba849eae69e5c9d39bd3d2 ("mm: use sc->priority for slab shrink targets") they
-were decoupled.  And as that commit stated "these two things have nothing to do with each other".
-
-So why do we have to still keep it around?  I can think of there might be huge slab accumulated
-without taking into account deferred objects, but nowadays the most workloads are constrained by
-memcg which could limit the usage of kmem (by default now), so it seems maintaining deferred
-objects is not that useful anymore.  It seems we could remove it to simplify the shrinker logic
-a lot.
-
-Signed-off-by: Yang Shi <shy828301@gmail.com>
 ---
- include/linux/shrinker.h      |  2 -
- include/trace/events/vmscan.h | 11 ++---
- mm/vmscan.c                   | 91 +++--------------------------------
- 3 files changed, 12 insertions(+), 92 deletions(-)
+ arch/arm64/lib/uaccess_flushcache.c |    1 +
+ arch/powerpc/lib/pmem.c             |    1 +
+ arch/x86/lib/usercopy_64.c          |    1 +
+ 3 files changed, 3 insertions(+)
 
-diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-index 0f80123650e2..db1d3e7d098e 100644
---- a/include/linux/shrinker.h
-+++ b/include/linux/shrinker.h
-@@ -73,8 +73,6 @@ struct shrinker {
- 	/* ID in shrinker_idr */
- 	int id;
- #endif
--	/* objs pending delete, per node */
--	atomic_long_t *nr_deferred;
- };
- #define DEFAULT_SEEKS 2 /* A good number if you don't know better. */
- 
-diff --git a/include/trace/events/vmscan.h b/include/trace/events/vmscan.h
-index 27f268bbeba4..130abf781790 100644
---- a/include/trace/events/vmscan.h
-+++ b/include/trace/events/vmscan.h
-@@ -184,10 +184,10 @@ DEFINE_EVENT(mm_vmscan_direct_reclaim_end_template, mm_vmscan_memcg_softlimit_re
- 
- TRACE_EVENT(mm_shrink_slab_start,
- 	TP_PROTO(struct shrinker *shr, struct shrink_control *sc,
--		unsigned long cache_items, unsigned long long delta,
--		unsigned long total_scan, int priority),
-+		unsigned long cache_items, unsigned long total_scan,
-+		int priority),
- 
--	TP_ARGS(shr, sc, cache_items, delta, total_scan, priority),
-+	TP_ARGS(shr, sc, cache_items, total_scan, priority),
- 
- 	TP_STRUCT__entry(
- 		__field(struct shrinker *, shr)
-@@ -195,7 +195,6 @@ TRACE_EVENT(mm_shrink_slab_start,
- 		__field(int, nid)
- 		__field(gfp_t, gfp_flags)
- 		__field(unsigned long, cache_items)
--		__field(unsigned long long, delta)
- 		__field(unsigned long, total_scan)
- 		__field(int, priority)
- 	),
-@@ -206,18 +205,16 @@ TRACE_EVENT(mm_shrink_slab_start,
- 		__entry->nid = sc->nid;
- 		__entry->gfp_flags = sc->gfp_mask;
- 		__entry->cache_items = cache_items;
--		__entry->delta = delta;
- 		__entry->total_scan = total_scan;
- 		__entry->priority = priority;
- 	),
- 
--	TP_printk("%pS %p: nid: %d gfp_flags %s cache items %ld delta %lld total_scan %ld priority %d",
-+	TP_printk("%pS %p: nid: %d gfp_flags %s cache items %ld total_scan %ld priority %d",
- 		__entry->shrink,
- 		__entry->shr,
- 		__entry->nid,
- 		show_gfp_flags(__entry->gfp_flags),
- 		__entry->cache_items,
--		__entry->delta,
- 		__entry->total_scan,
- 		__entry->priority)
- );
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 48ebea97f12f..5223131a20d0 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -336,38 +336,21 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
-  */
- int prealloc_shrinker(struct shrinker *shrinker)
- {
--	unsigned int size = sizeof(*shrinker->nr_deferred);
--
--	if (shrinker->flags & SHRINKER_NUMA_AWARE)
--		size *= nr_node_ids;
--
--	shrinker->nr_deferred = kzalloc(size, GFP_KERNEL);
--	if (!shrinker->nr_deferred)
--		return -ENOMEM;
--
- 	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
- 		if (prealloc_memcg_shrinker(shrinker))
--			goto free_deferred;
-+			goto nomem;
- 	}
- 
- 	return 0;
- 
--free_deferred:
--	kfree(shrinker->nr_deferred);
--	shrinker->nr_deferred = NULL;
-+nomem:
- 	return -ENOMEM;
+Index: linux-2.6/arch/arm64/lib/uaccess_flushcache.c
+===================================================================
+--- linux-2.6.orig/arch/arm64/lib/uaccess_flushcache.c	2020-09-16 12:44:15.068038000 +0200
++++ linux-2.6/arch/arm64/lib/uaccess_flushcache.c	2020-09-16 12:44:15.068038000 +0200
+@@ -38,3 +38,4 @@ unsigned long __copy_user_flushcache(voi
+ 	__clean_dcache_area_pop(to, n - rc);
+ 	return rc;
  }
++EXPORT_SYMBOL_GPL(__copy_user_flushcache);
+Index: linux-2.6/arch/x86/lib/usercopy_64.c
+===================================================================
+--- linux-2.6.orig/arch/x86/lib/usercopy_64.c	2020-09-16 12:44:15.068038000 +0200
++++ linux-2.6/arch/x86/lib/usercopy_64.c	2020-09-16 12:44:15.068038000 +0200
+@@ -134,6 +134,7 @@ long __copy_user_flushcache(void *dst, c
  
- void free_prealloced_shrinker(struct shrinker *shrinker)
- {
--	if (!shrinker->nr_deferred)
--		return;
--
- 	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
- 		unregister_memcg_shrinker(shrinker);
--
--	kfree(shrinker->nr_deferred);
--	shrinker->nr_deferred = NULL;
+ 	return rc;
  }
++EXPORT_SYMBOL_GPL(__copy_user_flushcache);
  
- void register_shrinker_prepared(struct shrinker *shrinker)
-@@ -397,15 +380,11 @@ EXPORT_SYMBOL(register_shrinker);
-  */
- void unregister_shrinker(struct shrinker *shrinker)
+ void __memcpy_flushcache(void *_dst, const void *_src, size_t size)
  {
--	if (!shrinker->nr_deferred)
--		return;
- 	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
- 		unregister_memcg_shrinker(shrinker);
- 	down_write(&shrinker_rwsem);
- 	list_del(&shrinker->list);
- 	up_write(&shrinker_rwsem);
--	kfree(shrinker->nr_deferred);
--	shrinker->nr_deferred = NULL;
- }
- EXPORT_SYMBOL(unregister_shrinker);
+Index: linux-2.6/arch/powerpc/lib/pmem.c
+===================================================================
+--- linux-2.6.orig/arch/powerpc/lib/pmem.c	2020-09-16 12:44:15.068038000 +0200
++++ linux-2.6/arch/powerpc/lib/pmem.c	2020-09-16 12:44:15.068038000 +0200
+@@ -75,6 +75,7 @@ long __copy_from_user_flushcache(void *d
  
-@@ -415,15 +394,11 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 				    struct shrinker *shrinker, int priority)
+ 	return copied;
+ }
++EXPORT_SYMBOL_GPL(__copy_from_user_flushcache);
+ 
+ void memcpy_flushcache(void *dest, const void *src, size_t size)
  {
- 	unsigned long freed = 0;
--	unsigned long long delta;
- 	long total_scan;
- 	long freeable;
--	long nr;
--	long new_nr;
- 	int nid = shrinkctl->nid;
- 	long batch_size = shrinker->batch ? shrinker->batch
- 					  : SHRINK_BATCH;
--	long scanned = 0, next_deferred;
- 
- 	if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
- 		nid = 0;
-@@ -432,61 +407,27 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 	if (freeable == 0 || freeable == SHRINK_EMPTY)
- 		return freeable;
- 
--	/*
--	 * copy the current shrinker scan count into a local variable
--	 * and zero it so that other concurrent shrinker invocations
--	 * don't also do this scanning work.
--	 */
--	nr = atomic_long_xchg(&shrinker->nr_deferred[nid], 0);
--
--	total_scan = nr;
- 	if (shrinker->seeks) {
--		delta = freeable >> priority;
--		delta *= 4;
--		do_div(delta, shrinker->seeks);
-+		total_scan = freeable >> priority;
-+		total_scan *= 4;
-+		do_div(total_scan, shrinker->seeks);
- 	} else {
- 		/*
- 		 * These objects don't require any IO to create. Trim
- 		 * them aggressively under memory pressure to keep
- 		 * them from causing refetches in the IO caches.
- 		 */
--		delta = freeable / 2;
-+		total_scan = freeable / 2;
- 	}
- 
--	total_scan += delta;
- 	if (total_scan < 0) {
- 		pr_err("shrink_slab: %pS negative objects to delete nr=%ld\n",
- 		       shrinker->scan_objects, total_scan);
- 		total_scan = freeable;
--		next_deferred = nr;
--	} else
--		next_deferred = total_scan;
--
--	/*
--	 * We need to avoid excessive windup on filesystem shrinkers
--	 * due to large numbers of GFP_NOFS allocations causing the
--	 * shrinkers to return -1 all the time. This results in a large
--	 * nr being built up so when a shrink that can do some work
--	 * comes along it empties the entire cache due to nr >>>
--	 * freeable. This is bad for sustaining a working set in
--	 * memory.
--	 *
--	 * Hence only allow the shrinker to scan the entire cache when
--	 * a large delta change is calculated directly.
--	 */
--	if (delta < freeable / 4)
--		total_scan = min(total_scan, freeable / 2);
--
--	/*
--	 * Avoid risking looping forever due to too large nr value:
--	 * never try to free more than twice the estimate number of
--	 * freeable entries.
--	 */
--	if (total_scan > freeable * 2)
--		total_scan = freeable * 2;
-+	}
- 
- 	trace_mm_shrink_slab_start(shrinker, shrinkctl, 
--				   freeable, delta, total_scan, priority);
-+				   freeable, total_scan, priority);
- 
- 	/*
- 	 * Normally, we should not scan less than batch_size objects in one
-@@ -517,26 +458,10 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 
- 		count_vm_events(SLABS_SCANNED, shrinkctl->nr_scanned);
- 		total_scan -= shrinkctl->nr_scanned;
--		scanned += shrinkctl->nr_scanned;
- 
- 		cond_resched();
- 	}
- 
--	if (next_deferred >= scanned)
--		next_deferred -= scanned;
--	else
--		next_deferred = 0;
--	/*
--	 * move the unused scan count back into the shrinker in a
--	 * manner that handles concurrent updates. If we exhausted the
--	 * scan, there is no need to do an update.
--	 */
--	if (next_deferred > 0)
--		new_nr = atomic_long_add_return(next_deferred,
--						&shrinker->nr_deferred[nid]);
--	else
--		new_nr = atomic_long_read(&shrinker->nr_deferred[nid]);
--
- 	trace_mm_shrink_slab_end(shrinker, nid, freed, total_scan);
- 	return freed;
- }
--- 
-2.26.2
 
