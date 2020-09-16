@@ -2,27 +2,27 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E378026B9C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 04:17:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1AC126B9CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 04:17:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbgIPCQ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 22:16:57 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:50154 "EHLO
+        id S1726344AbgIPCRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 22:17:15 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:49715 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726061AbgIPCQ4 (ORCPT
+        with ESMTP id S1726069AbgIPCRI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 22:16:56 -0400
+        Tue, 15 Sep 2020 22:17:08 -0400
 X-IronPort-AV: E=Sophos;i="5.76,430,1592841600"; 
-   d="scan'208";a="99286190"
+   d="scan'208";a="99286199"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 16 Sep 2020 10:16:51 +0800
+  by heian.cn.fujitsu.com with ESMTP; 16 Sep 2020 10:17:04 +0800
 Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 5F18648990F1;
-        Wed, 16 Sep 2020 10:16:48 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id 2B9A24CE34D2;
+        Wed, 16 Sep 2020 10:17:04 +0800 (CST)
 Received: from irides.mr (10.167.225.141) by G08CNEXMBPEKD05.g08.fujitsu.local
  (10.167.33.204) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 16 Sep
- 2020 10:16:46 +0800
-Subject: Re: [RFC PATCH 1/4] fs: introduce ->storage_lost() for memory-failure
+ 2020 10:17:02 +0800
+Subject: Re: [RFC PATCH 2/4] pagemap: introduce ->memory_failure()
 To:     "Darrick J. Wong" <darrick.wong@oracle.com>
 CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
         <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>,
@@ -30,22 +30,22 @@ CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
         <david@fromorbit.com>, <hch@lst.de>, <rgoldwyn@suse.de>,
         <qi.fuli@fujitsu.com>, <y-goto@fujitsu.com>
 References: <20200915101311.144269-1-ruansy.fnst@cn.fujitsu.com>
- <20200915101311.144269-2-ruansy.fnst@cn.fujitsu.com>
- <20200915161606.GD7955@magnolia>
+ <20200915101311.144269-3-ruansy.fnst@cn.fujitsu.com>
+ <20200915163104.GG7964@magnolia>
 From:   Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>
-Message-ID: <a84d6fcb-977c-0b00-0690-350dcd8a5117@cn.fujitsu.com>
-Date:   Wed, 16 Sep 2020 10:15:36 +0800
+Message-ID: <7afb6987-17f7-feb7-1ca9-05ff84185086@cn.fujitsu.com>
+Date:   Wed, 16 Sep 2020 10:15:52 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <20200915161606.GD7955@magnolia>
+In-Reply-To: <20200915163104.GG7964@magnolia>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.167.225.141]
 X-ClientProxiedBy: G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) To
  G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204)
-X-yoursite-MailScanner-ID: 5F18648990F1.A96BC
+X-yoursite-MailScanner-ID: 2B9A24CE34D2.AAD81
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
 X-Spam-Status: No
@@ -56,138 +56,105 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 2020/9/16 上午12:16, Darrick J. Wong wrote:
-> On Tue, Sep 15, 2020 at 06:13:08PM +0800, Shiyang Ruan wrote:
->> This function is used to handle errors which may cause data lost in
->> filesystem.  Such as memory-failure in fsdax mode.
+On 2020/9/16 上午12:31, Darrick J. Wong wrote:
+> On Tue, Sep 15, 2020 at 06:13:09PM +0800, Shiyang Ruan wrote:
+>> When memory-failure occurs, we call this function which is implemented
+>> by each devices.  For fsdax, pmem device implements it.  Pmem device
+>> will find out the block device where the error page located in, gets the
+>> filesystem on this block device, and finally call ->storage_lost() to
+>> handle the error in filesystem layer.
 >>
->> In XFS, it requires "rmapbt" feature in order to query for files or
->> metadata which associated to the error block.  Then we could call fs
->> recover functions to try to repair the damaged data.(did not implemented
->> in this patch)
->>
->> After that, the memory-failure also needs to kill processes who are
->> using those files.  The struct mf_recover_controller is created to store
->> necessary parameters.
+>> Normally, a pmem device may contain one or more partitions, each
+>> partition contains a block device, each block device contains a
+>> filesystem.  So we are able to find out the filesystem by one offset on
+>> this pmem device.  However, in other cases, such as mapped device, I
+>> didn't find a way to obtain the filesystem laying on it.  It is a
+>> problem need to be fixed.
 >>
 >> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
 >> ---
->>   fs/xfs/xfs_super.c | 80 ++++++++++++++++++++++++++++++++++++++++++++++
->>   include/linux/fs.h |  1 +
->>   include/linux/mm.h |  6 ++++
->>   3 files changed, 87 insertions(+)
+>>   block/genhd.c            | 12 ++++++++++++
+>>   drivers/nvdimm/pmem.c    | 31 +++++++++++++++++++++++++++++++
+>>   include/linux/genhd.h    |  2 ++
+>>   include/linux/memremap.h |  3 +++
+>>   4 files changed, 48 insertions(+)
 >>
->> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
->> index 71ac6c1cdc36..118d9c5d9e1e 100644
->> --- a/fs/xfs/xfs_super.c
->> +++ b/fs/xfs/xfs_super.c
->> @@ -35,6 +35,10 @@
->>   #include "xfs_refcount_item.h"
->>   #include "xfs_bmap_item.h"
->>   #include "xfs_reflink.h"
->> +#include "xfs_alloc.h"
->> +#include "xfs_rmap.h"
->> +#include "xfs_rmap_btree.h"
->> +#include "xfs_bit.h"
+>> diff --git a/block/genhd.c b/block/genhd.c
+>> index 99c64641c314..e7442b60683e 100644
+>> --- a/block/genhd.c
+>> +++ b/block/genhd.c
+>> @@ -1063,6 +1063,18 @@ struct block_device *bdget_disk(struct gendisk *disk, int partno)
+>>   }
+>>   EXPORT_SYMBOL(bdget_disk);
 >>   
->>   #include <linux/magic.h>
->>   #include <linux/fs_context.h>
->> @@ -1104,6 +1108,81 @@ xfs_fs_free_cached_objects(
->>   	return xfs_reclaim_inodes_nr(XFS_M(sb), sc->nr_to_scan);
+>> +struct block_device *bdget_disk_sector(struct gendisk *disk, sector_t sector)
+>> +{
+>> +	struct block_device *bdev = NULL;
+>> +	struct hd_struct *part = disk_map_sector_rcu(disk, sector);
+>> +
+>> +	if (part)
+>> +		bdev = bdget(part_devt(part));
+>> +
+>> +	return bdev;
+>> +}
+>> +EXPORT_SYMBOL(bdget_disk_sector);
+>> +
+>>   /*
+>>    * print a full list of all partitions - intended for places where the root
+>>    * filesystem can't be mounted and thus to give the victim some idea of what
+>> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+>> index fab29b514372..3ed96486c883 100644
+>> --- a/drivers/nvdimm/pmem.c
+>> +++ b/drivers/nvdimm/pmem.c
+>> @@ -364,9 +364,40 @@ static void pmem_release_disk(void *__pmem)
+>>   	put_disk(pmem->disk);
 >>   }
 >>   
->> +static int
->> +xfs_storage_lost_helper(
->> +	struct xfs_btree_cur		*cur,
->> +	struct xfs_rmap_irec		*rec,
->> +	void				*priv)
+>> +static int pmem_pagemap_memory_failure(struct dev_pagemap *pgmap,
+>> +		struct mf_recover_controller *mfrc)
 >> +{
->> +	struct xfs_inode		*ip;
->> +	struct mf_recover_controller	*mfrc = priv;
->> +	int				rc = 0;
+>> +	struct pmem_device *pdev;
+>> +	struct block_device *bdev;
+>> +	sector_t disk_sector;
+>> +	loff_t bdev_offset;
 >> +
->> +	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner)) {
->> +		// TODO check and try to fix metadata
->> +	} else {
->> +		/*
->> +		 * Get files that incore, filter out others that are not in use.
->> +		 */
->> +		xfs_iget(cur->bc_mp, cur->bc_tp, rec->rm_owner, XFS_IGET_INCORE,
->> +			 0, &ip);
+>> +	pdev = container_of(pgmap, struct pmem_device, pgmap);
+>> +	if (!pdev->disk)
+>> +		return -ENXIO;
+>> +
+>> +	disk_sector = (PFN_PHYS(mfrc->pfn) - pdev->phys_addr) >> SECTOR_SHIFT;
 > 
-> Missing return value check here.
+> Ah, I see, looking at the current x86 MCE code, the MCE handler gets a
+> physical address, which is then rounded down to a PFN, which is then
+> blown back up into a byte address(?) and then rounded down to sectors.
+> That is then blown back up into a byte address and passed on to XFS,
+> which rounds it down to fs blocksize.
+> 
+> /me wishes that wasn't so convoluted, but reforming the whole mm poison
+> system to have smaller blast radii isn't the purpose of this patch. :)
+> 
+>> +	bdev = bdget_disk_sector(pdev->disk, disk_sector);
+>> +	if (!bdev)
+>> +		return -ENXIO;
+>> +
+>> +	// TODO what if block device contains a mapped device
+> 
+> Find its dev_pagemap_ops and invoke its memory_failure function? ;)
 
-Yes, I ignored it.  My fault.
+Thanks for pointing out.  I'll think about it in this way.
+> 
+>> +	if (!bdev->bd_super)
+>> +		goto out;
+>> +
+>> +	bdev_offset = ((disk_sector - get_start_sect(bdev)) << SECTOR_SHIFT) -
+>> +			pdev->data_offset;
+>> +	bdev->bd_super->s_op->storage_lost(bdev->bd_super, bdev_offset, mfrc);
+> 
+> ->storage_lost is required for all filesystems?
 
-> 
->> +		if (!ip)
->> +			return 0;
->> +		if (!VFS_I(ip)->i_mapping)
->> +			goto out;
->> +
->> +		rc = mfrc->recover_fn(mfrc->pfn, mfrc->flags,
->> +				      VFS_I(ip)->i_mapping, rec->rm_offset);
->> +
->> +		// TODO try to fix data
->> +out:
->> +		xfs_irele(ip);
->> +	}
->> +
->> +	return rc;
->> +}
->> +
->> +static int
->> +xfs_fs_storage_lost(
->> +	struct super_block	*sb,
->> +	loff_t			offset,
-> 
-> offset into which device?  XFS supports three...
-> 
-> I'm also a little surprised you don't pass in a length.
-> 
-> I guess that means this function will get called repeatedly for every
-> byte in the poisoned range?
-
-The memory-failure will triggered on one PFN each time, so its length 
-could be one PAGE_SIZE.  But I think you are right, it's better to tell 
-filesystem how much range is effected and need to be fixed.  I didn't 
-know but I think there may be some other cases besides memory-failure. 
-So the length is necessary.
-
-> 
->> +	void			*priv)
->> +{
->> +	struct xfs_mount	*mp = XFS_M(sb);
->> +	struct xfs_trans	*tp = NULL;
->> +	struct xfs_btree_cur	*cur = NULL;
->> +	struct xfs_rmap_irec	rmap_low, rmap_high;
->> +	struct xfs_buf		*agf_bp = NULL;
->> +	xfs_fsblock_t		fsbno = XFS_B_TO_FSB(mp, offset);
->> +	xfs_agnumber_t		agno = XFS_FSB_TO_AGNO(mp, fsbno);
->> +	xfs_agblock_t		agbno = XFS_FSB_TO_AGBNO(mp, fsbno);
->> +	int			error = 0;
->> +
->> +	error = xfs_trans_alloc_empty(mp, &tp);
->> +	if (error)
->> +		return error;
->> +
->> +	error = xfs_alloc_read_agf(mp, tp, agno, 0, &agf_bp);
->> +	if (error)
->> +		return error;
->> +
->> +	cur = xfs_rmapbt_init_cursor(mp, tp, agf_bp, agno);
-> 
-> ...and this is definitely the wrong call sequence if the malfunctioning
-> device is the realtime device.  If a dax rt device dies, you'll be
-> shooting down files on the data device, which will cause all sorts of
-> problems.
-
-I didn't notice that.  Let me think about it.
-> 
-> Question: Should all this poison recovery stuff go into a new file?
-> xfs_poison.c?  There's already a lot of code in xfs_super.c.
-
-Yes, it's a bit too much.  I'll move them into a new file.
+I think it is required for filesystems that support fsdax, since the 
+owner tracking is moved here.  But anyway, there should have a non-NULL 
+judgment.
 
 
 --
@@ -197,61 +164,52 @@ Ruan Shiyang.
 > --D
 > 
 >> +
->> +	/* Construct a range for rmap query */
->> +	memset(&rmap_low, 0, sizeof(rmap_low));
->> +	memset(&rmap_high, 0xFF, sizeof(rmap_high));
->> +	rmap_low.rm_startblock = rmap_high.rm_startblock = agbno;
->> +
->> +	error = xfs_rmap_query_range(cur, &rmap_low, &rmap_high,
->> +				     xfs_storage_lost_helper, priv);
->> +	if (error == -ECANCELED)
->> +		error = 0;
->> +
->> +	xfs_btree_del_cursor(cur, error);
->> +	xfs_trans_brelse(tp, agf_bp);
->> +	return error;
+>> +out:
+>> +	bdput(bdev);
+>> +	return 0;
 >> +}
 >> +
->>   static const struct super_operations xfs_super_operations = {
->>   	.alloc_inode		= xfs_fs_alloc_inode,
->>   	.destroy_inode		= xfs_fs_destroy_inode,
->> @@ -1117,6 +1196,7 @@ static const struct super_operations xfs_super_operations = {
->>   	.show_options		= xfs_fs_show_options,
->>   	.nr_cached_objects	= xfs_fs_nr_cached_objects,
->>   	.free_cached_objects	= xfs_fs_free_cached_objects,
->> +	.storage_lost		= xfs_fs_storage_lost,
+>>   static const struct dev_pagemap_ops fsdax_pagemap_ops = {
+>>   	.kill			= pmem_pagemap_kill,
+>>   	.cleanup		= pmem_pagemap_cleanup,
+>> +	.memory_failure		= pmem_pagemap_memory_failure,
 >>   };
 >>   
->>   static int
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index e019ea2f1347..bd90485cfdc9 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -1951,6 +1951,7 @@ struct super_operations {
->>   				  struct shrink_control *);
->>   	long (*free_cached_objects)(struct super_block *,
->>   				    struct shrink_control *);
->> +	int (*storage_lost)(struct super_block *sb, loff_t offset, void *priv);
+>>   static int pmem_attach_disk(struct device *dev,
+>> diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+>> index 4ab853461dff..16e9e13e0841 100644
+>> --- a/include/linux/genhd.h
+>> +++ b/include/linux/genhd.h
+>> @@ -303,6 +303,8 @@ static inline void add_disk_no_queue_reg(struct gendisk *disk)
+>>   extern void del_gendisk(struct gendisk *gp);
+>>   extern struct gendisk *get_gendisk(dev_t dev, int *partno);
+>>   extern struct block_device *bdget_disk(struct gendisk *disk, int partno);
+>> +extern struct block_device *bdget_disk_sector(struct gendisk *disk,
+>> +			sector_t sector);
+>>   
+>>   extern void set_device_ro(struct block_device *bdev, int flag);
+>>   extern void set_disk_ro(struct gendisk *disk, int flag);
+>> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+>> index 5f5b2df06e61..efebefa70d00 100644
+>> --- a/include/linux/memremap.h
+>> +++ b/include/linux/memremap.h
+>> @@ -6,6 +6,7 @@
+>>   
+>>   struct resource;
+>>   struct device;
+>> +struct mf_recover_controller;
+>>   
+>>   /**
+>>    * struct vmem_altmap - pre-allocated storage for vmemmap_populate
+>> @@ -87,6 +88,8 @@ struct dev_pagemap_ops {
+>>   	 * the page back to a CPU accessible page.
+>>   	 */
+>>   	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
+>> +	int (*memory_failure)(struct dev_pagemap *pgmap,
+>> +			      struct mf_recover_controller *mfrc);
 >>   };
 >>   
->>   /*
->> diff --git a/include/linux/mm.h b/include/linux/mm.h
->> index 1983e08f5906..3f0c36e1bf3d 100644
->> --- a/include/linux/mm.h
->> +++ b/include/linux/mm.h
->> @@ -3002,6 +3002,12 @@ extern void shake_page(struct page *p, int access);
->>   extern atomic_long_t num_poisoned_pages __read_mostly;
->>   extern int soft_offline_page(unsigned long pfn, int flags);
->>   
->> +struct mf_recover_controller {
->> +	int (*recover_fn)(unsigned long pfn, int flags,
->> +		struct address_space *mapping, pgoff_t index);
->> +	unsigned long pfn;
->> +	int flags;
->> +};
->>   
->>   /*
->>    * Error handlers for various types of pages.
+>>   #define PGMAP_ALTMAP_VALID	(1 << 0)
 >> -- 
 >> 2.28.0
 >>
