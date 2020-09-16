@@ -2,220 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C1AC126B9CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 04:17:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B92AD26B9CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 04:22:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726344AbgIPCRP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 22:17:15 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:49715 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726069AbgIPCRI (ORCPT
+        id S1726276AbgIPCWX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 22:22:23 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:63591 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbgIPCWW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 22:17:08 -0400
-X-IronPort-AV: E=Sophos;i="5.76,430,1592841600"; 
-   d="scan'208";a="99286199"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 16 Sep 2020 10:17:04 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 2B9A24CE34D2;
-        Wed, 16 Sep 2020 10:17:04 +0800 (CST)
-Received: from irides.mr (10.167.225.141) by G08CNEXMBPEKD05.g08.fujitsu.local
- (10.167.33.204) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 16 Sep
- 2020 10:17:02 +0800
-Subject: Re: [RFC PATCH 2/4] pagemap: introduce ->memory_failure()
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <dan.j.williams@intel.com>,
-        <david@fromorbit.com>, <hch@lst.de>, <rgoldwyn@suse.de>,
-        <qi.fuli@fujitsu.com>, <y-goto@fujitsu.com>
-References: <20200915101311.144269-1-ruansy.fnst@cn.fujitsu.com>
- <20200915101311.144269-3-ruansy.fnst@cn.fujitsu.com>
- <20200915163104.GG7964@magnolia>
-From:   Ruan Shiyang <ruansy.fnst@cn.fujitsu.com>
-Message-ID: <7afb6987-17f7-feb7-1ca9-05ff84185086@cn.fujitsu.com>
-Date:   Wed, 16 Sep 2020 10:15:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        Tue, 15 Sep 2020 22:22:22 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20200916022218epoutp046b81e4d9093479c96a1fe405c6bbdf02~1IkjLTj5C0813408134epoutp045
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Sep 2020 02:22:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20200916022218epoutp046b81e4d9093479c96a1fe405c6bbdf02~1IkjLTj5C0813408134epoutp045
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1600222938;
+        bh=Sj28rhX7L+myUlYy8n3SHdDM87JorFrFrqfkmoC2nUk=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=koDvGUmNTpTFgmJ5rqtZskaYwdf7X8LN4AiiotKYXldv64bdweDXUdI2pmx5YBE11
+         b/jskSRZDKm2p+VrJ4y09/BpDqfUWfDie+dC8mLtwqTDbihnPNNkv8LzGOiV1U7fgH
+         0CtF0BGblRx8zzWevpMcBmuD1p1wAnvDanTN4hzs=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200916022218epcas1p2691fb7947d65795b69cfb8bf93c4c13e~1IkilNLjm1211712117epcas1p2C;
+        Wed, 16 Sep 2020 02:22:18 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.159]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4BrkQ049P3zMqYky; Wed, 16 Sep
+        2020 02:22:16 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2A.43.29173.4D6716F5; Wed, 16 Sep 2020 11:22:13 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200916022212epcas1p2048ed766ab7dd75fe43bc1996a62d2a3~1IkdooJ3I1211712117epcas1p2y;
+        Wed, 16 Sep 2020 02:22:12 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200916022212epsmtrp2d045953f0d9c90b36531f0df82c447e5~1Ikdn4kcK2035820358epsmtrp2f;
+        Wed, 16 Sep 2020 02:22:12 +0000 (GMT)
+X-AuditID: b6c32a37-9b7ff700000071f5-3a-5f6176d42d74
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        06.49.08382.4D6716F5; Wed, 16 Sep 2020 11:22:12 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20200916022212epsmtip194f34abdbf302bd5ebb81bb739a31bb3~1IkdePnUU0164401644epsmtip1a;
+        Wed, 16 Sep 2020 02:22:12 +0000 (GMT)
+From:   "Sungjong Seo" <sj1557.seo@samsung.com>
+To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
+Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
+        <mori.takahiro@ab.mitsubishielectric.co.jp>,
+        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
+        "'Namjae Jeon'" <namjae.jeon@samsung.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+In-Reply-To: <20200911044439.13842-1-kohada.t2@gmail.com>
+Subject: RE: [PATCH 1/3] exfat: remove useless directory scan in
+ exfat_add_entry()
+Date:   Wed, 16 Sep 2020 11:22:12 +0900
+Message-ID: <015d01d68bd0$2fc6bb60$8f543220$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <20200915163104.GG7964@magnolia>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.225.141]
-X-ClientProxiedBy: G08CNEXCHPEKD06.g08.fujitsu.local (10.167.33.205) To
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204)
-X-yoursite-MailScanner-ID: 2B9A24CE34D2.AAD81
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@cn.fujitsu.com
-X-Spam-Status: No
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQMWI+I2pfTF2STIlR6k2ufb8Rwp/wJPNK8aptjeoIA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmge7VssR4g/4vrBY/5t5msXhzciqL
+        xZ69J1ksLu+aw2Zx+f8nFotlXyazWPyYXu/A7vFlznF2j7bJ/9g9mo+tZPPYOesuu0ffllWM
+        Hp83yQWwReXYZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl
+        5gCdoqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMDQo0CtOzC0uzUvXS87PtTI0
+        MDAyBapMyMmY/WUDY8FEzopZbzuZGxgXsncxcnJICJhIPD7cy9LFyMUhJLCDUeLimm2sIAkh
+        gU+MEjv7VSAS3xgl9mw8wQjTsXr5KlaIxF5GiQMH57BBOC8ZJbq+fGEBqWIT0JV4cuMnM4gt
+        IqAncfLkdTYQm1mgkUnixMvsLkYODk4BS4kHHUYgYWGBEInzz6+BtbIIqEpsufebFaSEF6jk
+        7W95kDCvgKDEyZlPWCCmyEtsfzuHGeIeBYndn46yQmyyktjz8AVUjYjE7M42ZpDTJAQWckjc
+        u7GIBaLBRWL/sj6oZ4QlXh3fAg0KKYnP7/ayQdj1Ev/nr2WHaG5hlHj4aRsTyEESAvYS7y9Z
+        gJjMApoS63fpQ5QrSuz8PZcRYi+fxLuvPawQ1bwSHW1CECUqEt8/7GSB2XTlx1WmCYxKs5B8
+        NgvJZ7OQfDALYdkCRpZVjGKpBcW56anFhgXGyFG9iRGcSLXMdzBOe/tB7xAjEwfjIUYJDmYl
+        Ed4DjfHxQrwpiZVVqUX58UWlOanFhxhNgUE9kVlKNDkfmMrzSuINTY2MjY0tTMzMzUyNlcR5
+        H95SiBcSSE8sSc1OTS1ILYLpY+LglGpgOuFRcCVKsk3+0s0z7wuW2AdJsW8wrDwuk1edq9Su
+        e/6Jw9o3J58/Ee0/KVz/NXuGxje3yOfTj67PdTa/z+b5NOHpVzFxw5RnvEpbF8Ryv5Bi9lt4
+        JkdQnauw7NrXy9xlfxNFglRW3jH9WzCpTnvpzKQH071mSNoLLDucp+0SHuL9dmvwxVfv/zzP
+        M9O+ZN5xccbjV4YC5qz9/w/fnKA4OXD2ZultRiHf7f2f5u1U1Pu/JXv/kpiV7VOm9q5+vuc6
+        o2j3G5GkewbbXM5ve9Eockjrt92FH71va/7UqbzaEczdVMsf1ce3yF3qzlWO/e8v9E2Uz4r+
+        deTE+9Y9c6cGuJxbcPB9ybwXZfIWkxneSCqxFGckGmoxFxUnAgBZNT07LQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42LZdlhJTvdKWWK8wbr3qhY/5t5msXhzciqL
+        xZ69J1ksLu+aw2Zx+f8nFotlXyazWPyYXu/A7vFlznF2j7bJ/9g9mo+tZPPYOesuu0ffllWM
+        Hp83yQWwRXHZpKTmZJalFunbJXBlzP6ygbFgImfFrLedzA2MC9m7GDk5JARMJFYvX8XaxcjF
+        ISSwm1GiqeU5YxcjB1BCSuLgPk0IU1ji8OFiiJLnjBIz1zxiAellE9CVeHLjJzOILSKgJ3Hy
+        5HU2kCJmgWYmidYvzUwQHV2MErfeb2UDmcQpYCnxoMMIxBQWCJJ4/ZANpJdFQFViy73frCBh
+        XqCKt7/lQcK8AoISJ2c+YQEJMwONb9vICBJmFpCX2P52DjPE9QoSuz8dZYW4wEpiz8MXLBA1
+        IhKzO9uYJzAKz0IyaRbCpFlIJs1C0rGAkWUVo2RqQXFuem6xYYFhXmq5XnFibnFpXrpecn7u
+        JkZwNGlp7mDcvuqD3iFGJg7GQ4wSHMxKIrwHGuPjhXhTEiurUovy44tKc1KLDzFKc7AoifPe
+        KFwYJySQnliSmp2aWpBaBJNl4uCUamBSvlZQ7pS1cy6f0qx7F94vequxUs+UOehR2p/5zluy
+        DO9nrg/axR+yajVHunugdXfDkkV/y3eZNCqrumza/E0/6p9RzRGngnmCBaneyqnzDL7KTHFZ
+        nftI1dhv4sOdHHO6L1h/XHK75VMy854CcX+e4PfTzk5j8VuSImCzLiT+o/y6/dzrEv9+fbQj
+        XCBA87DDvElh77cv3q0Rub9a+MCbh45eSzkkJoXcPfnoo9sx7qqNzxLZ975Y3pbUuuqmUVJX
+        YvFN3SkKd/JSLtdMu9c6P2ouj248C29fg7HArQYvphL9nXzJm1SUju/MYCqNNVnsVvjhwaQo
+        tfcsHy3ePZFY8fdZnN2xY6tY1zgFZDErsRRnJBpqMRcVJwIA9iQDIRUDAAA=
+X-CMS-MailID: 20200916022212epcas1p2048ed766ab7dd75fe43bc1996a62d2a3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200911044449epcas1p42ecc35423eebc3b62428b14529d6a592
+References: <CGME20200911044449epcas1p42ecc35423eebc3b62428b14529d6a592@epcas1p4.samsung.com>
+        <20200911044439.13842-1-kohada.t2@gmail.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+> There is nothing in directory just created, so there is no need to scan.
+> 
+> Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
 
+Acked-by: Sungjong Seo <sj1557.seo@samsung.com>
 
-On 2020/9/16 上午12:31, Darrick J. Wong wrote:
-> On Tue, Sep 15, 2020 at 06:13:09PM +0800, Shiyang Ruan wrote:
->> When memory-failure occurs, we call this function which is implemented
->> by each devices.  For fsdax, pmem device implements it.  Pmem device
->> will find out the block device where the error page located in, gets the
->> filesystem on this block device, and finally call ->storage_lost() to
->> handle the error in filesystem layer.
->>
->> Normally, a pmem device may contain one or more partitions, each
->> partition contains a block device, each block device contains a
->> filesystem.  So we are able to find out the filesystem by one offset on
->> this pmem device.  However, in other cases, such as mapped device, I
->> didn't find a way to obtain the filesystem laying on it.  It is a
->> problem need to be fixed.
->>
->> Signed-off-by: Shiyang Ruan <ruansy.fnst@cn.fujitsu.com>
->> ---
->>   block/genhd.c            | 12 ++++++++++++
->>   drivers/nvdimm/pmem.c    | 31 +++++++++++++++++++++++++++++++
->>   include/linux/genhd.h    |  2 ++
->>   include/linux/memremap.h |  3 +++
->>   4 files changed, 48 insertions(+)
->>
->> diff --git a/block/genhd.c b/block/genhd.c
->> index 99c64641c314..e7442b60683e 100644
->> --- a/block/genhd.c
->> +++ b/block/genhd.c
->> @@ -1063,6 +1063,18 @@ struct block_device *bdget_disk(struct gendisk *disk, int partno)
->>   }
->>   EXPORT_SYMBOL(bdget_disk);
->>   
->> +struct block_device *bdget_disk_sector(struct gendisk *disk, sector_t sector)
->> +{
->> +	struct block_device *bdev = NULL;
->> +	struct hd_struct *part = disk_map_sector_rcu(disk, sector);
->> +
->> +	if (part)
->> +		bdev = bdget(part_devt(part));
->> +
->> +	return bdev;
->> +}
->> +EXPORT_SYMBOL(bdget_disk_sector);
->> +
->>   /*
->>    * print a full list of all partitions - intended for places where the root
->>    * filesystem can't be mounted and thus to give the victim some idea of what
->> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
->> index fab29b514372..3ed96486c883 100644
->> --- a/drivers/nvdimm/pmem.c
->> +++ b/drivers/nvdimm/pmem.c
->> @@ -364,9 +364,40 @@ static void pmem_release_disk(void *__pmem)
->>   	put_disk(pmem->disk);
->>   }
->>   
->> +static int pmem_pagemap_memory_failure(struct dev_pagemap *pgmap,
->> +		struct mf_recover_controller *mfrc)
->> +{
->> +	struct pmem_device *pdev;
->> +	struct block_device *bdev;
->> +	sector_t disk_sector;
->> +	loff_t bdev_offset;
->> +
->> +	pdev = container_of(pgmap, struct pmem_device, pgmap);
->> +	if (!pdev->disk)
->> +		return -ENXIO;
->> +
->> +	disk_sector = (PFN_PHYS(mfrc->pfn) - pdev->phys_addr) >> SECTOR_SHIFT;
+> ---
+>  fs/exfat/namei.c | 11 +----------
+>  1 file changed, 1 insertion(+), 10 deletions(-)
 > 
-> Ah, I see, looking at the current x86 MCE code, the MCE handler gets a
-> physical address, which is then rounded down to a PFN, which is then
-> blown back up into a byte address(?) and then rounded down to sectors.
-> That is then blown back up into a byte address and passed on to XFS,
-> which rounds it down to fs blocksize.
-> 
-> /me wishes that wasn't so convoluted, but reforming the whole mm poison
-> system to have smaller blast radii isn't the purpose of this patch. :)
-> 
->> +	bdev = bdget_disk_sector(pdev->disk, disk_sector);
->> +	if (!bdev)
->> +		return -ENXIO;
->> +
->> +	// TODO what if block device contains a mapped device
-> 
-> Find its dev_pagemap_ops and invoke its memory_failure function? ;)
-
-Thanks for pointing out.  I'll think about it in this way.
-> 
->> +	if (!bdev->bd_super)
->> +		goto out;
->> +
->> +	bdev_offset = ((disk_sector - get_start_sect(bdev)) << SECTOR_SHIFT) -
->> +			pdev->data_offset;
->> +	bdev->bd_super->s_op->storage_lost(bdev->bd_super, bdev_offset, mfrc);
-> 
-> ->storage_lost is required for all filesystems?
-
-I think it is required for filesystems that support fsdax, since the 
-owner tracking is moved here.  But anyway, there should have a non-NULL 
-judgment.
-
-
---
-Thanks,
-Ruan Shiyang.
-> 
-> --D
-> 
->> +
->> +out:
->> +	bdput(bdev);
->> +	return 0;
->> +}
->> +
->>   static const struct dev_pagemap_ops fsdax_pagemap_ops = {
->>   	.kill			= pmem_pagemap_kill,
->>   	.cleanup		= pmem_pagemap_cleanup,
->> +	.memory_failure		= pmem_pagemap_memory_failure,
->>   };
->>   
->>   static int pmem_attach_disk(struct device *dev,
->> diff --git a/include/linux/genhd.h b/include/linux/genhd.h
->> index 4ab853461dff..16e9e13e0841 100644
->> --- a/include/linux/genhd.h
->> +++ b/include/linux/genhd.h
->> @@ -303,6 +303,8 @@ static inline void add_disk_no_queue_reg(struct gendisk *disk)
->>   extern void del_gendisk(struct gendisk *gp);
->>   extern struct gendisk *get_gendisk(dev_t dev, int *partno);
->>   extern struct block_device *bdget_disk(struct gendisk *disk, int partno);
->> +extern struct block_device *bdget_disk_sector(struct gendisk *disk,
->> +			sector_t sector);
->>   
->>   extern void set_device_ro(struct block_device *bdev, int flag);
->>   extern void set_disk_ro(struct gendisk *disk, int flag);
->> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
->> index 5f5b2df06e61..efebefa70d00 100644
->> --- a/include/linux/memremap.h
->> +++ b/include/linux/memremap.h
->> @@ -6,6 +6,7 @@
->>   
->>   struct resource;
->>   struct device;
->> +struct mf_recover_controller;
->>   
->>   /**
->>    * struct vmem_altmap - pre-allocated storage for vmemmap_populate
->> @@ -87,6 +88,8 @@ struct dev_pagemap_ops {
->>   	 * the page back to a CPU accessible page.
->>   	 */
->>   	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
->> +	int (*memory_failure)(struct dev_pagemap *pgmap,
->> +			      struct mf_recover_controller *mfrc);
->>   };
->>   
->>   #define PGMAP_ALTMAP_VALID	(1 << 0)
->> -- 
->> 2.28.0
->>
->>
->>
-> 
-> 
+> diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c index
+> b966b9120c9c..803748946ddb 100644
+> --- a/fs/exfat/namei.c
+> +++ b/fs/exfat/namei.c
+> @@ -530,19 +530,10 @@ static int exfat_add_entry(struct inode *inode,
+> const char *path,
+>  		info->size = 0;
+>  		info->num_subdirs = 0;
+>  	} else {
+> -		int count;
+> -		struct exfat_chain cdir;
+> -
+>  		info->attr = ATTR_SUBDIR;
+>  		info->start_clu = start_clu;
+>  		info->size = clu_size;
+> -
+> -		exfat_chain_set(&cdir, info->start_clu,
+> -			EXFAT_B_TO_CLU(info->size, sbi), info->flags);
+> -		count = exfat_count_dir_entries(sb, &cdir);
+> -		if (count < 0)
+> -			return -EIO;
+> -		info->num_subdirs = count + EXFAT_MIN_SUBDIR;
+> +		info->num_subdirs = EXFAT_MIN_SUBDIR;
+>  	}
+>  	memset(&info->crtime, 0, sizeof(info->crtime));
+>  	memset(&info->mtime, 0, sizeof(info->mtime));
+> --
+> 2.25.1
 
 
