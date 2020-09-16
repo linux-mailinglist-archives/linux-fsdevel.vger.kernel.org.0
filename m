@@ -2,135 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 26B8B26C8C0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 20:57:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E200026C8DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 20:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbgIPS5B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 14:57:01 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31014 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728263AbgIPS4q (ORCPT
+        id S1727630AbgIPS6v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Sep 2020 14:58:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46820 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727076AbgIPS6j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:56:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600282604;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RskhOddlyzxn2O1hiGiO8qkIeVUodbG095OhCxUszWY=;
-        b=UT6UF0iK2JABM+n/s/4+pWRd6JYdz0Z7L3Ee9nNuPQryrNsdXW6jiGsE99V/HvneY7xlUU
-        s7/wDRs3sUH++Fe3fes3ffbZXYSQewDyXx9pAHuXZw7g7CKbfm8BB8e7bpcYL6PAAXdFnm
-        SWsFOdQm1GIarHaswwnGTwNsHm04oeE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-461-kILKsbndN-GspIYu-UxDow-1; Wed, 16 Sep 2020 14:56:42 -0400
-X-MC-Unique: kILKsbndN-GspIYu-UxDow-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 33309873081;
-        Wed, 16 Sep 2020 18:56:40 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DD88C5C22D;
-        Wed, 16 Sep 2020 18:56:39 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 08GIudmJ025956;
-        Wed, 16 Sep 2020 14:56:39 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 08GIuc6o025952;
-        Wed, 16 Sep 2020 14:56:39 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 16 Sep 2020 14:56:38 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Dan Williams <dan.j.williams@intel.com>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Kani, Toshi" <toshi.kani@hpe.com>,
-        "Norton, Scott J" <scott.norton@hpe.com>,
-        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
-        <rajesh.tadakamadla@hpe.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: [PATCH] pmem: fix __copy_user_flushcache
-In-Reply-To: <CAPcyv4gD0ZFkfajKTDnJhEEjf+5Av-GH+cHRFoyhzGe8bNEgAA@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.2009161451140.21915@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.2009140852030.22422@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com> <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2009151332280.3851@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2009160649560.20720@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gW6AvR+RaShHdQzOaEPv9nrq5myXDmywuoCTYDZxk-hw@mail.gmail.com>
- <alpine.LRH.2.02.2009161254400.745@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gD0ZFkfajKTDnJhEEjf+5Av-GH+cHRFoyhzGe8bNEgAA@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Wed, 16 Sep 2020 14:58:39 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DACDC06174A;
+        Wed, 16 Sep 2020 11:58:39 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id 67so4397948pgd.12;
+        Wed, 16 Sep 2020 11:58:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZHnOyfd11fuaDMHJEA6fIG0O9TIwpb3umMctEKX/Vyg=;
+        b=jntgCgVMXGda+8BFGAlrv5AGNNV+QQO8b6bEf34x5C5VztwL6t/++yyRtt8TGIRpVg
+         86b0/zRlb0ZZTCNXyrF2M5IvyQ4R3jvGkWJrkr7EGimz+Rmw9XGwoJ6NYFpw1Q7tU3ZJ
+         Z4oISOPdku2hodf3uTl2hHJCPh3rpLL06/G9souJroutxnNlCC8i6iA+wdU+8hf5PuYD
+         Emag8dE+GpqE+6EZ7lmjkcnTpyD+V1CR8nflGL0GXwO/s9BOrOgXty4eJljvA4TvI+t8
+         R4/YJHbQxPgcv2jJKIWX4envYmzl3GhzK/GmSKpfyNZTJRmPeQd2OI97kq+P/Ca2RSG4
+         kS2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZHnOyfd11fuaDMHJEA6fIG0O9TIwpb3umMctEKX/Vyg=;
+        b=OTIfh70VBdGmadGBec1V2ppEdWxXiDxIRZNCI1UeUS4mDdSQ6awgivY4WOdpPIdaA7
+         cT4azfMuac4zZShhcVsAUM8ji99AgNoRhBr8bu1jTfrMvUofJsngQ1guKmT2sRuo6+Rr
+         lKjMVI283cQ81kO9JJQFZZZtTXp7Wrr3iyduQEROW0/HT8EbAdidtwStkZVGMcOS6MIn
+         K+HHyx6AW3KcwwXp8EpcI8mM1iplKTFpG0aISEGxKSMuVTEcg11UTUopWFqO+hXL4pm2
+         SZOJ34awYTJqcZvm3JW/xqcZoSxCyvEeYStVhbn5QBzh6yIW08tag0PeR19nPcirgO2h
+         u27w==
+X-Gm-Message-State: AOAM533YcAkp9HUVoMkgcVcOmabzMH6A8qujxLe5S3C5T0WXmKb203NL
+        MrFa+Luv/HmJGch/oRjROGYT9s6apKQ=
+X-Google-Smtp-Source: ABdhPJyqp7mEXldM+Vzl4EMfrIFN6GkSxZha6QOteU6DVv2b9Vn5CZJwinly18mWEQKG7fBdWdFwWw==
+X-Received: by 2002:a63:6246:: with SMTP id w67mr242623pgb.344.1600282719147;
+        Wed, 16 Sep 2020 11:58:39 -0700 (PDT)
+Received: from localhost.localdomain (c-107-3-138-210.hsd1.ca.comcast.net. [107.3.138.210])
+        by smtp.gmail.com with ESMTPSA id fz23sm3453747pjb.36.2020.09.16.11.58.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Sep 2020 11:58:37 -0700 (PDT)
+From:   Yang Shi <shy828301@gmail.com>
+To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Cc:     shy828301@gmail.com, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 0/2] Remove shrinker's nr_deferred
+Date:   Wed, 16 Sep 2020 11:58:21 -0700
+Message-Id: <20200916185823.5347-1-shy828301@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
+Recently huge amount one-off slab drop was seen on some vfs metadata heavy workloads,
+it turned out there were huge amount accumulated nr_deferred objects seen by the
+shrinker.
 
-On Wed, 16 Sep 2020, Dan Williams wrote:
+I managed to reproduce this problem with kernel build workload plus negative dentry
+generator.
 
-> On Wed, Sep 16, 2020 at 10:24 AM Mikulas Patocka <mpatocka@redhat.com> wrote:
-> >
-> >
-> >
-> > On Wed, 16 Sep 2020, Dan Williams wrote:
-> >
-> > > On Wed, Sep 16, 2020 at 3:57 AM Mikulas Patocka <mpatocka@redhat.com> wrote:
-> > > >
-> > > >
-> > > >
-> > > > I'm submitting this patch that adds the required exports (so that we could
-> > > > use __copy_from_user_flushcache on x86, arm64 and powerpc). Please, queue
-> > > > it for the next merge window.
-> > >
-> > > Why? This should go with the first user, and it's not clear that it
-> > > needs to be relative to the current dax_operations export scheme.
-> >
-> > Before nvfs gets included in the kernel, I need to distribute it as a
-> > module. So, it would make my maintenance easier. But if you don't want to
-> > export it now, no problem, I can just copy __copy_user_flushcache from the
-> > kernel to the module.
-> 
-> That sounds a better plan than exporting symbols with no in-kernel consumer.
+First step, run the below kernel build test script:
 
-BTW, this function is buggy. Here I'm submitting the patch.
+NR_CPUS=`cat /proc/cpuinfo | grep -e processor | wc -l`
 
+cd /root/Buildarea/linux-stable
 
+for i in `seq 1500`; do
+        cgcreate -g memory:kern_build
+        echo 4G > /sys/fs/cgroup/memory/kern_build/memory.limit_in_bytes
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+        echo 3 > /proc/sys/vm/drop_caches
+        cgexec -g memory:kern_build make clean > /dev/null 2>&1
+        cgexec -g memory:kern_build make -j$NR_CPUS > /dev/null 2>&1
 
-If we copy less than 8 bytes and if the destination crosses a cache line,
-__copy_user_flushcache would invalidate only the first cache line. This
-patch makes it invalidate the second cache line as well.
+        cgdelete -g memory:kern_build
+done
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: stable@vger.kernel.org
+That would generate huge amount deferred objects due to __GFP_NOFS allocations.
 
----
- arch/x86/lib/usercopy_64.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Then run the below negative dentry generator script:
 
-Index: linux-2.6/arch/x86/lib/usercopy_64.c
-===================================================================
---- linux-2.6.orig/arch/x86/lib/usercopy_64.c	2020-09-05 10:01:27.000000000 +0200
-+++ linux-2.6/arch/x86/lib/usercopy_64.c	2020-09-16 20:48:31.000000000 +0200
-@@ -120,7 +120,7 @@ long __copy_user_flushcache(void *dst, c
- 	 */
- 	if (size < 8) {
- 		if (!IS_ALIGNED(dest, 4) || size != 4)
--			clean_cache_range(dst, 1);
-+			clean_cache_range(dst, size);
- 	} else {
- 		if (!IS_ALIGNED(dest, 8)) {
- 			dest = ALIGN(dest, boot_cpu_data.x86_clflush_size);
+NR_CPUS=`cat /proc/cpuinfo | grep -e processor | wc -l`
+
+mkdir /sys/fs/cgroup/memory/test
+echo $$ > /sys/fs/cgroup/memory/test/tasks
+
+for i in `seq $NR_CPUS`; do
+        while true; do
+                FILE=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 64`
+                cat $FILE 2>/dev/null
+        done &
+done
+
+Then kswapd will shrink half of dentry cache in just one loop as the below tracing result
+showed:
+
+	kswapd0-475   [028] .... 305968.252561: mm_shrink_slab_start: super_cache_scan+0x0/0x190 0000000024acf00c: nid: 0
+objects to shrink 4994376020 gfp_flags GFP_KERNEL cache items 93689873 delta 45746 total_scan 46844936 priority 12
+	kswapd0-475   [021] .... 306013.099399: mm_shrink_slab_end: super_cache_scan+0x0/0x190 0000000024acf00c: nid: 0 unused
+scan count 4994376020 new scan count 4947576838 total_scan 8 last shrinker return val 46844928
+
+There were huge deferred objects before the shrinker was called, the behavior does match the code
+but it might be not desirable from the user's stand of point.
+
+IIUC the deferred objects were used to make balance between slab and page cache, but since commit
+9092c71bb724dba2ecba849eae69e5c9d39bd3d2 ("mm: use sc->priority for slab shrink targets") they
+were decoupled.  And as that commit stated "these two things have nothing to do with each other".
+
+So why do we have to still keep it around?  I can think of there might be huge slab accumulated
+without taking into account deferred objects, but nowadays the most workloads are constrained by
+memcg which could limit the usage of kmem (by default now), so it seems maintaining deferred
+objects is not that useful anymore.  It seems we could remove it to simplify the shrinker logic
+a lot.
+
+I may overlook some other important usecases of nr_deferred, comments are much appreciated.
+
 
