@@ -2,66 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 42AAD26BA86
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 05:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A00C26BA9D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 05:27:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbgIPDLA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 23:11:00 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:4030 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726023AbgIPDK7 (ORCPT
+        id S1726309AbgIPD1a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 23:27:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42564 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbgIPD11 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 23:10:59 -0400
-X-UUID: cbd4855e607847e9aae04bae63b2b54a-20200916
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=XdGgRW/3OeKuYJf8ldjX1lPp2lx16y2TaHXPel27PiI=;
-        b=U5L5/9FV0DUL5oLnBSSDezrmApetUpN4JZqZ5+M7wgiajBFkFXpi+SjNkIKL8YHRVl+4ld7JijH/yCDwVZriKw/52+XCeVqxc+Fx+nonO0R+Hz3aD7Oi+yqKfQm8VtOmE7SvbdKvBEpzTZxcrtZWtuVnHaRj/LZXfytPfq0eRyU=;
-X-UUID: cbd4855e607847e9aae04bae63b2b54a-20200916
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.14 Build 0819 with TLSv1.2 ECDHE-RSA-AES256-SHA384 256/256)
-        with ESMTP id 1473426936; Wed, 16 Sep 2020 11:10:55 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Wed, 16 Sep 2020 11:10:52 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Wed, 16 Sep 2020 11:10:52 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>
-Subject: [RESEND PATCHv1] proc: use untagged_addr() for pagemap_read addresses
-Date:   Wed, 16 Sep 2020 11:10:51 +0800
-Message-ID: <20200916031051.18064-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        Tue, 15 Sep 2020 23:27:27 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C5C7C06174A;
+        Tue, 15 Sep 2020 20:27:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=9Wcd6pyA0kW5OVn3Wwf7BVBeUFWEe52ze3rkd5TtWfQ=; b=lGnL9G0gw7JtgaO0aLEb/oKGIc
+        UceWafAvIPyodM0XxP/qa42sSvmF0IwVeClsm+GJIZylgsR4QPf3nrZngzq5oFuS0eOIPpPvH6ozQ
+        zvsQgdH1zWph1n1xtvHaYvunv72kxK+xDLaV/6DVd9cp7Q1MvaBlHQ//FsHaS3b5wsu0cpLulSwMU
+        P2d658G5Nw0d7GSat1+EtgI8DI2kvp2EwzP2zFSU8GpVcxn8pGzJz36nrrQc14TcylZH90maJqXLJ
+        9YK7LkxR3UuxCVVOY9Q/2qgqPo2sJnffhm21FUkvoDPfsmTESH11J7jjVZzmPK4wY59u/xLOCNsJM
+        ooG6wzYQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kIO6I-0005yL-W7; Wed, 16 Sep 2020 03:27:19 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: [PATCH 1/2] fs: Add a filesystem flag for THPs
+Date:   Wed, 16 Sep 2020 04:27:16 +0100
+Message-Id: <20200916032717.22917-1-willy@infradead.org>
+X-Mailer: git-send-email 2.21.3
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: CE19B1F2FC9FC8C2D05489159D298EA6D34DC5946529AE6C8C162F3A4E39F4C32000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-V2hlbiB3ZSB0cnkgdG8gdmlzaXQgdGhlIHBhZ2VtYXAgb2YgYSB0YWdnZWQgdXNlcnNwYWNlIHBv
-aW50ZXIsIHdlIGZpbmQNCnRoYXQgdGhlIHN0YXJ0X3ZhZGRyIGlzIG5vdCBjb3JyZWN0IGJlY2F1
-c2Ugb2YgdGhlIHRhZy4NClRvIGZpeCBpdCwgd2Ugc2hvdWxkIHVudGFnIHRoZSB1c2VzcGFjZSBw
-b2ludGVycyBpbiBwYWdlbWFwX3JlYWQoKS4NCg0KU2lnbmVkLW9mZi1ieTogTWlsZXMgQ2hlbiA8
-bWlsZXMuY2hlbkBtZWRpYXRlay5jb20+DQotLS0NCiBmcy9wcm9jL3Rhc2tfbW11LmMgfCA0ICsr
-LS0NCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KDQpk
-aWZmIC0tZ2l0IGEvZnMvcHJvYy90YXNrX21tdS5jIGIvZnMvcHJvYy90YXNrX21tdS5jDQppbmRl
-eCA1MDY2YjAyNTFlZDguLmVlMGFjMDllNzlmYyAxMDA2NDQNCi0tLSBhL2ZzL3Byb2MvdGFza19t
-bXUuYw0KKysrIGIvZnMvcHJvYy90YXNrX21tdS5jDQpAQCAtMTU0MSwxMSArMTU0MSwxMSBAQCBz
-dGF0aWMgc3NpemVfdCBwYWdlbWFwX3JlYWQoc3RydWN0IGZpbGUgKmZpbGUsIGNoYXIgX191c2Vy
-ICpidWYsDQogDQogCXNyYyA9ICpwcG9zOw0KIAlzdnBmbiA9IHNyYyAvIFBNX0VOVFJZX0JZVEVT
-Ow0KLQlzdGFydF92YWRkciA9IHN2cGZuIDw8IFBBR0VfU0hJRlQ7DQorCXN0YXJ0X3ZhZGRyID0g
-dW50YWdnZWRfYWRkcihzdnBmbiA8PCBQQUdFX1NISUZUKTsNCiAJZW5kX3ZhZGRyID0gbW0tPnRh
-c2tfc2l6ZTsNCiANCiAJLyogd2F0Y2ggb3V0IGZvciB3cmFwYXJvdW5kICovDQotCWlmIChzdnBm
-biA+IG1tLT50YXNrX3NpemUgPj4gUEFHRV9TSElGVCkNCisJaWYgKHN0YXJ0X3ZhZGRyID4gbW0t
-PnRhc2tfc2l6ZSkNCiAJCXN0YXJ0X3ZhZGRyID0gZW5kX3ZhZGRyOw0KIA0KIAkvKg0KLS0gDQoy
-LjE4LjANCg==
+The page cache needs to know whether the filesystem supports THPs so that
+it doesn't send THPs to filesystems which can't handle them.  Dave Chinner
+points out that getting from the page mapping to the filesystem type
+is too many steps (mapping->host->i_sb->s_type->fs_flags) so cache that
+information in the address space flags.
+
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/inode.c              | 2 ++
+ include/linux/fs.h      | 1 +
+ include/linux/pagemap.h | 6 ++++++
+ mm/shmem.c              | 2 +-
+ 4 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/fs/inode.c b/fs/inode.c
+index 13d8c0a44e23..4531358ae97b 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -181,6 +181,8 @@ int inode_init_always(struct super_block *sb, struct inode *inode)
+ 	mapping->a_ops = &empty_aops;
+ 	mapping->host = inode;
+ 	mapping->flags = 0;
++	if (sb->s_type->fs_flags & FS_THP_SUPPORT)
++		__set_bit(AS_THP_SUPPORT, &mapping->flags);
+ 	mapping->wb_err = 0;
+ 	atomic_set(&mapping->i_mmap_writable, 0);
+ #ifdef CONFIG_READ_ONLY_THP_FOR_FS
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f8d75e4ad9d7..f10190b22d5a 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2217,6 +2217,7 @@ struct file_system_type {
+ #define FS_HAS_SUBTYPE		4
+ #define FS_USERNS_MOUNT		8	/* Can be mounted by userns root */
+ #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
++#define FS_THP_SUPPORT		8192	/* Remove once all fs converted */
+ #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+ 	int (*init_fs_context)(struct fs_context *);
+ 	const struct fs_parameter_spec *parameters;
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 09738075e478..ecb03e1b3555 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -34,6 +34,7 @@ enum mapping_flags {
+ 	AS_EXITING	= 4, 	/* final truncate in progress */
+ 	/* writeback related tags are not used */
+ 	AS_NO_WRITEBACK_TAGS = 5,
++	AS_THP_SUPPORT = 6,	/* THPs supported */
+ };
+ 
+ /**
+@@ -124,6 +125,11 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+ 	m->gfp_mask = mask;
+ }
+ 
++static inline bool mapping_thp_support(struct address_space *mapping)
++{
++	return test_bit(AS_THP_SUPPORT, &mapping->flags);
++}
++
+ void release_pages(struct page **pages, int nr);
+ 
+ /*
+diff --git a/mm/shmem.c b/mm/shmem.c
+index bb0ebb52fcbe..c763a340ea86 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3844,7 +3844,7 @@ static struct file_system_type shmem_fs_type = {
+ 	.parameters	= shmem_fs_parameters,
+ #endif
+ 	.kill_sb	= kill_litter_super,
+-	.fs_flags	= FS_USERNS_MOUNT,
++	.fs_flags	= FS_USERNS_MOUNT | FS_THP_SUPPORT,
+ };
+ 
+ int __init shmem_init(void)
+-- 
+2.28.0
 
