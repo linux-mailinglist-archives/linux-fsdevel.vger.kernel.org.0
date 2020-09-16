@@ -2,106 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 952B426CB6D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 22:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78A8326CAC9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 22:14:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727219AbgIPU1P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 16:27:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31239 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726891AbgIPRYn (ORCPT
+        id S1727864AbgIPUOh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Sep 2020 16:14:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58440 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726166AbgIPUNc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:24:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600277059;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MIDNYXiU2iGbO/F9JK0prHUpFcyTmc8uGMG0d6uO9go=;
-        b=DJHrLAJTK9asrU8CWApV8apdtDzQf4dG6rB6I6D7ulUnZMkXGDkqNkGDkjCasYqFbdXX+E
-        RivWxB79wOOBECrSkoZdWHvO1JWZDkgnvbV7uMvoegsEMkJBlzkrXBIWLfTpb8oB70gWLD
-        ZI94Sbvs3BHfSaFxE0570maJ4pMHIxQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-361-vMiOjr13O8uH-OJWC3YD5w-1; Wed, 16 Sep 2020 13:24:17 -0400
-X-MC-Unique: vMiOjr13O8uH-OJWC3YD5w-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E405A107464B;
-        Wed, 16 Sep 2020 17:24:14 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9499E60BFA;
-        Wed, 16 Sep 2020 17:24:14 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 08GHOEOU016676;
-        Wed, 16 Sep 2020 13:24:14 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 08GHOCwu016672;
-        Wed, 16 Sep 2020 13:24:12 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 16 Sep 2020 13:24:12 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Dan Williams <dan.j.williams@intel.com>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Eric Sandeen <esandeen@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Kani, Toshi" <toshi.kani@hpe.com>,
-        "Norton, Scott J" <scott.norton@hpe.com>,
-        "Tadakamadla, Rajesh (DCIG/CDI/HPS Perf)" 
-        <rajesh.tadakamadla@hpe.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: Re: [PATCH] pmem: export the symbols __copy_user_flushcache and
- __copy_from_user_flushcache
-In-Reply-To: <CAPcyv4gW6AvR+RaShHdQzOaEPv9nrq5myXDmywuoCTYDZxk-hw@mail.gmail.com>
-Message-ID: <alpine.LRH.2.02.2009161254400.745@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.2009140852030.22422@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gh=QaDB61_9_QTgtt-pZuTFdR6td0orE0VMH6=6SA2vw@mail.gmail.com> <alpine.LRH.2.02.2009151216050.16057@file01.intranet.prod.int.rdu2.redhat.com>
- <alpine.LRH.2.02.2009151332280.3851@file01.intranet.prod.int.rdu2.redhat.com> <alpine.LRH.2.02.2009160649560.20720@file01.intranet.prod.int.rdu2.redhat.com> <CAPcyv4gW6AvR+RaShHdQzOaEPv9nrq5myXDmywuoCTYDZxk-hw@mail.gmail.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Wed, 16 Sep 2020 16:13:32 -0400
+Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DF5DC061355
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Sep 2020 13:13:14 -0700 (PDT)
+Received: by mail-vs1-xe41.google.com with SMTP id q13so4771222vsj.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Sep 2020 13:13:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=GcbBDc3F14nB5fItkaCR8bNi/7szL/0DDXdKpHCyoVg=;
+        b=WdOkItQh65coZKHtbLtCry05LIlLS/47JKxIFd5oHs6A7Luo37AFBUWhJGKmiHg2Kc
+         3lhisA2LapqsXclKHkpUt/m0EhzXQla8tSj9wUtUlwkCTqzQmj6zCCqc2V02xvF1Atya
+         2xsQm+aC1YGiYs1zK3BscTTaL7swsr8Vikd1jpxJhT/VOlZqFcjqrENNApxWjziVkfWL
+         HWjDTUBHH4USrOcn4I/vZDaywNTIaBubN2QoaWlhinD4oCycqiP5P7dmIcJCbIlvmvGC
+         Iv+fHlUz+hyH0hE6v2xSvt9SPQnkOYDD4XiXZrrHCvaCPae51rT3DBBjlpFB8dNDM3Nb
+         Ij4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=GcbBDc3F14nB5fItkaCR8bNi/7szL/0DDXdKpHCyoVg=;
+        b=eEA2lM+9RQu/r+aQsiLk9d8JDArgR2GFM1J/bVaSkasdfE0/JG2Nz86uleaXO6DFgY
+         T0J769ioehza4rXTxIZCtTKitpjrucVdhKgYnvUpz9p68zHV8ILN+DILkb4j3+UjwPKV
+         5fwKKNYzEOEK52w3s1IFik7U1nKKNqlNTLaPIncpq8onwR58Jv5hO7v7OK62nmsF+XBS
+         y4HlCZZ+WqHFj+pPONW0Vn3RocsSBnRRHolOnJXkYUgU4OBALU38gmPWe+WBvnRA35OS
+         2HxmhhMotKxWARq+q0HVS0Y8XZB5GnUPCJifYe3kHDfP1zHG8F8jwIo0VL+FKakSEFUH
+         JeXQ==
+X-Gm-Message-State: AOAM533uFs8VibntPOXElv4oatuSWobaUwWdsbTQqIGICFlGb/PLmA8E
+        QuLKfoS3f5T0O4AHTeze8EHn72GAedOLggCu4XQ=
+X-Google-Smtp-Source: ABdhPJxy1gxkUt72kPzIznZooaLfdaI+EfieVI+ftdsKxLlXkLj8DSbhlQHXpspMiWRODAFl9uCV0L87nI/k2vn4anY=
+X-Received: by 2002:a05:6102:101a:: with SMTP id q26mr6140643vsp.57.1600287189878;
+ Wed, 16 Sep 2020 13:13:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Received: by 2002:ab0:3412:0:0:0:0:0 with HTTP; Wed, 16 Sep 2020 13:13:09
+ -0700 (PDT)
+Reply-To: aalihelp5@gmail.com
+From:   "Mr.Hui Ka Yan" <jacobmoore.moores41@gmail.com>
+Date:   Wed, 16 Sep 2020 13:13:09 -0700
+Message-ID: <CAEedSLdw9cQpdDgoAQWHTA9VDtMRsPUVn_VFAmSDuzGEiS==Sw@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Bin Herr Hui Ka Yan. Ich spende Ihnen einen Zuschuss von 10.500.000
+USD. Kontaktieren Sie mich (aalihelp5@gmail.com) f=C3=BCr weitere Details.
 
-
-On Wed, 16 Sep 2020, Dan Williams wrote:
-
-> On Wed, Sep 16, 2020 at 3:57 AM Mikulas Patocka <mpatocka@redhat.com> wrote:
-> >
-> >
-> >
-> > I'm submitting this patch that adds the required exports (so that we could
-> > use __copy_from_user_flushcache on x86, arm64 and powerpc). Please, queue
-> > it for the next merge window.
-> 
-> Why? This should go with the first user, and it's not clear that it
-> needs to be relative to the current dax_operations export scheme.
-
-Before nvfs gets included in the kernel, I need to distribute it as a 
-module. So, it would make my maintenance easier. But if you don't want to 
-export it now, no problem, I can just copy __copy_user_flushcache from the 
-kernel to the module.
-
-> My first question about nvfs is how it compares to a daxfs with
-> executables and other binaries configured to use page cache with the
-> new per-file dax facility?
-
-nvfs is faster than dax-based filesystems on metadata-heavy operations 
-because it doesn't have the overhead of the buffer cache and bios. See 
-this: http://people.redhat.com/~mpatocka/nvfs/BENCHMARKS
-
-Mikulas
-
+Danke und Gott segne dich.
