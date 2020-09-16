@@ -2,79 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 0747E26CAEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 22:19:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA53626CBC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 22:34:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728224AbgIPUTB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 16:19:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727279AbgIPUSt (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 16:18:49 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39F87C06174A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Sep 2020 13:18:48 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id b12so7982019edz.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Sep 2020 13:18:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=p1kPmSHf+ngJa59WBAiQHanufKi/olIRQcTOaRjv2BY=;
-        b=o1enCl+gl7+AvgMfzhsJZd4H1LcPChyDZWvltVzpi4cNG3wjS6Q+u3G88wvtkAb009
-         1UxkaJjguttyeX1Uds5ZpO/q2XTB0nBL66u4uyJAnP+utxIx9tVxLmSQbQa/ymgDJRZp
-         hIvRDqNYTQCIvvWH5pi7o9vV7MjiQ7p28TMJWYSS+VufWTKt+SZYzA5VUDXcNV0clOZ8
-         mj/QP++g9m64YsYYrL9p90LAStrlDRk+qPnZvinbWPpyO53UbONICL+MYmcEfblrtOpZ
-         DjNssdOuZq5Xx+gP2wwe+7lzd5w4JuT4CcnGzuUXILMXDhSLxhp9MSZYjEkEL72hWjT7
-         nMzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=p1kPmSHf+ngJa59WBAiQHanufKi/olIRQcTOaRjv2BY=;
-        b=ap+Ebe1QAVKdZkjhiMW895AS7keMIjICm7iFJwKLY/YD1K75zOlKyMszdEevjoinNr
-         iNnnAqgn/7kWTpZsV4trevhg50uJRQsKmxqUcUzPcPBBSuqFl8no0iIFTznAxyNbna31
-         Ol4d1y3exQjdcA0plQzDllXRXr9azTlcEKSolZT90H7ybnDOkgMy1QgD8pLJ/Bs3WnwV
-         FOs6FuNi1VlpW4mU1Hdagim0S9MHIAiMRTOP1tOgYsv/7i0Ep7rhgHh6BTi4zkjx1mGa
-         Qo2TnX3/wVzknafc80rMeWpEehYvNUZKqKISGuMuff+npjnL1ndSGlAss8cgOZpfPD0o
-         tGvA==
-X-Gm-Message-State: AOAM530yUbCZPLmTC+ENTByEgJzGI7WeTfWfEOCKkZpgmyHfphNzxc7/
-        Loh4KsC1U4m7q6w2ZQHVag==
-X-Google-Smtp-Source: ABdhPJyk0MO+DfwL7h6h1Q/0Ct2k8kRh/ufVeYlStUojb6Op262OU/qjcwp3Z7+kHgrbA4mBvPgpgA==
-X-Received: by 2002:a50:8306:: with SMTP id 6mr28420485edh.340.1600287525626;
-        Wed, 16 Sep 2020 13:18:45 -0700 (PDT)
-Received: from localhost.localdomain ([46.53.254.169])
-        by smtp.gmail.com with ESMTPSA id f17sm14919665eds.45.2020.09.16.13.18.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Sep 2020 13:18:44 -0700 (PDT)
-Date:   Wed, 16 Sep 2020 23:18:43 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: fix cast in fsparam_u32hex() macro
-Message-ID: <20200916201843.GA802551@localhost.localdomain>
+        id S1728313AbgIPUec (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Sep 2020 16:34:32 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:12798 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728388AbgIPUeW (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Sep 2020 16:34:22 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DC9C6BD5A73D45D7311C;
+        Wed, 16 Sep 2020 20:32:22 +0800 (CST)
+Received: from [10.174.177.167] (10.174.177.167) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.487.0; Wed, 16 Sep 2020 20:32:21 +0800
+Subject: Re: [RFC PATCH] locking/percpu-rwsem: use this_cpu_{inc|dec}() for
+ read_count
+To:     <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>
+CC:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        "Christoph Lameter" <cl@linux.com>, <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>
+References: <20200915140750.137881-1-houtao1@huawei.com>
+ <20200915150610.GC2674@hirez.programming.kicks-ass.net>
+ <20200915153113.GA6881@redhat.com>
+ <20200915155150.GD2674@hirez.programming.kicks-ass.net>
+ <20200915160344.GH35926@hirez.programming.kicks-ass.net>
+From:   Hou Tao <houtao1@huawei.com>
+Message-ID: <b885ce8e-4b0b-8321-c2cc-ee8f42de52d4@huawei.com>
+Date:   Wed, 16 Sep 2020 20:32:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20200915160344.GH35926@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.177.167]
+X-CFilter-Loop: Reflected
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+Hi,
 
- include/linux/fs_parser.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2020/9/16 0:03, peterz@infradead.org wrote:
+> On Tue, Sep 15, 2020 at 05:51:50PM +0200, peterz@infradead.org wrote:
+> 
+>> Anyway, I'll rewrite the Changelog and stuff it in locking/urgent.
+> 
+> How's this?
+> 
+Thanks for that.
 
---- a/include/linux/fs_parser.h
-+++ b/include/linux/fs_parser.h
-@@ -120,7 +120,7 @@ static inline bool fs_validate_description(const char *name,
- #define fsparam_u32oct(NAME, OPT) \
- 			__fsparam(fs_param_is_u32, NAME, OPT, 0, (void *)8)
- #define fsparam_u32hex(NAME, OPT) \
--			__fsparam(fs_param_is_u32_hex, NAME, OPT, 0, (void *16))
-+			__fsparam(fs_param_is_u32_hex, NAME, OPT, 0, (void *)16)
- #define fsparam_s32(NAME, OPT)	__fsparam(fs_param_is_s32, NAME, OPT, 0, NULL)
- #define fsparam_u64(NAME, OPT)	__fsparam(fs_param_is_u64, NAME, OPT, 0, NULL)
- #define fsparam_enum(NAME, OPT, array)	__fsparam(fs_param_is_enum, NAME, OPT, 0, array)
+> ---
+> Subject: locking/percpu-rwsem: Use this_cpu_{inc,dec}() for read_count
+> From: Hou Tao <houtao1@huawei.com>
+> Date: Tue, 15 Sep 2020 22:07:50 +0800
+> 
+> From: Hou Tao <houtao1@huawei.com>
+> 
+> The __this_cpu*() accessors are (in general) IRQ-unsafe which, given
+> that percpu-rwsem is a blocking primitive, should be just fine.
+> 
+> However, file_end_write() is used from IRQ context and will cause
+> load-store issues.
+> 
+> Fixing it by using the IRQ-safe this_cpu_*() for operations on
+> read_count. This will generate more expensive code on a number of
+> platforms, which might cause a performance regression for some of the
+> other percpu-rwsem users.
+> 
+> If any such is reported, we can consider alternative solutions.
+> 
+I have simply test the performance impact on both x86 and aarch64.
+
+There is no degradation under x86 (2 sockets, 18 core per sockets, 2 threads per core)
+
+v5.8.9
+no writer, reader cn                               | 18        | 36        | 72
+the rate of down_read/up_read per second           | 231423957 | 230737381 | 109943028
+the rate of down_read/up_read per second (patched) | 232864799 | 233555210 | 109768011
+
+However the performance degradation is huge under aarch64 (4 sockets, 24 core per sockets): nearly 60% lost.
+
+v4.19.111
+no writer, reader cn                               | 24        | 48        | 72        | 96
+the rate of down_read/up_read per second           | 166129572 | 166064100 | 165963448 | 165203565
+the rate of down_read/up_read per second (patched) |  63863506 |  63842132 |  63757267 |  63514920
+
+I will test the aarch64 host by using v5.8 tomorrow.
+
+Regards,
+Tao
+
+
+> Fixes: 70fe2f48152e ("aio: fix freeze protection of aio writes")
+> Signed-off-by: Hou Tao <houtao1@huawei.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Link: https://lkml.kernel.org/r/20200915140750.137881-1-houtao1@huawei.com
+> ---
+>  include/linux/percpu-rwsem.h  |    8 ++++----
+>  kernel/locking/percpu-rwsem.c |    4 ++--
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> --- a/include/linux/percpu-rwsem.h
+> +++ b/include/linux/percpu-rwsem.h
+> @@ -60,7 +60,7 @@ static inline void percpu_down_read(stru
+>  	 * anything we did within this RCU-sched read-size critical section.
+>  	 */
+>  	if (likely(rcu_sync_is_idle(&sem->rss)))
+> -		__this_cpu_inc(*sem->read_count);
+> +		this_cpu_inc(*sem->read_count);
+>  	else
+>  		__percpu_down_read(sem, false); /* Unconditional memory barrier */
+>  	/*
+> @@ -79,7 +79,7 @@ static inline bool percpu_down_read_tryl
+>  	 * Same as in percpu_down_read().
+>  	 */
+>  	if (likely(rcu_sync_is_idle(&sem->rss)))
+> -		__this_cpu_inc(*sem->read_count);
+> +		this_cpu_inc(*sem->read_count);
+>  	else
+>  		ret = __percpu_down_read(sem, true); /* Unconditional memory barrier */
+>  	preempt_enable();
+> @@ -103,7 +103,7 @@ static inline void percpu_up_read(struct
+>  	 * Same as in percpu_down_read().
+>  	 */
+>  	if (likely(rcu_sync_is_idle(&sem->rss))) {
+> -		__this_cpu_dec(*sem->read_count);
+> +		this_cpu_dec(*sem->read_count);
+>  	} else {
+>  		/*
+>  		 * slowpath; reader will only ever wake a single blocked
+> @@ -115,7 +115,7 @@ static inline void percpu_up_read(struct
+>  		 * aggregate zero, as that is the only time it matters) they
+>  		 * will also see our critical section.
+>  		 */
+> -		__this_cpu_dec(*sem->read_count);
+> +		this_cpu_dec(*sem->read_count);
+>  		rcuwait_wake_up(&sem->writer);
+>  	}
+>  	preempt_enable();
+> --- a/kernel/locking/percpu-rwsem.c
+> +++ b/kernel/locking/percpu-rwsem.c
+> @@ -45,7 +45,7 @@ EXPORT_SYMBOL_GPL(percpu_free_rwsem);
+>  
+>  static bool __percpu_down_read_trylock(struct percpu_rw_semaphore *sem)
+>  {
+> -	__this_cpu_inc(*sem->read_count);
+> +	this_cpu_inc(*sem->read_count);
+>  
+>  	/*
+>  	 * Due to having preemption disabled the decrement happens on
+> @@ -71,7 +71,7 @@ static bool __percpu_down_read_trylock(s
+>  	if (likely(!atomic_read_acquire(&sem->block)))
+>  		return true;
+>  
+> -	__this_cpu_dec(*sem->read_count);
+> +	this_cpu_dec(*sem->read_count);
+>  
+>  	/* Prod writer to re-evaluate readers_active_check() */
+>  	rcuwait_wake_up(&sem->writer);
+> .
+> 
