@@ -2,203 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 3876726BD62
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 08:40:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C63026BDDA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 09:20:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726149AbgIPGkD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 02:40:03 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:1168 "EHLO
-        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726140AbgIPGkA (ORCPT
+        id S1726451AbgIPHUn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Sep 2020 03:20:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50386 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbgIPHUm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 02:40:00 -0400
-Received: from ironmsg07-lv.qualcomm.com (HELO ironmsg07-lv.qulacomm.com) ([10.47.202.151])
-  by alexa-out.qualcomm.com with ESMTP; 15 Sep 2020 23:39:58 -0700
-Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by ironmsg07-lv.qulacomm.com with ESMTP/TLS/AES256-SHA; 15 Sep 2020 23:39:57 -0700
-Received: from hydcbspbld03.qualcomm.com ([10.242.221.48])
-  by ironmsg02-blr.qualcomm.com with ESMTP; 16 Sep 2020 12:09:43 +0530
-Received: by hydcbspbld03.qualcomm.com (Postfix, from userid 2304101)
-        id B78FE20EA9; Wed, 16 Sep 2020 12:09:42 +0530 (IST)
-From:   Pradeep P V K <ppvk@codeaurora.org>
-To:     miklos@szeredi.hu, willy@infradead.org
-Cc:     linux-fsdevel@vger.kernel.org, stummala@codeaurora.org,
-        sayalil@codeaurora.org, Pradeep P V K <ppvk@codeaurora.org>
-Subject: [PATCH V2] fuse: Remove __GFP_FS flag to avoid allocator recursing
-Date:   Wed, 16 Sep 2020 12:09:40 +0530
-Message-Id: <1600238380-33350-1-git-send-email-ppvk@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 16 Sep 2020 03:20:42 -0400
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FCD2C06174A;
+        Wed, 16 Sep 2020 00:20:41 -0700 (PDT)
+Received: by mail-oi1-x241.google.com with SMTP id c13so7020492oiy.6;
+        Wed, 16 Sep 2020 00:20:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=gNDte3S/hSJSnDsiYxZw5wA137HY+z+jEHhh9TJtTao=;
+        b=DaVPipPxKVC/gpTyN4KR0Ctl7CZDyBwQcM9Rmnm/4InSTijDwaWf0Vco2v6n4CSJ6Q
+         KKKbvNNex3CJlWu1d1MM+S8MIlQb9bd/i6kojeZyuFiA+VHPdDjOErfrfji8bfzK2uJZ
+         xQ8/sy4/AAS4ZiyIzQfndXkDYKw5JKJR20AHIMywGpmMqw4xu3A7EwCG7xiLp+v0tFS3
+         +aMHcdl2BWHd2RyIGv57lUVxYPKN1BthAxxnhQ8HB1J0GzoDcVkIm1UJwbPuthcIAxx0
+         NfPbeCdHjmkoMiSPfcTTHE36lA19nRO7WSvV2Um4rvXqJH8iPVX3nTNmjxHZORHwamQw
+         piDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=gNDte3S/hSJSnDsiYxZw5wA137HY+z+jEHhh9TJtTao=;
+        b=nwN9lyWYshjFviQkLSCG36XA8NFoQFhv4uxXM29r99t+HksZ0dpCbqY7HG8GV6P/6F
+         yooutSGetvtcnncXUgQu82nqgnMcNbklQTRr339bRKptjBEoMyNGwpuBzWrkV+yVt9FC
+         A6Mw1w0TZd0l2+uinSKN/CsvTyJT7TVGd+aUJzNOCuKXm9Sfif2FEdU7BzRVj6V/d5fI
+         Y83+UDIxZ92B7eNASEQKVVMZJ4wzHq3gXhuLnI3ShdUsOAbPmlHIXn+1ppW03wRqXCKS
+         died0GrmYuwekXwIHlyOTv8rOxjSwsOebJdYPlQwy6M8DWv+XqO/hyfW9POYt8qH1GQz
+         51VA==
+X-Gm-Message-State: AOAM530HR8/sAJ0CYUHsEGl9Fvf5tNMyRBBmSEUw/S69K1Oc1Fc0koVO
+        ad0Qdw1csAQfcsO97m4s74D5hmcu2a57dLFOaws=
+X-Google-Smtp-Source: ABdhPJzCc4qEMzE7TrxvsA6at1VRtP+FuaH49XHiuaQTXtAbmKP+V/811S14rpYhTOZtkDssbc3AifK31Af+8j3a4uM=
+X-Received: by 2002:aca:d409:: with SMTP id l9mr2094286oig.70.1600240840763;
+ Wed, 16 Sep 2020 00:20:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200915160336.36107-1-colin.king@canonical.com> <65fbb23b-a533-aedb-75eb-69e1c53eaae9@redhat.com>
+In-Reply-To: <65fbb23b-a533-aedb-75eb-69e1c53eaae9@redhat.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Wed, 16 Sep 2020 09:20:29 +0200
+Message-ID: <CA+icZUVx8=6H4MrzPKWLc-xsFveuB-9JtzfnH=VpnwWg7mPjtQ@mail.gmail.com>
+Subject: Re: [PATCH] vboxsf: fix comparison of signed char constant with
+ unsigned char array elements
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Found a deadlock between kswapd, writeback thread and fuse process
-Here are the sequence of events with callstacks on the deadlock.
+On Wed, Sep 16, 2020 at 8:16 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi,
+>
+> On 9/15/20 6:03 PM, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> >
+> > The comparison of signed char constants with unsigned char array
+> > elements leads to checks that are always false. Fix this by declaring
+> > the VBSF_MOUNT_SIGNATURE_BYTE* macros as octal unsigned int constants
+> > rather than as signed char constants. (Argueably the U is not necessarily
+> > required, but add it to be really clear of intent).
+> >
+> > Addresses-Coverity: ("Operands don't affect result")
+> > Fixes: 0fd169576648 ("fs: Add VirtualBox guest shared folder (vboxsf) support")
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>
+> A fix for this has already been queued up:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/log/?h=fixes
+>
+> Explicit nack for this one, since it will still apply, but combined
+> with the other fix, it will re-break things.
+>
 
-process#1		process#2		process#3
-__switch_to+0x150	__switch_to+0x150	try_to_free_pages
-__schedule+0x984	__schedule+0x984
-					memalloc_noreclaim_restore
-schedule+0x70		schedule+0x70		__perform_reclaim
-bit_wait+0x14		__fuse_request_send+0x154
-					__alloc_pages_direct_reclaim
-__wait_on_bit+0x70	fuse_simple_request+0x174
-inode_wait_for_writeback+0xa0
-						__alloc_pages_slowpath
-			fuse_flush_times+0x10c
-evict+0xa4		fuse_write_inode+0x5c	__alloc_pages_nodemask
-iput+0x248		__writeback_single_inode+0x3d4
-dentry_unlink_inode+0xd8			__alloc_pages_node
-			writeback_sb_inodes+0x4a0
-__dentry_kill+0x160	__writeback_inodes_wb+0xac
-shrink_dentry_list+0x170			alloc_pages_node
-			wb_writeback+0x26c	fuse_copy_fill
-prune_dcache_sb+0x54	wb_workfn+0x2c0		fuse_copy_one
-super_cache_scan+0x114	process_one_work+0x278	fuse_read_single_forget
-do_shrink_slab+0x24c	worker_thread+0x26c	fuse_read_forget
-shrink_slab+0xa8	kthread+0x118		fuse_dev_do_read
-shrink_node+0x118				fuse_dev_splice_read
-kswapd+0x92c					do_splice_to
-						do_splice
+Hans, your patch is from 2020-08-25 and in a "fixes" Git branch of vfs
+- why wasn't it applied to Linux 5.9?
 
-Process#1(kswapd) held an inode lock and initaited a writeback to free
-the pages, as the inode superblock is fuse, process#2 forms a fuse
-request. Process#3 (Fuse daemon threads) while serving process#2 request,
-it requires memory(pages) and as the system is already running in low
-memory it ends up in calling try_to_ free_pages(), which might now call
-kswapd again, which is already stuck with an inode lock held. Thus forms
-a deadlock.
+- Sedat -
 
-So, drop  __GFP_FS flag to avoid allocator recursing into the
-filesystem that might already held locks by using memalloc_nofs_save()
-and memalloc_nofs_restore() respectively.
-
-Changes since V1:
-- Used memalloc_nofs_save() in all allocation paths of fuse daemons
-  to avoid use __GFP_FS flag as per Matthew comments.
-
- __GFP_FS flags very
-Signed-off-by: Pradeep P V K <ppvk@codeaurora.org>
----
- fs/fuse/dev.c | 30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
-
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index 02b3c36..9f790fd 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -21,6 +21,7 @@
- #include <linux/swap.h>
- #include <linux/splice.h>
- #include <linux/sched.h>
-+#include <linux/sched/mm.h>
- 
- MODULE_ALIAS_MISCDEV(FUSE_MINOR);
- MODULE_ALIAS("devname:fuse");
-@@ -1314,6 +1315,8 @@ static int fuse_dev_open(struct inode *inode, struct file *file)
- 
- static ssize_t fuse_dev_read(struct kiocb *iocb, struct iov_iter *to)
- {
-+	ssize_t size;
-+	unsigned nofs_flag;
- 	struct fuse_copy_state cs;
- 	struct file *file = iocb->ki_filp;
- 	struct fuse_dev *fud = fuse_get_dev(file);
-@@ -1326,7 +1329,11 @@ static ssize_t fuse_dev_read(struct kiocb *iocb, struct iov_iter *to)
- 
- 	fuse_copy_init(&cs, 1, to);
- 
--	return fuse_dev_do_read(fud, file, &cs, iov_iter_count(to));
-+	nofs_flag = memalloc_nofs_save();
-+	size = fuse_dev_do_read(fud, file, &cs, iov_iter_count(to));
-+	memalloc_nofs_restore(nofs_flag);
-+
-+	return size;
- }
- 
- static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
-@@ -1335,6 +1342,7 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
- {
- 	int total, ret;
- 	int page_nr = 0;
-+	unsigned nofs_flag;
- 	struct pipe_buffer *bufs;
- 	struct fuse_copy_state cs;
- 	struct fuse_dev *fud = fuse_get_dev(in);
-@@ -1342,15 +1350,21 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
- 	if (!fud)
- 		return -EPERM;
- 
-+	nofs_flag = memalloc_nofs_save();
- 	bufs = kvmalloc_array(pipe->max_usage, sizeof(struct pipe_buffer),
- 			      GFP_KERNEL);
-+	memalloc_nofs_restore(nofs_flag);
- 	if (!bufs)
- 		return -ENOMEM;
- 
- 	fuse_copy_init(&cs, 1, NULL);
- 	cs.pipebufs = bufs;
- 	cs.pipe = pipe;
-+
-+	nofs_flag = memalloc_nofs_save();
- 	ret = fuse_dev_do_read(fud, in, &cs, len);
-+	memalloc_nofs_restore(nofs_flag);
-+
- 	if (ret < 0)
- 		goto out;
- 
-@@ -1918,6 +1932,8 @@ static ssize_t fuse_dev_do_write(struct fuse_dev *fud,
- 
- static ssize_t fuse_dev_write(struct kiocb *iocb, struct iov_iter *from)
- {
-+	ssize_t size;
-+	unsigned nofs_flag;
- 	struct fuse_copy_state cs;
- 	struct fuse_dev *fud = fuse_get_dev(iocb->ki_filp);
- 
-@@ -1929,7 +1945,11 @@ static ssize_t fuse_dev_write(struct kiocb *iocb, struct iov_iter *from)
- 
- 	fuse_copy_init(&cs, 0, from);
- 
--	return fuse_dev_do_write(fud, &cs, iov_iter_count(from));
-+	nofs_flag = memalloc_nofs_save();
-+	size = fuse_dev_do_write(fud, &cs, iov_iter_count(from));
-+	memalloc_nofs_restore(nofs_flag);
-+
-+	return size;
- }
- 
- static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
-@@ -1938,7 +1958,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
- {
- 	unsigned int head, tail, mask, count;
- 	unsigned nbuf;
--	unsigned idx;
-+	unsigned idx, nofs_flag;
- 	struct pipe_buffer *bufs;
- 	struct fuse_copy_state cs;
- 	struct fuse_dev *fud;
-@@ -1956,7 +1976,9 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
- 	mask = pipe->ring_size - 1;
- 	count = head - tail;
- 
-+	nofs_flag = memalloc_nofs_save();
- 	bufs = kvmalloc_array(count, sizeof(struct pipe_buffer), GFP_KERNEL);
-+	memalloc_nofs_restore(nofs_flag);
- 	if (!bufs) {
- 		pipe_unlock(pipe);
- 		return -ENOMEM;
-@@ -2010,7 +2032,9 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
- 	if (flags & SPLICE_F_MOVE)
- 		cs.move_pages = 1;
- 
-+	nofs_flag = memalloc_nofs_save();
- 	ret = fuse_dev_do_write(fud, &cs, len);
-+	memalloc_nofs_restore(nofs_flag);
- 
- 	pipe_lock(pipe);
- out_free:
--- 
-2.7.4
-
+> Regards,
+>
+> Hans
+>
+>
+>
+> > ---
+> >   fs/vboxsf/super.c | 8 ++++----
+> >   1 file changed, 4 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
+> > index 25aade344192..986efcb29cc2 100644
+> > --- a/fs/vboxsf/super.c
+> > +++ b/fs/vboxsf/super.c
+> > @@ -21,10 +21,10 @@
+> >
+> >   #define VBOXSF_SUPER_MAGIC 0x786f4256 /* 'VBox' little endian */
+> >
+> > -#define VBSF_MOUNT_SIGNATURE_BYTE_0 ('\000')
+> > -#define VBSF_MOUNT_SIGNATURE_BYTE_1 ('\377')
+> > -#define VBSF_MOUNT_SIGNATURE_BYTE_2 ('\376')
+> > -#define VBSF_MOUNT_SIGNATURE_BYTE_3 ('\375')
+> > +#define VBSF_MOUNT_SIGNATURE_BYTE_0 0000U
+> > +#define VBSF_MOUNT_SIGNATURE_BYTE_1 0377U
+> > +#define VBSF_MOUNT_SIGNATURE_BYTE_2 0376U
+> > +#define VBSF_MOUNT_SIGNATURE_BYTE_3 0375U
+> >
+> >   static int follow_symlinks;
+> >   module_param(follow_symlinks, int, 0444);
+> >
+>
