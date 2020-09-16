@@ -2,150 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C2FA26BA3E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 04:32:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C674626BA4F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 04:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbgIPCcT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Sep 2020 22:32:19 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:11673 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbgIPCcR (ORCPT
+        id S1726279AbgIPCpn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Sep 2020 22:45:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36174 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbgIPCpl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Sep 2020 22:32:17 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200916023215epoutp03fa7f14a11f18d2b4bb909ff014b965e4~1ItOrgLsz3086030860epoutp03p
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Sep 2020 02:32:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200916023215epoutp03fa7f14a11f18d2b4bb909ff014b965e4~1ItOrgLsz3086030860epoutp03p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1600223535;
-        bh=Yfl4dFFxDqDZxjerfzfkoY+8akViH1weFET+b6zYsDg=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=iXKCe03fZXxPnKsjs1JIUCYHR4GvDXdvM6wprv8L07JhSRFbn33ARCdXD8u2t8WQs
-         3MZwxAX0I6FV9gK49eUo1M73Sh3Ehsx5VSPppsfWTCSrlFeUruQwGWD4tKfzmGIsEq
-         rL5LNgCAaQIelGg/i8GTF4/2EFlbdTY0MMWeT2wc=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20200916023214epcas1p27986168474714ba5878d2fe6fd527a39~1ItOIPur32185321853epcas1p2f;
-        Wed, 16 Sep 2020 02:32:14 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.165]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4BrkdT6qCKzMqYkp; Wed, 16 Sep
-        2020 02:32:13 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B3.40.18978.D29716F5; Wed, 16 Sep 2020 11:32:13 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200916023213epcas1p1c82e74099554114d1e14ec4b15ca3ed0~1ItM33tT01610016100epcas1p1P;
-        Wed, 16 Sep 2020 02:32:13 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200916023213epsmtrp1c73641e21923df2e4df9e28c944a04ad~1ItM3PsJ_2982129821epsmtrp1g;
-        Wed, 16 Sep 2020 02:32:13 +0000 (GMT)
-X-AuditID: b6c32a35-b8298a8000004a22-1e-5f61792d1982
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A5.4A.08382.D29716F5; Wed, 16 Sep 2020 11:32:13 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20200916023212epsmtip1e17c7d5d06a7500a4ddbac7b6a5dc245~1ItMseg6D0762807628epsmtip1p;
-        Wed, 16 Sep 2020 02:32:12 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     "'Tetsuhiro Kohada'" <kohada.t2@gmail.com>
-Cc:     <kohada.tetsuhiro@dc.mitsubishielectric.co.jp>,
-        <mori.takahiro@ab.mitsubishielectric.co.jp>,
-        <motai.hirotaka@aj.mitsubishielectric.co.jp>,
-        "'Namjae Jeon'" <namjae.jeon@samsung.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20200911044506.13912-1-kohada.t2@gmail.com>
-Subject: RE: [PATCH 2/3] exfat: remove useless check in exfat_move_file()
-Date:   Wed, 16 Sep 2020 11:32:12 +0900
-Message-ID: <015f01d68bd1$95ace4d0$c106ae70$@samsung.com>
+        Tue, 15 Sep 2020 22:45:41 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76D33C061788
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 19:45:41 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id jw11so777291pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Sep 2020 19:45:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MjF3+x9EzhdvpwkfgHNm6fCxJhsYfijrbsp5nTW4btk=;
+        b=TFqZS2R0m222F1PpstUQjgnssD8KBxBq2UnQoK3XNMEmgo0GqrqYy3UNc2QomqCL9Q
+         Rjq/gjGSG4To7GIWcl0a2bVvh9mfyPtGSbVCIhOhQtD7UcCj5bFs1QwTUi91XMCGn0ot
+         XzIM3CObSqg+igz1rE6hW7FGStNFpCaJ95bvJsBc0BVGPusEXNuPKZPE1HQcpsJ4W4kV
+         b1ZhDwshZNkc33IR9x+8x2ofAPlhCCpraHAybRO0zIULfY95TxBEeIMexHPn2sg8s8Kb
+         oGmo4RnB9ACv51S04r6v+rrx1nHJO2xn496ATeQGorVZKphQgOUu4i8FMsSmOvot/8dF
+         QoBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MjF3+x9EzhdvpwkfgHNm6fCxJhsYfijrbsp5nTW4btk=;
+        b=WwZiFgNaB+lxDNdeu4xHcFGMJFzFfO5bz1v3olubqC59tMxxAZFw3V3/1+K1WGUnlx
+         5ISj/IG+y9REF13bdpun4mIx3UjUiJ9Z1Ew6dNv/q3q/npoDD+muLL7g6HTiAUEmpfUK
+         qwDqkwg9zAx55nARETge3Qm7TgJJVDMr0ITTpCUsUeJmV8NfbwHWQgmpXKtGxTtLmuCZ
+         PBKtrSqXgUyTp9UwXVvHwl4QeT8aiyXzvPQ3BFuRxtbOaWCNlCofz2GtxoUyU7ogv7Lc
+         KWP1JwWG93JvDAwllU5KAUwuLf8QnfIOv2RJZJK7jguIMklT5Z66aLL2rHOAeOGp8oY0
+         nesA==
+X-Gm-Message-State: AOAM532dK0LDmJ16vO0NE6bFdMalNrADzMx5Q95wJMFUtVldqKQ61seW
+        7zzWSLmlcJ7pzuVoIy8oXfunr3PFcapF4TNp2e/s5w==
+X-Google-Smtp-Source: ABdhPJwQUmoHrkkKHxHWVxGeTnBYi6Mtj+lxHnZr+5S36ywWnha+P6KyFwM7kKSQXksZzvU9GeSjckV2Af7XxXPxkl0=
+X-Received: by 2002:a17:902:aa4b:b029:d0:cbe1:e739 with SMTP id
+ c11-20020a170902aa4bb02900d0cbe1e739mr22798393plr.20.1600224339980; Tue, 15
+ Sep 2020 19:45:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQGgZsB+KXs97exselB5tzyGrN5ddgLZy8s5qcAEzwA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFJsWRmVeSWpSXmKPExsWy7bCmvq5uZWK8wctH+hY/5t5msXhzciqL
-        xZ69J1ksLu+aw2Zx+f8nFotlXyazWPyYXu/A7vFlznF2j7bJ/9g9mo+tZPPYOesuu0ffllWM
-        Hp83yQWwReXYZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl
-        5gCdoqRQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpMDQo0CtOzC0uzUvXS87PtTI0
-        MDAyBapMyMnY8foxe0ELZ8X7Bv8GxrnsXYwcHBICJhLN0+q6GLk4hAR2MEo8+ryZCcL5xCjR
-        tL+HEcL5xihxums+SxcjJ1jH9tfH2SASexkl1rb/ZoFwXjJKTFvyixWkik1AV+LJjZ/MILaI
-        gJ7EyZPX2UBsZoFGJokTL7NBbE4BS4lrXbsZQWxhAU+Jxi9rwDawCKhKrNm3BczmBaq58WgS
-        lC0ocXLmExaIOfIS29/OYYa4SEFi96ejrBC7rCTOzP/DDlEjIjG7s40Z5DgJgZkcEpOOXWeE
-        eNpF4t10RYheYYlXx7ewQ9hSEi/726Dseon/89eyQ/S2MEo8/LSNCaLXXuL9JQsQk1lAU2L9
-        Ln2IckWJnb/nMkKs5ZN497WHFaKaV6KjTQiiREXi+4edLDCbrvy4yjSBUWkWksdmIXlsFpIH
-        ZiEsW8DIsopRLLWgODc9tdiwwBA5qjcxghOplukOxolvP+gdYmTiYDzEKMHBrCTCe6AxPl6I
-        NyWxsiq1KD++qDQntfgQoykwqCcyS4km5wNTeV5JvKGpkbGxsYWJmbmZqbGSOO/DWwrxQgLp
-        iSWp2ampBalFMH1MHJxSDUxu/qy/G2bfV+hujPOP+VZRX3iSc2XCYaXmH0om2QvjIo5vjqs/
-        rFpwYcdJ8470FamTNn1edGLf5ZqmYxqSXzhVnKRfhQof/fjk+wn7T0eT+983ssVnSs4/drrh
-        r4uo6hajzqBPalouli2XeFP15WvP/vgeFfH0jXO0TrXuha4zKXdqtl9SVdTY/t81I/u1+/KD
-        z9vaF3lv76hs/MMyxb3ju1y4qtavMNZephtl0i/nzHMOqPy0KexKp/17A4nysvakY4zHdwdz
-        6zWua189o656+aF43e/Bvg8mHbFWNimWnJMbI776I0/WiRtVl2tLuU2M5r2ZcC9AeOfaW+U9
-        dlWrzh0WKAssWMC15s+RYiWW4oxEQy3mouJEAKc13VgtBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42LZdlhJTle3MjHeYO11Fosfc2+zWLw5OZXF
-        Ys/ekywWl3fNYbO4/P8Ti8WyL5OBstPrHdg9vsw5zu7RNvkfu0fzsZVsHjtn3WX36NuyitHj
-        8ya5ALYoLpuU1JzMstQifbsErowdrx+zF7RwVrxv8G9gnMvexcjJISFgIrH99XE2EFtIYDej
-        RNPu6C5GDqC4lMTBfZoQprDE4cPFEBXPGSUeb3YFsdkEdCWe3PjJDGKLCOhJnDx5HWgKFwez
-        QDOTROuXZiYQR0igi1FiRcNCJpAqTgFLiWtduxlBbGEBT4nGL2tYQGwWAVWJNfu2gNm8QDU3
-        Hk2CsgUlTs58wgJyBDPQhraNYK3MAvIS29/OYYY4X0Fi96ejrBBHWEmcmf+HHaJGRGJ2Zxvz
-        BEbhWUgmzUKYNAvJpFlIOhYwsqxilEwtKM5Nzy02LDDMSy3XK07MLS7NS9dLzs/dxAiOJi3N
-        HYzbV33QO8TIxMF4iFGCg1lJhPdAY3y8EG9KYmVValF+fFFpTmrxIUZpDhYlcd4bhQvjhATS
-        E0tSs1NTC1KLYLJMHJxSDUzBd7fGqi+MP/P1svbEGSvv5phs1pFSSK5gmbP3gfkWVZ4dCmyd
-        E/7EP/eOffI9bJrtXxF9WyO90gcba8yVfD/E1C3Z5SO29pn3ZQfNGRLanEHSdya6Lz8e4n9v
-        mi1XQ86VZrYnUbPCw7jrPz288FbjaJJi1naDE/8CFQTdbXvzFCsvVy7R46t+fNFMT6D7qeGP
-        ndfn3v+itDVyeobB9mPT9kmdmh7YGz2tyf/T/HP+wSezCmeI1vm9PXrv8Y2/PYJttw7c6BM4
-        ZDbrx/4IppYX5uGc8bs1fqfm7BCwqEyO+X/oxbKLU0V60y9PXnv9yJ6uBXm1Bu9Eiz+fmR70
-        eELsk3D5+ouqBwMOsTC5+XorsRRnJBpqMRcVJwIAYs7dKRUDAAA=
-X-CMS-MailID: 20200916023213epcas1p1c82e74099554114d1e14ec4b15ca3ed0
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20200911044511epcas1p4d62863352e65c534cd6080dd38d54b26
-References: <CGME20200911044511epcas1p4d62863352e65c534cd6080dd38d54b26@epcas1p4.samsung.com>
-        <20200911044506.13912-1-kohada.t2@gmail.com>
+References: <20200915125947.26204-1-songmuchun@bytedance.com>
+ <20200915143241.GH5449@casper.infradead.org> <CAMZfGtW0PqU6SLihLABA8rU+FuBqm8NksDW=EkLXy1RZfYeDGA@mail.gmail.com>
+ <20200915154213.GI5449@casper.infradead.org> <CAMZfGtVTjopGgFv4xCDcF1+iGeRva_ypH4EQWcDUFBdsfqhQbA@mail.gmail.com>
+ <20200915173948.GK5449@casper.infradead.org> <CAMZfGtW3S8kGJwff6oH14QWPXKTuQEAGdYwcLRUZxuJ7q8s7sA@mail.gmail.com>
+ <20200915181530.GL5449@casper.infradead.org>
+In-Reply-To: <20200915181530.GL5449@casper.infradead.org>
+From:   Muchun Song <songmuchun@bytedance.com>
+Date:   Wed, 16 Sep 2020 10:45:04 +0800
+Message-ID: <CAMZfGtX1T6K5d=z6vPXtwnsDE70uEVRi9a3rADiXrdHr8_ri9Q@mail.gmail.com>
+Subject: Re: [External] Re: [RFC PATCH 00/24] mm/hugetlb: Free some vmemmap
+ pages of hugetlb page
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        bp@alien8.de, x86@kernel.org, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>, viro@zeniv.linux.org.uk,
+        Andrew Morton <akpm@linux-foundation.org>, paulmck@kernel.org,
+        mchehab+huawei@kernel.org, pawan.kumar.gupta@linux.intel.com,
+        Randy Dunlap <rdunlap@infradead.org>, oneukum@suse.com,
+        anshuman.khandual@arm.com, jroedel@suse.de, almasrymina@google.com,
+        David Rientjes <rientjes@google.com>,
+        linux-doc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> In exfat_move_file(), the identity of source and target directory has been
-> checked by the caller.
-> Also, it gets stream.start_clu from file dir-entry, which is an invalid
-> determination.
-> 
-> Signed-off-by: Tetsuhiro Kohada <kohada.t2@gmail.com>
-> ---
->  fs/exfat/namei.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c index
-> 803748946ddb..1c433491f771 100644
-> --- a/fs/exfat/namei.c
-> +++ b/fs/exfat/namei.c
-> @@ -1095,11 +1095,6 @@ static int exfat_move_file(struct inode *inode,
-> struct exfat_chain *p_olddir,
->  	if (!epmov)
->  		return -EIO;
-> 
-> -	/* check if the source and target directory is the same */
-> -	if (exfat_get_entry_type(epmov) == TYPE_DIR &&
-> -	    le32_to_cpu(epmov->dentry.stream.start_clu) == p_newdir->dir)
-> -		return -EINVAL;
-> -
+On Wed, Sep 16, 2020 at 2:15 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Wed, Sep 16, 2020 at 02:03:15AM +0800, Muchun Song wrote:
+> > On Wed, Sep 16, 2020 at 1:39 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > >
+> > > On Wed, Sep 16, 2020 at 01:32:46AM +0800, Muchun Song wrote:
+> > > > On Tue, Sep 15, 2020 at 11:42 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > > > >
+> > > > > On Tue, Sep 15, 2020 at 11:28:01PM +0800, Muchun Song wrote:
+> > > > > > On Tue, Sep 15, 2020 at 10:32 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > > > > > >
+> > > > > > > On Tue, Sep 15, 2020 at 08:59:23PM +0800, Muchun Song wrote:
+> > > > > > > > This patch series will free some vmemmap pages(struct page structures)
+> > > > > > > > associated with each hugetlbpage when preallocated to save memory.
+> > > > > > >
+> > > > > > > It would be lovely to be able to do this.  Unfortunately, it's completely
+> > > > > > > impossible right now.  Consider, for example, get_user_pages() called
+> > > > > > > on the fifth page of a hugetlb page.
+> > > > > >
+> > > > > > Can you elaborate on the problem? Thanks so much.
+> > > > >
+> > > > > OK, let's say you want to do a 2kB I/O to offset 0x5000 of a 2MB page
+> > > > > on a 4kB base page system.  Today, that results in a bio_vec containing
+> > > > > {head+5, 0, 0x800}.  Then we call page_to_phys() on that (head+5) struct
+> > > > > page to get the physical address of the I/O, and we turn it into a struct
+> > > > > scatterlist, which similarly has a reference to the page (head+5).
+> > > >
+> > > > As I know, in this case, the get_user_pages() will get a reference
+> > > > to the head page (head+0) before returning such that the hugetlb
+> > > > page can not be freed. Although get_user_pages() returns the
+> > > > page (head+5) and the scatterlist has a reference to the page
+> > > > (head+5), this patch series can handle this situation. I can not
+> > > > figure out where the problem is. What I missed? Thanks.
+> > >
+> > > You freed pages 4-511 from the vmemmap so they could be used for
+> > > something else.  Page 5 isn't there any more.  So if you return head+5,
+> > > then when we complete the I/O, we'll look for the compound_head() of
+> > > head+5 and we won't find head.
+> >
+> > We do not free pages 4-511 from the vmemmap. Actually, we only
+> > free pages 128-511 from the vmemmap.
+> >
+> > The 512 struct pages occupy 8 pages of physical memory. We only
+> > free 6 physical page frames to the buddy. But we will create a new
+> > mapping just like below. The virtual address of the freed pages will
+> > remap to the second page frame. So the second page frame is
+> > reused.
+>
+> Oh!  I get what you're doing now.
+>
+> For the vmemmap case, you free the last N-2 physical pages but map the
+> second physical page multiple times.  So for the 512 pages case, we
+> see pages:
+>
+> abcdefgh | ijklmnop | ijklmnop | ijklmnop | ijklmnop | ijklmnop | ijklmnop ...
 
-It might check if the cluster numbers are same between source entry and
-target directory.
-Could you let me know what code you mentioned?
-Or do you mean the codes on vfs?
+Yeah, great. You are right.
 
->  	num_old_entries = exfat_count_ext_entries(sb, p_olddir, oldentry,
->  		epmov);
->  	if (num_old_entries < 0)
-> --
-> 2.25.1
+>
+> Huh.  I think that might work, except for PageHWPoison.  I'll go back
+> to your patch series and look at that some more.
+>
+
+The PageHWPoison also is considered in the patch series. Looking
+forward to your suggestions. Thanks.
 
 
+-- 
+Yours,
+Muchun
