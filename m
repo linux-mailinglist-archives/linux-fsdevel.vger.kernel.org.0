@@ -2,141 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C4826C868
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 20:48:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8A7126C874
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Sep 2020 20:50:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbgIPSsA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Sep 2020 14:48:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45126 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728156AbgIPSrn (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:47:43 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E035C06174A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Sep 2020 11:47:43 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id y2so8042098lfy.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Sep 2020 11:47:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FvU3RmnxF4Fi3PPUl/NAHaQ6sckA0cZltUifXE0sQUY=;
-        b=AiGhVJYFwlZ76nh2p80nDW5KlWkzhVstC+ekxJgSj3hh4Dl41ChGlQj+8UxI5F9Xc9
-         pKW8C5G/1nb+f2eUFPyOHFNx3MYZgioEwfLY2TkTz0uC4umYfzyb0loAbP9D1r4fVoeg
-         jK8KF5sV9qMp0+hOp7K8kAkTBJPF+XELbvJLo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FvU3RmnxF4Fi3PPUl/NAHaQ6sckA0cZltUifXE0sQUY=;
-        b=jn8Gg+e+bSM/UPOqxSQXHXZABW1raNGGQapJxpJL9XnwX66+QO2Sl/hydUn3TPHlPU
-         6C56bLpMp/TtAwklfmEKSGB/uzHykFFw2VM3238a4R36MzEe+7GjArRQZHwt87cOubqN
-         CEkyXm6PnEdg8IttYgnJAL2Mh2LRb1mRGi3gO0AVhYHRFS3INVgkc7/RH4BNAS6pmWhd
-         RD4Is/y8GOXl3LFLnk6ZbUwauojteuseKin2OyqnPZ5JSBfn+cgDCaBnvU0SozTM6kIf
-         1OeEmcqaMmN0ZAu+AQn23Q2Q+ED4D0QnTr/uVU1O24v/kn8AMl+IDHZiRBjA+4X9I2od
-         YA/Q==
-X-Gm-Message-State: AOAM533zCQA/rRpua6mkqutRqnCJMpjeecQvPbl4qETgTpYijMT/+3G3
-        iX7riPYBzbS7mOv3BAgD5mceDC9WyOIUqg==
-X-Google-Smtp-Source: ABdhPJxpMJ8G63M/ixpN0wqbkUkoekZBrT3iLbKL+Q80em694xWWkyaeEDJW8z0l8RpW/M2T7WtL5A==
-X-Received: by 2002:a19:4211:: with SMTP id p17mr8936668lfa.480.1600282060717;
-        Wed, 16 Sep 2020 11:47:40 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id n20sm5110535lfh.1.2020.09.16.11.47.38
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Sep 2020 11:47:39 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id x77so8132573lfa.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Sep 2020 11:47:38 -0700 (PDT)
-X-Received: by 2002:a19:4186:: with SMTP id o128mr7813977lfa.148.1600282058590;
- Wed, 16 Sep 2020 11:47:38 -0700 (PDT)
+        id S1728007AbgIPSty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Sep 2020 14:49:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47798 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728238AbgIPStk (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Wed, 16 Sep 2020 14:49:40 -0400
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C542C2222C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Sep 2020 18:49:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600282180;
+        bh=16sTH0SegakzZKBjY8U3FsytaAxRFzwi1y28PIc8vKg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=A8v0KRNufPmq2ID94lvuAYBLHSHS5ug/gBN4O948j2OLRL/yNp7TGrcaoMc8dhzbO
+         gakR5PNyJc34jx5b5aXJZqOG+ECqvTX6r+JpS79zCVia6YDkI+sbXhF5mFPtKxxwmH
+         lKt5qdjIMkNtCN34jJEvfHrZYNfN+/RBAbfSnBT8=
+Received: by mail-ed1-f48.google.com with SMTP id c8so7520669edv.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Sep 2020 11:49:39 -0700 (PDT)
+X-Gm-Message-State: AOAM532pIVE+Vs/npvK1SuxS86vJVJdvsAcAvrt4kAFZrQ5qwqCXM8bZ
+        +mW8/TApvI8Jz4LSLG9ZYz6C1Vmfv33gLavMkWyOBA==
+X-Google-Smtp-Source: ABdhPJwUX3bHQLCL84qG4wIC/JlN+nYNkgmXwAB8lo/1k8NF8oo4sGXt7L/6GSwGvTFkR4oICcgx71syaFhCR+ehMOk=
+X-Received: by 2002:a5d:5111:: with SMTP id s17mr28001448wrt.70.1600282177590;
+ Wed, 16 Sep 2020 11:49:37 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
- <c560a38d-8313-51fb-b1ec-e904bd8836bc@tessares.net> <CAHk-=wgZEUoiGoKh92stUh3sBA-7D24i6XqQN2UMm3u4=XkQkg@mail.gmail.com>
- <9550725a-2d3f-fa35-1410-cae912e128b9@tessares.net> <CAHk-=wimdSWe+GVBKwB0_=ZKX2ZN5JEqK5yA99toab4MAoYAsg@mail.gmail.com>
- <CAHk-=wimjnAsoDUjkanC2BQTntwK4qtzmPdBbtmgM=MMhR6B2w@mail.gmail.com>
- <a9faedf1-c528-38e9-2ac4-e8847ecda0f2@tessares.net> <CAHk-=wiHPE3Q-qARO+vqbN0FSHwQXCYSmKcrjgxqVLJun5DjhA@mail.gmail.com>
- <37989469-f88c-199b-d779-ed41bc65fe56@tessares.net> <CAHk-=wj8Bi5Kiufw8_1SEMmxc0GCO5Nh7TxEt+c1HdKaya=LaA@mail.gmail.com>
- <20200916103446.GB3607@quack2.suse.cz>
-In-Reply-To: <20200916103446.GB3607@quack2.suse.cz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 16 Sep 2020 11:47:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiTwLL5O5afYJrJTsEm6XqYdGubh6zvKOt_1f8pqbfYgw@mail.gmail.com>
-Message-ID: <CAHk-=wiTwLL5O5afYJrJTsEm6XqYdGubh6zvKOt_1f8pqbfYgw@mail.gmail.com>
-Subject: Re: Kernel Benchmarking
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Michael Larabel <Michael@michaellarabel.com>,
+References: <20200916072842.3502-1-rppt@kernel.org>
+In-Reply-To: <20200916072842.3502-1-rppt@kernel.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 16 Sep 2020 11:49:25 -0700
+X-Gmail-Original-Message-ID: <CALCETrV6nFQ4tzhxKPSnK+Ec=U8ojY0k_-G2EqEG-WMGT4TkUw@mail.gmail.com>
+Message-ID: <CALCETrV6nFQ4tzhxKPSnK+Ec=U8ojY0k_-G2EqEG-WMGT4TkUw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/5] mm: introduce memfd_secret system call to create
+ "secret" memory areas
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Idan Yaniv <idan.yaniv@ibm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
         Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Ted Ts'o" <tytso@google.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tycho Andersen <tycho@tycho.ws>, Will Deacon <will@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-riscv@lists.infradead.org, X86 ML <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Sep 16, 2020 at 3:34 AM Jan Kara <jack@suse.cz> wrote:
+On Wed, Sep 16, 2020 at 12:28 AM Mike Rapoport <rppt@kernel.org> wrote:
 >
-> wait_on_page_bit_common() has:
+> From: Mike Rapoport <rppt@linux.ibm.com>
 >
->         spin_lock_irq(&q->lock);
->         SetPageWaiters(page);
->         if (!trylock_page_bit_common(page, bit_nr, wait))
->           - which expands to:
->           (
->                 if (wait->flags & WQ_FLAG_EXCLUSIVE) {
->                         if (test_and_set_bit(bit_nr, &page->flags))
->                                 return false;
->                 } else if (test_bit(bit_nr, &page->flags))
->                         return false;
->           )
+> Hi,
 >
->                 __add_wait_queue_entry_tail(q, wait);
->         spin_unlock_irq(&q->lock);
+> This is an implementation of "secret" mappings backed by a file descriptor.
+> I've dropped the boot time reservation patch for now as it is not strictly
+> required for the basic usage and can be easily added later either with or
+> without CMA.
 >
-> Now the suspicious thing is the ordering here. What prevents the compiler
-> (or the CPU for that matter) from reordering SetPageWaiters() call behind
-> the __add_wait_queue_entry_tail() call? I know SetPageWaiters() and
-> test_and_set_bit() operate on the same long but is it really guaranteed
-> something doesn't reorder these?
+> v5 changes:
+> * rebase on v5.9-rc5
+> * drop boot time memory reservation patch
+>
+> v4 changes:
+> * rebase on v5.9-rc1
+> * Do not redefine PMD_PAGE_ORDER in fs/dax.c, thanks Kirill
+> * Make secret mappings exclusive by default and only require flags to
+>   memfd_secret() system call for uncached mappings, thanks again Kirill :)
+>
+> v3 changes:
+> * Squash kernel-parameters.txt update into the commit that added the
+>   command line option.
+> * Make uncached mode explicitly selectable by architectures. For now enable
+>   it only on x86.
+>
+> v2 changes:
+> * Follow Michael's suggestion and name the new system call 'memfd_secret'
+> * Add kernel-parameters documentation about the boot option
+> * Fix i386-tinyconfig regression reported by the kbuild bot.
+>   CONFIG_SECRETMEM now depends on !EMBEDDED to disable it on small systems
+>   from one side and still make it available unconditionally on
+>   architectures that support SET_DIRECT_MAP.
+>
+> The file descriptor backing secret memory mappings is created using a
+> dedicated memfd_secret system call The desired protection mode for the
+> memory is configured using flags parameter of the system call. The mmap()
+> of the file descriptor created with memfd_secret() will create a "secret"
+> memory mapping. The pages in that mapping will be marked as not present in
+> the direct map and will have desired protection bits set in the user page
+> table. For instance, current implementation allows uncached mappings.
 
-I agree that we might want to make this much more specific, but no,
-those things can't be re-ordered.
+I still have serious concerns with uncached mappings.  I'm not saying
+I can't be convinced, but I'm not currently convinced that we should
+allow user code to create UC mappings on x86.
 
-Part of it is very much that memory ordering is only about two
-different locations - accessing the *same* location is always ordered,
-even on weakly ordered CPU's.
-
-And the compiler can't re-order them either, we very much make
-test_and_set_bit() have the proper barriers. We'd be very screwed if a
-"set_bit()" could pass a "test_and_set_bit".
-
-That said, the PageWaiters bit is obviously very much by design in the
-same word as the bit we're testing and setting - because the whole
-point is that we can then at clear time check the PageWaiters bit
-atomically with the bit we're clearing.
-
-So this code optimally shouldn't use separate operations for those
-bits at all. It would be better to just have one atomic sequence with
-a cmpxchg that does both at the same time.
-
-So I agree that sequence isn't wonderful. But no, I don't think this is the bug.
-
-And as you mention, Matthieu sees it on UP, so memory ordering
-wouldn't have been an issue anyway (and compiler re-ordering would
-cause all kinds of other problems and break our bit operations
-entirely).
-
-Plus if it was some subtle bug like that, it wouldn't trigger as
-consistently as it apparently does for Matthieu.
-
-Of course, the reason that I don't see how it can trigger at all (I
-still like my ABBA deadlock scenario, but I don't see anybody holding
-any crossing locks in Matthieu's list of processes) means that I'm
-clearly missing something
-
-                  Linus
+--Andy
