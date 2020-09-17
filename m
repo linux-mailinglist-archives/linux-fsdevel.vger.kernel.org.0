@@ -2,107 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BEFC26E4E7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 21:02:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B763926E5A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 21:55:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726580AbgIQTC1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 15:02:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44852 "EHLO
+        id S1726630AbgIQTzR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 15:55:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbgIQTA3 (ORCPT
+        with ESMTP id S1727660AbgIQO6I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 15:00:29 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51D11C061756
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 12:00:29 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id n25so2981157ljj.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 12:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=QaNy7skFdocpIi7yXUk0cvyZ61htoWtJGhoFEfuldNs=;
-        b=NbAnzyB2Mzc30Bxhxt2G/fphVVd0HhTHio6XwB2c+aD3xh1gYYDxBMBwfzTwVjgO1y
-         2U/0SPniX5eHV7f8q+a1tgEHnXXLTpFyJIRbU1hQyswRasCEIfdyPNwxrAhx/TtmWgNp
-         D9gNAm/JHCes0tuZjojw2IFaa40CTEvGQa+Q4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QaNy7skFdocpIi7yXUk0cvyZ61htoWtJGhoFEfuldNs=;
-        b=NbgZnGb9vZzMgz3ltt/SzQ76xNLvkZbauP8qhC8AuR9sPnEb3QzXiTtMrl4Rc14hKl
-         qZVYHRNQ0wuepfaKN3MK7n+CAFXKXt8gUDQHT2nWzv4Ns4Gj8bHhIq2IXOvAN5Our1Bj
-         djbNCueFqd5MpLNkXjt+9e6xSiCI+kTqD9tZWcykiEw2s82D7JaRQkWy7GQnFwJROlyZ
-         lEf4T7zgvDmDurla/j021W7zEmu5LxE6VSrAE7Jg1xQCnncQPt6GogkAN9kBSuQXjZsg
-         tHXO8pwhoLEr94M+yETR0QhB8HPTINIFFSq0FiO6Cf9+CVCeHXCYfZBz1j2CmO38eHty
-         RlPA==
-X-Gm-Message-State: AOAM531N3tLHPKdL1H7CjnF5Izc/Qcy7MkO+gtMI5FDZFRYNQunANV2e
-        VB7+iioasi07nCAnA+G7sAjutzpapxRCAQ==
-X-Google-Smtp-Source: ABdhPJzO+HG803tS0WPoPq+HprpDjgBeSjM/ahzoRM9yKAsxOgrLuIXPszEVSBgjN5Uxna4XbAfmWg==
-X-Received: by 2002:a2e:3c0f:: with SMTP id j15mr8486253lja.461.1600369227165;
-        Thu, 17 Sep 2020 12:00:27 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id c7sm80527lff.116.2020.09.17.12.00.25
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Sep 2020 12:00:25 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id b12so3345664lfp.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 12:00:25 -0700 (PDT)
-X-Received: by 2002:ac2:5594:: with SMTP id v20mr10423309lfg.344.1600369225145;
- Thu, 17 Sep 2020 12:00:25 -0700 (PDT)
+        Thu, 17 Sep 2020 10:58:08 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F73AC061351;
+        Thu, 17 Sep 2020 07:47:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=e46ZxCmYJpeJz6E3Pq9hIabq8Ncj/V4WuCKu6cUX04k=; b=GgmJhYxu8pKJ+ZfpFhuO/KjJyt
+        FmOkSlVuFX6W5Ke0+UtWhFqTTiIXtAiUEvVAWpz2n9qUDej5ce/P1keOJeOGFxleNC9illwlgVVZZ
+        Tziy+vgLb9Ad+ITL5FA+fQXPPHX/PLCT6k9Z+wY4iDW4aWNHH5zEptwGHkknAhpkHD/oRBQMbGNhN
+        4UyBy6tUH1GvypyIWQdwGc2d0d8n0ZmbDOcwv3Qo2JWgFmCwEVxT9QQd/Tu1VMYK2ZQfIT6Iqcr09
+        3o7Y7VVEN4q74E53lqMa0sVs7MEkyCl55hYnMBUzdM9A1Ci7Dvfr6wtUkqGIyNhHcrylB/hwjDgY+
+        YUnPjkew==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kIvBQ-00088r-K0; Thu, 17 Sep 2020 14:46:48 +0000
+Date:   Thu, 17 Sep 2020 15:46:48 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Boaz Harrosh <boaz@plexistor.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Oleg Nesterov <oleg@redhat.com>, Hou Tao <houtao1@huawei.com>,
+        peterz@infradead.org, Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will@kernel.org>, Dennis Zhou <dennis@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH] locking/percpu-rwsem: use this_cpu_{inc|dec}() for
+ read_count
+Message-ID: <20200917144648.GA31086@infradead.org>
+References: <20200915140750.137881-1-houtao1@huawei.com>
+ <20200915150610.GC2674@hirez.programming.kicks-ass.net>
+ <20200915153113.GA6881@redhat.com>
+ <20200915155150.GD2674@hirez.programming.kicks-ass.net>
+ <20200915160344.GH35926@hirez.programming.kicks-ass.net>
+ <b885ce8e-4b0b-8321-c2cc-ee8f42de52d4@huawei.com>
+ <ddd5d732-06da-f8f2-ba4a-686c58297e47@plexistor.com>
+ <20200917120132.GA5602@redhat.com>
+ <20200917124838.GT5449@casper.infradead.org>
+ <e25a3354-04e4-54e9-a45f-7305bfd1f2bb@plexistor.com>
 MIME-Version: 1.0
-References: <CAHk-=wjfw3U5eTGWLaisPHg1+jXsCX=xLZgqPx4KJeHhEqRnEQ@mail.gmail.com>
- <a2369108-7103-278c-9f10-6309a0a9dc3b@MichaelLarabel.com> <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
- <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com> <20200912143704.GB6583@casper.infradead.org>
- <658ae026-32d9-0a25-5a59-9c510d6898d5@MichaelLarabel.com> <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
- <CAHk-=whc5CnTUWoeeCDj640Rng4nH8HdLsHgEdnz3NtPSRqqhQ@mail.gmail.com>
- <20200917182314.GU5449@casper.infradead.org> <CAHk-=wj6g2y2Z3cGzHBMoeLx-mfG0Md_2wMVwx=+g_e-xDNTbw@mail.gmail.com>
- <20200917185049.GV5449@casper.infradead.org>
-In-Reply-To: <20200917185049.GV5449@casper.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 17 Sep 2020 12:00:06 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj6Ha=cNU4kL3z661CV+c2x2=DKzPrfH=XujMa378NhWQ@mail.gmail.com>
-Message-ID: <CAHk-=wj6Ha=cNU4kL3z661CV+c2x2=DKzPrfH=XujMa378NhWQ@mail.gmail.com>
-Subject: Re: Kernel Benchmarking
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Michael Larabel <Michael@michaellarabel.com>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Ted Ts'o" <tytso@google.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e25a3354-04e4-54e9-a45f-7305bfd1f2bb@plexistor.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 11:50 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> Ahh.  Here's a race this doesn't close:
->
-> int truncate_inode_page(struct address_space *mapping, struct page *page)
+On Thu, Sep 17, 2020 at 04:46:38PM +0300, Boaz Harrosh wrote:
+> From my totally subjective experience on the filesystem side (user of
+> bio_endio) all HW block drivers I used including Nvme isci, sata... etc. end
+> up calling bio_endio in softirq. The big exception to that is the vdX
+> drivers under KVM. Which is very Ironic to me.
 
-I think this one currently depends on the page lock, doesn't it?
-
-And I think the point would be to get rid of that dependency, and just
-make the rule be that it's done with the i_mmap_rwsem held for
-writing.
-
-But it might be one of those cases where taking it for writing might
-add way too much serialization and might not be acceptable.
-
-Again, I do get the feeling that a spinlock would be much better here.
-Generally the areas we want to protect are truly just the trivial
-"check that mapping is valid". That's a spinlock kind of thing, not a
-semaphore kind of thing.
-
-Doing a blocking semaphore that might need to serialize IO with page
-faulting for the whole mapping is horrible and completely
-unacceptable. Truncation events might be rare, but they aren't unheard
-of!
-
-But doing a spinlock that does the same is likely a complete non-issue.
-
-              Linus
+NVMe normally calls it from hardirq or IPI context.  The only time it
+would use softirq context is if you have a single I/O queue, which is
+very unusual.
