@@ -2,75 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 90AAD26DEFD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 17:03:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 981C726DF64
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 17:16:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727824AbgIQPDZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 11:03:25 -0400
-Received: from cloud.peff.net ([104.130.231.41]:60092 "EHLO cloud.peff.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727674AbgIQPDL (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 11:03:11 -0400
-Received: (qmail 488 invoked by uid 109); 17 Sep 2020 13:16:06 -0000
-Received: from Unknown (HELO peff.net) (10.0.1.2)
- by cloud.peff.net (qpsmtpd/0.94) with ESMTP; Thu, 17 Sep 2020 13:16:06 +0000
-Authentication-Results: cloud.peff.net; auth=none
-Received: (qmail 8382 invoked by uid 111); 17 Sep 2020 13:16:05 -0000
-Received: from coredump.intra.peff.net (HELO sigill.intra.peff.net) (10.0.0.2)
- by peff.net (qpsmtpd/0.94) with (TLS_AES_256_GCM_SHA384 encrypted) ESMTPS; Thu, 17 Sep 2020 09:16:05 -0400
-Authentication-Results: peff.net; auth=none
-Date:   Thu, 17 Sep 2020 09:16:05 -0400
-From:   Jeff King <peff@peff.net>
-To:     =?utf-8?B?w4Z2YXIgQXJuZmrDtnLDsA==?= Bjarmason <avarab@gmail.com>
-Cc:     git@vger.kernel.org, tytso@mit.edu,
-        Junio C Hamano <gitster@pobox.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC PATCH 1/2] sha1-file: fsync() loose dir entry when
- core.fsyncObjectFiles
-Message-ID: <20200917131605.GC3024501@coredump.intra.peff.net>
-References: <87sgbghdbp.fsf@evledraar.gmail.com>
- <20200917112830.26606-2-avarab@gmail.com>
+        id S1727499AbgIQPQI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 11:16:08 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:52283 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727464AbgIQPLv (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Sep 2020 11:11:51 -0400
+X-Greylist: delayed 316 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 11:11:46 EDT
+Received: from mail-qk1-f176.google.com ([209.85.222.176]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MPosX-1k4oS230h1-00MvZo; Thu, 17 Sep 2020 17:06:09 +0200
+Received: by mail-qk1-f176.google.com with SMTP id o16so2503067qkj.10;
+        Thu, 17 Sep 2020 08:06:09 -0700 (PDT)
+X-Gm-Message-State: AOAM530uPMI73zvlf6p4VX51VC/BBLDZoBNraF9NJ/JlDTmUnz6m6ALE
+        oEGjREXJVWOi4OkqHEVTxCdOspb43VVHvatQv3g=
+X-Google-Smtp-Source: ABdhPJzKte3sE0w3grmNzAcZz6I6dO+iCU7vaqRU7ZPNRSPiGZWy3ZkwDFx390y2hVXA2c946+2P8Nzpm+An38NI1VY=
+X-Received: by 2002:a05:620a:15a7:: with SMTP id f7mr26786546qkk.3.1600355168294;
+ Thu, 17 Sep 2020 08:06:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200917112830.26606-2-avarab@gmail.com>
+References: <20200917074159.2442167-1-hch@lst.de> <20200917074159.2442167-2-hch@lst.de>
+In-Reply-To: <20200917074159.2442167-2-hch@lst.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 17 Sep 2020 17:05:52 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3+qdbGzWdi=PNL+goHDK9M=Y65p=UYTW=ze8PuN=KS_A@mail.gmail.com>
+Message-ID: <CAK8P3a3+qdbGzWdi=PNL+goHDK9M=Y65p=UYTW=ze8PuN=KS_A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] compat: lift compat_s64 and compat_u64 to <asm-generic/compat.h>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "the arch/x86 maintainers" <x86@kernel.org>,
+        Jan Kara <jack@suse.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:+kyRdoGXMGcCoFFC2gvTHjAv7SkQshfKd/Um6FcFTo8Qn+GeSAo
+ oOAy5+6t8LQKXIpKs71bAw8AFw1iRKGHN4lAgIB/YCjlUvC3ry9a12LGmsIgZXijB88vNd7
+ RbvBybC/W3/2cfui3Zl+iCXmnDwD8g/kcU2HZWGsBl+i//lF/oKRbrADyjo5NLZBqNue5jw
+ ZOgV5f4oO1PvcgSPMJ+9g==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:mOo9i8sIh1k=:PP27u5MgpCHKe0ejjq6zOJ
+ 0Nqw0ZPKfl0F+SPI/M5VW+dBb6I6ebHhsM9So4z/ZvX57wnLp9fKEbzjf/bWN7NGtqSSu/d1v
+ MiigtWR0aB4zNJhFwMAuDsZhUamdRahHBIUUr/SzxrjZ/pv7YLo3r2c4ijxl713YWTSYK2gwH
+ CeRC3k85gjAHlc39g4k5Bau4Ylbe6SQGEaKvB2hCQd2Dp5uaUbIb4n4X5vExa/0kUFNAS65Zn
+ 2fL3JCRQx0THOZb7A4rut2OIRRM41H4Bgzp9vS9HA8gxhiEFdIsM3+s9GTNA/b4T6b2W3MpKu
+ Ajy5ODzpgZTStxLsyQfZ/1zYXhJXGzlmnrrDyLrS2faQV0Szgmy/+tBfH2C6CBP2ET/3zp2bs
+ vffioUiYscYw7YFnULPfe4MBsGYvhtUK3vc9G00JF/4mlB+2KhqAwscm5kO0CmLxrjoTD/B49
+ ZEwnZVKLuBGzrc0QOh3aMV5+SZKkTvaj5/m0Ihi3RkM2BjoExyQIQ8PVq27Qrj2/JjbxC/DUM
+ sUDAEUhjqi1lOwNufa9xxwPvIqM44lr+OZnKSpn4sPeJocQP2QXK42eLUrVYokDnFhnudU89y
+ oR5MCqhOY65ICgLGcyXanPy5aYJY63hS/dg2Z50RYPOBqaFPbRnBOZOiSo/GSiSr60lsv825x
+ DULdu07eJN5Q+TTCJoHzZPpL8jD6ppRc4+hVWcKz5IGgO7ONJ1OCEd6y7smPFQbGB9AcE5ztd
+ D4HRTod+4j2tX5Hye9EhyBraDmWBuSfTkSQOReX00jcdI8duhECo9wjqOoC1OG0cv22wWYgLt
+ QmdDXADF0ZhDq+Nm/lOlZcd9RndVAEi17pS3PINIiI0gBwSgZp+GAn6KNSGo+ZppPNGh0toit
+ hjTcIs2lUofrt2UkoCjW5MkzRrwxfyx0vt9xK7yGgrlIFDxQnoOSSI3cEfvaaDZz11UkJLQwy
+ Y4KwUiTZB2KpxG2+/XajqtTBBjwT/ChWQjbMreSKNuWKeb508+WUL
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 01:28:29PM +0200, Ævar Arnfjörð Bjarmason wrote:
+On Thu, Sep 17, 2020 at 9:46 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> lift the compat_s64 and compat_u64 definitions into common code using the
+> COMPAT_FOR_U64_ALIGNMENT symbol for the x86 special case.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/arm64/include/asm/compat.h   | 2 --
+>  arch/mips/include/asm/compat.h    | 2 --
+>  arch/parisc/include/asm/compat.h  | 2 --
+>  arch/powerpc/include/asm/compat.h | 2 --
+>  arch/s390/include/asm/compat.h    | 2 --
+>  arch/sparc/include/asm/compat.h   | 3 +--
+>  arch/x86/include/asm/compat.h     | 2 --
+>  include/asm-generic/compat.h      | 8 ++++++++
+>  8 files changed, 9 insertions(+), 14 deletions(-)
 
-> Change the behavior of core.fsyncObjectFiles to also sync the
-> directory entry. I don't have a case where this broke, just going by
-> paranoia and the fsync(2) manual page's guarantees about its behavior.
-
-I've also often wondered whether this is necessary. Given the symptom of
-"oops, this object is there but with 0 bytes" after a hard crash (power
-off, etc), my assumption is that the metadata is being journaled but the
-actual data is not. Which would imply this isn't needed, but may just be
-revealing my naive view of how filesystems work.
-
-And of course all of my experience is on ext4 (which doubly confuses me,
-because my systems typically have data=ordered, which I thought would
-solve this). Non-journalling filesystems or other modes likely behave
-differently, but if this extra fsync carries a cost, we may want to make
-it optional.
-
->  sha1-file.c | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
-
-We already fsync pack files, but we don't fsync their directories. If
-this is important to do, we should be doing it there, too.
-
-We also don't fsync ref files (nor packed-refs) at all. If fsyncing
-files is important for reliability, we should be including those, too.
-It may be tempting to say that the important stuff is in objects and the
-refs can be salvaged from the commit graph, but my experience says
-otherwise. Missing, broken, or mysteriously-rewound refs cause confusing
-user-visible behavior, and when compounded with pruning operations like
-"git gc" they _do_ result in losing objects.
-
--Peff
+Acked-by: Arnd Bergmann <arnd@arndb.de>
