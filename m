@@ -2,130 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F34626E2F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 19:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CB6C26E345
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 20:09:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726553AbgIQRwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 13:52:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34198 "EHLO
+        id S1726383AbgIQSJm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 14:09:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726638AbgIQRwF (ORCPT
+        with ESMTP id S1726481AbgIQRa6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 13:52:05 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7732AC06178A
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 10:52:04 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id d15so3120088lfq.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 10:52:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6bZmvn6AnFCToftcYmbjrMBsBaTLLKSGSnwvFmZF6n0=;
-        b=KiLftkuCxl6NE0Z5GnOQXhoKfwhjNUBSCQAWnYyfLQ+LiSz8M2D9BnQlavUlJcqpj5
-         r2WBVfPMgec7ErXB7d/k7N1dWn9frQt9YfcR85U4NaYZ6A7c+n0cdKT+RFL174Krzqk2
-         lmXuheqYv1PgK+D/UjzvSTurKgMQjEi4xIS48=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6bZmvn6AnFCToftcYmbjrMBsBaTLLKSGSnwvFmZF6n0=;
-        b=txvjgxP1jKvVidO7mEcGoDpAeDkSH3bgTyYaWaqoO53vJUFiQHWdQ8fMHMLMgGtZhC
-         RKCyur8iJVGaaEgHREfkMz5l5cFvwDecudnf5el4CduPPpPRHttj/JXnXCWtj+bmZwjf
-         rOJOg4iu1gaVKWe+9mk+cZJ1xqgNjl5exe9DmQ/tPUiqpcana8sKHTV7gZer39VmUoQP
-         +VfL0pcu8Sej0KvHUyzPyHzDmwUdxvxyOA8lwdZt77DORfZlzuLmMRTi9KaEcBcpGU0z
-         C9z/pfF0M1o/oofDRYB0aEqqClAECBgc8NdN1BzMGaEIyQQfqXI9mhYyKksUq19WYP8j
-         W+ag==
-X-Gm-Message-State: AOAM530nI2jvkEEgWd+PziXxns6TPqvR6fwVkBHC+GUyKO/q4GA3LMRO
-        1MISysB8e7fvH8PAUzeFmCl/doOC8AXy1Q==
-X-Google-Smtp-Source: ABdhPJzuB2HYC+JFItahdOA6V1ssIe6DpBBYdw8x2d0w96QiUjl35f7vkAu9UR9TIJk0tK+ljE/Z2w==
-X-Received: by 2002:ac2:4a73:: with SMTP id q19mr10826426lfp.569.1600365120136;
-        Thu, 17 Sep 2020 10:52:00 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id w17sm55991ljd.2.2020.09.17.10.51.58
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Sep 2020 10:51:58 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id z17so3117446lfi.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Sep 2020 10:51:58 -0700 (PDT)
-X-Received: by 2002:a19:8907:: with SMTP id l7mr9413968lfd.105.1600365117964;
- Thu, 17 Sep 2020 10:51:57 -0700 (PDT)
+        Thu, 17 Sep 2020 13:30:58 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE849C06174A;
+        Thu, 17 Sep 2020 10:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=Vy+i14rdw+4hEhmBKTGutehzr8kV3l2y359HNYmPy6s=; b=Gm/aiQSY8U+jiHppzEQUoEzwep
+        cqGvY+jq384xbJGVBnfbwko8D5JZ0BGFns3s46sJKWmlyvr6Rprp6SB2EJM4tA5ZWwGgXjtq63029
+        6fca9dZX058BRWvIB7FVHM7gYriRdj93U6YriX8r4ysa1mBIe4YAaix4s1MqxQOLS42Oh2oGaQFEH
+        l/uG3rNoPBAWon9nPGtcQpTAFKhd3wMIPRsfkZGuARLiy2dYO81b/IGG1NmtVn1x1xE8tIT2y9NUm
+        dqXKBMMk9FcsMdibx/rdw78P0a5PJ/TlNM8r+Vr1v1L7claUCM+evzRzabhvPxLbjhmoPgUKFwgyF
+        nVKxc99Q==;
+Received: from 089144214092.atnat0023.highway.a1.net ([89.144.214.92] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kIxhM-0002QQ-Le; Thu, 17 Sep 2020 17:27:56 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Stefan Haberland <sth@linux.ibm.com>,
+        Jan Hoeppner <hoeppner@linux.ibm.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, nbd@other.debian.org,
+        linux-ide@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        linux-pm@vger.kernel.org, linux-mm@kvack.org,
+        linux-block@vger.kernel.org
+Subject: [PATCH 13/14] PM: mm: cleanup swsusp_swap_check
+Date:   Thu, 17 Sep 2020 18:57:19 +0200
+Message-Id: <20200917165720.3285256-14-hch@lst.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200917165720.3285256-1-hch@lst.de>
+References: <20200917165720.3285256-1-hch@lst.de>
 MIME-Version: 1.0
-References: <CAHk-=wiz=J=8mJ=zRG93nuJ9GtQAm5bSRAbWJbWZuN4Br38+EQ@mail.gmail.com>
- <CAHk-=wimM2kckaYj7spUJwehZkSYxK9RQqu3G392BE=73dyKtg@mail.gmail.com>
- <8bb582d2-2841-94eb-8862-91d1225d5ebc@MichaelLarabel.com> <CAHk-=wjqE_a6bpZyDQ4DCrvj_Dv2RwQoY7wN91kj8y-tZFRvEA@mail.gmail.com>
- <0cbc959e-1b8d-8d7e-1dc6-672cf5b3899a@MichaelLarabel.com> <CAHk-=whP-7Uw9WgWgjRgF1mCg+NnkOPpWjVw+a9M3F9C52DrVg@mail.gmail.com>
- <CAHk-=wjfw3U5eTGWLaisPHg1+jXsCX=xLZgqPx4KJeHhEqRnEQ@mail.gmail.com>
- <a2369108-7103-278c-9f10-6309a0a9dc3b@MichaelLarabel.com> <CAOQ4uxhz8prfD5K7dU68yHdz=iBndCXTg5w4BrF-35B+4ziOwA@mail.gmail.com>
- <0daf6ae6-422c-dd46-f85a-e83f6e1d1113@MichaelLarabel.com> <20200912143704.GB6583@casper.infradead.org>
- <658ae026-32d9-0a25-5a59-9c510d6898d5@MichaelLarabel.com> <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
-In-Reply-To: <CAHk-=wip0bCNnFK2Sxdn-YCTdKBF2JjF0kcM5mXbRuKKp3zojw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 17 Sep 2020 10:51:41 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whc5CnTUWoeeCDj640Rng4nH8HdLsHgEdnz3NtPSRqqhQ@mail.gmail.com>
-Message-ID: <CAHk-=whc5CnTUWoeeCDj640Rng4nH8HdLsHgEdnz3NtPSRqqhQ@mail.gmail.com>
-Subject: Re: Kernel Benchmarking
-To:     Michael Larabel <Michael@michaellarabel.com>,
-        Matthieu Baerts <matthieu.baerts@tessares.net>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Ted Ts'o" <tytso@google.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 14, 2020 at 10:47 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> (Note that it's a commit and has a SHA1, but it's from my "throw-away
-> tree for testing", so it doesn't have my sign-off or any real commit
-> message yet: I'll do that once it gets actual testing and comments).
+Use blkdev_get_by_dev instead of bdget + blkdev_get.
 
-Just to keep the list and people who were on this thread informed:
-Michal ended up doing more benchmarking, and everything seems to line
-up and yes, that patch continues to work fine with a 'unfairness'
-value of 5.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ kernel/power/swap.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-So I've committed it to my git tree (not pushed out yet, I have other
-pull requests etc I'm handling too), and we'll see if anybody can come
-up with a better model for how to avoid the page locking being such a
-pain. Or if somebody can figure out why fair locking causes problems
-for that packetdrill load that Matthieu reported.
+diff --git a/kernel/power/swap.c b/kernel/power/swap.c
+index 9d3ffbfe08dbf6..71385bedcc3a49 100644
+--- a/kernel/power/swap.c
++++ b/kernel/power/swap.c
+@@ -343,12 +343,10 @@ static int swsusp_swap_check(void)
+ 		return res;
+ 	root_swap = res;
+ 
+-	hib_resume_bdev = bdget(swsusp_resume_device);
+-	if (!hib_resume_bdev)
+-		return -ENOMEM;
+-	res = blkdev_get(hib_resume_bdev, FMODE_WRITE, NULL);
+-	if (res)
+-		return res;
++	hib_resume_bdev = blkdev_get_by_dev(swsusp_resume_device, FMODE_WRITE,
++			NULL);
++	if (IS_ERR(hib_resume_bdev))
++		return PTR_ERR(hib_resume_bdev);
+ 
+ 	res = set_blocksize(hib_resume_bdev, PAGE_SIZE);
+ 	if (res < 0)
+-- 
+2.28.0
 
-It does strike me that if the main source of contention comes from
-that "we need to check that the mapping is still valid as we insert
-the page into the page tables", then the page lock really isn't the
-obvious lock to use.
-
-It would be much more natural to use the mapping->i_mmap_rwsem, I feel.
-
-Willy? Your "just check for uptodate without any lock" patch itself
-feels wrong. That's what we do for plain reads, but the difference is
-that a read is a one-time event and a race is fine: we get valid data,
-it's just that it's only valid *concurrently* with the truncate or
-hole-punching event (ie either all zeroes or old data is fine).
-
-The reason faulting a page in is different from a read is that if you
-then map in a stale page, it might have had the correct contents at
-the time of the fault, but it will not have the correct contents going
-forward.
-
-So a page-in requires fundamentally stronger locking than a read()
-does, because of how the page-in causes that "future lifetime" of the
-page, in ways a read() event does not.
-
-But truncation that does page cache removal already requires that
-i_mmap_rwsem, and in fact the VM already very much uses that (ie when
-walking the page mapping).
-
-The other alternative might be just the mapping->private_lock. It's
-not a reader-writer lock, but if we don't need to sleep (and I don't
-think the final "check ->mapping" can sleep anyway since it has to be
-done together with the page table lock), a spinlock would be fine.
-
-                   Linus
