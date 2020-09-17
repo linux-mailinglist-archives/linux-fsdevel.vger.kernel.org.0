@@ -2,39 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6514226E6A4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 22:22:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B9AC26E6FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Sep 2020 22:59:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbgIQUWB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 16:22:01 -0400
-Received: from bsmtp2.bon.at ([213.33.87.16]:17068 "EHLO bsmtp2.bon.at"
+        id S1726354AbgIQU7q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 16:59:46 -0400
+Received: from bsmtp8.bon.at ([213.33.87.20]:61185 "EHLO bsmtp8.bon.at"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726333AbgIQUWB (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 16:22:01 -0400
-X-Greylist: delayed 406 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 16:22:00 EDT
+        id S1726315AbgIQU7q (ORCPT <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 17 Sep 2020 16:59:46 -0400
+Received: from bsmtp2.bon.at (unknown [192.168.181.107])
+        by bsmtp8.bon.at (Postfix) with ESMTPS id 4Bsp9Z5VLSz5vqq;
+        Thu, 17 Sep 2020 22:15:14 +0200 (CEST)
 Received: from dx.site (unknown [93.83.142.38])
-        by bsmtp2.bon.at (Postfix) with ESMTPSA id 4BspKL2xv0z5tl9;
-        Thu, 17 Sep 2020 22:21:58 +0200 (CEST)
+        by bsmtp2.bon.at (Postfix) with ESMTPSA id 4Bsp9W6c8Rz5tl9;
+        Thu, 17 Sep 2020 22:15:11 +0200 (CEST)
 Received: from [IPv6:::1] (localhost [IPv6:::1])
-        by dx.site (Postfix) with ESMTP id E3EB92100;
-        Thu, 17 Sep 2020 22:21:57 +0200 (CEST)
-Subject: Re: [RFC PATCH 1/2] sha1-file: fsync() loose dir entry when
- core.fsyncObjectFiles
-To:     =?UTF-8?B?w4Z2YXIgQXJuZmrDtnLDsCBCamFybWFzb24=?= <avarab@gmail.com>,
-        git@vger.kernel.org
-Cc:     tytso@mit.edu, Junio C Hamano <gitster@pobox.com>,
-        Christoph Hellwig <hch@lst.de>,
+        by dx.site (Postfix) with ESMTP id 0A2E42100;
+        Thu, 17 Sep 2020 22:15:10 +0200 (CEST)
+Subject: Re: [RFC PATCH 2/2] core.fsyncObjectFiles: make the docs less
+ flippant
+To:     Junio C Hamano <gitster@pobox.com>,
+        =?UTF-8?B?w4Z2YXIgQXJuZmrDtnLDsCBCamFybWFzb24=?= <avarab@gmail.com>
+Cc:     git@vger.kernel.org, tytso@mit.edu, Christoph Hellwig <hch@lst.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
 References: <87sgbghdbp.fsf@evledraar.gmail.com>
- <20200917112830.26606-2-avarab@gmail.com>
+ <20200917112830.26606-3-avarab@gmail.com>
+ <xmqqv9gcs91k.fsf@gitster.c.googlers.com>
 From:   Johannes Sixt <j6t@kdbg.org>
-Message-ID: <64358b70-4fff-5dc8-6e63-2fc916bea6af@kdbg.org>
-Date:   Thu, 17 Sep 2020 22:21:57 +0200
+Message-ID: <5b969f59-0006-8632-d040-6a816416f51a@kdbg.org>
+Date:   Thu, 17 Sep 2020 22:15:10 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <20200917112830.26606-2-avarab@gmail.com>
+In-Reply-To: <xmqqv9gcs91k.fsf@gitster.c.googlers.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -42,42 +44,100 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am 17.09.20 um 13:28 schrieb Ævar Arnfjörð Bjarmason:
-> Change the behavior of core.fsyncObjectFiles to also sync the
-> directory entry. I don't have a case where this broke, just going by
-> paranoia and the fsync(2) manual page's guarantees about its behavior.
+Am 17.09.20 um 17:43 schrieb Junio C Hamano:
+> Ævar Arnfjörð Bjarmason  <avarab@gmail.com> writes:
 > 
-> Signed-off-by: Ævar Arnfjörð Bjarmason <avarab@gmail.com>
-> ---
->  sha1-file.c | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
+>> As amusing as Linus's original prose[1] is here it doesn't really explain
+>> in any detail to the uninitiated why you would or wouldn't enable
+>> this, and the counter-intuitive reason for why git wouldn't fsync your
+>> precious data.
+>>
+>> So elaborate (a lot) on why this may or may not be needed. This is my
+>> best-effort attempt to summarize the various points raised in the last
+>> ML[2] discussion about this.
+>>
+>> 1.  aafe9fbaf4 ("Add config option to enable 'fsync()' of object
+>>     files", 2008-06-18)
+>> 2. https://lore.kernel.org/git/20180117184828.31816-1-hch@lst.de/
+>>
+>> Signed-off-by: Ævar Arnfjörð Bjarmason <avarab@gmail.com>
+>> ---
+>>  Documentation/config/core.txt | 42 ++++++++++++++++++++++++++++++-----
+>>  1 file changed, 36 insertions(+), 6 deletions(-)
 > 
-> diff --git a/sha1-file.c b/sha1-file.c
-> index dd65bd5c68..d286346921 100644
-> --- a/sha1-file.c
-> +++ b/sha1-file.c
-> @@ -1784,10 +1784,14 @@ int hash_object_file(const struct git_hash_algo *algo, const void *buf,
->  }
->  
->  /* Finalize a file on disk, and close it. */
-> -static void close_loose_object(int fd)
-> +static void close_loose_object(int fd, const struct strbuf *dirname)
->  {
-> -	if (fsync_object_files)
-> +	int dirfd;
-> +	if (fsync_object_files) {
->  		fsync_or_die(fd, "loose object file");
-> +		dirfd = xopen(dirname->buf, O_RDONLY);
-> +		fsync_or_die(dirfd, "loose object directory");
+> When I saw the subject in my mailbox, I expected to see that you
+> would resurrect Christoph's updated text in [*1*], but you wrote a
+> whole lot more ;-) And they are quite informative to help readers to
+> understand what the option does.  I am not sure if the understanding
+> directly help readers to decide if it is appropriate for their own
+> repositories, though X-<.
 
-Did you have the opportunity to verify that this works on Windows?
-Opening a directory with open(2), I mean: It's disallowed according to
-the docs:
-https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/open-wopen?view=vs-2019#return-value
+Not only that; the new text also uses the term "fsync" in a manner that
+I could be persuaded that it is actually an English word. Which, so far,
+I doubt that it is ;) A little bit less 1337 wording would help the
+users better.
 
-> +	}
->  	if (close(fd) != 0)
->  		die_errno(_("error when closing loose object file"));
->  }
+> 
+> 
+> Thanks.
+> 
+> [Reference]
+> 
+> *1* https://public-inbox.org/git/20180117193510.GA30657@lst.de/
+> 
+>>
+>> diff --git a/Documentation/config/core.txt b/Documentation/config/core.txt
+>> index 74619a9c03..5b47670c16 100644
+>> --- a/Documentation/config/core.txt
+>> +++ b/Documentation/config/core.txt
+>> @@ -548,12 +548,42 @@ core.whitespace::
+>>    errors. The default tab width is 8. Allowed values are 1 to 63.
+>>  
+>>  core.fsyncObjectFiles::
+>> -	This boolean will enable 'fsync()' when writing object files.
+>> -+
+>> -This is a total waste of time and effort on a filesystem that orders
+>> -data writes properly, but can be useful for filesystems that do not use
+>> -journalling (traditional UNIX filesystems) or that only journal metadata
+>> -and not file contents (OS X's HFS+, or Linux ext3 with "data=writeback").
+>> +	This boolean will enable 'fsync()' when writing loose object
+>> +	files. Both the file itself and its containng directory will
+>> +	be fsynced.
+>> ++
+>> +When git writes data any required object writes will precede the
+>> +corresponding reference update(s). For example, a
+>> +linkgit:git-receive-pack[1] accepting a push might write a pack or
+>> +loose objects (depending on settings such as `transfer.unpackLimit`).
+>> ++
+>> +Therefore on a journaled file system which ensures that data is
+>> +flushed to disk in chronological order an fsync shouldn't be
+>> +needed. The loose objects might be lost with a crash, but so will the
+>> +ref update that would have referenced them. Git's own state in such a
+>> +crash will remain consistent.
+>> ++
+>> +This option exists because that assumption doesn't hold on filesystems
+>> +where the data ordering is not preserved, such as on ext3 and ext4
+>> +with "data=writeback". On such a filesystem the `rename()` that drops
+>> +the new reference in place might be preserved, but the contents or
+>> +directory entry for the loose object(s) might not have been synced to
+>> +disk.
+>> ++
+>> +Enabling this option might slow git down by a lot in some
+>> +cases. E.g. in the case of a naïve bulk import tool which might create
+>> +a million loose objects before a final ref update and `gc`. In other
+>> +more common cases such as on a server being pushed to with default
+>> +`transfer.unpackLimit` settings the difference might not be noticable.
+>> ++
+>> +However, that's highly filesystem-dependent, on some filesystems
+>> +simply calling fsync() might force an unrelated bulk background write
+>> +to be serialized to disk. Such edge cases are the reason this option
+>> +is off by default. That default setting might change in future
+>> +versions.
+>> ++
+>> +In older versions of git only the descriptor for the file itself was
+>> +fsynced, not its directory entry.
+>>  
+>>  core.preloadIndex::
+>>  	Enable parallel index preload for operations like 'git diff'
+> 
 
--- Hannes
