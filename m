@@ -2,194 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A5E926E931
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 00:56:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99E0926E94B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Sep 2020 01:13:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726065AbgIQW45 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Sep 2020 18:56:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53054 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbgIQW44 (ORCPT
+        id S1726151AbgIQXN6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Sep 2020 19:13:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:43691 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726149AbgIQXN6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Sep 2020 18:56:56 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67D2AC06174A;
-        Thu, 17 Sep 2020 15:56:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=sKL/iWIcj7kseW56eZGIbOn0qPY+XDTbdfqR4zUQiv0=; b=m4WIwEzpF3pzAH8AOsbTv9/H2W
-        SEhCFUUEY/+1Mh71FJkb99Ph/DL5OyylHBDOEXBlo0eNz2ocoCL7BwssqAzcXjZMy1TOW8RWyo/5b
-        Huu45Fi5JmlJBgM+obba4IWeHHRasZlFWE4SCeGUomrMhJwVfwkR68bTbiteJAgUFLjB/wdaY41ub
-        6YCgFO7dyayMBvVqEj6SzgNPTM9UKnEO6WrFCYcPxUp5ITQFP1l7wzUHYvtLrQff5mXbX1WBO4U30
-        yCcfqm9M6PE3PqMkFLNatvDktKKnDKYKRuCIUI9AIiJLHSo2qb3vy5uTKHc476peEMDH3+GSJxLNP
-        WAvdIDkQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kJ2pi-0006uF-Kx; Thu, 17 Sep 2020 22:56:54 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-xfs@vger.kernel.org
-Subject: [PATCH 16/13] iomap: Make readpage synchronous
-Date:   Thu, 17 Sep 2020 23:56:47 +0100
-Message-Id: <20200917225647.26481-3-willy@infradead.org>
-X-Mailer: git-send-email 2.21.3
-In-Reply-To: <20200917225647.26481-1-willy@infradead.org>
-References: <20200917151050.5363-1-willy@infradead.org>
- <20200917225647.26481-1-willy@infradead.org>
+        Thu, 17 Sep 2020 19:13:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600384437;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=3IZMOFHDfDgqgBMZv+C4q9OSWQXJrKtdRyzz00lZbe4=;
+        b=YG3UrHPvwY3xaqS0HB38l8IdM0VyuDAMtmEecDk9NaNBxbi6glWHBMKBVFBy//i7fZkRiY
+        Dk7ihrKVdVpMzPJYma6IFqTu2A9lAcMjN0FupalQ2mKt622X/vYPSALrLVkDGRz/feSSp6
+        TuW5r3RlFK53uo+v3Zuwav1ScSGxxrI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-518-M4VA2YllOCWBMzXqqOnuOQ-1; Thu, 17 Sep 2020 19:13:52 -0400
+X-MC-Unique: M4VA2YllOCWBMzXqqOnuOQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3885864085;
+        Thu, 17 Sep 2020 23:13:51 +0000 (UTC)
+Received: from T590 (ovpn-12-51.pek2.redhat.com [10.72.12.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1F0D160BEC;
+        Thu, 17 Sep 2020 23:13:39 +0000 (UTC)
+Date:   Fri, 18 Sep 2020 07:13:35 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Brian Foster <bfoster@redhat.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org,
+        minlei@redhat.com
+Subject: Re: [PATCH] iomap: Fix the write_count in iomap_add_to_ioend().
+Message-ID: <20200917231335.GB1139137@T590>
+References: <20200822131312.GA17997@infradead.org>
+ <20200824142823.GA295033@bfoster>
+ <20200824150417.GA12258@infradead.org>
+ <20200824154841.GB295033@bfoster>
+ <20200825004203.GJ12131@dread.disaster.area>
+ <20200825144917.GA321765@bfoster>
+ <20200916001242.GE7955@magnolia>
+ <20200916084510.GA30815@infradead.org>
+ <20200916130714.GA1681377@bfoster>
+ <20200917080455.GY26262@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200917080455.GY26262@infradead.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A synchronous readpage lets us report the actual errno instead of
-ineffectively setting PageError.
+On Thu, Sep 17, 2020 at 09:04:55AM +0100, Christoph Hellwig wrote:
+> On Wed, Sep 16, 2020 at 09:07:14AM -0400, Brian Foster wrote:
+> > Dave described the main purpose earlier in this thread [1]. The initial
+> > motivation is that we've had downstream reports of soft lockup problems
+> > in writeback bio completion down in the bio -> bvec loop of
+> > iomap_finish_ioend() that has to finish writeback on each individual
+> > page of insanely large bios and/or chains. We've also had an upstream
+> > reports of a similar problem on linux-xfs [2].
+> > 
+> > The magic number itself was just pulled out of a hat. I picked it
+> > because it seemed conservative enough to still allow large contiguous
+> > bios (1GB w/ 4k pages) while hopefully preventing I/O completion
+> > problems, but was hoping for some feedback on that bit if the general
+> > approach was acceptable. I was also waiting for some feedback on either
+> > of the two users who reported the problem but I don't think I've heard
+> > back on that yet...
+> 
+> I think the saner answer is to always run large completions in the
+> workqueue, and add a bunch of cond_resched() calls, rather than
+> arbitrarily breaking up the I/O size.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/iomap/buffered-io.c | 64 +++++++++++++++++++++++++-----------------
- 1 file changed, 38 insertions(+), 26 deletions(-)
+Completion all ioend pages in single bio->end_bio() may pin too many pages
+unnecessary long, and adding cond_resched() can make the issue worse.
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 13b56d656337..aec95996bd4b 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -146,9 +146,6 @@ void iomap_set_range_uptodate(struct page *page, unsigned off, unsigned len)
- 	unsigned long flags;
- 	unsigned int i;
- 
--	if (PageError(page))
--		return;
--
- 	if (!iop) {
- 		SetPageUptodate(page);
- 		return;
-@@ -167,32 +164,41 @@ void iomap_set_range_uptodate(struct page *page, unsigned off, unsigned len)
- 	spin_unlock_irqrestore(&iop->uptodate_lock, flags);
- }
- 
--static void
--iomap_read_page_end_io(struct bio_vec *bvec, int error)
-+struct iomap_sync_end {
-+	blk_status_t status;
-+	struct completion done;
-+};
-+
-+static void iomap_read_page_end_io(struct bio_vec *bvec,
-+		struct iomap_sync_end *end, bool error)
- {
- 	struct page *page = bvec->bv_page;
- 	struct iomap_page *iop = to_iomap_page(page);
- 
--	if (unlikely(error)) {
--		ClearPageUptodate(page);
--		SetPageError(page);
--	} else {
-+	if (!error)
- 		iomap_set_range_uptodate(page, bvec->bv_offset, bvec->bv_len);
--	}
- 
--	if (!iop || atomic_dec_and_test(&iop->read_count))
--		unlock_page(page);
-+	if (!iop || atomic_dec_and_test(&iop->read_count)) {
-+		if (end)
-+			complete(&end->done);
-+		else
-+			unlock_page(page);
-+	}
- }
- 
- static void
- iomap_read_end_io(struct bio *bio)
- {
--	int error = blk_status_to_errno(bio->bi_status);
-+	struct iomap_sync_end *end = bio->bi_private;
- 	struct bio_vec *bvec;
- 	struct bvec_iter_all iter_all;
- 
-+	/* Capture the first error */
-+	if (end && end->status == BLK_STS_OK)
-+		end->status = bio->bi_status;
-+
- 	bio_for_each_segment_all(bvec, bio, iter_all)
--		iomap_read_page_end_io(bvec, error);
-+		iomap_read_page_end_io(bvec, end, bio->bi_status != BLK_STS_OK);
- 	bio_put(bio);
- }
- 
-@@ -201,6 +207,7 @@ struct iomap_readpage_ctx {
- 	bool			cur_page_in_bio;
- 	struct bio		*bio;
- 	struct readahead_control *rac;
-+	struct iomap_sync_end	*end;
- };
- 
- static void
-@@ -307,6 +314,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- 			ctx->bio->bi_opf |= REQ_RAHEAD;
- 		ctx->bio->bi_iter.bi_sector = sector;
- 		bio_set_dev(ctx->bio, iomap->bdev);
-+		ctx->bio->bi_private = ctx->end;
- 		ctx->bio->bi_end_io = iomap_read_end_io;
- 	}
- 
-@@ -324,22 +332,25 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
- int
- iomap_readpage(struct page *page, const struct iomap_ops *ops)
- {
--	struct iomap_readpage_ctx ctx = { .cur_page = page };
-+	struct iomap_sync_end end;
-+	struct iomap_readpage_ctx ctx = { .cur_page = page, .end = &end, };
- 	struct inode *inode = page->mapping->host;
- 	unsigned poff;
- 	loff_t ret;
- 
- 	trace_iomap_readpage(page->mapping->host, 1);
- 
-+	end.status = BLK_STS_OK;
-+	init_completion(&end.done);
-+
- 	for (poff = 0; poff < PAGE_SIZE; poff += ret) {
- 		ret = iomap_apply(inode, page_offset(page) + poff,
- 				PAGE_SIZE - poff, 0, ops, &ctx,
- 				iomap_readpage_actor);
--		if (ret <= 0) {
--			WARN_ON_ONCE(ret == 0);
--			SetPageError(page);
-+		if (WARN_ON_ONCE(ret == 0))
-+			ret = -EIO;
-+		if (ret < 0)
- 			break;
--		}
- 	}
- 
- 	if (ctx.bio) {
-@@ -347,15 +358,16 @@ iomap_readpage(struct page *page, const struct iomap_ops *ops)
- 		WARN_ON_ONCE(!ctx.cur_page_in_bio);
- 	} else {
- 		WARN_ON_ONCE(ctx.cur_page_in_bio);
--		unlock_page(page);
-+		complete(&end.done);
- 	}
- 
--	/*
--	 * Just like mpage_readahead and block_read_full_page we always
--	 * return 0 and just mark the page as PageError on errors.  This
--	 * should be cleaned up all through the stack eventually.
--	 */
--	return 0;
-+	wait_for_completion(&end.done);
-+	if (ret >= 0)
-+		ret = blk_status_to_errno(end.status);
-+	if (ret == 0)
-+		return AOP_UPDATED_PAGE;
-+	unlock_page(page);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(iomap_readpage);
- 
--- 
-2.28.0
+
+thanks,
+Ming
 
